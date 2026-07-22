@@ -698,6 +698,8 @@
           return { ok: true, value: cloneResidentPresentation(recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot)) };
         case "history_undo_pending":
           return { ok: true, value: cloneResidentPresentation(undoPendingActionForRoot(workingRoot)) };
+        case "data_open_computer_picker":
+          return { ok: true, value: cloneResidentPresentation(runPlaceDataToComputerForRoot(workingRoot)) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -10461,13 +10463,14 @@
   function updateActionButtons() {
     if (headlessMode) return;
     syncFinalResultButton();
-    const context = createActionContext();
+    const readoutRoot = createStateSourceReadoutRoot();
+    const context = createActionContextForWorkingRoot(readoutRoot);
     const gameplayLockReason = getGameplayLockReason();
     if (gameplayLockReason) {
       lockAllActionButtons(gameplayLockReason);
       return;
     }
-    if (isAiAutoBattlePlayer(playerState.currentPlayerId) && !isAiAutomationPaused()) {
+    if (isAiAutoBattlePlayer(readoutRoot.playerState.currentPlayerId) && !isAiAutomationPaused()) {
       lockAllActionButtons("电脑玩家自动行动中");
       return;
     }
@@ -10684,45 +10687,49 @@
     updateQuickTradeButtons();
   }
 
-  function runPlaceDataToComputer() {
-    const blocked = blockIncompatiblePendingQuickAction("place-data");
+  function runPlaceDataToComputerForRoot(workingRoot) {
+    const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
     if (blocked) return blocked;
 
     const gameplayLockReason = getGameplayLockReason();
     if (gameplayLockReason) {
-      rocketState.statusNote = gameplayLockReason;
+      workingRoot.rocketState.statusNote = gameplayLockReason;
       renderStateReadout();
       return { ok: false, message: gameplayLockReason };
     }
 
     if (isTechTilePickingActive()) {
-      rocketState.statusNote = "请先完成科技选择";
+      workingRoot.rocketState.statusNote = "请先完成科技选择";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
     if (isCardSelectionActive()) {
-      rocketState.statusNote = "请先完成精选";
+      workingRoot.rocketState.statusNote = "请先完成精选";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
     if (isDiscardSelectionActive()) {
-      rocketState.statusNote = "请先完成弃牌";
+      workingRoot.rocketState.statusNote = "请先完成弃牌";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
     if (isPlayCardSelectionActive()) {
-      rocketState.statusNote = "请先完成打牌";
+      workingRoot.rocketState.statusNote = "请先完成打牌";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
     if (isMovePaymentSelectionActive()) {
-      rocketState.statusNote = "请先完成移动";
+      workingRoot.rocketState.statusNote = "请先完成移动";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
 
     openDataPlacePicker();
     return { ok: true };
+  }
+
+  function runPlaceDataToComputer() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "data_open_computer_picker" }).value;
   }
 
   function analyzeDataForCurrentPlayer() {
