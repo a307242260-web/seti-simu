@@ -861,14 +861,14 @@
                 candidates: turnCandidates,
               };
             }
-            const pending = getAiAutoBattleProgress?.().pendingState || {};
+            const currentEffect = getCurrentActionEffect(workingRoot);
             return {
               ok: true,
               boundary: "draining",
               decisionType: null,
               candidates: [],
-              actionEffectActive: Boolean(pending.actionEffectFlowActive),
-              currentEffect: structuredClone(pending.currentEffect || null),
+              actionEffectActive: isActionEffectFlowActive(workingRoot),
+              currentEffect: structuredClone(currentEffect || null),
             };
           },
           executeDeterministic(workingRoot, boundary) {
@@ -1006,10 +1006,19 @@
     alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
     industryCardFiles: INDUSTRY_CARD_FILES,
   });
-  const decisionSessions = runtime.decisions;
-  const decisionState = decisionSessions.createFacade({
-    actionEffectFlow: "action_effect_flow",
-  });
+  function getActionEffectFlow(workingRoot = null) {
+    const root = workingRoot || createStateSourceReadoutRoot();
+    return root?.match?.actionEffectFlow || null;
+  }
+  function setActionEffectFlow(workingRoot, flow) {
+    if (!workingRoot?.match) throw new TypeError("action effect flow requires explicit workingRoot.match");
+    if (!flow) {
+      delete workingRoot.match.actionEffectFlow;
+      return null;
+    }
+    workingRoot.match.actionEffectFlow = flow;
+    return flow;
+  }
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const getPendingDataPlacementDecision = (workingRoot = createStateSourceReadoutRoot()) => (
@@ -1113,9 +1122,7 @@
     getPendingChongCardGain,
     getPendingAmibaTraceRemoval,
     getHeadlessConditionalPlayer,
-    get decisionSessions() { return decisionSessions; },
     getPlayerById,
-    get decisionState() { return decisionState; },
     cards,
     players,
     getPublicScanChoicesForCard,
@@ -1127,8 +1134,10 @@
     isTechTilePickingActive,
     tech,
     industry,
-    getResearchTechSelectionOptions,
-    isTechTileOwnedByOtherPlayer,
+    getResearchTechSelectionOptions: (workingRoot) => getResearchTechSelectionOptionsForRoot(workingRoot),
+    isTechTileOwnedByOtherPlayer: (workingRoot, ...args) => (
+      isTechTileOwnedByOtherPlayerForRoot(workingRoot, ...args)
+    ),
     isActionEffectFlowActive,
     skipCurrentActionEffect: (workingRoot) => skipCurrentActionEffectForRoot(workingRoot),
     getPendingDataPlacementDecision,
@@ -1168,9 +1177,9 @@
     handleRunezuFaceSymbolChoice,
     handleAmibaSymbolChoice,
     handleFinalScoreTileClick,
-    handleSupplyTechTileClick,
-    confirmTechBlueSlotChoice,
-    cancelTechSelection,
+    handleSupplyTechTileClick: (workingRoot, ...args) => handleSupplyTechTileClickForRoot(workingRoot, ...args),
+    confirmTechBlueSlotChoice: (workingRoot, ...args) => confirmTechBlueSlotChoiceForRoot(workingRoot, ...args),
+    cancelTechSelection: (workingRoot, ...args) => cancelTechSelectionForRoot(workingRoot, ...args),
     handleFangzhouTraceDestinationChoice: (workingRoot, ...args) => handleFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
     handleFangzhouUnlockTraceChoice: (workingRoot, ...args) => handleFangzhouUnlockTraceChoiceForRoot(workingRoot, ...args),
     handleDiscardCornerRepeatChoice,
@@ -1806,15 +1815,14 @@
   function createResidentRenderInput() {
     if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
     const viewer = getResidentViewer();
-    const decisions = { ...decisionSessions.createFacade({
-      actionEffectFlow: "action_effect_flow",
-    }) };
+    const decisions = {};
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const readoutRoot = createResidentReadoutRoot(canonical.resident);
     decisions.movePayment = getPendingMovePayment();
     decisions.cardSelectionContinuation = getPendingCardSelectionDecision(readoutRoot);
     decisions.alienTraceContinuation = getPendingAlienTraceDecision(readoutRoot);
     decisions.alienTracePickerState = uiRuntimeState.alienTracePickerState || null;
+    decisions.actionEffectFlow = getActionEffectFlow(readoutRoot);
     decisions.publicCardSelectedSlots = [...(uiRuntimeState.publicCardSelectedSlots || [])];
     decisions.discardContinuation = getPendingDiscardDecision(readoutRoot);
     decisions.discardSelectedHandIndexes = [...(uiRuntimeState.discardSelectedHandIndexes || [])];
@@ -2189,7 +2197,6 @@
     })
   );
   const effectFlowHelpers = effectFlowModule.createEffectFlowHelpers({
-    decisionSessions,
     uiRuntimeState,
     actionHistory,
     quickActionHistory,
@@ -2228,9 +2235,9 @@
     renderStateReadout,
     hasActiveCardTriggerResolution: (...args) => hasActiveCardTriggerResolution(...args),
     isCardTriggerRewardFlowBusy: (...args) => isCardTriggerRewardFlowBusy(...args),
-    settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
-    finishActionEffectFlow,
-    cancelActiveEffectSubFlows,
+    settleCardTasksAfterEffect: (workingRoot, ...args) => settleCardTasksAfterEffectForRoot(workingRoot, ...args),
+    finishActionEffectFlow: (workingRoot) => finishActionEffectFlowForRoot(workingRoot),
+    cancelActiveEffectSubFlows: (workingRoot) => cancelActiveEffectSubFlowsForRoot(workingRoot),
     maybeAutoExecuteAomomoRewardEffects,
     withEffectExecutionPlayer,
     executeActionEffectForOwner,
@@ -2332,6 +2339,10 @@
     completeCurrentActionEffect,
     executeActionEffect,
   } = effectFlowHelpers);
+  const getCurrentActionEffectForRoot = getCurrentActionEffect;
+  getCurrentActionEffect = (workingRoot = null) => getCurrentActionEffectForRoot(
+    workingRoot || createStateSourceReadoutRoot(),
+  );
   function recordAbilityCommands(result, history = actionHistory, workingRoot) {
     return recordAbilityCommandsForRoot(workingRoot, result, history);
   }
@@ -2353,7 +2364,6 @@
   } = actionBriefingHelpers);
   const effectChoiceFlowHelpers = effectChoiceFlowModule.createEffectChoiceFlowHelpers({
     document,
-    decisionSessions,
     uiRuntimeState,
     els,
     cards,
@@ -2412,7 +2422,6 @@
     isAsteroidContent,
   });
   const handFlowHelpers = handFlowModule.createHandFlow({
-    decisionSessions,
     uiRuntimeState,
     els,
     players,
@@ -2594,10 +2603,12 @@
   isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
   syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
   cancelHandScanSelection = (...args) => callHandFlowCommand("cancelHandScanSelection", args);
-  isMovePaymentSelectionActive = () => Boolean(getPendingMovePayment());
-  getMovePaymentPlayer = () => {
-    const pending = getPendingMovePayment();
-    return pending ? resolvePlayerReference({
+  isMovePaymentSelectionActive = (workingRoot = createStateSourceReadoutRoot()) => Boolean(
+    getPendingMovePayment(workingRoot),
+  );
+  getMovePaymentPlayer = (workingRoot = createStateSourceReadoutRoot()) => {
+    const pending = getPendingMovePayment(workingRoot);
+    return pending ? resolvePlayerReference(workingRoot, {
       playerId: pending.playerId,
       playerColor: pending.playerColor,
     }) : null;
@@ -2682,7 +2693,6 @@
     runezu,
     aomomo,
     historyCommands,
-    decisionSessions,
     uiRuntimeState,
     clearPendingAmibaSymbolChoice: () => alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.(),
     clearPendingRunezuSymbolBranch: () => alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.(),
@@ -2975,7 +2985,6 @@
   }
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
-    decisionSessions,
     uiRuntimeState,
     headless: headlessMode,
     document,
@@ -3105,7 +3114,6 @@
   const getFangzhouUnlockableTraceTypes = (...args) => callBrowserDomainCommand("alien_ui", "getFangzhouUnlockableTraceTypes", args);
   const hasAlienTracePanelPlacementTarget = (...args) => callBrowserDomainCommand("alien_ui", "hasAlienTracePanelPlacementTarget", args);
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
-    decisionSessions,
     uiRuntimeState,
     structuredClone,
     aliens,
@@ -3428,7 +3436,6 @@
     startNewGame,
   });
   actionRuntimeController = actionRuntimeModule.createActionRuntime({
-    decisionSessions,
     setupSelectionState,
     startScreenState,
     actionLogState,
@@ -3511,7 +3518,7 @@
     passForCurrentPlayer: (...args) => passForCurrentPlayer(...args),
     endCurrentTurn: (...args) => endCurrentTurn(...args),
     blockManualAiPendingInputIfNeeded,
-    getCurrentActionEffectIndex: () => decisionState.actionEffectFlow?.currentIndex,
+    getCurrentActionEffectIndex: () => getActionEffectFlow()?.currentIndex,
     runQuickTrade,
     confirmDataPlacement,
     standardActionAdapter: actions.createStandardAdapter({
@@ -3520,9 +3527,9 @@
           label: "扫描",
           getOptions(context) {
             const player = players.getCurrentPlayer(context.playerState);
-            const check = canStartMainAction()
+            const check = canStartMainAction(context.workingRoot)
               ? scanEffects.canExecuteScan(player, { standardAction: true })
-              : { ok: false, message: getMainActionStartBlockReason() };
+              : { ok: false, message: getMainActionStartBlockReason(context.workingRoot) };
             return check.ok ? { ok: true, choices: [{ target: { kind: "standard-scan" }, label: "扫描" }] } : check;
           },
           canExecute(context) { return this.getOptions(context); },
@@ -3532,7 +3539,9 @@
           label: "分析",
           getOptions(context) {
             const player = players.getCurrentPlayer(context.playerState);
-            const check = canStartMainAction() ? canAnalyzeDataForPlayer(player) : { ok: false, message: getMainActionStartBlockReason() };
+            const check = canStartMainAction(context.workingRoot)
+              ? canAnalyzeDataForPlayer(player)
+              : { ok: false, message: getMainActionStartBlockReason(context.workingRoot) };
             return check.ok ? { ok: true, choices: [{ target: { kind: "computer", requiredSlot: data.ANALYZE_REQUIRED_COMPUTER_SLOT }, payload: getAnalyzeActionOptionsForPlayer(player), label: "分析" }] } : check;
           },
           canExecute(context) { return this.getOptions(context); },
@@ -3541,7 +3550,9 @@
         playCard: {
           label: "打牌",
           getOptions(context) {
-            if (!canStartMainAction()) return { ok: false, message: getMainActionStartBlockReason() };
+            if (!canStartMainAction(context.workingRoot)) {
+              return { ok: false, message: getMainActionStartBlockReason(context.workingRoot) };
+            }
             const player = players.getCurrentPlayer(context.playerState);
             const choices = (player?.hand || []).map((card, handIndex) => ({ card, handIndex, cost: getCardPlayCost(card) }))
               .filter(({ cost }) => players.canAfford(player, cost))
@@ -3558,8 +3569,12 @@
         },
         pass: {
           label: "PASS",
-          getOptions() { return canStartMainAction() ? { ok: true, choices: [{ target: { kind: "pass" }, label: "PASS" }] } : { ok: false, message: getMainActionStartBlockReason() }; },
-          canExecute() { return this.getOptions(); },
+          getOptions(context) {
+            return canStartMainAction(context.workingRoot)
+              ? { ok: true, choices: [{ target: { kind: "pass" }, label: "PASS" }] }
+              : { ok: false, message: getMainActionStartBlockReason(context.workingRoot) };
+          },
+          canExecute(context) { return this.getOptions(context); },
           execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
       },
@@ -3567,7 +3582,7 @@
         move: {
           label: "移动",
           getOptions(context) {
-            if (hasActivePendingSubFlow()) return { ok: false, message: "请先完成当前选择" };
+            if (hasActivePendingSubFlow(context.workingRoot)) return { ok: false, message: "请先完成当前选择" };
             const player = players.getCurrentPlayer(context.playerState);
             const directions = [
               { id: "out", deltaX: 0, deltaY: 1 },
@@ -3634,13 +3649,19 @@
         cardCorner: {
           label: "弃牌角标",
           getOptions(context) {
-            if (!canUseCardCornerQuickAction()) return { ok: false, message: "当前无法使用卡牌快速行动" };
+            if (!canUseCardCornerQuickActionForRoot(context.workingRoot)) {
+              return { ok: false, message: "当前无法使用卡牌快速行动" };
+            }
             const player = players.getCurrentPlayer(context.playerState);
-            const choices = (player?.hand || []).map((card, handIndex) => ({ card, handIndex, action: getCardCornerQuickActionForCard(card) }))
+            const choices = (player?.hand || []).map((card, handIndex) => ({
+              card,
+              handIndex,
+              action: getCardCornerQuickActionForCardForRoot(context.workingRoot, card),
+            }))
               .filter(({ action }) => Boolean(action))
               .filter(({ action }) => action.actionKind !== "move"
-                || shouldQueueCardCornerMoveQuickAction(action, player)
-                || canStartCardCornerFreeMove().ok)
+                || shouldQueueCardCornerMoveQuickActionForRoot(context.workingRoot, action, player)
+                || canStartCardCornerFreeMoveForRoot(context.workingRoot).ok)
               .map(({ card, handIndex, action }) => ({
                 target: { cardInstanceId: card.id },
                 payload: { handIndex, actionKind: action.actionKind, symbolId: action.symbolId || null },
@@ -3687,13 +3708,14 @@
         },
         endTurn: {
           label: "结束回合",
-          getOptions() {
-            const legal = isActionPending() && !isActionEffectFlowActive() && !hasActivePendingSubFlow();
+          getOptions(context) {
+            const legal = isActionPending() && !isActionEffectFlowActive(context.workingRoot)
+              && !hasActivePendingSubFlow(context.workingRoot);
             return legal
               ? { ok: true, choices: [{ target: { kind: "end-turn" }, label: "结束回合" }] }
               : { ok: false, message: "主行动未完成或仍有待决选择" };
           },
-          canExecute() { return this.getOptions(); },
+          canExecute(context) { return this.getOptions(context); },
           execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
       },
@@ -4066,17 +4088,17 @@
     const effects = buildInitialIncomeEffectNodes(entries);
     if (!effects.length) return false;
 
-    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+    setActionEffectFlow(workingRoot, abilities.chain.startAbilityChain(
       "initialIncome",
       "初始收入增加",
       effects,
-    );
-    decisionState.actionEffectFlow.actionType = "initialIncome";
-    decisionState.actionEffectFlow.playerId = effects[0]?.options?.playerId || null;
-    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+    ));
+    getActionEffectFlow(workingRoot).actionType = "initialIncome";
+    getActionEffectFlow(workingRoot).playerId = effects[0]?.options?.playerId || null;
+    assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
 
     const firstPlayer = (workingRoot.playerState.players || [])
-      .find((player) => player.id === decisionState.actionEffectFlow.playerId) || null;
+      .find((player) => player.id === getActionEffectFlow(workingRoot).playerId) || null;
     if (firstPlayer) {
       workingRoot.playerState.currentPlayerId = firstPlayer.id;
     }
@@ -4086,7 +4108,7 @@
     renderDebugPlayerSwitch();
     renderPlayerStats();
     renderPlayerHand();
-    activateNextActionEffect();
+    activateNextActionEffect(workingRoot);
     return true;
   }
 
@@ -4172,11 +4194,11 @@
     const playerState = workingRoot?.playerState || createStateSourceReadoutRoot().playerState;
     return (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
       || (workingRoot
-        ? getPlayerById(workingRoot, decisionState.actionEffectFlow?.defaultPlayerId)
-        : getPlayerById(decisionState.actionEffectFlow?.defaultPlayerId))
+        ? getPlayerById(workingRoot, getActionEffectFlow(workingRoot)?.defaultPlayerId)
+        : getPlayerById(getActionEffectFlow(workingRoot)?.defaultPlayerId))
       || (workingRoot
-        ? getPlayerById(workingRoot, decisionState.actionEffectFlow?.playerId)
-        : getPlayerById(decisionState.actionEffectFlow?.playerId))
+        ? getPlayerById(workingRoot, getActionEffectFlow(workingRoot)?.playerId)
+        : getPlayerById(getActionEffectFlow(workingRoot)?.playerId))
       || players.getCurrentPlayer(playerState);
   }
 
@@ -4222,10 +4244,10 @@
     }
   }
 
-  function setActiveEffectFlowOwner(effect) {
-    if (!decisionState.actionEffectFlow || !effect) return null;
+  function setActiveEffectFlowOwner(workingRoot, effect) {
+    if (!getActionEffectFlow(workingRoot) || !effect) return null;
     const owner = getEffectOwnerPlayer(effect);
-    decisionState.actionEffectFlow.activePlayerId = owner?.id || null;
+    getActionEffectFlow(workingRoot).activePlayerId = owner?.id || null;
     return owner;
   }
 
@@ -4327,7 +4349,7 @@
     get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
     get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
     get pendingActionExecuted() { return isActionPending(); },
-    get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
+    get pendingActionEffectFlow() { return getActionEffectFlow(); },
     get actionHistoryHasSession() { return actionHistory.hasSession(); },
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
     get effectStepActive() { return uiRuntimeState.effectStepActive; },
@@ -4471,7 +4493,9 @@
     confirmDataPlacement,
     confirmDiscardAnyForIncome,
     confirmHandCardPlayAction,
-    confirmInitialSelectionForCurrentPlayer,
+    confirmInitialSelectionForCurrentPlayer: (workingRoot) => (
+      actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot)
+    ),
     confirmAlienRevealNotice: () => {
       const result = confirmAlienRevealNotice();
       maybeContinuePendingTurnEndRevealFlow();
@@ -4729,7 +4753,6 @@
     options,
   });
   const cardRuntime = cardRuntimeModule.createCardRuntime({
-    decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     SCORE_SOURCE_KEYS,
@@ -4901,6 +4924,8 @@
   getCardCornerQuickActionForCard = bindBrowserDomainCommand("card_runtime", "getCardCornerQuickActionForCard");
   const shouldQueueCardCornerMoveQuickActionForRoot = shouldQueueCardCornerMoveQuickAction;
   shouldQueueCardCornerMoveQuickAction = bindBrowserDomainCommand("card_runtime", "shouldQueueCardCornerMoveQuickAction");
+  const canUseCardCornerQuickActionForRoot = canUseCardCornerQuickAction;
+  canUseCardCornerQuickAction = bindBrowserDomainCommand("card_runtime", "canUseCardCornerQuickAction");
   const canStartCardCornerFreeMoveForRoot = canStartCardCornerFreeMove;
   canStartCardCornerFreeMove = bindBrowserDomainCommand("card_runtime", "canStartCardCornerFreeMove");
   const beginCardCornerFreeMoveForRoot = beginCardCornerFreeMove;
@@ -4983,7 +5008,6 @@
   const getMovableTokensForCardMoveEffectForRoot = getMovableTokensForCardMoveEffect;
   getMovableTokensForCardMoveEffect = bindBrowserDomainCommand("card_runtime", "getMovableTokensForCardMoveEffect");
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
-    decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     SCORE_SOURCE_KEYS,
@@ -5475,7 +5499,7 @@
     if (persistentGameSaveSuspended) return false;
     return !isActionPending()
       && !uiRuntimeState.effectStepActive
-      && !decisionState.actionEffectFlow
+      && !getActionEffectFlow()
       && !uiRuntimeState.alienRevealConfirmation
       && !hasTurnEndRevealContinuation()
       && !actionLogState.draft
@@ -5701,7 +5725,7 @@
       delete workingRoot.match.turnEndRevealContinuation;
     }
     uiRuntimeState.debugAlienTraceModeActive = false;
-    decisionState.actionEffectFlow = null;
+    setActionEffectFlow(workingRoot, null);
     clearCompletedEffectFlowForUndo();
     uiRuntimeState.effectStepActive = false;
     uiRuntimeState.moveHighlightRocketId = null;
@@ -5913,8 +5937,8 @@
     return Number(resolvedTurnState.roundNumber) >= FINAL_ROUND_NUMBER;
   }
 
-  function isGameEnded() {
-    return Boolean(createStateSourceReadoutRoot().turnState.gameEnded);
+  function isGameEnded(workingRoot = null) {
+    return Boolean((workingRoot || createStateSourceReadoutRoot()).turnState.gameEnded);
   }
 
   function buildFinalScoreSummaryLinesForRoot(workingRoot) {
@@ -5999,16 +6023,16 @@
     ];
   }
 
-  function isCardSelectionActive() {
-    return cards.isSelectionActive(createStateSourceReadoutRoot().cardState);
+  function isCardSelectionActive(workingRoot = null) {
+    return cards.isSelectionActive((workingRoot || createStateSourceReadoutRoot()).cardState);
   }
 
-  function isDiscardSelectionActive() {
-    return Boolean(getPendingDiscardDecision());
+  function isDiscardSelectionActive(workingRoot = null) {
+    return Boolean(getPendingDiscardDecision(workingRoot));
   }
 
-  function isPlayCardSelectionActive() {
-    return cards.isPlayCardSelectionActive(createStateSourceReadoutRoot().cardState);
+  function isPlayCardSelectionActive(workingRoot = null) {
+    return cards.isPlayCardSelectionActive((workingRoot || createStateSourceReadoutRoot()).cardState);
   }
 
   function allowsBlindDrawInSelection() {
@@ -6113,8 +6137,8 @@
   }
 
   function syncInteractionFocusChrome() {
-    const mode = getInteractionFocusMode();
     if (!els.appWrap) return;
+    const mode = getInteractionFocusMode();
     els.appWrap.dataset.interactionFocus = mode || "";
     els.appWrap.classList.toggle("has-future-span-ready-card", hasPlayableFutureSpanCard(getCurrentPlayer()));
     els.boardShell?.classList.toggle("board-shell-focused", mode === INTERACTION_FOCUS.BOARD_ROCKETS);
@@ -6292,7 +6316,7 @@
     if (history === quickActionHistory) {
       recordQuickHistoryCommand(command);
     } else {
-      recordHistoryCommand(command);
+      recordHistoryCommand(workingRoot, command);
     }
   }
 
@@ -6498,12 +6522,12 @@
       return { ok: false, message: "所选公共牌已不可用" };
     }
 
-    const effect = getCurrentActionEffect();
+    const effect = getCurrentActionEffect(workingRoot);
     const player = resolvePlayerReference({
       playerId: pending.playerId,
       playerColor: pending.playerColor,
     }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
-    beginEffectHistoryStep(effect?.label || pending.effectLabel || "公共牌角标弃除");
+    beginEffectHistoryStep(workingRoot, effect?.label || pending.effectLabel || "公共牌角标弃除");
     const rewards = selectedCards.map((card, cardIndex) => {
       workingCardState.publicCards[selectedSlots[cardIndex]] = null;
       cards.addToDiscardPile(workingCardState, card);
@@ -6537,18 +6561,18 @@
   }
 
 
-  function isActionEffectFlowActive() {
-    return decisionState.actionEffectFlow != null;
+  function isActionEffectFlowActive(workingRoot = null) {
+    return getActionEffectFlow(workingRoot) != null;
   }
 
-  function isInitialIncomeFlowActive() {
-    return decisionState.actionEffectFlow?.actionType === "initialIncome";
+  function isInitialIncomeFlowActive(workingRoot = null) {
+    return getActionEffectFlow(workingRoot)?.actionType === "initialIncome";
   }
 
-  function getGameplayLockReason() {
-    if (isGameEnded()) return "游戏已结束，正在进行终局计分";
+  function getGameplayLockReason(workingRoot = null) {
+    if (isGameEnded(workingRoot)) return "游戏已结束，正在进行终局计分";
     if (isInitialSelectionActive()) return "请先完成初始选择";
-    if (isInitialIncomeFlowActive()) return "请先完成初始收入增加";
+    if (isInitialIncomeFlowActive(workingRoot)) return "请先完成初始收入增加";
     return null;
   }
 
@@ -6617,24 +6641,24 @@
       logBefore: createActionLogImpactSnapshot(beforePlayer),
     });
     uiRuntimeState.effectStepActive = true;
-    recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
       player,
       beforePlayer,
       "恢复打牌前玩家状态",
     ));
-    recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
       actionCardState,
       beforeCardState.publicCards,
       beforeCardState.discardPile,
     ));
     if (beforeAlienState) {
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         actionAlienGameState,
         beforeAlienState,
         "恢复打牌前外星人状态",
       ));
     }
-    endEffectHistoryStep();
+    endEffectHistoryStep(workingRoot);
   }
 
   function releaseFutureSpanAfterPlayWithHistory(label = "未来跨度研究所：收回专属标记") {
@@ -6818,47 +6842,47 @@
     recordAbilityCommands(result, actionHistory, workingRoot);
     const runezuClaim = claimRunezuPlanetSymbolForTravelResult(workingRoot, actionType, result, actionOwner);
     if (runezuClaim?.ok) renderRunezuBoardSymbols();
-    endEffectHistoryStep();
+    endEffectHistoryStep(workingRoot);
 
-    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+    setActionEffectFlow(workingRoot, abilities.chain.startAbilityChain(
       `${actionType}-rewards`,
       `${actionLabel}奖励`,
       rewardEffects,
-    );
-    decisionState.actionEffectFlow.actionType = actionType;
-    decisionState.actionEffectFlow.playerId = actionOwner?.id || null;
-    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
-    decisionState.actionEffectFlow.consumesMainAction = true;
-    decisionState.actionEffectFlow.autoExecuteAomomoRewards = isAomomoRewardFlow;
+    ));
+    getActionEffectFlow(workingRoot).actionType = actionType;
+    getActionEffectFlow(workingRoot).playerId = actionOwner?.id || null;
+    assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
+    getActionEffectFlow(workingRoot).consumesMainAction = true;
+    getActionEffectFlow(workingRoot).autoExecuteAomomoRewards = isAomomoRewardFlow;
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
     workingRoot.rocketState.statusNote = `${actionLabel}：请依次点击奖励效果`;
-    activateNextActionEffect();
+    activateNextActionEffect(workingRoot);
     return true;
   }
 
-  function shouldAutoExecuteAomomoRewardEffect(effect) {
+  function shouldAutoExecuteAomomoRewardEffect(workingRoot, effect) {
     return Boolean(
-      decisionState.actionEffectFlow?.autoExecuteAomomoRewards
+      getActionEffectFlow(workingRoot)?.autoExecuteAomomoRewards
       && effect?.status === "active"
       && AOMOMO_AUTO_REWARD_EFFECT_TYPES.has(effect.type)
       && !hasActiveEffectSubFlow()
     );
   }
 
-  function maybeAutoExecuteAomomoRewardEffects() {
-    if (uiRuntimeState.autoExecutingActionEffects || !decisionState.actionEffectFlow?.autoExecuteAomomoRewards) return false;
+  function maybeAutoExecuteAomomoRewardEffects(workingRoot) {
+    if (uiRuntimeState.autoExecutingActionEffects || !getActionEffectFlow(workingRoot)?.autoExecuteAomomoRewards) return false;
     uiRuntimeState.autoExecutingActionEffects = true;
     let executed = false;
     try {
       for (let guard = 0; guard < 20; guard += 1) {
-        const effect = getCurrentActionEffect();
-        if (!shouldAutoExecuteAomomoRewardEffect(effect)) return executed;
-        const result = executeActionEffect(effect);
+        const effect = getCurrentActionEffect(workingRoot);
+        if (!shouldAutoExecuteAomomoRewardEffect(workingRoot, effect)) return executed;
+        const result = executeActionEffect(workingRoot, effect);
         executed = true;
         if (result?.awaitingChoice || result?.pendingChoice || result?.ok === false) return executed;
-        if (!decisionState.actionEffectFlow || decisionState.actionEffectFlow.completed || hasActiveEffectSubFlow()) return executed;
-        const current = getCurrentActionEffect();
+        if (!getActionEffectFlow(workingRoot) || getActionEffectFlow(workingRoot).completed || hasActiveEffectSubFlow()) return executed;
+        const current = getCurrentActionEffect(workingRoot);
         if (current === effect && current?.status === "active") return executed;
       }
       return executed;
@@ -6867,7 +6891,7 @@
     }
   }
 
-  function beginResearchTechActionSession(result, options = {}) {
+  function beginResearchTechActionSession(workingRoot, result, options = {}) {
     startActionLogDraft("researchTech", "科技行动", { source: HISTORY_SOURCE_MAIN });
     actionHistory.beginSession("researchTech", "科技行动");
     actionHistory.beginStep({
@@ -6878,7 +6902,7 @@
       logBefore: options.logBefore || createActionLogImpactSnapshot(),
     });
     uiRuntimeState.effectStepActive = true;
-    endEffectHistoryStep({
+    endEffectHistoryStep(workingRoot, {
       result: {
         ok: true,
         undoable: true,
@@ -6891,8 +6915,8 @@
     if (!workingRoot?.rocketState) throw new TypeError("startResearchTechEffectFlow 缺少 workingRoot");
     if (!result?.ok || !result.awaitingTileSelection) return false;
 
-    beginResearchTechActionSession(result, options);
-    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+    beginResearchTechActionSession(workingRoot, result, options);
+    setActionEffectFlow(workingRoot, abilities.chain.startAbilityChain(
       "researchTech",
       "科技行动",
       [{
@@ -6908,16 +6932,16 @@
         status: "pending",
         undoable: true,
       }],
-    );
-    decisionState.actionEffectFlow.actionType = "researchTech";
-    decisionState.actionEffectFlow.playerId = getCurrentPlayer()?.id || null;
-    decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
-    decisionState.actionEffectFlow.consumesMainAction = true;
+    ));
+    getActionEffectFlow(workingRoot).actionType = "researchTech";
+    getActionEffectFlow(workingRoot).playerId = getCurrentPlayer()?.id || null;
+    getActionEffectFlow(workingRoot).historySource = HISTORY_SOURCE_MAIN;
+    assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
+    getActionEffectFlow(workingRoot).consumesMainAction = true;
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
     workingRoot.rocketState.statusNote = "科技：请选择要研究的科技片";
-    activateNextActionEffect();
+    activateNextActionEffect(workingRoot);
     return true;
   }
 
@@ -7103,35 +7127,35 @@
     refreshHelpers.refreshActionState({ includeQuickPanel: false, includeStateReadout: true });
   }
 
-  function revertEffectFlowAfterUndo(step) {
-    if (!decisionState.actionEffectFlow || !step) return;
+  function revertEffectFlowAfterUndo(workingRoot, step) {
+    if (!getActionEffectFlow(workingRoot) || !step) return;
 
     if (isMainActionOpeningStep(step)) {
-      if (decisionState.actionEffectFlow.actionType === "researchTech") {
+      if (getActionEffectFlow(workingRoot).actionType === "researchTech") {
         clearResearchTechSelectionState();
       }
-      clearActionEffectFlow();
+      clearActionEffectFlow(workingRoot);
       return;
     }
 
     if (!Number.isInteger(step.effectIndex)) return;
 
-    const { effects } = decisionState.actionEffectFlow;
+    const { effects } = getActionEffectFlow(workingRoot);
     const effect = effects[step.effectIndex];
     if (!effect) return;
 
-    pruneEndOfFlowSettlementEffectsAfterUndo(decisionState.actionEffectFlow, step.effectIndex);
-    abilities.chain.removeInsertedNodesBySource?.(decisionState.actionEffectFlow, {
-      chainId: decisionState.actionEffectFlow.chainId || null,
+    pruneEndOfFlowSettlementEffectsAfterUndo(getActionEffectFlow(workingRoot), step.effectIndex);
+    abilities.chain.removeInsertedNodesBySource?.(getActionEffectFlow(workingRoot), {
+      chainId: getActionEffectFlow(workingRoot).chainId || null,
       effectId: step.effectId || effect.id || null,
       effectIndex: step.effectIndex,
       effectType: step.effectType || effect.type || null,
     });
-    decisionState.actionEffectFlow.completed = false;
+    getActionEffectFlow(workingRoot).completed = false;
     effect.status = "active";
     effect.result = null;
     effect.preHistoryCommandsApplied = false;
-    decisionState.actionEffectFlow.currentIndex = step.effectIndex;
+    getActionEffectFlow(workingRoot).currentIndex = step.effectIndex;
     for (let index = step.effectIndex + 1; index < effects.length; index += 1) {
       if (effects[index].status !== "pending") {
         effects[index].status = "pending";
@@ -7139,23 +7163,23 @@
       effects[index].preHistoryCommandsApplied = false;
     }
     cancelActiveEffectSubFlows();
-    if (decisionState.actionEffectFlow.actionType === "researchTech" && effect.type === "research_tech_select") {
+    if (getActionEffectFlow(workingRoot).actionType === "researchTech" && effect.type === "research_tech_select") {
       restoreResearchTechSelectionAfterUndo(effect);
     }
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
   }
 
-  function hasActiveEffectSubFlow() {
+  function hasActiveEffectSubFlow(workingRoot = null) {
     return Boolean(
-      getPendingScanTargetDecision()
-      || getPendingProbeSectorScanDecision()
-      || getPendingProbeLocationRewardDecision()
-      || getPublicScanQueueSession()
-      || getPendingHandScanDecision()
-      || getPendingPassReserveSelection()
-      || (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive()))
-      || getPendingCardTriggerAction()
-      || getPendingCardTaskCompletion()
+      getPendingScanTargetDecision(workingRoot)
+      || getPendingProbeSectorScanDecision(workingRoot)
+      || getPendingProbeLocationRewardDecision(workingRoot)
+      || getPublicScanQueueSession(workingRoot)
+      || getPendingHandScanDecision(workingRoot)
+      || getPendingPassReserveSelection(workingRoot)
+      || (isCardSelectionActive() && (getActionEffectFlow(workingRoot) || isCardTriggerPickSelectionActive()))
+      || getPendingCardTriggerAction(workingRoot)
+      || getPendingCardTaskCompletion(workingRoot)
       || getPendingJiuzheCardPlay()
       || getPendingYichangdianCardGain()
       || getPendingYichangdianCornerAction()
@@ -7170,25 +7194,25 @@
       || getPendingRunezuCardGain()
       || getPendingRunezuSymbolBranch()
       || getPendingRunezuFaceSymbolPlacement()
-      || getPendingStrategySlotDecision()
-      || getPendingPiratesRaidDecision()
-      || getPendingCardTriggerFreeMove()
-      || getPendingCardCornerFreeMove()
+      || getPendingStrategySlotDecision(workingRoot)
+      || getPendingPiratesRaidDecision(workingRoot)
+      || getPendingCardTriggerFreeMove(workingRoot)
+      || getPendingCardCornerFreeMove(workingRoot)
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
       || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && uiRuntimeState.alienTracePickerState?.mode !== "reveal-confirm")
-      || getPendingCardMoveDecision()
-      || getPendingScanFreeMoveDecision()
-      || Boolean(getPendingDataPlacementDecision()),
+      || getPendingCardMoveDecision(workingRoot)
+      || getPendingScanFreeMoveDecision(workingRoot)
+      || Boolean(getPendingDataPlacementDecision(workingRoot)),
     );
   }
 
-  function hasActivePendingSubFlow() {
-    return hasActiveEffectSubFlow()
+  function hasActivePendingSubFlow(workingRoot = null) {
+    return hasActiveEffectSubFlow(workingRoot)
       || isMovePaymentSelectionActive()
       || (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden)
-      || Boolean(getPendingIndustryAbilityDecision())
-      || Boolean(getPendingIndustryFreeMoveDecision())
+      || Boolean(getPendingIndustryAbilityDecision(workingRoot))
+      || Boolean(getPendingIndustryFreeMoveDecision(workingRoot))
       || isIndustryHandSelectionActive();
   }
 
@@ -7306,7 +7330,7 @@
   }
 
   function shouldRenderActionEffect(effect) {
-    if (decisionState.actionEffectFlow?.actionType !== "initialIncome") return true;
+    if (getActionEffectFlow()?.actionType !== "initialIncome") return true;
     const owner = getEffectOwnerPlayer(effect);
     return !owner?.id || !isAiAutoBattlePlayer(owner.id);
   }
@@ -7361,9 +7385,9 @@
     return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
   }
 
-  function clearActionEffectFlow() {
-    decisionState.actionEffectFlow = null;
-    closeLandTargetPicker();
+  function clearActionEffectFlow(workingRoot) {
+    setActionEffectFlow(workingRoot, null);
+    closeLandTargetPicker(workingRoot);
     closeScanAction4Picker();
     renderActionEffectBar();
     els.appWrap?.classList.toggle("action-effect-flow-active", false);
@@ -7430,7 +7454,7 @@
       syncHandScanSelectionChrome(workingRoot);
     }
 
-    if (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive())) {
+    if (isCardSelectionActive() && (getActionEffectFlow(workingRoot) || isCardTriggerPickSelectionActive())) {
       const cardSelectionPending = getPendingCardSelectionDecision(workingRoot);
       if (cardSelectionPending?.type === "fundamentalism_exchange_pick") {
         const pendingPlayer = resolvePlayerReference({
@@ -7504,9 +7528,9 @@
   }
 
   function skipCurrentActionEffectForRoot(workingRoot) {
-    if (!decisionState.actionEffectFlow) return;
+    if (!getActionEffectFlow(workingRoot)) return;
 
-    const current = getCurrentActionEffect();
+    const current = getCurrentActionEffect(workingRoot);
     if (!current || current.status !== "active") return;
     if (
       getPendingYichangdianCornerAction()
@@ -7528,10 +7552,10 @@
 
     cancelActiveEffectSubFlowsForRoot(workingRoot);
     cleanupSkippedActionEffect(current);
-    beginEffectHistoryStep(`跳过：${current.label}`);
-    endEffectHistoryStep();
+    beginEffectHistoryStep(workingRoot, `跳过：${current.label}`);
+    endEffectHistoryStep(workingRoot);
     workingRoot.rocketState.statusNote = `已跳过：${current.label}`;
-    completeCurrentActionEffect("skipped");
+    completeCurrentActionEffect(workingRoot, "skipped");
   }
 
   function skipCurrentActionEffect() {
@@ -7539,7 +7563,7 @@
   }
 
   function skipHeadlessCurrentActionEffectImpl(workingRoot) {
-    const current = getCurrentActionEffect();
+    const current = getCurrentActionEffect(workingRoot);
     if (!headlessMode || !current || current.status !== "active") {
       return { ok: false, message: "没有可跳过的活动效果" };
     }
@@ -7549,7 +7573,7 @@
     skipCurrentActionEffectForRoot(workingRoot);
     if (current.status === "active") {
       cleanupSkippedActionEffect(current);
-      completeCurrentActionEffect("skipped");
+      completeCurrentActionEffect(workingRoot, "skipped");
     }
     return { ok: true, progressed: true, skipped: true, message: `已跳过：${current.label}` };
   }
@@ -7558,8 +7582,8 @@
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_skip_current_effect" });
   }
 
-  function skipActionEffectWithMessage(effect, message, payload = {}) {
-    const current = effect || getCurrentActionEffect();
+  function skipActionEffectWithMessage(workingRoot, effect, message, payload = {}) {
+    const current = effect || getCurrentActionEffect(workingRoot);
     const result = {
       ok: true,
       undoable: true,
@@ -7575,9 +7599,9 @@
 
     current.result = result;
     cleanupSkippedActionEffect(current);
-    beginEffectHistoryStep(`跳过：${current.label}`);
+    beginEffectHistoryStep(workingRoot, `跳过：${current.label}`);
     setBrowserStatusNote(result.message);
-    completeCurrentActionEffect("skipped");
+    completeCurrentActionEffect(workingRoot, "skipped");
     renderStateReadout();
     return result;
   }
@@ -7586,7 +7610,7 @@
     if (headlessMode) return;
     if (!els.actionEffectBar || !els.actionEffectList) return;
 
-    if (!decisionState.actionEffectFlow) {
+    if (!getActionEffectFlow()) {
       els.actionEffectBar.hidden = true;
       els.actionEffectList.replaceChildren();
       if (els.actionEffectSkipButton) els.actionEffectSkipButton.hidden = true;
@@ -7616,7 +7640,7 @@
       els.actionEffectSkipButton.disabled = !canSkip;
     }
 
-    const visibleEffects = decisionState.actionEffectFlow.effects
+    const visibleEffects = getActionEffectFlow().effects
       .map((effect, index) => ({ effect, index }))
       .filter(({ effect }) => shouldRenderActionEffect(effect));
     if (!visibleEffects.length) {
@@ -7796,9 +7820,9 @@
   }
 
   function finishActionEffectFlowForRoot(workingRoot) {
-    if (!decisionState.actionEffectFlow) return;
+    if (!getActionEffectFlow(workingRoot)) return;
 
-    const finishedFlow = decisionState.actionEffectFlow;
+    const finishedFlow = getActionEffectFlow(workingRoot);
     if (appendEndOfFlowSectorFinishEffects(finishedFlow)) {
       return;
     }
@@ -7818,7 +7842,7 @@
       ? null
       : settleDelayedPublicRefillsAfterScanFlow(finishedFlow);
     rememberCompletedEffectFlowForUndo(finishedFlow);
-    clearActionEffectFlow();
+    clearActionEffectFlow(workingRoot);
     if (actionType === "researchTech") {
       tech.setTechSelectionActive(workingRoot.techGameState, false);
       tech.cancelPendingTake(workingRoot.techGameState);
@@ -7916,11 +7940,11 @@
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_finish_flow" }).value;
   }
 
-  function maybeCompleteActionEffectFromScan(result) {
+  function maybeCompleteActionEffectFromScan(workingRoot, result) {
     if (!result?.ok || !isActionEffectFlowActive()) return;
-    const current = getCurrentActionEffect();
+    const current = getCurrentActionEffect(workingRoot);
     if (current) current.result = result;
-    completeCurrentActionEffect();
+    completeCurrentActionEffect(workingRoot);
   }
 
   function closeScanAction4Picker() {
@@ -7997,13 +8021,13 @@
       throw new TypeError("launchRocketForScanAction4 缺少 workingRoot");
     }
     const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const currentEffect = getCurrentActionEffect();
+    const currentEffect = getCurrentActionEffect(workingRoot);
     const skipCost = Boolean(currentEffect?.options?.skipCost);
     if (!skipCost && !players.canAfford(currentPlayer, { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY })) {
       return { ok: false, message: "能量不足，发射需要 1 能量" };
     }
 
-    beginEffectHistoryStep("发射/移动");
+    beginEffectHistoryStep(workingRoot, "发射/移动");
 
     const result = abilities.executeAbility("scanAction4", createActionContextForWorkingRoot(workingRoot), {
       choice: "launch",
@@ -8011,7 +8035,7 @@
       cost: skipCost ? {} : { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY },
     });
     if (!result.ok) {
-      endEffectHistoryStep();
+      endEffectHistoryStep(workingRoot);
       return result;
     }
 
@@ -8019,7 +8043,7 @@
     recordAbilityCommands(result, actionHistory, workingRoot);
 
     renderRocketElement(result.rocket);
-    const current = getCurrentActionEffect();
+    const current = getCurrentActionEffect(workingRoot);
     if (current) current.result = result;
     return result;
   }
@@ -8034,7 +8058,7 @@
     }
 
     workingRoot.match.scanFreeMoveContinuation = {
-      effectId: getCurrentActionEffect()?.id || null,
+      effectId: getCurrentActionEffect(workingRoot)?.id || null,
       playerId: currentPlayer?.id || null,
     };
     workingRoot.rocketState.statusNote = rocketsForPlayer.length > 1
@@ -8080,7 +8104,7 @@
     }
 
     const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
-    beginEffectHistoryStep("发射/移动");
+    beginEffectHistoryStep(workingRoot, "发射/移动");
 
     const result = abilities.executeAbility("scanAction4", createActionContextForWorkingRoot(workingRoot), {
       choice: "move",
@@ -8093,22 +8117,22 @@
     if (result.rocket) renderRocketElement(result.rocket);
     if (!result.ok) {
       if (payment.discardCommand) payment.discardCommand.undo();
-      endEffectHistoryStep();
+      endEffectHistoryStep(workingRoot);
       workingRocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
 
-    if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
+    if (payment.discardCommand) recordHistoryCommand(workingRoot, payment.discardCommand);
     recordAbilityCommands(result, actionHistory, workingRoot);
 
     delete workingRoot.match.scanFreeMoveContinuation;
     deactivateMoveMode();
-    const current = getCurrentActionEffect();
+    const current = getCurrentActionEffect(workingRoot);
     if (current) current.result = result;
     workingRocketState.statusNote = `扫描效果：${result.message}`;
     renderPlayerStats();
-    completeCurrentActionEffect();
+    completeCurrentActionEffect(workingRoot);
     renderStateReadout();
     return result;
   }
@@ -8210,14 +8234,14 @@
     return { ok: false, effect: rewardEffect };
   }
 
-  function applyCardMoveAfterEventRewards(effect, moveResult, messageParts) {
+  function applyCardMoveAfterEventRewards(workingRoot, effect, moveResult, messageParts) {
     const rewards = effect.options?.afterEventRewards || [];
     if (!rewards.length || !moveResult?.events?.length) return [];
 
-    if (!decisionState.actionEffectFlow.cardEventRewardKeys) {
-      decisionState.actionEffectFlow.cardEventRewardKeys = [];
+    if (!getActionEffectFlow(workingRoot).cardEventRewardKeys) {
+      getActionEffectFlow(workingRoot).cardEventRewardKeys = [];
     }
-    const usedKeys = new Set(decisionState.actionEffectFlow.cardEventRewardKeys);
+    const usedKeys = new Set(getActionEffectFlow(workingRoot).cardEventRewardKeys);
     const applied = [];
 
     for (const reward of rewards) {
@@ -8234,14 +8258,14 @@
       applied.push(appliedReward);
       if (reward.onceKey) {
         usedKeys.add(reward.onceKey);
-        decisionState.actionEffectFlow.cardEventRewardKeys.push(reward.onceKey);
+        getActionEffectFlow(workingRoot).cardEventRewardKeys.push(reward.onceKey);
       }
     }
 
     return applied;
   }
 
-  function maybeApplyCardMoveSameRingReward(effect, moveResult, messageParts) {
+  function maybeApplyCardMoveSameRingReward(workingRoot, effect, moveResult, messageParts) {
     const rewardEffect = effect.options?.sameRingReward;
     const payload = moveResult?.payload || {};
     const fromY = payload.from?.y ?? payload.geometry?.from?.y;
@@ -8250,23 +8274,23 @@
     if (!rewardEffect || fromY == null || toY == null || Number(fromY) !== Number(toY) || deltaX <= 0) {
       return null;
     }
-    if (!decisionState.actionEffectFlow.cardEventRewardKeys) decisionState.actionEffectFlow.cardEventRewardKeys = [];
+    if (!getActionEffectFlow(workingRoot).cardEventRewardKeys) getActionEffectFlow(workingRoot).cardEventRewardKeys = [];
     const key = `${effect.id || "card-move"}:same-ring`;
-    if (decisionState.actionEffectFlow.cardEventRewardKeys.includes(key)) return null;
+    if (getActionEffectFlow(workingRoot).cardEventRewardKeys.includes(key)) return null;
     const applied = applyCardMoveRewardEffect(rewardEffect, messageParts);
-    if (applied?.ok) decisionState.actionEffectFlow.cardEventRewardKeys.push(key);
+    if (applied?.ok) getActionEffectFlow(workingRoot).cardEventRewardKeys.push(key);
     return applied;
   }
 
-  function maybeApplyCardMoveDistinctEventReward(effect, moveResult, messageParts) {
+  function maybeApplyCardMoveDistinctEventReward(workingRoot, effect, moveResult, messageParts) {
     const reward = effect.options?.distinctEventReward;
     if (!reward || !moveResult?.events?.length) return null;
-    if (!decisionState.actionEffectFlow.cardMoveDistinctEvents) decisionState.actionEffectFlow.cardMoveDistinctEvents = {};
-    if (!decisionState.actionEffectFlow.cardEventRewardKeys) decisionState.actionEffectFlow.cardEventRewardKeys = [];
+    if (!getActionEffectFlow(workingRoot).cardMoveDistinctEvents) getActionEffectFlow(workingRoot).cardMoveDistinctEvents = {};
+    if (!getActionEffectFlow(workingRoot).cardEventRewardKeys) getActionEffectFlow(workingRoot).cardEventRewardKeys = [];
     const key = reward.onceKey || `${effect.id || "card-move"}:distinct:${reward.eventType}`;
-    if (decisionState.actionEffectFlow.cardEventRewardKeys.includes(key)) return null;
-    if (!decisionState.actionEffectFlow.cardMoveDistinctEvents[key]) decisionState.actionEffectFlow.cardMoveDistinctEvents[key] = [];
-    const values = decisionState.actionEffectFlow.cardMoveDistinctEvents[key];
+    if (getActionEffectFlow(workingRoot).cardEventRewardKeys.includes(key)) return null;
+    if (!getActionEffectFlow(workingRoot).cardMoveDistinctEvents[key]) getActionEffectFlow(workingRoot).cardMoveDistinctEvents[key] = [];
+    const values = getActionEffectFlow(workingRoot).cardMoveDistinctEvents[key];
     const distinctBy = reward.distinctBy || "planetId";
 
     for (const event of moveResult.events || []) {
@@ -8278,7 +8302,7 @@
     const minCount = Math.max(1, Math.round(Number(reward.minCount) || 1));
     if (values.length < minCount) return null;
     const applied = applyCardMoveRewardEffect(reward.effect, messageParts);
-    if (applied?.ok) decisionState.actionEffectFlow.cardEventRewardKeys.push(key);
+    if (applied?.ok) getActionEffectFlow(workingRoot).cardEventRewardKeys.push(key);
     return applied;
   }
 
@@ -8491,8 +8515,8 @@
     banrenma,
     beginAlienTraceBoardPlacement: (workingRoot, ...args) => beginAlienTraceBoardPlacementForRoot(workingRoot, ...args),
     beginCardMoveEffect,
-    beginCardSelection,
-    beginDiscardSelection,
+    beginCardSelection: (workingRoot, ...args) => beginCardSelectionForRoot(workingRoot, ...args),
+    beginDiscardSelection: (workingRoot, ...args) => handFlowHelpers.beginDiscardSelection(workingRoot, ...args),
     beginEffectHistoryStep,
     beginPassReserveSelection,
     beginScanAction4FreeMove,
@@ -8517,7 +8541,6 @@
     createPublicScanPendingAction,
     createScanRunId,
     data,
-    decisionSessions,
     document,
     effectChoiceFlowHelpers,
     els,
@@ -8573,7 +8596,7 @@
     getPublicScanChoicesForCard,
     getPublicScanIconForScanCode,
     getPublicScanMaxSelectable,
-    getResearchTechSelectionPayload: (...args) => getResearchTechSelectionPayload?.(...args),
+    getResearchTechSelectionPayload: (workingRoot) => getResearchTechSelectionPayloadForRoot(workingRoot),
     getSectorContentForMove,
     getSectorScanTargetLabel,
     hasAlienTracePanelPlacementTarget: (workingRoot, ...args) => hasAlienTracePanelPlacementTargetForRoot(workingRoot, ...args),
@@ -8636,7 +8659,7 @@
     rocketActions,
     runezu,
     scanEffects,
-    shouldSkipCurrentResearchTechCost: (...args) => shouldSkipCurrentResearchTechCost?.(...args),
+    shouldSkipCurrentResearchTechCost: (workingRoot) => shouldSkipCurrentResearchTechCostForRoot(workingRoot),
     skipActionEffectWithMessage,
     solar,
     syncHandScanSelectionChrome,
@@ -9340,7 +9363,7 @@
     if (history === quickActionHistory) {
       recordQuickHistoryCommand(command);
     } else {
-      recordHistoryCommand(command);
+      recordHistoryCommand(workingRoot, command);
     }
   }
 
@@ -9420,7 +9443,7 @@
   function getScoreSourceKeyForGainEffect(effect) {
     const explicit = effect?.options?.scoreSourceKey;
     if (SCORE_SOURCE_KEY_SET.has(explicit)) return explicit;
-    const actionType = decisionState.actionEffectFlow?.actionType;
+    const actionType = getActionEffectFlow()?.actionType;
     switch (actionType) {
       case "orbit":
         return SCORE_SOURCE_KEYS.ORBIT;
@@ -9430,7 +9453,7 @@
       case "cardTrigger":
         return SCORE_SOURCE_KEYS.TASK_CARD;
       case "playCard":
-        return isAlienFamilyCard(decisionState.actionEffectFlow?.card)
+        return isAlienFamilyCard(getActionEffectFlow()?.card)
           ? SCORE_SOURCE_KEYS.ALIEN_EFFECT
           : SCORE_SOURCE_KEYS.CARD_EFFECT;
       case "banrenmaCondition":
@@ -9745,7 +9768,6 @@
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
       ),
-      decisionSessions,
       createCardCornerTriggerEventFields: typeof createCardCornerTriggerEventFields === "undefined" ? undefined : createCardCornerTriggerEventFields,
       createInitialSelectionImage: (...args) => createInitialSelectionImage(...args),
       data: typeof data === "undefined" ? undefined : data,
@@ -9963,7 +9985,6 @@
       confirmIndustryTuringBorrow: (...args) => confirmIndustryTuringBorrow(...args),
       countOwnedTechByType: (...args) => countOwnedTechByType(...args),
       createActionContext: createActionContextForWorkingRoot,
-      decisionSessions,
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
         || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
@@ -10019,11 +10040,11 @@
     isTechActionSelectionActive: isTechActionSelectionActiveForRoot,
     isTechTilePickingActive: isTechTilePickingActiveForRoot,
     isTechAwaitingConfirm,
-    getResearchTechSelectionEffect,
-    getResearchTechSelectionPayload,
-    getResearchTechSelectionOptions,
+    getResearchTechSelectionEffect: getResearchTechSelectionEffectForRoot,
+    getResearchTechSelectionPayload: getResearchTechSelectionPayloadForRoot,
+    getResearchTechSelectionOptions: getResearchTechSelectionOptionsForRoot,
     isTechTileOwnedByOtherPlayer: isTechTileOwnedByOtherPlayerForRoot,
-    shouldSkipCurrentResearchTechCost,
+    shouldSkipCurrentResearchTechCost: shouldSkipCurrentResearchTechCostForRoot,
     isGeneratedResearchTechFollowupEffect,
     countOwnedTechByTypeAfterSelection,
     appendResearchTechFollowupEffects: appendResearchTechFollowupEffectsForRoot,
@@ -10058,6 +10079,10 @@
     researchTechForCurrentPlayer,
     commitSelectedResearchTech
   } = techRuntime;
+  const getResearchTechSelectionEffect = () => getResearchTechSelectionEffectForRoot(createStateSourceReadoutRoot());
+  const getResearchTechSelectionPayload = () => getResearchTechSelectionPayloadForRoot(createStateSourceReadoutRoot());
+  const getResearchTechSelectionOptions = () => getResearchTechSelectionOptionsForRoot(createStateSourceReadoutRoot());
+  const shouldSkipCurrentResearchTechCost = () => shouldSkipCurrentResearchTechCostForRoot(createStateSourceReadoutRoot());
   const isTechActionSelectionActive = bindBrowserDomainCommand("tech_runtime", "isTechActionSelectionActive");
   const isTechTilePickingActive = bindBrowserDomainCommand("tech_runtime", "isTechTilePickingActive");
   const syncTechSelectionChrome = bindBrowserDomainCommand("tech_runtime", "syncTechSelectionChrome");
@@ -10311,6 +10336,7 @@
       ? workingRoot.playerState
       : { ...workingRoot.playerState, currentPlayerId: actorId, players: workingRoot.playerState.players };
     return {
+      workingRoot,
       solarState: workingRoot.solarState,
       playerState: actionPlayerState,
       cardState: workingRoot.cardState,
@@ -10517,22 +10543,21 @@
     return Boolean(actionHistory.hasIrreversibleBarrier?.());
   }
 
-  function getMainActionStartBlockReason() {
-    const gameplayLockReason = getGameplayLockReason();
+  function getMainActionStartBlockReason(workingRoot = null) {
+    const gameplayLockReason = getGameplayLockReason(workingRoot);
     if (gameplayLockReason) return gameplayLockReason;
     if (isActionPending()) return "请先回合结束或撤销当前行动";
-    if (isActionEffectFlowActive()) return "请先完成当前行动的效果";
+    if (isActionEffectFlowActive(workingRoot)) return "请先完成当前行动的效果";
     if (actionHistory.hasSession()) return "请先回合结束或撤销当前行动";
-    if (hasActivePendingSubFlow()) return "请先完成或取消当前流程";
+    if (hasActivePendingSubFlow(workingRoot)) return "请先完成或取消当前流程";
     return null;
   }
 
-  function canStartMainAction() {
-    return !getMainActionStartBlockReason();
+  function canStartMainAction(workingRoot = null) {
+    return !getMainActionStartBlockReason(workingRoot);
   }
 
   turnEndFlow = turnEndFlowModule.createTurnEndFlow({
-    decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     PASS_HAND_LIMIT,
@@ -10579,7 +10604,6 @@
     maybeOpenQueuedJiuzheOpportunity,
     maybeStartFundamentalismRoundStartIncomeFlow,
     openAlienRevealConfirmation,
-    decisionSessions,
     planetRewards,
     quickActionHistory,
     recordHistoryCommand,
@@ -10607,7 +10631,7 @@
 
   function undoPendingActionForRoot(workingRoot) {
     if (isTechActionSelectionActive()) {
-      const isResearchTechFlow = decisionState.actionEffectFlow?.actionType === "researchTech";
+      const isResearchTechFlow = getActionEffectFlow(workingRoot)?.actionType === "researchTech";
       const shouldUseHistoryUndo = isResearchTechFlow
         && (actionHistory.hasUndoableStep() || hasCurrentMainActionIrreversibleBarrier());
       if (shouldUseHistoryUndo) {
@@ -10637,46 +10661,46 @@
 
     if (
       !latestUndoSource
-      && decisionState.actionEffectFlow?.historySource === HISTORY_SOURCE_QUICK
-      && !decisionState.actionEffectFlow.preHistoryCommandsApplied
-      && decisionState.actionEffectFlow.preHistoryCommands?.length
+      && getActionEffectFlow(workingRoot)?.historySource === HISTORY_SOURCE_QUICK
+      && !getActionEffectFlow(workingRoot).preHistoryCommandsApplied
+      && getActionEffectFlow(workingRoot).preHistoryCommands?.length
     ) {
-      const flowLabel = decisionState.actionEffectFlow.label || "快速行动效果";
-      for (let index = decisionState.actionEffectFlow.preHistoryCommands.length - 1; index >= 0; index -= 1) {
-        decisionState.actionEffectFlow.preHistoryCommands[index]?.undo?.();
+      const flowLabel = getActionEffectFlow(workingRoot).label || "快速行动效果";
+      for (let index = getActionEffectFlow(workingRoot).preHistoryCommands.length - 1; index >= 0; index -= 1) {
+        getActionEffectFlow(workingRoot).preHistoryCommands[index]?.undo?.();
       }
       uiRuntimeState.effectStepActive = false;
       if (quickActionHistory.hasSession() && !quickActionHistory.hasUndoableStep()) {
         quickActionHistory.commitSession();
         clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
       }
-      clearActionEffectFlow();
+      clearActionEffectFlow(workingRoot);
       refreshAfterHistoryChange(`已撤销：${flowLabel}`);
       return;
     }
 
     if (latestUndoSource === HISTORY_SOURCE_QUICK) {
-      const undoingQuickEffectFlow = decisionState.actionEffectFlow?.historySource === HISTORY_SOURCE_QUICK;
+      const undoingQuickEffectFlow = getActionEffectFlow(workingRoot)?.historySource === HISTORY_SOURCE_QUICK;
       const result = quickActionHistory.undoLastStep();
       if (result.ok) {
         uiRuntimeState.effectStepActive = false;
         forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
-        const completedQuickEffectFlow = !decisionState.actionEffectFlow
+        const completedQuickEffectFlow = !getActionEffectFlow(workingRoot)
           ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_QUICK)
           : null;
         if (completedQuickEffectFlow) {
-          decisionState.actionEffectFlow = completedQuickEffectFlow;
+          setActionEffectFlow(workingRoot, completedQuickEffectFlow);
           els.appWrap?.classList.toggle("action-effect-flow-active", true);
         }
-        if ((undoingQuickEffectFlow || completedQuickEffectFlow) && decisionState.actionEffectFlow) {
+        if ((undoingQuickEffectFlow || completedQuickEffectFlow) && getActionEffectFlow(workingRoot)) {
           const effectIndex = result.step?.effectIndex;
           const hasRevertibleEffectStep = Number.isInteger(effectIndex)
-            && Boolean(decisionState.actionEffectFlow.effects?.[effectIndex]);
+            && Boolean(getActionEffectFlow(workingRoot).effects?.[effectIndex]);
           if (hasRevertibleEffectStep) {
-            revertEffectFlowAfterUndo(result.step);
+            revertEffectFlowAfterUndo(workingRoot, result.step);
           } else {
-            clearActionEffectFlow();
+            clearActionEffectFlow(workingRoot);
           }
         }
       }
@@ -10720,14 +10744,14 @@
         uiRuntimeState.effectStepActive = false;
         forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-        const completedMainEffectFlow = !decisionState.actionEffectFlow
+        const completedMainEffectFlow = !getActionEffectFlow(workingRoot)
           ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN)
           : null;
         if (completedMainEffectFlow) {
-          decisionState.actionEffectFlow = completedMainEffectFlow;
+          setActionEffectFlow(workingRoot, completedMainEffectFlow);
           els.appWrap?.classList.toggle("action-effect-flow-active", true);
         }
-        revertEffectFlowAfterUndo(result.step);
+        revertEffectFlowAfterUndo(workingRoot, result.step);
       }
       refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
       return;
@@ -10741,7 +10765,7 @@
           uiRuntimeState.effectStepActive = false;
           forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
           removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          revertEffectFlowAfterUndo(result.step);
+          revertEffectFlowAfterUndo(workingRoot, result.step);
           if (!isActionEffectFlowActive()) {
             clearFullyUndoneMainActionSession();
           }
@@ -10765,9 +10789,9 @@
         removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
         const completedMainEffectFlow = takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
         if (completedMainEffectFlow) {
-          decisionState.actionEffectFlow = completedMainEffectFlow;
+          setActionEffectFlow(workingRoot, completedMainEffectFlow);
           els.appWrap?.classList.toggle("action-effect-flow-active", true);
-          revertEffectFlowAfterUndo(result.step);
+          revertEffectFlowAfterUndo(workingRoot, result.step);
         }
         if (!isActionEffectFlowActive()) {
           clearFullyUndoneMainActionSession();
@@ -10783,7 +10807,7 @@
         uiRuntimeState.effectStepActive = false;
         clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
         removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
-        clearActionEffectFlow();
+        clearActionEffectFlow(workingRoot);
         clearActionPending();
       }
       refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
@@ -11064,7 +11088,6 @@
     markerBelongsToPlayer,
     markerOwnerLabel,
     openLandTargetPicker,
-    decisionSessions,
     players,
     recordAtomicActionHistory,
     recordHistoryCommand,
@@ -11399,7 +11422,7 @@
         ? { target: choice.target, rocketId: choice.rocketId }
         : { rocketId: choice.rocketId });
     }
-    const effect = getCurrentActionEffect();
+    const effect = getCurrentActionEffect(workingRoot);
     if (!effect || (pending.effectId && effect.id !== pending.effectId)) {
       return { ok: false, code: "LAND_TARGET_EFFECT_STALE", message: "登陆目标所属效果已失效" };
     }
@@ -11442,11 +11465,11 @@
     );
   }
 
-  function getHeadlessConditionalPlayer(pending) {
-    return resolvePlayerReference({
+  function getHeadlessConditionalPlayer(workingRoot, pending) {
+    return resolvePlayerReference(workingRoot, {
       playerId: pending?.playerId || pending?.targetPlayerId || null,
       playerColor: pending?.playerColor || pending?.targetPlayerColor || null,
-    }) || getEffectOwnerPlayer(pending?.effect) || getCurrentPlayer();
+    }) || getEffectOwnerPlayer(workingRoot, pending?.effect) || getCurrentPlayer(workingRoot);
   }
 
   function getHeadlessDecisionOwnerState(enumeratedActor = null) {
@@ -11482,7 +11505,7 @@
       playerColor: activePending?.playerColor || activePending?.targetPlayerColor || null,
     });
     const effect = activePending?.effect || (
-      decisionState.actionEffectFlow ? getCurrentActionEffect() : null
+      getActionEffectFlow(readoutRoot) ? getCurrentActionEffect(readoutRoot) : null
     );
     const effectOwner = effect ? getEffectOwnerPlayer(effect) : null;
     const actorPlayer = pendingOwner || effectOwner || enumeratedActor || currentPlayer || null;
@@ -11503,10 +11526,10 @@
     return {
       label: family,
       getOptions(context) {
-        return conditionalActionExecutor.getOptions(context, family);
+        return conditionalActionExecutor.getOptions(context.workingRoot, family);
       },
       canExecute(context, descriptor) {
-        return conditionalActionExecutor.validate(context, descriptor);
+        return conditionalActionExecutor.validate(context.workingRoot, descriptor);
       },
       execute() {
         return {
@@ -11521,7 +11544,9 @@
   function enumerateHeadlessConditionalActionsForRoot(workingRoot) {
     syncFinalScorePendingMarks(workingRoot);
     const decision = conditionalActionExecutor.inspect(workingRoot);
-    const actorPlayer = decision?.ownerId ? getPlayerById(decision.ownerId) : null;
+    const actorPlayer = decision?.ownerId
+      ? (workingRoot.playerState.players || []).find((player) => player.id === decision.ownerId) || null
+      : null;
     if (!actorPlayer?.id || !decision?.choices?.length) {
       return { actorPlayer, candidates: [] };
     }
@@ -11637,7 +11662,7 @@
   }
 
   function executeHeadlessCurrentActionEffectImpl(workingRoot) {
-    const effect = getCurrentActionEffect();
+    const effect = getCurrentActionEffect(workingRoot);
     if (!effect || effect.status !== "active") {
       return { ok: false, message: "没有可直接推进的活动效果" };
     }
@@ -12134,7 +12159,6 @@
     aomomo,
     runezu,
     solar,
-    decisionSessions,
     uiRuntimeState,
     DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT,
     rocketActions,
@@ -12229,11 +12253,10 @@
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
-    get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
+    get pendingActionEffectFlow() { return getActionEffectFlow(); },
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
-    decisionSessions,
     headless: headlessMode,
     actionHistory,
     aliens,

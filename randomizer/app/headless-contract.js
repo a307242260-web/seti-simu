@@ -80,6 +80,10 @@ function normalizeConditionalCandidate(candidate, actorPlayerId) {
     const family = standardAction.family;
     const target = clone(standardAction.target || undefined);
     const payload = clone(standardAction.payload || undefined);
+    if (target?.kind === "discard-hand-cards" && target.handIndexes?.length === 1) {
+      target.handIndex = target.handIndexes[0];
+      target.cardId = target.cardIds?.[0] || null;
+    }
     return compactObject({
       schemaVersion: ACTION_SCHEMA_VERSION,
       actionId: standardAction.actionId,

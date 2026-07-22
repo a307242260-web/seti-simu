@@ -30,7 +30,6 @@
       cardEffects,
       createActionContext,
       data,
-      decisionSessions,
       els,
       getBoardPointFromPolarPoint,
       getMainActionStartBlockReason,
@@ -69,9 +68,7 @@
       validateIndustryHuanyuMoveRocket,
       withPendingOwnerPlayer
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
         throw new TypeError("action interaction operation requires an explicit workingRoot");
@@ -722,7 +719,7 @@
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
 
     const cardMoveContinuation = workingRoot.match?.cardMoveContinuation || null;
-    const cardMoveEffect = (decisionState.actionEffectFlow?.effects || [])
+    const cardMoveEffect = (getActionEffectFlow(workingRoot)?.effects || [])
       .find((effect) => effect.id === cardMoveContinuation?.effectId) || null;
     const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(cardMoveEffect, rocketId);
     if (!huanyuRocketCheck.ok) {
@@ -876,9 +873,9 @@
 
   function ensurePendingDataPlacementEffectStep(pending, player) {
     if (!pending?.effect) return;
-    if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effect.label);
+    if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, pending.effect.label);
     if (!pending.restoreRecorded) {
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         player,
         pending.beforePlayerState,
         "恢复自动放置数据前玩家状态",
@@ -892,7 +889,7 @@
     const messages = [];
     for (const bonus of bonuses) {
       if (bonus.type === "income") {
-        const incomeStart = beginDiscardSelection(1, {
+        const incomeStart = beginDiscardSelection(workingRoot, 1, {
           type: "place_data_income",
           player,
           beforePlayerState: pending.beforePlayerState,

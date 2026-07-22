@@ -44,7 +44,7 @@ function createBaseHarness() {
   attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {};
   const workingRoot = {
-    match: {},
+    match: { actionEffectFlow: { delayedPublicRefills: [] } },
     alienGameState: {},
     cardState,
     nebulaDataState: {},
@@ -223,16 +223,16 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState } = createBaseHarness();
+  const { helpers, workingRoot } = createBaseHarness();
   const card = { id: "c1", cardName: "Card 1" };
-  const registered = helpers.registerDelayedPublicRefill("run-1", 2, card);
+  const registered = helpers.registerDelayedPublicRefill(workingRoot, "run-1", 2, card);
   assert.equal(registered.cardLabel, "Card 1");
-  const updated = helpers.registerDelayedPublicRefill("run-1", 2, { id: "c1b", cardName: "Card 1B" });
+  const updated = helpers.registerDelayedPublicRefill(workingRoot, "run-1", 2, { id: "c1b", cardName: "Card 1B" });
   assert.equal(updated.cardLabel, "Card 1B");
-  assert.equal(helpers.getDelayedPublicRefillSlots("run-1").length, 1);
-  assert.equal(helpers.cloneDelayedPublicRefills(pendingState.actionEffectFlow)[0].slotIndex, 2);
-  helpers.clearDelayedPublicRefillSlots("run-1");
-  assert.deepEqual(helpers.getDelayedPublicRefillSlots("run-1"), []);
+  assert.equal(helpers.getDelayedPublicRefillSlots("run-1", workingRoot.match.actionEffectFlow).length, 1);
+  assert.equal(helpers.cloneDelayedPublicRefills(workingRoot.match.actionEffectFlow)[0].slotIndex, 2);
+  helpers.clearDelayedPublicRefillSlots("run-1", workingRoot.match.actionEffectFlow);
+  assert.deepEqual(helpers.getDelayedPublicRefillSlots("run-1", workingRoot.match.actionEffectFlow), []);
 }
 
 {
@@ -320,6 +320,7 @@ function createBaseHarness() {
     hand: [],
   };
   const workingRoot = {
+    match: {},
     playerState: { currentPlayerId: "working-player", players: [workingPlayer] },
     turnState: { roundNumber: 3, turnNumber: 5 },
     rocketState: { statusNote: "" },

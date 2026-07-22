@@ -13,7 +13,11 @@ function createHarness() {
     passReserveSelection: null,
   };
   const uiRuntimeState = { passReserveSelectionDismissed: false, passReserveSelectedCardId: null };
-  const calls = { completed: 0, chrome: 0 };
+  const calls = { completed: 0, chrome: 0, roots: [] };
+  const recordInactive = (workingRoot) => {
+    calls.roots.push(workingRoot);
+    return false;
+  };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const runtime = createCardRuntime({
@@ -47,6 +51,18 @@ function createHarness() {
     },
     structuredClone,
     beginEffectHistoryStep: () => {},
+    getGameplayLockReason: (workingRoot) => {
+      calls.roots.push(workingRoot);
+      return null;
+    },
+    isTechTilePickingActive: recordInactive,
+    isCardSelectionActive: recordInactive,
+    isDiscardSelectionActive: recordInactive,
+    isPlayCardSelectionActive: recordInactive,
+    isHandScanSelectionActive: recordInactive,
+    isMovePaymentSelectionActive: recordInactive,
+    isIndustryHandSelectionActive: recordInactive,
+    hasActivePendingSubFlow: recordInactive,
     recordHistoryCommand: () => {},
     historyCommands: {
       createRestorePlayerCommand: () => ({}),
@@ -74,6 +90,13 @@ function createHarness() {
     rocketState: { statusNote: "" },
   };
   return { runtime, workingRoot, player, effect, pendingState, uiRuntimeState, calls, decisionSessions };
+}
+
+{
+  const { runtime, workingRoot, calls } = createHarness();
+  assert.equal(runtime.canUseCardCornerQuickAction(workingRoot), true);
+  assert.ok(calls.roots.length >= 9);
+  assert.ok(calls.roots.every((root) => root === workingRoot), "卡牌快速行动门禁必须显式读取同一 workingRoot");
 }
 
 {

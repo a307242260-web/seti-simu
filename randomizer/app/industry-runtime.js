@@ -46,7 +46,6 @@
       completeCurrentActionEffect,
       completeQuickActionStep,
       createActionContext,
-      decisionSessions,
       createCardCornerTriggerEventFields,
       createInitialSelectionImage,
       data,
@@ -120,9 +119,7 @@
       uiRuntimeState,
       updateActionButtons
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
     function setCardSelectionContinuation(workingRoot, pending) {
       const activeRoot = requireWorkingRoot(workingRoot);
@@ -188,7 +185,7 @@
     function getWorkingEffectOwnerPlayer(workingRoot, effect = null) {
       return resolveWorkingPlayerReference(workingRoot, effect || {})
         || resolveWorkingPlayerReference(workingRoot, {
-          playerId: decisionState.actionEffectFlow?.defaultPlayerId || decisionState.actionEffectFlow?.playerId,
+          playerId: getActionEffectFlow(workingRoot)?.defaultPlayerId || getActionEffectFlow(workingRoot)?.playerId,
         })
         || getWorkingCurrentPlayer(workingRoot);
     }
@@ -216,7 +213,7 @@
         undo() {
           cancelIndustryAbilityFlow(workingRoot, { silent: true });
           if (options.clearEffectFlow) {
-            clearActionEffectFlow();
+            clearActionEffectFlow(workingRoot);
           }
           restoreObjectSnapshot(player, beforePlayer);
           renderInitialSelectionArea();
@@ -624,7 +621,7 @@
         beforePlayer,
         "恢复赫利昂无效科技前玩家状态",
       ));
-      const incomeStart = beginDiscardSelection(1, {
+      const incomeStart = beginDiscardSelection(workingRoot, 1, {
         type: "industry_helios_income",
         player,
         beforePlayer,
@@ -1118,7 +1115,7 @@
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       startPendingActionSession("launch", "发射行动");
       recordAbilityCommands(result, undefined, workingRoot);
-      endEffectHistoryStep({
+      endEffectHistoryStep(workingRoot, {
         result: {
           ok: true,
           undoable: result.undoable,
@@ -1127,20 +1124,20 @@
         },
       });
 
-      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+      workingRoot.match.actionEffectFlow = abilities.chain.startAbilityChain(
         "launch-sector-finish",
         "发射后扇区结算",
         followups,
       );
-      decisionState.actionEffectFlow.actionType = "launch";
-      decisionState.actionEffectFlow.playerId = currentPlayer?.id || null;
-      assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
-      decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-      decisionState.actionEffectFlow.consumesMainAction = true;
+      getActionEffectFlow(workingRoot).actionType = "launch";
+      getActionEffectFlow(workingRoot).playerId = currentPlayer?.id || null;
+      assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
+      getActionEffectFlow(workingRoot).historySource = HISTORY_SOURCE_MAIN;
+      getActionEffectFlow(workingRoot).consumesMainAction = true;
 
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       rocketState.statusNote = "发射完成：请处理哨兵扫描触发的扇区结算";
-      activateNextActionEffect();
+      activateNextActionEffect(workingRoot);
       return true;
     }
 
@@ -1306,20 +1303,20 @@
       }
     }
 
-    function appendSentinelPlayCornerEffectsToFlow(nodes) {
-      if (!decisionState.actionEffectFlow || !nodes?.length) return false;
-      if (decisionState.actionEffectFlow.effects.some((effect) => effect.type === "industry_sentinel_corner")) {
+    function appendSentinelPlayCornerEffectsToFlow(workingRoot, nodes) {
+      if (!getActionEffectFlow(workingRoot) || !nodes?.length) return false;
+      if (getActionEffectFlow(workingRoot).effects.some((effect) => effect.type === "industry_sentinel_corner")) {
         return false;
       }
-      decisionState.actionEffectFlow.effects.push(...nodes.map((node) => ({
+      getActionEffectFlow(workingRoot).effects.push(...nodes.map((node) => ({
         ...node,
         status: "pending",
       })));
-      decisionState.actionEffectFlow.completed = false;
-      const hasActiveEffect = decisionState.actionEffectFlow.effects.some((effect) => effect.status === "active");
+      getActionEffectFlow(workingRoot).completed = false;
+      const hasActiveEffect = getActionEffectFlow(workingRoot).effects.some((effect) => effect.status === "active");
       if (!hasActiveEffect) {
         els.appWrap?.classList.toggle("action-effect-flow-active", true);
-        activateNextActionEffect();
+        activateNextActionEffect(workingRoot);
       }
       return true;
     }
@@ -1343,8 +1340,8 @@
       ) || [];
       if (!nodes.length) return false;
 
-      if (isActionEffectFlowActive() && decisionState.actionEffectFlow.actionType === "playCard") {
-        return appendSentinelPlayCornerEffectsToFlow(nodes);
+      if (isActionEffectFlowActive() && getActionEffectFlow(workingRoot).actionType === "playCard") {
+        return appendSentinelPlayCornerEffectsToFlow(workingRoot, nodes);
       }
 
       if (!isActionPending()) return false;
@@ -1388,7 +1385,7 @@
       const reward = rewardSnapshot
         ? { ...rewardSnapshot, gain: { ...(rewardSnapshot.gain || {}) } }
         : industry.getCornerReward(cards, card);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       if (!reward) {
         effect.result = {
           ok: true,
@@ -1396,7 +1393,7 @@
           message: `${effect.label}：没有弃牌角标奖励`,
         };
         rocketState.statusNote = effect.result.message;
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
@@ -1404,7 +1401,7 @@
       const beforePlayer = structuredClone(currentPlayer);
       const applied = industry.applyCornerReward(players, data, currentPlayer, reward);
       if (!applied.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         rocketState.statusNote = applied.message;
         renderStateReadout();
         return applied;
@@ -1424,7 +1421,7 @@
         }]);
       }
 
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复层云核心角标结算前玩家状态",
@@ -1456,7 +1453,7 @@
       }
       if (industry?.isAlienCard?.(playedCard)) {
         effect.result = { ok: false, undoable: true, message: "外星人卡牌不能触发哨兵弃牌角标" };
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
@@ -1464,13 +1461,13 @@
       const reward = industry.getCornerReward(cards, playedCard);
       if (!reward) {
         effect.result = { ok: false, undoable: true, message: "该牌没有弃牌角标奖励" };
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
 
       const beforePlayer = structuredClone(currentPlayer);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const dataResults = [];
       if (reward.kind === "resource") {
         if (reward.gain && Object.keys(reward.gain).length) {
@@ -1481,7 +1478,7 @@
         for (let index = 0; index < dataCount; index += 1) {
           const gainResult = data.gainData(currentPlayer, { source: "industry_sentinel" });
           dataResults.push(gainResult);
-          recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
+          recordHistoryCommand(workingRoot, historyCommands.createGainDataCommand(currentPlayer, gainResult));
         }
       } else if (reward.kind === "move" && reward.gain && Object.keys(reward.gain).length) {
         players.gainResources(currentPlayer, reward.gain);
@@ -1501,7 +1498,7 @@
         }]);
       }
 
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复哨兵弃牌角标结算前玩家状态",
@@ -1675,7 +1672,7 @@
       const check = industry?.canPlaceHeliosPassiveSlot?.(player, slotId);
       if (!check?.ok) {
         effect.result = { ok: false, undoable: true, message: check?.message || "无法领取奖励" };
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
@@ -1685,10 +1682,10 @@
       const rewardLabel = industry.getHeliosSlotRewardLabel?.(slotId) || "";
       const beforePlayer = structuredClone(player);
 
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const placeResult = industry.placeHeliosPassiveSlot(player, slotId);
       if (!placeResult?.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         rocketState.statusNote = placeResult?.message || "无法放置标记";
         renderStateReadout();
         return placeResult;
@@ -1704,10 +1701,10 @@
       if (reward?.data) {
         const gainResult = data.gainData(player, { source: "industry_helios_passive" });
         dataResults.push(gainResult);
-        recordHistoryCommand(historyCommands.createGainDataCommand(player, gainResult));
+        recordHistoryCommand(workingRoot, historyCommands.createGainDataCommand(player, gainResult));
       }
 
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
         `撤销赫利昂联合体：${slotLabel}奖励`,
@@ -1819,7 +1816,7 @@
     function confirmStrategyPassiveSlotChoice(workingRoot, slotId) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       const pending = getStrategySlotDecision(workingRoot);
-      const effect = getCurrentActionEffect();
+      const effect = getCurrentActionEffect(workingRoot);
       if (!pending || !effect || effect.id !== pending.effectId || effect.type !== "industry_strategy_passive_reward") {
         cancelStrategyPassiveSlotChoice(workingRoot);
         return { ok: false, message: "没有待选择的宇宙战略集团奖励槽" };
@@ -1853,7 +1850,7 @@
           undoable: true,
           message: check?.message || "无法领取奖励",
         };
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderInitialSelectionArea();
         renderStateReadout();
         return effect.result;
@@ -1864,9 +1861,9 @@
       const rewardLabel = industry.getStrategySlotRewardLabel?.(slotId) || "";
       const beforePlayer = options.beforePlayerState || structuredClone(player);
 
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(effect.label);
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, effect.label);
       if (!options.restoreRecorded) {
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           player,
           beforePlayer,
           `撤销宇宙战略集团：${slotLabel}奖励槽`,
@@ -1875,7 +1872,7 @@
 
       const placeResult = industry.placeStrategyPassiveSlot(player, slotId);
       if (!placeResult?.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         rocketState.statusNote = placeResult?.message || "无法放置被动标记";
         renderStateReadout();
         return placeResult;
@@ -1893,7 +1890,7 @@
         const gainResult = data.gainData(player, { source: "industry_strategy_passive" });
         dataResults.push(gainResult);
         if (!options.restoreRecorded) {
-          recordHistoryCommand(historyCommands.createGainDataCommand(player, gainResult));
+          recordHistoryCommand(workingRoot, historyCommands.createGainDataCommand(player, gainResult));
         }
       }
 

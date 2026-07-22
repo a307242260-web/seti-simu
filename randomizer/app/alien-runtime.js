@@ -35,9 +35,7 @@
     const runezu = context.runezu || null;
     const uiRuntimeState = context.uiRuntimeState || {};
 
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
         throw new TypeError("alien-runtime operation requires an explicit workingRoot");
@@ -543,8 +541,8 @@
         recordQuickHistoryCommand(restorePlayer);
         return;
       }
-      recordHistoryCommand(restoreAlien);
-      recordHistoryCommand(restorePlayer);
+      recordHistoryCommand(workingRoot, restoreAlien);
+      recordHistoryCommand(workingRoot, restorePlayer);
     }
 
     function confirmAlienTracePlacement(workingRoot, alienSlotId, traceType) {
@@ -604,7 +602,7 @@
       const afterReward = result.ok ? applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType) : null;
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
       if (pending?.type === "planet_reward_alien_trace" && result.ok) {
-        beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励", { logBefore: beforeLogSnapshot });
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "外星人标记奖励", { logBefore: beforeLogSnapshot });
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -612,8 +610,8 @@
           "恢复外星人标记奖励前状态",
           "恢复外星人标记奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: !revealIrreversible,
             irreversible: revealIrreversible,
@@ -631,7 +629,7 @@
             },
           };
         }
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       } else if (pending?.type === "banrenma_bonus_alien_trace" && result.ok) {
         beginQuickActionStep("banrenma-alien-trace", pending.effectLabel || "半人马外星人痕迹", {
           logBefore: beforeLogSnapshot,
@@ -716,7 +714,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "异常点痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "异常点痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -724,8 +722,8 @@
           "恢复异常点痕迹奖励前外星人状态",
           "恢复异常点痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
@@ -749,13 +747,13 @@
           beforePlayerState,
         });
         if (!openResult.ok && pending?.type === "planet_reward_alien_trace") {
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
         return result;
       }
 
       if (pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();
@@ -820,7 +818,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "方舟痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "方舟痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -828,8 +826,8 @@
           "恢复方舟痕迹奖励前外星人状态",
           "恢复方舟痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: rewardResult.undoable !== false,
             irreversible: rewardResult.irreversible || null,
@@ -861,7 +859,7 @@
       renderReservedCards();
 
       if (pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();
@@ -932,7 +930,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "半人马痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "半人马痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -940,8 +938,8 @@
           "恢复半人马痕迹奖励前外星人状态",
           "恢复半人马痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: rewardResult.undoable !== false,
             irreversible: rewardResult.irreversible || null,
@@ -990,13 +988,13 @@
           beforePlayerState,
         });
         if (!openResult.ok && pending?.type === "planet_reward_alien_trace") {
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
         return result;
       }
 
       if (pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinueAlienRevealQueuedOpportunities();
@@ -1067,7 +1065,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "奥陌陌痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "奥陌陌痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -1075,8 +1073,8 @@
           "恢复奥陌陌痕迹奖励前外星人状态",
           "恢复奥陌陌痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
@@ -1115,13 +1113,13 @@
           deferredEvents: pending?.type === "planet_reward_alien_trace" ? [] : traceEvents,
         });
         if (!openResult.ok && pending?.type === "planet_reward_alien_trace") {
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
         return result;
       }
 
       if (pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();
@@ -1185,7 +1183,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "虫族痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "虫族痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -1193,8 +1191,8 @@
           "恢复虫族痕迹奖励前外星人状态",
           "恢复虫族痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: rewardResult.undoable !== false,
             irreversible: rewardResult.irreversible || null,
@@ -1233,7 +1231,7 @@
         beforePlayerState,
       );
       if (!openedFollowUp && pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();
@@ -1297,7 +1295,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "阿米巴痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "阿米巴痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -1305,8 +1303,8 @@
           "恢复阿米巴痕迹奖励前外星人状态",
           "恢复阿米巴痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
@@ -1344,7 +1342,7 @@
         beforePlayerState,
       );
       if (!openedFollowUp && pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();
@@ -1408,7 +1406,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "符文族痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "符文族痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -1416,8 +1414,8 @@
           "恢复符文族痕迹奖励前外星人状态",
           "恢复符文族痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: rewardResult.undoable !== false,
             irreversible: rewardResult.irreversible || null,
@@ -1456,7 +1454,7 @@
         beforePlayerState,
       );
       if (!openedFollowUp && pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();
@@ -1520,7 +1518,7 @@
       appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
-        beginEffectHistoryStep(pending.effectLabel || "九折痕迹奖励");
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "九折痕迹奖励");
         recordPlacementHistory(
           workingRoot,
           beforeAlienState,
@@ -1528,8 +1526,8 @@
           "恢复九折痕迹奖励前外星人状态",
           "恢复九折痕迹奖励前玩家状态",
         );
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
@@ -1552,13 +1550,13 @@
           effectLabel: pending?.effectLabel || "九折痕迹精选",
         });
         if (!pickResult.ok && pending?.type === "planet_reward_alien_trace") {
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
         return result;
       }
 
       if (pending?.type === "planet_reward_alien_trace") {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       updateActionButtons();
       maybeContinuePendingTurnEndRevealFlow();

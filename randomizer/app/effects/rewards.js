@@ -108,14 +108,18 @@
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("effect reward executor requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
     const getScanTargetContinuation = (workingRoot) => workingRoot.match?.scanTargetContinuation || null;
     function setScanTargetContinuation(workingRoot, continuation) {
       if (!continuation) delete workingRoot.match.scanTargetContinuation;
       else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     function signalOwnerMatches(workingRoot, item, player) {
       const keys = getPlayerOwnerKeys(workingRoot, player);
@@ -342,11 +346,11 @@
     }
 
     function completeFundamentalismImmediateExchange(workingRoot, effect, player, choice) {
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(player);
       const spend = spendFundamentalismExchangeCost(workingRoot, player, choice.cost);
       if (!spend.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = spend.message;
         renderStateReadout();
         return spend;
@@ -355,7 +359,7 @@
         players.gainResources(player, choice.gain);
         addScoreSourceFromGain(player, SCORE_SOURCE_KEYS.INDUSTRY_EFFECT, choice.gain);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
         "恢复原教旨主义兑换前玩家状态",
@@ -377,7 +381,7 @@
         renderStateReadout();
         return spend;
       }
-      const result = beginCardSelection({
+      const result = beginCardSelection(workingRoot, {
         type: "fundamentalism_exchange_pick",
         player,
         effect,
@@ -402,7 +406,7 @@
     }
 
     function startFundamentalismDiscardExchange(workingRoot, effect, player) {
-      const result = beginDiscardSelection(1, {
+      const result = beginDiscardSelection(workingRoot, 1, {
         type: "industry_fundamentalism_score_discard",
         player,
         fromEffectFlow: true,
@@ -545,11 +549,11 @@
         renderStateReadout();
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const [card] = currentPlayer.reservedCards.splice(index, 1);
       cards.addCardToHand(currentPlayer, card);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复任务卡回手前玩家状态",
@@ -577,7 +581,7 @@
         countOwnedTechByType(workingRoot, currentPlayer, "purple"),
         countOwnedTechByType(workingRoot, currentPlayer, "blue"),
       );
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
         publicCards: ruleCardState(workingRoot).publicCards.slice(),
@@ -591,12 +595,12 @@
         ? { code: "hidden_card_reveal", reason: "盲抽翻出新牌" }
         : null;
       if (irreversible) markCurrentActionIrreversible(irreversible.reason, irreversible.code);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复科技类型奖励前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
@@ -614,7 +618,7 @@
       const currentPlayer = getCurrentPlayer(workingRoot);
       const count = countOwnedTechByType(workingRoot, currentPlayer, effect.options?.techType);
       const total = Math.max(0, Math.round(count * Number(effect.options?.per || 1)));
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const dataResults = [];
       if (effect.options?.resource === "data") {
@@ -624,7 +628,7 @@
         players.gainResources(currentPlayer, gain);
         recordScoreSourceForGainEffect(currentPlayer, effect, gain);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复科技数量奖励前玩家状态",
@@ -647,14 +651,14 @@
         effect.options || {},
       );
       const total = Math.max(0, Math.round(count * Number(effect.options?.per || 1)));
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (total > 0) {
         const gain = { [effect.options?.resource || "energy"]: total };
         players.gainResources(currentPlayer, gain);
         recordScoreSourceForGainEffect(currentPlayer, effect, gain);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复探测器数量奖励前玩家状态",
@@ -669,7 +673,7 @@
 
     function executeDiscardAllHandEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
         publicCards: ruleCardState(workingRoot).publicCards.slice(),
@@ -686,12 +690,12 @@
         }
       }
       insertActionEffectsAfterCurrent(workingRoot, effect.options?.rewards || []);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复弃掉全部手牌前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
@@ -755,10 +759,10 @@
       const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       const gain = effect.options?.gain || {};
       const beforePlayer = structuredClone(currentPlayer);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       players.gainResources(currentPlayer, gain);
       recordScoreSourceForGainEffect(currentPlayer, effect, gain);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复奖励前玩家状态",
@@ -772,14 +776,14 @@
     }
 
     function finishGainDataRewardEffect(workingRoot, effect, currentPlayer, count, source, options = {}) {
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(effect.label);
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, effect.label);
       const results = [];
       if (!options.skipGain) {
         for (let index = 0; index < count; index += 1) {
           const gainResult = data.gainData(currentPlayer, { source });
           results.push(gainResult);
           if (!options.restoreRecorded) {
-            recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
+            recordHistoryCommand(workingRoot, historyCommands.createGainDataCommand(currentPlayer, gainResult));
           }
         }
       }
@@ -811,7 +815,7 @@
             resumeKind: "gain-data-reward",
           });
         }
-        beginEffectHistoryStep(effect.label);
+        beginEffectHistoryStep(workingRoot, effect.label);
         effect.result = {
           ok: true,
           undoable: true,
@@ -819,17 +823,17 @@
           message: `${effect.label}：${placeCheck.message || "数据池已满且无法放置，未获得数据"}`,
         };
         ruleRocketState(workingRoot).statusNote = effect.result.message;
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       return finishGainDataRewardEffect(workingRoot, effect, currentPlayer, count, source);
     }
 
     function executeLaunchRewardEffect(workingRoot, effect) {
       const options = effect.options || {};
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
         skipCost: Boolean(options.skipCost),
         cost: options.cost,
@@ -838,9 +842,9 @@
         historyLabel: effect.label,
       });
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         if (/火箭数量已达上限|资源不足/.test(String(result.message || ""))) {
-          return skipActionEffectWithMessage(
+          return skipActionEffectWithMessage(workingRoot,
             effect,
             `${effect.label || "发射奖励"}：${result.message}，已跳过`,
             { reason: result.message || null, abilityId: result.abilityId || "launchProbe" },
@@ -863,7 +867,7 @@
 
     function executeHuanyuSuperdrivePassLaunchEffect(workingRoot, effect) {
       const options = effect.options || {};
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
         skipCost: options.skipCost !== false,
         ignoreRocketLimit: options.ignoreRocketLimit !== false,
@@ -871,7 +875,7 @@
         historyLabel: effect.label,
       });
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
@@ -884,7 +888,7 @@
         message: `${effect.label}：${result.message}`,
       };
       ruleRocketState(workingRoot).statusNote = effect.result.message;
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderRockets();
       renderPlayerStats();
       renderStateReadout();
@@ -921,7 +925,7 @@
       const beforeTurnBonuses = structuredClone(ruleTurnState(workingRoot).cardTurnEventBonuses || []);
       const flowBonuses = ensureCardFlowEventBonuses();
       const beforeFlowBonuses = structuredClone(flowBonuses);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const bonus = {
         ...(effect.options?.bonus || {}),
         id: effect.id,
@@ -935,13 +939,13 @@
       } else {
         flowBonuses.push(bonus);
       }
-      recordHistoryCommand({
+      recordHistoryCommand(workingRoot, {
         label: "恢复卡牌事件触发登记",
         describe: "移除已登记的卡牌事件触发",
         undo() {
           ruleTurnState(workingRoot).cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
-          if (decisionState.actionEffectFlow) {
-            decisionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
+          if (getActionEffectFlow(workingRoot)) {
+            getActionEffectFlow(workingRoot).cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
           }
         },
       });
@@ -962,13 +966,13 @@
         .filter((card) => Number(cards.getIncomeCodeForCard(card)) === incomeCode)
         .length;
       const gain = { [resource]: Math.round(count * per) };
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (gain[resource] > 0) {
         players.gainResources(currentPlayer, gain);
         recordScoreSourceForGainEffect(currentPlayer, effect, gain);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复手牌收入统计奖励前玩家状态",
@@ -996,13 +1000,13 @@
       const baseIncomeCount = Math.max(0, Math.round(Number(companyBaseIncome?.[incomeKey]) || 0));
       const count = Math.max(0, currentIncomeCount - baseIncomeCount);
       const gain = { [resource]: Math.round(count * per) };
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (gain[resource] > 0) {
         players.gainResources(currentPlayer, gain);
         recordScoreSourceForGainEffect(currentPlayer, effect, gain);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复收入统计奖励前玩家状态",
@@ -1023,13 +1027,13 @@
       for (const [resource, amount] of Object.entries(gainPerAlien)) {
         gain[resource] = Math.max(0, Math.round(Number(amount) || 0)) * alienCount;
       }
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (Object.values(gain).some((value) => value > 0)) {
         players.gainResources(currentPlayer, gain);
         recordScoreSourceForGainEffect(currentPlayer, effect, gain);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复外星人数量奖励前玩家状态",
@@ -1044,7 +1048,7 @@
 
     function executeTuckPlayedCardToIncomeEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      const playedCard = decisionState.actionEffectFlow?.card;
+      const playedCard = getActionEffectFlow(workingRoot)?.card;
       if (!currentPlayer || !playedCard) {
         ruleRocketState(workingRoot).statusNote = "没有可放入收入区的当前卡牌";
         renderStateReadout();
@@ -1057,17 +1061,17 @@
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const discardIndex = (ruleCardState(workingRoot).discardPile || []).findIndex((card) => card.id === playedCard.id);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = structuredClone(ruleCardState(workingRoot));
       if (discardIndex >= 0) ruleCardState(workingRoot).discardPile.splice(discardIndex, 1);
       const incomeResult = applyIncomeGainWithImmediateRewards(currentPlayer, gain, "card_income");
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复本卡放入收入区前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         ruleCardState(workingRoot),
         beforeCardState,
         "恢复本卡放入收入区前牌区",
@@ -1083,7 +1087,7 @@
 
     function executePickCardCornerRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      const result = beginCardSelection({
+      const result = beginCardSelection(workingRoot, {
         type: "card_pick_corner_reward",
         player: currentPlayer,
         effectLabel: effect.label,
@@ -1114,7 +1118,7 @@
         renderStateReadout();
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
-      const result = beginCardSelection({
+      const result = beginCardSelection(workingRoot, {
         type: "card_public_corner_discard",
         player: currentPlayer,
         effect,
@@ -1150,31 +1154,31 @@
     }
 
     function insertActionEffectsAfterCurrent(workingRoot, effects) {
-      if (!decisionState.actionEffectFlow || !effects?.length) return;
+      if (!getActionEffectFlow(workingRoot) || !effects?.length) return;
       const insertedEffects = effects.filter(Boolean);
-      const insertIndex = Math.max(0, decisionState.actionEffectFlow.currentIndex + 1);
-      const insertionSource = abilities.chain.createInsertionSource?.(decisionState.actionEffectFlow) || null;
-      const currentOwner = getCurrentActionEffect()
-        ? getEffectOwnerPlayer(workingRoot, getCurrentActionEffect())
+      const insertIndex = Math.max(0, getActionEffectFlow(workingRoot).currentIndex + 1);
+      const insertionSource = abilities.chain.createInsertionSource?.(getActionEffectFlow(workingRoot)) || null;
+      const currentOwner = getCurrentActionEffect(workingRoot)
+        ? getEffectOwnerPlayer(workingRoot, getCurrentActionEffect(workingRoot))
         : null;
       const ownerId = currentOwner?.id
-        || decisionState.actionEffectFlow.activePlayerId
-        || decisionState.actionEffectFlow.defaultPlayerId
-        || decisionState.actionEffectFlow.playerId
+        || getActionEffectFlow(workingRoot).activePlayerId
+        || getActionEffectFlow(workingRoot).defaultPlayerId
+        || getActionEffectFlow(workingRoot).playerId
         || null;
-      decisionState.actionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
+      getActionEffectFlow(workingRoot).effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
         const normalized = normalizeInsertedActionEffect(workingRoot, effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`);
         return abilities.chain.markInsertedNode?.(normalized, insertionSource) || normalized;
       }));
-      decisionState.actionEffectFlow.completed = false;
+      getActionEffectFlow(workingRoot).completed = false;
     }
 
     function insertActionEffectsBeforeCurrent(workingRoot, effects) {
-      if (!decisionState.actionEffectFlow || !effects?.length) return false;
+      if (!getActionEffectFlow(workingRoot) || !effects?.length) return false;
       const insertedEffects = effects.filter(Boolean);
       if (!insertedEffects.length) return false;
-      const flow = decisionState.actionEffectFlow;
-      const current = getCurrentActionEffect();
+      const flow = getActionEffectFlow(workingRoot);
+      const current = getCurrentActionEffect(workingRoot);
       const insertIndex = flow.completed
         ? Math.min(flow.effects.length, Math.max(0, flow.currentIndex + 1))
         : Math.max(0, flow.currentIndex);
@@ -1192,7 +1196,7 @@
       )));
       flow.currentIndex = insertIndex;
       flow.completed = false;
-      activateNextActionEffect();
+      activateNextActionEffect(workingRoot);
       return true;
     }
 
@@ -1215,7 +1219,7 @@
       if (!currentPlayer?.hand?.length) {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：没有手牌，跳过` };
         ruleRocketState(workingRoot).statusNote = effect.result.message;
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
@@ -1269,7 +1273,7 @@
       if (choice === "skip") {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：已跳过` };
         ruleRocketState(workingRoot).statusNote = effect.result.message;
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
         renderStateReadout();
         return effect.result;
       }
@@ -1384,12 +1388,12 @@
     function finishProbeLocationReward(workingRoot, effect, rocket) {
       const currentPlayer = getExplicitEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const reward = computeProbeLocationReward(workingRoot, effect, rocket);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const results = [];
       for (let index = 0; index < reward.dataCount; index += 1) {
         const gainResult = data.gainData(currentPlayer, { source: "probeLocationReward" });
         results.push(gainResult);
-        recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
+        recordHistoryCommand(workingRoot, historyCommands.createGainDataCommand(currentPlayer, gainResult));
       }
       return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
@@ -1412,7 +1416,7 @@
     }
 
     function executePlutoReserveEffect(workingRoot, effect) {
-      const card = decisionState.actionEffectFlow?.card;
+      const card = getActionEffectFlow(workingRoot)?.card;
       if (card) {
         ensurePlutoCardEffectState(card).pluto = {
           ...(card.cardEffectState?.pluto || {}),
@@ -1462,7 +1466,7 @@
       });
       if (result.ok) {
         effect.result = result;
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       return result;
     }
@@ -1528,7 +1532,7 @@
         card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
       )).length;
       if (filledSlots === 0) {
-        return skipActionEffectWithMessage(
+        return skipActionEffectWithMessage(workingRoot,
           effect,
           `${effect.label}：公共牌区为空，已跳过`,
           { reason: "no_public_scan_candidate" },
@@ -1545,7 +1549,7 @@
         ? `${effect.label}：请选择 ${selectableCount} 张当前公共牌`
         : `${effect.label}：请选择一张亮明的公共牌`;
       renderStateReadout();
-      return beginCardSelection({
+      return beginCardSelection(workingRoot, {
         ...createPublicScanPendingAction(currentPlayer, true, {
           maxSelectable: selectableCount,
           minSelectable: selectableCount,
@@ -1584,7 +1588,7 @@
         events: [{ type: "scanAction", source: "card", scanRunId }],
       };
       ruleRocketState(workingRoot).statusNote = "扫描行动已展开，请继续处理后续扫描效果";
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -1679,10 +1683,10 @@
         discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
       };
 
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const drawResult = cards.blindDraw(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer);
       if (!drawResult.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = drawResult.message;
         renderStateReadout();
         return drawResult;
@@ -1693,7 +1697,7 @@
       const drawnIndex = currentPlayer.hand.findIndex((item) => item.id === drawnCard.id);
       const discardResult = cards.discardFromHandAtIndex(currentPlayer, drawnIndex);
       if (!discardResult.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = discardResult.message;
         renderPlayerHand();
         renderStateReadout();
@@ -1734,12 +1738,12 @@
         }]);
       }
 
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复盲抽角标结算前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,

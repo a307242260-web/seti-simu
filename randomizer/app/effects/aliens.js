@@ -29,7 +29,6 @@
       completeCurrentActionEffect,
       createActionContext,
       data,
-      decisionSessions,
       document,
       els,
       endEffectHistoryStep,
@@ -83,9 +82,13 @@
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleSolarState = (workingRoot) => workingRoot.solarState;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("effect alien executor requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     let yichangdianCornerDecisionDraft = null;
     const getYichangdianCornerAction = () => yichangdianCornerDecisionDraft;
     const takeYichangdianCornerAction = () => {
@@ -112,13 +115,13 @@
     function executeYichangdianAnomalySignalScoreEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
       const score = countYichangdianAnomalySignals(workingRoot);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (score > 0) {
         players.gainResources(currentPlayer, { score });
         addPlayerScoreSource(currentPlayer, SCORE_SOURCE_KEYS.ALIEN_EFFECT, score);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复异常点信号得分前玩家状态",
@@ -141,17 +144,17 @@
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayerState = structuredClone(rulePlayerState(workingRoot));
       const rewardResult = applyYichangdianRewardToPlayer(currentPlayer, reward, `异常点牌 ${anomaly.markerId}`);
       if (rewardResult.ok) addScoreSourceFromGain(currentPlayer, SCORE_SOURCE_KEYS.ALIEN_EFFECT, reward.gain);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         rulePlayerState(workingRoot),
         beforePlayerState,
         "恢复异常点牌奖励前玩家状态",
       ));
-      if (getCurrentActionEffect()) {
-        getCurrentActionEffect().result = {
+      if (getCurrentActionEffect(workingRoot)) {
+        getCurrentActionEffect(workingRoot).result = {
           ok: true,
           undoable: true,
           message: rewardResult.message,
@@ -159,7 +162,7 @@
         };
       }
       if (reward.pickCard) {
-        beginCardSelection({
+        beginCardSelection(workingRoot, {
           type: "yichangdian_anomaly_pick",
           player: currentPlayer,
           allowBlindDraw: true,
@@ -167,7 +170,7 @@
         });
         return { ok: true, message: rewardResult.message };
       }
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderPlayerStats();
       renderStateReadout();
       return { ok: true, message: rewardResult.message };
@@ -187,7 +190,7 @@
 
     function executeYichangdianPublicAllEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayerState = structuredClone(rulePlayerState(workingRoot));
       const beforeCardState = structuredClone(ruleCardState(workingRoot));
       const picked = [];
@@ -195,12 +198,12 @@
         const result = cards.pickFromPublic(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer, slotIndex);
         if (result.ok) picked.push(result.card);
       }
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         rulePlayerState(workingRoot),
         beforePlayerState,
         "恢复异常点拿公共牌前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         ruleCardState(workingRoot),
         beforeCardState,
         "恢复异常点拿公共牌前牌区状态",
@@ -288,7 +291,7 @@
 
       const currentPlayer = getCurrentPlayer(workingRoot);
       if (effect?.options) effect.options.skippable = false;
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayerState = structuredClone(rulePlayerState(workingRoot));
       const beforeCardState = structuredClone(ruleCardState(workingRoot));
       const drawn = [];
@@ -369,12 +372,12 @@
 
       const incomeResult = applyIncomeFromCard(player, discardResult.card);
       pending.messageParts.push(incomeResult.message);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         rulePlayerState(workingRoot),
         pending.beforePlayerState,
         "恢复异常点盲抽角标前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         ruleCardState(workingRoot),
         pending.beforeCardState,
         "恢复异常点盲抽角标前牌区状态",
@@ -625,9 +628,9 @@
 
     function executeChongTravelForPickupWithLandTarget(workingRoot, effect, landTarget = { type: "planet" }, options = {}) {
       if (!chong) return null;
-      if (decisionState.actionEffectFlow) decisionState.actionEffectFlow.chongPickupContext = null;
+      if (getActionEffectFlow(workingRoot)) getActionEffectFlow(workingRoot).chongPickupContext = null;
 
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       let result = null;
       if (effect.type === chong.EFFECT_TYPES.CHONG_ORBIT_OR_LAND_FOR_PICKUP && options.actionKind === "orbit") {
         result = abilities.executeAbility("orbitProbe", createActionContext(workingRoot), {
@@ -643,7 +646,7 @@
       }
 
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = options.rocketId == null
           ? result.message
           : `${result.message}（请求火箭 R${options.rocketId}）`;
@@ -675,11 +678,11 @@
         : [];
       if (rewardEffects.length) insertActionEffectsAfterCurrent(workingRoot, rewardEffects);
 
-      if (decisionState.actionEffectFlow) {
-        decisionState.actionEffectFlow.chongPickupContext = {
+      if (getActionEffectFlow(workingRoot)) {
+        getActionEffectFlow(workingRoot).chongPickupContext = {
           planetId: result.planetId || null,
           actionEffectId: effect.id,
-          cardId: decisionState.actionEffectFlow.card?.id || null,
+          cardId: getActionEffectFlow(workingRoot).card?.id || null,
           cardIndex: effect.options?.cardIndex ?? null,
         };
       }
@@ -695,7 +698,7 @@
         },
       };
       ruleRocketState(workingRoot).statusNote = effect.result.message;
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -703,10 +706,10 @@
     function executeChongPickupFossilEffect(workingRoot, effect) {
       if (!chong) return null;
       const currentPlayer = getCurrentPlayer(workingRoot);
-      const card = decisionState.actionEffectFlow?.card || null;
+      const card = getActionEffectFlow(workingRoot)?.card || null;
       const task = card?.chongTask || chong.getCardTask(effect.options?.cardIndex);
       const beforeAlienState = structuredClone(ruleAlienGameState(workingRoot));
-      const planetId = decisionState.actionEffectFlow?.chongPickupContext?.planetId || null;
+      const planetId = getActionEffectFlow(workingRoot)?.chongPickupContext?.planetId || null;
 
       if (!planetId) {
         return finishChongFossilEffect(`${effect.label}：没有上一段登陆/环绕结果`, { planetId: null });
@@ -795,10 +798,10 @@
     }
 
     function getPriorActionEffectFlowIrreversible(workingRoot, effect) {
-      const effects = decisionState.actionEffectFlow?.effects || [];
+      const effects = getActionEffectFlow(workingRoot)?.effects || [];
       if (!effects.length) return null;
-      let currentIndex = Number.isInteger(decisionState.actionEffectFlow?.currentIndex)
-        ? decisionState.actionEffectFlow.currentIndex
+      let currentIndex = Number.isInteger(getActionEffectFlow(workingRoot)?.currentIndex)
+        ? getActionEffectFlow(workingRoot).currentIndex
         : effects.findIndex((item) => item === effect || (item?.id && item.id === effect?.id));
       if (!Number.isInteger(currentIndex) || currentIndex < 0) {
         currentIndex = effects.findIndex((item) => item === effect || (item?.id && item.id === effect?.id));
@@ -821,7 +824,7 @@
     function executeChongTaskCleanupEffect(workingRoot, effect) {
       if (!chong) return null;
       const rocketId = Math.round(Number(effect.options?.rocketId));
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforeAlienState = structuredClone(ruleAlienGameState(workingRoot));
       const beforeRocketState = structuredClone(ruleRocketState(workingRoot));
       if (!Number.isInteger(rocketId)) {
@@ -850,12 +853,12 @@
 
       const removeResult = rocketActions.removeRocket(ruleRocketState(workingRoot), rocketId);
       if (removeResult.ok) removeRocketElement(rocketId);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         ruleAlienGameState(workingRoot),
         beforeAlienState,
         "恢复虫族任务清理前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreRocketStateCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreRocketStateCommand(
         ruleRocketState(workingRoot),
         beforeRocketState,
         "恢复虫族任务清理前火箭状态",
@@ -906,7 +909,7 @@
         }
       }
       if (messages.length) {
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           currentPlayer,
           beforePlayer,
           "恢复奥陌陌扫描附加奖励前玩家状态",
@@ -952,11 +955,11 @@
       const currentPlayer = getCurrentPlayer(workingRoot);
       const count = Math.max(0, Math.round(Number(effect.options?.count) || 1));
       const visited = hasPlayerVisitedPlanetThisTurn(workingRoot, currentPlayer, aomomo?.PLANET_ID);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (visited && count > 0) {
         players.gainResources(currentPlayer, { aomomoFossils: count });
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           currentPlayer,
           beforePlayer,
           "恢复奥陌陌访问奖励前玩家状态",
@@ -988,14 +991,14 @@
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const beforePlayer = structuredClone(currentPlayer);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       players.spendResources(currentPlayer, { aomomoFossils: cost });
       const dataCount = Math.max(0, Math.round(Number(effect.options?.dataCount) || 1));
       const results = [];
       for (let index = 0; index < dataCount; index += 1) {
         results.push(data.gainData(currentPlayer, { source: "aomomo_card" }));
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复奥陌陌化石换数据前玩家状态",
@@ -1091,9 +1094,9 @@
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const beforePlayer = structuredClone(currentPlayer);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       players.spendResources(currentPlayer, { aomomoFossils: cost });
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复奥陌陌移动登陆前玩家状态",
@@ -1125,7 +1128,7 @@
       };
       ruleRocketState(workingRoot).statusNote = effect.result.message;
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -1140,13 +1143,13 @@
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const beforePlayer = structuredClone(currentPlayer);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       if (cost > 0) players.spendResources(currentPlayer, { aomomoFossils: cost });
       if (score > 0) {
         players.gainResources(currentPlayer, { score });
         addPlayerScoreSource(currentPlayer, SCORE_SOURCE_KEYS.ALIEN_EFFECT, score);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复奥陌陌化石得分前玩家状态",

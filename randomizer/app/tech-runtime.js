@@ -39,7 +39,6 @@
       confirmIndustryTuringBorrow,
       countOwnedTechByType,
       createActionContext,
-      decisionSessions,
       document,
       els,
       endEffectHistoryStep,
@@ -87,9 +86,7 @@
       uiRuntimeState,
       updateActionButtons,
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getPiratesRaidDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.piratesRaidContinuation || null;
 
     function requireWorkingRoot(workingRoot) {
@@ -131,7 +128,7 @@
       });
       return explicit
         || resolveWorkingPlayerReference(workingRoot, {
-          playerId: decisionState.actionEffectFlow?.defaultPlayerId || decisionState.actionEffectFlow?.playerId,
+          playerId: getActionEffectFlow(workingRoot)?.defaultPlayerId || getActionEffectFlow(workingRoot)?.playerId,
         })
         || getWorkingCurrentPlayer(workingRoot);
     }
@@ -252,21 +249,21 @@
       return false;
     }
 
-    function getResearchTechSelectionEffect() {
-      if (!decisionState.actionEffectFlow) return null;
-      return decisionState.actionEffectFlow.effects.find((effect) => (
+    function getResearchTechSelectionEffect(workingRoot) {
+      if (!getActionEffectFlow(workingRoot)) return null;
+      return getActionEffectFlow(workingRoot).effects.find((effect) => (
         effect.type === "research_tech_select"
         || effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
       )) || null;
     }
 
-    function getResearchTechSelectionPayload() {
-      const result = getResearchTechSelectionEffect()?.result;
+    function getResearchTechSelectionPayload(workingRoot) {
+      const result = getResearchTechSelectionEffect(workingRoot)?.result;
       return result?.payload || result || null;
     }
 
-    function getResearchTechSelectionOptions() {
-      return getResearchTechSelectionEffect()?.options || {};
+    function getResearchTechSelectionOptions(workingRoot) {
+      return getResearchTechSelectionEffect(workingRoot)?.options || {};
     }
 
     function isTechTileOwnedByOtherPlayer(workingRoot, tileId) {
@@ -279,8 +276,8 @@
       ));
     }
 
-    function shouldSkipCurrentResearchTechCost() {
-      return Boolean(getResearchTechSelectionOptions().skipCost);
+    function shouldSkipCurrentResearchTechCost(workingRoot) {
+      return Boolean(getResearchTechSelectionOptions(workingRoot).skipCost);
     }
 
     function isGeneratedResearchTechFollowupEffect(effect) {
@@ -304,26 +301,26 @@
 
     function appendResearchTechFollowupEffects(workingRoot, selectResult) {
       requireWorkingRoot(workingRoot);
-      if (!decisionState.actionEffectFlow) return;
-      const selectionOptions = getResearchTechSelectionOptions();
-      const owner = resolveWorkingPlayerReference(workingRoot, getCurrentActionEffect() || {})
+      if (!getActionEffectFlow(workingRoot)) return;
+      const selectionOptions = getResearchTechSelectionOptions(workingRoot);
+      const owner = resolveWorkingPlayerReference(workingRoot, getCurrentActionEffect(workingRoot) || {})
         || getWorkingCurrentPlayer(workingRoot);
       const ownerFields = {
         playerId: owner?.id || null,
         playerColor: owner?.color || null,
       };
 
-      const selectIndex = decisionState.actionEffectFlow.effects.findIndex((effect) => (
+      const selectIndex = getActionEffectFlow(workingRoot).effects.findIndex((effect) => (
         effect.type === "research_tech_select"
         || effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
       ));
       const trailingEffects = selectIndex >= 0
-        ? decisionState.actionEffectFlow.effects
+        ? getActionEffectFlow(workingRoot).effects
           .slice(selectIndex + 1)
           .filter((effect) => !isGeneratedResearchTechFollowupEffect(effect))
         : [];
       if (selectIndex >= 0) {
-        decisionState.actionEffectFlow.effects.splice(selectIndex + 1);
+        getActionEffectFlow(workingRoot).effects.splice(selectIndex + 1);
       }
 
       const bonusId = selectResult.bonusId ?? selectResult.payload?.bonusId;
@@ -476,7 +473,7 @@
         followups.push(heliosEffect);
       }
 
-      decisionState.actionEffectFlow.effects.push(
+      getActionEffectFlow(workingRoot).effects.push(
         ...followups.map((effect) => ({
           ...effect,
           options: {
@@ -554,12 +551,12 @@
 
     function restoreResearchTechSelectionAfterUndo(workingRoot, effect) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
-      const selectIndex = decisionState.actionEffectFlow?.effects?.indexOf(effect) ?? -1;
+      const selectIndex = getActionEffectFlow(workingRoot)?.effects?.indexOf(effect) ?? -1;
       if (selectIndex >= 0) {
-        const trailingEffects = decisionState.actionEffectFlow.effects
+        const trailingEffects = getActionEffectFlow(workingRoot).effects
           .slice(selectIndex + 1)
           .filter((item) => !isGeneratedResearchTechFollowupEffect(item));
-        decisionState.actionEffectFlow.effects.splice(selectIndex + 1, decisionState.actionEffectFlow.effects.length, ...trailingEffects);
+        getActionEffectFlow(workingRoot).effects.splice(selectIndex + 1, getActionEffectFlow(workingRoot).effects.length, ...trailingEffects);
       }
       tech.setTechSelectionActive(techGameState, true);
       techGameState.ui.pendingTileId = null;
@@ -601,7 +598,7 @@
         renderStateReadout();
         return;
       }
-      if (decisionState.actionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
+      if (getActionEffectFlow(workingRoot)?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
         const irreversibleReason = getCurrentActionIrreversibleReason?.();
         rocketState.statusNote = irreversibleReason
           ? `不可撤销：${irreversibleReason}`
@@ -620,7 +617,7 @@
       closeTechBlueSlotPicker(workingRoot);
       techGameState.ui.statusNote = "";
       rocketState.statusNote = "";
-      if (decisionState.actionEffectFlow?.actionType === "researchTech") {
+      if (getActionEffectFlow(workingRoot)?.actionType === "researchTech") {
         const rollbackResult = actionHistory.rollbackSession();
         if (!rollbackResult.ok) {
           rocketState.statusNote = rollbackResult.message || "当前科技行动不能取消";
@@ -633,7 +630,7 @@
         clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
         removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
         uiRuntimeState.effectStepActive = false;
-        clearActionEffectFlow();
+        clearActionEffectFlow(workingRoot);
       }
       clearActionPending();
       syncTechSelectionChrome(workingRoot);
@@ -653,7 +650,7 @@
           if (!currentPlayer?.techState) return false;
           if (!tech.isSupplySelectionActive(techGameState.ui)) return false;
           if (industry?.isTechBlockedByPirates?.(currentPlayer, tileId)) return false;
-          const selectionOptions = getResearchTechSelectionOptions();
+          const selectionOptions = getResearchTechSelectionOptions(workingRoot);
           if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) return false;
           return tech.resolver.canTakeTile(
             techGameState.board,
@@ -726,13 +723,13 @@
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!result?.ok || result.needsBlueSlotChoice) return result;
       rocketState.statusNote = result.message;
-      beginEffectHistoryStep(result.message || "选择科技片", { effectType: "research_tech_select" });
+      beginEffectHistoryStep(workingRoot, result.message || "选择科技片", { effectType: "research_tech_select" });
       recordAbilityCommands(result, undefined, workingRoot);
       rocketState.statusNote = result.message;
-      const current = getCurrentActionEffect();
+      const current = getCurrentActionEffect(workingRoot);
       if (current) current.result = result;
       onTechTileSelected(workingRoot, result);
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return result;
     }
@@ -741,7 +738,7 @@
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       const options = {
         tileId,
-        skipCost: shouldSkipCurrentResearchTechCost(),
+        skipCost: shouldSkipCurrentResearchTechCost(workingRoot),
       };
       if (actions?.createStandardAdapter) options.selectionOnly = true;
       if (blueSlot != null) options.blueSlot = blueSlot;
@@ -805,7 +802,7 @@
           renderStateReadout();
           return { ok: false, message };
         }
-        const selectionOptions = getResearchTechSelectionOptions();
+        const selectionOptions = getResearchTechSelectionOptions(workingRoot);
         if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) {
           const message = "这张牌只能选择其他玩家已研究过的科技";
           techGameState.ui.statusNote = message;
@@ -877,7 +874,7 @@
     }
 
     function getCurrentPiratesRaidMarkerEffect(workingRoot) {
-      const effect = getCurrentActionEffect();
+      const effect = getCurrentActionEffect(workingRoot);
       if (!effect || effect.type !== "industry_pirates_raid_marker" || effect.status !== "active") return null;
       if (getPiratesRaidDecision(workingRoot) && getPiratesRaidDecision(workingRoot).effectId !== effect.id) return null;
       return effect;
@@ -894,7 +891,7 @@
       }
       const blocked = industry.listPiratesRaidBlockedTechTiles?.(player) || [];
       if (!blocked.length) {
-        return skipActionEffectWithMessage(effect, "星际海盗：没有可放置的掠夺标记，已跳过", {
+        return skipActionEffectWithMessage(workingRoot, effect, "星际海盗：没有可放置的掠夺标记，已跳过", {
           reason: "no_pirates_raid_marker",
         });
       }
@@ -927,16 +924,16 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(player);
       const result = industry.placePiratesRaidMarker(player, tileId, planetId);
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         rocketState.statusNote = result.message;
         renderStateReadout();
         return result;
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
         "恢复星际海盗掠夺标记放置前玩家状态",
@@ -959,10 +956,10 @@
         return { ok: false, message: rocketState.statusNote };
       }
       const gain = effect.options?.gain || { publicity: industry?.PIRATES_RAID_PUBLICITY_GAIN || 3 };
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(player);
       players.gainResources(player, gain);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
         "恢复星际海盗宣传奖励前玩家状态",
@@ -1099,7 +1096,7 @@
           return { ok: false, message: rocketState.statusNote };
         }
 
-        beginEffectHistoryStep(effect.label);
+        beginEffectHistoryStep(workingRoot, effect.label);
         const beforePlayer = structuredClone(player);
         const beforePlanetStats = structuredClone(planetStatsState);
         const beforePlayerState = choice.kind === "plutoOrbit" || choice.kind === "plutoLand"
@@ -1108,7 +1105,7 @@
         const beforeRocketState = structuredClone(rocketState);
         const spend = players.spendResources(player, cost);
         if (!spend.ok) {
-          endEffectHistoryStep();
+          endEffectHistoryStep(workingRoot);
           rocketState.statusNote = spend.message;
           renderStateReadout();
           return spend;
@@ -1118,7 +1115,7 @@
           restoreObjectSnapshot(player, beforePlayer);
           if (beforePlayerState) restoreObjectSnapshot(playerState, beforePlayerState);
           else restoreObjectSnapshot(planetStatsState, beforePlanetStats);
-          endEffectHistoryStep();
+          endEffectHistoryStep(workingRoot);
           rocketState.statusNote = remove.message;
           renderStateReadout();
           return remove;
@@ -1132,31 +1129,31 @@
           if (beforePlayerState) restoreObjectSnapshot(playerState, beforePlayerState);
           else restoreObjectSnapshot(planetStatsState, beforePlanetStats);
           restoreObjectSnapshot(rocketState, beforeRocketState);
-          endEffectHistoryStep();
+          endEffectHistoryStep(workingRoot);
           rocketState.statusNote = place.message;
           renderStateReadout();
           return place;
         }
 
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           player,
           beforePlayer,
           "恢复星际海盗发射前玩家状态",
         ));
         if (beforePlayerState) {
-          recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+          recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
             playerState,
             beforePlayerState,
             "恢复星际海盗移除冥王星标记前玩家状态",
           ));
         } else {
-          recordHistoryCommand(historyCommands.createRestorePlanetStatsCommand(
+          recordHistoryCommand(workingRoot, historyCommands.createRestorePlanetStatsCommand(
             planetStatsState,
             beforePlanetStats,
             "恢复星际海盗移除星球标记前状态",
           ));
         }
-        recordHistoryCommand(historyCommands.createRestoreRocketStateCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestoreRocketStateCommand(
           rocketState,
           beforeRocketState,
           "恢复星际海盗发射前探测器状态",

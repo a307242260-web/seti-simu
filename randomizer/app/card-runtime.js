@@ -39,7 +39,6 @@
       createCardTriggerProgressCommands,
       data,
       deactivateMoveMode,
-      decisionSessions,
       discardReservedCardIfFinished,
       document,
       els,
@@ -124,9 +123,7 @@
         ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
     function setCardSelectionContinuation(workingRoot, pending) {
       const activeRoot = requireWorkingRoot(workingRoot);
@@ -279,17 +276,18 @@
     }
 
     function canUseCardCornerQuickAction(workingRoot) {
-      return !getGameplayLockReason()
-        && !isTechTilePickingActive()
-        && !isCardSelectionActive()
-        && !isDiscardSelectionActive()
-        && !isPlayCardSelectionActive()
-        && !isHandScanSelectionActive()
-        && !isMovePaymentSelectionActive()
+      requireWorkingRoot(workingRoot);
+      return !getGameplayLockReason(workingRoot)
+        && !isTechTilePickingActive(workingRoot)
+        && !isCardSelectionActive(workingRoot)
+        && !isDiscardSelectionActive(workingRoot)
+        && !isPlayCardSelectionActive(workingRoot)
+        && !isHandScanSelectionActive(workingRoot)
+        && !isMovePaymentSelectionActive(workingRoot)
         && !workingRoot.match?.industryAbilityContinuation
-        && !isIndustryHandSelectionActive()
+        && !isIndustryHandSelectionActive(workingRoot)
         && !getCardCornerFreeMove(workingRoot)
-        && !hasActivePendingSubFlow();
+        && !hasActivePendingSubFlow(workingRoot);
     }
 
     function formatCardCornerRewardMessage(reward, dataResults) {
@@ -759,19 +757,19 @@
         rocketState.statusNote = "已取消科技奖励精选";
       } else if (pending?.type === "jiuzhe_trace_pick") {
         rocketState.statusNote = "已取消九折痕迹精选";
-        if (pending.fromEffectFlow && getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
           };
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       } else if (pending?.type === "yichangdian_anomaly_pick") {
         rocketState.statusNote = "已取消异常奖励精选";
-        if (pending.fromEffectFlow && getCurrentActionEffect()) {
+        if (pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
           const baseResult = pending.effectResult || {};
-          getCurrentActionEffect().result = {
+          getCurrentActionEffect(workingRoot).result = {
             ok: baseResult.ok ?? true,
             undoable: baseResult.undoable ?? true,
             message: baseResult.message
@@ -780,49 +778,49 @@
             events: baseResult.events || [],
             payload: baseResult.payload || null,
           };
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       } else if (pending?.type === "chong_pick_card") {
         rocketState.statusNote = "已取消虫族奖励精选";
-        if (pending.fromEffectFlow && getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
           };
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       } else if (pending?.type === "amiba_pick_card") {
         rocketState.statusNote = "已取消阿米巴奖励精选";
-        if (pending.fromEffectFlow && getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
           };
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       } else if (pending?.type === "card_trigger_pick") {
         rocketState.statusNote = "已取消卡牌触发精选";
       } else if (pending?.type === "card_pick_corner_reward") {
         rocketState.statusNote = "已取消卡牌角标精选";
-        if (pending.fromEffectFlow && getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
           };
-          completeCurrentActionEffect("skipped");
+          completeCurrentActionEffect(workingRoot, "skipped");
         }
       } else if (pending?.type === "card_public_corner_discard") {
         rocketState.statusNote = "已取消公共牌角标弃除";
-        if (pending.fromEffectFlow && getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message: rocketState.statusNote,
           };
-          completeCurrentActionEffect("skipped");
+          completeCurrentActionEffect(workingRoot, "skipped");
         }
       } else if (pending?.type === "fundamentalism_exchange_pick") {
         const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
@@ -877,8 +875,8 @@
       }
       if (pending?.type === "planet_reward_pick_card") {
         markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: false,
             irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -886,7 +884,7 @@
             payload: { card: result.card, replenished: result.replenished || null },
           };
         }
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       if (pending?.type === "tech_bonus_pick_card") {
         markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
@@ -897,8 +895,8 @@
         });
         const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
         recordTechBonusScore(pendingPlayer, bonusResult);
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: false,
             irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -909,7 +907,7 @@
               playerColor: pendingPlayer?.color || null,
               techType: pending.selection?.techType || null,
               tileId: pending.selection?.tileId || null,
-              source: decisionState.actionEffectFlow?.actionType || "tech",
+              source: getActionEffectFlow(workingRoot)?.actionType || "tech",
             }],
             payload: {
               card: result.card,
@@ -919,11 +917,11 @@
           };
         }
         if (bonusResult?.message) rocketState.statusNote += `；${bonusResult.message}`;
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       if (pending?.type === "place_data_choose_card") {
         if (pending.fromEffectFlow && pending.autoDataPlacement) {
-          recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+          recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
             cardState,
             pending.beforeCardState,
             "恢复放置数据精选前牌区",
@@ -939,8 +937,8 @@
         rocketState.statusNote = `九折痕迹精选：${cards.getCardLabel(result.card)}`;
         if (pending.fromEffectFlow) {
           markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-          if (getCurrentActionEffect()) {
-            getCurrentActionEffect().result = {
+          if (getCurrentActionEffect(workingRoot)) {
+            getCurrentActionEffect(workingRoot).result = {
               ok: true,
               undoable: false,
               irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -948,7 +946,7 @@
               payload: { card: result.card, replenished: result.replenished || null },
             };
           }
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       }
       if (pending?.type === "yichangdian_anomaly_pick") {
@@ -956,8 +954,8 @@
         if (pending.fromEffectFlow) {
           const baseResult = pending.effectResult || {};
           markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-          if (getCurrentActionEffect()) {
-            getCurrentActionEffect().result = {
+          if (getCurrentActionEffect(workingRoot)) {
+            getCurrentActionEffect(workingRoot).result = {
               ok: true,
               undoable: false,
               irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -972,15 +970,15 @@
               },
             };
           }
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       }
       if (pending?.type === "chong_pick_card") {
         rocketState.statusNote = `虫族奖励精选：${cards.getCardLabel(result.card)}`;
         if (pending.fromEffectFlow) {
           markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-          if (getCurrentActionEffect()) {
-            getCurrentActionEffect().result = {
+          if (getCurrentActionEffect(workingRoot)) {
+            getCurrentActionEffect(workingRoot).result = {
               ok: true,
               undoable: false,
               irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -988,7 +986,7 @@
               payload: { card: result.card, replenished: result.replenished || null },
             };
           }
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         } else {
           beginQuickActionStep("chong-pick-card", pending.effectLabel || "虫族奖励精选", {
             logBefore: pending.logBefore,
@@ -1018,8 +1016,8 @@
         rocketState.statusNote = `阿米巴奖励精选：${cards.getCardLabel(result.card)}`;
         if (pending.fromEffectFlow) {
           markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-          if (getCurrentActionEffect()) {
-            getCurrentActionEffect().result = {
+          if (getCurrentActionEffect(workingRoot)) {
+            getCurrentActionEffect(workingRoot).result = {
               ok: true,
               undoable: false,
               irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -1027,7 +1025,7 @@
               payload: { card: result.card, replenished: result.replenished || null },
             };
           }
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
       }
       if (pending?.type === "card_trigger_pick") {
@@ -1060,18 +1058,18 @@
           insertMoveIntoCurrentFlow: true,
         });
         markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           player,
           beforePlayer,
           "恢复精选角标奖励前玩家状态",
         ));
-        recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
           cardState,
           beforeCardState.publicCards,
           beforeCardState.discardPile,
         ));
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: rewardResult.ok,
             undoable: false,
             irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -1079,8 +1077,8 @@
             payload: { card: result.card, replenished: result.replenished || null, corner: rewardResult },
           };
         }
-        rocketState.statusNote = getCurrentActionEffect()?.result?.message || rewardResult.message;
-        completeCurrentActionEffect();
+        rocketState.statusNote = getCurrentActionEffect(workingRoot)?.result?.message || rewardResult.message;
+        completeCurrentActionEffect(workingRoot);
       }
       if (pending?.type === "industry_mission_pick") {
         const player = getCardSelectionPlayer(workingRoot, pending);
@@ -1161,20 +1159,20 @@
       }
       if (pending?.type === "fundamentalism_exchange_pick") {
         const player = getCardSelectionPlayer(workingRoot, pending);
-        beginEffectHistoryStep(pending.effectLabel || "原教旨主义：精选兑换");
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "原教旨主义：精选兑换");
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           player,
           pending.beforePlayerState,
           "恢复原教旨主义精选兑换前玩家状态",
         ));
-        recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
           cardState,
           pending.beforeCardState,
           "恢复原教旨主义精选兑换前牌区",
         ));
         rocketState.statusNote = `原教旨主义：3分换1精选，获得 ${cards.getCardLabel(result.card)}`;
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: false,
             irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -1182,7 +1180,7 @@
             payload: { card: result.card, replenished: result.replenished || null, choiceId: pending.choiceId || null },
           };
         }
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       ensurePublicCardsFilledRespectingDelayedRefills(workingRoot);
       syncCardSelectionChrome();
@@ -1253,7 +1251,7 @@
     }
 
     function discardCardFromCurrentPlayer() {
-      return beginDiscardSelection(1);
+      return beginDiscardSelection(workingRoot, 1);
     }
 
     function canBlindDraw(workingRoot) {
@@ -1470,7 +1468,7 @@
       const pending = getPassReserveSelection(workingRoot);
       if (!pending || !selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
 
-      const currentEffect = getCurrentActionEffect();
+      const currentEffect = getCurrentActionEffect(workingRoot);
       if (!currentEffect || currentEffect.id !== pending.effectId) {
         return { ok: false, message: "当前 PASS 精选效果已失效" };
       }
@@ -1490,13 +1488,13 @@
         return result;
       }
 
-      beginEffectHistoryStep(currentEffect.label);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      beginEffectHistoryStep(workingRoot, currentEffect.label);
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
         "恢复 PASS 精选前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         cardState,
         beforeCardState,
         "恢复 PASS 精选前牌区",
@@ -1514,7 +1512,7 @@
       rocketState.statusNote = result.message;
       renderPlayerHand();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       updateActionButtons();
       renderStateReadout();
       return result;
@@ -1549,9 +1547,9 @@
 
     function getCompletedIndustryHuanyuMoveRocketIds(effect) {
       const groupId = effect?.options?.industryHuanyuMoveGroupId || null;
-      if (!groupId || !decisionState.actionEffectFlow?.effects?.length) return new Set();
+      if (!groupId || !getActionEffectFlow(workingRoot)?.effects?.length) return new Set();
       const used = new Set();
-      for (const candidate of decisionState.actionEffectFlow.effects) {
+      for (const candidate of getActionEffectFlow(workingRoot).effects) {
         if (!candidate || candidate === effect || candidate.id === effect.id) continue;
         if (candidate.options?.industryHuanyuMoveGroupId !== groupId) continue;
         if (candidate.status !== "completed" || candidate.result?.skipped) continue;
@@ -1614,7 +1612,7 @@
     function executeCardEffectMove(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { rocketState, playerState } = requireWorkingRoot(workingRoot);
       const ctx = getCardMoveContinuation(workingRoot);
-      const effect = getCurrentActionEffect();
+      const effect = getCurrentActionEffect(workingRoot);
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
       const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(effect, rocketId);
@@ -1647,7 +1645,7 @@
         energyCost > 0 ? { energy: energyCost } : {},
       );
 
-      beginEffectHistoryStep(effect.options?.historyLabel || effect.label);
+      beginEffectHistoryStep(workingRoot, effect.options?.historyLabel || effect.label);
 
       const result = abilities.executeAbility("moveProbe", createActionContext(workingRoot), {
         cost: moveCost,
@@ -1663,13 +1661,13 @@
       if (result.rocket) renderRocketElement(result.rocket);
       if (!result.ok) {
         if (payment.discardCommand) payment.discardCommand.undo();
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         rocketState.statusNote = result.message;
         renderStateReadout();
         return result;
       }
 
-      if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
+      if (payment.discardCommand) recordHistoryCommand(workingRoot, payment.discardCommand);
       recordAbilityCommands(result, undefined, workingRoot);
 
       const moveEvents = Array.isArray(result.events) ? result.events.filter(Boolean) : [];
@@ -1680,10 +1678,10 @@
       }
 
       const messageParts = [];
-      const appliedRewards = applyCardMoveAfterEventRewards(effect, result, messageParts);
-      const sameRingReward = maybeApplyCardMoveSameRingReward(effect, result, messageParts);
+      const appliedRewards = applyCardMoveAfterEventRewards(workingRoot, effect, result, messageParts);
+      const sameRingReward = maybeApplyCardMoveSameRingReward(workingRoot, effect, result, messageParts);
       if (sameRingReward) appliedRewards.push(sameRingReward);
-      const distinctEventReward = maybeApplyCardMoveDistinctEventReward(effect, result, messageParts);
+      const distinctEventReward = maybeApplyCardMoveDistinctEventReward(workingRoot, effect, result, messageParts);
       if (distinctEventReward) appliedRewards.push(distinctEventReward);
       const arrivalSettlement = settleCardTasksAfterEffect(workingRoot, { events: result.events, skipType1: true, render: false });
       const completedTransportForMovedToken = (arrivalSettlement?.chongCompletions || [])
@@ -1750,7 +1748,7 @@
       rocketState.statusNote = `${effect.label}：${effect.result.message}`;
       renderActionEffectBar();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -1758,7 +1756,7 @@
     function finishCurrentCardMoveEffectEarly(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       const ctx = getCardMoveContinuation(workingRoot);
-      const current = getCurrentActionEffect();
+      const current = getCurrentActionEffect(workingRoot);
       if (!ctx || !current || current.status !== "active" || ctx.effectId !== current.id) return false;
       if (!ctx.moved && !current.result) return false;
 
@@ -1791,7 +1789,7 @@
       rocketState.statusNote = current.result.message;
       renderActionEffectBar();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return true;
     }
@@ -1799,7 +1797,7 @@
     function requestCardEffectMove(workingRoot, deltaX, deltaY, rocketId) {
       const { rocketState, playerState } = requireWorkingRoot(workingRoot);
       const ctx = getCardMoveContinuation(workingRoot);
-      const effect = getCurrentActionEffect();
+      const effect = getCurrentActionEffect(workingRoot);
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
       const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(effect, rocketId);

@@ -1,9 +1,6 @@
 "use strict";
 
-const DEFINITIONS = Object.freeze({
-  discardAction: "discard_action",
-  actionEffectFlow: "action_effect_flow",
-});
+const DEFINITIONS = Object.freeze({});
 
 function attachDecisionState(pendingState, decisionSessions) {
   const facade = decisionSessions.createFacade(DEFINITIONS);

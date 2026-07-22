@@ -29,7 +29,6 @@
       amiba,
       aomomo,
       runezu,
-      decisionSessions,
       uiRuntimeState,
       DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT = 10,
       getCurrentPlayer,
@@ -103,9 +102,7 @@
     const ruleNebulaDataState = (workingRoot) => workingRoot.nebulaDataState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const ruleCardState = (workingRoot) => workingRoot.cardState;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => workingRoot?.match?.actionEffectFlow || null;
 
     function setDebugOpen(workingRoot, open) {
       const nextOpen = Boolean(open) && !els?.appWrap?.classList.contains("debug-tools-disabled");
@@ -131,6 +128,7 @@
     }
 
     function renderDebugPlayerSwitch(workingRoot) {
+      if (!els?.debugPlayerSwitchButton && !els?.debugPlayerMenu) return;
       const currentPlayer = getInterfacePlayer?.();
       if (els?.debugPlayerSwitchButton && currentPlayer) {
         els.debugPlayerSwitchButton.textContent = `玩家：${currentPlayer.colorLabel}（${getPlayerAgentLabel?.(currentPlayer.id)}）`;
@@ -965,12 +963,12 @@
     }
 
     function getActionEffectOwnerPlayerForFailsafe(workingRoot) {
-      if (!decisionState.actionEffectFlow) return null;
+      if (!getActionEffectFlow(workingRoot)) return null;
       const effect = getCurrentActionEffect?.();
       return getExplicitEffectOwnerPlayer?.(effect)
-        || getPlayerById?.(decisionState.actionEffectFlow.activePlayerId)
-        || getPlayerById?.(decisionState.actionEffectFlow.playerId)
-        || getPlayerById?.(decisionState.actionEffectFlow.defaultPlayerId)
+        || getPlayerById?.(getActionEffectFlow(workingRoot).activePlayerId)
+        || getPlayerById?.(getActionEffectFlow(workingRoot).playerId)
+        || getPlayerById?.(getActionEffectFlow(workingRoot).defaultPlayerId)
         || null;
     }
 
@@ -994,8 +992,8 @@
         workingRoot.match?.cardTriggerContinuation,
         workingRoot.match?.cardTriggerFreeMoveContinuation,
         workingRoot.match?.cardTaskCompletionContinuation,
-        decisionSessions?.peek?.("strategy_passive_slot"),
-        decisionSessions?.peek?.("pirates_raid_placement"),
+        workingRoot.match?.strategySlotContinuation,
+        workingRoot.match?.piratesRaidContinuation,
         workingRoot.match?.industryFreeMoveContinuation,
       ];
       for (const pending of pendingEntries) {

@@ -34,9 +34,7 @@
     const runezu = context.runezu || null;
     const uiRuntimeState = context.uiRuntimeState || {};
 
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const els = context.els || {};
 
     function requireWorkingRoot(workingRoot) {

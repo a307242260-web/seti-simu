@@ -77,7 +77,7 @@ function withWorkingRoot(context = {}) {
     getPublicScanChoicesForCard: () => ({ ok: false }),
     getCurrentPlayer: () => ({ id: "player-1" }),
     beginCardSelection: () => { beganSelection = true; },
-    skipActionEffectWithMessage(_effect, message, payload) {
+    skipActionEffectWithMessage(_workingRoot, _effect, message, payload) {
       return { ok: true, skipped: true, message, payload };
     },
   });
@@ -108,7 +108,7 @@ function withWorkingRoot(context = {}) {
     endEffectHistoryStep: () => calls.push("end"),
     renderStateReadout: () => calls.push("render"),
     rocketState: {},
-    skipActionEffectWithMessage(effect, message, payload) {
+    skipActionEffectWithMessage(_workingRoot, effect, message, payload) {
       calls.push({ effect, message, payload });
       return { ok: true, skipped: true, message };
     },
@@ -168,7 +168,7 @@ function withWorkingRoot(context = {}) {
     cardState: { publicCards: [] },
     getPublicScanChoicesForCard: () => ({ ok: false }),
     getCurrentPlayer: () => ({ id: "player-1" }),
-    skipActionEffectWithMessage(effect, message, payload) {
+    skipActionEffectWithMessage(_workingRoot, effect, message, payload) {
       calls.push({ effect, message, payload });
       return { ok: true, skipped: true, message, payload };
     },

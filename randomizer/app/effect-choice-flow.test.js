@@ -54,7 +54,7 @@ function createHarness(overrides = {}) {
   };
   const cardState = { publicCards: [{ id: "pub-1" }], discardPile: [] };
   const workingRoot = {
-    match: {},
+    match: { actionEffectFlow: pendingState.actionEffectFlow },
     rocketState,
     cardState,
     playerState: { players: [player], currentPlayerId: player.id },
@@ -271,15 +271,15 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, workingRoot, pendingState } = createHarness();
+  const { helper, workingRoot } = createHarness();
   workingRoot.match.scanTargetContinuation = {
     type: "pay_credit_reward",
     effect: { id: "pay-credit", label: "支付信用", options: { single: true, groupId: "pay-credit" } },
   };
   const result = helper.handlePayCreditChoice(workingRoot, "skip");
   assert.equal(result.ok, true);
-  assert.equal(pendingState.actionEffectFlow.effects.length, 2);
-  assert.deepEqual(pendingState.actionEffectFlow.effects.map((effect) => effect.id), ["pay-1", "pay-3"]);
+  assert.equal(workingRoot.match.actionEffectFlow.effects.length, 2);
+  assert.deepEqual(workingRoot.match.actionEffectFlow.effects.map((effect) => effect.id), ["pay-1", "pay-3"]);
 }
 
 {

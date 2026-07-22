@@ -37,7 +37,6 @@
       completeCurrentActionEffect,
       completePendingActionStep,
       createActionLogImpactSnapshot,
-      decisionSessions,
       els,
       endEffectHistoryStep,
       getCurrentPlayer,
@@ -84,9 +83,7 @@
       updateActionButtons,
       updatePublicCardControls
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     const TURN_END_REVEAL_CONTINUATION_FIELD = "turnEndRevealContinuation";
 
@@ -216,7 +213,7 @@
       logBefore: createActionLogImpactSnapshot(currentPlayer),
     });
     uiRuntimeState.effectStepActive = true;
-    completePendingActionStep();
+    completePendingActionStep(workingRoot);
     actionHistory.markActionComplete?.({ passPlayerId: currentPlayer.id });
   }
 
@@ -249,12 +246,12 @@
         message: `PASS 手牌上限：已不超过 ${PASS_HAND_LIMIT} 张`,
       };
       rocketState.statusNote = effect.result.message;
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
 
-    const result = beginDiscardSelection(discardCount, {
+    const result = beginDiscardSelection(workingRoot, discardCount, {
       type: "pass_hand_limit",
       player: currentPlayer,
       required: true,
@@ -279,29 +276,29 @@
     const beforeAlienState = structuredClone(alienGameState);
     const beforeCardState = structuredClone(cardState);
 
-    beginEffectHistoryStep(effect.label);
+    beginEffectHistoryStep(workingRoot, effect.label);
     const result = rotateSolarOrbit(workingRoot, 1);
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       solarState,
       beforeSolarState,
       "恢复 PASS 旋转前太阳系状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       rocketState,
       beforeRocketState,
       "恢复 PASS 旋转前火箭状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       playerState,
       beforePlayerState,
       "恢复 PASS 旋转前玩家状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       alienGameState,
       beforeAlienState,
       "恢复 PASS 旋转前外星人状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       cardState,
       beforeCardState,
       "恢复 PASS 旋转前牌区",
@@ -333,7 +330,7 @@
       events: result.events || [],
     };
     rocketState.statusNote = result.message;
-    completeCurrentActionEffect();
+    completeCurrentActionEffect(workingRoot);
     renderStateReadout();
     return result;
   }
@@ -358,20 +355,20 @@
     beginPassActionSession(currentPlayer);
     const passEffects = buildPassEffectQueue(workingRoot, currentPlayer);
     if (passEffects.length) {
-      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+      getActionEffectFlow(workingRoot) = abilities.chain.startAbilityChain(
         "pass",
         "PASS",
         passEffects,
       );
-      decisionState.actionEffectFlow.actionType = "pass";
-      decisionState.actionEffectFlow.playerId = currentPlayer.id;
-      assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
-      decisionState.actionEffectFlow.passEvent = createPassEvent(currentPlayer);
-      decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-      decisionState.actionEffectFlow.consumesMainAction = true;
+      getActionEffectFlow(workingRoot).actionType = "pass";
+      getActionEffectFlow(workingRoot).playerId = currentPlayer.id;
+      assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
+      getActionEffectFlow(workingRoot).passEvent = createPassEvent(currentPlayer);
+      getActionEffectFlow(workingRoot).historySource = HISTORY_SOURCE_MAIN;
+      getActionEffectFlow(workingRoot).consumesMainAction = true;
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       actionRocketState.statusNote = "PASS：请依次点击必做效果";
-      activateNextActionEffect();
+      activateNextActionEffect(workingRoot);
       return { ok: true, message: actionRocketState.statusNote, effects: structuredClone(passEffects) };
     }
 
@@ -516,7 +513,7 @@
       quickActionHistory.commitSession();
       clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
     }
-    clearActionEffectFlow();
+    clearActionEffectFlow(workingRoot);
     clearActionPending();
     const advanceResult = advanceTurnAfterPlayerAction(endingPlayerId, { passed: didPass, workingRoot });
     const roundStartResult = advanceResult.roundAdvanced
@@ -580,7 +577,7 @@
     industry?.clearTuringBorrowedTech?.(endingPlayer);
     industry?.clearSentinelPlayCornerState?.(endingPlayer);
 
-    endEffectHistoryStep();
+    endEffectHistoryStep(workingRoot);
     const turnEndContext = { endingPlayer, endingPlayerId, didPass };
     const turnEndReveal = revealReadyAliensAtTurnEnd(workingRoot, endingPlayer, {
       confirmBeforeSideEffects: true,

@@ -75,6 +75,7 @@ function createHarness() {
     executeOwner: [],
   };
   const workingRoot = {
+    match: {},
     playerState: { currentPlayerId: "p1", players: [{ id: "p1" }] },
     rocketState: { statusNote: "" },
     cardState: {},
@@ -206,7 +207,7 @@ function createHarness() {
     assignEffectFlowOwner(flow, playerId) {
       flow.ownerId = playerId;
     },
-    setActiveEffectFlowOwner(effect) {
+    setActiveEffectFlowOwner(_workingRoot, effect) {
       calls.activeOwner.push(effect.id);
     },
     renderReservedCards() {},
@@ -225,7 +226,7 @@ function createHarness() {
     isCardTriggerRewardFlowBusy() {
       return false;
     },
-    settleCardTasksAfterEffect(payload) {
+    settleCardTasksAfterEffect(_workingRoot, payload) {
       calls.settled.push(payload);
     },
     finishActionEffectFlow() {
@@ -255,7 +256,7 @@ function createHarness() {
 }
 
 {
-  const { helper, pendingState, workingRoot } = createHarness();
+  const { helper, workingRoot } = createHarness();
   const started = helper.startCardEffectFlow("flow-1", "测试效果", [
     { id: "effect-1", status: "pending", label: "效果1", type: "gain" },
     { id: "effect-2", status: "pending", label: "效果2", type: "scan" },
@@ -264,8 +265,8 @@ function createHarness() {
     historySource: "quick",
   });
   assert.equal(started, true);
-  assert.equal(pendingState.actionEffectFlow.historySource, "quick");
-  assert.equal(helper.getCurrentActionEffect().id, "effect-1");
+  assert.equal(workingRoot.match.actionEffectFlow.historySource, "quick");
+  assert.equal(helper.getCurrentActionEffect(workingRoot).id, "effect-1");
 }
 
 {
@@ -276,8 +277,8 @@ function createHarness() {
     workingRoot,
     historySource: "quick",
   });
-  helper.beginEffectHistoryStep("奖励一");
-  helper.endEffectHistoryStep({
+  helper.beginEffectHistoryStep(workingRoot, "奖励一");
+  helper.endEffectHistoryStep(workingRoot, {
     result: { ok: true, message: "done" },
   });
   assert.equal(quickActionHistory.session.steps.length, 1);

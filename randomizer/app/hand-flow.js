@@ -13,7 +13,6 @@
 
   function createHandFlow(context = {}) {
     const {
-      decisionSessions,
       uiRuntimeState,
       els,
       players,
@@ -126,9 +125,7 @@
     const ruleCardState = (workingRoot) => workingRoot.cardState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getDiscardContinuation = (workingRoot) => workingRoot?.match?.discardContinuation || null;
     function setDiscardContinuation(workingRoot, continuation) {
       if (!workingRoot?.match) throw new TypeError("discard selection requires Composition workingRoot.match");
@@ -222,7 +219,7 @@
     }
 
     function syncDiscardSelectionChrome(workingRoot) {
-      const active = isDiscardSelectionActive();
+      const active = isDiscardSelectionActive(workingRoot);
       if (active) cancelHandCardContextActions(workingRoot, { silent: true });
       els.appWrap?.classList.toggle("discard-selection-active", active);
       els.playerHandPanel?.classList.toggle("discard-selection-active", active);
@@ -1105,8 +1102,8 @@
 
     function beginDiscardSelection(workingRoot, count, pendingAction = null) {
       if (isTechTilePickingActive()) return { ok: false, message: "请先完成科技选择" };
-      if (isCardSelectionActive()) return { ok: false, message: "请先完成精选" };
-      if (isPlayCardSelectionActive()) return { ok: false, message: "请先完成打牌" };
+      if (isCardSelectionActive(workingRoot)) return { ok: false, message: "请先完成精选" };
+      if (isPlayCardSelectionActive(workingRoot)) return { ok: false, message: "请先完成打牌" };
       if (isHandScanSelectionActive(workingRoot)) return { ok: false, message: "请先完成手牌扫描" };
       if (isMovePaymentSelectionActive(workingRoot)) return { ok: false, message: "请先完成移动" };
 
@@ -1160,9 +1157,9 @@
         }
         completeQuickActionStep();
       }
-      if (pending?.type === "card_income" && pending.fromEffectFlow && getCurrentActionEffect()) {
-        getCurrentActionEffect().result = { ok: true, undoable: true, message: "已取消收入" };
-        completeCurrentActionEffect("skipped");
+      if (pending?.type === "card_income" && pending.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+        getCurrentActionEffect(workingRoot).result = { ok: true, undoable: true, message: "已取消收入" };
+        completeCurrentActionEffect(workingRoot, "skipped");
       }
       ruleRocketState(workingRoot).statusNote = isIncomeDiscardActionType(pending?.type) ? "已取消收入" : "已取消弃牌";
       syncDiscardSelectionChrome(workingRoot);
@@ -1202,7 +1199,7 @@
       if (isIncomeDiscardActionType(pending?.type)) {
         const incomeResult = applyIncomeFromCard(getDiscardPlayer(workingRoot, pending), discardedCards[0]);
         if (pending.type === "initial_income" && incomeResult.ok && pending.fromEffectFlow) {
-          const effect = getCurrentActionEffect();
+          const effect = getCurrentActionEffect(workingRoot);
           if (effect) {
             effect.result = {
               ok: true,
@@ -1211,7 +1208,7 @@
               message: incomeResult.message,
               payload: { gain: incomeResult.gain, card: discardedCards[0] },
             };
-            completeCurrentActionEffect();
+            completeCurrentActionEffect(workingRoot);
           }
         }
         ruleRocketState(workingRoot).statusNote = incomeResult.ok ? incomeResult.message : (incomeResult.message || "收入失败");
@@ -1229,19 +1226,19 @@
         const message = discardedCards.length
           ? `PASS 手牌上限：弃掉 ${discardedCards.map((card) => cards.getCardLabel(card)).join("、")}`
           : "PASS 手牌上限：无需弃牌";
-        beginEffectHistoryStep(pending.effectLabel || "PASS 手牌上限弃牌");
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+        beginEffectHistoryStep(workingRoot, pending.effectLabel || "PASS 手牌上限弃牌");
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
           player,
           pending.beforePlayerState,
           "恢复 PASS 弃牌前玩家状态",
         ));
-        recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
           ruleCardState(workingRoot),
           pending.beforeCardState,
           "恢复 PASS 弃牌前牌区",
         ));
-        if (getCurrentActionEffect()) {
-          getCurrentActionEffect().result = {
+        if (getCurrentActionEffect(workingRoot)) {
+          getCurrentActionEffect(workingRoot).result = {
             ok: true,
             undoable: true,
             message,
@@ -1252,7 +1249,7 @@
         renderPlayerHand();
         renderPlayerStats();
         renderPublicCards();
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
         updatePublicCardControls();
         updateActionButtons();
         renderStateReadout();
@@ -1421,7 +1418,7 @@
         return result;
       }
 
-      if (!decisionState.actionEffectFlow?.futureSpanPlayedCard) {
+      if (!getActionEffectFlow(workingRoot)?.futureSpanPlayedCard) {
         releaseFutureSpanAfterPlayWithHistory();
         markActionPending();
         updateActionButtons();
@@ -1911,7 +1908,7 @@
     function handleHandScanCardClick(workingRoot, handIndex) {
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || decisionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || getActionEffectFlow(workingRoot));
       const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];

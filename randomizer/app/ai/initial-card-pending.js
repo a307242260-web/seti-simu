@@ -200,13 +200,13 @@
           aiDifficultyLabel: player?.aiDifficultyLabel || getAiDifficultyLabel(),
         },
       );
-      confirmInitialSelectionForCurrentPlayer();
+      confirmInitialSelectionForCurrentPlayer(workingRoot);
       return { ok: true, progressed: true, message: "AI 初始选择完成" };
     }
 
     function runAiDiscardDecision(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      if (!isDiscardSelectionActive() || !state.pendingDiscardAction) return null;
+      if (!isDiscardSelectionActive(workingRoot) || !state.pendingDiscardAction) return null;
       const pendingDiscard = state.pendingDiscardAction;
       const player = resolveWorkingPlayerById(workingRoot, pendingDiscard.playerId) || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
@@ -271,13 +271,13 @@
         incomeDiscardPreview,
         tradeId: pendingDiscard.tradeId || null,
       });
-      return finalizePendingDiscardSelection(submittedIndexes);
+      return finalizePendingDiscardSelection(workingRoot, submittedIndexes);
     }
 
 
     function runAiCardSelectionDecision(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      if (!isCardSelectionActive() && !isIndustryHandSelectionActive()) return null;
+      if (!isCardSelectionActive(workingRoot) && !isIndustryHandSelectionActive()) return null;
       const pending = state.pendingCardSelectionContinuation || {};
       const player = resolveWorkingPlayerById(workingRoot, pending.playerId)
         || getWorkingCurrentPlayer(workingRoot);
@@ -519,7 +519,7 @@
 
     function runAiReadyCardTaskOpenDecision(workingRoot) {
       const { playerState } = requireWorkingRoot(workingRoot);
-      if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
+      if (isActionEffectFlowActive(workingRoot) || hasActivePendingSubFlow()) return null;
       if (typeof getReadyCardTasks !== "function" || typeof openCardTaskCompletionPicker !== "function") return null;
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) return null;
@@ -646,7 +646,7 @@
     function runAiReadyBanrenmaOpportunityOpenDecision(workingRoot) {
       const { alienGameState, playerState } = requireWorkingRoot(workingRoot);
       if (state.pendingBanrenmaOpportunity || state.pendingBanrenmaCardGain) return null;
-      if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
+      if (isActionEffectFlowActive(workingRoot) || hasActivePendingSubFlow()) return null;
       const currentPlayerId = getWorkingCurrentPlayer(workingRoot)?.id || null;
       for (const player of getAiBanrenmaOpportunityPlayers(workingRoot)) {
         const includeCards = player.id === currentPlayerId;
@@ -698,10 +698,10 @@
         || typeof openRunezuFaceSymbolPlacement !== "function"
         || !runezu?.isRunezuRevealedSlot
         || state.pendingRunezuFaceSymbolPlacement
-        || isActionEffectFlowActive()
+        || isActionEffectFlowActive(workingRoot)
         || hasActivePendingSubFlow()
-        || isCardSelectionActive()
-        || isDiscardSelectionActive()
+        || isCardSelectionActive(workingRoot)
+        || isDiscardSelectionActive(workingRoot)
       ) {
         return [];
       }

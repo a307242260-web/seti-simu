@@ -15,6 +15,7 @@ function createFixture() {
     playerState: { currentPlayerId: "move-owner", players: [{
       id: "move-owner",
       resources: { energy: 1 },
+      techState: { ownedTiles: {}, disabledTiles: {} },
       hand: [
         { id: "move-1", discardActionCode: 2 },
         { id: "move-2", discardActionCode: 2 },
@@ -45,6 +46,7 @@ function createFixture() {
     traceCalls: [],
     alienPicker: null,
     industryMoveCalls: [],
+    techCalls: [],
   };
   let contextReads = 0;
   const domain = createConditionalDecisionDomain(() => {
@@ -57,16 +59,14 @@ function createFixture() {
       },
       getCurrentPlayer: () => finalPlayer,
       getPendingProbeSectorScanDecision: () => (state.probePending ? probePending : null),
-      getHeadlessConditionalPlayer: (pending) => pending.player
+      getHeadlessConditionalPlayer: (_workingRoot, pending) => pending.player
         || root.playerState.players.find((player) => player.id === pending.playerId)
         || null,
-      decisionSessions: { peek: () => null },
-      decisionState: {},
       handleFinalScoreTileClick: (tileId) => {
         state.finalHandlerCalls.push(tileId);
         return { ok: true, progressed: true, tileId };
       },
-      getPlayerById: (playerId) => root.playerState.players.find((player) => player.id === playerId) || null,
+      getPlayerById: (_workingRoot, playerId) => root.playerState.players.find((player) => player.id === playerId) || null,
       cards: { getCardLabel: (card) => card?.label || card?.id || "card" },
       getPendingPassReserveSelection: (workingRoot) => workingRoot.match.passReserveContinuation || null,
       getPassReserveSelectionCards: () => [{ id: "reserve-a", label: "预留 A" }, { id: "reserve-b", label: "预留 B" }],
@@ -125,6 +125,22 @@ function createFixture() {
         delete workingRoot.match.landTargetContinuation;
         return { ok: true, progressed: true };
       },
+      isTechTilePickingActive: (workingRoot) => Boolean(workingRoot.techGameState.ui.techSelectionActive),
+      getResearchTechSelectionOptions: () => ({}),
+      isTechTileOwnedByOtherPlayer: () => false,
+      tech: {
+        listTakeableTiles: () => ["orange1", "purple1"],
+        getAvailableBlueSlots: () => [],
+      },
+      industry: {
+        isTechBlockedByPirates: () => false,
+      },
+      handleSupplyTechTileClick: (workingRoot, tileId) => {
+        state.techCalls.push([workingRoot, tileId]);
+        workingRoot.techGameState.ui.techSelectionActive = false;
+        delete workingRoot.match.industryAbilityContinuation;
+        return { ok: true, progressed: true, tileId };
+      },
       handleCardTriggerChoice: (workingRoot, choiceIndex) => {
         state.cardTriggerCalls.push(choiceIndex);
         delete workingRoot.match.cardTriggerContinuation;
@@ -165,6 +181,31 @@ function createFixture() {
     });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.industryAbilityContinuation = {
+    playerId: "move-owner",
+    flowType: "turing_borrow_tech",
+  };
+  fixture.root.techGameState.ui = {
+    techSelectionActive: true,
+    selectedTileId: null,
+    pendingTileId: null,
+    allowedTechTypes: ["orange", "purple"],
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.equal(decision.ownerId, "move-owner");
+  assert.deepEqual(decision.choices.map((choice) => choice.target.tileId), ["orange1", "purple1"]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  assert.equal(result.ok, true);
+  assert.equal(fixture.state.techCalls.length, 1);
+  assert.equal(fixture.state.techCalls[0][0], fixture.root, "科技 Decision 必须沿用同一 Composition workingRoot");
+  assert.equal(fixture.state.techCalls[0][1], "orange1");
 }
 
 {

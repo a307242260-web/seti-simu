@@ -51,7 +51,7 @@
       const { playerState } = requireWorkingRoot(workingRoot);
       const currentPlayer = players.getCurrentPlayer(playerState);
       if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
-      if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return [];
+      if (isActionEffectFlowActive(workingRoot) || hasActivePendingSubFlow()) return [];
       const result = dispatchRuntimeAction?.(workingRoot, { kind: "standard_enumerate" });
       if (!result?.ok) return [];
       return (result.candidates || [])

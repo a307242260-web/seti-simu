@@ -35,16 +35,12 @@
     const document = documentRef;
     const structuredClone = structuredCloneRef;
 
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
     const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
     function clearCardSelectionContinuation(workingRoot) {
       delete requireWorkingRoot(workingRoot).match.cardSelectionContinuation;
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
     }
-    const decisionSessions = context.decisionSessions;
     const uiRuntimeState = context.uiRuntimeState || {};
     const getHandScanContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.handScanContinuation || null;
     function setHandScanContinuation(workingRoot, continuation) {
@@ -232,6 +228,7 @@
       }
       return workingRoot;
     }
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     function getWorkingCurrentPlayer(workingRoot) {
       const { playerState } = requireWorkingRoot(workingRoot);
@@ -289,7 +286,7 @@
         : `最多选择 ${maxSelectable} 张公共牌，确认后依次扫描`;
     }
 
-    function ensureDelayedPublicRefills(flow = decisionState.actionEffectFlow) {
+    function ensureDelayedPublicRefills(flow = null) {
       if (!flow) return [];
       if (!Array.isArray(flow.delayedPublicRefills)) {
         flow.delayedPublicRefills = [];
@@ -297,11 +294,11 @@
       return flow.delayedPublicRefills;
     }
 
-    function registerDelayedPublicRefill(scanRunId, slotIndex, card) {
-      if (!scanRunId || !decisionState.actionEffectFlow) return null;
+    function registerDelayedPublicRefill(workingRoot, scanRunId, slotIndex, card) {
+      if (!scanRunId || !getActionEffectFlow(workingRoot)) return null;
       const index = Number(slotIndex);
       if (!Number.isInteger(index)) return null;
-      const list = ensureDelayedPublicRefills(decisionState.actionEffectFlow);
+      const list = ensureDelayedPublicRefills(getActionEffectFlow(workingRoot));
       const existing = list.find((item) => item.scanRunId === scanRunId && item.slotIndex === index);
       if (existing) {
         existing.card = card || existing.card || null;
@@ -318,19 +315,19 @@
       return entry;
     }
 
-    function getDelayedPublicRefillSlots(scanRunId, flow = decisionState.actionEffectFlow) {
+    function getDelayedPublicRefillSlots(scanRunId, flow = null) {
       return ensureDelayedPublicRefills(flow)
         .filter((item) => !scanRunId || item.scanRunId === scanRunId)
         .map((item) => ({ ...item }));
     }
 
-    function clearDelayedPublicRefillSlots(scanRunId, flow = decisionState.actionEffectFlow) {
+    function clearDelayedPublicRefillSlots(scanRunId, flow = null) {
       if (!flow || !Array.isArray(flow.delayedPublicRefills)) return;
       flow.delayedPublicRefills = flow.delayedPublicRefills
         .filter((item) => scanRunId && item.scanRunId !== scanRunId);
     }
 
-    function cloneDelayedPublicRefills(flow = decisionState.actionEffectFlow) {
+    function cloneDelayedPublicRefills(flow = null) {
       return Array.isArray(flow?.delayedPublicRefills)
         ? flow.delayedPublicRefills.map((item) => ({ ...item }))
         : [];
@@ -491,7 +488,7 @@
       return effects;
     }
 
-    function buildScanFinalizeFollowupEffects(workingRoot, _scanRunId, flow = decisionState.actionEffectFlow) {
+    function buildScanFinalizeFollowupEffects(workingRoot, _scanRunId, flow = getActionEffectFlow(workingRoot)) {
       return [
         ...buildReadySectorFinishEffects(workingRoot, { nebulaIds: getFlowMarkedNebulaIds(flow) }),
       ];
@@ -620,18 +617,18 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const fromEffectFlow = Boolean(pending.fromEffectFlow || decisionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(pending.fromEffectFlow || getActionEffectFlow(workingRoot));
       clearCardSelectionContinuation(workingRoot);
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
 
       if (fromEffectFlow) {
-        beginEffectHistoryStep("公共牌区扫描");
+        beginEffectHistoryStep(workingRoot, "公共牌区扫描");
       }
 
       if (extraUsed > 0) {
         players.spendResources(player, { additionalPublicScan: extraUsed });
-        recordHistoryCommand(historyCommands.createResourceSpendCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createResourceSpendCommand(
           player,
           { additionalPublicScan: extraUsed },
           `消耗 ${extraUsed} 额外公共扫描`,
@@ -679,7 +676,7 @@
 
       const pending = getCardSelectionContinuation(workingRoot);
       const maxSelectable = pending?.maxSelectable ?? 1;
-      const fromEffectFlow = Boolean(pending?.fromEffectFlow || decisionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(pending?.fromEffectFlow || getActionEffectFlow(workingRoot));
 
       if (maxSelectable <= 1) {
         return beginPublicScanForSingleCard(workingRoot, index, card, {
@@ -776,7 +773,7 @@
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || decisionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || getActionEffectFlow(workingRoot));
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
@@ -827,12 +824,12 @@
         return { ok: false, message };
       }
 
-      beginEffectHistoryStep(options.prefix || "星云扫描");
+      beginEffectHistoryStep(workingRoot, options.prefix || "星云扫描");
 
       if (hasCost) {
         const spendResult = players.spendResources(currentPlayer, cost);
         if (!spendResult.ok) {
-          endEffectHistoryStep();
+          endEffectHistoryStep(workingRoot);
           rocketState.statusNote = spendResult.message;
           renderStateReadout();
           return spendResult;
@@ -846,7 +843,7 @@
 
       if (!result.ok) {
         if (hasCost) players.gainResources(currentPlayer, cost);
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         if (isExhaustedNebulaScanMessage(result.message)) {
           const skipped = {
             ok: true,
@@ -869,7 +866,7 @@
 
       if (hasCost) {
         const costText = players.formatResourceCost(cost);
-        recordHistoryCommand(historyCommands.createResourceSpendCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createResourceSpendCommand(
           currentPlayer,
           cost,
           `${options.prefix || "星云扫描"}：消耗 ${costText}`,
@@ -892,16 +889,16 @@
       return result;
     }
 
-    function appendSectorSettlementResultToFlow(settlementResult) {
-      if (!decisionState.actionEffectFlow || !settlementResult?.ok) return;
-      if (!decisionState.actionEffectFlow.sectorSettlementResult) {
-        decisionState.actionEffectFlow.sectorSettlementResult = {
+    function appendSectorSettlementResultToFlow(workingRoot, settlementResult) {
+      if (!getActionEffectFlow(workingRoot) || !settlementResult?.ok) return;
+      if (!getActionEffectFlow(workingRoot).sectorSettlementResult) {
+        getActionEffectFlow(workingRoot).sectorSettlementResult = {
           ok: true,
           settlements: [],
           message: "",
         };
       }
-      const aggregate = decisionState.actionEffectFlow.sectorSettlementResult;
+      const aggregate = getActionEffectFlow(workingRoot).sectorSettlementResult;
       aggregate.settlements.push(settlementResult);
       aggregate.message = aggregate.settlements.map((item) => item.message).join("；");
       aggregate.runezuSymbolClaims = [
@@ -951,8 +948,8 @@
 
     function executeScanActionFinalizeEffect(workingRoot, effect) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const scanRunId = effect.options?.scanRunId || decisionState.actionEffectFlow?.scanRunId || null;
-      const followups = buildScanFinalizeFollowupEffects(workingRoot, scanRunId, decisionState.actionEffectFlow);
+      const scanRunId = effect.options?.scanRunId || getActionEffectFlow(workingRoot)?.scanRunId || null;
+      const followups = buildScanFinalizeFollowupEffects(workingRoot, scanRunId, getActionEffectFlow(workingRoot));
       if (followups.length) {
         insertActionEffectsAfterCurrent(followups);
       }
@@ -965,7 +962,7 @@
         payload: { inserted: followups.length, scanRunId },
       };
       rocketState.statusNote = effect.result.message;
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -981,14 +978,14 @@
 
       const beforeNebulaState = structuredClone(nebulaDataState);
       const beforeAlienState = structuredClone(alienGameState);
-      beginEffectHistoryStep(effect.label, { effectType: scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN });
+      beginEffectHistoryStep(workingRoot, effect.label, { effectType: scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN });
       const result = data.settleSector(nebulaDataState, sectorId, {
         players: playerState.players,
         getPlayerTokenSrc: getNormalTokenAssetForPlayer,
-        source: decisionState.actionEffectFlow?.actionType || "scan",
+        source: getActionEffectFlow(workingRoot)?.actionType || "scan",
       });
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         if (effect.type === "aomomo_land_only") {
           return finishAutomaticRewardEffect(effect, {
             ok: true,
@@ -1014,7 +1011,7 @@
         };
         effect.playerId = winner.id || effect.playerId || null;
         effect.playerColor = winner.color || effect.playerColor || null;
-        setActiveEffectFlowOwner(effect);
+        setActiveEffectFlowOwner(workingRoot, effect);
       }
       const claim = winner
         ? runezu?.claimSectorSymbol?.(alienGameState, result.sectorId, winner)
@@ -1029,18 +1026,18 @@
         result.message = `${result.message}；${claim.message}`;
       }
 
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         nebulaDataState,
         beforeNebulaState,
         "恢复完成扇区前星云状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复完成扇区前外星人状态",
       ));
 
-      appendSectorSettlementResultToFlow(result);
+      appendSectorSettlementResultToFlow(workingRoot, result);
       const rewardEffects = buildSectorSettlementRewardEffects(workingRoot, result);
       if (rewardEffects.length) {
         insertActionEffectsAfterCurrent(rewardEffects);
@@ -1065,7 +1062,7 @@
       renderSectorNebulaDataBoard();
       renderAlienPanels();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -1079,7 +1076,7 @@
 
     function replenishDelayedPublicRefillSlots(workingRoot, scanRunId, slots, options = {}) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      const flow = options.flow || decisionState.actionEffectFlow;
+      const flow = options.flow || getActionEffectFlow(workingRoot);
       const slotIndexes = normalizeDelayedPublicRefillSlotIndexes(slots);
       if (!slotIndexes.length) {
         clearDelayedPublicRefillSlots(scanRunId, flow);
@@ -1094,8 +1091,8 @@
       const publicCardsSnapshot = cardState.publicCards.slice();
       const discardPileSnapshot = (cardState.discardPile || []).slice();
       const hasEffectIndex = Object.prototype.hasOwnProperty.call(options, "effectIndex");
-      beginEffectHistoryStep(options.label || "补充公共牌区", {
-        effectIndex: hasEffectIndex ? options.effectIndex : decisionState.actionEffectFlow?.currentIndex ?? null,
+      beginEffectHistoryStep(workingRoot, options.label || "补充公共牌区", {
+        effectIndex: hasEffectIndex ? options.effectIndex : getActionEffectFlow(workingRoot)?.currentIndex ?? null,
         effectType: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL,
       });
       const replenished = [];
@@ -1104,7 +1101,7 @@
         const card = cards.replenishPublicSlot(cardState, playerState, slotIndex);
         if (card) replenished.push({ slotIndex, card });
       }
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         cardState,
         publicCardsSnapshot,
         discardPileSnapshot,
@@ -1132,7 +1129,7 @@
       if (!normalizeDelayedPublicRefillSlotIndexes(effect.options?.slots || []).length) {
         effect.result = result;
         rocketState.statusNote = effect.result.message;
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
         renderStateReadout();
         return effect.result;
       }
@@ -1157,7 +1154,7 @@
         effectIndex: null,
       });
       syntheticEffect.result = result;
-      endEffectHistoryStep({ effect: syntheticEffect, result });
+      endEffectHistoryStep(workingRoot, { effect: syntheticEffect, result });
       rocketState.statusNote = result.message;
       renderPublicCards();
       updatePublicCardControls();
@@ -1233,7 +1230,7 @@
       if (!effects.length) return false;
       flow.endOfFlowSettlementScheduled = true;
       flow.completed = false;
-      const ownerId = flow.playerId || flow.defaultPlayerId || decisionState.actionEffectFlow?.playerId || null;
+      const ownerId = flow.playerId || flow.defaultPlayerId || getActionEffectFlow(workingRoot)?.playerId || null;
       const insertionSource = createEndOfFlowInsertionSource(flow);
       for (const effect of effects) {
         const node = {
@@ -1245,7 +1242,7 @@
         };
         flow.effects.push(abilities.chain.markInsertedNode?.(node, insertionSource) || node);
       }
-      activateNextActionEffect();
+      activateNextActionEffect(workingRoot);
       return true;
     }
 
@@ -1259,7 +1256,7 @@
       if (!deferredEffects.length) return false;
 
       const existingIds = new Set((flow.effects || []).map((effect) => effect?.id).filter(Boolean));
-      const ownerId = flow.playerId || flow.defaultPlayerId || decisionState.actionEffectFlow?.playerId || null;
+      const ownerId = flow.playerId || flow.defaultPlayerId || getActionEffectFlow(workingRoot)?.playerId || null;
       const effectsToAppend = deferredEffects.filter((effect) => !effect.id || !existingIds.has(effect.id));
       if (!effectsToAppend.length) return false;
 
@@ -1272,7 +1269,7 @@
           status: "pending",
         });
       }
-      activateNextActionEffect();
+      activateNextActionEffect(workingRoot);
       return true;
     }
 
@@ -1294,13 +1291,13 @@
       if (cardState.publicCards?.[slotIndex]?.id === card.id) {
         cardState.publicCards[slotIndex] = null;
         if (deferPublicRefill) {
-          registerDelayedPublicRefill(pending.scanRunId, slotIndex, card);
+          registerDelayedPublicRefill(workingRoot, pending.scanRunId, slotIndex, card);
         } else {
           replenished = cards.replenishPublicSlot(cardState, playerState, slotIndex);
         }
       }
 
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         cardState,
         publicCardsSnapshot,
         discardPileSnapshot,
@@ -1339,7 +1336,7 @@
       if (!discardResult.ok) return discardResult;
 
       cards.addToDiscardPile(cardState, discardResult.card);
-      recordHistoryCommand(historyCommands.createDiscardHandCardCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createDiscardHandCardCommand(
         cardState,
         player,
         handSnapshot,
@@ -1635,7 +1632,7 @@
         const cost = normalizeResourceCost(pending.cost) || {};
         if (Object.keys(cost).length && !players.canAfford(getWorkingCurrentPlayer(workingRoot), cost)) {
           const message = `${pending.title || "扇区扫描"}：资源不足，需要 ${players.formatResourceCost(cost)}，已跳过`;
-          return skipActionEffectWithMessage(pending.effect || getCurrentActionEffect(), message, {
+          return skipActionEffectWithMessage(workingRoot, pending.effect || getCurrentActionEffect(workingRoot), message, {
             cost,
             sectorX,
           });
@@ -1656,7 +1653,7 @@
             },
           }));
           insertActionEffectsAfterCurrent(effects);
-          const effect = pending.effect || getCurrentActionEffect();
+          const effect = pending.effect || getCurrentActionEffect(workingRoot);
           const result = {
             ok: true,
             undoable: true,
@@ -1666,7 +1663,7 @@
           };
           if (effect) effect.result = result;
           rocketState.statusNote = result.message;
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return result;
         }
@@ -1683,7 +1680,7 @@
             options: { returnToHandIfSignalCount: pending.returnToHandIfSignalCount },
           }, sectorX);
         }
-        maybeCompleteActionEffectFromScan(result);
+        maybeCompleteActionEffectFromScan(workingRoot, result);
         return result;
       }
 
@@ -1721,7 +1718,7 @@
           renderPlayerStats();
           updateActionButtons();
           renderStateReadout();
-          maybeCompleteActionEffectFromScan(scanResult);
+          maybeCompleteActionEffectFromScan(workingRoot, scanResult);
           return scanResult;
         }
 
@@ -1744,11 +1741,11 @@
           renderPublicCards();
           updatePublicCardControls();
           updateActionButtons();
-          maybeCompleteActionEffectFromScan(scanResult);
+          maybeCompleteActionEffectFromScan(workingRoot, scanResult);
           return scanResult;
         }
 
-        beginEffectHistoryStep(`公共牌区扫描 ${cards.getCardLabel(pending.card)}`);
+        beginEffectHistoryStep(workingRoot, `公共牌区扫描 ${cards.getCardLabel(pending.card)}`);
         const result = abilities.executeAbility("scanPublicCard", createActionContext(workingRoot), {
           nebulaId,
           prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
@@ -1757,7 +1754,7 @@
           publicSlotIndex: pending.publicSlotIndex,
         });
         if (!result.ok) {
-          endEffectHistoryStep();
+          endEffectHistoryStep(workingRoot);
           rocketState.statusNote = result.message;
           renderSectors();
           renderStateReadout();
@@ -1776,12 +1773,12 @@
         renderPublicCards();
         updatePublicCardControls();
         updateActionButtons();
-        maybeCompleteActionEffectFromScan(result);
+        maybeCompleteActionEffectFromScan(workingRoot, result);
         return result;
       }
 
       if (pending?.type === "hand_scan") {
-        beginEffectHistoryStep(`手牌扫描 ${cards.getCardLabel(pending.card)}`);
+        beginEffectHistoryStep(workingRoot, `手牌扫描 ${cards.getCardLabel(pending.card)}`);
         const result = abilities.executeAbility("scanHandCard", createActionContext(workingRoot), {
           nebulaId,
           prefix: `手牌扫描 ${cards.getCardLabel(pending.card)}`,
@@ -1791,7 +1788,7 @@
           player: pending.player,
         });
         if (!result.ok) {
-          endEffectHistoryStep();
+          endEffectHistoryStep(workingRoot);
           rocketState.statusNote = result.message;
           renderSectors();
           renderStateReadout();
@@ -1810,7 +1807,7 @@
         renderPublicCards();
         updatePublicCardControls();
         updateActionButtons();
-        maybeCompleteActionEffectFromScan(result);
+        maybeCompleteActionEffectFromScan(workingRoot, result);
         return result;
       }
 
@@ -1848,12 +1845,12 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const effect = pending.effect || getCurrentActionEffect();
+      const effect = pending.effect || getCurrentActionEffect(workingRoot);
       closeScanTargetPicker(workingRoot);
-      beginEffectHistoryStep(effect?.label || "跳过盲抽弃牌扫描");
+      beginEffectHistoryStep(workingRoot, effect?.label || "跳过盲抽弃牌扫描");
       const discardResult = cards.discardFromHandAtIndex(player, handIndex);
       if (!discardResult.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         rocketState.statusNote = discardResult.message;
         renderPlayerHand();
         renderStateReadout();
@@ -1881,7 +1878,7 @@
       renderPublicCards();
       updatePublicCardControls();
       updateActionButtons();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return result;
     }
@@ -2062,7 +2059,7 @@
         );
       }
       const scanRunId = context.createScanRunId("main-scan");
-      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+      workingRoot.match.actionEffectFlow = abilities.chain.startAbilityChain(
         "scan",
         "扫描行动",
         scanEffects.buildScanEffectQueue(currentPlayer, {
@@ -2074,10 +2071,10 @@
           turnNumber: workingRoot.turnState.turnNumber,
         }),
       );
-      decisionState.actionEffectFlow.playerId = currentPlayer.id;
-      context.assignEffectFlowOwner(decisionState.actionEffectFlow, currentPlayer.id);
-      decisionState.actionEffectFlow.scanRunId = scanRunId;
-      decisionState.actionEffectFlow.scanActionEvent = {
+      getActionEffectFlow(workingRoot).playerId = currentPlayer.id;
+      context.assignEffectFlowOwner(getActionEffectFlow(workingRoot), currentPlayer.id);
+      getActionEffectFlow(workingRoot).scanRunId = scanRunId;
+      getActionEffectFlow(workingRoot).scanActionEvent = {
         type: "scanAction",
         source: "main",
         scanRunId,
@@ -2086,13 +2083,13 @@
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       actionRocketState.statusNote = "扫描：请依次点击能力效果";
       renderPlayerStats();
-      activateNextActionEffect();
+      activateNextActionEffect(workingRoot);
       return {
         ok: true,
         message: actionRocketState.statusNote,
         cost: costResult.cost || {},
         history: costResult.commands || [],
-        effects: structuredClone(decisionState.actionEffectFlow.effects || []),
+        effects: structuredClone(getActionEffectFlow(workingRoot).effects || []),
       };
     }
     return {

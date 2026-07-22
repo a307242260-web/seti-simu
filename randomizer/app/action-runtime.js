@@ -107,9 +107,7 @@
     const ENGINE_ACTION_FAMILIES = new Set(engineActionExecutor?.actionFamilies || []);
     const QUICK_TURN_ACTION_FAMILIES = new Set(quickTurnActionExecutor?.actionFamilies || []);
     const CONDITIONAL_ACTION_FAMILIES = new Set(conditionalActionExecutor?.actionFamilies || []);
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     function getExecutionWorkingRoot(standardContext) {
       const required = [
@@ -677,7 +675,7 @@
     }
 
     function handleActionEffectButtonClick(workingRoot, effectIndex) {
-      if (!decisionState.actionEffectFlow) return;
+      if (!getActionEffectFlow(workingRoot)) return;
       if (Number(effectIndex) !== getCurrentActionEffectIndex?.()) return;
 
       const effect = getCurrentActionEffect?.();

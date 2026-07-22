@@ -1,22 +1,15 @@
 (function (root, factory) {
   "use strict";
 
-  const decisionSessionStore = typeof module === "object" && module.exports
-    ? require("../game/effects/decision-session-store")
-    : root.SetiDecisionSessionStore;
-  const api = factory(root, decisionSessionStore);
+  const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppRuntime = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (root, decisionSessionStore) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-
-  if (!decisionSessionStore?.createDecisionSessionStore) {
-    throw new Error("缺少 SetiDecisionSessionStore，无法创建标准 Decision Session");
-  }
 
   function stripAssetExtension(value) {
     return String(value || "").replace(/\.[^./\\]+$/, "");
@@ -94,7 +87,6 @@
 
   function createRuntime(options = {}) {
     return {
-      decisions: decisionSessionStore.createDecisionSessionStore(),
       actionLog: createActionLogState(),
       actionBriefing: createActionBriefingState(),
       startScreen: createStartScreenState(options),

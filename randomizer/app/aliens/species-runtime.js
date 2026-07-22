@@ -54,7 +54,6 @@
       createActionLogImpactSnapshot,
       data,
       debugRuntimeController,
-      decisionSessions,
       discardReservedCardIfFinished,
       document,
       els,
@@ -153,9 +152,7 @@
       return resolveWorkingPlayerReference(workingRoot, effect?.options || effect)
         || getWorkingCurrentPlayer(workingRoot);
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getAlienTraceContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.alienTraceContinuation || null;
     function clearAlienTraceContinuation(workingRoot) {
       delete requireWorkingRoot(workingRoot).match.alienTraceContinuation;
@@ -904,19 +901,19 @@ function confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType) {
     appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
     if (pending?.type === "planet_reward_alien_trace") {
-      beginEffectHistoryStep(pending.effectLabel || "方舟解锁卡牌", { logBefore: beforeLogSnapshot });
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      beginEffectHistoryStep(workingRoot, pending.effectLabel || "方舟解锁卡牌", { logBefore: beforeLogSnapshot });
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复方舟解锁卡牌前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         beforePlayerState,
         "恢复方舟解锁卡牌前玩家状态",
       ));
-      if (getCurrentActionEffect()) {
-        getCurrentActionEffect().result = {
+      if (getCurrentActionEffect(workingRoot)) {
+        getCurrentActionEffect(workingRoot).result = {
           ok: true,
           undoable: true,
           message: rocketState.statusNote,
@@ -931,7 +928,7 @@ function confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType) {
           },
         };
       }
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
     } else {
       beginQuickActionStep("fangzhou-unlock", rocketState.statusNote, { logBefore: beforeLogSnapshot });
       recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
@@ -1045,12 +1042,12 @@ function enqueueFangzhouCard1RewardEffects(flips, flowLabel, options = {}) {
       actionType: options.actionType || "fangzhouBasic",
       ...options,
     };
-    if (decisionState.actionEffectFlow && options.insertIntoCurrentFlow) {
+    if (getActionEffectFlow(workingRoot) && options.insertIntoCurrentFlow) {
       insertActionEffectsAfterCurrent(effects);
       renderActionEffectBar();
       return { ok: true, effects, inserted: true, message: flowLabel };
     }
-    if (decisionState.actionEffectFlow && !options.forceNewFlow) {
+    if (getActionEffectFlow(workingRoot) && !options.forceNewFlow) {
       insertActionEffectsAfterCurrent(effects);
       renderActionEffectBar();
       return { ok: true, effects, inserted: true, message: flowLabel };
@@ -1579,8 +1576,8 @@ function claimRunezuSourceSymbolWithHistory(workingRoot, sourceType, sourceId, p
       recordQuickHistoryCommand(alienRestore);
       recordQuickHistoryCommand(playerRestore);
     } else if (actionHistory.hasSession() || uiRuntimeState.effectStepActive) {
-      recordHistoryCommand(alienRestore);
-      recordHistoryCommand(playerRestore);
+      recordHistoryCommand(workingRoot, alienRestore);
+      recordHistoryCommand(workingRoot, playerRestore);
     }
     return result;
   }
@@ -1615,20 +1612,20 @@ function finishRunezuCardGain(workingRoot, message, result = null, pendingContex
     const pending = pendingContext || runezuCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeRunezuCardGainDialog();
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      const existingResult = getCurrentActionEffect().result || {};
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      const existingResult = getCurrentActionEffect(workingRoot).result || {};
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, pending.effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         pending.beforeAlienState,
         "恢复符文族牌获取前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         pending.beforePlayerState,
         "恢复符文族牌获取前玩家状态",
       ));
-      getCurrentActionEffect().result = {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: !irreversible,
         irreversible,
@@ -1640,9 +1637,9 @@ function finishRunezuCardGain(workingRoot, message, result = null, pendingContex
       renderAlienPanels(workingRoot);
       renderPlayerHand();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
-      return getCurrentActionEffect()?.result || { ok: true, message };
+      return getCurrentActionEffect(workingRoot)?.result || { ok: true, message };
     }
     if (irreversible && pending) {
       beginQuickActionStep("runezu-card", pending.effectLabel || "符文族外星人牌");
@@ -1721,20 +1718,20 @@ function finishAmibaCardGain(workingRoot, message, result = null, pendingContext
     const pending = pendingContext || amibaCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeAmibaCardGainDialog();
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      const existingResult = getCurrentActionEffect().result || {};
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      const existingResult = getCurrentActionEffect(workingRoot).result || {};
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, pending.effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         pending.beforeAlienState,
         "恢复阿米巴牌获取前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         pending.beforePlayerState,
         "恢复阿米巴牌获取前玩家状态",
       ));
-      getCurrentActionEffect().result = {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: !irreversible,
         irreversible,
@@ -1746,9 +1743,9 @@ function finishAmibaCardGain(workingRoot, message, result = null, pendingContext
       renderAlienPanels(workingRoot);
       renderPlayerHand();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
-      return getCurrentActionEffect()?.result || { ok: true, message };
+      return getCurrentActionEffect(workingRoot)?.result || { ok: true, message };
     }
     if (irreversible && pending) {
       beginQuickActionStep("amiba-card", pending.effectLabel || "阿米巴外星人牌");
@@ -1828,20 +1825,20 @@ function finishAomomoCardGain(workingRoot, message, result = null, pendingContex
     const pending = pendingContext || aomomoCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeAomomoCardGainDialog();
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      const existingResult = getCurrentActionEffect().result || {};
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      const existingResult = getCurrentActionEffect(workingRoot).result || {};
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, pending.effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         pending.beforeAlienState,
         "恢复奥陌陌牌获取前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         pending.beforePlayerState,
         "恢复奥陌陌牌获取前玩家状态",
       ));
-      getCurrentActionEffect().result = {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: !irreversible,
         irreversible,
@@ -1853,9 +1850,9 @@ function finishAomomoCardGain(workingRoot, message, result = null, pendingContex
       renderAlienPanels(workingRoot);
       renderPlayerHand();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
-      return getCurrentActionEffect()?.result || { ok: true, message };
+      return getCurrentActionEffect(workingRoot)?.result || { ok: true, message };
     }
     if (irreversible && pending) {
       beginQuickActionStep("aomomo-card", pending.effectLabel || "奥陌陌外星人牌");
@@ -1946,8 +1943,8 @@ function finishAmibaSymbolChoice(workingRoot, message, payload = {}, options = {
       cardEffects.consumeTrigger(pending.triggerMatch.card, pending.triggerMatch.trigger.id);
       discardReservedCardIfFinished(resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot), pending.triggerMatch.card);
     }
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      getCurrentActionEffect().result = {
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: options.undoable !== false,
         message,
@@ -1958,7 +1955,7 @@ function finishAmibaSymbolChoice(workingRoot, message, payload = {}, options = {
       renderPlayerStats();
       renderPlayerHand();
       renderReservedCards();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return { ok: true, message, payload };
     }
@@ -1998,18 +1995,18 @@ function handleAmibaSymbolChoice(workingRoot, choice, pendingContext = null) {
     const message = `${rewardResult.message}；${result.message}`;
 
     if (pending.fromEffectFlow) {
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, pending.effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复阿米巴 symbol 前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         beforePlayerState,
         "恢复阿米巴 symbol 前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         cardState,
         beforeCardState,
         "恢复阿米巴 symbol 前牌区状态",
@@ -2081,37 +2078,37 @@ function handleAmibaTraceRemovalChoice(workingRoot, choice, pendingContext = nul
     if (choice === "cancel") {
       closeAmibaTraceRemovalDialog();
       rocketState.statusNote = "已取消阿米巴痕迹移除";
-      if (getCurrentActionEffect()) {
-        getCurrentActionEffect().result = { ok: true, undoable: true, message: rocketState.statusNote };
-        completeCurrentActionEffect();
+      if (getCurrentActionEffect(workingRoot)) {
+        getCurrentActionEffect(workingRoot).result = { ok: true, undoable: true, message: rocketState.statusNote };
+        completeCurrentActionEffect(workingRoot);
       }
       renderStateReadout();
       return { ok: true, message: rocketState.statusNote };
     }
     const [traceType, positionText] = String(choice || "").split(":");
-    beginEffectHistoryStep(pending.effectLabel || "阿米巴痕迹移除");
+    beginEffectHistoryStep(workingRoot, pending.effectLabel || "阿米巴痕迹移除");
     const removeResult = amiba.removePlayerTrace(alienGameState, pending.alienSlotId, traceType, Number(positionText), player);
     if (!removeResult.ok) {
-      endEffectHistoryStep();
+      endEffectHistoryStep(workingRoot);
       rocketState.statusNote = removeResult.message;
       renderStateReadout();
       return removeResult;
     }
     const rewardResult = applyAmibaRewardToPlayer(workingRoot, player, removeResult.reward, removeResult.message);
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       alienGameState,
       pending.beforeAlienState,
       "恢复阿米巴移除痕迹前外星人状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       playerState,
       pending.beforePlayerState,
       "恢复阿米巴移除痕迹前玩家状态",
     ));
     closeAmibaTraceRemovalDialog();
     const message = rewardResult.message;
-    if (getCurrentActionEffect()) {
-      getCurrentActionEffect().result = {
+    if (getCurrentActionEffect(workingRoot)) {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: true,
         message,
@@ -2120,7 +2117,7 @@ function handleAmibaTraceRemovalChoice(workingRoot, choice, pendingContext = nul
       rocketState.statusNote = message;
       renderAlienPanels(workingRoot);
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return { ok: true, message };
     }
@@ -2181,15 +2178,15 @@ function finishYichangdianCardGain(workingRoot, message, result = null, pendingC
     const irreversible = getAlienCardGainIrreversible(result);
     closeYichangdianCardGainDialog();
     rocketState.statusNote = message;
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      getCurrentActionEffect().result = {
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: !irreversible,
         irreversible,
         message,
         payload: { yichangdianCard: result?.card || null },
       };
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
     }
     renderAlienPanels(workingRoot);
     renderRockets();
@@ -2279,15 +2276,15 @@ function finishBanrenmaCardGain(workingRoot, message, result = null, pendingCont
     const combinedMessage = [baseResult?.message, message].filter(Boolean).join("；") || message;
     closeBanrenmaCardGainDialog();
     rocketState.statusNote = combinedMessage;
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      getCurrentActionEffect().result = {
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: !irreversible && baseResult?.undoable !== false,
         irreversible,
         message: combinedMessage,
         payload: { ...(baseResult?.payload || {}), banrenmaCard: result?.card || null },
       };
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
     }
     renderAlienPanels(workingRoot);
     renderRockets();
@@ -2375,19 +2372,19 @@ function finishChongCardGain(workingRoot, message, result = null, pendingContext
     const pending = pendingContext || chongCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeChongCardGainDialog();
-    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
-      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    if (pending?.fromEffectFlow && getCurrentActionEffect(workingRoot)) {
+      if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(workingRoot, pending.effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         pending.beforeAlienState,
         "恢复虫族牌获取前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         pending.beforePlayerState,
         "恢复虫族牌获取前玩家状态",
       ));
-      getCurrentActionEffect().result = {
+      getCurrentActionEffect(workingRoot).result = {
         ok: true,
         undoable: !irreversible,
         irreversible,
@@ -2398,9 +2395,9 @@ function finishChongCardGain(workingRoot, message, result = null, pendingContext
       renderAlienPanels(workingRoot);
       renderPlayerHand();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
-      return getCurrentActionEffect()?.result || { ok: true, message };
+      return getCurrentActionEffect(workingRoot)?.result || { ok: true, message };
     }
     if (irreversible && pending) {
       beginQuickActionStep("chong-card", pending.effectLabel || "虫族外星人牌");
@@ -2588,7 +2585,7 @@ function failChongTaskCompletion(workingRoot, message) {
 
 function finishChongFossilEffect(workingRoot, message, payload = {}, options = {}) {
     const { rocketState } = requireWorkingRoot(workingRoot);
-    const currentEffect = getCurrentActionEffect();
+    const currentEffect = getCurrentActionEffect(workingRoot);
     if (currentEffect && options.completeEffect !== false) {
       currentEffect.result = {
         ok: true,
@@ -2602,7 +2599,7 @@ function finishChongFossilEffect(workingRoot, message, payload = {}, options = {
       renderPlayerStats();
       renderPlayerHand();
       renderReservedCards();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
     } else {
       rocketState.statusNote = message;
@@ -2700,15 +2697,15 @@ function handleChongFossilChoice(workingRoot, choice, pendingContext = null) {
     const beforeAlienState = pending.beforeAlienState;
     const beforePlayerState = pending.beforePlayerState;
     if (pending.fromEffectFlow && !uiRuntimeState.effectStepActive) {
-      beginEffectHistoryStep(pending.effectLabel || "虫族化石");
+      beginEffectHistoryStep(workingRoot, pending.effectLabel || "虫族化石");
     }
     if (pending.fromEffectFlow || pending.mode === "pickup" || pending.mode === "reward") {
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复虫族化石前外星人状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         beforePlayerState,
         "恢复虫族化石前玩家状态",
@@ -2816,8 +2813,8 @@ function createJiuzheThresholdCardEffect(player, opportunity) {
   }
 
 function hasJiuzheThresholdEffectQueued(player, reason) {
-    if (!decisionState.actionEffectFlow || !player || !reason) return false;
-    return (decisionState.actionEffectFlow.effects || []).some((effect) => (
+    if (!getActionEffectFlow(workingRoot) || !player || !reason) return false;
+    return (getActionEffectFlow(workingRoot).effects || []).some((effect) => (
       effect?.type === JIUZHE_THRESHOLD_CARD_EFFECT_TYPE
       && effect.status !== "completed"
       && effect.status !== "skipped"
@@ -2978,8 +2975,8 @@ function handleJiuzheCardChoice(workingRoot, cardIndex, options = {}, pendingCon
       return result;
     }
 
-    const fromEffectFlow = Boolean(pending.fromEffectFlow && getCurrentActionEffect());
-    const effectLabel = pending.effectLabel || pending.label || getCurrentActionEffect()?.label || "九折打出";
+    const fromEffectFlow = Boolean(pending.fromEffectFlow && getCurrentActionEffect(workingRoot));
+    const effectLabel = pending.effectLabel || pending.label || getCurrentActionEffect(workingRoot)?.label || "九折打出";
     const effectResult = {
       ok: true,
       undoable: true,
@@ -2992,18 +2989,18 @@ function handleJiuzheCardChoice(workingRoot, cardIndex, options = {}, pendingCon
     };
 
     if (fromEffectFlow) {
-      beginEffectHistoryStep(effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      beginEffectHistoryStep(workingRoot, effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         beforePlayerState,
         "恢复九折打出前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复九折打出前外星人状态",
       ));
-      if (getCurrentActionEffect()) getCurrentActionEffect().result = effectResult;
+      if (getCurrentActionEffect(workingRoot)) getCurrentActionEffect(workingRoot).result = effectResult;
     } else {
       beginQuickActionStep("jiuzhe-card", pending.label || "九折打出");
       recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
@@ -3027,7 +3024,7 @@ function handleJiuzheCardChoice(workingRoot, cardIndex, options = {}, pendingCon
     updateActionButtons();
     renderStateReadout();
     if (fromEffectFlow) {
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
     } else {
       maybeContinueAlienRevealQueuedOpportunities();
     }
@@ -3045,8 +3042,8 @@ function handleJiuzheOpportunitySkip(workingRoot, options = {}, pendingContext =
     const beforeAlienState = structuredClone(alienGameState);
     const result = jiuzhe.declineOpportunity(alienGameState, player, pending.reason);
     if (result.ok) {
-      const fromEffectFlow = Boolean(pending.fromEffectFlow && getCurrentActionEffect());
-      const effectLabel = pending.effectLabel || pending.label || getCurrentActionEffect()?.label || "九折放弃";
+      const fromEffectFlow = Boolean(pending.fromEffectFlow && getCurrentActionEffect(workingRoot));
+      const effectLabel = pending.effectLabel || pending.label || getCurrentActionEffect(workingRoot)?.label || "九折放弃";
       const effectResult = {
         ok: true,
         undoable: true,
@@ -3058,13 +3055,13 @@ function handleJiuzheOpportunitySkip(workingRoot, options = {}, pendingContext =
         },
       };
       if (fromEffectFlow) {
-        beginEffectHistoryStep(effectLabel);
-        recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        beginEffectHistoryStep(workingRoot, effectLabel);
+        recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
           alienGameState,
           beforeAlienState,
           "恢复九折放弃前外星人状态",
         ));
-        if (getCurrentActionEffect()) getCurrentActionEffect().result = effectResult;
+        if (getCurrentActionEffect(workingRoot)) getCurrentActionEffect(workingRoot).result = effectResult;
       } else {
         beginQuickActionStep("jiuzhe-card-skip", pending.label || "九折放弃");
         recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
@@ -3081,7 +3078,7 @@ function handleJiuzheOpportunitySkip(workingRoot, options = {}, pendingContext =
       updateActionButtons();
       renderStateReadout();
       if (fromEffectFlow) {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       } else {
         maybeContinueAlienRevealQueuedOpportunities();
       }
@@ -3195,9 +3192,9 @@ function createBanrenmaPanelBonusEffect(player, mark) {
     };
   }
 
-function hasBanrenmaPanelBonusEffectQueued(player, markId) {
-    if (!decisionState.actionEffectFlow || !markId) return false;
-    return (decisionState.actionEffectFlow.effects || []).some((effect) => (
+function hasBanrenmaPanelBonusEffectQueued(workingRoot, player, markId) {
+    if (!getActionEffectFlow(workingRoot) || !markId) return false;
+    return (getActionEffectFlow(workingRoot).effects || []).some((effect) => (
       effect?.type === BANRENMA_PANEL_BONUS_EFFECT_TYPE
       && effect.status !== "completed"
       && effect.status !== "skipped"
@@ -3211,11 +3208,11 @@ function hasBanrenmaPanelBonusEffectQueued(player, markId) {
 
 function queueBanrenmaPanelBonusEffectForPlayer(workingRoot, player) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!banrenma || !player || !isActionEffectFlowActive()) return false;
+    if (!banrenma || !player || !isActionEffectFlowActive(workingRoot)) return false;
     const mark = banrenma.getPendingPanelMark(alienGameState, player);
     if (!mark || !banrenma.getAvailableBonusPositions(alienGameState).length) return false;
-    if (hasBanrenmaPanelBonusEffectQueued(player, mark.id)) return false;
-    insertActionEffectsAfterCurrent([createBanrenmaPanelBonusEffect(player, mark)]);
+    if (hasBanrenmaPanelBonusEffectQueued(workingRoot, player, mark.id)) return false;
+    insertActionEffectsAfterCurrent(workingRoot, [createBanrenmaPanelBonusEffect(player, mark)]);
     renderActionEffectBar();
     return true;
   }
@@ -3370,16 +3367,16 @@ function executeJiuzheThresholdCardEffect(workingRoot, effect) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
     const player = resolveWorkingPlayerReference(workingRoot, effect.options || effect) || getWorkingEffectOwnerPlayer(workingRoot, effect);
     if (!player) {
-      return skipActionEffectWithMessage(effect, "九折碰线打牌：找不到玩家");
+      return skipActionEffectWithMessage(workingRoot, effect, "九折碰线打牌：找不到玩家");
     }
     const expectedReason = effect.options?.reason || null;
     const latest = jiuzhe?.getPendingOpportunity?.(alienGameState, player) || null;
     if (!isJiuzheThresholdOpportunity(latest)) {
-      return skipActionEffectWithMessage(effect, "九折碰线打牌：没有待处理的达分机会");
+      return skipActionEffectWithMessage(workingRoot, effect, "九折碰线打牌：没有待处理的达分机会");
     }
     if (expectedReason && latest.reason !== expectedReason) {
       queueJiuzheThresholdEffectForPlayer(player, latest);
-      return skipActionEffectWithMessage(effect, "九折碰线打牌：机会已更新，跳过旧提醒");
+      return skipActionEffectWithMessage(workingRoot, effect, "九折碰线打牌：机会已更新，跳过旧提醒");
     }
     return openJiuzheCardDialog(workingRoot, player, {
       ...latest,
@@ -3392,15 +3389,15 @@ function executeBanrenmaPanelBonusEffect(workingRoot, effect) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
     const player = resolveWorkingPlayerReference(workingRoot, effect.options || effect) || getWorkingEffectOwnerPlayer(workingRoot, effect);
     if (!player) {
-      return skipActionEffectWithMessage(effect, "半人马顶部奖励：找不到玩家");
+      return skipActionEffectWithMessage(workingRoot, effect, "半人马顶部奖励：找不到玩家");
     }
     const mark = banrenma.getPendingPanelMark(alienGameState, player);
     const expectedMarkId = effect.options?.markId || null;
     if (!mark || (expectedMarkId && mark.id !== expectedMarkId)) {
-      return skipActionEffectWithMessage(effect, "半人马顶部奖励：没有待结算的分数标记");
+      return skipActionEffectWithMessage(workingRoot, effect, "半人马顶部奖励：没有待结算的分数标记");
     }
     if (!banrenma.getAvailableBonusPositions(alienGameState).length) {
-      return skipActionEffectWithMessage(effect, "半人马顶部奖励：没有可用奖励位");
+      return skipActionEffectWithMessage(workingRoot, effect, "半人马顶部奖励：没有可用奖励位");
     }
     return openBanrenmaOpportunityDialog(workingRoot, player, {
       type: "panel",
@@ -3456,8 +3453,8 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
     }
     banrenma.resolveScoreMark(alienGameState, player, pending.markId);
     const rewardResult = applyBanrenmaRewardToPlayer(player, markResult.reward, markResult.message);
-    const fromEffectFlow = Boolean(pending.fromEffectFlow && getCurrentActionEffect());
-    const effectLabel = pending.effectLabel || getCurrentActionEffect()?.label || markResult.message;
+    const fromEffectFlow = Boolean(pending.fromEffectFlow && getCurrentActionEffect(workingRoot));
+    const effectLabel = pending.effectLabel || getCurrentActionEffect(workingRoot)?.label || markResult.message;
     const baseResult = {
       ok: true,
       undoable: rewardResult.undoable !== false,
@@ -3469,18 +3466,18 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
       },
     };
     if (fromEffectFlow) {
-      beginEffectHistoryStep(effectLabel);
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      beginEffectHistoryStep(workingRoot, effectLabel);
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         playerState,
         beforePlayerState,
         "恢复半人马顶部奖励前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复半人马顶部奖励前外星人状态",
       ));
-      if (getCurrentActionEffect()) getCurrentActionEffect().result = baseResult;
+      if (getCurrentActionEffect(workingRoot)) getCurrentActionEffect(workingRoot).result = baseResult;
     } else {
       completeBanrenmaOpportunityStep(workingRoot, player, beforePlayerState, beforeAlienState, null, markResult.message);
     }
@@ -3500,7 +3497,7 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
         baseResult: fromEffectFlow ? baseResult : null,
       });
       if (!openResult.ok && fromEffectFlow) {
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
     } else if (markResult.reward?.alienTrace) {
       workingRoot.match.alienTraceContinuation = {
@@ -3531,8 +3528,8 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
           baseResult.message = noTargetMessage;
           baseResult.payload.alienTraceRewardLost = true;
           if (fromEffectFlow) {
-            if (getCurrentActionEffect()) getCurrentActionEffect().result = baseResult;
-            completeCurrentActionEffect();
+            if (getCurrentActionEffect(workingRoot)) getCurrentActionEffect(workingRoot).result = baseResult;
+            completeCurrentActionEffect(workingRoot);
           } else {
             queueBanrenmaOpportunitiesForPlayer(workingRoot, player);
             maybeContinueAlienRevealQueuedOpportunities();
@@ -3556,7 +3553,7 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
         });
       }
     } else if (fromEffectFlow) {
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
     } else {
       queueBanrenmaOpportunitiesForPlayer(workingRoot, player);
       maybeContinueAlienRevealQueuedOpportunities();
@@ -3885,14 +3882,14 @@ function executeRunezuSymbolRewardEffect(workingRoot, effect) {
     const symbolId = effect.options?.symbolId;
     const beforeAlienState = structuredClone(alienGameState);
     const beforePlayerState = structuredClone(playerState);
-    beginEffectHistoryStep(effect.label);
+    beginEffectHistoryStep(workingRoot, effect.label);
     const result = applyRunezuSymbolReward(workingRoot, currentPlayer, symbolId, effect.label);
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       alienGameState,
       beforeAlienState,
       "恢复符文族symbol奖励前外星人状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       playerState,
       beforePlayerState,
       "恢复符文族symbol奖励前玩家状态",
@@ -3943,7 +3940,7 @@ function handleRunezuSymbolBranchChoice(workingRoot, choice, pendingContext = nu
       if (effect) {
         effect.result = { ok: true, undoable: true, message: "已取消符文族分支奖励" };
         rocketState.statusNote = effect.result.message;
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
       }
       renderStateReadout();
       return { ok: true, cancelled: true, message: rocketState.statusNote };
@@ -3953,18 +3950,18 @@ function handleRunezuSymbolBranchChoice(workingRoot, choice, pendingContext = nu
     const currentPlayer = getPendingOwnerPlayer(pending, effect);
     const messages = [];
     let irreversible = null;
-    beginEffectHistoryStep(effect.label);
+    beginEffectHistoryStep(workingRoot, effect.label);
     for (const symbolId of branch.symbolIds || []) {
       const result = applyRunezuSymbolReward(workingRoot, currentPlayer, symbolId, effect.label);
       messages.push(result.message);
       if (result.irreversible) irreversible = result.irreversible;
     }
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       alienGameState,
       pending.beforeAlienState,
       "恢复符文族分支奖励前外星人状态",
     ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+    recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
       playerState,
       pending.beforePlayerState,
       "恢复符文族分支奖励前玩家状态",
@@ -3982,7 +3979,7 @@ function handleRunezuSymbolBranchChoice(workingRoot, choice, pendingContext = nu
       renderAlienPanels(workingRoot);
       renderPlayerStats();
       renderPlayerHand();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
     }
     renderStateReadout();
     return effect?.result || { ok: true, message: rocketState.statusNote };

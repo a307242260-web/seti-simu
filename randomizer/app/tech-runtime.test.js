@@ -124,6 +124,7 @@ function createHarness() {
     rocketState: context.rocketState,
     techGameState,
     workingRoot: {
+      match: { actionEffectFlow: pendingState.actionEffectFlow },
       cardState: {},
       playerState: context.playerState,
       rocketState: context.rocketState,
@@ -170,11 +171,11 @@ function createHarness() {
     options: { generatedByResearchTech: true },
   };
   const trailing = { type: "ordinary_followup", options: {} };
-  harness.pendingState.actionEffectFlow.effects = [selectEffect, generated, trailing];
+  harness.workingRoot.match.actionEffectFlow.effects = [selectEffect, generated, trailing];
 
   runtime.restoreResearchTechSelectionAfterUndo(harness.workingRoot, selectEffect);
 
-  assert.deepEqual(harness.pendingState.actionEffectFlow.effects, [selectEffect, trailing]);
+  assert.deepEqual(harness.workingRoot.match.actionEffectFlow.effects, [selectEffect, trailing]);
   assert.deepEqual(harness.techGameState.ui.allowedTechTypes, ["orange"]);
   assert.equal(harness.techGameState.ui.techSelectionActive, true);
   assert.equal(harness.rocketState.statusNote, "科技：请选择要研究的科技片");

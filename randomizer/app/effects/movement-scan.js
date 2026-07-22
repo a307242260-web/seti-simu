@@ -31,7 +31,6 @@
       completeCurrentActionEffect,
       createActionContext,
       data,
-      decisionSessions,
       document,
       effectChoiceFlowHelpers,
       els,
@@ -96,20 +95,24 @@
     const rulePlanetStatsState = (workingRoot) => workingRoot.planetStatsState;
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("effect movement/scan executor requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
     const getScanTargetContinuation = (workingRoot) => workingRoot.match?.scanTargetContinuation || null;
     function setScanTargetContinuation(workingRoot, continuation) {
       if (!continuation) delete workingRoot.match.scanTargetContinuation;
       else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     function executeSectorScanAtPlanet(workingRoot, planetId, prefixLabel, effect = null) {
       const cost = effect?.options?.skipCost ? {} : (normalizeResourceCost(effect?.options?.cost) || {});
       if (Object.keys(cost).length && !players.canAfford(getCurrentPlayer(workingRoot), cost)) {
         const message = `${prefixLabel || "扇区扫描"}：资源不足，需要 ${players.formatResourceCost(cost)}，已跳过`;
-        return skipActionEffectWithMessage(effect || getCurrentActionEffect(), message, {
+        return skipActionEffectWithMessage(workingRoot, effect || getCurrentActionEffect(workingRoot), message, {
           planetId,
           cost,
         });
@@ -135,7 +138,7 @@
             payload: { planetId, nebulaId: aomomo.NEBULA_ID, failedMessage: result.message || null },
           });
         }
-        maybeCompleteActionEffectFromScan(result);
+        maybeCompleteActionEffectFromScan(workingRoot, result);
         return result;
       }
 
@@ -144,7 +147,7 @@
       if (!choices.length || choices.every((choice) => choice.disabled)) {
         const planetName = planetId === "earth" ? "地球" : planetId === "mercury" ? "水星" : planetId;
         const message = `${planetName}所在扇区没有可扫描星云，已跳过`;
-        const activeEffect = effect || (isActionEffectFlowActive() ? getCurrentActionEffect() : null);
+        const activeEffect = effect || (isActionEffectFlowActive() ? getCurrentActionEffect(workingRoot) : null);
         if (activeEffect) {
           return finishAutomaticRewardEffect(workingRoot, activeEffect, {
             ok: true,
@@ -191,7 +194,7 @@
           },
         });
       }
-      maybeCompleteActionEffectFromScan(result);
+      maybeCompleteActionEffectFromScan(workingRoot, result);
       return result;
     }
 
@@ -233,7 +236,7 @@
       if (result.ok) {
         maybeReturnPlayedCardToHandAfterSectorScan(workingRoot, effect, sectorX);
       }
-      maybeCompleteActionEffectFromScan(result);
+      maybeCompleteActionEffectFromScan(workingRoot, result);
       return result;
     }
 
@@ -269,12 +272,12 @@
       const [card] = ruleCardState(workingRoot).discardPile.splice(discardIndex, 1);
       currentPlayer.hand.push(card);
       currentPlayer.resources.handSize = currentPlayer.hand.length;
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复卡牌回手前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
@@ -343,7 +346,7 @@
         payload: { count: scanEffectsToInsert.length },
       };
       ruleRocketState(workingRoot).statusNote = effect.result.message;
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderActionEffectBar();
       renderStateReadout();
       return effect.result;
@@ -464,26 +467,26 @@
 
     function executeRemovePlanetMarkerChoice(workingRoot, effect, choice) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlanetStats = structuredClone(rulePlanetStatsState(workingRoot));
       const beforePlayerState = choice.kind === "plutoOrbit" || choice.kind === "plutoLand"
         ? structuredClone(rulePlayerState(workingRoot))
         : null;
       const result = removePlanetMarkerForChoice(workingRoot, choice, currentPlayer, effect.options?.owner || "current");
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = `${effect.label}：${result.message}`;
         renderStateReadout();
         return result;
       }
       if (beforePlayerState) {
-        recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
           rulePlayerState(workingRoot),
           beforePlayerState,
           "恢复移除冥王星标记前玩家状态",
         ));
       } else {
-        recordHistoryCommand(historyCommands.createRestorePlanetStatsCommand(
+        recordHistoryCommand(workingRoot, historyCommands.createRestorePlanetStatsCommand(
           rulePlanetStatsState(workingRoot),
           beforePlanetStats,
           "恢复移除星球标记前状态",
@@ -556,7 +559,7 @@
     }
 
     function executeCardLandTarget(workingRoot, effect, target, contextInfo = {}) {
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const result = abilities.executeAbility("landProbe", createActionContext(workingRoot), {
         ...(effect.options || {}),
         target,
@@ -564,7 +567,7 @@
         historyLabel: effect.label,
       });
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
@@ -572,9 +575,9 @@
       recordAbilityCommands(result, undefined, workingRoot);
       const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
       claimRunezuPlanetSymbolForTravelResult("land", result, actionOwner);
-      if (decisionState.actionEffectFlow) {
+      if (getActionEffectFlow(workingRoot)) {
         const sector = getPlanetSectorCoordinate(result.planetId);
-        decisionState.actionEffectFlow.lastLanding = {
+        getActionEffectFlow(workingRoot).lastLanding = {
           planetId: result.planetId,
           sectorX: sector.x,
           hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
@@ -613,7 +616,7 @@
       };
       ruleRocketState(workingRoot).statusNote = effect.result.message;
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -625,7 +628,7 @@
       const preferredRocketId = placement?.ok ? placement.rocket?.id : null;
       const pluto = getAvailablePlutoEffectAction(workingRoot, "land", effect, { preferredRocketId });
       if (!landOptions.ok && !pluto.ok) {
-        return skipActionEffectWithMessage(
+        return skipActionEffectWithMessage(workingRoot,
           effect,
           `${effect.label || "登陆"}：${landOptions.message || "没有可用登陆目标"}，已跳过`,
           { reason: landOptions.message || null, abilityId: "land" },
@@ -700,7 +703,7 @@
         workingRoot.rocketState.statusNote = result.message;
         if (result.ok) {
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
         }
         renderStateReadout();
         return result;
@@ -711,8 +714,8 @@
       }
 
       if (choiceId === "skip") {
-        const effect = getCurrentActionEffect();
-        return skipActionEffectWithMessage(effect, `${effect?.label || "发射/移动"}：已跳过`, {
+        const effect = getCurrentActionEffect(workingRoot);
+        return skipActionEffectWithMessage(workingRoot, effect, `${effect?.label || "发射/移动"}：已跳过`, {
           choice: "skip",
         });
       }
@@ -735,7 +738,7 @@
       renderPublicCards();
       updatePublicCardControls();
       updateActionButtons();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return result;
     }
@@ -835,13 +838,13 @@
 
     function executePlutoCardActionEffect(workingRoot, effect, actionType, available, contextInfo = {}) {
       const currentPlayer = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeRocketState = structuredClone(ruleRocketState(workingRoot));
       const beforeCard = structuredClone(available.card);
       const spendResult = players.spendResources(currentPlayer, available.cost);
       if (!spendResult.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = spendResult.message;
         renderStateReadout();
         return spendResult;
@@ -849,7 +852,7 @@
       const removeResult = rocketActions.removeRocket(ruleRocketState(workingRoot), available.rocket.id);
       if (!removeResult.ok) {
         restoreMutableObject(currentPlayer, beforePlayer);
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = removeResult.message;
         renderStateReadout();
         return removeResult;
@@ -861,7 +864,7 @@
       if (!markerResult.ok) {
         restoreMutableObject(currentPlayer, beforePlayer);
         restoreMutableObject(ruleRocketState(workingRoot), beforeRocketState);
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = markerResult.message;
         renderStateReadout();
         return markerResult;
@@ -869,23 +872,23 @@
       if (actionType === "orbit") {
         players.incrementPlayerOrbitCount(rulePlayerState(workingRoot), currentPlayer.id);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复冥王星卡牌行动前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreRocketStateCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreRocketStateCommand(
         ruleRocketState(workingRoot),
         beforeRocketState,
         "恢复冥王星卡牌行动前探测器状态",
       ));
-      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
         available.card,
         beforeCard,
         "恢复冥王星卡牌行动前卡牌状态",
       ));
-      if (decisionState.actionEffectFlow && actionType === "land") {
-        decisionState.actionEffectFlow.lastLanding = {
+      if (getActionEffectFlow(workingRoot) && actionType === "land") {
+        getActionEffectFlow(workingRoot).lastLanding = {
           planetId: "pluto",
           sectorX: markerResult.marker.sectorX,
           hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
@@ -935,13 +938,13 @@
       renderRockets();
       renderReservedCards();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
 
     function executeNormalCardOrbitEffect(workingRoot, effect, choice = null) {
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const result = abilities.executeAbility("orbitProbe", createActionContext(workingRoot), {
         ...(effect.options || {}),
         rocketId: choice?.rocketId,
@@ -949,7 +952,7 @@
         historyLabel: effect.label,
       });
       if (!result.ok) {
-        endEffectHistoryStep();
+        endEffectHistoryStep(workingRoot);
         ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
@@ -974,7 +977,7 @@
       ruleRocketState(workingRoot).statusNote = effect.result.message;
       renderRockets();
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -1001,7 +1004,7 @@
       const preferredRocketId = normal?.defaultRocketId || null;
       const pluto = getAvailablePlutoEffectAction(workingRoot, "orbit", effect, { preferredRocketId });
       if (!normal.ok && !pluto.ok) {
-        return skipActionEffectWithMessage(
+        return skipActionEffectWithMessage(workingRoot,
           effect,
           `${effect.label || "环绕"}：${normal.message || "没有可用环绕目标"}，已跳过`,
           { reason: normal.message || null, abilityId: "orbitProbe" },
@@ -1054,15 +1057,15 @@
         publicCards: ruleCardState(workingRoot).publicCards.slice(),
         discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
       };
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const [card] = ruleCardState(workingRoot).discardPile.splice(discardIndex, 1);
       cards.addCardToHand(currentPlayer, card);
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复卡牌回手前玩家状态",
       ));
-      recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
         ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
@@ -1076,7 +1079,7 @@
     }
 
     function resolvePlayedCardReturnTarget(workingRoot, effect) {
-      const flow = decisionState.actionEffectFlow || {};
+      const flow = getActionEffectFlow(workingRoot) || {};
       const playedCard = flow.card || null;
       const sourceInstanceId = playedCard?.id || flow.playCardEvent?.sourceCardInstanceId || null;
       const sourceCardId = playedCard?.cardId || flow.playCardEvent?.cardId || null;
@@ -1147,13 +1150,13 @@
         return (currentPlayer?.hand || []).length === 0;
       }
       if (condition.type === "lastLandingHadOwnMarker") {
-        return Boolean(decisionState.actionEffectFlow?.lastLanding?.hadOwnLandingMarker);
+        return Boolean(getActionEffectFlow(workingRoot)?.lastLanding?.hadOwnLandingMarker);
       }
       if (condition.type === "lastLandingHadAnyMarker") {
-        return Boolean(decisionState.actionEffectFlow?.lastLanding?.hadAnyLandingMarker);
+        return Boolean(getActionEffectFlow(workingRoot)?.lastLanding?.hadAnyLandingMarker);
       }
       if (condition.type === "flowMarkedNebula") {
-        const markedNebulaIds = getFlowMarkedNebulaIds(decisionState.actionEffectFlow);
+        const markedNebulaIds = getFlowMarkedNebulaIds(getActionEffectFlow(workingRoot));
         const requiredNebulaIds = condition.nebulaIds || condition.includeNebulaIds || [condition.nebulaId];
         return requiredNebulaIds.filter(Boolean).some((nebulaId) => markedNebulaIds.has(String(nebulaId)));
       }
@@ -1235,7 +1238,7 @@
       const currentPlayer = getCurrentPlayer(workingRoot);
       const counts = countHandCornerKinds(workingRoot, currentPlayer);
       const count = Math.max(0, counts[choice] || 0);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const dataResults = [];
       if (choice === "publicity" && count > 0) {
@@ -1253,7 +1256,7 @@
           options: { movementPoints: count, historyLabel: effect.label },
         }]);
       }
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复按手牌角标奖励前玩家状态",
@@ -1280,7 +1283,7 @@
     }
 
     function executeLandingSectorScanEffect(workingRoot, effect) {
-      const sectorX = decisionState.actionEffectFlow?.lastLanding?.sectorX;
+      const sectorX = getActionEffectFlow(workingRoot)?.lastLanding?.sectorX;
       if (sectorX == null) {
         return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,

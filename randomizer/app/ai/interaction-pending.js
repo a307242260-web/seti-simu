@@ -1599,7 +1599,7 @@
           break;
         }
       }
-      if (!flow && isActionEffectFlowActive()) return null;
+      if (!flow && isActionEffectFlowActive(workingRoot)) return null;
       if (!flow) return { ok: false, blocked: true, message: "AI 没有可处理的外星人选项" };
       const player = getAiAlienPendingPlayer(workingRoot, flow.pending);
       if (!isAiAutoBattlePlayer(player?.id)) {

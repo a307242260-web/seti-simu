@@ -37,7 +37,7 @@ const { createIncomeRuntime } = require("./income-runtime");
     },
     turnState: { roundNumber: 2 },
     getCurrentPlayer: () => player,
-    beginDiscardSelection: (count, pending) => ({ ok: true, count, pending }),
+    beginDiscardSelection: (_workingRoot, count, pending) => ({ ok: true, count, pending }),
   });
 
   const result = runtime.applyIncomeFromCard(player, { id: "income-card" });
@@ -45,7 +45,8 @@ const { createIncomeRuntime } = require("./income-runtime");
   assert.equal(player.resources.credits, 1);
   assert.match(result.message, /收入牌/);
 
-  const started = runtime.beginIncomeForCurrentPlayer({ playerState: { players: [player], currentPlayerIndex: 0 } }, { source: "round" });
+  const workingRoot = { playerState: { players: [player], currentPlayerIndex: 0 } };
+  const started = runtime.beginIncomeForCurrentPlayer(workingRoot, { source: "round" });
   assert.equal(started.count, 1);
   assert.equal(started.pending.type, "income");
   assert.equal(started.pending.source, "round");

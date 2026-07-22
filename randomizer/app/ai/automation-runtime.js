@@ -196,7 +196,7 @@
 
     function recoverAiIdleActionEffectStep(workingRoot) {
       requireWorkingRoot(workingRoot);
-      if (!isActionEffectFlowActive()) return null;
+      if (!isActionEffectFlowActive(workingRoot)) return null;
       const effect = getCurrentActionEffect();
       if (!effect || (effect.status && effect.status !== "active")) return null;
       const pending = getAiAutoBattlePendingState();
@@ -227,7 +227,7 @@
       const alienTraceResult = runAiAlienTraceDecision(workingRoot);
       if (alienTraceResult) return alienTraceResult;
 
-      if (!isActionEffectFlowActive()) {
+      if (!isActionEffectFlowActive(workingRoot)) {
         const earlyReadyBanrenmaResult = runAiReadyBanrenmaOpportunityOpenDecision(workingRoot);
         if (earlyReadyBanrenmaResult) return earlyReadyBanrenmaResult;
       }
@@ -244,7 +244,7 @@
       const cardSelectionResult = runAiCardSelectionDecision(workingRoot);
       if (cardSelectionResult) return cardSelectionResult;
 
-      if (!isActionEffectFlowActive()) {
+      if (!isActionEffectFlowActive(workingRoot)) {
         const techSelectionResult = runAiResearchTechSelectionDecision(workingRoot);
         if (techSelectionResult) return techSelectionResult;
       }
@@ -255,7 +255,7 @@
       const strategyPassiveSlotResult = runAiStrategyPassiveSlotChoiceDecision(workingRoot);
       if (strategyPassiveSlotResult) return strategyPassiveSlotResult;
 
-      if (isActionEffectFlowActive() && !hasActivePendingSubFlow()) {
+      if (isActionEffectFlowActive(workingRoot) && !hasActivePendingSubFlow()) {
         const activeEffectResult = runAiActionEffectStep(workingRoot);
         if (activeEffectResult) return activeEffectResult;
       }

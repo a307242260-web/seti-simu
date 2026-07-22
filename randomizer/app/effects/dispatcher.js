@@ -171,9 +171,7 @@
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
+    const getActionEffectFlow = (workingRoot) => workingRoot.match?.actionEffectFlow || null;
 
     function executeCardEffect(workingRoot, effect) {
       const types = cardEffects.EFFECT_TYPES;
@@ -339,7 +337,7 @@
       delete workingRoot.match.cardSelectionContinuation;
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
-      const result = beginCardSelection({
+      const result = beginCardSelection(workingRoot, {
         type: "planet_reward_pick_card",
         player: currentPlayer,
         effectLabel: effect.label,
@@ -353,9 +351,9 @@
     }
 
     function openTechBonusPickCardEffect(workingRoot, effect) {
-      const selection = getResearchTechSelectionPayload();
+      const selection = getResearchTechSelectionPayload(workingRoot);
       const currentPlayer = getCurrentPlayer(workingRoot);
-      const result = beginCardSelection({
+      const result = beginCardSelection(workingRoot, {
         type: "tech_bonus_pick_card",
         player: currentPlayer,
         effectLabel: effect.label,
@@ -382,9 +380,10 @@
         renderPlayerHand();
       }
 
-      const result = beginDiscardSelection(1, {
+      const result = beginDiscardSelection(workingRoot, 1, {
         type: "initial_income",
         player: incomePlayer,
+        required: true,
         fromEffectFlow: true,
         effectLabel: effect.label,
       });
@@ -392,14 +391,14 @@
         ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         effect.result = { ok: false, undoable: false, message: result.message };
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
       }
       return result;
     }
 
     function openCardIncomeEffect(workingRoot, effect) {
       const incomePlayer = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
-      const result = beginDiscardSelection(1, {
+      const result = beginDiscardSelection(workingRoot, 1, {
         type: "card_income",
         player: incomePlayer,
         fromEffectFlow: true,
@@ -433,7 +432,7 @@
         });
       }
 
-      const result = beginDiscardSelection(1, {
+      const result = beginDiscardSelection(workingRoot, 1, {
         type: "industry_fundamentalism_income",
         player: incomePlayer,
         required: true,
@@ -447,7 +446,7 @@
         ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         effect.result = { ok: false, undoable: true, message: result.message };
-        completeCurrentActionEffect("skipped");
+        completeCurrentActionEffect(workingRoot, "skipped");
       }
       return result;
     }
@@ -464,11 +463,11 @@
         ruleRocketState(workingRoot).statusNote = effect.result.message;
         renderPlayerStats();
         renderPlayerHand();
-        completeCurrentActionEffect();
+        completeCurrentActionEffect(workingRoot);
         renderStateReadout();
         return effect.result;
       }
-      const result = beginDiscardSelection(1, {
+      const result = beginDiscardSelection(workingRoot, 1, {
         type: "planet_reward_income",
         player: currentPlayer,
         beforePlayerState: structuredClone(currentPlayer),
@@ -486,9 +485,9 @@
       const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       const gain = effect.options?.gain || {};
       const beforePlayer = structuredClone(currentPlayer);
-      beginEffectHistoryStep(effect.label);
+      beginEffectHistoryStep(workingRoot, effect.label);
       const incomeResult = applyIncomeGainWithImmediateRewards(currentPlayer, gain, "banrenma-income");
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复半人马收入前玩家状态",
@@ -501,7 +500,7 @@
       };
       ruleRocketState(workingRoot).statusNote = effect.result.message;
       renderPlayerStats();
-      completeCurrentActionEffect();
+      completeCurrentActionEffect(workingRoot);
       renderStateReadout();
       return effect.result;
     }
@@ -632,15 +631,15 @@
           renderStateReadout();
           return { ok: true, message: ruleRocketState(workingRoot).statusNote };
         case "research_tech_take": {
-          beginEffectHistoryStep(effect.label, { effectType: "research_tech_take" });
+          beginEffectHistoryStep(workingRoot, effect.label, { effectType: "research_tech_take" });
           const result = abilities.executeAbility("researchTechTake", createActionContext(workingRoot), effect.options || {});
           if (!result.ok) {
-            endEffectHistoryStep();
+            endEffectHistoryStep(workingRoot);
             ruleRocketState(workingRoot).statusNote = result.message;
             renderStateReadout();
             return result;
           }
-          if (!shouldSkipCurrentResearchTechCost()) {
+          if (!shouldSkipCurrentResearchTechCost(workingRoot)) {
             maybeConsumeAlienLabPanelForMainAction("researchTech", result);
           }
           recordAbilityCommands(result, undefined, workingRoot);
@@ -657,7 +656,7 @@
           ruleRocketState(workingRoot).statusNote = result.message;
           onTechTileTaken(result);
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return result;
         }
@@ -676,12 +675,12 @@
           renderRockets();
           renderRotateStateToken();
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return result;
         }
         case "research_tech_bonus": {
-          const selection = getResearchTechSelectionPayload();
+          const selection = getResearchTechSelectionPayload(workingRoot);
           const bonusId = effect.options?.bonusId || selection?.bonusId;
           const bonusEffect = tech.BONUS_EFFECTS[bonusId];
           if (bonusEffect?.cardSelection) {
@@ -701,14 +700,14 @@
                 playerColor: getCurrentPlayer(workingRoot)?.color || null,
                 techType: selection?.techType || null,
                 tileId: selection?.tileId || null,
-                source: decisionState.actionEffectFlow?.actionType || "tech",
+                source: getActionEffectFlow(workingRoot)?.actionType || "tech",
               },
             ];
           }
           effect.result = result;
           ruleRocketState(workingRoot).statusNote = result.message;
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return result;
         }
@@ -767,15 +766,15 @@
         case "industry_pirates_raid_launch":
           return executeIndustryPiratesRaidLaunchEffect(effect);
         case "fangzhou_launch": {
-          beginEffectHistoryStep(effect.label);
+          beginEffectHistoryStep(workingRoot, effect.label);
           const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
             skipCost: true,
             source: "fangzhou",
             ignoreRocketLimit: true,
           });
           if (!result.ok) {
-            endEffectHistoryStep();
-            return skipActionEffectWithMessage(
+            endEffectHistoryStep(workingRoot);
+            return skipActionEffectWithMessage(workingRoot,
               effect,
               `${effect.label || "方舟发射"}：${result.message || "无法发射"}，已跳过`,
               { reason: result.message || null, abilityId: result.abilityId || "launchProbe" },
@@ -787,7 +786,7 @@
           ruleRocketState(workingRoot).statusNote = result.message;
           renderRockets();
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return result;
         }
@@ -800,12 +799,12 @@
           }
           const count = Math.max(0, Math.round(Number(effect.options?.count) || 1));
           const beforePlayer = structuredClone(currentPlayer);
-          beginEffectHistoryStep(effect.label);
+          beginEffectHistoryStep(workingRoot, effect.label);
           currentPlayer.resources.additionalPublicScan = Math.min(
             2,
             (Number(currentPlayer.resources.additionalPublicScan) || 0) + count,
           );
-          recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+          recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
             currentPlayer,
             beforePlayer,
             "恢复方舟公共扫描标记前玩家状态",
@@ -817,7 +816,7 @@
           };
           ruleRocketState(workingRoot).statusNote = effect.result.message;
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return effect.result;
         }
@@ -826,12 +825,12 @@
         case "industry_fundamentalism_income":
           return openFundamentalismRoundStartIncomeEffect(workingRoot, effect);
         case scanEffects.EFFECT_TYPES.PAY_SCAN_COST: {
-          beginEffectHistoryStep(effect.label);
+          beginEffectHistoryStep(workingRoot, effect.label);
           const result = abilities.executeAbility("payScanCost", createActionContext(workingRoot), {
             cost: effect.options?.cost || scanEffects.SCAN_COST,
           });
           if (!result.ok) {
-            endEffectHistoryStep();
+            endEffectHistoryStep(workingRoot);
             ruleRocketState(workingRoot).statusNote = result.message;
             renderStateReadout();
             return result;
@@ -843,7 +842,7 @@
           effect.result = result;
           ruleRocketState(workingRoot).statusNote = result.message;
           renderPlayerStats();
-          completeCurrentActionEffect();
+          completeCurrentActionEffect(workingRoot);
           renderStateReadout();
           return result;
         }
@@ -859,7 +858,7 @@
             card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
           ));
           if (!hasCandidate) {
-            return skipActionEffectWithMessage(
+            return skipActionEffectWithMessage(workingRoot,
               effect,
               `${effect.label || "公共牌区扫描"}：公共牌区为空，已跳过`,
               { reason: "no_public_scan_candidate" },
@@ -872,7 +871,7 @@
             ? `公共牌区扫描：最多选择 ${maxSelectable} 张公共牌`
             : "公共牌区扫描：请选择一张公共牌";
           renderStateReadout();
-          return beginCardSelection(createPublicScanPendingAction(scanPlayer, true, {
+          return beginCardSelection(workingRoot, createPublicScanPendingAction(scanPlayer, true, {
             scanRunId,
             deferPublicRefill,
           }));
@@ -882,14 +881,14 @@
           if (!currentPlayer?.hand?.length) {
             effect.result = { ok: true, skipped: true, message: `${effect.label || "手牌扫描"}：没有手牌，跳过` };
             ruleRocketState(workingRoot).statusNote = effect.result.message;
-            completeCurrentActionEffect("skipped");
+            completeCurrentActionEffect(workingRoot, "skipped");
             renderStateReadout();
             return effect.result;
           }
           if (!hasHandScanTargetCard(currentPlayer)) {
             effect.result = { ok: true, skipped: true, message: `${effect.label || "手牌扫描"}：没有可扫描角标的手牌，跳过` };
             ruleRocketState(workingRoot).statusNote = effect.result.message;
-            completeCurrentActionEffect("skipped");
+            completeCurrentActionEffect(workingRoot, "skipped");
             renderStateReadout();
             return effect.result;
           }

@@ -31,7 +31,6 @@
       getPendingJiuzheCardPlay,
       getPendingBanrenmaOpportunity,
       getPlayerById,
-      decisionState,
       cards,
       players,
       getPublicScanChoicesForCard,
@@ -145,7 +144,7 @@
 
   function enumerateHeadlessMovePaymentActions(workingRoot, movePending) {
     const player = (workingRoot.playerState?.players || []).find((entry) => entry.id === movePending.playerId)
-      || getHeadlessConditionalPlayer(movePending);
+      || getHeadlessConditionalPlayer(workingRoot, movePending);
     const required = Math.max(0, Math.round(Number(movePending.requiredMovePoints) || 0));
     const moveCardIndexes = (player?.hand || []).flatMap((card, handIndex) => (
       isMovePaymentCard(card) ? [handIndex] : []
@@ -179,7 +178,7 @@
     if (!workingRoot || typeof workingRoot !== "object") {
       throw new TypeError("Conditional Decision 需要显式 working root");
     }
-    const finalScorePlayer = getCurrentPlayer();
+    const finalScorePlayer = getCurrentPlayer(workingRoot);
     const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
       workingRoot.finalScoringState,
       finalScorePlayer?.id,
@@ -215,7 +214,7 @@
       };
       visit(0, []);
       return {
-        actorPlayer: getHeadlessConditionalPlayer(probeSectorPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, probeSectorPending),
         candidates: subsets.map((subset) => {
           const rocketIds = subset.map((choice) => choice.rocket.id);
           return {
@@ -231,7 +230,7 @@
     const probeLocationPending = getPendingProbeLocationRewardDecision(workingRoot);
     if (probeLocationPending) {
       return {
-        actorPlayer: getHeadlessConditionalPlayer(probeLocationPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, probeLocationPending),
         candidates: (probeLocationPending.choices || []).map(({ rocket }) => ({
           id: "conditionalChoice",
           family: "choose_target",
@@ -245,7 +244,7 @@
     const yichangdianCornerPending = getPendingYichangdianCornerAction();
     if (yichangdianCornerPending) {
       return {
-        actorPlayer: getPlayerById(yichangdianCornerPending.playerId) || getCurrentPlayer(),
+        actorPlayer: getPlayerById(workingRoot, yichangdianCornerPending.playerId) || getCurrentPlayer(workingRoot),
         candidates: getPendingYichangdianCornerCards(workingRoot, yichangdianCornerPending).map((card) => ({
           id: "conditionalChoice",
           family: "choose_reward",
@@ -259,7 +258,7 @@
     if (amibaTraceRemovalPending) {
       const traceChoices = amibaTraceRemovalPending.choices || [];
       return {
-        actorPlayer: getPlayerById(amibaTraceRemovalPending.playerId) || getCurrentPlayer(),
+        actorPlayer: getPlayerById(workingRoot, amibaTraceRemovalPending.playerId) || getCurrentPlayer(workingRoot),
         candidates: (traceChoices.length ? traceChoices : ["cancel"]).map((choiceId) => ({
           id: "conditionalChoice",
           family: choiceId === "cancel" ? "accept_optional_effect" : "choose_target",
@@ -272,7 +271,7 @@
     const jiuzheCardPlayPending = getPendingJiuzheCardPlay();
     if (jiuzheCardPlayPending) {
       return {
-        actorPlayer: getPlayerById(jiuzheCardPlayPending.playerId) || getCurrentPlayer(),
+        actorPlayer: getPlayerById(workingRoot, jiuzheCardPlayPending.playerId) || getCurrentPlayer(workingRoot),
         candidates: [
           ...(jiuzheCardPlayPending.cardIndexes || []).map((cardIndex) => ({
             id: "conditionalChoice",
@@ -298,7 +297,7 @@
         ? (banrenmaOpportunityPending.positions || []).map(String)
         : (banrenmaOpportunityPending.cardIds || []).map(String);
       return {
-        actorPlayer: getPlayerById(banrenmaOpportunityPending.playerId) || getCurrentPlayer(),
+        actorPlayer: getPlayerById(workingRoot, banrenmaOpportunityPending.playerId) || getCurrentPlayer(workingRoot),
         candidates: [
           ...rawChoices.map((choiceId) => ({
             id: "conditionalChoice",
@@ -321,7 +320,7 @@
       };
     }
     const buildAlienCardGainDecision = (pending, kind, label) => ({
-      actorPlayer: getPlayerById(pending.playerId) || getCurrentPlayer(),
+      actorPlayer: getPlayerById(workingRoot, pending.playerId) || getCurrentPlayer(workingRoot),
       candidates: [
         ...(pending.displayedAvailable ? [{
           id: "conditionalChoice",
@@ -372,7 +371,7 @@
     }
     if (chongFossilPending) {
       return {
-        actorPlayer: getHeadlessConditionalPlayer(chongFossilPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, chongFossilPending),
         candidates: (chongFossilPending.fossilIds || []).map((fossilId) => ({
           id: "conditionalChoice",
           family: "choose_reward",
@@ -386,7 +385,7 @@
     const runezuFacePending = getPendingRunezuFaceSymbolPlacement();
     if (runezuFacePending) {
       return {
-        actorPlayer: getPlayerById(runezuFacePending.playerId) || getCurrentPlayer(),
+        actorPlayer: getPlayerById(workingRoot, runezuFacePending.playerId) || getCurrentPlayer(workingRoot),
         candidates: (runezuFacePending.choices || []).map((choice) => ({
           id: "conditionalChoice",
           family: "choose_reward",
@@ -403,7 +402,7 @@
     const runezuBranchPending = getPendingRunezuSymbolBranch();
     if (runezuBranchPending) {
       return {
-        actorPlayer: getHeadlessConditionalPlayer(runezuBranchPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, runezuBranchPending),
         candidates: (runezuBranchPending.branches || []).map((branch, index) => ({
           id: "conditionalChoice",
           family: "choose_branch",
@@ -433,7 +432,7 @@
         });
       }
       return {
-        actorPlayer: getHeadlessConditionalPlayer(amibaSymbolPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, amibaSymbolPending),
         candidates,
       };
     }
@@ -441,7 +440,7 @@
     if (scanTargetPending) {
       if (scanTargetPending.type === "sector_scan") {
         return {
-          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
           candidates: (scanTargetPending.choices || []).filter((choice) => choice?.disabled !== true).map((choice) => ({
             id: "conditionalChoice",
             family: "choose_target",
@@ -458,7 +457,7 @@
       }
       if (scanTargetPending.type === "conditional_sector_scan") {
         return {
-          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
           candidates: (scanTargetPending.sectorXs || []).map((sectorX) => ({
             id: "conditionalChoice",
             family: "choose_target",
@@ -470,7 +469,7 @@
       }
       if (scanTargetPending.type === "discard_corner_repeat") {
         return {
-          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
           candidates: (scanTargetPending.choices || []).map((card) => ({
             id: "conditionalChoice",
             family: "choose_card",
@@ -482,7 +481,7 @@
       }
       if (scanTargetPending.type === "return_unfinished_task") {
         return {
-          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
           candidates: (scanTargetPending.choices || []).map((card) => ({
             id: "conditionalChoice",
             family: "choose_card",
@@ -494,7 +493,7 @@
       }
       if (scanTargetPending.type === "remove_orbit_to_probe") {
         return {
-          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
           candidates: (scanTargetPending.choices || []).map((choice) => ({
             id: "conditionalChoice",
             family: "choose_target",
@@ -505,7 +504,7 @@
       }
       if (scanTargetPending.type === "remove_planet_marker") {
         return {
-          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
           candidates: (scanTargetPending.choices || []).map((choice) => ({
             id: "conditionalChoice",
             family: "choose_target",
@@ -515,7 +514,7 @@
         };
       }
       if (scanTargetPending.type === "discard_any_income") {
-        const player = getHeadlessConditionalPlayer(scanTargetPending);
+        const player = getHeadlessConditionalPlayer(workingRoot, scanTargetPending);
         const selected = new Set(scanTargetPending.selectedCardIds || []);
         const candidates = (player?.hand || []).flatMap((card) => (
           selected.has(card.id) ? [] : [{
@@ -535,7 +534,7 @@
         return { actorPlayer: player, candidates };
       }
       if (scanTargetPending.type === "pay_credit_reward") {
-        const player = getHeadlessConditionalPlayer(scanTargetPending);
+        const player = getHeadlessConditionalPlayer(workingRoot, scanTargetPending);
         const candidates = [];
         if (players.canAfford(player, { credits: 1 })) {
           candidates.push({
@@ -554,7 +553,7 @@
         return { actorPlayer: player, candidates };
       }
       return {
-        actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, scanTargetPending),
         candidates: [
           ...(scanTargetPending.choices || []).flatMap((choice, choiceIndex) => (
           choice?.disabled ? [] : [{
@@ -582,7 +581,7 @@
     }
     const handScanPending = workingRoot.match?.handScanContinuation;
     if (handScanPending) {
-      const player = getHeadlessConditionalPlayer(handScanPending);
+      const player = getHeadlessConditionalPlayer(workingRoot, handScanPending);
       const candidates = (player?.hand || []).flatMap((card, handIndex) => (
         getPublicScanChoicesForCard(card)?.ok ? [{
           id: "conditionalChoice",
@@ -609,7 +608,7 @@
     }
     const passReservePending = getPendingPassReserveSelection(workingRoot);
     if (passReservePending) {
-      const player = getPlayerById(passReservePending.playerId) || getCurrentPlayer();
+      const player = getPlayerById(workingRoot, passReservePending.playerId) || getCurrentPlayer(workingRoot);
       return {
         actorPlayer: player,
         candidates: getPassReserveSelectionCards(workingRoot).map((card) => ({
@@ -629,8 +628,11 @@
     if (movePaymentContinuation) {
       return enumerateHeadlessMovePaymentActions(workingRoot, movePaymentContinuation);
     }
-    if (isTechTilePickingActive()) {
-      const player = getHeadlessConditionalPlayer(cardTriggerMovePending) || getCurrentPlayer();
+    if (isTechTilePickingActive(workingRoot)) {
+      const player = getHeadlessConditionalPlayer(
+        workingRoot,
+        workingRoot.match?.industryAbilityContinuation,
+      ) || getCurrentPlayer(workingRoot);
       const pendingTileId = workingRoot.techGameState.ui.pendingTileId;
       if (pendingTileId) {
         return {
@@ -648,14 +650,14 @@
           })),
         };
       }
-      const selectionOptions = getResearchTechSelectionOptions();
+      const selectionOptions = getResearchTechSelectionOptions(workingRoot);
       const candidates = tech.listTakeableTiles(
         workingRoot.techGameState.board,
         player?.techState,
         { techTypes: workingRoot.techGameState.ui.allowedTechTypes },
       ).flatMap((tileId) => {
         if (industry?.isTechBlockedByPirates?.(player, tileId)) return [];
-        if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(tileId)) return [];
+        if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) return [];
         return [{
           id: "conditionalChoice",
           family: "choose_target",
@@ -676,7 +678,7 @@
     }
     const dataPlacePending = getPendingDataPlacementDecision(workingRoot);
     if (dataPlacePending) {
-      const player = getHeadlessConditionalPlayer(dataPlacePending);
+      const player = getHeadlessConditionalPlayer(workingRoot, dataPlacePending);
       const candidates = (data.listPlaceDataChoices?.(player) || []).map((choice, choiceIndex) => ({
         id: "conditionalChoice",
         family: "choose_target",
@@ -701,7 +703,7 @@
     const cardTriggerPending = getPendingCardTriggerAction(workingRoot);
     if (cardTriggerPending) {
       return {
-        actorPlayer: getHeadlessConditionalPlayer(cardTriggerPending) || getCurrentPlayer(),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, cardTriggerPending) || getCurrentPlayer(workingRoot),
         candidates: (cardTriggerPending.matches || []).map((match, choiceIndex) => ({
           id: "conditionalChoice",
           family: "choose_branch",
@@ -735,13 +737,13 @@
           target: { kind: "card-task-completion", choiceId: "confirm" },
         }];
       return {
-        actorPlayer: getHeadlessConditionalPlayer(cardTaskPending) || getCurrentPlayer(),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, cardTaskPending) || getCurrentPlayer(workingRoot),
         candidates: choices,
       };
     }
     const cardTriggerMovePending = getPendingCardTriggerFreeMove(workingRoot);
     if (cardTriggerMovePending) {
-      const player = getHeadlessConditionalPlayer(cardTriggerMovePending) || getCurrentPlayer();
+      const player = getHeadlessConditionalPlayer(workingRoot, cardTriggerMovePending) || getCurrentPlayer(workingRoot);
       const providedMovePoints = Math.max(0, Math.round(Number(
         cardTriggerMovePending.match?.effect?.options?.movementPoints ?? 1
       ) || 0));
@@ -791,7 +793,7 @@
     }
     const scanFreeMovePending = workingRoot.match?.scanFreeMoveContinuation;
     if (scanFreeMovePending) {
-      const player = getHeadlessConditionalPlayer(scanFreeMovePending);
+      const player = getHeadlessConditionalPlayer(workingRoot, scanFreeMovePending);
       const candidates = [];
       for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
         for (const direction of [
@@ -821,7 +823,7 @@
     }
     const industryFreeMovePending = workingRoot.match?.industryFreeMoveContinuation;
     if (industryFreeMovePending) {
-      const player = getHeadlessConditionalPlayer(industryFreeMovePending);
+      const player = getHeadlessConditionalPlayer(workingRoot, industryFreeMovePending);
       const movedRocketIds = new Set((industryFreeMovePending.movedRocketIds || []).map(String));
       const candidates = [];
       for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
@@ -865,7 +867,7 @@
     const cardMovePending = workingRoot.match?.cardMoveContinuation;
     if (cardMovePending) {
       const effect = getCurrentActionEffect(workingRoot);
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const player = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const candidates = [];
       for (const rocket of getMovableTokensForCardMoveEffect(effect, player?.id) || []) {
         for (const direction of [
@@ -921,7 +923,7 @@
     }
     const cardCornerMovePending = getPendingCardCornerFreeMove(workingRoot);
     if (cardCornerMovePending) {
-      const player = getHeadlessConditionalPlayer(cardCornerMovePending) || getCurrentPlayer();
+      const player = getHeadlessConditionalPlayer(workingRoot, cardCornerMovePending) || getCurrentPlayer(workingRoot);
       const providedMovePoints = Math.max(0, Math.round(Number(
         cardCornerMovePending.action?.moveReward?.movementPoints
           ?? cardCornerMovePending.action?.movementPoints
@@ -970,10 +972,10 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const strategySlotPending = getPendingStrategySlotDecision();
+    const strategySlotPending = getPendingStrategySlotDecision(workingRoot);
     if (strategySlotPending) {
       return {
-        actorPlayer: getHeadlessConditionalPlayer(strategySlotPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, strategySlotPending),
         candidates: (strategySlotPending.slotIds || []).map((slotId) => ({
           id: "conditionalChoice",
           family: "choose_reward",
@@ -989,7 +991,7 @@
     }
     const discardPending = workingRoot.match?.discardContinuation;
     if (discardPending) {
-      const player = getHeadlessConditionalPlayer(discardPending);
+      const player = getHeadlessConditionalPlayer(workingRoot, discardPending);
       const count = Math.max(0, Math.round(Number(discardPending.count) || 0));
       const hand = player?.hand || [];
       const combinations = [];
@@ -1032,7 +1034,7 @@
     const cardPending = workingRoot.match?.cardSelectionContinuation;
     if (cardPending) {
       if (["industry_deepspace_hand", "industry_future_hand"].includes(cardPending.type)) {
-        const player = getHeadlessConditionalPlayer(cardPending);
+        const player = getHeadlessConditionalPlayer(workingRoot, cardPending);
         return {
           actorPlayer: player,
           candidates: (player?.hand || []).flatMap((card, handIndex) => (
@@ -1105,14 +1107,14 @@
         });
       }
       return {
-        actorPlayer: getHeadlessConditionalPlayer(cardPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, cardPending),
         candidates,
       };
     }
     const landPending = getPendingLandTargetDecision(workingRoot);
     if (landPending) {
       return {
-        actorPlayer: getHeadlessConditionalPlayer(landPending),
+        actorPlayer: getHeadlessConditionalPlayer(workingRoot, landPending),
         candidates: (landPending.choices || []).map((choice, choiceIndex) => ({
           id: "conditionalChoice",
           family: "choose_target",
@@ -1131,7 +1133,7 @@
     const tracePending = getAlienTraceContinuation(workingRoot);
     const picker = getAlienTracePickerState();
     if (tracePending && picker?.mode === "fangzhou-destination") {
-      const player = getHeadlessConditionalPlayer(picker);
+      const player = getHeadlessConditionalPlayer(workingRoot, picker);
       const alienSlotId = Number(picker.selectedAlienSlotId || 0);
       const traceTypes = getFangzhouUnlockableTraceTypes(
         workingRoot,
@@ -1162,7 +1164,7 @@
       return { actorPlayer: player, candidates };
     }
     if (tracePending && picker?.mode === "fangzhou-unlock-color") {
-      const player = getHeadlessConditionalPlayer(picker);
+      const player = getHeadlessConditionalPlayer(workingRoot, picker);
       const traceTypes = getFangzhouUnlockableTraceTypes(
         workingRoot,
         Number(picker.selectedAlienSlotId || 0),
@@ -1203,7 +1205,7 @@
           });
         }
       }
-      return { actorPlayer: getHeadlessConditionalPlayer(tracePending || picker), candidates };
+      return { actorPlayer: getHeadlessConditionalPlayer(workingRoot, tracePending || picker), candidates };
     }
     return { actorPlayer: null, candidates: [] };
   }
@@ -1270,17 +1272,20 @@
       workingRoot,
     ),
     "research-tech-tile": (action, workingRoot) => {
-      const result = handleSupplyTechTileClick(action.target.tileId || action.target.choiceId);
+      const result = handleSupplyTechTileClick(workingRoot, action.target.tileId || action.target.choiceId);
       if (result?.ok !== false && workingRoot.techGameState.ui.pendingTileId) {
-        const blueSlot = tech.getAvailableBlueSlots(getCurrentPlayer()?.techState)?.[0];
-        if (blueSlot != null) return confirmTechBlueSlotChoice(blueSlot);
+        const blueSlot = tech.getAvailableBlueSlots(getCurrentPlayer(workingRoot)?.techState)?.[0];
+        if (blueSlot != null) return confirmTechBlueSlotChoice(workingRoot, blueSlot);
       }
       return result;
     },
-    "research-tech-blue-slot": (action) => confirmTechBlueSlotChoice(Number(action.target.slotId)),
-    "skip-research-tech": () => {
-      cancelTechSelection();
-      if (isActionEffectFlowActive()) skipCurrentActionEffect();
+    "research-tech-blue-slot": (action, workingRoot) => confirmTechBlueSlotChoice(
+      workingRoot,
+      Number(action.target.slotId),
+    ),
+    "skip-research-tech": (_action, workingRoot) => {
+      cancelTechSelection(workingRoot);
+      if (isActionEffectFlowActive(workingRoot)) skipCurrentActionEffect(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已跳过无可用科技的效果" };
     },
     "fangzhou-trace-destination": (action, workingRoot) => handleFangzhouTraceDestinationChoice(
@@ -1339,7 +1344,7 @@
     ),
     "skip-card-trigger-free-move": (_action, workingRoot) => {
       const pending = getPendingCardTriggerFreeMove(workingRoot);
-      const player = getCurrentPlayer();
+      const player = getCurrentPlayer(workingRoot);
       if (pending.beforePlayer) restoreObjectSnapshot(player, pending.beforePlayer);
       if (pending.beforeCardState) restoreObjectSnapshot(workingRoot.cardState, pending.beforeCardState);
       delete workingRoot.match.cardTriggerFreeMoveContinuation;
