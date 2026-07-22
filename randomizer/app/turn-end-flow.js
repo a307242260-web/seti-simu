@@ -264,7 +264,7 @@
     const beforeCardState = structuredClone(cardState);
 
     beginEffectHistoryStep(effect.label);
-    const result = rotateSolarOrbit(1);
+    const result = rotateSolarOrbit(workingRoot, 1);
     recordHistoryCommand(historyCommands.createRestoreObjectCommand(
       solarState,
       beforeSolarState,

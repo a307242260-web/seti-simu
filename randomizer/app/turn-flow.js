@@ -384,14 +384,14 @@
       industry?.resetAllIndustryActionMarks?.(playerState.players);
       cancelIndustryAbilityFlow?.({ silent: true });
       randomizePlayerTurnOrder(workingRoot);
-      randomizeWheels?.();
-      randomizeSectors?.();
+      randomizeWheels?.(workingRoot);
+      randomizeSectors?.(workingRoot);
       fillNebulaDataBoard?.({ source: "setup", replace: true });
       solarState.aomomoActive = false;
       if (aomomoClearNebulaId) data.clearNebulaData(nebulaDataState, aomomoClearNebulaId);
       renderWheels?.();
       renderSectorNebulaDataBoard?.();
-      randomizeFinalScores?.();
+      randomizeFinalScores?.(workingRoot);
       randomizeAliens?.();
       tech.setupBoardBonuses(techGameState);
       renderRoundStatus?.();

@@ -702,6 +702,8 @@
           return { ok: true, value: cloneResidentPresentation(runPlaceDataToComputerForRoot(workingRoot)) };
         case "debug_execute_income":
           return { ok: true, value: cloneResidentPresentation(executeIncomeForCurrentPlayerForRoot(workingRoot)) };
+        case "solar_rotate":
+          return { ok: true, value: cloneResidentPresentation(rotateSolarOrbitForRoot(workingRoot, command.count)) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -8495,14 +8497,15 @@
   function openRunezuSymbolBranchDialog(...args) { return callBrowserDomainCommand("alien_species", "openRunezuSymbolBranchDialog", args); }
   function handleRunezuSymbolBranchChoice(...args) { return callBrowserDomainCommand("alien_species", "handleRunezuSymbolBranchChoice", args); }
   function alignAlienPanelsToPlanets(...args) { return alienSpeciesRuntime.alignAlienPanelsToPlanets(...args); }
-  function triggerYichangdianAnomalyForEarthX(earthX) {
-    const anomaly = yichangdian?.getAnomalyBySectorX?.(alienGameState, earthX);
-    const alienSlotId = alienGameState.yichangdian?.revealedSlotId;
+  function triggerYichangdianAnomalyForEarthX(workingRoot, earthX) {
+    const alienState = workingRoot.alienGameState;
+    const anomaly = yichangdian?.getAnomalyBySectorX?.(alienState, earthX);
+    const alienSlotId = alienState.yichangdian?.revealedSlotId;
     if (!anomaly || !alienSlotId) {
-      yichangdian?.updateNextAnomaly?.(alienGameState, earthX);
+      yichangdian?.updateNextAnomaly?.(alienState, earthX);
       return null;
     }
-    const traceEntry = yichangdian.getTopTraceEntry(alienGameState, alienSlotId, anomaly.traceType);
+    const traceEntry = yichangdian.getTopTraceEntry(alienState, alienSlotId, anomaly.traceType);
     const player = findPlayerForYichangdianEntry(traceEntry);
     const reward = yichangdian.getAnomalyReward(anomaly.markerId);
     if (!player || !reward) return null;
@@ -8521,7 +8524,7 @@
         effectLabel: `异常点 ${anomaly.markerId}`,
       });
     }
-    yichangdian.updateNextAnomaly(alienGameState, earthX);
+    yichangdian.updateNextAnomaly(alienState, earthX);
     return {
       ok: rewardResult.ok,
       anomaly,
@@ -10214,7 +10217,7 @@
     renderRoundStatus,
     renderStateReadout,
     renderTechBoard,
-    rotateSolarOrbit,
+    rotateSolarOrbit: rotateSolarOrbitForRoot,
     scheduleAiAutoStepIfNeeded,
     selectDefaultRocketForCurrentPlayer,
     settleCardTasksAfterEffect,
@@ -11507,64 +11510,66 @@
   }
 
   /** 官网 randomizeWheels 的无动画版：直接累加步数并渲染 */
-  function randomizeWheels() {
+  function randomizeWheels(workingRoot) {
+    const { solarState: workingSolarState } = workingRoot;
     for (let w = 1; w <= 4; w += 1) {
       const delta = Math.floor(Math.random() * 8 + WHEEL_OFFSETS[w]);
-      solarState.wheelSteps[w] -= delta;
+      workingSolarState.wheelSteps[w] -= delta;
     }
-    solarState.rotation = solar.normalizeRotationState(solarState.wheelSteps, 0);
+    workingSolarState.rotation = solar.normalizeRotationState(workingSolarState.wheelSteps, 0);
     renderWheels();
   }
 
   /** 官网 randomizeSectors 逻辑：将 4 个扇区洗牌分配到 4 个外边槽位 */
-  function randomizeSectors() {
+  function randomizeSectors(workingRoot) {
     const pool = [1, 2, 3, 4];
     while (pool.length) {
       const slotId = pool.length;
       const pickIndex = Math.floor(Math.random() * pool.length);
       const sectorId = pool.splice(pickIndex, 1)[0];
-      solarState.sectorBySlot[slotId] = sectorId;
+      workingRoot.solarState.sectorBySlot[slotId] = sectorId;
     }
     renderSectors();
   }
 
   /** 终局计分：a/b/c/d 各自独立随机 1 或 2 */
-  function randomizeFinalScores() {
-    finalScoring.randomizeTileVariants(finalScoringState, FINAL_SCORE_IDS);
+  function randomizeFinalScores(workingRoot) {
+    finalScoring.randomizeTileVariants(workingRoot.finalScoringState, FINAL_SCORE_IDS);
     els.finalScoreTiles.forEach((img) => {
       const id = img.dataset.finalId;
       if (!id) return;
-      const variant = finalScoring.getTileVariant(finalScoringState, id);
+      const variant = finalScoring.getTileVariant(workingRoot.finalScoringState, id);
       img.src = `../assets/final/final_${id}${variant}.png`;
       img.alt = `终局计分 ${id.toUpperCase()}${variant}`;
     });
   }
 
   function getSetupState() {
-    return solar.createSetupState(solarState);
+    return solar.createSetupState(createStateSourceReadoutRoot().solarState);
   }
 
-  function rotateSolarOrbit(count) {
+  function rotateSolarOrbitForRoot(workingRoot, count) {
+    const { solarState: workingSolarState } = workingRoot;
     const iterations = Math.max(1, Math.round(Number(count || 1)));
     const rotationSettlements = [];
     const anomalyTriggers = [];
     const events = [];
 
     for (let index = 0; index < iterations; index += 1) {
-      const beforeRotation = structuredClone(solarState.rotation);
-      solarState.rotation = solar.applySolarOrbitRotation(solarState.rotation, 1);
-      solarState.wheelSteps = solar.rotationToWheelSteps(solarState.rotation);
+      const beforeRotation = structuredClone(workingSolarState.rotation);
+      workingSolarState.rotation = solar.applySolarOrbitRotation(workingSolarState.rotation, 1);
+      workingSolarState.wheelSteps = solar.rotationToWheelSteps(workingSolarState.rotation);
       const settlement = abilities.rocket.settleRocketsAfterSolarRotation(
-        { solarState, playerState, rocketState },
+        workingRoot,
         beforeRotation,
-        solarState.rotation,
+        workingSolarState.rotation,
       );
       if (settlement) {
         rotationSettlements.push(settlement);
         events.push(...(settlement.events || []));
       }
       const earth = getEarthSectorCoordinate();
-      const anomalyResult = triggerYichangdianAnomalyForEarthX(earth.x);
+      const anomalyResult = triggerYichangdianAnomalyForEarthX(workingRoot, earth.x);
       if (anomalyResult) {
         anomalyTriggers.push(anomalyResult);
         events.push(...(anomalyResult.events || []));
@@ -11593,6 +11598,10 @@
       payload: { rotationSettlements, anomalyTriggers },
       events,
     };
+  }
+
+  function rotateSolarOrbit(count) {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "solar_rotate", count }).value;
   }
 
   function handleMainActionButtonClick(event) {
