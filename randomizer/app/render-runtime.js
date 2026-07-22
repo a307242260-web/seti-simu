@@ -179,10 +179,11 @@
       planetReferenceLayout,
       planetStats,
       players,
+      document,
+      chongFossilOwnerTokenElements,
       referencePlacementKindLabels,
       planetsReferenceSize,
       rocketSurface,
-      removeRocketElement,
       renderRockets,
     } = context;
     function requireWorkingRoot(workingRoot) {
@@ -284,6 +285,14 @@
       rocketActions.placeRocketAtPlanetsReferencePoint(rocketState, rocket.id, createDefaultReferencePlacementInput(placement));
       return rocket;
     }
+    function removeRocketElement(rocketId) {
+      document?.getElementById(`rocket-${rocketId}`)?.remove();
+      const chongOwnerToken = chongFossilOwnerTokenElements?.get(String(rocketId));
+      if (chongOwnerToken) {
+        chongOwnerToken.remove();
+        chongFossilOwnerTokenElements.delete(String(rocketId));
+      }
+    }
     function removePlanetMarkerRockets(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       rocketState.rockets.filter(isPlanetMarkerRocket).forEach((rocket) => {
@@ -372,6 +381,7 @@
       getPolarPointFromClientPosition, formatPolarPoint, formatSectorCoordinate,
       formatPlanetsReferencePoint, isRocketOnPlanetsReference, createDefaultReferencePlacementInput,
       createPlanetMarkerPlacement, createPlanetMarkerRocket, removePlanetMarkerRockets,
+      removeRocketElement,
       syncPlanetOrbitLandMarkers, seedDefaultReferenceRockets, formatRocketLabel,
       getMovableTokensForPlayer, createRocketSnapshot, getEarthSectorCoordinate,
       getRocketCoordinateReadoutLines,

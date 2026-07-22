@@ -1951,10 +1951,11 @@
     planetReferenceLayout,
     planetStats,
     players,
+    document,
+    chongFossilOwnerTokenElements,
     referencePlacementKindLabels: REFERENCE_PLACEMENT_KIND_LABELS,
     planetsReferenceSize: PLANETS_REFERENCE_SIZE,
     rocketSurface: ROCKET_SURFACE,
-    removeRocketElement: (...args) => removeRocketElement(...args),
     renderRockets: (...args) => renderRockets(...args),
   });
   const {
@@ -1984,6 +1985,7 @@
     formatRocketLabel,
     getMovableTokensForPlayer: getMovableTokensForPlayerForRoot,
     createRocketSnapshot,
+    removeRocketElement,
     getEarthSectorCoordinate: getEarthSectorCoordinateForRoot,
     getRocketCoordinateReadoutLines,
   } = coordinateRuntime;
@@ -9560,17 +9562,6 @@
 
   function createReadoutActionContext() {
     return createActionContextForWorkingRoot(createStateSourceReadoutRoot());
-  }
-
-  function removeRocketElement(rocketId) {
-    if (!document) return;
-    const element = document.getElementById(`rocket-${rocketId}`);
-    if (element) element.remove();
-    const chongOwnerToken = chongFossilOwnerTokenElements.get(String(rocketId));
-    if (chongOwnerToken) {
-      chongOwnerToken.remove();
-      chongFossilOwnerTokenElements.delete(String(rocketId));
-    }
   }
 
   let legacyActionBarController = null;
