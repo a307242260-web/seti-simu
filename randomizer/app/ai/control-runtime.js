@@ -135,13 +135,16 @@
       runAiAutomationStep,
       resetGameForAiAutoBattle,
       resetAiStrategyDemandCache = () => {},
-      setPlayerAiDifficulty = null,
+      setPlayerAiDifficulty,
       setTurnStatePlayerOrder,
       startInitialSelection,
       updateActionButtons,
     } = context;
     if (typeof getRuleProjection !== "function") {
       throw new TypeError("createAiControlRuntime requires getRuleProjection() StateSource reader");
+    }
+    if (typeof setPlayerAiDifficulty !== "function") {
+      throw new TypeError("createAiControlRuntime requires setPlayerAiDifficulty() Composition command");
     }
 
     const aiAutoBattleState = {
@@ -179,15 +182,14 @@
     }
 
     function applyAiDifficultyToPlayer(player, difficulty = aiAutoBattleState.aiDifficulty) {
-      if (!player) return;
+      if (!player) return { ok: false, code: "AI_PLAYER_REQUIRED", message: "缺少 AI 玩家" };
       const normalized = normalizeAiDifficulty(difficulty);
       const label = getAiDifficultyLabel(normalized);
-      if (typeof setPlayerAiDifficulty === "function") {
-        setPlayerAiDifficulty(player.id, normalized, label);
-      } else {
-        player.aiDifficulty = normalized;
-        player.aiDifficultyLabel = label;
+      const result = setPlayerAiDifficulty(player.id, normalized, label);
+      if (!result || result.ok === false) {
+        throw new Error(result?.message || "AI 难度 Composition command 执行失败");
       }
+      return result;
     }
 
     function applyAiDifficultyToPlayerIds(playerIds = [], difficulty = aiAutoBattleState.aiDifficulty) {
