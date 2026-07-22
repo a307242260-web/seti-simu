@@ -1597,6 +1597,28 @@
     setActiveEffectFlowOwner,
     withEffectExecutionPlayer,
   } = playerEffectOwnerRuntime;
+  const browserContextRuntime = runtimeModule.createBrowserContextRuntime({
+    players,
+    industry,
+    browserHostState,
+    createReadoutRoot: createStateSourceReadoutRoot,
+    getPlayerById,
+    getRoundOrderPlayerIds: (...args) => getRoundOrderPlayerIds(...args),
+    isAiPlayer: (...args) => isAiAutoBattlePlayer(...args),
+    isAiAutomationPaused: (...args) => isAiAutomationPaused(...args),
+  });
+  const {
+    getInterfacePlayer,
+    createScanRunId,
+    resetScanRunSequence,
+    getActivePlayers,
+    getPlayerLabelById,
+    getPlayerCompanyLabel,
+    getPlayerDisplayLabel,
+    getPlayerActionLabel,
+    getTargetPlayerOptions,
+    getPlayerRoundOrderNumber,
+  } = browserContextRuntime;
 
   function createInitialSelectionProjection(viewer, resident) {
     const active = setupSelectionState.phase === "selecting";
@@ -4102,73 +4124,6 @@
     }
     recordInitialSelectionScoreSources(result);
     return result;
-  }
-
-  function getPlayerRoundOrderNumber(playerId) {
-    const index = getRoundOrderPlayerIds().indexOf(playerId);
-    return index >= 0 ? index + 1 : null;
-  }
-
-  function getInterfacePlayer() {
-    const { playerState, turnState } = createStateSourceReadoutRoot();
-    const currentPlayer = players.getCurrentPlayer(playerState);
-    if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id) || isAiAutomationPaused()) return currentPlayer;
-    const activeIds = new Set(turnState.activePlayerIds || []);
-    const humanPlayer = playerState.players.find((player) => activeIds.has(player.id) && !isAiAutoBattlePlayer(player.id))
-      || playerState.players.find((player) => !isAiAutoBattlePlayer(player.id))
-      || null;
-    return humanPlayer || currentPlayer;
-  }
-
-  function createScanRunId(prefix = "scan") {
-    browserHostState.scanRunSequence += 1;
-    return `${prefix}-${browserHostState.scanRunSequence}`;
-  }
-
-  function resetScanRunSequence() {
-    browserHostState.scanRunSequence = 0;
-  }
-
-  function getActivePlayers() {
-    const { playerState, turnState } = createStateSourceReadoutRoot();
-    const activeIds = new Set(turnState.activePlayerIds || []);
-    return playerState.players.filter((player) => activeIds.has(player.id));
-  }
-
-  function getPlayerLabelById(playerId) {
-    const player = getPlayerById(playerId);
-    return player ? player.colorLabel || player.name || player.id : playerId;
-  }
-
-  function getPlayerCompanyLabel(player) {
-    return industry?.getPlayerIndustryLabel?.(player)
-      || player?.initialSelection?.industry?.label
-      || null;
-  }
-
-  function getPlayerDisplayLabel(player, options = {}) {
-    const base = player?.colorLabel || player?.name || player?.id || "玩家";
-    const agentSuffix = isAiAutoBattlePlayer(player?.id) ? "(电脑)" : "";
-    const companyLabel = options.includeCompany === false ? null : getPlayerCompanyLabel(player);
-    return `${base}${agentSuffix}${companyLabel ? `-${companyLabel}` : ""}`;
-  }
-
-  function getPlayerActionLabel(player, fallback = {}) {
-    if (player) return player.colorLabel || player.name || player.id || "玩家";
-    if (fallback.playerId) return getPlayerLabelById(fallback.playerId) || fallback.playerId;
-    if (fallback.playerColor) {
-      return players.getPlayerColorDefinition(fallback.playerColor)?.label || fallback.playerColor;
-    }
-    return "玩家";
-  }
-
-  function getTargetPlayerOptions(player, options = {}) {
-    const targetPlayerId = options.targetPlayerId || options.playerId || player?.id || null;
-    const targetPlayerColor = options.targetPlayerColor || options.playerColor || player?.color || null;
-    const targetOptions = {};
-    if (targetPlayerId) targetOptions.targetPlayerId = targetPlayerId;
-    if (targetPlayerColor) targetOptions.targetPlayerColor = targetPlayerColor;
-    return targetOptions;
   }
 
   const aiControllerState = {

@@ -65,4 +65,34 @@ assert.equal(state.browserHost.scanRunSequence, 0);
   assert.equal(ui.effectExecutionPlayerId, null);
 }
 
+{
+  const human = { id: "human", color: "white", colorLabel: "白色" };
+  const bot = { id: "bot", color: "blue", colorLabel: "蓝色" };
+  const playerState = { currentPlayerId: "bot", players: [human, bot] };
+  const browserHostState = { scanRunSequence: 0 };
+  const context = runtime.createBrowserContextRuntime({
+    players: {
+      getCurrentPlayer: (stateValue) => stateValue.players.find((player) => player.id === stateValue.currentPlayerId),
+      getPlayerColorDefinition: (color) => ({ label: color === "blue" ? "蓝色" : "白色" }),
+    },
+    industry: { getPlayerIndustryLabel: (player) => player.id === "human" ? "人类公司" : null },
+    browserHostState,
+    createReadoutRoot: () => ({ playerState, turnState: { activePlayerIds: ["human", "bot"] } }),
+    getPlayerById: (id) => playerState.players.find((player) => player.id === id) || null,
+    getRoundOrderPlayerIds: () => ["bot", "human"],
+    isAiPlayer: (id) => id === "bot",
+    isAiAutomationPaused: () => false,
+  });
+  assert.equal(context.getInterfacePlayer(), human);
+  assert.equal(context.createScanRunId("sector"), "sector-1");
+  context.resetScanRunSequence();
+  assert.equal(browserHostState.scanRunSequence, 0);
+  assert.deepEqual(context.getActivePlayers(), [human, bot]);
+  assert.equal(context.getPlayerDisplayLabel(bot), "蓝色(电脑)");
+  assert.equal(context.getPlayerDisplayLabel(human), "白色-人类公司");
+  assert.equal(context.getPlayerActionLabel(null, { playerColor: "blue" }), "蓝色");
+  assert.deepEqual(context.getTargetPlayerOptions(human), { targetPlayerId: "human", targetPlayerColor: "white" });
+  assert.equal(context.getPlayerRoundOrderNumber("human"), 2);
+}
+
 console.log("runtime tests passed");

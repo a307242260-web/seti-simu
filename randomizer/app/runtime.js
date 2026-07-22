@@ -223,6 +223,77 @@
     });
   }
 
+  function createBrowserContextRuntime(context = {}) {
+    function getInterfacePlayer() {
+      const { playerState, turnState } = context.createReadoutRoot();
+      const currentPlayer = context.players.getCurrentPlayer(playerState);
+      if (!currentPlayer || !context.isAiPlayer(currentPlayer.id) || context.isAiAutomationPaused()) return currentPlayer;
+      const activeIds = new Set(turnState.activePlayerIds || []);
+      const humanPlayer = playerState.players.find((player) => activeIds.has(player.id) && !context.isAiPlayer(player.id))
+        || playerState.players.find((player) => !context.isAiPlayer(player.id))
+        || null;
+      return humanPlayer || currentPlayer;
+    }
+
+    function createScanRunId(prefix = "scan") {
+      context.browserHostState.scanRunSequence += 1;
+      return `${prefix}-${context.browserHostState.scanRunSequence}`;
+    }
+
+    function resetScanRunSequence() {
+      context.browserHostState.scanRunSequence = 0;
+    }
+
+    function getActivePlayers() {
+      const { playerState, turnState } = context.createReadoutRoot();
+      const activeIds = new Set(turnState.activePlayerIds || []);
+      return playerState.players.filter((player) => activeIds.has(player.id));
+    }
+
+    function getPlayerLabelById(playerId) {
+      const player = context.getPlayerById(playerId);
+      return player ? player.colorLabel || player.name || player.id : playerId;
+    }
+
+    function getPlayerCompanyLabel(player) {
+      return context.industry?.getPlayerIndustryLabel?.(player) || player?.initialSelection?.industry?.label || null;
+    }
+
+    function getPlayerDisplayLabel(player, options = {}) {
+      const base = player?.colorLabel || player?.name || player?.id || "玩家";
+      const agentSuffix = context.isAiPlayer(player?.id) ? "(电脑)" : "";
+      const companyLabel = options.includeCompany === false ? null : getPlayerCompanyLabel(player);
+      return `${base}${agentSuffix}${companyLabel ? `-${companyLabel}` : ""}`;
+    }
+
+    function getPlayerActionLabel(player, fallback = {}) {
+      if (player) return player.colorLabel || player.name || player.id || "玩家";
+      if (fallback.playerId) return getPlayerLabelById(fallback.playerId) || fallback.playerId;
+      if (fallback.playerColor) return context.players.getPlayerColorDefinition(fallback.playerColor)?.label || fallback.playerColor;
+      return "玩家";
+    }
+
+    function getTargetPlayerOptions(player, options = {}) {
+      const targetPlayerId = options.targetPlayerId || options.playerId || player?.id || null;
+      const targetPlayerColor = options.targetPlayerColor || options.playerColor || player?.color || null;
+      return {
+        ...(targetPlayerId ? { targetPlayerId } : {}),
+        ...(targetPlayerColor ? { targetPlayerColor } : {}),
+      };
+    }
+
+    function getPlayerRoundOrderNumber(playerId) {
+      const index = context.getRoundOrderPlayerIds().indexOf(playerId);
+      return index >= 0 ? index + 1 : null;
+    }
+
+    return Object.freeze({
+      getInterfacePlayer, createScanRunId, resetScanRunSequence, getActivePlayers,
+      getPlayerLabelById, getPlayerCompanyLabel, getPlayerDisplayLabel, getPlayerActionLabel,
+      getTargetPlayerOptions, getPlayerRoundOrderNumber,
+    });
+  }
+
   return {
     createRuntime,
     createActionLogState,
@@ -232,5 +303,6 @@
     createUiState,
     createBrowserHostState,
     createPlayerEffectOwnerRuntime,
+    createBrowserContextRuntime,
   };
 });
