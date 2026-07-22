@@ -27,13 +27,16 @@
       chong,
       amiba,
       runezu,
-      solarState,
-      nebulaDataState,
       alienGameState,
       FINAL_ROUND_NUMBER,
       AI_RESOURCE_VALUES,
       AI_TRACE_TYPES,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI alien valuation requires a StateSource rule readout");
+      return workingRoot;
+    };
     const aiAlienTraceEntryBelongsToPlayer = (...args) => context.aiAlienTraceEntryBelongsToPlayer(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
     const callback = (...args) => context.callback(...args);
@@ -277,6 +280,7 @@
 
     function getAiPlanetCoordinateById(planetId) {
       if (!planetId) return null;
+      const { solarState } = readRuleRoot();
       const coordinate = getPlanetSectorCoordinate?.(planetId);
       if (coordinate) return { x: coordinate.x, y: coordinate.y };
       if (planetId === "earth") {
@@ -1305,6 +1309,7 @@
 
     function scoreAiYichangdianNextAnomalyScanValue(player = getCurrentPlayer()) {
       if (!yichangdian?.getNextAnomalySectorX) return 0;
+      const { solarState } = readRuleRoot();
       const earth = getEarthSectorCoordinate?.();
       if (!earth || !alienGameState?.yichangdian?.revealInitialized) return 0;
       const nextSectorX = yichangdian.getNextAnomalySectorX(alienGameState, earth.x);
@@ -1320,6 +1325,7 @@
 
     function countAiYichangdianAnomalySignals() {
       if (!yichangdian || !solar?.getNebulaAtCoordinate) return 0;
+      const { nebulaDataState, solarState } = readRuleRoot();
       return (alienGameState?.yichangdian?.anomalies || []).reduce((total, anomaly) => {
         const nebula = solar.getNebulaAtCoordinate(anomaly.sectorX, 5, solarState?.sectorBySlot);
         const tokens = nebulaDataState?.nebulae?.[nebula?.id]?.tokens || [];

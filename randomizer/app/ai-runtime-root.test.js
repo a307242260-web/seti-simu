@@ -13,6 +13,7 @@ const { createAlienChoiceValue } = require("../game/ai/alien-choice-value");
 const { createTechAction } = require("../game/ai/tech-action");
 const { createScanValue } = require("../game/ai/scan-value");
 const { createDemandCard } = require("../game/ai/demand-card");
+const { createAlienValuation } = require("../game/ai/alien-valuation");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -281,6 +282,22 @@ const players = {
   assert.equal(demandCard.getAiAlienTraceTargetDemandForSlot(demand, 1, "blue"), 3);
   readout = rootB;
   assert.equal(demandCard.getAiAlienTraceTargetDemandForSlot(demand, 1, "blue"), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.solarState = { planetLocations: [{ planetId: "mars", x: 1, y: 2 }] };
+  const rootB = createRoot("a", 1);
+  rootB.solarState = { planetLocations: [{ planetId: "mars", x: 7, y: 4 }] };
+  let readout = rootA;
+  const alienValuation = createAlienValuation(contextWith({
+    getPlanetSectorCoordinate: () => null,
+    getRuleReadout: () => readout,
+    solar: { createSolarSnapshot: (solarState) => solarState },
+  }));
+  assert.deepEqual(alienValuation.getAiPlanetCoordinateById("mars"), { x: 1, y: 2 });
+  readout = rootB;
+  assert.deepEqual(alienValuation.getAiPlanetCoordinateById("mars"), { x: 7, y: 4 });
 }
 
 {
