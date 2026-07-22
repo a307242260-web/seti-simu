@@ -11,6 +11,67 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  function stripAssetExtension(value) {
+    return String(value || "").replace(/\.[^.]+$/, "");
+  }
+
+  function shuffleList(items, random = Math.random) {
+    const result = [...(items || [])];
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const pickIndex = Math.floor(random() * (index + 1));
+      [result[index], result[pickIndex]] = [result[pickIndex], result[index]];
+    }
+    return result;
+  }
+
+  function createInitialIncomeFlow(context = {}) {
+    function buildEffectNodes(entries = []) {
+      const effects = [];
+      for (const entry of entries) {
+        const total = Math.max(0, Math.round(Number(entry?.count) || 0));
+        if (!entry?.playerId || total <= 0) continue;
+        const companyLabel = entry.label || "公司牌";
+        for (let sequence = 1; sequence <= total; sequence += 1) {
+          effects.push({
+            id: `initial-income-${entry.playerId}-${sequence}`,
+            type: "initial_income",
+            icon: "income",
+            label: `${companyLabel}：收入增加 ${sequence}/${total}`,
+            status: "pending",
+            undoable: false,
+            options: { playerId: entry.playerId, companyLabel, sequence, total },
+          });
+        }
+      }
+      return effects;
+    }
+
+    function start(workingRoot, entries = []) {
+      const effects = buildEffectNodes(entries);
+      if (!effects.length) return false;
+      context.setActionEffectFlow(workingRoot, context.abilities.chain.startAbilityChain(
+        "initialIncome",
+        "初始收入增加",
+        effects,
+      ));
+      const flow = context.getActionEffectFlow(workingRoot);
+      flow.actionType = "initialIncome";
+      flow.playerId = effects[0]?.options?.playerId || null;
+      context.assignEffectFlowOwner(flow, flow.playerId);
+      const firstPlayer = (workingRoot.playerState.players || []).find((player) => player.id === flow.playerId) || null;
+      if (firstPlayer) workingRoot.playerState.currentPlayerId = firstPlayer.id;
+      context.setActionEffectFlowActive(true);
+      workingRoot.rocketState.statusNote = "初始收入增加：请依次点击收入效果";
+      context.renderDebugPlayerSwitch();
+      context.renderPlayerStats();
+      context.renderPlayerHand();
+      context.activateNextActionEffect(workingRoot);
+      return true;
+    }
+
+    return Object.freeze({ buildInitialIncomeEffectNodes: buildEffectNodes, startInitialIncomeEffectFlow: start });
+  }
+
   function createActionRuntime(context = {}) {
     if (!context.setupSelectionState) {
       throw new Error("createActionRuntime requires setupSelectionState");
@@ -28,8 +89,8 @@
       INDUSTRY_CARD_FILES = [],
       HISTORY_SOURCE_SETUP = "setup",
       ACTION_LOG_DEFAULT_LABELS = {},
-      stripAssetExtension = (value) => String(value || "").replace(/\.[^.]+$/, ""),
-      shuffleList = (items) => [...(items || [])],
+      stripAssetExtension: stripAssetExtensionOption = stripAssetExtension,
+      shuffleList: shuffleListOption = shuffleList,
       getCurrentPlayer,
       getPlayerById,
       getPlayerLabelById,
@@ -138,7 +199,7 @@
       return {
         id: `industry:${fileName}`,
         kind: "industry",
-        label: stripAssetExtension(fileName),
+        label: stripAssetExtensionOption(fileName),
         src: `../assets/industry/${fileName}`,
         width: INITIAL_SELECTION_CARD_SIZE.industry.width,
         height: INITIAL_SELECTION_CARD_SIZE.industry.height,
@@ -157,7 +218,7 @@
     }
 
     function normalizeStartIndustryLabels(industryLabels) {
-      const allLabels = INDUSTRY_CARD_FILES.map(stripAssetExtension);
+      const allLabels = INDUSTRY_CARD_FILES.map(stripAssetExtensionOption);
       if (!Array.isArray(industryLabels)) return allLabels;
       const requested = new Set(industryLabels.map((label) => String(label)));
       const selectedLabels = allLabels.filter((label) => requested.has(label));
@@ -166,14 +227,14 @@
 
     function getSelectedStartIndustryCardFiles() {
       const selectedLabels = new Set(normalizeStartIndustryLabels(context.startScreenState?.selectedIndustryLabels));
-      return INDUSTRY_CARD_FILES.filter((fileName) => selectedLabels.has(stripAssetExtension(fileName)));
+      return INDUSTRY_CARD_FILES.filter((fileName) => selectedLabels.has(stripAssetExtensionOption(fileName)));
     }
 
     function createIndustrySelectionOffers(playerIds = []) {
       const poolFiles = getSelectedStartIndustryCardFiles();
       const requiredCount = playerIds.length * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT;
       const sharedDeck = poolFiles.length >= requiredCount
-        ? shuffleList(poolFiles).slice(0, requiredCount)
+        ? shuffleListOption(poolFiles).slice(0, requiredCount)
         : null;
       const offersByPlayerId = {};
 
@@ -183,7 +244,7 @@
             index * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
             index * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT + INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
           )
-          : shuffleList(poolFiles).slice(0, INITIAL_SELECTION_INDUSTRY_OPTION_COUNT);
+          : shuffleListOption(poolFiles).slice(0, INITIAL_SELECTION_INDUSTRY_OPTION_COUNT);
         offersByPlayerId[playerId] = optionFiles.map(createIndustrySelectionCard);
       });
 
@@ -798,5 +859,8 @@
 
   return {
     createActionRuntime,
+    createInitialIncomeFlow,
+    shuffleList,
+    stripAssetExtension,
   };
 });
