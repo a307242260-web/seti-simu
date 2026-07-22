@@ -2548,8 +2548,14 @@
     beginDiscardSelection: (...args) => beginDiscardSelection?.(...args),
     restoreObjectSnapshot: (...args) => restoreObjectSnapshot(...args),
     applyCardCornerRewardFromCard: (...args) => applyCardCornerRewardFromCard(...args),
-    buildRepeatedCardCornerMoveEffect,
-    formatRepeatedCardCornerMoveReward,
+    buildRepeatedCardCornerMoveEffect: (...args) => cardRuntimeModule.buildRepeatedCardCornerMoveEffect(
+      ...args,
+      { effectType: cardEffects.EFFECT_TYPES.CARD_MOVE, getCardLabel: cards.getCardLabel },
+    ),
+    formatRepeatedCardCornerMoveReward: (...args) => cardRuntimeModule.formatRepeatedCardCornerMoveReward(
+      ...args,
+      formatPlanetRewardGain,
+    ),
     buildPlutoMarkerRemovalChoices,
     removePlutoMarker,
     getPlanetSectorCoordinate,
@@ -5488,47 +5494,6 @@
     return callDebugCommand("openDebugQuickSectorScanPicker");
   }
 
-
-  function buildCardCornerMoveEffectFromReward(effect, card, moveReward, index) {
-    const movementPoints = Math.max(1, Math.round(Number(moveReward.movementPoints || 1)));
-    return {
-      id: `${effect?.id || "public-corner"}-move-${index + 1}-${card.id}`,
-      type: cardEffects.EFFECT_TYPES.CARD_MOVE,
-      label: `${cards.getCardLabel(card)}：${moveReward.label}`,
-      icon: "movement",
-      options: {
-        movementPoints,
-        historyLabel: moveReward.label,
-      },
-    };
-  }
-
-  function buildRepeatedCardCornerMoveEffect(effect, card, moveReward, repeat) {
-    const repeatCount = Math.max(1, Math.round(Number(repeat || 1)));
-    const baseMovementPoints = Math.max(1, Math.round(Number(moveReward?.movementPoints || 1)));
-    const totalMovementPoints = baseMovementPoints * repeatCount;
-    return {
-      id: `${effect?.id || "repeat-corner"}-move-${card.id}`,
-      type: cardEffects.EFFECT_TYPES.CARD_MOVE,
-      label: `${cards.getCardLabel(card)}：${totalMovementPoints}移动（${moveReward.label} x${repeatCount}）`,
-      icon: "movement",
-      options: {
-        movementPoints: totalMovementPoints,
-        historyLabel: `${moveReward.label} x${repeatCount}`,
-      },
-    };
-  }
-
-  function formatRepeatedCardCornerMoveReward(moveReward, repeat) {
-    const repeatCount = Math.max(1, Math.round(Number(repeat || 1)));
-    const baseMovementPoints = Math.max(1, Math.round(Number(moveReward?.movementPoints || 1)));
-    const repeatedGain = Object.fromEntries(Object.entries(moveReward?.gain || {})
-      .map(([key, value]) => [key, Number(value) * repeatCount])
-      .filter(([, value]) => Number.isFinite(value) && value !== 0));
-    return [formatPlanetRewardGain(repeatedGain), `${baseMovementPoints * repeatCount}移动`]
-      .filter(Boolean)
-      .join("、");
-  }
 
   function isActionEffectFlowActive(workingRoot = null) {
     return getActionEffectFlow(workingRoot) != null;

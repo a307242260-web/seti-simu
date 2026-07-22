@@ -1,7 +1,31 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createCardRuntime, createCardSetupController } = require("./card-runtime");
+const {
+  createCardRuntime,
+  createCardSetupController,
+  buildRepeatedCardCornerMoveEffect,
+  formatRepeatedCardCornerMoveReward,
+} = require("./card-runtime");
+
+assert.deepEqual(buildRepeatedCardCornerMoveEffect(
+  { id: "effect-1" },
+  { id: "card-1", label: "测试牌" },
+  { movementPoints: 2, label: "角标" },
+  3,
+  { effectType: "card_move", getCardLabel: (card) => card.label },
+), {
+  id: "effect-1-move-card-1",
+  type: "card_move",
+  label: "测试牌：6移动（角标 x3）",
+  icon: "movement",
+  options: { movementPoints: 6, historyLabel: "角标 x3" },
+});
+assert.equal(formatRepeatedCardCornerMoveReward(
+  { movementPoints: 2, gain: { energy: 1 } },
+  3,
+  (gain) => `${gain.energy}能量`,
+), "3能量、6移动");
 
 function createHarness() {
   const player = { id: "p1", hand: [] };
