@@ -36,11 +36,12 @@
           const delayMs = options.stepDelayMs ?? aiAutoBattleState.stepDelayMs;
           const yieldEverySteps = Math.max(0, Math.round(Number(options.yieldEverySteps ?? 80) || 0));
           const stopBeforeRound = Math.max(0, Math.round(Number(options.stopBeforeRound) || 0));
-          const shouldStopBeforeRound = () => (
-            stopBeforeRound > 0
-            && !isGameEnded()
-            && Math.max(1, Math.round(Number(turnState.roundNumber) || 1)) >= stopBeforeRound
-          );
+          const shouldStopBeforeRound = () => {
+            const { turnState } = getRuleReadout();
+            return stopBeforeRound > 0
+              && !isGameEnded()
+              && Math.max(1, Math.round(Number(turnState.roundNumber) || 1)) >= stopBeforeRound;
+          };
           aiAutoBattleState.running = true;
           const summary = {
             ok: true,
@@ -56,6 +57,7 @@
 
           while (aiAutoBattleState.running && summary.steps < maxSteps) {
             if (shouldStopBeforeRound()) {
+              const { turnState } = getRuleReadout();
               summary.stopped = true;
               summary.stoppedBeforeRound = stopBeforeRound;
               summary.message = `已到第 ${turnState.roundNumber} 轮起始，按配置停止`;
@@ -74,6 +76,7 @@
               if (recoveryResult) result = recoveryResult;
             }
             if (typeof options.onStep === "function") {
+              const { turnState, playerState } = getRuleReadout();
               options.onStep({
                 steps: summary.steps,
                 roundNumber: turnState.roundNumber,
@@ -87,6 +90,7 @@
               break;
             }
             if (shouldStopBeforeRound()) {
+              const { turnState } = getRuleReadout();
               summary.stopped = true;
               summary.stoppedBeforeRound = stopBeforeRound;
               summary.message = `已到第 ${turnState.roundNumber} 轮起始，按配置停止`;

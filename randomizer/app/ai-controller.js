@@ -53,16 +53,7 @@
       aiTuningHistoryModule,
       aiBattleReportModule,
       aiExperimentRunnerModule,
-      solarState,
-      nebulaDataState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      rocketState,
-      planetStatsState,
-      techGameState,
-      cardState,
+      getRuleReadout,
       cardTaskState,
       ruleLifecycle,
       historyStepOrder,
@@ -1056,8 +1047,7 @@
     const aiBattleLog = resolvedAiBattleLogModule.createAiBattleLog({
       ...context,
       aiAutoBattleState,
-      turnState,
-      playerState,
+      getRuleReadout,
       getActivePlayers,
       aiNumber,
       countAiPlayerTech,
@@ -1130,8 +1120,7 @@
       windowRef,
       ai,
       aiAutoBattleState,
-      turnState,
-      playerState,
+      getRuleReadout,
       aiNumber,
       roundAiScore,
       getCardPrice,
@@ -1857,10 +1846,14 @@
         message: "AI 自动对战新局已重置",
       });
       if (!resetResult.ok) throw new Error(`Composition AI 新局重置失败：${resetResult.code || "unknown"}`);
+      const resetReadout = getRuleReadout();
+      if (!resetReadout?.turnState) {
+        throw new Error(`AI 新局 StateSource readout 缺少 turnState：${Object.keys(resetReadout || {}).join(",")}`);
+      }
       return {
         ok: true,
         activePlayerCount,
-        playerIds: [...turnState.activePlayerIds],
+        playerIds: [...resetReadout.turnState.activePlayerIds],
         message: "AI 自动对战新局已重置",
       };
     }

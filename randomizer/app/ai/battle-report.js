@@ -9,6 +9,7 @@
     }
     with (context) {
         function getAiAutoBattlePlayerResults() {
+          const { rocketState, turnState } = getRuleReadout();
           return getActivePlayers().map((player) => {
             const finalScoreBreakdown = computePlayerFinalScoreBreakdown(player);
             const rocketsForPlayer = rocketActions.getRocketsForPlayer

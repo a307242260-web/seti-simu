@@ -3900,6 +3900,7 @@
         turn: structuredClone(state.turn),
       };
     },
+    getRuleReadout: createStateSourceReadoutRoot,
     solarState,
     nebulaDataState,
     alienGameState,

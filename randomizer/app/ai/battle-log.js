@@ -169,6 +169,7 @@
 
         function createAiAutoBattleEntry(type, message, details = {}) {
           const currentPlayer = getAiAutoBattleEntryPlayer(details);
+          const { turnState, playerState } = getRuleReadout();
           const rawTurnNumber = turnState.turnNumber;
           return {
             id: aiAutoBattleState.logs.length + aiAutoBattleState.bugs.length + 1,
