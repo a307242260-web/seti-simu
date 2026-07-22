@@ -6287,7 +6287,7 @@
       beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
     }
     if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
-    recordAbilityCommands(result, quickActionHistory);
+    recordAbilityCommands(result, quickActionHistory, workingRoot);
     if (!recordInCurrentIndustryStep) {
       completeQuickActionStep();
     }
@@ -7621,7 +7621,7 @@
     }
 
     if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
-    recordAbilityCommands(result);
+    recordAbilityCommands(result, actionHistory, workingRoot);
 
     decisionState.actionEffectFlow.freeMoveMode = false;
     deactivateMoveMode();
