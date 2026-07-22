@@ -1046,7 +1046,7 @@
     });
     actionRocketState.statusNote = result.message;
     if (result.ok) {
-      const bonusResult = recordPlaceDataActionHistory(player, result);
+      const bonusResult = recordPlaceDataActionHistory(workingRoot, player, result);
       if (bonusResult?.message && !bonusResult.pendingIncome) {
         actionRocketState.statusNote = `${result.message}（${bonusResult.message}）`;
       } else if (bonusResult?.pendingIncome) {

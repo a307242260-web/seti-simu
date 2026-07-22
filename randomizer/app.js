@@ -6607,9 +6607,9 @@
     };
   }
 
-  function recordPlaceDataActionHistory(player, placeResult) {
+  function recordPlaceDataActionHistory(workingRoot, player, placeResult) {
     beginQuickActionStep("place-data", "放置数据");
-    recordAbilityCommands(placeResult, quickActionHistory);
+    recordAbilityCommands(placeResult, quickActionHistory, workingRoot);
     return applyPlaceDataSlotBonus(player, placeResult);
   }
 
