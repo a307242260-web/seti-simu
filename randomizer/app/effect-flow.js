@@ -199,6 +199,7 @@
           }
         }
       }
+      delete result.commands;
       recordScanScoreSourcesFromAbilityResult(workingRoot, result, history);
     }
 
