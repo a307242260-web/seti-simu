@@ -11,6 +11,28 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  function routeProbeDecisionClick(event, handlers) {
+    const probeScanRocket = event.target.closest("[data-probe-scan-rocket-id]");
+    if (probeScanRocket && !probeScanRocket.disabled) {
+      handlers.handleProbeSectorScanChoice(probeScanRocket.dataset.probeScanRocketId);
+      return true;
+    }
+
+    const probeScanConfirm = event.target.closest("[data-probe-scan-confirm]");
+    if (probeScanConfirm && !probeScanConfirm.disabled) {
+      handlers.confirmProbeSectorScanSelection();
+      return true;
+    }
+
+    const probeLocationReward = event.target.closest("[data-probe-location-rocket-id]");
+    if (probeLocationReward && !probeLocationReward.disabled) {
+      handlers.handleProbeLocationRewardChoice(probeLocationReward.dataset.probeLocationRocketId);
+      return true;
+    }
+
+    return false;
+  }
+
   function bindAppEvents(context) {
     if (!context || !context.els) {
       throw new Error("bindAppEvents requires app context");
@@ -65,6 +87,9 @@
       confirmCardTaskCompletion,
       handleOptionalHandScanChoice,
       handleDrawnHandScanSkip,
+      handleProbeSectorScanChoice,
+      confirmProbeSectorScanSelection,
+      handleProbeLocationRewardChoice,
       handleRemovePlanetMarkerChoice,
       handleHandCornerChoice,
       handleConditionalSectorChoice,
@@ -295,6 +320,11 @@
     });
     els.scanTargetActions?.addEventListener("click", (event) => {
       if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
+      if (routeProbeDecisionClick(event, {
+        handleProbeSectorScanChoice,
+        confirmProbeSectorScanSelection,
+        handleProbeLocationRewardChoice,
+      })) return;
 
       const aomomoFossilMoveCount = event.target.closest("[data-aomomo-fossil-move-count]");
       if (aomomoFossilMoveCount && !aomomoFossilMoveCount.disabled) {
@@ -999,5 +1029,5 @@
     windowRef.addEventListener("resize", resize);
   }
 
-  return { bindAppEvents };
+  return { bindAppEvents, routeProbeDecisionClick };
 });

@@ -1001,6 +1001,9 @@
         choices,
       });
       context.uiRuntimeState.probeSectorSelectedRocketIds = [];
+      setOverlayContent(effect.label, "请选择要扫描扇区的探测器", false);
+      renderProbeSectorScanPicker(workingRoot);
+      if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
       return { ok: true, pendingChoice: true, message: effect.label };
     }
 
@@ -1094,6 +1097,16 @@
     function openProbeLocationRewardPicker(workingRoot, effect, choices) {
       setProbeContinuation(workingRoot, "probeLocationRewardContinuation", { ...getPendingOwnerFields(workingRoot, effect), effect, choices });
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择探测器`;
+      const buttons = choices.map(({ rocket }) => {
+        const button = createButton();
+        button.type = "button";
+        button.className = "scan-target-option-button";
+        button.dataset.probeLocationRocketId = String(rocket.id);
+        button.innerHTML = `探测器 R${rocket.id}<small>结算当前位置奖励</small>`;
+        return button;
+      });
+      setOverlayContent(effect.label, "请选择要结算位置奖励的探测器", false);
+      openOverlayWithButtons(buttons);
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }

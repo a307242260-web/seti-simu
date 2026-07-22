@@ -507,6 +507,9 @@ function createHarness(initialValue = 0) {
   );
   assert.match(effectChoiceSource, /workingRoot[\s\S]*?probeSectorScanContinuation/, "探测器扫描规则上下文必须归 Composition continuation");
   assert.match(effectChoiceSource, /uiRuntimeState\?\.probeSectorSelectedRocketIds/, "探测器多选高亮只能进入 uiRuntimeState");
+  assert.match(appSource, /function handleProbeSectorScanChoice[\s\S]*?maxTargets === 1[\s\S]*?submitActiveCardDecision/, "探测器单选必须提交 active Decision choice");
+  assert.match(appSource, /function confirmProbeSectorScanSelection[\s\S]*?submitActiveCardDecision/, "探测器多选确认必须提交 active Decision choice");
+  assert.match(appSource, /function handleProbeLocationRewardChoice[\s\S]*?submitActiveCardDecision/, "探测器位置奖励必须提交 active Decision choice");
   assert.doesNotMatch(aiProductionSource, /runAiProbeSectorScanDecision|runAiProbeLocationRewardDecision|pendingProbeSectorScanAction|pendingProbeLocationRewardAction/, "探测器选择 AI 不得保留专用 pending resolver");
 }
 

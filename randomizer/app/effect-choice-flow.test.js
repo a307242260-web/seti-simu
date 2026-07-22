@@ -83,11 +83,12 @@ function createHarness(overrides = {}) {
       },
     },
   };
+  const uiRuntimeState = { probeSectorSelectedRocketIds: [] };
 
   const helper = createEffectChoiceFlowHelpers({
     document: { createElement: () => makeButton() },
     decisionSessions,
-    uiRuntimeState: { probeSectorSelectedRocketIds: [] },
+    uiRuntimeState,
     pendingState,
     els,
     cards: {
@@ -217,7 +218,7 @@ function createHarness(overrides = {}) {
     ...overrides,
   });
 
-  return { helper, pendingState, decisionSessions, workingRoot, rocketState, calls, els, player };
+  return { helper, pendingState, decisionSessions, workingRoot, rocketState, calls, els, player, uiRuntimeState };
 }
 
 {
@@ -281,7 +282,7 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, workingRoot, calls, els } = createHarness();
+  const { helper, workingRoot, calls, els, uiRuntimeState } = createHarness();
   const result = helper.executeProbeSectorScanEffect(workingRoot, {
     id: "probe-sector",
     label: "探测器扫描",
@@ -289,19 +290,30 @@ function createHarness(overrides = {}) {
   });
   assert.equal(result.ok, true);
   assert.equal(workingRoot.match.probeSectorScanContinuation.choices.length, 2);
+  assert.equal(els.scanTargetActions.children.length, 3);
+  assert.equal(els.scanTargetActions.children[0].dataset.probeScanRocketId, "1");
+  assert.equal(els.scanTargetActions.children[2].dataset.probeScanConfirm, "true");
+  const continuation = workingRoot.match.probeSectorScanContinuation;
+  const selectResult = helper.handleProbeSectorScanChoice(workingRoot, 1);
+  assert.equal(selectResult.ok, true);
+  assert.deepEqual(uiRuntimeState.probeSectorSelectedRocketIds, [1]);
+  assert.equal(workingRoot.match.probeSectorScanContinuation, continuation);
+  assert.equal(calls.inserted.length, 0);
   helper.confirmProbeSectorScanSelection(workingRoot, [1]);
   assert.equal(calls.inserted.length, 1);
   assert.equal(els.scanTargetOverlay.hidden, true);
 }
 
 {
-  const { helper, workingRoot, calls } = createHarness();
+  const { helper, workingRoot, calls, els } = createHarness();
   helper.executeProbeLocationRewardEffect(workingRoot, {
     id: "probe-location",
     label: "位置奖励",
     options: { asteroidData: 1, adjacentAsteroidData: 1 },
   });
   assert.equal(workingRoot.match.probeLocationRewardContinuation.choices.length, 2);
+  assert.equal(els.scanTargetActions.children.length, 2);
+  assert.equal(els.scanTargetActions.children[0].dataset.probeLocationRocketId, "1");
   const result = helper.handleProbeLocationRewardChoice(workingRoot, 1);
   assert.equal(result.ok, true);
   assert.equal(calls.history.length, 3);
