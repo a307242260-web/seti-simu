@@ -75,6 +75,7 @@
       cards,
       industry,
       finalScoring,
+      solar,
       data,
       tech,
       cardTaskStateModule,
@@ -83,12 +84,12 @@
       restoreMutableObject,
       resetScanRunSequence,
       resetActionLog,
-      randomizeWheels,
-      randomizeSectors,
+      randomizeWheels: randomizeWheelsOverride,
+      randomizeSectors: randomizeSectorsOverride,
       fillNebulaDataBoard,
       renderWheels,
       renderSectorNebulaDataBoard,
-      randomizeFinalScores,
+      randomizeFinalScores: randomizeFinalScoresOverride,
       randomizeAliens,
       renderRoundStatus,
       renderResidentDesktop,
@@ -113,6 +114,7 @@
       defaultInitialHandCount = 5,
       finalRoundNumber = 5,
       finalScoreIds = [],
+      wheelOffsets = {},
       aomomoClearNebulaId = null,
       normalizeAiDifficulty = (value) => String(value || ""),
       startScreenState,
@@ -125,6 +127,40 @@
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
         throw new TypeError("turn operation requires an explicit workingRoot");
+      }
+    }
+
+    function randomizeWheels(workingRoot) {
+      if (typeof randomizeWheelsOverride === "function") return randomizeWheelsOverride(workingRoot);
+      const workingSolarState = workingRoot.solarState;
+      for (let wheel = 1; wheel <= 4; wheel += 1) {
+        const delta = Math.floor(Math.random() * 8 + Number(wheelOffsets[wheel] || 0));
+        workingSolarState.wheelSteps[wheel] -= delta;
+      }
+      workingSolarState.rotation = solar.normalizeRotationState(workingSolarState.wheelSteps, 0);
+      renderWheels?.();
+    }
+
+    function randomizeSectors(workingRoot) {
+      if (typeof randomizeSectorsOverride === "function") return randomizeSectorsOverride(workingRoot);
+      const pool = [1, 2, 3, 4];
+      while (pool.length) {
+        const slotId = pool.length;
+        const pickIndex = Math.floor(Math.random() * pool.length);
+        workingRoot.solarState.sectorBySlot[slotId] = pool.splice(pickIndex, 1)[0];
+      }
+      renderSectorNebulaDataBoard?.();
+    }
+
+    function randomizeFinalScores(workingRoot) {
+      if (typeof randomizeFinalScoresOverride === "function") return randomizeFinalScoresOverride(workingRoot);
+      finalScoring.randomizeTileVariants(workingRoot.finalScoringState, finalScoreIds);
+      for (const image of els?.finalScoreTiles || []) {
+        const id = image.dataset.finalId;
+        if (!id) continue;
+        const variant = finalScoring.getTileVariant(workingRoot.finalScoringState, id);
+        image.src = `../assets/final/final_${id}${variant}.png`;
+        image.alt = `终局计分 ${id.toUpperCase()}${variant}`;
       }
     }
 

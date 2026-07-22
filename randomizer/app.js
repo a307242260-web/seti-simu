@@ -3411,12 +3411,9 @@
     createTurnState,
     resetScanRunSequence,
     resetActionLog,
-    randomizeWheels,
-    randomizeSectors,
     fillNebulaDataBoard,
     renderWheels,
     renderSectorNebulaDataBoard,
-    randomizeFinalScores,
     randomizeAliens,
     renderRoundStatus,
     renderResidentDesktop,
@@ -3442,6 +3439,7 @@
     defaultInitialHandCount: DEFAULT_INITIAL_HAND_COUNT,
     finalRoundNumber: FINAL_ROUND_NUMBER,
     finalScoreIds: FINAL_SCORE_IDS,
+    wheelOffsets: WHEEL_OFFSETS,
     aomomoClearNebulaId: aomomo?.NEBULA_ID || null,
     normalizeAiDifficulty(value) {
       return startScreenModule.normalizeAiDifficulty(value, {
@@ -11441,45 +11439,6 @@
 
   function moveActiveRocket(deltaX, deltaY) {
     return moveRocket(deltaX, deltaY, createStateSourceReadoutRoot().rocketState.activeRocketId);
-  }
-
-  /** 官网 randomizeWheels 的无动画版：直接累加步数并渲染 */
-  function randomizeWheels(workingRoot) {
-    const { solarState: workingSolarState } = workingRoot;
-    for (let w = 1; w <= 4; w += 1) {
-      const delta = Math.floor(Math.random() * 8 + WHEEL_OFFSETS[w]);
-      workingSolarState.wheelSteps[w] -= delta;
-    }
-    workingSolarState.rotation = solar.normalizeRotationState(workingSolarState.wheelSteps, 0);
-    renderWheels();
-  }
-
-  /** 官网 randomizeSectors 逻辑：将 4 个扇区洗牌分配到 4 个外边槽位 */
-  function randomizeSectors(workingRoot) {
-    const pool = [1, 2, 3, 4];
-    while (pool.length) {
-      const slotId = pool.length;
-      const pickIndex = Math.floor(Math.random() * pool.length);
-      const sectorId = pool.splice(pickIndex, 1)[0];
-      workingRoot.solarState.sectorBySlot[slotId] = sectorId;
-    }
-    renderSectors();
-  }
-
-  /** 终局计分：a/b/c/d 各自独立随机 1 或 2 */
-  function randomizeFinalScores(workingRoot) {
-    finalScoring.randomizeTileVariants(workingRoot.finalScoringState, FINAL_SCORE_IDS);
-    els.finalScoreTiles.forEach((img) => {
-      const id = img.dataset.finalId;
-      if (!id) return;
-      const variant = finalScoring.getTileVariant(workingRoot.finalScoringState, id);
-      img.src = `../assets/final/final_${id}${variant}.png`;
-      img.alt = `终局计分 ${id.toUpperCase()}${variant}`;
-    });
-  }
-
-  function getSetupState() {
-    return solar.createSetupState(createStateSourceReadoutRoot().solarState);
   }
 
   function rotateSolarOrbitForRoot(workingRoot, count) {
