@@ -318,10 +318,78 @@
     });
   }
 
+  function createLegacyEffectBarRenderer(options = {}) {
+    const { document, els = {} } = options;
+    function render(model = {}) {
+      if (!els.actionEffectBar || !els.actionEffectList) return;
+      const flow = model.flow || null;
+      if (!flow) {
+        els.actionEffectBar.hidden = true;
+        els.actionEffectList.replaceChildren();
+        if (els.actionEffectSkipButton) els.actionEffectSkipButton.hidden = true;
+        return;
+      }
+      const current = model.current || null;
+      const canSkip = current?.status === "active" && current.options?.skippable !== false && !current.required;
+      if (els.actionEffectSkipButton) {
+        const finishingCardMove = Boolean(
+          canSkip && model.cardMove?.effectId === current?.id && (model.cardMove.moved || current?.result),
+        );
+        els.actionEffectSkipButton.textContent = finishingCardMove ? "结束移动" : "跳过";
+        els.actionEffectSkipButton.setAttribute("aria-label", finishingCardMove ? "结束当前卡牌移动" : "跳过当前效果");
+        els.actionEffectSkipButton.title = finishingCardMove
+          ? "结束剩余移动力并结算已产生的访问触发" : "跳过当前效果";
+        els.actionEffectSkipButton.hidden = !canSkip;
+        els.actionEffectSkipButton.disabled = !canSkip;
+      }
+      const visibleEffects = (flow.effects || [])
+        .map((effect, index) => ({ effect, index }))
+        .filter(({ effect }) => model.shouldRender(effect));
+      if (!visibleEffects.length) {
+        els.actionEffectBar.hidden = true;
+        els.actionEffectList.replaceChildren();
+        return;
+      }
+      els.actionEffectBar.hidden = false;
+      els.actionEffectList.replaceChildren(...visibleEffects.map(({ effect, index }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "action-effect-button";
+        button.dataset.effectIndex = String(index);
+        const tooltip = model.getTooltip(effect);
+        button.title = tooltip;
+        button.setAttribute("aria-label", tooltip);
+        button.disabled = effect.status !== "active";
+        button.classList.toggle("is-active", effect.status === "active");
+        button.classList.toggle("is-completed", effect.status === "completed");
+        button.classList.toggle("is-skipped", effect.status === "skipped");
+        button.classList.toggle("is-undoable", effect.status === "completed" && effect.undoable !== false);
+        const image = document.createElement("img");
+        image.src = model.getIcon(effect);
+        image.alt = "";
+        image.setAttribute("aria-hidden", "true");
+        button.append(image);
+        const badgeText = effect.badge || (
+          model.cardMove?.effectId === effect.id && effect.status === "active"
+            ? String(model.cardMove.poolRemaining) : null
+        );
+        if (badgeText != null) {
+          const badge = document.createElement("span");
+          badge.className = "action-effect-badge";
+          badge.textContent = badgeText;
+          button.append(badge);
+        }
+        return button;
+      }));
+    }
+    return Object.freeze({ render });
+  }
+
   return Object.freeze({
     createActionBarModel,
     createActionBarController,
     createActionBarRenderer,
     createLegacyActionBarController,
+    createLegacyEffectBarRenderer,
   });
 });

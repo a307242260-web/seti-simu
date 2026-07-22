@@ -134,4 +134,32 @@ function projection(overrides = {}) {
   assert.equal(trade.title, "资源不足");
 })();
 
+(function testLegacyEffectBarRendersProjectionModel() {
+  const createNode = () => ({
+    children: [], dataset: {}, classList: { toggle() {} },
+    append(...children) { this.children.push(...children); },
+    setAttribute() {},
+  });
+  const list = createNode();
+  list.replaceChildren = function replaceChildren(...children) { this.children = children; };
+  const bar = { hidden: true };
+  const skip = createNode();
+  const renderer = actionBar.createLegacyEffectBarRenderer({
+    document: { createElement: createNode },
+    els: { actionEffectBar: bar, actionEffectList: list, actionEffectSkipButton: skip },
+  });
+  renderer.render({
+    flow: { effects: [{ id: "e1", status: "active", label: "移动", badge: "2", options: {} }] },
+    current: { id: "e1", status: "active", options: {} },
+    cardMove: null,
+    shouldRender: () => true,
+    getTooltip: () => "移动提示",
+    getIcon: () => "move.png",
+  });
+  assert.equal(bar.hidden, false);
+  assert.equal(list.children.length, 1);
+  assert.equal(list.children[0].children[1].textContent, "2");
+  assert.equal(skip.hidden, false);
+})();
+
 console.log("browser action bar projection/input tests passed");

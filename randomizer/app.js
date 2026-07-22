@@ -7634,84 +7634,17 @@
     return result;
   }
 
+  const legacyEffectBarRenderer = browserHostModule.actionBar.createLegacyEffectBarRenderer({ document, els });
   function renderActionEffectBar() {
-    if (!els.actionEffectBar || !els.actionEffectList) return;
-
-    if (!getActionEffectFlow()) {
-      els.actionEffectBar.hidden = true;
-      els.actionEffectList.replaceChildren();
-      if (els.actionEffectSkipButton) els.actionEffectSkipButton.hidden = true;
-      return;
-    }
-
-    const current = getCurrentActionEffect();
-    const canSkip = current?.status === "active"
-      && current.options?.skippable !== false
-      && !current.required;
-    if (els.actionEffectSkipButton) {
-      const finishingCardMove = Boolean(
-        canSkip
-        && getPendingCardMoveDecision()
-        && getPendingCardMoveDecision().effectId === current?.id
-        && (getPendingCardMoveDecision().moved || current?.result)
-      );
-      els.actionEffectSkipButton.textContent = finishingCardMove ? "结束移动" : "跳过";
-      els.actionEffectSkipButton.setAttribute(
-        "aria-label",
-        finishingCardMove ? "结束当前卡牌移动" : "跳过当前效果",
-      );
-      els.actionEffectSkipButton.title = finishingCardMove
-        ? "结束剩余移动力并结算已产生的访问触发"
-        : "跳过当前效果";
-      els.actionEffectSkipButton.hidden = !canSkip;
-      els.actionEffectSkipButton.disabled = !canSkip;
-    }
-
-    const visibleEffects = getActionEffectFlow().effects
-      .map((effect, index) => ({ effect, index }))
-      .filter(({ effect }) => shouldRenderActionEffect(effect));
-    if (!visibleEffects.length) {
-      els.actionEffectBar.hidden = true;
-      els.actionEffectList.replaceChildren();
-      return;
-    }
-
-    els.actionEffectBar.hidden = false;
-    els.actionEffectList.replaceChildren(...visibleEffects.map(({ effect, index }) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "action-effect-button";
-      button.dataset.effectIndex = String(index);
-      const tooltip = getActionEffectTooltip(effect);
-      button.title = tooltip;
-      button.setAttribute("aria-label", tooltip);
-      button.disabled = effect.status !== "active";
-      button.classList.toggle("is-active", effect.status === "active");
-      button.classList.toggle("is-completed", effect.status === "completed");
-      button.classList.toggle("is-skipped", effect.status === "skipped");
-      button.classList.toggle("is-undoable", effect.status === "completed" && effect.undoable !== false);
-
-      const image = document.createElement("img");
-      image.src = getActionEffectDisplayIconSrc(effect);
-      image.alt = "";
-      image.setAttribute("aria-hidden", "true");
-      button.append(image);
-      if (effect.badge) {
-        const badge = document.createElement("span");
-        badge.className = "action-effect-badge";
-        badge.textContent = effect.badge;
-        button.append(badge);
-      } else if (
-        getPendingCardMoveDecision()?.effectId === effect.id
-        && effect.status === "active"
-      ) {
-        const badge = document.createElement("span");
-        badge.className = "action-effect-badge";
-        badge.textContent = String(getPendingCardMoveDecision().poolRemaining);
-        button.append(badge);
-      }
-      return button;
-    }));
+    const flow = getActionEffectFlow();
+    return legacyEffectBarRenderer.render({
+      flow,
+      current: getCurrentActionEffect(),
+      cardMove: getPendingCardMoveDecision(),
+      shouldRender: shouldRenderActionEffect,
+      getTooltip: getActionEffectTooltip,
+      getIcon: getActionEffectDisplayIconSrc,
+    });
   }
 
   function resolveCompletedSectorSettlementsForRoot(workingRoot, actionType, options = {}) {
