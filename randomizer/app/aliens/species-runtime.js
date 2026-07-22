@@ -206,10 +206,6 @@
     const alienOpportunitySessions = {
       get jiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
       set jiuzheCardPlay(session) { replaceDecisionSession("jiuzhe_card_play", session); },
-      get jiuzheOpportunityOpen() { return Boolean(decisionSessions.peek("jiuzhe_opportunity_open")?.open); },
-      set jiuzheOpportunityOpen(open) {
-        replaceDecisionSession("jiuzhe_opportunity_open", open ? { open: true } : null);
-      },
       get banrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
       set banrenmaOpportunity(session) { replaceDecisionSession("banrenma_opportunity", session); },
     };
@@ -3207,7 +3203,7 @@ function getJiuzheCardConditionLabel(workingRoot, card, player) {
 
 function closeJiuzheCardDialog() {
     alienOpportunitySessions.jiuzheCardPlay = null;
-    alienOpportunitySessions.jiuzheOpportunityOpen = false;
+    uiRuntimeState.jiuzheOpportunityOpen = false;
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
@@ -3231,7 +3227,7 @@ function openJiuzheCardDialog(workingRoot, player, opportunity = null) {
     alienOpportunitySessions.jiuzheCardPlay = opportunity
       ? { playerId: player.id, playerColor: player.color, ...opportunity }
       : { playerId: player.id, playerColor: player.color, reason: "view", cost: {}, label: "查看九折牌" };
-    alienOpportunitySessions.jiuzheOpportunityOpen = Boolean(opportunity);
+    uiRuntimeState.jiuzheOpportunityOpen = Boolean(opportunity);
 
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = opportunity ? opportunity.label : "九折牌";
     if (els.scanTargetSubtitle) {
@@ -3422,7 +3418,7 @@ function handleJiuzheOpportunitySkip(workingRoot, options = {}) {
 
 function maybeOpenQueuedJiuzheOpportunity(workingRoot) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (alienOpportunitySessions.jiuzheOpportunityOpen || alienOpportunitySessions.jiuzheCardPlay) return null;
+    if (uiRuntimeState.jiuzheOpportunityOpen || alienOpportunitySessions.jiuzheCardPlay) return null;
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;

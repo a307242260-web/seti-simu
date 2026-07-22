@@ -26,6 +26,7 @@ assert.equal(state.actionLog.entries.length, 1);
 assert.equal(state.selection.currentPlayerId, "player-white");
 assert.equal(Object.hasOwn(state, "pending"), false);
 assert.equal(state.ui.passReserveSelectionDismissed, false);
+assert.equal(state.ui.jiuzheOpportunityOpen, false);
 assert.equal(state.browserHost.scanRunSequence, 0);
 
 console.log("runtime tests passed");

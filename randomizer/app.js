@@ -5377,7 +5377,7 @@
     }
     decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     decisionSessions.clear("jiuzhe_card_play");
-    decisionSessions.clear("jiuzhe_opportunity_open");
+    uiRuntimeState.jiuzheOpportunityOpen = false;
     decisionSessions.clear("yichangdian_card_gain");
     decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("banrenma_card_gain");

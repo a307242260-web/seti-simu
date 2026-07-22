@@ -72,6 +72,7 @@
       effectExecutionPlayerId: null,
       autoExecutingActionEffects: false,
       effectStepActive: false,
+      jiuzheOpportunityOpen: false,
       moveHighlightRocketId: null,
       industryFreeMoveState: null,
       stateReadoutRenderFrame: 0,
