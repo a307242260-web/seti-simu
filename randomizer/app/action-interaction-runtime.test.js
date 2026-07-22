@@ -3,10 +3,35 @@
 const assert = require("node:assert/strict");
 const {
   createActionInteractionRuntime,
+  createActionInteractionPort,
   createBoardPointerHandlers,
   createLandTargetPicker,
   createMoveUiRuntime,
 } = require("./action-interaction-runtime");
+
+{
+  const commands = [];
+  const runtime = {
+    getPlutoActionState: (card) => card.state,
+    confirmDataPlacement: (_root, target) => ({ ok: true, target }),
+  };
+  let pending = null;
+  const port = createActionInteractionPort({
+    getRuntime: () => runtime,
+    dispatchCommand: (name, args) => {
+      commands.push([name, args]);
+      return undefined;
+    },
+    getPendingDataPlacementDecision: () => pending,
+    submitActiveDecision: (kind, match) => ({ kind, matched: match({ slotId: "computer", blueSlot: null }) }),
+  });
+  assert.equal(port.getPlutoActionState({ state: "ready" }), "ready");
+  assert.deepEqual(port.getPlutoReservedCards(), []);
+  assert.equal(commands[0][0], "getPlutoReservedCards");
+  pending = { type: "place-data" };
+  assert.deepEqual(port.confirmDataPlacement("computer", null), { kind: "pending-data-placement", matched: true });
+  assert.deepEqual(port.confirmDataPlacement("blue", null, { workingRoot: {} }), { ok: true, target: "blue" });
+}
 
 const runtime = createActionInteractionRuntime({
   cardEffects: {

@@ -279,6 +279,63 @@
     });
   }
 
+  function createActionInteractionPort(context = {}) {
+    const directMethods = [
+      "ensurePlutoCardEffectState", "getPlutoActionState", "addPlutoMarker",
+      "getPlutoChoiceActionLabel", "formatPlutoChoiceLabel", "isDataPoolFull", "getAutoDataPlacementCheck",
+    ];
+    const commandFallbacks = {
+      getPlutoReservedCards: [],
+      collectPlutoMarkers: [],
+      buildPlutoMarkerContext: { plutoMarkers: [] },
+      playerHasOwnPlutoLanding: false,
+      buildPlutoMarkerRemovalChoices: [],
+      getPlutoCandidateRockets: [],
+      getPlutoActionCost: {},
+      getAvailablePlutoAction: { ok: false },
+      getCurrentPlanetActionPlacement: { ok: false },
+      activateMoveMode: false,
+    };
+    const commandMethods = [
+      "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
+      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets", "getPlutoActionCost",
+      "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement", "openPlutoActionChoicePicker",
+      "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode",
+      "closeDataPlacePicker", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
+    ];
+    const port = {};
+    for (const name of directMethods) {
+      port[name] = (...args) => context.getRuntime()?.[name](...args);
+    }
+    for (const name of commandMethods) {
+      port[name] = (...args) => context.dispatchCommand(name, args) ?? commandFallbacks[name];
+    }
+    port.continuePendingDataPlacementAfterBonus = (...args) => {
+      const execution = args[1] || {};
+      return execution.workingRoot
+        ? context.getRuntime()?.continuePendingDataPlacementAfterBonus(execution.workingRoot, args[0])
+        : context.dispatchCommand("continuePendingDataPlacementAfterBonus", args);
+    };
+    port.skipPendingDataPlacement = () => (context.getPendingDataPlacementDecision()
+      ? context.submitActiveDecision("skip-pending-data-placement", () => true)
+      : context.dispatchCommand("skipPendingDataPlacement", []));
+    port.confirmDataPlacement = (...args) => {
+      const execution = args[2] || {};
+      if (execution.workingRoot) {
+        return context.getRuntime()?.confirmDataPlacement(execution.workingRoot, args[0], args[1], execution);
+      }
+      if (context.getPendingDataPlacementDecision()) {
+        return context.submitActiveDecision(
+          "pending-data-placement",
+          (target) => target.slotId === args[0]
+            && String(target.blueSlot ?? "") === String(args[1] ?? ""),
+        );
+      }
+      return context.dispatchCommand("confirmDataPlacement", [args[0], args[1], execution]);
+    };
+    return Object.freeze(port);
+  }
+
   function createActionInteractionRuntime(context) {
     const simulation = context.simulation === true;
     const {
@@ -1484,6 +1541,7 @@
     createBoardPointerHandlers,
     createLandTargetPicker,
     createMoveUiRuntime,
+    createActionInteractionPort,
     createActionInteractionRuntime,
   };
 });

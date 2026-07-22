@@ -197,56 +197,6 @@
     if (execution.workingRoot) return turnEndFlow?.endCurrentTurn(execution.workingRoot, execution);
     return callBrowserDomainCommand("turn_end", "endCurrentTurn", [execution]);
   }
-  function getPlutoReservedCards(...args) { return callBrowserDomainCommand("action_interaction", "getPlutoReservedCards", args) || []; }
-  function ensurePlutoCardEffectState(...args) { return actionInteractionRuntime?.ensurePlutoCardEffectState(...args); }
-  function getPlutoActionState(...args) { return actionInteractionRuntime?.getPlutoActionState(...args); }
-  function addPlutoMarker(...args) { return actionInteractionRuntime?.addPlutoMarker(...args); }
-  function removePlutoMarker(...args) { return callBrowserDomainCommand("action_interaction", "removePlutoMarker", args); }
-  function collectPlutoMarkers(...args) { return callBrowserDomainCommand("action_interaction", "collectPlutoMarkers", args) || []; }
-  function buildPlutoMarkerContext(...args) { return callBrowserDomainCommand("action_interaction", "buildPlutoMarkerContext", args) || { plutoMarkers: [] }; }
-  function playerHasOwnPlutoLanding(...args) { return Boolean(callBrowserDomainCommand("action_interaction", "playerHasOwnPlutoLanding", args)); }
-  function buildPlutoMarkerRemovalChoices(...args) { return callBrowserDomainCommand("action_interaction", "buildPlutoMarkerRemovalChoices", args) || []; }
-  function getPlutoCandidateRockets(...args) { return callBrowserDomainCommand("action_interaction", "getPlutoCandidateRockets", args) || []; }
-  function getPlutoActionCost(...args) { return callBrowserDomainCommand("action_interaction", "getPlutoActionCost", args) || {}; }
-  function getAvailablePlutoAction(...args) { return callBrowserDomainCommand("action_interaction", "getAvailablePlutoAction", args) || { ok: false }; }
-  function executePlutoAction(...args) { return callBrowserDomainCommand("action_interaction", "executePlutoAction", args); }
-  function getCurrentPlanetActionPlacement(...args) { return callBrowserDomainCommand("action_interaction", "getCurrentPlanetActionPlacement", args) || { ok: false }; }
-  function getPlutoChoiceActionLabel(...args) { return actionInteractionRuntime?.getPlutoChoiceActionLabel(...args); }
-  function formatPlutoChoiceLabel(...args) { return actionInteractionRuntime?.formatPlutoChoiceLabel(...args); }
-  function openPlutoActionChoicePicker(...args) { return callBrowserDomainCommand("action_interaction", "openPlutoActionChoicePicker", args); }
-  function scheduleRenderMoveArrows(...args) { return callBrowserDomainCommand("action_interaction", "scheduleRenderMoveArrows", args); }
-  function clearMoveRocketHighlight(...args) { return callBrowserDomainCommand("action_interaction", "clearMoveRocketHighlight", args); }
-  function activateMoveMode(...args) { return callBrowserDomainCommand("action_interaction", "activateMoveMode", args) || false; }
-  function deactivateMoveMode(...args) { return callBrowserDomainCommand("action_interaction", "deactivateMoveMode", args); }
-  function closeDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "closeDataPlacePicker", args); }
-  function isDataPoolFull(...args) { return Boolean(actionInteractionRuntime?.isDataPoolFull(...args)); }
-  function getAutoDataPlacementCheck(...args) { return actionInteractionRuntime?.getAutoDataPlacementCheck(...args) || { ok: false }; }
-  function openDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "openDataPlacePicker", args); }
-  function openAutoDataPlacementPrompt(...args) { return callBrowserDomainCommand("action_interaction", "openAutoDataPlacementPrompt", args); }
-  function continuePendingDataPlacementAfterBonus(...args) {
-    return actionInteractionRuntime?.continuePendingDataPlacementAfterBonus(...args);
-  }
-  function skipPendingDataPlacement() {
-    if (getPendingDataPlacementDecision()) {
-      return submitActiveCardDecision("skip-pending-data-placement", () => true);
-    }
-    return callBrowserDomainCommand("action_interaction", "skipPendingDataPlacement", []);
-  }
-  function cancelDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "cancelDataPlacePicker", args); }
-  function confirmDataPlacement(...args) {
-    const execution = args[2] || {};
-    if (execution.workingRoot) {
-      return actionInteractionRuntime?.confirmDataPlacement(execution.workingRoot, args[0], args[1], execution);
-    }
-    if (getPendingDataPlacementDecision()) {
-      return submitActiveCardDecision(
-        "pending-data-placement",
-        (target) => target.slotId === args[0]
-          && String(target.blueSlot ?? "") === String(args[1] ?? ""),
-      );
-    }
-    return callBrowserDomainCommand("action_interaction", "confirmDataPlacement", [args[0], args[1], execution]);
-  }
   const { SCORE_SOURCE_KEYS } = scoreSourceRuntimeModule;
   const tokenWidths = {
     rocket: null,
@@ -301,6 +251,22 @@
     callDebugCommand,
     setBrowserStatusNote,
   } = browserDomainCommandPort;
+  const actionInteractionPort = actionInteractionRuntimeModule.createActionInteractionPort({
+    getRuntime: () => actionInteractionRuntime,
+    dispatchCommand: (name, args) => callBrowserDomainCommand("action_interaction", name, args),
+    getPendingDataPlacementDecision: (...args) => getPendingDataPlacementDecision(...args),
+    submitActiveDecision: (...args) => submitActiveCardDecision(...args),
+  });
+  const {
+    getPlutoReservedCards, ensurePlutoCardEffectState, getPlutoActionState, addPlutoMarker,
+    removePlutoMarker, collectPlutoMarkers, buildPlutoMarkerContext, playerHasOwnPlutoLanding,
+    buildPlutoMarkerRemovalChoices, getPlutoCandidateRockets, getPlutoActionCost, getAvailablePlutoAction,
+    executePlutoAction, getCurrentPlanetActionPlacement, getPlutoChoiceActionLabel, formatPlutoChoiceLabel,
+    openPlutoActionChoicePicker, scheduleRenderMoveArrows, clearMoveRocketHighlight, activateMoveMode,
+    deactivateMoveMode, closeDataPlacePicker, isDataPoolFull, getAutoDataPlacementCheck,
+    openDataPlacePicker, openAutoDataPlacementPrompt, continuePendingDataPlacementAfterBonus,
+    skipPendingDataPlacement, cancelDataPlacePicker, confirmDataPlacement,
+  } = actionInteractionPort;
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
