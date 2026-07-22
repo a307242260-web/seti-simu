@@ -98,8 +98,8 @@ function createHarness() {
 
 {
   const { runtime, workingRoot, pendingState, decisionSessions, calls } = createHarness();
-  runtime.enqueueType1TriggerEvents([{ type: "scan", sectorX: 2 }]);
-  assert.deepEqual(decisionSessions.peek("type1_trigger_queue").events, [{ type: "scan", sectorX: 2 }]);
+  runtime.enqueueType1TriggerEvents(workingRoot, [{ type: "scan", sectorX: 2 }]);
+  assert.deepEqual(workingRoot.match.type1TriggerEvents, [{ type: "scan", sectorX: 2 }]);
 
   decisionSessions.open("card_trigger_action", { matches: [{ id: "trigger" }] });
   assert.equal(runtime.cancelCardTriggerChoice(workingRoot), true);

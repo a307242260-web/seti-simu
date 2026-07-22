@@ -145,7 +145,7 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
-    const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
+    const TYPE1_TRIGGER_CONTINUATION_FIELD = "type1TriggerEvents";
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
     const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
     const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
@@ -165,8 +165,9 @@
       if (!session) return decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
       return decisionSessions.open(CARD_TRIGGER_FREE_MOVE_SESSION, session);
     }
-    function getType1TriggerEvents() {
-      return decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION)?.events || [];
+    function getType1TriggerEvents(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      return workingRoot.match?.[TYPE1_TRIGGER_CONTINUATION_FIELD] || [];
     }
 
     function buildCardTaskContext(workingRoot) {
@@ -323,15 +324,15 @@
       return event && typeof event === "object" ? { ...event } : event;
     }
 
-    function enqueueType1TriggerEvents(events) {
+    function enqueueType1TriggerEvents(workingRoot, events) {
+      requireWorkingRoot(workingRoot);
       const normalized = (events || []).filter(Boolean).map(cloneType1TriggerEvent);
       if (!normalized.length) return;
-      let session = decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION);
-      if (!session) {
-        decisionSessions.open(TYPE1_TRIGGER_QUEUE_SESSION, { events: [] });
-        session = decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION);
+      if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
+      if (!Array.isArray(workingRoot.match[TYPE1_TRIGGER_CONTINUATION_FIELD])) {
+        workingRoot.match[TYPE1_TRIGGER_CONTINUATION_FIELD] = [];
       }
-      session.events.push(...normalized);
+      workingRoot.match[TYPE1_TRIGGER_CONTINUATION_FIELD].push(...normalized);
     }
 
     function isCardTriggerPickSelectionActive() {
@@ -366,17 +367,17 @@
       const { playerState } = requireWorkingRoot(workingRoot);
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) return null;
-      enqueueType1TriggerEvents(events);
+      enqueueType1TriggerEvents(workingRoot, events);
       if (hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) return null;
 
-      const queuedEvents = getType1TriggerEvents();
+      const queuedEvents = getType1TriggerEvents(workingRoot);
       while (queuedEvents.length) {
         const event = queuedEvents.shift();
         const matches = getType1TriggerMatchesForEvent(currentPlayer, event);
         if (!matches.length) continue;
         return matches.length === 1 ? applyCardTriggerMatch(workingRoot, matches[0]) : openCardTriggerPicker(workingRoot, matches);
       }
-      decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
+      delete workingRoot.match[TYPE1_TRIGGER_CONTINUATION_FIELD];
       return null;
     }
 

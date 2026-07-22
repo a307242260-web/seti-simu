@@ -434,12 +434,14 @@
   }
 
   function validateBrowserSessionBoundary(state) {
-    if (Object.hasOwn(state?.match || {}, "turnEndRevealContinuation")) {
+    const forbiddenContinuation = ["turnEndRevealContinuation", "type1TriggerEvents"]
+      .find((field) => Object.hasOwn(state?.match || {}, field));
+    if (forbiddenContinuation) {
       return {
         ok: false,
-        path: "$.match.turnEndRevealContinuation",
-        code: "STATE_TURN_END_CONTINUATION_COMMITTED",
-        message: "回合末揭示 continuation 必须在 Composition Session 完成前清空",
+        path: `$.match.${forbiddenContinuation}`,
+        code: "STATE_EFFECT_CONTINUATION_COMMITTED",
+        message: `${forbiddenContinuation} 必须在 Composition Session 完成前清空`,
       };
     }
     return { ok: true };
@@ -956,7 +958,6 @@
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
-  const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
   const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
   const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
   const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
@@ -5366,7 +5367,9 @@
     decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
     decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
     decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
-    decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
+    if (workingRoot.match && typeof workingRoot.match === "object") {
+      delete workingRoot.match.type1TriggerEvents;
+    }
     decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     decisionSessions.clear("jiuzhe_card_play");
     decisionSessions.clear("jiuzhe_opportunity_open");
@@ -7145,7 +7148,9 @@
     decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
     decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
-    decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
+    if (workingRoot.match && typeof workingRoot.match === "object") {
+      delete workingRoot.match.type1TriggerEvents;
+    }
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("chong_card_gain");
