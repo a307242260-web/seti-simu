@@ -1618,7 +1618,7 @@
       }
 
       if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
 
       const moveEvents = Array.isArray(result.events) ? result.events.filter(Boolean) : [];
       if (ctx) {
