@@ -14,6 +14,23 @@ const {
   recordTurnVisitPlanetEvents,
   createTurnFlowController,
 } = require("./turn-flow");
+const { createTurnEndPort } = require("./turn-end-flow");
+
+{
+  const calls = [];
+  const runtime = {
+    createPassEvent: (playerId) => ({ playerId }),
+    passForCurrentPlayer: (root) => ({ root }),
+  };
+  const port = createTurnEndPort({
+    getRuntime: () => runtime,
+    dispatchCommand: (name, args) => calls.push([name, args]),
+  });
+  assert.deepEqual(port.createPassEvent("p1"), { playerId: "p1" });
+  assert.deepEqual(port.passForCurrentPlayer({ workingRoot: "root" }), { root: "root" });
+  port.executePassHandLimitEffect("effect");
+  assert.deepEqual(calls, [["executePassHandLimitEffect", ["effect"]]]);
+}
 
 const basePlayers = [
   { id: "p1", color: "white", colorLabel: "白" },

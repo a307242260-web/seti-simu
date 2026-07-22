@@ -613,7 +613,32 @@
     };
   }
 
+  function createTurnEndPort(context = {}) {
+    const commandMethods = [
+      "executePassFirstRotateEffect", "executePassHandLimitEffect", "maybeResumeTurnEndAfterReveal",
+      "maybeContinuePendingTurnEndRevealFlow", "maybeContinueAlienRevealQueuedOpportunities",
+    ];
+    const port = {
+      createPassEvent: (...args) => context.getRuntime()?.createPassEvent(...args),
+      passForCurrentPlayer(execution = {}) {
+        return execution.workingRoot
+          ? context.getRuntime()?.passForCurrentPlayer(execution.workingRoot, execution)
+          : context.dispatchCommand("passForCurrentPlayer", [execution]);
+      },
+      endCurrentTurn(execution = {}) {
+        return execution.workingRoot
+          ? context.getRuntime()?.endCurrentTurn(execution.workingRoot, execution)
+          : context.dispatchCommand("endCurrentTurn", [execution]);
+      },
+    };
+    for (const name of commandMethods) {
+      port[name] = (...args) => context.dispatchCommand(name, args);
+    }
+    return Object.freeze(port);
+  }
+
   return {
     createTurnEndFlow,
+    createTurnEndPort,
   };
 });

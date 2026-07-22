@@ -642,6 +642,17 @@
     });
   }
 
+  function createLegacyActionBarPort(context = {}) {
+    const methods = [
+      "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
+      "updateActionButtons", "isQuickPanelOpen", "setQuickPanelOpen", "toggleQuickPanel", "updateQuickPanel",
+    ];
+    return Object.freeze(Object.fromEntries(methods.map((name) => [
+      name,
+      (...args) => context.getController()?.[name](...args),
+    ])));
+  }
+
   return Object.freeze({
     createActionBarModel,
     createActionBarController,
@@ -650,5 +661,6 @@
     createLegacyUndoController,
     createLegacyEffectBarRenderer,
     createLegacyEffectBarPresentation,
+    createLegacyActionBarPort,
   });
 });

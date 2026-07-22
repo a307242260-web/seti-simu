@@ -273,4 +273,13 @@ function projection(overrides = {}) {
   assert.equal(list.children.length, 1);
 })();
 
+(function testLegacyActionBarPortUsesResidentController() {
+  const calls = [];
+  const port = actionBar.createLegacyActionBarPort({
+    getController: () => ({ setQuickPanelOpen: (open) => calls.push(open) }),
+  });
+  port.setQuickPanelOpen(true);
+  assert.deepEqual(calls, [true]);
+})();
+
 console.log("browser action bar projection/input tests passed");

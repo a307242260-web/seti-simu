@@ -179,24 +179,6 @@
   function runAiFinalScoreMarkDecision(...args) {
     return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
   }
-  function createPassEvent(...args) { return turnEndFlow?.createPassEvent(...args); }
-  function executePassFirstRotateEffect(...args) { return callBrowserDomainCommand("turn_end", "executePassFirstRotateEffect", args); }
-  function executePassHandLimitEffect(...args) { return callBrowserDomainCommand("turn_end", "executePassHandLimitEffect", args); }
-  function passForCurrentPlayer(execution = {}) {
-    if (execution.workingRoot) return turnEndFlow?.passForCurrentPlayer(execution.workingRoot, execution);
-    return callBrowserDomainCommand("turn_end", "passForCurrentPlayer", [execution]);
-  }
-  function maybeResumeTurnEndAfterReveal(...args) { return callBrowserDomainCommand("turn_end", "maybeResumeTurnEndAfterReveal", args); }
-  function maybeContinuePendingTurnEndRevealFlow(...args) {
-    return callBrowserDomainCommand("turn_end", "maybeContinuePendingTurnEndRevealFlow", args);
-  }
-  function maybeContinueAlienRevealQueuedOpportunities(...args) {
-    return callBrowserDomainCommand("turn_end", "maybeContinueAlienRevealQueuedOpportunities", args);
-  }
-  function endCurrentTurn(execution = {}) {
-    if (execution.workingRoot) return turnEndFlow?.endCurrentTurn(execution.workingRoot, execution);
-    return callBrowserDomainCommand("turn_end", "endCurrentTurn", [execution]);
-  }
   const { SCORE_SOURCE_KEYS } = scoreSourceRuntimeModule;
   const tokenWidths = {
     rocket: null,
@@ -251,6 +233,15 @@
     callDebugCommand,
     setBrowserStatusNote,
   } = browserDomainCommandPort;
+  const turnEndPort = turnEndFlowModule.createTurnEndPort({
+    getRuntime: () => turnEndFlow,
+    dispatchCommand: (name, args) => callBrowserDomainCommand("turn_end", name, args),
+  });
+  const {
+    createPassEvent, endCurrentTurn, executePassFirstRotateEffect, executePassHandLimitEffect,
+    maybeContinueAlienRevealQueuedOpportunities, maybeContinuePendingTurnEndRevealFlow,
+    maybeResumeTurnEndAfterReveal, passForCurrentPlayer,
+  } = turnEndPort;
   const actionInteractionPort = actionInteractionRuntimeModule.createActionInteractionPort({
     getRuntime: () => actionInteractionRuntime,
     dispatchCommand: (name, args) => callBrowserDomainCommand("action_interaction", name, args),
@@ -6703,15 +6694,13 @@
   }
 
   let legacyActionBarController = null;
-  function setActionButtonState(...args) { return legacyActionBarController?.setActionButtonState(...args); }
-  function setTurnActionButtonState(...args) { return legacyActionBarController?.setTurnActionButtonState(...args); }
-  function setQuickActionButtonEnabled(...args) { return legacyActionBarController?.setQuickActionButtonEnabled(...args); }
-  function updateActionButtons(...args) { return legacyActionBarController?.updateActionButtons(...args); }
-  function isQuickPanelOpen(...args) { return legacyActionBarController?.isQuickPanelOpen(...args); }
-  function setQuickPanelOpen(...args) { return legacyActionBarController?.setQuickPanelOpen(...args); }
-  function toggleQuickPanel(...args) { return legacyActionBarController?.toggleQuickPanel(...args); }
-  function updateQuickPanel(...args) { return legacyActionBarController?.updateQuickPanel(...args); }
-
+  const legacyActionBarPort = browserHostModule.actionBar.createLegacyActionBarPort({
+    getController: () => legacyActionBarController,
+  });
+  const {
+    setActionButtonState, setTurnActionButtonState, setQuickActionButtonEnabled, updateActionButtons,
+    isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
+  } = legacyActionBarPort;
 
   function markActionPending() {
     actionHistory.markActionComplete?.();
