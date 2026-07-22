@@ -38,7 +38,6 @@
       getPublicScanChoicesForCard,
       getPendingPassReserveSelection,
       getPassReserveSelectionCards,
-      getPendingMovePayment,
       isMovePaymentCard,
       isTechTilePickingActive,
       tech,
@@ -60,8 +59,6 @@
       getMovableTokensForCardMoveEffect,
       validateIndustryHuanyuMoveRocket,
       getPendingCardCornerFreeMove,
-      isPlayCardSelectionActive,
-      getCardPlayCost,
       getPendingStrategySlotDecision,
       isFutureSpanEligibleHandCard,
       getPublicCardMultiSelectMinSelectable,
@@ -125,9 +122,7 @@
       CARD_CORNER_FREE_MOVE_SESSION,
       settleCardTasksAfterEffect,
       finishIndustryAbilityFlow,
-      confirmMovePayment,
-      handlePlayCardSelect,
-      confirmPlayCardSelection,
+      resolveMovePaymentDecision,
       confirmStrategyPassiveSlotChoice,
       handleHandCardDiscard,
       handlePublicCardClick,
@@ -140,8 +135,9 @@
       handleStateTraceSlotPlacement,
     } = context;
 
-  function enumerateHeadlessMovePaymentActions(movePending) {
-    const player = movePending.player || getHeadlessConditionalPlayer(movePending);
+  function enumerateHeadlessMovePaymentActions(workingRoot, movePending) {
+    const player = (workingRoot.playerState?.players || []).find((entry) => entry.id === movePending.playerId)
+      || getHeadlessConditionalPlayer(movePending);
     const required = Math.max(0, Math.round(Number(movePending.requiredMovePoints) || 0));
     const moveCardIndexes = (player?.hand || []).flatMap((card, handIndex) => (
       isMovePaymentCard(card) ? [handIndex] : []
@@ -613,8 +609,9 @@
         })),
       };
     }
-    if (getPendingMovePayment()) {
-      return enumerateHeadlessMovePaymentActions(getPendingMovePayment());
+    const movePaymentContinuation = workingRoot.match?.movePaymentContinuation || null;
+    if (movePaymentContinuation) {
+      return enumerateHeadlessMovePaymentActions(workingRoot, movePaymentContinuation);
     }
     if (isTechTilePickingActive()) {
       const player = getCurrentPlayer();
@@ -841,28 +838,6 @@
         });
       }
       return { actorPlayer: player, candidates };
-    }
-    if (isPlayCardSelectionActive()) {
-      const player = getCurrentPlayer();
-      return {
-        actorPlayer: player,
-        candidates: (player?.hand || []).flatMap((card, handIndex) => {
-          const cost = getCardPlayCost(card);
-          if (!players.canAfford(player, cost)) return [];
-          return [{
-            id: "conditionalChoice",
-            family: "choose_card",
-            label: cards.getCardLabel(card),
-            target: {
-              kind: "play-hand-card",
-              choiceId: String(handIndex),
-              cardId: card.cardId || card.id || null,
-              handIndex,
-            },
-            handIndex,
-          }];
-        }),
-      };
     }
     const strategySlotPending = getPendingStrategySlotDecision();
     if (strategySlotPending) {
@@ -1217,12 +1192,10 @@
       return { ok: true, progressed: true, skipped: true, message: "已跳过无法执行的免费移动" };
     },
     "move-payment": (action) => {
-      getPendingMovePayment().selectedHandIndices = [...(action.selectedHandIndices || [])];
-      return confirmMovePayment({ automated: true });
-    },
-    "play-hand-card": (action) => {
-      const selected = handlePlayCardSelect(Number(action.target.handIndex));
-      return selected?.ok === false ? selected : confirmPlayCardSelection();
+      return resolveMovePaymentDecision({
+        automated: true,
+        selectedHandIndices: [...(action.selectedHandIndices || [])],
+      });
     },
     "strategy-passive-slot": (action) => confirmStrategyPassiveSlotChoice(action.target.slotId),
     "discard-hand-card": (action) => handleHandCardDiscard(Number(action.target.handIndex))

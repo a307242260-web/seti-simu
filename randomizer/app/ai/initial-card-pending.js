@@ -23,13 +23,13 @@
       AI_DEEPSPACE_SWAP_MIN_SCORE, AI_STYLE_SEAT_ORDER, INITIAL_SELECTION_REQUIRED, abilities, ai, aiAutoBattleState, aiNumber,
       aliens, allowsBlindDrawInSelection, amiba, applyAiDifficultyToPlayer, banrenma, canAiResolveAlienTraceEffect, canAiResolvePlayCardEffects,
       canBlindDraw, cancelCardTriggerChoice, cardEffects, cards, chooseAiIncomeDiscardIndexes, chooseAiTradeDiscardIndexes, confirmCardCornerQuickAction,
-      confirmCardTaskCompletion, confirmInitialSelectionForCurrentPlayer, confirmPassReserveSelection, confirmPlayCardSelection, confirmPublicScanSelection, createActionContext, drawCardForCurrentPlayer, executeFreeMoveForCardTrigger,
+      confirmCardTaskCompletion, confirmInitialSelectionForCurrentPlayer, confirmPassReserveSelection, confirmPublicScanSelection, createActionContext, drawCardForCurrentPlayer, executeFreeMoveForCardTrigger,
       finalizePendingDiscardSelection, getActivePlayers, getAiAutoBattlePendingState, getAiAutoBattlePlayerIds, getAiBestDeepspaceSwap, getAiBestHandScanIndex, getAiBestPublicScanSlots, getAiCardDisplayLabel,
       getAiDifficultyLabel, getAiIncomeDiscardPreview, getAiIncomeFinalFormulaEntries, getAiLaunchPaymentCost, getAiLiveScorePaceDeficit, getAiLowEngineCatchupProfile, getAiMarkedFinalFormulaEntries, getAiPassReserveResourcePressure,
-      getAiRoundNumber, getCardTypeCode, getInitialSelectionOffer, getPassReserveSelectionCards, getPendingPlayCardSelection,
-      getPlayerLabelById, getReadyCardTasks, handleCardTriggerChoice, handleHandCardCornerQuickAction, handleHandScanCardClick, handleIndustryDeepspaceHandClick, handlePlayCardSelect, handlePublicCardClick,
+      getAiRoundNumber, getCardTypeCode, getInitialSelectionOffer, getPassReserveSelectionCards,
+      getPlayerLabelById, getReadyCardTasks, handleCardTriggerChoice, handleHandCardCornerQuickAction, handleHandScanCardClick, handleIndustryDeepspaceHandClick, handlePublicCardClick,
       handlePublicCornerDiscardCardClick, handlePublicScanCardClick, hasActivePendingSubFlow, hasAiRunezuPassReservePressure, isActionEffectFlowActive, isAiAutoBattlePlayer, isAiIncomeDiscardType, isAiPassReservePreviewIncomeCandidate,
-      isCardSelectionActive, isDiscardSelectionActive, isHandScanSelectionActive, isIndustryHandSelectionActive, isInitialSelectionActive, isPlayCardSelectionActive, isPublicScanMultiSelectActive, listAiEffectMoveCandidates,
+      isCardSelectionActive, isDiscardSelectionActive, isHandScanSelectionActive, isIndustryHandSelectionActive, isInitialSelectionActive, isPublicScanMultiSelectActive, listAiEffectMoveCandidates,
       listAiPlayCardCandidates, openBanrenmaReadyOpportunityForPlayer, openCardTaskCompletionPicker, openRunezuFaceSymbolPlacement, pickPublicCardForCurrentPlayer, players, recordAiAutoBattleLog,
       rocketActions, roundAiScore, runezu, scoreAiAlienTraceValue, scoreAiB1TraceMarginalValue, scoreAiChongTraceTaskProgressValue, scoreAiChongTransportCompletionValue,
       scoreAiEffectValue, scoreAiPassReserveCard, scoreAiPublicPickCard, scoreAiRunezuFaceDependencyUnlockValue, scoreAiRunezuFaceRewardValue, scoreAiRunezuFaceSymbolPlacementChoice, scoreAiRunezuSpendSymbolFinalPenalty, selectPassReserveCard,
@@ -1012,40 +1012,6 @@
       return result || { ok: true, progressed: true, action };
     }
 
-    function runAiPlayCardSelectionDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!isPlayCardSelectionActive()) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择打牌` };
-      }
-      const pending = getPendingPlayCardSelection();
-      if (pending?.source === "future_span") {
-        return { ok: false, blocked: true, message: "AI 暂不支持未来跨度目标牌打出" };
-      }
-      if (pending?.source === "hand") {
-        recordAiAutoBattleLog("play-card", `${currentPlayer.colorLabel}AI 确认打出 ${cards.getCardLabel(pending.card)}`, {
-          handIndex: pending.handIndex,
-          card: pending.card,
-        });
-        return confirmPlayCardSelection();
-      }
-      const candidates = listAiPlayCardCandidates(workingRoot, currentPlayer);
-      const selected = selectScoredItem(candidates, { mode: "card" });
-      if (!selected) {
-        return { ok: false, blocked: true, message: "AI 没有可打出的普通手牌" };
-      }
-      const selectedLabel = getAiCardDisplayLabel(selected, currentPlayer) || selected.cardLabel || "未知卡牌";
-      recordAiAutoBattleLog("play-card", `${currentPlayer.colorLabel}AI 选择打出 ${selectedLabel}`, {
-        selected,
-        selectedLabel,
-        candidates,
-      });
-      const selectResult = handlePlayCardSelect(selected.handIndex);
-      if (!selectResult?.ok) return selectResult;
-      return confirmPlayCardSelection();
-    }
-
     return {
       getOrderedAiAutoBattlePlayerIds,
       getAiStyleFallbackIndex,
@@ -1076,7 +1042,6 @@
       listAiRunezuFaceSymbolQuickCandidates,
       runAiRunezuFaceSymbolQuickActionDecision,
       runAiCardCornerQuickActionDecision,
-      runAiPlayCardSelectionDecision,
     };
   }
 
@@ -1084,13 +1049,13 @@
     "AI_DEEPSPACE_SWAP_MIN_SCORE", "AI_STYLE_SEAT_ORDER", "INITIAL_SELECTION_REQUIRED", "abilities", "ai", "aiAutoBattleState", "aiNumber",
     "aliens", "allowsBlindDrawInSelection", "amiba", "applyAiDifficultyToPlayer", "banrenma", "canAiResolveAlienTraceEffect", "canAiResolvePlayCardEffects",
     "canBlindDraw", "cancelCardTriggerChoice", "cardEffects", "cards", "chooseAiIncomeDiscardIndexes", "chooseAiTradeDiscardIndexes", "confirmCardCornerQuickAction",
-    "confirmCardTaskCompletion", "confirmInitialSelectionForCurrentPlayer", "confirmPassReserveSelection", "confirmPlayCardSelection", "confirmPublicScanSelection", "createActionContext", "drawCardForCurrentPlayer", "executeFreeMoveForCardTrigger",
+    "confirmCardTaskCompletion", "confirmInitialSelectionForCurrentPlayer", "confirmPassReserveSelection", "confirmPublicScanSelection", "createActionContext", "drawCardForCurrentPlayer", "executeFreeMoveForCardTrigger",
     "finalizePendingDiscardSelection", "getActivePlayers", "getAiAutoBattlePendingState", "getAiAutoBattlePlayerIds", "getAiBestDeepspaceSwap", "getAiBestHandScanIndex", "getAiBestPublicScanSlots", "getAiCardDisplayLabel",
     "getAiDifficultyLabel", "getAiIncomeDiscardPreview", "getAiIncomeFinalFormulaEntries", "getAiLaunchPaymentCost", "getAiLiveScorePaceDeficit", "getAiLowEngineCatchupProfile", "getAiMarkedFinalFormulaEntries", "getAiPassReserveResourcePressure",
-    "getAiRoundNumber", "getCardTypeCode", "getInitialSelectionOffer", "getPassReserveSelectionCards", "getPendingPlayCardSelection",
-    "getPlayerLabelById", "getReadyCardTasks", "handleCardTriggerChoice", "handleHandCardCornerQuickAction", "handleHandScanCardClick", "handleIndustryDeepspaceHandClick", "handlePlayCardSelect", "handlePublicCardClick",
+    "getAiRoundNumber", "getCardTypeCode", "getInitialSelectionOffer", "getPassReserveSelectionCards",
+    "getPlayerLabelById", "getReadyCardTasks", "handleCardTriggerChoice", "handleHandCardCornerQuickAction", "handleHandScanCardClick", "handleIndustryDeepspaceHandClick", "handlePublicCardClick",
     "handlePublicCornerDiscardCardClick", "handlePublicScanCardClick", "hasActivePendingSubFlow", "hasAiRunezuPassReservePressure", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "isAiIncomeDiscardType", "isAiPassReservePreviewIncomeCandidate",
-    "isCardSelectionActive", "isDiscardSelectionActive", "isHandScanSelectionActive", "isIndustryHandSelectionActive", "isInitialSelectionActive", "isPlayCardSelectionActive", "isPublicScanMultiSelectActive", "listAiEffectMoveCandidates",
+    "isCardSelectionActive", "isDiscardSelectionActive", "isHandScanSelectionActive", "isIndustryHandSelectionActive", "isInitialSelectionActive", "isPublicScanMultiSelectActive", "listAiEffectMoveCandidates",
     "listAiPlayCardCandidates", "openBanrenmaReadyOpportunityForPlayer", "openCardTaskCompletionPicker", "openRunezuFaceSymbolPlacement", "pickPublicCardForCurrentPlayer", "players", "recordAiAutoBattleLog",
     "rocketActions", "roundAiScore", "runezu", "scoreAiAlienTraceValue", "scoreAiB1TraceMarginalValue", "scoreAiChongTraceTaskProgressValue", "scoreAiChongTransportCompletionValue",
     "scoreAiEffectValue", "scoreAiPassReserveCard", "scoreAiPublicPickCard", "scoreAiRunezuFaceDependencyUnlockValue", "scoreAiRunezuFaceRewardValue", "scoreAiRunezuFaceSymbolPlacementChoice", "scoreAiRunezuSpendSymbolFinalPenalty", "selectPassReserveCard",

@@ -135,15 +135,26 @@
     }) || {};
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
     const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
-    const MOVE_PAYMENT_SESSION = "move_payment";
     const getPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
     function setPassReserveSelection(session) {
       if (!session) return decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
       return decisionSessions.open(PASS_RESERVE_SELECTION_SESSION, session);
     }
-    function setMovePayment(session) {
-      if (!session) return decisionSessions.clear(MOVE_PAYMENT_SESSION);
-      return decisionSessions.open(MOVE_PAYMENT_SESSION, session);
+    function setMovePayment(workingRoot, session) {
+      if (!workingRoot?.match) throw new TypeError("move payment requires Composition workingRoot.match");
+      uiRuntimeState.movePaymentSelectedHandIndices = [];
+      if (!session) {
+        delete workingRoot.match.movePaymentContinuation;
+        return null;
+      }
+      workingRoot.match.movePaymentContinuation = {
+        ...structuredClone(session),
+        playerId: session.playerId || session.player?.id || null,
+        playerColor: session.playerColor || session.player?.color || null,
+      };
+      delete workingRoot.match.movePaymentContinuation.player;
+      delete workingRoot.match.movePaymentContinuation.selectedHandIndices;
+      return workingRoot.match.movePaymentContinuation;
     }
     const getCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
     function setCardCornerFreeMove(session) {
@@ -1784,7 +1795,7 @@
           return payCheck;
         }
 
-        setMovePayment({
+        setMovePayment(workingRoot, {
           player: currentPlayer,
           deltaX,
           deltaY,

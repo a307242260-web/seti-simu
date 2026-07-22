@@ -70,8 +70,6 @@
             pendingHandScan: Boolean(state.pendingHandScanAction),
             pendingPassReserve: Boolean(state.pendingPassReserveSelection),
             pendingCardSelection: Boolean(state.pendingCardSelectionAction),
-            pendingPlayCardSelection: Boolean(state.pendingPlayCardSelection),
-            pendingMovePayment: Boolean(state.pendingMovePayment),
             pendingCardTrigger: Boolean(state.pendingCardTriggerAction),
             pendingCardTriggerFreeMove: Boolean(state.pendingCardTriggerFreeMove),
             pendingCardCornerFreeMove: Boolean(state.pendingCardCornerFreeMove),

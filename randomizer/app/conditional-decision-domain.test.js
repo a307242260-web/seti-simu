@@ -12,6 +12,14 @@ function createFixture() {
     techGameState: { board: {}, ui: {} },
     rocketState: { rockets: [] },
     cardState: { publicCards: [] },
+    playerState: { currentPlayerId: "move-owner", players: [{
+      id: "move-owner",
+      resources: { energy: 1 },
+      hand: [
+        { id: "move-1", discardActionCode: 2 },
+        { id: "move-2", discardActionCode: 2 },
+      ],
+    }] },
   };
   const finalPlayer = { id: "final-owner" };
   const scanPlayer = { id: "scan-owner" };
@@ -23,18 +31,23 @@ function createFixture() {
     ],
     effect: { options: { maxTargets: 1 } },
   };
-  const state = { finalPending: true, finalHandlerCalls: [] };
+  const state = {
+    finalPending: true,
+    probePending: true,
+    finalHandlerCalls: [],
+    movePaymentCalls: [],
+  };
   let contextReads = 0;
   const domain = createConditionalDecisionDomain(() => {
     contextReads += 1;
-    return {
+    const resolved = {
       FINAL_SCORE_IDS: ["a", "b"],
       finalScoring: {
         getNextPendingMarkForPlayer: () => (state.finalPending ? { id: "pending-final" } : null),
         canMarkTile: (_finalState, tileId) => ({ ok: tileId === "a" }),
       },
       getCurrentPlayer: () => finalPlayer,
-      getPendingProbeSectorScanDecision: () => probePending,
+      getPendingProbeSectorScanDecision: () => (state.probePending ? probePending : null),
       getHeadlessConditionalPlayer: (pending) => pending.player,
       decisionSessions: { peek: () => null },
       decisionState: {},
@@ -42,9 +55,50 @@ function createFixture() {
         state.finalHandlerCalls.push(tileId);
         return { ok: true, progressed: true, tileId };
       },
+      getPlayerById: (playerId) => root.playerState.players.find((player) => player.id === playerId) || null,
+      isMovePaymentCard: (card) => Number(card?.discardActionCode) === 2,
+      players: {
+        canAfford: (player, cost) => Number(player?.resources?.energy || 0) >= Number(cost?.energy || 0),
+      },
+      resolveMovePaymentDecision: (options) => {
+        state.movePaymentCalls.push(structuredClone(options));
+        delete root.match.movePaymentContinuation;
+        return { ok: true, progressed: true };
+      },
     };
+    return new Proxy(resolved, {
+      get(target, property) {
+        return property in target ? target[property] : (() => null);
+      },
+    });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.movePaymentContinuation = {
+    playerId: "move-owner",
+    requiredMovePoints: 2,
+    rocketId: 7,
+    deltaX: 1,
+    deltaY: 0,
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.equal(decision.ownerId, "move-owner");
+  assert.ok(decision.choices.every((choice) => choice.family === "choose_payment"));
+  assert.deepEqual(
+    decision.choices.map((choice) => choice.payload.selectedHandIndices),
+    [[0], [1], [0, 1]],
+    "支付合法项必须只从 Composition continuation 与 working player 枚举",
+  );
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_payment"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.movePaymentCalls, [{ automated: true, selectedHandIndices: [0] }]);
+  assert.equal(fixture.root.match.movePaymentContinuation, undefined);
 }
 
 function toDescriptor(executor, root, family) {

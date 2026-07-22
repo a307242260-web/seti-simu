@@ -24,7 +24,7 @@
       aiNumber, aliens, amiba, aomomo, applyAiStrategyWeight, banrenma, buildAiChongTransportMoveCandidate,
       buildAiPlayCardCandidate, buildSectorScanChoicesForX, canAiContinueCardMoveAfterStep, canAiPlanetAcceptLanding, canAiPlanetAcceptOrbit, canPayForMove, cancelTechSelection, cardEffects,
       cards, chong, chooseAiDataPlacementOptionFromButtons, chooseAiLandChoice, closeScanTargetPicker, confirmDataPlacement, confirmDiscardAnyForIncome, confirmLandTargetPicker,
-      confirmMovePayment, confirmProbeSectorScanSelection, confirmScanTarget, confirmStrategyPassiveSlotChoice, confirmTechBlueSlotChoice, createActionContext, data, els,
+      confirmProbeSectorScanSelection, confirmScanTarget, confirmStrategyPassiveSlotChoice, confirmTechBlueSlotChoice, createActionContext, data, els,
       enrichAiAlienUseOptions, executeCardMoveForEffect, executeFreeMoveForCardCorner, executeFreeMoveForScanAction4, executeIndustryFreeMove, fangzhou, finishIndustryAbilityFlow, formatRocketLabel,
       getAiAlienCardConversionMultiplier, getAiAlienTraceRewardForValuation, getAiAlienTraceTargetDemandForSlot, getAiAvailableDataRoom, getAiDiscardedCardOpportunityCost, getAiMapDemand, getAiNextActionEffect, getAiNextMissingFinalScoreThreshold,
       getAiPlanetAtCoordinate, getAiResearchTechCandidateExecutionCheck, getAiResearchTechSelectionOptionsForEffect, getAiResourceValuesForRound, getAiRoundNumber, getAiStrategyDemand, getAlienTraceActionPlayer, getBestAiNebulaChoiceScore,
@@ -34,7 +34,7 @@
       handleJiuzheCardChoice, handleJiuzheOpportunitySkip, handleOptionalHandScanChoice, handlePayCreditChoice, handleProbeLocationRewardChoice, handleProbeSectorScanChoice, handleRemoveOrbitToProbeChoice, handleRemovePlanetMarkerChoice,
       handleReturnUnfinishedTaskChoice, handleRunezuCardGainChoice, handleRunezuFaceSymbolChoice, handleRunezuSymbolBranchChoice, handleScanAction4Choice, handleSupplyTechTileClick, handleYichangdianCardGainChoice, handleYichangdianCornerChoice,
       industry, isActionEffectFlowActive, isAiAutoBattlePlayer, isAiChongFossilToken, isAiChongPickupPlanetId, isAiChongTravelEffect, isAiHiddenFirstTraceColorLost, isAiHiddenFirstTraceTakenByOpponent,
-      isAiLandingEffect, isAiOpenHiddenFirstTraceTarget, isMovePaymentCard, isMovePaymentSelectionActive, isTechTilePickingActive, jiuzhe, listAiBorrowTechCandidates, listAiIndustryHuanyuMoveCandidates,
+      isAiLandingEffect, isAiOpenHiddenFirstTraceTarget, isTechTilePickingActive, jiuzhe, listAiBorrowTechCandidates, listAiIndustryHuanyuMoveCandidates,
       listAiResearchTechCandidates, moveRocket, players, rankAiScanTargetButtons, rankAiScanTargetChoices, recordAiAutoBattleLog, rocketActions,
       roundAiScore, runezu, scanEffects, scoreAiAlienTraceValue, scoreAiAomomoTraceTimingValue, scoreAiB1TraceMarginalValue, scoreAiBanrenmaTraceTimingValue,
       scoreAiCardCornerOpportunity, scoreAiFangzhouUnlockChoiceValue, scoreAiFinalSecondMarkNoDirectSetupPenalty, scoreAiHighCostPointConversionPenalty, scoreAiLandingAfterMove, scoreAiLateAlienCardConversionPenalty, scoreAiLaunchAction, scoreAiMoveArrivalRewardValue,
@@ -316,119 +316,6 @@
         choices: rankedChoices,
       });
       return confirmStrategyPassiveSlotChoice(selected.slotId);
-    }
-
-    function runAiMovePaymentDecision(workingRoot) {
-      const { rocketState, turnState } = requireWorkingRoot(workingRoot);
-      if (!isMovePaymentSelectionActive()) return null;
-      const currentPlayer = getAiPendingDecisionPlayer(workingRoot, state.pendingMovePayment)
-        || getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工确认移动支付` };
-      }
-
-      const requiredMovePoints = state.pendingMovePayment.requiredMovePoints || MOVE_ENERGY_COST;
-      const availableEnergy = Math.max(0, Math.round(Number(currentPlayer?.resources?.energy) || 0));
-      const moveCardIndexes = (currentPlayer?.hand || [])
-        .map((card, index) => (isMovePaymentCard(card) ? index : null))
-        .filter((index) => index != null);
-      const fallbackMoveCardCost = Math.max(0, aiNumber(getAiResourceValuesForRound().handSize));
-      const moveCardEntries = moveCardIndexes.map((handIndex) => {
-        const card = currentPlayer.hand?.[handIndex] || null;
-        const playCandidate = card ? buildAiPlayCardCandidate(workingRoot, card, handIndex, currentPlayer) : null;
-        return {
-          card,
-          handIndex,
-          playCandidate,
-          opportunityCost: Math.max(
-            fallbackMoveCardCost,
-            card ? getAiDiscardedCardOpportunityCost(card, playCandidate) : fallbackMoveCardCost,
-          ),
-        };
-      });
-      const moveCardOpportunityCosts = Object.fromEntries(
-        moveCardEntries.map((entry) => [entry.handIndex, roundAiScore(entry.opportunityCost)]),
-      );
-      const rocket = (rocketState.rockets || [])
-        .find((item) => Number(item.id) === Number(state.pendingMovePayment.rocketId)) || null;
-      const from = rocket ? rocketActions.getRocketSectorCoordinate(rocket) : null;
-      const effect = getCurrentActionEffect?.() || state.pendingMovePayment.cardMoveEffectContext?.effect || null;
-      const nextEffect = getAiNextActionEffect();
-      const to = from
-        ? {
-          x: solar.mod8(from.x + aiNumber(state.pendingMovePayment.deltaX)),
-          y: Math.min(
-            rocketActions.SECTOR_RING_MAX,
-            Math.max(rocketActions.SECTOR_RING_MIN, aiNumber(from.y) + aiNumber(state.pendingMovePayment.deltaY)),
-          ),
-        }
-        : null;
-      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer, {
-        rocket,
-        effect,
-        nextEffect,
-      });
-      const preserveEnergyForRouteCashout = shouldAiPreserveEnergyForRouteCashout(currentPlayer, to, {
-        routeTarget: routeScore.target,
-        requiredMovePoints,
-      });
-      const preferredHandIndices = ai?.selectionEvaluator?.evaluateMovePaymentIndexes?.(currentPlayer.hand || [], {
-        requiredMovePoints,
-        availableEnergy,
-        moveCardIndexes,
-        moveCardOpportunityCosts,
-        roundNumber: turnState.roundNumber,
-        preserveEnergy: preserveEnergyForRouteCashout,
-      }) || [];
-      const orderedMoveCards = [...moveCardIndexes].sort((left, right) => (
-        Number(moveCardOpportunityCosts[left] ?? 0) - Number(moveCardOpportunityCosts[right] ?? 0) || left - right
-      ));
-      const minimumCards = Math.max(0, requiredMovePoints - availableEnergy);
-      const paymentChoices = Array.from(
-        { length: Math.max(0, Math.min(requiredMovePoints, orderedMoveCards.length) - minimumCards) + 1 },
-        (_item, offset) => orderedMoveCards.slice(0, minimumCards + offset),
-      );
-      const paymentPolicy = decidePolicyChoice(workingRoot, "choose_payment", currentPlayer, "move-payment", paymentChoices.map((indexes) => ({
-        choiceId: indexes.join("+") || "energy-only",
-        value: indexes.join(",") === preferredHandIndices.join(",")
-          ? 100
-          : -indexes.reduce((total, index) => total + Number(moveCardOpportunityCosts[index] || 0), 0),
-        target: { handIndexes: indexes },
-        summary: indexes.length ? `支付移动牌 ${indexes.join(",")}` : "仅支付能量",
-        indexes,
-      })));
-      if (!paymentPolicy.ok) return { ok: false, blocked: true, code: paymentPolicy.code, message: paymentPolicy.message };
-      const selectedHandIndices = paymentPolicy.choice.indexes;
-      state.pendingMovePayment.selectedHandIndices = selectedHandIndices.slice(0, requiredMovePoints);
-      recordAiAutoBattleLog("move-payment", `${currentPlayer.colorLabel}AI 确认移动支付`, {
-        rocketId: state.pendingMovePayment.rocketId,
-        deltaX: state.pendingMovePayment.deltaX,
-        deltaY: state.pendingMovePayment.deltaY,
-        requiredMovePoints,
-        selectedHandIndices: state.pendingMovePayment.selectedHandIndices,
-        selectedCards: state.pendingMovePayment.selectedHandIndices
-          .map((handIndex) => {
-            const entry = moveCardEntries.find((candidate) => candidate.handIndex === Number(handIndex));
-            const card = entry?.card || currentPlayer.hand?.[handIndex] || null;
-            if (!card) return null;
-            return {
-              handIndex,
-              cardId: card.cardId || card.id || null,
-              cardInstanceId: card.id || null,
-              cardLabel: cards.getCardLabel?.(card) || card.cardName || card.label || null,
-              opportunityCost: roundAiScore(entry?.opportunityCost),
-              playScore: entry?.playCandidate ? roundAiScore(entry.playCandidate.score) : null,
-            };
-          })
-          .filter(Boolean),
-        moveCardOpportunityCosts,
-        energyCost: Math.max(0, requiredMovePoints - state.pendingMovePayment.selectedHandIndices.length),
-        preserveEnergy: preserveEnergyForRouteCashout,
-        preserveEnergyForRouteCashout,
-      });
-      const result = confirmMovePayment({ automated: true });
-      if (result?.ok) incrementAiMoveCountThisTurn(workingRoot, currentPlayer.id);
-      return result || { ok: false, blocked: true, message: "AI 移动支付未产生结果" };
     }
 
     function runAiLandTargetDecision(workingRoot) {
@@ -2301,7 +2188,6 @@
       runAiDataPlacementDecision,
       scoreAiStrategyPassiveSlotChoice,
       runAiStrategyPassiveSlotChoiceDecision,
-      runAiMovePaymentDecision,
       runAiLandTargetDecision,
       runAiProbeSectorScanDecision,
       runAiProbeLocationRewardDecision,
@@ -2365,7 +2251,7 @@
     "aiNumber", "aliens", "amiba", "aomomo", "applyAiStrategyWeight", "banrenma", "buildAiChongTransportMoveCandidate",
     "buildAiPlayCardCandidate", "buildSectorScanChoicesForX", "canAiContinueCardMoveAfterStep", "canAiPlanetAcceptLanding", "canAiPlanetAcceptOrbit", "canPayForMove", "cancelTechSelection", "cardEffects",
     "cards", "chong", "chooseAiDataPlacementOptionFromButtons", "chooseAiLandChoice", "closeScanTargetPicker", "confirmDataPlacement", "confirmDiscardAnyForIncome", "confirmLandTargetPicker",
-    "confirmMovePayment", "confirmProbeSectorScanSelection", "confirmScanTarget", "confirmStrategyPassiveSlotChoice", "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
+    "confirmProbeSectorScanSelection", "confirmScanTarget", "confirmStrategyPassiveSlotChoice", "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
     "enrichAiAlienUseOptions", "executeCardMoveForEffect", "executeFreeMoveForCardCorner", "executeFreeMoveForScanAction4", "executeIndustryFreeMove", "fangzhou", "finishIndustryAbilityFlow", "formatRocketLabel",
     "getAiAlienCardConversionMultiplier", "getAiAlienTraceRewardForValuation", "getAiAlienTraceTargetDemandForSlot", "getAiAvailableDataRoom", "getAiDiscardedCardOpportunityCost", "getAiMapDemand", "getAiNextActionEffect", "getAiNextMissingFinalScoreThreshold",
     "getAiPlanetAtCoordinate", "getAiResearchTechCandidateExecutionCheck", "getAiResearchTechSelectionOptionsForEffect", "getAiResourceValuesForRound", "getAiRoundNumber", "getAiStrategyDemand", "getAlienTraceActionPlayer", "getBestAiNebulaChoiceScore",
@@ -2375,7 +2261,7 @@
     "handleJiuzheCardChoice", "handleJiuzheOpportunitySkip", "handleOptionalHandScanChoice", "handlePayCreditChoice", "handleProbeLocationRewardChoice", "handleProbeSectorScanChoice", "handleRemoveOrbitToProbeChoice", "handleRemovePlanetMarkerChoice",
     "handleReturnUnfinishedTaskChoice", "handleRunezuCardGainChoice", "handleRunezuFaceSymbolChoice", "handleRunezuSymbolBranchChoice", "handleScanAction4Choice", "handleSupplyTechTileClick", "handleYichangdianCardGainChoice", "handleYichangdianCornerChoice",
     "industry", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "isAiChongFossilToken", "isAiChongPickupPlanetId", "isAiChongTravelEffect", "isAiHiddenFirstTraceColorLost", "isAiHiddenFirstTraceTakenByOpponent",
-    "isAiLandingEffect", "isAiOpenHiddenFirstTraceTarget", "isMovePaymentCard", "isMovePaymentSelectionActive", "isTechTilePickingActive", "jiuzhe", "listAiBorrowTechCandidates", "listAiIndustryHuanyuMoveCandidates",
+    "isAiLandingEffect", "isAiOpenHiddenFirstTraceTarget", "isTechTilePickingActive", "jiuzhe", "listAiBorrowTechCandidates", "listAiIndustryHuanyuMoveCandidates",
     "listAiResearchTechCandidates", "moveRocket", "players", "rankAiScanTargetButtons", "rankAiScanTargetChoices", "recordAiAutoBattleLog", "rocketActions",
     "roundAiScore", "runezu", "scanEffects", "scoreAiAlienTraceValue", "scoreAiAomomoTraceTimingValue", "scoreAiB1TraceMarginalValue", "scoreAiBanrenmaTraceTimingValue",
     "scoreAiCardCornerOpportunity", "scoreAiFangzhouUnlockChoiceValue", "scoreAiFinalSecondMarkNoDirectSetupPenalty", "scoreAiHighCostPointConversionPenalty", "scoreAiLandingAfterMove", "scoreAiLateAlienCardConversionPenalty", "scoreAiLaunchAction", "scoreAiMoveArrivalRewardValue",

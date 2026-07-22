@@ -440,6 +440,33 @@ function createHarness(initialValue = 0) {
   assert.match(tradeSource, /canAiMoveThisTurn\(workingRoot, player\.id\)/, "AI trade candidates 必须显式传 workingRoot");
   const standardActionSource = fs.readFileSync(path.join(__dirname, "../game/actions/standard-action.js"), "utf8");
   assert.doesNotMatch(standardActionSource, /_compositionCheckpointVersion|comparableDecision/, "Action identity 不得忽略 decisionStateVersion");
+  const handFlowSource = fs.readFileSync(path.join(__dirname, "hand-flow.js"), "utf8");
+  const cardRuntimeSource = fs.readFileSync(path.join(__dirname, "card-runtime.js"), "utf8");
+  const conditionalSource = fs.readFileSync(path.join(__dirname, "conditional-decision-domain.js"), "utf8");
+  const debugRuntimeSource = fs.readFileSync(path.join(__dirname, "debug-runtime.js"), "utf8");
+  const migratedPaymentSources = [appSource, handFlowSource, cardRuntimeSource, conditionalSource, debugRuntimeSource].join("\n");
+  assert.doesNotMatch(
+    migratedPaymentSources,
+    /["'](?:move_payment|play_card_selection|hand_card_play_action|card_corner_quick_action)["']/,
+    "第一批旧 DecisionSession key 必须从生产调用物理删除",
+  );
+  assert.doesNotMatch(
+    handFlowSource,
+    /(?:movePayment|playCardSelection|handCardPlayAction|cardCornerQuickAction)Draft/,
+    "hand-flow 不得用 module-local draft 同构替代规则 owner",
+  );
+  assert.match(handFlowSource, /workingRoot\.match\.movePaymentContinuation/, "支付上下文必须归 Composition continuation state");
+  assert.match(conditionalSource, /workingRoot\.match\?\.movePaymentContinuation/, "支付 Decision 必须从 Composition working root 枚举");
+  assert.doesNotMatch(conditionalSource, /isPlayCardSelectionActive|getPendingPlayCardSelection/, "规则枚举不得读取纯 UI 打牌选择");
+  assert.match(appSource, /MOVE_PAYMENT_DECISION_REQUIRED[\s\S]*?inputPort\.submitDecision\(/, "人类支付确认必须提交 active DecisionEffect");
+  assert.match(handFlowSource, /uiRuntimeState\.movePaymentSelectedHandIndices/, "未提交的手牌高亮只能进入 UI state");
+  const aiProductionSource = [
+    fs.readFileSync(path.join(__dirname, "ai/automation-runtime.js"), "utf8"),
+    fs.readFileSync(path.join(__dirname, "ai/initial-card-pending.js"), "utf8"),
+    fs.readFileSync(path.join(__dirname, "ai/interaction-pending.js"), "utf8"),
+    fs.readFileSync(path.join(__dirname, "ai-controller.js"), "utf8"),
+  ].join("\n");
+  assert.doesNotMatch(aiProductionSource, /pendingMovePayment|pendingPlayCardSelection|runAiMovePaymentDecision|runAiPlayCardSelectionDecision/, "AI 不得保留 UI/payment pending 旁路");
 }
 
 console.log("browser-rule-composition tests passed");

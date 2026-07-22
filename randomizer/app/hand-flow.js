@@ -14,6 +14,7 @@
   function createHandFlow(context = {}) {
     const {
       decisionSessions,
+      uiRuntimeState,
       els,
       players,
       cards,
@@ -133,33 +134,53 @@
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
-    const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
-    const PLAY_CARD_SELECTION_SESSION = "play_card_selection";
-    const MOVE_PAYMENT_SESSION = "move_payment";
-    const getMovePayment = () => decisionSessions.peek(MOVE_PAYMENT_SESSION);
+    const getMovePayment = (workingRoot) => workingRoot?.match?.movePaymentContinuation || null;
     function setMovePayment(workingRoot, session) {
-      if (!session) return decisionSessions.clear(MOVE_PAYMENT_SESSION);
-      return decisionSessions.open(MOVE_PAYMENT_SESSION, session);
+      if (!workingRoot?.match) throw new TypeError("move payment requires Composition workingRoot.match");
+      uiRuntimeState.movePaymentSelectedHandIndices = [];
+      if (!session) {
+        delete workingRoot.match.movePaymentContinuation;
+        return null;
+      }
+      const playerId = session.playerId || session.player?.id || null;
+      const playerColor = session.playerColor || session.player?.color || null;
+      workingRoot.match.movePaymentContinuation = {
+        ...structuredClone(session),
+        playerId,
+        playerColor,
+        selectedHandIndices: undefined,
+        player: undefined,
+      };
+      delete workingRoot.match.movePaymentContinuation.player;
+      delete workingRoot.match.movePaymentContinuation.selectedHandIndices;
+      return workingRoot.match.movePaymentContinuation;
     }
-    const peekPlayCardSelection = () => decisionSessions.peek(PLAY_CARD_SELECTION_SESSION);
+    const peekPlayCardSelection = () => uiRuntimeState.playCardSelection;
     function setPlayCardSelection(workingRoot, session) {
-      if (!session) return decisionSessions.clear(PLAY_CARD_SELECTION_SESSION);
-      return decisionSessions.open(PLAY_CARD_SELECTION_SESSION, session);
+      uiRuntimeState.playCardSelection = session ? structuredClone(session) : null;
+      return uiRuntimeState.playCardSelection;
     }
-    const peekHandCardPlayAction = () => decisionSessions.peek(HAND_CARD_PLAY_SESSION);
-    const peekCardCornerQuickAction = () => decisionSessions.peek(CARD_CORNER_QUICK_SESSION);
+    const peekHandCardPlayAction = () => uiRuntimeState.handCardPlayAction;
+    const peekCardCornerQuickAction = () => uiRuntimeState.cardCornerQuickAction;
     function setHandCardPlayAction(workingRoot, action) {
-      if (!action) return decisionSessions.clear(HAND_CARD_PLAY_SESSION);
+      if (!action) {
+        uiRuntimeState.handCardPlayAction = null;
+        return null;
+      }
       const pending = peekHandCardPlayAction();
       if (pending) return Object.assign(pending, action);
-      return decisionSessions.open(HAND_CARD_PLAY_SESSION, action);
+      uiRuntimeState.handCardPlayAction = structuredClone(action);
+      return uiRuntimeState.handCardPlayAction;
     }
     function setCardCornerQuickAction(workingRoot, action) {
-      if (!action) return decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
+      if (!action) {
+        uiRuntimeState.cardCornerQuickAction = null;
+        return null;
+      }
       const pending = peekCardCornerQuickAction();
       if (pending) return Object.assign(pending, action);
-      return decisionSessions.open(CARD_CORNER_QUICK_SESSION, action);
+      uiRuntimeState.cardCornerQuickAction = structuredClone(action);
+      return uiRuntimeState.cardCornerQuickAction;
     }
     let futureSpanPlayBeforePlayer = null;
 
@@ -219,11 +240,11 @@
     }
 
     function isMovePaymentSelectionActive(workingRoot) {
-      return getMovePayment() != null;
+      return getMovePayment(workingRoot) != null;
     }
 
     function getMovePaymentPlayer(workingRoot) {
-      const pending = getMovePayment();
+      const pending = getMovePayment(workingRoot);
       if (!pending) return null;
       const playerId = pending.player?.id || pending.playerId || null;
       if (playerId) return getPlayerById(workingRoot, playerId) || pending.player || null;
@@ -240,7 +261,7 @@
       const active = isMovePaymentSelectionActive(workingRoot);
       const lockedForAi = isMovePaymentLockedForAiAutomation(workingRoot);
       const manualActive = active && !lockedForAi;
-      const preservesCardCornerMove = getMovePayment()?.supplementalMoveContext?.type === "card_corner_free_move";
+      const preservesCardCornerMove = getMovePayment(workingRoot)?.supplementalMoveContext?.type === "card_corner_free_move";
       if (active && !preservesCardCornerMove) cancelHandCardContextActions(workingRoot, { silent: true });
       els.appWrap?.classList.toggle("move-payment-selection-active", manualActive);
       els.playerHandPanel?.classList.toggle("move-payment-selection-active", manualActive);
@@ -397,26 +418,26 @@
       const card = currentPlayer?.hand?.[index];
       if (!isMovePaymentCard(card)) return;
 
-      const pending = getMovePayment();
-      const selected = pending.selectedHandIndices || [];
+      const pending = getMovePayment(workingRoot);
+      const selected = uiRuntimeState.movePaymentSelectedHandIndices || [];
       if (selected.includes(index)) {
-        pending.selectedHandIndices = selected.filter((item) => item !== index);
+        uiRuntimeState.movePaymentSelectedHandIndices = selected.filter((item) => item !== index);
       } else if (selected.length < (pending.requiredMovePoints || MOVE_ENERGY_COST)) {
-        pending.selectedHandIndices = [...selected, index];
+        uiRuntimeState.movePaymentSelectedHandIndices = [...selected, index];
       }
       renderPlayerHand();
     }
 
-    function confirmMovePayment(workingRoot, options = {}) {
+    function resolveMovePaymentDecision(workingRoot, options = {}) {
       if (!workingRoot?.playerState || !workingRoot?.rocketState) {
-        throw new TypeError("confirmMovePayment 缺少 workingRoot");
+        throw new TypeError("resolveMovePaymentDecision 缺少 workingRoot");
       }
       if (!isMovePaymentSelectionActive(workingRoot)) return;
       if (isMovePaymentLockedForAiAutomation(workingRoot) && options.automated !== true) {
         return context.blockManualAiMovePayment?.();
       }
 
-      const activePayment = getMovePayment();
+      const activePayment = getMovePayment(workingRoot);
       const paymentPlayerId = activePayment?.player?.id || activePayment?.playerId || null;
       const paymentPlayerColor = activePayment?.player?.color || activePayment?.playerColor || null;
       const currentPlayer = (workingRoot.playerState.players || []).find((player) => (
@@ -429,7 +450,7 @@
         return { ok: false, message: workingRoot.rocketState.statusNote };
       }
       const { requiredMovePoints = MOVE_ENERGY_COST } = activePayment;
-      const selectedHandIndices = [...(activePayment.selectedHandIndices || [])].sort((left, right) => left - right);
+      const selectedHandIndices = [...(options.selectedHandIndices || [])].sort((left, right) => left - right);
       let paymentNote = "";
       let handSnapshot = null;
       let discardPileSnapshot = null;
@@ -494,7 +515,7 @@
         historyLabel: `移动消耗 ${selectedMoveCards.length ? `${selectedMoveCards.length} 张移动牌` : ""}${selectedMoveCards.length && energyCost ? " + " : ""}${energyCost ? `${energyCost} 能量` : ""}`,
       };
 
-      const pending = getMovePayment();
+      const pending = getMovePayment(workingRoot);
       const supplementalMoveContext = pending.supplementalMoveContext || null;
       const cardMoveEffectContext = pending.cardMoveEffectContext || null;
       setMovePayment(workingRoot, null);
@@ -1900,7 +1921,7 @@
       cancelMovePaymentSelection,
       beginMovePaymentSelection,
       handleHandCardMovePayment,
-      confirmMovePayment,
+      resolveMovePaymentDecision,
       syncPlayCardSelectionChrome,
       getPendingPlayCardSelection,
       handlePlayCardSelect,

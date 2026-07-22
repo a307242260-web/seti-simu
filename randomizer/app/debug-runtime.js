@@ -166,7 +166,10 @@
       decisionSessions?.clear?.("pass_reserve_selection");
       uiRuntimeState.passReserveSelectionDismissed = false;
       decisionState.handScanAction = null;
-      decisionSessions?.clear?.("play_card_selection");
+      uiRuntimeState.playCardSelection = null;
+      uiRuntimeState.handCardPlayAction = null;
+      uiRuntimeState.cardCornerQuickAction = null;
+      uiRuntimeState.movePaymentSelectedHandIndices = [];
       cards.setSelectionActive(ruleCardState(workingRoot), false);
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       cards.setPlayCardSelectionActive(ruleCardState(workingRoot), false);
@@ -978,7 +981,7 @@
       if (effectOwner) return effectOwner;
 
       const pendingEntries = [
-        decisionSessions?.peek?.("move_payment"),
+        workingRoot.match?.movePaymentContinuation,
         decisionState.discardAction,
         decisionState.cardSelectionAction,
         decisionSessions?.peek?.("pass_reserve_selection"),

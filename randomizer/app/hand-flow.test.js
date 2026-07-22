@@ -77,6 +77,13 @@ function createBaseContext(player, overrides = {}) {
     alienGameState,
     playerState: { currentPlayerId: player.id, players: [player] },
     turnState: {},
+    match: {},
+  };
+  const uiRuntimeState = overrides.uiRuntimeState || {
+    movePaymentSelectedHandIndices: [],
+    playCardSelection: null,
+    handCardPlayAction: null,
+    cardCornerQuickAction: null,
   };
   const cards = overrides.cards || createCards();
   const abilities = overrides.abilities || {
@@ -89,6 +96,7 @@ function createBaseContext(player, overrides = {}) {
   return {
     events,
     decisionSessions: overrides.decisionSessions || createDecisionSessionStore(),
+    uiRuntimeState,
     pendingState,
     cardState,
     rocketState,
@@ -535,7 +543,9 @@ function createBaseContext(player, overrides = {}) {
   const handFlow = createHandFlow(context);
   assert.equal(handFlow.beginMovePaymentSelection(context.workingRoot, 1, 0, 7).ok, true);
   handFlow.handleHandCardMovePayment(context.workingRoot, 0);
-  const result = handFlow.confirmMovePayment(context.workingRoot);
+  const result = handFlow.resolveMovePaymentDecision(context.workingRoot, {
+    selectedHandIndices: context.uiRuntimeState.movePaymentSelectedHandIndices,
+  });
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 1);
   assert.equal(player.resources.energy, 0);
@@ -549,24 +559,26 @@ function createBaseContext(player, overrides = {}) {
     hand: [],
   };
   const events = {};
-  const decisionSessions = createDecisionSessionStore();
-  decisionSessions.open("move_payment", {
-      player,
-      deltaX: 1,
-      deltaY: 0,
-      rocketId: 7,
-      requiredMovePoints: 1,
-      selectedHandIndices: [],
-      cardMoveEffectContext: { terrainRequired: 2, poolUsed: 1 },
-  });
-  const context = createBaseContext(player, { events, decisionSessions });
+  const context = createBaseContext(player, { events });
+  context.workingRoot.match.movePaymentContinuation = {
+    playerId: player.id,
+    playerColor: player.color,
+    deltaX: 1,
+    deltaY: 0,
+    rocketId: 7,
+    requiredMovePoints: 1,
+    cardMoveEffectContext: { terrainRequired: 2, poolUsed: 1 },
+  };
   const handFlow = createHandFlow(context);
-  const result = handFlow.confirmMovePayment(context.workingRoot, { automated: true });
+  const result = handFlow.resolveMovePaymentDecision(context.workingRoot, {
+    automated: true,
+    selectedHandIndices: [],
+  });
   assert.equal(result.ok, true);
   assert.equal(events.cardEffectMovePayment.terrainRequired, 2);
   assert.equal(events.cardEffectMovePayment.poolUsed, 1);
   assert.equal(events.cardEffectMovePayment.energyCost, 1);
-  assert.equal(decisionSessions.peek("move_payment"), null);
+  assert.equal(context.workingRoot.match.movePaymentContinuation, undefined);
 }
 
 {

@@ -1006,15 +1006,11 @@
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
-  const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
-  const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
   const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
   const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
   const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
   const CARD_TASK_COMPLETION_SESSION = "card_task_completion";
   const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
-  const PLAY_CARD_SELECTION_SESSION = "play_card_selection";
-  const MOVE_PAYMENT_SESSION = "move_payment";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -1030,8 +1026,9 @@
   const getPendingCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
   const getPendingCardTaskCompletion = () => decisionSessions.peek(CARD_TASK_COMPLETION_SESSION);
   const getPendingPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
-  const getPendingPlayCardSelectionSession = () => decisionSessions.peek(PLAY_CARD_SELECTION_SESSION);
-  const getPendingMovePayment = () => decisionSessions.peek(MOVE_PAYMENT_SESSION);
+  const getPendingMovePayment = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.movePaymentContinuation || null
+  );
   const conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
     FINAL_SCORE_IDS,
@@ -1062,7 +1059,6 @@
     getPublicScanChoicesForCard,
     getPendingPassReserveSelection,
     getPassReserveSelectionCards,
-    getPendingMovePayment,
     isMovePaymentCard,
     isTechTilePickingActive,
     tech,
@@ -1084,8 +1080,6 @@
     getMovableTokensForCardMoveEffect,
     validateIndustryHuanyuMoveRocket,
     getPendingCardCornerFreeMove,
-    isPlayCardSelectionActive,
-    getCardPlayCost,
     getPendingStrategySlotDecision,
     isFutureSpanEligibleHandCard,
     getPublicCardMultiSelectMinSelectable,
@@ -1136,9 +1130,7 @@
     CARD_CORNER_FREE_MOVE_SESSION,
     settleCardTasksAfterEffect,
     finishIndustryAbilityFlow,
-    confirmMovePayment,
-    handlePlayCardSelect,
-    confirmPlayCardSelection,
+    resolveMovePaymentDecision: (...args) => resolveMovePaymentDecision(...args),
     confirmStrategyPassiveSlotChoice,
     handleHandCardDiscard,
     handlePublicCardClick,
@@ -1225,6 +1217,7 @@
   let beginMovePaymentSelection;
   let handleHandCardMovePayment;
   let confirmMovePayment;
+  let resolveMovePaymentDecision;
   let syncPlayCardSelectionChrome;
   let getPendingPlayCardSelection;
   let handlePlayCardSelect;
@@ -1594,6 +1587,7 @@
       techGameState: structuredClone(state.tech || {}),
       alienGameState: structuredClone(state.aliens || {}),
       finalScoringState: structuredClone(state.finalScoring || {}),
+      match: structuredClone(state.match || {}),
     };
   }
 
@@ -1749,13 +1743,13 @@
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
-      movePayment: MOVE_PAYMENT_SESSION,
-      playCardSelection: PLAY_CARD_SELECTION_SESSION,
-      handCardPlayAction: HAND_CARD_PLAY_SESSION,
-      cardCornerQuickAction: CARD_CORNER_QUICK_SESSION,
     });
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const readoutRoot = createResidentReadoutRoot(canonical.resident);
+    decisions.movePayment = getPendingMovePayment();
+    decisions.playCardSelection = uiRuntimeState.playCardSelection;
+    decisions.handCardPlayAction = uiRuntimeState.handCardPlayAction;
+    decisions.cardCornerQuickAction = uiRuntimeState.cardCornerQuickAction;
     const projectedPlayers = canonical.resident?.players?.players || [];
     const finalScoreBreakdownsByPlayerId = Object.fromEntries(projectedPlayers.map((player) => [
       String(player.id),
@@ -2345,6 +2339,7 @@
   });
   const handFlowHelpers = handFlowModule.createHandFlow({
     decisionSessions,
+    uiRuntimeState,
     els,
     players,
     cards,
@@ -2484,7 +2479,7 @@
     cancelMovePaymentSelection,
     beginMovePaymentSelection,
     handleHandCardMovePayment,
-    confirmMovePayment,
+    resolveMovePaymentDecision,
     syncPlayCardSelectionChrome,
     getPendingPlayCardSelection,
     handlePlayCardSelect,
@@ -2517,8 +2512,14 @@
   isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
   syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
   cancelHandScanSelection = (...args) => callHandFlowCommand("cancelHandScanSelection", args);
-  isMovePaymentSelectionActive = (...args) => callHandFlowCommand("isMovePaymentSelectionActive", args);
-  getMovePaymentPlayer = (...args) => callHandFlowCommand("getMovePaymentPlayer", args);
+  isMovePaymentSelectionActive = () => Boolean(getPendingMovePayment());
+  getMovePaymentPlayer = () => {
+    const pending = getPendingMovePayment();
+    return pending ? resolvePlayerReference({
+      playerId: pending.playerId,
+      playerColor: pending.playerColor,
+    }) : null;
+  };
   isMovePaymentLockedForAiAutomation = (...args) => callHandFlowCommand("isMovePaymentLockedForAiAutomation", args);
   beginSupplementalMovePayment = (...args) => callHandFlowCommand("beginSupplementalMovePayment", args);
   syncMovePaymentChrome = (...args) => callHandFlowCommand("syncMovePaymentChrome", args);
@@ -2526,7 +2527,31 @@
   cancelMovePaymentSelection = (...args) => callHandFlowCommand("cancelMovePaymentSelection", args);
   beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
   handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
-  confirmMovePayment = (...args) => callHandFlowCommand("confirmMovePayment", args);
+  resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
+  confirmMovePayment = () => {
+    const decision = browserRuleComposition.inspect().session?.decision || null;
+    if (!decision || browserRuleComposition.inspect().phase !== "awaiting_input") {
+      return { ok: false, code: "MOVE_PAYMENT_DECISION_REQUIRED", message: "当前没有等待支付的 DecisionEffect" };
+    }
+    const selected = [...(uiRuntimeState.movePaymentSelectedHandIndices || [])]
+      .map(Number)
+      .sort((left, right) => left - right);
+    const choice = (decision.choices || []).find((candidate) => {
+      const raw = candidate?.selectedHandIndices
+        || candidate?.payload?.selectedHandIndices
+        || candidate?.standardAction?.payload?.selectedHandIndices
+        || [];
+      return JSON.stringify([...raw].map(Number).sort((left, right) => left - right)) === JSON.stringify(selected);
+    });
+    if (!choice) {
+      return { ok: false, code: "MOVE_PAYMENT_CHOICE_NOT_LEGAL", message: "当前手牌支付组合不在 DecisionEffect 合法选项中" };
+    }
+    return browserRuleComposition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      choice,
+    });
+  };
   syncPlayCardSelectionChrome = (...args) => callHandFlowCommand("syncPlayCardSelectionChrome", args);
   getPendingPlayCardSelection = (...args) => callHandFlowCommand("getPendingPlayCardSelection", args);
   handlePlayCardSelect = (...args) => callHandFlowCommand("handlePlayCardSelect", args);
@@ -4194,8 +4219,6 @@
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
     get effectStepActive() { return uiRuntimeState.effectStepActive; },
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
-    get pendingMovePayment() { return getPendingMovePayment(); },
-    get pendingPlayCardSelection() { return getPendingPlayCardSelectionSession(); },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingIndustryAbility() { return decisionSessions.peek("industry_ability"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
@@ -5519,10 +5542,13 @@
     clearCompletedEffectFlowForUndo();
     uiRuntimeState.effectStepActive = false;
     uiRuntimeState.moveHighlightRocketId = null;
-    decisionSessions.clear(MOVE_PAYMENT_SESSION);
-    decisionSessions.clear(PLAY_CARD_SELECTION_SESSION);
-    decisionSessions.clear(HAND_CARD_PLAY_SESSION);
-    decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
+    if (workingRoot.match && typeof workingRoot.match === "object") {
+      delete workingRoot.match.movePaymentContinuation;
+    }
+    uiRuntimeState.movePaymentSelectedHandIndices = [];
+    uiRuntimeState.playCardSelection = null;
+    uiRuntimeState.handCardPlayAction = null;
+    uiRuntimeState.cardCornerQuickAction = null;
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
     decisionSessions.clear("industry_ability");
