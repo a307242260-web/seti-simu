@@ -650,7 +650,7 @@
 
   function snapshotPlayedCard(card) {
     if (!card) return null;
-    return {
+    return Object.fromEntries(Object.entries({
       id: card.id,
       src: card.src,
       cardName: card.cardName,
@@ -658,7 +658,7 @@
       cardId: card.cardId,
       discardActionCode: card.discardActionCode,
       incomeActionCode: card.incomeActionCode,
-    };
+    }).filter(([, value]) => value !== undefined));
   }
 
   function shouldAppendSentinelPlayCornerEffect(cards, player, roundNumber, turnNumber, playedCard) {

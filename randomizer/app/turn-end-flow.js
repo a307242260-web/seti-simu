@@ -93,6 +93,17 @@
     }
   }
 
+  function setActionEffectFlow(workingRoot, flow) {
+    requireWorkingRoot(workingRoot);
+    if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
+    if (flow == null) {
+      delete workingRoot.match.actionEffectFlow;
+      return null;
+    }
+    workingRoot.match.actionEffectFlow = flow;
+    return flow;
+  }
+
   function getTurnEndRevealContinuation(workingRoot) {
     requireWorkingRoot(workingRoot);
     return workingRoot.match?.[TURN_END_REVEAL_CONTINUATION_FIELD] || null;
@@ -202,7 +213,7 @@
     return effects;
   }
 
-  function beginPassActionSession(currentPlayer) {
+  function beginPassActionSession(workingRoot, currentPlayer) {
     startActionLogDraft("pass", "PASS", { source: HISTORY_SOURCE_MAIN, player: currentPlayer });
     actionHistory.beginSession("pass", "PASS");
     actionHistory.beginStep({
@@ -227,7 +238,7 @@
       };
     }
 
-    return settleCardTasksAfterEffect({
+    return settleCardTasksAfterEffect(workingRoot, {
       events: [createPassEvent(player)],
       render: false,
     });
@@ -352,20 +363,20 @@
       return { ok: false, message: "没有当前玩家" };
     }
 
-    beginPassActionSession(currentPlayer);
+    beginPassActionSession(workingRoot, currentPlayer);
     const passEffects = buildPassEffectQueue(workingRoot, currentPlayer);
     if (passEffects.length) {
-      getActionEffectFlow(workingRoot) = abilities.chain.startAbilityChain(
+      const flow = setActionEffectFlow(workingRoot, abilities.chain.startAbilityChain(
         "pass",
         "PASS",
         passEffects,
-      );
-      getActionEffectFlow(workingRoot).actionType = "pass";
-      getActionEffectFlow(workingRoot).playerId = currentPlayer.id;
-      assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
-      getActionEffectFlow(workingRoot).passEvent = createPassEvent(currentPlayer);
-      getActionEffectFlow(workingRoot).historySource = HISTORY_SOURCE_MAIN;
-      getActionEffectFlow(workingRoot).consumesMainAction = true;
+      ));
+      flow.actionType = "pass";
+      flow.playerId = currentPlayer.id;
+      assignEffectFlowOwner(flow, flow.playerId);
+      flow.passEvent = createPassEvent(currentPlayer);
+      flow.historySource = HISTORY_SOURCE_MAIN;
+      flow.consumesMainAction = true;
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       actionRocketState.statusNote = "PASS：请依次点击必做效果";
       activateNextActionEffect(workingRoot);
@@ -373,7 +384,7 @@
     }
 
     const passSettlement = settlePassEventAfterEffects(workingRoot, currentPlayer);
-    if (hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
+    if (hasActiveCardTriggerResolution(workingRoot) || isActionEffectFlowActive(workingRoot)) {
       updateActionButtons();
       renderStateReadout();
       return { ok: true, message: passSettlement?.type1Result?.message || actionRocketState.statusNote };
@@ -441,8 +452,8 @@
       || getPendingBanrenmaCardGain()
       || workingRoot.match?.alienTraceContinuation
       || uiRuntimeState.alienTracePickerState
-      || isActionEffectFlowActive()
-      || hasActivePendingSubFlow()
+      || isActionEffectFlowActive(workingRoot)
+      || hasActivePendingSubFlow(workingRoot)
     );
   }
 
@@ -563,7 +574,9 @@
     requireWorkingRoot(workingRoot);
     const actionPlayerState = workingRoot.playerState;
     const actionTurnState = workingRoot.turnState;
-    if (!actionHistory.isActionComplete?.() || isActionEffectFlowActive() || hasActivePendingSubFlow()) {
+    if (!actionHistory.isActionComplete?.()
+      || isActionEffectFlowActive(workingRoot)
+      || hasActivePendingSubFlow(workingRoot)) {
       return { ok: false, message: "主行动未完成或仍有待决选择" };
     }
     const endingPlayer = (actionPlayerState.players || [])

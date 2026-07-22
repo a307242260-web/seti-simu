@@ -2041,26 +2041,35 @@
         || abilityFlow.flowType === "huanyu_free_moves"
         || abilityFlow.flowType === "fundamentalism_score_exchange"
         || abilityFlow.flowType === "pirates_raid_launch") {
+        beginQuickActionStep("industry-mark", `公司行动标记：${companyLabel}`);
         const result = industry.markIndustryAction(player, actionTurnState.roundNumber, {
           turnNumber: actionTurnState.turnNumber,
         });
         if (!result.ok) {
           restoreObjectSnapshot(player, beforeIndustryPlayer);
+          quickActionHistory.undoLastStep();
+          if (!quickActionHistory.hasUndoableStep()) {
+            quickActionHistory.commitSession();
+            clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+          }
           actionRocketState.statusNote = result.message;
           renderStateReadout();
           return result;
         }
 
-        const markerRestoreCommand = createIndustryActionRestoreCommand(
-          workingRoot,
-          player,
-          beforeIndustryPlayer,
-          companyLabel,
-          { clearEffectFlow: true },
-        );
-        const started = startIndustryAbilityFlow(workingRoot, abilityFlow, { markerRestoreCommand });
+        recordIndustryActionRestoreCommand(workingRoot, player, beforeIndustryPlayer, companyLabel);
+        completeQuickActionStep();
+        const started = startIndustryAbilityFlow(workingRoot, abilityFlow);
         if (!started) {
-          markerRestoreCommand?.undo();
+          const undoResult = quickActionHistory.undoLastStep();
+          if (undoResult.ok) {
+            forgetLastHistoryStep(HISTORY_SOURCE_QUICK, undoResult.step?.id || null);
+            removeLastActionLogStep(HISTORY_SOURCE_QUICK, undoResult.step?.id || null);
+          }
+          if (undoResult.ok && !quickActionHistory.hasUndoableStep()) {
+            quickActionHistory.commitSession();
+            clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+          }
         } else {
           actionRocketState.statusNote = abilityFlow.message || actionRocketState.statusNote;
         }

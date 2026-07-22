@@ -7884,13 +7884,15 @@
       releaseFutureSpanAfterPlayWithHistory();
     }
     if (finishedFlow.playCardEvent) {
-      settleCardTasksAfterEffect({ events: [finishedFlow.playCardEvent], render: false });
+      settleCardTasksAfterEffectForRoot(workingRoot, { events: [finishedFlow.playCardEvent], render: false });
     }
     if (finishedFlow.scanActionEvent) {
-      settleCardTasksAfterEffect({ events: [finishedFlow.scanActionEvent], render: false });
+      settleCardTasksAfterEffectForRoot(workingRoot, { events: [finishedFlow.scanActionEvent], render: false });
     }
-    const queuedType1Result = applyType1TriggerMatches([]);
-    if (queuedType1Result || hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
+    const queuedType1Result = applyType1TriggerMatchesForRoot(workingRoot, []);
+    if (queuedType1Result
+      || hasActiveCardTriggerResolution(workingRoot)
+      || isActionEffectFlowActive(workingRoot)) {
       workingRoot.rocketState.statusNote = queuedType1Result?.message || "卡牌触发：请先完成触发效果";
       if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
         markActionPending();
@@ -7901,12 +7903,13 @@
       return;
     }
     if (actionType === "pass") {
-      const passPlayer = getPlayerById(finishedFlow.playerId) || getCurrentPlayer();
-      const passSettlement = settleCardTasksAfterEffect({
+      const passPlayer = getPlayerById(workingRoot, finishedFlow.playerId)
+        || players.getCurrentPlayer(workingRoot.playerState);
+      const passSettlement = settleCardTasksAfterEffectForRoot(workingRoot, {
         events: [finishedFlow.passEvent || createPassEvent(passPlayer)],
         render: false,
       });
-      if (hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
+      if (hasActiveCardTriggerResolution(workingRoot) || isActionEffectFlowActive(workingRoot)) {
         workingRoot.rocketState.statusNote = passSettlement?.type1Result?.message || "PASS 任务触发：请先完成触发效果";
         markActionPending();
         renderPlayerStats();
@@ -7933,7 +7936,7 @@
     renderAlienPanels();
     updateActionButtons();
     renderStateReadout();
-    maybeResumeTurnEndAfterReveal();
+    maybeResumeTurnEndAfterReveal(workingRoot);
   }
 
   function finishActionEffectFlow() {
