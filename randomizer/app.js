@@ -655,7 +655,10 @@
           if (typeof operation !== "function") {
             return { ok: false, code: "EFFECT_EXECUTOR_COMMAND_UNKNOWN", message: `未知 Effect executor command: ${command.operation}` };
           }
-          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+          const args = command.operation === "handleScanAction4Choice"
+            ? [workingRoot, ...(command.args || [])]
+            : (command.args || []);
+          return { ok: true, value: cloneResidentPresentation(operation(...args)) };
         }
         case "debug_command": {
           const operation = debugRuntimeController?.[command.operation];
@@ -7522,8 +7525,11 @@
     return { ok: true };
   }
 
-  function launchRocketForScanAction4() {
-    const currentPlayer = getCurrentPlayer();
+  function launchRocketForScanAction4(workingRoot) {
+    if (!workingRoot?.playerState || !workingRoot?.rocketState) {
+      throw new TypeError("launchRocketForScanAction4 缺少 workingRoot");
+    }
+    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const currentEffect = getCurrentActionEffect();
     const skipCost = Boolean(currentEffect?.options?.skipCost);
     if (!skipCost && !players.canAfford(currentPlayer, { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY })) {
@@ -7532,7 +7538,7 @@
 
     beginEffectHistoryStep("发射/移动");
 
-    const result = abilities.executeAbility("scanAction4", createActionContext(), {
+    const result = abilities.executeAbility("scanAction4", createActionContextForWorkingRoot(workingRoot), {
       choice: "launch",
       skipCost,
       cost: skipCost ? {} : { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY },
@@ -7543,7 +7549,7 @@
     }
 
     maybeApplyIndustryLaunchScan(result);
-    recordAbilityCommands(result);
+    recordAbilityCommands(result, actionHistory, workingRoot);
 
     renderRocketElement(result.rocket);
     const current = getCurrentActionEffect();

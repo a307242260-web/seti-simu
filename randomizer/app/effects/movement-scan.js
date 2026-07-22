@@ -752,12 +752,15 @@
       });
     }
 
-    function handleScanAction4Choice(choiceId) {
+    function handleScanAction4Choice(workingRoot, choiceId) {
+      if (!workingRoot?.playerState || !workingRoot?.rocketState) {
+        throw new TypeError("handleScanAction4Choice 缺少 workingRoot");
+      }
       closeScanAction4Picker();
 
       if (choiceId === "launch") {
-        const result = launchRocketForScanAction4();
-        ruleRocketState().statusNote = result.ok ? result.message : result.message;
+        const result = launchRocketForScanAction4(workingRoot);
+        workingRoot.rocketState.statusNote = result.message;
         if (result.ok) {
           renderPlayerStats();
           completeCurrentActionEffect();
