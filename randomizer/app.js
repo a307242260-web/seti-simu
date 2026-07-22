@@ -692,6 +692,10 @@
           return { ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(workingRoot, command.effect)) };
         case "effect_cancel_pending_subflows":
           return { ok: true, value: cancelActivePendingSubFlowsForRoot(workingRoot) };
+        case "data_place_blue_slot":
+          return { ok: true, value: cloneResidentPresentation(placeDataToBlueSlotForRoot(workingRoot, command.blueSlot)) };
+        case "action_recover_pending":
+          return { ok: true, value: cloneResidentPresentation(recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot)) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -9767,25 +9771,32 @@
     return image;
   }
 
-  function placeDataToBlueSlot(blueSlot) {
-    const blocked = blockIncompatiblePendingQuickAction("place-data");
+  function placeDataToBlueSlotForRoot(workingRoot, blueSlot) {
+    const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
     if (blocked) return blocked;
 
-    const player = getCurrentPlayer();
+    const player = players.getCurrentPlayer(workingRoot.playerState);
     if (!data.listPoolTokens(player).length) {
-      rocketState.statusNote = "数据池没有可放置的数据";
+      workingRoot.rocketState.statusNote = "数据池没有可放置的数据";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
 
     const check = data.canPlaceDataToBlueBonus(player, blueSlot);
     if (!check.ok) {
-      rocketState.statusNote = check.message;
+      workingRoot.rocketState.statusNote = check.message;
       renderStateReadout();
       return check;
     }
 
-    return confirmDataPlacement(data.PLACEMENT_KIND_BLUE_BONUS, blueSlot);
+    return confirmDataPlacement(data.PLACEMENT_KIND_BLUE_BONUS, blueSlot, { workingRoot });
+  }
+
+  function placeDataToBlueSlot(blueSlot) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "data_place_blue_slot",
+      blueSlot,
+    }).value;
   }
 
   function getPlayerReadoutLines() {
@@ -10056,7 +10067,7 @@
     clearCompletedEffectFlowForUndo(HISTORY_SOURCE_MAIN);
   }
 
-  function recoverPendingActionFromOpenHistoryForAi() {
+  function recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot) {
     if (
       isActionPending()
       || isActionEffectFlowActive()
@@ -10067,10 +10078,14 @@
     }
     markActionPending();
     const info = actionHistory.getSessionInfo?.() || null;
-    rocketState.statusNote = `${info?.label || "行动"}已恢复为待回合结束状态`;
+    workingRoot.rocketState.statusNote = `${info?.label || "行动"}已恢复为待回合结束状态`;
     updateActionButtons();
     renderStateReadout();
-    return { ok: true, message: rocketState.statusNote, sessionInfo: info };
+    return { ok: true, message: workingRoot.rocketState.statusNote, sessionInfo: info };
+  }
+
+  function recoverPendingActionFromOpenHistoryForAi() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "action_recover_pending" }).value;
   }
 
   function isMainActionOpeningStep(step) {
