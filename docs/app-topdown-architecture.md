@@ -109,7 +109,7 @@
 ## 5. Public API 与 simulation 边界
 
 - `public-api.js` 组装 `window.SetiRandomizer`，`app.js` 只提供显式 context。
-- `simulation-env.js` 提供 simulation observation/action/replay 适配；它通过公开 API 和注入回调工作，不读取 `app.js` 局部实现。
+- `simulation-env.js` 提供 simulation observation/action/replay 适配；它直接依赖 rules-only Composition factory，不读取 `app.js` 或 Browser public API。
 - `view-adapter.js` 为 Node composition 提供 no-op render/log/hover 接口和空集合，不创建 fake DOM；浏览器 composition 仍使用 `dom.js`、真实 render runtime 与 events。
 - `ai-controller.js` 只装配 `app/ai/**` runtime 与 `game/ai/**` 规则域，通过 state getter/setter 与动作回调访问 app 状态；它按各 runtime 的 `REQUIRED_CONTEXT_KEYS` 校验显式 context，迁移不得复制 pending 状态。
 - 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。

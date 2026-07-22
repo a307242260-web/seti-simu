@@ -48,7 +48,7 @@
 - `randomizer/app/ai-controller.js`：AI runtime/rule domain 装配、`REQUIRED_CONTEXT_KEYS` 完整性校验与稳定 API adapter；不再承载 resolver/executor 函数体。
 - `randomizer/game/ai/*-valuation.js`、`*-candidates.js`、`action-value.js`、`demand-card.js`、`route-planet.js` 等：按资源、卡牌、路线、扫描、科技、终局和外星人拆分的只读 AI 估值域；它们只产生评分/诊断，不创建公共 Action identity。
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
-- `randomizer/game/ai/machine-player-host.js`：浏览器与 headless 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
+- `randomizer/game/ai/machine-player-host.js`：浏览器与 Simulation 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
 - `randomizer/game/ai/selection-evaluator.js`：setup、弃牌、支付、科技与外星人 legal choice 的纯估值；不拥有选择或提交权，结果必须经公共 Policy 端口。
 - `randomizer/game/ai/heuristic-evaluator.js`：直接从公共 observation/legal descriptors 计算策略分与稳定排序；不得恢复 legacy candidate 或 selector adapter。
@@ -102,7 +102,7 @@
 - `docs/card-modeling-dsl-spec.md`：卡牌描述转换为可执行 DSL 的规范。
 - `docs/alien-design.md`：外星人通用设计总结与新增外星人检查清单。
 - `docs/ai-design.md`：电脑玩家 AI 的当前唯一设计文档（控制器接口、价值模型、目标系统、回合规划、自博弈验证），后续开发以此为准。
-- `docs/rl-headless-env.md`：RL simulation env 契约、observation/action/replay schema 与当前浏览器实现映射。
+- `docs/rl-simulation-env.md`：RL Simulation env 契约、observation/action/replay schema 与当前浏览器实现映射。
 - `docs/implementation-proof-obligations.md`：跨模块状态机/迁移任务的验收条款正向推导、proof obligation、检查问题与分层证据模板。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。
 - `assets/industry/industry-abilities.md`：公司牌主动/被动能力设计与建模说明。

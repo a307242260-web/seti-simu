@@ -6,15 +6,14 @@
 
 - Node 入口：`randomizer/app/simulation-env.js`，通过 `createSimulationEnv()` 创建单局环境。
 - 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
-- `randomizer/app/simulation-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；只接受共享 registry 产生的 Standard Action descriptor，不从旧 id/candidate 生成 family、payload 或 action identity。
-- 传统 app 的 pending inventory 与创建入口已删除；simulation Effect Session host 只消费标准 Action/Decision/Effect Session，不加载浏览器宿主 UI 状态。
-- `legalActions()` 输出 `seti-rl-action-v2`，候选来自 app 与浏览器共享的 Standard Action adapter，不构建 actionGraph、valuation、selection pressure、planner 或第二套 legality。RL envelope 补充 mask/feature 与环境版本，但沿用 registry `actionId`；`step()` 校验 actor、版本与当前 legal action id 后，把保存的完整 Standard Action descriptor 交回同一 `registry.execute`。
-- pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过正式状态审计；未知 state/type/family 分别以稳定 `SIMULATION_UNSUPPORTED_PENDING`、`SIMULATION_UNSUPPORTED_PENDING_TYPE`、`SIMULATION_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用 resolver、DOM callback、recover 或 skip。
+- `randomizer/app/simulation-contract.js` 固化 action envelope、稳定 feature 与 observation 公私域 sanitizer；只接受 Rule Composition registry 产生的 Standard Action descriptor。
+- `randomizer/training/simulation-rule-composition.js` 装配 Simulation 的状态 adapter、registry 与 Effect domain；底层通用生命周期位于 `randomizer/game/rule-composition.js`。
+- `legalActions()` 输出 `seti-rl-action-v2`，候选直接来自 Simulation Rule Composition，不经过 Browser adapter，不构建第二套 action identity 或 legality。`step()` 只提交当前 Composition Action/Decision。
+- 等待输入时只检查 Composition 暴露的 active Decision；Simulation 不提供 pending inventory、resolver、recover、skip 或 drain API。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 将 RNG 与稳定编号统一保存到 `coreState.meta`，可在 fresh env 中恢复且不触发浏览器渲染。
-- 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；simulation 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
-- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 AI candidate builder 二次构建候选，而只向 `Rule Composition` 提交 Standard Action/Decision。唯一选择、deterministic pending 和当前 Effect 由同一 Effect Session drain；每个 policy replay step 附带已确认的 session action/decision/effect/event journal，失败输入不进入 confirmed replay。
-- Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
+- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；每个 policy step 附带对应的 Effect Session journal，失败输入不进入 confirmed replay。
+- Node composition 不创建或安装 `window`、`document`、DOM 元素、overlay、`localStorage` 或 `Image`。
 - simulation 的动作族覆盖矩阵与 taxonomy characterization 不再作为单元测试保留；默认 Node 回归只验证已设计的业务 unit 与唯一 full-flow。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
 - 固定评测入口为 `tools/run_rl_evaluation.js`：加载任意 self-play checkpoint，在冻结的 20 局四人 seed pool 上输出均分、P25/P50/P75、完局率、非法动作率、阻塞率，以及可机器判定的“稳定 200 分”结论。

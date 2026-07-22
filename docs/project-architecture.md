@@ -10,7 +10,7 @@
 | Node simulation | `randomizer/app/simulation-env.js` | `reset/observe/legalActions/step/checkpoint/replay/dispose`，无 DOM 投影 | 第二套规则、候选 selector、恢复迁移 |
 | 训练/评测 | `randomizer/training/**`、`tools/run_*training*`、`tools/run_rl_evaluation.js` | 模型、采样、训练 checkpoint、评测和报告 | 游戏规则、环境状态提交 |
 
-simulation 从 `index.html` 读取同一脚本清单，在 Node 中装配同一 `game/**`、`app/**` 与 `app.js`。`SetiSimulationRuntimeConfig` 只替换宿主能力，不替换规则实现。
+Simulation 直接装配 `training/simulation-rule-composition.js` 与 `game/rule-composition.js`，复用 `game/**` 的状态、Action 与 Effect domain；它不读取 `index.html`，也不加载 `app.js`、DOM、Browser globals 或恢复 facade。
 
 ## 唯一 owner 与依赖方向
 
@@ -63,6 +63,6 @@ Effect Session ───────────► StateStore.compareAndCommit
 - 固定 seed simulation 完整局、非零 checkpoint/replay fork、Browser/Simulation parity
 - 真实 Chrome 人类输入 smoke、机器席位完整局与 Browser Services recovery smoke
 
-更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-headless-env.md`。
+更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-simulation-env.md`。
 
 StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 均由相应行为单元测试与唯一完整流程验证，不再维护读取源码形态的独立架构扫描器。

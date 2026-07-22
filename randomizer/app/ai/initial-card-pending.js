@@ -218,8 +218,7 @@
         ? (player.hand || []).map((card) => cards.getIncomeGainForCard?.(card) || null)
         : null;
       const incomePlanningEntries = incomeGainByIndex ? getAiIncomeFinalFormulaEntries(player) : [];
-      const useSimulationRuleKernel = globalThis.SetiSimulationRuntimeConfig?.ruleKernel === true;
-      const dynamicIncomeIndexes = incomeGainByIndex && !useSimulationRuleKernel
+      const dynamicIncomeIndexes = incomeGainByIndex
         ? chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex, incomePlanningEntries)
         : null;
       const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"

@@ -1772,15 +1772,6 @@
     function openStrategyPassiveSlotChoice(workingRoot, effect, player, slotIds) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        if (globalThis.SetiSimulationRuntimeConfig?.enabled) {
-          workingRoot.match.strategySlotContinuation = {
-            effectId: effect.id,
-            slotIds: [...slotIds],
-            playerId: player?.id || null,
-            playerColor: player?.color || null,
-          };
-          return { ok: true, pendingChoice: true, undoable: true, message: "宇宙战略集团：请选择奖励槽" };
-        }
         rocketState.statusNote = "宇宙战略集团：无法打开奖励槽选择";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
