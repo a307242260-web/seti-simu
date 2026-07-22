@@ -3136,7 +3136,7 @@
                 requiredMovePoints: getRequiredMovePointsForUi(player, rocket.id, direction.deltaX, direction.deltaY),
               }))
               .filter(({ rocket, direction, requiredMovePoints }) => (
-                rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY).ok
+                rocketActions.canMoveRocket(context.rocketState, rocket.id, direction.deltaX, direction.deltaY).ok
                 && canPayForMove(player, requiredMovePoints).ok
               ))
               .map(({ rocket, direction, requiredMovePoints }) => ({
@@ -3172,8 +3172,8 @@
             const player = players.getCurrentPlayer(context.playerState);
             const companyCard = player?.initialSelection?.industry || null;
             const layout = industry.getIndustryActionMarkerLayout?.(companyCard);
-            const markCheck = industry.canMarkIndustryAction?.(player, turnState.roundNumber, {
-              turnNumber: turnState.turnNumber,
+            const markCheck = industry.canMarkIndustryAction?.(player, context.turnState.roundNumber, {
+              turnNumber: context.turnState.turnNumber,
               hasMarker: Boolean(layout),
               industryCard: companyCard,
               requireIndustryCard: true,
@@ -3224,9 +3224,9 @@
           getOptions(context) {
             const player = players.getCurrentPlayer(context.playerState);
             const choices = (aliens.ALIEN_SLOT_IDS || []).flatMap((alienSlotId) => (
-              runezu.isRunezuRevealedSlot(alienGameState, alienSlotId)
+              runezu.isRunezuRevealedSlot(context.alienGameState, alienSlotId)
                 ? (runezu.FACE_SYMBOL_POSITIONS || []).flatMap((position) => {
-                  const check = runezu.canPlaceFaceSymbol(alienGameState, position, player);
+                  const check = runezu.canPlaceFaceSymbol(context.alienGameState, position, player);
                   return (check.ok ? check.choices : []).map((choice) => ({
                     target: { alienSlotId: Number(alienSlotId), position: Number(position), symbolId: choice.symbolId },
                     label: `${runezu.formatSymbolLabel(choice.symbolId)} → ${position}`,
