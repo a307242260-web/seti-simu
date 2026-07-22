@@ -677,6 +677,12 @@
           }
           return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
         }
+        case "recovery_clear_transient":
+          clearTransientStateForRecovery(workingRoot);
+          return { ok: true };
+        case "recovery_refresh":
+          refreshAfterGameRecovery(command.message, workingRoot);
+          return { ok: true };
         case "effect_bar_click":
           return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClick(command.effectIndex)) };
         case "effect_skip_current":
@@ -5273,7 +5279,11 @@
     return gameRecoveryModule.getRecoverySnapshotFromLog(logOrPackage, options);
   }
 
-  function clearTransientStateForRecovery() {
+  function clearTransientStateForRecovery(workingRoot = null) {
+    if (!workingRoot) {
+      return browserRuleComposition.inputPort.submitHostCommand({ kind: "recovery_clear_transient" });
+    }
+    const { cardState: workingCardState, techGameState: workingTechGameState } = workingRoot;
     decisionState.discardAction = null;
     decisionState.cardSelectionAction = null;
     decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
@@ -5328,13 +5338,13 @@
     historyStepOrder.length = 0;
     actionHistory.commitSession();
     quickActionHistory.commitSession();
-    cards.setSelectionActive(cardState, false);
-    cards.setPlayCardSelectionActive(cardState, false);
-    cards.setDiscardSelectionActive(cardState, false, 0);
-    if (techGameState?.ui) {
-      techGameState.ui.industryBorrowMode = false;
+    cards.setSelectionActive(workingCardState, false);
+    cards.setPlayCardSelectionActive(workingCardState, false);
+    cards.setDiscardSelectionActive(workingCardState, false, 0);
+    if (workingTechGameState?.ui) {
+      workingTechGameState.ui.industryBorrowMode = false;
     }
-    tech.setTechSelectionActive(techGameState, false);
+    tech.setTechSelectionActive(workingTechGameState, false);
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
     if (els.alienTraceTitle) els.alienTraceTitle.textContent = "获取外星人标记";
@@ -5361,7 +5371,13 @@
     }
   }
 
-  function refreshAfterGameRecovery(message = "已从行动日志恢复局面") {
+  function refreshAfterGameRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
+    if (!workingRoot) {
+      return browserRuleComposition.inputPort.submitHostCommand({
+        kind: "recovery_refresh",
+        message,
+      });
+    }
     setTokenAssetSizes();
     renderWheels();
     renderSectors();
@@ -5388,7 +5404,7 @@
     syncTechSelectionChrome();
     syncIndustryHandSelectionChrome();
     syncInteractionFocusChrome();
-    rocketState.statusNote = message;
+    workingRoot.rocketState.statusNote = message;
     refreshHelpers.refreshActionState({ includeStateReadout: true });
     renderActionLog();
   }
@@ -5403,7 +5419,7 @@
       },
       restoreAiControlSnapshot,
       refreshAfterGameRecovery: options.skipRefresh ? null : refreshAfterGameRecovery,
-      getRecoveryMessage: () => rocketState.statusNote,
+      getRecoveryMessage: () => createStateSourceReadoutRoot().rocketState.statusNote,
     });
   }
 
