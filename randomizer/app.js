@@ -445,7 +445,7 @@
       return highCouplingStateModule.purifyHighCouplingSlices(
         initialGameStateModule.createCommittedCandidate(
           workingState,
-          getBrowserCommittedContext(),
+          getBrowserCommittedContext(workingState),
           stateStoreModule.SCHEMA_VERSION,
           0,
         ),
@@ -460,7 +460,7 @@
       createProjectionState(workingState, committedState) {
         return initialGameStateModule.createCommittedCandidate(
           workingState,
-          { ...getBrowserCommittedContext(), stateVersion: committedState.meta.stateVersion },
+          { ...getBrowserCommittedContext(workingState), stateVersion: committedState.meta.stateVersion },
           stateStoreModule.SCHEMA_VERSION,
           committedState.meta.stateVersion,
         );
@@ -469,7 +469,7 @@
         return highCouplingStateModule.purifyHighCouplingSlices(
           initialGameStateModule.createCommittedCandidate(
             workingState,
-            { ...getBrowserCommittedContext(), ...contextOverrides },
+            { ...getBrowserCommittedContext(workingState), ...contextOverrides },
             stateStoreModule.SCHEMA_VERSION,
             committedState.meta.stateVersion,
           ),
@@ -527,6 +527,33 @@
           return cloneResidentPresentation(runAiNonTurnAutomationStepForRoot(workingRoot));
         case "ai_run_selected_turn_action":
           return cloneResidentPresentation(runAiSelectedTurnActionForRoot(workingRoot, command.selector, command.options));
+        case "ai_recover_idle_action_effect":
+          return cloneResidentPresentation(recoverAiIdleActionEffectStepForRoot(workingRoot, ...(command.args || [])));
+        case "ai_build_turn_candidates":
+          return cloneResidentPresentation(buildAiTurnActionCandidatesForRoot(workingRoot, ...(command.args || [])));
+        case "card_trigger_list_free_move_candidates":
+          return { ok: true, value: cloneResidentPresentation(listCardTriggerFreeMoveCandidatesForRoot(workingRoot, ...(command.args || []))) };
+        case "ui_execute_primary_board_action":
+          return cloneResidentPresentation(actionRuntimeController?.executePrimaryBoardAction(
+            createActionContextForWorkingRoot(workingRoot, command.descriptor),
+            command.descriptor,
+            command.executionOptions,
+            command.options,
+          ));
+        case "score_build_final_summary":
+          return { ok: true, value: buildFinalScoreSummaryLinesForRoot(workingRoot) };
+        case "ui_get_required_move_points":
+          return { ok: true, value: getRequiredMovePointsForUiForRoot(workingRoot, ...(command.args || [])) };
+        case "card_execute_free_move_corner":
+          return cloneResidentPresentation(executeFreeMoveForCardCornerForRoot(workingRoot, ...(command.args || [])));
+        case "rocket_current_planet":
+          return { ok: true, value: getRocketCurrentPlanetIdForRoot(workingRoot, command.rocketId) };
+        case "chong_ready_transports":
+          return { ok: true, value: cloneResidentPresentation(listReadyChongTransportCandidatesForRoot(workingRoot, command.player, command.task)) };
+        case "scan_execute_free_move":
+          return cloneResidentPresentation(executeFreeMoveForScanAction4ForRoot(workingRoot, ...(command.args || [])));
+        case "card_execute_move_effect":
+          return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
         case "headless_enumerate_turn_actions":
           return { ok: true, value: enumerateHeadlessTurnActionsForRoot(workingRoot) };
         case "headless_enumerate_conditional_actions":
@@ -924,12 +951,12 @@
   const cardTaskState = cardTaskStateModule.createTaskState();
   const actionHistory = actionHistoryModule.createActionHistory();
   const quickActionHistory = actionHistoryModule.createActionHistory();
-  getBrowserCommittedContext = () => ({
+  getBrowserCommittedContext = (workingRoot) => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
-    seed: residentRuleRoot.meta?.seed ?? "browser-host",
+    seed: workingRoot.meta?.seed ?? "browser-host",
     headlessMode,
-    rngState: structuredClone(residentRuleRoot.meta?.rngState
+    rngState: structuredClone(workingRoot.meta?.rngState
       || { owner: headlessMode ? "headless" : "browser", state: null }),
     sequences: {
       card: cards.getNextCardInstanceSequence(),
@@ -939,7 +966,7 @@
       ...data.getDeterministicSequences(),
       historyStep: actionHistoryModule.getNextHistoryStepSequence(),
       actionLog: actionLogState.nextEntryId,
-      rocket: rocketState.nextRocketId,
+      rocket: workingRoot.rocketState.nextRocketId,
     },
   });
   const HISTORY_SOURCE_MAIN = "main";
@@ -2124,12 +2151,19 @@
     ),
     recordMoveActionHistory,
     executePrimaryBoardAction: (descriptor, executionOptions, options) => (
-      actionRuntimeController?.executePrimaryBoardAction(
-        createActionContextForWorkingRoot(residentRuleRoot, descriptor),
-        descriptor,
-        executionOptions,
-        options,
-      )
+      activeBrowserDomainWorkingRoot
+        ? actionRuntimeController?.executePrimaryBoardAction(
+          createActionContextForWorkingRoot(activeBrowserDomainWorkingRoot, descriptor),
+          descriptor,
+          executionOptions,
+          options,
+        )
+        : browserRuleComposition.inputPort.submitHostCommand({
+          kind: "ui_execute_primary_board_action",
+          descriptor,
+          executionOptions,
+          options,
+        })
     ),
     renderRocketElement,
     clearMoveRocketHighlight,
@@ -3840,7 +3874,14 @@
     aiRaceModel,
     ai,
     aiControlRuntimeModule,
-    browserRuleState: residentRuleRoot,
+    runAiAutomationStepThroughComposition: (...args) => browserRuleComposition.inputPort.submitHostCommand({
+      kind: "ai_run_automation_step",
+      args,
+    }),
+    recoverAiIdleActionEffectThroughComposition: (...args) => browserRuleComposition.inputPort.submitHostCommand({
+      kind: "ai_recover_idle_action_effect",
+      args,
+    }),
     solarState,
     nebulaDataState,
     alienGameState,
@@ -4089,13 +4130,16 @@
     runAiActionEffectStep: runAiActionEffectStepForRoot,
     runAiNonTurnAutomationStep: runAiNonTurnAutomationStepForRoot,
     runAiSelectedTurnAction: runAiSelectedTurnActionForRoot,
+    recoverAiIdleActionEffectStep: recoverAiIdleActionEffectStepForRoot,
     runAiStrategyABTest,
     runAiStrategyTuningCycle,
     scheduleAiAutoStepIfNeeded,
     stopAiAutoBattle,
     sumAiDemandMap,
   } = aiController;
-  const buildAiTurnActionCandidates = (...args) => buildAiTurnActionCandidatesForRoot(residentRuleRoot, ...args);
+  const buildAiTurnActionCandidates = (...args) => activeBrowserDomainWorkingRoot
+    ? buildAiTurnActionCandidatesForRoot(activeBrowserDomainWorkingRoot, ...args)
+    : browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_build_turn_candidates", args });
   const chooseInitialSelectionForAiPlayer = () => browserRuleComposition.inputPort.submitHostCommand({
     kind: "ai_choose_initial_selection",
   });
@@ -4120,7 +4164,12 @@
     metadata: { source: "headless-env-reset" },
   });
   const inspectHeadlessComposition = () => browserRuleComposition.inspect();
-  const listCardTriggerFreeMoveCandidates = (...args) => listCardTriggerFreeMoveCandidatesForRoot(residentRuleRoot, ...args);
+  const listCardTriggerFreeMoveCandidates = (...args) => activeBrowserDomainWorkingRoot
+    ? listCardTriggerFreeMoveCandidatesForRoot(activeBrowserDomainWorkingRoot, ...args)
+    : (browserRuleComposition.inputPort.submitHostCommand({
+      kind: "card_trigger_list_free_move_candidates",
+      args,
+    }, { commit: false }).value || []);
   const resolveAiAutomationToTurnBoundary = (options = {}) => browserRuleComposition.inputPort.submitHostCommand({
     kind: "ai_resolve_to_turn_boundary",
     options,
@@ -5245,13 +5294,20 @@
     return Boolean(turnState.gameEnded);
   }
 
-  function buildFinalScoreSummaryLines() {
-    return (playerState.players || [])
-      .filter((player) => turnState.activePlayerIds.includes(player.id))
+  function buildFinalScoreSummaryLinesForRoot(workingRoot) {
+    return (workingRoot.playerState.players || [])
+      .filter((player) => workingRoot.turnState.activePlayerIds.includes(player.id))
       .map((player) => {
-        const breakdown = computePlayerFinalScoreBreakdown(player, residentRuleRoot);
+        const breakdown = computePlayerFinalScoreBreakdown(player, workingRoot);
         return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
       });
+  }
+
+  function buildFinalScoreSummaryLines() {
+    if (activeBrowserDomainWorkingRoot) return buildFinalScoreSummaryLinesForRoot(activeBrowserDomainWorkingRoot);
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "score_build_final_summary",
+    }, { commit: false }).value || [];
   }
 
   function finishGameAfterFinalPass() {
@@ -5563,7 +5619,8 @@
   }
 
   function getRequiredMovePointsForUi(...args) {
-    return getRequiredMovePointsForUiForRoot(residentRuleRoot, ...args);
+    if (activeBrowserDomainWorkingRoot) return getRequiredMovePointsForUiForRoot(activeBrowserDomainWorkingRoot, ...args);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "ui_get_required_move_points", args }, { commit: false }).value;
   }
 
   function canPayForMove(player, requiredMovePoints = MOVE_ENERGY_COST) {
@@ -6039,7 +6096,8 @@
   }
 
   function executeFreeMoveForCardCorner(...args) {
-    return executeFreeMoveForCardCornerForRoot(residentRuleRoot, ...args);
+    if (activeBrowserDomainWorkingRoot) return executeFreeMoveForCardCornerForRoot(activeBrowserDomainWorkingRoot, ...args);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "card_execute_free_move_corner", args });
   }
 
   function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
@@ -6616,7 +6674,8 @@
   }
 
   function getRocketCurrentPlanetId(rocketId) {
-    return getRocketCurrentPlanetIdForRoot(residentRuleRoot, rocketId);
+    if (activeBrowserDomainWorkingRoot) return getRocketCurrentPlanetIdForRoot(activeBrowserDomainWorkingRoot, rocketId);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
   }
 
   function listReadyChongTransportCandidatesForRoot(workingRoot, player, task) {
@@ -6638,7 +6697,10 @@
   }
 
   function listReadyChongTransportCandidates(player, task) {
-    return listReadyChongTransportCandidatesForRoot(residentRuleRoot, player, task);
+    if (activeBrowserDomainWorkingRoot) {
+      return listReadyChongTransportCandidatesForRoot(activeBrowserDomainWorkingRoot, player, task);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "chong_ready_transports", player, task }, { commit: false }).value || [];
   }
 
   function buildSectorScanChoicesForXs(sectorXs) {
@@ -7354,7 +7416,8 @@
   }
 
   function executeFreeMoveForScanAction4(...args) {
-    return executeFreeMoveForScanAction4ForRoot(residentRuleRoot, ...args);
+    if (activeBrowserDomainWorkingRoot) return executeFreeMoveForScanAction4ForRoot(activeBrowserDomainWorkingRoot, ...args);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "scan_execute_free_move", args });
   }
 
   function beginCardMoveEffect(effect) {
@@ -7515,7 +7578,8 @@
   }
 
   function executeCardMoveForEffect(...args) {
-    return executeCardMoveForEffectForRoot(residentRuleRoot, ...args);
+    if (activeBrowserDomainWorkingRoot) return executeCardMoveForEffectForRoot(activeBrowserDomainWorkingRoot, ...args);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "card_execute_move_effect", args });
   }
 
   function executeSectorXScanEffect(...args) {
@@ -9467,6 +9531,7 @@
   function createActionContext() {
     const contextPlayerState = getActionContextPlayerState();
     const decisionOwner = getHeadlessDecisionOwnerState?.() || null;
+    const canonical = browserRuleComposition.stateSourcePort.read().state;
     return {
       solarState,
       playerState: contextPlayerState,
@@ -9480,14 +9545,14 @@
       techUiState: techGameState.ui,
       techGameState,
       turnState,
-      metaState: residentRuleRoot.meta,
-      matchState: residentRuleRoot.match,
-      stateVersion: residentRuleRoot.meta?.stateVersion ?? 0,
-      decisionVersion: residentRuleRoot.match?.decisionVersion ?? 0,
+      metaState: canonical.meta,
+      matchState: canonical.match,
+      stateVersion: canonical.meta?.stateVersion ?? 0,
+      decisionVersion: canonical.match?.decisionVersion ?? 0,
       standardActionAuthority: {
         actorId: decisionOwner?.actorPlayerId || contextPlayerState.currentPlayerId || null,
-        stateVersion: residentRuleRoot.meta?.stateVersion ?? 0,
-        decisionVersion: residentRuleRoot.match?.decisionVersion ?? 0,
+        stateVersion: canonical.meta?.stateVersion ?? 0,
+        decisionVersion: canonical.match?.decisionVersion ?? 0,
       },
       ...buildPlutoMarkerContext(),
       roundNumber: turnState.roundNumber,
@@ -10320,7 +10385,14 @@
   }
 
   function runQuickTrade(tradeId, options = {}) {
-    const workingRoot = options.workingRoot || residentRuleRoot;
+    if (!options.workingRoot) {
+      return dispatchBrowserRuleInput({
+        kind: "standard_intent",
+        family: "quick_trade",
+        selector: { tradeId },
+      });
+    }
+    const workingRoot = options.workingRoot;
     const actionPlayerState = workingRoot.playerState;
     const actionCardState = workingRoot.cardState;
     const actionRocketState = workingRoot.rocketState;
