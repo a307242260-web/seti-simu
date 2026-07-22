@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createCardTriggerRuntime } = require("./card-trigger-runtime");
-const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function createHarness() {
   const player = {
@@ -17,13 +17,13 @@ function createHarness() {
     cardTaskCompletion: null,
     actionEffectFlow: null,
   };
-  const compositionDecisions = createCompositionDecisionAccess();
+  const decisionSessions = createDecisionSessionStore();
   const calls = { started: 0, updated: 0, rendered: 0 };
   const runtime = createCardTriggerRuntime({
     HISTORY_SOURCE_QUICK: "quick",
     SCORE_SOURCE_KEYS: { TASK_CARD: "task_card" },
     pendingState,
-    compositionDecisions,
+    decisionSessions,
     els: {},
     cardEffects: {
       completeTask(card, taskId) {
@@ -79,7 +79,7 @@ function createHarness() {
     rocketState: { statusNote: "", rockets: [] },
     turnState: { roundNumber: 1 },
   };
-  return { runtime, workingRoot, player, cardState, pendingState, compositionDecisions, calls };
+  return { runtime, workingRoot, player, cardState, pendingState, decisionSessions, calls };
 }
 
 {

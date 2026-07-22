@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createCardRuntime } = require("./card-runtime");
-const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 const { attachDecisionState } = require("./test-decision-state");
 
 function createHarness() {
@@ -15,10 +15,10 @@ function createHarness() {
   };
   const uiRuntimeState = { passReserveSelectionDismissed: false, passReserveSelectedCardId: null };
   const calls = { completed: 0, chrome: 0 };
-  const compositionDecisions = createCompositionDecisionAccess();
-  attachDecisionState(pendingState, compositionDecisions);
+  const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
   const runtime = createCardRuntime({
-    compositionDecisions,
+    decisionSessions,
     pendingState,
     uiRuntimeState,
     els: {},
@@ -74,7 +74,7 @@ function createHarness() {
     turnState: { roundNumber: 2 },
     rocketState: { statusNote: "" },
   };
-  return { runtime, workingRoot, player, effect, pendingState, uiRuntimeState, calls, compositionDecisions };
+  return { runtime, workingRoot, player, effect, pendingState, uiRuntimeState, calls, decisionSessions };
 }
 
 {

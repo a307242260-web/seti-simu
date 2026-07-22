@@ -13,7 +13,7 @@
 
   function createHandFlow(context = {}) {
     const {
-      compositionDecisions,
+      decisionSessions,
       uiRuntimeState,
       els,
       players,
@@ -125,7 +125,7 @@
     const ruleCardState = (workingRoot) => workingRoot.cardState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -209,7 +209,7 @@
         els.discardSelectionBackdrop.setAttribute("aria-hidden", String(!active));
       }
       if (els.discardSelectionCancel) {
-        els.discardSelectionCancel.hidden = !active || Boolean(compositionState.discardAction?.required);
+        els.discardSelectionCancel.hidden = !active || Boolean(decisionState.discardAction?.required);
       }
       updatePlayerHandPanelTitle();
       if (active) setQuickPanelOpen(false);
@@ -1098,7 +1098,7 @@
         return { ok: false, message: `手牌不足，需要弃置 ${discardCount} 张牌` };
       }
 
-      compositionState.discardAction = { ...(pendingAction || {}), discarded: [], selectedIndexes: [] };
+      decisionState.discardAction = { ...(pendingAction || {}), discarded: [], selectedIndexes: [] };
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), true, discardCount);
       ruleRocketState(workingRoot).statusNote = pendingAction?.type === "pass_hand_limit"
         ? `PASS：请选择 ${discardCount} 张手牌弃掉，保留 4 张`
@@ -1113,7 +1113,7 @@
 
     function cancelDiscardSelection(workingRoot) {
       if (!isDiscardSelectionActive()) return;
-      const pending = compositionState.discardAction;
+      const pending = decisionState.discardAction;
       if (pending?.required) {
         ruleRocketState(workingRoot).statusNote = pending.type === "pass_hand_limit"
           ? "PASS 手牌上限弃牌必须完成"
@@ -1121,7 +1121,7 @@
         renderStateReadout();
         return;
       }
-      compositionState.discardAction = null;
+      decisionState.discardAction = null;
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       if (pending?.type === "industry_helios_income") {
         return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
@@ -1148,8 +1148,8 @@
     }
 
     function completeDiscardSelection(workingRoot, discardedCards) {
-      const pending = compositionState.discardAction;
-      compositionState.discardAction = null;
+      const pending = decisionState.discardAction;
+      decisionState.discardAction = null;
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       syncDiscardSelectionChrome(workingRoot);
 
@@ -1162,8 +1162,8 @@
           tradePlayer,
         );
         ruleRocketState(workingRoot).statusNote = tradeResult.ok ? tradeResult.message : (tradeResult.message || "交易失败");
-        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && compositionState.cardSelectionAction) {
-          compositionState.cardSelectionAction.beforeTradeState = beforeState;
+        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && decisionState.cardSelectionAction) {
+          decisionState.cardSelectionAction.beforeTradeState = beforeState;
         }
         if (tradeResult.ok && !tradeResult.awaitingCardSelection && beforeState) {
           context.recordQuickTradeCompletion?.(pending.tradeId, tradePlayer, beforeState);
@@ -1248,7 +1248,7 @@
     }
 
     function finalizePendingDiscardSelection(workingRoot) {
-      const pending = compositionState.discardAction;
+      const pending = decisionState.discardAction;
       const discardPlayer = pending?.player || getCurrentPlayer(workingRoot);
       const selected = [...(pending?.selectedIndexes || [])].sort((a, b) => b - a);
       const discarded = [...(pending?.discarded || [])];
@@ -1271,7 +1271,7 @@
     }
 
     function resolveDiscardSelectionDecision(workingRoot, selectedHandIndices) {
-      const pending = compositionState.discardAction;
+      const pending = decisionState.discardAction;
       const requiredCount = Math.max(0, cards.getDiscardRemaining(ruleCardState(workingRoot)));
       const selected = [...new Set((selectedHandIndices || []).map(Number))]
         .filter((index) => Number.isInteger(index) && index >= 0);
@@ -1289,18 +1289,18 @@
       if (!isDiscardSelectionActive()) return;
       const index = Math.round(handIndex);
       const needed = cards.getDiscardRemaining(ruleCardState(workingRoot));
-      if (!compositionState.discardAction) return;
-      if (!Array.isArray(compositionState.discardAction.selectedIndexes)) {
-        compositionState.discardAction.selectedIndexes = [];
+      if (!decisionState.discardAction) return;
+      if (!Array.isArray(decisionState.discardAction.selectedIndexes)) {
+        decisionState.discardAction.selectedIndexes = [];
       }
-      const selected = compositionState.discardAction.selectedIndexes;
+      const selected = decisionState.discardAction.selectedIndexes;
       const existingIndex = selected.indexOf(index);
       if (existingIndex >= 0) {
         selected.splice(existingIndex, 1);
         renderPlayerHand();
         ruleRocketState(workingRoot).statusNote = selected.length > 0
           ? `弃牌：已选 ${selected.length}/${needed} 张`
-          : (isIncomeDiscardActionType(compositionState.discardAction.type)
+          : (isIncomeDiscardActionType(decisionState.discardAction.type)
             ? "收入：请选择手牌弃掉"
             : `弃牌：请选择 ${needed} 张手牌`);
         renderStateReadout();
@@ -1406,7 +1406,7 @@
         return result;
       }
 
-      if (!compositionState.actionEffectFlow?.futureSpanPlayedCard) {
+      if (!decisionState.actionEffectFlow?.futureSpanPlayedCard) {
         releaseFutureSpanAfterPlayWithHistory();
         markActionPending();
         updateActionButtons();
@@ -1896,7 +1896,7 @@
     function handleHandScanCardClick(workingRoot, handIndex) {
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || compositionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || decisionState.actionEffectFlow);
       const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];

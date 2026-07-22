@@ -1,21 +1,21 @@
 (function (root, factory) {
   "use strict";
 
-  const compositionDecisionAccess = typeof module === "object" && module.exports
-    ? require("../game/effects/composition-decision-access")
-    : root.SetiCompositionDecisionAccess;
-  const api = factory(root, compositionDecisionAccess);
+  const decisionSessionStore = typeof module === "object" && module.exports
+    ? require("../game/effects/decision-session-store")
+    : root.SetiDecisionSessionStore;
+  const api = factory(root, decisionSessionStore);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppRuntime = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (root, compositionDecisionAccess) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (root, decisionSessionStore) {
   "use strict";
 
-  if (!compositionDecisionAccess?.createCompositionDecisionAccess) {
-    throw new Error("缺少 SetiCompositionDecisionAccess，无法创建标准 Decision Session");
+  if (!decisionSessionStore?.createDecisionSessionStore) {
+    throw new Error("缺少 SetiDecisionSessionStore，无法创建标准 Decision Session");
   }
 
   function stripAssetExtension(value) {
@@ -94,7 +94,7 @@
 
   function createRuntime(options = {}) {
     return {
-      decisions: compositionDecisionAccess.createCompositionDecisionAccess(),
+      decisions: decisionSessionStore.createDecisionSessionStore(),
       actionLog: createActionLogState(),
       actionBriefing: createActionBriefingState(),
       startScreen: createStartScreenState(options),

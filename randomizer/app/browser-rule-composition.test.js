@@ -439,7 +439,7 @@ function createHarness(initialValue = 0) {
   const tradeSource = fs.readFileSync(path.join(__dirname, "../game/ai/trade-candidates.js"), "utf8");
   assert.match(tradeSource, /canAiMoveThisTurn\(workingRoot, player\.id\)/, "AI trade candidates 必须显式传 workingRoot");
   const standardActionSource = fs.readFileSync(path.join(__dirname, "../game/actions/standard-action.js"), "utf8");
-  assert.doesNotMatch(standardActionSource, /_compositionCheckpointVersion|comparableDecision/, "Action identity 不得忽略 compositionStateVersion");
+  assert.doesNotMatch(standardActionSource, /_compositionCheckpointVersion|comparableDecision/, "Action identity 不得忽略 decisionStateVersion");
   const handFlowSource = fs.readFileSync(path.join(__dirname, "hand-flow.js"), "utf8");
   const cardRuntimeSource = fs.readFileSync(path.join(__dirname, "card-runtime.js"), "utf8");
   const conditionalSource = fs.readFileSync(path.join(__dirname, "conditional-decision-domain.js"), "utf8");

@@ -170,7 +170,7 @@
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -339,7 +339,7 @@
 
     function openPickCardRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      compositionState.cardSelectionAction = null;
+      decisionState.cardSelectionAction = null;
       const result = beginCardSelection({
         type: "planet_reward_pick_card",
         player: currentPlayer,
@@ -530,7 +530,7 @@
         playerColor: effect.options?.targetPlayerColor,
       }) || getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
-      compositionState.alienTraceAction = {
+      decisionState.alienTraceAction = {
         type: "planet_reward_alien_trace",
         beforeAlienState: structuredClone(ruleAlienGameState(workingRoot)),
         beforePlayerState: structuredClone(rulePlayerState(workingRoot)),
@@ -565,8 +565,8 @@
         }),
         finishNoTarget: () => {
           const message = `${effect.label}：没有合法外星人痕迹位置，奖励落空`;
-          compositionState.alienTraceAction = null;
-          compositionState.alienTracePickerState = null;
+          decisionState.alienTraceAction = null;
+          decisionState.alienTracePickerState = null;
           closeAlienTracePicker();
           return finishAutomaticRewardEffect(workingRoot, effect, {
             ok: true,
@@ -701,7 +701,7 @@
                 playerColor: getCurrentPlayer(workingRoot)?.color || null,
                 techType: selection?.techType || null,
                 tileId: selection?.tileId || null,
-                source: compositionState.actionEffectFlow?.actionType || "tech",
+                source: decisionState.actionEffectFlow?.actionType || "tech",
               },
             ];
           }

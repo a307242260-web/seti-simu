@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createScanFlowHelpers } = require("./scan-flow");
-const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 const { attachDecisionState } = require("./test-decision-state");
 
 function createBaseHarness() {
@@ -41,8 +41,8 @@ function createBaseHarness() {
     discardPublic: [],
     abilityPlayers: [],
   };
-  const compositionDecisions = createCompositionDecisionAccess();
-  attachDecisionState(pendingState, compositionDecisions);
+  const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
   const workingRoot = {
     match: {},
     alienGameState: {},
@@ -55,7 +55,7 @@ function createBaseHarness() {
   };
 
   const helpers = createScanFlowHelpers({
-    compositionDecisions,
+    decisionSessions,
     clearPendingAmibaSymbolChoice() {},
     clearPendingRunezuSymbolBranch() {},
     clearPendingRunezuFaceSymbolPlacement() {},
@@ -215,7 +215,7 @@ function createBaseHarness() {
     cardState,
     rocketState,
     player,
-    compositionDecisions,
+    decisionSessions,
     workingRoot,
   };
 }

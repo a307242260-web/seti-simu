@@ -35,14 +35,14 @@
     const document = documentRef;
     const structuredClone = structuredCloneRef;
 
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const compositionDecisions = context.compositionDecisions;
+    const decisionSessions = context.decisionSessions;
     const uiRuntimeState = context.uiRuntimeState || {};
     const getHandScanContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.handScanContinuation || null;
     function setHandScanContinuation(workingRoot, continuation) {
@@ -273,7 +273,7 @@
       return Math.min(1 + getPublicScanBonusSelectableCount(player), 3, filledSlots);
     }
 
-    function getPublicScanMinSelectable(pending = compositionState.cardSelectionAction) {
+    function getPublicScanMinSelectable(pending = decisionState.cardSelectionAction) {
       const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
       const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || 1));
       return Math.min(maxSelectable, requested);
@@ -287,7 +287,7 @@
         : `最多选择 ${maxSelectable} 张公共牌，确认后依次扫描`;
     }
 
-    function ensureDelayedPublicRefills(flow = compositionState.actionEffectFlow) {
+    function ensureDelayedPublicRefills(flow = decisionState.actionEffectFlow) {
       if (!flow) return [];
       if (!Array.isArray(flow.delayedPublicRefills)) {
         flow.delayedPublicRefills = [];
@@ -296,10 +296,10 @@
     }
 
     function registerDelayedPublicRefill(scanRunId, slotIndex, card) {
-      if (!scanRunId || !compositionState.actionEffectFlow) return null;
+      if (!scanRunId || !decisionState.actionEffectFlow) return null;
       const index = Number(slotIndex);
       if (!Number.isInteger(index)) return null;
-      const list = ensureDelayedPublicRefills(compositionState.actionEffectFlow);
+      const list = ensureDelayedPublicRefills(decisionState.actionEffectFlow);
       const existing = list.find((item) => item.scanRunId === scanRunId && item.slotIndex === index);
       if (existing) {
         existing.card = card || existing.card || null;
@@ -316,19 +316,19 @@
       return entry;
     }
 
-    function getDelayedPublicRefillSlots(scanRunId, flow = compositionState.actionEffectFlow) {
+    function getDelayedPublicRefillSlots(scanRunId, flow = decisionState.actionEffectFlow) {
       return ensureDelayedPublicRefills(flow)
         .filter((item) => !scanRunId || item.scanRunId === scanRunId)
         .map((item) => ({ ...item }));
     }
 
-    function clearDelayedPublicRefillSlots(scanRunId, flow = compositionState.actionEffectFlow) {
+    function clearDelayedPublicRefillSlots(scanRunId, flow = decisionState.actionEffectFlow) {
       if (!flow || !Array.isArray(flow.delayedPublicRefills)) return;
       flow.delayedPublicRefills = flow.delayedPublicRefills
         .filter((item) => scanRunId && item.scanRunId !== scanRunId);
     }
 
-    function cloneDelayedPublicRefills(flow = compositionState.actionEffectFlow) {
+    function cloneDelayedPublicRefills(flow = decisionState.actionEffectFlow) {
       return Array.isArray(flow?.delayedPublicRefills)
         ? flow.delayedPublicRefills.map((item) => ({ ...item }))
         : [];
@@ -489,7 +489,7 @@
       return effects;
     }
 
-    function buildScanFinalizeFollowupEffects(workingRoot, _scanRunId, flow = compositionState.actionEffectFlow) {
+    function buildScanFinalizeFollowupEffects(workingRoot, _scanRunId, flow = decisionState.actionEffectFlow) {
       return [
         ...buildReadySectorFinishEffects(workingRoot, { nebulaIds: getFlowMarkedNebulaIds(flow) }),
       ];
@@ -529,7 +529,7 @@
         return scanChoices;
       }
 
-      compositionState.cardSelectionAction = null;
+      decisionState.cardSelectionAction = null;
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
       rocketState.statusNote = `公共牌区扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
@@ -576,7 +576,7 @@
 
     function confirmPublicScanSelection(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = compositionState.cardSelectionAction;
+      const pending = decisionState.cardSelectionAction;
       if (pending?.type !== "public_scan") {
         return { ok: false, message: "当前不是公共牌区扫描" };
       }
@@ -618,8 +618,8 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const fromEffectFlow = Boolean(pending.fromEffectFlow || compositionState.actionEffectFlow);
-      compositionState.cardSelectionAction = null;
+      const fromEffectFlow = Boolean(pending.fromEffectFlow || decisionState.actionEffectFlow);
+      decisionState.cardSelectionAction = null;
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
 
@@ -675,9 +675,9 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = compositionState.cardSelectionAction;
+      const pending = decisionState.cardSelectionAction;
       const maxSelectable = pending?.maxSelectable ?? 1;
-      const fromEffectFlow = Boolean(pending?.fromEffectFlow || compositionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(pending?.fromEffectFlow || decisionState.actionEffectFlow);
 
       if (maxSelectable <= 1) {
         return beginPublicScanForSingleCard(workingRoot, index, card, {
@@ -774,7 +774,7 @@
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || compositionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || decisionState.actionEffectFlow);
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
@@ -891,15 +891,15 @@
     }
 
     function appendSectorSettlementResultToFlow(settlementResult) {
-      if (!compositionState.actionEffectFlow || !settlementResult?.ok) return;
-      if (!compositionState.actionEffectFlow.sectorSettlementResult) {
-        compositionState.actionEffectFlow.sectorSettlementResult = {
+      if (!decisionState.actionEffectFlow || !settlementResult?.ok) return;
+      if (!decisionState.actionEffectFlow.sectorSettlementResult) {
+        decisionState.actionEffectFlow.sectorSettlementResult = {
           ok: true,
           settlements: [],
           message: "",
         };
       }
-      const aggregate = compositionState.actionEffectFlow.sectorSettlementResult;
+      const aggregate = decisionState.actionEffectFlow.sectorSettlementResult;
       aggregate.settlements.push(settlementResult);
       aggregate.message = aggregate.settlements.map((item) => item.message).join("；");
       aggregate.runezuSymbolClaims = [
@@ -949,8 +949,8 @@
 
     function executeScanActionFinalizeEffect(workingRoot, effect) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const scanRunId = effect.options?.scanRunId || compositionState.actionEffectFlow?.scanRunId || null;
-      const followups = buildScanFinalizeFollowupEffects(workingRoot, scanRunId, compositionState.actionEffectFlow);
+      const scanRunId = effect.options?.scanRunId || decisionState.actionEffectFlow?.scanRunId || null;
+      const followups = buildScanFinalizeFollowupEffects(workingRoot, scanRunId, decisionState.actionEffectFlow);
       if (followups.length) {
         insertActionEffectsAfterCurrent(followups);
       }
@@ -983,7 +983,7 @@
       const result = data.settleSector(nebulaDataState, sectorId, {
         players: playerState.players,
         getPlayerTokenSrc: getNormalTokenAssetForPlayer,
-        source: compositionState.actionEffectFlow?.actionType || "scan",
+        source: decisionState.actionEffectFlow?.actionType || "scan",
       });
       if (!result.ok) {
         endEffectHistoryStep();
@@ -1077,7 +1077,7 @@
 
     function replenishDelayedPublicRefillSlots(workingRoot, scanRunId, slots, options = {}) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      const flow = options.flow || compositionState.actionEffectFlow;
+      const flow = options.flow || decisionState.actionEffectFlow;
       const slotIndexes = normalizeDelayedPublicRefillSlotIndexes(slots);
       if (!slotIndexes.length) {
         clearDelayedPublicRefillSlots(scanRunId, flow);
@@ -1093,7 +1093,7 @@
       const discardPileSnapshot = (cardState.discardPile || []).slice();
       const hasEffectIndex = Object.prototype.hasOwnProperty.call(options, "effectIndex");
       beginEffectHistoryStep(options.label || "补充公共牌区", {
-        effectIndex: hasEffectIndex ? options.effectIndex : compositionState.actionEffectFlow?.currentIndex ?? null,
+        effectIndex: hasEffectIndex ? options.effectIndex : decisionState.actionEffectFlow?.currentIndex ?? null,
         effectType: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL,
       });
       const replenished = [];
@@ -1231,7 +1231,7 @@
       if (!effects.length) return false;
       flow.endOfFlowSettlementScheduled = true;
       flow.completed = false;
-      const ownerId = flow.playerId || flow.defaultPlayerId || compositionState.actionEffectFlow?.playerId || null;
+      const ownerId = flow.playerId || flow.defaultPlayerId || decisionState.actionEffectFlow?.playerId || null;
       const insertionSource = createEndOfFlowInsertionSource(flow);
       for (const effect of effects) {
         const node = {
@@ -1257,7 +1257,7 @@
       if (!deferredEffects.length) return false;
 
       const existingIds = new Set((flow.effects || []).map((effect) => effect?.id).filter(Boolean));
-      const ownerId = flow.playerId || flow.defaultPlayerId || compositionState.actionEffectFlow?.playerId || null;
+      const ownerId = flow.playerId || flow.defaultPlayerId || decisionState.actionEffectFlow?.playerId || null;
       const effectsToAppend = deferredEffects.filter((effect) => !effect.id || !existingIds.has(effect.id));
       if (!effectsToAppend.length) return false;
 
@@ -1406,7 +1406,7 @@
         delete workingRoot.match.probeSectorScanContinuation;
         uiRuntimeState.probeSectorSelectedRocketIds = [];
         delete workingRoot.match.probeLocationRewardContinuation;
-        compositionDecisions.clear("strategy_passive_slot");
+        decisionSessions.clear("strategy_passive_slot");
         return;
       }
       if (getPublicScanQueue(workingRoot)) {
@@ -1434,7 +1434,7 @@
       clearPendingRunezuCardGain();
       clearPendingRunezuSymbolBranch();
       clearPendingRunezuFaceSymbolPlacement();
-      compositionDecisions.clear("strategy_passive_slot");
+      decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
       setScanTargetContinuation(workingRoot, null);
       delete workingRoot.match.probeSectorScanContinuation;
@@ -2060,7 +2060,7 @@
         );
       }
       const scanRunId = context.createScanRunId("main-scan");
-      compositionState.actionEffectFlow = abilities.chain.startAbilityChain(
+      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
         "scan",
         "扫描行动",
         scanEffects.buildScanEffectQueue(currentPlayer, {
@@ -2072,10 +2072,10 @@
           turnNumber: workingRoot.turnState.turnNumber,
         }),
       );
-      compositionState.actionEffectFlow.playerId = currentPlayer.id;
-      context.assignEffectFlowOwner(compositionState.actionEffectFlow, currentPlayer.id);
-      compositionState.actionEffectFlow.scanRunId = scanRunId;
-      compositionState.actionEffectFlow.scanActionEvent = {
+      decisionState.actionEffectFlow.playerId = currentPlayer.id;
+      context.assignEffectFlowOwner(decisionState.actionEffectFlow, currentPlayer.id);
+      decisionState.actionEffectFlow.scanRunId = scanRunId;
+      decisionState.actionEffectFlow.scanActionEvent = {
         type: "scanAction",
         source: "main",
         scanRunId,
@@ -2090,7 +2090,7 @@
         message: actionRocketState.statusNote,
         cost: costResult.cost || {},
         history: costResult.commands || [],
-        effects: structuredClone(compositionState.actionEffectFlow.effects || []),
+        effects: structuredClone(decisionState.actionEffectFlow.effects || []),
       };
     }
     return {

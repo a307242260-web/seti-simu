@@ -2,14 +2,14 @@
 
 const assert = require("node:assert/strict");
 const { createIndustryRuntime } = require("./industry-runtime.js");
-const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access.js");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store.js");
 const { attachDecisionState } = require("./test-decision-state");
 
 function noop() {}
 
 function createHarness() {
   const calls = [];
-  const compositionDecisions = createCompositionDecisionAccess();
+  const decisionSessions = createDecisionSessionStore();
   const pendingState = {
     cardSelectionAction: {
       type: "industry_deepspace_hand",
@@ -18,7 +18,7 @@ function createHarness() {
     },
     discardAction: { type: "industry_helios_income" },
   };
-  attachDecisionState(pendingState, compositionDecisions);
+  attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {
     effectStepActive: true,
     moveHighlightRocketId: 4,
@@ -45,7 +45,7 @@ function createHarness() {
     },
     clearHistoryStepOrderForSource: (source) => calls.push(`clear:${source}`),
     deactivateMoveMode: () => calls.push("move-off"),
-    compositionDecisions,
+    decisionSessions,
     els: {
       scanTargetOverlay: { hidden: false },
       scanTargetCancel: { hidden: true },
@@ -89,7 +89,7 @@ function createHarness() {
     techGameState,
     turnState: { roundNumber: 1, turnNumber: 1 },
   };
-  return { calls, context, compositionDecisions, pendingState, techGameState, uiRuntimeState, workingRoot };
+  return { calls, context, decisionSessions, pendingState, techGameState, uiRuntimeState, workingRoot };
 }
 
 {

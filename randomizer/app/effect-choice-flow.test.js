@@ -3,7 +3,7 @@
 const assert = require("node:assert/strict");
 const { createEffectChoiceFlowHelpers } = require("./effect-choice-flow");
 const { routeProbeDecisionClick } = require("./events");
-const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 const { attachDecisionState } = require("./test-decision-state");
 
 function makeButton() {
@@ -43,8 +43,8 @@ function createHarness(overrides = {}) {
       ],
     },
   };
-  const compositionDecisions = createCompositionDecisionAccess();
-  attachDecisionState(pendingState, compositionDecisions);
+  const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
   const rocketState = {
     statusNote: "",
     rockets: [
@@ -88,7 +88,7 @@ function createHarness(overrides = {}) {
 
   const helper = createEffectChoiceFlowHelpers({
     document: { createElement: () => makeButton() },
-    compositionDecisions,
+    decisionSessions,
     uiRuntimeState,
     pendingState,
     els,
@@ -219,7 +219,7 @@ function createHarness(overrides = {}) {
     ...overrides,
   });
 
-  return { helper, pendingState, compositionDecisions, workingRoot, rocketState, calls, els, player, uiRuntimeState };
+  return { helper, pendingState, decisionSessions, workingRoot, rocketState, calls, els, player, uiRuntimeState };
 }
 
 {

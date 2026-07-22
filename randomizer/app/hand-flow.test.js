@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createHandFlow } = require("./hand-flow");
-const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function makeClassList() {
   return { toggle() {} };
@@ -95,7 +95,7 @@ function createBaseContext(player, overrides = {}) {
 
   return {
     events,
-    compositionDecisions: overrides.compositionDecisions || createCompositionDecisionAccess(),
+    decisionSessions: overrides.decisionSessions || createDecisionSessionStore(),
     uiRuntimeState,
     pendingState,
     cardState,

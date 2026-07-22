@@ -37,7 +37,7 @@
       completeCurrentActionEffect,
       completePendingActionStep,
       createActionLogImpactSnapshot,
-      compositionDecisions,
+      decisionSessions,
       els,
       endEffectHistoryStep,
       getCurrentPlayer,
@@ -84,7 +84,7 @@
       updateActionButtons,
       updatePublicCardControls
     } = context;
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -312,10 +312,10 @@
     ));
 
     const anomalyPickOpen = isCardSelectionActive()
-      && compositionState.cardSelectionAction?.type === "yichangdian_anomaly_pick";
+      && decisionState.cardSelectionAction?.type === "yichangdian_anomaly_pick";
     if (anomalyPickOpen) {
-      compositionState.cardSelectionAction.fromEffectFlow = true;
-      compositionState.cardSelectionAction.effectResult = {
+      decisionState.cardSelectionAction.fromEffectFlow = true;
+      decisionState.cardSelectionAction.effectResult = {
         ok: result.ok,
         undoable: true,
         message: result.message,
@@ -361,17 +361,17 @@
     beginPassActionSession(currentPlayer);
     const passEffects = buildPassEffectQueue(workingRoot, currentPlayer);
     if (passEffects.length) {
-      compositionState.actionEffectFlow = abilities.chain.startAbilityChain(
+      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
         "pass",
         "PASS",
         passEffects,
       );
-      compositionState.actionEffectFlow.actionType = "pass";
-      compositionState.actionEffectFlow.playerId = currentPlayer.id;
-      assignEffectFlowOwner(compositionState.actionEffectFlow, compositionState.actionEffectFlow.playerId);
-      compositionState.actionEffectFlow.passEvent = createPassEvent(currentPlayer);
-      compositionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-      compositionState.actionEffectFlow.consumesMainAction = true;
+      decisionState.actionEffectFlow.actionType = "pass";
+      decisionState.actionEffectFlow.playerId = currentPlayer.id;
+      assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+      decisionState.actionEffectFlow.passEvent = createPassEvent(currentPlayer);
+      decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
+      decisionState.actionEffectFlow.consumesMainAction = true;
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       actionRocketState.statusNote = "PASS：请依次点击必做效果";
       activateNextActionEffect();
@@ -445,8 +445,8 @@
       || getPendingJiuzheCardPlay()
       || getPendingBanrenmaOpportunity()
       || getPendingBanrenmaCardGain()
-      || compositionState.alienTraceAction
-      || compositionState.alienTracePickerState
+      || decisionState.alienTraceAction
+      || decisionState.alienTracePickerState
       || isActionEffectFlowActive()
       || hasActivePendingSubFlow()
     );

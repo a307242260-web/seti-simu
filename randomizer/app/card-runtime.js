@@ -39,7 +39,7 @@
       createCardTriggerProgressCommands,
       data,
       deactivateMoveMode,
-      compositionDecisions,
+      decisionSessions,
       discardReservedCardIfFinished,
       document,
       els,
@@ -124,7 +124,7 @@
         ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -656,7 +656,7 @@
         return { ok: false, message: "请先完成移动" };
       }
 
-      compositionState.cardSelectionAction = pendingAction;
+      decisionState.cardSelectionAction = pendingAction;
       cards.setSelectionActive(cardState, true);
       rocketState.statusNote = pendingAction?.type === "public_scan"
         ? (pendingAction.maxSelectable ?? 1) > 1
@@ -699,8 +699,8 @@
 
     function cancelCardSelection(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = compositionState.cardSelectionAction;
-      compositionState.cardSelectionAction = null;
+      const pending = decisionState.cardSelectionAction;
+      decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       if (pending?.type === "trade" && pending.player && pending.refundCost) {
         if (pending.beforeTradeState) {
@@ -832,8 +832,8 @@
       }
 
       cards.setSelectionActive(cardState, false);
-      const pending = compositionState.cardSelectionAction;
-      compositionState.cardSelectionAction = null;
+      const pending = decisionState.cardSelectionAction;
+      decisionState.cardSelectionAction = null;
       rocketState.statusNote = pending?.type === "trade"
         ? `快速交易精选：${cards.getCardLabel(result.card)}`
         : `获得卡牌：${cards.getCardLabel(result.card)}`;
@@ -883,7 +883,7 @@
               playerColor: pending.player?.color || getWorkingCurrentPlayer(workingRoot)?.color || null,
               techType: pending.selection?.techType || null,
               tileId: pending.selection?.tileId || null,
-              source: compositionState.actionEffectFlow?.actionType || "tech",
+              source: decisionState.actionEffectFlow?.actionType || "tech",
             }],
             payload: {
               card: result.card,
@@ -1272,15 +1272,15 @@
 
     function handlePublicCardClick(workingRoot, slotIndex) {
       if (!isCardSelectionActive()) return;
-      if (compositionState.cardSelectionAction?.type === "public_scan") {
+      if (decisionState.cardSelectionAction?.type === "public_scan") {
         handlePublicScanCardClick(slotIndex);
         return;
       }
-      if (compositionState.cardSelectionAction?.type === "card_public_corner_discard") {
+      if (decisionState.cardSelectionAction?.type === "card_public_corner_discard") {
         handlePublicCornerDiscardCardClick(slotIndex);
         return;
       }
-      if (compositionState.cardSelectionAction?.type === "industry_deepspace_public") {
+      if (decisionState.cardSelectionAction?.type === "industry_deepspace_public") {
         finalizeIndustryDeepspaceSwap(slotIndex);
         return;
       }
@@ -1523,9 +1523,9 @@
 
     function getCompletedIndustryHuanyuMoveRocketIds(effect) {
       const groupId = effect?.options?.industryHuanyuMoveGroupId || null;
-      if (!groupId || !compositionState.actionEffectFlow?.effects?.length) return new Set();
+      if (!groupId || !decisionState.actionEffectFlow?.effects?.length) return new Set();
       const used = new Set();
-      for (const candidate of compositionState.actionEffectFlow.effects) {
+      for (const candidate of decisionState.actionEffectFlow.effects) {
         if (!candidate || candidate === effect || candidate.id === effect.id) continue;
         if (candidate.options?.industryHuanyuMoveGroupId !== groupId) continue;
         if (candidate.status !== "completed" || candidate.result?.skipped) continue;

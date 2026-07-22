@@ -19,7 +19,7 @@
   }
 
   function createEffectFlowHelpers(context = {}) {
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -132,7 +132,7 @@
     );
 
     function getEffectHistorySource() {
-      return compositionState.actionEffectFlow?.historySource || HISTORY_SOURCE_MAIN;
+      return decisionState.actionEffectFlow?.historySource || HISTORY_SOURCE_MAIN;
     }
 
     function shouldIrreversibleBlockCurrentMainAction(source) {
@@ -353,41 +353,41 @@
       if (!initialEffects.length) return false;
 
       const normalizedEffects = cardEffects.consolidateCardMoveEffects?.(initialEffects) || initialEffects;
-      compositionState.actionEffectFlow = abilities.chain.startAbilityChain(chainId, label, normalizedEffects);
-      compositionState.actionEffectFlow.actionType = options.actionType || "playCard";
-      compositionState.actionEffectFlow.playerId = getCurrentPlayerForRoot(workingRoot)?.id || null;
-      assignEffectFlowOwner(compositionState.actionEffectFlow, compositionState.actionEffectFlow.playerId);
-      compositionState.actionEffectFlow.scanRunId = options.scanRunId || null;
-      compositionState.actionEffectFlow.card = options.card || null;
-      compositionState.actionEffectFlow.cardTemporaryTasks = options.temporaryTasks || [];
-      compositionState.actionEffectFlow.playCardEvent = options.playCardEvent || null;
-      compositionState.actionEffectFlow.industryPlayedCard = options.industryPlayedCard || options.card || null;
-      compositionState.actionEffectFlow.futureSpanPlayedCard = Boolean(
+      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(chainId, label, normalizedEffects);
+      decisionState.actionEffectFlow.actionType = options.actionType || "playCard";
+      decisionState.actionEffectFlow.playerId = getCurrentPlayerForRoot(workingRoot)?.id || null;
+      assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+      decisionState.actionEffectFlow.scanRunId = options.scanRunId || null;
+      decisionState.actionEffectFlow.card = options.card || null;
+      decisionState.actionEffectFlow.cardTemporaryTasks = options.temporaryTasks || [];
+      decisionState.actionEffectFlow.playCardEvent = options.playCardEvent || null;
+      decisionState.actionEffectFlow.industryPlayedCard = options.industryPlayedCard || options.card || null;
+      decisionState.actionEffectFlow.futureSpanPlayedCard = Boolean(
         options.futureSpanPlayedCard,
       );
-      compositionState.actionEffectFlow.historySource = options.historySource || HISTORY_SOURCE_MAIN;
-      compositionState.actionEffectFlow.consumesMainAction = options.consumesMainAction !== false;
-      compositionState.actionEffectFlow.deferredEndEffects = remainingDeferredEndEffects.map((effect) => ({
+      decisionState.actionEffectFlow.historySource = options.historySource || HISTORY_SOURCE_MAIN;
+      decisionState.actionEffectFlow.consumesMainAction = options.consumesMainAction !== false;
+      decisionState.actionEffectFlow.deferredEndEffects = remainingDeferredEndEffects.map((effect) => ({
         ...effect,
         options: { ...(effect.options || {}) },
         status: "pending",
       }));
-      compositionState.actionEffectFlow.delayedPublicRefills = (options.delayedPublicRefills || [])
+      decisionState.actionEffectFlow.delayedPublicRefills = (options.delayedPublicRefills || [])
         .filter(Boolean)
         .map((item) => ({ ...item }));
-      compositionState.actionEffectFlow.deferredEndEffectsFlushed = !compositionState.actionEffectFlow.deferredEndEffects.length;
-      compositionState.actionEffectFlow.preHistoryCommands = Array.isArray(options.preHistoryCommands)
+      decisionState.actionEffectFlow.deferredEndEffectsFlushed = !decisionState.actionEffectFlow.deferredEndEffects.length;
+      decisionState.actionEffectFlow.preHistoryCommands = Array.isArray(options.preHistoryCommands)
         ? options.preHistoryCommands
         : [];
-      compositionState.actionEffectFlow.preHistoryCommandsApplied = false;
-      compositionState.actionEffectFlow.resumePendingActionExecuted = Boolean(
+      decisionState.actionEffectFlow.preHistoryCommandsApplied = false;
+      decisionState.actionEffectFlow.resumePendingActionExecuted = Boolean(
         actionHistory.isActionComplete?.()
         || (
-          compositionState.actionEffectFlow.historySource === HISTORY_SOURCE_QUICK
+          decisionState.actionEffectFlow.historySource === HISTORY_SOURCE_QUICK
           && actionHistory.hasSession()
         ),
       );
-      if (compositionState.actionEffectFlow.historySource === HISTORY_SOURCE_QUICK && !quickActionHistory.hasSession()) {
+      if (decisionState.actionEffectFlow.historySource === HISTORY_SOURCE_QUICK && !quickActionHistory.hasSession()) {
         quickActionHistory.beginSession("quick", "快速行动");
       }
 
@@ -424,8 +424,8 @@
       const source = meta.source || getEffectHistorySource();
       const history = ensureEffectHistorySession(
         source,
-        compositionState.actionEffectFlow?.actionType || "effect",
-        compositionState.actionEffectFlow?.label || label || "效果",
+        decisionState.actionEffectFlow?.actionType || "effect",
+        decisionState.actionEffectFlow?.label || label || "效果",
       );
       if (!history.hasSession() || uiRuntimeState.effectStepActive) return;
       const current = getCurrentActionEffect();
@@ -436,7 +436,7 @@
         type: "effect",
         label: label || current?.label || "效果",
         effectId: hasEffectId ? meta.effectId : current?.id || null,
-        effectIndex: hasEffectIndex ? meta.effectIndex : compositionState.actionEffectFlow?.currentIndex ?? null,
+        effectIndex: hasEffectIndex ? meta.effectIndex : decisionState.actionEffectFlow?.currentIndex ?? null,
         effectType: meta.effectType ?? current?.type ?? null,
         logBefore: meta.logBefore || createActionLogImpactSnapshot(),
         ...meta,
@@ -449,14 +449,14 @@
         current.preHistoryCommandsApplied = true;
       }
       if (
-        compositionState.actionEffectFlow
-        && !compositionState.actionEffectFlow.preHistoryCommandsApplied
-        && compositionState.actionEffectFlow.preHistoryCommands?.length
+        decisionState.actionEffectFlow
+        && !decisionState.actionEffectFlow.preHistoryCommandsApplied
+        && decisionState.actionEffectFlow.preHistoryCommands?.length
       ) {
-        for (const command of compositionState.actionEffectFlow.preHistoryCommands) {
+        for (const command of decisionState.actionEffectFlow.preHistoryCommands) {
           history.record(command);
         }
-        compositionState.actionEffectFlow.preHistoryCommandsApplied = true;
+        decisionState.actionEffectFlow.preHistoryCommandsApplied = true;
       }
     }
 
@@ -497,8 +497,8 @@
       const source = getEffectHistorySource();
       const history = ensureEffectHistorySession(
         source,
-        compositionState.actionEffectFlow?.actionType || "effect",
-        compositionState.actionEffectFlow?.label || effect?.label || "效果",
+        decisionState.actionEffectFlow?.actionType || "effect",
+        decisionState.actionEffectFlow?.label || effect?.label || "效果",
       );
       if (!history.hasSession()) {
         markCurrentActionIrreversibleForSource(source, reason, code);
@@ -509,7 +509,7 @@
         type: "irreversible",
         label: effect?.label || "不可撤销效果",
         effectId: effect?.id || null,
-        effectIndex: compositionState.actionEffectFlow?.currentIndex ?? null,
+        effectIndex: decisionState.actionEffectFlow?.currentIndex ?? null,
         effectType: effect?.type || null,
         undoable: false,
         irreversibleCode: code,
@@ -530,14 +530,14 @@
     }
 
     function getCurrentActionEffect() {
-      return abilities.chain.getCurrentChainNode(compositionState.actionEffectFlow);
+      return abilities.chain.getCurrentChainNode(decisionState.actionEffectFlow);
     }
 
     function activateNextActionEffect() {
-      if (!compositionState.actionEffectFlow) return;
+      if (!decisionState.actionEffectFlow) return;
 
       const next = abilities.chain.activateNext
-        ? abilities.chain.activateNext(compositionState.actionEffectFlow)
+        ? abilities.chain.activateNext(decisionState.actionEffectFlow)
         : null;
       if (!next) {
         finishActionEffectFlow();
@@ -550,13 +550,13 @@
     }
 
     function activateNextActionEffectIfIdle() {
-      if (!compositionState.actionEffectFlow || compositionState.actionEffectFlow.completed) return false;
+      if (!decisionState.actionEffectFlow || decisionState.actionEffectFlow.completed) return false;
       const next = abilities.chain.activateNextIfIdle
-        ? abilities.chain.activateNextIfIdle(compositionState.actionEffectFlow)
+        ? abilities.chain.activateNextIfIdle(decisionState.actionEffectFlow)
         : (() => {
           const current = getCurrentActionEffect();
           if (current?.status === "active") return null;
-          return abilities.chain.activateNext ? abilities.chain.activateNext(compositionState.actionEffectFlow) : null;
+          return abilities.chain.activateNext ? abilities.chain.activateNext(decisionState.actionEffectFlow) : null;
         })();
       if (!next) return false;
       setActiveEffectFlowOwner(next);
@@ -568,7 +568,7 @@
         ? workingRootOrStatus
         : null;
       const status = workingRoot ? requestedStatus : (workingRootOrStatus || "completed");
-      if (!compositionState.actionEffectFlow) return;
+      if (!decisionState.actionEffectFlow) return;
 
       const current = getCurrentActionEffect();
       if (!current || current.status !== "active") return;
@@ -601,7 +601,7 @@
       }
       let chainTransition = null;
       if (status === "skipped") {
-        chainTransition = abilities.chain.skipCurrentChainNode(compositionState.actionEffectFlow);
+        chainTransition = abilities.chain.skipCurrentChainNode(decisionState.actionEffectFlow);
       } else {
         if (irreversibleReason) {
           markCurrentActionIrreversible(
@@ -609,12 +609,12 @@
             current.result?.irreversible?.code || "irreversible_effect",
           );
         }
-        chainTransition = abilities.chain.resolveCurrentChainNode(compositionState.actionEffectFlow, current.result || {});
+        chainTransition = abilities.chain.resolveCurrentChainNode(decisionState.actionEffectFlow, current.result || {});
       }
       if (chainTransition?.next) setActiveEffectFlowOwner(chainTransition.next);
       renderActionEffectBar();
 
-      const flowCompleted = compositionState.actionEffectFlow?.completed;
+      const flowCompleted = decisionState.actionEffectFlow?.completed;
       if (flowCompleted) {
         settleCardTasksAfterEffect({ events: effectEvents, render: false });
         if (deferredType1Events.length) {
@@ -624,7 +624,7 @@
           activateNextActionEffectIfIdle();
         }
         if (
-          (compositionState.actionEffectFlow && !compositionState.actionEffectFlow.completed)
+          (decisionState.actionEffectFlow && !decisionState.actionEffectFlow.completed)
           || hasActiveCardTriggerResolution(workingRoot)
         ) {
           renderActionEffectBar();

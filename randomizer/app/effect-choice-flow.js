@@ -20,14 +20,14 @@
 
   function createEffectChoiceFlowHelpers(context = {}) {
     const documentRef = context.document || null;
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const compositionDecisions = context.compositionDecisions;
+    const decisionSessions = context.decisionSessions;
     const els = context.els || {};
     const requireWorkingRoot = (workingRoot) => {
       if (!workingRoot?.playerState || !workingRoot?.rocketState) {
@@ -456,9 +456,9 @@
       closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => {
         if (choice === "skip") {
-          if (compositionState.actionEffectFlow) {
+          if (decisionState.actionEffectFlow) {
             const groupId = effect.options?.groupId;
-            compositionState.actionEffectFlow.effects = compositionState.actionEffectFlow.effects.filter((item) => (
+            decisionState.actionEffectFlow.effects = decisionState.actionEffectFlow.effects.filter((item) => (
               item.status !== "pending" || item.options?.groupId !== groupId
             ));
           }

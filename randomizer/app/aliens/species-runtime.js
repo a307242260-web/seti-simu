@@ -54,7 +54,7 @@
       createActionLogImpactSnapshot,
       data,
       debugRuntimeController,
-      compositionDecisions,
+      decisionSessions,
       discardReservedCardIfFinished,
       document,
       els,
@@ -153,7 +153,7 @@
       return resolveWorkingPlayerReference(workingRoot, effect?.options || effect)
         || getWorkingCurrentPlayer(workingRoot);
     }
-    const compositionState = context.compositionDecisions?.createFacade?.({
+    const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -716,7 +716,7 @@ function renderAlienPanels(workingRoot) {
     aliens.renderAllAlienTraceMarkers(getAlienTraceLayer, alienGameState, {
       tokenSrc: aliens.ALIEN_TRACE_TOKEN_SRC,
       showStateTraceSlots: shouldShowStateTraceSlots(),
-      allowedTraceTypes: compositionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES,
+      allowedTraceTypes: decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES,
       canPlaceStateTrace: (...args) => canPlaceStateTrace(workingRoot, ...args),
       getPlayerTokenAsset: (playerColor) => (
         players.getPlayerColorDefinition(playerColor)?.normalTokenAsset
@@ -847,9 +847,9 @@ function applyFangzhouUnlockStateTraceReward(alienSlotId, player, traceType, pla
 
 function confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = compositionState.alienTraceAction;
+    const pending = decisionState.alienTraceAction;
     const inDebugMode = isDebugAlienTraceMode();
-    const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending || compositionState.alienTracePickerState, { allowFallback: inDebugMode });
+    const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending || decisionState.alienTracePickerState, { allowFallback: inDebugMode });
     if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
     if (!fangzhou?.canUnlockCard2ForTrace?.(alienGameState, currentPlayer, traceType)) {
       rocketState.statusNote = "无法解锁该方舟卡牌";
@@ -866,9 +866,9 @@ function confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType) {
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     const beforeLogSnapshot = createActionLogImpactSnapshot(currentPlayer);
     if (!inDebugMode) {
-      compositionState.alienTraceAction = null;
-      if (compositionState.alienTracePickerState?.mode !== "debug-direct") {
-        compositionState.alienTracePickerState = null;
+      decisionState.alienTraceAction = null;
+      if (decisionState.alienTracePickerState?.mode !== "debug-direct") {
+        decisionState.alienTracePickerState = null;
       }
       closeAlienTracePicker();
     }
@@ -1045,12 +1045,12 @@ function enqueueFangzhouCard1RewardEffects(flips, flowLabel, options = {}) {
       actionType: options.actionType || "fangzhouBasic",
       ...options,
     };
-    if (compositionState.actionEffectFlow && options.insertIntoCurrentFlow) {
+    if (decisionState.actionEffectFlow && options.insertIntoCurrentFlow) {
       insertActionEffectsAfterCurrent(effects);
       renderActionEffectBar();
       return { ok: true, effects, inserted: true, message: flowLabel };
     }
-    if (compositionState.actionEffectFlow && !options.forceNewFlow) {
+    if (decisionState.actionEffectFlow && !options.forceNewFlow) {
       insertActionEffectsAfterCurrent(effects);
       renderActionEffectBar();
       return { ok: true, effects, inserted: true, message: flowLabel };
@@ -2816,8 +2816,8 @@ function createJiuzheThresholdCardEffect(player, opportunity) {
   }
 
 function hasJiuzheThresholdEffectQueued(player, reason) {
-    if (!compositionState.actionEffectFlow || !player || !reason) return false;
-    return (compositionState.actionEffectFlow.effects || []).some((effect) => (
+    if (!decisionState.actionEffectFlow || !player || !reason) return false;
+    return (decisionState.actionEffectFlow.effects || []).some((effect) => (
       effect?.type === JIUZHE_THRESHOLD_CARD_EFFECT_TYPE
       && effect.status !== "completed"
       && effect.status !== "skipped"
@@ -3113,19 +3113,19 @@ function maybeOpenQueuedJiuzheOpportunity(workingRoot) {
   }
 
 function getActiveAlienSharedOverlayPendingForManualGuard() {
-    const tracePickerMode = String(compositionState.alienTracePickerState?.mode || "");
+    const tracePickerMode = String(decisionState.alienTracePickerState?.mode || "");
     const tracePickerHasOwner = Boolean(
-      compositionState.alienTracePickerState?.targetPlayerId
-      || compositionState.alienTracePickerState?.targetPlayerColor
+      decisionState.alienTracePickerState?.targetPlayerId
+      || decisionState.alienTracePickerState?.targetPlayerColor
     );
     const tracePickerPending = tracePickerMode
       && tracePickerMode !== "debug-direct"
       && tracePickerMode !== "reveal-confirm"
       && tracePickerHasOwner
-        ? compositionState.alienTracePickerState
+        ? decisionState.alienTracePickerState
         : null;
     const pendingEntries = [
-      compositionState.alienTraceAction ? { pending: compositionState.alienTraceAction, label: "外星人痕迹" } : null,
+      decisionState.alienTraceAction ? { pending: decisionState.alienTraceAction, label: "外星人痕迹" } : null,
       tracePickerPending ? { pending: tracePickerPending, label: "外星人痕迹" } : null,
       getCardTaskCompletion(workingRoot) ? { pending: getCardTaskCompletion(workingRoot), label: "任务完成" } : null,
       jiuzheCardPlayDraft.get() ? { pending: jiuzheCardPlayDraft.get(), label: "九折牌" } : null,
@@ -3197,8 +3197,8 @@ function createBanrenmaPanelBonusEffect(player, mark) {
   }
 
 function hasBanrenmaPanelBonusEffectQueued(player, markId) {
-    if (!compositionState.actionEffectFlow || !markId) return false;
-    return (compositionState.actionEffectFlow.effects || []).some((effect) => (
+    if (!decisionState.actionEffectFlow || !markId) return false;
+    return (decisionState.actionEffectFlow.effects || []).some((effect) => (
       effect?.type === BANRENMA_PANEL_BONUS_EFFECT_TYPE
       && effect.status !== "completed"
       && effect.status !== "skipped"
@@ -3504,7 +3504,7 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
         completeCurrentActionEffect();
       }
     } else if (markResult.reward?.alienTrace) {
-      compositionState.alienTraceAction = {
+      decisionState.alienTraceAction = {
         type: fromEffectFlow ? "planet_reward_alien_trace" : "banrenma_bonus_alien_trace",
         beforeAlienState,
         beforePlayerState,
@@ -3526,8 +3526,8 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
         );
         if (!hasPanelTarget) {
           const noTargetMessage = `${markResult.message}：无合法痕迹位置，奖励落空`;
-          compositionState.alienTraceAction = null;
-          compositionState.alienTracePickerState = null;
+          decisionState.alienTraceAction = null;
+          decisionState.alienTracePickerState = null;
           closeAlienTracePicker();
           baseResult.message = noTargetMessage;
           baseResult.payload.alienTraceRewardLost = true;
