@@ -7,29 +7,71 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "seti-decision-session-store-v1";
+  const SCHEMA_VERSION = "seti-composition-decision-access-v1";
+  const MATCH_FIELDS = Object.freeze({
+    discard_action: "discardActionContinuation",
+    card_selection_action: "cardSelectionContinuation",
+    alien_trace_action: "alienTraceContinuation",
+    alien_trace_picker_state: "alienTracePickerContinuation",
+    action_effect_flow: "actionEffectFlowContinuation",
+    land_target: "landTargetContinuation",
+    pirates_raid_placement: "piratesRaidContinuation",
+    strategy_passive_slot: "strategySlotContinuation",
+    industry_ability: "industryAbilityContinuation",
+    data_placement: "dataPlacementContinuation",
+  });
 
   function createDecisionSessionStore() {
-    const sessions = new Map();
+    const isolatedTestRoot = { match: {} };
+    let activeRoot = null;
+    let rootProvider = null;
     let sequence = 0;
 
+    function resolveRoot() {
+      const workingRoot = activeRoot || rootProvider?.() || isolatedTestRoot;
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("Composition decision access 缺少 workingRoot");
+      }
+      workingRoot.match ||= {};
+      return workingRoot;
+    }
+
+    function fieldFor(kind) {
+      const field = MATCH_FIELDS[kind];
+      if (!field) throw new TypeError(`未知 Composition decision kind：${kind}`);
+      return field;
+    }
+
+    function setRootProvider(provider) {
+      if (provider != null && typeof provider !== "function") throw new TypeError("root provider 必须是函数");
+      rootProvider = provider || null;
+    }
+
+    function runWithWorkingRoot(workingRoot, operation) {
+      if (typeof operation !== "function") throw new TypeError("working root operation 必须是函数");
+      const previous = activeRoot;
+      activeRoot = workingRoot;
+      try {
+        return operation();
+      } finally {
+        activeRoot = previous;
+      }
+    }
+
     function open(kind, session = {}) {
-      if (!kind) throw new TypeError("Decision Session 缺少 kind");
+      const field = fieldFor(kind);
       const decisionId = session.decisionId || `${kind}:${++sequence}`;
-      const entry = {
+      resolveRoot().match[field] = {
         ...session,
         kind,
         decisionId,
-        decisionVersion: Number.isInteger(session.decisionVersion)
-          ? session.decisionVersion
-          : 1,
+        decisionVersion: Number.isInteger(session.decisionVersion) ? session.decisionVersion : 1,
       };
-      sessions.set(kind, entry);
       return inspect(kind);
     }
 
     function peek(kind) {
-      return sessions.get(kind) || null;
+      return resolveRoot().match[fieldFor(kind)] || null;
     }
 
     function inspect(kind) {
@@ -47,17 +89,20 @@
     }
 
     function clear(kind) {
-      const entry = peek(kind);
-      sessions.delete(kind);
+      const root = resolveRoot();
+      const field = fieldFor(kind);
+      const entry = root.match[field] || null;
+      delete root.match[field];
       return entry;
     }
 
     function has(kind) {
-      return sessions.has(kind);
+      return Boolean(peek(kind));
     }
 
     function clearAll() {
-      sessions.clear();
+      const match = resolveRoot().match;
+      for (const field of Object.values(MATCH_FIELDS)) delete match[field];
     }
 
     function createFacade(definitions = {}) {
@@ -75,7 +120,17 @@
       return Object.freeze(facade);
     }
 
-    return Object.freeze({ open, peek, inspect, clear, has, clearAll, createFacade });
+    return Object.freeze({
+      setRootProvider,
+      runWithWorkingRoot,
+      open,
+      peek,
+      inspect,
+      clear,
+      has,
+      clearAll,
+      createFacade,
+    });
   }
 
   return Object.freeze({ SCHEMA_VERSION, createDecisionSessionStore });

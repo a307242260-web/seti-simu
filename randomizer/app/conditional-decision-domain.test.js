@@ -107,7 +107,7 @@ function createFixture() {
       players: {
         canAfford: (player, cost) => Number(player?.resources?.energy || 0) >= Number(cost?.energy || 0),
       },
-      resolveMovePaymentDecision: (options) => {
+      resolveMovePaymentDecision: (_workingRoot, options) => {
         state.movePaymentCalls.push(structuredClone(options));
         delete root.match.movePaymentContinuation;
         return { ok: true, progressed: true };

@@ -255,6 +255,7 @@
     }
 
     function canUseCardCornerQuickAction(workingRoot) {
+      workingRoot ||= context.getWorkingRoot?.();
       return !getGameplayLockReason()
         && !isTechTilePickingActive()
         && !isCardSelectionActive()

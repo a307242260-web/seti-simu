@@ -629,6 +629,9 @@
       lifecycle,
       projection,
       inspect,
+      runtimePort: Object.freeze({
+        getWorkingRoot: () => transactionWorkingState || activeSession?.workingState || workingState,
+      }),
       stateSourcePort: Object.freeze({
         getSnapshot: () => store.getSnapshot(),
         read: readStateSource,
