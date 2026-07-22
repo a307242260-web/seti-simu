@@ -656,6 +656,7 @@ function createContext(overrides = {}) {
 
 {
   const rocketState = { rockets: [], nextRocketId: 1, activeRocketId: null, statusNote: "old" };
+  const workingRoot = { solarState: {}, rocketState, planetStatsState: {} };
   let renderCalls = 0;
   const runtime = createCoordinateRuntime({
     els: {
@@ -671,7 +672,6 @@ function createContext(overrides = {}) {
       GLOBAL_COORDINATE_SYSTEM: { size: 1000 },
       createSolarSnapshot: () => ({ planetLocations: [{ planetId: "earth", x: 3, y: 4 }] }),
     },
-    solarState: {},
     rocketActions: {
       normalizeBoardPoint: (point) => point,
       normalizePlanetsReferencePoint: (point) => ({ ...point, x: point.percentX * 10, y: point.percentY * 10 }),
@@ -683,13 +683,11 @@ function createContext(overrides = {}) {
       getRocketsForPlayer: (state, playerId) => state.rockets.filter((rocket) => rocket.playerId === playerId),
       createRocketSnapshot: (rocket) => ({ id: rocket.id }),
     },
-    rocketState,
     planetReferenceLayout: {
       PLANET_ORDER: [],
       buildReferenceData: () => ({ ok: true }),
     },
     planetStats: {},
-    planetStatsState: {},
     referencePlacementKindLabels: { orbit: "环绕" },
     planetsReferenceSize: { width: 1000, height: 1000 },
     rocketSurface: { SOLAR: "solar", PLANETS_REFERENCE: "planets" },
@@ -698,9 +696,9 @@ function createContext(overrides = {}) {
   });
 
   assert.equal(runtime.getReferencePlacementName({ planetName: "地球", kind: "orbit", sequence: 2 }), "地球 环绕2");
-  assert.deepEqual(runtime.getEarthSectorCoordinate(), { x: 3, y: 4 });
+  assert.deepEqual(runtime.getEarthSectorCoordinate(workingRoot), { x: 3, y: 4 });
   assert.equal(runtime.isClientPositionInsidePlanetsReference(50, 50), true);
-  runtime.seedDefaultReferenceRockets();
+  runtime.seedDefaultReferenceRockets(workingRoot);
   assert.equal(renderCalls, 1);
   assert.equal(rocketState.statusNote, null);
 }

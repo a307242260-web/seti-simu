@@ -542,6 +542,12 @@
         case "setup_confirm_initial_selection":
           actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot);
           return { ok: true };
+        case "coordinate_sync_planet_markers":
+          coordinateRuntime.syncPlanetOrbitLandMarkers(workingRoot);
+          return { ok: true };
+        case "coordinate_seed_reference_rockets":
+          coordinateRuntime.seedDefaultReferenceRockets(workingRoot);
+          return { ok: true };
         case "ai_choose_initial_selection":
           return chooseInitialSelectionForAiPlayerForRoot(workingRoot);
         case "ai_execute_turn_action":
@@ -1635,12 +1641,9 @@
   const coordinateRuntime = renderRuntimeModule.createCoordinateRuntime({
     els,
     solar,
-    solarState,
     rocketActions,
-    rocketState,
     planetReferenceLayout,
     planetStats,
-    planetStatsState,
     referencePlacementKindLabels: REFERENCE_PLACEMENT_KIND_LABELS,
     planetsReferenceSize: PLANETS_REFERENCE_SIZE,
     rocketSurface: ROCKET_SURFACE,
@@ -1667,15 +1670,32 @@
     isRocketOnPlanetsReference,
     createDefaultReferencePlacementInput,
     createPlanetMarkerPlacement,
-    createPlanetMarkerRocket,
-    removePlanetMarkerRockets,
-    syncPlanetOrbitLandMarkers,
-    seedDefaultReferenceRockets,
+    createPlanetMarkerRocket: createPlanetMarkerRocketForRoot,
+    removePlanetMarkerRockets: removePlanetMarkerRocketsForRoot,
+    syncPlanetOrbitLandMarkers: syncPlanetOrbitLandMarkersForRoot,
+    seedDefaultReferenceRockets: seedDefaultReferenceRocketsForRoot,
     formatRocketLabel,
-    getMovableTokensForPlayer,
+    getMovableTokensForPlayer: getMovableTokensForPlayerForRoot,
     createRocketSnapshot,
-    getEarthSectorCoordinate,
+    getEarthSectorCoordinate: getEarthSectorCoordinateForRoot,
   } = coordinateRuntime;
+  function getCoordinateReadRoot() {
+    return activeBrowserDomainWorkingRoot || createStateSourceReadoutRoot();
+  }
+  function getMovableTokensForPlayer(playerId) {
+    return getMovableTokensForPlayerForRoot(getCoordinateReadRoot(), playerId);
+  }
+  function getEarthSectorCoordinate() {
+    return getEarthSectorCoordinateForRoot(getCoordinateReadRoot());
+  }
+  function syncPlanetOrbitLandMarkers() {
+    if (activeBrowserDomainWorkingRoot) return syncPlanetOrbitLandMarkersForRoot(activeBrowserDomainWorkingRoot);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
+  }
+  function seedDefaultReferenceRockets() {
+    if (activeBrowserDomainWorkingRoot) return seedDefaultReferenceRocketsForRoot(activeBrowserDomainWorkingRoot);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
+  }
   const actionLogViewRuntime = viewAdapter?.actionLogViewRuntime
     || actionLogRuntimeModule.createActionLogViewRuntime({
     document,

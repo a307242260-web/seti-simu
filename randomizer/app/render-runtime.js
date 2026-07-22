@@ -175,18 +175,21 @@
     const {
       els,
       solar,
-      solarState,
       rocketActions,
-      rocketState,
       planetReferenceLayout,
       planetStats,
-      planetStatsState,
       referencePlacementKindLabels,
       planetsReferenceSize,
       rocketSurface,
       removeRocketElement,
       renderRockets,
     } = context;
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("coordinate-runtime operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -282,7 +285,8 @@
         ? { ...common, parentPlanetId: slot.parentPlanetId, parentPlanetName: slot.parentPlanetName, satelliteId: slot.satelliteId, satelliteName: slot.satelliteName, kind: "satellite" }
         : { ...common, planetId: slot.planetId, planetName: slot.planetName, kind: slot.kind, sequence: slot.sequence, angleOffsetDegrees: slot.angleOffsetDegrees, center: slot.center };
     }
-    function createPlanetMarkerRocket(slot, markerState) {
+    function createPlanetMarkerRocket(workingRoot, slot, markerState) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const placement = createPlanetMarkerPlacement(slot, markerState);
       const rocket = { id: rocketState.nextRocketId, playerId: markerState.playerId, color: markerState.color, referencePlacement: placement };
       rocketState.nextRocketId += 1;
@@ -290,44 +294,49 @@
       rocketActions.placeRocketAtPlanetsReferencePoint(rocketState, rocket.id, createDefaultReferencePlacementInput(placement));
       return rocket;
     }
-    function removePlanetMarkerRockets() {
+    function removePlanetMarkerRockets(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       rocketState.rockets.filter(isPlanetMarkerRocket).forEach((rocket) => {
         rocketActions.removeRocket(rocketState, rocket.id);
         removeRocketElement(rocket.id);
       });
     }
-    function syncPlanetOrbitLandMarkers() {
-      removePlanetMarkerRockets();
+    function syncPlanetOrbitLandMarkers(workingRoot) {
+      const { planetStatsState } = requireWorkingRoot(workingRoot);
+      removePlanetMarkerRockets(workingRoot);
       for (const planetId of planetReferenceLayout.PLANET_ORDER) {
         for (const marker of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
           const slot = planetReferenceLayout.getPlanetSlot(planetId, "orbit", marker.sequence);
-          if (slot) createPlanetMarkerRocket(slot, marker);
+          if (slot) createPlanetMarkerRocket(workingRoot, slot, marker);
         }
         for (const marker of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
           const slot = planetReferenceLayout.getPlanetSlot(planetId, "land", marker.displaySlot || marker.sequence);
-          if (slot) createPlanetMarkerRocket(slot, marker);
+          if (slot) createPlanetMarkerRocket(workingRoot, slot, marker);
         }
         for (const marker of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
           const slot = planetReferenceLayout.getSatellitePlacement(planetId, marker.satelliteId);
-          if (slot) createPlanetMarkerRocket(slot, marker);
+          if (slot) createPlanetMarkerRocket(workingRoot, slot, marker);
         }
       }
       renderRockets();
     }
-    function seedDefaultReferenceRockets() {
+    function seedDefaultReferenceRockets(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (rocketState.rockets.length) return;
       rocketState.activeRocketId = null;
       rocketState.statusNote = null;
-      syncPlanetOrbitLandMarkers();
+      syncPlanetOrbitLandMarkers(workingRoot);
     }
     function formatRocketLabel(rocket) { return rocketActions.formatRocketLabel(rocket); }
-    function getMovableTokensForPlayer(playerId) {
+    function getMovableTokensForPlayer(workingRoot, playerId) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       return rocketActions.getMovableTokensForPlayer
         ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
     function createRocketSnapshot(rocket) { return rocketActions.createRocketSnapshot(rocket); }
-    function getEarthSectorCoordinate() {
+    function getEarthSectorCoordinate(workingRoot) {
+      const { solarState } = requireWorkingRoot(workingRoot);
       const earth = solar.createSolarSnapshot(solarState).planetLocations.find((planet) => planet.planetId === "earth");
       if (!earth) throw new Error("Earth position was not found in the current solar snapshot");
       return { x: earth.x, y: earth.y };
