@@ -1451,7 +1451,7 @@
         case chong?.EFFECT_TYPES?.CHONG_TASK_CLEANUP:
           return 1.5;
         case AI_FANGZHOU_CARD2_REWARD_EFFECT_TYPE:
-          return scoreAiFangzhouCard2AdvancedRewardValue(player);
+          return scoreAiFangzhouCard2AdvancedRewardValue(options.workingRoot, player);
         case aomomo?.EFFECT_GAIN_FOSSILS:
           return scoreAiCountedResourceGain({
             aomomoFossils: Math.max(1, Math.round(aiNumber(effectOptions.count || 1))),

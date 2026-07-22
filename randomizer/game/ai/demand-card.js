@@ -1375,7 +1375,7 @@
         [1, 2, 3].includes(typeCode) || Boolean(model?.reserveAfterPlay)
       );
       const effectValue = details.effectValue ?? playEffects.reduce((total, effect) => (
-        total + scoreAiEffectValue(effect, { player, immediate: true })
+        total + scoreAiEffectValue(effect, { workingRoot, player, immediate: true })
       ), 0);
       const hasPersistentModeledValue = Boolean(
         model?.tasks?.length

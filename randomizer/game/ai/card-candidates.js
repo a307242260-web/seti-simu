@@ -362,7 +362,7 @@
         currentPlayer,
       );
       const effectValue = playEffects.reduce((total, effect) => (
-        total + scoreAiEffectValue(effect, { player: currentPlayer, immediate: true })
+        total + scoreAiEffectValue(effect, { workingRoot, player: currentPlayer, immediate: true })
       ), 0);
       const strategyPassivePlayValue = scoreAiStrategyPassiveCardPlayValue(card, currentPlayer);
       const industryCard = getAiIndustryCard(currentPlayer);

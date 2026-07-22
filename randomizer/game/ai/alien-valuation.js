@@ -1139,7 +1139,8 @@
       }
     }
 
-    function scoreAiFangzhouCard1EffectValue(effect = {}, player = getCurrentPlayer(), options = {}) {
+    function scoreAiFangzhouCard1EffectValue(workingRoot, effect = {}, player = getCurrentPlayer(), options = {}) {
+      if (!workingRoot?.playerState) throw new TypeError("AI alien valuation requires an explicit workingRoot");
       if (!effect || typeof effect !== "object") return 0;
       let value = 0;
       const gain = effect.gain || {};
@@ -1161,7 +1162,7 @@
       }
       if (effect.scanAction) {
         const scanScore = getAiSafePositiveScore(() => (
-          scanEffects?.buildScanEffectQueue ? scoreAiScanAction(player) : 0
+          scanEffects?.buildScanEffectQueue ? scoreAiScanAction(workingRoot, player) : 0
         ));
         value += Math.max(8, scanScore * 0.5 + scoreAiScanPriorityFloor(player) * 0.6);
       }
@@ -1171,7 +1172,7 @@
       }
       if (effect.extraSectorScan) value += 3.8;
       if (effect.techAction) {
-        const bestTechScore = getAiSafePositiveScore(() => (listAiResearchTechCandidates() || [])[0]?.score);
+        const bestTechScore = getAiSafePositiveScore(() => (listAiResearchTechCandidates(workingRoot) || [])[0]?.score);
         value += Math.max(8.5, bestTechScore * 0.42);
       }
       if (effect.launchIgnoreLimit) {
@@ -1180,19 +1181,19 @@
       }
       const freeMoves = Math.max(0, Math.round(aiNumber(effect.freeMoves)));
       if (freeMoves > 0) {
-        const bestMoveScore = getAiSafePositiveScore(() => (listAiMoveCandidates() || [])[0]?.score);
+        const bestMoveScore = getAiSafePositiveScore(() => (listAiMoveCandidates(workingRoot) || [])[0]?.score);
         value += freeMoves * AI_RESOURCE_VALUES.movement + bestMoveScore * 0.22;
       }
       const cap = Math.max(8, aiNumber(options.cap || 32));
       return roundAiScore(Math.max(0, Math.min(cap, value)));
     }
 
-    function scoreAiFangzhouCard2AdvancedRewardValue(player = getCurrentPlayer()) {
+    function scoreAiFangzhouCard2AdvancedRewardValue(workingRoot, player = getCurrentPlayer()) {
       const indexes = getAiFangzhouCard1RewardIndexes();
       if (!indexes.length) return 16;
       const values = indexes
         .map((index) => fangzhou?.getCard1Effect?.(index, "advanced"))
-        .map((effect) => scoreAiFangzhouCard1EffectValue(effect, player, { cap: 34 }))
+        .map((effect) => scoreAiFangzhouCard1EffectValue(workingRoot, effect, player, { cap: 34 }))
         .filter((value) => Number.isFinite(Number(value)));
       if (!values.length) return 16;
       const average = values.reduce((total, value) => total + value, 0) / values.length;
