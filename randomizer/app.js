@@ -1117,7 +1117,7 @@
     handleDiscardIncomeCardChoice,
     confirmDiscardAnyForIncome,
     handlePayCreditChoice,
-    confirmScanTarget,
+    confirmScanTarget: (workingRoot, ...args) => scanFlowHelpers.confirmScanTarget(workingRoot, ...args),
     selectPassReserveCard,
     confirmPassReserveSelection,
     handleHandScanCardClick,

@@ -1085,7 +1085,8 @@
 
   const CONDITIONAL_CHOICE_HANDLERS = Object.freeze({
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
-    "sector-scan-target": (action) => confirmScanTarget(
+    "sector-scan-target": (action, workingRoot) => confirmScanTarget(
+      workingRoot,
       action.target.nebulaId ?? action.target.choiceId,
       action.target.sectorX,
       action.pendingContext || null,
@@ -1167,7 +1168,11 @@
     "discard-income-card": (action) => handleDiscardIncomeCardChoice(action.target.cardId),
     "confirm-discard-income": () => confirmDiscardAnyForIncome(),
     "pay-credit-reward": (action) => handlePayCreditChoice(action.target.choiceId),
-    "scan-target": (action) => confirmScanTarget(action.target.nebulaId, action.target.sectorX),
+    "scan-target": (action, workingRoot) => confirmScanTarget(
+      workingRoot,
+      action.target.nebulaId,
+      action.target.sectorX,
+    ),
     "pass-reserve-card": (action) => {
       selectPassReserveCard(action.target.choiceId);
       return confirmPassReserveSelection();
