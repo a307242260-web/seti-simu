@@ -5,7 +5,7 @@ const { createEffectMovementScanExecutors } = require("./movement-scan");
 const { createEffectRewardExecutors } = require("./rewards");
 const { createEffectAlienExecutors } = require("./aliens");
 const { createEffectDispatcher } = require("./dispatcher");
-const { createEffectExecutorSuite } = require("./bootstrap");
+const { REQUIRED_CONTEXT_KEYS, createEffectExecutorSuite } = require("./bootstrap");
 
 function withWorkingRoot(context = {}) {
   const workingRoot = {
@@ -23,7 +23,7 @@ function withWorkingRoot(context = {}) {
 
 assert.throws(
   () => createEffectExecutorSuite({
-    capabilities: {},
+    contexts: {},
     movementScanModule: { createEffectMovementScanExecutors },
     rewardModule: { createEffectRewardExecutors },
     alienModule: { createEffectAlienExecutors },
@@ -31,6 +31,60 @@ assert.throws(
   }),
   /Missing movement\/scan effect executor capability: INCOME_GAIN_LABELS/,
 );
+
+(() => {
+  const received = {};
+  const noop = () => {};
+  const contexts = Object.fromEntries(Object.entries(REQUIRED_CONTEXT_KEYS).map(([owner, keys]) => [
+    owner,
+    Object.fromEntries([...keys.map((key) => [key, noop]), ["foreignCapability", noop]]),
+  ]));
+  const exportsFor = (keys) => Object.fromEntries(keys.map((key) => [key, noop]));
+  createEffectExecutorSuite({
+    contexts,
+    movementScanModule: {
+      createEffectMovementScanExecutors(context) {
+        received.movementScan = context;
+        return exportsFor(REQUIRED_CONTEXT_KEYS.reward);
+      },
+    },
+    rewardModule: {
+      createEffectRewardExecutors(context) {
+        received.reward = context;
+        return exportsFor(REQUIRED_CONTEXT_KEYS.alien);
+      },
+    },
+    alienModule: {
+      createEffectAlienExecutors(context) {
+        received.alien = context;
+        return exportsFor(REQUIRED_CONTEXT_KEYS.dispatcher);
+      },
+    },
+    dispatcherModule: {
+      createEffectDispatcher(context) {
+        received.dispatcher = context;
+        return {};
+      },
+    },
+  });
+  for (const [owner, context] of Object.entries(received)) {
+    assert.deepEqual(Object.keys(context), REQUIRED_CONTEXT_KEYS[owner]);
+    assert.equal("foreignCapability" in context, false, `${owner} 不得看到非本域能力`);
+    assert.equal(Object.isFrozen(context), true);
+  }
+  const missingRewardContext = { ...contexts.reward };
+  delete missingRewardContext.SCORE_SOURCE_KEYS;
+  assert.throws(
+    () => createEffectExecutorSuite({
+      contexts: { ...contexts, reward: missingRewardContext },
+      movementScanModule: { createEffectMovementScanExecutors: () => ({}) },
+      rewardModule: { createEffectRewardExecutors: () => ({}) },
+      alienModule: { createEffectAlienExecutors: () => ({}) },
+      dispatcherModule: { createEffectDispatcher: () => ({}) },
+    }),
+    /Missing reward effect executor capability: SCORE_SOURCE_KEYS/,
+  );
+})();
 
 (() => {
   assert.equal(typeof createEffectMovementScanExecutors(withWorkingRoot()).executeSectorScanAtPlanet, "function");
