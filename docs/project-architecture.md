@@ -60,9 +60,10 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 - `node --check randomizer/app.js`
 - `node tools/run_node_tests.js`
+- `node tools/run_browser_smokes.js`
 - 固定 seed simulation 完整局、非零 checkpoint/replay fork、Browser/Simulation parity
 - 真实 Chrome 人类输入 smoke、机器席位完整局与 Browser Services recovery smoke
 
 更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-simulation-env.md`。
 
-StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 由相应行为单元测试与唯一完整流程验证；此外 `app/dependencies.test.js` 只保留一组薄壳反例门禁，防止生产 DOM 实现、simulation/no-op 分支和顶层实现函数重新回流入口。
+StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 由相应行为单元测试与唯一完整流程验证。脚本存在性、装配顺序、旧文件删除和源码禁词不再作为默认 Node 行为回归；浏览器真实装配由固定 Chrome smoke 清单验证。

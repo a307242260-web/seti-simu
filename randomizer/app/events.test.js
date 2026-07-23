@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createAppEventState, routeProbeDecisionClick, routeMainActionButtonClick } = require("./events");
+const { routeProbeDecisionClick, routeMainActionButtonClick } = require("./events");
 
 function route(dataset, disabled = false) {
   const calls = [];
@@ -42,24 +42,6 @@ assert.deepEqual(route({ unrelated: "true" }), {
   handled: false,
   calls: [],
 });
-
-{
-  const ui = { alienTracePickerState: { mode: "trace" }, moveHighlightRocketId: "rocket-1" };
-  const state = createAppEventState({
-    pending: {
-      getPendingCardTriggerFreeMove: () => ({ id: "move" }),
-      getActionEffectFlow: () => ({ id: "flow" }),
-    },
-    alien: { getPendingChongFossilChoice: () => ({ id: "fossil" }) },
-    ui,
-  });
-  assert.deepEqual(state.pendingChongFossilChoice, { id: "fossil" });
-  assert.deepEqual(state.pendingCardTriggerFreeMove, { id: "move" });
-  assert.deepEqual(state.pendingActionEffectFlow, { id: "flow" });
-  assert.equal(state.moveHighlightRocketId, "rocket-1");
-  state.alienTracePickerState = { mode: "reveal" };
-  assert.deepEqual(ui.alienTracePickerState, { mode: "reveal" });
-}
 
 {
   const calls = [];
