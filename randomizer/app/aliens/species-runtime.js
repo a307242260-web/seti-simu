@@ -11,26 +11,166 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const REQUIRED_BROWSER_PORT_KEYS = Object.freeze({
+    stateQuery: Object.freeze([
+      "buildPlutoMarkerContext", "buildProbeLocationIndex", "getAlienTraceActionPlayer",
+      "getCurrentActionEffect", "getPendingOwnerFields", "getPendingOwnerPlayer",
+      "getPlanetSectorCoordinate", "getTargetPlayerOptions", "hasActivePendingSubFlow",
+      "isActionEffectFlowActive", "isPendingLockedForAiAutomation", "startScreenState",
+      "uiRuntimeState",
+    ]),
+    decisionInput: Object.freeze([
+      "beginAlienTraceBoardPlacement", "beginCardSelection", "blindDrawCardForPlayer",
+      "blockManualAiPendingInput", "blockManualAiPendingInputIfNeeded", "closeAlienTracePicker",
+      "completeCurrentActionEffect", "completeQuickActionStep", "continueAfterCardTriggerResolution",
+      "discardReservedCardIfFinished", "failMissingAlienTraceTargetPlayer",
+      "finishAutomaticRewardEffect", "incrementCompletedTaskCount",
+      "insertActionEffectsAfterCurrent", "markActionPending", "markCurrentActionIrreversible",
+      "maybeContinueAlienRevealQueuedOpportunities", "maybeContinuePendingTurnEndRevealFlow",
+      "maybeRestoreAlienLabPanelForTrace", "openCardTaskCompletionPicker",
+      "openFangzhouTraceDestinationChoice", "removeReservedCardToDiscard", "removeRocketElement",
+      "settleCardTasksAfterEffect", "skipActionEffectWithMessage", "startCardEffectFlow",
+    ]),
+    history: Object.freeze([
+      "actionHistory", "beginEffectHistoryStep", "beginQuickActionStep",
+      "createActionLogImpactSnapshot", "endEffectHistoryStep", "quickActionHistory",
+      "recordHistoryCommand", "recordAlienTraceScore", "recordQuickHistoryCommand",
+    ]),
+    legality: Object.freeze([
+      "canPlaceAmibaTrace", "canPlaceAnyStateExtraTrace", "canPlaceAomomoTrace",
+      "canPlaceBanrenmaTrace", "canPlaceChongTrace", "canPlaceFangzhouTrace",
+      "canPlaceJiuzheTrace", "canPlaceRunezuFaceSymbol", "canPlaceRunezuTrace",
+      "canPlaceStateTrace", "canPlaceYichangdianTrace", "hasAlienTracePanelPlacementTarget",
+      "shouldShowStateTraceSlots",
+    ]),
+    render: Object.freeze([
+      "banrenmaBonusMarkerElements", "debugRuntimeController", "document", "els",
+      "renderActionEffectBar", "renderPlayerHand", "renderPlayerStats", "renderReservedCards",
+      "renderRockets", "renderRunezuBoardSymbols", "renderStateReadout",
+      "setScanTargetActionLayout", "updateActionButtons", "window",
+      "yichangdianAnomalyMarkerElements",
+    ]),
+    speciesRules: Object.freeze([
+      "aliens", "amiba", "aomomo", "banrenma", "buildAlienTraceEvent", "cardEffects",
+      "cards", "chong", "data", "fangzhou", "formatPlanetRewardGain",
+      "getAlienCardGainIrreversible", "getPlayerCompanyBaseIncome",
+      "getReadyChongTaskForReservedCard", "historyCommands", "jiuzhe", "planetRewards",
+      "players", "rocketActions", "runezu", "yichangdian",
+    ]),
+    constants: Object.freeze([
+      "BANRENMA_PANEL_BONUS_EFFECT_TYPE", "HISTORY_SOURCE_QUICK",
+      "JIUZHE_THRESHOLD_CARD_EFFECT_TYPE", "RESOURCE_ICON_SRC",
+    ]),
+  });
+
+  function validateBrowserPorts(ports) {
+    const missing = [];
+    for (const [portName, keys] of Object.entries(REQUIRED_BROWSER_PORT_KEYS)) {
+      const port = ports[portName];
+      if (!port || typeof port !== "object") {
+        missing.push(portName);
+        continue;
+      }
+      for (const key of keys) {
+        if (!Object.prototype.hasOwnProperty.call(port, key) || port[key] == null) {
+          missing.push(`${portName}.${key}`);
+        }
+      }
+    }
+    if (missing.length) {
+      throw new Error(`Browser Alien Species ports 缺少依赖：${missing.join(", ")}`);
+    }
+  }
+
   function createAlienSpeciesRuntime(context = {}) {
     const simulation = context.simulation === true;
+    const ports = context.ports || {};
+    if (context.ports) validateBrowserPorts(ports);
+    const stateQuery = ports.stateQuery || context;
+    const decisionInput = ports.decisionInput || context;
+    const render = ports.render || context;
+    const history = ports.history || context;
+    const legality = ports.legality || context;
+    const speciesRules = ports.speciesRules || context;
+    const constants = ports.constants || context;
     const {
-      actionHistory,
       aliens,
       amiba,
       aomomo,
       banrenma,
-      BANRENMA_PANEL_BONUS_EFFECT_TYPE,
-      banrenmaBonusMarkerElements,
+      buildAlienTraceEvent,
+      cardEffects,
+      cards,
+      chong,
+      data,
+      fangzhou,
+      formatPlanetRewardGain,
+      getAlienCardGainIrreversible,
+      getPlayerCompanyBaseIncome,
+      getReadyChongTaskForReservedCard,
+      historyCommands,
+      jiuzhe,
+      planetRewards,
+      players,
+      rocketActions,
+      runezu,
+      yichangdian,
+    } = speciesRules;
+    const {
+      buildPlutoMarkerContext,
+      buildProbeLocationIndex,
+      getAlienTraceActionPlayer,
+      getCurrentActionEffect,
+      getPendingOwnerFields,
+      getPendingOwnerPlayer,
+      getPlanetSectorCoordinate,
+      getTargetPlayerOptions,
+      hasActivePendingSubFlow,
+      isActionEffectFlowActive,
+      isPendingLockedForAiAutomation,
+      startScreenState,
+      uiRuntimeState,
+    } = stateQuery;
+    const {
       beginAlienTraceBoardPlacement,
       beginCardSelection,
-      beginEffectHistoryStep,
-      beginQuickActionStep,
       blindDrawCardForPlayer,
       blockManualAiPendingInput,
       blockManualAiPendingInputIfNeeded,
-      buildAlienTraceEvent,
-      buildPlutoMarkerContext,
-      buildProbeLocationIndex,
+      closeAlienTracePicker,
+      completeCurrentActionEffect,
+      completeQuickActionStep,
+      continueAfterCardTriggerResolution,
+      discardReservedCardIfFinished,
+      failMissingAlienTraceTargetPlayer,
+      finishAutomaticRewardEffect,
+      incrementCompletedTaskCount,
+      insertActionEffectsAfterCurrent,
+      markActionPending,
+      markCurrentActionIrreversible,
+      maybeContinueAlienRevealQueuedOpportunities,
+      maybeContinuePendingTurnEndRevealFlow,
+      maybeRestoreAlienLabPanelForTrace,
+      openCardTaskCompletionPicker,
+      openFangzhouTraceDestinationChoice,
+      removeReservedCardToDiscard,
+      removeRocketElement,
+      settleCardTasksAfterEffect,
+      skipActionEffectWithMessage,
+      startCardEffectFlow,
+    } = decisionInput;
+    const {
+      actionHistory,
+      beginEffectHistoryStep,
+      beginQuickActionStep,
+      createActionLogImpactSnapshot,
+      endEffectHistoryStep,
+      quickActionHistory,
+      recordHistoryCommand,
+      recordAlienTraceScore,
+      recordQuickHistoryCommand,
+    } = history;
+    const {
       canPlaceAmibaTrace,
       canPlaceAnyStateExtraTrace,
       canPlaceAomomoTrace,
@@ -42,58 +182,14 @@
       canPlaceRunezuTrace,
       canPlaceStateTrace,
       canPlaceYichangdianTrace,
-      cardEffects,
-      cards,
-      chong,
-      closeAlienTracePicker,
-      completeCurrentActionEffect,
-      completeQuickActionStep,
-      continueAfterCardTriggerResolution,
-      createActionLogImpactSnapshot,
-      data,
+      hasAlienTracePanelPlacementTarget,
+      shouldShowStateTraceSlots,
+    } = legality;
+    const {
+      banrenmaBonusMarkerElements,
       debugRuntimeController,
-      discardReservedCardIfFinished,
       document,
       els,
-      endEffectHistoryStep,
-      failMissingAlienTraceTargetPlayer,
-      fangzhou,
-      finishAutomaticRewardEffect,
-      formatPlanetRewardGain,
-      getAlienCardGainIrreversible,
-      getAlienTraceActionPlayer,
-      getCurrentActionEffect,
-      getPendingOwnerFields,
-      getPendingOwnerPlayer,
-      getPlanetSectorCoordinate,
-      getPlayerCompanyBaseIncome,
-      getReadyChongTaskForReservedCard,
-      getTargetPlayerOptions,
-      hasActivePendingSubFlow,
-      hasAlienTracePanelPlacementTarget,
-      HISTORY_SOURCE_QUICK,
-      historyCommands,
-      incrementCompletedTaskCount,
-      insertActionEffectsAfterCurrent,
-      isActionEffectFlowActive,
-      isPendingLockedForAiAutomation,
-      jiuzhe,
-      JIUZHE_THRESHOLD_CARD_EFFECT_TYPE,
-      markActionPending,
-      markCurrentActionIrreversible,
-      maybeContinueAlienRevealQueuedOpportunities,
-      maybeContinuePendingTurnEndRevealFlow,
-      maybeRestoreAlienLabPanelForTrace,
-      openCardTaskCompletionPicker,
-      openFangzhouTraceDestinationChoice,
-      planetRewards,
-      players,
-      quickActionHistory,
-      recordHistoryCommand,
-      recordAlienTraceScore,
-      recordQuickHistoryCommand,
-      removeReservedCardToDiscard,
-      removeRocketElement,
       renderActionEffectBar,
       renderPlayerHand,
       renderPlayerStats,
@@ -101,21 +197,17 @@
       renderRockets,
       renderRunezuBoardSymbols,
       renderStateReadout,
-      RESOURCE_ICON_SRC,
-      rocketActions,
-      runezu,
       setScanTargetActionLayout,
-      settleCardTasksAfterEffect,
-      shouldShowStateTraceSlots,
-      skipActionEffectWithMessage,
-      startCardEffectFlow,
-      startScreenState,
-      uiRuntimeState,
       updateActionButtons,
       window,
-      yichangdian,
       yichangdianAnomalyMarkerElements,
-    } = context;
+    } = render;
+    const {
+      BANRENMA_PANEL_BONUS_EFFECT_TYPE,
+      HISTORY_SOURCE_QUICK,
+      JIUZHE_THRESHOLD_CARD_EFFECT_TYPE,
+      RESOURCE_ICON_SRC,
+    } = constants;
 
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {

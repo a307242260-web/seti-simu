@@ -3,6 +3,11 @@
 const assert = require("assert");
 const { createAlienSpeciesPort, createAlienSpeciesRuntime } = require("./species-runtime.js");
 
+assert.throws(
+  () => createAlienSpeciesRuntime({ ports: {} }),
+  /Browser Alien Species ports 缺少依赖：stateQuery/,
+);
+
 {
   const calls = [];
   const runtime = {
