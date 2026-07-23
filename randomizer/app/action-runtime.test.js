@@ -3,6 +3,11 @@
 const assert = require("node:assert/strict");
 const actionRuntime = require("./action-runtime");
 
+assert.throws(
+  () => actionRuntime.createBrowserStandardActionAdapter(),
+  /requires actions\.createStandardAdapter/,
+);
+
 assert.equal(actionRuntime.stripAssetExtension("星际矿业.png"), "星际矿业");
 const source = [1, 2, 3];
 const shuffled = actionRuntime.shuffleList(source, () => 0);
