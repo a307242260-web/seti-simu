@@ -497,10 +497,6 @@
         label,
       }),
       runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
-      recoverAiIdleActionEffectThroughComposition: () => fail(
-        "BROWSER_MACHINE_RECOVERY_FORBIDDEN",
-        "Machine Player 不允许 recover/skip 旧 pending",
-      ),
       getRuleProjection: () => {
         const ruleState = ruleComposition.stateSourcePort.read().state;
         return {

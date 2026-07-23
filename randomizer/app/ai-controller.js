@@ -52,7 +52,7 @@
       aiBattleLogModule,
       aiTuningHistoryModule,
       aiBattleReportModule,
-      aiExperimentRunnerModule,
+      aiReportFormattersModule,
       getRuleReadout,
       ruleLifecycle,
       historyStepOrder,
@@ -1019,19 +1019,26 @@
     const resolvedAiBattleReportModule = aiBattleReportModule
       || root.SetiAppAiBattleReport
       || (typeof require === "function" ? require("./ai/battle-report") : null);
-    const resolvedAiExperimentRunnerModule = aiExperimentRunnerModule
-      || root.SetiAppAiExperimentRunner
-      || (typeof require === "function" ? require("./ai/experiment-runner") : null);
+    const resolvedAiReportFormattersModule = aiReportFormattersModule
+      || root.SetiAppAiReportFormatters
+      || (typeof require === "function" ? require("./ai/report-formatters") : null);
     if (
       !resolvedAiBattleLogModule?.createAiBattleLog
       || !resolvedAiTuningHistoryModule?.createAiTuningHistory
       || !resolvedAiBattleReportModule?.createAiBattleReport
-      || !resolvedAiExperimentRunnerModule?.createAiExperimentRunner
+      || !resolvedAiReportFormattersModule?.createAiReportFormatters
     ) {
-      throw new Error("createAiController requires AI log/report/tuning/runner modules");
+      throw new Error("createAiController requires AI log/report/tuning/formatter modules");
     }
 
-    let aiExperimentRunner;
+    const aiReportFormatters = resolvedAiReportFormattersModule.createAiReportFormatters({
+      ...context,
+      aiNumber,
+      roundAiScore,
+      getCardPrice,
+      getCardTypeCode,
+      getPlayerById,
+    });
     const aiBattleLog = resolvedAiBattleLogModule.createAiBattleLog({
       ...context,
       aiAutoBattleState,
@@ -1046,10 +1053,10 @@
       roundAiScore,
       getCardPrice,
       getCardTypeCode,
-      getAiCandidateRankScore: (...args) => aiExperimentRunner.getAiCandidateRankScore(...args),
-      summarizeAiTurnActionCandidate: (...args) => aiExperimentRunner.summarizeAiTurnActionCandidate(...args),
-      summarizeAiFinalScoreMarkCandidate: (...args) => aiExperimentRunner.summarizeAiFinalScoreMarkCandidate(...args),
-      getAiCardDisplayLabel: (...args) => aiExperimentRunner.getAiCardDisplayLabel(...args),
+      getAiCandidateRankScore: (...args) => aiReportFormatters.getAiCandidateRankScore(...args),
+      summarizeAiTurnActionCandidate: (...args) => aiReportFormatters.summarizeAiTurnActionCandidate(...args),
+      summarizeAiFinalScoreMarkCandidate: (...args) => aiReportFormatters.summarizeAiFinalScoreMarkCandidate(...args),
+      getAiCardDisplayLabel: (...args) => aiReportFormatters.getAiCardDisplayLabel(...args),
     });
     const {
       recordAiAutoBattleLog,
@@ -1092,7 +1099,7 @@
       isActionEffectFlowActive,
       getAiStrategyTuningHistory,
       getAiStrategyTuningRecommendation,
-      buildAiLowMarkPlayerDiagnostics: (...args) => aiExperimentRunner.buildAiLowMarkPlayerDiagnostics(...args),
+      buildAiLowMarkPlayerDiagnostics: (...args) => aiReportFormatters.buildAiLowMarkPlayerDiagnostics(...args),
     });
     const {
       getAiAutoBattlePendingState,
@@ -1102,49 +1109,20 @@
       getAiAutoBattleAnalysis,
     } = aiBattleReport;
 
-    aiExperimentRunner = resolvedAiExperimentRunnerModule.createAiExperimentRunner({
-      ...context,
-      ...aiControlRuntime,
-      windowRef,
-      ai,
-      aiAutoBattleState,
-      getRuleReadout,
-      aiNumber,
-      roundAiScore,
-      getCardPrice,
-      getCardTypeCode,
-      getActivePlayers,
-      getAiIndustryCard,
-      runAiAutomationStep: (...args) => context.runMachinePlayerStepThroughComposition(...args),
-      recoverAiIdleActionEffectStep: (...args) => context.recoverAiIdleActionEffectThroughComposition(...args),
-      recordAiAutoBattleLog,
-      recordAiAutoBattleBug,
-      getAiAutoBattleReport,
-      recordAiStrategyTuningSummary,
-      recordAiStrategyABComparison,
-      getAiStrategyTuningRecommendation,
-      applyAiStrategyTuning,
-    });
     const {
-      runAiAutoBattle,
-      stopAiAutoBattle,
       getAiCandidateRankScore,
       getAiCardDisplayLabel,
       summarizeAiTurnActionCandidate,
       buildAiLowMarkPlayerDiagnostics,
       summarizeAiFinalScoreMarkCandidate,
-      summarizeAiFinalScoreMarkDecision,
-      runAiAutoBattleBatch,
-      runAiStrategyABTest,
-      runAiStrategyTuningCycle,
-    } = aiExperimentRunner;
+    } = aiReportFormatters;
 
     Object.assign(
       aiDomainBindings,
       aiBattleLog,
       aiTuningHistory,
       aiBattleReport,
-      aiExperimentRunner,
+      aiReportFormatters,
     );
 
 
@@ -1169,7 +1147,7 @@
       ...aiBattleLog,
       ...aiTuningHistory,
       ...aiBattleReport,
-      ...aiExperimentRunner,
+      ...aiReportFormatters,
       canUseCardCornerQuickAction,
       resetGameForAiAutoBattle: (...args) => resetGameForAiAutoBattle(...args),
       getOrderedAiAutoBattlePlayerIds: (...args) => getOrderedAiAutoBattlePlayerIds(...args),

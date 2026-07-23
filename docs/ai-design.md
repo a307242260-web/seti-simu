@@ -72,7 +72,7 @@ GameState 快照
 
 - 电脑玩家判定由 `isAiAutoBattlePlayer(playerId)` 统一处理；默认人机局保留白色人类玩家，其余活跃玩家由 `configureDefaultAiOpponent()` 配置为电脑。
 - `createAiControlSnapshot()` / `restoreAiControlSnapshot()` 只保存和恢复可持久化 AI 控制配置：是否启用、电脑席位、步进参数和策略权重；不恢复 `running`、已排队定时器、进行中的自动步骤或旧的阻塞暂停。旧存档缺失 AI 控制配置，或快照中的电脑席位无法解析时，按默认人机入口重建电脑席位；显式 `enabled:false` 的快照仍按全手动恢复。
-- Browser 不再暴露 batch、A/B、调参、candidate selector 或 `runAiAutomationStep()` 公开入口；旧 experiment 模块只保留历史诊断实现，不属于 Browser 生产 API。
+- Browser 不再装配 batch、A/B、调参、candidate selector、`runAiAutomationStep()` 或 experiment runner；日志/报告仍需的纯格式化 helper 独立位于 `app/ai/report-formatters.js`，不具备机器席位推进能力。
 - 每个浏览器机器席位的唯一推进入口是 `browser-bootstrap` 的 Machine Player Host：它从 Rule Composition inspection/projection 构造 Action/Decision boundary，PolicyInputAdapter 完成 deadline、generation、stale 与重复响应校验后，经玩家共用 input port 提交。
 - AI 估值可以继续产生分数、reason、actionGraph 和 planner shadow，但这些字段只用于选择，不进入 Standard Action identity、合法性或执行输入。浏览器 AI 与训练 Policy 都从 `action-runtime` 的 Standard Action adapter 取得完整 descriptor，选中后交回同一 `registry.execute`；旧 action switch、simulation 专用 legality 与 runtime bypass 已删除。
 - 启发式与 Learned Policy 的新公共边界统一为 `game/ai/policy-port.js` 的 `DecisionContext -> PolicyDecision`。context 只含当前席位可见 observation、registry legal descriptors 和版本/确定性上下文；decision 只含一个 `actionId`、policy type/version/model checksum 与有限诊断。Host 独占请求时机、deadline/AbortSignal、恢复失效和最终提交，完整 failure taxonomy 与禁区矩阵见 `docs/policy-port-contract.md`。

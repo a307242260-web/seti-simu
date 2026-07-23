@@ -55,7 +55,7 @@
 - `randomizer/game/ai/selection-evaluator.js`：setup、弃牌、支付、科技与外星人 legal choice 的纯估值；不拥有选择或提交权，结果必须经公共 Policy 端口。
 - `randomizer/game/ai/heuristic-evaluator.js`：直接从公共 observation/legal descriptors 计算策略分与稳定排序；不得恢复 legacy candidate 或 selector adapter。
 - `randomizer/app/ai/battle-log.js`、`battle-report.js`：AI 对战日志、bug、结果/pending 汇总及报告 schema。
-- `randomizer/app/ai/tuning-history.js`、`experiment-runner.js`：调参历史持久化/推荐与单局、batch、A/B、tuning cycle runner。
+- `randomizer/app/ai/tuning-history.js`、`report-formatters.js`：调参历史持久化/推荐与日志、报告纯格式化 helper；Browser 不装配单局、batch、A/B 或 tuning cycle runner。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `randomizer/training/worker-protocol.js`、`simulation-worker.js`、`worker-pool.js`：Python/PyTorch 常驻采样协议、隔离 worker、超时/背压/崩溃恢复与批量请求。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。

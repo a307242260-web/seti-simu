@@ -80,9 +80,9 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/ai/control-runtime.js`：机器席位控制层。唯一持有席位配置、scheduler 标志与策略权重；scheduler 只请求 Browser Machine Player Host 执行一次公共 Policy 输入，不读取或解析旧 pending。
 - `randomizer/app/ai/browser-bootstrap.js`：Browser Machine Player 装配边界。从 Composition inspection/projection 构造 Action/Decision boundary，连接公共 PolicyInputAdapter/Machine Player Host 和 BrowserInputAdapter；人类席位拒绝创建 Policy 请求，lifecycle 变化统一使在途 generation 失效。
 - `randomizer/app/ai/battle-log.js`：AI 对战日志 compact、entry、bug 计数与玩家/比分快照。
-- `randomizer/app/ai/battle-report.js`、`tuning-history.js`、`experiment-runner.js`：历史诊断、报告和离线实验实现；不在 `window.SetiRandomizer` 暴露 Browser 生产入口，也不参与机器席位推进。
+- `randomizer/app/ai/battle-report.js`、`tuning-history.js`、`report-formatters.js`：历史诊断、报告、调参记录与纯格式化 helper；不包含 Browser 执行循环，也不参与机器席位推进。
 - `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：迁移期遗留的估值 helper 容器；Browser controller 只消费仍有调用者的纯估值/检查能力，不暴露其中的 pending resolver。
-- `randomizer/app/ai-controller.js`：控制与估值 helper 装配 adapter；对 Browser 只返回席位配置/快照/调度和仍有生产 caller 的只读估值能力，不构造或暴露旧 action executor、automation runtime、candidate selector 或 pending automation。
+- `randomizer/app/ai-controller.js`：控制与估值 helper 装配 adapter；对 Browser 只返回席位配置/快照/调度和仍有生产 caller 的只读估值能力，不构造或暴露旧 action executor、automation runtime、experiment runner、candidate selector 或 pending automation。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
@@ -126,7 +126,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 - 行数：`app/ai-controller.js` 从 22,434 行降为 21,089 行；新增 `battle-log.js` 223 行、`battle-report.js` 175 行、`tuning-history.js` 221 行、`experiment-runner.js` 932 行，均低于 3,000 行边界。
 - 日志/报告：迁出日志 compact/record/bug、player result、pending 汇总与 report/progress/analysis schema。
-- 调参/runner：迁出 history persistence、recommendation/apply，以及 single battle、batch、同 seed A/B 和 tuning cycle。
+- 调参/runner：当时迁出 history persistence、recommendation/apply，以及 single battle、batch、同 seed A/B 和 tuning cycle；runner 后续已物理删除，只保留仍有 caller 的记录/格式化能力。
 - 保持边界：controller API、默认值、seed 派生、权重恢复、bug/block 判定和报告 schema 保持不变；controller 只以显式 context 装配领域 runtime。
 
 ## AI Stage 3 迁移记录
@@ -146,7 +146,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 - composition：controller 按 runtime 的 `REQUIRED_CONTEXT_KEYS` 严格校验并注入 context，缺失依赖不再被静默过滤；深空换牌阈值按既有口径 `10` 补入显式 binding。
 - 测试：10,295 行集成测试拆为 pending、alien、action、strategy 四份 2,500 行以内的领域回归，共享 harness/fixture 独立维护；automation 与 action executor 增加直接模块契约测试。
-- Stage 5 的 controller 拆分数字仅为历史迁移记录；当前 Browser 已进一步删除旧 action/automation 模块、public candidate/batch API 与 pending 顺序推进器，不能再把当时的稳定 API/pending 顺序描述当作现状。历史证据见 `docs/ai-controller-migration-stage5.md`。
+- Stage 5 的 controller 拆分数字仅为历史迁移记录；当前 Browser 已进一步删除旧 action/automation/experiment runner 模块、public candidate/batch/A-B/tuning API 与 pending 顺序推进器，不能再把当时的稳定 API/pending 顺序描述当作现状。历史证据见 `docs/ai-controller-migration-stage5.md`。
 
 ## 验证要求
 
