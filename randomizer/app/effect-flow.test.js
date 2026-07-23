@@ -12,6 +12,7 @@ const {
   resultHasSignalMarkedEvent,
   getFlowMarkedNebulaIds,
   effectFlowMarkedNebula,
+  createPendingSubFlowRuntime,
 } = require("./effect-flow");
 
 {
@@ -23,6 +24,24 @@ const {
   assert.equal(resultHasSignalMarkedEvent(flow.effects[0].result), true);
   assert.deepEqual([...getFlowMarkedNebulaIds(flow)], ["2", "3"]);
   assert.equal(effectFlowMarkedNebula(flow), true);
+}
+
+{
+  const fallback = () => null;
+  const runtime = createPendingSubFlowRuntime(new Proxy({
+    getPendingScanTargetDecision: () => ({ type: "scan" }),
+    isCardSelectionActive: () => false,
+    isCardTriggerPickSelectionActive: () => false,
+    hasAlienDecision: () => false,
+    isScanAction4Open: () => false,
+    isLandTargetOpen: () => false,
+    isAlienTraceOpen: () => false,
+    isMovePaymentSelectionActive: () => false,
+    isDataPlaceOpen: () => false,
+    isIndustryHandSelectionActive: () => false,
+  }, { get: (target, key) => target[key] || fallback }));
+  assert.equal(runtime.hasActiveEffectSubFlow(), true);
+  assert.equal(runtime.hasActivePendingSubFlow(), true);
 }
 
 {

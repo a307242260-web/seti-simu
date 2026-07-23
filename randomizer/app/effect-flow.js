@@ -35,6 +35,103 @@
     return getFlowMarkedNebulaIds(flow).size > 0;
   }
 
+  function createPendingSubFlowRuntime(context = {}) {
+    function hasActiveEffectSubFlow(workingRoot = null) {
+      return Boolean(
+        context.getPendingScanTargetDecision(workingRoot)
+        || context.getPendingProbeSectorScanDecision(workingRoot)
+        || context.getPendingProbeLocationRewardDecision(workingRoot)
+        || context.getPublicScanQueueSession(workingRoot)
+        || context.getPendingHandScanDecision(workingRoot)
+        || context.getPendingPassReserveSelection(workingRoot)
+        || (context.isCardSelectionActive() && (context.getActionEffectFlow(workingRoot) || context.isCardTriggerPickSelectionActive()))
+        || context.getPendingCardTriggerAction(workingRoot)
+        || context.getPendingCardTaskCompletion(workingRoot)
+        || context.hasAlienDecision()
+        || context.getPendingStrategySlotDecision(workingRoot)
+        || context.getPendingPiratesRaidDecision(workingRoot)
+        || context.getPendingCardTriggerFreeMove(workingRoot)
+        || context.getPendingCardCornerFreeMove(workingRoot)
+        || context.isScanAction4Open()
+        || context.isLandTargetOpen()
+        || context.isAlienTraceOpen()
+        || context.getPendingCardMoveDecision(workingRoot)
+        || context.getPendingScanFreeMoveDecision(workingRoot)
+        || context.getPendingDataPlacementDecision(workingRoot)
+      );
+    }
+
+    function hasActivePendingSubFlow(workingRoot = null) {
+      return hasActiveEffectSubFlow(workingRoot)
+        || context.isMovePaymentSelectionActive()
+        || context.isDataPlaceOpen()
+        || Boolean(context.getPendingIndustryAbilityDecision(workingRoot))
+        || Boolean(context.getPendingIndustryFreeMoveDecision(workingRoot))
+        || context.isIndustryHandSelectionActive();
+    }
+
+    function cancelActivePendingSubFlowsForRoot(workingRoot) {
+      if (context.getPendingScanTargetDecision(workingRoot)?.type === "industry_remove_tech") {
+        context.rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
+        return true;
+      }
+      if (context.getPendingStrategySlotDecision(workingRoot)) {
+        context.cancelStrategyPassiveSlotChoiceForRoot(workingRoot);
+        return true;
+      }
+      const cardCornerMove = context.getPendingCardCornerFreeMove(workingRoot);
+      if (cardCornerMove?.finishIndustryFlowAfterMove) {
+        delete workingRoot.match.cardCornerFreeMoveContinuation;
+        workingRoot.rocketState.activeRocketId = null;
+        context.clearMoveRocketHighlight();
+        context.deactivateMoveMode();
+        const message = `${cardCornerMove.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
+        if (context.getPendingIndustryAbilityDecision(workingRoot)) {
+          context.finishIndustryAbilityFlowForRoot(workingRoot, message);
+        }
+        if (cardCornerMove.irreversibleIndustryFlow) {
+          context.commitIrreversibleIndustryQuickAction(
+            cardCornerMove.industryLogLabel || cardCornerMove.action?.label || "公司 1x 行动",
+            message,
+          );
+        }
+        workingRoot.rocketState.statusNote = message;
+        context.renderPlayerStats();
+        context.renderPublicCards();
+        context.renderPlayerHand();
+        context.updateActionButtons();
+        context.renderStateReadout();
+        return true;
+      }
+      if (hasActiveEffectSubFlow()) {
+        context.cancelActiveEffectSubFlowsForRoot(workingRoot);
+        return true;
+      }
+      if (context.isMovePaymentSelectionActive()) {
+        context.cancelMovePaymentSelection();
+        return true;
+      }
+      if (context.isDataPlaceOpen()) {
+        if (context.getPendingDataPlacementDecision()) {
+          context.cancelDataPlacePicker();
+          return true;
+        }
+        context.closeDataPlacePicker();
+        workingRoot.rocketState.statusNote = "已取消放置数据";
+        return true;
+      }
+      if (context.getPendingIndustryAbilityDecision(workingRoot)
+        || context.getPendingIndustryFreeMoveDecision(workingRoot)
+        || context.isIndustryHandSelectionActive()) {
+        context.rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
+        return true;
+      }
+      return false;
+    }
+
+    return Object.freeze({ hasActiveEffectSubFlow, hasActivePendingSubFlow, cancelActivePendingSubFlowsForRoot });
+  }
+
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createEffectFlowHelpers requires function: ${name}`);
@@ -1284,5 +1381,6 @@
     resultHasSignalMarkedEvent,
     getFlowMarkedNebulaIds,
     effectFlowMarkedNebula,
+    createPendingSubFlowRuntime,
   };
 });

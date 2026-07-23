@@ -973,6 +973,54 @@
     getPendingMovePayment, getPendingDiscardDecision, getPendingCardSelectionDecision,
     setPendingCardSelectionDecision,
   } = browserMatchRuntime;
+  const pendingSubFlowRuntime = effectFlowModule.createPendingSubFlowRuntime({
+    getPendingScanTargetDecision, getPendingProbeSectorScanDecision,
+    getPendingProbeLocationRewardDecision, getPublicScanQueueSession,
+    getPendingHandScanDecision, getPendingPassReserveSelection,
+    isCardSelectionActive: (...args) => isCardSelectionActive(...args),
+    getActionEffectFlow, isCardTriggerPickSelectionActive: (...args) => isCardTriggerPickSelectionActive(...args),
+    getPendingCardTriggerAction, getPendingCardTaskCompletion,
+    hasAlienDecision: () => Boolean(
+      getPendingJiuzheCardPlay() || getPendingYichangdianCardGain() || getPendingYichangdianCornerAction()
+      || getPendingBanrenmaCardGain() || getPendingBanrenmaOpportunity() || getPendingChongCardGain()
+      || getPendingChongFossilChoice() || getPendingAmibaCardGain() || getPendingAmibaSymbolChoice()
+      || getPendingAmibaTraceRemoval() || getPendingAomomoCardGain() || getPendingRunezuCardGain()
+      || getPendingRunezuSymbolBranch() || getPendingRunezuFaceSymbolPlacement()
+    ),
+    getPendingStrategySlotDecision, getPendingPiratesRaidDecision,
+    getPendingCardTriggerFreeMove, getPendingCardCornerFreeMove,
+    isScanAction4Open: () => Boolean(els.scanAction4Overlay && !els.scanAction4Overlay.hidden),
+    isLandTargetOpen: () => Boolean(els.landTargetOverlay && !els.landTargetOverlay.hidden),
+    isAlienTraceOpen: () => Boolean(
+      els.alienTraceOverlay && !els.alienTraceOverlay.hidden
+      && runtime.ui.alienTracePickerState?.mode !== "reveal-confirm"
+    ),
+    getPendingCardMoveDecision, getPendingScanFreeMoveDecision, getPendingDataPlacementDecision,
+    isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
+    isDataPlaceOpen: () => Boolean(els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden),
+    getPendingIndustryAbilityDecision, getPendingIndustryFreeMoveDecision,
+    isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive(...args),
+    rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction(...args),
+    cancelStrategyPassiveSlotChoiceForRoot: (...args) => cancelStrategyPassiveSlotChoiceForRoot(...args),
+    clearMoveRocketHighlight: (...args) => clearMoveRocketHighlight(...args),
+    deactivateMoveMode: (...args) => deactivateMoveMode(...args),
+    finishIndustryAbilityFlowForRoot: (...args) => finishIndustryAbilityFlowForRoot(...args),
+    commitIrreversibleIndustryQuickAction: (...args) => commitIrreversibleIndustryQuickAction(...args),
+    renderPlayerStats: (...args) => renderPlayerStats(...args),
+    renderPublicCards: (...args) => renderPublicCards(...args),
+    renderPlayerHand: (...args) => renderPlayerHand(...args),
+    updateActionButtons: (...args) => updateActionButtons(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+    cancelActiveEffectSubFlowsForRoot: (...args) => cancelActiveEffectSubFlowsForRoot(...args),
+    cancelMovePaymentSelection: (...args) => cancelMovePaymentSelection(...args),
+    cancelDataPlacePicker: (...args) => cancelDataPlacePicker(...args),
+    closeDataPlacePicker: (...args) => closeDataPlacePicker(...args),
+  });
+  const {
+    hasActiveEffectSubFlow,
+    hasActivePendingSubFlow,
+    cancelActivePendingSubFlowsForRoot,
+  } = pendingSubFlowRuntime;
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const landTargetPicker = actionInteractionRuntimeModule.createLandTargetPicker({
@@ -5139,110 +5187,6 @@
     setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
   });
   const revertEffectFlowAfterUndo = effectFlowUndoRuntime.revertEffectFlowAfterUndo;
-
-  function hasActiveEffectSubFlow(workingRoot = null) {
-    return Boolean(
-      getPendingScanTargetDecision(workingRoot)
-      || getPendingProbeSectorScanDecision(workingRoot)
-      || getPendingProbeLocationRewardDecision(workingRoot)
-      || getPublicScanQueueSession(workingRoot)
-      || getPendingHandScanDecision(workingRoot)
-      || getPendingPassReserveSelection(workingRoot)
-      || (isCardSelectionActive() && (getActionEffectFlow(workingRoot) || isCardTriggerPickSelectionActive()))
-      || getPendingCardTriggerAction(workingRoot)
-      || getPendingCardTaskCompletion(workingRoot)
-      || getPendingJiuzheCardPlay()
-      || getPendingYichangdianCardGain()
-      || getPendingYichangdianCornerAction()
-      || getPendingBanrenmaCardGain()
-      || getPendingBanrenmaOpportunity()
-      || getPendingChongCardGain()
-      || getPendingChongFossilChoice()
-      || getPendingAmibaCardGain()
-      || getPendingAmibaSymbolChoice()
-      || getPendingAmibaTraceRemoval()
-      || getPendingAomomoCardGain()
-      || getPendingRunezuCardGain()
-      || getPendingRunezuSymbolBranch()
-      || getPendingRunezuFaceSymbolPlacement()
-      || getPendingStrategySlotDecision(workingRoot)
-      || getPendingPiratesRaidDecision(workingRoot)
-      || getPendingCardTriggerFreeMove(workingRoot)
-      || getPendingCardCornerFreeMove(workingRoot)
-      || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
-      || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
-      || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && uiRuntimeState.alienTracePickerState?.mode !== "reveal-confirm")
-      || getPendingCardMoveDecision(workingRoot)
-      || getPendingScanFreeMoveDecision(workingRoot)
-      || Boolean(getPendingDataPlacementDecision(workingRoot)),
-    );
-  }
-
-  function hasActivePendingSubFlow(workingRoot = null) {
-    return hasActiveEffectSubFlow(workingRoot)
-      || isMovePaymentSelectionActive()
-      || (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden)
-      || Boolean(getPendingIndustryAbilityDecision(workingRoot))
-      || Boolean(getPendingIndustryFreeMoveDecision(workingRoot))
-      || isIndustryHandSelectionActive();
-  }
-
-  function cancelActivePendingSubFlowsForRoot(workingRoot) {
-    if (getPendingScanTargetDecision(workingRoot)?.type === "industry_remove_tech") {
-      rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
-      return true;
-    }
-    if (getPendingStrategySlotDecision(workingRoot)) {
-      cancelStrategyPassiveSlotChoiceForRoot(workingRoot);
-      return true;
-    }
-    if (getPendingCardCornerFreeMove(workingRoot)?.finishIndustryFlowAfterMove) {
-      const pending = getPendingCardCornerFreeMove(workingRoot);
-      delete workingRoot.match.cardCornerFreeMoveContinuation;
-      workingRoot.rocketState.activeRocketId = null;
-      clearMoveRocketHighlight();
-      deactivateMoveMode();
-      const message = `${pending.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
-      if (getPendingIndustryAbilityDecision(workingRoot)) {
-        finishIndustryAbilityFlowForRoot(workingRoot, message);
-      }
-      if (pending.irreversibleIndustryFlow) {
-        commitIrreversibleIndustryQuickAction(
-          pending.industryLogLabel || pending.action?.label || "公司 1x 行动",
-          message,
-        );
-      }
-      workingRoot.rocketState.statusNote = message;
-      renderPlayerStats();
-      renderPublicCards();
-      renderPlayerHand();
-      updateActionButtons();
-      renderStateReadout();
-      return true;
-    }
-    if (hasActiveEffectSubFlow()) {
-      cancelActiveEffectSubFlowsForRoot(workingRoot);
-      return true;
-    }
-    if (isMovePaymentSelectionActive()) {
-      cancelMovePaymentSelection();
-      return true;
-    }
-    if (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden) {
-      if (getPendingDataPlacementDecision()) {
-        cancelDataPlacePicker();
-        return true;
-      }
-      closeDataPlacePicker();
-      workingRoot.rocketState.statusNote = "已取消放置数据";
-      return true;
-    }
-    if (getPendingIndustryAbilityDecision(workingRoot) || getPendingIndustryFreeMoveDecision(workingRoot) || isIndustryHandSelectionActive()) {
-      rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
-      return true;
-    }
-    return false;
-  }
 
   function cancelActivePendingSubFlows() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_pending_subflows" }).value;
