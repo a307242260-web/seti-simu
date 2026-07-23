@@ -2171,6 +2171,7 @@
       handleHandCardMovePayment,
       resolveMovePaymentDecision,
       syncPlayCardSelectionChrome,
+      isPlayCardSelectionActive,
       getPendingPlayCardSelection,
       handlePlayCardSelect,
       confirmPlayCardSelection,

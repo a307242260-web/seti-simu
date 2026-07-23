@@ -2,6 +2,15 @@
 
 module.exports = Object.freeze([
   Object.freeze({
+    id: "production-start-button",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",
+    actionExpression: "document.querySelector('#start-screen-start-button').click()",
+    successExpression: "document.querySelector('#start-screen')?.hidden === true && document.querySelector('#initial-selection-area')?.hidden === false && Boolean(document.querySelector('.initial-selection-card-button'))",
+    obligation: "生产入口无未捕获异常、完成 SetiRandomizer 装配，且“开始游戏”可进入初始选择",
+    counterexample: "app.js 初始化异常导致公开 API 或事件未装配，或点击后启动页/初始选择状态错误",
+  }),
+  Object.freeze({
     id: "page-projection-action",
     file: "randomizer/app/browser-host/browser-host.browser-smoke.html",
     resultSelector: "body",

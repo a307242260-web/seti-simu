@@ -88,6 +88,7 @@
     throw new Error("Missing SETI StateStore runtime dependencies");
   }
   const document = window.document;
+  const els = window.SetiAppDom.collectElements(document);
   const Image = window.Image;
   const Blob = window.Blob;
   const requestAnimationFrame = window.requestAnimationFrame.bind(window);
@@ -176,6 +177,21 @@
   const FUNDAMENTALISM_ROUND_START_ROUNDS = Object.freeze([2, 3, 4]);
   const AI_DIFFICULTY_LAUGHABLE = "laughable";
   const AI_DIFFICULTY_WEAK_START = "weak_start";
+  const HISTORY_SOURCE_MAIN = "main";
+  const HISTORY_SOURCE_QUICK = "quick";
+  const HISTORY_SOURCE_SETUP = "setup";
+  const runtime = runtimeModule.createRuntime({
+    aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
+    defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
+    alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
+    industryCardFiles: INDUSTRY_CARD_FILES,
+  });
+  const actionLogState = runtime.actionLog;
+  const actionBriefingState = runtime.actionBriefing;
+  const startScreenState = runtime.startScreen;
+  const setupSelectionState = runtime.selection;
+  const uiRuntimeState = runtime.ui;
+  const browserHostState = runtime.browserHost;
   let finalScoreAiRuntime = null;
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
@@ -196,6 +212,7 @@
   const browserPendingDecisionModule = window.SetiBrowserPendingDecision;
   const standardActionSessionModule = window.SetiStandardActionSession;
   const standardActionModule = window.SetiStandardAction;
+  const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
   const browserDomainTargets = () => ({
     scan_flow: scanFlowHelpers,
     alien_ui: alienUiHelpers,
@@ -324,7 +341,7 @@
     isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive(...args),
     isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
     renderStateReadout: (...args) => renderStateReadout(...args),
-    openDataPlacePicker: (...args) => openDataPlacePicker(...args),
+    openDataPlacePicker,
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     getCurrentPlayer: (...args) => getCurrentPlayer(...args),
     runAction: (...args) => runAction(...args),
@@ -346,7 +363,7 @@
     getPendingLandTargetDecision: (...args) => getPendingLandTargetDecision(...args),
     withPendingOwnerPlayer: (...args) => withPendingOwnerPlayer(...args),
     closeLandTargetPicker: (...args) => closeLandTargetPicker(...args),
-    setBrowserStatusNote: (...args) => setBrowserStatusNote(...args),
+    setBrowserStatusNote,
     renderStateReadout: (...args) => renderStateReadout(...args),
   });
   const resumeLandTargetContinuation = landTargetContinuationRuntime.resume;
@@ -377,7 +394,7 @@
     getCommittedContext: getBrowserCommittedContext,
   } = browserWorkingStateAdapter;
   const actionContextFactory = actionRuntimeModule.createActionContextFactory({
-    buildPlutoMarkerContext: (...args) => buildPlutoMarkerContext(...args),
+    buildPlutoMarkerContext,
     getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
     getEarthSectorCoordinate: (...args) => getEarthSectorCoordinate(...args),
     solar,
@@ -390,7 +407,7 @@
     beginCardSelection: (...args) => beginCardSelectionForRoot(...args),
     beginDiscardSelection: (...args) => handFlowHelpers.beginDiscardSelection(...args),
     beginIncome: (...args) => beginIncomeForCurrentPlayerForRoot(...args),
-    getPlayerCompanyBaseIncome: (...args) => getPlayerCompanyBaseIncome(...args),
+    getPlayerCompanyBaseIncome,
     players,
     createReadoutRoot: () => createStateSourceReadoutRoot(),
   });
@@ -407,10 +424,10 @@
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
     getRuleReadout: () => createStateSourceReadoutRoot(),
     abilities,
-    getCurrentPlanetActionPlacement: (...args) => getCurrentPlanetActionPlacement(...args),
-    getAvailablePlutoAction: (...args) => getAvailablePlutoAction(...args),
-    openPlutoActionChoicePicker: (...args) => openPlutoActionChoicePicker(...args),
-    executePlutoAction: (...args) => executePlutoAction(...args),
+    getCurrentPlanetActionPlacement,
+    getAvailablePlutoAction,
+    openPlutoActionChoicePicker,
+    executePlutoAction,
     requestLandTargetPicker: (...args) => requestLandTargetPicker(...args),
     renderPlayerStats: (...args) => renderPlayerStats(...args),
     updateActionButtons: (...args) => updateActionButtons(...args),
@@ -714,12 +731,6 @@
     resolveCompletedSectorSettlements: (...args) => resolveCompletedSectorSettlements(...args),
     recordScoreSources: (...args) => recordInitialSelectionScoreSources(...args),
   });
-  const runtime = runtimeModule.createRuntime({
-    aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
-    defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
-    alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
-    industryCardFiles: INDUSTRY_CARD_FILES,
-  });
   let turnFlowController = null;
   const turnHostRuntime = turnFlowModule.createTurnHostRuntime({
     getController: () => turnFlowController,
@@ -803,8 +814,8 @@
     isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
     rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction(...args),
     cancelStrategyPassiveSlotChoice: (...args) => industryRuntime.cancelStrategyPassiveSlotChoice(...args),
-    clearMoveRocketHighlight: (...args) => clearMoveRocketHighlight(...args),
-    deactivateMoveMode: (...args) => deactivateMoveMode(...args),
+    clearMoveRocketHighlight,
+    deactivateMoveMode,
     finishIndustryAbilityFlow: (...args) => industryRuntime.finishIndustryAbilityFlow(...args),
     commitIrreversibleIndustryQuickAction: (...args) => commitIrreversibleIndustryQuickAction(...args),
     renderPlayerStats: (...args) => renderPlayerStats(...args),
@@ -814,8 +825,8 @@
     renderStateReadout: (...args) => renderStateReadout(...args),
     cancelActiveEffectSubFlowsForRoot: (...args) => cancelActiveEffectSubFlowsForRoot(...args),
     cancelMovePaymentSelection: (...args) => cancelMovePaymentSelection(...args),
-    cancelDataPlacePicker: (...args) => cancelDataPlacePicker(...args),
-    closeDataPlacePicker: (...args) => closeDataPlacePicker(...args),
+    cancelDataPlacePicker,
+    closeDataPlacePicker,
   });
   const {
     hasActiveEffectSubFlow,
@@ -845,7 +856,7 @@
   conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
     FINAL_SCORE_IDS,
-    getCurrentPlayer,
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
     getPendingProbeSectorScanDecision,
     getPendingProbeLocationRewardDecision,
     getPendingYichangdianCornerAction,
@@ -1024,12 +1035,6 @@
     advanceDeterministicStateForRoot: advanceSimulationDeterministicStateImpl,
     executeCurrentActionEffectForRoot: executeSimulationCurrentActionEffectImpl,
   } = conditionalCompositionRuntime;
-  const actionLogState = runtime.actionLog;
-  const actionBriefingState = runtime.actionBriefing;
-  const startScreenState = runtime.startScreen;
-  const setupSelectionState = runtime.selection;
-  const uiRuntimeState = runtime.ui;
-  const browserHostState = runtime.browserHost;
   const yichangdianAnomalyMarkerElements = new Map();
   const chongPlanetFossilMarkerElements = new Map();
   const chongFossilOwnerTokenElements = new Map();
@@ -1047,7 +1052,7 @@
     pruneEmptyActionLogDraft: (...args) => pruneEmptyActionLogDraft(...args),
     renderActionLog: (...args) => renderActionLog(...args),
     isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
-    hasActivePendingSubFlow: (...args) => hasActivePendingSubFlow(...args),
+    hasActivePendingSubFlow,
     getGameplayLockReason: (...args) => getGameplayLockReason(...args),
   });
   const {
@@ -1060,7 +1065,7 @@
   const cardSelectionState = browserHostModule.cardDecisionUi.createCardSelectionState({
     getRuleReadout: () => createStateSourceReadoutRoot(),
     cards,
-    getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
+    getPendingDiscardDecision,
     readCardSelectionDecision,
     getPublicScanMinSelectable: (...args) => getPublicScanMinSelectable(...args),
   });
@@ -1090,8 +1095,8 @@
     players,
     getPlayerById: (...args) => getPlayerById(...args),
     getPlayerByColor: (...args) => getPlayerByColor(...args),
-    getActionEffectFlow: (...args) => getActionEffectFlow(...args),
-    isAlienFamilyCard: (...args) => isAlienFamilyCard(...args),
+    getActionEffectFlow,
+    isAlienFamilyCard,
     recordHistoryCommand: (...args) => recordHistoryCommand(...args),
     recordQuickHistoryCommand: (...args) => recordQuickHistoryCommand(...args),
   });
@@ -1108,9 +1113,6 @@
     recordScoreSourceForGainEffect,
     recordTechBonusScore,
   } = scoreSourceRuntime;
-  const HISTORY_SOURCE_MAIN = "main";
-  const HISTORY_SOURCE_QUICK = "quick";
-  const HISTORY_SOURCE_SETUP = "setup";
   const SCAN_TARGET_ACTION_LAYOUT_CLASSES = Object.freeze([
     "jiuzhe-card-grid",
     "fangzhou-card-grid",
@@ -1138,7 +1140,6 @@
     playerBoardTechLayer: null,
   };
 
-  const els = window.SetiAppDom.collectElements(document);
   const residentViewStateStore = browserHostModule.viewStateStore.createViewStateStore();
   const residentDesktopRenderer = browserHostModule.residentRenderer.createResidentRenderer({ document, els });
   const residentStateSource = ruleComposition.stateSourcePort;
@@ -1188,7 +1189,6 @@
     getInterfacePlayer: () => getInterfacePlayer(),
   });
 
-  const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
   const createResidentReadoutRoot = (resident) => (
     browserHostModule.residentProjection.createReadoutRoot(resident)
   );
@@ -1206,7 +1206,7 @@
     players,
     uiRuntimeState,
     createReadoutRoot: createStateSourceReadoutRoot,
-    getPlayerByColor: (...args) => getPlayerByColor(...args),
+    getPlayerByColor,
     getCurrentPlayer: (workingRoot = null) => getCurrentPlayer(workingRoot || undefined),
     getActionEffectFlow,
   });
@@ -1229,7 +1229,7 @@
     browserHostState,
     createReadoutRoot: createStateSourceReadoutRoot,
     getPlayerById,
-    getRoundOrderPlayerIds: (...args) => getRoundOrderPlayerIds(...args),
+    getRoundOrderPlayerIds,
     isAiPlayer: (...args) => isAiAutoBattlePlayer(...args),
     isAiAutomationPaused: (...args) => isAiAutomationPaused(...args),
   });
@@ -1256,7 +1256,7 @@
     getReadyRunezuTask: (...args) => getReadyRunezuTaskForReservedCard?.(...args),
     getTaskBlockReason: () => getCardTaskCompletionBlockReason?.() || null,
     getRunezuTaskProgressIndexes: (...args) => getRunezuTaskProgressIndexes?.(...args),
-    getPlutoActionState: (...args) => getPlutoActionState(...args),
+    getPlutoActionState,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
     isDebugAlienTraceMode: () => isDebugAlienTraceMode?.() || false,
   });
@@ -1279,7 +1279,7 @@
     getPendingScanTargetDecision: () => (
       getPendingScanTargetDecision() || browserPendingDecisionOwner.read("public_scan")
     ),
-    computePlayerFinalScoreBreakdown,
+    computePlayerFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
     isCardSelectionActive: () => isCardSelectionActive?.(),
     allowsBlindDrawInSelection: () => allowsBlindDrawInSelection?.(),
     canBlindDraw: () => canBlindDraw?.(),
@@ -1295,9 +1295,9 @@
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     createResidentRenderInput,
     renderResidentRoundStatus: (...args) => residentDesktopRenderer.renderRoundStatus(...args),
-    getDisplayedTurnNumber: (...args) => getDisplayedTurnNumber(...args),
-    getRoundOrderPlayerIds: (...args) => getRoundOrderPlayerIds(...args),
-    getPlayerLabelById: (...args) => getPlayerLabelById(...args),
+    getDisplayedTurnNumber,
+    getRoundOrderPlayerIds,
+    getPlayerLabelById,
     getPlayerAgentLabel: (...args) => getPlayerAgentLabel(...args),
   });
   const {
@@ -1383,8 +1383,8 @@
   const boardPointerHandlers = actionInteractionRuntimeModule.createBoardPointerHandlers({
     getRocketState: () => createStateSourceReadoutRoot().rocketState,
     getHighlightedRocketId: () => uiRuntimeState.moveHighlightRocketId,
-    isAiInputLocked: isAiAutomationInputLocked,
-    blockManualInput: blockManualAiAutomationInput,
+    isAiInputLocked: (...args) => isAiAutomationInputLocked(...args),
+    blockManualInput: (...args) => blockManualAiAutomationInput(...args),
     isPlanetMarkerRocket,
     activateMoveMode,
     hasBlockingMoveDecision: () => Boolean(
@@ -1395,7 +1395,7 @@
       || getPendingCardMoveDecision()
     ),
     deactivateMoveMode,
-    renderStateReadout,
+    renderStateReadout: (...args) => renderStateReadout(...args),
   });
   const { handleRocketPointerDown, handleBoardPointerDown } = boardPointerHandlers;
   const coordinatePort = renderRuntimeModule.createCoordinatePort({
@@ -1442,13 +1442,13 @@
     getCardLabel: cards.getCardLabel,
     normalizeSectorX: solar.mod8,
     getNebulaLabel: data.getNebulaLabel,
-    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+    getCurrentPlayer,
     createReadoutRoot: createStateSourceReadoutRoot,
-    getPlayerLabelById: (...args) => getPlayerLabelById(...args),
-    getActionCycleNumber: (...args) => getActionCycleNumber(...args),
-    getDisplayedTurnNumber: (...args) => getDisplayedTurnNumber(...args),
+    getPlayerLabelById,
+    getActionCycleNumber,
+    getDisplayedTurnNumber,
     cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
-    isActionPending: (...args) => isActionPending(...args),
+    isActionPending,
     resetActionBriefingState: (...args) => resetActionBriefingState(...args),
     attachRecoverySnapshot: (...args) => attachRecoverySnapshotToActionLogEntry(...args),
     rememberActionBriefingEntry: (...args) => rememberActionBriefingEntry(...args),
@@ -1484,8 +1484,8 @@
     runezu,
     resourceIconSrc: RESOURCE_ICON_SRC,
     getReadoutRoot: createStateSourceReadoutRoot,
-    getPlayerCompanyBaseIncome: (...args) => getPlayerCompanyBaseIncome(...args),
-    getInterfacePlayer: (...args) => getInterfacePlayer(...args),
+    getPlayerCompanyBaseIncome,
+    getInterfacePlayer,
     computeFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
     isAiPlayer: (...args) => isAiAutoBattlePlayer?.(...args),
     isPlayerPassed: isPlayerPassedThisRound,
@@ -1578,19 +1578,19 @@
     formatPlanetsReferencePoint,
     formatPolarPoint,
     formatBoardPoint,
-    getNormalTokenAssetForPlayer,
+    getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
     isRocketOnPlanetsReference,
     isPlanetMarkerRocket,
-    isRocketMoveCandidate,
-    isRocketMoveMuted,
+    isRocketMoveCandidate: (...args) => isRocketMoveCandidate(...args),
+    isRocketMoveMuted: (...args) => isRocketMoveMuted(...args),
     handleRocketPointerDown,
-    getChongPlanetLabel,
+    getChongPlanetLabel: (...args) => getChongPlanetLabel(...args),
     getTurnReadoutLines,
     getInitialSelectionReadoutLines,
     getPlayerReadoutLines,
     getRocketCoordinateReadoutLines,
-    syncInteractionFocusChrome,
-    placeDataToBlueSlot,
+    syncInteractionFocusChrome: (...args) => syncInteractionFocusChrome(...args),
+    placeDataToBlueSlot: (...args) => placeDataToBlueSlot(...args),
   });
   const {
     setTokenAssetSizes,
@@ -1636,14 +1636,14 @@
     isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
     isDiscardSelectionActive,
     isPlayCardSelectionActive,
-    isMovePaymentSelectionActive,
-    isHandScanSelectionActive,
+    isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
+    isHandScanSelectionActive: (...args) => isHandScanSelectionActive(...args),
     isCardSelectionActive,
-    isTechTilePickingActive,
+    isTechTilePickingActive: (...args) => isTechTilePickingActive(...args),
     getPendingPiratesRaidDecision,
-    canUseCardCornerQuickAction,
-    getPendingCardCornerQuickAction,
-    getPendingHandCardPlayAction,
+    canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
+    getPendingCardCornerQuickAction: (...args) => getPendingCardCornerQuickAction(...args),
+    getPendingHandCardPlayAction: (...args) => getPendingHandCardPlayAction(...args),
     isRocketOnPlanetsReference,
   });
   const {
@@ -1663,21 +1663,21 @@
   } = moveUiRuntime;
   const interactionChrome = renderRuntimeModule.createInteractionChrome({
     els,
-    isPublicCardMultiSelectActive: (...args) => isPublicCardMultiSelectActive(...args),
+    isPublicCardMultiSelectActive,
     getPublicCardSelectedCount: () => uiRuntimeState.publicCardSelectedSlots?.length || 0,
-    getPublicCardMultiSelectMinSelectable: (...args) => getPublicCardMultiSelectMinSelectable(...args),
+    getPublicCardMultiSelectMinSelectable,
     getCardSelectionType: () => readCardSelectionDecision()?.type || null,
-    isCardSelectionActive: (...args) => isCardSelectionActive(...args),
+    isCardSelectionActive,
     cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
     setQuickPanelOpen: (...args) => setQuickPanelOpen(...args),
     renderPublicCards: (...args) => renderPublicCards(...args),
     updatePublicCardControls: (...args) => updatePublicCardControls(...args),
-    getInteractionFocusMode: (...args) => getInteractionFocusMode(...args),
+    getInteractionFocusMode,
     hasPlayableFutureSpanCard: () => hasPlayableFutureSpanCard(getCurrentPlayer()),
     isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
     scrollToPlayerHandPanel: (...args) => scrollToPlayerHandPanel(...args),
-    renderPlayerHand: (...args) => renderPlayerHand(...args),
-    renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
+    renderPlayerHand,
+    renderInitialSelectionArea,
   });
   const {
     syncPublicScanConfirmButton,
@@ -1699,11 +1699,11 @@
     resourceIconSrc: RESOURCE_ICON_SRC,
     jiuzheThresholdCardEffectType: JIUZHE_THRESHOLD_CARD_EFFECT_TYPE,
     banrenmaPanelBonusEffectType: BANRENMA_PANEL_BONUS_EFFECT_TYPE,
-    resolvePlayerReference: (...args) => resolvePlayerReference(...args),
-    getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
-    getActionEffectFlow: (...args) => getActionEffectFlow(...args),
+    resolvePlayerReference,
+    getEffectOwnerPlayer,
+    getActionEffectFlow,
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
-    getPendingCardMoveDecision: (...args) => getPendingCardMoveDecision(...args),
+    getPendingCardMoveDecision,
     isAiPlayer: (...args) => isAiAutoBattlePlayer(...args),
   });
   const {
@@ -1711,19 +1711,19 @@
     render: renderActionEffectBar,
   } = effectBarPresentation;
   const playerHandTitlePresenter = renderRuntimeModule.createPlayerHandTitlePresenter({
-    isDiscardSelectionActive: (...args) => isDiscardSelectionActive(...args),
-    getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
+    isDiscardSelectionActive,
+    getPendingDiscardDecision,
     isHandScanSelectionActive: (...args) => isHandScanSelectionActive(...args),
     isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
     isMovePaymentLockedForAiAutomation: (...args) => isMovePaymentLockedForAiAutomation(...args),
-    getPendingMovePayment: (...args) => getPendingMovePayment(...args),
+    getPendingMovePayment,
     moveEnergyCost: MOVE_ENERGY_COST,
-    isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive(...args),
+    isPlayCardSelectionActive,
     getPendingPlayCardSelection: (...args) => getPendingPlayCardSelection(...args),
     getPendingCardCornerQuickAction: (...args) => getPendingCardCornerQuickAction(...args),
     getPendingHandCardPlayAction: (...args) => getPendingHandCardPlayAction(...args),
     getCardLabel: (...args) => cards.getCardLabel(...args),
-    renderPlayerHand: (...args) => renderPlayerHand(...args),
+    renderPlayerHand,
   });
   const { getPlayerHandPanelTitleHint, updatePlayerHandPanelTitle } = playerHandTitlePresenter;
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
@@ -1742,7 +1742,7 @@
     getCurrentPlayerLabel: () => getCurrentPlayer()?.colorLabel || "",
     getActivePlayers,
     getDisplayedTurnNumber,
-    getNormalTokenAssetForPlayer,
+    getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
     getHistoryForSource: (...args) => getHistoryForSource?.(...args),
     createActionLogImpactSnapshot,
     appendActionLogStep: (...args) => appendActionLogStep?.(...args),
@@ -1754,7 +1754,7 @@
       computePlayerFinalScoreBreakdown(player, createStateSourceReadoutRoot())
     ),
     getPlayerScoreSource,
-    updateActionButtons,
+    updateActionButtons: (...args) => updateActionButtons(...args),
     renderPlayerStats,
     isGameEnded,
     isPlayerPassedThisRound,
@@ -1774,13 +1774,13 @@
   } = finalUiRuntime;
   const actionLogExportController = actionLogExport.createActionLogExportController({
     createReadoutRoot: createStateSourceReadoutRoot,
-    getDisplayedTurnNumber: (...args) => getDisplayedTurnNumber(...args),
-    isGameEnded: (...args) => isGameEnded(...args),
+    getDisplayedTurnNumber,
+    isGameEnded,
     getEntries: (...args) => getRecoverableActionLog(...args),
     getPlayerResults: (...args) => buildActionLogExportPlayerResults(...args),
     download: (...args) => residentBrowserServices.download(...args),
     setStatus: (...args) => setBrowserStatusNote(...args),
-    renderStateReadout: (...args) => renderStateReadout(...args),
+    renderStateReadout,
   });
   const {
     buildActionLogMarkdownContext,
@@ -1794,11 +1794,11 @@
   const { syncFinalScorePendingMarks, handleFinalScoreTileClick } = finalUiPort;
   const refreshHelpers = refreshModule.createRefreshHelpers({
     renderPlayerStats,
-    renderAlienPanels,
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
     renderRockets,
     renderActionEffectBar,
-    updateQuickPanel,
-    updateActionButtons,
+    updateQuickPanel: (...args) => updateQuickPanel(...args),
+    updateActionButtons: (...args) => updateActionButtons(...args),
     renderStateReadout,
     renderTechBoard: (...args) => renderTechBoard(...args),
     renderSectorNebulaDataBoard,
@@ -1833,7 +1833,7 @@
     markCurrentActionIrreversible,
     getIrreversibleReason,
     recordTurnVisitPlanetEvents,
-    recordNeutralScoreTracesFromAbilityResult,
+    recordNeutralScoreTracesFromAbilityResult: (...args) => recordNeutralScoreTracesFromAbilityResult(...args),
     recordScanScoreSourcesFromAbilityResult,
     startActionLogDraft,
     ensureActionLogDraft,
@@ -1847,9 +1847,9 @@
     clearCompletedEffectFlowForUndo: (...args) => clearCompletedEffectFlowForUndo(...args),
     assignEffectFlowOwner,
     setActiveEffectFlowOwner,
-    renderReservedCards: (...args) => renderReservedCards(...args),
+    renderReservedCards,
     renderActionEffectBar,
-    updateActionButtons,
+    updateActionButtons: (...args) => updateActionButtons(...args),
     renderStateReadout,
     hasActiveCardTriggerResolution: (...args) => hasActiveCardTriggerResolution(...args),
     isCardTriggerRewardFlowBusy: (...args) => isCardTriggerRewardFlowBusy(...args),
@@ -1858,7 +1858,7 @@
     cancelActiveEffectSubFlows: (workingRoot) => cancelActiveEffectSubFlowsForRoot(workingRoot),
     maybeAutoExecuteAomomoRewardEffects,
     withEffectExecutionPlayer,
-    executeActionEffectForOwner,
+    executeActionEffectForOwner: (...args) => executeActionEffectForOwner(...args),
   });
   const actionBriefingHelpers = actionBriefingModule.createActionBriefingHelpers({
     window,
@@ -1872,7 +1872,7 @@
     getSolarState: () => ruleComposition.stateSourcePort.read().state.solarSystem,
     data,
     aomomo,
-    getAomomoCurrentX,
+    getAomomoCurrentX: (...args) => getAomomoCurrentX(...args),
     normalizeActionLogText,
     createActionLogPlayedCardSnapshot,
     attachCardHoverPreview,
@@ -1923,6 +1923,39 @@
   const getCurrentActionEffect = (workingRoot = null) => getCurrentActionEffectForRoot(
     workingRoot || createStateSourceReadoutRoot(),
   );
+  const effectFlowRuntimePort = Object.freeze({
+    ...effectFlowHelpers,
+    actionLogOptionsFromHistoryStep,
+    activateNextActionEffect,
+    activateNextActionEffectIfIdle,
+    appendActionLogStep,
+    beginEffectHistoryStep,
+    beginQuickActionStep,
+    clearActionEffectFlow: (...args) => clearActionEffectFlow(...args),
+    clearHistoryStepOrderForSource,
+    completeCurrentActionEffect,
+    completePendingActionStep,
+    completeQuickActionStep,
+    composeActionLogDetailWithImpact,
+    createActionLogImpactSnapshot,
+    createActionLogPlayedCardSnapshot,
+    endEffectHistoryStep,
+    ensureEffectHistorySession,
+    executeActionEffect,
+    finishActionEffectFlow: (...args) => finishActionEffectFlow(...args),
+    forgetLastHistoryStep,
+    getCurrentActionEffect,
+    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
+    recordHistoryCommand,
+    recordQuickHistoryCommand,
+    recordQuickTradeCompletion,
+    rememberHistoryStep,
+    removeActionLogStepsBySource,
+    removeLastActionLogStep,
+    startActionLogDraft,
+    startCardEffectFlow,
+    startPlayCardEffectFlow,
+  });
   const effectHistoryPort = effectFlowModule.createEffectHistoryPort({
     actionHistory,
     recordAbilityCommandsForRoot,
@@ -1942,7 +1975,7 @@
     activateNextActionEffect,
     addScoreSourceToEffects: attachScoreSourceToEffects,
     assignEffectFlowOwner,
-    claimRunezuSourceSymbolWithHistory,
+    claimRunezuSourceSymbolWithHistory: (...args) => claimRunezuSourceSymbolWithHistory(...args),
     createActionLogImpactSnapshot,
     endEffectHistoryStep,
     executeActionEffect,
@@ -1974,7 +2007,7 @@
     createActionContext: createActionContextForWorkingRoot,
     getPendingDiscardDecision,
     readCardSelectionDecision,
-    recordQuickTradeCompletion: (...args) => recordQuickTradeCompletion(...args),
+    recordQuickTradeCompletion,
     renderPlayerStats,
     renderPublicCards: (...args) => renderPublicCards(...args),
     updatePublicCardControls: (...args) => updatePublicCardControls(...args),
@@ -1998,7 +2031,7 @@
     playerEffectOwnerRuntime,
     renderRuntime,
     coordinateRuntime,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     scoreSourceRuntime,
     cardHelpers: cardRuntimeModule,
     getScanRuntime: () => scanFlowHelpers,
@@ -2010,13 +2043,22 @@
       document, uiRuntimeState, els, SCORE_SOURCE_KEYS, normalizeResourceCost,
       openPendingDecision: openBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
-      restoreObjectSnapshot, formatPlanetRewardGain, getPlanetSectorCoordinate,
-      restoreMutableObject, getSectorContentForMove, isAsteroidContent,
-      renderActionEffectBar, finishAutomaticRewardEffect, insertActionEffectsAfterCurrent,
+      restoreObjectSnapshot: (...args) => restoreObjectSnapshot(...args),
+      formatPlanetRewardGain,
+      getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
+      restoreMutableObject: (...args) => restoreMutableObject(...args),
+      getSectorContentForMove,
+      isAsteroidContent,
+      renderActionEffectBar,
+      finishAutomaticRewardEffect,
+      insertActionEffectsAfterCurrent,
     },
   });
   const handFlowHelpers = handFlowModule.createBrowserHandFlow({
-    staticContext: handFlowModule.createBrowserHandStaticContext(dependencies, appConstants),
+    staticContext: handFlowModule.createBrowserHandStaticContext(
+      dependencies,
+      { ...appConstants, MOVE_ENERGY_COST },
+    ),
     getActionInteractionRuntime: () => actionInteractionRuntime,
     getActionRuntime: () => actionRuntimeController,
     getAlienSpeciesRuntime: () => alienSpeciesRuntime,
@@ -2030,7 +2072,7 @@
     browserContextRuntime,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     interactionChrome,
     pendingSubFlowRuntime,
@@ -2045,15 +2087,15 @@
       quickActionHistory,
       HISTORY_SOURCE_QUICK,
       SCORE_SOURCE_KEYS,
-      getGameplayLockReason,
+      getGameplayLockReason: (...args) => getGameplayLockReason(...args),
       canPayForMove,
-      getRequiredMovePointsForUi,
+      getRequiredMovePointsForUi: (...args) => getRequiredMovePointsForUi(...args),
       isMovePaymentCard,
       playerHasMovePaymentCard,
-      restoreObjectSnapshot,
+      restoreObjectSnapshot: (...args) => restoreObjectSnapshot(...args),
       updatePlayerHandPanelTitle,
-      updateActionButtons,
-      setQuickPanelOpen,
+      updateActionButtons: (...args) => updateActionButtons(...args),
+      setQuickPanelOpen: (...args) => setQuickPanelOpen(...args),
       executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
       createActionContext: createActionContextForWorkingRoot,
       recordMainActionIrreversibleBarrier: (...args) => recordMainActionIrreversibleBarrier(...args),
@@ -2066,8 +2108,8 @@
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
         || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
       ),
-      blockManualAiMovePayment,
-      blockIncompatiblePendingQuickAction,
+      blockManualAiMovePayment: (...args) => blockManualAiMovePayment(...args),
+      blockIncompatiblePendingQuickAction: (...args) => blockIncompatiblePendingQuickAction(...args),
       requestAnimationFrame,
     },
   });
@@ -2126,21 +2168,21 @@
   const effectSkipRuntime = effectFlowModule.createEffectSkipRuntime({
     industry,
     yichangdianCornerEffectType: cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS,
-    getActionEffectFlow: (...args) => getActionEffectFlow(...args),
-    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
+    getActionEffectFlow,
+    getCurrentActionEffect,
     getPendingYichangdianCornerAction: (...args) => getPendingYichangdianCornerAction(...args),
-    openYichangdianCornerPicker: (...args) => openYichangdianCornerPicker(...args),
+    openYichangdianCornerPicker,
     finishCurrentCardMoveEffectEarly: (...args) => finishCurrentCardMoveEffectEarly(...args),
-    getPendingScanTargetDecision: (...args) => getPendingScanTargetDecision(...args),
+    getPendingScanTargetDecision,
     handleDrawnHandScanSkip: (...args) => scanFlowHelpers.handleDrawnHandScanSkip(...args),
     cancelActiveEffectSubFlowsForRoot: (...args) => cancelActiveEffectSubFlowsForRoot(...args),
-    getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
-    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
-    renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
-    beginEffectHistoryStep: (...args) => beginEffectHistoryStep(...args),
-    endEffectHistoryStep: (...args) => endEffectHistoryStep(...args),
-    completeCurrentActionEffect: (...args) => completeCurrentActionEffect(...args),
-    renderStateReadout: (...args) => renderStateReadout(...args),
+    getEffectOwnerPlayer,
+    getCurrentPlayer,
+    renderInitialSelectionArea,
+    beginEffectHistoryStep,
+    endEffectHistoryStep,
+    completeCurrentActionEffect,
+    renderStateReadout,
     setStatusNote: (...args) => setBrowserStatusNote(...args),
   });
   const {
@@ -2160,7 +2202,7 @@
     cardSelectionDecisionOwner,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     effectSkipRuntime,
     handFlowRuntime: handFlowHelpers,
@@ -2177,18 +2219,18 @@
       structuredClone,
       els,
       SCAN_TARGET_ACTION_LAYOUT_CLASSES,
-      updateActionButtons,
+      updateActionButtons: (...args) => updateActionButtons(...args),
       syncPublicScanConfirmButton,
       actionHistory,
       getFlowMarkedNebulaIds,
       normalizeResourceCost,
       createActionContext: createActionContextForWorkingRoot,
       HISTORY_SOURCE_MAIN,
-      getNormalTokenAssetForPlayer,
+      getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
       getMovableTokensForWorkingRoot: (workingRoot, playerId) => (
         rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, playerId)
       ),
-      selectDefaultRocketForCurrentPlayer: (...args) => selectDefaultRocketForCurrentPlayer(...args),
+      selectDefaultRocketForCurrentPlayer,
       getRequiredMovePointsForWorkingRoot: (workingRoot, ...args) => (
         getRequiredMovePointsForUiForRoot(workingRoot, ...args)
       ),
@@ -2308,7 +2350,7 @@
     HISTORY_SOURCE_QUICK,
     startCardEffectFlow,
     renderActionEffectBar,
-    updateActionButtons,
+    updateActionButtons: (...args) => updateActionButtons(...args),
     beginDiscardSelection,
   });
   const {
@@ -2360,15 +2402,15 @@
     aomomo,
     runezu,
     els,
-    renderAlienPanels,
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
     renderStateReadout,
     getAlienTraceActionPlayer: (workingRoot, ...args) => alienRuntimeHelpers.getAlienTraceActionPlayer?.(workingRoot, ...args),
-    getAvailableDataTokenCount,
+    getAvailableDataTokenCount: (...args) => getAvailableDataTokenCount(...args),
     confirmFangzhouCard2Unlock: (workingRoot, ...args) => alienSpeciesRuntime.confirmFangzhouCard2Unlock(workingRoot, ...args),
     confirmAlienTracePlacement: (workingRoot, ...args) => alienRuntimeHelpers.confirmAlienTracePlacement(workingRoot, ...args),
     confirmFangzhouTracePlacement: (workingRoot, ...args) => alienRuntimeHelpers.confirmFangzhouTracePlacement(workingRoot, ...args),
-    isDebugAlienTraceMode,
-    isActionEffectFlowActive,
+    isDebugAlienTraceMode: (...args) => isDebugAlienTraceMode(...args),
+    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
     isCardSelectionActive,
     isDiscardSelectionActive,
     getPlayerColorDefinition: (playerColor) => players.getPlayerColorDefinition(playerColor),
@@ -2477,7 +2519,7 @@
     alienUiRuntime: alienUiHelpers,
     browserContextRuntime,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     playerEffectOwnerRuntime,
     playerLookupRuntime,
     renderRuntime,
@@ -2487,7 +2529,7 @@
       structuredClone,
       HISTORY_SOURCE_MAIN,
       getEarthSectorCoordinate,
-      updateActionButtons,
+      updateActionButtons: (...args) => updateActionButtons(...args),
       markCurrentActionIrreversible,
     },
   });
@@ -2527,8 +2569,8 @@
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     uiRuntimeState,
     openCardSelectionDecision,
-    alienSpeciesRuntime,
-    effectExecutors,
+    getAlienSpeciesRuntime: () => alienSpeciesRuntime,
+    getEffectExecutors: () => effectExecutors,
     closeAlienRevealConfirmationOverlay,
     setActionEffectFlow,
     clearCompletedEffectFlowForUndo: (...args) => clearCompletedEffectFlowForUndo(...args),
@@ -2545,8 +2587,8 @@
     renderRotateStateToken,
     syncPlanetOrbitLandMarkers,
     refreshHelpers,
-    renderPublicCards,
-    updatePublicCardControls,
+    renderPublicCards: (...args) => renderPublicCards(...args),
+    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
     renderReservedCards,
     renderInitialSelectionArea,
     renderPlayerHand,
@@ -2554,10 +2596,10 @@
     renderDebugPlayerSwitch,
     syncCardSelectionChrome,
     syncDiscardSelectionChrome,
-    syncPassReserveSelectionChrome,
+    syncPassReserveSelectionChrome: (...args) => syncPassReserveSelectionChrome(...args),
     syncHandScanSelectionChrome,
     syncPlayCardSelectionChrome,
-    syncTechSelectionChrome,
+    syncTechSelectionChrome: (...args) => syncTechSelectionChrome(...args),
     syncIndustryHandSelectionChrome,
     syncInteractionFocusChrome,
     renderActionLog,
@@ -2567,7 +2609,7 @@
     version: GAME_RECOVERY_VERSION,
     browserServices: residentBrowserServices,
     createReadoutRoot: createStateSourceReadoutRoot,
-    getActionCycleNumber: (...args) => getActionCycleNumber(...args),
+    getActionCycleNumber,
     createAiControlSnapshot: (...args) => createAiControlSnapshot(...args),
     getStableSnapshot: () => browserActionStableRecoverySnapshot,
     getEntries: () => actionLogState.entries,
@@ -2635,17 +2677,17 @@
     renderRuntime,
     resetPort: {
       clearTransientStateForRecovery,
-      restoreMutableObject,
+      restoreMutableObject: (...args) => restoreMutableObject(...args),
       createTurnState,
       resetScanRunSequence,
       resetActionLog,
     },
     setupPort: {
       fillNebulaDataBoard,
-      randomizeAliens,
-      cancelIndustryAbilityFlow,
+      randomizeAliens: (...args) => randomizeAliens(...args),
+      cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow(...args),
       closeFinalResultDialog,
-      configureDefaultAiOpponent,
+      configureDefaultAiOpponent: (...args) => configureDefaultAiOpponent(...args),
       startInitialSelection,
       seedDefaultReferenceRockets,
     },
@@ -2664,7 +2706,7 @@
       renderRoundStatus,
       renderResidentDesktop,
       renderDebugPlayerSwitch,
-      resize,
+      resize: (...args) => resize(...args),
       defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
       defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
       defaultInitialHandCount: DEFAULT_INITIAL_HAND_COUNT,
@@ -2697,7 +2739,7 @@
     closeActionBriefing,
     setDebugOpen,
     setReportTab,
-    resize,
+    resize: (...args) => resize(...args),
     setLogOpen,
     startNewGame,
   });
@@ -2751,10 +2793,10 @@
     renderTechBoard: (...args) => renderTechBoard(...args),
     renderSectorNebulaDataBoard,
     syncPlanetOrbitLandMarkers,
-    renderAlienPanels,
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
     renderRockets,
     syncInteractionFocusChrome,
-    updateActionButtons,
+    updateActionButtons: (...args) => updateActionButtons(...args),
     renderStateReadout,
     schedulePersistentGameStateSave,
     resolveInitialSelectionEffects,
@@ -2762,9 +2804,9 @@
       applyIndustryRoundStartBonusesForRoot?.(workingRoot, ...args)
     ),
     startInitialIncomeEffectFlow,
-    applyIndustryStartupPassives,
+    applyIndustryStartupPassives: (...args) => applyIndustryStartupPassives(...args),
     appendConfirmedActionLogEntry,
-    isInitialIncomeFlowActive,
+    isInitialIncomeFlowActive: (...args) => isInitialIncomeFlowActive(...args),
     renderActionLog,
     refreshLatestActionLogRecoverySnapshot,
     scrollToPlayerCommandPanel,
@@ -2799,26 +2841,37 @@
     maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction(...args),
     markActionPending,
     beginScanAction: (...args) => beginScanAction(...args),
-    beginPlayCardSelection: (...args) => beginPlayCardSelection(...args),
+    beginPlayCardSelection,
     researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer(...args),
-    orbitForCurrentPlayer: (...args) => orbitForCurrentPlayer(...args),
-    landForCurrentPlayer: (...args) => landForCurrentPlayer(...args),
-    moveRocket: (...args) => moveRocket(...args),
-    analyzeDataForCurrentPlayer: (...args) => analyzeDataForCurrentPlayer(...args),
-    passForCurrentPlayer: (...args) => passForCurrentPlayer(...args),
-    endCurrentTurn: (...args) => endCurrentTurn(...args),
+    orbitForCurrentPlayer,
+    landForCurrentPlayer,
+    moveRocket,
+    analyzeDataForCurrentPlayer,
+    passForCurrentPlayer,
+    endCurrentTurn,
     blockManualAiPendingInputIfNeeded,
     getCurrentActionEffectIndex: () => getActionEffectFlow()?.currentIndex,
     runQuickTrade,
     confirmDataPlacement,
     standardActionAdapter: actionRuntimeModule.createBrowserStandardActionAdapter({
       actions, players, scanEffects, data, cards, rocketActions, quickTrades, industry,
-      abilities, aliens, runezu, canStartMainAction, getMainActionStartBlockReason,
-      canAnalyzeDataForPlayer, getAnalyzeActionOptionsForPlayer, getCardPlayCost,
-      hasActivePendingSubFlow, getMovableTokensForPlayer, getRequiredMovePointsForUi,
-      canPayForMove, moveRocket, canUseCardCornerQuickActionForRoot,
-      getCardCornerQuickActionForCardForRoot, shouldQueueCardCornerMoveQuickActionForRoot,
-      canStartCardCornerFreeMoveForRoot, isActionPending, isActionEffectFlowActive,
+      abilities, aliens, runezu,
+      canStartMainAction,
+      getMainActionStartBlockReason,
+      canAnalyzeDataForPlayer,
+      getAnalyzeActionOptionsForPlayer,
+      getCardPlayCost: (...args) => getCardPlayCost(...args),
+      hasActivePendingSubFlow,
+      getMovableTokensForPlayer,
+      getRequiredMovePointsForUi: (...args) => getRequiredMovePointsForUi(...args),
+      canPayForMove,
+      moveRocket,
+      canUseCardCornerQuickActionForRoot: (...args) => canUseCardCornerQuickActionForRoot(...args),
+      getCardCornerQuickActionForCardForRoot: (...args) => getCardCornerQuickActionForCardForRoot(...args),
+      shouldQueueCardCornerMoveQuickActionForRoot: (...args) => shouldQueueCardCornerMoveQuickActionForRoot(...args),
+      canStartCardCornerFreeMoveForRoot: (...args) => canStartCardCornerFreeMoveForRoot(...args),
+      isActionPending,
+      isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
       createConditionalActionProvider,
     }),
   });
@@ -2834,7 +2887,7 @@
       difficulty: getPlayerById(seatId)?.aiDifficulty || AI_DIFFICULTY_LAUGHABLE,
     }),
     getRuleReadout: createStateSourceReadoutRoot,
-    isActionEffectFlowActive,
+    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
     stateOwners: {
       match: browserMatchRuntime,
       action: actionSessionRuntime,
@@ -2860,7 +2913,10 @@
       label: "Alien Species AI port",
     }],
     controllerContext: aiBrowserBootstrapModule.createBrowserAiControllerContext({
-      staticContext: aiBrowserBootstrapModule.createBrowserAiStaticContext(dependencies, appConstants),
+      staticContext: aiBrowserBootstrapModule.createBrowserAiStaticContext(
+        dependencies,
+        { ...appConstants, MOVE_ENERGY_COST },
+      ),
       getCardRuntime: () => cardRuntime,
       getCardTriggerRuntime: () => cardTriggerRuntime,
       getIndustryRuntime: () => industryRuntime,
@@ -2870,20 +2926,19 @@
       cardSelectionState,
       coordinateRuntime: coordinatePort,
       effectExecutorPort: effectExecutorCommandPort,
-      effectFlowRuntime: effectFlowHelpers,
+      effectFlowRuntime: effectFlowRuntimePort,
       playerEffectOwnerRuntime,
       playerLookupRuntime,
       turnHostRuntime,
       turnReadoutRuntime,
       hostPort: {
       window,
-      state: aiControllerState,
       ruleLifecycle: browserRuleLifecycle,
       historyStepOrder,
       els,
     analyzeDataForCurrentPlayer,
-    beginScanAction,
-    buildSectorScanChoicesForXs,
+    beginScanAction: (...args) => beginScanAction(...args),
+    buildSectorScanChoicesForXs: (...args) => buildSectorScanChoicesForXs(...args),
     canBlindDraw: (...args) => canBlindDraw(...args),
     canPayForMove,
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
@@ -2922,7 +2977,7 @@
     dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
     drawCardForCurrentPlayer: (...args) => drawCardForCurrentPlayer(...args),
     endCurrentTurn,
-    recoverPendingActionFromOpenHistoryForAi,
+    recoverPendingActionFromOpenHistoryForAi: (...args) => recoverPendingActionFromOpenHistoryForAi(...args),
     executeActionEffect,
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
@@ -2935,14 +2990,14 @@
     getCurrentPlayer,
     getInitialSelectionOffer,
     getPassReserveSelectionCards: (...args) => getPassReserveSelectionCards(...args),
-    getPlanetSectorCoordinate,
+    getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
     getReadyCardTasks: (...args) => getReadyCardTasks?.(...args),
     getRequiredMovePointsForUi: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
     getResearchTechSelectionOptions: (...args) => getResearchTechSelectionOptions(...args),
     getSectorContentForMove,
     getSectorXsMatchingCondition,
     handleCompanyActionMarkerClick: (...args) => handleCompanyActionMarkerClick(...args),
-    handlePublicCornerDiscardCardClick,
+    handlePublicCornerDiscardCardClick: (...args) => handlePublicCornerDiscardCardClick(...args),
     handlePublicCardClick: (...args) => handlePublicCardClick(...args),
     handleIndustryDeepspaceHandClick: (...args) => handleIndustryDeepspaceHandClick(...args),
     handleSupplyTechTileClick: (...args) => handleSupplyTechTileClick(...args),
@@ -2966,17 +3021,17 @@
     researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer(...args),
     resetActionLog,
     resetScanRunSequence,
-    restoreMutableObject,
+    restoreMutableObject: (...args) => restoreMutableObject(...args),
     runAction,
     runPlaceDataToComputer,
     runQuickTrade,
     runAiFinalScoreMarkDecision,
     selectPassReserveCard: (...args) => selectPassReserveCard(...args),
     sectorXHasAvailableScanTarget,
-    skipCurrentActionEffect,
+    skipCurrentActionEffect: (...args) => skipCurrentActionEffect(...args),
     startInitialSelection,
     startNewGame,
-        updateActionButtons,
+        updateActionButtons: (...args) => updateActionButtons(...args),
       },
     }),
   });
@@ -3015,7 +3070,7 @@
     cardHoverPreviewRuntime,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     effectSkipRuntime,
     handFlowRuntime: handFlowHelpers,
@@ -3032,8 +3087,8 @@
       createActionContext: createActionContextForWorkingRoot,
       document,
       els,
-      getGameplayLockReason,
-      getRequiredMovePointsForUi,
+      getGameplayLockReason: (...args) => getGameplayLockReason(...args),
+      getRequiredMovePointsForUi: (...args) => getRequiredMovePointsForUi(...args),
       getRequiredMovePointsForWorkingRoot: (workingRoot, ...args) => (
         getRequiredMovePointsForUiForRoot(workingRoot, ...args)
       ),
@@ -3044,7 +3099,7 @@
       quickActionHistory,
       renderActionEffectBar,
       structuredClone,
-      updateActionButtons,
+      updateActionButtons: (...args) => updateActionButtons(...args),
     },
   });
   const {
@@ -3196,7 +3251,7 @@
     cardRuntime,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     handFlowRuntime: handFlowHelpers,
     pendingSubFlowRuntime,
@@ -3215,21 +3270,21 @@
       els,
       getCardTriggerFreeMoveEffect,
       getEarthSectorCoordinate,
-      getPlanetSectorCoordinate,
-      getRequiredMovePointsForUi,
+      getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
+      getRequiredMovePointsForUi: (...args) => getRequiredMovePointsForUi(...args),
       getSectorContentForMove,
       isAsteroidContent,
       isInitialSelectionActive,
       uiRuntimeState,
       listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
-      listReadyChongTransportCandidates: listReadyChongTransportCandidatesForRoot,
+      listReadyChongTransportCandidates: (...args) => listReadyChongTransportCandidatesForRoot(...args),
       markCurrentActionIrreversibleForSource,
       openPendingDecision: openBrowserPendingDecision,
       quickActionHistory,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       renderActionEffectBar,
       structuredClone,
-      updateActionButtons,
+      updateActionButtons: (...args) => updateActionButtons(...args),
     },
   });
   const {
@@ -3369,7 +3424,7 @@
     getActivePlayers,
     recordQuickHistoryCommand,
     recordHistoryCommand,
-    renderAlienPanels,
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
     getScanScorePlayer,
   });
   const {
@@ -3414,10 +3469,10 @@
     isGameEnded,
     isInitialSelectionActive,
     els,
-    setTurnActionButtonState,
-    setActionButtonState,
-    setQuickActionButtonEnabled,
-    updateQuickPanel,
+    setTurnActionButtonState: (...args) => setTurnActionButtonState(...args),
+    setActionButtonState: (...args) => setActionButtonState(...args),
+    setQuickActionButtonEnabled: (...args) => setQuickActionButtonEnabled(...args),
+    updateQuickPanel: (...args) => updateQuickPanel(...args),
     renderActionEffectBar,
     getPendingCardCornerQuickAction,
     cancelCardCornerQuickAction,
@@ -3467,11 +3522,11 @@
     abilities,
     getActionEffectFlow,
     isMainActionOpeningStep,
-    clearResearchTechSelectionState,
+    clearResearchTechSelectionState: (...args) => clearResearchTechSelectionState(...args),
     clearActionEffectFlow: (...args) => clearActionEffectFlow(...args),
     pruneEndOfFlowSettlementEffectsAfterUndo,
-    cancelActiveEffectSubFlows,
-    restoreResearchTechSelectionAfterUndo,
+    cancelActiveEffectSubFlows: (...args) => cancelActiveEffectSubFlows(...args),
+    restoreResearchTechSelectionAfterUndo: (...args) => restoreResearchTechSelectionAfterUndo(...args),
     setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
   });
   const revertEffectFlowAfterUndo = effectFlowUndoRuntime.revertEffectFlowAfterUndo;
@@ -3506,7 +3561,7 @@
     actionHistory,
     setActionEffectFlow,
     closeLandTargetPicker,
-    closeScanAction4Picker,
+    closeScanAction4Picker: (...args) => closeScanAction4Picker(...args),
     renderActionEffectBar,
     setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
     renderReservedCards,
@@ -3526,7 +3581,7 @@
     closeScanTargetPicker,
     isLandTargetPickerOpen: () => Boolean(els.landTargetOverlay && !els.landTargetOverlay.hidden),
     cancelLandTargetPicker,
-    closeScanAction4Picker,
+    closeScanAction4Picker: (...args) => closeScanAction4Picker(...args),
     closeAlienTracePicker,
     isHandScanSelectionActive,
     syncHandScanSelectionChrome,
@@ -3549,7 +3604,7 @@
     clearYichangdianCornerAction: () => effectExecutors?.clearYichangdianCornerAction?.(),
     clearAlienDecisionDrafts: () => alienSpeciesRuntime?.clearAlienDecisionDrafts?.(),
     getPendingPiratesRaidDecision,
-    renderTechBoard,
+    renderTechBoard: (...args) => renderTechBoard(...args),
   });
   const cancelActiveEffectSubFlowsForRoot = effectSubFlowCancellationRuntime.cancelActiveEffectSubFlowsForRoot;
 
@@ -3570,7 +3625,7 @@
     actionLogOptionsFromHistoryStep,
     renderSectorNebulaDataBoard,
     renderPlayerStats,
-    renderAlienPanels,
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
   });
   const resolveCompletedSectorSettlementsForRoot = sectorSettlementRuntime.resolveCompletedSectorSettlementsForRoot;
 
@@ -3593,8 +3648,8 @@
     clearActionEffectFlow,
     finishResearchTechSelection: techRuntimeModule.createTechSelectionCompletionPort({
       tech,
-      syncTechSelectionChrome,
-      renderTechBoard,
+      syncTechSelectionChrome: (...args) => syncTechSelectionChrome(...args),
+      renderTechBoard: (...args) => renderTechBoard(...args),
     }),
     clearHistoryStepOrderForSource,
     removeActionLogStepsBySource,
@@ -3617,12 +3672,12 @@
     isActionEffectFlowActive,
     markActionPending,
     renderPlayerStats,
-    updateActionButtons,
+    updateActionButtons: (...args) => updateActionButtons(...args),
     renderStateReadout,
     getPlayerById,
     getCurrentPlayerForRoot: (workingRoot) => players.getCurrentPlayer(workingRoot.playerState),
     createPassEvent,
-    renderAlienPanels,
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
     maybeResumeTurnEndAfterReveal,
   });
   const finishActionEffectFlowForRoot = effectFlowCompletionRuntime.finishActionEffectFlowForRoot;
@@ -3675,13 +3730,13 @@
     handleLocationRewardChoice: handleProbeLocationRewardChoice,
   } = probeDecisionPort;
 
-  const effectExecutorContexts = {
+  const createEffectExecutorContexts = () => ({
     movementScan: {
       INCOME_GAIN_LABELS, SCORE_SOURCE_KEYS, abilities, addPlutoMarker, aomomo,
       attachScoreSourceToEffects, beginEffectHistoryStep,
       beginScanAction4FreeMove: beginScanAction4FreeMoveForRoot,
       buildPlanetRewardEffectsWithIndustry, buildPlutoMarkerRemovalChoices,
-      buildProbeLocationIndex: (...args) => buildProbeLocationIndex(...args),
+      buildProbeLocationIndex,
       buildSectorScanChoicesForX, buildSectorScanChoicesForXs, cardEffects, cards,
       claimRunezuPlanetSymbolForTravelResult, closeScanAction4Picker, closeScanTargetPicker,
       collectPlutoMarkers, completeCurrentActionEffect,
@@ -3697,9 +3752,10 @@
       isActionEffectFlowActive, launchRocketForScanAction4, maybeCompleteActionEffectFromScan,
       normalizeResourceCost, openLandTargetPicker, openScanTargetPicker, planetReferenceLayout,
       planetRewards, planetStats, playerHasOwnPlutoLanding, players, recordAbilityCommands,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       recordHistoryCommand, removePlutoMarker, removeRocketElement, renderActionEffectBar,
       renderAlienPanels, renderPlayerHand, renderPlayerStats, renderPublicCards,
-      renderReservedCards: (...args) => renderReservedCards(...args),
+      renderReservedCards,
       renderRockets, renderStateReadout, replaceNebulaDataForCurrentPlayer, restoreMutableObject,
       rocketActions, skipActionEffectWithMessage, solar, syncPlanetOrbitLandMarkers,
       updateActionButtons, updatePublicCardControls, withEffectExecutionPlayer,
@@ -3725,10 +3781,11 @@
       maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan(...args),
       nebulaHasScannableData, normalizeResourceCost, openAutoDataPlacementPrompt,
       openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       openScanTargetPicker, planetReferenceLayout, planetStats, players, recordAbilityCommands,
       recordHistoryCommand, recordScoreSourceForGainEffect, renderActionEffectBar,
       renderPlayerHand, renderPlayerStats, renderPublicCards,
-      renderReservedCards: (...args) => renderReservedCards(...args),
+      renderReservedCards,
       renderRocketElement, renderRockets, renderStateReadout,
       renderTechBoard: (...args) => renderTechBoard(...args),
       replaceNebulaDataForCurrentPlayer, resolvePlayerReference, restoreObjectSnapshot,
@@ -3755,7 +3812,7 @@
       openChongFossilChoiceDialog, openLandTargetPicker, openScanTargetPicker, players,
       recordAbilityCommands, recordHistoryCommand, removeRocketElement, renderActionEffectBar,
       renderAlienPanels, renderPlayerHand, renderPlayerStats, renderPublicCards,
-      renderReservedCards: (...args) => renderReservedCards(...args),
+      renderReservedCards,
       renderRockets, renderStateReadout, replaceNebulaDataForCurrentPlayer, rocketActions,
       solar, syncPlanetOrbitLandMarkers, updateActionButtons, withEffectExecutionPlayer,
       yichangdian,
@@ -3769,7 +3826,7 @@
       beginCardSelection: (workingRoot, ...args) => beginCardSelectionForRoot(workingRoot, ...args),
       beginDiscardSelection: (workingRoot, ...args) => handFlowHelpers.beginDiscardSelection(workingRoot, ...args),
       beginEffectHistoryStep, beginPassReserveSelection, buildNebulaScanChoice, cardEffects, chong,
-      claimRunezuSourceSymbolWithHistory,
+    claimRunezuSourceSymbolWithHistory: (...args) => claimRunezuSourceSymbolWithHistory(...args),
       closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
       completeCurrentActionEffect, createActionContext: createActionContextForWorkingRoot,
       createPublicScanPendingAction, endEffectHistoryStep, executeBanrenmaPanelBonusEffect,
@@ -3792,6 +3849,7 @@
       maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction(...args),
       onTechTileTaken: (...args) => onTechTileTaken(...args),
       openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       openAmibaSymbolChoiceDialog, openAmibaTraceRemovalDialog, openAomomoCardGainDialog,
       openFangzhouTraceDestinationChoice: (workingRoot, ...args) => openFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
       openRunezuSymbolBranchDialog, openScanAction4Picker, openScanTargetPicker, planetRewards,
@@ -3801,16 +3859,10 @@
       resolvePlayerReference, runezu, scanEffects,
       shouldSkipCurrentResearchTechCost: (workingRoot) => techRuntime.shouldSkipCurrentResearchTechCost(workingRoot),
       skipActionEffectWithMessage, syncHandScanSelectionChrome, tech, uiRuntimeState,
-      updateActionButtons,
+      updateActionButtons: (...args) => updateActionButtons(...args),
     },
-  };
-  const effectExecutors = effectExecutorBootstrapModule.createEffectExecutorSuite({
-    contexts: effectExecutorContexts,
-    movementScanModule: effectMovementScanExecutorsModule,
-    rewardModule: effectRewardExecutorsModule,
-    alienModule: effectAlienExecutorsModule,
-    dispatcherModule: effectDispatcherModule,
   });
+  let effectExecutors = null;
 
   const actionRuntimePort = actionRuntimeModule.createActionRuntimePort({
     getController: () => actionRuntimeController,
@@ -3828,13 +3880,13 @@
     els,
     techRenderContext,
     boardVisualScale: BOARD_VISUAL_SCALE,
-    layoutPlayerHandFan: (...args) => layoutPlayerHandFan(...args),
-    layoutReservedCardRows: (...args) => layoutReservedCardRows(...args),
+    layoutPlayerHandFan,
+    layoutReservedCardRows,
     alignAlienPanelsToPlanets: (...args) => alignAlienPanelsToPlanets(...args),
     renderAlienPanels: (...args) => renderAlienPanels(...args),
     renderTechBoard: (...args) => renderTechBoard(...args),
     getMoveHighlightRocketId: () => uiRuntimeState.moveHighlightRocketId,
-    scheduleRenderMoveArrows: (...args) => scheduleRenderMoveArrows(...args),
+    scheduleRenderMoveArrows,
   });
   const { resize, syncTechRenderContext } = browserLayoutRuntime;
 
@@ -3894,7 +3946,7 @@
     yichangdian,
     findPlayerForEntry: (...args) => findPlayerForYichangdianEntry(...args),
     applyRewardToPlayer: (...args) => applyYichangdianRewardToPlayer(...args),
-    beginCardSelection: (...args) => beginCardSelection(...args),
+    beginCardSelection,
   }).triggerForEarthX;
 
   const FINAL_RESULT_PLAYER_COLOR_ORDER = Object.freeze(["white", "brown", "blue", "green"]);
@@ -3926,7 +3978,7 @@
     cardRuntime,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     handFlowRuntime: handFlowHelpers,
     interactionChrome,
@@ -3961,7 +4013,7 @@
       resultHasSignalMarkedEvent,
       selectDefaultRocketForCurrentPlayer,
       uiRuntimeState,
-      updateActionButtons,
+      updateActionButtons: (...args) => updateActionButtons(...args),
     },
   });
   const industryCommands = bindDomainCommands("industry_runtime");
@@ -4000,7 +4052,7 @@
     cardRuntime,
     coordinatePort,
     effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     effectSkipRuntime,
     industryRuntime,
@@ -4097,7 +4149,7 @@
     cardRuntime,
     cardSelectionState,
     cardTriggerRuntime,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     finalUiRuntime,
     handFlowRuntime: handFlowHelpers,
     incomeRuntime,
@@ -4147,7 +4199,7 @@
     actionGuardRuntime,
     actionSessionRuntime,
     dataPlacementPort: dataPlacementContinuationRuntime,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     handFlowRuntime: handFlowHelpers,
     interactionChrome,
@@ -4160,7 +4212,10 @@
       runAction,
       validateIndustryHuanyuMoveRocket,
     },
-    cardTriggerPort: { hasActiveCardTriggerResolution, settleCardTasksAfterEffect },
+    cardTriggerPort: {
+      hasActiveCardTriggerResolution,
+      settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffectForRoot(...args),
+    },
     plutoRewardPort: {
       buildChoiceRewardSummary: buildPlutoChoiceRewardSummary,
       buildRewardEffects: buildPlutoRewardEffectsForAction,
@@ -4202,13 +4257,13 @@
     hostPort: {
       els,
       syncFinalResultButton,
-      cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
+      cancelHandCardContextActions,
     },
   });
   undoController = browserHostModule.actionBar.createBrowserUndoController({
     actionGuardRuntime,
     actionSessionRuntime,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     effectFlowUndoRuntime,
     historyRefreshRuntime,
     matchRuntime: browserMatchRuntime,
@@ -4241,7 +4296,7 @@
     browserContextRuntime,
     cardSelectionState,
     coordinatePort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectFlowRuntime: effectFlowRuntimePort,
     playerEffectOwnerRuntime,
     playerLookupRuntime,
     techRuntime,
@@ -4320,8 +4375,11 @@
     cardRuntime,
     cardTriggerRuntime,
     coordinateRuntime,
-    effectExecutorPort: effectExecutorCommandPort,
-    effectFlowRuntime: effectFlowHelpers,
+    effectExecutorPort: {
+      ...effectExecutorCommandPort,
+      skipActionEffectWithMessage,
+    },
+    effectFlowRuntime: effectFlowRuntimePort,
     historyPort: { actionHistory, quickActionHistory },
     industryRuntime,
     manualAiInputGuard,
@@ -4350,7 +4408,11 @@
       window,
       yichangdianAnomalyMarkerElements,
     },
-    rulePort: { buildAlienTraceEvent, formatPlanetRewardGain, getPlayerCompanyBaseIncome },
+    rulePort: {
+      buildAlienTraceEvent: (...args) => buildAlienTraceEventForRoot(...args),
+      formatPlanetRewardGain,
+      getPlayerCompanyBaseIncome,
+    },
     speciesRules: dependencies.alienSpeciesRules,
     constants: {
       BANRENMA_PANEL_BONUS_EFFECT_TYPE,
@@ -4358,6 +4420,14 @@
       JIUZHE_THRESHOLD_CARD_EFFECT_TYPE,
       RESOURCE_ICON_SRC,
     },
+  });
+
+  effectExecutors = effectExecutorBootstrapModule.createEffectExecutorSuite({
+    contexts: createEffectExecutorContexts(),
+    movementScanModule: effectMovementScanExecutorsModule,
+    rewardModule: effectRewardExecutorsModule,
+    alienModule: effectAlienExecutorsModule,
+    dispatcherModule: effectDispatcherModule,
   });
 
   window.SetiAppEvents.bindAppEvents({
@@ -4497,7 +4567,7 @@
     setDebugPlayerMenuOpen,
     switchCurrentPlayerColor,
     rotateSolarOrbit,
-    settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
+    settleCardTasksAfterEffect,
     addDebugIncome,
     promptDebugGainCard,
     addDebugScore,
@@ -4549,7 +4619,7 @@
     openBanrenmaCardConditionCompletionPicker,
     getReadyChongTaskForReservedCard,
     openChongTraceTaskCompletionPicker,
-    openCardTaskCompletionPicker: (...args) => openCardTaskCompletionPicker(...args),
+    openCardTaskCompletionPicker,
     confirmMovePayment,
     cancelMovePaymentSelection,
     isDiscardSelectionActive,
@@ -4587,7 +4657,13 @@
         setTokenAssetSizes,
         updateContinueButton: updateStartScreenContinueButton,
       },
-      startScreenRuntime: startScreenController,
+      startScreenRuntime: {
+        syncStartScreenDebugOption,
+        syncStartScreenActionLogOption,
+        syncStartScreenAlienOptions,
+        syncStartScreenIndustryOptions,
+        setDebugToolsEnabled,
+      },
     }),
     startScreenState,
     savePersistentGameStateNow,

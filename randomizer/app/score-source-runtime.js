@@ -194,6 +194,7 @@
       addPlayerScoreSource,
       addScoreSourceFromGain,
       attachScoreSourceToEffects,
+      getAlienTraceScoreSourceKey,
       getPlayerScoreSource,
       getScanScorePlayer,
       recordAlienTraceScore,

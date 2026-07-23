@@ -106,6 +106,7 @@ class CdpClient {
     this.socket = new WebSocket(url);
     this.nextId = 1;
     this.pending = new Map();
+    this.listeners = new Set();
   }
 
   async open() {
@@ -116,12 +117,20 @@ class CdpClient {
     this.socket.addEventListener("message", (event) => {
       const message = JSON.parse(event.data);
       const pending = this.pending.get(message.id);
-      if (!pending) return;
+      if (!pending) {
+        for (const listener of this.listeners) listener(message);
+        return;
+      }
       this.pending.delete(message.id);
       clearTimeout(pending.timer);
       if (message.error) pending.reject(new Error(message.error.message));
       else pending.resolve(message.result);
     });
+  }
+
+  onMessage(listener) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
   }
 
   send(method, params = {}, timeoutMs = 20000) {
@@ -144,7 +153,10 @@ class CdpClient {
 function validateInventory() {
   const ids = new Set();
   for (const smoke of inventory) {
-    for (const field of ["id", "file", "resultSelector", "resultAttribute", "obligation", "counterexample"]) {
+    const requiredFields = smoke.actionExpression
+      ? ["id", "file", "readyExpression", "actionExpression", "successExpression", "obligation", "counterexample"]
+      : ["id", "file", "resultSelector", "resultAttribute", "obligation", "counterexample"];
+    for (const field of requiredFields) {
       if (typeof smoke[field] !== "string" || !smoke[field].trim()) {
         throw new Error(`Chrome smoke ${smoke.id || "<unknown>"} 缺少 ${field}`);
       }
@@ -177,6 +189,46 @@ async function waitForResult(cdp, smoke, timeoutMs = 30000) {
     await delay(100);
   }
   throw new Error(`${smoke.id} 超时：${JSON.stringify(last)}`);
+}
+
+function formatException(exceptionDetails = {}) {
+  return exceptionDetails.exception?.description || exceptionDetails.text || "unknown";
+}
+
+async function waitForExpression(cdp, expression, label, getUncaughtException, timeoutMs = 30000) {
+  const deadline = Date.now() + timeoutMs;
+  let last = null;
+  while (Date.now() < deadline) {
+    const uncaughtException = getUncaughtException?.();
+    if (uncaughtException) {
+      throw new Error(`${label} 前浏览器异常：${formatException(uncaughtException)}`);
+    }
+    const evaluated = await cdp.send("Runtime.evaluate", {
+      returnByValue: true,
+      expression: `Boolean(${expression})`,
+    });
+    last = evaluated.result?.value;
+    if (last === true) return;
+    await delay(100);
+  }
+  throw new Error(`${label} 超时：${JSON.stringify(last)}`);
+}
+
+async function runInteractiveSmoke(cdp, smoke, getUncaughtException) {
+  await waitForExpression(cdp, smoke.readyExpression, `${smoke.id} 等待入口就绪`, getUncaughtException);
+  const evaluated = await cdp.send("Runtime.evaluate", {
+    awaitPromise: true,
+    returnByValue: true,
+    expression: smoke.actionExpression,
+  });
+  if (evaluated.exceptionDetails) {
+    throw new Error(`${smoke.id} 操作异常：${evaluated.exceptionDetails.text || "unknown"}`);
+  }
+  await waitForExpression(cdp, smoke.successExpression, `${smoke.id} 等待操作结果`, getUncaughtException);
+  return { href: (await cdp.send("Runtime.evaluate", {
+    returnByValue: true,
+    expression: "location.href",
+  })).result?.value };
 }
 
 async function main() {
@@ -217,10 +269,22 @@ async function main() {
     await cdp.open();
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
+    let uncaughtExceptions = [];
+    cdp.onMessage((message) => {
+      if (message.method === "Runtime.exceptionThrown") {
+        uncaughtExceptions.push(message.params?.exceptionDetails || {});
+      }
+    });
     for (const smoke of inventory) {
+      uncaughtExceptions = [];
       const url = `http://127.0.0.1:${server.address().port}/${smoke.file}`;
       await cdp.send("Page.navigate", { url });
-      const result = await waitForResult(cdp, smoke);
+      const result = smoke.actionExpression
+        ? await runInteractiveSmoke(cdp, smoke, () => uncaughtExceptions[0])
+        : await waitForResult(cdp, smoke);
+      if (uncaughtExceptions.length) {
+        throw new Error(`${smoke.id} 浏览器异常：${formatException(uncaughtExceptions[0])}`);
+      }
       process.stdout.write(`PASS ${smoke.id} ${result.href}\n`);
     }
     process.stdout.write(`SUMMARY browserSmoke passed=${inventory.length} failed=0 total=${inventory.length}\n`);
