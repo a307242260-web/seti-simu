@@ -50,6 +50,7 @@
     actionLogRuntimeModule,
     gameRecoveryModule,
     ruleCompositionModule,
+    browserRuleCompositionModule,
     runtimeModule,
     refreshModule,
     renderRuntimeModule,
@@ -601,60 +602,18 @@
     }),
   });
 
-  const ruleComposition = ruleCompositionModule.createRuleComposition({
-    invariantValidators: [validateBrowserSessionBoundary],
-    stateStoreApi: {
-      createStateStore(initialState, options) {
-        return highCouplingStateModule.createHighCouplingStateStore(initialState, options);
-      },
-    },
+  const ruleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
+    ruleCompositionApi: ruleCompositionModule,
+    stateStoreApi: stateStoreModule,
+    highCouplingState: highCouplingStateModule,
+    initialGameState: initialGameStateModule,
     effectRuntimeApi: effectSessionRuntimeModule,
-    createInitialState(_initialOptions, workingState) {
-      return highCouplingStateModule.purifyHighCouplingSlices(
-        initialGameStateModule.createCommittedCandidate(
-          workingState,
-          getBrowserCommittedContext(workingState),
-          stateStoreModule.SCHEMA_VERSION,
-          0,
-        ),
-      );
-    },
-    stateAdapter: {
+    workingStateAdapter: {
       createWorkingState: createBrowserWorkingState,
-      createProjectionState(workingState, committedState) {
-        return initialGameStateModule.createCommittedCandidate(
-          workingState,
-          { ...getBrowserCommittedContext(workingState), stateVersion: committedState.meta.stateVersion },
-          stateStoreModule.SCHEMA_VERSION,
-          committedState.meta.stateVersion,
-        );
-      },
-      createCommittedState(workingState, committedState, contextOverrides = {}) {
-        return highCouplingStateModule.purifyHighCouplingSlices(
-          initialGameStateModule.createCommittedCandidate(
-            workingState,
-            { ...getBrowserCommittedContext(workingState), ...contextOverrides },
-            stateStoreModule.SCHEMA_VERSION,
-            committedState.meta.stateVersion,
-          ),
-        );
-      },
-      createSavedState(committedState, workingState, contextOverrides = {}) {
-        const savedState = structuredClone(committedState);
-        savedState.meta = {
-          ...savedState.meta,
-          ...getBrowserCommittedContext(workingState),
-          ...structuredClone(contextOverrides),
-          schemaVersion: savedState.meta.schemaVersion,
-          stateVersion: savedState.meta.stateVersion,
-        };
-        return savedState;
-      },
       restoreWorkingState: restoreBrowserWorkingState,
-      onCommitted(workingState, committedState) {
-        workingState.meta = structuredClone(committedState.meta);
-      },
+      validateSessionBoundary: validateBrowserSessionBoundary,
     },
+    getCommittedContext: getBrowserCommittedContext,
     runWithWorkingState(workingRoot, operation) {
       return players.runWithScoreGainListener(
         (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
@@ -663,20 +622,13 @@
     },
     executeHostCommand: hostCommandDispatcher.execute,
     createActionRegistry: () => compositionActionRegistry,
-    effectDomains: [{
+    standardActionDomain: {
       create: standardActionSessionModule.createStandardActionDomain,
       families: standardActionModule.ALL_FAMILIES,
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: standardActionContinuation,
       },
-    }],
-    projectState(state) {
-      return {
-        meta: { stateVersion: state.meta.stateVersion },
-        match: structuredClone(state.match),
-        turn: structuredClone(state.turn),
-      };
     },
   });
   const browserRuleLifecycle = ruleComposition.lifecycle;

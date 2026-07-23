@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const browserRuleComposition = require("./browser-rule-composition");
 const stateStoreApi = require("../game/state/state-store");
 const effectRuntimeApi = require("../game/effects/session-runtime");
 const researchTechSession = require("../game/effects/research-tech-session");
@@ -428,12 +429,56 @@ function createHarness(initialValue = 0) {
 }
 
 {
+  let captured = null;
+  const adapter = {
+    createWorkingState: () => ({ match: {}, turn: {}, meta: {} }),
+    restoreWorkingState() {},
+    validateSessionBoundary: () => ({ ok: true }),
+  };
+  const composition = browserRuleComposition.createBrowserRuleComposition({
+    ruleCompositionApi: {
+      createRuleComposition(options) {
+        captured = options;
+        return { options };
+      },
+    },
+    stateStoreApi: { SCHEMA_VERSION: 3 },
+    highCouplingState: {
+      createHighCouplingStateStore: () => ({}),
+      purifyHighCouplingSlices: (state) => state,
+    },
+    initialGameState: {
+      createCommittedCandidate: (workingState, metadata, schemaVersion, stateVersion) => ({
+        ...structuredClone(workingState),
+        meta: { ...metadata, schemaVersion, stateVersion },
+      }),
+    },
+    workingStateAdapter: adapter,
+    getCommittedContext: () => ({ seed: "browser-seed" }),
+    effectRuntimeApi: {},
+    runWithWorkingState: (_root, operation) => operation(),
+    executeHostCommand: () => ({ ok: true }),
+    createActionRegistry: () => ({}),
+    standardActionDomain: { families: ["launch"] },
+  });
+  assert.equal(composition.options, captured);
+  assert.equal(captured.invariantValidators[0], adapter.validateSessionBoundary);
+  assert.equal(captured.effectDomains[0].families[0], "launch");
+  const initial = captured.createInitialState({}, { match: {}, turn: {} });
+  assert.equal(initial.meta.seed, "browser-seed");
+  assert.equal(initial.meta.schemaVersion, 3);
+  assert.deepEqual(captured.projectState({ meta: { stateVersion: 2 }, match: { a: 1 }, turn: { b: 2 } }), {
+    meta: { stateVersion: 2 }, match: { a: 1 }, turn: { b: 2 },
+  });
+}
+
+{
   const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
   const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
   const compositionSource = fs.readFileSync(path.join(__dirname, "../game/rule-composition.js"), "utf8");
   assert.equal(fs.existsSync(path.join(__dirname, "browser-state-authority.js")), false, "旧 authority 文件必须物理删除");
   assert.equal(fs.existsSync(path.join(__dirname, "../game/state/runtime-authority.js")), false, "无 caller RuntimeAuthority 必须物理删除");
-  assert.match(appSource, /createRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
+  assert.match(appSource, /createBrowserRuleComposition\(/, "生产 app 必须通过 Browser adapter 实例化唯一 Rule Composition");
   assert.doesNotMatch(appSource, /createBrowserStateAuthority\(/, "生产 app 不得实例化旧 BrowserStateAuthority");
   assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
   assert.equal(fs.existsSync(path.join(__dirname, "effect-session-host.js")), false, "旧 Browser Effect Session Host 必须物理删除");

@@ -18,6 +18,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppActionLogRuntime: {},
     SetiAppGameRecovery: {},
     SetiRuleComposition: {},
+    SetiAppBrowserRuleComposition: {},
     SetiAppRuntime: {},
     SetiAppRefresh: {},
     SetiAppRenderRuntime: {},
