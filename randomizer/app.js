@@ -2898,18 +2898,11 @@
     beginIncomeForCurrentPlayer,
     applyIndustryRoundStartBonuses,
     maybeStartFundamentalismRoundStartIncomeFlow,
-  } = bindDomainCommands("income_runtime", [
-    "beginIncomeForCurrentPlayer",
-    "applyIndustryRoundStartBonuses",
-    "maybeStartFundamentalismRoundStartIncomeFlow",
-  ]));
+  } = bindDomainCommands("income_runtime"));
   const {
     confirmAlienTracePlacement,
     confirmFangzhouTracePlacement,
-  } = bindDomainCommands("alien_runtime", [
-    "confirmAlienTracePlacement",
-    "confirmFangzhouTracePlacement",
-  ]);
+  } = bindDomainCommands("alien_runtime");
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
     uiRuntimeState,
@@ -3027,18 +3020,7 @@
     getEligibleAlienSlotIdsForTraceEffect,
     getFangzhouUnlockableTraceTypes,
     hasAlienTracePanelPlacementTarget,
-  } = bindDomainCommands("alien_ui", [
-    "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
-    "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
-    "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
-    "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "closeAlienTracePicker",
-    "beginAlienTraceBoardPlacement", "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement",
-    "beginFangzhouTraceGridPlacement", "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement",
-    "beginChongTraceGridPlacement", "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement",
-    "renderAlienTracePickerColorStep", "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice",
-    "routeFangzhouAlienTraceGain", "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
-    "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
-  ]);
+  } = bindDomainCommands("alien_ui");
   const {
     handleFangzhouTraceDestinationChoice,
     handleFangzhouUnlockTraceChoice,
@@ -3182,15 +3164,7 @@
     confirmJiuzheTracePlacement,
     settleTurnEndAlienRevealEntries,
     activateAomomoBoard,
-  } = bindDomainCommands("alien_runtime", [
-    "handleJiuzheRevealSideEffects", "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects",
-    "handleBanrenmaRevealSideEffects", "handleChongRevealSideEffects", "handleAmibaRevealSideEffects",
-    "handleAomomoRevealSideEffects", "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects",
-    "failMissingAlienTraceTargetPlayer", "getAlienTraceActionPlayer", "confirmYichangdianTracePlacement",
-    "confirmBanrenmaTracePlacement", "confirmAomomoTracePlacement", "confirmChongTracePlacement",
-    "confirmAmibaTracePlacement", "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement",
-    "settleTurnEndAlienRevealEntries", "activateAomomoBoard",
-  ]);
+  } = bindDomainCommands("alien_runtime");
 
   const cardSetupController = cardRuntimeModule.createCardSetupController({
     cards,
@@ -4303,18 +4277,7 @@
     dismissPassReserveSelectionOverlay,
     handlePublicCornerDiscardCardClick,
     confirmPublicCornerDiscardSelection,
-  } = bindDomainCommands("card_runtime", [
-    "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard", "shouldQueueCardCornerMoveQuickAction",
-    "canUseCardCornerQuickAction", "canStartCardCornerFreeMove", "beginCardCornerFreeMove",
-    "startCardCornerMoveEffectFlow", "hasFutureSpanEligibleHandCard", "hasPlayableFutureSpanCard",
-    "getStandardPlayCardActionBlockReason", "getPlayCardSelectionBlockReason", "getHandCardPlayActionForCard",
-    "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult", "drawBasicCardToPlayer",
-    "blindDrawCardForPlayer", "drawCardForCurrentPlayer", "pickPublicCardForCurrentPlayer", "canBlindDraw",
-    "updatePublicCardControls", "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick",
-    "handlePublicBlindDrawClick", "getPassReserveSelectionCards", "renderPassReserveSelection",
-    "syncPassReserveSelectionChrome", "beginPassReserveSelection", "dismissPassReserveSelectionOverlay",
-    "handlePublicCornerDiscardCardClick", "confirmPublicCornerDiscardSelection",
-  ]));
+  } = bindDomainCommands("card_runtime"));
   const selectPassReserveCardForRoot = selectPassReserveCard;
   const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
   selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
@@ -4347,10 +4310,7 @@
     finishCurrentCardMoveEffectEarly,
     requestCardEffectMove,
     getMovableTokensForCardMoveEffect,
-  } = bindDomainCommands("card_runtime", [
-    "selectDefaultRocketFromCandidates", "executeCardEffectMove", "finishCurrentCardMoveEffectEarly",
-    "requestCardEffectMove", "getMovableTokensForCardMoveEffect",
-  ]));
+  } = bindDomainCommands("card_runtime"));
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
@@ -5405,25 +5365,7 @@
     handleStrategyPassiveSlotClick: handleStrategyPassiveSlotClickForRoot,
     handleCompanyActionMarkerClick: handleCompanyActionMarkerClickForRoot
   } = industryRuntime;
-  const industryCommands = bindDomainCommands("industry_runtime", [
-    "createIndustryActionRestoreCommand", "recordIndustryActionRestoreCommand", "clearIndustryRollbackUi",
-    "rollbackPendingIndustryQuickAction", "cancelIndustryAbilityFlow", "finishIndustryAbilityFlow",
-    "startIndustryAbilityFlow", "startIndustryStratusEffectFlow", "startIndustryFundamentalismExchangeFlow",
-    "startIndustryPublicityPick", "beginIndustryTuringBorrow", "failIndustryTuringBorrow",
-    "checkIndustryTuringBorrowTile", "confirmIndustryTuringBorrow", "openIndustryHeliosTechPicker",
-    "confirmIndustryHeliosRemoveTech", "startIndustryHuanyuMoveEffectFlow", "beginIndustryHuanyuFreeMoves",
-    "canBeginIndustryFutureSpanHandSelection", "beginIndustryFutureSpanHandSelection",
-    "handleIndustryFutureSpanHandClick", "handleIndustryDeepspaceHandClick", "finalizeIndustryDeepspaceSwap",
-    "handleAlienLabPanelClick", "maybeConsumeAlienLabPanelForMainAction", "maybeApplyIndustryLaunchScan",
-    "startLaunchSectorFinishEffectFlow", "appendIndustryPlayPassiveStatus", "buildIndustryPlayCardAppendEffects",
-    "buildPlayCardEffectFlowQueue", "applyIndustryPlayCardPassives", "completeIndustryAbilityQuickStep",
-    "commitIrreversibleIndustryQuickAction", "tryInjectSentinelPlayCornerEffectAfterArm",
-    "executeIndustryStratusCornerEffect", "executeIndustrySentinelCornerEffect", "createCompanyCardSummary",
-    "executeIndustryHeliosPassiveRewardEffect", "getStrategyPassiveSelectableSlotIds",
-    "cancelStrategyPassiveSlotChoice", "openStrategyPassiveSlotChoice", "confirmStrategyPassiveSlotChoice",
-    "finishIndustryStrategyPassiveRewardEffect", "executeIndustryStrategyPassiveRewardEffect",
-    "handleStrategyPassiveSlotClick", "handleCompanyActionMarkerClick",
-  ]);
+  const industryCommands = bindDomainCommands("industry_runtime");
   const {
     createIndustryActionRestoreCommand, recordIndustryActionRestoreCommand, clearIndustryRollbackUi,
     rollbackPendingIndustryQuickAction, cancelIndustryAbilityFlow, finishIndustryAbilityFlow,
@@ -5584,16 +5526,7 @@
     handleSupplyTechTileClick, executeIndustryPiratesRaidMarkerEffect, handlePiratesRaidTechMarkerClick,
     executeIndustryPiratesRaidPublicityEffect, startIndustryPiratesRaidLaunchFlow, buildPiratesRaidLaunchChoices,
     executeIndustryPiratesRaidLaunchEffect, handlePiratesRaidLaunchChoice, setCheatModeOpen, toggleCheatMode,
-  } = bindDomainCommands("tech_runtime", [
-    "isTechActionSelectionActive", "isTechTilePickingActive", "syncTechSelectionChrome", "renderTechBoard",
-    "closeTechBlueSlotPicker", "isTechTileOwnedByOtherPlayer", "appendResearchTechFollowupEffects",
-    "onTechTileSelected", "onTechTileTaken", "clearResearchTechSelectionState", "restoreResearchTechSelectionAfterUndo",
-    "cancelPendingResearchTechTileChoice", "cancelTechSelection", "openTechBlueSlotPicker", "finalizeTechTakeResult",
-    "commitResearchTechSelectionResult", "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice",
-    "handleSupplyTechTileClick", "executeIndustryPiratesRaidMarkerEffect", "handlePiratesRaidTechMarkerClick",
-    "executeIndustryPiratesRaidPublicityEffect", "startIndustryPiratesRaidLaunchFlow", "buildPiratesRaidLaunchChoices",
-    "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice", "setCheatModeOpen", "toggleCheatMode",
-  ]);
+  } = bindDomainCommands("tech_runtime");
 
   const placeDataToBlueSlot = browserHostCommandPort.bindValue(
     "data_place_blue_slot",

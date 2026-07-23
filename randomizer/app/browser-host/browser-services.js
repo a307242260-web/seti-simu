@@ -72,6 +72,59 @@
     income_runtime: Object.freeze([
       "applyIndustryRoundStartBonuses", "maybeStartFundamentalismRoundStartIncomeFlow", "beginIncomeForCurrentPlayer",
     ]),
+    alien_runtime: Object.freeze([
+      "confirmAlienTracePlacement", "confirmFangzhouTracePlacement", "handleJiuzheRevealSideEffects",
+      "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects", "handleBanrenmaRevealSideEffects",
+      "handleChongRevealSideEffects", "handleAmibaRevealSideEffects", "handleAomomoRevealSideEffects",
+      "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects", "failMissingAlienTraceTargetPlayer",
+      "getAlienTraceActionPlayer", "confirmYichangdianTracePlacement", "confirmBanrenmaTracePlacement",
+      "confirmAomomoTracePlacement", "confirmChongTracePlacement", "confirmAmibaTracePlacement",
+      "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement", "settleTurnEndAlienRevealEntries",
+      "activateAomomoBoard",
+    ]),
+    card_runtime: Object.freeze([
+      "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard", "shouldQueueCardCornerMoveQuickAction",
+      "canUseCardCornerQuickAction", "canStartCardCornerFreeMove", "beginCardCornerFreeMove",
+      "startCardCornerMoveEffectFlow", "hasFutureSpanEligibleHandCard", "hasPlayableFutureSpanCard",
+      "getStandardPlayCardActionBlockReason", "getPlayCardSelectionBlockReason", "getHandCardPlayActionForCard",
+      "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult", "drawBasicCardToPlayer",
+      "blindDrawCardForPlayer", "drawCardForCurrentPlayer", "pickPublicCardForCurrentPlayer", "canBlindDraw",
+      "updatePublicCardControls", "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick",
+      "handlePublicBlindDrawClick", "getPassReserveSelectionCards", "renderPassReserveSelection",
+      "syncPassReserveSelectionChrome", "beginPassReserveSelection", "dismissPassReserveSelectionOverlay",
+      "handlePublicCornerDiscardCardClick", "confirmPublicCornerDiscardSelection", "selectDefaultRocketFromCandidates",
+      "executeCardEffectMove", "finishCurrentCardMoveEffectEarly", "requestCardEffectMove",
+      "getMovableTokensForCardMoveEffect",
+    ]),
+    industry_runtime: Object.freeze([
+      "createIndustryActionRestoreCommand", "recordIndustryActionRestoreCommand", "clearIndustryRollbackUi",
+      "rollbackPendingIndustryQuickAction", "cancelIndustryAbilityFlow", "finishIndustryAbilityFlow",
+      "startIndustryAbilityFlow", "startIndustryStratusEffectFlow", "startIndustryFundamentalismExchangeFlow",
+      "startIndustryPublicityPick", "beginIndustryTuringBorrow", "failIndustryTuringBorrow",
+      "checkIndustryTuringBorrowTile", "confirmIndustryTuringBorrow", "openIndustryHeliosTechPicker",
+      "confirmIndustryHeliosRemoveTech", "startIndustryHuanyuMoveEffectFlow", "beginIndustryHuanyuFreeMoves",
+      "canBeginIndustryFutureSpanHandSelection", "beginIndustryFutureSpanHandSelection",
+      "handleIndustryFutureSpanHandClick", "handleIndustryDeepspaceHandClick", "finalizeIndustryDeepspaceSwap",
+      "handleAlienLabPanelClick", "maybeConsumeAlienLabPanelForMainAction", "maybeApplyIndustryLaunchScan",
+      "startLaunchSectorFinishEffectFlow", "appendIndustryPlayPassiveStatus", "buildIndustryPlayCardAppendEffects",
+      "buildPlayCardEffectFlowQueue", "applyIndustryPlayCardPassives", "completeIndustryAbilityQuickStep",
+      "commitIrreversibleIndustryQuickAction", "tryInjectSentinelPlayCornerEffectAfterArm",
+      "executeIndustryStratusCornerEffect", "executeIndustrySentinelCornerEffect", "createCompanyCardSummary",
+      "executeIndustryHeliosPassiveRewardEffect", "getStrategyPassiveSelectableSlotIds",
+      "cancelStrategyPassiveSlotChoice", "openStrategyPassiveSlotChoice", "confirmStrategyPassiveSlotChoice",
+      "finishIndustryStrategyPassiveRewardEffect", "executeIndustryStrategyPassiveRewardEffect",
+      "handleStrategyPassiveSlotClick", "handleCompanyActionMarkerClick",
+    ]),
+    tech_runtime: Object.freeze([
+      "isTechActionSelectionActive", "isTechTilePickingActive", "syncTechSelectionChrome", "renderTechBoard",
+      "closeTechBlueSlotPicker", "isTechTileOwnedByOtherPlayer", "appendResearchTechFollowupEffects",
+      "onTechTileSelected", "onTechTileTaken", "clearResearchTechSelectionState", "restoreResearchTechSelectionAfterUndo",
+      "cancelPendingResearchTechTileChoice", "cancelTechSelection", "openTechBlueSlotPicker", "finalizeTechTakeResult",
+      "commitResearchTechSelectionResult", "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice",
+      "handleSupplyTechTileClick", "executeIndustryPiratesRaidMarkerEffect", "handlePiratesRaidTechMarkerClick",
+      "executeIndustryPiratesRaidPublicityEffect", "startIndustryPiratesRaidLaunchFlow", "buildPiratesRaidLaunchChoices",
+      "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice", "setCheatModeOpen", "toggleCheatMode",
+    ]),
   });
 
   function clone(value) {
@@ -302,8 +355,9 @@
       executeBrowserDomainCommand,
       callBrowserDomainCommand,
       bindBrowserDomainCommand: (domain, operation) => (...args) => callBrowserDomainCommand(domain, operation, args),
-      bindDomainCommands(domain, operations = []) {
-        return Object.freeze(Object.fromEntries(operations.map((operation) => [
+      bindDomainCommands(domain, operations = null) {
+        const selectedOperations = operations || [...(allowedCommands[domain] || [])];
+        return Object.freeze(Object.fromEntries(selectedOperations.map((operation) => [
           operation,
           (...args) => callBrowserDomainCommand(domain, operation, args),
         ])));
