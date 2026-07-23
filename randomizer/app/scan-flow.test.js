@@ -2,12 +2,18 @@
 
 const assert = require("node:assert/strict");
 const {
+  createBrowserScanFlow,
   createScanFlowHelpers,
   createScanAction4Picker,
   createSectorSettlementRuntime,
   buildSectorScanChoicesForXs,
   createProbeDecisionPort,
 } = require("./scan-flow");
+
+assert.throws(
+  () => createBrowserScanFlow(),
+  /Browser Scan bootstrap 缺少 owner getter：alienSpecies/,
+);
 
 assert.deepEqual(
   buildSectorScanChoicesForXs([1, 2], (x) => [{ x, kind: "scan" }]),

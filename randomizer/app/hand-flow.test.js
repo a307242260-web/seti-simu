@@ -4,9 +4,15 @@ const assert = require("node:assert/strict");
 const {
   BROWSER_STATIC_DEPENDENCY_KEYS,
   BROWSER_STATIC_CONSTANT_KEYS,
+  createBrowserHandFlow,
   createBrowserHandStaticContext,
   createHandFlow,
 } = require("./hand-flow");
+
+assert.throws(
+  () => createBrowserHandFlow(),
+  /Browser Hand bootstrap 缺少 owner getter：tech/,
+);
 
 {
   const dependencies = Object.fromEntries(

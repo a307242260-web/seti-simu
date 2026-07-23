@@ -51,6 +51,172 @@
     return fn;
   }
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "cards", "players", "data", "scanEffects", "planetRewards", "cardEffects",
+    "abilities", "solar", "runezu", "aomomo", "historyCommands",
+  ]);
+  const BROWSER_STATIC_CONSTANT_KEYS = Object.freeze([
+    "PUBLIC_SCAN_MAX_BONUS_CARDS", "SECTOR_FINISH_ICON_BY_COLOR", "SECTOR_WIN_REWARDS",
+    "PUBLIC_SCAN_TARGETS_BY_CODE", "PUBLIC_SCAN_CODE_LABELS",
+  ]);
+
+  function selectRequired(source, keys, label) {
+    const missing = keys.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(source, key) || source[key] == null,
+    );
+    if (missing.length) throw new Error(`${label} 缺少依赖：${missing.join(", ")}`);
+    return Object.fromEntries(keys.map((key) => [key, source[key]]));
+  }
+
+  function createBrowserScanStaticContext(dependencies = {}, constants = {}) {
+    return Object.freeze({
+      ...selectRequired(dependencies, BROWSER_STATIC_DEPENDENCY_KEYS, "Browser Scan 静态模块"),
+      ...selectRequired(constants, BROWSER_STATIC_CONSTANT_KEYS, "Browser Scan 静态常量"),
+    });
+  }
+
+  function createBrowserScanFlow(options = {}) {
+    const {
+      staticContext,
+      getActionInteractionRuntime,
+      getAlienSpeciesRuntime,
+      getCardRuntime,
+      getEffectExecutionPort,
+      getIndustryRuntime,
+      getTechRuntime,
+      actionSessionRuntime,
+      browserContextRuntime,
+      cardSelectionState,
+      effectExecutorPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      effectSkipRuntime,
+      handFlowRuntime,
+      interactionChrome,
+      pendingSubFlowRuntime,
+      playerEffectOwnerRuntime,
+      renderRuntime,
+      hostPort = {},
+    } = options;
+    const requireGetter = (name, getter) => {
+      if (typeof getter !== "function") {
+        throw new TypeError(`Browser Scan bootstrap 缺少 owner getter：${name}`);
+      }
+      return getter;
+    };
+    const lazy = (ownerName, getter, methodName) => {
+      const getOwner = requireGetter(ownerName, getter);
+      return (...args) => {
+        const method = getOwner()?.[methodName];
+        if (typeof method !== "function") {
+          throw new Error(`Browser Scan owner ${ownerName} 缺少方法：${methodName}`);
+        }
+        return method(...args);
+      };
+    };
+    const alien = (methodName) => lazy("alienSpecies", getAlienSpeciesRuntime, methodName);
+    const card = (methodName) => lazy("card", getCardRuntime, methodName);
+    const industry = (methodName) => lazy("industry", getIndustryRuntime, methodName);
+    const tech = (methodName) => lazy("tech", getTechRuntime, methodName);
+    const actionInteraction = (methodName) => (
+      lazy("actionInteraction", getActionInteractionRuntime, methodName)
+    );
+    const effectExecution = (methodName) => (
+      lazy("effectExecution", getEffectExecutionPort, methodName)
+    );
+
+    return createScanFlowHelpers({
+      ...staticContext,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      clearPendingAmibaSymbolChoice: alien("clearAmibaSymbolDecisionDraft"),
+      clearPendingRunezuSymbolBranch: alien("clearRunezuSymbolBranchDecisionDraft"),
+      clearPendingRunezuFaceSymbolPlacement: alien("clearRunezuFaceSymbolDecisionDraft"),
+      getPendingYichangdianCornerAction: hostPort.getPendingYichangdianCornerAction,
+      clearPendingAmibaCardGain: alien("clearAmibaCardGainDecisionDraft"),
+      clearPendingAomomoCardGain: alien("clearAomomoCardGainDecisionDraft"),
+      clearPendingRunezuCardGain: alien("clearRunezuCardGainDecisionDraft"),
+      clearPendingAmibaTraceRemoval: alien("clearAmibaTraceRemovalDecisionDraft"),
+      document: hostPort.document,
+      structuredClone: hostPort.structuredClone,
+      els: hostPort.els,
+      PUBLIC_SCAN_MAX_BONUS_CARDS: staticContext.PUBLIC_SCAN_MAX_BONUS_CARDS,
+      SECTOR_FINISH_ICON_BY_COLOR: staticContext.SECTOR_FINISH_ICON_BY_COLOR,
+      SECTOR_WIN_REWARDS: staticContext.SECTOR_WIN_REWARDS,
+      PUBLIC_SCAN_TARGETS_BY_CODE: staticContext.PUBLIC_SCAN_TARGETS_BY_CODE,
+      PUBLIC_SCAN_CODE_LABELS: staticContext.PUBLIC_SCAN_CODE_LABELS,
+      SCAN_TARGET_ACTION_LAYOUT_CLASSES: hostPort.SCAN_TARGET_ACTION_LAYOUT_CLASSES,
+      renderStateReadout: renderRuntime?.renderStateReadout,
+      renderPlayerStats: renderRuntime?.renderPlayerStats,
+      renderPublicCards: renderRuntime?.renderPublicCards,
+      renderPlayerHand: renderRuntime?.renderPlayerHand,
+      updatePublicCardControls: card("updatePublicCardControls"),
+      updateActionButtons: hostPort.updateActionButtons,
+      syncPublicScanConfirmButton: hostPort.syncPublicScanConfirmButton,
+      syncCardSelectionChrome: card("syncCardSelectionChrome"),
+      syncHandScanSelectionChrome: handFlowRuntime?.syncHandScanSelectionChrome,
+      beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
+      endEffectHistoryStep: effectFlowRuntime?.endEffectHistoryStep,
+      recordHistoryCommand: effectFlowRuntime?.recordHistoryCommand,
+      recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
+      actionHistory: hostPort.actionHistory,
+      isTechTilePickingActive: tech("isTechTilePickingActive"),
+      isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
+      isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
+      isPlayCardSelectionActive: cardSelectionState?.isPlayCardSelectionActive,
+      isMovePaymentSelectionActive: handFlowRuntime?.isMovePaymentSelectionActive,
+      isHandScanSelectionActive: handFlowRuntime?.isHandScanSelectionActive,
+      getFlowMarkedNebulaIds: hostPort.getFlowMarkedNebulaIds,
+      normalizeResourceCost: hostPort.normalizeResourceCost,
+      createActionContext: hostPort.createActionContext,
+      canStartMainAction: actionSessionRuntime?.canStartMainAction,
+      getMainActionStartBlockReason: actionSessionRuntime?.getMainActionStartBlockReason,
+      HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
+      startActionLogDraft: effectFlowRuntime?.startActionLogDraft,
+      clearHistoryStepOrderForSource: effectFlowRuntime?.clearHistoryStepOrderForSource,
+      removeActionLogStepsBySource: effectFlowRuntime?.removeActionLogStepsBySource,
+      maybeConsumeAlienLabPanelForMainAction: industry("maybeConsumeAlienLabPanelForMainAction"),
+      rememberHistoryStep: effectFlowRuntime?.rememberHistoryStep,
+      appendActionLogStep: effectFlowRuntime?.appendActionLogStep,
+      actionLogOptionsFromHistoryStep: effectFlowRuntime?.actionLogOptionsFromHistoryStep,
+      createScanRunId: browserContextRuntime?.createScanRunId,
+      assignEffectFlowOwner: playerEffectOwnerRuntime?.assignEffectFlowOwner,
+      enrichScanResultEvents: effectExecutorPort?.enrichScanResultEvents,
+      renderSectors: renderRuntime?.renderSectors,
+      insertActionEffectsAfterCurrent: effectExecutorPort?.insertActionEffectsAfterCurrent,
+      completeCurrentActionEffect: effectFlowRuntime?.completeCurrentActionEffect,
+      finishAutomaticRewardEffect: effectExecutorPort?.finishAutomaticRewardEffect,
+      setActiveEffectFlowOwner: playerEffectOwnerRuntime?.setActiveEffectFlowOwner,
+      getNormalTokenAssetForPlayer: hostPort.getNormalTokenAssetForPlayer,
+      renderSectorNebulaDataBoard: renderRuntime?.renderSectorNebulaDataBoard,
+      renderAlienPanels: alien("renderAlienPanels"),
+      renderRockets: renderRuntime?.renderRockets,
+      assignEffectOwner: playerEffectOwnerRuntime?.assignEffectOwner,
+      activateNextActionEffect: effectFlowRuntime?.activateNextActionEffect,
+      getPendingOwnerFields: playerEffectOwnerRuntime?.getPendingOwnerFields,
+      withPendingOwnerPlayer: playerEffectOwnerRuntime?.withPendingOwnerPlayer,
+      confirmIndustryHeliosRemoveTech: industry("confirmIndustryHeliosRemoveTech"),
+      isActionEffectFlowActive: effectFlowRuntime?.isActionEffectFlowActive,
+      skipActionEffectWithMessage: effectSkipRuntime?.skipWithMessage,
+      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+      applyAomomoScanCostAndBonus: effectExecutorPort?.applyAomomoScanCostAndBonus,
+      maybeReturnPlayedCardToHandAfterSectorScan: effectExecutorPort?.maybeReturnPlayedCardToHandAfterSectorScan,
+      maybeCompleteActionEffectFromScan: effectExecution("maybeCompleteFromScan"),
+      markCurrentActionIrreversible: actionSessionRuntime?.markCurrentActionIrreversible,
+      syncInteractionFocusChrome: interactionChrome?.syncInteractionFocusChrome,
+      openYichangdianCornerPicker: effectExecutorPort?.openYichangdianCornerPicker,
+      rollbackPendingIndustryQuickAction: industry("rollbackPendingIndustryQuickAction"),
+      beginCardSelection: card("beginCardSelection"),
+      renderRocketElement: renderRuntime?.renderRocketElement,
+      maybeApplyIndustryLaunchScan: industry("maybeApplyIndustryLaunchScan"),
+      getMovableTokensForWorkingRoot: hostPort.getMovableTokensForWorkingRoot,
+      activateMoveMode: actionInteraction("activateMoveMode"),
+      deactivateMoveMode: actionInteraction("deactivateMoveMode"),
+      selectDefaultRocketForCurrentPlayer: hostPort.selectDefaultRocketForCurrentPlayer,
+      beginSupplementalMovePayment: handFlowRuntime?.beginSupplementalMovePayment,
+      getRequiredMovePointsForWorkingRoot: hostPort.getRequiredMovePointsForWorkingRoot,
+    });
+  }
+
   function createScanAction4Picker(context = {}) {
     const { document, els = {}, players, scanEffects } = context;
     function close() {
@@ -2480,6 +2646,10 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    BROWSER_STATIC_CONSTANT_KEYS,
+    createBrowserScanFlow,
+    createBrowserScanStaticContext,
     createScanFlowHelpers,
     createScanAction4Picker,
     createSectorSettlementRuntime,

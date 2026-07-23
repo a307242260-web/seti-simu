@@ -59,6 +59,165 @@
     });
   }
 
+  function createBrowserHandFlow(options = {}) {
+    const {
+      staticContext,
+      getActionInteractionRuntime,
+      getActionRuntime,
+      getAlienSpeciesRuntime,
+      getCardRuntime,
+      getCardTriggerRuntime,
+      getIncomeRuntime,
+      getIndustryRuntime,
+      getScanRuntime,
+      getTechRuntime,
+      actionSessionRuntime,
+      browserContextRuntime,
+      cardSelectionState,
+      effectExecutorPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      interactionChrome,
+      pendingSubFlowRuntime,
+      playerLookupRuntime,
+      renderRuntime,
+      scoreSourceRuntime,
+      hostPort = {},
+    } = options;
+    const requireGetter = (name, getter) => {
+      if (typeof getter !== "function") {
+        throw new TypeError(`Browser Hand bootstrap 缺少 owner getter：${name}`);
+      }
+      return getter;
+    };
+    const lazy = (ownerName, getter, methodName) => {
+      const getOwner = requireGetter(ownerName, getter);
+      return (...args) => {
+        const method = getOwner()?.[methodName];
+        if (typeof method !== "function") {
+          throw new Error(`Browser Hand owner ${ownerName} 缺少方法：${methodName}`);
+        }
+        return method(...args);
+      };
+    };
+    const card = (methodName) => lazy("card", getCardRuntime, methodName);
+    const cardTrigger = (methodName) => lazy("cardTrigger", getCardTriggerRuntime, methodName);
+    const industry = (methodName) => lazy("industry", getIndustryRuntime, methodName);
+    const scan = (methodName) => lazy("scan", getScanRuntime, methodName);
+    const alien = (methodName) => lazy("alienSpecies", getAlienSpeciesRuntime, methodName);
+    const actionInteraction = (methodName) => (
+      lazy("actionInteraction", getActionInteractionRuntime, methodName)
+    );
+    const income = (methodName) => lazy("income", getIncomeRuntime, methodName);
+    const tech = (methodName) => lazy("tech", getTechRuntime, methodName);
+    const action = (methodName) => lazy("action", getActionRuntime, methodName);
+
+    return createHandFlow({
+      ...staticContext,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      els: hostPort.els,
+      quickActionHistory: hostPort.quickActionHistory,
+      HISTORY_SOURCE_QUICK: hostPort.HISTORY_SOURCE_QUICK,
+      SCORE_SOURCE_KEYS: hostPort.SCORE_SOURCE_KEYS,
+      getCurrentPlayer: playerLookupRuntime?.getCurrentPlayer,
+      getPlayerById: playerLookupRuntime?.getPlayerById,
+      getPlayerByColor: playerLookupRuntime?.getPlayerByColor,
+      getGameplayLockReason: hostPort.getGameplayLockReason,
+      isTechTilePickingActive: tech("isTechTilePickingActive"),
+      isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
+      isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
+      isPlayCardSelectionActive: cardSelectionState?.isPlayCardSelectionActive,
+      isIndustryHandSelectionActive: industry("isIndustryHandSelectionActive"),
+      hasActivePendingSubFlow: pendingSubFlowRuntime?.hasActivePendingSubFlow,
+      getHandCardPlayActionForCard: card("getHandCardPlayActionForCard"),
+      getCardCornerQuickActionForCard: card("getCardCornerQuickActionForCard"),
+      canUseCardCornerQuickAction: card("canUseCardCornerQuickAction"),
+      shouldQueueCardCornerMoveQuickAction: card("shouldQueueCardCornerMoveQuickAction"),
+      canPayForMove: hostPort.canPayForMove,
+      getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
+      isMovePaymentCard: hostPort.isMovePaymentCard,
+      playerHasMovePaymentCard: hostPort.playerHasMovePaymentCard,
+      hasPlayableFutureSpanCard: card("hasPlayableFutureSpanCard"),
+      getStandardPlayCardActionBlockReason: card("getStandardPlayCardActionBlockReason"),
+      getCardPlayCost: card("getCardPlayCost"),
+      formatCardPlayCost: card("formatCardPlayCost"),
+      restoreObjectSnapshot: hostPort.restoreObjectSnapshot,
+      releaseFutureSpanAfterPlayWithHistory: card("releaseFutureSpanAfterPlayWithHistory"),
+      markActionPending: actionSessionRuntime?.markActionPending,
+      renderPlayerHand: renderRuntime?.renderPlayerHand,
+      renderPlayerStats: renderRuntime?.renderPlayerStats,
+      renderReservedCards: renderRuntime?.renderReservedCards,
+      renderPublicCards: renderRuntime?.renderPublicCards,
+      renderInitialSelectionArea: renderRuntime?.renderInitialSelectionArea,
+      renderAlienPanels: alien("renderAlienPanels"),
+      renderStateReadout: renderRuntime?.renderStateReadout,
+      updatePublicCardControls: card("updatePublicCardControls"),
+      updatePlayerHandPanelTitle: hostPort.updatePlayerHandPanelTitle,
+      updateActionButtons: hostPort.updateActionButtons,
+      setQuickPanelOpen: hostPort.setQuickPanelOpen,
+      syncInteractionFocusChrome: interactionChrome?.syncInteractionFocusChrome,
+      openScanTargetPicker: scan("openScanTargetPicker"),
+      getPublicScanChoicesForCard: scan("getPublicScanChoicesForCard"),
+      executeFreeMoveForScanAction4: scan("executeFreeMoveForScanAction4"),
+      executeFreeMoveForCardCorner: card("executeFreeMoveForCardCorner"),
+      executeFreeMoveForCardTrigger: cardTrigger("executeFreeMoveForCardTrigger"),
+      executeIndustryFreeMove: hostPort.executeIndustryFreeMove,
+      executeCardEffectMove: card("executeCardEffectMove"),
+      createActionContext: hostPort.createActionContext,
+      recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
+      recordQuickHistoryCommand: effectFlowRuntime?.recordQuickHistoryCommand,
+      executePrimaryBoardAction: (...args) => action("executePrimaryBoardAction")(
+        hostPort.createActionContext(args[0], args[1]),
+        ...args.slice(1),
+      ),
+      renderRocketElement: renderRuntime?.renderRocketElement,
+      clearMoveRocketHighlight: actionInteraction("clearMoveRocketHighlight"),
+      beginQuickActionStep: effectFlowRuntime?.beginQuickActionStep,
+      completeQuickActionStep: effectFlowRuntime?.completeQuickActionStep,
+      clearHistoryStepOrderForSource: effectFlowRuntime?.clearHistoryStepOrderForSource,
+      addScoreSourceFromGain: scoreSourceRuntime?.addScoreSourceFromGain,
+      isAlienFamilyCard: effectExecutorPort?.isAlienFamilyCard,
+      applyFangzhouCard1Rewards: alien("applyFangzhouCard1Rewards"),
+      applyRunezuSymbolReward: alien("applyRunezuSymbolReward"),
+      settleCardTasksAfterEffect: cardTrigger("settleCardTasksAfterEffect"),
+      formatCardCornerRewardMessage: card("formatCardCornerRewardMessage"),
+      createCardCornerTriggerEventFields: card("createCardCornerTriggerEventFields"),
+      canStartCardCornerFreeMove: card("canStartCardCornerFreeMove"),
+      beginCardCornerFreeMove: card("beginCardCornerFreeMove"),
+      startCardCornerMoveEffectFlow: card("startCardCornerMoveEffectFlow"),
+      rollbackPendingIndustryQuickAction: industry("rollbackPendingIndustryQuickAction"),
+      continuePendingDataPlacementAfterBonus: actionInteraction("continuePendingDataPlacementAfterBonus"),
+      applyIndustryPlayCardPassives: industry("applyIndustryPlayCardPassives"),
+      buildPlayCardEffectFlowQueue: industry("buildPlayCardEffectFlowQueue"),
+      createImmediatePlayCardEvent: card("createImmediatePlayCardEvent"),
+      createPlayCardEvent: card("createPlayCardEvent"),
+      recordPlayCardStart: card("recordPlayCardStart"),
+      startPlayCardEffectFlow: effectFlowRuntime?.startPlayCardEffectFlow,
+      appendIndustryPlayPassiveStatus: industry("appendIndustryPlayPassiveStatus"),
+      recordMainActionIrreversibleBarrier: hostPort.recordMainActionIrreversibleBarrier,
+      renderFangzhouCardDisplays: alien("renderFangzhouCardDisplays"),
+      getFangzhouCard1RewardTargetOptions: alien("getFangzhouCard1RewardTargetOptions"),
+      getTargetPlayerOptions: browserContextRuntime?.getTargetPlayerOptions,
+      buildFangzhouCard1EffectQueue: alien("buildFangzhouCard1EffectQueue"),
+      applyIncomeFromCard: income("applyIncomeFromCard"),
+      beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
+      recordHistoryCommand: effectFlowRuntime?.recordHistoryCommand,
+      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+      completeCurrentActionEffect: effectFlowRuntime?.completeCurrentActionEffect,
+      isIncomeDiscardActionType: income("isIncomeDiscardActionType"),
+      submitDiscardDecision: hostPort.submitDiscardDecision,
+      scrollToPlayerCommandPanel: hostPort.scrollToPlayerCommandPanel,
+      getCardTypeCode: card("getCardTypeCode"),
+      dispatchStandardIntent: hostPort.dispatchStandardIntent,
+      blockManualAiMovePayment: hostPort.blockManualAiMovePayment,
+      blockIncompatiblePendingQuickAction: hostPort.blockIncompatiblePendingQuickAction,
+      recordQuickTradeCompletion: effectFlowRuntime?.recordQuickTradeCompletion,
+      formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
+      getDiscardCornerRewardMultiplier: card("getDiscardCornerRewardMultiplier"),
+      requestAnimationFrame: hostPort.requestAnimationFrame,
+    });
+  }
+
   function createHandFlow(context = {}) {
     const {
       uiRuntimeState,
@@ -2080,6 +2239,7 @@
   return {
     BROWSER_STATIC_DEPENDENCY_KEYS,
     BROWSER_STATIC_CONSTANT_KEYS,
+    createBrowserHandFlow,
     createBrowserHandStaticContext,
     createHandFlow,
     createMovePaymentDecisionPort,
