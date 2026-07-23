@@ -52,6 +52,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/machine-player-host.test.js", "architecture/policy-host", "Machine Player Host 独占代次、取消和合法性门禁", "旧 generation 响应推进当前回合"),
     entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位通过 PolicyInputAdapter 装配", "浏览器 AI 绕过公共 input port 直接执行规则"),
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
+    entry("randomizer/game/ai/probe-route-evaluator.test.js", "policy/heuristic-policy", "探测器路线只把标准叶真实净收益归给合法下一步", "PASS、无关动作、多探测器或重复终点继承路线价值"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
 
     entry("randomizer/game/actions/standard-action.test.js", "rules/actions", "Standard Action registry 的 identity、phase、validate/execute 协议", "未知、stale、越权 descriptor 到达 handler"),

@@ -686,10 +686,22 @@ function applyAlienTraceChoice(workingState, pending, choice) {
     player.color,
   );
   if (!placed?.ok) return placed;
-  const reward = placed.extraOnly
-    ? aliens.getExtraTraceReward?.()
-    : aliens.getFirstTraceRewardForSlot?.(alienSlotId);
-  if (reward?.gain) players.gainResources(player, reward.gain);
+  const firstYellowReward = !placed.extraOnly && traceType === "yellow"
+    ? {
+      gain: { publicity: 1 },
+      alienCard: {
+        id: `alien-trace-reward:${alienSlotId}:${player.id}`,
+        kind: "alien",
+        source: "first-yellow-trace",
+        alienSlotId,
+      },
+    }
+    : null;
+  if (firstYellowReward) {
+    players.gainResources(player, firstYellowReward.gain);
+    if (!Array.isArray(player.alienCards)) player.alienCards = [];
+    player.alienCards.push(firstYellowReward.alienCard);
+  }
   let revealed = null;
   if (placed.readyToReveal) {
     const assignedAlienId = aliens.getAlienSlot?.(
@@ -709,16 +721,16 @@ function applyAlienTraceChoice(workingState, pending, choice) {
       alienSlotId,
       traceType,
       playerId: player.id,
-      reward: clone(reward?.gain || null),
+      reward: clone(firstYellowReward || null),
       revealed: revealed?.ok ? revealed.alienId : null,
     }],
   };
 }
 
-function applyLandRewardEffects(workingState, result, markerSequenceOverride = null) {
+function applyPlanetRewardEffects(workingState, actionId, result, markerSequenceOverride = null) {
   const player = getActionOwner(workingState, result);
   if (!player) {
-    return { ok: false, code: "PLANET_REWARD_OWNER_MISSING", message: "登陆奖励 owner 不存在" };
+    return { ok: false, code: "PLANET_REWARD_OWNER_MISSING", message: "行星奖励 owner 不存在" };
   }
   const rewardResult = markerSequenceOverride != null
     ? {
@@ -726,7 +738,7 @@ function applyLandRewardEffects(workingState, result, markerSequenceOverride = n
       rewardMarkerSequence: markerSequenceOverride,
     }
     : result;
-  const effects = planetRewards.buildRewardEffectsForAction("land", rewardResult);
+  const effects = planetRewards.buildRewardEffectsForAction(actionId, rewardResult);
   const events = [];
   let pendingTrace = null;
   for (const effect of effects) {
@@ -765,7 +777,7 @@ function applyLandRewardEffects(workingState, result, markerSequenceOverride = n
     return {
       ok: false,
       code: "SIMULATION_PLANET_REWARD_UNSUPPORTED",
-      message: `Simulation composition 尚未接入登陆奖励效果 ${effect.type}`,
+      message: `Simulation composition 尚未接入${actionId}奖励效果 ${effect.type}`,
     };
   }
   return { ok: true, events, pendingTrace };
@@ -847,8 +859,8 @@ function createSimulationRuleComposition(options = {}) {
         : null;
       const result = baseRegistry.execute(context, action);
       if (result?.ok) {
-        if (action.family === "land") {
-          const reward = applyLandRewardEffects(root, result, landMarkerSequence);
+        if (action.family === "land" || action.family === "orbit") {
+          const reward = applyPlanetRewardEffects(root, action.family, result, landMarkerSequence);
           if (!reward.ok) return reward;
           result.events = [...(result.events || []), ...(reward.events || [])];
           if (reward.pendingTrace) {
@@ -891,9 +903,19 @@ function createSimulationRuleComposition(options = {}) {
         rockets.canMoveRocket?.(root.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok
       )).map((direction) => ({
         target: { rocketId: rocket.id, deltaX: direction.deltaX, deltaY: direction.deltaY },
-        payload: { requiredMovePoints: 1 },
+        payload: {
+          requiredMovePoints: rocketAbility.getRequiredMovePoints(
+            createActionContext(root),
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+          ),
+        },
         summary: `移动火箭 ${rocket.id} ${direction.id}`,
-      }));
+      })).filter((candidate) => (
+        Number(player.resources?.energy || 0) >= candidate.payload.requiredMovePoints
+      ));
     },
     validate(context, action) {
       return this.enumerate(context).some((candidate) => candidate.target.rocketId === action.target?.rocketId)
@@ -944,14 +966,23 @@ function createSimulationRuleComposition(options = {}) {
         ? workingState.match.pendingDecision : null;
       if (pendingMove) {
         const player = workingState.playerState.players.find((candidate) => candidate.id === pendingMove.playerId);
-        const spend = players.spendResources(player, { energy: pendingMove.requiredMovePoints });
-        if (!spend.ok) return spend;
-        const moved = rockets.moveRocket(
-          workingState.rocketState, pendingMove.rocketId, pendingMove.deltaX, pendingMove.deltaY,
-        );
+        const moved = rocketAbility.moveProbe(createActionContext(workingState), {
+          rocketId: pendingMove.rocketId,
+          deltaX: pendingMove.deltaX,
+          deltaY: pendingMove.deltaY,
+          cost: { energy: pendingMove.requiredMovePoints },
+          providedMovePoints: pendingMove.requiredMovePoints,
+          source: "move",
+        });
         if (!moved.ok) return moved;
         delete workingState.match.pendingDecision;
-        return { ok: true, progressed: true, events: [{ type: "move", rocketId: pendingMove.rocketId }] };
+        return {
+          ok: true,
+          progressed: true,
+          events: moved.events?.length
+            ? moved.events
+            : [{ type: "move", rocketId: pendingMove.rocketId }],
+        };
       }
       const pending = workingState.match.pendingDecision?.kind === "discard"
         ? workingState.match.pendingDecision : null;

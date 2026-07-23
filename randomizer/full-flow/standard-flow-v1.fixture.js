@@ -74,5 +74,5 @@ module.exports = Object.freeze({
     ],
     pending: ["player-white", "player-white", "conditional_choice", 4],
   },
-    finalCheckpointHash: "566026a75b43baa9157287f00134c1a8e6e82b9ca536dc4c1f5bc7e81e9023fd",
+    finalCheckpointHash: "4fa18342d552608f6521f7b02816365d7c6b4d155cdf33763008069530704702",
 });

@@ -9,9 +9,10 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
-  const EVALUATION_MODEL = "counterfactual-leaf-value-v1";
-  const PARAMETER_VERSION = "seti-theta0-v1";
+  const EVALUATION_MODEL = "counterfactual-probe-route-v1";
+  const PARAMETER_VERSION = "seti-theta0-probe-v1";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
+  const PROBE_FAMILIES = Object.freeze(new Set(["launch", "move", "orbit", "land"]));
   const DEFAULT_PARAMETERS = Object.freeze({
     parameterVersion: PARAMETER_VERSION,
     resourceValues: Object.freeze({
@@ -61,7 +62,7 @@
     }
     const projection = observation.outcomeProjection;
     const terminal = projection.terminal;
-    const score = terminal
+    const realizedScore = terminal
       ? finite(projection.scoring.officialTerminalScore)
       : finite(projection.scoring.realizedScore);
     const assetBreakdown = {
@@ -74,14 +75,15 @@
     };
     const unrealizedAssets = terminal
       ? 0
-      : Object.values(assetBreakdown).reduce((sum, value) => sum + value, 0);
+      : Object.values(assetBreakdown).reduce((total, value) => total + value, 0);
     return deepFreeze({
+      schemaVersion: outcomeModel.VALUE_SCHEMA_VERSION,
       evaluationModel: EVALUATION_MODEL,
       parameterVersion: parameters.parameterVersion,
       terminal,
-      realizedScore: score,
+      realizedScore,
       unrealizedAssets,
-      total: score + unrealizedAssets,
+      total: realizedScore + unrealizedAssets,
       assetBreakdown,
       fieldPaths: {
         realizedScore: terminal
@@ -92,60 +94,92 @@
     });
   }
 
-  function evaluateOutcome(context, action) {
+  function deltaValue(delta, parameters) {
+    return finite(delta?.realizedScore)
+      + finite(delta?.credits) * parameters.resourceValues.credits
+      + finite(delta?.energy) * parameters.resourceValues.energy
+      + finite(delta?.availableData) * parameters.resourceValues.availableData
+      + finite(delta?.publicity) * parameters.resourceValues.publicity
+      + finite(delta?.ordinaryCards) * parameters.resourceValues.ordinaryCard
+      + finite(delta?.alienCards) * parameters.resourceValues.alienCard;
+  }
+
+  function unresolved(outcome, code) {
+    return deepFreeze({
+      evaluationModel: EVALUATION_MODEL,
+      score: null,
+      qProbe: null,
+      status: outcome?.status || "unresolved",
+      confidence: outcome?.confidence || "none",
+      reasonCodes: [code],
+    });
+  }
+
+  function evaluateOutcome(context, action, inputParameters = {}) {
     const outcome = (context?.actionOutcomes || []).find((candidate) => (
       candidate?.actionId === action?.actionId
     ));
-    if (!outcome) {
-      return deepFreeze({
-        evaluationModel: EVALUATION_MODEL,
-        score: null,
-        status: "unresolved",
-        confidence: "none",
-        reasonCodes: ["outcome-missing"],
-      });
+    if (!outcome) return unresolved(null, "outcome-missing");
+    if (outcome.schemaVersion !== OUTCOME_SCHEMA_VERSION || outcome.status !== "settled") {
+      return unresolved(outcome, outcome.code || "outcome-unresolved");
     }
-    if (outcome.schemaVersion !== OUTCOME_SCHEMA_VERSION
-      || outcome.status !== "settled") {
-      return deepFreeze({
-        evaluationModel: EVALUATION_MODEL,
-        score: null,
-        status: outcome.status || "unresolved",
-        confidence: outcome.confidence || "none",
-        reasonCodes: [outcome.code || "outcome-unresolved"],
-      });
-    }
-    const leaves = Array.isArray(outcome.leaves) ? outcome.leaves : [];
-    const evaluatedLeaves = leaves
+    const parameters = mergeParameters(inputParameters);
+    const rootValue = outcome.rootObservation
+      ? evaluateState(outcome.rootObservation, context.seatId, parameters)
+      : null;
+    const isProbeAction = PROBE_FAMILIES.has(action?.family);
+    const evaluatedLeaves = (outcome.leaves || [])
       .filter((leaf) => leaf?.observation)
-      .map((leaf) => ({
-        leaf,
-        value: evaluateState(leaf.observation, context.seatId),
-      }))
+      .map((leaf) => {
+        const leafValue = evaluateState(leaf.observation, context.seatId, parameters);
+        const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
+        const currentActionDelta = summary
+          ? deltaValue(summary.currentDelta, parameters)
+          : (rootValue ? leafValue.total - rootValue.total : null);
+        const remainingRouteNet = summary
+          ? deltaValue(summary.remainingRouteDelta, parameters)
+          : 0;
+        const qProbe = summary ? currentActionDelta + remainingRouteNet : null;
+        return { leaf, leafValue, summary, currentActionDelta, remainingRouteNet, qProbe };
+      })
+      .filter((candidate) => (
+        !isProbeAction || (candidate.summary?.endpointActionId && candidate.qProbe > 0)
+      ))
       .sort((left, right) => (
-        right.value.total - left.value.total
+        finite(right.qProbe ?? (right.leafValue.total - rootValue?.total))
+        - finite(left.qProbe ?? (left.leafValue.total - rootValue?.total))
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
     const best = evaluatedLeaves[0] || null;
-    const rootValue = outcome.rootObservation
-      ? evaluateState(outcome.rootObservation, context.seatId)
-      : null;
-    const reward = best
-      ? outcomeModel.createReward(outcome.rootObservation, best.leaf.observation)
-      : null;
+    if (!best || !rootValue) {
+      return unresolved(outcome, isProbeAction ? "probe-route-no-positive-net" : "outcome-has-no-leaf");
+    }
+    const score = isProbeAction
+      ? best.qProbe
+      : best.leafValue.total - rootValue.total;
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score: best && rootValue ? best.value.total - rootValue.total : null,
-      status: best ? outcome.status : "unresolved",
-      confidence: outcome.confidence || (best ? "high" : "none"),
+      score,
+      qProbe: isProbeAction ? best.qProbe : null,
+      status: outcome.status,
+      confidence: outcome.confidence || "high",
       rootValue,
-      leafValue: best?.value || null,
-      reward,
-      valueDelta: best && rootValue ? best.value.total - rootValue.total : null,
-      selectedLeafId: best?.leaf?.leafId || null,
-      actionChain: best?.leaf?.actionChain || [],
-      reasonCodes: best ? ["counterfactual-standard-execution"] : ["outcome-has-no-leaf"],
+      leafValue: best.leafValue,
+      currentActionDelta: best.currentActionDelta,
+      remainingRouteNet: isProbeAction ? best.remainingRouteNet : 0,
+      publicityAlongRoute: isProbeAction ? finite(best.summary?.publicityAlongRoute) : 0,
+      endpointDelta: isProbeAction ? cloneDelta(best.summary?.endpointDelta) : null,
+      probeRouteSummary: isProbeAction ? best.summary : null,
+      selectedLeafId: best.leaf.leafId || null,
+      actionChain: best.leaf.actionChain || [],
+      reasonCodes: [isProbeAction
+        ? "probe-route-standard-outcomes"
+        : "counterfactual-standard-execution"],
     });
+  }
+
+  function cloneDelta(value) {
+    return value == null ? null : { ...value };
   }
 
   return Object.freeze({

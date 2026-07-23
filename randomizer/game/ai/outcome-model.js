@@ -7,11 +7,11 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const OBSERVATION_SCHEMA_VERSION = "seti-decision-observation-v1";
+  const OBSERVATION_SCHEMA_VERSION = "seti-decision-observation-v2";
   const OUTCOME_SCHEMA_VERSION = "seti-action-outcome-v1";
-  const PROJECTION_SCHEMA_VERSION = "seti-outcome-projection-v1";
-  const REWARD_SCHEMA_VERSION = "seti-outcome-reward-v1";
-  const VALUE_SCHEMA_VERSION = "seti-outcome-value-v1";
+  const PROJECTION_SCHEMA_VERSION = "seti-outcome-projection-v2";
+  const REWARD_SCHEMA_VERSION = "seti-outcome-reward-v2";
+  const VALUE_SCHEMA_VERSION = "seti-outcome-value-v2";
   const OUTCOME_STATUSES = Object.freeze(new Set([
     "settled", "unresolved", "failed", "stale",
   ]));
@@ -96,19 +96,23 @@
     };
   }
 
+  function isAlienCard(card) {
+    return card?.kind === "alien"
+      || card?.alienId != null
+      || card?.speciesId != null
+      || card?.alienCardId != null
+      || String(card?.set || "").startsWith("alien:");
+  }
+
   function countAlienCards(selfState) {
     const privateCount = count(selfState?.privateAlienCards) ?? 0;
-    const handCount = (selfState?.hand || []).filter((card) => (
-      card?.kind === "alien" || card?.alienId != null || card?.speciesId != null
-    )).length;
+    const handCount = (selfState?.hand || []).filter(isAlienCard).length;
     return privateCount + handCount;
   }
 
   function countOrdinaryCards(selfState, publicPlayer) {
     if (Array.isArray(selfState?.hand)) {
-      return selfState.hand.filter((card) => (
-        card?.kind !== "alien" && card?.alienId == null && card?.speciesId == null
-      )).length;
+      return selfState.hand.filter((card) => !isAlienCard(card)).length;
     }
     return finiteOrNull(publicPlayer?.handCount) ?? 0;
   }
@@ -126,7 +130,47 @@
     return finiteOrNull(publicPlayer?.techCount) ?? 0;
   }
 
-  function countPlayerTraces(source, seatId) {
+  function boardOf(source) {
+    return source?.publicState?.board || source?.board || {};
+  }
+
+  function playerColor(publicPlayer) {
+    return publicPlayer?.color || publicPlayer?.playerColor || null;
+  }
+
+  function boardRockets(source) {
+    const board = boardOf(source);
+    const candidates = board.rockets
+      ?? board.pieces?.public
+      ?? board.pieces?.rockets
+      ?? source?.publicState?.resident?.pieces?.rockets
+      ?? source?.resident?.pieces?.rockets
+      ?? [];
+    return Array.isArray(candidates) ? candidates : [];
+  }
+
+  function createProbeRoute(source, seatId, summary = null) {
+    const deployedProbes = boardRockets(source)
+      .filter((rocket) => (
+        String(rocket?.playerId ?? rocket?.ownerId ?? "") === String(seatId)
+        && rocket?.surface === "solar-board"
+      ))
+      .slice(0, 2)
+      .map((rocket) => ({
+        probeId: rocket.id,
+        position: { x: Number(rocket.sectorX), y: Number(rocket.sectorY) },
+      }));
+    return {
+      deployedProbes,
+      candidate: summary ? clone(summary) : null,
+      fieldPaths: {
+        probes: "publicState.board.rockets",
+        candidate: "standard action outcome route checkpoints",
+      },
+    };
+  }
+
+  function countPlayerTraces(source, seatId, publicPlayer = null) {
     const aliens = source?.publicState?.board?.aliens
       ?? source?.publicState?.aliens
       ?? source?.aliens
@@ -136,18 +180,33 @@
       : Object.values(aliens?.slots || aliens?.aliens || {});
     let traceCount = 0;
     let alienContacts = 0;
+    const color = playerColor(publicPlayer);
     for (const slot of slots) {
       const traces = slot?.traces || {};
       const own = Array.isArray(traces)
-        ? traces.filter((trace) => String(trace?.playerId ?? trace?.ownerId) === String(seatId)).length
-        : finiteOrNull(traces[seatId]) ?? 0;
+        ? traces.filter((trace) => (
+          String(trace?.playerId ?? trace?.ownerId) === String(seatId)
+          || (color && trace?.ownerPlayerColor === color)
+        )).length
+        : Object.values(traces).reduce((total, trace) => {
+          if (finiteOrNull(trace) != null) return total + (finiteOrNull(trace) || 0);
+          const owned = String(trace?.playerId ?? trace?.ownerId ?? "") === String(seatId)
+            || (color && trace?.ownerPlayerColor === color);
+          const extra = Array.isArray(trace?.extraMarkers)
+            ? trace.extraMarkers.filter((marker) => (
+              String(marker?.playerId ?? marker?.ownerId ?? "") === String(seatId)
+              || (color && marker?.playerColor === color)
+            )).length
+            : 0;
+          return total + (owned && trace?.firstPlaced !== false ? 1 : 0) + extra;
+        }, 0);
       traceCount += own;
       if (own > 0 && slot?.revealed !== false) alienContacts += 1;
     }
     return { traceCount, alienContacts };
   }
 
-  function createOutcomeProjection(source, seatId) {
+  function createOutcomeProjection(source, seatId, options = {}) {
     const publicPlayer = findPlayer(source, seatId);
     const selfState = selfStateOf(source, seatId, publicPlayer);
     const resources = publicPlayer?.resources || publicPlayer || selfState?.player?.resources || {};
@@ -161,7 +220,7 @@
     const officialTerminalScore = terminal
       ? (finiteOrNull(publicPlayer?.finalScore) ?? realizedScore)
       : null;
-    const traces = countPlayerTraces(source, seatId);
+    const traces = countPlayerTraces(source, seatId, publicPlayer);
     return deepFreeze({
       schemaVersion: PROJECTION_SCHEMA_VERSION,
       viewerSeatId: String(seatId),
@@ -188,6 +247,7 @@
         techCount: countTech(publicPlayer),
         traceCount: traces.traceCount,
         alienContacts: traces.alienContacts,
+        probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),
       },
     });
   }
@@ -204,19 +264,110 @@
       },
       publicState: publicStateOf(source),
       selfState: selfStateOf(source, seatId, findPlayer(source, seatId)),
-      outcomeProjection: createOutcomeProjection(source, seatId),
+      outcomeProjection: createOutcomeProjection(source, seatId, options),
     });
   }
 
+  function deltaProjection(before, after) {
+    return {
+      realizedScore: after.scoring.realizedScore - before.scoring.realizedScore,
+      credits: after.assets.credits - before.assets.credits,
+      energy: after.assets.energy - before.assets.energy,
+      publicity: after.assets.publicity - before.assets.publicity,
+      availableData: after.assets.availableData - before.assets.availableData,
+      ordinaryCards: after.assets.ordinaryCards - before.assets.ordinaryCards,
+      alienCards: after.assets.alienCards - before.assets.alienCards,
+    };
+  }
+
+  function routeActionIds(checkpoint, previousLength = 0) {
+    return (checkpoint?.actionChain || []).slice(previousLength);
+  }
+
+  function createProbeRouteSummary(rootObservation, checkpoints, fullActionChain) {
+    if (!checkpoints.length) return null;
+    const firstActionId = String(fullActionChain?.[0] || "");
+    const firstFamily = firstActionId.split(":")[0];
+    if (!["launch", "move", "orbit", "land"].includes(firstFamily)) return null;
+    const current = checkpoints[0].observation;
+    const final = checkpoints[checkpoints.length - 1].observation;
+    let endpointIndex = -1;
+    let previousLength = 0;
+    let publicityAlongRoute = 0;
+    const publicityOutcomeRefs = [];
+    for (let index = 0; index < checkpoints.length; index += 1) {
+      const checkpoint = checkpoints[index];
+      const actionIds = routeActionIds(checkpoint, previousLength);
+      previousLength = checkpoint.actionChain.length;
+      const before = index === 0 ? rootObservation : checkpoints[index - 1].observation;
+      const publicityDelta = checkpoint.observation.outcomeProjection.assets.publicity
+        - before.outcomeProjection.assets.publicity;
+      if (index > 0 && publicityDelta > 0) {
+        publicityAlongRoute += publicityDelta;
+        publicityOutcomeRefs.push(...actionIds);
+      }
+      if (actionIds.some((actionId) => (
+        String(actionId).startsWith("orbit:") || String(actionId).startsWith("land:")
+      ))) endpointIndex = index;
+    }
+    const endpoint = endpointIndex >= 0 ? checkpoints[endpointIndex] : null;
+    const beforeEndpoint = endpointIndex > 0
+      ? checkpoints[endpointIndex - 1].observation
+      : rootObservation;
+    const endpointActionId = endpoint
+      ? routeActionIds(endpoint, endpointIndex > 0
+        ? checkpoints[endpointIndex - 1].actionChain.length
+        : 0).find((actionId) => (
+        String(actionId).startsWith("orbit:") || String(actionId).startsWith("land:")
+      )) || null
+      : null;
+    return {
+      nextActionId: fullActionChain[0],
+      nextActionFamily: firstFamily,
+      currentOutcomeRef: checkpoints[0].actionChain.join("→"),
+      routeOutcomeRef: fullActionChain.join("→"),
+      endpointActionId,
+      endpointKind: endpointActionId ? endpointActionId.split(":")[0] : null,
+      currentDelta: deltaProjection(rootObservation.outcomeProjection, current.outcomeProjection),
+      remainingRouteDelta: deltaProjection(current.outcomeProjection, final.outcomeProjection),
+      publicityAlongRoute,
+      publicityOutcomeRefs: publicityOutcomeRefs.slice(0, 6),
+      endpointDelta: endpoint
+        ? deltaProjection(beforeEndpoint.outcomeProjection, endpoint.observation.outcomeProjection)
+        : null,
+    };
+  }
+
   function projectOutcomeObservations(outcomes, options = {}) {
-    return deepFreeze((outcomes || []).map((outcome) => ({
-      ...clone(outcome),
-      rootObservation: createDecisionObservation(outcome.rootObservation, options),
-      leaves: (outcome.leaves || []).map((leaf) => ({
-        ...clone(leaf),
-        observation: createDecisionObservation(leaf.observation, options),
-      })),
-    })));
+    return deepFreeze((outcomes || []).map((outcome) => {
+      const rootObservation = createDecisionObservation(outcome.rootObservation, options);
+      return {
+        ...clone(outcome),
+        rootObservation,
+        leaves: (outcome.leaves || []).map((leaf) => {
+          const checkpoints = (leaf.routeCheckpoints || []).map((checkpoint) => ({
+            actionId: checkpoint.actionId,
+            family: checkpoint.family,
+            actionChain: clone(checkpoint.actionChain || []),
+            observation: createDecisionObservation(checkpoint.observation, options),
+          }));
+          const probeRouteSummary = createProbeRouteSummary(
+            rootObservation,
+            checkpoints,
+            leaf.actionChain || [],
+          );
+          const projectedLeaf = clone(leaf);
+          delete projectedLeaf.routeCheckpoints;
+          return {
+            ...projectedLeaf,
+            observation: createDecisionObservation(leaf.observation, {
+              ...options,
+              probeRouteSummary,
+            }),
+          };
+        }),
+      };
+    }));
   }
 
   function assertOutcomeSet(outcomes, legalActions) {
@@ -265,6 +416,14 @@
       const keys = path.split(".").slice(1);
       const read = (projection) => keys.reduce((value, key) => value?.[key], projection);
       addFact(path, read(before), read(after));
+    }
+    for (const route of ["probeRoute"]) {
+      facts.push({
+        path: `outcomeProjection.progress.${route}`,
+        before: clone(before.progress?.[route] || null),
+        after: clone(after.progress?.[route] || null),
+        delta: null,
+      });
     }
     return deepFreeze({
       schemaVersion: REWARD_SCHEMA_VERSION,

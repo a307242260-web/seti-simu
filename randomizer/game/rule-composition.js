@@ -710,7 +710,7 @@
         timing.forkMilliseconds += now() - forkStartedAt;
       }
 
-      function explore(envelope, action, chain, depth, leaves) {
+      function explore(envelope, action, chain, depth, leaves, checkpoints = [], initialAction = action) {
         if (depth > maxDepth || leaves.length >= maxLeaves) {
           return { unresolved: true, code: "COUNTERFACTUAL_BRANCH_LIMIT" };
         }
@@ -788,7 +788,16 @@
             for (const successor of [...successors].sort((left, right) => (
               String(left.actionId).localeCompare(String(right.actionId))
             ))) {
-              const branch = explore(childSaved.envelope, successor, nextChain, depth + 1, leaves);
+              const branch = explore(
+                childSaved.envelope,
+                successor,
+                nextChain,
+                depth + 1,
+                leaves,
+                checkpoints,
+                initialAction,
+              );
+              if (branch?.failed) return branch;
               unresolved = unresolved || Boolean(branch?.unresolved);
               code = code || branch?.code || null;
             }
@@ -797,12 +806,59 @@
           const projectionStartedAt = now();
           const leafObservation = composition.projection(viewer).state;
           timing.projectionMilliseconds += now() - projectionStartedAt;
+          const nextCheckpoints = [...checkpoints, {
+            actionId: current.actionId,
+            family: current.family,
+            actionChain: nextChain,
+            observation: leafObservation,
+          }];
+          const continuation = typeof evaluateOptions.continueAfterSettled === "function"
+            ? evaluateOptions.continueAfterSettled({
+              initialAction: clone(initialAction),
+              currentAction: clone(current),
+              actionChain: clone(nextChain),
+              checkpoints: clone(nextCheckpoints),
+              legalSuccessors: clone(successors),
+              rootObservation: clone(rootObservation),
+            })
+            : [];
+          const continuationActions = Array.isArray(continuation)
+            ? continuation.filter((candidate) => (
+              successors.some((successor) => successor.actionId === candidate.actionId)
+            ))
+            : [];
+          if (continuationActions.length) {
+            const childSaved = composition.lifecycle.save();
+            if (!childSaved?.ok) {
+              return { failed: true, code: childSaved?.code || "COUNTERFACTUAL_BRANCH_SAVE_FAILED" };
+            }
+            let unresolved = false;
+            let code = null;
+            for (const successor of [...continuationActions].sort((left, right) => (
+              String(left.actionId).localeCompare(String(right.actionId))
+            ))) {
+              const branch = explore(
+                childSaved.envelope,
+                successor,
+                nextChain,
+                depth + 1,
+                leaves,
+                nextCheckpoints,
+                initialAction,
+              );
+              if (branch?.failed) return branch;
+              unresolved = unresolved || Boolean(branch?.unresolved);
+              code = code || branch?.code || null;
+            }
+            return { unresolved, code };
+          }
           leaves.push({
             leafId: `leaf:${stableHash(nextChain)}`,
             status: ["completed", "idle"].includes(nextInspection.phase) ? "settled" : nextInspection.phase,
             actionChain: nextChain,
             observation: leafObservation,
             legalSuccessors: successors,
+            routeCheckpoints: nextCheckpoints,
           });
           return { ok: true };
         } catch (error) {

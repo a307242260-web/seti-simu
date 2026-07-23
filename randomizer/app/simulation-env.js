@@ -92,6 +92,57 @@ function getTurnState(state) {
   return { ...clone(state.turn || {}), currentPlayerId: state.players?.currentPlayerId || state.turn?.currentPlayerId || null };
 }
 
+const PROBE_ROUTE_FAMILIES = new Set(["launch", "move", "orbit", "land"]);
+
+function publicRocketList(observation) {
+  return observation?.publicState?.board?.rockets || [];
+}
+
+function rocketPosition(observation, rocketId) {
+  const rocket = publicRocketList(observation)
+    .find((candidate) => String(candidate?.id) === String(rocketId));
+  return rocket?.surface === "solar-board"
+    ? `${Number(rocket.sectorX)},${Number(rocket.sectorY)}`
+    : null;
+}
+
+function selectProbeRouteContinuations(context) {
+  const initial = context.initialAction;
+  if (!PROBE_ROUTE_FAMILIES.has(initial?.family)) return [];
+  if ((context.actionChain || []).some((actionId) => (
+    String(actionId).startsWith("orbit:") || String(actionId).startsWith("land:")
+  ))) return [];
+  if ((context.checkpoints || []).length >= 6) return [];
+
+  let rocketId = initial.target?.rocketId ?? null;
+  if (initial.family === "launch") {
+    const rootIds = new Set(publicRocketList(context.rootObservation).map((rocket) => String(rocket.id)));
+    const launched = publicRocketList(context.checkpoints?.[0]?.observation)
+      .find((rocket) => rocket?.surface === "solar-board" && !rootIds.has(String(rocket.id)));
+    rocketId = launched?.id ?? null;
+  }
+  if (rocketId == null) return [];
+
+  const visited = new Set([
+    rocketPosition(context.rootObservation, rocketId),
+    ...(context.checkpoints || []).map((checkpoint) => rocketPosition(checkpoint.observation, rocketId)),
+  ].filter(Boolean));
+  const currentPosition = rocketPosition(
+    context.checkpoints?.[context.checkpoints.length - 1]?.observation,
+    rocketId,
+  );
+  return (context.legalSuccessors || []).filter((successor) => {
+    if (!["move", "orbit", "land"].includes(successor.family)) return false;
+    if (successor.target?.rocketId != null
+      && String(successor.target.rocketId) !== String(rocketId)) return false;
+    if (successor.family !== "move") return true;
+    if (!currentPosition) return false;
+    const [x, y] = currentPosition.split(",").map(Number);
+    const nextPosition = `${x + Number(successor.target?.deltaX || 0)},${y + Number(successor.target?.deltaY || 0)}`;
+    return !visited.has(nextPosition);
+  });
+}
+
 function buildDecisionFromState(state, legalActions) {
   const turn = getTurnState(state);
   if (turn.gameEnded) return null;
@@ -197,9 +248,10 @@ function createSimulationEnv() {
     ));
     return composition.counterfactualPort.evaluate(descriptors, {
       viewer: { playerId: legal[0]?.actorPlayerId || null, role: "player" },
-      maxDepth: options.maxDepth || 8,
-      maxLeaves: options.maxLeaves || 64,
+      maxDepth: options.maxDepth || 12,
+      maxLeaves: options.maxLeaves || 16,
       confidence: "low",
+      continueAfterSettled: selectProbeRouteContinuations,
     });
   }
 

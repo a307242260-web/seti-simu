@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("./simulation-env");
 const outcomeModel = require("../game/ai/outcome-model");
+const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const solar = require("../solar-system/core");
 
 function drainOpeningDecisions(environment) {
@@ -57,6 +58,25 @@ function createSaturnLandingCheckpoint(environment) {
   checkpoint.coreState.compositionEnvelope.committedState = JSON.stringify(roots[1]);
   checkpoint.replaySteps = null;
   return { checkpoint, playerId: green.id };
+}
+
+function createSaturnApproachCheckpoint(environment) {
+  const result = createSaturnLandingCheckpoint(environment);
+  const checkpoint = structuredClone(result.checkpoint);
+  const roots = [
+    JSON.parse(checkpoint.coreState.committedState),
+    JSON.parse(checkpoint.coreState.compositionEnvelope.committedState),
+  ];
+  for (const root of roots) {
+    const saturn = solar.createSolarSnapshot(root.solarSystem)
+      .planetLocations.find((planet) => planet.planetId === "saturn");
+    const rocket = root.pieces.rockets.find((candidate) => candidate.playerId === result.playerId);
+    rocket.sectorX = (Number(saturn.x) + 1) % 8;
+    rocket.sectorY = Number(saturn.y);
+  }
+  checkpoint.coreState.committedState = JSON.stringify(roots[0]);
+  checkpoint.coreState.compositionEnvelope.committedState = JSON.stringify(roots[1]);
+  return { checkpoint, playerId: result.playerId };
 }
 
 const env = createSimulationEnv();
@@ -137,23 +157,39 @@ try {
     assert.equal(outcome.leaves.length, 2, "两个未揭示外星人槽位必须形成两个真实叶子");
     assert.equal(outcome.leaves.every((leaf) => leaf.actionChain.length === 2), true,
       "登陆叶必须包含 land -> 黄色痕迹 Decision 全链");
-    const leafStats = outcome.leaves.map((leaf) => {
-      const player = leaf.observation.publicState.players
-        .find((candidate) => candidate.playerId === playerId);
-      return { score: player.score, availableData: player.availableData };
-    });
-    assert.deepEqual(leafStats, [
-      { score: 13, availableData: 2 },
-      { score: 11, availableData: 2 },
-    ], "每个叶必须包含登陆 8 分、首次 2 数据及痕迹槽位奖励");
+    const projectedLanding = outcomeModel.projectOutcomeObservations([outcome], {
+      seatId: playerId,
+      stateVersion: landing.stateVersion,
+      decisionVersion: landing.decisionVersion,
+    })[0];
+    assert.equal(projectedLanding.leaves.every((leaf) => (
+      leaf.observation.outcomeProjection.progress.probeRoute.candidate?.endpointKind === "land"
+      && leaf.observation.outcomeProjection.progress.probeRoute.candidate?.nextActionId === landing.actionId
+      && !Object.hasOwn(leaf, "routeCheckpoints")
+    )), true, "探测器 projection 只保留固定摘要和标准 outcome 引用，不携带完整路线 checkpoint");
+    const landingEvaluation = expectedScoreEvaluator.evaluateAction({
+      seatId: playerId,
+      actionOutcomes: [projectedLanding],
+    }, landing);
+    assert.ok(
+      Math.abs(
+        landingEvaluation.qProbe
+        - (landingEvaluation.leafValue.total - landingEvaluation.rootValue.total)
+      ) < Number.EPSILON * 100,
+      "探测器 Q 必须完全等于实际 root/leaf 字段估值差",
+    );
+    assert.equal(landingEvaluation.currentActionDelta, landingEvaluation.qProbe);
+    assert.equal(landingEvaluation.remainingRouteNet, 0);
+    assert.match(landingEvaluation.probeRouteSummary.endpointActionId, /^land:/);
+    const rootAssets = projectedLanding.rootObservation.outcomeProjection.assets;
+    assert.equal(projectedLanding.leaves.every((leaf) => (
+      leaf.observation.outcomeProjection.assets.ordinaryCards === rootAssets.ordinaryCards
+      && leaf.observation.outcomeProjection.assets.alienCards === rootAssets.alienCards + 1
+    )), true, "标准叶中的黄色痕迹奖励牌必须只进入 alienCards");
     assert.deepEqual(sandbox.createCheckpoint(), before, "土星候选评估不得污染 canonical root");
 
     const directLanding = actual.legalActions().find((action) => action.actionId === landing.actionId);
     assert.equal(actual.step(directLanding).ok, true);
-    const afterLand = actual.observe(playerId).publicState.players
-      .find((player) => player.playerId === playerId);
-    assert.equal(afterLand.score, 8, "土星登陆生产奖励必须先结算 8 分");
-    assert.equal(afterLand.availableData, 2, "土星首次登陆必须结算 2 数据");
     const traceChoices = actual.legalActions();
     assert.equal(traceChoices.length, 2);
     assert.equal(traceChoices.every((choice) => (
@@ -161,12 +197,59 @@ try {
       && choice.target?.kind === "planet-reward-alien-trace"
       && choice.target?.traceType === "yellow"
     )), true);
-    assert.equal(actual.step(traceChoices[0]).ok, true);
+    const selectedTrace = traceChoices[0];
+    assert.equal(actual.step(selectedTrace).ok, true);
+    const matchingLeaf = projectedLanding.leaves.find((leaf) => (
+      leaf.actionChain.at(-1) === selectedTrace.actionId
+    ));
+    assert.ok(matchingLeaf, "直接标准 Decision 必须存在对应反事实叶");
+    const directObservation = outcomeModel.createDecisionObservation(
+      actual.observe(playerId),
+      {
+        seatId: playerId,
+        stateVersion: selectedTrace.stateVersion,
+        decisionVersion: selectedTrace.decisionVersion,
+      },
+    );
+    assert.deepEqual(
+      directObservation.outcomeProjection.scoring,
+      matchingLeaf.observation.outcomeProjection.scoring,
+      "直接标准执行与反事实叶的分数字段必须一致",
+    );
+    assert.deepEqual(
+      directObservation.outcomeProjection.assets,
+      matchingLeaf.observation.outcomeProjection.assets,
+      "直接标准执行与反事实叶的资源/牌型字段必须一致",
+    );
     const committed = JSON.parse(actual.createCheckpoint().coreState.committedState);
-    assert.equal(committed.aliens.aliens[traceChoices[0].target.alienSlotId].traces.yellow.firstPlaced, true);
+    assert.equal(committed.aliens.aliens[selectedTrace.target.alienSlotId].traces.yellow.firstPlaced, true);
   } finally {
     sandbox.dispose();
     actual.dispose();
+  }
+}
+
+{
+  const environment = createSimulationEnv();
+  try {
+    environment.reset({ seed: "seti-104-official-v1", activePlayerCount: 4 });
+    const { checkpoint, playerId } = createSaturnApproachCheckpoint(environment);
+    environment.loadCheckpoint(checkpoint);
+    const move = environment.legalActions().find((action) => action.family === "move");
+    assert.ok(move, "土星相邻格必须能枚举标准移动");
+    const publicityBefore = environment.observe(playerId).publicState.players
+      .find((candidate) => candidate.playerId === playerId).publicity;
+    assert.equal(environment.step(move).ok, true);
+    const payment = environment.legalActions().find((action) => action.family === "choose_payment");
+    assert.ok(payment, "标准移动必须继续进入支付 Decision");
+    const paymentResult = environment.step(payment);
+    assert.equal(paymentResult.ok, true, JSON.stringify(paymentResult.failure || paymentResult));
+    const player = environment.observe(playerId).publicState.players
+      .find((candidate) => candidate.playerId === playerId);
+    assert.equal(player.publicity, publicityBefore + 1,
+      "沿途经过非地球行星的宣传必须来自 production moveProbe 到达奖励");
+  } finally {
+    environment.dispose();
   }
 }
 

@@ -41,6 +41,8 @@ function resourceDelta(before, after) {
 function buildDiagnostics(turns) {
   const evaluated = turns.flatMap((turn) => turn.actions.map((action) => ({ turn, action })))
     .filter(({ action }) => action.value && action.family !== "end_turn");
+  const timed = turns.flatMap((turn) => turn.actions)
+    .filter((action) => Number(action.timing?.candidateCount) > 0);
   const tiedTopChoices = evaluated.filter(({ action }) => (
     action.alternatives.some((alternative) => Math.abs(alternative.score - action.value.score) < 1e-9)
   ));
@@ -69,6 +71,27 @@ function buildDiagnostics(turns) {
     tiedTopChoiceCount: tiedTopChoices.length,
     nonPositiveChoiceCount: nonPositiveChoices.length,
     zeroScoreTurnCount: turns.filter((turn) => turn.scoreAfter === turn.scoreBefore).length,
+    actionFamilyCounts: Object.freeze(Object.fromEntries(
+      [...evaluated, ...turns.flatMap((turn) => turn.actions
+        .filter((action) => action.family === "end_turn")
+        .map((action) => ({ action })))]
+        .reduce((counts, { action }) => {
+          counts.set(action.family, (counts.get(action.family) || 0) + 1);
+          return counts;
+        }, new Map()),
+    )),
+    performance: Object.freeze({
+      maxDecisionMilliseconds: Math.max(0, ...timed.map((action) => Number(action.timing.totalMilliseconds) || 0)),
+      maxPerCandidateMilliseconds: Math.max(0, ...timed.map((action) => (
+        (Number(action.timing.totalMilliseconds) || 0) / Number(action.timing.candidateCount)
+      ))),
+      averagePerCandidateMilliseconds: timed.length
+        ? timed.reduce((total, action) => (
+          total + ((Number(action.timing.totalMilliseconds) || 0) / Number(action.timing.candidateCount))
+        ), 0) / timed.length
+        : 0,
+      routeCheckpointLimit: 6,
+    }),
     optimisticScoreMisses,
   });
 }
@@ -121,6 +144,9 @@ function runFixedBoardTurnReport(options = {}) {
     const playerLabels = Object.fromEntries(
       initialObservation.publicState.players.map((player) => [player.playerId, player.playerLabel]),
     );
+    const initialScores = Object.fromEntries(
+      initialObservation.publicState.players.map((player) => [player.playerId, Number(player.score) || 0]),
+    );
     const setupChoices = [];
     const turns = [];
     let activeTurn = null;
@@ -147,6 +173,10 @@ function runFixedBoardTurnReport(options = {}) {
         result.policyProvenance,
       );
       const valuationMilliseconds = performance.now() - valuationStartedAt;
+      const counterfactualTiming = env.getCounterfactualDiagnostics() || {};
+      if (Number(counterfactualTiming.totalMilliseconds) > 1000) {
+        throw new Error(`fixed-board 单次决策 ${counterfactualTiming.totalMilliseconds}ms 超过 1s 门禁`);
+      }
       const chosenEvaluation = rankedEvaluations.find((candidate) => candidate.actionId === chosen.actionId) || null;
       const record = {
         decisionNumber: decisionCount,
@@ -165,7 +195,7 @@ function runFixedBoardTurnReport(options = {}) {
         scoreAfter: scoreOf(result.observation, actorPlayerId),
         scoreDelta: scoreOf(result.observation, actorPlayerId) - scoreOf(before, actorPlayerId),
         timing: {
-          ...(env.getCounterfactualDiagnostics() || {}),
+          ...counterfactualTiming,
           valuationMilliseconds,
         },
       };
@@ -205,12 +235,14 @@ function runFixedBoardTurnReport(options = {}) {
       .map((player) => ({
         playerId: player.playerId,
         playerLabel: player.playerLabel,
+        initialScore: initialScores[player.playerId] || 0,
         finalScore: Number(player.finalScore ?? player.score ?? 0),
         scoreSources: { ...(player.scoreSources || {}) },
         resources: resourcesOf(terminal, player.playerId),
       }))
       .sort((left, right) => right.finalScore - left.finalScore);
 
+    const diagnostics = buildDiagnostics(turns);
     return {
       schemaVersion: "seti-heuristic-turn-report-v3",
       boardId: FIXED_BOARD_ID,
@@ -220,7 +252,7 @@ function runFixedBoardTurnReport(options = {}) {
       setupChoices,
       turns,
       finalScores,
-      diagnostics: buildDiagnostics(turns),
+      diagnostics,
     };
   } finally {
     env.dispose();
@@ -260,19 +292,27 @@ function formatEvaluation(candidate, timing = null) {
   const root = evaluation.rootValue;
   const leaf = evaluation.leafValue;
   const parts = [
-    `Q=${formatNumber(candidate.score)}`,
+    `Vroot=${formatNumber(root?.total)}`,
+    `当前动作实际delta=${formatNumber(evaluation.currentActionDelta)}`,
+    `剩余路线净收益=${formatNumber(evaluation.remainingRouteNet)}`,
+    `Q_probe=${evaluation.qProbe == null ? "—" : formatNumber(evaluation.qProbe)}`,
+    `排序Q=${formatNumber(candidate.score)}`,
     `状态=${evaluation.status}/${evaluation.confidence}`,
-    `根(分${formatNumber(root?.realizedScore)}+资产${formatNumber(root?.unrealizedAssets)})`,
-    `叶(分${formatNumber(leaf?.realizedScore)}+资产${formatNumber(leaf?.unrealizedAssets)})`,
+    `Vleaf=${formatNumber(leaf?.total)}`,
+    `沿途宣传=${formatNumber(evaluation.publicityAlongRoute)}@${(evaluation.probeRouteSummary?.publicityOutcomeRefs || []).join("→") || "无"}`,
+    `终点即时=${evaluation.probeRouteSummary?.endpointActionId || "无"}@${JSON.stringify(evaluation.endpointDelta || {})}`,
     `链=${(evaluation.actionChain || []).join("→") || "—"}`,
+    "字段=outcomeProjection.scoring/assets/progress.probeRoute.candidate",
     `依据=${evaluation.reasonCodes.join(",")}`,
   ];
   if (timing) {
+    const candidateCount = Math.max(1, Number(timing.candidateCount) || 1);
     parts.push(
-      `耗时 fork ${formatNumber(timing.forkMilliseconds)}ms`
+      `耗时(${candidateCount}候选合计) fork ${formatNumber(timing.forkMilliseconds)}ms`
       + `/执行 ${formatNumber(timing.executionMilliseconds)}ms`
       + `/投影 ${formatNumber(timing.projectionMilliseconds)}ms`
-      + `/估值 ${formatNumber(timing.valuationMilliseconds)}ms`,
+      + `/估值 ${formatNumber(timing.valuationMilliseconds)}ms`
+      + `；每候选 ${formatNumber((Number(timing.totalMilliseconds) || 0) / candidateCount)}ms`,
     );
   }
   return parts.join("；");
@@ -295,10 +335,10 @@ function formatTurnReportMarkdown(report) {
     `- board fingerprint：\`${report.boardFingerprint}\``,
     `- Policy 决策数：${report.decisionCount}`,
     `- 游戏回合数：${report.turns.length}`,
-    "- 价值口径：`Q` 只读取同一 Rule Composition/Standard Action/Effect Session/Decision/commit 链真实执行后的叶状态；已兑现分 1:1，未兑现资产使用 θ₀",
+    "- 价值口径：本阶段只实现探测器路线；`Q_probe=当前动作真实标准结算价值+同一路线剩余真实净收益`，不按路线长度折价，不给 PASS/无关动作挂路线值",
     "- 诊断目标：初次接触玩家约 100 分；最终表同时列出各机器人的目标差距",
-    "- 固定反例：R1 T04 绿色登陆土星的标准链为 `land -> choose_target(yellow trace)`；登陆先兑现 8 分与首次 2 数据，两个痕迹槽叶分别为 13/11 分",
-    "- 同根 parity 门禁：`orbit/place_data/research_tech/play_card/scan/launch/move/pass`，以及 `analyze -> blue trace` 两叶，均逐 leaf 对照直接标准提交",
+    "- 固定反例：R1 T04 绿色登陆土星按 `land -> choose_target(yellow trace)` 标准链展开；成本、地点奖励、首黄宣传及 alienCard 均取实际 root/leaf 字段，不复制规则常数",
+    "- 字段边界：projection 只保留最多两枚探测器位置和当前候选的 next action、沿途宣传、终点 outcome 引用及标准 delta；完整 checkpoint 不进入 Policy DTO",
     "",
     "## 开局待决选择",
     "",
@@ -313,6 +353,8 @@ function formatTurnReportMarkdown(report) {
     "",
     `- ${report.turns.length} 个玩家回合中，${report.diagnostics.zeroScoreTurnCount} 个回合没有获得分数。`,
     `- ${report.diagnostics.evaluatedDecisionCount} 个可计算 Q 的非结束决策中，${report.diagnostics.tiedTopChoiceCount} 个与至少一个备选动作同分，${report.diagnostics.nonPositiveChoiceCount} 个选中动作的 Q 不大于 0；这两项可直接定位估值区分度不足。`,
+    `- 实际提交行动族：${Object.entries(report.diagnostics.actionFamilyCounts).map(([family, count]) => `${family}=${count}`).join("，") || "无"}；表格主列均为实际提交，备选列仅为未提交的反事实候选。`,
+    `- 性能：路线 checkpoint 上限=${report.diagnostics.performance.routeCheckpointLimit}；每候选平均 ${formatNumber(report.diagnostics.performance.averagePerCandidateMilliseconds)}ms、最大 ${formatNumber(report.diagnostics.performance.maxPerCandidateMilliseconds)}ms；候选集整步最大 ${formatNumber(report.diagnostics.performance.maxDecisionMilliseconds)}ms，超过 1s 会立即中止整局。`,
   );
   if (report.diagnostics.optimisticScoreMisses.length) {
     lines.push(
@@ -338,7 +380,7 @@ function formatTurnReportMarkdown(report) {
       `- 分数：${turn.scoreBefore} → ${turn.scoreAfter}（${signed(turn.scoreAfter - turn.scoreBefore)}）`,
       `- 持有资源：${formatResourceTransition(turn.resourcesBefore, turn.resourcesAfter)}`,
       "",
-      "| # | 决策 | 价值评估 | 执行后实际变化 | 同时可选的高价值备选 |",
+      "| # | 实际提交决策 | V(root)→V(leaf) 与字段级 Q | 执行后实际变化 | 未提交反事实前三备选 |",
       "| ---: | --- | --- | --- | --- |",
     );
     turn.actions.forEach((action) => {
@@ -346,10 +388,10 @@ function formatTurnReportMarkdown(report) {
     });
   }
 
-  lines.push("", "## 最终分数、目标差距与剩余资源", "", "| 名次 | 机器人 | 总分 | 距 100 分 | 钱 | 电 | 宣传 | 数据 | 手牌 | 预留牌 |", "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+  lines.push("", "## 最终分数、目标差距与剩余资源", "", "| 名次 | 机器人 | 总分 | 实局增长 | 距 100 分 | 钱 | 电 | 宣传 | 数据 | 手牌 | 预留牌 |", "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
   report.finalScores.forEach((player, index) => {
     const resources = player.resources;
-    lines.push(`| ${index + 1} | ${player.playerLabel} | ${player.finalScore} | ${signed(player.finalScore - 100)} | ${resources.credits} | ${resources.energy} | ${resources.publicity} | ${resources.availableData} | ${resources.handCount} | ${resources.reservedCount} |`);
+    lines.push(`| ${index + 1} | ${player.playerLabel} | ${player.finalScore} | ${signed(player.finalScore - player.initialScore)} | ${signed(player.finalScore - 100)} | ${resources.credits} | ${resources.energy} | ${resources.publicity} | ${resources.availableData} | ${resources.handCount} | ${resources.reservedCount} |`);
   });
   lines.push("");
   return lines.join("\n");

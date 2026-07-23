@@ -21,11 +21,16 @@ function action(actionId, family) {
   };
 }
 
-function observation(score, credits) {
+function observation(score, credits, probeRouteSummary = null) {
   return outcomeModel.createDecisionObservation({
     publicState: { players: [{ id: "p1", resources: { score, credits } }], board: {} },
     selfState: { id: "p1", resources: { score, credits }, hand: [] },
-  }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
+  }, {
+    seatId: "p1",
+    stateVersion: 7,
+    decisionVersion: 3,
+    probeRouteSummary,
+  });
 }
 
 const legalActions = [action("pass:p1:7", "pass"), action("launch:p1:7", "launch")];
@@ -51,7 +56,23 @@ const current = policyPort.createDecisionContext({
       status: "settled",
       confidence: "high",
       rootObservation: observation(0, 0),
-      leaves: [{ leafId: "launch-leaf", actionChain: ["launch:p1:7"], observation: observation(6, 0) }],
+      leaves: [{
+        leafId: "launch-leaf",
+        actionChain: ["launch:p1:7", "move:p1:8", "orbit:p1:9"],
+        observation: observation(10, 0, {
+          nextActionId: "launch:p1:7",
+          nextActionFamily: "launch",
+          currentOutcomeRef: "launch:p1:7",
+          routeOutcomeRef: "launch:p1:7→move:p1:8→orbit:p1:9",
+          endpointActionId: "orbit:p1:9",
+          endpointKind: "orbit",
+          currentDelta: { credits: 0 },
+          remainingRouteDelta: { realizedScore: 10 },
+          publicityAlongRoute: 0,
+          publicityOutcomeRefs: [],
+          endpointDelta: { realizedScore: 10 },
+        }),
+      }],
     },
   ],
 });
@@ -113,8 +134,9 @@ assert.equal(thetaValue.assetBreakdown.availableData, 7.5);
 assert.equal(thetaValue.assetBreakdown.publicity, 10);
 assert.equal(thetaValue.assetBreakdown.ordinaryCard, 5);
 assert.equal(thetaValue.assetBreakdown.alienCard, 20 / 3);
-assert.equal(thetaValue.total, 265 / 6, "θ₀ 必须按每种资源的单单位价值估值");
+assert.equal(thetaValue.total, 265 / 6, "本阶段只保留 θ₀ 与已兑现分，不给科技/扫描等其他路径加值");
 assert.equal(Object.hasOwn(thetaValue.assetBreakdown, "alien"), false);
+assert.equal(thetaValue.schemaVersion, outcomeModel.VALUE_SCHEMA_VERSION);
 
 assert.throws(
   () => policy.decide({ schemaVersion: policyPort.CONTEXT_SCHEMA_VERSION, legalActions: [] }),

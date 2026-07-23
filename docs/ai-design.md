@@ -31,7 +31,10 @@ Rule Composition
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
 - `game/ai/machine-player-host.js`：固定席位、deadline/取消、generation、去重与 fail-closed 提交协调。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
-- `game/ai/expected-score-evaluator.js`：只按真实 leaf observation 计算已兑现分和 θ₀ 未兑现资产。
+- `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、θ₀ 资产事实和固定大小的
+  探测器路线摘要。
+- `game/ai/expected-score-evaluator.js`：只按真实 root/leaf projection 的字段级 V 计算
+  `Q=V(leaf)-V(root)`。
 - `game/ai/heuristic-evaluator.js`：只按 outcome Q 排序；没有可比较 leaf 时按稳定 actionId
   tie-break，不存在 family fallback 或第二排序链。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
@@ -71,6 +74,21 @@ Decision 链只通过 active Effect Session 暴露的标准 choice 继续。主 
 分支从 root identity 与 actionId 派生独立 RNG；一旦消费随机数，outcome 标为
 `low-confidence/COUNTERFACTUAL_RANDOM_SAMPLE`。Browser 无法安全聚合随机期望时同样返回
 low confidence，不读取本局未来 RNG。
+
+每个 root/leaf observation 使用 `seti-decision-observation-v2`，其中
+`outcomeProjection` 为 `seti-outcome-projection-v2`。projection 只增加以下
+viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute` 最多列两枚本席在途
+探测器的标识/坐标；候选 leaf 只额外携带 `nextActionId/family`、当前标准 outcome 引用、
+路线终点 `orbit/land` outcome 引用、沿途宣传 delta、终点即时 delta 和剩余路线总 delta。
+用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
+或扫描结构。
+
+本阶段只有探测器候选动作使用 `Q_probe=当前动作真实标准结算价值+从当前 leaf 完成同一路线的
+真实净收益`。路线由 counterfactual port 在同一个复用 fork 中继续提交生产
+`launch/move/choose_payment/orbit|land/Decision`；移动到行星的宣传来自 production
+`moveProbe` 到达事件，终点收益来自完整标准 leaf。没有路线长度、完成概率、tempo、发射/移动
+奖励或 PASS 惩罚；PASS 与无关动作不会收到路线摘要，没有正收益终点时探测器动作不获推荐。
+多探测器候选按 next action 独立归因，Vroot 不汇总未来终点，因此不会重复占用同一收益。
 
 θ₀ 仅用于 leaf 未兑现资产。等价于 5 分的数量分别是：1 信用、1 能源、2 数据、2 宣传、
 2 普通牌、1.5 外星人牌；因此单单位权重为信用=5、能源=5、数据=2.5、宣传=2.5、
