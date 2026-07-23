@@ -219,7 +219,7 @@ function createState() {
       return originalViewDispatch(intent);
     },
   };
-  const adapter = inputApi.createBrowserInputAdapter({
+const adapter = inputApi.createBrowserInputAdapter({
     dispatchAction(action) {
       calls.action.push(action);
       return { ok: false, code: "STANDARD_ACTION_STALE", authority: { stateVersion: 8 } };
@@ -247,6 +247,25 @@ function createState() {
   assert.equal(adapter.dispatchIntent({ kind: "mystery" }).code, "BROWSER_INPUT_INTENT_UNKNOWN");
   assert.equal(calls.action.length, 1);
   assert.equal(calls.decision.length, 1);
+})();
+
+(function testLegacyRuleInputDispatcherOwnsStableSnapshotAndStandardRouting() {
+  let phase = "idle";
+  const calls = [];
+  const dispatcher = inputApi.createLegacyRuleInputDispatcher({
+    standardActionSchemaVersion: "seti-standard-action-v1",
+    inspect: () => ({ phase }),
+    createRecoverySnapshot: (options) => { calls.push(["snapshot", options.label]); return {}; },
+    enumerateActions: () => [{ actionId: "pass:1" }],
+    dispatchRuntimeAction: (action) => ({ ok: true, action: {
+      schemaVersion: "seti-standard-action-v1", actionId: `${action.family}:1`, family: action.family, phase: "main",
+    } }),
+    submitAction: (action) => { calls.push(["main", action.actionId]); phase = "idle"; return { ok: true }; },
+    submitQuickAction: (action) => { calls.push(["quick", action.actionId]); return { ok: true }; },
+  });
+  assert.equal(dispatcher.dispatch({ kind: "standard_enumerate" }).candidates.length, 1);
+  assert.equal(dispatcher.dispatch({ kind: "standard_intent", family: "pass" }).ok, true);
+  assert.deepEqual(calls, [["snapshot", "Standard Action 开始前稳定恢复点"], ["main", "pass:1"]]);
 })();
 
 console.log("browser host reference core tests passed");

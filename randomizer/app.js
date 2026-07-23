@@ -899,6 +899,16 @@
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
   });
   let actionRuntimeController = null;
+  const legacyRuleInputDispatcher = browserHostModule.inputAdapter.createLegacyRuleInputDispatcher({
+    standardActionSchemaVersion: standardActionModule.SCHEMA_VERSION,
+    inspect: (...args) => ruleComposition.inspect(...args),
+    createRecoverySnapshot: (...args) => createGameRecoverySnapshot(...args),
+    enumerateActions: (...args) => ruleComposition.inputPort.enumerateActions(...args),
+    dispatchRuntimeAction: (...args) => actionRuntimeController.dispatchAction(...args),
+    submitQuickAction: (...args) => ruleComposition.inputPort.submitQuickAction(...args),
+    submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
+  });
+  const dispatchBrowserRuleInput = legacyRuleInputDispatcher.dispatch;
   const initialSelectionHost = startScreenModule.createInitialSelectionHost({
     getActionRuntime: () => actionRuntimeController,
     getRuleReadout: () => createStateSourceReadoutRoot(),
@@ -922,54 +932,6 @@
     resolveCompletedSectorSettlements: (...args) => resolveCompletedSectorSettlements(...args),
     recordScoreSources: (...args) => recordInitialSelectionScoreSources(...args),
   });
-  let browserActionStableRecoverySnapshot = null;
-  function dispatchBrowserRuleInput(request, fallbackOptions = null, explicitActionContext = null) {
-    const action = typeof request === "string"
-      ? { kind: request, payload: fallbackOptions || null }
-      : { ...(request || {}) };
-    const ensureStableRecoverySnapshot = () => {
-      if (ruleComposition.inspect().phase === "idle" && !browserActionStableRecoverySnapshot) {
-        browserActionStableRecoverySnapshot = createGameRecoverySnapshot({
-          label: "Standard Action 开始前稳定恢复点",
-        });
-      }
-    };
-    if (action.kind === "standard_enumerate") {
-      ensureStableRecoverySnapshot();
-      return {
-        ok: true,
-        candidates: ruleComposition.inputPort.enumerateActions(action.payload || {}),
-      };
-    }
-    if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
-      return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
-    }
-    let descriptor = action.standardAction
-      || (action.schemaVersion === standardActionModule.SCHEMA_VERSION ? action : null);
-    if (action.kind === "standard_intent") {
-      ensureStableRecoverySnapshot();
-      const resolved = actionRuntimeController.dispatchAction({
-        kind: "standard_resolve",
-        family: action.family,
-        selector: action.selector || {},
-        payload: action.payload || {},
-      }, fallbackOptions, explicitActionContext);
-      if (!resolved?.ok) return resolved;
-      descriptor = resolved.action;
-    }
-    if (descriptor) {
-      const opensSession = ruleComposition.inspect().phase === "idle";
-      if (opensSession) ensureStableRecoverySnapshot();
-      const result = descriptor.phase === "quick"
-        ? ruleComposition.inputPort.submitQuickAction(descriptor)
-        : ruleComposition.inputPort.submitAction(descriptor);
-      if (ruleComposition.inspect().phase === "idle") {
-        browserActionStableRecoverySnapshot = null;
-      }
-      return result;
-    }
-    return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
-  }
   const runtime = runtimeModule.createRuntime({
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,

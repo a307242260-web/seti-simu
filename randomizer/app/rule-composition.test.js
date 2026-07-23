@@ -450,14 +450,15 @@ function createHarness(initialValue = 0) {
     "Rule Composition 不得保留测试 Effect factory/executor 的 production fallback wiring",
   );
   assert.match(appSource, /ruleComposition\.inputPort\.submitDecision\(/, "AI conditional caller 必须提交 Composition Decision");
-  const dispatchInputSource = appSource.slice(
-    appSource.indexOf("function dispatchBrowserRuleInput"),
-    appSource.indexOf("const runtime = runtimeModule.createRuntime"),
+  const inputAdapterSource = fs.readFileSync(path.join(__dirname, "browser-host/input-adapter.js"), "utf8");
+  const dispatchInputSource = inputAdapterSource.slice(
+    inputAdapterSource.indexOf("function createLegacyRuleInputDispatcher"),
+    inputAdapterSource.indexOf("return Object.freeze({ SCHEMA_VERSION"),
   );
   assert.ok(
-    dispatchInputSource.indexOf("ruleComposition.inputPort.enumerateActions")
-      < dispatchInputSource.indexOf("return actionRuntimeController.dispatchAction"),
-    "simulation Standard Action 枚举必须先进入 composition inputPort",
+    dispatchInputSource.indexOf("options.enumerateActions")
+      < dispatchInputSource.indexOf("return options.dispatchRuntimeAction"),
+    "Browser Standard Action 枚举必须先进入 composition inputPort adapter",
   );
   assert.doesNotMatch(appSource, /replaceMutableObject\?\.|if \(!ruleCompositionModule\.replaceMutableObject\)/, "working root restore 不得保留 optional helper 双协议");
   const tradeSource = fs.readFileSync(path.join(__dirname, "../game/ai/trade-candidates.js"), "utf8");

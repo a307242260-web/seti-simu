@@ -99,5 +99,54 @@
     });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, createBrowserInputAdapter });
+  function createLegacyRuleInputDispatcher(options = {}) {
+    let stableRecoverySnapshot = null;
+
+    function ensureStableRecoverySnapshot() {
+      if (options.inspect().phase === "idle" && !stableRecoverySnapshot) {
+        stableRecoverySnapshot = options.createRecoverySnapshot({
+          label: "Standard Action 开始前稳定恢复点",
+        });
+      }
+    }
+
+    function dispatch(request, fallbackOptions = null, explicitActionContext = null) {
+      const action = typeof request === "string"
+        ? { kind: request, payload: fallbackOptions || null }
+        : { ...(request || {}) };
+      if (action.kind === "standard_enumerate") {
+        ensureStableRecoverySnapshot();
+        return { ok: true, candidates: options.enumerateActions(action.payload || {}) };
+      }
+      if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
+        return options.dispatchRuntimeAction(action, fallbackOptions, explicitActionContext);
+      }
+      let descriptor = action.standardAction
+        || (action.schemaVersion === options.standardActionSchemaVersion ? action : null);
+      if (action.kind === "standard_intent") {
+        ensureStableRecoverySnapshot();
+        const resolved = options.dispatchRuntimeAction({
+          kind: "standard_resolve",
+          family: action.family,
+          selector: action.selector || {},
+          payload: action.payload || {},
+        }, fallbackOptions, explicitActionContext);
+        if (!resolved?.ok) return resolved;
+        descriptor = resolved.action;
+      }
+      if (descriptor) {
+        if (options.inspect().phase === "idle") ensureStableRecoverySnapshot();
+        const result = descriptor.phase === "quick"
+          ? options.submitQuickAction(descriptor)
+          : options.submitAction(descriptor);
+        if (options.inspect().phase === "idle") stableRecoverySnapshot = null;
+        return result;
+      }
+      return options.dispatchRuntimeAction(action, fallbackOptions, explicitActionContext);
+    }
+
+    return Object.freeze({ dispatch });
+  }
+
+  return Object.freeze({ SCHEMA_VERSION, createBrowserInputAdapter, createLegacyRuleInputDispatcher });
 });
