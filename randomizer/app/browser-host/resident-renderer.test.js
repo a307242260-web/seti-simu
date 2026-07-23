@@ -163,6 +163,57 @@ function createProjection() {
   assert.throws(() => renderer.renderAll({ projection: createProjection() }), /ViewState/);
 })();
 
+(function testCurrentPlayerResourcesUseIconsAndHideZeroSpecialTokens() {
+  const fixture = createFixture();
+  const renderer = rendererApi.createResidentRenderer(fixture);
+  const player = {
+    id: "p1",
+    displayName: "玩家",
+    uiColor: "#fff",
+    score: 6,
+    resourceStats: [
+      { label: "信用点", value: 10, iconSrc: "credits.webp" },
+      { label: "能量", value: 9, iconSrc: "energy.webp" },
+      { label: "宣传", value: "2/10", iconSrc: "publicity.webp" },
+      { label: "可用数据", value: 3, iconSrc: "data.webp" },
+      { label: "额外公共扫描", value: 0, iconSrc: "scan.webp" },
+      { label: "奥陌陌化石", value: 0, iconSrc: "fossil.webp" },
+      { label: "当前数据放置进展", value: "3/6", iconSrc: "analyze.webp" },
+    ],
+  };
+  const projection = {
+    schemaVersion: rendererApi.SCHEMA_VERSION,
+    viewer: { playerId: "p1" },
+    match: {},
+    players: {},
+    resident: {
+      browserReadModel: {
+        render: {
+          playerPanels: { interfacePlayerId: "p1", players: [player] },
+        },
+      },
+    },
+  };
+  const input = { projection, viewState: {} };
+
+  renderer.renderPlayers(input);
+  const row = fixture.els.playerStats.children[0];
+  assert.equal(row.textContent, "");
+  assert.deepEqual(
+    row.children.slice(1).map((node) => node.attributes["aria-label"]),
+    ["信用点 10", "能量 9", "宣传 2/10", "可用数据 3"],
+  );
+  assert.equal(row.children[0].children[2].attributes["aria-label"], "分数 6");
+
+  player.resourceStats[4].value = 1;
+  player.resourceStats[5].value = 2;
+  renderer.renderPlayers(input);
+  assert.deepEqual(
+    fixture.els.playerStats.children[0].children.slice(1).map((node) => node.attributes["aria-label"]),
+    ["信用点 10", "能量 9", "宣传 2/10", "可用数据 3", "额外公共扫描 1", "奥陌陌化石 2"],
+  );
+})();
+
 (function testResidentPresentationBuilderKeepsDomainProjectionOutOfBootstrap() {
   const builder = projectionApi.createResidentPresentationBuilder({
     setupSelectionState: {

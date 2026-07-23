@@ -35,6 +35,56 @@
     const els = options.els || {};
     if (!document?.createElement) throw new TypeError("常驻 renderer 需要 document.createElement");
 
+    function createPlayerStatIcon(stat) {
+      const item = document.createElement("span");
+      const icon = document.createElement("img");
+      const value = document.createElement("span");
+      item.className = "player-stat player-stat-with-icon";
+      item.setAttribute("aria-label", `${stat.label} ${stat.value}`);
+      icon.className = "player-stat-icon";
+      icon.src = stat.iconSrc || "";
+      icon.alt = "";
+      icon.width = 296;
+      icon.height = 296;
+      icon.decoding = "async";
+      icon.setAttribute("aria-hidden", "true");
+      value.className = "player-stat-value";
+      value.textContent = text(stat.value);
+      item.append(icon, value);
+      return item;
+    }
+
+    function createCurrentPlayerHeader(player) {
+      const item = document.createElement("span");
+      const marker = document.createElement("span");
+      const name = document.createElement("span");
+      item.className = "player-stat player-stat-current";
+      item.style.setProperty("--player-color", player.uiColor || "");
+      marker.className = "player-color-marker";
+      marker.setAttribute("aria-hidden", "true");
+      name.className = "player-stat-value";
+      name.textContent = player.displayName || player.colorLabel || player.name || player.id;
+      item.append(marker, name, createPlayerStatIcon({
+        label: "分数",
+        value: Number(player.score) || 0,
+        iconSrc: "../assets/symbol/effect/score.webp",
+      }));
+      return item;
+    }
+
+    function getPlayerPanels(projection) {
+      return projection.resident?.browserReadModel?.render?.playerPanels || null;
+    }
+
+    function visibleCurrentResourceStats(player) {
+      const alwaysVisible = new Set(["信用点", "能量", "宣传", "可用数据"]);
+      const positiveOnly = new Set(["奥陌陌化石", "额外公共扫描"]);
+      return (player?.resourceStats || []).filter((stat) => (
+        alwaysVisible.has(stat.label)
+        || (positiveOnly.has(stat.label) && Number(stat.value) > 0)
+      ));
+    }
+
     function renderRoundStatus(input) {
       const projection = assertInput(input);
       if (els.roundStatusRound) {
@@ -67,14 +117,20 @@
 
     function renderPlayers(input) {
       const projection = assertInput(input);
-      const own = projection.players?.[projection.viewer.playerId] || null;
+      const playerPanels = getPlayerPanels(projection);
+      const own = playerPanels?.players?.find(
+        (player) => String(player.id) === String(playerPanels.interfacePlayerId),
+      ) || null;
       if (els.playerStats) {
         if (!own) els.playerStats.replaceChildren();
         else {
           const row = document.createElement("div");
           row.className = "player-stats-row player-stats-main-row";
           row.dataset.playerId = text(own.id);
-          row.textContent = `${own.colorLabel || own.name || own.id} · ${resourceSummary(own)}`;
+          row.append(
+            createCurrentPlayerHeader(own),
+            ...visibleCurrentResourceStats(own).map(createPlayerStatIcon),
+          );
           els.playerStats.replaceChildren(row);
         }
       }
