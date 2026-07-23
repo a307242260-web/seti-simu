@@ -217,7 +217,7 @@
     tech_runtime: techRuntime,
     income_runtime: incomeRuntime,
   });
-  const browserDomainCommandPort = browserHostModule.browserServices.createLegacyDomainCommandPort({
+  const browserDomainCommandPort = browserHostModule.browserServices.createDomainCommandPort({
     getTarget: (domain) => browserDomainTargets()[domain] || null,
     clonePresentation: cloneResidentPresentation,
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
@@ -332,6 +332,18 @@
     revealYichangdianForDebug, runDebugQuickSectorScan, selectDefaultRocketForCurrentPlayer,
     setDebugOpen, setDebugPlayerMenuOpen, switchCurrentPlayerColor, toggleSectorWinDebug,
   } = debugPort;
+  const debugIncomeAdapter = debugRuntimeModule.createDebugIncomeAdapter({
+    players,
+    applyIncomeResourcesForPlayer: (...args) => applyIncomeResourcesForPlayer(...args),
+    renderPlayerStats: (...args) => renderPlayerStats(...args),
+    renderPublicCards: (...args) => renderPublicCards(...args),
+    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
+    updateActionButtons: (...args) => updateActionButtons(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const executeIncomeForCurrentPlayerForRoot = debugIncomeAdapter.executeForRoot;
+  const executeIncomeForCurrentPlayer = debugIncomeAdapter.execute;
   const actionInteractionPort = actionInteractionRuntimeModule.createActionInteractionPort({
     getRuntime: () => actionInteractionRuntime,
     dispatchCommand: (name, args) => callBrowserDomainCommand("action_interaction", name, args),
@@ -348,6 +360,47 @@
     openDataPlacePicker, openAutoDataPlacementPrompt, continuePendingDataPlacementAfterBonus,
     skipPendingDataPlacement, cancelDataPlacePicker, confirmDataPlacement,
   } = actionInteractionPort;
+  const dataAnalyzeInteractionRuntime = actionInteractionRuntimeModule.createDataAnalyzeInteractionRuntime({
+    data,
+    industry,
+    players,
+    planetRewards,
+    historySourceMain: "main",
+    blockIncompatiblePendingQuickActionForRoot: (...args) => blockIncompatiblePendingQuickActionForRoot(...args),
+    getGameplayLockReason: (...args) => getGameplayLockReason(...args),
+    isTechTilePickingActive: (...args) => isTechTilePickingActive(...args),
+    isCardSelectionActive: (...args) => isCardSelectionActive(...args),
+    isDiscardSelectionActive: (...args) => isDiscardSelectionActive(...args),
+    isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive(...args),
+    isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+    openDataPlacePicker: (...args) => openDataPlacePicker(...args),
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+    runAction: (...args) => runAction(...args),
+    startCardEffectFlow: (...args) => startCardEffectFlow(...args),
+  });
+  const {
+    runPlaceDataToComputerForRoot,
+    runPlaceDataToComputer,
+    canAnalyzeDataForPlayer,
+    getAnalyzeActionOptionsForPlayer,
+    analyzeDataForCurrentPlayer,
+    startAnalyzeDataRewardFlow,
+  } = dataAnalyzeInteractionRuntime;
+  const landTargetContinuationRuntime = actionInteractionRuntimeModule.createLandTargetContinuationRuntime({
+    executePlutoAction: (...args) => actionInteractionRuntime.executePlutoAction(...args),
+    runAction: (...args) => runAction(...args),
+    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
+    effectExecutors: () => effectExecutors,
+    getPendingLandTargetDecision: (...args) => getPendingLandTargetDecision(...args),
+    withPendingOwnerPlayer: (...args) => withPendingOwnerPlayer(...args),
+    closeLandTargetPicker: (...args) => closeLandTargetPicker(...args),
+    setBrowserStatusNote: (...args) => setBrowserStatusNote(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+  });
+  const resumeLandTargetContinuation = landTargetContinuationRuntime.resume;
+  const confirmLandTargetChoiceForRoot = landTargetContinuationRuntime.confirmForRoot;
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -898,7 +951,9 @@
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
   });
   let actionRuntimeController = null;
-  const legacyRuleInputDispatcher = browserHostModule.inputAdapter.createLegacyRuleInputDispatcher({
+  const createRuleInputDispatcher = browserHostModule.inputAdapter.createRuleInputDispatcher
+    || browserHostModule.inputAdapter.createLegacyRuleInputDispatcher;
+  const ruleInputDispatcher = createRuleInputDispatcher({
     standardActionSchemaVersion: standardActionModule.SCHEMA_VERSION,
     inspect: (...args) => ruleComposition.inspect(...args),
     createRecoverySnapshot: (...args) => createGameRecoverySnapshot(...args),
@@ -907,7 +962,16 @@
     submitQuickAction: (...args) => ruleComposition.inputPort.submitQuickAction(...args),
     submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
   });
-  const dispatchBrowserRuleInput = legacyRuleInputDispatcher.dispatch;
+  const dispatchBrowserRuleInput = ruleInputDispatcher.dispatch;
+  const standardIntentPort = browserHostModule.inputAdapter.createStandardIntentPort({
+    dispatch: dispatchBrowserRuleInput,
+  });
+  const runAction = standardIntentPort.runAction;
+  const activeDecisionPort = browserHostModule.inputAdapter.createActiveDecisionPort({
+    inspect: (...args) => ruleComposition.inspect(...args),
+    submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
+  });
+  const submitActiveCardDecision = activeDecisionPort.submit;
   const initialSelectionHost = startScreenModule.createInitialSelectionHost({
     getActionRuntime: () => actionRuntimeController,
     getRuleReadout: () => createStateSourceReadoutRoot(),
@@ -1036,6 +1100,11 @@
   const openLandTargetPicker = landTargetPicker.open;
   const requestLandTargetPicker = landTargetPicker.request;
   const confirmLandTargetPicker = landTargetPicker.confirm;
+  const getSimulationConditionalPlayer = conditionalDecisionDomainModule.createConditionalPlayerResolver({
+    resolvePlayerReference: (...args) => resolvePlayerReference(...args),
+    getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+  });
   const conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
     FINAL_SCORE_IDS,
@@ -1198,7 +1267,7 @@
   const cardTaskState = cardTaskStateModule.createTaskState();
   const actionHistory = actionHistoryModule.createActionHistory();
   const quickActionHistory = actionHistoryModule.createActionHistory();
-  const actionSessionRuntime = browserHostModule.actionBar.createLegacyActionSessionRuntime({
+  const actionSessionRuntime = browserHostModule.actionBar.createActionSessionRuntime({
     actionHistory,
     uiRuntimeState,
     historySourceMain: HISTORY_SOURCE_MAIN,
@@ -1217,7 +1286,7 @@
     clearStaleFullyUndoneMainActionSession, canUndoCurrentMainAction,
     hasCurrentMainActionIrreversibleBarrier, getMainActionStartBlockReason, canStartMainAction,
   } = actionSessionRuntime;
-  const cardSelectionState = browserHostModule.cardDecisionUi.createLegacyCardSelectionState({
+  const cardSelectionState = browserHostModule.cardDecisionUi.createCardSelectionState({
     getRuleReadout: () => createStateSourceReadoutRoot(),
     cards,
     getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
@@ -1604,58 +1673,44 @@
   };
 
   const els = window.SetiAppDom.collectElements(document);
-  const residentViewStateStore = browserHostModule?.viewStateStore
-    ? browserHostModule.viewStateStore.createViewStateStore()
-    : null;
-  const residentDesktopRenderer = browserHostModule?.residentRenderer
-    ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
-    : null;
+  const residentViewStateStore = browserHostModule.viewStateStore.createViewStateStore();
+  const residentDesktopRenderer = browserHostModule.residentRenderer.createResidentRenderer({ document, els });
   const residentStateSource = ruleComposition.stateSourcePort;
-  const residentProjectionAdapter = browserHostModule?.projectionAdapter
-    ? browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
-      stateSource: residentStateSource,
-    })
-    : null;
-  const residentInputAdapter = browserHostModule?.inputAdapter && residentViewStateStore
-    ? browserHostModule.inputAdapter.createBrowserInputAdapter({
-      dispatchAction(action) {
-        return action?.phase === "quick"
-          ? ruleComposition.inputPort.submitQuickAction(action)
-          : ruleComposition.inputPort.submitAction(action);
-      },
-      submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
-      viewStateStore: residentViewStateStore,
-      refreshProjection: () => residentProjectionAdapter?.projectSource({ viewer: getResidentViewer() }) || null,
-    })
-    : null;
-  const residentDecisionController = residentInputAdapter && browserHostModule?.decisionUi
-    ? browserHostModule.decisionUi.createDecisionUiController({
-      dispatchIntent(intent) {
-        const result = residentInputAdapter.dispatchIntent(intent);
-        queueMicrotask(renderResidentDesktop);
-        return result;
-      },
-    })
-    : null;
-  const residentDecisionRenderer = residentDecisionController && document
-    ? browserHostModule.decisionUi.createDecisionDomRenderer({
-      root: document.getElementById("compositionDecisionRoot"),
-      controller: residentDecisionController,
-    })
-    : null;
-  const residentBrowserServices = browserHostModule?.browserServices
-    ? browserHostModule.browserServices.createBrowserServices({
-      ruleLifecycle: browserRuleLifecycle,
-      viewStateStore: residentViewStateStore,
-      storage: gameRecoveryModule.getPersistentGameStorage(window),
-      storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
-      downloadPort: browserHostModule.browserServices.createBrowserDownloadPort({
-        window,
-        document,
-        Blob,
-      }),
-    })
-    : null;
+  const residentProjectionAdapter = browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
+    stateSource: residentStateSource,
+  });
+  const residentInputAdapter = browserHostModule.inputAdapter.createBrowserInputAdapter({
+    dispatchAction(action) {
+      return action?.phase === "quick"
+        ? ruleComposition.inputPort.submitQuickAction(action)
+        : ruleComposition.inputPort.submitAction(action);
+    },
+    submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
+    viewStateStore: residentViewStateStore,
+    refreshProjection: () => residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }),
+  });
+  const residentDecisionController = browserHostModule.decisionUi.createDecisionUiController({
+    dispatchIntent(intent) {
+      const result = residentInputAdapter.dispatchIntent(intent);
+      queueMicrotask(renderResidentDesktop);
+      return result;
+    },
+  });
+  const residentDecisionRenderer = browserHostModule.decisionUi.createDecisionDomRenderer({
+    root: document.getElementById("compositionDecisionRoot"),
+    controller: residentDecisionController,
+  });
+  const residentBrowserServices = browserHostModule.browserServices.createBrowserServices({
+    ruleLifecycle: browserRuleLifecycle,
+    viewStateStore: residentViewStateStore,
+    storage: gameRecoveryModule.getPersistentGameStorage(window),
+    storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
+    downloadPort: browserHostModule.browserServices.createBrowserDownloadPort({
+      window,
+      document,
+      Blob,
+    }),
+  });
 
   function getResidentViewer() {
     const player = getInterfacePlayer();
@@ -1668,9 +1723,9 @@
 
   const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
   const createResidentReadoutRoot = (resident) => (
-    browserHostModule.residentProjection.createLegacyReadoutRoot(resident)
+    browserHostModule.residentProjection.createReadoutRoot(resident)
   );
-  const createStateSourceReadoutRoot = () => browserHostModule.residentProjection.createLegacyReadoutRoot(
+  const createStateSourceReadoutRoot = () => browserHostModule.residentProjection.createReadoutRoot(
     ruleComposition.stateSourcePort.read().state,
     { solarKey: "solarSystem", includeMatch: true },
   );
@@ -1793,7 +1848,7 @@
     const input = createResidentRenderInput();
     if (!input) return;
     residentDesktopRenderer.renderAll(input);
-    residentDecisionRenderer?.render(input);
+    residentDecisionRenderer.render(input);
   }
   const cardHoverPreviewRuntime = renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
@@ -2171,7 +2226,7 @@
     renderPlayerHand: (...args) => renderPlayerHand(...args),
     renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
   });
-  const effectBarPresentation = browserHostModule.actionBar.createLegacyEffectBarPresentation({
+  const effectBarPresentation = browserHostModule.actionBar.createEffectBarPresentation({
     document,
     els,
     players,
@@ -4938,22 +4993,6 @@
   queueCardTriggerRewardEffects = bindBrowserDomainCommand("card_trigger", "queueCardTriggerRewardEffects");
   const openCardTaskCompletionPickerForRoot = openCardTaskCompletionPicker;
   openCardTaskCompletionPicker = bindBrowserDomainCommand("card_trigger", "openCardTaskCompletionPicker");
-  function submitActiveCardDecision(kind, matches) {
-    const inspection = ruleComposition.inspect();
-    const decision = inspection.session?.decision || null;
-    const choice = (decision?.choices || []).find((candidate) => {
-      const target = candidate?.target || candidate?.standardAction?.target || null;
-      return target?.kind === kind && matches(target, candidate);
-    });
-    if (inspection.phase !== "awaiting_input" || !decision || !choice) {
-      return { ok: false, code: "CARD_DECISION_REQUIRED", message: "当前输入不在 active Decision 合法项中" };
-    }
-    return ruleComposition.inputPort.submitDecision({
-      decisionId: decision.decisionId,
-      decisionVersion: decision.decisionVersion,
-      choice,
-    });
-  }
   cancelCardTriggerChoice = () => submitActiveCardDecision(
     "card-trigger-cancel",
     (target) => target.choiceId === "cancel",
@@ -5417,14 +5456,12 @@
     return requestCardEffectMoveForRoot(workingRoot, deltaX, deltaY, rocketId);
   }
 
-  function executeCardMoveForEffect(...args) {
-    const [deltaX, deltaY, rocketId] = args;
-    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
-    return submitActiveCardDecision(
-      "card-effect-move",
-      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
-    );
-  }
+  const executeCardMoveForEffect = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
+    "card-effect-move",
+    deltaX,
+    deltaY,
+    rocketId,
+  );
 
   function handleProbeSectorScanChoice(rocketId) {
     const pending = getPendingProbeSectorScanDecision();
@@ -6077,13 +6114,12 @@
     finishIndustryStrategyPassiveRewardEffect, executeIndustryStrategyPassiveRewardEffect,
     handleStrategyPassiveSlotClick, handleCompanyActionMarkerClick,
   } = industryCommands;
-  function executeIndustryFreeMove(deltaX, deltaY, rocketId) {
-    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
-    return submitActiveCardDecision(
-      "industry-free-move",
-      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
-    );
-  }
+  const executeIndustryFreeMove = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
+    "industry-free-move",
+    deltaX,
+    deltaY,
+    rocketId,
+  );
 
   const techRuntime = techRuntimeModule.createTechRuntime({
       Array: typeof Array === "undefined" ? undefined : Array,
@@ -6245,14 +6281,14 @@
     });
   }
 
-  let legacyActionBarController = null;
-  const legacyActionBarPort = browserHostModule.actionBar.createLegacyActionBarPort({
-    getController: () => legacyActionBarController,
+  let actionBarController = null;
+  const actionBarPort = browserHostModule.actionBar.createActionBarPort({
+    getController: () => actionBarController,
   });
   const {
     setActionButtonState, setTurnActionButtonState, setQuickActionButtonEnabled, updateActionButtons,
     isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
-  } = legacyActionBarPort;
+  } = actionBarPort;
 
   function recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot) {
     if (
@@ -6347,9 +6383,9 @@
     updatePublicCardControls,
   });
 
-  let legacyUndoController = null;
+  let undoController = null;
   function undoPendingActionForRoot(workingRoot) {
-    return legacyUndoController.undoPendingActionForRoot(workingRoot);
+    return undoController.undoPendingActionForRoot(workingRoot);
   }
 
   function undoPendingAction() {
@@ -6446,7 +6482,7 @@
     completeQuickActionStep,
   });
 
-  legacyActionBarController = browserHostModule.actionBar.createLegacyActionBarController({
+  actionBarController = browserHostModule.actionBar.createDesktopActionBarController({
     els,
     actions,
     abilities,
@@ -6483,7 +6519,7 @@
     hasPlayableFutureSpanCard,
     cancelHandCardContextActions,
   });
-  legacyUndoController = browserHostModule.actionBar.createLegacyUndoController({
+  undoController = browserHostModule.actionBar.createUndoController({
     actionHistory,
     quickActionHistory,
     HISTORY_SOURCE_MAIN,
@@ -6517,186 +6553,11 @@
     clearActionPending,
   });
 
-  function runPlaceDataToComputerForRoot(workingRoot) {
-    const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
-    if (blocked) return blocked;
-
-    const gameplayLockReason = getGameplayLockReason();
-    if (gameplayLockReason) {
-      workingRoot.rocketState.statusNote = gameplayLockReason;
-      renderStateReadout();
-      return { ok: false, message: gameplayLockReason };
-    }
-
-    if (isTechTilePickingActive()) {
-      workingRoot.rocketState.statusNote = "请先完成科技选择";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-    if (isCardSelectionActive()) {
-      workingRoot.rocketState.statusNote = "请先完成精选";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-    if (isDiscardSelectionActive()) {
-      workingRoot.rocketState.statusNote = "请先完成弃牌";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-    if (isPlayCardSelectionActive()) {
-      workingRoot.rocketState.statusNote = "请先完成打牌";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-    if (isMovePaymentSelectionActive()) {
-      workingRoot.rocketState.statusNote = "请先完成移动";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-
-    openDataPlacePicker();
-    return { ok: true };
-  }
-
-  function runPlaceDataToComputer() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "data_open_computer_picker" }).value;
-  }
-
-  function analyzeDataForCurrentPlayer() {
-    return runAction("analyze", getAnalyzeActionOptionsForPlayer());
-  }
-
-  function canAnalyzeDataForPlayer(player = getCurrentPlayer()) {
-    return data.canAnalyzeData(player, {
-      skipEnergyCost: Boolean(industry.canAnalyzeWithoutEnergy?.(player)),
-    });
-  }
-
-  function getAnalyzeActionOptionsForPlayer(player = getCurrentPlayer(), actionOptions = {}) {
-    const options = { ...(actionOptions || {}) };
-    if (industry.canAnalyzeWithoutEnergy?.(player)) {
-      options.skipCost = true;
-    }
-    return options;
-  }
-
-  function startAnalyzeDataRewardFlow(workingRoot) {
-    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const rewardEffects = [{
-      id: "analyze-blue-alien-trace",
-      type: planetRewards.EFFECT_TYPES.ALIEN_TRACE,
-      label: "分析：获得 1 个蓝色外星人痕迹",
-      icon: "alien_blue",
-      needsUserChoice: true,
-      options: {
-        traceType: "blue",
-        targetPlayerId: currentPlayer?.id || null,
-        targetPlayerColor: currentPlayer?.color || null,
-      },
-    }];
-    return startCardEffectFlow(
-      "analyze-rewards",
-      "分析奖励",
-      rewardEffects,
-      { workingRoot, actionType: "analyze", historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
-    );
-  }
-
-  function runAction(actionId, actionOptions) {
-    const options = actionOptions || {};
-    const selector = actionId === "land"
-      ? {
-        ...(options.rocketId == null ? {} : { rocketId: Number(options.rocketId) }),
-        ...(options.target?.type ? { type: options.target.type } : {}),
-        ...(options.target?.satelliteId ? { satelliteId: options.target.satelliteId } : {}),
-      }
-      : (options.rocketId == null ? {} : { rocketId: Number(options.rocketId) });
-    return dispatchBrowserRuleInput({
-      kind: "standard_intent",
-      family: actionId,
-      selector,
-      payload: options,
-    });
-  }
-
-  function resumeLandTargetContinuation(workingRoot, pending, choice) {
-    const actionType = pending.actionType || choice.actionType || (choice.kind === "orbit" ? "orbit" : "land");
-    if (pending.resumeKind === "main-planet-action") {
-      if (choice.kind === "pluto") {
-        return actionInteractionRuntime.executePlutoAction(workingRoot, actionType, {
-          preferredRocketId: choice.preferredRocketId,
-        });
-      }
-      return runAction(actionType, actionType === "land"
-        ? { target: choice.target, rocketId: choice.rocketId }
-        : { rocketId: choice.rocketId });
-    }
-    const effect = getCurrentActionEffect(workingRoot);
-    if (!effect || (pending.effectId && effect.id !== pending.effectId)) {
-      return { ok: false, code: "LAND_TARGET_EFFECT_STALE", message: "登陆目标所属效果已失效" };
-    }
-    if (pending.resumeKind === "card-pluto-action") {
-      if (choice.kind === "pluto") {
-        return effectExecutors.executePlutoCardActionEffect(workingRoot, effect, actionType, choice.available, {
-          preOwnLandingMarker: choice.preOwnLandingMarker,
-        });
-      }
-      if (actionType === "orbit") return effectExecutors.executeNormalCardOrbitEffect(workingRoot, effect, choice);
-      return effectExecutors.executeCardLandTarget(workingRoot, effect, choice.target, {
-        preOwnLandingMarker: choice.preOwnLandingMarker,
-      });
-    }
-    if (pending.resumeKind === "chong-travel") {
-      return effectExecutors.executeChongTravelForPickupChoice(workingRoot, effect, choice);
-    }
-    return { ok: false, code: "LAND_TARGET_RESUME_UNMIGRATED", message: `未知登陆目标续体：${pending.resumeKind}` };
-  }
-
-  function confirmLandTargetChoiceForRoot(workingRoot, choiceIndex = 0) {
-    const pending = getPendingLandTargetDecision(workingRoot);
-    return withPendingOwnerPlayer(pending, () => {
-    if (!pending?.choices?.length) {
-      closeLandTargetPicker(workingRoot);
-      setBrowserStatusNote("登陆目标已失效");
-      renderStateReadout();
-      return { ok: false, message: "登陆目标已失效" };
-    }
-    const choice = pending.choices[choiceIndex] || pending.choices[0];
-    closeLandTargetPicker(workingRoot);
-    return resumeLandTargetContinuation(workingRoot, pending, choice);
-    });
-  }
-
   function confirmLandTargetChoice(choiceIndex = 0) {
     return submitActiveCardDecision(
       "land-target",
       (target) => Number(target.choiceId) === Number(choiceIndex),
     );
-  }
-
-  function getSimulationConditionalPlayer(workingRoot, pending) {
-    return resolvePlayerReference(workingRoot, {
-      playerId: pending?.playerId || pending?.targetPlayerId || null,
-      playerColor: pending?.playerColor || pending?.targetPlayerColor || null,
-    }) || getEffectOwnerPlayer(workingRoot, pending?.effect) || getCurrentPlayer(workingRoot);
-  }
-
-  function executeIncomeForCurrentPlayerForRoot(workingRoot) {
-    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const result = applyIncomeResourcesForPlayer(currentPlayer, {
-      label: "执行收入（调试，可能重复发放）",
-    });
-    workingRoot.rocketState.statusNote = result.message;
-    renderPlayerStats();
-    renderPublicCards();
-    updatePublicCardControls();
-    updateActionButtons();
-    renderStateReadout();
-    return result;
-  }
-
-  function executeIncomeForCurrentPlayer() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
   }
 
   const debugRuntimeController = debugRuntimeModule.createDebugRuntime({
@@ -7304,7 +7165,7 @@
       getBrowserProjection: () => residentProjectionAdapter.projectSource({
         viewer: getResidentViewer(),
       }),
-      browserServices: residentBrowserServices?.createPublicFacade?.() || null,
+      browserServices: residentBrowserServices.createPublicFacade(),
     },
   });
 

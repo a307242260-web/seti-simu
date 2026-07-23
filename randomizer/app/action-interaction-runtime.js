@@ -480,6 +480,137 @@
     return Object.freeze(port);
   }
 
+  function createDataAnalyzeInteractionRuntime(context = {}) {
+    function runPlaceDataToComputerForRoot(workingRoot) {
+      const blocked = context.blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
+      if (blocked) return blocked;
+      const blockers = [
+        [context.getGameplayLockReason(), null],
+        [context.isTechTilePickingActive(), "请先完成科技选择"],
+        [context.isCardSelectionActive(), "请先完成精选"],
+        [context.isDiscardSelectionActive(), "请先完成弃牌"],
+        [context.isPlayCardSelectionActive(), "请先完成打牌"],
+        [context.isMovePaymentSelectionActive(), "请先完成移动"],
+      ];
+      const blocker = blockers.find(([active]) => Boolean(active));
+      if (blocker) {
+        const message = blocker[1] || blocker[0];
+        workingRoot.rocketState.statusNote = message;
+        context.renderStateReadout();
+        return { ok: false, message };
+      }
+      context.openDataPlacePicker();
+      return { ok: true };
+    }
+
+    function runPlaceDataToComputer() {
+      return context.submitHostCommand({ kind: "data_open_computer_picker" }).value;
+    }
+
+    function canAnalyzeDataForPlayer(player = context.getCurrentPlayer()) {
+      return context.data.canAnalyzeData(player, {
+        skipEnergyCost: Boolean(context.industry.canAnalyzeWithoutEnergy?.(player)),
+      });
+    }
+
+    function getAnalyzeActionOptionsForPlayer(player = context.getCurrentPlayer(), actionOptions = {}) {
+      const options = { ...(actionOptions || {}) };
+      if (context.industry.canAnalyzeWithoutEnergy?.(player)) options.skipCost = true;
+      return options;
+    }
+
+    function analyzeDataForCurrentPlayer() {
+      return context.runAction("analyze", getAnalyzeActionOptionsForPlayer());
+    }
+
+    function startAnalyzeDataRewardFlow(workingRoot) {
+      const currentPlayer = context.players.getCurrentPlayer(workingRoot.playerState);
+      return context.startCardEffectFlow(
+        "analyze-rewards",
+        "分析奖励",
+        [{
+          id: "analyze-blue-alien-trace",
+          type: context.planetRewards.EFFECT_TYPES.ALIEN_TRACE,
+          label: "分析：获得 1 个蓝色外星人痕迹",
+          icon: "alien_blue",
+          needsUserChoice: true,
+          options: {
+            traceType: "blue",
+            targetPlayerId: currentPlayer?.id || null,
+            targetPlayerColor: currentPlayer?.color || null,
+          },
+        }],
+        {
+          workingRoot,
+          actionType: "analyze",
+          historySource: context.historySourceMain,
+          consumesMainAction: true,
+        },
+      );
+    }
+
+    return Object.freeze({
+      runPlaceDataToComputerForRoot,
+      runPlaceDataToComputer,
+      canAnalyzeDataForPlayer,
+      getAnalyzeActionOptionsForPlayer,
+      analyzeDataForCurrentPlayer,
+      startAnalyzeDataRewardFlow,
+    });
+  }
+
+  function createLandTargetContinuationRuntime(context = {}) {
+    function resume(workingRoot, pending, choice) {
+      const actionType = pending.actionType || choice.actionType || (choice.kind === "orbit" ? "orbit" : "land");
+      if (pending.resumeKind === "main-planet-action") {
+        if (choice.kind === "pluto") {
+          return context.executePlutoAction(workingRoot, actionType, {
+            preferredRocketId: choice.preferredRocketId,
+          });
+        }
+        return context.runAction(actionType, actionType === "land"
+          ? { target: choice.target, rocketId: choice.rocketId }
+          : { rocketId: choice.rocketId });
+      }
+      const effect = context.getCurrentActionEffect(workingRoot);
+      if (!effect || (pending.effectId && effect.id !== pending.effectId)) {
+        return { ok: false, code: "LAND_TARGET_EFFECT_STALE", message: "登陆目标所属效果已失效" };
+      }
+      if (pending.resumeKind === "card-pluto-action") {
+        if (choice.kind === "pluto") {
+          return context.effectExecutors().executePlutoCardActionEffect(workingRoot, effect, actionType, choice.available, {
+            preOwnLandingMarker: choice.preOwnLandingMarker,
+          });
+        }
+        if (actionType === "orbit") return context.effectExecutors().executeNormalCardOrbitEffect(workingRoot, effect, choice);
+        return context.effectExecutors().executeCardLandTarget(workingRoot, effect, choice.target, {
+          preOwnLandingMarker: choice.preOwnLandingMarker,
+        });
+      }
+      if (pending.resumeKind === "chong-travel") {
+        return context.effectExecutors().executeChongTravelForPickupChoice(workingRoot, effect, choice);
+      }
+      return { ok: false, code: "LAND_TARGET_RESUME_UNMIGRATED", message: `未知登陆目标续体：${pending.resumeKind}` };
+    }
+
+    function confirmForRoot(workingRoot, choiceIndex = 0) {
+      const pending = context.getPendingLandTargetDecision(workingRoot);
+      return context.withPendingOwnerPlayer(pending, () => {
+        if (!pending?.choices?.length) {
+          context.closeLandTargetPicker(workingRoot);
+          context.setBrowserStatusNote("登陆目标已失效");
+          context.renderStateReadout();
+          return { ok: false, message: "登陆目标已失效" };
+        }
+        const choice = pending.choices[choiceIndex] || pending.choices[0];
+        context.closeLandTargetPicker(workingRoot);
+        return resume(workingRoot, pending, choice);
+      });
+    }
+
+    return Object.freeze({ resume, confirmForRoot });
+  }
+
   function createActionInteractionRuntime(context) {
     const {
       HISTORY_SOURCE_MAIN,
@@ -1686,6 +1817,8 @@
     createPrimaryActionUiRuntime,
     createSolarRotationRuntime,
     createActionInteractionPort,
+    createDataAnalyzeInteractionRuntime,
+    createLandTargetContinuationRuntime,
     createActionInteractionRuntime,
   };
 });

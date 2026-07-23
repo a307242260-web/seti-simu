@@ -252,7 +252,7 @@ const adapter = inputApi.createBrowserInputAdapter({
 (function testLegacyRuleInputDispatcherOwnsStableSnapshotAndStandardRouting() {
   let phase = "idle";
   const calls = [];
-  const dispatcher = inputApi.createLegacyRuleInputDispatcher({
+  const dispatcher = inputApi.createRuleInputDispatcher({
     standardActionSchemaVersion: "seti-standard-action-v1",
     inspect: () => ({ phase }),
     createRecoverySnapshot: (options) => { calls.push(["snapshot", options.label]); return {}; },
@@ -266,6 +266,31 @@ const adapter = inputApi.createBrowserInputAdapter({
   assert.equal(dispatcher.dispatch({ kind: "standard_enumerate" }).candidates.length, 1);
   assert.equal(dispatcher.dispatch({ kind: "standard_intent", family: "pass" }).ok, true);
   assert.deepEqual(calls, [["snapshot", "Standard Action 开始前稳定恢复点"], ["main", "pass:1"]]);
+})();
+
+(function testStandardIntentAndActiveDecisionPortsOwnBrowserInputMapping() {
+  const dispatched = [];
+  const standard = inputApi.createStandardIntentPort({
+    dispatch(request) { dispatched.push(request); return { ok: true }; },
+  });
+  standard.runAction("land", { rocketId: 3, target: { type: "satellite", satelliteId: "s1" } });
+  assert.deepEqual(dispatched[0].selector, { rocketId: 3, type: "satellite", satelliteId: "s1" });
+
+  const submissions = [];
+  const decisions = inputApi.createActiveDecisionPort({
+    inspect: () => ({
+      phase: "awaiting_input",
+      session: { decision: {
+        decisionId: "d1",
+        decisionVersion: 2,
+        choices: [{ target: { kind: "industry-free-move", rocketId: 7, direction: "cw" } }],
+      } },
+    }),
+    submitDecision(submission) { submissions.push(submission); return { ok: true }; },
+  });
+  assert.equal(decisions.submitDirectional("industry-free-move", 1, 0, 7).ok, true);
+  assert.equal(submissions[0].decisionVersion, 2);
+  assert.equal(decisions.submit("unknown", () => true).code, "CARD_DECISION_REQUIRED");
 })();
 
 console.log("browser host reference core tests passed");

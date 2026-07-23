@@ -46,7 +46,7 @@ function projection(overrides = {}) {
   };
 }
 
-(function testLegacyActionSessionRuntimeOwnsHistoryAndStartLocks() {
+(function testActionSessionRuntimeOwnsHistoryAndStartLocks() {
   let complete = false;
   let session = false;
   let barrier = null;
@@ -62,7 +62,7 @@ function projection(overrides = {}) {
     getSessionInfo() { return session ? { stepCount: 0 } : null; },
     commitSession() { session = false; },
   };
-  const runtime = actionBar.createLegacyActionSessionRuntime({
+  const runtime = actionBar.createActionSessionRuntime({
     actionHistory: history,
     uiRuntimeState: { effectStepActive: true },
     historySourceMain: "main",
@@ -142,7 +142,7 @@ function projection(overrides = {}) {
   assert.equal(calls.undo.length, 1);
 })();
 
-(function testLegacyActionBarOwnsDomStateAndQuickPanel() {
+(function testDesktopActionBarOwnsDomStateAndQuickPanel() {
   const createButton = () => ({
     disabled: false,
     title: "",
@@ -161,7 +161,7 @@ function projection(overrides = {}) {
     quickActionsPanel: { hidden: true },
     quickActionsTrades: { querySelectorAll: () => [trade] },
   };
-  const controller = actionBar.createLegacyActionBarController({
+  const controller = actionBar.createDesktopActionBarController({
     els,
     quickTrades: { canExecuteTrade: () => ({ ok: false, message: "资源不足" }) },
     createReadoutActionContext: () => ({}),
@@ -177,7 +177,7 @@ function projection(overrides = {}) {
   assert.equal(trade.title, "资源不足");
 })();
 
-(function testLegacyUndoControllerOwnsQuickPreCommandsAndMainRollback() {
+(function testUndoControllerOwnsQuickPreCommandsAndMainRollback() {
   const calls = [];
   let flow = {
     historySource: "quick",
@@ -200,7 +200,7 @@ function projection(overrides = {}) {
     hasSession: () => true,
     commitSession() { calls.push("commit:quick"); },
   };
-  const controller = actionBar.createLegacyUndoController({
+  const controller = actionBar.createUndoController({
     actionHistory,
     quickActionHistory,
     HISTORY_SOURCE_MAIN: "main",
@@ -238,7 +238,7 @@ function projection(overrides = {}) {
 
 (function testLegacyUndoControllerReportsIrreversibleBarrier() {
   const calls = [];
-  const controller = actionBar.createLegacyUndoController({
+  const controller = actionBar.createUndoController({
     actionHistory: { hasUndoableStep: () => false, hasSession: () => true, peekLastUndoableStep: () => null },
     quickActionHistory: { hasUndoableStep: () => false },
     HISTORY_SOURCE_MAIN: "main",
@@ -271,7 +271,7 @@ function projection(overrides = {}) {
   list.replaceChildren = function replaceChildren(...children) { this.children = children; };
   const bar = { hidden: true };
   const skip = createNode();
-  const renderer = actionBar.createLegacyEffectBarRenderer({
+  const renderer = actionBar.createEffectBarRenderer({
     document: { createElement: createNode },
     els: { actionEffectBar: bar, actionEffectList: list, actionEffectSkipButton: skip },
   });
@@ -297,7 +297,7 @@ function projection(overrides = {}) {
     setAttribute() {},
   });
   const list = createNode();
-  const presentation = actionBar.createLegacyEffectBarPresentation({
+  const presentation = actionBar.createEffectBarPresentation({
     document: { createElement: createNode },
     els: { actionEffectBar: { hidden: true }, actionEffectList: list, actionEffectSkipButton: createNode() },
     players: { formatResourceCost: (cost) => `${cost.energy}能量` },
@@ -318,7 +318,7 @@ function projection(overrides = {}) {
 
 (function testLegacyActionBarPortUsesResidentController() {
   const calls = [];
-  const port = actionBar.createLegacyActionBarPort({
+  const port = actionBar.createActionBarPort({
     getController: () => ({ setQuickPanelOpen: (open) => calls.push(open) }),
   });
   port.setQuickPanelOpen(true);

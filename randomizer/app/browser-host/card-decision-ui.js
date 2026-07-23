@@ -108,7 +108,7 @@
     });
   }
 
-  function createLegacyCardSelectionState(context = {}) {
+  function createCardSelectionState(context = {}) {
     const readRoot = (workingRoot = null) => workingRoot || context.getRuleReadout();
     function isCardSelectionActive(workingRoot = null) {
       return context.cards.isSelectionActive(readRoot(workingRoot).cardState);
@@ -155,6 +155,6 @@
     createCardDecisionPresenter,
     createCardDecisionRegistry,
     createCardDecisionUiController,
-    createLegacyCardSelectionState,
+    createCardSelectionState,
   });
 });

@@ -43,6 +43,8 @@ const { collectDependencies } = require("./dependencies");
     SetiAppAlienRuntime: {},
     SetiAppScoreSourceRuntime: {},
     SetiAppAlienUi: {},
+    SetiBrowserHost: {},
+    SetiAppAiControlRuntime: {},
     SetiSolarSystem: {},
     SetiPlayers: {},
     SetiRocketActions: {},
@@ -90,6 +92,34 @@ const { collectDependencies } = require("./dependencies");
 })();
 
 (() => {
+  const randomizerRoot = path.join(__dirname, "..");
+  const indexSource = fs.readFileSync(path.join(randomizerRoot, "index.html"), "utf8");
+  const scriptPaths = [...indexSource.matchAll(/<script\s+src="\.\/([^"?]+)(?:\?[^"\s]*)?"/g)]
+    .map((match) => match[1]);
+  assert.equal(new Set(scriptPaths).size, scriptPaths.length, "index.html 不得重复加载脚本");
+  for (const relative of scriptPaths) {
+    assert.equal(fs.existsSync(path.join(randomizerRoot, relative)), true, `index.html 脚本不存在: ${relative}`);
+  }
+
+  const browserSources = new Map(scriptPaths
+    .filter((relative) => relative.endsWith(".js"))
+    .map((relative) => [relative, fs.readFileSync(path.join(randomizerRoot, relative), "utf8")]));
+  for (const [relative, source] of browserSources) {
+    for (const match of source.matchAll(/root\.(Seti[A-Za-z0-9_$]+)\s*=\s*api/g)) {
+      const globalName = match[1];
+      const callers = [...browserSources]
+        .filter(([candidate, candidateSource]) => candidate !== relative && candidateSource.includes(globalName));
+      assert.ok(callers.length > 0, `生产全局 export 无 caller: ${globalName} (${relative})`);
+    }
+  }
+
+  for (const removed of ["app/view-adapter.js", "app/effect-session-host.js"]) {
+    assert.equal(fs.existsSync(path.join(randomizerRoot, removed)), false, `旧实现必须物理删除: ${removed}`);
+    assert.equal(scriptPaths.includes(removed), false, `index.html 不得加载旧实现: ${removed}`);
+  }
+})();
+
+(() => {
   const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
   const forbiddenDomImplementation = [
     /document\.(?:createElement|querySelector|addEventListener)/,
@@ -106,6 +136,22 @@ const { collectDependencies } = require("./dependencies");
   assert.match(appSource, /createBrowserInputAdapter\(/, "Browser 输入必须由 Browser Host adapter 装配");
   assert.match(appSource, /createBrowserWorkingStateAdapter\(/, "working state 只能由窄 adapter 装配");
   assert.match(appSource, /createPendingSubFlowRuntime\(/, "待决子流程必须由 effect runtime 聚合");
-  const topLevelFunctions = appSource.match(/^  (?:async )?function [A-Za-z0-9_]+/gm) || [];
-  assert.ok(topLevelFunctions.length <= 100, `app.js 顶层实现函数反弹：${topLevelFunctions.length}`);
+  for (const migratedResponsibility of [
+    "submitActiveCardDecision",
+    "runPlaceDataToComputerForRoot",
+    "analyzeDataForCurrentPlayer",
+    "canAnalyzeDataForPlayer",
+    "getAnalyzeActionOptionsForPlayer",
+    "startAnalyzeDataRewardFlow",
+    "resumeLandTargetContinuation",
+    "confirmLandTargetChoiceForRoot",
+    "getSimulationConditionalPlayer",
+    "executeIncomeForCurrentPlayerForRoot",
+  ]) {
+    assert.doesNotMatch(
+      appSource,
+      new RegExp(`function ${migratedResponsibility}\\b`),
+      `app.js 不得按函数数豁免已归属领域 owner 的实现：${migratedResponsibility}`,
+    );
+  }
 })();

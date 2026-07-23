@@ -48,6 +48,8 @@
     Object.freeze({ key: "alienRuntimeModule", globalName: "SetiAppAlienRuntime" }),
     Object.freeze({ key: "scoreSourceRuntimeModule", globalName: "SetiAppScoreSourceRuntime" }),
     Object.freeze({ key: "alienUiModule", globalName: "SetiAppAlienUi" }),
+    Object.freeze({ key: "browserHostModule", globalName: "SetiBrowserHost" }),
+    Object.freeze({ key: "aiControlRuntimeModule", globalName: "SetiAppAiControlRuntime" }),
     Object.freeze({ key: "solar", globalName: "SetiSolarSystem" }),
     Object.freeze({ key: "players", globalName: "SetiPlayers" }),
     Object.freeze({ key: "rocketActions", globalName: "SetiRocketActions" }),
@@ -77,12 +79,6 @@
     Object.freeze({ key: "aiRaceModel", globalName: "SetiAIRaceModel" }),
     Object.freeze({ key: "ai", globalName: "SetiAI" }),
   ]);
-  const OPTIONAL_GLOBALS = Object.freeze([
-    Object.freeze({ key: "browserHostModule", globalName: "SetiBrowserHost" }),
-    Object.freeze({ key: "aiControlRuntimeModule", globalName: "SetiAppAiControlRuntime" }),
-    Object.freeze({ key: "effectSessionHostModule", globalName: "SetiAppEffectSessionHost" }),
-  ]);
-
   function collectDependencies(source = root) {
     const dependencies = {};
     const missing = [];
@@ -93,10 +89,6 @@
         missing.push(entry.globalName);
       }
       dependencies[entry.key] = value;
-    }
-
-    for (const entry of OPTIONAL_GLOBALS) {
-      dependencies[entry.key] = source[entry.globalName] || null;
     }
 
     if (missing.length) {

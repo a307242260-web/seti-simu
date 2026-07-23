@@ -211,7 +211,7 @@ function createProjection() {
     projectionAdapter: { projectSource: () => canonical },
     uiRuntimeState: { publicCardSelectedSlots: [1], alienRevealConfirmation: { active: true } },
     getViewer: () => canonical.viewer,
-    createReadoutRoot: projectionApi.createLegacyReadoutRoot,
+    createReadoutRoot: projectionApi.createReadoutRoot,
     getPendingMovePayment: () => ({ required: 2 }),
     computePlayerFinalScoreBreakdown: () => ({ total: 12 }),
     isCardSelectionActive: () => true,

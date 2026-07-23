@@ -1,8 +1,19 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createConditionalDecisionDomain } = require("./conditional-decision-domain");
+const { createConditionalDecisionDomain, createConditionalPlayerResolver } = require("./conditional-decision-domain");
 const { createConditionalActionExecutor } = require("./conditional-action-executor");
+
+{
+  const fallback = { id: "fallback" };
+  const resolver = createConditionalPlayerResolver({
+    resolvePlayerReference: (_root, reference) => reference.playerId === "p1" ? { id: "p1" } : null,
+    getEffectOwnerPlayer: () => null,
+    getCurrentPlayer: () => fallback,
+  });
+  assert.equal(resolver({}, { playerId: "p1" }).id, "p1");
+  assert.equal(resolver({}, {}).id, "fallback");
+}
 
 function createFixture() {
   const root = {

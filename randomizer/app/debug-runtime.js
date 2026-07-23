@@ -1229,8 +1229,29 @@
     return Object.freeze(port);
   }
 
+  function createDebugIncomeAdapter(context = {}) {
+    function executeForRoot(workingRoot) {
+      const currentPlayer = context.players.getCurrentPlayer(workingRoot.playerState);
+      const result = context.applyIncomeResourcesForPlayer(currentPlayer, {
+        label: "执行收入（调试，可能重复发放）",
+      });
+      workingRoot.rocketState.statusNote = result.message;
+      context.renderPlayerStats();
+      context.renderPublicCards();
+      context.updatePublicCardControls();
+      context.updateActionButtons();
+      context.renderStateReadout();
+      return result;
+    }
+    function execute() {
+      return context.submitHostCommand({ kind: "debug_execute_income" }).value;
+    }
+    return Object.freeze({ executeForRoot, execute });
+  }
+
   return {
     createDebugRuntime,
     createDebugPort,
+    createDebugIncomeAdapter,
   };
 });

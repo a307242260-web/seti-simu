@@ -74,7 +74,7 @@
     return output;
   }
 
-  function createLegacyReadoutRoot(resident, options = {}) {
+  function createReadoutRoot(resident, options = {}) {
     const solarKey = options.solarKey || "solar";
     return {
       turnState: structuredClone(resident.turn || {}),
@@ -331,7 +331,7 @@
     validateProjection,
     createResidentProjection,
     clonePresentation,
-    createLegacyReadoutRoot,
+    createReadoutRoot,
     createResidentPresentationBuilder,
     createResidentRenderInputBuilder,
   });

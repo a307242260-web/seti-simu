@@ -11,11 +11,11 @@ function modulesFor(relative) {
   if (/browser-host\/(?:heuristic-policy\.integration|policy-input-adapter)\.test|public-api-ai-contract/.test(relative)) return ["webUi"];
   if (/simulation-(?:contract|final-scoring|legality)\.test/.test(relative)) return ["uniqueAction"];
   if (/conditional-decision-domain\.test/.test(relative)) return ["uniqueAction"];
-  if (/simulation-(?:decision-owner|effect-session-host|effect-session-worker-recovery|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
+  if (/simulation-(?:decision-owner|effect-session-worker-recovery|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
   if (/simulation-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
   if (/training\/simulation-rule-composition\.test/.test(relative)) return ["unifiedAuthorityState"];
   if (/\/training\/|\/game\/ai\/|\/app\/ai\/|ai-runtime-root|simulation-worker-resilience/.test(relative)) return ["robot"];
-  if (/\/game\/effects\/|effect-session-host/.test(relative)) return ["uniqueSessionState"];
+  if (/\/game\/effects\//.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
   if (/\/game\/(?:actions|abilities|industry|aliens)\/|\/game\/(?:basic-cards|initial-cards)\.test|action-runtime|action-briefing/.test(relative)) return ["uniqueAction"];
   if (/\/game\/(?:state|cards|data|tech|history)\/|\/game\/(?:players|rockets|rockets\.move|planet-stats|final-scoring|end-game-scoring)\.test|\/solar-system\//.test(relative)) return ["unifiedAuthorityState"];
@@ -45,7 +45,6 @@ randomizer/app/browser-host/decision-ui.test.js
 randomizer/app/browser-host/industry-alien-decision-ui.test.js
 randomizer/app/browser-host/player-stats-ui.test.js
 randomizer/app/browser-host/resident-renderer.test.js
-randomizer/app/browser-host/scan-data-land-session.test.js
 randomizer/app/rule-composition.test.js
 randomizer/app/card-runtime.test.js
 randomizer/app/card-trigger-runtime.test.js
@@ -54,7 +53,6 @@ randomizer/app/debug-runtime.test.js
 randomizer/app/dependencies.test.js
 randomizer/app/effect-choice-flow.test.js
 randomizer/app/effect-flow.test.js
-randomizer/app/effect-session-host.test.js
 randomizer/app/effects/executors.test.js
 randomizer/app/events.test.js
 randomizer/app/final-ui-runtime.test.js
@@ -80,7 +78,6 @@ randomizer/app/scan-flow.test.js
 randomizer/app/start-screen.test.js
 randomizer/app/tech-runtime.test.js
 randomizer/app/turn-flow.test.js
-randomizer/app/view-adapter.test.js
 randomizer/game/actions/actions.test.js
 randomizer/game/actions/quick-trades.test.js
 randomizer/game/aliens/amiba.test.js

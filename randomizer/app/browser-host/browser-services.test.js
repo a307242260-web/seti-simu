@@ -186,7 +186,7 @@ function createHarness(options = {}) {
       return { ok: true, nested: { count: root.count } };
     },
   };
-  const port = servicesApi.createLegacyDomainCommandPort({
+  const port = servicesApi.createDomainCommandPort({
     getTarget: (domain) => (domain === "scan_flow" ? target : null),
     clonePresentation: (value) => structuredClone(value),
     submitHostCommand(command) { submitted.push(command); return { value: { command } }; },

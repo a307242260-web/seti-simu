@@ -244,7 +244,7 @@
     });
   }
 
-  function createLegacyDomainCommandPort(options = {}) {
+  function createDomainCommandPort(options = {}) {
     const allowedCommands = Object.fromEntries(Object.entries(options.allowedCommands || LEGACY_DOMAIN_COMMANDS)
       .map(([domain, operations]) => [domain, new Set(operations)]));
 
@@ -319,7 +319,7 @@
     VIEW_SCHEMA_VERSION,
     createBrowserServices,
     createBrowserDownloadPort,
-    createLegacyDomainCommandPort,
+    createDomainCommandPort,
     LEGACY_DOMAIN_COMMANDS,
     subscribeRefresh,
   });

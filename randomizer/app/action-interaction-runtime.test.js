@@ -4,12 +4,70 @@ const assert = require("node:assert/strict");
 const {
   createActionInteractionRuntime,
   createActionInteractionPort,
+  createDataAnalyzeInteractionRuntime,
+  createLandTargetContinuationRuntime,
   createBoardPointerHandlers,
   createLandTargetPicker,
   createMoveUiRuntime,
   createPrimaryActionUiRuntime,
   createSolarRotationRuntime,
 } = require("./action-interaction-runtime");
+
+{
+  const calls = [];
+  const player = { id: "p1", color: "blue" };
+  const runtime = createDataAnalyzeInteractionRuntime({
+    data: { canAnalyzeData: (_player, options) => ({ ok: true, options }) },
+    industry: { canAnalyzeWithoutEnergy: () => true },
+    players: { getCurrentPlayer: () => player },
+    planetRewards: { EFFECT_TYPES: { ALIEN_TRACE: "alien_trace" } },
+    historySourceMain: "main",
+    blockIncompatiblePendingQuickActionForRoot: () => null,
+    getGameplayLockReason: () => null,
+    isTechTilePickingActive: () => false,
+    isCardSelectionActive: () => false,
+    isDiscardSelectionActive: () => false,
+    isPlayCardSelectionActive: () => false,
+    isMovePaymentSelectionActive: () => false,
+    renderStateReadout: () => calls.push("render"),
+    openDataPlacePicker: () => calls.push("picker"),
+    submitHostCommand: (command) => ({ value: command.kind }),
+    getCurrentPlayer: () => player,
+    runAction: (family, options) => ({ family, options }),
+    startCardEffectFlow: (...args) => ({ args }),
+  });
+  const root = { playerState: {}, rocketState: { statusNote: "" } };
+  assert.equal(runtime.runPlaceDataToComputerForRoot(root).ok, true);
+  assert.deepEqual(calls, ["picker"]);
+  assert.equal(runtime.runPlaceDataToComputer(), "data_open_computer_picker");
+  assert.equal(runtime.canAnalyzeDataForPlayer(player).options.skipEnergyCost, true);
+  assert.equal(runtime.getAnalyzeActionOptionsForPlayer(player).skipCost, true);
+  assert.equal(runtime.analyzeDataForCurrentPlayer().family, "analyze");
+  assert.equal(runtime.startAnalyzeDataRewardFlow(root).args[2][0].options.targetPlayerId, "p1");
+}
+
+{
+  const calls = [];
+  const runtime = createLandTargetContinuationRuntime({
+    executePlutoAction: () => ({ ok: true, kind: "pluto" }),
+    runAction: (family, options) => ({ ok: true, family, options }),
+    getCurrentActionEffect: () => ({ id: "effect-1" }),
+    effectExecutors: () => ({
+      executeCardLandTarget: () => ({ ok: true, kind: "land-effect" }),
+    }),
+    getPendingLandTargetDecision: () => ({
+      resumeKind: "main-planet-action",
+      actionType: "land",
+      choices: [{ rocketId: 7, target: { type: "planet" } }],
+    }),
+    withPendingOwnerPlayer: (_pending, callback) => callback(),
+    closeLandTargetPicker: () => calls.push("close"),
+    setBrowserStatusNote: () => {},
+    renderStateReadout: () => {},
+  });
+  assert.equal(runtime.confirmForRoot({}, 0).family, "land");
+  assert.deepEqual(calls, ["close"]);
+}
 
 {
   const calls = [];

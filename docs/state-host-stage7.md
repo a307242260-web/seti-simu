@@ -9,7 +9,7 @@
 ## 端口
 
 - `randomizer/game/state/host-source.js`：宿主共同使用的只读 source selector。输出携带 `committed | working`、state/session version 与 decision，且深冻结、调用隔离。
-- `randomizer/app/effect-session-host.js`：浏览器空闲投影兼容真实 StateStore snapshot，并订阅 commit 触发刷新；renderer 失败只记宿主错误，不影响已经成立的提交。
+- `randomizer/app/rule-composition.js`：浏览器唯一 Rule Composition 直接持有 StateStore 与 active Session；Browser Host 只读其 projection/source port 并经 input port 提交。
 - `randomizer/game/rule-composition.js`：配置 `stateStore` 后使用 `dispatchStoredAction()`，working state、checkpoint 与最终 committed state 均为 `seti-committed-game-state-v1`；不再用 simulation 私有 `{stateVersion,snapshot}` 作为权威事实。
 - `randomizer/app/simulation-env.js`：reset 时从 recovery v2 committed JSON 建立 StateStore；observation 只由当前 committed/working source 单向生成。
 
@@ -37,7 +37,6 @@ Stage 8 已删除旧状态 adapter、旧存档读取和过渡 inventory；未知
 
 ```text
 node randomizer/game/state/host-source.test.js
-node randomizer/app/effect-session-host.test.js
 node randomizer/app/rule-composition.test.js
 node randomizer/app/simulation-env.test.js
 node randomizer/app/simulation-effect-session-integration.test.js

@@ -161,7 +161,7 @@
     return Object.freeze({ render, handleDomEvent, dispose: () => rootNode.removeEventListener("click", handleDomEvent) });
   }
 
-  function createLegacyActionBarController(context = {}) {
+  function createDesktopActionBarController(context = {}) {
     const { els } = context;
     const mainButtons = [
       els.actionLaunchButton, els.actionOrbitButton, els.actionLandButton, els.actionScanButton,
@@ -318,7 +318,7 @@
     });
   }
 
-  function createLegacyUndoController(context = {}) {
+  function createUndoController(context = {}) {
     const {
       actionHistory,
       quickActionHistory,
@@ -494,7 +494,7 @@
     return Object.freeze({ undoPendingActionForRoot });
   }
 
-  function createLegacyActionSessionRuntime(context = {}) {
+  function createActionSessionRuntime(context = {}) {
     const { actionHistory, uiRuntimeState, historySourceMain } = context;
 
     function markActionPending() {
@@ -618,7 +618,7 @@
     });
   }
 
-  function createLegacyEffectBarRenderer(options = {}) {
+  function createEffectBarRenderer(options = {}) {
     const { document, els = {} } = options;
     function render(model = {}) {
       if (!els.actionEffectBar || !els.actionEffectList) return;
@@ -685,8 +685,8 @@
     return Object.freeze({ render });
   }
 
-  function createLegacyEffectBarPresentation(context = {}) {
-    const renderer = createLegacyEffectBarRenderer({ document: context.document, els: context.els });
+  function createEffectBarPresentation(context = {}) {
+    const renderer = createEffectBarRenderer({ document: context.document, els: context.els });
 
     function normalizeResourceCost(cost) {
       if (!cost || typeof cost !== "object" || Array.isArray(cost)) return null;
@@ -766,7 +766,7 @@
     });
   }
 
-  function createLegacyActionBarPort(context = {}) {
+  function createActionBarPort(context = {}) {
     const methods = [
       "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
       "updateActionButtons", "isQuickPanelOpen", "setQuickPanelOpen", "toggleQuickPanel", "updateQuickPanel",
@@ -781,11 +781,11 @@
     createActionBarModel,
     createActionBarController,
     createActionBarRenderer,
-    createLegacyActionBarController,
-    createLegacyUndoController,
-    createLegacyActionSessionRuntime,
-    createLegacyEffectBarRenderer,
-    createLegacyEffectBarPresentation,
-    createLegacyActionBarPort,
+    createDesktopActionBarController,
+    createUndoController,
+    createActionSessionRuntime,
+    createEffectBarRenderer,
+    createEffectBarPresentation,
+    createActionBarPort,
   });
 });

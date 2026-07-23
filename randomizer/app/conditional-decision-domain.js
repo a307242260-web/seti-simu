@@ -7,6 +7,15 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  function createConditionalPlayerResolver(context = {}) {
+    return function getConditionalPlayer(workingRoot, pending) {
+      return context.resolvePlayerReference(workingRoot, {
+        playerId: pending?.playerId || pending?.targetPlayerId || null,
+        playerColor: pending?.playerColor || pending?.targetPlayerColor || null,
+      }) || context.getEffectOwnerPlayer(workingRoot, pending?.effect) || context.getCurrentPlayer(workingRoot);
+    };
+  }
+
   function createResolvedConditionalDecisionDomain(context) {
     const {
       finalScoring,
@@ -1459,5 +1468,5 @@
     });
   }
 
-  return Object.freeze({ createConditionalDecisionDomain });
+  return Object.freeze({ createConditionalPlayerResolver, createConditionalDecisionDomain });
 });

@@ -1,7 +1,26 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createDebugPort, createDebugRuntime } = require("./debug-runtime");
+const { createDebugIncomeAdapter, createDebugPort, createDebugRuntime } = require("./debug-runtime");
+
+{
+  const calls = [];
+  const adapter = createDebugIncomeAdapter({
+    players: { getCurrentPlayer: () => ({ id: "p1" }) },
+    applyIncomeResourcesForPlayer: () => ({ ok: true, message: "收入完成" }),
+    renderPlayerStats: () => calls.push("stats"),
+    renderPublicCards: () => calls.push("cards"),
+    updatePublicCardControls: () => calls.push("controls"),
+    updateActionButtons: () => calls.push("actions"),
+    renderStateReadout: () => calls.push("readout"),
+    submitHostCommand: (command) => ({ value: command.kind }),
+  });
+  const root = { playerState: {}, rocketState: { statusNote: "" } };
+  assert.equal(adapter.executeForRoot(root).ok, true);
+  assert.equal(root.rocketState.statusNote, "收入完成");
+  assert.deepEqual(calls, ["stats", "cards", "controls", "actions", "readout"]);
+  assert.equal(adapter.execute(), "debug_execute_income");
+}
 
 {
   const calls = [];

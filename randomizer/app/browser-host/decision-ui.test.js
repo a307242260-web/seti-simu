@@ -7,10 +7,6 @@ const projectionApi = require("./projection-adapter");
 const viewStateApi = require("./view-state-store");
 const inputApi = require("./input-adapter");
 const decisionUiApi = require("./decision-ui");
-const effectSessionApi = require("../../game/effects/session-runtime");
-const standardActionApi = require("../../game/actions/standard-action");
-const { createQuickActionCoordinator } = require("../../game/effects/quick-action-session");
-const { createBrowserEffectSessionHost } = require("../effect-session-host");
 
 function projection(choices, overrides = {}) {
   return {
@@ -150,101 +146,6 @@ function projection(choices, overrides = {}) {
   assert.deepEqual(first.content.tiles, rebuilt.content.tiles);
   assert.deepEqual(first.content.tiles.map((tile) => tile.tileId), ["blue2", "purple1"]);
   assert.equal(ruleCalls, 0);
-})();
-
-(function testActualQuickInterruptMakesOldDecisionIdentityStale() {
-  let committed = { version: 1, stateVersion: 1, decisionVersion: 0, actorId: "p1", trace: [] };
-  const store = {
-    getSnapshot: () => ({ state: structuredClone(committed) }),
-    compareAndCommit(baseVersion, nextState) {
-      if (baseVersion !== committed.version) return { ok: false, code: "STATE_VERSION_CONFLICT" };
-      committed = structuredClone(nextState);
-      return { ok: true };
-    },
-  };
-  const registry = standardActionApi.createRegistry({
-    getAuthority: (state) => ({
-      actorId: state.actorId,
-      stateVersion: state.stateVersion,
-      decisionVersion: state.decisionVersion,
-    }),
-  });
-  for (const family of ["research_tech", "quick_trade"]) {
-    registry.register(standardActionApi.createOptionDefinition(family, {
-      getOptions: () => ({ ok: true, choices: [{ target: { id: family } }] }),
-      canExecute: () => ({ ok: true }),
-      execute: () => { throw new Error("legacy action execute must stay unreachable"); },
-    }));
-  }
-  const runtime = effectSessionApi.createRuntime({ readCommittedState: () => structuredClone(committed) });
-  runtime.registerExecutor("tech-decision", {
-    getLegalChoices: () => [{ choiceId: "blue2@slot-b" }],
-    resolveDecision(state, _effect, choice) {
-      state.trace.push(`decision:${choice.choiceId}`);
-      return { ok: true, nextState: state };
-    },
-  });
-  runtime.registerExecutor("quick-boost", (state) => {
-    state.trace.push("quick");
-    return { ok: true, nextState: state };
-  });
-  const flow = {
-    dispatch(state, action) {
-      return runtime.dispatchAction(state, action, () => ({
-        kind: "action",
-        ownerId: "p1",
-        effects: [{
-          type: "tech-decision", kind: "decision", decisionKind: "research_tech_choice",
-          ownerId: "p1", allowQuickActions: true,
-        }],
-      }));
-    },
-    inspect: runtime.inspect,
-    observe: runtime.observe,
-    advance: runtime.advance,
-    drain: runtime.drain,
-    resolveDecision: runtime.resolveDecision,
-    abort: runtime.abort,
-  };
-  const quick = createQuickActionCoordinator({
-    runtime,
-    registry,
-    buildEffectGroup: () => ({ effects: [{ type: "quick-boost" }] }),
-  });
-  flow.interrupt = quick.interrupt;
-  const host = createBrowserEffectSessionHost({
-    stateStore: store,
-    actionRegistry: registry,
-    flows: { research_tech: flow },
-  });
-  const action = host.enumerateActions({ family: "research_tech" })[0];
-  host.dispatchAction(action);
-  const oldDecision = host.inspect().session.decision;
-  const viewStore = viewStateApi.createViewStateStore();
-  const oldProjection = projection(
-    [{ choiceId: "blue2@slot-b", label: "蓝 2 / B", presentation: { tileId: "blue2", slotId: "slot-b" } }],
-    { decision: { decisionId: oldDecision.decisionId, decisionVersion: oldDecision.decisionVersion } },
-  );
-  viewStore.reconcileProjection(oldProjection);
-  viewStore.dispatch({ type: "draft.set", intentKind: "decision", selectedChoiceIds: ["blue2@slot-b"] });
-  const input = inputApi.createBrowserInputAdapter({
-    dispatchAction: () => ({ ok: true }),
-    submitDecision(submission) {
-      return host.submitDecisionChoice(submission.decisionId, submission.decisionVersion, submission.choice.choiceId);
-    },
-    viewStateStore: viewStore,
-    refreshProjection: () => ({ projectionId: "after-quick" }),
-  });
-  const controller = decisionUiApi.createDecisionUiController({ dispatchIntent: input.dispatchIntent });
-  const quickAction = host.enumerateActions({ family: "quick_trade" })[0];
-  assert.equal(host.dispatchQuickAction(quickAction).ok, true);
-  const stale = controller.dispatchUiIntent({ type: "confirm" }, {
-    projection: oldProjection,
-    viewState: viewStore.getSnapshot(),
-  });
-  assert.equal(stale.code, "EFFECT_HOST_DECISION_STALE");
-  assert.notEqual(host.inspect().session.decision.decisionVersion, oldDecision.decisionVersion);
-  assert.deepEqual(committed.trace, []);
 })();
 
 console.log("browser decision UI tests passed");

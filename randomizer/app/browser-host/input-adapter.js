@@ -99,7 +99,7 @@
     });
   }
 
-  function createLegacyRuleInputDispatcher(options = {}) {
+  function createRuleInputDispatcher(options = {}) {
     let stableRecoverySnapshot = null;
 
     function ensureStableRecoverySnapshot() {
@@ -148,5 +148,63 @@
     return Object.freeze({ dispatch });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, createBrowserInputAdapter, createLegacyRuleInputDispatcher });
+  function createStandardIntentPort(options = {}) {
+    if (typeof options.dispatch !== "function") {
+      throw new TypeError("StandardIntentPort 需要 dispatch port");
+    }
+    function runAction(actionId, actionOptions = {}) {
+      const selector = actionId === "land"
+        ? {
+          ...(actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }),
+          ...(actionOptions.target?.type ? { type: actionOptions.target.type } : {}),
+          ...(actionOptions.target?.satelliteId ? { satelliteId: actionOptions.target.satelliteId } : {}),
+        }
+        : (actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) });
+      return options.dispatch({
+        kind: "standard_intent",
+        family: actionId,
+        selector,
+        payload: actionOptions,
+      });
+    }
+    return Object.freeze({ runAction });
+  }
+
+  function createActiveDecisionPort(options = {}) {
+    if (typeof options.inspect !== "function" || typeof options.submitDecision !== "function") {
+      throw new TypeError("ActiveDecisionPort 需要 inspect/submitDecision ports");
+    }
+    function submit(kind, matches) {
+      const inspection = options.inspect();
+      const decision = inspection.session?.decision || null;
+      const choice = (decision?.choices || []).find((candidate) => {
+        const target = candidate?.target || candidate?.standardAction?.target || null;
+        return target?.kind === kind && matches(target, candidate);
+      });
+      if (inspection.phase !== "awaiting_input" || !decision || !choice) {
+        return { ok: false, code: "CARD_DECISION_REQUIRED", message: "当前输入不在 active Decision 合法项中" };
+      }
+      return options.submitDecision({
+        decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion,
+        choice,
+      });
+    }
+    function submitDirectional(kind, deltaX, deltaY, rocketId) {
+      const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
+      return submit(
+        kind,
+        (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
+      );
+    }
+    return Object.freeze({ submit, submitDirectional });
+  }
+
+  return Object.freeze({
+    SCHEMA_VERSION,
+    createBrowserInputAdapter,
+    createRuleInputDispatcher,
+    createStandardIntentPort,
+    createActiveDecisionPort,
+  });
 });

@@ -14,7 +14,7 @@ const standardAction = require("../../game/actions/standard-action");
 (function testLegacyCardSelectionStateReadsProjectionOnly() {
   const root = { cardState: { selecting: true, playing: false } };
   let pending = { type: "public_scan", minSelectable: 1, maxSelectable: 2, allowBlindDraw: false };
-  const state = cardDecisionUiApi.createLegacyCardSelectionState({
+  const state = cardDecisionUiApi.createCardSelectionState({
     getRuleReadout: () => root,
     cards: {
       isSelectionActive: (cardState) => cardState.selecting,

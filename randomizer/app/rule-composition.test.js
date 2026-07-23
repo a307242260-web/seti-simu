@@ -436,6 +436,17 @@ function createHarness(initialValue = 0) {
   assert.match(appSource, /createRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
   assert.doesNotMatch(appSource, /createBrowserStateAuthority\(/, "生产 app 不得实例化旧 BrowserStateAuthority");
   assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
+  assert.equal(fs.existsSync(path.join(__dirname, "effect-session-host.js")), false, "旧 Browser Effect Session Host 必须物理删除");
+  assert.equal(fs.existsSync(path.join(__dirname, "view-adapter.js")), false, "旧 Headless no-op view adapter 必须物理删除");
+  assert.doesNotMatch(indexSource, /effect-session-host\.js|view-adapter\.js/, "生产入口不得加载旧宿主或 no-op view adapter");
+  const browserHostSources = [
+    "action-bar.js",
+    "browser-services.js",
+    "card-decision-ui.js",
+    "input-adapter.js",
+    "resident-projection.js",
+  ].map((file) => fs.readFileSync(path.join(__dirname, "browser-host", file), "utf8")).join("\n");
+  assert.doesNotMatch(browserHostSources, /createLegacy[A-Za-z]+/, "Browser Host 不得重新暴露 compatibility API");
   for (const file of ["low-coupling-slices.js", "high-coupling-slices.js"]) {
     const sliceSource = fs.readFileSync(path.join(__dirname, "../game/state", file), "utf8");
     assert.doesNotMatch(sliceSource, /beginWorkingCopy\(|compareAndCommit\(/, `${file} 不得保留 Composition 外部 CAS 入口`);
@@ -452,7 +463,7 @@ function createHarness(initialValue = 0) {
   assert.match(appSource, /ruleComposition\.inputPort\.submitDecision\(/, "AI conditional caller 必须提交 Composition Decision");
   const inputAdapterSource = fs.readFileSync(path.join(__dirname, "browser-host/input-adapter.js"), "utf8");
   const dispatchInputSource = inputAdapterSource.slice(
-    inputAdapterSource.indexOf("function createLegacyRuleInputDispatcher"),
+    inputAdapterSource.indexOf("function createRuleInputDispatcher"),
     inputAdapterSource.indexOf("return Object.freeze({ SCHEMA_VERSION"),
   );
   assert.ok(
@@ -521,7 +532,9 @@ function createHarness(initialValue = 0) {
   assert.doesNotMatch(cardRuntimeSource, /passReserveContinuation[^\n]*selectedCardId|getPassReserveSelection\([^)]*\)\.selectedCardId/, "PASS continuation 不得持有 UI 选择");
   assert.match(cardRuntimeSource, /uiRuntimeState\.passReserveSelectedCardId/, "PASS 未确认高亮只能进入 uiRuntimeState");
   assert.match(appSource, /PASS_RESERVE_DECISION_REQUIRED[\s\S]*?inputPort\.submitDecision\(/, "PASS 人类确认必须映射 active Decision choice");
-  assert.match(appSource, /function submitActiveCardDecision[\s\S]*?inputPort\.submitDecision\(/, "卡牌 trigger/task/free-move 人类输入必须提交 active Decision choice");
+  const browserInputSource = fs.readFileSync(path.join(__dirname, "browser-host/input-adapter.js"), "utf8");
+  assert.match(browserInputSource, /function createActiveDecisionPort[\s\S]*?options\.submitDecision\(/, "卡牌 trigger/task/free-move 人类输入必须由 Browser Input Adapter 提交 active Decision choice");
+  assert.match(appSource, /createActiveDecisionPort\(/, "app.js 只装配 active Decision input port");
   assert.doesNotMatch([appSource, scanFlowSource, debugRuntimeSource].join("\n"), /["']public_scan_queue["']/, "公共扫描队列旧 store key 必须物理删除");
   assert.match(scanFlowSource, /workingRoot[\s\S]*?publicScanContinuation/, "公共扫描队列必须归 Composition continuation");
   const effectChoiceSource = fs.readFileSync(path.join(__dirname, "effect-choice-flow.js"), "utf8");
