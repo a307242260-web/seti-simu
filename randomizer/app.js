@@ -1082,6 +1082,29 @@
   const conditionalActionExecutor = conditionalActionExecutorModule.createConditionalActionExecutor({
     domain: conditionalDecisionDomain,
   });
+  const conditionalCompositionRuntime = conditionalActionExecutorModule.createConditionalCompositionRuntime({
+    executor: conditionalActionExecutor,
+    syncFinalScorePendingMarks: (...args) => syncFinalScorePendingMarks(...args),
+    dispatchAction: (...args) => actionRuntimeController.dispatchAction(...args),
+    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
+    getPendingIndustryAbilityDecision: (...args) => getPendingIndustryAbilityDecision(...args),
+    getPendingCardSelectionDecision: (...args) => getPendingCardSelectionDecision(...args),
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+    beginCardSelection: (...args) => beginCardSelection(...args),
+    setPendingCardSelectionDecision: (...args) => setPendingCardSelectionDecision(...args),
+    setCardSelectionActive: (...args) => cards.setSelectionActive(...args),
+    allowsBlindDrawInSelection: (...args) => allowsBlindDrawInSelection(...args),
+    canBlindDraw: (...args) => canBlindDraw(...args),
+    finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
+    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
+    executeActionEffect: (...args) => executeActionEffect(...args),
+  });
+  const {
+    createConditionalActionProvider,
+    enumerateConditionalActionsForRoot: enumerateSimulationConditionalActionsForRoot,
+    advanceDeterministicStateForRoot: advanceSimulationDeterministicStateImpl,
+    executeCurrentActionEffectForRoot: executeSimulationCurrentActionEffectImpl,
+  } = conditionalCompositionRuntime;
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -6786,108 +6809,6 @@
       playerId: pending?.playerId || pending?.targetPlayerId || null,
       playerColor: pending?.playerColor || pending?.targetPlayerColor || null,
     }) || getEffectOwnerPlayer(workingRoot, pending?.effect) || getCurrentPlayer(workingRoot);
-  }
-
-  function createConditionalActionProvider(family) {
-    return {
-      label: family,
-      getOptions(context) {
-        return conditionalActionExecutor.getOptions(context.workingRoot, family);
-      },
-      canExecute(context, descriptor) {
-        return conditionalActionExecutor.validate(context.workingRoot, descriptor);
-      },
-      execute() {
-        return {
-          ok: false,
-          code: "CONDITIONAL_ACTION_EXECUTOR_REQUIRED",
-          message: "Conditional Standard Action 只允许由 working-root executor 执行",
-        };
-      },
-    };
-  }
-
-  function enumerateSimulationConditionalActionsForRoot(workingRoot) {
-    syncFinalScorePendingMarks(workingRoot);
-    const decision = conditionalActionExecutor.inspect(workingRoot);
-    const actorPlayer = decision?.ownerId
-      ? (workingRoot.playerState.players || []).find((player) => player.id === decision.ownerId) || null
-      : null;
-    if (!actorPlayer?.id || !decision?.choices?.length) {
-      return { actorPlayer, candidates: [] };
-    }
-    const listing = actionRuntimeController.dispatchAction(
-      { kind: "standard_enumerate", payload: { actorId: actorPlayer.id } },
-      null,
-      createActionContextForWorkingRoot(workingRoot),
-    );
-    const candidates = (listing.candidates || [])
-      .filter((standardAction) => standardAction.phase === "conditional")
-      .map((standardAction) => ({
-        ...structuredClone(standardAction.payload || {}),
-        id: "conditionalChoice",
-        family: standardAction.family,
-        label: standardAction.summary,
-        target: structuredClone(standardAction.target || null),
-        standardAction,
-      }));
-    return { actorPlayer, candidates };
-  }
-
-  function advanceSimulationDeterministicStateImpl(workingRoot) {
-    const industryPending = getPendingIndustryAbilityDecision(workingRoot);
-    if (industryPending && !getPendingCardSelectionDecision(workingRoot)) {
-      const player = getCurrentPlayer();
-      const retryByFlowType = {
-        strategy_pick: () => beginCardSelection({
-          type: "industry_strategy_pick",
-          player,
-          allowBlindDraw: false,
-        }),
-        future_span_pick: () => beginCardSelection({
-          type: "industry_future_pick",
-          player,
-          allowBlindDraw: false,
-          advanceAmount: industryPending.advanceAmount,
-        }),
-        deepspace_swap: () => {
-          setPendingCardSelectionDecision(workingRoot, {
-            type: "industry_deepspace_hand",
-            player,
-            allowBlindDraw: false,
-          });
-          cards.setSelectionActive(workingRoot.cardState, true);
-          return { ok: true, message: industryPending.message };
-        },
-      };
-      const retry = retryByFlowType[industryPending.flowType];
-      if (retry) {
-        const result = retry();
-        if (result?.ok !== false) {
-          return { ok: true, progressed: true, message: result?.message || industryPending.message };
-        }
-      }
-    }
-    const cardPending = getPendingCardSelectionDecision(workingRoot);
-    if (
-      cardPending?.type?.startsWith?.("industry_")
-      && !(workingRoot.cardState.publicCards || []).some(Boolean)
-      && !(allowsBlindDrawInSelection() && canBlindDraw())
-    ) {
-      const label = getPendingIndustryAbilityDecision(workingRoot)?.label || "公司 1x";
-      const message = `${label}：公共牌区与牌库均无牌，精选效果落空`;
-      finishIndustryAbilityFlow(message);
-      return { ok: true, progressed: true, skipped: true, message };
-    }
-    return null;
-  }
-
-  function executeSimulationCurrentActionEffectImpl(workingRoot) {
-    const effect = getCurrentActionEffect(workingRoot);
-    if (!effect || effect.status !== "active") {
-      return { ok: false, message: "没有可直接推进的活动效果" };
-    }
-    return executeActionEffect(workingRoot, effect);
   }
 
   function launchRocketForCurrentPlayer() {

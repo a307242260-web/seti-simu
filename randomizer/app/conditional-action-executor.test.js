@@ -5,6 +5,7 @@ const {
   ACTION_FAMILIES,
   DECISION_SCHEMA_VERSION,
   createConditionalActionExecutor,
+  createConditionalCompositionRuntime,
 } = require("./conditional-action-executor");
 
 function createRoot() {
@@ -61,6 +62,35 @@ function descriptor(root, executor, family) {
     payload: option.payload,
     decision: option.decision,
   };
+}
+
+{
+  const root = createRoot();
+  const executor = createExecutor();
+  const runtime = createConditionalCompositionRuntime({
+    executor,
+    syncFinalScorePendingMarks: () => {},
+    createActionContext: (workingRoot) => ({ workingRoot }),
+    dispatchAction: () => ({
+      candidates: [{ phase: "conditional", family: "choose_reward", summary: "奖励", payload: { score: 1 }, target: { choiceId: "0" } }],
+    }),
+    getPendingIndustryAbilityDecision: () => null,
+    getPendingCardSelectionDecision: () => null,
+    getCurrentPlayer: () => root.playerState.players[0],
+    beginCardSelection: () => ({ ok: true }),
+    setPendingCardSelectionDecision: () => {},
+    setCardSelectionActive: () => {},
+    allowsBlindDrawInSelection: () => false,
+    canBlindDraw: () => false,
+    finishIndustryAbilityFlow: () => {},
+    getCurrentActionEffect: () => ({ id: "effect", status: "active" }),
+    executeActionEffect: (_workingRoot, effect) => ({ ok: true, effectId: effect.id }),
+  });
+  const provider = runtime.createConditionalActionProvider("choose_reward");
+  assert.equal(provider.getOptions({ workingRoot: root }).ok, true);
+  assert.equal(provider.execute().code, "CONDITIONAL_ACTION_EXECUTOR_REQUIRED");
+  assert.equal(runtime.enumerateConditionalActionsForRoot(root).candidates[0].id, "conditionalChoice");
+  assert.equal(runtime.executeCurrentActionEffectForRoot(root).effectId, "effect");
 }
 
 {

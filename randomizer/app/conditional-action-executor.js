@@ -275,9 +275,110 @@
     return Object.freeze({ actionFamilies: ACTION_FAMILIES, inspect, getOptions, validate, execute, executeEffectChoice });
   }
 
+  function createConditionalCompositionRuntime(context = {}) {
+    function createConditionalActionProvider(family) {
+      return Object.freeze({
+        label: family,
+        getOptions(actionContext) {
+          return context.executor.getOptions(actionContext.workingRoot, family);
+        },
+        canExecute(actionContext, descriptor) {
+          return context.executor.validate(actionContext.workingRoot, descriptor);
+        },
+        execute() {
+          return fail(
+            "CONDITIONAL_ACTION_EXECUTOR_REQUIRED",
+            "Conditional Standard Action 只允许由 working-root executor 执行",
+          );
+        },
+      });
+    }
+
+    function enumerateConditionalActionsForRoot(workingRoot) {
+      context.syncFinalScorePendingMarks(workingRoot);
+      const decision = context.executor.inspect(workingRoot);
+      const actorPlayer = decision?.ownerId
+        ? (workingRoot.playerState.players || []).find((player) => player.id === decision.ownerId) || null
+        : null;
+      if (!actorPlayer?.id || !decision?.choices?.length) return { actorPlayer, candidates: [] };
+      const listing = context.dispatchAction(
+        { kind: "standard_enumerate", payload: { actorId: actorPlayer.id } },
+        null,
+        context.createActionContext(workingRoot),
+      );
+      const candidates = (listing.candidates || [])
+        .filter((standardAction) => standardAction.phase === "conditional")
+        .map((standardAction) => ({
+          ...clone(standardAction.payload || {}),
+          id: "conditionalChoice",
+          family: standardAction.family,
+          label: standardAction.summary,
+          target: clone(standardAction.target || null),
+          standardAction,
+        }));
+      return { actorPlayer, candidates };
+    }
+
+    function advanceDeterministicStateForRoot(workingRoot) {
+      const industryPending = context.getPendingIndustryAbilityDecision(workingRoot);
+      if (industryPending && !context.getPendingCardSelectionDecision(workingRoot)) {
+        const player = context.getCurrentPlayer();
+        const retryByFlowType = {
+          strategy_pick: () => context.beginCardSelection({
+            type: "industry_strategy_pick", player, allowBlindDraw: false,
+          }),
+          future_span_pick: () => context.beginCardSelection({
+            type: "industry_future_pick", player, allowBlindDraw: false,
+            advanceAmount: industryPending.advanceAmount,
+          }),
+          deepspace_swap: () => {
+            context.setPendingCardSelectionDecision(workingRoot, {
+              type: "industry_deepspace_hand", player, allowBlindDraw: false,
+            });
+            context.setCardSelectionActive(workingRoot.cardState, true);
+            return { ok: true, message: industryPending.message };
+          },
+        };
+        const retry = retryByFlowType[industryPending.flowType];
+        if (retry) {
+          const result = retry();
+          if (result?.ok !== false) {
+            return { ok: true, progressed: true, message: result?.message || industryPending.message };
+          }
+        }
+      }
+      const cardPending = context.getPendingCardSelectionDecision(workingRoot);
+      if (cardPending?.type?.startsWith?.("industry_")
+        && !(workingRoot.cardState.publicCards || []).some(Boolean)
+        && !(context.allowsBlindDrawInSelection() && context.canBlindDraw())) {
+        const label = context.getPendingIndustryAbilityDecision(workingRoot)?.label || "公司 1x";
+        const message = `${label}：公共牌区与牌库均无牌，精选效果落空`;
+        context.finishIndustryAbilityFlow(message);
+        return { ok: true, progressed: true, skipped: true, message };
+      }
+      return null;
+    }
+
+    function executeCurrentActionEffectForRoot(workingRoot) {
+      const effect = context.getCurrentActionEffect(workingRoot);
+      if (!effect || effect.status !== "active") {
+        return fail("ACTION_EFFECT_NOT_ACTIVE", "没有可直接推进的活动效果");
+      }
+      return context.executeActionEffect(workingRoot, effect);
+    }
+
+    return Object.freeze({
+      createConditionalActionProvider,
+      enumerateConditionalActionsForRoot,
+      advanceDeterministicStateForRoot,
+      executeCurrentActionEffectForRoot,
+    });
+  }
+
   return Object.freeze({
     DECISION_SCHEMA_VERSION,
     ACTION_FAMILIES,
     createConditionalActionExecutor,
+    createConditionalCompositionRuntime,
   });
 });
