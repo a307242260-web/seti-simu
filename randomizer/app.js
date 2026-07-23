@@ -427,6 +427,26 @@
     moveRocket,
     moveActiveRocket,
   } = primaryActionUiRuntime;
+  const solarRotationRuntime = actionInteractionRuntimeModule.createSolarRotationRuntime({
+    solar,
+    settleRocketsAfterSolarRotation: (...args) => abilities.rocket.settleRocketsAfterSolarRotation(...args),
+    triggerAnomalyForEarthX: (...args) => triggerYichangdianAnomalyForEarthX(...args),
+    getEarthSectorCoordinate: (...args) => getEarthSectorCoordinate(...args),
+    renderWheels: (...args) => renderWheels(...args),
+    renderSectorBoard: (...args) => renderSectorNebulaDataBoard(...args),
+    renderRotateStateToken: (...args) => renderRotateStateToken(...args),
+    refreshBoardState: (...args) => refreshHelpers.refreshBoardState(...args),
+    refreshPlayerPanels: (...args) => refreshHelpers.refreshPlayerPanels(...args),
+    refreshAfterPendingChange: (...args) => refreshHelpers.refreshAfterPendingChange(...args),
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const { rotateSolarOrbitForRoot, rotateSolarOrbit } = solarRotationRuntime;
+  const {
+    getMarkedNebulaIdsFromEvents,
+    resultHasSignalMarkedEvent,
+    getFlowMarkedNebulaIds,
+    effectFlowMarkedNebula,
+  } = effectFlowModule;
 
   const ruleComposition = ruleCompositionModule.createRuleComposition({
     invariantValidators: [validateBrowserSessionBoundary],
@@ -5472,34 +5492,6 @@
     }).value;
   }
 
-  function getMarkedNebulaIdsFromEvents(events = []) {
-    const marked = new Set();
-    for (const event of events || []) {
-      if (event?.type === "signalMarked" && event.nebulaId) {
-        marked.add(String(event.nebulaId));
-      }
-    }
-    return marked;
-  }
-
-  function resultHasSignalMarkedEvent(result) {
-    return getMarkedNebulaIdsFromEvents(result?.events).size > 0;
-  }
-
-  function getFlowMarkedNebulaIds(flow) {
-    const marked = new Set();
-    for (const effect of flow?.effects || []) {
-      for (const nebulaId of getMarkedNebulaIdsFromEvents(effect.result?.events)) {
-        marked.add(nebulaId);
-      }
-    }
-    return marked;
-  }
-
-  function effectFlowMarkedNebula(flow) {
-    return getFlowMarkedNebulaIds(flow).size > 0;
-  }
-
   const effectFlowCompletionRuntime = effectFlowModule.createEffectFlowCompletionRuntime({
     HISTORY_SOURCE_MAIN,
     uiRuntimeState,
@@ -6857,62 +6849,6 @@
 
   function executeIncomeForCurrentPlayer() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
-  }
-
-  function rotateSolarOrbitForRoot(workingRoot, count) {
-    const { solarState: workingSolarState } = workingRoot;
-    const iterations = Math.max(1, Math.round(Number(count || 1)));
-    const rotationSettlements = [];
-    const anomalyTriggers = [];
-    const events = [];
-
-    for (let index = 0; index < iterations; index += 1) {
-      const beforeRotation = structuredClone(workingSolarState.rotation);
-      workingSolarState.rotation = solar.applySolarOrbitRotation(workingSolarState.rotation, 1);
-      workingSolarState.wheelSteps = solar.rotationToWheelSteps(workingSolarState.rotation);
-      const settlement = abilities.rocket.settleRocketsAfterSolarRotation(
-        workingRoot,
-        beforeRotation,
-        workingSolarState.rotation,
-      );
-      if (settlement) {
-        rotationSettlements.push(settlement);
-        events.push(...(settlement.events || []));
-      }
-      const earth = getEarthSectorCoordinate();
-      const anomalyResult = triggerYichangdianAnomalyForEarthX(workingRoot, earth.x);
-      if (anomalyResult) {
-        anomalyTriggers.push(anomalyResult);
-        events.push(...(anomalyResult.events || []));
-      }
-    }
-
-    const lastSettlement = rotationSettlements[rotationSettlements.length - 1];
-    const lastAnomaly = anomalyTriggers[anomalyTriggers.length - 1];
-    renderWheels();
-    renderSectorNebulaDataBoard();
-    renderRotateStateToken();
-    refreshHelpers.refreshBoardState({
-      includeTech: false,
-      includeFinalScore: false,
-      includeRunezuSymbols: true,
-    });
-    refreshHelpers.refreshPlayerPanels();
-    refreshHelpers.refreshAfterPendingChange({
-      includeQuickPanel: false,
-      includeEffectBar: false,
-      includeStateReadout: true,
-    });
-    return {
-      ok: true,
-      message: lastAnomaly?.message || lastSettlement?.message || "太阳系旋转",
-      payload: { rotationSettlements, anomalyTriggers },
-      events,
-    };
-  }
-
-  function rotateSolarOrbit(count) {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "solar_rotate", count }).value;
   }
 
   const debugRuntimeController = debugRuntimeModule.createDebugRuntime({

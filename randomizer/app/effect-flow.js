@@ -11,6 +11,30 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  function getMarkedNebulaIdsFromEvents(events = []) {
+    const marked = new Set();
+    for (const event of events || []) {
+      if (event?.type === "signalMarked" && event.nebulaId) marked.add(String(event.nebulaId));
+    }
+    return marked;
+  }
+
+  function resultHasSignalMarkedEvent(result) {
+    return getMarkedNebulaIdsFromEvents(result?.events).size > 0;
+  }
+
+  function getFlowMarkedNebulaIds(flow) {
+    const marked = new Set();
+    for (const effect of flow?.effects || []) {
+      for (const nebulaId of getMarkedNebulaIdsFromEvents(effect.result?.events)) marked.add(nebulaId);
+    }
+    return marked;
+  }
+
+  function effectFlowMarkedNebula(flow) {
+    return getFlowMarkedNebulaIds(flow).size > 0;
+  }
+
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createEffectFlowHelpers requires function: ${name}`);
@@ -1256,5 +1280,9 @@
     createEffectFlowCompletionRuntime,
     createEffectFlowStateRuntime,
     createEffectSkipRuntime,
+    getMarkedNebulaIdsFromEvents,
+    resultHasSignalMarkedEvent,
+    getFlowMarkedNebulaIds,
+    effectFlowMarkedNebula,
   };
 });

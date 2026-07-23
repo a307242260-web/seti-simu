@@ -8,6 +8,7 @@ const {
   createLandTargetPicker,
   createMoveUiRuntime,
   createPrimaryActionUiRuntime,
+  createSolarRotationRuntime,
 } = require("./action-interaction-runtime");
 
 {
@@ -41,6 +42,31 @@ const {
   assert.equal(runtime.landForCurrentPlayer().family, "land");
   assert.equal(runtime.moveRocket(1, 0).rocket, null);
   assert.deepEqual(calls, ["请先点击要移动的火箭", "render"]);
+}
+
+{
+  const calls = [];
+  const root = { solarState: { rotation: { value: 0 }, wheelSteps: {} } };
+  const runtime = createSolarRotationRuntime({
+    solar: {
+      applySolarOrbitRotation: (rotation) => ({ value: rotation.value + 1 }),
+      rotationToWheelSteps: (rotation) => ({ 1: rotation.value }),
+    },
+    settleRocketsAfterSolarRotation: () => null,
+    triggerAnomalyForEarthX: () => null,
+    getEarthSectorCoordinate: () => ({ x: 2 }),
+    renderWheels: () => calls.push("wheels"),
+    renderSectorBoard: () => calls.push("sector"),
+    renderRotateStateToken: () => calls.push("token"),
+    refreshBoardState: () => calls.push("board"),
+    refreshPlayerPanels: () => calls.push("players"),
+    refreshAfterPendingChange: () => calls.push("pending"),
+    submitHostCommand: (command) => ({ value: command.count }),
+  });
+  assert.equal(runtime.rotateSolarOrbitForRoot(root, 2).message, "太阳系旋转");
+  assert.equal(root.solarState.rotation.value, 2);
+  assert.deepEqual(calls, ["wheels", "sector", "token", "board", "players", "pending"]);
+  assert.equal(runtime.rotateSolarOrbit(3), 3);
 }
 
 {

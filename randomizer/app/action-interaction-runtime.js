@@ -378,6 +378,51 @@
     });
   }
 
+  function createSolarRotationRuntime(context = {}) {
+    function rotateSolarOrbitForRoot(workingRoot, count) {
+      const workingSolarState = workingRoot.solarState;
+      const iterations = Math.max(1, Math.round(Number(count || 1)));
+      const rotationSettlements = [];
+      const anomalyTriggers = [];
+      const events = [];
+      for (let index = 0; index < iterations; index += 1) {
+        const beforeRotation = structuredClone(workingSolarState.rotation);
+        workingSolarState.rotation = context.solar.applySolarOrbitRotation(workingSolarState.rotation, 1);
+        workingSolarState.wheelSteps = context.solar.rotationToWheelSteps(workingSolarState.rotation);
+        const settlement = context.settleRocketsAfterSolarRotation(workingRoot, beforeRotation, workingSolarState.rotation);
+        if (settlement) {
+          rotationSettlements.push(settlement);
+          events.push(...(settlement.events || []));
+        }
+        const anomalyResult = context.triggerAnomalyForEarthX(workingRoot, context.getEarthSectorCoordinate().x);
+        if (anomalyResult) {
+          anomalyTriggers.push(anomalyResult);
+          events.push(...(anomalyResult.events || []));
+        }
+      }
+      const lastSettlement = rotationSettlements.at(-1);
+      const lastAnomaly = anomalyTriggers.at(-1);
+      context.renderWheels();
+      context.renderSectorBoard();
+      context.renderRotateStateToken();
+      context.refreshBoardState({ includeTech: false, includeFinalScore: false, includeRunezuSymbols: true });
+      context.refreshPlayerPanels();
+      context.refreshAfterPendingChange({
+        includeQuickPanel: false, includeEffectBar: false, includeStateReadout: true,
+      });
+      return {
+        ok: true,
+        message: lastAnomaly?.message || lastSettlement?.message || "太阳系旋转",
+        payload: { rotationSettlements, anomalyTriggers },
+        events,
+      };
+    }
+    return Object.freeze({
+      rotateSolarOrbitForRoot,
+      rotateSolarOrbit: (count) => context.submitHostCommand({ kind: "solar_rotate", count }).value,
+    });
+  }
+
   function createActionInteractionPort(context = {}) {
     const directMethods = [
       "ensurePlutoCardEffectState", "getPlutoActionState", "addPlutoMarker",
@@ -1639,6 +1684,7 @@
     createLandTargetPicker,
     createMoveUiRuntime,
     createPrimaryActionUiRuntime,
+    createSolarRotationRuntime,
     createActionInteractionPort,
     createActionInteractionRuntime,
   };

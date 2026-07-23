@@ -8,7 +8,22 @@ const {
   createEffectFlowCompletionRuntime,
   createEffectFlowStateRuntime,
   createEffectSkipRuntime,
+  getMarkedNebulaIdsFromEvents,
+  resultHasSignalMarkedEvent,
+  getFlowMarkedNebulaIds,
+  effectFlowMarkedNebula,
 } = require("./effect-flow");
+
+{
+  const flow = { effects: [
+    { result: { events: [{ type: "signalMarked", nebulaId: 2 }, { type: "other" }] } },
+    { result: { events: [{ type: "signalMarked", nebulaId: "2" }, { type: "signalMarked", nebulaId: "3" }] } },
+  ] };
+  assert.deepEqual([...getMarkedNebulaIdsFromEvents(flow.effects[0].result.events)], ["2"]);
+  assert.equal(resultHasSignalMarkedEvent(flow.effects[0].result), true);
+  assert.deepEqual([...getFlowMarkedNebulaIds(flow)], ["2", "3"]);
+  assert.equal(effectFlowMarkedNebula(flow), true);
+}
 
 {
   const calls = [];
