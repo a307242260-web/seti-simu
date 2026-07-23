@@ -7,6 +7,7 @@ const { spawnSync } = require("node:child_process");
 const inventory = require("./node-test-inventory");
 
 const repositoryRoot = path.resolve(__dirname, "..");
+const randomizerRoot = path.join(repositoryRoot, "randomizer");
 const matches = [];
 const excludes = [];
 let listOnly = false;
@@ -37,10 +38,25 @@ for (const classification of classifications) {
   }
 }
 
+function collectTests(directory, output) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) collectTests(absolute, output);
+    else if (entry.isFile() && entry.name.endsWith(".test.js")) {
+      output.push(path.relative(repositoryRoot, absolute).split(path.sep).join("/"));
+    }
+  }
+}
+
 const registeredTests = [...classified.values()].sort((left, right) => left.file.localeCompare(right.file));
+const diskTests = [];
+collectTests(randomizerRoot, diskTests);
+diskTests.sort();
 const missing = registeredTests.filter((test) => !fs.existsSync(path.join(repositoryRoot, test.file)));
-if (missing.length || invalidEntries.length || inventory.fullFlow.length !== 1) {
+const unregistered = diskTests.filter((file) => !classified.has(file));
+if (missing.length || unregistered.length || invalidEntries.length || inventory.fullFlow.length !== 1) {
   if (missing.length) process.stderr.write(`清单文件不存在：\n${missing.map((test) => test.file).join("\n")}\n`);
+  if (unregistered.length) process.stderr.write(`未登记测试：\n${unregistered.join("\n")}\n`);
   for (const invalid of invalidEntries) {
     process.stderr.write(`清单条目字段缺失：${invalid.classification} ${invalid.test?.file || "<unknown>"} ${invalid.invalidFields.join(",")}\n`);
   }
