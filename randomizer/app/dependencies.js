@@ -52,6 +52,7 @@
     Object.freeze({ key: "alienUiModule", globalName: "SetiAppAlienUi" }),
     Object.freeze({ key: "browserHostModule", globalName: "SetiBrowserHost" }),
     Object.freeze({ key: "aiControlRuntimeModule", globalName: "SetiAppAiControlRuntime" }),
+    Object.freeze({ key: "aiBrowserBootstrapModule", globalName: "SetiAppAiBrowserBootstrap" }),
     Object.freeze({ key: "solar", globalName: "SetiSolarSystem" }),
     Object.freeze({ key: "players", globalName: "SetiPlayers" }),
     Object.freeze({ key: "rocketActions", globalName: "SetiRocketActions" }),

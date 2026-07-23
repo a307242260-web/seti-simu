@@ -32,6 +32,7 @@ randomizer/app/action-interaction-runtime.test.js
 randomizer/app/action-runtime.test.js
 randomizer/app/score-source-runtime.test.js
 randomizer/app/ai-runtime-root.test.js
+randomizer/app/ai/browser-bootstrap.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js

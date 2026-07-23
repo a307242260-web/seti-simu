@@ -47,6 +47,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppAlienUi: {},
     SetiBrowserHost: {},
     SetiAppAiControlRuntime: {},
+    SetiAppAiBrowserBootstrap: {},
     SetiSolarSystem: {},
     SetiPlayers: {},
     SetiRocketActions: {},

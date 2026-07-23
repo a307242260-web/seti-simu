@@ -59,6 +59,7 @@
     finalUiRuntimeModule,
     finalScoreAiRuntimeModule,
     aiControlRuntimeModule,
+    aiBrowserBootstrapModule,
     actionBriefingModule,
     effectFlowModule,
     effectChoiceFlowModule,
@@ -3451,27 +3452,25 @@
     }),
   });
 
-  const aiControllerState = aiControlRuntimeModule.createAiControllerState({
-    match: browserMatchRuntime,
-    action: actionSessionRuntime,
-    actionHistory,
-    ui: uiRuntimeState,
-    getAlien: () => alienSpeciesPort,
-  });
-
-  const runAiStepThroughComposition = aiControlRuntimeModule.createAiCompositionStepPort({
-    inspect: (...args) => ruleComposition.inspect(...args),
+  const {
+    controller: aiController,
+    compositionPort: aiCompositionPort,
+  } = aiBrowserBootstrapModule.createBrowserAiBootstrap({
+    aiControlRuntimeModule,
+    aiControllerModule: window.SetiAppAiController,
+    ruleComposition,
     getRuleReadout: createStateSourceReadoutRoot,
     isActionEffectFlowActive,
-    beginDrain: (...args) => ruleComposition.inputPort.beginDrain(...args),
-    readState: (...args) => ruleComposition.stateSourcePort.read(...args),
     heuristicPolicy: ai?.heuristicPolicy,
-    submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
-  }).run;
-
-  const aiController = window.SetiAppAiController.createAiController({
-    window,
+    stateOwners: {
+      match: browserMatchRuntime,
+      action: actionSessionRuntime,
+      actionHistory,
+      ui: uiRuntimeState,
+      getAlien: () => alienSpeciesPort,
+    },
+    controllerContext: {
+      window,
     state: aiControllerState,
     solar,
     players,
@@ -3503,22 +3502,6 @@
     aiRaceModel,
     ai,
     aiControlRuntimeModule,
-    setPlayerAiDifficulty: (playerId, difficulty, label) => ruleComposition.inputPort.submitHostCommand({
-      kind: "ai_set_player_difficulty",
-      playerId,
-      difficulty,
-      label,
-    }),
-    runAiAutomationStepThroughComposition: (...args) => runAiStepThroughComposition("ai_run_automation_step", args),
-    recoverAiIdleActionEffectThroughComposition: (...args) => runAiStepThroughComposition("ai_recover_idle_action_effect", args),
-    getRuleProjection: () => {
-      const state = ruleComposition.stateSourcePort.read().state;
-      return {
-        players: structuredClone(state.players),
-        turn: structuredClone(state.turn),
-      };
-    },
-    getRuleReadout: createStateSourceReadoutRoot,
     ruleLifecycle: browserRuleLifecycle,
     historyStepOrder,
     els,
@@ -3716,7 +3699,8 @@
     skipCurrentActionEffect,
     startInitialSelection,
     startNewGame,
-    updateActionButtons,
+      updateActionButtons,
+    },
   });
   const {
     aiNumber,
@@ -3764,28 +3748,13 @@
     stopAiAutoBattle,
     sumAiDemandMap,
   } = aiController;
-  const buildAiTurnActionCandidates = (...args) => ruleComposition.inputPort.submitHostCommand({
-    kind: "ai_build_turn_candidates",
-    args,
-  });
-  const listCardTriggerFreeMoveCandidates = (...args) => (
-    ruleComposition.inputPort.submitHostCommand({
-      kind: "card_trigger_list_free_move_candidates",
-      args,
-    }, { commit: false }).value || []
-  );
-  const resolveAiAutomationToTurnBoundary = (options = {}) => ruleComposition.inputPort.submitHostCommand({
-    kind: "ai_resolve_to_turn_boundary",
-    options,
-  });
-  const runAiAutomationStep = () => ruleComposition.inputPort.submitHostCommand({ kind: "ai_run_automation_step" });
-  const runAiActionEffectStep = () => ruleComposition.inputPort.submitHostCommand({ kind: "ai_run_action_effect_step" });
-  const runAiNonTurnAutomationStep = () => ruleComposition.inputPort.submitHostCommand({ kind: "ai_run_non_turn_step" });
-  const runAiSelectedTurnAction = (selector = {}, options = {}) => ruleComposition.inputPort.submitHostCommand({
-    kind: "ai_run_selected_turn_action",
-    selector,
-    options,
-  });
+  const buildAiTurnActionCandidates = aiCompositionPort.buildTurnActionCandidates;
+  const listCardTriggerFreeMoveCandidates = aiCompositionPort.listCardTriggerFreeMoveCandidates;
+  const resolveAiAutomationToTurnBoundary = aiCompositionPort.resolveToTurnBoundary;
+  const runAiAutomationStep = aiCompositionPort.runAutomationStep;
+  const runAiActionEffectStep = aiCompositionPort.runActionEffectStep;
+  const runAiNonTurnAutomationStep = aiCompositionPort.runNonTurnStep;
+  const runAiSelectedTurnAction = aiCompositionPort.runSelectedTurnAction;
   const cardRuntime = cardRuntimeModule.createCardRuntime({
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
