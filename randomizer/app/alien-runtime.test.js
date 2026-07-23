@@ -1,7 +1,25 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createAlienRuntimeHelpers, createNeutralScoreTraceRuntime, createChongTransportRuntime } = require("./alien-runtime");
+const {
+  createAlienRuntimeHelpers,
+  createBrowserAlienRuntime,
+  createBrowserAlienStaticContext,
+  createNeutralScoreTraceRuntime,
+  createChongTransportRuntime,
+} = require("./alien-runtime");
+
+assert.throws(
+  () => createBrowserAlienStaticContext({}),
+  /Browser Alien 静态模块缺少依赖/,
+  "browser Alien bootstrap should reject missing static dependencies",
+);
+
+assert.throws(
+  () => createBrowserAlienRuntime({ staticContext: {} }),
+  /Browser Alien bootstrap 缺少 owner getter/,
+  "browser Alien bootstrap should reject missing owner adapters",
+);
 
 {
   const runtime = createChongTransportRuntime({

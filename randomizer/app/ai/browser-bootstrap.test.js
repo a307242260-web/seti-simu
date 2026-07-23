@@ -8,11 +8,17 @@ const {
   HAND_CONTROLLER_METHODS,
   SCAN_CONTROLLER_METHODS,
   ALIEN_SPECIES_CONTROLLER_METHODS,
+  createBrowserAiRuntimePorts,
   createBrowserAiStaticContext,
   createLazyPortBindings,
   selectControllerPort,
   createBrowserAiBootstrap,
 } = require("./browser-bootstrap");
+
+assert.throws(
+  () => createBrowserAiRuntimePorts(),
+  /Browser AI runtime port 缺少 action context\/dispatch\/move points adapter/,
+);
 
 function createHarness() {
   const commands = [];

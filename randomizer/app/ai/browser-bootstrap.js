@@ -132,6 +132,146 @@
     });
   }
 
+  function createBrowserAiRuntimePorts(options = {}) {
+    const {
+      getAlienSpeciesRuntime,
+      getCardRuntime,
+      getCardTriggerRuntime,
+      getIndustryRuntime,
+      getTechRuntime,
+      scanRuntime,
+      createActionContext,
+      dispatchRuntimeAction,
+      getRequiredMovePointsForUi,
+    } = options;
+    const lazy = (label, getter, method) => (...args) => {
+      if (typeof getter !== "function") {
+        throw new TypeError(`Browser AI runtime port 缺少 owner getter：${label}`);
+      }
+      const fn = getter()?.[method];
+      if (typeof fn !== "function") {
+        throw new Error(`Browser AI runtime port ${label} 缺少方法：${method}`);
+      }
+      return fn(...args);
+    };
+    const card = (method) => lazy("card", getCardRuntime, method);
+    const cardTrigger = (method) => lazy("cardTrigger", getCardTriggerRuntime, method);
+    const tech = (method) => lazy("tech", getTechRuntime, method);
+    const industry = (method) => lazy("industry", getIndustryRuntime, method);
+    const alien = (method) => lazy("alienSpecies", getAlienSpeciesRuntime, method);
+    if (typeof createActionContext !== "function"
+      || typeof dispatchRuntimeAction !== "function"
+      || typeof getRequiredMovePointsForUi !== "function") {
+      throw new TypeError("Browser AI runtime port 缺少 action context/dispatch/move points adapter");
+    }
+    return Object.freeze({
+      createActionContext,
+      dispatchRuntimeAction,
+      canBlindDraw: card("canBlindDraw"),
+      cancelCardTriggerChoice: cardTrigger("cancelCardTriggerChoice"),
+      confirmCardTaskCompletion: cardTrigger("confirmCardTaskCompletion"),
+      confirmPassReserveSelection: card("confirmPassReserveSelection"),
+      confirmTechBlueSlotChoice: tech("confirmTechBlueSlotChoice"),
+      drawCardForCurrentPlayer: card("drawCardForCurrentPlayer"),
+      executeCardMoveForEffect: card("requestCardEffectMove"),
+      executeFreeMoveForCardCorner: card("executeFreeMoveForCardCorner"),
+      executeFreeMoveForCardTrigger: cardTrigger("executeFreeMoveForCardTrigger"),
+      executeFreeMoveForScanAction4: scanRuntime?.executeFreeMoveForScanAction4,
+      executeIndustryFreeMove: industry("executeIndustryFreeMove"),
+      getRequiredMovePointsForUi,
+      getPassReserveSelectionCards: card("getPassReserveSelectionCards"),
+      getReadyCardTasks: cardTrigger("getReadyCardTasks"),
+      handleCardTriggerChoice: cardTrigger("handleCardTriggerChoice"),
+      handlePublicCardClick: card("handlePublicCardClick"),
+      openBanrenmaReadyOpportunityForPlayer: alien("openBanrenmaReadyOpportunityForPlayer"),
+      openCardTaskCompletionPicker: cardTrigger("openCardTaskCompletionPicker"),
+      openRunezuFaceSymbolPlacement: alien("openRunezuFaceSymbolPlacement"),
+      pickPublicCardForCurrentPlayer: card("pickPublicCardForCurrentPlayer"),
+      selectPassReserveCard: card("selectPassReserveCard"),
+    });
+  }
+
+  function createBrowserAiControllerContext(options = {}) {
+    const {
+      staticContext,
+      getCardRuntime,
+      getCardTriggerRuntime,
+      getIndustryRuntime,
+      getProbeDecisionPort,
+      getTechRuntime,
+      actionSessionRuntime,
+      browserContextRuntime,
+      cardSelectionState,
+      coordinateRuntime,
+      effectChoicePort,
+      effectExecutorPort,
+      effectFlowRuntime,
+      playerEffectOwnerRuntime,
+      playerLookupRuntime,
+      scanDecisionPort,
+      turnHostRuntime,
+      turnReadoutRuntime,
+      hostPort = {},
+    } = options;
+    const lazy = (label, getter, method) => (...args) => {
+      if (typeof getter !== "function") {
+        throw new TypeError(`Browser AI controller context 缺少 owner getter：${label}`);
+      }
+      const fn = getter()?.[method];
+      if (typeof fn !== "function") {
+        throw new Error(`Browser AI controller context ${label} 缺少方法：${method}`);
+      }
+      return fn(...args);
+    };
+    const card = (method) => lazy("card", getCardRuntime, method);
+    const cardTrigger = (method) => lazy("cardTrigger", getCardTriggerRuntime, method);
+    const industry = (method) => lazy("industry", getIndustryRuntime, method);
+    const tech = (method) => lazy("tech", getTechRuntime, method);
+    const probe = (method) => lazy("probeDecision", getProbeDecisionPort, method);
+    return Object.freeze({
+      ...staticContext,
+      ...hostPort,
+      activateNextActionEffect: effectFlowRuntime?.activateNextActionEffect,
+      allowsBlindDrawInSelection: cardSelectionState?.allowsBlindDrawInSelection,
+      canStartMainAction: actionSessionRuntime?.canStartMainAction,
+      confirmDiscardAnyForIncome: effectChoicePort?.confirmDiscardAnyForIncome,
+      confirmProbeSectorScanSelection: probe("confirmSectorSelection"),
+      endCurrentTurn: hostPort.endCurrentTurn,
+      executeActionEffect: effectFlowRuntime?.executeActionEffect,
+      getActivePlayers: browserContextRuntime?.getActivePlayers,
+      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+      getCurrentPlayer: playerLookupRuntime?.getCurrentPlayer,
+      getEarthSectorCoordinate: coordinateRuntime?.getEarthSectorCoordinate,
+      getEffectOwnerPlayer: playerEffectOwnerRuntime?.getEffectOwnerPlayer,
+      getMovableTokensForPlayer: coordinateRuntime?.getMovableTokensForPlayer,
+      getPlanetSectorCoordinate: hostPort.getPlanetSectorCoordinate,
+      getPlayerByColor: playerLookupRuntime?.getPlayerByColor,
+      getPlayerById: playerLookupRuntime?.getPlayerById,
+      getPlayerLabelById: browserContextRuntime?.getPlayerLabelById,
+      handleConditionalSectorChoice: effectChoicePort?.handleConditionalSectorChoice,
+      handleDiscardCornerRepeatChoice: effectChoicePort?.handleDiscardCornerRepeatChoice,
+      handleDiscardIncomeCardChoice: effectChoicePort?.handleDiscardIncomeCardChoice,
+      handleHandCornerChoice: effectExecutorPort?.handleHandCornerChoice,
+      handleOptionalHandScanChoice: effectExecutorPort?.handleOptionalHandScanChoice,
+      handlePayCreditChoice: effectChoicePort?.handlePayCreditChoice,
+      handleFundamentalismExchangeChoice: effectChoicePort?.handleFundamentalismExchangeChoice,
+      handleProbeLocationRewardChoice: probe("handleLocationRewardChoice"),
+      handleProbeSectorScanChoice: probe("handleSectorChoice"),
+      handleRemoveOrbitToProbeChoice: effectChoicePort?.handleRemoveOrbitToProbeChoice,
+      handleRemovePlanetMarkerChoice: effectExecutorPort?.handleRemovePlanetMarkerChoice,
+      handleReturnUnfinishedTaskChoice: effectExecutorPort?.handleReturnUnfinishedTaskChoice,
+      handleScanAction4Choice: effectExecutorPort?.handleScanAction4Choice,
+      handleYichangdianCornerChoice: effectExecutorPort?.handleYichangdianCornerChoice,
+      hasActivePendingSubFlow: hostPort.hasActivePendingSubFlow,
+      isActionEffectFlowActive: effectFlowRuntime?.isActionEffectFlowActive,
+      isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
+      isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
+      isGameEnded: turnReadoutRuntime?.isGameEnded,
+      isPublicScanMultiSelectActive: cardSelectionState?.isPublicScanMultiSelectActive,
+      setTurnStatePlayerOrder: turnHostRuntime?.setTurnStatePlayerOrder,
+    });
+  }
+
   function createLazyPortBindings(getPort, methods = [], label = "Browser AI domain port") {
     if (typeof getPort !== "function") {
       throw new TypeError(`${label} requires getPort function`);
@@ -264,6 +404,8 @@
     SCAN_CONTROLLER_METHODS,
     ALIEN_SPECIES_CONTROLLER_METHODS,
     createBrowserAiStaticContext,
+    createBrowserAiControllerContext,
+    createBrowserAiRuntimePorts,
     createLazyPortBindings,
     selectControllerPort,
     createBrowserAiBootstrap,

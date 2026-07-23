@@ -1,7 +1,23 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createCardTriggerRuntime } = require("./card-trigger-runtime");
+const {
+  createBrowserCardTriggerRuntime,
+  createBrowserCardTriggerStaticContext,
+  createCardTriggerRuntime,
+} = require("./card-trigger-runtime");
+
+assert.throws(
+  () => createBrowserCardTriggerStaticContext({}),
+  /Browser Card Trigger 静态模块缺少依赖/,
+  "browser Card Trigger bootstrap should reject missing static dependencies",
+);
+
+assert.throws(
+  () => createBrowserCardTriggerRuntime({ staticContext: {} }),
+  /Browser Card Trigger bootstrap 缺少 owner getter/,
+  "browser Card Trigger bootstrap should reject missing owner adapters",
+);
 
 function createHarness() {
   const player = {

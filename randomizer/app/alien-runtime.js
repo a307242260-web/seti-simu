@@ -11,6 +11,150 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "aliens", "players", "data", "cardEffects", "historyCommands", "jiuzhe",
+    "yichangdian", "fangzhou", "banrenma", "chong", "amiba", "aomomo", "runezu",
+  ]);
+
+  function createBrowserAlienStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) throw new Error(`Browser Alien 静态模块缺少依赖：${missing.join(", ")}`);
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
+
+  function createBrowserAlienRuntime(options = {}) {
+    const {
+      staticContext,
+      getAlienSpeciesRuntime,
+      getCardRuntime,
+      getCardTriggerRuntime,
+      getIndustryRuntime,
+      getTurnEndRuntime,
+      alienUiRuntime,
+      browserContextRuntime,
+      effectExecutorPort,
+      effectFlowRuntime,
+      playerEffectOwnerRuntime,
+      playerLookupRuntime,
+      renderRuntime,
+      scoreSourceRuntime,
+      hostPort = {},
+    } = options;
+    const requiredOwnerGetters = {
+      alienSpecies: getAlienSpeciesRuntime,
+      card: getCardRuntime,
+      cardTrigger: getCardTriggerRuntime,
+      industry: getIndustryRuntime,
+      turnEnd: getTurnEndRuntime,
+    };
+    const missingOwnerGetters = Object.entries(requiredOwnerGetters)
+      .filter(([, getter]) => typeof getter !== "function")
+      .map(([label]) => label);
+    if (missingOwnerGetters.length) {
+      throw new TypeError(`Browser Alien bootstrap 缺少 owner getter：${missingOwnerGetters.join(", ")}`);
+    }
+    const lazy = (label, getter, method) => (...args) => {
+      const fn = getter()?.[method];
+      if (typeof fn !== "function") {
+        throw new Error(`Browser Alien owner ${label} 缺少方法：${method}`);
+      }
+      return fn(...args);
+    };
+    const species = (method) => lazy("alienSpecies", getAlienSpeciesRuntime, method);
+    const card = (method) => lazy("card", getCardRuntime, method);
+    const cardTrigger = (method) => lazy("cardTrigger", getCardTriggerRuntime, method);
+    const industry = (method) => lazy("industry", getIndustryRuntime, method);
+    const turnEnd = (method) => lazy("turnEnd", getTurnEndRuntime, method);
+
+    return createAlienRuntimeHelpers({
+      ...staticContext,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      structuredClone: hostPort.structuredClone,
+      HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
+      getCurrentPlayer: playerLookupRuntime?.getCurrentPlayer,
+      getActivePlayers: browserContextRuntime?.getActivePlayers,
+      getPlayerById: playerLookupRuntime?.getPlayerById,
+      getPlayerByColor: playerLookupRuntime?.getPlayerByColor,
+      getPlayerActionLabel: browserContextRuntime?.getPlayerActionLabel,
+      resolvePlayerReference: playerEffectOwnerRuntime?.resolvePlayerReference,
+      getEarthSectorCoordinate: hostPort.getEarthSectorCoordinate,
+      isDebugAlienTraceMode: species("isDebugAlienTraceMode"),
+      isAlienTracePickerChoiceAllowed: alienUiRuntime?.isAlienTracePickerChoiceAllowed,
+      getAvailableDataTokenCount: species("getAvailableDataTokenCount"),
+      renderAlienPanels: species("renderAlienPanels"),
+      renderPlayerStats: renderRuntime?.renderPlayerStats,
+      renderPlayerHand: renderRuntime?.renderPlayerHand,
+      renderReservedCards: renderRuntime?.renderReservedCards,
+      renderRockets: renderRuntime?.renderRockets,
+      renderStateReadout: renderRuntime?.renderStateReadout,
+      renderWheels: renderRuntime?.renderWheels,
+      renderSectorNebulaDataBoard: renderRuntime?.renderSectorNebulaDataBoard,
+      renderFangzhouCardDisplays: species("renderFangzhouCardDisplays"),
+      updateActionButtons: hostPort.updateActionButtons,
+      closeAlienTracePicker: alienUiRuntime?.closeAlienTracePicker,
+      clearAlienTracePlacementMode: alienUiRuntime?.clearAlienTracePlacementMode,
+      maybeRevealAlienAfterTrace: species("maybeRevealAlienAfterTrace"),
+      createActionLogImpactSnapshot: effectFlowRuntime?.createActionLogImpactSnapshot,
+      beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
+      recordHistoryCommand: effectFlowRuntime?.recordHistoryCommand,
+      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+      completeCurrentActionEffect: effectFlowRuntime?.completeCurrentActionEffect,
+      beginQuickActionStep: effectFlowRuntime?.beginQuickActionStep,
+      recordQuickHistoryCommand: effectFlowRuntime?.recordQuickHistoryCommand,
+      completeQuickActionStep: effectFlowRuntime?.completeQuickActionStep,
+      settleCardTasksAfterEffect: cardTrigger("settleCardTasksAfterEffect"),
+      maybeContinueAlienRevealQueuedOpportunities: turnEnd("maybeContinueAlienRevealQueuedOpportunities"),
+      maybeContinuePendingTurnEndRevealFlow: turnEnd("maybeContinuePendingTurnEndRevealFlow"),
+      markCurrentActionIrreversible: hostPort.markCurrentActionIrreversible,
+      appendActionLogStep: effectFlowRuntime?.appendActionLogStep,
+      queueJiuzheOpportunitiesForPlayer: species("queueJiuzheOpportunitiesForPlayer"),
+      queueBanrenmaOpportunitiesForPlayer: species("queueBanrenmaOpportunitiesForPlayer"),
+      recordAlienTraceScore: scoreSourceRuntime?.recordAlienTraceScore,
+      formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
+      appendRevealCardGrantMessage: species("appendRevealCardGrantMessage"),
+      getRevealIrreversible: species("getRevealIrreversible"),
+      buildAlienTraceEvent: cardTrigger("buildAlienTraceEvent"),
+      maybeRestoreAlienLabPanelForTrace: industry("maybeRestoreAlienLabPanelForTrace"),
+      beginCardSelection: card("beginCardSelection"),
+      enqueueFangzhouCard1RewardEffects: species("enqueueFangzhouCard1RewardEffects"),
+      applyYichangdianRewardToPlayer: species("applyYichangdianRewardToPlayer"),
+      applyFangzhouTraceRewardToPlayer: species("applyFangzhouTraceRewardToPlayer"),
+      getAlienTraceScoreSourceKey: scoreSourceRuntime?.getAlienTraceScoreSourceKey,
+      applyBanrenmaRewardToPlayer: species("applyBanrenmaRewardToPlayer"),
+      applyAomomoRewardToPlayer: species("applyAomomoRewardToPlayer"),
+      applyChongRewardToPlayer: species("applyChongRewardToPlayer"),
+      applyAmibaRewardToPlayer: species("applyAmibaRewardToPlayer"),
+      applyRunezuRewardToPlayer: species("applyRunezuRewardToPlayer"),
+      applyJiuzheRewardToPlayer: species("applyJiuzheRewardToPlayer"),
+      openYichangdianCardGainDialog: species("openYichangdianCardGainDialog"),
+      openBanrenmaCardGainDialog: species("openBanrenmaCardGainDialog"),
+      openAomomoCardGainDialog: species("openAomomoCardGainDialog"),
+      openChongRewardFollowUps: species("openChongRewardFollowUps"),
+      openAmibaRewardFollowUps: species("openAmibaRewardFollowUps"),
+      openRunezuRewardFollowUps: species("openRunezuRewardFollowUps"),
+      isJiuzheTracePlacementMode: alienUiRuntime?.isJiuzheTracePlacementMode,
+      isYichangdianTracePlacementMode: alienUiRuntime?.isYichangdianTracePlacementMode,
+      isFangzhouTracePlacementMode: alienUiRuntime?.isFangzhouTracePlacementMode,
+      isBanrenmaTracePlacementMode: alienUiRuntime?.isBanrenmaTracePlacementMode,
+      isChongTracePlacementMode: alienUiRuntime?.isChongTracePlacementMode,
+      isAmibaTracePlacementMode: alienUiRuntime?.isAmibaTracePlacementMode,
+      isAomomoTracePlacementMode: alienUiRuntime?.isAomomoTracePlacementMode,
+      isRunezuTracePlacementMode: alienUiRuntime?.isRunezuTracePlacementMode,
+      canPlaceJiuzheTrace: alienUiRuntime?.canPlaceJiuzheTrace,
+      canPlaceYichangdianTrace: alienUiRuntime?.canPlaceYichangdianTrace,
+      canPlaceFangzhouTrace: alienUiRuntime?.canPlaceFangzhouTrace,
+      canPlaceBanrenmaTrace: alienUiRuntime?.canPlaceBanrenmaTrace,
+      canPlaceChongTrace: alienUiRuntime?.canPlaceChongTrace,
+      canPlaceAmibaTrace: alienUiRuntime?.canPlaceAmibaTrace,
+      canPlaceAomomoTrace: alienUiRuntime?.canPlaceAomomoTrace,
+      canPlaceRunezuTrace: alienUiRuntime?.canPlaceRunezuTrace,
+    });
+  }
+
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createAlienRuntimeHelpers requires function: ${name}`);
@@ -1781,6 +1925,9 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    createBrowserAlienRuntime,
+    createBrowserAlienStaticContext,
     createAlienRuntimeHelpers,
     createNeutralScoreTraceRuntime,
     createChongTransportRuntime,

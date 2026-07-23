@@ -7,6 +7,138 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "abilities", "aliens", "amiba", "cardEffects", "cardTaskStateModule", "cards",
+    "chong", "data", "fangzhou", "historyCommands", "jiuzhe", "players",
+    "rocketActions", "runezu", "solar",
+  ]);
+
+  function createBrowserCardTriggerStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) throw new Error(`Browser Card Trigger 静态模块缺少依赖：${missing.join(", ")}`);
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
+
+  function createBrowserCardTriggerRuntime(options = {}) {
+    const {
+      staticContext,
+      getActionInteractionRuntime,
+      getAlienSpeciesRuntime,
+      getIndustryRuntime,
+      actionSessionRuntime,
+      cardRuntime,
+      cardSelectionState,
+      effectExecutorPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      handFlowRuntime,
+      pendingSubFlowRuntime,
+      playerEffectOwnerRuntime,
+      renderRuntime,
+      scoreSourceRuntime,
+      hostPort = {},
+    } = options;
+    const requiredOwnerGetters = {
+      actionInteraction: getActionInteractionRuntime,
+      alienSpecies: getAlienSpeciesRuntime,
+      industry: getIndustryRuntime,
+    };
+    const missingOwnerGetters = Object.entries(requiredOwnerGetters)
+      .filter(([, getter]) => typeof getter !== "function")
+      .map(([label]) => label);
+    if (missingOwnerGetters.length) {
+      throw new TypeError(`Browser Card Trigger bootstrap 缺少 owner getter：${missingOwnerGetters.join(", ")}`);
+    }
+    const lazy = (label, getter, method) => (...args) => {
+      const fn = getter()?.[method];
+      if (typeof fn !== "function") {
+        throw new Error(`Browser Card Trigger owner ${label} 缺少方法：${method}`);
+      }
+      return fn(...args);
+    };
+    const actionInteraction = (method) => lazy("actionInteraction", getActionInteractionRuntime, method);
+    const alien = (method) => lazy("alienSpecies", getAlienSpeciesRuntime, method);
+    const industry = (method) => lazy("industry", getIndustryRuntime, method);
+
+    return createCardTriggerRuntime({
+      ...staticContext,
+      HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
+      HISTORY_SOURCE_QUICK: hostPort.HISTORY_SOURCE_QUICK,
+      SCORE_SOURCE_KEYS: hostPort.SCORE_SOURCE_KEYS,
+      actionLogOptionsFromHistoryStep: effectFlowRuntime?.actionLogOptionsFromHistoryStep,
+      activateMoveMode: actionInteraction("activateMoveMode"),
+      activateNextActionEffectIfIdle: effectFlowRuntime?.activateNextActionEffectIfIdle,
+      addScoreSourceFromGain: scoreSourceRuntime?.addScoreSourceFromGain,
+      appendActionLogStep: effectFlowRuntime?.appendActionLogStep,
+      beginCardSelection: cardRuntime?.beginCardSelection,
+      beginQuickActionStep: effectFlowRuntime?.beginQuickActionStep,
+      beginSupplementalMovePayment: handFlowRuntime?.beginSupplementalMovePayment,
+      blockManualAiPendingInputIfNeeded: hostPort.blockManualAiPendingInputIfNeeded,
+      buildPlutoMarkerContext: actionInteraction("buildPlutoMarkerContext"),
+      cardTaskState: hostPort.cardTaskState,
+      cardTriggerNeedsFreeMove: hostPort.cardTriggerNeedsFreeMove,
+      clearMoveRocketHighlight: actionInteraction("clearMoveRocketHighlight"),
+      completeQuickActionStep: effectFlowRuntime?.completeQuickActionStep,
+      composeActionLogDetailWithImpact: effectFlowRuntime?.composeActionLogDetailWithImpact,
+      createActionContext: hostPort.createActionContext,
+      createActionLogImpactSnapshot: effectFlowRuntime?.createActionLogImpactSnapshot,
+      deactivateMoveMode: actionInteraction("deactivateMoveMode"),
+      document: hostPort.document,
+      els: hostPort.els,
+      ensureEffectHistorySession: effectFlowRuntime?.ensureEffectHistorySession,
+      finishActionEffectFlow: effectFlowRuntime?.finishActionEffectFlow,
+      formatCardCornerRewardMessage: cardRuntime?.formatCardCornerRewardMessage,
+      formatChongGain: alien("formatChongGain"),
+      formatChongFossilRewardSummary: alien("formatChongFossilRewardSummary"),
+      formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
+      getCardTriggerFreeMoveEffect: hostPort.getCardTriggerFreeMoveEffect,
+      getCardTypeCode: cardRuntime?.getCardTypeCode,
+      getChongPlanetLabel: alien("getChongPlanetLabel"),
+      getEarthSectorCoordinate: hostPort.getEarthSectorCoordinate,
+      getPendingOwnerFields: playerEffectOwnerRuntime?.getPendingOwnerFields,
+      getPendingAmibaSymbolChoice: alien("getAmibaSymbolDecisionDraft"),
+      getPlanetSectorCoordinate: hostPort.getPlanetSectorCoordinate,
+      getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
+      getSectorContentForMove: hostPort.getSectorContentForMove,
+      hasActivePendingSubFlow: pendingSubFlowRuntime?.hasActivePendingSubFlow,
+      insertActionEffectsAfterCurrent: effectExecutorPort?.insertActionEffectsAfterCurrent,
+      insertActionEffectsBeforeCurrent: effectExecutorPort?.insertActionEffectsBeforeCurrent,
+      isActionEffectFlowActive: effectFlowRuntime?.isActionEffectFlowActive,
+      isAsteroidContent: hostPort.isAsteroidContent,
+      isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
+      isInitialSelectionActive: hostPort.isInitialSelectionActive,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      layoutReservedCardRows: renderRuntime?.layoutReservedCardRows,
+      listCardTriggerFreeMoveCandidates: hostPort.listCardTriggerFreeMoveCandidates,
+      listReadyChongTransportCandidates: hostPort.listReadyChongTransportCandidates,
+      markCurrentActionIrreversibleForSource: hostPort.markCurrentActionIrreversibleForSource,
+      maybeApplyIndustryLaunchScan: industry("maybeApplyIndustryLaunchScan"),
+      openAmibaSymbolChoiceDialog: alien("openAmibaSymbolChoiceDialog"),
+      playerHasOwnOrbitMarkerAtPlanet: effectExecutorPort?.playerHasOwnOrbitMarkerAtPlanet,
+      quickActionHistory: hostPort.quickActionHistory,
+      recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
+      recordQuickHistoryCommand: effectFlowRuntime?.recordQuickHistoryCommand,
+      rememberHistoryStep: effectFlowRuntime?.rememberHistoryStep,
+      renderActionEffectBar: hostPort.renderActionEffectBar,
+      renderAlienPanels: alien("renderAlienPanels"),
+      renderInitialSelectionArea: renderRuntime?.renderInitialSelectionArea,
+      renderPlayerHand: renderRuntime?.renderPlayerHand,
+      renderPlayerStats: renderRuntime?.renderPlayerStats,
+      renderPublicCards: renderRuntime?.renderPublicCards,
+      renderReservedCards: renderRuntime?.renderReservedCards,
+      renderRocketElement: renderRuntime?.renderRocketElement,
+      renderRockets: renderRuntime?.renderRockets,
+      renderStateReadout: renderRuntime?.renderStateReadout,
+      startCardEffectFlow: effectFlowRuntime?.startCardEffectFlow,
+      structuredClone: hostPort.structuredClone,
+      updateActionButtons: hostPort.updateActionButtons,
+    });
+  }
+
   function createCardTriggerRuntime(context = {}) {
     const {
       HISTORY_SOURCE_MAIN,
@@ -1577,5 +1709,10 @@
     };
   }
 
-  return { createCardTriggerRuntime };
+  return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    createBrowserCardTriggerRuntime,
+    createBrowserCardTriggerStaticContext,
+    createCardTriggerRuntime,
+  };
 });
