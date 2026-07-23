@@ -148,7 +148,6 @@ assert.equal(storage.removed, true);
   Object.assign(context, {
     uiRuntimeState,
     submitHostCommand: (command) => calls.push(command),
-    setPendingCardSelectionDecision: (_root, pending) => calls.push(["card-decision", pending]),
     closeAlienRevealConfirmationOverlay: () => calls.push("close-alien"),
     setActionEffectFlow: (_root, flow) => calls.push(["effect-flow", flow]),
     clearCompletedEffectFlowForUndo: () => calls.push("clear-completed-flow"),
