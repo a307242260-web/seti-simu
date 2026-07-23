@@ -2501,30 +2501,11 @@
   beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
   handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
   resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
-  confirmMovePayment = () => {
-    const decision = ruleComposition.inspect().session?.decision || null;
-    if (!decision || ruleComposition.inspect().phase !== "awaiting_input") {
-      return { ok: false, code: "MOVE_PAYMENT_DECISION_REQUIRED", message: "当前没有等待支付的 DecisionEffect" };
-    }
-    const selected = [...(uiRuntimeState.movePaymentSelectedHandIndices || [])]
-      .map(Number)
-      .sort((left, right) => left - right);
-    const choice = (decision.choices || []).find((candidate) => {
-      const raw = candidate?.selectedHandIndices
-        || candidate?.payload?.selectedHandIndices
-        || candidate?.standardAction?.payload?.selectedHandIndices
-        || [];
-      return JSON.stringify([...raw].map(Number).sort((left, right) => left - right)) === JSON.stringify(selected);
-    });
-    if (!choice) {
-      return { ok: false, code: "MOVE_PAYMENT_CHOICE_NOT_LEGAL", message: "当前手牌支付组合不在 DecisionEffect 合法选项中" };
-    }
-    return ruleComposition.inputPort.submitDecision({
-      decisionId: decision.decisionId,
-      decisionVersion: decision.decisionVersion,
-      choice,
-    });
-  };
+  ({ confirmMovePayment } = handFlowModule.createMovePaymentDecisionPort({
+    inspectComposition: () => ruleComposition.inspect(),
+    submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
+    getSelectedHandIndices: () => uiRuntimeState.movePaymentSelectedHandIndices || [],
+  }));
   syncPlayCardSelectionChrome = (...args) => callHandFlowCommand("syncPlayCardSelectionChrome", args);
   getPendingPlayCardSelection = (...args) => callHandFlowCommand("getPendingPlayCardSelection", args);
   handlePlayCardSelect = (...args) => callHandFlowCommand("handlePlayCardSelect", args);
@@ -2772,13 +2753,11 @@
   beginScanAction4FreeMove = () => ruleComposition.inputPort.submitHostCommand({
     kind: "effect_begin_scan_free_move",
   }).value;
-  executeFreeMoveForScanAction4 = (deltaX, deltaY, rocketId) => {
-    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
-    return submitActiveCardDecision(
-      "scan-free-move",
-      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
-    );
-  };
+  const scanDecisionPort = scanFlowModule.createScanDecisionPort({
+    inspectComposition: () => ruleComposition.inspect(),
+    submitActiveDecision: (...args) => submitActiveCardDecision(...args),
+  });
+  executeFreeMoveForScanAction4 = scanDecisionPort.executeFreeMove;
   getPublicScanMaxSelectable = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanMaxSelectable", args);
   buildReadySectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildReadySectorFinishEffects", args);
   buildScanFinalizeFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildScanFinalizeFollowupEffects", args);
@@ -2809,22 +2788,8 @@
   hasAomomoScanAtX = (...args) => callBrowserDomainCommand("scan_flow", "hasAomomoScanAtX", args);
   buildSectorScanChoicesForX = (...args) => callBrowserDomainCommand("scan_flow", "buildSectorScanChoicesForX", args);
   expandScanChoicesWithAomomoTargets = (...args) => callBrowserDomainCommand("scan_flow", "expandScanChoicesWithAomomoTargets", args);
-  confirmScanTarget = (nebulaId, sectorX) => {
-    const choiceTarget = (ruleComposition.inspect().session?.decision?.choices || [])
-      .map((choice) => choice?.target || choice?.standardAction?.target || null)
-      .find((target) => (
-        ["scan-target", "sector-scan-target"].includes(target?.kind)
-        && String(target.nebulaId) === String(nebulaId)
-        && (sectorX == null || String(target.sectorX) === String(sectorX))
-      ));
-    if (!choiceTarget) return { ok: false, code: "SCAN_DECISION_REQUIRED", message: "当前扫描目标不在 active Decision 合法项中" };
-    return submitActiveCardDecision(
-      choiceTarget.kind,
-      (target) => String(target.nebulaId) === String(nebulaId)
-        && (sectorX == null || String(target.sectorX) === String(sectorX)),
-    );
-  };
-  handleDrawnHandScanSkip = () => submitActiveCardDecision("skip-drawn-hand-scan", () => true);
+  confirmScanTarget = scanDecisionPort.confirmScanTarget;
+  handleDrawnHandScanSkip = scanDecisionPort.skipDrawnHandScan;
   beginSectorScan = (...args) => callBrowserDomainCommand("scan_flow", "beginSectorScan", args);
   getSectorOpenDataCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorOpenDataCount", args);
   getSectorReplacedCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorReplacedCount", args);
@@ -4281,24 +4246,11 @@
   const selectPassReserveCardForRoot = selectPassReserveCard;
   const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
   selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
-  confirmPassReserveSelection = () => {
-    const selectedCardId = uiRuntimeState.passReserveSelectedCardId || null;
-    if (!selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
-    const inspection = ruleComposition.inspect();
-    const decision = inspection.session?.decision || null;
-    const choice = (decision?.choices || []).find((candidate) => {
-      const target = candidate?.target || candidate?.standardAction?.target || null;
-      return target?.kind === "pass-reserve-card" && String(target.choiceId) === String(selectedCardId);
-    });
-    if (inspection.phase !== "awaiting_input" || !decision || !choice) {
-      return { ok: false, code: "PASS_RESERVE_DECISION_REQUIRED", message: "当前 PASS 选择不在 active Decision 合法项中" };
-    }
-    return ruleComposition.inputPort.submitDecision({
-      decisionId: decision.decisionId,
-      decisionVersion: decision.decisionVersion,
-      choice,
-    });
-  };
+  ({ confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
+    inspectComposition: () => ruleComposition.inspect(),
+    submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
+    getSelectedCardId: () => uiRuntimeState.passReserveSelectedCardId || null,
+  }));
   const selectDefaultRocketFromCandidatesForRoot = selectDefaultRocketFromCandidates;
   const executeCardEffectMoveForRoot = executeCardEffectMove;
   const finishCurrentCardMoveEffectEarlyForRoot = finishCurrentCardMoveEffectEarly;

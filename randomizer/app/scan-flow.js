@@ -2442,11 +2442,49 @@
     return Object.freeze({ resolveCompletedSectorSettlementsForRoot });
   }
 
+  function createScanDecisionPort(context = {}) {
+    const { inspectComposition, submitActiveDecision } = context;
+    if (typeof inspectComposition !== "function" || typeof submitActiveDecision !== "function") {
+      throw new TypeError("scan decision port requires composition inspection and decision submission");
+    }
+
+    function executeFreeMove(deltaX, deltaY, rocketId) {
+      const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
+      return submitActiveDecision(
+        "scan-free-move",
+        (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
+      );
+    }
+
+    function confirmScanTarget(nebulaId, sectorX) {
+      const choiceTarget = (inspectComposition()?.session?.decision?.choices || [])
+        .map((choice) => choice?.target || choice?.standardAction?.target || null)
+        .find((target) => (
+          ["scan-target", "sector-scan-target"].includes(target?.kind)
+          && String(target.nebulaId) === String(nebulaId)
+          && (sectorX == null || String(target.sectorX) === String(sectorX))
+        ));
+      if (!choiceTarget) {
+        return { ok: false, code: "SCAN_DECISION_REQUIRED", message: "当前扫描目标不在 active Decision 合法项中" };
+      }
+      return submitActiveDecision(
+        choiceTarget.kind,
+        (target) => String(target.nebulaId) === String(nebulaId)
+          && (sectorX == null || String(target.sectorX) === String(sectorX)),
+      );
+    }
+
+    const skipDrawnHandScan = () => submitActiveDecision("skip-drawn-hand-scan", () => true);
+
+    return Object.freeze({ executeFreeMove, confirmScanTarget, skipDrawnHandScan });
+  }
+
   return {
     createScanFlowHelpers,
     createScanAction4Picker,
     createSectorSettlementRuntime,
     buildSectorScanChoicesForXs,
     createProbeDecisionPort,
+    createScanDecisionPort,
   };
 });
