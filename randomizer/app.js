@@ -1042,16 +1042,6 @@
   const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
-  let handlePublicCornerDiscardCardClick;
-  let handlePublicCornerDiscardCardClickForRoot;
-  let confirmPublicCornerDiscardSelection;
-  let confirmPublicCornerDiscardSelectionForRoot;
-  let executeFreeMoveForCardCorner;
-  let executeFreeMoveForCardCornerForRoot;
-  let beginCardMoveEffect;
-  let beginCardMoveEffectForRoot;
-  let recordPlayCardStart;
-  let releaseFutureSpanAfterPlayWithHistory;
   let buildCardTaskContext;
   let buildPlayerDataTotals;
   let addProbeLocation;
@@ -1113,79 +1103,6 @@
   let applyCardTriggerMatch;
   let handleCardTriggerChoice;
   let executeFreeMoveForCardTrigger;
-  let getDiscardCornerRewardMultiplier;
-  let multiplyRewardGain;
-  let multiplyDiscardActionReward;
-  let multiplyDiscardMoveReward;
-  let getCardCornerQuickActionForCard;
-  let shouldQueueCardCornerMoveQuickAction;
-  let canUseCardCornerQuickAction;
-  let formatCardCornerRewardMessage;
-  let getCardCornerEventKind;
-  let normalizeCardCornerRewardMultiplier;
-  let cardCornerCodesEqual;
-  let normalizeCardCornerTriggerCode;
-  let getDiscardActionTriggerResourceRewardForCode;
-  let getDiscardActionTriggerMoveRewardForCode;
-  let createCardCornerTriggerEventFields;
-  let applyCardCornerRewardFromCard;
-  let canStartCardCornerFreeMove;
-  let beginCardCornerFreeMove;
-  let cloneEffectEvent;
-  let getAfterMoveEventsForEffect;
-  let buildQueuedCardCornerMoveEffect;
-  let startCardCornerMoveEffectFlow;
-  let getCardPrice;
-  let getCardPlayCost;
-  let getCardPlayCreditCost;
-  let createPlayCardEvent;
-  let createImmediatePlayCardEvent;
-  let restoreObjectSnapshot;
-  let getFutureSpanCreditPriceForCard;
-  let getFutureSpanDeltaForCard;
-  let isFutureSpanEligibleHandCard;
-  let hasFutureSpanEligibleHandCard;
-  let hasPlayableFutureSpanCard;
-  let getStandardPlayCardActionBlockReason;
-  let formatCardPlayCost;
-  let getCardTypeCode;
-  let getPlayCardSelectionBlockReason;
-  let getHandCardPlayActionForCard;
-  let beginCardSelection;
-  let cancelCardSelection;
-  let finalizeCardSelectionResult;
-  let drawBasicCardToPlayer;
-  let blindDrawCardForPlayer;
-  let drawCardForCurrentPlayer;
-  let pickPublicCardForCurrentPlayer;
-  let discardCardFromCurrentPlayer;
-  let canBlindDraw;
-  let updatePublicCardControls;
-  let getDelayedPublicRefillSlotIndexes;
-  let ensurePublicCardsFilledRespectingDelayedRefills;
-  let renderPublicCards;
-  let handlePublicCardClick;
-  let handlePublicBlindDrawClick;
-  let isPassReserveSelectionActive;
-  let getPassReserveSelectionCards;
-  let renderPassReserveSelection;
-  let syncPassReserveSelectionChrome;
-  let beginPassReserveSelection;
-  let dismissPassReserveSelectionOverlay;
-  let selectPassReserveCard;
-  let confirmPassReserveSelection;
-  let initCardMoveEffectState;
-  let isIndustryHuanyuMoveEffect;
-  let getEffectResultRocketId;
-  let getCompletedIndustryHuanyuMoveRocketIds;
-  let validateIndustryHuanyuMoveRocket;
-  let getMovableTokensForCardMoveEffect;
-  let getCardMoveEffectCost;
-  let addResourceCosts;
-  let selectDefaultRocketFromCandidates;
-  let executeCardEffectMove;
-  let finishCurrentCardMoveEffectEarly;
-  let requestCardEffectMove;
   const techRenderContext = {
     supplyStage: null,
     supplySlots: {},
@@ -3621,14 +3538,14 @@
     activateMoveModeForWorkingRoot: (workingRoot, rocketId) => actionInteractionRuntime.activateMoveMode(workingRoot, rocketId),
     deactivateMoveModeForWorkingRoot: (workingRoot) => actionInteractionRuntime.deactivateMoveMode(workingRoot),
   });
-  ({
-    getDiscardCornerRewardMultiplier,
+  const {
+    getDiscardCornerRewardMultiplier: getDiscardCornerRewardMultiplierForRoot,
     multiplyRewardGain,
     multiplyDiscardActionReward,
     multiplyDiscardMoveReward,
-    getCardCornerQuickActionForCard,
-    shouldQueueCardCornerMoveQuickAction,
-    canUseCardCornerQuickAction,
+    getCardCornerQuickActionForCard: getCardCornerQuickActionForCardForRoot,
+    shouldQueueCardCornerMoveQuickAction: shouldQueueCardCornerMoveQuickActionForRoot,
+    canUseCardCornerQuickAction: canUseCardCornerQuickActionForRoot,
     formatCardCornerRewardMessage,
     getCardCornerEventKind,
     normalizeCardCornerRewardMultiplier,
@@ -3638,12 +3555,12 @@
     getDiscardActionTriggerMoveRewardForCode,
     createCardCornerTriggerEventFields,
     applyCardCornerRewardFromCard,
-    canStartCardCornerFreeMove,
-    beginCardCornerFreeMove,
+    canStartCardCornerFreeMove: canStartCardCornerFreeMoveForRoot,
+    beginCardCornerFreeMove: beginCardCornerFreeMoveForRoot,
     cloneEffectEvent,
     getAfterMoveEventsForEffect,
     buildQueuedCardCornerMoveEffect,
-    startCardCornerMoveEffectFlow,
+    startCardCornerMoveEffectFlow: startCardCornerMoveEffectFlowForRoot,
     getCardPrice,
     getCardPlayCost,
     getCardPlayCreditCost,
@@ -3653,104 +3570,70 @@
     getFutureSpanCreditPriceForCard,
     getFutureSpanDeltaForCard,
     isFutureSpanEligibleHandCard,
-    hasFutureSpanEligibleHandCard,
-    hasPlayableFutureSpanCard,
-    getStandardPlayCardActionBlockReason,
+    hasFutureSpanEligibleHandCard: hasFutureSpanEligibleHandCardForRoot,
+    hasPlayableFutureSpanCard: hasPlayableFutureSpanCardForRoot,
+    getStandardPlayCardActionBlockReason: getStandardPlayCardActionBlockReasonForRoot,
     formatCardPlayCost,
     getCardTypeCode,
-    getPlayCardSelectionBlockReason,
-    getHandCardPlayActionForCard,
-    beginCardSelection,
-    cancelCardSelection,
-    finalizeCardSelectionResult,
-    drawBasicCardToPlayer,
-    blindDrawCardForPlayer,
-    drawCardForCurrentPlayer,
-    pickPublicCardForCurrentPlayer,
+    getPlayCardSelectionBlockReason: getPlayCardSelectionBlockReasonForRoot,
+    getHandCardPlayActionForCard: getHandCardPlayActionForCardForRoot,
+    beginCardSelection: beginCardSelectionForRoot,
+    cancelCardSelection: cancelCardSelectionForRoot,
+    finalizeCardSelectionResult: finalizeCardSelectionResultForRoot,
+    drawBasicCardToPlayer: drawBasicCardToPlayerForRoot,
+    blindDrawCardForPlayer: blindDrawCardForPlayerForRoot,
+    drawCardForCurrentPlayer: drawCardForCurrentPlayerForRoot,
+    pickPublicCardForCurrentPlayer: pickPublicCardForCurrentPlayerForRoot,
     discardCardFromCurrentPlayer,
-    canBlindDraw,
-    updatePublicCardControls,
+    canBlindDraw: canBlindDrawForRoot,
+    updatePublicCardControls: updatePublicCardControlsForRoot,
     getDelayedPublicRefillSlotIndexes,
-    ensurePublicCardsFilledRespectingDelayedRefills,
+    ensurePublicCardsFilledRespectingDelayedRefills: ensurePublicCardsFilledRespectingDelayedRefillsForRoot,
     renderPublicCards,
-    handlePublicCardClick,
-    handlePublicBlindDrawClick,
-    handlePublicCornerDiscardCardClick,
-    confirmPublicCornerDiscardSelection,
+    handlePublicCardClick: handlePublicCardClickForRoot,
+    handlePublicBlindDrawClick: handlePublicBlindDrawClickForRoot,
+    handlePublicCornerDiscardCardClick: handlePublicCornerDiscardCardClickForRoot,
+    confirmPublicCornerDiscardSelection: confirmPublicCornerDiscardSelectionForRoot,
     isPassReserveSelectionActive,
-    getPassReserveSelectionCards,
-    renderPassReserveSelection,
-    syncPassReserveSelectionChrome,
-    beginPassReserveSelection,
-    dismissPassReserveSelectionOverlay,
-    selectPassReserveCard,
-    confirmPassReserveSelection,
+    getPassReserveSelectionCards: getPassReserveSelectionCardsForRoot,
+    renderPassReserveSelection: renderPassReserveSelectionForRoot,
+    syncPassReserveSelectionChrome: syncPassReserveSelectionChromeForRoot,
+    beginPassReserveSelection: beginPassReserveSelectionForRoot,
+    dismissPassReserveSelectionOverlay: dismissPassReserveSelectionOverlayForRoot,
+    selectPassReserveCard: selectPassReserveCardForRoot,
+    confirmPassReserveSelection: confirmPassReserveSelectionForRoot,
     initCardMoveEffectState,
     isIndustryHuanyuMoveEffect,
     getEffectResultRocketId,
     getCompletedIndustryHuanyuMoveRocketIds,
     validateIndustryHuanyuMoveRocket,
-    getMovableTokensForCardMoveEffect,
+    getMovableTokensForCardMoveEffect: getMovableTokensForCardMoveEffectForRoot,
     getCardMoveEffectCost,
     addResourceCosts,
-    selectDefaultRocketFromCandidates,
-    executeCardEffectMove,
-    finishCurrentCardMoveEffectEarly,
-    requestCardEffectMove,
-    executeFreeMoveForCardCorner,
+    selectDefaultRocketFromCandidates: selectDefaultRocketFromCandidatesForRoot,
+    executeCardEffectMove: executeCardEffectMoveForRoot,
+    finishCurrentCardMoveEffectEarly: finishCurrentCardMoveEffectEarlyForRoot,
+    requestCardEffectMove: requestCardEffectMoveForRoot,
+    executeFreeMoveForCardCorner: executeFreeMoveForCardCornerForRoot,
     recordPlayCardStart,
-    releaseFutureSpanAfterPlayWithHistory,
-    beginCardMoveEffect,
-  } = cardRuntime);
-  beginCardMoveEffectForRoot = beginCardMoveEffect;
-  beginCardMoveEffect = (effect) => ruleComposition.inputPort.submitHostCommand({
+    releaseFutureSpanAfterPlayWithHistory: releaseFutureSpanAfterPlayWithHistoryForRoot,
+    beginCardMoveEffect: beginCardMoveEffectForRoot,
+  } = cardRuntime;
+  const beginCardMoveEffect = (effect) => ruleComposition.inputPort.submitHostCommand({
     kind: "effect_begin_card_move",
     effect,
   }).value;
-  executeFreeMoveForCardCornerForRoot = executeFreeMoveForCardCorner;
-  executeFreeMoveForCardCorner = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
+  const executeFreeMoveForCardCorner = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
     "card-corner-free-move",
     (target, choice) => String(target.rocketId) === String(rocketId)
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
-  const releaseFutureSpanAfterPlayWithHistoryForRoot = releaseFutureSpanAfterPlayWithHistory;
-  releaseFutureSpanAfterPlayWithHistory = bindBrowserDomainCommand(
+  const releaseFutureSpanAfterPlayWithHistory = bindBrowserDomainCommand(
     "card_runtime",
     "releaseFutureSpanAfterPlayWithHistory",
   );
-  const getDiscardCornerRewardMultiplierForRoot = getDiscardCornerRewardMultiplier;
-  const getCardCornerQuickActionForCardForRoot = getCardCornerQuickActionForCard;
-  const shouldQueueCardCornerMoveQuickActionForRoot = shouldQueueCardCornerMoveQuickAction;
-  const canUseCardCornerQuickActionForRoot = canUseCardCornerQuickAction;
-  const canStartCardCornerFreeMoveForRoot = canStartCardCornerFreeMove;
-  const beginCardCornerFreeMoveForRoot = beginCardCornerFreeMove;
-  const startCardCornerMoveEffectFlowForRoot = startCardCornerMoveEffectFlow;
-  const hasFutureSpanEligibleHandCardForRoot = hasFutureSpanEligibleHandCard;
-  const hasPlayableFutureSpanCardForRoot = hasPlayableFutureSpanCard;
-  const getStandardPlayCardActionBlockReasonForRoot = getStandardPlayCardActionBlockReason;
-  const getPlayCardSelectionBlockReasonForRoot = getPlayCardSelectionBlockReason;
-  const getHandCardPlayActionForCardForRoot = getHandCardPlayActionForCard;
-  const beginCardSelectionForRoot = beginCardSelection;
-  const cancelCardSelectionForRoot = cancelCardSelection;
-  const finalizeCardSelectionResultForRoot = finalizeCardSelectionResult;
-  const drawBasicCardToPlayerForRoot = drawBasicCardToPlayer;
-  const blindDrawCardForPlayerForRoot = blindDrawCardForPlayer;
-  const drawCardForCurrentPlayerForRoot = drawCardForCurrentPlayer;
-  const pickPublicCardForCurrentPlayerForRoot = pickPublicCardForCurrentPlayer;
-  const canBlindDrawForRoot = canBlindDraw;
-  const updatePublicCardControlsForRoot = updatePublicCardControls;
-  const ensurePublicCardsFilledRespectingDelayedRefillsForRoot = ensurePublicCardsFilledRespectingDelayedRefills;
-  const handlePublicCardClickForRoot = handlePublicCardClick;
-  const handlePublicBlindDrawClickForRoot = handlePublicBlindDrawClick;
-  const getPassReserveSelectionCardsForRoot = getPassReserveSelectionCards;
-  const renderPassReserveSelectionForRoot = renderPassReserveSelection;
-  const syncPassReserveSelectionChromeForRoot = syncPassReserveSelectionChrome;
-  const beginPassReserveSelectionForRoot = beginPassReserveSelection;
-  const dismissPassReserveSelectionOverlayForRoot = dismissPassReserveSelectionOverlay;
-  handlePublicCornerDiscardCardClickForRoot = handlePublicCornerDiscardCardClick;
-  confirmPublicCornerDiscardSelectionForRoot = confirmPublicCornerDiscardSelection;
-  ({
+  const {
     getDiscardCornerRewardMultiplier,
     getCardCornerQuickActionForCard,
     shouldQueueCardCornerMoveQuickAction,
@@ -3782,27 +3665,20 @@
     dismissPassReserveSelectionOverlay,
     handlePublicCornerDiscardCardClick,
     confirmPublicCornerDiscardSelection,
-  } = bindDomainCommands("card_runtime"));
-  const selectPassReserveCardForRoot = selectPassReserveCard;
-  const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
-  selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
-  ({ confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
+  } = bindDomainCommands("card_runtime");
+  const selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
+  const { confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
     submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
     getSelectedCardId: () => uiRuntimeState.passReserveSelectedCardId || null,
-  }));
-  const selectDefaultRocketFromCandidatesForRoot = selectDefaultRocketFromCandidates;
-  const executeCardEffectMoveForRoot = executeCardEffectMove;
-  const finishCurrentCardMoveEffectEarlyForRoot = finishCurrentCardMoveEffectEarly;
-  const requestCardEffectMoveForRoot = requestCardEffectMove;
-  const getMovableTokensForCardMoveEffectForRoot = getMovableTokensForCardMoveEffect;
-  ({
+  });
+  const {
     selectDefaultRocketFromCandidates,
     executeCardEffectMove,
     finishCurrentCardMoveEffectEarly,
     requestCardEffectMove,
     getMovableTokensForCardMoveEffect,
-  } = bindDomainCommands("card_runtime"));
+  } = bindDomainCommands("card_runtime");
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
