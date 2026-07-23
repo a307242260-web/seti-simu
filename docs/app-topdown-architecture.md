@@ -33,7 +33,7 @@
    - 卡牌/科技/公司：`card-runtime`、`card-trigger-runtime`、`income-runtime`、`tech-runtime`、`industry-runtime`
    - 外星人：`alien-runtime`、`alien-ui`、`aliens/species-runtime`
    - 展示/恢复：`render-runtime`、`final-ui-runtime`、`action-log-runtime`、`game-recovery`
-   - AI/API：`final-score-ai-runtime`、`ai-controller`、`public-api`、`simulation-env`
+   - AI/API：`final-score-ai-runtime`、`ai/browser-bootstrap`、`ai-controller`、`public-api`、`simulation-env`
 3. `app.js` 调用 `SetiAppDependencies.collectDependencies(window)`，创建状态并把显式 context 注入各 runtime。
 4. `bootstrap` 与 `public-api` 完成事件和 `window.SetiRandomizer` Browser/debug facade 装配；Simulation 入口直接依赖 rules-only Composition，不经过 Browser app。
 

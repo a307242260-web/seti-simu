@@ -33,7 +33,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`initial-card-pending.js`、`interaction-pending.js`、`action-executor.js`、`automation-runtime.js` 承接 pending resolver、顶层行动执行与优先级编排；`ai-controller.js` 只装配这些 runtime 并转发稳定 API。
+17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`ai/browser-bootstrap.js` 独占 Browser controller state、Composition step adapter 与 AI Host command facade；`initial-card-pending.js`、`interaction-pending.js`、`action-executor.js`、`automation-runtime.js` 承接 pending resolver、顶层行动执行与优先级编排；`ai-controller.js` 只装配这些 runtime 并转发稳定 API。
 18. `randomizer/app/conditional-decision-domain.js` 构建条件动作的 owner/version/choices/followup；`conditional-action-executor.js` 只负责 descriptor 校验、stale 检查和失败原子恢复。`randomizer/app/effects/**` 继续按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
@@ -78,6 +78,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；规则状态、活跃 Session、RNG 与确定性序列统一由 Browser Composition lifecycle 原子保存/恢复，模块不接受 StateStore-only snapshot，也不在 composition 外回灌序列。UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，不暴露 Simulation reset/step/checkpoint/Decision API，也不返回 mutable working root。
 - `randomizer/app/ai/control-runtime.js`：AI 控制层。唯一持有 `aiAutoBattleState`、scheduler 标志与策略权重；通过显式 `state` getter 和回调读取 pending、执行自动步骤，不复制 app pending 或 resolver 状态。
+- `randomizer/app/ai/browser-bootstrap.js`：Browser AI 装配边界。创建 controller state、连接 Composition inspect/read/decision/host-command 端口，并只暴露冻结的 controller 与 Composition command facade；缺少必需端口时创建期 fail-fast。
 - `randomizer/app/ai/battle-log.js`：AI 对战日志 compact、entry、bug 计数与玩家/比分快照。
 - `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。
 - `randomizer/app/ai/tuning-history.js`：调参历史的 localStorage 持久化、A/B 摘要、推荐与应用入口。

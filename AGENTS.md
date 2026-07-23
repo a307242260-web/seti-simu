@@ -44,6 +44,7 @@
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。
+- `randomizer/app/ai/browser-bootstrap.js`：Browser AI controller state、Composition step adapter 与 AI Host command facade 的窄装配 owner；创建期校验必需端口。
 - `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：按初始/卡牌与交互域拆分的 pending resolver，通过窄 context 调用 app flow。
 - `randomizer/app/ai/action-executor.js`、`automation-runtime.js`：顶层行动执行、pending 优先级与自动化步骤编排。
 - `randomizer/app/ai-controller.js`：AI runtime/rule domain 装配、`REQUIRED_CONTEXT_KEYS` 完整性校验与稳定 API adapter；不再承载 resolver/executor 函数体。
