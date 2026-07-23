@@ -3,6 +3,8 @@
 const assert = require("node:assert/strict");
 const {
   createActionInteractionRuntime,
+  createBrowserActionInteractionRuntime,
+  createBrowserActionInteractionStaticContext,
   createActionInteractionPort,
   createDataAnalyzeInteractionRuntime,
   createLandTargetContinuationRuntime,
@@ -13,6 +15,16 @@ const {
   createSolarRotationRuntime,
   createBoardQueryRuntime,
 } = require("./action-interaction-runtime");
+
+assert.throws(
+  () => createBrowserActionInteractionStaticContext({}),
+  /静态模块缺少依赖/,
+);
+
+assert.throws(
+  () => createBrowserActionInteractionRuntime({}),
+  /bootstrap 缺少 owner/,
+);
 
 {
   const solar = { createSolarSnapshot: () => ({ planetLocations: [{ planetId: "earth", x: 1, y: 2 }] }) };

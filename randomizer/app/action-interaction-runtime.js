@@ -680,6 +680,143 @@
     return Object.freeze({ resume, confirmForRoot });
   }
 
+  const BROWSER_ACTION_INTERACTION_STATIC_KEYS = Object.freeze([
+    "abilities",
+    "actionShared",
+    "cardEffects",
+    "data",
+    "historyCommands",
+    "players",
+    "rocketActions",
+    "solar",
+  ]);
+
+  function createBrowserActionInteractionStaticContext(dependencies = {}, constants = {}) {
+    const context = {};
+    for (const key of BROWSER_ACTION_INTERACTION_STATIC_KEYS) {
+      if (dependencies[key] == null) {
+        throw new TypeError(`ActionInteraction 静态模块缺少依赖：${key}`);
+      }
+      context[key] = dependencies[key];
+    }
+    if (!constants.HISTORY_SOURCE_MAIN || !constants.SCORE_SOURCE_KEYS) {
+      throw new TypeError("ActionInteraction 静态模块缺少 HISTORY_SOURCE_MAIN/SCORE_SOURCE_KEYS");
+    }
+    return Object.freeze({
+      ...context,
+      HISTORY_SOURCE_MAIN: constants.HISTORY_SOURCE_MAIN,
+      SCORE_SOURCE_KEYS: constants.SCORE_SOURCE_KEYS,
+    });
+  }
+
+  function createBrowserActionInteractionRuntime(options = {}) {
+    const {
+      staticContext,
+      actionGuardRuntime,
+      actionPort,
+      actionSessionRuntime,
+      cardTriggerPort,
+      dataPlacementPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      handFlowRuntime,
+      interactionChrome,
+      playerEffectOwnerRuntime,
+      plutoRewardPort,
+      renderRuntime,
+      scoreSourceRuntime,
+      hostPort,
+    } = options;
+    const owners = {
+      staticContext,
+      actionGuardRuntime,
+      actionPort,
+      actionSessionRuntime,
+      cardTriggerPort,
+      dataPlacementPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      handFlowRuntime,
+      interactionChrome,
+      playerEffectOwnerRuntime,
+      plutoRewardPort,
+      renderRuntime,
+      scoreSourceRuntime,
+      hostPort,
+    };
+    for (const [name, owner] of Object.entries(owners)) {
+      if (!owner || typeof owner !== "object") {
+        throw new TypeError(`ActionInteraction bootstrap 缺少 owner：${name}`);
+      }
+    }
+    const requireCapability = (ownerName, capability) => {
+      const value = owners[ownerName][capability];
+      if (typeof value !== "function") {
+        throw new TypeError(`ActionInteraction ${ownerName} 缺少能力：${capability}`);
+      }
+      return value;
+    };
+
+    return createActionInteractionRuntime({
+      ...staticContext,
+      addPlayerScoreSource: requireCapability("scoreSourceRuntime", "addPlayerScoreSource"),
+      beginCardSelection: requireCapability("actionPort", "beginCardSelection"),
+      beginDiscardSelection: requireCapability("handFlowRuntime", "beginDiscardSelection"),
+      beginEffectHistoryStep: requireCapability("effectFlowRuntime", "beginEffectHistoryStep"),
+      beginQuickActionStep: requireCapability("effectFlowRuntime", "beginQuickActionStep"),
+      blockIncompatiblePendingQuickAction: requireCapability(
+        "actionGuardRuntime",
+        "blockIncompatiblePendingQuickAction",
+      ),
+      blockIncompatiblePendingQuickActionForRoot: requireCapability(
+        "actionGuardRuntime",
+        "blockIncompatiblePendingQuickActionForRoot",
+      ),
+      buildPlutoChoiceRewardSummary: requireCapability("plutoRewardPort", "buildChoiceRewardSummary"),
+      buildPlutoRewardEffectsForAction: requireCapability("plutoRewardPort", "buildRewardEffects"),
+      canStartMainAction: requireCapability("actionSessionRuntime", "canStartMainAction"),
+      cancelMovePaymentSelection: requireCapability("handFlowRuntime", "cancelMovePaymentSelection"),
+      createActionContext: requireCapability("actionPort", "createActionContext"),
+      getMainActionStartBlockReason: requireCapability(
+        "actionSessionRuntime",
+        "getMainActionStartBlockReason",
+      ),
+      getPendingOwnerFields: requireCapability("playerEffectOwnerRuntime", "getPendingOwnerFields"),
+      getPendingOwnerPlayer: requireCapability("playerEffectOwnerRuntime", "getPendingOwnerPlayer"),
+      hasActiveCardTriggerResolution: requireCapability(
+        "cardTriggerPort",
+        "hasActiveCardTriggerResolution",
+      ),
+      isActionEffectFlowActive: requireCapability("actionGuardRuntime", "isActionEffectFlowActive"),
+      isMovePaymentSelectionActive: requireCapability(
+        "handFlowRuntime",
+        "isMovePaymentSelectionActive",
+      ),
+      recordAtomicActionHistory: requireCapability("effectHistoryPort", "recordAtomicActionHistory"),
+      recordAbilityCommands: requireCapability("effectHistoryPort", "recordAbilityCommands"),
+      recordHistoryCommand: requireCapability("effectFlowRuntime", "recordHistoryCommand"),
+      recordQuickHistoryCommand: requireCapability("effectFlowRuntime", "recordQuickHistoryCommand"),
+      renderInitialSelectionArea: requireCapability("renderRuntime", "renderInitialSelectionArea"),
+      renderPlayerStats: requireCapability("renderRuntime", "renderPlayerStats"),
+      renderReservedCards: requireCapability("renderRuntime", "renderReservedCards"),
+      renderRocketElement: requireCapability("renderRuntime", "renderRocketElement"),
+      renderRockets: requireCapability("renderRuntime", "renderRockets"),
+      renderStateReadout: requireCapability("renderRuntime", "renderStateReadout"),
+      resumeDataPlacementContinuation: requireCapability("dataPlacementPort", "resume"),
+      runAction: requireCapability("actionPort", "runAction"),
+      settleCardTasksAfterEffect: requireCapability("cardTriggerPort", "settleCardTasksAfterEffect"),
+      startCardEffectFlow: requireCapability("effectFlowRuntime", "startCardEffectFlow"),
+      syncInteractionFocusChrome: requireCapability("interactionChrome", "syncInteractionFocusChrome"),
+      validateIndustryHuanyuMoveRocket: requireCapability(
+        "actionPort",
+        "validateIndustryHuanyuMoveRocket",
+      ),
+      withPendingOwnerPlayer: requireCapability("playerEffectOwnerRuntime", "withPendingOwnerPlayer"),
+      completeQuickActionStep: requireCapability("effectFlowRuntime", "completeQuickActionStep"),
+      ...hostPort,
+    });
+  }
+
   function createActionInteractionRuntime(context) {
     const {
       HISTORY_SOURCE_MAIN,
@@ -1891,6 +2028,9 @@
     createDataPlacementContinuationRuntime,
     createLandDecisionPort,
     createLandTargetContinuationRuntime,
+    BROWSER_ACTION_INTERACTION_STATIC_KEYS,
+    createBrowserActionInteractionStaticContext,
+    createBrowserActionInteractionRuntime,
     createActionInteractionRuntime,
   };
 });
