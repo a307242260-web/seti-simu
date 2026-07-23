@@ -205,6 +205,7 @@ function createHarness(options = {}) {
   const scanCommands = port.bindDomainCommands("scan_flow", ["beginSectorScan"]);
   scanCommands.beginSectorScan(5);
   assert.equal(typeof port.bindDomainCommands("income_runtime").beginIncomeForCurrentPlayer, "function");
+  assert.equal(typeof port.bindDomainCommands("card_trigger").buildProbeLocationIndex, "function");
   const effectChoiceCommands = port.bindEffectChoiceCommands(["confirm"]);
   effectChoiceCommands.confirm(1);
   const effectExecutorCommands = port.bindEffectExecutorCommands(["format"]);

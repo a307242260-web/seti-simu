@@ -148,6 +148,12 @@ assert.equal(storage.removed, true);
   Object.assign(context, {
     uiRuntimeState,
     submitHostCommand: (command) => calls.push(command),
+    getAlienSpeciesRuntime: () => ({
+      clearJiuzheCardPlayDecisionDraft: () => calls.push("clear-jiuzhe-draft"),
+    }),
+    getEffectExecutors: () => ({
+      clearYichangdianCornerAction: () => calls.push("clear-yichangdian-corner"),
+    }),
     closeAlienRevealConfirmationOverlay: () => calls.push("close-alien"),
     setActionEffectFlow: (_root, flow) => calls.push(["effect-flow", flow]),
     clearCompletedEffectFlowForUndo: () => calls.push("clear-completed-flow"),
@@ -177,6 +183,8 @@ assert.equal(storage.removed, true);
   };
   host.clearTransientStateForRecovery(root);
   assert.deepEqual(root.match, {});
+  assert.ok(calls.includes("clear-jiuzhe-draft"));
+  assert.ok(calls.includes("clear-yichangdian-corner"));
   assert.deepEqual(context.historyStepOrder, []);
   assert.equal(root.techGameState.ui.industryBorrowMode, false);
   assert.equal(uiRuntimeState.effectStepActive, false);
