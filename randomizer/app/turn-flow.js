@@ -221,6 +221,120 @@
     });
   }
 
+  const BROWSER_TURN_FLOW_STATIC_KEYS = Object.freeze([
+    "players",
+    "cards",
+    "industry",
+    "finalScoring",
+    "solar",
+    "data",
+    "aliens",
+    "rocketActions",
+    "planetStats",
+    "tech",
+    "cardTaskStateModule",
+  ]);
+
+  function createBrowserTurnFlowStaticContext(dependencies = {}) {
+    const context = {};
+    for (const key of BROWSER_TURN_FLOW_STATIC_KEYS) {
+      if (dependencies[key] == null) {
+        throw new TypeError(`TurnFlow 静态模块缺少依赖：${key}`);
+      }
+      context[key] = dependencies[key];
+    }
+    return Object.freeze(context);
+  }
+
+  function createBrowserTurnFlowController(options = {}) {
+    const {
+      staticContext,
+      ruleLifecycle,
+      cardSetupController,
+      persistenceController,
+      refreshRuntime,
+      renderRuntime,
+      resetPort,
+      setupPort,
+      scorePort,
+      hostPort,
+    } = options;
+    const owners = {
+      staticContext,
+      ruleLifecycle,
+      cardSetupController,
+      persistenceController,
+      refreshRuntime,
+      renderRuntime,
+      resetPort,
+      setupPort,
+      scorePort,
+      hostPort,
+    };
+    for (const [name, owner] of Object.entries(owners)) {
+      if (!owner || typeof owner !== "object") {
+        throw new TypeError(`TurnFlow bootstrap 缺少 owner：${name}`);
+      }
+    }
+    const requireCapability = (ownerName, capability) => {
+      const value = owners[ownerName][capability];
+      if (typeof value !== "function") {
+        throw new TypeError(`TurnFlow ${ownerName} 缺少能力：${capability}`);
+      }
+      return value;
+    };
+
+    return createTurnFlowController({
+      ...staticContext,
+      ruleLifecycle,
+      clearTransientStateForRecovery: requireCapability(
+        "resetPort",
+        "clearTransientStateForRecovery",
+      ),
+      restoreMutableObject: requireCapability("resetPort", "restoreMutableObject"),
+      createTurnState: requireCapability("resetPort", "createTurnState"),
+      resetScanRunSequence: requireCapability("resetPort", "resetScanRunSequence"),
+      resetActionLog: requireCapability("resetPort", "resetActionLog"),
+      fillNebulaDataBoard: requireCapability("setupPort", "fillNebulaDataBoard"),
+      randomizeAliens: requireCapability("setupPort", "randomizeAliens"),
+      cancelIndustryAbilityFlow: requireCapability("setupPort", "cancelIndustryAbilityFlow"),
+      closeFinalResultDialog: requireCapability("setupPort", "closeFinalResultDialog"),
+      preparePassReservePilesForCurrentGame: requireCapability(
+        "cardSetupController",
+        "preparePassReservePilesForCurrentGame",
+      ),
+      initializeCardGame: requireCapability("cardSetupController", "initializeCardGame"),
+      configureDefaultAiOpponent: requireCapability("setupPort", "configureDefaultAiOpponent"),
+      startInitialSelection: requireCapability("setupPort", "startInitialSelection"),
+      seedDefaultReferenceRockets: requireCapability("setupPort", "seedDefaultReferenceRockets"),
+      renderWheels: requireCapability("renderRuntime", "renderWheels"),
+      renderSectorNebulaDataBoard: requireCapability(
+        "renderRuntime",
+        "renderSectorNebulaDataBoard",
+      ),
+      renderRotateStateToken: requireCapability("renderRuntime", "renderRotateStateToken"),
+      renderStateReadout: requireCapability("renderRuntime", "renderStateReadout"),
+      refreshHelpers: refreshRuntime,
+      clearPersistentGameState: requireCapability(
+        "persistenceController",
+        "clearPersistentGameState",
+      ),
+      schedulePersistentGameStateSave: requireCapability(
+        "persistenceController",
+        "schedulePersistentGameStateSave",
+      ),
+      setPersistentGameSaveSuspended: requireCapability(
+        "persistenceController",
+        "setPersistentGameSaveSuspended",
+      ),
+      computePlayerFinalScoreBreakdown: requireCapability(
+        "scorePort",
+        "computePlayerFinalScoreBreakdown",
+      ),
+      ...hostPort,
+    });
+  }
+
   function createTurnHostRuntime(context = {}) {
     const controller = () => context.getController();
     function getActiveOrderedPlayerIdsFromReadout() {
@@ -738,6 +852,9 @@
     hasPlayerVisitedPlanetThisTurn,
     recordTurnVisitPlanetEvents,
     createTurnFlowController,
+    BROWSER_TURN_FLOW_STATIC_KEYS,
+    createBrowserTurnFlowStaticContext,
+    createBrowserTurnFlowController,
     createTurnReadoutRuntime,
     createTurnHostRuntime,
   };

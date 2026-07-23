@@ -12,6 +12,8 @@ const {
   buildFinalScoreSummaryLines,
   hasPlayerVisitedPlanetThisTurn,
   recordTurnVisitPlanetEvents,
+  createBrowserTurnFlowController,
+  createBrowserTurnFlowStaticContext,
   createTurnFlowController,
   createTurnReadoutRuntime,
   createTurnHostRuntime,
@@ -21,6 +23,16 @@ const {
   createBrowserTurnEndStaticContext,
   createTurnEndPort,
 } = require("./turn-end-flow");
+
+assert.throws(
+  () => createBrowserTurnFlowStaticContext({}),
+  /TurnFlow 静态模块缺少依赖/,
+);
+
+assert.throws(
+  () => createBrowserTurnFlowController({}),
+  /TurnFlow bootstrap 缺少 owner/,
+);
 
 assert.throws(
   () => createBrowserTurnEndStaticContext({}),
