@@ -11,8 +11,132 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  const REQUIRED_BROWSER_PORT_KEYS = Object.freeze({
+    browser: Object.freeze(["window", "document", "resize"]),
+    stateQuery: Object.freeze([
+      "uiRuntimeState", "getCurrentPlayer", "getInterfacePlayer", "getPlayerAgentLabel",
+      "getActivePlayers", "getPlayerById", "getPlayerByColor", "getNormalTokenAssetForPlayer",
+      "getAlienJiuzheTraceLayer", "getEarthSectorCoordinate", "getRoundOrderPlayerIds",
+      "getDisplayedTurnNumber", "getFirstEligiblePlayerId", "isPlayerPassedThisRound",
+      "hasPlayerCompletedThisTurn", "isGameEnded", "resolvePlayerReference",
+      "getExplicitEffectOwnerPlayer", "getCurrentActionEffect", "isCardSelectionActive",
+      "isDiscardSelectionActive", "isPlayCardSelectionActive", "isTechTilePickingActive",
+      "getMovableTokensForPlayer",
+    ]),
+    aiControl: Object.freeze([
+      "isAiAutoBattlePlayer", "createAiControlSnapshot", "restoreAiControlSnapshot",
+      "scheduleAiAutoStepIfNeeded",
+    ]),
+    decisionInput: Object.freeze([
+      "closeTechBlueSlotPicker", "closeDataPlacePicker", "closeScanTargetPicker",
+      "closeScanAction4Picker", "closeLandTargetPicker", "closeAlienTracePicker",
+      "clearActionEffectFlow", "clearActionPending", "clearMoveRocketHighlight",
+      "resolveCompletedSectorSettlements", "maybeStartFundamentalismRoundStartIncomeFlow",
+      "maybeOpenActionBriefingForCompletedCycle", "maybeAutoOpenFinalResultDialog",
+      "clearTransientStateForRecovery", "advanceTurnAfterPlayerAction",
+      "applyIndustryRoundStartBonuses", "activateAomomoBoard",
+    ]),
+    render: Object.freeze([
+      "els", "syncPassReserveSelectionChrome", "syncCardSelectionChrome",
+      "syncDiscardSelectionChrome", "syncPlayCardSelectionChrome", "syncTechSelectionChrome",
+      "setTokenAssetSizes", "renderRoundStatus", "renderPlayerStats", "renderPlayerHand",
+      "renderPublicCards", "renderReservedCards", "renderAlienPanels", "renderTechBoard",
+      "renderRockets", "renderWheels", "renderSectorNebulaDataBoard", "renderStateReadout",
+      "updatePublicCardControls", "updateActionButtons", "schedulePersistentGameStateSave",
+    ]),
+    debugRules: Object.freeze([
+      "players", "cards", "tech", "data", "aliens", "jiuzhe", "yichangdian",
+      "fangzhou", "banrenma", "chong", "amiba", "aomomo", "runezu", "solar",
+      "rocketActions",
+    ]),
+    constants: Object.freeze(["DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT"]),
+  });
+
+  function validateBrowserPorts(ports) {
+    const missing = [];
+    for (const [portName, keys] of Object.entries(REQUIRED_BROWSER_PORT_KEYS)) {
+      const port = ports[portName];
+      if (!port || typeof port !== "object") {
+        missing.push(portName);
+        continue;
+      }
+      for (const key of keys) {
+        if (!Object.prototype.hasOwnProperty.call(port, key) || port[key] == null) {
+          missing.push(`${portName}.${key}`);
+        }
+      }
+    }
+    if (missing.length) {
+      throw new Error(`Browser Debug ports 缺少依赖：${missing.join(", ")}`);
+    }
+  }
+
+  function createBrowserDebugRuntime(options = {}) {
+    const {
+      aiController,
+      alienSpeciesPort,
+      browserContextRuntime,
+      cardSelectionState,
+      coordinatePort,
+      effectFlowRuntime,
+      playerEffectOwnerRuntime,
+      playerLookupRuntime,
+      techRuntime,
+      turnHostRuntime,
+      turnReadoutRuntime,
+      browserPort,
+      statePort = {},
+      decisionPort,
+      renderPort,
+      debugRules,
+      constants,
+    } = options;
+    return createDebugRuntime({
+      ports: {
+        browser: browserPort,
+        stateQuery: {
+          uiRuntimeState: statePort.uiRuntimeState,
+          getCurrentPlayer: playerLookupRuntime?.getCurrentPlayer,
+          getInterfacePlayer: browserContextRuntime?.getInterfacePlayer,
+          getPlayerAgentLabel: aiController?.getPlayerAgentLabel,
+          getActivePlayers: browserContextRuntime?.getActivePlayers,
+          getPlayerById: playerLookupRuntime?.getPlayerById,
+          getPlayerByColor: playerLookupRuntime?.getPlayerByColor,
+          getNormalTokenAssetForPlayer: statePort.getNormalTokenAssetForPlayer,
+          getAlienJiuzheTraceLayer: alienSpeciesPort?.getAlienJiuzheTraceLayer,
+          getEarthSectorCoordinate: coordinatePort?.getEarthSectorCoordinate,
+          getRoundOrderPlayerIds: turnHostRuntime?.getRoundOrderPlayerIds,
+          getDisplayedTurnNumber: turnHostRuntime?.getDisplayedTurnNumber,
+          getFirstEligiblePlayerId: turnReadoutRuntime?.getFirstEligiblePlayerId,
+          isPlayerPassedThisRound: turnReadoutRuntime?.isPlayerPassedThisRound,
+          hasPlayerCompletedThisTurn: turnReadoutRuntime?.hasPlayerCompletedThisTurn,
+          isGameEnded: turnReadoutRuntime?.isGameEnded,
+          resolvePlayerReference: playerEffectOwnerRuntime?.resolvePlayerReference,
+          getExplicitEffectOwnerPlayer: playerEffectOwnerRuntime?.getExplicitEffectOwnerPlayer,
+          getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+          isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
+          isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
+          isPlayCardSelectionActive: cardSelectionState?.isPlayCardSelectionActive,
+          isTechTilePickingActive: techRuntime?.isTechTilePickingActive,
+          getMovableTokensForPlayer: coordinatePort?.getMovableTokensForPlayer,
+        },
+        aiControl: {
+          isAiAutoBattlePlayer: aiController?.isAiAutoBattlePlayer,
+          createAiControlSnapshot: aiController?.createAiControlSnapshot,
+          restoreAiControlSnapshot: aiController?.restoreAiControlSnapshot,
+          scheduleAiAutoStepIfNeeded: aiController?.scheduleAiAutoStepIfNeeded,
+        },
+        decisionInput: decisionPort,
+        render: renderPort,
+        debugRules,
+        constants,
+      },
+    });
+  }
+
   function createDebugRuntime(context = {}) {
     const ports = context.ports || {};
+    if (context.ports) validateBrowserPorts(ports);
     const browser = ports.browser || context;
     const stateQuery = ports.stateQuery || context;
     const aiControl = ports.aiControl || context;
@@ -1271,6 +1395,7 @@
   }
 
   return {
+    createBrowserDebugRuntime,
     createDebugRuntime,
     createDebugPort,
     createDebugIncomeAdapter,

@@ -1,11 +1,19 @@
 "use strict";
 
 const assert = require("assert");
-const { createAlienSpeciesPort, createAlienSpeciesRuntime } = require("./species-runtime.js");
+const {
+  createAlienSpeciesPort,
+  createAlienSpeciesRuntime,
+  createBrowserAlienSpeciesRuntime,
+} = require("./species-runtime.js");
 
 assert.throws(
   () => createAlienSpeciesRuntime({ ports: {} }),
   /Browser Alien Species ports 缺少依赖：stateQuery/,
+);
+assert.throws(
+  () => createBrowserAlienSpeciesRuntime(),
+  /Browser Alien Species ports 缺少依赖：stateQuery\.buildPlutoMarkerContext/,
 );
 
 {

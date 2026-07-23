@@ -1,7 +1,17 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createDebugIncomeAdapter, createDebugPort, createDebugRuntime } = require("./debug-runtime");
+const {
+  createBrowserDebugRuntime,
+  createDebugIncomeAdapter,
+  createDebugPort,
+  createDebugRuntime,
+} = require("./debug-runtime");
+
+assert.throws(
+  () => createBrowserDebugRuntime(),
+  /Browser Debug ports 缺少依赖：browser/,
+);
 
 {
   const calls = [];
