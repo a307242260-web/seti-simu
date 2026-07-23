@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const standardAction = require("../game/actions/standard-action");
+const { createSimulationEnv } = require("../app/simulation-env");
 const { createSimulationRuleComposition } = require("./simulation-rule-composition");
 
 function createSeededRandom(seed) {
@@ -67,4 +68,27 @@ const stale = kernel.composition.inputPort.submitDecision({
 assert.equal(stale.ok, false, "过期 Decision 必须在 handler 前拒绝");
 
 kernel.composition.dispose();
+
+{
+  const env = createSimulationEnv();
+  let researchExecuted = false;
+  try {
+    env.reset({ seed: "research-seed-7", activePlayerCount: 4 });
+    for (let step = 0; step < 40 && !researchExecuted; step += 1) {
+      const actions = env.legalActions();
+      const action = actions.find((candidate) => candidate.family === "research_tech")
+        || actions.find((candidate) => candidate.family === "pass")
+        || actions.find((candidate) => candidate.family === "end_turn")
+        || actions[0];
+      assert.ok(action, `生产 composition 第 ${step} 步必须有合法行动`);
+      const result = env.step(action);
+      assert.equal(result.ok, true, `${action.family} 生产 handler 不得因缺 composition context 失败`);
+      researchExecuted = action.family === "research_tech";
+    }
+  } finally {
+    env.dispose();
+  }
+  assert.equal(researchExecuted, true, "生产 Standard Action 回归必须实际执行 research_tech");
+}
+
 console.log("simulation production Standard Action composition tests passed");

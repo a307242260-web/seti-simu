@@ -75,7 +75,7 @@
 - Heuristic Policy：相同上下文确定性、只返回 legal actionId；空集、畸形配置、未知与 disabled action 均 fail-closed。
 - evaluator：稳定 tie-break，不修改 observation/legal descriptor；selection evaluator 覆盖 setup、弃牌/支付、科技、蓝槽、移动和外星选择。
 - Simulation Host：未知 action、schema mismatch、错 actor、stale、篡改 descriptor 均零提交；terminal 后 step 与 dispose 后所有公共调用拒绝；checkpoint/replay schema 保持。
-- Standard Action：生产 Simulation composition 对 22 family 唯一注册；已接入 family 走真实 opening Decision 执行，未接入 family 逐项显式 fail-closed 原因；stale Decision 在 handler 前拒绝。
+- Standard Action：生产 Simulation composition 对 22 family 唯一注册；已接入 family 走真实 opening Decision 与 `research_tech` 执行，未接入 family 逐项显式 fail-closed 原因；stale Decision 在 handler 前拒绝。该回归同时发现并补齐研究科技缺失太阳系旋转 context、全员 PASS 后未走正式 TurnFlow 轮转、无预留牌轮次卡死三项生产缺口。
 - Chrome：固定 5 项清单可重复执行页面/projection/人类输入、Policy 输入、save/recovery 与领域 Decision。
 
 ## 验证命令

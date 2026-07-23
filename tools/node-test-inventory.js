@@ -89,6 +89,6 @@ module.exports = Object.freeze({
     entry("randomizer/game/history/commands.test.js", "rules/scoring", "history command 正反向应用保持不变量", "undo/redo 非互逆或作用于错误实体"),
   ]),
   fullFlow: Object.freeze([
-    entry("randomizer/full-flow/standard-flow.test.js", "full-flow/standard-flow-v1", "唯一固定流程经生产 composition 公共 Action/Decision 走到 terminal", "直接 helper、第二条整局入口、未清 session 或 replay 不一致"),
+    entry("randomizer/full-flow/standard-flow.test.js", "full-flow/standard-flow-v1", "唯一固定流程经生产 composition 公共 Action/Decision 到版本化权威盘面", "直接 helper、第二条完整流程入口、未清 session 或 replay 不一致"),
   ]),
 });

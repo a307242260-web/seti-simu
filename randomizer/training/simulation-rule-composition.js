@@ -14,6 +14,7 @@ const planetStats = require("../game/planet-stats");
 const data = require("../game/data");
 const cards = require("../game/cards/deck");
 const tech = require("../game/tech");
+const industry = require("../game/industry");
 const aliens = require("../game/aliens");
 const finalScoring = require("../game/final-scoring");
 const actionHistory = require("../game/history/action-history");
@@ -446,6 +447,15 @@ function applyCornerReward(workingState, player, reward, source) {
 function createSimulationRuleComposition(options = {}) {
   if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
   let composition;
+  const turnFlow = turnFlowApi.createTurnFlowController({
+    cards,
+    industry,
+    finalRoundNumber: 5,
+    defaultActivePlayerCount: options.activePlayerCount || 4,
+    computePlayerFinalScoreBreakdown(_workingRoot, player) {
+      return { totalScore: Number(player?.resources?.score || 0) };
+    },
+  });
   const baseRegistry = actions.createStandardRegistry({
     getAuthority(workingState) {
       const root = workingState.workingRoot || workingState;
@@ -784,16 +794,22 @@ function createSimulationRuleComposition(options = {}) {
       const companyLabel = player.initialSelection?.industry?.label || null;
       if (companyLabel === "图灵系统") players.gainResources(player, { publicity: 2 });
       if (companyLabel === "层云核心") players.gainResources(player, { publicity: 1 });
-      const order = root.turnState.activePlayerIds || [];
-      const index = order.indexOf(player.id);
-      const nextPlayerId = order[(index + 1) % order.length] || player.id;
-      root.playerState.currentPlayerId = nextPlayerId;
-      root.turnState.turnNumber += 1;
-      const nextPlayer = root.playerState.players.find((candidate) => candidate.id === nextPlayerId);
+      const transition = turnFlow.advanceTurnAfterPlayerAction(root, player.id, { passed: true });
+      const nextPlayer = root.playerState.players
+        .find((candidate) => candidate.id === transition.nextPlayerId);
       if (nextPlayer) {
         nextPlayer.mainActionCompleted = false;
       }
-      return { ok: true, progressed: true, events: [{ type: "end_turn", playerId: player.id }] };
+      return {
+        ok: true,
+        progressed: true,
+        events: [{
+          type: "end_turn",
+          playerId: player.id,
+          roundAdvanced: Boolean(transition.roundAdvanced),
+          gameEnded: Boolean(transition.gameEnded),
+        }],
+      };
     },
   });
 
@@ -821,10 +837,15 @@ function createSimulationRuleComposition(options = {}) {
         );
       }
       if (!workingState.turnState.passedPlayerIds.includes(playerId)) workingState.turnState.passedPlayerIds.push(playerId);
-      if (!workingState.turnState.completedTurnPlayerIds.includes(playerId)) workingState.turnState.completedTurnPlayerIds.push(playerId);
-      workingState.match.passReserveContinuation = {
-        type: "pass-reserve-pick", playerId, roundNumber: workingState.turnState.roundNumber,
-      };
+      const reserve = cards.getPassReservePile(workingState.cardState, workingState.turnState.roundNumber);
+      if (reserve.length) {
+        workingState.match.passReserveContinuation = {
+          type: "pass-reserve-pick", playerId, roundNumber: workingState.turnState.roundNumber,
+        };
+      } else {
+        const player = workingState.playerState.players.find((candidate) => candidate.id === playerId);
+        if (player) player.passCompletionPending = true;
+      }
       return { ok: true, progressed: true, events: [{ type: "pass", playerId }] };
     },
   });
@@ -890,6 +911,24 @@ function createSimulationRuleComposition(options = {}) {
       decisionVersion: workingRoot.match.decisionVersion || 0,
       getEarthSectorCoordinate: () => getEarthCoordinate(workingRoot),
       getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
+      rotateSolarOrbit(count = 1) {
+        const beforeRotation = clone(workingRoot.solarState.rotation);
+        workingRoot.solarState.rotation = solar.applySolarOrbitRotation(
+          workingRoot.solarState.rotation,
+          count,
+        );
+        workingRoot.solarState.wheelSteps = solar.rotationToWheelSteps(workingRoot.solarState.rotation);
+        const settlement = rocketAbility.settleRocketsAfterSolarRotation(
+          workingRoot,
+          beforeRotation,
+          workingRoot.solarState.rotation,
+        );
+        return {
+          ok: settlement?.ok !== false,
+          message: settlement?.message || "太阳系旋转",
+          events: settlement?.events || [],
+        };
+      },
     };
   }
 
