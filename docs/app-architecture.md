@@ -78,15 +78,14 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；规则状态、活跃 Session、RNG 与确定性序列统一由 Browser Composition lifecycle 原子保存/恢复，模块不接受 StateStore-only snapshot，也不在 composition 外回灌序列。UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，不暴露 Simulation reset/step/checkpoint/Decision API，也不返回 mutable working root。
 - `randomizer/app/ai/control-runtime.js`：AI 控制层。唯一持有 `aiAutoBattleState`、scheduler 标志与策略权重；通过显式 `state` getter 和回调读取 pending、执行自动步骤，不复制 app pending 或 resolver 状态。
-- `randomizer/app/ai/browser-bootstrap.js`：Browser AI 装配边界。创建 controller state、连接 Composition inspect/read/decision/host-command 端口，并只暴露冻结的 controller 与 Composition command facade；缺少必需端口时创建期 fail-fast。
+- `randomizer/app/ai/browser-bootstrap.js`：Browser Machine Player 装配边界。从 Composition inspection/projection 构造 Action/Decision boundary，连接公共 PolicyInputAdapter/Machine Player Host 和 BrowserInputAdapter；人类席位拒绝创建 Policy 请求，lifecycle 变化统一使在途 generation 失效。
 - `randomizer/app/ai/battle-log.js`：AI 对战日志 compact、entry、bug 计数与玩家/比分快照。
 - `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。
 - `randomizer/app/ai/tuning-history.js`：调参历史的 localStorage 持久化、A/B 摘要、推荐与应用入口。
 - `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
 - `randomizer/app/ai/initial-card-pending.js`：初始选择、收入弃牌、PASS 预留、公共牌/手牌选择、卡牌触发/任务与打牌 pending resolver。
 - `randomizer/app/ai/interaction-pending.js`：数据、移动支付、登陆、扫描、科技、公司免费移动与外星人 pending resolver；只通过筛选后的显式 context 调用 app flow，不持有 pending 状态。
-- `randomizer/app/ai/action-executor.js`：浏览器 AI 的估值候选汇总、重试诊断与行动执行器；simulation 枚举/执行只转发 Standard Action descriptor，不拥有第二套 legality、回合或 pending 状态。
-- `randomizer/app/ai/automation-runtime.js`：非回合 pending 优先级、效果恢复、选定行动执行和 `runAiAutomationStep` 编排。
+- `randomizer/app/ai/action-executor.js`、`randomizer/app/ai/automation-runtime.js`：遗留估值/实验实现，不得接入 Browser Machine Player 调度、Host Command 或公开 API；Browser 生产执行只走 PolicyInputAdapter。
 - `randomizer/app/ai-controller.js`：AI 装配 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域并转发稳定 API，不再包含 resolver、行动 executor、控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。

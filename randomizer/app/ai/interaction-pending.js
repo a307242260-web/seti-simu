@@ -77,21 +77,12 @@
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
 
-    function decidePolicyChoice(workingRoot, family, player, decisionId, choices) {
-      const { turnState } = requireWorkingRoot(workingRoot);
-      return ai?.heuristicPolicy?.decideChoice?.({
-        seatId: player?.id,
-        family,
-        stateVersion: Math.max(0, Number(turnState.roundNumber) || 0),
-        decisionVersion: Math.max(0, Number(turnState.turnNumber) || 0),
-        decisionId,
-        requestId: `browser:${player?.id}:${decisionId}:${turnState.roundNumber || 0}:${turnState.turnNumber || 0}`,
-        observation: {
-          publicState: { roundNumber: turnState.roundNumber || 0 },
-          selfState: { playerId: player?.id || null },
-        },
-        choices,
-      }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
+    function decidePolicyChoice() {
+      return {
+        ok: false,
+        code: "BROWSER_POLICY_INPUT_REQUIRED",
+        message: "Browser 机器选择只能经 Machine Player Host 与 PolicyInputAdapter 提交",
+      };
     }
 
     function decideBlueSlot(workingRoot, player, availableSlots, decisionId) {

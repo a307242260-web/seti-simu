@@ -39,3 +39,14 @@ load 阶段切换到存档中预声明的整席 fallback。
 
 浏览器 `policy-input-adapter.js` 和训练 `heuristic-policy-adapter.js` 都只是该 Host 的 adapter。
 前者提交 BrowserInputAdapter，后者提交 `simulation-env.step()`；两端不维护独立 Policy 分支。
+
+## Browser 接线
+
+Browser 调度由 `app/ai/browser-bootstrap.js` 从 Rule Composition 的 inspection、StateSource projection
+和 `inputPort.enumerateActions()` 构造唯一 boundary。顶层 Action 与 active Decision 都交给
+`browser-host/policy-input-adapter.js`，再由本 Host 请求固定席位 Policy；成功结果只经
+BrowserInputAdapter 的 `dispatchAction` / `submitDecision` 回到公共输入端口。
+
+Browser 不再直接调用 `heuristicPolicy.decideChoice`，也不再通过 `ai_run_*`、
+candidate/selector 或 `simulation_*` Host Command 执行动作。新局与恢复 lifecycle 会失效所有
+Browser 在途请求；人类席位不会创建 Policy 请求。

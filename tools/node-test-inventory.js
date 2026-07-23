@@ -31,6 +31,7 @@ randomizer/app/action-log-runtime.test.js
 randomizer/app/action-interaction-runtime.test.js
 randomizer/app/action-runtime.test.js
 randomizer/app/score-source-runtime.test.js
+randomizer/app/ai/browser-machine-player.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js

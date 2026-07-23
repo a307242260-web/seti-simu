@@ -2,7 +2,7 @@
 
 本文件是电脑玩家（AI 自动机）的**当前唯一权威文档**，覆盖控制器接口、价值模型、目标系统、回合规划、自博弈验证和后续路线。旧的接口契约文档与成本收益草稿已经合并进本文，不再单独维护。
 
-- **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与自动调度，`randomizer/app/ai/automation-runtime.js` 推进 pending，`randomizer/app/ai/action-executor.js` 选择并执行顶层行动；`randomizer/app/ai-controller.js` 只装配这些 runtime、规则域并转发稳定控制/批跑 API。规则估值层集中在 `randomizer/game/ai/**`。
+- **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与异步调度；每一步统一进入 `app/ai/browser-bootstrap.js` 装配的 Machine Player Host → Policy Port → `browser-host/policy-input-adapter.js`，并经玩家共用的 Standard Action/Decision input port 提交。旧 `automation-runtime` / `action-executor` 不再是 Browser 执行入口。规则估值层集中在 `randomizer/game/ai/**`。
 - **规则域装配**：资源/交易、卡牌/任务、路线/星球、扫描/数据、科技/行动、终局节奏、选择压力和外星人估值按领域拆在 `randomizer/game/ai/**`，通过显式 context 注入；完整函数清单见 `docs/ai-domain-migration-stage3.md`，这些模块不读取 DOM。
 - **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`Rule Composition` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Simulation host 禁止回流旧 pending resolver/recover/skip。旧 pending inventory 与创建入口已删除，不得恢复第二套 resolver 或通用 pending 容器。
 - **公共 Heuristic Policy**：`game/ai/heuristic-policy.js` 是浏览器席位、offline demonstration teacher 与冻结评测对手共用的版本化策略实现；新顶层路径由 `expected-score-evaluator.js` 直接从公共 observation 与 legal descriptors 计算预期终局分，`heuristic-evaluator.js` 只保留合法集排序和旧浏览器兼容入口。浏览器通过 `browser-host/policy-input-adapter.js` 提交同一 Standard Action/Decision，训练与评测通过 `training/heuristic-policy-adapter.js` 使用同一实例与 provenance，不维护训练专用策略分叉。

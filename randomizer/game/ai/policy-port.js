@@ -291,6 +291,7 @@
 
     return Object.freeze({
       accept(decision, runtimeContext) {
+        if (status !== "pending") return settle("responded", null);
         return settle("responded", options.validateDecision(decision, runtimeContext));
       },
       cancel(reason = "Policy request 已取消") {
