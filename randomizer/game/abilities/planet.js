@@ -304,6 +304,12 @@
     };
   }
 
+  function listOrbitRequirementsAt(context, placement, options = {}) {
+    if (!placement?.planet || !canAddOrbitForPlacement(context, placement)) return [];
+    const cost = resolveCost(options, DEFAULT_ORBIT_COST);
+    return [buildOrbitChoice(context, placement, cost, options)];
+  }
+
   function buildLandChoicesForPlacement(context, placement, options = {}) {
     const planetId = placement.planet.planetId;
     const choices = [];
@@ -429,6 +435,11 @@
       energyCost: choices[0].energyCost,
       cost: { ...(choices[0].cost || {}) },
     };
+  }
+
+  function listLandRequirementsAt(context, placement, options = {}) {
+    if (!placement?.planet) return [];
+    return buildLandChoicesForPlacement(context, placement, options);
   }
 
   function orbitProbe(context, options = {}) {
@@ -704,6 +715,8 @@
     getLandEnergyCost,
     getOrbitOptions,
     getLandOptions,
+    listOrbitRequirementsAt,
+    listLandRequirementsAt,
     orbitProbe,
     landProbe,
   });

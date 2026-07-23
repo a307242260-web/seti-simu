@@ -256,6 +256,9 @@
         traceCount: traces.traceCount,
         alienContacts: traces.alienContacts,
         probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),
+        probeGoalRequirements: String(source?.probeRouteRequirements?.playerId) === String(seatId)
+          ? clone(source.probeRouteRequirements)
+          : null,
       },
     });
   }

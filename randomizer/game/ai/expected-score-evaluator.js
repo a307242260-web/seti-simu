@@ -76,6 +76,25 @@
     });
   }
 
+  function gapSize(requirement) {
+    const gap = requirement?.gap || {};
+    return finite(gap.credits) + finite(gap.energy) + finite(gap.movementSteps);
+  }
+
+  function sameTarget(requirements, goal) {
+    return (requirements?.candidates || [])
+      .filter((candidate) => candidate?.targetId === goal?.targetId)
+      .sort((left, right) => gapSize(left) - gapSize(right))[0] || null;
+  }
+
+  function matchesNextStep(action, step) {
+    if (!action || !step || action.family !== step.family) return false;
+    if (step.family !== "move") return true;
+    return String(action.target?.rocketId) === String(step.rocketId)
+      && finite(action.target?.deltaX) === finite(step.deltaX)
+      && finite(action.target?.deltaY) === finite(step.deltaY);
+  }
+
   function evaluateOutcome(context, action) {
     const outcome = (context?.actionOutcomes || []).find((candidate) => (
       candidate?.actionId === action?.actionId
@@ -90,67 +109,122 @@
     if (!rootValue) return unavailable(outcome, "outcome-root-missing");
 
     const isProbeAction = PROBE_FAMILIES.has(action?.family);
-    const hasIncompleteProbeRoute = (context?.actionOutcomes || []).some((candidateOutcome) => (
-      candidateOutcome?.status === "settled"
-      && (candidateOutcome.leaves || []).some((leaf) => {
-        const candidate = leaf?.observation?.outcomeProjection?.progress?.probeRoute?.candidate;
-        return candidate && !candidate.endpointActionId;
-      })
-    ));
+    const rootRequirements = outcome.rootObservation.outcomeProjection.progress?.probeGoalRequirements;
+    const rootGoal = rootRequirements?.candidates?.[0] || null;
+    if (!rootGoal && isProbeAction) {
+      const legacyBest = (outcome.leaves || [])
+        .filter((leaf) => leaf?.status !== "failed" && leaf?.observation)
+        .map((leaf) => {
+          const leafValue = evaluateState(leaf.observation, context.seatId);
+          const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
+          return { leaf, leafValue, summary, goalScoreGain: finite(summary?.goalScoreGain) };
+        })
+        .filter((candidate) => candidate.summary?.endpointActionId && candidate.goalScoreGain > 0)
+        .sort((left, right) => right.goalScoreGain - left.goalScoreGain)[0];
+      if (!legacyBest) return unavailable(outcome, "probe-goal-no-positive-endpoint");
+      return deepFreeze({
+        evaluationModel: EVALUATION_MODEL,
+        score: legacyBest.goalScoreGain,
+        selectable: true,
+        priorityClass: 4,
+        goalScoreGain: legacyBest.goalScoreGain,
+        status: outcome.status,
+        confidence: outcome.confidence || "high",
+        rootValue,
+        leafValue: legacyBest.leafValue,
+        actualScoreDelta: legacyBest.leafValue.realizedScore - rootValue.realizedScore,
+        probeRouteSummary: legacyBest.summary,
+        selectedLeafId: legacyBest.leaf.leafId || null,
+        actionChain: legacyBest.leaf.actionChain || [],
+        reasonCodes: ["probe-goal-standard-route"],
+      });
+    }
     const evaluatedLeaves = (outcome.leaves || [])
       .filter((leaf) => leaf?.status !== "failed" && leaf?.observation)
       .map((leaf) => {
         const leafValue = evaluateState(leaf.observation, context.seatId);
         const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
-        const goalScoreGain = finite(summary?.goalScoreGain);
-        return { leaf, leafValue, summary, goalScoreGain };
+        const leafRequirements = leaf.observation.outcomeProjection.progress?.probeGoalRequirements;
+        const leafGoal = sameTarget(leafRequirements, rootGoal);
+        const actualScoreDelta = leafValue.realizedScore - rootValue.realizedScore;
+        const gapReduction = rootGoal && leafGoal
+          ? Math.max(0, gapSize(rootGoal) - gapSize(leafGoal))
+          : 0;
+        const completed = Boolean(
+          rootGoal
+          && actualScoreDelta > 0
+          && (summary?.endpointActionId || ["orbit", "land"].includes(action?.family)),
+        );
+        return {
+          leaf,
+          leafValue,
+          leafGoal,
+          summary,
+          actualScoreDelta,
+          gapReduction,
+          completed,
+        };
       })
-      .filter((candidate) => (
-        !isProbeAction
-        || (candidate.summary?.endpointActionId && candidate.goalScoreGain > 0)
-      ))
       .sort((left, right) => (
-        right.goalScoreGain - left.goalScoreGain
-        || finite(left.summary?.routeCost?.credits) - finite(right.summary?.routeCost?.credits)
-        || finite(left.summary?.routeCost?.energy) - finite(right.summary?.routeCost?.energy)
+        Number(right.completed) - Number(left.completed)
+        || right.gapReduction - left.gapReduction
+        || right.actualScoreDelta - left.actualScoreDelta
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
     const best = evaluatedLeaves[0] || null;
-    if (!best) {
-      return unavailable(outcome, isProbeAction ? "probe-goal-no-positive-endpoint" : "outcome-has-no-leaf");
-    }
+    if (!best) return unavailable(outcome, "outcome-has-no-leaf");
 
     const controlFlow = action?.phase === "conditional";
     const endTurn = action?.family === "end_turn";
     const pass = action?.family === "pass";
-    const orangeTechDelta = finite(
-      best.leaf.observation.outcomeProjection.progress?.orangeTechCount,
-    ) - finite(
-      outcome.rootObservation.outcomeProjection.progress?.orangeTechCount,
+    const nextProbeStep = matchesNextStep(action, rootGoal?.nextStep);
+    const routeAdvanced = nextProbeStep && (
+      best.completed
+      || best.gapReduction > 0
+      || Boolean(best.summary?.endpointActionId)
     );
-    const fillsProbeTechGap = hasIncompleteProbeRoute && orangeTechDelta > 0;
-    const selectable = isProbeAction || fillsProbeTechGap || controlFlow || endTurn || pass;
+    const directGapFill = !isProbeAction && best.gapReduction > 0;
+    const selectable = Boolean(rootGoal && (best.completed || routeAdvanced || directGapFill))
+      || controlFlow
+      || endTurn
+      || pass;
     if (!selectable) return unavailable(outcome, "not-current-probe-goal-step");
-    const priorityClass = isProbeAction ? 3 : fillsProbeTechGap ? 2 : controlFlow ? 2 : endTurn ? 1 : 0;
+    const priorityClass = best.completed
+      ? 5
+      : routeAdvanced
+        ? 4
+        : directGapFill
+          ? 3
+          : controlFlow
+            ? 2
+            : endTurn
+              ? 1
+              : 0;
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score: isProbeAction ? best.goalScoreGain : 0,
+      score: best.completed
+        ? finite(rootGoal?.targetBenefit?.score)
+        : best.gapReduction,
       selectable: true,
       priorityClass,
-      goalScoreGain: isProbeAction ? best.goalScoreGain : 0,
+      goalScoreGain: finite(rootGoal?.targetBenefit?.score),
       status: outcome.status,
       confidence: outcome.confidence || "high",
       rootValue,
       leafValue: best.leafValue,
-      actualScoreDelta: best.leafValue.realizedScore - rootValue.realizedScore,
-      orangeTechDelta,
+      actualScoreDelta: best.actualScoreDelta,
+      probeGoalRequirement: rootGoal,
+      leafProbeGoalRequirement: best.leafGoal,
+      gapReduction: best.gapReduction,
       probeRouteSummary: isProbeAction ? best.summary : null,
       selectedLeafId: best.leaf.leafId || null,
       actionChain: best.leaf.actionChain || [],
-      reasonCodes: [isProbeAction
-        ? "probe-goal-standard-route"
-        : fillsProbeTechGap
-          ? "probe-route-orange-tech-gap"
+      reasonCodes: [best.completed
+        ? "probe-goal-completed-standard-leaf"
+        : routeAdvanced
+          ? "probe-goal-route-advanced"
+          : directGapFill
+            ? "probe-goal-gap-reduced-by-standard-leaf"
         : controlFlow
           ? "required-standard-decision"
           : endTurn

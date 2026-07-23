@@ -215,6 +215,7 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
     ),
     decision,
     actionHistorySummary: { count: (state.match?.actionLog || []).length },
+    probeRouteRequirements: clone(state.probeRouteRequirements || null),
     terminal: Boolean(turn.gameEnded),
   };
 }
@@ -301,7 +302,15 @@ function createSimulationEnv() {
 
   function observeWithActions(viewerPlayerId, actions) {
     const startedAt = performance.now();
-    const result = buildObservation(getWorkingProjection(composition), seed, viewerPlayerId, actions);
+    const projected = composition.projection({
+      playerId: viewerPlayerId || actions?.[0]?.actorPlayerId || null,
+      role: "player",
+    }).state;
+    const state = {
+      ...getWorkingProjection(composition),
+      probeRouteRequirements: clone(projected?.probeRouteRequirements || null),
+    };
+    const result = buildObservation(state, seed, viewerPlayerId, actions);
     recordDuration("observationMilliseconds", startedAt);
     diagnostics.observationCalls += 1;
     return result;

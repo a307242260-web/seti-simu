@@ -36,6 +36,12 @@
   const BASE_ROCKET_LIMIT = 1;
   const ORANGE1_ROCKET_LIMIT = 2;
   const ASTEROID_EXIT_MOVE_POINTS = 2;
+  const MOVE_DIRECTIONS = Object.freeze([
+    Object.freeze({ id: "out", deltaX: 0, deltaY: 1 }),
+    Object.freeze({ id: "cw", deltaX: 1, deltaY: 0 }),
+    Object.freeze({ id: "ccw", deltaX: -1, deltaY: 0 }),
+    Object.freeze({ id: "in", deltaX: 0, deltaY: -1 }),
+  ]);
 
   function cloneCost(cost) {
     return Object.fromEntries(
@@ -315,11 +321,44 @@
 
   function getRequiredMovePoints(context, player, rocketId, deltaX, deltaY, options = {}) {
     const geometry = resolveMoveGeometry(context, rocketId, deltaX, deltaY);
-    const exitsAsteroid = isAsteroidContent(geometry.fromContent);
+    return getRequiredMovePointsFromCoordinate(context, player, geometry.from, options);
+  }
+
+  function getRequiredMovePointsFromCoordinate(context, player, coordinate, options = {}) {
+    const exitsAsteroid = isAsteroidContent(getVisibleContent(context, coordinate));
     if (!options.ignoreAsteroidRestriction && exitsAsteroid && !players.playerOwnsTech(player, "orange2", context)) {
       return ASTEROID_EXIT_MOVE_POINTS;
     }
     return 1;
+  }
+
+  function getLaunchCost(context, player, options = {}) {
+    const defaultCost = getIndustryPassives()?.getStandardLaunchCost?.(player, DEFAULT_LAUNCH_COST)
+      || DEFAULT_LAUNCH_COST;
+    return resolveCost(options, defaultCost);
+  }
+
+  function listMoveRequirements(context, player, rocketId, options = {}) {
+    return MOVE_DIRECTIONS
+      .filter((direction) => (
+        rockets.canMoveRocket?.(
+          context.rocketState,
+          rocketId,
+          direction.deltaX,
+          direction.deltaY,
+        )?.ok
+      ))
+      .map((direction) => ({
+        ...direction,
+        requiredMovePoints: getRequiredMovePoints(
+          context,
+          player,
+          rocketId,
+          direction.deltaX,
+          direction.deltaY,
+          options,
+        ),
+      }));
   }
 
   function resolveProvidedMovePoints(options, cost) {
@@ -338,9 +377,7 @@
       return { ok: false, abilityId: "launchProbe", message: "没有当前玩家" };
     }
 
-    const defaultLaunchCost = getIndustryPassives()?.getStandardLaunchCost?.(currentPlayer, DEFAULT_LAUNCH_COST)
-      || DEFAULT_LAUNCH_COST;
-    const cost = resolveCost(options, defaultLaunchCost);
+    const cost = getLaunchCost(context, currentPlayer, options);
     const rocketLimit = getRocketLimitForPlayer(currentPlayer, context);
     const activeRocketCount = getActiveRocketCountForPlayer(context.rocketState, currentPlayer.id);
     if (!options.ignoreRocketLimit && activeRocketCount >= rocketLimit) {
@@ -641,8 +678,12 @@
     BASE_ROCKET_LIMIT,
     ORANGE1_ROCKET_LIMIT,
     ASTEROID_EXIT_MOVE_POINTS,
+    MOVE_DIRECTIONS,
     getRocketLimitForPlayer,
+    getLaunchCost,
     getRequiredMovePoints,
+    getRequiredMovePointsFromCoordinate,
+    listMoveRequirements,
     launchProbe,
     moveProbe,
     settleRocketsAfterSolarRotation,

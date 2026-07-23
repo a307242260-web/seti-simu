@@ -25,6 +25,7 @@ const ai = require("../game/ai");
 const { createHeuristicPolicyAdapter } = require("./heuristic-policy-adapter");
 const planetReferenceLayout = require("../game/planet-reference-layout");
 const rocketAbility = require("../game/abilities/rocket");
+const planetAbility = require("../game/abilities/planet");
 const { createRuleComposition } = require("../game/rule-composition");
 
 const RULESET_VERSION = "seti-runtime-v1";
@@ -548,6 +549,222 @@ function createCommittedState(workingState, stateVersion, overrides = {}) {
   );
 }
 
+function rewardScore(effects) {
+  return (effects || []).reduce((total, effect) => (
+    total + Number(effect?.options?.gain?.score || 0)
+  ), 0);
+}
+
+function routeRequirementKey(sourceId, choice) {
+  return [
+    sourceId,
+    choice.actionType,
+    choice.planetId,
+    choice.target?.type || "planet",
+    choice.target?.satelliteId || "",
+  ].join(":");
+}
+
+function productionProbeDirections(player, coordinate) {
+  const preferredDirectionId = player?.color === "blue" ? "out" : "ccw";
+  if (preferredDirectionId === "out" && Number(coordinate?.y || 0) >= 3) return [];
+  return rocketAbility.MOVE_DIRECTIONS.filter((direction) => direction.id === preferredDirectionId);
+}
+
+function buildProbeRouteRequirements(workingState) {
+  const player = players.getCurrentPlayer(workingState.playerState);
+  if (!player || workingState.turnState.gameEnded) return null;
+  const context = {
+    workingRoot: workingState,
+    solarState: workingState.solarState,
+    playerState: workingState.playerState,
+    rocketState: workingState.rocketState,
+    planetStatsState: workingState.planetStatsState,
+    alienGameState: workingState.alienGameState,
+    turnState: workingState.turnState,
+    getPlanetLocations: () => solar.createSolarSnapshot(workingState.solarState).planetLocations,
+  };
+  const earth = getEarthCoordinate(workingState);
+  const activeRockets = rockets.getRocketsForPlayer(workingState.rocketState, player.id)
+    .filter((rocket) => rocket.surface === "solar-board");
+  const sources = activeRockets.map((rocket) => ({
+    sourceId: `rocket:${rocket.id}`,
+    rocketId: rocket.id,
+    launchRequired: false,
+    coordinate: rockets.getRocketSectorCoordinate(rocket),
+  }));
+  const activeCount = rocketAbility.getActiveRocketCountForPlayer
+    ? rocketAbility.getActiveRocketCountForPlayer(workingState.rocketState, player.id)
+    : activeRockets.length;
+  const launchSlotAvailable = rockets.findAvailableSlotIndex(
+    workingState.rocketState,
+    earth.x,
+    earth.y,
+  ) !== null;
+  if (activeCount < rocketAbility.getRocketLimitForPlayer(player, context) && launchSlotAvailable) {
+    sources.push({
+      sourceId: "launch",
+      rocketId: null,
+      launchRequired: true,
+      coordinate: earth,
+    });
+  }
+
+  const candidates = [];
+  for (const source of sources) {
+    if (!source.coordinate) continue;
+    const queue = [{
+      coordinate: source.coordinate,
+      path: [],
+      movePoints: 0,
+      publicityStops: 0,
+    }];
+    const visited = new Set([`${source.coordinate.x},${source.coordinate.y}`]);
+    while (queue.length) {
+      const route = queue.shift();
+      const visible = solar.resolveVisibleContent(
+        route.coordinate.x,
+        route.coordinate.y,
+        workingState.solarState,
+      )?.content;
+      if (visible?.kind === solar.layout.CONTENT_KIND.PLANET && visible.planetId !== "earth") {
+        const planet = solar.layout.PLANETS[visible.planetId] || {};
+        const placement = {
+          rocket: { id: source.rocketId, playerId: player.id, surface: "solar-board" },
+          currentPlayer: player,
+          planet: {
+            planetId: visible.planetId,
+            name: planet.name || visible.label,
+            label: visible.label,
+            x: route.coordinate.x,
+            y: route.coordinate.y,
+          },
+          sectorCoordinate: route.coordinate,
+        };
+        const endpointChoices = [
+          ...planetAbility.listOrbitRequirementsAt(context, placement),
+          ...planetAbility.listLandRequirementsAt(context, placement),
+        ];
+        for (const choice of endpointChoices) {
+          const effects = choice.actionType === "orbit"
+            ? planetRewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
+            : choice.target?.type === "satellite"
+              ? planetRewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
+              : planetRewards.buildPlanetLandRewardEffects(
+                choice.planetId,
+                choice.rewardMarkerSequence ?? choice.markerSequence,
+              );
+          const scoreGain = rewardScore(effects);
+          if (scoreGain <= 0) continue;
+          const launchCost = source.launchRequired
+            ? rocketAbility.getLaunchCost(context, player)
+            : {};
+          const endpointCost = choice.cost || {};
+          const totalCost = {
+            credits: Number(launchCost.credits || 0) + Number(endpointCost.credits || 0),
+            energy: route.movePoints + Number(endpointCost.energy || 0),
+          };
+          const firstMove = route.path[0] || null;
+          const targetId = [
+            choice.actionType,
+            choice.planetId,
+            choice.target?.type || "planet",
+            choice.target?.satelliteId || "",
+          ].join(":");
+          candidates.push({
+            requirementId: routeRequirementKey(source.sourceId, choice),
+            targetId,
+            playerId: player.id,
+            sourceId: source.sourceId,
+            rocketId: source.rocketId,
+            planetId: choice.planetId,
+            endpointFamily: choice.actionType,
+            endpointTarget: clone(choice.target || { type: "planet" }),
+            targetBenefit: {
+              score: scoreGain,
+              rewardSummary: choice.rewardSummary,
+              source: `planetRewards.${choice.actionType}:${choice.planetId}`,
+            },
+            required: {
+              credits: totalCost.credits,
+              energy: totalCost.energy,
+              movementSteps: route.path.length,
+              movementPoints: route.movePoints,
+            },
+            gap: {
+              credits: Math.max(0, totalCost.credits - Number(player.resources?.credits || 0)),
+              energy: Math.max(0, totalCost.energy - Number(player.resources?.energy || 0)),
+              movementSteps: route.path.length,
+            },
+            nextStep: source.launchRequired
+              ? { family: "launch" }
+              : firstMove
+                ? { family: "move", rocketId: source.rocketId, ...firstMove }
+                : { family: choice.actionType, rocketId: source.rocketId, target: clone(choice.target || {}) },
+            path: route.path.map((step) => ({ ...step })),
+            publicityStops: route.publicityStops,
+            fieldSources: {
+              topology: "SetiRocketActions.canMoveFromCoordinate",
+              movementCost: "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              launchCost: "SetiAbilityRocket.getLaunchCost",
+              endpointCost: choice.actionType === "land"
+                ? "SetiAbilityPlanet.getLandEnergyCost"
+                : "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+              rewards: "SetiPlanetRewards",
+            },
+          });
+        }
+      }
+      for (const direction of productionProbeDirections(player, route.coordinate)) {
+        const move = rockets.canMoveFromCoordinate(
+          workingState.rocketState,
+          route.coordinate,
+          direction.deltaX,
+          direction.deltaY,
+          source.rocketId,
+        );
+        if (!move.ok) continue;
+        const key = `${move.to.x},${move.to.y}`;
+        if (visited.has(key)) continue;
+        visited.add(key);
+        const destination = solar.resolveVisibleContent(
+          move.to.x,
+          move.to.y,
+          workingState.solarState,
+        )?.content;
+        queue.push({
+          coordinate: move.to,
+          path: [...route.path, {
+            directionId: direction.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          }],
+          movePoints: route.movePoints + rocketAbility.getRequiredMovePointsFromCoordinate(
+            context,
+            player,
+            route.coordinate,
+          ),
+          publicityStops: route.publicityStops + (
+            destination?.kind === solar.layout.CONTENT_KIND.PLANET
+            && destination.planetId !== "earth" ? 1 : 0
+          ),
+        });
+      }
+    }
+  }
+  const ranked = candidates.sort((left, right) => (
+    right.targetBenefit.score - left.targetBenefit.score
+    || left.required.credits + left.required.energy - right.required.credits - right.required.energy
+    || left.required.movementSteps - right.required.movementSteps
+    || String(left.requirementId).localeCompare(String(right.requirementId))
+  )).slice(0, 12);
+  return {
+    schemaVersion: "seti-probe-route-requirements-v1",
+    playerId: player.id,
+    candidates: ranked,
+  };
+}
+
 function restoreWorkingState(target, source, metadata = {}) {
   if (source?.playerState && source?.turnState) {
     for (const key of Object.keys(source)) {
@@ -892,25 +1109,17 @@ function createSimulationRuleComposition(options = {}) {
       const rocket = [...root.rocketState.rockets].reverse()
         .find((candidate) => candidate.playerId === playerId && candidate.surface === "solar-board");
       if (!rocket) return [];
-      const preferredDirectionId = player?.color === "blue" ? "out" : "ccw";
-      if (preferredDirectionId === "out" && Number(rocket.sectorY || 0) >= 3) return [];
-      return [
-        { id: "out", deltaX: 0, deltaY: 1 },
-        { id: "cw", deltaX: 1, deltaY: 0 },
-        { id: "ccw", deltaX: -1, deltaY: 0 },
-        { id: "in", deltaX: 0, deltaY: -1 },
-      ].filter((direction) => direction.id === preferredDirectionId && (
-        rockets.canMoveRocket?.(root.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok
+      return rocketAbility.listMoveRequirements(
+        createActionContext(root),
+        player,
+        rocket.id,
+      ).filter((direction) => (
+        productionProbeDirections(player, rockets.getRocketSectorCoordinate(rocket))
+          .some((allowed) => allowed.id === direction.id)
       )).map((direction) => ({
         target: { rocketId: rocket.id, deltaX: direction.deltaX, deltaY: direction.deltaY },
         payload: {
-          requiredMovePoints: rocketAbility.getRequiredMovePoints(
-            createActionContext(root),
-            player,
-            rocket.id,
-            direction.deltaX,
-            direction.deltaY,
-          ),
+          requiredMovePoints: direction.requiredMovePoints,
         },
         summary: `移动火箭 ${rocket.id} ${direction.id}`,
       })).filter((candidate) => (
@@ -1308,10 +1517,10 @@ function createSimulationRuleComposition(options = {}) {
 
   const stateAdapter = {
     createWorkingState: (initialOptions) => createWorkingState(initialOptions, options.random),
-    createProjectionState: (workingState, committedState) => createCommittedState(
-      workingState,
-      committedState.meta.stateVersion,
-    ),
+    createProjectionState: (workingState, committedState) => ({
+      ...createCommittedState(workingState, committedState.meta.stateVersion),
+      probeRouteRequirements: buildProbeRouteRequirements(workingState),
+    }),
     createCommittedState: (workingState, committedState, overrides) => createCommittedState(
       workingState,
       committedState.meta.stateVersion,
@@ -1463,10 +1672,20 @@ function createSimulationRuleComposition(options = {}) {
         });
       },
     }],
-    projectState(state, viewer) {
-      return typeof options.projectCounterfactualState === "function"
-        ? options.projectCounterfactualState(clone(state), clone(viewer))
+    projectWorkingState: true,
+    projectState(state, viewer, _session, projectionContext = {}) {
+      const committed = state?.playerState
+        ? createCommittedState(state, projectionContext.stateVersion || 0)
         : clone(state);
+      const projectedState = {
+        ...committed,
+        probeRouteRequirements: state?.playerState
+          ? buildProbeRouteRequirements(state)
+          : null,
+      };
+      return typeof options.projectCounterfactualState === "function"
+        ? options.projectCounterfactualState(projectedState, clone(viewer))
+        : projectedState;
     },
     createCounterfactualFork: options.counterfactualEnabled === false
       ? null

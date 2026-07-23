@@ -227,7 +227,8 @@ function runFixedBoardTurnReport(options = {}) {
         probeGoals: turns
           .filter((turn) => turn.actorPlayerId === player.playerId)
           .flatMap((turn) => turn.actions)
-          .map((action) => action.value?.evaluation?.probeRouteSummary)
+          .map((action) => action.value?.evaluation?.probeGoalRequirement
+            || action.value?.evaluation?.probeRouteSummary)
           .filter(Boolean),
         actualProbeScore: turns
           .filter((turn) => turn.actorPlayerId === player.playerId)
@@ -285,29 +286,38 @@ function formatEvaluation(candidate, timing = null) {
     return `不可选；状态=${evaluation.status}；置信=${evaluation.confidence}；${evaluation.reasonCodes.join(",")}`;
   }
   const route = evaluation.probeRouteSummary;
+  const goal = evaluation.probeGoalRequirement || null;
+  const gap = goal?.gap || route?.resourceGap || null;
+  const required = goal?.required || route?.routeCost || null;
   const parts = [
-    route
+    goal
+      ? `目标=${goal.planetId}/${goal.endpointFamily}`
+      : route
       ? `目标=${route.endpointPlanetId || "未知行星"}/${route.endpointKind || "未知终点"}`
       : evaluation.orangeTechDelta > 0
         ? `目标=补探测器橙色科技缺口(+${evaluation.orangeTechDelta})`
         : "目标=无",
     `目标已兑现分=${formatNumber(evaluation.goalScoreGain)}`,
     `当前标准叶实际分差=${formatNumber(evaluation.actualScoreDelta)}`,
-    route
-      ? `缺口=钱${route.resourceGap?.credits || 0}/电${route.resourceGap?.energy || 0}/移动${route.resourceGap?.movementSteps || 0}`
+    gap
+      ? `缺口=钱${gap.credits || 0}/电${gap.energy || 0}/移动${gap.movementSteps || 0}`
       : "缺口=—",
-    route
-      ? `全路线实耗=钱${route.routeCost?.credits || 0}/电${route.routeCost?.energy || 0}/移动${route.routeCost?.movementSteps || 0}`
+    required
+      ? `全路线需求=钱${required.credits || 0}/电${required.energy || 0}/移动${required.movementSteps || 0}`
       : "全路线实耗=—",
-    `下一步=${route?.nextActionSummary || route?.nextActionId || candidate.summary}`,
+    `下一步=${goal?.nextStep?.family || route?.nextActionSummary || route?.nextActionId || candidate.summary}`,
     `状态=${evaluation.status}/${evaluation.confidence}`,
     `沿途宣传=${formatNumber(route?.publicityAlongRoute)}@${(route?.publicityOutcomeRefs || []).join("→") || "无（不计分）"}`,
     `终点标准叶=${route?.endpointActionId || "无"}@${JSON.stringify(route?.endpointDelta || {})}`,
-    route
+    goal
+      ? `叶后同目标缺口=${evaluation.leafProbeGoalRequirement
+        ? `钱${evaluation.leafProbeGoalRequirement.gap?.credits || 0}/电${evaluation.leafProbeGoalRequirement.gap?.energy || 0}/移动${evaluation.leafProbeGoalRequirement.gap?.movementSteps || 0}`
+        : "目标已完成或不再可用"}`
+      : route
       ? `叶后资源=钱${route.remainingResources?.credits || 0}/电${route.remainingResources?.energy || 0}（仅供后续路线补缺，不折算 V/Q）`
       : "叶后资源=无探测器用途",
     `链=${(evaluation.actionChain || []).join("→") || "—"}`,
-    "字段=outcomeProjection.scoring.realizedScore/progress.probeRoute.candidate",
+    "字段=outcomeProjection.scoring.realizedScore/progress.probeGoalRequirements/progress.probeRoute.candidate",
     `依据=${evaluation.reasonCodes.join(",")}`,
   ];
   if (timing) {
@@ -347,7 +357,7 @@ function formatTurnReportMarkdown(report) {
     "- 决策口径：本阶段只实现探测器目标；只选择有正分标准终点叶的发射/移动/环绕/登陆下一步，资源仅用于展示路线实耗和缺口，不折算统一 V/Q",
     "- 诊断目标：初次接触玩家约 100 分；最终表同时列出各机器人的目标差距",
     "- 固定反例：R1 T04 绿色登陆土星按 `land -> choose_target(yellow trace)` 标准链展开；成本、地点奖励、首黄宣传及 alienCard 均取实际 root/leaf 字段，不复制规则常数",
-    "- 字段边界：projection 只保留最多两枚探测器位置和当前候选的 next action、沿途宣传、终点 outcome 引用及标准 delta；完整 checkpoint 不进入 Policy DTO",
+    "- 字段边界：projection 只保留固定上限的探测器目标需求摘要；拓扑、成本、减免与奖励引用均由生产规则 owner 生成，完整 checkpoint 不进入 Policy DTO",
     "",
     "## 开局待决选择",
     "",
@@ -395,12 +405,12 @@ function formatTurnReportMarkdown(report) {
   report.finalScores.forEach((player) => {
     const lastGoal = player.probeGoals.at(-1) || null;
     const goalNames = [...new Set(player.probeGoals.map((goal) => (
-      `${goal.endpointPlanetId || "未知行星"}/${goal.endpointKind || "未知终点"}`
+      `${goal.planetId || goal.endpointPlanetId || "未知行星"}/${goal.endpointFamily || goal.endpointKind || "未知终点"}`
     )))].join("、") || "无已解析正分终点";
     const gap = lastGoal
-      ? `钱${lastGoal.resourceGap?.credits || 0}/电${lastGoal.resourceGap?.energy || 0}/移动${lastGoal.resourceGap?.movementSteps || 0}`
+      ? `钱${lastGoal.gap?.credits ?? lastGoal.resourceGap?.credits ?? 0}/电${lastGoal.gap?.energy ?? lastGoal.resourceGap?.energy ?? 0}/移动${lastGoal.gap?.movementSteps ?? lastGoal.resourceGap?.movementSteps ?? 0}`
       : "无";
-    const nextStep = lastGoal?.nextActionSummary || lastGoal?.nextActionId || "无";
+    const nextStep = lastGoal?.nextStep?.family || lastGoal?.nextActionSummary || lastGoal?.nextActionId || "无";
     const purpose = lastGoal
       ? `钱${player.resources.credits}/电${player.resources.energy}：仅供后续可解析探测器路线补缺`
       : `钱${player.resources.credits}/电${player.resources.energy}：当前无正分探测器终点，不折算价值`;

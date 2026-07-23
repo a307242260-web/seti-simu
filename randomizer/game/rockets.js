@@ -401,20 +401,23 @@
       return { ok: false, rocket, message };
     }
 
+    return { ...canMoveFromCoordinate(rocketState, current, deltaX, deltaY, rocket.id), rocket };
+  }
+
+  function canMoveFromCoordinate(rocketState, current, deltaX, deltaY, movingRocketId = null) {
+    if (!current) return { ok: false, message: "缺少移动起点" };
     const sectorX = solar.mod8(current.x + Number(deltaX || 0));
     const sectorY = clamp(current.y + Number(deltaY || 0), SECTOR_RING_MIN, SECTOR_RING_MAX);
 
-    if (sectorX === rocket.sectorX && sectorY === rocket.sectorY) {
-      const message = `R${rocket.id} 已在边界，无法继续移动`;
-      return { ok: false, rocket, message };
+    if (sectorX === Number(current.x) && sectorY === Number(current.y)) {
+      return { ok: false, message: "已在边界，无法继续移动" };
     }
 
-    if (findAvailableSlotIndex(rocketState, sectorX, sectorY, rocket.id) === null) {
-      const message = `扇区[${sectorX},${sectorY}]已满，R${rocket.id} 无法移动`;
-      return { ok: false, rocket, message };
+    if (findAvailableSlotIndex(rocketState, sectorX, sectorY, movingRocketId) === null) {
+      return { ok: false, message: `扇区[${sectorX},${sectorY}]已满，无法移动` };
     }
 
-    return { ok: true, rocket, message: null };
+    return { ok: true, to: { x: sectorX, y: sectorY }, message: null };
   }
 
   function moveRocket(rocketState, rocketId, deltaX, deltaY) {
@@ -557,6 +560,7 @@
     launchRocketAtSector,
     createMovableTokenAtSector,
     canMoveRocket,
+    canMoveFromCoordinate,
     moveRocket,
     moveActiveRocket,
     serializeSectorOccupancy,
