@@ -97,6 +97,8 @@
       hasCurrentMainActionIrreversibleBarrier: actionSessionRuntime?.hasCurrentMainActionIrreversibleBarrier,
       maybeApplyIndustryLaunchScan: industryRuntime?.maybeApplyIndustryLaunchScan,
       normalizeResourceCost: hostPort.normalizeResourceCost,
+      openPendingDecision: hostPort.openPendingDecision,
+      readPendingDecision: hostPort.readPendingDecision,
       recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
       recordHistoryCommand: effectFlowRuntime?.recordHistoryCommand,
       removeActionLogStepsBySource: effectFlowRuntime?.removeActionLogStepsBySource,
@@ -203,6 +205,8 @@
       techRenderContext,
       uiRuntimeState,
       updateActionButtons,
+      openPendingDecision,
+      readPendingDecision,
     } = context;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getPiratesRaidDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.piratesRaidContinuation || null;
@@ -213,11 +217,11 @@
       }
       return workingRoot;
     }
-    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    const getScanTargetDecision = () => readPendingDecision?.("scan_target") || null;
     function setScanTargetContinuation(workingRoot, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!continuation) delete activeRoot.match.scanTargetContinuation;
-      else activeRoot.match.scanTargetContinuation = structuredClone(continuation);
+      requireWorkingRoot(workingRoot);
+      if (!continuation) return null;
+      return openPendingDecision(workingRoot, "scan_target", continuation);
     }
 
     function getWorkingCurrentPlayer(workingRoot) {
@@ -1163,7 +1167,7 @@
       setScanTargetContinuation(workingRoot, { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "星际海盗";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个已有掠夺标记主星上的己方环绕或登陆标记，移除后消耗 1 信用点并在该星球当前扇区免费发射。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
       els.scanTargetActions.replaceChildren(...choices.map((choice) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -1186,9 +1190,9 @@
       return getPlanetSectorCoordinate(choice.planetId);
     }
 
-    function handlePiratesRaidLaunchChoice(workingRoot, choiceId) {
+    function handlePiratesRaidLaunchChoice(workingRoot, choiceId, pendingOverride = null) {
       const { planetStatsState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getScanTargetContinuation(workingRoot);
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "industry_pirates_raid_launch") {
         return { ok: false, message: "没有待处理的星际海盗发射" };
       }

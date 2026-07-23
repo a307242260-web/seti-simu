@@ -399,4 +399,21 @@ function createCardSelectionOwner(overrides = {}) {
   );
 }
 
+{
+  const root = { match: { stable: true }, playerState: { players: [{ id: "p1" }] } };
+  const before = structuredClone(root);
+  const owner = browserPendingDecision.createBrowserPendingDecisionOwner({
+    inspectSession: () => ({ session: { decision: null } }),
+    enumerate: () => ({ actorPlayer: { id: "p1" }, candidates: [] }),
+  });
+  owner.runRuleTransaction(root, () => {
+    assert.throws(
+      () => owner.open(root, "scan_target", { playerId: "p1" }),
+      /没有合法选项/,
+    );
+    assert.equal(owner.takeOpenedDecisionEffect(), null);
+  });
+  assert.deepEqual(root, before, "DecisionEffect 打开失败不得污染 working root");
+}
+
 console.log("standard action Effect Session tests passed");

@@ -304,6 +304,58 @@ function createFixture() {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
+  fixture.root.rocketState.rockets = [{ id: 7, playerId: "move-owner" }];
+  const pendingByKind = {
+    scan_target: {
+      playerId: "move-owner",
+      type: "sector_scan",
+      choices: [{ nebulaId: "n1", sectorX: 3, label: "星云 1" }],
+    },
+    public_scan: {
+      playerId: "move-owner",
+      type: "public_scan",
+      choices: [{ nebulaId: "n2", sectorX: 4, label: "星云 2" }],
+      publicScanQueue: { currentIndex: 0, items: [{ cardId: "public-1" }] },
+    },
+    scan_free_move: { playerId: "move-owner" },
+    probe_sector_scan: {
+      playerId: "move-owner",
+      choices: [{ rocket: { id: 7 } }],
+      effect: { options: { maxTargets: 1 } },
+    },
+    probe_location_reward: {
+      playerId: "move-owner",
+      choices: [{ rocket: { id: 7 } }],
+    },
+  };
+  const targetKinds = Object.fromEntries(Object.entries(pendingByKind).map(([kind, pending]) => [
+    kind,
+    fixture.domain.describePendingDecision(fixture.root, kind, pending)
+      .candidates.map((choice) => choice.target.kind),
+  ]));
+  assert.deepEqual(targetKinds, {
+    scan_target: ["sector-scan-target"],
+    public_scan: ["scan-target"],
+    scan_free_move: ["scan-free-move", "scan-free-move", "scan-free-move", "scan-free-move"],
+    probe_sector_scan: ["probe-sector-selection"],
+    probe_location_reward: ["probe-location-reward"],
+  }, "扫描、公共扫描、免费移动与两类探测必须完全由 Session legal choices 枚举");
+  const actionChoice = fixture.domain.describePendingDecision(fixture.root, "scan_free_move", {
+    stage: "action_choice",
+    playerId: "move-owner",
+    choices: ["launch", "move", "skip"],
+  });
+  assert.deepEqual(actionChoice.candidates.map((choice) => choice.target.kind), [
+    "scan-action-launch",
+    "scan-action-move",
+    "scan-action-skip",
+  ], "扫描 4 的发射/移动分支也必须进入同一 Session Decision 链");
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
   fixture.root.match.cardTriggerContinuation = {
     playerId: "move-owner",
     matches: [{ card: { id: "card-a" }, effect: { label: "奖励 A" } }],
@@ -432,10 +484,20 @@ function toDescriptor(executor, root, family) {
   assert.deepEqual(fixture.state.finalHandlerCalls, ["a"], "choice 必须路由到生产 followup handler");
 
   fixture.state.finalPending = false;
-  const scanDecision = executor.inspect(fixture.root);
-  assert.equal(scanDecision.ownerId, fixture.scanPlayer.id, "高优先级结束后才可暴露扫描 owner");
-  assert.deepEqual(scanDecision.choices.map((choice) => choice.choiceId), ["rocket-1", "rocket-2"]);
-  assert.deepEqual(scanDecision.followup.handlerIds, ["probe-sector-selection"]);
+  const scanDecision = fixture.domain.describePendingDecision(
+    fixture.root,
+    "probe_sector_scan",
+    {
+      player: fixture.scanPlayer,
+      choices: [
+        { rocket: { id: "rocket-1" } },
+        { rocket: { id: "rocket-2" } },
+      ],
+      effect: { options: { maxTargets: 1 } },
+    },
+  );
+  assert.equal(scanDecision.actorPlayer.id, fixture.scanPlayer.id, "扫描 DecisionEffect 必须保留唯一 owner");
+  assert.deepEqual(scanDecision.candidates.map((choice) => choice.target.choiceId), ["rocket-1", "rocket-2"]);
   assert.equal(fixture.getContextReads(), 1, "显式 domain context 应只解析一次");
 }
 

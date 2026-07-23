@@ -229,13 +229,13 @@
       els.scanAction4Overlay.hidden = true;
       els.scanAction4Actions?.replaceChildren();
     }
-    function open() {
+    function open(workingRoot) {
       if (!els.scanAction4Overlay || !els.scanAction4Actions) {
         return { ok: false, message: "无法打开发射/移动选择" };
       }
-      const currentPlayer = context.getCurrentPlayer();
-      const skipCost = Boolean(context.getCurrentEffect()?.options?.skipCost);
-      const hasRocket = context.getMovableTokensForPlayer(currentPlayer?.id).length > 0;
+      const currentPlayer = context.getCurrentPlayer(workingRoot);
+      const skipCost = Boolean(context.getCurrentEffect(workingRoot)?.options?.skipCost);
+      const hasRocket = context.getMovableTokensForPlayer(workingRoot, currentPlayer?.id).length > 0;
       const canLaunch = skipCost || players.canAfford(currentPlayer, {
         energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY,
       });
@@ -249,6 +249,12 @@
       }];
       if (hasRocket) choices.push({ id: "move", label: "移动", description: "选择飞船并移动，不消耗能量或手牌" });
       choices.push({ id: "skip", label: "跳过", description: "不执行本次发射/移动效果" });
+      context.openPendingDecision(workingRoot, "scan_free_move", {
+        stage: "action_choice",
+        effectId: context.getCurrentEffect(workingRoot)?.id || null,
+        playerId: currentPlayer?.id || null,
+        choices: choices.filter((choice) => !choice.disabled).map((choice) => choice.id),
+      });
       if (els.scanAction4Subtitle) {
         els.scanAction4Subtitle.textContent = hasRocket
           ? "选择发射、移动，或跳过此效果。" : "没有飞船时只能选择发射或跳过。";
@@ -318,22 +324,25 @@
     const clearPendingAomomoCardGain = requireFunction("clearPendingAomomoCardGain", context.clearPendingAomomoCardGain);
     const clearPendingRunezuCardGain = requireFunction("clearPendingRunezuCardGain", context.clearPendingRunezuCardGain);
     const clearPendingAmibaTraceRemoval = requireFunction("clearPendingAmibaTraceRemoval", context.clearPendingAmibaTraceRemoval);
-    const getPublicScanQueue = (workingRoot) => requireWorkingRoot(workingRoot).match?.publicScanContinuation || null;
-    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    const getScanTargetDecision = () => (
+      context.readPendingDecision?.("scan_target")
+      || context.readPendingDecision?.("public_scan")
+      || null
+    );
+    const getPublicScanQueue = () => (
+      context.readPendingDecision?.("public_scan")?.publicScanQueue || null
+    );
     function setScanTargetContinuation(workingRoot, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!continuation) {
-        delete activeRoot.match.scanTargetContinuation;
-        return null;
-      }
+      requireWorkingRoot(workingRoot);
+      if (!continuation) return null;
       const normalized = structuredClone(continuation);
       normalized.playerId ||= continuation.player?.id || null;
       normalized.playerColor ||= continuation.player?.color || null;
       normalized.cardId ||= continuation.card?.id || continuation.card?.cardId || null;
       delete normalized.player;
       delete normalized.card;
-      activeRoot.match.scanTargetContinuation = normalized;
-      return normalized;
+      const kind = normalized.type === "public_scan" ? "public_scan" : "scan_target";
+      return context.openPendingDecision(workingRoot, kind, normalized);
     }
     function hydrateScanTargetContinuation(workingRoot, continuation) {
       if (!continuation) return null;
@@ -346,15 +355,6 @@
         ? cardPool.find((candidate) => String(candidate?.id || candidate?.cardId) === String(continuation.cardId)) || null
         : null;
       return { ...continuation, player, card };
-    }
-    function setPublicScanQueue(workingRoot, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!continuation) {
-        delete activeRoot.match.publicScanContinuation;
-        return null;
-      }
-      activeRoot.match.publicScanContinuation = structuredClone(continuation);
-      return activeRoot.match.publicScanContinuation;
     }
     const els = context.els || {};
 
@@ -793,8 +793,7 @@
       });
     }
 
-    function openPublicScanNebulaPickerForCurrentQueueItem(workingRoot) {
-      const queue = getPublicScanQueue(workingRoot);
+    function openPublicScanNebulaPickerForCurrentQueueItem(workingRoot, queue = getPublicScanQueue()) {
       if (!queue) return { ok: false, message: "没有待扫描的公共牌" };
       const item = queue.items[queue.currentIndex];
       if (!item) return { ok: false, message: "没有待扫描的公共牌" };
@@ -809,6 +808,7 @@
         scanCode: scanChoices.scanCode,
         fromEffectFlow: queue.fromEffectFlow,
         queueMode: true,
+        publicScanQueue: queue,
         scanRunId: queue.scanRunId || null,
         deferPublicRefill: Boolean(queue.deferPublicRefill),
         title: "公共牌区扫描",
@@ -894,20 +894,20 @@
         });
       }
 
-      setPublicScanQueue(workingRoot, {
+      const queue = {
         items,
         currentIndex: 0,
         fromEffectFlow,
         scanRunId: pending.scanRunId || null,
         deferPublicRefill: Boolean(pending.deferPublicRefill),
-      });
+      };
       rocketState.statusNote = `公共牌区扫描：已弃除 ${items.length} 张牌，请依次选择星云`;
       renderPlayerStats();
       renderPublicCards();
       updatePublicCardControls();
       updateActionButtons();
       renderStateReadout();
-      return openPublicScanNebulaPickerForCurrentQueueItem(workingRoot);
+      return openPublicScanNebulaPickerForCurrentQueueItem(workingRoot, queue);
     }
 
     function handlePublicScanCardClick(workingRoot, slotIndex) {
@@ -1646,30 +1646,16 @@
     }
 
     function closeScanTargetPicker(workingRoot, options = {}) {
-      const { rocketState } = requireWorkingRoot(workingRoot);
+      requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay) {
-        if (getPublicScanQueue(workingRoot) && !options.forcePublicScanQueueClose) return;
-        if (options.forcePublicScanQueueClose) setPublicScanQueue(workingRoot, null);
-        setScanTargetContinuation(workingRoot, null);
-        delete workingRoot.match.probeSectorScanContinuation;
         uiRuntimeState.probeSectorSelectedRocketIds = [];
-        delete workingRoot.match.probeLocationRewardContinuation;
         delete workingRoot.match.strategySlotContinuation;
         return;
-      }
-      if (getPublicScanQueue(workingRoot)) {
-        if (options.forcePublicScanQueueClose) {
-          setPublicScanQueue(workingRoot, null);
-        } else {
-        rocketState.statusNote = "公共牌区扫描：请完成全部星云选择";
-        renderStateReadout();
-        return;
-        }
       }
       if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending(workingRoot)) {
         return;
       }
-      if (!options.preserveIndustryAction && getScanTargetContinuation(workingRoot)?.type === "industry_remove_tech") {
+      if (!options.preserveIndustryAction && getScanTargetDecision()?.type === "industry_remove_tech") {
         rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
         return;
       }
@@ -1684,10 +1670,7 @@
       clearPendingRunezuFaceSymbolPlacement();
       delete workingRoot.match.strategySlotContinuation;
       setScanTargetActionLayout();
-      setScanTargetContinuation(workingRoot, null);
-      delete workingRoot.match.probeSectorScanContinuation;
       uiRuntimeState.probeSectorSelectedRocketIds = [];
-      delete workingRoot.match.probeLocationRewardContinuation;
       els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) {
         els.scanTargetCancel.hidden = false;
@@ -1818,14 +1801,13 @@
     function openScanTargetPicker(workingRoot, config) {
       if (openScanTargetPickerOverride) return openScanTargetPickerOverride(workingRoot, config);
       config = config || {};
+      if (!els.scanTargetOverlay || !els.scanTargetActions) {
+        return { ok: false, message: "无法打开扫描目标选择" };
+      }
       setScanTargetContinuation(workingRoot, {
         ...getPendingOwnerFields(workingRoot, config.effect || null, config.player || null),
         ...config,
       });
-      if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        setScanTargetContinuation(workingRoot, null);
-        return { ok: false, message: "无法打开扫描目标选择" };
-      }
       if (els.scanTargetTitle) {
         els.scanTargetTitle.textContent = config.title || "选择扫描目标";
       }
@@ -1855,7 +1837,7 @@
       els.scanTargetActions.replaceChildren(...choiceNodes);
 
       if (els.scanTargetCancel) {
-        els.scanTargetCancel.hidden = Boolean(config.queueMode || config.hideCancel);
+        els.scanTargetCancel.hidden = true;
       }
       els.scanTargetOverlay.hidden = false;
       renderPlayerHand();
@@ -1864,7 +1846,7 @@
 
     function confirmScanTarget(workingRoot, nebulaId, sectorX, pendingContext = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const pending = hydrateScanTargetContinuation(workingRoot, pendingContext || getScanTargetContinuation(workingRoot));
+      const pending = hydrateScanTargetContinuation(workingRoot, pendingContext || getScanTargetDecision());
       return withPendingOwnerPlayer(workingRoot, pending, () => {
       closeScanTargetPicker(workingRoot, { preserveIndustryAction: true });
 
@@ -1931,7 +1913,7 @@
       }
 
       if (pending?.type === "public_scan") {
-        if (pending.queueMode && getPublicScanQueue(workingRoot)) {
+        if (pending.queueMode && pending.publicScanQueue) {
           const scanResult = replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, {
             prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
             source: scanSource,
@@ -1943,7 +1925,7 @@
             renderStateReadout();
             return scanResult;
           }
-          const queue = getPublicScanQueue(workingRoot);
+          const queue = structuredClone(pending.publicScanQueue);
           if (!Array.isArray(queue.events)) queue.events = [];
           queue.events.push(...(scanResult.events || []));
           queue.currentIndex += 1;
@@ -1953,10 +1935,9 @@
             renderPlayerStats();
             updateActionButtons();
             renderStateReadout();
-            openPublicScanNebulaPickerForCurrentQueueItem(workingRoot);
+            openPublicScanNebulaPickerForCurrentQueueItem(workingRoot, queue);
             return scanResult;
           }
-          setPublicScanQueue(workingRoot, null);
           closeScanTargetPicker(workingRoot);
           scanResult.events = queue.events.slice();
           rocketState.statusNote = scanResult.message;
@@ -2076,9 +2057,9 @@
       return player?.hand?.findIndex((card) => card.id === cardId) ?? -1;
     }
 
-    function handleDrawnHandScanSkip(workingRoot) {
+    function handleDrawnHandScanSkip(workingRoot, pendingContext = null) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = hydrateScanTargetContinuation(workingRoot, getScanTargetContinuation(workingRoot));
+      const pending = hydrateScanTargetContinuation(workingRoot, pendingContext || getScanTargetDecision());
       if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
         return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
       }
@@ -2373,10 +2354,10 @@
         context.renderStateReadout();
         return { ok: false, message: workingRoot.rocketState.statusNote };
       }
-      workingRoot.match.scanFreeMoveContinuation = {
+      context.openPendingDecision(workingRoot, "scan_free_move", {
         effectId: context.getCurrentActionEffect(workingRoot)?.id || null,
         playerId: currentPlayer?.id || null,
-      };
+      });
       workingRoot.rocketState.statusNote = rockets.length > 1
         ? "扫描效果：请点击要移动的飞船"
         : "扫描效果：使用方向键移动飞船";
@@ -2431,7 +2412,6 @@
       }
       if (payment.discardCommand) context.recordHistoryCommand(workingRoot, payment.discardCommand);
       context.recordAbilityCommands(result, context.actionHistory, workingRoot);
-      delete workingRoot.match.scanFreeMoveContinuation;
       context.deactivateMoveMode(workingRoot);
       const current = context.getCurrentActionEffect(workingRoot);
       if (current) current.result = result;

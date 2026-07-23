@@ -229,13 +229,7 @@
   });
   const effectChoiceCommandPort = browserDomainCommandPort.bindEffectChoiceCommands();
   const {
-    handleConditionalSectorChoice,
     handleDiscardIncomeCardChoice,
-    confirmDiscardAnyForIncome,
-    handlePayCreditChoice,
-    handleFundamentalismExchangeChoice,
-    handleDiscardCornerRepeatChoice,
-    handleRemoveOrbitToProbeChoice,
   } = effectChoiceCommandPort;
   const effectExecutorCommandPort = browserDomainCommandPort.bindEffectExecutorCommands();
   const {
@@ -247,23 +241,18 @@
     markerOwnerLabel,
     buildPlanetMarkerRemovalChoices,
     removePlanetMarkerForChoice,
-    handleRemovePlanetMarkerChoice,
-    handleScanAction4Choice,
     formatPlanetRewardGain,
     finishAutomaticRewardEffect,
     buildPlutoRewardEffectsForAction,
     buildPlutoChoiceRewardSummary,
-    handleHandCornerChoice,
     getSectorXsMatchingCondition,
     sectorXHasAvailableScanTarget,
     isAlienFamilyCard,
-    handleReturnUnfinishedTaskChoice,
     countOwnedTechByType,
     enrichScanResultEvents,
     getPlayerCompanyBaseIncome,
     insertActionEffectsAfterCurrent,
     insertActionEffectsBeforeCurrent,
-    handleOptionalHandScanChoice,
     openYichangdianCornerPicker,
     handleYichangdianCornerChoice,
     applyAomomoScanCostAndBonus,
@@ -571,7 +560,6 @@
       effect_skip_current: (root) => ({ ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot(root)) }),
       effect_cancel_subflows: (root) => (cancelActiveEffectSubFlowsForRoot(root), { ok: true }),
       effect_finish_flow: (root) => ({ ok: true, value: cloneResidentPresentation(finishActionEffectFlowForRoot(root)) }),
-      effect_begin_scan_free_move: (root) => ({ ok: true, value: cloneResidentPresentation(beginScanAction4FreeMoveForRoot(root)) }),
       effect_begin_card_move: (root, command) => ({ ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(root, command.effect)) }),
       effect_cancel_pending_subflows: (root) => ({ ok: true, value: cancelActivePendingSubFlowsForRoot(root) }),
       data_place_blue_slot: (root, command) => ({ ok: true, value: cloneResidentPresentation(actionInteractionRuntime.placeDataToBlueSlot(root, command.blueSlot)) }),
@@ -674,6 +662,33 @@
     submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
   });
   const submitActiveCardDecision = activeDecisionPort.submit;
+  const submitChoiceById = (kind, choiceId) => submitActiveCardDecision(
+    kind,
+    (target) => String(target.choiceId) === String(choiceId),
+  );
+  const handleConditionalSectorChoice = (sectorX) => submitChoiceById("conditional-sector", sectorX);
+  const confirmDiscardAnyForIncome = (
+    cardIds = uiRuntimeState.discardIncomeSelectedCardIds || []
+  ) => {
+    const expected = [...cardIds].map(String).sort();
+    return submitActiveCardDecision("confirm-discard-income", (target) => {
+      const actual = [...(target.cardIds || [])].map(String).sort();
+      return actual.length === expected.length
+        && actual.every((cardId, index) => cardId === expected[index]);
+    });
+  };
+  const handlePayCreditChoice = (choiceId) => submitChoiceById("pay-credit-reward", choiceId);
+  const handleFundamentalismExchangeChoice = (choiceId) => (
+    submitChoiceById("fundamentalism-exchange", choiceId)
+  );
+  const handleDiscardCornerRepeatChoice = (cardId) => submitChoiceById("discard-corner-repeat", cardId);
+  const handleRemoveOrbitToProbeChoice = (choiceId) => submitChoiceById("remove-orbit-to-probe", choiceId);
+  const handleRemovePlanetMarkerChoice = (choiceId) => submitChoiceById("remove-planet-marker", choiceId);
+  const handleHandCornerChoice = (choiceId) => submitChoiceById("hand-corner-choice", choiceId);
+  const handleReturnUnfinishedTaskChoice = (cardId) => submitChoiceById("return-unfinished-task", cardId);
+  const handleOptionalHandScanChoice = (choiceId) => submitChoiceById("optional-hand-scan", choiceId);
+  const handlePiratesRaidLaunchChoice = (choiceId) => submitChoiceById("pirates-raid-launch", choiceId);
+  const handleScanAction4Choice = (choiceId) => submitChoiceById(`scan-action-${choiceId}`, choiceId);
   const abortActiveDecision = (message) => ruleComposition.inputPort.abort({
     code: "BROWSER_DECISION_CANCELLED",
     message,
@@ -734,10 +749,8 @@
   const {
     getActionEffectFlow, setActionEffectFlow, getPendingDataPlacementDecision,
     getPendingLandTargetDecision, getPendingAlienTraceDecision, getPendingPiratesRaidDecision,
-    getPendingStrategySlotDecision, getPendingIndustryAbilityDecision, getPublicScanQueueSession,
-    getPendingProbeSectorScanDecision, getPendingProbeLocationRewardDecision,
-    getPendingScanTargetDecision, getPendingCardMoveDecision,
-    getPendingScanFreeMoveDecision, getPendingIndustryFreeMoveDecision,
+    getPendingStrategySlotDecision, getPendingIndustryAbilityDecision,
+    getPendingCardMoveDecision, getPendingIndustryFreeMoveDecision,
     hasTurnEndRevealContinuation, getPendingCardCornerFreeMove, getPendingCardTriggerFreeMove,
     getPendingCardTriggerAction, getPendingCardTaskCompletion,
   } = browserMatchRuntime;
@@ -745,6 +758,13 @@
   const getPendingPassReserveSelection = () => browserPendingDecisionOwner.read("pass_reserve");
   const getPendingMovePayment = () => browserPendingDecisionOwner.read("move_payment");
   const getPendingDiscardDecision = () => browserPendingDecisionOwner.read("discard");
+  const getPendingScanTargetDecision = () => browserPendingDecisionOwner.read("scan_target");
+  const getPendingScanFreeMoveDecision = () => browserPendingDecisionOwner.read("scan_free_move");
+  const getPendingProbeSectorScanDecision = () => browserPendingDecisionOwner.read("probe_sector_scan");
+  const getPendingProbeLocationRewardDecision = () => browserPendingDecisionOwner.read("probe_location_reward");
+  const getPublicScanQueueSession = () => (
+    browserPendingDecisionOwner.read("public_scan")?.publicScanQueue || null
+  );
   const openBrowserPendingDecision = (workingRoot, kind, pending) => (
     browserPendingDecisionOwner.open(workingRoot, kind, pending)
   );
@@ -892,9 +912,16 @@
     getAlienTraceChoiceSlotIds: (_workingRoot, ...args) => getAlienTraceChoiceSlotIds(...args),
     canPlaceStateTrace: (workingRoot, ...args) => canPlaceStateTraceForRoot(workingRoot, ...args),
     aliens,
-    handleConditionalSectorChoice,
+    handleConditionalSectorChoice: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.handleConditionalSectorChoice(workingRoot, ...args)
+    ),
     handleChongFossilChoice,
-    confirmProbeSectorScanSelection,
+    confirmProbeSectorScanSelection: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.confirmProbeSectorScanSelection(workingRoot, ...args)
+    ),
+    handleProbeLocationRewardChoice: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.handleProbeLocationRewardChoice(workingRoot, ...args)
+    ),
     handleRunezuSymbolBranchChoice,
     handleRunezuFaceSymbolChoice,
     handleAmibaSymbolChoice,
@@ -904,17 +931,44 @@
     cancelTechSelection: (workingRoot, ...args) => techRuntime.cancelTechSelection(workingRoot, ...args),
     handleFangzhouTraceDestinationChoice: (workingRoot, ...args) => handleFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
     handleFangzhouUnlockTraceChoice: (workingRoot, ...args) => handleFangzhouUnlockTraceChoiceForRoot(workingRoot, ...args),
-    handleDiscardCornerRepeatChoice,
-    handleReturnUnfinishedTaskChoice,
-    handleRemoveOrbitToProbeChoice,
-    handleRemovePlanetMarkerChoice,
+    handleDiscardCornerRepeatChoice: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.handleDiscardCornerRepeatChoice(workingRoot, ...args)
+    ),
+    handleReturnUnfinishedTaskChoice: (workingRoot, ...args) => (
+      effectExecutors.handleReturnUnfinishedTaskChoice(workingRoot, ...args)
+    ),
+    handleRemoveOrbitToProbeChoice: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.handleRemoveOrbitToProbeChoice(workingRoot, ...args)
+    ),
+    handleRemovePlanetMarkerChoice: (workingRoot, ...args) => (
+      effectExecutors.handleRemovePlanetMarkerChoice(workingRoot, ...args)
+    ),
     confirmDataPlacement: (workingRoot, ...args) => actionInteractionRuntime.confirmDataPlacement(workingRoot, ...args),
     skipPendingDataPlacement: (workingRoot) => actionInteractionRuntime.skipPendingDataPlacement(workingRoot),
     handleDiscardIncomeCardChoice,
-    confirmDiscardAnyForIncome,
-    handlePayCreditChoice,
+    confirmDiscardAnyForIncome: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.confirmDiscardAnyForIncome(workingRoot, ...args)
+    ),
+    handlePayCreditChoice: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.handlePayCreditChoice(workingRoot, ...args)
+    ),
+    handleFundamentalismExchangeChoice: (workingRoot, ...args) => (
+      effectChoiceFlowHelpers.handleFundamentalismExchangeChoice(workingRoot, ...args)
+    ),
+    handleOptionalHandScanChoice: (workingRoot, ...args) => (
+      effectExecutors.handleOptionalHandScanChoice(workingRoot, ...args)
+    ),
+    handleHandCornerChoice: (workingRoot, ...args) => (
+      effectExecutors.handleHandCornerChoice(workingRoot, ...args)
+    ),
+    handlePiratesRaidLaunchChoice: (workingRoot, ...args) => (
+      techRuntime.handlePiratesRaidLaunchChoice(workingRoot, ...args)
+    ),
+    handleScanAction4Choice: (workingRoot, ...args) => (
+      effectExecutors.handleScanAction4Choice(workingRoot, ...args)
+    ),
     confirmScanTarget: (workingRoot, ...args) => scanFlowHelpers.confirmScanTarget(workingRoot, ...args),
-    handleDrawnHandScanSkip: (workingRoot) => scanFlowHelpers.handleDrawnHandScanSkip(workingRoot),
+    handleDrawnHandScanSkip: (workingRoot, ...args) => scanFlowHelpers.handleDrawnHandScanSkip(workingRoot, ...args),
     confirmPassReserveSelection: (workingRoot, ...args) => confirmPassReserveSelectionForRoot(workingRoot, ...args),
     handleCardTriggerChoice: (workingRoot, ...args) => handleCardTriggerChoiceForRoot(workingRoot, ...args),
     cancelCardTriggerChoice: (workingRoot, ...args) => cancelCardTriggerChoiceForRoot(workingRoot, ...args),
@@ -1219,7 +1273,9 @@
     getActionEffectFlow,
     getPendingDiscardDecision,
     getPendingHandScanDecision,
-    getPendingScanTargetDecision,
+    getPendingScanTargetDecision: () => (
+      getPendingScanTargetDecision() || browserPendingDecisionOwner.read("public_scan")
+    ),
     computePlayerFinalScoreBreakdown,
     isCardSelectionActive: () => isCardSelectionActive?.(),
     allowsBlindDrawInSelection: () => allowsBlindDrawInSelection?.(),
@@ -1949,6 +2005,8 @@
     getActionInteractionRuntime: () => actionInteractionRuntime,
     hostPort: {
       document, uiRuntimeState, els, SCORE_SOURCE_KEYS, normalizeResourceCost,
+      openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       restoreObjectSnapshot, formatPlanetRewardGain, getPlanetSectorCoordinate,
       restoreMutableObject, getSectorContentForMove, isAsteroidContent,
       renderActionEffectBar, finishAutomaticRewardEffect, insertActionEffectsAfterCurrent,
@@ -2169,9 +2227,6 @@
     getPublicScanIconForScanCode,
     openPublicScanNebulaPickerForCurrentQueueItem,
   } = scanFlowHelpers;
-  const beginScanAction4FreeMove = () => ruleComposition.inputPort.submitHostCommand({
-    kind: "effect_begin_scan_free_move",
-  }).value;
   const scanDecisionPort = scanFlowModule.createScanDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
     submitActiveDecision: (...args) => submitActiveCardDecision(...args),
@@ -2806,18 +2861,15 @@
       getCardRuntime: () => cardRuntime,
       getCardTriggerRuntime: () => cardTriggerRuntime,
       getIndustryRuntime: () => industryRuntime,
-      getProbeDecisionPort: () => probeDecisionPort,
       getTechRuntime: () => techRuntime,
       actionSessionRuntime,
       browserContextRuntime,
       cardSelectionState,
       coordinateRuntime: coordinatePort,
-      effectChoicePort: effectChoiceCommandPort,
       effectExecutorPort: effectExecutorCommandPort,
       effectFlowRuntime: effectFlowHelpers,
       playerEffectOwnerRuntime,
       playerLookupRuntime,
-      scanDecisionPort,
       turnHostRuntime,
       turnReadoutRuntime,
       hostPort: {
@@ -2857,7 +2909,6 @@
       getCardTriggerRuntime: () => cardTriggerRuntime,
       getIndustryRuntime: () => industryRuntime,
       getTechRuntime: () => techRuntime,
-      scanRuntime: scanFlowHelpers,
       createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
       dispatchRuntimeAction: (workingRoot, request) => dispatchBrowserRuleInput(
         request,
@@ -2875,7 +2926,6 @@
     executeCardMoveForEffect,
     executeFreeMoveForCardCorner,
     executeFreeMoveForCardTrigger: (...args) => executeFreeMoveForCardTrigger?.(...args),
-    executeFreeMoveForScanAction4,
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
     formatRocketLabel,
@@ -3601,7 +3651,10 @@
     scanEffects,
     getCurrentPlayer,
     getCurrentEffect: getCurrentActionEffect,
-    getMovableTokensForPlayer,
+    getMovableTokensForPlayer: (workingRoot, playerId) => (
+      getMovableTokensForPlayerForRoot(workingRoot, playerId)
+    ),
+    openPendingDecision: openBrowserPendingDecision,
   });
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
@@ -3631,7 +3684,8 @@
   const effectExecutorContexts = {
     movementScan: {
       INCOME_GAIN_LABELS, SCORE_SOURCE_KEYS, abilities, addPlutoMarker, aomomo,
-      attachScoreSourceToEffects, beginEffectHistoryStep, beginScanAction4FreeMove,
+      attachScoreSourceToEffects, beginEffectHistoryStep,
+      beginScanAction4FreeMove: beginScanAction4FreeMoveForRoot,
       buildPlanetRewardEffectsWithIndustry, buildPlutoMarkerRemovalChoices,
       buildProbeLocationIndex: (...args) => buildProbeLocationIndex(...args),
       buildSectorScanChoicesForX, buildSectorScanChoicesForXs, cardEffects, cards,
@@ -3999,7 +4053,8 @@
     commitResearchTechSelectionResult, selectResearchTechTileForCurrentFlow, confirmTechBlueSlotChoice,
     handleSupplyTechTileClick, executeIndustryPiratesRaidMarkerEffect, handlePiratesRaidTechMarkerClick,
     executeIndustryPiratesRaidPublicityEffect, startIndustryPiratesRaidLaunchFlow, buildPiratesRaidLaunchChoices,
-    executeIndustryPiratesRaidLaunchEffect, handlePiratesRaidLaunchChoice, setCheatModeOpen, toggleCheatMode,
+    executeIndustryPiratesRaidLaunchEffect,
+    setCheatModeOpen, toggleCheatMode,
   } = bindDomainCommands("tech_runtime");
 
   const placeDataToBlueSlot = browserHostCommandPort.bindValue(
@@ -4206,6 +4261,7 @@
       closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
       clearActionEffectFlow,
       readCardSelectionDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       openCardSelectionDecision,
       clearActionPending,
       clearMoveRocketHighlight,

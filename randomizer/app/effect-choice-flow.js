@@ -81,6 +81,8 @@
       ...staticContext,
       document: hostPort.document,
       uiRuntimeState: hostPort.uiRuntimeState,
+      openPendingDecision: hostPort.openPendingDecision,
+      readPendingDecision: hostPort.readPendingDecision,
       els: hostPort.els,
       SCORE_SOURCE_KEYS: hostPort.SCORE_SOURCE_KEYS,
       getCurrentPlayer: playerLookupRuntime.getCurrentPlayer,
@@ -159,23 +161,17 @@
     const rulePlayerState = (workingRoot) => requireWorkingRoot(workingRoot).playerState;
     const ruleNebulaDataState = (workingRoot) => requireWorkingRoot(workingRoot).nebulaDataState;
     const rulePlanetStatsState = (workingRoot) => requireWorkingRoot(workingRoot).planetStatsState;
-    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    const getScanTargetDecision = () => context.readPendingDecision?.("scan_target") || null;
     function setScanTargetContinuation(workingRoot, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!continuation) delete activeRoot.match.scanTargetContinuation;
-      else activeRoot.match.scanTargetContinuation = structuredClone(continuation);
-      return activeRoot.match.scanTargetContinuation || null;
+      requireWorkingRoot(workingRoot);
+      if (!continuation) return null;
+      return context.openPendingDecision(workingRoot, "scan_target", continuation);
     }
-    const getProbeSectorScanSession = (workingRoot) => requireWorkingRoot(workingRoot).match?.probeSectorScanContinuation || null;
-    const getProbeLocationRewardSession = (workingRoot) => requireWorkingRoot(workingRoot).match?.probeLocationRewardContinuation || null;
-    function setProbeContinuation(workingRoot, field, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!continuation) {
-        delete activeRoot.match[field];
-        return null;
-      }
-      activeRoot.match[field] = structuredClone(continuation);
-      return activeRoot.match[field];
+    const getProbeSectorScanDecision = () => context.readPendingDecision?.("probe_sector_scan") || null;
+    const getProbeLocationRewardDecision = () => context.readPendingDecision?.("probe_location_reward") || null;
+    function openProbeDecision(workingRoot, kind, pending) {
+      requireWorkingRoot(workingRoot);
+      return context.openPendingDecision(workingRoot, kind, pending);
     }
     const cards = context.cards || {};
     const players = context.players || {};
@@ -256,7 +252,7 @@
       };
     }
 
-    function setOverlayContent(title, subtitle, showCancel = true) {
+    function setOverlayContent(title, subtitle, showCancel = false) {
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = title || "";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = subtitle || "";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = !showCancel;
@@ -377,8 +373,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleConditionalSectorChoice(workingRoot, sectorXValue) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleConditionalSectorChoice(workingRoot, sectorXValue, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "conditional_sector_scan") return { ok: false, message: "没有待处理的条件扇区扫描" };
       const effect = pending.effect;
       const sectorX = solar.mod8(Number(sectorXValue) || 0);
@@ -411,7 +407,7 @@
     }
 
     function renderDiscardIncomePicker(workingRoot) {
-      const pending = getScanTargetContinuation(workingRoot);
+      const pending = getScanTargetDecision();
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
       const selected = new Set(uiRuntimeState.discardIncomeSelectedCardIds || []);
       const currentPlayer = getPendingOwnerPlayer(workingRoot, pending, pending.effect);
@@ -454,7 +450,7 @@
     }
 
     function handleDiscardIncomeCardChoice(workingRoot, cardId) {
-      const pending = getScanTargetContinuation(workingRoot);
+      const pending = getScanTargetDecision();
       if (pending?.type !== "discard_any_income") return { ok: false, message: "没有待处理的收入弃牌" };
       const selected = uiRuntimeState.discardIncomeSelectedCardIds || [];
       const existingIndex = selected.indexOf(cardId);
@@ -465,11 +461,11 @@
       return { ok: true, message: `已选择 ${selected.length} 张` };
     }
 
-    function confirmDiscardAnyForIncome(workingRoot) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function confirmDiscardAnyForIncome(workingRoot, selectedCardIds = null, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "discard_any_income") return { ok: false, message: "没有待确认的收入弃牌" };
       const effect = pending.effect;
-      const selected = new Set(uiRuntimeState.discardIncomeSelectedCardIds || []);
+      const selected = new Set(selectedCardIds || uiRuntimeState.discardIncomeSelectedCardIds || []);
       uiRuntimeState.discardIncomeSelectedCardIds = [];
       closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => {
@@ -568,8 +564,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handlePayCreditChoice(workingRoot, choice) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handlePayCreditChoice(workingRoot, choice, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "pay_credit_reward") return { ok: false, message: "没有待处理的信用支付" };
       const effect = pending.effect;
       closeScanTargetPicker(workingRoot);
@@ -639,7 +635,12 @@
     function executeIndustryFundamentalismExchangeEffect(workingRoot, effect) {
       const player = getEffectOwnerPlayer(workingRoot, effect);
       const choices = getFundamentalismExchangeChoiceSpecs(workingRoot, player);
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect, player), type: "industry_fundamentalism_exchange", effect });
+      setScanTargetContinuation(workingRoot, {
+        ...getPendingOwnerFields(workingRoot, effect, player),
+        type: "industry_fundamentalism_exchange",
+        effect,
+        choices,
+      });
       setOverlayContent(effect.label || "原教旨主义", "选择一次分数/资源兑换。资源不足的选项不可用。");
       const buttons = choices.map((choice) => {
         const button = createButton();
@@ -771,8 +772,8 @@
       return result;
     }
 
-    function handleFundamentalismExchangeChoice(workingRoot, choiceId) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleFundamentalismExchangeChoice(workingRoot, choiceId, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "industry_fundamentalism_exchange") {
         return { ok: false, message: "没有待处理的原教旨主义兑换" };
       }
@@ -827,8 +828,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleDiscardCornerRepeatChoice(workingRoot, cardId) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleDiscardCornerRepeatChoice(workingRoot, cardId, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "discard_corner_repeat") return { ok: false, message: "没有待处理的角标重复弃牌" };
       const effect = pending.effect;
       closeScanTargetPicker(workingRoot);
@@ -956,8 +957,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleRemoveOrbitToProbeChoice(workingRoot, choiceId) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleRemoveOrbitToProbeChoice(workingRoot, choiceId, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "remove_orbit_to_probe") return { ok: false, message: "没有待处理的环绕移除" };
       const choice = pending.choices.find((item) => item.id === choiceId);
       const effect = pending.effect;
@@ -1094,7 +1095,7 @@
     }
 
     function renderProbeSectorScanPicker(workingRoot) {
-      const pending = getProbeSectorScanSession(workingRoot);
+      const pending = getProbeSectorScanDecision();
       if (!pending || !els.scanTargetActions) return;
       const selected = new Set(context.uiRuntimeState?.probeSectorSelectedRocketIds || []);
       const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
@@ -1121,7 +1122,7 @@
     }
 
     function openProbeSectorScanPicker(workingRoot, effect, choices) {
-      setProbeContinuation(workingRoot, "probeSectorScanContinuation", {
+      openProbeDecision(workingRoot, "probe_sector_scan", {
         ...getPendingOwnerFields(workingRoot, effect),
         effect,
         choices,
@@ -1152,7 +1153,7 @@
     }
 
     function handleProbeSectorScanChoice(workingRoot, rocketId) {
-      const pending = getProbeSectorScanSession(workingRoot);
+      const pending = getProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
       const id = Number(rocketId);
       const choice = pending.choices.find((item) => Number(item.rocket.id) === id);
@@ -1160,7 +1161,6 @@
       const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
       if (maxTargets === 1) {
         const effect = pending.effect;
-        setProbeContinuation(workingRoot, "probeSectorScanContinuation", null);
         context.uiRuntimeState.probeSectorSelectedRocketIds = [];
         closeScanTargetPicker(workingRoot);
         return withPendingOwnerPlayer(workingRoot, pending, () => queueProbeSectorScanEffects(workingRoot, effect, [choice.rocket]));
@@ -1175,14 +1175,13 @@
     }
 
     function confirmProbeSectorScanSelection(workingRoot, rocketIds = null, pendingContext = null) {
-      const pending = pendingContext || getProbeSectorScanSession(workingRoot);
+      const pending = pendingContext || getProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待确认的探测器扫描" };
       const selected = new Set(rocketIds || []);
       const rockets = pending.choices
         .filter((choice) => selected.has(choice.rocket.id))
         .map((choice) => choice.rocket);
       const effect = pending.effect;
-      setProbeContinuation(workingRoot, "probeSectorScanContinuation", null);
       context.uiRuntimeState.probeSectorSelectedRocketIds = [];
       closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => queueProbeSectorScanEffects(workingRoot, effect, rockets));
@@ -1221,7 +1220,11 @@
     }
 
     function openProbeLocationRewardPicker(workingRoot, effect, choices) {
-      setProbeContinuation(workingRoot, "probeLocationRewardContinuation", { ...getPendingOwnerFields(workingRoot, effect), effect, choices });
+      openProbeDecision(
+        workingRoot,
+        "probe_location_reward",
+        { ...getPendingOwnerFields(workingRoot, effect), effect, choices },
+      );
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择探测器`;
       const buttons = choices.map(({ rocket }) => {
         const button = createButton();
@@ -1256,11 +1259,10 @@
     }
 
     function handleProbeLocationRewardChoice(workingRoot, rocketId, pendingContext = null) {
-      const pending = pendingContext || getProbeLocationRewardSession(workingRoot);
+      const pending = pendingContext || getProbeLocationRewardDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器位置奖励" };
       const rocket = (pending.choices || []).find((choice) => Number(choice.rocket.id) === Number(rocketId))?.rocket;
       const effect = pending.effect;
-      setProbeContinuation(workingRoot, "probeLocationRewardContinuation", null);
       closeScanTargetPicker(workingRoot);
       if (!rocket) return { ok: false, message: "无效探测器" };
       return withPendingOwnerPlayer(workingRoot, pending, () => finishProbeLocationReward(workingRoot, effect, rocket));

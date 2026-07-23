@@ -241,7 +241,7 @@
         discardDecision: context.getPendingDiscardDecision?.(),
         discardSelectedHandIndexes: [...(context.uiRuntimeState?.discardSelectedHandIndexes || [])],
         handScanDecision: context.getPendingHandScanDecision?.(),
-        scanTargetContinuation: context.getPendingScanTargetDecision?.(readoutRoot),
+        scanTargetDecision: context.getPendingScanTargetDecision?.(),
         playCardSelection: context.uiRuntimeState?.playCardSelection,
         handCardPlayAction: context.uiRuntimeState?.handCardPlayAction,
         cardCornerQuickAction: context.uiRuntimeState?.cardCornerQuickAction,

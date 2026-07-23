@@ -119,6 +119,10 @@
       handleDiscardIncomeCardChoice,
       confirmDiscardAnyForIncome,
       handlePayCreditChoice,
+      handleFundamentalismExchangeChoice,
+      handleOptionalHandScanChoice,
+      handleHandCornerChoice,
+      handlePiratesRaidLaunchChoice,
       confirmScanTarget,
       handleDrawnHandScanSkip,
       confirmPassReserveSelection,
@@ -127,6 +131,7 @@
       confirmCardTaskCompletion,
       handleHandScanCardClick,
       executeCardMoveForEffect,
+      handleScanAction4Choice,
       executeFreeMoveForCardTrigger,
       restoreObjectSnapshot,
       clearMoveRocketHighlight,
@@ -272,6 +277,279 @@
         ],
       };
     }
+    if (kind === "probe_sector_scan") {
+      const choices = pending.choices || [];
+      const maxTargets = Math.max(1, Math.round(Number(pending.effect?.options?.maxTargets) || 1));
+      const subsets = [];
+      const visit = (start, selected) => {
+        if (selected.length) subsets.push([...selected]);
+        if (selected.length >= maxTargets) return;
+        for (let index = start; index < choices.length; index += 1) {
+          selected.push(choices[index]);
+          visit(index + 1, selected);
+          selected.pop();
+        }
+      };
+      visit(0, []);
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+        candidates: subsets.map((subset) => {
+          const rocketIds = subset.map((choice) => choice.rocket.id);
+          return {
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `选择探测器 ${rocketIds.join(",")}`,
+            target: { kind: "probe-sector-selection", choiceId: rocketIds.join(","), rocketIds },
+          };
+        }),
+      };
+    }
+    if (kind === "probe_location_reward") {
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+        candidates: (pending.choices || []).map(({ rocket }) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          label: `探测器位置奖励 R${rocket.id}`,
+          target: { kind: "probe-location-reward", choiceId: String(rocket.id), rocketId: rocket.id },
+        })),
+      };
+    }
+    if (kind === "scan_free_move") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending);
+      if (pending.stage === "action_choice") {
+        const labels = { launch: "发射", move: "移动", skip: "跳过" };
+        return {
+          actorPlayer: player,
+          candidates: (pending.choices || []).map((choiceId) => ({
+            id: "conditionalChoice",
+            family: choiceId === "skip" ? "accept_optional_effect" : "choose_branch",
+            label: labels[choiceId] || choiceId,
+            target: {
+              kind: `scan-action-${choiceId}`,
+              choiceId,
+            },
+          })),
+        };
+      }
+      const candidates = [];
+      for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(
+            workingRoot.rocketState,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+          )?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "scan-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "scan_target" || kind === "public_scan") {
+      if (pending.type === "sector_scan") {
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: (pending.choices || []).filter((choice) => choice?.disabled !== true).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label || `扫描 ${choice.nebulaId}`,
+            target: {
+              kind: "sector-scan-target",
+              choiceId: String(choice.nebulaId),
+              nebulaId: choice.nebulaId,
+              sectorX: choice.sectorX,
+            },
+          })),
+        };
+      }
+      if (pending.type === "conditional_sector_scan") {
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: (pending.sectorXs || []).map((sectorX) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `条件扫描扇区 ${sectorX}`,
+            target: { kind: "conditional-sector", choiceId: String(sectorX), sectorX },
+          })),
+        };
+      }
+      if (pending.type === "discard_corner_repeat" || pending.type === "return_unfinished_task") {
+        const targetKind = pending.type === "discard_corner_repeat"
+          ? "discard-corner-repeat"
+          : "return-unfinished-task";
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: (pending.choices || []).map((card) => ({
+            id: "conditionalChoice",
+            family: "choose_card",
+            label: cards.getCardLabel(card),
+            target: { kind: targetKind, choiceId: card.id, cardId: card.id },
+            cardInstanceId: card.id,
+          })),
+        };
+      }
+      if (pending.type === "remove_orbit_to_probe" || pending.type === "remove_planet_marker") {
+        const targetKind = pending.type === "remove_orbit_to_probe"
+          ? "remove-orbit-to-probe"
+          : "remove-planet-marker";
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: (pending.choices || []).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label || (pending.type === "remove_orbit_to_probe" ? "移除环绕标记" : "移除星球标记"),
+            target: {
+              kind: targetKind,
+              choiceId: choice.id,
+              ...(choice.planetId ? { planetId: choice.planetId } : {}),
+            },
+          })),
+        };
+      }
+      if (pending.type === "discard_any_income") {
+        const player = getSimulationConditionalPlayer(workingRoot, pending);
+        const hand = player?.hand || [];
+        const candidates = [];
+        const cardIdSubsets = [[]];
+        for (const card of hand) {
+          cardIdSubsets.push(...cardIdSubsets.map((cardIds) => [...cardIds, card.id]));
+        }
+        for (const cardIds of cardIdSubsets) {
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_payment",
+            label: cardIds.length
+              ? `弃掉 ${cardIds.map((cardId) => cards.getCardLabel(hand.find((card) => card.id === cardId))).join("、")}`
+              : "不弃牌",
+            target: {
+              kind: "confirm-discard-income",
+              choiceId: cardIds.join("+") || "none",
+              cardIds,
+            },
+          });
+        }
+        return { actorPlayer: player, candidates };
+      }
+      if (pending.type === "pay_credit_reward") {
+        const player = getSimulationConditionalPlayer(workingRoot, pending);
+        const candidates = [];
+        if (players.canAfford(player, { credits: 1 })) {
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_payment",
+            label: "支付 1 信用",
+            target: { kind: "pay-credit-reward", choiceId: "pay" },
+          });
+        }
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过支付",
+          target: { kind: "pay-credit-reward", choiceId: "skip" },
+        });
+        return { actorPlayer: player, candidates };
+      }
+      if (pending.type === "industry_fundamentalism_exchange") {
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: (pending.choices || []).filter((choice) => !choice.disabled).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_reward",
+            label: choice.label,
+            target: { kind: "fundamentalism-exchange", choiceId: choice.id },
+          })),
+        };
+      }
+      if (pending.type === "optional_hand_scan") {
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: [
+            {
+              id: "conditionalChoice",
+              family: "choose_branch",
+              label: "选择手牌",
+              target: { kind: "optional-hand-scan", choiceId: "start" },
+            },
+            {
+              id: "conditionalChoice",
+              family: "accept_optional_effect",
+              label: "跳过手牌扫描",
+              target: { kind: "optional-hand-scan", choiceId: "skip" },
+            },
+          ],
+        };
+      }
+      if (pending.type === "hand_corner_reward") {
+        const labels = { publicity: "宣传", data: "数据", move: "移动" };
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: Object.entries(pending.counts || {}).flatMap(([choice, count]) => (
+            Number(count) > 0 ? [{
+              id: "conditionalChoice",
+              family: "choose_reward",
+              label: `${labels[choice] || choice} ${count}`,
+              target: { kind: "hand-corner-choice", choiceId: choice },
+            }] : []
+          )),
+        };
+      }
+      if (pending.type === "industry_pirates_raid_launch") {
+        return {
+          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+          candidates: (pending.choices || []).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label,
+            target: { kind: "pirates-raid-launch", choiceId: choice.id },
+          })),
+        };
+      }
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+        candidates: [
+          ...(pending.choices || []).flatMap((choice, choiceIndex) => (
+            choice?.disabled ? [] : [{
+              id: "conditionalChoice",
+              family: "choose_target",
+              label: choice.label || `扫描目标 ${choiceIndex + 1}`,
+              target: {
+                kind: "scan-target",
+                choiceId: String(choiceIndex),
+                sectorX: choice.sectorX,
+                nebulaId: choice.nebulaId,
+              },
+              nebulaId: choice.nebulaId,
+              sectorX: choice.sectorX,
+            }]
+          )),
+          ...(pending.type === "hand_scan" && pending.discardDrawnOnSkip ? [{
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "跳过盲抽手牌扫描",
+            target: { kind: "skip-drawn-hand-scan", choiceId: "skip" },
+          }] : []),
+        ],
+      };
+    }
     throw new TypeError(`未知 browser pending Decision: ${kind || "<missing>"}`);
   }
 
@@ -297,48 +575,6 @@
             }]
             : []
         )),
-      };
-    }
-    const probeSectorPending = getPendingProbeSectorScanDecision(workingRoot);
-    if (probeSectorPending) {
-      const choices = probeSectorPending.choices || [];
-      const maxTargets = Math.max(1, Math.round(Number(probeSectorPending.effect?.options?.maxTargets) || 1));
-      const subsets = [];
-      const visit = (start, selected) => {
-        if (selected.length) subsets.push([...selected]);
-        if (selected.length >= maxTargets) return;
-        for (let index = start; index < choices.length; index += 1) {
-          selected.push(choices[index]);
-          visit(index + 1, selected);
-          selected.pop();
-        }
-      };
-      visit(0, []);
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, probeSectorPending),
-        candidates: subsets.map((subset) => {
-          const rocketIds = subset.map((choice) => choice.rocket.id);
-          return {
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `选择探测器 ${rocketIds.join(",")}`,
-            target: { kind: "probe-sector-selection", choiceId: rocketIds.join(","), rocketIds },
-            pendingContext: structuredClone(probeSectorPending),
-          };
-        }),
-      };
-    }
-    const probeLocationPending = getPendingProbeLocationRewardDecision(workingRoot);
-    if (probeLocationPending) {
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, probeLocationPending),
-        candidates: (probeLocationPending.choices || []).map(({ rocket }) => ({
-          id: "conditionalChoice",
-          family: "choose_target",
-          label: `探测器位置奖励 R${rocket.id}`,
-          target: { kind: "probe-location-reward", choiceId: String(rocket.id), rocketId: rocket.id },
-          pendingContext: structuredClone(probeLocationPending),
-        })),
       };
     }
     const chongFossilPending = getPendingChongFossilChoice();
@@ -537,149 +773,6 @@
         candidates,
       };
     }
-    const scanTargetPending = workingRoot.match?.scanTargetContinuation;
-    if (scanTargetPending) {
-      if (scanTargetPending.type === "sector_scan") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-          candidates: (scanTargetPending.choices || []).filter((choice) => choice?.disabled !== true).map((choice) => ({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: choice.label || `扫描 ${choice.nebulaId}`,
-            target: {
-              kind: "sector-scan-target",
-              choiceId: String(choice.nebulaId),
-              nebulaId: choice.nebulaId,
-              sectorX: choice.sectorX,
-            },
-            pendingContext: structuredClone(scanTargetPending),
-          })),
-        };
-      }
-      if (scanTargetPending.type === "conditional_sector_scan") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-          candidates: (scanTargetPending.sectorXs || []).map((sectorX) => ({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `条件扫描扇区 ${sectorX}`,
-            target: { kind: "conditional-sector", choiceId: String(sectorX), sectorX },
-            sectorX,
-          })),
-        };
-      }
-      if (scanTargetPending.type === "discard_corner_repeat") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-          candidates: (scanTargetPending.choices || []).map((card) => ({
-            id: "conditionalChoice",
-            family: "choose_card",
-            label: cards.getCardLabel(card),
-            target: { kind: "discard-corner-repeat", choiceId: card.id, cardId: card.id },
-            cardInstanceId: card.id,
-          })),
-        };
-      }
-      if (scanTargetPending.type === "return_unfinished_task") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-          candidates: (scanTargetPending.choices || []).map((card) => ({
-            id: "conditionalChoice",
-            family: "choose_card",
-            label: cards.getCardLabel(card),
-            target: { kind: "return-unfinished-task", choiceId: card.id, cardId: card.id },
-            cardInstanceId: card.id,
-          })),
-        };
-      }
-      if (scanTargetPending.type === "remove_orbit_to_probe") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-          candidates: (scanTargetPending.choices || []).map((choice) => ({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: choice.label || "移除环绕标记",
-            target: { kind: "remove-orbit-to-probe", choiceId: choice.id, planetId: choice.planetId },
-          })),
-        };
-      }
-      if (scanTargetPending.type === "remove_planet_marker") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-          candidates: (scanTargetPending.choices || []).map((choice) => ({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: choice.label || "移除星球标记",
-            target: { kind: "remove-planet-marker", choiceId: choice.id },
-          })),
-        };
-      }
-      if (scanTargetPending.type === "discard_any_income") {
-        const player = getSimulationConditionalPlayer(workingRoot, scanTargetPending);
-        const selected = new Set(scanTargetPending.selectedCardIds || []);
-        const candidates = (player?.hand || []).flatMap((card) => (
-          selected.has(card.id) ? [] : [{
-            id: "conditionalChoice",
-            family: "choose_card",
-            label: cards.getCardLabel(card),
-            target: { kind: "discard-income-card", choiceId: card.id, cardId: card.id },
-            cardInstanceId: card.id,
-          }]
-        ));
-        candidates.push({
-          id: "conditionalChoice",
-          family: "choose_branch",
-          label: "确认收入弃牌",
-          target: { kind: "confirm-discard-income", choiceId: "confirm" },
-        });
-        return { actorPlayer: player, candidates };
-      }
-      if (scanTargetPending.type === "pay_credit_reward") {
-        const player = getSimulationConditionalPlayer(workingRoot, scanTargetPending);
-        const candidates = [];
-        if (players.canAfford(player, { credits: 1 })) {
-          candidates.push({
-            id: "conditionalChoice",
-            family: "choose_payment",
-            label: "支付 1 信用",
-            target: { kind: "pay-credit-reward", choiceId: "pay" },
-          });
-        }
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "跳过支付",
-          target: { kind: "pay-credit-reward", choiceId: "skip" },
-        });
-        return { actorPlayer: player, candidates };
-      }
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, scanTargetPending),
-        candidates: [
-          ...(scanTargetPending.choices || []).flatMap((choice, choiceIndex) => (
-          choice?.disabled ? [] : [{
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: choice.label || `扫描目标 ${choiceIndex + 1}`,
-            target: {
-              kind: "scan-target",
-              choiceId: String(choiceIndex),
-              sectorX: choice.sectorX,
-              nebulaId: choice.nebulaId,
-            },
-            nebulaId: choice.nebulaId,
-            sectorX: choice.sectorX,
-          }]
-          )),
-          ...(scanTargetPending.type === "hand_scan" && scanTargetPending.discardDrawnOnSkip ? [{
-            id: "conditionalChoice",
-            family: "accept_optional_effect",
-            label: "跳过盲抽手牌扫描",
-            target: { kind: "skip-drawn-hand-scan", choiceId: "skip" },
-          }] : []),
-        ],
-      };
-    }
     if (isTechTilePickingActive(workingRoot)) {
       const player = getSimulationConditionalPlayer(
         workingRoot,
@@ -840,36 +933,6 @@
           label: "取消无法执行的卡牌触发",
           target: { kind: "skip-card-trigger-free-move", choiceId: "skip" },
         });
-      }
-      return { actorPlayer: player, candidates };
-    }
-    const scanFreeMovePending = workingRoot.match?.scanFreeMoveContinuation;
-    if (scanFreeMovePending) {
-      const player = getSimulationConditionalPlayer(workingRoot, scanFreeMovePending);
-      const candidates = [];
-      for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
-        for (const direction of [
-          { id: "out", deltaX: 0, deltaY: 1 },
-          { id: "cw", deltaX: 1, deltaY: 0 },
-          { id: "ccw", deltaX: -1, deltaY: 0 },
-          { id: "in", deltaX: 0, deltaY: -1 },
-        ]) {
-          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
-          candidates.push({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `${formatRocketLabel(rocket)} ${direction.id}`,
-            target: {
-              kind: "scan-free-move",
-              choiceId: `${rocket.id}:${direction.id}`,
-              rocketId: rocket.id,
-              direction: direction.id,
-            },
-            rocketId: rocket.id,
-            deltaX: direction.deltaX,
-            deltaY: direction.deltaY,
-          });
-        }
       }
       return { actorPlayer: player, candidates };
     }
@@ -1141,7 +1204,11 @@
   }
 
   const CONDITIONAL_CHOICE_HANDLERS = Object.freeze({
-    "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
+    "conditional-sector": (action, workingRoot) => handleConditionalSectorChoice(
+      workingRoot,
+      action.target.sectorX ?? action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
     "sector-scan-target": (action, workingRoot) => confirmScanTarget(
       workingRoot,
       action.target.nebulaId ?? action.target.choiceId,
@@ -1172,7 +1239,9 @@
     "banrenma-panel-bonus": (action) => handleBanrenmaBonusChoice(action.target.choiceId, action.pendingContext || null),
     "banrenma-card-condition": (action) => handleBanrenmaCardConditionChoice(action.target.choiceId, action.pendingContext || null),
     "probe-sector-selection": (action, workingRoot) => {
-      const pending = action.pendingContext || getPendingProbeSectorScanDecision(workingRoot);
+      const pending = action.decisionContext?.pending
+        || action.pendingContext
+        || getPendingProbeSectorScanDecision(workingRoot);
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
       return confirmProbeSectorScanSelection(
         workingRoot,
@@ -1183,7 +1252,7 @@
     "probe-location-reward": (action, workingRoot) => handleProbeLocationRewardChoice(
       workingRoot,
       action.target.rocketId ?? action.target.choiceId,
-      action.pendingContext || null,
+      action.decisionContext?.pending || action.pendingContext || null,
     ),
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(
       action.target.choiceId,
@@ -1222,22 +1291,69 @@
       workingRoot, action.destination, action.traceType || null,
     ),
     "fangzhou-unlock-color": (action, workingRoot) => handleFangzhouUnlockTraceChoice(workingRoot, action.target.traceType),
-    "discard-corner-repeat": (action) => handleDiscardCornerRepeatChoice(action.target.cardId),
-    "return-unfinished-task": (action) => handleReturnUnfinishedTaskChoice(action.target.cardId),
-    "remove-orbit-to-probe": (action) => handleRemoveOrbitToProbeChoice(action.target.choiceId),
-    "remove-planet-marker": (action) => handleRemovePlanetMarkerChoice(action.target.choiceId),
+    "discard-corner-repeat": (action, workingRoot) => handleDiscardCornerRepeatChoice(
+      workingRoot,
+      action.target.cardId,
+      action.decisionContext?.pending,
+    ),
+    "return-unfinished-task": (action, workingRoot) => handleReturnUnfinishedTaskChoice(
+      workingRoot,
+      action.target.cardId,
+      action.decisionContext?.pending,
+    ),
+    "remove-orbit-to-probe": (action, workingRoot) => handleRemoveOrbitToProbeChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
+    "remove-planet-marker": (action, workingRoot) => handleRemovePlanetMarkerChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
     "pending-data-placement": (action, workingRoot) => confirmDataPlacement(workingRoot, action.placementTarget, action.blueSlot),
     "skip-pending-data-placement": (_action, workingRoot) => skipPendingDataPlacement(workingRoot)
       || { ok: true, progressed: true, skipped: true, message: "已跳过本次数据获得" },
-    "discard-income-card": (action) => handleDiscardIncomeCardChoice(action.target.cardId),
-    "confirm-discard-income": () => confirmDiscardAnyForIncome(),
-    "pay-credit-reward": (action) => handlePayCreditChoice(action.target.choiceId),
+    "confirm-discard-income": (action, workingRoot) => confirmDiscardAnyForIncome(
+      workingRoot,
+      action.target.cardIds || [],
+      action.decisionContext?.pending,
+    ),
+    "pay-credit-reward": (action, workingRoot) => handlePayCreditChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
+    "fundamentalism-exchange": (action, workingRoot) => handleFundamentalismExchangeChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
+    "optional-hand-scan": (action, workingRoot) => handleOptionalHandScanChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
+    "hand-corner-choice": (action, workingRoot) => handleHandCornerChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
+    "pirates-raid-launch": (action, workingRoot) => handlePiratesRaidLaunchChoice(
+      workingRoot,
+      action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
     "scan-target": (action, workingRoot) => confirmScanTarget(
       workingRoot,
       action.target.nebulaId,
       action.target.sectorX,
+      action.decisionContext?.pending,
     ),
-    "skip-drawn-hand-scan": (_action, workingRoot) => handleDrawnHandScanSkip(workingRoot),
+    "skip-drawn-hand-scan": (action, workingRoot) => handleDrawnHandScanSkip(
+      workingRoot,
+      action.decisionContext?.pending,
+    ),
     "pass-reserve-card": (action, workingRoot) => {
       return confirmPassReserveSelection(
         workingRoot,
@@ -1272,7 +1388,11 @@
       action.deltaX,
       action.deltaY,
       action.target.rocketId,
+      { pending: action.decisionContext?.pending },
     ),
+    "scan-action-launch": (_action, workingRoot) => handleScanAction4Choice(workingRoot, "launch"),
+    "scan-action-move": (_action, workingRoot) => handleScanAction4Choice(workingRoot, "move"),
+    "scan-action-skip": (_action, workingRoot) => handleScanAction4Choice(workingRoot, "skip"),
     "card-trigger-free-move": (action, workingRoot) => executeFreeMoveForCardTrigger(
       workingRoot,
       action.deltaX,

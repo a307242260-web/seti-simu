@@ -118,6 +118,7 @@
       getPendingPlayCardSelection: handFlowRuntime?.getPendingPlayCardSelection,
       readCardSelectionDecision: cardSelectionDecisionOwner?.read,
       openCardSelectionDecision: cardSelectionDecisionOwner?.open,
+      readPendingDecision: hostPort.readPendingDecision,
       getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
       hasFutureSpanEligibleHandCard: cardRuntime?.hasFutureSpanEligibleHandCard,
       insertActionEffectsAfterCurrent: effectExecutorPort?.insertActionEffectsAfterCurrent,
@@ -310,7 +311,7 @@
         player.id === pending?.playerId || player.color === pending?.playerColor
       )) || getWorkingCurrentPlayer(workingRoot)
     );
-    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    const getScanTargetDecision = () => context.readPendingDecision?.("scan_target") || null;
     const getStrategySlotDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.strategySlotContinuation || null;
     const getIndustryAbilityContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.industryAbilityContinuation || null;
     const setIndustryAbilityContinuation = (workingRoot, value) => {
@@ -388,8 +389,7 @@
 
     function clearIndustryRollbackUi(workingRoot) {
       const { cardState, techGameState } = requireWorkingRoot(workingRoot);
-      if (getScanTargetContinuation(workingRoot)?.type === "industry_remove_tech") {
-        delete workingRoot.match.scanTargetContinuation;
+      if (getScanTargetDecision()?.type === "industry_remove_tech") {
         if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
         if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       }

@@ -905,7 +905,7 @@
           return { ok: true, message: ruleRocketState(workingRoot).statusNote };
         }
         case scanEffects.EFFECT_TYPES.SCAN_ACTION_4:
-          return openScanAction4Picker();
+          return openScanAction4Picker(workingRoot);
         case scanEffects.EFFECT_TYPES.SCAN_ACTION_FINALIZE:
           return executeScanActionFinalizeEffect(effect);
         case scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN:

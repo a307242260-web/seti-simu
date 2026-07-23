@@ -374,8 +374,6 @@
         const method = alienDraftConsumers[kind];
         if (method) context.getAlienSpeciesRuntime()?.[method]?.();
       }
-      if (kind === "probe-sector-selection") delete workingRoot.match.probeSectorScanContinuation;
-      if (kind === "probe-location-reward") delete workingRoot.match.probeLocationRewardContinuation;
       if (kind === "sector-scan-target") context.closeScanTargetPickerForRoot(workingRoot);
     }
 

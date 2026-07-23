@@ -59,6 +59,7 @@
       launchRocketForScanAction4,
       maybeCompleteActionEffectFromScan,
       normalizeResourceCost,
+      openPendingDecision,
       openLandTargetPicker,
       openScanTargetPicker,
       planetReferenceLayout,
@@ -88,6 +89,7 @@
       updatePublicCardControls,
       withEffectExecutionPlayer,
       withPendingOwnerPlayer,
+      readPendingDecision,
     } = context;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const ruleCardState = (workingRoot) => workingRoot.cardState;
@@ -101,10 +103,10 @@
       }
       return workingRoot;
     }
-    const getScanTargetContinuation = (workingRoot) => workingRoot.match?.scanTargetContinuation || null;
+    const getScanTargetDecision = () => readPendingDecision?.("scan_target") || null;
     function setScanTargetContinuation(workingRoot, continuation) {
-      if (!continuation) delete workingRoot.match.scanTargetContinuation;
-      else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
+      if (!continuation) return null;
+      return openPendingDecision(workingRoot, "scan_target", continuation);
     }
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
@@ -531,7 +533,7 @@
       });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "移除环绕或登陆标记";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择要移除的己方环绕或登陆标记。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
       els.scanTargetActions.replaceChildren(...choices.map((choice) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -546,8 +548,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleRemovePlanetMarkerChoice(workingRoot, choiceId) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleRemovePlanetMarkerChoice(workingRoot, choiceId, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "remove_planet_marker") {
         return { ok: false, message: "没有待移除的星球标记" };
       }
@@ -710,7 +712,7 @@
       }
 
       if (choiceId === "move") {
-        return beginScanAction4FreeMove();
+        return beginScanAction4FreeMove(workingRoot);
       }
 
       if (choiceId === "skip") {
@@ -1213,7 +1215,7 @@
       setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "hand_corner_reward", effect, counts });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一种左上角快速行动类别，按当前手牌数量获得对应奖励。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
       const specs = [
         ["publicity", "宣传", `${counts.publicity} 宣传`],
         ["data", "数据", `${counts.data} 数据`],
@@ -1274,8 +1276,8 @@
       }, [renderPlayerHand]);
     }
 
-    function handleHandCornerChoice(workingRoot, choice) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleHandCornerChoice(workingRoot, choice, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "hand_corner_reward") return { ok: false, message: "没有待处理的手牌角标奖励" };
       const effect = pending.effect;
       closeScanTargetPicker(workingRoot);

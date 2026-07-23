@@ -13,6 +13,11 @@
     "discard",
     "hand_scan",
     "pass_reserve",
+    "scan_target",
+    "scan_free_move",
+    "public_scan",
+    "probe_sector_scan",
+    "probe_location_reward",
   ]);
 
   function clone(value) {

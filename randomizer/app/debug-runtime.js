@@ -31,6 +31,7 @@
       "closeTechBlueSlotPicker", "closeDataPlacePicker", "closeScanTargetPicker",
       "closeScanAction4Picker", "closeLandTargetPicker", "closeAlienTracePicker",
       "clearActionEffectFlow", "clearActionPending", "clearMoveRocketHighlight",
+      "readPendingDecision",
       "resolveCompletedSectorSettlements", "maybeStartFundamentalismRoundStartIncomeFlow",
       "maybeOpenActionBriefingForCompletedCycle", "maybeAutoOpenFinalResultDialog",
       "clearTransientStateForRecovery", "advanceTurnAfterPlayerAction",
@@ -570,7 +571,6 @@
         renderStateReadout?.();
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
-      workingRoot.match.scanTargetContinuation = { type: "debug_quick_sector_scan" };
       renderDebugQuickSectorScanPlayerStep(workingRoot);
       ruleRocketState(workingRoot).statusNote = "快速扫描扇区：请选择玩家颜色";
       renderStateReadout?.();
@@ -1119,10 +1119,11 @@
 
       const pendingEntries = [
         decisionInput.readCardSelectionDecision?.(),
-        workingRoot.match?.scanTargetContinuation,
-        workingRoot.match?.probeSectorScanContinuation,
-        workingRoot.match?.probeLocationRewardContinuation,
-        workingRoot.match?.publicScanContinuation,
+        decisionInput.readPendingDecision?.("scan_target"),
+        decisionInput.readPendingDecision?.("public_scan"),
+        decisionInput.readPendingDecision?.("scan_free_move"),
+        decisionInput.readPendingDecision?.("probe_sector_scan"),
+        decisionInput.readPendingDecision?.("probe_location_reward"),
         workingRoot.match?.alienTraceContinuation,
         workingRoot.match?.landTargetContinuation,
         workingRoot.match?.dataPlacementContinuation,

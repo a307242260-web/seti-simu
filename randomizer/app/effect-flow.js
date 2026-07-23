@@ -1137,8 +1137,6 @@
       if (context.isLandTargetPickerOpen?.()) context.cancelLandTargetPicker?.(workingRoot);
       context.closeScanAction4Picker?.();
       context.closeAlienTracePicker?.();
-      delete workingRoot.match.publicScanContinuation;
-
       if (context.isHandScanSelectionActive?.(workingRoot)) {
         context.syncHandScanSelectionChrome?.(workingRoot);
       }
@@ -1165,7 +1163,6 @@
         context.syncPassReserveSelectionChrome?.();
       }
       if (context.getPendingScanFreeMoveDecision?.(workingRoot)) {
-        delete workingRoot.match.scanFreeMoveContinuation;
         context.deactivateMoveMode?.();
       }
       if (context.getPendingCardMoveDecision?.(workingRoot)) {

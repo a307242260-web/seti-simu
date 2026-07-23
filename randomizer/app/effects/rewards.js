@@ -72,6 +72,7 @@
       normalizeResourceCost,
       openAutoDataPlacementPrompt,
       openPendingDecision,
+      readPendingDecision,
       openScanTargetPicker,
       planetReferenceLayout,
       planetStats,
@@ -115,10 +116,10 @@
       }
       return workingRoot;
     }
-    const getScanTargetContinuation = (workingRoot) => workingRoot.match?.scanTargetContinuation || null;
+    const getScanTargetDecision = () => readPendingDecision?.("scan_target") || null;
     function setScanTargetContinuation(workingRoot, continuation) {
-      if (!continuation) delete workingRoot.match.scanTargetContinuation;
-      else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
+      if (!continuation) return null;
+      return openPendingDecision(workingRoot, "scan_target", continuation);
     }
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
@@ -170,7 +171,7 @@
     }
 
     function renderDiscardIncomePicker(workingRoot) {
-      const pending = getScanTargetContinuation(workingRoot);
+      const pending = getScanTargetDecision();
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedCardIds || []);
       const currentPlayer = getPendingOwnerPlayer(workingRoot, pending, pending.effect);
@@ -518,7 +519,7 @@
       setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "return_unfinished_task", effect, choices });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
       if (document && els.scanTargetActions) {
         const buttons = choices.map((card) => {
           const button = document.createElement("button");
@@ -536,8 +537,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleReturnUnfinishedTaskChoice(workingRoot, cardId) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleReturnUnfinishedTaskChoice(workingRoot, cardId, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "return_unfinished_task") return { ok: false, message: "没有待处理的任务卡回手" };
       const effect = pending.effect;
       closeScanTargetPicker(workingRoot);
@@ -1246,7 +1247,7 @@
       }
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "可选手牌扫描";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "可以执行一次手牌扫描，也可以跳过本次。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
       const start = document.createElement("button");
       start.type = "button";
       start.className = "scan-target-option-button";
@@ -1265,8 +1266,8 @@
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleOptionalHandScanChoice(workingRoot, choice) {
-      const pending = getScanTargetContinuation(workingRoot);
+    function handleOptionalHandScanChoice(workingRoot, choice, pendingOverride = null) {
+      const pending = pendingOverride || getScanTargetDecision();
       if (pending?.type !== "optional_hand_scan") return { ok: false, message: "没有待处理的可选手牌扫描" };
       const effect = pending.effect;
       closeScanTargetPicker(workingRoot);

@@ -1455,9 +1455,9 @@
       const cardCornerAction = continuationState.cardCornerQuickAction;
       const handCardPlayAction = continuationState.handCardPlayAction;
       const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
-      const handScanPickIndex = continuationState.scanTargetContinuation?.type === "hand_scan"
-        && Number.isInteger(Number(continuationState.scanTargetContinuation.handIndex))
-        ? Number(continuationState.scanTargetContinuation.handIndex)
+      const handScanPickIndex = continuationState.scanTargetDecision?.type === "hand_scan"
+        && Number.isInteger(Number(continuationState.scanTargetDecision.handIndex))
+        ? Number(continuationState.scanTargetDecision.handIndex)
         : null;
       const handPickActive = discardActive
         || playActive
