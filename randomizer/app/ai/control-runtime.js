@@ -214,7 +214,7 @@
       recordAiAutoBattleLog,
       recordAiAutoBattleBug,
       renderStateReadout,
-      runAiAutomationStep,
+      runMachinePlayerStep,
       resetGameForAiAutoBattle,
       resetAiStrategyDemandCache = () => {},
       setPlayerAiDifficulty,
@@ -532,7 +532,7 @@
       schedulerState.inProgress = true;
       let result;
       try {
-        result = await runAiAutomationStep();
+        result = await runMachinePlayerStep();
       } catch (error) {
         result = {
           ok: false,

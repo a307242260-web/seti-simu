@@ -2054,7 +2054,6 @@
     }
 
     function renderStateReadout() {
-      if (uiRuntimeState.codexAiBatchSuppressReadoutRender) return;
       const snapshot = solar.createSolarSnapshot(solarState);
       const axisLine = "坐标轴 x0=中线上方偏右第一块，顺时针递增";
       const wheelLine = [1, 2, 3, 4]

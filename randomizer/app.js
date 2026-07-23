@@ -461,9 +461,34 @@
     getController: () => actionRuntimeController,
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
   });
+  function enumerateStandardContinuationActionsForRoot(workingRoot) {
+    const currentPlayer = players.getCurrentPlayer(workingRoot?.playerState);
+    if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
+    if (isActionEffectFlowActive(workingRoot) || hasActivePendingSubFlow()) return [];
+    const result = dispatchBrowserRuleInput(
+      { kind: "standard_enumerate" },
+      undefined,
+      createActionContextForWorkingRoot(workingRoot),
+    );
+    if (!result?.ok) return [];
+    return (result.candidates || [])
+      .filter((standardAction) => standardAction.phase !== "conditional")
+      .map((standardAction) => ({
+        id: standardAction.family,
+        kind: standardAction.phase,
+        family: standardAction.family,
+        actionId: standardAction.actionId,
+        actorId: standardAction.actorId,
+        target: structuredClone(standardAction.target || null),
+        payload: structuredClone(standardAction.payload || {}),
+        standardAction: structuredClone(standardAction),
+        available: true,
+        label: standardAction.summary,
+      }));
+  }
   const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
     enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
-    enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
+    enumerateTurnActionsForRoot: (...args) => enumerateStandardContinuationActionsForRoot(...args),
     getCurrentPlayer: (playerState) => players.getCurrentPlayer(playerState),
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
     isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
@@ -2875,48 +2900,21 @@
   });
   const {
     aiNumber,
-    applyAiStrategyTuning,
-    applyAiStrategyTuningRecommendation,
     applyAiStrategyWeight,
     cardTriggerNeedsFreeMove,
-    clearAiStrategyTuningHistory,
-    configureAiAutoBattle,
-    configureAiStrategyWeights,
     configureDefaultAiOpponent,
     createAiControlSnapshot,
-    getAiAutoBattleAnalysis,
-    getAiAutoBattleProgress,
-    getAiAutoBattleReport,
-    buildAiTurnActionCandidates: buildAiTurnActionCandidatesForRoot,
-    chooseInitialSelectionForAiPlayer: chooseInitialSelectionForAiPlayerForRoot,
-    enumerateSimulationTurnActions: enumerateSimulationTurnActionsForRoot,
-    executeAiTurnAction: executeAiTurnActionForRoot,
     getAiMapDemand,
     getAiRemainingRoundWeight,
     getAiStrategyDemand,
-    getAiStrategyTuningHistory,
-    getAiStrategyTuningRecommendation,
-    getAiStrategyWeights,
     getCardTriggerFreeMoveEffect,
     getPlayerAgentLabel,
     isAiAutomationPaused,
     isAiAutoBattlePlayer,
     listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
     recordAiAutoBattleLog,
-    resolveAiAutomationToTurnBoundary: resolveAiAutomationToTurnBoundaryForRoot,
-    resetAiStrategyWeights,
     restoreAiControlSnapshot,
-    runAiAutoBattle,
-    runAiAutoBattleBatch,
-    runAiAutomationStep: runAiAutomationStepForRoot,
-    runAiActionEffectStep: runAiActionEffectStepForRoot,
-    runAiNonTurnAutomationStep: runAiNonTurnAutomationStepForRoot,
-    runAiSelectedTurnAction: runAiSelectedTurnActionForRoot,
-    recoverAiIdleActionEffectStep: recoverAiIdleActionEffectStepForRoot,
-    runAiStrategyABTest,
-    runAiStrategyTuningCycle,
     scheduleAiAutoStepIfNeeded,
-    stopAiAutoBattle,
     sumAiDemandMap,
   } = aiController;
   const cardRuntime = cardRuntimeModule.createBrowserCardRuntime({

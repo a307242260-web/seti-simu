@@ -77,23 +77,6 @@
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
 
-    function decidePolicyChoice() {
-      return {
-        ok: false,
-        code: "BROWSER_POLICY_INPUT_REQUIRED",
-        message: "Browser 机器选择只能经 Machine Player Host 与 PolicyInputAdapter 提交",
-      };
-    }
-
-    function decideBlueSlot(workingRoot, player, availableSlots, decisionId) {
-      return decidePolicyChoice(workingRoot, "choose_target", player, decisionId, availableSlots.map((slot) => ({
-        choiceId: String(slot),
-        value: -Number(slot),
-        target: { blueSlot: Number(slot) },
-        summary: `蓝色科技槽 ${slot}`,
-        slot: Number(slot),
-      })));
-    }
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
     function getAiMoveTurnKey(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
@@ -1560,69 +1543,6 @@
       return options;
     }
 
-    function runAiAlienUseDecision(workingRoot) {
-      const flows = getAiAlienUseFlows();
-      if (!flows.length) return null;
-      let flow = null;
-      let options = [];
-      let selected = null;
-      for (const candidateFlow of flows) {
-        const candidatePlayer = getAiAlienPendingPlayer(workingRoot, candidateFlow.pending);
-        if (!isAiAutoBattlePlayer(candidatePlayer?.id)) {
-          flow = candidateFlow;
-          break;
-        }
-        const candidateOptions = listAiAlienUseOptions(workingRoot, candidateFlow);
-        const alienPolicy = decidePolicyChoice(workingRoot, "choose_reward", candidatePlayer, `alien:${candidateFlow.type}`, candidateOptions
-          .filter((option) => !option.disabled)
-          .map((option, index) => ({
-            choiceId: `alien-option-${index}`,
-            value: ai.selectionEvaluator.scoreAlienUseOption(option),
-            target: { optionIndex: index },
-            summary: `外星人选项 ${index + 1}`,
-            option,
-          })));
-        const candidateSelected = alienPolicy.ok ? alienPolicy.choice.option : null;
-        if (candidateSelected) {
-          flow = candidateFlow;
-          options = candidateOptions;
-          selected = candidateSelected;
-          break;
-        }
-      }
-      if (!flow && isActionEffectFlowActive(workingRoot)) return null;
-      if (!flow) return { ok: false, blocked: true, message: "AI 没有可处理的外星人选项" };
-      const player = getAiAlienPendingPlayer(workingRoot, flow.pending);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工处理${flow.label}` };
-      }
-      if (!selected) {
-        return { ok: false, blocked: true, message: `AI 没有可用${flow.label}选项` };
-      }
-
-      recordAiAutoBattleLog("alien-use", `${player.colorLabel}AI 处理${flow.label}`, {
-        logPlayerId: player.id || null,
-        logPlayerColor: player.color || null,
-        pendingType: flow.type,
-        selected: {
-          choice: selected.choice,
-          label: selected.label,
-        },
-        options: options.map((option) => ({
-          choice: option.choice,
-          label: option.label,
-          disabled: option.disabled,
-          score: option.score,
-        })),
-      });
-
-      if (typeof flow.handleChoice === "function") {
-        return flow.handleChoice(selected.choice, { automated: true });
-      }
-      selected.button?.click();
-      return { ok: true, progressed: true, message: `AI 已处理${flow.label}` };
-    }
-
     function runAiMoveActionDecision(workingRoot, action) {
       const { playerState } = requireWorkingRoot(workingRoot);
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
@@ -1633,99 +1553,6 @@
       return moveRocket(action.deltaX, action.deltaY, action.rocketId, { automated: true });
     }
 
-
-    function runAiResearchTechSelectionDecision(workingRoot, effect) {
-      const { techGameState, playerState } = requireWorkingRoot(workingRoot);
-      if (!isTechTilePickingActive()) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择科技片` };
-      }
-      const selectionOptions = getAiResearchTechSelectionOptionsForEffect(effect);
-
-      if (techGameState.ui.pendingTileId) {
-        const availableSlots = tech.getAvailableBlueSlots(currentPlayer.techState);
-        const blueSlotPolicy = decideBlueSlot(workingRoot, currentPlayer, availableSlots, `blue-slot:${techGameState.ui.pendingTileId}`);
-        if (!blueSlotPolicy.ok) return { ok: false, blocked: true, code: blueSlotPolicy.code, message: blueSlotPolicy.message };
-        const blueSlot = blueSlotPolicy.choice.slot;
-        if (blueSlot == null) {
-          return { ok: false, blocked: true, message: "AI 没有可用蓝色科技槽位" };
-        }
-        recordAiAutoBattleLog("tech-placement", `${currentPlayer.colorLabel}AI 选择蓝色科技槽位 ${blueSlot}`, {
-          tileId: techGameState.ui.pendingTileId,
-          availableSlots,
-          blueSlot,
-        });
-        return confirmTechBlueSlotChoice(workingRoot, blueSlot);
-      }
-
-      const candidates = techGameState.ui.industryBorrowMode
-        ? listAiBorrowTechCandidates(workingRoot, currentPlayer)
-        : listAiResearchTechCandidates(workingRoot, selectionOptions);
-      const techPolicy = decidePolicyChoice(workingRoot, "choose_target", currentPlayer, `research-tech:${effect?.id || "generic"}`, candidates
-        .filter((candidate) => candidate?.available !== false)
-        .map((candidate) => ({
-          choiceId: candidate.tileId,
-          value: ai.selectionEvaluator.scoreResearchTechCandidate(candidate),
-          target: { tileId: candidate.tileId },
-          summary: candidate.label || candidate.tileId,
-          candidate,
-        })));
-      const policySelected = techPolicy.ok ? techPolicy.choice.candidate : null;
-      if (!techPolicy.ok && candidates.length) {
-        return { ok: false, blocked: true, code: techPolicy.code, message: techPolicy.message };
-      }
-      const policyCheck = policySelected
-        ? getAiResearchTechCandidateExecutionCheck(workingRoot, policySelected, currentPlayer, selectionOptions)
-        : null;
-      let selected = policySelected || candidates[0] || null;
-      const executable = selectExecutableAiResearchTechCandidate(workingRoot, candidates, selected, currentPlayer, selectionOptions);
-      if (!executable.candidate && selected?.tileId) {
-        recordAiAutoBattleLog("tech-placement-reject", `${currentPlayer.colorLabel}AI 科技候选失效：${selected.tileId}`, {
-          selected,
-          reason: executable.check?.message || null,
-        });
-      }
-      selected = executable.candidate;
-      if (!selected?.tileId) {
-        const message = `${effect?.label || "选择科技"}：${executable.check?.message || "没有可研究科技候选"}，已跳过`;
-        recordAiAutoBattleLog("tech-placement", `${currentPlayer.colorLabel}AI 跳过科技选择`, {
-          effectId: effect?.id || null,
-          effectType: effect?.type || null,
-          candidates,
-          message,
-        });
-        cancelTechSelection?.();
-        skipCurrentActionEffect?.();
-        return { ok: true, progressed: true, skipped: true, message };
-      }
-      if (policySelected?.tileId && policySelected.tileId !== selected.tileId) {
-        recordAiAutoBattleLog("tech-placement-retarget", `${currentPlayer.colorLabel}AI 改选科技 ${selected.tileId}`, {
-          rejected: policySelected,
-          selected,
-          reason: policyCheck?.message || null,
-        });
-      }
-      recordAiAutoBattleLog("tech-placement", `${currentPlayer.colorLabel}AI 选择科技 ${selected.tileId}`, {
-        selected,
-        candidates,
-      });
-      const result = handleSupplyTechTileClick(selected.tileId);
-      if (result?.needsBlueSlotChoice) {
-        const availableSlots = result.availableSlots || [];
-        const blueSlotPolicy = decideBlueSlot(workingRoot, currentPlayer, availableSlots, `blue-slot:${selected.tileId}`);
-        if (!blueSlotPolicy.ok) return { ok: false, blocked: true, code: blueSlotPolicy.code, message: blueSlotPolicy.message };
-        const blueSlot = blueSlotPolicy.choice.slot;
-        if (blueSlot == null) return result;
-        recordAiAutoBattleLog("tech-placement", `${currentPlayer.colorLabel}AI 选择蓝色科技槽位 ${blueSlot}`, {
-          tileId: selected.tileId,
-          availableSlots,
-          blueSlot,
-        });
-        return confirmTechBlueSlotChoice(workingRoot, blueSlot);
-      }
-      return result;
-    }
 
     return {
       getAiMoveTurnKey,
@@ -1793,9 +1620,7 @@
       makeAiAlienChoiceFlow,
       getAiAlienUseFlows,
       listAiAlienUseOptions,
-      runAiAlienUseDecision,
       runAiMoveActionDecision,
-      runAiResearchTechSelectionDecision,
     };
   }
 

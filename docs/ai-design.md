@@ -2,16 +2,16 @@
 
 本文件是电脑玩家（AI 自动机）的**当前唯一权威文档**，覆盖控制器接口、价值模型、目标系统、回合规划、自博弈验证和后续路线。旧的接口契约文档与成本收益草稿已经合并进本文，不再单独维护。
 
-- **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与异步调度；每一步统一进入 `app/ai/browser-bootstrap.js` 装配的 Machine Player Host → Policy Port → `browser-host/policy-input-adapter.js`，并经玩家共用的 Standard Action/Decision input port 提交。旧 `automation-runtime` / `action-executor` 不再是 Browser 执行入口。规则估值层集中在 `randomizer/game/ai/**`。
+- **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与异步调度；每一步统一进入 `app/ai/browser-bootstrap.js` 装配的 Machine Player Host → Policy Port → `browser-host/policy-input-adapter.js`，并经玩家共用的 Standard Action/Decision input port 提交。旧 `automation-runtime` / `action-executor` 已从 Browser 生产代码物理删除。规则估值层集中在 `randomizer/game/ai/**`。
 - **规则域装配**：资源/交易、卡牌/任务、路线/星球、扫描/数据、科技/行动、终局节奏、选择压力和外星人估值按领域拆在 `randomizer/game/ai/**`，通过显式 context 注入；完整函数清单见 `docs/ai-domain-migration-stage3.md`，这些模块不读取 DOM。
-- **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`Rule Composition` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Simulation host 禁止回流旧 pending resolver/recover/skip。旧 pending inventory 与创建入口已删除，不得恢复第二套 resolver 或通用 pending 容器。
+- **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`Rule Composition` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Simulation host 禁止回流旧 pending resolver/recover/skip。Browser 的旧 pending 自动推进入口与公开 API 已删除，不得恢复第二套 resolver 或通用 pending 容器。
 - **公共 Heuristic Policy**：`game/ai/heuristic-policy.js` 是浏览器席位、offline demonstration teacher 与冻结评测对手共用的版本化策略实现；新顶层路径由 `expected-score-evaluator.js` 直接从公共 observation 与 legal descriptors 计算预期终局分，`heuristic-evaluator.js` 只保留合法集排序和旧浏览器兼容入口。浏览器通过 `browser-host/policy-input-adapter.js` 提交同一 Standard Action/Decision，训练与评测通过 `training/heuristic-policy-adapter.js` 使用同一实例与 provenance，不维护训练专用策略分叉。
 - **大脑层**：价值模型、目标系统、回合规划器，以及它们如何把“当前可行动内容的实时成本/收益”和“长线达成目标的动态收益”统一成一条决策链路。
 - **核心规则**：
   1. **收入价值要扣掉丢牌成本**：一次收入提升会弃 1 张手牌，价值 = 资源价值×剩余可享受次数 − 被弃牌价值。
   2. **价值以“动态实时框架单位”计算**：每次决策实时枚举可行动内容并算 `净收益 = 收益 − 成本`；长线收益（完成扇区 / 凑 6 数据分析 / 登陆等）按**当前可达性**动态加权，且因对手行动而实时变更。
   3. **终局板块标记后围绕高价值终局计分行动**：标记 25/50/70 后，凡能推进所标记 a/b/c/d 公式的行动，在原收益上叠加对应位次倍率的终局边际分。
-  4. **默认人机入口按 1 人类 + 3 电脑运行**：普通浏览器入口保留白色人类玩家，其余 3 个活跃席位由电脑行动；批跑和 A/B 入口未显式传 `activePlayerCount` 时也按 4 人局重置。
+  4. **默认人机入口按 1 人类 + 3 电脑运行**：普通浏览器入口保留白色人类玩家，其余 3 个活跃席位由电脑行动。
 
 > 机制、状态模型或接口变化时，请同步本文与 `AGENTS.md`（见 `AGENTS.md` 约定）。
 
@@ -50,7 +50,7 @@
 │ L1 价值模型 Valuation        game/ai/valuation.js         │ 单一估值口径
 │   资源折算 / 收入净值 / 终局边际 / 状态估值                 │
 └─────────────────────────────────────────────────────────┘
-        ▲ 接入 app/ai-controller.js 的电脑玩家驱动与子决策收口
+        ▲ 由 Machine Player Host 作为 Policy 估值输入
 ```
 
 数据流（一次决策）：
@@ -60,7 +60,7 @@ GameState 快照
   → L4 给出当前激活目标与权重（含对手影响后的可达性）
   → L2 对每个 legal action 实时算 net（含终局边际、目标加权）
   → Heuristic evaluator / L3 按 typed descriptor evaluation 的 `actionGraph.net`、实时估值与稳定顺序选择
-  → 经 `app/ai-controller.js` 执行，子决策再回到 L2/L4 估值
+  → Machine Player Host 返回 PolicyDecision，经公共输入端口提交
   → battle-analytics 记录 breakdown，供调参与路径挖掘
 ```
 
@@ -72,20 +72,15 @@ GameState 快照
 
 - 电脑玩家判定由 `isAiAutoBattlePlayer(playerId)` 统一处理；默认人机局保留白色人类玩家，其余活跃玩家由 `configureDefaultAiOpponent()` 配置为电脑。
 - `createAiControlSnapshot()` / `restoreAiControlSnapshot()` 只保存和恢复可持久化 AI 控制配置：是否启用、电脑席位、步进参数和策略权重；不恢复 `running`、已排队定时器、进行中的自动步骤或旧的阻塞暂停。旧存档缺失 AI 控制配置，或快照中的电脑席位无法解析时，按默认人机入口重建电脑席位；显式 `enabled:false` 的快照仍按全手动恢复。
-- 批跑 / A/B / 调参入口走 `configureAiAutoBattle()`、`runAiAutomationStep()`、`runAiAutoBattleBatch()`、`runAiStrategyABTest()`、`runAiStrategyTuningCycle()`；未显式传 `activePlayerCount` 时按 4 人局重置。
-- `runAiStrategyABTest()` 必须透传当前 `aiDifficulty`，`weak_start` 基线使用真实低难度默认权重；A/B 验收同时比较全席均分、每局最低分均值、P25、270+ 席位数、270+ 赢家局数、最高分、完成率、未完成局、阻塞和 bug。赢家均分单独上升、但全席或低尾下降时不得判定为改进；A/B 结束后必须恢复进入测试前的“难度默认权重 / 显式自定义权重”模式。
-- `runAiAutomationStep()` 是唯一推进器，先收口外星人使用、外星人痕迹和半人马就绪机会，再按“初始选择 / 弃牌 / PASS 预留 / 终局标记 / 公共牌选择 / 科技放置 / 扫描 / 打牌 / 移动支付 / 登陆 / 数据放置 / 共用扫描弹窗 / 效果链 / 顶层行动”的顺序推进其余 pending 状态。
+- Browser 不再暴露 batch、A/B、调参、candidate selector 或 `runAiAutomationStep()` 公开入口；旧 experiment 模块只保留历史诊断实现，不属于 Browser 生产 API。
+- 每个浏览器机器席位的唯一推进入口是 `browser-bootstrap` 的 Machine Player Host：它从 Rule Composition inspection/projection 构造 Action/Decision boundary，PolicyInputAdapter 完成 deadline、generation、stale 与重复响应校验后，经玩家共用 input port 提交。
 - AI 估值可以继续产生分数、reason、actionGraph 和 planner shadow，但这些字段只用于选择，不进入 Standard Action identity、合法性或执行输入。浏览器 AI 与训练 Policy 都从 `action-runtime` 的 Standard Action adapter 取得完整 descriptor，选中后交回同一 `registry.execute`；旧 action switch、simulation 专用 legality 与 runtime bypass 已删除。
 - 启发式与 Learned Policy 的新公共边界统一为 `game/ai/policy-port.js` 的 `DecisionContext -> PolicyDecision`。context 只含当前席位可见 observation、registry legal descriptors 和版本/确定性上下文；decision 只含一个 `actionId`、policy type/version/model checksum 与有限诊断。Host 独占请求时机、deadline/AbortSignal、恢复失效和最终提交，完整 failure taxonomy 与禁区矩阵见 `docs/policy-port-contract.md`。
 - 公共端口的独立启发式实现位于 `game/ai/heuristic-policy.js`，当前版本为 `seti-heuristic-policy-v2`。实例冻结难度、family 权重和 `seti-theta0-v1` 估值参数及配置 checksum，只从传入 legal descriptors 选择；空集、未知 family 与全禁用配置均 fail-closed，同一 conditional request 则允许共享 runtime 枚举的多个 family 共同参与选择。浏览器席位、teacher demonstration 与冻结 opponent 必须复用该实现和 provenance，不得包装旧 executor/resolver 或建立训练专用 selector；阶段 1 proof matrix 见 `docs/heuristic-policy-stage1.md`。
 - 机器人不再注入或强制使用 AI 专用公司；它与人类从同一开始界面公司池获得 2 张候选并按真实开局估值选择。初始牌组合、`openingPlan` 摘要、目标和 `aiStyle` 都按实际被确认的普通公司重算，避免使用未选择公司牌的资源结构污染后续策略。
 - 顶层行动候选仍由现有规则入口判断可用性，策略层优先读取 `actionGraph.net`，旧 `candidate.score` 只作为 fallback 与 tie-breaker。L3 规划器目前以影子模式对同一候选生成“快速 -> 主行动 -> 快速”的静态链，并把与实际策略的首行动分歧写入 `turn-action.plannerShadow`；在固定种子证明某类链能提升而不破坏高分局前，影子结果不直接改写实际选择。
-- 子决策以 `runAi*Decision()` 族函数处理；每个 AI pending 分支必须返回 `progressed`、`skipped` 或明确 `blocked`，不能把自动批跑永久停在需要人工点击的状态。
-- 任何跨弹窗延迟结算的 pending 都必须带 `playerId/playerColor` 或可解析 `effect`；AI 分发和确认 handler 均按 `pending owner -> effect owner -> current player` 解析执行玩家。若 pending owner 是人类玩家，AI 必须返回 `blocked` 等待人工处理；若 pending owner 是电脑玩家，人工入口必须拒绝并重新调度 AI，AI 调用确认 handler 时显式传入 `{ automated: true }`。不能因为当前可见玩家是人类而让人类控制 AI pending，也不能因为当前可见玩家是 AI 而代处理人类 pending。公共牌精选和打牌候选估值同样必须使用 pending owner 的资源、火箭数、可结算效果、任务/终局需求、路线计划、移动效果和角标移动预览；`scoreAiPlayCardValue` 内部 helper 不能回退到当前可见玩家。`codex-ai-low-resource-baseline:5` 在修正 owner 上下文后仍复现 `[138,199,279,218]`、`bugCount=0`，说明这是估值归属修正而非新的提分窗口。
-- 左侧兜底控制只用于恢复异常状态：`AI接管` 会把当前电脑 pending 或可恢复的电脑回合交回自动机并清除旧阻塞暂停，不清空现场 pending；`强制跳过` 会清理当前 pending UI 并把目标玩家标记为本回合已完成但不标记 PASS，用于脱离无法继续的执行卡死。
-- 共用 overlay 的 rare 效果也要有 AI 收口路径。`scanTargetOverlay` 除普通扫描外还承载移除标记、手牌角标奖励、任意弃牌收入、支付信用、重复角标、移除环绕放探测器、任务回手、探测器扇区扫描和探测器位置奖励；这些 pending 即使仍不作为 AI 主动打牌候选，也必须在被强制或触发进入时能自动选择、跳过或确认，不能停在弹窗上。
-- 手牌扫描效果只有在当前手牌存在可扫描角标时才打开 pending；若自动机选中的手牌无法继续展开扫描目标，会记录 `hand-scan-recovery` 并跳过当前效果节点，避免批跑停在 `pendingHandScanAction`。
-- 1 类任务卡触发只在当前事件窗口内可选；AI 若因火箭上限、资源不足或无合法目标无法发动某个触发，应取消本次触发选择并等待下次同类事件，不得消耗触发槽，也不得把自动批跑阻塞在不可执行触发上。
+- 子决策必须由 Rule Composition 以标准 Decision 暴露给 Policy；Browser 不再调用 `runAi*Decision()` pending resolver，也不允许 recover/skip 旧 pending。
+- 跨弹窗或 rare effect 若尚未进入标准 Decision，Machine Player Host 必须 fail-closed 并暂停，不能由旧 resolver、DOM click 或“取第一个候选”代处理。
 - PASS 预留牌默认仍保持原顺序；只有第 2 轮出现 0 信用点、0 能量或 1 手牌以内的硬资源锁，且预留牌堆里有能补对应短板的收入牌时，才启用 `scoreAiPassReserveCard` 排序，避免早期资源滚动被随机牌序截断。
 - PASS 预留日志现在额外记录 `passReserveResourcePressurePreview` 与 `passReserveResourcePressureMiss`：前者忽略“仅第 2 轮启用”的行为门槛，用来识别第 1/3/4 轮是否也存在 0 信用点、0 能量或低手牌且牌堆有对应收入牌的窗口，并列出最多 6 张能补短板的收入候选；后者表示该窗口当前只被记录、未用于排序，且选中牌本身也不是预览收入候选。批跑分析会输出 `passReserveResourcePressureMissSamples`，用于后续筛更窄的可验证窗口，不能直接把 PASS 预留排序扩到所有轮次。
 - AI 不直接改规则状态；顶层与 conditional 策略选择只消费 action-runtime 已枚举的完整 Standard Action descriptor，规则执行只发生在 registry family handler 中。估值 candidate、planner shadow 与诊断字段不得转换或替代公共 identity。
@@ -578,9 +573,8 @@ Goal = {
 ```
 randomizer/
 ├─ app/ai/control-runtime.js    # 控制状态、配置、快照、pending owner、scheduler 与 seed helper
-├─ app/ai/automation-runtime.js # pending 优先级、效果恢复与唯一自动步骤推进器
-├─ app/ai/action-executor.js    # 顶层候选汇总、选择、执行与失败重试
-├─ app/ai-controller.js         # runtime/rule composition 与稳定 API adapter
+├─ app/ai/browser-bootstrap.js  # Browser Machine Player Host 与 PolicyInputAdapter 装配
+├─ app/ai-controller.js         # 控制/估值 helper 装配，不暴露旧 automation API
 └─ game/ai/
    ├─ valuation.js        # L1：资源折算 / 收入净值 / 终局边际 / 状态估值
    ├─ race-model.js       # 跨层：公开行动窗口 / ETA / 独占收益与失败备选
@@ -598,7 +592,7 @@ randomizer/
 
 ## 9. 自博弈与日志挖掘
 
-复用 `runAiAutoBattleBatch` / `runAiStrategyABTest` / `runAiStrategyTuningCycle`，并增强“从高分日志反推可复用路径”：
+本节记录旧 Browser batch/A-B 工具曾采用的分析口径，仅供历史策略研究参考；这些函数不再是 Browser 公开 API，也不能作为当前机器席位 smoke 入口。后续若在独立离线 harness 重建日志挖掘，可复用以下分析目标：
 
 1. 批量自博弈，按最终分分桶，抽取**高分局（>25 / 抢到首痕迹）**完整序列。
 2. `battle-analytics.js` 增加**可配置窗口的行动序列**频繁模式统计，默认统计每名玩家自己的前 6 个玩家回合，支持 `sequenceWindowTurns: 8/10/"all"`；同时支持玩家回合序列、全局行动序列、前 N 个主行动序列。
@@ -706,8 +700,7 @@ node tools/run_node_tests.js --match game/ai
 node tools/run_node_tests.js
 ```
 
-浏览器 smoke 与批跑入口使用 `runAiAutoBattleBatch`。
-本地浏览器可用 `randomizer/index.html?codexAiBatch=3&seed=codex-ai-batch` 触发受 URL 参数保护的 smoke，结果写入 `#codex-ai-batch-result`；需要复现离散种子时可传 `seeds=codex-ai-batch-wide%3A6`，需要快速出口时可配 `maxSteps=50`、`stopBeforeRound=4` 或 `activePlayerCount=1`。该入口默认跳过状态读数/行动日志 DOM 重绘，并在 `stepDelayMs=0` 时不再每步进入浏览器定时器队列以避开后台标签页节流；长批跑默认每 80 步让出一次事件循环，也可用 `yieldEverySteps=120` 调整诊断可读性。`tools/run_ai_autobattle_browser.js` 作为 CDP 包装器默认传入 `yieldEverySteps=20`，可用 `--seeds seed-a,seed-b` 精确复现离散种子而不必补跑前缀局；纯验分时配 `--lightweight` 跳过完整分析与样本诊断，只需要槽位/精选/收入等 compact 决策记录时配 `--sampleDiagnostics`，避免为一个决策样本保留整局分析；从其它 worktree 调用脚本时必须传 `--root <被测仓库根目录>`，否则默认仍服务脚本所在仓库。等待预算至少 5 分钟并按 `games * maxSteps * 180ms` 放大，避免慢局在普通效果流中被误报为卡死；需要观察完整 UI 时传 `renderReadout=1`，极慢诊断可显式传 `--timeoutMs`；如果传了 `--out` 但运行超时，工具仍会落盘 `summary.timedOut=true`、`partialState.progress`、尾部日志和错误信息，方便先复盘阻塞点再继续 A/B；长批跑建议传 `--tmpRoot C:\tmp` 或设置 `SETI_AI_TMP_ROOT`，把临时 Chrome profile 放到可控目录，避免用户 Temp 持续膨胀。
+浏览器验收只使用 Machine Player Host smoke，证明真实页面装配、Policy 请求与公共输入提交链；旧 URL batch 参数和 `runAiAutoBattleBatch` 不再是生产验收入口。
 
 - 2026-07-10 验证过一个终局主行动前资源交易的严格收益口径：当 `cards-for-credit` 解锁的牌只有单步移动路线和 `playCardConversionPressure`，而没有直接分、公式增量、C2/任务进度或终局牌预期分时，不把路线计划和转换压力当成具体终局收益。它命中 seed2 蓝色 R4T5 的 `突破摄星`，但浏览器实跑从当前基线 `[194,172,227,181]` 退到 `[162,167,221,184]`，总分 `774→734`、最高 `227→221`、`bugCount=0`。行为已撤回：路线计划虽未立刻兑现，仍会改变后续共享牌、科技和行动节奏；后续必须按完整替代序列验证，不能仅根据“非直接收益”压制这类交易。
 - 2026-07-10 开局组合估值开始把“可立即研究科技”的宣传门槛从线性资源值中单独识别：`scoreOpeningCombination` 记录一次性 `immediatePublicity`，`weak_start` 只有初始公司和两张初始牌合计达到 4 宣传时才得到 3.2 的研究就绪价值。它修正 seed2 绿色作弊实验室把 `6+2`（1 宣传、仅两次扫描）压过 `16+2`（4 宣传、可直接研究科技）的误判；seed2 从 `[194,172,227,181]` 提升到 `[214,205,205,172]`，总分 `774→796`，开局计划转换缺口 `1→0`。固定 seed1/3/4/5 分别保持 `[189,322,207,222]`、`[163,212,287,174]`、`[307,161,298,160]`、`[153,209,279,250]`，全部 `bugCount=0`。五局总分 `4367→4389`，每席均分约 `218.35→219.45`；这是基于真实研究可行动性的正向修正，但仍不足以满足整体均分 +10 目标。
@@ -762,6 +755,6 @@ node tools/run_node_tests.js
 ## 12. 文档维护原则
 
 - 本文是 AI 设计的唯一维护入口；接口契约、价值口径、路线图和验证方式都在本文更新。
-- 若新增 AI 模块、公开 API、批跑指标或默认人机行为，需要同步本文的 §2、§8、§9、§11。
+- 若新增 AI 模块、机器席位接口、离线评估指标或默认人机行为，需要同步本文的 §2、§8、§9、§11；Browser 不得恢复 batch/A-B/candidate selector 公开 API。
 - 若改变基础价值、终局边际、外星人痕迹或行动成本口径，需要同步本文的 §3、§4、§5，并补充 `randomizer/game/ai/ai.test.js`。
 - `AGENTS.md` 只保留本文作为 AI 入口，避免再拆出临时成本收益或旧版接口文档。

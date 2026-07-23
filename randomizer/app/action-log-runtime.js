@@ -632,7 +632,7 @@
     }
 
     function renderActionLog() {
-      if (uiRuntimeState.codexAiBatchSuppressReadoutRender || !els.actionLogReadout) return;
+      if (!els.actionLogReadout) return;
       const entries = actionLogState.entries;
       if (!entries.length) {
         const empty = document.createElement("p");

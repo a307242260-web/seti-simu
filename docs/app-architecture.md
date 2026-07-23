@@ -6,7 +6,7 @@
 
 浏览器的 View、Input Adapter、ViewState、可见性边界和 proof obligations 见 [docs/browser-host-ui.md](./browser-host-ui.md)。本文件与该契约都描述当前生产装配。
 
-Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。`app/ai/action-executor.js` 不维护规则 switch；`app/simulation-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
+Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。旧 Browser AI action executor 已删除；`app/simulation-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
 
 Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-action-executor.js` 统一接收 Browser authority 的显式 working root 与 Standard Action descriptor。Browser 按钮和 AI descriptor 都经 `action-runtime` 进入该 executor；移动支付仍由宿主收集，但最终规则写入也回到同一 executor。该边界不读取 DOM、旧 Decision store 或 `app.js` 全局规则 slice，stale 与失败不得污染传入 root。
 
@@ -33,7 +33,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`ai/browser-bootstrap.js` 独占 Browser controller state、Composition step adapter 与 AI Host command facade；`initial-card-pending.js`、`interaction-pending.js`、`action-executor.js`、`automation-runtime.js` 承接 pending resolver、顶层行动执行与优先级编排；`ai-controller.js` 只装配这些 runtime 并转发稳定 API。
+17. `randomizer/app/ai/control-runtime.js` 封装机器席位配置、快照/恢复与调度；`ai/browser-bootstrap.js` 独占 Browser Machine Player Host、Composition boundary reader 与 PolicyInputAdapter 装配。Browser 不加载 action executor / automation runtime，也不暴露 candidate、selector、pending automation 或 batch/A-B API；`ai-controller.js` 只保留控制与估值 helper 装配。
 18. `randomizer/app/conditional-decision-domain.js` 构建条件动作的 owner/version/choices/followup；`conditional-action-executor.js` 只负责 descriptor 校验、stale 检查和失败原子恢复。`randomizer/app/effects/**` 继续按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
@@ -77,16 +77,12 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；规则状态、活跃 Session、RNG 与确定性序列统一由 Browser Composition lifecycle 原子保存/恢复，模块不接受 StateStore-only snapshot，也不在 composition 外回灌序列。UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，不暴露 Simulation reset/step/checkpoint/Decision API，也不返回 mutable working root。
-- `randomizer/app/ai/control-runtime.js`：AI 控制层。唯一持有 `aiAutoBattleState`、scheduler 标志与策略权重；通过显式 `state` getter 和回调读取 pending、执行自动步骤，不复制 app pending 或 resolver 状态。
+- `randomizer/app/ai/control-runtime.js`：机器席位控制层。唯一持有席位配置、scheduler 标志与策略权重；scheduler 只请求 Browser Machine Player Host 执行一次公共 Policy 输入，不读取或解析旧 pending。
 - `randomizer/app/ai/browser-bootstrap.js`：Browser Machine Player 装配边界。从 Composition inspection/projection 构造 Action/Decision boundary，连接公共 PolicyInputAdapter/Machine Player Host 和 BrowserInputAdapter；人类席位拒绝创建 Policy 请求，lifecycle 变化统一使在途 generation 失效。
 - `randomizer/app/ai/battle-log.js`：AI 对战日志 compact、entry、bug 计数与玩家/比分快照。
-- `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。
-- `randomizer/app/ai/tuning-history.js`：调参历史的 localStorage 持久化、A/B 摘要、推荐与应用入口。
-- `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
-- `randomizer/app/ai/initial-card-pending.js`：初始选择、收入弃牌、PASS 预留、公共牌/手牌选择、卡牌触发/任务与打牌 pending resolver。
-- `randomizer/app/ai/interaction-pending.js`：数据、移动支付、登陆、扫描、科技、公司免费移动与外星人 pending resolver；只通过筛选后的显式 context 调用 app flow，不持有 pending 状态。
-- `randomizer/app/ai/action-executor.js`、`randomizer/app/ai/automation-runtime.js`：遗留估值/实验实现，不得接入 Browser Machine Player 调度、Host Command 或公开 API；Browser 生产执行只走 PolicyInputAdapter。
-- `randomizer/app/ai-controller.js`：AI 装配 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域并转发稳定 API，不再包含 resolver、行动 executor、控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
+- `randomizer/app/ai/battle-report.js`、`tuning-history.js`、`experiment-runner.js`：历史诊断、报告和离线实验实现；不在 `window.SetiRandomizer` 暴露 Browser 生产入口，也不参与机器席位推进。
+- `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：迁移期遗留的估值 helper 容器；Browser controller 只消费仍有调用者的纯估值/检查能力，不暴露其中的 pending resolver。
+- `randomizer/app/ai-controller.js`：控制与估值 helper 装配 adapter；对 Browser 只返回席位配置/快照/调度和仍有生产 caller 的只读估值能力，不构造或暴露旧 action executor、automation runtime、candidate selector 或 pending automation。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
@@ -102,9 +98,9 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 ## 仍需拆分的高耦合区
 
-- AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；pending resolver 与 action executor 位于 `randomizer/app/ai/**`；纯估值、目标/需求、规划、竞速和候选构建位于 `randomizer/game/ai/**`。app AI runtime 通过窄显式 context 调用 UI flow，game AI 模块不得读取 DOM。
+- AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；Browser 推进只走 `browser-bootstrap` 的 Machine Player Host。纯估值、目标/需求、规划和竞速位于 `randomizer/game/ai/**`，game AI 模块不得读取 DOM。
 - `randomizer/app/aliens/species-runtime.js` 当前 4,455 行，边界是八物种共用机会队列、dialog、followup 与面板运行域；后续应按物种或 rewards/dialogs/render 子域继续拆，并保持共用队列单一所有者。
-- `randomizer/app/ai-controller.js` 当前 1,980 行；`control-runtime` / `initial-card-pending` / `interaction-pending` / `action-executor` / `automation-runtime` 当前分别为 659 / 1,095 / 2,278 / 283 / 404 行。controller context 缺项会在装配时直接失败。
+- `randomizer/app/ai-controller.js` 仍有迁移期估值 helper 装配债务；旧 `action-executor.js` / `automation-runtime.js` 已物理删除，新增 Browser 接线不得恢复这两个全局模块或它们的 controller API。
 - 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 
@@ -117,6 +113,8 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - 大块迁移不要顺手改规则、文案或常量值。先做无行为移动，通过回归后再做功能性调整。
 
 ## AI Stage 1 迁移记录
+
+以下 Stage 1～5 仅记录当时的拆分过程与旧文件归属，不描述当前 Browser 生产接线；当前边界以上文“当前加载层次 / 文件职责”为准。
 
 - 行数：`app/ai-controller.js` 从 Stage 0 的 22,960 行降为 22,434 行；新增 `app/ai/control-runtime.js` 659 行，低于 3,000 行边界。
 - 控制状态与配置：迁出 `aiAutoBattleState`、scheduler 四状态、`normalize/get/applyAiDifficulty*`、`configureDefaultAiOpponent`、`configureAiAutoBattle` 和玩家解析/配置函数。
@@ -148,7 +146,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 - composition：controller 按 runtime 的 `REQUIRED_CONTEXT_KEYS` 严格校验并注入 context，缺失依赖不再被静默过滤；深空换牌阈值按既有口径 `10` 补入显式 binding。
 - 测试：10,295 行集成测试拆为 pending、alien、action、strategy 四份 2,500 行以内的领域回归，共享 harness/fixture 独立维护；automation 与 action executor 增加直接模块契约测试。
-- Stage 5 收口边界：controller 22,960 → 1,968 行；后续接线后当前为 1,980 行。稳定 API、simulation/public API 调用方式、固定 seed 摘要与 pending 顺序保持不变；历史证据见 `docs/ai-controller-migration-stage5.md`。
+- Stage 5 的 controller 拆分数字仅为历史迁移记录；当前 Browser 已进一步删除旧 action/automation 模块、public candidate/batch API 与 pending 顺序推进器，不能再把当时的稳定 API/pending 顺序描述当作现状。历史证据见 `docs/ai-controller-migration-stage5.md`。
 
 ## 验证要求
 

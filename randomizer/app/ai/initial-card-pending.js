@@ -50,14 +50,6 @@
     }
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
-    function decidePolicyChoice() {
-      return {
-        ok: false,
-        code: "BROWSER_POLICY_INPUT_REQUIRED",
-        message: "Browser 机器选择只能经 Machine Player Host 与 PolicyInputAdapter 提交",
-      };
-    }
-
     function getOrderedAiAutoBattlePlayerIds(workingRoot) {
       const { turnState } = requireWorkingRoot(workingRoot);
       const aiIds = new Set(getAiAutoBattlePlayerIds());
@@ -106,162 +98,6 @@
       }
       const fallback = getAiSeatStyle(workingRoot, player?.id);
       return fallback || "balanced";
-    }
-
-    function chooseInitialSelectionForAiPlayer(workingRoot) {
-      const { playerState, turnState } = requireWorkingRoot(workingRoot);
-      if (!isInitialSelectionActive()) return null;
-      const playerId = playerState.currentPlayerId;
-      if (!isAiAutoBattlePlayer(playerId)) {
-        return { ok: false, blocked: true, message: `${getPlayerLabelById(playerId)}不是电脑玩家，等待人类初始选择` };
-      }
-      const offer = getInitialSelectionOffer(playerId);
-      if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
-      const player = resolveWorkingPlayerById(workingRoot, playerId);
-      if (player) applyAiDifficultyToPlayer(player);
-      const selectionOptions = {
-        roundNumber: turnState.roundNumber,
-        player,
-        aiDifficulty: player?.aiDifficulty,
-      };
-      const initialPairs = ai.selectionEvaluator.getInitialPairs(
-        offer.initialOptions || [],
-        INITIAL_SELECTION_REQUIRED.initial,
-      );
-      const openingPlans = (offer.industryOptions || []).flatMap((industry) => initialPairs.map((initialCards) => (
-        ai.selectionEvaluator.scoreOpeningCombination(industry, initialCards, selectionOptions)
-      ))).sort((left, right) => (
-        Number(right.score || 0) - Number(left.score || 0)
-        || String(left.industry?.id || "").localeCompare(String(right.industry?.id || ""))
-      ));
-      const policyResult = decidePolicyChoice(workingRoot, "choose_branch", player, "initial-selection", openingPlans.map((plan, index) => ({
-        choiceId: `${plan.industry?.id || index}:${plan.initialCards.map((card) => card.id).join("+")}`,
-        value: Number(plan.score || 0),
-        target: {
-          industryId: plan.industry?.id || null,
-          initialIds: plan.initialCards.map((card) => card.id),
-        },
-        summary: `${plan.industry?.label || plan.industry?.id || "公司"} + 初始牌`,
-        plan,
-      })));
-      if (!policyResult.ok) {
-        return { ok: false, blocked: true, code: policyResult.code, message: policyResult.message };
-      }
-      const selectedPlan = policyResult.choice.plan;
-      const industryCard = selectedPlan.industry;
-      const initialSelection = selectedPlan.initialCards;
-      if (!industryCard || initialSelection.length < INITIAL_SELECTION_REQUIRED.initial) {
-        return { ok: false, message: "AI 初始选择候选不足" };
-      }
-      const evaluatedOpening = ai.selectionEvaluator.evaluateInitialSelection(offer, selectionOptions);
-      const openingPlan = evaluatedOpening.industry?.id === industryCard.id
-        ? evaluatedOpening.openingPlan
-        : {
-          score: Math.round(selectedPlan.score * 100) / 100,
-          goals: selectedPlan.goals,
-          summary: selectedPlan.summary,
-          topPlans: evaluatedOpening.openingPlan?.topPlans || [],
-        };
-      const aiStyle = inferAiStyleFromOpening(workingRoot, openingPlan, industryCard, player);
-      if (player) {
-        player.aiStyle = aiStyle;
-      }
-      if (player && openingPlan) {
-        player.openingPlan = {
-          ...structuredClone(openingPlan),
-          industryLabel: industryCard.label || industryCard.id || null,
-          aiStyle,
-          aiDifficulty: player.aiDifficulty,
-          aiDifficultyLabel: player.aiDifficultyLabel,
-        };
-      }
-      offer.selectedIndustryId = industryCard.id;
-      offer.selectedInitialIds = initialSelection
-        .slice(0, INITIAL_SELECTION_REQUIRED.initial)
-        .map((card) => card.id);
-      recordAiAutoBattleLog(
-        "initial-selection",
-        `${getPlayerLabelById(playerId)}选择 ${industryCard.label || industryCard.id}`,
-        {
-          industryCard,
-          initialCards: initialSelection,
-          openingPlan,
-          aiStyle,
-          aiDifficulty: player?.aiDifficulty || aiAutoBattleState.aiDifficulty,
-          aiDifficultyLabel: player?.aiDifficultyLabel || getAiDifficultyLabel(),
-        },
-      );
-      confirmInitialSelectionForCurrentPlayer(workingRoot);
-      return { ok: true, progressed: true, message: "AI 初始选择完成" };
-    }
-
-    function runAiDiscardDecision(workingRoot) {
-      const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      if (!isDiscardSelectionActive(workingRoot) || !state.pendingDiscardAction) return null;
-      const pendingDiscard = state.pendingDiscardAction;
-      const player = resolveWorkingPlayerById(workingRoot, pendingDiscard.playerId) || getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工弃牌` };
-      }
-      const count = Math.max(0, Math.round(Number(pendingDiscard.count) || 0));
-      const pendingType = pendingDiscard.type || null;
-      const incomeGainByIndex = isAiIncomeDiscardType(pendingType)
-        ? (player.hand || []).map((card) => cards.getIncomeGainForCard?.(card) || null)
-        : null;
-      const incomePlanningEntries = incomeGainByIndex ? getAiIncomeFinalFormulaEntries(player) : [];
-      const dynamicIncomeIndexes = incomeGainByIndex
-        ? chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex, incomePlanningEntries)
-        : null;
-      const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"
-        ? chooseAiTradeDiscardIndexes(workingRoot, player, count, pendingDiscard)
-        : null;
-      const preferredIndexes = dynamicIncomeIndexes || tradeDiscardIndexes || ai?.selectionEvaluator?.evaluateDiscardIndexes?.(player.hand || [], count, {
-        pendingType,
-        incomeGainByIndex,
-      })
-        || [];
-      const discardChoices = [[...preferredIndexes].sort((left, right) => left - right), ...(player.hand || []).map((_card, startIndex) => {
-        const indexes = Array.from({ length: count }, (_item, offset) => (startIndex + offset) % player.hand.length)
-          .sort((left, right) => left - right);
-        return indexes;
-      })].filter((indexes, index, all) => (
-        all.findIndex((other) => other.join(",") === indexes.join(",")) === index
-      ));
-      const discardPolicy = decidePolicyChoice(workingRoot, "choose_card", player, `discard:${pendingType || "generic"}`, discardChoices.map((indexes) => ({
-        choiceId: indexes.join("+") || "none",
-        value: indexes.join(",") === [...preferredIndexes].sort((left, right) => left - right).join(",") ? 1 : 0,
-        target: { handIndexes: indexes },
-        summary: `弃牌 ${indexes.join(",")}`,
-        indexes,
-      })));
-      if (!discardPolicy.ok) return { ok: false, blocked: true, code: discardPolicy.code, message: discardPolicy.message };
-      const selectedIndexes = discardPolicy.choice.indexes;
-      const submittedIndexes = selectedIndexes.slice(0, count).sort((left, right) => left - right);
-      const incomeDiscardPreview = incomeGainByIndex
-        ? getAiIncomeDiscardPreview(player, count, pendingType, incomeGainByIndex, incomePlanningEntries, selectedIndexes)
-        : null;
-      recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${submittedIndexes.length} 张`, {
-        logPlayerId: player.id || null,
-        logPlayerColor: player.color || null,
-        selectedIndexes: submittedIndexes,
-        selectedCards: submittedIndexes
-          .map((handIndex) => {
-            const card = player.hand?.[handIndex] || null;
-            if (!card) return null;
-            return {
-              handIndex,
-              cardId: card.cardId || card.id || null,
-              cardInstanceId: card.id || null,
-              cardLabel: cards.getCardLabel?.(card) || card.cardName || card.label || null,
-            };
-          })
-          .filter(Boolean),
-        pendingType,
-        incomeGainByIndex,
-        incomeDiscardPreview,
-        tradeId: pendingDiscard.tradeId || null,
-      });
-      return finalizePendingDiscardSelection(workingRoot, submittedIndexes);
     }
 
 
@@ -779,8 +615,6 @@
       getAiStyleFallbackIndex,
       getAiSeatStyle,
       inferAiStyleFromOpening,
-      chooseInitialSelectionForAiPlayer,
-      runAiDiscardDecision,
       runAiCardSelectionDecision,
       cardTriggerNeedsFreeMove,
       getCardTriggerFreeMoveEffect,

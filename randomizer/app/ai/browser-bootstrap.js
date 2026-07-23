@@ -496,7 +496,7 @@
         difficulty,
         label,
       }),
-      runAiAutomationStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
+      runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
       recoverAiIdleActionEffectThroughComposition: () => fail(
         "BROWSER_MACHINE_RECOVERY_FORBIDDEN",
         "Machine Player 不允许 recover/skip 旧 pending",

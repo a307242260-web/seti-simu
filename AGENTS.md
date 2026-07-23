@@ -45,9 +45,9 @@
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。
 - `randomizer/app/ai/browser-bootstrap.js`：Browser AI controller state、Composition step adapter 与 AI Host command facade 的窄装配 owner；创建期校验必需端口。
-- `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：按初始/卡牌与交互域拆分的 pending resolver，通过窄 context 调用 app flow。
-- `randomizer/app/ai/action-executor.js`、`automation-runtime.js`：顶层行动执行、pending 优先级与自动化步骤编排。
-- `randomizer/app/ai-controller.js`：AI runtime/rule domain 装配、`REQUIRED_CONTEXT_KEYS` 完整性校验与稳定 API adapter；不再承载 resolver/executor 函数体。
+- `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：迁移期遗留的估值 helper 容器；Browser controller 不再暴露其中的 pending resolver。
+- 旧 `randomizer/app/ai/action-executor.js`、`automation-runtime.js` 已删除；Browser 机器席位不得恢复 candidate/selector/pending automation 旁路。
+- `randomizer/app/ai-controller.js`：机器席位控制与估值 helper 装配；Browser 推进只经 `ai/browser-bootstrap.js` 的 Machine Player Host，不暴露旧 automation 或 batch/A-B API。
 - `randomizer/game/ai/*-valuation.js`、`*-candidates.js`、`action-value.js`、`demand-card.js`、`route-planet.js` 等：按资源、卡牌、路线、扫描、科技、终局和外星人拆分的只读 AI 估值域；它们只产生评分/诊断，不创建公共 Action identity。
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
 - `randomizer/game/ai/machine-player-host.js`：浏览器与 Simulation 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。

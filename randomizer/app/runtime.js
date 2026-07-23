@@ -75,7 +75,6 @@
       handCardPlayAction: null,
       cardCornerQuickAction: null,
       stateReadoutRenderFrame: 0,
-      codexAiBatchSuppressReadoutRender: false,
     };
   }
 
