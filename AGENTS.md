@@ -9,6 +9,7 @@
 - 开始修改前，先读相关模块和本文件列出的细节文档；不要只凭记忆改机制。
 - 机制、状态模型、能力流程或资料路径发生变化时，同步更新对应文档。
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
+- `SETI-*` issue 使用 `/Users/bilibili/.local/bin/mocha` 的默认 workspace；执行 issue 命令前先运行 `mocha config show`，确认 workspace ID 为 `6377be1d-624b-40f3-aec9-810bdeaff66d`。不得附加 `--profile algo1-wyfx`，也不得把不存在的 `SETI-N` 改查或改写为同号 `ALG-N`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。
 - Node 测试只允许 unit 与唯一 full-flow 两类；分类、准入和完整流程 fixture 见 `docs/node-testing.md`。
 - 跨模块状态机、规则内核或 runtime 迁移开工前，按 `docs/implementation-proof-obligations.md` 将验收条款转成可证伪义务和分层证据；静态 coverage label 不算行为完成证据。
