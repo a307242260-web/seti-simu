@@ -2701,10 +2701,7 @@
     }),
   });
 
-  const {
-    controller: aiController,
-    compositionPort: aiCompositionPort,
-  } = aiBrowserBootstrapModule.createBrowserAiBootstrap({
+  const { controller: aiController } = aiBrowserBootstrapModule.createBrowserAiBootstrap({
     aiControlRuntimeModule,
     aiControllerModule: window.SetiAppAiController,
     ruleComposition,

@@ -506,16 +506,13 @@
       },
       getRuleReadout,
     });
-    const compositionPort = Object.freeze({
-      runAutomationStep: (options = {}) => machinePlayerPort.runOnce(options),
-    });
     ruleComposition.subscribe((event) => {
       if (event?.source === "lifecycle") {
         machinePlayerPort.invalidate(`Rule Composition lifecycle: ${event.event?.type || "unknown"}`);
       }
     });
 
-    return Object.freeze({ controller, compositionPort, machinePlayerPort });
+    return Object.freeze({ controller, machinePlayerPort });
   }
 
   return {
