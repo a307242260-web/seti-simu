@@ -122,7 +122,6 @@
       getPublicScanQueueSession: continuationGetter("publicScanContinuation"),
       getPendingProbeSectorScanDecision: continuationGetter("probeSectorScanContinuation"),
       getPendingProbeLocationRewardDecision: continuationGetter("probeLocationRewardContinuation"),
-      getPendingHandScanDecision: continuationGetter("handScanContinuation"),
       getPendingScanTargetDecision: continuationGetter("scanTargetContinuation"),
       getPendingCardMoveDecision: continuationGetter("cardMoveContinuation"),
       getPendingScanFreeMoveDecision: continuationGetter("scanFreeMoveContinuation"),
@@ -132,9 +131,6 @@
       getPendingCardTriggerFreeMove: continuationGetter("cardTriggerFreeMoveContinuation"),
       getPendingCardTriggerAction: continuationGetter("cardTriggerContinuation"),
       getPendingCardTaskCompletion: continuationGetter("cardTaskCompletionContinuation"),
-      getPendingPassReserveSelection: continuationGetter("passReserveContinuation"),
-      getPendingMovePayment: continuationGetter("movePaymentContinuation"),
-      getPendingDiscardDecision: continuationGetter("discardContinuation"),
     });
   }
 

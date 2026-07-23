@@ -97,7 +97,8 @@ function buildDecisionFromState(state, legalActions) {
   if (turn.gameEnded) return null;
   const actorPlayerId = legalActions[0]?.actorPlayerId || turn.currentPlayerId || null;
   if (!actorPlayerId) return null;
-  const pending = state.match?.discardContinuation || null;
+  const pending = state.match?.pendingDecision?.kind === "discard"
+    ? state.match.pendingDecision : null;
   return {
     actorPlayerId,
     pendingOwnerPlayerId: pending?.playerId || null,

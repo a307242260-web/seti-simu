@@ -193,6 +193,7 @@
   const initialGameStateModule = window.SetiInitialGameState;
   const effectSessionRuntimeModule = window.SetiEffectSession;
   const cardSelectionDecisionModule = window.SetiCardSelectionDecision;
+  const browserPendingDecisionModule = window.SetiBrowserPendingDecision;
   const standardActionSessionModule = window.SetiStandardActionSession;
   const standardActionModule = window.SetiStandardAction;
   const browserDomainTargets = () => ({
@@ -477,6 +478,21 @@
     canBlindDraw: (workingRoot) => canBlindDrawForRoot(workingRoot),
     isFutureSpanEligibleHandCard: (card) => isFutureSpanEligibleHandCard(card),
   });
+  let conditionalDecisionDomain = null;
+  const browserPendingDecisionOwner = browserPendingDecisionModule.createBrowserPendingDecisionOwner({
+    inspectSession: () => ruleComposition.inspect(),
+    enumerate: (workingRoot, kind, pending) => (
+      conditionalDecisionDomain.describePendingDecision(workingRoot, kind, pending)
+    ),
+  });
+  const takeOpenedDecisionEffect = () => {
+    const effects = [
+      cardSelectionDecisionOwner.takeOpenedDecisionEffect(),
+      browserPendingDecisionOwner.takeOpenedDecisionEffect(),
+    ].filter(Boolean);
+    if (effects.length > 1) throw new Error("同一规则事务不能打开多个 DecisionEffect");
+    return effects[0] || null;
+  };
   const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
     enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
     enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
@@ -582,11 +598,14 @@
       validateSessionBoundary: validateBrowserSessionBoundary,
     },
     getCommittedContext: getBrowserCommittedContext,
-    runWithWorkingState: (workingRoot, operation) => cardSelectionDecisionOwner.runRuleTransaction(
+    runWithWorkingState: (workingRoot, operation) => browserPendingDecisionOwner.runRuleTransaction(
       workingRoot,
-      () => players.runWithScoreGainListener(
-        (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
-        operation,
+      () => cardSelectionDecisionOwner.runRuleTransaction(
+        workingRoot,
+        () => players.runWithScoreGainListener(
+          (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
+          operation,
+        ),
       ),
     ),
     executeHostCommand: hostCommandDispatcher.execute,
@@ -597,9 +616,7 @@
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: standardActionContinuation,
-        takeOpenedCardSelectionDecisionEffect: () => (
-          cardSelectionDecisionOwner.takeOpenedDecisionEffect()
-        ),
+        takeOpenedDecisionEffect,
       },
     },
   });
@@ -657,6 +674,10 @@
     submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
   });
   const submitActiveCardDecision = activeDecisionPort.submit;
+  const abortActiveDecision = (message) => ruleComposition.inputPort.abort({
+    code: "BROWSER_DECISION_CANCELLED",
+    message,
+  });
   const initialSelectionHost = startScreenModule.createInitialSelectionHost({
     getActionRuntime: () => actionRuntimeController,
     getRuleReadout: () => createStateSourceReadoutRoot(),
@@ -715,12 +736,18 @@
     getPendingLandTargetDecision, getPendingAlienTraceDecision, getPendingPiratesRaidDecision,
     getPendingStrategySlotDecision, getPendingIndustryAbilityDecision, getPublicScanQueueSession,
     getPendingProbeSectorScanDecision, getPendingProbeLocationRewardDecision,
-    getPendingHandScanDecision, getPendingScanTargetDecision, getPendingCardMoveDecision,
+    getPendingScanTargetDecision, getPendingCardMoveDecision,
     getPendingScanFreeMoveDecision, getPendingIndustryFreeMoveDecision,
     hasTurnEndRevealContinuation, getPendingCardCornerFreeMove, getPendingCardTriggerFreeMove,
-    getPendingCardTriggerAction, getPendingCardTaskCompletion, getPendingPassReserveSelection,
-    getPendingMovePayment, getPendingDiscardDecision,
+    getPendingCardTriggerAction, getPendingCardTaskCompletion,
   } = browserMatchRuntime;
+  const getPendingHandScanDecision = () => browserPendingDecisionOwner.read("hand_scan");
+  const getPendingPassReserveSelection = () => browserPendingDecisionOwner.read("pass_reserve");
+  const getPendingMovePayment = () => browserPendingDecisionOwner.read("move_payment");
+  const getPendingDiscardDecision = () => browserPendingDecisionOwner.read("discard");
+  const openBrowserPendingDecision = (workingRoot, kind, pending) => (
+    browserPendingDecisionOwner.open(workingRoot, kind, pending)
+  );
   const readCardSelectionDecision = () => cardSelectionDecisionOwner.read();
   const openCardSelectionDecision = (workingRoot, pending) => {
     uiRuntimeState.publicCardSelectedSlots = [];
@@ -795,7 +822,7 @@
     getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
     getCurrentPlayer: (...args) => getCurrentPlayer(...args),
   });
-  const conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
+  conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
     FINAL_SCORE_IDS,
     getCurrentPlayer,
@@ -1951,6 +1978,8 @@
     scoreSourceRuntime,
     hostPort: {
       uiRuntimeState,
+      openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       els,
       quickActionHistory,
       HISTORY_SOURCE_QUICK,
@@ -1986,14 +2015,14 @@
   const isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
   const syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
   const isMovePaymentSelectionActive = (workingRoot = createStateSourceReadoutRoot()) => Boolean(
-    getPendingMovePayment(workingRoot),
+    getPendingMovePayment(),
   );
   const getMovePaymentPlayer = (...args) => callHandFlowCommand("getMovePaymentPlayer", args);
   const isMovePaymentLockedForAiAutomation = (...args) => callHandFlowCommand("isMovePaymentLockedForAiAutomation", args);
   const beginSupplementalMovePayment = (...args) => callHandFlowCommand("beginSupplementalMovePayment", args);
   const syncMovePaymentChrome = (...args) => callHandFlowCommand("syncMovePaymentChrome", args);
   const scrollToPlayerHandPanel = (...args) => callHandFlowCommand("scrollToPlayerHandPanel", args);
-  const cancelMovePaymentSelection = (...args) => callHandFlowCommand("cancelMovePaymentSelection", args);
+  const cancelMovePaymentSelection = () => abortActiveDecision("已取消移动支付");
   const beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
   const handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
   const resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
@@ -2080,6 +2109,8 @@
     renderRuntime,
     hostPort: {
       uiRuntimeState,
+      openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       getPendingYichangdianCornerAction: (...args) => getPendingYichangdianCornerAction(...args),
       document,
       structuredClone,
@@ -2190,7 +2221,7 @@
   const confirmPublicScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "confirmPublicScanSelection", args);
   const handlePublicScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handlePublicScanCardClick", args);
   const beginHandScan = (...args) => callBrowserDomainCommand("scan_flow", "beginHandScan", args);
-  const cancelHandScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "cancelHandScanSelection", args);
+  const cancelHandScanSelection = () => abortActiveDecision("已取消手牌扫描");
   const handleHandScanCardClick = (handIndex) => submitActiveCardDecision(
     "hand-scan-card",
     (target) => Number(target.handIndex) === Number(handIndex),
@@ -2962,6 +2993,8 @@
       ),
       normalizeResourceCost,
       uiRuntimeState,
+      openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       quickActionHistory,
       renderActionEffectBar,
       structuredClone,
@@ -3643,6 +3676,7 @@
       isAsteroidContent, isDataPoolFull, markCurrentActionIrreversible,
       maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan(...args),
       nebulaHasScannableData, normalizeResourceCost, openAutoDataPlacementPrompt,
+      openPendingDecision: openBrowserPendingDecision,
       openScanTargetPicker, planetReferenceLayout, planetStats, players, recordAbilityCommands,
       recordHistoryCommand, recordScoreSourceForGainEffect, renderActionEffectBar,
       renderPlayerHand, renderPlayerStats, renderPublicCards,
@@ -3709,6 +3743,7 @@
       maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan(...args),
       maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction(...args),
       onTechTileTaken: (...args) => onTechTileTaken(...args),
+      openPendingDecision: openBrowserPendingDecision,
       openAmibaSymbolChoiceDialog, openAmibaTraceRemovalDialog, openAomomoCardGainDialog,
       openFangzhouTraceDestinationChoice: (workingRoot, ...args) => openFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
       openRunezuSymbolBranchDialog, openScanAction4Picker, openScanTargetPicker, planetRewards,

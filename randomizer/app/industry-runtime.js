@@ -393,12 +393,6 @@
         if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
         if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       }
-      if (workingRoot.match?.discardContinuation?.type === "industry_helios_income") {
-        delete workingRoot.match.discardContinuation;
-        uiRuntimeState.discardSelectedHandIndexes = [];
-        cards.setDiscardSelectionActive(cardState, false, 0);
-        syncDiscardSelectionChrome();
-      }
       if (readCardSelectionDecision()?.type?.startsWith?.("industry_")) {
         openCardSelectionDecision(workingRoot, null);
         cards.setSelectionActive(cardState, false);

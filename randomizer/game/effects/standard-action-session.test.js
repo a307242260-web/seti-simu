@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const stateStoreApi = require("../state/state-store");
 const effectRuntimeApi = require("./session-runtime");
 const cardSelection = require("./card-selection-decision");
+const browserPendingDecision = require("./browser-pending-decision");
 const standardActionDomain = require("./standard-action-session");
 const { createRuleComposition } = require("../rule-composition");
 
@@ -354,6 +355,48 @@ function createCardSelectionOwner(overrides = {}) {
   assert.equal(effect.payload.choices.every((choice) => (
     choice.cardSelection.type === "card_public_corner_discard"
   )), true);
+}
+
+{
+  let inspection = { session: { decision: null } };
+  const owner = browserPendingDecision.createBrowserPendingDecisionOwner({
+    inspectSession: () => inspection,
+    enumerate(_workingRoot, kind, pending) {
+      return {
+        actorPlayer: { id: pending.playerId },
+        candidates: [{
+          family: kind === "hand_scan" ? "choose_card" : "choose_payment",
+          target: { kind, choiceId: "legal" },
+        }],
+      };
+    },
+  });
+  const root = {};
+  for (const kind of browserPendingDecision.SUPPORTED_KINDS) {
+    let effect;
+    owner.runRuleTransaction(root, () => {
+      owner.open(root, kind, { playerId: "p1", marker: kind });
+      effect = owner.takeOpenedDecisionEffect();
+    });
+    assert.equal(effect.kind, "decision");
+    assert.equal(effect.ownerId, "p1");
+    assert.deepEqual(effect.payload.choices[0].decisionContext, {
+      kind,
+      pending: { playerId: "p1", marker: kind },
+    });
+    inspection = {
+      session: {
+        decision: {
+          choices: structuredClone(effect.payload.choices),
+        },
+      },
+    };
+    assert.equal(owner.read(kind).marker, kind, "Browser 必须从同一 Decision snapshot 读取等待态");
+  }
+  assert.throws(
+    () => owner.open(root, "discard", { playerId: "p1" }),
+    /当前规则事务/,
+  );
 }
 
 console.log("standard action Effect Session tests passed");

@@ -298,14 +298,11 @@
     }
 
     function clearPlayerScopedSelectionsForSwitch(workingRoot) {
-      delete workingRoot.match.discardContinuation;
       uiRuntimeState.discardSelectedHandIndexes = [];
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
-      delete workingRoot.match.passReserveContinuation;
       uiRuntimeState.passReserveSelectionDismissed = false;
       uiRuntimeState.passReserveSelectedCardId = null;
-      delete workingRoot.match.handScanContinuation;
       uiRuntimeState.playCardSelection = null;
       uiRuntimeState.handCardPlayAction = null;
       uiRuntimeState.cardCornerQuickAction = null;
@@ -1121,15 +1118,11 @@
       if (effectOwner) return effectOwner;
 
       const pendingEntries = [
-        workingRoot.match?.movePaymentContinuation,
-        workingRoot.match?.discardContinuation,
         decisionInput.readCardSelectionDecision?.(),
-        workingRoot.match?.passReserveContinuation,
         workingRoot.match?.scanTargetContinuation,
         workingRoot.match?.probeSectorScanContinuation,
         workingRoot.match?.probeLocationRewardContinuation,
         workingRoot.match?.publicScanContinuation,
-        workingRoot.match?.handScanContinuation,
         workingRoot.match?.alienTraceContinuation,
         workingRoot.match?.landTargetContinuation,
         workingRoot.match?.dataPlacementContinuation,

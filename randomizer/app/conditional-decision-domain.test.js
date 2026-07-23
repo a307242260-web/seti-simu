@@ -79,11 +79,10 @@ function createFixture() {
       },
       getPlayerById: (_workingRoot, playerId) => root.playerState.players.find((player) => player.id === playerId) || null,
       cards: { getCardLabel: (card) => card?.label || card?.id || "card" },
-      getPendingPassReserveSelection: (workingRoot) => workingRoot.match.passReserveContinuation || null,
+      getPendingPassReserveSelection: () => null,
       getPassReserveSelectionCards: () => [{ id: "reserve-a", label: "预留 A" }, { id: "reserve-b", label: "预留 B" }],
       confirmPassReserveSelection: (workingRoot, cardId) => {
         state.passReserveCalls.push(cardId);
-        delete workingRoot.match.passReserveContinuation;
         return { ok: true, progressed: true };
       },
       getPendingCardTriggerAction: (workingRoot) => workingRoot.match.cardTriggerContinuation || null,
@@ -107,13 +106,11 @@ function createFixture() {
         delete workingRoot.match.dataPlacementContinuation;
         return { ok: true, progressed: true, skipped: true };
       },
-      finalizePendingDiscardSelection: (workingRoot, handIndexes) => {
+      finalizePendingDiscardSelection: (_workingRoot, handIndexes) => {
         state.discardCalls.push([...handIndexes]);
-        delete workingRoot.match.discardContinuation;
         return { ok: true, progressed: true };
       },
-      cancelDiscardSelection: (workingRoot) => {
-        delete workingRoot.match.discardContinuation;
+      cancelDiscardSelection: () => {
         return { ok: true, progressed: true, skipped: true };
       },
       getPendingLandTargetDecision: (workingRoot) => workingRoot.match.landTargetContinuation || null,
@@ -167,9 +164,8 @@ function createFixture() {
       players: {
         canAfford: (player, cost) => Number(player?.resources?.energy || 0) >= Number(cost?.energy || 0),
       },
-      resolveMovePaymentDecision: (options) => {
+      resolveMovePaymentDecision: (_workingRoot, options) => {
         state.movePaymentCalls.push(structuredClone(options));
-        delete root.match.movePaymentContinuation;
         return { ok: true, progressed: true };
       },
       rocketActions: {
@@ -251,25 +247,20 @@ function createFixture() {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.discardContinuation = {
+  const pending = {
     playerId: "move-owner",
     type: "pass_hand_limit",
     count: 2,
     required: true,
   };
-  const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.equal(decision.ownerId, "move-owner");
-  assert.deepEqual(decision.choices.map((choice) => choice.target), [{
+  const decision = fixture.domain.describePendingDecision(fixture.root, "discard", pending);
+  assert.equal(decision.actorPlayer.id, "move-owner");
+  assert.deepEqual(decision.candidates.map((choice) => choice.target), [{
     kind: "discard-hand-cards",
     choiceId: "0+1",
     handIndexes: [0, 1],
     cardIds: ["move-1", "move-2"],
   }]);
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_payment"));
-  assert.equal(result.ok, true);
-  assert.deepEqual(fixture.state.discardCalls, [[0, 1]]);
-  assert.equal(fixture.root.match.discardContinuation, undefined);
 }
 
 {
@@ -301,14 +292,12 @@ function createFixture() {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.passReserveContinuation = { effectId: "pass", playerId: "move-owner", roundNumber: 2 };
-  const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.deepEqual(decision.choices.map((choice) => choice.choiceId), ["reserve-a", "reserve-b"]);
-  assert.equal(fixture.root.match.passReserveContinuation.selectedCardId, undefined, "规则 continuation 不得保存 UI 选择");
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_card"));
-  assert.equal(result.ok, true);
-  assert.deepEqual(fixture.state.passReserveCalls, ["reserve-a"]);
+  const decision = fixture.domain.describePendingDecision(fixture.root, "pass_reserve", {
+    effectId: "pass",
+    playerId: "move-owner",
+    roundNumber: 2,
+  });
+  assert.deepEqual(decision.candidates.map((choice) => choice.target.choiceId), ["reserve-a", "reserve-b"]);
 }
 
 {
@@ -347,26 +336,21 @@ function createFixture() {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.movePaymentContinuation = {
+  const pending = {
     playerId: "move-owner",
     requiredMovePoints: 2,
     rocketId: 7,
     deltaX: 1,
     deltaY: 0,
   };
-  const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.equal(decision.ownerId, "move-owner");
-  assert.ok(decision.choices.every((choice) => choice.family === "choose_payment"));
+  const decision = fixture.domain.describePendingDecision(fixture.root, "move_payment", pending);
+  assert.equal(decision.actorPlayer.id, "move-owner");
+  assert.ok(decision.candidates.every((choice) => choice.family === "choose_payment"));
   assert.deepEqual(
-    decision.choices.map((choice) => choice.payload.selectedHandIndices),
+    decision.candidates.map((choice) => choice.selectedHandIndices),
     [[0], [1], [0, 1]],
-    "支付合法项必须只从 Composition continuation 与 working player 枚举",
+    "支付合法项必须只从 Decision payload 与 working player 枚举",
   );
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_payment"));
-  assert.equal(result.ok, true);
-  assert.deepEqual(fixture.state.movePaymentCalls, [{ automated: true, selectedHandIndices: [0] }]);
-  assert.equal(fixture.root.match.movePaymentContinuation, undefined);
 }
 
 {

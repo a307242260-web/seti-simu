@@ -142,6 +142,7 @@
       openRemovePlanetMarkerPicker,
       openRunezuSymbolBranchDialog,
       openScanAction4Picker,
+      openPendingDecision,
       openScanTargetPicker,
       planetRewards,
       recordAbilityCommands,
@@ -891,12 +892,12 @@
             renderStateReadout();
             return effect.result;
           }
-          workingRoot.match.handScanContinuation = {
+          openPendingDecision(workingRoot, "hand_scan", {
             type: "hand_scan",
             playerId: currentPlayer.id,
             playerColor: currentPlayer.color || null,
             fromEffectFlow: true,
-          };
+          });
           ruleRocketState(workingRoot).statusNote = "手牌扫描：请选择一张手牌弃除并扫描";
           syncHandScanSelectionChrome(workingRoot);
           updateActionButtons();

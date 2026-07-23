@@ -183,6 +183,98 @@
     };
   }
 
+  function describePendingDecision(workingRoot, kind, pending) {
+    if (!workingRoot || typeof workingRoot !== "object") {
+      throw new TypeError("Browser pending Decision 需要显式 working root");
+    }
+    if (kind === "hand_scan") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending);
+      const candidates = (player?.hand || []).flatMap((card, handIndex) => (
+        getPublicScanChoicesForCard(card)?.ok ? [{
+          id: "conditionalChoice",
+          family: "choose_card",
+          label: cards.getCardLabel(card),
+          target: {
+            kind: "hand-scan-card",
+            choiceId: String(handIndex),
+            cardId: card.cardId || card.id || null,
+            handIndex,
+          },
+          handIndex,
+        }] : []
+      ));
+      if (pending.optional || !candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过手牌扫描",
+          target: { kind: "skip-hand-scan", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "pass_reserve") {
+      const player = getPlayerById(workingRoot, pending.playerId) || getCurrentPlayer(workingRoot);
+      return {
+        actorPlayer: player,
+        candidates: getPassReserveSelectionCards(workingRoot, pending).map((card) => ({
+          id: "conditionalChoice",
+          family: "choose_card",
+          label: cards.getCardLabel(card),
+          target: {
+            kind: "pass-reserve-card",
+            choiceId: card.id,
+            cardId: card.cardId || card.id || null,
+          },
+          cardInstanceId: card.id,
+        })),
+      };
+    }
+    if (kind === "move_payment") return enumerateSimulationMovePaymentActions(workingRoot, pending);
+    if (kind === "discard") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending);
+      const count = Math.max(0, Math.round(Number(pending.count) || 0));
+      const hand = player?.hand || [];
+      const combinations = [];
+      function collectCombinations(startIndex, selected) {
+        if (selected.length === count) {
+          combinations.push([...selected]);
+          return;
+        }
+        for (let handIndex = startIndex; handIndex <= hand.length - (count - selected.length); handIndex += 1) {
+          selected.push(handIndex);
+          collectCombinations(handIndex + 1, selected);
+          selected.pop();
+        }
+      }
+      collectCombinations(0, []);
+      return {
+        actorPlayer: player,
+        candidates: [
+          ...combinations.map((handIndexes) => ({
+            id: "conditionalChoice",
+            family: "choose_payment",
+            label: handIndexes.map((handIndex) => cards.getCardLabel(hand[handIndex])).join("、"),
+            target: {
+              kind: "discard-hand-cards",
+              choiceId: handIndexes.join("+"),
+              handIndexes,
+              cardIds: handIndexes.map((handIndex) => hand[handIndex]?.cardId || hand[handIndex]?.id || null),
+            },
+            handIndexes,
+          })),
+          ...(!pending.required ? [{
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "取消弃牌",
+            target: { kind: "cancel-discard-selection", choiceId: "cancel" },
+          }] : []),
+        ],
+      };
+    }
+    throw new TypeError(`未知 browser pending Decision: ${kind || "<missing>"}`);
+  }
+
   function collectConditionalChoices(workingRoot) {
     if (!workingRoot || typeof workingRoot !== "object") {
       throw new TypeError("Conditional Decision 需要显式 working root");
@@ -588,55 +680,6 @@
         ],
       };
     }
-    const handScanPending = workingRoot.match?.handScanContinuation;
-    if (handScanPending) {
-      const player = getSimulationConditionalPlayer(workingRoot, handScanPending);
-      const candidates = (player?.hand || []).flatMap((card, handIndex) => (
-        getPublicScanChoicesForCard(card)?.ok ? [{
-          id: "conditionalChoice",
-          family: "choose_card",
-          label: cards.getCardLabel(card),
-          target: {
-            kind: "hand-scan-card",
-            choiceId: String(handIndex),
-            cardId: card.cardId || card.id || null,
-            handIndex,
-          },
-          handIndex,
-        }] : []
-      ));
-      if (handScanPending.optional || !candidates.length) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "跳过手牌扫描",
-          target: { kind: "skip-hand-scan", choiceId: "skip" },
-        });
-      }
-      return { actorPlayer: player, candidates };
-    }
-    const passReservePending = getPendingPassReserveSelection(workingRoot);
-    if (passReservePending) {
-      const player = getPlayerById(workingRoot, passReservePending.playerId) || getCurrentPlayer(workingRoot);
-      return {
-        actorPlayer: player,
-        candidates: getPassReserveSelectionCards(workingRoot).map((card) => ({
-          id: "conditionalChoice",
-          family: "choose_card",
-          label: cards.getCardLabel(card),
-          target: {
-            kind: "pass-reserve-card",
-            choiceId: card.id,
-            cardId: card.cardId || card.id || null,
-          },
-          cardInstanceId: card.id,
-        })),
-      };
-    }
-    const movePaymentContinuation = workingRoot.match?.movePaymentContinuation || null;
-    if (movePaymentContinuation) {
-      return enumerateSimulationMovePaymentActions(workingRoot, movePaymentContinuation);
-    }
     if (isTechTilePickingActive(workingRoot)) {
       const player = getSimulationConditionalPlayer(
         workingRoot,
@@ -998,48 +1041,6 @@
         })),
       };
     }
-    const discardPending = workingRoot.match?.discardContinuation;
-    if (discardPending) {
-      const player = getSimulationConditionalPlayer(workingRoot, discardPending);
-      const count = Math.max(0, Math.round(Number(discardPending.count) || 0));
-      const hand = player?.hand || [];
-      const combinations = [];
-      function collectCombinations(startIndex, selected) {
-        if (selected.length === count) {
-          combinations.push([...selected]);
-          return;
-        }
-        for (let handIndex = startIndex; handIndex <= hand.length - (count - selected.length); handIndex += 1) {
-          selected.push(handIndex);
-          collectCombinations(handIndex + 1, selected);
-          selected.pop();
-        }
-      }
-      collectCombinations(0, []);
-      return {
-        actorPlayer: player,
-        candidates: [
-          ...combinations.map((handIndexes) => ({
-            id: "conditionalChoice",
-            family: "choose_payment",
-            label: handIndexes.map((handIndex) => cards.getCardLabel(hand[handIndex])).join("、"),
-            target: {
-              kind: "discard-hand-cards",
-              choiceId: handIndexes.join("+"),
-              handIndexes,
-              cardIds: handIndexes.map((handIndex) => hand[handIndex]?.cardId || hand[handIndex]?.id || null),
-            },
-            handIndexes,
-          })),
-          ...(!discardPending.required ? [{
-            id: "conditionalChoice",
-            family: "accept_optional_effect",
-            label: "取消弃牌",
-            target: { kind: "cancel-discard-selection", choiceId: "cancel" },
-          }] : []),
-        ],
-      };
-    }
     const landPending = getPendingLandTargetDecision(workingRoot);
     if (landPending) {
       return {
@@ -1238,7 +1239,11 @@
     ),
     "skip-drawn-hand-scan": (_action, workingRoot) => handleDrawnHandScanSkip(workingRoot),
     "pass-reserve-card": (action, workingRoot) => {
-      return confirmPassReserveSelection(workingRoot, action.target.choiceId);
+      return confirmPassReserveSelection(
+        workingRoot,
+        action.target.choiceId,
+        action.decisionContext?.pending,
+      );
     },
     "card-trigger": (action, workingRoot) => handleCardTriggerChoice(
       workingRoot,
@@ -1252,9 +1257,12 @@
       action.target.choiceId,
       { automated: true },
     ),
-    "hand-scan-card": (action, workingRoot) => handleHandScanCardClick(workingRoot, Number(action.target.handIndex)),
+    "hand-scan-card": (action, workingRoot) => handleHandScanCardClick(
+      workingRoot,
+      Number(action.target.handIndex),
+      action.decisionContext?.pending,
+    ),
     "skip-hand-scan": (_action, workingRoot) => {
-      delete workingRoot.match.handScanContinuation;
       skipCurrentActionEffect(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已跳过手牌扫描" };
     },
@@ -1319,16 +1327,18 @@
       }
       return { ok: true, progressed: true, skipped: true, message: "已跳过无法执行的免费移动" };
     },
-    "move-payment": (action) => {
-      return resolveMovePaymentDecision({
+    "move-payment": (action, workingRoot) => {
+      return resolveMovePaymentDecision(workingRoot, {
         automated: true,
         selectedHandIndices: [...(action.selectedHandIndices || [])],
+        pending: action.decisionContext?.pending,
       });
     },
     "strategy-passive-slot": (action) => confirmStrategyPassiveSlotChoice(action.target.slotId),
     "discard-hand-cards": (action, workingRoot) => finalizePendingDiscardSelection(
       workingRoot,
       action.target.handIndexes,
+      action.decisionContext?.pending,
     ),
     "cancel-discard-selection": (_action, workingRoot) => cancelDiscardSelection(workingRoot)
       || { ok: true, progressed: true, skipped: true, message: "已取消弃牌" },
@@ -1363,12 +1373,14 @@
       ...structuredClone(choice.payload || {}),
       family: choice.family,
       target: structuredClone(choice.target || null),
+      decisionContext: structuredClone(choice.payload?.decisionContext || null),
     }, workingRoot);
   }
 
 
     return Object.freeze({
       describeDecision: collectConditionalChoices,
+      describePendingDecision,
       executeChoice: executeProductionConditionalChoice,
     });
   }
@@ -1384,6 +1396,7 @@
     };
     return Object.freeze({
       describeDecision: (...args) => resolve().describeDecision(...args),
+      describePendingDecision: (...args) => resolve().describePendingDecision(...args),
       executeChoice: (...args) => resolve().executeChoice(...args),
     });
   }

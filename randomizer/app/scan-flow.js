@@ -129,6 +129,8 @@
     return createScanFlowHelpers({
       ...staticContext,
       uiRuntimeState: hostPort.uiRuntimeState,
+      openPendingDecision: hostPort.openPendingDecision,
+      readPendingDecision: hostPort.readPendingDecision,
       clearPendingAmibaSymbolChoice: alien("clearAmibaSymbolDecisionDraft"),
       clearPendingRunezuSymbolBranch: alien("clearRunezuSymbolBranchDecisionDraft"),
       clearPendingRunezuFaceSymbolPlacement: alien("clearRunezuFaceSymbolDecisionDraft"),
@@ -290,15 +292,11 @@
       uiRuntimeState.cardSelectionType = null;
     }
     const uiRuntimeState = context.uiRuntimeState || {};
-    const getHandScanContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.handScanContinuation || null;
+    const getHandScanDecision = () => context.readPendingDecision?.("hand_scan") || null;
     function setHandScanContinuation(workingRoot, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!continuation) {
-        delete activeRoot.match.handScanContinuation;
-        return null;
-      }
-      activeRoot.match.handScanContinuation = structuredClone(continuation);
-      return activeRoot.match.handScanContinuation;
+      requireWorkingRoot(workingRoot);
+      if (!continuation) return null;
+      return context.openPendingDecision(workingRoot, "hand_scan", continuation);
     }
     const clearPendingAmibaSymbolChoice = requireFunction(
       "clearPendingAmibaSymbolChoice",
@@ -1017,11 +1015,14 @@
       renderStateReadout();
     }
 
-    function handleHandScanCardClick(workingRoot, handIndex) {
+    function handleHandScanCardClick(workingRoot, handIndex, pendingOverride = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || getActionEffectFlow(workingRoot));
+      const fromEffectFlow = Boolean(
+        (pendingOverride || getHandScanDecision())?.fromEffectFlow
+        || getActionEffectFlow(workingRoot)
+      );
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];

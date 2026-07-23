@@ -1445,13 +1445,13 @@
       const movePayment = continuationState.movePayment;
       const playCardSelection = continuationState.playCardSelection;
       const discardActive = Boolean(cardState.ui?.discardSelectionActive)
-        && continuationState.discardContinuation?.playerId === currentPlayer?.id;
+        && continuationState.discardDecision?.playerId === currentPlayer?.id;
       const playActive = Boolean(cardState.ui?.playCardSelectionActive)
         && actualCurrentPlayer?.id === currentPlayer?.id;
       const movePaymentActive = Boolean(movePayment)
         && (movePayment.playerId || movePayment.player?.id) === currentPlayer?.id;
-      const handScanActive = Boolean(continuationState.handScanContinuation)
-        && continuationState.handScanContinuation?.playerId === currentPlayer?.id;
+      const handScanActive = Boolean(continuationState.handScanDecision)
+        && continuationState.handScanDecision?.playerId === currentPlayer?.id;
       const cardCornerAction = continuationState.cardCornerQuickAction;
       const handCardPlayAction = continuationState.handCardPlayAction;
       const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();

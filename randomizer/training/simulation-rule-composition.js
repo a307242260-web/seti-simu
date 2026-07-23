@@ -396,13 +396,14 @@ function installOpeningDiscard(workingState) {
   const next = workingState.match.initialIncomeQueue?.[0] || null;
   const player = workingState.playerState.players.find((candidate) => candidate.id === next?.playerId) || null;
   if (!next || !player) {
-    delete workingState.match.discardContinuation;
+    delete workingState.match.pendingDecision;
     delete workingState.match.initialIncomeQueue;
     workingState.playerState.currentPlayerId = workingState.turnState.startPlayerId;
     return false;
   }
   workingState.playerState.currentPlayerId = player.id;
-  workingState.match.discardContinuation = {
+  workingState.match.pendingDecision = {
+    kind: "discard",
     type: "initial_income",
     playerId: player.id,
     count: 1,
@@ -412,8 +413,8 @@ function installOpeningDiscard(workingState) {
 }
 
 function discardChoices(workingState) {
-  const pending = workingState.match.discardContinuation;
-  if (!pending) return [];
+  const pending = workingState.match.pendingDecision;
+  if (pending?.kind !== "discard") return [];
   const player = workingState.playerState.players.find((candidate) => candidate.id === pending.playerId);
   if (!player) return [];
   return player.hand.map((card, handIndex) => ({
@@ -459,7 +460,7 @@ function createSimulationRuleComposition(options = {}) {
   const baseRegistry = actions.createStandardRegistry({
     getAuthority(workingState) {
       const root = workingState.workingRoot || workingState;
-      const pending = root.match.discardContinuation;
+      const pending = root.match.pendingDecision;
       return {
         actorId: pending?.playerId || root.playerState.currentPlayerId || null,
         stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
@@ -520,7 +521,8 @@ function createSimulationRuleComposition(options = {}) {
     },
     execute(context, action) {
       const root = context.workingRoot || context;
-      root.match.movePaymentContinuation = {
+      root.match.pendingDecision = {
+        kind: "move_payment",
         type: "move-payment", playerId: root.playerState.currentPlayerId,
         rocketId: action.target.rocketId, deltaX: action.target.deltaX, deltaY: action.target.deltaY,
         requiredMovePoints: action.payload?.requiredMovePoints || 1,
@@ -533,7 +535,8 @@ function createSimulationRuleComposition(options = {}) {
     family: "choose_payment",
     enumerate(context) {
       const root = context.workingRoot || context;
-      const pendingMove = root.match.movePaymentContinuation;
+      const pendingMove = root.match.pendingDecision?.kind === "move_payment"
+        ? root.match.pendingDecision : null;
       if (pendingMove) {
         const player = root.playerState.players.find((candidate) => candidate.id === pendingMove.playerId);
         return Number(player?.resources?.energy || 0) >= pendingMove.requiredMovePoints
@@ -548,7 +551,7 @@ function createSimulationRuleComposition(options = {}) {
     },
     validate(context, action) {
       const root = context.workingRoot || context;
-      const candidates = root.match.movePaymentContinuation
+      const candidates = root.match.pendingDecision?.kind === "move_payment"
         ? [{ target: { choiceId: "energy" } }]
         : discardChoices(root);
       return candidates.some((choice) => choice.target.choiceId === action.target?.choiceId)
@@ -557,7 +560,8 @@ function createSimulationRuleComposition(options = {}) {
     },
     execute(context, action) {
       const workingState = context.workingRoot || context;
-      const pendingMove = workingState.match.movePaymentContinuation;
+      const pendingMove = workingState.match.pendingDecision?.kind === "move_payment"
+        ? workingState.match.pendingDecision : null;
       if (pendingMove) {
         const player = workingState.playerState.players.find((candidate) => candidate.id === pendingMove.playerId);
         const spend = players.spendResources(player, { energy: pendingMove.requiredMovePoints });
@@ -566,10 +570,11 @@ function createSimulationRuleComposition(options = {}) {
           workingState.rocketState, pendingMove.rocketId, pendingMove.deltaX, pendingMove.deltaY,
         );
         if (!moved.ok) return moved;
-        delete workingState.match.movePaymentContinuation;
+        delete workingState.match.pendingDecision;
         return { ok: true, progressed: true, events: [{ type: "move", rocketId: pendingMove.rocketId }] };
       }
-      const pending = workingState.match.discardContinuation;
+      const pending = workingState.match.pendingDecision?.kind === "discard"
+        ? workingState.match.pendingDecision : null;
       const player = workingState.playerState.players.find((candidate) => candidate.id === pending?.playerId);
       if (!player) return { ok: false, code: "SIMULATION_DISCARD_OWNER_MISSING", message: "opening 弃牌 owner 不存在" };
       const indexes = (action.target?.handIndexes || [action.target?.handIndex])
@@ -590,7 +595,7 @@ function createSimulationRuleComposition(options = {}) {
         }
       }
       workingState.match.initialIncomeQueue.shift();
-      delete workingState.match.discardContinuation;
+      delete workingState.match.pendingDecision;
       installOpeningDiscard(workingState);
       return { ok: true, progressed: true, events: [{ type: "opening_discard" }] };
     },
@@ -739,8 +744,8 @@ function createSimulationRuleComposition(options = {}) {
     family: "choose_card",
     enumerate(context) {
       const root = context.workingRoot || context;
-      const pending = root.match.passReserveContinuation;
-      if (!pending) return [];
+      const pending = root.match.pendingDecision;
+      if (pending?.kind !== "pass_reserve") return [];
       return cards.getPassReservePile(root.cardState, pending.roundNumber).map((card) => ({
         target: { kind: "pass-reserve-card", choiceId: card.id, cardId: card.cardId || card.id || null },
         payload: { cardInstanceId: card.id },
@@ -753,11 +758,12 @@ function createSimulationRuleComposition(options = {}) {
     },
     execute(context, action) {
       const root = context.workingRoot || context;
-      const pending = root.match.passReserveContinuation;
+      const pending = root.match.pendingDecision?.kind === "pass_reserve"
+        ? root.match.pendingDecision : null;
       const player = root.playerState.players.find((candidate) => candidate.id === pending?.playerId);
       const result = cards.pickPassReserveCard(root.cardState, player, pending.roundNumber, action.target.choiceId);
       if (!result.ok) return result;
-      delete root.match.passReserveContinuation;
+      delete root.match.pendingDecision;
       player.passCompletionPending = true;
       return { ok: true, progressed: true, events: [{ type: "pass_reserve_pick", playerId: player.id }] };
     },
@@ -839,7 +845,8 @@ function createSimulationRuleComposition(options = {}) {
       if (!workingState.turnState.passedPlayerIds.includes(playerId)) workingState.turnState.passedPlayerIds.push(playerId);
       const reserve = cards.getPassReservePile(workingState.cardState, workingState.turnState.roundNumber);
       if (reserve.length) {
-        workingState.match.passReserveContinuation = {
+        workingState.match.pendingDecision = {
+          kind: "pass_reserve",
           type: "pass-reserve-pick", playerId, roundNumber: workingState.turnState.roundNumber,
         };
       } else {
@@ -968,7 +975,7 @@ function createSimulationRuleComposition(options = {}) {
                   ok: true,
                   boundary: "conditional_choice",
                   decisionType: "conditional_choice",
-                  ownerId: workingState.match.discardContinuation?.playerId || null,
+                  ownerId: workingState.match.pendingDecision?.playerId || null,
                   family: choices[0].family,
                   choices,
                 };

@@ -71,6 +71,7 @@
       nebulaHasScannableData,
       normalizeResourceCost,
       openAutoDataPlacementPrompt,
+      openPendingDecision,
       openScanTargetPicker,
       planetReferenceLayout,
       planetStats,
@@ -1223,13 +1224,13 @@
         renderStateReadout();
         return effect.result;
       }
-      workingRoot.match.handScanContinuation = {
+      openPendingDecision(workingRoot, "hand_scan", {
         type: "hand_scan",
         playerId: currentPlayer.id,
         playerColor: currentPlayer.color || null,
         fromEffectFlow: true,
         optional,
-      };
+      });
       ruleRocketState(workingRoot).statusNote = optional
         ? `${effect.label}：请选择一张手牌弃除并扫描，或点击跳过`
         : `${effect.label}：请选择一张手牌弃除并扫描`;

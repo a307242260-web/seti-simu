@@ -1140,7 +1140,6 @@
       delete workingRoot.match.publicScanContinuation;
 
       if (context.isHandScanSelectionActive?.(workingRoot)) {
-        delete workingRoot.match.handScanContinuation;
         context.syncHandScanSelectionChrome?.(workingRoot);
       }
       if (context.isCardSelectionActive?.()
@@ -1161,7 +1160,6 @@
         context.syncCardSelectionChrome?.();
       }
       if (context.getPendingPassReserveSelection?.(workingRoot)) {
-        delete workingRoot.match.passReserveContinuation;
         uiRuntimeState.passReserveSelectionDismissed = false;
         uiRuntimeState.passReserveSelectedCardId = null;
         context.syncPassReserveSelectionChrome?.();

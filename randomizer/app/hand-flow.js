@@ -208,6 +208,8 @@
       completeCurrentActionEffect: effectFlowRuntime?.completeCurrentActionEffect,
       isIncomeDiscardActionType: income("isIncomeDiscardActionType"),
       submitDiscardDecision: hostPort.submitDiscardDecision,
+      openPendingDecision: hostPort.openPendingDecision,
+      readPendingDecision: hostPort.readPendingDecision,
       scrollToPlayerCommandPanel: hostPort.scrollToPlayerCommandPanel,
       getCardTypeCode: card("getCardTypeCode"),
       dispatchStandardIntent: hostPort.dispatchStandardIntent,
@@ -328,6 +330,8 @@
       completeCurrentActionEffect,
       isIncomeDiscardActionType,
       submitDiscardDecision,
+      openPendingDecision,
+      readPendingDecision,
       scrollToPlayerCommandPanel,
       getCardTypeCode,
     } = context;
@@ -335,14 +339,10 @@
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
-    const getDiscardContinuation = (workingRoot) => workingRoot?.match?.discardContinuation || null;
+    const getDiscardDecision = () => readPendingDecision?.("discard") || null;
     function setDiscardContinuation(workingRoot, continuation) {
-      if (!workingRoot?.match) throw new TypeError("discard selection requires Composition workingRoot.match");
       uiRuntimeState.discardSelectedHandIndexes = [];
-      if (!continuation) {
-        delete workingRoot.match.discardContinuation;
-        return null;
-      }
+      if (!continuation) return null;
       const player = continuation.player || null;
       const normalized = {
         ...structuredClone(continuation),
@@ -353,44 +353,34 @@
       delete normalized.player;
       delete normalized.selectedIndexes;
       delete normalized.discarded;
-      workingRoot.match.discardContinuation = normalized;
-      return normalized;
+      return openPendingDecision(workingRoot, "discard", normalized);
     }
-    function getDiscardPlayer(workingRoot, pending = getDiscardContinuation(workingRoot)) {
+    function getDiscardPlayer(workingRoot, pending = getDiscardDecision()) {
       return (workingRoot?.playerState?.players || []).find((player) => (
         player.id === pending?.playerId || player.color === pending?.playerColor
       )) || getCurrentPlayer(workingRoot);
     }
-    const getHandScanContinuation = (workingRoot) => workingRoot?.match?.handScanContinuation || null;
+    const getHandScanDecision = () => readPendingDecision?.("hand_scan") || null;
     function setHandScanContinuation(workingRoot, continuation) {
-      if (!workingRoot?.match) throw new TypeError("hand scan requires Composition workingRoot.match");
-      if (!continuation) {
-        delete workingRoot.match.handScanContinuation;
-        return null;
-      }
-      workingRoot.match.handScanContinuation = structuredClone(continuation);
-      return workingRoot.match.handScanContinuation;
+      if (!continuation) return null;
+      return openPendingDecision(workingRoot, "hand_scan", continuation);
     }
-    const getMovePayment = (workingRoot) => workingRoot?.match?.movePaymentContinuation || null;
+    const getMovePayment = () => readPendingDecision?.("move_payment") || null;
     function setMovePayment(workingRoot, session) {
-      if (!workingRoot?.match) throw new TypeError("move payment requires Composition workingRoot.match");
       uiRuntimeState.movePaymentSelectedHandIndices = [];
-      if (!session) {
-        delete workingRoot.match.movePaymentContinuation;
-        return null;
-      }
+      if (!session) return null;
       const playerId = session.playerId || session.player?.id || null;
       const playerColor = session.playerColor || session.player?.color || null;
-      workingRoot.match.movePaymentContinuation = {
+      const pending = {
         ...structuredClone(session),
         playerId,
         playerColor,
         selectedHandIndices: undefined,
         player: undefined,
       };
-      delete workingRoot.match.movePaymentContinuation.player;
-      delete workingRoot.match.movePaymentContinuation.selectedHandIndices;
-      return workingRoot.match.movePaymentContinuation;
+      delete pending.player;
+      delete pending.selectedHandIndices;
+      return openPendingDecision(workingRoot, "move_payment", pending);
     }
     const peekPlayCardSelection = () => uiRuntimeState.playCardSelection;
     function setPlayCardSelection(workingRoot, session) {
@@ -438,7 +428,7 @@
         els.discardSelectionBackdrop.setAttribute("aria-hidden", String(!active));
       }
       if (els.discardSelectionCancel) {
-        els.discardSelectionCancel.hidden = !active || Boolean(getDiscardContinuation(workingRoot)?.required);
+        els.discardSelectionCancel.hidden = !active || Boolean(getDiscardDecision()?.required);
       }
       updatePlayerHandPanelTitle();
       if (active) setQuickPanelOpen(false);
@@ -448,7 +438,7 @@
     }
 
     function isHandScanSelectionActive(workingRoot) {
-      return getHandScanContinuation(workingRoot) != null;
+      return getHandScanDecision() != null;
     }
 
     function syncHandScanSelectionChrome(workingRoot) {
@@ -477,11 +467,11 @@
     }
 
     function isMovePaymentSelectionActive(workingRoot) {
-      return getMovePayment(workingRoot) != null;
+      return getMovePayment() != null;
     }
 
     function getMovePaymentPlayer(workingRoot) {
-      const pending = getMovePayment(workingRoot);
+      const pending = getMovePayment();
       if (!pending) return null;
       const playerId = pending.player?.id || pending.playerId || null;
       if (playerId) return getPlayerById(workingRoot, playerId) || pending.player || null;
@@ -498,7 +488,7 @@
       const active = isMovePaymentSelectionActive(workingRoot);
       const lockedForAi = isMovePaymentLockedForAiAutomation(workingRoot);
       const manualActive = active && !lockedForAi;
-      const preservesCardCornerMove = getMovePayment(workingRoot)?.supplementalMoveContext?.type === "cardCornerFreeMove";
+      const preservesCardCornerMove = getMovePayment()?.supplementalMoveContext?.type === "cardCornerFreeMove";
       if (active && !preservesCardCornerMove) cancelHandCardContextActions(workingRoot, { silent: true });
       els.appWrap?.classList.toggle("move-payment-selection-active", manualActive);
       els.playerHandPanel?.classList.toggle("move-payment-selection-active", manualActive);
@@ -655,7 +645,7 @@
       const card = currentPlayer?.hand?.[index];
       if (!isMovePaymentCard(card)) return;
 
-      const pending = getMovePayment(workingRoot);
+      const pending = getMovePayment();
       const selected = uiRuntimeState.movePaymentSelectedHandIndices || [];
       if (selected.includes(index)) {
         uiRuntimeState.movePaymentSelectedHandIndices = selected.filter((item) => item !== index);
@@ -674,7 +664,7 @@
         return context.blockManualAiMovePayment?.();
       }
 
-      const activePayment = getMovePayment(workingRoot);
+      const activePayment = options.pending || getMovePayment();
       const paymentPlayerId = activePayment?.player?.id || activePayment?.playerId || null;
       const paymentPlayerColor = activePayment?.player?.color || activePayment?.playerColor || null;
       const currentPlayer = (workingRoot.playerState.players || []).find((player) => (
@@ -752,7 +742,7 @@
         historyLabel: `移动消耗 ${selectedMoveCards.length ? `${selectedMoveCards.length} 张移动牌` : ""}${selectedMoveCards.length && energyCost ? " + " : ""}${energyCost ? `${energyCost} 能量` : ""}`,
       };
 
-      const pending = getMovePayment(workingRoot);
+      const pending = options.pending || getMovePayment();
       const supplementalMoveContext = pending.supplementalMoveContext || null;
       const cardMoveEffectContext = pending.cardMoveEffectContext || null;
       setMovePayment(workingRoot, null);
@@ -1345,7 +1335,7 @@
 
     function cancelDiscardSelection(workingRoot) {
       if (!isDiscardSelectionActive()) return;
-      const pending = getDiscardContinuation(workingRoot);
+      const pending = getDiscardDecision();
       if (pending?.required) {
         ruleRocketState(workingRoot).statusNote = pending.type === "pass_hand_limit"
           ? "PASS 手牌上限弃牌必须完成"
@@ -1380,7 +1370,7 @@
     }
 
     function completeDiscardSelection(workingRoot, discardedCards) {
-      const pending = getDiscardContinuation(workingRoot);
+      const pending = getDiscardDecision();
       setDiscardContinuation(workingRoot, null);
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       syncDiscardSelectionChrome(workingRoot);
@@ -1482,8 +1472,12 @@
       return { ok: true, cards: discardedCards, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function finalizePendingDiscardSelection(workingRoot, selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes) {
-      const pending = getDiscardContinuation(workingRoot);
+    function finalizePendingDiscardSelection(
+      workingRoot,
+      selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes,
+      pendingOverride = null,
+    ) {
+      const pending = pendingOverride || getDiscardDecision();
       if (!pending) return { ok: false, message: "当前没有待完成的弃牌" };
       const discardPlayer = getDiscardPlayer(workingRoot, pending);
       const selectedAscending = [...new Set((selectedHandIndexes || []).map((index) => Math.round(Number(index))))]
@@ -1514,7 +1508,7 @@
     function handleHandCardDiscard(workingRoot, handIndex) {
       if (!isDiscardSelectionActive()) return;
       const index = Math.round(handIndex);
-      const pending = getDiscardContinuation(workingRoot);
+      const pending = getDiscardDecision();
       if (!pending) return;
       const needed = pending.count;
       if (!Array.isArray(uiRuntimeState.discardSelectedHandIndexes)) uiRuntimeState.discardSelectedHandIndexes = [];
@@ -2123,7 +2117,7 @@
     function handleHandScanCardClick(workingRoot, handIndex) {
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || getActionEffectFlow(workingRoot));
+      const fromEffectFlow = Boolean(getHandScanDecision()?.fromEffectFlow || getActionEffectFlow(workingRoot));
       const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];

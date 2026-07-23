@@ -21,7 +21,7 @@
     const actionFamilies = Object.freeze([...(options.actionFamilies || [])]);
     const continuation = options.continuation || null;
     const commitWorkingState = options.commitWorkingState;
-    const takeOpenedCardSelectionDecisionEffect = options.takeOpenedCardSelectionDecisionEffect;
+    const takeOpenedDecisionEffect = options.takeOpenedDecisionEffect;
     if (typeof runtime?.registerExecutor !== "function") {
       throw new TypeError("standard action domain 缺少 composition Effect runtime");
     }
@@ -35,12 +35,12 @@
     runtime.registerExecutor(EFFECT_TYPE, (workingRoot, effect) => {
       const result = executeRegisteredAction(workingRoot, effect.payload.action);
       if (!result?.ok) return result;
-      const cardSelectionDecisionEffect = takeOpenedCardSelectionDecisionEffect?.() || null;
+      const openedDecisionEffect = takeOpenedDecisionEffect?.() || null;
       return {
         ok: true,
         nextState: result.nextState,
-        spawnedEffects: cardSelectionDecisionEffect
-          ? [{ priority: "direct", effect: cardSelectionDecisionEffect }]
+        spawnedEffects: openedDecisionEffect
+          ? [{ priority: "direct", effect: openedDecisionEffect }]
           : continuation
             ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
             : [],
@@ -98,12 +98,12 @@
           code: "STANDARD_ACTION_CONTINUATION_STALLED",
           message: "Standard Action continuation 未返回推进结果",
         };
-        const cardSelectionDecisionEffect = takeOpenedCardSelectionDecisionEffect?.() || null;
+        const openedDecisionEffect = takeOpenedDecisionEffect?.() || null;
         return {
           ok: true,
           nextState: commitWorkingState(workingRoot, result),
-          spawnedEffects: cardSelectionDecisionEffect
-            ? [{ priority: "direct", effect: cardSelectionDecisionEffect }]
+          spawnedEffects: openedDecisionEffect
+            ? [{ priority: "direct", effect: openedDecisionEffect }]
             : result.progressed === false
               ? []
               : [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
@@ -130,12 +130,12 @@
               code: "STANDARD_ACTION_DECISION_RESOLVE_FAILED",
               message: "Standard Action Decision resolve 未返回成功结果",
             };
-            const cardSelectionDecisionEffect = takeOpenedCardSelectionDecisionEffect?.() || null;
+            const openedDecisionEffect = takeOpenedDecisionEffect?.() || null;
             return {
               ok: true,
               nextState: commitWorkingState(workingRoot, resolved),
-              spawnedEffects: cardSelectionDecisionEffect
-                ? [{ priority: "direct", effect: cardSelectionDecisionEffect }]
+              spawnedEffects: openedDecisionEffect
+                ? [{ priority: "direct", effect: openedDecisionEffect }]
                 : [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
               events: clone(resolved.events || [{
                 type: "standard_action_decision_executed",
