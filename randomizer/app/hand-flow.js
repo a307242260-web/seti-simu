@@ -11,6 +11,54 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "players",
+    "cards",
+    "quickTrades",
+    "data",
+    "industry",
+    "cardEffects",
+    "abilities",
+    "historyCommands",
+    "scanEffects",
+    "fangzhou",
+    "banrenma",
+    "chong",
+    "amiba",
+    "aomomo",
+    "runezu",
+    "solar",
+    "rocketActions",
+  ]);
+  const BROWSER_STATIC_CONSTANT_KEYS = Object.freeze([
+    "MOVE_ENERGY_COST",
+  ]);
+
+  function selectRequired(source, keys, label) {
+    const missing = keys.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(source, key) || source[key] == null,
+    );
+    if (missing.length) {
+      throw new Error(`${label} 缺少依赖：${missing.join(", ")}`);
+    }
+    return Object.fromEntries(keys.map((key) => [key, source[key]]));
+  }
+
+  function createBrowserHandStaticContext(dependencies = {}, constants = {}) {
+    return Object.freeze({
+      ...selectRequired(
+        dependencies,
+        BROWSER_STATIC_DEPENDENCY_KEYS,
+        "Browser Hand 静态模块",
+      ),
+      ...selectRequired(
+        constants,
+        BROWSER_STATIC_CONSTANT_KEYS,
+        "Browser Hand 静态常量",
+      ),
+    });
+  }
+
   function createHandFlow(context = {}) {
     const {
       uiRuntimeState,
@@ -2030,6 +2078,9 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    BROWSER_STATIC_CONSTANT_KEYS,
+    createBrowserHandStaticContext,
     createHandFlow,
     createMovePaymentDecisionPort,
   };

@@ -1,7 +1,37 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createHandFlow } = require("./hand-flow");
+const {
+  BROWSER_STATIC_DEPENDENCY_KEYS,
+  BROWSER_STATIC_CONSTANT_KEYS,
+  createBrowserHandStaticContext,
+  createHandFlow,
+} = require("./hand-flow");
+
+{
+  const dependencies = Object.fromEntries(
+    BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, { key }]),
+  );
+  const constants = Object.fromEntries(
+    BROWSER_STATIC_CONSTANT_KEYS.map((key) => [key, `constant:${key}`]),
+  );
+  const selected = createBrowserHandStaticContext(
+    { ...dependencies, unrelatedModule: {} },
+    { ...constants, UNRELATED_CONSTANT: true },
+  );
+  assert.deepEqual(Object.keys(selected), [
+    ...BROWSER_STATIC_DEPENDENCY_KEYS,
+    ...BROWSER_STATIC_CONSTANT_KEYS,
+  ]);
+  assert.equal(Object.isFrozen(selected), true);
+  assert.throws(
+    () => createBrowserHandStaticContext(
+      { ...dependencies, cards: undefined },
+      constants,
+    ),
+    /cards/,
+  );
+}
 
 function makeClassList() {
   return { toggle() {} };

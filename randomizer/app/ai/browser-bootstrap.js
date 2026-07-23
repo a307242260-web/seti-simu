@@ -22,6 +22,72 @@
     "stateOwners",
     "controllerContext",
   ]);
+  const CONTROLLER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "solar",
+    "players",
+    "rocketActions",
+    "planetStats",
+    "planetRewards",
+    "finalScoring",
+    "endGameScoring",
+    "industry",
+    "abilities",
+    "actions",
+    "scanEffects",
+    "quickTrades",
+    "cards",
+    "initialCards",
+    "cardEffects",
+    "cardTaskStateModule",
+    "tech",
+    "data",
+    "aliens",
+    "aomomo",
+    "jiuzhe",
+    "yichangdian",
+    "fangzhou",
+    "banrenma",
+    "chong",
+    "amiba",
+    "runezu",
+    "aiRaceModel",
+    "ai",
+    "aiControlRuntimeModule",
+  ]);
+  const CONTROLLER_STATIC_CONSTANT_KEYS = Object.freeze([
+    "DEFAULT_ACTIVE_PLAYER_COUNT",
+    "DEFAULT_INITIAL_HAND_COUNT",
+    "DEFAULT_INITIAL_PLAYER_COLOR",
+    "FINAL_ROUND_NUMBER",
+    "FINAL_SCORE_IDS",
+    "INITIAL_SELECTION_REQUIRED",
+    "MOVE_ENERGY_COST",
+  ]);
+
+  function selectRequired(source, keys, label) {
+    const missing = keys.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(source, key) || source[key] == null,
+    );
+    if (missing.length) {
+      throw new Error(`${label} 缺少依赖：${missing.join(", ")}`);
+    }
+    return Object.fromEntries(keys.map((key) => [key, source[key]]));
+  }
+
+  function createBrowserAiStaticContext(dependencies = {}, constants = {}) {
+    return Object.freeze({
+      ...selectRequired(
+        dependencies,
+        CONTROLLER_STATIC_DEPENDENCY_KEYS,
+        "Browser AI 静态模块",
+      ),
+      ...selectRequired(
+        constants,
+        CONTROLLER_STATIC_CONSTANT_KEYS,
+        "Browser AI 静态常量",
+      ),
+    });
+  }
 
   function createBrowserAiBootstrap(context = {}) {
     const missingKeys = REQUIRED_CONTEXT_KEYS.filter(
@@ -107,5 +173,11 @@
     return Object.freeze({ controller, compositionPort });
   }
 
-  return { REQUIRED_CONTEXT_KEYS, createBrowserAiBootstrap };
+  return {
+    REQUIRED_CONTEXT_KEYS,
+    CONTROLLER_STATIC_DEPENDENCY_KEYS,
+    CONTROLLER_STATIC_CONSTANT_KEYS,
+    createBrowserAiStaticContext,
+    createBrowserAiBootstrap,
+  };
 });

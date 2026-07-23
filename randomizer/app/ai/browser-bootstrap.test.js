@@ -3,6 +3,9 @@
 const assert = require("node:assert/strict");
 const {
   REQUIRED_CONTEXT_KEYS,
+  CONTROLLER_STATIC_DEPENDENCY_KEYS,
+  CONTROLLER_STATIC_CONSTANT_KEYS,
+  createBrowserAiStaticContext,
   createBrowserAiBootstrap,
 } = require("./browser-bootstrap");
 
@@ -63,6 +66,31 @@ function createHarness() {
       `缺少 ${missingKey} 时必须在创建期失败`,
     );
   }
+})();
+
+(() => {
+  const dependencies = Object.fromEntries(
+    CONTROLLER_STATIC_DEPENDENCY_KEYS.map((key) => [key, { key }]),
+  );
+  const constants = Object.fromEntries(
+    CONTROLLER_STATIC_CONSTANT_KEYS.map((key) => [key, `constant:${key}`]),
+  );
+  const selected = createBrowserAiStaticContext(
+    { ...dependencies, unrelatedModule: {} },
+    { ...constants, UNRELATED_CONSTANT: true },
+  );
+  assert.deepEqual(Object.keys(selected), [
+    ...CONTROLLER_STATIC_DEPENDENCY_KEYS,
+    ...CONTROLLER_STATIC_CONSTANT_KEYS,
+  ]);
+  assert.equal(Object.isFrozen(selected), true);
+  assert.throws(
+    () => createBrowserAiStaticContext(
+      { ...dependencies, players: null },
+      constants,
+    ),
+    /players/,
+  );
 })();
 
 (() => {
