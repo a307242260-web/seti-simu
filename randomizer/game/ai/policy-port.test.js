@@ -91,12 +91,45 @@ for (const [submitted, code] of [
   assert.equal(policyPort.validatePolicyDecision(current, submitted, validator).code, code);
 }
 
-const request = policyPort.createPolicyRequestSession({
-  context: current,
-  validateDecision: () => ({ ok: true }),
-});
-assert.equal(request.cancel().code, "POLICY_CANCELLED");
-assert.equal(request.accept(decision(current), {}).code, "POLICY_LATE_RESPONSE");
+function createTrackedRequest() {
+  const calls = { validator: 0, registry: 0, submit: 0 };
+  const request = policyPort.createPolicyRequestSession({
+    context: current,
+    validateDecision() {
+      calls.validator += 1;
+      calls.registry += 1;
+      calls.submit += 1;
+      return { ok: true };
+    },
+  });
+  return { request, calls };
+}
+
+const firstResponse = createTrackedRequest();
+assert.equal(firstResponse.request.accept(decision(current), {}).ok, true);
+assert.deepEqual(firstResponse.calls, { validator: 1, registry: 1, submit: 1 });
+assert.equal(firstResponse.request.accept(decision(current), {}).code, "POLICY_DUPLICATE_RESPONSE");
+assert.deepEqual(
+  firstResponse.calls,
+  { validator: 1, registry: 1, submit: 1 },
+  "重复响应不得再次进入 validator 或其下游链路",
+);
+
+for (const [settleRequest, expectedSettleCode] of [
+  [(request) => request.cancel(), "POLICY_CANCELLED"],
+  [(request) => request.expire(), "POLICY_TIMEOUT"],
+  [(request) => request.invalidate(), "POLICY_REQUEST_INVALIDATED"],
+  [(request) => request.reject(new Error("policy failed")), "POLICY_FAILURE"],
+]) {
+  const lateResponse = createTrackedRequest();
+  assert.equal(settleRequest(lateResponse.request).code, expectedSettleCode);
+  assert.equal(lateResponse.request.accept(decision(current), {}).code, "POLICY_LATE_RESPONSE");
+  assert.deepEqual(
+    lateResponse.calls,
+    { validator: 0, registry: 0, submit: 0 },
+    `${expectedSettleCode} 后的迟到响应不得进入 validator 或其下游链路`,
+  );
+}
 
 (async () => {
   let release;
@@ -118,6 +151,7 @@ assert.equal(request.accept(decision(current), {}).code, "POLICY_LATE_RESPONSE")
   release(decision(current));
   await Promise.resolve();
   assert.equal(capturedSession.snapshot().status, "timed_out");
+  assert.equal(validationCalls, 1, "迟到响应不得重新进入 validator");
   console.log("policy port protocol tests passed");
 })().catch((error) => {
   console.error(error);
