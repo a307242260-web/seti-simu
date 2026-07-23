@@ -1,8 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const stateApi = require("../../game/state/state-store");
 const projectionApi = require("./projection-adapter");
 const viewStateApi = require("./view-state-store");

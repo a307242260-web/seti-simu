@@ -104,7 +104,7 @@
     function runAiCardSelectionDecision(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!isCardSelectionActive(workingRoot) && !isIndustryHandSelectionActive()) return null;
-      const pending = state.pendingCardSelectionContinuation || {};
+      const pending = state.pendingCardSelectionDecision || {};
       const player = resolveWorkingPlayerById(workingRoot, pending.playerId)
         || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {

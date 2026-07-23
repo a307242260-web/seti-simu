@@ -194,7 +194,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     get pendingProbeLocationRewardAction() { return options.probeLocationPending || null; },
     get pendingLandTargetAction() { return options.landTargetPending || null; },
     get pendingDataPlaceAction() { return options.dataPlacePending || null; },
-    get pendingCardSelectionContinuation() { return options.pendingCardSelectionContinuation || null; },
+    get pendingCardSelectionDecision() { return options.pendingCardSelectionDecision || null; },
     get publicCardSelectedSlots() { return [...(options.publicCardSelectedSlots || [])]; },
     get pendingDiscardAction() { return pendingDiscardAction; },
     get pendingPassReserveSelection() { return pendingPassReserveSelection; },
@@ -765,7 +765,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   context.confirmPublicScanSelection = () => {
     noteHandled({
       type: "public-scan-confirm",
-      selectedSlots: [...(options.pendingCardSelectionContinuation?.selectedSlots || [])],
+      selectedSlots: [...(options.pendingCardSelectionDecision?.selectedSlots || [])],
     });
     return { ok: true, progressed: true };
   };
@@ -866,7 +866,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   }
   if (options.canBlindDraw) {
     context.canBlindDraw = () => true;
-    context.allowsBlindDrawInSelection = () => options.pendingCardSelectionContinuation?.allowBlindDraw !== false;
+    context.allowsBlindDrawInSelection = () => options.pendingCardSelectionDecision?.allowBlindDraw !== false;
   }
   if (options.playCardSelectionActive) {
     context.isPlayCardSelectionActive = () => true;
