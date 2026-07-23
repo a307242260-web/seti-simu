@@ -1,9 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
 const standardAction = require("../actions/standard-action");
 const scanCardSession = require("./scan-card-session");
 
@@ -366,28 +363,6 @@ function runCardTrace(api = scanCardSession) {
     actorId: "p1",
   });
   assert.equal(wrongFamily.code, "NESTED_FLOW_ACTION_FAMILY_INVALID");
-})();
-
-(function testBrowserAndNodeFixedTraceParity() {
-  const context = vm.createContext({ console, structuredClone, globalThis: null });
-  context.globalThis = context;
-  for (const file of [
-    "../actions/standard-action.js",
-    "session-runtime.js",
-    "scan-card-session.js",
-  ]) {
-    const source = fs.readFileSync(path.resolve(__dirname, file), "utf8");
-    vm.runInContext(source, context, { filename: file });
-  }
-  const browserResult = JSON.parse(JSON.stringify({
-    scan: runScanTrace(context.SetiScanCardSession),
-    card: runCardTrace(context.SetiScanCardSession),
-  }));
-  const nodeResult = JSON.parse(JSON.stringify({
-    scan: runScanTrace(scanCardSession),
-    card: runCardTrace(scanCardSession),
-  }));
-  assert.deepEqual(browserResult, nodeResult);
 })();
 
 console.log("scan/card effect session tests passed");

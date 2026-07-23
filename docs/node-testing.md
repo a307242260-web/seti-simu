@@ -9,6 +9,9 @@
 
 测试类型与架构归属是两个正交维度。每个 unit 必须按 SETI-45 已确认的组件归入“唯一 Action、唯一 Effect Queue、唯一 Session 状态、统一权威状态、网页 UI、机器人”之一；唯一 full-flow 同时覆盖前四个共享内部组件。归属取决于测试实际验收的契约，不取决于测试从 Browser、Simulation 或其他宿主入口执行；不得用实现路径或 runtime core 等名词创造新的架构分类。
 
+正式 owner、proof obligation、反例以及现有文件的删除/重写边界见
+`docs/node-test-architecture-matrix.md`。新增测试先找到唯一 owner 和可观察失败语义，再进入 inventory。
+
 ## 运行
 
 ```sh
@@ -28,7 +31,8 @@ node tools/run_node_tests.js --match game/actions
 - 删除固定版面、固定 seed 整局和逐回合报告三套额外流程基线。
 - 删除 StateStore 源码架构扫描器及三套负向 fixture；唯一 owner、快照隔离、CAS 冲突和恢复拒绝继续由对应状态行为 unit 与唯一 full-flow 验证。
 - 删除 8 个浏览器自动化/观测工具测试与 6 个训练/worker 基础设施测试；这些套件不再作为机器人单元能力证据。自动化编排、日志/报告、调参、自博弈、评测与 worker 容错细节不再由默认 Node 回归验证。
-- 删除剩余 6 个 `game/ai` 先行测试及 3 个藏在网页 UI 分类下的 Policy/机器人接入测试；机器人尚未按完整设计实现前不保留其单元或接入测试，机器人相关测试数为零。
+- 删除旧 AI runtime characterization 与装配 key 枚举；机器人只保留正式 Policy Port、Machine Player Host、Policy→Browser 输入和浏览器机器席位 composition 的行为 unit。
 - Action unit 只保留玩家可选择的主行动、快速行为，以及外星人标记会产生差异结果的物种行为；删除误归其中的展示、协议、simulation、状态初始化、资料同步、UI 坐标、能力链、公司与起始卡测试，不挪到其他模块继续保留。
+- 清除保留测试中的生产 `.js/.html` 源码读取、脚本装配、旧符号缺失、Browser/Node 源码 parity 和资源文件存在性断言；不以 AST、snapshot 或导出枚举替代。
 
 被删除的迁移、装配和“旧符号不存在”风险不再验证；业务规则与状态行为风险继续由对应 unit 和唯一 full-flow 覆盖。

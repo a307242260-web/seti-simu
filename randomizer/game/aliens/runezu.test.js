@@ -1,8 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const runezu = require("./runezu");
 const yichangdian = require("./yichangdian");
 
@@ -19,17 +17,9 @@ function assertRunezuTaskRewardEffect(result, symbolIds) {
   });
 }
 
-function assertRunezuSymbolAssetExists(symbolId) {
-  const relativeSrc = runezu.getSymbolSrc(symbolId).replace(/^\.\.\//, "");
-  const assetPath = path.resolve(__dirname, "..", "..", "..", relativeSrc);
-  assert.equal(fs.existsSync(assetPath), true, `${symbolId} icon asset should exist at ${assetPath}`);
-}
-
 function assertRunezuCardTaskCanonical(card) {
   assert.deepEqual(card.runezuTask, runezu.getCardTask(card));
 }
-
-runezu.SYMBOL_IDS.forEach(assertRunezuSymbolAssetExists);
 
 const card = runezu.createAlienCard(5, 1);
 

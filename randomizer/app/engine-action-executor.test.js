@@ -1,8 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const { createEngineActionExecutor, ACTION_FAMILIES } = require("./engine-action-executor");
 
 function root() {
@@ -133,25 +131,6 @@ function createExecutor(trace = [], options = {}) {
     assert.equal(executor.execute(aiRoot, structuredClone(action)).ok, true);
     assert.deepEqual(aiRoot, browserRoot, `${family} Browser/AI 同 descriptor 必须产生相同 working root`);
   }
-}
-
-{
-  const actionRuntimeSource = fs.readFileSync(path.join(__dirname, "action-runtime.js"), "utf8");
-  assert.match(actionRuntimeSource, /ENGINE_ACTION_FAMILIES\.has\(descriptor\?\.family\)/);
-  assert.match(actionRuntimeSource, /engineActionExecutor\.execute\(workingRoot, descriptor/);
-  assert.doesNotMatch(actionRuntimeSource, /engineActionWorkingRoot|primaryBoardWorkingRoot|quickTurnActionWorkingRoot|conditionalActionWorkingRoot/);
-  const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
-  const browserServicesSource = fs.readFileSync(path.join(__dirname, "browser-host/browser-services.js"), "utf8");
-  assert.equal(/executors:\s*\{/.test(appSource), false, "app.js 不得保留四 family executor 函数体");
-  assert.match(appSource, /executeScan: \(workingRoot, descriptor\) => executeMainScanAction\(workingRoot, descriptor\)/);
-  assert.match(appSource, /executePlayCard: \(_workingRoot, descriptor\) => executeStandardPlayCard\(descriptor\)/);
-  assert.match(browserServicesSource, /operation\(workingRoot, \.\.\.\(command\.args \|\| \[\]\)\)/);
-  assert.doesNotMatch(appSource, /function executeBrowserOperation/, "通用 Browser operation 执行不得回流 app.js");
-  assert.equal(
-    /execute\(\) \{ return beginScanAction\(\); \}/.test(appSource),
-    false,
-    "Standard Action registry 不得保留扫描重复 executor",
-  );
 }
 
 console.log("engine action executor tests passed");

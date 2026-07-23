@@ -1,9 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
 const projectionApi = require("./projection-adapter");
 const viewStateApi = require("./view-state-store");
 const inputApi = require("./input-adapter");
@@ -180,17 +177,6 @@ function projectDecision(decision, viewer) {
   assert.throws(() => projectDecision(rawDecision("choose_payment", "p1", [{
     actionId: "legacy-payment", family: "choose_payment", actorId: "p1", summary: "旧支付",
   }]), { viewerId: "viewer-p1", playerId: "p1", role: "player" }), /Standard Action identity/);
-})();
-
-(function testBrowserScriptParity() {
-  const source = fs.readFileSync(path.join(__dirname, "card-decision-ui.js"), "utf8");
-  const context = vm.createContext({ structuredClone, globalThis: null });
-  context.globalThis = context;
-  vm.runInContext(source, context, { filename: "card-decision-ui.js" });
-  assert.deepEqual(
-    JSON.parse(JSON.stringify(context.SetiBrowserCardDecisionUi.CARD_DECISION_KINDS)),
-    cardDecisionUiApi.CARD_DECISION_KINDS,
-  );
 })();
 
 console.log("browser card decision UI tests passed");

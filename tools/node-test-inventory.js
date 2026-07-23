@@ -31,8 +31,6 @@ randomizer/app/action-log-runtime.test.js
 randomizer/app/action-interaction-runtime.test.js
 randomizer/app/action-runtime.test.js
 randomizer/app/score-source-runtime.test.js
-randomizer/app/ai-runtime-root.test.js
-randomizer/app/ai/browser-bootstrap.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js
@@ -45,13 +43,13 @@ randomizer/app/browser-host/card-decision-ui.test.js
 randomizer/app/browser-host/decision-ui.test.js
 randomizer/app/browser-host/industry-alien-decision-ui.test.js
 randomizer/app/browser-host/player-stats-ui.test.js
+randomizer/app/browser-host/policy-input-adapter.test.js
 randomizer/app/browser-host/resident-renderer.test.js
 randomizer/app/rule-composition.test.js
 randomizer/app/card-runtime.test.js
 randomizer/app/card-trigger-runtime.test.js
 randomizer/app/constants.test.js
 randomizer/app/debug-runtime.test.js
-randomizer/app/dependencies.test.js
 randomizer/app/effect-choice-flow.test.js
 randomizer/app/effect-flow.test.js
 randomizer/app/effects/executors.test.js
@@ -81,6 +79,9 @@ randomizer/app/tech-runtime.test.js
 randomizer/app/turn-flow.test.js
 randomizer/game/actions/actions.test.js
 randomizer/game/actions/quick-trades.test.js
+randomizer/game/actions/standard-action.test.js
+randomizer/game/ai/machine-player-host.test.js
+randomizer/game/ai/policy-port.test.js
 randomizer/game/aliens/amiba.test.js
 randomizer/game/aliens/aomomo.test.js
 randomizer/game/aliens/banrenma.test.js

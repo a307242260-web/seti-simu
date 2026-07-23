@@ -1,79 +1,6 @@
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const { TextDecoder } = require("node:util");
 require("../card-catalog");
 const cards = require("./deck");
-
-const INTEGER_CARD_MODEL_FIELDS = new Set([
-  "price",
-  "card_type_code",
-  "discard_action_code",
-  "scan_action_code",
-  "income_code",
-]);
-
-function decodeCsvFile(filePath) {
-  const data = fs.readFileSync(filePath);
-  for (const encoding of ["utf-8", "gb18030"]) {
-    try {
-      return new TextDecoder(encoding, { fatal: true }).decode(data);
-    } catch (_error) {
-      // Try the next known source encoding.
-    }
-  }
-  throw new Error(`Cannot decode CSV: ${filePath}`);
-}
-
-function parseCsvRows(text) {
-  const rows = [];
-  let row = [];
-  let field = "";
-  let inQuotes = false;
-
-  for (let index = 0; index < text.length; index += 1) {
-    const character = text[index];
-    if (inQuotes) {
-      if (character === "\"") {
-        if (text[index + 1] === "\"") {
-          field += "\"";
-          index += 1;
-        } else {
-          inQuotes = false;
-        }
-      } else {
-        field += character;
-      }
-    } else if (character === "\"") {
-      inQuotes = true;
-    } else if (character === ",") {
-      row.push(field);
-      field = "";
-    } else if (character === "\n") {
-      row.push(field.replace(/\r$/, ""));
-      rows.push(row);
-      row = [];
-      field = "";
-    } else {
-      field += character;
-    }
-  }
-
-  if (field || row.length) {
-    row.push(field.replace(/\r$/, ""));
-    rows.push(row);
-  }
-
-  const header = rows.shift().map((name, index) => (
-    index === 0 ? name.replace(/^\uFEFF/, "") : name
-  ));
-  return rows
-    .filter((fields) => fields.some((value) => value !== ""))
-    .map((fields) => Object.fromEntries(header.map((name, index) => {
-      const value = fields[index] ?? "";
-      return [name, INTEGER_CARD_MODEL_FIELDS.has(name) ? Number(value) : value];
-    })));
-}
 
 function collectCardZoneIds(cardState, playerState) {
   const ids = [];
@@ -108,10 +35,6 @@ function assertUniqueCardZoneIds(cardState, playerState, label) {
   const ids = collectCardZoneIds(cardState, playerState);
   assert.equal(new Set(ids).size, ids.length, label);
 }
-
-const csvModelPath = path.resolve(__dirname, "../../../assets/cards/card_model.csv");
-const csvCatalog = parseCsvRows(decodeCsvFile(csvModelPath));
-assert.deepEqual(cards.CARD_CATALOG, csvCatalog);
 
 const cardState = cards.createCardState();
 const player = {

@@ -1,9 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
 const standardAction = require("../../game/actions/standard-action");
 const domainSession = require("../../game/effects/industry-alien-session");
 const projectionApi = require("./projection-adapter");
@@ -187,22 +184,6 @@ function projectDecision(decision, viewer = { viewerId: "viewer-p1", playerId: "
   });
   assert.equal(result.ok, false);
   assert.equal(result.code, "DECISION_UI_RENDERER_MISSING");
-})();
-
-(function testBrowserScriptParity() {
-  const source = fs.readFileSync(path.join(__dirname, "industry-alien-decision-ui.js"), "utf8");
-  const context = vm.createContext({
-    structuredClone,
-    SetiStandardAction: standardAction,
-    SetiIndustryAlienSession: domainSession,
-    globalThis: null,
-  });
-  context.globalThis = context;
-  vm.runInContext(source, context, { filename: "industry-alien-decision-ui.js" });
-  assert.deepEqual(
-    JSON.parse(JSON.stringify(context.SetiBrowserIndustryAlienDecisionUi.DECISION_KINDS)),
-    domainUiApi.DECISION_KINDS,
-  );
 })();
 
 console.log("browser industry/alien Decision UI tests passed");

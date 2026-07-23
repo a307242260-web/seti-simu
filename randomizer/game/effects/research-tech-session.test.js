@@ -1,9 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
 const researchTechSession = require("./research-tech-session");
 
 function createCommittedState(overrides = {}) {
@@ -188,22 +185,6 @@ function runFixedTrace(api = researchTechSession) {
   const result = harness.dispatch(harness.getAuthority(), { family: "scan", actorId: "p2" });
   assert.equal(result.code, "RESEARCH_TECH_ACTION_FAMILY_INVALID");
   assert.equal(result.session.phase, "aborted");
-})();
-
-(function testBrowserAndNodeHostFixedTraceParity() {
-  const context = vm.createContext({
-    console,
-    structuredClone,
-    globalThis: null,
-  });
-  context.globalThis = context;
-  for (const file of ["session-runtime.js", "research-tech-session.js"]) {
-    const source = fs.readFileSync(path.join(__dirname, file), "utf8");
-    vm.runInContext(source, context, { filename: file });
-  }
-  const browserTrace = JSON.parse(JSON.stringify(runFixedTrace(context.SetiResearchTechSession)));
-  const nodeTrace = JSON.parse(JSON.stringify(runFixedTrace(researchTechSession)));
-  assert.deepEqual(browserTrace, nodeTrace);
 })();
 
 console.log("research tech effect session tests passed");

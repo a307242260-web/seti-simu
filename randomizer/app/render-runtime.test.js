@@ -1,8 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const {
   RENDER_CONTEXT_CAPABILITY_INVENTORY,
   cloneSelectorResult,
@@ -648,29 +646,6 @@ function createContext(overrides = {}) {
   context.enforceCapabilityInventory = true;
   context.unknownRootReader = () => ({});
   assert.throws(() => createRenderRuntime(context), /未分类 capability: .*unknownRootReader/);
-}
-
-{
-  const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
-  const start = appSource.indexOf("renderRuntimeModule.createRenderRuntime({");
-  const end = appSource.indexOf("\n  });", start);
-  assert.ok(start >= 0 && end > start, "必须存在生产 render-runtime 装配块");
-  const wiring = appSource.slice(start, end);
-  assert.match(wiring, /getProjection:/);
-  for (const key of [
-    "solarState", "playerState", "rocketState", "nebulaDataState",
-    "planetStatsState", "alienGameState", "finalScoringState", "turnState", "cardState", "techGameState",
-    "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById", "getPlayerByColor",
-    "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",
-    "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
-    "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
-    "isMovePaymentSelectionActive", "isHandScanSelectionActive", "getInitialSelectionOffer",
-    "renderReservedCardsFromTaskState", "updatePublicCardControls", "updatePlayerHandPanelTitle",
-    "canBlindDraw", "selectDefaultRocketForCurrentPlayer", "isCardSelectionActive",
-    "isPublicCardMultiSelectActive", "isAiAutoBattlePlayer",
-  ]) {
-    assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
-  }
 }
 
 {
