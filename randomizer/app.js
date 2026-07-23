@@ -1042,55 +1042,12 @@
   const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
-  let syncDiscardSelectionChrome;
-  let isHandScanSelectionActive;
-  let syncHandScanSelectionChrome;
-  let cancelHandScanSelection;
-  let isMovePaymentSelectionActive;
-  let getMovePaymentPlayer;
-  let isMovePaymentLockedForAiAutomation;
-  let beginSupplementalMovePayment;
-  let beginSupplementalMovePaymentForRoot;
-  let syncMovePaymentChrome;
-  let scrollToPlayerHandPanel;
-  let cancelMovePaymentSelection;
-  let beginMovePaymentSelection;
-  let handleHandCardMovePayment;
-  let confirmMovePayment;
-  let resolveMovePaymentDecision;
-  let syncPlayCardSelectionChrome;
-  let getPendingPlayCardSelection;
-  let handlePlayCardSelect;
-  let confirmPlayCardSelection;
-  let handleHandCardPlay;
-  let executeStandardPlayCard;
-  let executeStandardCardCornerAction;
   let executeMainScanAction;
   let launchRocketForScanAction4;
   let beginScanAction4FreeMove;
   let beginScanAction4FreeMoveForRoot;
   let executeFreeMoveForScanAction4;
   let executeFreeMoveForScanAction4ForRoot;
-  let getPendingHandCardPlayAction;
-  let cancelHandCardPlayAction;
-  let clearHandCardContextActions;
-  let cancelHandCardContextActions;
-  let confirmHandCardPlayAction;
-  let getPendingCardCornerQuickAction;
-  let syncCardCornerQuickActionChrome;
-  let cancelCardCornerQuickAction;
-  let handleHandCardCornerQuickAction;
-  let confirmCardCornerQuickAction;
-  let beginDiscardSelection;
-  let cancelDiscardSelection;
-  let completeDiscardSelection;
-  let finalizePendingDiscardSelection;
-  let handleHandCardDiscard;
-  let beginPlayCardSelection;
-  let cancelPlayCardSelection;
-  let handleFutureSpanCardPlay;
-  let handleFutureSpanPlayCardSelect;
-  let handleHandScanCardClick;
   let getPublicScanBonusSelectableCount;
   let getPublicScanMaxSelectable;
   let getPublicScanMinSelectable;
@@ -2437,96 +2394,52 @@
     getDiscardCornerRewardMultiplier: (...args) => getDiscardCornerRewardMultiplier(...args),
     requestAnimationFrame,
   });
-  ({
-    syncDiscardSelectionChrome,
-    isHandScanSelectionActive,
-    syncHandScanSelectionChrome,
-    cancelHandScanSelection,
-    isMovePaymentSelectionActive,
-    getMovePaymentPlayer,
-    isMovePaymentLockedForAiAutomation,
-    beginSupplementalMovePayment,
-    syncMovePaymentChrome,
-    scrollToPlayerHandPanel,
-    cancelMovePaymentSelection,
-    beginMovePaymentSelection,
-    handleHandCardMovePayment,
-    resolveMovePaymentDecision,
-    syncPlayCardSelectionChrome,
-    getPendingPlayCardSelection,
-    handlePlayCardSelect,
-    confirmPlayCardSelection,
-    executeStandardCardCornerAction,
-    getPendingHandCardPlayAction,
-    cancelHandCardPlayAction,
-    clearHandCardContextActions,
-    cancelHandCardContextActions,
-    confirmHandCardPlayAction,
-    getPendingCardCornerQuickAction,
-    syncCardCornerQuickActionChrome,
-    cancelCardCornerQuickAction,
-    handleHandCardCornerQuickAction,
-    confirmCardCornerQuickAction,
-    beginDiscardSelection,
-    cancelDiscardSelection,
-    completeDiscardSelection,
-    finalizePendingDiscardSelection,
-    handleHandCardDiscard,
-    beginPlayCardSelection,
-    cancelPlayCardSelection,
-    executeStandardPlayCard,
-    handleFutureSpanCardPlay,
-    handleHandCardPlay,
-    handleFutureSpanPlayCardSelect,
-    handleHandScanCardClick,
-  } = handFlowHelpers);
-  beginSupplementalMovePaymentForRoot = beginSupplementalMovePayment;
-  syncDiscardSelectionChrome = (...args) => callHandFlowCommand("syncDiscardSelectionChrome", args);
-  isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
-  syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
-  cancelHandScanSelection = (...args) => callHandFlowCommand("cancelHandScanSelection", args);
-  isMovePaymentSelectionActive = (workingRoot = createStateSourceReadoutRoot()) => Boolean(
+  const beginSupplementalMovePaymentForRoot = handFlowHelpers.beginSupplementalMovePayment;
+  const syncDiscardSelectionChrome = (...args) => callHandFlowCommand("syncDiscardSelectionChrome", args);
+  const isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
+  const syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
+  const isMovePaymentSelectionActive = (workingRoot = createStateSourceReadoutRoot()) => Boolean(
     getPendingMovePayment(workingRoot),
   );
-  getMovePaymentPlayer = (workingRoot = createStateSourceReadoutRoot()) => {
+  const getMovePaymentPlayer = (workingRoot = createStateSourceReadoutRoot()) => {
     const pending = getPendingMovePayment(workingRoot);
     return pending ? resolvePlayerReference(workingRoot, {
       playerId: pending.playerId,
       playerColor: pending.playerColor,
     }) : null;
   };
-  isMovePaymentLockedForAiAutomation = (...args) => callHandFlowCommand("isMovePaymentLockedForAiAutomation", args);
-  beginSupplementalMovePayment = (...args) => callHandFlowCommand("beginSupplementalMovePayment", args);
-  syncMovePaymentChrome = (...args) => callHandFlowCommand("syncMovePaymentChrome", args);
-  scrollToPlayerHandPanel = (...args) => callHandFlowCommand("scrollToPlayerHandPanel", args);
-  cancelMovePaymentSelection = (...args) => callHandFlowCommand("cancelMovePaymentSelection", args);
-  beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
-  handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
-  resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
-  ({ confirmMovePayment } = handFlowModule.createMovePaymentDecisionPort({
+  const isMovePaymentLockedForAiAutomation = (...args) => callHandFlowCommand("isMovePaymentLockedForAiAutomation", args);
+  const beginSupplementalMovePayment = (...args) => callHandFlowCommand("beginSupplementalMovePayment", args);
+  const syncMovePaymentChrome = (...args) => callHandFlowCommand("syncMovePaymentChrome", args);
+  const scrollToPlayerHandPanel = (...args) => callHandFlowCommand("scrollToPlayerHandPanel", args);
+  const cancelMovePaymentSelection = (...args) => callHandFlowCommand("cancelMovePaymentSelection", args);
+  const beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
+  const handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
+  const resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
+  const { confirmMovePayment } = handFlowModule.createMovePaymentDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
     submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
     getSelectedHandIndices: () => uiRuntimeState.movePaymentSelectedHandIndices || [],
-  }));
-  syncPlayCardSelectionChrome = (...args) => callHandFlowCommand("syncPlayCardSelectionChrome", args);
-  getPendingPlayCardSelection = (...args) => callHandFlowCommand("getPendingPlayCardSelection", args);
-  handlePlayCardSelect = (...args) => callHandFlowCommand("handlePlayCardSelect", args);
-  confirmPlayCardSelection = (...args) => callHandFlowCommand("confirmPlayCardSelection", args);
-  executeStandardCardCornerAction = (...args) => callHandFlowCommand("executeStandardCardCornerAction", args);
-  getPendingHandCardPlayAction = (...args) => callHandFlowCommand("getPendingHandCardPlayAction", args);
-  cancelHandCardPlayAction = (...args) => callHandFlowCommand("cancelHandCardPlayAction", args);
-  clearHandCardContextActions = (...args) => callHandFlowCommand("clearHandCardContextActions", args);
-  cancelHandCardContextActions = (...args) => callHandFlowCommand("cancelHandCardContextActions", args);
-  confirmHandCardPlayAction = (...args) => callHandFlowCommand("confirmHandCardPlayAction", args);
-  getPendingCardCornerQuickAction = (...args) => callHandFlowCommand("getPendingCardCornerQuickAction", args);
-  syncCardCornerQuickActionChrome = (...args) => callHandFlowCommand("syncCardCornerQuickActionChrome", args);
-  cancelCardCornerQuickAction = (...args) => callHandFlowCommand("cancelCardCornerQuickAction", args);
-  handleHandCardCornerQuickAction = (...args) => callHandFlowCommand("handleHandCardCornerQuickAction", args);
-  confirmCardCornerQuickAction = (...args) => callHandFlowCommand("confirmCardCornerQuickAction", args);
-  beginDiscardSelection = (...args) => callHandFlowCommand("beginDiscardSelection", args);
-  cancelDiscardSelection = () => submitActiveCardDecision("cancel-discard-selection", () => true);
-  completeDiscardSelection = (...args) => callHandFlowCommand("completeDiscardSelection", args);
-  finalizePendingDiscardSelection = (selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes || []) => (
+  });
+  const syncPlayCardSelectionChrome = (...args) => callHandFlowCommand("syncPlayCardSelectionChrome", args);
+  const getPendingPlayCardSelection = (...args) => callHandFlowCommand("getPendingPlayCardSelection", args);
+  const handlePlayCardSelect = (...args) => callHandFlowCommand("handlePlayCardSelect", args);
+  const confirmPlayCardSelection = (...args) => callHandFlowCommand("confirmPlayCardSelection", args);
+  const executeStandardCardCornerAction = (...args) => callHandFlowCommand("executeStandardCardCornerAction", args);
+  const getPendingHandCardPlayAction = (...args) => callHandFlowCommand("getPendingHandCardPlayAction", args);
+  const cancelHandCardPlayAction = (...args) => callHandFlowCommand("cancelHandCardPlayAction", args);
+  const clearHandCardContextActions = (...args) => callHandFlowCommand("clearHandCardContextActions", args);
+  const cancelHandCardContextActions = (...args) => callHandFlowCommand("cancelHandCardContextActions", args);
+  const confirmHandCardPlayAction = (...args) => callHandFlowCommand("confirmHandCardPlayAction", args);
+  const getPendingCardCornerQuickAction = (...args) => callHandFlowCommand("getPendingCardCornerQuickAction", args);
+  const syncCardCornerQuickActionChrome = (...args) => callHandFlowCommand("syncCardCornerQuickActionChrome", args);
+  const cancelCardCornerQuickAction = (...args) => callHandFlowCommand("cancelCardCornerQuickAction", args);
+  const handleHandCardCornerQuickAction = (...args) => callHandFlowCommand("handleHandCardCornerQuickAction", args);
+  const confirmCardCornerQuickAction = (...args) => callHandFlowCommand("confirmCardCornerQuickAction", args);
+  const beginDiscardSelection = (...args) => callHandFlowCommand("beginDiscardSelection", args);
+  const cancelDiscardSelection = () => submitActiveCardDecision("cancel-discard-selection", () => true);
+  const completeDiscardSelection = (...args) => callHandFlowCommand("completeDiscardSelection", args);
+  const finalizePendingDiscardSelection = (selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes || []) => (
     submitActiveCardDecision(
       "discard-hand-cards",
       (target) => {
@@ -2536,14 +2449,13 @@
       },
     )
   );
-  handleHandCardDiscard = (...args) => callHandFlowCommand("handleHandCardDiscard", args);
-  beginPlayCardSelection = (...args) => callHandFlowCommand("beginPlayCardSelection", args);
-  cancelPlayCardSelection = (...args) => callHandFlowCommand("cancelPlayCardSelection", args);
-  executeStandardPlayCard = (...args) => callHandFlowCommand("executeStandardPlayCard", args);
-  handleFutureSpanCardPlay = (...args) => callHandFlowCommand("handleFutureSpanCardPlay", args);
-  handleHandCardPlay = (...args) => callHandFlowCommand("handleHandCardPlay", args);
-  handleFutureSpanPlayCardSelect = (...args) => callHandFlowCommand("handleFutureSpanPlayCardSelect", args);
-  handleHandScanCardClick = (...args) => callHandFlowCommand("handleHandScanCardClick", args);
+  const handleHandCardDiscard = (...args) => callHandFlowCommand("handleHandCardDiscard", args);
+  const beginPlayCardSelection = (...args) => callHandFlowCommand("beginPlayCardSelection", args);
+  const cancelPlayCardSelection = (...args) => callHandFlowCommand("cancelPlayCardSelection", args);
+  const executeStandardPlayCard = (...args) => callHandFlowCommand("executeStandardPlayCard", args);
+  const handleFutureSpanCardPlay = (...args) => callHandFlowCommand("handleFutureSpanCardPlay", args);
+  const handleHandCardPlay = (...args) => callHandFlowCommand("handleHandCardPlay", args);
+  const handleFutureSpanPlayCardSelect = (...args) => callHandFlowCommand("handleFutureSpanPlayCardSelect", args);
   const effectSkipRuntime = effectFlowModule.createEffectSkipRuntime({
     industry,
     yichangdianCornerEffectType: cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS,
@@ -2804,8 +2716,8 @@
   confirmPublicScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "confirmPublicScanSelection", args);
   handlePublicScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handlePublicScanCardClick", args);
   beginHandScan = (...args) => callBrowserDomainCommand("scan_flow", "beginHandScan", args);
-  cancelHandScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "cancelHandScanSelection", args);
-  handleHandScanCardClick = (handIndex) => submitActiveCardDecision(
+  const cancelHandScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "cancelHandScanSelection", args);
+  const handleHandScanCardClick = (handIndex) => submitActiveCardDecision(
     "hand-scan-card",
     (target) => Number(target.handIndex) === Number(handIndex),
   );
