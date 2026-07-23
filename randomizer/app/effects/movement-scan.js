@@ -104,9 +104,9 @@
       return workingRoot;
     }
     const getScanTargetDecision = () => readPendingDecision?.("scan_target") || null;
-    function setScanTargetContinuation(workingRoot, continuation) {
-      if (!continuation) return null;
-      return openPendingDecision(workingRoot, "scan_target", continuation);
+    function openScanTargetDecision(workingRoot, pending) {
+      if (!pending) return null;
+      return openPendingDecision(workingRoot, "scan_target", pending);
     }
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
@@ -517,7 +517,7 @@
         return executeRemovePlanetMarkerChoice(workingRoot, effect, choices[0]);
       }
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        setScanTargetContinuation(workingRoot, {
+        openScanTargetDecision(workingRoot, {
           ...getPendingOwnerFields(workingRoot, effect),
           type: "remove_planet_marker",
           effect,
@@ -525,7 +525,7 @@
         });
         return { ok: true, pendingChoice: true, message: effect.label };
       }
-      setScanTargetContinuation(workingRoot, {
+      openScanTargetDecision(workingRoot, {
         ...getPendingOwnerFields(workingRoot, effect),
         type: "remove_planet_marker",
         effect,
@@ -1212,7 +1212,7 @@
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return applyHandCornerChoice(workingRoot, effect, "publicity");
       }
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "hand_corner_reward", effect, counts });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "hand_corner_reward", effect, counts });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一种左上角快速行动类别，按当前手牌数量获得对应奖励。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;

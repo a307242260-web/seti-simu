@@ -218,10 +218,10 @@
       return workingRoot;
     }
     const getScanTargetDecision = () => readPendingDecision?.("scan_target") || null;
-    function setScanTargetContinuation(workingRoot, continuation) {
+    function openScanTargetDecision(workingRoot, pending) {
       requireWorkingRoot(workingRoot);
-      if (!continuation) return null;
-      return openPendingDecision(workingRoot, "scan_target", continuation);
+      if (!pending) return null;
+      return openPendingDecision(workingRoot, "scan_target", pending);
     }
 
     function getWorkingCurrentPlayer(workingRoot) {
@@ -1164,7 +1164,7 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      setScanTargetContinuation(workingRoot, { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices });
+      openScanTargetDecision(workingRoot, { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "星际海盗";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个已有掠夺标记主星上的己方环绕或登陆标记，移除后消耗 1 信用点并在该星球当前扇区免费发射。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;

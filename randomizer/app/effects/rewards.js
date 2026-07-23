@@ -117,9 +117,9 @@
       return workingRoot;
     }
     const getScanTargetDecision = () => readPendingDecision?.("scan_target") || null;
-    function setScanTargetContinuation(workingRoot, continuation) {
-      if (!continuation) return null;
-      return openPendingDecision(workingRoot, "scan_target", continuation);
+    function openScanTargetDecision(workingRoot, pending) {
+      if (!pending) return null;
+      return openPendingDecision(workingRoot, "scan_target", pending);
     }
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
@@ -516,7 +516,7 @@
           payload: { cardIds: [] },
         });
       }
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "return_unfinished_task", effect, choices });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "return_unfinished_task", effect, choices });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
@@ -1259,7 +1259,7 @@
       skip.dataset.optionalHandScan = "skip";
       skip.innerHTML = "跳过<small>不执行这次弃牌扫描</small>";
       els.scanTargetActions.replaceChildren(start, skip);
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "optional_hand_scan", effect });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "optional_hand_scan", effect });
       els.scanTargetOverlay.hidden = false;
       ruleRocketState(workingRoot).statusNote = `${effect.label}：选择手牌或跳过`;
       renderStateReadout();

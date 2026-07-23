@@ -162,10 +162,10 @@
     const ruleNebulaDataState = (workingRoot) => requireWorkingRoot(workingRoot).nebulaDataState;
     const rulePlanetStatsState = (workingRoot) => requireWorkingRoot(workingRoot).planetStatsState;
     const getScanTargetDecision = () => context.readPendingDecision?.("scan_target") || null;
-    function setScanTargetContinuation(workingRoot, continuation) {
+    function openScanTargetDecision(workingRoot, pending) {
       requireWorkingRoot(workingRoot);
-      if (!continuation) return null;
-      return context.openPendingDecision(workingRoot, "scan_target", continuation);
+      if (!pending) return null;
+      return context.openPendingDecision(workingRoot, "scan_target", pending);
     }
     const getProbeSectorScanDecision = () => context.readPendingDecision?.("probe_sector_scan") || null;
     const getProbeLocationRewardDecision = () => context.readPendingDecision?.("probe_location_reward") || null;
@@ -353,7 +353,7 @@
           payload: { sectorX: xs[0] },
         });
       }
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect, player), type: "conditional_sector_scan", effect, sectorXs: xs });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect, player), type: "conditional_sector_scan", effect, sectorXs: xs });
       setOverlayContent(effect.label, `选择一个符合条件的扇区，随后扫描 ${repeat} 次。`);
       const opened = openOverlayWithButtons(xs.map((sectorX) => {
         const button = createButton();
@@ -440,7 +440,7 @@
         });
       }
       uiRuntimeState.discardIncomeSelectedCardIds = [];
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "discard_any_income", effect });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "discard_any_income", effect });
       setOverlayContent(effect.label, "选择任意数量手牌，确认后弃掉并逐张结算收入图标。");
       renderDiscardIncomePicker(workingRoot);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
@@ -546,7 +546,7 @@
           message: `${effect.label}：信用不足，已跳过`,
         });
       }
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "pay_credit_reward", effect });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "pay_credit_reward", effect });
       setOverlayContent(effect.label, "可以支付 1 信用获得奖励，也可以跳过剩余支付节点。");
       const pay = createButton();
       pay.type = "button";
@@ -635,7 +635,7 @@
     function executeIndustryFundamentalismExchangeEffect(workingRoot, effect) {
       const player = getEffectOwnerPlayer(workingRoot, effect);
       const choices = getFundamentalismExchangeChoiceSpecs(workingRoot, player);
-      setScanTargetContinuation(workingRoot, {
+      openScanTargetDecision(workingRoot, {
         ...getPendingOwnerFields(workingRoot, effect, player),
         type: "industry_fundamentalism_exchange",
         effect,
@@ -813,7 +813,7 @@
           payload: { cardIds: [] },
         });
       }
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "discard_corner_repeat", effect, choices });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "discard_corner_repeat", effect, choices });
       setOverlayContent(effect.label, "选择一张非外星人手牌弃掉，并重复结算其左上角奖励。");
       openOverlayWithButtons(choices.map((card) => {
         const button = createButton();
@@ -942,7 +942,7 @@
           payload: { markerIds: [] },
         });
       }
-      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "remove_orbit_to_probe", effect, choices });
+      openScanTargetDecision(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "remove_orbit_to_probe", effect, choices });
       setOverlayContent(effect.label, "选择一个己方环绕标记，移除后在该星球当前扇区放置探测器。");
       openOverlayWithButtons(choices.map((choice) => {
         const button = createButton();

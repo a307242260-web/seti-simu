@@ -332,29 +332,29 @@
     const getPublicScanQueue = () => (
       context.readPendingDecision?.("public_scan")?.publicScanQueue || null
     );
-    function setScanTargetContinuation(workingRoot, continuation) {
+    function openScanTargetDecision(workingRoot, pending) {
       requireWorkingRoot(workingRoot);
-      if (!continuation) return null;
-      const normalized = structuredClone(continuation);
-      normalized.playerId ||= continuation.player?.id || null;
-      normalized.playerColor ||= continuation.player?.color || null;
-      normalized.cardId ||= continuation.card?.id || continuation.card?.cardId || null;
+      if (!pending) return null;
+      const normalized = structuredClone(pending);
+      normalized.playerId ||= pending.player?.id || null;
+      normalized.playerColor ||= pending.player?.color || null;
+      normalized.cardId ||= pending.card?.id || pending.card?.cardId || null;
       delete normalized.player;
       delete normalized.card;
       const kind = normalized.type === "public_scan" ? "public_scan" : "scan_target";
       return context.openPendingDecision(workingRoot, kind, normalized);
     }
-    function hydrateScanTargetContinuation(workingRoot, continuation) {
-      if (!continuation) return null;
-      const player = resolveWorkingPlayerReference(workingRoot, continuation)
+    function hydrateScanTargetDecision(workingRoot, pending) {
+      if (!pending) return null;
+      const player = resolveWorkingPlayerReference(workingRoot, pending)
         || getWorkingCurrentPlayer(workingRoot);
-      const cardPool = continuation.type === "hand_scan"
+      const cardPool = pending.type === "hand_scan"
         ? (player?.hand || [])
         : (workingRoot.cardState?.publicCards || []);
-      const card = continuation.cardId
-        ? cardPool.find((candidate) => String(candidate?.id || candidate?.cardId) === String(continuation.cardId)) || null
+      const card = pending.cardId
+        ? cardPool.find((candidate) => String(candidate?.id || candidate?.cardId) === String(pending.cardId)) || null
         : null;
-      return { ...continuation, player, card };
+      return { ...pending, player, card };
     }
     const els = context.els || {};
 
@@ -1804,7 +1804,7 @@
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return { ok: false, message: "无法打开扫描目标选择" };
       }
-      setScanTargetContinuation(workingRoot, {
+      openScanTargetDecision(workingRoot, {
         ...getPendingOwnerFields(workingRoot, config.effect || null, config.player || null),
         ...config,
       });
@@ -1846,7 +1846,7 @@
 
     function confirmScanTarget(workingRoot, nebulaId, sectorX, pendingContext = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const pending = hydrateScanTargetContinuation(workingRoot, pendingContext || getScanTargetDecision());
+      const pending = hydrateScanTargetDecision(workingRoot, pendingContext || getScanTargetDecision());
       return withPendingOwnerPlayer(workingRoot, pending, () => {
       closeScanTargetPicker(workingRoot, { preserveIndustryAction: true });
 
@@ -2059,7 +2059,7 @@
 
     function handleDrawnHandScanSkip(workingRoot, pendingContext = null) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = hydrateScanTargetContinuation(workingRoot, pendingContext || getScanTargetDecision());
+      const pending = hydrateScanTargetDecision(workingRoot, pendingContext || getScanTargetDecision());
       if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
         return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
       }
