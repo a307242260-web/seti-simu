@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 新架构设计报告</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: #0d1b2d;
+      --panel-2: #10243a;
+      --line: #24425f;
+      --text: #e8f2ff;
+      --muted: #9bb0c8;
+      --cyan: #53d7ff;
+      --blue: #6f9dff;
+      --violet: #a78bfa;
+      --green: #54dfa5;
+      --amber: #ffd166;
+      --red: #ff7f91;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .24);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 5%, rgba(83, 215, 255, .12), transparent 28rem),
+        radial-gradient(circle at 14% 24%, rgba(167, 139, 250, .09), transparent 24rem),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.72 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      color: #c9e7ff;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .91em;
+    }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 72px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 360px;
+      padding: 56px clamp(24px, 5vw, 68px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(16, 36, 58, .96), rgba(8, 24, 41, .92));
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -120px -190px auto;
+      width: 430px;
+      height: 430px;
+      border: 1px solid rgba(83, 215, 255, .22);
+      border-radius: 50%;
+      box-shadow: 0 0 0 46px rgba(83, 215, 255, .035), 0 0 0 92px rgba(83, 215, 255, .025);
+    }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--cyan);
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1 { max-width: 780px; margin: 0; font-size: clamp(38px, 7vw, 76px); line-height: 1.04; letter-spacing: -.045em; }
+    .lead { max-width: 760px; margin: 28px 0 0; color: #bed0e4; font-size: clamp(17px, 2vw, 21px); }
+    .meta { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 30px; }
+    .pill {
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(7, 17, 31, .48);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 0;
+      padding: 13px;
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(7, 17, 31, .9);
+      backdrop-filter: blur(16px);
+    }
+    nav a { padding: 6px 10px; border-radius: 9px; color: var(--muted); font-size: 13px; }
+    nav a:hover { background: var(--panel-2); color: var(--text); text-decoration: none; }
+    section { scroll-margin-top: 90px; margin-top: 76px; }
+    .section-kicker { margin: 0 0 8px; color: var(--cyan); font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h2 { margin: 0 0 18px; font-size: clamp(28px, 4vw, 44px); line-height: 1.15; letter-spacing: -.03em; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    .intro { max-width: 830px; margin: 0 0 26px; color: var(--muted); font-size: 17px; }
+    .grid { display: grid; gap: 16px; }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(16, 36, 58, .84), rgba(11, 27, 46, .88));
+    }
+    .card p { margin: 8px 0 0; color: var(--muted); }
+    .num {
+      display: inline-grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      background: rgba(83, 215, 255, .12);
+      color: var(--cyan);
+      font-weight: 800;
+    }
+    .callout {
+      padding: 22px 24px;
+      border-left: 3px solid var(--green);
+      border-radius: 0 16px 16px 0;
+      background: rgba(84, 223, 165, .07);
+      color: #cfe9df;
+    }
+    .diagram {
+      overflow: hidden;
+      padding: clamp(18px, 3vw, 32px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(5, 15, 27, .72);
+      box-shadow: var(--shadow);
+    }
+    .diagram-title { margin-bottom: 22px; color: var(--muted); font-size: 13px; }
+    .architecture { display: grid; gap: 12px; }
+    .arch-row { display: grid; gap: 12px; }
+    .arch-row.hosts { grid-template-columns: 1fr 1fr 1fr; }
+    .arch-row.core { grid-template-columns: 1fr 1.2fr 1fr; }
+    .arch-box {
+      position: relative;
+      min-height: 94px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--panel);
+    }
+    .arch-box strong { display: block; margin-bottom: 4px; color: var(--text); }
+    .arch-box small { display: block; color: var(--muted); line-height: 1.5; }
+    .arch-box.host { border-top: 3px solid var(--blue); }
+    .arch-box.policy { border-top: 3px solid var(--violet); }
+    .arch-box.action { border-top: 3px solid var(--cyan); }
+    .arch-box.effect { border-top: 3px solid var(--green); }
+    .arch-box.state { border-top: 3px solid var(--amber); }
+    .connector {
+      padding: 3px 0;
+      color: var(--muted);
+      text-align: center;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      letter-spacing: .08em;
+    }
+    .owner-table { width: 100%; border-collapse: collapse; }
+    .owner-table th, .owner-table td { padding: 14px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .owner-table th { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+    .owner-table tr:last-child td { border-bottom: 0; }
+    .owner-table td:first-child { width: 24%; color: var(--text); font-weight: 700; }
+    .tag { display: inline-block; padding: 2px 7px; border-radius: 6px; background: rgba(83, 215, 255, .1); color: var(--cyan); font-size: 12px; }
+    .sequence { display: grid; grid-template-columns: repeat(7, minmax(100px, 1fr)); gap: 10px; align-items: stretch; }
+    .step {
+      position: relative;
+      min-height: 158px;
+      padding: 16px 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+    .step::after {
+      content: "→";
+      position: absolute;
+      top: 58px;
+      right: -18px;
+      z-index: 2;
+      color: var(--cyan);
+      font-size: 20px;
+    }
+    .step:last-child::after { display: none; }
+    .step b { display: block; margin: 8px 0 7px; line-height: 1.35; }
+    .step small { color: var(--muted); line-height: 1.45; }
+    .step-index { color: var(--cyan); font: 700 12px/1 "SFMono-Regular", Consolas, monospace; }
+    .state-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center; }
+    .state-node { padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+    .state-node strong { display: block; margin-bottom: 8px; }
+    .state-node p { margin: 0; color: var(--muted); }
+    .arrow { color: var(--cyan); font-size: 30px; text-align: center; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .host-panel { padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); }
+    .host-panel.browser { border-top: 3px solid var(--blue); }
+    .host-panel.sim { border-top: 3px solid var(--violet); }
+    .host-panel ul, .compact-list { margin: 14px 0 0; padding-left: 19px; color: var(--muted); }
+    li { margin: 7px 0; }
+    .code-paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .path {
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(13, 27, 45, .7);
+    }
+    .path span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+    .status-line { display: flex; align-items: flex-start; gap: 13px; }
+    .status-dot { flex: 0 0 auto; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 16px rgba(84, 223, 165, .7); }
+    .risk .status-dot { background: var(--amber); box-shadow: 0 0 16px rgba(255, 209, 102, .65); }
+    footer { margin-top: 76px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    @media (max-width: 920px) {
+      .grid-3, .grid-2, .split, .code-paths { grid-template-columns: 1fr; }
+      .sequence { grid-template-columns: 1fr 1fr; }
+      .step::after { display: none; }
+    }
+    @media (max-width: 680px) {
+      .page { width: min(100% - 20px, 1180px); padding-top: 10px; }
+      .hero { padding: 34px 22px; border-radius: 20px; }
+      nav { position: static; }
+      section { margin-top: 56px; }
+      .arch-row.hosts, .arch-row.core { grid-template-columns: 1fr; }
+      .sequence { grid-template-columns: 1fr; }
+      .state-flow { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+      .owner-table { display: block; overflow-x: auto; }
+    }
+    @media print {
+      :root { color-scheme: light; --bg: #fff; --panel: #f6f8fb; --panel-2: #eef3f8; --line: #cbd5e1; --text: #102033; --muted: #4c6075; }
+      body { background: #fff; }
+      nav { display: none; }
+      .hero, .diagram { box-shadow: none; }
+      section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Architecture Report · 2026-07-23</p>
+      <h1>SETI 新架构：一个规则内核，两个宿主</h1>
+      <p class="lead">
+        新架构把浏览器原型从“UI 流程即规则”的大型闭包，收敛为由权威状态、语义 Action、
+        Effect Session 和宿主投影组成的可验证内核。浏览器与训练环境不再各自解释游戏。
+      </p>
+      <div class="meta">
+        <span class="pill">基于当前代码与设计文档</span>
+        <span class="pill">无构建步骤</span>
+        <span class="pill">Browser / Simulation 同源</span>
+        <span class="pill">Fail-closed</span>
+      </div>
+    </header>
+
+    <nav aria-label="报告目录">
+      <a href="#summary">设计判断</a>
+      <a href="#principles">核心原则</a>
+      <a href="#map">总体架构</a>
+      <a href="#transaction">执行链路</a>
+      <a href="#state">状态模型</a>
+      <a href="#hosts">双宿主</a>
+      <a href="#ai">AI 边界</a>
+      <a href="#code">代码地图</a>
+      <a href="#status">现状与风险</a>
+    </nav>
+
+    <section id="summary">
+      <p class="section-kicker">Executive judgment</p>
+      <h2>设计的核心不是“拆文件”，而是“冻结所有权”</h2>
+      <p class="intro">
+        当前代码已经形成清晰的单向依赖：宿主只能提交输入和读取投影；规则层独占合法性与变更；
+        StateStore 独占已提交事实。这样才能让浏览器玩家、机器席位和训练 Policy 在相同的规则边界上行动。
+      </p>
+      <div class="callout">
+        <strong>一句话概括：</strong>
+        玩家或 Policy 只选择“做什么”；Standard Action 判断“能不能做”；Effect Session 负责“如何完整结算”；
+        StateStore 决定“能否成为新事实”；Browser / Simulation 只决定“如何看见与如何输入”。
+      </div>
+    </section>
+
+    <section id="principles">
+      <p class="section-kicker">Design principles</p>
+      <h2>五条架构原则</h2>
+      <div class="grid grid-3">
+        <article class="card"><span class="num">1</span><h3>单一权威状态</h3><p>规则事实只存在于 committed snapshot，或基于其版本创建的唯一 Session working copy。</p></article>
+        <article class="card"><span class="num">2</span><h3>语义输入</h3><p>输入使用稳定 Action / Decision descriptor，不携带 DOM、闭包、估值或按钮文案。</p></article>
+        <article class="card"><span class="num">3</span><h3>事务化结算</h3><p>一个动作的 effect、触发、选择、日志、撤销与不可逆屏障在同一 Session 内推进。</p></article>
+        <article class="card"><span class="num">4</span><h3>宿主无规则</h3><p>Browser 负责投影与交互，Simulation 负责 observation 与 step；两者都不拥有第二套规则。</p></article>
+        <article class="card"><span class="num">5</span><h3>默认拒绝</h3><p>旧 schema、stale 版本、越权 owner、未知 family 和非法 Policy 输出都 fail-closed。</p></article>
+        <article class="card"><span class="num">6</span><h3>同源可验证</h3><p>浏览器与训练共享 state、Action、Effect、Policy 端口，parity 可以由相同 checkpoint 证明。</p></article>
+      </div>
+    </section>
+
+    <section id="map">
+      <p class="section-kicker">System map</p>
+      <h2>总体架构图</h2>
+      <p class="intro">箭头表示依赖和输入方向。越靠下越接近规则事实；上层可以替换，下层 owner 不被宿主反向覆盖。</p>
+      <div class="diagram" role="img" aria-label="SETI 新架构分层图">
+        <div class="diagram-title">HOST CAPABILITIES → PUBLIC PROTOCOLS → RULE OWNERS → COMMITTED FACT</div>
+        <div class="architecture">
+          <div class="arch-row hosts">
+            <div class="arch-box host"><strong>Browser Host</strong><small>DOM · Event · ViewState<br>BrowserProjection · Browser Services</small></div>
+            <div class="arch-box policy"><strong>Machine Player Host</strong><small>代次 · deadline · 取消 · stale 去重<br>Policy 输出校验</small></div>
+            <div class="arch-box host"><strong>Simulation Host</strong><small>reset · observe · legalActions<br>step · checkpoint · replay</small></div>
+          </div>
+          <div class="connector">↓ player input　　↓ PolicyDecision　　↓ RL action envelope</div>
+          <div class="arch-row core">
+            <div class="arch-box action"><strong>Standard Action Registry</strong><small>22 个语义 family<br>enumerate · validate · execute</small></div>
+            <div class="arch-box effect"><strong>Rule Composition + Effect Session</strong><small>working copy · queue · DecisionEffect<br>journal · undo · barrier · deterministic drain</small></div>
+            <div class="arch-box policy"><strong>Policy Port</strong><small>DecisionContext → PolicyDecision<br>只从 legal set 选择 actionId</small></div>
+          </div>
+          <div class="connector">　　　　　　　　　　　　↓ compareAndCommit(baseVersion, candidate)</div>
+          <div class="arch-row">
+            <div class="arch-box state"><strong>StateStore / CommittedGameState</strong><small>schema · stateVersion · RNG · sequences · invariants · CAS · snapshot isolation</small></div>
+          </div>
+          <div class="connector">↓ immutable projection / observation / save checkpoint</div>
+        </div>
+      </div>
+
+      <div class="diagram" style="margin-top:16px">
+        <table class="owner-table">
+          <thead><tr><th>唯一 Owner</th><th>拥有</th><th>明确不拥有</th></tr></thead>
+          <tbody>
+            <tr><td>StateStore</td><td>Committed schema、版本、RNG、序列、CAS</td><td>Action、DOM、Policy、Effect 推进</td></tr>
+            <tr><td>Standard Action Registry</td><td>身份、枚举、执行前重验、family handler</td><td>UI 呈现、策略估值、长期 working state</td></tr>
+            <tr><td>Effect Session</td><td>队列、DecisionEffect、journal、undo、barrier、提交门禁</td><td>宿主渲染、Policy 选择</td></tr>
+            <tr><td>Browser Host</td><td>可见性投影、ViewState、人类输入、浏览器服务</td><td>canonical root、合法性、规则 mutation</td></tr>
+            <tr><td>Machine Player Host</td><td>请求生命周期、deadline、取消、去重、输出验证</td><td>估值规则、游戏执行、DOM resolver</td></tr>
+            <tr><td>Policy</td><td>在给定 legal set 内选择 <code>actionId</code></td><td>创建 Action identity、直接执行规则、读取 DOM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="transaction">
+      <p class="section-kicker">Action lifecycle</p>
+      <h2>一次动作如何成为新事实</h2>
+      <p class="intro">所有入口最终经过同一条事务链。任何一步失败都不会把半成品写回 committed state。</p>
+      <div class="diagram">
+        <div class="sequence">
+          <div class="step"><span class="step-index">01</span><b>读取投影</b><small>BrowserProjection 或 observation 只暴露当前 viewer 可见信息。</small></div>
+          <div class="step"><span class="step-index">02</span><b>选择 Action</b><small>人类输入或 Policy 从 legal descriptor 中选择语义 actionId。</small></div>
+          <div class="step"><span class="step-index">03</span><b>重新校验</b><small>检查 schema、actor、stateVersion、decisionVersion、候选成员关系。</small></div>
+          <div class="step"><span class="step-index">04</span><b>打开 Session</b><small>从 committed snapshot 创建带 baseVersion 的 working copy。</small></div>
+          <div class="step"><span class="step-index">05</span><b>推进 Effect</b><small>按 direct → trigger → deferred 排序结算；多选时停在 DecisionEffect。</small></div>
+          <div class="step"><span class="step-index">06</span><b>CAS 提交</b><small>完整通过不变量后，compareAndCommit 原子更新 stateVersion。</small></div>
+          <div class="step"><span class="step-index">07</span><b>刷新派生物</b><small>生成新投影、事件、history、log、replay；机器席位获得新代次。</small></div>
+        </div>
+      </div>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card"><h3>确定性 drain</h3><p>零选项按规则失败或落空；唯一等价项自动推进；两个以上非等价项必须形成新的策略选择点。drain 有步数上限。</p></div>
+        <div class="card"><h3>选择是显式边界</h3><p>DecisionEffect 带 owner、decisionVersion 和 choices。浏览器按钮与 AI 都只能提交 choice，不能用回调旁路执行。</p></div>
+      </div>
+    </section>
+
+    <section id="state">
+      <p class="section-kicker">State model</p>
+      <h2>状态生命周期：事实、草稿与派生物</h2>
+      <div class="diagram">
+        <div class="state-flow">
+          <div class="state-node"><strong>Committed snapshot</strong><p>唯一权威事实；深拷贝、冻结、带 stateVersion。</p></div>
+          <div class="arrow">→</div>
+          <div class="state-node"><strong>Session working copy</strong><p>基于 baseVersion 的事务草稿；持有 effect queue 与 journal。</p></div>
+          <div class="arrow">→</div>
+          <div class="state-node"><strong>新 committed snapshot</strong><p>只有 CAS 与全部不变量通过后才发布。</p></div>
+        </div>
+      </div>
+      <div class="grid grid-3" style="margin-top:16px">
+        <div class="card"><h3>规则状态</h3><p><code>match / turn / players / solarSystem / pieces / planets / data / cards / tech / aliens / finalScoring</code></p></div>
+        <div class="card"><h3>事务记录</h3><p>actions、decisions、effects、events、RNG、history、logs 与 replay 随 Session 前进。</p></div>
+        <div class="card"><h3>非权威派生物</h3><p>Browser ViewState、行动日志视图、observation、报告与训练 checkpoint 不得反向覆盖规则事实。</p></div>
+      </div>
+    </section>
+
+    <section id="hosts">
+      <p class="section-kicker">Host separation</p>
+      <h2>同一个内核，两种运行形态</h2>
+      <div class="split">
+        <article class="host-panel browser">
+          <h3>Browser Host</h3>
+          <ul>
+            <li>把 committed/session 状态投影成按 viewer 隔离、深冻结的 BrowserProjection。</li>
+            <li>把点击、选择、拖拽转换为 Action / Decision submission。</li>
+            <li>管理 ViewState、DOM renderer、Browser Services 与本地恢复交互。</li>
+            <li>人类席位与机器席位共用 BrowserInputAdapter 提交边界。</li>
+          </ul>
+        </article>
+        <article class="host-panel sim">
+          <h3>Simulation Host</h3>
+          <ul>
+            <li>直接装配 <code>simulation-rule-composition</code> 与公共 <code>rule-composition</code>。</li>
+            <li>向训练端提供 reset / observe / legalActions / step / checkpoint / replay。</li>
+            <li>把相同 descriptor 投影成 RL envelope，不创建第二套 candidate identity。</li>
+            <li>不加载 index.html、app.js、DOM 或 Browser globals。</li>
+          </ul>
+        </article>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <strong>Parity 的含义：</strong>不是两个实现“看起来行为相同”，而是从同一 checkpoint 执行同一
+        <code>actionId</code>，得到一致的 committed state、事件、RNG cursor 与下一决策边界。
+      </div>
+    </section>
+
+    <section id="ai">
+      <p class="section-kicker">Machine player</p>
+      <h2>AI 是决策者，不是自动化旁路</h2>
+      <p class="intro">
+        新架构把 AI 从浏览器 resolver / candidate / executor 链条中抽离。Policy 只能消费公共 DecisionContext，
+        并返回 legal set 中的 actionId；Machine Player Host 负责异步请求安全，规则内核负责最终重验与执行。
+      </p>
+      <div class="diagram">
+        <div class="state-flow">
+          <div class="state-node"><strong>DecisionContext</strong><p>observation + legal descriptors + owner + versions</p></div>
+          <div class="arrow">→</div>
+          <div class="state-node"><strong>PolicyDecision</strong><p>actionId + provenance；不携带 executor 或 DOM callback</p></div>
+          <div class="arrow">→</div>
+          <div class="state-node"><strong>公共输入端口</strong><p>提交前重验；未知、stale、超时、重复均 fail-closed</p></div>
+        </div>
+      </div>
+      <div class="grid grid-3" style="margin-top:16px">
+        <div class="card"><h3>Policy Port</h3><p>定义版本化请求、响应、validator 与请求失效语义。</p></div>
+        <div class="card"><h3>Heuristic Policy</h3><p>只读估值和稳定排序，可供浏览器席位、teacher 与冻结 opponent 共用。</p></div>
+        <div class="card"><h3>Machine Player Host</h3><p>固定席位、代次、deadline、取消、去重；不执行游戏规则。</p></div>
+      </div>
+    </section>
+
+    <section id="code">
+      <p class="section-kicker">Implementation map</p>
+      <h2>关键代码地图</h2>
+      <p class="intro">以下是理解与维护新架构时应优先阅读的实现 owner，而不是按 UI 功能随机追调用。</p>
+      <div class="code-paths">
+        <div class="path"><code>randomizer/game/state/state-store.js</code><span>CommittedGameState、schema、不变量、working copy 与 CAS。</span></div>
+        <div class="path"><code>randomizer/game/actions/standard-action.js</code><span>Action envelope、稳定 identity 与 registry 协议。</span></div>
+        <div class="path"><code>randomizer/game/effects/session-runtime.js</code><span>Effect Session 状态机、队列、DecisionEffect、journal、undo。</span></div>
+        <div class="path"><code>randomizer/game/rule-composition.js</code><span>把 State、Action、Effect、输入端口与投影接成公共规则内核。</span></div>
+        <div class="path"><code>randomizer/app/browser-host/**</code><span>投影、输入 adapter、resident renderer、action bar 与 Browser Services。</span></div>
+        <div class="path"><code>randomizer/app/simulation-env.js</code><span>无 DOM 的环境协议与 RL action envelope。</span></div>
+        <div class="path"><code>randomizer/game/ai/policy-port.js</code><span>DecisionContext → PolicyDecision 公共契约。</span></div>
+        <div class="path"><code>randomizer/game/ai/machine-player-host.js</code><span>机器席位请求生命周期与 fail-closed 提交协调。</span></div>
+        <div class="path"><code>randomizer/app.js</code><span>Browser composition root；负责接线，不应再成为第二规则 owner。</span></div>
+        <div class="path"><code>randomizer/training/simulation-rule-composition.js</code><span>训练宿主到公共规则内核的窄装配层。</span></div>
+      </div>
+    </section>
+
+    <section id="status">
+      <p class="section-kicker">Assessment</p>
+      <h2>当前完成度与后续关注点</h2>
+      <div class="grid grid-2">
+        <article class="card">
+          <div class="status-line"><span class="status-dot"></span><div><h3>已经建立的生产边界</h3><p>22 个 Standard Action family、统一 Effect Session、StateStore CAS、BrowserProjection、Simulation Env、公共 Policy Port 与 Machine Player Host 已在代码中形成对应 owner。</p></div></div>
+        </article>
+        <article class="card">
+          <div class="status-line"><span class="status-dot"></span><div><h3>旧旁路正在收口</h3><p>浏览器机器席位不再暴露 legacy candidate / selector / pending automation；恢复与输入只接受当前 schema 和公共端口。</p></div></div>
+        </article>
+        <article class="card risk">
+          <div class="status-line"><span class="status-dot"></span><div><h3>Composition root 仍然偏大</h3><p><code>randomizer/app.js</code> 当前仍约 4,610 行。后续拆分应继续以 owner 和显式 context 为依据，不能只把函数搬到新文件。</p></div></div>
+        </article>
+        <article class="card risk">
+          <div class="status-line"><span class="status-dot"></span><div><h3>真实装配证据不可省略</h3><p>跨模块迁移除了 Node 行为回归，还必须保留真实 Chrome smoke、固定 seed 完整局、checkpoint fork 与 Browser/Simulation parity。</p></div></div>
+        </article>
+      </div>
+      <div class="callout" style="margin-top:16px;border-color:var(--amber);background:rgba(255,209,102,.06)">
+        <strong>演进准则：</strong>未来新增机制时，先回答“状态由谁拥有、Action identity 在哪里生成、Effect 在哪个 Session
+        结算、宿主只看到什么投影、失败是否无副作用”，再决定文件放置。
+      </div>
+    </section>
+
+    <section id="sources">
+      <p class="section-kicker">Sources</p>
+      <h2>报告依据</h2>
+      <div class="card">
+        <p style="margin-top:0">设计文档：<code>docs/project-architecture.md</code>、<code>docs/app-architecture.md</code>、
+          <code>docs/standard-action-contract.md</code>、<code>docs/effect-session-runtime.md</code>、
+          <code>docs/committed-game-state.md</code>、<code>docs/state-host-stage7.md</code>、
+          <code>docs/browser-host-ui.md</code>、<code>docs/machine-player-host.md</code>、
+          <code>docs/policy-port-contract.md</code>、<code>docs/rl-simulation-env.md</code>。</p>
+        <p>实现核对：StateStore、Standard Action、Effect Session、Rule Composition、Browser Host、
+          Simulation Env、Policy Port、Machine Player Host 与 Browser composition root 当前代码。</p>
+      </div>
+    </section>
+
+    <footer>
+      SETI 新架构设计报告 · 依据 2026-07-23 工作树中的架构文档与实现生成。
+      本报告描述当前生产装配，不把迁移方案当作已完成事实。
+    </footer>
+  </main>
+</body>
+</html>
