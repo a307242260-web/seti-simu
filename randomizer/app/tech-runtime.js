@@ -24,13 +24,8 @@
   function createTechRuntime(context = {}) {
     const simulation = context.simulation === true;
     const {
-      Array,
-      Boolean,
       HISTORY_SOURCE_MAIN,
       HISTORY_SOURCE_QUICK,
-      Math,
-      Number,
-      String,
       actions,
       abilities,
       actionHistory,
@@ -86,7 +81,6 @@
       setQuickPanelOpen,
       skipActionEffectWithMessage,
       startCardEffectFlow,
-      structuredClone,
       syncCardSelectionChrome,
       syncInteractionFocusChrome,
       syncPlanetOrbitLandMarkers,

@@ -35,17 +35,10 @@
 
   function createIndustryRuntime(context = {}) {
     const {
-      Array,
-      Boolean,
       HISTORY_SOURCE_MAIN,
       HISTORY_SOURCE_QUICK,
       INDUSTRY_TURING_BORROW_TECH_TYPES,
-      Math,
-      Number,
-      Object,
       SCORE_SOURCE_KEYS,
-      Set,
-      String,
       abilities,
       activateMoveMode,
       activateNextActionEffect,
@@ -131,7 +124,6 @@
       startCardEffectFlow,
       startIndustryPiratesRaidLaunchFlow,
       startPendingActionSession,
-      structuredClone,
       syncCardSelectionChrome,
       syncDiscardSelectionChrome,
       syncIndustryHandSelectionChrome,
