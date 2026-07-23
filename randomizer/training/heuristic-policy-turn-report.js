@@ -297,6 +297,8 @@ function formatTurnReportMarkdown(report) {
     `- 游戏回合数：${report.turns.length}`,
     "- 价值口径：`Q` 只读取同一 Rule Composition/Standard Action/Effect Session/Decision/commit 链真实执行后的叶状态；已兑现分 1:1，未兑现资产使用 θ₀",
     "- 诊断目标：初次接触玩家约 100 分；最终表同时列出各机器人的目标差距",
+    "- 固定反例：R1 T04 绿色登陆土星的标准链为 `land -> choose_target(yellow trace)`；登陆先兑现 8 分与首次 2 数据，两个痕迹槽叶分别为 13/11 分",
+    "- 同根 parity 门禁：`orbit/place_data/research_tech/play_card/scan/launch/move/pass`，以及 `analyze -> blue trace` 两叶，均逐 leaf 对照直接标准提交",
     "",
     "## 开局待决选择",
     "",

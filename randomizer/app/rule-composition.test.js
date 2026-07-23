@@ -183,6 +183,147 @@ function createForkableHarness() {
 }
 
 {
+  const parityFamilies = [
+    "orbit",
+    "place_data",
+    "research_tech",
+    "play_card",
+    "scan",
+    "launch",
+    "move",
+    "pass",
+    "analyze",
+  ];
+  const familyAmount = Object.freeze(Object.fromEntries(
+    parityFamilies.map((family, index) => [family, index + 1]),
+  ));
+  function createParityComposition() {
+    function parityRegistry() {
+      return {
+        enumerate(state, request = {}) {
+          return (request.family ? [request.family] : parityFamilies).map((family) => ({
+            schemaVersion: "seti-standard-action-v1",
+            family,
+            phase: family === "place_data" ? "quick" : "main",
+            actionId: `${family}:parity:${state.meta.stateVersion}`,
+            actorId: "player-1",
+            stateVersion: state.meta.stateVersion,
+            decisionVersion: 0,
+            target: { kind: `${family}-target` },
+            payload: {},
+            summary: family,
+          }));
+        },
+        validate(state, action) {
+          const fresh = this.enumerate(state, { family: action?.family })[0];
+          return fresh?.actionId === action?.actionId
+            ? { ok: true }
+            : { ok: false, code: "STANDARD_ACTION_STALE" };
+        },
+      };
+    }
+    const composition = createRuleComposition({
+      stateStoreApi,
+      effectRuntimeApi,
+      createActionRegistry: parityRegistry,
+      createInitialState: () => createState(0),
+      projectState: (state) => ({
+        match: structuredClone(state.match),
+        meta: { stateVersion: state.meta.stateVersion },
+      }),
+      effectDomains: [createTestEffectDomain(parityFamilies, (_state, action) => ({
+        effects: [
+          { type: "parity_add", payload: { amount: familyAmount[action.family] } },
+          ...(action.family === "analyze" ? [{
+            type: "parity_blue_trace",
+            kind: "decision",
+            ownerId: "player-1",
+            payload: {
+              choices: [
+                {
+                  id: "alien-1-blue",
+                  actionId: "choose_target:alien-1-blue",
+                  family: "choose_target",
+                  phase: "conditional",
+                  amount: 3,
+                },
+                {
+                  id: "alien-2-blue",
+                  actionId: "choose_target:alien-2-blue",
+                  family: "choose_target",
+                  phase: "conditional",
+                  amount: 5,
+                },
+              ],
+            },
+          }] : []),
+        ],
+      }), {
+        parity_add(state, effect) {
+          state.match.value += effect.payload.amount;
+          return { ok: true, nextState: state };
+        },
+        parity_blue_trace: {
+          getLegalChoices(_state, effect) { return effect.payload.choices; },
+          resolveDecision(state, _effect, choice) {
+            state.match.value += choice.amount;
+            state.match.blueTraceChoice = choice.id;
+            return { ok: true, nextState: state };
+          },
+        },
+      })],
+      createCounterfactualFork(envelope) {
+        const fork = createParityComposition();
+        assert.equal(fork.lifecycle.restore(envelope).ok, true);
+        return fork;
+      },
+    });
+    return composition;
+  }
+
+  const sandbox = createParityComposition();
+  const root = sandbox.lifecycle.save().envelope;
+  const actions = sandbox.inputPort.enumerateActions();
+  const outcomes = sandbox.counterfactualPort.evaluate(actions);
+  assert.deepEqual(sandbox.lifecycle.save().envelope, root,
+    "动作族 parity 矩阵执行后必须保持 canonical root 不变");
+  for (const action of actions) {
+    const outcome = outcomes.find((candidate) => candidate.actionId === action.actionId);
+    assert.equal(outcome.status, "settled", `${action.family} 必须得到 settled outcome`);
+    const directLeaves = [];
+    if (action.family === "analyze") {
+      for (const expectedChoiceId of ["alien-1-blue", "alien-2-blue"]) {
+        const direct = createParityComposition();
+        assert.equal(direct.inputPort.submitAction(
+          direct.inputPort.enumerateActions({ family: action.family })[0],
+        ).ok, true);
+        const decision = direct.inspect().session.decision;
+        assert.equal(decision.decisionKind, "parity_blue_trace");
+        const choice = decision.choices.find((candidate) => candidate.id === expectedChoiceId);
+        assert.equal(direct.inputPort.submitDecision({
+          decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion,
+          choice,
+        }).ok, true);
+        directLeaves.push(direct.projection().state);
+      }
+      assert.equal(outcome.leaves.every((leaf) => leaf.actionChain.length === 2), true,
+        "analyze -> blue trace 必须展开完整标准 Decision 链");
+    } else {
+      const direct = createParityComposition();
+      const directAction = direct.inputPort.enumerateActions({ family: action.family })[0];
+      assert.equal(direct.inputPort.submitAction(directAction).ok, true);
+      directLeaves.push(direct.projection().state);
+    }
+    assert.deepEqual(
+      outcome.leaves.map((leaf) => leaf.observation.match).sort((left, right) => left.value - right.value),
+      directLeaves.map((leaf) => leaf.match).sort((left, right) => left.value - right.value),
+      `${action.family} 沙箱 leaf 必须等于同根直接标准提交`,
+    );
+  }
+}
+
+{
   const { composition, commitEvents } = createHarness(10);
   const action = composition.inputPort.enumerateActions({ family: "scan" })[0];
   const opened = composition.inputPort.submitAction(action);
