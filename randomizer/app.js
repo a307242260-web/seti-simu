@@ -1806,44 +1806,7 @@
     getActionCycleNumber,
     isGameEnded,
   });
-  let getEffectHistorySource;
-  let shouldIrreversibleBlockCurrentMainAction;
-  let markCurrentActionIrreversibleForSource;
-  let getHistoryForSource;
-  let getActiveEffectHistory;
-  let ensureEffectHistorySession;
-  let recordHistoryCommand;
-  let recordQuickHistoryCommand;
-  let recordAbilityCommandsForRoot;
-  let startPendingActionSession;
-  let beginQuickActionStep;
-  let completePendingActionStep;
-  let completeQuickActionStep;
-  let rememberHistoryStep;
-  let forgetLastHistoryStep;
-  let clearHistoryStepOrderForSource;
-  let getLatestUndoSource;
-  let recordQuickTradeCompletion;
-  let recordAtomicActionHistoryForRoot;
-  let startCardEffectFlow;
-  let startPlayCardEffectFlow;
-  let beginEffectHistoryStep;
-  let endEffectHistoryStep;
-  let recordIrreversibleEffectStep;
-  let getCurrentActionEffect;
-  let activateNextActionEffect;
-  let activateNextActionEffectIfIdle;
-  let completeCurrentActionEffect;
-  let executeActionEffect;
-  let resetActionBriefingState;
-  let rememberActionBriefingEntry;
-  let openActionBriefing;
-  let closeActionBriefing;
-  let openActionBriefingDetailLog;
-  let isActionBriefingEnabled;
-  let isActionBriefingOpen;
-  let maybeOpenActionBriefingForCompletedCycle;
-  ({
+  const {
     getEffectHistorySource,
     shouldIrreversibleBlockCurrentMainAction,
     markCurrentActionIrreversibleForSource,
@@ -1868,14 +1831,13 @@
     beginEffectHistoryStep,
     endEffectHistoryStep,
     recordIrreversibleEffectStep,
-    getCurrentActionEffect,
+    getCurrentActionEffect: getCurrentActionEffectForRoot,
     activateNextActionEffect,
     activateNextActionEffectIfIdle,
     completeCurrentActionEffect,
     executeActionEffect,
-  } = effectFlowHelpers);
-  const getCurrentActionEffectForRoot = getCurrentActionEffect;
-  getCurrentActionEffect = (workingRoot = null) => getCurrentActionEffectForRoot(
+  } = effectFlowHelpers;
+  const getCurrentActionEffect = (workingRoot = null) => getCurrentActionEffectForRoot(
     workingRoot || createStateSourceReadoutRoot(),
   );
   const effectHistoryPort = effectFlowModule.createEffectHistoryPort({
@@ -1937,7 +1899,7 @@
     renderStateReadout,
   });
   const { runQuickTrade } = quickTradeFlow;
-  ({
+  const {
     resetActionBriefingState,
     rememberActionBriefingEntry,
     openActionBriefing,
@@ -1946,7 +1908,7 @@
     isActionBriefingEnabled,
     isActionBriefingOpen,
     maybeOpenActionBriefingForCompletedCycle,
-  } = actionBriefingHelpers);
+  } = actionBriefingHelpers;
   const effectChoiceFlowHelpers = effectChoiceFlowModule.createEffectChoiceFlowHelpers({
     document,
     uiRuntimeState,
