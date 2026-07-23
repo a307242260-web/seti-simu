@@ -11,6 +11,144 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "abilities", "aliens", "historyCommands", "industry", "planetRewards",
+  ]);
+
+  function createBrowserTurnEndStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) throw new Error(`Browser Turn End 静态模块缺少依赖：${missing.join(", ")}`);
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
+
+  function createBrowserTurnEndFlow(options = {}) {
+    const {
+      staticContext,
+      actionBriefingRuntime,
+      actionLogRuntime,
+      actionSessionRuntime,
+      alienRuntime,
+      alienUiRuntime,
+      cardRuntime,
+      cardSelectionState,
+      cardTriggerRuntime,
+      effectFlowRuntime,
+      finalUiRuntime,
+      handFlowRuntime,
+      incomeRuntime,
+      pendingSubFlowRuntime,
+      playerEffectOwnerRuntime,
+      playerLookupRuntime,
+      renderRuntime,
+      turnHostRuntime,
+      turnReadoutRuntime,
+      getAlienSpeciesRuntime,
+      getDebugRuntime,
+      hostPort = {},
+    } = options;
+    const requiredOwners = {
+      actionBriefingRuntime, actionLogRuntime, actionSessionRuntime, alienRuntime,
+      alienUiRuntime, cardRuntime, cardSelectionState,
+      cardTriggerRuntime, effectFlowRuntime, finalUiRuntime, handFlowRuntime,
+      incomeRuntime, pendingSubFlowRuntime, playerEffectOwnerRuntime,
+      playerLookupRuntime, renderRuntime, turnHostRuntime, turnReadoutRuntime,
+    };
+    const missingOwners = Object.entries(requiredOwners)
+      .filter(([, owner]) => !owner || typeof owner !== "object")
+      .map(([label]) => label);
+    if (missingOwners.length) {
+      throw new TypeError(`Browser Turn End bootstrap 缺少 owner：${missingOwners.join(", ")}`);
+    }
+    const missingOwnerGetters = Object.entries({
+      alienSpeciesRuntime: getAlienSpeciesRuntime,
+      debugRuntime: getDebugRuntime,
+    }).filter(([, getter]) => typeof getter !== "function").map(([label]) => label);
+    if (missingOwnerGetters.length) {
+      throw new TypeError(`Browser Turn End bootstrap 缺少 owner getter：${missingOwnerGetters.join(", ")}`);
+    }
+    const lazy = (label, getter, method) => (...args) => {
+      const fn = getter()?.[method];
+      if (typeof fn !== "function") {
+        throw new Error(`Browser Turn End owner ${label} 缺少方法：${method}`);
+      }
+      return fn(...args);
+    };
+    const alienSpecies = (method) => lazy("alienSpeciesRuntime", getAlienSpeciesRuntime, method);
+    const debug = (method) => lazy("debugRuntime", getDebugRuntime, method);
+
+    return createTurnEndFlow({
+      ...staticContext,
+      HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
+      HISTORY_SOURCE_QUICK: hostPort.HISTORY_SOURCE_QUICK,
+      PASS_HAND_LIMIT: hostPort.PASS_HAND_LIMIT,
+      PASS_RESERVE_ROUNDS: hostPort.PASS_RESERVE_ROUNDS,
+      actionHistory: hostPort.actionHistory,
+      quickActionHistory: hostPort.quickActionHistory,
+      els: hostPort.els,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      activateNextActionEffect: effectFlowRuntime.activateNextActionEffect,
+      advanceTurnAfterPlayerAction: turnHostRuntime.advanceTurnAfterPlayerAction,
+      appendActionLogStep: actionLogRuntime.appendActionLogStep,
+      applyIncomeResourcesForPlayer: incomeRuntime.applyIncomeResourcesForPlayer,
+      applyIndustryRoundStartBonuses: incomeRuntime.applyIndustryRoundStartBonuses,
+      assignEffectFlowOwner: playerEffectOwnerRuntime.assignEffectFlowOwner,
+      beginDiscardSelection: handFlowRuntime.beginDiscardSelection,
+      beginEffectHistoryStep: effectFlowRuntime.beginEffectHistoryStep,
+      buildAlienRevealNoticeEntry: alienUiRuntime.buildAlienRevealNoticeEntry,
+      canStartMainAction: actionSessionRuntime.canStartMainAction,
+      clearActionEffectFlow: hostPort.clearActionEffectFlow,
+      clearActionPending: actionSessionRuntime.clearActionPending,
+      clearHistoryStepOrderForSource: effectFlowRuntime.clearHistoryStepOrderForSource,
+      commitActionLogDraft: actionLogRuntime.commitActionLogDraft,
+      completeCurrentActionEffect: effectFlowRuntime.completeCurrentActionEffect,
+      completePendingActionStep: effectFlowRuntime.completePendingActionStep,
+      createActionLogImpactSnapshot: actionLogRuntime.createActionLogImpactSnapshot,
+      endEffectHistoryStep: effectFlowRuntime.endEffectHistoryStep,
+      getCurrentPlayer: playerLookupRuntime.getCurrentPlayer,
+      getDisplayedTurnNumber: turnHostRuntime.getDisplayedTurnNumber,
+      getMainActionStartBlockReason: actionSessionRuntime.getMainActionStartBlockReason,
+      hasActiveCardTriggerResolution: cardTriggerRuntime.hasActiveCardTriggerResolution,
+      hasActivePendingSubFlow: pendingSubFlowRuntime.hasActivePendingSubFlow,
+      getPendingBanrenmaCardGain: alienSpecies("getPendingBanrenmaCardGain"),
+      getPendingJiuzheCardPlay: alienSpecies("getPendingJiuzheCardPlay"),
+      getPendingBanrenmaOpportunity: alienSpecies("getPendingBanrenmaOpportunity"),
+      isActionEffectFlowActive: hostPort.isActionEffectFlowActive,
+      isCardSelectionActive: cardSelectionState.isCardSelectionActive,
+      isFinalRound: turnReadoutRuntime.isFinalRound,
+      isWeakStartAiDifficulty: turnReadoutRuntime.isWeakStartAiDifficulty,
+      maybeAutoOpenFinalResultDialog: finalUiRuntime.maybeAutoOpenFinalResultDialog,
+      maybeOpenActionBriefingForCompletedCycle: actionBriefingRuntime.maybeOpenActionBriefingForCompletedCycle,
+      maybeOpenQueuedBanrenmaOpportunity: alienSpecies("maybeOpenQueuedBanrenmaOpportunity"),
+      maybeOpenQueuedJiuzheOpportunity: alienSpecies("maybeOpenQueuedJiuzheOpportunity"),
+      maybeStartFundamentalismRoundStartIncomeFlow: incomeRuntime.maybeStartFundamentalismRoundStartIncomeFlow,
+      openAlienRevealConfirmation: alienUiRuntime.openAlienRevealConfirmation,
+      recordHistoryCommand: effectFlowRuntime.recordHistoryCommand,
+      refreshLatestActionLogRecoverySnapshot: hostPort.refreshLatestActionLogRecoverySnapshot,
+      renderAlienPanels: alienSpecies("renderAlienPanels"),
+      renderDebugPlayerSwitch: debug("renderDebugPlayerSwitch"),
+      renderInitialSelectionArea: renderRuntime.renderInitialSelectionArea,
+      renderPlayerStats: renderRuntime.renderPlayerStats,
+      renderPublicCards: renderRuntime.renderPublicCards,
+      renderReservedCards: renderRuntime.renderReservedCards,
+      renderRockets: renderRuntime.renderRockets,
+      renderRoundStatus: turnReadoutRuntime.renderRoundStatus,
+      renderStateReadout: renderRuntime.renderStateReadout,
+      renderTechBoard: hostPort.renderTechBoard,
+      rotateSolarOrbit: hostPort.rotateSolarOrbit,
+      scheduleAiAutoStepIfNeeded: hostPort.scheduleAiAutoStepIfNeeded,
+      selectDefaultRocketForCurrentPlayer: debug("selectDefaultRocketForCurrentPlayer"),
+      settleCardTasksAfterEffect: cardTriggerRuntime.settleCardTasksAfterEffect,
+      settleTurnEndAlienRevealEntries: alienRuntime.settleTurnEndAlienRevealEntries,
+      startActionLogDraft: actionLogRuntime.startActionLogDraft,
+      updateActionButtons: hostPort.updateActionButtons,
+      updatePublicCardControls: cardRuntime.updatePublicCardControls,
+    });
+  }
+
   function createTurnEndFlow(context) {
     const {
       HISTORY_SOURCE_MAIN,
@@ -638,6 +776,9 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    createBrowserTurnEndFlow,
+    createBrowserTurnEndStaticContext,
     createTurnEndFlow,
     createTurnEndPort,
   };

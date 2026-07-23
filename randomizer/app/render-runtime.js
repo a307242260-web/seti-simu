@@ -58,6 +58,21 @@
   const ALLOWED_RENDER_CONTEXT_KEYS = new Set(Object.entries(RENDER_CONTEXT_CAPABILITY_INVENTORY)
     .filter(([category]) => category !== "forbidden")
     .flatMap(([, keys]) => keys));
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "solar", "players", "rocketActions", "planetStats", "planetReferenceLayout",
+    "endGameScoring", "finalScoring", "data", "aliens", "jiuzhe", "yichangdian",
+    "chong", "aomomo", "runezu", "industry", "tech",
+  ]);
+
+  function createBrowserRenderStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) throw new Error(`Browser Render 静态模块缺少依赖：${missing.join(", ")}`);
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
 
   function cloneSelectorResult(value) {
     return value == null || typeof value !== "object" ? value : structuredClone(value);
@@ -2133,8 +2148,10 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
     RENDER_CONTEXT_CAPABILITY_INVENTORY,
     cloneSelectorResult,
+    createBrowserRenderStaticContext,
     createRenderRuntime,
     createCardHoverPreviewRuntime,
     createCoordinateRuntime,

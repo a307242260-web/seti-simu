@@ -502,17 +502,17 @@
   const statusNoteCommandHandler = browserHostModule.browserServices.createStatusNoteCommandHandler();
   const hostCommandDispatcher = browserHostModule.browserServices.createHostCommandDispatcher({
     getHandlers: () => ({
-      turn_set_player_order: (root, command) => { turnFlowController.setTurnStatePlayerOrder(root, command.playerIds, command.options); return { ok: true }; },
-      turn_randomize_player_order: (root) => { turnFlowController.randomizePlayerTurnOrder(root); return { ok: true }; },
+      turn_set_player_order: (root, command) => (turnFlowController.setTurnStatePlayerOrder(root, command.playerIds, command.options), { ok: true }),
+      turn_randomize_player_order: (root) => (turnFlowController.randomizePlayerTurnOrder(root), { ok: true }),
       turn_begin_next_round: (root) => ({ ok: true, ...turnFlowController.beginNextRound(root) }),
       turn_advance_after_action: (root, command) => ({ ok: true, ...turnFlowController.advanceTurnAfterPlayerAction(root, command.playerId, command.options) }),
       turn_start_new_game: (root, command) => turnFlowController.startNewGame(root, command.options),
-      turn_randomize_all: (root) => { turnFlowController.randomizeAll(root); return { ok: true }; },
-      setup_start_initial_selection: (root) => { actionRuntimeController.startInitialSelection(root); return { ok: true }; },
-      setup_select_initial_card: (root, command) => { actionRuntimeController.handleInitialSelectionCardClick(root, command.selectionKind, command.cardId); return { ok: true }; },
-      setup_confirm_initial_selection: (root) => { actionRuntimeController.confirmInitialSelectionForCurrentPlayer(root); return { ok: true }; },
-      coordinate_sync_planet_markers: (root) => { coordinateRuntime.syncPlanetOrbitLandMarkers(root); return { ok: true }; },
-      coordinate_seed_reference_rockets: (root) => { coordinateRuntime.seedDefaultReferenceRockets(root); return { ok: true }; },
+      turn_randomize_all: (root) => (turnFlowController.randomizeAll(root), { ok: true }),
+      setup_start_initial_selection: (root) => (actionRuntimeController.startInitialSelection(root), { ok: true }),
+      setup_select_initial_card: (root, command) => (actionRuntimeController.handleInitialSelectionCardClick(root, command.selectionKind, command.cardId), { ok: true }),
+      setup_confirm_initial_selection: (root) => (actionRuntimeController.confirmInitialSelectionForCurrentPlayer(root), { ok: true }),
+      coordinate_sync_planet_markers: (root) => (coordinateRuntime.syncPlanetOrbitLandMarkers(root), { ok: true }),
+      coordinate_seed_reference_rockets: (root) => (coordinateRuntime.seedDefaultReferenceRockets(root), { ok: true }),
       ai_choose_initial_selection: (root) => chooseInitialSelectionForAiPlayerForRoot(root),
       ai_set_player_difficulty: aiDifficultyCommandHandler,
       ai_execute_turn_action: (root, command) => cloneResidentPresentation(executeAiTurnActionForRoot(root, command.action)),
@@ -543,11 +543,11 @@
       hand_flow_command: handFlowCommandHandler,
       effect_executor_command: effectExecutorCommandHandler,
       debug_command: debugCommandHandler,
-      recovery_clear_transient: (root) => { clearTransientStateForRecovery(root); return { ok: true }; },
-      recovery_refresh: (root, command) => { refreshAfterGameRecovery(command.message, root); return { ok: true }; },
+      recovery_clear_transient: (root) => (clearTransientStateForRecovery(root), { ok: true }),
+      recovery_refresh: (root, command) => (refreshAfterGameRecovery(command.message, root), { ok: true }),
       effect_bar_click: (root, command) => ({ ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(root, command.effectIndex)) }),
       effect_skip_current: (root) => ({ ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot(root)) }),
-      effect_cancel_subflows: (root) => { cancelActiveEffectSubFlowsForRoot(root); return { ok: true }; },
+      effect_cancel_subflows: (root) => (cancelActiveEffectSubFlowsForRoot(root), { ok: true }),
       effect_finish_flow: (root) => ({ ok: true, value: cloneResidentPresentation(finishActionEffectFlowForRoot(root)) }),
       effect_begin_scan_free_move: (root) => ({ ok: true, value: cloneResidentPresentation(beginScanAction4FreeMoveForRoot(root)) }),
       effect_begin_card_move: (root, command) => ({ ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(root, command.effect)) }),
@@ -581,12 +581,10 @@
       validateSessionBoundary: validateBrowserSessionBoundary,
     },
     getCommittedContext: getBrowserCommittedContext,
-    runWithWorkingState(workingRoot, operation) {
-      return players.runWithScoreGainListener(
-        (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
-        operation,
-      );
-    },
+    runWithWorkingState: (workingRoot, operation) => players.runWithScoreGainListener(
+      (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
+      operation,
+    ),
     executeHostCommand: hostCommandDispatcher.execute,
     createActionRegistry: () => compositionActionRegistry,
     standardActionDomain: {
@@ -618,13 +616,10 @@
       workingRoot,
       standardAction: descriptor,
     }),
-    executeIndustry: (workingRoot, descriptor) => {
-      const player = players.getCurrentPlayer(workingRoot.playerState);
-      return industryRuntime.handleCompanyActionMarkerClick(
-        workingRoot,
-        player?.initialSelection?.industry,
-      ) || { ok: true, progressed: true };
-    },
+    executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
+      workingRoot,
+      players.getCurrentPlayer(workingRoot.playerState)?.initialSelection?.industry,
+    ) || { ok: true, progressed: true },
     executeCardCorner: (_workingRoot, descriptor) => executeStandardCardCornerAction(descriptor),
     executePlaceData: (workingRoot, descriptor) => confirmDataPlacement(
       descriptor.target?.target,
@@ -1058,21 +1053,19 @@
     stateSource: residentStateSource,
   });
   const residentInputAdapter = browserHostModule.inputAdapter.createBrowserInputAdapter({
-    dispatchAction(action) {
-      return action?.phase === "quick"
+    dispatchAction: (action) => (
+      action?.phase === "quick"
         ? ruleComposition.inputPort.submitQuickAction(action)
-        : ruleComposition.inputPort.submitAction(action);
-    },
+        : ruleComposition.inputPort.submitAction(action)
+    ),
     submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
     viewStateStore: residentViewStateStore,
     refreshProjection: () => residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }),
   });
   const residentDecisionController = browserHostModule.decisionUi.createDecisionUiController({
-    dispatchIntent(intent) {
-      const result = residentInputAdapter.dispatchIntent(intent);
-      queueMicrotask(renderResidentDesktop);
-      return result;
-    },
+    dispatchIntent: (intent) => (
+      (result) => (queueMicrotask(renderResidentDesktop), result)
+    )(residentInputAdapter.dispatchIntent(intent)),
   });
   const residentDecisionRenderer = browserHostModule.decisionUi.createDecisionDomRenderer({
     root: document.getElementById("compositionDecisionRoot"),
@@ -1417,24 +1410,10 @@
     isConfirmed: (playerId) => isInitialSelectionConfirmed(playerId),
   });
   const renderRuntime = renderRuntimeModule.createRenderRuntime({
+    ...renderRuntimeModule.createBrowserRenderStaticContext(dependencies),
     document,
     Image,
     enforceCapabilityInventory: true,
-    solar,
-    players,
-    rocketActions,
-    planetStats,
-    planetReferenceLayout,
-    endGameScoring,
-    finalScoring,
-    data,
-    aliens,
-    jiuzhe,
-    yichangdian,
-    chong,
-    aomomo,
-    runezu,
-    industry,
     getProjection: () => createResidentRenderInput()?.projection,
     viewState: uiRuntimeState,
     tokenWidths,
@@ -1452,7 +1431,6 @@
     OPPONENT_SECTOR_WIN_STATS,
     OPPONENT_TECH_TYPES,
     ROTATE_STATE_SLOTS,
-    tech,
     actionHistory,
     quickActionHistory,
     getPlayerRoundOrderNumber,
@@ -2019,11 +1997,7 @@
       recordMainActionIrreversibleBarrier: (...args) => recordMainActionIrreversibleBarrier(...args),
       submitDiscardDecision: (handIndexes) => submitActiveCardDecision(
         "discard-hand-cards",
-        (target) => {
-          const expected = [...handIndexes].map(Number).sort((left, right) => left - right);
-          const actual = [...(target.handIndexes || [])].map(Number).sort((left, right) => left - right);
-          return actual.length === expected.length && actual.every((value, index) => value === expected[index]);
-        },
+        handFlowModule.createHandIndexDecisionMatcher(handIndexes),
       ),
       scrollToPlayerCommandPanel,
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
@@ -2042,13 +2016,7 @@
   const isMovePaymentSelectionActive = (workingRoot = createStateSourceReadoutRoot()) => Boolean(
     getPendingMovePayment(workingRoot),
   );
-  const getMovePaymentPlayer = (workingRoot = createStateSourceReadoutRoot()) => {
-    const pending = getPendingMovePayment(workingRoot);
-    return pending ? resolvePlayerReference(workingRoot, {
-      playerId: pending.playerId,
-      playerColor: pending.playerColor,
-    }) : null;
-  };
+  const getMovePaymentPlayer = (...args) => callHandFlowCommand("getMovePaymentPlayer", args);
   const isMovePaymentLockedForAiAutomation = (...args) => callHandFlowCommand("isMovePaymentLockedForAiAutomation", args);
   const beginSupplementalMovePayment = (...args) => callHandFlowCommand("beginSupplementalMovePayment", args);
   const syncMovePaymentChrome = (...args) => callHandFlowCommand("syncMovePaymentChrome", args);
@@ -2083,11 +2051,7 @@
   const finalizePendingDiscardSelection = (selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes || []) => (
     submitActiveCardDecision(
       "discard-hand-cards",
-      (target) => {
-        const expected = [...selectedHandIndexes].map(Number).sort((left, right) => left - right);
-        const actual = [...(target.handIndexes || [])].map(Number).sort((left, right) => left - right);
-        return actual.length === expected.length && actual.every((value, index) => value === expected[index]);
-      },
+      handFlowModule.createHandIndexDecisionMatcher(selectedHandIndexes),
     )
   );
   const handleHandCardDiscard = (...args) => callHandFlowCommand("handleHandCardDiscard", args);
@@ -2650,12 +2614,10 @@
     finalScoreIds: FINAL_SCORE_IDS,
     wheelOffsets: WHEEL_OFFSETS,
     aomomoClearNebulaId: aomomo?.NEBULA_ID || null,
-    normalizeAiDifficulty(value) {
-      return startScreenModule.normalizeAiDifficulty(value, {
+    normalizeAiDifficulty: (value) => startScreenModule.normalizeAiDifficulty(value, {
         weakStartValue: AI_DIFFICULTY_WEAK_START,
         defaultValue: AI_DIFFICULTY_LAUGHABLE,
-      });
-    },
+      }),
     startScreenState,
     historyStepOrder,
     cardTaskState,
@@ -2882,11 +2844,9 @@
     confirmInitialSelectionForCurrentPlayer: (workingRoot) => (
       actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot)
     ),
-    confirmAlienRevealNotice: () => {
-      const result = confirmAlienRevealNotice();
-      maybeContinuePendingTurnEndRevealFlow();
-      return result;
-    },
+    confirmAlienRevealNotice: () => (
+      (result) => (maybeContinuePendingTurnEndRevealFlow(), result)
+    )(confirmAlienRevealNotice()),
     confirmLandTargetPicker,
     confirmMovePayment,
     confirmPassReserveSelection: (...args) => confirmPassReserveSelection(...args),
@@ -3573,17 +3533,7 @@
     getPendingDataPlacementDecision,
     closeDataPlacePicker,
     clearYichangdianCornerAction: () => effectExecutors?.clearYichangdianCornerAction?.(),
-    clearAlienDecisionDrafts: () => {
-      alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
-      alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
-      alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
-      alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
-      alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
-    },
+    clearAlienDecisionDrafts: () => alienSpeciesRuntime?.clearAlienDecisionDrafts?.(),
     getPendingPiratesRaidDecision,
     renderTechBoard,
   });
@@ -3635,16 +3585,16 @@
     clearHistoryStepOrderForSource,
     removeActionLogStepsBySource,
     clearActionPending,
-    finishInitialIncomeUi: () => {
-      renderDebugPlayerSwitch();
-      renderPlayerStats();
-      renderPlayerHand();
-      syncInteractionFocusChrome();
-      updateActionButtons();
-      renderStateReadout();
-      refreshLatestActionLogRecoverySnapshot("初始收入完成后状态");
-      scrollToPlayerCommandPanel();
-    },
+    finishInitialIncomeUi: () => (
+      renderDebugPlayerSwitch(),
+      renderPlayerStats(),
+      renderPlayerHand(),
+      syncInteractionFocusChrome(),
+      updateActionButtons(),
+      renderStateReadout(),
+      refreshLatestActionLogRecoverySnapshot("初始收入完成后状态"),
+      scrollToPlayerCommandPanel()
+    ),
     startTemporaryCardTaskRewardFlow,
     releaseFutureSpanAfterPlayWithHistoryForRoot,
     settleCardTasksAfterEffectForRoot,
@@ -4113,76 +4063,45 @@
 
   const recoverPendingActionFromOpenHistoryForAi = browserHostCommandPort.bindValue("action_recover_pending");
 
-  turnEndFlow = turnEndFlowModule.createTurnEndFlow({
-    HISTORY_SOURCE_MAIN,
-    HISTORY_SOURCE_QUICK,
-    PASS_HAND_LIMIT,
-    PASS_RESERVE_ROUNDS,
-    abilities,
-    actionHistory,
-    activateNextActionEffect,
-    advanceTurnAfterPlayerAction,
-    aliens,
-    appendActionLogStep,
-    applyIncomeResourcesForPlayer,
-    applyIndustryRoundStartBonuses,
-    assignEffectFlowOwner,
-    beginDiscardSelection,
-    beginEffectHistoryStep,
-    buildAlienRevealNoticeEntry,
-    canStartMainAction,
-    clearActionEffectFlow,
-    clearActionPending,
-    clearHistoryStepOrderForSource,
-    commitActionLogDraft,
-    completeCurrentActionEffect,
-    completePendingActionStep,
-    createActionLogImpactSnapshot,
-    els,
-    endEffectHistoryStep,
-    getCurrentPlayer,
-    getDisplayedTurnNumber,
-    getMainActionStartBlockReason,
-    hasActiveCardTriggerResolution,
-    hasActivePendingSubFlow,
-    getPendingBanrenmaCardGain,
-    getPendingJiuzheCardPlay,
-    getPendingBanrenmaOpportunity,
-    historyCommands,
-    industry,
-    isActionEffectFlowActive,
-    isCardSelectionActive,
-    isFinalRound,
-    isWeakStartAiDifficulty,
-    maybeAutoOpenFinalResultDialog,
-    maybeOpenActionBriefingForCompletedCycle,
-    maybeOpenQueuedBanrenmaOpportunity,
-    maybeOpenQueuedJiuzheOpportunity,
-    maybeStartFundamentalismRoundStartIncomeFlow,
-    openAlienRevealConfirmation,
-    planetRewards,
-    quickActionHistory,
-    recordHistoryCommand,
-    refreshLatestActionLogRecoverySnapshot,
-    renderAlienPanels,
-    renderDebugPlayerSwitch,
-    renderInitialSelectionArea,
-    renderPlayerStats,
-    renderPublicCards,
-    renderReservedCards,
-    renderRockets,
-    renderRoundStatus,
-    renderStateReadout,
-    renderTechBoard,
-    rotateSolarOrbit: rotateSolarOrbitForRoot,
-    scheduleAiAutoStepIfNeeded,
-    selectDefaultRocketForCurrentPlayer,
-    settleCardTasksAfterEffect,
-    settleTurnEndAlienRevealEntries,
-    startActionLogDraft,
-    uiRuntimeState,
-    updateActionButtons,
-    updatePublicCardControls,
+  turnEndFlow = turnEndFlowModule.createBrowserTurnEndFlow({
+    staticContext: turnEndFlowModule.createBrowserTurnEndStaticContext(dependencies),
+    actionBriefingRuntime: actionBriefingHelpers,
+    actionLogRuntime: actionLogController,
+    actionSessionRuntime,
+    alienRuntime: alienRuntimeHelpers,
+    alienUiRuntime: alienUiHelpers,
+    cardRuntime,
+    cardSelectionState,
+    cardTriggerRuntime,
+    effectFlowRuntime: effectFlowHelpers,
+    finalUiRuntime,
+    handFlowRuntime: handFlowHelpers,
+    incomeRuntime,
+    pendingSubFlowRuntime,
+    playerEffectOwnerRuntime,
+    playerLookupRuntime,
+    renderRuntime,
+    turnHostRuntime,
+    turnReadoutRuntime,
+    getAlienSpeciesRuntime: () => alienSpeciesRuntime,
+    getDebugRuntime: () => debugRuntimeController,
+    hostPort: {
+      HISTORY_SOURCE_MAIN,
+      HISTORY_SOURCE_QUICK,
+      PASS_HAND_LIMIT,
+      PASS_RESERVE_ROUNDS,
+      actionHistory,
+      quickActionHistory,
+      els,
+      uiRuntimeState,
+      clearActionEffectFlow,
+      isActionEffectFlowActive,
+      refreshLatestActionLogRecoverySnapshot,
+      renderTechBoard,
+      rotateSolarOrbit: rotateSolarOrbitForRoot,
+      scheduleAiAutoStepIfNeeded,
+      updateActionButtons,
+    },
   });
 
   let undoController = null;
@@ -4617,16 +4536,15 @@
     cancelCardSelection,
     confirmPublicScanSelection,
     cancelDiscardSelection,
-    confirmPlayCardSelection: () => {
-      const pending = getPendingPlayCardSelection();
-      return pending?.card?.id
+    confirmPlayCardSelection: () => (
+      getPendingPlayCardSelection()?.card?.id
         ? dispatchBrowserRuleInput({
           kind: "standard_intent",
           family: "play_card",
-          selector: { cardInstanceId: pending.card.id },
+          selector: { cardInstanceId: getPendingPlayCardSelection().card.id },
         })
-        : confirmPlayCardSelection();
-    },
+        : confirmPlayCardSelection()
+    ),
     cancelPlayCardSelection,
     confirmHandCardPlayAction,
     confirmCardCornerQuickAction,
@@ -4671,17 +4589,14 @@
   window.SetiAppBootstrap.initializeAppBootstrap({
     root: window,
     document,
-    initializeShell() {
-      setTokenAssetSizes();
-      syncStartScreenDebugOption();
-      syncStartScreenActionLogOption();
-      syncStartScreenAlienOptions();
-      syncStartScreenIndustryOptions();
-      setDebugToolsEnabled(false);
-      setReportTab("action");
-      setLogOpen(false);
-      updateStartScreenContinueButton();
-    },
+    initializeShell: window.SetiAppBootstrap.createBrowserShellInitializer({
+      actionLogViewRuntime,
+      renderRuntime: {
+        setTokenAssetSizes,
+        updateContinueButton: updateStartScreenContinueButton,
+      },
+      startScreenRuntime: startScreenController,
+    }),
     startScreenState,
     savePersistentGameStateNow,
     normalizeAiDifficulty,

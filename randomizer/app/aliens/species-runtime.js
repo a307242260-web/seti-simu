@@ -4214,6 +4214,18 @@ function alignAlienPanelsToPlanets() {
     els.appWrap.style.setProperty("--alien-panel-min-height", `${panelHeight}px`);
   }
 
+    function clearAlienDecisionDrafts() {
+      chongCardGainDraft.clear();
+      clearChongFossilDecisionDraft();
+      amibaCardGainDraft.clear();
+      clearAmibaSymbolDecisionDraft();
+      amibaTraceRemovalDraft.clear();
+      aomomoCardGainDraft.clear();
+      runezuCardGainDraft.clear();
+      clearRunezuSymbolBranchDecisionDraft();
+      clearRunezuFaceSymbolDecisionDraft();
+    }
+
     return {
       getAlienTraceLayer,
       getAlienJiuzheTraceLayer,
@@ -4354,6 +4366,7 @@ function alignAlienPanelsToPlanets() {
       getBanrenmaOpportunityDecisionDraft: banrenmaOpportunityDraft.get,
       takeBanrenmaOpportunityDecisionDraft: banrenmaOpportunityDraft.take,
       clearBanrenmaOpportunityDecisionDraft: banrenmaOpportunityDraft.clear,
+      clearAlienDecisionDrafts,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,

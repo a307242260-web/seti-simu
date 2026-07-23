@@ -272,7 +272,30 @@
     return publicApi;
   }
 
+  function createBrowserShellInitializer(context = {}) {
+    const {
+      actionLogViewRuntime,
+      renderRuntime,
+      startScreenRuntime,
+    } = context;
+    if (!actionLogViewRuntime || !renderRuntime || !startScreenRuntime) {
+      throw new TypeError("Browser shell initializer 缺少 owner runtime");
+    }
+    return function initializeBrowserShell() {
+      renderRuntime.setTokenAssetSizes();
+      startScreenRuntime.syncStartScreenDebugOption();
+      startScreenRuntime.syncStartScreenActionLogOption();
+      startScreenRuntime.syncStartScreenAlienOptions();
+      startScreenRuntime.syncStartScreenIndustryOptions();
+      startScreenRuntime.setDebugToolsEnabled(false);
+      actionLogViewRuntime.setReportTab("action");
+      actionLogViewRuntime.setLogOpen(false);
+      renderRuntime.updateContinueButton();
+    };
+  }
+
   return {
+    createBrowserShellInitializer,
     summarizeCodexAiBatchResult,
     installBeforeUnloadSave,
     maybeRunCodexAiBatchSmoke,

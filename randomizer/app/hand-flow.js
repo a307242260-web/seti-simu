@@ -2236,12 +2236,23 @@
     return Object.freeze({ confirmMovePayment });
   }
 
+  function createHandIndexDecisionMatcher(expectedIndexes = []) {
+    const normalize = (indexes) => [...indexes].map(Number).sort((left, right) => left - right);
+    const expected = normalize(expectedIndexes);
+    return (target) => {
+      const actual = normalize(target?.handIndexes || []);
+      return actual.length === expected.length
+        && actual.every((value, index) => value === expected[index]);
+    };
+  }
+
   return {
     BROWSER_STATIC_DEPENDENCY_KEYS,
     BROWSER_STATIC_CONSTANT_KEYS,
     createBrowserHandFlow,
     createBrowserHandStaticContext,
     createHandFlow,
+    createHandIndexDecisionMatcher,
     createMovePaymentDecisionPort,
   };
 });

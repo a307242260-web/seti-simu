@@ -7,7 +7,14 @@ const {
   createBrowserHandFlow,
   createBrowserHandStaticContext,
   createHandFlow,
+  createHandIndexDecisionMatcher,
 } = require("./hand-flow");
+
+{
+  const matches = createHandIndexDecisionMatcher([3, 1]);
+  assert.equal(matches({ handIndexes: [1, 3] }), true);
+  assert.equal(matches({ handIndexes: [1, 2] }), false);
+}
 
 assert.throws(
   () => createBrowserHandFlow(),

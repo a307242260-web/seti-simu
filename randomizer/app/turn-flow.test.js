@@ -16,7 +16,23 @@ const {
   createTurnReadoutRuntime,
   createTurnHostRuntime,
 } = require("./turn-flow");
-const { createTurnEndPort } = require("./turn-end-flow");
+const {
+  createBrowserTurnEndFlow,
+  createBrowserTurnEndStaticContext,
+  createTurnEndPort,
+} = require("./turn-end-flow");
+
+assert.throws(
+  () => createBrowserTurnEndStaticContext({}),
+  /Browser Turn End 静态模块缺少依赖/,
+  "browser Turn End bootstrap should reject missing static dependencies",
+);
+
+assert.throws(
+  () => createBrowserTurnEndFlow({ staticContext: {} }),
+  /Browser Turn End bootstrap 缺少 owner/,
+  "browser Turn End bootstrap should reject missing owners",
+);
 
 {
   const calls = [];

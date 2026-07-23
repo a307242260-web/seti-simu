@@ -3,6 +3,32 @@
 const assert = require("node:assert/strict");
 const bootstrap = require("./bootstrap");
 
+{
+  const calls = [];
+  const initializeShell = bootstrap.createBrowserShellInitializer({
+    actionLogViewRuntime: {
+      setReportTab: (value) => calls.push(["tab", value]),
+      setLogOpen: (value) => calls.push(["log", value]),
+    },
+    renderRuntime: {
+      setTokenAssetSizes: () => calls.push("tokens"),
+      updateContinueButton: () => calls.push("continue"),
+    },
+    startScreenRuntime: {
+      syncStartScreenDebugOption: () => calls.push("debug"),
+      syncStartScreenActionLogOption: () => calls.push("action-log"),
+      syncStartScreenAlienOptions: () => calls.push("aliens"),
+      syncStartScreenIndustryOptions: () => calls.push("industry"),
+      setDebugToolsEnabled: (value) => calls.push(["debug-tools", value]),
+    },
+  });
+  initializeShell();
+  assert.deepEqual(calls, [
+    "tokens", "debug", "action-log", "aliens", "industry",
+    ["debug-tools", false], ["tab", "action"], ["log", false], "continue",
+  ]);
+}
+
 (async () => {
   const calls = [];
   const listeners = {};

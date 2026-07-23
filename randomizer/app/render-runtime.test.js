@@ -7,12 +7,19 @@ const {
   RENDER_CONTEXT_CAPABILITY_INVENTORY,
   cloneSelectorResult,
   createRenderRuntime,
+  createBrowserRenderStaticContext,
   createCoordinateRuntime,
   createBrowserLayoutRuntime,
   createCoordinatePort,
   createInteractionChrome,
   createPlayerHandTitlePresenter,
 } = require("./render-runtime");
+
+assert.throws(
+  () => createBrowserRenderStaticContext({}),
+  /Browser Render 静态模块缺少依赖/,
+  "browser Render bootstrap should reject missing static dependencies",
+);
 
 {
   const source = { nested: { value: 1 } };
