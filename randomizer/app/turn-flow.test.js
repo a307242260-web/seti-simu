@@ -14,6 +14,7 @@ const {
   recordTurnVisitPlanetEvents,
   createTurnFlowController,
   createTurnReadoutRuntime,
+  createTurnHostRuntime,
 } = require("./turn-flow");
 const { createTurnEndPort } = require("./turn-end-flow");
 
@@ -31,6 +32,38 @@ const { createTurnEndPort } = require("./turn-end-flow");
   assert.deepEqual(port.passForCurrentPlayer({ workingRoot: "root" }), { root: "root" });
   port.executePassHandLimitEffect("effect");
   assert.deepEqual(calls, [["executePassHandLimitEffect", ["effect"]]]);
+}
+
+{
+  const submitted = [];
+  const root = { turnState: {
+    turnNumber: 2,
+    turnOrderPlayerIds: ["p1", "p2"],
+    activePlayerIds: ["p1", "p2"],
+    passedPlayerIds: [],
+    completedTurnPlayerIds: [],
+  } };
+  const host = createTurnHostRuntime({
+    getController: () => ({
+      getDisplayedTurnNumber: (_root, value) => value + 1,
+      getActionCycleNumber: () => 4,
+      advanceTurnAfterPlayerAction: (_root, playerId) => ({ ok: true, playerId }),
+    }),
+    getRuleReadout: () => root,
+    submitHostCommand: (command) => { submitted.push(command); return { ok: true }; },
+    newGame: () => ({ ok: true }),
+    defaultActivePlayerCount: 3,
+    defaultInitialPlayerColor: "white",
+    finalScoreIds: ["a"],
+    playerColorIds: ["white", "blue", "yellow"],
+    normalizeAiDifficulty: (value) => value === "weak" ? "weak" : "normal",
+  });
+  assert.equal(host.getDisplayedTurnNumber(), 3);
+  assert.equal(host.getActionCycleNumber(), 4);
+  assert.equal(host.advanceTurnAfterPlayerAction("p1", { workingRoot: root }).playerId, "p1");
+  assert.equal(host.normalizeAiDifficulty("weak"), "weak");
+  host.startNewGame({ activePlayerCount: 9 });
+  assert.equal(submitted.at(-1).options.activePlayerCount, 3);
 }
 
 const basePlayers = [

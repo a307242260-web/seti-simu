@@ -221,6 +221,75 @@
     });
   }
 
+  function createTurnHostRuntime(context = {}) {
+    const controller = () => context.getController();
+    function getActiveOrderedPlayerIdsFromReadout() {
+      return getActiveOrderedPlayerIds(context.getRuleReadout().turnState);
+    }
+    function getRoundOrderPlayerIdsFromReadout() {
+      return getRoundOrderPlayerIds(context.getRuleReadout().turnState);
+    }
+    function setTurnStatePlayerOrderFromHost(playerIds, options = {}) {
+      return context.submitHostCommand({ kind: "turn_set_player_order", playerIds, options });
+    }
+    function randomizePlayerTurnOrderFromHost() {
+      return context.submitHostCommand({ kind: "turn_randomize_player_order" });
+    }
+    function beginNextRoundFromHost() {
+      return context.submitHostCommand({ kind: "turn_begin_next_round" });
+    }
+    function getDisplayedTurnNumberFromReadout(rawTurnNumber = null) {
+      const root = context.getRuleReadout();
+      return controller().getDisplayedTurnNumber(root, rawTurnNumber ?? root.turnState.turnNumber);
+    }
+    function getActionCycleNumberFromReadout() {
+      return controller().getActionCycleNumber(context.getRuleReadout());
+    }
+    function advanceTurnAfterPlayerActionFromHost(playerId, options = {}) {
+      if (options.workingRoot) {
+        const operationOptions = { ...options };
+        delete operationOptions.workingRoot;
+        return controller().advanceTurnAfterPlayerAction(options.workingRoot, playerId, operationOptions);
+      }
+      return context.submitHostCommand({
+        kind: "turn_advance_after_action",
+        playerId,
+        options: { ...options },
+      });
+    }
+    function startNewGameFromHost(options = {}) {
+      const activePlayerCount = Math.min(
+        Math.max(1, Math.round(Number(options.activePlayerCount) || context.defaultActivePlayerCount)),
+        context.playerColorIds.length,
+      );
+      const resetResult = context.newGame({
+        activePlayerCount,
+        defaultInitialPlayerColor: context.defaultInitialPlayerColor,
+        finalScoreIds: context.finalScoreIds,
+        seed: options.seed,
+        rngState: options.rngState,
+      });
+      if (!resetResult.ok) return resetResult;
+      return context.submitHostCommand({
+        kind: "turn_start_new_game",
+        options: { ...options, activePlayerCount, compositionStatePrepared: true },
+      });
+    }
+    return Object.freeze({
+      getActiveOrderedPlayerIds: getActiveOrderedPlayerIdsFromReadout,
+      getRoundOrderPlayerIds: getRoundOrderPlayerIdsFromReadout,
+      setTurnStatePlayerOrder: setTurnStatePlayerOrderFromHost,
+      randomizePlayerTurnOrder: randomizePlayerTurnOrderFromHost,
+      beginNextRound: beginNextRoundFromHost,
+      getDisplayedTurnNumber: getDisplayedTurnNumberFromReadout,
+      getActionCycleNumber: getActionCycleNumberFromReadout,
+      advanceTurnAfterPlayerAction: advanceTurnAfterPlayerActionFromHost,
+      startNewGame: startNewGameFromHost,
+      randomizeAll: () => context.submitHostCommand({ kind: "turn_randomize_all" }),
+      normalizeAiDifficulty: context.normalizeAiDifficulty,
+    });
+  }
+
   function shufflePlayerIds(playerIds) {
     const result = [...playerIds];
     for (let index = result.length - 1; index > 0; index -= 1) {
@@ -670,5 +739,6 @@
     recordTurnVisitPlanetEvents,
     createTurnFlowController,
     createTurnReadoutRuntime,
+    createTurnHostRuntime,
   };
 });

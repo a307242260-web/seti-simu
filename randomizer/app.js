@@ -937,6 +937,26 @@
     alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
     industryCardFiles: INDUSTRY_CARD_FILES,
   });
+  let turnFlowController = null;
+  const turnHostRuntime = turnFlowModule.createTurnHostRuntime({
+    getController: () => turnFlowController,
+    getRuleReadout: () => createStateSourceReadoutRoot(),
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    newGame: (...args) => browserRuleLifecycle.newGame(...args),
+    defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
+    defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
+    finalScoreIds: FINAL_SCORE_IDS,
+    playerColorIds: players.PLAYER_COLOR_IDS,
+    normalizeAiDifficulty: (value) => startScreenModule.normalizeAiDifficulty(value, {
+      weakStartValue: AI_DIFFICULTY_WEAK_START,
+      defaultValue: AI_DIFFICULTY_LAUGHABLE,
+    }),
+  });
+  const {
+    getActiveOrderedPlayerIds, getRoundOrderPlayerIds, setTurnStatePlayerOrder,
+    randomizePlayerTurnOrder, beginNextRound, getDisplayedTurnNumber, getActionCycleNumber,
+    advanceTurnAfterPlayerAction, startNewGame, randomizeAll, normalizeAiDifficulty,
+  } = turnHostRuntime;
   const browserMatchRuntime = runtimeModule.createBrowserMatchRuntime({
     createReadoutRoot: () => createStateSourceReadoutRoot(),
     uiRuntimeState: runtime.ui,
@@ -3540,7 +3560,7 @@
     restorePersistentGameState,
   } = persistenceController;
 
-  const turnFlowController = turnFlowModule.createTurnFlowController({
+  turnFlowController = turnFlowModule.createTurnFlowController({
     players,
     uiRuntimeState,
     setupSelectionState,
@@ -3941,84 +3961,6 @@
       ),
     }),
   });
-
-  function getActiveOrderedPlayerIds() {
-    return turnFlowModule.getActiveOrderedPlayerIds(createStateSourceReadoutRoot().turnState);
-  }
-
-  function getRoundOrderPlayerIds() {
-    return turnFlowModule.getRoundOrderPlayerIds(createStateSourceReadoutRoot().turnState);
-  }
-
-  function setTurnStatePlayerOrder(playerIds, options = {}) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "turn_set_player_order",
-      playerIds,
-      options,
-    });
-  }
-
-  function randomizePlayerTurnOrder() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_player_order" });
-  }
-
-  function beginNextRound() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "turn_begin_next_round" });
-  }
-
-  function getDisplayedTurnNumber(rawTurnNumber = null) {
-    const root = createStateSourceReadoutRoot();
-    return turnFlowController.getDisplayedTurnNumber(root, rawTurnNumber ?? root.turnState.turnNumber);
-  }
-
-  function getActionCycleNumber() {
-    return turnFlowController.getActionCycleNumber(createStateSourceReadoutRoot());
-  }
-
-  function advanceTurnAfterPlayerAction(playerId, options = {}) {
-    if (options.workingRoot) {
-      const workingRoot = options.workingRoot;
-      const operationOptions = { ...options };
-      delete operationOptions.workingRoot;
-      return turnFlowController.advanceTurnAfterPlayerAction(workingRoot, playerId, operationOptions);
-    }
-    const operationOptions = { ...options };
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "turn_advance_after_action",
-      playerId,
-      options: operationOptions,
-    });
-  }
-
-  function startNewGame(options = {}) {
-    const activePlayerCount = Math.min(
-      Math.max(1, Math.round(Number(options.activePlayerCount) || DEFAULT_ACTIVE_PLAYER_COUNT)),
-      players.PLAYER_COLOR_IDS.length,
-    );
-    const resetResult = browserRuleLifecycle.newGame({
-      activePlayerCount,
-      defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
-      finalScoreIds: FINAL_SCORE_IDS,
-      seed: options.seed,
-      rngState: options.rngState,
-    });
-    if (!resetResult.ok) return resetResult;
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "turn_start_new_game",
-      options: { ...options, activePlayerCount, compositionStatePrepared: true },
-    });
-  }
-
-  function randomizeAll() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_all" });
-  }
-
-  function normalizeAiDifficulty(value) {
-    return startScreenModule.normalizeAiDifficulty(value, {
-      weakStartValue: AI_DIFFICULTY_WEAK_START,
-      defaultValue: AI_DIFFICULTY_LAUGHABLE,
-    });
-  }
 
   const aiControllerState = {
     get pendingDiscardAction() { return getPendingDiscardDecision(); },
