@@ -446,6 +446,58 @@
     return Object.freeze({ createWorkingState, restoreWorkingState, validateSessionBoundary });
   }
 
+  function createBrowserRuleStateAdapter(context = {}) {
+    const workingState = createBrowserWorkingStateAdapter({
+      initialGameState: context.initialGameState,
+      ruleModules: {
+        players: context.players,
+        solar: context.solar,
+        rocketActions: context.rocketActions,
+        planetStats: context.planetStats,
+        data: context.data,
+        cards: context.cards,
+        tech: context.tech,
+        aliens: context.aliens,
+        finalScoring: context.finalScoring,
+        createTurnState: context.createTurnState,
+      },
+      defaultInitialPlayerColor: context.defaultInitialPlayerColor,
+      defaultActivePlayerCount: context.defaultActivePlayerCount,
+      finalScoreIds: context.finalScoreIds,
+      restoreSequences(sequences) {
+        const sequenceOwners = context.sequenceOwners || {};
+        if (Number.isSafeInteger(sequences.card)) sequenceOwners.cards?.restoreNextCardInstanceSequence?.(sequences.card);
+        if (Number.isSafeInteger(sequences.handCard)) sequenceOwners.players?.restoreNextHandCardSequence?.(sequences.handCard);
+        if (Number.isSafeInteger(sequences.finalMark)) sequenceOwners.finalScoring?.restoreNextFinalMarkSequence?.(sequences.finalMark);
+        if (Number.isSafeInteger(sequences.dataToken)) sequenceOwners.data?.restoreNextDataTokenSequence?.(sequences.dataToken);
+        if (Number.isSafeInteger(sequences.nebulaToken)) sequenceOwners.data?.restoreDeterministicSequences?.(sequences);
+        if (Number.isSafeInteger(sequences.historyStep)) sequenceOwners.history?.restoreNextHistoryStepSequence?.(sequences.historyStep);
+      },
+    });
+
+    function getCommittedContext(rootState) {
+      const deterministicSequences = context.data?.getDeterministicSequences?.() || {};
+      return {
+        gameId: context.gameId || "seti-browser-runtime",
+        rulesetVersion: context.rulesetVersion || "seti-runtime-v1",
+        seed: rootState?.meta?.seed ?? "browser-host",
+        rngState: structuredClone(rootState?.meta?.rngState || { owner: "browser", state: null }),
+        sequences: {
+          card: context.cards?.getNextCardInstanceSequence?.(),
+          handCard: context.players?.getNextHandCardSequence?.(),
+          finalMark: context.finalScoring?.getNextFinalMarkSequence?.(),
+          dataToken: context.data?.getNextDataTokenSequence?.(),
+          ...deterministicSequences,
+          historyStep: context.history?.getNextHistoryStepSequence?.(),
+          actionLog: context.getActionLogSequence?.(),
+          rocket: rootState?.rocketState?.nextRocketId,
+        },
+      };
+    }
+
+    return Object.freeze({ ...workingState, getCommittedContext });
+  }
+
   return {
     createRuntime,
     createActionLogState,
@@ -459,5 +511,6 @@
     createPlayerLookupRuntime,
     createBrowserContextRuntime,
     createBrowserWorkingStateAdapter,
+    createBrowserRuleStateAdapter,
   };
 });

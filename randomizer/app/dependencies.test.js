@@ -134,7 +134,7 @@ const { collectDependencies } = require("./dependencies");
   }
   assert.doesNotMatch(appSource, /context\.simulation|simulationMode/, "Browser app 不得用 simulation/no-op 分支伪装共享 runtime");
   assert.match(appSource, /createBrowserInputAdapter\(/, "Browser 输入必须由 Browser Host adapter 装配");
-  assert.match(appSource, /createBrowserWorkingStateAdapter\(/, "working state 只能由窄 adapter 装配");
+  assert.match(appSource, /createBrowserRuleStateAdapter\(/, "working state 与 committed metadata 只能由窄 adapter 装配");
   assert.match(appSource, /createPendingSubFlowRuntime\(/, "待决子流程必须由 effect runtime 聚合");
   assert.doesNotMatch(appSource, /^  function\s+/m, "app.js 不得保留顶层领域/UI/流程函数体");
   assert.doesNotMatch(appSource, /executeHostCommand\([^)]*\)\s*\{[\s\S]*?switch\s*\(/, "Host command 分发必须归 Browser Host dispatcher");

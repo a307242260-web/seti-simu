@@ -53,6 +53,36 @@
     return true;
   }
 
+  function createAppEventState(context = {}) {
+    const pending = context.pending || {};
+    const alien = context.alien || {};
+    const ui = context.ui || {};
+    return {
+      get pendingChongFossilChoice() { return alien.getPendingChongFossilChoice?.(); },
+      get pendingChongCardGain() { return alien.getPendingChongCardGain?.(); },
+      get pendingAmibaTraceRemoval() { return alien.getPendingAmibaTraceRemoval?.(); },
+      get pendingAmibaSymbolChoice() { return alien.getPendingAmibaSymbolChoice?.(); },
+      get pendingAmibaCardGain() { return alien.getPendingAmibaCardGain?.(); },
+      get pendingAomomoCardGain() { return alien.getPendingAomomoCardGain?.(); },
+      get pendingRunezuFaceSymbolPlacement() { return alien.getPendingRunezuFaceSymbolPlacement?.(); },
+      get pendingRunezuSymbolBranch() { return alien.getPendingRunezuSymbolBranch?.(); },
+      get pendingRunezuCardGain() { return alien.getPendingRunezuCardGain?.(); },
+      get pendingBanrenmaCardGain() { return alien.getPendingBanrenmaCardGain?.(); },
+      get pendingBanrenmaOpportunity() { return alien.getPendingBanrenmaOpportunity?.(); },
+      get pendingYichangdianCardGain() { return alien.getPendingYichangdianCardGain?.(); },
+      get pendingJiuzheCardPlay() { return alien.getPendingJiuzheCardPlay?.(); },
+      get jiuzheCardViewOpen() { return Boolean(ui.jiuzheCardViewOpen); },
+      get pendingStrategyPassiveSlotChoice() { return pending.getPendingStrategySlotDecision?.(); },
+      get alienTracePickerState() { return ui.alienTracePickerState; },
+      set alienTracePickerState(value) { ui.alienTracePickerState = value; },
+      get pendingAlienRevealConfirmation() { return ui.alienRevealConfirmation; },
+      get moveHighlightRocketId() { return ui.moveHighlightRocketId; },
+      get pendingCardTriggerFreeMove() { return pending.getPendingCardTriggerFreeMove?.(); },
+      get pendingCardCornerFreeMove() { return pending.getPendingCardCornerFreeMove?.(); },
+      get pendingActionEffectFlow() { return pending.getActionEffectFlow?.(); },
+    };
+  }
+
   function bindAppEvents(context) {
     if (!context || !context.els) {
       throw new Error("bindAppEvents requires app context");
@@ -1061,5 +1091,5 @@
     windowRef.addEventListener("resize", resize);
   }
 
-  return { bindAppEvents, routeProbeDecisionClick, routeMainActionButtonClick };
+  return { bindAppEvents, createAppEventState, routeProbeDecisionClick, routeMainActionButtonClick };
 });

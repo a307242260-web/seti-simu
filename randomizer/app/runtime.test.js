@@ -45,6 +45,37 @@ assert.deepEqual(state.startScreen.selectedIndustryLabels, ["层云核心", "图
   assert.deepEqual(restoredSequences, []);
 }
 
+{
+  const ruleState = runtime.createBrowserRuleStateAdapter({
+    initialGameState: {},
+    players: { getNextHandCardSequence: () => 2 },
+    cards: { getNextCardInstanceSequence: () => 3 },
+    finalScoring: { getNextFinalMarkSequence: () => 4 },
+    data: {
+      getNextDataTokenSequence: () => 5,
+      getDeterministicSequences: () => ({ nebulaToken: 6 }),
+    },
+    history: { getNextHistoryStepSequence: () => 7 },
+    getActionLogSequence: () => 8,
+  });
+  const committed = ruleState.getCommittedContext({
+    meta: { seed: "seed-2", rngState: { owner: "test", state: 9 } },
+    rocketState: { nextRocketId: 10 },
+  });
+  assert.equal(committed.seed, "seed-2");
+  assert.deepEqual(committed.rngState, { owner: "test", state: 9 });
+  assert.deepEqual(committed.sequences, {
+    card: 3,
+    handCard: 2,
+    finalMark: 4,
+    dataToken: 5,
+    nebulaToken: 6,
+    historyStep: 7,
+    actionLog: 8,
+    rocket: 10,
+  });
+}
+
 state.actionLog.entries.push({ id: 1 });
 state.selection.currentPlayerId = "player-white";
 

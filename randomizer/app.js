@@ -191,18 +191,6 @@
   const effectSessionRuntimeModule = window.SetiEffectSession;
   const standardActionSessionModule = window.SetiStandardActionSession;
   const standardActionModule = window.SetiStandardAction;
-  const browserRuleModules = {
-    players,
-    solar,
-    rocketActions,
-    planetStats,
-    data,
-    cards,
-    tech,
-    aliens,
-    finalScoring,
-    createTurnState,
-  };
   const browserDomainTargets = () => ({
     scan_flow: scanFlowHelpers,
     alien_ui: alienUiHelpers,
@@ -404,32 +392,30 @@
   });
   const resumeLandTargetContinuation = landTargetContinuationRuntime.resume;
   const confirmLandTargetChoiceForRoot = landTargetContinuationRuntime.confirmForRoot;
-  let getBrowserCommittedContext = () => ({
-    gameId: "seti-browser-runtime",
-    rulesetVersion: "seti-runtime-v1",
-    seed: "browser-host",
-    rngState: { owner: "browser", state: null },
-    sequences: {},
-  });
-  const browserWorkingStateAdapter = runtimeModule.createBrowserWorkingStateAdapter({
+  const browserWorkingStateAdapter = runtimeModule.createBrowserRuleStateAdapter({
     initialGameState: initialGameStateModule,
-    ruleModules: browserRuleModules,
+    players,
+    solar,
+    rocketActions,
+    planetStats,
+    data,
+    cards,
+    tech,
+    aliens,
+    finalScoring,
+    createTurnState,
     defaultInitialPlayerColor: players.DEFAULT_PLAYER_COLOR,
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     finalScoreIds: FINAL_SCORE_IDS,
-    restoreSequences(sequences) {
-      if (Number.isSafeInteger(sequences.card)) cards.restoreNextCardInstanceSequence(sequences.card);
-      if (Number.isSafeInteger(sequences.handCard)) players.restoreNextHandCardSequence(sequences.handCard);
-      if (Number.isSafeInteger(sequences.finalMark)) finalScoring.restoreNextFinalMarkSequence(sequences.finalMark);
-      if (Number.isSafeInteger(sequences.dataToken)) data.restoreNextDataTokenSequence(sequences.dataToken);
-      if (Number.isSafeInteger(sequences.nebulaToken)) data.restoreDeterministicSequences(sequences);
-      if (Number.isSafeInteger(sequences.historyStep)) actionHistoryModule.restoreNextHistoryStepSequence(sequences.historyStep);
-    },
+    sequenceOwners: { cards, players, finalScoring, data, history: actionHistoryModule },
+    history: actionHistoryModule,
+    getActionLogSequence: () => actionLogState.nextEntryId,
   });
   const {
     createWorkingState: createBrowserWorkingState,
     restoreWorkingState: restoreBrowserWorkingState,
     validateSessionBoundary: validateBrowserSessionBoundary,
+    getCommittedContext: getBrowserCommittedContext,
   } = browserWorkingStateAdapter;
   const actionContextFactory = actionRuntimeModule.createActionContextFactory({
     buildPlutoMarkerContext: (...args) => buildPlutoMarkerContext(...args),
@@ -1115,23 +1101,6 @@
     recordScoreSourceForGainEffect,
     recordTechBonusScore,
   } = scoreSourceRuntime;
-  getBrowserCommittedContext = (workingRoot) => ({
-    gameId: "seti-browser-runtime",
-    rulesetVersion: "seti-runtime-v1",
-    seed: workingRoot.meta?.seed ?? "browser-host",
-    rngState: structuredClone(workingRoot.meta?.rngState
-      || { owner: "browser", state: null }),
-    sequences: {
-      card: cards.getNextCardInstanceSequence(),
-      handCard: players.getNextHandCardSequence(),
-      finalMark: finalScoring.getNextFinalMarkSequence(),
-      dataToken: data.getNextDataTokenSequence(),
-      ...data.getDeterministicSequences(),
-      historyStep: actionHistoryModule.getNextHistoryStepSequence(),
-      actionLog: actionLogState.nextEntryId,
-      rocket: workingRoot.rocketState.nextRocketId,
-    },
-  });
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
@@ -6075,30 +6044,11 @@
   });
   const focusDebugCalibration = (...args) => callDebugCommand("focusDebugCalibration", args);
 
-  const appEventState = {
-    get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
-    get pendingChongCardGain() { return getPendingChongCardGain(); },
-    get pendingAmibaTraceRemoval() { return getPendingAmibaTraceRemoval(); },
-    get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
-    get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
-    get pendingAomomoCardGain() { return getPendingAomomoCardGain(); },
-    get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
-    get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
-    get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
-    get pendingBanrenmaCardGain() { return getPendingBanrenmaCardGain(); },
-    get pendingBanrenmaOpportunity() { return getPendingBanrenmaOpportunity(); },
-    get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
-    get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
-    get jiuzheCardViewOpen() { return Boolean(uiRuntimeState.jiuzheCardViewOpen); },
-    get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
-    get alienTracePickerState() { return uiRuntimeState.alienTracePickerState; },
-    set alienTracePickerState(value) { uiRuntimeState.alienTracePickerState = value; },
-    get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
-    get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
-    get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
-    get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
-    get pendingActionEffectFlow() { return getActionEffectFlow(); },
-  };
+  const appEventState = window.SetiAppEvents.createAppEventState({
+    pending: browserMatchRuntime,
+    alien: alienSpeciesPort,
+    ui: uiRuntimeState,
+  });
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
     actionHistory,
