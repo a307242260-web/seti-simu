@@ -5,22 +5,24 @@
   let standardAction = root.SetiStandardAction;
   let heuristicEvaluator = root.SetiHeuristicEvaluator;
   let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
+  let outcomeModel = root.SetiOutcomeModel;
 
-  if ((!policyPort || !standardAction || !heuristicEvaluator || !expectedScoreEvaluator) && typeof require === "function") {
+  if ((!policyPort || !standardAction || !heuristicEvaluator || !expectedScoreEvaluator || !outcomeModel) && typeof require === "function") {
     policyPort = policyPort || require("./policy-port");
     standardAction = standardAction || require("../actions/standard-action");
     heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
     expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
+    outcomeModel = outcomeModel || require("./outcome-model");
   }
 
-  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator);
+  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiHeuristicPolicy = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v2";
+  const POLICY_VERSION = "seti-heuristic-policy-v3";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
 
@@ -47,21 +49,6 @@
       hash = Math.imul(hash, 0x01000193);
     }
     return (hash >>> 0).toString(16).padStart(8, "0");
-  }
-
-  function normalizeWeights(input = {}) {
-    const result = {};
-    for (const [family, rawValue] of Object.entries(input || {})) {
-      if (!KNOWN_FAMILIES.has(family)) {
-        throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", `未知策略权重 family: ${family}`);
-      }
-      const value = Number(rawValue);
-      if (!Number.isFinite(value) || value < 0) {
-        throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", `${family} 权重必须是非负有限数值`);
-      }
-      result[family] = value;
-    }
-    return Object.freeze(result);
   }
 
   function isObservationFeasible(context, action) {
@@ -93,6 +80,14 @@
         { families: unknownFamilies },
       );
     }
+    try {
+      outcomeModel.assertOutcomeSet(context.actionOutcomes, context.legalActions);
+    } catch (error) {
+      throw new HeuristicPolicyError(
+        "HEURISTIC_POLICY_OUTCOME_INVALID",
+        error?.message || "Heuristic Policy 需要与 legal set 对齐的标准 outcome",
+      );
+    }
     const malformed = context.legalActions.find((action) => (
       standardAction.PHASE_BY_FAMILY[action.family] !== action.phase
     ));
@@ -107,7 +102,6 @@
 
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
-    const strategyWeights = normalizeWeights(options.strategyWeights);
     const evaluationParameters = expectedScoreEvaluator.mergeParameters(options.evaluationParameters);
     const evaluateAction = options.evaluateAction || ((context, action) => (
       expectedScoreEvaluator.evaluateAction(context, action, evaluationParameters)
@@ -118,20 +112,16 @@
     const provenance = Object.freeze({
       type: POLICY_TYPE,
       version: POLICY_VERSION,
-      config: Object.freeze({ difficulty, strategyWeights, evaluationParameters }),
-      configChecksum: stableHash({ difficulty, strategyWeights, evaluationParameters }),
+      config: Object.freeze({ difficulty, evaluationParameters }),
+      configChecksum: stableHash({ difficulty, evaluationParameters }),
     });
 
     function decide(context) {
       assertContext(context);
       const selected = heuristicEvaluator.selectLegalAction(context, {
         evaluateAction,
-        strategyWeights,
         isFeasible: isObservationFeasible,
       });
-      if (!selected && context.legalActions.some((action) => (strategyWeights[action.family] ?? 1) <= 0)) {
-        throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_ENABLED_ACTION", "配置禁用了当前全部 legal action");
-      }
       if (!selected) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_SELECTION", "Heuristic Policy 未能选择 legal descriptor");
       }

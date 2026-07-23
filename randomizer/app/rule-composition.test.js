@@ -120,6 +120,36 @@ function createHarness(initialValue = 0) {
   return { composition, commitEvents: () => commitEvents };
 }
 
+function createForkableHarness() {
+  function create() {
+    return createRuleComposition({
+      stateStoreApi,
+      effectRuntimeApi,
+      createActionRegistry: createRegistry,
+      createInitialState: () => createState(0),
+      projectState: (state) => ({
+        match: structuredClone(state.match),
+        meta: { stateVersion: state.meta.stateVersion },
+      }),
+      effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"], (_state, action) => ({
+        effects: [{ type: "add", payload: { amount: action.family === "scan" ? 2 : 1 } }],
+      }), {
+        add(state, effect) {
+          state.match.value += effect.payload.amount;
+          return { ok: true, nextState: state };
+        },
+      })],
+      createCounterfactualFork(envelope) {
+        const fork = create();
+        const restored = fork.lifecycle.restore(envelope);
+        assert.equal(restored.ok, true);
+        return fork;
+      },
+    });
+  }
+  return create();
+}
+
 {
   const { composition, commitEvents } = createHarness();
   const action = composition.inputPort.enumerateActions({ family: "launch" })[0];
@@ -132,6 +162,24 @@ function createHarness(initialValue = 0) {
   assert.equal(Object.hasOwn(composition, "compareAndCommit"), false);
   assert.equal(Object.hasOwn(composition, "getSnapshot"), false);
   assert.equal(Object.hasOwn(composition, "actionRegistry"), false);
+}
+
+{
+  const composition = createForkableHarness();
+  const actions = composition.inputPort.enumerateActions()
+    .filter((action) => action.family !== "quick_trade");
+  const before = composition.lifecycle.save().envelope;
+  const outcomes = composition.counterfactualPort.evaluate(actions);
+  const reversed = composition.counterfactualPort.evaluate([...actions].reverse());
+  assert.deepEqual(
+    outcomes.map((outcome) => [outcome.actionId, outcome.leaves[0].observation.match.value]),
+    reversed.map((outcome) => [outcome.actionId, outcome.leaves[0].observation.match.value]),
+    "候选枚举顺序不得改变任一真实执行 outcome",
+  );
+  assert.deepEqual(composition.lifecycle.save().envelope, before,
+    "执行全部 fork 后 canonical state/RNG/session/journal/history/replay 必须不变");
+  assert.equal(outcomes.find((outcome) => outcome.actionId.startsWith("scan")).leaves[0].observation.match.value, 2);
+  assert.equal(outcomes.find((outcome) => outcome.actionId.startsWith("launch")).leaves[0].observation.match.value, 1);
 }
 
 {

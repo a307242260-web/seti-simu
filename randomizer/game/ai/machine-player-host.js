@@ -287,6 +287,7 @@
           decisionVersion: input.decisionVersion,
           observation: input.observation,
           legalActions: input.legalActions,
+          actionOutcomes: input.actionOutcomes || [],
           deterministicContext: {
             ...(input.deterministicContext || {}),
             machineHostSchemaVersion: SCHEMA_VERSION,
@@ -428,6 +429,7 @@
           decisionVersion: input.decisionVersion,
           observation: input.observation,
           legalActions: input.legalActions,
+          actionOutcomes: input.actionOutcomes || [],
           deterministicContext: {
             ...(input.deterministicContext || {}),
             machineHostSchemaVersion: SCHEMA_VERSION,

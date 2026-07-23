@@ -3,76 +3,117 @@
 const assert = require("node:assert/strict");
 const policyPort = require("./policy-port");
 const heuristicPolicy = require("./heuristic-policy");
+const outcomeModel = require("./outcome-model");
+const expectedScoreEvaluator = require("./expected-score-evaluator");
 
-function action(actionId, family, value) {
+function action(actionId, family) {
   return {
     schemaVersion: policyPort.STANDARD_ACTION_SCHEMA_VERSION,
     family,
-    phase: family === "quick_trade" ? "quick" : "main",
+    phase: "main",
     actionId,
     actorId: "p1",
     stateVersion: 7,
     decisionVersion: 3,
-    target: { value },
-    payload: { value },
-    summary: `${family}:${value}`,
+    target: {},
+    payload: {},
+    summary: family,
   };
 }
 
-function context(actions) {
-  return policyPort.createDecisionContext({
-    requestId: "heuristic-policy-request",
-    seatId: "p1",
-    stateVersion: 7,
-    decisionVersion: 3,
-    observation: {
-      publicState: {
-        roundNumber: 2,
-        players: [{ id: "p1", resources: { credits: 4, energy: 3 } }],
-        board: { rockets: [{ id: "r1", playerId: "p1", surface: "solar-board" }] },
-      },
-      selfState: { hand: [] },
-    },
-    legalActions: actions,
-    deterministicContext: { seed: "heuristic-policy-fixed" },
-  });
+function observation(score, credits) {
+  return outcomeModel.createDecisionObservation({
+    publicState: { players: [{ id: "p1", resources: { score, credits } }], board: {} },
+    selfState: { id: "p1", resources: { score, credits }, hand: [] },
+  }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
 }
 
-const legalActions = [
-  action("pass:p1:7", "pass", 1),
-  action("launch:p1:7", "launch", 9),
-];
-const current = context(legalActions);
-const before = structuredClone(current);
-const policy = heuristicPolicy.createHeuristicPolicy({
-  difficulty: "contract-test",
-  evaluateAction: (_decisionContext, candidate) => ({ score: candidate.payload.value }),
+const legalActions = [action("pass:p1:7", "pass"), action("launch:p1:7", "launch")];
+const current = policyPort.createDecisionContext({
+  requestId: "heuristic-policy-request",
+  seatId: "p1",
+  stateVersion: 7,
+  decisionVersion: 3,
+  observation: observation(0, 0),
+  legalActions,
+  actionOutcomes: [
+    {
+      schemaVersion: "seti-action-outcome-v1",
+      actionId: "pass:p1:7",
+      status: "settled",
+      confidence: "high",
+      rootObservation: observation(0, 0),
+      leaves: [{ leafId: "pass-leaf", actionChain: ["pass:p1:7"], observation: observation(0, 1) }],
+    },
+    {
+      schemaVersion: "seti-action-outcome-v1",
+      actionId: "launch:p1:7",
+      status: "settled",
+      confidence: "high",
+      rootObservation: observation(0, 0),
+      leaves: [{ leafId: "launch-leaf", actionChain: ["launch:p1:7"], observation: observation(4, 0) }],
+    },
+  ],
 });
-
+const before = structuredClone(current);
+const policy = heuristicPolicy.createHeuristicPolicy({ difficulty: "contract-test" });
 const first = policy.decide(current);
 const second = policy.decide(current);
 assert.deepEqual(first, second, "同一 DecisionContext 必须得到确定性 PolicyDecision");
-assert.equal(first.actionId, "launch:p1:7", "Heuristic Policy 必须只从 legal set 选择最高估值 actionId");
-assert.equal(legalActions.some((candidate) => candidate.actionId === first.actionId), true);
-assert.deepEqual(current, before, "策略不得修改 observation 或 legal descriptor");
-assert.equal(Object.isFrozen(policy.getProvenance()), true);
-assert.equal(policy.getProvenance().type, heuristicPolicy.POLICY_TYPE);
+assert.equal(first.actionId, "launch:p1:7", "Heuristic Policy 必须真实按标准执行 leaf outcome 选择");
+assert.deepEqual(current, before, "策略不得修改 observation、outcome 或 legal descriptor");
+assert.equal(policy.getProvenance().version, heuristicPolicy.POLICY_VERSION);
 
 const validation = policyPort.validatePolicyDecision(current, first, {
   registry: { validate: (_runtime, selected) => ({ ok: selected.actionId === first.actionId }) },
   runtimeContext: {},
 });
-assert.equal(validation.ok, true, "Heuristic Policy 输出必须通过公共 Policy validator");
+assert.equal(validation.ok, true);
+
+const thetaObservation = outcomeModel.createDecisionObservation({
+  publicState: {
+    players: [{
+      id: "p1",
+      resources: {
+        score: 0,
+        credits: 1,
+        energy: 2,
+        availableData: 3,
+        publicity: 4,
+      },
+    }],
+    board: {
+      aliens: {
+        slots: [{ revealed: true, traces: { p1: 4 } }],
+      },
+    },
+  },
+  selfState: {
+    id: "p1",
+    hand: [
+      { id: "ordinary-1" },
+      { id: "ordinary-2" },
+      { id: "alien-in-hand", kind: "alien" },
+    ],
+    privateAlienCards: [{ id: "private-alien-1" }],
+  },
+}, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
+const thetaValue = expectedScoreEvaluator.evaluateState(thetaObservation, "p1");
+assert.deepEqual(expectedScoreEvaluator.DEFAULT_PARAMETERS.resourceValues, {
+  credits: 1,
+  energy: 2,
+  availableData: 2,
+  publicity: 2,
+  ordinaryCard: 1.5,
+  alienCard: 5,
+});
+assert.equal(thetaValue.assetBreakdown.ordinaryCard, 3);
+assert.equal(thetaValue.assetBreakdown.alienCard, 10);
+assert.equal(thetaValue.total, 32, "θ₀ 不得把 alien contact 计作外星人牌价值");
+assert.equal(Object.hasOwn(thetaValue.assetBreakdown, "alien"), false);
 
 assert.throws(
-  () => heuristicPolicy.createHeuristicPolicy({ strategyWeights: { unknown_family: 1 } }),
-  (error) => error.code === "HEURISTIC_POLICY_CONFIG_INVALID",
-);
-assert.throws(
-  () => policy.decide({
-    schemaVersion: policyPort.CONTEXT_SCHEMA_VERSION,
-    legalActions: [],
-  }),
+  () => policy.decide({ schemaVersion: policyPort.CONTEXT_SCHEMA_VERSION, legalActions: [] }),
   (error) => error.code === "HEURISTIC_POLICY_EMPTY_LEGAL_SET",
 );
 assert.throws(
@@ -83,13 +124,4 @@ assert.throws(
   (error) => error.code === "HEURISTIC_POLICY_UNSUPPORTED_FAMILY",
 );
 
-const disabled = heuristicPolicy.createHeuristicPolicy({
-  strategyWeights: { pass: 0, launch: 0 },
-  evaluateAction: () => ({ score: 1 }),
-});
-assert.throws(
-  () => disabled.decide(current),
-  (error) => error.code === "HEURISTIC_POLICY_NO_ENABLED_ACTION",
-);
-
-console.log("heuristic policy behavior tests passed");
+console.log("heuristic policy outcome behavior tests passed");

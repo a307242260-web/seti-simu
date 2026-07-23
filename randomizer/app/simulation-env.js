@@ -1,7 +1,6 @@
 "use strict";
 
 const { performance } = require("node:perf_hooks");
-const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
 const { createSimulationRuleComposition } = require("../training/simulation-rule-composition");
 const {
   ACTION_SCHEMA_VERSION,
@@ -15,6 +14,7 @@ const {
   sanitizeTechSupply,
   sanitizeFinalScoringState,
 } = require("./simulation-contract");
+const outcomeModel = require("../game/ai/outcome-model");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
 const REPLAY_SCHEMA_VERSION = "seti-rl-replay-v1";
@@ -168,24 +168,6 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
   };
 }
 
-function buildReward(beforePlayer, afterPlayer, terminal) {
-  const before = beforePlayer?.resources || {};
-  const after = afterPlayer?.resources || {};
-  return {
-    immediateScoreDelta: (after.score || 0) - (before.score || 0),
-    resourceDelta: {
-      credits: (after.credits || 0) - (before.credits || 0),
-      energy: (after.energy || 0) - (before.energy || 0),
-      publicity: (after.publicity || 0) - (before.publicity || 0),
-      availableData: (after.availableData || 0) - (before.availableData || 0),
-      additionalPublicScan: (after.additionalPublicScan || 0) - (before.additionalPublicScan || 0),
-      handCount: (afterPlayer?.hand || []).length - (beforePlayer?.hand || []).length,
-    },
-    terminalScoreDelta: terminal ? (after.score || 0) - (before.score || 0) : 0,
-    shaping: {},
-  };
-}
-
 function createSimulationEnv() {
   let kernel = null;
   let composition = null;
@@ -199,7 +181,27 @@ function createSimulationEnv() {
   let lastObservation = null;
   let diagnostics = null;
   let policyAdapter = null;
+  let policySeatsInitialized = false;
   let disposed = false;
+
+  function evaluateActionOutcomes(actions = null, options = {}) {
+    assertUsable();
+    cachedLegal = null;
+    selectors = new Map();
+    const freshLegal = this.legalActions();
+    const legal = clone((actions || freshLegal).map((requested) => (
+      freshLegal.find((action) => action.actionId === requested.actionId) || requested
+    )));
+    const descriptors = legal.map((action) => (
+      selectors.get(action.actionId) || action
+    ));
+    return composition.counterfactualPort.evaluate(descriptors, {
+      viewer: { playerId: legal[0]?.actorPlayerId || null, role: "player" },
+      maxDepth: options.maxDepth || 8,
+      maxLeaves: options.maxLeaves || 64,
+      confidence: "low",
+    });
+  }
 
   function recordDuration(key, startedAt) {
     diagnostics[key] += performance.now() - startedAt;
@@ -212,6 +214,18 @@ function createSimulationEnv() {
   function assertUsable() {
     assertNotDisposed();
     if (!composition) throw environmentError("SIMULATION_ENV_NOT_READY", "Simulation env 尚未 reset");
+  }
+
+  function ensurePolicyAdapter() {
+    if (!policyAdapter) {
+      const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
+      policyAdapter = createHeuristicPolicyAdapter({
+        difficulty: config.aiDifficulty,
+        strategyWeights: config.strategyWeights || {},
+        seed,
+      });
+    }
+    return policyAdapter;
   }
 
   function rawLegalDescriptors() {
@@ -239,6 +253,21 @@ function createSimulationEnv() {
     recordDuration("observationMilliseconds", startedAt);
     diagnostics.observationCalls += 1;
     return result;
+  }
+
+  function standardObservation(observation, seatId, actions = []) {
+    return outcomeModel.createDecisionObservation(observation, {
+      seatId,
+      stateVersion: actions[0]?.stateVersion ?? null,
+      decisionVersion: actions[0]?.decisionVersion ?? null,
+    });
+  }
+
+  function rewardBetween(beforeObservation, afterObservation, seatId, beforeActions = [], afterActions = []) {
+    return outcomeModel.createReward(
+      standardObservation(beforeObservation, seatId, beforeActions),
+      standardObservation(afterObservation, seatId, afterActions),
+    );
   }
 
   function saveEnvelope() {
@@ -295,6 +324,12 @@ function createSimulationEnv() {
         activePlayerCount: config.activePlayerCount,
         random: seededRandom,
         rngState: { algorithm: "seti-simulation-mulberry32-v1", state: seededRandom.getState() },
+        projectCounterfactualState: (state, viewer) => buildObservation(
+          state,
+          seed,
+          viewer?.playerId || null,
+          [],
+        ),
       });
       composition = kernel.composition;
       const newGameResult = kernel.newGame(config);
@@ -305,15 +340,8 @@ function createSimulationEnv() {
       const drain = composition.inputPort.beginDrain({ metadata: { source: "simulation_reset" } });
       recordDuration("resetDrainMilliseconds", drainStartedAt);
       if (drain?.ok === false) throw new Error(drain.message || drain.code || "simulation reset drain 失败");
-      policyAdapter = createHeuristicPolicyAdapter({
-        difficulty: config.aiDifficulty,
-        strategyWeights: resetConfig.strategyWeights || {},
-        seed,
-      });
-      policyAdapter.initializeSeats(
-        (getWorkingProjection(composition).players?.players || []).map((player) => player.id),
-        { phase: "new_game" },
-      );
+      policyAdapter = null;
+      policySeatsInitialized = false;
       recordDuration("bootMilliseconds", startedAt);
       const actions = this.legalActions();
       lastObservation = observeWithActions(undefined, actions);
@@ -354,15 +382,13 @@ function createSimulationEnv() {
       assertUsable();
       const actions = cachedLegal || this.legalActions();
       const beforeObservation = lastObservation || observeWithActions(action?.actorPlayerId, actions);
-      const beforeState = getWorkingProjection(composition);
       const actorPlayerId = beforeObservation.decision?.actorPlayerId || null;
-      const beforePlayer = (beforeState.players?.players || []).find((player) => player.id === actorPlayerId) || null;
       const terminal = this.isTerminal();
       const reject = (code, message) => ({
         ok: false,
         actionId: action?.actionId || null,
         actorPlayerId,
-        reward: buildReward(beforePlayer, beforePlayer, terminal),
+        reward: rewardBetween(beforeObservation, beforeObservation, actorPlayerId, actions, actions),
         done: terminal,
         terminated: terminal,
         truncated: false,
@@ -413,7 +439,7 @@ function createSimulationEnv() {
           ok: false,
           actionId: action.actionId,
           actorPlayerId,
-          reward: buildReward(beforePlayer, beforePlayer, false),
+          reward: rewardBetween(beforeObservation, beforeObservation, actorPlayerId, actions, actions),
           done: this.isTerminal(),
           terminated: this.isTerminal(),
           truncated: false,
@@ -429,9 +455,7 @@ function createSimulationEnv() {
       const postActions = this.legalActions();
       const observation = observeWithActions(undefined, postActions);
       lastObservation = observation;
-      const afterState = getWorkingProjection(composition);
-      const afterPlayer = (afterState.players?.players || []).find((player) => player.id === actorPlayerId) || null;
-      const reward = buildReward(beforePlayer, afterPlayer, observation.terminal);
+      const reward = rewardBetween(beforeObservation, observation, actorPlayerId, actions, postActions);
       const journal = result.journal || composition.inspect().session?.journal || null;
       const replayEvent = {
         stepIndex: replaySteps.length,
@@ -469,6 +493,16 @@ function createSimulationEnv() {
       return clone(diagnostics || {});
     },
 
+    getCounterfactualDiagnostics() {
+      assertUsable();
+      return clone(composition.counterfactualPort.getDiagnostics?.() || null);
+    },
+
+    readCounterfactualRngState() {
+      assertUsable();
+      return seededRandom.getState();
+    },
+
     runOfflineTeacherDecision() {
       assertUsable();
       if (!config?.offlineTeacher) throw new Error("offline teacher oracle 未启用");
@@ -477,16 +511,43 @@ function createSimulationEnv() {
 
     runHeuristicPolicyDecision(asTeacher = false) {
       assertUsable();
+      ensurePolicyAdapter();
+      if (!policySeatsInitialized) {
+        policyAdapter.initializeSeats(
+          (getWorkingProjection(composition).players?.players || []).map((player) => player.id),
+          { phase: "new_game" },
+        );
+        policySeatsInitialized = true;
+      }
+      this.createCheckpoint();
+      cachedLegal = null;
+      selectors = new Map();
       const beforeActions = this.legalActions();
       const beforeObservation = lastObservation || observeWithActions(undefined, beforeActions);
       if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
-      const selection = policyAdapter.runDecision(beforeObservation, beforeActions, {
+      const policyObservation = standardObservation(beforeObservation, beforeActions[0].actorPlayerId, beforeActions);
+      const actionOutcomes = outcomeModel.projectOutcomeObservations(
+        evaluateActionOutcomes.call(this, beforeActions),
+        {
+          seatId: beforeActions[0].actorPlayerId,
+          stateVersion: beforeActions[0].stateVersion,
+          decisionVersion: beforeActions[0].decisionVersion,
+        },
+      );
+      const selection = policyAdapter.runDecision(policyObservation, beforeActions, {
         seed,
         episodeId: config?.episodeId || null,
-      }, (chosenAction) => this.step(chosenAction));
+      }, (chosenAction) => this.step(chosenAction), actionOutcomes);
       const result = selection.submission?.result;
       if (!result?.ok) throw new Error(result?.error || "Heuristic opponent 执行失败");
-      if (!asTeacher) return { ...result, policyDecision: selection.decision, policyProvenance: policyAdapter.getProvenance() };
+      if (!asTeacher) {
+        return {
+          ...result,
+          policyDecision: selection.decision,
+          policyProvenance: policyAdapter.getProvenance(),
+          actionOutcomes: selection.context.actionOutcomes,
+        };
+      }
       return {
         beforeObservation,
         beforeActions,
@@ -519,6 +580,8 @@ function createSimulationEnv() {
         finalStateSummary: this.observe(),
       };
     },
+
+    evaluateActionOutcomes,
 
     loadReplay(replay) {
       assertNotDisposed();
@@ -580,7 +643,10 @@ function createSimulationEnv() {
         }
         seededRandom.setState(rngState.state);
         environmentEvents = clone(checkpoint.environmentEvents || []);
-        if (checkpoint.machinePlayerHostSnapshot) policyAdapter.restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
+        if (checkpoint.machinePlayerHostSnapshot) {
+          ensurePolicyAdapter().restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
+          policySeatsInitialized = true;
+        }
         cachedLegal = null;
         selectors = new Map();
         return this.observe();
@@ -600,7 +666,10 @@ function createSimulationEnv() {
       environmentEvents = clone(checkpoint.environmentEvents || []);
       cachedLegal = null;
       selectors = new Map();
-      if (checkpoint.machinePlayerHostSnapshot) policyAdapter.restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
+      if (checkpoint.machinePlayerHostSnapshot) {
+        ensurePolicyAdapter().restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
+        policySeatsInitialized = true;
+      }
       const actions = this.legalActions();
       lastObservation = observeWithActions(undefined, actions);
       return clone(lastObservation);

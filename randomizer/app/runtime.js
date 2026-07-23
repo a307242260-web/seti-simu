@@ -354,10 +354,24 @@
     }
 
     function createWorkingState(initialOptions = {}) {
+      let random;
+      if (initialOptions.counterfactualSeed != null) {
+        let state = 2166136261;
+        for (const character of String(initialOptions.counterfactualSeed)) {
+          state ^= character.charCodeAt(0);
+          state = Math.imul(state, 16777619);
+        }
+        random = () => {
+          state = Math.imul(state ^ (state >>> 15), 1 | state);
+          state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
+          return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
+        };
+      }
       const state = context.initialGameState.createSessionState(context.ruleModules, {
         defaultInitialPlayerColor: initialOptions.defaultInitialPlayerColor ?? context.defaultInitialPlayerColor,
         activePlayerCount: initialOptions.activePlayerCount ?? context.defaultActivePlayerCount,
         finalScoreIds: initialOptions.finalScoreIds ?? context.finalScoreIds,
+        random,
       });
       state.meta = {
         seed: initialOptions.seed ?? "browser-host",

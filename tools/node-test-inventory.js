@@ -44,6 +44,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/simulation-effect-session-worker-recovery.test.js", "architecture/simulation-host", "worker 恢复 active Session 与 journal", "恢复只还原 committed state 而丢失 continuation"),
     entry("randomizer/app/simulation-no-browser-globals.test.js", "architecture/simulation-host", "rules-only Simulation 不依赖 DOM/Window", "训练入口加载浏览器全局或 app composition"),
     entry("randomizer/app/simulation-state-checkpoint.test.js", "architecture/simulation-host", "checkpoint 当前 schema round-trip 保持 action identity", "未知 schema 或非零版本恢复后 legal set 漂移"),
+    entry("randomizer/app/simulation-counterfactual-outcome.test.js", "architecture/policy-host", "每个 legal action 从同根隔离 fork 经标准链生成 outcome", "枚举顺序、失败 fork 或 RNG 消耗污染 canonical root"),
     entry("randomizer/app/simulation-training-replay.test.js", "architecture/simulation-host", "训练 replay 逐步复现 observation/action/reward", "stale 或篡改 replay 被静默接受"),
     entry("randomizer/training/simulation-rule-composition.test.js", "architecture/simulation-host", "生产 rules-only composition 经正式 Decision 提交", "直接 helper 调用绕过 composition working root"),
 
@@ -52,7 +53,6 @@ module.exports = Object.freeze({
     entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位通过 PolicyInputAdapter 装配", "浏览器 AI 绕过公共 input port 直接执行规则"),
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
-    entry("randomizer/game/ai/selection-evaluator.test.js", "policy/selection-evaluator", "setup、支付、科技与外星选择使用领域估值", "代表性 choice 选错或修改候选 payload"),
 
     entry("randomizer/game/actions/standard-action.test.js", "rules/actions", "Standard Action registry 的 identity、phase、validate/execute 协议", "未知、stale、越权 descriptor 到达 handler"),
     entry("randomizer/game/actions/actions.test.js", "rules/actions", "发射、环绕、登陆、科技生产规则的合法性与提交", "资源不足或非法目标仍修改规则状态"),

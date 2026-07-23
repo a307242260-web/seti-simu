@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const policyPort = require("../../game/ai/policy-port");
+const outcomeModel = require("../../game/ai/outcome-model");
 const policyInputAdapter = require("../browser-host/policy-input-adapter");
 const {
   createCompositionPolicyBoundaryReader,
@@ -64,8 +65,10 @@ function action(overrides = {}) {
       ruleComposition: {
         inspect: () => ({ phase: "idle", session: null }),
         inputPort: { enumerateActions: () => [] },
+        counterfactualPort: { evaluate: () => [] },
         subscribe: () => () => {},
       },
+      outcomeModel,
       projectionSource: {
         read: () => ({
           source: { stateVersion: 0 },
@@ -132,6 +135,7 @@ function action(overrides = {}) {
   const traces = [];
   const port = createBrowserMachinePlayerPort({
     ruleComposition,
+    outcomeModel,
     projectionSource,
     policyInputAdapterModule: {
       createPolicyInputAdapter(options) {

@@ -8,8 +8,8 @@ const FIXED_BOARD_CONFIG = Object.freeze({
   activePlayerCount: 4,
   aiDifficulty: "weak_start",
   offlineTeacher: true,
-  policyVersion: "seti-heuristic-policy-v2",
-  opponentIdentity: "seti-heuristic-policy-v2",
+  policyVersion: "seti-heuristic-policy-v3",
+  opponentIdentity: "seti-heuristic-policy-v3",
 });
 
 function stableSerialize(value) {

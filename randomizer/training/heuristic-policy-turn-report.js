@@ -46,14 +46,18 @@ function buildDiagnostics(turns) {
   ));
   const nonPositiveChoices = evaluated.filter(({ action }) => action.value.score <= 0);
   const optimisticScoreMisses = evaluated
-    .filter(({ action }) => action.value.evaluation.realizedDelta > action.scoreDelta)
+    .filter(({ action }) => (
+      Number(action.value.evaluation.leafValue?.realizedScore || 0)
+      - Number(action.value.evaluation.rootValue?.realizedScore || 0)
+    ) > action.scoreDelta)
     .map(({ turn, action }) => ({
       roundNumber: turn.roundNumber,
       turnNumber: turn.turnNumber,
       playerLabel: turn.playerLabel,
       decisionNumber: action.decisionNumber,
       action: action.text,
-      expectedImmediateScore: action.value.evaluation.realizedDelta,
+      expectedImmediateScore: Number(action.value.evaluation.leafValue?.realizedScore || 0)
+        - Number(action.value.evaluation.rootValue?.realizedScore || 0),
       actualScoreDelta: action.scoreDelta,
     }))
     .sort((left, right) => (
@@ -78,28 +82,26 @@ function isObservationFeasible(observation, actorPlayerId, action) {
   return rockets.some((rocket) => rocket?.playerId === actorPlayerId && rocket?.surface === "solar-board");
 }
 
-function evaluateLegalActions(observation, legalActions, actorPlayerId, provenance) {
-  if (legalActions.every((action) => action.phase === "conditional")) return [];
+function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPlayerId, provenance) {
   const parameters = provenance?.config?.evaluationParameters || {};
-  const weights = provenance?.config?.strategyWeights || {};
-  return legalActions.map((action, index) => ({ action, index }))
+  return legalActions.map((action) => ({ action }))
     .filter(({ action }) => isObservationFeasible(observation, actorPlayerId, action))
-    .map(({ action, index }) => {
+    .map(({ action }) => {
     const evaluation = expectedScoreEvaluator.evaluateAction(
-      { observation, seatId: actorPlayerId },
+      { observation, actionOutcomes, seatId: actorPlayerId },
       action,
       parameters,
     );
-    const weight = Number(weights[action.family] ?? 1);
     return Object.freeze({
       actionId: action.actionId,
       summary: actionText(action) || "结束回合",
-      index,
-      weight,
-      score: evaluation.score * weight,
+      score: evaluation.score,
       evaluation,
     });
-  }).sort((left, right) => right.score - left.score || left.index - right.index);
+  }).sort((left, right) => (
+    Number(right.score ?? -Infinity) - Number(left.score ?? -Infinity)
+    || left.actionId.localeCompare(right.actionId)
+  ));
 }
 
 function actionText(action) {
@@ -136,12 +138,15 @@ function runFixedBoardTurnReport(options = {}) {
       const actorPlayerId = chosen.actorPlayerId || before.decision?.actorPlayerId;
       const resourcesBefore = resourcesOf(before, actorPlayerId);
       const resourcesAfter = resourcesOf(result.observation, actorPlayerId);
+      const valuationStartedAt = performance.now();
       const rankedEvaluations = evaluateLegalActions(
         before,
         legalActions,
+        result.actionOutcomes,
         actorPlayerId,
         result.policyProvenance,
       );
+      const valuationMilliseconds = performance.now() - valuationStartedAt;
       const chosenEvaluation = rankedEvaluations.find((candidate) => candidate.actionId === chosen.actionId) || null;
       const record = {
         decisionNumber: decisionCount,
@@ -159,6 +164,10 @@ function runFixedBoardTurnReport(options = {}) {
         scoreBefore: scoreOf(before, actorPlayerId),
         scoreAfter: scoreOf(result.observation, actorPlayerId),
         scoreDelta: scoreOf(result.observation, actorPlayerId) - scoreOf(before, actorPlayerId),
+        timing: {
+          ...(env.getCounterfactualDiagnostics() || {}),
+          valuationMilliseconds,
+        },
       };
 
       if (!reachedTurnActions && chosen.decisionType === "conditional_choice") {
@@ -203,7 +212,7 @@ function runFixedBoardTurnReport(options = {}) {
       .sort((left, right) => right.finalScore - left.finalScore);
 
     return {
-      schemaVersion: "seti-heuristic-turn-report-v2",
+      schemaVersion: "seti-heuristic-turn-report-v3",
       boardId: FIXED_BOARD_ID,
       seed: FIXED_BOARD_CONFIG.seed,
       boardFingerprint: fingerprintFixedBoard(projectFixedBoard(initialObservation)),
@@ -242,20 +251,30 @@ function formatActualDelta(action, scoreDelta) {
   return parts.join("，") || "—";
 }
 
-function formatEvaluation(candidate) {
-  if (!candidate) return "条件选择（非终局分口径）";
+function formatEvaluation(candidate, timing = null) {
+  if (!candidate) return "未生成 outcome";
   const evaluation = candidate.evaluation;
-  const planValue = (evaluation.selectedPlans || []).reduce((sum, plan) => sum + Number(plan.expectedValue || 0), 0);
+  if (evaluation.score == null) {
+    return `状态=${evaluation.status}；置信=${evaluation.confidence}；${evaluation.reasonCodes.join(",")}`;
+  }
+  const root = evaluation.rootValue;
+  const leaf = evaluation.leafValue;
   const parts = [
     `Q=${formatNumber(candidate.score)}`,
-    `即时分${signed(evaluation.realizedDelta)}`,
-    `锁定终局${signed(evaluation.lockedFinalDelta)}`,
-    `计划${signed(planValue)}`,
-    `资源残值${signed(evaluation.leftoverSalvageDelta)}`,
-    `风险-${formatNumber(evaluation.riskPenalty)}`,
-    `节奏-${formatNumber(evaluation.tempoCost)}`,
+    `状态=${evaluation.status}/${evaluation.confidence}`,
+    `根(分${formatNumber(root?.realizedScore)}+资产${formatNumber(root?.unrealizedAssets)})`,
+    `叶(分${formatNumber(leaf?.realizedScore)}+资产${formatNumber(leaf?.unrealizedAssets)})`,
+    `链=${(evaluation.actionChain || []).join("→") || "—"}`,
+    `依据=${evaluation.reasonCodes.join(",")}`,
   ];
-  if (candidate.weight !== 1) parts.push(`权重×${candidate.weight}`);
+  if (timing) {
+    parts.push(
+      `耗时 fork ${formatNumber(timing.forkMilliseconds)}ms`
+      + `/执行 ${formatNumber(timing.executionMilliseconds)}ms`
+      + `/投影 ${formatNumber(timing.projectionMilliseconds)}ms`
+      + `/估值 ${formatNumber(timing.valuationMilliseconds)}ms`,
+    );
+  }
   return parts.join("；");
 }
 
@@ -276,7 +295,7 @@ function formatTurnReportMarkdown(report) {
     `- board fingerprint：\`${report.boardFingerprint}\``,
     `- Policy 决策数：${report.decisionCount}`,
     `- 游戏回合数：${report.turns.length}`,
-    "- 价值口径：`Q` 按本局 Policy 的同一参数重算，是当时用于排序的预期终局分增量；显示“条件选择（非终局分口径）”的行不与 Q 横向比较",
+    "- 价值口径：`Q` 只读取同一 Rule Composition/Standard Action/Effect Session/Decision/commit 链真实执行后的叶状态；已兑现分 1:1，未兑现资产使用 θ₀",
     "- 诊断目标：初次接触玩家约 100 分；最终表同时列出各机器人的目标差距",
     "",
     "## 开局待决选择",
@@ -321,7 +340,7 @@ function formatTurnReportMarkdown(report) {
       "| ---: | --- | --- | --- | --- |",
     );
     turn.actions.forEach((action) => {
-      lines.push(`| ${action.decisionNumber} | ${markdownCell(action.text)} | ${markdownCell(formatEvaluation(action.value))} | ${markdownCell(formatActualDelta(action, action.scoreDelta))} | ${markdownCell(formatAlternatives(action.alternatives))} |`);
+      lines.push(`| ${action.decisionNumber} | ${markdownCell(action.text)} | ${markdownCell(formatEvaluation(action.value, action.timing))} | ${markdownCell(formatActualDelta(action, action.scoreDelta))} | ${markdownCell(formatAlternatives(action.alternatives))} |`);
     });
   }
 

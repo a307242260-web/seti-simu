@@ -56,7 +56,7 @@ SUMMARY fullFlow passed=1 failed=0 total=1
 | Simulation Host | `simulation-decision-owner`、checkpoint、replay、worker recovery、no-browser-globals、唯一 full-flow | 中 | 缺对 `reset/observe/legalActions/step/reward/terminal/dispose` 的完整公共契约矩阵；缺非法 action、未知 schema、terminal 后 step 等系统反例 |
 | Policy Port | `policy-port.test.js` | 强 | 已覆盖 schema、迟到/重复/cancel/timeout 等零副作用语义 |
 | Machine Player Host | `machine-player-host.test.js`、`browser-machine-player.test.js` | 中强 | Host 协议有覆盖；浏览器 composition 测试正在共享工作树变更，尚未形成稳定提交基线 |
-| Heuristic Policy / AI 估值 | 无默认 unit | 弱 | `heuristic-policy.js`、`heuristic-evaluator.js`、`selection-evaluator.js` 及资源/卡牌/路线/扫描/科技/终局/外星人估值没有直接行为回归 |
+| Heuristic Policy / AI 估值 | Policy、outcome 与隔离反事实 unit | 中强 | `selection-evaluator.js` 已删除；策略只按标准 leaf outcome 排序，仍需持续扩充真实规则对照 |
 | persistence/recovery | `browser-services.test.js`、`game-recovery.test.js`、`simulation-state-checkpoint.test.js` | 强（Node） | Chrome recovery 不是默认可重复证据；Browser 与 Simulation 的跨宿主 round-trip parity 未固化 |
 | 游戏规则领域 | cards/data/tech/aliens/players/rockets/scoring 等测试 | 中强 | 覆盖广，但与 Standard Action/Effect Session 的正式入口映射不完整；部分只测底层 helper |
 | 唯一完整流程 | `full-flow/standard-flow.test.js` | 中强 | 固定 Simulation trace 覆盖权威盘面与 journal；没有经过真实 Browser DOM/input/render/save 恢复完整链 |
@@ -73,11 +73,10 @@ SUMMARY fullFlow passed=1 failed=0 total=1
 
 它们不证明 Heuristic Policy 会从 legal set 中稳定选出合法结果，也不证明各估值单元面对资源、卡牌、路线、扫描、科技、终局和外星人局面时输出正确。当前 `game/ai` 大量生产模块没有直接行为测试。这是最明显的架构单元缺口。
 
-建议最少补三类 unit：
+建议最少保留两类策略 unit，并由反事实 outcome 合约覆盖规则结果：
 
 1. `heuristic-policy`：相同 DecisionContext 确定性、只返回 legal actionId、空集/畸形输入 fail-closed。
 2. `heuristic-evaluator`：稳定排序、tie-break、不得修改 observation/legal descriptors。
-3. `selection-evaluator`：setup、弃牌、支付、科技、外星人 choice 的代表性反例。
 
 其余细分 valuation 只在存在独立业务公式和真实回归风险时保留，不按“一文件一测试”扩张。
 
@@ -202,7 +201,7 @@ unit
 └── policy
     ├── heuristic-policy
     ├── heuristic-evaluator
-    └── selection-evaluator
+    └── counterfactual-outcome
 
 fullFlow
 └── standard-flow-v1

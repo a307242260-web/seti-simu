@@ -1,8 +1,9 @@
 # Machine Player Host
 
 `randomizer/game/ai/machine-player-host.js` 是浏览器机器席位与 simulation/训练机器席位共用的协调器。
-它只负责固定席位身份、Policy 请求生命周期和公共 Standard Action/Decision 提交；不执行规则、
-不 drain Effect、不生成第二份状态，也不参与策略估值。
+它负责固定席位身份、Policy 请求生命周期、Host-owned 反事实 outcome 获取和公共
+Standard Action/Decision 提交。真实提交仍只有一次；反事实执行委托给 Rule Composition
+隔离 fork，不把 root、executor、StateStore 或 Effect Session 暴露给 Policy。
 
 ## 席位与初始化
 
@@ -21,7 +22,8 @@ primary 初始化失败时，Host 只会在新局/加载阶段依次尝试该席
 adapter 向 Host 提供三件事：从同源 state source 读取 observation/legal set、提交前复核 fresh
 authority、把已验证 descriptor 提交公共输入端口。Host 负责：
 
-1. 用固定席位 identity 和版本化 legal set 构造 `DecisionContext`；
+1. 从 Rule Composition counterfactual port 读取与版本化 legal set 对齐的 action outcomes，
+   再构造 `DecisionContext`；
 2. 管理 deadline、AbortSignal、同 decision 去重和请求代次；
 3. 复核 PolicyDecision 的 seat/state/decision/action 与固定 type/version/checksum；
 4. fresh revalidate 后最多提交一次。
@@ -29,6 +31,11 @@ authority、把已验证 descriptor 提交公共输入端口。Host 负责：
 timeout、异常、非法输出、identity drift、stale 或提交失败都会留下结构化 paused reason；adapter
 不得在失败后调用 recover、skip、旧 resolver 或 Heuristic 单步 fallback。由于提交发生在全部验证之后，
 失败请求不会推进 state、effect 或 journal。
+
+反事实 fork 从同一 root envelope 创建，每个 action 独立恢复并只经生产 registry、
+Effect Session、Decision 和 commit 链执行。枚举顺序不参与 branch identity；失败/stale fork
+返回结构化 outcome。分支 fanout/depth 超限或随机期望不能安全聚合时返回
+`unresolved`/`low-confidence`，禁止把 `awaiting_decision` 当作叶子或使用 family 常数兜底。
 
 ## 存档与恢复
 

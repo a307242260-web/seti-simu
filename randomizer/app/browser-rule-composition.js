@@ -126,6 +126,22 @@
           sectorBySlot: structuredClone(workingRoot.solarState?.sectorBySlot || {}),
         }),
       },
+      createCounterfactualFork: context.counterfactualEnabled === false
+        ? null
+        : (envelope, forkOptions = {}) => {
+          const fork = createBrowserRuleComposition({
+            ...context,
+            counterfactualEnabled: false,
+            initialOptions: { counterfactualSeed: forkOptions.branchKey },
+          });
+          const restored = fork.lifecycle.restore(envelope);
+          if (!restored?.ok) {
+            fork.dispose();
+            throw new Error(restored?.message || restored?.code || "Browser counterfactual fork 恢复失败");
+          }
+          return fork;
+        },
+      initialOptions: context.initialOptions || {},
     });
     const projectionSource = Object.freeze({
       read(viewer = null) {

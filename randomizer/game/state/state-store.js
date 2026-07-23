@@ -395,6 +395,15 @@
       };
     }
 
+    function restoreForkSnapshot(candidate) {
+      committedState = deepFreeze(clone(candidate));
+      return {
+        ok: true,
+        stateVersion: committedState.meta.stateVersion,
+        snapshot: getSnapshot(),
+      };
+    }
+
     function serialize(candidate = committedState) {
       const validation = validate(candidate);
       if (!validation.ok) return validation;
@@ -415,6 +424,7 @@
       validate,
       compareAndCommit,
       restore,
+      restoreForkSnapshot,
       serialize,
       deserialize,
       subscribe,

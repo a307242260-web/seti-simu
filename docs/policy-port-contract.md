@@ -113,7 +113,7 @@ schema 为 `seti-policy-decision-v1`：
 
 ## 当前生产边界
 
-Browser Host 与 simulation/training Host 都直接构造 `DecisionContext` 并提交 `PolicyDecision`。setup、弃牌、移动支付、科技槽和外星人分支也先把当前合法选项转成 Standard Decision descriptor，再由同一公共 Heuristic Policy 返回 `PolicyDecision`；纯估值集中在 `selection-evaluator.js`，不拥有选择或提交权。旧 `game/ai/policy.js` 已删除。Host 失败策略必须显式创建新的 request generation，不能单步调用 resolver 或取首项。
+Browser Host 与 simulation/training Host 都直接构造 `DecisionContext` 并提交 `PolicyDecision`。setup、弃牌、移动支付、科技槽和外星人分支也先把当前合法选项转成 Standard Decision descriptor，在隔离 Composition fork 中经生产 input port 完整执行，再由公共 Heuristic Policy 按标准 leaf observation 的 `V(leaf)-V(root)` 返回 `PolicyDecision`。旧 `selection-evaluator.js` 与 `game/ai/policy.js` 已删除。Host 失败策略必须显式创建新的 request generation，不能单步调用 resolver、读取 descriptor 文案或取首项。
 
 ## Proof obligations 与证据
 

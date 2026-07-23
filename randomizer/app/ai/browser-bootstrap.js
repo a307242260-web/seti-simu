@@ -30,6 +30,7 @@
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "aiControlRuntimeModule",
     "ruleComposition",
+    "outcomeModel",
     "policyInputAdapterModule",
     "projectionAdapter",
     "inputAdapter",
@@ -53,6 +54,12 @@
       throw new TypeError("Browser Machine Player boundary reader 需要 Rule Composition inspect/input 与 Browser projection ports");
     }
     return function readBoundary(seatId) {
+      const stabilized = composition.lifecycle?.save?.();
+      if (stabilized?.ok === false) {
+        const error = new Error(stabilized.message || "Rule Composition authority 稳定化失败");
+        error.code = stabilized.code || "RULE_COMPOSITION_STABILIZE_FAILED";
+        throw error;
+      }
       const inspection = composition.inspect();
       const source = projectionSource.read({
         viewerId: `machine:${seatId}`,
@@ -90,6 +97,7 @@
   function createBrowserMachinePlayerPort(options = {}) {
     const {
       ruleComposition,
+      outcomeModel,
       projectionSource,
       policyInputAdapterModule,
       projectionAdapter,
@@ -99,6 +107,7 @@
     } = options;
     if (!policyInputAdapterModule?.createPolicyInputAdapter
       || !projectionAdapter?.projectSource
+      || !outcomeModel?.createDecisionObservation
       || !inputAdapter?.dispatchAction
       || !inputAdapter?.submitDecision
       || typeof createPolicy !== "function"
@@ -124,9 +133,27 @@
         drivers.set(seatId, policyInputAdapterModule.createPolicyInputAdapter({
           policy: createPolicy(seatId),
           readBoundary: () => readBoundary(seatId),
-          readObservation: () => projectionAdapter.projectSource({
-            viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-          }),
+          readObservation: () => {
+            const boundary = readBoundary(seatId);
+            return outcomeModel.createDecisionObservation(projectionAdapter.projectSource({
+              viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+            }), {
+              seatId,
+              stateVersion: boundary.stateVersion,
+              decisionVersion: boundary.decisionVersion,
+            });
+          },
+          readActionOutcomes: (boundary) => outcomeModel.projectOutcomeObservations(
+            ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
+              viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+              confidence: "low",
+            }),
+            {
+              seatId,
+              stateVersion: boundary.stateVersion,
+              decisionVersion: boundary.decisionVersion,
+            },
+          ),
           inputAdapter,
           onPause: options.onPause,
           onDiagnostic: options.onDiagnostic,
@@ -188,6 +215,7 @@
     const {
       aiControlRuntimeModule,
       ruleComposition,
+      outcomeModel,
       policyInputAdapterModule,
       projectionAdapter,
       inputAdapter,
@@ -201,6 +229,7 @@
     let controller = null;
     const machinePlayerPort = createBrowserMachinePlayerPort({
       ruleComposition,
+      outcomeModel,
       projectionSource,
       policyInputAdapterModule,
       projectionAdapter,

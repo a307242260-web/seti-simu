@@ -116,7 +116,7 @@ function createHeuristicPolicyAdapter(options = {}) {
     return restored;
   }
 
-  function runDecision(observation, legalActions, deterministicContext = {}, submitAction = null) {
+  function runDecision(observation, legalActions, deterministicContext = {}, submitAction = null, actionOutcomes = []) {
     if (!Array.isArray(legalActions) || !legalActions.length) {
       throw new heuristicPolicy.HeuristicPolicyError(
         "HEURISTIC_POLICY_EMPTY_LEGAL_SET",
@@ -133,6 +133,7 @@ function createHeuristicPolicyAdapter(options = {}) {
       decisionVersion: first.decisionVersion,
       observation,
       legalActions: descriptors,
+      actionOutcomes,
       deterministicContext: {
         ...deterministicContext,
         inputSchemaVersion: "seti-simulation-policy-input-v1",
@@ -147,6 +148,7 @@ function createHeuristicPolicyAdapter(options = {}) {
       throw new heuristicPolicy.HeuristicPolicyError(
         result?.code || "HEURISTIC_POLICY_ACTION_MAPPING_FAILED",
         result?.message || "PolicyDecision 无法映射回 Host legal action",
+        { hostResult: result || null },
       );
     }
     return Object.freeze({
@@ -157,6 +159,7 @@ function createHeuristicPolicyAdapter(options = {}) {
         decisionVersion: first.decisionVersion,
         observation,
         legalActions: descriptors,
+        actionOutcomes,
         deterministicContext,
       }),
       decision: result.policyDecision,

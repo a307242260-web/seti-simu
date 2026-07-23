@@ -3715,6 +3715,7 @@
   const { controller: aiController } = aiBrowserBootstrapModule.createBrowserAiBootstrap({
     aiControlRuntimeModule,
     ruleComposition,
+    outcomeModel: ai.outcomeModel,
     inputPort: aiOwnerInputPort,
     policyInputAdapterModule: browserHostModule.policyInputAdapter,
     projectionAdapter: residentProjectionAdapter,

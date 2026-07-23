@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
 const { createSimulationEnv } = require("../app/simulation-env");
 const fixture = require("./standard-flow-v1.fixture");
 
@@ -101,7 +102,14 @@ for (const [stepIndex, [actionId, maskIndex]] of fixture.operations.entries()) {
   assert.notEqual(result.blocked, true, `流程不得 blocked：${actionId}`);
 }
 
-assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
+if (fixture.finalCheckpointHash) {
+  const checkpointHash = crypto.createHash("sha256")
+    .update(JSON.stringify(env.createCheckpoint()))
+    .digest("hex");
+  assert.equal(checkpointHash, fixture.finalCheckpointHash, "最终 checkpoint bytes 发生漂移");
+} else {
+  assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
+}
 assert.equal(env.createCheckpoint().effectSessionJournals.length, fixture.operations.length,
   "每次 composition 输入都必须留下对应 Effect Session journal");
 assert.equal(env.createCheckpoint().effectSessionCheckpoint ?? null, null, "最终 Effect Session 必须清空");

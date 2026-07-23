@@ -1,14 +1,16 @@
 (function (root, factory) {
   "use strict";
 
-  const api = factory();
+  let outcomeModel = root.SetiOutcomeModel;
+  if (!outcomeModel && typeof require === "function") outcomeModel = require("./outcome-model");
+  const api = factory(outcomeModel);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiPolicyPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
   const CONTEXT_SCHEMA_VERSION = "seti-policy-context-v1";
@@ -156,11 +158,14 @@
       }
       actionIds.add(action.actionId);
     }
+    const actionOutcomes = copySerializable(input.actionOutcomes || [], "$.actionOutcomes");
+    if (actionOutcomes.length) outcomeModel.assertOutcomeSet(actionOutcomes, legalActions);
     return deepFreeze({
       schemaVersion: CONTEXT_SCHEMA_VERSION,
       ...authority,
       observation: copySerializable(input.observation || {}, "$.observation"),
       legalActions,
+      actionOutcomes,
       deterministicContext: copySerializable(input.deterministicContext || {}, "$.deterministicContext"),
     });
   }

@@ -21,7 +21,7 @@
 
 - `randomizer/game/ai/heuristic-policy.test.js`
 - `randomizer/game/ai/heuristic-evaluator.test.js`
-- `randomizer/game/ai/selection-evaluator.test.js`
+- `randomizer/app/simulation-counterfactual-outcome.test.js`
 - `randomizer/app/simulation-host-contract.test.js`
 - `randomizer/training/simulation-standard-action-composition.test.js`
 

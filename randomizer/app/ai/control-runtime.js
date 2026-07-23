@@ -17,55 +17,10 @@
     [AI_DIFFICULTY_LAUGHABLE]: "令人发笑的",
     [AI_DIFFICULTY_WEAK_START]: "开始弱小的",
   });
-  const AI_STRATEGY_WEIGHT_KEYS = Object.freeze([
-    "engine",
-    "playCard",
-    "tech",
-    "scan",
-    "route",
-    "move",
-    "orbitLand",
-    "task",
-    "final",
-    "pass",
-  ]);
-  const AI_STRATEGY_WEIGHT_DEFAULTS = Object.freeze({
-    ...AI_STRATEGY_WEIGHT_KEYS.reduce((weights, key) => ({ ...weights, [key]: 1 }), {}),
-    engine: 1.30,
-    playCard: 1.44,
-    tech: 1.16,
-    scan: 1.18,
-    route: 0.76,
-    move: 0.74,
-    orbitLand: 1.00,
-    task: 1.24,
-    final: 1.34,
-    pass: 0.78,
-  });
-  const AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS = Object.freeze({
-    ...AI_STRATEGY_WEIGHT_KEYS.reduce((weights, key) => ({ ...weights, [key]: 1 }), {}),
-    engine: 1.22,
-    playCard: 1.40,
-    tech: 1.14,
-    scan: 1.08,
-    route: 0.80,
-    move: 0.78,
-    orbitLand: 1.02,
-    task: 1.22,
-    final: 1.28,
-    pass: 0.82,
-  });
-
   function normalizeAiDifficulty(value) {
     return String(value || "") === AI_DIFFICULTY_WEAK_START
       ? AI_DIFFICULTY_WEAK_START
       : AI_DIFFICULTY_LAUGHABLE;
-  }
-
-  function getAiStrategyWeightDefaultsForDifficulty(difficulty) {
-    return normalizeAiDifficulty(difficulty) === AI_DIFFICULTY_WEAK_START
-      ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
-      : AI_STRATEGY_WEIGHT_DEFAULTS;
   }
 
   function hashAiSeed(seed) {
@@ -252,9 +207,6 @@
       pausedOnBug: false,
       suspended: false,
     };
-    let aiStrategyWeights = { ...AI_STRATEGY_WEIGHT_DEFAULTS };
-    let aiStrategyWeightsUseDifficultyDefaults = true;
-
     function getAiDifficultyLabel(value = aiAutoBattleState.aiDifficulty) {
       const difficulty = normalizeAiDifficulty(value);
       return AI_DIFFICULTY_LABELS[difficulty] || AI_DIFFICULTY_LABELS[AI_DIFFICULTY_LAUGHABLE];
@@ -278,62 +230,6 @@
         applyAiDifficultyToPlayer(getPlayerById(playerId), normalized);
       }
       return normalized;
-    }
-
-    function normalizeAiStrategyWeights(weights = {}, options = {}) {
-      const explicitBase = options.baseWeights && typeof options.baseWeights === "object"
-        ? options.baseWeights
-        : null;
-      const base = options.merge === false
-        ? (explicitBase || AI_STRATEGY_WEIGHT_DEFAULTS)
-        : (explicitBase || aiStrategyWeights);
-      const normalized = {};
-      for (const key of AI_STRATEGY_WEIGHT_KEYS) {
-        const value = Number(weights?.[key] ?? base[key] ?? AI_STRATEGY_WEIGHT_DEFAULTS[key]);
-        normalized[key] = Math.round(
-          Math.min(1.6, Math.max(0.6, Number.isFinite(value) ? value : 1)) * 1000,
-        ) / 1000;
-      }
-      return normalized;
-    }
-
-    function configureAiStrategyWeights(weights = {}, options = {}) {
-      aiStrategyWeights = normalizeAiStrategyWeights(weights, options);
-      aiStrategyWeightsUseDifficultyDefaults = options.useDifficultyDefaults === true;
-      resetAiStrategyDemandCache();
-      return { ok: true, weights: { ...aiStrategyWeights } };
-    }
-
-    function resetAiStrategyWeights() {
-      return configureAiStrategyWeights(AI_STRATEGY_WEIGHT_DEFAULTS, {
-        merge: false,
-        useDifficultyDefaults: true,
-      });
-    }
-
-    function getAiActiveStrategyWeights(player = getCurrentPlayer()) {
-      const difficulty = player?.aiDifficulty || aiAutoBattleState.aiDifficulty;
-      if (aiStrategyWeightsUseDifficultyDefaults) {
-        return getAiStrategyWeightDefaultsForDifficulty(difficulty);
-      }
-      return aiStrategyWeights;
-    }
-
-    function getAiStrategyWeights(player = getCurrentPlayer()) {
-      return { ...getAiActiveStrategyWeights(player) };
-    }
-
-    function getAiStrategyWeight(key, player = getCurrentPlayer()) {
-      const value = Number(getAiActiveStrategyWeights(player)?.[key]);
-      return Number.isFinite(value) ? value : 1;
-    }
-
-    function getConfiguredAiStrategyWeights() {
-      return { ...aiStrategyWeights };
-    }
-
-    function usesDifficultyDefaultStrategyWeights() {
-      return aiStrategyWeightsUseDifficultyDefaults;
     }
 
     function getAiAutoBattlePlayerIds() {
@@ -594,7 +490,6 @@
         maxBugRepeats: Math.max(1, Math.round(Number(aiAutoBattleState.maxBugRepeats) || 1)),
         maxMovesPerTurn: Math.max(0, Math.round(Number(aiAutoBattleState.maxMovesPerTurn) || 0)),
         aiDifficulty: aiAutoBattleState.aiDifficulty,
-        strategyWeights: getAiStrategyWeights(),
       };
     }
 
@@ -608,9 +503,6 @@
           ),
           missing: true,
         };
-      }
-      if (snapshot.strategyWeights && typeof snapshot.strategyWeights === "object") {
-        configureAiStrategyWeights(snapshot.strategyWeights, { merge: false });
       }
       if (snapshot.stepDelayMs != null) {
         aiAutoBattleState.stepDelayMs = Math.max(0, Math.round(Number(snapshot.stepDelayMs) || 0));
@@ -653,23 +545,6 @@
       resetAiStrategyDemandCache();
       schedulerState.suspended = true;
       try {
-        if (options.resetStrategyWeights) resetAiStrategyWeights();
-        if (options.strategyTuning) {
-          configureAiStrategyWeights(options.strategyTuning?.weights || options.strategyTuning, { merge: true });
-        }
-        if (options.strategyWeights) {
-          const strategyDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
-          const mergeStrategyWeights = options.mergeStrategyWeights !== false;
-          const strategyMergeBase = mergeStrategyWeights
-            && aiStrategyWeightsUseDifficultyDefaults
-            && strategyDifficulty === AI_DIFFICULTY_WEAK_START
-              ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
-              : null;
-          configureAiStrategyWeights(options.strategyWeights, {
-            merge: mergeStrategyWeights,
-            ...(strategyMergeBase ? { baseWeights: strategyMergeBase } : {}),
-          });
-        }
         if (options.reset) {
           const resetResult = resetGameForAiAutoBattle(options);
           if (!resetResult.ok) return resetResult;
@@ -707,42 +582,31 @@
       applyAiDifficultyToPlayer,
       applyAiDifficultyToPlayerIds,
       configureAiAutoBattle,
-      configureAiStrategyWeights,
       configureDefaultAiOpponent,
       createAiControlSnapshot,
       getAiAutoBattlePlayerIds,
       getAiDifficultyLabel,
-      getAiStrategyWeight,
-      getAiStrategyWeightDefaultsForDifficulty,
-      getAiStrategyWeights,
-      getConfiguredAiStrategyWeights,
       getPendingAutomationPlayerId,
       getPendingOwnerPlayer,
       isAiAutomationPaused,
       isAiAutoBattlePlayer,
       normalizeAiDifficulty,
-      normalizeAiStrategyWeights,
-      resetAiStrategyWeights,
       restoreAiControlSnapshot,
       runWithAiRandomSeed,
       getAiBatchSeed,
       scheduleAiAutoStepIfNeeded,
-      usesDifficultyDefaultStrategyWeights,
     };
   }
 
   return {
     AI_DIFFICULTY_LAUGHABLE,
     AI_DIFFICULTY_WEAK_START,
-    AI_STRATEGY_WEIGHT_DEFAULTS,
-    AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS,
     createAiControlRuntime,
     createManualAiInputGuard,
     createAiControllerState,
     createAiDifficultyCommandHandler,
     createAiSeededRandom,
     getAiBatchSeed,
-    getAiStrategyWeightDefaultsForDifficulty,
     hashAiSeed,
     normalizeAiDifficulty,
     runWithAiRandomSeed,

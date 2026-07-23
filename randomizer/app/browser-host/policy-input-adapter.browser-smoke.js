@@ -43,10 +43,34 @@
       viewStateStore: viewStore,
     });
     const policy = SetiHeuristicPolicy.createHeuristicPolicy({ difficulty: "weak_start" });
+    const observation = (score) => SetiOutcomeModel.createDecisionObservation({
+      publicState: { players: [{ id: "p1", resources: { score, credits: 0 } }], board: {} },
+      selfState: { playerId: "p1", hand: [] },
+    }, {
+      seatId: "p1",
+      stateVersion: boundary.stateVersion,
+      decisionVersion: boundary.decisionVersion,
+    });
     const driver = SetiBrowserPolicyInputAdapter.createPolicyInputAdapter({
       policy,
       readBoundary: () => structuredClone(boundary),
-      readObservation: () => ({ publicState: { status: status.textContent } }),
+      readObservation: () => observation(0),
+      readActionOutcomes: (current) => current.legalActions.map((candidate) => {
+        const score = candidate.target?.reward === "score" ? 5 : 1;
+        return {
+          schemaVersion: "seti-action-outcome-v1",
+          actionId: candidate.actionId,
+          status: "settled",
+          confidence: "high",
+          rootObservation: observation(0),
+          leaves: [{
+            leafId: `leaf:${candidate.actionId}`,
+            actionChain: [candidate.actionId],
+            observation: observation(score),
+            legalSuccessors: [],
+          }],
+        };
+      }),
       inputAdapter: input,
     });
     assert((await driver.runOnce()).ok, "AI Standard Action 提交失败");

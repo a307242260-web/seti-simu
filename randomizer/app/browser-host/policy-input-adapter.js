@@ -126,6 +126,7 @@
     const policy = options.policy;
     const readBoundary = options.readBoundary;
     const readObservation = options.readObservation;
+    const readActionOutcomes = options.readActionOutcomes;
     const inputAdapter = options.inputAdapter;
     if (typeof policy?.decide !== "function" && typeof policy !== "function") {
       throw new TypeError("PolicyInputAdapter 需要 Policy decide(context)");
@@ -185,6 +186,9 @@
             authorityKey: `${boundary.kind}:${boundary.decisionId || ""}`,
             observation: readObservation(seatId),
             legalActions: boundary.legalActions,
+            actionOutcomes: typeof readActionOutcomes === "function"
+              ? readActionOutcomes(boundary, seatId)
+              : [],
             deterministicContext: {
               inputSchemaVersion: SCHEMA_VERSION,
               boundaryKind: boundary.kind,

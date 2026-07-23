@@ -20,6 +20,22 @@
     return Object.freeze(value);
   }
 
+  function stableSerialize(value) {
+    if (value == null || typeof value !== "object") return JSON.stringify(value);
+    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`).join(",")}}`;
+  }
+
+  function stableHash(value) {
+    const input = stableSerialize(value);
+    let hash = 0x811c9dc5;
+    for (let index = 0; index < input.length; index += 1) {
+      hash ^= input.charCodeAt(index);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    return (hash >>> 0).toString(16).padStart(8, "0");
+  }
+
   function fail(code, message, details = {}) {
     return deepFreeze({ ok: false, code, message, ...clone(details) });
   }
@@ -84,6 +100,7 @@
     let unsubscribeStore = null;
     let effectDomainByFamily = new Map();
     let drainEffectGroupFactory = null;
+    let lastCounterfactualDiagnostics = null;
 
     function actionContext(state) {
       if (stateAdapter) {
@@ -581,18 +598,46 @@
       return { ok: true, state: loaded.state, session: restoredSession?.session || null };
     }
 
-    function restore(envelope) {
-      const validated = validateRestore(envelope);
+    function restore(envelope, restoreOptions = {}) {
+      let validated;
+      if (restoreOptions.trustedFork === true) {
+        try {
+          const state = JSON.parse(envelope.committedState);
+          const restoredSession = envelope.session == null
+            ? null
+            : runtime.restoreCheckpoint(clone(envelope.session));
+          if (restoredSession?.ok === false) return deepFreeze(clone(restoredSession));
+          validated = { ok: true, state, session: restoredSession?.session || null };
+        } catch (error) {
+          return fail("RULE_COMPOSITION_FORK_RESTORE_FAILED", error?.message || "内存 fork checkpoint 损坏");
+        }
+      } else {
+        validated = validateRestore(envelope);
+      }
       if (!validated.ok) return validated;
-      installStore(validated.state);
-      if (stateAdapter) stateAdapter.restoreWorkingState(workingState, validated.state, { reason: "restore" });
+      if (restoreOptions.inPlace === true) {
+        const restoredStore = restoreOptions.trustedFork === true
+          ? store.restoreForkSnapshot(validated.state)
+          : store.restore(validated.state, { source: "composition-in-memory-fork" });
+        if (!restoredStore?.ok) return deepFreeze(clone(restoredStore));
+        activeSession = null;
+        activeFamily = null;
+        lastActionResult = null;
+      } else {
+        installStore(validated.state);
+      }
+      if (stateAdapter) stateAdapter.restoreWorkingState(workingState, validated.state, {
+        reason: restoreOptions.inPlace === true ? "counterfactual_restore" : "restore",
+      });
       if (validated.session) {
         const restored = runtime.restoreCheckpoint(clone(envelope.session));
         if (!restored?.ok) throw new Error("已预验证的 Effect Session 恢复失败");
         activeSession = restored.session;
         activeFamily = activeSession.journal?.actions?.[0]?.action?.family || null;
       }
-      publish({ source: "lifecycle", event: { type: "restored" } });
+      if (restoreOptions.silent !== true) {
+        publish({ source: "lifecycle", event: { type: "restored" } });
+      }
       return deepFreeze({ ok: true, projection: projection() });
     }
 
@@ -616,6 +661,211 @@
       return deepFreeze({ ok: true, projection: committedProjection() });
     }
 
+    function evaluateCounterfactualOutcomes(actions = [], evaluateOptions = {}) {
+      const legalActions = clone(actions);
+      const viewer = clone(evaluateOptions.viewer || null);
+      const rootObservation = projection(viewer).state;
+      if (typeof options.createCounterfactualFork !== "function") {
+        return deepFreeze(legalActions.map((action) => ({
+          schemaVersion: "seti-action-outcome-v1",
+          actionId: action.actionId,
+          status: "unresolved",
+          confidence: "none",
+          code: "COUNTERFACTUAL_FORK_UNAVAILABLE",
+          rootObservation,
+          leaves: [],
+        })));
+      }
+      const saved = save();
+      if (!saved?.ok) {
+        return deepFreeze(legalActions.map((action) => ({
+          schemaVersion: "seti-action-outcome-v1",
+          actionId: action.actionId,
+          status: "failed",
+          confidence: "none",
+          code: saved?.code || "COUNTERFACTUAL_ROOT_SAVE_FAILED",
+          rootObservation,
+          leaves: [],
+        })));
+      }
+      const canonicalBefore = stableSerialize(saved.envelope);
+      const maxDepth = Math.max(1, Number(evaluateOptions.maxDepth) || 4);
+      const maxLeaves = Math.max(1, Number(evaluateOptions.maxLeaves) || 12);
+      const timing = {
+        forkMilliseconds: 0,
+        executionMilliseconds: 0,
+        projectionMilliseconds: 0,
+      };
+      const now = () => (
+        typeof performance !== "undefined" && typeof performance.now === "function"
+          ? performance.now()
+          : Date.now()
+      );
+      let reusableFork = null;
+      if (options.reuseCounterfactualFork === true) {
+        const forkStartedAt = now();
+        reusableFork = options.createCounterfactualFork(clone(saved.envelope), {
+          branchKey: stableHash({ canonicalBefore, pool: true }),
+        });
+        timing.forkMilliseconds += now() - forkStartedAt;
+      }
+
+      function explore(envelope, action, chain, depth, leaves) {
+        if (depth > maxDepth || leaves.length >= maxLeaves) {
+          return { unresolved: true, code: "COUNTERFACTUAL_BRANCH_LIMIT" };
+        }
+        let fork;
+        try {
+          const branchKey = stableHash({ canonicalBefore, actionId: action.actionId, chain });
+          const forkStartedAt = now();
+          fork = reusableFork || options.createCounterfactualFork(clone(envelope), { branchKey });
+          const composition = fork?.composition || fork;
+          if (reusableFork) {
+            reusableFork.resetBranch?.(branchKey);
+            const restored = composition.lifecycle.restore(clone(envelope), {
+              silent: true,
+              inPlace: true,
+              trustedFork: true,
+            });
+            if (!restored?.ok) {
+              return {
+                failed: true,
+                code: restored?.code || "COUNTERFACTUAL_FORK_RESTORE_FAILED",
+                message: restored?.message || null,
+              };
+            }
+          }
+          timing.forkMilliseconds += now() - forkStartedAt;
+          if (!composition?.inputPort || !composition?.inspect || !composition?.lifecycle) {
+            return { failed: true, code: "COUNTERFACTUAL_FORK_INVALID" };
+          }
+          const inspection = composition.inspect();
+          const candidates = inspection.phase === "awaiting_input" && inspection.session?.decision
+            ? inspection.session.decision.choices
+            : composition.inputPort.enumerateActions({ actorId: action.actorId });
+          const current = candidates.find((candidate) => candidate.actionId === action.actionId);
+          if (!current) return { failed: true, code: "COUNTERFACTUAL_ACTION_STALE" };
+          const executionStartedAt = now();
+          const result = current.phase === "conditional"
+            ? composition.inputPort.submitDecision({
+              decisionId: inspection.session.decision.decisionId,
+              decisionVersion: inspection.session.decision.decisionVersion,
+              choice: current,
+            })
+            : composition.inputPort.submitAction(current);
+          timing.executionMilliseconds += now() - executionStartedAt;
+          if (!result?.ok) {
+            return {
+              failed: true,
+              code: result?.code || "COUNTERFACTUAL_EXECUTION_FAILED",
+              message: result?.message || null,
+            };
+          }
+          const nextChain = [...chain, current.actionId];
+          const nextInspection = composition.inspect();
+          const awaitingDecision = nextInspection.phase === "awaiting_input";
+          const successors = awaitingDecision
+            ? clone(nextInspection.session?.decision?.choices || [])
+            : clone(composition.inputPort.enumerateActions({}));
+          if (awaitingDecision && current.phase === "conditional" && chain.length === 0) {
+            const projectionStartedAt = now();
+            const leafObservation = composition.projection(viewer).state;
+            timing.projectionMilliseconds += now() - projectionStartedAt;
+            leaves.push({
+              leafId: `leaf:${stableHash(nextChain)}`,
+              status: "settled",
+              actionChain: nextChain,
+              observation: leafObservation,
+              legalSuccessors: successors,
+            });
+            return { ok: true };
+          }
+          if (awaitingDecision && successors.length) {
+            const childSaved = composition.lifecycle.save();
+            if (!childSaved?.ok) return { failed: true, code: childSaved?.code || "COUNTERFACTUAL_BRANCH_SAVE_FAILED" };
+            let unresolved = false;
+            let code = null;
+            for (const successor of [...successors].sort((left, right) => (
+              String(left.actionId).localeCompare(String(right.actionId))
+            ))) {
+              const branch = explore(childSaved.envelope, successor, nextChain, depth + 1, leaves);
+              unresolved = unresolved || Boolean(branch?.unresolved);
+              code = code || branch?.code || null;
+            }
+            return { unresolved, code };
+          }
+          const projectionStartedAt = now();
+          const leafObservation = composition.projection(viewer).state;
+          timing.projectionMilliseconds += now() - projectionStartedAt;
+          leaves.push({
+            leafId: `leaf:${stableHash(nextChain)}`,
+            status: ["completed", "idle"].includes(nextInspection.phase) ? "settled" : nextInspection.phase,
+            actionChain: nextChain,
+            observation: leafObservation,
+            legalSuccessors: successors,
+          });
+          return { ok: true };
+        } catch (error) {
+          return {
+            failed: true,
+            code: error?.code || "COUNTERFACTUAL_EXECUTION_FAILED",
+            message: error?.message || String(error),
+          };
+        } finally {
+          try {
+            if (!reusableFork) {
+              const disposable = fork?.composition || fork;
+              disposable?.dispose?.();
+            }
+          } catch (_error) {
+            // Fork disposal must never affect the canonical composition.
+          }
+        }
+      }
+
+      const outcomes = legalActions.map((action) => {
+        const leaves = [];
+        const branch = explore(saved.envelope, action, [], 0, leaves);
+        return {
+          schemaVersion: "seti-action-outcome-v1",
+          actionId: action.actionId,
+          status: branch?.failed ? "failed" : branch?.unresolved ? "unresolved" : "settled",
+          confidence: branch?.unresolved
+            ? "low"
+            : branch?.failed
+              ? "none"
+              : (evaluateOptions.confidence || "high"),
+          code: branch?.code || null,
+          message: branch?.message || null,
+          rootObservation,
+          leaves,
+        };
+      }).sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
+      try {
+        (reusableFork?.composition || reusableFork)?.dispose?.();
+      } finally {
+        reusableFork = null;
+      }
+      const canonicalRestored = restore(saved.envelope, { silent: true });
+      if (!canonicalRestored?.ok) {
+        throw new Error(canonicalRestored?.message || "COUNTERFACTUAL_ROOT_RESTORE_FAILED");
+      }
+      const after = save();
+      if (!after?.ok || stableSerialize(after.envelope) !== canonicalBefore) {
+        throw new Error("COUNTERFACTUAL_ROOT_POLLUTED: canonical state/RNG/session/journal/history/replay 发生变化");
+      }
+      lastCounterfactualDiagnostics = deepFreeze({
+        candidateCount: legalActions.length,
+        forkMilliseconds: timing.forkMilliseconds,
+        executionMilliseconds: timing.executionMilliseconds,
+        projectionMilliseconds: timing.projectionMilliseconds,
+        totalMilliseconds: timing.forkMilliseconds
+          + timing.executionMilliseconds
+          + timing.projectionMilliseconds,
+      });
+      return deepFreeze(outcomes);
+    }
+
     const inputPort = Object.freeze({
       enumerateActions,
       submitAction,
@@ -628,6 +878,10 @@
       abort,
     });
     const lifecycle = Object.freeze({ newGame, save, validateRestore, restore });
+    const counterfactualPort = Object.freeze({
+      evaluate: evaluateCounterfactualOutcomes,
+      getDiagnostics: () => clone(lastCounterfactualDiagnostics),
+    });
 
     const stateSourcePort = !stateAdapter || typeof stateAdapter.createProjectionState === "function"
       ? Object.freeze({
@@ -665,6 +919,7 @@
       SAVE_SCHEMA_VERSION,
       inputPort,
       lifecycle,
+      counterfactualPort,
       projection,
       inspect,
       ...(stateSourcePort ? { stateSourcePort } : {}),

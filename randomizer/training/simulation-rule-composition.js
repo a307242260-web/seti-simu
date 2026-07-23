@@ -11,6 +11,7 @@ const players = require("../game/players");
 const solar = require("../solar-system/core");
 const rockets = require("../game/rockets");
 const planetStats = require("../game/planet-stats");
+const planetRewards = require("../game/actions/planet-rewards");
 const data = require("../game/data");
 const cards = require("../game/cards/deck");
 const tech = require("../game/tech");
@@ -33,6 +34,29 @@ const INDUSTRY_CARD_FILES = Object.freeze([
   "任务中继站.png", "哨兵探测网络.png", "深空探测.png", "图灵系统.png",
   "未来跨度研究所.png", "异星实验室.png", "宇宙战略集团.png",
 ]);
+
+function hashCounterfactualSeed(seed) {
+  const text = String(seed ?? "seti-counterfactual");
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function createCounterfactualRandom(seed) {
+  let state = hashCounterfactualSeed(seed) || 1;
+  const random = function counterfactualRandom() {
+    state = Math.imul(state ^ (state >>> 15), 1 | state);
+    state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
+    return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
+  };
+  random.resetSeed = (nextSeed) => {
+    state = hashCounterfactualSeed(nextSeed) || 1;
+  };
+  return random;
+}
 const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   { family: "launch", obligation: "生产发射规则枚举、校验并提交火箭" },
   { family: "orbit", obligation: "生产环绕规则枚举目标并提交轨道占位" },
@@ -100,6 +124,14 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
 
 function clone(value) {
   return value == null ? value : structuredClone(value);
+}
+
+function stableSerialize(value) {
+  if (value == null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => (
+    `${JSON.stringify(key)}:${stableSerialize(value[key])}`
+  )).join(",")}}`;
 }
 
 function replaceMutable(target, source) {
@@ -248,7 +280,7 @@ function createInitialSelectionInputPort() {
             industryId: plan.industry?.id || null,
             initialIds: plan.initialCards.map((card) => card.id),
           },
-          payload: { value: Number(plan.score || 0) },
+          payload: {},
           summary: `${plan.industry?.label || plan.industry?.id || "公司"} + 初始牌`,
         };
       });
@@ -319,52 +351,40 @@ function createInitialSelectionInputPort() {
   });
 }
 
-function chooseInitialSelections(workingState, options, random) {
-  const playerIds = workingState.turnState.activePlayerIds;
-  const industryDeck = shuffle(INDUSTRY_CARD_FILES, random).slice(0, playerIds.length * 2);
-  const initialDeck = shuffle(Array.from({ length: initialCards.INITIAL_CARD_COUNT }, (_item, index) => index + 1), random);
-  const aiDifficulty = options.aiDifficulty || "laughable";
+function getInitialPairs(cardsToChoose = [], count = 2) {
+  if (count <= 0) return [[]];
+  if (count === 1) return cardsToChoose.map((card) => [card]);
+  const pairs = [];
+  for (let left = 0; left < cardsToChoose.length; left += 1) {
+    for (let right = left + 1; right < cardsToChoose.length; right += 1) {
+      pairs.push([cardsToChoose[left], cardsToChoose[right]]);
+    }
+  }
+  return pairs;
+}
+
+function submitOpeningPlans(workingState, offers, selectedPlans, aiDifficulty) {
   const inputPort = createInitialSelectionInputPort();
-  const policyAdapter = createHeuristicPolicyAdapter({
-    difficulty: aiDifficulty,
-    seed: options.seed ?? workingState.meta?.seed ?? "seti-simulation",
-  });
-  policyAdapter.initializeSeats(playerIds, { phase: "new_game" });
-  for (const [index, playerId] of playerIds.entries()) {
-    const player = workingState.playerState.players.find((candidate) => candidate.id === playerId);
-    const industryOptions = industryDeck.slice(index * 2, index * 2 + 2)
-      .map((fileName) => createSelectionCard("industry", fileName));
-    const initialOptions = initialDeck.slice(index * 3, index * 3 + 3)
-      .map((number) => createSelectionCard("initial", number));
-    const pairs = ai.selectionEvaluator.getInitialPairs(initialOptions, 2);
-    const plans = industryOptions.flatMap((industryCard) => pairs.map((initialSelection) => (
-      ai.selectionEvaluator.scoreOpeningCombination(industryCard, initialSelection, {
-        roundNumber: workingState.turnState.roundNumber,
-        player,
-        aiDifficulty: options.aiDifficulty || "laughable",
-      })
-    ))).sort((left, right) => Number(right.score || 0) - Number(left.score || 0)
-      || String(left.industry?.id || "").localeCompare(String(right.industry?.id || "")));
-    const decision = inputPort.open(player, plans, index + 1, aiDifficulty);
-    policyAdapter.runDecision({
-      publicState: { roundNumber: workingState.turnState.roundNumber },
-      selfState: { playerId: player.id },
-    }, decision.choices, {
-      decisionFamily: "choose_branch",
-      decisionId: decision.decisionId,
-      setupPhase: "initial_selection",
-    }, (choice) => inputPort.submitDecision({
+  for (const [index, offer] of offers.entries()) {
+    const player = workingState.playerState.players
+      .find((candidate) => candidate.id === offer.playerId);
+    const decision = inputPort.open(player, offer.plans, index + 1, aiDifficulty);
+    const selected = selectedPlans[index];
+    const choice = decision.choices.find((candidate) => (
+      candidate.target?.industryId === selected.industry?.id
+      && stableSerialize(candidate.target?.initialIds || [])
+        === stableSerialize(selected.initialCards.map((card) => card.id))
+    ));
+    const submitted = inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       choice,
-    }));
+    });
+    if (!submitted?.ok) throw new Error(submitted?.message || "初始选择提交失败");
   }
 }
 
-function initializeProductionGame(workingState, options, random) {
-  randomizeBoard(workingState, random);
-  createCardGame(workingState, random, 4);
-  chooseInitialSelections(workingState, options, random);
+function resolveOpeningRules(workingState, random) {
   const selectionResult = initialCards.resolveInitialSelections({
     playerState: workingState.playerState,
     cardState: workingState.cardState,
@@ -388,8 +408,91 @@ function initializeProductionGame(workingState, options, random) {
   workingState.match.initialIncomeQueue = selectionResult.pendingIncomeIncreases.flatMap((entry) => (
     Array.from({ length: entry.count }, () => ({ playerId: entry.playerId, label: entry.label }))
   ));
+  return selectionResult;
+}
+
+function createOpeningObservation(workingState, playerId) {
+  const player = workingState.playerState.players.find((candidate) => candidate.id === playerId);
+  const publicPlayers = workingState.playerState.players.map((candidate) => ({
+    id: candidate.id,
+    playerId: candidate.id,
+    resources: clone(candidate.resources || {}),
+    handCount: (candidate.hand || []).length,
+    techState: clone(candidate.techState || {}),
+  }));
+  return ai.outcomeModel.createDecisionObservation({
+    publicState: {
+      match: { terminal: false },
+      players: publicPlayers,
+      board: { aliens: clone(workingState.alienGameState || {}) },
+    },
+    selfState: {
+      playerId,
+      player: { id: playerId, resources: clone(player?.resources || {}) },
+      hand: clone(player?.hand || []),
+      reservedCards: clone(player?.reservedCards || []),
+    },
+    terminal: false,
+  }, { seatId: playerId, stateVersion: 0, decisionVersion: 0 });
+}
+
+function chooseInitialSelections(workingState, options, random) {
+  const playerIds = workingState.turnState.activePlayerIds;
+  const industryDeck = shuffle(INDUSTRY_CARD_FILES, random).slice(0, playerIds.length * 2);
+  const initialDeck = shuffle(Array.from({ length: initialCards.INITIAL_CARD_COUNT }, (_item, index) => index + 1), random);
+  const aiDifficulty = options.aiDifficulty || "laughable";
+  const offers = playerIds.map((playerId, index) => {
+    const industryOptions = industryDeck.slice(index * 2, index * 2 + 2)
+      .map((fileName) => createSelectionCard("industry", fileName));
+    const initialOptions = initialDeck.slice(index * 3, index * 3 + 3)
+      .map((number) => createSelectionCard("initial", number));
+    const plans = industryOptions.flatMap((industryCard) => (
+      getInitialPairs(initialOptions, 2).map((initialSelection) => ({
+        industry: industryCard,
+        initialCards: initialSelection,
+      }))
+    )).sort((left, right) => (
+      String(left.industry?.id || "").localeCompare(String(right.industry?.id || ""))
+      || stableSerialize(left.initialCards.map((card) => card.id))
+        .localeCompare(stableSerialize(right.initialCards.map((card) => card.id)))
+    ));
+    return { playerId, plans };
+  });
+  const selectedPlans = offers.map((offer) => offer.plans[0]);
+  const rootSequences = readSequences(workingState);
+  for (const [playerIndex, offer] of offers.entries()) {
+    const evaluated = offer.plans.map((candidate) => {
+      const fork = clone(workingState);
+      const forkPlans = selectedPlans.map((selected, index) => (
+        index === playerIndex ? candidate : selected
+      ));
+      restoreSequences(rootSequences);
+      submitOpeningPlans(fork, offers, forkPlans, aiDifficulty);
+      resolveOpeningRules(
+        fork,
+        createCounterfactualRandom(`${options.seed}:setup:${offer.playerId}:${stableSerialize(candidate)}`),
+      );
+      const observation = createOpeningObservation(fork, offer.playerId);
+      const value = ai.expectedScoreEvaluator.evaluateState(observation, offer.playerId);
+      return { candidate, value: value.total };
+    }).sort((left, right) => (
+      right.value - left.value
+      || stableSerialize(left.candidate).localeCompare(stableSerialize(right.candidate))
+    ));
+    selectedPlans[playerIndex] = evaluated[0].candidate;
+  }
+  restoreSequences(rootSequences);
+  submitOpeningPlans(workingState, offers, selectedPlans, aiDifficulty);
+}
+
+function initializeProductionGame(workingState, options, random) {
+  randomizeBoard(workingState, random);
+  createCardGame(workingState, random, 4);
+  chooseInitialSelections(workingState, options, random);
+  resolveOpeningRules(workingState, random);
   workingState.match.decisionVersion = 1;
   installOpeningDiscard(workingState);
+  workingState.meta.sequences = readSequences(workingState);
 }
 
 function readSequences(workingState) {
@@ -539,6 +642,135 @@ function applyCornerReward(workingState, player, reward, source) {
   }
 }
 
+function getActionOwner(workingState, result) {
+  const ownerEvent = (result?.events || []).find((event) => event?.playerId || event?.playerColor) || {};
+  const playerId = result?.playerId || ownerEvent.playerId || null;
+  const playerColor = result?.playerColor || ownerEvent.playerColor || null;
+  return (workingState.playerState.players || []).find((player) => (
+    (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
+  )) || players.getCurrentPlayer(workingState.playerState);
+}
+
+function listAlienTraceChoices(workingState, pending) {
+  const traceType = pending?.traceType || null;
+  if (!traceType) return [];
+  return [1, 2].flatMap((alienSlotId) => {
+    const slot = aliens.getAlienSlot?.(workingState.alienGameState, alienSlotId);
+    const trace = slot?.traces?.[traceType];
+    if (!slot || (slot.revealed && !trace?.firstPlaced)) return [];
+    return [{
+      target: {
+        kind: "planet-reward-alien-trace",
+        choiceId: `${alienSlotId}:${traceType}`,
+        alienSlotId,
+        traceType,
+      },
+      payload: { alienSlotId, traceType },
+      summary: `外星人${alienSlotId}：${traceType}痕迹`,
+    }];
+  });
+}
+
+function applyAlienTraceChoice(workingState, pending, choice) {
+  const player = (workingState.playerState.players || [])
+    .find((candidate) => candidate.id === pending?.playerId);
+  const alienSlotId = Number(choice?.target?.alienSlotId);
+  const traceType = choice?.target?.traceType;
+  if (!player || !Number.isInteger(alienSlotId) || !traceType) {
+    return { ok: false, code: "PLANET_REWARD_TRACE_STALE", message: "行星奖励痕迹选择已失效" };
+  }
+  const placed = aliens.placeFirstTrace(
+    workingState.alienGameState,
+    alienSlotId,
+    traceType,
+    player.color,
+  );
+  if (!placed?.ok) return placed;
+  const reward = placed.extraOnly
+    ? aliens.getExtraTraceReward?.()
+    : aliens.getFirstTraceRewardForSlot?.(alienSlotId);
+  if (reward?.gain) players.gainResources(player, reward.gain);
+  let revealed = null;
+  if (placed.readyToReveal) {
+    const assignedAlienId = aliens.getAlienSlot?.(
+      workingState.alienGameState,
+      alienSlotId,
+    )?.assignedAlienId;
+    if (assignedAlienId) {
+      revealed = aliens.revealAlien(workingState.alienGameState, alienSlotId, assignedAlienId);
+    }
+  }
+  return {
+    ok: true,
+    progressed: true,
+    events: [{
+      type: "alienTracePlaced",
+      source: "planet_reward",
+      alienSlotId,
+      traceType,
+      playerId: player.id,
+      reward: clone(reward?.gain || null),
+      revealed: revealed?.ok ? revealed.alienId : null,
+    }],
+  };
+}
+
+function applyLandRewardEffects(workingState, result, markerSequenceOverride = null) {
+  const player = getActionOwner(workingState, result);
+  if (!player) {
+    return { ok: false, code: "PLANET_REWARD_OWNER_MISSING", message: "登陆奖励 owner 不存在" };
+  }
+  const rewardResult = markerSequenceOverride != null
+    ? {
+      ...result,
+      rewardMarkerSequence: markerSequenceOverride,
+    }
+    : result;
+  const effects = planetRewards.buildRewardEffectsForAction("land", rewardResult);
+  const events = [];
+  let pendingTrace = null;
+  for (const effect of effects) {
+    if (effect.type === planetRewards.EFFECT_TYPES.GAIN_RESOURCES) {
+      players.gainResources(player, effect.options?.gain || {});
+      events.push({
+        type: "planet_reward_resources",
+        playerId: player.id,
+        gain: clone(effect.options?.gain || {}),
+      });
+      continue;
+    }
+    if (effect.type === planetRewards.EFFECT_TYPES.GAIN_DATA) {
+      const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
+      const before = Number(player.resources?.availableData || 0);
+      players.gainResources(player, { availableData: count });
+      const gainedCount = Number(player.resources?.availableData || 0) - before;
+      for (let index = 0; index < count; index += 1) {
+        events.push({
+          type: index < gainedCount ? "planet_reward_data" : "planet_reward_data_discarded",
+          playerId: player.id,
+          availableDataAfter: Number(player.resources?.availableData || 0),
+        });
+      }
+      continue;
+    }
+    if (effect.type === planetRewards.EFFECT_TYPES.ALIEN_TRACE && !pendingTrace) {
+      pendingTrace = {
+        type: "planet_reward_alien_trace",
+        playerId: player.id,
+        traceType: effect.options?.traceType || null,
+        sourceActionId: result.actionId,
+      };
+      continue;
+    }
+    return {
+      ok: false,
+      code: "SIMULATION_PLANET_REWARD_UNSUPPORTED",
+      message: `Simulation composition 尚未接入登陆奖励效果 ${effect.type}`,
+    };
+  }
+  return { ok: true, events, pendingTrace };
+}
+
 function createSimulationRuleComposition(options = {}) {
   if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
   let composition;
@@ -593,14 +825,40 @@ function createSimulationRuleComposition(options = {}) {
 
   const registry = {
     register: (...args) => baseRegistry.register(...args),
-    enumerate: (...args) => baseRegistry.enumerate(...args),
+    enumerate(context, request) {
+      const root = context?.workingRoot || context;
+      const listed = baseRegistry.enumerate(context, request);
+      const playerId = root?.playerState?.currentPlayerId || null;
+      const passed = (root?.turnState?.passedPlayerIds || []).includes(playerId);
+      const passCompletionPending = root?.playerState?.players
+        ?.find((player) => player.id === playerId)?.passCompletionPending === true;
+      if (!passed && !passCompletionPending) return listed;
+      return listed.filter((action) => (
+        action.phase === "conditional" || action.family === "end_turn"
+      ));
+    },
     validate: (...args) => baseRegistry.validate(...args),
     coverage: (...args) => baseRegistry.coverage(...args),
     execute(context, action) {
       const root = context.workingRoot || context;
       const before = root.match.decisionVersion || 0;
+      const landMarkerSequence = action.family === "land" && action.target?.type !== "satellite"
+        ? planetStats.getPlanetLandingCount(root.planetStatsState, action.target?.planetId) + 1
+        : null;
       const result = baseRegistry.execute(context, action);
       if (result?.ok) {
+        if (action.family === "land") {
+          const reward = applyLandRewardEffects(root, result, landMarkerSequence);
+          if (!reward.ok) return reward;
+          result.events = [...(result.events || []), ...(reward.events || [])];
+          if (reward.pendingTrace) {
+            result.decisionEffect = createConditionalDecisionEffect(
+              root,
+              "planet_reward_alien_trace",
+              reward.pendingTrace,
+            );
+          }
+        }
         if (action.family === "land" || action.family === "orbit") {
           const player = players.getCurrentPlayer(root.playerState);
           if (player) player.mainActionCompleted = true;
@@ -858,6 +1116,9 @@ function createSimulationRuleComposition(options = {}) {
           payload: { tileId },
           summary: `研究科技 ${tileId}`,
           }));
+      }
+      if (sessionDecision?.kind === "planet_reward_alien_trace") {
+        return listAlienTraceChoices(root, sessionDecision.pending);
       }
       return [];
     },
@@ -1128,6 +1389,13 @@ function createSimulationRuleComposition(options = {}) {
             },
             resolveDecision(_workingState, choice, resolutionContext = {}) {
               _workingState = _workingState.workingRoot || _workingState;
+              if (resolutionContext.decisionContext?.kind === "planet_reward_alien_trace") {
+                return applyAlienTraceChoice(
+                  _workingState,
+                  resolutionContext.decisionContext.pending,
+                  choice,
+                );
+              }
               if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
                 const moved = rockets.moveRocket(
                   _workingState.rocketState,
@@ -1164,7 +1432,47 @@ function createSimulationRuleComposition(options = {}) {
         });
       },
     }],
-    projectState(state) { return clone(state); },
+    projectState(state, viewer) {
+      return typeof options.projectCounterfactualState === "function"
+        ? options.projectCounterfactualState(clone(state), clone(viewer))
+        : clone(state);
+    },
+    createCounterfactualFork: options.counterfactualEnabled === false
+      ? null
+      : (envelope, forkOptions = {}) => {
+        const branchKey = [
+          options.seed ?? "seti-simulation",
+          "composition-fork",
+          forkOptions.branchKey || "root",
+        ].join(":");
+        const branchRandom = createCounterfactualRandom(branchKey);
+        const forkKernel = createSimulationRuleComposition({
+          ...options,
+          random: branchRandom,
+          rngState: {
+            algorithm: "seti-counterfactual-mulberry32-v1",
+            state: hashCounterfactualSeed(branchKey),
+            branch: true,
+          },
+          counterfactualEnabled: false,
+        });
+        const restored = forkKernel.composition.lifecycle.restore(envelope, { silent: true });
+        if (!restored?.ok) {
+          forkKernel.composition.dispose();
+          throw new Error(restored?.message || restored?.code || "Simulation counterfactual fork 恢复失败");
+        }
+        return {
+          composition: forkKernel.composition,
+          resetBranch(nextBranchKey) {
+            branchRandom.resetSeed([
+              options.seed ?? "seti-simulation",
+              "composition-fork",
+              nextBranchKey || "root",
+            ].join(":"));
+          },
+        };
+      },
+    reuseCounterfactualFork: true,
     initialOptions: {
       activePlayerCount: options.activePlayerCount || 4,
       seed: options.seed,
