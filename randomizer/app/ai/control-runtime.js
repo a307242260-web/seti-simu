@@ -141,6 +141,66 @@
     });
   }
 
+  function createAiCompositionStepPort(context = {}) {
+    function run(commandKind, args = []) {
+      let inspection = context.inspect();
+      if (inspection.phase === "idle" && context.isActionEffectFlowActive(context.getRuleReadout())) {
+        const drained = context.beginDrain();
+        if (!drained?.ok) return drained;
+        inspection = context.inspect();
+      }
+      const decision = inspection.session?.decision || null;
+      if (inspection.phase === "awaiting_input" && decision?.choices?.length) {
+        const family = decision.choices[0]?.family
+          || decision.choices[0]?.standardAction?.family
+          || decision.decisionKind
+          || null;
+        const actorId = decision.ownerId || null;
+        const stateSourceSnapshot = context.readState();
+        const policyResult = context.heuristicPolicy?.decideChoice?.({
+          seatId: actorId,
+          family,
+          stateVersion: Math.max(0, Number(decision.stateVersion) || 0),
+          decisionVersion: Math.max(0, Number(decision.decisionVersion) || 0),
+          decisionId: decision.decisionId,
+          requestId: `browser-session:${actorId}:${decision.decisionId}:${decision.decisionVersion || 0}`,
+          observation: {
+            publicState: { roundNumber: Math.max(0, Number(stateSourceSnapshot?.state?.turn?.roundNumber) || 0) },
+            selfState: { playerId: actorId },
+          },
+          choices: decision.choices.map((choice, index) => ({
+            choiceId: String(choice?.standardAction?.actionId || choice?.actionId || choice?.target?.choiceId || choice?.choiceId || index),
+            value: Number(choice?.value ?? choice?.payload?.value ?? choice?.payload?.score ?? 0),
+            target: structuredClone(choice?.target || choice?.standardAction?.target || null),
+            summary: choice?.label || choice?.summary || choice?.standardAction?.summary || `选择 ${index + 1}`,
+            sourceIndex: index,
+          })),
+        }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
+        if (!policyResult.ok) return policyResult;
+        const sourceIndex = Number(policyResult.choice?.sourceIndex);
+        const choice = decision.choices[Number.isSafeInteger(sourceIndex) ? sourceIndex : 0] || null;
+        if (!choice) return { ok: false, code: "AI_SESSION_CHOICE_MISSING", message: "Policy 选择未映射到 activeSession choice" };
+        return context.submitDecision({
+          decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion,
+          choice,
+        });
+      }
+      return context.submitHostCommand({ kind: commandKind, args });
+    }
+    return Object.freeze({ run });
+  }
+
+  function createAiDifficultyCommandHandler() {
+    return (workingRoot, command) => {
+      const player = workingRoot.playerState.players.find((candidate) => candidate.id === command.playerId);
+      if (!player) return { ok: false, code: "AI_PLAYER_NOT_FOUND", message: "找不到 AI 玩家" };
+      player.aiDifficulty = command.difficulty;
+      player.aiDifficultyLabel = command.label;
+      return { ok: true };
+    };
+  }
+
   function createAiControlRuntime(context) {
     if (!context || !context.state) {
       throw new Error("createAiControlRuntime requires app state accessors");
@@ -682,6 +742,8 @@
     AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS,
     createAiControlRuntime,
     createManualAiInputGuard,
+    createAiCompositionStepPort,
+    createAiDifficultyCommandHandler,
     createAiSeededRandom,
     getAiBatchSeed,
     getAiStrategyWeightDefaultsForDifficulty,

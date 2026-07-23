@@ -234,4 +234,19 @@ function createHarness(options = {}) {
   ]);
 })();
 
+(function testHostDispatcherAndOperationHandlerFailClosed() {
+  const operationHandler = servicesApi.createOperationCommandHandler({
+    getTarget: () => ({ ping: (_root, value) => ({ value }) }),
+    clonePresentation: structuredClone,
+    unknownCode: "OP_UNKNOWN",
+    label: "Test",
+  });
+  const dispatcher = servicesApi.createHostCommandDispatcher({
+    getHandlers: () => ({ operation: operationHandler }),
+  });
+  assert.deepEqual(dispatcher.execute({}, { kind: "operation", operation: "ping", args: [3] }).value, { value: 3 });
+  assert.equal(dispatcher.execute({}, { kind: "operation", operation: "missing" }).code, "OP_UNKNOWN");
+  assert.equal(dispatcher.execute({}, { kind: "forged" }).code, "BROWSER_HOST_COMMAND_UNKNOWN");
+})();
+
 console.log("Browser services composition lifecycle tests passed");

@@ -1313,7 +1313,26 @@
     };
   }
 
+  function createAlienDecisionPort(context = {}) {
+    return Object.freeze({
+      handleFangzhouTraceDestinationChoice(destination, traceType = null) {
+        return context.submitActiveDecision("fangzhou-trace-destination", (target) => (
+          target.choiceId === destination || target.choiceId === `${destination}:${traceType}`
+        ));
+      },
+      handleFangzhouUnlockTraceChoice(traceType) {
+        return context.submitActiveDecision("fangzhou-unlock-color", (target) => target.traceType === traceType);
+      },
+      handleStateTraceSlotPlacement(alienSlotId, traceType) {
+        return context.submitActiveDecision("alien-state-trace", (target) => (
+          Number(target.slotId) === Number(alienSlotId) && target.traceType === traceType
+        ));
+      },
+    });
+  }
+
   return {
     createAlienUiHelpers,
+    createAlienDecisionPort,
   };
 });

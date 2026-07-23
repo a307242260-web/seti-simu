@@ -481,7 +481,47 @@
     };
   }
 
+  function createFinalUiPort(context = {}) {
+    function syncFinalScorePendingMarks(workingRoot = null) {
+      return workingRoot
+        ? context.runtime.syncFinalScorePendingMarks(workingRoot)
+        : context.submitHostCommand({ kind: "score_sync_pending_marks" });
+    }
+    function handleFinalScoreTileClick(tileId, workingRoot = null) {
+      return workingRoot
+        ? context.runtime.handleFinalScoreTileClick(workingRoot, tileId)
+        : context.submitHostCommand({ kind: "score_mark_tile", tileId });
+    }
+    return Object.freeze({ syncFinalScorePendingMarks, handleFinalScoreTileClick });
+  }
+
+  function createFinalScoreBreakdownRuntime(context = {}) {
+    function compute(player, workingRoot) {
+      if (!workingRoot) throw new TypeError("终局计分 readout 需要显式只读 root");
+      const probeLocationData = context.buildProbeLocationIndexForRoot(workingRoot);
+      return context.endGameScoring?.computePlayerFinalScore
+        ? context.endGameScoring.computePlayerFinalScore({
+          currentPlayer: player,
+          finalScoringState: workingRoot.finalScoringState,
+          playerState: workingRoot.playerState,
+          nebulaDataState: workingRoot.nebulaDataState,
+          alienGameState: workingRoot.alienGameState,
+          planetStatsState: workingRoot.planetStatsState,
+          ...context.buildPlutoMarkerContext(workingRoot),
+          probeLocations: probeLocationData.index,
+          probeLocationDetails: probeLocationData.details,
+          cardEffects: context.cardEffects,
+          getCardTypeCode: context.getCardTypeCode,
+          getPlayerCompanyBaseIncome: context.getPlayerCompanyBaseIncome,
+        })
+        : { totalScore: player.resources?.score || 0 };
+    }
+    return Object.freeze({ compute });
+  }
+
   return {
     createFinalUiRuntime,
+    createFinalUiPort,
+    createFinalScoreBreakdownRuntime,
   };
 });

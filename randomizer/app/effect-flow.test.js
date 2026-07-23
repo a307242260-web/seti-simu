@@ -5,6 +5,7 @@ const {
   createEffectFlowHelpers,
   createEffectFlowUndoRuntime,
   createIrreversibleBarrierRuntime,
+  createEffectExecutionPort,
   createEffectSubFlowCancellationRuntime,
   createEffectFlowCompletionRuntime,
   createEffectFlowStateRuntime,
@@ -15,6 +16,21 @@ const {
   effectFlowMarkedNebula,
   createPendingSubFlowRuntime,
 } = require("./effect-flow");
+
+{
+  const effect = {};
+  let completed = 0;
+  const port = createEffectExecutionPort({
+    isActionEffectFlowActive: () => true,
+    getCurrentActionEffect: () => effect,
+    completeCurrentActionEffect: () => { completed += 1; },
+    getExecutors: () => ({ executeActionEffectForOwner: (_root, value) => value }),
+  });
+  port.maybeCompleteFromScan({}, { ok: true, value: 3 });
+  assert.equal(effect.result.value, 3);
+  assert.equal(completed, 1);
+  assert.equal(port.executeForOwner({}, 4), 4);
+}
 
 {
   const calls = [];

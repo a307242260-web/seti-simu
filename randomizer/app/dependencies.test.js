@@ -136,6 +136,10 @@ const { collectDependencies } = require("./dependencies");
   assert.match(appSource, /createBrowserInputAdapter\(/, "Browser 输入必须由 Browser Host adapter 装配");
   assert.match(appSource, /createBrowserWorkingStateAdapter\(/, "working state 只能由窄 adapter 装配");
   assert.match(appSource, /createPendingSubFlowRuntime\(/, "待决子流程必须由 effect runtime 聚合");
+  assert.doesNotMatch(appSource, /^  function\s+/m, "app.js 不得保留顶层领域/UI/流程函数体");
+  assert.doesNotMatch(appSource, /executeHostCommand\([^)]*\)\s*\{[\s\S]*?switch\s*\(/, "Host command 分发必须归 Browser Host dispatcher");
+  assert.match(appSource, /createHostCommandDispatcher\(/, "app.js 必须只装配 Browser Host command dispatcher");
+  assert.match(appSource, /continuation:\s*standardActionContinuation/, "Standard Action continuation 必须由独立 runtime 提供");
   for (const migratedResponsibility of [
     "submitActiveCardDecision",
     "runPlaceDataToComputerForRoot",

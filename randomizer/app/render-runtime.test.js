@@ -9,6 +9,7 @@ const {
   createRenderRuntime,
   createCoordinateRuntime,
   createBrowserLayoutRuntime,
+  createCoordinatePort,
   createInteractionChrome,
   createPlayerHandTitlePresenter,
 } = require("./render-runtime");
@@ -809,6 +810,22 @@ function createContext(overrides = {}) {
   assert.equal(presenter.getPlayerHandPanelTitleHint(), "（已选择 移动）");
   presenter.updatePlayerHandPanelTitle();
   assert.equal(rendered, 1);
+}
+
+{
+  const runtime = {
+    getMovableTokensForPlayer: (root, playerId) => [root.rocketState, playerId],
+    getEarthSectorCoordinate: (root) => root.earth,
+  };
+  const port = createCoordinatePort({
+    runtime,
+    getRuleReadout: () => ({ rocketState: "rockets", earth: { x: 1, y: 2 } }),
+    submitHostCommand: (command) => ({ ok: true, kind: command.kind }),
+  });
+  assert.deepEqual(port.getMovableTokensForPlayer("p1"), ["rockets", "p1"]);
+  assert.deepEqual(port.getEarthSectorCoordinate(), { x: 1, y: 2 });
+  assert.equal(port.syncPlanetOrbitLandMarkers().kind, "coordinate_sync_planet_markers");
+  assert.equal(port.seedDefaultReferenceRockets().kind, "coordinate_seed_reference_rockets");
 }
 
 console.log("render-runtime tests passed");

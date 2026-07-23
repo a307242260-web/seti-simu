@@ -852,6 +852,31 @@
     return Object.freeze({ refreshAfterHistoryChange });
   }
 
+  function createPendingActionRecoveryRuntime(context = {}) {
+    function recoverForRoot(workingRoot) {
+      if (context.isActionPending()
+        || context.isActionEffectFlowActive()
+        || context.hasActivePendingSubFlow()
+        || !context.actionHistory.hasSession()) {
+        return { ok: false, message: "当前不需要恢复行动待结束状态" };
+      }
+      context.markActionPending();
+      const info = context.actionHistory.getSessionInfo?.() || null;
+      workingRoot.rocketState.statusNote = `${info?.label || "行动"}已恢复为待回合结束状态`;
+      context.updateActionButtons();
+      context.renderStateReadout();
+      return { ok: true, message: workingRoot.rocketState.statusNote, sessionInfo: info };
+    }
+    return Object.freeze({ recoverForRoot });
+  }
+
+  function createUndoPort(context = {}) {
+    return Object.freeze({
+      undoForRoot: (...args) => context.getController().undoPendingActionForRoot(...args),
+      undo: context.submitUndo,
+    });
+  }
+
   function createActionBarPort(context = {}) {
     const methods = [
       "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
@@ -874,6 +899,8 @@
     createEffectBarPresentation,
     createActionGuardRuntime,
     createHistoryRefreshRuntime,
+    createPendingActionRecoveryRuntime,
+    createUndoPort,
     createActionBarPort,
   });
 });

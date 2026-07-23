@@ -6,12 +6,31 @@ const {
   createScanAction4Picker,
   createSectorSettlementRuntime,
   buildSectorScanChoicesForXs,
+  createProbeDecisionPort,
 } = require("./scan-flow");
 
 assert.deepEqual(
   buildSectorScanChoicesForXs([1, 2], (x) => [{ x, kind: "scan" }]),
   [{ x: 1, kind: "scan" }, { x: 2, kind: "scan" }],
 );
+
+{
+  const submissions = [];
+  const port = createProbeDecisionPort({
+    getPendingProbeSectorScanDecision: () => ({ effect: { options: { maxTargets: 1 } } }),
+    submitActiveDecision(kind, matches) {
+      submissions.push(kind);
+      return matches({ rocketIds: ["7"], rocketId: 7 });
+    },
+    handleMultiSectorChoice: () => ({ ok: true }),
+    getRuleReadout: () => ({}),
+    getSelectedRocketIds: () => [7],
+  });
+  assert.equal(port.handleSectorChoice(7), true);
+  assert.equal(port.confirmSectorSelection(), true);
+  assert.equal(port.handleLocationRewardChoice(7), true);
+  assert.deepEqual(submissions, ["probe-sector-selection", "probe-sector-selection", "probe-location-reward"]);
+}
 
 {
   const actions = { children: [], replaceChildren(...children) { this.children = children; } };

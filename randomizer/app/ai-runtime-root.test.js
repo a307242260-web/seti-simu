@@ -4,7 +4,7 @@ const { createInitialCardPendingRuntime } = require("./ai/initial-card-pending")
 const { createInteractionPendingRuntime } = require("./ai/interaction-pending");
 const { createActionExecutor } = require("./ai/action-executor");
 const { createAutomationRuntime } = require("./ai/automation-runtime");
-const { createManualAiInputGuard } = require("./ai/control-runtime");
+const { createManualAiInputGuard, createAiCompositionStepPort } = require("./ai/control-runtime");
 const { createTechCandidates } = require("../game/ai/tech-candidates");
 const { createFinalPace } = require("../game/ai/final-pace");
 const { createSelectionPressure } = require("../game/ai/selection-pressure");
@@ -17,6 +17,23 @@ const { createDemandCard } = require("../game/ai/demand-card");
 const { createAlienValuation } = require("../game/ai/alien-valuation");
 const { createTradeCandidates } = require("../game/ai/trade-candidates");
 const { createRoutePlanet } = require("../game/ai/route-planet");
+
+{
+  const decision = { decisionId: "d1", decisionVersion: 2, ownerId: "p1", choices: [{ choiceId: "a" }, { choiceId: "b" }] };
+  let submitted = null;
+  const port = createAiCompositionStepPort({
+    inspect: () => ({ phase: "awaiting_input", session: { decision } }),
+    getRuleReadout: () => ({}),
+    isActionEffectFlowActive: () => false,
+    beginDrain: () => ({ ok: true }),
+    readState: () => ({ state: { turn: { roundNumber: 2 } } }),
+    heuristicPolicy: { decideChoice: () => ({ ok: true, choice: { sourceIndex: 1 } }) },
+    submitDecision: (value) => { submitted = value; return { ok: true }; },
+    submitHostCommand: () => ({ ok: true }),
+  });
+  assert.equal(port.run("ai_run").ok, true);
+  assert.equal(submitted.choice.choiceId, "b");
+}
 
 function contextWith(overrides = {}) {
   const fallback = () => null;

@@ -148,4 +148,20 @@ assert.equal(state.browserHost.scanRunSequence, 0);
   assert.equal(context.getPlayerRoundOrderNumber("human"), 2);
 }
 
+{
+  const players = {
+    normalizePlayerColor: (color) => color,
+    getCurrentPlayer: (state) => state.players[0],
+  };
+  const root = { playerState: { players: [{ id: "p1", color: "white" }] }, rocketState: {}, turnState: {} };
+  const lookup = runtime.createPlayerLookupRuntime({
+    players,
+    uiRuntimeState: {},
+    createReadoutRoot: () => root,
+  });
+  assert.equal(lookup.getCurrentPlayer().id, "p1");
+  assert.equal(lookup.getPlayerById(root, "p1").color, "white");
+  assert.equal(lookup.getPlayerByColor("white").id, "p1");
+}
+
 console.log("runtime tests passed");

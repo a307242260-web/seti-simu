@@ -15,6 +15,35 @@
     return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
   }
 
+  function createProbeDecisionPort(context = {}) {
+    function handleSectorChoice(rocketId) {
+      const pending = context.getPendingProbeSectorScanDecision();
+      const maxTargets = Math.max(1, Math.round(Number(pending?.effect?.options?.maxTargets) || 1));
+      if (maxTargets === 1) {
+        return context.submitActiveDecision(
+          "probe-sector-selection",
+          (target) => (target.rocketIds || []).length === 1
+            && String(target.rocketIds[0]) === String(rocketId),
+        );
+      }
+      return context.handleMultiSectorChoice(context.getRuleReadout(), rocketId);
+    }
+    function confirmSectorSelection() {
+      const selected = [...(context.getSelectedRocketIds() || [])].map(String).sort();
+      return context.submitActiveDecision(
+        "probe-sector-selection",
+        (target) => [...(target.rocketIds || [])].map(String).sort().join(",") === selected.join(","),
+      );
+    }
+    function handleLocationRewardChoice(rocketId) {
+      return context.submitActiveDecision(
+        "probe-location-reward",
+        (target) => String(target.rocketId ?? target.choiceId) === String(rocketId),
+      );
+    }
+    return Object.freeze({ handleSectorChoice, confirmSectorSelection, handleLocationRewardChoice });
+  }
+
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createScanFlowHelpers requires function: ${name}`);
@@ -2418,5 +2447,6 @@
     createScanAction4Picker,
     createSectorSettlementRuntime,
     buildSectorScanChoicesForXs,
+    createProbeDecisionPort,
   };
 });

@@ -99,6 +99,20 @@
     return Object.freeze({ enumerate, validate, execute });
   }
 
+  function createActionRuntimePort(context = {}) {
+    function handleActionEffectButtonClickForRoot(workingRoot, effectIndex) {
+      return context.getController().handleActionEffectButtonClick(workingRoot, effectIndex);
+    }
+    function beginScanAction() {
+      return context.getController()?.dispatchAction({
+        kind: "standard_intent",
+        family: "scan",
+        selector: { kind: "standard-scan" },
+      }) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" };
+    }
+    return Object.freeze({ handleActionEffectButtonClickForRoot, beginScanAction });
+  }
+
   function createInitialSelectionEffectsResolver(context = {}) {
     return function resolveInitialSelectionEffects(workingRoot) {
       if (!context.initialCards?.resolveInitialSelections) return null;
@@ -983,6 +997,7 @@
     createInitialSelectionEffectsResolver,
     createActionContextFactory,
     createCompositionActionRegistry,
+    createActionRuntimePort,
     shuffleList,
     stripAssetExtension,
   };

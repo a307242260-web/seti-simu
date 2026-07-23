@@ -325,6 +325,17 @@
     return Object.freeze({ createRenderInput });
   }
 
+  function createViewerResolver(context = {}) {
+    return function getViewer() {
+      const player = context.getInterfacePlayer();
+      return Object.freeze({
+        viewerId: `browser:${player?.id || "spectator"}`,
+        playerId: player?.id == null ? null : String(player.id),
+        role: player ? "player" : "spectator",
+      });
+    };
+  }
+
   return Object.freeze({
     SCHEMA_VERSION,
     LEGACY_SLICE_KEYS,
@@ -334,5 +345,6 @@
     createReadoutRoot,
     createResidentPresentationBuilder,
     createResidentRenderInputBuilder,
+    createViewerResolver,
   });
 });

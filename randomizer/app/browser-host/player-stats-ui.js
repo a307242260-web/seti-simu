@@ -310,5 +310,10 @@
     });
   }
 
-  return { createPlayerStatsUi };
+  function createNormalTokenAssetResolver(players) {
+    return (player) => players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
+      || "../assets/tokens/normal_token.png";
+  }
+
+  return { createPlayerStatsUi, createNormalTokenAssetResolver };
 });

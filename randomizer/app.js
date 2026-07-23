@@ -176,9 +176,9 @@
   let finalScoreAiRuntime = null;
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
-  function runAiFinalScoreMarkDecision(...args) {
-    return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
-  }
+  const runAiFinalScoreMarkDecision = finalScoreAiRuntimeModule.createFinalScoreAiPort({
+    getRuntime: () => finalScoreAiRuntime,
+  }).runDecision;
   const { SCORE_SOURCE_KEYS } = scoreSourceRuntimeModule;
   const tokenWidths = {
     rocket: null,
@@ -507,6 +507,113 @@
     getController: () => actionRuntimeController,
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
   });
+  const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
+    enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
+    enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
+    getCurrentPlayer: (playerState) => players.getCurrentPlayer(playerState),
+    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
+    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
+    advanceDeterministicStateForRoot: (...args) => advanceSimulationDeterministicStateImpl(...args),
+    executeCurrentActionEffectForRoot: (...args) => executeSimulationCurrentActionEffectImpl(...args),
+    executeEffectChoice: (...args) => conditionalActionExecutor.executeEffectChoice(...args),
+    getAlienSpeciesRuntime: () => alienSpeciesRuntime,
+    getEffectExecutors: () => effectExecutors,
+    closeScanTargetPickerForRoot: (...args) => closeScanTargetPickerForRoot(...args),
+  });
+  const effectChoiceCommandHandler = browserHostModule.browserServices.createOperationCommandHandler({
+    getTarget: () => effectChoiceFlowHelpers,
+    clonePresentation: cloneResidentPresentation,
+    unknownCode: "EFFECT_CHOICE_COMMAND_UNKNOWN",
+    label: "Effect choice",
+  });
+  const handFlowCommandHandler = browserHostModule.browserServices.createOperationCommandHandler({
+    getTarget: () => handFlowHelpers,
+    clonePresentation: cloneResidentPresentation,
+    unknownCode: "HAND_FLOW_COMMAND_UNKNOWN",
+    label: "Hand flow",
+  });
+  const effectExecutorCommandHandler = browserHostModule.browserServices.createOperationCommandHandler({
+    getTarget: () => effectExecutors,
+    clonePresentation: cloneResidentPresentation,
+    unknownCode: "EFFECT_EXECUTOR_COMMAND_UNKNOWN",
+    label: "Effect executor",
+  });
+  const debugCommandHandler = browserHostModule.browserServices.createOperationCommandHandler({
+    getTarget: () => debugRuntimeController,
+    clonePresentation: cloneResidentPresentation,
+    unknownCode: "DEBUG_COMMAND_UNKNOWN",
+    label: "Debug",
+  });
+  const aiDifficultyCommandHandler = aiControlRuntimeModule.createAiDifficultyCommandHandler();
+  const statusNoteCommandHandler = browserHostModule.browserServices.createStatusNoteCommandHandler();
+  const hostCommandDispatcher = browserHostModule.browserServices.createHostCommandDispatcher({
+    getHandlers: () => ({
+      turn_set_player_order: (root, command) => { turnFlowController.setTurnStatePlayerOrder(root, command.playerIds, command.options); return { ok: true }; },
+      turn_randomize_player_order: (root) => { turnFlowController.randomizePlayerTurnOrder(root); return { ok: true }; },
+      turn_begin_next_round: (root) => ({ ok: true, ...turnFlowController.beginNextRound(root) }),
+      turn_advance_after_action: (root, command) => ({ ok: true, ...turnFlowController.advanceTurnAfterPlayerAction(root, command.playerId, command.options) }),
+      turn_start_new_game: (root, command) => turnFlowController.startNewGame(root, command.options),
+      turn_randomize_all: (root) => { turnFlowController.randomizeAll(root); return { ok: true }; },
+      setup_start_initial_selection: (root) => { actionRuntimeController.startInitialSelection(root); return { ok: true }; },
+      setup_select_initial_card: (root, command) => { actionRuntimeController.handleInitialSelectionCardClick(root, command.selectionKind, command.cardId); return { ok: true }; },
+      setup_confirm_initial_selection: (root) => { actionRuntimeController.confirmInitialSelectionForCurrentPlayer(root); return { ok: true }; },
+      coordinate_sync_planet_markers: (root) => { coordinateRuntime.syncPlanetOrbitLandMarkers(root); return { ok: true }; },
+      coordinate_seed_reference_rockets: (root) => { coordinateRuntime.seedDefaultReferenceRockets(root); return { ok: true }; },
+      ai_choose_initial_selection: (root) => chooseInitialSelectionForAiPlayerForRoot(root),
+      ai_set_player_difficulty: aiDifficultyCommandHandler,
+      ai_execute_turn_action: (root, command) => cloneResidentPresentation(executeAiTurnActionForRoot(root, command.action)),
+      ai_resolve_to_turn_boundary: (root, command) => cloneResidentPresentation(resolveAiAutomationToTurnBoundaryForRoot(root, command.options)),
+      ai_run_automation_step: (root) => cloneResidentPresentation(runAiAutomationStepForRoot(root)),
+      ai_run_action_effect_step: (root) => cloneResidentPresentation(runAiActionEffectStepForRoot(root)),
+      ai_run_non_turn_step: (root) => cloneResidentPresentation(runAiNonTurnAutomationStepForRoot(root)),
+      ai_run_selected_turn_action: (root, command) => cloneResidentPresentation(runAiSelectedTurnActionForRoot(root, command.selector, command.options)),
+      ai_recover_idle_action_effect: (root, command) => cloneResidentPresentation(recoverAiIdleActionEffectStepForRoot(root, ...(command.args || [])) || { ok: true, idle: true, message: "当前没有待恢复的行动效果" }),
+      ai_build_turn_candidates: (root, command) => cloneResidentPresentation(buildAiTurnActionCandidatesForRoot(root, ...(command.args || []))),
+      card_trigger_list_free_move_candidates: (root, command) => ({ ok: true, value: cloneResidentPresentation(listCardTriggerFreeMoveCandidatesForRoot(root, ...(command.args || []))) }),
+      ui_execute_primary_board_action: (root, command) => cloneResidentPresentation(actionRuntimeController?.executePrimaryBoardAction(createActionContextForWorkingRoot(root, command.descriptor), command.descriptor, command.executionOptions, command.options)),
+      score_build_final_summary: (root) => ({ ok: true, value: buildFinalScoreSummaryLinesForRoot(root) }),
+      score_sync_pending_marks: (root) => cloneResidentPresentation(syncFinalScorePendingMarksForRoot(root)),
+      score_mark_tile: (root, command) => cloneResidentPresentation(handleFinalScoreTileClickForRoot(root, command.tileId)),
+      ui_get_required_move_points: (root, command) => ({ ok: true, value: getRequiredMovePointsForUiForRoot(root, ...(command.args || [])) }),
+      ui_set_status_note: statusNoteCommandHandler,
+      land_target_open: (root, command) => ({ ok: true, value: cloneResidentPresentation(openLandTargetPicker(root, command.options)) }),
+      land_target_cancel: (root) => ({ ok: true, value: cloneResidentPresentation(cancelLandTargetPicker(root)) }),
+      card_toggle_public_corner_discard: (root, command) => ({ ok: true, value: cloneResidentPresentation(handlePublicCornerDiscardCardClickForRoot(root, command.slotIndex)) }),
+      card_confirm_public_corner_discard: (root) => ({ ok: true, value: cloneResidentPresentation(confirmPublicCornerDiscardSelectionForRoot(root)) }),
+      quick_action_check_pending: (root, command) => ({ ok: true, value: cloneResidentPresentation(blockIncompatiblePendingQuickActionForRoot(root, command.actionType)) }),
+      card_execute_free_move_corner: (root, command) => cloneResidentPresentation(executeFreeMoveForCardCornerForRoot(root, ...(command.args || []))),
+      rocket_current_planet: (root, command) => ({ ok: true, value: getRocketCurrentPlanetIdForRoot(root, command.rocketId) }),
+      chong_ready_transports: (root, command) => ({ ok: true, value: cloneResidentPresentation(listReadyChongTransportCandidatesForRoot(root, command.player, command.task)) }),
+      scan_execute_free_move: (root, command) => cloneResidentPresentation(executeFreeMoveForScanAction4ForRoot(root, ...(command.args || []))),
+      effect_choice_command: effectChoiceCommandHandler,
+      hand_flow_command: handFlowCommandHandler,
+      effect_executor_command: effectExecutorCommandHandler,
+      debug_command: debugCommandHandler,
+      recovery_clear_transient: (root) => { clearTransientStateForRecovery(root); return { ok: true }; },
+      recovery_refresh: (root, command) => { refreshAfterGameRecovery(command.message, root); return { ok: true }; },
+      effect_bar_click: (root, command) => ({ ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(root, command.effectIndex)) }),
+      effect_skip_current: (root) => ({ ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot(root)) }),
+      effect_cancel_subflows: (root) => { cancelActiveEffectSubFlowsForRoot(root); return { ok: true }; },
+      effect_finish_flow: (root) => ({ ok: true, value: cloneResidentPresentation(finishActionEffectFlowForRoot(root)) }),
+      effect_begin_scan_free_move: (root) => ({ ok: true, value: cloneResidentPresentation(beginScanAction4FreeMoveForRoot(root)) }),
+      effect_begin_card_move: (root, command) => ({ ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(root, command.effect)) }),
+      effect_cancel_pending_subflows: (root) => ({ ok: true, value: cancelActivePendingSubFlowsForRoot(root) }),
+      data_place_blue_slot: (root, command) => ({ ok: true, value: cloneResidentPresentation(actionInteractionRuntime.placeDataToBlueSlot(root, command.blueSlot)) }),
+      action_recover_pending: (root) => ({ ok: true, value: cloneResidentPresentation(recoverPendingActionFromOpenHistoryForAiForRoot(root)) }),
+      history_undo_pending: (root) => ({ ok: true, value: cloneResidentPresentation(undoPendingActionForRoot(root)) }),
+      data_open_computer_picker: (root) => ({ ok: true, value: cloneResidentPresentation(runPlaceDataToComputerForRoot(root)) }),
+      debug_execute_income: (root) => ({ ok: true, value: cloneResidentPresentation(executeIncomeForCurrentPlayerForRoot(root)) }),
+      solar_rotate: (root, command) => ({ ok: true, value: cloneResidentPresentation(rotateSolarOrbitForRoot(root, command.count)) }),
+      scan_settle_completed_sectors: (root, command) => ({ ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(root, command.actionType, command.options)) }),
+      card_execute_move_effect: (root, command) => cloneResidentPresentation(executeCardMoveForEffectForRoot(root, ...(command.args || []))),
+      simulation_enumerate_turn_actions: (root) => ({ ok: true, value: enumerateSimulationTurnActionsForRoot(root) }),
+      simulation_enumerate_conditional_actions: (root) => ({ ok: true, value: enumerateSimulationConditionalActionsForRoot(root) }),
+      simulation_execute_conditional_action: (root, command) => cloneResidentPresentation(conditionalActionExecutor.execute(root, command.action?.standardAction || command.action)),
+      simulation_advance_deterministic: (root) => advanceSimulationDeterministicStateImpl(root) || { ok: true, progressed: false },
+      simulation_execute_current_effect: (root) => executeSimulationCurrentActionEffectImpl(root) || { ok: true, progressed: false },
+      domain_command: (root, command) => executeBrowserDomainCommand(root, command),
+    }),
+  });
 
   const ruleComposition = ruleCompositionModule.createRuleComposition({
     invariantValidators: [validateBrowserSessionBoundary],
@@ -568,325 +675,14 @@
         operation,
       );
     },
-    executeHostCommand(workingRoot, command) {
-      switch (command.kind) {
-        case "turn_set_player_order":
-          turnFlowController.setTurnStatePlayerOrder(workingRoot, command.playerIds, command.options);
-          return { ok: true };
-        case "turn_randomize_player_order":
-          turnFlowController.randomizePlayerTurnOrder(workingRoot);
-          return { ok: true };
-        case "turn_begin_next_round":
-          return { ok: true, ...turnFlowController.beginNextRound(workingRoot) };
-        case "turn_advance_after_action":
-          return { ok: true, ...turnFlowController.advanceTurnAfterPlayerAction(
-            workingRoot,
-            command.playerId,
-            command.options,
-          ) };
-        case "turn_start_new_game":
-          return turnFlowController.startNewGame(workingRoot, command.options);
-        case "turn_randomize_all":
-          turnFlowController.randomizeAll(workingRoot);
-          return { ok: true };
-        case "setup_start_initial_selection":
-          actionRuntimeController.startInitialSelection(workingRoot);
-          return { ok: true };
-        case "setup_select_initial_card":
-          actionRuntimeController.handleInitialSelectionCardClick(
-            workingRoot,
-            command.selectionKind,
-            command.cardId,
-          );
-          return { ok: true };
-        case "setup_confirm_initial_selection":
-          actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot);
-          return { ok: true };
-        case "coordinate_sync_planet_markers":
-          coordinateRuntime.syncPlanetOrbitLandMarkers(workingRoot);
-          return { ok: true };
-        case "coordinate_seed_reference_rockets":
-          coordinateRuntime.seedDefaultReferenceRockets(workingRoot);
-          return { ok: true };
-        case "ai_choose_initial_selection":
-          return chooseInitialSelectionForAiPlayerForRoot(workingRoot);
-        case "ai_set_player_difficulty": {
-          const player = workingRoot.playerState.players.find((candidate) => candidate.id === command.playerId);
-          if (!player) return { ok: false, code: "AI_PLAYER_NOT_FOUND", message: "找不到 AI 玩家" };
-          player.aiDifficulty = command.difficulty;
-          player.aiDifficultyLabel = command.label;
-          return { ok: true };
-        }
-        case "ai_execute_turn_action":
-          return cloneResidentPresentation(executeAiTurnActionForRoot(workingRoot, command.action));
-        case "ai_resolve_to_turn_boundary":
-          return cloneResidentPresentation(resolveAiAutomationToTurnBoundaryForRoot(workingRoot, command.options));
-        case "ai_run_automation_step":
-          return cloneResidentPresentation(runAiAutomationStepForRoot(workingRoot));
-        case "ai_run_action_effect_step":
-          return cloneResidentPresentation(runAiActionEffectStepForRoot(workingRoot));
-        case "ai_run_non_turn_step":
-          return cloneResidentPresentation(runAiNonTurnAutomationStepForRoot(workingRoot));
-        case "ai_run_selected_turn_action":
-          return cloneResidentPresentation(runAiSelectedTurnActionForRoot(workingRoot, command.selector, command.options));
-        case "ai_recover_idle_action_effect":
-          return cloneResidentPresentation(
-            recoverAiIdleActionEffectStepForRoot(workingRoot, ...(command.args || []))
-            || { ok: true, idle: true, message: "当前没有待恢复的行动效果" },
-          );
-        case "ai_build_turn_candidates":
-          return cloneResidentPresentation(buildAiTurnActionCandidatesForRoot(workingRoot, ...(command.args || [])));
-        case "card_trigger_list_free_move_candidates":
-          return { ok: true, value: cloneResidentPresentation(listCardTriggerFreeMoveCandidatesForRoot(workingRoot, ...(command.args || []))) };
-        case "ui_execute_primary_board_action":
-          return cloneResidentPresentation(actionRuntimeController?.executePrimaryBoardAction(
-            createActionContextForWorkingRoot(workingRoot, command.descriptor),
-            command.descriptor,
-            command.executionOptions,
-            command.options,
-          ));
-        case "score_build_final_summary":
-          return { ok: true, value: buildFinalScoreSummaryLinesForRoot(workingRoot) };
-        case "score_sync_pending_marks":
-          return cloneResidentPresentation(syncFinalScorePendingMarksForRoot(workingRoot));
-        case "score_mark_tile":
-          return cloneResidentPresentation(handleFinalScoreTileClickForRoot(workingRoot, command.tileId));
-        case "ui_get_required_move_points":
-          return { ok: true, value: getRequiredMovePointsForUiForRoot(workingRoot, ...(command.args || [])) };
-        case "ui_set_status_note":
-          workingRoot.rocketState.statusNote = command.message;
-          return { ok: true, value: command.message };
-        case "land_target_open":
-          return { ok: true, value: cloneResidentPresentation(openLandTargetPicker(workingRoot, command.options)) };
-        case "land_target_cancel":
-          return { ok: true, value: cloneResidentPresentation(cancelLandTargetPicker(workingRoot)) };
-        case "card_toggle_public_corner_discard":
-          return { ok: true, value: cloneResidentPresentation(handlePublicCornerDiscardCardClickForRoot(
-            workingRoot,
-            command.slotIndex,
-          )) };
-        case "card_confirm_public_corner_discard":
-          return { ok: true, value: cloneResidentPresentation(confirmPublicCornerDiscardSelectionForRoot(workingRoot)) };
-        case "quick_action_check_pending":
-          return { ok: true, value: cloneResidentPresentation(blockIncompatiblePendingQuickActionForRoot(
-            workingRoot,
-            command.actionType,
-          )) };
-        case "card_execute_free_move_corner":
-          return cloneResidentPresentation(executeFreeMoveForCardCornerForRoot(workingRoot, ...(command.args || [])));
-        case "rocket_current_planet":
-          return { ok: true, value: getRocketCurrentPlanetIdForRoot(workingRoot, command.rocketId) };
-        case "chong_ready_transports":
-          return { ok: true, value: cloneResidentPresentation(listReadyChongTransportCandidatesForRoot(workingRoot, command.player, command.task)) };
-        case "scan_execute_free_move":
-          return cloneResidentPresentation(executeFreeMoveForScanAction4ForRoot(workingRoot, ...(command.args || [])));
-        case "effect_choice_command": {
-          const operation = effectChoiceFlowHelpers?.[command.operation];
-          if (typeof operation !== "function") {
-            return { ok: false, code: "EFFECT_CHOICE_COMMAND_UNKNOWN", message: `未知 Effect choice command: ${command.operation}` };
-          }
-          return { ok: true, value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))) };
-        }
-        case "hand_flow_command": {
-          const operation = handFlowHelpers?.[command.operation];
-          if (typeof operation !== "function") {
-            return { ok: false, code: "HAND_FLOW_COMMAND_UNKNOWN", message: `未知 Hand flow command: ${command.operation}` };
-          }
-          return {
-            ok: true,
-            value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))),
-          };
-        }
-        case "effect_executor_command": {
-          const operation = effectExecutors?.[command.operation];
-          if (typeof operation !== "function") {
-            return { ok: false, code: "EFFECT_EXECUTOR_COMMAND_UNKNOWN", message: `未知 Effect executor command: ${command.operation}` };
-          }
-          return {
-            ok: true,
-            value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))),
-          };
-        }
-        case "debug_command": {
-          const operation = debugRuntimeController?.[command.operation];
-          if (typeof operation !== "function") {
-            return { ok: false, code: "DEBUG_COMMAND_UNKNOWN", message: `未知 Debug command: ${command.operation}` };
-          }
-          return {
-            ok: true,
-            value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))),
-          };
-        }
-        case "recovery_clear_transient":
-          clearTransientStateForRecovery(workingRoot);
-          return { ok: true };
-        case "recovery_refresh":
-          refreshAfterGameRecovery(command.message, workingRoot);
-          return { ok: true };
-        case "effect_bar_click":
-          return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(workingRoot, command.effectIndex)) };
-        case "effect_skip_current":
-          return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot(workingRoot)) };
-        case "effect_cancel_subflows":
-          cancelActiveEffectSubFlowsForRoot(workingRoot);
-          return { ok: true };
-        case "effect_finish_flow":
-          return { ok: true, value: cloneResidentPresentation(finishActionEffectFlowForRoot(workingRoot)) };
-        case "effect_begin_scan_free_move":
-          return { ok: true, value: cloneResidentPresentation(beginScanAction4FreeMoveForRoot(workingRoot)) };
-        case "effect_begin_card_move":
-          return { ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(workingRoot, command.effect)) };
-        case "effect_cancel_pending_subflows":
-          return { ok: true, value: cancelActivePendingSubFlowsForRoot(workingRoot) };
-        case "data_place_blue_slot":
-          return { ok: true, value: cloneResidentPresentation(actionInteractionRuntime.placeDataToBlueSlot(workingRoot, command.blueSlot)) };
-        case "action_recover_pending":
-          return { ok: true, value: cloneResidentPresentation(recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot)) };
-        case "history_undo_pending":
-          return { ok: true, value: cloneResidentPresentation(undoPendingActionForRoot(workingRoot)) };
-        case "data_open_computer_picker":
-          return { ok: true, value: cloneResidentPresentation(runPlaceDataToComputerForRoot(workingRoot)) };
-        case "debug_execute_income":
-          return { ok: true, value: cloneResidentPresentation(executeIncomeForCurrentPlayerForRoot(workingRoot)) };
-        case "solar_rotate":
-          return { ok: true, value: cloneResidentPresentation(rotateSolarOrbitForRoot(workingRoot, command.count)) };
-        case "scan_settle_completed_sectors":
-          return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
-            workingRoot,
-            command.actionType,
-            command.options,
-          )) };
-        case "card_execute_move_effect":
-          return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
-        case "simulation_enumerate_turn_actions":
-          return { ok: true, value: enumerateSimulationTurnActionsForRoot(workingRoot) };
-        case "simulation_enumerate_conditional_actions":
-          return { ok: true, value: enumerateSimulationConditionalActionsForRoot(workingRoot) };
-        case "simulation_execute_conditional_action":
-          return cloneResidentPresentation(
-            conditionalActionExecutor.execute(workingRoot, command.action?.standardAction || command.action),
-          );
-        case "simulation_advance_deterministic":
-          return advanceSimulationDeterministicStateImpl(workingRoot) || { ok: true, progressed: false };
-        case "simulation_execute_current_effect":
-          return executeSimulationCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
-        case "domain_command":
-          return executeBrowserDomainCommand(workingRoot, command);
-        default:
-          return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
-      }
-    },
+    executeHostCommand: hostCommandDispatcher.execute,
     createActionRegistry: () => compositionActionRegistry,
     effectDomains: [{
       create: standardActionSessionModule.createStandardActionDomain,
       families: standardActionModule.ALL_FAMILIES,
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
-        continuation: {
-          inspect(workingRoot) {
-            const conditional = enumerateSimulationConditionalActionsForRoot(workingRoot);
-            const candidates = (conditional.candidates || [])
-              .filter((candidate) => candidate?.available !== false);
-            if (candidates.length) {
-              if (candidates[0]?.target?.kind === "chong-fossil-choice") {
-                alienSpeciesRuntime?.takeChongFossilDecisionDraft?.();
-              }
-              if (candidates[0]?.target?.kind === "amiba-symbol-choice") {
-                alienSpeciesRuntime?.takeAmibaSymbolDecisionDraft?.();
-              }
-              if (candidates[0]?.target?.kind === "yichangdian-corner-choice") {
-                effectExecutors?.takeYichangdianCornerAction?.();
-              }
-              if (candidates[0]?.target?.kind === "runezu-symbol-branch") {
-                alienSpeciesRuntime?.takeRunezuSymbolBranchDecisionDraft?.();
-              }
-              if (candidates[0]?.target?.kind === "runezu-face-symbol-choice") {
-                alienSpeciesRuntime?.takeRunezuFaceSymbolDecisionDraft?.();
-              }
-              if (candidates[0]?.target?.kind === "runezu-card-gain") alienSpeciesRuntime?.takeRunezuCardGainDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "amiba-card-gain") alienSpeciesRuntime?.takeAmibaCardGainDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "aomomo-card-gain") alienSpeciesRuntime?.takeAomomoCardGainDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "yichangdian-card-gain") alienSpeciesRuntime?.takeYichangdianCardGainDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "banrenma-card-gain") alienSpeciesRuntime?.takeBanrenmaCardGainDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "chong-card-gain") alienSpeciesRuntime?.takeChongCardGainDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "amiba-trace-removal") alienSpeciesRuntime?.takeAmibaTraceRemovalDecisionDraft?.();
-              if (candidates[0]?.target?.kind === "jiuzhe-card-play" || candidates[0]?.target?.kind === "jiuzhe-card-skip") {
-                alienSpeciesRuntime?.takeJiuzheCardPlayDecisionDraft?.();
-              }
-              if (candidates[0]?.target?.kind === "banrenma-panel-bonus" || candidates[0]?.target?.kind === "banrenma-card-condition") {
-                alienSpeciesRuntime?.takeBanrenmaOpportunityDecisionDraft?.();
-              }
-              if (candidates[0]?.target?.kind === "probe-sector-selection") {
-                delete workingRoot.match.probeSectorScanContinuation;
-              }
-              if (candidates[0]?.target?.kind === "probe-location-reward") {
-                delete workingRoot.match.probeLocationRewardContinuation;
-              }
-              if (candidates[0]?.target?.kind === "sector-scan-target") {
-                closeScanTargetPickerForRoot(workingRoot);
-              }
-              return {
-                ok: true,
-                boundary: "conditional_choice",
-                decisionType: "conditional_choice",
-                actorPlayer: conditional.actorPlayer || null,
-                ownerId: conditional.actorPlayer?.id || null,
-                family: candidates[0]?.family || null,
-                candidates,
-              };
-            }
-            const turnCandidates = enumerateSimulationTurnActionsForRoot(workingRoot);
-            if (turnCandidates.length || workingRoot.turnState.gameEnded) {
-              return {
-                ok: true,
-                boundary: workingRoot.turnState.gameEnded ? "terminal" : "turn_action",
-                decisionType: "turn_action",
-                actorPlayer: players.getCurrentPlayer(workingRoot.playerState),
-                candidates: turnCandidates,
-              };
-            }
-            const currentEffect = getCurrentActionEffect(workingRoot);
-            return {
-              ok: true,
-              boundary: "draining",
-              decisionType: null,
-              candidates: [],
-              actionEffectActive: isActionEffectFlowActive(workingRoot),
-              currentEffect: structuredClone(currentEffect || null),
-            };
-          },
-          executeDeterministic(workingRoot, boundary) {
-            const deterministic = advanceSimulationDeterministicStateImpl(workingRoot);
-            if (deterministic?.progressed) {
-              return {
-                ...deterministic,
-                ok: deterministic.ok !== false,
-                events: [{ type: "standard_action_deterministic_advance" }],
-              };
-            }
-            if (boundary?.actionEffectActive) {
-              const effectResult = executeSimulationCurrentActionEffectImpl(workingRoot);
-              return {
-                ...(effectResult || {}),
-                ok: effectResult?.ok !== false,
-                progressed: effectResult?.ok !== false,
-                events: [{
-                  type: "standard_action_deterministic_effect",
-                  effectType: boundary.currentEffect?.type || effectResult?.type || null,
-                  effectId: boundary.currentEffect?.id || effectResult?.effectId || null,
-                }],
-              };
-            }
-            return {
-              ok: false,
-              code: "SIMULATION_UNSUPPORTED_PENDING",
-              message: "存在未迁移的 simulation pending，Composition 拒绝 resolver/recover/skip fallback",
-            };
-          },
-          resolveDecision(workingRoot, choice) {
-            return conditionalActionExecutor.executeEffectChoice(workingRoot, choice);
-          },
-        },
+        continuation: standardActionContinuation,
       },
     }],
     projectState(state) {
@@ -1694,14 +1490,9 @@
     }),
   });
 
-  function getResidentViewer() {
-    const player = getInterfacePlayer();
-    return {
-      viewerId: `browser:${player?.id || "spectator"}`,
-      playerId: player?.id == null ? null : String(player.id),
-      role: player ? "player" : "spectator",
-    };
-  }
+  const getResidentViewer = browserHostModule.residentProjection.createViewerResolver({
+    getInterfacePlayer: () => getInterfacePlayer(),
+  });
 
   const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
   const createResidentReadoutRoot = (resident) => (
@@ -1711,6 +1502,12 @@
     ruleComposition.stateSourcePort.read().state,
     { solarKey: "solarSystem", includeMatch: true },
   );
+  const playerLookupRuntime = runtimeModule.createPlayerLookupRuntime({
+    players,
+    uiRuntimeState,
+    createReadoutRoot: createStateSourceReadoutRoot,
+  });
+  const { isBrowserWorkingRoot, getPlayerById, getCurrentPlayer, getPlayerByColor } = playerLookupRuntime;
   const playerEffectOwnerRuntime = runtimeModule.createPlayerEffectOwnerRuntime({
     players,
     uiRuntimeState,
@@ -1720,8 +1517,6 @@
     getActionEffectFlow,
   });
   const {
-    isBrowserWorkingRoot,
-    getPlayerById,
     resolvePlayerReference,
     effectHasExplicitPlayerTarget,
     assignEffectOwner,
@@ -1826,12 +1621,11 @@
     renderRoundStatus,
   } = turnReadoutRuntime;
 
-  function renderResidentDesktop() {
-    const input = createResidentRenderInput();
-    if (!input) return;
-    residentDesktopRenderer.renderAll(input);
-    residentDecisionRenderer.render(input);
-  }
+  const renderResidentDesktop = browserHostModule.residentRenderer.createDesktopRenderPort({
+    createRenderInput: createResidentRenderInput,
+    renderer: residentDesktopRenderer,
+    decisionRenderer: residentDecisionRenderer,
+  });
   const cardHoverPreviewRuntime = renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
   const hideCardHoverPreview = cardHoverPreviewRuntime.hide;
@@ -1908,21 +1702,17 @@
     renderStateReadout,
   });
   const { handleRocketPointerDown, handleBoardPointerDown } = boardPointerHandlers;
-  function getCoordinateReadRoot() {
-    return createStateSourceReadoutRoot();
-  }
-  function getMovableTokensForPlayer(playerId) {
-    return getMovableTokensForPlayerForRoot(getCoordinateReadRoot(), playerId);
-  }
-  function getEarthSectorCoordinate() {
-    return getEarthSectorCoordinateForRoot(getCoordinateReadRoot());
-  }
-  function syncPlanetOrbitLandMarkers() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
-  }
-  function seedDefaultReferenceRockets() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
-  }
+  const coordinatePort = renderRuntimeModule.createCoordinatePort({
+    runtime: coordinateRuntime,
+    getRuleReadout: createStateSourceReadoutRoot,
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const {
+    getMovableTokensForPlayer,
+    getEarthSectorCoordinate,
+    syncPlanetOrbitLandMarkers,
+    seedDefaultReferenceRockets,
+  } = coordinatePort;
   const actionLogViewRuntime = actionLogRuntimeModule.createActionLogViewRuntime({
     document,
     els,
@@ -2316,19 +2106,11 @@
     getActionLogMarkdown,
     downloadActionLogMarkdown,
   } = actionLogExportController;
-  function syncFinalScorePendingMarks(workingRoot = null) {
-    if (workingRoot) return syncFinalScorePendingMarksForRoot(workingRoot);
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "score_sync_pending_marks",
-    });
-  }
-  function handleFinalScoreTileClick(tileId, workingRoot = null) {
-    if (workingRoot) return handleFinalScoreTileClickForRoot(workingRoot, tileId);
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "score_mark_tile",
-      tileId,
-    });
-  }
+  const finalUiPort = finalUiRuntimeModule.createFinalUiPort({
+    runtime: finalUiRuntime,
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const { syncFinalScorePendingMarks, handleFinalScoreTileClick } = finalUiPort;
   const refreshHelpers = refreshModule.createRefreshHelpers({
     renderPlayerStats,
     renderAlienPanels,
@@ -2498,15 +2280,12 @@
   getCurrentActionEffect = (workingRoot = null) => getCurrentActionEffectForRoot(
     workingRoot || createStateSourceReadoutRoot(),
   );
-  function recordAbilityCommands(result, history = actionHistory, workingRoot) {
-    return recordAbilityCommandsForRoot(workingRoot, result, history);
-  }
-  function recordAtomicActionHistory(actionType, label, result, options = {}) {
-    return recordAtomicActionHistoryForRoot(actionType, label, result, {
-      ...options,
-      workingRoot: options.workingRoot,
-    });
-  }
+  const effectHistoryPort = effectFlowModule.createEffectHistoryPort({
+    actionHistory,
+    recordAbilityCommandsForRoot,
+    recordAtomicActionHistoryForRoot,
+  });
+  const { recordAbilityCommands, recordAtomicActionHistory } = effectHistoryPort;
   const actionEffectOrchestrator = effectFlowModule.createActionEffectOrchestrator({
     HISTORY_SOURCE_MAIN,
     abilities,
@@ -3231,24 +3010,22 @@
     beginIncomeForCurrentPlayer,
   } = incomeRuntime);
   const beginIncomeForCurrentPlayerForRoot = beginIncomeForCurrentPlayer;
-  beginIncomeForCurrentPlayer = bindBrowserDomainCommand("income_runtime", "beginIncomeForCurrentPlayer");
-  function applyIndustryRoundStartBonuses(...args) {
-    return callBrowserDomainCommand("income_runtime", "applyIndustryRoundStartBonuses", args);
-  }
-  function maybeStartFundamentalismRoundStartIncomeFlow(...args) {
-    return callBrowserDomainCommand(
-      "income_runtime",
-      "maybeStartFundamentalismRoundStartIncomeFlow",
-      args,
-    );
-  }
-  function confirmAlienTracePlacement(...args) {
-    return callBrowserDomainCommand("alien_runtime", "confirmAlienTracePlacement", args);
-  }
-
-  function confirmFangzhouTracePlacement(...args) {
-    return callBrowserDomainCommand("alien_runtime", "confirmFangzhouTracePlacement", args);
-  }
+  ({
+    beginIncomeForCurrentPlayer,
+    applyIndustryRoundStartBonuses,
+    maybeStartFundamentalismRoundStartIncomeFlow,
+  } = bindDomainCommands("income_runtime", [
+    "beginIncomeForCurrentPlayer",
+    "applyIndustryRoundStartBonuses",
+    "maybeStartFundamentalismRoundStartIncomeFlow",
+  ]));
+  const {
+    confirmAlienTracePlacement,
+    confirmFangzhouTracePlacement,
+  } = bindDomainCommands("alien_runtime", [
+    "confirmAlienTracePlacement",
+    "confirmFangzhouTracePlacement",
+  ]);
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
     uiRuntimeState,
@@ -3378,19 +3155,11 @@
     "routeFangzhouAlienTraceGain", "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
     "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
   ]);
-  function handleFangzhouTraceDestinationChoice(destination, traceType = null) {
-    return submitActiveCardDecision("fangzhou-trace-destination", (target) => (
-      target.choiceId === destination || target.choiceId === `${destination}:${traceType}`
-    ));
-  }
-  function handleFangzhouUnlockTraceChoice(traceType) {
-    return submitActiveCardDecision("fangzhou-unlock-color", (target) => target.traceType === traceType);
-  }
-  function handleStateTraceSlotPlacement(alienSlotId, traceType) {
-    return submitActiveCardDecision("alien-state-trace", (target) => (
-      Number(target.slotId) === Number(alienSlotId) && target.traceType === traceType
-    ));
-  }
+  const {
+    handleFangzhouTraceDestinationChoice,
+    handleFangzhouUnlockTraceChoice,
+    handleStateTraceSlotPlacement,
+  } = alienUiModule.createAlienDecisionPort({ submitActiveDecision: submitActiveCardDecision });
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
     uiRuntimeState,
     structuredClone,
@@ -4086,65 +3855,16 @@
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
   };
 
-  function runAiStepThroughComposition(commandKind, args = []) {
-    let inspection = ruleComposition.inspect();
-    if (inspection.phase === "idle") {
-      const readoutRoot = createStateSourceReadoutRoot();
-      if (isActionEffectFlowActive(readoutRoot)) {
-        const drained = ruleComposition.inputPort.beginDrain();
-        if (!drained?.ok) return drained;
-        inspection = ruleComposition.inspect();
-      }
-    }
-    const decision = inspection.session?.decision || null;
-    if (inspection.phase === "awaiting_input" && decision?.choices?.length) {
-      const family = decision.choices[0]?.family
-        || decision.choices[0]?.standardAction?.family
-        || decision.decisionKind
-        || null;
-      const actorId = decision.ownerId || null;
-      const stateSourceSnapshot = ruleComposition.stateSourcePort.read();
-      const policyResult = ai?.heuristicPolicy?.decideChoice?.({
-        seatId: actorId,
-        family,
-        stateVersion: Math.max(0, Number(decision.stateVersion) || 0),
-        decisionVersion: Math.max(0, Number(decision.decisionVersion) || 0),
-        decisionId: decision.decisionId,
-        requestId: `browser-session:${actorId}:${decision.decisionId}:${decision.decisionVersion || 0}`,
-        observation: {
-          publicState: {
-            roundNumber: Math.max(0, Number(stateSourceSnapshot?.state?.turn?.roundNumber) || 0),
-          },
-          selfState: { playerId: actorId },
-        },
-        choices: decision.choices.map((choice, index) => ({
-          choiceId: String(
-            choice?.standardAction?.actionId
-            || choice?.actionId
-            || choice?.target?.choiceId
-            || choice?.choiceId
-            || index,
-          ),
-          value: Number(choice?.value ?? choice?.payload?.value ?? choice?.payload?.score ?? 0),
-          target: structuredClone(choice?.target || choice?.standardAction?.target || null),
-          summary: choice?.label || choice?.summary || choice?.standardAction?.summary || `选择 ${index + 1}`,
-          sourceIndex: index,
-        })),
-      }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
-      if (!policyResult.ok) return policyResult;
-      const sourceIndex = Number(policyResult.choice?.sourceIndex);
-      const choice = decision.choices[Number.isSafeInteger(sourceIndex) ? sourceIndex : 0] || null;
-      if (!choice) {
-        return { ok: false, code: "AI_SESSION_CHOICE_MISSING", message: "Policy 选择未映射到 activeSession choice" };
-      }
-      return ruleComposition.inputPort.submitDecision({
-        decisionId: decision.decisionId,
-        decisionVersion: decision.decisionVersion,
-        choice,
-      });
-    }
-    return ruleComposition.inputPort.submitHostCommand({ kind: commandKind, args });
-  }
+  const runAiStepThroughComposition = aiControlRuntimeModule.createAiCompositionStepPort({
+    inspect: (...args) => ruleComposition.inspect(...args),
+    getRuleReadout: createStateSourceReadoutRoot,
+    isActionEffectFlowActive,
+    beginDrain: (...args) => ruleComposition.inputPort.beginDrain(...args),
+    readState: (...args) => ruleComposition.stateSourcePort.read(...args),
+    heuristicPolicy: ai?.heuristicPolicy,
+    submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  }).run;
 
   const aiController = window.SetiAppAiController.createAiController({
     window,
@@ -5011,13 +4731,10 @@
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
 
-  function blockManualAiMovePayment(message = null) {
-    const player = getMovePaymentPlayer();
-    return blockManualAiAutomationInput(
-      message || `${player?.colorLabel || "电脑玩家"}AI 正在确认移动支付`,
-      player,
-    );
-  }
+  const blockManualAiMovePayment = renderRuntimeModule.createMovePaymentAiGuard({
+    getMovePaymentPlayer,
+    blockManualInput: blockManualAiAutomationInput,
+  });
 
   const getRequiredMovePointsForUi = browserHostCommandPort.bindValue(
     "ui_get_required_move_points",
@@ -5025,10 +4742,7 @@
     { commit: false },
   );
 
-  function getNormalTokenAssetForPlayer(player) {
-    return players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
-      || "../assets/tokens/normal_token.png";
-  }
+  const getNormalTokenAssetForPlayer = playerStatsUiModule.createNormalTokenAssetResolver(players);
 
   const neutralScoreTraceRuntime = alienRuntimeModule.createNeutralScoreTraceRuntime({
     aliens,
@@ -5271,13 +4985,11 @@
     settleDelayedPublicRefillsAfterScanFlow,
     rememberCompletedEffectFlowForUndo,
     clearActionEffectFlow,
-    finishResearchTechSelection: (workingRoot) => {
-      tech.setTechSelectionActive(workingRoot.techGameState, false);
-      tech.cancelPendingTake(workingRoot.techGameState);
-      workingRoot.techGameState.ui.statusNote = "";
-      syncTechSelectionChrome();
-      renderTechBoard();
-    },
+    finishResearchTechSelection: techRuntimeModule.createTechSelectionCompletionPort({
+      tech,
+      syncTechSelectionChrome,
+      renderTechBoard,
+    }),
     clearHistoryStepOrderForSource,
     removeActionLogStepsBySource,
     clearActionPending,
@@ -5311,12 +5023,16 @@
 
   const finishActionEffectFlow = browserHostCommandPort.bindValue("effect_finish_flow");
 
-  function maybeCompleteActionEffectFromScan(workingRoot, result) {
-    if (!result?.ok || !isActionEffectFlowActive()) return;
-    const current = getCurrentActionEffect(workingRoot);
-    if (current) current.result = result;
-    completeCurrentActionEffect(workingRoot);
-  }
+  const effectExecutionPort = effectFlowModule.createEffectExecutionPort({
+    isActionEffectFlowActive,
+    getCurrentActionEffect,
+    completeCurrentActionEffect,
+    getExecutors: () => effectExecutors,
+  });
+  const {
+    maybeCompleteFromScan: maybeCompleteActionEffectFromScan,
+    executeForOwner: executeActionEffectForOwner,
+  } = effectExecutionPort;
 
   const scanAction4Picker = scanFlowModule.createScanAction4Picker({
     document,
@@ -5330,9 +5046,7 @@
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
 
-  function executeCardMoveForEffectForRoot(workingRoot, deltaX, deltaY, rocketId) {
-    return requestCardEffectMoveForRoot(workingRoot, deltaX, deltaY, rocketId);
-  }
+  const executeCardMoveForEffectForRoot = requestCardEffectMoveForRoot;
 
   const executeCardMoveForEffect = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
     "card-effect-move",
@@ -5341,37 +5055,18 @@
     rocketId,
   );
 
-  function handleProbeSectorScanChoice(rocketId) {
-    const pending = getPendingProbeSectorScanDecision();
-    const maxTargets = Math.max(1, Math.round(Number(pending?.effect?.options?.maxTargets) || 1));
-    if (maxTargets === 1) {
-      return submitActiveCardDecision(
-        "probe-sector-selection",
-        (target) => (target.rocketIds || []).length === 1
-          && String(target.rocketIds[0]) === String(rocketId),
-      );
-    }
-    return effectChoiceFlowHelpers.handleProbeSectorScanChoice(createStateSourceReadoutRoot(), rocketId);
-  }
-
-  function confirmProbeSectorScanSelection() {
-    const selected = [...(uiRuntimeState.probeSectorSelectedRocketIds || [])].map(String).sort();
-    return submitActiveCardDecision(
-      "probe-sector-selection",
-      (target) => [...(target.rocketIds || [])].map(String).sort().join(",") === selected.join(","),
-    );
-  }
-
-  function handleProbeLocationRewardChoice(rocketId) {
-    return submitActiveCardDecision(
-      "probe-location-reward",
-      (target) => String(target.rocketId ?? target.choiceId) === String(rocketId),
-    );
-  }
-
-  function executeActionEffectForOwner(...args) {
-    return effectExecutors.executeActionEffectForOwner(...args);
-  }
+  const probeDecisionPort = scanFlowModule.createProbeDecisionPort({
+    getPendingProbeSectorScanDecision,
+    submitActiveDecision: submitActiveCardDecision,
+    handleMultiSectorChoice: (...args) => effectChoiceFlowHelpers.handleProbeSectorScanChoice(...args),
+    getRuleReadout: createStateSourceReadoutRoot,
+    getSelectedRocketIds: () => uiRuntimeState.probeSectorSelectedRocketIds || [],
+  });
+  const {
+    handleSectorChoice: handleProbeSectorScanChoice,
+    confirmSectorSelection: confirmProbeSectorScanSelection,
+    handleLocationRewardChoice: handleProbeLocationRewardChoice,
+  } = probeDecisionPort;
 
   const effectExecutorContext = {
     insertActionEffectsAfterCurrent: (...args) => effectExecutors.insertActionEffectsAfterCurrent(...args),
@@ -5577,22 +5272,15 @@
     effectDispatcherModule.createEffectDispatcher({ ...effectExecutorContext, ...effectExecutors }),
   );
 
-  function handleActionEffectButtonClickForRoot(workingRoot, effectIndex) {
-    return actionRuntimeController.handleActionEffectButtonClick(workingRoot, effectIndex);
-  }
+  const actionRuntimePort = actionRuntimeModule.createActionRuntimePort({
+    getController: () => actionRuntimeController,
+  });
+  const { handleActionEffectButtonClickForRoot, beginScanAction } = actionRuntimePort;
 
   const handleActionEffectButtonClick = browserHostCommandPort.bindValue(
     "effect_bar_click",
     (effectIndex) => ({ effectIndex }),
   );
-
-  function beginScanAction() {
-    return actionRuntimeController?.dispatchAction({
-      kind: "standard_intent",
-      family: "scan",
-      selector: { kind: "standard-scan" },
-    }) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" };
-  }
 
   const browserLayoutRuntime = renderRuntimeModule.createBrowserLayoutRuntime({
     window,
@@ -5608,16 +5296,13 @@
     getMoveHighlightRocketId: () => uiRuntimeState.moveHighlightRocketId,
     scheduleRenderMoveArrows: (...args) => scheduleRenderMoveArrows(...args),
   });
-  function resize(...args) { return browserLayoutRuntime.resize(...args); }
-  function syncTechRenderContext(...args) { return browserLayoutRuntime.syncTechRenderContext(...args); }
+  const { resize, syncTechRenderContext } = browserLayoutRuntime;
 
   let alienSpeciesRuntime = null;
-  function getPendingYichangdianCornerAction() {
-    return effectExecutors?.getYichangdianCornerAction?.() || null;
-  }
-  function getPendingYichangdianCornerCards(workingRoot, pendingContext = null) {
-    return effectExecutors?.getPendingYichangdianCornerCards?.(workingRoot, pendingContext) || [];
-  }
+  const {
+    getPendingYichangdianCornerAction,
+    getPendingYichangdianCornerCards,
+  } = effectFlowModule.createEffectExecutorQueryPort({ getExecutors: () => effectExecutors });
   const alienSpeciesPort = alienSpeciesRuntimeModule.createAlienSpeciesPort({
     getRuntime: () => alienSpeciesRuntime,
     dispatchCommand: (name, args) => callBrowserDomainCommand("alien_species", name, args),
@@ -5665,120 +5350,29 @@
     openRunezuFaceSymbolPlacement, handleRunezuFaceSymbolChoice, executeRunezuSymbolRewardEffect, closeRunezuSymbolBranchDialog,
     openRunezuSymbolBranchDialog, handleRunezuSymbolBranchChoice, alignAlienPanelsToPlanets,
   } = alienSpeciesPort;
-  function triggerYichangdianAnomalyForEarthX(workingRoot, earthX) {
-    const alienState = workingRoot.alienGameState;
-    const anomaly = yichangdian?.getAnomalyBySectorX?.(alienState, earthX);
-    const alienSlotId = alienState.yichangdian?.revealedSlotId;
-    if (!anomaly || !alienSlotId) {
-      yichangdian?.updateNextAnomaly?.(alienState, earthX);
-      return null;
-    }
-    const traceEntry = yichangdian.getTopTraceEntry(alienState, alienSlotId, anomaly.traceType);
-    const player = findPlayerForYichangdianEntry(traceEntry);
-    const reward = yichangdian.getAnomalyReward(anomaly.markerId);
-    if (!player || !reward) return null;
-
-    anomaly.triggeredCount = Math.max(0, Math.round(Number(anomaly.triggeredCount) || 0)) + 1;
-    const rewardResult = applyYichangdianRewardToPlayer(
-      player,
-      reward,
-      `异常点 ${anomaly.markerId}`,
-    );
-    if (reward.pickCard) {
-      beginCardSelection({
-        type: "yichangdian_anomaly_pick",
-        player,
-        allowBlindDraw: true,
-        effectLabel: `异常点 ${anomaly.markerId}`,
-      });
-    }
-    yichangdian.updateNextAnomaly(alienState, earthX);
-    return {
-      ok: rewardResult.ok,
-      anomaly,
-      playerId: player.id,
-      reward,
-      events: [{
-        type: "yichangdianAnomaly",
-        playerId: player.id,
-        markerId: anomaly.markerId,
-      }],
-      message: rewardResult.message,
-    };
-  }
-
-  function getCurrentPlayer(workingRoot = null) {
-    if (uiRuntimeState.effectExecutionPlayerId) {
-      const effectPlayer = isBrowserWorkingRoot(workingRoot)
-        ? getPlayerById(workingRoot, uiRuntimeState.effectExecutionPlayerId)
-        : getPlayerById(uiRuntimeState.effectExecutionPlayerId);
-      if (effectPlayer) return effectPlayer;
-    }
-    const source = isBrowserWorkingRoot(workingRoot)
-      ? workingRoot.playerState
-      : createStateSourceReadoutRoot().playerState;
-    return players.getCurrentPlayer(source);
-  }
-
-  function getPlayerByColor(workingRootOrColor, explicitColor = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrColor) ? workingRootOrColor : null;
-    const color = workingRoot ? explicitColor : workingRootOrColor;
-    const normalizedColor = players.normalizePlayerColor(color);
-    const source = workingRoot ? workingRoot.playerState : createStateSourceReadoutRoot().playerState;
-    return source.players.find((player) => player.color === normalizedColor) || null;
-  }
+  const triggerYichangdianAnomalyForEarthX = alienRuntimeModule.createYichangdianAnomalyRuntime({
+    yichangdian,
+    findPlayerForEntry: (...args) => findPlayerForYichangdianEntry(...args),
+    applyRewardToPlayer: (...args) => applyYichangdianRewardToPlayer(...args),
+    beginCardSelection: (...args) => beginCardSelection(...args),
+  }).triggerForEarthX;
 
   const FINAL_RESULT_PLAYER_COLOR_ORDER = Object.freeze(["white", "brown", "blue", "green"]);
 
-  function computePlayerFinalScoreBreakdown(player, workingRoot) {
-    if (!workingRoot) throw new TypeError("终局计分 readout 需要显式只读 root");
-    const probeLocationData = buildProbeLocationIndexForRoot(workingRoot);
-    return endGameScoring?.computePlayerFinalScore
-      ? endGameScoring.computePlayerFinalScore({
-        currentPlayer: player,
-        finalScoringState: workingRoot.finalScoringState,
-        playerState: workingRoot.playerState,
-        nebulaDataState: workingRoot.nebulaDataState,
-        alienGameState: workingRoot.alienGameState,
-        planetStatsState: workingRoot.planetStatsState,
-        ...(actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] }),
-        probeLocations: probeLocationData.index,
-        probeLocationDetails: probeLocationData.details,
-        cardEffects,
-        getCardTypeCode,
-        getPlayerCompanyBaseIncome,
-      })
-      : { totalScore: player.resources?.score || 0 };
-  }
-
-  function applyIndustryStartupPassives(workingRoot) {
-    if (!workingRoot?.playerState || !workingRoot?.finalScoringState) {
-      throw new TypeError("applyIndustryStartupPassives 缺少 workingRoot");
-    }
-    for (const player of workingRoot.playerState.players) {
-      if (industry?.shouldInitializeStrategyPassiveMarkers?.(player)) {
-        industry.initializeStrategyPassiveMarkers(player);
-      }
-      if (industry?.shouldInitializeHeliosPassiveMarkers?.(player)) {
-        industry.initializeHeliosPassiveMarkers(player);
-      }
-      if (industry?.shouldInitializeAlienLabPanels?.(player)) {
-        industry.initializeAlienLabPanels(player);
-      }
-      if (industry?.shouldInitializeFutureSpan?.(player)) {
-        industry.initializeFutureSpanState(player);
-      }
-      if (!industry?.shouldPlaceMissionStartupFinalMark?.(player)) continue;
-      const markResult = finalScoring.placeDirectMarkAtSlot(workingRoot.finalScoringState, "c", player, 3, {
-        tokenSrc: getNormalTokenAssetForPlayer(player),
-        source: "mission_relay_startup",
-      });
-      if (!markResult.ok) {
-        workingRoot.rocketState.statusNote = markResult.message;
-      }
-    }
-    renderFinalScoreBoard();
-  }
+  const computePlayerFinalScoreBreakdown = finalUiRuntimeModule.createFinalScoreBreakdownRuntime({
+    endGameScoring,
+    buildProbeLocationIndexForRoot,
+    buildPlutoMarkerContext: (workingRoot) => actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] },
+    cardEffects,
+    getCardTypeCode,
+    getPlayerCompanyBaseIncome,
+  }).compute;
+  const applyIndustryStartupPassives = industryRuntimeModule.createIndustryStartupRuntime({
+    industry,
+    finalScoring,
+    getNormalTokenAssetForPlayer,
+    renderFinalScoreBoard,
+  }).apply;
 
   const industryRuntime = industryRuntimeModule.createIndustryRuntime({
       Array: typeof Array === "undefined" ? undefined : Array,
@@ -6147,13 +5741,11 @@
     (blueSlot) => ({ blueSlot }),
   );
 
-  function queueStateReadoutRender() {
-    if (uiRuntimeState.stateReadoutRenderFrame) return;
-    uiRuntimeState.stateReadoutRenderFrame = window.requestAnimationFrame(() => {
-      uiRuntimeState.stateReadoutRenderFrame = 0;
-      renderStateReadout();
-    });
-  }
+  const queueStateReadoutRender = renderRuntimeModule.createFrameRenderScheduler({
+    state: uiRuntimeState,
+    requestAnimationFrame: window.requestAnimationFrame.bind(window),
+    render: renderStateReadout,
+  }).queue;
 
   let actionBarController = null;
   const actionBarPort = browserHostModule.actionBar.createActionBarPort({
@@ -6164,22 +5756,15 @@
     isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
   } = actionBarPort;
 
-  function recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot) {
-    if (
-      isActionPending()
-      || isActionEffectFlowActive()
-      || hasActivePendingSubFlow()
-      || !actionHistory.hasSession()
-    ) {
-      return { ok: false, message: "当前不需要恢复行动待结束状态" };
-    }
-    markActionPending();
-    const info = actionHistory.getSessionInfo?.() || null;
-    workingRoot.rocketState.statusNote = `${info?.label || "行动"}已恢复为待回合结束状态`;
-    updateActionButtons();
-    renderStateReadout();
-    return { ok: true, message: workingRoot.rocketState.statusNote, sessionInfo: info };
-  }
+  const recoverPendingActionFromOpenHistoryForAiForRoot = browserHostModule.actionBar.createPendingActionRecoveryRuntime({
+    isActionPending,
+    isActionEffectFlowActive,
+    hasActivePendingSubFlow,
+    actionHistory,
+    markActionPending,
+    updateActionButtons,
+    renderStateReadout,
+  }).recoverForRoot;
 
   const recoverPendingActionFromOpenHistoryForAi = browserHostCommandPort.bindValue("action_recover_pending");
 
@@ -6256,41 +5841,15 @@
   });
 
   let undoController = null;
-  function undoPendingActionForRoot(workingRoot) {
-    return undoController.undoPendingActionForRoot(workingRoot);
-  }
-
-  const undoPendingAction = browserHostCommandPort.bindValue("history_undo_pending");
-
-
-  function resumeDataPlacementContinuation(workingRoot, pending, outcome) {
-    const effect = pending?.effect;
-    if (!effect) return { ok: false, message: "放置数据续体缺少效果上下文" };
-    if (pending.resumeKind === "gain-data-reward") {
-      const player = effectExecutors.getEffectTargetPlayer(workingRoot, effect);
-      return effectExecutors.finishGainDataRewardEffect(
-        workingRoot,
-        effect,
-        player,
-        Math.max(0, Math.round(effect.options?.count || 0)),
-        effect.options?.source || "planet_reward",
-        {
-          placementMessages: outcome.messages,
-          restoreRecorded: outcome.restoreRecorded,
-          skipGain: outcome.skipped,
-        },
-      );
-    }
-    if (pending.resumeKind === "industry-strategy-passive") {
-      return industryRuntime.finishIndustryStrategyPassiveRewardEffect(workingRoot, effect, {
-        placementMessages: outcome.messages,
-        restoreRecorded: outcome.restoreRecorded,
-        beforePlayerState: outcome.beforePlayerState,
-        skipDataGain: outcome.skipped,
-      });
-    }
-    return { ok: false, message: `未知放置数据续体：${pending.resumeKind || "missing"}` };
-  }
+  const undoPort = browserHostModule.actionBar.createUndoPort({
+    getController: () => undoController,
+    submitUndo: browserHostCommandPort.bindValue("history_undo_pending"),
+  });
+  const { undoForRoot: undoPendingActionForRoot, undo: undoPendingAction } = undoPort;
+  const resumeDataPlacementContinuation = actionInteractionRuntimeModule.createDataPlacementContinuationRuntime({
+    getEffectExecutors: () => effectExecutors,
+    getIndustryRuntime: () => industryRuntime,
+  }).resume;
 
   actionInteractionRuntime = actionInteractionRuntimeModule.createActionInteractionRuntime({
     HISTORY_SOURCE_MAIN,
@@ -6423,12 +5982,9 @@
     clearActionPending,
   });
 
-  function confirmLandTargetChoice(choiceIndex = 0) {
-    return submitActiveCardDecision(
-      "land-target",
-      (target) => Number(target.choiceId) === Number(choiceIndex),
-    );
-  }
+  const confirmLandTargetChoice = actionInteractionRuntimeModule.createLandDecisionPort({
+    submitActiveDecision: submitActiveCardDecision,
+  }).confirm;
 
   const debugRuntimeController = debugRuntimeModule.createDebugRuntime({
     window,

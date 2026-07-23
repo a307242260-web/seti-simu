@@ -423,6 +423,48 @@
     return Object.freeze({ resize, syncTechRenderContext });
   }
 
+  function createCoordinatePort(context = {}) {
+    function getMovableTokensForPlayer(playerId) {
+      return context.runtime.getMovableTokensForPlayer(context.getRuleReadout(), playerId);
+    }
+    function getEarthSectorCoordinate() {
+      return context.runtime.getEarthSectorCoordinate(context.getRuleReadout());
+    }
+    function syncPlanetOrbitLandMarkers() {
+      return context.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
+    }
+    function seedDefaultReferenceRockets() {
+      return context.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
+    }
+    return Object.freeze({
+      getMovableTokensForPlayer,
+      getEarthSectorCoordinate,
+      syncPlanetOrbitLandMarkers,
+      seedDefaultReferenceRockets,
+    });
+  }
+
+  function createFrameRenderScheduler(context = {}) {
+    function queue() {
+      if (context.state.stateReadoutRenderFrame) return;
+      context.state.stateReadoutRenderFrame = context.requestAnimationFrame(() => {
+        context.state.stateReadoutRenderFrame = 0;
+        context.render();
+      });
+    }
+    return Object.freeze({ queue });
+  }
+
+  function createMovePaymentAiGuard(context = {}) {
+    return function block(message = null) {
+      const player = context.getMovePaymentPlayer();
+      return context.blockManualInput(
+        message || `${player?.colorLabel || "电脑玩家"}AI 正在确认移动支付`,
+        player,
+      );
+    };
+  }
+
   function createInteractionChrome(context = {}) {
     const { els = {} } = context;
     function syncPublicScanConfirmButton() {
@@ -2097,6 +2139,9 @@
     createCardHoverPreviewRuntime,
     createCoordinateRuntime,
     createBrowserLayoutRuntime,
+    createCoordinatePort,
+    createFrameRenderScheduler,
+    createMovePaymentAiGuard,
     createInteractionChrome,
     createPlayerHandTitlePresenter,
   };

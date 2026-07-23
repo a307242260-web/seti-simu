@@ -198,5 +198,14 @@
     });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, createResidentRenderer });
+  function createDesktopRenderPort(context = {}) {
+    return function render() {
+      const input = context.createRenderInput();
+      if (!input) return;
+      context.renderer.renderAll(input);
+      context.decisionRenderer.render(input);
+    };
+  }
+
+  return Object.freeze({ SCHEMA_VERSION, createResidentRenderer, createDesktopRenderPort });
 });

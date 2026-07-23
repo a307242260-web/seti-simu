@@ -16,8 +16,9 @@
 | render/log runtime | 11,997 | `render-runtime.js`、`action-log-runtime.js` 等 |
 | 最终严格验收 | 9,930 | `final-score-ai-runtime.js`、`turn-end-flow.js`、`action-interaction-runtime.js` |
 | Browser Host 薄壳收口 | 7,311 | projection/input、working state、continuation、回合/行动/效果 Browser 端口 |
+| Browser Host 职责复核 | 6,604 | Host command registry、Standard Action continuation、Effect/Decision/领域流程全部迁入既有 owner |
 
-本轮在 StateStore/Browser Host/Policy 集成后的 11,532 行基线上继续按职责迁移，最终为 7,311 行、88 个顶层函数。行数只作反弹信号；真正门禁是入口不再包含生产 DOM 构建/事件绑定、simulation/no-op 分支、领域算法正文或 mutable working root facade。
+本轮在 StateStore/Browser Host/Policy 集成后的 11,532 行基线上继续按职责迁移，职责复核后为 6,604 行、0 个顶层 `function` 声明。行数只作反弹信号；真正门禁是入口不再包含生产 DOM 构建/事件绑定、Host command switch、Standard Action continuation 正文、simulation/no-op 分支、领域算法正文或 mutable working root facade。
 
 ## 2. 加载与装配顺序
 
@@ -118,7 +119,7 @@
 
 - `app/aliens/species-runtime.js` 当前 4,455 行，超过约 3,000 行。当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
 - `app/ai-controller.js` 当前 1,980 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
-- `app.js` 已作为无构建页面的显式 composition root 收口；剩余函数只承担跨 runtime continuation 或启动接线。常驻玩家统计/readout、Action Bar/quick panel/effect bar、Browser 下载、布局/交互 chrome、初始选择、登陆与扫描 picker、working state、continuation selector、回合读数/控制和标准输入路由均已有明确 owner。
+- `app.js` 已作为无构建页面的显式 composition root 收口；顶层函数声明为零，只保留依赖收集、runtime/port 实例化、声明式 handler/context 注入和页面启动接线。常驻玩家统计/readout、Action Bar/quick panel/effect bar、Browser 下载、布局/交互 chrome、初始选择、登陆与扫描 picker、working state、continuation selector、回合读数/控制和标准输入路由均已有明确 owner。
 - 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
 
 ## 7. 验证基线

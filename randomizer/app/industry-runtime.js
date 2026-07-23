@@ -11,6 +11,28 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  function createIndustryStartupRuntime(context = {}) {
+    function apply(workingRoot) {
+      if (!workingRoot?.playerState || !workingRoot?.finalScoringState) {
+        throw new TypeError("applyIndustryStartupPassives 缺少 workingRoot");
+      }
+      for (const player of workingRoot.playerState.players) {
+        if (context.industry?.shouldInitializeStrategyPassiveMarkers?.(player)) context.industry.initializeStrategyPassiveMarkers(player);
+        if (context.industry?.shouldInitializeHeliosPassiveMarkers?.(player)) context.industry.initializeHeliosPassiveMarkers(player);
+        if (context.industry?.shouldInitializeAlienLabPanels?.(player)) context.industry.initializeAlienLabPanels(player);
+        if (context.industry?.shouldInitializeFutureSpan?.(player)) context.industry.initializeFutureSpanState(player);
+        if (!context.industry?.shouldPlaceMissionStartupFinalMark?.(player)) continue;
+        const markResult = context.finalScoring.placeDirectMarkAtSlot(workingRoot.finalScoringState, "c", player, 3, {
+          tokenSrc: context.getNormalTokenAssetForPlayer(player),
+          source: "mission_relay_startup",
+        });
+        if (!markResult.ok) workingRoot.rocketState.statusNote = markResult.message;
+      }
+      context.renderFinalScoreBoard();
+    }
+    return Object.freeze({ apply });
+  }
+
   function createIndustryRuntime(context = {}) {
     const {
       Array,
@@ -2172,5 +2194,5 @@
     };
   }
 
-  return { createIndustryRuntime };
+  return { createIndustryRuntime, createIndustryStartupRuntime };
 });

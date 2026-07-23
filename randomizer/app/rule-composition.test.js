@@ -545,9 +545,10 @@ function createHarness(initialValue = 0) {
   );
   assert.match(effectChoiceSource, /workingRoot[\s\S]*?probeSectorScanContinuation/, "探测器扫描规则上下文必须归 Composition continuation");
   assert.match(effectChoiceSource, /uiRuntimeState\?\.probeSectorSelectedRocketIds/, "探测器多选高亮只能进入 uiRuntimeState");
-  assert.match(appSource, /function handleProbeSectorScanChoice[\s\S]*?maxTargets === 1[\s\S]*?submitActiveCardDecision/, "探测器单选必须提交 active Decision choice");
-  assert.match(appSource, /function confirmProbeSectorScanSelection[\s\S]*?submitActiveCardDecision/, "探测器多选确认必须提交 active Decision choice");
-  assert.match(appSource, /function handleProbeLocationRewardChoice[\s\S]*?submitActiveCardDecision/, "探测器位置奖励必须提交 active Decision choice");
+  assert.match(scanFlowSource, /function createProbeDecisionPort[\s\S]*?maxTargets === 1[\s\S]*?submitActiveDecision/, "探测器单选必须由 Scan Decision port 提交 active Decision choice");
+  assert.match(scanFlowSource, /function confirmSectorSelection[\s\S]*?submitActiveDecision/, "探测器多选确认必须由 Scan Decision port 提交 active Decision choice");
+  assert.match(scanFlowSource, /function handleLocationRewardChoice[\s\S]*?submitActiveDecision/, "探测器位置奖励必须由 Scan Decision port 提交 active Decision choice");
+  assert.doesNotMatch(appSource, /function handleProbeSectorScanChoice|function confirmProbeSectorScanSelection|function handleProbeLocationRewardChoice/, "探测器 Decision 函数体不得回流 app.js");
   assert.doesNotMatch(aiProductionSource, /runAiProbeSectorScanDecision|runAiProbeLocationRewardDecision|pendingProbeSectorScanAction|pendingProbeLocationRewardAction/, "探测器选择 AI 不得保留专用 pending resolver");
   const actionInteractionSource = fs.readFileSync(path.join(__dirname, "action-interaction-runtime.js"), "utf8");
   assert.doesNotMatch([appSource, actionInteractionSource].join("\n"), /["']data_placement["']|peek\([^\n]*data_placement|open\([^\n]*data_placement|clear\([^\n]*data_placement/, "数据放置旧 store key/peek/mutation 必须物理删除");

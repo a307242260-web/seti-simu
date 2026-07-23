@@ -11,6 +11,16 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  function createTechSelectionCompletionPort(context = {}) {
+    return function finish(workingRoot) {
+      context.tech.setTechSelectionActive(workingRoot.techGameState, false);
+      context.tech.cancelPendingTake(workingRoot.techGameState);
+      workingRoot.techGameState.ui.statusNote = "";
+      context.syncTechSelectionChrome();
+      context.renderTechBoard();
+    };
+  }
+
   function createTechRuntime(context = {}) {
     const simulation = context.simulation === true;
     const {
@@ -1254,5 +1264,5 @@
     };
   }
 
-  return { createTechRuntime };
+  return { createTechRuntime, createTechSelectionCompletionPort };
 });

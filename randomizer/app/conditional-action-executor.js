@@ -375,10 +375,113 @@
     });
   }
 
+  function createStandardActionContinuation(context = {}) {
+    const alienDraftConsumers = Object.freeze({
+      "chong-fossil-choice": "takeChongFossilDecisionDraft",
+      "amiba-symbol-choice": "takeAmibaSymbolDecisionDraft",
+      "runezu-symbol-branch": "takeRunezuSymbolBranchDecisionDraft",
+      "runezu-face-symbol-choice": "takeRunezuFaceSymbolDecisionDraft",
+      "runezu-card-gain": "takeRunezuCardGainDecisionDraft",
+      "amiba-card-gain": "takeAmibaCardGainDecisionDraft",
+      "aomomo-card-gain": "takeAomomoCardGainDecisionDraft",
+      "yichangdian-card-gain": "takeYichangdianCardGainDecisionDraft",
+      "banrenma-card-gain": "takeBanrenmaCardGainDecisionDraft",
+      "chong-card-gain": "takeChongCardGainDecisionDraft",
+      "amiba-trace-removal": "takeAmibaTraceRemovalDecisionDraft",
+      "jiuzhe-card-play": "takeJiuzheCardPlayDecisionDraft",
+      "jiuzhe-card-skip": "takeJiuzheCardPlayDecisionDraft",
+      "banrenma-panel-bonus": "takeBanrenmaOpportunityDecisionDraft",
+      "banrenma-card-condition": "takeBanrenmaOpportunityDecisionDraft",
+    });
+
+    function consumeConditionalDraft(workingRoot, kind) {
+      if (kind === "yichangdian-corner-choice") {
+        context.getEffectExecutors()?.takeYichangdianCornerAction?.();
+      } else {
+        const method = alienDraftConsumers[kind];
+        if (method) context.getAlienSpeciesRuntime()?.[method]?.();
+      }
+      if (kind === "probe-sector-selection") delete workingRoot.match.probeSectorScanContinuation;
+      if (kind === "probe-location-reward") delete workingRoot.match.probeLocationRewardContinuation;
+      if (kind === "sector-scan-target") context.closeScanTargetPickerForRoot(workingRoot);
+    }
+
+    function inspect(workingRoot) {
+      const conditional = context.enumerateConditionalActionsForRoot(workingRoot);
+      const candidates = (conditional.candidates || []).filter((candidate) => candidate?.available !== false);
+      if (candidates.length) {
+        consumeConditionalDraft(workingRoot, candidates[0]?.target?.kind);
+        return {
+          ok: true,
+          boundary: "conditional_choice",
+          decisionType: "conditional_choice",
+          actorPlayer: conditional.actorPlayer || null,
+          ownerId: conditional.actorPlayer?.id || null,
+          family: candidates[0]?.family || null,
+          candidates,
+        };
+      }
+      const turnCandidates = context.enumerateTurnActionsForRoot(workingRoot);
+      if (turnCandidates.length || workingRoot.turnState.gameEnded) {
+        return {
+          ok: true,
+          boundary: workingRoot.turnState.gameEnded ? "terminal" : "turn_action",
+          decisionType: "turn_action",
+          actorPlayer: context.getCurrentPlayer(workingRoot.playerState),
+          candidates: turnCandidates,
+        };
+      }
+      const currentEffect = context.getCurrentActionEffect(workingRoot);
+      return {
+        ok: true,
+        boundary: "draining",
+        decisionType: null,
+        candidates: [],
+        actionEffectActive: context.isActionEffectFlowActive(workingRoot),
+        currentEffect: structuredClone(currentEffect || null),
+      };
+    }
+
+    function executeDeterministic(workingRoot, boundary) {
+      const deterministic = context.advanceDeterministicStateForRoot(workingRoot);
+      if (deterministic?.progressed) {
+        return {
+          ...deterministic,
+          ok: deterministic.ok !== false,
+          events: [{ type: "standard_action_deterministic_advance" }],
+        };
+      }
+      if (boundary?.actionEffectActive) {
+        const effectResult = context.executeCurrentActionEffectForRoot(workingRoot);
+        return {
+          ...(effectResult || {}),
+          ok: effectResult?.ok !== false,
+          progressed: effectResult?.ok !== false,
+          events: [{
+            type: "standard_action_deterministic_effect",
+            effectType: boundary.currentEffect?.type || effectResult?.type || null,
+            effectId: boundary.currentEffect?.id || effectResult?.effectId || null,
+          }],
+        };
+      }
+      return fail(
+        "SIMULATION_UNSUPPORTED_PENDING",
+        "存在未迁移的 simulation pending，Composition 拒绝 resolver/recover/skip fallback",
+      );
+    }
+
+    function resolveDecision(workingRoot, choice) {
+      return context.executeEffectChoice(workingRoot, choice);
+    }
+
+    return Object.freeze({ inspect, executeDeterministic, resolveDecision });
+  }
+
   return Object.freeze({
     DECISION_SCHEMA_VERSION,
     ACTION_FAMILIES,
     createConditionalActionExecutor,
     createConditionalCompositionRuntime,
+    createStandardActionContinuation,
   });
 });

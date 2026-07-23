@@ -94,7 +94,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/card-trigger-runtime.js`：任务就绪、1 型触发、任务确认、奖励队列和触发后的续跑；不在 `app.js` 复制任务/触发分支。
 - `randomizer/app/income-runtime.js`：弃牌收入、收入资源发放、轮开始公司收益和原教旨主义轮开始收入队列。
 - `randomizer/app/scan-flow.js`：公共牌/手牌扫描、扫描目标、扇区结算、延迟补牌及扫描收尾；扫描 pending 的确认、取消和续跑在该 flow 内完成。
-- `randomizer/app.js`：composition root 与跨 flow 顶层总控。可以维护状态所有权、组合规则模块、调度 continuation 和注入 context，但不应再新增卡牌/收入/扫描/任务触发、外星人/公司/debug、具体渲染、公开 API 或 AI 策略正文。
+- `randomizer/app.js`：Browser composition root。只收集依赖、实例化 Composition/Browser Host/领域 runtime、注入显式 context/handler 并启动页面；Host command switch、continuation、卡牌/收入/扫描/任务触发、外星人/公司/debug、具体渲染、公开 API 或 AI 策略正文均不得回流。
 - `randomizer/app.js` 只负责 Browser UI 与 Browser composition 装配；Simulation 不加载该入口。
 - `randomizer/app/render-runtime.js`：承接卡牌 hover、玩家/对手面板、手牌/保留牌、数据板、状态读出、火箭/marker、棋盘坐标转换与引用贴图适配；`app.js` 只保留渲染调度和跨 flow 刷新组合。
 

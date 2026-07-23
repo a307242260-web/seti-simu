@@ -6,7 +6,33 @@ const {
   DECISION_SCHEMA_VERSION,
   createConditionalActionExecutor,
   createConditionalCompositionRuntime,
+  createStandardActionContinuation,
 } = require("./conditional-action-executor");
+
+{
+  const consumed = [];
+  const candidate = { family: "choose_reward", target: { kind: "chong-fossil-choice" }, available: true };
+  const continuation = createStandardActionContinuation({
+    enumerateConditionalActionsForRoot: () => ({ actorPlayer: { id: "p1" }, candidates: [candidate] }),
+    enumerateTurnActionsForRoot: () => [],
+    getCurrentPlayer: () => ({ id: "p1" }),
+    getCurrentActionEffect: () => null,
+    isActionEffectFlowActive: () => false,
+    advanceDeterministicStateForRoot: () => null,
+    executeCurrentActionEffectForRoot: () => ({ ok: true }),
+    executeEffectChoice: (_root, choice) => ({ ok: true, choice }),
+    getAlienSpeciesRuntime: () => ({ takeChongFossilDecisionDraft: () => consumed.push("chong") }),
+    getEffectExecutors: () => ({}),
+    closeScanTargetPickerForRoot: () => consumed.push("scan"),
+  });
+  const root = { match: {}, turnState: { gameEnded: false }, playerState: {} };
+  const boundary = continuation.inspect(root);
+  assert.equal(boundary.boundary, "conditional_choice");
+  assert.equal(boundary.ownerId, "p1");
+  assert.deepEqual(consumed, ["chong"]);
+  assert.equal(continuation.resolveDecision(root, candidate).ok, true);
+  assert.equal(continuation.executeDeterministic(root, {}).code, "SIMULATION_UNSUPPORTED_PENDING");
+}
 
 function createRoot() {
   return {

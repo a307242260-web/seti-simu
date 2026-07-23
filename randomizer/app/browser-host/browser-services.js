@@ -319,6 +319,40 @@
     return Object.freeze({ submit, bindValue, bindResult });
   }
 
+  function createHostCommandDispatcher(options = {}) {
+    if (typeof options.getHandlers !== "function") {
+      throw new TypeError("HostCommandDispatcher 需要 getHandlers");
+    }
+    function execute(workingRoot, command = {}) {
+      const handler = options.getHandlers()?.[command.kind];
+      if (typeof handler !== "function") {
+        return fail("BROWSER_HOST_COMMAND_UNKNOWN", `未知 Browser host command: ${command.kind || "<missing>"}`);
+      }
+      return handler(workingRoot, command);
+    }
+    return Object.freeze({ execute });
+  }
+
+  function createOperationCommandHandler(options = {}) {
+    return (workingRoot, command = {}) => {
+      const operation = options.getTarget()?.[command.operation];
+      if (typeof operation !== "function") {
+        return fail(options.unknownCode, `未知 ${options.label} command: ${command.operation || "<missing>"}`);
+      }
+      return {
+        ok: true,
+        value: options.clonePresentation(operation(workingRoot, ...(command.args || []))),
+      };
+    };
+  }
+
+  function createStatusNoteCommandHandler() {
+    return (workingRoot, command) => {
+      workingRoot.rocketState.statusNote = command.message;
+      return { ok: true, value: command.message };
+    };
+  }
+
   function subscribeRefresh(options = {}) {
     const refresh = requireFunction(options, "refresh", "Browser refresh subscription");
     const unsubscribers = [];
@@ -335,6 +369,9 @@
     VIEW_SCHEMA_VERSION,
     createBrowserServices,
     createHostCommandPort,
+    createHostCommandDispatcher,
+    createOperationCommandHandler,
+    createStatusNoteCommandHandler,
     createBrowserDownloadPort,
     createDomainCommandPort,
     LEGACY_DOMAIN_COMMANDS,

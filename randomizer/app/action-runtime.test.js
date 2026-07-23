@@ -10,6 +10,17 @@ assert.deepEqual(source, [1, 2, 3]);
 assert.deepEqual([...shuffled].sort(), source);
 
 {
+  const port = actionRuntime.createActionRuntimePort({
+    getController: () => ({
+      handleActionEffectButtonClick: (_root, index) => index,
+      dispatchAction: (action) => ({ ok: true, action }),
+    }),
+  });
+  assert.equal(port.handleActionEffectButtonClickForRoot({}, 2), 2);
+  assert.equal(port.beginScanAction().action.family, "scan");
+}
+
+{
   const calls = [];
   const registry = actionRuntime.createCompositionActionRegistry({
     getController: () => ({

@@ -1093,6 +1093,40 @@
     return Object.freeze({ recordMainActionIrreversibleBarrier });
   }
 
+  function createEffectExecutionPort(context = {}) {
+    function maybeCompleteFromScan(workingRoot, result) {
+      if (!result?.ok || !context.isActionEffectFlowActive()) return;
+      const current = context.getCurrentActionEffect(workingRoot);
+      if (current) current.result = result;
+      context.completeCurrentActionEffect(workingRoot);
+    }
+    function executeForOwner(...args) {
+      return context.getExecutors().executeActionEffectForOwner(...args);
+    }
+    return Object.freeze({ maybeCompleteFromScan, executeForOwner });
+  }
+
+  function createEffectHistoryPort(context = {}) {
+    return Object.freeze({
+      recordAbilityCommands(result, history = context.actionHistory, workingRoot) {
+        return context.recordAbilityCommandsForRoot(workingRoot, result, history);
+      },
+      recordAtomicActionHistory(actionType, label, result, options = {}) {
+        return context.recordAtomicActionHistoryForRoot(actionType, label, result, {
+          ...options,
+          workingRoot: options.workingRoot,
+        });
+      },
+    });
+  }
+
+  function createEffectExecutorQueryPort(context = {}) {
+    return Object.freeze({
+      getPendingYichangdianCornerAction: () => context.getExecutors()?.getYichangdianCornerAction?.() || null,
+      getPendingYichangdianCornerCards: (...args) => context.getExecutors()?.getPendingYichangdianCornerCards?.(...args) || [],
+    });
+  }
+
   function createEffectSubFlowCancellationRuntime(context = {}) {
     const uiRuntimeState = context.uiRuntimeState || {};
 
@@ -1406,6 +1440,9 @@
     createEffectFlowHelpers,
     createEffectFlowUndoRuntime,
     createIrreversibleBarrierRuntime,
+    createEffectExecutionPort,
+    createEffectHistoryPort,
+    createEffectExecutorQueryPort,
     createEffectSubFlowCancellationRuntime,
     createEffectFlowCompletionRuntime,
     createEffectFlowStateRuntime,

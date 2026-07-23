@@ -585,6 +585,49 @@
     return Object.freeze({ getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId });
   }
 
+  function createDataPlacementContinuationRuntime(context = {}) {
+    function resume(workingRoot, pending, outcome) {
+      const effect = pending?.effect;
+      if (!effect) return { ok: false, message: "放置数据续体缺少效果上下文" };
+      if (pending.resumeKind === "gain-data-reward") {
+        const executors = context.getEffectExecutors();
+        const player = executors.getEffectTargetPlayer(workingRoot, effect);
+        return executors.finishGainDataRewardEffect(
+          workingRoot,
+          effect,
+          player,
+          Math.max(0, Math.round(effect.options?.count || 0)),
+          effect.options?.source || "planet_reward",
+          {
+            placementMessages: outcome.messages,
+            restoreRecorded: outcome.restoreRecorded,
+            skipGain: outcome.skipped,
+          },
+        );
+      }
+      if (pending.resumeKind === "industry-strategy-passive") {
+        return context.getIndustryRuntime().finishIndustryStrategyPassiveRewardEffect(workingRoot, effect, {
+          placementMessages: outcome.messages,
+          restoreRecorded: outcome.restoreRecorded,
+          beforePlayerState: outcome.beforePlayerState,
+          skipDataGain: outcome.skipped,
+        });
+      }
+      return { ok: false, message: `未知放置数据续体：${pending.resumeKind || "missing"}` };
+    }
+    return Object.freeze({ resume });
+  }
+
+  function createLandDecisionPort(context = {}) {
+    function confirm(choiceIndex = 0) {
+      return context.submitActiveDecision(
+        "land-target",
+        (target) => Number(target.choiceId) === Number(choiceIndex),
+      );
+    }
+    return Object.freeze({ confirm });
+  }
+
   function createLandTargetContinuationRuntime(context = {}) {
     function resume(workingRoot, pending, choice) {
       const actionType = pending.actionType || choice.actionType || (choice.kind === "orbit" ? "orbit" : "land");
@@ -1845,6 +1888,8 @@
     createActionInteractionPort,
     createDataAnalyzeInteractionRuntime,
     createBoardQueryRuntime,
+    createDataPlacementContinuationRuntime,
+    createLandDecisionPort,
     createLandTargetContinuationRuntime,
     createActionInteractionRuntime,
   };

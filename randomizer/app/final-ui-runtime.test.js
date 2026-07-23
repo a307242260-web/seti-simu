@@ -2,6 +2,22 @@
 
 const assert = require("node:assert/strict");
 const { createFinalUiRuntime } = require("./final-ui-runtime");
+const { createFinalUiPort } = require("./final-ui-runtime");
+
+{
+  const port = createFinalUiPort({
+    runtime: {
+      syncFinalScorePendingMarks: (root) => ({ root }),
+      handleFinalScoreTileClick: (root, tileId) => ({ root, tileId }),
+    },
+    submitHostCommand: (command) => ({ command }),
+  });
+  const root = { id: "root" };
+  assert.equal(port.syncFinalScorePendingMarks(root).root, root);
+  assert.equal(port.syncFinalScorePendingMarks().command.kind, "score_sync_pending_marks");
+  assert.equal(port.handleFinalScoreTileClick("a", root).tileId, "a");
+  assert.equal(port.handleFinalScoreTileClick("b").command.tileId, "b");
+}
 
 function createClassList(element) {
   const values = new Set();

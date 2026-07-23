@@ -1134,7 +1134,14 @@
     };
   }
 
+  function createFinalScoreAiPort(context = {}) {
+    return Object.freeze({
+      runDecision: (...args) => context.getRuntime()?.runAiFinalScoreMarkDecision(...args) || null,
+    });
+  }
+
   return {
     createFinalScoreAiRuntime,
+    createFinalScoreAiPort,
   };
 });

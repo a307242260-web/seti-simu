@@ -289,6 +289,36 @@
     });
   }
 
+  function createPlayerLookupRuntime(context = {}) {
+    const isWorkingRoot = (value) => Boolean(value?.playerState && value?.rocketState && value?.turnState);
+    function getPlayerById(rootOrId, explicitId = null) {
+      const workingRoot = isWorkingRoot(rootOrId) ? rootOrId : null;
+      const id = workingRoot ? explicitId : rootOrId;
+      const source = workingRoot ? workingRoot.playerState : context.createReadoutRoot().playerState;
+      return source.players.find((player) => player.id === id) || null;
+    }
+    function getCurrentPlayer(workingRoot = null) {
+      if (context.uiRuntimeState.effectExecutionPlayerId) {
+        const effectPlayer = isWorkingRoot(workingRoot)
+          ? getPlayerById(workingRoot, context.uiRuntimeState.effectExecutionPlayerId)
+          : getPlayerById(context.uiRuntimeState.effectExecutionPlayerId);
+        if (effectPlayer) return effectPlayer;
+      }
+      const source = isWorkingRoot(workingRoot)
+        ? workingRoot.playerState
+        : context.createReadoutRoot().playerState;
+      return context.players.getCurrentPlayer(source);
+    }
+    function getPlayerByColor(workingRootOrColor, explicitColor = null) {
+      const workingRoot = isWorkingRoot(workingRootOrColor) ? workingRootOrColor : null;
+      const color = workingRoot ? explicitColor : workingRootOrColor;
+      const normalizedColor = context.players.normalizePlayerColor(color);
+      const source = workingRoot ? workingRoot.playerState : context.createReadoutRoot().playerState;
+      return source.players.find((player) => player.color === normalizedColor) || null;
+    }
+    return Object.freeze({ isBrowserWorkingRoot: isWorkingRoot, getPlayerById, getCurrentPlayer, getPlayerByColor });
+  }
+
   function createBrowserContextRuntime(context = {}) {
     function getInterfacePlayer() {
       const { playerState, turnState } = context.createReadoutRoot();
@@ -426,6 +456,7 @@
     createBrowserHostState,
     createBrowserMatchRuntime,
     createPlayerEffectOwnerRuntime,
+    createPlayerLookupRuntime,
     createBrowserContextRuntime,
     createBrowserWorkingStateAdapter,
   };

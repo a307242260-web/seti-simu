@@ -1744,9 +1744,46 @@
     return Object.freeze({ listReadyForRoot, listReady });
   }
 
+  function createYichangdianAnomalyRuntime(context = {}) {
+    function triggerForEarthX(workingRoot, earthX) {
+      const alienState = workingRoot.alienGameState;
+      const anomaly = context.yichangdian?.getAnomalyBySectorX?.(alienState, earthX);
+      const alienSlotId = alienState.yichangdian?.revealedSlotId;
+      if (!anomaly || !alienSlotId) {
+        context.yichangdian?.updateNextAnomaly?.(alienState, earthX);
+        return null;
+      }
+      const traceEntry = context.yichangdian.getTopTraceEntry(alienState, alienSlotId, anomaly.traceType);
+      const player = context.findPlayerForEntry(traceEntry);
+      const reward = context.yichangdian.getAnomalyReward(anomaly.markerId);
+      if (!player || !reward) return null;
+      anomaly.triggeredCount = Math.max(0, Math.round(Number(anomaly.triggeredCount) || 0)) + 1;
+      const rewardResult = context.applyRewardToPlayer(player, reward, `异常点 ${anomaly.markerId}`);
+      if (reward.pickCard) {
+        context.beginCardSelection({
+          type: "yichangdian_anomaly_pick",
+          player,
+          allowBlindDraw: true,
+          effectLabel: `异常点 ${anomaly.markerId}`,
+        });
+      }
+      context.yichangdian.updateNextAnomaly(alienState, earthX);
+      return {
+        ok: rewardResult.ok,
+        anomaly,
+        playerId: player.id,
+        reward,
+        events: [{ type: "yichangdianAnomaly", playerId: player.id, markerId: anomaly.markerId }],
+        message: rewardResult.message,
+      };
+    }
+    return Object.freeze({ triggerForEarthX });
+  }
+
   return {
     createAlienRuntimeHelpers,
     createNeutralScoreTraceRuntime,
     createChongTransportRuntime,
+    createYichangdianAnomalyRuntime,
   };
 });
