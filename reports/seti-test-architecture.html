@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 新架构测试全景</title>
+  <style>
+    :root {
+      --ink: #20242a;
+      --muted: #5c6570;
+      --line: #b9c1ca;
+      --soft: #f4f6f8;
+      --blue: #285d8e;
+      --blue-soft: #edf4fa;
+      --green: #23653d;
+      --green-soft: #edf7f0;
+      --amber: #8b5d16;
+      --amber-soft: #fbf5e9;
+      --red: #8b3c3c;
+      --red-soft: #fbefef;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 44px 0 72px; }
+    header { padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.25; letter-spacing: -.02em; }
+    h2 { margin: 0 0 14px; font-size: 21px; line-height: 1.35; }
+    h3 { margin: 0 0 5px; font-size: 15px; }
+    p { margin: 0; color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; }
+    section { margin-top: 38px; }
+    .meta { margin-bottom: 8px; color: var(--blue); font: 600 12px/1.4 "SFMono-Regular", Consolas, monospace; }
+    .summary { max-width: 980px; }
+    .verdict { padding: 15px 17px; border-left: 3px solid var(--green); background: var(--green-soft); color: #31483a; }
+    .verdict b { color: #203f2b; }
+
+    .metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .metric { padding: 14px 15px; border: 1px solid var(--line); background: #fff; }
+    .metric strong { display: block; color: var(--blue); font: 700 25px/1.15 "SFMono-Regular", Consolas, monospace; }
+    .metric span { color: var(--muted); font-size: 12px; }
+
+    .architecture { border: 1px solid var(--line); background: var(--soft); padding: 20px; }
+    .runner { width: fit-content; margin: 0 auto 17px; padding: 11px 20px; border: 1px solid #9db6cc; background: var(--blue-soft); text-align: center; }
+    .runner b { display: block; color: var(--blue); }
+    .branches { display: grid; grid-template-columns: 3fr 1fr; gap: 14px; position: relative; }
+    .branch { padding: 15px; border: 1px solid var(--line); background: #fff; }
+    .branch-title { margin-bottom: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--line); }
+    .branch-title b { display: block; }
+    .branch-title span { color: var(--muted); font-size: 12px; }
+    .unit-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .group { min-height: 165px; padding: 12px; border: 1px solid var(--line); }
+    .group.arch { background: var(--blue-soft); border-color: #b7cada; }
+    .group.rules { background: var(--green-soft); border-color: #bad3c2; }
+    .group.policy { background: var(--amber-soft); border-color: #dccba9; }
+    .group ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+    .group li + li { margin-top: 2px; }
+    .flow { display: grid; place-items: center; min-height: 225px; text-align: center; background: var(--green-soft); border-color: #bad3c2; }
+    .flow strong { display: block; color: var(--green); font: 700 30px/1.2 "SFMono-Regular", Consolas, monospace; }
+    .flow code { display: block; margin-top: 8px; overflow-wrap: anywhere; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-size: 13px; }
+    td { color: #46505b; }
+    td:first-child { font-weight: 600; color: var(--ink); }
+    .count { width: 76px; text-align: right; font: 600 13px/1.6 "SFMono-Regular", Consolas, monospace; color: var(--blue); }
+    .status { color: var(--green); font-weight: 600; }
+
+    .evidence { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .evidence article { padding: 15px 16px; border: 1px solid var(--line); }
+    .evidence .n { display: block; margin-bottom: 7px; color: var(--blue); font: 700 12px/1 "SFMono-Regular", Consolas, monospace; }
+    .evidence p { font-size: 13px; }
+
+    details { border: 1px solid var(--line); }
+    summary { cursor: pointer; padding: 13px 15px; background: var(--soft); font-weight: 600; }
+    .deleted-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .deleted-grid div { padding: 8px 13px; border-top: 1px solid var(--line); color: var(--muted); font: 12px/1.45 "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; }
+    .deleted-grid div:nth-child(odd) { border-right: 1px solid var(--line); }
+    .note { margin-top: 10px; color: var(--muted); font-size: 13px; }
+    footer { margin-top: 38px; padding-top: 14px; border-top: 1px solid var(--line); color: #77808b; font-size: 12px; }
+
+    @media (max-width: 900px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .branches, .unit-groups, .evidence { grid-template-columns: 1fr; }
+      .flow { min-height: auto; }
+    }
+    @media (max-width: 620px) {
+      main { width: min(100% - 24px, 1180px); padding-top: 28px; }
+      h1 { font-size: 25px; }
+      .metrics, .deleted-grid { grid-template-columns: 1fr; }
+      .deleted-grid div:nth-child(odd) { border-right: 0; }
+      table { table-layout: fixed; font-size: 12px; line-height: 1.45; }
+      th, td { padding: 8px 6px; overflow-wrap: anywhere; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="meta">SETI / TEST ARCHITECTURE / 2026-07-23</div>
+    <h1>新架构测试全景</h1>
+    <p class="summary">这份报告呈现当前测试体系：每个测试属于哪个正式架构 owner、承担什么行为义务、覆盖什么反例，以及默认回归如何阻止旧实现门禁重新进入。</p>
+  </header>
+
+  <section>
+    <div class="verdict"><b>最终判断：</b>默认测试已经收敛为 69 个架构/规则/策略 unit 与唯一 1 个 full-flow。32 个无法证明必要性的旧 app/tooling 测试已物理删除；inventory 逐项登记 owner、义务和反例，runner 会拒绝磁盘上任何未登记测试。当前基线满足 SETI-140 的目标。</div>
+  </section>
+
+  <section>
+    <div class="metrics">
+      <div class="metric"><strong>69</strong><span>正式 unit</span></div>
+      <div class="metric"><strong>1</strong><span>唯一 full-flow</span></div>
+      <div class="metric"><strong>32</strong><span>旧测试物理删除</span></div>
+      <div class="metric"><strong>0</strong><span>未登记测试</span></div>
+      <div class="metric"><strong>5/5</strong><span>Chrome smoke</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>当前测试架构</h2>
+    <div class="architecture">
+      <div class="runner"><b>tools/run_node_tests.js</b><span>递归发现全部 .test.js → 与显式 inventory 双向校验 → 只允许 unit + 唯一 fullFlow</span></div>
+      <div class="branches">
+        <div class="branch">
+          <div class="branch-title"><b>unit · 69</b><span>每一项都有 file / owner / obligation / counterexample</span></div>
+          <div class="unit-groups">
+            <article class="group arch">
+              <h3>Architecture · 37</h3>
+              <ul>
+                <li>Browser Host · 11</li>
+                <li>Effect Session · 8</li>
+                <li>Simulation Host · 7</li>
+                <li>StateStore · 5</li>
+                <li>Policy Host · 3</li>
+                <li>Standard Action · 2</li>
+                <li>Rule Composition · 1</li>
+              </ul>
+            </article>
+            <article class="group rules">
+              <h3>Rules · 29</h3>
+              <ul>
+                <li>Aliens · 10</li>
+                <li>Actions · 8</li>
+                <li>Scoring · 4</li>
+                <li>Cards · 3</li>
+                <li>Data · 2</li>
+                <li>Tech · 2</li>
+              </ul>
+            </article>
+            <article class="group policy">
+              <h3>Policy · 3</h3>
+              <ul>
+                <li>Heuristic Policy · 1</li>
+                <li>Heuristic Evaluator · 1</li>
+                <li>Selection Evaluator · 1</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+        <div class="branch flow">
+          <div>
+            <strong>1</strong>
+            <h3>Full-flow</h3>
+            <p>正式 Action / Decision 到版本化权威盘面</p>
+            <code>standard-flow.test.js</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>正式 owner 覆盖</h2>
+    <table>
+      <thead><tr><th>Owner</th><th class="count">数量</th><th>它负责证明什么</th><th>关键反例</th></tr></thead>
+      <tbody>
+        <tr><td>StateStore</td><td class="count">5</td><td>快照隔离、版本单调、CAS、schema 水合与确定性恢复。</td><td>旧版本覆盖新状态、可写引用污染 committed state。</td></tr>
+        <tr><td>Standard Action</td><td class="count">2</td><td>Action identity、22 family 生产注册、phase 与 handler 前校验。</td><td>unknown、stale、越权 descriptor 到达领域 handler。</td></tr>
+        <tr><td>Effect Session</td><td class="count">8</td><td>working copy、Decision、queue、journal、barrier、commit/abort。</td><td>多选被代选、失败 effect 入 journal、脏 working copy 被提交。</td></tr>
+        <tr><td>Rule Composition</td><td class="count">1</td><td>registry、session 和原子提交由组合层单一持有。</td><td>handler 或 renderer 失败污染权威状态。</td></tr>
+        <tr><td>Browser Host</td><td class="count">11</td><td>单向 projection、ViewState 隔离、人类与 Policy 共用正式输入。</td><td>隐藏信息泄漏、renderer 回写规则、旧 DOM choice 被重新解释。</td></tr>
+        <tr><td>Simulation Host</td><td class="count">7</td><td>rules-only API、step/reward/terminal、checkpoint、replay 与 worker 恢复。</td><td>篡改 action、错误 actor/schema、terminal 或 dispose 后继续提交。</td></tr>
+        <tr><td>Policy Host</td><td class="count">3</td><td>请求代次、deadline、取消、迟到、重复和合法 actionId 门禁。</td><td>旧 generation 或迟到响应推进当前回合。</td></tr>
+        <tr><td>Rules</td><td class="count">29</td><td>行动、卡牌、数据、科技、外星人和计分的领域不变量。</td><td>资源不足、非法目标、重复奖励或失败操作产生部分写入。</td></tr>
+        <tr><td>Policy</td><td class="count">3</td><td>策略确定性、稳定排序、代表性选择估值且不改输入。</td><td>返回非法 actionId、tie-break 漂移、修改 observation。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>关键证据链</h2>
+    <div class="evidence">
+      <article><span class="n">E1 · INVENTORY</span><h3>磁盘与清单双射</h3><p>runner 递归扫描 <code>randomizer/**/*.test.js</code>；缺文件、重复登记、字段缺失、未登记文件或 full-flow 数量不为 1 均立即失败。</p></article>
+      <article><span class="n">E2 · BEHAVIOR</span><h3>测试公共行为，不读源码形态</h3><p>保留测试通过公共 API、正式 composition 和生产 registry 构造反例；不以正则、字符串、AST 或文件布局证明架构完成。</p></article>
+      <article><span class="n">E3 · BROWSER</span><h3>真实 Chrome 单独验收</h3><p>固定覆盖页面 projection/人类输入、卡牌 Decision、Policy 输入、保存恢复和公司/外星 Decision，不伪装成 Node unit。</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>删除范围</h2>
+    <details>
+      <summary>查看已物理删除的 32 个旧测试</summary>
+      <div class="deleted-grid">
+        <div>action-interaction-runtime.test.js</div><div>action-log-export.test.js</div>
+        <div>action-log-runtime.test.js</div><div>action-runtime.test.js</div>
+        <div>alien-runtime.test.js</div><div>alien-trace-reward-flow.test.js</div>
+        <div>alien-ui.test.js</div><div>aliens/species-runtime.test.js</div>
+        <div>bootstrap.test.js</div><div>card-runtime.test.js</div>
+        <div>card-trigger-runtime.test.js</div><div>conditional-action-executor.test.js</div>
+        <div>constants.test.js</div><div>debug-runtime.test.js</div>
+        <div>effect-choice-flow.test.js</div><div>effect-flow.test.js</div>
+        <div>effects/executors.test.js</div><div>engine-action-executor.test.js</div>
+        <div>final-ui-runtime.test.js</div><div>hand-flow.test.js</div>
+        <div>income-runtime.test.js</div><div>industry-runtime.test.js</div>
+        <div>primary-board-action-executor.test.js</div><div>quick-turn-action-executor.test.js</div>
+        <div>refresh.test.js</div><div>render-runtime.test.js</div>
+        <div>runtime.test.js</div><div>scan-flow.test.js</div>
+        <div>score-source-runtime.test.js</div><div>start-screen.test.js</div>
+        <div>tech-runtime.test.js</div><div>turn-flow.test.js</div>
+      </div>
+    </details>
+    <p class="note">删除不等于丢失规则证据：有正式 owner 的反例已由 Standard Action、Effect Session、Browser Host、Simulation Host、规则领域或唯一 full-flow 接管；图片文件名、Markdown 导出格式、debug 辅助入口和 renderer helper 调用顺序等非架构义务不再接管。</p>
+  </section>
+
+  <section>
+    <h2>最终验证</h2>
+    <table>
+      <thead><tr><th>检查</th><th>结果</th><th>命令或证据</th></tr></thead>
+      <tbody>
+        <tr><td>磁盘与 inventory 一致</td><td class="status">PASS · 70 = 70</td><td>未登记 0，缺失 0，full-flow 恰好 1。</td></tr>
+        <tr><td>Node unit</td><td class="status">PASS · 69/69</td><td><code>node tools/run_node_tests.js</code></td></tr>
+        <tr><td>唯一 full-flow</td><td class="status">PASS · 1/1</td><td><code>randomizer/full-flow/standard-flow.test.js</code></td></tr>
+        <tr><td>真实 Chrome</td><td class="status">PASS · 5/5</td><td><code>node tools/run_browser_smokes.js</code></td></tr>
+        <tr><td>交付提交</td><td class="status">PASS</td><td><code>c4ed167</code> · 32 个旧测试物理删除。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>权威明细：<code>tools/node-test-inventory.js</code>。逐文件删除与接管记录：<code>docs/node-test-audit-result.md</code>。</footer>
+</main>
+</body>
+</html>
