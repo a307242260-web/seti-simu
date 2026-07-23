@@ -7,7 +7,41 @@ const {
   createBoardPointerHandlers,
   createLandTargetPicker,
   createMoveUiRuntime,
+  createPrimaryActionUiRuntime,
 } = require("./action-interaction-runtime");
+
+{
+  const calls = [];
+  const root = { rocketState: { activeRocketId: null } };
+  const runtime = createPrimaryActionUiRuntime({
+    runAction: (family, options) => ({ ok: true, family, options }),
+    canStartMainAction: () => true,
+    getMainActionStartBlockReason: () => null,
+    setStatusNote: (message) => calls.push(message),
+    renderStateReadout: () => calls.push("render"),
+    createActionContext: () => ({}),
+    getRuleReadout: () => root,
+    abilities: { planet: { getOrbitOptions: () => ({ ok: true, defaultRocketId: 1 }), getLandOptions: () => ({ ok: true, defaultRocketId: 1, defaultTarget: { type: "planet" } }) } },
+    getCurrentPlanetActionPlacement: () => null,
+    getAvailablePlutoAction: () => ({ ok: false }),
+    openPlutoActionChoicePicker: () => ({ ok: true }),
+    executePlutoAction: () => ({ ok: true }),
+    requestLandTargetPicker: () => {},
+    renderPlayerStats: () => {},
+    updateActionButtons: () => {},
+    isAiInputLocked: () => false,
+    blockManualAiInput: () => ({ ok: false }),
+    getHighlightedRocketId: () => null,
+    enumerateActions: () => [],
+    submitQuickAction: () => ({ ok: true }),
+    beginMovePaymentSelection: () => ({ ok: true }),
+  });
+  assert.equal(runtime.launchRocketForCurrentPlayer().family, "launch");
+  assert.equal(runtime.orbitForCurrentPlayer().family, "orbit");
+  assert.equal(runtime.landForCurrentPlayer().family, "land");
+  assert.equal(runtime.moveRocket(1, 0).rocket, null);
+  assert.deepEqual(calls, ["请先点击要移动的火箭", "render"]);
+}
 
 {
   const commands = [];

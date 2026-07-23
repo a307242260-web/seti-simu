@@ -397,6 +397,36 @@
     createActionContext: createActionContextForWorkingRoot,
     createReadoutActionContext,
   } = actionContextFactory;
+  const primaryActionUiRuntime = actionInteractionRuntimeModule.createPrimaryActionUiRuntime({
+    runAction: (...args) => runAction(...args),
+    canStartMainAction: (...args) => canStartMainAction(...args),
+    getMainActionStartBlockReason: (...args) => getMainActionStartBlockReason(...args),
+    setStatusNote: (...args) => setBrowserStatusNote(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
+    getRuleReadout: () => createStateSourceReadoutRoot(),
+    abilities,
+    getCurrentPlanetActionPlacement: (...args) => getCurrentPlanetActionPlacement(...args),
+    getAvailablePlutoAction: (...args) => getAvailablePlutoAction(...args),
+    openPlutoActionChoicePicker: (...args) => openPlutoActionChoicePicker(...args),
+    executePlutoAction: (...args) => executePlutoAction(...args),
+    requestLandTargetPicker: (...args) => requestLandTargetPicker(...args),
+    renderPlayerStats: (...args) => renderPlayerStats(...args),
+    updateActionButtons: (...args) => updateActionButtons(...args),
+    isAiInputLocked: (...args) => isAiAutomationInputLocked(...args),
+    blockManualAiInput: (...args) => blockManualAiAutomationInput(...args),
+    getHighlightedRocketId: () => uiRuntimeState.moveHighlightRocketId,
+    enumerateActions: (...args) => ruleComposition.inputPort.enumerateActions(...args),
+    submitQuickAction: (...args) => ruleComposition.inputPort.submitQuickAction(...args),
+    beginMovePaymentSelection: (...args) => beginMovePaymentSelection(...args),
+  });
+  const {
+    launchRocketForCurrentPlayer,
+    orbitForCurrentPlayer,
+    landForCurrentPlayer,
+    moveRocket,
+    moveActiveRocket,
+  } = primaryActionUiRuntime;
 
   const ruleComposition = ruleCompositionModule.createRuleComposition({
     invariantValidators: [validateBrowserSessionBoundary],
@@ -6811,98 +6841,6 @@
     }) || getEffectOwnerPlayer(workingRoot, pending?.effect) || getCurrentPlayer(workingRoot);
   }
 
-  function launchRocketForCurrentPlayer() {
-    runAction("launch");
-  }
-
-  function orbitForCurrentPlayer() {
-    if (!canStartMainAction()) {
-      const message = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      setBrowserStatusNote(message);
-      renderStateReadout();
-      return { ok: false, message };
-    }
-    const context = createActionContextForWorkingRoot(createStateSourceReadoutRoot());
-    const normal = abilities.planet.getOrbitOptions(context);
-    const placement = getCurrentPlanetActionPlacement(context);
-    const preferredRocketId = normal?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
-    const pluto = getAvailablePlutoAction("orbit", { preferredRocketId });
-    if (normal.ok && pluto.ok) {
-      return openPlutoActionChoicePicker("orbit");
-    }
-    if (!normal.ok && pluto.ok) {
-      return executePlutoAction("orbit", { preferredRocketId });
-    }
-    if (!normal.ok) {
-      setBrowserStatusNote(normal.message);
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return { ok: false, message: normal.message };
-    }
-    if (normal.needsChoice) {
-      requestLandTargetPicker({
-        ...normal,
-        resumeKind: "main-planet-action",
-        actionType: "orbit",
-        title: "选择环绕目标",
-        selectLabel: "环绕到",
-        confirmText: "确认环绕",
-      });
-      setBrowserStatusNote("请选择环绕目标");
-      renderStateReadout();
-      return { ok: true, pendingChoice: true };
-    }
-    return runAction("orbit", { rocketId: normal.defaultRocketId });
-  }
-
-  function landForCurrentPlayer() {
-    if (!canStartMainAction()) {
-      const message = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      setBrowserStatusNote(message);
-      renderStateReadout();
-      return { ok: false, message };
-    }
-    const context = createActionContextForWorkingRoot(createStateSourceReadoutRoot());
-    const check = abilities.planet.getLandOptions(context);
-    const placement = getCurrentPlanetActionPlacement(context);
-    const preferredRocketId = check?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
-    const pluto = getAvailablePlutoAction("land", { preferredRocketId });
-    if (check.ok && pluto.ok) {
-      return openPlutoActionChoicePicker("land");
-    }
-    if (!check.ok) {
-      if (pluto.ok) {
-        return executePlutoAction("land", { preferredRocketId });
-      }
-      setBrowserStatusNote(check.message);
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return { ok: false, message: check.message };
-    }
-
-    const options = check;
-    if (!options.ok) {
-      setBrowserStatusNote(options.message);
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return { ok: false, message: options.message };
-    }
-
-    if (options.needsChoice) {
-      requestLandTargetPicker({
-        ...options,
-        resumeKind: "main-planet-action",
-        actionType: "land",
-      });
-      return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
-    }
-
-    return runAction("land", { target: options.defaultTarget, rocketId: options.defaultRocketId });
-  }
-
   function executeIncomeForCurrentPlayerForRoot(workingRoot) {
     const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const result = applyIncomeResourcesForPlayer(currentPlayer, {
@@ -6919,46 +6857,6 @@
 
   function executeIncomeForCurrentPlayer() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
-  }
-
-  function moveRocket(deltaX, deltaY, rocketId, options = {}) {
-    if (isAiAutomationInputLocked() && options.automated !== true) {
-      return blockManualAiAutomationInput("电脑玩家自动移动中");
-    }
-    const readoutRoot = createStateSourceReadoutRoot();
-    const selectedRocketId = rocketId
-      ?? uiRuntimeState.moveHighlightRocketId
-      ?? readoutRoot.rocketState.activeRocketId;
-    if (!selectedRocketId) {
-      setBrowserStatusNote("请先点击要移动的火箭");
-      renderStateReadout();
-      return { ok: false, rocket: null, message: "请先点击要移动的火箭" };
-    }
-
-    const standardAction = options.standardAction || ruleComposition.inputPort.enumerateActions({
-      family: "move",
-    }).find((candidate) => (
-      Number(candidate.target?.rocketId) === Number(selectedRocketId)
-      && Number(candidate.target?.deltaX) === Number(deltaX)
-      && Number(candidate.target?.deltaY) === Number(deltaY)
-    )) || null;
-    if (!standardAction) {
-      setBrowserStatusNote("移动 intent 已失效");
-      renderStateReadout();
-      return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "移动 intent 已失效" };
-    }
-
-    if (!options.standardAction) {
-      return ruleComposition.inputPort.submitQuickAction(standardAction);
-    }
-
-    return beginMovePaymentSelection(deltaX, deltaY, selectedRocketId, {
-      standardAction,
-    });
-  }
-
-  function moveActiveRocket(deltaX, deltaY) {
-    return moveRocket(deltaX, deltaY, createStateSourceReadoutRoot().rocketState.activeRocketId);
   }
 
   function rotateSolarOrbitForRoot(workingRoot, count) {

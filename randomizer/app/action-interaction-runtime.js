@@ -279,6 +279,105 @@
     });
   }
 
+  function createPrimaryActionUiRuntime(context = {}) {
+    function failWithStatus(message, extra = {}) {
+      context.setStatusNote(message);
+      context.renderStateReadout();
+      return { ok: false, message, ...extra };
+    }
+
+    function launchRocketForCurrentPlayer() {
+      return context.runAction("launch");
+    }
+
+    function orbitForCurrentPlayer() {
+      if (!context.canStartMainAction()) {
+        return failWithStatus(context.getMainActionStartBlockReason() || "本回合已经开始或完成主要行动");
+      }
+      const actionContext = context.createActionContext(context.getRuleReadout());
+      const normal = context.abilities.planet.getOrbitOptions(actionContext);
+      const placement = context.getCurrentPlanetActionPlacement(actionContext);
+      const preferredRocketId = normal?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
+      const pluto = context.getAvailablePlutoAction("orbit", { preferredRocketId });
+      if (normal.ok && pluto.ok) return context.openPlutoActionChoicePicker("orbit");
+      if (!normal.ok && pluto.ok) return context.executePlutoAction("orbit", { preferredRocketId });
+      if (!normal.ok) {
+        context.renderPlayerStats();
+        context.updateActionButtons();
+        return failWithStatus(normal.message);
+      }
+      if (normal.needsChoice) {
+        context.requestLandTargetPicker({
+          ...normal,
+          resumeKind: "main-planet-action",
+          actionType: "orbit",
+          title: "选择环绕目标",
+          selectLabel: "环绕到",
+          confirmText: "确认环绕",
+        });
+        context.setStatusNote("请选择环绕目标");
+        context.renderStateReadout();
+        return { ok: true, pendingChoice: true };
+      }
+      return context.runAction("orbit", { rocketId: normal.defaultRocketId });
+    }
+
+    function landForCurrentPlayer() {
+      if (!context.canStartMainAction()) {
+        return failWithStatus(context.getMainActionStartBlockReason() || "本回合已经开始或完成主要行动");
+      }
+      const actionContext = context.createActionContext(context.getRuleReadout());
+      const options = context.abilities.planet.getLandOptions(actionContext);
+      const placement = context.getCurrentPlanetActionPlacement(actionContext);
+      const preferredRocketId = options?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
+      const pluto = context.getAvailablePlutoAction("land", { preferredRocketId });
+      if (options.ok && pluto.ok) return context.openPlutoActionChoicePicker("land");
+      if (!options.ok) {
+        if (pluto.ok) return context.executePlutoAction("land", { preferredRocketId });
+        context.renderPlayerStats();
+        context.updateActionButtons();
+        return failWithStatus(options.message);
+      }
+      if (options.needsChoice) {
+        context.requestLandTargetPicker({ ...options, resumeKind: "main-planet-action", actionType: "land" });
+        return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
+      }
+      return context.runAction("land", { target: options.defaultTarget, rocketId: options.defaultRocketId });
+    }
+
+    function moveRocket(deltaX, deltaY, rocketId, options = {}) {
+      if (context.isAiInputLocked() && options.automated !== true) {
+        return context.blockManualAiInput("电脑玩家自动移动中");
+      }
+      const readoutRoot = context.getRuleReadout();
+      const selectedRocketId = rocketId
+        ?? context.getHighlightedRocketId()
+        ?? readoutRoot.rocketState.activeRocketId;
+      if (!selectedRocketId) return failWithStatus("请先点击要移动的火箭", { rocket: null });
+      const standardAction = options.standardAction || context.enumerateActions({ family: "move" })
+        .find((candidate) => Number(candidate.target?.rocketId) === Number(selectedRocketId)
+          && Number(candidate.target?.deltaX) === Number(deltaX)
+          && Number(candidate.target?.deltaY) === Number(deltaY)) || null;
+      if (!standardAction) {
+        return { ...failWithStatus("移动 intent 已失效"), code: "STANDARD_ACTION_NOT_LEGAL" };
+      }
+      if (!options.standardAction) return context.submitQuickAction(standardAction);
+      return context.beginMovePaymentSelection(deltaX, deltaY, selectedRocketId, { standardAction });
+    }
+
+    return Object.freeze({
+      launchRocketForCurrentPlayer,
+      orbitForCurrentPlayer,
+      landForCurrentPlayer,
+      moveRocket,
+      moveActiveRocket: (deltaX, deltaY) => moveRocket(
+        deltaX,
+        deltaY,
+        context.getRuleReadout().rocketState.activeRocketId,
+      ),
+    });
+  }
+
   function createActionInteractionPort(context = {}) {
     const directMethods = [
       "ensurePlutoCardEffectState", "getPlutoActionState", "addPlutoMarker",
@@ -337,7 +436,6 @@
   }
 
   function createActionInteractionRuntime(context) {
-    const simulation = context.simulation === true;
     const {
       HISTORY_SOURCE_MAIN,
       SCORE_SOURCE_KEYS,
@@ -959,7 +1057,6 @@
 
   function scheduleRenderMoveArrows(workingRoot) {
     requireWorkingRoot(workingRoot);
-    if (simulation) return;
     moveArrowRenderFrame += 1;
     const frameId = moveArrowRenderFrame;
     requestAnimationFrame(() => {
@@ -1541,6 +1638,7 @@
     createBoardPointerHandlers,
     createLandTargetPicker,
     createMoveUiRuntime,
+    createPrimaryActionUiRuntime,
     createActionInteractionPort,
     createActionInteractionRuntime,
   };
