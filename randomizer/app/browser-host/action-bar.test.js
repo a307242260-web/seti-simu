@@ -5,6 +5,16 @@ const fs = require("node:fs");
 const path = require("node:path");
 const actionBar = require("./action-bar");
 
+assert.throws(
+  () => actionBar.createBrowserDesktopActionBarController({}),
+  /DesktopActionBar bootstrap 缺少 owner/,
+);
+
+assert.throws(
+  () => actionBar.createBrowserUndoController({}),
+  /Undo bootstrap 缺少 owner/,
+);
+
 const standard = (family, phase, suffix, disabledReason = null) => ({
   schemaVersion: "seti-standard-action-v1",
   actionId: `${family}:${suffix}`,

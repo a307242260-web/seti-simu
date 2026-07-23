@@ -318,6 +318,80 @@
     });
   }
 
+  function createBrowserDesktopActionBarController(options = {}) {
+    const {
+      actionGuardRuntime,
+      actionInteractionRuntime,
+      actionSessionRuntime,
+      cardRuntime,
+      cardSelectionState,
+      dataAnalyzeRuntime,
+      handFlowRuntime,
+      pendingSubFlowRuntime,
+      playerLookupRuntime,
+      rulePort,
+      techRuntime,
+      hostPort,
+    } = options;
+    const owners = {
+      actionGuardRuntime,
+      actionInteractionRuntime,
+      actionSessionRuntime,
+      cardRuntime,
+      cardSelectionState,
+      dataAnalyzeRuntime,
+      handFlowRuntime,
+      pendingSubFlowRuntime,
+      playerLookupRuntime,
+      rulePort,
+      techRuntime,
+      hostPort,
+    };
+    for (const [name, owner] of Object.entries(owners)) {
+      if (!owner || typeof owner !== "object") {
+        throw new TypeError(`DesktopActionBar bootstrap 缺少 owner：${name}`);
+      }
+    }
+    const capability = (ownerName, name) => {
+      const value = owners[ownerName][name];
+      if (typeof value !== "function") {
+        throw new TypeError(`DesktopActionBar ${ownerName} 缺少能力：${name}`);
+      }
+      return value;
+    };
+    return createDesktopActionBarController({
+      ...rulePort,
+      ...hostPort,
+      getGameplayLockReason: capability("actionGuardRuntime", "getGameplayLockReason"),
+      lockAllActionButtons: capability("actionGuardRuntime", "lockAllActionButtons"),
+      isActionEffectFlowActive: capability("actionGuardRuntime", "isActionEffectFlowActive"),
+      isInitialIncomeFlowActive: capability("actionGuardRuntime", "isInitialIncomeFlowActive"),
+      isActionPending: capability("actionSessionRuntime", "isActionPending"),
+      canUndoCurrentMainAction: capability("actionSessionRuntime", "canUndoCurrentMainAction"),
+      hasCurrentMainActionIrreversibleBarrier: capability(
+        "actionSessionRuntime",
+        "hasCurrentMainActionIrreversibleBarrier",
+      ),
+      canStartMainAction: capability("actionSessionRuntime", "canStartMainAction"),
+      isTechTilePickingActive: capability("techRuntime", "isTechTilePickingActive"),
+      isCardSelectionActive: capability("cardSelectionState", "isCardSelectionActive"),
+      isDiscardSelectionActive: capability("cardSelectionState", "isDiscardSelectionActive"),
+      isPlayCardSelectionActive: capability("cardSelectionState", "isPlayCardSelectionActive"),
+      isMovePaymentSelectionActive: capability("handFlowRuntime", "isMovePaymentSelectionActive"),
+      isHandScanSelectionActive: capability("handFlowRuntime", "isHandScanSelectionActive"),
+      cancelHandCardContextActions: capability("handFlowRuntime", "cancelHandCardContextActions"),
+      hasActivePendingSubFlow: capability("pendingSubFlowRuntime", "hasActivePendingSubFlow"),
+      getAvailablePlutoAction: capability("actionInteractionRuntime", "getAvailablePlutoAction"),
+      canAnalyzeDataForPlayer: capability("dataAnalyzeRuntime", "canAnalyzeDataForPlayer"),
+      getCurrentPlayer: capability("playerLookupRuntime", "getCurrentPlayer"),
+      getStandardPlayCardActionBlockReason: capability(
+        "cardRuntime",
+        "getStandardPlayCardActionBlockReason",
+      ),
+      hasPlayableFutureSpanCard: capability("cardRuntime", "hasPlayableFutureSpanCard"),
+    });
+  }
+
   function createUndoController(context = {}) {
     const {
       actionHistory,
@@ -492,6 +566,85 @@
     }
 
     return Object.freeze({ undoPendingActionForRoot });
+  }
+
+  function createBrowserUndoController(options = {}) {
+    const {
+      actionGuardRuntime,
+      actionSessionRuntime,
+      effectFlowRuntime,
+      effectFlowUndoRuntime,
+      historyRefreshRuntime,
+      matchRuntime,
+      pendingSubFlowRuntime,
+      techRuntime,
+      hostPort,
+    } = options;
+    const owners = {
+      actionGuardRuntime,
+      actionSessionRuntime,
+      effectFlowRuntime,
+      effectFlowUndoRuntime,
+      historyRefreshRuntime,
+      matchRuntime,
+      pendingSubFlowRuntime,
+      techRuntime,
+      hostPort,
+    };
+    for (const [name, owner] of Object.entries(owners)) {
+      if (!owner || typeof owner !== "object") {
+        throw new TypeError(`Undo bootstrap 缺少 owner：${name}`);
+      }
+    }
+    const capability = (ownerName, name) => {
+      const value = owners[ownerName][name];
+      if (typeof value !== "function") {
+        throw new TypeError(`Undo ${ownerName} 缺少能力：${name}`);
+      }
+      return value;
+    };
+    return createUndoController({
+      ...hostPort,
+      isTechActionSelectionActive: capability("techRuntime", "isTechActionSelectionActive"),
+      cancelPendingResearchTechTileChoice: capability(
+        "techRuntime",
+        "cancelPendingResearchTechTileChoice",
+      ),
+      cancelTechSelection: capability("techRuntime", "cancelTechSelection"),
+      hasCurrentMainActionIrreversibleBarrier: capability(
+        "actionSessionRuntime",
+        "hasCurrentMainActionIrreversibleBarrier",
+      ),
+      isActionPending: capability("actionSessionRuntime", "isActionPending"),
+      getCurrentActionIrreversibleReason: capability(
+        "actionSessionRuntime",
+        "getCurrentActionIrreversibleReason",
+      ),
+      clearFullyUndoneMainActionSession: capability(
+        "actionSessionRuntime",
+        "clearFullyUndoneMainActionSession",
+      ),
+      clearActionPending: capability("actionSessionRuntime", "clearActionPending"),
+      isActionEffectFlowActive: capability("actionGuardRuntime", "isActionEffectFlowActive"),
+      hasActivePendingSubFlow: capability("pendingSubFlowRuntime", "hasActivePendingSubFlow"),
+      cancelActivePendingSubFlowsForRoot: capability(
+        "pendingSubFlowRuntime",
+        "cancelActivePendingSubFlowsForRoot",
+      ),
+      refreshAfterHistoryChange: capability(
+        "historyRefreshRuntime",
+        "refreshAfterHistoryChange",
+      ),
+      getActionEffectFlow: capability("matchRuntime", "getActionEffectFlow"),
+      setActionEffectFlow: capability("matchRuntime", "setActionEffectFlow"),
+      getLatestUndoSource: capability("effectFlowRuntime", "getLatestUndoSource"),
+      clearHistoryStepOrderForSource: capability(
+        "effectFlowRuntime",
+        "clearHistoryStepOrderForSource",
+      ),
+      forgetLastHistoryStep: capability("effectFlowRuntime", "forgetLastHistoryStep"),
+      revertEffectFlowAfterUndo: capability("effectFlowUndoRuntime", "revertEffectFlowAfterUndo"),
+    });
   }
 
   function createActionSessionRuntime(context = {}) {
@@ -893,7 +1046,9 @@
     createActionBarController,
     createActionBarRenderer,
     createDesktopActionBarController,
+    createBrowserDesktopActionBarController,
     createUndoController,
+    createBrowserUndoController,
     createActionSessionRuntime,
     createEffectBarRenderer,
     createEffectBarPresentation,
