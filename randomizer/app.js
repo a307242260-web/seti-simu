@@ -3791,38 +3791,13 @@
     }),
   });
 
-  const aiControllerState = {
-    get pendingDiscardAction() { return getPendingDiscardDecision(); },
-    get pendingCardSelectionContinuation() { return getPendingCardSelectionDecision(); },
-    get publicCardSelectedSlots() { return [...(uiRuntimeState.publicCardSelectedSlots || [])]; },
-    get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
-    get pendingAlienTraceContinuation() { return getPendingAlienTraceDecision(); },
-    get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
-    get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
-    get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
-    get pendingYichangdianCornerAction() { return getPendingYichangdianCornerAction(); },
-    get pendingBanrenmaCardGain() { return getPendingBanrenmaCardGain(); },
-    get pendingBanrenmaOpportunity() { return getPendingBanrenmaOpportunity(); },
-    get pendingChongCardGain() { return getPendingChongCardGain(); },
-    get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
-    get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
-    get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
-    get pendingAmibaTraceRemoval() { return getPendingAmibaTraceRemoval(); },
-    get pendingAomomoCardGain() { return getPendingAomomoCardGain(); },
-    get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
-    get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
-    get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
-    get pendingActionExecuted() { return isActionPending(); },
-    get pendingActionEffectFlow() { return getActionEffectFlow(); },
-    get actionHistoryHasSession() { return actionHistory.hasSession(); },
-    get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
-    get effectStepActive() { return uiRuntimeState.effectStepActive; },
-    set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
-    get pendingIndustryAbility() { return getPendingIndustryAbilityDecision(); },
-    get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
-    get alienTracePickerState() { return uiRuntimeState.alienTracePickerState; },
-    get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
-  };
+  const aiControllerState = aiControlRuntimeModule.createAiControllerState({
+    match: browserMatchRuntime,
+    action: actionSessionRuntime,
+    actionHistory,
+    ui: uiRuntimeState,
+    getAlien: () => alienSpeciesPort,
+  });
 
   const runAiStepThroughComposition = aiControlRuntimeModule.createAiCompositionStepPort({
     inspect: (...args) => ruleComposition.inspect(...args),

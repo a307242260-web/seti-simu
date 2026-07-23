@@ -4,7 +4,7 @@ const { createInitialCardPendingRuntime } = require("./ai/initial-card-pending")
 const { createInteractionPendingRuntime } = require("./ai/interaction-pending");
 const { createActionExecutor } = require("./ai/action-executor");
 const { createAutomationRuntime } = require("./ai/automation-runtime");
-const { createManualAiInputGuard, createAiCompositionStepPort } = require("./ai/control-runtime");
+const { createManualAiInputGuard, createAiCompositionStepPort, createAiControllerState } = require("./ai/control-runtime");
 const { createTechCandidates } = require("../game/ai/tech-candidates");
 const { createFinalPace } = require("../game/ai/final-pace");
 const { createSelectionPressure } = require("../game/ai/selection-pressure");
@@ -33,6 +33,27 @@ const { createRoutePlanet } = require("../game/ai/route-planet");
   });
   assert.equal(port.run("ai_run").ok, true);
   assert.equal(submitted.choice.choiceId, "b");
+}
+
+{
+  const ui = { publicCardSelectedSlots: [1], effectStepActive: false };
+  const controllerState = createAiControllerState({
+    match: {
+      getPendingDiscardDecision: () => ({ id: "discard" }),
+      getPendingStrategySlotDecision: () => ({ id: "strategy" }),
+    },
+    action: { isActionPending: () => true },
+    actionHistory: { hasSession: () => true, getSessionInfo: () => ({ id: "history" }) },
+    ui,
+    getAlien: () => ({ getPendingJiuzheCardPlay: () => ({ id: "jiuzhe" }) }),
+  });
+  assert.deepEqual(controllerState.pendingDiscardAction, { id: "discard" });
+  assert.deepEqual(controllerState.pendingJiuzheCardPlay, { id: "jiuzhe" });
+  assert.deepEqual(controllerState.pendingStrategyPassiveSlotChoice, { id: "strategy" });
+  assert.equal(controllerState.pendingActionExecuted, true);
+  assert.equal(controllerState.actionHistoryHasSession, true);
+  controllerState.effectStepActive = true;
+  assert.equal(ui.effectStepActive, true);
 }
 
 function contextWith(overrides = {}) {

@@ -201,6 +201,46 @@
     };
   }
 
+  function createAiControllerState(context = {}) {
+    const match = context.match || {};
+    const action = context.action || {};
+    const ui = context.ui || {};
+    const getAlien = context.getAlien || (() => ({}));
+    const alienPending = (name) => getAlien()?.[name]?.();
+    return {
+      get pendingDiscardAction() { return match.getPendingDiscardDecision?.(); },
+      get pendingCardSelectionContinuation() { return match.getPendingCardSelectionDecision?.(); },
+      get publicCardSelectedSlots() { return [...(ui.publicCardSelectedSlots || [])]; },
+      get pendingPublicScanQueue() { return match.getPublicScanQueueSession?.(); },
+      get pendingAlienTraceContinuation() { return match.getPendingAlienTraceDecision?.(); },
+      get pendingLandTargetAction() { return match.getPendingLandTargetDecision?.(); },
+      get pendingJiuzheCardPlay() { return alienPending("getPendingJiuzheCardPlay"); },
+      get pendingYichangdianCardGain() { return alienPending("getPendingYichangdianCardGain"); },
+      get pendingYichangdianCornerAction() { return alienPending("getPendingYichangdianCornerAction"); },
+      get pendingBanrenmaCardGain() { return alienPending("getPendingBanrenmaCardGain"); },
+      get pendingBanrenmaOpportunity() { return alienPending("getPendingBanrenmaOpportunity"); },
+      get pendingChongCardGain() { return alienPending("getPendingChongCardGain"); },
+      get pendingChongFossilChoice() { return alienPending("getPendingChongFossilChoice"); },
+      get pendingAmibaCardGain() { return alienPending("getPendingAmibaCardGain"); },
+      get pendingAmibaSymbolChoice() { return alienPending("getPendingAmibaSymbolChoice"); },
+      get pendingAmibaTraceRemoval() { return alienPending("getPendingAmibaTraceRemoval"); },
+      get pendingAomomoCardGain() { return alienPending("getPendingAomomoCardGain"); },
+      get pendingRunezuCardGain() { return alienPending("getPendingRunezuCardGain"); },
+      get pendingRunezuSymbolBranch() { return alienPending("getPendingRunezuSymbolBranch"); },
+      get pendingRunezuFaceSymbolPlacement() { return alienPending("getPendingRunezuFaceSymbolPlacement"); },
+      get pendingActionExecuted() { return action.isActionPending?.(); },
+      get pendingActionEffectFlow() { return match.getActionEffectFlow?.(); },
+      get actionHistoryHasSession() { return context.actionHistory?.hasSession?.() || false; },
+      get actionHistorySessionInfo() { return context.actionHistory?.getSessionInfo?.() || null; },
+      get effectStepActive() { return ui.effectStepActive; },
+      set effectStepActive(value) { ui.effectStepActive = value; },
+      get pendingIndustryAbility() { return match.getPendingIndustryAbilityDecision?.(); },
+      get pendingStrategyPassiveSlotChoice() { return match.getPendingStrategySlotDecision?.(); },
+      get alienTracePickerState() { return ui.alienTracePickerState; },
+      get pendingAlienRevealConfirmation() { return ui.alienRevealConfirmation; },
+    };
+  }
+
   function createAiControlRuntime(context) {
     if (!context || !context.state) {
       throw new Error("createAiControlRuntime requires app state accessors");
@@ -743,6 +783,7 @@
     createAiControlRuntime,
     createManualAiInputGuard,
     createAiCompositionStepPort,
+    createAiControllerState,
     createAiDifficultyCommandHandler,
     createAiSeededRandom,
     getAiBatchSeed,
