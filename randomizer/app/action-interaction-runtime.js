@@ -1059,6 +1059,39 @@
     return markers;
   }
 
+  function collectPlutoMarkersFromPlayerProjection(playerProjection) {
+    const markers = [];
+    for (const player of playerProjection?.players || []) {
+      for (const card of player?.reservedCards || []) {
+        if (!cardEffects.getCardModel?.(card)?.pluto) continue;
+        const pluto = card?.cardEffectState?.pluto || {};
+        for (const marker of pluto.orbitMarkers || []) {
+          markers.push({
+            ...structuredClone(marker),
+            kind: "orbit",
+            planetId: "pluto",
+            cardId: card.id,
+            playerId: marker.playerId || player.id,
+            playerColor: marker.playerColor || player.color,
+            color: marker.color || player.color,
+          });
+        }
+        for (const marker of pluto.landingMarkers || []) {
+          markers.push({
+            ...structuredClone(marker),
+            kind: "land",
+            planetId: "pluto",
+            cardId: card.id,
+            playerId: marker.playerId || player.id,
+            playerColor: marker.playerColor || player.color,
+            color: marker.color || player.color,
+          });
+        }
+      }
+    }
+    return markers;
+  }
+
   function buildPlutoMarkerContext(workingRoot) {
     return { plutoMarkers: collectPlutoMarkers(workingRoot) };
   }
@@ -2009,6 +2042,7 @@
       clearMoveRocketHighlight,
       closeDataPlacePicker,
       collectPlutoMarkers,
+      collectPlutoMarkersFromPlayerProjection,
       confirmDataPlacement,
       continuePendingDataPlacementAfterBonus,
       deactivateMoveMode,

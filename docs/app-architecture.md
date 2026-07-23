@@ -32,6 +32,9 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 13. `randomizer/app/action-log-export.js` 生成行动日志 Markdown 和下载文件名。
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
+    终局、日志与恢复只读取 BrowserProjection 的窄 runtime selector；终局规则派生由
+    `randomizer/game/final-read-model.js` 从 StateSource state 一次生成，Browser runtime
+    不再接收计分 slices 或拼装第二个 rule root。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
 17. `randomizer/app/ai/control-runtime.js` 封装机器席位配置、快照/恢复与调度；`ai/browser-bootstrap.js` 独占 Browser Machine Player Host、Composition boundary reader 与 PolicyInputAdapter 装配。Browser 不加载 action executor / automation runtime，也不暴露 candidate、selector、pending automation 或 batch/A-B API；`ai-controller.js` 只保留控制与估值 helper 装配。
 18. `randomizer/app/conditional-decision-domain.js` 构建条件动作的 owner/version/choices/followup；`conditional-action-executor.js` 只负责 descriptor 校验、stale 检查和失败原子恢复。`randomizer/app/effects/**` 继续按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。

@@ -323,12 +323,11 @@
       if (!index[key].includes(locationType)) index[key].push(locationType);
     }
 
-    function buildProbeLocationIndex(workingRoot) {
-      const { rocketState } = requireWorkingRoot(workingRoot);
+    function buildProbeLocationIndexFromPieces(pieces) {
       const index = {};
       const details = [];
       const earth = getEarthSectorCoordinate();
-      for (const rocket of rocketState.rockets || []) {
+      for (const rocket of pieces?.rockets || []) {
         const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
         const content = getSectorContentForMove(coordinate);
         let locationType = null;
@@ -372,6 +371,10 @@
         });
       }
       return { index, details };
+    }
+
+    function buildProbeLocationIndex(workingRoot) {
+      return buildProbeLocationIndexFromPieces(requireWorkingRoot(workingRoot).rocketState);
     }
 
     function startTemporaryCardTaskRewardFlow(tasks, settlementResult, options = {}) {
@@ -1644,6 +1647,7 @@
       buildPlayerDataTotals,
       addProbeLocation,
       buildProbeLocationIndex,
+      buildProbeLocationIndexFromPieces,
       startTemporaryCardTaskRewardFlow,
       getReadyCardTasks,
       refreshCardTaskState,

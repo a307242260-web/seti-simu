@@ -317,17 +317,17 @@
 
   function createRecoveryLogController(options = {}) {
     function createSnapshot(meta = {}) {
-      const readoutRoot = options.createReadoutRoot();
+      const projection = options.getRecoveryProjection();
       return createGameRecoverySnapshot({
         browserServices: options.browserServices,
         ruleLifecycleOptions: {
           seed: meta.seed ?? "browser-host",
           rngState: meta.rngState || { owner: "browser", state: null },
         },
-        roundNumber: readoutRoot.turnState.roundNumber,
-        turnNumber: readoutRoot.turnState.turnNumber,
-        actionCycleNumber: options.getActionCycleNumber(),
-        currentPlayerId: readoutRoot.playerState.currentPlayerId,
+        roundNumber: projection.roundNumber,
+        turnNumber: projection.turnNumber,
+        actionCycleNumber: projection.actionCycleNumber,
+        currentPlayerId: projection.currentPlayerId,
         entryId: meta.entryId ?? null,
         label: meta.label || null,
         runtime: { aiControl: options.createAiControlSnapshot() },
@@ -375,12 +375,11 @@
         ...applyOptions,
         browserServices: options.browserServices,
         onAfterStateRestored: () => {
-          options.getActionCycleNumber();
           options.clearTransientStateForRecovery();
         },
         restoreAiControlSnapshot: options.restoreAiControlSnapshot,
         refreshAfterGameRecovery: applyOptions.skipRefresh ? null : options.refreshAfterGameRecovery,
-        getRecoveryMessage: () => options.createReadoutRoot().rocketState.statusNote,
+        getRecoveryMessage: () => options.getRecoveryMessage?.() || null,
       });
     }
 

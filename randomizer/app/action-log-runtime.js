@@ -353,8 +353,11 @@
       });
     }
 
-    function createActionLogImpactSnapshot(player = context.getCurrentPlayer()) {
-      return createImpactSnapshot(player, { resourceKeys, incomeKeys });
+    function createActionLogImpactSnapshot(player = null) {
+      const projection = context.getActionLogProjection();
+      const playerId = player?.id || player?.color || projection.currentPlayerId;
+      const projectedPlayer = projection.impactByPlayerId?.[playerId] || null;
+      return createImpactSnapshot(projectedPlayer, { resourceKeys, incomeKeys });
     }
 
     function formatActionLogImpact(before, after = createActionLogImpactSnapshot(), options = {}) {
@@ -377,14 +380,23 @@
     }
 
     function ensureActionLogDraft(options = {}) {
-      const readoutRoot = context.createReadoutRoot();
+      const projection = context.getActionLogProjection();
+      const getDisplayedTurnNumber = (rawTurnNumber) => (
+        Math.floor((Math.max(1, Math.round(Number(rawTurnNumber) || 1)) - 1)
+          / projection.activePlayerCount) + 1
+      );
       return ensureDraft(actionLogState, {
-        getCurrentPlayer: context.getCurrentPlayer,
-        currentPlayerId: readoutRoot.playerState.currentPlayerId,
-        roundNumber: readoutRoot.turnState.roundNumber,
-        turnNumber: readoutRoot.turnState.turnNumber,
-        getPlayerLabelById: context.getPlayerLabelById,
-        getActionCycleNumber: context.getActionCycleNumber,
+        getCurrentPlayer: () => projection.impactByPlayerId?.[projection.currentPlayerId] || null,
+        currentPlayerId: projection.currentPlayerId,
+        roundNumber: projection.roundNumber,
+        turnNumber: projection.turnNumber,
+        getPlayerLabelById: (playerId) => (
+          projection.impactByPlayerId?.[playerId]?.colorLabel
+          || projection.impactByPlayerId?.[playerId]?.name
+          || playerId
+        ),
+        getActionCycleNumber: () => projection.actionCycleNumber,
+        getDisplayedTurnNumber,
         getActionLogActionLabel,
         historySourceQuick,
         defaultQuickLabel: context.defaultLabels?.quick,
@@ -453,9 +465,13 @@
     }
 
     function commitActionLogDraft(options = {}) {
+      const projection = context.getActionLogProjection();
       const entry = createEntryFromDraft(actionLogState, {
-        getDisplayedTurnNumber: context.getDisplayedTurnNumber,
-        getActionCycleNumber: context.getActionCycleNumber,
+        getDisplayedTurnNumber: (rawTurnNumber) => (
+          Math.floor((Math.max(1, Math.round(Number(rawTurnNumber) || 1)) - 1)
+            / projection.activePlayerCount) + 1
+        ),
+        getActionCycleNumber: () => projection.actionCycleNumber,
         getActionLogActionLabel,
       }, options);
       if (!entry && !actionLogState.draft) {
@@ -473,14 +489,21 @@
     }
 
     function appendConfirmedActionLogEntry(entryInput) {
-      const readoutRoot = context.createReadoutRoot();
+      const projection = context.getActionLogProjection();
       const entry = createConfirmedEntry(actionLogState, entryInput, {
-        getCurrentPlayer: context.getCurrentPlayer,
-        roundNumber: readoutRoot.turnState.roundNumber,
-        turnNumber: readoutRoot.turnState.turnNumber,
-        getDisplayedTurnNumber: context.getDisplayedTurnNumber,
-        getActionCycleNumber: context.getActionCycleNumber,
-        getPlayerLabelById: context.getPlayerLabelById,
+        getCurrentPlayer: () => projection.impactByPlayerId?.[projection.currentPlayerId] || null,
+        roundNumber: projection.roundNumber,
+        turnNumber: projection.turnNumber,
+        getDisplayedTurnNumber: (rawTurnNumber) => (
+          Math.floor((Math.max(1, Math.round(Number(rawTurnNumber) || 1)) - 1)
+            / projection.activePlayerCount) + 1
+        ),
+        getActionCycleNumber: () => projection.actionCycleNumber,
+        getPlayerLabelById: (playerId) => (
+          projection.impactByPlayerId?.[playerId]?.colorLabel
+          || projection.impactByPlayerId?.[playerId]?.name
+          || playerId
+        ),
         getActionLogActionLabel,
         historySourceMain,
         getCardLabel: context.getCardLabel,

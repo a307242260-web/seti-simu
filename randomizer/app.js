@@ -14,6 +14,7 @@
     planetRewards,
     finalScoring,
     endGameScoring,
+    finalReadModelModule,
     actionHistoryModule,
     historyCommands,
     historyTransactions,
@@ -195,6 +196,8 @@
   let finalScoreAiRuntime = null;
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
+  let cardTriggerRuntime = null;
+  let finalReadModelOwner = null;
   const runAiFinalScoreMarkDecision = finalScoreAiRuntimeModule.createFinalScoreAiPort({
     getRuntime: () => finalScoreAiRuntime,
   }).runDecision;
@@ -1165,6 +1168,18 @@
   const residentStateSource = ruleComposition.stateSourcePort;
   const residentProjectionAdapter = browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
     stateSource: residentStateSource,
+    visibilityPolicy: (state, viewer, projectionContext) => {
+      if (!finalReadModelOwner) {
+        throw new TypeError("BrowserProjection 的 FinalReadModel owner 尚未装配");
+      }
+      const visible = browserHostModule.projectionAdapter.defaultVisibilityPolicy(
+        state,
+        viewer,
+        projectionContext,
+      );
+      visible.resident.finalReadModel = finalReadModelOwner.project(state);
+      return visible;
+    },
     createActionContext: ({ state }) => ({
       actorId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
     }),
@@ -1208,7 +1223,28 @@
   const getResidentViewer = browserHostModule.residentProjection.createViewerResolver({
     getInterfacePlayer: () => getInterfacePlayer(),
   });
-
+  const getCanonicalBrowserProjection = () => residentProjectionAdapter.projectSource({
+    viewer: getResidentViewer(),
+  });
+  const getFinalUiProjection = () => (
+    browserHostModule.residentProjection.selectFinalUiProjection(getCanonicalBrowserProjection())
+  );
+  const getFinalScoreAiProjection = () => (
+    browserHostModule.residentProjection.selectFinalScoreAiProjection(getCanonicalBrowserProjection())
+  );
+  const getActionLogProjection = () => (
+    browserHostModule.residentProjection.selectActionLogProjection(getCanonicalBrowserProjection())
+  );
+  const getRecoveryProjection = () => (
+    browserHostModule.residentProjection.selectRecoveryProjection(getCanonicalBrowserProjection())
+  );
+  const getProjectedFinalScoreBreakdown = (playerOrId) => {
+    const playerId = typeof playerOrId === "object"
+      ? (playerOrId?.id || playerOrId?.color)
+      : playerOrId;
+    return getFinalUiProjection().players.find((entry) => String(entry.id) === String(playerId))?.breakdown
+      || { totalScore: Number(playerOrId?.resources?.score) || 0 };
+  };
   const createResidentReadoutRoot = (resident) => (
     browserHostModule.residentProjection.createReadoutRoot(resident)
   );
@@ -1299,7 +1335,7 @@
     getPendingScanTargetDecision: () => (
       getPendingScanTargetDecision() || browserPendingDecisionOwner.read("public_scan")
     ),
-    computePlayerFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
+    computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
     isCardSelectionActive: () => isCardSelectionActive?.(),
     allowsBlindDrawInSelection: () => allowsBlindDrawInSelection?.(),
     canBlindDraw: () => canBlindDraw?.(),
@@ -1311,7 +1347,7 @@
     weakStartAiDifficulty: AI_DIFFICULTY_WEAK_START,
     finalRoundNumber: FINAL_ROUND_NUMBER,
     getRuleReadout: createStateSourceReadoutRoot,
-    computePlayerFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
+    computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     createResidentRenderInput,
     renderResidentRoundStatus: (...args) => residentDesktopRenderer.renderRoundStatus(...args),
@@ -1462,11 +1498,7 @@
     getCardLabel: cards.getCardLabel,
     normalizeSectorX: solar.mod8,
     getNebulaLabel: data.getNebulaLabel,
-    getCurrentPlayer,
-    createReadoutRoot: createStateSourceReadoutRoot,
-    getPlayerLabelById,
-    getActionCycleNumber,
-    getDisplayedTurnNumber,
+    getActionLogProjection,
     cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
     isActionPending,
     resetActionBriefingState: (...args) => resetActionBriefingState(...args),
@@ -1506,7 +1538,7 @@
     getReadoutRoot: createStateSourceReadoutRoot,
     getPlayerCompanyBaseIncome,
     getInterfacePlayer,
-    computeFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
+    computeFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
     isAiPlayer: (...args) => isAiAutoBattlePlayer?.(...args),
     isPlayerPassed: isPlayerPassedThisRound,
   });
@@ -1751,17 +1783,12 @@
     els,
     players,
     finalScoring,
-    endGameScoring,
     uiRuntimeState,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getFinalUiProjection,
     FINAL_SCORE_SLOT_POINTS,
     FINAL_ROUND_NUMBER,
     SCORE_SOURCE_KEYS,
     HISTORY_SOURCE_QUICK,
-    getCurrentPlayer,
-    getCurrentPlayerLabel: () => getCurrentPlayer()?.colorLabel || "",
-    getActivePlayers,
-    getDisplayedTurnNumber,
     getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
     getHistoryForSource: (...args) => getHistoryForSource?.(...args),
     createActionLogImpactSnapshot,
@@ -1770,15 +1797,8 @@
     rememberHistoryStep: (...args) => rememberHistoryStep?.(...args),
     historyCommands,
     queueStateReadoutRender: (...args) => queueStateReadoutRender?.(...args),
-    computePlayerFinalScoreBreakdown: (player) => (
-      computePlayerFinalScoreBreakdown(player, createStateSourceReadoutRoot())
-    ),
-    getPlayerScoreSource,
     updateActionButtons: (...args) => updateActionButtons(...args),
     renderPlayerStats,
-    isGameEnded,
-    isPlayerPassedThisRound,
-    countPlayerOwnedTech: actionLogExport.countOwnedTech,
   });
   const {
     syncFinalScorePendingMarks: syncFinalScorePendingMarksForRoot,
@@ -1793,9 +1813,7 @@
     buildActionLogExportPlayerResults,
   } = finalUiRuntime;
   const actionLogExportController = actionLogExport.createActionLogExportController({
-    createReadoutRoot: createStateSourceReadoutRoot,
-    getDisplayedTurnNumber,
-    isGameEnded,
+    getActionLogProjection,
     getEntries: (...args) => getRecoverableActionLog(...args),
     getPlayerResults: (...args) => buildActionLogExportPlayerResults(...args),
     download: (...args) => residentBrowserServices.download(...args),
@@ -2636,8 +2654,7 @@
   const recoveryLogController = gameRecoveryModule.createRecoveryLogController({
     version: GAME_RECOVERY_VERSION,
     browserServices: residentBrowserServices,
-    createReadoutRoot: createStateSourceReadoutRoot,
-    getActionCycleNumber,
+    getRecoveryProjection,
     createAiControlSnapshot: (...args) => createAiControlSnapshot(...args),
     getStableSnapshot: () => browserActionStableRecoverySnapshot,
     getEntries: () => actionLogState.entries,
@@ -2646,6 +2663,7 @@
     clearTransientStateForRecovery,
     restoreAiControlSnapshot: (...args) => restoreAiControlSnapshot(...args),
     refreshAfterGameRecovery,
+    getRecoveryMessage: () => null,
     importActionLogEntries: (...args) => actionLogRuntimeModule.importEntries(actionLogState, ...args),
   });
   const {
@@ -2720,8 +2738,8 @@
       seedDefaultReferenceRockets,
     },
     scorePort: {
-      computePlayerFinalScoreBreakdown: (workingRoot, player) => (
-        computePlayerFinalScoreBreakdown(player, workingRoot)
+      computePlayerFinalScoreBreakdown: (_workingRoot, player) => (
+        getProjectedFinalScoreBreakdown(player)
       ),
     },
     hostPort: {
@@ -2972,9 +2990,7 @@
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
     cancelTechSelection: (...args) => cancelTechSelection(...args),
     clearTransientStateForRecovery,
-    computePlayerFinalScoreBreakdown: (player) => (
-      computePlayerFinalScoreBreakdown(player, createStateSourceReadoutRoot())
-    ),
+    computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
     confirmDataPlacement,
     confirmInitialSelectionForCurrentPlayer: (workingRoot) => (
       actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot)
@@ -3270,7 +3286,7 @@
     finishCurrentCardMoveEffectEarly,
     getMovableTokensForCardMoveEffect,
   } = bindDomainCommands("card_runtime");
-  const cardTriggerRuntime = cardTriggerRuntimeModule.createBrowserCardTriggerRuntime({
+  cardTriggerRuntime = cardTriggerRuntimeModule.createBrowserCardTriggerRuntime({
     staticContext: cardTriggerRuntimeModule.createBrowserCardTriggerStaticContext(dependencies),
     getActionInteractionRuntime: () => actionInteractionRuntime,
     getAlienSpeciesRuntime: () => alienSpeciesRuntime,
@@ -3471,16 +3487,10 @@
     aiNumber,
     aiRaceModel,
     aiValuation,
-    aliens,
     applyAiStrategyWeight,
-    cardEffects,
-    createActionContext: createReadoutActionContext,
-    endGameScoring,
-    finalScoring,
     getAiMapDemand,
     getAiRemainingRoundWeight,
     getAiStrategyDemand,
-    getCardTypeCode,
     getCurrentPlayer,
     getPlayerById,
     handleFinalScoreTileClick,
@@ -3488,7 +3498,7 @@
     recordAiAutoBattleLog,
     sumAiDemandMap,
     syncFinalScorePendingMarks,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getFinalScoreAiProjection,
   });
 
 
@@ -3979,14 +3989,17 @@
 
   const FINAL_RESULT_PLAYER_COLOR_ORDER = Object.freeze(["white", "brown", "blue", "green"]);
 
-  const computePlayerFinalScoreBreakdown = finalUiRuntimeModule.createFinalScoreBreakdownRuntime({
+  finalReadModelOwner = finalReadModelModule.createFinalReadModelOwner({
     endGameScoring,
-    buildProbeLocationIndexForRoot,
-    buildPlutoMarkerContext: (workingRoot) => actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] },
+    finalScoring,
+    buildProbeLocationIndex: (pieces) => cardTriggerRuntime?.buildProbeLocationIndexFromPieces(pieces),
+    collectPlutoMarkers: (playerState) => (
+      actionInteractionRuntime?.collectPlutoMarkersFromPlayerProjection(playerState) || []
+    ),
     cardEffects,
     getCardTypeCode,
     getPlayerCompanyBaseIncome,
-  }).compute;
+  });
   const applyIndustryStartupPassives = industryRuntimeModule.createIndustryStartupRuntime({
     industry,
     finalScoring,

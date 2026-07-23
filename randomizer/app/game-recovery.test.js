@@ -201,12 +201,13 @@ assert.equal(storage.removed, true);
   const controller = recovery.createRecoveryLogController({
     version: recovery.RECOVERY_SNAPSHOT_VERSION,
     browserServices: harness.services,
-    createReadoutRoot: () => ({
-      turnState: { roundNumber: 4, turnNumber: 7 },
-      playerState: { currentPlayerId: "player-blue" },
-      rocketState: { statusNote: "恢复完成" },
+    getRecoveryProjection: () => ({
+      schemaVersion: "seti-recovery-projection-v1",
+      roundNumber: 4,
+      turnNumber: 7,
+      actionCycleNumber: 3,
+      currentPlayerId: "player-blue",
     }),
-    getActionCycleNumber: () => 3,
     createAiControlSnapshot: () => ({ enabled: true }),
     getStableSnapshot: () => snapshot,
     getEntries: () => entries,
@@ -215,8 +216,14 @@ assert.equal(storage.removed, true);
     clearTransientStateForRecovery: () => calls.push("clear"),
     restoreAiControlSnapshot: () => ({ message: "AI restored" }),
     refreshAfterGameRecovery: (message) => calls.push(["refresh", message]),
+    getRecoveryMessage: () => null,
     importActionLogEntries: (saved, options) => calls.push(["import", saved.length, options.truncateToEntryId]),
   });
+  const freshSnapshot = controller.createGameRecoverySnapshot({ label: "DTO checkpoint" });
+  assert.equal(freshSnapshot.meta.roundNumber, 4);
+  assert.equal(freshSnapshot.meta.turnNumber, 7);
+  assert.equal(freshSnapshot.meta.actionCycleNumber, 3);
+  assert.equal(freshSnapshot.meta.currentPlayerId, "player-blue");
   const attached = controller.attachRecoverySnapshotToActionLogEntry(entries[0], "恢复点");
   assert.notEqual(attached, snapshot);
   assert.equal(attached.meta.entryId, 9);

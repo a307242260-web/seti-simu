@@ -8,6 +8,46 @@
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-host-v1";
+  const BROWSER_PROJECTION_KEYS = Object.freeze([
+    "schemaVersion", "projectionId", "source", "viewer", "match", "board", "players",
+    "cards", "tech", "aliens", "resident", "controls", "decision", "feedback",
+  ]);
+  const RUNTIME_PROJECTION_SCHEMAS = Object.freeze({
+    finalUi: "seti-final-ui-projection-v1",
+    finalScoreAi: "seti-final-score-ai-projection-v1",
+    actionLog: "seti-action-log-projection-v1",
+    recovery: "seti-recovery-projection-v1",
+  });
+  const FINAL_READ_MODEL_SCHEMA = "seti-final-read-model-v1";
+  const FINAL_UI_KEYS = Object.freeze([
+    "schemaVersion", "identity", "turn", "players", "finalBoard", "revealFlags",
+  ]);
+  const FINAL_SCORE_AI_KEYS = Object.freeze([
+    "schemaVersion", "identity", "turn", "players", "finalBoard", "candidatesByPlayerId",
+  ]);
+  const FINAL_READ_MODEL_KEYS = Object.freeze([
+    "schemaVersion", "turn", "players", "finalBoard", "candidatesByPlayerId", "revealFlags",
+  ]);
+  const FINAL_TURN_KEYS = Object.freeze([
+    "roundNumber", "turnNumber", "displayedTurnNumber", "actionCycleNumber", "currentPlayerId", "activePlayerIds",
+    "passedPlayerIds", "completedTurnPlayerIds", "gameEnded", "gameEndReason",
+  ]);
+  const FINAL_PLAYER_KEYS = Object.freeze([
+    "id", "color", "colorLabel", "name", "score", "publicity", "industryId", "industryLabel", "passed",
+    "scoreSources", "metrics", "breakdown",
+  ]);
+  const FINAL_METRIC_KEYS = Object.freeze([
+    "completedTaskCount", "reservedTaskCount", "handTaskCount", "type3Reserved", "type3InHand",
+    "traceCounts", "techCounts", "orbitLandCount", "sectorWins",
+  ]);
+  const FINAL_BOARD_KEYS = Object.freeze([
+    "thresholds", "tiles", "formulaMultipliers", "pendingByPlayerId",
+    "claimedThresholdsByPlayerId", "markedTileIdsByPlayerId", "legalTilesByPlayerId",
+  ]);
+  const FINAL_CANDIDATE_KEYS = Object.freeze([
+    "tileId", "variant", "formulaId", "available", "reason", "slotIndex", "baseValue",
+    "multiplier", "immediateScore",
+  ]);
   const LEGACY_SLICE_KEYS = Object.freeze([
     "playerState", "turnState", "cardState", "solarState", "rocketState",
     "planetStatsState", "nebulaDataState", "finalScoringState", "techGameState",
@@ -26,6 +66,155 @@
 
   function fail(code, message, details = {}) {
     return deepFreeze({ ok: false, code, message, ...clone(details) });
+  }
+
+  function assertExactKeys(value, keys, label) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      throw new TypeError(`${label} 必须是普通对象`);
+    }
+    const actual = Object.keys(value).sort();
+    const expected = [...keys].sort();
+    const unknownKeys = actual.filter((key) => !expected.includes(key));
+    const missingKeys = expected.filter((key) => !actual.includes(key));
+    if (unknownKeys.length || missingKeys.length) {
+      throw new TypeError(`${label} 字段不匹配：unknown=${unknownKeys.join(",") || "-"} missing=${missingKeys.join(",") || "-"}`);
+    }
+  }
+
+  function assertDeepFrozen(value, label, seen = new WeakSet()) {
+    if (value == null || typeof value !== "object" || seen.has(value)) return;
+    seen.add(value);
+    if (!Object.isFrozen(value)) throw new TypeError(`${label} 必须深冻结`);
+    for (const child of Object.values(value)) assertDeepFrozen(child, label, seen);
+  }
+
+  function assertCanonicalBrowserProjection(projection) {
+    assertExactKeys(projection, BROWSER_PROJECTION_KEYS, "BrowserProjection");
+    const validation = validateProjection(projection);
+    if (!validation.ok) throw new TypeError(`${validation.code}: ${validation.message}`);
+    assertDeepFrozen(projection, "BrowserProjection");
+    return projection;
+  }
+
+  function createRuntimeIdentity(projection) {
+    return {
+      projectionId: projection.projectionId,
+      sourceKind: projection.source.kind,
+      stateVersion: projection.source.stateVersion,
+      sessionId: projection.source.sessionId ?? null,
+      sessionRevision: projection.source.sessionRevision ?? null,
+      viewerId: projection.viewer.viewerId,
+      viewerPlayerId: projection.viewer.playerId ?? null,
+    };
+  }
+
+  function getFinalReadModel(projection) {
+    const readModel = projection.resident?.finalReadModel;
+    if (!readModel || readModel.schemaVersion !== FINAL_READ_MODEL_SCHEMA) {
+      throw new TypeError(`BrowserProjection 缺少 ${FINAL_READ_MODEL_SCHEMA} finalReadModel`);
+    }
+    assertDeepFrozen(readModel, "finalReadModel");
+    assertExactKeys(readModel, FINAL_READ_MODEL_KEYS, "finalReadModel");
+    assertExactKeys(readModel.turn, FINAL_TURN_KEYS, "finalReadModel.turn");
+    assertExactKeys(readModel.finalBoard, FINAL_BOARD_KEYS, "finalReadModel.finalBoard");
+    assertExactKeys(readModel.revealFlags, ["jiuzhe", "runezu"], "finalReadModel.revealFlags");
+    if (!Array.isArray(readModel.players)) throw new TypeError("finalReadModel.players 必须是数组");
+    for (const player of readModel.players) {
+      assertExactKeys(player, FINAL_PLAYER_KEYS, "finalReadModel.player");
+      assertExactKeys(player.metrics, FINAL_METRIC_KEYS, "finalReadModel.player.metrics");
+    }
+    for (const candidates of Object.values(readModel.candidatesByPlayerId || {})) {
+      for (const candidate of Object.values(candidates || {})) {
+        assertExactKeys(candidate, FINAL_CANDIDATE_KEYS, "finalReadModel.candidate");
+      }
+    }
+    return readModel;
+  }
+
+  function selectFinalUiProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getFinalReadModel(projection);
+    const selected = deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.finalUi,
+      identity: createRuntimeIdentity(projection),
+      turn: clone(readModel.turn),
+      players: clone(readModel.players),
+      finalBoard: clone(readModel.finalBoard),
+      revealFlags: clone(readModel.revealFlags),
+    });
+    assertExactKeys(selected, FINAL_UI_KEYS, "FinalUiProjection");
+    return selected;
+  }
+
+  function selectFinalScoreAiProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getFinalReadModel(projection);
+    const selected = deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.finalScoreAi,
+      identity: createRuntimeIdentity(projection),
+      turn: clone(readModel.turn),
+      players: clone(readModel.players),
+      finalBoard: clone(readModel.finalBoard),
+      candidatesByPlayerId: clone(readModel.candidatesByPlayerId),
+    });
+    assertExactKeys(selected, FINAL_SCORE_AI_KEYS, "FinalScoreAiProjection");
+    return selected;
+  }
+
+  function selectActionLogProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    for (const key of ["roundNumber", "turnNumber", "actionCycleNumber"]) {
+      if (!Number.isSafeInteger(projection.match?.[key]) || projection.match[key] < 1) {
+        throw new TypeError(`ActionLogProjection 缺少合法 match.${key}`);
+      }
+    }
+    const readModel = getFinalReadModel(projection);
+    const playerViews = projection.resident?.players?.players || [];
+    const impactByPlayerId = Object.fromEntries(playerViews.filter((player) => player?.id).map((player) => [
+      String(player.id),
+      {
+        id: String(player.id),
+        color: player.color || null,
+        colorLabel: player.colorLabel || null,
+        name: player.name || null,
+        resources: clone(player.resources || {}),
+        income: clone(player.income || {}),
+      },
+    ]));
+    const currentPlayer = readModel.players.find(
+      (player) => String(player.id) === String(projection.match.currentPlayerId),
+    );
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.actionLog,
+      identity: createRuntimeIdentity(projection),
+      roundNumber: projection.match.roundNumber,
+      turnNumber: projection.match.turnNumber,
+      displayedTurnNumber: readModel.turn.displayedTurnNumber,
+      actionCycleNumber: projection.match.actionCycleNumber,
+      activePlayerCount: Math.max(1, readModel.turn.activePlayerIds.length || readModel.players.length || 1),
+      currentPlayerId: projection.match.currentPlayerId ?? null,
+      currentPlayerLabel: currentPlayer?.colorLabel || currentPlayer?.name || currentPlayer?.id || null,
+      terminal: Boolean(projection.match.terminal),
+      gameEndReason: projection.resident.turn?.gameEndReason || null,
+      impactByPlayerId,
+    });
+  }
+
+  function selectRecoveryProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    for (const key of ["roundNumber", "turnNumber", "actionCycleNumber"]) {
+      if (!Number.isSafeInteger(projection.match?.[key]) || projection.match[key] < 1) {
+        throw new TypeError(`RecoveryProjection 缺少合法 match.${key}`);
+      }
+    }
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.recovery,
+      identity: createRuntimeIdentity(projection),
+      roundNumber: projection.match.roundNumber,
+      turnNumber: projection.match.turnNumber,
+      actionCycleNumber: projection.match.actionCycleNumber,
+      currentPlayerId: projection.match.currentPlayerId ?? null,
+    });
   }
 
   function validateProjection(projection) {
@@ -338,9 +527,16 @@
 
   return Object.freeze({
     SCHEMA_VERSION,
+    BROWSER_PROJECTION_KEYS,
+    RUNTIME_PROJECTION_SCHEMAS,
     LEGACY_SLICE_KEYS,
     validateProjection,
+    assertCanonicalBrowserProjection,
     createResidentProjection,
+    selectFinalUiProjection,
+    selectFinalScoreAiProjection,
+    selectActionLogProjection,
+    selectRecoveryProjection,
     clonePresentation,
     createReadoutRoot,
     createResidentPresentationBuilder,

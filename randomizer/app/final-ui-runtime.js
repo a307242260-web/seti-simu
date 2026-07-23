@@ -18,14 +18,10 @@
       els,
       players,
       finalScoring,
-      endGameScoring,
       uiRuntimeState,
       FINAL_SCORE_SLOT_POINTS,
       FINAL_ROUND_NUMBER,
       SCORE_SOURCE_KEYS,
-      getCurrentPlayer,
-      getActivePlayers,
-      getDisplayedTurnNumber,
       getNormalTokenAssetForPlayer,
       getHistoryForSource,
       createActionLogImpactSnapshot,
@@ -34,17 +30,12 @@
       rememberHistoryStep,
       historyCommands,
       queueStateReadoutRender,
-      computePlayerFinalScoreBreakdown,
-      getPlayerScoreSource,
-      getCurrentPlayerLabel,
       updateActionButtons,
       renderPlayerStats,
-      isGameEnded,
-      countPlayerOwnedTech,
-      getRuleReadout,
+      getFinalUiProjection,
     } = context;
-    if (typeof getRuleReadout !== "function") {
-      throw new TypeError("Final UI runtime 缺少 getRuleReadout()");
+    if (typeof getFinalUiProjection !== "function") {
+      throw new TypeError("Final UI runtime 缺少 getFinalUiProjection()");
     }
 
     const HISTORY_SOURCE_QUICK = context.HISTORY_SOURCE_QUICK || "quick";
@@ -68,7 +59,7 @@
       const currentAdded = (result.added || []).filter((pending) => pending.playerId === currentPlayer?.id);
       if (currentAdded.length) {
         const thresholds = currentAdded.map((pending) => `${pending.threshold}分`).join("、");
-        const label = getCurrentPlayerLabel?.() || currentPlayer?.colorLabel || "";
+        const label = currentPlayer?.colorLabel || "";
         workingRoot.rocketState.statusNote = `${label}玩家达到 ${thresholds}，请选择终局计分板块标记`;
       }
       return result;
@@ -106,17 +97,17 @@
 
     function renderFinalScoreBoard(projected = null) {
       if (simulation) return;
-      const readoutRoot = getRuleReadout();
-      const projectedFinalScoringState = projected?.finalScoringState || readoutRoot.finalScoringState;
-      const currentPlayer = projected?.currentPlayer || players.getCurrentPlayer(readoutRoot.playerState);
-      const pending = finalScoring.getNextPendingMarkForPlayer(projectedFinalScoringState, currentPlayer?.id);
+      const projection = getFinalUiProjection();
+      const currentPlayerId = projected?.playerId || projection.turn.currentPlayerId;
+      const currentPlayer = projection.players.find((entry) => entry.id === currentPlayerId) || null;
+      const pending = projection.finalBoard.pendingByPlayerId?.[currentPlayerId]?.[0] || null;
 
       els.finalScoreTileWraps.forEach((wrap) => {
         const tileId = wrap.dataset.finalId;
-        const tile = projectedFinalScoringState.tiles?.[tileId];
+        const tile = projection.finalBoard.tiles?.[tileId];
         const layer = wrap.querySelector(".final-score-token-layer");
         const canMark = pending
-          ? finalScoring.canMarkTile(projectedFinalScoringState, tileId, currentPlayer)
+          ? projection.finalBoard.legalTilesByPlayerId?.[currentPlayerId]?.[tileId] || { ok: false }
           : { ok: false };
 
         wrap.disabled = !canMark.ok;
@@ -201,7 +192,7 @@
     }
 
     function hasJiuzheFinalResultRow(summaries) {
-      return Boolean(getRuleReadout().alienGameState.jiuzhe?.revealInitialized)
+      return Boolean(getFinalUiProjection().revealFlags.jiuzhe)
         || summaries.some((summary) => (
           Number(summary.breakdown.jiuzheCardScore || 0) !== 0
           || Number(summary.breakdown.jiuzhePenaltyScore || 0) !== 0
@@ -210,16 +201,16 @@
     }
 
     function hasRunezuFinalResultRow(summaries) {
-      return Boolean(getRuleReadout().alienGameState.runezu?.revealInitialized)
+      return Boolean(getFinalUiProjection().revealFlags.runezu)
         || summaries.some((summary) => Number(summary.breakdown.runezuSymbolScore || 0) !== 0);
     }
 
     function getFinalResultPlayers() {
-      const readoutRoot = getRuleReadout();
-      const activeOrder = new Map((readoutRoot.turnState.activePlayerIds || []).map((playerId, index) => [playerId, index]));
+      const projection = getFinalUiProjection();
+      const activeOrder = new Map((projection.turn.activePlayerIds || []).map((playerId, index) => [playerId, index]));
       const colorOrder = new Map(FINAL_RESULT_PLAYER_COLOR_ORDER.map((color, index) => [color, index]));
-      const activeIds = new Set(readoutRoot.turnState.activePlayerIds || []);
-      return readoutRoot.playerState.players.filter((player) => activeIds.has(player.id)).sort((left, right) => {
+      const activeIds = new Set(projection.turn.activePlayerIds || []);
+      return projection.players.filter((player) => activeIds.has(player.id)).sort((left, right) => {
         const colorDelta = (colorOrder.get(left.color) ?? 99) - (colorOrder.get(right.color) ?? 99);
         if (colorDelta) return colorDelta;
         return (activeOrder.get(left.id) ?? 999) - (activeOrder.get(right.id) ?? 999);
@@ -229,10 +220,10 @@
     function buildFinalResultPlayerSummaries() {
       return getFinalResultPlayers().map((player) => ({
         player,
-        breakdown: computePlayerFinalScoreBreakdown(player),
-        scoreSources: Object.fromEntries(
-          Object.values(SCORE_SOURCE_KEYS).map((key) => [key, getPlayerScoreSource(player, key)]),
-        ),
+        breakdown: player.breakdown,
+        scoreSources: Object.fromEntries(Object.values(SCORE_SOURCE_KEYS).map(
+          (key) => [key, normalizeScoreSourceAmount(player.scoreSources?.[key])],
+        )),
       }));
     }
 
@@ -387,11 +378,11 @@
       els.finalResultHead.replaceChildren(headerRow);
       els.finalResultBody.replaceChildren(...bodyRows);
       if (els.finalResultSubtitle) {
-        const readoutTurnState = getRuleReadout().turnState;
+        const turn = getFinalUiProjection().turn;
         const winnerCount = summaries.filter((summary) => (Number(summary.breakdown.totalScore) || 0) === maxScore).length;
-        const phaseLabel = isGameEnded()
-          ? `第 ${readoutTurnState.roundNumber} 轮结束`
-          : `第 ${readoutTurnState.roundNumber} 轮第 ${getDisplayedTurnNumber()} 回合`;
+        const phaseLabel = turn.gameEnded
+          ? `第 ${turn.roundNumber} 轮结束`
+          : `第 ${turn.roundNumber} 轮第 ${turn.displayedTurnNumber} 回合`;
         els.finalResultSubtitle.textContent = summaries.length
           ? `${phaseLabel} · ${summaries.length} 名玩家 · ${winnerCount > 1 ? "并列最高分" : "最高分"} ${formatFinalResultScore(maxScore)}`
           : "暂无玩家分数";
@@ -405,7 +396,7 @@
         els.finalResultButton.setAttribute("aria-expanded", String(!els.finalResultOverlay?.hidden));
         els.finalResultButton.setAttribute("aria-disabled", "false");
       }
-      if (!isGameEnded()) {
+      if (!getFinalUiProjection().turn.gameEnded) {
         uiRuntimeState.finalResultAutoOpened = false;
       }
       if (els.finalResultOverlay && !els.finalResultOverlay.hidden) {
@@ -439,7 +430,7 @@
 
     function maybeAutoOpenFinalResultDialog() {
       syncFinalResultButton();
-      if (!isGameEnded() || uiRuntimeState.finalResultAutoOpened) return;
+      if (!getFinalUiProjection().turn.gameEnded || uiRuntimeState.finalResultAutoOpened) return;
       openFinalResultDialog({ auto: true });
     }
 
@@ -450,18 +441,19 @@
         return {
           playerId: player.id || null,
           playerLabel: player.colorLabel || player.name || player.id || "未知玩家",
-          finalScore: breakdown.totalScore ?? player.resources?.score ?? 0,
-          baseScore: breakdown.baseScore ?? player.resources?.score ?? 0,
+          finalScore: breakdown.totalScore ?? player.score ?? 0,
+          baseScore: breakdown.baseScore ?? player.score ?? 0,
           tileScore: breakdown.tileScore ?? 0,
           cardScore: breakdown.cardScore ?? 0,
           jiuzheCardScore: breakdown.jiuzheCardScore ?? 0,
           jiuzhePenaltyScore: breakdown.jiuzhePenaltyScore ?? 0,
           runezuSymbolScore: breakdown.runezuSymbolScore ?? 0,
-          completedTaskCount: player.completedTaskCount || 0,
-          techCount: typeof countPlayerOwnedTech === "function"
-            ? countPlayerOwnedTech(player)
-            : 0,
-          passed: context.isPlayerPassedThisRound(player.id),
+          completedTaskCount: player.metrics?.completedTaskCount || 0,
+          techCount: Object.values(player.metrics?.techCounts || {}).reduce(
+            (total, value) => total + (Number(value) || 0),
+            0,
+          ),
+          passed: player.passed,
         };
       });
     }
@@ -495,33 +487,8 @@
     return Object.freeze({ syncFinalScorePendingMarks, handleFinalScoreTileClick });
   }
 
-  function createFinalScoreBreakdownRuntime(context = {}) {
-    function compute(player, workingRoot) {
-      if (!workingRoot) throw new TypeError("终局计分 readout 需要显式只读 root");
-      const probeLocationData = context.buildProbeLocationIndexForRoot(workingRoot);
-      return context.endGameScoring?.computePlayerFinalScore
-        ? context.endGameScoring.computePlayerFinalScore({
-          currentPlayer: player,
-          finalScoringState: workingRoot.finalScoringState,
-          playerState: workingRoot.playerState,
-          nebulaDataState: workingRoot.nebulaDataState,
-          alienGameState: workingRoot.alienGameState,
-          planetStatsState: workingRoot.planetStatsState,
-          ...context.buildPlutoMarkerContext(workingRoot),
-          probeLocations: probeLocationData.index,
-          probeLocationDetails: probeLocationData.details,
-          cardEffects: context.cardEffects,
-          getCardTypeCode: context.getCardTypeCode,
-          getPlayerCompanyBaseIncome: context.getPlayerCompanyBaseIncome,
-        })
-        : { totalScore: player.resources?.score || 0 };
-    }
-    return Object.freeze({ compute });
-  }
-
   return {
     createFinalUiRuntime,
     createFinalUiPort,
-    createFinalScoreBreakdownRuntime,
   };
 });

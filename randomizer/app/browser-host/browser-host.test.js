@@ -1,10 +1,151 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const stateApi = require("../../game/state/state-store");
 const projectionApi = require("./projection-adapter");
+const residentProjectionApi = require("./resident-projection");
+const finalReadModelApi = require("../../game/final-read-model");
 const viewStateApi = require("./view-state-store");
 const inputApi = require("./input-adapter");
+
+function deepFreeze(value) {
+  if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+  for (const child of Object.values(value)) deepFreeze(child);
+  return Object.freeze(value);
+}
+
+function createFinalReadModel() {
+  return {
+    schemaVersion: "seti-final-read-model-v1",
+    turn: {
+      roundNumber: 2, turnNumber: 3, displayedTurnNumber: 3, actionCycleNumber: 1, currentPlayerId: "p1",
+      activePlayerIds: ["p1"], passedPlayerIds: [], completedTurnPlayerIds: [],
+      gameEnded: false, gameEndReason: null,
+    },
+    players: [{
+      id: "p1", color: "blue", colorLabel: "蓝色", name: "一号", score: 12, publicity: 0,
+      industryId: null, industryLabel: null, passed: false, scoreSources: {},
+      metrics: {
+        completedTaskCount: 0, reservedTaskCount: 0, handTaskCount: 0, type3Reserved: 0,
+        type3InHand: 0, traceCounts: { yellow: 0, pink: 0, blue: 0 },
+        techCounts: { orange: 0, purple: 0, blue: 0 }, orbitLandCount: 0, sectorWins: 0,
+      },
+      breakdown: { totalScore: 12, baseScore: 12 },
+    }],
+    finalBoard: {
+      thresholds: [25, 50, 70],
+      tiles: { a: { id: "a", variant: 1, marks: [] } },
+      formulaMultipliers: { a1: { 1: 5, 2: 4, 3: 3 } },
+      pendingByPlayerId: { p1: [{ id: "pending-1", playerId: "p1", threshold: 25 }] },
+      claimedThresholdsByPlayerId: { p1: [] },
+      markedTileIdsByPlayerId: { p1: [] },
+      legalTilesByPlayerId: { p1: { a: { ok: true, reason: null, slotIndex: 1 } } },
+    },
+    candidatesByPlayerId: {
+      p1: {
+        a: {
+          tileId: "a", variant: 1, formulaId: "a1", available: true, reason: null,
+          slotIndex: 1, baseValue: 2, multiplier: 5, immediateScore: 10,
+        },
+      },
+    },
+    revealFlags: { jiuzhe: false, runezu: false },
+  };
+}
+
+function createProjectionWithFinalReadModel() {
+  return projectionApi.createBrowserProjectionAdapter({
+    stateStore: stateApi.createStateStore(createState()),
+    visibilityPolicy(state, viewer, context) {
+      const visible = projectionApi.defaultVisibilityPolicy(state, viewer, context);
+      visible.resident.finalReadModel = createFinalReadModel();
+      return visible;
+    },
+  }).projectCommitted({
+    viewer: { viewerId: "viewer-p1", playerId: "p1", role: "player" },
+  });
+}
+
+(function testFinalReadModelOwnerDerivesFrozenNarrowRuleResultsWithoutMutatingState() {
+  const state = structuredClone(createState());
+  state.turn = {
+    roundNumber: 2, turnNumber: 3, actionCycleNumber: 4, currentPlayerId: "p1",
+    activePlayerIds: ["p1"], passedPlayerIds: [], completedTurnPlayerIds: [],
+  };
+  state.players = {
+    currentPlayerId: "p1",
+    players: [{
+      id: "p1", color: "blue", colorLabel: "蓝色", resources: { score: 25, publicity: 1 },
+      hand: [], reservedCards: [], completedTaskCount: 0, scoreSources: { scanScore: 3 },
+    }],
+  };
+  state.finalScoring = {
+    thresholds: [25, 50, 70],
+    tiles: Object.fromEntries(["a", "b", "c", "d"].map((id) => [id, { id, marks: [] }])),
+    pendingMarks: [{ id: "pending-p1-25", playerId: "p1", threshold: 25 }],
+    tileVariants: { a: 1, b: 1, c: 1, d: 1 },
+  };
+  const before = structuredClone(state);
+  const finalScoring = {
+    FINAL_SCORE_THRESHOLDS: [25, 50, 70],
+    getPendingMarksForPlayer: (finalState, playerId) => (
+      finalState.pendingMarks.filter((entry) => entry.playerId === playerId)
+    ),
+    listMarks: (finalState) => Object.values(finalState.tiles).flatMap((tile) => tile.marks),
+    canMarkTile: () => ({ ok: true, slotIndex: 1 }),
+    getTileVariant: (finalState, tileId) => finalState.tileVariants[tileId],
+    getNextSlotIndex: () => 1,
+  };
+  const endGameScoring = {
+    computePlayerFinalScore: ({ currentPlayer }) => ({
+      totalScore: currentPlayer.resources.score + 10,
+      baseScore: currentPlayer.resources.score,
+    }),
+    countTraceMarkers: () => 0,
+    countOwnedTech: () => 0,
+    countType3Cards: () => 0,
+    countOrbitOrLandMarkers: () => 0,
+    countSectorWins: () => 0,
+    getFormulaId: (tileId, variant) => `${tileId}${variant}`,
+    getFormulaBaseValue: () => 2,
+    getSlotMultiplier: () => 5,
+  };
+  const readModel = finalReadModelApi.createFinalReadModelOwner({
+    finalScoring,
+    endGameScoring,
+    cardEffects: { getCardModel: () => null },
+    getCardTypeCode: () => 0,
+  }).project(state);
+
+  assert.equal(readModel.players[0].breakdown.totalScore, 35);
+  assert.equal(readModel.candidatesByPlayerId.p1.a.immediateScore, 10);
+  assert.equal(readModel.finalBoard.legalTilesByPlayerId.p1.a.ok, true);
+  assert.equal(Object.hasOwn(readModel, "pieces"), false);
+  assert.equal(Object.hasOwn(readModel, "finalScoringState"), false);
+  assert.deepEqual(state, before);
+  assert.equal(Object.isFrozen(readModel.candidatesByPlayerId.p1.a), true);
+  assert.throws(() => { readModel.players[0].score = 999; }, TypeError);
+})();
+
+(function testFinalLogAndRecoveryBrowserRuntimesHaveNoLegacyReadoutOrRuleRecomputePath() {
+  const files = [
+    "../final-ui-runtime.js",
+    "../final-score-ai-runtime.js",
+    "../action-log-runtime.js",
+    "../action-log-export.js",
+    "../game-recovery.js",
+  ];
+  for (const file of files) {
+    const source = fs.readFileSync(path.join(__dirname, file), "utf8");
+    assert.equal(/\bgetRuleReadout\b|\bcreateReadoutRoot\b|projection\.scoring/.test(source), false, file);
+  }
+  const finalAiSource = fs.readFileSync(path.join(__dirname, "../final-score-ai-runtime.js"), "utf8");
+  assert.equal(/\bendGameScoring\b|\bfinalScoring\b|\bcreateScoringContext\b/.test(finalAiSource), false);
+  const finalUiSource = fs.readFileSync(path.join(__dirname, "../final-ui-runtime.js"), "utf8");
+  assert.equal(/\bendGameScoring\b|computePlayerFinalScoreBreakdown/.test(finalUiSource), false);
+})();
 
 function createState() {
   return stateApi.createCommittedGameState({
@@ -86,6 +227,56 @@ function createState() {
   assert.equal(adapter.projectCommitted({
     viewer: { viewerId: "viewer-p1", playerId: "p1", role: "player" },
   }).players.p1.resources.credits, 5);
+})();
+
+(function testRuntimeSelectorsAcceptOnlyCanonicalFrozenBrowserProjection() {
+  const projection = createProjectionWithFinalReadModel();
+  const finalUi = residentProjectionApi.selectFinalUiProjection(projection);
+  const finalAi = residentProjectionApi.selectFinalScoreAiProjection(projection);
+  const actionLog = residentProjectionApi.selectActionLogProjection(projection);
+  const recovery = residentProjectionApi.selectRecoveryProjection(projection);
+
+  assert.equal(finalUi.schemaVersion, "seti-final-ui-projection-v1");
+  assert.equal(finalUi.players[0].id, "p1");
+  assert.equal(finalAi.schemaVersion, "seti-final-score-ai-projection-v1");
+  assert.equal(finalAi.candidatesByPlayerId.p1.a.immediateScore, 10);
+  assert.deepEqual(
+    { roundNumber: actionLog.roundNumber, turnNumber: actionLog.turnNumber, currentPlayerId: actionLog.currentPlayerId },
+    { roundNumber: 2, turnNumber: 3, currentPlayerId: "p1" },
+  );
+  assert.equal(recovery.schemaVersion, "seti-recovery-projection-v1");
+  assert.equal(Object.isFrozen(finalUi.finalBoard.tiles), true);
+  assert.throws(() => { finalAi.candidatesByPlayerId.p1.a.immediateScore = 999; }, TypeError);
+
+  const forged = Object.freeze({ ...projection, ruleRoot: {} });
+  assert.throws(
+    () => residentProjectionApi.selectActionLogProjection(forged),
+    /字段不匹配/,
+  );
+  const mutable = structuredClone(projection);
+  assert.throws(
+    () => residentProjectionApi.selectRecoveryProjection(mutable),
+    /必须深冻结/,
+  );
+  const missing = Object.freeze(Object.fromEntries(
+    Object.entries(projection).filter(([key]) => key !== "resident"),
+  ));
+  assert.throws(
+    () => residentProjectionApi.selectFinalUiProjection(missing),
+    /字段不匹配/,
+  );
+  const forgedCandidate = structuredClone(projection);
+  forgedCandidate.resident.finalReadModel.candidatesByPlayerId.p1.a.ruleRoot = {};
+  assert.throws(
+    () => residentProjectionApi.selectFinalScoreAiProjection(deepFreeze(forgedCandidate)),
+    /字段不匹配/,
+  );
+  const withoutReadModel = structuredClone(projection);
+  delete withoutReadModel.resident.finalReadModel;
+  assert.throws(
+    () => residentProjectionApi.selectFinalUiProjection(deepFreeze(withoutReadModel)),
+    /缺少 seti-final-read-model-v1/,
+  );
 })();
 
 (function testSessionProjectionUsesOnlyConsistentInspectObserveAndHidesDecisionChoices() {

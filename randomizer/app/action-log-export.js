@@ -330,18 +330,18 @@
   function createActionLogExportController(options = {}) {
     function buildContext(contextOptions = {}) {
       const generatedAt = contextOptions.generatedAt || new Date();
-      const readoutRoot = options.createReadoutRoot();
-      const displayedTurnNumber = options.getDisplayedTurnNumber();
+      const projection = options.getActionLogProjection();
       return {
         generatedAt,
-        isGameEnded: options.isGameEnded(),
-        gameEndReason: readoutRoot.turnState.gameEndReason || null,
-        roundNumber: readoutRoot.turnState.roundNumber,
-        turnNumber: displayedTurnNumber,
+        isGameEnded: projection.terminal,
+        gameEndReason: projection.gameEndReason,
+        roundNumber: projection.roundNumber,
+        turnNumber: projection.displayedTurnNumber,
         turnState: {
-          ...structuredClone(readoutRoot.turnState),
-          displayedTurnNumber,
-          currentPlayerId: readoutRoot.playerState.currentPlayerId,
+          roundNumber: projection.roundNumber,
+          turnNumber: projection.turnNumber,
+          displayedTurnNumber: projection.displayedTurnNumber,
+          currentPlayerId: projection.currentPlayerId,
         },
         entries: options.getEntries({ includeRecovery: false }),
         playerResults: options.getPlayerResults(),

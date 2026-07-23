@@ -18,16 +18,10 @@
       aiNumber,
       aiRaceModel,
       aiValuation,
-      aliens,
       applyAiStrategyWeight,
-      cardEffects,
-      createActionContext,
-      endGameScoring,
-      finalScoring,
       getAiMapDemand,
       getAiRemainingRoundWeight,
       getAiStrategyDemand,
-      getCardTypeCode,
       getCurrentPlayer,
       getPlayerById,
       handleFinalScoreTileClick,
@@ -35,11 +29,23 @@
       recordAiAutoBattleLog,
       sumAiDemandMap,
       syncFinalScorePendingMarks,
-      getRuleReadout,
+      getFinalScoreAiProjection,
     } = context;
-    if (typeof getRuleReadout !== "function") {
-      throw new TypeError("Final score AI runtime 缺少 getRuleReadout()");
+    if (typeof getFinalScoreAiProjection !== "function") {
+      throw new TypeError("Final score AI runtime 缺少 getFinalScoreAiProjection()");
     }
+
+  function getProjectedPlayer(player) {
+    if (!player) return null;
+    const playerId = player.id || player.color;
+    return getFinalScoreAiProjection().players.find((entry) => String(entry.id) === String(playerId)) || null;
+  }
+
+  function getFormulaMultiplier(formulaId, slotIndex) {
+    return Math.max(0, aiNumber(
+      getFinalScoreAiProjection().finalBoard.formulaMultipliers?.[formulaId]?.[slotIndex],
+    ));
+  }
 
   function getAiFinalScoreFormulaPotential(formulaId) {
     switch (formulaId) {
@@ -100,24 +106,15 @@
 
   function getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand = {}) {
     if (!player || (formulaId !== "c1" && formulaId !== "c2")) return null;
-    const countOpenTasks = (card) => {
-      const model = cardEffects?.getCardModel?.(card) || null;
-      const completed = new Set(card?.cardEffectState?.completedTaskIds || []);
-      return (model?.tasks || []).filter((task) => task?.id && !completed.has(task.id)).length;
-    };
-    const reservedCards = Array.isArray(player.reservedCards) ? player.reservedCards : [];
-    const hand = Array.isArray(player.hand) ? player.hand : [];
-    const reservedTaskCount = reservedCards.reduce((total, card) => total + countOpenTasks(card), 0);
-    const handTaskCount = hand.reduce((total, card) => total + countOpenTasks(card), 0);
-    const type3Reserved = endGameScoring?.countType3Cards
-      ? Math.max(0, Math.round(aiNumber(endGameScoring.countType3Cards(player, getCardTypeCode))))
-      : reservedCards.reduce((total, card) => total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0), 0);
-    const type3InHand = hand.reduce((total, card) => (
-      total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0)
-    ), 0);
+    const projectedPlayer = getProjectedPlayer(player);
+    const metrics = projectedPlayer?.metrics || {};
+    const reservedTaskCount = Math.max(0, aiNumber(metrics.reservedTaskCount));
+    const handTaskCount = Math.max(0, aiNumber(metrics.handTaskCount));
+    const type3Reserved = Math.max(0, aiNumber(metrics.type3Reserved));
+    const type3InHand = Math.max(0, aiNumber(metrics.type3InHand));
     const currentBase = Math.max(0, Math.round(aiNumber(baseValue)));
-    const completedTaskCount = Math.max(0, aiNumber(player.completedTaskCount));
-    const roundNumber = Math.max(1, Math.round(aiNumber(getRuleReadout().turnState.roundNumber) || 1));
+    const completedTaskCount = Math.max(0, aiNumber(metrics.completedTaskCount));
+    const roundNumber = Math.max(1, Math.round(aiNumber(getFinalScoreAiProjection().turn.roundNumber) || 1));
     const taskDemand = aiNumber(demand.task) + getAiMapDemand(demand.actions, "playCard") * 0.8;
     const visibleTaskPipeline = reservedTaskCount + handTaskCount * 0.35;
     const visibleType3Pipeline = type3Reserved + type3InHand * 0.45;
@@ -186,12 +183,12 @@
   }
 
   function scoreAiFinalScoreFormulaGrowth(formulaId, player, slotIndex, baseValue, demand = {}) {
-    if (!player || !endGameScoring?.getSlotMultiplier) return 0;
+    if (!player) return 0;
     if (!["c1", "c2", "d1", "d2"].includes(formulaId)) return 0;
     const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
 
     const remainingRounds = Math.max(1, aiNumber(getAiRemainingRoundWeight()));
-    const roundNumber = Math.max(1, Math.round(aiNumber(getRuleReadout().turnState.roundNumber) || 1));
+    const roundNumber = Math.max(1, Math.round(aiNumber(getFinalScoreAiProjection().turn.roundNumber) || 1));
     const currentBase = Math.max(0, Math.round(aiNumber(baseValue)));
 
     if (formulaId === "c1" || formulaId === "c2") {
@@ -207,7 +204,7 @@
       if (currentBase <= 0 && pipelineScale < 0.12) return 0;
       const baseGain = Math.max(0, projectedBase - pipelineCurrentBase);
       if (baseGain <= 0 && currentBase > 0) return 0;
-      const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, slot)));
+      const multiplier = getFormulaMultiplier(formulaId, slot);
       const growthValue = baseGain * multiplier;
       const firstSlotPremium = slot === 1 && roundNumber <= 3
         ? Math.min(
@@ -226,15 +223,15 @@
       return Math.min(24, growthValue * (formulaId === "c1" ? 0.48 : 0.68) + firstSlotPremium + zeroBaseFloor);
     }
 
-    if (!endGameScoring?.countOwnedTech) return 0;
     if (slot >= 3) return 0;
+    const projectedPlayer = getProjectedPlayer(player);
     const techCounts = ["orange", "purple", "blue"].map((techType) => (
-      Math.max(0, Math.round(aiNumber(endGameScoring.countOwnedTech(player, techType))))
+      Math.max(0, Math.round(aiNumber(projectedPlayer?.metrics?.techCounts?.[techType])))
     ));
     const totalTech = techCounts.reduce((total, count) => total + count, 0);
-    const hasCheatLab = player?.industryCard?.id === "industry:作弊实验室"
-      || player?.industryCard?.label === "作弊实验室";
-    const publicity = Math.max(0, aiNumber(player.resources?.publicity));
+    const hasCheatLab = projectedPlayer?.industryId === "industry:作弊实验室"
+      || projectedPlayer?.industryLabel === "作弊实验室";
+    const publicity = Math.max(0, aiNumber(projectedPlayer?.publicity));
     const techDemand = sumAiDemandMap(demand.techTypes) + getAiMapDemand(demand.actions, "researchTech");
     const resourceBoost = publicity >= (hasCheatLab ? 4 : 6) ? 0.65 : publicity >= 3 ? 0.35 : 0;
     const demandBoost = Math.min(1.4, Math.max(0, techDemand) * 0.045);
@@ -261,7 +258,7 @@
     const baseGain = Math.max(0, projectedBase - currentBase);
     if (baseGain <= 0 && currentBase > 0) return 0;
 
-    const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, slot)));
+    const multiplier = getFormulaMultiplier(formulaId, slot);
     const growthValue = baseGain * multiplier;
     const firstSlotPremium = slot === 1 && roundNumber <= 3
       ? Math.min(8, (formulaId === "d2" ? 3.2 : 2.4) + expectedNewTech * 0.7)
@@ -274,7 +271,7 @@
 
   function scoreAiWeakCFinalFormulaPenalty(formulaId, player, slotIndex, thresholdValue, baseValue, growthPotentialScore, demand = {}) {
     if (formulaId !== "c1" && formulaId !== "c2") return 0;
-    const roundNumber = Math.max(1, Math.round(aiNumber(getRuleReadout().turnState.roundNumber) || 1));
+    const roundNumber = Math.max(1, Math.round(aiNumber(getFinalScoreAiProjection().turn.roundNumber) || 1));
     const threshold = Math.max(0, aiNumber(thresholdValue));
 
     const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
@@ -351,7 +348,7 @@
     const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
     if (!cPipelineState) return null;
 
-    const roundNumber = Math.max(1, Math.round(aiNumber(getRuleReadout().turnState.roundNumber) || 1));
+    const roundNumber = Math.max(1, Math.round(aiNumber(getFinalScoreAiProjection().turn.roundNumber) || 1));
     const threshold = Math.max(0, aiNumber(thresholdValue));
     const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
     const projectedBase = Math.max(0, aiNumber(cPipelineState.projectedBase));
@@ -381,17 +378,8 @@
   }
 
   function getAiB1FinalFormulaState(player) {
-    const traceTypes = aliens?.TRACE_TYPES?.length ? aliens.TRACE_TYPES : ["yellow", "pink", "blue"];
-    const counts = {};
-    for (const traceType of traceTypes) {
-      counts[traceType] = endGameScoring?.countTraceMarkers
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countTraceMarkers(
-          player,
-          getRuleReadout().alienGameState,
-          traceType,
-        ))))
-        : 0;
-    }
+    const traceTypes = ["yellow", "pink", "blue"];
+    const counts = { ...(getProjectedPlayer(player)?.metrics?.traceCounts || {}) };
     const values = traceTypes.map((traceType) => counts[traceType] || 0);
     const minTrace = values.length ? Math.min(...values) : 0;
     const totalTrace = values.reduce((total, count) => total + count, 0);
@@ -421,7 +409,7 @@
     if (!missingTypes.length) return 0;
 
     const threshold = Math.max(0, aiNumber(thresholdValue));
-    const roundNumber = Math.max(1, Math.round(aiNumber(getRuleReadout().turnState.roundNumber) || 1));
+    const roundNumber = Math.max(1, Math.round(aiNumber(getFinalScoreAiProjection().turn.roundNumber) || 1));
     if (threshold < 50 && roundNumber <= 2) return 0;
 
     const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
@@ -458,23 +446,13 @@
   }
 
   function getAiB2FinalFormulaState(player, context = {}) {
-    if (!player || !endGameScoring) {
+    if (!player) {
       return { orbitLandCount: 0, sectorWins: 0 };
     }
+    const metrics = getProjectedPlayer(player)?.metrics || {};
     return {
-      orbitLandCount: endGameScoring.countOrbitOrLandMarkers
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countOrbitOrLandMarkers(
-          player,
-          context.planetStatsState,
-          context,
-        ))))
-        : 0,
-      sectorWins: endGameScoring.countSectorWins
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countSectorWins(
-          player,
-          context.nebulaDataState,
-        ))))
-        : 0,
+      orbitLandCount: Math.max(0, Math.round(aiNumber(metrics.orbitLandCount))),
+      sectorWins: Math.max(0, Math.round(aiNumber(metrics.sectorWins))),
     };
   }
 
@@ -490,7 +468,7 @@
     if (formulaId !== "b2" || !player) return 0;
     if (Math.max(0, aiNumber(baseValue)) > 0) return 0;
 
-    const state = b2State || getAiB2FinalFormulaState(player, createActionContext());
+    const state = b2State || getAiB2FinalFormulaState(player);
     const orbitLandCount = Math.max(0, aiNumber(state.orbitLandCount));
     const sectorWins = Math.max(0, aiNumber(state.sectorWins));
     const missingSectorSide = sectorWins <= 0;
@@ -499,7 +477,7 @@
 
     const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
     const threshold = Math.max(0, aiNumber(thresholdValue));
-    const roundNumber = Math.max(1, Math.round(aiNumber(getRuleReadout().turnState.roundNumber) || 1));
+    const roundNumber = Math.max(1, Math.round(aiNumber(getFinalScoreAiProjection().turn.roundNumber) || 1));
     const scanDemand = getAiMapDemand(demand.actions, "scan")
       + sumAiDemandMap(demand.scanColors) * 0.35
       + getAiMapDemand(demand.traceTypes, "pink") * 0.15
@@ -546,9 +524,8 @@
 
   function hasAiPlayerClaimedFinalThreshold(playerId, threshold) {
     if (!playerId) return false;
-    return (finalScoring.listMarks?.(getRuleReadout().finalScoringState) || []).some((mark) => (
-      mark?.playerId === playerId && Number(mark?.threshold) === Number(threshold)
-    ));
+    return (getFinalScoreAiProjection().finalBoard.claimedThresholdsByPlayerId?.[playerId] || [])
+      .some((claimed) => Number(claimed) === Number(threshold));
   }
 
   const AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION = 8;
@@ -576,19 +553,13 @@
   }
 
   function getAiFinalTileRaceThresholds() {
-    const finalState = getRuleReadout().finalScoringState;
-    return Array.isArray(finalState.thresholds) && finalState.thresholds.length
-      ? [...finalState.thresholds]
-      : [...(finalScoring.FINAL_SCORE_THRESHOLDS || [])];
+    return [...(getFinalScoreAiProjection().finalBoard.thresholds || [])];
   }
 
   function getAiFinalTileRaceTarget(player, options = {}) {
     if (!player) return null;
     const minimumThreshold = Math.max(0, aiNumber(options.minimumThreshold));
-    const pending = (finalScoring.getPendingMarksForPlayer?.(
-      getRuleReadout().finalScoringState,
-      player.id,
-    ) || [])
+    const pending = (getFinalScoreAiProjection().finalBoard.pendingByPlayerId?.[player.id] || [])
       .find((entry) => aiNumber(entry?.threshold) > minimumThreshold);
     if (pending) {
       return {
@@ -598,7 +569,7 @@
       };
     }
 
-    const score = Math.max(0, aiNumber(player.resources?.score));
+    const score = Math.max(0, aiNumber(getProjectedPlayer(player)?.score));
     const threshold = getAiFinalTileRaceThresholds().find((entry) => (
       aiNumber(entry) > minimumThreshold
       && !hasAiPlayerClaimedFinalThreshold(player.id, entry)
@@ -623,13 +594,13 @@
 
   function getAiFinalTileRaceActionWindow(player) {
     if (!player?.id || !aiRaceModel?.buildActionWindowOrder) return [];
-    const readoutTurnState = getRuleReadout().turnState;
-    const completedPlayerIds = [...(readoutTurnState.completedTurnPlayerIds || [])];
+    const turn = getFinalScoreAiProjection().turn;
+    const completedPlayerIds = [...(turn.completedTurnPlayerIds || [])];
     if (!completedPlayerIds.some((playerId) => String(playerId) === String(player.id))) {
       completedPlayerIds.push(player.id);
     }
     return aiRaceModel.buildActionWindowOrder({
-      ...readoutTurnState,
+      ...turn,
       completedTurnPlayerIds: completedPlayerIds,
     }, player.id);
   }
@@ -661,17 +632,10 @@
       || !player?.id
       || !pending
       || !aiRaceModel?.estimateRaceOutcome
-      || !endGameScoring?.getSlotMultiplier
     ) return null;
 
-    const currentMultiplier = Math.max(
-      0,
-      aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot)),
-    );
-    const fallbackMultiplier = Math.max(
-      0,
-      aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot + 1)),
-    );
+    const currentMultiplier = getFormulaMultiplier(formulaId, currentSlot);
+    const fallbackMultiplier = getFormulaMultiplier(formulaId, currentSlot + 1);
     const multiplierGap = Math.max(0, currentMultiplier - fallbackMultiplier);
     if (multiplierGap <= 0) return null;
 
@@ -683,19 +647,19 @@
       minimumThreshold: aiNumber(pending.threshold),
     });
     const actorEta = estimateAiFinalTileRaceEta(actorTarget);
-    const readoutRoot = getRuleReadout();
-    const activeIds = Array.isArray(readoutRoot.turnState.activePlayerIds) && readoutRoot.turnState.activePlayerIds.length
-      ? readoutRoot.turnState.activePlayerIds
-      : readoutRoot.playerState.players.map((entry) => entry.id).filter(Boolean);
+    const projection = getFinalScoreAiProjection();
+    const activeIds = Array.isArray(projection.turn.activePlayerIds) && projection.turn.activePlayerIds.length
+      ? projection.turn.activePlayerIds
+      : projection.players.map((entry) => entry.id).filter(Boolean);
     const activeIdSet = new Set(activeIds.map((playerId) => String(playerId)));
-    const passedIdSet = new Set((readoutRoot.turnState.passedPlayerIds || []).map((playerId) => String(playerId)));
+    const passedIdSet = new Set((projection.turn.passedPlayerIds || []).map((playerId) => String(playerId)));
     const opponentEtas = [];
 
-    for (const opponent of readoutRoot.playerState.players || []) {
+    for (const opponent of projection.players || []) {
       if (!opponent?.id || String(opponent.id) === String(player.id)) continue;
       if (activeIdSet.size && !activeIdSet.has(String(opponent.id))) continue;
       if (passedIdSet.has(String(opponent.id))) continue;
-      if (finalScoring.hasPlayerMarkedTile?.(readoutRoot.finalScoringState, tileId, opponent.id)) continue;
+      if (projection.finalBoard.markedTileIdsByPlayerId?.[opponent.id]?.includes(tileId)) continue;
 
       const target = getAiFinalTileRaceTarget(opponent);
       if (!target) continue;
@@ -764,55 +728,46 @@
   }
 
   function scoreAiFinalScoreTileCompetition(tileId, formulaId, slotIndex, player, context) {
-    if (!tileId || !formulaId || !player || !endGameScoring?.getSlotMultiplier) return 0;
+    if (!tileId || !formulaId || !player) return 0;
     const currentSlot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
     if (currentSlot >= 3) return 0;
-    const currentMultiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot)));
-    const nextMultiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot + 1)));
+    const currentMultiplier = getFormulaMultiplier(formulaId, currentSlot);
+    const nextMultiplier = getFormulaMultiplier(formulaId, currentSlot + 1);
     const multiplierGap = Math.max(0, currentMultiplier - nextMultiplier);
     if (multiplierGap <= 0) return 0;
 
-    const readoutRoot = getRuleReadout();
-    const thresholds = Array.isArray(readoutRoot.finalScoringState.thresholds) && readoutRoot.finalScoringState.thresholds.length
-      ? readoutRoot.finalScoringState.thresholds
-      : finalScoring.FINAL_SCORE_THRESHOLDS || [];
+    const projection = getFinalScoreAiProjection();
+    const thresholds = projection.finalBoard.thresholds || [];
     let score = 0;
-    const activeIds = Array.isArray(readoutRoot.turnState.activePlayerIds) && readoutRoot.turnState.activePlayerIds.length
-      ? readoutRoot.turnState.activePlayerIds
-      : readoutRoot.playerState.players.map((entry) => entry.id).filter(Boolean);
+    const activeIds = Array.isArray(projection.turn.activePlayerIds) && projection.turn.activePlayerIds.length
+      ? projection.turn.activePlayerIds
+      : projection.players.map((entry) => entry.id).filter(Boolean);
 
     for (const opponentId of activeIds) {
       if (!opponentId || opponentId === player.id) continue;
-      const opponent = readoutRoot.playerState.players.find((entry) => entry.id === opponentId);
+      const opponent = projection.players.find((entry) => entry.id === opponentId);
       if (!opponent) continue;
-      if (finalScoring.hasPlayerMarkedTile?.(readoutRoot.finalScoringState, tileId, opponent.id)) continue;
+      const opponentCandidate = projection.candidatesByPlayerId?.[opponent.id]?.[tileId];
+      if (!opponentCandidate?.available) continue;
 
-      const opponentScore = Math.max(0, aiNumber(opponent.resources?.score));
+      const opponentScore = Math.max(0, aiNumber(opponent.score));
       const nextThreshold = thresholds.find((threshold) => (
         opponentScore < aiNumber(threshold)
         && !hasAiPlayerClaimedFinalThreshold(opponent.id, threshold)
       )) || null;
-      const pendingCount = finalScoring.getPendingMarksForPlayer?.(
-        readoutRoot.finalScoringState,
-        opponent.id,
-      )?.length || 0;
+      const pendingCount = projection.finalBoard.pendingByPlayerId?.[opponent.id]?.length || 0;
       let readiness = pendingCount > 0 ? 1.15 : 0;
       if (nextThreshold != null) {
         const deficit = Math.max(0, aiNumber(nextThreshold) - opponentScore);
         if (deficit <= 0) readiness = Math.max(readiness, 1.15);
         else if (deficit <= 8) readiness = Math.max(readiness, 0.75);
-        else if (deficit <= 15 && Math.max(1, Math.round(aiNumber(readoutRoot.turnState.roundNumber) || 1)) >= 3) {
+        else if (deficit <= 15 && Math.max(1, Math.round(aiNumber(projection.turn.roundNumber) || 1)) >= 3) {
           readiness = Math.max(readiness, 0.4);
         }
       }
       if (readiness <= 0) continue;
 
-      const opponentBase = Math.max(0, aiNumber(endGameScoring.getFormulaBaseValue(
-        formulaId,
-        opponent,
-        context,
-        { getCardTypeCode },
-      )));
+      const opponentBase = Math.max(0, aiNumber(opponentCandidate.baseValue));
       const formulaPotential = getAiFinalScoreFormulaPotential(formulaId);
       const immediateSwing = opponentBase * multiplierGap;
       const slotUrgency = currentSlot === 1 ? 5 : 2.2;
@@ -826,38 +781,25 @@
   }
 
   function getAiFinalScoreTileCandidate(tileId, player = getCurrentPlayer()) {
-    if (!tileId || !player || !finalScoring?.canMarkTile || !endGameScoring?.getFormulaId) {
-      return null;
-    }
-    const readoutRoot = getRuleReadout();
-    const pending = finalScoring.getNextPendingMarkForPlayer(readoutRoot.finalScoringState, player.id);
+    if (!tileId || !player) return null;
+    const projection = getFinalScoreAiProjection();
+    const pending = projection.finalBoard.pendingByPlayerId?.[player.id]?.[0] || null;
     if (!pending) return null;
 
-    const check = finalScoring.canMarkTile(readoutRoot.finalScoringState, tileId, player);
-    if (!check.ok) {
+    const derived = projection.candidatesByPlayerId?.[player.id]?.[tileId];
+    if (!derived?.available) {
       return {
         tileId,
         available: false,
-        reason: check.message || "不可标记",
+        reason: derived?.reason || "不可标记",
       };
     }
 
-    const variant = finalScoring.getTileVariant(readoutRoot.finalScoringState, tileId);
-    const formulaId = endGameScoring.getFormulaId(tileId, variant);
-    const context = {
-      ...createActionContext(),
-      finalScoringState: readoutRoot.finalScoringState,
-      cardEffects,
-      getCardTypeCode,
-    };
-    const baseValue = Math.max(0, aiNumber(endGameScoring.getFormulaBaseValue(
-      formulaId,
-      player,
-      context,
-      { getCardTypeCode },
-    )));
-    const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, check.slotIndex)));
-    const immediateScore = baseValue * multiplier;
+    const { variant, formulaId } = derived;
+    const check = { ok: true, slotIndex: derived.slotIndex };
+    const baseValue = Math.max(0, aiNumber(derived.baseValue));
+    const multiplier = Math.max(0, aiNumber(derived.multiplier));
+    const immediateScore = Math.max(0, aiNumber(derived.immediateScore));
     const demand = getAiStrategyDemand(player);
     const demandScore = scoreAiFinalScoreFormulaDemand(formulaId, demand);
     const b1FormulaState = formulaId === "b1" ? getAiB1FinalFormulaState(player) : null;
@@ -865,12 +807,10 @@
     const cFormulaPipeline = (formulaId === "c1" || formulaId === "c2")
       ? getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand)
       : null;
-    const thresholds = Array.isArray(readoutRoot.finalScoringState.thresholds) && readoutRoot.finalScoringState.thresholds.length
-      ? readoutRoot.finalScoringState.thresholds
-      : finalScoring.FINAL_SCORE_THRESHOLDS || [];
+    const thresholds = projection.finalBoard.thresholds || [];
     const lastThreshold = Math.max(...thresholds.map((threshold) => aiNumber(threshold)));
     const isLastThreshold = aiNumber(pending.threshold) >= lastThreshold;
-    const roundNumber = aiNumber(readoutRoot.turnState.roundNumber);
+    const roundNumber = aiNumber(projection.turn.roundNumber);
     const thresholdValue = aiNumber(pending.threshold);
     const isLateMarker = isLastThreshold || roundNumber >= 4;
     const speculationScale = isLateMarker ? 0.35 : 1;
@@ -920,7 +860,7 @@
         ? 3 * secondSlotSpeculationScale
         : 0;
     const familyPriorityScore = tileId === "c" || tileId === "d" ? 3.5 * effectiveSpeculationScale : 0;
-    const activeOpponentCount = (readoutRoot.turnState.activePlayerIds || [])
+    const activeOpponentCount = (projection.turn.activePlayerIds || [])
       .filter((playerId) => playerId && playerId !== player.id)
       .length;
     const competitiveSlotSwingScore = Number(check.slotIndex) === 1
@@ -933,7 +873,7 @@
       formulaId,
       check.slotIndex,
       player,
-      context,
+      projection,
     ) * Math.max(0.35, effectiveSpeculationScale);
     const finalTileRace = buildAiB2FinalTileDeferRace(
       tileId,
@@ -1094,10 +1034,7 @@
   function runAiFinalScoreMarkDecision() {
     syncFinalScorePendingMarks();
     const currentPlayer = getCurrentPlayer();
-    const pending = finalScoring.getNextPendingMarkForPlayer(
-      getRuleReadout().finalScoringState,
-      currentPlayer?.id,
-    );
+    const pending = getFinalScoreAiProjection().finalBoard.pendingByPlayerId?.[currentPlayer?.id]?.[0] || null;
     if (!pending) return null;
     if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
       return {

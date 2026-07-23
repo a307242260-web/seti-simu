@@ -1939,10 +1939,7 @@
       const resources = currentPlayer.resources;
       const finalScoreBreakdown = getPlayerFinalScoreBreakdown(currentPlayer);
 
-      renderFinalScoreBoard({
-        currentPlayer,
-        finalScoringState: cloneResident("finalScoring"),
-      });
+      renderFinalScoreBoard();
 
       const mainStats = [
         createPlayerNameStat(currentPlayer, resources.score, finalScoreBreakdown.totalScore),
