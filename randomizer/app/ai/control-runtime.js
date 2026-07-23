@@ -159,7 +159,7 @@
     const alienPending = (name) => getAlien()?.[name]?.();
     return {
       get pendingDiscardAction() { return match.getPendingDiscardDecision?.(); },
-      get pendingCardSelectionContinuation() { return match.getPendingCardSelectionDecision?.(); },
+      get pendingCardSelectionDecision() { return match.readCardSelectionDecision?.(); },
       get publicCardSelectedSlots() { return [...(ui.publicCardSelectedSlots || [])]; },
       get pendingPublicScanQueue() { return match.getPublicScanQueueSession?.(); },
       get pendingAlienTraceContinuation() { return match.getPendingAlienTraceDecision?.(); },
@@ -486,7 +486,7 @@
 
     function getPendingAutomationPlayerId() {
       if (state.pendingDiscardAction?.playerId) return state.pendingDiscardAction.playerId;
-      if (state.pendingCardSelectionContinuation?.playerId) return state.pendingCardSelectionContinuation.playerId;
+      if (state.pendingCardSelectionDecision?.playerId) return state.pendingCardSelectionDecision.playerId;
       const sharedPendingEntries = [
         state.pendingLandTargetAction,
       ];

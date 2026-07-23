@@ -334,7 +334,6 @@
 
     function openPickCardRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      delete workingRoot.match.cardSelectionContinuation;
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
       const result = beginCardSelection(workingRoot, {

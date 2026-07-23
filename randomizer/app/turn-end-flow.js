@@ -118,6 +118,8 @@
       getPendingBanrenmaOpportunity: alienSpecies("getPendingBanrenmaOpportunity"),
       isActionEffectFlowActive: hostPort.isActionEffectFlowActive,
       isCardSelectionActive: cardSelectionState.isCardSelectionActive,
+      readCardSelectionDecision: cardRuntime.readCardSelectionDecision,
+      openCardSelectionDecision: cardRuntime.openCardSelectionDecision,
       isFinalRound: turnReadoutRuntime.isFinalRound,
       isWeakStartAiDifficulty: turnReadoutRuntime.isWeakStartAiDifficulty,
       maybeAutoOpenFinalResultDialog: finalUiRuntime.maybeAutoOpenFinalResultDialog,
@@ -453,18 +455,21 @@
       "恢复 PASS 旋转前牌区",
     ));
 
-    const cardSelectionPending = workingRoot.match?.cardSelectionContinuation;
+    const cardSelectionPending = context.readCardSelectionDecision?.();
     const anomalyPickOpen = isCardSelectionActive()
       && cardSelectionPending?.type === "yichangdian_anomaly_pick";
     if (anomalyPickOpen) {
-      cardSelectionPending.fromEffectFlow = true;
-      cardSelectionPending.effectResult = {
-        ok: result.ok,
-        undoable: true,
-        message: result.message,
-        payload: result.payload || null,
-        events: result.events || [],
-      };
+      context.openCardSelectionDecision(workingRoot, {
+        ...cardSelectionPending,
+        fromEffectFlow: true,
+        effectResult: {
+          ok: result.ok,
+          undoable: true,
+          message: result.message,
+          payload: result.payload || null,
+          events: result.events || [],
+        },
+      });
       rocketState.statusNote = result.message;
       updateActionButtons();
       renderStateReadout();

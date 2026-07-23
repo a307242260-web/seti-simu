@@ -243,7 +243,6 @@
       const { cardState, techGameState } = workingRoot;
       for (const field of transientMatchFields) delete workingRoot.match[field];
       context.uiRuntimeState.discardSelectedHandIndexes = [];
-      context.setPendingCardSelectionDecision(workingRoot, null);
       context.uiRuntimeState.passReserveSelectionDismissed = false;
       context.uiRuntimeState.passReserveSelectedCardId = null;
       context.uiRuntimeState.probeSectorSelectedRocketIds = [];

@@ -151,7 +151,7 @@
         return result;
       }
       if (result.awaitingCardSelection) {
-        const continuation = context.getPendingCardSelectionDecision(workingRoot);
+        const continuation = context.readCardSelectionDecision(workingRoot);
         if (continuation) {
           continuation.beforeTradeState = beforeState;
           if (options.preferBlindDraw) continuation.aiPreferBlindDraw = true;

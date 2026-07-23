@@ -34,6 +34,7 @@
       getTurnEndRuntime,
       actionSessionRuntime,
       browserMatchRuntime,
+      cardSelectionDecisionOwner,
       cardHoverPreviewRuntime,
       cardSelectionState,
       effectExecutorPort,
@@ -116,6 +117,8 @@
       getGameplayLockReason: hostPort.getGameplayLockReason,
       getMainActionStartBlockReason: actionSessionRuntime?.getMainActionStartBlockReason,
       getPendingIndustryAbilityDecision: browserMatchRuntime?.getPendingIndustryAbilityDecision,
+      readCardSelectionDecision: cardSelectionDecisionOwner?.read,
+      openCardSelectionDecision: cardSelectionDecisionOwner?.open,
       getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
       getRequiredMovePointsForWorkingRoot: hostPort.getRequiredMovePointsForWorkingRoot,
       getPublicScanSelectionInstruction: scan("getPublicScanSelectionInstruction"),
@@ -350,26 +353,15 @@
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
-    const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
-    function setCardSelectionContinuation(workingRoot, pending) {
-      const activeRoot = requireWorkingRoot(workingRoot);
+    const readCardSelectionDecision = () => context.readCardSelectionDecision?.() || null;
+    function openCardSelectionDecision(workingRoot, pending) {
+      requireWorkingRoot(workingRoot);
       uiRuntimeState.publicCardSelectedSlots = [];
       if (!pending) {
-        delete activeRoot.match.cardSelectionContinuation;
         uiRuntimeState.cardSelectionType = null;
         return null;
       }
-      const player = pending.player || null;
-      const normalized = {
-        ...structuredClone(pending),
-        playerId: pending.playerId || player?.id || null,
-        playerColor: pending.playerColor || player?.color || null,
-        effectId: pending.effectId || pending.effect?.id || null,
-      };
-      delete normalized.player;
-      delete normalized.effect;
-      delete normalized.selectedSlots;
-      activeRoot.match.cardSelectionContinuation = normalized;
+      const normalized = context.openCardSelectionDecision?.(workingRoot, pending);
       uiRuntimeState.cardSelectionType = normalized.type || null;
       return normalized;
     }
@@ -1169,7 +1161,7 @@
         return { ok: false, message: "请先完成移动" };
       }
 
-      setCardSelectionContinuation(workingRoot, pendingAction);
+      openCardSelectionDecision(workingRoot, pendingAction);
       cards.setSelectionActive(cardState, true);
       rocketState.statusNote = pendingAction?.type === "public_scan"
         ? (pendingAction.maxSelectable ?? 1) > 1
@@ -1212,8 +1204,8 @@
 
     function cancelCardSelection(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getCardSelectionContinuation(workingRoot);
-      setCardSelectionContinuation(workingRoot, null);
+      const pending = readCardSelectionDecision();
+      openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       if (pending?.type === "trade" && pending.refundCost) {
         const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
@@ -1347,8 +1339,8 @@
       }
 
       cards.setSelectionActive(cardState, false);
-      const pending = getCardSelectionContinuation(workingRoot);
-      setCardSelectionContinuation(workingRoot, null);
+      const pending = readCardSelectionDecision();
+      openCardSelectionDecision(workingRoot, null);
       rocketState.statusNote = pending?.type === "trade"
         ? `快速交易精选：${cards.getCardLabel(result.card)}`
         : `获得卡牌：${cards.getCardLabel(result.card)}`;
@@ -1788,15 +1780,15 @@
 
     function handlePublicCardClick(workingRoot, slotIndex) {
       if (!isCardSelectionActive()) return;
-      if (getCardSelectionContinuation(workingRoot)?.type === "public_scan") {
+      if (readCardSelectionDecision()?.type === "public_scan") {
         handlePublicScanCardClick(slotIndex);
         return;
       }
-      if (getCardSelectionContinuation(workingRoot)?.type === "card_public_corner_discard") {
+      if (readCardSelectionDecision()?.type === "card_public_corner_discard") {
         handlePublicCornerDiscardCardClick(workingRoot, slotIndex);
         return;
       }
-      if (getCardSelectionContinuation(workingRoot)?.type === "industry_deepspace_public") {
+      if (readCardSelectionDecision()?.type === "industry_deepspace_public") {
         finalizeIndustryDeepspaceSwap(slotIndex);
         return;
       }
@@ -1819,7 +1811,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getCardSelectionContinuation(workingRoot);
+      const pending = readCardSelectionDecision();
       const maxSelectable = pending?.maxSelectable ?? 1;
       const selectedSlots = uiRuntimeState.publicCardSelectedSlots || [];
       const existingIndex = selectedSlots.indexOf(index);
@@ -1847,7 +1839,7 @@
 
     function confirmPublicCornerDiscardSelection(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      const pending = getCardSelectionContinuation(workingRoot);
+      const pending = readCardSelectionDecision();
       if (pending?.type !== "card_public_corner_discard") {
         return { ok: false, message: "当前不是公共牌角标弃除" };
       }
@@ -1872,7 +1864,7 @@
       cards.ensurePublicCardsFilled(cardState, playerState);
       markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
       cards.setSelectionActive(cardState, false);
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       syncCardSelectionChrome();
       return finishAutomaticRewardEffect(effect, {
         ok: true,
@@ -2434,6 +2426,8 @@
       });
     }
     return {
+      readCardSelectionDecision,
+      openCardSelectionDecision,
       getDiscardCornerRewardMultiplier,
       multiplyRewardGain,
       multiplyDiscardActionReward,

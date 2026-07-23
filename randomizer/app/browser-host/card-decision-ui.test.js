@@ -18,7 +18,7 @@ const standardAction = require("../../game/actions/standard-action");
       isPlayCardSelectionActive: (cardState) => cardState.playing,
     },
     getPendingDiscardDecision: () => null,
-    getPendingCardSelectionDecision: () => pending,
+    readCardSelectionDecision: () => pending,
     getPublicScanMinSelectable: (value) => value.minSelectable,
   });
   assert.equal(state.isCardSelectionActive(), true);

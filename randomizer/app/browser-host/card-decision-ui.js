@@ -120,19 +120,19 @@
       return context.cards.isPlayCardSelectionActive(readRoot(workingRoot).cardState);
     }
     function allowsBlindDrawInSelection() {
-      return context.getPendingCardSelectionDecision()?.allowBlindDraw !== false;
+      return context.readCardSelectionDecision()?.allowBlindDraw !== false;
     }
     function isPublicScanMultiSelectActive() {
-      const pending = context.getPendingCardSelectionDecision();
+      const pending = context.readCardSelectionDecision();
       return isCardSelectionActive() && pending?.type === "public_scan" && (pending.maxSelectable ?? 1) > 1;
     }
     function isPublicCornerDiscardSelectionActive() {
-      return isCardSelectionActive() && context.getPendingCardSelectionDecision()?.type === "card_public_corner_discard";
+      return isCardSelectionActive() && context.readCardSelectionDecision()?.type === "card_public_corner_discard";
     }
     function isPublicCardMultiSelectActive() {
       return isPublicScanMultiSelectActive() || isPublicCornerDiscardSelectionActive();
     }
-    function getPublicCardMultiSelectMinSelectable(pending = context.getPendingCardSelectionDecision()) {
+    function getPublicCardMultiSelectMinSelectable(pending = context.readCardSelectionDecision()) {
       if (pending?.type === "public_scan") return context.getPublicScanMinSelectable(pending);
       const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
       const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || maxSelectable));

@@ -110,27 +110,6 @@
       return flow;
     }
 
-    function setPendingCardSelectionDecision(workingRoot, pending) {
-      context.uiRuntimeState.publicCardSelectedSlots = [];
-      if (!pending) {
-        delete workingRoot.match.cardSelectionContinuation;
-        context.uiRuntimeState.cardSelectionType = null;
-        return null;
-      }
-      const player = pending.player || null;
-      workingRoot.match.cardSelectionContinuation = {
-        ...structuredClone(pending),
-        playerId: pending.playerId || player?.id || null,
-        playerColor: pending.playerColor || player?.color || null,
-        effectId: pending.effectId || pending.effect?.id || null,
-      };
-      delete workingRoot.match.cardSelectionContinuation.player;
-      delete workingRoot.match.cardSelectionContinuation.effect;
-      delete workingRoot.match.cardSelectionContinuation.selectedSlots;
-      context.uiRuntimeState.cardSelectionType = workingRoot.match.cardSelectionContinuation.type || null;
-      return workingRoot.match.cardSelectionContinuation;
-    }
-
     return Object.freeze({
       getActionEffectFlow,
       setActionEffectFlow,
@@ -156,8 +135,6 @@
       getPendingPassReserveSelection: continuationGetter("passReserveContinuation"),
       getPendingMovePayment: continuationGetter("movePaymentContinuation"),
       getPendingDiscardDecision: continuationGetter("discardContinuation"),
-      getPendingCardSelectionDecision: continuationGetter("cardSelectionContinuation"),
-      setPendingCardSelectionDecision,
     });
   }
 

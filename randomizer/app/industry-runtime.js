@@ -34,6 +34,7 @@
       getTechRuntime,
       actionSessionRuntime,
       browserMatchRuntime,
+      cardSelectionDecisionOwner,
       cardHoverPreviewRuntime,
       cardRuntime,
       cardSelectionState,
@@ -115,6 +116,8 @@
       getMovableTokensForPlayer: hostPort.getMovableTokensForPlayer,
       getNormalTokenAssetForPlayer: hostPort.getNormalTokenAssetForPlayer,
       getPendingPlayCardSelection: handFlowRuntime?.getPendingPlayCardSelection,
+      readCardSelectionDecision: cardSelectionDecisionOwner?.read,
+      openCardSelectionDecision: cardSelectionDecisionOwner?.open,
       getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
       hasFutureSpanEligibleHandCard: cardRuntime?.hasFutureSpanEligibleHandCard,
       insertActionEffectsAfterCurrent: effectExecutorPort?.insertActionEffectsAfterCurrent,
@@ -287,30 +290,20 @@
       updateActionButtons
     } = context;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
-    const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
-    function setCardSelectionContinuation(workingRoot, pending) {
-      const activeRoot = requireWorkingRoot(workingRoot);
+    const readCardSelectionDecision = () => context.readCardSelectionDecision?.() || null;
+    function openCardSelectionDecision(workingRoot, pending) {
+      requireWorkingRoot(workingRoot);
       uiRuntimeState.publicCardSelectedSlots = [];
       if (!pending) {
-        delete activeRoot.match.cardSelectionContinuation;
         uiRuntimeState.cardSelectionType = null;
         uiRuntimeState.industryHandSelectionType = null;
         return null;
       }
-      const player = pending.player || null;
-      activeRoot.match.cardSelectionContinuation = {
-        ...structuredClone(pending),
-        playerId: pending.playerId || player?.id || null,
-        playerColor: pending.playerColor || player?.color || null,
-        effectId: pending.effectId || pending.effect?.id || null,
-      };
-      delete activeRoot.match.cardSelectionContinuation.player;
-      delete activeRoot.match.cardSelectionContinuation.effect;
-      delete activeRoot.match.cardSelectionContinuation.selectedSlots;
-      uiRuntimeState.industryHandSelectionType = activeRoot.match.cardSelectionContinuation.type?.startsWith?.("industry_")
-        ? activeRoot.match.cardSelectionContinuation.type
+      const normalized = context.openCardSelectionDecision?.(workingRoot, pending);
+      uiRuntimeState.industryHandSelectionType = normalized.type?.startsWith?.("industry_")
+        ? normalized.type
         : null;
-      return activeRoot.match.cardSelectionContinuation;
+      return normalized;
     }
     const getCardSelectionPlayer = (workingRoot, pending) => (
       (workingRoot.playerState?.players || []).find((player) => (
@@ -406,8 +399,8 @@
         cards.setDiscardSelectionActive(cardState, false, 0);
         syncDiscardSelectionChrome();
       }
-      if (getCardSelectionContinuation(workingRoot)?.type?.startsWith?.("industry_")) {
-        setCardSelectionContinuation(workingRoot, null);
+      if (readCardSelectionDecision()?.type?.startsWith?.("industry_")) {
+        openCardSelectionDecision(workingRoot, null);
         cards.setSelectionActive(cardState, false);
         syncCardSelectionChrome();
       }
@@ -458,12 +451,12 @@
         tech.setTechSelectionActive(techGameState, false);
         syncTechSelectionChrome(workingRoot);
       }
-      const cardSelectionPending = getCardSelectionContinuation(workingRoot);
+      const cardSelectionPending = readCardSelectionDecision();
       if (cardSelectionPending?.type?.startsWith?.("industry_")) {
         if (cardSelectionPending.refundCost) {
           players.gainResources(getCardSelectionPlayer(workingRoot, cardSelectionPending), cardSelectionPending.refundCost);
         }
-        setCardSelectionContinuation(workingRoot, null);
+        openCardSelectionDecision(workingRoot, null);
         cards.setSelectionActive(cardState, false);
         syncCardSelectionChrome();
       }
@@ -488,7 +481,7 @@
       setIndustryAbilityContinuation(workingRoot, null);
       workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       syncCardSelectionChrome();
       if (message) rocketState.statusNote = message;
       renderPlayerStats();
@@ -538,7 +531,7 @@
         case "fenwick_publicity_pick":
           return startIndustryPublicityPick(workingRoot, flow, "industry_fenwick_pick");
         case "deepspace_swap":
-          setCardSelectionContinuation(workingRoot, {
+          openCardSelectionDecision(workingRoot, {
             type: "industry_deepspace_hand",
             player: getWorkingCurrentPlayer(workingRoot),
             allowBlindDraw: false,
@@ -578,7 +571,7 @@
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const nodes = industry?.buildStratusPublicCornerEffectNodes?.(cards, cardState.publicCards) || [];
       setIndustryAbilityContinuation(workingRoot, null);
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 
@@ -621,7 +614,7 @@
         groupId,
       }) || [];
       setIndustryAbilityContinuation(workingRoot, null);
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 
@@ -820,7 +813,7 @@
         groupId,
       }) || [];
       setIndustryAbilityContinuation(workingRoot, null);
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -1026,7 +1019,7 @@
         renderStateReadout();
         return check;
       }
-      setCardSelectionContinuation(workingRoot, {
+      openCardSelectionDecision(workingRoot, {
         type: "industry_future_hand",
         player,
         allowBlindDraw: false,
@@ -1075,7 +1068,7 @@
       ));
       completeQuickActionStep();
 
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       rocketState.statusNote = `未来跨度研究所：扣下 ${cards.getCardLabel(removeResult.card)}，目标 ${targetScore} 分`;
       syncIndustryHandSelectionChrome();
@@ -1103,7 +1096,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      setCardSelectionContinuation(workingRoot, {
+      openCardSelectionDecision(workingRoot, {
         type: "industry_deepspace_public",
         player,
         handIndex: index,
@@ -1121,7 +1114,7 @@
 
     function finalizeIndustryDeepspaceSwap(workingRoot, publicSlotIndex) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getCardSelectionContinuation(workingRoot);
+      const pending = readCardSelectionDecision();
       const player = getCardSelectionPlayer(workingRoot, pending);
       const handIndex = Number(pending?.handIndex);
       const slotIndex = Math.round(Number(publicSlotIndex));
@@ -1152,7 +1145,7 @@
         beforeDiscard,
       ));
 
-      setCardSelectionContinuation(workingRoot, null);
+      openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
       finishIndustryAbilityFlow(workingRoot, `深空探测：${cards.getCardLabel(handCard)} 与 ${cards.getCardLabel(publicCard)} 已交换`);

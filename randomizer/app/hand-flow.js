@@ -138,6 +138,8 @@
       isMovePaymentCard: hostPort.isMovePaymentCard,
       playerHasMovePaymentCard: hostPort.playerHasMovePaymentCard,
       hasPlayableFutureSpanCard: card("hasPlayableFutureSpanCard"),
+      readCardSelectionDecision: card("readCardSelectionDecision"),
+      openCardSelectionDecision: card("openCardSelectionDecision"),
       getStandardPlayCardActionBlockReason: card("getStandardPlayCardActionBlockReason"),
       getCardPlayCost: card("getCardPlayCost"),
       formatCardPlayCost: card("formatCardPlayCost"),
@@ -1392,8 +1394,11 @@
           tradePlayer,
         );
         ruleRocketState(workingRoot).statusNote = tradeResult.ok ? tradeResult.message : (tradeResult.message || "交易失败");
-        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && workingRoot.match?.cardSelectionContinuation) {
-          workingRoot.match.cardSelectionContinuation.beforeTradeState = beforeState;
+        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState) {
+          const cardSelection = context.readCardSelectionDecision?.();
+          if (cardSelection) {
+            context.openCardSelectionDecision(workingRoot, { ...cardSelection, beforeTradeState: beforeState });
+          }
         }
         if (tradeResult.ok && !tradeResult.awaitingCardSelection && beforeState) {
           context.recordQuickTradeCompletion?.(pending.tradeId, tradePlayer, beforeState);

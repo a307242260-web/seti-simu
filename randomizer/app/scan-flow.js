@@ -86,6 +86,7 @@
       getTechRuntime,
       actionSessionRuntime,
       browserContextRuntime,
+      cardSelectionDecisionOwner,
       cardSelectionState,
       effectExecutorPort,
       effectFlowRuntime,
@@ -163,6 +164,8 @@
       isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
       isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
       isPlayCardSelectionActive: cardSelectionState?.isPlayCardSelectionActive,
+      readCardSelectionDecision: cardSelectionDecisionOwner?.read,
+      openCardSelectionDecision: cardSelectionDecisionOwner?.open,
       isMovePaymentSelectionActive: handFlowRuntime?.isMovePaymentSelectionActive,
       isHandScanSelectionActive: handFlowRuntime?.isHandScanSelectionActive,
       getFlowMarkedNebulaIds: hostPort.getFlowMarkedNebulaIds,
@@ -280,9 +283,9 @@
     const document = documentRef;
     const structuredClone = structuredCloneRef;
 
-    const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
-    function clearCardSelectionContinuation(workingRoot) {
-      delete requireWorkingRoot(workingRoot).match.cardSelectionContinuation;
+    const readCardSelectionDecision = () => context.readCardSelectionDecision?.() || null;
+    function clearCardSelectionDecision(workingRoot) {
+      requireWorkingRoot(workingRoot);
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
     }
@@ -773,7 +776,7 @@
         return scanChoices;
       }
 
-      clearCardSelectionContinuation(workingRoot);
+      clearCardSelectionDecision(workingRoot);
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
       rocketState.statusNote = `公共牌区扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
@@ -820,7 +823,7 @@
 
     function confirmPublicScanSelection(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getCardSelectionContinuation(workingRoot);
+      const pending = readCardSelectionDecision();
       if (pending?.type !== "public_scan") {
         return { ok: false, message: "当前不是公共牌区扫描" };
       }
@@ -863,7 +866,7 @@
       }
 
       const fromEffectFlow = Boolean(pending.fromEffectFlow || getActionEffectFlow(workingRoot));
-      clearCardSelectionContinuation(workingRoot);
+      clearCardSelectionDecision(workingRoot);
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
 
@@ -919,7 +922,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getCardSelectionContinuation(workingRoot);
+      const pending = readCardSelectionDecision();
       const maxSelectable = pending?.maxSelectable ?? 1;
       const fromEffectFlow = Boolean(pending?.fromEffectFlow || getActionEffectFlow(workingRoot));
 

@@ -72,6 +72,7 @@
       HISTORY_SOURCE_QUICK: hostPort.HISTORY_SOURCE_QUICK,
       actionHistory: hostPort.actionHistory,
       beginCardSelection: cardRuntime?.beginCardSelection,
+      openCardSelectionDecision: cardRuntime?.openCardSelectionDecision,
       beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
       buildPlutoMarkerRemovalChoices: actionInteraction("buildPlutoMarkerRemovalChoices"),
       cancelIndustryAbilityFlow: industryRuntime?.cancelIndustryAbilityFlow,
@@ -1094,7 +1095,6 @@
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
       delete workingRoot.match.industryAbilityContinuation;
-      delete workingRoot.match.cardSelectionContinuation;
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
       cards.setSelectionActive(cardState, false);

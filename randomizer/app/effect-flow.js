@@ -1145,7 +1145,7 @@
       }
       if (context.isCardSelectionActive?.()
         && (context.getActionEffectFlow?.(workingRoot) || context.isCardTriggerPickSelectionActive?.())) {
-        const pending = context.getPendingCardSelectionDecision?.(workingRoot);
+        const pending = context.readCardSelectionDecision?.(workingRoot);
         if (pending?.type === "fundamentalism_exchange_pick") {
           const pendingPlayer = context.resolvePlayerReference?.({
             playerId: pending.playerId, playerColor: pending.playerColor,
@@ -1157,7 +1157,6 @@
             context.restoreObjectSnapshot?.(workingRoot.cardState, pending.beforeCardState);
           }
         }
-        context.setPendingCardSelectionDecision?.(workingRoot, null);
         context.setCardSelectionActive?.(workingRoot.cardState, false);
         context.syncCardSelectionChrome?.();
       }

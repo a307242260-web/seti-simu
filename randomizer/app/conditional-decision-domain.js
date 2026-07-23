@@ -1040,86 +1040,6 @@
         ],
       };
     }
-    const cardPending = workingRoot.match?.cardSelectionContinuation;
-    if (cardPending) {
-      if (["industry_deepspace_hand", "industry_future_hand"].includes(cardPending.type)) {
-        const player = getSimulationConditionalPlayer(workingRoot, cardPending);
-        return {
-          actorPlayer: player,
-          candidates: (player?.hand || []).flatMap((card, handIndex) => (
-            cardPending.type === "industry_future_hand" && !isFutureSpanEligibleHandCard(card)
-              ? []
-              : [{
-                id: "conditionalChoice",
-                family: "choose_card",
-                label: cards.getCardLabel(card),
-                target: {
-                  kind: "hand-card",
-                  choiceId: String(handIndex),
-                  cardId: card.cardId || card.id || null,
-                  handIndex,
-                },
-                handIndex,
-                pendingType: cardPending.type,
-              }]
-          )),
-        };
-      }
-      const selectedSlots = new Set(getPublicCardSelectedSlots?.() || []);
-      const maxSelectable = Math.max(1, Math.round(Number(cardPending.maxSelectable) || 1));
-      const candidates = (workingRoot.cardState.publicCards || []).flatMap((card, slotIndex) => (
-        card
-          && !selectedSlots.has(slotIndex)
-          && selectedSlots.size < maxSelectable
-          && (cardPending.type !== "public_scan" || getPublicScanChoicesForCard(card)?.ok)
-          ? [{
-          id: "conditionalChoice",
-          family: "choose_card",
-          label: cards.getCardLabel(card),
-          target: {
-            kind: "public-card",
-            choiceId: String(slotIndex),
-            slotId: String(slotIndex),
-            cardId: card.cardId || card.id || null,
-          },
-          slotIndex,
-        }] : []
-      ));
-      if (
-        cardPending.type === "card_public_corner_discard"
-        && selectedSlots.size >= getPublicCardMultiSelectMinSelectable(cardPending)
-      ) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "choose_branch",
-          label: "确认弃除公共牌",
-          target: { kind: "confirm-public-corner-discard", choiceId: "confirm" },
-        });
-      }
-      if (
-        cardPending.type === "public_scan"
-        && selectedSlots.size >= getPublicScanMinSelectable(cardPending)
-      ) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "choose_branch",
-          label: "确认公共牌扫描",
-          target: { kind: "confirm-public-scan", choiceId: "confirm" },
-        });
-      }
-      if (allowsBlindDrawInSelection() && canBlindDraw()) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "choose_card",
-          label: "盲抽",
-          target: { kind: "blind-draw", choiceId: "blind-draw" },
-        });
-      }
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, cardPending),
-        candidates,
-      };
-    }
     const landPending = getPendingLandTargetDecision(workingRoot);
     if (landPending) {
       return {
@@ -1416,7 +1336,7 @@
       || { ok: true, progressed: true, message: "已选择公共牌" },
     "confirm-public-corner-discard": (_action, workingRoot) => confirmPublicCornerDiscardSelection(workingRoot),
     "confirm-public-scan": (_action, workingRoot) => confirmPublicScanSelection(workingRoot),
-    "hand-card": (action, workingRoot) => workingRoot.match?.cardSelectionContinuation?.type === "industry_deepspace_hand"
+    "hand-card": (action, workingRoot) => action.pendingType === "industry_deepspace_hand"
       ? handleIndustryDeepspaceHandClick(workingRoot, Number(action.target.handIndex))
       : handleIndustryFutureSpanHandClick(workingRoot, Number(action.target.handIndex)),
     "blind-draw": (_action, workingRoot) => drawCardForCurrentPlayer(workingRoot, { fromSelection: true }),

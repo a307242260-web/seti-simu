@@ -233,7 +233,7 @@
       const readoutRoot = context.createReadoutRoot(canonical.resident);
       const decisions = {
         movePayment: context.getPendingMovePayment?.(),
-        cardSelectionContinuation: context.getPendingCardSelectionDecision?.(readoutRoot),
+        cardSelectionDecision: context.readCardSelectionDecision?.(readoutRoot),
         alienTraceContinuation: context.getPendingAlienTraceDecision?.(readoutRoot),
         alienTracePickerState: context.uiRuntimeState?.alienTracePickerState || null,
         actionEffectFlow: context.getActionEffectFlow?.(readoutRoot),

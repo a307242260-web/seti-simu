@@ -300,7 +300,6 @@
     function clearPlayerScopedSelectionsForSwitch(workingRoot) {
       delete workingRoot.match.discardContinuation;
       uiRuntimeState.discardSelectedHandIndexes = [];
-      delete workingRoot.match.cardSelectionContinuation;
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
       delete workingRoot.match.passReserveContinuation;
@@ -1124,7 +1123,7 @@
       const pendingEntries = [
         workingRoot.match?.movePaymentContinuation,
         workingRoot.match?.discardContinuation,
-        workingRoot.match?.cardSelectionContinuation,
+        decisionInput.readCardSelectionDecision?.(),
         workingRoot.match?.passReserveContinuation,
         workingRoot.match?.scanTargetContinuation,
         workingRoot.match?.probeSectorScanContinuation,

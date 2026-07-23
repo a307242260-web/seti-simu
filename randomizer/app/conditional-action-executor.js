@@ -266,7 +266,16 @@
         choices: [choice],
       };
       try {
-        return domain.executeChoice(workingRoot, clone(choice), clone(decision));
+        const result = domain.executeChoice(workingRoot, clone(choice), clone(decision));
+        const cardSelection = rawChoice?.cardSelection || rawChoice?.payload?.cardSelection || null;
+        if (
+          result?.ok
+          && cardSelection
+          && options.shouldRestageCardSelection?.(workingRoot, cardSelection)
+        ) {
+          options.cardSelectionDecisionOwner.open(workingRoot, cardSelection);
+        }
+        return result;
       } catch (error) {
         return fail("CONDITIONAL_CHOICE_EXECUTOR_THROWN", error?.message || "Effect Session choice 执行异常");
       }
@@ -320,42 +329,6 @@
     }
 
     function advanceDeterministicStateForRoot(workingRoot) {
-      const industryPending = context.getPendingIndustryAbilityDecision(workingRoot);
-      if (industryPending && !context.getPendingCardSelectionDecision(workingRoot)) {
-        const player = context.getCurrentPlayer();
-        const retryByFlowType = {
-          strategy_pick: () => context.beginCardSelection({
-            type: "industry_strategy_pick", player, allowBlindDraw: false,
-          }),
-          future_span_pick: () => context.beginCardSelection({
-            type: "industry_future_pick", player, allowBlindDraw: false,
-            advanceAmount: industryPending.advanceAmount,
-          }),
-          deepspace_swap: () => {
-            context.setPendingCardSelectionDecision(workingRoot, {
-              type: "industry_deepspace_hand", player, allowBlindDraw: false,
-            });
-            context.setCardSelectionActive(workingRoot.cardState, true);
-            return { ok: true, message: industryPending.message };
-          },
-        };
-        const retry = retryByFlowType[industryPending.flowType];
-        if (retry) {
-          const result = retry();
-          if (result?.ok !== false) {
-            return { ok: true, progressed: true, message: result?.message || industryPending.message };
-          }
-        }
-      }
-      const cardPending = context.getPendingCardSelectionDecision(workingRoot);
-      if (cardPending?.type?.startsWith?.("industry_")
-        && !(workingRoot.cardState.publicCards || []).some(Boolean)
-        && !(context.allowsBlindDrawInSelection() && context.canBlindDraw())) {
-        const label = context.getPendingIndustryAbilityDecision(workingRoot)?.label || "公司 1x";
-        const message = `${label}：公共牌区与牌库均无牌，精选效果落空`;
-        context.finishIndustryAbilityFlow(message);
-        return { ok: true, progressed: true, skipped: true, message };
-      }
       return null;
     }
 

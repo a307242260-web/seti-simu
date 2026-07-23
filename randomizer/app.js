@@ -192,6 +192,7 @@
   const createTurnState = turnFlowModule.createTurnState;
   const initialGameStateModule = window.SetiInitialGameState;
   const effectSessionRuntimeModule = window.SetiEffectSession;
+  const cardSelectionDecisionModule = window.SetiCardSelectionDecision;
   const standardActionSessionModule = window.SetiStandardActionSession;
   const standardActionModule = window.SetiStandardAction;
   const browserDomainTargets = () => ({
@@ -461,6 +462,21 @@
     getController: () => actionRuntimeController,
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
   });
+  const cardSelectionDecisionOwner = cardSelectionDecisionModule.createCardSelectionDecisionOwner({
+    inspectSession: () => ruleComposition.inspect(),
+    resolvePlayer: (workingRoot, pending) => (
+      (workingRoot.playerState?.players || []).find((player) => (
+        player.id === pending?.playerId || player.color === pending?.playerColor
+      )) || players.getCurrentPlayer(workingRoot.playerState)
+    ),
+    getCardLabel: (card) => cards.getCardLabel(card),
+    getSelectedPublicSlots: () => uiRuntimeState.publicCardSelectedSlots || [],
+    getPublicScanChoicesForCard: (card) => getPublicScanChoicesForCard(card),
+    getPublicScanMinSelectable: (pending) => getPublicScanMinSelectable(pending),
+    getPublicCardMultiSelectMinSelectable: (pending) => getPublicCardMultiSelectMinSelectable(pending),
+    canBlindDraw: (workingRoot) => canBlindDrawForRoot(workingRoot),
+    isFutureSpanEligibleHandCard: (card) => isFutureSpanEligibleHandCard(card),
+  });
   const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
     enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
     enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
@@ -566,9 +582,12 @@
       validateSessionBoundary: validateBrowserSessionBoundary,
     },
     getCommittedContext: getBrowserCommittedContext,
-    runWithWorkingState: (workingRoot, operation) => players.runWithScoreGainListener(
-      (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
-      operation,
+    runWithWorkingState: (workingRoot, operation) => cardSelectionDecisionOwner.runRuleTransaction(
+      workingRoot,
+      () => players.runWithScoreGainListener(
+        (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
+        operation,
+      ),
     ),
     executeHostCommand: hostCommandDispatcher.execute,
     createActionRegistry: () => compositionActionRegistry,
@@ -578,6 +597,9 @@
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: standardActionContinuation,
+        takeOpenedCardSelectionDecisionEffect: () => (
+          cardSelectionDecisionOwner.takeOpenedDecisionEffect()
+        ),
       },
     },
   });
@@ -697,9 +719,14 @@
     getPendingScanFreeMoveDecision, getPendingIndustryFreeMoveDecision,
     hasTurnEndRevealContinuation, getPendingCardCornerFreeMove, getPendingCardTriggerFreeMove,
     getPendingCardTriggerAction, getPendingCardTaskCompletion, getPendingPassReserveSelection,
-    getPendingMovePayment, getPendingDiscardDecision, getPendingCardSelectionDecision,
-    setPendingCardSelectionDecision,
+    getPendingMovePayment, getPendingDiscardDecision,
   } = browserMatchRuntime;
+  const readCardSelectionDecision = () => cardSelectionDecisionOwner.read();
+  const openCardSelectionDecision = (workingRoot, pending) => {
+    uiRuntimeState.publicCardSelectedSlots = [];
+    uiRuntimeState.cardSelectionType = pending?.type || null;
+    return cardSelectionDecisionOwner.open(workingRoot, pending);
+  };
   const pendingSubFlowRuntime = effectFlowModule.createPendingSubFlowRuntime({
     getPendingScanTargetDecision, getPendingProbeSectorScanDecision,
     getPendingProbeLocationRewardDecision, getPublicScanQueueSession,
@@ -892,6 +919,8 @@
   }));
   const conditionalActionExecutor = conditionalActionExecutorModule.createConditionalActionExecutor({
     domain: conditionalDecisionDomain,
+    cardSelectionDecisionOwner,
+    shouldRestageCardSelection: (workingRoot) => cards.isSelectionActive(workingRoot.cardState),
   });
   const conditionalCompositionRuntime = conditionalActionExecutorModule.createConditionalCompositionRuntime({
     executor: conditionalActionExecutor,
@@ -899,13 +928,8 @@
     dispatchAction: (...args) => actionRuntimeController.dispatchAction(...args),
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
     getPendingIndustryAbilityDecision: (...args) => getPendingIndustryAbilityDecision(...args),
-    getPendingCardSelectionDecision: (...args) => getPendingCardSelectionDecision(...args),
     getCurrentPlayer: (...args) => getCurrentPlayer(...args),
     beginCardSelection: (...args) => beginCardSelection(...args),
-    setPendingCardSelectionDecision: (...args) => setPendingCardSelectionDecision(...args),
-    setCardSelectionActive: (...args) => cards.setSelectionActive(...args),
-    allowsBlindDrawInSelection: (...args) => allowsBlindDrawInSelection(...args),
-    canBlindDraw: (...args) => canBlindDraw(...args),
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
     executeActionEffect: (...args) => executeActionEffect(...args),
@@ -953,7 +977,7 @@
     getRuleReadout: () => createStateSourceReadoutRoot(),
     cards,
     getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
-    getPendingCardSelectionDecision: (...args) => getPendingCardSelectionDecision(...args),
+    readCardSelectionDecision,
     getPublicScanMinSelectable: (...args) => getPublicScanMinSelectable(...args),
   });
   const {
@@ -1155,7 +1179,7 @@
     getViewer: getResidentViewer,
     createReadoutRoot: createResidentReadoutRoot,
     getPendingMovePayment,
-    getPendingCardSelectionDecision,
+    readCardSelectionDecision,
     getPendingAlienTraceDecision,
     getActionEffectFlow,
     getPendingDiscardDecision,
@@ -1548,7 +1572,7 @@
     isPublicCardMultiSelectActive: (...args) => isPublicCardMultiSelectActive(...args),
     getPublicCardSelectedCount: () => uiRuntimeState.publicCardSelectedSlots?.length || 0,
     getPublicCardMultiSelectMinSelectable: (...args) => getPublicCardMultiSelectMinSelectable(...args),
-    getCardSelectionType: () => getPendingCardSelectionDecision()?.type || null,
+    getCardSelectionType: () => readCardSelectionDecision()?.type || null,
     isCardSelectionActive: (...args) => isCardSelectionActive(...args),
     cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
     setQuickPanelOpen: (...args) => setQuickPanelOpen(...args),
@@ -1855,7 +1879,7 @@
     quickTrades,
     createActionContext: createActionContextForWorkingRoot,
     getPendingDiscardDecision,
-    getPendingCardSelectionDecision,
+    readCardSelectionDecision,
     recordQuickTradeCompletion: (...args) => recordQuickTradeCompletion(...args),
     renderPlayerStats,
     renderPublicCards: (...args) => renderPublicCards(...args),
@@ -2035,6 +2059,7 @@
     getTechRuntime: () => techRuntime,
     actionSessionRuntime,
     browserContextRuntime,
+    cardSelectionDecisionOwner,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
     effectFlowRuntime: effectFlowHelpers,
@@ -2404,7 +2429,7 @@
   const recoveryHost = gameRecoveryModule.createRecoveryHost({
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     uiRuntimeState,
-    setPendingCardSelectionDecision,
+    openCardSelectionDecision,
     alienSpeciesRuntime,
     effectExecutors,
     closeAlienRevealConfirmationOverlay,
@@ -2901,6 +2926,7 @@
     getTurnEndRuntime: () => turnEndPort,
     actionSessionRuntime,
     browserMatchRuntime,
+    cardSelectionDecisionOwner,
     cardHoverPreviewRuntime,
     cardSelectionState,
     effectExecutorPort: effectExecutorCommandPort,
@@ -3420,10 +3446,10 @@
     isCardSelectionActive,
     getActionEffectFlow,
     isCardTriggerPickSelectionActive,
-    getPendingCardSelectionDecision,
+    readCardSelectionDecision,
     resolvePlayerReference,
     restoreObjectSnapshot,
-    setPendingCardSelectionDecision,
+    openCardSelectionDecision,
     setCardSelectionActive: (cardState, active) => cards.setSelectionActive(cardState, active),
     syncCardSelectionChrome,
     getPendingPassReserveSelection,
@@ -3804,6 +3830,7 @@
     getTechRuntime: () => techRuntime,
     actionSessionRuntime,
     browserMatchRuntime,
+    cardSelectionDecisionOwner,
     cardHoverPreviewRuntime,
     cardRuntime,
     cardSelectionState,
@@ -4132,6 +4159,8 @@
       closeLandTargetPicker,
       closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
       clearActionEffectFlow,
+      readCardSelectionDecision,
+      openCardSelectionDecision,
       clearActionPending,
       clearMoveRocketHighlight,
       resolveCompletedSectorSettlements,
