@@ -36,6 +36,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppEffectRewardExecutors: {},
     SetiAppEffectAlienExecutors: {},
     SetiAppEffectDispatcher: {},
+    SetiAppEffectExecutorBootstrap: {},
     SetiAppHandFlow: {},
     SetiAppScanFlow: {},
     SetiAppIncomeRuntime: {},

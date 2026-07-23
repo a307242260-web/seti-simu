@@ -41,6 +41,7 @@
     Object.freeze({ key: "effectRewardExecutorsModule", globalName: "SetiAppEffectRewardExecutors" }),
     Object.freeze({ key: "effectAlienExecutorsModule", globalName: "SetiAppEffectAlienExecutors" }),
     Object.freeze({ key: "effectDispatcherModule", globalName: "SetiAppEffectDispatcher" }),
+    Object.freeze({ key: "effectExecutorBootstrapModule", globalName: "SetiAppEffectExecutorBootstrap" }),
     Object.freeze({ key: "handFlowModule", globalName: "SetiAppHandFlow" }),
     Object.freeze({ key: "scanFlowModule", globalName: "SetiAppScanFlow" }),
     Object.freeze({ key: "incomeRuntimeModule", globalName: "SetiAppIncomeRuntime" }),

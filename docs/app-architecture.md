@@ -91,6 +91,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
 - `randomizer/app/effects/dispatcher.js`：卡牌、星球奖励、科技、公司和扫描 effect 的顶层分发；不得在 `app.js` 重建巨型 type switch。
+- `randomizer/app/effects/bootstrap.js`：按 movement/scan、reward、alien、dispatcher 四个 owner 建立隔离 capability scope 并装配 executor suite；缺失能力在创建期 fail-fast，领域 executor 不共享可枚举的巨型 context。
 - `randomizer/app/card-runtime.js`：卡牌选择、打牌/弃牌、角标快速行动、卡牌移动、公共牌控制与 PASS 预留选择；相关 pending 的确认、取消和继续选择在模块内闭环。
 - `randomizer/app/card-trigger-runtime.js`：任务就绪、1 型触发、任务确认、奖励队列和触发后的续跑；不在 `app.js` 复制任务/触发分支。
 - `randomizer/app/income-runtime.js`：弃牌收入、收入资源发放、轮开始公司收益和原教旨主义轮开始收入队列。

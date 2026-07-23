@@ -5,6 +5,7 @@ const { createEffectMovementScanExecutors } = require("./movement-scan");
 const { createEffectRewardExecutors } = require("./rewards");
 const { createEffectAlienExecutors } = require("./aliens");
 const { createEffectDispatcher } = require("./dispatcher");
+const { createEffectExecutorSuite } = require("./bootstrap");
 
 function withWorkingRoot(context = {}) {
   const workingRoot = {
@@ -19,6 +20,17 @@ function withWorkingRoot(context = {}) {
   };
   return { ...context, workingRoot };
 }
+
+assert.throws(
+  () => createEffectExecutorSuite({
+    capabilities: {},
+    movementScanModule: { createEffectMovementScanExecutors },
+    rewardModule: { createEffectRewardExecutors },
+    alienModule: { createEffectAlienExecutors },
+    dispatcherModule: { createEffectDispatcher },
+  }),
+  /Missing movement\/scan effect executor capability: INCOME_GAIN_LABELS/,
+);
 
 (() => {
   assert.equal(typeof createEffectMovementScanExecutors(withWorkingRoot()).executeSectorScanAtPlanet, "function");

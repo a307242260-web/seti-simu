@@ -47,9 +47,10 @@
 - `effects/rewards.js`：资源、数据、抽牌、条件、科技和扫描奖励。
 - `effects/aliens.js`：外星人 effect 与 continuation。
 - `effects/dispatcher.js`：顶层 effect type 分发。
+- `effects/bootstrap.js`：按四个 executor owner 隔离 capability scope，并在创建期检查缺失接线。
 - `effect-flow.js` / `effect-choice-flow.js`：队列、history step 与选择器生命周期。
 
-`app.js` 只保留 executor context 注入、跨 flow continuation 和少量兼容转发，不再保留巨型 type switch 或成片 effect 实现。
+`app.js` 只收集 executor capability inventory；bootstrap 分别向 movement/scan、reward、alien 与 dispatcher 暴露各自构造期实际读取的能力，executor 之间不再共享巨型 context。入口不再保留巨型 type switch 或成片 effect 实现。
 
 ### Card / income / scan / trigger
 

@@ -539,8 +539,13 @@ function createHarness(initialValue = 0) {
   assert.match(handFlowSource, /workingRoot\.match\.movePaymentContinuation/, "支付上下文必须归 Composition continuation state");
   assert.match(conditionalSource, /workingRoot\.match\?\.movePaymentContinuation/, "支付 Decision 必须从 Composition working root 枚举");
   assert.doesNotMatch(conditionalSource, /isPlayCardSelectionActive|getPendingPlayCardSelection/, "规则枚举不得读取纯 UI 打牌选择");
-  assert.match(appSource, /MOVE_PAYMENT_DECISION_REQUIRED[\s\S]*?inputPort\.submitDecision\(/, "人类支付确认必须提交 active DecisionEffect");
-  assert.match(handFlowSource, /uiRuntimeState\.movePaymentSelectedHandIndices/, "未提交的手牌高亮只能进入 UI state");
+  const movePaymentDecisionPortSource = handFlowSource.slice(
+    handFlowSource.indexOf("function createMovePaymentDecisionPort"),
+    handFlowSource.indexOf("return Object.freeze({ confirmMovePayment });"),
+  );
+  assert.match(movePaymentDecisionPortSource, /MOVE_PAYMENT_DECISION_REQUIRED[\s\S]*?submitDecision\(/, "人类支付确认必须由 hand owner 提交 active DecisionEffect");
+  assert.doesNotMatch(movePaymentDecisionPortSource, /uiRuntimeState/, "支付 Decision port 只能通过注入 selector 读取未提交高亮");
+  assert.match(appSource, /getSelectedHandIndices:[\s\S]*?uiRuntimeState\.movePaymentSelectedHandIndices/, "未提交的手牌高亮只能在 Browser 装配层注入");
   const aiProductionSource = [
     fs.readFileSync(path.join(__dirname, "ai/automation-runtime.js"), "utf8"),
     fs.readFileSync(path.join(__dirname, "ai/initial-card-pending.js"), "utf8"),
@@ -576,7 +581,8 @@ function createHarness(initialValue = 0) {
   );
   assert.doesNotMatch(cardRuntimeSource, /passReserveContinuation[^\n]*selectedCardId|getPassReserveSelection\([^)]*\)\.selectedCardId/, "PASS continuation 不得持有 UI 选择");
   assert.match(cardRuntimeSource, /uiRuntimeState\.passReserveSelectedCardId/, "PASS 未确认高亮只能进入 uiRuntimeState");
-  assert.match(appSource, /PASS_RESERVE_DECISION_REQUIRED[\s\S]*?inputPort\.submitDecision\(/, "PASS 人类确认必须映射 active Decision choice");
+  assert.match(cardRuntimeSource, /function createPassReserveDecisionPort[\s\S]*?PASS_RESERVE_DECISION_REQUIRED[\s\S]*?submitDecision\(/, "PASS 人类确认必须由 card owner 映射 active Decision choice");
+  assert.match(appSource, /getSelectedCardId:[\s\S]*?uiRuntimeState\.passReserveSelectedCardId/, "PASS Browser 高亮必须通过窄 selector 注入 card owner");
   const browserInputSource = fs.readFileSync(path.join(__dirname, "browser-host/input-adapter.js"), "utf8");
   assert.match(browserInputSource, /function createActiveDecisionPort[\s\S]*?options\.submitDecision\(/, "卡牌 trigger/task/free-move 人类输入必须由 Browser Input Adapter 提交 active Decision choice");
   assert.match(appSource, /createActiveDecisionPort\(/, "app.js 只装配 active Decision input port");

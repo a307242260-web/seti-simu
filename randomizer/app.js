@@ -66,6 +66,7 @@
     effectRewardExecutorsModule,
     effectAlienExecutorsModule,
     effectDispatcherModule,
+    effectExecutorBootstrapModule,
     handFlowModule,
     startScreenModule,
     turnFlowModule,
@@ -4839,7 +4840,7 @@
     handleLocationRewardChoice: handleProbeLocationRewardChoice,
   } = probeDecisionPort;
 
-  const effectExecutorContext = {
+  const effectExecutorCapabilities = {
     insertActionEffectsAfterCurrent: (...args) => effectExecutors.insertActionEffectsAfterCurrent(...args),
     openAlienTraceRewardEffect: (...args) => effectExecutors.openAlienTraceRewardEffect(...args),
     BANRENMA_PANEL_BONUS_EFFECT_TYPE,
@@ -5021,27 +5022,13 @@
     withPendingOwnerPlayer,
     yichangdian,
   };
-  const effectMovementScanExecutors = effectMovementScanExecutorsModule.createEffectMovementScanExecutors(
-    effectExecutorContext,
-  );
-  const effectRewardExecutors = effectRewardExecutorsModule.createEffectRewardExecutors({
-    ...effectExecutorContext,
-    ...effectMovementScanExecutors,
+  const effectExecutors = effectExecutorBootstrapModule.createEffectExecutorSuite({
+    capabilities: effectExecutorCapabilities,
+    movementScanModule: effectMovementScanExecutorsModule,
+    rewardModule: effectRewardExecutorsModule,
+    alienModule: effectAlienExecutorsModule,
+    dispatcherModule: effectDispatcherModule,
   });
-  const effectAlienExecutors = effectAlienExecutorsModule.createEffectAlienExecutors({
-    ...effectExecutorContext,
-    ...effectMovementScanExecutors,
-    ...effectRewardExecutors,
-  });
-  const effectExecutors = {
-    ...effectMovementScanExecutors,
-    ...effectRewardExecutors,
-    ...effectAlienExecutors,
-  };
-  Object.assign(
-    effectExecutors,
-    effectDispatcherModule.createEffectDispatcher({ ...effectExecutorContext, ...effectExecutors }),
-  );
 
   const actionRuntimePort = actionRuntimeModule.createActionRuntimePort({
     getController: () => actionRuntimeController,
