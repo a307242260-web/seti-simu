@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,28 @@
   root.SetiAppStartScreen = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  function createSetupOwnerInputPort(registry, context = {}) {
+    return registry.register("setup", {
+      startInitialSelection: (workingRoot) => (
+        context.getActionRuntime().startInitialSelection(workingRoot),
+        { ok: true, value: { ok: true } }
+      ),
+      selectInitialCard: (workingRoot, command) => (
+        context.getActionRuntime().handleInitialSelectionCardClick(
+          workingRoot,
+          command.selectionKind ?? command.args?.[0],
+          command.cardId ?? command.args?.[1],
+        ),
+        { ok: true, value: { ok: true } }
+      ),
+      confirmInitialSelection: (workingRoot) => (
+        context.getActionRuntime().confirmInitialSelectionForCurrentPlayer(workingRoot),
+        { ok: true, value: { ok: true } }
+      ),
+    });
+  }
+
+
 
   function stripAssetExtension(value) {
     return String(value || "").replace(/\.[^./\\]+$/, "");
@@ -170,17 +191,13 @@
       return getRuntime().getCardFromInitialOffer(offer, kind, cardId);
     }
     function start() {
-      return context.submitHostCommand({ kind: "setup_start_initial_selection" });
+      return context.inputPort.startInitialSelection();
     }
     function selectCard(kind, cardId) {
-      return context.submitHostCommand({
-        kind: "setup_select_initial_card",
-        selectionKind: kind,
-        cardId,
-      });
+      return context.inputPort.selectInitialCard(kind, cardId);
     }
     function confirm() {
-      return context.submitHostCommand({ kind: "setup_confirm_initial_selection" });
+      return context.inputPort.confirmInitialSelection();
     }
 
     return Object.freeze({
@@ -526,6 +543,7 @@
   }
 
   return {
+    createSetupOwnerInputPort,
     normalizeAiDifficulty,
     normalizeStartPlayerCount,
     getSelectedStartAlienIds,

@@ -147,7 +147,10 @@ assert.equal(storage.removed, true);
   const context = Object.fromEntries(refreshNames.map((name) => [name, () => calls.push(name)]));
   Object.assign(context, {
     uiRuntimeState,
-    submitHostCommand: (command) => calls.push(command),
+    inputPort: {
+      clearTransient: () => calls.push("recovery.clearTransient"),
+      refresh: (message) => calls.push(["recovery.refresh", message]),
+    },
     getAlienSpeciesRuntime: () => ({
       clearJiuzheCardPlayDecisionDraft: () => calls.push("clear-jiuzhe-draft"),
     }),
@@ -176,7 +179,7 @@ assert.equal(storage.removed, true);
   });
   const host = recovery.createRecoveryHost(context);
   host.clearTransientStateForRecovery();
-  assert.deepEqual(calls.shift(), { kind: "recovery_clear_transient" });
+  assert.equal(calls.shift(), "recovery.clearTransient");
   const root = {
     match: { type1TriggerEvents: [] },
     cardState: {}, techGameState: { ui: { industryBorrowMode: true } }, rocketState: {},

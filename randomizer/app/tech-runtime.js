@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,28 @@
   root.SetiAppTechRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "isTechActionSelectionActive", "isTechTilePickingActive", "syncTechSelectionChrome", "renderTechBoard",
+    "closeTechBlueSlotPicker", "isTechTileOwnedByOtherPlayer", "appendResearchTechFollowupEffects",
+    "onTechTileSelected", "onTechTileTaken", "clearResearchTechSelectionState",
+    "restoreResearchTechSelectionAfterUndo", "cancelPendingResearchTechTileChoice", "cancelTechSelection",
+    "openTechBlueSlotPicker", "finalizeTechTakeResult", "commitResearchTechSelectionResult",
+    "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice", "handleSupplyTechTileClick",
+    "executeIndustryPiratesRaidMarkerEffect", "handlePiratesRaidTechMarkerClick",
+    "executeIndustryPiratesRaidPublicityEffect", "startIndustryPiratesRaidLaunchFlow",
+    "buildPiratesRaidLaunchChoices", "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice",
+    "setCheatModeOpen", "toggleCheatMode",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("tech_runtime input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("tech_runtime input port 缺少 owner resolver");
+    return registry.registerTarget("tech_runtime", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "actions", "abilities", "cardEffects", "cards", "historyCommands", "industry",
@@ -1368,6 +1389,8 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserTechRuntime,
     createBrowserTechStaticContext,

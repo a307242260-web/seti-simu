@@ -9,137 +9,6 @@
 
   const SCHEMA_VERSION = "seti-browser-services-v1";
   const VIEW_SCHEMA_VERSION = "seti-browser-host-v1";
-  const EFFECT_CHOICE_COMMANDS = Object.freeze([
-    "handleConditionalSectorChoice", "handleDiscardIncomeCardChoice", "confirmDiscardAnyForIncome",
-    "handlePayCreditChoice", "handleFundamentalismExchangeChoice", "handleDiscardCornerRepeatChoice",
-    "handleRemoveOrbitToProbeChoice", "handleProbeSectorScanChoice",
-  ]);
-  const EFFECT_EXECUTOR_COMMANDS = Object.freeze([
-    "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan", "getPlanetName",
-    "markerBelongsToPlayer", "playerHasOwnOrbitMarkerAtPlanet", "markerOwnerLabel",
-    "buildPlanetMarkerRemovalChoices", "removePlanetMarkerForChoice", "handleRemovePlanetMarkerChoice",
-    "handleScanAction4Choice", "formatPlanetRewardGain", "finishAutomaticRewardEffect",
-    "buildPlutoRewardEffectsForAction", "buildPlutoChoiceRewardSummary", "handleHandCornerChoice",
-    "getSectorXsMatchingCondition", "sectorXHasAvailableScanTarget", "isAlienFamilyCard",
-    "handleReturnUnfinishedTaskChoice", "countOwnedTechByType", "enrichScanResultEvents",
-    "getPlayerCompanyBaseIncome", "insertActionEffectsAfterCurrent", "insertActionEffectsBeforeCurrent",
-    "handleOptionalHandScanChoice", "openYichangdianCornerPicker", "handleYichangdianCornerChoice",
-    "applyAomomoScanCostAndBonus",
-  ]);
-  const LEGACY_DOMAIN_COMMANDS = Object.freeze({
-    scan_flow: Object.freeze([
-      "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
-      "replaceNebulaDataForCurrentPlayer", "getSectorFinishWinnerTarget", "executeScanActionFinalizeEffect",
-      "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
-      "settleDelayedPublicRefillsAfterScanFlow", "buildEndOfFlowFollowupEffects",
-      "shouldAppendQueuedSectorFinishEffects", "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
-      "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
-      "closeScanTargetPicker", "nebulaHasScannableData", "buildNebulaScanChoice", "isAomomoActive",
-      "getAomomoPlanetLocation", "getAomomoCurrentX", "getNebulaCurrentX", "getSectorScanTargetLabel",
-      "buildAomomoScanChoiceForX", "hasAomomoScanAtX", "buildSectorScanChoicesForX",
-      "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
-      "getSectorOpenDataCount", "getSectorReplacedCount", "getSectorExtraMarkCount", "getPublicScanChoicesForCard",
-      "hasHandScanTargetCard", "createPublicScanPendingAction", "beginPublicDeckScan", "beginPublicScanForSingleCard",
-      "confirmPublicScanSelection", "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection",
-      "handleHandScanCardClick",
-    ]),
-    alien_ui: Object.freeze([
-      "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
-      "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
-      "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
-      "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "beginAlienTraceBoardPlacement",
-      "closeAlienTracePicker", "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement",
-      "beginFangzhouTraceGridPlacement", "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement",
-      "beginChongTraceGridPlacement", "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement",
-      "renderAlienTracePickerColorStep", "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice",
-      "handleFangzhouTraceDestinationChoice", "handleFangzhouUnlockTraceChoice", "routeFangzhouAlienTraceGain",
-      "handleStateTraceSlotPlacement", "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
-      "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
-    ]),
-    turn_end: Object.freeze([
-      "executePassFirstRotateEffect", "executePassHandLimitEffect", "passForCurrentPlayer",
-      "maybeResumeTurnEndAfterReveal", "maybeContinuePendingTurnEndRevealFlow",
-      "maybeContinueAlienRevealQueuedOpportunities", "endCurrentTurn",
-    ]),
-    action_interaction: Object.freeze([
-      "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
-      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
-      "getPlutoActionCost", "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement",
-      "openPlutoActionChoicePicker", "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode",
-      "deactivateMoveMode", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
-      "confirmDataPlacement",
-    ]),
-    income_runtime: Object.freeze([
-      "applyIndustryRoundStartBonuses", "maybeStartFundamentalismRoundStartIncomeFlow", "beginIncomeForCurrentPlayer",
-    ]),
-    alien_runtime: Object.freeze([
-      "confirmAlienTracePlacement", "confirmFangzhouTracePlacement", "handleJiuzheRevealSideEffects",
-      "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects", "handleBanrenmaRevealSideEffects",
-      "handleChongRevealSideEffects", "handleAmibaRevealSideEffects", "handleAomomoRevealSideEffects",
-      "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects", "failMissingAlienTraceTargetPlayer",
-      "getAlienTraceActionPlayer", "confirmYichangdianTracePlacement", "confirmBanrenmaTracePlacement",
-      "confirmAomomoTracePlacement", "confirmChongTracePlacement", "confirmAmibaTracePlacement",
-      "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement", "settleTurnEndAlienRevealEntries",
-      "activateAomomoBoard",
-    ]),
-    card_runtime: Object.freeze([
-      "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard", "shouldQueueCardCornerMoveQuickAction",
-      "canUseCardCornerQuickAction", "canStartCardCornerFreeMove", "beginCardCornerFreeMove",
-      "startCardCornerMoveEffectFlow", "hasFutureSpanEligibleHandCard", "hasPlayableFutureSpanCard",
-      "getStandardPlayCardActionBlockReason", "getPlayCardSelectionBlockReason", "getHandCardPlayActionForCard",
-      "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult", "drawBasicCardToPlayer",
-      "blindDrawCardForPlayer", "drawCardForCurrentPlayer", "pickPublicCardForCurrentPlayer", "canBlindDraw",
-      "updatePublicCardControls", "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick",
-      "handlePublicBlindDrawClick", "getPassReserveSelectionCards", "renderPassReserveSelection",
-      "syncPassReserveSelectionChrome", "beginPassReserveSelection", "dismissPassReserveSelectionOverlay",
-      "handlePublicCornerDiscardCardClick", "confirmPublicCornerDiscardSelection", "selectDefaultRocketFromCandidates",
-      "executeCardEffectMove", "finishCurrentCardMoveEffectEarly", "resolveCardMoveDirectionDecision",
-      "getMovableTokensForCardMoveEffect",
-    ]),
-    card_trigger: Object.freeze([
-      "buildCardTaskContext", "buildPlayerDataTotals", "buildProbeLocationIndex", "getReadyCardTasks",
-      "refreshCardTaskState", "applyType1TriggerMatches", "continueAfterCardTriggerResolution",
-      "buildAlienTraceEvent", "getActiveCardEventBonuses", "applyCardEventBonusReward",
-      "applyPublicityMoveFollowupBonus", "processCardEventBonuses", "processChongTransportArrivalEvents",
-      "buildChongPositionArrivalEvents", "settleCardTasksAfterEffect", "getReadyTaskForReservedCard",
-      "getReadyChongTaskForReservedCard", "getReadyAmibaTaskForReservedCard",
-      "getReadyRunezuTaskForReservedCard", "removeReservedCardToDiscard", "discardReservedCardIfFinished",
-      "createCardTriggerProgressSnapshot", "createCardTriggerProgressCommands",
-      "consumeCardTriggerWithSnapshot", "confirmCardTriggerProgress", "prepareCardTriggerRewardEffects",
-      "queueCardTriggerRewardEffects", "openCardTaskCompletionPicker", "openCardTriggerPicker",
-      "applyCardTriggerReward", "beginCardTriggerFreeMove", "applyCardTriggerMatch",
-    ]),
-    industry_runtime: Object.freeze([
-      "createIndustryActionRestoreCommand", "recordIndustryActionRestoreCommand", "clearIndustryRollbackUi",
-      "rollbackPendingIndustryQuickAction", "cancelIndustryAbilityFlow", "finishIndustryAbilityFlow",
-      "startIndustryAbilityFlow", "startIndustryStratusEffectFlow", "startIndustryFundamentalismExchangeFlow",
-      "startIndustryPublicityPick", "beginIndustryTuringBorrow", "failIndustryTuringBorrow",
-      "checkIndustryTuringBorrowTile", "confirmIndustryTuringBorrow", "openIndustryHeliosTechPicker",
-      "confirmIndustryHeliosRemoveTech", "startIndustryHuanyuMoveEffectFlow", "beginIndustryHuanyuFreeMoves",
-      "canBeginIndustryFutureSpanHandSelection", "beginIndustryFutureSpanHandSelection",
-      "handleIndustryFutureSpanHandClick", "handleIndustryDeepspaceHandClick", "finalizeIndustryDeepspaceSwap",
-      "handleAlienLabPanelClick", "maybeConsumeAlienLabPanelForMainAction", "maybeApplyIndustryLaunchScan",
-      "startLaunchSectorFinishEffectFlow", "appendIndustryPlayPassiveStatus", "buildIndustryPlayCardAppendEffects",
-      "buildPlayCardEffectFlowQueue", "applyIndustryPlayCardPassives", "completeIndustryAbilityQuickStep",
-      "commitIrreversibleIndustryQuickAction", "tryInjectSentinelPlayCornerEffectAfterArm",
-      "executeIndustryStratusCornerEffect", "executeIndustrySentinelCornerEffect", "createCompanyCardSummary",
-      "executeIndustryHeliosPassiveRewardEffect", "getStrategyPassiveSelectableSlotIds",
-      "cancelStrategyPassiveSlotChoice", "openStrategyPassiveSlotChoice", "confirmStrategyPassiveSlotChoice",
-      "finishIndustryStrategyPassiveRewardEffect", "executeIndustryStrategyPassiveRewardEffect",
-      "handleStrategyPassiveSlotClick", "handleCompanyActionMarkerClick",
-    ]),
-    tech_runtime: Object.freeze([
-      "isTechActionSelectionActive", "isTechTilePickingActive", "syncTechSelectionChrome", "renderTechBoard",
-      "closeTechBlueSlotPicker", "isTechTileOwnedByOtherPlayer", "appendResearchTechFollowupEffects",
-      "onTechTileSelected", "onTechTileTaken", "clearResearchTechSelectionState", "restoreResearchTechSelectionAfterUndo",
-      "cancelPendingResearchTechTileChoice", "cancelTechSelection", "openTechBlueSlotPicker", "finalizeTechTakeResult",
-      "commitResearchTechSelectionResult", "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice",
-      "handleSupplyTechTileClick", "executeIndustryPiratesRaidMarkerEffect", "handlePiratesRaidTechMarkerClick",
-      "executeIndustryPiratesRaidPublicityEffect", "startIndustryPiratesRaidLaunchFlow", "buildPiratesRaidLaunchChoices",
-      "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice", "setCheatModeOpen", "toggleCheatMode",
-    ]),
-  });
-
   function clone(value) {
     return value == null ? value : structuredClone(value);
   }
@@ -327,114 +196,84 @@
     });
   }
 
-  function createDomainCommandPort(options = {}) {
-    const allowedCommands = Object.fromEntries(Object.entries(options.allowedCommands || LEGACY_DOMAIN_COMMANDS)
-      .map(([domain, operations]) => [domain, new Set(operations)]));
-
-    function executeBrowserDomainCommand(workingRoot, command = {}) {
-      const target = options.getTarget(command.domain);
-      const allowed = allowedCommands[command.domain];
-      if ((allowed && !allowed.has(command.operation)) || (!allowed && !Object.hasOwn(target || {}, command.operation))) {
-        return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNKNOWN", message: `未知 Browser domain command: ${command.domain}.${command.operation}` };
-      }
-      const method = target?.[command.operation];
-      if (typeof method !== "function") {
-        return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
-      }
-      const value = method(workingRoot, ...(command.args || []));
-      return { ok: value?.ok !== false, value: options.clonePresentation(value) };
+  function createOwnerInputRegistry(options = {}) {
+    if (typeof options.submit !== "function") throw new TypeError("OwnerInputRegistry 需要 submit port");
+    if (typeof options.clonePresentation !== "function") {
+      throw new TypeError("OwnerInputRegistry 需要 clonePresentation port");
     }
+    const handlers = new Map();
+    const owners = new Map();
 
-    function callBrowserDomainCommand(domain, operation, args = []) {
-      try {
-        return options.submitHostCommand({ kind: "domain_command", domain, operation, args }).value;
-      } catch (error) {
-        throw new Error(`${domain}.${operation}: ${error?.message || error}`, { cause: error });
+    function assertOwner(owner) {
+      if (typeof owner !== "string" || !/^[a-z][a-z0-9_]*$/.test(owner)) {
+        throw new TypeError(`Owner input registry 的 owner 非法: ${String(owner)}`);
       }
     }
 
-    function callOperation(kind, operation, args = []) {
-      return options.submitHostCommand({ kind, operation, args }).value;
+    function register(owner, inputHandlers = {}) {
+      assertOwner(owner);
+      if (owners.has(owner)) throw new Error(`Owner input registry 重复 owner: ${owner}`);
+      const names = Object.keys(inputHandlers);
+      if (!names.length) throw new TypeError(`Owner input registry ${owner} 没有声明 input`);
+      const port = {};
+      for (const name of names) {
+        if (typeof name !== "string" || !/^[a-z][A-Za-z0-9]*$/.test(name)) {
+          throw new TypeError(`Owner input registry ${owner} 的 input 名非法: ${String(name)}`);
+        }
+        const handler = inputHandlers[name];
+        if (typeof handler !== "function") throw new TypeError(`${owner}.${name} input handler 不是函数`);
+        const kind = `${owner}.${name}`;
+        if (handlers.has(kind)) throw new Error(`Owner input registry 重复 kind: ${kind}`);
+        handlers.set(kind, Object.freeze({ owner, handler }));
+        port[name] = (...args) => options.submit({ kind, args }).value;
+      }
+      owners.set(owner, Object.freeze(new Set(names)));
+      return Object.freeze(port);
     }
 
-    function bindOperationCommands(kind, operations = []) {
-      return Object.freeze(Object.fromEntries(operations.map((operation) => [
-        operation,
-        (...args) => callOperation(kind, operation, args),
+    function registerTarget(owner, inputNames, getTarget) {
+      if (!Array.isArray(inputNames) || !inputNames.length || new Set(inputNames).size !== inputNames.length) {
+        throw new TypeError(`Owner input registry ${owner} 的 input schema 非法或重复`);
+      }
+      if (typeof getTarget !== "function") throw new TypeError(`${owner} 缺少 target resolver`);
+      return register(owner, Object.fromEntries(inputNames.map((name) => [
+        name,
+        (workingRoot, command) => {
+          const target = getTarget();
+          const method = target?.[name];
+          if (typeof method !== "function") {
+            return fail("BROWSER_OWNER_INPUT_UNAVAILABLE", `Browser owner input 未装配: ${owner}.${name}`);
+          }
+          const value = method(workingRoot, ...(command.args || []));
+          return { ok: value?.ok !== false, value: options.clonePresentation(value) };
+        },
       ])));
     }
 
-    return Object.freeze({
-      executeBrowserDomainCommand,
-      callBrowserDomainCommand,
-      bindBrowserDomainCommand: (domain, operation) => (...args) => callBrowserDomainCommand(domain, operation, args),
-      bindDomainCommands(domain, operations = null) {
-        const selectedOperations = operations || [...(allowedCommands[domain] || [])];
-        return Object.freeze(Object.fromEntries(selectedOperations.map((operation) => [
-          operation,
-          (...args) => callBrowserDomainCommand(domain, operation, args),
-        ])));
-      },
-      bindEffectChoiceCommands: (operations = EFFECT_CHOICE_COMMANDS) => bindOperationCommands("effect_choice_command", operations),
-      bindEffectExecutorCommands: (operations = EFFECT_EXECUTOR_COMMANDS) => bindOperationCommands("effect_executor_command", operations),
-      callEffectChoiceCommand: (operation, args = []) => callOperation("effect_choice_command", operation, args),
-      callHandFlowCommand: (operation, args = []) => callOperation("hand_flow_command", operation, args),
-      callEffectExecutorCommand: (operation, args = []) => callOperation("effect_executor_command", operation, args),
-      callDebugCommand: (operation, args = []) => callOperation("debug_command", operation, args),
-      setBrowserStatusNote(message) {
-        return options.submitHostCommand({ kind: "ui_set_status_note", message: String(message || "") }).value;
+    function execute(workingRoot, command = {}) {
+      if (Object.hasOwn(command, "domain") || Object.hasOwn(command, "operation")) {
+        return fail("BROWSER_OWNER_INPUT_CROSS_DOMAIN", "Browser owner input 不接受 domain/operation 逃生字段");
+      }
+      const entry = handlers.get(command.kind);
+      if (!entry) return fail("BROWSER_OWNER_INPUT_UNKNOWN", `未知 Browser owner input: ${command.kind || "<missing>"}`);
+      const separator = command.kind.indexOf(".");
+      if (separator < 1 || command.kind.slice(0, separator) !== entry.owner) {
+        return fail("BROWSER_OWNER_INPUT_CROSS_DOMAIN", `Browser owner input 越权: ${command.kind}`);
+      }
+      return entry.handler(workingRoot, command);
+    }
+
+    return Object.freeze({ register, registerTarget, execute });
+  }
+
+  function createBrowserStatusOwnerInputPort(registry) {
+    return registry.register("browser_status", {
+      setNote: (workingRoot, command) => {
+        const message = String(command.message ?? command.args?.[0] ?? "");
+        workingRoot.rocketState.statusNote = message;
+        return { ok: true, value: message };
       },
     });
-  }
-
-  function createHostCommandPort(options = {}) {
-    if (typeof options.submitHostCommand !== "function") {
-      throw new TypeError("HostCommandPort 需要 submitHostCommand port");
-    }
-    function submit(kind, payload = {}, submitOptions = undefined) {
-      return options.submitHostCommand({ kind, ...(payload || {}) }, submitOptions);
-    }
-    function bindValue(kind, buildPayload = () => ({}), submitOptions = undefined) {
-      return (...args) => submit(kind, buildPayload(...args), submitOptions).value;
-    }
-    function bindResult(kind, buildPayload = () => ({}), submitOptions = undefined) {
-      return (...args) => submit(kind, buildPayload(...args), submitOptions);
-    }
-    return Object.freeze({ submit, bindValue, bindResult });
-  }
-
-  function createHostCommandDispatcher(options = {}) {
-    if (typeof options.getHandlers !== "function") {
-      throw new TypeError("HostCommandDispatcher 需要 getHandlers");
-    }
-    function execute(workingRoot, command = {}) {
-      const handler = options.getHandlers()?.[command.kind];
-      if (typeof handler !== "function") {
-        return fail("BROWSER_HOST_COMMAND_UNKNOWN", `未知 Browser host command: ${command.kind || "<missing>"}`);
-      }
-      return handler(workingRoot, command);
-    }
-    return Object.freeze({ execute });
-  }
-
-  function createOperationCommandHandler(options = {}) {
-    return (workingRoot, command = {}) => {
-      const operation = options.getTarget()?.[command.operation];
-      if (typeof operation !== "function") {
-        return fail(options.unknownCode, `未知 ${options.label} command: ${command.operation || "<missing>"}`);
-      }
-      return {
-        ok: true,
-        value: options.clonePresentation(operation(workingRoot, ...(command.args || []))),
-      };
-    };
-  }
-
-  function createStatusNoteCommandHandler() {
-    return (workingRoot, command) => {
-      workingRoot.rocketState.statusNote = command.message;
-      return { ok: true, value: command.message };
-    };
   }
 
   function subscribeRefresh(options = {}) {
@@ -452,13 +291,9 @@
     SCHEMA_VERSION,
     VIEW_SCHEMA_VERSION,
     createBrowserServices,
-    createHostCommandPort,
-    createHostCommandDispatcher,
-    createOperationCommandHandler,
-    createStatusNoteCommandHandler,
+    createOwnerInputRegistry,
+    createBrowserStatusOwnerInputPort,
     createBrowserDownloadPort,
-    createDomainCommandPort,
-    LEGACY_DOMAIN_COMMANDS,
     subscribeRefresh,
   });
 });

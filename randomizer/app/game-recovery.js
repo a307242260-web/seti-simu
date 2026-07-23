@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,20 @@
   root.SetiAppGameRecovery = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  function createRecoveryOwnerInputPort(registry, context = {}) {
+    return registry.register("recovery", {
+      clearTransient: (workingRoot) => {
+        const value = context.clearTransient(workingRoot);
+        return { ok: value?.ok !== false, value };
+      },
+      refresh: (workingRoot, command) => {
+        const value = context.refresh(command.message ?? command.args?.[0], workingRoot);
+        return { ok: value?.ok !== false, value };
+      },
+    });
+  }
+
+
 
   const RECOVERY_SNAPSHOT_VERSION = 2;
 
@@ -232,7 +245,7 @@
     ]);
 
     function clearTransientState(workingRoot = null) {
-      if (!workingRoot) return context.submitHostCommand({ kind: "recovery_clear_transient" });
+      if (!workingRoot) return context.inputPort.clearTransient();
       const alienSpeciesRuntime = context.getAlienSpeciesRuntime?.();
       const effectExecutors = context.getEffectExecutors?.();
       const { cardState, techGameState } = workingRoot;
@@ -281,7 +294,7 @@
     }
 
     function refreshAfterRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
-      if (!workingRoot) return context.submitHostCommand({ kind: "recovery_refresh", message });
+      if (!workingRoot) return context.inputPort.refresh(message);
       context.setTokenAssetSizes();
       context.renderWheels();
       context.renderSectors();
@@ -492,6 +505,7 @@
   }
 
   return {
+    createRecoveryOwnerInputPort,
     RECOVERY_SNAPSHOT_VERSION,
     createGameRecoverySnapshot,
     normalizeRecoverableActionLogEntry,

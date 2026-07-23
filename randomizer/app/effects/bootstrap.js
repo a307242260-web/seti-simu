@@ -1,11 +1,32 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiAppEffectExecutorBootstrap = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan", "getPlanetName",
+    "markerBelongsToPlayer", "playerHasOwnOrbitMarkerAtPlanet", "markerOwnerLabel",
+    "buildPlanetMarkerRemovalChoices", "removePlanetMarkerForChoice", "handleRemovePlanetMarkerChoice",
+    "handleScanAction4Choice", "formatPlanetRewardGain", "finishAutomaticRewardEffect",
+    "buildPlutoRewardEffectsForAction", "buildPlutoChoiceRewardSummary", "handleHandCornerChoice",
+    "getSectorXsMatchingCondition", "sectorXHasAvailableScanTarget", "isAlienFamilyCard",
+    "handleReturnUnfinishedTaskChoice", "countOwnedTechByType", "enrichScanResultEvents",
+    "getPlayerCompanyBaseIncome", "insertActionEffectsAfterCurrent", "insertActionEffectsBeforeCurrent",
+    "handleOptionalHandScanChoice", "openYichangdianCornerPicker", "handleYichangdianCornerChoice",
+    "applyAomomoScanCostAndBonus",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("effect_executor input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("effect_executor input port 缺少 owner resolver");
+    return registry.registerTarget("effect_executor", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze({
     movementScan: Object.freeze([
@@ -183,5 +204,5 @@
     return Object.freeze({ ...executors, ...dispatcher });
   }
 
-  return { REQUIRED_CONTEXT_KEYS, createEffectExecutorSuite };
+  return { BROWSER_INPUT_NAMES, createBrowserInputPort, REQUIRED_CONTEXT_KEYS, createEffectExecutorSuite };
 });

@@ -1,11 +1,30 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiBrowserActionBar = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  function createActionBarOwnerInputPorts(registry, context = {}) {
+    return Object.freeze({
+      quickAction: registry.register("quick_action", {
+        checkPending: (workingRoot, command) => ({
+          ok: true,
+          value: context.clonePresentation(
+            context.checkPending(workingRoot, command.actionType ?? command.args?.[0]),
+          ),
+        }),
+      }),
+      history: registry.register("history", {
+        undoPending: (workingRoot) => ({
+          ok: true,
+          value: context.clonePresentation(context.undoPending(workingRoot)),
+        }),
+      }),
+    });
+  }
+
+
 
   const STANDARD_ACTION_SCHEMA = "seti-standard-action-v1";
   const BROWSER_PROJECTION_SCHEMA = "seti-browser-host-v1";
@@ -1037,10 +1056,7 @@
     }
 
     function blockIncompatiblePendingQuickAction(actionType) {
-      return context.submitHostCommand({
-        kind: "quick_action_check_pending",
-        actionType,
-      }).value;
+      return context.inputPort.checkPending(actionType);
     }
 
     return Object.freeze({
@@ -1109,6 +1125,7 @@
   }
 
   return Object.freeze({
+    createActionBarOwnerInputPorts,
     ACTION_BAR_PROJECTION_SCHEMA,
     selectActionBarProjection,
     createActionBarModel,

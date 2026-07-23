@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,32 @@
   root.SetiAppActionRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  function createActionOwnerInputPorts(registry, context = {}) {
+    return Object.freeze({
+      primaryBoard: registry.register("primary_board", {
+        execute: (workingRoot, command) => context.clonePresentation(
+          context.executePrimaryBoardAction(
+            context.createActionContext(workingRoot, command.descriptor),
+            command.descriptor,
+            command.executionOptions,
+            command.options,
+          ),
+        ),
+        getRequiredMovePoints: (workingRoot, command) => ({
+          ok: true,
+          value: context.getRequiredMovePoints(workingRoot, ...(command.args || [])),
+        }),
+      }),
+      recovery: registry.register("action_recovery", {
+        recoverPending: (workingRoot) => ({
+          ok: true,
+          value: context.clonePresentation(context.recoverPending(workingRoot)),
+        }),
+      }),
+    });
+  }
+
+
 
   function stripAssetExtension(value) {
     return String(value || "").replace(/\.[^.]+$/, "");
@@ -1272,6 +1297,7 @@
   }
 
   return {
+    createActionOwnerInputPorts,
     createActionRuntime,
     createBrowserStandardActionAdapter,
     createInitialIncomeFlow,

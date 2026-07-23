@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,22 @@
   root.SetiAppFinalUiRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  function createFinalScoreOwnerInputPort(registry, context = {}) {
+    return registry.register("final_score", {
+      syncPendingMarks: (workingRoot) => {
+        const value = context.clonePresentation(context.syncPendingMarks(workingRoot));
+        return { ok: value?.ok !== false, value };
+      },
+      markTile: (workingRoot, command) => {
+        const value = context.clonePresentation(
+          context.markTile(workingRoot, command.tileId ?? command.args?.[0]),
+        );
+        return { ok: value?.ok !== false, value };
+      },
+    });
+  }
+
+
 
   function createFinalUiRuntime(context = {}) {
     const simulation = Boolean(context.simulation);
@@ -477,17 +492,18 @@
     function syncFinalScorePendingMarks(workingRoot = null) {
       return workingRoot
         ? context.runtime.syncFinalScorePendingMarks(workingRoot)
-        : context.submitHostCommand({ kind: "score_sync_pending_marks" });
+        : context.inputPort.syncPendingMarks();
     }
     function handleFinalScoreTileClick(tileId, workingRoot = null) {
       return workingRoot
         ? context.runtime.handleFinalScoreTileClick(workingRoot, tileId)
-        : context.submitHostCommand({ kind: "score_mark_tile", tileId });
+        : context.inputPort.markTile(tileId);
     }
     return Object.freeze({ syncFinalScorePendingMarks, handleFinalScoreTileClick });
   }
 
   return {
+    createFinalScoreOwnerInputPort,
     createFinalUiRuntime,
     createFinalUiPort,
   };

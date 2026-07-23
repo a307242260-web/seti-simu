@@ -11,6 +11,47 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "renderJiuzheThresholds", "maybeRevealAlienAfterTrace", "renderYichangdianCardDisplays",
+    "renderBanrenmaScoremarks", "renderBanrenmaCardDisplays", "renderChongCardDisplays",
+    "renderAmibaCardDisplays", "renderAomomoCardDisplays", "renderRunezuCardDisplays",
+    "renderBanrenmaBonusMarkers", "renderAlienPanels", "randomizeAliens", "confirmFangzhouCard2Unlock",
+    "createFangzhouReservedButtons", "flipFangzhouCard1Rewards", "applyFangzhouCard1Rewards",
+    "applyFangzhouCard1Reward", "queueFangzhouBasicRewards", "applyFangzhouTraceRewardToPlayer",
+    "renderFangzhouCardDisplays", "openFangzhouCard1Dialog", "findPlayerForJiuzheEntry",
+    "findPlayerForYichangdianEntry", "applyAmibaRewardToPlayer", "applyRunezuRewardToPlayer",
+    "applyRunezuSymbolReward", "claimRunezuSourceSymbolWithHistory", "openRunezuCardGainDialog",
+    "finishRunezuCardGain", "handleRunezuCardGainChoice", "openAmibaCardGainDialog",
+    "finishAmibaCardGain", "handleAmibaCardGainChoice", "openAomomoCardGainDialog",
+    "finishAomomoCardGain", "handleAomomoCardGainChoice", "openAmibaSymbolChoiceDialog",
+    "finishAmibaSymbolChoice", "handleAmibaSymbolChoice", "openAmibaTraceRemovalDialog",
+    "handleAmibaTraceRemovalChoice", "openYichangdianCardGainDialog", "finishYichangdianCardGain",
+    "handleYichangdianCardGainChoice", "openBanrenmaCardGainDialog", "finishBanrenmaCardGain",
+    "handleBanrenmaCardGainChoice", "openChongCardGainDialog", "finishChongCardGain",
+    "handleChongCardGainChoice", "openChongFossilChoiceDialog", "createChongTransportTokenForFossil",
+    "openChongPickCardFollowUp", "failChongTaskCompletion", "finishChongFossilEffect",
+    "completeChongTraceTaskWithFossil", "handleChongFossilChoice", "queueJiuzheOpportunitiesForPlayer",
+    "buildJiuzheCardConditionContext", "getJiuzheCardConditionLabel", "openJiuzheCardDialog",
+    "handleJiuzheCardChoice", "handleJiuzheOpportunitySkip", "maybeOpenQueuedJiuzheOpportunity",
+    "getReadyBanrenmaCards", "getReadyBanrenmaCardsForOpportunity", "getReadyBanrenmaCardForOpportunity",
+    "queueBanrenmaPanelBonusEffectForPlayer", "queueBanrenmaOpportunitiesForPlayer",
+    "openBanrenmaCardConditionCompletionPicker", "openBanrenmaOpportunityDialog",
+    "maybeOpenQueuedBanrenmaOpportunity", "openBanrenmaReadyOpportunityForPlayer",
+    "executeJiuzheThresholdCardEffect", "executeBanrenmaPanelBonusEffect",
+    "completeBanrenmaOpportunityStep", "handleBanrenmaBonusChoice",
+    "handleBanrenmaCardConditionChoice", "openChongRewardFollowUps", "openAmibaRewardFollowUps",
+    "openRunezuRewardFollowUps", "executeStandardRunezuFaceSymbol", "openRunezuFaceSymbolPlacement",
+    "handleRunezuFaceSymbolChoice", "executeRunezuSymbolRewardEffect", "openRunezuSymbolBranchDialog",
+    "handleRunezuSymbolBranchChoice",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("alien_species input port 需要已校验 registry");
+    }
+    return registry.registerTarget("alien_species", BROWSER_INPUT_NAMES, getTarget);
+  }
+
   const REQUIRED_BROWSER_PORT_KEYS = Object.freeze({
     stateQuery: Object.freeze([
       "buildPlutoMarkerContext", "buildProbeLocationIndex", "getAlienTraceActionPlayer",
@@ -4452,37 +4493,7 @@ function alignAlienPanelsToPlanets() {
       "getBanrenmaCardConditionLabel", "appendRevealCardGrantMessage", "getRevealIrreversible",
       "closeRunezuFaceSymbolPlacement", "closeRunezuSymbolBranchDialog", "alignAlienPanelsToPlanets",
     ];
-    const commandMethods = [
-      "renderJiuzheThresholds", "maybeRevealAlienAfterTrace", "renderYichangdianCardDisplays", "renderBanrenmaScoremarks",
-      "renderBanrenmaCardDisplays", "renderChongCardDisplays", "renderAmibaCardDisplays", "renderAomomoCardDisplays",
-      "renderRunezuCardDisplays", "renderBanrenmaBonusMarkers", "renderAlienPanels", "randomizeAliens",
-      "confirmFangzhouCard2Unlock", "createFangzhouReservedButtons", "flipFangzhouCard1Rewards",
-      "applyFangzhouCard1Rewards", "applyFangzhouCard1Reward", "queueFangzhouBasicRewards",
-      "applyFangzhouTraceRewardToPlayer", "renderFangzhouCardDisplays", "openFangzhouCard1Dialog",
-      "findPlayerForJiuzheEntry", "findPlayerForYichangdianEntry", "applyAmibaRewardToPlayer",
-      "applyRunezuRewardToPlayer", "applyRunezuSymbolReward", "claimRunezuSourceSymbolWithHistory",
-      "openRunezuCardGainDialog", "finishRunezuCardGain", "handleRunezuCardGainChoice",
-      "openAmibaCardGainDialog", "finishAmibaCardGain", "handleAmibaCardGainChoice",
-      "openAomomoCardGainDialog", "finishAomomoCardGain", "handleAomomoCardGainChoice",
-      "openAmibaSymbolChoiceDialog", "finishAmibaSymbolChoice", "handleAmibaSymbolChoice",
-      "openAmibaTraceRemovalDialog", "handleAmibaTraceRemovalChoice", "openYichangdianCardGainDialog",
-      "finishYichangdianCardGain", "handleYichangdianCardGainChoice", "openBanrenmaCardGainDialog",
-      "finishBanrenmaCardGain", "handleBanrenmaCardGainChoice", "openChongCardGainDialog",
-      "finishChongCardGain", "handleChongCardGainChoice", "openChongFossilChoiceDialog",
-      "createChongTransportTokenForFossil", "openChongPickCardFollowUp", "failChongTaskCompletion",
-      "finishChongFossilEffect", "completeChongTraceTaskWithFossil", "handleChongFossilChoice",
-      "queueJiuzheOpportunitiesForPlayer", "buildJiuzheCardConditionContext", "getJiuzheCardConditionLabel",
-      "openJiuzheCardDialog", "handleJiuzheCardChoice", "handleJiuzheOpportunitySkip",
-      "maybeOpenQueuedJiuzheOpportunity", "getReadyBanrenmaCards", "getReadyBanrenmaCardsForOpportunity",
-      "getReadyBanrenmaCardForOpportunity", "queueBanrenmaPanelBonusEffectForPlayer",
-      "queueBanrenmaOpportunitiesForPlayer", "openBanrenmaCardConditionCompletionPicker",
-      "openBanrenmaOpportunityDialog", "maybeOpenQueuedBanrenmaOpportunity", "openBanrenmaReadyOpportunityForPlayer",
-      "executeJiuzheThresholdCardEffect", "executeBanrenmaPanelBonusEffect", "completeBanrenmaOpportunityStep",
-      "handleBanrenmaBonusChoice", "handleBanrenmaCardConditionChoice", "openChongRewardFollowUps",
-      "openAmibaRewardFollowUps", "openRunezuRewardFollowUps", "executeStandardRunezuFaceSymbol",
-      "openRunezuFaceSymbolPlacement", "handleRunezuFaceSymbolChoice", "executeRunezuSymbolRewardEffect",
-      "openRunezuSymbolBranchDialog", "handleRunezuSymbolBranchChoice",
-    ];
+    const commandMethods = BROWSER_INPUT_NAMES;
     const draftMethods = {
       getPendingChongFossilChoice: "getChongFossilDecisionDraft",
       getPendingAmibaSymbolChoice: "getAmibaSymbolDecisionDraft",
@@ -4500,7 +4511,7 @@ function alignAlienPanelsToPlanets() {
     };
     const port = {};
     for (const name of directMethods) port[name] = (...args) => context.getRuntime()[name](...args);
-    for (const name of commandMethods) port[name] = (...args) => context.dispatchCommand(name, args);
+    for (const name of commandMethods) port[name] = (...args) => context.inputPort[name](...args);
     for (const [name, runtimeName] of Object.entries(draftMethods)) {
       port[name] = () => context.getRuntime()?.[runtimeName]?.() || null;
     }
@@ -4508,6 +4519,8 @@ function alignAlienPanelsToPlanets() {
   }
 
   return Object.freeze({
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
     createAlienSpeciesPort,
     createAlienSpeciesRuntime,
     createBrowserAlienSpeciesRuntime,

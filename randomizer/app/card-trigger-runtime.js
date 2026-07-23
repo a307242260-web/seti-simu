@@ -1,11 +1,32 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiAppCardTriggerRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "buildCardTaskContext", "buildPlayerDataTotals", "buildProbeLocationIndex", "getReadyCardTasks",
+    "refreshCardTaskState", "applyType1TriggerMatches", "continueAfterCardTriggerResolution",
+    "buildAlienTraceEvent", "getActiveCardEventBonuses", "applyCardEventBonusReward",
+    "applyPublicityMoveFollowupBonus", "processCardEventBonuses", "processChongTransportArrivalEvents",
+    "buildChongPositionArrivalEvents", "settleCardTasksAfterEffect", "getReadyTaskForReservedCard",
+    "getReadyChongTaskForReservedCard", "getReadyAmibaTaskForReservedCard", "getReadyRunezuTaskForReservedCard",
+    "removeReservedCardToDiscard", "discardReservedCardIfFinished", "createCardTriggerProgressSnapshot",
+    "createCardTriggerProgressCommands", "consumeCardTriggerWithSnapshot", "confirmCardTriggerProgress",
+    "prepareCardTriggerRewardEffects", "queueCardTriggerRewardEffects", "openCardTaskCompletionPicker",
+    "openCardTriggerPicker", "applyCardTriggerReward", "beginCardTriggerFreeMove", "applyCardTriggerMatch",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("card_trigger input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("card_trigger input port 缺少 owner resolver");
+    return registry.registerTarget("card_trigger", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "abilities", "aliens", "amiba", "cardEffects", "cardTaskStateModule", "cards",
@@ -1711,6 +1732,8 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserCardTriggerRuntime,
     createBrowserCardTriggerStaticContext,

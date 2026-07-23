@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,41 @@
   root.SetiAppAlienRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "confirmAlienTracePlacement", "confirmFangzhouTracePlacement", "handleJiuzheRevealSideEffects",
+    "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects", "handleBanrenmaRevealSideEffects",
+    "handleChongRevealSideEffects", "handleAmibaRevealSideEffects", "handleAomomoRevealSideEffects",
+    "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects", "failMissingAlienTraceTargetPlayer",
+    "getAlienTraceActionPlayer", "confirmYichangdianTracePlacement", "confirmBanrenmaTracePlacement",
+    "confirmAomomoTracePlacement", "confirmChongTracePlacement", "confirmAmibaTracePlacement",
+    "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement", "settleTurnEndAlienRevealEntries",
+    "activateAomomoBoard",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("alien_runtime input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("alien_runtime input port 缺少 owner resolver");
+    return registry.registerTarget("alien_runtime", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+  function createChongTransportOwnerInputPort(registry, context = {}) {
+    return registry.register("chong_transport", {
+      listReady: (workingRoot, command) => ({
+        ok: true,
+        value: context.clonePresentation(
+          context.listReady(
+            workingRoot,
+            command.player ?? command.args?.[0],
+            command.task ?? command.args?.[1],
+          ),
+        ),
+      }),
+    });
+  }
+
+
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "aliens", "players", "data", "cardEffects", "historyCommands", "jiuzhe",
@@ -1882,10 +1916,7 @@
     }
 
     function listReady(player, task) {
-      return context.submitHostCommand(
-        { kind: "chong_ready_transports", player, task },
-        { commit: false },
-      ).value || [];
+      return context.inputPort.listReady(player, task) || [];
     }
 
     return Object.freeze({ listReadyForRoot, listReady });
@@ -1928,6 +1959,9 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
+    createChongTransportOwnerInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserAlienRuntime,
     createBrowserAlienStaticContext,

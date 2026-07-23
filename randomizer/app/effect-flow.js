@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,40 @@
   root.SetiAppEffectFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  function createEffectFlowOwnerInputPort(registry, context = {}) {
+    return registry.register("effect_flow", {
+      executeScanFreeMove: (workingRoot, command) => context.clonePresentation(
+        context.executeScanFreeMove(workingRoot, ...(command.args || [])),
+      ),
+      barClick: (workingRoot, command) => ({
+        ok: true,
+        value: context.clonePresentation(
+          context.handleBarClick(workingRoot, command.effectIndex ?? command.args?.[0]),
+        ),
+      }),
+      skipCurrent: (workingRoot) => ({
+        ok: true,
+        value: context.clonePresentation(context.skipCurrent(workingRoot)),
+      }),
+      cancelSubflows: (workingRoot) => (context.cancelSubflows(workingRoot), { ok: true }),
+      finish: (workingRoot) => ({
+        ok: true,
+        value: context.clonePresentation(context.finish(workingRoot)),
+      }),
+      beginCardMove: (workingRoot, command) => ({
+        ok: true,
+        value: context.clonePresentation(
+          context.beginCardMove(workingRoot, command.effect ?? command.args?.[0]),
+        ),
+      }),
+      cancelPendingSubflows: (workingRoot) => ({
+        ok: true,
+        value: context.cancelPendingSubflows(workingRoot),
+      }),
+    });
+  }
+
+
 
   function getMarkedNebulaIdsFromEvents(events = []) {
     const marked = new Set();
@@ -1399,6 +1432,7 @@
   }
 
   return {
+    createEffectFlowOwnerInputPort,
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
     createEffectFlowUndoRuntime,

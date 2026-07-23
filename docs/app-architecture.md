@@ -72,7 +72,12 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/score-source-runtime.js`：处理分数来源账本、扫描/初始选择记账和 history 撤销命令；只写调用方显式 player/root，不读取 DOM。
 - `randomizer/app/action-briefing.js`：只处理 AI 行动简报的数据归纳、摘要文案和 overlay 开关；不要在这里执行规则结算或直接修改行动日志源数据。
 - `randomizer/app/alien-ui.js`：只处理外星人揭示弹层、痕迹选择器、方舟分流和“进入某物种放置模式”的 UI 壳层；不实现物种奖励、dialog 或具体面板渲染。
-- `randomizer/app/aliens/species-runtime.js`：处理物种奖励、外星人牌获取、虫族任务、九折/半人马机会、符文 symbol、followup 和具体面板渲染，并由 `createAlienSpeciesPort` 统一区分只读/DOM 调用与 Composition host command。Browser 装配只接受 `stateQuery`、`decisionInput`、`history`、`legality`、`render`、`speciesRules`、`constants` 七个显式窄 port，并在创建期按 `port.key` 校验缺项；禁止从 dependencies/runtime sources 按同名键搜索或拼成共享 capability bag。
+- `randomizer/app/aliens/species-runtime.js`：处理物种奖励、外星人牌获取、虫族任务、九折/半人马机会、符文 symbol、followup 和具体面板渲染，并由 `createAlienSpeciesPort` 统一区分只读/DOM 调用与已校验的物种 owner input port。Browser 装配只接受 `stateQuery`、`decisionInput`、`history`、`legality`、`render`、`speciesRules`、`constants` 七个显式窄 port，并在创建期按 `port.key` 校验缺项；禁止从 dependencies/runtime sources 按同名键搜索或拼成共享 capability bag。
+
+Browser 规则写入由真实 owner 模块各自声明 `BROWSER_INPUT_NAMES` 或显式 handler factory；
+`app.js` 只装配这些 owner-local port，`browser-services.js` 只负责注册、重复 kind 检查与未知
+kind / `domain` / `operation` 字段的 fail-closed。生产代码不得恢复中央 command 总表、通用
+`domain_command`，也不得向业务 runtime 注入可提交任意字符串 kind 的入口。
 - `randomizer/app/tech-runtime.js`：处理科技供应区选择、蓝槽 picker、确认/取消/undo 恢复和海盗科技标记交互；规则判断仍委托 `game/tech/**` 与 `game/industry/**`。
 - `randomizer/app/industry-runtime.js`：处理公司能力与被动的 UI/Decision/history 编排；图灵借用、免费移动和策略槽只打开正式 DecisionEffect，确认与取消统一经过 active Decision port，公司规则、数值和文案继续由 `game/industry/**` 提供。
 - `randomizer/app/action-log-runtime.js`：处理行动日志草稿、步骤、entry、导入组装及日志列表/tab 的 DOM 展示；通过显式参数接收 turn/player/history 与 view 上下文，不直接抓 app 闭包。

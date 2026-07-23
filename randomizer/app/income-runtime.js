@@ -1,11 +1,24 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiAppIncomeRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "applyIndustryRoundStartBonuses", "maybeStartFundamentalismRoundStartIncomeFlow",
+    "beginIncomeForCurrentPlayer",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("income_runtime input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("income_runtime input port 缺少 owner resolver");
+    return registry.registerTarget("income_runtime", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+
 
   function isIncomeDiscardActionType(type) {
     return type === "income"
@@ -486,5 +499,10 @@
     };
   }
 
-  return { createIncomeRuntime, isIncomeDiscardActionType };
+  return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
+    createIncomeRuntime,
+    isIncomeDiscardActionType,
+  };
 });

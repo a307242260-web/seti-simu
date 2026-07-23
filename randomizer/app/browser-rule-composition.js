@@ -75,7 +75,7 @@
         },
       },
       runWithWorkingState: context.runWithWorkingState,
-      executeHostCommand: context.executeHostCommand,
+      executeOwnerInput: context.executeOwnerInput,
       createActionRegistry: context.createActionRegistry,
       effectDomains: [context.standardActionDomain],
       projectState(state) {

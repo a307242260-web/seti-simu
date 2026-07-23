@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,47 @@
   root.SetiAppScanFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
+    "replaceNebulaDataForCurrentPlayer", "getSectorFinishWinnerTarget", "executeScanActionFinalizeEffect",
+    "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
+    "settleDelayedPublicRefillsAfterScanFlow", "buildEndOfFlowFollowupEffects",
+    "shouldAppendQueuedSectorFinishEffects", "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
+    "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
+    "closeScanTargetPicker", "nebulaHasScannableData", "buildNebulaScanChoice", "isAomomoActive",
+    "getAomomoPlanetLocation", "getAomomoCurrentX", "getNebulaCurrentX", "getSectorScanTargetLabel",
+    "buildAomomoScanChoiceForX", "hasAomomoScanAtX", "buildSectorScanChoicesForX",
+    "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
+    "getSectorOpenDataCount", "getSectorReplacedCount", "getSectorExtraMarkCount",
+    "getPublicScanChoicesForCard", "hasHandScanTargetCard", "createPublicScanPendingAction",
+    "beginPublicDeckScan", "beginPublicScanForSingleCard", "confirmPublicScanSelection",
+    "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection", "handleHandScanCardClick",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("scan_flow input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("scan_flow input port 缺少 owner resolver");
+    return registry.registerTarget("scan_flow", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+  function createSectorSettlementOwnerInputPort(registry, context = {}) {
+    return registry.register("sector_settlement", {
+      resolveCompleted: (workingRoot, command) => ({
+        ok: true,
+        value: context.clonePresentation(
+          context.resolveCompleted(
+            workingRoot,
+            command.actionType ?? command.args?.[0],
+            command.options ?? command.args?.[1],
+          ),
+        ),
+      }),
+    });
+  }
+
+
 
   function buildSectorScanChoicesForXs(sectorXs, buildSectorScanChoicesForX) {
     return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
@@ -2626,6 +2666,9 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
+    createSectorSettlementOwnerInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     BROWSER_STATIC_CONSTANT_KEYS,
     createBrowserScanFlow,

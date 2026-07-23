@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
 
   if (typeof module === "object" && module.exports) {
@@ -12,6 +11,21 @@
   }
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  function createAiOwnerInputPort(registry, context = {}) {
+    return registry.register("ai", {
+      setPlayerDifficulty: (workingRoot, command) => {
+        const value = context.setPlayerDifficulty(workingRoot, {
+          ...command,
+          playerId: command.playerId ?? command.args?.[0],
+          difficulty: command.difficulty ?? command.args?.[1],
+          label: command.label ?? command.args?.[2],
+        });
+        return { ok: value?.ok !== false, value };
+      },
+    });
+  }
+
+
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "aiControlRuntimeModule",
@@ -191,21 +205,14 @@
       createPolicy,
       isMachineSeat: (seatId) => Boolean(controller?.isAiAutoBattlePlayer?.(seatId)),
     });
-    const submitHostCommand = (command, options) => (
-      ruleComposition.inputPort.submitHostCommand(command, options)
-    );
     const controlRuntime = aiControlRuntimeModule.createAiControlRuntime({
       ...controlContext,
       state,
       recordAiAutoBattleLog: () => null,
       recordAiAutoBattleBug: () => null,
       resetAiStrategyDemandCache: () => {},
-      setPlayerAiDifficulty: (playerId, difficulty, label) => submitHostCommand({
-        kind: "ai_set_player_difficulty",
-        playerId,
-        difficulty,
-        label,
-      }),
+      setPlayerAiDifficulty: (playerId, difficulty, label) => options.inputPort
+        .setPlayerDifficulty(playerId, difficulty, label),
       runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
       getRuleProjection: () => {
         const ruleState = readRuleState();
@@ -235,6 +242,7 @@
   }
 
   return {
+    createAiOwnerInputPort,
     REQUIRED_CONTEXT_KEYS,
     createCompositionPolicyBoundaryReader,
     createBrowserMachinePlayerPort,

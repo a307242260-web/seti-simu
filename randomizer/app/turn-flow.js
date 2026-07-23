@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,56 @@
   root.SetiAppTurnFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  function createTurnOwnerInputPort(registry, context = {}) {
+    return registry.register("turn", {
+      setPlayerOrder: (workingRoot, command) => (
+        context.getController().setTurnStatePlayerOrder(
+          workingRoot,
+          command.playerIds ?? command.args?.[0],
+          command.options ?? command.args?.[1],
+        ),
+        { ok: true, value: { ok: true } }
+      ),
+      randomizePlayerOrder: (workingRoot) => (
+        context.getController().randomizePlayerTurnOrder(workingRoot),
+        { ok: true, value: { ok: true } }
+      ),
+      beginNextRound: (workingRoot) => {
+        const value = context.getController().beginNextRound(workingRoot);
+        return { ok: true, value };
+      },
+      advanceAfterAction: (workingRoot, command) => {
+        const value = context.getController().advanceTurnAfterPlayerAction(
+          workingRoot,
+          command.playerId ?? command.args?.[0],
+          command.options ?? command.args?.[1],
+        );
+        return { ok: true, value };
+      },
+      startNewGame: (workingRoot, command) => {
+        const value = context.getController().startNewGame(
+          workingRoot,
+          command.options ?? command.args?.[0],
+        );
+        return { ok: value?.ok !== false, value };
+      },
+      randomizeAll: (workingRoot) => (
+        context.getController().randomizeAll(workingRoot),
+        { ok: true, value: { ok: true } }
+      ),
+    });
+  }
+
+  function createTurnReadoutOwnerInputPort(registry, context = {}) {
+    return registry.register("turn_readout", {
+      buildFinalSummary: (workingRoot) => ({
+        ok: true,
+        value: context.buildFinalSummary(workingRoot),
+      }),
+    });
+  }
+
+
 
   function createTurnState(sourcePlayers, options = {}) {
     const playerIds = (Array.isArray(sourcePlayers) ? sourcePlayers : [])
@@ -190,7 +239,7 @@
       );
     }
     function buildFinalScoreSummaryLinesFromHost() {
-      return context.submitHostCommand({ kind: "score_build_final_summary" }, { commit: false }).value || [];
+      return context.inputPort.buildFinalSummary() || [];
     }
     function renderRoundStatus() {
       const input = context.createResidentRenderInput();
@@ -360,13 +409,13 @@
       return [...readProjection().roundOrderPlayerIds];
     }
     function setTurnStatePlayerOrderFromHost(playerIds, options = {}) {
-      return context.submitHostCommand({ kind: "turn_set_player_order", playerIds, options });
+      return context.turnInputPort.setPlayerOrder(playerIds, options);
     }
     function randomizePlayerTurnOrderFromHost() {
-      return context.submitHostCommand({ kind: "turn_randomize_player_order" });
+      return context.turnInputPort.randomizePlayerOrder();
     }
     function beginNextRoundFromHost() {
-      return context.submitHostCommand({ kind: "turn_begin_next_round" });
+      return context.turnInputPort.beginNextRound();
     }
     function getDisplayedTurnNumberFromReadout(rawTurnNumber = null) {
       const projection = readProjection();
@@ -385,11 +434,7 @@
         delete operationOptions.workingRoot;
         return controller().advanceTurnAfterPlayerAction(options.workingRoot, playerId, operationOptions);
       }
-      return context.submitHostCommand({
-        kind: "turn_advance_after_action",
-        playerId,
-        options: { ...options },
-      });
+      return context.turnInputPort.advanceAfterAction(playerId, { ...options });
     }
     function startNewGameFromHost(options = {}) {
       const activePlayerCount = Math.min(
@@ -404,12 +449,13 @@
         rngState: options.rngState,
       });
       if (!resetResult.ok) return resetResult;
-      const startResult = context.submitHostCommand({
-        kind: "turn_start_new_game",
-        options: { ...options, activePlayerCount, compositionStatePrepared: true },
+      const startResult = context.turnInputPort.startNewGame({
+        ...options,
+        activePlayerCount,
+        compositionStatePrepared: true,
       });
       if (!startResult?.ok) return startResult;
-      return context.submitHostCommand({ kind: "setup_start_initial_selection" });
+      return context.setupInputPort.startInitialSelection();
     }
     return Object.freeze({
       getActiveOrderedPlayerIds: getActiveOrderedPlayerIdsFromReadout,
@@ -421,7 +467,7 @@
       getActionCycleNumber: getActionCycleNumberFromReadout,
       advanceTurnAfterPlayerAction: advanceTurnAfterPlayerActionFromHost,
       startNewGame: startNewGameFromHost,
-      randomizeAll: () => context.submitHostCommand({ kind: "turn_randomize_all" }),
+      randomizeAll: () => context.turnInputPort.randomizeAll(),
       normalizeAiDifficulty: context.normalizeAiDifficulty,
     });
   }
@@ -859,6 +905,8 @@
   }
 
   return {
+    createTurnOwnerInputPort,
+    createTurnReadoutOwnerInputPort,
     createTurnState,
     getActiveOrderedPlayerIds,
     getRoundOrderPlayerIds,

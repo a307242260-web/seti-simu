@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,36 @@
   root.SetiAppDebugRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "runDebugQuickSectorScan", "openDebugQuickSectorScanPicker", "setDebugOpen", "setDebugPlayerMenuOpen",
+    "renderDebugPlayerSwitch", "selectDefaultRocketForCurrentPlayer", "switchCurrentPlayerColor",
+    "getFailsafePendingOwnerPlayer", "handleAiTakeoverFailsafe", "handleForceSkipTurnFailsafe",
+    "addDebugIncome", "addDebugData", "addDebugScore", "addDebugCardByInput", "promptDebugGainCard",
+    "revealJiuzheForDebug", "revealYichangdianForDebug", "revealFangzhouForDebug", "revealBanrenmaForDebug",
+    "revealChongForDebug", "revealAmibaForDebug", "revealAomomoForDebug", "revealRunezuForDebug",
+    "fillNebulaDataBoard", "fillDebugNebulaData", "toggleSectorWinDebug", "handleDebugQuickSectorScanChoice",
+    "logAomomoDebugCoordinates", "focusDebugCalibration", "setDebugAlienTraceModeActive",
+    "toggleDebugAlienTraceMode", "enableDebugAlienTraceModeForReveal",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("debug input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("debug input port 缺少 owner resolver");
+    return registry.registerTarget("debug", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+  function createDebugIncomeOwnerInputPort(registry, context = {}) {
+    return registry.register("debug_income", {
+      execute: (workingRoot) => ({
+        ok: true,
+        value: context.clonePresentation(context.execute(workingRoot)),
+      }),
+    });
+  }
+
+
 
   const REQUIRED_BROWSER_PORT_KEYS = Object.freeze({
     browser: Object.freeze(["window", "document", "resize"]),
@@ -1384,12 +1413,15 @@
       return result;
     }
     function execute() {
-      return context.submitHostCommand({ kind: "debug_execute_income" }).value;
+      return context.inputPort.execute();
     }
     return Object.freeze({ executeForRoot, execute });
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
+    createDebugIncomeOwnerInputPort,
     createBrowserDebugRuntime,
     createDebugRuntime,
     createDebugPort,

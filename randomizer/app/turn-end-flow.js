@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -10,6 +9,21 @@
   }
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "executePassFirstRotateEffect", "executePassHandLimitEffect", "passForCurrentPlayer",
+    "maybeResumeTurnEndAfterReveal", "maybeContinuePendingTurnEndRevealFlow",
+    "maybeContinueAlienRevealQueuedOpportunities", "endCurrentTurn",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("turn_end input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("turn_end input port 缺少 owner resolver");
+    return registry.registerTarget("turn_end", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "abilities", "aliens", "historyCommands", "industry", "planetRewards",
@@ -769,6 +783,8 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserTurnEndFlow,
     createBrowserTurnEndStaticContext,

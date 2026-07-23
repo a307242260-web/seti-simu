@@ -302,7 +302,7 @@ function createHarness(initialValue = 0) {
       createProjectionState: (workingState) => structuredClone(workingState),
       restoreWorkingState: replace,
     },
-    executeHostCommand(workingState, command) {
+    executeOwnerInput(workingState, command) {
       if (command.kind !== "increment") return { ok: false, code: "UNKNOWN" };
       workingState.match.value += command.amount;
       return { ok: true, amount: command.amount };
@@ -321,12 +321,12 @@ function createHarness(initialValue = 0) {
   composition.inputPort.enumerateActions({ family: "launch" });
   assert.deepEqual(composition.projection(), before, "枚举必须保持 committed projection 不变");
   assert.equal(commitEvents, 0, "枚举不得隐式 compare-and-commit");
-  const commandResult = composition.inputPort.submitHostCommand({ kind: "increment", amount: 4 });
+  const commandResult = composition.inputPort.submitOwnerInput({ kind: "increment", amount: 4 });
   assert.equal(commandResult.ok, true);
   assert.equal(commandResult.stateVersion, 1);
   assert.equal(composition.stateSourcePort.read().state.match.value, 4);
   assert.equal(commitEvents, 1, "宿主命令必须由 composition 统一执行一次 CAS");
-  const rejected = composition.inputPort.submitHostCommand({ kind: "unknown", amount: 99 });
+  const rejected = composition.inputPort.submitOwnerInput({ kind: "unknown", amount: 99 });
   assert.equal(rejected.ok, false);
   assert.equal(composition.stateSourcePort.read().state.match.value, 4, "失败宿主命令必须零污染");
 }
@@ -354,10 +354,10 @@ function createHarness(initialValue = 0) {
       createProjectionState: (workingState) => structuredClone(workingState),
       restoreWorkingState: replace,
     },
-    executeHostCommand(workingState, command) {
+    executeOwnerInput(workingState, command) {
       if (command.kind === "outer") {
         outerArgument = { owner: workingState.match };
-        const nested = composition.inputPort.submitHostCommand({ kind: "nested", argument: outerArgument });
+        const nested = composition.inputPort.submitOwnerInput({ kind: "nested", argument: outerArgument });
         return nested.ok ? { ok: true } : nested;
       }
       if (command.kind === "nested") {
@@ -375,7 +375,7 @@ function createHarness(initialValue = 0) {
       { noop: (state) => ({ ok: true, nextState: state }) })],
   });
   composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
-  const result = composition.inputPort.submitHostCommand({ kind: "outer" });
+  const result = composition.inputPort.submitOwnerInput({ kind: "outer" });
   assert.equal(result.ok, true);
   assert.equal(composition.stateSourcePort.read().state.match.value, 3);
   assert.equal(commitEvents, 1, "嵌套宿主命令只允许由最外层 composition 执行一次 CAS");
@@ -455,7 +455,7 @@ function createHarness(initialValue = 0) {
     getCommittedContext: () => ({ seed: "browser-seed" }),
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
-    executeHostCommand: () => ({ ok: true }),
+    executeOwnerInput: () => ({ ok: true }),
     createActionRegistry: () => ({}),
     standardActionDomain: { families: ["launch"] },
   });

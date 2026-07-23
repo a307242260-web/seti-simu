@@ -1,11 +1,50 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiAppCardRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard",
+    "shouldQueueCardCornerMoveQuickAction", "canUseCardCornerQuickAction", "canStartCardCornerFreeMove",
+    "beginCardCornerFreeMove", "startCardCornerMoveEffectFlow", "hasFutureSpanEligibleHandCard",
+    "hasPlayableFutureSpanCard", "getStandardPlayCardActionBlockReason", "getPlayCardSelectionBlockReason",
+    "getHandCardPlayActionForCard", "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult",
+    "drawBasicCardToPlayer", "blindDrawCardForPlayer", "drawCardForCurrentPlayer",
+    "pickPublicCardForCurrentPlayer", "canBlindDraw", "updatePublicCardControls",
+    "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick", "handlePublicBlindDrawClick",
+    "getPassReserveSelectionCards", "renderPassReserveSelection", "syncPassReserveSelectionChrome",
+    "beginPassReserveSelection", "dismissPassReserveSelectionOverlay", "handlePublicCornerDiscardCardClick",
+    "confirmPublicCornerDiscardSelection", "selectDefaultRocketFromCandidates", "executeCardEffectMove",
+    "finishCurrentCardMoveEffectEarly", "resolveCardMoveDirectionDecision", "getMovableTokensForCardMoveEffect",
+    "releaseFutureSpanAfterPlayWithHistory",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("card_runtime input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("card_runtime input port 缺少 owner resolver");
+    return registry.registerTarget("card_runtime", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+  function createPublicCardOwnerInputPort(registry, context = {}) {
+    return registry.register("public_card", {
+      toggleCornerDiscard: (workingRoot, command) => ({
+        ok: true,
+        value: context.clonePresentation(
+          context.toggleCornerDiscard(workingRoot, command.slotIndex ?? command.args?.[0]),
+        ),
+      }),
+      confirmCornerDiscard: (workingRoot) => ({
+        ok: true,
+        value: context.clonePresentation(context.confirmCornerDiscard(workingRoot)),
+      }),
+    });
+  }
+
+
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "abilities", "banrenma", "cardEffects", "cards", "data", "fangzhou",
@@ -2530,6 +2569,9 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
+    createPublicCardOwnerInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserCardRuntime,
     createBrowserCardStaticContext,

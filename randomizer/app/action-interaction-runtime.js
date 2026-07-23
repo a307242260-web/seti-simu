@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -10,6 +9,70 @@
   }
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
+    "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
+    "getPlutoActionCost", "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement",
+    "openPlutoActionChoicePicker", "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode",
+    "deactivateMoveMode", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
+    "confirmDataPlacement",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("action_interaction input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("action_interaction input port 缺少 owner resolver");
+    return registry.registerTarget("action_interaction", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+  function createInteractionOwnerInputPorts(registry, context = {}) {
+    return Object.freeze({
+      landTarget: registry.register("land_target", {
+        open: (workingRoot, command) => ({
+          ok: true,
+          value: context.clonePresentation(
+            context.openLandTarget(workingRoot, command.options ?? command.args?.[0]),
+          ),
+        }),
+        cancel: (workingRoot) => ({
+          ok: true,
+          value: context.clonePresentation(context.cancelLandTarget(workingRoot)),
+        }),
+      }),
+      boardQuery: registry.register("board_query", {
+        currentPlanet: (workingRoot, command) => ({
+          ok: true,
+          value: context.getRocketCurrentPlanet(
+            workingRoot,
+            command.rocketId ?? command.args?.[0],
+          ),
+        }),
+      }),
+      dataInteraction: registry.register("data_interaction", {
+        placeBlueSlot: (workingRoot, command) => ({
+          ok: true,
+          value: context.clonePresentation(
+            context.placeDataToBlueSlot(workingRoot, command.blueSlot ?? command.args?.[0]),
+          ),
+        }),
+        openComputerPicker: (workingRoot) => ({
+          ok: true,
+          value: context.clonePresentation(context.openComputerPicker(workingRoot)),
+        }),
+      }),
+      solar: registry.register("solar", {
+        rotate: (workingRoot, command) => ({
+          ok: true,
+          value: context.clonePresentation(
+            context.rotateSolarOrbit(workingRoot, command.count ?? command.args?.[0]),
+          ),
+        }),
+      }),
+    });
+  }
+
+
 
   function createBoardPointerHandlers(context = {}) {
     const required = [
@@ -62,8 +125,9 @@
 
   function createLandTargetPicker(context = {}) {
     const { document, els = {} } = context;
-    if (typeof context.dispatchHostCommand !== "function") {
-      throw new TypeError("land target picker requires dispatchHostCommand()");
+    if (typeof context.inputPort?.open !== "function"
+      || typeof context.inputPort?.cancel !== "function") {
+      throw new TypeError("land target picker requires narrow inputPort");
     }
     if (typeof context.submitChoice !== "function") {
       throw new TypeError("land target picker requires submitChoice()");
@@ -78,7 +142,7 @@
     function cancel(workingRoot = null) {
       if (!workingRoot?.match) {
         if (context.readPendingDecision?.("land_target")) return context.submitCancel();
-        return context.dispatchHostCommand({ kind: "land_target_cancel" }).value;
+        return context.inputPort.cancel();
       }
       const pending = context.readPendingDecision?.("land_target") || null;
       close(workingRoot);
@@ -125,10 +189,7 @@
     }
 
     function request(options) {
-      return context.dispatchHostCommand({
-        kind: "land_target_open",
-        options: structuredClone(options),
-      }).value;
+      return context.inputPort.open(structuredClone(options));
     }
 
     function confirm() {
@@ -470,7 +531,7 @@
     }
     return Object.freeze({
       rotateSolarOrbitForRoot,
-      rotateSolarOrbit: (count) => context.submitHostCommand({ kind: "solar_rotate", count }).value,
+      rotateSolarOrbit: (count) => context.inputPort.rotate(count),
     });
   }
 
@@ -555,7 +616,7 @@
     }
 
     function runPlaceDataToComputer() {
-      return context.submitHostCommand({ kind: "data_open_computer_picker" }).value;
+      return context.inputPort.openComputerPicker();
     }
 
     function canAnalyzeDataForPlayer(player = context.getCurrentPlayer()) {
@@ -630,7 +691,7 @@
     }
 
     function getRocketCurrentPlanetId(rocketId) {
-      return context.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
+      return context.inputPort.currentPlanet(rocketId);
     }
 
     return Object.freeze({ getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId });
@@ -2035,6 +2096,9 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
+    createInteractionOwnerInputPorts,
     createBoardPointerHandlers,
     createLandTargetPicker,
     createMoveUiRuntime,

@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,36 @@
   root.SetiAppIndustryRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  const BROWSER_INPUT_NAMES = Object.freeze([
+    "createIndustryActionRestoreCommand", "recordIndustryActionRestoreCommand", "clearIndustryRollbackUi",
+    "rollbackPendingIndustryQuickAction", "cancelIndustryAbilityFlow", "finishIndustryAbilityFlow",
+    "startIndustryAbilityFlow", "startIndustryStratusEffectFlow", "startIndustryFundamentalismExchangeFlow",
+    "startIndustryPublicityPick", "beginIndustryTuringBorrow", "failIndustryTuringBorrow",
+    "checkIndustryTuringBorrowTile", "confirmIndustryTuringBorrow", "openIndustryHeliosTechPicker",
+    "confirmIndustryHeliosRemoveTech", "startIndustryHuanyuMoveEffectFlow", "beginIndustryHuanyuFreeMoves",
+    "canBeginIndustryFutureSpanHandSelection", "beginIndustryFutureSpanHandSelection",
+    "handleIndustryFutureSpanHandClick", "handleIndustryDeepspaceHandClick", "finalizeIndustryDeepspaceSwap",
+    "handleAlienLabPanelClick", "maybeConsumeAlienLabPanelForMainAction", "maybeApplyIndustryLaunchScan",
+    "startLaunchSectorFinishEffectFlow", "appendIndustryPlayPassiveStatus",
+    "buildIndustryPlayCardAppendEffects", "buildPlayCardEffectFlowQueue", "applyIndustryPlayCardPassives",
+    "completeIndustryAbilityQuickStep", "commitIrreversibleIndustryQuickAction",
+    "tryInjectSentinelPlayCornerEffectAfterArm", "executeIndustryStratusCornerEffect",
+    "executeIndustrySentinelCornerEffect", "createCompanyCardSummary",
+    "executeIndustryHeliosPassiveRewardEffect", "getStrategyPassiveSelectableSlotIds",
+    "cancelStrategyPassiveSlotChoice", "openStrategyPassiveSlotChoice", "confirmStrategyPassiveSlotChoice",
+    "finishIndustryStrategyPassiveRewardEffect", "executeIndustryStrategyPassiveRewardEffect",
+    "handleStrategyPassiveSlotClick", "handleCompanyActionMarkerClick",
+  ]);
+
+  function createBrowserInputPort(registry, getTarget) {
+    if (typeof registry?.registerTarget !== "function") {
+      throw new TypeError("industry_runtime input port 需要已校验 registry");
+    }
+    if (typeof getTarget !== "function") throw new TypeError("industry_runtime input port 缺少 owner resolver");
+    return registry.registerTarget("industry_runtime", BROWSER_INPUT_NAMES, getTarget);
+  }
+
+
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "abilities", "cardEffects", "cards", "data", "historyCommands", "industry",
@@ -2310,6 +2339,8 @@
   }
 
   return {
+    BROWSER_INPUT_NAMES,
+    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserIndustryRuntime,
     createBrowserIndustryStaticContext,

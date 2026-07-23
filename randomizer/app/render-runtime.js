@@ -1,6 +1,5 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory(root);
 
   if (typeof module === "object" && module.exports) {
@@ -10,6 +9,20 @@
   root.SetiAppRenderRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
+  function createCoordinateOwnerInputPort(registry, context = {}) {
+    return registry.register("coordinate", {
+      syncPlanetMarkers: (workingRoot) => (
+        context.getRuntime().syncPlanetOrbitLandMarkers(workingRoot),
+        { ok: true, value: { ok: true } }
+      ),
+      seedReferenceRockets: (workingRoot) => (
+        context.getRuntime().seedDefaultReferenceRockets(workingRoot),
+        { ok: true, value: { ok: true } }
+      ),
+    });
+  }
+
+
 
   const RENDER_CONTEXT_CAPABILITY_INVENTORY = Object.freeze({
     platform: Object.freeze([
@@ -427,10 +440,10 @@
       return { x: earth.x, y: earth.y };
     }
     function syncPlanetOrbitLandMarkers() {
-      return context.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
+      return context.inputPort.syncPlanetMarkers();
     }
     function seedDefaultReferenceRockets() {
-      return context.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
+      return context.inputPort.seedReferenceRockets();
     }
     return Object.freeze({
       getMovableTokensForPlayer,
@@ -1713,6 +1726,7 @@
   }
 
   return {
+    createCoordinateOwnerInputPort,
     RENDER_CONTEXT_CAPABILITY_INVENTORY,
     cloneSelectorResult,
     createRenderRuntime,

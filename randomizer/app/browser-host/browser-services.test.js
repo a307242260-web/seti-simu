@@ -178,7 +178,7 @@ function createHarness(options = {}) {
   assert.deepEqual(calls, ["append", "click", "remove", "revoke:blob:test"]);
 })();
 
-(function testLegacyDomainCommandPortOwnsWhitelistAndInputRouting() {
+(function testOwnerInputRegistryRoutesOnlyOwnerDeclaredKinds() {
   const submitted = [];
   const target = {
     beginSectorScan(root, count) {
@@ -186,71 +186,39 @@ function createHarness(options = {}) {
       return { ok: true, nested: { count: root.count } };
     },
   };
-  const port = servicesApi.createDomainCommandPort({
-    getTarget: (domain) => (domain === "scan_flow" ? target : null),
+  const registry = servicesApi.createOwnerInputRegistry({
     clonePresentation: (value) => structuredClone(value),
-    submitHostCommand(command) { submitted.push(command); return { value: { command } }; },
-  });
-  const root = { count: 1 };
-  const executed = port.executeBrowserDomainCommand(root, {
-    domain: "scan_flow", operation: "beginSectorScan", args: [2],
-  });
-  assert.equal(executed.ok, true);
-  assert.equal(executed.value.nested.count, 3);
-  assert.notEqual(executed.value.nested, target.nested);
-  assert.equal(port.executeBrowserDomainCommand(root, {
-    domain: "scan_flow", operation: "forged", args: [],
-  }).code, "BROWSER_DOMAIN_COMMAND_UNKNOWN");
-  port.bindBrowserDomainCommand("scan_flow", "beginSectorScan")(4);
-  const scanCommands = port.bindDomainCommands("scan_flow", ["beginSectorScan"]);
-  scanCommands.beginSectorScan(5);
-  assert.equal(typeof port.bindDomainCommands("income_runtime").beginIncomeForCurrentPlayer, "function");
-  assert.equal(typeof port.bindDomainCommands("card_trigger").buildProbeLocationIndex, "function");
-  const effectChoiceCommands = port.bindEffectChoiceCommands(["confirm"]);
-  effectChoiceCommands.confirm(1);
-  const effectExecutorCommands = port.bindEffectExecutorCommands(["format"]);
-  effectExecutorCommands.format("earth");
-  assert.equal(typeof port.bindEffectChoiceCommands().handleConditionalSectorChoice, "function");
-  assert.equal(typeof port.bindEffectExecutorCommands().executeSectorXScanEffect, "function");
-  port.setBrowserStatusNote("ready");
-  assert.deepEqual(submitted, [
-    { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [4] },
-    { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [5] },
-    { kind: "effect_choice_command", operation: "confirm", args: [1] },
-    { kind: "effect_executor_command", operation: "format", args: ["earth"] },
-    { kind: "ui_set_status_note", message: "ready" },
-  ]);
-})();
-
-(function testHostCommandPortBuildsNarrowCommands() {
-  const submitted = [];
-  const port = servicesApi.createHostCommandPort({
-    submitHostCommand(command, options) {
-      submitted.push({ command, options });
-      return { ok: true, value: command.effectIndex ?? command.kind };
+    submit(command) {
+      submitted.push(command);
+      return { value: { command } };
     },
   });
-  assert.equal(port.bindValue("effect_bar_click", (effectIndex) => ({ effectIndex }))(3), 3);
-  assert.equal(port.bindResult("effect_cancel_subflows")().ok, true);
-  assert.deepEqual(submitted, [
-    { command: { kind: "effect_bar_click", effectIndex: 3 }, options: undefined },
-    { command: { kind: "effect_cancel_subflows" }, options: undefined },
-  ]);
-})();
-
-(function testHostDispatcherAndOperationHandlerFailClosed() {
-  const operationHandler = servicesApi.createOperationCommandHandler({
-    getTarget: () => ({ ping: (_root, value) => ({ value }) }),
-    clonePresentation: structuredClone,
-    unknownCode: "OP_UNKNOWN",
-    label: "Test",
-  });
-  const dispatcher = servicesApi.createHostCommandDispatcher({
-    getHandlers: () => ({ operation: operationHandler }),
-  });
-  assert.deepEqual(dispatcher.execute({}, { kind: "operation", operation: "ping", args: [3] }).value, { value: 3 });
-  assert.equal(dispatcher.execute({}, { kind: "operation", operation: "missing" }).code, "OP_UNKNOWN");
-  assert.equal(dispatcher.execute({}, { kind: "forged" }).code, "BROWSER_HOST_COMMAND_UNKNOWN");
+  const port = registry.registerTarget("scan_flow", ["beginSectorScan"], () => target);
+  const root = { count: 1 };
+  const executed = registry.execute(root, { kind: "scan_flow.beginSectorScan", args: [2] });
+  assert.equal(executed.ok, true);
+  assert.equal(executed.value.nested.count, 3);
+  port.beginSectorScan(4);
+  assert.deepEqual(submitted, [{ kind: "scan_flow.beginSectorScan", args: [4] }]);
+  assert.equal(registry.execute(root, { kind: "scan_flow.forged" }).code, "BROWSER_OWNER_INPUT_UNKNOWN");
+  assert.equal(registry.execute(root, {
+    kind: "scan_flow.beginSectorScan",
+    domain: "alien_runtime",
+    operation: "beginSectorScan",
+    args: [99],
+  }).code, "BROWSER_OWNER_INPUT_CROSS_DOMAIN");
+  assert.throws(
+    () => registry.registerTarget("scan_flow", ["beginSectorScan"], () => target),
+    /重复 owner/,
+  );
+  assert.throws(
+    () => registry.registerTarget("alien_runtime", ["confirm", "confirm"], () => target),
+    /schema 非法或重复/,
+  );
+  assert.throws(
+    () => registry.register("alien_runtime", { "cross.domain": () => ({ ok: true }) }),
+    /input 名非法/,
+  );
 })();
 
 console.log("Browser services composition lifecycle tests passed");

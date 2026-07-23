@@ -34,7 +34,7 @@
     const effectRuntimeApi = options.effectRuntimeApi;
     const createActionRegistry = options.createActionRegistry;
     const createInitialState = options.createInitialState;
-    const executeHostCommand = options.executeHostCommand;
+    const executeOwnerInput = options.executeOwnerInput;
     const stateAdapter = options.stateAdapter || null;
     if (typeof stateStoreApi?.createStateStore !== "function") {
       throw new TypeError("Rule Composition 缺少 StateStore factory");
@@ -425,8 +425,8 @@
       return advanceSession(runtime.abort(activeSession, clone(reason)), false);
     }
 
-    function submitHostCommand(command, submitOptions = {}) {
-      if (typeof executeHostCommand !== "function") {
+    function submitOwnerInput(command, submitOptions = {}) {
+      if (typeof executeOwnerInput !== "function") {
         return fail("RULE_COMPOSITION_HOST_COMMAND_UNAVAILABLE", "Rule Composition 未配置 Browser host command executor");
       }
       if (!command?.kind || typeof command.kind !== "string") {
@@ -437,7 +437,7 @@
         try {
           const nestedResult = runWithWorkingStateContext(
             nestedWorkingState,
-            () => executeHostCommand(nestedWorkingState, command),
+            () => executeOwnerInput(nestedWorkingState, command),
           );
           // 嵌套命令仍在同一个 Composition 事务内；结果可能携带仅供事务内消费的
           // undo command 函数，不能提前跨端口 structuredClone/deepFreeze。
@@ -453,7 +453,7 @@
         activeHostWorkingState = actionContext(clone(committedBefore));
         result = runWithWorkingStateContext(
           activeHostWorkingState,
-          () => executeHostCommand(activeHostWorkingState, clone(command)),
+          () => executeOwnerInput(activeHostWorkingState, clone(command)),
         );
       } catch (error) {
         if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_thrown" });
@@ -608,7 +608,7 @@
       submitQuickAction,
       submitDecision,
       beginDrain,
-      submitHostCommand,
+      submitOwnerInput,
       advance,
       abort,
     });

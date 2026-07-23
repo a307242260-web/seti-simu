@@ -473,7 +473,7 @@ function browserProjection(overrides = {}) {
     readPendingDecision: (kind) => kind === "industry_ability" ? { id: "industry" } : null,
     isIndustryHandSelectionActive: () => false,
     renderStateReadout: () => calls.push("readout"),
-    submitHostCommand: (command) => ({ value: command.actionType }),
+    inputPort: { checkPending: (actionType) => actionType },
   });
   assert.equal(runtime.isActionEffectFlowActive(), true);
   assert.equal(runtime.getGameplayLockReason(), "请先完成初始收入增加");
