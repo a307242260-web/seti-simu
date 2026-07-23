@@ -1042,28 +1042,6 @@
   const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
-  let formatIncomeGain;
-  let getBlindDrawIrreversible;
-  let applyIncomeGainWithImmediateRewards;
-  let maybeCompleteFundamentalismIncomeTaskCard;
-  let applyIncomeFromCard;
-  let buildIncomeResourceGain;
-  let formatIncomeResourceSummary;
-  let applyIncomeResourcesForPlayer;
-  let hasHuanyuSuperdriveRoundStartPending;
-  let applyHuanyuSuperdriveRoundStartForPlayer;
-  let hasCheatLabRoundStartPending;
-  let applyCheatLabRoundStartForPlayer;
-  let hasGrandStrategyRoundStartPending;
-  let countStrategyPassiveSlotTokens;
-  let applyGrandStrategyRoundStartForPlayer;
-  let appendIndustryRoundStartLog;
-  let applyIndustryRoundStartBonusesForRoot;
-  let getFundamentalismRoundStartIncomeRound;
-  let hasFundamentalismRoundStartIncomePending;
-  let buildFundamentalismRoundStartIncomeEffect;
-  let maybeStartFundamentalismRoundStartIncomeFlowForRoot;
-  let beginIncomeForCurrentPlayer;
   let handlePublicCornerDiscardCardClick;
   let handlePublicCornerDiscardCardClickForRoot;
   let confirmPublicCornerDiscardSelection;
@@ -2624,7 +2602,7 @@
     updateActionButtons,
     beginDiscardSelection,
   });
-  ({
+  const {
     formatIncomeGain,
     getBlindDrawIrreversible,
     applyIncomeGainWithImmediateRewards,
@@ -2646,14 +2624,13 @@
     hasFundamentalismRoundStartIncomePending,
     buildFundamentalismRoundStartIncomeEffect,
     maybeStartFundamentalismRoundStartIncomeFlow: maybeStartFundamentalismRoundStartIncomeFlowForRoot,
-    beginIncomeForCurrentPlayer,
-  } = incomeRuntime);
-  const beginIncomeForCurrentPlayerForRoot = beginIncomeForCurrentPlayer;
-  ({
+    beginIncomeForCurrentPlayer: beginIncomeForCurrentPlayerForRoot,
+  } = incomeRuntime;
+  const {
     beginIncomeForCurrentPlayer,
     applyIndustryRoundStartBonuses,
     maybeStartFundamentalismRoundStartIncomeFlow,
-  } = bindDomainCommands("income_runtime"));
+  } = bindDomainCommands("income_runtime");
   const {
     confirmAlienTracePlacement,
     confirmFangzhouTracePlacement,
