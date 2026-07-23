@@ -66,7 +66,7 @@
 - 旧存档中的“作弊实验室”仅作为异星实验室的同能力兼容标签：开局资源、收入增加和三色板块翻面规则均与异星实验室相同，不再永久正面或获得轮开始资源；新局机器人不会被分配该标签。
 - 玩家运行时字段：`industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn`（图灵借用；带行动上下文时按 Round/Turn 精确判定，无显式上下文的同回合长链路按未清空借用态生效）、`industrySentinelArmedRound` / `industrySentinelArmedTurn`（哨兵当前回合武装）、`industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` / `industryPlayedCardRound` / `industryPlayedCardTurn`（当前回合打牌快照，字段名沿用 ThisRound）、`industryAlienLabPanels`（异星实验室及旧兼容标签三色板块）、`industryFutureSpan`（未来跨度扣下的牌、目标分与打出状态）、`industryFundamentalismRoundStartIncomeRound`（原教旨主义第 2/3/4 轮开始收入已结算轮号）。旧存档可能仍带 `industryHuanyuSuperdriveRoundStartRound` / `industryCheatLabRoundStartRound` / `industryGrandStrategyRoundStartRound`，当前公司目录不再注册对应补强，因此不会继续写入。寰宇动力主动效果改走快速行动效果队列，不再依赖 `industryHuanyuFreeMove*` 运行时字段。回合结束时会清空当前玩家的图灵借用和哨兵武装/打牌快照；新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等轮内状态，不重置 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记），也不清空未来跨度目标牌、原教旨主义已结算轮号或异星实验室板块。
 - 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、未来跨度普通 1x、宇宙战略）外，普通 1x 会写入 `quickActionHistory`；撤销会恢复 1x 前玩家快照、清空轮内公司运行态并取消进行中的公司能力流，避免只撤销奖励但标记仍占用。层云核心、寰宇动力和原教旨主义 1x 走快速行动效果队列，并按效果步骤撤销；第一个效果步骤同时回退放置公司标记的快速行动。进行中的公司选择/借用/移动流程取消时会回滚当前公司 quick step；但任务中继站、芬威克、未来跨度普通 1x、宇宙战略确认拿牌后会提交不可撤销快速行动屏障，之前的快速行动也不再可撤销。原教旨主义的 3 分换精选在公共牌补牌后只让该节点不可撤销。芬威克若精选到移动角标，取消后续免费移动只放弃移动并提交该不可撤销快速行动。未来跨度专属标记是独立快速行动，仍单独记录。
-- 交互聚焦：`app.js` 的 `syncInteractionFocusChrome()` 根据进行中的流程在 `#app-wrap` 上设置 `data-interaction-focus`（`public-cards` / `hand-cards` / `tech-panel` / `board-rockets`）；`style.css` 会暗化非目标区域。`hand-cards` 聚焦时不能暗化或禁用 `.player-command` 父容器，需只暗化手牌区的兄弟控件，保证收入弃牌、打牌选牌、移动弃牌支付、手牌扫描等流程中手牌区保持高亮可点。公司牌 1x 可放置时仅用牌面蓝色高亮（`is-action-marker-pending`），不自动进入全屏聚焦以免遮挡行动按钮。
+- 交互聚焦：`app/render-runtime.js` 的 interaction chrome 根据进行中的流程在 `#app-wrap` 上设置 `data-interaction-focus`（`public-cards` / `hand-cards` / `tech-panel` / `board-rockets`）；`style.css` 会暗化非目标区域。`hand-cards` 聚焦时不能暗化或禁用 `.player-command` 父容器，需只暗化手牌区的兄弟控件，保证收入弃牌、打牌选牌、移动弃牌支付、手牌扫描等流程中手牌区保持高亮可点。公司牌 1x 可放置时仅用牌面蓝色高亮（`is-action-marker-pending`），不自动进入全屏聚焦以免遮挡行动按钮。
 - 选择公司后，保留牌区右侧分两行显示：第一行放 1 / 2 型任务牌，并按手牌区方式在牌多时部分覆盖；第二行放 3 型终局计分牌以及声明 `displayRow: "bottom"` 的特殊保留牌（当前为 b139 冥王星）。
 
 数据获得满池提示：
@@ -241,13 +241,13 @@ UI 布局：
 
 - 轮：所有玩家各自执行若干回合，直到所有玩家都 PASS 后结束；全部 PASS 后进入下一轮第 1 回合。
 - 回合：一轮内的一次行动圈；每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS。所有未 PASS 玩家在当前行动圈都行动后，真实行动圈编号才递增。
-- `turnState` 位于 `randomizer/app.js`，记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号，用 `getDisplayedTurnNumber()` 折算为界面/详细日志回合号）、`actionCycleNumber`（本轮内真实行动圈编号，所有未 PASS 玩家各行动一次后递增，用于行动简报分组和弹窗回合标题）、基础顺位 `turnOrderPlayerIds`、本轮起始玩家 `startPlayerId`、启用玩家 `activePlayerIds`、本轮已 PASS 玩家与当前行动圈已行动玩家。
+- `turnState` 属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`app/turn-flow.js` 提供回合读数与控制端口。它记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
 - 页面加载时会自动执行原 `set-button` 设置流程：白色玩家固定为初始首位，其余颜色玩家随机洗牌，并重置为第 1 轮第 1 回合。默认人机入口启用 4 名活跃玩家，其中白色为人类玩家，其余 3 个活跃席位为电脑玩家；开始界面可切换为 3 人局，此时白色玩家仍固定参与，其余颜色只随机启用 2 个电脑席位。
 - 新轮开始时，起始玩家按基础顺位顺延到上一轮第二顺位玩家。
 
 ### 行动日志状态
 
-行动日志由 `randomizer/app.js` 内的 `actionLogState` 管理，并显示在右侧日志抽屉的「行动日志」页签：
+行动日志由 `randomizer/app/action-log-runtime.js` 管理，并显示在右侧日志抽屉的「行动日志」页签：
 
 - 日志按「轮 / 回合 / 玩家 / 行动」生成一条记录；记录内按完成顺序列出主要行动效果与穿插的快速行动。
 - 初始选择确认后也会写入正式日志，标题前缀固定显示为「初始选择」而不是轮/回合；内容记录玩家选择的公司、移出游戏的初始牌，最后一名玩家还会记录统一初始牌结算结果。
@@ -352,7 +352,7 @@ UI 布局：
 
 - `actionHistory`：主行动会话，控制主行动撤销与回合结束提交。
 - `quickActionHistory`：快速行动会话，记录快速交易、放置数据、移动等快速步骤。
-- `historyStepOrder`：`app.js` 中的轻量顺序栈，记录 `{ source, stepId }`，用于在主/快速行动交错时按最近完成步骤撤销。
+- `historyStepOrder`：行动历史适配层的轻量顺序栈，记录 `{ source, stepId }`，用于在主/快速行动交错时按最近完成步骤撤销。
 - `randomizer/game/history/transactions.js`：历史辅助层，提供能力结果记录、不可撤销屏障标记、组合状态快照恢复等工具；新增复杂机制优先复用它或同等语义，而不是直接操作两套 history。
 
 `createActionHistory()` 提供的会话 API：

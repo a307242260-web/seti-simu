@@ -52,7 +52,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 ## Composition root
 
-`randomizer/app.js` 当前 11,532 行，是共享 composition root、浏览器顶层流程接线与公开服务装配点，不是第二个 StateStore、Action registry 或 Policy。`randomizer/app/ai-controller.js` 当前 1,980 行，只负责 AI runtime/rule domain 注入和稳定 API 转发；具体 resolver、automation、executor、日志与估值分别位于 `app/ai/**` 和 `game/ai/**`。
+`randomizer/app.js` 当前 7,311 行、88 个顶层函数，是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host/领域 runtime、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、Policy、DOM renderer 或 simulation 入口。`randomizer/app/ai-controller.js` 只负责 AI runtime/rule domain 注入和稳定 API 转发；具体 resolver、automation、executor、日志与估值分别位于 `app/ai/**` 和 `game/ai/**`。
 
 传统 `window.Seti*` 只作为无构建脚本的模块注册方式。是否使用全局命名空间不改变状态 owner，也不能成为跨局可变事实或隐藏 fallback 的理由。
 
@@ -65,4 +65,4 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-simulation-env.md`。
 
-StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 均由相应行为单元测试与唯一完整流程验证，不再维护读取源码形态的独立架构扫描器。
+StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 由相应行为单元测试与唯一完整流程验证；此外 `app/dependencies.test.js` 只保留一组薄壳反例门禁，防止生产 DOM 实现、simulation/no-op 分支和顶层实现函数重新回流入口。
