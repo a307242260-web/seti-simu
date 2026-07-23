@@ -24,7 +24,7 @@
       aiNumber, aliens, amiba, aomomo, applyAiStrategyWeight, banrenma, buildAiChongTransportMoveCandidate,
       buildAiPlayCardCandidate, canAiContinueCardMoveAfterStep, canAiPlanetAcceptLanding, canAiPlanetAcceptOrbit, canPayForMove, cancelTechSelection, cardEffects,
       chong, chooseAiLandChoice, confirmLandTargetPicker,
-      confirmStrategyPassiveSlotChoice, confirmTechBlueSlotChoice, createActionContext, data, els,
+      confirmTechBlueSlotChoice, createActionContext, data, els,
       enrichAiAlienUseOptions, fangzhou, formatRocketLabel,
       getAiAlienCardConversionMultiplier, getAiAlienTraceRewardForValuation, getAiAlienTraceTargetDemandForSlot, getAiAvailableDataRoom, getAiDiscardedCardOpportunityCost, getAiMapDemand, getAiNextActionEffect, getAiNextMissingFinalScoreThreshold,
       getAiPlanetAtCoordinate, getAiResearchTechCandidateExecutionCheck, getAiResearchTechSelectionOptionsForEffect, getAiResourceValuesForRound, getAiRoundNumber, getAiStrategyDemand, getAlienTraceActionPlayer,
@@ -136,37 +136,6 @@
       let value = scoreAiResourceBundle(bundle);
       if (reward.data && getAiAvailableDataRoom(player) <= 0) value -= 4;
       return value;
-    }
-
-    function runAiStrategyPassiveSlotChoiceDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      const pending = state.pendingStrategyPassiveSlotChoice;
-      if (!pending) return null;
-      const effect = getCurrentActionEffect();
-      const player = getWorkingEffectOwnerPlayer(workingRoot, effect) || getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择宇宙战略集团奖励槽` };
-      }
-      const rankedChoices = (pending.slotIds || [])
-        .map((slotId) => ({
-          slotId,
-          score: scoreAiStrategyPassiveSlotChoice(workingRoot, slotId, player),
-          rewardLabel: industry?.getStrategySlotRewardLabel?.(slotId) || "",
-        }))
-        .filter((entry) => entry.slotId && Number.isFinite(Number(entry.score)))
-        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0));
-      const selected = rankedChoices[0] || null;
-      if (!selected) {
-        return { ok: false, blocked: true, message: "AI 没有可选的宇宙战略集团奖励槽" };
-      }
-      recordAiAutoBattleLog("industry", `${player.colorLabel}AI 选择宇宙战略集团奖励槽`, {
-        logPlayerId: player.id,
-        slotId: selected.slotId,
-        score: selected.score,
-        rewardLabel: selected.rewardLabel,
-        choices: rankedChoices,
-      });
-      return confirmStrategyPassiveSlotChoice(selected.slotId);
     }
 
     function runAiLandTargetDecision(workingRoot) {
@@ -1391,7 +1360,6 @@
       queryAiButtons,
       chooseFirstAiButton,
       scoreAiStrategyPassiveSlotChoice,
-      runAiStrategyPassiveSlotChoiceDecision,
       runAiLandTargetDecision,
       buildAiEffectMoveCandidate,
       isAiIndustryHuanyuMoveEffect,
@@ -1444,7 +1412,7 @@
     "aiNumber", "aliens", "amiba", "aomomo", "applyAiStrategyWeight", "banrenma", "buildAiChongTransportMoveCandidate",
     "buildAiPlayCardCandidate", "canAiContinueCardMoveAfterStep", "canAiPlanetAcceptLanding", "canAiPlanetAcceptOrbit", "canPayForMove", "cancelTechSelection", "cardEffects",
     "chong", "chooseAiLandChoice", "confirmLandTargetPicker",
-    "confirmStrategyPassiveSlotChoice", "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
+    "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
     "enrichAiAlienUseOptions", "fangzhou", "formatRocketLabel",
     "getAiAlienCardConversionMultiplier", "getAiAlienTraceRewardForValuation", "getAiAlienTraceTargetDemandForSlot", "getAiAvailableDataRoom", "getAiDiscardedCardOpportunityCost", "getAiMapDemand", "getAiNextActionEffect", "getAiNextMissingFinalScoreThreshold",
     "getAiPlanetAtCoordinate", "getAiResearchTechCandidateExecutionCheck", "getAiResearchTechSelectionOptionsForEffect", "getAiResourceValuesForRound", "getAiRoundNumber", "getAiStrategyDemand", "getAlienTraceActionPlayer",

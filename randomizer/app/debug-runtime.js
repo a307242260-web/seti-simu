@@ -1132,9 +1132,9 @@
         workingRoot.match?.alienTraceContinuation,
         workingRoot.match?.landTargetContinuation,
         workingRoot.match?.dataPlacementContinuation,
-        workingRoot.match?.strategySlotContinuation,
+        decisionInput.readPendingDecision?.("strategy_slot"),
         workingRoot.match?.piratesRaidContinuation,
-        workingRoot.match?.industryFreeMoveContinuation,
+        decisionInput.readPendingDecision?.("industry_free_move"),
       ];
       for (const pending of pendingEntries) {
         const owner = getExplicitPendingOwnerPlayerForFailsafe(workingRoot, pending);

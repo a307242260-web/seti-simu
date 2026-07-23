@@ -116,7 +116,6 @@
       getDelayedPublicRefillSlots: scan("getDelayedPublicRefillSlots"),
       getGameplayLockReason: hostPort.getGameplayLockReason,
       getMainActionStartBlockReason: actionSessionRuntime?.getMainActionStartBlockReason,
-      getPendingIndustryAbilityDecision: browserMatchRuntime?.getPendingIndustryAbilityDecision,
       readCardSelectionDecision: cardSelectionDecisionOwner?.read,
       openCardSelectionDecision: cardSelectionDecisionOwner?.open,
       getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
@@ -280,7 +279,6 @@
       getDelayedPublicRefillSlots,
       getGameplayLockReason,
       getMainActionStartBlockReason,
-      getPendingIndustryAbilityDecision,
       getRequiredMovePointsForUi,
       getPublicScanSelectionInstruction,
       handlePublicScanCardClick,
@@ -491,7 +489,6 @@
         && !isPlayCardSelectionActive(workingRoot)
         && !isHandScanSelectionActive(workingRoot)
         && !isMovePaymentSelectionActive(workingRoot)
-        && !workingRoot.match?.industryAbilityContinuation
         && !isIndustryHandSelectionActive(workingRoot)
         && !getCardCornerFreeMove(workingRoot)
         && !hasActivePendingSubFlow(workingRoot);
@@ -790,9 +787,7 @@
         return result;
       }
 
-      const recordInCurrentIndustryStep = Boolean(
-        pending.industryQuickStepActive && getPendingIndustryAbilityDecision(workingRoot),
-      );
+      const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive);
       if (!recordInCurrentIndustryStep) beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
       if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
       recordAbilityCommands(result, quickActionHistory, workingRoot);
@@ -809,7 +804,9 @@
         render: false,
       });
       if (finishIndustryAfterMove) {
-        finishIndustryAbilityFlow(industryFinishMessage);
+        finishIndustryAbilityFlow(workingRoot, industryFinishMessage, {
+          irreversible: Boolean(pending.irreversibleIndustryFlow),
+        });
         if (pending.irreversibleIndustryFlow) {
           commitIrreversibleIndustryQuickAction(pending.industryLogLabel || pending.action.label, industryFinishMessage);
         }
@@ -1562,7 +1559,7 @@
         rocketState.statusNote = incomeResult.ok
           ? `任务中继站：精选 ${cards.getCardLabel(result.card)}，${incomeResult.message}`
           : incomeResult.message;
-        finishIndustryAbilityFlow(rocketState.statusNote);
+        finishIndustryAbilityFlow(workingRoot, rocketState.statusNote, { irreversible: true });
         commitIrreversibleIndustryQuickAction("任务中继站：精选", rocketState.statusNote);
       }
       if (pending?.type === "industry_fenwick_pick") {
@@ -1598,11 +1595,11 @@
             }
           } else {
             rocketState.statusNote = `${rocketState.statusNote}；${moveCheck.message}`;
-            finishIndustryAbilityFlow(rocketState.statusNote);
+            finishIndustryAbilityFlow(workingRoot, rocketState.statusNote, { irreversible: true });
             commitIrreversibleIndustryQuickAction("芬威克研究中心：精选", rocketState.statusNote);
           }
         } else {
-          finishIndustryAbilityFlow(rocketState.statusNote);
+          finishIndustryAbilityFlow(workingRoot, rocketState.statusNote, { irreversible: true });
           commitIrreversibleIndustryQuickAction("芬威克研究中心：精选", rocketState.statusNote);
         }
       }
@@ -1618,7 +1615,7 @@
           ));
         }
         rocketState.statusNote = `宇宙战略集团：精选 ${cards.getCardLabel(result.card)}`;
-        finishIndustryAbilityFlow(rocketState.statusNote);
+        finishIndustryAbilityFlow(workingRoot, rocketState.statusNote, { irreversible: true });
         commitIrreversibleIndustryQuickAction("宇宙战略集团：精选", rocketState.statusNote);
       }
       if (pending?.type === "industry_future_pick") {
@@ -1628,7 +1625,7 @@
         rocketState.statusNote = advanceResult?.ok
           ? `未来跨度研究所：精选 ${cards.getCardLabel(result.card)}，目标提高到 ${advanceResult.targetScore} 分`
           : (advanceResult?.message || "未来跨度目标分更新失败");
-        finishIndustryAbilityFlow(rocketState.statusNote);
+        finishIndustryAbilityFlow(workingRoot, rocketState.statusNote, { irreversible: true });
         commitIrreversibleIndustryQuickAction("未来跨度研究所：精选", rocketState.statusNote);
       }
       if (pending?.type === "fundamentalism_exchange_pick") {

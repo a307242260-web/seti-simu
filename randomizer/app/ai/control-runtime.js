@@ -184,8 +184,6 @@
       get actionHistorySessionInfo() { return context.actionHistory?.getSessionInfo?.() || null; },
       get effectStepActive() { return ui.effectStepActive; },
       set effectStepActive(value) { ui.effectStepActive = value; },
-      get pendingIndustryAbility() { return match.getPendingIndustryAbilityDecision?.(); },
-      get pendingStrategyPassiveSlotChoice() { return match.getPendingStrategySlotDecision?.(); },
       get alienTracePickerState() { return ui.alienTracePickerState; },
       get pendingAlienRevealConfirmation() { return ui.alienRevealConfirmation; },
     };

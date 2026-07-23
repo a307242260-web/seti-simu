@@ -72,7 +72,7 @@
       get pendingYichangdianCardGain() { return alien.getPendingYichangdianCardGain?.(); },
       get pendingJiuzheCardPlay() { return alien.getPendingJiuzheCardPlay?.(); },
       get jiuzheCardViewOpen() { return Boolean(ui.jiuzheCardViewOpen); },
-      get pendingStrategyPassiveSlotChoice() { return pending.getPendingStrategySlotDecision?.(); },
+      get hasStrategySlotDecision() { return Boolean(pending.readPendingDecision?.("strategy_slot")); },
       get alienTracePickerState() { return ui.alienTracePickerState; },
       set alienTracePickerState(value) { ui.alienTracePickerState = value; },
       get pendingAlienRevealConfirmation() { return ui.alienRevealConfirmation; },
@@ -504,7 +504,7 @@
         closeJiuzheCardDialog();
         return;
       }
-      if (state.pendingStrategyPassiveSlotChoice) {
+      if (state.hasStrategySlotDecision) {
         cancelStrategyPassiveSlotChoice();
         return;
       }
@@ -526,7 +526,7 @@
           closeJiuzheCardDialog();
           return;
         }
-        if (state.pendingStrategyPassiveSlotChoice) {
+        if (state.hasStrategySlotDecision) {
           cancelStrategyPassiveSlotChoice();
           return;
         }

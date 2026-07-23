@@ -117,9 +117,6 @@
       getPendingLandTargetDecision: continuationGetter("landTargetContinuation"),
       getPendingAlienTraceDecision: continuationGetter("alienTraceContinuation"),
       getPendingPiratesRaidDecision: continuationGetter("piratesRaidContinuation"),
-      getPendingStrategySlotDecision: continuationGetter("strategySlotContinuation"),
-      getPendingIndustryAbilityDecision: continuationGetter("industryAbilityContinuation"),
-      getPendingIndustryFreeMoveDecision: continuationGetter("industryFreeMoveContinuation"),
       hasTurnEndRevealContinuation: (workingRoot = null) => Boolean(readRoot(workingRoot)?.match?.turnEndRevealContinuation),
     });
   }

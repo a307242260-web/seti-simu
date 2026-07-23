@@ -1027,8 +1027,8 @@
         context.cancelHandCardPlayAction({ silent: true });
       }
       if (!context.hasActivePendingSubFlow()) return null;
-      workingRoot.rocketState.statusNote = context.getPendingIndustryAbilityDecision(workingRoot)
-        || context.getPendingIndustryFreeMoveDecision(workingRoot)
+      workingRoot.rocketState.statusNote = context.readPendingDecision("industry_ability")
+        || context.readPendingDecision("industry_free_move")
         || context.isIndustryHandSelectionActive()
         ? "请先完成或取消公司 1x 行动"
         : "请先完成或取消当前流程";

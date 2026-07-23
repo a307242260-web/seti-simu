@@ -159,7 +159,7 @@
 
     function isBoardRocketInteractionActive() {
       return uiRuntimeState.moveHighlightRocketId != null
-        || Boolean(context.getPendingIndustryFreeMoveDecision())
+        || Boolean(context.readPendingDecision("industry_free_move"))
         || Boolean(context.getPendingCardTriggerFreeMove())
         || Boolean(context.getPendingCardCornerFreeMove())
         || Boolean(context.getPendingScanFreeMoveDecision())
@@ -192,7 +192,7 @@
       if (rocket.playerId !== player?.id) return false;
       if (!(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) return false;
       if (context.isRocketOnPlanetsReference(rocket)) return false;
-      if (context.getPendingIndustryFreeMoveDecision()?.movedRocketIds?.includes(rocket.id)) return false;
+      if (context.readPendingDecision("industry_free_move")?.movedRocketIds?.includes(rocket.id)) return false;
       return true;
     }
 

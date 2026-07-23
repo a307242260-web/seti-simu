@@ -75,7 +75,6 @@
       openCardSelectionDecision: cardRuntime?.openCardSelectionDecision,
       beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
       buildPlutoMarkerRemovalChoices: actionInteraction("buildPlutoMarkerRemovalChoices"),
-      cancelIndustryAbilityFlow: industryRuntime?.cancelIndustryAbilityFlow,
       clearActionEffectFlow: effectFlowRuntime?.clearActionEffectFlow,
       clearActionPending: actionSessionRuntime?.clearActionPending,
       clearHistoryStepOrderForSource: effectFlowRuntime?.clearHistoryStepOrderForSource,
@@ -85,6 +84,7 @@
       countOwnedTechByType: effectExecutorPort?.countOwnedTechByType,
       createActionContext: hostPort.createActionContext,
       dispatchStandardIntent: hostPort.dispatchStandardIntent,
+      submitActiveDecision: hostPort.submitActiveDecision,
       document: hostPort.document,
       els: hostPort.els,
       endEffectHistoryStep: effectFlowRuntime?.endEffectHistoryStep,
@@ -149,7 +149,6 @@
       beginEffectHistoryStep,
       buildPlanetMarkerRemovalChoices,
       buildPlutoMarkerRemovalChoices,
-      cancelIndustryAbilityFlow,
       cardEffects,
       cards,
       clearActionEffectFlow,
@@ -711,14 +710,8 @@
     function cancelTechSelection(workingRoot) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (techGameState.ui.industryBorrowMode) {
-        techGameState.ui.industryBorrowMode = false;
-        tech.setTechSelectionActive(techGameState, false);
-        techGameState.ui.statusNote = "";
-        cancelIndustryAbilityFlow();
-        rocketState.statusNote = "已取消图灵系统科技借用";
-        syncTechSelectionChrome(workingRoot);
-        renderStateReadout();
-        return;
+        return context.submitActiveDecision?.("cancel-industry-ability", "cancel")
+          || { ok: false, code: "INDUSTRY_DECISION_REQUIRED", message: "图灵系统 DecisionEffect 不可用" };
       }
       if (getActionEffectFlow(workingRoot)?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
         const irreversibleReason = getCurrentActionIrreversibleReason?.();
@@ -911,7 +904,8 @@
     function handleSupplyTechTileClick(workingRoot, tileId) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (techGameState.ui.industryBorrowMode) {
-        return confirmIndustryTuringBorrow(tileId);
+        return context.submitActiveDecision?.("research-tech-tile", String(tileId))
+          || { ok: false, code: "INDUSTRY_DECISION_REQUIRED", message: "图灵系统 DecisionEffect 不可用" };
       }
       if (!tech.isSupplySelectionActive(techGameState.ui)) return;
 
@@ -1098,7 +1092,6 @@
       const { cardState, rocketState, turnState } = requireWorkingRoot(workingRoot);
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
-      delete workingRoot.match.industryAbilityContinuation;
       uiRuntimeState.publicCardSelectedSlots = [];
       uiRuntimeState.cardSelectionType = null;
       cards.setSelectionActive(cardState, false);

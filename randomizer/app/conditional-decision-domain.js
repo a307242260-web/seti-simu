@@ -64,7 +64,6 @@
       getCurrentActionEffect,
       getMovableTokensForCardMoveEffect,
       validateIndustryHuanyuMoveRocket,
-      getPendingStrategySlotDecision,
       isFutureSpanEligibleHandCard,
       getPublicCardMultiSelectMinSelectable,
       getPublicScanMinSelectable,
@@ -102,6 +101,8 @@
       handleBanrenmaCardConditionChoice,
       handleFinalScoreTileClick,
       handleSupplyTechTileClick,
+      confirmIndustryTuringBorrow,
+      cancelIndustryAbilityFlow,
       confirmTechBlueSlotChoice,
       cancelTechSelection,
       handleFangzhouTraceDestinationChoice,
@@ -140,6 +141,7 @@
       finishIndustryAbilityFlow,
       resolveMovePaymentDecision,
       confirmStrategyPassiveSlotChoice,
+      cancelStrategyPassiveSlotChoice,
       finalizePendingDiscardSelection,
       cancelDiscardSelection,
       handlePublicCardClick,
@@ -466,6 +468,92 @@
         });
       }
       return { actorPlayer: player, candidates };
+    }
+    if (kind === "industry_ability") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot);
+      if (pending.flowType !== "turing_borrow_tech") {
+        return { actorPlayer: player, candidates: [] };
+      }
+      const candidates = tech.listTakeableTiles(
+        workingRoot.techGameState.board,
+        player?.techState,
+        { techTypes: workingRoot.techGameState.ui.allowedTechTypes },
+      ).map((tileId) => ({
+        id: "conditionalChoice",
+        family: "choose_target",
+        label: `借用科技 ${tileId}`,
+        target: { kind: "research-tech-tile", choiceId: tileId, tileId },
+        tileId,
+      })).concat({
+        id: "conditionalChoice",
+        family: "accept_optional_effect",
+        label: "取消图灵系统科技借用",
+        target: { kind: "cancel-industry-ability", choiceId: "cancel" },
+      });
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "industry_free_move") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot);
+      const movedRocketIds = new Set((pending.movedRocketIds || []).map(String));
+      const candidates = [];
+      for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
+        if (movedRocketIds.has(String(rocket.id))) continue;
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(player, rocket.id, direction.deltaX, direction.deltaY);
+          const supplemental = Math.max(0, terrainRequired - 1);
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "industry-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "结束公司免费移动",
+          target: { kind: "finish-industry-free-move", choiceId: "finish" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "strategy_slot") {
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot),
+        candidates: (pending.slotIds || []).map((slotId) => ({
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: industry.getStrategyPassiveSlotLabel?.(slotId) || slotId,
+          target: {
+            kind: "strategy-passive-slot",
+            choiceId: slotId,
+            slotId,
+          },
+          slotId,
+        })).concat({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "取消奖励槽选择",
+          target: { kind: "cancel-strategy-passive-slot", choiceId: "cancel" },
+        }),
+      };
     }
     if (kind === "probe_sector_scan") {
       const choices = pending.choices || [];
@@ -964,10 +1052,7 @@
       };
     }
     if (isTechTilePickingActive(workingRoot)) {
-      const player = getSimulationConditionalPlayer(
-        workingRoot,
-        workingRoot.match?.industryAbilityContinuation,
-      ) || getCurrentPlayer(workingRoot);
+      const player = getCurrentPlayer(workingRoot);
       const pendingTileId = workingRoot.techGameState.ui.pendingTileId;
       if (pendingTileId) {
         return {
@@ -1034,66 +1119,6 @@
         target: { kind: "skip-pending-data-placement", choiceId: "skip" },
       });
       return { actorPlayer: player, candidates };
-    }
-    const industryFreeMovePending = workingRoot.match?.industryFreeMoveContinuation;
-    if (industryFreeMovePending) {
-      const player = getSimulationConditionalPlayer(workingRoot, industryFreeMovePending);
-      const movedRocketIds = new Set((industryFreeMovePending.movedRocketIds || []).map(String));
-      const candidates = [];
-      for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
-        if (movedRocketIds.has(String(rocket.id))) continue;
-        for (const direction of [
-          { id: "out", deltaX: 0, deltaY: 1 },
-          { id: "cw", deltaX: 1, deltaY: 0 },
-          { id: "ccw", deltaX: -1, deltaY: 0 },
-          { id: "in", deltaX: 0, deltaY: -1 },
-        ]) {
-          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
-          const terrainRequired = getRequiredMovePointsForUi(player, rocket.id, direction.deltaX, direction.deltaY);
-          const supplemental = Math.max(0, terrainRequired - 1);
-          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
-          candidates.push({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `${formatRocketLabel(rocket)} ${direction.id}`,
-            target: {
-              kind: "industry-free-move",
-              choiceId: `${rocket.id}:${direction.id}`,
-              rocketId: rocket.id,
-              direction: direction.id,
-            },
-            rocketId: rocket.id,
-            deltaX: direction.deltaX,
-            deltaY: direction.deltaY,
-          });
-        }
-      }
-      if (!candidates.length) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "结束公司免费移动",
-          target: { kind: "finish-industry-free-move", choiceId: "finish" },
-        });
-      }
-      return { actorPlayer: player, candidates };
-    }
-    const strategySlotPending = getPendingStrategySlotDecision(workingRoot);
-    if (strategySlotPending) {
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, strategySlotPending),
-        candidates: (strategySlotPending.slotIds || []).map((slotId) => ({
-          id: "conditionalChoice",
-          family: "choose_reward",
-          label: industry.getStrategyPassiveSlotLabel?.(slotId) || slotId,
-          target: {
-            kind: "strategy-passive-slot",
-            choiceId: slotId,
-            slotId,
-          },
-          slotId,
-        })),
-      };
     }
     const landPending = getPendingLandTargetDecision(workingRoot);
     if (landPending) {
@@ -1262,6 +1287,9 @@
       workingRoot,
     ),
     "research-tech-tile": (action, workingRoot) => {
+      if (action.decisionContext?.kind === "industry_ability") {
+        return confirmIndustryTuringBorrow(workingRoot, action.target.tileId || action.target.choiceId);
+      }
       const result = handleSupplyTechTileClick(workingRoot, action.target.tileId || action.target.choiceId);
       if (result?.ok !== false && workingRoot.techGameState.ui.pendingTileId) {
         const blueSlot = tech.getAvailableBlueSlots(getCurrentPlayer(workingRoot)?.techState)?.[0];
@@ -1273,6 +1301,11 @@
       workingRoot,
       Number(action.target.slotId),
     ),
+    "cancel-industry-ability": (_action, workingRoot) => {
+      cancelIndustryAbilityFlow(workingRoot);
+      workingRoot.rocketState.statusNote = "已取消图灵系统科技借用";
+      return { ok: true, progressed: true, skipped: true, message: workingRoot.rocketState.statusNote };
+    },
     "skip-research-tech": (_action, workingRoot) => {
       cancelTechSelection(workingRoot);
       if (isActionEffectFlowActive(workingRoot)) skipCurrentActionEffect(workingRoot);
@@ -1434,9 +1467,10 @@
       action.deltaX,
       action.deltaY,
       action.target.rocketId,
+      { pending: action.decisionContext?.pending },
     ),
-    "finish-industry-free-move": (_action, workingRoot) => {
-      const pending = workingRoot.match?.industryFreeMoveContinuation;
+    "finish-industry-free-move": (action, workingRoot) => {
+      const pending = action.decisionContext?.pending;
       finishIndustryAbilityFlow(workingRoot, `${pending?.label || "公司免费移动"}：已结束`);
       return { ok: true, progressed: true, skipped: true, message: "已结束公司免费移动" };
     },
@@ -1447,7 +1481,11 @@
       deactivateMoveMode();
       settleCardTasksAfterEffect({ events: pending.deferredEvents || [], render: false });
       if (pending.finishIndustryFlowAfterMove) {
-        finishIndustryAbilityFlow(pending.afterMoveStatus || "公司 1x 行动：已跳过无法执行的免费移动");
+        finishIndustryAbilityFlow(
+          workingRoot,
+          pending.afterMoveStatus || "公司 1x 行动：已跳过无法执行的免费移动",
+          { irreversible: Boolean(pending.irreversibleIndustryFlow) },
+        );
       }
       return { ok: true, progressed: true, skipped: true, message: "已跳过无法执行的免费移动" };
     },
@@ -1458,7 +1496,15 @@
         pending: action.decisionContext?.pending,
       });
     },
-    "strategy-passive-slot": (action) => confirmStrategyPassiveSlotChoice(action.target.slotId),
+    "strategy-passive-slot": (action, workingRoot) => confirmStrategyPassiveSlotChoice(
+      workingRoot,
+      action.target.slotId,
+      action.decisionContext?.pending,
+    ),
+    "cancel-strategy-passive-slot": (_action, workingRoot) => {
+      cancelStrategyPassiveSlotChoice(workingRoot);
+      return { ok: true, progressed: true, skipped: true, message: "已取消奖励槽选择" };
+    },
     "discard-hand-cards": (action, workingRoot) => finalizePendingDiscardSelection(
       workingRoot,
       action.target.handIndexes,

@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const { createConditionalDecisionDomain, createConditionalPlayerResolver } = require("./conditional-decision-domain");
 const { createConditionalActionExecutor } = require("./conditional-action-executor");
+const { createBrowserPendingDecisionOwner } = require("../game/effects/browser-pending-decision");
 
 {
   const fallback = { id: "fallback" };
@@ -13,6 +14,32 @@ const { createConditionalActionExecutor } = require("./conditional-action-execut
   });
   assert.equal(resolver({}, { playerId: "p1" }).id, "p1");
   assert.equal(resolver({}, {}).id, "fallback");
+}
+
+{
+  const root = { marker: "unchanged" };
+  const owner = createBrowserPendingDecisionOwner({
+    inspectSession: () => ({ phase: "idle" }),
+    enumerate: (_workingRoot, kind, pending) => ({
+      actorPlayer: { id: pending.playerId },
+      candidates: [{
+        family: "choose_reward",
+        target: { kind: `${kind}-choice`, choiceId: "a" },
+      }],
+    }),
+  });
+  const opened = owner.runRuleTransaction(root, () => {
+    owner.open(root, "strategy_slot", { playerId: "p1", slotIds: ["top"] });
+    return owner.takeOpenedDecisionEffect();
+  });
+  assert.equal(opened.ownerId, "p1");
+  assert.equal(opened.payload.choices[0].decisionContext.kind, "strategy_slot");
+  assert.deepEqual(root, { marker: "unchanged" }, "DecisionEffect 打开不得把 pending 复制进 working root");
+  assert.throws(
+    () => owner.runRuleTransaction(root, () => owner.open(root, "legacy-industry", { playerId: "p1" })),
+    /不支持的 browser pending Decision/,
+  );
+  assert.deepEqual(root, { marker: "unchanged" }, "未知旧类型必须 fail-closed 且零污染");
 }
 
 function createFixture() {
@@ -57,6 +84,7 @@ function createFixture() {
     traceCalls: [],
     alienPicker: null,
     industryMoveCalls: [],
+    strategyCalls: [],
     techCalls: [],
   };
   let contextReads = 0;
@@ -142,8 +170,20 @@ function createFixture() {
       handleSupplyTechTileClick: (workingRoot, tileId) => {
         state.techCalls.push([workingRoot, tileId]);
         workingRoot.techGameState.ui.techSelectionActive = false;
-        delete workingRoot.match.industryAbilityContinuation;
         return { ok: true, progressed: true, tileId };
+      },
+      confirmIndustryTuringBorrow: (workingRoot, tileId) => {
+        state.techCalls.push([workingRoot, tileId]);
+        workingRoot.techGameState.ui.techSelectionActive = false;
+        return { ok: true, progressed: true, tileId };
+      },
+      cancelIndustryAbilityFlow: () => ({ ok: true }),
+      confirmStrategyPassiveSlotChoice: (_workingRoot, slotId, pending) => {
+        state.strategyCalls.push(["confirm", slotId, pending.effectId]);
+        return { ok: true, progressed: true };
+      },
+      cancelStrategyPassiveSlotChoice: () => {
+        state.strategyCalls.push(["cancel"]);
       },
       handleCardTriggerChoice: (_workingRoot, choiceIndex, pending) => {
         state.cardTriggerCalls.push(choiceIndex);
@@ -171,9 +211,8 @@ function createFixture() {
       getRequiredMovePointsForUi: () => 1,
       canPayForMove: () => ({ ok: true }),
       formatRocketLabel: (rocket) => `火箭 ${rocket.id}`,
-      executeIndustryFreeMove: (workingRoot, deltaX, deltaY, rocketId) => {
+      executeIndustryFreeMove: (_workingRoot, deltaX, deltaY, rocketId) => {
         state.industryMoveCalls.push([deltaX, deltaY, rocketId]);
-        delete workingRoot.match.industryFreeMoveContinuation;
         return { ok: true, progressed: true };
       },
     };
@@ -201,7 +240,7 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.industryAbilityContinuation = {
+  const pending = {
     playerId: "move-owner",
     flowType: "turing_borrow_tech",
   };
@@ -212,10 +251,14 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
     allowedTechTypes: ["orange", "purple"],
   };
   const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.equal(decision.ownerId, "move-owner");
-  assert.deepEqual(decision.choices.map((choice) => choice.target.tileId), ["orange1", "purple1"]);
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  const decision = describeSessionDecision(fixture.domain, fixture.root, "industry_ability", pending);
+  assert.equal(decision.actorPlayer.id, "move-owner");
+  assert.deepEqual(
+    decision.candidates.filter((choice) => choice.target.kind === "research-tech-tile")
+      .map((choice) => choice.target.tileId),
+    ["orange1", "purple1"],
+  );
+  const result = executor.executeEffectChoice(fixture.root, decision.candidates[0]);
   assert.equal(result.ok, true);
   assert.equal(fixture.state.techCalls.length, 1);
   assert.equal(fixture.state.techCalls[0][0], fixture.root, "科技 Decision 必须沿用同一 Composition workingRoot");
@@ -275,24 +318,46 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
   fixture.root.rocketState.rockets = [{ id: 7, playerId: "move-owner" }];
-  fixture.root.match.industryFreeMoveContinuation = {
+  const pending = {
     playerId: "move-owner",
     movesLeft: 1,
     movedRocketIds: [],
     label: "寰宇动力",
   };
   const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.equal(decision.ownerId, "move-owner");
-  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), [
+  const decision = describeSessionDecision(fixture.domain, fixture.root, "industry_free_move", pending);
+  assert.equal(decision.actorPlayer.id, "move-owner");
+  assert.deepEqual(decision.candidates.map((choice) => choice.target.kind), [
     "industry-free-move",
     "industry-free-move",
     "industry-free-move",
     "industry-free-move",
   ]);
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  const result = executor.executeEffectChoice(fixture.root, decision.candidates[0]);
   assert.equal(result.ok, true);
   assert.deepEqual(fixture.state.industryMoveCalls, [[0, 1, 7]]);
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  const pending = {
+    effectId: "strategy-effect",
+    playerId: "move-owner",
+    slotIds: ["top", "bottom"],
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = describeSessionDecision(fixture.domain, fixture.root, "strategy_slot", pending);
+  assert.deepEqual(decision.candidates.map((choice) => choice.target.kind), [
+    "strategy-passive-slot",
+    "strategy-passive-slot",
+    "cancel-strategy-passive-slot",
+  ]);
+  assert.equal(executor.executeEffectChoice(fixture.root, decision.candidates[0]).ok, true);
+  assert.deepEqual(fixture.state.strategyCalls, [["confirm", "top", "strategy-effect"]]);
+  assert.equal(executor.executeEffectChoice(fixture.root, decision.candidates[2]).ok, true);
+  assert.deepEqual(fixture.state.strategyCalls.at(-1), ["cancel"]);
 }
 
 {

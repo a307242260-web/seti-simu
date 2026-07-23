@@ -231,8 +231,7 @@
       "alienTraceContinuation", "landTargetContinuation",
       "type1TriggerEvents", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
       "turnEndRevealContinuation",
-      "dataPlacementContinuation", "industryAbilityContinuation", "piratesRaidContinuation",
-      "strategySlotContinuation", "industryFreeMoveContinuation",
+      "dataPlacementContinuation", "piratesRaidContinuation",
     ]);
 
     function clearTransientState(workingRoot = null) {

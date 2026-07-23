@@ -1649,7 +1649,6 @@
       requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay) {
         uiRuntimeState.probeSectorSelectedRocketIds = [];
-        delete workingRoot.match.strategySlotContinuation;
         return;
       }
       if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending(workingRoot)) {
@@ -1666,7 +1665,6 @@
       clearPendingRunezuCardGain();
       clearPendingRunezuSymbolBranch();
       clearPendingRunezuFaceSymbolPlacement();
-      delete workingRoot.match.strategySlotContinuation;
       setScanTargetActionLayout();
       uiRuntimeState.probeSectorSelectedRocketIds = [];
       els.scanTargetOverlay.hidden = true;

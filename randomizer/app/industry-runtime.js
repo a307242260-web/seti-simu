@@ -118,6 +118,7 @@
       getPendingPlayCardSelection: handFlowRuntime?.getPendingPlayCardSelection,
       readCardSelectionDecision: cardSelectionDecisionOwner?.read,
       openCardSelectionDecision: cardSelectionDecisionOwner?.open,
+      openPendingDecision: hostPort.openPendingDecision,
       readPendingDecision: hostPort.readPendingDecision,
       getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
       hasFutureSpanEligibleHandCard: cardRuntime?.hasFutureSpanEligibleHandCard,
@@ -256,6 +257,7 @@
       isTechTilePickingActive,
       launchRocketForCurrentPlayer,
       openAutoDataPlacementPrompt,
+      openPendingDecision,
       openScanTargetPicker,
       players,
       quickActionHistory,
@@ -312,11 +314,8 @@
       )) || getWorkingCurrentPlayer(workingRoot)
     );
     const getScanTargetDecision = () => context.readPendingDecision?.("scan_target") || null;
-    const getStrategySlotDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.strategySlotContinuation || null;
-    const getIndustryAbilityContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.industryAbilityContinuation || null;
-    const setIndustryAbilityContinuation = (workingRoot, value) => {
-      requireWorkingRoot(workingRoot).match.industryAbilityContinuation = value == null ? null : value;
-    };
+    const getStrategySlotDecision = () => readPendingDecision?.("strategy_slot") || null;
+    const getIndustryFreeMoveDecision = () => readPendingDecision?.("industry_free_move") || null;
 
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
@@ -362,7 +361,7 @@
 
     function isIndustryFreeMoveActive(workingRoot) {
       requireWorkingRoot(workingRoot);
-      return Boolean(workingRoot.match.industryFreeMoveContinuation);
+      return Boolean(getIndustryFreeMoveDecision());
     }
 
     function createIndustryActionRestoreCommand(workingRoot, player, beforePlayer, companyLabel, options = {}) {
@@ -403,11 +402,9 @@
         tech.setTechSelectionActive(techGameState, false);
         syncTechSelectionChrome(workingRoot);
       }
-      if (uiRuntimeState.moveHighlightRocketId != null || workingRoot.match.industryFreeMoveContinuation) {
+      if (uiRuntimeState.moveHighlightRocketId != null || getIndustryFreeMoveDecision()) {
         deactivateMoveMode();
       }
-      setIndustryAbilityContinuation(workingRoot, null);
-      workingRoot.match.industryFreeMoveContinuation = null;
       syncIndustryHandSelectionChrome();
       syncInteractionFocusChrome();
     }
@@ -454,8 +451,6 @@
         cards.setSelectionActive(cardState, false);
         syncCardSelectionChrome();
       }
-      setIndustryAbilityContinuation(workingRoot, null);
-      workingRoot.match.industryFreeMoveContinuation = null;
       if (uiRuntimeState.moveHighlightRocketId != null) {
         deactivateMoveMode();
       }
@@ -469,11 +464,8 @@
       syncInteractionFocusChrome();
     }
 
-    function finishIndustryAbilityFlow(workingRoot, message) {
+    function finishIndustryAbilityFlow(workingRoot, message, options = {}) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const flowType = getIndustryAbilityContinuation(workingRoot)?.flowType;
-      setIndustryAbilityContinuation(workingRoot, null);
-      workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
       openCardSelectionDecision(workingRoot, null);
       syncCardSelectionChrome();
@@ -486,7 +478,7 @@
       renderStateReadout();
       syncIndustryHandSelectionChrome();
       syncInteractionFocusChrome();
-      if (flowType && !isIndustryIrreversibleFlow(flowType)) {
+      if (!options.irreversible) {
         completeIndustryAbilityQuickStep(workingRoot, message || rocketState.statusNote || null);
       }
     }
@@ -499,7 +491,6 @@
         return false;
       }
 
-      setIndustryAbilityContinuation(workingRoot, { ...flow });
       switch (flow.flowType) {
         case "stratus_public_corners":
           return startIndustryStratusEffectFlow(workingRoot, flow, options);
@@ -564,7 +555,6 @@
     function startIndustryStratusEffectFlow(workingRoot, flow, options = {}) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const nodes = industry?.buildStratusPublicCornerEffectNodes?.(cards, cardState.publicCards) || [];
-      setIndustryAbilityContinuation(workingRoot, null);
       openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -607,7 +597,6 @@
         count: flow.exchangeCount ?? industry?.FUNDAMENTALISM_EXCHANGE_COUNT ?? 3,
         groupId,
       }) || [];
-      setIndustryAbilityContinuation(workingRoot, null);
       openCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -665,6 +654,8 @@
 
     function beginIndustryTuringBorrow(workingRoot, flow) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
+      const beforeUi = structuredClone(techGameState.ui);
+      const beforeStatusNote = rocketState.statusNote;
       tech.setTechSelectionActive(techGameState, true);
       techGameState.ui.industryBorrowMode = true;
       techGameState.ui.selectedTileId = null;
@@ -672,6 +663,16 @@
       techGameState.ui.allowedTechTypes = [...INDUSTRY_TURING_BORROW_TECH_TYPES];
       techGameState.ui.statusNote = flow.message;
       rocketState.statusNote = flow.message;
+      try {
+        openPendingDecision(workingRoot, "industry_ability", {
+          ...structuredClone(flow),
+          playerId: getWorkingCurrentPlayer(workingRoot)?.id || null,
+        });
+      } catch (error) {
+        restoreObjectSnapshot(techGameState.ui, beforeUi);
+        rocketState.statusNote = beforeStatusNote;
+        throw error;
+      }
       syncTechSelectionChrome(workingRoot);
       renderTechBoard(workingRoot);
       renderStateReadout();
@@ -769,7 +770,6 @@
       industry?.clearHeliosPassiveSlots?.(player);
       renderTechBoard(workingRoot);
       renderInitialSelectionArea();
-      setIndustryAbilityContinuation(workingRoot, { flowType: "helios_remove_tech", removedTileId: tileId });
       recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
@@ -786,7 +786,6 @@
         restoreObjectSnapshot(player, beforePlayer);
         renderTechBoard(workingRoot);
         renderInitialSelectionArea();
-        setIndustryAbilityContinuation(workingRoot, null);
         rollbackPendingIndustryQuickAction(workingRoot, incomeStart.message || "赫利昂联合体：收入无法结算，已撤回 1x 行动");
         return { ok: false, message: incomeStart.message || "赫利昂联合体：收入无法结算" };
       }
@@ -806,9 +805,7 @@
         count: flow.movesLeft ?? industry?.HUANYU_FREE_MOVE_COUNT ?? 2,
         groupId,
       }) || [];
-      setIndustryAbilityContinuation(workingRoot, null);
       openCardSelectionDecision(workingRoot, null);
-      workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 
@@ -848,17 +845,18 @@
     function beginIndustryHuanyuFreeMoves(workingRoot, flow) {
       const { rocketState, turnState } = requireWorkingRoot(workingRoot);
       const player = getWorkingCurrentPlayer(workingRoot);
-      workingRoot.match.industryFreeMoveContinuation = {
+      const pending = {
         playerId: player.id,
         movesLeft: flow.movesLeft ?? 2,
         movedRocketIds: [],
         label: flow.label || "寰宇动力",
       };
-      player.industryHuanyuFreeMovesLeft = workingRoot.match.industryFreeMoveContinuation.movesLeft;
+      openPendingDecision(workingRoot, "industry_free_move", pending);
+      player.industryHuanyuFreeMovesLeft = pending.movesLeft;
       player.industryHuanyuFreeMoveTurn = turnState.turnNumber;
       const rocketsForPlayer = getMovableTokensForPlayer(player.id);
       rocketState.statusNote = rocketsForPlayer.length
-        ? `${flow.message}（剩余 ${workingRoot.match.industryFreeMoveContinuation.movesLeft} 次）`
+        ? `${flow.message}（剩余 ${pending.movesLeft} 次）`
         : `${flow.message}：当前没有可移动火箭`;
       syncInteractionFocusChrome();
       renderRockets();
@@ -876,7 +874,7 @@
 
     function executeIndustryFreeMove(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const state = workingRoot.match.industryFreeMoveContinuation;
+      const state = payment.pending || getIndustryFreeMoveDecision();
       if (!state) return { ok: false, message: "没有待结算的公司免费移动" };
       if (state.movedRocketIds.includes(rocketId)) {
         rocketState.statusNote = "该火箭本轮已免费移动过";
@@ -941,22 +939,7 @@
       recordQuickHistoryCommand({
         label: "恢复寰宇免费移动次数",
         undo() {
-          if (!workingRoot.match.industryFreeMoveContinuation) {
-            workingRoot.match.industryFreeMoveContinuation = {
-              playerId: player.id,
-              movesLeft: freeMoveStateBefore.movesLeft,
-              movedRocketIds: [...freeMoveStateBefore.movedRocketIds],
-              label: freeMoveStateBefore.label,
-            };
-            setIndustryAbilityContinuation(workingRoot, {
-              flowType: "huanyu_free_moves",
-              label: freeMoveStateBefore.label,
-            });
-          } else {
-            workingRoot.match.industryFreeMoveContinuation.movesLeft = freeMoveStateBefore.movesLeft;
-            workingRoot.match.industryFreeMoveContinuation.movedRocketIds = [...freeMoveStateBefore.movedRocketIds];
-            workingRoot.match.industryFreeMoveContinuation.label = freeMoveStateBefore.label;
-          }
+          openPendingDecision(workingRoot, "industry_free_move", freeMoveStateBefore);
         },
       });
       if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
@@ -972,6 +955,7 @@
         return result;
       }
 
+      openPendingDecision(workingRoot, "industry_free_move", state);
       rocketState.statusNote = `${state.label}：还可免费移动 ${state.movesLeft} 枚火箭`;
       deactivateMoveMode();
       renderRockets();
@@ -993,8 +977,8 @@
         || isTechTilePickingActive(workingRoot)
         || isHandScanSelectionActive()
         || isMovePaymentSelectionActive()
-        || getIndustryAbilityContinuation(workingRoot)
-        || workingRoot.match.industryFreeMoveContinuation
+        || readPendingDecision?.("industry_ability")
+        || getIndustryFreeMoveDecision()
         || isIndustryHandSelectionActive()) {
         return { ok: false, message: "请先完成或取消当前流程" };
       }
@@ -1903,7 +1887,7 @@
     }
 
     function closeStrategyPassiveSlotChoicePicker(workingRoot) {
-      delete requireWorkingRoot(workingRoot).match.strategySlotContinuation;
+      requireWorkingRoot(workingRoot);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       renderActionEffectBar();
@@ -1913,8 +1897,7 @@
 
     function cancelStrategyPassiveSlotChoice(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!getStrategySlotDecision(workingRoot)) return;
-      delete workingRoot.match.strategySlotContinuation;
+      if (!getStrategySlotDecision()) return;
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       rocketState.statusNote = "宇宙战略集团：已取消奖励槽选择，可重新点击效果或跳过";
@@ -1930,11 +1913,11 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      workingRoot.match.strategySlotContinuation = {
+      openPendingDecision(workingRoot, "strategy_slot", {
         effectId: effect.id,
         slotIds: [...slotIds],
         playerId: player?.id || null,
-      };
+      });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = "宇宙战略集团";
       if (els.scanTargetSubtitle) {
         els.scanTargetSubtitle.textContent = "黑色扫描角标可选择一个空奖励槽触发。";
@@ -1958,9 +1941,9 @@
       return { ok: true, pendingChoice: true, undoable: true, message: rocketState.statusNote };
     }
 
-    function confirmStrategyPassiveSlotChoice(workingRoot, slotId) {
+    function confirmStrategyPassiveSlotChoice(workingRoot, slotId, pendingOverride = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getStrategySlotDecision(workingRoot);
+      const pending = pendingOverride || getStrategySlotDecision();
       const effect = getCurrentActionEffect(workingRoot);
       if (!pending || !effect || effect.id !== pending.effectId || effect.type !== "industry_strategy_passive_reward") {
         cancelStrategyPassiveSlotChoice(workingRoot);

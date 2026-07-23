@@ -510,8 +510,9 @@
         free: true,
         poolRemaining: 1,
         industryHuanyuMove: true,
-      })
-        .filter((candidate) => !(workingRoot.match?.industryFreeMoveContinuation?.movedRocketIds || []).includes(candidate.rocketId));
+      }).filter((candidate) => !(
+        players.getCurrentPlayer(workingRoot.playerState)?.industryHuanyuMovedRocketIds || []
+      ).includes(candidate.rocketId));
     }
 
     function scoreAiIndustryHuanyuMoves(workingRoot) {

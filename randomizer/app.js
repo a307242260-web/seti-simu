@@ -747,8 +747,7 @@
   const {
     getActionEffectFlow, setActionEffectFlow, getPendingDataPlacementDecision,
     getPendingLandTargetDecision, getPendingAlienTraceDecision, getPendingPiratesRaidDecision,
-    getPendingStrategySlotDecision, getPendingIndustryAbilityDecision,
-    getPendingIndustryFreeMoveDecision, hasTurnEndRevealContinuation,
+    hasTurnEndRevealContinuation,
   } = browserMatchRuntime;
   const getPendingHandScanDecision = () => browserPendingDecisionOwner.read("hand_scan");
   const getPendingPassReserveSelection = () => browserPendingDecisionOwner.read("pass_reserve");
@@ -789,7 +788,8 @@
       || getPendingAmibaTraceRemoval() || getPendingAomomoCardGain() || getPendingRunezuCardGain()
       || getPendingRunezuSymbolBranch() || getPendingRunezuFaceSymbolPlacement()
     ),
-    getPendingStrategySlotDecision, getPendingPiratesRaidDecision,
+    readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
+    getPendingPiratesRaidDecision,
     getPendingCardTriggerFreeMove, getPendingCardCornerFreeMove,
     isScanAction4Open: () => Boolean(els.scanAction4Overlay && !els.scanAction4Overlay.hidden),
     isLandTargetOpen: () => Boolean(els.landTargetOverlay && !els.landTargetOverlay.hidden),
@@ -800,7 +800,6 @@
     getPendingCardMoveDecision, getPendingScanFreeMoveDecision, getPendingDataPlacementDecision,
     isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
     isDataPlaceOpen: () => Boolean(els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden),
-    getPendingIndustryAbilityDecision, getPendingIndustryFreeMoveDecision,
     isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
     rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction(...args),
     cancelStrategyPassiveSlotChoice: (...args) => industryRuntime.cancelStrategyPassiveSlotChoice(...args),
@@ -896,7 +895,6 @@
     getMovableTokensForCardMoveEffect,
     validateIndustryHuanyuMoveRocket,
     getPendingCardCornerFreeMove,
-    getPendingStrategySlotDecision,
     isFutureSpanEligibleHandCard,
     getPublicCardMultiSelectMinSelectable,
     getPublicScanMinSelectable,
@@ -928,6 +926,8 @@
     handleAmibaSymbolChoice,
     handleFinalScoreTileClick,
     handleSupplyTechTileClick: (workingRoot, ...args) => techRuntime.handleSupplyTechTileClick(workingRoot, ...args),
+    confirmIndustryTuringBorrow: (workingRoot, ...args) => industryRuntime.confirmIndustryTuringBorrow(workingRoot, ...args),
+    cancelIndustryAbilityFlow: (workingRoot, ...args) => industryRuntime.cancelIndustryAbilityFlow(workingRoot, ...args),
     confirmTechBlueSlotChoice: (workingRoot, ...args) => techRuntime.confirmTechBlueSlotChoice(workingRoot, ...args),
     cancelTechSelection: (workingRoot, ...args) => techRuntime.cancelTechSelection(workingRoot, ...args),
     handleFangzhouTraceDestinationChoice: (workingRoot, ...args) => handleFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
@@ -990,6 +990,7 @@
     finishIndustryAbilityFlow: (workingRoot, ...args) => industryRuntime.finishIndustryAbilityFlow(workingRoot, ...args),
     resolveMovePaymentDecision: (...args) => resolveMovePaymentDecision(...args),
     confirmStrategyPassiveSlotChoice,
+    cancelStrategyPassiveSlotChoice: (workingRoot) => industryRuntime.cancelStrategyPassiveSlotChoice(workingRoot),
     finalizePendingDiscardSelection: (workingRoot, ...args) => handFlowHelpers.finalizePendingDiscardSelection(workingRoot, ...args),
     cancelDiscardSelection: (workingRoot) => handFlowHelpers.cancelDiscardSelection(workingRoot),
     handlePublicCardClick: (workingRoot, ...args) => handlePublicCardClickForRoot(workingRoot, ...args),
@@ -1011,7 +1012,6 @@
     syncFinalScorePendingMarks: (...args) => syncFinalScorePendingMarks(...args),
     dispatchAction: (...args) => actionRuntimeController.dispatchAction(...args),
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
-    getPendingIndustryAbilityDecision: (...args) => getPendingIndustryAbilityDecision(...args),
     getCurrentPlayer: (...args) => getCurrentPlayer(...args),
     beginCardSelection: (...args) => beginCardSelection(...args),
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
@@ -1389,7 +1389,7 @@
     activateMoveMode,
     hasBlockingMoveDecision: () => Boolean(
       getPendingCardTriggerFreeMove()
-      || getPendingIndustryFreeMoveDecision()
+      || browserPendingDecisionOwner.read("industry_free_move")
       || getPendingCardCornerFreeMove()
       || getPendingScanFreeMoveDecision()
       || getPendingCardMoveDecision()
@@ -1628,7 +1628,7 @@
     uiRuntimeState,
     getRuleReadout: createStateSourceReadoutRoot,
     getCurrentPlayer,
-    getPendingIndustryFreeMoveDecision,
+    readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     getPendingCardTriggerFreeMove,
     getPendingCardCornerFreeMove,
     getPendingScanFreeMoveDecision,
@@ -2902,7 +2902,6 @@
     confirmLandTargetPicker,
     confirmMovePayment,
     confirmPassReserveSelection: (...args) => confirmPassReserveSelection(...args),
-    confirmStrategyPassiveSlotChoice: (...args) => confirmStrategyPassiveSlotChoice(...args),
     confirmTechBlueSlotChoice: (...args) => confirmTechBlueSlotChoice(...args),
     createActionContext: createReadoutActionContext,
     aiRuntimePorts: aiBrowserBootstrapModule.createBrowserAiRuntimePorts({
@@ -3425,8 +3424,7 @@
     getPendingHandCardPlayAction,
     cancelHandCardPlayAction,
     hasActivePendingSubFlow,
-    getPendingIndustryAbilityDecision,
-    getPendingIndustryFreeMoveDecision,
+    readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
     renderStateReadout,
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
@@ -3956,6 +3954,8 @@
       getNormalTokenAssetForPlayer,
       getRequiredMovePointsForUi,
       launchRocketForCurrentPlayer,
+      openPendingDecision: openBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       quickActionHistory,
       renderActionEffectBar,
       resultHasSignalMarkedEvent,
@@ -4016,6 +4016,7 @@
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
         || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
       ),
+      submitActiveDecision: (kind, choiceId) => submitChoiceById(kind, choiceId),
       document,
       els,
       getPlanetSectorCoordinate,
@@ -4301,6 +4302,7 @@
   const appEventState = window.SetiAppEvents.createAppEventState({
     pending: {
       ...browserMatchRuntime,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       getPendingCardTriggerFreeMove,
       getPendingCardCornerFreeMove,
     },
@@ -4436,8 +4438,8 @@
     handlePiratesRaidLaunchChoice,
     handleReturnUnfinishedTaskChoice,
     handlePiratesRaidTechMarkerClick,
-    confirmStrategyPassiveSlotChoice,
-    cancelStrategyPassiveSlotChoice,
+    confirmStrategyPassiveSlotChoice: (slotId) => submitChoiceById("strategy-passive-slot", slotId),
+    cancelStrategyPassiveSlotChoice: () => submitChoiceById("cancel-strategy-passive-slot", "cancel"),
     confirmScanTarget,
     closeBanrenmaOpportunityDialog,
     closeJiuzheCardDialog,

@@ -448,29 +448,29 @@ function applyCornerReward(workingState, player, reward, source) {
 function createSimulationRuleComposition(options = {}) {
   if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
   let composition;
-  function createCardCornerDecisionEffect(workingRoot, pending) {
+  function createConditionalDecisionEffect(workingRoot, kind, pending, family = "choose_target") {
     const choices = baseRegistry.enumerate(
       { workingRoot },
       {
-        family: "choose_target",
+        family,
         payload: {
           decisionContext: {
-            kind: "card_corner_free_move",
+            kind,
             pending: clone(pending),
           },
         },
       },
     );
-    if (!choices.length) throw new Error("card_corner_free_move DecisionEffect 没有合法选项");
+    if (!choices.length) throw new Error(`${kind} DecisionEffect 没有合法选项`);
     return {
       type: standardActionDomainApi.DECISION_EFFECT_TYPE,
       kind: "decision",
       ownerId: pending.playerId,
-      decisionKind: "choose_target",
+      decisionKind: family,
       payload: {
         choices,
         decisionContext: {
-          kind: "card_corner_free_move",
+          kind,
           pending: clone(pending),
         },
       },
@@ -674,7 +674,7 @@ function createSimulationRuleComposition(options = {}) {
           type: "card-corner-free-move", playerId: player.id,
           movementPoints: moveReward.movementPoints || 1,
         };
-        decisionEffect = createCardCornerDecisionEffect(root, pending);
+        decisionEffect = createConditionalDecisionEffect(root, "card_corner_free_move", pending);
       }
       return {
         ok: true,
@@ -704,10 +704,12 @@ function createSimulationRuleComposition(options = {}) {
       const root = context.workingRoot || context;
       const player = players.getCurrentPlayer(root.playerState);
       player.industryAbilityUsed = true;
+      let decisionEffect = null;
       if (action.target?.companyLabel === "图灵系统") {
-        root.match.industryAbilityContinuation = {
-          type: "borrow-tech", playerId: root.playerState.currentPlayerId,
-        };
+        decisionEffect = createConditionalDecisionEffect(root, "industry_ability", {
+          flowType: "turing_borrow_tech",
+          playerId: root.playerState.currentPlayerId,
+        });
       } else if (action.target?.companyLabel === "层云核心") {
         for (const card of (root.cardState.publicCards || []).slice(0, 3)) {
           const reward = cards.getDiscardActionRewardForCard(card)
@@ -715,7 +717,7 @@ function createSimulationRuleComposition(options = {}) {
           applyCornerReward(root, player, reward, "industry_stratus");
         }
       }
-      return { ok: true, progressed: true, events: [{ type: "industry" }] };
+      return { ok: true, progressed: true, decisionEffect, events: [{ type: "industry" }] };
     },
   });
 
@@ -754,8 +756,8 @@ function createSimulationRuleComposition(options = {}) {
             summary: `${rockets.formatRocketLabel(rocket)} ${direction.id}`,
           })));
       }
-      const pending = root.match.industryAbilityContinuation;
-      if (pending?.type === "borrow-tech") {
+      if (sessionDecision?.kind === "industry_ability"
+        && sessionDecision.pending?.flowType === "turing_borrow_tech") {
         return ["orange1", "orange2", "orange3", "orange4", "purple1", "purple2", "purple3", "purple4"]
           .map((tileId) => ({
           target: { kind: "research-tech-tile", choiceId: tileId, tileId },
@@ -775,7 +777,6 @@ function createSimulationRuleComposition(options = {}) {
       player.industryBorrowedTechTileId = action.target.tileId;
       player.industryBorrowedTechRound = root.turnState.roundNumber;
       player.industryBorrowedTechTurn = root.turnState.turnNumber;
-      delete root.match.industryAbilityContinuation;
       return { ok: true, progressed: true, events: [{ type: "industry_borrow_tech", tileId: action.target.tileId }] };
     },
   });
@@ -1045,6 +1046,21 @@ function createSimulationRuleComposition(options = {}) {
                   ok: true,
                   progressed: true,
                   events: [{ type: "card_corner_move", rocketId: choice.target?.rocketId }],
+                };
+              }
+              if (resolutionContext.decisionContext?.kind === "industry_ability") {
+                const player = players.getCurrentPlayer(_workingState.playerState);
+                const tileId = choice.target?.tileId;
+                if (!tileId) {
+                  return { ok: false, code: "INDUSTRY_TECH_STALE", message: "借用科技选择已失效" };
+                }
+                player.industryBorrowedTechTileId = tileId;
+                player.industryBorrowedTechRound = _workingState.turnState.roundNumber;
+                player.industryBorrowedTechTurn = _workingState.turnState.turnNumber;
+                return {
+                  ok: true,
+                  progressed: true,
+                  events: [{ type: "industry_borrow_tech", tileId }],
                 };
               }
               const descriptor = choice?.standardAction || choice;

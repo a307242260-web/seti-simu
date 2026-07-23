@@ -50,7 +50,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
 - `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；科技/分析在边界内直连规则 action/ability，扫描与打牌分别下沉到 `scan-flow.js` / `hand-flow.js` 的显式 root 入口，`app.js` 只负责装配。Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
 - `randomizer/app/quick-turn-action-executor.js`：快速交易、公司 1x、弃牌角标、放置数据、符文族面部 symbol、PASS 与结束回合的 working-root 生产边界。Browser/AI 的 descriptor 共用同一原子入口；Quick family 只写 caller root 与 quick history，不推进 turn，PASS 只完成主行动，只有 `end_turn` 推进 turn/current player；stale 与失败会恢复完整 working root。
-- `randomizer/app/conditional-decision-domain.js`：扫描/卡牌、公司/外星人、科技/终局等 conditional family 的 owner、choices 与 followup 唯一生产定义；通过显式 context 调用既有领域 continuation，不拥有第二份状态。
+- `randomizer/app/conditional-decision-domain.js`：扫描/卡牌、公司/外星人、科技/终局等 conditional family 的 owner、choices 与 followup 唯一生产定义；图灵科技借用、公司免费移动和策略奖励槽直接消费 Session Decision context，不在 match 中保存第二份等待状态。
 - `randomizer/app/conditional-action-executor.js`：七类 conditional family 的 descriptor validation 与 working-root 原子边界。Browser、Policy 与 replay 提交同一个 Standard Action/Decision identity；stale、未知 followup、规则失败或异常均 fail-closed 并恢复完整 working root。宿主恢复产生的 composition stateVersion 不覆盖 Effect Session 内已确认的 domain decision identity。
 - `randomizer/app/dependencies.js`：唯一的 app 入口依赖表。新增或删除 `window.Seti*` 依赖时先改这里，让脚本顺序错误能尽早报错。
 - `randomizer/app/browser-host/decision-ui.js`：统一 Decision shell、renderer registry、科技 presentation 与 focus/confirm/cancel intent；只消费 `BrowserProjection + ViewState`，不得枚举领域合法项或续跑 Effect queue。
@@ -72,7 +72,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/alien-ui.js`：只处理外星人揭示弹层、痕迹选择器、方舟分流和“进入某物种放置模式”的 UI 壳层；不实现物种奖励、dialog 或具体面板渲染。
 - `randomizer/app/aliens/species-runtime.js`：处理物种奖励、外星人牌获取、虫族任务、九折/半人马机会、符文 symbol、followup 和具体面板渲染，并由 `createAlienSpeciesPort` 统一区分只读/DOM 调用与 Composition host command。Browser 装配只接受 `stateQuery`、`decisionInput`、`history`、`legality`、`render`、`speciesRules`、`constants` 七个显式窄 port，并在创建期按 `port.key` 校验缺项；禁止从 dependencies/runtime sources 按同名键搜索或拼成共享 capability bag。
 - `randomizer/app/tech-runtime.js`：处理科技供应区选择、蓝槽 picker、确认/取消/undo 恢复和海盗科技标记交互；规则判断仍委托 `game/tech/**` 与 `game/industry/**`。
-- `randomizer/app/industry-runtime.js`：处理公司能力与被动的 UI/pending/history 编排；公司规则、数值和文案继续由 `game/industry/**` 提供。
+- `randomizer/app/industry-runtime.js`：处理公司能力与被动的 UI/Decision/history 编排；图灵借用、免费移动和策略槽只打开正式 DecisionEffect，确认与取消统一经过 active Decision port，公司规则、数值和文案继续由 `game/industry/**` 提供。
 - `randomizer/app/action-log-runtime.js`：处理行动日志草稿、步骤、entry、导入组装及日志列表/tab 的 DOM 展示；通过显式参数接收 turn/player/history 与 view 上下文，不直接抓 app 闭包。
 - `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；规则状态、活跃 Session、RNG 与确定性序列统一由 Browser Composition lifecycle 原子保存/恢复，模块不接受 StateStore-only snapshot，也不在 composition 外回灌序列。UI 刷新通过显式回调注入。

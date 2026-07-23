@@ -48,7 +48,7 @@
         || context.getPendingCardTriggerAction(workingRoot)
         || context.getPendingCardTaskCompletion(workingRoot)
         || context.hasAlienDecision()
-        || context.getPendingStrategySlotDecision(workingRoot)
+        || context.readPendingDecision("strategy_slot")
         || context.getPendingPiratesRaidDecision(workingRoot)
         || context.getPendingCardTriggerFreeMove(workingRoot)
         || context.getPendingCardCornerFreeMove(workingRoot)
@@ -65,8 +65,8 @@
       return hasActiveEffectSubFlow(workingRoot)
         || context.isMovePaymentSelectionActive()
         || context.isDataPlaceOpen()
-        || Boolean(context.getPendingIndustryAbilityDecision(workingRoot))
-        || Boolean(context.getPendingIndustryFreeMoveDecision(workingRoot))
+        || Boolean(context.readPendingDecision("industry_ability"))
+        || Boolean(context.readPendingDecision("industry_free_move"))
         || context.isIndustryHandSelectionActive();
     }
 
@@ -75,7 +75,7 @@
         context.rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
         return true;
       }
-      if (context.getPendingStrategySlotDecision(workingRoot)) {
+      if (context.readPendingDecision("strategy_slot")) {
         context.cancelStrategyPassiveSlotChoiceForRoot(workingRoot);
         return true;
       }
@@ -96,8 +96,8 @@
         workingRoot.rocketState.statusNote = "已取消放置数据";
         return true;
       }
-      if (context.getPendingIndustryAbilityDecision(workingRoot)
-        || context.getPendingIndustryFreeMoveDecision(workingRoot)
+      if (context.readPendingDecision("industry_ability")
+        || context.readPendingDecision("industry_free_move")
         || context.isIndustryHandSelectionActive()) {
         context.rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
         return true;
@@ -1148,7 +1148,6 @@
       delete workingRoot.match.type1TriggerEvents;
       context.clearYichangdianCornerAction?.();
       context.clearAlienDecisionDrafts?.();
-      delete workingRoot.match.strategySlotContinuation;
       if (context.getPendingPiratesRaidDecision?.(workingRoot)) {
         delete workingRoot.match.piratesRaidContinuation;
         context.renderTechBoard?.(workingRoot);

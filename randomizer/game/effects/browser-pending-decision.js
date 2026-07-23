@@ -23,6 +23,9 @@
     "card_trigger_free_move",
     "card_trigger",
     "card_task_completion",
+    "industry_ability",
+    "industry_free_move",
+    "strategy_slot",
   ]);
 
   function clone(value) {

@@ -84,7 +84,6 @@
       confirmAlienRevealNotice,
       confirmLandTargetPicker,
       confirmPassReserveSelection,
-      confirmStrategyPassiveSlotChoice,
       confirmTechBlueSlotChoice,
       createActionContext,
       createTurnState,

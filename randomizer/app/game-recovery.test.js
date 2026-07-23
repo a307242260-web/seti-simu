@@ -172,7 +172,7 @@ assert.equal(storage.removed, true);
   host.clearTransientStateForRecovery();
   assert.deepEqual(calls.shift(), { kind: "recovery_clear_transient" });
   const root = {
-    match: { industryAbilityContinuation: {}, turnEndRevealContinuation: {} },
+    match: { turnEndRevealContinuation: {} },
     cardState: {}, techGameState: { ui: { industryBorrowMode: true } }, rocketState: {},
   };
   host.clearTransientStateForRecovery(root);

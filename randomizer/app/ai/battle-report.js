@@ -67,7 +67,6 @@
               : null,
             pendingPublicScanQueue: Boolean(state.pendingPublicScanQueue),
             pendingCardSelection: Boolean(state.pendingCardSelectionDecision),
-            pendingStrategyPassiveSlotChoice: Boolean(state.pendingStrategyPassiveSlotChoice),
             pendingJiuzheCardPlay: Boolean(state.pendingJiuzheCardPlay),
             pendingYichangdianCardGain: Boolean(state.pendingYichangdianCardGain),
             pendingYichangdianCornerAction: Boolean(state.pendingYichangdianCornerAction),
@@ -88,7 +87,6 @@
             pendingDataPlacement: Boolean(els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden),
             pendingActionEffectCardMove: Boolean(state.pendingActionEffectFlow?.cardMoveEffect),
             pendingActionEffectFreeMove: Boolean(state.pendingActionEffectFlow?.freeMoveMode),
-            pendingIndustryAbility: Boolean(state.pendingIndustryAbility),
             pendingIndustryHandSelection: isIndustryHandSelectionActive(),
           };
         }
