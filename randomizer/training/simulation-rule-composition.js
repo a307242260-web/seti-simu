@@ -46,8 +46,8 @@ function hashCounterfactualSeed(seed) {
   return hash >>> 0;
 }
 
-function createCounterfactualRandom(seed) {
-  let state = hashCounterfactualSeed(seed) || 1;
+function createCounterfactualRandomFromState(initialState) {
+  let state = Number(initialState) >>> 0 || 1;
   const random = function counterfactualRandom() {
     state = Math.imul(state ^ (state >>> 15), 1 | state);
     state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
@@ -56,7 +56,12 @@ function createCounterfactualRandom(seed) {
   random.resetSeed = (nextSeed) => {
     state = hashCounterfactualSeed(nextSeed) || 1;
   };
+  random.getState = () => state >>> 0;
   return random;
+}
+
+function createCounterfactualRandom(seed) {
+  return createCounterfactualRandomFromState(hashCounterfactualSeed(seed));
 }
 const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   { family: "launch", obligation: "生产发射规则枚举、校验并提交火箭" },
@@ -425,7 +430,10 @@ function createOpeningObservation(workingState, playerId) {
     publicState: {
       match: { terminal: false },
       players: publicPlayers,
-      board: { aliens: clone(workingState.alienGameState || {}) },
+      board: {
+        rockets: clone(workingState.rocketState.rockets || []),
+        aliens: clone(workingState.alienGameState || {}),
+      },
     },
     selfState: {
       playerId,
@@ -433,6 +441,7 @@ function createOpeningObservation(workingState, playerId) {
       hand: clone(player?.hand || []),
       reservedCards: clone(player?.reservedCards || []),
     },
+    probeRouteRequirements: buildProbeRouteRequirements(workingState, playerId),
     terminal: false,
   }, { seatId: playerId, stateVersion: 0, decisionVersion: 0 });
 }
@@ -452,17 +461,14 @@ function chooseInitialSelections(workingState, options, random) {
         industry: industryCard,
         initialCards: initialSelection,
       }))
-    )).sort((left, right) => (
-      String(left.industry?.id || "").localeCompare(String(right.industry?.id || ""))
-      || stableSerialize(left.initialCards.map((card) => card.id))
-        .localeCompare(stableSerialize(right.initialCards.map((card) => card.id)))
     ));
     return { playerId, plans };
   });
   const selectedPlans = offers.map((offer) => offer.plans[0]);
   const rootSequences = readSequences(workingState);
+  const rootRandomState = random.getState?.() ?? null;
   for (const [playerIndex, offer] of offers.entries()) {
-    const evaluated = offer.plans.map((candidate) => {
+    const evaluated = offer.plans.map((candidate, planIndex) => {
       const fork = clone(workingState);
       const forkPlans = selectedPlans.map((selected, index) => (
         index === playerIndex ? candidate : selected
@@ -471,14 +477,19 @@ function chooseInitialSelections(workingState, options, random) {
       submitOpeningPlans(fork, offers, forkPlans, aiDifficulty);
       resolveOpeningRules(
         fork,
-        createCounterfactualRandom(`${options.seed}:setup:${offer.playerId}:${stableSerialize(candidate)}`),
+        rootRandomState == null
+          ? createCounterfactualRandom(`${options.seed}:setup:${offer.playerId}`)
+          : createCounterfactualRandomFromState(rootRandomState),
       );
       const observation = createOpeningObservation(fork, offer.playerId);
-      const value = ai.expectedScoreEvaluator.evaluateState(observation, offer.playerId);
-      return { candidate, value: value.total };
+      const evaluation = ai.expectedScoreEvaluator.evaluateSetupProbeGoals(
+        observation,
+        offer.playerId,
+      );
+      return { candidate, evaluation, planIndex };
     }).sort((left, right) => (
-      right.value - left.value
-      || stableSerialize(left.candidate).localeCompare(stableSerialize(right.candidate))
+      ai.expectedScoreEvaluator.compareSetupProbeGoals(left.evaluation, right.evaluation)
+      || left.planIndex - right.planIndex
     ));
     selectedPlans[playerIndex] = evaluated[0].candidate;
   }
@@ -571,8 +582,10 @@ function productionProbeDirections(player, coordinate) {
   return rocketAbility.MOVE_DIRECTIONS.filter((direction) => direction.id === preferredDirectionId);
 }
 
-function buildProbeRouteRequirements(workingState) {
-  const player = players.getCurrentPlayer(workingState.playerState);
+function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
+  const player = requestedPlayerId == null
+    ? players.getCurrentPlayer(workingState.playerState)
+    : workingState.playerState.players.find((candidate) => candidate.id === requestedPlayerId);
   if (!player || workingState.turnState.gameEnded) return null;
   const context = {
     workingRoot: workingState,

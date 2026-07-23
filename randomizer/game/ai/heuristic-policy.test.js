@@ -135,6 +135,41 @@ assert.deepEqual(inventoryValue.resourceFacts, {
 });
 assert.equal(inventoryValue.schemaVersion, outcomeModel.VALUE_SCHEMA_VERSION);
 
+function setupObservation(targetBenefitScore, gap) {
+  return outcomeModel.createDecisionObservation({
+    publicState: {
+      players: [{ id: "p1", resources: { score: 0, credits: 0, energy: 0 } }],
+      board: {},
+    },
+    selfState: { id: "p1", hand: [] },
+    probeRouteRequirements: {
+      playerId: "p1",
+      candidates: [{
+        targetId: "land:target:planet:",
+        targetBenefit: { score: targetBenefitScore },
+        gap,
+      }],
+    },
+  }, { seatId: "p1", stateVersion: 0, decisionVersion: 0 });
+}
+
+const higherBenefit = expectedScoreEvaluator.evaluateSetupProbeGoals(
+  setupObservation(12, { credits: 1, energy: 2, movementSteps: 2 }),
+  "p1",
+);
+const lowerBenefit = expectedScoreEvaluator.evaluateSetupProbeGoals(
+  setupObservation(8, { credits: 0, energy: 0, movementSteps: 0 }),
+  "p1",
+);
+assert.ok(expectedScoreEvaluator.compareSetupProbeGoals(higherBenefit, lowerBenefit) < 0,
+  "setup 必须先按真实叶的正分探测器目标收益排序");
+const lowerGap = expectedScoreEvaluator.evaluateSetupProbeGoals(
+  setupObservation(12, { credits: 0, energy: 1, movementSteps: 1 }),
+  "p1",
+);
+assert.ok(expectedScoreEvaluator.compareSetupProbeGoals(lowerGap, higherBenefit) < 0,
+  "同目标收益的 setup 叶必须按 credits/energy/movement 缺口排序");
+
 assert.throws(
   () => policy.decide({ schemaVersion: policyPort.CONTEXT_SCHEMA_VERSION, legalActions: [] }),
   (error) => error.code === "HEURISTIC_POLICY_EMPTY_LEGAL_SET",

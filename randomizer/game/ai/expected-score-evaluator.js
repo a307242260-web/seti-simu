@@ -92,6 +92,45 @@
       .sort((left, right) => gapSize(left) - gapSize(right))[0] || null;
   }
 
+  function evaluateSetupProbeGoals(observation, seatId) {
+    evaluateState(observation, seatId);
+    const candidates = observation.outcomeProjection.progress?.probeGoalRequirements?.candidates || [];
+    const goal = candidates
+      .filter((candidate) => finite(candidate?.targetBenefit?.score) > 0)
+      .sort((left, right) => (
+        finite(right.targetBenefit?.score) - finite(left.targetBenefit?.score)
+        || gapSize(left) - gapSize(right)
+      ))[0] || null;
+    const gap = goal?.gap || {};
+    return deepFreeze({
+      evaluationModel: EVALUATION_MODEL,
+      reachable: Boolean(goal),
+      targetBenefitScore: finite(goal?.targetBenefit?.score),
+      gap: {
+        credits: finite(gap.credits),
+        energy: finite(gap.energy),
+        movementSteps: finite(gap.movementSteps),
+      },
+      targetId: goal?.targetId || null,
+      fieldPaths: {
+        requirements: "outcomeProjection.progress.probeGoalRequirements.candidates",
+        targetBenefit: "outcomeProjection.progress.probeGoalRequirements.candidates[].targetBenefit.score",
+        gap: "outcomeProjection.progress.probeGoalRequirements.candidates[].gap",
+      },
+    });
+  }
+
+  function compareSetupProbeGoals(left, right) {
+    const leftGap = left?.gap || {};
+    const rightGap = right?.gap || {};
+    return Number(Boolean(right?.reachable)) - Number(Boolean(left?.reachable))
+      || finite(right?.targetBenefitScore) - finite(left?.targetBenefitScore)
+      || gapSize({ gap: leftGap }) - gapSize({ gap: rightGap })
+      || finite(leftGap.credits) - finite(rightGap.credits)
+      || finite(leftGap.energy) - finite(rightGap.energy)
+      || finite(leftGap.movementSteps) - finite(rightGap.movementSteps);
+  }
+
   function matchesNextStep(action, step) {
     if (!action || !step || action.family !== step.family) return false;
     if (step.family !== "move") return true;
@@ -251,6 +290,8 @@
     DEFAULT_PARAMETERS,
     mergeParameters,
     evaluateState,
+    evaluateSetupProbeGoals,
+    compareSetupProbeGoals,
     evaluateAction: evaluateOutcome,
     evaluateOutcome,
   });

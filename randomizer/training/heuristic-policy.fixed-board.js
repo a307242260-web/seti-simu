@@ -1,6 +1,7 @@
 "use strict";
 
 const crypto = require("node:crypto");
+const heuristicPolicy = require("../game/ai/heuristic-policy");
 
 const FIXED_BOARD_ID = "seti-104-board-v1";
 const FIXED_BOARD_CONFIG = Object.freeze({
@@ -8,8 +9,8 @@ const FIXED_BOARD_CONFIG = Object.freeze({
   activePlayerCount: 4,
   aiDifficulty: "weak_start",
   offlineTeacher: true,
-  policyVersion: "seti-heuristic-policy-v3",
-  opponentIdentity: "seti-heuristic-policy-v3",
+  policyVersion: heuristicPolicy.POLICY_VERSION,
+  opponentIdentity: heuristicPolicy.POLICY_VERSION,
 });
 
 function stableSerialize(value) {

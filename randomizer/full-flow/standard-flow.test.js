@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const { createSimulationEnv } = require("../app/simulation-env");
+const heuristicPolicy = require("../game/ai/heuristic-policy");
 const fixture = require("./standard-flow-v1.fixture");
 
 function initialSnapshot(env) {
@@ -76,6 +77,13 @@ function finalSnapshot(env) {
 }
 
 const env = createSimulationEnv();
+const actualPolicyProvenance = heuristicPolicy.createHeuristicPolicy({
+  difficulty: fixture.config.aiDifficulty,
+}).getProvenance();
+assert.deepEqual(fixture.policyProvenance, actualPolicyProvenance,
+  "full-flow fixture 必须记录代码当前实际 Policy provenance");
+assert.equal(fixture.config.policyVersion, actualPolicyProvenance.version,
+  "full-flow config 不得声明不存在的 Policy 版本");
 env.reset(fixture.config);
 assert.deepEqual(initialSnapshot(env), fixture.initialSnapshot, "版本化初始状态发生漂移");
 
@@ -102,13 +110,14 @@ for (const [stepIndex, [actionId, maskIndex]] of fixture.operations.entries()) {
   assert.notEqual(result.blocked, true, `流程不得 blocked：${actionId}`);
 }
 
+if (fixture.finalSnapshot) {
+  assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
+}
 if (fixture.finalCheckpointHash) {
   const checkpointHash = crypto.createHash("sha256")
     .update(JSON.stringify(env.createCheckpoint()))
     .digest("hex");
   assert.equal(checkpointHash, fixture.finalCheckpointHash, "最终 checkpoint bytes 发生漂移");
-} else {
-  assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
 }
 assert.equal(env.createCheckpoint().effectSessionJournals.length, fixture.operations.length,
   "每次 composition 输入都必须留下对应 Effect Session journal");
