@@ -1125,3 +1125,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 共享树 Node 170/170、独立 `a0bda84` 快照 Node 169/169；193 个生产入口、5 个正式 owner、0 residual/violations；九类负向 fixture、commit trace、projection poison、checkpoint/replay/worker recovery/parity 均通过；真实 Chrome 四机器席位 494 步终局，blocked=false、bugCount=0。
 - observed_outcome: 窄字符串扫描被可执行语义门禁替代；正常仓库零违规，第二 root、直接写、改名 bridge、保存拼 root、恢复拆 root、双写、旧 Policy/schema 与未知 fallback 均被 fixture 稳定阻断。
 - keep_or_revise: 保留并进入 5 个 issue 观察窗口；若统一 JS parser 或依赖图基础设施落地，则迁移实现但保留 owner/dataflow/poison/trace/negative-fixture 语义。
+
+- date: 2026-07-23
+- source: SETI-123、SETI-137、SETI-138、SETI-139 与 owner 的整体架构复审反馈
+- promoted_to: project_memory
+- promotion_decision: promote
+- target_agent: 领航、总控及负责 SETI 架构迁移验收的 agent
+- target_component: 架构迁移完成度判断与阶段复审
+- target_file: PROJECT_MEMORY.md；docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 将架构迁移完成度拆成“新主链 proof obligations”和“旧路径 residual inventory”两套独立证据；禁止用少数竖切片成功、测试全绿、入口文件缩小或新模块存在外推全仓旧代码已接近清理完成。
+- applied_change: 项目长期记忆新增双账门禁、提交基线要求与三问校准法；coordination experience 记录本次判断变化的事实、责任和可复核残留计数。
+- expected_effect: 后续阶段结论不会把方法验证成功误报成整体迁移接近完成；每组有限 issue 完成后都会重新盘点全仓残留，并据此生成下一组删除清单。
+- evaluation_window: SETI-139 收口及后续 3 组架构清理里程碑
+- success_signal: 每次阶段汇报同时包含新主链义务、旧路径残留计数和提交基线；下一组 issue 直接对应非零 residual，完成后相关计数归零。
+- rollback_condition: 不回滚双账原则；若现有文本式计数受改名影响，则升级为 AST/dataflow/capability inventory，但不得退回只看文件行数或已知字符串。
+- risk: 机械计数可能把合法同名业务字段计入旧路径；必须用 caller、owner 和数据流复核语义，不能为追求数字删除真实规则。
+- evidence_before: `f7b4c01` 冷快照仍有 22 类 continuation、约 173 处直接引用，五组 readout-root 兼容调用分别为 30/81/8/2/36，并存在中央 Host Command、Simulation Policy 旁路和旧 AI pending runtime；这些残留未被 SETI-137～139 的局部验收覆盖。
+- owner_or_agent_decision: owner 明确要求记录当前判断及其与下发 SETI-139 系列时产生变化的原因，用于改善协作并提升 agent 判断能力；本次据此直接 promote 到项目长期记忆。
+- applied_at: 2026-07-23
+- verification: `rg` 复核新增长期规则、经验条目和 promotion decision 均包含提交基线、双账门禁、残留计数及三问校准法；未修改生产代码或测试。
+- observed_outcome: 待 SETI-139 及后续清理链验证；当前已把“局部竖切片成功不能外推整体完成”从聊天结论变为项目级约束。
+- keep_or_revise: 保留；后续若 residual inventory 自动化成熟，补充机器生成的计数来源，但不改变完成度必须双账报告的原则。

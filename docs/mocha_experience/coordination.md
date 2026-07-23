@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-23：竖切片成功不能外推为全仓架构迁移完成
+
+- date: 2026-07-23
+- source_issue: SETI-123、SETI-137、SETI-138、SETI-139，以及 owner 对整体架构完成度的复审追问
+- observation: 架构迁移需要同时维护“新主链 proof obligations”和“旧路径 residual inventory”两套账。三条有限竖切片完成或进入实施，只能证明选定路径已硬切和方法可重复，不能证明剩余旧架构数量按同等比例下降。若阶段复审仍沿用建单时的局部 caller 清单，而没有从最新提交快照重跑全仓残留审计，就会把局部验收成功错误外推成整体接近完成。
+- evidence: SETI-123 最初刻意只允许 SETI-137 Browser Machine Player Host、SETI-138 Card Selection DecisionEffect、SETI-139 Action Bar DTO 三条竖切片，并写明三项后重新审计。137、138 的本域旧路径确已物理删除；但在 `f7b4c01` 冷快照全仓复审中，仍有 22 类 continuation、约 173 处直接引用，`createReadoutRoot=30`、`getRuleReadout=81`、`createReadoutActionContext=8`、`createResidentReadoutRoot=2`、`createStateSourceReadoutRoot=36`，以及 app.js 中央 Host Command、Simulation 直接 Policy 调用和约 2,306 行旧 AI pending runtime。此前的“核心约 75%、整体清理接近后半程”判断，混合了新主链成立程度与旧代码清除程度，且没有先给出上述全仓基线。
+- promote_to: project_memory
+- promotion_status: promote
+- decision: 项目长期记忆新增双账门禁。以后每轮架构里程碑收口后，先固定提交基线并重跑全仓 residual inventory，再决定下一组 issue；整体完成度必须同时报告新主链义务和旧路径归零情况。没有全仓 residual 证据时只允许汇报局部里程碑，不得给整体百分比。owner 可用“新主链义务表在哪里、旧路径残留计数在哪里、基于哪个提交”三问快速校准结论。
+
 ## 2026-07-21：总控关单复用子项证据并延后经验沉淀
 
 - date: 2026-07-21
