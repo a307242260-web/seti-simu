@@ -710,7 +710,16 @@
         timing.forkMilliseconds += now() - forkStartedAt;
       }
 
-      function explore(envelope, action, chain, depth, leaves, checkpoints = [], initialAction = action) {
+      function explore(
+        envelope,
+        action,
+        chain,
+        depth,
+        leaves,
+        checkpoints = [],
+        initialAction = action,
+        lastProbeAction = null,
+      ) {
         if (depth > maxDepth || leaves.length >= maxLeaves) {
           return { unresolved: true, code: "COUNTERFACTUAL_BRANCH_LIMIT" };
         }
@@ -762,6 +771,9 @@
             };
           }
           const nextChain = [...chain, current.actionId];
+          const nextProbeAction = ["launch", "move", "orbit", "land"].includes(current.family)
+            ? clone(current)
+            : lastProbeAction;
           const nextInspection = composition.inspect();
           const awaitingDecision = nextInspection.phase === "awaiting_input";
           const successors = awaitingDecision
@@ -785,6 +797,8 @@
             if (!childSaved?.ok) return { failed: true, code: childSaved?.code || "COUNTERFACTUAL_BRANCH_SAVE_FAILED" };
             let unresolved = false;
             let code = null;
+            let successfulBranchCount = 0;
+            let firstFailure = null;
             for (const successor of [...successors].sort((left, right) => (
               String(left.actionId).localeCompare(String(right.actionId))
             ))) {
@@ -796,19 +810,27 @@
                 leaves,
                 checkpoints,
                 initialAction,
+                nextProbeAction,
               );
-              if (branch?.failed) return branch;
+              if (branch?.failed) {
+                firstFailure ||= branch;
+                continue;
+              }
+              successfulBranchCount += 1;
               unresolved = unresolved || Boolean(branch?.unresolved);
               code = code || branch?.code || null;
             }
+            if (!successfulBranchCount && firstFailure) return firstFailure;
             return { unresolved, code };
           }
           const projectionStartedAt = now();
           const leafObservation = composition.projection(viewer).state;
           timing.projectionMilliseconds += now() - projectionStartedAt;
           const nextCheckpoints = [...checkpoints, {
-            actionId: current.actionId,
-            family: current.family,
+            actionId: nextProbeAction?.actionId || current.actionId,
+            family: nextProbeAction?.family || current.family,
+            target: clone(nextProbeAction?.target || current.target || {}),
+            summary: nextProbeAction?.summary || current.summary || null,
             actionChain: nextChain,
             observation: leafObservation,
           }];
@@ -834,6 +856,8 @@
             }
             let unresolved = false;
             let code = null;
+            let successfulBranchCount = 0;
+            let firstFailure = null;
             for (const successor of [...continuationActions].sort((left, right) => (
               String(left.actionId).localeCompare(String(right.actionId))
             ))) {
@@ -845,11 +869,17 @@
                 leaves,
                 nextCheckpoints,
                 initialAction,
+                nextProbeAction,
               );
-              if (branch?.failed) return branch;
+              if (branch?.failed) {
+                firstFailure ||= branch;
+                continue;
+              }
+              successfulBranchCount += 1;
               unresolved = unresolved || Boolean(branch?.unresolved);
               code = code || branch?.code || null;
             }
+            if (!successfulBranchCount && firstFailure) return firstFailure;
             return { unresolved, code };
           }
           leaves.push({

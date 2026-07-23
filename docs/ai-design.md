@@ -31,16 +31,16 @@ Rule Composition
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
 - `game/ai/machine-player-host.js`：固定席位、deadline/取消、generation、去重与 fail-closed 提交协调。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
-- `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、θ₀ 资产事实和固定大小的
-  探测器路线摘要。
-- `game/ai/expected-score-evaluator.js`：只按真实 root/leaf projection 的字段级 V 计算
-  `Q=V(leaf)-V(root)`。
-- `game/ai/heuristic-evaluator.js`：只按 outcome Q 排序；没有可比较 leaf 时按稳定 actionId
-  tie-break，不存在 family fallback 或第二排序链。
+- `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、资源事实和固定大小的
+  探测器目标摘要。
+- `game/ai/expected-score-evaluator.js`：只从真实标准叶识别正分环绕/登陆终点、路线实耗、
+  缺口和唯一下一步；库存、宣传、卡牌不折算统一 V/Q。
+- `game/ai/heuristic-evaluator.js`：只选择 `settled + selectable` 的目标步骤；失败或 unresolved
+  候选 fail-closed，同一目标分才按实耗与稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
   Standard Action registry、Effect Session、Decision 与 commit 语义。
 - Simulation setup 选择也进入隔离规则 fork：提交标准 setup Decision、执行正式初始结算，再以同一
-  `DecisionObservation -> OutcomeProjection -> V(leaf)-V(root)` 口径排序。旧
+  `DecisionObservation -> OutcomeProjection -> target/gap/next-step` 口径选择。旧
   `selection-evaluator.js` 及其开局静态分值已删除。
 - `app/ai/control-runtime.js`：机器席位配置、难度、快照/恢复、pending owner 与自动调度。
 - `app/ai/browser-bootstrap.js`：control runtime、Browser Machine Player Host 与 PolicyInputAdapter 的窄装配 owner。
@@ -78,23 +78,24 @@ low confidence，不读取本局未来 RNG。
 每个 root/leaf observation 使用 `seti-decision-observation-v2`，其中
 `outcomeProjection` 为 `seti-outcome-projection-v2`。projection 只增加以下
 viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute` 最多列两枚本席在途
-探测器的标识/坐标；候选 leaf 只额外携带 `nextActionId/family`、当前标准 outcome 引用、
-路线终点 `orbit/land` outcome 引用、沿途宣传 delta、终点即时 delta 和剩余路线总 delta。
+探测器的标识/坐标；候选 leaf 只额外携带 `nextActionId/family/summary`、目标行星与
+`orbit/land` outcome 引用、已兑现目标分、沿途宣传 delta、终点即时 delta、标准路线实耗、
+移动余步和叶后钱/电。
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 
-本阶段只有探测器候选动作使用 `Q_probe=当前动作真实标准结算价值+从当前 leaf 完成同一路线的
-真实净收益`。路线由 counterfactual port 在同一个复用 fork 中继续提交生产
+本阶段不使用统一行动价值、库存 V/Q 或 θ 排序。探测器候选路线由 counterfactual port
+在同一个复用 fork 中继续提交生产
 `launch/move/choose_payment/orbit|land/Decision`；移动到行星的宣传来自 production
-`moveProbe` 到达事件，终点收益来自完整标准 leaf。没有路线长度、完成概率、tempo、发射/移动
-奖励或 PASS 惩罚；PASS 与无关动作不会收到路线摘要，没有正收益终点时探测器动作不获推荐。
-多探测器候选按 next action 独立归因，Vroot 不汇总未来终点，因此不会重复占用同一收益。
+`moveProbe` 到达事件，终点收益、成本、科技减免和奖励全部来自完整标准 leaf。只有已解析且
+终点已兑现分为正的路线可选，最高目标分路线的当前 `nextAction` 获得推荐；没有路线长度、
+完成概率、tempo、发射/移动奖励或 PASS 惩罚。多探测器候选按 next action 独立归因，不共享
+终点或沿途收益。
 
-θ₀ 仅用于 leaf 未兑现资产。等价于 5 分的数量分别是：1 信用、1 能源、2 数据、2 宣传、
-2 普通牌、1.5 外星人牌；因此单单位权重为信用=5、能源=5、数据=2.5、宣传=2.5、
-普通牌=2.5、外星人牌=10/3。外星人接触/痕迹只是标准盘面进度字段，不代替外星人牌估值。
-已兑现分按真实分 1:1；终局 leaf 只取真实终局分，不再叠加资产。
-PASS 没有固定惩罚，和其他行动一样只评价真实执行后的 leaf。
+信用、能源和移动只用于报告该标准路线的实耗、余步和可执行缺口；宣传与卡牌不直接计分。
+当标准叶真实取得橙色科技，且当前存在因资源耗尽未完成的探测器路线时，该科技行动可作为
+补缺步骤；它自身的分数不参与探测器目标排序。其他扫描、数据、科技和库存路径本阶段不估值。
+完成主要行动后规则要求的 PASS/结束回合只是控制流兜底，不继承探测器目标收益。
 
 反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
 StateStore、working state、Effect Session 与独立分支 RNG，再调用生产 registry/executor。

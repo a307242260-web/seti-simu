@@ -9,21 +9,11 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
-  const EVALUATION_MODEL = "counterfactual-probe-route-v1";
-  const PARAMETER_VERSION = "seti-theta0-probe-v1";
+  const EVALUATION_MODEL = "counterfactual-probe-goal-v1";
+  const PARAMETER_VERSION = "seti-probe-goal-v1";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
   const PROBE_FAMILIES = Object.freeze(new Set(["launch", "move", "orbit", "land"]));
-  const DEFAULT_PARAMETERS = Object.freeze({
-    parameterVersion: PARAMETER_VERSION,
-    resourceValues: Object.freeze({
-      credits: 5,
-      energy: 5,
-      availableData: 2.5,
-      publicity: 2.5,
-      ordinaryCard: 2.5,
-      alienCard: 10 / 3,
-    }),
-  });
+  const DEFAULT_PARAMETERS = Object.freeze({ parameterVersion: PARAMETER_VERSION });
 
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
@@ -37,24 +27,10 @@
   }
 
   function mergeParameters(input = {}) {
-    const resourceValues = {
-      ...DEFAULT_PARAMETERS.resourceValues,
-      ...(input.resourceValues || {}),
-    };
-    for (const [key, value] of Object.entries(resourceValues)) {
-      if (!Number.isFinite(Number(value)) || Number(value) < 0) {
-        throw new TypeError(`leaf 资源价值 ${key} 必须是非负有限数值`);
-      }
-      resourceValues[key] = Number(value);
-    }
-    return deepFreeze({
-      parameterVersion: String(input.parameterVersion || PARAMETER_VERSION),
-      resourceValues,
-    });
+    return deepFreeze({ parameterVersion: String(input.parameterVersion || PARAMETER_VERSION) });
   }
 
-  function evaluateState(observation, seatId, inputParameters = {}) {
-    const parameters = mergeParameters(inputParameters);
+  function evaluateState(observation, seatId) {
     if (observation?.schemaVersion !== outcomeModel.OBSERVATION_SCHEMA_VERSION
       || observation?.viewer?.seatId !== seatId
       || observation?.outcomeProjection?.schemaVersion !== outcomeModel.PROJECTION_SCHEMA_VERSION) {
@@ -65,121 +41,122 @@
     const realizedScore = terminal
       ? finite(projection.scoring.officialTerminalScore)
       : finite(projection.scoring.realizedScore);
-    const assetBreakdown = {
-      credits: finite(projection.assets.credits) * parameters.resourceValues.credits,
-      energy: finite(projection.assets.energy) * parameters.resourceValues.energy,
-      availableData: finite(projection.assets.availableData) * parameters.resourceValues.availableData,
-      publicity: finite(projection.assets.publicity) * parameters.resourceValues.publicity,
-      ordinaryCard: finite(projection.assets.ordinaryCards) * parameters.resourceValues.ordinaryCard,
-      alienCard: finite(projection.assets.alienCards) * parameters.resourceValues.alienCard,
-    };
-    const unrealizedAssets = terminal
-      ? 0
-      : Object.values(assetBreakdown).reduce((total, value) => total + value, 0);
     return deepFreeze({
       schemaVersion: outcomeModel.VALUE_SCHEMA_VERSION,
       evaluationModel: EVALUATION_MODEL,
-      parameterVersion: parameters.parameterVersion,
+      parameterVersion: PARAMETER_VERSION,
       terminal,
       realizedScore,
-      unrealizedAssets,
-      total: realizedScore + unrealizedAssets,
-      assetBreakdown,
+      total: realizedScore,
+      resourceFacts: {
+        credits: finite(projection.assets.credits),
+        energy: finite(projection.assets.energy),
+        publicity: finite(projection.assets.publicity),
+        ordinaryCards: finite(projection.assets.ordinaryCards),
+        alienCards: finite(projection.assets.alienCards),
+      },
       fieldPaths: {
         realizedScore: terminal
           ? "outcomeProjection.scoring.officialTerminalScore"
           : "outcomeProjection.scoring.realizedScore",
-        assets: outcomeModel.ASSET_PATHS,
+        resources: outcomeModel.ASSET_PATHS,
       },
     });
   }
 
-  function deltaValue(delta, parameters) {
-    return finite(delta?.realizedScore)
-      + finite(delta?.credits) * parameters.resourceValues.credits
-      + finite(delta?.energy) * parameters.resourceValues.energy
-      + finite(delta?.availableData) * parameters.resourceValues.availableData
-      + finite(delta?.publicity) * parameters.resourceValues.publicity
-      + finite(delta?.ordinaryCards) * parameters.resourceValues.ordinaryCard
-      + finite(delta?.alienCards) * parameters.resourceValues.alienCard;
-  }
-
-  function unresolved(outcome, code) {
+  function unavailable(outcome, code) {
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
       score: null,
-      qProbe: null,
+      selectable: false,
+      priorityClass: -1,
       status: outcome?.status || "unresolved",
       confidence: outcome?.confidence || "none",
       reasonCodes: [code],
     });
   }
 
-  function evaluateOutcome(context, action, inputParameters = {}) {
+  function evaluateOutcome(context, action) {
     const outcome = (context?.actionOutcomes || []).find((candidate) => (
       candidate?.actionId === action?.actionId
     ));
-    if (!outcome) return unresolved(null, "outcome-missing");
+    if (!outcome) return unavailable(null, "outcome-missing");
     if (outcome.schemaVersion !== OUTCOME_SCHEMA_VERSION || outcome.status !== "settled") {
-      return unresolved(outcome, outcome.code || "outcome-unresolved");
+      return unavailable(outcome, outcome.code || "outcome-unresolved");
     }
-    const parameters = mergeParameters(inputParameters);
     const rootValue = outcome.rootObservation
-      ? evaluateState(outcome.rootObservation, context.seatId, parameters)
+      ? evaluateState(outcome.rootObservation, context.seatId)
       : null;
+    if (!rootValue) return unavailable(outcome, "outcome-root-missing");
+
     const isProbeAction = PROBE_FAMILIES.has(action?.family);
+    const hasIncompleteProbeRoute = (context?.actionOutcomes || []).some((candidateOutcome) => (
+      candidateOutcome?.status === "settled"
+      && (candidateOutcome.leaves || []).some((leaf) => {
+        const candidate = leaf?.observation?.outcomeProjection?.progress?.probeRoute?.candidate;
+        return candidate && !candidate.endpointActionId;
+      })
+    ));
     const evaluatedLeaves = (outcome.leaves || [])
-      .filter((leaf) => leaf?.observation)
+      .filter((leaf) => leaf?.status !== "failed" && leaf?.observation)
       .map((leaf) => {
-        const leafValue = evaluateState(leaf.observation, context.seatId, parameters);
+        const leafValue = evaluateState(leaf.observation, context.seatId);
         const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
-        const currentActionDelta = summary
-          ? deltaValue(summary.currentDelta, parameters)
-          : (rootValue ? leafValue.total - rootValue.total : null);
-        const remainingRouteNet = summary
-          ? deltaValue(summary.remainingRouteDelta, parameters)
-          : 0;
-        const qProbe = summary ? currentActionDelta + remainingRouteNet : null;
-        return { leaf, leafValue, summary, currentActionDelta, remainingRouteNet, qProbe };
+        const goalScoreGain = finite(summary?.goalScoreGain);
+        return { leaf, leafValue, summary, goalScoreGain };
       })
       .filter((candidate) => (
-        !isProbeAction || (candidate.summary?.endpointActionId && candidate.qProbe > 0)
+        !isProbeAction
+        || (candidate.summary?.endpointActionId && candidate.goalScoreGain > 0)
       ))
       .sort((left, right) => (
-        finite(right.qProbe ?? (right.leafValue.total - rootValue?.total))
-        - finite(left.qProbe ?? (left.leafValue.total - rootValue?.total))
+        right.goalScoreGain - left.goalScoreGain
+        || finite(left.summary?.routeCost?.credits) - finite(right.summary?.routeCost?.credits)
+        || finite(left.summary?.routeCost?.energy) - finite(right.summary?.routeCost?.energy)
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
     const best = evaluatedLeaves[0] || null;
-    if (!best || !rootValue) {
-      return unresolved(outcome, isProbeAction ? "probe-route-no-positive-net" : "outcome-has-no-leaf");
+    if (!best) {
+      return unavailable(outcome, isProbeAction ? "probe-goal-no-positive-endpoint" : "outcome-has-no-leaf");
     }
-    const score = isProbeAction
-      ? best.qProbe
-      : best.leafValue.total - rootValue.total;
+
+    const controlFlow = action?.phase === "conditional";
+    const endTurn = action?.family === "end_turn";
+    const pass = action?.family === "pass";
+    const orangeTechDelta = finite(
+      best.leaf.observation.outcomeProjection.progress?.orangeTechCount,
+    ) - finite(
+      outcome.rootObservation.outcomeProjection.progress?.orangeTechCount,
+    );
+    const fillsProbeTechGap = hasIncompleteProbeRoute && orangeTechDelta > 0;
+    const selectable = isProbeAction || fillsProbeTechGap || controlFlow || endTurn || pass;
+    if (!selectable) return unavailable(outcome, "not-current-probe-goal-step");
+    const priorityClass = isProbeAction ? 3 : fillsProbeTechGap ? 2 : controlFlow ? 2 : endTurn ? 1 : 0;
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score,
-      qProbe: isProbeAction ? best.qProbe : null,
+      score: isProbeAction ? best.goalScoreGain : 0,
+      selectable: true,
+      priorityClass,
+      goalScoreGain: isProbeAction ? best.goalScoreGain : 0,
       status: outcome.status,
       confidence: outcome.confidence || "high",
       rootValue,
       leafValue: best.leafValue,
-      currentActionDelta: best.currentActionDelta,
-      remainingRouteNet: isProbeAction ? best.remainingRouteNet : 0,
-      publicityAlongRoute: isProbeAction ? finite(best.summary?.publicityAlongRoute) : 0,
-      endpointDelta: isProbeAction ? cloneDelta(best.summary?.endpointDelta) : null,
+      actualScoreDelta: best.leafValue.realizedScore - rootValue.realizedScore,
+      orangeTechDelta,
       probeRouteSummary: isProbeAction ? best.summary : null,
       selectedLeafId: best.leaf.leafId || null,
       actionChain: best.leaf.actionChain || [],
       reasonCodes: [isProbeAction
-        ? "probe-route-standard-outcomes"
-        : "counterfactual-standard-execution"],
+        ? "probe-goal-standard-route"
+        : fillsProbeTechGap
+          ? "probe-route-orange-tech-gap"
+        : controlFlow
+          ? "required-standard-decision"
+          : endTurn
+            ? "end-turn-no-probe-step"
+            : "pass-last-resort"],
     });
-  }
-
-  function cloneDelta(value) {
-    return value == null ? null : { ...value };
   }
 
   return Object.freeze({

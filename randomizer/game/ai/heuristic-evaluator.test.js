@@ -17,6 +17,7 @@ const selected = evaluator.selectLegalAction(context, {
   evaluateAction: (_current, action) => ({
     score: action.actionId === "a-high" ? 8 : 2,
     status: "settled",
+    selectable: true,
   }),
 });
 assert.equal(selected.actionId, "a-high", "排序只能消费 action outcome 的 leaf value");
@@ -26,7 +27,7 @@ const tied = evaluator.selectLegalAction({
   ...context,
   legalActions: [descriptor("z-action"), descriptor("a-action")],
 }, {
-  evaluateAction: () => ({ score: 5, status: "settled" }),
+  evaluateAction: () => ({ score: 5, status: "settled", selectable: true }),
 });
 assert.equal(tied.actionId, "a-action", "同 Q 必须使用稳定 actionId tie-break，不依赖枚举顺序");
 
@@ -36,6 +37,19 @@ const unresolved = evaluator.selectLegalAction({
 }, {
   evaluateAction: () => ({ score: null, status: "unresolved" }),
 });
-assert.equal(unresolved.actionId, "a-action", "全部未完成时只能按明确状态与 actionId 稳定选择");
+assert.equal(unresolved, null, "失败或 unresolved 候选必须 fail closed，不能被稳定 tie-break 误选");
+
+const goalBeforePass = evaluator.selectLegalAction({
+  ...context,
+  legalActions: [descriptor("pass"), { ...descriptor("move"), family: "move" }],
+}, {
+  evaluateAction: (_current, candidate) => ({
+    score: candidate.family === "move" ? 1 : 0,
+    status: "settled",
+    selectable: true,
+    priorityClass: candidate.family === "move" ? 3 : 0,
+  }),
+});
+assert.equal(goalBeforePass.actionId, "move", "已解析正分路线的下一步必须优先于 PASS");
 
 console.log("heuristic evaluator outcome behavior tests passed");

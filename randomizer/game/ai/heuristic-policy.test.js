@@ -66,6 +66,11 @@ const current = policyPort.createDecisionContext({
           routeOutcomeRef: "launch:p1:7→move:p1:8→orbit:p1:9",
           endpointActionId: "orbit:p1:9",
           endpointKind: "orbit",
+          endpointPlanetId: "earth",
+          goalScoreGain: 10,
+          routeCost: { credits: 2, energy: 1, movementSteps: 1 },
+          resourceGap: { credits: 0, energy: 0, movementSteps: 1 },
+          remainingResources: { credits: 0, energy: 0 },
           currentDelta: { credits: 0 },
           remainingRouteDelta: { realizedScore: 10 },
           publicityAlongRoute: 0,
@@ -91,7 +96,7 @@ const validation = policyPort.validatePolicyDecision(current, first, {
 });
 assert.equal(validation.ok, true);
 
-const thetaObservation = outcomeModel.createDecisionObservation({
+const inventoryObservation = outcomeModel.createDecisionObservation({
   publicState: {
     players: [{
       id: "p1",
@@ -119,24 +124,16 @@ const thetaObservation = outcomeModel.createDecisionObservation({
     privateAlienCards: [{ id: "private-alien-1" }],
   },
 }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
-const thetaValue = expectedScoreEvaluator.evaluateState(thetaObservation, "p1");
-assert.deepEqual(expectedScoreEvaluator.DEFAULT_PARAMETERS.resourceValues, {
-  credits: 5,
-  energy: 5,
-  availableData: 2.5,
-  publicity: 2.5,
-  ordinaryCard: 2.5,
-  alienCard: 10 / 3,
+const inventoryValue = expectedScoreEvaluator.evaluateState(inventoryObservation, "p1");
+assert.equal(inventoryValue.total, 0, "信用、能源、宣传和卡牌只作为路线事实，不得形成统一库存 V");
+assert.deepEqual(inventoryValue.resourceFacts, {
+  credits: 1,
+  energy: 2,
+  publicity: 4,
+  ordinaryCards: 2,
+  alienCards: 2,
 });
-assert.equal(thetaValue.assetBreakdown.credits, 5);
-assert.equal(thetaValue.assetBreakdown.energy, 10);
-assert.equal(thetaValue.assetBreakdown.availableData, 7.5);
-assert.equal(thetaValue.assetBreakdown.publicity, 10);
-assert.equal(thetaValue.assetBreakdown.ordinaryCard, 5);
-assert.equal(thetaValue.assetBreakdown.alienCard, 20 / 3);
-assert.equal(thetaValue.total, 265 / 6, "本阶段只保留 θ₀ 与已兑现分，不给科技/扫描等其他路径加值");
-assert.equal(Object.hasOwn(thetaValue.assetBreakdown, "alien"), false);
-assert.equal(thetaValue.schemaVersion, outcomeModel.VALUE_SCHEMA_VERSION);
+assert.equal(inventoryValue.schemaVersion, outcomeModel.VALUE_SCHEMA_VERSION);
 
 assert.throws(
   () => policy.decide({ schemaVersion: policyPort.CONTEXT_SCHEMA_VERSION, legalActions: [] }),

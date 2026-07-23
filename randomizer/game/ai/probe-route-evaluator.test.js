@@ -48,6 +48,11 @@ const routeBase = {
   currentOutcomeRef: "move:1→choose_payment:1",
   endpointActionId: "orbit:1",
   endpointKind: "orbit",
+  endpointPlanetId: "mars",
+  goalScoreGain: 20,
+  routeCost: { credits: 0, energy: 3, movementSteps: 2 },
+  resourceGap: { credits: 0, energy: 0, movementSteps: 1 },
+  remainingResources: { credits: 4, energy: 1 },
   publicityOutcomeRefs: ["move:2→choose_payment:2"],
 };
 
@@ -61,10 +66,10 @@ const publicityRoute = evaluationFor(action("move:1", "move"), {
   publicityAlongRoute: 1,
   endpointDelta: { energy: -1, realizedScore: 20 },
 });
-assert.equal(publicityRoute.currentActionDelta, -5);
-assert.equal(publicityRoute.remainingRouteNet, 12.5);
-assert.equal(publicityRoute.qProbe, 7.5);
-assert.equal(publicityRoute.publicityAlongRoute, 1, "沿途宣传只来自真实 checkpoint 的 publicity delta");
+assert.equal(publicityRoute.goalScoreGain, 20);
+assert.equal(publicityRoute.score, 20);
+assert.equal(publicityRoute.probeRouteSummary.publicityAlongRoute, 1,
+  "沿途宣传只保留标准叶事实，不能直接进入目标得分");
 
 const landingRoute = evaluationFor(action("move:land", "move"), {
   ...routeBase,
@@ -73,19 +78,21 @@ const landingRoute = evaluationFor(action("move:land", "move"), {
   routeOutcomeRef: "move:land→choose_payment:land→land:1→choose_target:trace",
   endpointActionId: "land:1",
   endpointKind: "land",
+  goalScoreGain: 18,
   currentDelta: { energy: -1 },
   remainingRouteDelta: { energy: -2, availableData: 2, realizedScore: 18 },
   publicityAlongRoute: 0,
   publicityOutcomeRefs: [],
   endpointDelta: { energy: -2, availableData: 2, realizedScore: 18 },
 });
-assert.equal(landingRoute.qProbe, 8, "着陆完整 Decision 链的即时资源和分数必须共同进入真实净值");
+assert.equal(landingRoute.score, 18, "着陆目标只读取完整标准 Decision 链兑现的真实分数");
 
 const shortRoute = evaluationFor(action("move:short", "move"), {
   ...routeBase,
   nextActionId: "move:short",
   nextActionFamily: "move",
   routeOutcomeRef: "move:short→orbit:1",
+  goalScoreGain: 10,
   currentDelta: { energy: -1 },
   remainingRouteDelta: { realizedScore: 10 },
   publicityAlongRoute: 0,
@@ -96,12 +103,13 @@ const longRoute = evaluationFor(action("move:long", "move"), {
   nextActionId: "move:long",
   nextActionFamily: "move",
   routeOutcomeRef: "move:long→move:extra→orbit:1",
+  goalScoreGain: 10,
   currentDelta: { energy: -1 },
   remainingRouteDelta: { realizedScore: 10 },
   publicityAlongRoute: 0,
   endpointDelta: { realizedScore: 10 },
 });
-assert.equal(shortRoute.qProbe, longRoute.qProbe, "路径长短本身不得折价");
+assert.equal(shortRoute.score, longRoute.score, "路径长短本身不得折价");
 
 const pass = evaluationFor(action("pass:1", "pass"), {
   ...routeBase,
@@ -113,20 +121,21 @@ const pass = evaluationFor(action("pass:1", "pass"), {
   publicityAlongRoute: 0,
   endpointDelta: { realizedScore: 99 },
 });
-assert.equal(pass.qProbe, null, "PASS 不得继承探测器未来路线值");
-assert.equal(pass.remainingRouteNet, 0);
+assert.equal(pass.score, 0, "PASS 不得继承探测器未来路线值");
+assert.equal(pass.probeRouteSummary, null);
 
 const firstProbe = evaluationFor(action("move:probe-1", "move", 1), {
   ...routeBase,
   nextActionId: "move:probe-1",
   nextActionFamily: "move",
   routeOutcomeRef: "move:probe-1→orbit:shared",
+  goalScoreGain: 6,
   currentDelta: {},
   remainingRouteDelta: { realizedScore: 6 },
   publicityAlongRoute: 0,
   endpointDelta: { realizedScore: 6 },
 });
-assert.equal(firstProbe.qProbe, 6);
+assert.equal(firstProbe.score, 6);
 assert.equal(firstProbe.probeRouteSummary.nextActionId, "move:probe-1",
   "多探测器候选只归因当前 next action，不在 Vroot 汇总重复终点收益");
 
@@ -137,6 +146,7 @@ const noEndpoint = evaluationFor(action("move:loop", "move"), {
   routeOutcomeRef: "move:loop→move:back",
   endpointActionId: null,
   endpointKind: null,
+  goalScoreGain: 0,
   currentDelta: { energy: -1 },
   remainingRouteDelta: { publicity: 1 },
   publicityAlongRoute: 1,

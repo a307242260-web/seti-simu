@@ -171,15 +171,13 @@ try {
       seatId: playerId,
       actionOutcomes: [projectedLanding],
     }, landing);
-    assert.ok(
-      Math.abs(
-        landingEvaluation.qProbe
-        - (landingEvaluation.leafValue.total - landingEvaluation.rootValue.total)
-      ) < Number.EPSILON * 100,
-      "探测器 Q 必须完全等于实际 root/leaf 字段估值差",
+    assert.equal(
+      landingEvaluation.goalScoreGain,
+      landingEvaluation.leafValue.realizedScore - landingEvaluation.rootValue.realizedScore,
+      "探测器目标收益必须完全等于实际 root/leaf 已兑现分字段差",
     );
-    assert.equal(landingEvaluation.currentActionDelta, landingEvaluation.qProbe);
-    assert.equal(landingEvaluation.remainingRouteNet, 0);
+    assert.equal(landingEvaluation.actualScoreDelta, landingEvaluation.goalScoreGain);
+    assert.equal(landingEvaluation.selectable, true);
     assert.match(landingEvaluation.probeRouteSummary.endpointActionId, /^land:/);
     const rootAssets = projectedLanding.rootObservation.outcomeProjection.assets;
     assert.equal(projectedLanding.leaves.every((leaf) => (

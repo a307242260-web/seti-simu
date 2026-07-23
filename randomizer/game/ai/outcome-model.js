@@ -130,6 +130,13 @@
     return finiteOrNull(publicPlayer?.techCount) ?? 0;
   }
 
+  function countOrangeTech(publicPlayer) {
+    const ownedTiles = publicPlayer?.techState?.ownedTiles || {};
+    return Object.entries(ownedTiles).filter(([tileId, owned]) => (
+      owned && String(tileId).startsWith("orange")
+    )).length;
+  }
+
   function boardOf(source) {
     return source?.publicState?.board || source?.board || {};
   }
@@ -245,6 +252,7 @@
       },
       progress: {
         techCount: countTech(publicPlayer),
+        orangeTechCount: countOrangeTech(publicPlayer),
         traceCount: traces.traceCount,
         alienContacts: traces.alienContacts,
         probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),
@@ -321,13 +329,37 @@
         String(actionId).startsWith("orbit:") || String(actionId).startsWith("land:")
       )) || null
       : null;
+    const rootProjection = rootObservation.outcomeProjection;
+    const finalProjection = final.outcomeProjection;
+    const routeDelta = deltaProjection(rootProjection, finalProjection);
+    const remainingMoves = checkpoints.slice(1)
+      .filter((checkpoint) => checkpoint.family === "move").length;
+    const endpointTarget = endpoint?.target || {};
     return {
       nextActionId: fullActionChain[0],
       nextActionFamily: firstFamily,
+      nextActionSummary: checkpoints[0].summary || null,
       currentOutcomeRef: checkpoints[0].actionChain.join("→"),
       routeOutcomeRef: fullActionChain.join("→"),
       endpointActionId,
       endpointKind: endpointActionId ? endpointActionId.split(":")[0] : null,
+      endpointPlanetId: endpointTarget.planetId ?? null,
+      endpointRocketId: endpointTarget.rocketId ?? checkpoints[0].target?.rocketId ?? null,
+      goalScoreGain: routeDelta.realizedScore,
+      routeCost: {
+        credits: Math.max(0, -routeDelta.credits),
+        energy: Math.max(0, -routeDelta.energy),
+        movementSteps: checkpoints.filter((checkpoint) => checkpoint.family === "move").length,
+      },
+      resourceGap: {
+        credits: 0,
+        energy: 0,
+        movementSteps: remainingMoves,
+      },
+      remainingResources: {
+        credits: finalProjection.assets.credits,
+        energy: finalProjection.assets.energy,
+      },
       currentDelta: deltaProjection(rootObservation.outcomeProjection, current.outcomeProjection),
       remainingRouteDelta: deltaProjection(current.outcomeProjection, final.outcomeProjection),
       publicityAlongRoute,
@@ -348,6 +380,8 @@
           const checkpoints = (leaf.routeCheckpoints || []).map((checkpoint) => ({
             actionId: checkpoint.actionId,
             family: checkpoint.family,
+            target: clone(checkpoint.target || {}),
+            summary: checkpoint.summary || null,
             actionChain: clone(checkpoint.actionChain || []),
             observation: createDecisionObservation(checkpoint.observation, options),
           }));

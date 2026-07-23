@@ -31,13 +31,18 @@
           action,
           score: finiteScore(evaluation.score),
           status: evaluation.status || null,
+          selectable: evaluation.selectable === true,
+          priorityClass: Number(evaluation.priorityClass) || 0,
         };
       });
     if (!available.length) return null;
-    const resolved = available.filter((entry) => entry.score != null);
-    const pool = resolved.length ? resolved : available;
+    const pool = available.filter((entry) => (
+      entry.selectable && entry.status === "settled" && entry.score != null
+    ));
+    if (!pool.length) return null;
     return pool.sort((left, right) => (
-      (right.score ?? 0) - (left.score ?? 0)
+      right.priorityClass - left.priorityClass
+      || (right.score ?? 0) - (left.score ?? 0)
       || String(left.action.actionId).localeCompare(String(right.action.actionId))
     ))[0]?.action || null;
   }
