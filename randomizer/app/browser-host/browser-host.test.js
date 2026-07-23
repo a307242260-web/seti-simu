@@ -7,8 +7,10 @@ const stateApi = require("../../game/state/state-store");
 const projectionApi = require("./projection-adapter");
 const residentProjectionApi = require("./resident-projection");
 const finalReadModelApi = require("../../game/final-read-model");
+const browserReadModelApi = require("../../game/browser-read-model");
 const viewStateApi = require("./view-state-store");
 const inputApi = require("./input-adapter");
+const actionInteractionApi = require("../action-interaction-runtime");
 
 function deepFreeze(value) {
   if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
@@ -56,11 +58,35 @@ function createFinalReadModel() {
 }
 
 function createProjectionWithFinalReadModel() {
+  const browserReadModelOwner = browserReadModelApi.createBrowserReadModelOwner({
+    solar: {
+      createSolarSnapshot: () => ({
+        planetLocations: [{ planetId: "earth", x: 0, y: 4 }],
+        visibleContents: [],
+      }),
+    },
+    aliens: {
+      ALIEN_SLOT_IDS: [1, 2],
+      getAlienSlot: (alienState, slotId) => alienState?.slots?.[slotId] || null,
+      JIUZHE_ALIEN_ID: "jiuzhe",
+    },
+    tech: {
+      isSupplySelectionActive: (ui) => Boolean(ui?.techSelectionActive),
+      listTakeableTiles: () => ["blue1"],
+    },
+  });
   return projectionApi.createBrowserProjectionAdapter({
     stateStore: stateApi.createStateStore(createState()),
     visibilityPolicy(state, viewer, context) {
       const visible = projectionApi.defaultVisibilityPolicy(state, viewer, context);
-      visible.resident.finalReadModel = createFinalReadModel();
+      visible.resident = {
+        finalReadModel: createFinalReadModel(),
+        browserReadModel: browserReadModelOwner.project(state, {
+          viewer,
+          createHandPresentation: (player) => player?.hand || [],
+          createReservedCardItems: (player) => player?.reservedCards || [],
+        }),
+      };
       return visible;
     },
   }).projectCommitted({
@@ -277,6 +303,121 @@ function createState() {
     () => residentProjectionApi.selectFinalUiProjection(deepFreeze(withoutReadModel)),
     /缺少 seti-final-read-model-v1/,
   );
+})();
+
+(function testBoardEventRenderAndTurnSelectorsAreFrozenNarrowDtos() {
+  const projection = createProjectionWithFinalReadModel();
+  const events = residentProjectionApi.selectEventsProjection(projection);
+  const actionInteraction = residentProjectionApi.selectActionInteractionProjection(projection);
+  const turn = residentProjectionApi.selectTurnFlowProjection(projection);
+  const board = residentProjectionApi.selectBoardCoordinateProjection(projection);
+  const render = residentProjectionApi.selectRenderProjection(projection);
+
+  assert.deepEqual(Object.keys(actionInteraction).sort(), [
+    "activeRocketId", "identity", "industryBorrowMode", "schemaVersion",
+  ]);
+  assert.equal(turn.displayedTurnNumber, 2);
+  assert.deepEqual(turn.roundOrderPlayerIds, []);
+  assert.deepEqual(board.planetLocations, [{ planetId: "earth", x: 0, y: 4 }]);
+  assert.deepEqual(events.clickableTechTileIds, []);
+  assert.equal(Object.hasOwn(render, "solar"), false);
+  assert.equal(Object.hasOwn(render, "players"), false);
+  assert.equal(Object.hasOwn(render, "pieces"), false);
+  assert.deepEqual(Object.keys(render.dataPresentation).sort(), [
+    "aomomoTokens", "blueDropZones", "playerTokens", "sectorTokensBySectorId",
+  ]);
+  assert.deepEqual(Object.keys(render.markerPresentation).sort(), [
+    "anomalies", "piratesRaid", "planetFossils", "runezuSymbols",
+  ]);
+  for (const dto of [events, actionInteraction, turn, board, render]) {
+    assert.equal(Object.isFrozen(dto), true);
+    assert.equal(JSON.stringify(dto).includes("ruleRoot"), false);
+  }
+
+  assert.throws(
+    () => residentProjectionApi.assertTurnFlowProjection(Object.freeze({ ...turn, forged: true })),
+    /字段不匹配/,
+  );
+  assert.throws(
+    () => residentProjectionApi.assertRenderProjection(structuredClone(render)),
+    /必须深冻结/,
+  );
+  const forgedRender = structuredClone(projection);
+  forgedRender.resident.browserReadModel.render.boardChrome.solarState = {};
+  assert.throws(
+    () => residentProjectionApi.selectRenderProjection(deepFreeze(forgedRender)),
+    /字段不匹配/,
+  );
+  const missingRenderField = structuredClone(projection);
+  delete missingRenderField.resident.browserReadModel.render.dataPresentation.playerTokens;
+  assert.throws(
+    () => residentProjectionApi.selectRenderProjection(deepFreeze(missingRenderField)),
+    /字段不匹配/,
+  );
+
+  const renderSource = fs.readFileSync(path.join(__dirname, "../render-runtime.js"), "utf8");
+  const renderOwnerBody = renderSource.slice(
+    renderSource.indexOf("function createRenderRuntime"),
+    renderSource.indexOf("return {", renderSource.indexOf("function createRenderRuntime")),
+  );
+  assert.equal(
+    /\b(?:solar|players|rocketActions|planetStats|endGameScoring|finalScoring|data|aliens|jiuzhe|chong|aomomo|runezu|industry|tech)\./
+      .test(renderOwnerBody),
+    false,
+  );
+})();
+
+(function testPrimaryActionUiOnlyPresentsAndSubmitsCompositionDescriptors() {
+  const submitted = [];
+  const pickerRequests = [];
+  const actionsByFamily = {
+    launch: [{
+      schemaVersion: "seti-standard-action-v1", actionId: "launch:1", family: "launch",
+      target: null, summary: "发射",
+    }],
+    orbit: [1, 2].map((rocketId) => ({
+      schemaVersion: "seti-standard-action-v1", actionId: `orbit:${rocketId}`, family: "orbit",
+      target: { rocketId, planetId: "mars" }, summary: `R${rocketId} 环绕火星`,
+    })),
+    land: [{
+      schemaVersion: "seti-standard-action-v1", actionId: "land:1", family: "land",
+      target: { rocketId: 1, planetId: "mars", type: "planet" }, summary: "登陆火星",
+    }],
+    move: [{
+      schemaVersion: "seti-standard-action-v1", actionId: "move:1", family: "move",
+      target: { rocketId: 1, deltaX: 1, deltaY: 0 }, summary: "移动",
+    }],
+  };
+  const runtime = actionInteractionApi.createPrimaryActionUiRuntime({
+    enumerateActions: ({ family }) => structuredClone(actionsByFamily[family] || []),
+    submitAction(action) { submitted.push(["main", action]); return { ok: true }; },
+    submitQuickAction(action) { submitted.push(["quick", action]); return { ok: true }; },
+    canStartMainAction: () => true,
+    getMainActionStartBlockReason: () => null,
+    getAvailablePlutoAction: () => ({ ok: false }),
+    requestLandTargetPicker(options) { pickerRequests.push(options); return { ok: true }; },
+    executePlutoAction: () => assert.fail("普通 descriptor 路径不应执行冥王星 fallback"),
+    setStatusNote: () => {},
+    renderStateReadout: () => {},
+    renderPlayerStats: () => {},
+    updateActionButtons: () => {},
+    isAiInputLocked: () => false,
+    blockManualAiInput: () => ({ ok: false }),
+    getHighlightedRocketId: () => null,
+    getActionInteractionProjection: () => Object.freeze({ activeRocketId: 1 }),
+    beginMovePaymentSelection: () => assert.fail("首次 move intent 应直接提交 descriptor"),
+  });
+
+  assert.equal(runtime.launchRocketForCurrentPlayer().ok, true);
+  assert.equal(runtime.orbitForCurrentPlayer().ok, true);
+  assert.equal(pickerRequests[0].choices.every((choice) => choice.standardAction), true);
+  assert.equal(runtime.landForCurrentPlayer().ok, true);
+  assert.equal(runtime.moveActiveRocket(1, 0).ok, true);
+  assert.deepEqual(submitted.map(([kind, action]) => [kind, action.actionId]), [
+    ["main", "launch:1"],
+    ["main", "land:1"],
+    ["quick", "move:1"],
+  ]);
 })();
 
 (function testSessionProjectionUsesOnlyConsistentInspectObserveAndHidesDecisionChoices() {

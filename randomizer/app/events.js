@@ -105,7 +105,8 @@
       amiba,
       runezu,
       techRenderContext,
-      getRuleReadout,
+      getEventsProjection,
+      assertEventsProjection,
       getActiveDecisionChoices,
       setStatusNote,
       randomizeAll,
@@ -282,6 +283,10 @@
       logAomomoDebugCoordinates,
       resize,
     } = context;
+    if (typeof getEventsProjection !== "function" || typeof assertEventsProjection !== "function") {
+      throw new TypeError("bindAppEvents requires frozen EventsProjection provider");
+    }
+    const readEventsProjection = () => assertEventsProjection(getEventsProjection());
     const hasActiveDecisionKind = (kind) => (getActiveDecisionChoices?.() || []).some((choice) => (
       (choice?.target || choice?.standardAction?.target)?.kind === kind
     ));
@@ -555,24 +560,15 @@
       const alienSlotId = Number(button.dataset.alienSlot);
       const pickerStep = button.dataset.alienPickerStep;
       const allowedTraceTypes = state.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
-      const { alienGameState } = getRuleReadout();
-      const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
-      const useJiuzheGrid = jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.JIUZHE_ALIEN_ID);
-      const useYichangdianGrid = yichangdian?.isYichangdianRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.YICHANGDIAN_ALIEN_ID);
-      const useFangzhouGrid = fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.FANGZHOU_ALIEN_ID);
-      const useBanrenmaGrid = banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.BANRENMA_ALIEN_ID);
-      const useChongGrid = chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.CHONG_ALIEN_ID);
-      const useAmibaGrid = amiba?.isAmibaRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.AMIBA_ALIEN_ID);
-      const useAomomoGrid = aomomo?.isAomomoRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.AOMOMO_ALIEN_ID);
-      const useRunezuGrid = runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)
-        || (alienSlot?.revealed && alienSlot.alienId === aliens.RUNEZU_ALIEN_ID);
+      const route = readEventsProjection().alienRoutesBySlotId[String(alienSlotId)]?.route || "standard";
+      const useJiuzheGrid = route === aliens.JIUZHE_ALIEN_ID;
+      const useYichangdianGrid = route === aliens.YICHANGDIAN_ALIEN_ID;
+      const useFangzhouGrid = route === aliens.FANGZHOU_ALIEN_ID;
+      const useBanrenmaGrid = route === aliens.BANRENMA_ALIEN_ID;
+      const useChongGrid = route === aliens.CHONG_ALIEN_ID;
+      const useAmibaGrid = route === aliens.AMIBA_ALIEN_ID;
+      const useAomomoGrid = route === aliens.AOMOMO_ALIEN_ID;
+      const useRunezuGrid = route === aliens.RUNEZU_ALIEN_ID;
 
       if (pickerStep === "alien") {
         if (useJiuzheGrid) {
@@ -868,8 +864,7 @@
       const unlockButton = event.target.closest("[data-fangzhou-unlock]");
       if (!unlockButton || unlockButton.disabled || !isDebugAlienTraceMode()) return;
       const traceType = unlockButton.dataset.fangzhouUnlock;
-      const { alienGameState } = getRuleReadout();
-      const alienSlotId = alienGameState.fangzhou?.revealedSlotId || 2;
+      const alienSlotId = readEventsProjection().fangzhouRevealedSlotId || 2;
       confirmFangzhouCard2Unlock(alienSlotId, traceType);
     });
     els.debugJiuzheButton?.addEventListener("click", () => {
@@ -1020,10 +1015,15 @@
       }
     });
     syncTechRenderContext();
-    tech.bindSupplyTileClicks(null, techRenderContext, els.techTiles, {
-      getGameState: () => getRuleReadout().techGameState,
-      onTileClick: handleSupplyTechTileClick,
-    });
+    for (const element of els.techTiles || []) {
+      element.draggable = false;
+      element.addEventListener("click", () => {
+        const tileId = element.dataset.techId;
+        if (!tileId) return;
+        const clickable = new Set(readEventsProjection().clickableTechTileIds);
+        if (clickable.has(tileId)) handleSupplyTechTileClick(tileId);
+      });
+    }
     els.logToggle.addEventListener("click", () => {
       setLogOpen(els.appWrap.classList.contains("log-collapsed"));
     });

@@ -1109,11 +1109,12 @@
               { id: "ccw", deltaX: -1, deltaY: 0 },
               { id: "in", deltaX: 0, deltaY: -1 },
             ];
-            const choices = (getMovableTokensForPlayer(player?.id) || []).flatMap((rocket) => directions
+            const choices = (getMovableTokensForPlayer(actionContext, player?.id) || []).flatMap((rocket) => directions
               .map((direction) => ({
                 rocket,
                 direction,
                 requiredMovePoints: getRequiredMovePointsForUi(
+                  actionContext,
                   player,
                   rocket.id,
                   direction.deltaX,

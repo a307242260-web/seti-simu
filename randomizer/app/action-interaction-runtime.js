@@ -176,7 +176,7 @@
         return INTERACTION_FOCUS.HAND_CARDS;
       }
       if (context.isCardSelectionActive()) return INTERACTION_FOCUS.PUBLIC_CARDS;
-      if (context.isTechTilePickingActive() || context.getRuleReadout().techGameState?.ui?.industryBorrowMode) {
+      if (context.isTechTilePickingActive() || context.getActionInteractionProjection().industryBorrowMode) {
         return INTERACTION_FOCUS.TECH_PANEL;
       }
       if (context.getPendingPiratesRaidDecision()) return INTERACTION_FOCUS.PLAYER_BOARD;
@@ -224,8 +224,8 @@
 
     function getSectorContentForMove(coordinate, workingRoot = null) {
       if (!coordinate) return null;
-      const root = workingRoot || context.getRuleReadout();
-      return solar.resolveVisibleContent(coordinate.x, coordinate.y, root.solarState)?.content || null;
+      if (!workingRoot) throw new TypeError("move legality query requires explicit workingRoot");
+      return solar.resolveVisibleContent(coordinate.x, coordinate.y, workingRoot.solarState)?.content || null;
     }
 
     function isAsteroidContent(content) {
@@ -287,73 +287,123 @@
       return { ok: false, message, ...extra };
     }
 
+    function listActions(family) {
+      const actions = context.enumerateActions({ family });
+      if (!Array.isArray(actions)) {
+        throw new TypeError(`Primary Action inputPort 未返回 ${family} descriptor 数组`);
+      }
+      return actions;
+    }
+
+    function submitMainAction(action) {
+      if (!action || action.schemaVersion !== "seti-standard-action-v1") {
+        return { ...failWithStatus("行动 descriptor 已失效"), code: "STANDARD_ACTION_NOT_LEGAL" };
+      }
+      return context.submitAction(action);
+    }
+
     function launchRocketForCurrentPlayer() {
-      return context.runAction("launch");
+      const [action] = listActions("launch");
+      return action
+        ? submitMainAction(action)
+        : { ...failWithStatus("当前无法发射"), code: "STANDARD_ACTION_NOT_LEGAL" };
     }
 
     function orbitForCurrentPlayer() {
       if (!context.canStartMainAction()) {
         return failWithStatus(context.getMainActionStartBlockReason() || "本回合已经开始或完成主要行动");
       }
-      const actionContext = context.createActionContext(context.getRuleReadout());
-      const normal = context.abilities.planet.getOrbitOptions(actionContext);
-      const placement = context.getCurrentPlanetActionPlacement(actionContext);
-      const preferredRocketId = normal?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
+      const descriptors = listActions("orbit");
+      const preferredRocketId = descriptors[0]?.target?.rocketId ?? null;
       const pluto = context.getAvailablePlutoAction("orbit", { preferredRocketId });
-      if (normal.ok && pluto.ok) return context.openPlutoActionChoicePicker("orbit");
-      if (!normal.ok && pluto.ok) return context.executePlutoAction("orbit", { preferredRocketId });
-      if (!normal.ok) {
-        context.renderPlayerStats();
-        context.updateActionButtons();
-        return failWithStatus(normal.message);
-      }
-      if (normal.needsChoice) {
-        context.requestLandTargetPicker({
-          ...normal,
+      if (descriptors.length && pluto.ok) {
+        return context.requestLandTargetPicker({
           resumeKind: "main-planet-action",
           actionType: "orbit",
           title: "选择环绕目标",
           selectLabel: "环绕到",
           confirmText: "确认环绕",
+          planet: { planetId: "orbit-choice", name: "环绕目标" },
+          choices: [
+            ...descriptors.map((standardAction) => ({
+              kind: "standard-action",
+              label: standardAction.summary || "环绕",
+              standardAction,
+            })),
+            { kind: "pluto", label: "环绕冥王星", preferredRocketId },
+          ],
+        });
+      }
+      if (!descriptors.length && pluto.ok) {
+        return context.executePlutoAction("orbit", { preferredRocketId });
+      }
+      if (!descriptors.length) {
+        context.renderPlayerStats();
+        context.updateActionButtons();
+        return { ...failWithStatus("当前无法环绕"), code: "STANDARD_ACTION_NOT_LEGAL" };
+      }
+      if (descriptors.length > 1) {
+        context.requestLandTargetPicker({
+          resumeKind: "main-planet-action",
+          actionType: "orbit",
+          title: "选择环绕目标",
+          selectLabel: "环绕到",
+          confirmText: "确认环绕",
+          planet: { planetId: "orbit-choice", name: "环绕目标" },
+          choices: descriptors.map((standardAction) => ({
+            kind: "standard-action",
+            label: standardAction.summary || "环绕",
+            standardAction,
+          })),
         });
         context.setStatusNote("请选择环绕目标");
         context.renderStateReadout();
         return { ok: true, pendingChoice: true };
       }
-      return context.runAction("orbit", { rocketId: normal.defaultRocketId });
+      return submitMainAction(descriptors[0]);
     }
 
     function landForCurrentPlayer() {
       if (!context.canStartMainAction()) {
         return failWithStatus(context.getMainActionStartBlockReason() || "本回合已经开始或完成主要行动");
       }
-      const actionContext = context.createActionContext(context.getRuleReadout());
-      const options = context.abilities.planet.getLandOptions(actionContext);
-      const placement = context.getCurrentPlanetActionPlacement(actionContext);
-      const preferredRocketId = options?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
+      const descriptors = listActions("land");
+      const preferredRocketId = descriptors[0]?.target?.rocketId ?? null;
       const pluto = context.getAvailablePlutoAction("land", { preferredRocketId });
-      if (options.ok && pluto.ok) return context.openPlutoActionChoicePicker("land");
-      if (!options.ok) {
+      if (!descriptors.length) {
         if (pluto.ok) return context.executePlutoAction("land", { preferredRocketId });
         context.renderPlayerStats();
         context.updateActionButtons();
-        return failWithStatus(options.message);
+        return { ...failWithStatus("当前无法登陆"), code: "STANDARD_ACTION_NOT_LEGAL" };
       }
-      if (options.needsChoice) {
-        context.requestLandTargetPicker({ ...options, resumeKind: "main-planet-action", actionType: "land" });
-        return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
+      const choices = descriptors.map((standardAction) => ({
+        kind: "standard-action",
+        label: standardAction.summary || "登陆",
+        standardAction,
+      }));
+      if (pluto.ok) choices.push({ kind: "pluto", label: "登陆冥王星", preferredRocketId });
+      if (choices.length > 1) {
+        context.requestLandTargetPicker({
+          resumeKind: "main-planet-action",
+          actionType: "land",
+          title: "选择登陆目标",
+          selectLabel: "登陆到",
+          confirmText: "确认登陆",
+          planet: { planetId: "land-choice", name: "登陆目标" },
+          choices,
+        });
+        return { ok: true, pendingChoice: true };
       }
-      return context.runAction("land", { target: options.defaultTarget, rocketId: options.defaultRocketId });
+      return submitMainAction(descriptors[0]);
     }
 
     function moveRocket(deltaX, deltaY, rocketId, options = {}) {
       if (context.isAiInputLocked() && options.automated !== true) {
         return context.blockManualAiInput("电脑玩家自动移动中");
       }
-      const readoutRoot = context.getRuleReadout();
       const selectedRocketId = rocketId
         ?? context.getHighlightedRocketId()
-        ?? readoutRoot.rocketState.activeRocketId;
+        ?? context.getActionInteractionProjection().activeRocketId;
       if (!selectedRocketId) return failWithStatus("请先点击要移动的火箭", { rocket: null });
       const standardAction = options.standardAction || context.enumerateActions({ family: "move" })
         .find((candidate) => Number(candidate.target?.rocketId) === Number(selectedRocketId)
@@ -374,7 +424,7 @@
       moveActiveRocket: (deltaX, deltaY) => moveRocket(
         deltaX,
         deltaY,
-        context.getRuleReadout().rocketState.activeRocketId,
+        context.getActionInteractionProjection().activeRocketId,
       ),
     });
   }
@@ -444,7 +494,7 @@
     const commandMethods = [
       "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
       "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets", "getPlutoActionCost",
-      "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement", "openPlutoActionChoicePicker",
+      "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement",
       "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode",
       "closeDataPlacePicker", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
     ];
@@ -562,8 +612,8 @@
 
   function createBoardQueryRuntime(context = {}) {
     function getPlanetSectorCoordinate(planetId) {
-      const snapshot = context.solar.createSolarSnapshot(context.getRuleReadout().solarState);
-      const planet = snapshot.planetLocations.find((item) => item.planetId === planetId);
+      const planet = context.getBoardCoordinateProjection().planetLocations
+        .find((item) => item.planetId === planetId);
       if (!planet) throw new Error(`${planetId} position was not found in the current solar snapshot`);
       return { x: planet.x, y: planet.y };
     }
@@ -638,9 +688,10 @@
             preferredRocketId: choice.preferredRocketId,
           });
         }
-        return context.runAction(actionType, actionType === "land"
-          ? { target: choice.target, rocketId: choice.rocketId }
-          : { rocketId: choice.rocketId });
+        if (choice.kind !== "standard-action" || !choice.standardAction) {
+          return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "行动 descriptor 已失效" };
+        }
+        return context.submitAction(choice.standardAction);
       }
       const effect = context.getCurrentActionEffect(workingRoot);
       if (!effect || (pending.effectId && effect.id !== pending.effectId)) {
@@ -1289,91 +1340,6 @@
     const rocketLabel = available?.rocket?.id != null ? `R${available.rocket.id}` : "探测器";
     const rewardSummary = buildPlutoChoiceRewardSummary(actionType, effect);
     return `${actionLabel}冥王星${rewardSummary ? ` - 奖励：${rewardSummary}` : ""}（${rocketLabel}，${costLabel}）`;
-  }
-
-  function buildPlutoActionChoiceOptions(workingRoot, actionType) {
-    const context = createActionContext(requireWorkingRoot(workingRoot));
-    const actionLabel = getPlutoChoiceActionLabel(actionType);
-    const normalCheck = actionType === "orbit"
-      ? abilities.planet.getOrbitOptions(context)
-      : abilities.planet.getLandOptions(context);
-    const placement = getCurrentPlanetActionPlacement(workingRoot, context);
-    const preferredRocketId = normalCheck?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
-    const plutoCheck = getAvailablePlutoAction(workingRoot, actionType, { preferredRocketId });
-    const choices = [];
-
-    if (normalCheck.ok) {
-      if (actionType === "orbit") {
-        choices.push(...normalCheck.choices.map((choice) => ({
-          ...choice,
-          kind: "normal",
-        })));
-      } else {
-        const landOptions = abilities.planet.getLandOptions(context);
-        if (landOptions.ok) {
-          choices.push(...landOptions.choices.map((choice) => ({
-            ...choice,
-            kind: "normal",
-          })));
-        }
-      }
-    }
-
-    if (plutoCheck.ok) {
-      choices.push({
-        kind: "pluto",
-        label: formatPlutoChoiceLabel(actionType, plutoCheck),
-        preferredRocketId,
-      });
-    }
-
-    if (!choices.length) {
-      return {
-        ok: false,
-        message: normalCheck.message || plutoCheck.message || `当前无法${actionLabel}`,
-      };
-    }
-
-    return {
-      ok: true,
-      actionType,
-      title: `选择${actionLabel}目标`,
-      selectLabel: `${actionLabel}到`,
-      confirmText: `确认${actionLabel}`,
-      planet: { planetId: `pluto-${actionType}-choice`, name: `${actionLabel}目标` },
-      choices,
-      needsChoice: choices.length > 1,
-      defaultTarget: choices[0].target,
-    };
-  }
-
-  function openPlutoActionChoicePicker(workingRoot, actionType) {
-    requireWorkingRoot(workingRoot);
-    const { rocketState } = workingRoot;
-    const options = buildPlutoActionChoiceOptions(workingRoot, actionType);
-    if (!options.ok) {
-      rocketState.statusNote = options.message;
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return { ok: false, message: options.message };
-    }
-    if (options.choices.length === 1) {
-      const [choice] = options.choices;
-      return choice.kind === "pluto"
-        ? executePlutoAction(workingRoot, actionType, { preferredRocketId: choice.preferredRocketId })
-        : runAction(actionType, actionType === "land"
-          ? { target: choice.target, rocketId: choice.rocketId }
-          : { rocketId: choice.rocketId });
-    }
-    openLandTargetPicker(workingRoot, {
-      ...options,
-      resumeKind: "main-planet-action",
-      actionType,
-    });
-    rocketState.statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
-    renderStateReadout();
-    return { ok: true, pendingChoice: true };
   }
 
   function getMoveArrowDirectionRotation(angleDegrees, kind) {
@@ -2060,7 +2026,6 @@
       isDataPoolFull,
       openAutoDataPlacementPrompt,
       openDataPlacePicker,
-      openPlutoActionChoicePicker,
       placeDataToBlueSlot,
       playerHasOwnPlutoLanding,
       removePlutoMarker,

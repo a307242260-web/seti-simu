@@ -15,6 +15,7 @@
     finalScoring,
     endGameScoring,
     finalReadModelModule,
+    browserReadModelModule,
     actionHistoryModule,
     historyCommands,
     historyTransactions,
@@ -198,6 +199,7 @@
   let actionInteractionRuntime = null;
   let cardTriggerRuntime = null;
   let finalReadModelOwner = null;
+  let browserReadModelOwner = null;
   const runAiFinalScoreMarkDecision = finalScoreAiRuntimeModule.createFinalScoreAiPort({
     getRuntime: () => finalScoreAiRuntime,
   }).runDecision;
@@ -325,7 +327,7 @@
     removePlutoMarker, collectPlutoMarkers, buildPlutoMarkerContext, playerHasOwnPlutoLanding,
     buildPlutoMarkerRemovalChoices, getPlutoCandidateRockets, getPlutoActionCost, getAvailablePlutoAction,
     executePlutoAction, getCurrentPlanetActionPlacement, getPlutoChoiceActionLabel, formatPlutoChoiceLabel,
-    openPlutoActionChoicePicker, scheduleRenderMoveArrows, clearMoveRocketHighlight, activateMoveMode,
+    scheduleRenderMoveArrows, clearMoveRocketHighlight, activateMoveMode,
     deactivateMoveMode, closeDataPlacePicker, isDataPoolFull, getAutoDataPlacementCheck,
     openDataPlacePicker, openAutoDataPlacementPrompt, continuePendingDataPlacementAfterBonus,
     skipPendingDataPlacement, cancelDataPlacePicker, confirmDataPlacement,
@@ -361,6 +363,7 @@
   const landTargetDecisionRuntime = actionInteractionRuntimeModule.createLandTargetDecisionRuntime({
     executePlutoAction: (...args) => actionInteractionRuntime.executePlutoAction(...args),
     runAction: (...args) => runAction(...args),
+    submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
     effectExecutors: () => effectExecutors,
     getPendingLandTargetDecision: (...args) => getPendingLandTargetDecision(...args),
@@ -419,17 +422,12 @@
     createReadoutActionContext,
   } = actionContextFactory;
   const primaryActionUiRuntime = actionInteractionRuntimeModule.createPrimaryActionUiRuntime({
-    runAction: (...args) => runAction(...args),
     canStartMainAction: (...args) => canStartMainAction(...args),
     getMainActionStartBlockReason: (...args) => getMainActionStartBlockReason(...args),
     setStatusNote: (...args) => setBrowserStatusNote(...args),
     renderStateReadout: (...args) => renderStateReadout(...args),
-    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
-    getRuleReadout: () => createStateSourceReadoutRoot(),
-    abilities,
-    getCurrentPlanetActionPlacement,
+    getActionInteractionProjection: () => getActionInteractionProjection(),
     getAvailablePlutoAction,
-    openPlutoActionChoicePicker,
     executePlutoAction,
     requestLandTargetPicker: (...args) => requestLandTargetPicker(...args),
     renderPlayerStats: (...args) => renderPlayerStats(...args),
@@ -438,6 +436,7 @@
     blockManualAiInput: (...args) => blockManualAiAutomationInput(...args),
     getHighlightedRocketId: () => uiRuntimeState.moveHighlightRocketId,
     enumerateActions: (...args) => ruleComposition.inputPort.enumerateActions(...args),
+    submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
     submitQuickAction: (...args) => ruleComposition.inputPort.submitQuickAction(...args),
     beginMovePaymentSelection: (...args) => beginMovePaymentSelection(...args),
   });
@@ -715,7 +714,7 @@
   });
   const initialSelectionHost = startScreenModule.createInitialSelectionHost({
     getActionRuntime: () => actionRuntimeController,
-    getRuleReadout: () => createStateSourceReadoutRoot(),
+    getTurnFlowProjection: () => getTurnFlowProjection(),
     submitHostCommand: (command) => ruleComposition.inputPort.submitHostCommand(command),
   });
   const {
@@ -739,7 +738,8 @@
   let turnFlowController = null;
   const turnHostRuntime = turnFlowModule.createTurnHostRuntime({
     getController: () => turnFlowController,
-    getRuleReadout: () => createStateSourceReadoutRoot(),
+    getTurnFlowProjection: () => getTurnFlowProjection(),
+    assertTurnFlowProjection: browserHostModule.residentProjection.assertTurnFlowProjection,
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     newGame: (...args) => browserRuleLifecycle.newGame(...args),
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
@@ -1172,12 +1172,22 @@
       if (!finalReadModelOwner) {
         throw new TypeError("BrowserProjection 的 FinalReadModel owner 尚未装配");
       }
+      if (!browserReadModelOwner) {
+        throw new TypeError("BrowserProjection 的 BrowserReadModel owner 尚未装配");
+      }
       const visible = browserHostModule.projectionAdapter.defaultVisibilityPolicy(
         state,
         viewer,
         projectionContext,
       );
-      visible.resident.finalReadModel = finalReadModelOwner.project(state);
+      const finalReadModel = finalReadModelOwner.project(state);
+      const browserReadModel = browserReadModelOwner.project(state, {
+        viewer,
+        createHandPresentation: (player) => player?.hand || [],
+        createReservedCardItems: (player) => player?.reservedCards || [],
+        createRenderPresentation: (input) => createBrowserRenderPresentation(input),
+      });
+      visible.resident = { finalReadModel, browserReadModel };
       return visible;
     },
     createActionContext: ({ state }) => ({
@@ -1223,9 +1233,18 @@
   const getResidentViewer = browserHostModule.residentProjection.createViewerResolver({
     getInterfacePlayer: () => getInterfacePlayer(),
   });
-  const getCanonicalBrowserProjection = () => residentProjectionAdapter.projectSource({
-    viewer: getResidentViewer(),
-  });
+  let browserProjectionReadActive = false;
+  const getCanonicalBrowserProjection = () => {
+    if (browserProjectionReadActive) {
+      throw new Error("BrowserProjection owner 禁止在 projection 构造期间递归读取 projection");
+    }
+    browserProjectionReadActive = true;
+    try {
+      return residentProjectionAdapter.projectSource({ viewer: getResidentViewer() });
+    } finally {
+      browserProjectionReadActive = false;
+    }
+  };
   const getFinalUiProjection = () => (
     browserHostModule.residentProjection.selectFinalUiProjection(getCanonicalBrowserProjection())
   );
@@ -1238,6 +1257,45 @@
   const getRecoveryProjection = () => (
     browserHostModule.residentProjection.selectRecoveryProjection(getCanonicalBrowserProjection())
   );
+  const getEventsProjection = () => (
+    browserHostModule.residentProjection.selectEventsProjection(getCanonicalBrowserProjection())
+  );
+  const getActionInteractionProjection = () => (
+    browserHostModule.residentProjection.selectActionInteractionProjection(getCanonicalBrowserProjection())
+  );
+  const getTurnFlowProjection = () => (
+    browserHostModule.residentProjection.selectTurnFlowProjection(getCanonicalBrowserProjection())
+  );
+  const pregameBoardCoordinateProjection = (() => {
+    const snapshot = solar.createSolarSnapshot(solar.createBaselineState());
+    const value = {
+      schemaVersion: "seti-board-coordinate-projection-v1",
+      identity: {
+        projectionId: "browser:pregame-board",
+        sourceKind: "committed",
+        stateVersion: 0,
+        sessionId: null,
+        sessionRevision: null,
+        viewerId: "browser:spectator",
+        viewerPlayerId: null,
+      },
+      tokens: [],
+      activeRocketId: null,
+      planetLocations: structuredClone(snapshot.planetLocations),
+      visibleContents: structuredClone(snapshot.visibleContents),
+    };
+    const freeze = (item) => {
+      if (item == null || typeof item !== "object" || Object.isFrozen(item)) return item;
+      Object.values(item).forEach(freeze);
+      return Object.freeze(item);
+    };
+    return freeze(value);
+  })();
+  const getBoardCoordinateProjection = () => (
+    ruleComposition.stateSourcePort.getSnapshot()
+      ? browserHostModule.residentProjection.selectBoardCoordinateProjection(getCanonicalBrowserProjection())
+      : pregameBoardCoordinateProjection
+  );
   const getProjectedFinalScoreBreakdown = (playerOrId) => {
     const playerId = typeof playerOrId === "object"
       ? (playerOrId?.id || playerOrId?.color)
@@ -1245,9 +1303,6 @@
     return getFinalUiProjection().players.find((entry) => String(entry.id) === String(playerId))?.breakdown
       || { totalScore: Number(playerOrId?.resources?.score) || 0 };
   };
-  const createResidentReadoutRoot = (resident) => (
-    browserHostModule.residentProjection.createReadoutRoot(resident)
-  );
   const createStateSourceReadoutRoot = () => browserHostModule.residentProjection.createReadoutRoot(
     ruleComposition.stateSourcePort.read().state,
     { solarKey: "solarSystem", includeMatch: true },
@@ -1319,34 +1374,785 @@
   const createInitialSelectionProjection = residentPresentationBuilder.createInitialSelection;
   const createReservedCardProjection = residentPresentationBuilder.createReservedCards;
 
-  const residentRenderInputBuilder = browserHostModule.residentProjection.createResidentRenderInputBuilder({
-    presentationBuilder: residentPresentationBuilder,
-    viewStateStore: residentViewStateStore,
-    projectionAdapter: residentProjectionAdapter,
-    uiRuntimeState,
-    getViewer: getResidentViewer,
-    createReadoutRoot: createResidentReadoutRoot,
-    getPendingMovePayment,
-    readCardSelectionDecision,
-    getPendingAlienTraceDecision,
-    getActionEffectFlow,
-    getPendingDiscardDecision,
-    getPendingHandScanDecision,
-    getPendingScanTargetDecision: () => (
-      getPendingScanTargetDecision() || browserPendingDecisionOwner.read("public_scan")
-    ),
-    computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
-    isCardSelectionActive: () => isCardSelectionActive?.(),
-    allowsBlindDrawInSelection: () => allowsBlindDrawInSelection?.(),
-    canBlindDraw: () => canBlindDraw?.(),
-    isPublicCardMultiSelectActive: () => isPublicCardMultiSelectActive?.(),
-    getPlayerHandPanelTitleHint: () => getPlayerHandPanelTitleHint(),
-  });
-  const createResidentRenderInput = residentRenderInputBuilder.createRenderInput;
+  function createBrowserRenderPresentation({
+    state,
+    players: sourcePlayers,
+    turnFlow,
+    boardCoordinate,
+    viewer,
+  }) {
+    const getProjectedCompanyBaseIncome = (player) => players.normalizeIncome(
+      initialCards.getIndustryEffect?.(player?.initialSelection?.industry)?.baseIncome || null,
+    );
+    const residentForPresentation = {
+      players: {
+        currentPlayerId: turnFlow.currentPlayerId,
+        players: sourcePlayers,
+      },
+      aliens: state.aliens || {},
+    };
+    const interfacePlayer = sourcePlayers.find(
+      (player) => String(player?.id) === String(viewer?.playerId),
+    ) || sourcePlayers.find(
+      (player) => String(player?.id) === String(turnFlow.currentPlayerId),
+    ) || null;
+    const handCount = Array.isArray(interfacePlayer?.hand)
+      ? interfacePlayer.hand.length
+      : Math.max(0, Math.round(Number(interfacePlayer?.resources?.handSize) || 0));
+    const selectionActive = Boolean(isCardSelectionActive?.());
+    const allowsBlindDraw = selectionActive && Boolean(allowsBlindDrawInSelection?.());
+    const blindDrawAvailable = Boolean(canBlindDraw?.());
+    const finalReadModel = finalReadModelOwner.project(state);
+    const actualCurrentPlayer = sourcePlayers.find(
+      (player) => String(player?.id) === String(turnFlow.currentPlayerId),
+    ) || null;
+    const playerById = new Map(sourcePlayers.map((player) => [String(player?.id), player]));
+    const selectedPublicSlots = new Set(uiRuntimeState.publicCardSelectedSlots || []);
+    const movePayment = getPendingMovePayment?.();
+    const discardDecision = getPendingDiscardDecision?.();
+    const handScanDecision = getPendingHandScanDecision?.();
+    const scanTargetDecision = getPendingScanTargetDecision?.()
+      || browserPendingDecisionOwner.read("public_scan");
+    const playCardSelection = uiRuntimeState.playCardSelection || null;
+    const cardCornerAction = uiRuntimeState.cardCornerQuickAction || null;
+    const handCardPlayAction = uiRuntimeState.handCardPlayAction || null;
+    const publicCards = state.cards?.publicCards || [];
+    const hand = Array.isArray(interfacePlayer?.hand) ? interfacePlayer.hand : [];
+    const discardActive = Boolean(state.cards?.ui?.discardSelectionActive)
+      && discardDecision?.playerId === interfacePlayer?.id;
+    const playActive = Boolean(state.cards?.ui?.playCardSelectionActive)
+      && actualCurrentPlayer?.id === interfacePlayer?.id;
+    const movePaymentActive = Boolean(movePayment)
+      && (movePayment.playerId || movePayment.player?.id) === interfacePlayer?.id;
+    const handScanActive = Boolean(handScanDecision)
+      && handScanDecision.playerId === interfacePlayer?.id;
+    const handScanPickIndex = scanTargetDecision?.type === "hand_scan"
+      && Number.isInteger(Number(scanTargetDecision.handIndex))
+      ? Number(scanTargetDecision.handIndex)
+      : null;
+    const cardCornerActionEnabled = actualCurrentPlayer?.id === interfacePlayer?.id
+      && canUseCardCornerQuickAction();
+    const industryHandActive = Boolean(industryRuntime?.isIndustryHandSelectionActive?.());
+    const futureSpanHandActive = Boolean(industryRuntime?.isIndustryFutureSpanHandSelectionActive?.());
+    const handPickActive = discardActive
+      || playActive
+      || movePaymentActive
+      || handScanActive
+      || industryHandActive
+      || handScanPickIndex != null
+      || cardCornerActionEnabled;
+
+    function createHandCardView(card, index) {
+      const label = card?.cardName || (card?.faceUp ? `手牌 ${index + 1}` : `手牌背面 ${index + 1}`);
+      const imageSrc = card?.src || players.CARD_BACK_SRC;
+      const view = {
+        imageSrc,
+        label,
+        interactive: handPickActive && !(handScanPickIndex != null && index !== handScanPickIndex),
+        disabled: false,
+        selected: false,
+        classNames: [],
+        title: "",
+        ariaLabel: label,
+      };
+      if (!view.interactive) return view;
+      const playCost = getCardPlayCost(card);
+      const formattedPlayCost = formatCardPlayCost(playCost);
+      if (discardActive) {
+        view.classNames.push("is-selectable");
+        view.selected = (uiRuntimeState.discardSelectedHandIndexes || []).includes(index);
+      } else if (handScanActive) {
+        const scanChoices = getPublicScanChoicesForCard(card);
+        if (scanChoices.ok) {
+          view.classNames.push("is-scan-card");
+          view.ariaLabel = `${label}（扫描牌，点击弃除并扫描）`;
+          view.title = `${scanChoices.scanLabel}：点击后选择星云`;
+        } else {
+          view.classNames.push("is-scan-card-muted");
+          view.disabled = true;
+          view.title = scanChoices.message;
+        }
+      } else if (handScanPickIndex != null) {
+        view.classNames.push("is-scan-card");
+        view.selected = true;
+        view.disabled = true;
+        view.ariaLabel = `${label}（扫描中）`;
+      } else if (futureSpanHandActive) {
+        const eligible = isFutureSpanEligibleHandCard(card);
+        view.classNames.push(eligible ? "is-industry-hand-card" : "is-industry-hand-card-muted");
+        view.disabled = !eligible;
+        view.ariaLabel = eligible ? `${label}（未来跨度：扣下并设置目标分）` : label;
+        view.title = eligible
+          ? `未来跨度：目标分 +${getFutureSpanDeltaForCard(card)}`
+          : "未来跨度只能选择费用为信用点的手牌";
+      } else if (industryHandActive) {
+        view.classNames.push("is-industry-hand-card");
+        view.ariaLabel = `${label}（深空探测：选择交换手牌）`;
+        view.title = "深空探测：点击选择要交换的手牌";
+      } else if (movePaymentActive) {
+        const moveCard = isMovePaymentCard(card);
+        view.classNames.push(moveCard ? "is-move-card" : "is-move-card-muted");
+        view.disabled = !moveCard;
+        view.selected = moveCard && (movePayment.selectedHandIndices || []).includes(index);
+        view.ariaLabel = moveCard ? `${label}（移动牌，点击选择弃置）` : label;
+        view.title = moveCard ? "弃置此牌以支付移动" : "";
+      } else if (cardCornerActionEnabled) {
+        const quickAction = getCardCornerQuickActionForCard(card);
+        const playAction = getHandCardPlayActionForCard(card, actualCurrentPlayer);
+        view.selected = cardCornerAction?.cardId === card.id || handCardPlayAction?.cardId === card.id;
+        if (quickAction || playAction) {
+          if (quickAction) view.classNames.push("is-corner-action-card");
+          if (playAction) view.classNames.push("is-hand-play-card");
+          const labels = [
+            playAction ? `打出，费用 ${formattedPlayCost}` : null,
+            quickAction?.label || null,
+          ].filter(Boolean).join("；");
+          view.ariaLabel = `${label}（${labels}）`;
+          view.title = view.selected
+            ? `${labels}：点击上方按钮确认，或再次点击取消`
+            : `${labels}：点击选择`;
+        } else {
+          view.classNames.push("is-corner-action-card-muted");
+          view.title = "这张牌没有可用的手牌快捷操作";
+        }
+      } else if (playActive) {
+        const affordable = players.canAfford(interfacePlayer, playCost);
+        view.classNames.push(affordable ? "is-playable" : "is-unaffordable");
+        view.selected = playCardSelection?.handIndex === index;
+        view.ariaLabel = `${label}，费用 ${formattedPlayCost}`;
+        view.title = affordable
+          ? view.selected
+            ? `已选择 ${label}，点击上方「打出」确认，或再次点击取消选择`
+            : `选择 ${label}，费用 ${formattedPlayCost}`
+          : `资源不足，需要 ${formattedPlayCost}`;
+      }
+      if (view.selected) view.classNames.push("is-selected");
+      return view;
+    }
+
+    function normalizeIncomeValue(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return 0;
+      return Math.max(0, Number.isInteger(number) ? number : Math.round(number * 100) / 100);
+    }
+
+    function createIncomeView(player, key, label, iconSrc, showBasePlusIncrease = false) {
+      const income = players.normalizeIncome(player?.income || null);
+      const baseIncome = getProjectedCompanyBaseIncome(player);
+      const total = normalizeIncomeValue(income[key]);
+      const base = Math.min(total, normalizeIncomeValue(baseIncome?.[key]));
+      const increase = Math.max(0, normalizeIncomeValue(total - base));
+      return {
+        label,
+        iconSrc,
+        value: showBasePlusIncrease ? `${base}+${increase}` : total,
+        title: showBasePlusIncrease
+          ? `${label} ${base}+${increase}（总计 ${total}）`
+          : `${label} ${total}`,
+      };
+    }
+
+    function createPlayerPanel(player) {
+      const finalPlayer = finalReadModel.players.find(
+        (entry) => String(entry.id) === String(player?.id),
+      );
+      const color = players.getPlayerColorDefinition(player?.color);
+      const resources = player?.resources || players.DEFAULT_RESOURCES;
+      const income = players.normalizeIncome(player?.income || null);
+      const placedData = data.listComputerPlacedTokens?.(player)?.length || 0;
+      const totalData = Object.keys(data.COMPUTER_DATA_SLOTS || {}).length || 6;
+      const showAomomo = Boolean(
+        state.solarSystem?.aomomoActive
+        || state.aliens?.aomomo?.revealInitialized
+        || Number(resources.aomomoFossils) > 0,
+      );
+      const resourceStats = [
+        { label: "信用点", value: resources.credits, iconSrc: RESOURCE_ICON_SRC.credits },
+        { label: "能量", value: resources.energy, iconSrc: RESOURCE_ICON_SRC.energy },
+        {
+          label: "宣传",
+          value: `${resources.publicity}/${players.RESOURCE_LIMITS.publicity}`,
+          iconSrc: RESOURCE_ICON_SRC.publicity,
+        },
+        { label: "可用数据", value: resources.availableData, iconSrc: RESOURCE_ICON_SRC.data },
+        {
+          label: "额外公共扫描",
+          value: resources.additionalPublicScan || 0,
+          iconSrc: RESOURCE_ICON_SRC.additionalPublicScan,
+        },
+        ...(showAomomo ? [{
+          label: "奥陌陌化石",
+          value: resources.aomomoFossils || 0,
+          iconSrc: RESOURCE_ICON_SRC.aomomoFossil,
+        }] : []),
+        {
+          label: "当前数据放置进展",
+          value: `${placedData}/${totalData}`,
+          iconSrc: RESOURCE_ICON_SRC.analyzeData,
+        },
+      ];
+      const runezuCounts = state.aliens?.runezu?.revealInitialized
+        ? runezu.getPlayerSymbolCounts(player)
+        : {};
+      const runezuStats = (runezu.SYMBOL_IDS || [])
+        .filter((symbolId) => (runezuCounts[symbolId] || 0) > 0)
+        .map((symbolId) => ({
+          label: runezu.formatSymbolLabel(symbolId),
+          value: runezuCounts[symbolId],
+          iconSrc: runezu.getSymbolSrc(symbolId),
+        }));
+      const fangzhouStats = state.aliens?.fangzhou?.revealInitialized ? [{
+        label: "🔒",
+        value: `${Math.min(3, Math.max(0, Number(fangzhou.getUnlockCount?.(state.aliens, player)) || 0))}/3`,
+      }] : [];
+      const labelName = String(player?.name || "").trim();
+      const colorLabel = String(player?.colorLabel || "").trim();
+      const strippedName = colorLabel && labelName.startsWith(colorLabel)
+        ? labelName.slice(colorLabel.length).trim()
+        : labelName;
+      const displayName = `${labelName && labelName !== `${colorLabel}玩家` ? strippedName || labelName : "玩家"}${
+        player?.aiEnabled ? "(电脑)" : ""
+      }`;
+      const opponentStats = {
+        orbitLand: endGameScoring.countOrbitOrLandMarkers(player, state.planets || {}, buildPlutoMarkerContext()),
+        sectorWins: OPPONENT_SECTOR_WIN_STATS.map(({ color: sectorColor, label, iconKey }) => ({
+          label,
+          value: endGameScoring.countSectorWinsByColor(player, state.data || {}, sectorColor),
+          iconSrc: RESOURCE_ICON_SRC[iconKey],
+        })),
+        traces: ["yellow", "pink", "blue"].map((traceType) => ({
+          label: `${traceType}外星人痕迹`,
+          value: endGameScoring.countTraceMarkers(player, state.aliens || {}, traceType),
+          iconSrc: RESOURCE_ICON_SRC[`alien${traceType[0].toUpperCase()}${traceType.slice(1)}`],
+        })),
+        runezu: runezuStats,
+        jiuzhe: {
+          visible: Boolean(state.aliens?.jiuzhe?.revealedSlotId
+            || jiuzhe.getPlayerJiuzheCards?.(state.aliens || {}, player)?.length
+            || jiuzhe.countPlayedCards?.(state.aliens || {}, player)
+            || jiuzhe.getPanelThreat?.(state.aliens || {}, player)),
+          count: jiuzhe.countPlayedCards?.(state.aliens || {}, player) || 0,
+          threat: jiuzhe.getPanelThreat?.(state.aliens || {}, player) || 0,
+        },
+      };
+      return {
+        id: player?.id ?? null,
+        color: player?.color ?? null,
+        colorLabel: player?.colorLabel ?? null,
+        displayName,
+        uiColor: color.uiColor,
+        tokenAssets: {
+          rocket: color.rocketAsset,
+          orbit: color.satelliteAsset,
+          land: color.landdingAsset,
+        },
+        passed: turnFlow.passedPlayerIds.includes(player?.id),
+        roundOrderNumber: turnFlow.roundOrderPlayerIds.indexOf(player?.id) + 1,
+        score: Number(resources.score) || 0,
+        handCount: Array.isArray(player?.hand)
+          ? player.hand.length
+          : Math.max(0, Number(resources.handSize) || 0),
+        finalTotalScore: Number(finalPlayer?.breakdown?.totalScore) || Number(resources.score) || 0,
+        resourceStats,
+        incomeStats: [
+          createIncomeView(player, "credits", "收入信用点", RESOURCE_ICON_SRC.credits, true),
+          createIncomeView(player, "energy", "收入能量", RESOURCE_ICON_SRC.energy, true),
+          createIncomeView(player, "handSize", "收入手牌", RESOURCE_ICON_SRC.incomeCard, true),
+          { label: "收入宣传", value: income.publicity || 0, iconSrc: RESOURCE_ICON_SRC.publicity, title: "" },
+          { label: "收入数据", value: income.availableData || 0, iconSrc: RESOURCE_ICON_SRC.data, title: "" },
+          {
+            label: "收入额外公共扫描",
+            value: income.additionalPublicScan || 0,
+            iconSrc: RESOURCE_ICON_SRC.additionalPublicScan,
+            title: "",
+          },
+        ],
+        runezuStats,
+        fangzhouStats,
+        techStats: OPPONENT_TECH_TYPES.map(({ type, label, color: techColor }) => ({
+          type,
+          label,
+          color: techColor,
+          slots: [1, 2, 3, 4].map((index) => {
+            const tileId = `${type}${index}`;
+            const owned = Array.isArray(player?.techState?.ownedTiles)
+              ? player.techState.ownedTiles.some((tile) => tile?.id === tileId || tile === tileId)
+              : Boolean(player?.techState?.ownedTiles?.[tileId]);
+            const disabled = Array.isArray(player?.techState?.disabledTiles)
+              ? player.techState.disabledTiles.includes(tileId)
+              : Boolean(player?.techState?.disabledTiles?.[tileId]);
+            return { label: `${label}${index}`, owned, disabled };
+          }),
+        })),
+        opponentStats,
+      };
+    }
+
+    function createPlayerDataPresentation(player) {
+      if (!player) return { playerTokens: [], blueDropZones: [] };
+      const playerTokens = [];
+      for (const token of data.listPoolTokens(player)) {
+        const layout = data.getEffectivePoolSlotLayout(token.slotIndex);
+        if (!layout) continue;
+        playerTokens.push({
+          key: `${player.id}:${token.id}`,
+          kind: "pool",
+          imageSrc: data.DATA_TOKEN_SRC,
+          alt: `数据池 ${token.index}`,
+          title: `数据池 ${token.index} @(${layout.percentX}%,${layout.percentY}%)`,
+          tokenId: token.id,
+          tokenIndex: token.index,
+          slotIndex: token.slotIndex,
+          blueSlot: null,
+          placementSlot: null,
+          percentX: layout.percentX,
+          percentY: layout.percentY,
+          scale: (layout.scalePercent / 100) * data.DATA_TOKEN_DISPLAY_SCALE,
+        });
+      }
+      for (const token of data.listPlacedTokens(player)) {
+        const blue = token.placementKind === "blueBonus";
+        const layout = blue
+          ? data.getBlueBonusDataSlotLayout(token.blueSlot)
+          : data.getComputerDataSlotLayout(token.placementSlot);
+        if (!layout) continue;
+        playerTokens.push({
+          key: `${player.id}:${token.id}`,
+          kind: blue ? "blue-bonus" : "placed",
+          imageSrc: data.DATA_TOKEN_SRC,
+          alt: blue ? `蓝色科技位数据 ${token.index}` : `已放置数据 ${token.index}`,
+          title: blue
+            ? `已放置 ${token.index} @位置${token.blueSlot}蓝色科技 (${layout.percentX}%,${layout.percentY}%)`
+            : `已放置 ${token.index} @第一排放置位${token.placementSlot} (${layout.percentX}%,${layout.percentY}%)`,
+          tokenId: token.id,
+          tokenIndex: token.index,
+          slotIndex: null,
+          blueSlot: blue ? token.blueSlot : null,
+          placementSlot: blue ? null : token.placementSlot,
+          percentX: layout.percentX,
+          percentY: layout.percentY,
+          scale: (layout.scalePercent / 100) * data.DATA_TOKEN_DISPLAY_SCALE,
+        });
+      }
+      const eligible = new Set(data.listEligibleBlueBonusSlots(player));
+      const hasPoolData = data.listPoolTokens(player).length > 0;
+      const blueDropZones = [];
+      for (const blueSlot of [1, 2, 3, 4]) {
+        if (!data.hasBlueTechInBoardSlot(player, blueSlot)) continue;
+        if (data.listBlueBonusPlacedTokens(player).some((token) => token.blueSlot === blueSlot)) continue;
+        const layout = data.getBlueBonusDataSlotLayout(blueSlot);
+        if (!layout) continue;
+        const tileId = data.getBlueTechTileInBoardSlot(player, blueSlot);
+        const required = data.getRequiredComputerSlotForBlueBonus(blueSlot);
+        const enabled = eligible.has(blueSlot) && hasPoolData;
+        blueDropZones.push({
+          blueSlot,
+          enabled,
+          title: enabled
+            ? `放置数据到 ${tileId || `位置${blueSlot}蓝色科技`} 下方`
+            : hasPoolData ? `需先在第一排第 ${required} 位放置数据` : "数据池没有可放置的数据",
+          percentX: layout.percentX,
+          percentY: layout.percentY,
+          scale: (layout.scalePercent / 100) * data.DATA_TOKEN_DISPLAY_SCALE,
+        });
+      }
+      return { playerTokens, blueDropZones };
+    }
+
+    function createSectorDataPresentation() {
+      const result = {};
+      for (const sectorId of [1, 2, 3, 4]) {
+        const panels = [];
+        for (const nebulaId of data.listNebulaIdsForSector(sectorId)) {
+          const region = data.getNebulaPanelRegion(nebulaId);
+          const tokens = data.listNebulaTokens(state.data || {}, nebulaId).map((token) => {
+            const layout = data.getEffectiveNebulaSlotLayout(nebulaId, token.slotIndex, token);
+            const ownerLabel = token.replacedByPlayerLabel || token.replacedByPlayerColor || "";
+            return {
+              key: `${nebulaId}:${token.id}`,
+              imageSrc: token.playerTokenSrc || data.DATA_TOKEN_SRC,
+              alt: ownerLabel
+                ? `${data.getNebulaLabel(nebulaId)} ${ownerLabel}扫描标记 ${token.index}`
+                : `${data.getNebulaLabel(nebulaId)} 数据 ${token.index}`,
+              title: `${data.getNebulaLabel(nebulaId)} 序号${token.index} @槽位${token.slotIndex}${
+                ownerLabel ? ` 已替换为${ownerLabel}token` : ""
+              } 局部(${layout.percentX}%,${layout.percentY}%)`,
+              tokenId: token.id,
+              tokenIndex: token.index,
+              slotIndex: token.slotIndex,
+              replacedByPlayerColor: token.replacedByPlayerColor || null,
+              percentX: layout.percentX,
+              percentY: layout.percentY,
+              widthPercent: (layout.scalePercent || 11.8) * 0.35,
+            };
+          });
+          const winMarkers = (data.listSectorWinRecords(state.data || {}, nebulaId) || []).map((record) => {
+            const slot = data.getSettlementWinMarkerSlot(nebulaId, record.settlementNumber);
+            const layout = data.getEffectiveSectorWinMarkerLayout(
+              nebulaId,
+              record.slotKind || slot.slotKind,
+              record.markerIndex || slot.markerIndex,
+            );
+            const ownerLabel = record.playerLabel || record.playerColor || "";
+            return {
+              key: `${nebulaId}:${record.settlementNumber}`,
+              imageSrc: record.playerTokenSrc || "../assets/tokens/normal_token.png",
+              alt: `${data.getNebulaLabel(nebulaId)} ${ownerLabel}胜利标记 ${record.settlementNumber || ""}`,
+              title: `${data.getNebulaLabel(nebulaId)} 第${record.settlementNumber || "?"}次完成 ${ownerLabel}`,
+              percentX: layout.percentX,
+              percentY: layout.percentY,
+              widthPercent: layout.scalePercent || 9.4,
+            };
+          });
+          panels.push({ nebulaId, region, tokens, winMarkers });
+        }
+        result[String(sectorId)] = panels;
+      }
+      return result;
+    }
+
+    const solarSnapshot = solar.createSolarSnapshot(state.solarSystem || {});
+    const wheelTransforms = [1, 2, 3, 4].map((wheelId) => ({
+      wheelId,
+      transform: `rotate(${(Number(state.solarSystem?.wheelSteps?.[wheelId]) || 0) * (Math.PI / 4)}rad)`,
+    }));
+    const sectors = [1, 2, 3, 4].map((slotId) => ({
+      slotId,
+      sectorId: state.solarSystem?.sectorBySlot?.[slotId] ?? null,
+    }));
+    const rotateIndex = ((Number(state.solarSystem?.rotation?.rotationCount) || 0) % ROTATE_STATE_SLOTS.length
+      + ROTATE_STATE_SLOTS.length) % ROTATE_STATE_SLOTS.length;
+    const playerDataPresentation = createPlayerDataPresentation(interfacePlayer);
+    function getBoardMarkerPoint(sourceType, sourceId, radialFraction, angularFraction) {
+      let coordinate = null;
+      if (sourceType === "planet") {
+        coordinate = solarSnapshot.planetLocations.find((planet) => planet.planetId === sourceId) || null;
+      } else if (sourceType === "sector") {
+        for (let x = 0; x < 8; x += 1) {
+          if (solar.getNebulaAtCoordinate(x, 5, state.solarSystem?.sectorBySlot)?.id === sourceId) {
+            coordinate = { x, y: 5 };
+            break;
+          }
+        }
+      }
+      if (!coordinate) return null;
+      const boundary = solar.getSectorCoordinateBoundary(coordinate.x, coordinate.y);
+      const polar = boundary.polarBoundary || {};
+      if (
+        Number.isFinite(polar.innerRadius)
+        && Number.isFinite(polar.outerRadius)
+        && Number.isFinite(polar.startAngleDegrees)
+        && Number.isFinite(polar.endAngleDegrees)
+      ) {
+        return solar.polarToGlobalPoint(
+          polar.innerRadius + (polar.outerRadius - polar.innerRadius) * radialFraction,
+          polar.startAngleDegrees + (polar.endAngleDegrees - polar.startAngleDegrees) * angularFraction,
+        );
+      }
+      return boundary.boardCenter || solar.solarGridToGlobalPoint(coordinate.x, coordinate.y);
+    }
+    const planetFossils = state.aliens?.chong?.revealInitialized
+      ? ["jupiter", "saturn"].flatMap((planetId) => {
+        const fossils = chong.getAvailablePlanetFossils(state.aliens || {}, planetId);
+        const point = fossils.length ? getBoardMarkerPoint("planet", planetId, 0.78, 0.72) : null;
+        if (!point) return [];
+        const label = getChongPlanetLabel(planetId);
+        return [{
+          key: `planet:${planetId}`,
+          planetId,
+          imageSrc: chong.FOSSIL_BACK_SRC,
+          alt: `${label}化石背面`,
+          title: `${label}化石背面 x${fossils.length}`,
+          count: fossils.length,
+          leftPercent: point.x / 10,
+          topPercent: point.y / 10,
+        }];
+      }) : [];
+    const runezuSymbols = state.aliens?.runezu?.revealInitialized
+      ? runezu.listSourceSymbols(state.aliens || {}).flatMap((symbol) => {
+        if (symbol.claimedByPlayerId || symbol.claimedByPlayerColor) return [];
+        const surface = symbol.sourceType === "tech" ? "tech" : "board";
+        const point = surface === "board"
+          ? getBoardMarkerPoint(
+            symbol.sourceType,
+            symbol.sourceId,
+            symbol.sourceType === "planet" ? 0.72 : 0.38,
+            symbol.sourceType === "planet" ? 0.72 : 0.52,
+          )
+          : null;
+        if (surface === "board" && !point) return [];
+        return [{
+          key: `${symbol.sourceType}:${symbol.sourceId}`,
+          surface,
+          sourceType: symbol.sourceType,
+          sourceId: symbol.sourceId,
+          imageSrc: runezu.getSymbolSrc(symbol.symbolId),
+          alt: `符文族 ${symbol.symbolId}`,
+          title: `符文族 ${symbol.sourceType}:${symbol.sourceId} ${runezu.formatSymbolLabel(symbol.symbolId)}`,
+          leftPercent: point ? point.x / 10 : null,
+          topPercent: point ? point.y / 10 : null,
+        }];
+      }) : [];
+    const readoutLines = [
+      "坐标轴 x0=中线上方偏右第一块，顺时针递增",
+      `版图位置 ${[1, 2, 3, 4].map((wheelId) => (
+        `W${wheelId}=${solar.mod8(state.solarSystem?.wheelSteps?.[wheelId])}`
+      )).join("  ")}`,
+      `行星 ${solarSnapshot.planetLocations.map((planet) => `${planet.name}[${planet.x},${planet.y}]`).join("  ")}`,
+      `星云 ${solarSnapshot.nebulaRelations.map((relation) => relation.displayText).join("  ")}`,
+      `可见统计 ${Object.entries(solarSnapshot.statistics.visibleMeaningfulContentCounts)
+        .map(([label, count]) => `${label}=${count}`).join("  ")}`,
+      "",
+      "轮次状态",
+      turnFlow.terminal
+        ? `游戏结束：第${turnFlow.roundNumber}轮全员 PASS，进行终局计分`
+        : `第${turnFlow.roundNumber}轮 第${turnFlow.displayedTurnNumber}回合`,
+      `基础顺位 ${turnFlow.turnOrderPlayerIds.map((id) => turnFlow.playerLabelsById[String(id)] || id).join(" > ") || "无"}`,
+      `本轮顺位 ${turnFlow.roundOrderPlayerIds.map((id) => turnFlow.playerLabelsById[String(id)] || id).join(" > ") || "无"}`,
+      "",
+      ...finalScoring.getReadoutLines(state.finalScoring || {}),
+      "",
+      "星球统计",
+      ...planetStats.formatPlanetStatsLines(state.planets || {}),
+      "",
+      ...getRocketCoordinateReadoutLines({
+        rockets: boardCoordinate.tokens,
+        activeRocketId: boardCoordinate.activeRocketId,
+        statusNote: state.pieces?.statusNote || null,
+      }),
+      "",
+      ...tech.getReadoutLines(state.tech || {}, {
+        currentPlayerId: turnFlow.currentPlayerId,
+        players: sourcePlayers,
+      }),
+      "",
+      ...data.getReadoutLines({
+        currentPlayerId: turnFlow.currentPlayerId,
+        players: sourcePlayers,
+      }),
+      "",
+      ...data.getNebulaReadoutLines(state.data || {}),
+      "",
+      ...data.getSectorSettlementReadoutLines(state.data || {}),
+      "",
+      ...aliens.getReadoutLines(state.aliens || {}),
+      "",
+      ...(industry.getReadoutLines?.(interfacePlayer, turnFlow.roundNumber) || []),
+      ...(actionHistory.hasSession() ? ["", "行动指令栈", ...actionHistory.getTrace()] : []),
+      ...(quickActionHistory.hasSession() ? ["", "快速行动指令栈", ...quickActionHistory.getTrace()] : []),
+    ];
+
+    return {
+      boardChrome: {
+        wheelTransforms,
+        sectors,
+        aomomoWheelImageSrc: state.solarSystem?.aomomoActive ? aomomo.WHEEL3_AMM_SRC || null : null,
+        rotateTokenSlot: structuredClone(ROTATE_STATE_SLOTS[rotateIndex] || null),
+      },
+      tokenPresentation: {
+        activeRocketId: boardCoordinate.activeRocketId,
+        draggingRocketId: state.pieces?.draggingRocketId ?? null,
+        tokens: boardCoordinate.tokens.map((token) => {
+          const color = players.getPlayerColorDefinition(token.color || players.DEFAULT_PLAYER_COLOR);
+          const onReference = isRocketOnPlanetsReference(token);
+          const kind = token.referencePlacement?.kind;
+          const boardPoint = onReference ? null : getBoardPointFromPolarPoint(token);
+          const referencePoint = token.planetsReference || { percentX: 50, percentY: 50 };
+          const referenceLabel = getReferencePlacementName(token.referencePlacement);
+          const tokenTypeLabel = token.kind === rocketActions.ROCKET_KIND?.CHONG_FOSSIL
+            ? "化石"
+            : kind === "orbit" ? "卫星" : kind === "land" ? "登陆" : "火箭";
+          const rocketLabel = rocketActions.formatRocketLabel(token);
+          return {
+            ...token,
+            imageSrc: token.tokenSrc || (
+              !onReference
+                ? color.rocketAsset
+                : kind === "orbit"
+                  ? color.satelliteAsset
+                  : kind === "land" || kind === "satellite"
+                    ? color.landdingAsset
+                    : color.rocketAsset
+            ),
+            alt: referenceLabel
+              ? `${referenceLabel} ${color.label}${tokenTypeLabel} ${rocketLabel}`
+              : `${color.label}${tokenTypeLabel} ${rocketLabel}`,
+            title: onReference
+              ? referenceLabel
+                ? `${referenceLabel} ${rocketLabel} ${formatPlanetsReferencePoint(referencePoint)}`
+                : formatPlanetsReferencePoint(referencePoint)
+              : referenceLabel
+                ? `${referenceLabel} ${rocketLabel} ${formatPolarPoint(token)} ${formatBoardPoint(boardPoint)}`
+                : `${formatPolarPoint(token)} ${formatBoardPoint(boardPoint)}`,
+            uiColorId: color.id,
+            glowColor: color.glowColor,
+            leftPercent: onReference ? referencePoint.percentX : boardPoint.x / 10,
+            topPercent: onReference ? referencePoint.percentY : boardPoint.y / 10,
+            referenceLabel,
+            tokenTypeLabel,
+            rocketLabel,
+            isReferencePlaced: onReference,
+            isPlanetMarker: Boolean(token.referencePlacement?.isPlanetMarker),
+            isChongFossil: token.kind === rocketActions.ROCKET_KIND?.CHONG_FOSSIL,
+            isMoveTarget: token.id === uiRuntimeState.moveHighlightRocketId,
+            isMoveCandidate: isRocketMoveCandidate(token),
+            isMoveMuted: isRocketMoveMuted(token),
+            isMoveSelectable: token.playerId === interfacePlayer?.id && token.movable,
+            ownerTokenSrc: getNormalTokenAssetForPlayer(playerById.get(String(token.playerId)) || token),
+          };
+        }),
+      },
+      playerPanels: {
+        currentPlayerId: turnFlow.currentPlayerId,
+        interfacePlayerId: interfacePlayer?.id ?? null,
+        players: sourcePlayers.map(createPlayerPanel),
+      },
+      turnPresentation: structuredClone(turnFlow),
+      cardPanels: {
+        publicCards: publicCards.map((card, index) => ({
+          imageSrc: card?.src || null,
+          label: card?.cardName || `公共牌 ${index + 1}`,
+          empty: !card,
+          selectable: selectionActive,
+          selected: Boolean(isPublicCardMultiSelectActive?.() && selectedPublicSlots.has(index)),
+        })),
+        handCards: hand.map(createHandCardView),
+        publicControls: {
+          selectionActive,
+          multiSelectActive: Boolean(isPublicCardMultiSelectActive?.()),
+          blindDrawEnabled: selectionActive && allowsBlindDraw && blindDrawAvailable,
+          blindDrawReason: !selectionActive
+            ? "请先进入精选"
+            : !allowsBlindDraw
+              ? "本次精选不能盲抽"
+              : blindDrawAvailable ? "盲抽一张牌加入手牌" : "牌库已空",
+        },
+        handPanel: {
+          count: handCount,
+          overLimit: handCount > 4,
+          hint: getPlayerHandPanelTitleHint?.() || "",
+          empty: hand.length === 0,
+          contextActionReady: Boolean(cardCornerAction || handCardPlayAction),
+        },
+        initialSelection: {
+          ...residentPresentationBuilder.createInitialSelection(viewer, residentForPresentation),
+          companyClassNames: (() => {
+            const selected = interfacePlayer?.initialSelection?.industry;
+            if (!selected) return [];
+            const classNames = [];
+            const hasTuringBorrowedTech = selected.label === "图灵系统"
+              && Boolean(industry.getBorrowedTechTileId?.(
+                interfacePlayer,
+                turnFlow.roundNumber,
+                turnFlow.turnNumber,
+              ));
+            if (selected.label === "未来跨度研究所") {
+              classNames.push("has-company-below-card-markers");
+              if (industry.hasFutureSpanCard?.(interfacePlayer)) {
+                classNames.push("has-future-span-card-below");
+              }
+            } else if (industry.shouldShowAlienLabPanels?.(interfacePlayer) || hasTuringBorrowedTech) {
+              classNames.push("has-company-below-card-markers");
+            }
+            return classNames;
+          })(),
+        },
+        reservedCards: residentPresentationBuilder.createReservedCards(viewer, residentForPresentation),
+      },
+      dataPresentation: {
+        ...playerDataPresentation,
+        sectorTokensBySectorId: createSectorDataPresentation(),
+        aomomoTokens: state.solarSystem?.aomomoActive
+          ? data.listNebulaTokens(state.data || {}, "aomomo").map((token) => {
+            const layout = data.getEffectiveAomomoBoardSlotLayout(
+              token.slotIndex,
+              token,
+              state.solarSystem || {},
+              solar,
+            );
+            return {
+              key: `aomomo:${token.id}`,
+              imageSrc: token.playerTokenSrc || data.DATA_TOKEN_SRC,
+              alt: `奥陌陌 数据 ${token.index}`,
+              title: `奥陌陌 序号${token.index} @槽位${token.slotIndex}`,
+              percentX: layout.percentX,
+              percentY: layout.percentY,
+              widthPercent: (layout.scalePercent || 8.5) * 0.35,
+            };
+          }) : [],
+      },
+      markerPresentation: {
+        piratesRaid: sourcePlayers.flatMap((player) => (
+          industry.shouldShowPiratesRaidMarkers?.(player)
+            ? (industry.listPiratesRaidPlanetMarkers?.(player) || []).map((marker) => {
+              const center = planetReferenceLayout.PLANET_REFERENCE_CENTERS?.[marker.planetId];
+              return center ? {
+                playerId: marker.playerId || player.id || "",
+                playerColor: marker.playerColor || player.color || "",
+                planetId: marker.planetId,
+                tileId: marker.tileId,
+                imageSrc: industry.PIRATES_RAID_MARKER_SRC || "../assets/industry/掠夺标记.png",
+                title: `星际海盗：${marker.tileId} 掠夺标记 @ ${getPlanetName(marker.planetId)}`,
+                leftPercent: ((center.x - 70) / PLANETS_REFERENCE_SIZE.width) * 100,
+                topPercent: (center.y / PLANETS_REFERENCE_SIZE.height) * 100,
+              } : null;
+            }).filter(Boolean)
+            : []
+        )),
+        anomalies: (state.aliens?.yichangdian?.anomalies || []).map((anomaly) => {
+          const point = aliens.getYichangdianAnomalyMarkerBoardPoint?.(solar, anomaly)
+            || solar.solarGridToGlobalPoint(anomaly.sectorX, anomaly.y || 4);
+          return {
+            key: `${anomaly.markerId}:${anomaly.sectorX}:${anomaly.y || 4}`,
+            markerId: anomaly.markerId,
+            sectorX: anomaly.sectorX,
+            sectorY: anomaly.y || 4,
+            imageSrc: anomaly.src || yichangdian.getAnomalyMarkerSrc(anomaly.markerId),
+            alt: `异常 ${anomaly.markerId}`,
+            title: `${yichangdian.formatAnomalyLabel(anomaly)} @ [${point.x.toFixed(2)},${point.y.toFixed(2)}]`,
+            leftPercent: point.x / 10,
+            topPercent: point.y / 10,
+            boardX: point.x,
+            boardY: point.y,
+          };
+        }),
+        planetFossils,
+        runezuSymbols,
+      },
+      techTilePresentation: {
+        supplyTiles: (Array.isArray(state.tech?.board?.supplyTiles || state.tech?.board?.tiles)
+          ? (state.tech?.board?.supplyTiles || state.tech?.board?.tiles)
+          : Object.values(state.tech?.board?.supplyTiles || state.tech?.board?.tiles || {})
+        ).map((tile) => ({
+          id: tile?.id || tile,
+          imageSrc: tile?.src || null,
+          label: tile?.label || tile?.id || String(tile),
+        })),
+        playerTiles: sourcePlayers.flatMap((player) => (
+          Object.entries(player?.techState?.ownedTiles || {}).filter(([, owned]) => Boolean(owned))
+            .map(([tileId]) => ({ playerId: player.id, tileId }))
+        )),
+      },
+      finalScorePresentation: {
+        breakdownsByPlayerId: Object.fromEntries(finalReadModel.players.map((player) => [
+          String(player.id),
+          structuredClone(player.breakdown),
+        ])),
+      },
+      readoutLines,
+    };
+  }
+
+  const createResidentRenderInput = () => {
+    const projection = getCanonicalBrowserProjection();
+    residentViewStateStore.reconcileProjection(projection);
+    return { projection, viewState: residentViewStateStore.getSnapshot() };
+  };
   const turnReadoutRuntime = turnFlowModule.createTurnReadoutRuntime({
     weakStartAiDifficulty: AI_DIFFICULTY_WEAK_START,
     finalRoundNumber: FINAL_ROUND_NUMBER,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getTurnFlowProjection: () => getTurnFlowProjection(),
+    assertTurnFlowProjection: browserHostModule.residentProjection.assertTurnFlowProjection,
     computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
     createResidentRenderInput,
@@ -1437,7 +2243,7 @@
     getRocketCoordinateReadoutLines,
   } = coordinateRuntime;
   const boardPointerHandlers = actionInteractionRuntimeModule.createBoardPointerHandlers({
-    getRocketState: () => createStateSourceReadoutRoot().rocketState,
+    getRocketState: () => ({ rockets: getBoardCoordinateProjection().tokens }),
     getHighlightedRocketId: () => uiRuntimeState.moveHighlightRocketId,
     isAiInputLocked: (...args) => isAiAutomationInputLocked(...args),
     blockManualInput: (...args) => blockManualAiAutomationInput(...args),
@@ -1456,7 +2262,7 @@
   const { handleRocketPointerDown, handleBoardPointerDown } = boardPointerHandlers;
   const coordinatePort = renderRuntimeModule.createCoordinatePort({
     runtime: coordinateRuntime,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getBoardCoordinateProjection: () => getBoardCoordinateProjection(),
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
   });
   const {
@@ -1529,18 +2335,7 @@
   } = actionLogController;
   const playerStatsUi = playerStatsUiModule.createPlayerStatsUi({
     document,
-    players,
-    data,
-    aomomo,
-    fangzhou,
-    runezu,
     resourceIconSrc: RESOURCE_ICON_SRC,
-    getReadoutRoot: createStateSourceReadoutRoot,
-    getPlayerCompanyBaseIncome,
-    getInterfacePlayer,
-    computeFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
-    isAiPlayer: (...args) => isAiAutoBattlePlayer?.(...args),
-    isPlayerPassed: isPlayerPassedThisRound,
   });
   const {
     createPlayerNameStat,
@@ -1552,8 +2347,6 @@
     buildPlayerIncomeStatNodes,
     buildPlayerRunezuStatNodes,
     buildPlayerFangzhouStatNodes,
-    formatPlayerIncomeBreakdown,
-    getPlayerReadoutLines,
   } = playerStatsUi;
   const getInitialSelectionReadoutLines = startScreenModule.createInitialSelectionReadout({
     state: setupSelectionState,
@@ -1565,11 +2358,13 @@
     isConfirmed: (playerId) => isInitialSelectionConfirmed(playerId),
   });
   const renderRuntime = renderRuntimeModule.createRenderRuntime({
-    ...renderRuntimeModule.createBrowserRenderStaticContext(dependencies),
     document,
     Image,
     enforceCapabilityInventory: true,
-    getProjection: () => createResidentRenderInput()?.projection,
+    getProjection: () => browserHostModule.residentProjection.selectRenderProjection(
+      createResidentRenderInput()?.projection,
+    ),
+    assertProjection: browserHostModule.residentProjection.assertRenderProjection,
     viewState: uiRuntimeState,
     tokenWidths,
     techRenderContext,
@@ -1583,14 +2378,6 @@
     REFERENCE_ORBIT_IMAGE_SCALE,
     REFERENCE_LANDDING_IMAGE_SCALE,
     RESOURCE_ICON_SRC,
-    OPPONENT_SECTOR_WIN_STATS,
-    OPPONENT_TECH_TYPES,
-    ROTATE_STATE_SLOTS,
-    actionHistory,
-    quickActionHistory,
-    getPlayerRoundOrderNumber,
-    getPlayerDisplayLabel,
-    isPlayerPassedThisRound,
     createInitialSelectionPicker,
     createCompanyCardSummary: (...args) => createCompanyCardSummary?.(...args),
     createPlayerNameStat,
@@ -1602,45 +2389,8 @@
     buildPlayerIncomeStatNodes,
     buildPlayerRunezuStatNodes,
     buildPlayerFangzhouStatNodes,
-    renderFinalScoreBoard: (...args) => renderFinalScoreBoard?.(...args),
-    buildPlutoMarkerContext: (...args) => renderRuntimeModule.cloneSelectorResult(buildPlutoMarkerContext(...args)),
-    canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
-    isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
-    isIndustryFutureSpanHandSelectionActive: (...args) => industryRuntime.isIndustryFutureSpanHandSelectionActive(...args),
-    isFutureSpanEligibleHandCard: (...args) => isFutureSpanEligibleHandCard(...args),
-    getFutureSpanDeltaForCard: (...args) => getFutureSpanDeltaForCard(...args),
-    isMovePaymentCard: (...args) => isMovePaymentCard?.(...args),
-    getCardCornerQuickActionForCard: (...args) => renderRuntimeModule.cloneSelectorResult(
-      getCardCornerQuickActionForCard(...args),
-    ),
-    getHandCardPlayActionForCard: (...args) => renderRuntimeModule.cloneSelectorResult(
-      getHandCardPlayActionForCard(...args),
-    ),
-    getCardPlayCost: (...args) => renderRuntimeModule.cloneSelectorResult(getCardPlayCost(...args)),
-    formatCardPlayCost: (...args) => formatCardPlayCost(...args),
-    getPublicScanChoicesForCard: (...args) => renderRuntimeModule.cloneSelectorResult(
-      getPublicScanChoicesForCard(...args),
-    ),
     attachCardHoverPreview,
-    getPlanetName,
-    getBoardPointFromPolarPoint: (...args) => renderRuntimeModule.cloneSelectorResult(
-      getBoardPointFromPolarPoint(...args),
-    ),
-    getReferencePlacementName,
-    formatPlanetsReferencePoint,
-    formatPolarPoint,
-    formatBoardPoint,
-    getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
-    isRocketOnPlanetsReference,
-    isPlanetMarkerRocket,
-    isRocketMoveCandidate: (...args) => isRocketMoveCandidate(...args),
-    isRocketMoveMuted: (...args) => isRocketMoveMuted(...args),
     handleRocketPointerDown,
-    getChongPlanetLabel: (...args) => getChongPlanetLabel(...args),
-    getTurnReadoutLines,
-    getInitialSelectionReadoutLines,
-    getPlayerReadoutLines,
-    getRocketCoordinateReadoutLines,
     syncInteractionFocusChrome: (...args) => syncInteractionFocusChrome(...args),
     placeDataToBlueSlot: (...args) => placeDataToBlueSlot(...args),
   });
@@ -1678,7 +2428,7 @@
     rocketActions,
     solar,
     uiRuntimeState,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getActionInteractionProjection: () => getActionInteractionProjection(),
     getCurrentPlayer,
     readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     getPendingCardTriggerFreeMove,
@@ -2734,8 +3484,8 @@
       cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow(...args),
       closeFinalResultDialog,
       configureDefaultAiOpponent: (...args) => configureDefaultAiOpponent(...args),
-      startInitialSelection,
-      seedDefaultReferenceRockets,
+      startInitialSelection: (workingRoot) => actionRuntimeController.startInitialSelection(workingRoot),
+      seedDefaultReferenceRockets: (workingRoot) => coordinateRuntime.seedDefaultReferenceRockets(workingRoot),
     },
     scorePort: {
       computePlayerFinalScoreBreakdown: (_workingRoot, player) => (
@@ -2908,8 +3658,12 @@
       getAnalyzeActionOptionsForPlayer,
       getCardPlayCost: (...args) => getCardPlayCost(...args),
       hasActivePendingSubFlow,
-      getMovableTokensForPlayer,
-      getRequiredMovePointsForUi: (...args) => getRequiredMovePointsForUi(...args),
+      getMovableTokensForPlayer: (actionContext, playerId) => (
+        getMovableTokensForPlayerForRoot(actionContext.workingRoot, playerId)
+      ),
+      getRequiredMovePointsForUi: (actionContext, ...args) => (
+        getRequiredMovePointsForUiForRoot(actionContext.workingRoot, ...args)
+      ),
       canPayForMove,
       moveRocket,
       canUseCardCornerQuickActionForRoot: (...args) => canUseCardCornerQuickActionForRoot(...args),
@@ -3458,7 +4212,10 @@
     { commit: false },
   );
 
-  const getNormalTokenAssetForPlayer = playerStatsUiModule.createNormalTokenAssetResolver(players);
+  const getNormalTokenAssetForPlayer = (player) => (
+    players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
+    || "../assets/tokens/normal_token.png"
+  );
 
   const neutralScoreTraceRuntime = alienRuntimeModule.createNeutralScoreTraceRuntime({
     aliens,
@@ -3572,9 +4329,8 @@
   const cancelActivePendingSubFlows = browserHostCommandPort.bindValue("effect_cancel_pending_subflows");
 
   const boardQueryRuntime = actionInteractionRuntimeModule.createBoardQueryRuntime({
-    solar,
     rocketActions,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getBoardCoordinateProjection: () => getBoardCoordinateProjection(),
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
   });
   const { getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId } = boardQueryRuntime;
@@ -3992,13 +4748,22 @@
   finalReadModelOwner = finalReadModelModule.createFinalReadModelOwner({
     endGameScoring,
     finalScoring,
-    buildProbeLocationIndex: (pieces) => cardTriggerRuntime?.buildProbeLocationIndexFromPieces(pieces),
+    buildProbeLocationIndex: (pieces, solarState) => (
+      cardTriggerRuntime?.buildProbeLocationIndexFromPieces(pieces, solarState)
+    ),
     collectPlutoMarkers: (playerState) => (
       actionInteractionRuntime?.collectPlutoMarkersFromPlayerProjection(playerState) || []
     ),
     cardEffects,
     getCardTypeCode,
-    getPlayerCompanyBaseIncome,
+    getPlayerCompanyBaseIncome: (player) => players.normalizeIncome(
+      initialCards.getIndustryEffect?.(player?.initialSelection?.industry)?.baseIncome || null,
+    ),
+  });
+  browserReadModelOwner = browserReadModelModule.createBrowserReadModelOwner({
+    solar,
+    aliens,
+    tech,
   });
   const applyIndustryStartupPassives = industryRuntimeModule.createIndustryStartupRuntime({
     industry,
@@ -4500,7 +5265,8 @@
     amiba,
     runezu,
     techRenderContext,
-    getRuleReadout: createStateSourceReadoutRoot,
+    getEventsProjection: () => getEventsProjection(),
+    assertEventsProjection: browserHostModule.residentProjection.assertEventsProjection,
     getActiveDecisionChoices: () => ruleComposition.inspect().session?.decision?.choices || [],
     setStatusNote: setBrowserStatusNote,
     randomizeAll,

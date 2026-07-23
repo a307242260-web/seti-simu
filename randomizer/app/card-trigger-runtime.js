@@ -323,13 +323,19 @@
       if (!index[key].includes(locationType)) index[key].push(locationType);
     }
 
-    function buildProbeLocationIndexFromPieces(pieces) {
+    function buildProbeLocationIndexFromPieces(pieces, solarState = null) {
       const index = {};
       const details = [];
-      const earth = getEarthSectorCoordinate();
+      const earth = solarState
+        ? solar.createSolarSnapshot(solarState).planetLocations.find(
+          (planet) => planet.planetId === "earth",
+        ) || null
+        : getEarthSectorCoordinate();
       for (const rocket of pieces?.rockets || []) {
         const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
-        const content = getSectorContentForMove(coordinate);
+        const content = solarState
+          ? solar.resolveVisibleContent(coordinate?.x, coordinate?.y, solarState)?.content || null
+          : getSectorContentForMove(coordinate);
         let locationType = null;
         if (isAsteroidContent(content)) locationType = "asteroid";
         if (content?.kind === solar.layout.CONTENT_KIND.COMET) locationType = "comet";

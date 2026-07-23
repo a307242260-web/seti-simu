@@ -2,38 +2,16 @@
   "use strict";
 
   const api = factory();
-
-  if (typeof module === "object" && module.exports) {
-    module.exports = api;
-  }
-
+  if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiBrowserPlayerStatsUi = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  function requireFunction(context, name) {
-    if (typeof context?.[name] !== "function") {
-      throw new TypeError(`createPlayerStatsUi requires function: ${name}`);
-    }
-    return context[name];
-  }
-
   function createPlayerStatsUi(context = {}) {
     const document = context.document;
-    const players = context.players;
-    const data = context.data;
-    const aomomo = context.aomomo;
-    const fangzhou = context.fangzhou;
-    const runezu = context.runezu;
     const resourceIconSrc = context.resourceIconSrc || {};
-    const getReadoutRoot = requireFunction(context, "getReadoutRoot");
-    const getPlayerCompanyBaseIncome = requireFunction(context, "getPlayerCompanyBaseIncome");
-    const getInterfacePlayer = requireFunction(context, "getInterfacePlayer");
-    const computeFinalScoreBreakdown = requireFunction(context, "computeFinalScoreBreakdown");
-    const isAiPlayer = requireFunction(context, "isAiPlayer");
-    const isPlayerPassed = requireFunction(context, "isPlayerPassed");
-    if (!document?.createElement || !players || !data) {
-      throw new TypeError("createPlayerStatsUi requires document, players and data");
+    if (!document?.createElement) {
+      throw new TypeError("createPlayerStatsUi requires document");
     }
 
     function createStatText(label, value) {
@@ -56,7 +34,7 @@
       item.className = "player-stat player-stat-with-icon";
       item.setAttribute("aria-label", `${label} ${value}`);
       icon.className = "player-stat-icon";
-      icon.src = iconSrc;
+      icon.src = iconSrc || "";
       icon.alt = "";
       icon.width = 296;
       icon.height = 296;
@@ -74,7 +52,7 @@
       item.className = "player-stat player-stat-icon-marker";
       item.setAttribute("aria-label", label);
       icon.className = "player-stat-icon player-stat-marker-icon";
-      icon.src = iconSrc;
+      icon.src = iconSrc || "";
       icon.alt = "";
       icon.width = 296;
       icon.height = 296;
@@ -91,7 +69,7 @@
       item.className = className;
       item.setAttribute("aria-label", `${label} ${value}`);
       icon.className = "player-stat-icon";
-      icon.src = iconSrc;
+      icon.src = iconSrc || "";
       icon.alt = "";
       icon.width = 296;
       icon.height = 296;
@@ -103,19 +81,7 @@
       return item;
     }
 
-    function getCurrentPlayerStatLabel(player) {
-      const name = String(player?.name || "").trim();
-      const colorLabel = String(player?.colorLabel || "").trim();
-      const colorDefaultName = colorLabel ? `${colorLabel}玩家` : "";
-      const strippedName = colorLabel && name.startsWith(colorLabel)
-        ? name.slice(colorLabel.length).trim()
-        : name;
-      const base = name && name !== colorDefaultName ? strippedName || name : "玩家";
-      return `${base}${isAiPlayer(player?.id) ? "(电脑)" : ""}`;
-    }
-
-    function createPlayerNameStat(player, score, finalTotalScore) {
-      const color = players.getPlayerColorDefinition(player.color);
+    function createPlayerNameStat(player, score = player?.score, finalTotalScore = player?.finalTotalScore) {
       const item = document.createElement("span");
       const marker = document.createElement("span");
       const name = document.createElement("span");
@@ -127,12 +93,12 @@
         "player-stat-final-score",
       );
       item.className = "player-stat player-stat-current";
-      item.style.setProperty("--player-color", color.uiColor);
+      item.style.setProperty("--player-color", player?.uiColor || "");
       marker.className = "player-color-marker";
       marker.setAttribute("aria-hidden", "true");
       name.className = "player-stat-value";
-      name.classList.toggle("is-player-passed", isPlayerPassed(player?.id));
-      name.textContent = getCurrentPlayerStatLabel(player);
+      name.classList.toggle("is-player-passed", Boolean(player?.passed));
+      name.textContent = player?.displayName || "玩家";
       item.title = name.textContent;
       item.append(marker, name, scoreEl, finalScoreEl);
       return item;
@@ -153,145 +119,44 @@
       return row;
     }
 
-    function shouldShowAomomoFossils(player) {
-      const readoutRoot = getReadoutRoot();
-      return Boolean(aomomo && (readoutRoot.solarState.aomomoActive
-        || readoutRoot.alienGameState.aomomo?.revealInitialized
-        || Number(player?.resources?.aomomoFossils) > 0));
-    }
-
-    function shouldShowFangzhouUnlockStats() {
-      return Boolean(fangzhou && getReadoutRoot().alienGameState.fangzhou?.revealInitialized);
-    }
-
-    function getPlayerFangzhouUnlockCount(player) {
-      const count = Number(fangzhou?.getUnlockCount?.(getReadoutRoot().alienGameState, player)) || 0;
-      return Math.min(3, Math.max(0, Math.round(count)));
-    }
-
-    function buildPlayerFangzhouStatNodes(player) {
-      if (!shouldShowFangzhouUnlockStats()) return [];
-      const label = document.createElement("span");
-      label.className = "player-stat player-stat-fangzhou-label";
-      label.textContent = "方舟";
-      return [label, createStatText("🔒", `${getPlayerFangzhouUnlockCount(player)}/3`)];
-    }
-
-    function getPlayerDataPlacementProgress(player) {
-      const placedCount = typeof data.listComputerPlacedTokens === "function"
-        ? data.listComputerPlacedTokens(player).length
-        : 0;
-      const total = Object.keys(data.COMPUTER_DATA_SLOTS || {}).length || 6;
-      return {
-        placed: Math.min(total, Math.max(0, Math.round(Number(placedCount) || 0))),
-        total,
-      };
+    function mapIconStats(stats) {
+      return (stats || []).map((stat) => {
+        const item = createStatIcon(stat.label, stat.value, stat.iconSrc);
+        if (stat.title) {
+          item.title = stat.title;
+          item.setAttribute("aria-label", stat.title);
+        }
+        return item;
+      });
     }
 
     function buildPlayerResourceStatNodes(player, options = {}) {
-      const resources = player.resources || players.DEFAULT_RESOURCES;
-      const limits = players.RESOURCE_LIMITS;
-      const dataPlacementProgress = getPlayerDataPlacementProgress(player);
-      const nodes = [
-        createStatIcon("信用点", resources.credits, resourceIconSrc.credits),
-        createStatIcon("能量", resources.energy, resourceIconSrc.energy),
-        createStatIcon("宣传", `${resources.publicity}/${limits.publicity}`, resourceIconSrc.publicity),
-        createStatIcon("可用数据", resources.availableData, resourceIconSrc.data),
-        createStatIcon("额外公共扫描", resources.additionalPublicScan || 0, resourceIconSrc.additionalPublicScan),
-      ];
-      if (shouldShowAomomoFossils(player)) {
-        nodes.push(createStatIcon("奥陌陌化石", resources.aomomoFossils || 0, resourceIconSrc.aomomoFossil));
-      }
-      nodes.push(createStatIcon(
-        "当前数据放置进展",
-        `${dataPlacementProgress.placed}/${dataPlacementProgress.total}`,
-        resourceIconSrc.analyzeData,
-      ));
+      const nodes = mapIconStats(player?.resourceStats);
       if (options.includeHandSize) {
-        const handCount = Array.isArray(player.hand) ? player.hand.length : (resources.handSize || 0);
-        nodes.push(createStatIcon("手牌", handCount, resourceIconSrc.card));
+        nodes.push(createStatIcon("手牌", player?.handCount || 0, resourceIconSrc.card));
       }
       return nodes;
     }
 
-    function normalizeIncomeDisplayValue(value) {
-      const number = Number(value);
-      if (!Number.isFinite(number)) return 0;
-      return Math.max(0, Number.isInteger(number) ? number : Math.round(number * 100) / 100);
-    }
-
-    function getPlayerIncomeBreakdown(player, incomeKey, normalizedIncome, normalizedCompanyBaseIncome) {
-      const income = normalizedIncome || players.normalizeIncome(player?.income || null);
-      const companyBaseIncome = normalizedCompanyBaseIncome || getPlayerCompanyBaseIncome(player);
-      const total = normalizeIncomeDisplayValue(income?.[incomeKey]);
-      const configuredBase = normalizeIncomeDisplayValue(companyBaseIncome?.[incomeKey]);
-      const base = Math.min(total, configuredBase);
-      return { total, base, increase: Math.max(0, normalizeIncomeDisplayValue(total - base)) };
-    }
-
-    function formatPlayerIncomeBreakdown(player, incomeKey, normalizedIncome, normalizedCompanyBaseIncome) {
-      const breakdown = getPlayerIncomeBreakdown(player, incomeKey, normalizedIncome, normalizedCompanyBaseIncome);
-      return `${breakdown.total}(${breakdown.base}+${breakdown.increase})`;
-    }
-
-    function createIncomeStatIcon(label, player, incomeKey, iconSrc, income, companyBaseIncome, options = {}) {
-      const breakdown = getPlayerIncomeBreakdown(player, incomeKey, income, companyBaseIncome);
-      const value = options.showBasePlusIncrease
-        ? `${breakdown.base}+${breakdown.increase}`
-        : breakdown.total;
-      const item = createStatIcon(label, value, iconSrc);
-      const detail = options.showBasePlusIncrease
-        ? `${label} ${breakdown.base}+${breakdown.increase}（总计 ${breakdown.total}）`
-        : `${label} ${breakdown.total}`;
-      item.setAttribute("aria-label", detail);
-      item.title = detail;
-      return item;
-    }
-
-    function buildPlayerIncomeStatNodes(player, options = {}) {
-      const income = players.normalizeIncome(player?.income || null);
-      const companyBaseIncome = getPlayerCompanyBaseIncome(player);
+    function buildPlayerIncomeStatNodes(player) {
       return [
         createStatIconMarker("收入", resourceIconSrc.income),
-        createIncomeStatIcon("收入信用点", player, "credits", resourceIconSrc.credits, income, companyBaseIncome, options),
-        createIncomeStatIcon("收入能量", player, "energy", resourceIconSrc.energy, income, companyBaseIncome, options),
-        createIncomeStatIcon("收入手牌", player, "handSize", resourceIconSrc.incomeCard, income, companyBaseIncome, options),
-        createStatIcon("收入宣传", income.publicity || 0, resourceIconSrc.publicity),
-        createStatIcon("收入数据", income.availableData || 0, resourceIconSrc.data),
-        createStatIcon("收入额外公共扫描", income.additionalPublicScan || 0, resourceIconSrc.additionalPublicScan),
+        ...mapIconStats(player?.incomeStats),
       ];
     }
 
     function buildPlayerRunezuStatNodes(player) {
-      if (!runezu || !getReadoutRoot().alienGameState.runezu?.revealInitialized) return [];
-      const counts = runezu.getPlayerSymbolCounts(player);
-      return (runezu.SYMBOL_IDS || [])
-        .filter((symbolId) => (counts[symbolId] || 0) > 0)
-        .map((symbolId) => createStatIcon(
-          runezu.formatSymbolLabel(symbolId),
-          counts[symbolId],
-          runezu.getSymbolSrc(symbolId),
-        ));
+      return mapIconStats(player?.runezuStats);
     }
 
-    function getPlayerReadoutLines() {
-      const readoutRoot = getReadoutRoot();
-      const interfacePlayer = getInterfacePlayer();
-      const currentPlayer = (readoutRoot.playerState.players || [])
-        .find((player) => player.id === interfacePlayer?.id)
-        || players.getCurrentPlayer(readoutRoot.playerState);
-      const resources = currentPlayer.resources;
-      const income = players.normalizeIncome(currentPlayer.income || null);
-      const companyBaseIncome = getPlayerCompanyBaseIncome(currentPlayer);
-      const limits = players.RESOURCE_LIMITS;
-      const reservedCount = Array.isArray(currentPlayer.reservedCards) ? currentPlayer.reservedCards.length : 0;
-      const finalScoreBreakdown = computeFinalScoreBreakdown(currentPlayer, readoutRoot);
+    function buildPlayerFangzhouStatNodes(player) {
+      if (!player?.fangzhouStats?.length) return [];
+      const label = document.createElement("span");
+      label.className = "player-stat player-stat-fangzhou-label";
+      label.textContent = "方舟";
       return [
-        "玩家状态",
-        `${currentPlayer.name}(${currentPlayer.color}) 信用点=${resources.credits} 能量=${resources.energy} 宣传=${resources.publicity}/${limits.publicity} 可用数据=${resources.availableData}/${limits.availableData} 奥陌陌化石=${resources.aomomoFossils || 0} 额外公共扫描=${resources.additionalPublicScan || 0} 手牌=${resources.handSize} 保留=${reservedCount} 完成任务=${currentPlayer.completedTaskCount || 0} 分数=${resources.score} 环绕=${currentPlayer.orbitCount}`,
-        `终局总分=${finalScoreBreakdown.totalScore}（板块=${finalScoreBreakdown.tileScore || 0} 卡牌=${finalScoreBreakdown.cardScore || 0} 九折=${finalScoreBreakdown.jiuzheCardScore || 0} 符文族=${finalScoreBreakdown.runezuSymbolScore || 0} 威胁=${finalScoreBreakdown.jiuzheThreat || 0}${finalScoreBreakdown.jiuzhePenaltyApplied ? " 已0.9修正" : ""}）`,
-        `符文族symbol ${runezu?.getPlayerSymbolSummary?.(currentPlayer) || "无"}`,
-        `收入 信用点=${formatPlayerIncomeBreakdown(currentPlayer, "credits", income, companyBaseIncome)} 能量=${formatPlayerIncomeBreakdown(currentPlayer, "energy", income, companyBaseIncome)} 手牌=${formatPlayerIncomeBreakdown(currentPlayer, "handSize", income, companyBaseIncome)} 宣传=${income.publicity || 0} 数据=${income.availableData || 0} 额外公共扫描=${income.additionalPublicScan || 0}`,
+        label,
+        ...player.fangzhouStats.map((stat) => createStatText(stat.label, stat.value)),
       ];
     }
 
@@ -305,15 +170,8 @@
       buildPlayerIncomeStatNodes,
       buildPlayerRunezuStatNodes,
       buildPlayerFangzhouStatNodes,
-      formatPlayerIncomeBreakdown,
-      getPlayerReadoutLines,
     });
   }
 
-  function createNormalTokenAssetResolver(players) {
-    return (player) => players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
-      || "../assets/tokens/normal_token.png";
-  }
-
-  return { createPlayerStatsUi, createNormalTokenAssetResolver };
+  return { createPlayerStatsUi };
 });

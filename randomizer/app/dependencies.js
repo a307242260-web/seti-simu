@@ -65,6 +65,7 @@
     Object.freeze({ key: "finalScoring", globalName: "SetiFinalScoring" }),
     Object.freeze({ key: "endGameScoring", globalName: "SetiEndGameScoring" }),
     Object.freeze({ key: "finalReadModelModule", globalName: "SetiFinalReadModel" }),
+    Object.freeze({ key: "browserReadModelModule", globalName: "SetiBrowserReadModel" }),
     Object.freeze({ key: "actionHistoryModule", globalName: "SetiActionHistory" }),
     Object.freeze({ key: "historyCommands", globalName: "SetiHistoryCommands" }),
     Object.freeze({ key: "historyTransactions", globalName: "SetiHistoryTransactions" }),

@@ -45,7 +45,10 @@
       players: listPlayers(state),
     };
     const pieces = state?.pieces || {};
-    const probeLocationData = context.buildProbeLocationIndex?.(pieces) || { index: {}, details: [] };
+    const probeLocationData = context.buildProbeLocationIndex?.(
+      pieces,
+      state?.solarSystem || {},
+    ) || { index: {}, details: [] };
     return {
       solarState: state?.solarSystem || {},
       playerState: players,

@@ -139,20 +139,28 @@
       if (!runtime) throw new Error("initial selection action runtime is not ready");
       return runtime;
     };
-    const getReadout = (workingRoot = null) => workingRoot || context.getRuleReadout();
+    const getTurnFlow = () => {
+      const projection = context.getTurnFlowProjection?.();
+      if (!projection) throw new Error("initial selection turn projection is not ready");
+      return projection;
+    };
 
     function getPlayerIds(workingRoot = null) {
-      return getRuntime().getInitialSelectionPlayerIds(getReadout(workingRoot));
+      return workingRoot
+        ? getRuntime().getInitialSelectionPlayerIds(workingRoot)
+        : [...getTurnFlow().activePlayerIds];
     }
     function isActive() {
       return getRuntime().isInitialSelectionActive();
     }
     function getOffer(playerId = null, workingRoot = null) {
-      const resolvedPlayerId = playerId ?? getReadout(workingRoot).playerState.currentPlayerId;
+      const resolvedPlayerId = playerId
+        ?? (workingRoot ? workingRoot.playerState.currentPlayerId : getTurnFlow().currentPlayerId);
       return getRuntime().getInitialSelectionOffer(resolvedPlayerId);
     }
     function isConfirmed(playerId = null, workingRoot = null) {
-      const resolvedPlayerId = playerId ?? getReadout(workingRoot).playerState.currentPlayerId;
+      const resolvedPlayerId = playerId
+        ?? (workingRoot ? workingRoot.playerState.currentPlayerId : getTurnFlow().currentPlayerId);
       return getRuntime().isInitialSelectionConfirmed(resolvedPlayerId);
     }
     function canConfirm(offer) {

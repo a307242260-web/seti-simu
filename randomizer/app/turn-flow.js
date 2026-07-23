@@ -145,30 +145,43 @@
   }
 
   function createTurnReadoutRuntime(context = {}) {
-    const readRoot = (workingRoot = null) => workingRoot || context.getRuleReadout();
+    const readProjection = () => context.assertTurnFlowProjection(context.getTurnFlowProjection());
     function isWeakStartAiDifficulty(player) {
       return player?.aiDifficulty === context.weakStartAiDifficulty;
     }
     function isPlayerPassedThisRound(playerId) {
-      return isPlayerPassed(readRoot().turnState, playerId);
+      return readProjection().passedPlayerIds.includes(playerId);
     }
     function hasPlayerCompletedThisTurn(playerId) {
-      return hasPlayerCompletedTurn(readRoot().turnState, playerId);
+      return readProjection().completedTurnPlayerIds.includes(playerId);
     }
     function getFirstEligiblePlayerIdFromReadout() {
-      return getFirstEligiblePlayerId(readRoot().turnState);
+      const projection = readProjection();
+      return projection.roundOrderPlayerIds.find((id) => !projection.passedPlayerIds.includes(id)) || null;
     }
     function getNextEligiblePlayerIdFromReadout(afterPlayerId) {
-      return getNextEligiblePlayerId(readRoot().turnState, afterPlayerId);
+      const projection = readProjection();
+      const order = projection.roundOrderPlayerIds;
+      const startIndex = Math.max(-1, order.indexOf(afterPlayerId));
+      for (let offset = 1; offset <= order.length; offset += 1) {
+        const id = order[(startIndex + offset) % order.length];
+        if (!projection.passedPlayerIds.includes(id)
+          && !projection.completedTurnPlayerIds.includes(id)) return id;
+      }
+      return null;
     }
     function haveAllActivePlayersPassedFromReadout() {
-      return haveAllActivePlayersPassed(readRoot().turnState);
+      const projection = readProjection();
+      return projection.activePlayerIds.length > 0
+        && projection.activePlayerIds.every((id) => projection.passedPlayerIds.includes(id));
     }
     function isFinalRoundFromReadout(candidateTurnState = null) {
-      return isFinalRound(candidateTurnState || readRoot().turnState, context.finalRoundNumber);
+      return candidateTurnState
+        ? isFinalRound(candidateTurnState, context.finalRoundNumber)
+        : readProjection().roundNumber >= context.finalRoundNumber;
     }
     function isGameEndedFromReadout(workingRoot = null) {
-      return isGameEnded(readRoot(workingRoot));
+      return workingRoot ? isGameEnded(workingRoot) : readProjection().terminal;
     }
     function buildFinalScoreSummaryLinesForRoot(workingRoot) {
       return buildFinalScoreSummaryLines(
@@ -184,23 +197,23 @@
       if (input) context.renderResidentRoundStatus(input);
     }
     function getTurnReadoutLines() {
-      const turnState = readRoot().turnState;
+      const projection = readProjection();
       const labels = (ids, separator, fallback = "无") => (
-        (ids || []).map(context.getPlayerLabelById).join(separator) || fallback
+        (ids || []).map((id) => projection.playerLabelsById[String(id)] || String(id)).join(separator) || fallback
       );
-      const agentLabels = (turnState.activePlayerIds || [])
-        .map((playerId) => `${context.getPlayerLabelById(playerId)}=${context.getPlayerAgentLabel(playerId)}`)
+      const agentLabels = projection.activePlayerIds
+        .map((playerId) => `${projection.playerLabelsById[String(playerId)] || playerId}=${projection.playerAgentLabelsById[String(playerId)] || "玩家"}`)
         .join("、") || "无";
       return [
         "轮次状态",
         isGameEndedFromReadout()
-          ? `游戏结束：第${turnState.roundNumber}轮全员 PASS，进行终局计分`
-          : `第${turnState.roundNumber}轮 第${context.getDisplayedTurnNumber()}回合`,
-        `基础顺位 ${labels(turnState.turnOrderPlayerIds, " > ")}`,
-        `本轮顺位 ${labels(context.getRoundOrderPlayerIds(), " > ")}`,
+          ? `游戏结束：第${projection.roundNumber}轮全员 PASS，进行终局计分`
+          : `第${projection.roundNumber}轮 第${projection.displayedTurnNumber}回合`,
+        `基础顺位 ${labels(projection.turnOrderPlayerIds, " > ")}`,
+        `本轮顺位 ${labels(projection.roundOrderPlayerIds, " > ")}`,
         `玩家代理 ${agentLabels}`,
-        `本轮已 PASS ${labels(turnState.passedPlayerIds, "、")}`,
-        `当前行动圈已行动 ${labels(turnState.completedTurnPlayerIds, "、")}`,
+        `本轮已 PASS ${labels(projection.passedPlayerIds, "、")}`,
+        `当前行动圈已行动 ${labels(projection.completedTurnPlayerIds, "、")}`,
       ];
     }
     return Object.freeze({
@@ -337,11 +350,14 @@
 
   function createTurnHostRuntime(context = {}) {
     const controller = () => context.getController();
+    const readProjection = () => context.assertTurnFlowProjection(context.getTurnFlowProjection());
     function getActiveOrderedPlayerIdsFromReadout() {
-      return getActiveOrderedPlayerIds(context.getRuleReadout().turnState);
+      const projection = readProjection();
+      const active = new Set(projection.activePlayerIds);
+      return projection.turnOrderPlayerIds.filter((id) => active.has(id));
     }
     function getRoundOrderPlayerIdsFromReadout() {
-      return getRoundOrderPlayerIds(context.getRuleReadout().turnState);
+      return [...readProjection().roundOrderPlayerIds];
     }
     function setTurnStatePlayerOrderFromHost(playerIds, options = {}) {
       return context.submitHostCommand({ kind: "turn_set_player_order", playerIds, options });
@@ -353,11 +369,15 @@
       return context.submitHostCommand({ kind: "turn_begin_next_round" });
     }
     function getDisplayedTurnNumberFromReadout(rawTurnNumber = null) {
-      const root = context.getRuleReadout();
-      return controller().getDisplayedTurnNumber(root, rawTurnNumber ?? root.turnState.turnNumber);
+      const projection = readProjection();
+      if (rawTurnNumber == null || Number(rawTurnNumber) === projection.turnNumber) {
+        return projection.displayedTurnNumber;
+      }
+      const activeCount = Math.max(1, projection.activePlayerIds.length);
+      return Math.floor((Math.max(1, Number(rawTurnNumber) || 1) - 1) / activeCount) + 1;
     }
     function getActionCycleNumberFromReadout() {
-      return controller().getActionCycleNumber(context.getRuleReadout());
+      return readProjection().actionCycleNumber;
     }
     function advanceTurnAfterPlayerActionFromHost(playerId, options = {}) {
       if (options.workingRoot) {
@@ -384,10 +404,12 @@
         rngState: options.rngState,
       });
       if (!resetResult.ok) return resetResult;
-      return context.submitHostCommand({
+      const startResult = context.submitHostCommand({
         kind: "turn_start_new_game",
         options: { ...options, activePlayerCount, compositionStatePrepared: true },
       });
+      if (!startResult?.ok) return startResult;
+      return context.submitHostCommand({ kind: "setup_start_initial_selection" });
     }
     return Object.freeze({
       getActiveOrderedPlayerIds: getActiveOrderedPlayerIdsFromReadout,
@@ -809,11 +831,10 @@
           clearPersistentGameState?.();
         }
         resetGameStateForNewGame(workingRoot, options);
-        seedDefaultReferenceRockets?.();
+        seedDefaultReferenceRockets?.(workingRoot);
         randomizeAll(workingRoot);
         initializeCardGame?.(workingRoot, defaultInitialHandCount);
         configureDefaultAiOpponent?.({ aiDifficulty });
-        startInitialSelection?.();
         rocketState.statusNote = options.message || "新游戏已开始，请完成初始选择。";
         renderStateReadout?.();
         resize?.();

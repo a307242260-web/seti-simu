@@ -17,8 +17,37 @@
     finalScoreAi: "seti-final-score-ai-projection-v1",
     actionLog: "seti-action-log-projection-v1",
     recovery: "seti-recovery-projection-v1",
+    events: "seti-browser-events-projection-v1",
+    actionInteraction: "seti-action-interaction-projection-v1",
+    turnFlow: "seti-turn-flow-projection-v1",
+    boardCoordinate: "seti-board-coordinate-projection-v1",
+    render: "seti-render-projection-v1",
   });
   const FINAL_READ_MODEL_SCHEMA = "seti-final-read-model-v1";
+  const BROWSER_READ_MODEL_SCHEMA = "seti-browser-read-model-v1";
+  const BROWSER_RENDER_KEYS = Object.freeze([
+    "boardChrome", "tokenPresentation", "playerPanels", "turnPresentation", "cardPanels",
+    "dataPresentation", "markerPresentation", "techTilePresentation",
+    "finalScorePresentation", "readoutLines",
+  ]);
+  const BROWSER_RENDER_CHILD_KEYS = Object.freeze({
+    boardChrome: Object.freeze([
+      "wheelTransforms", "sectors", "aomomoWheelImageSrc", "rotateTokenSlot",
+    ]),
+    tokenPresentation: Object.freeze(["activeRocketId", "draggingRocketId", "tokens"]),
+    playerPanels: Object.freeze(["currentPlayerId", "interfacePlayerId", "players"]),
+    cardPanels: Object.freeze([
+      "publicCards", "handCards", "publicControls", "handPanel", "initialSelection", "reservedCards",
+    ]),
+    dataPresentation: Object.freeze([
+      "playerTokens", "blueDropZones", "sectorTokensBySectorId", "aomomoTokens",
+    ]),
+    markerPresentation: Object.freeze([
+      "piratesRaid", "anomalies", "planetFossils", "runezuSymbols",
+    ]),
+    techTilePresentation: Object.freeze(["supplyTiles", "playerTiles"]),
+    finalScorePresentation: Object.freeze(["breakdownsByPlayerId"]),
+  });
   const FINAL_UI_KEYS = Object.freeze([
     "schemaVersion", "identity", "turn", "players", "finalBoard", "revealFlags",
   ]);
@@ -53,6 +82,29 @@
     "planetStatsState", "nebulaDataState", "finalScoringState", "techGameState",
     "alienGameState", "viewerPlayer", "displayedTurn",
   ]);
+  const RUNTIME_PROJECTION_KEYS = Object.freeze({
+    events: Object.freeze([
+      "schemaVersion", "identity", "alienRoutesBySlotId", "fangzhouRevealedSlotId",
+      "clickableTechTileIds",
+    ]),
+    actionInteraction: Object.freeze([
+      "schemaVersion", "identity", "activeRocketId", "industryBorrowMode",
+    ]),
+    turnFlow: Object.freeze([
+      "schemaVersion", "identity", "roundNumber", "turnNumber", "displayedTurnNumber",
+      "actionCycleNumber", "currentPlayerId", "turnOrderPlayerIds", "activePlayerIds",
+      "roundOrderPlayerIds", "passedPlayerIds", "completedTurnPlayerIds", "terminal",
+      "gameEndReason", "playerLabelsById", "playerAgentLabelsById",
+    ]),
+    boardCoordinate: Object.freeze([
+      "schemaVersion", "identity", "tokens", "activeRocketId", "planetLocations", "visibleContents",
+    ]),
+    render: Object.freeze([
+      "schemaVersion", "identity", "viewer", "boardChrome", "tokenPresentation",
+      "playerPanels", "turnPresentation", "cardPanels", "dataPresentation",
+      "markerPresentation", "techTilePresentation", "finalScorePresentation", "readoutLines",
+    ]),
+  });
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -96,6 +148,15 @@
     return projection;
   }
 
+  function assertRuntimeProjection(value, kind, label) {
+    assertExactKeys(value, RUNTIME_PROJECTION_KEYS[kind], label);
+    if (value.schemaVersion !== RUNTIME_PROJECTION_SCHEMAS[kind]) {
+      throw new TypeError(`${label} schemaVersion 不支持：${value.schemaVersion || "<missing>"}`);
+    }
+    assertDeepFrozen(value, label);
+    return value;
+  }
+
   function createRuntimeIdentity(projection) {
     return {
       projectionId: projection.projectionId,
@@ -106,6 +167,85 @@
       viewerId: projection.viewer.viewerId,
       viewerPlayerId: projection.viewer.playerId ?? null,
     };
+  }
+
+  function selectEventsProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getBrowserReadModel(projection);
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.events,
+      identity: createRuntimeIdentity(projection),
+      ...clone(readModel.events),
+    });
+  }
+
+  const assertEventsProjection = (value) => assertRuntimeProjection(value, "events", "EventsProjection");
+  const assertActionInteractionProjection = (value) => (
+    assertRuntimeProjection(value, "actionInteraction", "ActionInteractionProjection")
+  );
+  const assertTurnFlowProjection = (value) => assertRuntimeProjection(value, "turnFlow", "TurnFlowProjection");
+  const assertBoardCoordinateProjection = (value) => (
+    assertRuntimeProjection(value, "boardCoordinate", "BoardCoordinateProjection")
+  );
+  const assertRenderProjection = (value) => assertRuntimeProjection(value, "render", "RenderProjection");
+
+  function selectActionInteractionProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getBrowserReadModel(projection);
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.actionInteraction,
+      identity: createRuntimeIdentity(projection),
+      ...clone(readModel.actionInteraction),
+    });
+  }
+
+  function selectTurnFlowProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getBrowserReadModel(projection);
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.turnFlow,
+      identity: createRuntimeIdentity(projection),
+      ...clone(readModel.turnFlow),
+    });
+  }
+
+  function selectBoardCoordinateProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getBrowserReadModel(projection);
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.boardCoordinate,
+      identity: createRuntimeIdentity(projection),
+      ...clone(readModel.boardCoordinate),
+    });
+  }
+
+  function selectRenderProjection(browserProjection) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getBrowserReadModel(projection);
+    return deepFreeze({
+      schemaVersion: RUNTIME_PROJECTION_SCHEMAS.render,
+      identity: createRuntimeIdentity(projection),
+      viewer: clone(projection.viewer),
+      ...clone(readModel.render),
+    });
+  }
+
+  function getBrowserReadModel(projection) {
+    const readModel = projection.resident?.browserReadModel;
+    if (!readModel || readModel.schemaVersion !== BROWSER_READ_MODEL_SCHEMA) {
+      throw new TypeError(`BrowserProjection 缺少 ${BROWSER_READ_MODEL_SCHEMA} browserReadModel`);
+    }
+    assertDeepFrozen(readModel, "browserReadModel");
+    assertExactKeys(
+      readModel,
+      ["schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "render"],
+      "browserReadModel",
+    );
+    assertExactKeys(readModel.render, BROWSER_RENDER_KEYS, "browserReadModel.render");
+    for (const [key, keys] of Object.entries(BROWSER_RENDER_CHILD_KEYS)) {
+      assertExactKeys(readModel.render[key], keys, `browserReadModel.render.${key}`);
+    }
+    return readModel;
   }
 
   function getFinalReadModel(projection) {
@@ -413,107 +553,6 @@
     return Object.freeze({ createInitialSelection, createReservedCards });
   }
 
-  function createResidentRenderInputBuilder(context = {}) {
-    const presentation = context.presentationBuilder;
-    function createRenderInput() {
-      if (!context.viewStateStore || !context.projectionAdapter) return null;
-      const viewer = context.getViewer();
-      const canonical = context.projectionAdapter.projectSource({ viewer });
-      const readoutRoot = context.createReadoutRoot(canonical.resident);
-      const decisions = {
-        movePayment: context.getPendingMovePayment?.(),
-        cardSelectionDecision: context.readCardSelectionDecision?.(readoutRoot),
-        alienTraceDecision: context.getPendingAlienTraceDecision?.(readoutRoot),
-        alienTracePickerState: context.uiRuntimeState?.alienTracePickerState || null,
-        actionEffectFlow: context.getActionEffectFlow?.(readoutRoot),
-        publicCardSelectedSlots: [...(context.uiRuntimeState?.publicCardSelectedSlots || [])],
-        discardDecision: context.getPendingDiscardDecision?.(),
-        discardSelectedHandIndexes: [...(context.uiRuntimeState?.discardSelectedHandIndexes || [])],
-        handScanDecision: context.getPendingHandScanDecision?.(),
-        scanTargetDecision: context.getPendingScanTargetDecision?.(),
-        playCardSelection: context.uiRuntimeState?.playCardSelection,
-        handCardPlayAction: context.uiRuntimeState?.handCardPlayAction,
-        cardCornerQuickAction: context.uiRuntimeState?.cardCornerQuickAction,
-      };
-      const projectedPlayers = canonical.resident?.players?.players || [];
-      const finalScoreBreakdownsByPlayerId = Object.fromEntries(projectedPlayers.map((player) => [
-        String(player.id),
-        clonePresentation(context.computePlayerFinalScoreBreakdown?.(player, readoutRoot)),
-      ]));
-      const interfacePlayer = projectedPlayers.find((player) => String(player?.id) === viewer.playerId)
-        || projectedPlayers.find((player) => (
-          String(player?.id) === String(canonical.resident.players.currentPlayerId)
-        ))
-        || null;
-      const handCount = Array.isArray(interfacePlayer?.hand)
-        ? interfacePlayer.hand.length
-        : Math.max(0, Math.round(Number(interfacePlayer?.resources?.handSize) || 0));
-      const selectionActive = Boolean(context.isCardSelectionActive?.());
-      const allowsBlindDraw = selectionActive && Boolean(context.allowsBlindDrawInSelection?.());
-      const blindDrawAvailable = Boolean(context.canBlindDraw?.());
-      const projection = createResidentProjection({
-        projection: {
-          ...canonical,
-          resident: {
-            ...canonical.resident,
-            turn: structuredClone(canonical.resident.turn),
-            players: {
-              currentPlayerId: canonical.resident.players.currentPlayerId,
-              players: structuredClone(projectedPlayers),
-            },
-            solar: structuredClone(canonical.resident.solar),
-            pieces: structuredClone(canonical.resident.pieces),
-            planets: structuredClone(canonical.resident.planets),
-            data: structuredClone(canonical.resident.data),
-            cards: {
-              ...canonical.resident.cards,
-              publicCards: structuredClone(canonical.resident.cards.publicCards || []),
-              publicMarket: structuredClone(canonical.resident.cards.publicCards || []),
-              ui: {
-                selectionActive: Boolean(canonical.resident.cards.ui?.selectionActive),
-                discardSelectionActive: Boolean(canonical.resident.cards.ui?.discardSelectionActive),
-                playCardSelectionActive: Boolean(canonical.resident.cards.ui?.playCardSelectionActive),
-              },
-              publicControls: {
-                selectionActive,
-                multiSelectActive: Boolean(context.isPublicCardMultiSelectActive?.()),
-                blindDrawEnabled: selectionActive && allowsBlindDraw && blindDrawAvailable,
-                blindDrawReason: !selectionActive
-                  ? "请先进入精选"
-                  : !allowsBlindDraw
-                    ? "本次精选不能盲抽"
-                    : blindDrawAvailable ? "盲抽一张牌加入手牌" : "牌库已空",
-              },
-            },
-            handPanel: {
-              count: handCount, overLimit: handCount > 4,
-              hint: context.getPlayerHandPanelTitleHint?.(),
-            },
-            initialSelection: presentation.createInitialSelection(viewer, canonical.resident),
-            reservedCards: presentation.createReservedCards(viewer, canonical.resident),
-            tech: {
-              board: structuredClone(canonical.resident.tech.board || {}),
-              ui: structuredClone(canonical.resident.tech.ui || {}),
-            },
-            aliens: structuredClone(canonical.resident.aliens),
-            finalScoring: {
-              ...structuredClone(canonical.resident.finalScoring),
-              breakdownsByPlayerId: finalScoreBreakdownsByPlayerId,
-            },
-            decisions: {
-              ...clonePresentation(decisions),
-              alienRevealConfirmation: clonePresentation(context.uiRuntimeState?.alienRevealConfirmation),
-            },
-          },
-        },
-      });
-      if (projection.ok === false) throw new TypeError(`${projection.code}: ${projection.message}`);
-      context.viewStateStore.reconcileProjection(projection);
-      return { projection, viewState: context.viewStateStore.getSnapshot() };
-    }
-    return Object.freeze({ createRenderInput });
-  }
-
   function createViewerResolver(context = {}) {
     return function getViewer() {
       const player = context.getInterfacePlayer();
@@ -529,6 +568,7 @@
     SCHEMA_VERSION,
     BROWSER_PROJECTION_KEYS,
     RUNTIME_PROJECTION_SCHEMAS,
+    RUNTIME_PROJECTION_KEYS,
     LEGACY_SLICE_KEYS,
     validateProjection,
     assertCanonicalBrowserProjection,
@@ -537,10 +577,19 @@
     selectFinalScoreAiProjection,
     selectActionLogProjection,
     selectRecoveryProjection,
+    selectEventsProjection,
+    selectActionInteractionProjection,
+    selectTurnFlowProjection,
+    selectBoardCoordinateProjection,
+    selectRenderProjection,
+    assertEventsProjection,
+    assertActionInteractionProjection,
+    assertTurnFlowProjection,
+    assertBoardCoordinateProjection,
+    assertRenderProjection,
     clonePresentation,
     createReadoutRoot,
     createResidentPresentationBuilder,
-    createResidentRenderInputBuilder,
     createViewerResolver,
   });
 });
