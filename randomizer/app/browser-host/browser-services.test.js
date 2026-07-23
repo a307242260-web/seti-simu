@@ -208,6 +208,8 @@ function createHarness(options = {}) {
   effectChoiceCommands.confirm(1);
   const effectExecutorCommands = port.bindEffectExecutorCommands(["format"]);
   effectExecutorCommands.format("earth");
+  assert.equal(typeof port.bindEffectChoiceCommands().handleConditionalSectorChoice, "function");
+  assert.equal(typeof port.bindEffectExecutorCommands().executeSectorXScanEffect, "function");
   port.setBrowserStatusNote("ready");
   assert.deepEqual(submitted, [
     { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [4] },

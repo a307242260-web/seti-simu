@@ -9,6 +9,23 @@
 
   const SCHEMA_VERSION = "seti-browser-services-v1";
   const VIEW_SCHEMA_VERSION = "seti-browser-host-v1";
+  const EFFECT_CHOICE_COMMANDS = Object.freeze([
+    "handleConditionalSectorChoice", "handleDiscardIncomeCardChoice", "confirmDiscardAnyForIncome",
+    "handlePayCreditChoice", "handleFundamentalismExchangeChoice", "handleDiscardCornerRepeatChoice",
+    "handleRemoveOrbitToProbeChoice",
+  ]);
+  const EFFECT_EXECUTOR_COMMANDS = Object.freeze([
+    "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan", "getPlanetName",
+    "markerBelongsToPlayer", "playerHasOwnOrbitMarkerAtPlanet", "markerOwnerLabel",
+    "buildPlanetMarkerRemovalChoices", "removePlanetMarkerForChoice", "handleRemovePlanetMarkerChoice",
+    "handleScanAction4Choice", "formatPlanetRewardGain", "finishAutomaticRewardEffect",
+    "buildPlutoRewardEffectsForAction", "buildPlutoChoiceRewardSummary", "handleHandCornerChoice",
+    "getSectorXsMatchingCondition", "sectorXHasAvailableScanTarget", "isAlienFamilyCard",
+    "handleReturnUnfinishedTaskChoice", "countOwnedTechByType", "enrichScanResultEvents",
+    "getPlayerCompanyBaseIncome", "insertActionEffectsAfterCurrent", "insertActionEffectsBeforeCurrent",
+    "handleOptionalHandScanChoice", "openYichangdianCornerPicker", "handleYichangdianCornerChoice",
+    "applyAomomoScanCostAndBonus",
+  ]);
   const LEGACY_DOMAIN_COMMANDS = Object.freeze({
     scan_flow: Object.freeze([
       "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
@@ -291,8 +308,8 @@
           (...args) => callBrowserDomainCommand(domain, operation, args),
         ])));
       },
-      bindEffectChoiceCommands: (operations = []) => bindOperationCommands("effect_choice_command", operations),
-      bindEffectExecutorCommands: (operations = []) => bindOperationCommands("effect_executor_command", operations),
+      bindEffectChoiceCommands: (operations = EFFECT_CHOICE_COMMANDS) => bindOperationCommands("effect_choice_command", operations),
+      bindEffectExecutorCommands: (operations = EFFECT_EXECUTOR_COMMANDS) => bindOperationCommands("effect_executor_command", operations),
       callEffectChoiceCommand: (operation, args = []) => callOperation("effect_choice_command", operation, args),
       callHandFlowCommand: (operation, args = []) => callOperation("hand_flow_command", operation, args),
       callEffectExecutorCommand: (operation, args = []) => callOperation("effect_executor_command", operation, args),
