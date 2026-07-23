@@ -467,7 +467,13 @@ function createSimulationRuleComposition(options = {}) {
       kind: "decision",
       ownerId: pending.playerId,
       decisionKind: "choose_target",
-      payload: { choices },
+      payload: {
+        choices,
+        decisionContext: {
+          kind: "card_corner_free_move",
+          pending: clone(pending),
+        },
+      },
     };
   }
   const turnFlow = turnFlowApi.createTurnFlowController({
@@ -744,7 +750,6 @@ function createSimulationRuleComposition(options = {}) {
               rocketId: rocket.id,
               deltaX: direction.deltaX,
               deltaY: direction.deltaY,
-              decisionContext: clone(sessionDecision),
             },
             summary: `${rockets.formatRocketLabel(rocket)} ${direction.id}`,
           })));
@@ -1026,9 +1031,9 @@ function createSimulationRuleComposition(options = {}) {
             executeDeterministic() {
               return { ok: false, code: "SIMULATION_RULE_STALLED", message: "Rule Composition 没有可执行的确定性 Effect" };
             },
-            resolveDecision(_workingState, choice) {
+            resolveDecision(_workingState, choice, resolutionContext = {}) {
               _workingState = _workingState.workingRoot || _workingState;
-              if (choice?.payload?.decisionContext?.kind === "card_corner_free_move") {
+              if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
                 const moved = rockets.moveRocket(
                   _workingState.rocketState,
                   choice.target?.rocketId,

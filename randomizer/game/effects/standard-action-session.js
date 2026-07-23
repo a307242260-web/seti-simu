@@ -125,7 +125,10 @@
                 message: "Standard Action Decision resolve 缺少 Composition working root",
               };
             }
-            const resolved = continuation.resolveDecision(compositionWorkingRoot, clone(choice));
+            const resolved = continuation.resolveDecision(compositionWorkingRoot, clone(choice), {
+              effect: clone(_effect),
+              decisionContext: clone(_effect.payload?.decisionContext || null),
+            });
             if (!resolved?.ok) return resolved || {
               ok: false,
               code: "STANDARD_ACTION_DECISION_RESOLVE_FAILED",

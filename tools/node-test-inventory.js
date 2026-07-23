@@ -9,6 +9,7 @@ module.exports = Object.freeze({
   unit: Object.freeze([
     entry("randomizer/app/rule-composition.test.js", "architecture/rule-composition", "组合层独占 registry、session 与原子提交", "handler 或 renderer 失败污染 committed state"),
     entry("randomizer/app/conditional-decision-domain.test.js", "architecture/standard-action", "条件选择统一映射为有 owner/version 的 Standard Action", "stale、错 owner 或未知选择进入领域 handler"),
+    entry("randomizer/app/card-runtime.test.js", "architecture/effect-session", "卡牌移动点先投影到 badge 再打开 Session DecisionEffect", "提前 return 导致 badge 未初始化或旧 match continuation 复活"),
     entry("randomizer/training/simulation-standard-action-composition.test.js", "architecture/standard-action", "生产 composition 唯一注册 22 family 并正式执行", "synthetic registry 掩盖漏注册、错误 phase 或 stale 重放"),
 
     entry("randomizer/game/effects/session-runtime.test.js", "architecture/effect-session", "Effect Session 独占 working copy、队列、Decision 与提交", "多选自动代选、失败 effect 入 journal 或脏提交"),
