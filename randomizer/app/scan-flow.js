@@ -152,7 +152,7 @@
       updatePublicCardControls: card("updatePublicCardControls"),
       updateActionButtons: hostPort.updateActionButtons,
       syncPublicScanConfirmButton: hostPort.syncPublicScanConfirmButton,
-      syncCardSelectionChrome: card("syncCardSelectionChrome"),
+      syncCardSelectionChrome: interactionChrome?.syncCardSelectionChrome,
       syncHandScanSelectionChrome: handFlowRuntime?.syncHandScanSelectionChrome,
       beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
       endEffectHistoryStep: effectFlowRuntime?.endEffectHistoryStep,

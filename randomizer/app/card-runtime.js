@@ -7,6 +7,164 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "abilities", "banrenma", "cardEffects", "cards", "data", "fangzhou",
+    "historyCommands", "industry", "players", "quickTrades", "rocketActions", "runezu",
+  ]);
+
+  function createBrowserCardStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) throw new Error(`Browser Card 静态模块缺少依赖：${missing.join(", ")}`);
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
+
+  function createBrowserCardRuntime(options = {}) {
+    const {
+      staticContext,
+      getActionInteractionRuntime,
+      getAlienSpeciesRuntime,
+      getCardTriggerRuntime,
+      getIndustryRuntime,
+      getScanRuntime,
+      getTechRuntime,
+      getTurnEndRuntime,
+      actionSessionRuntime,
+      browserMatchRuntime,
+      cardHoverPreviewRuntime,
+      cardSelectionState,
+      effectExecutorPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      effectSkipRuntime,
+      handFlowRuntime,
+      interactionChrome,
+      pendingSubFlowRuntime,
+      renderRuntime,
+      scoreSourceRuntime,
+      hostPort = {},
+    } = options;
+    const requireGetter = (name, getter) => {
+      if (typeof getter !== "function") {
+        throw new TypeError(`Browser Card bootstrap 缺少 owner getter：${name}`);
+      }
+      return getter;
+    };
+    const lazy = (ownerName, getter, methodName) => {
+      const getOwner = requireGetter(ownerName, getter);
+      return (...args) => {
+        const method = getOwner()?.[methodName];
+        if (typeof method !== "function") {
+          throw new Error(`Browser Card owner ${ownerName} 缺少方法：${methodName}`);
+        }
+        return method(...args);
+      };
+    };
+    const actionInteraction = (methodName) => (
+      lazy("actionInteraction", getActionInteractionRuntime, methodName)
+    );
+    const alien = (methodName) => lazy("alienSpecies", getAlienSpeciesRuntime, methodName);
+    const cardTrigger = (methodName) => lazy("cardTrigger", getCardTriggerRuntime, methodName);
+    const industry = (methodName) => lazy("industry", getIndustryRuntime, methodName);
+    const scan = (methodName) => lazy("scan", getScanRuntime, methodName);
+    const tech = (methodName) => lazy("tech", getTechRuntime, methodName);
+    const turnEnd = (methodName) => lazy("turnEnd", getTurnEndRuntime, methodName);
+
+    return createCardRuntime({
+      ...staticContext,
+      HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
+      HISTORY_SOURCE_QUICK: hostPort.HISTORY_SOURCE_QUICK,
+      SCORE_SOURCE_KEYS: hostPort.SCORE_SOURCE_KEYS,
+      SCORE_SOURCE_KEY_SET: new Set(Object.values(hostPort.SCORE_SOURCE_KEYS || {})),
+      actionHistory: hostPort.actionHistory,
+      activateMoveMode: actionInteraction("activateMoveMode"),
+      addScoreSourceFromGain: scoreSourceRuntime?.addScoreSourceFromGain,
+      allowsBlindDrawInSelection: cardSelectionState?.allowsBlindDrawInSelection,
+      appendActionLogStep: effectFlowRuntime?.appendActionLogStep,
+      attachCardHoverPreview: cardHoverPreviewRuntime?.attach,
+      beginDiscardSelection: handFlowRuntime?.beginDiscardSelection,
+      beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
+      beginQuickActionStep: effectFlowRuntime?.beginQuickActionStep,
+      beginSupplementalMovePayment: handFlowRuntime?.beginSupplementalMovePayment,
+      canPayForMove: hostPort.canPayForMove,
+      canStartMainAction: actionSessionRuntime?.canStartMainAction,
+      clearMoveRocketHighlight: actionInteraction("clearMoveRocketHighlight"),
+      clearHistoryStepOrderForSource: effectFlowRuntime?.clearHistoryStepOrderForSource,
+      commitIrreversibleIndustryQuickAction: industry("commitIrreversibleIndustryQuickAction"),
+      completeCurrentActionEffect: effectFlowRuntime?.completeCurrentActionEffect,
+      completeQuickActionStep: effectFlowRuntime?.completeQuickActionStep,
+      continueAfterCardTriggerResolution: cardTrigger("continueAfterCardTriggerResolution"),
+      continuePendingDataPlacementAfterBonus: actionInteraction("continuePendingDataPlacementAfterBonus"),
+      createActionContext: hostPort.createActionContext,
+      createActionLogImpactSnapshot: effectFlowRuntime?.createActionLogImpactSnapshot,
+      createActionLogPlayedCardSnapshot: effectFlowRuntime?.createActionLogPlayedCardSnapshot,
+      createCardTriggerProgressCommands: cardTrigger("createCardTriggerProgressCommands"),
+      deactivateMoveMode: actionInteraction("deactivateMoveMode"),
+      discardReservedCardIfFinished: cardTrigger("discardReservedCardIfFinished"),
+      document: hostPort.document,
+      els: hostPort.els,
+      finalizeIndustryDeepspaceSwap: industry("finalizeIndustryDeepspaceSwap"),
+      finishAutomaticRewardEffect: effectExecutorPort?.finishAutomaticRewardEffect,
+      finishIndustryAbilityFlow: industry("finishIndustryAbilityFlow"),
+      formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
+      endEffectHistoryStep: effectFlowRuntime?.endEffectHistoryStep,
+      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+      getDelayedPublicRefillSlots: scan("getDelayedPublicRefillSlots"),
+      getGameplayLockReason: hostPort.getGameplayLockReason,
+      getMainActionStartBlockReason: actionSessionRuntime?.getMainActionStartBlockReason,
+      getPendingIndustryAbilityDecision: browserMatchRuntime?.getPendingIndustryAbilityDecision,
+      getRequiredMovePointsForUi: hostPort.getRequiredMovePointsForUi,
+      getRequiredMovePointsForWorkingRoot: hostPort.getRequiredMovePointsForWorkingRoot,
+      getPublicScanSelectionInstruction: scan("getPublicScanSelectionInstruction"),
+      handlePublicScanCardClick: scan("handlePublicScanCardClick"),
+      hasActivePendingSubFlow: pendingSubFlowRuntime?.hasActivePendingSubFlow,
+      hideCardHoverPreview: cardHoverPreviewRuntime?.hide,
+      insertActionEffectsAfterCurrent: effectExecutorPort?.insertActionEffectsAfterCurrent,
+      isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
+      isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
+      isHandScanSelectionActive: handFlowRuntime?.isHandScanSelectionActive,
+      isIndustryHandSelectionActive: industry("isIndustryHandSelectionActive"),
+      isMovePaymentLockedForAiAutomation: handFlowRuntime?.isMovePaymentLockedForAiAutomation,
+      isMovePaymentSelectionActive: handFlowRuntime?.isMovePaymentSelectionActive,
+      isPlayCardSelectionActive: cardSelectionState?.isPlayCardSelectionActive,
+      isTechTilePickingActive: tech("isTechTilePickingActive"),
+      keepExistingMainActionPendingAfterChongTask: alien("keepExistingMainActionPendingAfterChongTask"),
+      markCurrentActionIrreversible: actionSessionRuntime?.markCurrentActionIrreversible,
+      maybeContinuePendingTurnEndRevealFlow: turnEnd("maybeContinuePendingTurnEndRevealFlow"),
+      normalizeResourceCost: hostPort.normalizeResourceCost,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      quickActionHistory: hostPort.quickActionHistory,
+      recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
+      recordHistoryCommand: effectFlowRuntime?.recordHistoryCommand,
+      recordQuickHistoryCommand: effectFlowRuntime?.recordQuickHistoryCommand,
+      recordScoreSourceForGainEffect: scoreSourceRuntime?.recordScoreSourceForGainEffect,
+      recordTechBonusScore: scoreSourceRuntime?.recordTechBonusScore,
+      renderActionEffectBar: hostPort.renderActionEffectBar,
+      renderPlayerHand: renderRuntime?.renderPlayerHand,
+      renderPlayerStats: renderRuntime?.renderPlayerStats,
+      renderRocketElement: renderRuntime?.renderRocketElement,
+      renderRockets: renderRuntime?.renderRockets,
+      renderInitialSelectionArea: renderRuntime?.renderInitialSelectionArea,
+      renderRuntime,
+      renderStateReadout: renderRuntime?.renderStateReadout,
+      rollbackPendingIndustryQuickAction: industry("rollbackPendingIndustryQuickAction"),
+      scrollToPlayerHandPanel: handFlowRuntime?.scrollToPlayerHandPanel,
+      settleCardTasksAfterEffect: cardTrigger("settleCardTasksAfterEffect"),
+      skipActionEffectWithMessage: effectSkipRuntime?.skipWithMessage,
+      startCardEffectFlow: effectFlowRuntime?.startCardEffectFlow,
+      startActionLogDraft: effectFlowRuntime?.startActionLogDraft,
+      structuredClone: hostPort.structuredClone,
+      syncCardSelectionChrome: interactionChrome?.syncCardSelectionChrome,
+      syncMovePaymentChrome: handFlowRuntime?.syncMovePaymentChrome,
+      updateActionButtons: hostPort.updateActionButtons,
+      activateMoveModeForWorkingRoot: actionInteraction("activateMoveMode"),
+      deactivateMoveModeForWorkingRoot: actionInteraction("deactivateMoveMode"),
+    });
+  }
+
   function buildRepeatedCardCornerMoveEffect(effect, card, moveReward, repeat, options = {}) {
     const repeatCount = Math.max(1, Math.round(Number(repeat || 1)));
     const baseMovementPoints = Math.max(1, Math.round(Number(moveReward?.movementPoints || 1)));
@@ -2392,6 +2550,9 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    createBrowserCardRuntime,
+    createBrowserCardStaticContext,
     createCardRuntime,
     createCardSetupController,
     createPassReserveDecisionPort,

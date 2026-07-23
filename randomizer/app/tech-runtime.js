@@ -11,6 +11,119 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "actions", "abilities", "cardEffects", "cards", "historyCommands", "industry",
+    "planetReferenceLayout", "planetRewards", "planetStats", "players", "rocketActions", "tech",
+  ]);
+
+  function createBrowserTechStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) throw new Error(`Browser Tech 静态模块缺少依赖：${missing.join(", ")}`);
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
+
+  function createBrowserTechRuntime(options = {}) {
+    const {
+      staticContext,
+      getActionInteractionRuntime,
+      getActionBarPort,
+      actionSessionRuntime,
+      browserLayoutRuntime,
+      cardRuntime,
+      coordinatePort,
+      effectExecutorPort,
+      effectFlowRuntime,
+      effectHistoryPort,
+      effectSkipRuntime,
+      industryRuntime,
+      interactionChrome,
+      renderRuntime,
+      scanRuntime,
+      hostPort = {},
+    } = options;
+    const requireGetter = (name, getter) => {
+      if (typeof getter !== "function") {
+        throw new TypeError(`Browser Tech bootstrap 缺少 owner getter：${name}`);
+      }
+      return getter;
+    };
+    const lazy = (ownerName, getter, methodName) => {
+      const getOwner = requireGetter(ownerName, getter);
+      return (...args) => {
+        const method = getOwner()?.[methodName];
+        if (typeof method !== "function") {
+          throw new Error(`Browser Tech owner ${ownerName} 缺少方法：${methodName}`);
+        }
+        return method(...args);
+      };
+    };
+    const actionInteraction = (methodName) => (
+      lazy("actionInteraction", getActionInteractionRuntime, methodName)
+    );
+    const actionBar = (methodName) => lazy("actionBar", getActionBarPort, methodName);
+
+    return createTechRuntime({
+      ...staticContext,
+      HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
+      HISTORY_SOURCE_QUICK: hostPort.HISTORY_SOURCE_QUICK,
+      actionHistory: hostPort.actionHistory,
+      beginCardSelection: cardRuntime?.beginCardSelection,
+      beginEffectHistoryStep: effectFlowRuntime?.beginEffectHistoryStep,
+      buildPlutoMarkerRemovalChoices: actionInteraction("buildPlutoMarkerRemovalChoices"),
+      cancelIndustryAbilityFlow: industryRuntime?.cancelIndustryAbilityFlow,
+      clearActionEffectFlow: effectFlowRuntime?.clearActionEffectFlow,
+      clearActionPending: actionSessionRuntime?.clearActionPending,
+      clearHistoryStepOrderForSource: effectFlowRuntime?.clearHistoryStepOrderForSource,
+      closeScanTargetPicker: scanRuntime?.closeScanTargetPicker,
+      completeCurrentActionEffect: effectFlowRuntime?.completeCurrentActionEffect,
+      confirmIndustryTuringBorrow: industryRuntime?.confirmIndustryTuringBorrow,
+      countOwnedTechByType: effectExecutorPort?.countOwnedTechByType,
+      createActionContext: hostPort.createActionContext,
+      dispatchStandardIntent: hostPort.dispatchStandardIntent,
+      document: hostPort.document,
+      els: hostPort.els,
+      endEffectHistoryStep: effectFlowRuntime?.endEffectHistoryStep,
+      finishAutomaticRewardEffect: effectExecutorPort?.finishAutomaticRewardEffect,
+      formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
+      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
+      getPlanetName: effectExecutorPort?.getPlanetName,
+      getPlanetSectorCoordinate: hostPort.getPlanetSectorCoordinate,
+      getCurrentActionIrreversibleReason: actionSessionRuntime?.getCurrentActionIrreversibleReason,
+      hasCurrentMainActionIrreversibleBarrier: actionSessionRuntime?.hasCurrentMainActionIrreversibleBarrier,
+      maybeApplyIndustryLaunchScan: industryRuntime?.maybeApplyIndustryLaunchScan,
+      normalizeResourceCost: hostPort.normalizeResourceCost,
+      recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
+      recordHistoryCommand: effectFlowRuntime?.recordHistoryCommand,
+      removeActionLogStepsBySource: effectFlowRuntime?.removeActionLogStepsBySource,
+      renderActionEffectBar: hostPort.renderActionEffectBar,
+      renderPlayerStats: renderRuntime?.renderPlayerStats,
+      renderRocketElement: renderRuntime?.renderRocketElement,
+      renderRockets: renderRuntime?.renderRockets,
+      renderRotateStateToken: renderRuntime?.renderRotateStateToken,
+      renderRunezuBoardSymbols: renderRuntime?.renderRunezuBoardSymbols,
+      renderSectorNebulaDataBoard: renderRuntime?.renderSectorNebulaDataBoard,
+      renderStateReadout: renderRuntime?.renderStateReadout,
+      renderWheels: renderRuntime?.renderWheels,
+      removePlutoMarker: actionInteraction("removePlutoMarker"),
+      restoreObjectSnapshot: cardRuntime?.restoreObjectSnapshot,
+      runAction: hostPort.runAction,
+      setQuickPanelOpen: actionBar("setQuickPanelOpen"),
+      skipActionEffectWithMessage: effectSkipRuntime?.skipWithMessage,
+      startCardEffectFlow: effectFlowRuntime?.startCardEffectFlow,
+      syncCardSelectionChrome: interactionChrome?.syncCardSelectionChrome,
+      syncInteractionFocusChrome: interactionChrome?.syncInteractionFocusChrome,
+      syncPlanetOrbitLandMarkers: coordinatePort?.syncPlanetOrbitLandMarkers,
+      syncTechRenderContext: browserLayoutRuntime?.syncTechRenderContext,
+      techRenderContext: hostPort.techRenderContext,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      updateActionButtons: actionBar("updateActionButtons"),
+    });
+  }
+
   function createTechSelectionCompletionPort(context = {}) {
     return function finish(workingRoot) {
       context.tech.setTechSelectionActive(workingRoot.techGameState, false);
@@ -1258,5 +1371,11 @@
     };
   }
 
-  return { createTechRuntime, createTechSelectionCompletionPort };
+  return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    createBrowserTechRuntime,
+    createBrowserTechStaticContext,
+    createTechRuntime,
+    createTechSelectionCompletionPort,
+  };
 });

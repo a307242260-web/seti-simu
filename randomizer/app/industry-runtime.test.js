@@ -1,7 +1,12 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createIndustryRuntime } = require("./industry-runtime.js");
+const { createBrowserIndustryRuntime, createIndustryRuntime } = require("./industry-runtime.js");
+
+assert.throws(
+  () => createBrowserIndustryRuntime(),
+  /Browser Industry bootstrap 缺少 owner getter：actionInteraction/,
+);
 
 function noop() {}
 

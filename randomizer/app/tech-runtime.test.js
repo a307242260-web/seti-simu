@@ -1,7 +1,12 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createTechRuntime } = require("./tech-runtime.js");
+const { createBrowserTechRuntime, createTechRuntime } = require("./tech-runtime.js");
+
+assert.throws(
+  () => createBrowserTechRuntime(),
+  /Browser Tech bootstrap 缺少 owner getter：actionInteraction/,
+);
 
 function createHarness() {
   const calls = [];

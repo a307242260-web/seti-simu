@@ -2,11 +2,17 @@
 
 const assert = require("node:assert/strict");
 const {
+  createBrowserCardRuntime,
   createCardRuntime,
   createCardSetupController,
   buildRepeatedCardCornerMoveEffect,
   formatRepeatedCardCornerMoveReward,
 } = require("./card-runtime");
+
+assert.throws(
+  () => createBrowserCardRuntime(),
+  /Browser Card bootstrap 缺少 owner getter：actionInteraction/,
+);
 
 assert.deepEqual(buildRepeatedCardCornerMoveEffect(
   { id: "effect-1" },
