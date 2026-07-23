@@ -10,6 +10,36 @@ assert.deepEqual(source, [1, 2, 3]);
 assert.deepEqual([...shuffled].sort(), source);
 
 {
+  const root = {
+    solarState: {},
+    playerState: { currentPlayerId: "p1", players: [{ id: "p1" }, { id: "p2" }] },
+    cardState: {}, rocketState: {}, nebulaDataState: {}, planetStatsState: {}, alienGameState: {},
+    finalScoringState: {}, techGameState: { board: {}, ui: {} },
+    turnState: { roundNumber: 2, turnNumber: 3 }, meta: { stateVersion: 7 }, match: { decisionVersion: 4 },
+  };
+  const factory = actionRuntime.createActionContextFactory({
+    buildPlutoMarkerContext: () => ({ plutoMarkers: ["marker"] }),
+    getNormalTokenAssetForPlayer: () => "token",
+    getEarthSectorCoordinate: () => ({ x: 0, y: 0 }),
+    solar: { createSolarSnapshot: () => ({ planetLocations: [] }) },
+    rotateSolarOrbit: () => {}, drawBasicCardToPlayer: () => {}, drawBasicCard: () => {}, blindDrawCard: () => {},
+    rocketActions: { launchRocketAtSector: () => ({ ok: true }) },
+    cards: { replenishPublicSlot: () => ({ ok: true }) },
+    beginCardSelection: () => {}, beginDiscardSelection: () => {}, beginIncome: () => {},
+    getPlayerCompanyBaseIncome: () => 1,
+    players: { normalizePlayerTechState: () => ({}) },
+    createReadoutRoot: () => root,
+  });
+  const context = factory.createActionContext(root, { actorId: "p2" });
+  assert.equal(context.playerState.currentPlayerId, "p2");
+  assert.equal(context.playerState.players, root.playerState.players);
+  assert.equal(context.standardActionAuthority.stateVersion, 7);
+  assert.deepEqual(context.plutoMarkers, ["marker"]);
+  assert.equal(factory.createReadoutActionContext().workingRoot, root);
+  assert.throws(() => factory.createActionContext({}), /Composition workingRoot/);
+}
+
+{
   const recorded = [];
   const resolveInitialSelectionEffects = actionRuntime.createInitialSelectionEffectsResolver({
     initialCards: {

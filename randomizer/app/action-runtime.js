@@ -97,6 +97,74 @@
     };
   }
 
+  function createActionContextFactory(context = {}) {
+    function createActionContext(workingRoot, descriptor = null) {
+      if (!workingRoot?.playerState || !workingRoot?.turnState || !workingRoot?.match) {
+        throw new TypeError("Action context 缺少 Composition workingRoot");
+      }
+      const actorId = descriptor?.actorId || workingRoot.playerState.currentPlayerId;
+      const actionPlayerState = actorId === workingRoot.playerState.currentPlayerId
+        ? workingRoot.playerState
+        : { ...workingRoot.playerState, currentPlayerId: actorId, players: workingRoot.playerState.players };
+      return {
+        workingRoot,
+        solarState: workingRoot.solarState,
+        playerState: actionPlayerState,
+        cardState: workingRoot.cardState,
+        rocketState: workingRoot.rocketState,
+        nebulaDataState: workingRoot.nebulaDataState,
+        planetStatsState: workingRoot.planetStatsState,
+        alienGameState: workingRoot.alienGameState,
+        finalScoringState: workingRoot.finalScoringState,
+        techBoardState: workingRoot.techGameState.board,
+        techUiState: workingRoot.techGameState.ui,
+        techGameState: workingRoot.techGameState,
+        turnState: workingRoot.turnState,
+        metaState: workingRoot.meta,
+        matchState: workingRoot.match,
+        stateVersion: workingRoot.meta?.stateVersion ?? 0,
+        decisionVersion: workingRoot.match?.decisionVersion ?? 0,
+        standardActionAuthority: {
+          actorId,
+          stateVersion: workingRoot.meta?.stateVersion ?? 0,
+          decisionVersion: workingRoot.match?.decisionVersion ?? 0,
+        },
+        ...(context.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] }),
+        roundNumber: workingRoot.turnState.roundNumber,
+        turnNumber: workingRoot.turnState.turnNumber,
+        getPlayerTokenSrc: context.getNormalTokenAssetForPlayer,
+        getEarthSectorCoordinate: context.getEarthSectorCoordinate,
+        getPlanetLocations: () => context.solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
+        rotateSolarOrbit: (count) => context.rotateSolarOrbit(workingRoot, count),
+        drawBasicCardToPlayer: (player) => context.drawBasicCardToPlayer(workingRoot, player),
+        drawBasicCard: () => context.drawBasicCard(workingRoot),
+        blindDrawCard: (player) => context.blindDrawCard(workingRoot, player),
+        launchRocketAtEarth: (player) => context.rocketActions.launchRocketAtSector(
+          workingRoot.rocketState,
+          context.getEarthSectorCoordinate(),
+          { playerId: player.id, color: player.color },
+        ),
+        replenishPublicSlot: (slotIndex) => context.cards.replenishPublicSlot(
+          workingRoot.cardState,
+          workingRoot.playerState,
+          slotIndex,
+        ),
+        beginCardSelection: (pendingAction) => context.beginCardSelection(workingRoot, pendingAction),
+        beginDiscardSelection: (count, pendingAction) => context.beginDiscardSelection(workingRoot, count, pendingAction),
+        beginIncome: (options) => context.beginIncome(workingRoot, options),
+        getPlayerCompanyBaseIncome: context.getPlayerCompanyBaseIncome,
+        ensurePlayerTechState: (player) => {
+          if (!player.techState) player.techState = context.players.normalizePlayerTechState(null);
+        },
+      };
+    }
+
+    return Object.freeze({
+      createActionContext,
+      createReadoutActionContext: () => createActionContext(context.createReadoutRoot()),
+    });
+  }
+
   function createActionRuntime(context = {}) {
     if (!context.setupSelectionState) {
       throw new Error("createActionRuntime requires setupSelectionState");
@@ -886,6 +954,7 @@
     createActionRuntime,
     createInitialIncomeFlow,
     createInitialSelectionEffectsResolver,
+    createActionContextFactory,
     shuffleList,
     stripAssetExtension,
   };

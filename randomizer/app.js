@@ -375,6 +375,28 @@
     restoreWorkingState: restoreBrowserWorkingState,
     validateSessionBoundary: validateBrowserSessionBoundary,
   } = browserWorkingStateAdapter;
+  const actionContextFactory = actionRuntimeModule.createActionContextFactory({
+    buildPlutoMarkerContext: (...args) => buildPlutoMarkerContext(...args),
+    getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
+    getEarthSectorCoordinate: (...args) => getEarthSectorCoordinate(...args),
+    solar,
+    rotateSolarOrbit: (...args) => rotateSolarOrbitForRoot(...args),
+    drawBasicCardToPlayer: (...args) => drawBasicCardToPlayerForRoot(...args),
+    drawBasicCard: (...args) => drawCardForCurrentPlayerForRoot(...args),
+    blindDrawCard: (...args) => blindDrawCardForPlayerForRoot(...args),
+    rocketActions,
+    cards,
+    beginCardSelection: (...args) => beginCardSelectionForRoot(...args),
+    beginDiscardSelection: (...args) => handFlowHelpers.beginDiscardSelection(...args),
+    beginIncome: (...args) => beginIncomeForCurrentPlayerForRoot(...args),
+    getPlayerCompanyBaseIncome: (...args) => getPlayerCompanyBaseIncome(...args),
+    players,
+    createReadoutRoot: () => createStateSourceReadoutRoot(),
+  });
+  const {
+    createActionContext: createActionContextForWorkingRoot,
+    createReadoutActionContext,
+  } = actionContextFactory;
 
   const ruleComposition = ruleCompositionModule.createRuleComposition({
     invariantValidators: [validateBrowserSessionBoundary],
@@ -6328,73 +6350,6 @@
       uiRuntimeState.stateReadoutRenderFrame = 0;
       renderStateReadout();
     });
-  }
-
-  function createActionContextForWorkingRoot(workingRoot, descriptor = null) {
-    if (!isBrowserWorkingRoot(workingRoot)) throw new TypeError("Action context 缺少 Composition workingRoot");
-    const actorId = descriptor?.actorId || workingRoot.playerState.currentPlayerId;
-    const actionPlayerState = actorId === workingRoot.playerState.currentPlayerId
-      ? workingRoot.playerState
-      : { ...workingRoot.playerState, currentPlayerId: actorId, players: workingRoot.playerState.players };
-    return {
-      workingRoot,
-      solarState: workingRoot.solarState,
-      playerState: actionPlayerState,
-      cardState: workingRoot.cardState,
-      rocketState: workingRoot.rocketState,
-      nebulaDataState: workingRoot.nebulaDataState,
-      planetStatsState: workingRoot.planetStatsState,
-      alienGameState: workingRoot.alienGameState,
-      finalScoringState: workingRoot.finalScoringState,
-      techBoardState: workingRoot.techGameState.board,
-      techUiState: workingRoot.techGameState.ui,
-      techGameState: workingRoot.techGameState,
-      turnState: workingRoot.turnState,
-      metaState: workingRoot.meta,
-      matchState: workingRoot.match,
-      stateVersion: workingRoot.meta?.stateVersion ?? 0,
-      decisionVersion: workingRoot.match?.decisionVersion ?? 0,
-      standardActionAuthority: {
-        actorId,
-        stateVersion: workingRoot.meta?.stateVersion ?? 0,
-        decisionVersion: workingRoot.match?.decisionVersion ?? 0,
-      },
-      ...(actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] }),
-      roundNumber: workingRoot.turnState.roundNumber,
-      turnNumber: workingRoot.turnState.turnNumber,
-      getPlayerTokenSrc: (player) => getNormalTokenAssetForPlayer(player),
-      getEarthSectorCoordinate,
-      getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
-      rotateSolarOrbit: (count) => rotateSolarOrbitForRoot(workingRoot, count),
-      drawBasicCardToPlayer: (player) => drawBasicCardToPlayerForRoot(workingRoot, player),
-      drawBasicCard: () => drawCardForCurrentPlayerForRoot(workingRoot),
-      blindDrawCard: (player) => blindDrawCardForPlayerForRoot(workingRoot, player),
-      launchRocketAtEarth: (player) => rocketActions.launchRocketAtSector(
-        workingRoot.rocketState,
-        getEarthSectorCoordinate(),
-        { playerId: player.id, color: player.color },
-      ),
-      replenishPublicSlot: (slotIndex) => cards.replenishPublicSlot(
-        workingRoot.cardState,
-        workingRoot.playerState,
-        slotIndex,
-      ),
-      beginCardSelection: (pendingAction) => beginCardSelectionForRoot(workingRoot, pendingAction),
-      beginDiscardSelection: (count, pendingAction) => handFlowHelpers.beginDiscardSelection(
-        workingRoot,
-        count,
-        pendingAction,
-      ),
-      beginIncome: (options) => beginIncomeForCurrentPlayerForRoot(workingRoot, options),
-      getPlayerCompanyBaseIncome,
-      ensurePlayerTechState: (player) => {
-        if (!player.techState) player.techState = players.normalizePlayerTechState(null);
-      },
-    };
-  }
-
-  function createReadoutActionContext() {
-    return createActionContextForWorkingRoot(createStateSourceReadoutRoot());
   }
 
   let legacyActionBarController = null;
