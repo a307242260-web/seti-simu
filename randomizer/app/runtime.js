@@ -96,6 +96,72 @@
     };
   }
 
+  function createBrowserMatchRuntime(context = {}) {
+    const readRoot = (workingRoot = null) => workingRoot || context.createReadoutRoot();
+    const continuationGetter = (field) => (workingRoot = null) => readRoot(workingRoot)?.match?.[field] || null;
+    const getActionEffectFlow = continuationGetter("actionEffectFlow");
+
+    function setActionEffectFlow(workingRoot, flow) {
+      if (!workingRoot?.match) throw new TypeError("action effect flow requires explicit workingRoot.match");
+      if (!flow) {
+        delete workingRoot.match.actionEffectFlow;
+        return null;
+      }
+      workingRoot.match.actionEffectFlow = flow;
+      return flow;
+    }
+
+    function setPendingCardSelectionDecision(workingRoot, pending) {
+      context.uiRuntimeState.publicCardSelectedSlots = [];
+      if (!pending) {
+        delete workingRoot.match.cardSelectionContinuation;
+        context.uiRuntimeState.cardSelectionType = null;
+        return null;
+      }
+      const player = pending.player || null;
+      workingRoot.match.cardSelectionContinuation = {
+        ...structuredClone(pending),
+        playerId: pending.playerId || player?.id || null,
+        playerColor: pending.playerColor || player?.color || null,
+        effectId: pending.effectId || pending.effect?.id || null,
+      };
+      delete workingRoot.match.cardSelectionContinuation.player;
+      delete workingRoot.match.cardSelectionContinuation.effect;
+      delete workingRoot.match.cardSelectionContinuation.selectedSlots;
+      context.uiRuntimeState.cardSelectionType = workingRoot.match.cardSelectionContinuation.type || null;
+      return workingRoot.match.cardSelectionContinuation;
+    }
+
+    return Object.freeze({
+      getActionEffectFlow,
+      setActionEffectFlow,
+      getPendingDataPlacementDecision: continuationGetter("dataPlacementContinuation"),
+      getPendingLandTargetDecision: continuationGetter("landTargetContinuation"),
+      getPendingAlienTraceDecision: continuationGetter("alienTraceContinuation"),
+      getPendingPiratesRaidDecision: continuationGetter("piratesRaidContinuation"),
+      getPendingStrategySlotDecision: continuationGetter("strategySlotContinuation"),
+      getPendingIndustryAbilityDecision: continuationGetter("industryAbilityContinuation"),
+      getPublicScanQueueSession: continuationGetter("publicScanContinuation"),
+      getPendingProbeSectorScanDecision: continuationGetter("probeSectorScanContinuation"),
+      getPendingProbeLocationRewardDecision: continuationGetter("probeLocationRewardContinuation"),
+      getPendingHandScanDecision: continuationGetter("handScanContinuation"),
+      getPendingScanTargetDecision: continuationGetter("scanTargetContinuation"),
+      getPendingCardMoveDecision: continuationGetter("cardMoveContinuation"),
+      getPendingScanFreeMoveDecision: continuationGetter("scanFreeMoveContinuation"),
+      getPendingIndustryFreeMoveDecision: continuationGetter("industryFreeMoveContinuation"),
+      hasTurnEndRevealContinuation: (workingRoot = null) => Boolean(readRoot(workingRoot)?.match?.turnEndRevealContinuation),
+      getPendingCardCornerFreeMove: continuationGetter("cardCornerFreeMoveContinuation"),
+      getPendingCardTriggerFreeMove: continuationGetter("cardTriggerFreeMoveContinuation"),
+      getPendingCardTriggerAction: continuationGetter("cardTriggerContinuation"),
+      getPendingCardTaskCompletion: continuationGetter("cardTaskCompletionContinuation"),
+      getPendingPassReserveSelection: continuationGetter("passReserveContinuation"),
+      getPendingMovePayment: continuationGetter("movePaymentContinuation"),
+      getPendingDiscardDecision: continuationGetter("discardContinuation"),
+      getPendingCardSelectionDecision: continuationGetter("cardSelectionContinuation"),
+      setPendingCardSelectionDecision,
+    });
+  }
+
   function createPlayerEffectOwnerRuntime(context = {}) {
     const isWorkingRoot = (value) => Boolean(value?.playerState && value?.rocketState && value?.turnState);
 
@@ -358,6 +424,7 @@
     createSelectionState,
     createUiState,
     createBrowserHostState,
+    createBrowserMatchRuntime,
     createPlayerEffectOwnerRuntime,
     createBrowserContextRuntime,
     createBrowserWorkingStateAdapter,

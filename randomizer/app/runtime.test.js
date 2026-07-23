@@ -60,6 +60,31 @@ assert.equal(state.ui.jiuzheOpportunityOpen, false);
 assert.equal(state.browserHost.scanRunSequence, 0);
 
 {
+  const root = { match: { landTargetContinuation: { id: "land" } } };
+  const uiRuntimeState = { publicCardSelectedSlots: [1], cardSelectionType: null };
+  const matchRuntime = runtime.createBrowserMatchRuntime({
+    createReadoutRoot: () => root,
+    uiRuntimeState,
+  });
+  assert.deepEqual(matchRuntime.getPendingLandTargetDecision(), { id: "land" });
+  assert.equal(matchRuntime.getPendingDiscardDecision(), null);
+  const player = { id: "p1", color: "blue" };
+  const effect = { id: "effect-1" };
+  const pending = matchRuntime.setPendingCardSelectionDecision(root, {
+    type: "public_scan", player, effect, selectedSlots: [0], maxSelectable: 2,
+  });
+  assert.deepEqual(pending, {
+    type: "public_scan", playerId: "p1", playerColor: "blue", effectId: "effect-1", maxSelectable: 2,
+  });
+  assert.deepEqual(uiRuntimeState.publicCardSelectedSlots, []);
+  assert.equal(uiRuntimeState.cardSelectionType, "public_scan");
+  matchRuntime.setActionEffectFlow(root, { id: "flow" });
+  assert.deepEqual(matchRuntime.getActionEffectFlow(), { id: "flow" });
+  matchRuntime.setPendingCardSelectionDecision(root, null);
+  assert.equal(matchRuntime.getPendingCardSelectionDecision(), null);
+}
+
+{
   const p1 = { id: "p1", color: "white" };
   const p2 = { id: "p2", color: "blue" };
   const playerState = { currentPlayerId: "p1", players: [p1, p2] };

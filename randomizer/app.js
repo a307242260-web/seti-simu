@@ -904,25 +904,24 @@
     alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
     industryCardFiles: INDUSTRY_CARD_FILES,
   });
-  function getActionEffectFlow(workingRoot = null) {
-    const root = workingRoot || createStateSourceReadoutRoot();
-    return root?.match?.actionEffectFlow || null;
-  }
-  function setActionEffectFlow(workingRoot, flow) {
-    if (!workingRoot?.match) throw new TypeError("action effect flow requires explicit workingRoot.match");
-    if (!flow) {
-      delete workingRoot.match.actionEffectFlow;
-      return null;
-    }
-    workingRoot.match.actionEffectFlow = flow;
-    return flow;
-  }
+  const browserMatchRuntime = runtimeModule.createBrowserMatchRuntime({
+    createReadoutRoot: () => createStateSourceReadoutRoot(),
+    uiRuntimeState: runtime.ui,
+  });
+  const {
+    getActionEffectFlow, setActionEffectFlow, getPendingDataPlacementDecision,
+    getPendingLandTargetDecision, getPendingAlienTraceDecision, getPendingPiratesRaidDecision,
+    getPendingStrategySlotDecision, getPendingIndustryAbilityDecision, getPublicScanQueueSession,
+    getPendingProbeSectorScanDecision, getPendingProbeLocationRewardDecision,
+    getPendingHandScanDecision, getPendingScanTargetDecision, getPendingCardMoveDecision,
+    getPendingScanFreeMoveDecision, getPendingIndustryFreeMoveDecision,
+    hasTurnEndRevealContinuation, getPendingCardCornerFreeMove, getPendingCardTriggerFreeMove,
+    getPendingCardTriggerAction, getPendingCardTaskCompletion, getPendingPassReserveSelection,
+    getPendingMovePayment, getPendingDiscardDecision, getPendingCardSelectionDecision,
+    setPendingCardSelectionDecision,
+  } = browserMatchRuntime;
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
-  const getPendingDataPlacementDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.dataPlacementContinuation || null
-  );
-  const getPendingLandTargetDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.landTargetContinuation || null;
   const landTargetPicker = actionInteractionRuntimeModule.createLandTargetPicker({
     document,
     els,
@@ -936,81 +935,6 @@
   const openLandTargetPicker = landTargetPicker.open;
   const requestLandTargetPicker = landTargetPicker.request;
   const confirmLandTargetPicker = landTargetPicker.confirm;
-  const getPendingAlienTraceDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.alienTraceContinuation || null;
-  const getPendingPiratesRaidDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.piratesRaidContinuation || null;
-  const getPendingStrategySlotDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.strategySlotContinuation || null;
-  const getPendingIndustryAbilityDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.industryAbilityContinuation || null;
-  const getPublicScanQueueSession = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.publicScanContinuation || null
-  );
-  const getPendingProbeSectorScanDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.probeSectorScanContinuation || null
-  );
-  const getPendingProbeLocationRewardDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.probeLocationRewardContinuation || null
-  );
-  const getPendingHandScanDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.handScanContinuation || null
-  );
-  const getPendingScanTargetDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.scanTargetContinuation || null
-  );
-  const getPendingCardMoveDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.cardMoveContinuation || null
-  );
-  const getPendingScanFreeMoveDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.scanFreeMoveContinuation || null
-  );
-  const getPendingIndustryFreeMoveDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.industryFreeMoveContinuation || null
-  );
-  const hasTurnEndRevealContinuation = (workingRoot = createStateSourceReadoutRoot()) => (
-    Boolean(workingRoot?.match?.turnEndRevealContinuation)
-  );
-  const getPendingCardCornerFreeMove = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.cardCornerFreeMoveContinuation || null
-  );
-  const getPendingCardTriggerFreeMove = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.cardTriggerFreeMoveContinuation || null
-  );
-  const getPendingCardTriggerAction = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.cardTriggerContinuation || null
-  );
-  const getPendingCardTaskCompletion = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.cardTaskCompletionContinuation || null
-  );
-  const getPendingPassReserveSelection = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.passReserveContinuation || null
-  );
-  const getPendingMovePayment = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.movePaymentContinuation || null
-  );
-  const getPendingDiscardDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.discardContinuation || null
-  );
-  const getPendingCardSelectionDecision = (workingRoot = createStateSourceReadoutRoot()) => (
-    workingRoot?.match?.cardSelectionContinuation || null
-  );
-  function setPendingCardSelectionDecision(workingRoot, pending) {
-    uiRuntimeState.publicCardSelectedSlots = [];
-    if (!pending) {
-      delete workingRoot.match.cardSelectionContinuation;
-      uiRuntimeState.cardSelectionType = null;
-      return null;
-    }
-    const player = pending.player || null;
-    workingRoot.match.cardSelectionContinuation = {
-      ...structuredClone(pending),
-      playerId: pending.playerId || player?.id || null,
-      playerColor: pending.playerColor || player?.color || null,
-      effectId: pending.effectId || pending.effect?.id || null,
-    };
-    delete workingRoot.match.cardSelectionContinuation.player;
-    delete workingRoot.match.cardSelectionContinuation.effect;
-    delete workingRoot.match.cardSelectionContinuation.selectedSlots;
-    uiRuntimeState.cardSelectionType = workingRoot.match.cardSelectionContinuation.type || null;
-    return workingRoot.match.cardSelectionContinuation;
-  }
   const conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
     FINAL_SCORE_IDS,
