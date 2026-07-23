@@ -461,34 +461,9 @@
     getController: () => actionRuntimeController,
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
   });
-  function enumerateStandardContinuationActionsForRoot(workingRoot) {
-    const currentPlayer = players.getCurrentPlayer(workingRoot?.playerState);
-    if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
-    if (isActionEffectFlowActive(workingRoot) || hasActivePendingSubFlow()) return [];
-    const result = dispatchBrowserRuleInput(
-      { kind: "standard_enumerate" },
-      undefined,
-      createActionContextForWorkingRoot(workingRoot),
-    );
-    if (!result?.ok) return [];
-    return (result.candidates || [])
-      .filter((standardAction) => standardAction.phase !== "conditional")
-      .map((standardAction) => ({
-        id: standardAction.family,
-        kind: standardAction.phase,
-        family: standardAction.family,
-        actionId: standardAction.actionId,
-        actorId: standardAction.actorId,
-        target: structuredClone(standardAction.target || null),
-        payload: structuredClone(standardAction.payload || {}),
-        standardAction: structuredClone(standardAction),
-        available: true,
-        label: standardAction.summary,
-      }));
-  }
   const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
     enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
-    enumerateTurnActionsForRoot: (...args) => enumerateStandardContinuationActionsForRoot(...args),
+    enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
     getCurrentPlayer: (playerState) => players.getCurrentPlayer(playerState),
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
     isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
@@ -2904,6 +2879,7 @@
     cardTriggerNeedsFreeMove,
     configureDefaultAiOpponent,
     createAiControlSnapshot,
+    enumerateSimulationTurnActions: enumerateSimulationTurnActionsForRoot,
     getAiMapDemand,
     getAiRemainingRoundWeight,
     getAiStrategyDemand,

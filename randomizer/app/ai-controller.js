@@ -1598,6 +1598,28 @@
       buildAiFinalHighScorePassRecoveryDiagnostic,
     });
 
+    function enumerateSimulationTurnActions(workingRoot) {
+      const currentPlayer = players.getCurrentPlayer(workingRoot?.playerState);
+      if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
+      if (isActionEffectFlowActive(workingRoot) || hasActivePendingSubFlow()) return [];
+      const result = dispatchRuntimeAction?.(workingRoot, { kind: "standard_enumerate" });
+      if (!result?.ok) return [];
+      return (result.candidates || [])
+        .filter((standardAction) => standardAction.phase !== "conditional")
+        .map((standardAction) => ({
+          id: standardAction.family,
+          kind: standardAction.phase,
+          family: standardAction.family,
+          actionId: standardAction.actionId,
+          actorId: standardAction.actorId,
+          target: structuredClone(standardAction.target || null),
+          payload: structuredClone(standardAction.payload || {}),
+          standardAction: structuredClone(standardAction),
+          available: true,
+          label: standardAction.summary,
+        }));
+    }
+
     function resetGameForAiAutoBattle(options = {}) {
       resetAiStrategyDemandCache();
       const requestedActivePlayerCount = options.activePlayerCount == null
@@ -1645,6 +1667,7 @@
       configureAiStrategyWeights,
       configureDefaultAiOpponent,
       createAiControlSnapshot,
+      enumerateSimulationTurnActions,
       estimateAiJiuzheCardCompletionFactor,
       getAiEarlyDirectScorePlayPassFloor,
       getAiB2SectorWinExactDelta,
