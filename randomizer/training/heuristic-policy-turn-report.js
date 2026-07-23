@@ -310,7 +310,9 @@ function formatEvaluation(candidate, timing = null) {
     `沿途宣传=${formatNumber(route?.publicityAlongRoute)}@${(route?.publicityOutcomeRefs || []).join("→") || "无（不计分）"}`,
     `终点标准叶=${route?.endpointActionId || "无"}@${JSON.stringify(route?.endpointDelta || {})}`,
     goal
-      ? `叶后同目标缺口=${evaluation.leafProbeGoalRequirement
+      ? `叶后同目标缺口=${evaluation.reasonCodes?.includes("probe-goal-completed-standard-leaf")
+        ? "目标已完成"
+        : evaluation.leafProbeGoalRequirement
         ? `钱${evaluation.leafProbeGoalRequirement.gap?.credits || 0}/电${evaluation.leafProbeGoalRequirement.gap?.energy || 0}/移动${evaluation.leafProbeGoalRequirement.gap?.movementSteps || 0}`
         : "目标已完成或不再可用"}`
       : route
