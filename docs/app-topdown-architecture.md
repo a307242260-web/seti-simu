@@ -84,7 +84,7 @@
 - `render-runtime.js`：玩家、卡牌、数据、火箭、marker、坐标转换和引用贴图。
 - `final-ui-runtime.js`：终局计分与结果 UI。
 - `action-log-runtime.js`：日志 draft/entry、导入与 DOM 展示。
-- `debug-runtime.js`：debug、calibration、quick sector scan、failsafe 与 reveal 调试入口。
+- `debug-runtime.js`：debug、calibration、quick sector scan、failsafe 与 reveal 调试入口；Browser 依赖按 browser/state query/AI control/decision input/render/debug rules/constants 显式分口，不接受万能依赖源。
 - `action-interaction-runtime.js`：移动箭头、冥王星交互、数据放置 picker。
 - `final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
 - `score-source-runtime.js`：初始、扫描、科技、外星人和行动效果的分数来源账本。
