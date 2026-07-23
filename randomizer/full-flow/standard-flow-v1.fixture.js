@@ -60,7 +60,7 @@ module.exports = Object.freeze({
   initialSnapshot: {
     turn: [1, 1, 1, "player-white"],
     players: [
-      ["player-blue", 6, 3, 2, 7, 4, 4, 0],
+      ["player-blue", 6, 5, 2, 8, 2, 4, 0],
       ["player-green", 8, 3, 3, 4, 2, 6, 0],
       ["player-brown", 11, 4, 2, 4, 0, 7, 0],
       ["player-white", 7, 4, 3, 7, 0, 4, 0],
@@ -69,9 +69,10 @@ module.exports = Object.freeze({
     rockets: [
       [1, "player-white", "planets-reference"],
       [2, "player-brown", "planets-reference"],
-      [3, "player-green", "planets-reference"],
+      [3, "player-blue", "planets-reference"],
+      [4, "player-green", "planets-reference"],
     ],
     pending: ["player-white", "player-white", "conditional_choice", 4],
   },
-    finalCheckpointHash: "6149f1fc394866596c33a55d53f3b0487188914dc0fe4b14c343b74a580905a8",
+    finalCheckpointHash: "566026a75b43baa9157287f00134c1a8e6e82b9ca536dc4c1f5bc7e81e9023fd",
 });

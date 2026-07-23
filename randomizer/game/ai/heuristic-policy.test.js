@@ -51,7 +51,7 @@ const current = policyPort.createDecisionContext({
       status: "settled",
       confidence: "high",
       rootObservation: observation(0, 0),
-      leaves: [{ leafId: "launch-leaf", actionChain: ["launch:p1:7"], observation: observation(4, 0) }],
+      leaves: [{ leafId: "launch-leaf", actionChain: ["launch:p1:7"], observation: observation(6, 0) }],
     },
   ],
 });
@@ -100,16 +100,20 @@ const thetaObservation = outcomeModel.createDecisionObservation({
 }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
 const thetaValue = expectedScoreEvaluator.evaluateState(thetaObservation, "p1");
 assert.deepEqual(expectedScoreEvaluator.DEFAULT_PARAMETERS.resourceValues, {
-  credits: 1,
-  energy: 2,
-  availableData: 2,
-  publicity: 2,
-  ordinaryCard: 1.5,
-  alienCard: 5,
+  credits: 5,
+  energy: 5,
+  availableData: 2.5,
+  publicity: 2.5,
+  ordinaryCard: 2.5,
+  alienCard: 10 / 3,
 });
-assert.equal(thetaValue.assetBreakdown.ordinaryCard, 3);
-assert.equal(thetaValue.assetBreakdown.alienCard, 10);
-assert.equal(thetaValue.total, 32, "θ₀ 不得把 alien contact 计作外星人牌价值");
+assert.equal(thetaValue.assetBreakdown.credits, 5);
+assert.equal(thetaValue.assetBreakdown.energy, 10);
+assert.equal(thetaValue.assetBreakdown.availableData, 7.5);
+assert.equal(thetaValue.assetBreakdown.publicity, 10);
+assert.equal(thetaValue.assetBreakdown.ordinaryCard, 5);
+assert.equal(thetaValue.assetBreakdown.alienCard, 20 / 3);
+assert.equal(thetaValue.total, 265 / 6, "θ₀ 必须按每种资源的单单位价值估值");
 assert.equal(Object.hasOwn(thetaValue.assetBreakdown, "alien"), false);
 
 assert.throws(

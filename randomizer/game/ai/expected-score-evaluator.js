@@ -15,12 +15,12 @@
   const DEFAULT_PARAMETERS = Object.freeze({
     parameterVersion: PARAMETER_VERSION,
     resourceValues: Object.freeze({
-      credits: 1,
-      energy: 2,
-      availableData: 2,
-      publicity: 2,
-      ordinaryCard: 1.5,
-      alienCard: 5,
+      credits: 5,
+      energy: 5,
+      availableData: 2.5,
+      publicity: 2.5,
+      ordinaryCard: 2.5,
+      alienCard: 10 / 3,
     }),
   });
 
