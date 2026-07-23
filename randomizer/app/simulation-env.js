@@ -4,6 +4,7 @@ const { performance } = require("node:perf_hooks");
 const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
 const { createSimulationRuleComposition } = require("../training/simulation-rule-composition");
 const {
+  ACTION_SCHEMA_VERSION,
   OBSERVATION_SCHEMA_VERSION,
   normalizeTurnCandidate,
   normalizeConditionalCandidate,
@@ -21,6 +22,30 @@ const CORE_STATE_VERSION = 2;
 
 function clone(value) {
   return value == null ? value : structuredClone(value);
+}
+
+function stableSerialize(value) {
+  if (value == null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`).join(",")}}`;
+}
+
+function sameSubmittedAction(submitted, current) {
+  return submitted?.schemaVersion === current?.schemaVersion
+    && submitted?.actionId === current?.actionId
+    && submitted?.actorPlayerId === current?.actorPlayerId
+    && submitted?.decisionType === current?.decisionType
+    && submitted?.family === current?.family
+    && submitted?.stateVersion === current?.stateVersion
+    && submitted?.decisionVersion === current?.decisionVersion
+    && stableSerialize(submitted?.target || null) === stableSerialize(current?.target || null)
+    && stableSerialize(submitted?.payload || null) === stableSerialize(current?.payload || null);
+}
+
+function environmentError(code, message) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
 }
 
 function hashSeed(seed) {
@@ -173,9 +198,19 @@ function createSimulationEnv() {
   let lastObservation = null;
   let diagnostics = null;
   let policyAdapter = null;
+  let disposed = false;
 
   function recordDuration(key, startedAt) {
     diagnostics[key] += performance.now() - startedAt;
+  }
+
+  function assertNotDisposed() {
+    if (disposed) throw environmentError("SIMULATION_ENV_DISPOSED", "Simulation env 已 dispose");
+  }
+
+  function assertUsable() {
+    assertNotDisposed();
+    if (!composition) throw environmentError("SIMULATION_ENV_NOT_READY", "Simulation env 尚未 reset");
   }
 
   function rawLegalDescriptors() {
@@ -220,6 +255,7 @@ function createSimulationEnv() {
 
   return {
     reset(resetConfig = {}) {
+      if (disposed) throw environmentError("SIMULATION_ENV_DISPOSED", "Simulation env 已 dispose");
       seed = resetConfig.seed ?? "seti-simulation";
       config = {
         seed,
@@ -284,10 +320,12 @@ function createSimulationEnv() {
     },
 
     observe(viewerPlayerId) {
+      assertUsable();
       return observeWithActions(viewerPlayerId, this.legalActions(viewerPlayerId));
     },
 
     legalActions(viewerPlayerId) {
+      assertUsable();
       const startedAt = performance.now();
       if (this.isTerminal()) return [];
       const cachedActorId = cachedLegal?.[0]?.actorPlayerId || null;
@@ -312,24 +350,51 @@ function createSimulationEnv() {
     },
 
     step(action) {
+      assertUsable();
       const actions = cachedLegal || this.legalActions();
-      const selector = selectors.get(action?.actionId);
       const beforeObservation = lastObservation || observeWithActions(action?.actorPlayerId, actions);
       const beforeState = getWorkingProjection(composition);
       const actorPlayerId = beforeObservation.decision?.actorPlayerId || null;
       const beforePlayer = (beforeState.players?.players || []).find((player) => player.id === actorPlayerId) || null;
+      const terminal = this.isTerminal();
+      const reject = (code, message) => ({
+        ok: false,
+        actionId: action?.actionId || null,
+        actorPlayerId,
+        reward: buildReward(beforePlayer, beforePlayer, terminal),
+        done: terminal,
+        terminated: terminal,
+        truncated: false,
+        observation: beforeObservation,
+        legalActions: clone(actions),
+        replayEvent: null,
+        error: message,
+        failure: { ok: false, code, message },
+      });
+      if (terminal) return reject("SIMULATION_TERMINAL", "terminal 环境不接受新的 policy action");
+      const currentAction = actions.find((candidate) => candidate.actionId === action?.actionId);
+      if (!currentAction) {
+        return reject(
+          "SIMULATION_ACTION_NOT_LEGAL",
+          `动作不在当前 legalActions：${action?.actionId || "<missing>"}`,
+        );
+      }
+      if (action?.schemaVersion !== ACTION_SCHEMA_VERSION) {
+        return reject("SIMULATION_ACTION_SCHEMA_MISMATCH", "Simulation Action schema 版本不匹配");
+      }
+      if (action.actorPlayerId !== currentAction.actorPlayerId) {
+        return reject("SIMULATION_ACTION_ACTOR_MISMATCH", "Simulation Action actor 不是当前 decision owner");
+      }
+      if (action.stateVersion !== currentAction.stateVersion
+        || action.decisionVersion !== currentAction.decisionVersion) {
+        return reject("SIMULATION_ACTION_STALE", "Simulation Action authority version 已过期");
+      }
+      if (!sameSubmittedAction(action, currentAction)) {
+        return reject("SIMULATION_ACTION_DESCRIPTOR_MISMATCH", "Simulation Action descriptor 与当前 legal set 不一致");
+      }
+      const selector = selectors.get(currentAction.actionId);
       if (!selector) {
-        return {
-          ok: false,
-          actionId: action?.actionId || null,
-          actorPlayerId,
-          reward: buildReward(beforePlayer, beforePlayer, false),
-          done: this.isTerminal(),
-          observation: beforeObservation,
-          legalActions: clone(actions),
-          replayEvent: null,
-          error: `动作不在当前 legalActions：${action?.actionId || "<missing>"}`,
-        };
+        return reject("SIMULATION_ACTION_SELECTOR_MISSING", "当前 legal action 缺少规则 selector");
       }
       const startedAt = performance.now();
       const inspection = composition.inspect();
@@ -349,6 +414,8 @@ function createSimulationEnv() {
           actorPlayerId,
           reward: buildReward(beforePlayer, beforePlayer, false),
           done: this.isTerminal(),
+          terminated: this.isTerminal(),
+          truncated: false,
           observation: beforeObservation,
           legalActions: clone(actions),
           replayEvent: null,
@@ -383,6 +450,8 @@ function createSimulationEnv() {
         actorPlayerId,
         reward,
         done: observation.terminal,
+        terminated: observation.terminal,
+        truncated: false,
         observation,
         legalActions: postActions,
         replayEvent,
@@ -390,17 +459,23 @@ function createSimulationEnv() {
     },
 
     isTerminal() {
-      return Boolean(composition && getTurnState(getWorkingProjection(composition)).gameEnded);
+      assertUsable();
+      return Boolean(getTurnState(getWorkingProjection(composition)).gameEnded);
     },
 
-    getDiagnostics() { return clone(diagnostics || {}); },
+    getDiagnostics() {
+      assertUsable();
+      return clone(diagnostics || {});
+    },
 
     runOfflineTeacherDecision() {
+      assertUsable();
       if (!config?.offlineTeacher) throw new Error("offline teacher oracle 未启用");
       return this.runHeuristicPolicyDecision(true);
     },
 
     runHeuristicPolicyDecision(asTeacher = false) {
+      assertUsable();
       const beforeActions = this.legalActions();
       const beforeObservation = lastObservation || observeWithActions(undefined, beforeActions);
       if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
@@ -425,6 +500,7 @@ function createSimulationEnv() {
     },
 
     getReplay() {
+      assertUsable();
       return {
         schemaVersion: REPLAY_SCHEMA_VERSION,
         seed,
@@ -444,6 +520,7 @@ function createSimulationEnv() {
     },
 
     loadReplay(replay) {
+      assertNotDisposed();
       if (!replay || replay.schemaVersion !== REPLAY_SCHEMA_VERSION) throw new Error("不支持的 replay schema");
       this.reset(replay.config || { seed: replay.seed });
       for (const [index, event] of (replay.steps || []).entries()) {
@@ -454,6 +531,7 @@ function createSimulationEnv() {
     },
 
     createCheckpoint() {
+      assertUsable();
       const envelope = saveEnvelope();
       return {
         schemaVersion: CHECKPOINT_SCHEMA_VERSION,
@@ -472,6 +550,7 @@ function createSimulationEnv() {
     },
 
     loadCheckpoint(checkpoint) {
+      assertNotDisposed();
       if (!checkpoint || checkpoint.schemaVersion !== CHECKPOINT_SCHEMA_VERSION) {
         throw new Error(`不支持的 checkpoint schema：${checkpoint?.schemaVersion || "missing"}`);
       }
@@ -527,10 +606,15 @@ function createSimulationEnv() {
     },
 
     dispose() {
+      if (disposed) return;
+      disposed = true;
       kernel = null;
       composition = null;
+      seededRandom = null;
+      policyAdapter = null;
       selectors = new Map();
       cachedLegal = null;
+      lastObservation = null;
     },
   };
 }

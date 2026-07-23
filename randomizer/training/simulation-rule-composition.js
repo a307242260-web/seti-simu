@@ -31,6 +31,70 @@ const INDUSTRY_CARD_FILES = Object.freeze([
   "任务中继站.png", "哨兵探测网络.png", "深空探测.png", "图灵系统.png",
   "未来跨度研究所.png", "异星实验室.png", "宇宙战略集团.png",
 ]);
+const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
+  { family: "launch", obligation: "生产发射规则枚举、校验并提交火箭" },
+  { family: "orbit", obligation: "生产环绕规则枚举目标并提交轨道占位" },
+  { family: "land", obligation: "生产登陆规则枚举目标并提交星球占位" },
+  {
+    family: "scan",
+    obligation: "扫描必须由生产望远镜规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入望远镜扫描规则端口",
+  },
+  {
+    family: "analyze",
+    obligation: "分析必须由生产数据轨规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入数据分析规则端口",
+  },
+  { family: "research_tech", obligation: "生产科技规则枚举科技板目标并提交研究" },
+  {
+    family: "play_card",
+    obligation: "打牌必须由生产卡牌规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入卡牌效果执行端口",
+  },
+  { family: "pass", obligation: "生产回合规则提交 PASS 并建立预留牌 continuation" },
+  { family: "move", obligation: "生产火箭规则枚举移动并建立支付 continuation" },
+  {
+    family: "quick_trade",
+    obligation: "快速交易必须由生产资源规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入快速交易规则端口",
+  },
+  { family: "industry", obligation: "生产公司能力规则枚举并提交公司行动" },
+  { family: "card_corner", obligation: "生产卡角规则枚举手牌并提交弃牌收益" },
+  {
+    family: "place_data",
+    obligation: "放置数据必须由生产数据规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入数据放置规则端口",
+  },
+  {
+    family: "runezu_face_symbol",
+    obligation: "符号面行动必须由生产外星种族规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入 RUNEZU 符号面规则端口",
+  },
+  { family: "end_turn", obligation: "生产回合规则结算收入并切换 owner" },
+  { family: "choose_card", obligation: "生产 continuation 枚举并提交预留牌选择" },
+  { family: "choose_target", obligation: "生产 continuation 枚举并提交移动或科技目标" },
+  { family: "choose_payment", obligation: "生产 continuation 枚举并提交弃牌或移动支付" },
+  {
+    family: "choose_reward",
+    obligation: "奖励选择必须由生产效果 continuation 提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入奖励选择 continuation",
+  },
+  {
+    family: "choose_branch",
+    obligation: "分支选择必须由生产效果 continuation 提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入分支选择 continuation",
+  },
+  {
+    family: "choose_final_scoring",
+    obligation: "终局计分选择必须由生产终局规则提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入终局计分选择 continuation",
+  },
+  {
+    family: "accept_optional_effect",
+    obligation: "可选效果必须由生产效果 continuation 提供合法描述符",
+    unavailableReason: "Simulation composition 尚未接入可选效果 continuation",
+  },
+]);
 
 function clone(value) {
   return value == null ? value : structuredClone(value);
@@ -765,6 +829,28 @@ function createSimulationRuleComposition(options = {}) {
     },
   });
 
+  for (const contract of SIMULATION_FAMILY_CONTRACTS) {
+    if (!contract.unavailableReason) continue;
+    registry.register({
+      family: contract.family,
+      enumerate() { return []; },
+      validate() {
+        return {
+          ok: false,
+          code: "SIMULATION_ACTION_FAMILY_UNAVAILABLE",
+          message: contract.unavailableReason,
+        };
+      },
+      execute() {
+        return {
+          ok: false,
+          code: "SIMULATION_ACTION_FAMILY_UNAVAILABLE",
+          message: contract.unavailableReason,
+        };
+      },
+    });
+  }
+
   const stateAdapter = {
     createWorkingState: (initialOptions) => createWorkingState(initialOptions, options.random),
     createProjectionState: (workingState, committedState) => createCommittedState(
@@ -887,7 +973,19 @@ function createSimulationRuleComposition(options = {}) {
     });
   }
 
-  return Object.freeze({ composition, newGame });
+  const actionContract = Object.freeze({
+    coverage() {
+      const registrations = new Map(registry.coverage().map((entry) => [entry.family, entry]));
+      return SIMULATION_FAMILY_CONTRACTS.map((contract) => Object.freeze({
+        ...registrations.get(contract.family),
+        obligation: contract.obligation,
+        status: contract.unavailableReason ? "unavailable" : "supported",
+        unavailableReason: contract.unavailableReason || null,
+      }));
+    },
+  });
+
+  return Object.freeze({ composition, newGame, actionContract });
 }
 
 module.exports = { createSimulationRuleComposition };
