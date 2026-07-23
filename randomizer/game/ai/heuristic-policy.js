@@ -64,89 +64,6 @@
     return Object.freeze(result);
   }
 
-  function decideChoice(input = {}) {
-    const seatId = String(input.seatId || "");
-    const family = String(input.family || "");
-    const stateVersion = Number(input.stateVersion ?? 0);
-    const decisionVersion = Number(input.decisionVersion ?? 0);
-    const choices = Array.isArray(input.choices) ? input.choices : [];
-    try {
-      if (!seatId) throw new HeuristicPolicyError("HEURISTIC_POLICY_CHOICE_OWNER_INVALID", "机器选择缺少 seatId");
-      if (!standardAction.CONDITIONAL_FAMILIES.includes(family)) {
-        throw new HeuristicPolicyError("HEURISTIC_POLICY_UNSUPPORTED_FAMILY", `机器选择不支持 family: ${family}`, { families: [family] });
-      }
-      if (!Number.isSafeInteger(stateVersion) || stateVersion < 0
-        || !Number.isSafeInteger(decisionVersion) || decisionVersion < 0) {
-        throw new HeuristicPolicyError("HEURISTIC_POLICY_CHOICE_VERSION_INVALID", "机器选择版本必须是非负安全整数");
-      }
-      if (!choices.length) throw new HeuristicPolicyError("HEURISTIC_POLICY_EMPTY_LEGAL_SET", "机器选择没有 legal descriptor");
-      const ids = new Set();
-      const legalActions = choices.map((choice, index) => {
-        const choiceId = String(choice?.choiceId ?? "");
-        const value = Number(choice?.value);
-        if (!choiceId || ids.has(choiceId)) {
-          throw new HeuristicPolicyError("HEURISTIC_POLICY_DESCRIPTOR_INVALID", "机器选择 choiceId 必须非空且唯一");
-        }
-        if (!Number.isFinite(value)) {
-          throw new HeuristicPolicyError("HEURISTIC_POLICY_DESCRIPTOR_INVALID", `机器选择 ${choiceId} 缺少有限 evaluator value`);
-        }
-        ids.add(choiceId);
-        return Object.freeze({
-          schemaVersion: policyPort.STANDARD_ACTION_SCHEMA_VERSION,
-          family,
-          phase: standardAction.PHASE_BY_FAMILY[family],
-          actionId: `${family}:${stableHash({ seatId, family, choiceId, target: choice.target || null })}`,
-          actorId: seatId,
-          stateVersion,
-          decisionVersion,
-          target: Object.freeze({ choiceId, ...(choice.target || {}) }),
-          payload: Object.freeze({
-            value,
-            ...(family === "choose_card" ? { score: value } : {}),
-            ...(choice.payload || {}),
-          }),
-          summary: String(choice.summary || choiceId),
-        });
-      });
-      const context = policyPort.createDecisionContext({
-        requestId: String(input.requestId || `browser-choice:${seatId}:${family}:${stateVersion}:${decisionVersion}`),
-        seatId,
-        stateVersion,
-        decisionVersion,
-        observation: input.observation || {},
-        legalActions,
-        deterministicContext: {
-          decisionFamily: family,
-          decisionId: input.decisionId == null ? null : String(input.decisionId),
-        },
-      });
-      const policy = input.policy || createHeuristicPolicy(input.policyOptions || {});
-      const decision = policy.decide(context);
-      const validation = policyPort.validatePolicyDecision(context, decision, {
-        registry: { validate: (_runtimeContext, action) => ({ ok: legalActions.some((item) => item.actionId === action.actionId) }) },
-        runtimeContext: { seatId, stateVersion, decisionVersion },
-      });
-      if (!validation.ok) return Object.freeze(validation);
-      const selectedIndex = legalActions.findIndex((action) => action.actionId === decision.actionId);
-      return Object.freeze({
-        ok: true,
-        choice: choices[selectedIndex],
-        action: validation.action,
-        decision,
-        context,
-        provenance: policy.getProvenance(),
-      });
-    } catch (error) {
-      return Object.freeze({
-        ok: false,
-        code: error?.code || "HEURISTIC_POLICY_CHOICE_FAILED",
-        message: error?.message || String(error),
-        family,
-        seatId: seatId || null,
-      });
-    }
-  }
-
   function isObservationFeasible(context, action) {
     const isMoveLike = action.family === "move"
       || (action.family === "card_corner" && action.payload?.actionKind === "move");
@@ -239,6 +156,5 @@
     DEFAULT_DIFFICULTY,
     HeuristicPolicyError,
     createHeuristicPolicy,
-    decideChoice,
   });
 });

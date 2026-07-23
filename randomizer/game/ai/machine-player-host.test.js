@@ -105,6 +105,46 @@ function harness(activePolicy, options = {}) {
 
   {
     let release;
+    const stale = harness(policy("stale-v1", (context) => new Promise((resolve) => {
+      release = () => resolve(policyPort.createPolicyDecision(context, {
+        actionId: context.legalActions[0].actionId,
+        policyType: "heuristic",
+        policyVersion: "stale-v1",
+      }));
+    })));
+    const pending = stale.host.requestDecision("p1");
+    stale.advance();
+    release();
+    assert.equal((await pending).code, "MACHINE_POLICY_STALE");
+    assert.deepEqual(stale.submissions, [], "authority 变化后的 stale choice 不得提交");
+  }
+
+  {
+    const invalid = harness(policy("invalid-v1", (context) => policyPort.createPolicyDecision(context, {
+      actionId: "pass:not-in-legal-set",
+      policyType: "heuristic",
+      policyVersion: "invalid-v1",
+    })));
+    assert.equal((await invalid.host.requestDecision("p1")).code, "POLICY_ACTION_NOT_LEGAL");
+    assert.deepEqual(invalid.submissions, [], "非法 choice 不得进入标准输入端口");
+  }
+
+  {
+    let clock = 10;
+    const timedOut = harness(policy("deadline-v1", (context) => {
+      clock = 100;
+      return policyPort.createPolicyDecision(context, {
+        actionId: context.legalActions[0].actionId,
+        policyType: "heuristic",
+        policyVersion: "deadline-v1",
+      });
+    }), { defaultDeadlineMs: 50, now: () => clock });
+    assert.equal(timedOut.host.requestDecisionSync("p1").code, "POLICY_TIMEOUT");
+    assert.deepEqual(timedOut.submissions, [], "deadline 后返回的 choice 不得提交");
+  }
+
+  {
+    let release;
     const cancelled = harness(policy("cancel-v1", (context) => new Promise((resolve) => {
       release = () => resolve(policyPort.createPolicyDecision(context, {
         actionId: context.legalActions[0].actionId,

@@ -21,6 +21,7 @@ const actionHistory = require("../game/history/action-history");
 const turnFlowApi = require("../app/turn-flow");
 const initialCards = require("../game/initial-cards");
 const ai = require("../game/ai");
+const { createHeuristicPolicyAdapter } = require("./heuristic-policy-adapter");
 const planetReferenceLayout = require("../game/planet-reference-layout");
 const rocketAbility = require("../game/abilities/rocket");
 const { createRuleComposition } = require("../game/rule-composition");
@@ -223,10 +224,112 @@ function syncPlanetRockets(workingState) {
   }
 }
 
+function createInitialSelectionInputPort() {
+  let activeDecision = null;
+  const registry = standardActionApi.createRegistry({
+    getAuthority() {
+      return activeDecision && {
+        actorId: activeDecision.player.id,
+        stateVersion: activeDecision.stateVersion,
+        decisionVersion: activeDecision.decisionVersion,
+      };
+    },
+  });
+
+  registry.register({
+    family: "choose_branch",
+    enumerate() {
+      if (!activeDecision) return [];
+      return activeDecision.plans.map((plan, planIndex) => {
+        const choiceId = `${plan.industry?.id || planIndex}:${plan.initialCards.map((card) => card.id).join("+")}`;
+        return {
+          target: {
+            choiceId,
+            industryId: plan.industry?.id || null,
+            initialIds: plan.initialCards.map((card) => card.id),
+          },
+          payload: { value: Number(plan.score || 0) },
+          summary: `${plan.industry?.label || plan.industry?.id || "公司"} + 初始牌`,
+        };
+      });
+    },
+    validate() {
+      return activeDecision
+        ? { ok: true }
+        : { ok: false, code: "INITIAL_SELECTION_DECISION_INACTIVE", message: "初始选择 Decision 已失效" };
+    },
+    execute(_context, action) {
+      const plan = activeDecision?.plansByChoiceId.get(action.target?.choiceId);
+      if (!plan) {
+        return {
+          ok: false,
+          code: "INITIAL_SELECTION_CHOICE_NOT_LEGAL",
+          message: "初始选择不在当前 legal set",
+        };
+      }
+      activeDecision.player.initialSelection = {
+        industry: clone(plan.industry),
+        removedInitialCards: clone(plan.initialCards),
+      };
+      activeDecision.player.aiDifficulty = activeDecision.aiDifficulty;
+      activeDecision = null;
+      return { ok: true, progressed: true, events: [{ type: "initial_selection_submitted" }] };
+    },
+  });
+
+  return Object.freeze({
+    open(player, plans, decisionVersion, aiDifficulty) {
+      if (activeDecision) throw new Error("上一个初始选择 Decision 尚未提交");
+      const decisionId = `initial-selection:${player.id}`;
+      activeDecision = {
+        decisionId,
+        stateVersion: 0,
+        decisionVersion,
+        player,
+        plans,
+        plansByChoiceId: new Map(plans.map((plan, planIndex) => [
+          `${plan.industry?.id || planIndex}:${plan.initialCards.map((card) => card.id).join("+")}`,
+          plan,
+        ])),
+        aiDifficulty,
+      };
+      const choices = registry.enumerate({});
+      if (!choices.length) {
+        activeDecision = null;
+        throw new Error(`席位 ${player.id} 没有合法初始选择`);
+      }
+      return Object.freeze({
+        decisionId,
+        decisionVersion,
+        stateVersion: 0,
+        ownerId: player.id,
+        choices,
+      });
+    },
+    submitDecision(input = {}) {
+      if (!activeDecision) {
+        return { ok: false, code: "INITIAL_SELECTION_DECISION_INACTIVE", message: "初始选择 Decision 已失效" };
+      }
+      if (input.decisionId !== activeDecision.decisionId
+        || input.decisionVersion !== activeDecision.decisionVersion) {
+        return { ok: false, code: "INITIAL_SELECTION_DECISION_STALE", message: "初始选择 Decision 版本已失效" };
+      }
+      return registry.execute({}, input.choice);
+    },
+  });
+}
+
 function chooseInitialSelections(workingState, options, random) {
   const playerIds = workingState.turnState.activePlayerIds;
   const industryDeck = shuffle(INDUSTRY_CARD_FILES, random).slice(0, playerIds.length * 2);
   const initialDeck = shuffle(Array.from({ length: initialCards.INITIAL_CARD_COUNT }, (_item, index) => index + 1), random);
+  const aiDifficulty = options.aiDifficulty || "laughable";
+  const inputPort = createInitialSelectionInputPort();
+  const policyAdapter = createHeuristicPolicyAdapter({
+    difficulty: aiDifficulty,
+    seed: options.seed ?? workingState.meta?.seed ?? "seti-simulation",
+  });
+  policyAdapter.initializeSeats(playerIds, { phase: "new_game" });
   for (const [index, playerId] of playerIds.entries()) {
     const player = workingState.playerState.players.find((candidate) => candidate.id === playerId);
     const industryOptions = industryDeck.slice(index * 2, index * 2 + 2)
@@ -242,28 +345,19 @@ function chooseInitialSelections(workingState, options, random) {
       })
     ))).sort((left, right) => Number(right.score || 0) - Number(left.score || 0)
       || String(left.industry?.id || "").localeCompare(String(right.industry?.id || "")));
-    const policyResult = ai.heuristicPolicy.decideChoice({
-      seatId: player.id,
-      family: "choose_branch",
-      stateVersion: workingState.turnState.roundNumber,
-      decisionVersion: workingState.turnState.turnNumber,
-      decisionId: "initial-selection",
-      observation: { publicState: { roundNumber: workingState.turnState.roundNumber }, selfState: { playerId: player.id } },
-      choices: plans.map((plan, planIndex) => ({
-        choiceId: `${plan.industry?.id || planIndex}:${plan.initialCards.map((card) => card.id).join("+")}`,
-        value: Number(plan.score || 0),
-        target: { industryId: plan.industry?.id || null, initialIds: plan.initialCards.map((card) => card.id) },
-        summary: `${plan.industry?.label || plan.industry?.id || "公司"} + 初始牌`,
-        plan,
-      })),
-      policyOptions: { difficulty: options.aiDifficulty || "laughable" },
-    });
-    if (!policyResult.ok) throw new Error(policyResult.message);
-    player.initialSelection = {
-      industry: clone(policyResult.choice.plan.industry),
-      removedInitialCards: clone(policyResult.choice.plan.initialCards),
-    };
-    player.aiDifficulty = options.aiDifficulty || "laughable";
+    const decision = inputPort.open(player, plans, index + 1, aiDifficulty);
+    policyAdapter.runDecision({
+      publicState: { roundNumber: workingState.turnState.roundNumber },
+      selfState: { playerId: player.id },
+    }, decision.choices, {
+      decisionFamily: "choose_branch",
+      decisionId: decision.decisionId,
+      setupPhase: "initial_selection",
+    }, (choice) => inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      choice,
+    }));
   }
 }
 
