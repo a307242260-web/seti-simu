@@ -11,6 +11,68 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const BROWSER_CONTEXT_KEYS = Object.freeze([
+    "actionHistory", "aliens", "amiba", "aomomo", "banrenma",
+    "BANRENMA_PANEL_BONUS_EFFECT_TYPE", "banrenmaBonusMarkerElements",
+    "beginAlienTraceBoardPlacement", "beginCardSelection", "beginEffectHistoryStep",
+    "beginQuickActionStep", "blindDrawCardForPlayer", "blockManualAiPendingInput",
+    "blockManualAiPendingInputIfNeeded", "buildAlienTraceEvent", "buildPlutoMarkerContext",
+    "buildProbeLocationIndex", "canPlaceAmibaTrace", "canPlaceAnyStateExtraTrace",
+    "canPlaceAomomoTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
+    "canPlaceFangzhouTrace", "canPlaceJiuzheTrace", "canPlaceRunezuFaceSymbol",
+    "canPlaceRunezuTrace", "canPlaceStateTrace", "canPlaceYichangdianTrace",
+    "cardEffects", "cards", "chong", "closeAlienTracePicker",
+    "completeCurrentActionEffect", "completeQuickActionStep",
+    "continueAfterCardTriggerResolution", "createActionLogImpactSnapshot", "data",
+    "debugRuntimeController", "discardReservedCardIfFinished", "document", "els",
+    "endEffectHistoryStep", "failMissingAlienTraceTargetPlayer", "fangzhou",
+    "finishAutomaticRewardEffect", "formatPlanetRewardGain",
+    "getAlienCardGainIrreversible", "getAlienTraceActionPlayer",
+    "getCurrentActionEffect", "getPendingOwnerFields", "getPendingOwnerPlayer",
+    "getPlanetSectorCoordinate", "getPlayerCompanyBaseIncome",
+    "getReadyChongTaskForReservedCard", "getTargetPlayerOptions",
+    "hasActivePendingSubFlow", "hasAlienTracePanelPlacementTarget",
+    "HISTORY_SOURCE_QUICK", "historyCommands", "incrementCompletedTaskCount",
+    "insertActionEffectsAfterCurrent", "isActionEffectFlowActive",
+    "isPendingLockedForAiAutomation", "jiuzhe", "JIUZHE_THRESHOLD_CARD_EFFECT_TYPE",
+    "markActionPending", "markCurrentActionIrreversible",
+    "maybeContinueAlienRevealQueuedOpportunities",
+    "maybeContinuePendingTurnEndRevealFlow", "maybeRestoreAlienLabPanelForTrace",
+    "openCardTaskCompletionPicker", "openFangzhouTraceDestinationChoice",
+    "planetRewards", "players", "quickActionHistory", "recordHistoryCommand",
+    "recordAlienTraceScore", "recordQuickHistoryCommand",
+    "removeReservedCardToDiscard", "removeRocketElement", "renderActionEffectBar",
+    "renderPlayerHand", "renderPlayerStats", "renderReservedCards", "renderRockets",
+    "renderRunezuBoardSymbols", "renderStateReadout", "RESOURCE_ICON_SRC",
+    "rocketActions", "runezu", "setScanTargetActionLayout",
+    "settleCardTasksAfterEffect", "shouldShowStateTraceSlots",
+    "skipActionEffectWithMessage", "startCardEffectFlow", "startScreenState",
+    "uiRuntimeState", "updateActionButtons", "window", "yichangdian",
+    "yichangdianAnomalyMarkerElements",
+  ]);
+
+  function createBrowserAlienSpeciesContext(options = {}) {
+    const sources = [...(options.sources || []), options.values || {}];
+    const context = {};
+    const missing = [];
+    for (const key of BROWSER_CONTEXT_KEYS) {
+      const source = [...sources].reverse().find(
+        (candidate) => candidate != null
+          && Object.prototype.hasOwnProperty.call(candidate, key)
+          && candidate[key] != null,
+      );
+      if (!source) {
+        missing.push(key);
+      } else {
+        context[key] = source[key];
+      }
+    }
+    if (missing.length) {
+      throw new Error(`Browser Alien Species context 缺少依赖：${missing.join(", ")}`);
+    }
+    return Object.freeze(context);
+  }
+
   function createAlienSpeciesRuntime(context = {}) {
     const simulation = context.simulation === true;
     const {
@@ -4266,6 +4328,8 @@ function alignAlienPanelsToPlanets() {
   }
 
   return Object.freeze({
+    BROWSER_CONTEXT_KEYS,
+    createBrowserAlienSpeciesContext,
     createAlienSpeciesPort,
     createAlienSpeciesRuntime,
   });
