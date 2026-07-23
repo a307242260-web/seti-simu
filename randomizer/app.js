@@ -1042,67 +1042,6 @@
   const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
-  let buildCardTaskContext;
-  let buildPlayerDataTotals;
-  let addProbeLocation;
-  let buildProbeLocationIndex;
-  let startTemporaryCardTaskRewardFlow;
-  let getReadyCardTasks;
-  let refreshCardTaskState;
-  let cloneType1TriggerEvent;
-  let enqueueType1TriggerEvents;
-  let isCardTriggerPickSelectionActive;
-  let hasActiveCardTriggerResolution;
-  let isCardTriggerRewardFlowBusy;
-  let getType1TriggerMatchesForEvent;
-  let applyType1TriggerMatches;
-  let continueAfterCardTriggerResolution;
-  let cancelCardTriggerChoice;
-  let buildAlienTraceEvent;
-  let getNebulaColorForCardEvent;
-  let ensureCardFlowEventBonuses;
-  let getActiveCardEventBonuses;
-  let eventMatchesCardBonus;
-  let getCardEventBonusKey;
-  let applyCardEventBonusReward;
-  let applyPublicityMoveFollowupBonus;
-  let processCardEventBonuses;
-  let processChongTransportArrivalEvents;
-  let getChongTransportDestinationCoordinate;
-  let getChongTransportArrivalEventKey;
-  let buildChongPositionArrivalEvents;
-  let settleCardTasksAfterEffect;
-  let getChongRewardPrimaryIcon;
-  let createChongTaskEffect;
-  let buildChongRewardQueueEffects;
-  let buildChongFossilRewardQueueEffects;
-  let buildChongTransportCleanupEffect;
-  let buildChongTaskCompletionEffects;
-  let getReadyTaskForReservedCard;
-  let getReadyChongTaskForReservedCard;
-  let getReadyAmibaTaskForReservedCard;
-  let getReadyRunezuTaskForReservedCard;
-  let getRunezuTaskProgressIndexes;
-  let incrementCompletedTaskCount;
-  let removeReservedCardToDiscard;
-  let discardReservedCardIfFinished;
-  let createCardTriggerProgressSnapshot;
-  let createCardTriggerProgressCommands;
-  let consumeCardTriggerWithSnapshot;
-  let confirmCardTriggerProgress;
-  let prepareCardTriggerRewardEffects;
-  let queueCardTriggerRewardEffects;
-  let getCardTaskCompletionBlockReason;
-  let openCardTaskCompletionPicker;
-  let closeCardTaskCompletionPicker;
-  let confirmCardTaskCompletion;
-  let openCardTriggerPicker;
-  let closeCardTriggerPicker;
-  let applyCardTriggerReward;
-  let beginCardTriggerFreeMove;
-  let applyCardTriggerMatch;
-  let handleCardTriggerChoice;
-  let executeFreeMoveForCardTrigger;
   const techRenderContext = {
     supplyStage: null,
     supplySlots: {},
@@ -3767,49 +3706,89 @@
     structuredClone,
     updateActionButtons,
   });
-  ({
-    buildCardTaskContext,
-    buildPlayerDataTotals,
+  const {
+    buildCardTaskContext: buildCardTaskContextForRoot,
+    buildPlayerDataTotals: buildPlayerDataTotalsForRoot,
     addProbeLocation,
-    buildProbeLocationIndex,
+    buildProbeLocationIndex: buildProbeLocationIndexForRoot,
     startTemporaryCardTaskRewardFlow,
-    getReadyCardTasks,
-    refreshCardTaskState,
+    getReadyCardTasks: getReadyCardTasksForRoot,
+    refreshCardTaskState: refreshCardTaskStateForRoot,
     cloneType1TriggerEvent,
     enqueueType1TriggerEvents,
     isCardTriggerPickSelectionActive,
     hasActiveCardTriggerResolution,
     isCardTriggerRewardFlowBusy,
     getType1TriggerMatchesForEvent,
-    applyType1TriggerMatches,
-    continueAfterCardTriggerResolution,
-    cancelCardTriggerChoice,
-    buildAlienTraceEvent,
+    applyType1TriggerMatches: applyType1TriggerMatchesForRoot,
+    continueAfterCardTriggerResolution: continueAfterCardTriggerResolutionForRoot,
+    cancelCardTriggerChoice: cancelCardTriggerChoiceForRoot,
+    buildAlienTraceEvent: buildAlienTraceEventForRoot,
     getNebulaColorForCardEvent,
     ensureCardFlowEventBonuses,
-    getActiveCardEventBonuses,
+    getActiveCardEventBonuses: getActiveCardEventBonusesForRoot,
     eventMatchesCardBonus,
     getCardEventBonusKey,
-    applyCardEventBonusReward,
-    applyPublicityMoveFollowupBonus,
-    processCardEventBonuses,
-    processChongTransportArrivalEvents,
+    applyCardEventBonusReward: applyCardEventBonusRewardForRoot,
+    applyPublicityMoveFollowupBonus: applyPublicityMoveFollowupBonusForRoot,
+    processCardEventBonuses: processCardEventBonusesForRoot,
+    processChongTransportArrivalEvents: processChongTransportArrivalEventsForRoot,
     getChongTransportDestinationCoordinate,
     getChongTransportArrivalEventKey,
-    buildChongPositionArrivalEvents,
-    settleCardTasksAfterEffect,
+    buildChongPositionArrivalEvents: buildChongPositionArrivalEventsForRoot,
+    settleCardTasksAfterEffect: settleCardTasksAfterEffectForRoot,
     getChongRewardPrimaryIcon,
     createChongTaskEffect,
     buildChongRewardQueueEffects,
     buildChongFossilRewardQueueEffects,
     buildChongTransportCleanupEffect,
     buildChongTaskCompletionEffects,
+    getReadyTaskForReservedCard: getReadyTaskForReservedCardForRoot,
+    getReadyChongTaskForReservedCard: getReadyChongTaskForReservedCardForRoot,
+    getReadyAmibaTaskForReservedCard: getReadyAmibaTaskForReservedCardForRoot,
+    getReadyRunezuTaskForReservedCard: getReadyRunezuTaskForReservedCardForRoot,
+    getRunezuTaskProgressIndexes,
+    incrementCompletedTaskCount,
+    removeReservedCardToDiscard: removeReservedCardToDiscardForRoot,
+    discardReservedCardIfFinished: discardReservedCardIfFinishedForRoot,
+    createCardTriggerProgressSnapshot: createCardTriggerProgressSnapshotForRoot,
+    createCardTriggerProgressCommands: createCardTriggerProgressCommandsForRoot,
+    consumeCardTriggerWithSnapshot: consumeCardTriggerWithSnapshotForRoot,
+    confirmCardTriggerProgress: confirmCardTriggerProgressForRoot,
+    prepareCardTriggerRewardEffects: prepareCardTriggerRewardEffectsForRoot,
+    queueCardTriggerRewardEffects: queueCardTriggerRewardEffectsForRoot,
+    getCardTaskCompletionBlockReason,
+    openCardTaskCompletionPicker: openCardTaskCompletionPickerForRoot,
+    closeCardTaskCompletionPicker,
+    confirmCardTaskCompletion: confirmCardTaskCompletionForRoot,
+    openCardTriggerPicker: openCardTriggerPickerForRoot,
+    closeCardTriggerPicker,
+    applyCardTriggerReward: applyCardTriggerRewardForRoot,
+    beginCardTriggerFreeMove: beginCardTriggerFreeMoveForRoot,
+    applyCardTriggerMatch: applyCardTriggerMatchForRoot,
+    handleCardTriggerChoice: handleCardTriggerChoiceForRoot,
+    executeFreeMoveForCardTrigger: executeFreeMoveForCardTriggerForRoot,
+  } = cardTriggerRuntime;
+  const {
+    buildCardTaskContext,
+    buildPlayerDataTotals,
+    buildProbeLocationIndex,
+    getReadyCardTasks,
+    refreshCardTaskState,
+    applyType1TriggerMatches,
+    continueAfterCardTriggerResolution,
+    buildAlienTraceEvent,
+    getActiveCardEventBonuses,
+    applyCardEventBonusReward,
+    applyPublicityMoveFollowupBonus,
+    processCardEventBonuses,
+    processChongTransportArrivalEvents,
+    buildChongPositionArrivalEvents,
+    settleCardTasksAfterEffect,
     getReadyTaskForReservedCard,
     getReadyChongTaskForReservedCard,
     getReadyAmibaTaskForReservedCard,
     getReadyRunezuTaskForReservedCard,
-    getRunezuTaskProgressIndexes,
-    incrementCompletedTaskCount,
     removeReservedCardToDiscard,
     discardReservedCardIfFinished,
     createCardTriggerProgressSnapshot,
@@ -3818,100 +3797,25 @@
     confirmCardTriggerProgress,
     prepareCardTriggerRewardEffects,
     queueCardTriggerRewardEffects,
-    getCardTaskCompletionBlockReason,
     openCardTaskCompletionPicker,
-    closeCardTaskCompletionPicker,
-    confirmCardTaskCompletion,
     openCardTriggerPicker,
-    closeCardTriggerPicker,
     applyCardTriggerReward,
     beginCardTriggerFreeMove,
     applyCardTriggerMatch,
-    handleCardTriggerChoice,
-    executeFreeMoveForCardTrigger,
-  } = cardTriggerRuntime);
-  const buildCardTaskContextForRoot = buildCardTaskContext;
-  buildCardTaskContext = bindBrowserDomainCommand("card_trigger", "buildCardTaskContext");
-  const buildPlayerDataTotalsForRoot = buildPlayerDataTotals;
-  buildPlayerDataTotals = bindBrowserDomainCommand("card_trigger", "buildPlayerDataTotals");
-  const buildProbeLocationIndexForRoot = buildProbeLocationIndex;
-  buildProbeLocationIndex = bindBrowserDomainCommand("card_trigger", "buildProbeLocationIndex");
-  const getReadyCardTasksForRoot = getReadyCardTasks;
-  getReadyCardTasks = bindBrowserDomainCommand("card_trigger", "getReadyCardTasks");
-  const refreshCardTaskStateForRoot = refreshCardTaskState;
-  refreshCardTaskState = bindBrowserDomainCommand("card_trigger", "refreshCardTaskState");
-  const applyType1TriggerMatchesForRoot = applyType1TriggerMatches;
-  applyType1TriggerMatches = bindBrowserDomainCommand("card_trigger", "applyType1TriggerMatches");
-  const continueAfterCardTriggerResolutionForRoot = continueAfterCardTriggerResolution;
-  continueAfterCardTriggerResolution = bindBrowserDomainCommand("card_trigger", "continueAfterCardTriggerResolution");
-  const cancelCardTriggerChoiceForRoot = cancelCardTriggerChoice;
-  cancelCardTriggerChoice = bindBrowserDomainCommand("card_trigger", "cancelCardTriggerChoice");
-  const buildAlienTraceEventForRoot = buildAlienTraceEvent;
-  buildAlienTraceEvent = bindBrowserDomainCommand("card_trigger", "buildAlienTraceEvent");
-  const getActiveCardEventBonusesForRoot = getActiveCardEventBonuses;
-  getActiveCardEventBonuses = bindBrowserDomainCommand("card_trigger", "getActiveCardEventBonuses");
-  const applyCardEventBonusRewardForRoot = applyCardEventBonusReward;
-  applyCardEventBonusReward = bindBrowserDomainCommand("card_trigger", "applyCardEventBonusReward");
-  const applyPublicityMoveFollowupBonusForRoot = applyPublicityMoveFollowupBonus;
-  applyPublicityMoveFollowupBonus = bindBrowserDomainCommand("card_trigger", "applyPublicityMoveFollowupBonus");
-  const processCardEventBonusesForRoot = processCardEventBonuses;
-  processCardEventBonuses = bindBrowserDomainCommand("card_trigger", "processCardEventBonuses");
-  const processChongTransportArrivalEventsForRoot = processChongTransportArrivalEvents;
-  processChongTransportArrivalEvents = bindBrowserDomainCommand("card_trigger", "processChongTransportArrivalEvents");
-  const buildChongPositionArrivalEventsForRoot = buildChongPositionArrivalEvents;
-  buildChongPositionArrivalEvents = bindBrowserDomainCommand("card_trigger", "buildChongPositionArrivalEvents");
-  const settleCardTasksAfterEffectForRoot = settleCardTasksAfterEffect;
-  settleCardTasksAfterEffect = bindBrowserDomainCommand("card_trigger", "settleCardTasksAfterEffect");
-  const getReadyTaskForReservedCardForRoot = getReadyTaskForReservedCard;
-  getReadyTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyTaskForReservedCard");
-  const getReadyChongTaskForReservedCardForRoot = getReadyChongTaskForReservedCard;
-  getReadyChongTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyChongTaskForReservedCard");
-  const getReadyAmibaTaskForReservedCardForRoot = getReadyAmibaTaskForReservedCard;
-  getReadyAmibaTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyAmibaTaskForReservedCard");
-  const getReadyRunezuTaskForReservedCardForRoot = getReadyRunezuTaskForReservedCard;
-  getReadyRunezuTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyRunezuTaskForReservedCard");
-  const removeReservedCardToDiscardForRoot = removeReservedCardToDiscard;
-  removeReservedCardToDiscard = bindBrowserDomainCommand("card_trigger", "removeReservedCardToDiscard");
-  const discardReservedCardIfFinishedForRoot = discardReservedCardIfFinished;
-  discardReservedCardIfFinished = bindBrowserDomainCommand("card_trigger", "discardReservedCardIfFinished");
-  const createCardTriggerProgressSnapshotForRoot = createCardTriggerProgressSnapshot;
-  createCardTriggerProgressSnapshot = bindBrowserDomainCommand("card_trigger", "createCardTriggerProgressSnapshot");
-  const createCardTriggerProgressCommandsForRoot = createCardTriggerProgressCommands;
-  createCardTriggerProgressCommands = bindBrowserDomainCommand("card_trigger", "createCardTriggerProgressCommands");
-  const consumeCardTriggerWithSnapshotForRoot = consumeCardTriggerWithSnapshot;
-  consumeCardTriggerWithSnapshot = bindBrowserDomainCommand("card_trigger", "consumeCardTriggerWithSnapshot");
-  const confirmCardTriggerProgressForRoot = confirmCardTriggerProgress;
-  confirmCardTriggerProgress = bindBrowserDomainCommand("card_trigger", "confirmCardTriggerProgress");
-  const prepareCardTriggerRewardEffectsForRoot = prepareCardTriggerRewardEffects;
-  prepareCardTriggerRewardEffects = bindBrowserDomainCommand("card_trigger", "prepareCardTriggerRewardEffects");
-  const queueCardTriggerRewardEffectsForRoot = queueCardTriggerRewardEffects;
-  queueCardTriggerRewardEffects = bindBrowserDomainCommand("card_trigger", "queueCardTriggerRewardEffects");
-  const openCardTaskCompletionPickerForRoot = openCardTaskCompletionPicker;
-  openCardTaskCompletionPicker = bindBrowserDomainCommand("card_trigger", "openCardTaskCompletionPicker");
-  cancelCardTriggerChoice = () => submitActiveCardDecision(
+  } = bindDomainCommands("card_trigger");
+  const cancelCardTriggerChoice = () => submitActiveCardDecision(
     "card-trigger-cancel",
     (target) => target.choiceId === "cancel",
   );
-  const confirmCardTaskCompletionForRoot = confirmCardTaskCompletion;
-  confirmCardTaskCompletion = (choiceId = "confirm") => submitActiveCardDecision(
+  const confirmCardTaskCompletion = (choiceId = "confirm") => submitActiveCardDecision(
     "card-task-completion",
     (target) => String(target.choiceId) === String(choiceId),
   );
-  const openCardTriggerPickerForRoot = openCardTriggerPicker;
-  openCardTriggerPicker = bindBrowserDomainCommand("card_trigger", "openCardTriggerPicker");
-  const applyCardTriggerRewardForRoot = applyCardTriggerReward;
-  applyCardTriggerReward = bindBrowserDomainCommand("card_trigger", "applyCardTriggerReward");
-  const beginCardTriggerFreeMoveForRoot = beginCardTriggerFreeMove;
-  beginCardTriggerFreeMove = bindBrowserDomainCommand("card_trigger", "beginCardTriggerFreeMove");
-  const applyCardTriggerMatchForRoot = applyCardTriggerMatch;
-  applyCardTriggerMatch = bindBrowserDomainCommand("card_trigger", "applyCardTriggerMatch");
-  const handleCardTriggerChoiceForRoot = handleCardTriggerChoice;
-  handleCardTriggerChoice = (choiceIndex) => submitActiveCardDecision(
+  const handleCardTriggerChoice = (choiceIndex) => submitActiveCardDecision(
     "card-trigger",
     (target) => Number(target.choiceIndex) === Number(choiceIndex),
   );
-  const executeFreeMoveForCardTriggerForRoot = executeFreeMoveForCardTrigger;
-  executeFreeMoveForCardTrigger = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
+  const executeFreeMoveForCardTrigger = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
     "card-trigger-free-move",
     (target, choice) => String(target.rocketId) === String(rocketId)
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
