@@ -156,6 +156,73 @@
     .arch-box.action { border-top: 3px solid var(--cyan); }
     .arch-box.effect { border-top: 3px solid var(--green); }
     .arch-box.state { border-top: 3px solid var(--amber); }
+    .ownership-map { display: grid; gap: 14px; }
+    .owner-group {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--panel);
+    }
+    .owner-group > header {
+      display: grid;
+      grid-template-columns: minmax(170px, .7fr) minmax(0, 2fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .owner-group h3 { display: flex; align-items: center; gap: 10px; margin: 0; }
+    .owner-mark {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 14px rgba(83, 215, 255, .55);
+    }
+    .owner-mark.green { background: var(--green); box-shadow: 0 0 14px rgba(84, 223, 165, .55); }
+    .owner-mark.amber { background: var(--amber); box-shadow: 0 0 14px rgba(255, 209, 102, .55); }
+    .owner-mark.blue { background: var(--blue); box-shadow: 0 0 14px rgba(111, 157, 255, .55); }
+    .owner-mark.violet { background: var(--violet); box-shadow: 0 0 14px rgba(167, 139, 250, .55); }
+    .owner-summary { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .owned-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .owned-bucket {
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(7, 17, 31, .58);
+    }
+    .owned-bucket b { display: block; margin-bottom: 9px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+    .owned-items { display: flex; flex-wrap: wrap; gap: 6px; }
+    .owned-item {
+      padding: 4px 8px;
+      border: 1px solid rgba(83, 215, 255, .18);
+      border-radius: 7px;
+      background: rgba(83, 215, 255, .07);
+      color: #d9efff;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .owned-item em { color: var(--muted); font-style: normal; }
+    .ownership-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+    .ownership-flow div {
+      position: relative;
+      padding: 11px 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+    .ownership-flow div:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -15px;
+      z-index: 2;
+      color: var(--cyan);
+    }
     .connector {
       padding: 3px 0;
       color: var(--muted);
@@ -218,6 +285,10 @@
       .grid-3, .grid-2, .split, .code-paths { grid-template-columns: 1fr; }
       .sequence { grid-template-columns: 1fr 1fr; }
       .step::after { display: none; }
+      .owner-group > header { grid-template-columns: 1fr; }
+      .owned-columns { grid-template-columns: 1fr 1fr; }
+      .ownership-flow { grid-template-columns: 1fr; }
+      .ownership-flow div:not(:last-child)::after { content: "↓"; right: 50%; bottom: -18px; top: auto; }
     }
     @media (max-width: 680px) {
       .page { width: min(100% - 20px, 1180px); padding-top: 10px; }
@@ -229,6 +300,7 @@
       .state-flow { grid-template-columns: 1fr; }
       .arrow { transform: rotate(90deg); }
       .owner-table { display: block; overflow-x: auto; }
+      .owned-columns { grid-template-columns: 1fr; }
     }
     @media print {
       :root { color-scheme: light; --bg: #fff; --panel: #f6f8fb; --panel-2: #eef3f8; --line: #cbd5e1; --text: #102033; --muted: #4c6075; }
@@ -265,6 +337,7 @@
       <a href="#hosts">双宿主</a>
       <a href="#ai">AI 边界</a>
       <a href="#code">代码地图</a>
+      <a href="#boundary">边界外内容</a>
       <a href="#status">现状与风险</a>
     </nav>
 
@@ -333,6 +406,238 @@
             <tr><td>Policy</td><td>在给定 legal set 内选择 <code>actionId</code></td><td>创建 Action identity、直接执行规则、读取 DOM</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <h3 style="margin:30px 0 14px;font-size:24px">Ownership 展开图</h3>
+      <p class="intro">下图把每个抽象方块继续展开到当前代码中的具体对象。上层发出意图，下层拥有规则事实；同一对象只列在它的唯一 owner 下。</p>
+      <div class="diagram">
+        <div class="ownership-flow" aria-label="架构所有权主链">
+          <div>Browser / Simulation<br>收集输入</div>
+          <div>Action / Decision<br>描述意图</div>
+          <div>Rule + Effect<br>执行结算</div>
+          <div>State + Resources<br>保存事实</div>
+          <div>Projection / Replay<br>派生输出</div>
+        </div>
+        <div class="ownership-map">
+          <article class="owner-group">
+            <header>
+              <div>
+                <h3><span class="owner-mark"></span>Standard Action</h3>
+                <p class="owner-summary">拥有玩家可选择行为的 identity、枚举、校验和唯一执行入口。</p>
+              </div>
+              <div class="owned-columns">
+                <div class="owned-bucket">
+                  <b>主行动 · main</b>
+                  <div class="owned-items">
+                    <span class="owned-item">发射 <em>launch</em></span>
+                    <span class="owned-item">环绕 <em>orbit</em></span>
+                    <span class="owned-item">着陆 <em>land</em></span>
+                    <span class="owned-item">扫描 <em>scan</em></span>
+                    <span class="owned-item">分析 <em>analyze</em></span>
+                    <span class="owned-item">研究科技 <em>research_tech</em></span>
+                    <span class="owned-item">打牌 <em>play_card</em></span>
+                    <span class="owned-item">PASS <em>pass</em></span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>快速行动 · quick</b>
+                  <div class="owned-items">
+                    <span class="owned-item">移动 <em>move</em></span>
+                    <span class="owned-item">快速交易 <em>quick_trade</em></span>
+                    <span class="owned-item">公司能力 <em>industry</em></span>
+                    <span class="owned-item">卡牌角标 <em>card_corner</em></span>
+                    <span class="owned-item">放置数据 <em>place_data</em></span>
+                    <span class="owned-item">符文族面符号 <em>runezu_face_symbol</em></span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>控制与条件选择</b>
+                  <div class="owned-items">
+                    <span class="owned-item">结束回合 <em>end_turn</em></span>
+                    <span class="owned-item">选牌 <em>choose_card</em></span>
+                    <span class="owned-item">选目标 <em>choose_target</em></span>
+                    <span class="owned-item">选支付 <em>choose_payment</em></span>
+                    <span class="owned-item">选奖励 <em>choose_reward</em></span>
+                    <span class="owned-item">选分支 <em>choose_branch</em></span>
+                    <span class="owned-item">选终局板块 <em>choose_final_scoring</em></span>
+                    <span class="owned-item">接受/跳过可选效果 <em>accept_optional_effect</em></span>
+                  </div>
+                </div>
+              </div>
+            </header>
+          </article>
+
+          <article class="owner-group">
+            <header>
+              <div>
+                <h3><span class="owner-mark green"></span>Effect Session</h3>
+                <p class="owner-summary">拥有一个 Action 从开始到提交之间的完整事务与中间选择。</p>
+              </div>
+              <div class="owned-columns">
+                <div class="owned-bucket">
+                  <b>执行对象</b>
+                  <div class="owned-items">
+                    <span class="owned-item">Effect Group</span>
+                    <span class="owned-item">Effect</span>
+                    <span class="owned-item">DecisionEffect</span>
+                    <span class="owned-item">working copy</span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>推进规则</b>
+                  <div class="owned-items">
+                    <span class="owned-item">direct 队列</span>
+                    <span class="owned-item">trigger 队列</span>
+                    <span class="owned-item">deferred 队列</span>
+                    <span class="owned-item">deterministic drain</span>
+                    <span class="owned-item">步数上限</span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>事务记录</b>
+                  <div class="owned-items">
+                    <span class="owned-item">actions</span>
+                    <span class="owned-item">decisions</span>
+                    <span class="owned-item">effects / events</span>
+                    <span class="owned-item">RNG / history</span>
+                    <span class="owned-item">logs / replay</span>
+                    <span class="owned-item">undo frame</span>
+                    <span class="owned-item">不可逆屏障</span>
+                  </div>
+                </div>
+              </div>
+            </header>
+          </article>
+
+          <article class="owner-group">
+            <header>
+              <div>
+                <h3><span class="owner-mark amber"></span>StateStore 与标准资源</h3>
+                <p class="owner-summary">StateStore 拥有 committed fact；玩家资源是 players 切片中的规则事实。</p>
+              </div>
+              <div class="owned-columns">
+                <div class="owned-bucket">
+                  <b>标准资源 · resources</b>
+                  <div class="owned-items">
+                    <span class="owned-item">信用点 <em>credits</em></span>
+                    <span class="owned-item">能源 <em>energy</em></span>
+                    <span class="owned-item">宣传 <em>publicity</em></span>
+                    <span class="owned-item">可用数据 <em>availableData</em></span>
+                    <span class="owned-item">手牌数 <em>handSize</em></span>
+                    <span class="owned-item">分数 <em>score</em></span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>机制专属资源</b>
+                  <div class="owned-items">
+                    <span class="owned-item">阿米巴化石 <em>aomomoFossils</em></span>
+                    <span class="owned-item">额外公共扫描 <em>additionalPublicScan</em></span>
+                    <span class="owned-item">收入轨 <em>income</em></span>
+                    <span class="owned-item">分数来源账本 <em>scoreSources</em></span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>Committed 根切片</b>
+                  <div class="owned-items">
+                    <span class="owned-item">meta</span><span class="owned-item">match</span>
+                    <span class="owned-item">turn</span><span class="owned-item">players</span>
+                    <span class="owned-item">solarSystem</span><span class="owned-item">pieces</span>
+                    <span class="owned-item">planets</span><span class="owned-item">data</span>
+                    <span class="owned-item">cards</span><span class="owned-item">tech</span>
+                    <span class="owned-item">aliens</span><span class="owned-item">finalScoring</span>
+                  </div>
+                </div>
+              </div>
+            </header>
+          </article>
+
+          <article class="owner-group">
+            <header>
+              <div>
+                <h3><span class="owner-mark blue"></span>Browser / Simulation Host</h3>
+                <p class="owner-summary">宿主拥有展示和 I/O 能力，但不拥有规则合法性与 canonical state。</p>
+              </div>
+              <div class="owned-columns">
+                <div class="owned-bucket">
+                  <b>Browser Host owns</b>
+                  <div class="owned-items">
+                    <span class="owned-item">BrowserProjection</span>
+                    <span class="owned-item">ViewState</span>
+                    <span class="owned-item">DOM renderer</span>
+                    <span class="owned-item">事件与拖拽</span>
+                    <span class="owned-item">Action Bar</span>
+                    <span class="owned-item">Browser Services</span>
+                    <span class="owned-item">本地保存/恢复交互</span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>Simulation Host owns</b>
+                  <div class="owned-items">
+                    <span class="owned-item">reset</span>
+                    <span class="owned-item">observe</span>
+                    <span class="owned-item">legalActions</span>
+                    <span class="owned-item">step</span>
+                    <span class="owned-item">checkpoint</span>
+                    <span class="owned-item">replay</span>
+                    <span class="owned-item">dispose</span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>Host 明确不 owns</b>
+                  <div class="owned-items">
+                    <span class="owned-item">规则状态</span>
+                    <span class="owned-item">Action identity</span>
+                    <span class="owned-item">合法性</span>
+                    <span class="owned-item">Effect 推进</span>
+                    <span class="owned-item">Policy 估值</span>
+                  </div>
+                </div>
+              </div>
+            </header>
+          </article>
+
+          <article class="owner-group">
+            <header>
+              <div>
+                <h3><span class="owner-mark violet"></span>AI / Policy</h3>
+                <p class="owner-summary">Policy 拥有选择；Machine Player Host 拥有请求生命周期；规则执行仍归公共内核。</p>
+              </div>
+              <div class="owned-columns">
+                <div class="owned-bucket">
+                  <b>Policy owns</b>
+                  <div class="owned-items">
+                    <span class="owned-item">DecisionContext 消费</span>
+                    <span class="owned-item">legal set 评分</span>
+                    <span class="owned-item">稳定排序</span>
+                    <span class="owned-item">PolicyDecision</span>
+                    <span class="owned-item">provenance</span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>Machine Player Host owns</b>
+                  <div class="owned-items">
+                    <span class="owned-item">固定机器席位</span>
+                    <span class="owned-item">请求代次</span>
+                    <span class="owned-item">deadline</span>
+                    <span class="owned-item">取消</span>
+                    <span class="owned-item">stale 去重</span>
+                    <span class="owned-item">输出 validator</span>
+                  </div>
+                </div>
+                <div class="owned-bucket">
+                  <b>AI 明确不 owns</b>
+                  <div class="owned-items">
+                    <span class="owned-item">候选 identity 创建</span>
+                    <span class="owned-item">StateStore mutation</span>
+                    <span class="owned-item">Effect executor</span>
+                    <span class="owned-item">DOM resolver</span>
+                    <span class="owned-item">默认取首项 fallback</span>
+                  </div>
+                </div>
+              </div>
+            </header>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -443,6 +748,94 @@
         <div class="path"><code>randomizer/game/ai/machine-player-host.js</code><span>机器席位请求生命周期与 fail-closed 提交协调。</span></div>
         <div class="path"><code>randomizer/app.js</code><span>Browser composition root；负责接线，不应再成为第二规则 owner。</span></div>
         <div class="path"><code>randomizer/training/simulation-rule-composition.js</code><span>训练宿主到公共规则内核的窄装配层。</span></div>
+      </div>
+    </section>
+
+    <section id="boundary">
+      <p class="section-kicker">Architecture boundary</p>
+      <h2>大块之外，还有什么？</h2>
+      <p class="intro">
+        有，但不能统称为“架构外”。规则领域仍属于公共内核，只是前面的 owner 图没有逐项展开；
+        Composition / Adapter 属于运行时接线层；资产、训练编排和验证工具才位于生产规则内核之外。
+      </p>
+      <div class="diagram">
+        <div class="grid grid-3">
+          <article class="card" style="border-top:3px solid var(--green)">
+            <h3>① 内核中的领域模块</h3>
+            <p>它们不另建顶层 owner，而是在 Action / Effect / State 三类公共协议下实现具体规则。</p>
+            <div class="owned-items" style="margin-top:15px">
+              <span class="owned-item">玩家与资源</span>
+              <span class="owned-item">火箭 / 移动</span>
+              <span class="owned-item">太阳系 / 星球</span>
+              <span class="owned-item">扫描 / 数据</span>
+              <span class="owned-item">卡牌 / 任务 / 触发</span>
+              <span class="owned-item">科技 / bonus</span>
+              <span class="owned-item">公司能力</span>
+              <span class="owned-item">八种外星人</span>
+              <span class="owned-item">终局计分</span>
+              <span class="owned-item">历史 / 撤销命令</span>
+            </div>
+          </article>
+          <article class="card" style="border-top:3px solid var(--blue)">
+            <h3>② 接线与 Adapter 层</h3>
+            <p>它们属于生产运行时，但只做协议转换和依赖装配，不应成为新的规则 owner。</p>
+            <div class="owned-items" style="margin-top:15px">
+              <span class="owned-item">app.js composition root</span>
+              <span class="owned-item">app/bootstrap.js</span>
+              <span class="owned-item">app/dependencies.js</span>
+              <span class="owned-item">Action input adapter</span>
+              <span class="owned-item">Decision UI adapter</span>
+              <span class="owned-item">Projection adapter</span>
+              <span class="owned-item">Simulation composition</span>
+              <span class="owned-item">Public API facade</span>
+            </div>
+          </article>
+          <article class="card" style="border-top:3px solid var(--violet)">
+            <h3>③ 生产内核外的支撑系统</h3>
+            <p>这些内容可以消费内核或为内核提供静态输入，但不参与一局游戏的权威提交。</p>
+            <div class="owned-items" style="margin-top:15px">
+              <span class="owned-item">图片与卡牌资产</span>
+              <span class="owned-item">卡牌 / 公司 / 外星人目录</span>
+              <span class="owned-item">训练与 self-play 编排</span>
+              <span class="owned-item">PyTorch worker</span>
+              <span class="owned-item">评测与 battle report</span>
+              <span class="owned-item">Node unit / full-flow</span>
+              <span class="owned-item">Chrome smoke</span>
+              <span class="owned-item">debug / calibration</span>
+              <span class="owned-item">生成、打包、发布工具</span>
+              <span class="owned-item">docs / reports</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:16px">
+        <article class="card">
+          <h3>领域模块如何归入架构</h3>
+          <table class="owner-table" style="margin-top:10px">
+            <tbody>
+              <tr><td>火箭 / 星球</td><td>状态归 <code>pieces / planets / solarSystem</code>；发射、环绕、着陆、移动归 Action；奖励链归 Effect。</td></tr>
+              <tr><td>扫描 / 数据</td><td>token 与扇区事实归 <code>data</code>；扫描和放置数据归 Action；选择与奖励归 Effect。</td></tr>
+              <tr><td>卡牌</td><td>牌库、手牌、任务状态归 <code>cards / players</code>；打牌与角标归 Action；触发、选牌和奖励归 Effect。</td></tr>
+              <tr><td>科技 / 公司 / 外星人</td><td>事实分别归 <code>tech / players / aliens</code>；玩家意图归 Action；机会队列和 followup 归 Effect。</td></tr>
+              <tr><td>终局计分</td><td>标记和结果归 <code>finalScoring</code>；板块选择归 conditional Action；结算链归 Effect。</td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="card">
+          <h3>判断是否出现“架构外规则”</h3>
+          <ul class="compact-list">
+            <li>DOM callback 直接扣资源或改盘面：是架构外 mutation，应迁回规则内核。</li>
+            <li>AI 自己创建候选 identity 或执行动作：是旁路，应改为选择公共 legal descriptor。</li>
+            <li>训练环境复制一套规则：是第二规则源，应改为复用 Rule Composition。</li>
+            <li>renderer 根据界面状态决定合法性：owner 错位，应由 registry / session 判断。</li>
+            <li>资产、目录、测试、报告不写入 committed state：属于正常支撑系统，不是规则缺口。</li>
+          </ul>
+        </article>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <strong>边界结论：</strong>允许存在“核心架构外的支撑内容”，不允许存在“无人拥有的生产规则”。
+        任何会改变一局游戏结果的行为，都必须最终落入 Action、Effect 或 State 三个规则 owner 之一。
       </div>
     </section>
 
