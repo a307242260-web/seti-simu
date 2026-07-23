@@ -12,10 +12,17 @@
   "use strict";
 
   function createDebugRuntime(context = {}) {
-    const windowRef = context.window || root;
-    const documentRef = context.document !== undefined ? context.document : root.document;
+    const ports = context.ports || {};
+    const browser = ports.browser || context;
+    const stateQuery = ports.stateQuery || context;
+    const aiControl = ports.aiControl || context;
+    const decisionInput = ports.decisionInput || context;
+    const render = ports.render || context;
+    const debugRules = ports.debugRules || context;
+    const constants = ports.constants || context;
+    const windowRef = browser.window || root;
+    const documentRef = browser.document !== undefined ? browser.document : root.document;
     const {
-      els,
       players,
       cards,
       tech,
@@ -29,8 +36,12 @@
       amiba,
       aomomo,
       runezu,
+      rocketActions,
+      solar,
+      solarState,
+    } = debugRules;
+    const {
       uiRuntimeState,
-      DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT = 10,
       getCurrentPlayer,
       getInterfacePlayer,
       getPlayerAgentLabel,
@@ -45,10 +56,6 @@
       getFirstEligiblePlayerId,
       isPlayerPassedThisRound,
       hasPlayerCompletedThisTurn,
-      isAiAutoBattlePlayer,
-      createAiControlSnapshot,
-      restoreAiControlSnapshot,
-      scheduleAiAutoStepIfNeeded,
       isGameEnded,
       resolvePlayerReference,
       getExplicitEffectOwnerPlayer,
@@ -57,13 +64,35 @@
       isDiscardSelectionActive,
       isPlayCardSelectionActive,
       isTechTilePickingActive,
+      getMovableTokensForPlayer,
+    } = stateQuery;
+    const {
+      isAiAutoBattlePlayer,
+      createAiControlSnapshot,
+      restoreAiControlSnapshot,
+      scheduleAiAutoStepIfNeeded,
+    } = aiControl;
+    const {
       closeTechBlueSlotPicker,
       closeDataPlacePicker,
       closeScanTargetPicker,
       closeScanAction4Picker,
       closeLandTargetPicker,
+      closeAlienTracePicker,
       clearActionEffectFlow,
       clearActionPending,
+      clearMoveRocketHighlight,
+      resolveCompletedSectorSettlements,
+      maybeStartFundamentalismRoundStartIncomeFlow,
+      maybeOpenActionBriefingForCompletedCycle,
+      maybeAutoOpenFinalResultDialog,
+      clearTransientStateForRecovery,
+      advanceTurnAfterPlayerAction,
+      applyIndustryRoundStartBonuses,
+      activateAomomoBoard,
+    } = decisionInput;
+    const {
+      els,
       syncPassReserveSelectionChrome,
       syncCardSelectionChrome,
       syncDiscardSelectionChrome,
@@ -84,17 +113,9 @@
       updatePublicCardControls,
       updateActionButtons,
       schedulePersistentGameStateSave,
-      clearMoveRocketHighlight,
-      getMovableTokensForPlayer,
-      resolveCompletedSectorSettlements,
-      maybeStartFundamentalismRoundStartIncomeFlow,
-      maybeOpenActionBriefingForCompletedCycle,
-      maybeAutoOpenFinalResultDialog,
-      clearTransientStateForRecovery,
-      advanceTurnAfterPlayerAction,
-      applyIndustryRoundStartBonuses,
-      activateAomomoBoard,
-    } = context;
+    } = render;
+    const { resize } = browser;
+    const { DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT = 10 } = constants;
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
@@ -108,7 +129,7 @@
       const nextOpen = Boolean(open) && !els?.appWrap?.classList.contains("debug-tools-disabled");
       els?.appWrap?.classList.toggle("debug-collapsed", !nextOpen);
       els?.debugToggle?.setAttribute("aria-expanded", String(nextOpen));
-      context.resize?.();
+      resize?.();
     }
 
     function createFocusDebugCalibrationHandler(workingRoot) {
@@ -183,10 +204,10 @@
 
     function selectDefaultRocketForCurrentPlayer(workingRoot) {
       const currentPlayer = getCurrentPlayer?.();
-      const currentRocket = context.rocketActions?.getActiveRocket(ruleRocketState(workingRoot));
+      const currentRocket = rocketActions?.getActiveRocket(ruleRocketState(workingRoot));
       if (
         currentRocket?.playerId === currentPlayer?.id
-        && context.rocketActions?.isControllablePlayerRocket(currentRocket)
+        && rocketActions?.isControllablePlayerRocket(currentRocket)
       ) {
         return currentRocket;
       }
@@ -439,7 +460,7 @@
     function setDebugAlienTraceModeActive(workingRoot, active, message = null) {
       uiRuntimeState.debugAlienTraceModeActive = Boolean(active);
       if (uiRuntimeState.debugAlienTraceModeActive) {
-        context.closeAlienTracePicker?.(workingRoot);
+        closeAlienTracePicker?.(workingRoot);
         uiRuntimeState.alienTracePickerState = {
           mode: "debug-direct",
           allowedTraceTypes: aliens.TRACE_TYPES,
@@ -832,7 +853,7 @@
       if (!aomomo) return;
       const lines = [];
       for (const token of data.listNebulaTokens(ruleNebulaDataState(workingRoot), aomomo.NEBULA_ID)) {
-        const layout = data.getEffectiveAomomoBoardSlotLayout?.(token.slotIndex, token, context.solarState, context.solar);
+        const layout = data.getEffectiveAomomoBoardSlotLayout?.(token.slotIndex, token, solarState, solar);
         if (!layout) continue;
         const boardX = layout.boardPercentX ?? layout.percentX;
         const boardY = layout.boardPercentY ?? layout.percentY;
