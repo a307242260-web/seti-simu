@@ -754,6 +754,7 @@
           poolUsed: cardMoveEffectContext.poolUsed,
           energyCost,
           discardCommand,
+          pending: cardMoveEffectContext.pending || null,
         });
       }
 
@@ -764,6 +765,7 @@
           energyCost,
           discardCommand,
           fromMovePayment: true,
+          pending: supplementalMoveContext.pending || null,
         });
       }
       if (supplementalMoveContext?.type === "cardCornerFreeMove") {
@@ -773,6 +775,7 @@
           energyCost,
           discardCommand,
           fromMovePayment: true,
+          pending: supplementalMoveContext.pending || null,
         });
       }
       if (supplementalMoveContext?.type === "cardTriggerFreeMove") {
@@ -782,6 +785,7 @@
           energyCost,
           discardCommand,
           fromMovePayment: true,
+          pending: supplementalMoveContext.pending || null,
         });
       }
       if (supplementalMoveContext?.type === "industry_free_move") {

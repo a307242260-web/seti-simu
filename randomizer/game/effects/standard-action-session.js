@@ -35,15 +35,16 @@
     runtime.registerExecutor(EFFECT_TYPE, (workingRoot, effect) => {
       const result = executeRegisteredAction(workingRoot, effect.payload.action);
       if (!result?.ok) return result;
-      const openedDecisionEffect = takeOpenedDecisionEffect?.() || null;
+      const openedDecisionEffect = result.decisionEffect || takeOpenedDecisionEffect?.() || null;
+      const spawnedEffects = openedDecisionEffect
+        ? [{ priority: "direct", effect: openedDecisionEffect }]
+        : continuation
+          ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
+          : [];
       return {
         ok: true,
         nextState: result.nextState,
-        spawnedEffects: openedDecisionEffect
-          ? [{ priority: "direct", effect: openedDecisionEffect }]
-          : continuation
-            ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
-            : [],
+        spawnedEffects,
         events: clone(result.events || []),
         history: clone(result.history || []),
         log: clone(result.log ?? (result.message ? { type: "standardAction", message: result.message } : null)),

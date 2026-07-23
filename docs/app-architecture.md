@@ -88,8 +88,8 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
 - `randomizer/app/effects/dispatcher.js`：卡牌、星球奖励、科技、公司和扫描 effect 的顶层分发；不得在 `app.js` 重建巨型 type switch。
 - `randomizer/app/effects/bootstrap.js`：按 movement/scan、reward、alien、dispatcher 四个 owner 建立隔离 capability scope 并装配 executor suite；缺失能力在创建期 fail-fast，领域 executor 不共享可枚举的巨型 context。
-- `randomizer/app/card-runtime.js`：卡牌选择、打牌/弃牌、角标快速行动、卡牌移动、公共牌控制与 PASS 预留选择；相关 pending 的确认、取消和继续选择在模块内闭环。
-- `randomizer/app/card-trigger-runtime.js`：任务就绪、1 型触发、任务确认、奖励队列和触发后的续跑；不在 `app.js` 复制任务/触发分支。
+- `randomizer/app/card-runtime.js`：卡牌选择、打牌/弃牌、角标快速行动、卡牌移动、公共牌控制与 PASS 预留选择；卡牌移动与角标免费移动只创建纯数据 DecisionEffect，等待态由 active Session projection 唯一暴露。
+- `randomizer/app/card-trigger-runtime.js`：任务就绪、1 型触发、任务确认、奖励队列和触发后的续跑；触发选择、触发免费移动与任务完成不写 match continuation，玩家与机器席位统一提交 Session Decision。
 - `randomizer/app/income-runtime.js`：弃牌收入、收入资源发放、轮开始公司收益和原教旨主义轮开始收入队列。
 - `randomizer/app/scan-flow.js`：公共牌/手牌扫描、扫描目标、扇区结算、延迟补牌及扫描收尾；扫描 pending 的确认、取消和续跑在该 flow 内完成。
 - `randomizer/app.js`：Browser composition root。只收集依赖、实例化 Composition/Browser Host/领域 runtime、注入显式 context/handler 并启动页面；Host command switch、continuation、卡牌/收入/扫描/任务触发、外星人/公司/debug、具体渲染、公开 API 或 AI 策略正文均不得回流。

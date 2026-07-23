@@ -85,10 +85,6 @@ function createFixture() {
         state.passReserveCalls.push(cardId);
         return { ok: true, progressed: true };
       },
-      getPendingCardTriggerAction: (workingRoot) => workingRoot.match.cardTriggerContinuation || null,
-      getPendingCardTaskCompletion: (workingRoot) => workingRoot.match.cardTaskCompletionContinuation || null,
-      getPendingCardTriggerFreeMove: (workingRoot) => workingRoot.match.cardTriggerFreeMoveContinuation || null,
-      getPendingCardCornerFreeMove: (workingRoot) => workingRoot.match.cardCornerFreeMoveContinuation || null,
       getPendingDataPlacementDecision: (workingRoot) => workingRoot.match.dataPlacementContinuation || null,
       data: {
         listPlaceDataChoices: () => [
@@ -149,15 +145,15 @@ function createFixture() {
         delete workingRoot.match.industryAbilityContinuation;
         return { ok: true, progressed: true, tileId };
       },
-      handleCardTriggerChoice: (workingRoot, choiceIndex) => {
+      handleCardTriggerChoice: (_workingRoot, choiceIndex, pending) => {
         state.cardTriggerCalls.push(choiceIndex);
-        delete workingRoot.match.cardTriggerContinuation;
+        assert.equal(pending.matches[choiceIndex].effect.label, "奖励 A");
         return { ok: true, progressed: true };
       },
       cancelCardTriggerChoice: () => true,
-      confirmCardTaskCompletion: (workingRoot, choiceId) => {
+      confirmCardTaskCompletion: (_workingRoot, choiceId, options) => {
         state.cardTaskCalls.push(choiceId);
-        delete workingRoot.match.cardTaskCompletionContinuation;
+        assert.equal(options.pending.ready.card.id, "task-a");
         return { ok: true, progressed: true };
       },
       isMovePaymentCard: (card) => Number(card?.discardActionCode) === 2,
@@ -188,6 +184,17 @@ function createFixture() {
     });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+function describeSessionDecision(domain, workingRoot, kind, pending) {
+  const described = domain.describePendingDecision(workingRoot, kind, pending);
+  return {
+    ...described,
+    candidates: described.candidates.map((choice) => ({
+      ...choice,
+      decisionContext: { kind, pending: structuredClone(pending) },
+    })),
+  };
 }
 
 {
@@ -327,6 +334,23 @@ function createFixture() {
       playerId: "move-owner",
       choices: [{ rocket: { id: 7 } }],
     },
+    card_trigger: {
+      playerId: "move-owner",
+      matches: [{ card: { id: "card-a" }, effect: { label: "奖励 A" } }],
+    },
+    card_task_completion: {
+      playerId: "move-owner",
+      ready: { card: { id: "task-a" }, effects: [] },
+    },
+    card_trigger_free_move: {
+      playerId: "move-owner",
+      match: { effect: { options: { movementPoints: 1 } } },
+    },
+    card_move: { playerId: "move-owner", poolRemaining: 1, moved: false },
+    card_corner_free_move: {
+      playerId: "move-owner",
+      action: { label: "免费移动", movementPoints: 1 },
+    },
   };
   const targetKinds = Object.fromEntries(Object.entries(pendingByKind).map(([kind, pending]) => [
     kind,
@@ -339,6 +363,11 @@ function createFixture() {
     scan_free_move: ["scan-free-move", "scan-free-move", "scan-free-move", "scan-free-move"],
     probe_sector_scan: ["probe-sector-selection"],
     probe_location_reward: ["probe-location-reward"],
+    card_trigger: ["card-trigger", "card-trigger-cancel"],
+    card_task_completion: ["card-task-completion"],
+    card_trigger_free_move: ["skip-card-trigger-free-move"],
+    card_move: ["skip-card-effect-move"],
+    card_corner_free_move: ["skip-card-corner-free-move"],
   }, "扫描、公共扫描、免费移动与两类探测必须完全由 Session legal choices 枚举");
   const actionChoice = fixture.domain.describePendingDecision(fixture.root, "scan_free_move", {
     stage: "action_choice",
@@ -356,11 +385,19 @@ function createFixture() {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.cardTriggerContinuation = {
+  const pending = {
     playerId: "move-owner",
     matches: [{ card: { id: "card-a" }, effect: { label: "奖励 A" } }],
   };
-  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const executor = createConditionalActionExecutor({ domain: {
+    describeDecision: (workingRoot) => describeSessionDecision(
+      fixture.domain,
+      workingRoot,
+      "card_trigger",
+      pending,
+    ),
+    executeChoice: (...args) => fixture.domain.executeChoice(...args),
+  } });
   const decision = executor.inspect(fixture.root);
   assert.deepEqual(decision.choices.map((choice) => choice.target.kind), ["card-trigger", "card-trigger-cancel"]);
   const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_branch"));
@@ -372,11 +409,19 @@ function createFixture() {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.cardTaskCompletionContinuation = {
+  const pending = {
     playerId: "move-owner",
     ready: { card: { id: "task-a" }, effects: [] },
   };
-  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const executor = createConditionalActionExecutor({ domain: {
+    describeDecision: (workingRoot) => describeSessionDecision(
+      fixture.domain,
+      workingRoot,
+      "card_task_completion",
+      pending,
+    ),
+    executeChoice: (...args) => fixture.domain.executeChoice(...args),
+  } });
   const decision = executor.inspect(fixture.root);
   assert.deepEqual(decision.choices.map((choice) => choice.target.kind), ["card-task-completion"]);
   const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "accept_optional_effect"));

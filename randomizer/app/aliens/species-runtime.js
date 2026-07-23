@@ -16,7 +16,7 @@
       "buildPlutoMarkerContext", "buildProbeLocationIndex", "getAlienTraceActionPlayer",
       "getCurrentActionEffect", "getPendingOwnerFields", "getPendingOwnerPlayer",
       "getPlanetSectorCoordinate", "getTargetPlayerOptions", "hasActivePendingSubFlow",
-      "isActionEffectFlowActive", "isPendingLockedForAiAutomation", "startScreenState",
+      "isActionEffectFlowActive", "isPendingLockedForAiAutomation", "readPendingDecision", "startScreenState",
       "uiRuntimeState",
     ]),
     decisionInput: Object.freeze([
@@ -123,6 +123,7 @@
           hasActivePendingSubFlow: pendingSubFlowRuntime?.hasActivePendingSubFlow,
           isActionEffectFlowActive: effectFlowRuntime?.isActionEffectFlowActive,
           isPendingLockedForAiAutomation: manualAiInputGuard?.isPendingLockedForAiAutomation,
+          readPendingDecision: hostPort.readPendingDecision,
           startScreenState: hostPort.startScreenState,
           uiRuntimeState: hostPort.uiRuntimeState,
         },
@@ -256,6 +257,7 @@
       hasActivePendingSubFlow,
       isActionEffectFlowActive,
       isPendingLockedForAiAutomation,
+      readPendingDecision,
       startScreenState,
       uiRuntimeState,
     } = stateQuery;
@@ -369,7 +371,7 @@
     function clearAlienTraceContinuation(workingRoot) {
       delete requireWorkingRoot(workingRoot).match.alienTraceContinuation;
     }
-    const getCardTaskCompletion = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardTaskCompletionContinuation || null;
+    const getCardTaskCompletion = () => readPendingDecision?.("card_task_completion") || null;
     let chongFossilDecisionDraft = null;
     let amibaSymbolDecisionDraft = null;
     let runezuSymbolBranchDecisionDraft = null;
@@ -3335,7 +3337,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
         : null;
     const pendingEntries = [
       tracePickerPending ? { pending: tracePickerPending, label: "外星人痕迹" } : null,
-      getCardTaskCompletion(workingRoot) ? { pending: getCardTaskCompletion(workingRoot), label: "任务完成" } : null,
+      getCardTaskCompletion() ? { pending: getCardTaskCompletion(), label: "任务完成" } : null,
       jiuzheCardPlayDraft.get() ? { pending: jiuzheCardPlayDraft.get(), label: "九折牌" } : null,
       yichangdianCardGainDraft.get() ? { pending: yichangdianCardGainDraft.get(), label: "异常点外星人牌" } : null,
       banrenmaCardGainDraft.get() ? { pending: banrenmaCardGainDraft.get(), label: "半人马外星人牌" } : null,

@@ -79,30 +79,6 @@
         context.cancelStrategyPassiveSlotChoiceForRoot(workingRoot);
         return true;
       }
-      const cardCornerMove = context.getPendingCardCornerFreeMove(workingRoot);
-      if (cardCornerMove?.finishIndustryFlowAfterMove) {
-        delete workingRoot.match.cardCornerFreeMoveContinuation;
-        workingRoot.rocketState.activeRocketId = null;
-        context.clearMoveRocketHighlight();
-        context.deactivateMoveMode();
-        const message = `${cardCornerMove.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
-        if (context.getPendingIndustryAbilityDecision(workingRoot)) {
-          context.finishIndustryAbilityFlowForRoot(workingRoot, message);
-        }
-        if (cardCornerMove.irreversibleIndustryFlow) {
-          context.commitIrreversibleIndustryQuickAction(
-            cardCornerMove.industryLogLabel || cardCornerMove.action?.label || "公司 1x 行动",
-            message,
-          );
-        }
-        workingRoot.rocketState.statusNote = message;
-        context.renderPlayerStats();
-        context.renderPublicCards();
-        context.renderPlayerHand();
-        context.updateActionButtons();
-        context.renderStateReadout();
-        return true;
-      }
       if (hasActiveEffectSubFlow()) {
         context.cancelActiveEffectSubFlowsForRoot(workingRoot);
         return true;
@@ -1166,15 +1142,10 @@
         context.deactivateMoveMode?.();
       }
       if (context.getPendingCardMoveDecision?.(workingRoot)) {
-        delete workingRoot.match.cardMoveContinuation;
         context.deactivateMoveMode?.();
       }
       if (context.getPendingDataPlacementDecision?.(workingRoot)) context.closeDataPlacePicker?.();
-      delete workingRoot.match.cardTriggerContinuation;
-      delete workingRoot.match.cardTaskCompletionContinuation;
-      delete workingRoot.match.cardTriggerFreeMoveContinuation;
       delete workingRoot.match.type1TriggerEvents;
-      delete workingRoot.match.cardCornerFreeMoveContinuation;
       context.clearYichangdianCornerAction?.();
       context.clearAlienDecisionDrafts?.();
       delete workingRoot.match.strategySlotContinuation;

@@ -44,8 +44,6 @@
       players,
       getPublicScanChoicesForCard,
       getPendingPassReserveSelection,
-      getPendingCardTriggerAction,
-      getPendingCardTaskCompletion,
       getPassReserveSelectionCards,
       isMovePaymentCard,
       isTechTilePickingActive,
@@ -57,7 +55,6 @@
       skipCurrentActionEffect,
       getPendingDataPlacementDecision,
       data,
-      getPendingCardTriggerFreeMove,
       getMovableTokensForPlayer,
       rocketActions,
       getRequiredMovePointsForUi,
@@ -67,7 +64,6 @@
       getCurrentActionEffect,
       getMovableTokensForCardMoveEffect,
       validateIndustryHuanyuMoveRocket,
-      getPendingCardCornerFreeMove,
       getPendingStrategySlotDecision,
       isFutureSpanEligibleHandCard,
       getPublicCardMultiSelectMinSelectable,
@@ -130,7 +126,7 @@
       cancelCardTriggerChoice,
       confirmCardTaskCompletion,
       handleHandScanCardClick,
-      executeCardMoveForEffect,
+      resolveCardMoveDirectionDecision,
       handleScanAction4Choice,
       executeFreeMoveForCardTrigger,
       restoreObjectSnapshot,
@@ -276,6 +272,200 @@
           }] : []),
         ],
       };
+    }
+    if (kind === "card_trigger") {
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot),
+        candidates: (pending.matches || []).map((match, choiceIndex) => ({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: match?.effect?.label || cards.getCardLabel(match?.card),
+          target: { kind: "card-trigger", choiceId: String(choiceIndex), choiceIndex },
+        })).concat({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "取消本次卡牌触发",
+          target: { kind: "card-trigger-cancel", choiceId: "cancel" },
+        }),
+      };
+    }
+    if (kind === "card_task_completion") {
+      if (!pending.ready) return { actorPlayer: null, candidates: [] };
+      const transports = pending.ready.chongTask
+        && pending.ready.task?.kind === "transport"
+        ? pending.ready.deliveredTransports || []
+        : [];
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot),
+        candidates: transports.length > 1
+          ? transports.map((transport) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `选择搬运飞船 ${transport.rocketId}`,
+            target: { kind: "card-task-completion", choiceId: String(transport.rocketId) },
+          }))
+          : [{
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "确认完成任务",
+            target: { kind: "card-task-completion", choiceId: "confirm" },
+          }],
+      };
+    }
+    if (kind === "card_trigger_free_move") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot);
+      const providedMovePoints = Math.max(0, Math.round(Number(
+        pending.match?.effect?.options?.movementPoints ?? 1
+      ) || 0));
+      const candidates = [];
+      for (const rocket of getMovableTokensForPlayer(player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+            pending.match?.effect?.options || {},
+          );
+          const supplemental = Math.max(0, terrainRequired - providedMovePoints);
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "card-trigger-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "取消无法执行的卡牌触发",
+          target: { kind: "skip-card-trigger-free-move", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "card_move") {
+      const effect = getCurrentActionEffect(workingRoot);
+      const player = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
+      const candidates = [];
+      for (const rocket of getMovableTokensForCardMoveEffect(effect, player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!validateIndustryHuanyuMoveRocket(effect, rocket.id)?.ok) continue;
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+            effect?.options || {},
+          );
+          const supplemental = Math.max(0, terrainRequired - Math.max(0, pending.poolRemaining || 0));
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "card-effect-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (pending.moved) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "结束剩余移动",
+          target: { kind: "finish-card-effect-move", choiceId: "finish" },
+        });
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过无可用路径的移动效果",
+          target: { kind: "skip-card-effect-move", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "card_corner_free_move") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending) || getCurrentPlayer(workingRoot);
+      const providedMovePoints = Math.max(0, Math.round(Number(
+        pending.action?.moveReward?.movementPoints
+          ?? pending.action?.movementPoints
+          ?? 1
+      ) || 0));
+      const candidates = [];
+      for (const rocket of getMovableTokensForPlayer(player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+          );
+          const supplemental = Math.max(0, terrainRequired - providedMovePoints);
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "card-corner-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过无法执行的免费移动",
+          target: { kind: "skip-card-corner-free-move", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
     }
     if (kind === "probe_sector_scan") {
       const choices = pending.choices || [];
@@ -845,97 +1035,6 @@
       });
       return { actorPlayer: player, candidates };
     }
-    const cardTriggerPending = getPendingCardTriggerAction(workingRoot);
-    if (cardTriggerPending) {
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, cardTriggerPending) || getCurrentPlayer(workingRoot),
-        candidates: (cardTriggerPending.matches || []).map((match, choiceIndex) => ({
-          id: "conditionalChoice",
-          family: "choose_branch",
-          label: match?.effect?.label || cards.getCardLabel(match?.card),
-          target: { kind: "card-trigger", choiceId: String(choiceIndex), choiceIndex },
-        })).concat({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "取消本次卡牌触发",
-          target: { kind: "card-trigger-cancel", choiceId: "cancel" },
-        }),
-      };
-    }
-    const cardTaskPending = getPendingCardTaskCompletion(workingRoot);
-    if (cardTaskPending?.ready) {
-      const transports = cardTaskPending.ready.chongTask
-        && cardTaskPending.ready.task?.kind === "transport"
-        ? cardTaskPending.ready.deliveredTransports || []
-        : [];
-      const choices = transports.length > 1
-        ? transports.map((transport) => ({
-          id: "conditionalChoice",
-          family: "choose_target",
-          label: `选择搬运飞船 ${transport.rocketId}`,
-          target: { kind: "card-task-completion", choiceId: String(transport.rocketId) },
-        }))
-        : [{
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "确认完成任务",
-          target: { kind: "card-task-completion", choiceId: "confirm" },
-        }];
-      return {
-        actorPlayer: getSimulationConditionalPlayer(workingRoot, cardTaskPending) || getCurrentPlayer(workingRoot),
-        candidates: choices,
-      };
-    }
-    const cardTriggerMovePending = getPendingCardTriggerFreeMove(workingRoot);
-    if (cardTriggerMovePending) {
-      const player = getSimulationConditionalPlayer(workingRoot, cardTriggerMovePending) || getCurrentPlayer(workingRoot);
-      const providedMovePoints = Math.max(0, Math.round(Number(
-        cardTriggerMovePending.match?.effect?.options?.movementPoints ?? 1
-      ) || 0));
-      const candidates = [];
-      for (const rocket of getMovableTokensForPlayer(player?.id) || []) {
-        for (const direction of [
-          { id: "out", deltaX: 0, deltaY: 1 },
-          { id: "cw", deltaX: 1, deltaY: 0 },
-          { id: "ccw", deltaX: -1, deltaY: 0 },
-          { id: "in", deltaX: 0, deltaY: -1 },
-        ]) {
-          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
-          const terrainRequired = getRequiredMovePointsForUi(
-            player,
-            rocket.id,
-            direction.deltaX,
-            direction.deltaY,
-            cardTriggerMovePending.match?.effect?.options || {},
-          );
-          const supplemental = Math.max(0, terrainRequired - providedMovePoints);
-          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
-          candidates.push({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `${formatRocketLabel(rocket)} ${direction.id}`,
-            target: {
-              kind: "card-trigger-free-move",
-              choiceId: `${rocket.id}:${direction.id}`,
-              rocketId: rocket.id,
-              direction: direction.id,
-            },
-            rocketId: rocket.id,
-            deltaX: direction.deltaX,
-            deltaY: direction.deltaY,
-          });
-        }
-      }
-      if (!candidates.length) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "取消无法执行的卡牌触发",
-          target: { kind: "skip-card-trigger-free-move", choiceId: "skip" },
-        });
-      }
-      return { actorPlayer: player, candidates };
-    }
     const industryFreeMovePending = workingRoot.match?.industryFreeMoveContinuation;
     if (industryFreeMovePending) {
       const player = getSimulationConditionalPlayer(workingRoot, industryFreeMovePending);
@@ -975,114 +1074,6 @@
           family: "accept_optional_effect",
           label: "结束公司免费移动",
           target: { kind: "finish-industry-free-move", choiceId: "finish" },
-        });
-      }
-      return { actorPlayer: player, candidates };
-    }
-    const cardMovePending = workingRoot.match?.cardMoveContinuation;
-    if (cardMovePending) {
-      const effect = getCurrentActionEffect(workingRoot);
-      const player = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
-      const candidates = [];
-      for (const rocket of getMovableTokensForCardMoveEffect(effect, player?.id) || []) {
-        for (const direction of [
-          { id: "out", deltaX: 0, deltaY: 1 },
-          { id: "cw", deltaX: 1, deltaY: 0 },
-          { id: "ccw", deltaX: -1, deltaY: 0 },
-          { id: "in", deltaX: 0, deltaY: -1 },
-        ]) {
-          if (!validateIndustryHuanyuMoveRocket(effect, rocket.id)?.ok) continue;
-          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
-          const terrainRequired = getRequiredMovePointsForUi(
-            player,
-            rocket.id,
-            direction.deltaX,
-            direction.deltaY,
-            effect?.options || {},
-          );
-          const supplemental = Math.max(0, terrainRequired - Math.max(0, cardMovePending.poolRemaining || 0));
-          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
-          candidates.push({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `${formatRocketLabel(rocket)} ${direction.id}`,
-            target: {
-              kind: "card-effect-move",
-              choiceId: `${rocket.id}:${direction.id}`,
-              rocketId: rocket.id,
-              direction: direction.id,
-            },
-            rocketId: rocket.id,
-            deltaX: direction.deltaX,
-            deltaY: direction.deltaY,
-          });
-        }
-      }
-      if (cardMovePending.moved) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "结束剩余移动",
-          target: { kind: "finish-card-effect-move", choiceId: "finish" },
-        });
-      }
-      if (!candidates.length) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "跳过无可用路径的移动效果",
-          target: { kind: "skip-card-effect-move", choiceId: "skip" },
-        });
-      }
-      return { actorPlayer: player, candidates };
-    }
-    const cardCornerMovePending = getPendingCardCornerFreeMove(workingRoot);
-    if (cardCornerMovePending) {
-      const player = getSimulationConditionalPlayer(workingRoot, cardCornerMovePending) || getCurrentPlayer(workingRoot);
-      const providedMovePoints = Math.max(0, Math.round(Number(
-        cardCornerMovePending.action?.moveReward?.movementPoints
-          ?? cardCornerMovePending.action?.movementPoints
-          ?? 1
-      ) || 0));
-      const candidates = [];
-      for (const rocket of getMovableTokensForPlayer(player?.id) || []) {
-        for (const direction of [
-          { id: "out", deltaX: 0, deltaY: 1 },
-          { id: "cw", deltaX: 1, deltaY: 0 },
-          { id: "ccw", deltaX: -1, deltaY: 0 },
-          { id: "in", deltaX: 0, deltaY: -1 },
-        ]) {
-          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
-          const terrainRequired = getRequiredMovePointsForUi(
-            player,
-            rocket.id,
-            direction.deltaX,
-            direction.deltaY,
-          );
-          const supplemental = Math.max(0, terrainRequired - providedMovePoints);
-          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
-          candidates.push({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: `${formatRocketLabel(rocket)} ${direction.id}`,
-            target: {
-              kind: "card-corner-free-move",
-              choiceId: `${rocket.id}:${direction.id}`,
-              rocketId: rocket.id,
-              direction: direction.id,
-            },
-            rocketId: rocket.id,
-            deltaX: direction.deltaX,
-            deltaY: direction.deltaY,
-          });
-        }
-      }
-      if (!candidates.length) {
-        candidates.push({
-          id: "conditionalChoice",
-          family: "accept_optional_effect",
-          label: "跳过无法执行的免费移动",
-          target: { kind: "skip-card-corner-free-move", choiceId: "skip" },
         });
       }
       return { actorPlayer: player, candidates };
@@ -1364,14 +1355,18 @@
     "card-trigger": (action, workingRoot) => handleCardTriggerChoice(
       workingRoot,
       Number(action.target.choiceIndex),
+      action.decisionContext?.pending,
     ),
-    "card-trigger-cancel": (_action, workingRoot) => cancelCardTriggerChoice(workingRoot)
+    "card-trigger-cancel": (action, workingRoot) => cancelCardTriggerChoice(
+      workingRoot,
+      action.decisionContext?.pending,
+    )
       ? { ok: true, progressed: true, skipped: true, message: "已取消卡牌触发" }
       : { ok: false, message: "当前没有可取消的卡牌触发" },
     "card-task-completion": (action, workingRoot) => confirmCardTaskCompletion(
       workingRoot,
       action.target.choiceId,
-      { automated: true },
+      { automated: true, pending: action.decisionContext?.pending },
     ),
     "hand-scan-card": (action, workingRoot) => handleHandScanCardClick(
       workingRoot,
@@ -1382,7 +1377,13 @@
       skipCurrentActionEffect(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已跳过手牌扫描" };
     },
-    "card-effect-move": (action, workingRoot) => executeCardMoveForEffect(workingRoot, action.deltaX, action.deltaY, action.target.rocketId),
+    "card-effect-move": (action, workingRoot) => resolveCardMoveDirectionDecision(
+      workingRoot,
+      action.deltaX,
+      action.deltaY,
+      action.target.rocketId,
+      action.decisionContext?.pending,
+    ),
     "scan-free-move": (action, workingRoot) => executeFreeMoveForScanAction4(
       workingRoot,
       action.deltaX,
@@ -1398,20 +1399,23 @@
       action.deltaX,
       action.deltaY,
       action.target.rocketId,
+      { pending: action.decisionContext?.pending },
     ),
-    "skip-card-trigger-free-move": (_action, workingRoot) => {
-      const pending = getPendingCardTriggerFreeMove(workingRoot);
+    "skip-card-trigger-free-move": (action, workingRoot) => {
+      const pending = action.decisionContext?.pending;
       const player = getCurrentPlayer(workingRoot);
       if (pending.beforePlayer) restoreObjectSnapshot(player, pending.beforePlayer);
       if (pending.beforeCardState) restoreObjectSnapshot(workingRoot.cardState, pending.beforeCardState);
-      delete workingRoot.match.cardTriggerFreeMoveContinuation;
       workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
       continueAfterCardTriggerResolution(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已取消无法执行的卡牌触发" };
     },
-    "finish-card-effect-move": () => finishCurrentCardMoveEffectEarly()
+    "finish-card-effect-move": (action, workingRoot) => finishCurrentCardMoveEffectEarly(
+      workingRoot,
+      action.decisionContext?.pending,
+    )
       ? { ok: true, progressed: true, message: "已结束剩余移动" }
       : { ok: false, message: "当前不能结束移动效果" },
     "skip-card-effect-move": () => {
@@ -1423,6 +1427,7 @@
       action.deltaX,
       action.deltaY,
       action.target.rocketId,
+      { pending: action.decisionContext?.pending },
     ),
     "industry-free-move": (action, workingRoot) => executeIndustryFreeMove(
       workingRoot,
@@ -1435,9 +1440,8 @@
       finishIndustryAbilityFlow(workingRoot, `${pending?.label || "公司免费移动"}：已结束`);
       return { ok: true, progressed: true, skipped: true, message: "已结束公司免费移动" };
     },
-    "skip-card-corner-free-move": (_action, workingRoot) => {
-      const pending = getPendingCardCornerFreeMove(workingRoot);
-      delete workingRoot.match.cardCornerFreeMoveContinuation;
+    "skip-card-corner-free-move": (action, workingRoot) => {
+      const pending = action.decisionContext?.pending;
       workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();

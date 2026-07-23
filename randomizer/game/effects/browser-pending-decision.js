@@ -18,6 +18,11 @@
     "public_scan",
     "probe_sector_scan",
     "probe_location_reward",
+    "card_move",
+    "card_corner_free_move",
+    "card_trigger_free_move",
+    "card_trigger",
+    "card_task_completion",
   ]);
 
   function clone(value) {

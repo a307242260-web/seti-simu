@@ -374,25 +374,13 @@
         player.id === pending?.playerId || player.color === pending?.playerColor
       )) || getWorkingCurrentPlayer(workingRoot);
     }
-    const getMatchContinuation = (workingRoot, field) => requireWorkingRoot(workingRoot).match?.[field] || null;
-    function setMatchContinuation(workingRoot, field, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!activeRoot.match || typeof activeRoot.match !== "object") activeRoot.match = {};
-      if (!continuation) {
-        delete activeRoot.match[field];
-        return null;
-      }
-      activeRoot.match[field] = structuredClone(continuation);
-      return activeRoot.match[field];
-    }
     const getPassReserveSelection = () => readPendingDecision?.("pass_reserve") || null;
-    const getCardMoveContinuation = (workingRoot) => getMatchContinuation(workingRoot, "cardMoveContinuation");
-    function setCardMoveContinuation(workingRoot, continuation) {
-      if (!continuation) return setMatchContinuation(workingRoot, "cardMoveContinuation", null);
+    const getCardMoveDecision = () => readPendingDecision?.("card_move") || null;
+    function openCardMoveDecision(workingRoot, continuation) {
       const normalized = structuredClone(continuation);
       normalized.effectId ||= continuation.effect?.id || null;
       delete normalized.effect;
-      return setMatchContinuation(workingRoot, "cardMoveContinuation", normalized);
+      return openPendingDecision(workingRoot, "card_move", normalized);
     }
     function setMovePayment(workingRoot, session) {
       uiRuntimeState.movePaymentSelectedHandIndices = [];
@@ -406,8 +394,10 @@
       delete pending.selectedHandIndices;
       return openPendingDecision(workingRoot, "move_payment", pending);
     }
-    const getCardCornerFreeMove = (workingRoot) => getMatchContinuation(workingRoot, "cardCornerFreeMoveContinuation");
-    const setCardCornerFreeMove = (workingRoot, value) => setMatchContinuation(workingRoot, "cardCornerFreeMoveContinuation", value);
+    const getCardCornerFreeMove = () => readPendingDecision?.("card_corner_free_move") || null;
+    const openCardCornerFreeMove = (workingRoot, value) => (
+      openPendingDecision(workingRoot, "card_corner_free_move", value)
+    );
 
     function getDiscardCornerRewardMultiplier(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       return industry?.shouldDoubleDiscardCornerRewards?.(player) ? 2 : 1;
@@ -675,7 +665,7 @@
         return check;
       }
 
-      setCardCornerFreeMove(workingRoot, {
+      openCardCornerFreeMove(workingRoot, {
         playerId: getWorkingCurrentPlayer(workingRoot)?.id || null,
         playerColor: getWorkingCurrentPlayer(workingRoot)?.color || null,
         action,
@@ -749,7 +739,7 @@
 
     function executeFreeMoveForCardCorner(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { playerState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getMatchContinuation(workingRoot, "cardCornerFreeMoveContinuation");
+      const pending = payment.pending || getCardCornerFreeMove();
       if (!pending) return { ok: false, message: "没有待结算的弃牌移动" };
 
       const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
@@ -777,6 +767,7 @@
           terrainRequired,
           providedMovePoints,
           context: { type: "cardCornerFreeMove", terrainRequired },
+          pending,
           message: `${pending.action.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
         });
       }
@@ -807,7 +798,6 @@
       recordAbilityCommands(result, quickActionHistory, workingRoot);
       if (!recordInCurrentIndustryStep) completeQuickActionStep();
 
-      setMatchContinuation(workingRoot, "cardCornerFreeMoveContinuation", null);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
@@ -861,12 +851,13 @@
         renderStateReadout();
         return { ok: false, message };
       }
-      if (!getCardMoveContinuation(workingRoot) || getCardMoveContinuation(workingRoot).effectId !== effect.id) {
-        initCardMoveEffectState(workingRoot, effect);
+      let pending = getCardMoveDecision();
+      if (!pending || pending.effectId !== effect.id) {
+        pending = initCardMoveEffectState(workingRoot, effect);
       } else {
-        effect.badge = String(getCardMoveContinuation(workingRoot).poolRemaining);
+        effect.badge = String(pending.poolRemaining);
       }
-      const poolRemaining = getCardMoveContinuation(workingRoot).poolRemaining;
+      const poolRemaining = pending.poolRemaining;
       rocketState.statusNote = poolRemaining > 1
         ? `${effect.label}：剩余 ${poolRemaining} 点移动力，请点击要移动的飞船`
         : rockets.length > 1
@@ -1587,7 +1578,7 @@
         if (applied.ok && applied.pendingFreeMove) {
           const moveCheck = canStartCardCornerFreeMove(workingRoot);
           if (moveCheck.ok) {
-            setCardCornerFreeMove(workingRoot, {
+            openCardCornerFreeMove(workingRoot, {
               playerId: getWorkingCurrentPlayer(workingRoot)?.id || null,
               playerColor: getWorkingCurrentPlayer(workingRoot)?.color || null,
               action: {
@@ -2083,13 +2074,13 @@
 
     function initCardMoveEffectState(workingRoot, effect) {
       const movementPoints = Math.max(1, Math.round(Number(effect.options?.movementPoints || 1)));
-      setCardMoveContinuation(workingRoot, {
+      effect.badge = String(movementPoints);
+      return openCardMoveDecision(workingRoot, {
         effectId: effect.id || null,
         poolRemaining: movementPoints,
         deferredType1Events: [],
         moved: false,
       });
-      effect.badge = String(movementPoints);
     }
 
     function isIndustryHuanyuMoveEffect(effect) {
@@ -2173,7 +2164,7 @@
 
     function executeCardEffectMove(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const ctx = getCardMoveContinuation(workingRoot);
+      const ctx = payment.pending || getCardMoveDecision();
       const effect = getCurrentActionEffect(workingRoot);
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
@@ -2268,7 +2259,7 @@
       clearMoveRocketHighlight();
 
       if (ctx && ctx.poolRemaining > 0) {
-        setCardMoveContinuation(workingRoot, ctx);
+        openCardMoveDecision(workingRoot, ctx);
         const currentPlayer = getWorkingCurrentPlayer(workingRoot);
         const rocketsForPlayer = getWorkingMovableTokens(workingRoot, currentPlayer?.id);
         rocketState.statusNote = `${effect.label}：剩余 ${ctx.poolRemaining} 点移动力`;
@@ -2295,7 +2286,6 @@
         return effect.result;
       }
 
-      setCardMoveContinuation(workingRoot, null);
       deactivateMoveMode();
       effect.result = {
         ...result,
@@ -2315,9 +2305,9 @@
       return effect.result;
     }
 
-    function finishCurrentCardMoveEffectEarly(workingRoot) {
+    function finishCurrentCardMoveEffectEarly(workingRoot, pending = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const ctx = getCardMoveContinuation(workingRoot);
+      const ctx = pending || getCardMoveDecision();
       const current = getCurrentActionEffect(workingRoot);
       if (!ctx || !current || current.status !== "active" || ctx.effectId !== current.id) return false;
       if (!ctx.moved && !current.result) return false;
@@ -2331,7 +2321,6 @@
         ? `结束剩余 ${poolRemaining} 点移动力`
         : "移动已完成";
 
-      setCardMoveContinuation(workingRoot, null);
       current.badge = "";
       current.result = {
         ...(current.result || {}),
@@ -2356,9 +2345,9 @@
       return true;
     }
 
-    function requestCardEffectMove(workingRoot, deltaX, deltaY, rocketId) {
+    function resolveCardMoveDirectionDecision(workingRoot, deltaX, deltaY, rocketId, pending = null) {
       const { rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const ctx = getCardMoveContinuation(workingRoot);
+      const ctx = pending || getCardMoveDecision();
       const effect = getCurrentActionEffect(workingRoot);
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
@@ -2406,6 +2395,7 @@
           cardMoveEffectContext: {
             terrainRequired,
             poolUsed,
+            pending: ctx,
           },
         });
         rocketState.statusNote = poolUsed > 0
@@ -2421,6 +2411,7 @@
         terrainRequired,
         poolUsed,
         energyCost: 0,
+        pending: ctx,
       });
     }
     return {
@@ -2507,7 +2498,7 @@
       selectDefaultRocketFromCandidates,
       executeCardEffectMove,
       finishCurrentCardMoveEffectEarly,
-      requestCardEffectMove,
+      resolveCardMoveDirectionDecision,
     };
   }
 

@@ -1659,8 +1659,6 @@
         rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
         return;
       }
-      delete workingRoot.match.cardTriggerContinuation;
-      delete workingRoot.match.cardTaskCompletionContinuation;
       clearPendingAmibaCardGain();
       clearPendingAmibaSymbolChoice();
       clearPendingAmibaTraceRemoval();

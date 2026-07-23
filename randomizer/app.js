@@ -546,7 +546,6 @@
       card_toggle_public_corner_discard: (root, command) => ({ ok: true, value: cloneResidentPresentation(handlePublicCornerDiscardCardClickForRoot(root, command.slotIndex)) }),
       card_confirm_public_corner_discard: (root) => ({ ok: true, value: cloneResidentPresentation(confirmPublicCornerDiscardSelectionForRoot(root)) }),
       quick_action_check_pending: (root, command) => ({ ok: true, value: cloneResidentPresentation(blockIncompatiblePendingQuickActionForRoot(root, command.actionType)) }),
-      card_execute_free_move_corner: (root, command) => cloneResidentPresentation(executeFreeMoveForCardCornerForRoot(root, ...(command.args || []))),
       rocket_current_planet: (root, command) => ({ ok: true, value: getRocketCurrentPlanetIdForRoot(root, command.rocketId) }),
       chong_ready_transports: (root, command) => ({ ok: true, value: cloneResidentPresentation(listReadyChongTransportCandidatesForRoot(root, command.player, command.task)) }),
       scan_execute_free_move: (root, command) => cloneResidentPresentation(executeFreeMoveForScanAction4ForRoot(root, ...(command.args || []))),
@@ -569,7 +568,6 @@
       debug_execute_income: (root) => ({ ok: true, value: cloneResidentPresentation(executeIncomeForCurrentPlayerForRoot(root)) }),
       solar_rotate: (root, command) => ({ ok: true, value: cloneResidentPresentation(rotateSolarOrbitForRoot(root, command.count)) }),
       scan_settle_completed_sectors: (root, command) => ({ ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(root, command.actionType, command.options)) }),
-      card_execute_move_effect: (root, command) => cloneResidentPresentation(executeCardMoveForEffectForRoot(root, ...(command.args || []))),
       domain_command: (root, command) => executeBrowserDomainCommand(root, command),
     }),
   });
@@ -750,9 +748,7 @@
     getActionEffectFlow, setActionEffectFlow, getPendingDataPlacementDecision,
     getPendingLandTargetDecision, getPendingAlienTraceDecision, getPendingPiratesRaidDecision,
     getPendingStrategySlotDecision, getPendingIndustryAbilityDecision,
-    getPendingCardMoveDecision, getPendingIndustryFreeMoveDecision,
-    hasTurnEndRevealContinuation, getPendingCardCornerFreeMove, getPendingCardTriggerFreeMove,
-    getPendingCardTriggerAction, getPendingCardTaskCompletion,
+    getPendingIndustryFreeMoveDecision, hasTurnEndRevealContinuation,
   } = browserMatchRuntime;
   const getPendingHandScanDecision = () => browserPendingDecisionOwner.read("hand_scan");
   const getPendingPassReserveSelection = () => browserPendingDecisionOwner.read("pass_reserve");
@@ -762,6 +758,11 @@
   const getPendingScanFreeMoveDecision = () => browserPendingDecisionOwner.read("scan_free_move");
   const getPendingProbeSectorScanDecision = () => browserPendingDecisionOwner.read("probe_sector_scan");
   const getPendingProbeLocationRewardDecision = () => browserPendingDecisionOwner.read("probe_location_reward");
+  const getPendingCardMoveDecision = () => browserPendingDecisionOwner.read("card_move");
+  const getPendingCardCornerFreeMove = () => browserPendingDecisionOwner.read("card_corner_free_move");
+  const getPendingCardTriggerFreeMove = () => browserPendingDecisionOwner.read("card_trigger_free_move");
+  const getPendingCardTriggerAction = () => browserPendingDecisionOwner.read("card_trigger");
+  const getPendingCardTaskCompletion = () => browserPendingDecisionOwner.read("card_task_completion");
   const getPublicScanQueueSession = () => (
     browserPendingDecisionOwner.read("public_scan")?.publicScanQueue || null
   );
@@ -974,7 +975,9 @@
     cancelCardTriggerChoice: (workingRoot, ...args) => cancelCardTriggerChoiceForRoot(workingRoot, ...args),
     confirmCardTaskCompletion: (workingRoot, ...args) => confirmCardTaskCompletionForRoot(workingRoot, ...args),
     handleHandScanCardClick: (workingRoot, ...args) => scanFlowHelpers.handleHandScanCardClick(workingRoot, ...args),
-    executeCardMoveForEffect: (workingRoot, ...args) => executeCardMoveForEffectForRoot(workingRoot, ...args),
+    resolveCardMoveDirectionDecision: (workingRoot, ...args) => (
+      resolveCardMoveDirectionDecisionForRoot(workingRoot, ...args)
+    ),
     executeFreeMoveForCardTrigger: (workingRoot, ...args) => executeFreeMoveForCardTriggerForRoot(workingRoot, ...args),
     restoreObjectSnapshot,
     clearMoveRocketHighlight,
@@ -2889,7 +2892,6 @@
     computePlayerFinalScoreBreakdown: (player) => (
       computePlayerFinalScoreBreakdown(player, createStateSourceReadoutRoot())
     ),
-    confirmCardTaskCompletion: (...args) => confirmCardTaskCompletion?.(...args),
     confirmDataPlacement,
     confirmInitialSelectionForCurrentPlayer: (workingRoot) => (
       actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot)
@@ -2923,9 +2925,6 @@
     endCurrentTurn,
     recoverPendingActionFromOpenHistoryForAi,
     executeActionEffect,
-    executeCardMoveForEffect,
-    executeFreeMoveForCardCorner,
-    executeFreeMoveForCardTrigger: (...args) => executeFreeMoveForCardTrigger?.(...args),
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
     formatRocketLabel,
@@ -2943,8 +2942,6 @@
     getResearchTechSelectionOptions: (...args) => getResearchTechSelectionOptions(...args),
     getSectorContentForMove,
     getSectorXsMatchingCondition,
-    handleCardTriggerChoice: (...args) => handleCardTriggerChoice?.(...args),
-    cancelCardTriggerChoice: (...args) => cancelCardTriggerChoice?.(...args),
     handleCompanyActionMarkerClick: (...args) => handleCompanyActionMarkerClick(...args),
     handlePublicCornerDiscardCardClick,
     handlePublicCardClick: (...args) => handlePublicCardClick(...args),
@@ -3125,8 +3122,8 @@
     addResourceCosts,
     selectDefaultRocketFromCandidates: selectDefaultRocketFromCandidatesForRoot,
     executeCardEffectMove: executeCardEffectMoveForRoot,
+    resolveCardMoveDirectionDecision: resolveCardMoveDirectionDecisionForRoot,
     finishCurrentCardMoveEffectEarly: finishCurrentCardMoveEffectEarlyForRoot,
-    requestCardEffectMove: requestCardEffectMoveForRoot,
     executeFreeMoveForCardCorner: executeFreeMoveForCardCornerForRoot,
     recordPlayCardStart,
     releaseFutureSpanAfterPlayWithHistory: releaseFutureSpanAfterPlayWithHistoryForRoot,
@@ -3189,7 +3186,6 @@
     selectDefaultRocketFromCandidates,
     executeCardEffectMove,
     finishCurrentCardMoveEffectEarly,
-    requestCardEffectMove,
     getMovableTokensForCardMoveEffect,
   } = bindDomainCommands("card_runtime");
   const cardTriggerRuntime = cardTriggerRuntimeModule.createBrowserCardTriggerRuntime({
@@ -3229,7 +3225,9 @@
       listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
       listReadyChongTransportCandidates: listReadyChongTransportCandidatesForRoot,
       markCurrentActionIrreversibleForSource,
+      openPendingDecision: openBrowserPendingDecision,
       quickActionHistory,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       renderActionEffectBar,
       structuredClone,
       updateActionButtons,
@@ -3658,8 +3656,6 @@
   });
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
-
-  const executeCardMoveForEffectForRoot = requestCardEffectMoveForRoot;
 
   const executeCardMoveForEffect = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
     "card-effect-move",
@@ -4303,7 +4299,11 @@
   const focusDebugCalibration = (...args) => callDebugCommand("focusDebugCalibration", args);
 
   const appEventState = window.SetiAppEvents.createAppEventState({
-    pending: browserMatchRuntime,
+    pending: {
+      ...browserMatchRuntime,
+      getPendingCardTriggerFreeMove,
+      getPendingCardCornerFreeMove,
+    },
     alien: alienSpeciesPort,
     ui: uiRuntimeState,
   });
@@ -4328,7 +4328,11 @@
     renderRuntime,
     scoreSourceRuntime,
     turnEndRuntime: turnEndPort,
-    hostPort: { startScreenState, uiRuntimeState },
+    hostPort: {
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
+      startScreenState,
+      uiRuntimeState,
+    },
     renderPort: {
       banrenmaBonusMarkerElements,
       debugRuntimeController: {

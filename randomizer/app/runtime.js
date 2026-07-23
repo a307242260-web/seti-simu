@@ -119,13 +119,8 @@
       getPendingPiratesRaidDecision: continuationGetter("piratesRaidContinuation"),
       getPendingStrategySlotDecision: continuationGetter("strategySlotContinuation"),
       getPendingIndustryAbilityDecision: continuationGetter("industryAbilityContinuation"),
-      getPendingCardMoveDecision: continuationGetter("cardMoveContinuation"),
       getPendingIndustryFreeMoveDecision: continuationGetter("industryFreeMoveContinuation"),
       hasTurnEndRevealContinuation: (workingRoot = null) => Boolean(readRoot(workingRoot)?.match?.turnEndRevealContinuation),
-      getPendingCardCornerFreeMove: continuationGetter("cardCornerFreeMoveContinuation"),
-      getPendingCardTriggerFreeMove: continuationGetter("cardTriggerFreeMoveContinuation"),
-      getPendingCardTriggerAction: continuationGetter("cardTriggerContinuation"),
-      getPendingCardTaskCompletion: continuationGetter("cardTaskCompletionContinuation"),
     });
   }
 

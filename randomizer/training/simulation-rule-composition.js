@@ -448,6 +448,28 @@ function applyCornerReward(workingState, player, reward, source) {
 function createSimulationRuleComposition(options = {}) {
   if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
   let composition;
+  function createCardCornerDecisionEffect(workingRoot, pending) {
+    const choices = baseRegistry.enumerate(
+      { workingRoot },
+      {
+        family: "choose_target",
+        payload: {
+          decisionContext: {
+            kind: "card_corner_free_move",
+            pending: clone(pending),
+          },
+        },
+      },
+    );
+    if (!choices.length) throw new Error("card_corner_free_move DecisionEffect 没有合法选项");
+    return {
+      type: standardActionDomainApi.DECISION_EFFECT_TYPE,
+      kind: "decision",
+      ownerId: pending.playerId,
+      decisionKind: "choose_target",
+      payload: { choices },
+    };
+  }
   const turnFlow = turnFlowApi.createTurnFlowController({
     cards,
     industry,
@@ -640,13 +662,20 @@ function createSimulationRuleComposition(options = {}) {
       cards.addToDiscardPile(root.cardState, discarded.card);
       applyCornerReward(root, player, reward, "card_corner");
       applyCornerReward(root, player, moveReward, "card_corner");
+      let decisionEffect = null;
       if (moveReward) {
-        root.match.cardCornerFreeMoveContinuation = {
+        const pending = {
           type: "card-corner-free-move", playerId: player.id,
           movementPoints: moveReward.movementPoints || 1,
         };
+        decisionEffect = createCardCornerDecisionEffect(root, pending);
       }
-      return { ok: true, progressed: true, events: [{ type: "card_corner", playerId: player.id }] };
+      return {
+        ok: true,
+        progressed: true,
+        decisionEffect,
+        events: [{ type: "card_corner", playerId: player.id }],
+      };
     },
   });
 
@@ -686,8 +715,40 @@ function createSimulationRuleComposition(options = {}) {
 
   registry.register({
     family: "choose_target",
-    enumerate(context) {
+    enumerate(context, { request } = {}) {
       const root = context.workingRoot || context;
+      const sessionDecision = request?.payload?.decisionContext || null;
+      if (sessionDecision?.kind === "card_corner_free_move") {
+        const pending = sessionDecision.pending || {};
+        const directions = [
+          { id: "out", deltaX: 0, deltaY: 1 }, { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 }, { id: "in", deltaX: 0, deltaY: -1 },
+        ];
+        return (root.rocketState.rockets || [])
+          .filter((rocket) => rocket.playerId === pending.playerId && rocket.surface === "solar-board")
+          .flatMap((rocket) => directions.filter((direction) => (
+            rockets.canMoveRocket(
+              root.rocketState,
+              rocket.id,
+              direction.deltaX,
+              direction.deltaY,
+            )?.ok
+          )).map((direction) => ({
+            target: {
+              kind: "card-corner-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            payload: {
+              rocketId: rocket.id,
+              deltaX: direction.deltaX,
+              deltaY: direction.deltaY,
+              decisionContext: clone(sessionDecision),
+            },
+            summary: `${rockets.formatRocketLabel(rocket)} ${direction.id}`,
+          })));
+      }
       const pending = root.match.industryAbilityContinuation;
       if (pending?.type === "borrow-tech") {
         return ["orange1", "orange2", "orange3", "orange4", "purple1", "purple2", "purple3", "purple4"]
@@ -697,24 +758,7 @@ function createSimulationRuleComposition(options = {}) {
           summary: `研究科技 ${tileId}`,
           }));
       }
-      const movePending = root.match.cardCornerFreeMoveContinuation;
-      if (!movePending) return [];
-      const directions = [
-        { id: "out", deltaX: 0, deltaY: 1 }, { id: "cw", deltaX: 1, deltaY: 0 },
-        { id: "ccw", deltaX: -1, deltaY: 0 }, { id: "in", deltaX: 0, deltaY: -1 },
-      ];
-      return root.rocketState.rockets
-        .filter((rocket) => rocket.playerId === movePending.playerId && rocket.surface === "solar-board")
-        .flatMap((rocket) => directions.filter((direction) => (
-          rockets.canMoveRocket(root.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok
-        )).map((direction) => ({
-          target: {
-            kind: "card-corner-free-move", choiceId: `${rocket.id}:${direction.id}`,
-            rocketId: rocket.id, direction: direction.id,
-          },
-          payload: { rocketId: rocket.id, deltaX: direction.deltaX, deltaY: direction.deltaY },
-          summary: `${rockets.formatRocketLabel(rocket)} ${direction.id}`,
-        })));
+      return [];
     },
     validate(context, action) {
       return this.enumerate(context).some((candidate) => candidate.target.choiceId === action.target?.choiceId)
@@ -722,15 +766,6 @@ function createSimulationRuleComposition(options = {}) {
     },
     execute(context, action) {
       const root = context.workingRoot || context;
-      const movePending = root.match.cardCornerFreeMoveContinuation;
-      if (movePending) {
-        const moved = rockets.moveRocket(
-          root.rocketState, action.target.rocketId, action.payload.deltaX, action.payload.deltaY,
-        );
-        if (!moved.ok) return moved;
-        delete root.match.cardCornerFreeMoveContinuation;
-        return { ok: true, progressed: true, events: [{ type: "card_corner_move", rocketId: action.target.rocketId }] };
-      }
       const player = players.getCurrentPlayer(root.playerState);
       player.industryBorrowedTechTileId = action.target.tileId;
       player.industryBorrowedTechRound = root.turnState.roundNumber;
@@ -993,6 +1028,20 @@ function createSimulationRuleComposition(options = {}) {
             },
             resolveDecision(_workingState, choice) {
               _workingState = _workingState.workingRoot || _workingState;
+              if (choice?.payload?.decisionContext?.kind === "card_corner_free_move") {
+                const moved = rockets.moveRocket(
+                  _workingState.rocketState,
+                  choice.target?.rocketId,
+                  choice.payload?.deltaX,
+                  choice.payload?.deltaY,
+                );
+                if (!moved.ok) return moved;
+                return {
+                  ok: true,
+                  progressed: true,
+                  events: [{ type: "card_corner_move", rocketId: choice.target?.rocketId }],
+                };
+              }
               const descriptor = choice?.standardAction || choice;
               return registry.execute(_workingState, descriptor);
             },

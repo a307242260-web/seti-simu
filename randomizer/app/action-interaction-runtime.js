@@ -1526,9 +1526,9 @@
     ));
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
 
-    const cardMoveContinuation = workingRoot.match?.cardMoveContinuation || null;
+    const pendingCardMove = context.getPendingCardMoveDecision?.() || null;
     const cardMoveEffect = (getActionEffectFlow(workingRoot)?.effects || [])
-      .find((effect) => effect.id === cardMoveContinuation?.effectId) || null;
+      .find((effect) => effect.id === pendingCardMove?.effectId) || null;
     const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(cardMoveEffect, rocketId);
     if (!huanyuRocketCheck.ok) {
       rocketState.statusNote = huanyuRocketCheck.message;

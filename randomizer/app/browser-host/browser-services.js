@@ -93,7 +93,7 @@
       "handlePublicBlindDrawClick", "getPassReserveSelectionCards", "renderPassReserveSelection",
       "syncPassReserveSelectionChrome", "beginPassReserveSelection", "dismissPassReserveSelectionOverlay",
       "handlePublicCornerDiscardCardClick", "confirmPublicCornerDiscardSelection", "selectDefaultRocketFromCandidates",
-      "executeCardEffectMove", "finishCurrentCardMoveEffectEarly", "requestCardEffectMove",
+      "executeCardEffectMove", "finishCurrentCardMoveEffectEarly", "resolveCardMoveDirectionDecision",
       "getMovableTokensForCardMoveEffect",
     ]),
     industry_runtime: Object.freeze([

@@ -45,6 +45,8 @@ Effect Group 内的原始顺序就是规则顺序。宿主或 executor 不得按
 
 Effect 与 DecisionEffect 都是纯数据，不携带闭包、DOM、Policy 或宿主 callback。`effectId` 是 decision/replay/stale validation 的身份；显示 label 不参与身份。
 
+卡牌移动、弃牌角标免费移动、卡牌触发免费移动、卡牌触发选择与任务完成等待也遵循同一协议：Browser runtime 只在规则事务中 open DecisionEffect，Simulation 通过正式 Standard Action registry 生成 choice；旧 match continuation、恢复字段和 AI 直调 resolver 均不再参与生产路径。
+
 普通 executor 接受 workingState 的克隆，必须返回：
 
 ```js

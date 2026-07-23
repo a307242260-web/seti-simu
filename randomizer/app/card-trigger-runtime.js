@@ -118,6 +118,7 @@
       markCurrentActionIrreversibleForSource: hostPort.markCurrentActionIrreversibleForSource,
       maybeApplyIndustryLaunchScan: industry("maybeApplyIndustryLaunchScan"),
       openAmibaSymbolChoiceDialog: alien("openAmibaSymbolChoiceDialog"),
+      openPendingDecision: hostPort.openPendingDecision,
       playerHasOwnOrbitMarkerAtPlanet: effectExecutorPort?.playerHasOwnOrbitMarkerAtPlanet,
       quickActionHistory: hostPort.quickActionHistory,
       recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
@@ -133,6 +134,7 @@
       renderRocketElement: renderRuntime?.renderRocketElement,
       renderRockets: renderRuntime?.renderRockets,
       renderStateReadout: renderRuntime?.renderStateReadout,
+      readPendingDecision: hostPort.readPendingDecision,
       startCardEffectFlow: effectFlowRuntime?.startCardEffectFlow,
       structuredClone: hostPort.structuredClone,
       updateActionButtons: hostPort.updateActionButtons,
@@ -205,6 +207,7 @@
       markCurrentActionIrreversibleForSource,
       maybeApplyIndustryLaunchScan,
       openAmibaSymbolChoiceDialog,
+      openPendingDecision,
       playerHasOwnOrbitMarkerAtPlanet,
       players,
       quickActionHistory,
@@ -221,6 +224,7 @@
       renderRocketElement,
       renderRockets,
       renderStateReadout,
+      readPendingDecision,
       rocketActions,
       runezu,
       solar,
@@ -266,23 +270,16 @@
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     const TYPE1_TRIGGER_CONTINUATION_FIELD = "type1TriggerEvents";
-    const getMatchContinuation = (workingRoot, field) => requireWorkingRoot(workingRoot).match?.[field] || null;
-    function setMatchContinuation(workingRoot, field, continuation) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (!activeRoot.match || typeof activeRoot.match !== "object") activeRoot.match = {};
-      if (!continuation) {
-        delete activeRoot.match[field];
-        return null;
-      }
-      activeRoot.match[field] = structuredClone(continuation);
-      return activeRoot.match[field];
-    }
-    const getCardTriggerAction = (workingRoot) => getMatchContinuation(workingRoot, "cardTriggerContinuation");
-    const getCardTaskCompletion = (workingRoot) => getMatchContinuation(workingRoot, "cardTaskCompletionContinuation");
-    const setCardTriggerAction = (workingRoot, value) => setMatchContinuation(workingRoot, "cardTriggerContinuation", value);
-    const setCardTaskCompletion = (workingRoot, value) => setMatchContinuation(workingRoot, "cardTaskCompletionContinuation", value);
-    const getCardTriggerFreeMove = (workingRoot) => getMatchContinuation(workingRoot, "cardTriggerFreeMoveContinuation");
-    const setCardTriggerFreeMove = (workingRoot, value) => setMatchContinuation(workingRoot, "cardTriggerFreeMoveContinuation", value);
+    const getCardTriggerAction = () => readPendingDecision?.("card_trigger") || null;
+    const getCardTaskCompletion = () => readPendingDecision?.("card_task_completion") || null;
+    const getCardTriggerFreeMove = () => readPendingDecision?.("card_trigger_free_move") || null;
+    const openCardTriggerAction = (workingRoot, value) => openPendingDecision(workingRoot, "card_trigger", value);
+    const openCardTaskCompletion = (workingRoot, value) => (
+      openPendingDecision(workingRoot, "card_task_completion", value)
+    );
+    const openCardTriggerFreeMove = (workingRoot, value) => (
+      openPendingDecision(workingRoot, "card_trigger_free_move", value)
+    );
     function getType1TriggerEvents(workingRoot) {
       requireWorkingRoot(workingRoot);
       return workingRoot.match?.[TYPE1_TRIGGER_CONTINUATION_FIELD] || [];
@@ -461,7 +458,7 @@
       return Boolean(
         getCardTriggerAction(workingRoot)
         || getCardTriggerFreeMove(workingRoot)
-        || workingRoot.match?.cardCornerFreeMoveContinuation
+        || readPendingDecision?.("card_corner_free_move")
         || isCardTriggerPickSelectionActive()
         || getPendingAmibaSymbolChoice()?.triggerMatch
       );
@@ -521,9 +518,9 @@
       return false;
     }
 
-    function cancelCardTriggerChoice(workingRoot) {
+    function cancelCardTriggerChoice(workingRoot, pending = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!getCardTriggerAction(workingRoot)) return false;
+      if (!pending && !getCardTriggerAction()) return false;
       closeCardTriggerPicker(workingRoot);
       rocketState.statusNote = "已取消卡牌触发";
       continueAfterCardTriggerResolution(workingRoot);
@@ -1182,7 +1179,7 @@
       if (!ready) return { ok: false, message: "这张任务卡尚未满足完成条件" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开任务确认窗口" };
 
-      setCardTaskCompletion(workingRoot, {
+      openCardTaskCompletion(workingRoot, {
         ...getPendingOwnerFields(null, player),
         ready,
       });
@@ -1229,13 +1226,12 @@
     }
 
     function closeCardTaskCompletionPicker(workingRoot) {
-      setCardTaskCompletion(workingRoot, null);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
     function confirmCardTaskCompletion(workingRoot, choice = "confirm", options = {}) {
       const { cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getCardTaskCompletion(workingRoot);
+      const pending = options.pending || getCardTaskCompletion();
       if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
       const blocked = blockManualAiPendingInputIfNeeded(pending, options, "任务完成");
       if (blocked) return blocked;
@@ -1317,7 +1313,7 @@
       if (!matches?.length) return { ok: false, message: "没有可触发的卡牌" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开卡牌触发选择" };
 
-      setCardTriggerAction(workingRoot, {
+      openCardTriggerAction(workingRoot, {
         ...getPendingOwnerFields(null, getWorkingCurrentPlayer(workingRoot)),
         matches,
       });
@@ -1339,7 +1335,6 @@
     }
 
     function closeCardTriggerPicker(workingRoot) {
-      setCardTriggerAction(workingRoot, null);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
@@ -1473,7 +1468,7 @@
       if (!rocketsForPlayer.length) {
         return { ok: false, message: "没有可移动的飞船" };
       }
-      setCardTriggerFreeMove(workingRoot, {
+      openCardTriggerFreeMove(workingRoot, {
         ...getPendingOwnerFields(null, currentPlayer),
         match,
         beforePlayer: structuredClone(currentPlayer),
@@ -1544,8 +1539,8 @@
       return applyCardTriggerReward(workingRoot, match);
     }
 
-    function handleCardTriggerChoice(workingRoot, choiceIndex) {
-      const matches = getCardTriggerAction(workingRoot)?.matches || [];
+    function handleCardTriggerChoice(workingRoot, choiceIndex, pending = null) {
+      const matches = (pending || getCardTriggerAction())?.matches || [];
       const match = matches[Number(choiceIndex)];
       closeCardTriggerPicker(workingRoot);
       if (!match) return { ok: false, message: "无效的卡牌触发选择" };
@@ -1554,7 +1549,7 @@
 
     function executeFreeMoveForCardTrigger(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { cardState, rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const pending = getCardTriggerFreeMove(workingRoot);
+      const pending = payment.pending || getCardTriggerFreeMove();
       if (!pending) return { ok: false, message: "没有待结算的卡牌免费移动" };
 
       const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
@@ -1573,13 +1568,14 @@
         ? Math.max(1, Math.round(Number(payment.terrainRequired)))
         : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY, pending.match.effect.options || {});
       if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
-        return beginSupplementalMovePayment({
+        return beginSupplementalMovePayment(workingRoot, {
           deltaX,
           deltaY,
           rocketId,
           terrainRequired,
           providedMovePoints,
           context: { type: "cardTriggerFreeMove", terrainRequired },
+          pending,
           message: `${pending.match.effect.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
         });
       }
@@ -1629,7 +1625,6 @@
       discardReservedCardIfFinished(workingRoot, getWorkingCurrentPlayer(workingRoot), pending.match.card);
       completeQuickActionStep();
 
-      setCardTriggerFreeMove(workingRoot, null);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();

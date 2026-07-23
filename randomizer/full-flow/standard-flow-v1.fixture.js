@@ -35,7 +35,7 @@ module.exports = Object.freeze({
     ["choose_payment:31e55dce", 0], ["move:06bbb1d8", 0],
     ["choose_payment:31e55dce", 0], ["land:b9ac754d", 0],
     ["pass:a1f33c73", 0], ["choose_card:d87855f5", 4],
-    ["card_corner:907f5c7c", 0], ["choose_target:e6ba851b", 2],
+    ["card_corner:907f5c7c", 0], ["choose_target:48bbc339", 0],
     ["end_turn:b2f9b29d", 0], ["card_corner:516d5f48", 0],
     ["card_corner:900dd762", 0], ["card_corner:bb61a2f4", 0],
     ["card_corner:f77e1323", 0], ["industry:54e8f517", 0],
