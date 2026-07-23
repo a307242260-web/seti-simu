@@ -559,6 +559,32 @@
     });
   }
 
+  function createBoardQueryRuntime(context = {}) {
+    function getPlanetSectorCoordinate(planetId) {
+      const snapshot = context.solar.createSolarSnapshot(context.getRuleReadout().solarState);
+      const planet = snapshot.planetLocations.find((item) => item.planetId === planetId);
+      if (!planet) throw new Error(`${planetId} position was not found in the current solar snapshot`);
+      return { x: planet.x, y: planet.y };
+    }
+
+    function getRocketCurrentPlanetIdForRoot(workingRoot, rocketId) {
+      const rocket = workingRoot.rocketState.rockets.find((item) => Number(item.id) === Number(rocketId));
+      const coordinate = context.rocketActions.getRocketSectorCoordinate(rocket);
+      if (!coordinate) return null;
+      const snapshot = context.solar.createSolarSnapshot(workingRoot.solarState);
+      const planet = snapshot.planetLocations.find((item) => (
+        Number(item.x) === Number(coordinate.x) && Number(item.y) === Number(coordinate.y)
+      ));
+      return planet?.planetId || null;
+    }
+
+    function getRocketCurrentPlanetId(rocketId) {
+      return context.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
+    }
+
+    return Object.freeze({ getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId });
+  }
+
   function createLandTargetContinuationRuntime(context = {}) {
     function resume(workingRoot, pending, choice) {
       const actionType = pending.actionType || choice.actionType || (choice.kind === "orbit" ? "orbit" : "land");
@@ -1818,6 +1844,7 @@
     createSolarRotationRuntime,
     createActionInteractionPort,
     createDataAnalyzeInteractionRuntime,
+    createBoardQueryRuntime,
     createLandTargetContinuationRuntime,
     createActionInteractionRuntime,
   };

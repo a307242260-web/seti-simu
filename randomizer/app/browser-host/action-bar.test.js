@@ -316,13 +316,74 @@ function projection(overrides = {}) {
   assert.equal(list.children.length, 1);
 })();
 
-(function testLegacyActionBarPortUsesResidentController() {
+(function testActionBarPortUsesResidentController() {
   const calls = [];
   const port = actionBar.createActionBarPort({
     getController: () => ({ setQuickPanelOpen: (open) => calls.push(open) }),
   });
   port.setQuickPanelOpen(true);
   assert.deepEqual(calls, [true]);
+})();
+
+(function testActionGuardOwnsLocksAndPendingRejection() {
+  const calls = [];
+  let flow = { actionType: "initialIncome" };
+  const els = Object.fromEntries([
+    "actionPassButton", "actionConfirmButton", "actionUndoButton", "actionLaunchButton",
+    "actionOrbitButton", "actionLandButton", "actionScanButton", "actionAnalyzeButton",
+    "actionPlayCardButton", "actionResearchTechButton",
+  ].map((key) => [key, { key }]));
+  const runtime = actionBar.createActionGuardRuntime({
+    getActionEffectFlow: () => flow,
+    isGameEnded: () => false,
+    isInitialSelectionActive: () => false,
+    els,
+    setTurnActionButtonState: (button) => calls.push(`turn:${button.key}`),
+    setActionButtonState: (button, enabled, reason) => calls.push(`${button.key}:${enabled}:${reason}`),
+    setQuickActionButtonEnabled: (enabled, reason) => calls.push(`quick:${enabled}:${reason}`),
+    updateQuickPanel: () => calls.push("quick-panel"),
+    renderActionEffectBar: () => calls.push("effect-bar"),
+    getPendingCardCornerQuickAction: () => ({ id: "corner" }),
+    cancelCardCornerQuickAction: () => calls.push("cancel-corner"),
+    getPendingHandCardPlayAction: () => ({ id: "card" }),
+    cancelHandCardPlayAction: () => calls.push("cancel-card"),
+    hasActivePendingSubFlow: () => true,
+    getPendingIndustryAbilityDecision: () => ({ id: "industry" }),
+    getPendingIndustryFreeMoveDecision: () => null,
+    isIndustryHandSelectionActive: () => false,
+    renderStateReadout: () => calls.push("readout"),
+    submitHostCommand: (command) => ({ value: command.actionType }),
+  });
+  assert.equal(runtime.isActionEffectFlowActive(), true);
+  assert.equal(runtime.getGameplayLockReason(), "请先完成初始收入增加");
+  runtime.lockAllActionButtons("locked");
+  assert.ok(calls.includes("actionLaunchButton:false:locked"));
+  const root = { rocketState: {} };
+  assert.equal(runtime.blockIncompatiblePendingQuickActionForRoot(root, "scan").ok, false);
+  assert.equal(root.rocketState.statusNote, "请先完成或取消公司 1x 行动");
+  assert.ok(calls.includes("cancel-corner"));
+  assert.ok(calls.includes("cancel-card"));
+  assert.equal(runtime.blockIncompatiblePendingQuickAction("scan"), "scan");
+  flow = null;
+  assert.equal(runtime.isInitialIncomeFlowActive(), false);
+})();
+
+(function testHistoryRefreshRuntimeCallsEveryViewOwner() {
+  const calls = [];
+  const context = new Proxy({
+    setBrowserStatusNote: (message) => calls.push(`status:${message}`),
+    refreshActionState: (options) => calls.push(`action:${options.includeStateReadout}`),
+  }, {
+    get(target, key) {
+      if (key in target) return target[key];
+      return () => calls.push(String(key));
+    },
+  });
+  actionBar.createHistoryRefreshRuntime(context).refreshAfterHistoryChange("已撤销");
+  assert.ok(calls.includes("renderSectorNebulaDataBoard"));
+  assert.ok(calls.includes("syncPlanetOrbitLandMarkers"));
+  assert.ok(calls.includes("status:已撤销"));
+  assert.ok(calls.includes("action:true"));
 })();
 
 console.log("browser action bar projection/input tests passed");

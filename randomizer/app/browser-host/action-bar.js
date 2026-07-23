@@ -766,6 +766,92 @@
     });
   }
 
+  function createActionGuardRuntime(context = {}) {
+    function isActionEffectFlowActive(workingRoot = null) {
+      return context.getActionEffectFlow(workingRoot) != null;
+    }
+
+    function isInitialIncomeFlowActive(workingRoot = null) {
+      return context.getActionEffectFlow(workingRoot)?.actionType === "initialIncome";
+    }
+
+    function getGameplayLockReason(workingRoot = null) {
+      if (context.isGameEnded(workingRoot)) return "游戏已结束，正在进行终局计分";
+      if (context.isInitialSelectionActive()) return "请先完成初始选择";
+      if (isInitialIncomeFlowActive(workingRoot)) return "请先完成初始收入增加";
+      return null;
+    }
+
+    function lockAllActionButtons(reason) {
+      context.setTurnActionButtonState(context.els.actionPassButton, false);
+      context.setTurnActionButtonState(context.els.actionConfirmButton, false);
+      context.setTurnActionButtonState(context.els.actionUndoButton, false);
+      for (const button of [
+        context.els.actionLaunchButton,
+        context.els.actionOrbitButton,
+        context.els.actionLandButton,
+        context.els.actionScanButton,
+        context.els.actionAnalyzeButton,
+        context.els.actionPlayCardButton,
+        context.els.actionResearchTechButton,
+      ]) context.setActionButtonState(button, false, reason);
+      context.setQuickActionButtonEnabled(false, reason);
+      context.updateQuickPanel();
+      context.renderActionEffectBar();
+    }
+
+    function blockIncompatiblePendingQuickActionForRoot(workingRoot, actionType) {
+      if (actionType !== "card-corner" && context.getPendingCardCornerQuickAction()) {
+        context.cancelCardCornerQuickAction({ silent: true });
+      }
+      if (context.getPendingHandCardPlayAction()) {
+        context.cancelHandCardPlayAction({ silent: true });
+      }
+      if (!context.hasActivePendingSubFlow()) return null;
+      workingRoot.rocketState.statusNote = context.getPendingIndustryAbilityDecision(workingRoot)
+        || context.getPendingIndustryFreeMoveDecision(workingRoot)
+        || context.isIndustryHandSelectionActive()
+        ? "请先完成或取消公司 1x 行动"
+        : "请先完成或取消当前流程";
+      context.renderStateReadout();
+      return { ok: false, message: workingRoot.rocketState.statusNote };
+    }
+
+    function blockIncompatiblePendingQuickAction(actionType) {
+      return context.submitHostCommand({
+        kind: "quick_action_check_pending",
+        actionType,
+      }).value;
+    }
+
+    return Object.freeze({
+      isActionEffectFlowActive,
+      isInitialIncomeFlowActive,
+      getGameplayLockReason,
+      lockAllActionButtons,
+      blockIncompatiblePendingQuickActionForRoot,
+      blockIncompatiblePendingQuickAction,
+    });
+  }
+
+  function createHistoryRefreshRuntime(context = {}) {
+    function refreshAfterHistoryChange(message) {
+      context.renderSectorNebulaDataBoard();
+      context.syncPlanetOrbitLandMarkers();
+      context.renderPublicCards();
+      context.updatePublicCardControls();
+      context.refreshPlayerPanels();
+      context.renderPlayerHand();
+      context.renderReservedCards();
+      context.renderInitialSelectionArea();
+      context.clearStaleFullyUndoneMainActionSession();
+      context.syncInteractionFocusChrome();
+      if (message) context.setBrowserStatusNote(message);
+      context.refreshActionState({ includeQuickPanel: false, includeStateReadout: true });
+    }
+    return Object.freeze({ refreshAfterHistoryChange });
+  }
+
   function createActionBarPort(context = {}) {
     const methods = [
       "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
@@ -786,6 +872,8 @@
     createActionSessionRuntime,
     createEffectBarRenderer,
     createEffectBarPresentation,
+    createActionGuardRuntime,
+    createHistoryRefreshRuntime,
     createActionBarPort,
   });
 });

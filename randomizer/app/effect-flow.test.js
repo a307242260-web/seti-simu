@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const {
   createEffectFlowHelpers,
   createEffectFlowUndoRuntime,
+  createIrreversibleBarrierRuntime,
   createEffectSubFlowCancellationRuntime,
   createEffectFlowCompletionRuntime,
   createEffectFlowStateRuntime,
@@ -14,6 +15,27 @@ const {
   effectFlowMarkedNebula,
   createPendingSubFlowRuntime,
 } = require("./effect-flow");
+
+{
+  const calls = [];
+  const history = {
+    hasSession: () => true,
+    beginStep: (step) => calls.push(step),
+    endStep: () => ({ id: "s1", label: "不可撤销奖励", irreversibleReason: "已揭示信息" }),
+  };
+  const runtime = createIrreversibleBarrierRuntime({
+    actionHistory: history,
+    historySourceMain: "main",
+    rememberHistoryStep: (...args) => calls.push(args),
+    appendActionLogStep: (...args) => calls.push(args),
+    actionLogOptionsFromHistoryStep: () => ({ undoable: false }),
+    markCurrentActionIrreversible: (...args) => calls.push(args),
+  });
+  const step = runtime.recordMainActionIrreversibleBarrier("不可撤销奖励", "已揭示信息");
+  assert.equal(step.id, "s1");
+  assert.equal(calls[0].undoable, false);
+  assert.deepEqual(calls.at(-1), ["已揭示信息", "irreversible_effect"]);
+}
 
 {
   const flow = { effects: [

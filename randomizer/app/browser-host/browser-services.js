@@ -303,6 +303,22 @@
     });
   }
 
+  function createHostCommandPort(options = {}) {
+    if (typeof options.submitHostCommand !== "function") {
+      throw new TypeError("HostCommandPort 需要 submitHostCommand port");
+    }
+    function submit(kind, payload = {}, submitOptions = undefined) {
+      return options.submitHostCommand({ kind, ...(payload || {}) }, submitOptions);
+    }
+    function bindValue(kind, buildPayload = () => ({}), submitOptions = undefined) {
+      return (...args) => submit(kind, buildPayload(...args), submitOptions).value;
+    }
+    function bindResult(kind, buildPayload = () => ({}), submitOptions = undefined) {
+      return (...args) => submit(kind, buildPayload(...args), submitOptions);
+    }
+    return Object.freeze({ submit, bindValue, bindResult });
+  }
+
   function subscribeRefresh(options = {}) {
     const refresh = requireFunction(options, "refresh", "Browser refresh subscription");
     const unsubscribers = [];
@@ -318,6 +334,7 @@
     SCHEMA_VERSION,
     VIEW_SCHEMA_VERSION,
     createBrowserServices,
+    createHostCommandPort,
     createBrowserDownloadPort,
     createDomainCommandPort,
     LEGACY_DOMAIN_COMMANDS,

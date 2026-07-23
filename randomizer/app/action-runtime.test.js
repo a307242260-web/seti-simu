@@ -10,6 +10,32 @@ assert.deepEqual(source, [1, 2, 3]);
 assert.deepEqual([...shuffled].sort(), source);
 
 {
+  const calls = [];
+  const registry = actionRuntime.createCompositionActionRegistry({
+    getController: () => ({
+      dispatchAction(action, _fallback, actionContext) {
+        calls.push({ action, actionContext });
+        return action.kind === "standard_enumerate" ? { candidates: ["scan"] } : { ok: true };
+      },
+      executeStandardDescriptor(actionContext, action) {
+        calls.push({ action, actionContext, execute: true });
+        return { ok: true, action };
+      },
+    }),
+    createActionContext: (root, action = null) => ({ root, action }),
+  });
+  const root = { id: "root" };
+  const descriptor = { actionId: "scan:1" };
+  assert.deepEqual(registry.enumerate(root), ["scan"]);
+  assert.equal(registry.validate(root, descriptor).ok, true);
+  assert.equal(registry.execute(root, descriptor).action, descriptor);
+  assert.equal(calls.length, 3);
+  const unavailable = actionRuntime.createCompositionActionRegistry({ getController: () => null, createActionContext: () => ({}) });
+  assert.deepEqual(unavailable.enumerate(root), []);
+  assert.equal(unavailable.validate(root, descriptor).code, "ACTION_RUNTIME_UNAVAILABLE");
+}
+
+{
   const root = {
     solarState: {},
     playerState: { currentPlayerId: "p1", players: [{ id: "p1" }, { id: "p2" }] },

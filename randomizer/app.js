@@ -231,6 +231,9 @@
     callDebugCommand,
     setBrowserStatusNote,
   } = browserDomainCommandPort;
+  const browserHostCommandPort = browserHostModule.browserServices.createHostCommandPort({
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
   const {
     handleConditionalSectorChoice,
     handleDiscardIncomeCardChoice,
@@ -500,6 +503,10 @@
     getFlowMarkedNebulaIds,
     effectFlowMarkedNebula,
   } = effectFlowModule;
+  const compositionActionRegistry = actionRuntimeModule.createCompositionActionRegistry({
+    getController: () => actionRuntimeController,
+    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
+  });
 
   const ruleComposition = ruleCompositionModule.createRuleComposition({
     invariantValidators: [validateBrowserSessionBoundary],
@@ -769,30 +776,7 @@
           return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
       }
     },
-    createActionRegistry() {
-      return {
-        enumerate(workingState, request = {}) {
-          return actionRuntimeController?.dispatchAction(
-            { kind: "standard_enumerate", payload: request },
-            null,
-            createActionContextForWorkingRoot(workingState),
-          )?.candidates || [];
-        },
-        validate(workingState, action) {
-          return actionRuntimeController?.dispatchAction(
-            { kind: "standard_validate", standardAction: action },
-            null,
-            createActionContextForWorkingRoot(workingState, action),
-          ) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE" };
-        },
-        execute(workingState, action) {
-          return actionRuntimeController?.executeStandardDescriptor(
-            createActionContextForWorkingRoot(workingState, action),
-            action,
-          ) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE" };
-        },
-      };
-    },
+    createActionRegistry: () => compositionActionRegistry,
     effectDomains: [{
       create: standardActionSessionModule.createStandardActionDomain,
       families: standardActionModule.ALL_FAMILIES,
@@ -951,9 +935,7 @@
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
   });
   let actionRuntimeController = null;
-  const createRuleInputDispatcher = browserHostModule.inputAdapter.createRuleInputDispatcher
-    || browserHostModule.inputAdapter.createLegacyRuleInputDispatcher;
-  const ruleInputDispatcher = createRuleInputDispatcher({
+  const ruleInputDispatcher = browserHostModule.inputAdapter.createRuleInputDispatcher({
     standardActionSchemaVersion: standardActionModule.SCHEMA_VERSION,
     inspect: (...args) => ruleComposition.inspect(...args),
     createRecoverySnapshot: (...args) => createGameRecoverySnapshot(...args),
@@ -2226,6 +2208,12 @@
     renderPlayerHand: (...args) => renderPlayerHand(...args),
     renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
   });
+  const {
+    syncPublicScanConfirmButton,
+    syncCardSelectionChrome,
+    syncInteractionFocusChrome,
+    syncIndustryHandSelectionChrome,
+  } = interactionChrome;
   const effectBarPresentation = browserHostModule.actionBar.createEffectBarPresentation({
     document,
     els,
@@ -5023,22 +5011,6 @@
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
 
-  function syncPublicScanConfirmButton() {
-    return interactionChrome.syncPublicScanConfirmButton();
-  }
-
-  function syncCardSelectionChrome() {
-    return interactionChrome.syncCardSelectionChrome();
-  }
-
-  function syncInteractionFocusChrome() {
-    return interactionChrome.syncInteractionFocusChrome();
-  }
-
-  function syncIndustryHandSelectionChrome() {
-    return interactionChrome.syncIndustryHandSelectionChrome();
-  }
-
   function blockManualAiMovePayment(message = null) {
     const player = getMovePaymentPlayer();
     return blockManualAiAutomationInput(
@@ -5047,9 +5019,11 @@
     );
   }
 
-  function getRequiredMovePointsForUi(...args) {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "ui_get_required_move_points", args }, { commit: false }).value;
-  }
+  const getRequiredMovePointsForUi = browserHostCommandPort.bindValue(
+    "ui_get_required_move_points",
+    (...args) => ({ args }),
+    { commit: false },
+  );
 
   function getNormalTokenAssetForPlayer(player) {
     return players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
@@ -5104,115 +5078,60 @@
   });
 
 
-  function isActionEffectFlowActive(workingRoot = null) {
-    return getActionEffectFlow(workingRoot) != null;
-  }
-
-  function isInitialIncomeFlowActive(workingRoot = null) {
-    return getActionEffectFlow(workingRoot)?.actionType === "initialIncome";
-  }
-
-  function getGameplayLockReason(workingRoot = null) {
-    if (isGameEnded(workingRoot)) return "游戏已结束，正在进行终局计分";
-    if (isInitialSelectionActive()) return "请先完成初始选择";
-    if (isInitialIncomeFlowActive(workingRoot)) return "请先完成初始收入增加";
-    return null;
-  }
-
-  function lockAllActionButtons(reason) {
-    setTurnActionButtonState(els.actionPassButton, false);
-    setTurnActionButtonState(els.actionConfirmButton, false);
-    setTurnActionButtonState(els.actionUndoButton, false);
-    setActionButtonState(els.actionLaunchButton, false, reason);
-    setActionButtonState(els.actionOrbitButton, false, reason);
-    setActionButtonState(els.actionLandButton, false, reason);
-    setActionButtonState(els.actionScanButton, false, reason);
-    setActionButtonState(els.actionAnalyzeButton, false, reason);
-    setActionButtonState(els.actionPlayCardButton, false, reason);
-    setActionButtonState(els.actionResearchTechButton, false, reason);
-    setQuickActionButtonEnabled(false, reason);
-    updateQuickPanel();
-    renderActionEffectBar();
-  }
-
-  function blockIncompatiblePendingQuickActionForRoot(workingRoot, actionType) {
-    if (actionType !== "card-corner" && getPendingCardCornerQuickAction()) {
-      cancelCardCornerQuickAction({ silent: true });
-    }
-    if (getPendingHandCardPlayAction()) {
-      cancelHandCardPlayAction({ silent: true });
-    }
-    if (hasActivePendingSubFlow()) {
-      workingRoot.rocketState.statusNote = getPendingIndustryAbilityDecision(workingRoot) || getPendingIndustryFreeMoveDecision(workingRoot) || isIndustryHandSelectionActive()
-        ? "请先完成或取消公司 1x 行动"
-        : "请先完成或取消当前流程";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-    return null;
-  }
-
-  function blockIncompatiblePendingQuickAction(actionType) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "quick_action_check_pending",
-      actionType,
-    }).value;
-  }
-
-  function isIncomeDiscardActionType(type) {
-    return type === "income"
-      || type === "planet_reward_income"
-      || type === "place_data_income"
-      || type === "initial_income"
-      || type === "card_income"
-      || type === "industry_helios_income"
-      || type === "industry_fundamentalism_income";
-  }
-
-  function recordMainActionIrreversibleBarrier(label, reason, code = "irreversible_effect") {
-    const history = actionHistory;
-    if (!history.hasSession()) {
-      markCurrentActionIrreversible(reason, code);
-      return null;
-    }
-
-    history.beginStep({
-      source: HISTORY_SOURCE_MAIN,
-      type: "irreversible",
-      label: label || "不可撤销",
-      effectIndex: null,
-      undoable: false,
-      irreversibleCode: code,
-      irreversibleReason: reason || "该步骤产生不可撤销影响",
-    });
-    const step = history.endStep();
-    if (step) {
-      rememberHistoryStep(HISTORY_SOURCE_MAIN, step.id);
-      appendActionLogStep(
-        HISTORY_SOURCE_MAIN,
-        step.label,
-        step.irreversibleReason,
-        actionLogOptionsFromHistoryStep(step),
-      );
-    }
-    markCurrentActionIrreversible(reason, code);
-    return step;
-  }
-
-  function refreshAfterHistoryChange(message) {
-    renderSectorNebulaDataBoard();
-    syncPlanetOrbitLandMarkers();
-    renderPublicCards();
-    updatePublicCardControls();
-    refreshHelpers.refreshPlayerPanels();
-    renderPlayerHand();
-    renderReservedCards();
-    renderInitialSelectionArea();
-    clearStaleFullyUndoneMainActionSession();
-    syncInteractionFocusChrome();
-    if (message) setBrowserStatusNote(message);
-    refreshHelpers.refreshActionState({ includeQuickPanel: false, includeStateReadout: true });
-  }
+  const actionGuardRuntime = browserHostModule.actionBar.createActionGuardRuntime({
+    getActionEffectFlow,
+    isGameEnded,
+    isInitialSelectionActive,
+    els,
+    setTurnActionButtonState,
+    setActionButtonState,
+    setQuickActionButtonEnabled,
+    updateQuickPanel,
+    renderActionEffectBar,
+    getPendingCardCornerQuickAction,
+    cancelCardCornerQuickAction,
+    getPendingHandCardPlayAction,
+    cancelHandCardPlayAction,
+    hasActivePendingSubFlow,
+    getPendingIndustryAbilityDecision,
+    getPendingIndustryFreeMoveDecision,
+    isIndustryHandSelectionActive,
+    renderStateReadout,
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const {
+    isActionEffectFlowActive,
+    isInitialIncomeFlowActive,
+    getGameplayLockReason,
+    lockAllActionButtons,
+    blockIncompatiblePendingQuickActionForRoot,
+    blockIncompatiblePendingQuickAction,
+  } = actionGuardRuntime;
+  const isIncomeDiscardActionType = incomeRuntimeModule.isIncomeDiscardActionType;
+  const irreversibleBarrierRuntime = effectFlowModule.createIrreversibleBarrierRuntime({
+    actionHistory,
+    historySourceMain: HISTORY_SOURCE_MAIN,
+    markCurrentActionIrreversible,
+    rememberHistoryStep,
+    appendActionLogStep,
+    actionLogOptionsFromHistoryStep,
+  });
+  const recordMainActionIrreversibleBarrier = irreversibleBarrierRuntime.recordMainActionIrreversibleBarrier;
+  const historyRefreshRuntime = browserHostModule.actionBar.createHistoryRefreshRuntime({
+    renderSectorNebulaDataBoard,
+    syncPlanetOrbitLandMarkers,
+    renderPublicCards,
+    updatePublicCardControls,
+    refreshPlayerPanels: (...args) => refreshHelpers.refreshPlayerPanels(...args),
+    renderPlayerHand,
+    renderReservedCards,
+    renderInitialSelectionArea,
+    clearStaleFullyUndoneMainActionSession,
+    syncInteractionFocusChrome,
+    setBrowserStatusNote,
+    refreshActionState: (...args) => refreshHelpers.refreshActionState(...args),
+  });
+  const refreshAfterHistoryChange = historyRefreshRuntime.refreshAfterHistoryChange;
 
   const effectFlowUndoRuntime = effectFlowModule.createEffectFlowUndoRuntime({
     abilities,
@@ -5227,59 +5146,28 @@
   });
   const revertEffectFlowAfterUndo = effectFlowUndoRuntime.revertEffectFlowAfterUndo;
 
-  function cancelActivePendingSubFlows() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_pending_subflows" }).value;
-  }
+  const cancelActivePendingSubFlows = browserHostCommandPort.bindValue("effect_cancel_pending_subflows");
 
-  function getPlanetSectorCoordinate(planetId) {
-    const snapshot = solar.createSolarSnapshot(createStateSourceReadoutRoot().solarState);
-    const planet = snapshot.planetLocations.find((item) => item.planetId === planetId);
-    if (!planet) {
-      throw new Error(`${planetId} position was not found in the current solar snapshot`);
-    }
-    return { x: planet.x, y: planet.y };
-  }
-
-  function getRocketCurrentPlanetIdForRoot(workingRoot, rocketId) {
-    const rocket = workingRoot.rocketState.rockets.find((item) => Number(item.id) === Number(rocketId));
-    const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
-    if (!coordinate) return null;
-    const snapshot = solar.createSolarSnapshot(workingRoot.solarState);
-    const planet = snapshot.planetLocations.find((item) => (
-      Number(item.x) === Number(coordinate.x) && Number(item.y) === Number(coordinate.y)
-    ));
-    return planet?.planetId || null;
-  }
-
-  function getRocketCurrentPlanetId(rocketId) {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
-  }
-
-  function listReadyChongTransportCandidatesForRoot(workingRoot, player, task) {
-    if (!chong?.listActiveTransports || task?.kind !== "transport") return [];
-    return chong.listActiveTransports(workingRoot.alienGameState, player)
-      .map((transport) => {
-        const currentPlanetId = getRocketCurrentPlanetIdForRoot(workingRoot, transport.rocketId);
-        return {
-          ...transport,
-          currentPlanetId,
-          task: {
-            ...(transport.task || {}),
-            destinationPlanetId: task.destinationPlanetId,
-          },
-          completionTask: task,
-        };
-      })
-      .filter((transport) => transport.currentPlanetId === task.destinationPlanetId);
-  }
-
-  function listReadyChongTransportCandidates(player, task) {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "chong_ready_transports", player, task }, { commit: false }).value || [];
-  }
-
-  function buildSectorScanChoicesForXs(sectorXs) {
-    return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
-  }
+  const boardQueryRuntime = actionInteractionRuntimeModule.createBoardQueryRuntime({
+    solar,
+    rocketActions,
+    getRuleReadout: createStateSourceReadoutRoot,
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const { getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId } = boardQueryRuntime;
+  const chongTransportRuntime = alienRuntimeModule.createChongTransportRuntime({
+    chong,
+    getRocketCurrentPlanetIdForRoot,
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const {
+    listReadyForRoot: listReadyChongTransportCandidatesForRoot,
+    listReady: listReadyChongTransportCandidates,
+  } = chongTransportRuntime;
+  const buildSectorScanChoicesForXs = (sectorXs) => scanFlowModule.buildSectorScanChoicesForXs(
+    sectorXs,
+    buildSectorScanChoicesForX,
+  );
 
   const effectFlowStateRuntime = effectFlowModule.createEffectFlowStateRuntime({
     HISTORY_SOURCE_MAIN,
@@ -5345,13 +5233,8 @@
   });
   const cancelActiveEffectSubFlowsForRoot = effectSubFlowCancellationRuntime.cancelActiveEffectSubFlowsForRoot;
 
-  function cancelActiveEffectSubFlows() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_subflows" });
-  }
-
-  function skipCurrentActionEffect() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
-  }
+  const cancelActiveEffectSubFlows = browserHostCommandPort.bindResult("effect_cancel_subflows");
+  const skipCurrentActionEffect = browserHostCommandPort.bindValue("effect_skip_current");
 
   const sectorSettlementRuntime = scanFlowModule.createSectorSettlementRuntime({
     HISTORY_SOURCE_MAIN,
@@ -5371,13 +5254,10 @@
   });
   const resolveCompletedSectorSettlementsForRoot = sectorSettlementRuntime.resolveCompletedSectorSettlementsForRoot;
 
-  function resolveCompletedSectorSettlements(actionType, options = {}) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "scan_settle_completed_sectors",
-      actionType,
-      options,
-    }).value;
-  }
+  const resolveCompletedSectorSettlements = browserHostCommandPort.bindValue(
+    "scan_settle_completed_sectors",
+    (actionType, options = {}) => ({ actionType, options }),
+  );
 
   const effectFlowCompletionRuntime = effectFlowModule.createEffectFlowCompletionRuntime({
     HISTORY_SOURCE_MAIN,
@@ -5429,9 +5309,7 @@
   });
   const finishActionEffectFlowForRoot = effectFlowCompletionRuntime.finishActionEffectFlowForRoot;
 
-  function finishActionEffectFlow() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_finish_flow" }).value;
-  }
+  const finishActionEffectFlow = browserHostCommandPort.bindValue("effect_finish_flow");
 
   function maybeCompleteActionEffectFromScan(workingRoot, result) {
     if (!result?.ok || !isActionEffectFlowActive()) return;
@@ -5703,12 +5581,10 @@
     return actionRuntimeController.handleActionEffectButtonClick(workingRoot, effectIndex);
   }
 
-  function handleActionEffectButtonClick(effectIndex) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "effect_bar_click",
-      effectIndex,
-    }).value;
-  }
+  const handleActionEffectButtonClick = browserHostCommandPort.bindValue(
+    "effect_bar_click",
+    (effectIndex) => ({ effectIndex }),
+  );
 
   function beginScanAction() {
     return actionRuntimeController?.dispatchAction({
@@ -6266,12 +6142,10 @@
     "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice", "setCheatModeOpen", "toggleCheatMode",
   ]);
 
-  function placeDataToBlueSlot(blueSlot) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "data_place_blue_slot",
-      blueSlot,
-    }).value;
-  }
+  const placeDataToBlueSlot = browserHostCommandPort.bindValue(
+    "data_place_blue_slot",
+    (blueSlot) => ({ blueSlot }),
+  );
 
   function queueStateReadoutRender() {
     if (uiRuntimeState.stateReadoutRenderFrame) return;
@@ -6307,9 +6181,7 @@
     return { ok: true, message: workingRoot.rocketState.statusNote, sessionInfo: info };
   }
 
-  function recoverPendingActionFromOpenHistoryForAi() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "action_recover_pending" }).value;
-  }
+  const recoverPendingActionFromOpenHistoryForAi = browserHostCommandPort.bindValue("action_recover_pending");
 
   turnEndFlow = turnEndFlowModule.createTurnEndFlow({
     HISTORY_SOURCE_MAIN,
@@ -6388,9 +6260,7 @@
     return undoController.undoPendingActionForRoot(workingRoot);
   }
 
-  function undoPendingAction() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "history_undo_pending" }).value;
-  }
+  const undoPendingAction = browserHostCommandPort.bindValue("history_undo_pending");
 
 
   function resumeDataPlacementContinuation(workingRoot, pending, outcome) {

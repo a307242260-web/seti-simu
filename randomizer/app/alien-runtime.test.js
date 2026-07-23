@@ -1,7 +1,21 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createAlienRuntimeHelpers, createNeutralScoreTraceRuntime } = require("./alien-runtime");
+const { createAlienRuntimeHelpers, createNeutralScoreTraceRuntime, createChongTransportRuntime } = require("./alien-runtime");
+
+{
+  const runtime = createChongTransportRuntime({
+    chong: { listActiveTransports: () => [{ rocketId: 1, task: { kind: "transport" } }, { rocketId: 2 }] },
+    getRocketCurrentPlanetIdForRoot: (_root, rocketId) => rocketId === 1 ? "mars" : "earth",
+    submitHostCommand: () => ({ value: [{ rocketId: 1 }] }),
+  });
+  const task = { kind: "transport", destinationPlanetId: "mars" };
+  const candidates = runtime.listReadyForRoot({ alienGameState: {} }, { id: "p1" }, task);
+  assert.equal(candidates.length, 1);
+  assert.equal(candidates[0].currentPlanetId, "mars");
+  assert.equal(candidates[0].completionTask, task);
+  assert.equal(runtime.listReady({ id: "p1" }, task)[0].rocketId, 1);
+}
 
 function createHarness(overrides = {}) {
   const calls = {

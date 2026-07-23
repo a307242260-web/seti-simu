@@ -5,7 +5,13 @@ const {
   createScanFlowHelpers,
   createScanAction4Picker,
   createSectorSettlementRuntime,
+  buildSectorScanChoicesForXs,
 } = require("./scan-flow");
+
+assert.deepEqual(
+  buildSectorScanChoicesForXs([1, 2], (x) => [{ x, kind: "scan" }]),
+  [{ x: 1, kind: "scan" }, { x: 2, kind: "scan" }],
+);
 
 {
   const actions = { children: [], replaceChildren(...children) { this.children = children; } };

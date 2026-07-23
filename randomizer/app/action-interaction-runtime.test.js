@@ -11,7 +11,22 @@ const {
   createMoveUiRuntime,
   createPrimaryActionUiRuntime,
   createSolarRotationRuntime,
+  createBoardQueryRuntime,
 } = require("./action-interaction-runtime");
+
+{
+  const solar = { createSolarSnapshot: () => ({ planetLocations: [{ planetId: "earth", x: 1, y: 2 }] }) };
+  const runtime = createBoardQueryRuntime({
+    solar,
+    rocketActions: { getRocketSectorCoordinate: () => ({ x: 1, y: 2 }) },
+    getRuleReadout: () => ({ solarState: {} }),
+    submitHostCommand: (command) => ({ value: command.rocketId === 7 ? "earth" : null }),
+  });
+  assert.deepEqual(runtime.getPlanetSectorCoordinate("earth"), { x: 1, y: 2 });
+  assert.equal(runtime.getRocketCurrentPlanetIdForRoot({ rocketState: { rockets: [{ id: 7 }] }, solarState: {} }, 7), "earth");
+  assert.equal(runtime.getRocketCurrentPlanetId(7), "earth");
+  assert.throws(() => runtime.getPlanetSectorCoordinate("missing"), /position was not found/);
+}
 
 {
   const calls = [];

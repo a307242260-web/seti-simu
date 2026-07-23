@@ -72,6 +72,33 @@
     return Object.freeze({ buildInitialIncomeEffectNodes: buildEffectNodes, startInitialIncomeEffectFlow: start });
   }
 
+  function createCompositionActionRegistry(context = {}) {
+    function getController() {
+      return context.getController?.() || null;
+    }
+    function enumerate(workingState, request = {}) {
+      return getController()?.dispatchAction(
+        { kind: "standard_enumerate", payload: request },
+        null,
+        context.createActionContext(workingState),
+      )?.candidates || [];
+    }
+    function validate(workingState, action) {
+      return getController()?.dispatchAction(
+        { kind: "standard_validate", standardAction: action },
+        null,
+        context.createActionContext(workingState, action),
+      ) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE" };
+    }
+    function execute(workingState, action) {
+      return getController()?.executeStandardDescriptor(
+        context.createActionContext(workingState, action),
+        action,
+      ) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE" };
+    }
+    return Object.freeze({ enumerate, validate, execute });
+  }
+
   function createInitialSelectionEffectsResolver(context = {}) {
     return function resolveInitialSelectionEffects(workingRoot) {
       if (!context.initialCards?.resolveInitialSelections) return null;
@@ -955,6 +982,7 @@
     createInitialIncomeFlow,
     createInitialSelectionEffectsResolver,
     createActionContextFactory,
+    createCompositionActionRegistry,
     shuffleList,
     stripAssetExtension,
   };

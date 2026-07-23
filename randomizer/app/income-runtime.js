@@ -7,6 +7,16 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  function isIncomeDiscardActionType(type) {
+    return type === "income"
+      || type === "planet_reward_income"
+      || type === "place_data_income"
+      || type === "initial_income"
+      || type === "card_income"
+      || type === "industry_helios_income"
+      || type === "industry_fundamentalism_income";
+  }
+
   function createIncomeRuntime(context = {}) {
     const {
       INCOME_GAIN_LABELS,
@@ -476,5 +486,5 @@
     };
   }
 
-  return { createIncomeRuntime };
+  return { createIncomeRuntime, isIncomeDiscardActionType };
 });

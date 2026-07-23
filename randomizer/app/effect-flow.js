@@ -1061,6 +1061,38 @@
     return Object.freeze({ revertEffectFlowAfterUndo });
   }
 
+  function createIrreversibleBarrierRuntime(context = {}) {
+    function recordMainActionIrreversibleBarrier(label, reason, code = "irreversible_effect") {
+      const history = context.actionHistory;
+      if (!history.hasSession()) {
+        context.markCurrentActionIrreversible(reason, code);
+        return null;
+      }
+      history.beginStep({
+        source: context.historySourceMain,
+        type: "irreversible",
+        label: label || "不可撤销",
+        effectIndex: null,
+        undoable: false,
+        irreversibleCode: code,
+        irreversibleReason: reason || "该步骤产生不可撤销影响",
+      });
+      const step = history.endStep();
+      if (step) {
+        context.rememberHistoryStep(context.historySourceMain, step.id);
+        context.appendActionLogStep(
+          context.historySourceMain,
+          step.label,
+          step.irreversibleReason,
+          context.actionLogOptionsFromHistoryStep(step),
+        );
+      }
+      context.markCurrentActionIrreversible(reason, code);
+      return step;
+    }
+    return Object.freeze({ recordMainActionIrreversibleBarrier });
+  }
+
   function createEffectSubFlowCancellationRuntime(context = {}) {
     const uiRuntimeState = context.uiRuntimeState || {};
 
@@ -1373,6 +1405,7 @@
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
     createEffectFlowUndoRuntime,
+    createIrreversibleBarrierRuntime,
     createEffectSubFlowCancellationRuntime,
     createEffectFlowCompletionRuntime,
     createEffectFlowStateRuntime,

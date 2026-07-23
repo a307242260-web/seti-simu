@@ -11,6 +11,10 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  function buildSectorScanChoicesForXs(sectorXs, buildSectorScanChoicesForX) {
+    return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
+  }
+
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createScanFlowHelpers requires function: ${name}`);
@@ -2413,5 +2417,6 @@
     createScanFlowHelpers,
     createScanAction4Picker,
     createSectorSettlementRuntime,
+    buildSectorScanChoicesForXs,
   };
 });

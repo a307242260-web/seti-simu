@@ -1,7 +1,10 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createIncomeRuntime } = require("./income-runtime");
+const { createIncomeRuntime, isIncomeDiscardActionType } = require("./income-runtime");
+
+assert.equal(isIncomeDiscardActionType("initial_income"), true);
+assert.equal(isIncomeDiscardActionType("play_card"), false);
 
 {
   const player = {

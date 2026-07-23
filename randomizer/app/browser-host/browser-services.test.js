@@ -218,4 +218,20 @@ function createHarness(options = {}) {
   ]);
 })();
 
+(function testHostCommandPortBuildsNarrowCommands() {
+  const submitted = [];
+  const port = servicesApi.createHostCommandPort({
+    submitHostCommand(command, options) {
+      submitted.push({ command, options });
+      return { ok: true, value: command.effectIndex ?? command.kind };
+    },
+  });
+  assert.equal(port.bindValue("effect_bar_click", (effectIndex) => ({ effectIndex }))(3), 3);
+  assert.equal(port.bindResult("effect_cancel_subflows")().ok, true);
+  assert.deepEqual(submitted, [
+    { command: { kind: "effect_bar_click", effectIndex: 3 }, options: undefined },
+    { command: { kind: "effect_cancel_subflows" }, options: undefined },
+  ]);
+})();
+
 console.log("Browser services composition lifecycle tests passed");

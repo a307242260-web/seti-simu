@@ -1718,8 +1718,35 @@
     });
   }
 
+  function createChongTransportRuntime(context = {}) {
+    function listReadyForRoot(workingRoot, player, task) {
+      if (!context.chong?.listActiveTransports || task?.kind !== "transport") return [];
+      return context.chong.listActiveTransports(workingRoot.alienGameState, player)
+        .map((transport) => {
+          const currentPlanetId = context.getRocketCurrentPlanetIdForRoot(workingRoot, transport.rocketId);
+          return {
+            ...transport,
+            currentPlanetId,
+            task: { ...(transport.task || {}), destinationPlanetId: task.destinationPlanetId },
+            completionTask: task,
+          };
+        })
+        .filter((transport) => transport.currentPlanetId === task.destinationPlanetId);
+    }
+
+    function listReady(player, task) {
+      return context.submitHostCommand(
+        { kind: "chong_ready_transports", player, task },
+        { commit: false },
+      ).value || [];
+    }
+
+    return Object.freeze({ listReadyForRoot, listReady });
+  }
+
   return {
     createAlienRuntimeHelpers,
     createNeutralScoreTraceRuntime,
+    createChongTransportRuntime,
   };
 });
