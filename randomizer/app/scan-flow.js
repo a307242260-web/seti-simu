@@ -339,10 +339,9 @@
     }
     const uiRuntimeState = context.uiRuntimeState || {};
     const getHandScanDecision = () => context.readPendingDecision?.("hand_scan") || null;
-    function setHandScanContinuation(workingRoot, continuation) {
+    function openHandScanDecision(workingRoot, pending) {
       requireWorkingRoot(workingRoot);
-      if (!continuation) return null;
-      return context.openPendingDecision(workingRoot, "hand_scan", continuation);
+      return context.openPendingDecision(workingRoot, "hand_scan", pending);
     }
     const clearPendingAmibaSymbolChoice = requireFunction(
       "clearPendingAmibaSymbolChoice",
@@ -1037,7 +1036,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      setHandScanContinuation(workingRoot, { type: "hand_scan", playerId: currentPlayer.id });
+      openHandScanDecision(workingRoot, { type: "hand_scan", playerId: currentPlayer.id });
       rocketState.statusNote = "手牌扫描：请选择一张手牌弃除并扫描";
       syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
@@ -1048,7 +1047,6 @@
     function cancelHandScanSelection(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive(workingRoot)) return;
-      setHandScanContinuation(workingRoot, null);
       rocketState.statusNote = "已取消手牌扫描";
       syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
@@ -1079,7 +1077,6 @@
         return scanChoices;
       }
 
-      setHandScanContinuation(workingRoot, null);
       syncHandScanSelectionChrome(workingRoot);
       rocketState.statusNote = `手牌扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();

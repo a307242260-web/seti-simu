@@ -6,6 +6,7 @@ const policyInputAdapter = require("../browser-host/policy-input-adapter");
 const {
   createCompositionPolicyBoundaryReader,
   createBrowserMachinePlayerPort,
+  createBrowserAiBootstrap,
 } = require("./browser-bootstrap");
 
 function action(overrides = {}) {
@@ -49,6 +50,48 @@ function action(overrides = {}) {
     decisionVersion: 2,
     legalActions: [legal],
   });
+
+  {
+    let runtimeOptions = null;
+    const difficultyCalls = [];
+    const bootstrap = createBrowserAiBootstrap({
+      aiControlRuntimeModule: {
+        createAiControllerState: () => ({}),
+        createAiControlRuntime(options) {
+          runtimeOptions = options;
+          return { isAiAutoBattlePlayer: () => false };
+        },
+      },
+      ruleComposition: {
+        inspect: () => ({ phase: "idle", session: null }),
+        stateSourcePort: {
+          read: () => ({
+            source: { stateVersion: 0 },
+            state: { turn: { currentPlayerId: "p1" }, players: { currentPlayerId: "p1" } },
+            decision: null,
+          }),
+        },
+        inputPort: { enumerateActions: () => [] },
+        subscribe: () => () => {},
+      },
+      inputPort: {
+        setPlayerDifficulty(...args) {
+          difficultyCalls.push(args);
+          return { ok: true };
+        },
+      },
+      policyInputAdapterModule: { createPolicyInputAdapter: () => ({}) },
+      projectionAdapter: { projectSource: () => ({}) },
+      inputAdapter: { dispatchAction: () => ({}), submitDecision: () => ({}) },
+      createPolicy: () => ({ decide: () => null }),
+      readRuleState: () => ({ players: {}, turn: {}, pieces: {} }),
+      stateOwners: {},
+      controlContext: { getPlayerById: () => null },
+    });
+    assert.equal(Boolean(bootstrap.controller), true);
+    assert.deepEqual(runtimeOptions.setPlayerAiDifficulty("p2", "weak_start", "测试"), { ok: true });
+    assert.deepEqual(difficultyCalls, [["p2", "weak_start", "测试"]]);
+  }
 
   const choice = action({
     family: "choose_reward",

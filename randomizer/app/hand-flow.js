@@ -363,15 +363,17 @@
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     const getDiscardDecision = () => readPendingDecision?.("discard") || null;
-    function setDiscardContinuation(workingRoot, continuation) {
+    function clearDiscardSelectionUi() {
       uiRuntimeState.discardSelectedHandIndexes = [];
-      if (!continuation) return null;
-      const player = continuation.player || null;
+    }
+    function openDiscardDecision(workingRoot, pending) {
+      clearDiscardSelectionUi();
+      const player = pending.player || null;
       const normalized = {
-        ...structuredClone(continuation),
-        playerId: continuation.playerId || player?.id || null,
-        playerColor: continuation.playerColor || player?.color || null,
-        count: Math.max(0, Math.round(Number(continuation.count) || 0)),
+        ...structuredClone(pending),
+        playerId: pending.playerId || player?.id || null,
+        playerColor: pending.playerColor || player?.color || null,
+        count: Math.max(0, Math.round(Number(pending.count) || 0)),
       };
       delete normalized.player;
       delete normalized.selectedIndexes;
@@ -384,9 +386,8 @@
       )) || getCurrentPlayer(workingRoot);
     }
     const getHandScanDecision = () => readPendingDecision?.("hand_scan") || null;
-    function setHandScanContinuation(workingRoot, continuation) {
-      if (!continuation) return null;
-      return openPendingDecision(workingRoot, "hand_scan", continuation);
+    function openHandScanDecision(workingRoot, pending) {
+      return openPendingDecision(workingRoot, "hand_scan", pending);
     }
     const getMovePayment = () => readPendingDecision?.("move_payment") || null;
     function setMovePayment(workingRoot, session) {
@@ -482,7 +483,6 @@
 
     function cancelHandScanSelection(workingRoot) {
       if (!isHandScanSelectionActive(workingRoot)) return;
-      setHandScanContinuation(workingRoot, null);
       ruleRocketState(workingRoot).statusNote = "已取消手牌扫描";
       syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
@@ -1347,7 +1347,7 @@
         return { ok: false, message: `手牌不足，需要弃置 ${discardCount} 张牌` };
       }
 
-      setDiscardContinuation(workingRoot, { ...(pendingAction || {}), count: discardCount });
+      openDiscardDecision(workingRoot, { ...(pendingAction || {}), count: discardCount });
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), true, discardCount);
       ruleRocketState(workingRoot).statusNote = pendingAction?.type === "pass_hand_limit"
         ? `PASS：请选择 ${discardCount} 张手牌弃掉，保留 4 张`
@@ -1370,7 +1370,7 @@
         renderStateReadout();
         return;
       }
-      setDiscardContinuation(workingRoot, null);
+      clearDiscardSelectionUi();
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       if (pending?.type === "industry_helios_income") {
         return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
@@ -1398,7 +1398,7 @@
 
     function completeDiscardSelection(workingRoot, discardedCards) {
       const pending = getDiscardDecision();
-      setDiscardContinuation(workingRoot, null);
+      clearDiscardSelectionUi();
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       syncDiscardSelectionChrome(workingRoot);
 
@@ -2161,7 +2161,6 @@
         return scanChoices;
       }
 
-      setHandScanContinuation(workingRoot, null);
       syncHandScanSelectionChrome(workingRoot);
       ruleRocketState(workingRoot).statusNote = `手牌扫描：${cards.getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();

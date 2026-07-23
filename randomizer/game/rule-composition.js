@@ -79,7 +79,7 @@
     let activeSession = null;
     let activeFamily = null;
     let lastActionResult = null;
-    let activeHostWorkingState = null;
+    let activeOwnerInputWorkingState = null;
     let transactionWorkingState = null;
     const listeners = new Set();
     let unsubscribeStore = null;
@@ -135,7 +135,7 @@
         return deepFreeze(clone(validation));
       }
       const {
-        commands: _hostUndoCommands,
+        commands: _undoCommands,
         history: _legacyUndoHistory,
         ...serializableResult
       } = result;
@@ -427,63 +427,63 @@
 
     function submitOwnerInput(command, submitOptions = {}) {
       if (typeof executeOwnerInput !== "function") {
-        return fail("RULE_COMPOSITION_HOST_COMMAND_UNAVAILABLE", "Rule Composition 未配置 Browser host command executor");
+        return fail("RULE_COMPOSITION_OWNER_INPUT_UNAVAILABLE", "Rule Composition 未配置 Browser owner input executor");
       }
       if (!command?.kind || typeof command.kind !== "string") {
-        return fail("RULE_COMPOSITION_HOST_COMMAND_INVALID", "Browser host command 缺少 kind");
+        return fail("RULE_COMPOSITION_OWNER_INPUT_INVALID", "Browser owner input 缺少 kind");
       }
-      const nestedWorkingState = activeHostWorkingState || transactionWorkingState;
+      const nestedWorkingState = activeOwnerInputWorkingState || transactionWorkingState;
       if (nestedWorkingState) {
         try {
           const nestedResult = runWithWorkingStateContext(
             nestedWorkingState,
             () => executeOwnerInput(nestedWorkingState, command),
           );
-          // 嵌套命令仍在同一个 Composition 事务内；结果可能携带仅供事务内消费的
+          // 嵌套 owner input 仍在同一个 Composition 事务内；结果可能携带仅供事务内消费的
           // undo command 函数，不能提前跨端口 structuredClone/deepFreeze。
           return nestedResult || { ok: true };
         } catch (error) {
-          return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");
+          return fail("RULE_COMPOSITION_OWNER_INPUT_THROWN", error?.message || "Browser owner input 执行异常");
         }
       }
       const beforeWorkingState = stateAdapter ? clone(workingState) : null;
       const committedBefore = store.getSnapshot();
       let result;
       try {
-        activeHostWorkingState = actionContext(clone(committedBefore));
+        activeOwnerInputWorkingState = actionContext(clone(committedBefore));
         result = runWithWorkingStateContext(
-          activeHostWorkingState,
-          () => executeOwnerInput(activeHostWorkingState, clone(command)),
+          activeOwnerInputWorkingState,
+          () => executeOwnerInput(activeOwnerInputWorkingState, clone(command)),
         );
       } catch (error) {
-        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_thrown" });
-        return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");
+        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "owner_input_thrown" });
+        return fail("RULE_COMPOSITION_OWNER_INPUT_THROWN", error?.message || "Browser owner input 执行异常");
       } finally {
-        activeHostWorkingState = null;
+        activeOwnerInputWorkingState = null;
       }
       if (!result || result.ok === false) {
-        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_rejected" });
+        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "owner_input_rejected" });
         return result?.ok === false
           ? deepFreeze(clone(result))
-          : fail("RULE_COMPOSITION_HOST_COMMAND_FAILED", "Browser host command 未返回成功结果");
+          : fail("RULE_COMPOSITION_OWNER_INPUT_FAILED", "Browser owner input 未返回成功结果");
       }
       if (activeSession || !stateAdapter || submitOptions.commit === false) {
         return deepFreeze(clone(result));
       }
       const committedBoundary = store.getSnapshot();
       const candidate = stateAdapter.createCommittedState(workingState, committedBoundary, {
-        source: "browser-host-command",
+        source: "browser-owner-input",
         commandKind: command.kind,
       });
       const validation = store.validate(candidate);
       if (!validation.ok) {
-        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_state_invalid" });
+        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "owner_input_state_invalid" });
         return deepFreeze(clone(validation));
       }
       const committedSerialized = store.serialize(committedBoundary);
       const candidateSerialized = store.serialize(candidate);
       if (!candidateSerialized.ok) {
-        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_serialize_failed" });
+        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "owner_input_serialize_failed" });
         return deepFreeze(clone(candidateSerialized));
       }
       if (committedSerialized.ok && committedSerialized.serialized === candidateSerialized.serialized) {
@@ -492,10 +492,10 @@
       const committed = store.compareAndCommit(
         committedBoundary.meta.stateVersion,
         candidate,
-        { source: "browser-host-command", commandKind: command.kind },
+        { source: "browser-owner-input", commandKind: command.kind },
       );
       if (!committed.ok) {
-        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_commit_rejected" });
+        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "owner_input_commit_rejected" });
         return deepFreeze(clone(committed));
       }
       return deepFreeze({ ...clone(result), stateVersion: store.getSnapshot().meta.stateVersion });

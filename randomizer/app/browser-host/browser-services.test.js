@@ -200,6 +200,20 @@ function createHarness(options = {}) {
   assert.equal(executed.value.nested.count, 3);
   port.beginSectorScan(4);
   assert.deepEqual(submitted, [{ kind: "scan_flow.beginSectorScan", args: [4] }]);
+
+  const rejectingRegistry = servicesApi.createOwnerInputRegistry({
+    clonePresentation: (value) => structuredClone(value),
+    submit: () => ({ ok: false, code: "OWNER_INPUT_REJECTED", message: "拒绝测试输入" }),
+  });
+  const rejectingPort = rejectingRegistry.register("test_owner", {
+    reject: () => ({ ok: true }),
+  });
+  assert.deepEqual(rejectingPort.reject(), {
+    ok: false,
+    code: "OWNER_INPUT_REJECTED",
+    message: "拒绝测试输入",
+  });
+
   assert.equal(registry.execute(root, { kind: "scan_flow.forged" }).code, "BROWSER_OWNER_INPUT_UNKNOWN");
   assert.equal(registry.execute(root, {
     kind: "scan_flow.beginSectorScan",

@@ -37,6 +37,7 @@
     "readRuleState",
     "stateOwners",
     "controlContext",
+    "inputPort",
   ]);
 
   function fail(code, message, details = {}) {
@@ -211,7 +212,7 @@
       recordAiAutoBattleLog: () => null,
       recordAiAutoBattleBug: () => null,
       resetAiStrategyDemandCache: () => {},
-      setPlayerAiDifficulty: (playerId, difficulty, label) => options.inputPort
+      setPlayerAiDifficulty: (playerId, difficulty, label) => context.inputPort
         .setPlayerDifficulty(playerId, difficulty, label),
       runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
       getRuleProjection: () => {

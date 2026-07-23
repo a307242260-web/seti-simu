@@ -225,7 +225,10 @@
         const kind = `${owner}.${name}`;
         if (handlers.has(kind)) throw new Error(`Owner input registry 重复 kind: ${kind}`);
         handlers.set(kind, Object.freeze({ owner, handler }));
-        port[name] = (...args) => options.submit({ kind, args }).value;
+        port[name] = (...args) => {
+          const result = options.submit({ kind, args });
+          return result?.ok === false ? result : result?.value;
+        };
       }
       owners.set(owner, Object.freeze(new Set(names)));
       return Object.freeze(port);
