@@ -34,7 +34,8 @@
     "projectionAdapter",
     "inputAdapter",
     "createPolicy",
-    "readRuleState",
+    "projectionSource",
+    "readAiControlProjection",
     "stateOwners",
     "controlContext",
     "inputPort",
@@ -46,13 +47,14 @@
 
   function createCompositionPolicyBoundaryReader(options = {}) {
     const composition = options.ruleComposition;
-    if (!composition?.inspect || !composition?.stateSourcePort?.read
+    const projectionSource = options.projectionSource;
+    if (!composition?.inspect || !projectionSource?.read
       || !composition?.inputPort?.enumerateActions) {
-      throw new TypeError("Browser Machine Player boundary reader 需要 Rule Composition inspect/state/input ports");
+      throw new TypeError("Browser Machine Player boundary reader 需要 Rule Composition inspect/input 与 Browser projection ports");
     }
     return function readBoundary(seatId) {
       const inspection = composition.inspect();
-      const source = composition.stateSourcePort.read({
+      const source = projectionSource.read({
         viewerId: `machine:${seatId}`,
         playerId: seatId,
         role: "player",
@@ -71,10 +73,8 @@
           legalActions,
         };
       }
-      const actorId = source.state?.turn?.currentPlayerId
-        ?? source.state?.players?.currentPlayerId
-        ?? null;
-      if (source.state?.turn?.gameEnded || source.state?.match?.terminal) {
+      const actorId = source.state?.match?.currentPlayerId ?? null;
+      if (source.state?.match?.terminal) {
         return { kind: "terminal", terminal: { phase: "completed" } };
       }
       return {
@@ -90,6 +90,7 @@
   function createBrowserMachinePlayerPort(options = {}) {
     const {
       ruleComposition,
+      projectionSource,
       policyInputAdapterModule,
       projectionAdapter,
       inputAdapter,
@@ -104,18 +105,17 @@
       || typeof isMachineSeat !== "function") {
       throw new TypeError("Browser Machine Player port 缺少 policy/projection/input/seat ports");
     }
-    const readBoundary = createCompositionPolicyBoundaryReader({ ruleComposition });
+    const readBoundary = createCompositionPolicyBoundaryReader({ ruleComposition, projectionSource });
     const drivers = new Map();
     let generation = 0;
     let lastResult = null;
 
     function currentSeatId() {
       const inspection = ruleComposition.inspect();
-      const source = ruleComposition.stateSourcePort.read();
+      const source = projectionSource.read();
       return source.decision?.ownerId
         ?? inspection.session?.decision?.ownerId
-        ?? source.state?.turn?.currentPlayerId
-        ?? source.state?.players?.currentPlayerId
+        ?? source.state?.match?.currentPlayerId
         ?? null;
     }
 
@@ -192,7 +192,8 @@
       projectionAdapter,
       inputAdapter,
       createPolicy,
-      readRuleState,
+      projectionSource,
+      readAiControlProjection,
       stateOwners,
       controlContext,
     } = context;
@@ -200,6 +201,7 @@
     let controller = null;
     const machinePlayerPort = createBrowserMachinePlayerPort({
       ruleComposition,
+      projectionSource,
       policyInputAdapterModule,
       projectionAdapter,
       inputAdapter,
@@ -216,12 +218,7 @@
         .setPlayerDifficulty(playerId, difficulty, label),
       runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
       getRuleProjection: () => {
-        const ruleState = readRuleState();
-        return {
-          players: structuredClone(ruleState.players),
-          turn: structuredClone(ruleState.turn),
-          pieces: structuredClone(ruleState.pieces),
-        };
+        return structuredClone(readAiControlProjection());
       },
     });
     controller = Object.freeze({

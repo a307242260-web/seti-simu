@@ -665,6 +665,12 @@
       validateSessionBoundary: validateBrowserSessionBoundary,
     },
     getCommittedContext: getBrowserCommittedContext,
+    browserProjection: {
+      visibilityPolicy: browserHostModule.projectionAdapter.defaultVisibilityPolicy,
+      getFinalReadModelOwner: () => finalReadModelOwner,
+      getBrowserReadModelOwner: () => browserReadModelOwner,
+      createRenderPresentation: (input) => createBrowserRenderPresentation(input),
+    },
     runWithWorkingState: (workingRoot, operation) => browserPendingDecisionOwner.runRuleTransaction(
       workingRoot,
       () => cardSelectionDecisionOwner.runRuleTransaction(
@@ -832,9 +838,7 @@
     advanceTurnAfterPlayerAction, startNewGame, randomizeAll, normalizeAiDifficulty,
   } = turnHostRuntime;
   const browserMatchRuntime = runtimeModule.createBrowserMatchRuntime({
-    readActionEffectFlow: () => structuredClone(
-      ruleComposition.stateSourcePort.read().state.match?.actionEffectFlow || null,
-    ),
+    readActionEffectFlow: () => ruleComposition.readModelPort.read("actionEffectFlow"),
     uiRuntimeState: runtime.ui,
   });
   const {
@@ -1162,7 +1166,7 @@
     hasCurrentMainActionIrreversibleBarrier, getMainActionStartBlockReason, canStartMainAction,
   } = actionSessionRuntime;
   const cardSelectionState = browserHostModule.cardDecisionUi.createCardSelectionState({
-    readCardUiState: () => structuredClone(readRuleState().cards?.ui || {}),
+    readCardUiState: () => ruleComposition.readModelPort.read("cardUi"),
     cards,
     getPendingDiscardDecision,
     readCardSelectionDecision,
@@ -1241,34 +1245,11 @@
 
   const residentViewStateStore = browserHostModule.viewStateStore.createViewStateStore();
   const residentDesktopRenderer = browserHostModule.residentRenderer.createResidentRenderer({ document, els });
-  const residentStateSource = ruleComposition.stateSourcePort;
+  const browserProjectionSource = ruleComposition.projectionSource;
   const residentProjectionAdapter = browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
-    stateSource: residentStateSource,
-    visibilityPolicy: (state, viewer, projectionContext) => {
-      if (!finalReadModelOwner) {
-        throw new TypeError("BrowserProjection 的 FinalReadModel owner 尚未装配");
-      }
-      if (!browserReadModelOwner) {
-        throw new TypeError("BrowserProjection 的 BrowserReadModel owner 尚未装配");
-      }
-      const visible = browserHostModule.projectionAdapter.defaultVisibilityPolicy(
-        state,
-        viewer,
-        projectionContext,
-      );
-      const finalReadModel = finalReadModelOwner.project(state);
-      const browserReadModel = browserReadModelOwner.project(state, {
-        viewer,
-        createHandPresentation: (player) => player?.hand || [],
-        createReservedCardItems: (player) => player?.reservedCards || [],
-        createRenderPresentation: (input) => createBrowserRenderPresentation(input),
-      });
-      visible.resident = { finalReadModel, browserReadModel };
-      return visible;
-    },
-    createActionContext: ({ state }) => ({
-      actorId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
-    }),
+    stateSource: browserProjectionSource,
+    sourceStateIsVisible: true,
+    createActionContext: ({ state }) => ({ actorId: state?.match?.currentPlayerId ?? null }),
     actionAdapter: {
       enumerate: (projectionContext) => ruleComposition.inputPort.enumerateActions(
         projectionContext.actorId == null ? {} : { actorId: projectionContext.actorId },
@@ -1342,35 +1323,8 @@
   const getTurnFlowProjection = () => (
     browserHostModule.residentProjection.selectTurnFlowProjection(getCanonicalBrowserProjection())
   );
-  const pregameBoardCoordinateProjection = (() => {
-    const snapshot = solar.createSolarSnapshot(solar.createBaselineState());
-    const value = {
-      schemaVersion: "seti-board-coordinate-projection-v1",
-      identity: {
-        projectionId: "browser:pregame-board",
-        sourceKind: "committed",
-        stateVersion: 0,
-        sessionId: null,
-        sessionRevision: null,
-        viewerId: "browser:spectator",
-        viewerPlayerId: null,
-      },
-      tokens: [],
-      activeRocketId: null,
-      planetLocations: structuredClone(snapshot.planetLocations),
-      visibleContents: structuredClone(snapshot.visibleContents),
-    };
-    const freeze = (item) => {
-      if (item == null || typeof item !== "object" || Object.isFrozen(item)) return item;
-      Object.values(item).forEach(freeze);
-      return Object.freeze(item);
-    };
-    return freeze(value);
-  })();
   const getBoardCoordinateProjection = () => (
-    ruleComposition.stateSourcePort.getSnapshot()
-      ? browserHostModule.residentProjection.selectBoardCoordinateProjection(getCanonicalBrowserProjection())
-      : pregameBoardCoordinateProjection
+    browserHostModule.residentProjection.selectBoardCoordinateProjection(getCanonicalBrowserProjection())
   );
   const getProjectedFinalScoreBreakdown = (playerOrId) => {
     const playerId = typeof playerOrId === "object"
@@ -1379,14 +1333,7 @@
     return getFinalUiProjection().players.find((entry) => String(entry.id) === String(playerId))?.breakdown
       || { totalScore: Number(playerOrId?.resources?.score) || 0 };
   };
-  const readRuleState = () => ruleComposition.stateSourcePort.read().state;
-  const readPlayerTurnState = () => {
-    const state = readRuleState();
-    return {
-      players: structuredClone(state.players),
-      turn: structuredClone(state.turn),
-    };
-  };
+  const readPlayerTurnState = () => ruleComposition.readModelPort.read("playerTurn");
   const playerLookupRuntime = runtimeModule.createPlayerLookupRuntime({
     players,
     uiRuntimeState,
@@ -2746,7 +2693,7 @@
     getTurnState: () => getTurnFlowProjection(),
     HISTORY_SOURCE_MAIN,
     solar,
-    getSolarState: () => ruleComposition.stateSourcePort.read().state.solarSystem,
+    getSolarState: () => ruleComposition.readModelPort.read("solarBriefing"),
     data,
     aomomo,
     getAomomoCurrentX: (...args) => getAomomoCurrentX(...args),
@@ -3775,7 +3722,8 @@
     createPolicy: (seatId) => ai.heuristicPolicy.createHeuristicPolicy({
       difficulty: getPlayerById(seatId)?.aiDifficulty || AI_DIFFICULTY_LAUGHABLE,
     }),
-    readRuleState,
+    projectionSource: browserProjectionSource,
+    readAiControlProjection: readPlayerTurnState,
     stateOwners: {
       match: browserMatchRuntime,
       action: actionSessionRuntime,
@@ -3810,7 +3758,7 @@
         return {
           ...result,
           activePlayerCount,
-          playerIds: [...(readRuleState().turn?.activePlayerIds || [])],
+          playerIds: [...(readPlayerTurnState().turn?.activePlayerIds || [])],
         };
       },
       setTurnStatePlayerOrder,

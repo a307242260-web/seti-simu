@@ -220,7 +220,7 @@
       updateActionButtons,
     } = context;
     if (typeof getRuleProjection !== "function") {
-      throw new TypeError("createAiControlRuntime requires getRuleProjection() StateSource reader");
+      throw new TypeError("createAiControlRuntime requires getRuleProjection() player/turn DTO reader");
     }
     if (typeof setPlayerAiDifficulty !== "function") {
       throw new TypeError("createAiControlRuntime requires setPlayerAiDifficulty() Composition command");

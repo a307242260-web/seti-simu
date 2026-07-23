@@ -427,6 +427,45 @@ function createHarness(initialValue = 0) {
 }
 
 {
+  const replace = (target, source) => {
+    for (const key of Reflect.ownKeys(target)) delete target[key];
+    Object.assign(target, structuredClone(source));
+  };
+  const composition = createRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createActionRegistry: createRegistry,
+    createInitialState: (_options, workingState) => structuredClone(workingState),
+    stateAdapter: {
+      createWorkingState() {
+        const state = createState(12);
+        state.solarSystem.rootPoison = "canonical-root-must-not-escape";
+        return state;
+      },
+      createCommittedState: (workingState, committedState) => ({
+        ...structuredClone(workingState),
+        meta: structuredClone(committedState.meta),
+      }),
+      restoreWorkingState: replace,
+    },
+    readModels: {
+      matchSummary: (workingRoot) => ({ value: workingRoot.match.value }),
+    },
+    projectState: (state) => ({ match: structuredClone(state.match) }),
+    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"],
+      () => ({ effects: [{ type: "noop" }] }),
+      { noop: (state) => ({ ok: true, nextState: state }) })],
+  });
+  assert.equal(Object.hasOwn(composition, "stateSourcePort"), false,
+    "未显式提供 canonical projection adapter 时不得暴露完整 root port");
+  assert.deepEqual(composition.readModelPort.read("matchSummary"), { value: 12 });
+  assert.equal(composition.readModelPort.read("matchSummary").rootPoison, undefined,
+    "窄 read model 不得携带 canonical root poison");
+  assert.equal(Object.isFrozen(composition.readModelPort.read("matchSummary")), true);
+  assert.throws(() => composition.readModelPort.read("canonicalRoot"), /未注册 read model/);
+}
+
+{
   let captured = null;
   const adapter = {
     createWorkingState: () => ({ match: {}, turn: {}, meta: {} }),
@@ -437,7 +476,16 @@ function createHarness(initialValue = 0) {
     ruleCompositionApi: {
       createRuleComposition(options) {
         captured = options;
-        return { options };
+        return {
+          options,
+          projection: (viewer) => ({
+            stateVersion: 7,
+            state: options.projectState({
+              match: { value: 9 },
+              rootPoison: "must-not-cross-browser-boundary",
+            }, viewer),
+          }),
+        };
       },
     },
     stateStoreApi: { SCHEMA_VERSION: 3 },
@@ -447,7 +495,7 @@ function createHarness(initialValue = 0) {
     },
     initialGameState: {
       createCommittedCandidate: (workingState, metadata, schemaVersion, stateVersion) => ({
-        ...structuredClone(workingState),
+        match: structuredClone(workingState.match),
         meta: { ...metadata, schemaVersion, stateVersion },
       }),
     },
@@ -458,6 +506,15 @@ function createHarness(initialValue = 0) {
     executeOwnerInput: () => ({ ok: true }),
     createActionRegistry: () => ({}),
     standardActionDomain: { families: ["launch"] },
+    browserProjection: {
+      visibilityPolicy: (state) => ({
+        match: structuredClone(state.match),
+        hasRootPoison: Object.hasOwn(state, "rootPoison"),
+      }),
+      getFinalReadModelOwner: () => ({ project: () => ({ final: true }) }),
+      getBrowserReadModelOwner: () => ({ project: () => ({ browser: true }) }),
+      createRenderPresentation: () => ({}),
+    },
   });
   assert.equal(composition.options, captured);
   assert.equal(captured.invariantValidators[0], adapter.validateSessionBoundary);
@@ -465,9 +522,26 @@ function createHarness(initialValue = 0) {
   const initial = captured.createInitialState({}, { match: {}, turn: {} });
   assert.equal(initial.meta.seed, "browser-seed");
   assert.equal(initial.meta.schemaVersion, 3);
-  assert.deepEqual(captured.projectState({ meta: { stateVersion: 2 }, match: { a: 1 }, turn: { b: 2 } }), {
-    meta: { stateVersion: 2 }, match: { a: 1 }, turn: { b: 2 },
+  assert.equal(captured.projectWorkingState, true);
+  assert.deepEqual(captured.projectState({
+    match: { a: 1 },
+    playerState: {}, turnState: {}, solarState: {}, rocketState: {}, planetStatsState: {},
+    nebulaDataState: {}, cardState: {}, techGameState: {}, alienGameState: {}, finalScoringState: {},
+    rootPoison: "secret",
+  }, null, null, { stateVersion: 2 }), {
+    match: { a: 1 },
+    hasRootPoison: false,
+    resident: { finalReadModel: { final: true }, browserReadModel: { browser: true } },
   });
+  assert.equal(Object.prototype.hasOwnProperty.call(composition, "stateSourcePort"), false,
+    "Browser composition 不得暴露 canonical root state source");
+  assert.deepEqual(composition.projectionSource.read().state, {
+    match: { value: 9 },
+    hasRootPoison: false,
+    resident: { finalReadModel: { final: true }, browserReadModel: { browser: true } },
+  },
+    "Browser projection source 必须只返回显式投影，语义 poison 不得越界");
+  assert.equal(composition.projectionSource.read().state.rootPoison, undefined);
 }
 
 console.log("rule-composition tests passed");

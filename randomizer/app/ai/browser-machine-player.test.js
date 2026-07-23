@@ -30,19 +30,18 @@ function action(overrides = {}) {
   let source = {
     source: { kind: "committed", stateVersion: 4, phase: "idle" },
     state: {
-      turn: { currentPlayerId: "p1" },
-      players: { currentPlayerId: "p1" },
-      match: { decisionVersion: 2 },
+      match: { currentPlayerId: "p1", decisionVersion: 2 },
+      rootPoison: "must-not-be-read",
     },
     decision: null,
   };
   const legal = action();
   const ruleComposition = {
     inspect: () => structuredClone(inspection),
-    stateSourcePort: { read: () => structuredClone(source) },
     inputPort: { enumerateActions: () => [legal] },
   };
-  const readBoundary = createCompositionPolicyBoundaryReader({ ruleComposition });
+  const projectionSource = { read: () => structuredClone(source) };
+  const readBoundary = createCompositionPolicyBoundaryReader({ ruleComposition, projectionSource });
   assert.deepEqual(readBoundary("p1"), {
     kind: "action",
     actorId: "p1",
@@ -64,15 +63,15 @@ function action(overrides = {}) {
       },
       ruleComposition: {
         inspect: () => ({ phase: "idle", session: null }),
-        stateSourcePort: {
-          read: () => ({
-            source: { stateVersion: 0 },
-            state: { turn: { currentPlayerId: "p1" }, players: { currentPlayerId: "p1" } },
-            decision: null,
-          }),
-        },
         inputPort: { enumerateActions: () => [] },
         subscribe: () => () => {},
+      },
+      projectionSource: {
+        read: () => ({
+          source: { stateVersion: 0 },
+          state: { match: { currentPlayerId: "p1" } },
+          decision: null,
+        }),
       },
       inputPort: {
         setPlayerDifficulty(...args) {
@@ -84,7 +83,7 @@ function action(overrides = {}) {
       projectionAdapter: { projectSource: () => ({}) },
       inputAdapter: { dispatchAction: () => ({}), submitDecision: () => ({}) },
       createPolicy: () => ({ decide: () => null }),
-      readRuleState: () => ({ players: {}, turn: {}, pieces: {} }),
+      readAiControlProjection: () => ({ players: {}, turn: {} }),
       stateOwners: {},
       controlContext: { getPlayerById: () => null },
     });
@@ -133,6 +132,7 @@ function action(overrides = {}) {
   const traces = [];
   const port = createBrowserMachinePlayerPort({
     ruleComposition,
+    projectionSource,
     policyInputAdapterModule: {
       createPolicyInputAdapter(options) {
         return {
@@ -159,8 +159,7 @@ function action(overrides = {}) {
   assert.deepEqual(await port.runOnce(), { ok: true, actionId: "pass:p1" });
   assert.deepEqual(traces, [["request", "p1", "pass:p1"]]);
 
-  source.state.turn.currentPlayerId = "human";
-  source.state.players.currentPlayerId = "human";
+  source.state.match.currentPlayerId = "human";
   const human = await port.runOnce();
   assert.equal(human.code, "BROWSER_MACHINE_SEAT_NOT_CONTROLLED");
   assert.equal(traces.length, 1, "人类席位不得创建 Policy 请求");

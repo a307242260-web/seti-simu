@@ -33,7 +33,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
     终局、日志与恢复只读取 BrowserProjection 的窄 runtime selector；终局规则派生由
-    `randomizer/game/final-read-model.js` 从 StateSource state 一次生成，Browser runtime
+    `randomizer/game/final-read-model.js` 在 Browser Composition 投影边界内从显式 working root 一次生成，Browser runtime
     不再接收计分 slices 或拼装第二个 rule root。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
 17. `randomizer/app/ai/control-runtime.js` 封装机器席位配置、快照/恢复与调度；`ai/browser-bootstrap.js` 直接装配 control runtime、Browser Machine Player Host、Composition boundary reader 与 PolicyInputAdapter。Browser 不加载 controller adapter、legacy valuation/candidate、pending resolver、report/tuning 或 batch/A-B runtime。
@@ -49,7 +49,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/runtime.js`：创建 Decision Session、纯 UI 状态与 Browser Host 内部状态；不得恢复通用 `pending` 容器或把规则事实塞入 UI/host state。
 - `randomizer/app/browser-rule-composition.js`：把 Browser working-state adapter、committed/save metadata 与 rules-only Composition factory 连接起来；不读取 DOM、恢复 UI、AI controller 或领域 renderer。
 - `randomizer/app/render-runtime.js`：传统 DOM renderer 的兼容外壳；生产 context 只接收 `getProjection()`、纯 ViewState 与显式 capability inventory 中的纯模块、DOM-only helper、标量/新 DTO selector、输入 callback，不接收 `browserRuleState/workingState/playerState/turnState/cardState/...` 或复合 root reader/writer。未分类能力在生产 bootstrap 时 fail-fast；对象型窄 selector 必须在 composition 边界返回新 identity。旧领域 readout 若会 normalize 输入，只能处理 projection 的一次性克隆；补牌、机会排队、AI 调度等规则推进不得由 renderer 触发。
-- `randomizer/app/rule-composition.js`：Browser 唯一规则 composition；内部独占 StateStore、Standard Action registry、Effect runtime 与 active Session，向生产 caller 只暴露 `inputPort`、只读 projection/state source 和 `lifecycle.newGame/save/validateRestore/restore`。稳定 working root 由 composition 内部 state adapter 原位水合，宿主不得执行 slices 回灌；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。
+- `randomizer/app/rule-composition.js`：Browser 唯一规则 composition；内部独占 StateStore、Standard Action registry、Effect runtime 与 active Session，向生产 caller 只暴露 `inputPort`、viewer-safe `projectionSource`、固定名称的窄 `readModelPort` 和 `lifecycle.newGame/save/validateRestore/restore`。Browser 不装配 canonical `stateSourcePort`；规则 owner 在 composition 内显式接收 working root，展示与 AI caller 只能读取深冻结 DTO。稳定 working root 由 composition 内部 state adapter 原位水合，宿主不得执行 slices 回灌；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。
 - `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
 - `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；科技/分析在边界内直连规则 action/ability，扫描与打牌分别下沉到 `scan-flow.js` / `hand-flow.js` 的显式 root 入口，`app.js` 只负责装配。Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
 - `randomizer/app/quick-turn-action-executor.js`：快速交易、公司 1x、弃牌角标、放置数据、符文族面部 symbol、PASS 与结束回合的 working-root 生产边界。Browser/AI 的 descriptor 共用同一原子入口；Quick family 只写 caller root 与 quick history，不推进 turn，PASS 只完成主行动，只有 `end_turn` 推进 turn/current player；stale 与失败会恢复完整 working root。

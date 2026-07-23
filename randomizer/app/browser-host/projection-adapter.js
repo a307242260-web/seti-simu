@@ -284,6 +284,7 @@
     const visibilityPolicy = options.visibilityPolicy || defaultVisibilityPolicy;
     const createActionContext = options.createActionContext || ((input) => input);
     const decisionPresenter = options.decisionPresenter || defaultDecisionPresenter;
+    const sourceStateIsVisible = options.sourceStateIsVisible === true;
     const policyId = options.policyId || visibilityPolicy.policyId || "custom-viewer-policy";
     if (!stateStore?.getSnapshot && !stateSource?.read) {
       throw new TypeError("BrowserProjectionAdapter 需要 StateStore.getSnapshot() 或 StateSource.read()");
@@ -298,11 +299,13 @@
     if (typeof decisionPresenter !== "function") throw new TypeError("decisionPresenter 必须是函数");
 
     function buildProjection({ kind, state, viewer, inspection = null, observation = null, sourceEnvelope = null }) {
-      const visible = visibilityPolicy(clone(state), clone(viewer), {
-        kind,
-        inspection: clone(inspection),
-        observation: clone(observation),
-      });
+      const visible = sourceStateIsVisible
+        ? clone(state)
+        : visibilityPolicy(clone(state), clone(viewer), {
+          kind,
+          inspection: clone(inspection),
+          observation: clone(observation),
+        });
       if (!visible || typeof visible !== "object" || Array.isArray(visible)) {
         throw new TypeError("visibilityPolicy 必须返回普通投影对象");
       }

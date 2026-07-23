@@ -62,9 +62,8 @@
     }
     if (stateAdapter && (typeof stateAdapter.createWorkingState !== "function"
       || typeof stateAdapter.createCommittedState !== "function"
-      || typeof stateAdapter.createProjectionState !== "function"
       || typeof stateAdapter.restoreWorkingState !== "function")) {
-      throw new TypeError("Rule Composition stateAdapter 缺少 working/committed/projection/restore 原子协议");
+      throw new TypeError("Rule Composition stateAdapter 缺少 working/committed/restore 原子协议");
     }
     const storeOptions = Object.freeze({ invariantValidators: [...(options.invariantValidators || [])] });
     let workingState = stateAdapter
@@ -163,7 +162,12 @@
         stateStore: store,
         validateState: (state) => store.validate(state),
         projectState: (state, viewer, inspection) => (
-          options.projectState(clone(state), clone(viewer), clone(inspection))
+          options.projectState(
+            clone(stateAdapter && options.projectWorkingState ? workingState : state),
+            clone(viewer),
+            clone(inspection),
+            { stateVersion: state?.meta?.stateVersion ?? store.getSnapshot().meta.stateVersion },
+          )
         ),
       });
       const contextualizeExecutor = (executor) => {
@@ -238,13 +242,21 @@
 
     function committedProjection(viewer = null) {
       const state = store.getSnapshot();
-      const projected = options.projectState(clone(state), clone(viewer), null);
+      const projected = options.projectState(
+        clone(stateAdapter && options.projectWorkingState ? workingState : state),
+        clone(viewer),
+        null,
+        { stateVersion: state.meta.stateVersion },
+      );
       return deepFreeze({ phase: "idle", stateVersion: state.meta.stateVersion, state: projected });
     }
 
     function projection(viewer = null) {
       if (!activeSession) return committedProjection(viewer);
-      return deepFreeze(runtime.observe(activeSession, clone(viewer)));
+      return deepFreeze({
+        ...runtime.observe(activeSession, clone(viewer)),
+        stateVersion: store.getSnapshot().meta.stateVersion,
+      });
     }
 
     function inspect() {
@@ -256,6 +268,9 @@
     }
 
     function readStateSource(viewer = null) {
+      if (stateAdapter && typeof stateAdapter.createProjectionState !== "function") {
+        throw new TypeError("Rule Composition 未配置 canonical state source");
+      }
       const committed = store.getSnapshot();
       const projectedState = stateAdapter
         ? stateAdapter.createProjectionState(workingState, committed)
@@ -614,13 +629,8 @@
     });
     const lifecycle = Object.freeze({ newGame, save, validateRestore, restore });
 
-    return Object.freeze({
-      SAVE_SCHEMA_VERSION,
-      inputPort,
-      lifecycle,
-      projection,
-      inspect,
-      stateSourcePort: Object.freeze({
+    const stateSourcePort = !stateAdapter || typeof stateAdapter.createProjectionState === "function"
+      ? Object.freeze({
         getSnapshot: () => store.getSnapshot(),
         read: readStateSource,
         project(projector, viewer = null) {
@@ -632,7 +642,33 @@
           if (typeof listener !== "function") throw new TypeError("Rule Composition state source subscriber 必须是函数");
           return store.subscribe(listener);
         },
-      }),
+      })
+      : null;
+    const readModelEntries = Object.entries(options.readModels || {});
+    for (const [name, reader] of readModelEntries) {
+      if (typeof reader !== "function") throw new TypeError(`Rule Composition read model ${name} 必须是函数`);
+    }
+    const readModelPort = readModelEntries.length
+      ? Object.freeze({
+        read(name) {
+          const reader = options.readModels?.[name];
+          if (typeof reader !== "function") throw new TypeError(`Rule Composition 未注册 read model: ${name}`);
+          return deepFreeze(clone(reader(workingState, {
+            phase: activeSession?.phase || "idle",
+            stateVersion: store.getSnapshot().meta.stateVersion,
+          })));
+        },
+      })
+      : null;
+
+    return Object.freeze({
+      SAVE_SCHEMA_VERSION,
+      inputPort,
+      lifecycle,
+      projection,
+      inspect,
+      ...(stateSourcePort ? { stateSourcePort } : {}),
+      ...(readModelPort ? { readModelPort } : {}),
       subscribe(listener) {
         if (typeof listener !== "function") throw new TypeError("Rule Composition subscriber 必须是函数");
         listeners.add(listener);
