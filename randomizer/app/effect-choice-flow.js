@@ -11,6 +11,132 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
+    "cards", "players", "rocketActions", "data", "solar", "planetStats",
+    "planetReferenceLayout", "planetRewards", "cardEffects", "historyCommands",
+    "aomomo", "endGameScoring",
+  ]);
+
+  function createBrowserEffectChoiceStaticContext(dependencies = {}) {
+    const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
+      (key) => !Object.prototype.hasOwnProperty.call(dependencies, key) || dependencies[key] == null,
+    );
+    if (missing.length) {
+      throw new Error(`Browser Effect Choice 静态模块缺少依赖：${missing.join(", ")}`);
+    }
+    return Object.freeze(Object.fromEntries(
+      BROWSER_STATIC_DEPENDENCY_KEYS.map((key) => [key, dependencies[key]]),
+    ));
+  }
+
+  function createBrowserEffectChoiceFlow(options = {}) {
+    const {
+      staticContext,
+      playerLookupRuntime,
+      playerEffectOwnerRuntime,
+      renderRuntime,
+      coordinateRuntime,
+      effectFlowRuntime,
+      scoreSourceRuntime,
+      cardHelpers,
+      getScanRuntime,
+      getIncomeRuntime,
+      getHandRuntime,
+      getCardRuntime,
+      getActionInteractionRuntime,
+      hostPort = {},
+    } = options;
+    const requiredOwners = {
+      staticContext, playerLookupRuntime, playerEffectOwnerRuntime, renderRuntime, coordinateRuntime,
+      effectFlowRuntime, scoreSourceRuntime, cardHelpers,
+    };
+    const missingOwners = Object.entries(requiredOwners)
+      .filter(([, owner]) => !owner || typeof owner !== "object")
+      .map(([name]) => name);
+    if (missingOwners.length) {
+      throw new TypeError(`Browser Effect Choice bootstrap 缺少 owner：${missingOwners.join(", ")}`);
+    }
+    const getters = {
+      scanRuntime: getScanRuntime,
+      incomeRuntime: getIncomeRuntime,
+      handRuntime: getHandRuntime,
+      cardRuntime: getCardRuntime,
+      actionInteractionRuntime: getActionInteractionRuntime,
+    };
+    const missingGetters = Object.entries(getters)
+      .filter(([, getter]) => typeof getter !== "function")
+      .map(([name]) => name);
+    if (missingGetters.length) {
+      throw new TypeError(`Browser Effect Choice bootstrap 缺少 owner getter：${missingGetters.join(", ")}`);
+    }
+    const lazy = (label, getter, method) => (...args) => {
+      const fn = getter()?.[method];
+      if (typeof fn !== "function") {
+        throw new Error(`Browser Effect Choice owner ${label} 缺少方法：${method}`);
+      }
+      return fn(...args);
+    };
+
+    return createEffectChoiceFlowHelpers({
+      ...staticContext,
+      document: hostPort.document,
+      uiRuntimeState: hostPort.uiRuntimeState,
+      els: hostPort.els,
+      SCORE_SOURCE_KEYS: hostPort.SCORE_SOURCE_KEYS,
+      getCurrentPlayer: playerLookupRuntime.getCurrentPlayer,
+      getEffectOwnerPlayer: playerEffectOwnerRuntime.getEffectOwnerPlayer,
+      getExplicitEffectOwnerPlayer: playerEffectOwnerRuntime.getExplicitEffectOwnerPlayer,
+      getPendingOwnerFields: playerEffectOwnerRuntime.getPendingOwnerFields,
+      getPendingOwnerPlayer: playerEffectOwnerRuntime.getPendingOwnerPlayer,
+      withPendingOwnerPlayer: playerEffectOwnerRuntime.withPendingOwnerPlayer,
+      closeScanTargetPicker: lazy("scanRuntime", getScanRuntime, "closeScanTargetPicker"),
+      renderStateReadout: renderRuntime.renderStateReadout,
+      renderPlayerHand: renderRuntime.renderPlayerHand,
+      renderPlayerStats: renderRuntime.renderPlayerStats,
+      renderReservedCards: renderRuntime.renderReservedCards,
+      renderRockets: renderRuntime.renderRockets,
+      syncPlanetOrbitLandMarkers: coordinateRuntime.syncPlanetOrbitLandMarkers,
+      renderActionEffectBar: hostPort.renderActionEffectBar,
+      beginEffectHistoryStep: effectFlowRuntime.beginEffectHistoryStep,
+      endEffectHistoryStep: effectFlowRuntime.endEffectHistoryStep,
+      recordHistoryCommand: effectFlowRuntime.recordHistoryCommand,
+      finishAutomaticRewardEffect: hostPort.finishAutomaticRewardEffect,
+      insertActionEffectsAfterCurrent: hostPort.insertActionEffectsAfterCurrent,
+      completeCurrentActionEffect: effectFlowRuntime.completeCurrentActionEffect,
+      executeSectorXScanEffect: lazy("scanRuntime", getScanRuntime, "executeSectorXScanEffect"),
+      buildSectorScanChoicesForX: lazy("scanRuntime", getScanRuntime, "buildSectorScanChoicesForX"),
+      getSectorScanTargetLabel: lazy("scanRuntime", getScanRuntime, "getSectorScanTargetLabel"),
+      normalizeResourceCost: hostPort.normalizeResourceCost,
+      formatIncomeGain: lazy("incomeRuntime", getIncomeRuntime, "formatIncomeGain"),
+      applyIncomeFromCard: lazy("incomeRuntime", getIncomeRuntime, "applyIncomeFromCard"),
+      recordScoreSourceForGainEffect: scoreSourceRuntime.recordScoreSourceForGainEffect,
+      addPlayerScoreSource: scoreSourceRuntime.addPlayerScoreSource,
+      addScoreSourceFromGain: scoreSourceRuntime.addScoreSourceFromGain,
+      beginCardSelection: lazy("handRuntime", getHandRuntime, "beginCardSelection"),
+      beginDiscardSelection: lazy("handRuntime", getHandRuntime, "beginDiscardSelection"),
+      restoreObjectSnapshot: hostPort.restoreObjectSnapshot,
+      applyCardCornerRewardFromCard: lazy("cardRuntime", getCardRuntime, "applyCardCornerRewardFromCard"),
+      buildRepeatedCardCornerMoveEffect: (...args) => cardHelpers.buildRepeatedCardCornerMoveEffect(
+        ...args,
+        { effectType: staticContext.cardEffects.EFFECT_TYPES.CARD_MOVE, getCardLabel: staticContext.cards.getCardLabel },
+      ),
+      formatRepeatedCardCornerMoveReward: (...args) => cardHelpers.formatRepeatedCardCornerMoveReward(
+        ...args,
+        hostPort.formatPlanetRewardGain,
+      ),
+      buildPlutoMarkerRemovalChoices: lazy(
+        "actionInteractionRuntime",
+        getActionInteractionRuntime,
+        "buildPlutoMarkerRemovalChoices",
+      ),
+      removePlutoMarker: lazy("actionInteractionRuntime", getActionInteractionRuntime, "removePlutoMarker"),
+      getPlanetSectorCoordinate: hostPort.getPlanetSectorCoordinate,
+      restoreMutableObject: hostPort.restoreMutableObject,
+      getSectorContentForMove: hostPort.getSectorContentForMove,
+      isAsteroidContent: hostPort.isAsteroidContent,
+    });
+  }
+
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createEffectChoiceFlowHelpers requires function: ${name}`);
@@ -1164,6 +1290,9 @@
   }
 
   return {
+    BROWSER_STATIC_DEPENDENCY_KEYS,
+    createBrowserEffectChoiceStaticContext,
+    createBrowserEffectChoiceFlow,
     createEffectChoiceFlowHelpers,
   };
 });

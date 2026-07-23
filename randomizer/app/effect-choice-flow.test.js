@@ -1,8 +1,22 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createEffectChoiceFlowHelpers } = require("./effect-choice-flow");
+const {
+  createBrowserEffectChoiceFlow,
+  createBrowserEffectChoiceStaticContext,
+  createEffectChoiceFlowHelpers,
+} = require("./effect-choice-flow");
 const { routeProbeDecisionClick } = require("./events");
+
+assert.throws(
+  () => createBrowserEffectChoiceStaticContext({}),
+  /静态模块缺少依赖/,
+);
+
+assert.throws(
+  () => createBrowserEffectChoiceFlow({}),
+  /bootstrap 缺少 owner/,
+);
 
 function makeButton() {
   return {
