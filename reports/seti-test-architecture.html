@@ -72,6 +72,9 @@
     td:first-child { font-weight: 600; color: var(--ink); }
     .count { width: 76px; text-align: right; font: 600 13px/1.6 "SFMono-Regular", Consolas, monospace; color: var(--blue); }
     .status { color: var(--green); font-weight: 600; }
+    .test-catalog td:first-child { width: 42%; font-weight: 400; }
+    .test-catalog td:nth-child(2) { width: 24%; color: var(--blue); font: 600 12px/1.55 "SFMono-Regular", Consolas, monospace; }
+    .test-catalog code { overflow-wrap: anywhere; }
 
     .evidence { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .evidence article { padding: 15px 16px; border: 1px solid var(--line); }
@@ -190,6 +193,86 @@
         <tr><td>Policy Host</td><td class="count">3</td><td>请求代次、deadline、取消、迟到、重复和合法 actionId 门禁。</td><td>旧 generation 或迟到响应推进当前回合。</td></tr>
         <tr><td>Rules</td><td class="count">29</td><td>行动、卡牌、数据、科技、外星人和计分的领域不变量。</td><td>资源不足、非法目标、重复奖励或失败操作产生部分写入。</td></tr>
         <tr><td>Policy</td><td class="count">3</td><td>策略确定性、稳定排序、代表性选择估值且不改输入。</td><td>返回非法 actionId、tie-break 漂移、修改 observation。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>逐测试覆盖清单</h2>
+    <p class="note">以下 70 项与 <code>tools/node-test-inventory.js</code> 一一对应。“所属部分”是正式 owner，不根据文件路径推断；“覆盖功能”是该测试必须证明的行为义务。</p>
+    <table class="test-catalog">
+      <thead><tr><th>测试文件</th><th>所属部分</th><th>覆盖功能</th></tr></thead>
+      <tbody>
+        <tr><td><code>randomizer/app/rule-composition.test.js</code></td><td>architecture/rule-composition</td><td>组合层独占 registry、session 与原子提交</td></tr>
+        <tr><td><code>randomizer/app/conditional-decision-domain.test.js</code></td><td>architecture/standard-action</td><td>条件选择统一映射为有 owner/version 的 Standard Action</td></tr>
+        <tr><td><code>randomizer/training/simulation-standard-action-composition.test.js</code></td><td>architecture/standard-action</td><td>生产 composition 唯一注册 22 family 并正式执行</td></tr>
+        <tr><td><code>randomizer/game/effects/session-runtime.test.js</code></td><td>architecture/effect-session</td><td>Effect Session 独占 working copy、队列、Decision 与提交</td></tr>
+        <tr><td><code>randomizer/game/effects/session-journal.test.js</code></td><td>architecture/effect-session</td><td>session journal 可重放且 barrier/undo 语义稳定</td></tr>
+        <tr><td><code>randomizer/game/effects/state-store-session.test.js</code></td><td>architecture/effect-session</td><td>Session 只经 StateStore CAS 原子提交</td></tr>
+        <tr><td><code>randomizer/game/effects/standard-action-session.test.js</code></td><td>architecture/effect-session</td><td>Standard Action 领域只经统一 Session/Decision 入口</td></tr>
+        <tr><td><code>randomizer/game/effects/quick-action-session.test.js</code></td><td>architecture/effect-session</td><td>快速行动 continuation 由 Session 串行推进</td></tr>
+        <tr><td><code>randomizer/game/effects/research-tech-session.test.js</code></td><td>architecture/effect-session</td><td>科技选择与蓝槽选择共享一个 Decision owner</td></tr>
+        <tr><td><code>randomizer/game/effects/scan-card-session.test.js</code></td><td>architecture/effect-session</td><td>扫描卡牌链通过 Effect Session 有序提交</td></tr>
+        <tr><td><code>randomizer/game/effects/industry-alien-session.test.js</code></td><td>architecture/effect-session</td><td>公司与外星人 continuation 共用 session journal</td></tr>
+        <tr><td><code>randomizer/game/state/state-store.test.js</code></td><td>architecture/state-store</td><td>StateStore 快照隔离、版本单调与 CAS</td></tr>
+        <tr><td><code>randomizer/game/state/host-source.test.js</code></td><td>architecture/state-store</td><td>Host 只读取冻结的权威投影</td></tr>
+        <tr><td><code>randomizer/game/state/deterministic-sequences.test.js</code></td><td>architecture/state-store</td><td>序列号随 checkpoint 确定性恢复</td></tr>
+        <tr><td><code>randomizer/game/state/high-coupling-slices.test.js</code></td><td>architecture/state-store</td><td>高耦合 slices 以单一 root 原位水合</td></tr>
+        <tr><td><code>randomizer/game/state/low-coupling-slices.test.js</code></td><td>architecture/state-store</td><td>低耦合 slices 按 schema 克隆与恢复</td></tr>
+        <tr><td><code>randomizer/app/browser-host/browser-host.test.js</code></td><td>architecture/browser-host</td><td>Browser Host 只接收 projection 与正式 input port</td></tr>
+        <tr><td><code>randomizer/app/browser-host/browser-services.test.js</code></td><td>architecture/browser-host</td><td>保存恢复只接受 composition 当前 schema</td></tr>
+        <tr><td><code>randomizer/app/browser-host/action-bar.test.js</code></td><td>architecture/browser-host</td><td>Action Bar 只呈现 legal descriptor 并提交 intent</td></tr>
+        <tr><td><code>randomizer/app/browser-host/decision-ui.test.js</code></td><td>architecture/browser-host</td><td>通用 Decision UI 保留 owner 与 decisionVersion</td></tr>
+        <tr><td><code>randomizer/app/browser-host/card-decision-ui.test.js</code></td><td>architecture/browser-host</td><td>卡牌 Decision 仅投影公开 choice 并原样提交</td></tr>
+        <tr><td><code>randomizer/app/browser-host/industry-alien-decision-ui.test.js</code></td><td>architecture/browser-host</td><td>公司/外星选择经 presentation registry 映射</td></tr>
+        <tr><td><code>randomizer/app/browser-host/player-stats-ui.test.js</code></td><td>architecture/browser-host</td><td>常驻玩家统计只读 projection</td></tr>
+        <tr><td><code>randomizer/app/browser-host/policy-input-adapter.test.js</code></td><td>architecture/browser-host</td><td>人类与 Policy 共用正式 Action/Decision 输入</td></tr>
+        <tr><td><code>randomizer/app/browser-host/resident-renderer.test.js</code></td><td>architecture/browser-host</td><td>resident renderer 单向消费冻结 selector</td></tr>
+        <tr><td><code>randomizer/app/events.test.js</code></td><td>architecture/browser-host</td><td>DOM dataset 只路由到 Standard intent/显式 input callback</td></tr>
+        <tr><td><code>randomizer/app/game-recovery.test.js</code></td><td>architecture/browser-host</td><td>Browser recovery 包 round-trip 且瞬态 UI 不入权威状态</td></tr>
+        <tr><td><code>randomizer/app/simulation-host-contract.test.js</code></td><td>architecture/simulation-host</td><td>Simulation reset/observe/legalActions/step/reward/terminal/dispose 公共契约</td></tr>
+        <tr><td><code>randomizer/app/simulation-decision-owner.test.js</code></td><td>architecture/simulation-host</td><td>Simulation Decision owner 与合法集一致</td></tr>
+        <tr><td><code>randomizer/app/simulation-effect-session-worker-recovery.test.js</code></td><td>architecture/simulation-host</td><td>worker 恢复 active Session 与 journal</td></tr>
+        <tr><td><code>randomizer/app/simulation-no-browser-globals.test.js</code></td><td>architecture/simulation-host</td><td>rules-only Simulation 不依赖 DOM/Window</td></tr>
+        <tr><td><code>randomizer/app/simulation-state-checkpoint.test.js</code></td><td>architecture/simulation-host</td><td>checkpoint 当前 schema round-trip 保持 action identity</td></tr>
+        <tr><td><code>randomizer/app/simulation-training-replay.test.js</code></td><td>architecture/simulation-host</td><td>训练 replay 逐步复现 observation/action/reward</td></tr>
+        <tr><td><code>randomizer/training/simulation-rule-composition.test.js</code></td><td>architecture/simulation-host</td><td>生产 rules-only composition 经正式 Decision 提交</td></tr>
+        <tr><td><code>randomizer/game/ai/policy-port.test.js</code></td><td>architecture/policy-host</td><td>Policy Port schema、取消、超时与迟到响应零副作用</td></tr>
+        <tr><td><code>randomizer/game/ai/machine-player-host.test.js</code></td><td>architecture/policy-host</td><td>Machine Player Host 独占代次、取消和合法性门禁</td></tr>
+        <tr><td><code>randomizer/app/ai/browser-machine-player.test.js</code></td><td>architecture/policy-host</td><td>Browser 机器席位通过 PolicyInputAdapter 装配</td></tr>
+        <tr><td><code>randomizer/game/ai/heuristic-policy.test.js</code></td><td>policy/heuristic-policy</td><td>启发式策略确定性选择且只返回 legal actionId</td></tr>
+        <tr><td><code>randomizer/game/ai/heuristic-evaluator.test.js</code></td><td>policy/heuristic-evaluator</td><td>估值稳定排序且不修改 observation/descriptors</td></tr>
+        <tr><td><code>randomizer/game/ai/selection-evaluator.test.js</code></td><td>policy/selection-evaluator</td><td>setup、支付、科技与外星选择使用领域估值</td></tr>
+        <tr><td><code>randomizer/game/actions/standard-action.test.js</code></td><td>rules/actions</td><td>Standard Action registry 的 identity、phase、validate/execute 协议</td></tr>
+        <tr><td><code>randomizer/game/actions/actions.test.js</code></td><td>rules/actions</td><td>发射、环绕、登陆、科技生产规则的合法性与提交</td></tr>
+        <tr><td><code>randomizer/game/actions/quick-trades.test.js</code></td><td>rules/actions</td><td>快速交易成本、次数与资源变更</td></tr>
+        <tr><td><code>randomizer/game/players.test.js</code></td><td>rules/actions</td><td>玩家资源/收入/支付不变量</td></tr>
+        <tr><td><code>randomizer/game/rockets.test.js</code></td><td>rules/actions</td><td>火箭创建、占位与 owner 规则</td></tr>
+        <tr><td><code>randomizer/game/rockets.move.test.js</code></td><td>rules/actions</td><td>火箭移动边界、方向和移动点</td></tr>
+        <tr><td><code>randomizer/game/planet-stats.test.js</code></td><td>rules/actions</td><td>星球轨道/登陆统计按权威占位计算</td></tr>
+        <tr><td><code>randomizer/solar-system/core.test.js</code></td><td>rules/actions</td><td>太阳系旋转、坐标和轨道投影确定</td></tr>
+        <tr><td><code>randomizer/game/cards/deck.test.js</code></td><td>rules/cards</td><td>牌库抽取、弃牌、补充与实例 identity</td></tr>
+        <tr><td><code>randomizer/game/cards/effects.test.js</code></td><td>rules/cards</td><td>卡牌效果解析为显式规则结果</td></tr>
+        <tr><td><code>randomizer/game/cards/task-state.test.js</code></td><td>rules/cards</td><td>任务状态转换与完成门禁</td></tr>
+        <tr><td><code>randomizer/game/data/data.test.js</code></td><td>rules/data</td><td>数据获得、放置、分析与容量不变量</td></tr>
+        <tr><td><code>randomizer/game/data/nebula.test.js</code></td><td>rules/data</td><td>星云数据槽与奖励结算</td></tr>
+        <tr><td><code>randomizer/game/tech/tech.test.js</code></td><td>rules/tech</td><td>科技供应、取得、蓝槽与 owner 规则</td></tr>
+        <tr><td><code>randomizer/game/tech/bonuses.test.js</code></td><td>rules/tech</td><td>科技奖励按 tile/slot 唯一结算</td></tr>
+        <tr><td><code>randomizer/game/aliens/amiba.test.js</code></td><td>rules/aliens</td><td>阿米巴物种奖励与机会规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/aomomo.test.js</code></td><td>rules/aliens</td><td>奥陌陌物种轨迹与奖励规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/banrenma.test.js</code></td><td>rules/aliens</td><td>半人马物种机会与目标规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/chong.test.js</code></td><td>rules/aliens</td><td>虫族任务与化石选择规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/fangzhou.test.js</code></td><td>rules/aliens</td><td>方舟物种奖励与位置规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/jiuzhe.test.js</code></td><td>rules/aliens</td><td>九折物种机会队列与卡牌规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/runezu.test.js</code></td><td>rules/aliens</td><td>符文族 symbol 与分支规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/yichangdian.test.js</code></td><td>rules/aliens</td><td>异常点物种奖励与推进规则</td></tr>
+        <tr><td><code>randomizer/game/aliens/reveal-card-grants.test.js</code></td><td>rules/aliens</td><td>外星揭示卡奖励按 owner 唯一发放</td></tr>
+        <tr><td><code>randomizer/game/aliens/trace-placement-legality.test.js</code></td><td>rules/aliens</td><td>外星痕迹槽位、类型与 owner 合法性</td></tr>
+        <tr><td><code>randomizer/game/final-scoring.test.js</code></td><td>rules/scoring</td><td>终局计分板选择、占位与分数</td></tr>
+        <tr><td><code>randomizer/game/end-game-scoring.test.js</code></td><td>rules/scoring</td><td>终局总分只汇总正式分源</td></tr>
+        <tr><td><code>randomizer/game/history/action-history.test.js</code></td><td>rules/scoring</td><td>规则行动 history 的 commit/undo 边界</td></tr>
+        <tr><td><code>randomizer/game/history/commands.test.js</code></td><td>rules/scoring</td><td>history command 正反向应用保持不变量</td></tr>
+        <tr><td><code>randomizer/full-flow/standard-flow.test.js</code></td><td>full-flow/standard-flow-v1</td><td>唯一固定流程经生产 composition 公共 Action/Decision 到版本化权威盘面</td></tr>
       </tbody>
     </table>
   </section>
