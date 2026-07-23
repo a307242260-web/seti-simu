@@ -786,8 +786,7 @@
                 delete workingRoot.match.probeLocationRewardContinuation;
               }
               if (candidates[0]?.target?.kind === "sector-scan-target") {
-                delete workingRoot.match.scanTargetContinuation;
-                if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+                closeScanTargetPickerForRoot(workingRoot);
               }
               return {
                 ok: true,
@@ -3023,6 +3022,7 @@
   discardHandScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardHandScanCard", args);
   finalizeScanSourceCard = (...args) => callBrowserDomainCommand("scan_flow", "finalizeScanSourceCard", args);
   restoreYichangdianCornerPickerIfPending = (...args) => callBrowserDomainCommand("scan_flow", "restoreYichangdianCornerPickerIfPending", args);
+  const closeScanTargetPickerForRoot = closeScanTargetPicker;
   closeScanTargetPicker = (...args) => callBrowserDomainCommand("scan_flow", "closeScanTargetPicker", args);
   nebulaHasScannableData = (...args) => callBrowserDomainCommand("scan_flow", "nebulaHasScannableData", args);
   buildNebulaScanChoice = (...args) => callBrowserDomainCommand("scan_flow", "buildNebulaScanChoice", args);
