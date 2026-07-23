@@ -8,6 +8,16 @@
   "use strict";
 
   const STANDARD_ACTION_SCHEMA = "seti-standard-action-v1";
+  const BROWSER_PROJECTION_SCHEMA = "seti-browser-host-v1";
+  const ACTION_BAR_PROJECTION_SCHEMA = "seti-action-bar-projection-v1";
+  const BROWSER_PROJECTION_KEYS = Object.freeze([
+    "schemaVersion", "projectionId", "source", "viewer", "match", "board", "players",
+    "cards", "tech", "aliens", "resident", "controls", "decision", "feedback",
+  ]);
+  const ACTION_KEYS = Object.freeze([
+    "schemaVersion", "actionId", "family", "phase", "actorId", "stateVersion",
+    "decisionVersion", "target", "payload", "summary", "disabledReason",
+  ]);
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -15,6 +25,110 @@
 
   function fail(code, message, details = {}) {
     return { ok: false, code, message, ...clone(details) };
+  }
+
+  function deepFreeze(value) {
+    if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+    for (const child of Object.values(value)) deepFreeze(child);
+    return Object.freeze(value);
+  }
+
+  function assertExactKeys(value, allowedKeys, label) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      throw new TypeError(`${label} 必须是对象`);
+    }
+    const unknownKeys = Object.keys(value).filter((key) => !allowedKeys.includes(key));
+    if (unknownKeys.length) {
+      throw new TypeError(`${label} 含伪造字段：${unknownKeys.join(", ")}`);
+    }
+  }
+
+  function assertDeepFrozen(value, label) {
+    if (value == null || typeof value !== "object") return;
+    if (!Object.isFrozen(value)) throw new TypeError(`${label} 必须深冻结`);
+    for (const child of Object.values(value)) assertDeepFrozen(child, label);
+  }
+
+  function normalizeProjectedAction(action) {
+    assertExactKeys(action, ACTION_KEYS, "Action Bar Standard Action");
+    if (action.schemaVersion !== STANDARD_ACTION_SCHEMA
+      || !action.actionId || !action.family || !action.phase || !action.actorId
+      || !Number.isSafeInteger(action.stateVersion)
+      || !Number.isSafeInteger(action.decisionVersion)) {
+      throw new TypeError("Action Bar Standard Action identity 不完整");
+    }
+    return deepFreeze({
+      schemaVersion: STANDARD_ACTION_SCHEMA,
+      actionId: String(action.actionId),
+      family: String(action.family),
+      phase: String(action.phase),
+      actorId: String(action.actorId),
+      stateVersion: action.stateVersion,
+      decisionVersion: action.decisionVersion,
+      target: clone(action.target ?? null),
+      payload: clone(action.payload || {}),
+      summary: action.summary || action.family,
+      disabledReason: action.disabledReason || null,
+    });
+  }
+
+  function selectActionBarProjection(browserProjection, options = {}) {
+    assertExactKeys(browserProjection, BROWSER_PROJECTION_KEYS, "BrowserProjection");
+    if (browserProjection.schemaVersion !== BROWSER_PROJECTION_SCHEMA) {
+      throw new TypeError(`Action Bar 只接受 ${BROWSER_PROJECTION_SCHEMA} BrowserProjection`);
+    }
+    assertDeepFrozen(browserProjection, "BrowserProjection");
+    if (!browserProjection.projectionId || !browserProjection.source?.kind
+      || !Number.isSafeInteger(browserProjection.source.stateVersion)
+      || !browserProjection.viewer?.viewerId
+      || browserProjection.match?.currentPlayerId == null) {
+      throw new TypeError("Action Bar BrowserProjection identity 不完整");
+    }
+    const inspection = options.inspection || null;
+    const sessionInspection = inspection?.session || null;
+    if (sessionInspection && (
+      sessionInspection.sessionId !== browserProjection.source.sessionId
+      || sessionInspection.revision !== browserProjection.source.sessionRevision
+    )) {
+      throw new TypeError("Action Bar BrowserProjection 与 Composition inspection 不一致");
+    }
+    const actions = (browserProjection.controls?.actions || []).map(normalizeProjectedAction);
+    const quickActions = (browserProjection.controls?.quickActions || []).map(normalizeProjectedAction);
+    const inspectionControls = sessionInspection?.controls || null;
+    const canUndo = inspectionControls
+      ? inspectionControls.canUndo === true
+      : options.canUndo === true;
+    return deepFreeze({
+      schemaVersion: ACTION_BAR_PROJECTION_SCHEMA,
+      projectionId: String(browserProjection.projectionId),
+      source: {
+        kind: String(browserProjection.source.kind),
+        stateVersion: browserProjection.source.stateVersion,
+        sessionId: browserProjection.source.sessionId ?? null,
+        sessionRevision: browserProjection.source.sessionRevision ?? null,
+      },
+      seat: {
+        currentPlayerId: String(browserProjection.match.currentPlayerId),
+        viewerPlayerId: browserProjection.viewer.playerId == null
+          ? null : String(browserProjection.viewer.playerId),
+        machineControlled: options.machineControlled === true,
+        automationPaused: options.automationPaused === true,
+      },
+      controls: {
+        actions,
+        quickActions,
+        canUndo,
+        undoDisabledReason: canUndo
+          ? null
+          : (inspectionControls?.undoDisabledReason
+            || browserProjection.controls?.undoDisabledReason
+            || options.undoDisabledReason
+            || "没有可撤销的 Effect"),
+      },
+      feedback: {
+        progress: clone(sessionInspection?.progress || browserProjection.feedback?.progress || null),
+      },
+    });
   }
 
   function normalizeControl(action) {
@@ -163,10 +277,77 @@
 
   function createDesktopActionBarController(context = {}) {
     const { els } = context;
+    if (typeof context.getProjection !== "function") {
+      throw new TypeError("DesktopActionBar 需要 Action Bar projection selector");
+    }
+    if (typeof context.dispatchIntent !== "function") {
+      throw new TypeError("DesktopActionBar 需要 BrowserInputAdapter dispatchIntent()");
+    }
     const mainButtons = [
       els.actionLaunchButton, els.actionOrbitButton, els.actionLandButton, els.actionScanButton,
       els.actionAnalyzeButton, els.actionPlayCardButton, els.actionResearchTechButton,
     ];
+    const mainFamilies = new Map([
+      [els.actionLaunchButton, "launch"],
+      [els.actionOrbitButton, "orbit"],
+      [els.actionLandButton, "land"],
+      [els.actionScanButton, "scan"],
+      [els.actionAnalyzeButton, "analyze"],
+      [els.actionPlayCardButton, "play_card"],
+      [els.actionResearchTechButton, "research_tech"],
+    ]);
+    let projection = null;
+
+    function readProjection() {
+      const nextProjection = context.getProjection();
+      if (!nextProjection || nextProjection.schemaVersion !== ACTION_BAR_PROJECTION_SCHEMA) {
+        throw new TypeError("DesktopActionBar selector 未返回冻结 Action Bar DTO");
+      }
+      assertDeepFrozen(nextProjection, "Action Bar DTO");
+      projection = nextProjection;
+      return projection;
+    }
+
+    function listActions(model = projection) {
+      return [
+        ...(model?.controls?.actions || []),
+        ...(model?.controls?.quickActions || []),
+      ];
+    }
+
+    function matchesSelector(action, selector = {}) {
+      return Object.entries(selector).every(([key, value]) => (
+        JSON.stringify(action.target?.[key]) === JSON.stringify(value)
+        || JSON.stringify(action.payload?.[key]) === JSON.stringify(value)
+      ));
+    }
+
+    function activateAction(actionId) {
+      const action = listActions(readProjection()).find((candidate) => (
+        String(candidate.actionId) === String(actionId)
+      ));
+      if (!action) {
+        return fail("ACTION_BAR_ACTION_STALE", "actionId 不在当前 Action Bar DTO 中", { actionId });
+      }
+      if (action.disabledReason) {
+        return fail("ACTION_BAR_ACTION_DISABLED", action.disabledReason, { actionId });
+      }
+      return context.dispatchIntent({ kind: "action", action: clone(action) });
+    }
+
+    function activateFamily(family, selector = {}) {
+      const matches = listActions(readProjection()).filter((action) => (
+        action.family === family && !action.disabledReason && matchesSelector(action, selector)
+      ));
+      if (matches.length !== 1) {
+        return fail(
+          matches.length ? "ACTION_BAR_ACTION_AMBIGUOUS" : "ACTION_BAR_ACTION_NOT_LEGAL",
+          matches.length ? `${family} 当前有多个合法 Action` : `${family} 当前没有合法 Action`,
+          { family },
+        );
+      }
+      return activateAction(matches[0].actionId);
+    }
 
     function setActionButtonState(button, enabled, reason) {
       if (!button) return;
@@ -194,49 +375,29 @@
       mainButtons.forEach((button) => setActionButtonState(button, enabled, reason));
     }
 
-    function updateTurnActionButtons() {
-      const pendingBlockedReason = "请先回合结束或撤销当前行动";
-      if (context.isTechTilePickingActive()) {
-        setTurnActionButtonState(els.actionPassButton, false);
-        setTurnActionButtonState(els.actionConfirmButton, false);
-        setTurnActionButtonState(els.actionUndoButton, true);
-        return "请先选择科技或点击取消";
-      }
-      if (context.isActionEffectFlowActive()) {
-        setTurnActionButtonState(els.actionPassButton, false);
-        setTurnActionButtonState(els.actionConfirmButton, false);
-        setTurnActionButtonState(els.actionUndoButton, context.quickActionHistory.hasUndoableStep() || context.canUndoCurrentMainAction());
-        return "请先完成当前行动的效果";
-      }
-      if (context.isActionPending()) {
-        const irreversible = context.hasCurrentMainActionIrreversibleBarrier();
-        setTurnActionButtonState(els.actionPassButton, false);
-        setTurnActionButtonState(els.actionConfirmButton, true, true);
-        setTurnActionButtonState(els.actionUndoButton, context.quickActionHistory.hasUndoableStep() || context.canUndoCurrentMainAction(), !irreversible);
-        return pendingBlockedReason;
-      }
-      setTurnActionButtonState(els.actionPassButton, context.canStartMainAction());
-      setTurnActionButtonState(els.actionConfirmButton, false);
-      setTurnActionButtonState(els.actionUndoButton, context.quickActionHistory.hasUndoableStep());
-      return null;
-    }
-
     function isQuickPanelOpen() {
       return !els.quickActionsPanel.hidden;
     }
 
     function updateQuickPanel() {
       if (!isQuickPanelOpen()) return;
-      const actionContext = context.createReadoutActionContext();
+      const model = readProjection();
       els.quickActionsTrades.querySelectorAll("[data-quick-trade]").forEach((button) => {
-        const check = context.quickTrades.canExecuteTrade(button.dataset.quickTrade, actionContext);
-        button.disabled = !check.ok;
-        button.title = check.ok ? "" : (check.message || "当前无法兑换");
+        const action = model.controls.quickActions.find((candidate) => (
+          candidate.family === "quick_trade"
+          && !candidate.disabledReason
+          && String(candidate.target?.tradeId) === String(button.dataset.quickTrade)
+        ));
+        button.disabled = !action;
+        button.title = action ? "" : "当前无法兑换";
+        button.dataset.actionId = action?.actionId || "";
       });
     }
 
     function setQuickPanelOpen(open) {
-      if (open && context.getGameplayLockReason()) return;
+      const model = readProjection();
+      const machineLocked = model.seat.machineControlled && !model.seat.automationPaused;
+      if (open && (machineLocked || !model.controls.quickActions.some((action) => !action.disabledReason))) return;
       if (open) context.cancelHandCardContextActions({ silent: true });
       els.quickActionsPanel.hidden = !open;
       els.actionQuickButton.setAttribute("aria-expanded", String(open));
@@ -250,145 +411,50 @@
 
     function updateActionButtons() {
       context.syncFinalResultButton();
-      const readoutRoot = context.createReadoutRoot();
-      const actionContext = context.createActionContext(readoutRoot);
-      const gameplayLockReason = context.getGameplayLockReason();
-      if (gameplayLockReason) return context.lockAllActionButtons(gameplayLockReason);
-      if (context.isAiPlayer(readoutRoot.playerState.currentPlayerId) && !context.isAiAutomationPaused()) {
-        return context.lockAllActionButtons("电脑玩家自动行动中");
+      const model = readProjection();
+      const machineLocked = model.seat.machineControlled && !model.seat.automationPaused;
+      const lockReason = machineLocked ? "电脑玩家自动行动中" : "当前无法执行此行动";
+      for (const button of mainButtons) {
+        const family = mainFamilies.get(button);
+        const enabled = !machineLocked && model.controls.actions.some((action) => (
+          action.family === family && !action.disabledReason
+        ));
+        setActionButtonState(button, enabled, enabled ? "" : lockReason);
       }
-
-      const locks = {
-        tech: context.isTechTilePickingActive(),
-        card: context.isCardSelectionActive(),
-        discard: context.isDiscardSelectionActive(),
-        play: context.isPlayCardSelectionActive(),
-        move: context.isMovePaymentSelectionActive(),
-        handScan: context.isHandScanSelectionActive(),
-        effect: context.isActionEffectFlowActive(),
-        history: context.actionHistory.hasSession(),
-        subFlow: context.hasActivePendingSubFlow(),
-      };
-      const selectionReason = locks.tech ? "请先选择科技或点击取消"
-        : locks.handScan ? "请先完成手牌扫描或点击取消"
-          : locks.move ? "请先确认或取消移动"
-            : locks.play ? "请先打出或点击取消"
-              : locks.discard ? "请先完成弃牌或点击取消" : "请先完成精选或点击取消";
-      const pendingReason = updateTurnActionButtons();
-      const effectReason = locks.effect ? "请先完成当前行动的效果" : pendingReason;
-      const finishLocked = (reason, quickEnabled = false) => {
-        setMainButtons(false, reason);
-        setQuickActionButtonEnabled(quickEnabled, reason);
-        updateQuickPanel();
-        context.renderActionEffectBar();
-      };
-      if (locks.tech || locks.discard || locks.play || locks.move) return finishLocked(selectionReason);
-      if (locks.card || locks.handScan) return finishLocked(effectReason || selectionReason);
-      if (locks.subFlow) return finishLocked("请先完成或取消当前流程");
-      if (locks.effect || context.isActionPending() || locks.history) {
-        return finishLocked(pendingReason, !context.isInitialIncomeFlowActive());
-      }
-
-      const currentPlayer = context.getCurrentPlayer();
-      const launch = context.actions.canExecute("launch", actionContext);
-      const orbit = context.abilities.planet.getOrbitOptions(actionContext);
-      const land = context.abilities.planet.getLandOptions(actionContext);
-      const plutoOrbit = context.getAvailablePlutoAction("orbit");
-      const plutoLand = context.getAvailablePlutoAction("land");
-      const research = context.actions.canExecute("researchTech", actionContext);
-      const analyze = context.canAnalyzeDataForPlayer(currentPlayer);
-      const scan = context.scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
-      const playBlock = context.getStandardPlayCardActionBlockReason(currentPlayer);
-      const canPlay = !playBlock && (Boolean(currentPlayer?.hand?.length) || context.hasPlayableFutureSpanCard(currentPlayer));
-      setActionButtonState(els.actionLaunchButton, launch.ok, launch.message);
-      setActionButtonState(els.actionOrbitButton, orbit.ok || plutoOrbit.ok, orbit.ok ? orbit.message : (orbit.message || plutoOrbit.message));
-      setActionButtonState(els.actionLandButton, land.ok || plutoLand.ok, land.ok ? land.message : (land.message || plutoLand.message));
-      setActionButtonState(els.actionScanButton, scan.ok, scan.message);
-      setActionButtonState(els.actionAnalyzeButton, analyze.ok, analyze.message);
-      setActionButtonState(els.actionPlayCardButton, canPlay, canPlay ? "" : (playBlock || "没有手牌可打出"));
-      setActionButtonState(els.actionResearchTechButton, research.ok, research.message);
-      setQuickActionButtonEnabled(true);
+      const passEnabled = !machineLocked
+        && model.controls.actions.some((action) => action.family === "pass" && !action.disabledReason);
+      const endTurnEnabled = !machineLocked
+        && model.controls.actions.some((action) => action.family === "end_turn" && !action.disabledReason);
+      setTurnActionButtonState(els.actionPassButton, passEnabled);
+      setTurnActionButtonState(els.actionConfirmButton, endTurnEnabled, endTurnEnabled);
+      setTurnActionButtonState(els.actionUndoButton, !machineLocked && model.controls.canUndo);
+      setQuickActionButtonEnabled(
+        !machineLocked && model.controls.quickActions.some((action) => !action.disabledReason),
+        machineLocked ? lockReason : "当前没有可执行的快速行动",
+      );
       updateQuickPanel();
-      context.renderActionEffectBar();
+      return model;
     }
 
     return Object.freeze({
       setActionButtonState, setTurnActionButtonState, setQuickActionButtonEnabled,
       updateActionButtons, isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
+      activateAction, activateFamily,
     });
   }
 
   function createBrowserDesktopActionBarController(options = {}) {
-    const {
-      actionGuardRuntime,
-      actionInteractionRuntime,
-      actionSessionRuntime,
-      cardRuntime,
-      cardSelectionState,
-      dataAnalyzeRuntime,
-      handFlowRuntime,
-      pendingSubFlowRuntime,
-      playerLookupRuntime,
-      rulePort,
-      techRuntime,
-      hostPort,
-    } = options;
-    const owners = {
-      actionGuardRuntime,
-      actionInteractionRuntime,
-      actionSessionRuntime,
-      cardRuntime,
-      cardSelectionState,
-      dataAnalyzeRuntime,
-      handFlowRuntime,
-      pendingSubFlowRuntime,
-      playerLookupRuntime,
-      rulePort,
-      techRuntime,
-      hostPort,
-    };
+    const { projectionPort, inputPort, hostPort } = options;
+    const owners = { projectionPort, inputPort, hostPort };
     for (const [name, owner] of Object.entries(owners)) {
       if (!owner || typeof owner !== "object") {
         throw new TypeError(`DesktopActionBar bootstrap 缺少 owner：${name}`);
       }
     }
-    const capability = (ownerName, name) => {
-      const value = owners[ownerName][name];
-      if (typeof value !== "function") {
-        throw new TypeError(`DesktopActionBar ${ownerName} 缺少能力：${name}`);
-      }
-      return value;
-    };
     return createDesktopActionBarController({
-      ...rulePort,
       ...hostPort,
-      getGameplayLockReason: capability("actionGuardRuntime", "getGameplayLockReason"),
-      lockAllActionButtons: capability("actionGuardRuntime", "lockAllActionButtons"),
-      isActionEffectFlowActive: capability("actionGuardRuntime", "isActionEffectFlowActive"),
-      isInitialIncomeFlowActive: capability("actionGuardRuntime", "isInitialIncomeFlowActive"),
-      isActionPending: capability("actionSessionRuntime", "isActionPending"),
-      canUndoCurrentMainAction: capability("actionSessionRuntime", "canUndoCurrentMainAction"),
-      hasCurrentMainActionIrreversibleBarrier: capability(
-        "actionSessionRuntime",
-        "hasCurrentMainActionIrreversibleBarrier",
-      ),
-      canStartMainAction: capability("actionSessionRuntime", "canStartMainAction"),
-      isTechTilePickingActive: capability("techRuntime", "isTechTilePickingActive"),
-      isCardSelectionActive: capability("cardSelectionState", "isCardSelectionActive"),
-      isDiscardSelectionActive: capability("cardSelectionState", "isDiscardSelectionActive"),
-      isPlayCardSelectionActive: capability("cardSelectionState", "isPlayCardSelectionActive"),
-      isMovePaymentSelectionActive: capability("handFlowRuntime", "isMovePaymentSelectionActive"),
-      isHandScanSelectionActive: capability("handFlowRuntime", "isHandScanSelectionActive"),
-      cancelHandCardContextActions: capability("handFlowRuntime", "cancelHandCardContextActions"),
-      hasActivePendingSubFlow: capability("pendingSubFlowRuntime", "hasActivePendingSubFlow"),
-      getAvailablePlutoAction: capability("actionInteractionRuntime", "getAvailablePlutoAction"),
-      canAnalyzeDataForPlayer: capability("dataAnalyzeRuntime", "canAnalyzeDataForPlayer"),
-      getCurrentPlayer: capability("playerLookupRuntime", "getCurrentPlayer"),
-      getStandardPlayCardActionBlockReason: capability(
-        "cardRuntime",
-        "getStandardPlayCardActionBlockReason",
-      ),
-      hasPlayableFutureSpanCard: capability("cardRuntime", "hasPlayableFutureSpanCard"),
+      getProjection: projectionPort.getProjection,
+      dispatchIntent: inputPort.dispatchIntent,
     });
   }
 
@@ -1034,6 +1100,7 @@
     const methods = [
       "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
       "updateActionButtons", "isQuickPanelOpen", "setQuickPanelOpen", "toggleQuickPanel", "updateQuickPanel",
+      "activateAction", "activateFamily",
     ];
     return Object.freeze(Object.fromEntries(methods.map((name) => [
       name,
@@ -1042,6 +1109,8 @@
   }
 
   return Object.freeze({
+    ACTION_BAR_PROJECTION_SCHEMA,
+    selectActionBarProjection,
     createActionBarModel,
     createActionBarController,
     createActionBarRenderer,

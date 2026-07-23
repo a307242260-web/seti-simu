@@ -1060,6 +1060,14 @@
   const residentStateSource = ruleComposition.stateSourcePort;
   const residentProjectionAdapter = browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
     stateSource: residentStateSource,
+    createActionContext: ({ state }) => ({
+      actorId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+    }),
+    actionAdapter: {
+      enumerate: (projectionContext) => ruleComposition.inputPort.enumerateActions(
+        projectionContext.actorId == null ? {} : { actorId: projectionContext.actorId },
+      ),
+    },
   });
   const residentInputAdapter = browserHostModule.inputAdapter.createBrowserInputAdapter({
     dispatchAction: (action) => (
@@ -3977,6 +3985,7 @@
   const {
     setActionButtonState, setTurnActionButtonState, setQuickActionButtonEnabled, updateActionButtons,
     isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
+    activateFamily: activateActionBarFamily,
   } = actionBarPort;
 
   const recoverPendingActionFromOpenHistoryForAiForRoot = browserHostModule.actionBar.createPendingActionRecoveryRuntime({
@@ -4084,27 +4093,29 @@
     },
   });
 
+  const getDesktopActionBarProjection = () => {
+    const browserProjection = residentProjectionAdapter.projectSource({
+      viewer: getResidentViewer(),
+    });
+    const currentPlayerId = browserProjection.match.currentPlayerId;
+    return browserHostModule.actionBar.selectActionBarProjection(browserProjection, {
+      inspection: ruleComposition.inspect(),
+      machineControlled: isAiAutoBattlePlayer(currentPlayerId),
+      automationPaused: isAiAutomationPaused(),
+      canUndo: actionHistory.hasUndoableStep() || quickActionHistory.hasUndoableStep(),
+    });
+  };
   actionBarController = browserHostModule.actionBar.createBrowserDesktopActionBarController({
-    actionGuardRuntime,
-    actionInteractionRuntime,
-    actionSessionRuntime,
-    cardRuntime,
-    cardSelectionState,
-    dataAnalyzeRuntime: dataAnalyzeInteractionRuntime,
-    handFlowRuntime: handFlowHelpers,
-    pendingSubFlowRuntime,
-    playerLookupRuntime,
-    techRuntime,
-    rulePort: { actions, abilities, scanEffects, quickTrades, actionHistory, quickActionHistory },
+    projectionPort: {
+      getProjection: getDesktopActionBarProjection,
+    },
+    inputPort: {
+      dispatchIntent: (...args) => residentInputAdapter.dispatchIntent(...args),
+    },
     hostPort: {
       els,
       syncFinalResultButton,
-      createReadoutRoot: createStateSourceReadoutRoot,
-      createActionContext: createActionContextForWorkingRoot,
-      createReadoutActionContext,
-      isAiPlayer: isAiAutoBattlePlayer,
-      isAiAutomationPaused,
-      renderActionEffectBar,
+      cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
     },
   });
   undoController = browserHostModule.actionBar.createBrowserUndoController({
@@ -4279,21 +4290,16 @@
     syncStartScreenActionLogOption,
     handleStartAlienOptionChange,
     handleStartIndustryOptionChange,
-    launchRocketForCurrentPlayer,
     orbitForCurrentPlayer,
     landForCurrentPlayer,
-    dispatchStandardIntent: (family) => dispatchBrowserRuleInput({ kind: "standard_intent", family }),
     beginPlayCardSelection,
     researchTechForCurrentPlayer,
     cancelTechSelection,
     confirmLandTargetPicker,
     cancelLandTargetPicker,
     toggleQuickPanel,
-    passForCurrentPlayer,
-    dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
-    endCurrentTurn,
+    activateActionBarFamily,
     undoPendingAction,
-    runQuickTrade,
     runPlaceDataToComputer,
     confirmDataPlacement,
     cancelDataPlacePicker,

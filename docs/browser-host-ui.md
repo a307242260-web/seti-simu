@@ -35,6 +35,21 @@ PolicyDecision ─> PolicyInputAdapter ─> 同一 Action / Decision port
 
 传统 `app/render-runtime.js` 的生产装配也遵循同一读取边界：它只保存 `getProjection()` provider 和 ViewState，通过 `BrowserProjection.resident` 的只读 selector 兼容尚未迁走的 DOM 细节。provider 会剥离 callback/executor，隐藏对手手牌与牌库顺序，并在一次 render 调用内固定同一 projection；不得把 mutable root 或长期 slice 换名塞回 context。会补数据、排机会或续跑 AI 的旧 render-time 副作用已经删除，规则 flow 必须在进入刷新前完成这些推进。
 
+### Action Bar 冻结 DTO
+
+`browser-host/action-bar.js` 的桌面控制器只接收 `seti-action-bar-projection-v1`。该 DTO 由深冻结的 `seti-browser-host-v1` 投影经 `selectActionBarProjection()` 收窄，顶层字段固定为：
+
+| 字段 | 唯一来源 |
+|---|---|
+| `projectionId`、`source` | BrowserProjection identity |
+| `seat.currentPlayerId`、`seat.viewerPlayerId` | BrowserProjection `match` / `viewer` |
+| `seat.machineControlled`、`seat.automationPaused` | Browser AI control owner 的只读 seat 状态 |
+| `controls.actions`、`controls.quickActions` | Composition `inputPort.enumerateActions()` 后进入 BrowserProjection 的 Standard Action descriptor |
+| `controls.canUndo`、`undoDisabledReason` | 同 source identity 的 Effect Session `inspect().controls`；idle 时仅复用 history owner 的只读 undo capability |
+| `feedback.progress` | 同 source identity 的 Effect Session inspection，idle 时回退到 BrowserProjection feedback |
+
+selector 拒绝可变 BrowserProjection、缺失 identity、额外顶层字段、带额外字段的 Action descriptor，以及 projection/session identity 漂移。桌面按钮只按 DTO 显示和启用；点击把 DTO 中原始 Standard Action 的克隆交给 BrowserInputAdapter，再由 Composition input port 复核并提交。Action Bar 不创建 readout root，不接收 `playerState/turnState/cardState` 等传统 slice，也不保留 family fallback executor。
+
 ## 输入边界
 
 `app/browser-host/input-adapter.js` 路由三类互斥输入：

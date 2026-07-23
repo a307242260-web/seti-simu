@@ -5,6 +5,11 @@
   function assert(condition, message) {
     if (!condition) throw new Error(message);
   }
+  function deepFreeze(value) {
+    if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+    for (const child of Object.values(value)) deepFreeze(child);
+    return Object.freeze(value);
+  }
 
   try {
     assert(SetiBrowserHost.SCHEMA_VERSION === "seti-browser-host-v1", "facade schema 错误");
@@ -93,6 +98,37 @@
     assert(actionCalls[1].command.sessionRevision === 9, "撤销未携带 session identity");
     assert(actionBarRoot.querySelector("[data-action-id='end_turn:chrome']").disabled, "结束回合 disabled reason 丢失");
     assert(actionBarRoot.querySelector("[data-action-bar-progress]").textContent.includes("1/2"), "Effect 进度映射失败");
+    const actionBarProjection = SetiBrowserHost.actionBar.selectActionBarProjection(deepFreeze({
+      ...structuredClone(projection),
+      controls: {
+        actions: [{
+          schemaVersion: "seti-standard-action-v1",
+          actionId: "launch:desktop",
+          family: "launch",
+          phase: "main",
+          actorId: "p1",
+          stateVersion: 0,
+          decisionVersion: 0,
+          target: null,
+          payload: {},
+          summary: "发射",
+          disabledReason: null,
+        }],
+        quickActions: [],
+        canUndo: false,
+        undoDisabledReason: null,
+        canEndTurn: false,
+      },
+    }), { canUndo: false });
+    assert(actionBarProjection.schemaVersion === "seti-action-bar-projection-v1", "Action Bar DTO schema 错误");
+    assert(Object.isFrozen(actionBarProjection.controls.actions[0].payload), "Action Bar DTO 未深冻结");
+    let mutationRejected = false;
+    try {
+      actionBarProjection.controls.actions[0].payload.forged = true;
+    } catch (_error) {
+      mutationRejected = true;
+    }
+    assert(mutationRejected, "Action Bar DTO mutation 未 fail-closed");
     document.body.dataset.result = "passed";
     output.textContent = JSON.stringify({ ok: true, projectionId: projection.projectionId });
   } catch (error) {

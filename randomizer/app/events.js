@@ -39,11 +39,11 @@
     if (button === context.quickButton) return false;
     if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
     const handlers = {
-      "action-launch-button": context.launch,
+      "action-launch-button": () => context.activateFamily("launch"),
       "action-orbit-button": context.orbit,
       "action-land-button": context.land,
-      "action-scan-button": () => context.dispatchStandardIntent("scan"),
-      "action-analyze-button": () => context.dispatchStandardIntent("analyze"),
+      "action-scan-button": () => context.activateFamily("scan"),
+      "action-analyze-button": () => context.activateFamily("analyze"),
       "action-play-card-button": context.beginPlayCard,
       "action-research-tech-button": context.researchTech,
     };
@@ -115,21 +115,16 @@
       syncStartScreenActionLogOption,
       handleStartAlienOptionChange,
       handleStartIndustryOptionChange,
-      launchRocketForCurrentPlayer,
       orbitForCurrentPlayer,
       landForCurrentPlayer,
-      dispatchStandardIntent,
       beginPlayCardSelection,
       researchTechForCurrentPlayer,
       cancelTechSelection,
       confirmLandTargetPicker,
       cancelLandTargetPicker,
       toggleQuickPanel,
-      passForCurrentPlayer,
-      dispatchRuntimeAction,
-      endCurrentTurn,
+      activateActionBarFamily,
       undoPendingAction,
-      runQuickTrade,
       runPlaceDataToComputer,
       confirmDataPlacement,
       cancelDataPlacePicker,
@@ -314,10 +309,9 @@
     els.actionBarMain?.addEventListener("click", (event) => routeMainActionButtonClick(event, {
       actionBarMain: els.actionBarMain,
       quickButton: els.actionQuickButton,
-      launch: launchRocketForCurrentPlayer,
       orbit: orbitForCurrentPlayer,
       land: landForCurrentPlayer,
-      dispatchStandardIntent,
+      activateFamily: activateActionBarFamily,
       beginPlayCard: beginPlayCardSelection,
       researchTech: researchTechForCurrentPlayer,
     }));
@@ -330,11 +324,11 @@
     els.actionQuickButton.addEventListener("click", toggleQuickPanel);
     els.actionPassButton?.addEventListener("click", () => {
       if (els.actionPassButton.disabled) return;
-      dispatchRuntimeAction?.({ kind: "standard_intent", family: "pass" }) || passForCurrentPlayer();
+      activateActionBarFamily("pass");
     });
     els.actionConfirmButton?.addEventListener("click", () => {
       if (els.actionConfirmButton.disabled) return;
-      dispatchRuntimeAction?.({ kind: "standard_intent", family: "end_turn" }) || endCurrentTurn();
+      activateActionBarFamily("end_turn");
     });
     els.actionUndoButton?.addEventListener("click", () => {
       if (els.actionUndoButton.disabled) return;
@@ -349,12 +343,7 @@
     els.quickActionsTrades.addEventListener("click", (event) => {
       const button = event.target.closest("[data-quick-trade]");
       if (!button || button.disabled) return;
-      dispatchRuntimeAction?.({
-        kind: "standard_intent",
-        family: "quick_trade",
-        selector: { tradeId: button.dataset.quickTrade },
-      })
-        || runQuickTrade(button.dataset.quickTrade);
+      activateActionBarFamily("quick_trade", { tradeId: button.dataset.quickTrade });
     });
     els.playerBoardDataLayer?.addEventListener("click", (event) => {
       const token = event.target.closest(".data-token-pool");

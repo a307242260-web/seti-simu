@@ -55,7 +55,7 @@ assert.deepEqual(route({ unrelated: "true" }), {
   }, {
     actionBarMain: { contains: (candidate) => candidate === button },
     quickButton: null,
-    dispatchStandardIntent: (family) => calls.push(family),
+    activateFamily: (family) => calls.push(family),
   });
   assert.equal(handled, true);
   assert.deepEqual(calls, ["scan"]);

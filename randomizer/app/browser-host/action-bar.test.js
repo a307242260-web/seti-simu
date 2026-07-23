@@ -32,7 +32,7 @@ const standard = (family, phase, suffix, disabledReason = null) => ({
 function projection(overrides = {}) {
   return {
     projectionId: "session:controls",
-    source: { kind: "session", sessionId: "s1", sessionRevision: 4 },
+    source: { kind: "session", stateVersion: 7, sessionId: "s1", sessionRevision: 4 },
     controls: {
       actions: [
         standard("launch", "main", "a"),
@@ -54,6 +54,33 @@ function projection(overrides = {}) {
     },
     ...overrides,
   };
+}
+
+function deepFreeze(value) {
+  if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+  for (const child of Object.values(value)) deepFreeze(child);
+  return Object.freeze(value);
+}
+
+function browserProjection(overrides = {}) {
+  const projected = projection();
+  return deepFreeze({
+    schemaVersion: "seti-browser-host-v1",
+    projectionId: projected.projectionId,
+    source: projected.source,
+    viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" },
+    match: { currentPlayerId: "p1" },
+    board: {},
+    players: {},
+    cards: {},
+    tech: {},
+    aliens: {},
+    resident: {},
+    controls: projected.controls,
+    decision: null,
+    feedback: projected.feedback,
+    ...overrides,
+  });
 }
 
 (function testActionSessionRuntimeOwnsHistoryAndStartLocks() {
@@ -152,7 +179,49 @@ function projection(overrides = {}) {
   assert.equal(calls.undo.length, 1);
 })();
 
-(function testDesktopActionBarOwnsDomStateAndQuickPanel() {
+(function testActionBarSelectorIsMinimalFrozenAndFailClosed() {
+  const dto = actionBar.selectActionBarProjection(browserProjection(), {
+    inspection: {
+      session: {
+        sessionId: "s1",
+        revision: 4,
+        controls: { canUndo: true, undoDisabledReason: null },
+        progress: { completedEffects: 2, totalEffects: 3 },
+      },
+    },
+  });
+  assert.deepEqual(Object.keys(dto), [
+    "schemaVersion", "projectionId", "source", "seat", "controls", "feedback",
+  ]);
+  assert.equal(Object.isFrozen(dto.controls.actions[0].target), true);
+  assert.throws(() => { dto.controls.actions[0].target.suffix = "mutated"; }, TypeError);
+  assert.throws(
+    () => actionBar.selectActionBarProjection({ ...browserProjection(), forgedRoot: {} }),
+    /伪造字段/,
+  );
+  assert.throws(
+    () => actionBar.selectActionBarProjection({ ...browserProjection() }),
+    /深冻结/,
+  );
+  assert.throws(
+    () => actionBar.selectActionBarProjection(browserProjection({ match: {} })),
+    /identity 不完整/,
+  );
+  const forgedActionProjection = structuredClone(browserProjection());
+  forgedActionProjection.controls.actions[0].workingRoot = {};
+  assert.throws(
+    () => actionBar.selectActionBarProjection(deepFreeze(forgedActionProjection)),
+    /伪造字段/,
+  );
+  assert.throws(
+    () => actionBar.selectActionBarProjection(browserProjection(), {
+      inspection: { session: { sessionId: "forged", revision: 4 } },
+    }),
+    /inspection 不一致/,
+  );
+})();
+
+(function testDesktopActionBarRendersProjectionAndSubmitsThroughInputPort() {
   const createButton = () => ({
     disabled: false,
     title: "",
@@ -163,6 +232,25 @@ function projection(overrides = {}) {
   });
   const trade = createButton();
   trade.dataset.quickTrade = "energy";
+  const quickTrade = standard("quick_trade", "quick", "trade");
+  quickTrade.target = { tradeId: "energy" };
+  const sourceProjection = browserProjection({
+    controls: {
+      ...projection().controls,
+      quickActions: [quickTrade],
+    },
+  });
+  const dto = actionBar.selectActionBarProjection(sourceProjection, {
+    inspection: {
+      session: {
+        sessionId: "s1",
+        revision: 4,
+        controls: { canUndo: true },
+      },
+    },
+  });
+  let currentDto = dto;
+  const calls = [];
   const els = {
     actionLaunchButton: createButton(), actionOrbitButton: createButton(), actionLandButton: createButton(),
     actionScanButton: createButton(), actionAnalyzeButton: createButton(), actionPlayCardButton: createButton(),
@@ -173,18 +261,44 @@ function projection(overrides = {}) {
   };
   const controller = actionBar.createDesktopActionBarController({
     els,
-    quickTrades: { canExecuteTrade: () => ({ ok: false, message: "资源不足" }) },
-    createReadoutActionContext: () => ({}),
-    getGameplayLockReason: () => null,
+    getProjection: () => currentDto,
+    dispatchIntent: (intent) => (calls.push(intent), { ok: true }),
+    syncFinalResultButton() {},
     cancelHandCardContextActions() {},
   });
-  controller.setActionButtonState(els.actionLaunchButton, false, "锁定");
-  assert.equal(els.actionLaunchButton.disabled, true);
-  assert.equal(els.actionLaunchButton.title, "锁定");
+  controller.updateActionButtons();
+  assert.equal(els.actionLaunchButton.disabled, false);
+  assert.equal(els.actionScanButton.disabled, true);
+  assert.equal(els.actionPassButton.disabled, false);
+  assert.equal(els.actionConfirmButton.disabled, false);
+  assert.equal(els.actionUndoButton.disabled, false);
   controller.setQuickPanelOpen(true);
   assert.equal(els.quickActionsPanel.hidden, false);
-  assert.equal(trade.disabled, true);
-  assert.equal(trade.title, "资源不足");
+  assert.equal(trade.disabled, false);
+  assert.equal(trade.dataset.actionId, "quick_trade:trade");
+  assert.equal(controller.activateFamily("quick_trade", { tradeId: "energy" }).ok, true);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].kind, "action");
+  assert.equal(calls[0].action.actionId, "quick_trade:trade");
+  calls[0].action.target.tradeId = "forged";
+  assert.equal(dto.controls.quickActions[0].target.tradeId, "energy");
+
+  currentDto = actionBar.selectActionBarProjection(sourceProjection, {
+    machineControlled: true,
+    automationPaused: false,
+  });
+  controller.updateActionButtons();
+  assert.equal(els.actionLaunchButton.disabled, true);
+  assert.equal(els.actionLaunchButton.title, "电脑玩家自动行动中");
+
+  currentDto = actionBar.selectActionBarProjection(sourceProjection, {
+    machineControlled: true,
+    automationPaused: true,
+    canUndo: true,
+  });
+  controller.updateActionButtons();
+  assert.equal(els.actionLaunchButton.disabled, false);
+  assert.equal(els.actionUndoButton.disabled, false);
 })();
 
 (function testUndoControllerOwnsQuickPreCommandsAndMainRollback() {
