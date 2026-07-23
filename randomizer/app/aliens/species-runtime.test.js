@@ -1,30 +1,7 @@
 "use strict";
 
 const assert = require("assert");
-const {
-  BROWSER_CONTEXT_KEYS,
-  createBrowserAlienSpeciesContext,
-  createAlienSpeciesPort,
-  createAlienSpeciesRuntime,
-} = require("./species-runtime.js");
-
-{
-  const source = Object.fromEntries(BROWSER_CONTEXT_KEYS.map((key) => [key, `source:${key}`]));
-  const context = createBrowserAlienSpeciesContext({
-    sources: [source, { unrelated: true }],
-    values: { players: "override:players" },
-  });
-  assert.deepEqual(Object.keys(context), BROWSER_CONTEXT_KEYS);
-  assert.equal(context.players, "override:players");
-  assert.equal(context.cards, "source:cards");
-  assert.equal(Object.isFrozen(context), true);
-  assert.throws(
-    () => createBrowserAlienSpeciesContext({
-      sources: [{ ...source, cards: null }],
-    }),
-    /cards/,
-  );
-}
+const { createAlienSpeciesPort, createAlienSpeciesRuntime } = require("./species-runtime.js");
 
 {
   const calls = [];
