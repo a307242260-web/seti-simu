@@ -143,6 +143,7 @@
       openRunezuSymbolBranchDialog,
       openScanAction4Picker,
       openPendingDecision,
+      readPendingDecision,
       openScanTargetPicker,
       planetRewards,
       recordAbilityCommands,
@@ -528,7 +529,7 @@
         playerColor: effect.options?.targetPlayerColor,
       }) || getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
-      workingRoot.match.alienTraceContinuation = {
+      const pending = {
         type: "planet_reward_alien_trace",
         beforeAlienState: structuredClone(ruleAlienGameState(workingRoot)),
         beforePlayerState: structuredClone(rulePlayerState(workingRoot)),
@@ -564,7 +565,6 @@
         }),
         finishNoTarget: () => {
           const message = `${effect.label}：没有合法外星人痕迹位置，奖励落空`;
-          delete workingRoot.match.alienTraceContinuation;
           uiRuntimeState.alienTracePickerState = null;
           closeAlienTracePicker(workingRoot);
           return finishAutomaticRewardEffect(workingRoot, effect, {
@@ -581,6 +581,7 @@
           });
         },
       });
+      if (flow.route !== "no-target") openPendingDecision(workingRoot, "alien_trace", pending);
       return flow.result;
     }
 

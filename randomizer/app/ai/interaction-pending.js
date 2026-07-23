@@ -429,12 +429,10 @@
 
     function listAiAlienStateTraceTargets(options = {}) {
       const pickerMode = String(state.alienTracePickerState?.mode || "");
-      const allowPendingFallback = Boolean(options.allowPendingFallback && state.pendingAlienTraceContinuation);
       if (
         pickerMode !== "debug-direct"
         && pickerMode !== "trace-board"
         && !pickerMode.endsWith("-grid")
-        && !allowPendingFallback
       ) return [];
       return getAiAlienTraceButtons("[data-state-trace-slot].is-placeable", els.alienTraceLayers || [])
         .map((button) => ({ kind: "state-slot", button }));
@@ -889,11 +887,7 @@
       const hiddenFirstTraceColorLost = Number.isFinite(alienSlot)
         && isAiOpenHiddenFirstTraceTarget(alienSlot, traceType)
         && isAiHiddenFirstTraceColorLost(traceType, player);
-      const forcedPendingStateExtraTrace = Boolean(
-        state.pendingAlienTraceContinuation
-        && target.kind === "state-slot"
-        && target.button.dataset.stateTraceKind === "extra"
-      );
+      const forcedPendingStateExtraTrace = false;
       if (
         target.kind === "state-slot"
         && mode !== "debug-direct"
@@ -1040,11 +1034,8 @@
           ...listAiAlienGridTraceTargets(),
           ...listAiAlienStateTraceTargets(),
         ];
-      } else if (pickerMode || state.pendingAlienTraceContinuation) {
+      } else if (pickerMode) {
         targets = listAiAlienPickerTargets();
-        if (!targets.length && state.pendingAlienTraceContinuation) {
-          targets = listAiAlienStateTraceTargets({ allowPendingFallback: true });
-        }
       }
       return targets
         .map((target, index) => ({ ...target, index, score: scoreAiAlienTraceTarget(workingRoot, target, player) }))
@@ -1053,40 +1044,8 @@
     }
 
     function runAiAlienTraceDecision(workingRoot) {
-      if (!state.pendingAlienTraceContinuation && (!state.alienTracePickerState || !state.alienTracePickerState.mode)) return null;
-      const player = getAlienTraceActionPlayer(state.pendingAlienTraceContinuation || state.alienTracePickerState);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择外星人痕迹` };
-      }
-
-      const target = chooseAiAlienTraceTarget(workingRoot, player);
-      if (!target?.button) {
-        const message = "AI 没有可用外星人痕迹目标，已跳过当前效果";
-        recordAiAutoBattleLog("alien-trace-skip", message, {
-          logPlayerId: player.id || null,
-          logPlayerColor: player.color || null,
-          mode: state.alienTracePickerState?.mode || null,
-        });
-        skipCurrentActionEffect?.();
-        return { ok: true, progressed: true, skipped: true, message };
-      }
-      const button = target.button;
-      const traceType = getAiAlienTraceTargetTraceType(target);
-      recordAiAutoBattleLog("alien-trace", `${player.colorLabel}AI 选择外星人痕迹`, {
-        logPlayerId: player.id || null,
-        logPlayerColor: player.color || null,
-        kind: target.kind,
-        mode: state.alienTracePickerState?.mode || null,
-        alienSlot: button.dataset.alienSlot || null,
-        pickerStep: button.dataset.alienPickerStep || null,
-        traceType: traceType || null,
-        position: getAiAlienTraceTargetPosition(target),
-        score: target.score,
-        b1TraceValue: scoreAiB1TraceMarginalValue(player, traceType),
-        label: button.textContent || "",
-      });
-      button.click();
-      return { ok: true, progressed: true, message: "AI 已选择外星人痕迹" };
+      requireWorkingRoot(workingRoot);
+      return null;
     }
 
     function getAiAlienPendingPlayer(workingRoot, pending = {}) {

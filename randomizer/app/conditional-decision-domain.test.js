@@ -35,11 +35,35 @@ const { createBrowserPendingDecisionOwner } = require("../game/effects/browser-p
   assert.equal(opened.ownerId, "p1");
   assert.equal(opened.payload.choices[0].decisionContext.kind, "strategy_slot");
   assert.deepEqual(root, { marker: "unchanged" }, "DecisionEffect 打开不得把 pending 复制进 working root");
+  const deferred = owner.runRuleTransaction(root, () => {
+    owner.defer(root, "turn_end_reveal", { playerId: "p1", didPass: true });
+    return owner.takeDeferredDecisionEffects();
+  });
+  assert.equal(deferred.length, 1);
+  assert.equal(deferred[0].payload.choices[0].decisionContext.kind, "turn_end_reveal");
+  assert.deepEqual(root, { marker: "unchanged" }, "deferred Decision 也不得把续体复制进 working root");
   assert.throws(
     () => owner.runRuleTransaction(root, () => owner.open(root, "legacy-industry", { playerId: "p1" })),
     /不支持的 browser pending Decision/,
   );
   assert.deepEqual(root, { marker: "unchanged" }, "未知旧类型必须 fail-closed 且零污染");
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.domain.describePendingDecision(fixture.root, "pirates_raid", {
+    playerId: "move-owner",
+    planetId: "earth",
+  });
+  const turnEnd = fixture.domain.describePendingDecision(fixture.root, "turn_end_reveal", {
+    playerId: "move-owner",
+    endingPlayerId: "move-owner",
+    didPass: true,
+  });
+  assert.equal(turnEnd.actorPlayer.id, "move-owner");
+  assert.deepEqual(turnEnd.candidates.map((choice) => choice.target.kind), ["turn-end-reveal-confirm"]);
 }
 
 function createFixture() {
@@ -113,7 +137,6 @@ function createFixture() {
         state.passReserveCalls.push(cardId);
         return { ok: true, progressed: true };
       },
-      getPendingDataPlacementDecision: (workingRoot) => workingRoot.match.dataPlacementContinuation || null,
       data: {
         listPlaceDataChoices: () => [
           { target: "computer", blueSlot: null, label: "电脑" },
@@ -122,12 +145,10 @@ function createFixture() {
       },
       confirmDataPlacement: (workingRoot, target, blueSlot) => {
         state.dataPlacementCalls.push([target, blueSlot]);
-        delete workingRoot.match.dataPlacementContinuation;
         return { ok: true, progressed: true };
       },
       skipPendingDataPlacement: (workingRoot) => {
         state.dataPlacementCalls.push(["skip"]);
-        delete workingRoot.match.dataPlacementContinuation;
         return { ok: true, progressed: true, skipped: true };
       },
       finalizePendingDiscardSelection: (_workingRoot, handIndexes) => {
@@ -137,8 +158,6 @@ function createFixture() {
       cancelDiscardSelection: () => {
         return { ok: true, progressed: true, skipped: true };
       },
-      getPendingLandTargetDecision: (workingRoot) => workingRoot.match.landTargetContinuation || null,
-      getAlienTraceContinuation: (workingRoot) => workingRoot.match.alienTraceContinuation || null,
       getAlienTracePickerState: () => state.alienPicker,
       getAlienTraceChoiceSlotIds: (_workingRoot, allowed) => allowed || [1],
       canPlaceStateTrace: () => true,
@@ -149,12 +168,10 @@ function createFixture() {
       },
       handleStateTraceSlotPlacement: (workingRoot, slotId, traceType) => {
         state.traceCalls.push([slotId, traceType]);
-        delete workingRoot.match.alienTraceContinuation;
         return { ok: true, progressed: true };
       },
       confirmLandTargetChoice: (workingRoot, choiceIndex) => {
         state.landCalls.push(choiceIndex);
-        delete workingRoot.match.landTargetContinuation;
         return { ok: true, progressed: true };
       },
       isTechTilePickingActive: (workingRoot) => Boolean(workingRoot.techGameState.ui.techSelectionActive),
@@ -269,7 +286,7 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.landTargetContinuation = {
+  const pending = {
     playerId: "move-owner",
     type: "land_target",
     resumeKind: "main-planet-action",
@@ -279,18 +296,17 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
       { label: "登陆", kind: "land", target: "mars", rocketId: 7 },
     ],
   };
-  assert.doesNotThrow(() => JSON.stringify(fixture.root.match.landTargetContinuation));
+  assert.doesNotThrow(() => JSON.stringify(pending));
   const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.equal(decision.ownerId, "move-owner");
-  assert.deepEqual(decision.choices.map((choice) => choice.target), [
+  const decision = describeSessionDecision(fixture.domain, fixture.root, "land_target", pending);
+  assert.equal(decision.actorPlayer.id, "move-owner");
+  assert.deepEqual(decision.candidates.map((choice) => choice.target), [
     { kind: "land-target", choiceId: "0", planetId: null, rocketId: 7 },
     { kind: "land-target", choiceId: "1", planetId: "mars", rocketId: 7 },
   ]);
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  const result = executor.executeEffectChoice(fixture.root, decision.candidates[0]);
   assert.equal(result.ok, true);
   assert.deepEqual(fixture.state.landCalls, [0]);
-  assert.equal(fixture.root.match.landTargetContinuation, undefined);
 }
 
 {
@@ -519,21 +535,21 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.dataPlacementContinuation = { playerId: "move-owner", resumeKind: "gain-data-reward" };
+  const pending = { playerId: "move-owner", resumeKind: "gain-data-reward" };
   const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), [
+  const decision = describeSessionDecision(fixture.domain, fixture.root, "data_placement", pending);
+  assert.deepEqual(decision.candidates.map((choice) => choice.target.kind), [
     "pending-data-placement",
     "pending-data-placement",
     "skip-pending-data-placement",
   ]);
-  assert.deepEqual(decision.choices[1].target, {
+  assert.deepEqual(decision.candidates[1].target, {
     kind: "pending-data-placement",
     choiceId: "blue-tech:2",
     slotId: "blue-tech",
     blueSlot: 2,
   });
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  const result = executor.executeEffectChoice(fixture.root, decision.candidates[0]);
   assert.equal(result.ok, true);
   assert.deepEqual(fixture.state.dataPlacementCalls, [["computer", null]]);
 }
@@ -542,7 +558,7 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.root.match.alienTraceContinuation = { playerId: "move-owner", targetPlayerId: "move-owner" };
+  const pending = { playerId: "move-owner", targetPlayerId: "move-owner" };
   fixture.state.alienPicker = {
     mode: "trace-board",
     playerId: "move-owner",
@@ -551,9 +567,9 @@ function describeSessionDecision(domain, workingRoot, kind, pending) {
     allowedTraceTypes: ["yellow"],
   };
   const executor = createConditionalActionExecutor({ domain: fixture.domain });
-  const decision = executor.inspect(fixture.root);
-  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), ["alien-state-trace"]);
-  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  const decision = describeSessionDecision(fixture.domain, fixture.root, "alien_trace", pending);
+  assert.deepEqual(decision.candidates.map((choice) => choice.target.kind), ["alien-state-trace"]);
+  const result = executor.executeEffectChoice(fixture.root, decision.candidates[0]);
   assert.equal(result.ok, true);
   assert.deepEqual(fixture.state.traceCalls, [[1, "yellow"]]);
 }

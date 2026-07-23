@@ -234,7 +234,7 @@
       const decisions = {
         movePayment: context.getPendingMovePayment?.(),
         cardSelectionDecision: context.readCardSelectionDecision?.(readoutRoot),
-        alienTraceContinuation: context.getPendingAlienTraceDecision?.(readoutRoot),
+        alienTraceDecision: context.getPendingAlienTraceDecision?.(readoutRoot),
         alienTracePickerState: context.uiRuntimeState?.alienTracePickerState || null,
         actionEffectFlow: context.getActionEffectFlow?.(readoutRoot),
         publicCardSelectedSlots: [...(context.uiRuntimeState?.publicCardSelectedSlots || [])],

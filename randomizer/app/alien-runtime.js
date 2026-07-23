@@ -73,6 +73,7 @@
     return createAlienRuntimeHelpers({
       ...staticContext,
       uiRuntimeState: hostPort.uiRuntimeState,
+      readPendingDecision: hostPort.readPendingDecision,
       structuredClone: hostPort.structuredClone,
       HISTORY_SOURCE_MAIN: hostPort.HISTORY_SOURCE_MAIN,
       getCurrentPlayer: playerLookupRuntime?.getCurrentPlayer,
@@ -186,9 +187,12 @@
       }
       return workingRoot;
     }
-    const getAlienTraceContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.alienTraceContinuation || null;
-    function clearAlienTraceContinuation(workingRoot) {
-      delete requireWorkingRoot(workingRoot).match.alienTraceContinuation;
+    const getAlienTraceDecision = (workingRoot) => (
+      requireWorkingRoot(workingRoot),
+      context.readPendingDecision?.("alien_trace") || null
+    );
+    function closeAlienTraceDecision(workingRoot) {
+      requireWorkingRoot(workingRoot);
     }
 
     function getWorkingActivePlayers(workingRoot) {
@@ -692,7 +696,7 @@
     function confirmAlienTracePlacement(workingRoot, alienSlotId, traceType) {
       const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       if (!inDebugMode && !isAlienTracePickerChoiceAllowed(alienSlotId, traceType)) {
@@ -703,7 +707,7 @@
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       const beforeLogSnapshot = createActionLogImpactSnapshot(currentPlayer);
-      clearAlienTraceContinuation(workingRoot);
+      closeAlienTraceDecision(workingRoot);
       const result = aliens.placeFirstTrace(
         alienGameState,
         alienSlotId,
@@ -797,7 +801,6 @@
       }
       renderPlayerStats();
       renderPlayerHand();
-      maybeContinueAlienRevealQueuedOpportunities();
       renderStateReadout();
       return revealResult || result;
     }
@@ -816,13 +819,13 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("yichangdian-grid");
       }
 
@@ -919,13 +922,13 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("fangzhou-grid", "fangzhou-use");
       }
 
@@ -1025,7 +1028,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const rewardPreview = banrenma.getTraceReward(traceType, Number(position));
@@ -1038,7 +1041,7 @@
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("banrenma-grid");
       }
 
@@ -1160,7 +1163,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const rewardPreview = aomomo.getTraceReward(traceType, Number(position));
@@ -1173,7 +1176,7 @@
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("aomomo-grid");
       }
 
@@ -1285,13 +1288,13 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("chong-grid");
       }
 
@@ -1397,13 +1400,13 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("amiba-grid");
       }
 
@@ -1508,13 +1511,13 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("runezu-grid");
       }
 
@@ -1620,13 +1623,13 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = getAlienTraceContinuation(workingRoot);
+      const pending = getAlienTraceDecision(workingRoot);
       const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
       if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
-        clearAlienTraceContinuation(workingRoot);
+        closeAlienTraceDecision(workingRoot);
         clearAlienTracePlacementMode("jiuzhe-grid");
       }
 

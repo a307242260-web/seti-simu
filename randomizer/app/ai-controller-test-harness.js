@@ -188,7 +188,6 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
 
   const state = {
     get pendingJiuzheCardPlay() { return pendingJiuzheCardPlay; },
-    get pendingAlienTraceContinuation() { return options.pendingAlienTraceContinuation || null; },
     get pendingScanTargetAction() { return options.scanTargetPending || null; },
     get pendingProbeSectorScanAction() { return options.probeSectorPending || null; },
     get pendingProbeLocationRewardAction() { return options.probeLocationPending || null; },
@@ -576,7 +575,6 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     },
     hasActivePendingSubFlow: () => Boolean(
       pendingJiuzheCardPlay
-      || options.pendingAlienTraceContinuation
       || options.scanTargetPending
       || options.probeSectorPending
       || options.probeLocationPending

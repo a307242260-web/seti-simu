@@ -43,7 +43,10 @@
       }
       return workingRoot;
     }
-    const getAlienTraceContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.alienTraceContinuation || null;
+    const getAlienTraceDecision = (workingRoot) => (
+      requireWorkingRoot(workingRoot),
+      context.readPendingDecision?.("alien_trace") || null
+    );
 
     function getWorkingCurrentPlayer(workingRoot) {
       const { playerState } = requireWorkingRoot(workingRoot);
@@ -150,7 +153,7 @@
     }
 
     function getAlienTracePickerPlayer(workingRoot) {
-      return getAlienTraceActionPlayer(workingRoot, getAlienTraceContinuation(workingRoot) || uiRuntimeState.alienTracePickerState);
+      return getAlienTraceActionPlayer(workingRoot, getAlienTraceDecision(workingRoot) || uiRuntimeState.alienTracePickerState);
     }
 
     function canPlaceJiuzheTrace(workingRoot, alienSlotId, traceType, position) {
@@ -309,7 +312,7 @@
 
     function closeAlienTracePicker(workingRoot) {
       uiRuntimeState.alienTracePickerState = null;
-      delete requireWorkingRoot(workingRoot).match.alienTraceContinuation;
+      requireWorkingRoot(workingRoot);
       if (!els.alienTraceOverlay) return;
       els.alienTraceOverlay.hidden = true;
       if (els.alienTraceTitle) els.alienTraceTitle.textContent = "获取外星人标记";
@@ -470,7 +473,11 @@
       confirmButton.dataset.alienRevealConfirm = "true";
       confirmButton.textContent = "确认";
       confirmButton.addEventListener("click", () => {
-        confirmAlienRevealNotice();
+        if (typeof context.submitAlienRevealConfirmation === "function") {
+          context.submitAlienRevealConfirmation();
+        } else {
+          confirmAlienRevealNotice();
+        }
       });
       actions.replaceChildren(confirmButton);
       dialog.append(title, body, actions);
@@ -1069,7 +1076,7 @@
           allowedAlienSlotIds: uiRuntimeState.alienTracePickerState?.allowedAlienSlotIds || null,
           targetPlayerId: uiRuntimeState.alienTracePickerState?.targetPlayerId || null,
           targetPlayerColor: uiRuntimeState.alienTracePickerState?.targetPlayerColor || null,
-          label: getAlienTraceContinuation(workingRoot)?.effectLabel || uiRuntimeState.alienTracePickerState?.effectLabel || "外星人痕迹",
+          label: getAlienTraceDecision(workingRoot)?.effectLabel || uiRuntimeState.alienTracePickerState?.effectLabel || "外星人痕迹",
           fangzhouDestinationResolved: true,
         });
       }

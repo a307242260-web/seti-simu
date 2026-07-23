@@ -208,7 +208,7 @@
       readPendingDecision,
     } = context;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
-    const getPiratesRaidDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.piratesRaidContinuation || null;
+    const getPiratesRaidDecision = () => readPendingDecision?.("pirates_raid") || null;
 
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
@@ -1011,12 +1011,12 @@
           reason: "no_pirates_raid_marker",
         });
       }
-      workingRoot.match.piratesRaidContinuation = {
+      openPendingDecision(workingRoot, "pirates_raid", {
         effectId: effect.id,
         playerId: player.id,
         playerColor: player.color,
         planetId,
-      };
+      });
       rocketState.statusNote = `${effect.label}：请选择玩家面板上的掠夺标记放置到 ${getPlanetName(planetId)}`;
       renderTechBoard(workingRoot);
       syncInteractionFocusChrome();
@@ -1024,10 +1024,10 @@
       return { ok: true, pendingChoice: true, message: rocketState.statusNote };
     }
 
-    function handlePiratesRaidTechMarkerClick(workingRoot, tileId) {
+    function handlePiratesRaidTechMarkerClick(workingRoot, tileId, pendingOverride = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       const effect = getCurrentPiratesRaidMarkerEffect(workingRoot);
-      const pending = getPiratesRaidDecision(workingRoot);
+      const pending = pendingOverride || getPiratesRaidDecision(workingRoot);
       if (!effect || !pending) {
         return { ok: false, message: "没有待放置的掠夺标记" };
       }
@@ -1054,7 +1054,6 @@
         beforePlayer,
         "恢复星际海盗掠夺标记放置前玩家状态",
       ));
-      delete workingRoot.match.piratesRaidContinuation;
       return finishAutomaticRewardEffect(effect, {
         ok: true,
         undoable: true,

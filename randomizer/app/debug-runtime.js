@@ -1129,11 +1129,11 @@
         decisionInput.readPendingDecision?.("card_trigger_free_move"),
         decisionInput.readPendingDecision?.("card_trigger"),
         decisionInput.readPendingDecision?.("card_task_completion"),
-        workingRoot.match?.alienTraceContinuation,
-        workingRoot.match?.landTargetContinuation,
-        workingRoot.match?.dataPlacementContinuation,
+        decisionInput.readPendingDecision?.("alien_trace"),
+        decisionInput.readPendingDecision?.("land_target"),
+        decisionInput.readPendingDecision?.("data_placement"),
         decisionInput.readPendingDecision?.("strategy_slot"),
-        workingRoot.match?.piratesRaidContinuation,
+        decisionInput.readPendingDecision?.("pirates_raid"),
         decisionInput.readPendingDecision?.("industry_free_move"),
       ];
       for (const pending of pendingEntries) {

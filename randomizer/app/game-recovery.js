@@ -228,10 +228,7 @@
 
   function createRecoveryHost(context = {}) {
     const transientMatchFields = Object.freeze([
-      "alienTraceContinuation", "landTargetContinuation",
       "type1TriggerEvents", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
-      "turnEndRevealContinuation",
-      "dataPlacementContinuation", "piratesRaidContinuation",
     ]);
 
     function clearTransientState(workingRoot = null) {

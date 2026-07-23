@@ -45,7 +45,7 @@ Effect Group 内的原始顺序就是规则顺序。宿主或 executor 不得按
 
 Effect 与 DecisionEffect 都是纯数据，不携带闭包、DOM、Policy 或宿主 callback。`effectId` 是 decision/replay/stale validation 的身份；显示 label 不参与身份。
 
-卡牌移动、弃牌角标免费移动、卡牌触发免费移动、卡牌触发选择、任务完成、图灵科技借用、公司免费移动与策略奖励槽也遵循同一协议：Browser runtime 只在规则事务中 open DecisionEffect，Simulation 通过正式 Standard Action registry 生成 choice；确认、取消和 Policy 输入都提交 active Decision，旧 match continuation、恢复字段和 AI 直调 resolver 均不再参与生产路径。
+卡牌移动、弃牌角标免费移动、卡牌触发免费移动、卡牌触发选择、任务完成、图灵科技借用、公司免费移动、策略奖励槽、外星人痕迹、登陆目标、数据放置、海盗掠夺与回合末揭示也遵循同一协议：Browser runtime 只在规则事务中 open DecisionEffect，Simulation 通过正式 Standard Action registry 生成 choice；确认、取消和 Policy 输入都提交 active Decision，旧 match continuation、恢复字段和 AI 直调 resolver 均不再参与生产路径。回合末揭示使用 Session deferred Decision，稳定排在同一规则事务已打开的 direct Decision 与 deterministic continuation 之后，不额外寄存等待协议。
 
 普通 executor 接受 workingState 的克隆，必须返回：
 

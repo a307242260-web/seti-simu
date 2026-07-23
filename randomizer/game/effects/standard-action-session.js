@@ -22,6 +22,11 @@
     const continuation = options.continuation || null;
     const commitWorkingState = options.commitWorkingState;
     const takeOpenedDecisionEffect = options.takeOpenedDecisionEffect;
+    const takeDeferredDecisionEffects = options.takeDeferredDecisionEffects;
+    const takeDeferredEffects = () => (takeDeferredDecisionEffects?.() || []).map((effect) => ({
+      priority: "deferred",
+      effect,
+    }));
     if (typeof runtime?.registerExecutor !== "function") {
       throw new TypeError("standard action domain 缺少 composition Effect runtime");
     }
@@ -36,11 +41,13 @@
       const result = executeRegisteredAction(workingRoot, effect.payload.action);
       if (!result?.ok) return result;
       const openedDecisionEffect = result.decisionEffect || takeOpenedDecisionEffect?.() || null;
-      const spawnedEffects = openedDecisionEffect
-        ? [{ priority: "direct", effect: openedDecisionEffect }]
-        : continuation
+      const spawnedEffects = [
+        ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
+        ...(!openedDecisionEffect && continuation
           ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
-          : [];
+          : []),
+        ...takeDeferredEffects(),
+      ];
       return {
         ok: true,
         nextState: result.nextState,
@@ -103,11 +110,13 @@
         return {
           ok: true,
           nextState: commitWorkingState(workingRoot, result),
-          spawnedEffects: openedDecisionEffect
-            ? [{ priority: "direct", effect: openedDecisionEffect }]
-            : result.progressed === false
-              ? []
-              : [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
+          spawnedEffects: [
+            ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
+            ...(!openedDecisionEffect && result.progressed !== false
+              ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
+              : []),
+            ...takeDeferredEffects(),
+          ],
           events: clone(result.events || []),
         };
       });
@@ -138,9 +147,13 @@
             return {
               ok: true,
               nextState: commitWorkingState(workingRoot, resolved),
-              spawnedEffects: openedDecisionEffect
-                ? [{ priority: "direct", effect: openedDecisionEffect }]
-                : [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
+              spawnedEffects: [
+                ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
+                ...(!openedDecisionEffect
+                  ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
+                  : []),
+                ...takeDeferredEffects(),
+              ],
               events: clone(resolved.events || [{
                 type: "standard_action_decision_executed",
                 family: choice?.family || choice?.standardAction?.family || null,

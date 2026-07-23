@@ -162,7 +162,6 @@
       get pendingCardSelectionDecision() { return match.readCardSelectionDecision?.(); },
       get publicCardSelectedSlots() { return [...(ui.publicCardSelectedSlots || [])]; },
       get pendingPublicScanQueue() { return match.getPublicScanQueueSession?.(); },
-      get pendingAlienTraceContinuation() { return match.getPendingAlienTraceDecision?.(); },
       get pendingLandTargetAction() { return match.getPendingLandTargetDecision?.(); },
       get pendingJiuzheCardPlay() { return alienPending("getPendingJiuzheCardPlay"); },
       get pendingYichangdianCardGain() { return alienPending("getPendingYichangdianCardGain"); },
@@ -456,7 +455,6 @@
 
     function getPendingAlienAutomationPlayerId() {
       const pendingEntries = [
-        state.pendingAlienTraceContinuation,
         shouldUseAlienTracePickerOwnerForAutomation(state.alienTracePickerState)
           ? state.alienTracePickerState
           : null,

@@ -97,8 +97,7 @@
 
   function createBrowserMatchRuntime(context = {}) {
     const readRoot = (workingRoot = null) => workingRoot || context.createReadoutRoot();
-    const continuationGetter = (field) => (workingRoot = null) => readRoot(workingRoot)?.match?.[field] || null;
-    const getActionEffectFlow = continuationGetter("actionEffectFlow");
+    const getActionEffectFlow = (workingRoot = null) => readRoot(workingRoot)?.match?.actionEffectFlow || null;
 
     function setActionEffectFlow(workingRoot, flow) {
       if (!workingRoot?.match) throw new TypeError("action effect flow requires explicit workingRoot.match");
@@ -113,11 +112,6 @@
     return Object.freeze({
       getActionEffectFlow,
       setActionEffectFlow,
-      getPendingDataPlacementDecision: continuationGetter("dataPlacementContinuation"),
-      getPendingLandTargetDecision: continuationGetter("landTargetContinuation"),
-      getPendingAlienTraceDecision: continuationGetter("alienTraceContinuation"),
-      getPendingPiratesRaidDecision: continuationGetter("piratesRaidContinuation"),
-      hasTurnEndRevealContinuation: (workingRoot = null) => Boolean(readRoot(workingRoot)?.match?.turnEndRevealContinuation),
     });
   }
 
@@ -373,7 +367,7 @@
 
     function validateSessionBoundary(state) {
       const forbiddenContinuation = [
-        "turnEndRevealContinuation", "type1TriggerEvents", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
+        "type1TriggerEvents", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
       ].find((field) => Object.hasOwn(state?.match || {}, field));
       return forbiddenContinuation
         ? {

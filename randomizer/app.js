@@ -355,7 +355,7 @@
     analyzeDataForCurrentPlayer,
     startAnalyzeDataRewardFlow,
   } = dataAnalyzeInteractionRuntime;
-  const landTargetContinuationRuntime = actionInteractionRuntimeModule.createLandTargetContinuationRuntime({
+  const landTargetDecisionRuntime = actionInteractionRuntimeModule.createLandTargetDecisionRuntime({
     executePlutoAction: (...args) => actionInteractionRuntime.executePlutoAction(...args),
     runAction: (...args) => runAction(...args),
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
@@ -366,8 +366,8 @@
     setBrowserStatusNote,
     renderStateReadout: (...args) => renderStateReadout(...args),
   });
-  const resumeLandTargetContinuation = landTargetContinuationRuntime.resume;
-  const confirmLandTargetChoiceForRoot = landTargetContinuationRuntime.confirmForRoot;
+  const confirmLandTargetChoiceForRoot = landTargetDecisionRuntime.confirmForRoot;
+  const cancelLandTargetChoiceForRoot = landTargetDecisionRuntime.cancelForRoot;
   const browserWorkingStateAdapter = runtimeModule.createBrowserRuleStateAdapter({
     initialGameState: initialGameStateModule,
     players,
@@ -499,6 +499,7 @@
     if (effects.length > 1) throw new Error("同一规则事务不能打开多个 DecisionEffect");
     return effects[0] || null;
   };
+  const takeDeferredDecisionEffects = () => browserPendingDecisionOwner.takeDeferredDecisionEffects();
   const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
     enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
     enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
@@ -620,6 +621,7 @@
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: standardActionContinuation,
         takeOpenedDecisionEffect,
+        takeDeferredDecisionEffects,
       },
     },
   });
@@ -756,9 +758,7 @@
     uiRuntimeState: runtime.ui,
   });
   const {
-    getActionEffectFlow, setActionEffectFlow, getPendingDataPlacementDecision,
-    getPendingLandTargetDecision, getPendingAlienTraceDecision, getPendingPiratesRaidDecision,
-    hasTurnEndRevealContinuation,
+    getActionEffectFlow, setActionEffectFlow,
   } = browserMatchRuntime;
   const getPendingHandScanDecision = () => browserPendingDecisionOwner.read("hand_scan");
   const getPendingPassReserveSelection = () => browserPendingDecisionOwner.read("pass_reserve");
@@ -773,11 +773,19 @@
   const getPendingCardTriggerFreeMove = () => browserPendingDecisionOwner.read("card_trigger_free_move");
   const getPendingCardTriggerAction = () => browserPendingDecisionOwner.read("card_trigger");
   const getPendingCardTaskCompletion = () => browserPendingDecisionOwner.read("card_task_completion");
+  const getPendingDataPlacementDecision = () => browserPendingDecisionOwner.read("data_placement");
+  const getPendingLandTargetDecision = () => browserPendingDecisionOwner.read("land_target");
+  const getPendingAlienTraceDecision = () => browserPendingDecisionOwner.read("alien_trace");
+  const getPendingPiratesRaidDecision = () => browserPendingDecisionOwner.read("pirates_raid");
+  const hasTurnEndRevealDecision = () => Boolean(browserPendingDecisionOwner.read("turn_end_reveal"));
   const getPublicScanQueueSession = () => (
     browserPendingDecisionOwner.read("public_scan")?.publicScanQueue || null
   );
   const openBrowserPendingDecision = (workingRoot, kind, pending) => (
     browserPendingDecisionOwner.open(workingRoot, kind, pending)
+  );
+  const deferBrowserPendingDecision = (workingRoot, kind, pending) => (
+    browserPendingDecisionOwner.defer(workingRoot, kind, pending)
   );
   const readCardSelectionDecision = () => cardSelectionDecisionOwner.read();
   const openCardSelectionDecision = (workingRoot, pending) => {
@@ -840,6 +848,9 @@
     els,
     dispatchHostCommand: (command) => ruleComposition.inputPort.submitHostCommand(command),
     submitChoice: (choiceIndex) => confirmLandTargetChoice(choiceIndex),
+    submitCancel: () => submitActiveCardDecision("land-target-cancel", () => true),
+    openPendingDecision: openBrowserPendingDecision,
+    readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     getPendingOwnerFields: (...args) => getPendingOwnerFields(...args),
     renderStateReadout: (...args) => renderStateReadout(...args),
   });
@@ -913,8 +924,8 @@
     allowsBlindDrawInSelection,
     canBlindDraw,
     getPendingLandTargetDecision,
-    getAlienTraceContinuation: (workingRoot) => workingRoot.match?.alienTraceContinuation || null,
     getAlienTracePickerState: () => uiRuntimeState.alienTracePickerState || null,
+    openPendingDecision: openBrowserPendingDecision,
     abilities,
     createActionContext: createReadoutActionContext,
     getFangzhouUnlockableTraceTypes: (workingRoot, ...args) => getFangzhouUnlockableTraceTypesForRoot(workingRoot, ...args),
@@ -976,6 +987,9 @@
     handlePiratesRaidLaunchChoice: (workingRoot, ...args) => (
       techRuntime.handlePiratesRaidLaunchChoice(workingRoot, ...args)
     ),
+    handlePiratesRaidTechMarkerClick: (workingRoot, ...args) => (
+      techRuntime.handlePiratesRaidTechMarkerClick(workingRoot, ...args)
+    ),
     handleScanAction4Choice: (workingRoot, ...args) => (
       effectExecutors.handleScanAction4Choice(workingRoot, ...args)
     ),
@@ -1010,7 +1024,13 @@
     handleIndustryDeepspaceHandClick: (workingRoot, ...args) => industryRuntime.handleIndustryDeepspaceHandClick(workingRoot, ...args),
     handleIndustryFutureSpanHandClick: (workingRoot, ...args) => industryRuntime.handleIndustryFutureSpanHandClick(workingRoot, ...args),
     drawCardForCurrentPlayer: (workingRoot, ...args) => drawCardForCurrentPlayerForRoot(workingRoot, ...args),
-    confirmLandTargetChoice: (workingRoot, choiceIndex) => confirmLandTargetChoiceForRoot(workingRoot, choiceIndex),
+    confirmLandTargetChoice: (workingRoot, choiceIndex, pending) => (
+      confirmLandTargetChoiceForRoot(workingRoot, choiceIndex, pending)
+    ),
+    cancelLandTargetChoice: (workingRoot, pending) => cancelLandTargetChoiceForRoot(workingRoot, pending),
+    finishCurrentTurnAfterAlienReveal: (workingRoot, ...args) => (
+      turnEndFlow.finishCurrentTurnAfterAlienReveal(workingRoot, ...args)
+    ),
     handleStateTraceSlotPlacement: (workingRoot, ...args) => handleStateTraceSlotPlacementForRoot(workingRoot, ...args),
   }));
   const conditionalActionExecutor = conditionalActionExecutorModule.createConditionalActionExecutor({
@@ -2401,6 +2421,8 @@
     amiba,
     aomomo,
     runezu,
+    readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
+    submitAlienRevealConfirmation: () => confirmAlienRevealNotice(),
     els,
     renderAlienPanels: (...args) => renderAlienPanels(...args),
     renderStateReadout,
@@ -2419,7 +2441,7 @@
     buildAlienRevealNoticeEntry: buildAlienRevealNoticeEntryForRoot,
     openAlienRevealConfirmation,
     closeAlienRevealConfirmationOverlay,
-    confirmAlienRevealNotice,
+    confirmAlienRevealNotice: confirmAlienRevealNoticeUi,
     isAlienTraceBoardPlacementMode,
     isAlienTracePlacementMode,
     isAlienTracePlacementSlotAllowed,
@@ -2470,6 +2492,11 @@
     hasAlienTracePanelPlacementTarget: hasAlienTracePanelPlacementTargetForRoot,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
+  const confirmAlienRevealNotice = () => (
+    browserPendingDecisionOwner.read("turn_end_reveal")
+      ? submitActiveCardDecision("turn-end-reveal-confirm", () => true)
+      : confirmAlienRevealNoticeUi()
+  );
   const {
     buildAlienRevealNoticeEntry,
     getAlienTracePickerPlayer,
@@ -2526,6 +2553,7 @@
     scoreSourceRuntime,
     hostPort: {
       uiRuntimeState,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       structuredClone,
       HISTORY_SOURCE_MAIN,
       getEarthSectorCoordinate,
@@ -2648,7 +2676,7 @@
       && !uiRuntimeState.effectStepActive
       && !getActionEffectFlow()
       && !uiRuntimeState.alienRevealConfirmation
-      && !hasTurnEndRevealContinuation()
+      && !hasTurnEndRevealDecision()
       && !actionLogState.draft
       && !actionHistory.hasSession()
       && !quickActionHistory.hasSession()
@@ -4100,11 +4128,17 @@
     onTechTileSelected, onTechTileTaken, clearResearchTechSelectionState, restoreResearchTechSelectionAfterUndo,
     cancelPendingResearchTechTileChoice, cancelTechSelection, openTechBlueSlotPicker, finalizeTechTakeResult,
     commitResearchTechSelectionResult, selectResearchTechTileForCurrentFlow, confirmTechBlueSlotChoice,
-    handleSupplyTechTileClick, executeIndustryPiratesRaidMarkerEffect, handlePiratesRaidTechMarkerClick,
+    handleSupplyTechTileClick, executeIndustryPiratesRaidMarkerEffect,
+    handlePiratesRaidTechMarkerClick: handlePiratesRaidTechMarkerClickForRoot,
     executeIndustryPiratesRaidPublicityEffect, startIndustryPiratesRaidLaunchFlow, buildPiratesRaidLaunchChoices,
     executeIndustryPiratesRaidLaunchEffect,
     setCheatModeOpen, toggleCheatMode,
   } = bindDomainCommands("tech_runtime");
+  const handlePiratesRaidTechMarkerClick = (tileId) => (
+    getPendingPiratesRaidDecision()
+      ? submitActiveCardDecision("pirates-raid-marker", (target) => String(target.tileId) === String(tileId))
+      : { ok: false, message: "没有待放置的掠夺标记" }
+  );
 
   const placeDataToBlueSlot = browserHostCommandPort.bindValue(
     "data_place_blue_slot",
@@ -4170,6 +4204,8 @@
       quickActionHistory,
       els,
       uiRuntimeState,
+      deferPendingDecision: deferBrowserPendingDecision,
+      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       clearActionEffectFlow,
       isActionEffectFlowActive,
       refreshLatestActionLogRecoverySnapshot,
@@ -4186,7 +4222,7 @@
     submitUndo: browserHostCommandPort.bindValue("history_undo_pending"),
   });
   const { undoForRoot: undoPendingActionForRoot, undo: undoPendingAction } = undoPort;
-  const dataPlacementContinuationRuntime = actionInteractionRuntimeModule.createDataPlacementContinuationRuntime({
+  const dataPlacementDecisionRuntime = actionInteractionRuntimeModule.createDataPlacementDecisionRuntime({
     getEffectExecutors: () => effectExecutors,
     getIndustryRuntime: () => industryRuntime,
   });
@@ -4198,7 +4234,7 @@
     ),
     actionGuardRuntime,
     actionSessionRuntime,
-    dataPlacementPort: dataPlacementContinuationRuntime,
+    dataPlacementPort: dataPlacementDecisionRuntime,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     handFlowRuntime: handFlowHelpers,
@@ -4212,6 +4248,9 @@
       runAction,
       validateIndustryHuanyuMoveRocket,
     },
+    openPendingDecision: openBrowserPendingDecision,
+    readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
+    readCardSelectionDecision,
     cardTriggerPort: {
       hasActiveCardTriggerResolution,
       settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffectForRoot(...args),
@@ -4389,6 +4428,7 @@
     scoreSourceRuntime,
     turnEndRuntime: turnEndPort,
     hostPort: {
+      openPendingDecision: openBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       startScreenState,
       uiRuntimeState,

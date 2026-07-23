@@ -90,6 +90,8 @@
       quickActionHistory: hostPort.quickActionHistory,
       els: hostPort.els,
       uiRuntimeState: hostPort.uiRuntimeState,
+      deferPendingDecision: hostPort.deferPendingDecision,
+      readPendingDecision: hostPort.readPendingDecision,
       activateNextActionEffect: effectFlowRuntime.activateNextActionEffect,
       advanceTurnAfterPlayerAction: turnHostRuntime.advanceTurnAfterPlayerAction,
       appendActionLogStep: actionLogRuntime.appendActionLogStep,
@@ -98,7 +100,6 @@
       assignEffectFlowOwner: playerEffectOwnerRuntime.assignEffectFlowOwner,
       beginDiscardSelection: handFlowRuntime.beginDiscardSelection,
       beginEffectHistoryStep: effectFlowRuntime.beginEffectHistoryStep,
-      buildAlienRevealNoticeEntry: alienUiRuntime.buildAlienRevealNoticeEntry,
       canStartMainAction: actionSessionRuntime.canStartMainAction,
       clearActionEffectFlow: hostPort.clearActionEffectFlow,
       clearActionPending: actionSessionRuntime.clearActionPending,
@@ -127,7 +128,6 @@
       maybeOpenQueuedBanrenmaOpportunity: alienSpecies("maybeOpenQueuedBanrenmaOpportunity"),
       maybeOpenQueuedJiuzheOpportunity: alienSpecies("maybeOpenQueuedJiuzheOpportunity"),
       maybeStartFundamentalismRoundStartIncomeFlow: incomeRuntime.maybeStartFundamentalismRoundStartIncomeFlow,
-      openAlienRevealConfirmation: alienUiRuntime.openAlienRevealConfirmation,
       recordHistoryCommand: effectFlowRuntime.recordHistoryCommand,
       refreshLatestActionLogRecoverySnapshot: hostPort.refreshLatestActionLogRecoverySnapshot,
       renderAlienPanels: alienSpecies("renderAlienPanels"),
@@ -168,7 +168,6 @@
       assignEffectFlowOwner,
       beginDiscardSelection,
       beginEffectHistoryStep,
-      buildAlienRevealNoticeEntry,
       canStartMainAction,
       clearActionEffectFlow,
       clearActionPending,
@@ -177,6 +176,7 @@
       completeCurrentActionEffect,
       completePendingActionStep,
       createActionLogImpactSnapshot,
+      deferPendingDecision,
       els,
       endEffectHistoryStep,
       getCurrentPlayer,
@@ -198,9 +198,9 @@
       maybeOpenQueuedBanrenmaOpportunity,
       maybeOpenQueuedJiuzheOpportunity,
       maybeStartFundamentalismRoundStartIncomeFlow,
-      openAlienRevealConfirmation,
       planetRewards,
       quickActionHistory,
+      readPendingDecision,
       recordHistoryCommand,
       refreshLatestActionLogRecoverySnapshot,
       renderAlienPanels,
@@ -225,8 +225,6 @@
     } = context;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
-    const TURN_END_REVEAL_CONTINUATION_FIELD = "turnEndRevealContinuation";
-
   function requireWorkingRoot(workingRoot) {
     if (!workingRoot || typeof workingRoot !== "object") {
       throw new TypeError("turn-end operation requires an explicit workingRoot");
@@ -244,24 +242,21 @@
     return flow;
   }
 
-  function getTurnEndRevealContinuation(workingRoot) {
+  function getTurnEndRevealDecision(workingRoot) {
     requireWorkingRoot(workingRoot);
-    return workingRoot.match?.[TURN_END_REVEAL_CONTINUATION_FIELD] || null;
+    return readPendingDecision?.("turn_end_reveal") || null;
   }
 
-  function setTurnEndRevealContinuation(workingRoot, continuation) {
+  function deferTurnEndRevealDecision(workingRoot, decision) {
     requireWorkingRoot(workingRoot);
-    if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
-    if (continuation == null) {
-      delete workingRoot.match[TURN_END_REVEAL_CONTINUATION_FIELD];
-      return null;
-    }
+    if (decision == null) return null;
     const normalized = {
-      endingPlayerId: continuation.endingPlayerId || continuation.endingPlayer?.id || null,
-      didPass: Boolean(continuation.didPass),
-      turnEndReveal: structuredClone(continuation.turnEndReveal || null),
+      endingPlayerId: decision.endingPlayerId || decision.endingPlayer?.id || null,
+      playerId: decision.endingPlayerId || decision.endingPlayer?.id || null,
+      didPass: Boolean(decision.didPass),
+      turnEndReveal: structuredClone(decision.turnEndReveal || null),
     };
-    workingRoot.match[TURN_END_REVEAL_CONTINUATION_FIELD] = normalized;
+    deferPendingDecision(workingRoot, "turn_end_reveal", normalized);
     return normalized;
   }
 
@@ -561,7 +556,7 @@
       });
   }
 
-  function revealReadyAliensAtTurnEnd(workingRoot, triggerPlayer, options = {}) {
+  function revealReadyAliensAtTurnEnd(workingRoot, triggerPlayer) {
     const actionAlienGameState = workingRoot.alienGameState;
     const revealEntries = listReadyAlienRevealSlotIds(workingRoot)
       .map((alienSlotId) => ({
@@ -574,11 +569,6 @@
     }
 
     const settledEntries = settleTurnEndAlienRevealEntries(triggerPlayer, revealEntries);
-    if (options.confirmBeforeSideEffects) {
-      openAlienRevealConfirmation(
-        settledEntries.map((entry) => buildAlienRevealNoticeEntry(entry.alienSlotId, entry.revealResult)),
-      );
-    }
     return {
       ok: true,
       count: settledEntries.length,
@@ -593,16 +583,16 @@
       || getPendingJiuzheCardPlay()
       || getPendingBanrenmaOpportunity()
       || getPendingBanrenmaCardGain()
-      || workingRoot.match?.alienTraceContinuation
+      || readPendingDecision?.("alien_trace")
       || uiRuntimeState.alienTracePickerState
       || isActionEffectFlowActive(workingRoot)
       || hasActivePendingSubFlow(workingRoot)
     );
   }
 
-  function queueTurnEndAfterRevealContinuation(workingRoot, continuation) {
-    setTurnEndRevealContinuation(workingRoot, continuation);
-    workingRoot.rocketState.statusNote = continuation?.turnEndReveal?.message || "请先完成外星人揭示流程";
+  function deferTurnEndAfterRevealDecision(workingRoot, decision) {
+    deferTurnEndRevealDecision(workingRoot, decision);
+    workingRoot.rocketState.statusNote = decision?.turnEndReveal?.message || "请先完成外星人揭示流程";
     updateActionButtons();
     renderStateReadout();
     return { ok: true, pending: true, message: workingRoot.rocketState.statusNote };
@@ -610,14 +600,14 @@
 
   function maybeResumeTurnEndAfterReveal(workingRoot) {
     requireWorkingRoot(workingRoot);
-    const continuation = getTurnEndRevealContinuation(workingRoot);
-    if (!continuation || hasTurnEndRevealBlockingSubFlow(workingRoot)) return null;
-    return finishCurrentTurnAfterAlienReveal(workingRoot, continuation);
+    const decision = getTurnEndRevealDecision(workingRoot);
+    if (!decision || hasTurnEndRevealBlockingSubFlow(workingRoot)) return null;
+    return finishCurrentTurnAfterAlienReveal(workingRoot, decision);
   }
 
   function maybeContinuePendingTurnEndRevealFlow(workingRoot) {
     requireWorkingRoot(workingRoot);
-    if (!getTurnEndRevealContinuation(workingRoot)) return null;
+    if (!getTurnEndRevealDecision(workingRoot)) return null;
     return maybeContinueAlienRevealQueuedOpportunities(workingRoot);
   }
 
@@ -647,14 +637,13 @@
     const actionRocketState = workingRoot.rocketState;
     const resolvedEndingPlayer = endingPlayer || (actionPlayerState.players || [])
       .find((player) => player.id === endingPlayerId) || null;
-    if (turnEndReveal?.count && hasTurnEndRevealBlockingSubFlow(workingRoot)) {
-      return queueTurnEndAfterRevealContinuation(workingRoot, {
+    if (turnEndReveal?.count && !getTurnEndRevealDecision(workingRoot)) {
+      return deferTurnEndAfterRevealDecision(workingRoot, {
         endingPlayerId,
         didPass,
         turnEndReveal,
       });
     }
-    setTurnEndRevealContinuation(workingRoot, null);
     const passIncomeResult = didPass ? applyPassTurnEndIncome(workingRoot, resolvedEndingPlayer) : null;
     commitActionLogDraft({
       passed: didPass,
@@ -735,9 +724,7 @@
 
     endEffectHistoryStep(workingRoot);
     const turnEndContext = { endingPlayer, endingPlayerId, didPass };
-    const turnEndReveal = revealReadyAliensAtTurnEnd(workingRoot, endingPlayer, {
-      confirmBeforeSideEffects: true,
-    });
+    const turnEndReveal = revealReadyAliensAtTurnEnd(workingRoot, endingPlayer);
     return finishCurrentTurnAfterAlienReveal(workingRoot, {
       ...turnEndContext,
       turnEndReveal,
@@ -752,6 +739,7 @@
       maybeContinueAlienRevealQueuedOpportunities,
       maybeContinuePendingTurnEndRevealFlow,
       maybeResumeTurnEndAfterReveal,
+      finishCurrentTurnAfterAlienReveal,
       passForCurrentPlayer,
     };
   }

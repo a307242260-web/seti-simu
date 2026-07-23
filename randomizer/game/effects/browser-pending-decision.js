@@ -26,6 +26,11 @@
     "industry_ability",
     "industry_free_move",
     "strategy_slot",
+    "alien_trace",
+    "pirates_raid",
+    "land_target",
+    "data_placement",
+    "turn_end_reveal",
   ]);
 
   function clone(value) {
@@ -57,7 +62,7 @@
         throw new TypeError("browser pending Decision transaction 缺少 workingRoot/operation");
       }
       if (activeRuleTransaction) return operation();
-      activeRuleTransaction = { workingRoot, openedDecisionEffect: null };
+      activeRuleTransaction = { workingRoot, openedDecisionEffect: null, deferredDecisionEffects: [] };
       try {
         return operation();
       } finally {
@@ -65,15 +70,12 @@
       }
     }
 
-    function open(workingRoot, kind, rawPending) {
+    function createDecisionEffect(workingRoot, kind, rawPending) {
       if (!SUPPORTED_KINDS.includes(kind)) {
         throw new TypeError(`不支持的 browser pending Decision: ${kind || "<missing>"}`);
       }
       if (!activeRuleTransaction || activeRuleTransaction.workingRoot !== workingRoot) {
         throw new Error("browser pending DecisionEffect 只能在当前规则事务内 open");
-      }
-      if (activeRuleTransaction.openedDecisionEffect) {
-        throw new Error("同一规则事务不能 open 两个 browser pending DecisionEffect");
       }
       const pending = clone(rawPending || {});
       const described = options.enumerate(workingRoot, kind, pending);
@@ -85,15 +87,28 @@
         throw new Error(`${kind} DecisionEffect 没有合法选项`);
       }
       const ownerId = described?.ownerId || described?.actorPlayer?.id || pending.playerId || null;
-      const effect = {
+      return {
         ownerId,
         type: DECISION_EFFECT_TYPE,
         kind: "decision",
         decisionKind: described?.decisionKind || choices[0]?.family || kind,
         payload: { choices },
       };
+    }
+
+    function open(workingRoot, kind, rawPending) {
+      if (activeRuleTransaction?.openedDecisionEffect) {
+        throw new Error("同一规则事务不能 open 两个 browser pending DecisionEffect");
+      }
+      const effect = createDecisionEffect(workingRoot, kind, rawPending);
       activeRuleTransaction.openedDecisionEffect = effect;
-      return clone(pending);
+      return clone(rawPending || {});
+    }
+
+    function defer(workingRoot, kind, rawPending) {
+      const effect = createDecisionEffect(workingRoot, kind, rawPending);
+      activeRuleTransaction.deferredDecisionEffects.push(effect);
+      return clone(rawPending || {});
     }
 
     function takeOpenedDecisionEffect() {
@@ -103,11 +118,20 @@
       return clone(effect);
     }
 
+    function takeDeferredDecisionEffects() {
+      const effects = activeRuleTransaction?.deferredDecisionEffects || [];
+      if (!effects.length) return [];
+      activeRuleTransaction.deferredDecisionEffects = [];
+      return clone(effects);
+    }
+
     return Object.freeze({
       read,
       open,
+      defer,
       runRuleTransaction,
       takeOpenedDecisionEffect,
+      takeDeferredDecisionEffects,
     });
   }
 

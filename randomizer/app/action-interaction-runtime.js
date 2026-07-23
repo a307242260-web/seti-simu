@@ -70,7 +70,6 @@
     }
 
     function close(workingRoot = null) {
-      if (workingRoot?.match) delete workingRoot.match.landTargetContinuation;
       if (!els.landTargetOverlay) return;
       els.landTargetOverlay.hidden = true;
       delete els.landTargetOverlay.dataset.planetId;
@@ -78,9 +77,10 @@
 
     function cancel(workingRoot = null) {
       if (!workingRoot?.match) {
+        if (context.readPendingDecision?.("land_target")) return context.submitCancel();
         return context.dispatchHostCommand({ kind: "land_target_cancel" }).value;
       }
-      const pending = workingRoot.match.landTargetContinuation || null;
+      const pending = context.readPendingDecision?.("land_target") || null;
       close(workingRoot);
       if (pending?.cancelKind === "chong-travel") {
         workingRoot.rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
@@ -92,7 +92,7 @@
     function open(workingRoot, options = {}) {
       if (!workingRoot?.match) throw new TypeError("land target requires Composition workingRoot.match");
       const effect = options.effect || null;
-      workingRoot.match.landTargetContinuation = {
+      const pending = {
         ...(context.getPendingOwnerFields?.(effect, options.player || null) || {}),
         type: "land_target",
         resumeKind: options.resumeKind || "main-planet-action",
@@ -105,6 +105,7 @@
         confirmText: options.confirmText || null,
         planet: structuredClone(options.planet || null),
       };
+      context.openPendingDecision(workingRoot, "land_target", pending);
       if (!els.landTargetOverlay || !els.landTargetSelect) {
         return { ok: true, pending: true, message: "请选择登陆目标" };
       }
@@ -585,7 +586,7 @@
     return Object.freeze({ getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId });
   }
 
-  function createDataPlacementContinuationRuntime(context = {}) {
+  function createDataPlacementDecisionRuntime(context = {}) {
     function resume(workingRoot, pending, outcome) {
       const effect = pending?.effect;
       if (!effect) return { ok: false, message: "放置数据续体缺少效果上下文" };
@@ -628,7 +629,7 @@
     return Object.freeze({ confirm });
   }
 
-  function createLandTargetContinuationRuntime(context = {}) {
+  function createLandTargetDecisionRuntime(context = {}) {
     function resume(workingRoot, pending, choice) {
       const actionType = pending.actionType || choice.actionType || (choice.kind === "orbit" ? "orbit" : "land");
       if (pending.resumeKind === "main-planet-action") {
@@ -662,8 +663,8 @@
       return { ok: false, code: "LAND_TARGET_RESUME_UNMIGRATED", message: `未知登陆目标续体：${pending.resumeKind}` };
     }
 
-    function confirmForRoot(workingRoot, choiceIndex = 0) {
-      const pending = context.getPendingLandTargetDecision(workingRoot);
+    function confirmForRoot(workingRoot, choiceIndex = 0, pendingOverride = null) {
+      const pending = pendingOverride || context.getPendingLandTargetDecision(workingRoot);
       return context.withPendingOwnerPlayer(pending, () => {
         if (!pending?.choices?.length) {
           context.closeLandTargetPicker(workingRoot);
@@ -677,7 +678,17 @@
       });
     }
 
-    return Object.freeze({ resume, confirmForRoot });
+    function cancelForRoot(workingRoot, pendingOverride = null) {
+      const pending = pendingOverride || context.getPendingLandTargetDecision(workingRoot);
+      context.closeLandTargetPicker(workingRoot);
+      if (pending?.cancelKind === "chong-travel") {
+        workingRoot.rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
+        context.renderStateReadout();
+      }
+      return { ok: true, progressed: true, skipped: true, canceled: true };
+    }
+
+    return Object.freeze({ resume, confirmForRoot, cancelForRoot });
   }
 
   const BROWSER_ACTION_INTERACTION_STATIC_KEYS = Object.freeze([
@@ -802,7 +813,7 @@
       renderRocketElement: requireCapability("renderRuntime", "renderRocketElement"),
       renderRockets: requireCapability("renderRuntime", "renderRockets"),
       renderStateReadout: requireCapability("renderRuntime", "renderStateReadout"),
-      resumeDataPlacementContinuation: requireCapability("dataPlacementPort", "resume"),
+      resumeDataPlacementDecision: requireCapability("dataPlacementPort", "resume"),
       runAction: requireCapability("actionPort", "runAction"),
       settleCardTasksAfterEffect: requireCapability("cardTriggerPort", "settleCardTasksAfterEffect"),
       startCardEffectFlow: requireCapability("effectFlowRuntime", "startCardEffectFlow"),
@@ -849,8 +860,11 @@
       markerBelongsToPlayer,
       markerOwnerLabel,
       openLandTargetPicker,
+      openPendingDecision,
       players,
       quickActionHistory,
+      readCardSelectionDecision,
+      readPendingDecision,
       recordAtomicActionHistory,
       recordAbilityCommands,
       recordHistoryCommand,
@@ -862,7 +876,7 @@
       renderRocketElement,
       renderRockets,
       renderStateReadout,
-      resumeDataPlacementContinuation,
+      resumeDataPlacementDecision,
       restoreMutableObject,
       rocketActions,
       runAction,
@@ -890,14 +904,19 @@
       return players.getCurrentPlayer(workingRoot.playerState);
     }
 
-    function getPendingDataPlacement(workingRoot) {
-      return requireWorkingRoot(workingRoot).match?.dataPlacementContinuation || null;
+    function getPendingDataPlacement(workingRoot, pendingOverride = null) {
+      requireWorkingRoot(workingRoot);
+      return pendingOverride
+        || readPendingDecision?.("data_placement")
+        || readCardSelectionDecision?.()?.dataPlacementDecision
+        || readPendingDecision?.("discard")?.dataPlacementDecision
+        || null;
     }
 
     function setPendingDataPlacement(workingRoot, pending) {
-      const activeRoot = requireWorkingRoot(workingRoot);
-      if (pending) activeRoot.match.dataPlacementContinuation = pending;
-      else delete activeRoot.match.dataPlacementContinuation;
+      requireWorkingRoot(workingRoot);
+      if (pending) openPendingDecision(workingRoot, "data_placement", pending);
+      return pending || null;
     }
     let moveArrowRenderFrame = 0;
 
@@ -1705,6 +1724,7 @@
           effectLabel: pending.effect?.label || "自动放置数据",
           fromEffectFlow: true,
           autoDataPlacement: true,
+          dataPlacementDecision: structuredClone(pending),
         });
         if (!incomeStart.ok) {
           messages.push(incomeStart.message);
@@ -1722,6 +1742,7 @@
           beforeCardState: pending.beforeCardState,
           fromEffectFlow: true,
           autoDataPlacement: true,
+          dataPlacementDecision: structuredClone(pending),
         });
         if (!selectionStart.ok) {
           messages.push(selectionStart.message);
@@ -1749,12 +1770,11 @@
     return { ok: true, pendingIncome: false, pendingCardSelection: false, messages };
   }
 
-  function continuePendingDataPlacementAfterBonus(workingRoot, message = null) {
-    const pending = getPendingDataPlacement(workingRoot);
+  function continuePendingDataPlacementAfterBonus(workingRoot, message = null, pendingOverride = null) {
+    const pending = getPendingDataPlacement(workingRoot, pendingOverride);
     if (!pending) return null;
     if (message) pending.messages.push(message);
-    setPendingDataPlacement(workingRoot, null);
-    return resumeDataPlacementContinuation(workingRoot, pending, {
+    return resumeDataPlacementDecision(workingRoot, pending, {
       skipped: false,
       messages: pending.messages.filter(Boolean),
       restoreRecorded: pending.restoreRecorded,
@@ -1762,9 +1782,9 @@
     });
   }
 
-  function confirmPendingDataPlacement(workingRoot, target, blueSlot) {
+  function confirmPendingDataPlacement(workingRoot, target, blueSlot, pendingOverride = null) {
     requireWorkingRoot(workingRoot);
-    const pending = getPendingDataPlacement(workingRoot);
+    const pending = getPendingDataPlacement(workingRoot, pendingOverride);
     const player = getPendingDataPlacementPlayer(workingRoot, pending);
     closeDataPlacePicker(workingRoot, { keepPending: true });
     return withPendingOwnerPlayer(workingRoot, pending, () => {
@@ -1793,7 +1813,7 @@
     pending.messages.push(...(bonusResult.messages || []));
     renderPlayerStats();
     renderInitialSelectionArea();
-    return continuePendingDataPlacementAfterBonus(workingRoot);
+    return continuePendingDataPlacementAfterBonus(workingRoot, null, pending);
     });
   }
 
@@ -1902,15 +1922,14 @@
     return applyPlaceDataSlotBonus(workingRoot, player, placeResult);
   }
 
-  function skipPendingDataPlacement(workingRoot) {
-    const pending = getPendingDataPlacement(workingRoot);
+  function skipPendingDataPlacement(workingRoot, pendingOverride = null) {
+    const pending = getPendingDataPlacement(workingRoot, pendingOverride);
     if (!pending) {
       closeDataPlacePicker(workingRoot);
       return null;
     }
     closeDataPlacePicker(workingRoot, { keepPending: true });
-    setPendingDataPlacement(workingRoot, null);
-    return resumeDataPlacementContinuation(workingRoot, pending, {
+    return resumeDataPlacementDecision(workingRoot, pending, {
       skipped: true,
       messages: [],
       restoreRecorded: false,
@@ -1929,8 +1948,8 @@
 
   function confirmDataPlacement(workingRoot, target, blueSlot, execution = {}) {
     requireWorkingRoot(workingRoot);
-    if (getPendingDataPlacement(workingRoot)) {
-      return confirmPendingDataPlacement(workingRoot, target, blueSlot);
+    if (execution.pending || getPendingDataPlacement(workingRoot)) {
+      return confirmPendingDataPlacement(workingRoot, target, blueSlot, execution.pending);
     }
     closeDataPlacePicker(workingRoot);
     const blocked = blockIncompatiblePendingQuickAction("place-data");
@@ -2025,9 +2044,9 @@
     createActionInteractionPort,
     createDataAnalyzeInteractionRuntime,
     createBoardQueryRuntime,
-    createDataPlacementContinuationRuntime,
+    createDataPlacementDecisionRuntime,
     createLandDecisionPort,
-    createLandTargetContinuationRuntime,
+    createLandTargetDecisionRuntime,
     BROWSER_ACTION_INTERACTION_STATIC_KEYS,
     createBrowserActionInteractionStaticContext,
     createBrowserActionInteractionRuntime,

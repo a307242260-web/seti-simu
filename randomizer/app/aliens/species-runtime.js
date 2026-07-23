@@ -28,6 +28,7 @@
       "insertActionEffectsAfterCurrent", "markActionPending", "markCurrentActionIrreversible",
       "maybeContinueAlienRevealQueuedOpportunities", "maybeContinuePendingTurnEndRevealFlow",
       "maybeRestoreAlienLabPanelForTrace", "openCardTaskCompletionPicker",
+      "openPendingDecision",
       "openFangzhouTraceDestinationChoice", "removeReservedCardToDiscard", "removeRocketElement",
       "settleCardTasksAfterEffect", "skipActionEffectWithMessage", "startCardEffectFlow",
     ]),
@@ -148,6 +149,7 @@
           maybeContinuePendingTurnEndRevealFlow: turnEndRuntime?.maybeContinuePendingTurnEndRevealFlow,
           maybeRestoreAlienLabPanelForTrace: industryRuntime?.maybeRestoreAlienLabPanelForTrace,
           openCardTaskCompletionPicker: cardTriggerRuntime?.openCardTaskCompletionPicker,
+          openPendingDecision: hostPort.openPendingDecision,
           openFangzhouTraceDestinationChoice: alienUiRuntime?.openFangzhouTraceDestinationChoice,
           removeReservedCardToDiscard: cardTriggerRuntime?.removeReservedCardToDiscard,
           removeRocketElement: coordinateRuntime?.removeRocketElement,
@@ -258,6 +260,7 @@
       isActionEffectFlowActive,
       isPendingLockedForAiAutomation,
       readPendingDecision,
+      openPendingDecision,
       startScreenState,
       uiRuntimeState,
     } = stateQuery;
@@ -367,9 +370,12 @@
         || getWorkingCurrentPlayer(workingRoot);
     }
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
-    const getAlienTraceContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.alienTraceContinuation || null;
-    function clearAlienTraceContinuation(workingRoot) {
-      delete requireWorkingRoot(workingRoot).match.alienTraceContinuation;
+    const getAlienTraceDecision = (workingRoot) => (
+      requireWorkingRoot(workingRoot),
+      readPendingDecision?.("alien_trace") || null
+    );
+    function closeAlienTraceDecision(workingRoot) {
+      requireWorkingRoot(workingRoot);
     }
     const getCardTaskCompletion = () => readPendingDecision?.("card_task_completion") || null;
     let chongFossilDecisionDraft = null;
@@ -1058,7 +1064,7 @@ function applyFangzhouUnlockStateTraceReward(alienSlotId, player, traceType, pla
 
 function confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = getAlienTraceContinuation(workingRoot);
+    const pending = getAlienTraceDecision(workingRoot);
     const inDebugMode = isDebugAlienTraceMode();
     const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending || uiRuntimeState.alienTracePickerState, { allowFallback: inDebugMode });
     if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
@@ -1077,7 +1083,7 @@ function confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType) {
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     const beforeLogSnapshot = createActionLogImpactSnapshot(currentPlayer);
     if (!inDebugMode) {
-      clearAlienTraceContinuation(workingRoot);
+      closeAlienTraceDecision(workingRoot);
       if (uiRuntimeState.alienTracePickerState?.mode !== "debug-direct") {
         uiRuntimeState.alienTracePickerState = null;
       }
@@ -3714,7 +3720,7 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
         completeCurrentActionEffect(workingRoot);
       }
     } else if (markResult.reward?.alienTrace) {
-      workingRoot.match.alienTraceContinuation = {
+      const alienTracePending = {
         type: fromEffectFlow ? "planet_reward_alien_trace" : "banrenma_bonus_alien_trace",
         beforeAlienState,
         beforePlayerState,
@@ -3736,7 +3742,7 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
         );
         if (!hasPanelTarget) {
           const noTargetMessage = `${markResult.message}：无合法痕迹位置，奖励落空`;
-          clearAlienTraceContinuation(workingRoot);
+          closeAlienTraceDecision(workingRoot);
           uiRuntimeState.alienTracePickerState = null;
           closeAlienTracePicker(workingRoot);
           baseResult.message = noTargetMessage;
@@ -3766,6 +3772,7 @@ function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null)
           label: fromEffectFlow ? effectLabel : "半人马顶部奖励外星人痕迹",
         });
       }
+      openPendingDecision(workingRoot, "alien_trace", alienTracePending);
     } else if (fromEffectFlow) {
       completeCurrentActionEffect(workingRoot);
     } else {

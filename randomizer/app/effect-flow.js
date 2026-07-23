@@ -1149,7 +1149,6 @@
       context.clearYichangdianCornerAction?.();
       context.clearAlienDecisionDrafts?.();
       if (context.getPendingPiratesRaidDecision?.(workingRoot)) {
-        delete workingRoot.match.piratesRaidContinuation;
         context.renderTechBoard?.(workingRoot);
       }
     }

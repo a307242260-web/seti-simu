@@ -53,7 +53,6 @@
       isTechTileOwnedByOtherPlayer,
       isActionEffectFlowActive,
       skipCurrentActionEffect,
-      getPendingDataPlacementDecision,
       data,
       getMovableTokensForPlayer,
       rocketActions,
@@ -70,9 +69,8 @@
       getPublicCardSelectedSlots,
       allowsBlindDrawInSelection,
       canBlindDraw,
-      getPendingLandTargetDecision,
-      getAlienTraceContinuation,
       getAlienTracePickerState,
+      openPendingDecision,
       abilities,
       createActionContext,
       getFangzhouUnlockableTraceTypes,
@@ -120,6 +118,7 @@
       handleOptionalHandScanChoice,
       handleHandCornerChoice,
       handlePiratesRaidLaunchChoice,
+      handlePiratesRaidTechMarkerClick,
       confirmScanTarget,
       handleDrawnHandScanSkip,
       confirmPassReserveSelection,
@@ -151,6 +150,8 @@
       handleIndustryFutureSpanHandClick,
       drawCardForCurrentPlayer,
       confirmLandTargetChoice,
+      cancelLandTargetChoice,
+      finishCurrentTurnAfterAlienReveal,
       handleStateTraceSlotPlacement,
     } = context;
 
@@ -642,6 +643,156 @@
       }
       return { actorPlayer: player, candidates };
     }
+    if (kind === "data_placement") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending);
+      const candidates = (data.listPlaceDataChoices?.(player) || []).map((choice, choiceIndex) => ({
+        id: "conditionalChoice",
+        family: "choose_target",
+        label: choice.label || `放置数据 ${choiceIndex + 1}`,
+        target: {
+          kind: "pending-data-placement",
+          choiceId: `${choice.target}:${choice.blueSlot ?? ""}`,
+          slotId: choice.target,
+          blueSlot: choice.blueSlot ?? null,
+        },
+        placementTarget: choice.target,
+        blueSlot: choice.blueSlot ?? null,
+      }));
+      candidates.push({
+        id: "conditionalChoice",
+        family: "accept_optional_effect",
+        label: "跳过本次数据获得",
+        target: { kind: "skip-pending-data-placement", choiceId: "skip" },
+      });
+      return { actorPlayer: player, candidates };
+    }
+    if (kind === "land_target") {
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+        candidates: (pending.choices || []).map((choice, choiceIndex) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          choiceIndex,
+          label: choice.label || `登陆目标 ${choiceIndex + 1}`,
+          target: {
+            kind: "land-target",
+            choiceId: String(choiceIndex),
+            planetId: choice.target || null,
+            rocketId: choice.rocketId || null,
+          },
+        })).concat(pending.cancelKind ? [{
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "取消登陆目标选择",
+          target: { kind: "land-target-cancel", choiceId: "cancel" },
+        }] : []),
+      };
+    }
+    if (kind === "pirates_raid") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending);
+      return {
+        actorPlayer: player,
+        candidates: (industry.listPiratesRaidBlockedTechTiles?.(player) || []).map((tileId) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          label: `放置掠夺标记：${tileId}`,
+          target: { kind: "pirates-raid-marker", choiceId: tileId, tileId },
+        })),
+      };
+    }
+    if (kind === "turn_end_reveal") {
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+        candidates: [{
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "确认外星人揭示并继续回合结束",
+          target: { kind: "turn-end-reveal-confirm", choiceId: "confirm" },
+        }],
+      };
+    }
+    if (kind === "alien_trace") {
+      const picker = getAlienTracePickerState();
+      const player = getSimulationConditionalPlayer(workingRoot, picker || pending);
+      if (picker?.mode === "fangzhou-destination") {
+        const traceTypes = getFangzhouUnlockableTraceTypes(
+          workingRoot,
+          Number(picker.selectedAlienSlotId || 0),
+          picker.allowedTraceTypes || aliens.TRACE_TYPES,
+          player,
+        );
+        const candidates = [];
+        if (hasAlienTracePanelPlacementTarget(
+          workingRoot,
+          picker.allowedAlienSlotIds || null,
+          picker.allowedTraceTypes || aliens.TRACE_TYPES,
+          player,
+        )) {
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_branch",
+            label: "放到外星人面板",
+            target: { kind: "fangzhou-trace-destination", choiceId: "panel" },
+            destination: "panel",
+          });
+        }
+        for (const traceType of traceTypes) {
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_branch",
+            label: `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌`,
+            target: { kind: "fangzhou-trace-destination", choiceId: `unlock:${traceType}`, traceType },
+            destination: "unlock",
+            traceType,
+          });
+        }
+        return { actorPlayer: player, candidates };
+      }
+      if (picker?.mode === "fangzhou-unlock-color") {
+        const traceTypes = getFangzhouUnlockableTraceTypes(
+          workingRoot,
+          Number(picker.selectedAlienSlotId || 0),
+          picker.allowedTraceTypes || aliens.TRACE_TYPES,
+          player,
+        );
+        return {
+          actorPlayer: player,
+          candidates: traceTypes.map((traceType) => ({
+            id: "conditionalChoice",
+            family: "choose_branch",
+            label: `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌`,
+            target: { kind: "fangzhou-unlock-color", choiceId: traceType, traceType },
+            traceType,
+          })),
+        };
+      }
+      if (picker?.mode === "trace-board") {
+        const slotIds = getAlienTraceChoiceSlotIds(workingRoot, picker.allowedAlienSlotIds);
+        const traceTypes = picker.allowedTraceTypes?.length ? picker.allowedTraceTypes : aliens.TRACE_TYPES;
+        const candidates = [];
+        for (const alienSlotId of slotIds) {
+          for (const traceType of traceTypes) {
+            if (!canPlaceStateTrace(workingRoot, alienSlotId, traceType, "first")
+              && !canPlaceStateTrace(workingRoot, alienSlotId, traceType, "extra")) continue;
+            candidates.push({
+              id: "conditionalChoice",
+              family: "choose_target",
+              label: `${aliens.getAlienSlotLabel(alienSlotId)} ${aliens.getTraceTypeLabel(traceType)}`,
+              target: {
+                kind: "alien-state-trace",
+                choiceId: `${alienSlotId}:${traceType}`,
+                slotId: String(alienSlotId),
+                traceType,
+              },
+              alienSlotId: Number(alienSlotId),
+              traceType,
+            });
+          }
+        }
+        return { actorPlayer: player, candidates };
+      }
+      return { actorPlayer: player, candidates: [] };
+    }
     if (kind === "scan_target" || kind === "public_scan") {
       if (pending.type === "sector_scan") {
         return {
@@ -1096,7 +1247,34 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const dataPlacePending = getPendingDataPlacementDecision(workingRoot);
+    if (kind === "pirates_raid") {
+      const player = getSimulationConditionalPlayer(workingRoot, pending);
+      return {
+        actorPlayer: player,
+        candidates: (industry.listPiratesRaidBlockedTechTiles?.(player) || []).map((tileId) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          label: `放置掠夺标记：${tileId}`,
+          target: {
+            kind: "pirates-raid-launch",
+            choiceId: tileId,
+            tileId,
+          },
+        })),
+      };
+    }
+    if (kind === "turn_end_reveal") {
+      return {
+        actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
+        candidates: [{
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "确认外星人揭示并继续回合结束",
+          target: { kind: "turn-end-reveal-confirm", choiceId: "confirm" },
+        }],
+      };
+    }
+    const dataPlacePending = kind === "data_placement" ? pending : null;
     if (dataPlacePending) {
       const player = getSimulationConditionalPlayer(workingRoot, dataPlacePending);
       const candidates = (data.listPlaceDataChoices?.(player) || []).map((choice, choiceIndex) => ({
@@ -1120,7 +1298,7 @@
       });
       return { actorPlayer: player, candidates };
     }
-    const landPending = getPendingLandTargetDecision(workingRoot);
+    const landPending = kind === "land_target" ? pending : null;
     if (landPending) {
       return {
         actorPlayer: getSimulationConditionalPlayer(workingRoot, landPending),
@@ -1139,7 +1317,7 @@
       };
     }
 
-    const tracePending = getAlienTraceContinuation(workingRoot);
+    const tracePending = kind === "alien_trace" ? pending : null;
     const picker = getAlienTracePickerState();
     if (tracePending && picker?.mode === "fangzhou-destination") {
       const player = getSimulationConditionalPlayer(workingRoot, picker);
@@ -1311,10 +1489,22 @@
       if (isActionEffectFlowActive(workingRoot)) skipCurrentActionEffect(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已跳过无可用科技的效果" };
     },
-    "fangzhou-trace-destination": (action, workingRoot) => handleFangzhouTraceDestinationChoice(
-      workingRoot, action.destination, action.traceType || null,
-    ),
-    "fangzhou-unlock-color": (action, workingRoot) => handleFangzhouUnlockTraceChoice(workingRoot, action.target.traceType),
+    "fangzhou-trace-destination": (action, workingRoot) => {
+      const result = handleFangzhouTraceDestinationChoice(
+        workingRoot, action.destination, action.traceType || null,
+      );
+      if (result?.ok !== false && getAlienTracePickerState()) {
+        openPendingDecision(workingRoot, "alien_trace", action.decisionContext?.pending);
+      }
+      return result;
+    },
+    "fangzhou-unlock-color": (action, workingRoot) => {
+      const result = handleFangzhouUnlockTraceChoice(workingRoot, action.target.traceType);
+      if (result?.ok !== false && getAlienTracePickerState()) {
+        openPendingDecision(workingRoot, "alien_trace", action.decisionContext?.pending);
+      }
+      return result;
+    },
     "discard-corner-repeat": (action, workingRoot) => handleDiscardCornerRepeatChoice(
       workingRoot,
       action.target.cardId,
@@ -1335,8 +1525,16 @@
       action.target.choiceId,
       action.decisionContext?.pending,
     ),
-    "pending-data-placement": (action, workingRoot) => confirmDataPlacement(workingRoot, action.placementTarget, action.blueSlot),
-    "skip-pending-data-placement": (_action, workingRoot) => skipPendingDataPlacement(workingRoot)
+    "pending-data-placement": (action, workingRoot) => confirmDataPlacement(
+      workingRoot,
+      action.placementTarget,
+      action.blueSlot,
+      { pending: action.decisionContext?.pending },
+    ),
+    "skip-pending-data-placement": (action, workingRoot) => skipPendingDataPlacement(
+      workingRoot,
+      action.decisionContext?.pending,
+    )
       || { ok: true, progressed: true, skipped: true, message: "已跳过本次数据获得" },
     "confirm-discard-income": (action, workingRoot) => confirmDiscardAnyForIncome(
       workingRoot,
@@ -1366,6 +1564,11 @@
     "pirates-raid-launch": (action, workingRoot) => handlePiratesRaidLaunchChoice(
       workingRoot,
       action.target.choiceId,
+      action.decisionContext?.pending,
+    ),
+    "pirates-raid-marker": (action, workingRoot) => handlePiratesRaidTechMarkerClick(
+      workingRoot,
+      action.target.tileId || action.target.choiceId,
       action.decisionContext?.pending,
     ),
     "scan-target": (action, workingRoot) => confirmScanTarget(
@@ -1520,7 +1723,18 @@
       ? handleIndustryDeepspaceHandClick(workingRoot, Number(action.target.handIndex))
       : handleIndustryFutureSpanHandClick(workingRoot, Number(action.target.handIndex)),
     "blind-draw": (_action, workingRoot) => drawCardForCurrentPlayer(workingRoot, { fromSelection: true }),
-    "land-target": (action, workingRoot) => confirmLandTargetChoice(workingRoot, Number(action.target.choiceId)),
+    "land-target": (action, workingRoot) => confirmLandTargetChoice(
+      workingRoot,
+      Number(action.target.choiceId),
+      action.decisionContext?.pending,
+    ),
+    "land-target-cancel": (action, workingRoot) => cancelLandTargetChoice(
+      workingRoot,
+      action.decisionContext?.pending,
+    ),
+    "turn-end-reveal-confirm": (action, workingRoot) => {
+      return finishCurrentTurnAfterAlienReveal(workingRoot, action.decisionContext?.pending || {});
+    },
     "alien-state-trace": (action, workingRoot) => handleStateTraceSlotPlacement(
       workingRoot, Number(action.target.slotId), action.target.traceType,
     ),
