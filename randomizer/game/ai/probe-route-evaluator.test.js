@@ -6,13 +6,14 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "probe-seat";
 
-function observation(resources, summary = null, rockets = []) {
+function observation(resources, summary = null, rockets = [], probeRouteRequirements = null) {
   return outcomeModel.createDecisionObservation({
     publicState: {
       players: [{ id: seatId, resources }],
       board: { rockets },
     },
     selfState: { id: seatId, hand: [] },
+    probeRouteRequirements,
   }, { seatId, stateVersion: 1, decisionVersion: 1, probeRouteSummary: summary });
 }
 
@@ -153,5 +154,62 @@ const noEndpoint = evaluationFor(action("move:loop", "move"), {
   endpointDelta: null,
 });
 assert.equal(noEndpoint.score, null, "没有正收益终点的循环不得形成探测器推荐");
+
+{
+  const goal = {
+    targetId: "land:goal:planet:",
+    planetId: "goal",
+    endpointFamily: "land",
+    targetBenefit: { score: 9 },
+    required: { credits: 2, energy: 3, movementSteps: 1 },
+    gap: { credits: 0, energy: 1, movementSteps: 1 },
+    nextStep: { family: "launch" },
+  };
+  const root = observation(
+    { score: 0, credits: 4, energy: 2, publicity: 0, availableData: 0 },
+    null,
+    [],
+    { playerId: seatId, candidates: [goal] },
+  );
+  const leaf = observation(
+    { score: 5, credits: 2, energy: 1, publicity: 0, availableData: 0 },
+    {
+      ...routeBase,
+      nextActionId: "launch:other",
+      nextActionFamily: "launch",
+      routeOutcomeRef: "launch:other→land:other",
+      endpointActionId: "land:other",
+      endpointKind: "land",
+      endpointPlanetId: "other",
+      endpointTargetId: "land:other:planet:",
+      goalScoreGain: 5,
+    },
+    [],
+    {
+      playerId: seatId,
+      candidates: [{
+        ...goal,
+        required: { credits: 0, energy: 2, movementSteps: 1 },
+        gap: { credits: 0, energy: 1, movementSteps: 1 },
+        nextStep: { family: "move" },
+      }],
+    },
+  );
+  const candidate = action("launch:other", "launch");
+  const result = evaluator.evaluateAction({
+    seatId,
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: candidate.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: root,
+      leaves: [{ leafId: "wrong-endpoint", actionChain: ["launch:other", "land:other"], observation: leaf }],
+    }],
+  }, candidate);
+  assert.equal(result.reasonCodes.includes("probe-goal-completed-standard-leaf"), false,
+    "其他 targetId 的得分叶不得冒充当前探测器目标完成");
+  assert.equal(result.score, 0, "其他终点的实际得分不得进入当前目标分");
+}
 
 console.log("probe route evaluator tests passed");

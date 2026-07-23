@@ -106,6 +106,22 @@ function rocketPosition(observation, rocketId) {
     : null;
 }
 
+function sameProbeMove(action, step, rocketId) {
+  return action?.family === "move"
+    && String(action.target?.rocketId) === String(rocketId)
+    && Number(action.target?.deltaX) === Number(step?.deltaX)
+    && Number(action.target?.deltaY) === Number(step?.deltaY);
+}
+
+function sameProbeEndpoint(action, goal, rocketId) {
+  if (action?.family !== goal?.endpointFamily) return false;
+  if (String(action.target?.rocketId) !== String(rocketId)) return false;
+  if (String(action.target?.planetId || "") !== String(goal.planetId || "")) return false;
+  const expectedTarget = goal.endpointTarget || {};
+  return String(action.target?.type || "planet") === String(expectedTarget.type || "planet")
+    && String(action.target?.satelliteId || "") === String(expectedTarget.satelliteId || "");
+}
+
 function selectProbeRouteContinuations(context) {
   const initial = context.initialAction;
   if (!PROBE_ROUTE_FAMILIES.has(initial?.family)) return [];
@@ -114,12 +130,19 @@ function selectProbeRouteContinuations(context) {
   ))) return [];
   if ((context.checkpoints || []).length >= 6) return [];
 
+  const goal = context.rootObservation?.probeRouteRequirements?.candidates?.[0] || null;
+  if (!goal) return [];
   let rocketId = initial.target?.rocketId ?? null;
   if (initial.family === "launch") {
+    if (goal.nextStep?.family !== "launch") return [];
     const rootIds = new Set(publicRocketList(context.rootObservation).map((rocket) => String(rocket.id)));
     const launched = publicRocketList(context.checkpoints?.[0]?.observation)
       .find((rocket) => rocket?.surface === "solar-board" && !rootIds.has(String(rocket.id)));
     rocketId = launched?.id ?? null;
+  } else if (initial.family === "move") {
+    if (!sameProbeMove(initial, goal.nextStep, rocketId)) return [];
+  } else if (!sameProbeEndpoint(initial, goal, rocketId)) {
+    return [];
   }
   if (rocketId == null) return [];
 
@@ -131,12 +154,15 @@ function selectProbeRouteContinuations(context) {
     context.checkpoints?.[context.checkpoints.length - 1]?.observation,
     rocketId,
   );
+  const completedMoves = (context.checkpoints || [])
+    .filter((checkpoint) => checkpoint.family === "move").length;
+  const nextMove = goal.path?.[completedMoves] || null;
   return (context.legalSuccessors || []).filter((successor) => {
-    if (!["move", "orbit", "land"].includes(successor.family)) return false;
-    if (successor.target?.rocketId != null
-      && String(successor.target.rocketId) !== String(rocketId)) return false;
-    if (successor.family !== "move") return true;
-    if (!currentPosition) return false;
+    if (nextMove) {
+      if (!sameProbeMove(successor, nextMove, rocketId) || !currentPosition) return false;
+    } else {
+      return sameProbeEndpoint(successor, goal, rocketId);
+    }
     const [x, y] = currentPosition.split(",").map(Number);
     const nextPosition = `${x + Number(successor.target?.deltaX || 0)},${y + Number(successor.target?.deltaY || 0)}`;
     return !visited.has(nextPosition);

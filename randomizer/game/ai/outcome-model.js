@@ -295,6 +295,16 @@
     return (checkpoint?.actionChain || []).slice(previousLength);
   }
 
+  function probeTargetId(family, target = {}) {
+    if (!["orbit", "land"].includes(family) || !target?.planetId) return null;
+    return [
+      family,
+      target.planetId,
+      target.type || "planet",
+      target.satelliteId || "",
+    ].join(":");
+  }
+
   function createProbeRouteSummary(rootObservation, checkpoints, fullActionChain) {
     if (!checkpoints.length) return null;
     const firstActionId = String(fullActionChain?.[0] || "");
@@ -347,6 +357,9 @@
       endpointActionId,
       endpointKind: endpointActionId ? endpointActionId.split(":")[0] : null,
       endpointPlanetId: endpointTarget.planetId ?? null,
+      endpointTargetType: endpointTarget.type || "planet",
+      endpointSatelliteId: endpointTarget.satelliteId ?? null,
+      endpointTargetId: probeTargetId(endpointActionId?.split(":")[0], endpointTarget),
       endpointRocketId: endpointTarget.rocketId ?? checkpoints[0].target?.rocketId ?? null,
       goalScoreGain: routeDelta.realizedScore,
       routeCost: {

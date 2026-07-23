@@ -81,6 +81,11 @@
     return finite(gap.credits) + finite(gap.energy) + finite(gap.movementSteps);
   }
 
+  function requirementSize(requirement) {
+    const required = requirement?.required || {};
+    return finite(required.credits) + finite(required.energy) + finite(required.movementSteps);
+  }
+
   function sameTarget(requirements, goal) {
     return (requirements?.candidates || [])
       .filter((candidate) => candidate?.targetId === goal?.targetId)
@@ -150,10 +155,13 @@
         const gapReduction = rootGoal && leafGoal
           ? Math.max(0, gapSize(rootGoal) - gapSize(leafGoal))
           : 0;
+        const requirementReduction = rootGoal && leafGoal
+          ? Math.max(0, requirementSize(rootGoal) - requirementSize(leafGoal))
+          : 0;
         const completed = Boolean(
           rootGoal
           && actualScoreDelta > 0
-          && (summary?.endpointActionId || ["orbit", "land"].includes(action?.family)),
+          && summary?.endpointTargetId === rootGoal.targetId,
         );
         return {
           leaf,
@@ -162,12 +170,14 @@
           summary,
           actualScoreDelta,
           gapReduction,
+          requirementReduction,
           completed,
         };
       })
       .sort((left, right) => (
         Number(right.completed) - Number(left.completed)
         || right.gapReduction - left.gapReduction
+        || right.requirementReduction - left.requirementReduction
         || right.actualScoreDelta - left.actualScoreDelta
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
@@ -181,7 +191,7 @@
     const routeAdvanced = nextProbeStep && (
       best.completed
       || best.gapReduction > 0
-      || Boolean(best.summary?.endpointActionId)
+      || best.requirementReduction > 0
     );
     const directGapFill = !isProbeAction && best.gapReduction > 0;
     const selectable = Boolean(rootGoal && (best.completed || routeAdvanced || directGapFill))
@@ -216,6 +226,7 @@
       probeGoalRequirement: rootGoal,
       leafProbeGoalRequirement: best.leafGoal,
       gapReduction: best.gapReduction,
+      requirementReduction: best.requirementReduction,
       probeRouteSummary: isProbeAction ? best.summary : null,
       selectedLeafId: best.leaf.leafId || null,
       actionChain: best.leaf.actionChain || [],

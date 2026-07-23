@@ -298,7 +298,7 @@ function formatEvaluation(candidate, timing = null) {
         ? `目标=补探测器橙色科技缺口(+${evaluation.orangeTechDelta})`
         : "目标=无",
     `目标已兑现分=${formatNumber(evaluation.goalScoreGain)}`,
-    `当前标准叶实际分差=${formatNumber(evaluation.actualScoreDelta)}`,
+    `候选标准链叶累计分差=${formatNumber(evaluation.actualScoreDelta)}`,
     gap
       ? `缺口=钱${gap.credits || 0}/电${gap.energy || 0}/移动${gap.movementSteps || 0}`
       : "缺口=—",
