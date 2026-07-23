@@ -33,7 +33,6 @@
 - `randomizer/app/turn-end-flow.js`：PASS 必做效果、回合末外星人揭示、收入与跨轮收尾。
 - `randomizer/app/action-interaction-runtime.js`：冥王星行动、移动箭头 UI 与数据放置 picker。
 - `randomizer/app/score-source-runtime.js`：初始、扫描、科技、外星人和行动效果的分数来源账本与撤销命令。
-- `randomizer/app/final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
 - `randomizer/app/card-runtime.js`：手牌出牌、弃牌角标、公共牌选择、PASS 预留与卡牌移动运行时。
 - `randomizer/app/card-trigger-runtime.js`：卡牌任务、触发匹配、奖励队列和确认/取消/续跑运行时。
 - `randomizer/app/income-runtime.js`：卡牌收入、轮开始收入和公司轮开始收益运行时。
@@ -46,17 +45,12 @@
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。
 - `randomizer/app/ai/browser-bootstrap.js`：Browser AI controller state、Composition step adapter 与 AI Host command facade 的窄装配 owner；创建期校验必需端口。
-- `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：迁移期遗留的估值 helper 容器；Browser controller 不再暴露其中的 pending resolver。
-- 旧 `randomizer/app/ai/action-executor.js`、`automation-runtime.js` 已删除；Browser 机器席位不得恢复 candidate/selector/pending automation 旁路。
-- `randomizer/app/ai-controller.js`：机器席位控制与估值 helper 装配；Browser 推进只经 `ai/browser-bootstrap.js` 的 Machine Player Host，不暴露旧 automation 或 batch/A-B API。
-- `randomizer/game/ai/*-valuation.js`、`*-candidates.js`、`action-value.js`、`demand-card.js`、`route-planet.js` 等：按资源、卡牌、路线、扫描、科技、终局和外星人拆分的只读 AI 估值域；它们只产生评分/诊断，不创建公共 Action identity。
+- 旧 `randomizer/app/ai-controller.js`、pending/automation/action-executor、report/tuning runtime 与 legacy valuation/candidate 域已物理删除；Browser 机器席位不得恢复 candidate/selector/pending automation 旁路。
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
 - `randomizer/game/ai/machine-player-host.js`：浏览器与 Simulation 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
 - `randomizer/game/ai/selection-evaluator.js`：setup、弃牌、支付、科技与外星人 legal choice 的纯估值；不拥有选择或提交权，结果必须经公共 Policy 端口。
 - `randomizer/game/ai/heuristic-evaluator.js`：直接从公共 observation/legal descriptors 计算策略分与稳定排序；不得恢复 legacy candidate 或 selector adapter。
-- `randomizer/app/ai/battle-log.js`、`battle-report.js`：AI 对战日志、bug、结果/pending 汇总及报告 schema。
-- `randomizer/app/ai/tuning-history.js`、`report-formatters.js`：调参历史持久化/推荐与日志、报告纯格式化 helper；Browser 不装配单局、batch、A/B 或 tuning cycle runner。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `randomizer/training/worker-protocol.js`、`simulation-worker.js`、`worker-pool.js`：Python/PyTorch 常驻采样协议、隔离 worker、超时/背压/崩溃恢复与批量请求。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。

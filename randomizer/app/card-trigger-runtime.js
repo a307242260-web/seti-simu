@@ -80,7 +80,6 @@
       blockManualAiPendingInputIfNeeded: hostPort.blockManualAiPendingInputIfNeeded,
       buildPlutoMarkerContext: actionInteraction("buildPlutoMarkerContext"),
       cardTaskState: hostPort.cardTaskState,
-      cardTriggerNeedsFreeMove: hostPort.cardTriggerNeedsFreeMove,
       clearMoveRocketHighlight: actionInteraction("clearMoveRocketHighlight"),
       completeQuickActionStep: effectFlowRuntime?.completeQuickActionStep,
       composeActionLogDetailWithImpact: effectFlowRuntime?.composeActionLogDetailWithImpact,
@@ -95,7 +94,6 @@
       formatChongGain: alien("formatChongGain"),
       formatChongFossilRewardSummary: alien("formatChongFossilRewardSummary"),
       formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
-      getCardTriggerFreeMoveEffect: hostPort.getCardTriggerFreeMoveEffect,
       getCardTypeCode: cardRuntime?.getCardTypeCode,
       getChongPlanetLabel: alien("getChongPlanetLabel"),
       getEarthSectorCoordinate: hostPort.getEarthSectorCoordinate,
@@ -113,7 +111,6 @@
       isInitialSelectionActive: hostPort.isInitialSelectionActive,
       uiRuntimeState: hostPort.uiRuntimeState,
       layoutReservedCardRows: renderRuntime?.layoutReservedCardRows,
-      listCardTriggerFreeMoveCandidates: hostPort.listCardTriggerFreeMoveCandidates,
       listReadyChongTransportCandidates: hostPort.listReadyChongTransportCandidates,
       markCurrentActionIrreversibleForSource: hostPort.markCurrentActionIrreversibleForSource,
       maybeApplyIndustryLaunchScan: industry("maybeApplyIndustryLaunchScan"),
@@ -163,7 +160,6 @@
       cardEffects,
       cardTaskState,
       cardTaskStateModule,
-      cardTriggerNeedsFreeMove,
       cards,
       chong,
       clearMoveRocketHighlight,
@@ -182,7 +178,6 @@
       formatChongGain,
       formatChongFossilRewardSummary,
       formatPlanetRewardGain,
-      getCardTriggerFreeMoveEffect,
       getCardTypeCode,
       getChongPlanetLabel,
       getEarthSectorCoordinate,
@@ -202,7 +197,6 @@
       uiRuntimeState,
       jiuzhe,
       layoutReservedCardRows,
-      listCardTriggerFreeMoveCandidates,
       listReadyChongTransportCandidates,
       markCurrentActionIrreversibleForSource,
       maybeApplyIndustryLaunchScan,
@@ -479,12 +473,7 @@
     }
 
     function getType1TriggerMatchesForEvent(player, event) {
-      return cardTaskStateModule
-        .collectType1TriggerMatches(player, [event], cardEffects)
-        .filter((match) => (
-          !cardTriggerNeedsFreeMove(match)
-          || listCardTriggerFreeMoveCandidates(match).length > 0
-        ));
+      return cardTaskStateModule.collectType1TriggerMatches(player, [event], cardEffects);
     }
 
     function applyType1TriggerMatches(workingRoot, events = []) {
@@ -1530,7 +1519,14 @@
         && match.event?.moveReward) {
         return beginCardTriggerFreeMove(workingRoot, {
           ...match,
-          effect: getCardTriggerFreeMoveEffect(match),
+          effect: {
+            ...match.effect,
+            type: cardEffects.EFFECT_TYPES.FREE_MOVE,
+            options: {
+              ...(match.effect.options || {}),
+              movementPoints: match.event.moveReward.movementPoints || 1,
+            },
+          },
         });
       }
       if (match?.effect?.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD) {

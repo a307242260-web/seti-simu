@@ -1,59 +1,38 @@
 (function (root, factory) {
   "use strict";
 
-  let valuation = root.SetiAIValuation;
-  let goals = root.SetiAIGoals;
-  let raceModel = root.SetiAIRaceModel;
-  let actionGraph = root.SetiAIActionGraph;
-  let planner = root.SetiAIPlanner;
-  let evaluator = root.SetiAIEvaluator;
   let selectionEvaluator = root.SetiAISelectionEvaluator;
   let policyPort = root.SetiPolicyPort;
   let heuristicEvaluator = root.SetiHeuristicEvaluator;
   let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
   let heuristicPolicy = root.SetiHeuristicPolicy;
   let machinePlayerHost = root.SetiMachinePlayerHost;
-  let analytics = root.SetiAIBattleAnalytics;
 
-  if ((!valuation || !goals || !raceModel || !actionGraph || !planner || !evaluator || !selectionEvaluator || !policyPort || !heuristicEvaluator || !expectedScoreEvaluator || !heuristicPolicy || !machinePlayerHost || !analytics) && typeof require === "function") {
-    valuation = valuation || require("./valuation");
-    goals = goals || require("./goals");
-    raceModel = raceModel || require("./race-model");
-    actionGraph = actionGraph || require("./action-graph");
-    planner = planner || require("./planner");
-    evaluator = evaluator || require("./evaluator");
+  if ((!selectionEvaluator || !policyPort || !heuristicEvaluator || !expectedScoreEvaluator || !heuristicPolicy || !machinePlayerHost) && typeof require === "function") {
     selectionEvaluator = selectionEvaluator || require("./selection-evaluator");
     policyPort = policyPort || require("./policy-port");
     heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
     expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
     heuristicPolicy = heuristicPolicy || require("./heuristic-policy");
     machinePlayerHost = machinePlayerHost || require("./machine-player-host");
-    analytics = analytics || require("./battle-analytics");
   }
 
-  const api = factory(valuation, goals, raceModel, actionGraph, planner, evaluator, selectionEvaluator, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost, analytics);
+  const api = factory(selectionEvaluator, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAI = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (valuation, goals, raceModel, actionGraph, planner, evaluator, selectionEvaluator, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost, analytics) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (selectionEvaluator, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost) {
   "use strict";
 
   return Object.freeze({
-    valuation,
-    goals,
-    raceModel,
-    actionGraph,
-    planner,
-    evaluator,
     selectionEvaluator,
     policyPort,
     heuristicEvaluator,
     expectedScoreEvaluator,
     heuristicPolicy,
     machinePlayerHost,
-    analytics,
   });
 });

@@ -15,263 +15,15 @@
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "aiControlRuntimeModule",
-    "aiControllerModule",
     "ruleComposition",
     "policyInputAdapterModule",
     "projectionAdapter",
     "inputAdapter",
     "createPolicy",
-    "getRuleReadout",
-    "isActionEffectFlowActive",
+    "readRuleState",
     "stateOwners",
-    "controllerContext",
-    "controllerPorts",
-    "lazyControllerPorts",
+    "controlContext",
   ]);
-  const HAND_CONTROLLER_METHODS = Object.freeze([
-    "beginPlayCardSelection",
-    "confirmCardCornerQuickAction",
-    "confirmHandCardPlayAction",
-    "confirmPlayCardSelection",
-    "finalizePendingDiscardSelection",
-    "getPendingPlayCardSelection",
-    "handleHandCardCornerQuickAction",
-    "handleHandScanCardClick",
-    "handlePlayCardSelect",
-    "isHandScanSelectionActive",
-    "isMovePaymentSelectionActive",
-    "isPlayCardSelectionActive",
-  ]);
-  const SCAN_CONTROLLER_METHODS = Object.freeze([
-    "buildSectorScanChoicesForX",
-    "closeScanTargetPicker",
-    "confirmPublicScanSelection",
-    "confirmScanTarget",
-    "getPublicScanChoicesForCard",
-    "handlePublicScanCardClick",
-  ]);
-  const ALIEN_SPECIES_CONTROLLER_METHODS = Object.freeze([
-    "handleAmibaCardGainChoice",
-    "handleAmibaSymbolChoice",
-    "handleAmibaTraceRemovalChoice",
-    "handleAomomoCardGainChoice",
-    "handleBanrenmaBonusChoice",
-    "handleBanrenmaCardConditionChoice",
-    "handleBanrenmaCardGainChoice",
-    "handleChongCardGainChoice",
-    "handleChongFossilChoice",
-    "handleJiuzheCardChoice",
-    "handleJiuzheOpportunitySkip",
-    "handleRunezuCardGainChoice",
-    "handleRunezuFaceSymbolChoice",
-    "handleRunezuSymbolBranchChoice",
-    "handleYichangdianCardGainChoice",
-    "openBanrenmaReadyOpportunityForPlayer",
-    "openRunezuFaceSymbolPlacement",
-  ]);
-  const CONTROLLER_STATIC_DEPENDENCY_KEYS = Object.freeze([
-    "solar",
-    "players",
-    "rocketActions",
-    "planetStats",
-    "planetRewards",
-    "finalScoring",
-    "endGameScoring",
-    "industry",
-    "abilities",
-    "actions",
-    "scanEffects",
-    "quickTrades",
-    "cards",
-    "initialCards",
-    "cardEffects",
-    "cardTaskStateModule",
-    "tech",
-    "data",
-    "aliens",
-    "aomomo",
-    "jiuzhe",
-    "yichangdian",
-    "fangzhou",
-    "banrenma",
-    "chong",
-    "amiba",
-    "runezu",
-    "aiRaceModel",
-    "ai",
-    "aiControlRuntimeModule",
-  ]);
-  const CONTROLLER_STATIC_CONSTANT_KEYS = Object.freeze([
-    "DEFAULT_ACTIVE_PLAYER_COUNT",
-    "DEFAULT_INITIAL_HAND_COUNT",
-    "DEFAULT_INITIAL_PLAYER_COLOR",
-    "FINAL_ROUND_NUMBER",
-    "FINAL_SCORE_IDS",
-    "INITIAL_SELECTION_REQUIRED",
-    "MOVE_ENERGY_COST",
-  ]);
-
-  function selectRequired(source, keys, label) {
-    const missing = keys.filter(
-      (key) => !Object.prototype.hasOwnProperty.call(source, key) || source[key] == null,
-    );
-    if (missing.length) {
-      throw new Error(`${label} 缺少依赖：${missing.join(", ")}`);
-    }
-    return Object.fromEntries(keys.map((key) => [key, source[key]]));
-  }
-
-  function createBrowserAiStaticContext(dependencies = {}, constants = {}) {
-    return Object.freeze({
-      ...selectRequired(
-        dependencies,
-        CONTROLLER_STATIC_DEPENDENCY_KEYS,
-        "Browser AI 静态模块",
-      ),
-      ...selectRequired(
-        constants,
-        CONTROLLER_STATIC_CONSTANT_KEYS,
-        "Browser AI 静态常量",
-      ),
-    });
-  }
-
-  function createBrowserAiRuntimePorts(options = {}) {
-    const {
-      getAlienSpeciesRuntime,
-      getCardRuntime,
-      getCardTriggerRuntime,
-      getIndustryRuntime,
-      getTechRuntime,
-      createActionContext,
-      dispatchRuntimeAction,
-      getRequiredMovePointsForUi,
-    } = options;
-    const lazy = (label, getter, method) => (...args) => {
-      if (typeof getter !== "function") {
-        throw new TypeError(`Browser AI runtime port 缺少 owner getter：${label}`);
-      }
-      const fn = getter()?.[method];
-      if (typeof fn !== "function") {
-        throw new Error(`Browser AI runtime port ${label} 缺少方法：${method}`);
-      }
-      return fn(...args);
-    };
-    const card = (method) => lazy("card", getCardRuntime, method);
-    const cardTrigger = (method) => lazy("cardTrigger", getCardTriggerRuntime, method);
-    const tech = (method) => lazy("tech", getTechRuntime, method);
-    const industry = (method) => lazy("industry", getIndustryRuntime, method);
-    const alien = (method) => lazy("alienSpecies", getAlienSpeciesRuntime, method);
-    if (typeof createActionContext !== "function"
-      || typeof dispatchRuntimeAction !== "function"
-      || typeof getRequiredMovePointsForUi !== "function") {
-      throw new TypeError("Browser AI runtime port 缺少 action context/dispatch/move points adapter");
-    }
-    return Object.freeze({
-      createActionContext,
-      dispatchRuntimeAction,
-      canBlindDraw: card("canBlindDraw"),
-      confirmPassReserveSelection: card("confirmPassReserveSelection"),
-      confirmTechBlueSlotChoice: tech("confirmTechBlueSlotChoice"),
-      drawCardForCurrentPlayer: card("drawCardForCurrentPlayer"),
-      executeIndustryFreeMove: industry("executeIndustryFreeMove"),
-      getRequiredMovePointsForUi,
-      getPassReserveSelectionCards: card("getPassReserveSelectionCards"),
-      getReadyCardTasks: cardTrigger("getReadyCardTasks"),
-      handlePublicCardClick: card("handlePublicCardClick"),
-      openBanrenmaReadyOpportunityForPlayer: alien("openBanrenmaReadyOpportunityForPlayer"),
-      openCardTaskCompletionPicker: cardTrigger("openCardTaskCompletionPicker"),
-      openRunezuFaceSymbolPlacement: alien("openRunezuFaceSymbolPlacement"),
-      pickPublicCardForCurrentPlayer: card("pickPublicCardForCurrentPlayer"),
-      selectPassReserveCard: card("selectPassReserveCard"),
-    });
-  }
-
-  function createBrowserAiControllerContext(options = {}) {
-    const {
-      staticContext,
-      getCardRuntime,
-      getCardTriggerRuntime,
-      getIndustryRuntime,
-      getTechRuntime,
-      actionSessionRuntime,
-      browserContextRuntime,
-      cardSelectionState,
-      coordinateRuntime,
-      effectExecutorPort,
-      effectFlowRuntime,
-      playerEffectOwnerRuntime,
-      playerLookupRuntime,
-      turnHostRuntime,
-      turnReadoutRuntime,
-      hostPort = {},
-    } = options;
-    const lazy = (label, getter, method) => (...args) => {
-      if (typeof getter !== "function") {
-        throw new TypeError(`Browser AI controller context 缺少 owner getter：${label}`);
-      }
-      const fn = getter()?.[method];
-      if (typeof fn !== "function") {
-        throw new Error(`Browser AI controller context ${label} 缺少方法：${method}`);
-      }
-      return fn(...args);
-    };
-    const card = (method) => lazy("card", getCardRuntime, method);
-    const cardTrigger = (method) => lazy("cardTrigger", getCardTriggerRuntime, method);
-    const industry = (method) => lazy("industry", getIndustryRuntime, method);
-    const tech = (method) => lazy("tech", getTechRuntime, method);
-    return Object.freeze({
-      ...staticContext,
-      ...hostPort,
-      activateNextActionEffect: effectFlowRuntime?.activateNextActionEffect,
-      allowsBlindDrawInSelection: cardSelectionState?.allowsBlindDrawInSelection,
-      canStartMainAction: actionSessionRuntime?.canStartMainAction,
-      endCurrentTurn: hostPort.endCurrentTurn,
-      executeActionEffect: effectFlowRuntime?.executeActionEffect,
-      getActivePlayers: browserContextRuntime?.getActivePlayers,
-      getCurrentActionEffect: effectFlowRuntime?.getCurrentActionEffect,
-      getCurrentPlayer: playerLookupRuntime?.getCurrentPlayer,
-      getEarthSectorCoordinate: coordinateRuntime?.getEarthSectorCoordinate,
-      getEffectOwnerPlayer: playerEffectOwnerRuntime?.getEffectOwnerPlayer,
-      getMovableTokensForPlayer: coordinateRuntime?.getMovableTokensForPlayer,
-      getPlanetSectorCoordinate: hostPort.getPlanetSectorCoordinate,
-      getPlayerByColor: playerLookupRuntime?.getPlayerByColor,
-      getPlayerById: playerLookupRuntime?.getPlayerById,
-      getPlayerLabelById: browserContextRuntime?.getPlayerLabelById,
-      handleYichangdianCornerChoice: effectExecutorPort?.handleYichangdianCornerChoice,
-      hasActivePendingSubFlow: hostPort.hasActivePendingSubFlow,
-      isActionEffectFlowActive: effectFlowRuntime?.isActionEffectFlowActive,
-      isCardSelectionActive: cardSelectionState?.isCardSelectionActive,
-      isDiscardSelectionActive: cardSelectionState?.isDiscardSelectionActive,
-      isGameEnded: turnReadoutRuntime?.isGameEnded,
-      isPublicScanMultiSelectActive: cardSelectionState?.isPublicScanMultiSelectActive,
-      setTurnStatePlayerOrder: turnHostRuntime?.setTurnStatePlayerOrder,
-    });
-  }
-
-  function createLazyPortBindings(getPort, methods = [], label = "Browser AI domain port") {
-    if (typeof getPort !== "function") {
-      throw new TypeError(`${label} requires getPort function`);
-    }
-    return Object.freeze(Object.fromEntries(methods.map((method) => [
-      method,
-      (...args) => {
-        const port = getPort();
-        if (typeof port?.[method] !== "function") {
-          throw new Error(`${label} 未装配方法：${method}`);
-        }
-        return port[method](...args);
-      },
-    ])));
-  }
-
-  function selectControllerPort(port, methods = [], label = "Browser AI controller port") {
-    const missing = methods.filter((method) => typeof port?.[method] !== "function");
-    if (missing.length) {
-      throw new Error(`${label} 缺少方法：${missing.join(", ")}`);
-    }
-    return Object.freeze(Object.fromEntries(methods.map((method) => [method, port[method]])));
-  }
 
   function fail(code, message, details = {}) {
     return Object.freeze({ ok: false, code, message, ...structuredClone(details) });
@@ -420,31 +172,15 @@
 
     const {
       aiControlRuntimeModule,
-      aiControllerModule,
       ruleComposition,
       policyInputAdapterModule,
       projectionAdapter,
       inputAdapter,
       createPolicy,
-      getRuleReadout,
-      isActionEffectFlowActive,
+      readRuleState,
       stateOwners,
-      controllerContext,
-      controllerPorts,
-      lazyControllerPorts,
+      controlContext,
     } = context;
-    const directControllerContext = Object.assign(
-      {},
-      ...controllerPorts.map(({ port, methods, label }) => (
-        selectControllerPort(port, methods, label)
-      )),
-    );
-    const lazyControllerContext = Object.assign(
-      {},
-      ...lazyControllerPorts.map(({ getPort, methods, label }) => (
-        createLazyPortBindings(getPort, methods, label)
-      )),
-    );
     const state = aiControlRuntimeModule.createAiControllerState(stateOwners);
     let controller = null;
     const machinePlayerPort = createBrowserMachinePlayerPort({
@@ -458,11 +194,12 @@
     const submitHostCommand = (command, options) => (
       ruleComposition.inputPort.submitHostCommand(command, options)
     );
-    controller = aiControllerModule.createAiController({
-      ...controllerContext,
-      ...directControllerContext,
-      ...lazyControllerContext,
+    const controlRuntime = aiControlRuntimeModule.createAiControlRuntime({
+      ...controlContext,
       state,
+      recordAiAutoBattleLog: () => null,
+      recordAiAutoBattleBug: () => null,
+      resetAiStrategyDemandCache: () => {},
       setPlayerAiDifficulty: (playerId, difficulty, label) => submitHostCommand({
         kind: "ai_set_player_difficulty",
         playerId,
@@ -471,13 +208,22 @@
       }),
       runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
       getRuleProjection: () => {
-        const ruleState = ruleComposition.stateSourcePort.read().state;
+        const ruleState = readRuleState();
         return {
           players: structuredClone(ruleState.players),
           turn: structuredClone(ruleState.turn),
+          pieces: structuredClone(ruleState.pieces),
         };
       },
-      getRuleReadout,
+    });
+    controller = Object.freeze({
+      ...controlRuntime,
+      getPlayerAgentLabel(playerId) {
+        const player = controlContext.getPlayerById(playerId);
+        return controlRuntime.isAiAutoBattlePlayer(playerId)
+          ? `${player?.colorLabel || "电脑玩家"}AI`
+          : "人类";
+      },
     });
     ruleComposition.subscribe((event) => {
       if (event?.source === "lifecycle") {
@@ -490,16 +236,6 @@
 
   return {
     REQUIRED_CONTEXT_KEYS,
-    CONTROLLER_STATIC_DEPENDENCY_KEYS,
-    CONTROLLER_STATIC_CONSTANT_KEYS,
-    HAND_CONTROLLER_METHODS,
-    SCAN_CONTROLLER_METHODS,
-    ALIEN_SPECIES_CONTROLLER_METHODS,
-    createBrowserAiStaticContext,
-    createBrowserAiControllerContext,
-    createBrowserAiRuntimePorts,
-    createLazyPortBindings,
-    selectControllerPort,
     createCompositionPolicyBoundaryReader,
     createBrowserMachinePlayerPort,
     createBrowserAiBootstrap,

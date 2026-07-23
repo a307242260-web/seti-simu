@@ -14,7 +14,7 @@
 | alien species runtime | 16,035 | `app/aliens/species-runtime.js` |
 | tech/industry runtime | 13,558 | `tech-runtime.js`、`industry-runtime.js` |
 | render/log runtime | 11,997 | `render-runtime.js`、`action-log-runtime.js` 等 |
-| 最终严格验收 | 9,930 | `final-score-ai-runtime.js`、`turn-end-flow.js`、`action-interaction-runtime.js` |
+| 最终严格验收 | 9,930 | `turn-end-flow.js`、`action-interaction-runtime.js`、Machine Player Host |
 | Browser Host 薄壳收口 | 7,311 | projection/input、working state、continuation、回合/行动/效果 Browser 端口 |
 | Browser Host 职责复核 | 6,604 | Host command registry、Standard Action continuation、Effect/Decision/领域流程全部迁入既有 owner |
 
@@ -33,7 +33,7 @@
    - 卡牌/科技/公司：`card-runtime`、`card-trigger-runtime`、`income-runtime`、`tech-runtime`、`industry-runtime`
    - 外星人：`alien-runtime`、`alien-ui`、`aliens/species-runtime`
    - 展示/恢复：`render-runtime`、`final-ui-runtime`、`action-log-runtime`、`game-recovery`
-   - AI/API：`final-score-ai-runtime`、`ai/browser-bootstrap`、`ai-controller`、`public-api`、`simulation-env`
+   - AI/API：`ai/control-runtime`、`ai/browser-bootstrap`、`public-api`、`simulation-env`
 3. `app.js` 调用 `SetiAppDependencies.collectDependencies(window)`，创建状态并把显式 context 注入各 runtime。
 4. `bootstrap` 与 `public-api` 完成事件和 `window.SetiRandomizer` Browser/debug facade 装配；Simulation 入口直接依赖 rules-only Composition，不经过 Browser app。
 
@@ -86,7 +86,6 @@
 - `action-log-runtime.js`：日志 draft/entry、导入与 DOM 展示。
 - `debug-runtime.js`：debug、calibration、quick sector scan、failsafe 与 reveal 调试入口；Browser 依赖按 browser/state query/AI control/decision input/render/debug rules/constants 显式分口，不接受万能依赖源。
 - `action-interaction-runtime.js`：移动箭头、冥王星交互、数据放置 picker。
-- `final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
 - `score-source-runtime.js`：初始、扫描、科技、外星人和行动效果的分数来源账本。
 
 `app.js` 只保留统一刷新调度、顶层事件路由所需转发和 controller 装配。
@@ -113,13 +112,13 @@
 
 - `public-api.js` 组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，`app.js` 只提供显式 context；Simulation API 只属于 rules-only Composition/Simulation adapter。
 - `simulation-env.js` 提供 simulation observation/action/replay 适配；它直接依赖 rules-only Composition factory，不读取 `app.js` 或 Browser public API。
-- `ai-controller.js` 只装配 `app/ai/**` runtime 与 `game/ai/**` 规则域，通过 state getter/setter 与动作回调访问 app 状态；它按各 runtime 的 `REQUIRED_CONTEXT_KEYS` 校验显式 context，迁移不得复制 pending 状态。
+- `ai/browser-bootstrap.js` 直接装配 `control-runtime` 与 Machine Player Host；Policy 只消费公共 observation/legal descriptors，pending 与规则 mutation 不进入 AI controller context。
 - 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。
 
 ## 6. 超大文件与残余风险
 
 - `app/aliens/species-runtime.js` 当前 4,455 行，超过约 3,000 行。当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
-- `app/ai-controller.js` 当前 1,980 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
+- 旧 `app/ai-controller.js`、pending resolver、automation/action executor、日志/报告/调参与 legacy valuation/candidate 域均已删除。后续不得恢复 controller adapter、策略旁路或 resolver 正文。
 - `app.js` 已作为无构建页面的显式 composition root 收口；顶层函数声明为零，只保留依赖收集、runtime/port 实例化、声明式 handler/context 注入和页面启动接线。常驻玩家统计/readout、Action Bar/quick panel/effect bar、Browser 下载、布局/交互 chrome、初始选择、登陆与扫描 picker、working state、continuation selector、回合读数/控制和标准输入路由均已有明确 owner。
 - 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
 

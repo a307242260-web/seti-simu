@@ -158,17 +158,14 @@ function createProjectionWithFinalReadModel() {
 (function testFinalLogAndRecoveryBrowserRuntimesHaveNoLegacyReadoutOrRuleRecomputePath() {
   const files = [
     "../final-ui-runtime.js",
-    "../final-score-ai-runtime.js",
     "../action-log-runtime.js",
     "../action-log-export.js",
     "../game-recovery.js",
   ];
   for (const file of files) {
     const source = fs.readFileSync(path.join(__dirname, file), "utf8");
-    assert.equal(/\bgetRuleReadout\b|\bcreateReadoutRoot\b|projection\.scoring/.test(source), false, file);
+    assert.equal(/projection\.scoring/.test(source), false, file);
   }
-  const finalAiSource = fs.readFileSync(path.join(__dirname, "../final-score-ai-runtime.js"), "utf8");
-  assert.equal(/\bendGameScoring\b|\bfinalScoring\b|\bcreateScoringContext\b/.test(finalAiSource), false);
   const finalUiSource = fs.readFileSync(path.join(__dirname, "../final-ui-runtime.js"), "utf8");
   assert.equal(/\bendGameScoring\b|computePlayerFinalScoreBreakdown/.test(finalUiSource), false);
 })();

@@ -38,8 +38,6 @@
     runezu,
     initialCards,
     industry,
-    aiValuation,
-    aiRaceModel,
     ai,
     alienTraceRewardFlow,
     actionRuntimeModule,
@@ -59,7 +57,6 @@
     playerStatsUiModule,
     debugRuntimeModule,
     finalUiRuntimeModule,
-    finalScoreAiRuntimeModule,
     aiControlRuntimeModule,
     aiBrowserBootstrapModule,
     actionBriefingModule,
@@ -194,15 +191,11 @@
   const setupSelectionState = runtime.selection;
   const uiRuntimeState = runtime.ui;
   const browserHostState = runtime.browserHost;
-  let finalScoreAiRuntime = null;
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
   let cardTriggerRuntime = null;
   let finalReadModelOwner = null;
   let browserReadModelOwner = null;
-  const runAiFinalScoreMarkDecision = finalScoreAiRuntimeModule.createFinalScoreAiPort({
-    getRuntime: () => finalScoreAiRuntime,
-  }).runDecision;
   const { SCORE_SOURCE_KEYS } = scoreSourceRuntimeModule;
   const tokenWidths = {
     rocket: null,
@@ -226,7 +219,6 @@
     alien_runtime: alienRuntimeHelpers,
     alien_species: alienSpeciesRuntime,
     card_runtime: cardRuntime,
-    ai_controller: aiController,
     card_trigger: cardTriggerRuntime,
     industry_runtime: industryRuntime,
     tech_runtime: techRuntime,
@@ -471,6 +463,22 @@
     getController: () => actionRuntimeController,
     createActionContext: (...args) => createActionContextForWorkingRoot(...args),
   });
+  const enumerateSimulationTurnActionsForRoot = (workingRoot) => (
+    compositionActionRegistry.enumerate(workingRoot)
+      .filter((standardAction) => standardAction.phase !== "conditional")
+      .map((standardAction) => ({
+        id: standardAction.family,
+        kind: standardAction.phase,
+        family: standardAction.family,
+        actionId: standardAction.actionId,
+        actorId: standardAction.actorId,
+        target: structuredClone(standardAction.target || null),
+        payload: structuredClone(standardAction.payload || {}),
+        standardAction: structuredClone(standardAction),
+        available: true,
+        label: standardAction.summary,
+      }))
+  );
   const cardSelectionDecisionOwner = cardSelectionDecisionModule.createCardSelectionDecisionOwner({
     inspectSession: () => ruleComposition.inspect(),
     resolvePlayer: (workingRoot, pending) => (
@@ -1316,6 +1324,7 @@
     return getFinalUiProjection().players.find((entry) => String(entry.id) === String(playerId))?.breakdown
       || { totalScore: Number(playerOrId?.resources?.score) || 0 };
   };
+  const readRuleState = () => ruleComposition.stateSourcePort.read().state;
   const createStateSourceReadoutRoot = () => browserHostModule.residentProjection.createReadoutRoot(
     ruleComposition.stateSourcePort.read().state,
     { solarKey: "solarSystem", includeMatch: true },
@@ -3700,7 +3709,6 @@
 
   const { controller: aiController } = aiBrowserBootstrapModule.createBrowserAiBootstrap({
     aiControlRuntimeModule,
-    aiControllerModule: window.SetiAppAiController,
     ruleComposition,
     policyInputAdapterModule: browserHostModule.policyInputAdapter,
     projectionAdapter: residentProjectionAdapter,
@@ -3708,8 +3716,7 @@
     createPolicy: (seatId) => ai.heuristicPolicy.createHeuristicPolicy({
       difficulty: getPlayerById(seatId)?.aiDifficulty || AI_DIFFICULTY_LAUGHABLE,
     }),
-    getRuleReadout: createStateSourceReadoutRoot,
-    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
+    readRuleState,
     stateOwners: {
       match: browserMatchRuntime,
       action: actionSessionRuntime,
@@ -3717,163 +3724,49 @@
       ui: uiRuntimeState,
       getAlien: () => alienSpeciesPort,
     },
-    controllerPorts: [
-      {
-        port: handFlowHelpers,
-        methods: aiBrowserBootstrapModule.HAND_CONTROLLER_METHODS,
-        label: "Hand AI port",
-      },
-      {
-        port: scanFlowHelpers,
-        methods: aiBrowserBootstrapModule.SCAN_CONTROLLER_METHODS,
-        label: "Scan AI port",
-      },
-    ],
-    lazyControllerPorts: [{
-      getPort: () => alienSpeciesPort,
-      methods: aiBrowserBootstrapModule.ALIEN_SPECIES_CONTROLLER_METHODS,
-      label: "Alien Species AI port",
-    }],
-    controllerContext: aiBrowserBootstrapModule.createBrowserAiControllerContext({
-      staticContext: aiBrowserBootstrapModule.createBrowserAiStaticContext(
-        dependencies,
-        { ...appConstants, MOVE_ENERGY_COST },
-      ),
-      getCardRuntime: () => cardRuntime,
-      getCardTriggerRuntime: () => cardTriggerRuntime,
-      getIndustryRuntime: () => industryRuntime,
-      getTechRuntime: () => techRuntime,
-      actionSessionRuntime,
-      browserContextRuntime,
-      cardSelectionState,
-      coordinateRuntime: coordinatePort,
-      effectExecutorPort: effectExecutorCommandPort,
-      effectFlowRuntime: effectFlowRuntimePort,
-      playerEffectOwnerRuntime,
-      playerLookupRuntime,
-      turnHostRuntime,
-      turnReadoutRuntime,
-      hostPort: {
+    controlContext: {
       window,
-      ruleLifecycle: browserRuleLifecycle,
-      historyStepOrder,
-      els,
-    analyzeDataForCurrentPlayer,
-    beginScanAction: (...args) => beginScanAction(...args),
-    buildSectorScanChoicesForXs: (...args) => buildSectorScanChoicesForXs(...args),
-    canBlindDraw: (...args) => canBlindDraw(...args),
-    canPayForMove,
-    canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
-    cancelTechSelection: (...args) => cancelTechSelection(...args),
-    clearTransientStateForRecovery,
-    computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
-    confirmDataPlacement,
-    confirmInitialSelectionForCurrentPlayer: (workingRoot) => (
-      actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot)
-    ),
-    confirmAlienRevealNotice: () => (
-      (result) => (maybeContinuePendingTurnEndRevealFlow(), result)
-    )(confirmAlienRevealNotice()),
-    confirmLandTargetPicker,
-    confirmMovePayment,
-    confirmPassReserveSelection: (...args) => confirmPassReserveSelection(...args),
-    confirmTechBlueSlotChoice: (...args) => confirmTechBlueSlotChoice(...args),
-    createActionContext: createReadoutActionContext,
-    aiRuntimePorts: aiBrowserBootstrapModule.createBrowserAiRuntimePorts({
-      getAlienSpeciesRuntime: () => alienSpeciesRuntime,
-      getCardRuntime: () => cardRuntime,
-      getCardTriggerRuntime: () => cardTriggerRuntime,
-      getIndustryRuntime: () => industryRuntime,
-      getTechRuntime: () => techRuntime,
-      createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
-      dispatchRuntimeAction: (workingRoot, request) => dispatchBrowserRuleInput(
-        request,
-        undefined,
-        createActionContextForWorkingRoot(workingRoot, request?.payload || request),
-      ),
-      getRequiredMovePointsForUi: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
-    }),
-    createTurnState,
-    dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
-    drawCardForCurrentPlayer: (...args) => drawCardForCurrentPlayer(...args),
-    endCurrentTurn,
-    recoverPendingActionFromOpenHistoryForAi: (...args) => recoverPendingActionFromOpenHistoryForAi(...args),
-    executeActionEffect,
-    executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
-    finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow(...args),
-    formatRocketLabel,
-    getAlienTraceActionPlayer,
-    getCardPlayCost: (...args) => getCardPlayCost(...args),
-    getCardPrice: (...args) => getCardPrice(...args),
-    getCardTypeCode: (...args) => getCardTypeCode(...args),
-    getCurrentActionEffect,
-    getCurrentPlayer,
-    getInitialSelectionOffer,
-    getPassReserveSelectionCards: (...args) => getPassReserveSelectionCards(...args),
-    getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
-    getReadyCardTasks: (...args) => getReadyCardTasks?.(...args),
-    getRequiredMovePointsForUi: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
-    getResearchTechSelectionOptions: (...args) => getResearchTechSelectionOptions(...args),
-    getSectorContentForMove,
-    getSectorXsMatchingCondition,
-    handleCompanyActionMarkerClick: (...args) => handleCompanyActionMarkerClick(...args),
-    handlePublicCornerDiscardCardClick: (...args) => handlePublicCornerDiscardCardClick(...args),
-    handlePublicCardClick: (...args) => handlePublicCardClick(...args),
-    handleIndustryDeepspaceHandClick: (...args) => handleIndustryDeepspaceHandClick(...args),
-    handleSupplyTechTileClick: (...args) => handleSupplyTechTileClick(...args),
-    hasActivePendingSubFlow,
-    initializeCardGame,
-    isAsteroidContent,
-    isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
-    isInitialSelectionActive,
-    isMovePaymentCard,
-    isUiBlockingAiAutomation: isActionBriefingOpen,
-    isTechTileOwnedByOtherPlayer: (...args) => isTechTileOwnedByOtherPlayer(...args),
-    isTechTilePickingActive: (...args) => isTechTilePickingActive(...args),
-    landForCurrentPlayer,
-    moveRocket,
-    orbitForCurrentPlayer,
-    openCardTaskCompletionPicker: (...args) => openCardTaskCompletionPicker(...args),
-    passForCurrentPlayer,
-    pickPublicCardForCurrentPlayer: (...args) => pickPublicCardForCurrentPlayer?.(...args),
-    randomizeAll,
-    renderStateReadout,
-    researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer(...args),
-    resetActionLog,
-    resetScanRunSequence,
-    restoreMutableObject: (...args) => restoreMutableObject(...args),
-    runAction,
-    runPlaceDataToComputer,
-    runQuickTrade,
-    runAiFinalScoreMarkDecision,
-    selectPassReserveCard: (...args) => selectPassReserveCard(...args),
-    sectorXHasAvailableScanTarget,
-    skipCurrentActionEffect: (...args) => skipCurrentActionEffect(...args),
-    startInitialSelection,
-    startNewGame,
-        updateActionButtons: (...args) => updateActionButtons(...args),
+      DEFAULT_ACTIVE_PLAYER_COUNT,
+      DEFAULT_INITIAL_PLAYER_COLOR,
+      getCurrentActionEffect,
+      getCurrentPlayer,
+      getEffectOwnerPlayer,
+      getPlayerByColor,
+      getPlayerById,
+      getPlayerLabelById,
+      isGameEnded,
+      isUiBlockingAiAutomation: isActionBriefingOpen,
+      isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
+      renderStateReadout,
+      resetGameForAiAutoBattle(options = {}) {
+        const activePlayerCount = Math.min(
+          Math.max(1, Math.round(Number(options.activePlayerCount) || DEFAULT_ACTIVE_PLAYER_COUNT)),
+          players.PLAYER_COLOR_IDS.length,
+        );
+        const result = startNewGame({
+          activePlayerCount,
+          clearStorage: false,
+          message: "AI 新局已重置",
+        });
+        return {
+          ...result,
+          activePlayerCount,
+          playerIds: [...(readRuleState().turn?.activePlayerIds || [])],
+        };
       },
-    }),
+      setTurnStatePlayerOrder,
+      startInitialSelection,
+      updateActionButtons: (...args) => updateActionButtons(...args),
+    },
   });
   const {
-    aiNumber,
-    applyAiStrategyWeight,
-    cardTriggerNeedsFreeMove,
     configureDefaultAiOpponent,
     createAiControlSnapshot,
-    enumerateSimulationTurnActions: enumerateSimulationTurnActionsForRoot,
-    getAiMapDemand,
-    getAiRemainingRoundWeight,
-    getAiStrategyDemand,
-    getCardTriggerFreeMoveEffect,
     getPlayerAgentLabel,
     isAiAutomationPaused,
     isAiAutoBattlePlayer,
-    listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
-    recordAiAutoBattleLog,
     restoreAiControlSnapshot,
     scheduleAiAutoStepIfNeeded,
-    sumAiDemandMap,
   } = aiController;
   const cardRuntime = cardRuntimeModule.createBrowserCardRuntime({
     staticContext: cardRuntimeModule.createBrowserCardStaticContext(dependencies),
@@ -4084,11 +3977,9 @@
       SCORE_SOURCE_KEYS,
       blockManualAiPendingInputIfNeeded,
       cardTaskState,
-      cardTriggerNeedsFreeMove,
       createActionContext: createActionContextForWorkingRoot,
       document,
       els,
-      getCardTriggerFreeMoveEffect,
       getEarthSectorCoordinate,
       getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
       getRequiredMovePointsForUi: (...args) => getRequiredMovePointsForUi(...args),
@@ -4096,7 +3987,6 @@
       isAsteroidContent,
       isInitialSelectionActive,
       uiRuntimeState,
-      listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
       listReadyChongTransportCandidates: (...args) => listReadyChongTransportCandidatesForRoot(...args),
       markCurrentActionIrreversibleForSource,
       openPendingDecision: openBrowserPendingDecision,
@@ -4259,27 +4149,6 @@
     recordNeutralScoreTracesFromScanResult,
     recordNeutralScoreTracesFromAbilityResult,
   } = neutralScoreTraceRuntime;
-
-  finalScoreAiRuntime = finalScoreAiRuntimeModule.createFinalScoreAiRuntime({
-    FINAL_ROUND_NUMBER,
-    FINAL_SCORE_IDS,
-    aiNumber,
-    aiRaceModel,
-    aiValuation,
-    applyAiStrategyWeight,
-    getAiMapDemand,
-    getAiRemainingRoundWeight,
-    getAiStrategyDemand,
-    getCurrentPlayer,
-    getPlayerById,
-    handleFinalScoreTileClick,
-    isAiAutoBattlePlayer,
-    recordAiAutoBattleLog,
-    sumAiDemandMap,
-    syncFinalScorePendingMarks,
-    getFinalScoreAiProjection,
-  });
-
 
   const actionGuardRuntime = browserHostModule.actionBar.createActionGuardRuntime({
     getActionEffectFlow,

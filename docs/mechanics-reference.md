@@ -6,7 +6,7 @@
 
 ## App 装配层
 
-浏览器入口仍由 `randomizer/index.html` 按 `<script>` 顺序加载，不需要构建步骤。`randomizer/app/dependencies.js` 负责收集 `window.Seti*` 依赖并在脚本顺序错误时提前报错；`randomizer/app/constants.js` 负责静态配置、图标路径、扫描奖励表和 UI 参数；`randomizer/app/dom.js` 负责固定 DOM 元素注册；`randomizer/app/events.js` 负责事件绑定路由；`randomizer/app/public-api.js` 负责组装 `window.SetiRandomizer`；`randomizer/app/ai-controller.js` 负责 AI 自动机和策略批跑控制器。详细边界和后续拆分原则见 `docs/app-architecture.md`。
+浏览器入口仍由 `randomizer/index.html` 按 `<script>` 顺序加载，不需要构建步骤。`randomizer/app/dependencies.js` 负责收集 `window.Seti*` 依赖并在脚本顺序错误时提前报错；`randomizer/app/constants.js` 负责静态配置、图标路径、扫描奖励表和 UI 参数；`randomizer/app/dom.js` 负责固定 DOM 元素注册；`randomizer/app/events.js` 负责事件绑定路由；`randomizer/app/public-api.js` 负责组装 `window.SetiRandomizer`；`randomizer/app/ai/browser-bootstrap.js` 负责机器席位 control runtime 与 Machine Player Host 装配。详细边界和后续拆分原则见 `docs/app-architecture.md`。
 
 ## 效果术语表
 当需要查看某个具体效果术语的效果时参考：docs\effect-glossary.md

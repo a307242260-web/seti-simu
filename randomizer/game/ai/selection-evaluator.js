@@ -1,23 +1,84 @@
 (function (root, factory) {
   "use strict";
 
-  let evaluator = root.SetiAIEvaluator;
   let initialCards = root.SetiInitialCards;
 
-  if ((!evaluator || !initialCards) && typeof require === "function") {
-    evaluator = evaluator || require("./evaluator");
+  if (!initialCards && typeof require === "function") {
     initialCards = initialCards || require("../initial-cards");
   }
 
-  const api = factory(evaluator, initialCards);
+  const api = factory(initialCards);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAISelectionEvaluator = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (evaluator, initialCards) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (initialCards) {
   "use strict";
+
+  const FINAL_ROUND_NUMBER = 4;
+  const RESOURCE_VALUES = Object.freeze({
+    score: 1,
+    credits: 3,
+    energy: 3,
+    handSize: 3,
+    availableData: 1.5,
+    publicity: 1,
+    additionalPublicScan: 1.5,
+  });
+
+  function numeric(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : 0;
+  }
+
+  function getResourceValue(resources = {}, values = RESOURCE_VALUES) {
+    return Object.entries(resources || {}).reduce((total, [key, value]) => (
+      total + numeric(value) * numeric(values[key])
+    ), 0);
+  }
+
+  function getRemainingIncomeMultiplier(roundNumber = 1) {
+    const round = Math.max(1, Math.round(numeric(roundNumber) || 1));
+    return Math.max(0, FINAL_ROUND_NUMBER - round);
+  }
+
+  function getIncomeValue(income = {}, options = {}) {
+    return getResourceValue(income, options.resourceValues)
+      * getRemainingIncomeMultiplier(options.roundNumber);
+  }
+
+  function getIndustryEffectForEvaluation(cardOrLabel, options = {}) {
+    const player = options.player || (options.aiDifficulty ? { aiDifficulty: options.aiDifficulty } : null);
+    if (player && initialCards?.getEffectiveIndustryEffect) {
+      return initialCards.getEffectiveIndustryEffect(cardOrLabel, player);
+    }
+    return initialCards?.getIndustryEffect?.(cardOrLabel);
+  }
+
+  function evaluateIndustryCard(cardOrLabel, options = {}) {
+    const effect = getIndustryEffectForEvaluation(cardOrLabel, options);
+    if (!effect) return 0;
+    return getResourceValue(effect.resources, options.resourceValues)
+      + getIncomeValue(effect.baseIncome, options)
+      + numeric(effect.blindDraw) * RESOURCE_VALUES.handSize
+      + numeric(effect.dataGain) * RESOURCE_VALUES.availableData
+      + numeric(effect.launchCount) * 2
+      + numeric(effect.incomeIncreaseCount) * 2;
+  }
+
+  function evaluateInitialCard(cardOrNumber, options = {}) {
+    const effect = initialCards?.getInitialCardEffect?.(cardOrNumber);
+    if (!effect) return 0;
+    return getResourceValue(effect.resources, options.resourceValues)
+      + getIncomeValue(effect.income, options)
+      + numeric(effect.blindDraw) * RESOURCE_VALUES.handSize
+      + numeric(effect.dataGain) * RESOURCE_VALUES.availableData
+      + numeric(effect.scan?.count) * 3
+      + (effect.orbitPlanetId ? 3 : 0)
+      + (effect.alienTrace ? 6 : 0);
+  }
 
   function byScoreDescending(left, right) {
     return Number(right.score || 0) - Number(left.score || 0);
@@ -77,11 +138,11 @@
   }
 
   function getEffectResourcesValue(effect = {}, options = {}) {
-    return evaluator.getResourceValue(effect.resources || {}, options.resourceValues)
-      + Number(effect.blindDraw || 0) * evaluator.RESOURCE_VALUES.handSize
-      + Number(effect.dataGain || 0) * evaluator.RESOURCE_VALUES.availableData
-      + evaluator.getIncomeValue(effect.income || {}, options)
-      + evaluator.getIncomeValue(effect.baseIncome || {}, options);
+    return getResourceValue(effect.resources || {}, options.resourceValues)
+      + Number(effect.blindDraw || 0) * RESOURCE_VALUES.handSize
+      + Number(effect.dataGain || 0) * RESOURCE_VALUES.availableData
+      + getIncomeValue(effect.income || {}, options)
+      + getIncomeValue(effect.baseIncome || {}, options);
   }
 
   function addOpeningGoal(goals, id, amount = 1) {
@@ -117,9 +178,9 @@
   function scoreOpeningCombination(industry, initialPair = [], options = {}) {
     const effects = getOpeningEffects(industry, initialPair, options);
     const goals = {};
-    let score = evaluator.evaluateIndustryCard(industry, options);
+    let score = evaluateIndustryCard(industry, options);
     for (const card of initialPair) {
-      score += evaluator.evaluateInitialCard(initialCards?.getInitialCardNumber?.(card) || card, options);
+      score += evaluateInitialCard(initialCards?.getInitialCardNumber?.(card) || card, options);
     }
 
     const combined = effects.reduce((summary, entry) => {
@@ -267,7 +328,7 @@
       };
     }
 
-    const industry = chooseBest(industryOptions, (card) => evaluator.evaluateIndustryCard(card, options));
+    const industry = chooseBest(industryOptions, (card) => evaluateIndustryCard(card, options));
     return {
       industry,
       initialCards: initialOptions.slice(0, initialCount),

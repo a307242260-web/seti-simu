@@ -52,7 +52,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 ## Composition root
 
-`randomizer/app.js` 当前 7,311 行、88 个顶层函数，是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host/领域 runtime、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、Policy、DOM renderer 或 simulation 入口。`randomizer/app/ai-controller.js` 只负责 AI runtime/rule domain 注入和稳定 API 转发；具体 resolver、automation、executor、日志与估值分别位于 `app/ai/**` 和 `game/ai/**`。
+`randomizer/app.js` 是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host/领域 runtime、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、Policy、DOM renderer 或 simulation 入口。机器席位由 `app/ai/browser-bootstrap.js` 直接装配 control runtime 与 Machine Player Host；旧 controller、resolver、automation、report/tuning 和 valuation/candidate 域不属于生产架构。
 
 传统 `window.Seti*` 只作为无构建脚本的模块注册方式。是否使用全局命名空间不改变状态 owner，也不能成为跨局可变事实或隐藏 fallback 的理由。
 

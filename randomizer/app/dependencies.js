@@ -30,7 +30,6 @@
     Object.freeze({ key: "playerStatsUiModule", globalName: "SetiBrowserPlayerStatsUi" }),
     Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
     Object.freeze({ key: "finalUiRuntimeModule", globalName: "SetiAppFinalUiRuntime" }),
-    Object.freeze({ key: "finalScoreAiRuntimeModule", globalName: "SetiAppFinalScoreAiRuntime" }),
     Object.freeze({ key: "startScreenModule", globalName: "SetiAppStartScreen" }),
     Object.freeze({ key: "turnFlowModule", globalName: "SetiAppTurnFlow" }),
     Object.freeze({ key: "turnEndFlowModule", globalName: "SetiAppTurnEndFlow" }),
@@ -80,8 +79,6 @@
     Object.freeze({ key: "aliens", globalName: "SetiAliens" }),
     Object.freeze({ key: "initialCards", globalName: "SetiInitialCards" }),
     Object.freeze({ key: "industry", globalName: "SetiIndustry" }),
-    Object.freeze({ key: "aiValuation", globalName: "SetiAIValuation" }),
-    Object.freeze({ key: "aiRaceModel", globalName: "SetiAIRaceModel" }),
     Object.freeze({ key: "ai", globalName: "SetiAI" }),
   ]);
   function collectDependencies(source = root) {
