@@ -26,7 +26,7 @@
             && String(target.rocketIds[0]) === String(rocketId),
         );
       }
-      return context.handleMultiSectorChoice(context.getRuleReadout(), rocketId);
+      return context.handleMultiSectorChoice(rocketId);
     }
     function confirmSectorSelection() {
       const selected = [...(context.getSelectedRocketIds() || [])].map(String).sort();

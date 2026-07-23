@@ -1358,7 +1358,7 @@
     );
     port.logAomomoDebugCoordinates = (alienSlotId = null) => context.dispatchCommand(
       "logAomomoDebugCoordinates",
-      [alienSlotId ?? context.getRuleReadout().alienGameState.aomomo?.revealedSlotId ?? 1],
+      [alienSlotId ?? context.getEventsProjection().aomomoRevealedSlotId ?? 1],
     );
     for (const species of ["Jiuzhe", "Fangzhou", "Yichangdian", "Banrenma", "Chong", "Amiba", "Aomomo"]) {
       port[`focus${species}DebugCalibration`] = (alienSlotId = 1) => context.dispatchCommand(

@@ -317,6 +317,7 @@ function createState() {
   assert.deepEqual(turn.roundOrderPlayerIds, []);
   assert.deepEqual(board.planetLocations, [{ planetId: "earth", x: 0, y: 4 }]);
   assert.deepEqual(events.clickableTechTileIds, []);
+  assert.equal(events.aomomoRevealedSlotId, null);
   assert.equal(Object.hasOwn(render, "solar"), false);
   assert.equal(Object.hasOwn(render, "players"), false);
   assert.equal(Object.hasOwn(render, "pieces"), false);
@@ -333,6 +334,16 @@ function createState() {
 
   assert.throws(
     () => residentProjectionApi.assertTurnFlowProjection(Object.freeze({ ...turn, forged: true })),
+    /字段不匹配/,
+  );
+  assert.throws(
+    () => residentProjectionApi.assertEventsProjection(Object.freeze({ ...events, forged: true })),
+    /字段不匹配/,
+  );
+  const missingEventField = structuredClone(events);
+  delete missingEventField.aomomoRevealedSlotId;
+  assert.throws(
+    () => residentProjectionApi.assertEventsProjection(deepFreeze(missingEventField)),
     /字段不匹配/,
   );
   assert.throws(

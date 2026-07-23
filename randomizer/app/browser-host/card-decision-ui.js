@@ -109,15 +109,17 @@
   }
 
   function createCardSelectionState(context = {}) {
-    const readRoot = (workingRoot = null) => workingRoot || context.getRuleReadout();
+    const readCardState = (workingRoot = null) => (
+      workingRoot?.cardState || { ui: context.readCardUiState() }
+    );
     function isCardSelectionActive(workingRoot = null) {
-      return context.cards.isSelectionActive(readRoot(workingRoot).cardState);
+      return context.cards.isSelectionActive(readCardState(workingRoot));
     }
     function isDiscardSelectionActive(workingRoot = null) {
       return Boolean(context.getPendingDiscardDecision(workingRoot));
     }
     function isPlayCardSelectionActive(workingRoot = null) {
-      return context.cards.isPlayCardSelectionActive(readRoot(workingRoot).cardState);
+      return context.cards.isPlayCardSelectionActive(readCardState(workingRoot));
     }
     function allowsBlindDrawInSelection() {
       return context.readCardSelectionDecision()?.allowBlindDraw !== false;

@@ -8,14 +8,14 @@ const decisionUiApi = require("./decision-ui");
 const cardDecisionUiApi = require("./card-decision-ui");
 const standardAction = require("../../game/actions/standard-action");
 
-(function testLegacyCardSelectionStateReadsProjectionOnly() {
-  const root = { cardState: { selecting: true, playing: false } };
+(function testCardSelectionStateReadsNarrowCardUiState() {
+  const cardUiState = { selecting: true, playing: false };
   let pending = { type: "public_scan", minSelectable: 1, maxSelectable: 2, allowBlindDraw: false };
   const state = cardDecisionUiApi.createCardSelectionState({
-    getRuleReadout: () => root,
+    readCardUiState: () => cardUiState,
     cards: {
-      isSelectionActive: (cardState) => cardState.selecting,
-      isPlayCardSelectionActive: (cardState) => cardState.playing,
+      isSelectionActive: (cardState) => cardState.ui.selecting,
+      isPlayCardSelectionActive: (cardState) => cardState.ui.playing,
     },
     getPendingDiscardDecision: () => null,
     readCardSelectionDecision: () => pending,

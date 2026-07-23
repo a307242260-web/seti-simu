@@ -77,15 +77,13 @@
     "tileId", "variant", "formulaId", "available", "reason", "slotIndex", "baseValue",
     "multiplier", "immediateScore",
   ]);
-  const LEGACY_SLICE_KEYS = Object.freeze([
-    "playerState", "turnState", "cardState", "solarState", "rocketState",
-    "planetStatsState", "nebulaDataState", "finalScoringState", "techGameState",
-    "alienGameState", "viewerPlayer", "displayedTurn",
+  const RESIDENT_PROJECTION_INPUT_KEYS = Object.freeze([
+    "projection", "stateSource", "projector", "viewer",
   ]);
   const RUNTIME_PROJECTION_KEYS = Object.freeze({
     events: Object.freeze([
       "schemaVersion", "identity", "alienRoutesBySlotId", "fangzhouRevealedSlotId",
-      "clickableTechTileIds",
+      "aomomoRevealedSlotId", "clickableTechTileIds",
     ]),
     actionInteraction: Object.freeze([
       "schemaVersion", "identity", "activeRocketId", "industryBorrowMode",
@@ -371,9 +369,11 @@
   }
 
   function createResidentProjection(input = {}) {
-    const legacyKeys = LEGACY_SLICE_KEYS.filter((key) => Object.hasOwn(input, key));
-    if (legacyKeys.length) {
-      return fail("RESIDENT_PROJECTION_LEGACY_SLICE_REJECTED", "常驻投影拒绝传统规则 slice 输入", { legacyKeys });
+    const unknownKeys = Object.keys(input).filter((key) => !RESIDENT_PROJECTION_INPUT_KEYS.includes(key));
+    if (unknownKeys.length) {
+      return fail("RESIDENT_PROJECTION_INPUT_FIELDS_INVALID", "常驻投影只接受规范 projection 或 StateSource projector", {
+        unknownKeys,
+      });
     }
     let projection = input.projection || null;
     if (!projection && input.stateSource?.project && typeof input.projector === "function") {
@@ -401,23 +401,6 @@
       if (cloned !== undefined) output[key] = cloned;
     }
     return output;
-  }
-
-  function createReadoutRoot(resident, options = {}) {
-    const solarKey = options.solarKey || "solar";
-    return {
-      turnState: structuredClone(resident.turn || {}),
-      playerState: structuredClone(resident.players || { currentPlayerId: null, players: [] }),
-      solarState: structuredClone(resident[solarKey] || {}),
-      rocketState: structuredClone(resident.pieces || {}),
-      planetStatsState: structuredClone(resident.planets || {}),
-      nebulaDataState: structuredClone(resident.data || {}),
-      cardState: structuredClone(resident.cards || {}),
-      techGameState: structuredClone(resident.tech || {}),
-      alienGameState: structuredClone(resident.aliens || {}),
-      finalScoringState: structuredClone(resident.finalScoring || {}),
-      ...(options.includeMatch ? { match: structuredClone(resident.match || {}) } : {}),
-    };
   }
 
   function createResidentPresentationBuilder(context = {}) {
@@ -569,7 +552,6 @@
     BROWSER_PROJECTION_KEYS,
     RUNTIME_PROJECTION_SCHEMAS,
     RUNTIME_PROJECTION_KEYS,
-    LEGACY_SLICE_KEYS,
     validateProjection,
     assertCanonicalBrowserProjection,
     createResidentProjection,
@@ -588,7 +570,6 @@
     assertBoardCoordinateProjection,
     assertRenderProjection,
     clonePresentation,
-    createReadoutRoot,
     createResidentPresentationBuilder,
     createViewerResolver,
   });

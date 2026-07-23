@@ -244,6 +244,7 @@
   const effectChoiceCommandPort = browserDomainCommandPort.bindEffectChoiceCommands();
   const {
     handleDiscardIncomeCardChoice,
+    handleProbeSectorScanChoice: handleProbeSectorScanChoiceCommand,
   } = effectChoiceCommandPort;
   const effectExecutorCommandPort = browserDomainCommandPort.bindEffectExecutorCommands();
   const {
@@ -282,7 +283,7 @@
   } = turnEndPort;
   const debugPort = debugRuntimeModule.createDebugPort({
     dispatchCommand: (name, args) => callDebugCommand(name, args),
-    getRuleReadout: () => createStateSourceReadoutRoot(),
+    getEventsProjection: () => getEventsProjection(),
   });
   const {
     addDebugCardByInput, addDebugData, addDebugIncome, addDebugScore, fillDebugNebulaData,
@@ -407,11 +408,9 @@
     beginIncome: (...args) => beginIncomeForCurrentPlayerForRoot(...args),
     getPlayerCompanyBaseIncome,
     players,
-    createReadoutRoot: () => createStateSourceReadoutRoot(),
   });
   const {
     createActionContext: createActionContextForWorkingRoot,
-    createReadoutActionContext,
   } = actionContextFactory;
   const primaryActionUiRuntime = actionInteractionRuntimeModule.createPrimaryActionUiRuntime({
     canStartMainAction: (...args) => canStartMainAction(...args),
@@ -778,7 +777,9 @@
     advanceTurnAfterPlayerAction, startNewGame, randomizeAll, normalizeAiDifficulty,
   } = turnHostRuntime;
   const browserMatchRuntime = runtimeModule.createBrowserMatchRuntime({
-    createReadoutRoot: () => createStateSourceReadoutRoot(),
+    readActionEffectFlow: () => structuredClone(
+      ruleComposition.stateSourcePort.read().state.match?.actionEffectFlow || null,
+    ),
     uiRuntimeState: runtime.ui,
   });
   const {
@@ -951,7 +952,6 @@
     getAlienTracePickerState: () => uiRuntimeState.alienTracePickerState || null,
     openPendingDecision: openBrowserPendingDecision,
     abilities,
-    createActionContext: createReadoutActionContext,
     getFangzhouUnlockableTraceTypes: (workingRoot, ...args) => getFangzhouUnlockableTraceTypesForRoot(workingRoot, ...args),
     hasAlienTracePanelPlacementTarget: (workingRoot, ...args) => hasAlienTracePanelPlacementTargetForRoot(workingRoot, ...args),
     getAlienTraceChoiceSlotIds: (_workingRoot, ...args) => getAlienTraceChoiceSlotIds(...args),
@@ -1107,7 +1107,7 @@
     hasCurrentMainActionIrreversibleBarrier, getMainActionStartBlockReason, canStartMainAction,
   } = actionSessionRuntime;
   const cardSelectionState = browserHostModule.cardDecisionUi.createCardSelectionState({
-    getRuleReadout: () => createStateSourceReadoutRoot(),
+    readCardUiState: () => structuredClone(readRuleState().cards?.ui || {}),
     cards,
     getPendingDiscardDecision,
     readCardSelectionDecision,
@@ -1325,20 +1325,23 @@
       || { totalScore: Number(playerOrId?.resources?.score) || 0 };
   };
   const readRuleState = () => ruleComposition.stateSourcePort.read().state;
-  const createStateSourceReadoutRoot = () => browserHostModule.residentProjection.createReadoutRoot(
-    ruleComposition.stateSourcePort.read().state,
-    { solarKey: "solarSystem", includeMatch: true },
-  );
+  const readPlayerTurnState = () => {
+    const state = readRuleState();
+    return {
+      players: structuredClone(state.players),
+      turn: structuredClone(state.turn),
+    };
+  };
   const playerLookupRuntime = runtimeModule.createPlayerLookupRuntime({
     players,
     uiRuntimeState,
-    createReadoutRoot: createStateSourceReadoutRoot,
+    readPlayerTurnState,
   });
   const { isBrowserWorkingRoot, getPlayerById, getCurrentPlayer, getPlayerByColor } = playerLookupRuntime;
   const playerEffectOwnerRuntime = runtimeModule.createPlayerEffectOwnerRuntime({
     players,
     uiRuntimeState,
-    createReadoutRoot: createStateSourceReadoutRoot,
+    readPlayerTurnState,
     getPlayerByColor,
     getCurrentPlayer: (workingRoot = null) => getCurrentPlayer(workingRoot || undefined),
     getActionEffectFlow,
@@ -1360,7 +1363,7 @@
     players,
     industry,
     browserHostState,
-    createReadoutRoot: createStateSourceReadoutRoot,
+    readPlayerTurnState,
     getPlayerById,
     getRoundOrderPlayerIds,
     isAiPlayer: (...args) => isAiAutoBattlePlayer(...args),
@@ -2685,7 +2688,7 @@
     els,
     actionBriefingState,
     startScreenState,
-    getTurnState: () => createStateSourceReadoutRoot().turnState,
+    getTurnState: () => getTurnFlowProjection(),
     HISTORY_SOURCE_MAIN,
     solar,
     getSolarState: () => ruleComposition.stateSourcePort.read().state.solarSystem,
@@ -2740,7 +2743,7 @@
     executeActionEffect,
   } = effectFlowHelpers;
   const getCurrentActionEffect = (workingRoot = null) => getCurrentActionEffectForRoot(
-    workingRoot || createStateSourceReadoutRoot(),
+    workingRoot,
   );
   const effectFlowRuntimePort = Object.freeze({
     ...effectFlowHelpers,
@@ -2936,7 +2939,7 @@
   const syncDiscardSelectionChrome = (...args) => callHandFlowCommand("syncDiscardSelectionChrome", args);
   const isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
   const syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
-  const isMovePaymentSelectionActive = (workingRoot = createStateSourceReadoutRoot()) => Boolean(
+  const isMovePaymentSelectionActive = () => Boolean(
     getPendingMovePayment(),
   );
   const getMovePaymentPlayer = (...args) => callHandFlowCommand("getMovePaymentPlayer", args);
@@ -3940,10 +3943,10 @@
     syncPassReserveSelectionChrome,
     beginPassReserveSelection,
     dismissPassReserveSelectionOverlay,
+    selectPassReserveCard,
     handlePublicCornerDiscardCardClick,
     confirmPublicCornerDiscardSelection,
   } = bindDomainCommands("card_runtime");
-  const selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
   const { confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
     submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
@@ -4405,8 +4408,7 @@
   const probeDecisionPort = scanFlowModule.createProbeDecisionPort({
     getPendingProbeSectorScanDecision,
     submitActiveDecision: submitActiveCardDecision,
-    handleMultiSectorChoice: (...args) => effectChoiceFlowHelpers.handleProbeSectorScanChoice(...args),
-    getRuleReadout: createStateSourceReadoutRoot,
+    handleMultiSectorChoice: (...args) => handleProbeSectorScanChoiceCommand(...args),
     getSelectedRocketIds: () => uiRuntimeState.probeSectorSelectedRocketIds || [],
   });
   const {
@@ -4787,10 +4789,10 @@
     researchTechForCurrentPlayer,
     commitSelectedResearchTech
   } = techRuntime;
-  const getResearchTechSelectionEffect = () => techRuntime.getResearchTechSelectionEffect(createStateSourceReadoutRoot());
-  const getResearchTechSelectionPayload = () => techRuntime.getResearchTechSelectionPayload(createStateSourceReadoutRoot());
-  const getResearchTechSelectionOptions = () => techRuntime.getResearchTechSelectionOptions(createStateSourceReadoutRoot());
-  const shouldSkipCurrentResearchTechCost = () => techRuntime.shouldSkipCurrentResearchTechCost(createStateSourceReadoutRoot());
+  const getResearchTechSelectionEffect = () => techRuntime.getResearchTechSelectionEffect();
+  const getResearchTechSelectionPayload = () => techRuntime.getResearchTechSelectionPayload();
+  const getResearchTechSelectionOptions = () => techRuntime.getResearchTechSelectionOptions();
+  const shouldSkipCurrentResearchTechCost = () => techRuntime.shouldSkipCurrentResearchTechCost();
   const {
     isTechActionSelectionActive, isTechTilePickingActive, syncTechSelectionChrome, renderTechBoard,
     closeTechBlueSlotPicker, isTechTileOwnedByOtherPlayer, appendResearchTechFollowupEffects,
@@ -5469,7 +5471,7 @@
       createRocketSnapshot,
       buildPlanetOrbitLandReferenceData,
       syncPlanetOrbitLandMarkers,
-      createActionContext: createReadoutActionContext,
+      enumerateActions: (request) => ruleComposition.inputPort.enumerateActions(request),
       getPlanetsReferencePointFromClientPosition,
       getPlanetsReferenceDimensions,
       renderRocketElement,

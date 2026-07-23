@@ -96,8 +96,9 @@
   }
 
   function createBrowserMatchRuntime(context = {}) {
-    const readRoot = (workingRoot = null) => workingRoot || context.createReadoutRoot();
-    const getActionEffectFlow = (workingRoot = null) => readRoot(workingRoot)?.match?.actionEffectFlow || null;
+    const getActionEffectFlow = (workingRoot = null) => (
+      workingRoot?.match?.actionEffectFlow || context.readActionEffectFlow()
+    );
 
     function setActionEffectFlow(workingRoot, flow) {
       if (!workingRoot?.match) throw new TypeError("action effect flow requires explicit workingRoot.match");
@@ -121,7 +122,7 @@
     function getPlayerById(rootOrId, explicitId = null) {
       const workingRoot = isWorkingRoot(rootOrId) ? rootOrId : null;
       const playerId = workingRoot ? explicitId : rootOrId;
-      const playerState = workingRoot?.playerState || context.createReadoutRoot().playerState;
+      const playerState = workingRoot?.playerState || context.readPlayerTurnState().players;
       return playerState.players.find((player) => player.id === playerId) || null;
     }
 
@@ -170,7 +171,7 @@
     function getEffectOwnerPlayer(rootOrEffect, explicitEffect = null) {
       const workingRoot = isWorkingRoot(rootOrEffect) ? rootOrEffect : null;
       const effect = workingRoot ? explicitEffect : rootOrEffect;
-      const playerState = workingRoot?.playerState || context.createReadoutRoot().playerState;
+      const playerState = workingRoot?.playerState || context.readPlayerTurnState().players;
       const flow = context.getActionEffectFlow(workingRoot);
       return (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
         || (workingRoot ? getPlayerById(workingRoot, flow?.defaultPlayerId) : getPlayerById(flow?.defaultPlayerId))
@@ -247,7 +248,7 @@
     function getPlayerById(rootOrId, explicitId = null) {
       const workingRoot = isWorkingRoot(rootOrId) ? rootOrId : null;
       const id = workingRoot ? explicitId : rootOrId;
-      const source = workingRoot ? workingRoot.playerState : context.createReadoutRoot().playerState;
+      const source = workingRoot ? workingRoot.playerState : context.readPlayerTurnState().players;
       return source.players.find((player) => player.id === id) || null;
     }
     function getCurrentPlayer(workingRoot = null) {
@@ -259,14 +260,14 @@
       }
       const source = isWorkingRoot(workingRoot)
         ? workingRoot.playerState
-        : context.createReadoutRoot().playerState;
+        : context.readPlayerTurnState().players;
       return context.players.getCurrentPlayer(source);
     }
     function getPlayerByColor(workingRootOrColor, explicitColor = null) {
       const workingRoot = isWorkingRoot(workingRootOrColor) ? workingRootOrColor : null;
       const color = workingRoot ? explicitColor : workingRootOrColor;
       const normalizedColor = context.players.normalizePlayerColor(color);
-      const source = workingRoot ? workingRoot.playerState : context.createReadoutRoot().playerState;
+      const source = workingRoot ? workingRoot.playerState : context.readPlayerTurnState().players;
       return source.players.find((player) => player.color === normalizedColor) || null;
     }
     return Object.freeze({ isBrowserWorkingRoot: isWorkingRoot, getPlayerById, getCurrentPlayer, getPlayerByColor });
@@ -274,7 +275,7 @@
 
   function createBrowserContextRuntime(context = {}) {
     function getInterfacePlayer() {
-      const { playerState, turnState } = context.createReadoutRoot();
+      const { players: playerState, turn: turnState } = context.readPlayerTurnState();
       const currentPlayer = context.players.getCurrentPlayer(playerState);
       if (!currentPlayer || !context.isAiPlayer(currentPlayer.id) || context.isAiAutomationPaused()) return currentPlayer;
       const activeIds = new Set(turnState.activePlayerIds || []);
@@ -294,7 +295,7 @@
     }
 
     function getActivePlayers() {
-      const { playerState, turnState } = context.createReadoutRoot();
+      const { players: playerState, turn: turnState } = context.readPlayerTurnState();
       const activeIds = new Set(turnState.activePlayerIds || []);
       return playerState.players.filter((player) => activeIds.has(player.id));
     }

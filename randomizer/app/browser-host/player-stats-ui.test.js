@@ -61,7 +61,7 @@ function createElement(tagName) {
   assert.equal(ui.buildPlayerFangzhouStatNodes(player)[1].children[1].textContent, "2/3");
   assert.equal(ui.buildPlayerRunezuStatNodes(player)[0].attributes["aria-label"], "星 1");
   assert.equal(
-    /\bgetReadoutRoot\b|\bgetRuleReadout\b|\bplayers\.|\bdata\.|\brunezu\./.test(
+    /\bplayers\.|\bdata\.|\brunezu\./.test(
       fs.readFileSync(require.resolve("./player-stats-ui"), "utf8"),
     ),
     false,

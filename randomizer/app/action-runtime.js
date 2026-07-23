@@ -202,7 +202,6 @@
 
     return Object.freeze({
       createActionContext,
-      createReadoutActionContext: () => createActionContext(context.createReadoutRoot()),
     });
   }
 

@@ -11,7 +11,9 @@
   const READ_MODEL_KEYS = Object.freeze([
     "schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "render",
   ]);
-  const EVENT_KEYS = Object.freeze(["alienRoutesBySlotId", "fangzhouRevealedSlotId", "clickableTechTileIds"]);
+  const EVENT_KEYS = Object.freeze([
+    "alienRoutesBySlotId", "fangzhouRevealedSlotId", "aomomoRevealedSlotId", "clickableTechTileIds",
+  ]);
   const ALIEN_ROUTE_KEYS = Object.freeze(["slotId", "revealed", "alienId", "route"]);
   const ACTION_INTERACTION_KEYS = Object.freeze(["activeRocketId", "industryBorrowMode"]);
   const TURN_FLOW_KEYS = Object.freeze([
@@ -155,6 +157,7 @@
     return {
       alienRoutesBySlotId,
       fangzhouRevealedSlotId: alienState.fangzhou?.revealedSlotId ?? null,
+      aomomoRevealedSlotId: alienState.aomomo?.revealedSlotId ?? null,
       clickableTechTileIds: [...new Set(clickableTechTileIds.map(String))],
     };
   }

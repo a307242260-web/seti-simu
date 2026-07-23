@@ -12,7 +12,7 @@
   const EFFECT_CHOICE_COMMANDS = Object.freeze([
     "handleConditionalSectorChoice", "handleDiscardIncomeCardChoice", "confirmDiscardAnyForIncome",
     "handlePayCreditChoice", "handleFundamentalismExchangeChoice", "handleDiscardCornerRepeatChoice",
-    "handleRemoveOrbitToProbeChoice",
+    "handleRemoveOrbitToProbeChoice", "handleProbeSectorScanChoice",
   ]);
   const EFFECT_EXECUTOR_COMMANDS = Object.freeze([
     "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan", "getPlanetName",

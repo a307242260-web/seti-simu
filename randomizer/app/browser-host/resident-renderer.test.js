@@ -123,15 +123,15 @@ function createProjection() {
   assert.equal(fixture.els.techTiles[0].hidden, true);
 })();
 
-(function testLegacySliceInputRejectedWithoutReadingPoisonGetters() {
-  const legacy = {};
-  Object.defineProperty(legacy, "playerState", {
+(function testUnknownInputRejectedWithoutReadingPoisonGetters() {
+  const forged = {};
+  Object.defineProperty(forged, "playerState", {
     enumerable: true,
     get() { throw new Error("legacy getter touched"); },
   });
-  const rejected = projectionApi.createResidentProjection(legacy);
-  assert.equal(rejected.code, "RESIDENT_PROJECTION_LEGACY_SLICE_REJECTED");
-  assert.deepEqual(rejected.legacyKeys, ["playerState"]);
+  const rejected = projectionApi.createResidentProjection(forged);
+  assert.equal(rejected.code, "RESIDENT_PROJECTION_INPUT_FIELDS_INVALID");
+  assert.deepEqual(rejected.unknownKeys, ["playerState"]);
 })();
 
 (function testDefaultProjectionSupportsCommittedArraySlicesWithoutLeaks() {

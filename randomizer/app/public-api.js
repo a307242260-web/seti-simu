@@ -22,7 +22,6 @@
       rocketActions,
       planetReferenceLayout,
       planetStats,
-      abilities,
       tech,
       data,
       aliens,
@@ -105,7 +104,7 @@
       createRocketSnapshot,
       buildPlanetOrbitLandReferenceData,
       syncPlanetOrbitLandMarkers,
-      createActionContext,
+      enumerateActions,
       getPlanetsReferencePointFromClientPosition,
       getPlanetsReferenceDimensions,
       renderRocketElement,
@@ -234,7 +233,23 @@
       getPlanetOrbitLandReferenceData: () => structuredClone(buildPlanetOrbitLandReferenceData()),
       getGeneratedPlanetReferencePlacements: () => structuredClone(planetReferenceLayout.listAllOrbitLandSlots()),
       syncPlanetOrbitLandMarkers,
-      getLandOptions: () => structuredClone(abilities.planet.getLandOptions(createActionContext())),
+      getLandOptions: () => {
+        const choices = (enumerateActions?.({ family: "land" }) || []).map((action) => ({
+          actionId: action.actionId,
+          target: structuredClone(action.target || {}),
+          rocketId: action.target?.rocketId ?? null,
+          planetId: action.target?.planetId ?? null,
+          label: action.summary || "登陆",
+        }));
+        if (!choices.length) return { ok: false, message: "当前没有可登陆目标", choices: [] };
+        return {
+          ok: true,
+          choices,
+          needsChoice: choices.length > 1,
+          defaultTarget: structuredClone(choices[0].target),
+          defaultRocketId: choices[0].rocketId,
+        };
+      },
       clientToPlanetsReferencePoint: (clientX, clientY) => getPlanetsReferencePointFromClientPosition(clientX, clientY),
       getPlayerState: () => {
         const projection = readBrowserProjection();
