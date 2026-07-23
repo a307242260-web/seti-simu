@@ -1042,85 +1042,6 @@
   const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
-  let executeMainScanAction;
-  let launchRocketForScanAction4;
-  let beginScanAction4FreeMove;
-  let beginScanAction4FreeMoveForRoot;
-  let executeFreeMoveForScanAction4;
-  let executeFreeMoveForScanAction4ForRoot;
-  let getPublicScanBonusSelectableCount;
-  let getPublicScanMaxSelectable;
-  let getPublicScanMinSelectable;
-  let getPublicScanSelectionInstruction;
-  let ensureDelayedPublicRefills;
-  let registerDelayedPublicRefill;
-  let getDelayedPublicRefillSlots;
-  let clearDelayedPublicRefillSlots;
-  let cloneDelayedPublicRefills;
-  let buildReadySectorFinishEffects;
-  let buildSectorSettlementRewardEffects;
-  let buildScanFinalizeFollowupEffects;
-  let isScanRelatedEffectFlow;
-  let beginPublicScanForSingleCard;
-  let openPublicScanNebulaPickerForCurrentQueueItem;
-  let confirmPublicScanSelection;
-  let handlePublicScanCardClick;
-  let beginHandScan;
-  let isExhaustedNebulaScanMessage;
-  let replaceNebulaDataForCurrentPlayer;
-  let getSectorFinishIcon;
-  let getSectorFinishWinnerTarget;
-  let appendSectorSettlementResultToFlow;
-  let getSectorWinnerRewardKey;
-  let createTargetResourceEffect;
-  let createTargetPinkTraceEffect;
-  let isKnownScanEffectType;
-  let isScanRelatedEffect;
-  let executeScanActionFinalizeEffect;
-  let executeSectorFinishScanEffect;
-  let normalizeDelayedPublicRefillSlotIndexes;
-  let replenishDelayedPublicRefillSlots;
-  let executeScanPublicRefillEffect;
-  let settleDelayedPublicRefillsAfterScanFlow;
-  let buildEndOfFlowFollowupEffects;
-  let shouldAppendQueuedSectorFinishEffects;
-  let createEndOfFlowInsertionSource;
-  let isEndOfFlowSettlementEffect;
-  let pruneEndOfFlowSettlementEffectsAfterUndo;
-  let appendEndOfFlowSectorFinishEffects;
-  let appendDeferredEndOfFlowEffects;
-  let discardPublicScanCard;
-  let discardHandScanCard;
-  let finalizeScanSourceCard;
-  let restoreYichangdianCornerPickerIfPending;
-  let setScanTargetActionLayout;
-  let closeScanTargetPicker;
-  let nebulaHasScannableData;
-  let buildNebulaScanChoice;
-  let isAomomoActive;
-  let getAomomoPlanetLocation;
-  let getAomomoCurrentX;
-  let getNebulaCurrentX;
-  let getSectorScanTargetLabel;
-  let buildAomomoScanChoiceForX;
-  let hasAomomoScanAtX;
-  let buildSectorScanChoicesForX;
-  let expandScanChoicesWithAomomoTargets;
-  let openScanTargetPicker;
-  let confirmScanTarget;
-  let findPendingHandScanCardIndex;
-  let handleDrawnHandScanSkip;
-  let beginSectorScan;
-  let getSectorOpenDataCount;
-  let getSectorCapacity;
-  let getSectorReplacedCount;
-  let getSectorExtraMarkCount;
-  let getSectorNebulaLabelText;
-  let getPublicScanChoicesForCard;
-  let hasHandScanTargetCard;
-  let getPublicScanIconForScanCode;
-  let createPublicScanPendingAction;
-  let beginPublicDeckScan;
   let formatIncomeGain;
   let getBlindDrawIrreversible;
   let applyIncomeGainWithImmediateRewards;
@@ -2583,13 +2504,12 @@
     beginSupplementalMovePayment: (workingRoot, ...args) => beginSupplementalMovePaymentForRoot(workingRoot, ...args),
     getRequiredMovePointsForWorkingRoot: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
   });
-  ({
+  const {
     executeMainScanAction,
     launchRocketForScanAction4,
     beginScanAction4FreeMove: beginScanAction4FreeMoveForRoot,
     executeFreeMoveForScanAction4: executeFreeMoveForScanAction4ForRoot,
     getPublicScanBonusSelectableCount,
-    getPublicScanMaxSelectable,
     getPublicScanMinSelectable,
     getPublicScanSelectionInstruction,
     ensureDelayedPublicRefills,
@@ -2597,13 +2517,9 @@
     getDelayedPublicRefillSlots,
     clearDelayedPublicRefillSlots,
     cloneDelayedPublicRefills,
-    buildReadySectorFinishEffects,
     buildSectorSettlementRewardEffects,
-    buildScanFinalizeFollowupEffects,
     isExhaustedNebulaScanMessage,
-    replaceNebulaDataForCurrentPlayer,
     getSectorFinishIcon,
-    getSectorFinishWinnerTarget,
     appendSectorSettlementResultToFlow,
     getSectorWinnerRewardKey,
     createTargetResourceEffect,
@@ -2611,111 +2527,71 @@
     isKnownScanEffectType,
     isScanRelatedEffect,
     isScanRelatedEffectFlow,
-    executeScanActionFinalizeEffect,
-    executeSectorFinishScanEffect,
     normalizeDelayedPublicRefillSlotIndexes,
-    replenishDelayedPublicRefillSlots,
-    executeScanPublicRefillEffect,
-    settleDelayedPublicRefillsAfterScanFlow,
-    buildEndOfFlowFollowupEffects,
-    shouldAppendQueuedSectorFinishEffects,
     createEndOfFlowInsertionSource,
     isEndOfFlowSettlementEffect,
     pruneEndOfFlowSettlementEffectsAfterUndo,
-    appendEndOfFlowSectorFinishEffects,
     appendDeferredEndOfFlowEffects,
-    discardPublicScanCard,
-    discardHandScanCard,
-    finalizeScanSourceCard,
-    restoreYichangdianCornerPickerIfPending,
     setScanTargetActionLayout,
-    closeScanTargetPicker,
-    nebulaHasScannableData,
-    buildNebulaScanChoice,
-    isAomomoActive,
-    getAomomoPlanetLocation,
-    getAomomoCurrentX,
-    getNebulaCurrentX,
-    getSectorScanTargetLabel,
-    buildAomomoScanChoiceForX,
-    hasAomomoScanAtX,
-    buildSectorScanChoicesForX,
-    expandScanChoicesWithAomomoTargets,
     openScanTargetPicker,
-    confirmScanTarget,
     findPendingHandScanCardIndex,
-    handleDrawnHandScanSkip,
-    beginSectorScan,
-    getSectorOpenDataCount,
     getSectorCapacity,
-    getSectorReplacedCount,
-    getSectorExtraMarkCount,
     getSectorNebulaLabelText,
-    getPublicScanChoicesForCard,
-    hasHandScanTargetCard,
     getPublicScanIconForScanCode,
-    createPublicScanPendingAction,
-    beginPublicDeckScan,
-    beginPublicScanForSingleCard,
     openPublicScanNebulaPickerForCurrentQueueItem,
-    confirmPublicScanSelection,
-    handlePublicScanCardClick,
-    beginHandScan,
-    cancelHandScanSelection,
-    handleHandScanCardClick,
-  } = scanFlowHelpers);
-  beginScanAction4FreeMove = () => ruleComposition.inputPort.submitHostCommand({
+  } = scanFlowHelpers;
+  const beginScanAction4FreeMove = () => ruleComposition.inputPort.submitHostCommand({
     kind: "effect_begin_scan_free_move",
   }).value;
   const scanDecisionPort = scanFlowModule.createScanDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
     submitActiveDecision: (...args) => submitActiveCardDecision(...args),
   });
-  executeFreeMoveForScanAction4 = scanDecisionPort.executeFreeMove;
-  getPublicScanMaxSelectable = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanMaxSelectable", args);
-  buildReadySectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildReadySectorFinishEffects", args);
-  buildScanFinalizeFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildScanFinalizeFollowupEffects", args);
-  replaceNebulaDataForCurrentPlayer = (...args) => callBrowserDomainCommand("scan_flow", "replaceNebulaDataForCurrentPlayer", args);
-  getSectorFinishWinnerTarget = (...args) => callBrowserDomainCommand("scan_flow", "getSectorFinishWinnerTarget", args);
-  executeScanActionFinalizeEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeScanActionFinalizeEffect", args);
-  executeSectorFinishScanEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeSectorFinishScanEffect", args);
-  replenishDelayedPublicRefillSlots = (...args) => callBrowserDomainCommand("scan_flow", "replenishDelayedPublicRefillSlots", args);
-  executeScanPublicRefillEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeScanPublicRefillEffect", args);
-  settleDelayedPublicRefillsAfterScanFlow = (...args) => callBrowserDomainCommand("scan_flow", "settleDelayedPublicRefillsAfterScanFlow", args);
-  buildEndOfFlowFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildEndOfFlowFollowupEffects", args);
-  shouldAppendQueuedSectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "shouldAppendQueuedSectorFinishEffects", args);
-  appendEndOfFlowSectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "appendEndOfFlowSectorFinishEffects", args);
-  discardPublicScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardPublicScanCard", args);
-  discardHandScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardHandScanCard", args);
-  finalizeScanSourceCard = (...args) => callBrowserDomainCommand("scan_flow", "finalizeScanSourceCard", args);
-  restoreYichangdianCornerPickerIfPending = (...args) => callBrowserDomainCommand("scan_flow", "restoreYichangdianCornerPickerIfPending", args);
-  const closeScanTargetPickerForRoot = closeScanTargetPicker;
-  closeScanTargetPicker = (...args) => callBrowserDomainCommand("scan_flow", "closeScanTargetPicker", args);
-  nebulaHasScannableData = (...args) => callBrowserDomainCommand("scan_flow", "nebulaHasScannableData", args);
-  buildNebulaScanChoice = (...args) => callBrowserDomainCommand("scan_flow", "buildNebulaScanChoice", args);
-  isAomomoActive = (...args) => callBrowserDomainCommand("scan_flow", "isAomomoActive", args);
-  getAomomoPlanetLocation = (...args) => callBrowserDomainCommand("scan_flow", "getAomomoPlanetLocation", args);
-  getAomomoCurrentX = (...args) => callBrowserDomainCommand("scan_flow", "getAomomoCurrentX", args);
-  getNebulaCurrentX = (...args) => callBrowserDomainCommand("scan_flow", "getNebulaCurrentX", args);
-  getSectorScanTargetLabel = (...args) => callBrowserDomainCommand("scan_flow", "getSectorScanTargetLabel", args);
-  buildAomomoScanChoiceForX = (...args) => callBrowserDomainCommand("scan_flow", "buildAomomoScanChoiceForX", args);
-  hasAomomoScanAtX = (...args) => callBrowserDomainCommand("scan_flow", "hasAomomoScanAtX", args);
-  buildSectorScanChoicesForX = (...args) => callBrowserDomainCommand("scan_flow", "buildSectorScanChoicesForX", args);
-  expandScanChoicesWithAomomoTargets = (...args) => callBrowserDomainCommand("scan_flow", "expandScanChoicesWithAomomoTargets", args);
-  confirmScanTarget = scanDecisionPort.confirmScanTarget;
-  handleDrawnHandScanSkip = scanDecisionPort.skipDrawnHandScan;
-  beginSectorScan = (...args) => callBrowserDomainCommand("scan_flow", "beginSectorScan", args);
-  getSectorOpenDataCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorOpenDataCount", args);
-  getSectorReplacedCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorReplacedCount", args);
-  getSectorExtraMarkCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorExtraMarkCount", args);
-  getPublicScanChoicesForCard = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanChoicesForCard", args);
-  hasHandScanTargetCard = (...args) => callBrowserDomainCommand("scan_flow", "hasHandScanTargetCard", args);
-  createPublicScanPendingAction = (...args) => callBrowserDomainCommand("scan_flow", "createPublicScanPendingAction", args);
-  beginPublicDeckScan = (...args) => callBrowserDomainCommand("scan_flow", "beginPublicDeckScan", args);
-  beginPublicScanForSingleCard = (...args) => callBrowserDomainCommand("scan_flow", "beginPublicScanForSingleCard", args);
-  confirmPublicScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "confirmPublicScanSelection", args);
-  handlePublicScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handlePublicScanCardClick", args);
-  beginHandScan = (...args) => callBrowserDomainCommand("scan_flow", "beginHandScan", args);
+  const executeFreeMoveForScanAction4 = scanDecisionPort.executeFreeMove;
+  const getPublicScanMaxSelectable = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanMaxSelectable", args);
+  const buildReadySectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildReadySectorFinishEffects", args);
+  const buildScanFinalizeFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildScanFinalizeFollowupEffects", args);
+  const replaceNebulaDataForCurrentPlayer = (...args) => callBrowserDomainCommand("scan_flow", "replaceNebulaDataForCurrentPlayer", args);
+  const getSectorFinishWinnerTarget = (...args) => callBrowserDomainCommand("scan_flow", "getSectorFinishWinnerTarget", args);
+  const executeScanActionFinalizeEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeScanActionFinalizeEffect", args);
+  const executeSectorFinishScanEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeSectorFinishScanEffect", args);
+  const replenishDelayedPublicRefillSlots = (...args) => callBrowserDomainCommand("scan_flow", "replenishDelayedPublicRefillSlots", args);
+  const executeScanPublicRefillEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeScanPublicRefillEffect", args);
+  const settleDelayedPublicRefillsAfterScanFlow = (...args) => callBrowserDomainCommand("scan_flow", "settleDelayedPublicRefillsAfterScanFlow", args);
+  const buildEndOfFlowFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildEndOfFlowFollowupEffects", args);
+  const shouldAppendQueuedSectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "shouldAppendQueuedSectorFinishEffects", args);
+  const appendEndOfFlowSectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "appendEndOfFlowSectorFinishEffects", args);
+  const discardPublicScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardPublicScanCard", args);
+  const discardHandScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardHandScanCard", args);
+  const finalizeScanSourceCard = (...args) => callBrowserDomainCommand("scan_flow", "finalizeScanSourceCard", args);
+  const restoreYichangdianCornerPickerIfPending = (...args) => callBrowserDomainCommand("scan_flow", "restoreYichangdianCornerPickerIfPending", args);
+  const closeScanTargetPickerForRoot = scanFlowHelpers.closeScanTargetPicker;
+  const closeScanTargetPicker = (...args) => callBrowserDomainCommand("scan_flow", "closeScanTargetPicker", args);
+  const nebulaHasScannableData = (...args) => callBrowserDomainCommand("scan_flow", "nebulaHasScannableData", args);
+  const buildNebulaScanChoice = (...args) => callBrowserDomainCommand("scan_flow", "buildNebulaScanChoice", args);
+  const isAomomoActive = (...args) => callBrowserDomainCommand("scan_flow", "isAomomoActive", args);
+  const getAomomoPlanetLocation = (...args) => callBrowserDomainCommand("scan_flow", "getAomomoPlanetLocation", args);
+  const getAomomoCurrentX = (...args) => callBrowserDomainCommand("scan_flow", "getAomomoCurrentX", args);
+  const getNebulaCurrentX = (...args) => callBrowserDomainCommand("scan_flow", "getNebulaCurrentX", args);
+  const getSectorScanTargetLabel = (...args) => callBrowserDomainCommand("scan_flow", "getSectorScanTargetLabel", args);
+  const buildAomomoScanChoiceForX = (...args) => callBrowserDomainCommand("scan_flow", "buildAomomoScanChoiceForX", args);
+  const hasAomomoScanAtX = (...args) => callBrowserDomainCommand("scan_flow", "hasAomomoScanAtX", args);
+  const buildSectorScanChoicesForX = (...args) => callBrowserDomainCommand("scan_flow", "buildSectorScanChoicesForX", args);
+  const expandScanChoicesWithAomomoTargets = (...args) => callBrowserDomainCommand("scan_flow", "expandScanChoicesWithAomomoTargets", args);
+  const confirmScanTarget = scanDecisionPort.confirmScanTarget;
+  const handleDrawnHandScanSkip = scanDecisionPort.skipDrawnHandScan;
+  const beginSectorScan = (...args) => callBrowserDomainCommand("scan_flow", "beginSectorScan", args);
+  const getSectorOpenDataCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorOpenDataCount", args);
+  const getSectorReplacedCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorReplacedCount", args);
+  const getSectorExtraMarkCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorExtraMarkCount", args);
+  const getPublicScanChoicesForCard = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanChoicesForCard", args);
+  const hasHandScanTargetCard = (...args) => callBrowserDomainCommand("scan_flow", "hasHandScanTargetCard", args);
+  const createPublicScanPendingAction = (...args) => callBrowserDomainCommand("scan_flow", "createPublicScanPendingAction", args);
+  const beginPublicDeckScan = (...args) => callBrowserDomainCommand("scan_flow", "beginPublicDeckScan", args);
+  const beginPublicScanForSingleCard = (...args) => callBrowserDomainCommand("scan_flow", "beginPublicScanForSingleCard", args);
+  const confirmPublicScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "confirmPublicScanSelection", args);
+  const handlePublicScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handlePublicScanCardClick", args);
+  const beginHandScan = (...args) => callBrowserDomainCommand("scan_flow", "beginHandScan", args);
   const cancelHandScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "cancelHandScanSelection", args);
   const handleHandScanCardClick = (handIndex) => submitActiveCardDecision(
     "hand-scan-card",
