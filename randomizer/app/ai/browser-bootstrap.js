@@ -21,6 +21,49 @@
     "isActionEffectFlowActive",
     "stateOwners",
     "controllerContext",
+    "controllerPorts",
+    "lazyControllerPorts",
+  ]);
+  const HAND_CONTROLLER_METHODS = Object.freeze([
+    "beginPlayCardSelection",
+    "confirmCardCornerQuickAction",
+    "confirmHandCardPlayAction",
+    "confirmPlayCardSelection",
+    "finalizePendingDiscardSelection",
+    "getPendingPlayCardSelection",
+    "handleHandCardCornerQuickAction",
+    "handleHandScanCardClick",
+    "handlePlayCardSelect",
+    "isHandScanSelectionActive",
+    "isMovePaymentSelectionActive",
+    "isPlayCardSelectionActive",
+  ]);
+  const SCAN_CONTROLLER_METHODS = Object.freeze([
+    "buildSectorScanChoicesForX",
+    "closeScanTargetPicker",
+    "confirmPublicScanSelection",
+    "confirmScanTarget",
+    "getPublicScanChoicesForCard",
+    "handlePublicScanCardClick",
+  ]);
+  const ALIEN_SPECIES_CONTROLLER_METHODS = Object.freeze([
+    "handleAmibaCardGainChoice",
+    "handleAmibaSymbolChoice",
+    "handleAmibaTraceRemovalChoice",
+    "handleAomomoCardGainChoice",
+    "handleBanrenmaBonusChoice",
+    "handleBanrenmaCardConditionChoice",
+    "handleBanrenmaCardGainChoice",
+    "handleChongCardGainChoice",
+    "handleChongFossilChoice",
+    "handleJiuzheCardChoice",
+    "handleJiuzheOpportunitySkip",
+    "handleRunezuCardGainChoice",
+    "handleRunezuFaceSymbolChoice",
+    "handleRunezuSymbolBranchChoice",
+    "handleYichangdianCardGainChoice",
+    "openBanrenmaReadyOpportunityForPlayer",
+    "openRunezuFaceSymbolPlacement",
   ]);
   const CONTROLLER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "solar",
@@ -89,6 +132,30 @@
     });
   }
 
+  function createLazyPortBindings(getPort, methods = [], label = "Browser AI domain port") {
+    if (typeof getPort !== "function") {
+      throw new TypeError(`${label} requires getPort function`);
+    }
+    return Object.freeze(Object.fromEntries(methods.map((method) => [
+      method,
+      (...args) => {
+        const port = getPort();
+        if (typeof port?.[method] !== "function") {
+          throw new Error(`${label} 未装配方法：${method}`);
+        }
+        return port[method](...args);
+      },
+    ])));
+  }
+
+  function selectControllerPort(port, methods = [], label = "Browser AI controller port") {
+    const missing = methods.filter((method) => typeof port?.[method] !== "function");
+    if (missing.length) {
+      throw new Error(`${label} 缺少方法：${missing.join(", ")}`);
+    }
+    return Object.freeze(Object.fromEntries(methods.map((method) => [method, port[method]])));
+  }
+
   function createBrowserAiBootstrap(context = {}) {
     const missingKeys = REQUIRED_CONTEXT_KEYS.filter(
       (key) => !Object.prototype.hasOwnProperty.call(context, key) || context[key] == null,
@@ -106,7 +173,21 @@
       heuristicPolicy,
       stateOwners,
       controllerContext,
+      controllerPorts,
+      lazyControllerPorts,
     } = context;
+    const directControllerContext = Object.assign(
+      {},
+      ...controllerPorts.map(({ port, methods, label }) => (
+        selectControllerPort(port, methods, label)
+      )),
+    );
+    const lazyControllerContext = Object.assign(
+      {},
+      ...lazyControllerPorts.map(({ getPort, methods, label }) => (
+        createLazyPortBindings(getPort, methods, label)
+      )),
+    );
     const state = aiControlRuntimeModule.createAiControllerState(stateOwners);
     const runCompositionStep = aiControlRuntimeModule.createAiCompositionStepPort({
       inspect: (...args) => ruleComposition.inspect(...args),
@@ -123,6 +204,8 @@
     );
     const controller = aiControllerModule.createAiController({
       ...controllerContext,
+      ...directControllerContext,
+      ...lazyControllerContext,
       state,
       setPlayerAiDifficulty: (playerId, difficulty, label) => submitHostCommand({
         kind: "ai_set_player_difficulty",
@@ -177,7 +260,12 @@
     REQUIRED_CONTEXT_KEYS,
     CONTROLLER_STATIC_DEPENDENCY_KEYS,
     CONTROLLER_STATIC_CONSTANT_KEYS,
+    HAND_CONTROLLER_METHODS,
+    SCAN_CONTROLLER_METHODS,
+    ALIEN_SPECIES_CONTROLLER_METHODS,
     createBrowserAiStaticContext,
+    createLazyPortBindings,
+    selectControllerPort,
     createBrowserAiBootstrap,
   };
 });

@@ -5,7 +5,12 @@ const {
   REQUIRED_CONTEXT_KEYS,
   CONTROLLER_STATIC_DEPENDENCY_KEYS,
   CONTROLLER_STATIC_CONSTANT_KEYS,
+  HAND_CONTROLLER_METHODS,
+  SCAN_CONTROLLER_METHODS,
+  ALIEN_SPECIES_CONTROLLER_METHODS,
   createBrowserAiStaticContext,
+  createLazyPortBindings,
+  selectControllerPort,
   createBrowserAiBootstrap,
 } = require("./browser-bootstrap");
 
@@ -49,6 +54,8 @@ function createHarness() {
     isActionEffectFlowActive: () => false,
     stateOwners: { match: {}, action: {}, actionHistory: {}, ui: {}, getAlien: () => ({}) },
     controllerContext: { marker: "controller" },
+    controllerPorts: [],
+    lazyControllerPorts: [],
   });
   return { bootstrap, commands, controllerContexts, ruleState };
 }
@@ -66,6 +73,41 @@ function createHarness() {
       `缺少 ${missingKey} 时必须在创建期失败`,
     );
   }
+})();
+
+(() => {
+  const methods = [...HAND_CONTROLLER_METHODS, ...SCAN_CONTROLLER_METHODS];
+  const port = Object.fromEntries(methods.map((method) => [method, () => method]));
+  const selected = selectControllerPort(port, methods, "AI flow port");
+  assert.deepEqual(Object.keys(selected), methods);
+  assert.equal(selected.confirmScanTarget(), "confirmScanTarget");
+  assert.throws(
+    () => selectControllerPort({}, ["missing"], "AI flow port"),
+    /AI flow port 缺少方法：missing/,
+  );
+})();
+
+(() => {
+  const calls = [];
+  let port = null;
+  const bindings = createLazyPortBindings(
+    () => port,
+    ALIEN_SPECIES_CONTROLLER_METHODS,
+    "Alien Species AI port",
+  );
+  assert.deepEqual(Object.keys(bindings), ALIEN_SPECIES_CONTROLLER_METHODS);
+  assert.throws(
+    () => bindings.handleAmibaCardGainChoice("choice"),
+    /Alien Species AI port 未装配方法：handleAmibaCardGainChoice/,
+  );
+  port = {
+    handleAmibaCardGainChoice(...args) {
+      calls.push(args);
+      return "ok";
+    },
+  };
+  assert.equal(bindings.handleAmibaCardGainChoice("choice"), "ok");
+  assert.deepEqual(calls, [["choice"]]);
 })();
 
 (() => {
