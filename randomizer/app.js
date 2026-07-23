@@ -235,7 +235,7 @@
   const browserDomainCommandPort = browserHostModule.browserServices.createDomainCommandPort({
     getTarget: (domain) => browserDomainTargets()[domain] || null,
     clonePresentation: cloneResidentPresentation,
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const {
     executeBrowserDomainCommand,
@@ -247,7 +247,7 @@
     setBrowserStatusNote,
   } = browserDomainCommandPort;
   const browserHostCommandPort = browserHostModule.browserServices.createHostCommandPort({
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const effectChoiceCommandPort = browserDomainCommandPort.bindEffectChoiceCommands();
   const {
@@ -312,7 +312,7 @@
     updatePublicCardControls: (...args) => updatePublicCardControls(...args),
     updateActionButtons: (...args) => updateActionButtons(...args),
     renderStateReadout: (...args) => renderStateReadout(...args),
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const executeIncomeForCurrentPlayerForRoot = debugIncomeAdapter.executeForRoot;
   const executeIncomeForCurrentPlayer = debugIncomeAdapter.execute;
@@ -347,7 +347,7 @@
     isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
     renderStateReadout: (...args) => renderStateReadout(...args),
     openDataPlacePicker,
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
     getCurrentPlayer: (...args) => getCurrentPlayer(...args),
     runAction: (...args) => runAction(...args),
     startCardEffectFlow: (...args) => startCardEffectFlow(...args),
@@ -458,7 +458,7 @@
     refreshBoardState: (...args) => refreshHelpers.refreshBoardState(...args),
     refreshPlayerPanels: (...args) => refreshHelpers.refreshPlayerPanels(...args),
     refreshAfterPendingChange: (...args) => refreshHelpers.refreshAfterPendingChange(...args),
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const { rotateSolarOrbitForRoot, rotateSolarOrbit } = solarRotationRuntime;
   const {
@@ -627,6 +627,19 @@
       },
     },
   });
+  let scheduleResidentDesktopRefresh = () => {};
+  const postCommitRefreshCommandKinds = new Set([
+    "setup_start_initial_selection",
+    "setup_select_initial_card",
+    "setup_confirm_initial_selection",
+  ]);
+  const submitBrowserHostCommand = (...args) => {
+    const result = ruleComposition.inputPort.submitHostCommand(...args);
+    if (result?.ok !== false && postCommitRefreshCommandKinds.has(args[0]?.kind)) {
+      scheduleResidentDesktopRefresh();
+    }
+    return result;
+  };
   const browserRuleLifecycle = ruleComposition.lifecycle;
   const primaryBoardActionExecutor = primaryBoardActionExecutorModule.createPrimaryBoardActionExecutor({
     actions,
@@ -715,7 +728,7 @@
   const initialSelectionHost = startScreenModule.createInitialSelectionHost({
     getActionRuntime: () => actionRuntimeController,
     getTurnFlowProjection: () => getTurnFlowProjection(),
-    submitHostCommand: (command) => ruleComposition.inputPort.submitHostCommand(command),
+    submitHostCommand: (command) => submitBrowserHostCommand(command),
   });
   const {
     canConfirm: canConfirmInitialSelection,
@@ -740,7 +753,7 @@
     getController: () => turnFlowController,
     getTurnFlowProjection: () => getTurnFlowProjection(),
     assertTurnFlowProjection: browserHostModule.residentProjection.assertTurnFlowProjection,
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
     newGame: (...args) => browserRuleLifecycle.newGame(...args),
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
@@ -849,7 +862,7 @@
   const landTargetPicker = actionInteractionRuntimeModule.createLandTargetPicker({
     document,
     els,
-    dispatchHostCommand: (command) => ruleComposition.inputPort.submitHostCommand(command),
+    dispatchHostCommand: (command) => submitBrowserHostCommand(command),
     submitChoice: (choiceIndex) => confirmLandTargetChoice(choiceIndex),
     submitCancel: () => submitActiveCardDecision("land-target-cancel", () => true),
     openPendingDecision: openBrowserPendingDecision,
@@ -2154,7 +2167,7 @@
     getTurnFlowProjection: () => getTurnFlowProjection(),
     assertTurnFlowProjection: browserHostModule.residentProjection.assertTurnFlowProjection,
     computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
     createResidentRenderInput,
     renderResidentRoundStatus: (...args) => residentDesktopRenderer.renderRoundStatus(...args),
     getDisplayedTurnNumber,
@@ -2184,6 +2197,15 @@
     renderer: residentDesktopRenderer,
     decisionRenderer: residentDecisionRenderer,
   });
+  let residentDesktopRefreshScheduled = false;
+  scheduleResidentDesktopRefresh = () => {
+    if (residentDesktopRefreshScheduled) return;
+    residentDesktopRefreshScheduled = true;
+    queueMicrotask(() => {
+      residentDesktopRefreshScheduled = false;
+      renderResidentDesktop();
+    });
+  };
   const cardHoverPreviewRuntime = renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
   const hideCardHoverPreview = cardHoverPreviewRuntime.hide;
@@ -2263,7 +2285,7 @@
   const coordinatePort = renderRuntimeModule.createCoordinatePort({
     runtime: coordinateRuntime,
     getBoardCoordinateProjection: () => getBoardCoordinateProjection(),
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const {
     getMovableTokensForPlayer,
@@ -2577,7 +2599,7 @@
   } = actionLogExportController;
   const finalUiPort = finalUiRuntimeModule.createFinalUiPort({
     runtime: finalUiRuntime,
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const { syncFinalScorePendingMarks, handleFinalScoreTileClick } = finalUiPort;
   const refreshHelpers = refreshModule.createRefreshHelpers({
@@ -3362,7 +3384,7 @@
   const { initializeCardGame, preparePassReservePilesForCurrentGame } = cardSetupController;
 
   const recoveryHost = gameRecoveryModule.createRecoveryHost({
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
     uiRuntimeState,
     openCardSelectionDecision,
     getAlienSpeciesRuntime: () => alienSpeciesRuntime,
@@ -3981,7 +4003,7 @@
     releaseFutureSpanAfterPlayWithHistory: releaseFutureSpanAfterPlayWithHistoryForRoot,
     beginCardMoveEffect: beginCardMoveEffectForRoot,
   } = cardRuntime;
-  const beginCardMoveEffect = (effect) => ruleComposition.inputPort.submitHostCommand({
+  const beginCardMoveEffect = (effect) => submitBrowserHostCommand({
     kind: "effect_begin_card_move",
     effect,
   }).value;
@@ -4277,7 +4299,7 @@
     readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
     renderStateReadout,
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const {
     isActionEffectFlowActive,
@@ -4331,13 +4353,13 @@
   const boardQueryRuntime = actionInteractionRuntimeModule.createBoardQueryRuntime({
     rocketActions,
     getBoardCoordinateProjection: () => getBoardCoordinateProjection(),
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const { getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId } = boardQueryRuntime;
   const chongTransportRuntime = alienRuntimeModule.createChongTransportRuntime({
     chong,
     getRocketCurrentPlanetIdForRoot,
-    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    submitHostCommand: (...args) => submitBrowserHostCommand(...args),
   });
   const {
     listReadyForRoot: listReadyChongTransportCandidatesForRoot,
