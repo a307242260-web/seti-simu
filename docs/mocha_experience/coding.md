@@ -18,9 +18,9 @@
 - source_issue: SETI-158（续 SETI-124/135/136）
 - observation: 对已有完整旧实现、有限效果目录和明确目标架构的跨模块迁移，领航仍会把 implementation 退化为 exploratory debugging：每迁少量类型就运行测试，用下一次失败发现下一段设计，再提交 checkpoint。该循环能持续产出代码，却把测试当成需求发现器，导致根契约（确定性实体序列、真实 Decision owner）尚未闭合时横向扩大覆盖，形成高吞吐、低收敛和大量碎提交。此类任务必须在首个生产 patch 前冻结完整迁移矩阵；测试只验证设计，不负责逐步发现设计。
 - evidence: SETI-124/135/136 两天内产生数百个迁移提交并反复修改入口文件，owner 多次纠正“阶段提交后停工”和局部搬运；SETI-158 已有 46 类有限 effect 目录及旧 Browser executor，但 runs 仍按 2/46、4/46、6/46、11/46 逐批扩展。提交 `6dfe65c` 声称 Browser/Simulation 同根，却因摘要测试忽略 data token id，漏掉模块全局 `dataTokenSequence`；提交 `05e4c40` 的 owner 反例只人工传 `ownerId`，而生产 Browser/Simulation adapter 均未传。run `a2c2d074-c4c1-4943-ba02-83aee3c57dfe` 收归 card sequence 后未先修这两个根契约，继续横向迁移 7 类 effect，最终被 owner 监督中断。
-- promote_to: agent_prompt, loop_template
+- promote_to: global_agents, agent_prompt, loop_template
 - promotion_status: promote
-- decision: 为领航增加“复杂 implementation 设计冻结”协议，并更新项目 proof-obligation loop：有完整旧实现且存在有限目录、跨 3 个以上 owner/状态边界或 10 个以上语义项时，开工先形成全量 migration matrix，逐项写 owner、正式 primitive、state/RNG/sequence、Decision、不可逆语义、旧入口和删除证据；矩阵未闭合不得 patch。设计冻结后按 owner/语义族连续批量实现，不得以逐 handler 测试失败来发现下一段设计；发现设计遗漏时先停止 patch、回补全矩阵并检查所有剩余项。定向测试在完整语义批次后运行，全量验证在全部映射完成后运行；checkpoint 和覆盖数增长不构成验收或停工条件。
+- decision: 将通用原则升级到本机全局 AGENTS source-of-truth，同时为领航增加“复杂 implementation 设计冻结”协议并更新项目 proof-obligation loop：有完整旧实现且存在有限目录、跨 3 个以上 owner/状态边界或 10 个以上语义项时，开工先形成全量 migration matrix，逐项写 owner、正式 primitive、state/RNG/sequence、Decision、不可逆语义、旧入口和删除证据；有限集合必须递归覆盖 nested effect/callback/followup/recovery。矩阵未闭合不得 patch。设计冻结后按 owner/语义族连续批量实现，不得以逐 handler 测试失败来发现下一段设计；发现设计遗漏时先停止 patch、回补全矩阵并检查所有剩余项。定向测试在完整语义批次后运行，全量验证在全部映射完成后运行；checkpoint 和覆盖数增长不构成验收或停工条件。
 
 - date: 2026-07-21
 - source_issue: SETI-124 runs `627968ce-3dbf-4f24-ab3b-2f6724adf9df`、`f0b69138-48a4-48bd-b5f0-c3db2eb87dde`
