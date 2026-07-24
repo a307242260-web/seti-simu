@@ -742,11 +742,7 @@ function createForkableHarness() {
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
     executeOwnerInput: () => ({ ok: true }),
-    getStandardActionSource: () => ({
-      enumerate() { return []; },
-      validate() { return { ok: false }; },
-      execute() { return { ok: false }; },
-    }),
+    initialSetupSource: require("../game/production-composition").createInitialSetupSource(),
     productionRules: { quickTrades: require("../game/actions/quick-trades") },
     browserProjection: {
       visibilityPolicy: (state) => ({

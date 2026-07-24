@@ -1316,7 +1316,19 @@ function createSimulationRuleComposition(options = {}) {
   };
   const production = productionCompositionApi.createProductionComposition({
     ruleCompositionApi: { createRuleComposition },
-    getStandardActionSource: () => registry,
+    initialSetupSource: productionCompositionApi.createInitialSetupSource(
+      Object.fromEntries(["choose_card", "choose_payment"].map((family) => [family, {
+        enumerate(context) {
+          return registry.enumerate(context, { family });
+        },
+        validate(context, action) {
+          return registry.validate(context, action);
+        },
+        execute(context, action) {
+          return registry.execute(context, action);
+        },
+      }])),
+    ),
     productionRules: { quickTrades },
     getAuthority(workingState) {
       const root = workingState.workingRoot || workingState;

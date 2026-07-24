@@ -480,7 +480,29 @@
     effectFlowMarkedNebula,
   } = effectFlowModule;
   let productionActionRegistry = null;
-  let browserLegacyActionSource = null;
+  const browserInitialSetupSource = productionCompositionModule.createInitialSetupSource(
+    Object.fromEntries(["choose_card", "choose_payment"].map((family) => [family, {
+      enumerate(actionContext) {
+        const result = conditionalActionExecutor.getOptions(
+          actionContext.workingRoot || actionContext,
+          family,
+        );
+        return result?.ok ? result.choices : [];
+      },
+      validate(actionContext, action) {
+        return conditionalActionExecutor.validate(
+          actionContext.workingRoot || actionContext,
+          action,
+        );
+      },
+      execute(actionContext, action) {
+        return conditionalActionExecutor.execute(
+          actionContext.workingRoot || actionContext,
+          action,
+        );
+      },
+    }])),
+  );
   const enumerateSimulationTurnActionsForRoot = (workingRoot) => (
     productionActionRegistry.enumerate(createActionContextForWorkingRoot(workingRoot))
       .filter((standardAction) => standardAction.phase !== "conditional")
@@ -683,7 +705,7 @@
       ),
     ),
     executeOwnerInput: browserOwnerInputRegistry.execute,
-    getStandardActionSource: () => browserLegacyActionSource,
+    initialSetupSource: browserInitialSetupSource,
     productionRules: { quickTrades },
     hostServices: {
       quickTradeHistory: {
@@ -1106,7 +1128,6 @@
     executeActionEffect: (...args) => executeActionEffect(...args),
   });
   const {
-    createConditionalActionProvider,
     enumerateConditionalActionsForRoot: enumerateSimulationConditionalActionsForRoot,
     advanceDeterministicStateForRoot: advanceSimulationDeterministicStateImpl,
     executeCurrentActionEffectForRoot: executeSimulationCurrentActionEffectImpl,
@@ -3576,8 +3597,6 @@
     createActionLogImpactSnapshot,
     abilities,
     createActionContext: createActionContextForWorkingRoot,
-    quickTurnActionExecutor,
-    conditionalActionExecutor,
     actions,
     removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: syncPlanetOrbitLandMarkers,
@@ -3606,34 +3625,7 @@
     blockManualAiPendingInputIfNeeded,
     getCurrentActionEffectIndex: () => getActionEffectFlow()?.currentIndex,
     confirmDataPlacement,
-    standardActionAdapter: (() => {
-      browserLegacyActionSource = actionRuntimeModule.createBrowserStandardActionAdapter({
-        actions, players, scanEffects, data, cards, rocketActions, industry,
-        abilities, aliens, runezu,
-        canStartMainAction,
-        getMainActionStartBlockReason,
-        canAnalyzeDataForPlayer,
-        getAnalyzeActionOptionsForPlayer,
-        getCardPlayCost: (...args) => getCardPlayCost(...args),
-        hasActivePendingSubFlow,
-        getMovableTokensForPlayer: (actionContext, playerId) => (
-          getMovableTokensForPlayerForRoot(actionContext.workingRoot, playerId)
-        ),
-        getRequiredMovePointsForUi: (actionContext, ...args) => (
-          getRequiredMovePointsForUiForRoot(actionContext.workingRoot, ...args)
-        ),
-        canPayForMove,
-        moveRocket,
-        canUseCardCornerQuickActionForRoot: (...args) => canUseCardCornerQuickActionForRoot(...args),
-        getCardCornerQuickActionForCardForRoot: (...args) => getCardCornerQuickActionForCardForRoot(...args),
-        shouldQueueCardCornerMoveQuickActionForRoot: (...args) => shouldQueueCardCornerMoveQuickActionForRoot(...args),
-        canStartCardCornerFreeMoveForRoot: (...args) => canStartCardCornerFreeMoveForRoot(...args),
-        isActionPending,
-        isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
-        createConditionalActionProvider,
-      });
-      return productionActionRegistry;
-    })(),
+    standardActionAdapter: productionActionRegistry,
   });
 
   const { controller: aiController } = aiBrowserBootstrapModule.createBrowserAiBootstrap({

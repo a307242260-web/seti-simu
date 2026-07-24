@@ -108,23 +108,8 @@ function enumerateBrowserProductionPort(state, family) {
     },
     cardState: structuredClone(state.cards),
   };
-  const legacySource = standardAction.createRegistry({
-    getAuthority: () => ({
-      actorId: state.turn.currentPlayerId,
-      stateVersion: state.meta.stateVersion,
-      decisionVersion: state.match.decisionVersion,
-    }),
-  });
-  legacySource.register(standardAction.createOptionDefinition(
-    "play_card",
-    standardAction.createPlayCardProvider({
-      players,
-      cards,
-      getCardPlayCost: cardEffects.getCardPlayCost,
-    }),
-  ));
   const pack = productionComposition.createProductionDomainPack({
-    getStandardActionSource: () => legacySource,
+    initialSetupSource: productionComposition.createInitialSetupSource(),
     productionRules: { quickTrades },
     getAuthority: () => ({
       actorId: state.turn.currentPlayerId,
@@ -177,13 +162,13 @@ for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
     execute() { return { ok: false }; },
   };
   assert.throws(() => productionComposition.createProductionDomainPack({
-    getStandardActionSource: () => registryPort,
+    initialSetupSource: productionComposition.createInitialSetupSource(),
     productionRules: { quickTrades },
     hostFamilyExecutors: { quick_trade() {} },
   }), /重复 Production family executor: quick_trade/,
   "host 自定义同 family executor 必须 fail-fast");
   assert.throws(() => productionComposition.createProductionDomainPack({
-    getStandardActionSource: () => registryPort,
+    initialSetupSource: productionComposition.createInitialSetupSource(),
     productionRules: { quickTrades },
     additionalDomains: [{
       id: "host-quick-trade",

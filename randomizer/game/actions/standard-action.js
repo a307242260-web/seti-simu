@@ -320,6 +320,9 @@
       || typeof quickTrades.canExecuteTrade !== "function") {
       throw new TypeError("quick_trade production provider 缺少 QuickTrades 规则端口");
     }
+    if (typeof options.execute !== "function") {
+      throw new TypeError("quick_trade production provider 缺少正式 executor");
+    }
     return Object.freeze({
       label: options.label || "快速交易",
       getOptions(actionContext) {
@@ -343,9 +346,6 @@
           : { ok: false, code: "QUICK_TRADE_STALE", message: "快速交易已失效" };
       },
       execute(actionContext, option) {
-        if (typeof options.execute !== "function") {
-          return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" };
-        }
         return options.execute(actionContext, option);
       },
     });
@@ -408,21 +408,6 @@
     }));
   }
 
-  function createStage3Definitions(actions = {}) {
-    const entries = [
-      ["move", ["move"]],
-      ["quick_trade", ["quickTrade", "quick_trade"]],
-      ["industry", ["industry"]],
-      ["card_corner", ["cardCorner", "card_corner"]],
-      ["runezu_face_symbol", ["runezuFaceSymbol", "runezu_face_symbol"]],
-      ["end_turn", ["endTurn", "end_turn"]],
-    ];
-    return Object.freeze(entries.flatMap(([family, keys]) => {
-      const configuredKey = keys.find((key) => Object.hasOwn(actions, key));
-      return configuredKey ? [createOptionDefinition(family, actions[configuredKey])] : [];
-    }));
-  }
-
   function createConditionalDefinition(family, action) {
     if (!CONDITIONAL_FAMILIES.includes(family)) {
       throw new TypeError(`未知 conditional Standard Action family: ${family}`);
@@ -441,9 +426,6 @@
     for (const definition of createReferenceDefinitions(referenceActions)) registry.register(definition);
     if (options.stage2Actions) {
       for (const definition of createStage2Definitions(options.stage2Actions)) registry.register(definition);
-    }
-    if (options.stage3Actions) {
-      for (const definition of createStage3Definitions(options.stage3Actions)) registry.register(definition);
     }
     if (options.stage4Actions) {
       for (const definition of createStage4Definitions(options.stage4Actions)) registry.register(definition);
@@ -493,7 +475,6 @@
     createReferenceDefinitions,
     createOptionDefinition,
     createStage2Definitions,
-    createStage3Definitions,
     createConditionalDefinition,
     createQuickTradeProvider,
     createPlayCardProvider,

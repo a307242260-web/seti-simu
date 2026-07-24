@@ -41,7 +41,7 @@
     );
     const production = productionCompositionApi.createProductionComposition({
       ruleCompositionApi,
-      getStandardActionSource: context.getStandardActionSource,
+      initialSetupSource: context.initialSetupSource,
       productionRules: context.productionRules,
       hostServices: context.hostServices,
       getAuthority: context.getAuthority,

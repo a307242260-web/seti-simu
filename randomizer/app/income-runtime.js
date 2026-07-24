@@ -95,8 +95,7 @@
       ].join("、");
     }
 
-    // 兼容仍在装配层读取的函数名只转发正式 Decision；这里不再写玩家、牌堆或数据池。
-    function submitLegacyIncomeInput(_player, payload) {
+    function submitIncomeStandardDecision(_player, payload) {
       return submitIncomeDecision(payload);
     }
 
@@ -105,9 +104,9 @@
       getBlindDrawIrreversible,
       buildIncomeResourceGain,
       formatIncomeResourceSummary,
-      applyIncomeGainWithImmediateRewards: submitLegacyIncomeInput,
-      applyIncomeFromCard: submitLegacyIncomeInput,
-      applyIncomeResourcesForPlayer: submitLegacyIncomeInput,
+      applyIncomeGainWithImmediateRewards: submitIncomeStandardDecision,
+      applyIncomeFromCard: submitIncomeStandardDecision,
+      applyIncomeResourcesForPlayer: submitIncomeStandardDecision,
       applyIndustryRoundStartBonuses() {
         return inspectIncomeDecision()
           ? submitIncomeDecision("round_start")

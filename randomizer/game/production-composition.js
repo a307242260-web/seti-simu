@@ -40,6 +40,38 @@
 
   const PACK_ID = "seti-production-domain-pack-v1";
   const QUICK_TRADE_EXECUTOR_ID = `${PACK_ID}:quick_trade:executor`;
+  const INITIAL_SETUP_SOURCE_ID = `${PACK_ID}:initial_setup`;
+  const INITIAL_SETUP_FAMILIES = Object.freeze(["choose_card", "choose_payment"]);
+
+  function createInitialSetupSource(definitions = {}) {
+    const handlers = Object.freeze(Object.fromEntries(
+      INITIAL_SETUP_FAMILIES.flatMap((family) => {
+        const handler = definitions[family];
+        if (!handler) return [];
+        for (const method of ["enumerate", "validate", "execute"]) {
+          if (typeof handler[method] !== "function") {
+            throw new TypeError(`initial setup ${family} 缺少 ${method}()`);
+          }
+        }
+        return [[family, Object.freeze(handler)]];
+      }),
+    ));
+    return Object.freeze({
+      ownerId: INITIAL_SETUP_SOURCE_ID,
+      families: Object.freeze(Object.keys(handlers)),
+      enumerate(context, request = {}) {
+        return handlers[request.family]?.enumerate(context) || [];
+      },
+      validate(context, action) {
+        return handlers[action?.family]?.validate(context, action)
+          || { ok: false, code: "INITIAL_SETUP_FAMILY_INACTIVE" };
+      },
+      execute(context, action) {
+        return handlers[action?.family]?.execute(context, action)
+          || { ok: false, code: "INITIAL_SETUP_FAMILY_INACTIVE" };
+      },
+    });
+  }
 
   function assertNoHostRuleOverrides(options) {
     const forbidden = [
@@ -63,19 +95,13 @@
 
   function createProductionDomainPack(options = {}) {
     assertNoHostRuleOverrides(options);
-    if (typeof options.getStandardActionSource !== "function") {
-      throw new TypeError("Production Domain Pack 缺少 initial setup Standard Action source resolver");
+    const initialSetupSource = options.initialSetupSource;
+    if (initialSetupSource?.ownerId !== INITIAL_SETUP_SOURCE_ID
+      || typeof initialSetupSource.enumerate !== "function"
+      || typeof initialSetupSource.validate !== "function"
+      || typeof initialSetupSource.execute !== "function") {
+      throw new TypeError("Production Domain Pack 缺少正式 initial setup source");
     }
-    const getInitialSetupSource = () => {
-      const source = options.getStandardActionSource();
-      if (!source
-        || typeof source.enumerate !== "function"
-        || typeof source.validate !== "function"
-        || typeof source.execute !== "function") {
-        throw new TypeError("Production Domain Pack 尚未装配 initial setup Standard Action source");
-      }
-      return source;
-    };
     if (!Array.isArray(options.productionRules?.quickTrades?.TRADE_ACTIONS)
       || typeof options.productionRules.quickTrades.canExecuteTrade !== "function"
       || typeof options.productionRules.quickTrades.executeTrade !== "function") {
@@ -99,9 +125,9 @@
       ...probeTurnSession.ACTION_FAMILIES,
       ...residualDomainSession.ACTION_FAMILIES,
     ]);
-    const placeholderFamilies = standardAction.ALL_FAMILIES
+    const conditionalFamilies = standardAction.ALL_FAMILIES
       .filter((family) => !ownedFamilies.has(family));
-    const standardFamilies = Object.freeze(["quick_trade", ...placeholderFamilies]);
+    const standardFamilies = Object.freeze(["quick_trade", ...conditionalFamilies]);
     claimFamilies("standard_action", standardFamilies);
     claimFamilies(cardPlayDomain.DOMAIN_ID, cardPlayDomain.ACTION_FAMILIES);
     claimFamilies(scienceSession.DOMAIN_ID, scienceSession.ACTION_FAMILIES);
@@ -192,12 +218,12 @@
     for (const definition of residualDomainSession.createActionDefinitions()) {
       ownedRegistry.register(definition);
     }
-    for (const family of placeholderFamilies) {
+    for (const family of conditionalFamilies) {
       ownedRegistry.register(standardAction.createOptionDefinition(family, {
         label: family,
         getOptions(context) {
-          if (family === "choose_payment") {
-            const choices = getInitialSetupSource().enumerate(context, { family });
+          if (initialSetupSource.families.includes(family)) {
+            const choices = initialSetupSource.enumerate(context, { family });
             return choices.length
               ? { ok: true, choices: choices.map((entry) => ({
                 target: entry.target,
@@ -210,27 +236,25 @@
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
         },
         canExecute(context, option) {
-          if (family === "choose_payment") {
-            const source = getInitialSetupSource();
-            const candidate = source.enumerate(context, { family }).find((entry) => (
+          if (initialSetupSource.families.includes(family)) {
+            const candidate = initialSetupSource.enumerate(context, { family }).find((entry) => (
               JSON.stringify(entry.target) === JSON.stringify(option.target)
               && JSON.stringify(entry.payload) === JSON.stringify(option.payload)
             ));
-            return candidate ? source.validate(context, candidate) : {
+            return candidate ? initialSetupSource.validate(context, candidate) : {
               ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "initial setup payment 已失效",
             };
           }
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
         },
         execute(context, action) {
-          if (family === "choose_payment") {
-            const source = getInitialSetupSource();
-            const candidate = source.enumerate(context, { family }).find((entry) => (
+          if (initialSetupSource.families.includes(family)) {
+            const candidate = initialSetupSource.enumerate(context, { family }).find((entry) => (
               JSON.stringify(entry.target) === JSON.stringify(action.target)
               && JSON.stringify(entry.payload) === JSON.stringify(action.payload)
             ));
             return candidate
-              ? source.execute(context, candidate)
+              ? initialSetupSource.execute(context, candidate)
               : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "initial setup payment 已失效" };
           }
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 执行` };
@@ -252,7 +276,7 @@
         const residualActions = residualDomainSession.ACTION_FAMILIES.flatMap(
           (family) => ownedRegistry.enumerate(context, { ...request, family }),
         );
-        const placeholderActions = placeholderFamilies.flatMap(
+        const conditionalActions = conditionalFamilies.flatMap(
           (family) => ownedRegistry.enumerate(context, { ...request, family }),
         );
         const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
@@ -262,7 +286,7 @@
           ...scienceActions,
           ...probeTurnActions,
           ...residualActions,
-          ...placeholderActions,
+          ...conditionalActions,
         ]) {
           byFamily.get(action.family)?.push(action);
         }
@@ -416,6 +440,9 @@
   return Object.freeze({
     PACK_ID,
     QUICK_TRADE_EXECUTOR_ID,
+    INITIAL_SETUP_SOURCE_ID,
+    INITIAL_SETUP_FAMILIES,
+    createInitialSetupSource,
     createProductionDomainPack,
     createProductionComposition,
   });

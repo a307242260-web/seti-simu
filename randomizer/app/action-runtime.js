@@ -276,8 +276,6 @@
       createActionLogImpactSnapshot,
       abilities,
       createActionContext,
-      quickTurnActionExecutor,
-      conditionalActionExecutor,
       actions,
       removeRocketElement,
       syncPlanetOrbitLandMarkersAfterAction = syncPlanetOrbitLandMarkers,
@@ -309,8 +307,6 @@
       confirmDataPlacement,
       standardActionAdapter,
     } = context;
-    const QUICK_TURN_ACTION_FAMILIES = new Set(quickTurnActionExecutor?.actionFamilies || []);
-    const CONDITIONAL_ACTION_FAMILIES = new Set(conditionalActionExecutor?.actionFamilies || []);
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
 
     function getExecutionWorkingRoot(standardContext) {
@@ -668,18 +664,6 @@
     }
 
     function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
-      const workingRoot = getExecutionWorkingRoot(standardContext);
-      if (CONDITIONAL_ACTION_FAMILIES.has(descriptor?.family)) {
-        return conditionalActionExecutor.execute(workingRoot, descriptor);
-      }
-      if (QUICK_TURN_ACTION_FAMILIES.has(descriptor?.family)) {
-        return quickTurnActionExecutor.execute(workingRoot, descriptor, {
-          validate: (workingRoot, action) => standardActionAdapter.validate(
-            createActionContext(workingRoot, action),
-            action,
-          ),
-        });
-      }
       return standardActionAdapter.execute(standardContext, descriptor);
     }
 
@@ -926,141 +910,9 @@
     };
   }
 
-  function createBrowserStandardActionAdapter(context = {}) {
-    const {
-      actions,
-      players,
-      scanEffects,
-      data,
-      cards,
-      rocketActions,
-      industry,
-      abilities,
-      aliens,
-      runezu,
-      canStartMainAction,
-      getMainActionStartBlockReason,
-      canAnalyzeDataForPlayer,
-      getAnalyzeActionOptionsForPlayer,
-      hasActivePendingSubFlow,
-      getMovableTokensForPlayer,
-      getRequiredMovePointsForUi,
-      canPayForMove,
-      moveRocket,
-      canUseCardCornerQuickActionForRoot,
-      getCardCornerQuickActionForCardForRoot,
-      shouldQueueCardCornerMoveQuickActionForRoot,
-      canStartCardCornerFreeMoveForRoot,
-      isActionPending,
-      isActionEffectFlowActive,
-      createConditionalActionProvider,
-    } = context;
-    if (typeof actions?.createStandardAdapter !== "function") {
-      throw new TypeError("browser standard action adapter requires actions.createStandardAdapter");
-    }
-
-    return actions.createStandardAdapter({
-      stage2Actions: {
-        pass: {
-          label: "PASS",
-          getOptions(actionContext) {
-            return canStartMainAction(actionContext.workingRoot)
-              ? { ok: true, choices: [{ target: { kind: "pass" }, label: "PASS" }] }
-              : { ok: false, message: getMainActionStartBlockReason(actionContext.workingRoot) };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
-      },
-      stage3Actions: {
-        move: {
-          label: "移动",
-          getOptions(actionContext) {
-            if (hasActivePendingSubFlow(actionContext.workingRoot)) return { ok: false, message: "请先完成当前选择" };
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const directions = [
-              { id: "out", deltaX: 0, deltaY: 1 },
-              { id: "cw", deltaX: 1, deltaY: 0 },
-              { id: "ccw", deltaX: -1, deltaY: 0 },
-              { id: "in", deltaX: 0, deltaY: -1 },
-            ];
-            const choices = (getMovableTokensForPlayer(actionContext, player?.id) || []).flatMap((rocket) => directions
-              .map((direction) => ({
-                rocket,
-                direction,
-                requiredMovePoints: getRequiredMovePointsForUi(
-                  actionContext,
-                  player,
-                  rocket.id,
-                  direction.deltaX,
-                  direction.deltaY,
-                ),
-              }))
-              .filter(({ rocket, direction, requiredMovePoints }) => (
-                rocketActions.canMoveRocket(
-                  actionContext.rocketState,
-                  rocket.id,
-                  direction.deltaX,
-                  direction.deltaY,
-                ).ok
-                && canPayForMove(player, requiredMovePoints).ok
-              ))
-              .map(({ rocket, direction, requiredMovePoints }) => ({
-                target: { rocketId: rocket.id, deltaX: direction.deltaX, deltaY: direction.deltaY },
-                payload: { requiredMovePoints },
-                label: `移动火箭 ${rocket.id} ${direction.id}`,
-              })));
-            return choices.length ? { ok: true, choices } : { ok: false, message: "没有合法移动目标" };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute(_actionContext, option) {
-            return moveRocket(
-              option.target.deltaX,
-              option.target.deltaY,
-              option.target.rocketId,
-              { automated: true },
-            );
-          },
-        },
-      },
-      stage4Actions: Object.fromEntries(
-        actions.standardAction.CONDITIONAL_FAMILIES.map((family) => [
-          family,
-          family === "choose_payment"
-            ? createConditionalActionProvider(family)
-            : {
-              label: family,
-              getOptions() {
-                return {
-                  ok: false,
-                  code: "SESSION_DECISION_ONLY",
-                  message: `${family} 只由 Effect Session Decision 产生`,
-                };
-              },
-              canExecute() {
-                return {
-                  ok: false,
-                  code: "SESSION_DECISION_ONLY",
-                  message: `${family} 只由 Effect Session Decision 执行`,
-                };
-              },
-              execute() {
-                return {
-                  ok: false,
-                  code: "SESSION_DECISION_ONLY",
-                  message: `${family} 只由 Effect Session Decision 执行`,
-                };
-              },
-            },
-        ]),
-      ),
-    });
-  }
-
   return {
     createActionOwnerInputPorts,
     createActionRuntime,
-    createBrowserStandardActionAdapter,
     createInitialIncomeFlow,
     createInitialSelectionEffectsResolver,
     createActionContextFactory,
