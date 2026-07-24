@@ -73,12 +73,10 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   {
     family: "scan",
     obligation: "扫描必须由生产望远镜规则提供合法描述符",
-    unavailableReason: "Simulation composition 尚未接入望远镜扫描规则端口",
   },
   {
     family: "analyze",
     obligation: "分析必须由生产数据轨规则提供合法描述符",
-    unavailableReason: "Simulation composition 尚未接入数据分析规则端口",
   },
   { family: "research_tech", obligation: "生产科技规则枚举科技板目标并提交研究" },
   { family: "play_card", obligation: "打牌使用生产手牌、费用、卡牌实体与 Effect journal" },
@@ -90,7 +88,6 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   {
     family: "place_data",
     obligation: "放置数据必须由生产数据规则提供合法描述符",
-    unavailableReason: "Simulation composition 尚未接入数据放置规则端口",
   },
   {
     family: "runezu_face_symbol",

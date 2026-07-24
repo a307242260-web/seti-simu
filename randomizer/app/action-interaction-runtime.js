@@ -616,7 +616,7 @@
     }
 
     function runPlaceDataToComputer() {
-      return context.inputPort.openComputerPicker();
+      return context.dispatchStandardIntent("place_data", { kind: "place-data" });
     }
 
     function canAnalyzeDataForPlayer(player = context.getCurrentPlayer()) {
@@ -632,7 +632,7 @@
     }
 
     function analyzeDataForCurrentPlayer() {
-      return context.runAction("analyze", getAnalyzeActionOptionsForPlayer());
+      return context.dispatchStandardIntent("analyze", { kind: "computer" });
     }
 
     function startAnalyzeDataRewardFlow(workingRoot) {

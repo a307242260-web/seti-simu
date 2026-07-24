@@ -4,19 +4,23 @@
   let standardAction = root.SetiStandardAction;
   let standardActionSession = root.SetiStandardActionSession;
   let cardPlayDomain = root.SetiCardPlayDomain;
-  if ((!standardAction || !standardActionSession || !cardPlayDomain) && typeof require === "function") {
+  let scienceSession = root.SetiScienceSession;
+  if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession)
+    && typeof require === "function") {
     standardAction = standardAction || require("./actions/standard-action");
     standardActionSession = standardActionSession || require("./effects/standard-action-session");
     cardPlayDomain = cardPlayDomain || require("./cards/play-domain");
+    scienceSession = scienceSession || require("./effects/science-session");
   }
 
-  const api = factory(standardAction, standardActionSession, cardPlayDomain);
+  const api = factory(standardAction, standardActionSession, cardPlayDomain, scienceSession);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction,
   standardActionSession,
   cardPlayDomain,
+  scienceSession,
 ) {
   "use strict";
 
@@ -64,10 +68,16 @@
         familyOwners.set(family, owner);
       }
     };
+    const ownedFamilies = new Set([
+      "quick_trade",
+      "play_card",
+      ...scienceSession.ACTION_FAMILIES,
+    ]);
     const standardFamilies = standardAction.ALL_FAMILIES
-      .filter((family) => family !== "play_card");
+      .filter((family) => !["play_card", ...scienceSession.ACTION_FAMILIES].includes(family));
     claimFamilies("standard_action", standardFamilies);
     claimFamilies(cardPlayDomain.DOMAIN_ID, cardPlayDomain.ACTION_FAMILIES);
+    claimFamilies(scienceSession.DOMAIN_ID, scienceSession.ACTION_FAMILIES);
     for (const descriptor of options.additionalDomains || []) {
       claimFamilies(descriptor?.id || "host_domain", descriptor?.families || []);
     }
@@ -144,6 +154,9 @@
     }));
     const playCardProvider = cardPlayDomain.createPlayCardProvider();
     ownedRegistry.register(standardAction.createOptionDefinition("play_card", playCardProvider));
+    for (const definition of scienceSession.createActionDefinitions()) {
+      ownedRegistry.register(definition);
+    }
     const requireSource = () => {
       const source = options.getStandardActionSource();
       if (typeof source?.enumerate !== "function"
@@ -153,24 +166,27 @@
       }
       return source;
     };
-    const isOwned = (action) => ["quick_trade", "play_card"].includes(action?.family);
+    const isOwned = (action) => ownedFamilies.has(action?.family);
     const actionRegistry = Object.freeze({
       ownerId: PACK_ID,
       enumerate(context, request = {}) {
-        if (["quick_trade", "play_card"].includes(request.family)) {
+        if (ownedFamilies.has(request.family)) {
           return ownedRegistry.enumerate(context, request);
         }
         if (request.family) {
           return requireSource().enumerate(context, request).filter((action) => !isOwned(action));
         }
         const legacy = standardAction.ALL_FAMILIES
-          .filter((family) => !["quick_trade", "play_card"].includes(family))
+          .filter((family) => !ownedFamilies.has(family))
           .flatMap((family) => requireSource().enumerate(context, { ...request, family }))
           .filter((action) => !isOwned(action));
         const quickActions = ownedRegistry.enumerate(context, { ...request, family: "quick_trade" });
         const playActions = ownedRegistry.enumerate(context, { ...request, family: "play_card" });
+        const scienceActions = scienceSession.ACTION_FAMILIES.flatMap(
+          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+        );
         const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
-        for (const action of [...legacy, ...quickActions, ...playActions]) {
+        for (const action of [...legacy, ...quickActions, ...playActions, ...scienceActions]) {
           byFamily.get(action.family)?.push(action);
         }
         return standardAction.ALL_FAMILIES.flatMap((family) => byFamily.get(family));
@@ -204,7 +220,7 @@
       coverage() {
         const legacy = typeof requireSource().coverage === "function"
           ? requireSource().coverage().filter((entry) => (
-            entry.registered && !["quick_trade", "play_card"].includes(entry.family)
+            entry.registered && !ownedFamilies.has(entry.family)
           ))
           : [];
         const byFamily = new Map(legacy.map((entry) => [entry.family, entry]));
@@ -214,6 +230,9 @@
         const ownedPlayCard = ownedRegistry.coverage()
           .find((entry) => entry.family === "play_card");
         byFamily.set("play_card", ownedPlayCard);
+        for (const family of scienceSession.ACTION_FAMILIES) {
+          byFamily.set(family, ownedRegistry.coverage().find((entry) => entry.family === family));
+        }
         return standardAction.ALL_FAMILIES.map((family) => (
           byFamily.get(family) || {
             family,
@@ -238,9 +257,15 @@
       families: cardPlayDomain.ACTION_FAMILIES,
       create: cardPlayDomain.createExperimentalCardPlayDomain,
     });
+    const scienceDomain = Object.freeze({
+      id: scienceSession.DOMAIN_ID,
+      families: scienceSession.ACTION_FAMILIES,
+      create: scienceSession.createScienceDomain,
+    });
     const effectDomains = Object.freeze([
       standardDomain,
       cardDomain,
+      scienceDomain,
       ...(options.additionalDomains || []),
     ]);
     return Object.freeze({
@@ -251,11 +276,19 @@
       actionOwners: Object.freeze({
         quick_trade: `${PACK_ID}:quick_trade`,
         play_card: cardPlayDomain.EXECUTOR_ID,
+        scan: scienceSession.EXECUTOR_ID,
+        place_data: scienceSession.EXECUTOR_ID,
+        analyze: scienceSession.EXECUTOR_ID,
+        research_tech: scienceSession.EXECUTOR_ID,
         legacy: "host_input_source",
       }),
       actionExecutorOwners: Object.freeze({
         quick_trade: QUICK_TRADE_EXECUTOR_ID,
         play_card: cardPlayDomain.EXECUTOR_ID,
+        scan: scienceSession.EXECUTOR_ID,
+        place_data: scienceSession.EXECUTOR_ID,
+        analyze: scienceSession.EXECUTOR_ID,
+        research_tech: scienceSession.EXECUTOR_ID,
       }),
     });
   }

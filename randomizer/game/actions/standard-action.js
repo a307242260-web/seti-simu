@@ -264,45 +264,11 @@
     };
   }
 
-  function createResearchTechDefinition(researchTechAction) {
-    assertReferenceAction(researchTechAction, "research_tech", "getResearchOptions");
-    return {
-      family: "research_tech",
-      label: researchTechAction.label || "科技",
-      enumerate(context, { request }) {
-        const options = researchTechAction.getResearchOptions(context, request?.payload || {});
-        if (!options.ok) return [];
-        return options.choices.map((choice) => ({
-          target: {
-            tileId: choice.tileId,
-            ...(choice.blueSlot == null ? {} : { blueSlot: choice.blueSlot }),
-          },
-          payload: {
-            ...(request?.payload || {}),
-            ...(options.allowedTechTypes ? { allowedTechTypes: [...options.allowedTechTypes] } : {}),
-          },
-          summary: choice.label,
-        }));
-      },
-      validate(context, action) {
-        return researchTechAction.canExecute(context, action.payload || {});
-      },
-      execute(context, action) {
-        return researchTechAction.execute(context, {
-          ...(action.payload || {}),
-          tileId: action.target.tileId,
-          blueSlot: action.target.blueSlot ?? null,
-        });
-      },
-    };
-  }
-
   function createReferenceDefinitions(referenceActions = {}) {
     return Object.freeze([
       createLaunchDefinition(referenceActions.launch),
       createOrbitDefinition(referenceActions.orbit),
       createLandDefinition(referenceActions.land),
-      createResearchTechDefinition(referenceActions.researchTech || referenceActions.research_tech),
     ]);
   }
 
@@ -424,7 +390,7 @@
       },
       execute(actionContext, option) {
         if (typeof options.execute !== "function") {
-          return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" };
+          return { ok: false, code: "PLAY_CARD_EXECUTOR_REQUIRED" };
         }
         return options.execute(actionContext, option);
       },
@@ -433,8 +399,6 @@
 
   function createStage2Definitions(actions = {}) {
     const entries = [
-      ["scan", ["scan"]],
-      ["analyze", ["analyze"]],
       ["play_card", ["playCard", "play_card"]],
       ["pass", ["pass"]],
     ];
@@ -450,7 +414,6 @@
       ["quick_trade", ["quickTrade", "quick_trade"]],
       ["industry", ["industry"]],
       ["card_corner", ["cardCorner", "card_corner"]],
-      ["place_data", ["placeData", "place_data"]],
       ["runezu_face_symbol", ["runezuFaceSymbol", "runezu_face_symbol"]],
       ["end_turn", ["endTurn", "end_turn"]],
     ];
@@ -527,7 +490,6 @@
     createLaunchDefinition,
     createOrbitDefinition,
     createLandDefinition,
-    createResearchTechDefinition,
     createReferenceDefinitions,
     createOptionDefinition,
     createStage2Definitions,

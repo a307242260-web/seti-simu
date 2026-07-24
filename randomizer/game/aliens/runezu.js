@@ -781,7 +781,7 @@
       .map((slot) => ({ ...slot }));
   }
 
-  function claimSourceSymbol(alienState, sourceType, sourceId, player) {
+  function claimSourceSymbol(alienState, sourceType, sourceId, player, options = {}) {
     const runezu = ensureRunezuState(alienState);
     const key = createSourceKey(sourceType, sourceId);
     const slot = runezu.sourceSymbolSlots?.[key];
@@ -792,7 +792,7 @@
     gainPlayerSymbol(player, slot.symbolId);
     slot.claimedByPlayerId = player?.id || null;
     slot.claimedByPlayerColor = player?.color || player?.playerColor || null;
-    slot.claimedAt = Date.now();
+    slot.claimedAt = options.claimedAt ?? Date.now();
     return {
       ok: true,
       sourceType,
@@ -802,16 +802,16 @@
     };
   }
 
-  function claimPlanetSymbol(alienState, planetId, player) {
-    return claimSourceSymbol(alienState, "planet", planetId, player);
+  function claimPlanetSymbol(alienState, planetId, player, options = {}) {
+    return claimSourceSymbol(alienState, "planet", planetId, player, options);
   }
 
-  function claimSectorSymbol(alienState, sectorId, player) {
-    return claimSourceSymbol(alienState, "sector", sectorId, player);
+  function claimSectorSymbol(alienState, sectorId, player, options = {}) {
+    return claimSourceSymbol(alienState, "sector", sectorId, player, options);
   }
 
-  function claimTechSymbol(alienState, tileId, player) {
-    return claimSourceSymbol(alienState, "tech", tileId, player);
+  function claimTechSymbol(alienState, tileId, player, options = {}) {
+    return claimSourceSymbol(alienState, "tech", tileId, player, options);
   }
 
   function takePanelSymbol(alienState, slotId, player, options = {}) {

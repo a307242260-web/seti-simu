@@ -73,8 +73,6 @@
     PICK_CARD: "card_play_domain_pick_card",
     PICK_CARD_START: "card_play_domain_pick_card_start",
     INCOME_DECISION: "card_play_domain_income_decision",
-    RESEARCH_TECH: "card_play_domain_research_tech",
-    RESEARCH_TECH_DECISION: "card_play_domain_research_tech_decision",
     LAUNCH: "card_play_domain_launch",
     FIXED_NEBULA_SCAN: "card_play_domain_fixed_nebula_scan",
     COLOR_NEBULA_SCAN: "card_play_domain_color_nebula_scan",
@@ -170,6 +168,13 @@
 
   function getWorkingRoot(state, workingContext) {
     return workingContext?.workingRoot || workingContext || state;
+  }
+
+  function getScienceDomain() {
+    const api = typeof globalThis !== "undefined" ? globalThis.SetiScienceSession : null;
+    if (api) return api;
+    if (typeof require === "function") return require("../effects/science-session");
+    throw new TypeError("Card Play 缺少 Science production domain");
   }
 
   function getSlice(root, browserKey, committedKey) {
@@ -304,6 +309,65 @@
     }
 
     function createSpawnedCardEffect(effect, ownerId, cardInstanceId) {
+      if (effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) {
+        const science = getScienceDomain();
+        return {
+          priority: "direct",
+          effect: {
+            type: science.EFFECT_TYPES.RESEARCH,
+            decisionKind: "choose_target",
+            ownerId,
+            payload: {
+              options: {
+                ...clone(effect.options || {}),
+                skipCost: effect.options?.skipCost !== false,
+              },
+              mainAction: false,
+              cardInstanceId,
+              cardEffect: clone(effect),
+            },
+          },
+        };
+      }
+      if (effect.type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN) {
+        const science = getScienceDomain();
+        return {
+          priority: "direct",
+          effect: {
+            type: science.EFFECT_TYPES.PUBLIC_SCAN,
+            decisionKind: "choose_card",
+            ownerId,
+            payload: {
+              selected: 0,
+              max: Math.max(1, Number(effect.options?.repeat || effect.options?.count) || 1),
+              consumeMarkers: false,
+              cardInstanceId,
+              cardEffect: clone(effect),
+            },
+          },
+        };
+      }
+      if (effect.type === cardEffects.EFFECT_TYPES.SCAN_ACTION) {
+        const science = getScienceDomain();
+        return {
+          priority: "direct",
+          effect: {
+            type: science.EFFECT_TYPES.EXECUTE,
+            ownerId,
+            payload: {
+              action: {
+                family: "scan",
+                phase: "main",
+                actorId: ownerId,
+                target: { kind: "card-scan-action" },
+                payload: { skipCost: true, nestedCardEffect: true },
+              },
+              cardInstanceId,
+              cardEffect: clone(effect),
+            },
+          },
+        };
+      }
       let type = EFFECT_TYPES.COLOR_NEBULA_SCAN;
       let decisionKind = "choose_target";
       if (DIRECT_EFFECT_TYPES.includes(effect.type)) {
@@ -315,8 +379,6 @@
       } else if (effect.type === cardEffects.REWARD_TYPES.PICK_CARD) {
         type = EFFECT_TYPES.PICK_CARD_START;
         decisionKind = null;
-      } else if (effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) {
-        type = EFFECT_TYPES.RESEARCH_TECH;
         decisionKind = null;
       } else if (effect.type === cardEffects.REWARD_TYPES.LAUNCH) {
         type = EFFECT_TYPES.LAUNCH;
@@ -668,205 +730,6 @@
     };
     runtime.registerExecutor(EFFECT_TYPES.INCOME_DECISION, incomeDecisionExecutor);
 
-    function researchConditionMet(actor, condition) {
-      if (!condition) return true;
-      if (condition.type === "resourceEquals") {
-        return Number(actor.resources?.[condition.resource] || 0) === Number(condition.count || 0);
-      }
-      if (condition.type === "resourceThreshold") {
-        return Number(actor.resources?.[condition.resource] || 0) >= Number(condition.count || 0);
-      }
-      return false;
-    }
-
-    function listResearchChoices(root, sessionEffect) {
-      const effect = sessionEffect.payload?.cardEffect;
-      const actor = getActor(root, sessionEffect.ownerId);
-      const techGameState = getSlice(root, "techGameState", "tech");
-      if (!actor || !techGameState?.board || !researchConditionMet(
-        actor,
-        effect?.options?.requireCondition,
-      )) return [];
-      const filter = effect.options?.techTypes?.length
-        ? { techTypes: effect.options.techTypes }
-        : {};
-      let tileIds = tech.resolver.listTakeableTiles(
-        techGameState.board,
-        actor.techState || players.normalizePlayerTechState(null),
-        filter,
-      );
-      if (effect.options?.researchedByOthersOnly) {
-        const others = getSlice(root, "playerState", "players").players
-          .filter((player) => player.id !== actor.id);
-        tileIds = tileIds.filter((tileId) => others.some((player) => (
-          Boolean(player.techState?.ownedTiles?.[tileId])
-        )));
-      }
-      const blueSlots = tech.getAvailableBlueSlots(
-        actor.techState || players.normalizePlayerTechState(null),
-      );
-      return tileIds.flatMap((tileId) => {
-        const slots = tech.getTechType(tileId) === "blue" ? blueSlots : [null];
-        return slots.map((blueSlot) => ({
-          family: "choose_target",
-          target: {
-            choiceId: blueSlot == null ? tileId : `${tileId}:slot:${blueSlot}`,
-            tileId,
-            blueSlot,
-          },
-          payload: {
-            skipCost: effect.options?.skipCost !== false,
-            skipRotate: Boolean(effect.options?.skipRotate),
-            skipBonus: Boolean(effect.options?.skipBonus),
-          },
-          summary: blueSlot == null ? `研究 ${tileId}` : `研究 ${tileId}，放入蓝色槽 ${blueSlot}`,
-        }));
-      });
-    }
-
-    runtime.registerExecutor(EFFECT_TYPES.RESEARCH_TECH, (
-      state,
-      sessionEffect,
-      workingContext,
-    ) => {
-      const root = getWorkingRoot(state, workingContext);
-      const choices = listResearchChoices(root, sessionEffect);
-      return {
-        ok: true,
-        nextState: commitWorkingState(state, {
-          source: cardEffects.EFFECT_TYPES.RESEARCH_TECH,
-        }),
-        spawnedEffects: choices.length
-          ? [{
-            priority: "direct",
-            effect: {
-              type: EFFECT_TYPES.RESEARCH_TECH_DECISION,
-              kind: "decision",
-              decisionKind: "choose_target",
-              ownerId: sessionEffect.ownerId,
-              payload: clone(sessionEffect.payload),
-            },
-          }]
-          : [],
-        events: choices.length
-          ? []
-          : [{
-            type: "card_effect",
-            effectId: sessionEffect.payload?.cardEffect?.id || null,
-            effectType: cardEffects.EFFECT_TYPES.RESEARCH_TECH,
-            playerId: sessionEffect.ownerId,
-            skipped: true,
-            reason: "no_takeable_tech",
-          }],
-      };
-    });
-
-    const researchTechDecisionExecutor = {
-      getLegalChoices(state, sessionEffect, workingContext) {
-        return listResearchChoices(getWorkingRoot(state, workingContext), sessionEffect);
-      },
-      resolveDecision(state, sessionEffect, choice, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        const effect = sessionEffect.payload?.cardEffect;
-        const actor = getActor(root, sessionEffect.ownerId);
-        const legal = listResearchChoices(root, sessionEffect)
-          .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
-        if (!actor || !legal) return fail("CARD_RESEARCH_TECH_CHOICE_STALE", "科技选择已失效");
-        const actionContext = createActionContext(root, actor.id);
-        const takeOptions = {
-          tileId: legal.target.tileId,
-          blueSlot: legal.target.blueSlot,
-          techTypes: effect.options?.techTypes,
-          skipCost: effect.options?.skipCost !== false,
-          skipRotation: Boolean(effect.options?.skipRotate),
-        };
-        let result;
-        if (effect.options?.skipBonus) {
-          const selected = tech.resolver.selectTechTile(actionContext, takeOptions);
-          if (!selected.ok || selected.needsBlueSlotChoice) return selected;
-          result = tech.resolver.takeSelectedTechTile(actionContext, {
-            ...takeOptions,
-            expectedBonusId: selected.bonusId,
-            expectedFirstTake: selected.firstTake,
-          });
-          if (result.ok && !effect.options?.skipRotate) {
-            const rotated = tech.resolver.rotateForResearch(actionContext, 1);
-            if (!rotated.ok) return rotated;
-          }
-        } else {
-          result = tech.resolver.executeTakeTech(actionContext, takeOptions);
-        }
-        if (!result?.ok) return result;
-
-        const spawnedEffects = [];
-        const appendPick = (suffix) => {
-          spawnedEffects.push(createSpawnedCardEffect({
-            id: `${effect.id || "research-tech"}-${suffix}`,
-            type: cardEffects.REWARD_TYPES.PICK_CARD,
-            label: "科技奖励：精选 1 张牌",
-            options: { count: 1 },
-          }, actor.id, sessionEffect.payload?.cardInstanceId || null));
-        };
-        if (result.awaitingCardSelection) appendPick("pick");
-        const after = effect.options?.afterResearchReward;
-        if (after?.kind === "techTypeCountScore") {
-          const count = Object.keys(actor.techState?.ownedTiles || {})
-            .filter((tileId) => (
-              actor.techState.ownedTiles[tileId]
-              && tech.getTechType(tileId) === result.techType
-            ))
-            .length;
-          players.gainResources(actor, { score: count * Math.max(0, Number(after.scorePer) || 0) });
-        } else if (after?.kind === "resourceValueScore") {
-          players.gainResources(actor, {
-            score: Math.max(0, Number(actor.resources?.[after.resource]) || 0),
-          });
-        } else if (after?.kind === "publicityIfNotFirstTake" && !result.firstTake) {
-          players.gainResources(actor, {
-            publicity: Math.max(0, Number(after.publicity) || 0),
-          });
-        } else if (after?.kind === "repeatBonus" && !effect.options?.skipBonus) {
-          const repeated = tech.resolver.applyTechBonus(actionContext, {
-            bonusId: result.bonusId,
-            firstTake: false,
-          });
-          if (!repeated.ok) return repeated;
-          if (repeated.awaitingCardSelection) appendPick("repeat-pick");
-        }
-        return {
-          ok: true,
-          nextState: commitWorkingState(state, {
-            source: cardEffects.EFFECT_TYPES.RESEARCH_TECH,
-          }),
-          spawnedEffects,
-          irreversible: {
-            code: "tech_bonus_reveal",
-            reason: "拿取科技后露出下一张 bonus",
-          },
-          events: [{
-            type: "card_effect",
-            effectId: effect.id || null,
-            effectType: effect.type,
-            playerId: actor.id,
-            tileId: result.tileId,
-            techType: result.techType,
-          }],
-          history: [{
-            type: "card_effect_decision",
-            effectId: effect.id || null,
-            effectType: effect.type,
-            choiceId: legal.target.choiceId,
-            tileId: result.tileId,
-            executorId: EXECUTOR_ID,
-          }],
-        };
-      },
-    };
-    runtime.registerExecutor(
-      EFFECT_TYPES.RESEARCH_TECH_DECISION,
-      researchTechDecisionExecutor,
-    );
-
     runtime.registerExecutor(EFFECT_TYPES.LAUNCH, (state, sessionEffect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
       const effect = sessionEffect.payload?.cardEffect;
@@ -1067,11 +930,18 @@
       if (!actor || effect?.type !== cardEffects.EFFECT_TYPES.SCAN_NEBULA) {
         return fail("CARD_SCAN_CONTEXT_STALE", "固定星云扫描上下文已失效");
       }
-      const result = abilities.executeAbility("scanNebula", createActionContext(root, actor.id), {
-        nebulaId: effect.options?.nebulaId,
+      const result = getScienceDomain().executeNebulaScan(root, actor.id, {
+        family: "choose_target",
+        target: {
+          choiceId: `nebula:${effect.options?.nebulaId}`,
+          nebulaId: effect.options?.nebulaId,
+        },
+        payload: { gainData: effect.options?.gainData !== false },
+      }, {
+        nebulaIds: [effect.options?.nebulaId],
         gainData: effect.options?.gainData,
         source: "card",
-        prefix: effect.label,
+        label: effect.label,
       });
       if (!result.ok) return result;
       return {
@@ -1090,13 +960,16 @@
 
     const colorDecisionExecutor = {
       getLegalChoices(state, sessionEffect, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
         const effect = sessionEffect.payload?.cardEffect;
-        return (cardEffects.NEBULA_IDS_BY_COLOR[effect?.options?.color] || []).map((nebulaId) => ({
-          family: "choose_target",
-          target: { choiceId: nebulaId, nebulaId },
-          payload: { gainData: effect.options?.gainData !== false },
-          summary: `扫描 ${nebulaId}`,
+        const choices = getScienceDomain().listNebulaChoices(root, {
+          nebulaIds: cardEffects.NEBULA_IDS_BY_COLOR[effect?.options?.color] || [],
+          gainData: effect?.options?.gainData,
+        }).map((choice) => ({
+          ...choice,
+          target: { ...choice.target, choiceId: choice.target.nebulaId },
         }));
+        return getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, choices);
       },
       resolveDecision(state, sessionEffect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
@@ -1105,11 +978,17 @@
         const legal = colorDecisionExecutor.getLegalChoices(state, sessionEffect, workingContext)
           .some((candidate) => candidate.target.nebulaId === choice?.target?.nebulaId);
         if (!actor || !legal) return fail("CARD_SCAN_CHOICE_STALE", "星云扫描选择已失效");
-        const result = abilities.executeAbility("scanNebula", createActionContext(root, actor.id), {
-          nebulaId: choice.target.nebulaId,
+        const result = getScienceDomain().executeNebulaScan(root, actor.id, {
+          ...clone(choice),
+          target: {
+            ...clone(choice.target),
+            choiceId: `nebula:${choice.target.nebulaId}`,
+          },
+        }, {
+          nebulaIds: [choice.target.nebulaId],
           gainData: effect.options?.gainData,
           source: "card",
-          prefix: effect.label,
+          label: effect.label,
         });
         if (!result.ok) return result;
         return {
@@ -1277,20 +1156,18 @@
     }
 
     function listScannableNebulaChoices(root, nebulaIds, options = {}) {
-      const unique = [...new Set((nebulaIds || []).filter(Boolean))];
-      return unique
-        .filter((nebulaId) => (
-          (data.listNebulaTokens?.(
-            getSlice(root, "nebulaDataState", "data"),
-            nebulaId,
-          ) || []).length > 0
-        ))
-        .map((nebulaId) => makeChoice(
+      return getScienceDomain().listNebulaChoices(root, {
+        nebulaIds,
+        gainData: options.gainData,
+      }).map((choice) => makeChoice(
           "choose_target",
-          nebulaId,
-          { nebulaId, sectorX: getNebulaSectorX(root, nebulaId) },
+          choice.target.nebulaId,
+          {
+            nebulaId: choice.target.nebulaId,
+            sectorX: getNebulaSectorX(root, choice.target.nebulaId),
+          },
           { gainData: options.gainData !== false },
-          `扫描 ${data.getNebulaLabel?.(nebulaId) || nebulaId}`,
+          choice.summary,
         ));
     }
 
@@ -1316,11 +1193,14 @@
         });
       }
       const actor = getActor(root, sessionEffect.ownerId);
-      const result = abilities.executeAbility("scanNebula", createActionContext(root, actor.id), {
-        nebulaId: legal.target.nebulaId,
+      const result = getScienceDomain().executeNebulaScan(root, actor.id, {
+        ...clone(legal),
+        target: { ...clone(legal.target), choiceId: `nebula:${legal.target.nebulaId}` },
+      }, {
+        nebulaIds: [legal.target.nebulaId],
         gainData: legal.payload?.gainData !== false,
         source: "card",
-        prefix: sessionEffect.payload.cardEffect.label,
+        label: sessionEffect.payload.cardEffect.label,
       });
       if (!result.ok) return result;
       const drawnCardId = sessionEffect.payload?.drawnCardId;
@@ -1741,13 +1621,6 @@
         }
         return listScannableNebulaChoices(root, ids, options);
       }
-      if (effect.type === cardEffects.EFFECT_TYPES.SCAN_ACTION) {
-        return listScannableNebulaChoices(
-          root,
-          Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat(),
-          { gainData: true },
-        );
-      }
       if (effect.type === cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN) {
         const choices = listScannableNebulaChoices(
           root,
@@ -1808,9 +1681,6 @@
       if (effect.type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
         const cardState = getSlice(root, "cardState", "cards");
         return listCardChoices(cardState.publicCards || []);
-      }
-      if (effect.type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN) {
-        return listCardChoices(getSlice(root, "cardState", "cards").publicCards || []);
       }
       if (effect.type === cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND) {
         return listCardChoices((actor.reservedCards || []).filter((card) => (
@@ -1914,7 +1784,6 @@
         cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN,
         cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN,
         cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN,
-        cardEffects.EFFECT_TYPES.SCAN_ACTION,
         cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN,
       ].includes(effect.type)) return resolveNebulaScan(state, sessionEffect, choice, workingContext);
       if ([
@@ -2024,37 +1893,18 @@
             });
           }
         }
-      } else if ([
-        cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD,
-        cardEffects.EFFECT_TYPES.PUBLIC_SCAN,
-      ].includes(effect.type)) {
+      } else if (effect.type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
         const index = cardState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
-        const card = cardState.publicCards[index];
-        if (effect.type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
-          const result = cards.pickFromPublic(
-            cardState,
-            getSlice(root, "playerState", "players"),
-            actor,
-            index,
-            () => nextCommittedRandom(root),
-            { createCardInstance: createCommittedCardFactory(root) },
-          );
-          if (!result.ok) return result;
-          spawnedEffects = spawnCardEffects(cornerEffects(result.card), sessionEffect);
-        } else {
-          cardState.publicCards[index] = null;
-          spawnedEffects = spawnCardEffects([{
-            id: `${effect.id}:public-scan`,
-            type: cardEffects.EFFECT_TYPES.SCAN_NEBULA,
-            label: "公共牌扫描",
-            options: {
-              nebulaId: Object.values(cardEffects.NEBULA_IDS_BY_COLOR)
-                .flat()[Math.abs(cards.getDiscardActionCodeForCard(card) || 0) % 8],
-              gainData: true,
-            },
-          }], sessionEffect);
-          cards.addToDiscardPile(cardState, card);
-        }
+        const result = cards.pickFromPublic(
+          cardState,
+          getSlice(root, "playerState", "players"),
+          actor,
+          index,
+          () => nextCommittedRandom(root),
+          { createCardInstance: createCommittedCardFactory(root) },
+        );
+        if (!result.ok) return result;
+        spawnedEffects = spawnCardEffects(cornerEffects(result.card), sessionEffect);
       } else if (effect.type === cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND) {
         const index = actor.reservedCards.findIndex((card) => card.id === legal.target.cardInstanceId);
         const [card] = actor.reservedCards.splice(index, 1);
@@ -2171,14 +2021,21 @@
       [cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.PROBE_STACK_REWARD]: {},
       [cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD]: {},
-      [cardEffects.EFFECT_TYPES.PUBLIC_SCAN]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS]: {},
       [cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF]: {},
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },
-      [cardEffects.EFFECT_TYPES.SCAN_ACTION]: { decisionKind: "choose_target" },
     });
+
+    const SCIENCE_CARD_DECISION_TYPES = new Set([
+      cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN,
+      cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN,
+      cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN,
+      cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN,
+      cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN,
+      cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN,
+    ]);
 
     for (const [effectType, descriptor] of Object.entries(GENERIC_EFFECT_DESCRIPTORS)) {
       const runtimeType = genericEffectRuntimeType(effectType);
@@ -2186,7 +2043,11 @@
       if (descriptor.decisionKind) {
         runtime.registerExecutor(genericEffectRuntimeType(effectType, true), {
           getLegalChoices(state, sessionEffect, workingContext) {
-            return listGenericChoices(getWorkingRoot(state, workingContext), sessionEffect);
+            const root = getWorkingRoot(state, workingContext);
+            const choices = listGenericChoices(root, sessionEffect);
+            return SCIENCE_CARD_DECISION_TYPES.has(effectType)
+              ? getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, choices)
+              : choices;
           },
           resolveDecision: genericResolve,
         });
@@ -2194,7 +2055,12 @@
       if (effectType === cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN) {
         runtime.registerExecutor(genericEffectRuntimeType(effectType, true), {
           getLegalChoices(state, sessionEffect, workingContext) {
-            return listGenericChoices(getWorkingRoot(state, workingContext), sessionEffect);
+            const root = getWorkingRoot(state, workingContext);
+            return getScienceDomain().formalizeChoices(
+              root,
+              sessionEffect.ownerId,
+              listGenericChoices(root, sessionEffect),
+            );
           },
           resolveDecision: genericResolve,
         });

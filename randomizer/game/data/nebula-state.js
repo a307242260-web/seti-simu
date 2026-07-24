@@ -20,6 +20,24 @@
   let nebulaTokenSequence = 0;
   let nebulaReplacementSequence = 0;
 
+  function takeSequence(options, key) {
+    const sequences = options?.root?.meta?.sequences;
+    if (sequences && typeof sequences === "object") {
+      const value = Number(sequences[key]);
+      if (!Number.isSafeInteger(value) || value < 1) {
+        throw new TypeError(`meta.sequences.${key} 必须是正安全整数`);
+      }
+      sequences[key] = value + 1;
+      return value;
+    }
+    if (key === "nebulaToken") {
+      nebulaTokenSequence += 1;
+      return nebulaTokenSequence;
+    }
+    nebulaReplacementSequence += 1;
+    return nebulaReplacementSequence;
+  }
+
   function getDeterministicSequences() {
     return {
       nebulaToken: nebulaTokenSequence + 1,
@@ -326,9 +344,9 @@
       const layout = nebulaPlacement.getNebulaDataSlotLayout(nebulaId, slotIndex);
       if (!slotIndex || !layout) break;
 
-      nebulaTokenSequence += 1;
+      const sequence = takeSequence(options, "nebulaToken");
       const token = normalizeNebulaToken({
-        id: `nebula-data-${nebulaTokenSequence}`,
+        id: `nebula-data-${sequence}`,
         index: getNextNebulaDataIndex(state),
         slotIndex,
       }, nebulaId, bucket.tokens.length);
@@ -497,18 +515,18 @@
       return { ok: false, message: `未知扇区 ${sectorId}` };
     }
 
-    nebulaReplacementSequence += 1;
+    const replacementSequence = takeSequence(options, "nebulaReplacement");
     const playerColor = options.playerColor || player.color || null;
     const playerLabel = options.playerLabel || player.colorLabel || player.name || playerColor || "玩家";
     const mark = {
-      id: options.id || `sector-extra-mark-${normalizedSectorId}-${nebulaReplacementSequence}`,
+      id: options.id || `sector-extra-mark-${normalizedSectorId}-${replacementSequence}`,
       sectorId: normalizedSectorId,
       replacedByPlayerId: player.id || null,
       replacedByPlayerColor: playerColor,
       replacedByPlayerLabel: playerLabel,
       playerTokenSrc: options.playerTokenSrc || options.tokenSrc || null,
-      replacedAt: options.replacedAt || new Date().toISOString(),
-      replacementOrder: options.replacementOrder || nebulaReplacementSequence,
+      replacedAt: options.replacedAt || `sequence:${replacementSequence}`,
+      replacementOrder: options.replacementOrder || replacementSequence,
     };
     ensureSectorExtraMarkList(state, normalizedSectorId).push(mark);
     return {
@@ -577,16 +595,16 @@
     const layout = nebulaPlacement.getNebulaDataSlotLayout(nebulaId, 1);
     if (!layout || !participant) return null;
 
-    nebulaTokenSequence += 1;
+    const tokenSequence = takeSequence(options, "nebulaToken");
     return normalizeNebulaToken({
-      id: `nebula-data-${nebulaTokenSequence}`,
+      id: `nebula-data-${tokenSequence}`,
       index: getNextNebulaDataIndex(state),
       slotIndex: 1,
       replacedByPlayerId: participant.playerId,
       replacedByPlayerColor: participant.playerColor,
       replacedByPlayerLabel: participant.playerLabel,
       playerTokenSrc: getSettlementPlayerTokenSrc(participant, options),
-      replacedAt: options.settledAt || new Date().toISOString(),
+      replacedAt: options.settledAt || `sequence:${tokenSequence}`,
       replacementOrder: participant.latestReplacementOrder,
     }, nebulaId, 0);
   }
@@ -839,9 +857,9 @@
     token.replacedByPlayerColor = playerColor;
     token.replacedByPlayerLabel = playerLabel;
     token.playerTokenSrc = tokenSrc;
-    token.replacedAt = options.replacedAt || new Date().toISOString();
-    nebulaReplacementSequence += 1;
-    token.replacementOrder = options.replacementOrder || nebulaReplacementSequence;
+    const replacementSequence = takeSequence(options, "nebulaReplacement");
+    token.replacedAt = options.replacedAt || `sequence:${replacementSequence}`;
+    token.replacementOrder = options.replacementOrder || replacementSequence;
     rebuildNebulaStats(bucket);
 
     const label = nebulaPlacement.getNebulaLabel(nebulaId);

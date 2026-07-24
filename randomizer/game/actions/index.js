@@ -73,15 +73,8 @@
   function execute(actionId, context, options) {
     const action = getAction(actionId);
     if (!action) return { ok: false, actionId, message: `未知行动: ${actionId}` };
-    if (
-      actionId === "researchTech"
-      && options?.selectionOnly
-      && options.tileId
-      && options.blueSlot == null
-    ) {
-      return action.execute(context, options);
-    }
-    const family = actionId === "researchTech" ? "research_tech" : actionId;
+    if (actionId === "researchTech") return action.execute(context, options);
+    const family = actionId;
     const selector = actionId === "land"
       ? {
         ...(options?.rocketId == null && options?.target?.rocketId == null
@@ -90,30 +83,12 @@
         ...(options?.target?.type ? { type: options.target.type } : {}),
         ...(options?.target?.satelliteId ? { satelliteId: options.target.satelliteId } : {}),
       }
-      : actionId === "researchTech"
-        ? {
-          ...(options?.tileId ? { tileId: options.tileId } : {}),
-          ...(options?.blueSlot == null ? {} : { blueSlot: Number(options.blueSlot) }),
-        }
-        : (options?.rocketId == null ? {} : { rocketId: Number(options.rocketId) });
-    const requestPayload = actionId === "researchTech" && options?.selectionOnly
-      ? {
-        selectionOnly: true,
-        skipCost: Boolean(options.skipCost),
-        ...(options.techTypes ? { techTypes: options.techTypes } : {}),
-      }
-      : {};
+      : (options?.rocketId == null ? {} : { rocketId: Number(options.rocketId) });
     const adapter = createStandardAdapter();
-    const resolved = adapter.resolveIntent(
-      context,
-      family,
-      selector,
-      Object.keys(requestPayload).length ? { payload: requestPayload } : {},
-    );
+    const resolved = adapter.resolveIntent(context, family, selector);
     if (resolved.code === "STANDARD_ACTION_NOT_LEGAL" && Object.keys(selector).length === 0) {
       return action.execute(context, options);
     }
-    if (actionId === "researchTech" && !options?.tileId) return action.execute(context, options);
     return resolved.ok ? adapter.execute(context, resolved.action) : resolved;
   }
 

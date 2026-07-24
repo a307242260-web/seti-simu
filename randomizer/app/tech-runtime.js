@@ -893,7 +893,7 @@
                 : {}),
             },
           },
-        ) || { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED", message: "科技行动 executor 未装配" }
+        ) || { ok: false, code: "STANDARD_ACTION_EXECUTOR_REQUIRED", message: "科技行动 executor 未装配" }
         : abilities.executeAbility("researchTechSelect", createActionContext(workingRoot), options);
       if (result.needsBlueSlotChoice) {
         techGameState.ui.pendingTileId = tileId;
@@ -1335,7 +1335,7 @@
     }
 
     function researchTechForCurrentPlayer() {
-      return runAction("researchTech");
+      return hostPort.dispatchStandardIntent("research_tech", { kind: "research-tech" });
     }
 
     function commitSelectedResearchTech() {

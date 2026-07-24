@@ -42,7 +42,6 @@
     alienTraceRewardFlow,
     actionRuntimeModule,
     primaryBoardActionExecutorModule,
-    engineActionExecutorModule,
     quickTurnActionExecutorModule,
     conditionalDecisionDomainModule,
     conditionalActionExecutorModule,
@@ -739,25 +738,12 @@
     abilities,
     solar,
   });
-  const engineActionExecutor = engineActionExecutorModule.createEngineActionExecutor({
-    actions,
-    abilities,
-    players,
-    createActionContext: createActionContextForWorkingRoot,
-    getAnalyzeActionOptions: getAnalyzeActionOptionsForPlayer,
-    executeScan: (workingRoot, descriptor) => executeMainScanAction(workingRoot, descriptor),
-  });
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
     executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
       workingRoot,
       players.getCurrentPlayer(workingRoot.playerState)?.initialSelection?.industry,
     ) || { ok: true, progressed: true },
     executeCardCorner: (_workingRoot, descriptor) => executeStandardCardCornerAction(descriptor),
-    executePlaceData: (workingRoot, descriptor) => confirmDataPlacement(
-      descriptor.target?.target,
-      descriptor.target?.blueSlot,
-      { workingRoot, standardAction: descriptor },
-    ),
     executeRunezuFaceSymbol: (workingRoot, descriptor) => executeStandardRunezuFaceSymbol(workingRoot, descriptor),
     executePass: (workingRoot, descriptor) => passForCurrentPlayer({ workingRoot, standardAction: descriptor }),
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
@@ -3066,7 +3052,6 @@
     },
   });
   const {
-    executeMainScanAction,
     launchRocketForScanAction4,
     beginScanAction4FreeMove: beginScanAction4FreeMoveForRoot,
     executeFreeMoveForScanAction4: executeFreeMoveForScanAction4ForRoot,
@@ -3656,7 +3641,6 @@
     abilities,
     createActionContext: createActionContextForWorkingRoot,
     primaryBoardActionExecutor,
-    engineActionExecutor,
     quickTurnActionExecutor,
     conditionalActionExecutor,
     actions,
@@ -4941,6 +4925,10 @@
       tokenWidths,
       uiRuntimeState,
       updateActionButtons,
+      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
+        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
+        || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
+      ),
     },
   });
 

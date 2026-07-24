@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const playDomain = require("./play-domain");
+const scienceSession = require("../effects/science-session");
 const cardEffects = require("./effects");
 const standardAction = require("../actions/standard-action");
 const stateStoreApi = require("../state/state-store");
@@ -65,7 +66,11 @@ function createLegacyRoot(cardId) {
       rulesetVersion: "test-v1",
       seed: 158,
       rngState: {},
-      sequences: { card: 100, dataToken: 200 },
+      sequences: {
+        card: 100,
+        dataToken: 200,
+        ...data.getDeterministicSequences(),
+      },
     },
     playerState: {
       currentPlayerId: "p1",
@@ -235,11 +240,18 @@ function createIntegratedComposition(cardId, browserShape) {
       registry.register(standardAction.createOptionDefinition("play_card", provider));
       return registry;
     },
-    effectDomains: [{
-      id: "card_play_test_boundary",
-      families: ["play_card"],
-      create: playDomain.createExperimentalCardPlayDomain,
-    }],
+    effectDomains: [
+      {
+        id: "card_play_test_boundary",
+        families: ["play_card"],
+        create: playDomain.createExperimentalCardPlayDomain,
+      },
+      {
+        id: scienceSession.DOMAIN_ID,
+        families: scienceSession.ACTION_FAMILIES,
+        create: scienceSession.createScienceDomain,
+      },
+    ],
     projectState: semanticState,
   };
   if (browserShape) {

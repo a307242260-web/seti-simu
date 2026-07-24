@@ -157,6 +157,18 @@ assert.equal(
   productionComposition.QUICK_TRADE_EXECUTOR_ID,
   "Simulation quick_trade 必须命中 game-owned executor",
 );
+for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
+  assert.equal(
+    kernel.productionActionOwners[family],
+    "science:executor:v1",
+    `${family} 必须由唯一 Science production owner 拥有`,
+  );
+  assert.equal(
+    kernel.productionActionExecutorOwners[family],
+    "science:executor:v1",
+    `${family} 必须命中唯一 Science executor`,
+  );
+}
 
 {
   const registryPort = {
@@ -229,6 +241,66 @@ const stale = kernel.composition.inputPort.submitDecision({
 assert.equal(stale.ok, false, "过期 Decision 必须在 handler 前拒绝");
 
 kernel.composition.dispose();
+
+for (const family of ["scan", "place_data"]) {
+  const scienceKernel = createSimulationRuleComposition({
+    ...config,
+    seed: `seti-159-${family}`,
+    random: createSeededRandom(`seti-159-${family}`),
+  });
+  assert.equal(scienceKernel.newGame(config).ok, true);
+  finishOpening(scienceKernel);
+  const action = scienceKernel.composition.inputPort.enumerateActions({ family })[0];
+  assert.ok(action, `${family} 必须由生产 composition 枚举`);
+  const beforeInvalid = scienceKernel.composition.stateSourcePort.read().state;
+  const wrongOwner = action.phase === "quick"
+    ? scienceKernel.composition.inputPort.submitQuickAction({ ...action, actorId: "player-unknown" })
+    : scienceKernel.composition.inputPort.submitAction({ ...action, actorId: "player-unknown" });
+  assert.equal(wrongOwner.ok, false, `${family} 错 owner 必须 fail-closed`);
+  assert.deepEqual(scienceKernel.composition.stateSourcePort.read().state, beforeInvalid,
+    `${family} 非法提交不得写 committed state`);
+  const result = submitActionToCompletion(
+    scienceKernel.composition,
+    action,
+    action.phase === "quick",
+  );
+  assert.equal(result.stateVersion, action.stateVersion + 1, `${family} 整条 Effect Session 只能 CAS 一次`);
+  assert.ok(result.journal.effects.some((effect) => effect.type === "science_domain_execute"));
+  const stale = action.phase === "quick"
+    ? scienceKernel.composition.inputPort.submitQuickAction(action)
+    : scienceKernel.composition.inputPort.submitAction(action);
+  assert.equal(stale.ok, false, `${family} 旧 stateVersion action 必须拒绝`);
+  scienceKernel.composition.dispose();
+}
+
+{
+  const analyzeKernel = createSimulationRuleComposition({
+    ...config,
+    seed: "seti-159-analyze",
+    random: createSeededRandom("seti-159-analyze"),
+  });
+  assert.equal(analyzeKernel.newGame(config).ok, true);
+  finishOpening(analyzeKernel);
+  restoreScenario(analyzeKernel, (state, player) => {
+    player.resources.energy = 10;
+    player.mainActionCompleted = false;
+    player.dataState.poolTokens = [];
+    player.dataState.placedTokens = Array.from({ length: 6 }, (_, index) => ({
+      id: `data-token-${100 + index}`,
+      index: 100 + index,
+      placementKind: "computer",
+      placementSlot: index + 1,
+    }));
+    player.resources.availableData = 0;
+    state.meta.sequences.dataToken = 200;
+  });
+  const action = analyzeKernel.composition.inputPort.enumerateActions({ family: "analyze" })[0];
+  assert.ok(action, "analyze 必须按计算机第 6 格状态枚举");
+  const result = submitActionToCompletion(analyzeKernel.composition, action);
+  assert.equal(result.stateVersion, action.stateVersion + 1, "analyze 与蓝色痕迹 Decision 只能 CAS 一次");
+  assert.ok(result.journal.events.some((event) => event.type === "analyze"));
+  analyzeKernel.composition.dispose();
+}
 
 {
   const parityConfig = {

@@ -285,7 +285,6 @@
       abilities,
       createActionContext,
       primaryBoardActionExecutor,
-      engineActionExecutor,
       quickTurnActionExecutor,
       conditionalActionExecutor,
       actions,
@@ -322,7 +321,6 @@
       standardActionAdapter,
     } = context;
     const PRIMARY_BOARD_FAMILIES = new Set(primaryBoardActionExecutor?.actionFamilies || []);
-    const ENGINE_ACTION_FAMILIES = new Set(engineActionExecutor?.actionFamilies || []);
     const QUICK_TURN_ACTION_FAMILIES = new Set(quickTurnActionExecutor?.actionFamilies || []);
     const CONDITIONAL_ACTION_FAMILIES = new Set(conditionalActionExecutor?.actionFamilies || []);
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
@@ -698,32 +696,6 @@
           ),
         });
       }
-      if (ENGINE_ACTION_FAMILIES.has(descriptor?.family)) {
-        const actionLogBefore = createActionLogImpactSnapshot?.();
-        const result = engineActionExecutor.execute(workingRoot, descriptor, {
-          validate: (workingRoot, action) => standardActionAdapter.validate(
-            createActionContext(workingRoot, action),
-            action,
-          ),
-        });
-        if (!result?.ok) return result;
-        if (descriptor.family === "research_tech" && result.tileId) {
-          workingRoot.rocketState.statusNote = result.message;
-          finalizeTechTakeResult?.(result);
-        }
-        if (descriptor.family === "analyze") {
-          recordAtomicActionHistory?.("analyze", ACTION_LOG_DEFAULT_LABELS.analyze, result, {
-            logBefore: actionLogBefore,
-          });
-          const startedRewardFlow = startAnalyzeDataRewardFlow?.(workingRoot);
-          if (startedRewardFlow) executeActionEffect?.(actionWorkingRoot, getCurrentActionEffect?.());
-          settleCardTasksAfterEffect?.({ events: result.events, render: false });
-          renderPlayerStats?.();
-          updateActionButtons?.();
-          renderStateReadout?.();
-        }
-        return result;
-      }
       if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
         return standardActionAdapter.execute(standardContext, descriptor);
       }
@@ -1049,37 +1021,6 @@
 
     return actions.createStandardAdapter({
       stage2Actions: {
-        scan: {
-          label: "扫描",
-          getOptions(actionContext) {
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const check = canStartMainAction(actionContext.workingRoot)
-              ? scanEffects.canExecuteScan(player, { standardAction: true })
-              : { ok: false, message: getMainActionStartBlockReason(actionContext.workingRoot) };
-            return check.ok ? { ok: true, choices: [{ target: { kind: "standard-scan" }, label: "扫描" }] } : check;
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
-        },
-        analyze: {
-          label: "分析",
-          getOptions(actionContext) {
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const check = canStartMainAction(actionContext.workingRoot)
-              ? canAnalyzeDataForPlayer(player)
-              : { ok: false, message: getMainActionStartBlockReason(actionContext.workingRoot) };
-            return check.ok ? {
-              ok: true,
-              choices: [{
-                target: { kind: "computer", requiredSlot: data.ANALYZE_REQUIRED_COMPUTER_SLOT },
-                payload: getAnalyzeActionOptionsForPlayer(player),
-                label: "分析",
-              }],
-            } : check;
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
-        },
         pass: {
           label: "PASS",
           getOptions(actionContext) {
@@ -1185,22 +1126,6 @@
                 label: action.label,
               }));
             return choices.length ? { ok: true, choices } : { ok: false, message: "没有可用弃牌角标" };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
-        placeData: {
-          label: "放置数据",
-          getOptions(actionContext) {
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const result = abilities.data.listPlacementChoices(player);
-            const choices = (result.choices || []).map((choice) => ({
-              target: { target: choice.target, blueSlot: choice.blueSlot ?? null },
-              label: choice.label || "放置数据",
-            }));
-            return result.ok && choices.length
-              ? { ok: true, choices }
-              : { ok: false, message: result.message || "没有数据放置目标" };
           },
           canExecute(actionContext) { return this.getOptions(actionContext); },
           execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },

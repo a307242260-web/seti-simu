@@ -82,6 +82,7 @@
       playerColor: options.playerColor || currentPlayer.color,
       playerLabel: options.playerLabel || currentPlayer.colorLabel,
       playerTokenSrc: getPlayerTokenSrc(context, currentPlayer, options),
+      ...(context.workingRoot ? { root: context.workingRoot } : {}),
     };
 
     if (!nextToken) {
