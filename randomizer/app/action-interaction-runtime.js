@@ -1,13 +1,15 @@
 (function (root, factory) {
   "use strict";
-  const api = factory();
+  let turnFlow = root.SetiTurnFlow;
+  if (!turnFlow && typeof require === "function") turnFlow = require("../game/turn-flow");
+  const api = factory(turnFlow);
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
   if (root) {
     root.SetiAppActionInteractionRuntime = api;
   }
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (turnFlow) {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
     "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
@@ -473,8 +475,7 @@
       if (!standardAction) {
         return { ...failWithStatus("移动 intent 已失效"), code: "STANDARD_ACTION_NOT_LEGAL" };
       }
-      if (!options.standardAction) return context.submitQuickAction(standardAction);
-      return context.beginMovePaymentSelection(deltaX, deltaY, selectedRocketId, { standardAction });
+      return context.submitQuickAction(standardAction);
     }
 
     return Object.freeze({
@@ -498,10 +499,11 @@
       const anomalyTriggers = [];
       const events = [];
       for (let index = 0; index < iterations; index += 1) {
-        const beforeRotation = structuredClone(workingSolarState.rotation);
-        workingSolarState.rotation = context.solar.applySolarOrbitRotation(workingSolarState.rotation, 1);
-        workingSolarState.wheelSteps = context.solar.rotationToWheelSteps(workingSolarState.rotation);
-        const settlement = context.settleRocketsAfterSolarRotation(workingRoot, beforeRotation, workingSolarState.rotation);
+        const settlement = turnFlow.rotateSolarSystem(
+          workingRoot,
+          1,
+          workingRoot.playerState?.currentPlayerId,
+        );
         if (settlement) {
           rotationSettlements.push(settlement);
           events.push(...(settlement.events || []));

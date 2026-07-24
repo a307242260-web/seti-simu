@@ -21,7 +21,6 @@ const industry = require("../game/industry");
 const aliens = require("../game/aliens");
 const finalScoring = require("../game/final-scoring");
 const actionHistory = require("../game/history/action-history");
-const turnFlowApi = require("../app/turn-flow");
 const initialCards = require("../game/initial-cards");
 const ai = require("../game/ai");
 const { createHeuristicPolicyAdapter } = require("./heuristic-policy-adapter");
@@ -30,6 +29,7 @@ const rocketAbility = require("../game/abilities/rocket");
 const planetAbility = require("../game/abilities/planet");
 const { createRuleComposition } = require("../game/rule-composition");
 const productionCompositionApi = require("../game/production-composition");
+const turnFlowApi = require("../game/turn-flow");
 
 const RULESET_VERSION = "seti-runtime-v1";
 const DEFAULT_FINAL_SCORE_IDS = Object.freeze(["a", "b", "c", "d"]);
@@ -973,147 +973,6 @@ function applyCornerReward(workingState, player, reward, source) {
   }
 }
 
-function getActionOwner(workingState, result) {
-  const ownerEvent = (result?.events || []).find((event) => event?.playerId || event?.playerColor) || {};
-  const playerId = result?.playerId || ownerEvent.playerId || null;
-  const playerColor = result?.playerColor || ownerEvent.playerColor || null;
-  return (workingState.playerState.players || []).find((player) => (
-    (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
-  )) || players.getCurrentPlayer(workingState.playerState);
-}
-
-function listAlienTraceChoices(workingState, pending) {
-  const traceType = pending?.traceType || null;
-  if (!traceType) return [];
-  return [1, 2].flatMap((alienSlotId) => {
-    const slot = aliens.getAlienSlot?.(workingState.alienGameState, alienSlotId);
-    const trace = slot?.traces?.[traceType];
-    if (!slot || (slot.revealed && !trace?.firstPlaced)) return [];
-    return [{
-      target: {
-        kind: "planet-reward-alien-trace",
-        choiceId: `${alienSlotId}:${traceType}`,
-        alienSlotId,
-        traceType,
-      },
-      payload: { alienSlotId, traceType },
-      summary: `外星人${alienSlotId}：${traceType}痕迹`,
-    }];
-  });
-}
-
-function applyAlienTraceChoice(workingState, pending, choice) {
-  const player = (workingState.playerState.players || [])
-    .find((candidate) => candidate.id === pending?.playerId);
-  const alienSlotId = Number(choice?.target?.alienSlotId);
-  const traceType = choice?.target?.traceType;
-  if (!player || !Number.isInteger(alienSlotId) || !traceType) {
-    return { ok: false, code: "PLANET_REWARD_TRACE_STALE", message: "行星奖励痕迹选择已失效" };
-  }
-  const placed = aliens.placeFirstTrace(
-    workingState.alienGameState,
-    alienSlotId,
-    traceType,
-    player.color,
-  );
-  if (!placed?.ok) return placed;
-  const firstYellowReward = !placed.extraOnly && traceType === "yellow"
-    ? {
-      gain: { publicity: 1 },
-      alienCard: {
-        id: `alien-trace-reward:${alienSlotId}:${player.id}`,
-        kind: "alien",
-        source: "first-yellow-trace",
-        alienSlotId,
-      },
-    }
-    : null;
-  if (firstYellowReward) {
-    players.gainResources(player, firstYellowReward.gain);
-    if (!Array.isArray(player.alienCards)) player.alienCards = [];
-    player.alienCards.push(firstYellowReward.alienCard);
-  }
-  let revealed = null;
-  if (placed.readyToReveal) {
-    const assignedAlienId = aliens.getAlienSlot?.(
-      workingState.alienGameState,
-      alienSlotId,
-    )?.assignedAlienId;
-    if (assignedAlienId) {
-      revealed = aliens.revealAlien(workingState.alienGameState, alienSlotId, assignedAlienId);
-    }
-  }
-  return {
-    ok: true,
-    progressed: true,
-    events: [{
-      type: "alienTracePlaced",
-      source: "planet_reward",
-      alienSlotId,
-      traceType,
-      playerId: player.id,
-      reward: clone(firstYellowReward || null),
-      revealed: revealed?.ok ? revealed.alienId : null,
-    }],
-  };
-}
-
-function applyPlanetRewardEffects(workingState, actionId, result, markerSequenceOverride = null) {
-  const player = getActionOwner(workingState, result);
-  if (!player) {
-    return { ok: false, code: "PLANET_REWARD_OWNER_MISSING", message: "行星奖励 owner 不存在" };
-  }
-  const rewardResult = markerSequenceOverride != null
-    ? {
-      ...result,
-      rewardMarkerSequence: markerSequenceOverride,
-    }
-    : result;
-  const effects = planetRewards.buildRewardEffectsForAction(actionId, rewardResult);
-  const events = [];
-  let pendingTrace = null;
-  for (const effect of effects) {
-    if (effect.type === planetRewards.EFFECT_TYPES.GAIN_RESOURCES) {
-      players.gainResources(player, effect.options?.gain || {});
-      events.push({
-        type: "planet_reward_resources",
-        playerId: player.id,
-        gain: clone(effect.options?.gain || {}),
-      });
-      continue;
-    }
-    if (effect.type === planetRewards.EFFECT_TYPES.GAIN_DATA) {
-      const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
-      const before = Number(player.resources?.availableData || 0);
-      players.gainResources(player, { availableData: count });
-      const gainedCount = Number(player.resources?.availableData || 0) - before;
-      for (let index = 0; index < count; index += 1) {
-        events.push({
-          type: index < gainedCount ? "planet_reward_data" : "planet_reward_data_discarded",
-          playerId: player.id,
-          availableDataAfter: Number(player.resources?.availableData || 0),
-        });
-      }
-      continue;
-    }
-    if (effect.type === planetRewards.EFFECT_TYPES.ALIEN_TRACE && !pendingTrace) {
-      pendingTrace = {
-        type: "planet_reward_alien_trace",
-        playerId: player.id,
-        traceType: effect.options?.traceType || null,
-        sourceActionId: result.actionId,
-      };
-      continue;
-    }
-    return {
-      ok: false,
-      code: "SIMULATION_PLANET_REWARD_UNSUPPORTED",
-      message: `Simulation composition 尚未接入${actionId}奖励效果 ${effect.type}`,
-    };
-  }
-  return { ok: true, events, pendingTrace };
-}
-
 function createSimulationRuleComposition(options = {}) {
   if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
   let composition;
@@ -1145,15 +1004,6 @@ function createSimulationRuleComposition(options = {}) {
       },
     };
   }
-  const turnFlow = turnFlowApi.createTurnFlowController({
-    cards,
-    industry,
-    finalRoundNumber: 5,
-    defaultActivePlayerCount: options.activePlayerCount || 4,
-    computePlayerFinalScoreBreakdown(_workingRoot, player) {
-      return { totalScore: Number(player?.resources?.score || 0) };
-    },
-  });
   const baseRegistry = actions.createStandardRegistry({
     getAuthority(workingState) {
       const root = workingState.workingRoot || workingState;
@@ -1185,128 +1035,28 @@ function createSimulationRuleComposition(options = {}) {
     execute(context, action) {
       const root = context.workingRoot || context;
       const before = root.match.decisionVersion || 0;
-      const landMarkerSequence = action.family === "land" && action.target?.type !== "satellite"
-        ? planetStats.getPlanetLandingCount(root.planetStatsState, action.target?.planetId) + 1
-        : null;
       const result = baseRegistry.execute(context, action);
-      if (result?.ok) {
-        if (action.family === "land" || action.family === "orbit") {
-          const reward = applyPlanetRewardEffects(root, action.family, result, landMarkerSequence);
-          if (!reward.ok) return reward;
-          result.events = [...(result.events || []), ...(reward.events || [])];
-          if (reward.pendingTrace) {
-            result.decisionEffect = createConditionalDecisionEffect(
-              root,
-              "planet_reward_alien_trace",
-              reward.pendingTrace,
-            );
-          }
-        }
-        if (action.family === "land" || action.family === "orbit") {
-          const player = players.getCurrentPlayer(root.playerState);
-          if (player) player.mainActionCompleted = true;
-        }
-        if ((root.match.decisionVersion || 0) === before) root.match.decisionVersion = before + 1;
+      if (result?.ok && (root.match.decisionVersion || 0) === before) {
+        root.match.decisionVersion = before + 1;
       }
       return result;
     },
   };
 
   registry.register({
-    family: "move",
-    enumerate(context) {
-      const root = context.workingRoot || context;
-      if (hasPendingContinuation(root)) return [];
-      const playerId = root.playerState.currentPlayerId;
-      const player = players.getCurrentPlayer(root.playerState);
-      if (player?.mainActionCompleted) return [];
-      const rocket = [...root.rocketState.rockets].reverse()
-        .find((candidate) => candidate.playerId === playerId && candidate.surface === "solar-board");
-      if (!rocket) return [];
-      return rocketAbility.listMoveRequirements(
-        createActionContext(root),
-        player,
-        rocket.id,
-      ).filter((direction) => (
-        productionProbeDirections(player, rockets.getRocketSectorCoordinate(rocket))
-          .some((allowed) => allowed.id === direction.id)
-      )).map((direction) => ({
-        target: { rocketId: rocket.id, deltaX: direction.deltaX, deltaY: direction.deltaY },
-        payload: {
-          requiredMovePoints: direction.requiredMovePoints,
-        },
-        summary: `移动火箭 ${rocket.id} ${direction.id}`,
-      })).filter((candidate) => (
-        Number(player.resources?.energy || 0) >= candidate.payload.requiredMovePoints
-      ));
-    },
-    validate(context, action) {
-      return this.enumerate(context).some((candidate) => candidate.target.rocketId === action.target?.rocketId)
-        ? { ok: true } : { ok: false, code: "MOVE_STALE", message: "移动行动已失效" };
-    },
-    execute(context, action) {
-      const root = context.workingRoot || context;
-      root.match.pendingDecision = {
-        kind: "move_payment",
-        type: "move-payment", playerId: root.playerState.currentPlayerId,
-        rocketId: action.target.rocketId, deltaX: action.target.deltaX, deltaY: action.target.deltaY,
-        requiredMovePoints: action.payload?.requiredMovePoints || 1,
-      };
-      return { ok: true, progressed: true, events: [{ type: "move_payment_requested" }] };
-    },
-  });
-
-  registry.register({
     family: "choose_payment",
     enumerate(context) {
       const root = context.workingRoot || context;
-      const pendingMove = root.match.pendingDecision?.kind === "move_payment"
-        ? root.match.pendingDecision : null;
-      if (pendingMove) {
-        const player = root.playerState.players.find((candidate) => candidate.id === pendingMove.playerId);
-        return Number(player?.resources?.energy || 0) >= pendingMove.requiredMovePoints
-          ? [{
-            target: { kind: "move-payment", choiceId: "energy" },
-            payload: { selectedHandIndices: [] },
-            summary: `消耗 ${pendingMove.requiredMovePoints} 能量`,
-          }]
-          : [];
-      }
       return discardChoices(root);
     },
     validate(context, action) {
       const root = context.workingRoot || context;
-      const candidates = root.match.pendingDecision?.kind === "move_payment"
-        ? [{ target: { choiceId: "energy" } }]
-        : discardChoices(root);
-      return candidates.some((choice) => choice.target.choiceId === action.target?.choiceId)
+      return discardChoices(root).some((choice) => choice.target.choiceId === action.target?.choiceId)
         ? { ok: true }
         : { ok: false, code: "SIMULATION_DISCARD_STALE", message: "opening 弃牌选择已失效" };
     },
     execute(context, action) {
       const workingState = context.workingRoot || context;
-      const pendingMove = workingState.match.pendingDecision?.kind === "move_payment"
-        ? workingState.match.pendingDecision : null;
-      if (pendingMove) {
-        const player = workingState.playerState.players.find((candidate) => candidate.id === pendingMove.playerId);
-        const moved = rocketAbility.moveProbe(createActionContext(workingState), {
-          rocketId: pendingMove.rocketId,
-          deltaX: pendingMove.deltaX,
-          deltaY: pendingMove.deltaY,
-          cost: { energy: pendingMove.requiredMovePoints },
-          providedMovePoints: pendingMove.requiredMovePoints,
-          source: "move",
-        });
-        if (!moved.ok) return moved;
-        delete workingState.match.pendingDecision;
-        return {
-          ok: true,
-          progressed: true,
-          events: moved.events?.length
-            ? moved.events
-            : [{ type: "move", rocketId: pendingMove.rocketId }],
-        };
-      }
       const pending = workingState.match.pendingDecision?.kind === "discard"
         ? workingState.match.pendingDecision : null;
       const player = workingState.playerState.players.find((candidate) => candidate.id === pending?.playerId);
@@ -1497,9 +1247,6 @@ function createSimulationRuleComposition(options = {}) {
           summary: `研究科技 ${tileId}`,
           }));
       }
-      if (sessionDecision?.kind === "planet_reward_alien_trace") {
-        return listAlienTraceChoices(root, sessionDecision.pending);
-      }
       return [];
     },
     validate(context, action) {
@@ -1522,12 +1269,7 @@ function createSimulationRuleComposition(options = {}) {
       const root = context.workingRoot || context;
       const pending = root.match.pendingDecision;
       if (pending?.kind === "card_selection") return listCardSelectionChoices(root, pending);
-      if (pending?.kind !== "pass_reserve") return [];
-      return cards.getPassReservePile(root.cardState, pending.roundNumber).map((card) => ({
-        target: { kind: "pass-reserve-card", choiceId: card.id, cardId: card.cardId || card.id || null },
-        payload: { cardInstanceId: card.id },
-        summary: cards.getCardLabel(card),
-      }));
+      return [];
     },
     validate(context, action) {
       return this.enumerate(context).some((candidate) => candidate.target.choiceId === action.target?.choiceId)
@@ -1570,14 +1312,7 @@ function createSimulationRuleComposition(options = {}) {
           }],
         };
       }
-      const pending = root.match.pendingDecision?.kind === "pass_reserve"
-        ? root.match.pendingDecision : null;
-      const player = root.playerState.players.find((candidate) => candidate.id === pending?.playerId);
-      const result = cards.pickPassReserveCard(root.cardState, player, pending.roundNumber, action.target.choiceId);
-      if (!result.ok) return result;
-      delete root.match.pendingDecision;
-      player.passCompletionPending = true;
-      return { ok: true, progressed: true, events: [{ type: "pass_reserve_pick", playerId: player.id }] };
+      return { ok: false, code: "SIMULATION_CARD_SELECTION_STALE", message: "卡牌选择已失效" };
     },
   });
 
@@ -1597,98 +1332,6 @@ function createSimulationRuleComposition(options = {}) {
         code: "STANDARD_ACTION_NOT_LEGAL",
         message: "奖励选择必须由当前 Effect Session Decision 提交",
       };
-    },
-  });
-
-  registry.register({
-    family: "end_turn",
-    enumerate(context) {
-      const root = context.workingRoot || context;
-      const player = players.getCurrentPlayer(root.playerState);
-      return player?.passCompletionPending && !hasPendingContinuation(root)
-        ? [{ target: { kind: "end-turn" }, summary: "结束回合" }]
-        : [];
-    },
-    validate(context, action) {
-      return this.enumerate(context).some((candidate) => candidate.target.kind === action.target?.kind)
-        ? { ok: true } : { ok: false, code: "END_TURN_STALE", message: "结束回合已失效" };
-    },
-    execute(context) {
-      const root = context.workingRoot || context;
-      const player = players.getCurrentPlayer(root.playerState);
-      player.passCompletionPending = false;
-      const income = player.income || players.DEFAULT_INCOME;
-      players.gainResources(player, {
-        credits: income.credits || 0,
-        energy: income.energy || 0,
-        publicity: income.publicity || 0,
-        availableData: income.availableData || 0,
-        additionalPublicScan: income.additionalPublicScan || 0,
-      });
-      for (let index = 0; index < Math.max(0, Math.round(Number(income.handSize) || 0)); index += 1) {
-        cards.blindDraw(root.cardState, root.playerState, player, options.random, {
-          createCardInstance: (entry, sequence) => (
-            cards.createCommittedCardInstance(root, entry, sequence)
-          ),
-        });
-      }
-      const companyLabel = player.initialSelection?.industry?.label || null;
-      if (companyLabel === "图灵系统") players.gainResources(player, { publicity: 2 });
-      if (companyLabel === "层云核心") players.gainResources(player, { publicity: 1 });
-      const transition = turnFlow.advanceTurnAfterPlayerAction(root, player.id, { passed: true });
-      const nextPlayer = root.playerState.players
-        .find((candidate) => candidate.id === transition.nextPlayerId);
-      if (nextPlayer) {
-        nextPlayer.mainActionCompleted = false;
-      }
-      return {
-        ok: true,
-        progressed: true,
-        events: [{
-          type: "end_turn",
-          playerId: player.id,
-          roundAdvanced: Boolean(transition.roundAdvanced),
-          gameEnded: Boolean(transition.gameEnded),
-        }],
-      };
-    },
-  });
-
-  registry.register({
-    family: "pass",
-    enumerate(context) {
-      const workingState = context.workingRoot || context;
-      const playerId = workingState.playerState.currentPlayerId;
-      return hasPendingContinuation(workingState)
-        || workingState.turnState.passedPlayerIds.includes(playerId)
-        ? [] : [{ target: { kind: "pass" }, summary: "PASS" }];
-    },
-    validate() { return { ok: true }; },
-    execute(context) {
-      const workingState = context.workingRoot || context;
-      const playerId = workingState.playerState.currentPlayerId;
-      if (!(workingState.turnState.passedPlayerIds || []).length) {
-        const beforeRotation = clone(workingState.solarState.rotation);
-        workingState.solarState.rotation = solar.applySolarOrbitRotation(workingState.solarState.rotation, 1);
-        workingState.solarState.wheelSteps = solar.rotationToWheelSteps(workingState.solarState.rotation);
-        rocketAbility.settleRocketsAfterSolarRotation(
-          workingState,
-          beforeRotation,
-          workingState.solarState.rotation,
-        );
-      }
-      if (!workingState.turnState.passedPlayerIds.includes(playerId)) workingState.turnState.passedPlayerIds.push(playerId);
-      const reserve = cards.getPassReservePile(workingState.cardState, workingState.turnState.roundNumber);
-      if (reserve.length) {
-        workingState.match.pendingDecision = {
-          kind: "pass_reserve",
-          type: "pass-reserve-pick", playerId, roundNumber: workingState.turnState.roundNumber,
-        };
-      } else {
-        const player = workingState.playerState.players.find((candidate) => candidate.id === playerId);
-        if (player) player.passCompletionPending = true;
-      }
-      return { ok: true, progressed: true, events: [{ type: "pass", playerId }] };
     },
   });
 
@@ -1805,13 +1448,6 @@ function createSimulationRuleComposition(options = {}) {
     },
     resolveDecision(_workingState, choice, resolutionContext = {}) {
       _workingState = _workingState.workingRoot || _workingState;
-      if (resolutionContext.decisionContext?.kind === "planet_reward_alien_trace") {
-        return applyAlienTraceChoice(
-          _workingState,
-          resolutionContext.decisionContext.pending,
-          choice,
-        );
-      }
       if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
         const moved = rockets.moveRocket(
           _workingState.rocketState,

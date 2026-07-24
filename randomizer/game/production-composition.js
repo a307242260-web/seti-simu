@@ -5,15 +5,17 @@
   let standardActionSession = root.SetiStandardActionSession;
   let cardPlayDomain = root.SetiCardPlayDomain;
   let scienceSession = root.SetiScienceSession;
-  if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession)
+  let probeTurnSession = root.SetiProbeTurnSession;
+  if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession || !probeTurnSession)
     && typeof require === "function") {
     standardAction = standardAction || require("./actions/standard-action");
     standardActionSession = standardActionSession || require("./effects/standard-action-session");
     cardPlayDomain = cardPlayDomain || require("./cards/play-domain");
     scienceSession = scienceSession || require("./effects/science-session");
+    probeTurnSession = probeTurnSession || require("./effects/probe-turn-session");
   }
 
-  const api = factory(standardAction, standardActionSession, cardPlayDomain, scienceSession);
+  const api = factory(standardAction, standardActionSession, cardPlayDomain, scienceSession, probeTurnSession);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -21,6 +23,7 @@
   standardActionSession,
   cardPlayDomain,
   scienceSession,
+  probeTurnSession,
 ) {
   "use strict";
 
@@ -72,12 +75,18 @@
       "quick_trade",
       "play_card",
       ...scienceSession.ACTION_FAMILIES,
+      ...probeTurnSession.ACTION_FAMILIES,
     ]);
     const standardFamilies = standardAction.ALL_FAMILIES
-      .filter((family) => !["play_card", ...scienceSession.ACTION_FAMILIES].includes(family));
+      .filter((family) => ![
+        "play_card",
+        ...scienceSession.ACTION_FAMILIES,
+        ...probeTurnSession.ACTION_FAMILIES,
+      ].includes(family));
     claimFamilies("standard_action", standardFamilies);
     claimFamilies(cardPlayDomain.DOMAIN_ID, cardPlayDomain.ACTION_FAMILIES);
     claimFamilies(scienceSession.DOMAIN_ID, scienceSession.ACTION_FAMILIES);
+    claimFamilies(probeTurnSession.DOMAIN_ID, probeTurnSession.ACTION_FAMILIES);
     for (const descriptor of options.additionalDomains || []) {
       claimFamilies(descriptor?.id || "host_domain", descriptor?.families || []);
     }
@@ -157,6 +166,9 @@
     for (const definition of scienceSession.createActionDefinitions()) {
       ownedRegistry.register(definition);
     }
+    for (const definition of probeTurnSession.createActionDefinitions()) {
+      ownedRegistry.register(definition);
+    }
     const requireSource = () => {
       const source = options.getStandardActionSource();
       if (typeof source?.enumerate !== "function"
@@ -185,8 +197,11 @@
         const scienceActions = scienceSession.ACTION_FAMILIES.flatMap(
           (family) => ownedRegistry.enumerate(context, { ...request, family }),
         );
+        const probeTurnActions = probeTurnSession.ACTION_FAMILIES.flatMap(
+          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+        );
         const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
-        for (const action of [...legacy, ...quickActions, ...playActions, ...scienceActions]) {
+        for (const action of [...legacy, ...quickActions, ...playActions, ...scienceActions, ...probeTurnActions]) {
           byFamily.get(action.family)?.push(action);
         }
         return standardAction.ALL_FAMILIES.flatMap((family) => byFamily.get(family));
@@ -233,6 +248,9 @@
         for (const family of scienceSession.ACTION_FAMILIES) {
           byFamily.set(family, ownedRegistry.coverage().find((entry) => entry.family === family));
         }
+        for (const family of probeTurnSession.ACTION_FAMILIES) {
+          byFamily.set(family, ownedRegistry.coverage().find((entry) => entry.family === family));
+        }
         return standardAction.ALL_FAMILIES.map((family) => (
           byFamily.get(family) || {
             family,
@@ -262,10 +280,16 @@
       families: scienceSession.ACTION_FAMILIES,
       create: scienceSession.createScienceDomain,
     });
+    const probeTurnDomain = Object.freeze({
+      id: probeTurnSession.DOMAIN_ID,
+      families: probeTurnSession.ACTION_FAMILIES,
+      create: probeTurnSession.createProbeTurnDomain,
+    });
     const effectDomains = Object.freeze([
       standardDomain,
       cardDomain,
       scienceDomain,
+      probeTurnDomain,
       ...(options.additionalDomains || []),
     ]);
     return Object.freeze({
@@ -280,6 +304,12 @@
         place_data: scienceSession.EXECUTOR_ID,
         analyze: scienceSession.EXECUTOR_ID,
         research_tech: scienceSession.EXECUTOR_ID,
+        launch: probeTurnSession.EXECUTOR_ID,
+        move: probeTurnSession.EXECUTOR_ID,
+        orbit: probeTurnSession.EXECUTOR_ID,
+        land: probeTurnSession.EXECUTOR_ID,
+        pass: probeTurnSession.EXECUTOR_ID,
+        end_turn: probeTurnSession.EXECUTOR_ID,
         legacy: "host_input_source",
       }),
       actionExecutorOwners: Object.freeze({
@@ -289,6 +319,12 @@
         place_data: scienceSession.EXECUTOR_ID,
         analyze: scienceSession.EXECUTOR_ID,
         research_tech: scienceSession.EXECUTOR_ID,
+        launch: probeTurnSession.EXECUTOR_ID,
+        move: probeTurnSession.EXECUTOR_ID,
+        orbit: probeTurnSession.EXECUTOR_ID,
+        land: probeTurnSession.EXECUTOR_ID,
+        pass: probeTurnSession.EXECUTOR_ID,
+        end_turn: probeTurnSession.EXECUTOR_ID,
       }),
     });
   }

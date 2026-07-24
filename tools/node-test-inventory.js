@@ -19,6 +19,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/effects/quick-action-session.test.js", "architecture/effect-session", "快速行动 continuation 由 Session 串行推进", "快速行动失败后遗留 working mutation"),
     entry("randomizer/game/effects/research-tech-session.test.js", "architecture/effect-session", "科技选择与蓝槽选择共享一个 Decision owner", "旧科技选择在新 decisionVersion 执行"),
     entry("randomizer/game/effects/scan-card-session.test.js", "architecture/effect-session", "扫描卡牌链通过 Effect Session 有序提交", "扫描多选被静默取首项"),
+    entry("randomizer/game/effects/probe-turn-session.test.js", "architecture/effect-session", "探测器、PASS 与纯回合推进只编排正式规则和跨域 handoff", "公司、收入、外星人或卡牌语义在 probe_turn 内执行或越过 handoff 先推进回合"),
     entry("randomizer/game/effects/industry-alien-session.test.js", "architecture/effect-session", "公司与外星人 continuation 共用 session journal", "机会队列或 followup 绕过 session owner"),
 
     entry("randomizer/game/state/state-store.test.js", "architecture/state-store", "StateStore 快照隔离、版本单调与 CAS", "修改只读快照或旧版本提交污染权威状态"),

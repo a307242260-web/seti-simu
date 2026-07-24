@@ -14,7 +14,6 @@
   const REQUIRED_GLOBALS = Object.freeze([
     Object.freeze({ key: "alienTraceRewardFlow", globalName: "SetiAppAlienTraceRewardFlow" }),
     Object.freeze({ key: "actionRuntimeModule", globalName: "SetiAppActionRuntime" }),
-    Object.freeze({ key: "primaryBoardActionExecutorModule", globalName: "SetiPrimaryBoardActionExecutor" }),
     Object.freeze({ key: "quickTurnActionExecutorModule", globalName: "SetiQuickTurnActionExecutor" }),
     Object.freeze({ key: "conditionalDecisionDomainModule", globalName: "SetiConditionalDecisionDomain" }),
     Object.freeze({ key: "conditionalActionExecutorModule", globalName: "SetiConditionalActionExecutor" }),

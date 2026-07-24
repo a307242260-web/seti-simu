@@ -484,7 +484,7 @@
         choices.push(makeChoice(
           "choose_target",
           `trace:${alienSlotId}:${traceType}`,
-          { alienSlotId, traceType },
+          { kind: "planet-reward-alien-trace", alienSlotId, traceType },
           {},
           `${aliens.getAlienSlotLabel(alienSlotId)} ${aliens.getTraceTypeLabel(traceType)}`,
         ));
@@ -506,7 +506,7 @@
         if (check?.ok) choices.push(makeChoice(
           "choose_target",
           `trace:${alienSlotId}:${traceType}:${species.speciesId}:${position}`,
-          { alienSlotId, traceType, speciesId: species.speciesId, position },
+          { kind: "planet-reward-alien-trace", alienSlotId, traceType, speciesId: species.speciesId, position },
           {},
           `${aliens.getAlienSlotLabel(alienSlotId)} ${position}`,
         ));
@@ -523,12 +523,23 @@
     if (!actor || !legal) return fail("SCIENCE_TRACE_CHOICE_STALE", "外星人痕迹选择已失效");
     const slot = aliens.getAlienSlot(alienState, legal.target.alienSlotId);
     if (!slot?.traces?.[legal.target.traceType]?.firstPlaced) {
-      return aliens.placeFirstTrace(
+      const placed = aliens.placeFirstTrace(
         alienState,
         legal.target.alienSlotId,
         legal.target.traceType,
         actor.color,
       );
+      if (placed?.ok && !placed.extraOnly && legal.target.traceType === "yellow") {
+        players.gainResources(actor, { publicity: 1 });
+        if (!Array.isArray(actor.alienCards)) actor.alienCards = [];
+        actor.alienCards.push({
+          id: `alien-trace-reward:${legal.target.alienSlotId}:${actor.id}`,
+          kind: "alien",
+          source: "first-yellow-trace",
+          alienSlotId: legal.target.alienSlotId,
+        });
+      }
+      return placed;
     }
     if (!slot.revealed) {
       return aliens.addExtraTrace(
@@ -814,6 +825,7 @@
         const root = getWorkingRoot(state, workingContext);
         return formalizeChoices(root, effect.ownerId, listNebulaChoices(root, {
           sectorX: effect.payload?.sectorX,
+          nebulaIds: effect.payload?.nebulaIds,
           gainData: effect.payload?.gainData,
         }));
       },
@@ -1120,9 +1132,13 @@
         const actor = getActor(root, effect.ownerId);
         const legal = listIncomeChoices(root, effect.ownerId)
           .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
-        const card = actor?.hand?.find((entry) => entry.id === legal?.target?.cardInstanceId);
+        const handIndex = actor?.hand?.findIndex((entry) => entry.id === legal?.target?.cardInstanceId) ?? -1;
+        const card = handIndex >= 0 ? actor.hand[handIndex] : null;
         if (!actor || !card) return fail("SCIENCE_INCOME_STALE", "收入选择已失效");
         const gain = cards.getIncomeGainForCard(card);
+        const discarded = cards.discardFromHandAtIndex(actor, handIndex);
+        if (!discarded.ok) return discarded;
+        cards.addToDiscardPile(getSlice(root, "cardState", "cards"), discarded.card);
         const result = players.gainIncome(actor, gain, {
           blindDraw: (target) => cards.blindDraw(
             getSlice(root, "cardState", "cards"),
@@ -1188,11 +1204,12 @@
     runtime.registerExecutor(EFFECT_TYPES.ALIEN_TRACE, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        return formalizeChoices(root, effect.ownerId, listAlienTraceChoices(
-          root,
-          effect.ownerId,
-          effect.payload?.traceType,
-        ));
+        const traceTypes = effect.payload?.traceType
+          ? [effect.payload.traceType]
+          : (aliens.TRACE_TYPES || ["pink", "yellow", "blue"]);
+        return formalizeChoices(root, effect.ownerId, traceTypes.flatMap((traceType) => (
+          listAlienTraceChoices(root, effect.ownerId, traceType)
+        )));
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);

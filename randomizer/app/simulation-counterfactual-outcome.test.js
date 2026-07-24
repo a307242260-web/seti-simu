@@ -233,7 +233,9 @@ try {
     environment.reset({ seed: "seti-104-official-v1", activePlayerCount: 4 });
     const { checkpoint, playerId } = createSaturnApproachCheckpoint(environment);
     environment.loadCheckpoint(checkpoint);
-    const move = environment.legalActions().find((action) => action.family === "move");
+    const move = environment.legalActions().find((action) => (
+      action.family === "move" && action.target?.deltaX === -1 && action.target?.deltaY === 0
+    ));
     assert.ok(move, "土星相邻格必须能枚举标准移动");
     const publicityBefore = environment.observe(playerId).publicState.players
       .find((candidate) => candidate.playerId === playerId).publicity;

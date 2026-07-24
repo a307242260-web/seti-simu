@@ -11,15 +11,7 @@
   "use strict";
   function createActionOwnerInputPorts(registry, context = {}) {
     return Object.freeze({
-      primaryBoard: registry.register("primary_board", {
-        execute: (workingRoot, command) => context.clonePresentation(
-          context.executePrimaryBoardAction(
-            context.createActionContext(workingRoot, command.descriptor),
-            command.descriptor,
-            command.executionOptions,
-            command.options,
-          ),
-        ),
+      probeQuery: registry.register("probe_query", {
         getRequiredMovePoints: (workingRoot, command) => ({
           ok: true,
           value: context.getRequiredMovePoints(workingRoot, ...(command.args || [])),
@@ -284,7 +276,6 @@
       createActionLogImpactSnapshot,
       abilities,
       createActionContext,
-      primaryBoardActionExecutor,
       quickTurnActionExecutor,
       conditionalActionExecutor,
       actions,
@@ -313,14 +304,11 @@
       landForCurrentPlayer,
       moveRocket,
       analyzeDataForCurrentPlayer,
-      passForCurrentPlayer,
-      endCurrentTurn,
       blockManualAiPendingInputIfNeeded,
       getCurrentActionEffectIndex,
       confirmDataPlacement,
       standardActionAdapter,
     } = context;
-    const PRIMARY_BOARD_FAMILIES = new Set(primaryBoardActionExecutor?.actionFamilies || []);
     const QUICK_TURN_ACTION_FAMILIES = new Set(quickTurnActionExecutor?.actionFamilies || []);
     const CONDITIONAL_ACTION_FAMILIES = new Set(conditionalActionExecutor?.actionFamilies || []);
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
@@ -696,45 +684,7 @@
           ),
         });
       }
-      if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
-        return standardActionAdapter.execute(standardContext, descriptor);
-      }
-      if (descriptor.family === "move") {
-        const validation = standardActionAdapter.validate(standardContext, descriptor);
-        if (!validation?.ok) return validation;
-        return moveRocket?.(
-          descriptor.target?.deltaX,
-          descriptor.target?.deltaY,
-          descriptor.target?.rocketId,
-          { automated: true, standardAction: descriptor },
-        ) || { ok: false, code: "PRIMARY_BOARD_MOVE_CALLER_MISSING", message: "移动 caller 未装配" };
-      }
-      return executePrimaryBoardAction(standardContext, descriptor, executionOptions);
-    }
-
-    function executePrimaryBoardAction(standardContext, descriptor, executionOptions = null, options = {}) {
-      if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
-        return { ok: false, code: "PRIMARY_BOARD_FAMILY_INVALID", message: `非 Primary Board family: ${descriptor?.family || "<missing>"}` };
-      }
-      return primaryBoardActionExecutor.execute(getExecutionWorkingRoot(standardContext), descriptor, {
-        ...(options.skipValidation ? {} : { validate: standardActionAdapter.validate }),
-        executionOptions,
-      });
-    }
-
-    function resolvePrimaryBoardDescriptor(actionId, actionOptions = {}) {
-      const selector = actionId === "land"
-        ? {
-          ...(actionOptions?.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }),
-          ...(actionOptions?.target?.type ? { type: actionOptions.target.type } : {}),
-          ...(actionOptions?.target?.satelliteId ? { satelliteId: actionOptions.target.satelliteId } : {}),
-        }
-        : (actionOptions?.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) });
-      const standardContext = createActionContext();
-      const resolved = standardActionAdapter.resolveIntent(standardContext, actionId, selector);
-      return resolved.ok
-        ? { ok: true, result: executeStandardDescriptor(standardContext, resolved.action) }
-        : resolved;
+      return standardActionAdapter.execute(standardContext, descriptor);
     }
 
     function runAction(actionId, actionOptions) {
@@ -775,12 +725,7 @@
         : cleanActionOptions;
       const actionContext = requestedActionContext;
       const actionLogBefore = createActionLogImpactSnapshot?.();
-      const primaryExecution = PRIMARY_BOARD_FAMILIES.has(actionId) && actionId !== "move"
-        ? resolvePrimaryBoardDescriptor(actionId, resolvedActionOptions)
-        : null;
-      const result = primaryExecution
-        ? (primaryExecution.ok ? primaryExecution.result : primaryExecution)
-        : abilityId
+      const result = abilityId
         ? abilities.executeAbility(abilityId, actionContext, resolvedActionOptions)
         : actionId === "researchTech"
           ? abilities.executeAbility("researchTechPrepare", actionContext, resolvedActionOptions)
@@ -979,7 +924,6 @@
       handleInitialSelectionCardClick,
       confirmInitialSelectionForCurrentPlayer,
       runAction,
-      executePrimaryBoardAction,
       executeStandardDescriptor,
       handleActionEffectButtonClick,
       dispatchAction,

@@ -191,10 +191,6 @@
       createActionContext: hostPort.createActionContext,
       recordAbilityCommands: effectHistoryPort?.recordAbilityCommands,
       recordQuickHistoryCommand: effectFlowRuntime?.recordQuickHistoryCommand,
-      executePrimaryBoardAction: (...args) => action("executePrimaryBoardAction")(
-        hostPort.createActionContext(args[0], args[1]),
-        ...args.slice(1),
-      ),
       renderRocketElement: renderRuntime?.renderRocketElement,
       clearMoveRocketHighlight: actionInteraction("clearMoveRocketHighlight"),
       beginQuickActionStep: effectFlowRuntime?.beginQuickActionStep,
@@ -316,7 +312,6 @@
       executeCardEffectMove,
       createActionContext,
       recordAbilityCommands,
-      executePrimaryBoardAction,
       renderRocketElement,
       clearMoveRocketHighlight,
       beginQuickActionStep,
@@ -830,14 +825,12 @@
         return moveCheck;
       }
 
-      const moveResult = pending.standardAction && typeof executePrimaryBoardAction === "function"
-        ? executePrimaryBoardAction(workingRoot, pending.standardAction, moveOptions, { skipValidation: true })
-        : abilities.executeAbility("moveProbe", createActionContext(workingRoot), {
-          ...moveOptions,
-          rocketId: pending.rocketId,
-          deltaX: pending.deltaX,
-          deltaY: pending.deltaY,
-        });
+      const moveResult = abilities.executeAbility("moveProbe", createActionContext(workingRoot), {
+        ...moveOptions,
+        rocketId: pending.rocketId,
+        deltaX: pending.deltaX,
+        deltaY: pending.deltaY,
+      });
       if (!moveResult.ok && discardCommand) {
         if (pending.standardAction) {
           const restoredPlayer = players.getCurrentPlayer(workingRoot.playerState);

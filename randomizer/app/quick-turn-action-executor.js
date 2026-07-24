@@ -8,7 +8,7 @@
   "use strict";
 
   const ACTION_FAMILIES = Object.freeze([
-    "industry", "card_corner", "runezu_face_symbol", "pass", "end_turn",
+    "industry", "card_corner", "runezu_face_symbol",
   ]);
 
   function clone(value) {
@@ -60,8 +60,6 @@
       industry: options.executeIndustry,
       card_corner: options.executeCardCorner,
       runezu_face_symbol: options.executeRunezuFaceSymbol,
-      pass: options.executePass,
-      end_turn: options.executeEndTurn,
     };
     for (const family of ACTION_FAMILIES) {
       if (typeof handlers[family] !== "function") {

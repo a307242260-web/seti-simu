@@ -1,13 +1,17 @@
 (function (root, factory) {
   "use strict";
-  const api = factory();
+  let productionTurnFlow = root.SetiTurnFlow;
+  if (!productionTurnFlow && typeof require === "function") {
+    productionTurnFlow = require("../game/turn-flow");
+  }
+  const api = factory(productionTurnFlow);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppTurnFlow = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (productionTurnFlow) {
   "use strict";
   function createTurnOwnerInputPort(registry, context = {}) {
     return registry.register("turn", {
@@ -61,31 +65,7 @@
 
 
   function createTurnState(sourcePlayers, options = {}) {
-    const playerIds = (Array.isArray(sourcePlayers) ? sourcePlayers : [])
-      .map((player) => player?.id)
-      .filter(Boolean);
-    const requestedCount = Math.max(1, Math.round(Number(options.activePlayerCount) || 1));
-    const activePlayerCount = Math.min(requestedCount, playerIds.length || 1);
-    const currentPlayerId = playerIds.includes(options.currentPlayerId) ? options.currentPlayerId : playerIds[0];
-    const activePlayerIds = activePlayerCount === 1 && currentPlayerId
-      ? [currentPlayerId]
-      : playerIds.slice(0, activePlayerCount);
-
-    return {
-      roundNumber: 1,
-      turnNumber: 1,
-      actionCycleNumber: 1,
-      activePlayerCount,
-      turnOrderPlayerIds: playerIds,
-      activePlayerIds,
-      startPlayerId: activePlayerIds[0] || currentPlayerId || null,
-      passedPlayerIds: [],
-      completedTurnPlayerIds: [],
-      cardTurnEventBonuses: [],
-      visitedPlanetsByPlayerId: {},
-      gameEnded: false,
-      gameEndReason: null,
-    };
+    return productionTurnFlow.createTurnState(sourcePlayers, options);
   }
 
   function rotatePlayerIds(playerIds, startPlayerId) {
@@ -624,27 +604,7 @@
 
     function beginNextRound(workingRoot) {
       requireWorkingRoot(workingRoot);
-      const { cardState, playerState, turnState } = workingRoot;
-      cards.discardUnusedPassReserveCards(cardState, turnState.roundNumber);
-      industry?.resetAllRoundIndustryRuntimeState?.(playerState.players);
-      turnState.roundNumber += 1;
-      turnState.turnNumber = 1;
-      turnState.actionCycleNumber = 1;
-      turnState.passedPlayerIds = [];
-      turnState.completedTurnPlayerIds = [];
-      turnState.cardTurnEventBonuses = [];
-      turnState.visitedPlanetsByPlayerId = {};
-      const activeOrderedIds = getActiveOrderedPlayerIds(turnState);
-      let nextStartPlayerId = null;
-      if (activeOrderedIds.length) {
-        const currentStartIndex = activeOrderedIds.includes(turnState.startPlayerId)
-          ? activeOrderedIds.indexOf(turnState.startPlayerId)
-          : 0;
-        turnState.startPlayerId = activeOrderedIds[(currentStartIndex + 1) % activeOrderedIds.length];
-        nextStartPlayerId = turnState.startPlayerId;
-      }
-      playerState.currentPlayerId = nextStartPlayerId || turnState.activePlayerIds[0] || playerState.currentPlayerId;
-      return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: playerState.currentPlayerId };
+      return productionTurnFlow.beginNextRound(workingRoot);
     }
 
     function getDisplayedTurnNumber(workingRoot, rawTurnNumber = workingRoot?.turnState?.turnNumber) {
@@ -668,124 +628,19 @@
 
     function advanceTurnAfterPlayerAction(workingRoot, playerId, options = {}) {
       requireWorkingRoot(workingRoot);
-      const actionTurnState = workingRoot.turnState;
-      const actionPlayerState = workingRoot.playerState;
-      const actionCardState = workingRoot.cardState;
-      const isPassed = (id) => (actionTurnState.passedPlayerIds || []).includes(id);
-      const isCompleted = (id) => (actionTurnState.completedTurnPlayerIds || []).includes(id);
-      const roundOrder = () => getRoundOrderPlayerIds(actionTurnState);
-      const displayedTurnNumber = (rawTurnNumber = actionTurnState.turnNumber) => {
-        const activePlayerCount = Math.max(
-          1,
-          (actionTurnState.activePlayerIds || []).length
-            || Math.round(Number(actionTurnState.activePlayerCount) || 0)
-            || defaultActivePlayerCount,
-        );
-        return Math.floor((Math.max(1, Math.round(Number(rawTurnNumber) || 1)) - 1) / activePlayerCount) + 1;
-      };
-      const actionCycleNumber = () => {
-        const value = Math.max(1, Math.round(Number(actionTurnState.actionCycleNumber) || 1));
-        if (actionTurnState.actionCycleNumber !== value) actionTurnState.actionCycleNumber = value;
-        return value;
-      };
-      const allPassed = () => (actionTurnState.activePlayerIds || []).length > 0
-        && actionTurnState.activePlayerIds.every(isPassed);
-      const nextEligible = (afterPlayerId) => {
-        const order = roundOrder();
-        if (!order.length) return null;
-        const startIndex = order.includes(afterPlayerId) ? order.indexOf(afterPlayerId) : -1;
-        for (let offset = 1; offset <= order.length; offset += 1) {
-          const id = order[(startIndex + offset + order.length) % order.length];
-          if (!isPassed(id) && !isCompleted(id)) return id;
-        }
-        return null;
-      };
-      const firstEligible = () => roundOrder().find((id) => !isPassed(id)) || null;
-      const beginActionNextRound = () => {
-        cards.discardUnusedPassReserveCards(actionCardState, actionTurnState.roundNumber);
-        industry?.resetAllRoundIndustryRuntimeState?.(actionPlayerState.players);
-        actionTurnState.roundNumber += 1;
-        actionTurnState.turnNumber = 1;
-        actionTurnState.actionCycleNumber = 1;
-        actionTurnState.passedPlayerIds = [];
-        actionTurnState.completedTurnPlayerIds = [];
-        actionTurnState.cardTurnEventBonuses = [];
-        actionTurnState.visitedPlanetsByPlayerId = {};
-        const activeIds = getActiveOrderedPlayerIds(actionTurnState);
-        if (activeIds.length) {
-          const startIndex = activeIds.includes(actionTurnState.startPlayerId)
-            ? activeIds.indexOf(actionTurnState.startPlayerId)
-            : 0;
-          actionTurnState.startPlayerId = activeIds[(startIndex + 1) % activeIds.length];
-        }
-        actionPlayerState.currentPlayerId = actionTurnState.startPlayerId
-          || actionTurnState.activePlayerIds?.[0]
-          || actionPlayerState.currentPlayerId;
-        return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: actionPlayerState.currentPlayerId };
-      };
-      if (!playerId) return { roundAdvanced: false, turnAdvanced: false, nextPlayerId: actionPlayerState.currentPlayerId };
-
-      if (options.passed && !isPassed(playerId)) {
-        actionTurnState.passedPlayerIds.push(playerId);
+      const transition = productionTurnFlow.advanceTurnAfterPlayerAction(workingRoot, playerId, {
+        ...options,
+        finalRoundNumber,
+      });
+      if (transition.gameEnded && typeof computePlayerFinalScoreBreakdown === "function") {
+        transition.finalScoreLines = (workingRoot.playerState.players || [])
+          .filter((player) => (workingRoot.turnState.activePlayerIds || []).includes(player.id))
+          .map((player) => {
+            const breakdown = computePlayerFinalScoreBreakdown(workingRoot, player);
+            return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
+          });
       }
-      actionTurnState.cardTurnEventBonuses = (actionTurnState.cardTurnEventBonuses || [])
-        .filter((bonus) => bonus.playerId !== playerId);
-      if (!actionTurnState.visitedPlanetsByPlayerId || typeof actionTurnState.visitedPlanetsByPlayerId !== "object") {
-        actionTurnState.visitedPlanetsByPlayerId = {};
-      }
-      delete actionTurnState.visitedPlanetsByPlayerId[playerId];
-      if (!isCompleted(playerId)) {
-        actionTurnState.completedTurnPlayerIds.push(playerId);
-      }
-
-      const completedCycleInfo = {
-        completedActionCycle: true,
-        completedActionCycleRoundNumber: actionTurnState.roundNumber,
-        completedActionCycleNumber: actionCycleNumber(),
-        completedActionCycleTurnNumber: displayedTurnNumber(),
-        completedActionCycleRawTurnNumber: actionTurnState.turnNumber,
-        completedActionCyclePlayerIds: [...(actionTurnState.completedTurnPlayerIds || [])],
-      };
-
-      if (allPassed() && Number(actionTurnState.roundNumber) >= finalRoundNumber) {
-        actionTurnState.gameEnded = true;
-        actionTurnState.gameEndReason = "final_round_all_passed";
-        return {
-          roundAdvanced: false,
-          turnAdvanced: false,
-          gameEnded: true,
-          nextPlayerId: actionPlayerState.currentPlayerId,
-          finalScoreLines: (actionPlayerState.players || [])
-            .filter((player) => (actionTurnState.activePlayerIds || []).includes(player.id))
-            .map((player) => {
-              const breakdown = computePlayerFinalScoreBreakdown(workingRoot, player);
-              return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
-            }),
-        };
-      }
-
-      if (allPassed()) {
-        return { ...beginActionNextRound(), ...completedCycleInfo };
-      }
-
-      const nextPlayerId = nextEligible(playerId);
-      if (nextPlayerId) {
-        actionPlayerState.currentPlayerId = nextPlayerId;
-        actionTurnState.turnNumber += 1;
-        return { roundAdvanced: false, turnAdvanced: true, nextPlayerId };
-      }
-
-      actionTurnState.turnNumber += 1;
-      actionTurnState.completedTurnPlayerIds = [];
-      actionTurnState.actionCycleNumber = actionCycleNumber() + 1;
-      const firstEligiblePlayerId = firstEligible();
-      actionPlayerState.currentPlayerId = firstEligiblePlayerId || actionPlayerState.currentPlayerId;
-      return {
-        roundAdvanced: false,
-        turnAdvanced: true,
-        nextPlayerId: actionPlayerState.currentPlayerId,
-        ...completedCycleInfo,
-      };
+      return transition;
     }
 
     function resetGameStateForNewGame(workingRoot, options = {}) {

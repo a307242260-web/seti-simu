@@ -242,7 +242,7 @@ UI 布局：
 
 - 轮：所有玩家各自执行若干回合，直到所有玩家都 PASS 后结束；全部 PASS 后进入下一轮第 1 回合。
 - 回合：一轮内的一次行动圈；每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS。所有未 PASS 玩家在当前行动圈都行动后，真实行动圈编号才递增。
-- `turnState` 属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`app/turn-flow.js` 提供回合读数与控制端口。它记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
+- `turnState` 属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`game/turn-flow.js` 是轮次推进与太阳系旋转的唯一生产 owner，`app/turn-flow.js` 只保留浏览器读数、初始化与控制端口。它记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
 - 页面加载时会自动执行原 `set-button` 设置流程：白色玩家固定为初始首位，其余颜色玩家随机洗牌，并重置为第 1 轮第 1 回合。默认人机入口启用 4 名活跃玩家，其中白色为人类玩家，其余 3 个活跃席位为电脑玩家；开始界面可切换为 3 人局，此时白色玩家仍固定参与，其余颜色只随机启用 2 个电脑席位。
 - 新轮开始时，起始玩家按基础顺位顺延到上一轮第二顺位玩家。
 
@@ -257,6 +257,7 @@ UI 布局：
 - 日志 step 会记录 `stepId`、`source`、`undoable`、`irreversibleReason`；打牌 step 额外记录 `playedCard` 快照用于在日志中高亮牌名并 hover/focus 预览牌面。撤销时按 `stepId` 精确删除 draft 中对应记录，避免主/快速行动交错时删错日志。
 - 撤销快速行动会删除 draft 中最近的快速行动记录；撤销主要行动效果会删除最近的主要行动记录；回滚整个主要行动会删除 draft 中所有主要行动记录但保留尚未撤销的快速行动记录。若最近步骤是不可撤销屏障，只提示原因，不会越过屏障撤销更早步骤。
 - 主行动、快速行动、回合控制和条件选择统一使用 22 个 Standard Action family。浏览器与训练端对同一合法 descriptor 共享 `actionId`、owner、target/payload 与 registry executor；Effect Session host 统一 working state、decision、journal 与提交边界，UI、Policy 和 AI 估值不得自行预扣资源、补写 history 或代替多选 owner。
+- `launch / move / orbit / land / pass / end_turn` 统一由 `game/effects/probe-turn-session.js` 枚举和编排。移动支付、行星奖励、PASS 弃牌/预留精选均是同一 session 内的标准 Decision；公司、收入、外星人、卡牌触发与终局计分由版本化跨域 effect handoff 交给对应 game domain，`probe_turn` 只在这些等待边界之间推进纯回合状态。Browser 只提交 descriptor/choice，Simulation 不再注册自己的 move、planet reward、PASS 或 end-turn provider。
 - 确认后不可撤销的精选/拿牌效果会写入不可撤销屏障，并在日志中显示原因；公司 1x 中任务中继站、芬威克、未来跨度、宇宙战略等公共牌精选补牌能力也按 quick 日志记录 `不可撤销：公共牌补牌翻出新牌`。
 - 每条已确认的稳定行动日志 entry 会附带 `recoverySnapshot`，其中规则事实是 StateStore 当前 schema 的 committed JSON；隐藏牌序、外星人、火箭、科技、星云、玩家与任务事实都在该 schema 内，AI 控制配置作为宿主 runtime 数据单独保存，不递归保存日志本身。最后一名玩家确认初始选择后若进入“初始收入增加”效果流，该条日志会暂时不暴露恢复快照，直到初始收入全部完成后刷新为稳定恢复点。`window.SetiRandomizer.getActionLogRecoveryPackage()` 可导出含恢复快照的日志包；`window.SetiRandomizer.recoverFromActionLog(logOrPackage, { entryId/index })` 只接受当前版本并恢复对应 committed 边界。恢复点定位为“某条已确认日志之后”的稳定局面。
 - 浏览器会把最近稳定局面自动保存到本地 `localStorage`。保存点要求当前没有进行中的主行动、快速行动、效果队列或选择弹窗，因此若刷新发生在半步流程中，会回到上一个稳定保存点。页面加载时先显示开始界面，不会自动恢复或新开；点击「开始游戏」会清除本地进度并新开一局，点击「继续游戏(beta)」才会恢复当前 schema 的最近保存点和当时的人类/电脑控制配置。版本 1、缺版本、未知版本、损坏 JSON 或无法解析的席位配置都会结构化拒绝，不改现场状态。没有可恢复局面时，「继续游戏(beta)」保持禁用。

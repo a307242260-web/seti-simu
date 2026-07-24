@@ -41,7 +41,6 @@
     ai,
     alienTraceRewardFlow,
     actionRuntimeModule,
-    primaryBoardActionExecutorModule,
     quickTurnActionExecutorModule,
     conditionalDecisionDomainModule,
     conditionalActionExecutorModule,
@@ -291,9 +290,9 @@
     dispatchCommand: (name, args) => browserOwnerInputs.turn_end[name](...args),
   });
   const {
-    createPassEvent, endCurrentTurn, executePassFirstRotateEffect, executePassHandLimitEffect,
+    createPassEvent, executePassFirstRotateEffect, executePassHandLimitEffect,
     maybeContinueAlienRevealQueuedOpportunities, maybeContinuePendingTurnEndRevealFlow,
-    maybeResumeTurnEndAfterReveal, passForCurrentPlayer,
+    maybeResumeTurnEndAfterReveal,
   } = turnEndPort;
   const debugPort = debugRuntimeModule.createDebugPort({
     dispatchCommand: (name, args) => browserOwnerInputs.debug[name](...args),
@@ -568,8 +567,6 @@
     browserOwnerInputRegistry,
     {
       clonePresentation: cloneResidentPresentation,
-      createActionContext: (...args) => createActionContextForWorkingRoot(...args),
-      executePrimaryBoardAction: (...args) => actionRuntimeController?.executePrimaryBoardAction(...args),
       getRequiredMovePoints: (...args) => getRequiredMovePointsForUiForRoot(...args),
       recoverPending: (...args) => recoverPendingActionFromOpenHistoryForAiForRoot(...args),
     },
@@ -733,11 +730,6 @@
     return result;
   }
   const browserRuleLifecycle = ruleComposition.lifecycle;
-  const primaryBoardActionExecutor = primaryBoardActionExecutorModule.createPrimaryBoardActionExecutor({
-    actions,
-    abilities,
-    solar,
-  });
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
     executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
       workingRoot,
@@ -745,8 +737,6 @@
     ) || { ok: true, progressed: true },
     executeCardCorner: (_workingRoot, descriptor) => executeStandardCardCornerAction(descriptor),
     executeRunezuFaceSymbol: (workingRoot, descriptor) => executeStandardRunezuFaceSymbol(workingRoot, descriptor),
-    executePass: (workingRoot, descriptor) => passForCurrentPlayer({ workingRoot, standardAction: descriptor }),
-    executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
   });
   let actionRuntimeController = null;
   const ruleInputDispatcher = browserHostModule.inputAdapter.createRuleInputDispatcher({
@@ -3640,7 +3630,6 @@
     createActionLogImpactSnapshot,
     abilities,
     createActionContext: createActionContextForWorkingRoot,
-    primaryBoardActionExecutor,
     quickTurnActionExecutor,
     conditionalActionExecutor,
     actions,
@@ -3668,8 +3657,6 @@
     landForCurrentPlayer,
     moveRocket,
     analyzeDataForCurrentPlayer,
-    passForCurrentPlayer,
-    endCurrentTurn,
     blockManualAiPendingInputIfNeeded,
     getCurrentActionEffectIndex: () => getActionEffectFlow()?.currentIndex,
     confirmDataPlacement,
@@ -4112,7 +4099,7 @@
     blockManualInput: blockManualAiAutomationInput,
   });
 
-  const getRequiredMovePointsForUi = (...args) => actionOwnerInputPorts.primaryBoard
+  const getRequiredMovePointsForUi = (...args) => actionOwnerInputPorts.probeQuery
     .getRequiredMovePoints(...args);
 
   const getNormalTokenAssetForPlayer = (player) => (
@@ -5444,8 +5431,8 @@
       pickPublicCardForCurrentPlayer,
       discardCardFromCurrentPlayer,
       undoPendingAction,
-      endCurrentTurn,
-      passForCurrentPlayer,
+      endCurrentTurn: () => runAction("end_turn"),
+      passForCurrentPlayer: () => runAction("pass"),
       runAction,
       dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
       runQuickTrade,
