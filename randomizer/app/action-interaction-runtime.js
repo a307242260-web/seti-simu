@@ -176,7 +176,7 @@
       }));
       els.landTargetOverlay.dataset.planetId = options.planet?.planetId || "";
       els.landTargetOverlay.hidden = false;
-      els.landTargetSelect.focus();
+      context.focusService?.focus(els.landTargetSelect);
       return { ok: true, pending: true, message: "请选择登陆目标" };
     }
 
@@ -308,7 +308,7 @@
     function scrollToPlayerCommandPanel() {
       const panel = els.playerCommand || els.actionEffectBar || els.actionLaunchButton;
       if (!panel) return;
-      requestAnimationFrame(() => panel.scrollIntoView({
+      requestAnimationFrame(() => context.focusService?.scrollIntoView(panel, {
         behavior: "auto",
         block: "start",
         inline: "nearest",

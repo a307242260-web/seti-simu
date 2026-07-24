@@ -16,7 +16,6 @@
     "restoreResearchTechSelectionAfterUndo", "cancelPendingResearchTechTileChoice", "cancelTechSelection",
     "openTechBlueSlotPicker", "finalizeTechTakeResult", "commitResearchTechSelectionResult",
     "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice", "handleSupplyTechTileClick",
-    "setCheatModeOpen", "toggleCheatMode",
   ]);
 
   function createBrowserInputPort(registry, getTarget) {
@@ -951,20 +950,6 @@
       return selectResearchTechTileForCurrentFlow(workingRoot, tileId);
     }
 
-     function setCheatModeOpen(workingRoot, open) {
-      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
-      tech.setCheatModeEnabled(techGameState, open);
-      els.debugCheatButton?.setAttribute("aria-pressed", String(open));
-      rocketState.statusNote = open ? "作弊模式：研究科技不消耗宣传" : "";
-      updateActionButtons();
-      renderStateReadout();
-    }
-
-    function toggleCheatMode(workingRoot) {
-      const { techGameState } = requireWorkingRoot(workingRoot);
-      setCheatModeOpen(workingRoot, !techGameState.ui.cheatModeEnabled);
-    }
-
     function researchTechForCurrentPlayer() {
       return hostPort.dispatchStandardIntent("research_tech", { kind: "research-tech" });
     }
@@ -1001,8 +986,6 @@
       selectResearchTechTileForCurrentFlow,
       confirmTechBlueSlotChoice,
       handleSupplyTechTileClick,
-      setCheatModeOpen,
-      toggleCheatMode,
       researchTechForCurrentPlayer,
       commitSelectedResearchTech
     };

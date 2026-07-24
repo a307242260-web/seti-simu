@@ -251,7 +251,6 @@
       getMovableTokensForWorkingRoot: hostPort.getMovableTokensForWorkingRoot,
       activateMoveMode: actionInteraction("activateMoveMode"),
       deactivateMoveMode: actionInteraction("deactivateMoveMode"),
-      selectDefaultRocketForCurrentPlayer: hostPort.selectDefaultRocketForCurrentPlayer,
       beginSupplementalMovePayment: handFlowRuntime?.beginSupplementalMovePayment,
       getRequiredMovePointsForWorkingRoot: hostPort.getRequiredMovePointsForWorkingRoot,
     });
@@ -2263,7 +2262,6 @@
         ? "扫描效果：请点击要移动的飞船"
         : "扫描效果：使用方向键移动飞船";
       if (rockets.length === 1) context.activateMoveMode(workingRoot, rockets[0].id);
-      else context.selectDefaultRocketForCurrentPlayer(workingRoot);
       context.renderStateReadout();
       return { ok: true, message: workingRoot.rocketState.statusNote };
     }

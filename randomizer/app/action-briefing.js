@@ -313,7 +313,6 @@
   }
 
   function createActionBriefingHelpers(context = {}) {
-    const windowRef = context.window || root;
     const documentRef = context.document !== undefined ? context.document : root.document;
     const els = context.els || {};
     const actionBriefingState = context.actionBriefingState || {};
@@ -470,7 +469,7 @@
       els.actionBriefingOverlay.setAttribute("aria-hidden", "false");
       actionBriefingState.pendingTurnKey = turnKey || null;
       actionBriefingState.pendingAiResume = Boolean(options.resumeAiAfterClose);
-      windowRef.setTimeout(() => els.actionBriefingConfirm?.focus?.(), 0);
+      context.focusService?.focusNextFrame?.(els.actionBriefingConfirm);
       return true;
     }
 

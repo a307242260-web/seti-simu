@@ -22,6 +22,7 @@
   function createInitialState() {
     return {
       schemaVersion: SCHEMA_VERSION,
+      status: { note: "" },
       overlay: { activeId: null, minimizedIds: [] },
       hover: { entityRef: null, anchorRef: null },
       focus: { entityRef: null, controlId: null },
@@ -30,6 +31,7 @@
       layout: { viewport: null, panelSizes: {}, collapsedRegions: [] },
       draft: { intentKind: null, selectedChoiceIds: [], text: "" },
       animation: { acknowledgedEventIds: [] },
+      debug: { panelOpen: false, playerMenuOpen: false, sectorCalibration: false },
       projection: { projectionId: null, decisionId: null, decisionVersion: null },
     };
   }
@@ -43,7 +45,7 @@
     if (expected.length !== actual.length || expected.some((key, index) => key !== actual[index])) {
       return deepFreeze({ ok: false, code: "VIEW_STATE_ROOT_FIELDS_INVALID" });
     }
-    const required = ["overlay", "hover", "focus", "tabs", "scroll", "layout", "draft", "animation", "projection"];
+    const required = ["status", "overlay", "hover", "focus", "tabs", "scroll", "layout", "draft", "animation", "debug", "projection"];
     if (required.some((key) => snapshot[key] == null || typeof snapshot[key] !== "object" || Array.isArray(snapshot[key]))) {
       return deepFreeze({ ok: false, code: "VIEW_STATE_SNAPSHOT_INVALID" });
     }
@@ -72,6 +74,12 @@
       const type = intent?.type;
       const next = clone(state);
       switch (type) {
+        case "status.set":
+          next.status.note = String(intent.note ?? "");
+          break;
+        case "status.clear":
+          next.status.note = "";
+          break;
         case "overlay.set":
           next.overlay.activeId = intent.activeId == null ? null : String(intent.activeId);
           break;
@@ -132,6 +140,16 @@
             ...next.animation.acknowledgedEventIds,
             ...(intent.eventIds || []),
           ]);
+          break;
+        case "debug.panel":
+          next.debug.panelOpen = Boolean(intent.open);
+          if (!next.debug.panelOpen) next.debug.playerMenuOpen = false;
+          break;
+        case "debug.playerMenu":
+          next.debug.playerMenuOpen = Boolean(intent.open) && next.debug.panelOpen;
+          break;
+        case "debug.sectorCalibration":
+          next.debug.sectorCalibration = Boolean(intent.active);
           break;
         case "reset":
           state = createInitialState();

@@ -11,7 +11,7 @@ function createRecoveryHarness() {
   const view = viewApi.createViewStateStore();
   let ruleEnvelope = { schemaVersion: RULE_SCHEMA, committedState: "round-4", session: null };
   let restoreCalls = 0;
-  const services = servicesApi.createBrowserServices({
+  const checkpointPort = recovery.createBrowserCheckpointAdapter({
     ruleLifecycle: {
       save: () => ({ ok: true, envelope: structuredClone(ruleEnvelope) }),
       validateRestore(envelope) {
@@ -26,10 +26,11 @@ function createRecoveryHarness() {
       },
     },
     viewStateStore: view,
+    viewSchemaVersion: viewApi.SCHEMA_VERSION,
   });
   return {
     view,
-    services,
+    checkpointPort,
     get ruleEnvelope() { return ruleEnvelope; },
     set ruleEnvelope(value) { ruleEnvelope = structuredClone(value); },
     get restoreCalls() { return restoreCalls; },
@@ -39,7 +40,7 @@ function createRecoveryHarness() {
 const harness = createRecoveryHarness();
 harness.view.dispatch({ type: "overlay.set", activeId: "report" });
 const snapshot = recovery.createGameRecoverySnapshot({
-  browserServices: harness.services,
+  browserCheckpointPort: harness.checkpointPort,
   roundNumber: 4,
   turnNumber: 7,
   actionCycleNumber: 3,
@@ -51,10 +52,10 @@ const snapshot = recovery.createGameRecoverySnapshot({
 
 assert.equal(snapshot.version, recovery.RECOVERY_SNAPSHOT_VERSION);
 assert.equal(snapshot.meta.label, "恢复点");
-assert.equal(snapshot.browserCheckpoint.schemaVersion, servicesApi.SCHEMA_VERSION);
+assert.equal(snapshot.browserCheckpoint.schemaVersion, recovery.BROWSER_CHECKPOINT_SCHEMA_VERSION);
 assert.equal(Object.hasOwn(snapshot, "committedState"), false);
 assert.equal(Object.hasOwn(snapshot, "state"), false);
-assert.throws(() => recovery.createGameRecoverySnapshot({}), /Browser Services composition lifecycle capture/);
+assert.throws(() => recovery.createGameRecoverySnapshot({}), /Browser checkpoint capture/);
 
 const pack = recovery.createActionLogRecoveryPackage({
   version: "v1",
@@ -65,19 +66,20 @@ const pack = recovery.createActionLogRecoveryPackage({
 assert.deepEqual(pack.latestSnapshot, { label: "当前局面", live: true });
 assert.equal(pack.entries[0].recoverySnapshot, undefined);
 
-const storage = {
+const rawStorage = {
   value: `{"version":${recovery.RECOVERY_SNAPSHOT_VERSION},"latestSnapshot":{"ok":true}}`,
   removed: false,
   getItem() { return this.value; },
   removeItem() { this.removed = true; },
 };
-assert.deepEqual(recovery.readPersistentGamePackage(storage, "seti"), {
+const storageService = servicesApi.createStorageService({ storage: rawStorage, storageKey: "seti" });
+assert.deepEqual(recovery.readPersistentGamePackage(storageService), {
   version: recovery.RECOVERY_SNAPSHOT_VERSION,
   latestSnapshot: { ok: true },
 });
-storage.value = "{bad json";
-assert.equal(recovery.readPersistentGamePackage(storage, "seti"), null);
-assert.equal(storage.removed, true);
+rawStorage.value = "{bad json";
+assert.equal(recovery.readPersistentGamePackage(storageService), null);
+assert.equal(rawStorage.removed, true);
 
 (function testPersistenceControllerOwnsTimerSuspensionAndRestoreAdapter() {
   const memory = new Map();
@@ -86,16 +88,18 @@ assert.equal(storage.removed, true);
   let timer = null;
   let stable = true;
   const controller = recovery.createPersistenceController({
-    window: {
-      localStorage: {
+    storageService: servicesApi.createStorageService({
+      storage: {
         getItem: (key) => memory.get(key) || null,
         setItem: (key, value) => memory.set(key, value),
         removeItem: (key) => memory.delete(key),
       },
+      storageKey: "seti-test",
+    }),
+    timerService: servicesApi.createTimerService({
       setTimeout(callback) { timer = callback; return 7; },
       clearTimeout() { timer = null; },
-    },
-    storageKey: "seti-test",
+    }),
     saveDelayMs: 10,
     version: recovery.RECOVERY_SNAPSHOT_VERSION,
     getEntries: () => entries,
@@ -203,7 +207,7 @@ assert.equal(storage.removed, true);
   const entries = [{ id: 9, actionLabel: "扫描" }];
   const controller = recovery.createRecoveryLogController({
     version: recovery.RECOVERY_SNAPSHOT_VERSION,
-    browserServices: harness.services,
+    browserCheckpointPort: harness.checkpointPort,
     getRecoveryProjection: () => ({
       schemaVersion: "seti-recovery-projection-v1",
       roundNumber: 4,
@@ -245,7 +249,7 @@ assert.equal(storage.removed, true);
   harness.ruleEnvelope = { schemaVersion: RULE_SCHEMA, committedState: "round-1", session: null };
   harness.view.clear();
   const result = recovery.applyGameRecoverySnapshot(snapshot, {
-    browserServices: harness.services,
+    browserCheckpointPort: harness.checkpointPort,
     restoreDeterministicState() { throw new Error("外部确定性回灌不应被调用"); },
     onAfterStateRestored() { restored.push("after-state"); },
     restoreAiControlSnapshot(aiControl) { return { message: `AI:${String(aiControl.enabled)}` }; },
@@ -267,7 +271,7 @@ assert.equal(storage.removed, true);
     { version: 999, committedState: "{}" },
   ]) {
     const beforeCalls = harness.restoreCalls;
-    const rejected = recovery.applyGameRecoverySnapshot(rejectedSnapshot, { browserServices: harness.services });
+    const rejected = recovery.applyGameRecoverySnapshot(rejectedSnapshot, { browserCheckpointPort: harness.checkpointPort });
     assert.equal(rejected.ok, false);
     assert.equal(rejected.code, "RECOVERY_SNAPSHOT_VERSION_UNSUPPORTED");
     assert.equal(harness.restoreCalls, beforeCalls);
@@ -278,7 +282,7 @@ assert.equal(storage.removed, true);
     { version: recovery.RECOVERY_SNAPSHOT_VERSION, committedState: "{}" },
     { version: recovery.RECOVERY_SNAPSHOT_VERSION, state: {} },
   ]) {
-    const rejected = recovery.applyGameRecoverySnapshot(legacy, { browserServices: harness.services });
+    const rejected = recovery.applyGameRecoverySnapshot(legacy, { browserCheckpointPort: harness.checkpointPort });
     assert.equal(rejected.code, "RECOVERY_BROWSER_CHECKPOINT_MISSING");
   }
   assert.equal(harness.restoreCalls, beforeCalls, "旧 StateStore schema 不得触发 lifecycle restore");
@@ -289,14 +293,14 @@ assert.equal(storage.removed, true);
   invalid.browserCheckpoint.rules.schemaVersion = "legacy-v0";
   invalid.browserCheckpoint.rules.envelope.schemaVersion = "legacy-v0";
   const beforeCalls = harness.restoreCalls;
-  const result = recovery.applyGameRecoverySnapshot(invalid, { browserServices: harness.services });
+  const result = recovery.applyGameRecoverySnapshot(invalid, { browserCheckpointPort: harness.checkpointPort });
   assert.equal(result.code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
   assert.equal(harness.restoreCalls, beforeCalls);
 })();
 
-(function testBrowserServicesAreRequiredForRestore() {
+(function testBrowserCheckpointPortIsRequiredForRestore() {
   const result = recovery.applyGameRecoverySnapshot(snapshot, {});
-  assert.equal(result.code, "RECOVERY_BROWSER_SERVICES_MISSING");
+  assert.equal(result.code, "RECOVERY_BROWSER_CHECKPOINT_PORT_MISSING");
 })();
 
 console.log("game recovery composition lifecycle tests passed");

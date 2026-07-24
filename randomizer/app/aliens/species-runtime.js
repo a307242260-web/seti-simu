@@ -365,10 +365,7 @@
       maybeRevealAlienAfterTrace(_root, slotId, result) {
         return result?.readyToReveal ? { ok: true, delayed: true, alienSlotId: slotId } : null;
       },
-      isDebugAlienTraceMode: () => Boolean(context.hostPort?.uiRuntimeState?.debugAlienTraceModeActive),
-      setDebugAlienTraceModeActive: (...args) => context.renderPort?.debugRuntimeController?.setDebugAlienTraceModeActive(...args),
-      toggleDebugAlienTraceMode: (...args) => context.renderPort?.debugRuntimeController?.toggleDebugAlienTraceMode(...args),
-      enableDebugAlienTraceModeForReveal: (...args) => context.renderPort?.debugRuntimeController?.enableDebugAlienTraceModeForReveal(...args),
+      isDebugAlienTraceMode: () => false,
       getAvailableDataTokenCount: (player) => Number(player?.resources?.availableData) || 0,
       getChongPlanetLabel: (planetId) => String(planetId || ""),
       formatChongGain: (gain) => JSON.stringify(gain || {}),

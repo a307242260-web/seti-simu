@@ -331,7 +331,6 @@
       createTurnState: requireCapability("resetPort", "createTurnState"),
       resetScanRunSequence: requireCapability("resetPort", "resetScanRunSequence"),
       resetActionLog: requireCapability("resetPort", "resetActionLog"),
-      fillNebulaDataBoard: requireCapability("setupPort", "fillNebulaDataBoard"),
       randomizeAliens: requireCapability("setupPort", "randomizeAliens"),
       cancelIndustryAbilityFlow: requireCapability("setupPort", "cancelIndustryAbilityFlow"),
       closeFinalResultDialog: requireCapability("setupPort", "closeFinalResultDialog"),
@@ -474,7 +473,6 @@
       resetActionLog,
       randomizeWheels: randomizeWheelsOverride,
       randomizeSectors: randomizeSectorsOverride,
-      fillNebulaDataBoard,
       renderWheels,
       renderSectorNebulaDataBoard,
       randomizeFinalScores: randomizeFinalScoresOverride,
@@ -680,7 +678,8 @@
       randomizePlayerTurnOrder(workingRoot);
       randomizeWheels?.(workingRoot);
       randomizeSectors?.(workingRoot);
-      fillNebulaDataBoard?.({ source: "setup", replace: true });
+      data.clearNebulaData(nebulaDataState);
+      data.fillAllNebulaData(nebulaDataState, { source: "setup" });
       solarState.aomomoActive = false;
       if (aomomoClearNebulaId) data.clearNebulaData(nebulaDataState, aomomoClearNebulaId);
       renderWheels?.();

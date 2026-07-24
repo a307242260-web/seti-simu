@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const policyPort = require("../../game/ai/policy-port");
 const outcomeModel = require("../../game/ai/outcome-model");
 const policyInputAdapter = require("../browser-host/policy-input-adapter");
+const aiControlRuntime = require("./control-runtime");
 const {
   createCompositionPolicyBoundaryReader,
   createBrowserMachinePlayerPort,
@@ -27,6 +28,49 @@ function action(overrides = {}) {
 }
 
 (async () => {
+  {
+    const committedPlayer = {
+      id: "p1",
+      color: "white",
+      colorLabel: "白色",
+      aiDifficulty: "committed-default",
+    };
+    const committedBytes = JSON.stringify(committedPlayer);
+    const controller = aiControlRuntime.createAiControlRuntime({
+      timerService: { schedule: () => ({ ok: true, timerId: 1 }) },
+      state: {},
+      getRuleProjection: () => ({
+        players: { currentPlayerId: "p1", players: [committedPlayer] },
+        turn: { currentPlayerId: "p1", activePlayerIds: ["p1"], activePlayerCount: 1 },
+      }),
+      getPlayerById: (id) => (id === "p1" ? committedPlayer : null),
+      getPlayerByColor: (color) => (color === "white" ? committedPlayer : null),
+      getPlayerLabelById: () => "白色",
+      getCurrentPlayer: () => committedPlayer,
+      getEffectOwnerPlayer: () => committedPlayer,
+      getCurrentActionEffect: () => null,
+      isGameEnded: () => false,
+      isIndustryHandSelectionActive: () => false,
+      recordAiAutoBattleLog: () => {},
+      recordAiAutoBattleBug: () => {},
+      renderStateReadout: () => {},
+      runMachinePlayerStep: async () => ({ ok: true }),
+      resetGameForAiAutoBattle: () => ({ ok: true }),
+      setTurnStatePlayerOrder: () => {},
+      startInitialSelection: () => {},
+      updateActionButtons: () => {},
+    });
+    const configured = controller.configureAiAutoBattle({
+      playerIds: ["p1"],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    });
+    assert.equal(configured.ok, true);
+    assert.equal(controller.getSeatDifficulty("p1"), "weak_start");
+    assert.equal(JSON.stringify(committedPlayer), committedBytes, "Browser AI 配置不得写 player committed slice");
+    assert.deepEqual(controller.createAiControlSnapshot().seatDifficulties, { p1: "weak_start" });
+  }
+
   let inspection = { phase: "idle", session: null };
   let source = {
     source: { kind: "committed", stateVersion: 4, phase: "idle" },
@@ -53,7 +97,6 @@ function action(overrides = {}) {
 
   {
     let runtimeOptions = null;
-    const difficultyCalls = [];
     const bootstrap = createBrowserAiBootstrap({
       aiControlRuntimeModule: {
         createAiControllerState: () => ({}),
@@ -76,12 +119,6 @@ function action(overrides = {}) {
           decision: null,
         }),
       },
-      inputPort: {
-        setPlayerDifficulty(...args) {
-          difficultyCalls.push(args);
-          return { ok: true };
-        },
-      },
       policyInputAdapterModule: { createPolicyInputAdapter: () => ({}) },
       projectionAdapter: { projectSource: () => ({}) },
       inputAdapter: { dispatchAction: () => ({}), submitDecision: () => ({}) },
@@ -91,8 +128,8 @@ function action(overrides = {}) {
       controlContext: { getPlayerById: () => null },
     });
     assert.equal(Boolean(bootstrap.controller), true);
-    assert.deepEqual(runtimeOptions.setPlayerAiDifficulty("p2", "weak_start", "测试"), { ok: true });
-    assert.deepEqual(difficultyCalls, [["p2", "weak_start", "测试"]]);
+    assert.equal(Object.hasOwn(runtimeOptions, "setPlayerAiDifficulty"), false);
+    assert.equal(Object.hasOwn(runtimeOptions, "inputPort"), false);
   }
 
   const choice = action({

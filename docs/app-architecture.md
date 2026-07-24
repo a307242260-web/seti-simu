@@ -73,14 +73,16 @@ Presentation helper 必须满足：
 
 Browser service 可以操作：
 
-- `localStorage` 与保存 envelope；
+- `localStorage` 中的隔离 envelope（service 只把它视为可克隆 payload）；
 - 下载、Blob/URL 生命周期；
 - timer、resize、focus、overlay 等 UI 能力；
 - status/debug ViewState；
 - Machine Player Host 的席位配置与调度状态。
 
 Browser service 不接收 projection root 或规则 input port，不执行收入、回合、扫描、卡牌、
-科技、公司、外星人、undo/recovery 等规则 mutation。规则恢复只调用 Composition lifecycle。
+科技、公司、外星人、undo/recovery 等规则 mutation，也不接 Composition lifecycle、
+StateStore 或 Effect Session。`game-recovery.js` 的显式 checkpoint adapter 才能把正式
+Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 
 ## 3. 文件职责
 
@@ -95,12 +97,12 @@ Browser service 不接收 projection root 或规则 input port，不执行收入
 | `randomizer/app/browser-host/projection-adapter.js` | viewer visibility policy |
 | `randomizer/app/browser-host/resident-projection.js` | 窄 resident DTO |
 | `randomizer/app/browser-host/resident-renderer.js` | projection 到 DOM 的渲染隔离 |
-| `randomizer/app/browser-host/browser-services.js` | 保存、下载与独立宿主服务 |
+| `randomizer/app/browser-host/browser-services.js` | storage/download/timer/focus 独立宿主能力 |
 | `randomizer/app/start-screen.js` | 开始页与初始选择 presentation |
 | `randomizer/app/events.js` | DOM 事件到显式 input callback 的路由 |
 | `randomizer/app/render-runtime.js` | DOM renderer 与纯 ViewState |
-| `randomizer/app/game-recovery.js` | save/restore envelope 和 lifecycle 适配 |
-| `randomizer/app/ai/control-runtime.js` | 机器席位配置、generation 与调度状态 |
+| `randomizer/app/game-recovery.js` | Composition lifecycle + ViewState checkpoint 适配 |
+| `randomizer/app/ai/control-runtime.js` | 不写 player slice 的机器席位/难度配置、generation 与调度状态 |
 | `randomizer/app/ai/browser-bootstrap.js` | Machine Player Host 与 Policy input 装配 |
 | `randomizer/app/public-api.js` | 冻结的 inspect/capture/restore/input facade |
 

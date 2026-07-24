@@ -11,22 +11,6 @@
   }
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  function createAiOwnerInputPort(registry, context = {}) {
-    return registry.register("ai", {
-      setPlayerDifficulty: (workingRoot, command) => {
-        const value = context.setPlayerDifficulty(workingRoot, {
-          ...command,
-          playerId: command.playerId ?? command.args?.[0],
-          difficulty: command.difficulty ?? command.args?.[1],
-          label: command.label ?? command.args?.[2],
-        });
-        return { ok: value?.ok !== false, value };
-      },
-    });
-  }
-
-
-
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "aiControlRuntimeModule",
     "ruleComposition",
@@ -39,7 +23,6 @@
     "readAiControlProjection",
     "stateOwners",
     "controlContext",
-    "inputPort",
   ]);
 
   function fail(code, message, details = {}) {
@@ -253,8 +236,6 @@
       recordAiAutoBattleLog: () => null,
       recordAiAutoBattleBug: () => null,
       resetAiStrategyDemandCache: () => {},
-      setPlayerAiDifficulty: (playerId, difficulty, label) => context.inputPort
-        .setPlayerDifficulty(playerId, difficulty, label),
       runMachinePlayerStep: (options) => machinePlayerPort.runOnce(options),
       getFormalInputOwnerId: () => machinePlayerPort.inspect().seatId,
       getRuleProjection: () => {
@@ -280,7 +261,6 @@
   }
 
   return {
-    createAiOwnerInputPort,
     REQUIRED_CONTEXT_KEYS,
     createCompositionPolicyBoundaryReader,
     createBrowserMachinePlayerPort,

@@ -130,7 +130,6 @@
       confirmDataPlacement,
       cancelDataPlacePicker,
       skipPendingDataPlacement,
-      handleDebugQuickSectorScanChoice,
       handleAomomoFossilMoveLandCountChoice,
       handleYichangdianCornerChoice,
       handleCardTriggerChoice,
@@ -203,34 +202,9 @@
       closeActionBriefing,
       openActionBriefingDetailLog,
       blockManualAiSharedOverlayInputIfNeeded,
-      handleAiTakeoverFailsafe,
-      handleForceSkipTurnFailsafe,
       setDebugOpen,
       setDebugPlayerMenuOpen,
-      switchCurrentPlayerColor,
-      rotateSolarOrbit,
-      settleCardTasksAfterEffect,
-      addDebugIncome,
-      promptDebugGainCard,
-      addDebugScore,
       toggleSectorWinDebug,
-      toggleDebugAlienTraceMode,
-      isDebugAlienTraceMode,
-      revealJiuzheForDebug,
-      focusJiuzheDebugCalibration,
-      revealYichangdianForDebug,
-      focusYichangdianDebugCalibration,
-      revealFangzhouForDebug,
-      focusFangzhouDebugCalibration,
-      revealBanrenmaForDebug,
-      focusBanrenmaDebugCalibration,
-      revealChongForDebug,
-      focusChongDebugCalibration,
-      revealAmibaForDebug,
-      focusAmibaDebugCalibration,
-      revealAomomoForDebug,
-      focusAomomoDebugCalibration,
-      revealRunezuForDebug,
       openFangzhouCard1Dialog,
       handlePublicBlindDrawClick,
       handlePublicCardClick,
@@ -267,7 +241,6 @@
       isPlayCardSelectionActive,
       handlePlayCardSelect,
       handleHandCardCornerQuickAction,
-      toggleCheatMode,
       confirmTechBlueSlotChoice,
       closeTechBlueSlotPicker,
       renderStateReadout,
@@ -306,8 +279,6 @@
     els.startAlienOptions?.addEventListener("change", handleStartAlienOptionChange);
     els.startIndustryOptions?.addEventListener("change", handleStartIndustryOptionChange);
     els.spinButton?.addEventListener("click", randomizeAll);
-    els.failsafeAiButton?.addEventListener("click", handleAiTakeoverFailsafe);
-    els.failsafeSkipButton?.addEventListener("click", handleForceSkipTurnFailsafe);
     els.actionBarMain?.addEventListener("click", (event) => routeMainActionButtonClick(event, {
       actionBarMain: els.actionBarMain,
       quickButton: els.actionQuickButton,
@@ -382,11 +353,6 @@
         return;
       }
 
-      const debugSectorButton = event.target.closest("[data-debug-sector-scan-step]");
-      if (debugSectorButton && !debugSectorButton.disabled) {
-        handleDebugQuickSectorScanChoice(debugSectorButton);
-        return;
-      }
 
       const yichangdianCorner = event.target.closest("[data-yichangdian-corner-card-id]");
       if (yichangdianCorner && !yichangdianCorner.disabled) {
@@ -826,58 +792,7 @@
     els.debugPlayerSwitchButton?.addEventListener("click", () => {
       setDebugPlayerMenuOpen(els.debugPlayerMenu?.hidden);
     });
-    els.debugPlayerMenu?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-player-color]");
-      if (!button) return;
-      switchCurrentPlayerColor(button.dataset.playerColor);
-    });
-    els.debugRotateButton.addEventListener("click", () => {
-      const result = rotateSolarOrbit(1);
-      settleCardTasksAfterEffect({ events: result.events, render: true });
-    });
-    els.debugIncomeButton.addEventListener("click", addDebugIncome);
-    els.debugGainCardButton?.addEventListener("click", promptDebugGainCard);
-    els.debugScoreButton?.addEventListener("click", addDebugScore);
     els.debugSectorWinButton?.addEventListener("click", toggleSectorWinDebug);
-    els.debugAlienTraceButton?.addEventListener("click", toggleDebugAlienTraceMode);
-    els.reservedCardFan?.addEventListener("click", (event) => {
-      const unlockButton = event.target.closest("[data-fangzhou-unlock]");
-      if (!unlockButton || unlockButton.disabled || !isDebugAlienTraceMode()) return;
-      const traceType = unlockButton.dataset.fangzhouUnlock;
-      const alienSlotId = readEventsProjection().fangzhouRevealedSlotId || 2;
-      confirmFangzhouCard2Unlock(alienSlotId, traceType);
-    });
-    els.debugJiuzheButton?.addEventListener("click", () => {
-      const result = revealJiuzheForDebug();
-      if (result?.ok) focusJiuzheDebugCalibration(1);
-    });
-    els.debugYichangdianButton?.addEventListener("click", () => {
-      const result = revealYichangdianForDebug();
-      if (result?.ok) focusYichangdianDebugCalibration(1);
-    });
-    els.debugFangzhouButton?.addEventListener("click", () => {
-      const result = revealFangzhouForDebug();
-      if (result?.ok) focusFangzhouDebugCalibration(1);
-    });
-    els.debugBanrenmaButton?.addEventListener("click", () => {
-      const result = revealBanrenmaForDebug();
-      if (result?.ok) focusBanrenmaDebugCalibration(1);
-    });
-    els.debugChongButton?.addEventListener("click", () => {
-      const result = revealChongForDebug();
-      if (result?.ok) focusChongDebugCalibration(1);
-    });
-    els.debugAmibaButton?.addEventListener("click", () => {
-      const result = revealAmibaForDebug();
-      if (result?.ok) focusAmibaDebugCalibration(1);
-    });
-    els.debugAomomoButton?.addEventListener("click", () => {
-      const result = revealAomomoForDebug();
-      if (result?.ok) focusAomomoDebugCalibration(1);
-    });
-    els.debugRunezuButton?.addEventListener("click", () => {
-      revealRunezuForDebug();
-    });
     documentRef.addEventListener("click", (event) => {
       const viewButton = event.target.closest("[data-fangzhou-card-view]");
       if (!viewButton) return;
@@ -978,7 +893,6 @@
       }
       handleHandCardCornerQuickAction(Number(button.dataset.handIndex));
     });
-    els.debugCheatButton?.addEventListener("click", toggleCheatMode);
     els.techBlueSlotActions?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-blue-slot]");
       if (!button) return;

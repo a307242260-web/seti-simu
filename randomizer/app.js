@@ -90,7 +90,19 @@
   const els = window.SetiAppDom.collectElements(document);
   const Image = window.Image;
   const Blob = window.Blob;
-  const requestAnimationFrame = window.requestAnimationFrame.bind(window);
+  const residentTimerService = browserHostModule.browserServices.createTimerService({
+    setTimeout: window.setTimeout.bind(window),
+    clearTimeout: window.clearTimeout.bind(window),
+    requestAnimationFrame: window.requestAnimationFrame.bind(window),
+    cancelAnimationFrame: window.cancelAnimationFrame?.bind(window),
+  });
+  const requestAnimationFrame = (callback) => {
+    const scheduled = residentTimerService.requestFrame(callback);
+    return scheduled.frameId ?? scheduled.timerId ?? 0;
+  };
+  const residentFocusService = browserHostModule.browserServices.createFocusService({
+    timerService: residentTimerService,
+  });
   const getComputedStyle = window.getComputedStyle.bind(window);
 
   const alienSpeciesRuntimeModule = window.SetiAppAlienSpeciesRuntime;
@@ -211,7 +223,7 @@
   const browserPendingDecisionModule = window.SetiBrowserPendingDecision;
   const standardActionModule = window.SetiStandardAction;
   const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
-  const browserOwnerInputRegistry = browserHostModule.browserServices.createOwnerInputRegistry({
+  const browserOwnerInputRegistry = browserHostModule.legacyOwnerInputRegistry.createOwnerInputRegistry({
     clonePresentation: cloneResidentPresentation,
     submit: (...args) => submitRegisteredBrowserInput(...args),
   });
@@ -243,7 +255,6 @@
     tech_runtime: techRuntimeModule.createBrowserInputPort(browserOwnerInputRegistry, () => techRuntime),
     income_runtime: incomeRuntimeModule.createBrowserInputPort(browserOwnerInputRegistry, () => incomeRuntime),
     hand_flow: handFlowModule.createBrowserInputPort(browserOwnerInputRegistry, () => handFlowHelpers),
-    debug: debugRuntimeModule.createBrowserInputPort(browserOwnerInputRegistry, () => debugRuntime),
     effect_choice: effectChoiceFlowModule.createBrowserInputPort(
       browserOwnerInputRegistry,
       () => effectChoiceFlowHelpers,
@@ -253,9 +264,13 @@
       () => effectExecutors,
     ),
   });
-  const setBrowserStatusNote = (message) => browserStatusOwnerInputPort.setNote(
-    String(message || ""),
-  );
+  const setBrowserStatusNote = (message) => {
+    const snapshot = residentViewStateStore.dispatch({
+      type: "status.set",
+      note: String(message || ""),
+    });
+    return snapshot?.ok === false ? snapshot : snapshot.status.note;
+  };
   const effectChoiceCommandPort = browserOwnerInputs.effect_choice;
   const {
     handleDiscardIncomeCardChoice,
@@ -327,40 +342,20 @@
     maybeContinueAlienRevealQueuedOpportunities, maybeContinuePendingTurnEndRevealFlow,
     maybeResumeTurnEndAfterReveal,
   } = turnEndPort;
-  const debugPort = debugRuntimeModule.createDebugPort({
-    dispatchCommand: (name, args) => browserOwnerInputs.debug[name](...args),
-    getEventsProjection: () => getEventsProjection(),
-    getFailsafePendingOwnerPlayer: () => {
-      const ownerId = ruleComposition.inspect()?.session?.decision?.ownerId || null;
-      return ownerId ? getPlayerById(ownerId) : null;
-    },
-  });
-  const {
-    addDebugCardByInput, addDebugData, addDebugIncome, addDebugScore, fillDebugNebulaData,
-    fillNebulaDataBoard, focusAomomoDebugCalibration, focusAmibaDebugCalibration,
-    focusBanrenmaDebugCalibration, focusChongDebugCalibration, focusFangzhouDebugCalibration,
-    focusJiuzheDebugCalibration, focusYichangdianDebugCalibration, getFailsafePendingOwnerPlayer,
-    handleAiTakeoverFailsafe, handleDebugQuickSectorScanChoice, handleForceSkipTurnFailsafe,
-    logAomomoDebugCoordinates, openDebugQuickSectorScanPicker, promptDebugGainCard,
-    renderDebugPlayerSwitch, revealAmibaForDebug, revealAomomoForDebug, revealBanrenmaForDebug,
-    revealChongForDebug, revealFangzhouForDebug, revealJiuzheForDebug, revealRunezuForDebug,
-    revealYichangdianForDebug, runDebugQuickSectorScan, selectDefaultRocketForCurrentPlayer,
-    setDebugOpen, setDebugPlayerMenuOpen, switchCurrentPlayerColor, toggleSectorWinDebug,
-  } = debugPort;
-  const debugIncomeAdapter = debugRuntimeModule.createDebugIncomeAdapter({
-    players,
-    applyIncomeResourcesForPlayer: (...args) => applyIncomeResourcesForPlayer(...args),
-    renderPlayerStats: (...args) => renderPlayerStats(...args),
-    renderPublicCards: (...args) => renderPublicCards(...args),
-    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
-    updateActionButtons: (...args) => updateActionButtons(...args),
-    renderStateReadout: (...args) => renderStateReadout(...args),
-    inputPort: {
-      execute: (...args) => debugIncomeOwnerInputPort.execute(...args),
-    },
-  });
-  const executeIncomeForCurrentPlayerForRoot = debugIncomeAdapter.executeForRoot;
-  const executeIncomeForCurrentPlayer = debugIncomeAdapter.execute;
+  let debugRuntimeController = null;
+  const setDebugOpen = (...args) => debugRuntimeController?.setDebugOpen(...args);
+  const setDebugPlayerMenuOpen = (...args) => debugRuntimeController?.setDebugPlayerMenuOpen(...args);
+  const renderDebugPlayerSwitch = (...args) => debugRuntimeController?.renderDebugPlayerSwitch(...args);
+  const toggleSectorWinDebug = (...args) => debugRuntimeController?.toggleSectorWinDebug(...args);
+  const logAomomoDebugCoordinates = (...args) => debugRuntimeController?.logAomomoDebugCoordinates(...args);
+  const focusDebugCalibration = (...args) => debugRuntimeController?.focusDebugCalibration(...args);
+  const focusJiuzheDebugCalibration = (...args) => focusDebugCalibration(...args);
+  const focusYichangdianDebugCalibration = (...args) => focusDebugCalibration(...args);
+  const focusFangzhouDebugCalibration = (...args) => focusDebugCalibration(...args);
+  const focusBanrenmaDebugCalibration = (...args) => focusDebugCalibration(...args);
+  const focusChongDebugCalibration = (...args) => focusDebugCalibration(...args);
+  const focusAmibaDebugCalibration = (...args) => focusDebugCalibration(...args);
+  const focusAomomoDebugCalibration = (...args) => focusDebugCalibration(...args);
   const actionInteractionPort = actionInteractionRuntimeModule.createActionInteractionPort({
     getRuntime: () => actionInteractionRuntime,
     dispatchCommand: (name, args) => browserOwnerInputs.action_interaction[name](...args),
@@ -580,19 +575,12 @@
     getEffectExecutors: () => effectExecutors,
     closeScanTargetPickerForRoot: (...args) => closeScanTargetPickerForRoot(...args),
   });
-  const aiDifficultyCommandHandler = aiControlRuntimeModule.createAiDifficultyCommandHandler();
   const turnOwnerInputPort = turnFlowModule.createTurnOwnerInputPort(browserOwnerInputRegistry, {
     getController: () => turnFlowController,
   });
   const coordinateOwnerInputPort = renderRuntimeModule.createCoordinateOwnerInputPort(
     browserOwnerInputRegistry,
     { getRuntime: () => coordinateRuntime },
-  );
-  const aiOwnerInputPort = aiBrowserBootstrapModule.createAiOwnerInputPort(browserOwnerInputRegistry, {
-    setPlayerDifficulty: aiDifficultyCommandHandler,
-  });
-  const browserStatusOwnerInputPort = browserHostModule.browserServices.createBrowserStatusOwnerInputPort(
-    browserOwnerInputRegistry,
   );
   const actionOwnerInputPorts = actionRuntimeModule.createActionOwnerInputPorts(
     browserOwnerInputRegistry,
@@ -655,13 +643,6 @@
       finish: (...args) => finishActionEffectFlowForRoot(...args),
       beginCardMove: (...args) => beginCardMoveEffectForRoot(...args),
       cancelPendingSubflows: (...args) => cancelActivePendingSubFlowsForRoot(...args),
-    },
-  );
-  const debugIncomeOwnerInputPort = debugRuntimeModule.createDebugIncomeOwnerInputPort(
-    browserOwnerInputRegistry,
-    {
-      clonePresentation: cloneResidentPresentation,
-      execute: (...args) => executeIncomeForCurrentPlayerForRoot(...args),
     },
   );
   const sectorSettlementOwnerInputPort = scanFlowModule.createSectorSettlementOwnerInputPort(
@@ -984,6 +965,7 @@
     readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     getPendingOwnerFields: (...args) => getPendingOwnerFields(...args),
     renderStateReadout: (...args) => renderStateReadout(...args),
+    focusService: residentFocusService,
   });
   const closeLandTargetPicker = landTargetPicker.close;
   const cancelLandTargetPicker = landTargetPicker.cancel;
@@ -1333,16 +1315,25 @@
     root: document.getElementById("compositionDecisionRoot"),
     controller: residentDecisionController,
   });
+  const residentStorageService = browserHostModule.browserServices.createStorageService({
+    window,
+    storageKey: PERSISTENT_GAME_STORAGE_KEY,
+  });
   const residentBrowserServices = browserHostModule.browserServices.createBrowserServices({
-    ruleLifecycle: browserRuleLifecycle,
-    viewStateStore: residentViewStateStore,
-    storage: gameRecoveryModule.getPersistentGameStorage(window),
-    storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
-    downloadPort: browserHostModule.browserServices.createBrowserDownloadPort({
+    storageService: residentStorageService,
+    timerService: residentTimerService,
+    focusService: residentFocusService,
+    downloadService: browserHostModule.browserServices.createDownloadService({
       window,
       document,
       Blob,
+      timerService: residentTimerService,
     }),
+  });
+  const browserCheckpointPort = gameRecoveryModule.createBrowserCheckpointAdapter({
+    ruleLifecycle: browserRuleLifecycle,
+    viewStateStore: residentViewStateStore,
+    viewSchemaVersion: browserHostModule.viewStateStore.SCHEMA_VERSION,
   });
 
   const getResidentViewer = () => {
@@ -1494,7 +1485,7 @@
     getRunezuTaskProgressIndexes: () => [],
     getPlutoActionState,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
-    isDebugAlienTraceMode: () => Boolean(uiRuntimeState.debugAlienTraceModeActive),
+    isDebugAlienTraceMode: () => false,
   });
   const createInitialSelectionProjection = residentPresentationBuilder.createInitialSelection;
   const createReservedCardProjection = residentPresentationBuilder.createReservedCards;
@@ -2069,7 +2060,7 @@
       ...getRocketCoordinateReadoutLines({
         rockets: boardCoordinate.tokens,
         activeRocketId: boardCoordinate.activeRocketId,
-        statusNote: state.pieces?.statusNote || null,
+        statusNote: residentViewStateStore.getSnapshot().status.note || state.pieces?.statusNote || null,
       }),
       "",
       ...tech.getReadoutLines(structuredClone(state.tech || {}), {
@@ -2573,6 +2564,7 @@
     moveEnergyCost: MOVE_ENERGY_COST,
     players,
     requestAnimationFrame,
+    focusService: residentFocusService,
     rocketActions,
     solar,
     uiRuntimeState,
@@ -2796,7 +2788,6 @@
     executeActionEffectForOwner: (...args) => executeActionEffectForOwner(...args),
   });
   const actionBriefingHelpers = actionBriefingModule.createActionBriefingHelpers({
-    window,
     document,
     els,
     actionBriefingState,
@@ -2823,6 +2814,7 @@
     getDisplayedTurnNumber,
     getActionCycleNumber,
     isGameEnded,
+    focusService: residentFocusService,
   });
   const {
     getEffectHistorySource,
@@ -3032,6 +3024,7 @@
       blockManualAiMovePayment: (...args) => blockManualAiMovePayment(...args),
       blockIncompatiblePendingQuickAction: (...args) => blockIncompatiblePendingQuickAction(...args),
       requestAnimationFrame,
+      focusService: residentFocusService,
     },
   });
   const beginSupplementalMovePaymentForRoot = handFlowHelpers.beginSupplementalMovePayment;
@@ -3167,7 +3160,6 @@
       getMovableTokensForWorkingRoot: (workingRoot, playerId) => (
         rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, playerId)
       ),
-      selectDefaultRocketForCurrentPlayer,
       getRequiredMovePointsForWorkingRoot: (workingRoot, ...args) => (
         getRequiredMovePointsForUiForRoot(workingRoot, ...args)
       ),
@@ -3571,7 +3563,7 @@
   const { clearTransientStateForRecovery, refreshAfterGameRecovery } = recoveryHost;
   const recoveryLogController = gameRecoveryModule.createRecoveryLogController({
     version: GAME_RECOVERY_VERSION,
-    browserServices: residentBrowserServices,
+    browserCheckpointPort,
     getRecoveryProjection,
     createAiControlSnapshot: (...args) => createAiControlSnapshot(...args),
     getStableSnapshot: () => browserActionStableRecoverySnapshot,
@@ -3598,8 +3590,8 @@
     recoverFromActionLog,
   } = recoveryLogController;
   const persistenceController = gameRecoveryModule.createPersistenceController({
-    window,
-    storageKey: PERSISTENT_GAME_STORAGE_KEY,
+    storageService: residentStorageService,
+    timerService: residentTimerService,
     saveDelayMs: PERSISTENT_GAME_SAVE_DELAY_MS,
     version: GAME_RECOVERY_VERSION,
     getEntries: () => actionLogState.entries,
@@ -3647,7 +3639,6 @@
       resetActionLog,
     },
     setupPort: {
-      fillNebulaDataBoard,
       randomizeAliens: (...args) => randomizeAliens(...args),
       cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow(...args),
       closeFinalResultDialog,
@@ -3796,12 +3787,11 @@
     aiControlRuntimeModule,
     ruleComposition,
     outcomeModel: ai.outcomeModel,
-    inputPort: aiOwnerInputPort,
     policyInputAdapterModule: browserHostModule.policyInputAdapter,
     projectionAdapter: residentProjectionAdapter,
     inputAdapter: residentInputAdapter,
     createPolicy: (seatId) => ai.heuristicPolicy.createHeuristicPolicy({
-      difficulty: getPlayerById(seatId)?.aiDifficulty || AI_DIFFICULTY_LAUGHABLE,
+      difficulty: aiController?.getSeatDifficulty?.(seatId) || AI_DIFFICULTY_LAUGHABLE,
     }),
     projectionSource: browserProjectionSource,
     readAiControlProjection: readPlayerTurnState,
@@ -3813,7 +3803,7 @@
       getAlien: () => alienSpeciesPort,
     },
     controlContext: {
-      window,
+      timerService: residentTimerService,
       DEFAULT_ACTIVE_PLAYER_COUNT,
       DEFAULT_INITIAL_PLAYER_COLOR,
       getCurrentActionEffect,
@@ -3827,7 +3817,7 @@
       isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
       refreshCompositionPresentation: () => {
         scheduleResidentDesktopRefresh();
-        window.setTimeout(() => scheduleResidentDesktopRefresh(), 0);
+        residentTimerService.schedule(() => scheduleResidentDesktopRefresh(), 0);
       },
       renderStateReadout,
       resetGameForAiAutoBattle(options = {}) {
@@ -4695,7 +4685,7 @@
     getAlienBanrenmaCardArea, getAlienChongCardArea, getAlienAmibaCardArea, getAlienAomomoCardArea,
     getAlienRunezuCardArea, getAlienJiuzheThresholdElement, getAlienBanrenmaScoremarkElement, getAlienBackImage,
     createJiuzheThresholdNode, renderJiuzheThresholds, maybeRevealAlienAfterTrace, isDebugAlienTraceMode,
-    setDebugAlienTraceModeActive, toggleDebugAlienTraceMode, enableDebugAlienTraceModeForReveal, renderYichangdianCardDisplays,
+    renderYichangdianCardDisplays,
     renderBanrenmaScoremarks, renderBanrenmaCardDisplays, renderChongCardDisplays, renderAmibaCardDisplays,
     renderAomomoCardDisplays, renderRunezuCardDisplays, renderBanrenmaBonusMarkers, renderAlienPanels,
     randomizeAliens, applyFangzhouUnlockStateTraceReward, confirmFangzhouCard2Unlock, getAlienFangzhouCardArea,
@@ -4813,7 +4803,6 @@
       quickActionHistory,
       renderActionEffectBar,
       resultHasSignalMarkedEvent,
-      selectDefaultRocketForCurrentPlayer,
       uiRuntimeState,
       updateActionButtons: (...args) => updateActionButtons(...args),
     },
@@ -4906,7 +4895,6 @@
     cancelPendingResearchTechTileChoice, cancelTechSelection, openTechBlueSlotPicker, finalizeTechTakeResult,
     commitResearchTechSelectionResult, selectResearchTechTileForCurrentFlow, confirmTechBlueSlotChoice,
     handleSupplyTechTileClick,
-    setCheatModeOpen, toggleCheatMode,
   } = browserOwnerInputs.tech_runtime;
   const {
     isTechActionSelectionActive: isTechActionSelectionActiveForRoot,
@@ -4932,7 +4920,7 @@
 
   const queueStateReadoutRender = renderRuntimeModule.createFrameRenderScheduler({
     state: uiRuntimeState,
-    requestAnimationFrame: window.requestAnimationFrame.bind(window),
+    requestAnimationFrame,
     render: renderStateReadout,
   }).queue;
 
@@ -5124,68 +5112,22 @@
     submitActiveDecision: submitActiveCardDecision,
   }).confirm;
 
-  const debugRuntimeController = debugRuntimeModule.createBrowserDebugRuntime({
-    aiController,
-    alienSpeciesPort,
-    browserContextRuntime,
-    cardSelectionState,
-    coordinatePort,
-    effectFlowRuntime: effectFlowRuntimePort,
-    playerEffectOwnerRuntime,
-    playerLookupRuntime,
-    techRuntime,
-    turnHostRuntime,
-    turnReadoutRuntime,
-    browserPort: { window, document, resize },
-    statePort: { uiRuntimeState, getNormalTokenAssetForPlayer },
-    decisionPort: {
-      closeTechBlueSlotPicker,
-      closeDataPlacePicker,
-      closeScanTargetPicker,
-      closeScanAction4Picker,
-      closeLandTargetPicker,
-      closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
-      clearActionEffectFlow,
-      readCardSelectionDecision,
-      readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
-      openCardSelectionDecision,
-      clearActionPending,
-      clearMoveRocketHighlight,
-      resolveCompletedSectorSettlements,
-      maybeOpenActionBriefingForCompletedCycle,
-      maybeAutoOpenFinalResultDialog,
-      clearTransientStateForRecovery,
-      advanceTurnAfterPlayerAction,
-      applyIndustryRoundStartBonuses,
-      activateAomomoBoard,
+  debugRuntimeController = debugRuntimeModule.createBrowserDebugRuntime({
+    viewStateStore: residentViewStateStore,
+    projectionPort: {
+      getInterfacePlayer,
+      getActivePlayers,
+      getPlayerAgentLabel: (...args) => aiController.getPlayerAgentLabel(...args),
+      getPlayerColorDefinition: (...args) => players.getPlayerColorDefinition(...args),
+      getAlienJiuzheTraceLayer: (...args) => alienSpeciesPort.getAlienJiuzheTraceLayer(...args),
+      getAomomoCalibrationLines: () => [],
     },
+    browserPort: { document, resize, focusService: residentFocusService },
     renderPort: {
       els,
-      syncPassReserveSelectionChrome,
-      syncCardSelectionChrome,
-      syncDiscardSelectionChrome,
-      syncPlayCardSelectionChrome,
-      syncTechSelectionChrome,
-      setTokenAssetSizes,
-      renderRoundStatus,
-      renderPlayerStats,
-      renderPlayerHand,
-      renderPublicCards,
-      renderReservedCards,
-      renderAlienPanels,
-      renderTechBoard,
-      renderRockets,
-      renderWheels,
       renderSectorNebulaDataBoard,
-      renderStateReadout,
-      updatePublicCardControls,
-      updateActionButtons,
-      schedulePersistentGameStateSave,
     },
-    debugRules: dependencies.debugRules,
-    constants: { DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT },
   });
-  const focusDebugCalibration = (...args) => browserOwnerInputs.debug.focusDebugCalibration(...args);
 
   const appEventState = window.SetiAppEvents.createAppEventState({
     pending: {
@@ -5232,11 +5174,6 @@
     },
     renderPort: {
       banrenmaBonusMarkerElements,
-      debugRuntimeController: {
-        setDebugAlienTraceModeActive: (...args) => browserOwnerInputs.debug.setDebugAlienTraceModeActive(...args),
-        toggleDebugAlienTraceMode: (...args) => browserOwnerInputs.debug.toggleDebugAlienTraceMode(...args),
-        enableDebugAlienTraceModeForReveal: (...args) => browserOwnerInputs.debug.enableDebugAlienTraceModeForReveal(...args),
-      },
       document,
       els,
       renderActionEffectBar,
@@ -5310,7 +5247,6 @@
     confirmDataPlacement,
     cancelDataPlacePicker,
     skipPendingDataPlacement,
-    handleDebugQuickSectorScanChoice,
     handleJiuzheCardChoice,
     handleJiuzheOpportunitySkip,
     handleYichangdianCardGainChoice,
@@ -5397,34 +5333,9 @@
     closeActionBriefing,
     openActionBriefingDetailLog,
     blockManualAiSharedOverlayInputIfNeeded,
-    handleAiTakeoverFailsafe,
-    handleForceSkipTurnFailsafe,
     setDebugOpen,
     setDebugPlayerMenuOpen,
-    switchCurrentPlayerColor,
-    rotateSolarOrbit,
-    settleCardTasksAfterEffect,
-    addDebugIncome,
-    promptDebugGainCard,
-    addDebugScore,
     toggleSectorWinDebug,
-    toggleDebugAlienTraceMode,
-    isDebugAlienTraceMode,
-    revealJiuzheForDebug,
-    focusJiuzheDebugCalibration,
-    revealYichangdianForDebug,
-    focusYichangdianDebugCalibration,
-    revealFangzhouForDebug,
-    focusFangzhouDebugCalibration,
-    revealBanrenmaForDebug,
-    focusBanrenmaDebugCalibration,
-    revealChongForDebug,
-    focusChongDebugCalibration,
-    revealAmibaForDebug,
-    focusAmibaDebugCalibration,
-    revealAomomoForDebug,
-    focusAomomoDebugCalibration,
-    revealRunezuForDebug,
     openFangzhouCard1Dialog,
     handlePublicBlindDrawClick,
     handlePublicCardClick,
@@ -5471,7 +5382,6 @@
     isPlayCardSelectionActive,
     handlePlayCardSelect,
     handleHandCardCornerQuickAction,
-    toggleCheatMode,
     confirmTechBlueSlotChoice,
     closeTechBlueSlotPicker,
     renderStateReadout,
@@ -5511,8 +5421,8 @@
         return projection;
       },
       inspectInput: () => residentInputAdapter.inspectInputState(),
-      capture: () => residentBrowserServices.capture(),
-      restore: (envelope) => residentBrowserServices.restore(envelope),
+      capture: () => browserCheckpointPort.capture(),
+      restore: (envelope) => browserCheckpointPort.restore(envelope),
       dispatchAction: (action) => residentInputAdapter.dispatchAction(action),
       submitDecision: (submission) => residentInputAdapter.submitDecision(submission),
     },

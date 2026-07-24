@@ -238,6 +238,7 @@
       formatPlanetRewardGain: effectExecutorPort?.formatPlanetRewardGain,
       getDiscardCornerRewardMultiplier: card("getDiscardCornerRewardMultiplier"),
       requestAnimationFrame: hostPort.requestAnimationFrame,
+      focusService: hostPort.focusService,
     });
   }
 
@@ -528,7 +529,7 @@
       const panel = els.playerHandPanel;
       if (!panel) return;
       context.requestAnimationFrame?.(() => {
-        panel.scrollIntoView({
+        context.focusService?.scrollIntoView(panel, {
           behavior: "smooth",
           block: "center",
           inline: "nearest",

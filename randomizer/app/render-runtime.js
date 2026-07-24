@@ -51,7 +51,7 @@
       "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction", "getPendingPlayCardSelection",
       "isDiscardSelectionActive", "isPlayCardSelectionActive", "isMovePaymentSelectionActive",
       "isHandScanSelectionActive", "getInitialSelectionOffer", "renderReservedCardsFromTaskState",
-      "updatePublicCardControls", "updatePlayerHandPanelTitle", "canBlindDraw", "selectDefaultRocketForCurrentPlayer",
+      "updatePublicCardControls", "updatePlayerHandPanelTitle", "canBlindDraw",
       "isCardSelectionActive", "isPublicCardMultiSelectActive", "isAiAutoBattlePlayer",
       "ensurePublicCardsFilledRespectingDelayedRefills",
       "solar", "players", "rocketActions", "planetStats", "planetReferenceLayout",

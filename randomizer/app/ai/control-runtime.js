@@ -96,16 +96,6 @@
     });
   }
 
-  function createAiDifficultyCommandHandler() {
-    return (workingRoot, command) => {
-      const player = workingRoot.playerState.players.find((candidate) => candidate.id === command.playerId);
-      if (!player) return { ok: false, code: "AI_PLAYER_NOT_FOUND", message: "找不到 AI 玩家" };
-      player.aiDifficulty = command.difficulty;
-      player.aiDifficultyLabel = command.label;
-      return { ok: true };
-    };
-  }
-
   function createAiControllerState(context = {}) {
     const match = context.match || {};
     const action = context.action || {};
@@ -149,7 +139,7 @@
     }
 
     const {
-      window: windowRef = root,
+      timerService,
       state,
       getRuleProjection,
       DEFAULT_ACTIVE_PLAYER_COUNT,
@@ -171,7 +161,6 @@
       runMachinePlayerStep,
       resetGameForAiAutoBattle,
       resetAiStrategyDemandCache = () => {},
-      setPlayerAiDifficulty,
       setTurnStatePlayerOrder,
       startInitialSelection,
       updateActionButtons,
@@ -179,16 +168,16 @@
     if (typeof getRuleProjection !== "function") {
       throw new TypeError("createAiControlRuntime requires getRuleProjection() player/turn DTO reader");
     }
-    if (typeof setPlayerAiDifficulty !== "function") {
-      throw new TypeError("createAiControlRuntime requires setPlayerAiDifficulty() Composition command");
+    if (typeof timerService?.schedule !== "function") {
+      throw new TypeError("createAiControlRuntime requires timerService");
     }
-
     const aiAutoBattleState = {
       enabled: false,
       running: false,
       manualDrive: false,
       playerIds: [],
       aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
+      seatDifficulties: {},
       logs: [],
       bugs: [],
       bugCounts: {},
@@ -214,24 +203,32 @@
       return AI_DIFFICULTY_LABELS[difficulty] || AI_DIFFICULTY_LABELS[AI_DIFFICULTY_LAUGHABLE];
     }
 
-    function applyAiDifficultyToPlayer(player, difficulty = aiAutoBattleState.aiDifficulty) {
-      if (!player) return { ok: false, code: "AI_PLAYER_REQUIRED", message: "缺少 AI 玩家" };
+    function setSeatDifficulty(playerId, difficulty = aiAutoBattleState.aiDifficulty) {
+      if (!getPlayerById(playerId)) return { ok: false, code: "AI_PLAYER_REQUIRED", message: "缺少 AI 玩家" };
       const normalized = normalizeAiDifficulty(difficulty);
-      const label = getAiDifficultyLabel(normalized);
-      const result = setPlayerAiDifficulty(player.id, normalized, label);
-      if (!result || result.ok === false) {
-        throw new Error(result?.message || "AI 难度 Composition command 执行失败");
-      }
-      return result;
+      aiAutoBattleState.seatDifficulties[playerId] = normalized;
+      return { ok: true, playerId, difficulty: normalized, label: getAiDifficultyLabel(normalized) };
     }
 
-    function applyAiDifficultyToPlayerIds(playerIds = [], difficulty = aiAutoBattleState.aiDifficulty) {
+    function setSeatDifficulties(playerIds = [], difficulty = aiAutoBattleState.aiDifficulty) {
       const normalized = normalizeAiDifficulty(difficulty);
       aiAutoBattleState.aiDifficulty = normalized;
+      const activeIds = new Set(playerIds);
+      aiAutoBattleState.seatDifficulties = Object.fromEntries(
+        Object.entries(aiAutoBattleState.seatDifficulties)
+          .filter(([playerId]) => activeIds.has(playerId)),
+      );
       for (const playerId of playerIds) {
-        applyAiDifficultyToPlayer(getPlayerById(playerId), normalized);
+        const configured = setSeatDifficulty(playerId, normalized);
+        if (!configured.ok) return configured;
       }
       return normalized;
+    }
+
+    function getSeatDifficulty(playerId) {
+      return normalizeAiDifficulty(
+        aiAutoBattleState.seatDifficulties[playerId] ?? aiAutoBattleState.aiDifficulty,
+      );
     }
 
     function getAiAutoBattlePlayerIds() {
@@ -270,7 +267,7 @@
     function configureDefaultAiOpponent(options = {}) {
       const aiPlayerIds = getDefaultAiOpponentPlayerIds();
       if (!aiPlayerIds.length) return { ok: false, message: "没有可用的默认电脑玩家" };
-      const aiDifficulty = applyAiDifficultyToPlayerIds(aiPlayerIds, options.aiDifficulty);
+      const aiDifficulty = setSeatDifficulties(aiPlayerIds, options.aiDifficulty);
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = aiPlayerIds;
       schedulerState.pausedOnBug = false;
@@ -312,7 +309,7 @@
     function setAiAutoBattlePlayers(options = {}) {
       const playerIds = resolveAiAutoBattlePlayerIds(options);
       if (!playerIds.length) return { ok: false, message: "没有可配置为电脑玩家的玩家" };
-      const aiDifficulty = applyAiDifficultyToPlayerIds(playerIds, options.aiDifficulty);
+      const aiDifficulty = setSeatDifficulties(playerIds, options.aiDifficulty);
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = playerIds;
       schedulerState.pausedOnBug = false;
@@ -419,7 +416,11 @@
       if (!shouldAutoRunCurrentAiPlayer()) return;
       schedulerState.scheduled = true;
       const delay = Math.max(0, Math.round(Number(aiAutoBattleState.stepDelayMs) || 0));
-      windowRef.setTimeout(runScheduledAiAutoStep, delay);
+      const scheduled = timerService.schedule(runScheduledAiAutoStep, delay);
+      if (!scheduled.ok) {
+        schedulerState.scheduled = false;
+        schedulerState.pausedOnBug = true;
+      }
     }
 
     async function runScheduledAiAutoStep() {
@@ -473,6 +474,7 @@
       aiAutoBattleState.enabled = false;
       aiAutoBattleState.running = false;
       aiAutoBattleState.playerIds = [];
+      aiAutoBattleState.seatDifficulties = {};
       resetScheduler();
       return { ok: true, disabled: true, message };
     }
@@ -497,7 +499,7 @@
 
     function createAiControlSnapshot() {
       return {
-        version: 1,
+        version: 2,
         enabled: Boolean(aiAutoBattleState.enabled),
         playerIds: getAiAutoBattlePlayerIds(),
         pausedOnBug: false,
@@ -506,6 +508,9 @@
         maxBugRepeats: Math.max(1, Math.round(Number(aiAutoBattleState.maxBugRepeats) || 1)),
         maxMovesPerTurn: Math.max(0, Math.round(Number(aiAutoBattleState.maxMovesPerTurn) || 0)),
         aiDifficulty: aiAutoBattleState.aiDifficulty,
+        seatDifficulties: Object.fromEntries(
+          getAiAutoBattlePlayerIds().map((playerId) => [playerId, getSeatDifficulty(playerId)]),
+        ),
       };
     }
 
@@ -542,7 +547,14 @@
       }
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = playerIds;
-      applyAiDifficultyToPlayerIds(playerIds, aiDifficulty);
+      setSeatDifficulties(playerIds, aiDifficulty);
+      if (snapshot.seatDifficulties && typeof snapshot.seatDifficulties === "object") {
+        for (const playerId of playerIds) {
+          if (Object.hasOwn(snapshot.seatDifficulties, playerId)) {
+            setSeatDifficulty(playerId, snapshot.seatDifficulties[playerId]);
+          }
+        }
+      }
       schedulerState.pausedOnBug = options.restorePausedOnBug === true
         ? Boolean(snapshot.pausedOnBug)
         : false;
@@ -595,13 +607,12 @@
       AI_DIFFICULTY_LAUGHABLE,
       AI_DIFFICULTY_WEAK_START,
       aiAutoBattleState,
-      applyAiDifficultyToPlayer,
-      applyAiDifficultyToPlayerIds,
       configureAiAutoBattle,
       configureDefaultAiOpponent,
       createAiControlSnapshot,
       getAiAutoBattlePlayerIds,
       getAiDifficultyLabel,
+      getSeatDifficulty,
       getPendingAutomationPlayerId,
       getPendingOwnerPlayer,
       isAiAutomationPaused,
@@ -620,7 +631,6 @@
     createAiControlRuntime,
     createManualAiInputGuard,
     createAiControllerState,
-    createAiDifficultyCommandHandler,
     createAiSeededRandom,
     getAiBatchSeed,
     hashAiSeed,

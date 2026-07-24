@@ -51,8 +51,6 @@
       passReserveSelectionDismissed: false,
       passReserveSelectedCardId: null,
       probeSectorSelectedRocketIds: [],
-      debugAlienTraceModeActive: false,
-      sectorWinDebugActive: false,
       completedEffectFlowsForUndo: {},
       finalResultAutoOpened: false,
       effectExecutionPlayerId: null,

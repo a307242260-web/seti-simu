@@ -118,23 +118,6 @@
       runezu: aliens.runezu,
       yichangdian: aliens.yichangdian,
     });
-    const debugRules = Object.freeze({
-      players: dependencies.players,
-      cards: dependencies.cards,
-      tech: dependencies.tech,
-      data: dependencies.data,
-      aliens,
-      jiuzhe: aliens.jiuzhe,
-      yichangdian: aliens.yichangdian,
-      fangzhou: aliens.fangzhou,
-      banrenma: aliens.banrenma,
-      chong: aliens.chong,
-      amiba: aliens.amiba,
-      aomomo: aliens.aomomo,
-      runezu: aliens.runezu,
-      solar: dependencies.solar,
-      rocketActions: dependencies.rocketActions,
-    });
     return {
       ...dependencies,
       jiuzhe: aliens.jiuzhe,
@@ -146,7 +129,6 @@
       aomomo: aliens.aomomo,
       runezu: aliens.runezu,
       alienSpeciesRules,
-      debugRules,
     };
   }
 

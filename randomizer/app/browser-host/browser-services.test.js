@@ -5,234 +5,112 @@ const stateApi = require("../../game/state/state-store");
 const viewApi = require("./view-state-store");
 const servicesApi = require("./browser-services");
 
-const RULE_SCHEMA = "seti-rule-composition-save-v1";
-
-function createState(version = 0, gameId = "services") {
+function createState() {
   return stateApi.createCommittedGameState({
-    stateVersion: version, gameId, rulesetVersion: "v1", seed: 81,
+    gameId: "browser-services", rulesetVersion: "v1", seed: 81,
     rngState: {}, sequences: {}, match: {}, turn: {}, players: {}, solarSystem: {},
     pieces: {}, planets: {}, data: {}, cards: {}, tech: {}, aliens: {}, finalScoring: {},
   });
 }
 
-function createHarness(options = {}) {
-  const store = stateApi.createStateStore(createState());
-  const view = options.viewStateStore || viewApi.createViewStateStore();
-  const memory = new Map();
-  const calls = { validate: 0, restore: 0, debug: 0, downloads: [] };
-  let session = { id: "session-a" };
-  const lifecycle = {
-    save() {
-      const serialized = store.serialize();
-      return serialized.ok ? {
-        ok: true,
-        envelope: { schemaVersion: RULE_SCHEMA, committedState: serialized.serialized, session: structuredClone(session) },
-      } : serialized;
-    },
-    validateRestore(envelope) {
-      calls.validate += 1;
-      if (envelope?.schemaVersion !== RULE_SCHEMA) return { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
-      const loaded = store.deserialize(envelope.committedState);
-      return loaded.ok ? { ok: true } : loaded;
-    },
-    restore(envelope) {
-      calls.restore += 1;
-      if (options.failRuleRestore) return { ok: false, code: "RULE_RESTORE_POISON" };
-      const loaded = store.deserialize(envelope.committedState);
-      if (!loaded.ok) return loaded;
-      const restored = store.restore(loaded.state);
-      if (!restored.ok) return restored;
-      session = structuredClone(envelope.session);
-      return { ok: true, projection: { stateVersion: restored.stateVersion } };
-    },
+function committedFingerprint(store) {
+  return {
+    version: store.getSnapshot().meta.stateVersion,
+    bytes: store.serialize().serialized,
   };
-  const services = servicesApi.createBrowserServices({
-    ruleLifecycle: lifecycle,
-    viewStateStore: view,
-    storage: { getItem: (key) => memory.get(key) || null, setItem: (key, value) => memory.set(key, value), removeItem: (key) => memory.delete(key) },
-    downloadPort: { save(request) { calls.downloads.push(structuredClone(request)); return { ok: true }; } },
-    debugCommandPort: { dispatch(command) { calls.debug += 1; return { ok: true, command }; } },
-    now: () => new Date("2026-07-19T00:00:00.000Z"),
-  });
-  return { store, view, services, calls, memory };
 }
 
-(function testCompositionEnvelopeRoundTripAndViewRebuild() {
-  const harness = createHarness();
-  harness.view.dispatch({ type: "overlay.set", activeId: "report" });
-  const captured = harness.services.capture();
-  assert.equal(captured.ok, true);
-  assert.equal(captured.envelope.schemaVersion, servicesApi.SCHEMA_VERSION);
-  assert.equal(captured.envelope.rules.schemaVersion, RULE_SCHEMA);
-  assert.equal(typeof captured.envelope.rules.envelope.committedState, "string");
-  assert.equal(Object.hasOwn(captured.envelope, "state"), false);
-  assert.equal(Object.hasOwn(captured.envelope, "session"), false);
-  assert.equal(captured.envelope.view.schemaVersion, servicesApi.VIEW_SCHEMA_VERSION);
-  harness.view.clear();
-  const restored = harness.services.restore(captured.envelope);
-  assert.deepEqual(restored, { ok: true, stateVersion: 0, sessionRestored: true, viewRestored: true });
-  assert.equal(harness.calls.restore, 1);
-  assert.equal(harness.view.getSnapshot().overlay.activeId, "report");
-})();
-
-(function testMissingLifecycleAndLegacyStateStoreFallbackAreRejected() {
-  assert.throws(() => servicesApi.createBrowserServices({}), /Rule Composition lifecycle 缺少 save/);
-  assert.throws(() => servicesApi.createBrowserServices({
-    stateStore: stateApi.createStateStore(createState()),
-  }), /Rule Composition lifecycle 缺少 save/);
-})();
-
-(function testOldEnvelopeFieldsAndRuleSchemaFailClosedBeforeRestore() {
-  const harness = createHarness();
-  const legacy = structuredClone(harness.services.capture().envelope);
-  legacy.state = { serialized: "legacy" };
-  legacy.session = { checkpoint: {} };
-  const oldFields = harness.services.restore(legacy);
-  assert.equal(oldFields.code, "BROWSER_RECOVERY_FIELDS_UNSUPPORTED");
-  assert.deepEqual([...oldFields.unknownKeys].sort(), ["session", "state"]);
-
-  const invalidRule = structuredClone(harness.services.capture().envelope);
-  invalidRule.rules.schemaVersion = "legacy-v0";
-  invalidRule.rules.envelope.schemaVersion = "legacy-v0";
-  assert.equal(harness.services.restore(invalidRule).code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
-  assert.equal(harness.calls.restore, 0, "预验证失败不得调用 composition restore");
-})();
-
-(function testInvalidViewFailsBeforeRuleMutation() {
-  const harness = createHarness();
-  const envelope = structuredClone(harness.services.capture().envelope);
-  envelope.view.state.ruleState = { credits: 99 };
-  const result = harness.services.restore(envelope);
-  assert.equal(result.code, "VIEW_STATE_ROOT_FIELDS_INVALID");
-  assert.equal(harness.calls.restore, 0);
-})();
-
-(function testViewRestoreFailureRollsBackCompositionBytes() {
-  const residentView = viewApi.createViewStateStore();
-  const rejectingView = {
-    getSnapshot: residentView.getSnapshot,
-    validate: residentView.validate,
-    clear: residentView.clear,
-    restore(snapshot) {
-      if (snapshot.overlay?.activeId === "poison") return { ok: false, code: "VIEW_RESTORE_POISON" };
-      return residentView.restore(snapshot);
-    },
-  };
-  const harness = createHarness({ viewStateStore: rejectingView });
-  const beforeBytes = harness.store.serialize().serialized;
-  const envelope = structuredClone(harness.services.capture().envelope);
-  const changedStore = stateApi.createStateStore(createState(9, "changed"));
-  envelope.rules.envelope.committedState = changedStore.serialize().serialized;
-  envelope.view.state.overlay.activeId = "poison";
-  const result = harness.services.restore(envelope);
-  assert.equal(result.code, "VIEW_RESTORE_POISON");
-  assert.equal(harness.store.serialize().serialized, beforeBytes);
-  assert.equal(harness.calls.restore, 2, "失败后必须只经 lifecycle 回滚规则状态");
-})();
-
-(function testStorageDownloadDebugAndFacadeArePortsOnly() {
-  const harness = createHarness();
-  assert.equal(harness.services.save().ok, true);
-  harness.view.clear();
-  assert.equal(harness.services.load().ok, true);
-  assert.equal(harness.services.download({ filename: "log.md", content: "visible log" }).ok, true);
-  assert.deepEqual(harness.calls.downloads[0], { filename: "log.md", content: "visible log", mimeType: "text/plain;charset=utf-8" });
-  assert.equal(harness.services.download({ filename: "bad.md", state: harness.store.getSnapshot() }).code, "BROWSER_DOWNLOAD_REQUEST_INVALID");
-  const facade = harness.services.createPublicFacade();
-  assert.equal(Object.isFrozen(facade), true);
-  assert.equal(facade.dispatchDeveloperCommand({ type: "failsafe.pause" }).ok, true);
-  assert.equal(harness.calls.debug, 1);
-  assert.equal(Object.hasOwn(facade, "stateStore"), false);
-  assert.equal(Object.hasOwn(facade, "sessionPort"), false);
-})();
-
-(function testRefreshOnlyObservesAndCannotBreakCommit() {
+(function testStorageDownloadTimerFocusAndViewStateCannotMutateRules() {
   const store = stateApi.createStateStore(createState());
-  let refreshes = 0;
-  const subscription = servicesApi.subscribeRefresh({ stateStore: store, refresh() { refreshes += 1; throw new Error("view crashed"); } });
-  const working = store.beginWorkingCopy();
-  assert.equal(store.compareAndCommit(working.baseVersion, working.state).ok, true);
-  assert.equal(store.getSnapshot().meta.stateVersion, 1);
-  assert.equal(refreshes, 1);
-  subscription.dispose();
-})();
-
-(function testBrowserDownloadPortOwnsDomLifecycle() {
+  const before = committedFingerprint(store);
+  const memory = new Map();
   const calls = [];
-  const link = {
-    click: () => calls.push("click"),
-    remove: () => calls.push("remove"),
-  };
-  const port = servicesApi.createBrowserDownloadPort({
+  const timers = [];
+  const timer = servicesApi.createTimerService({
+    setTimeout(callback) { timers.push(callback); return timers.length; },
+    clearTimeout(id) { calls.push(["cancel", id]); },
+    requestAnimationFrame(callback) { timers.push(callback); return timers.length + 10; },
+    cancelAnimationFrame(id) { calls.push(["cancel-frame", id]); },
+  });
+  const storage = servicesApi.createStorageService({
+    storageKey: "seti-test",
+    storage: {
+      getItem: (key) => memory.get(key) || null,
+      setItem: (key, value) => memory.set(key, value),
+      removeItem: (key) => memory.delete(key),
+    },
+  });
+  const link = { click: () => calls.push("click"), remove: () => calls.push("remove") };
+  const download = servicesApi.createDownloadService({
     window: {
       URL: {
         createObjectURL: () => "blob:test",
-        revokeObjectURL: (url) => calls.push(`revoke:${url}`),
+        revokeObjectURL: (url) => calls.push(["revoke", url]),
       },
-      setTimeout: (callback) => callback(),
     },
-    document: { body: { append: () => calls.push("append") }, createElement: () => link },
+    document: {
+      body: { append: () => calls.push("append") },
+      createElement: () => link,
+    },
     Blob: class TestBlob {},
+    timerService: timer,
   });
-  assert.equal(port.save({ filename: "log.md", content: "log", mimeType: "text/markdown" }).ok, true);
-  assert.deepEqual(calls, ["append", "click", "remove", "revoke:blob:test"]);
+  const focus = servicesApi.createFocusService({ timerService: timer });
+  const services = servicesApi.createBrowserServices({
+    storageService: storage,
+    timerService: timer,
+    focusService: focus,
+    downloadService: download,
+  });
+  const view = viewApi.createViewStateStore();
+
+  assert.equal(services.storage.write({ envelope: { schemaVersion: "opaque-v1" } }).ok, true);
+  assert.deepEqual(services.storage.read().value, { envelope: { schemaVersion: "opaque-v1" } });
+  assert.equal(services.download({ filename: "log.md", content: "visible" }).ok, true);
+  assert.equal(services.timer.schedule(() => calls.push("timer"), 0).ok, true);
+  assert.equal(services.focus.focus({ focus: () => calls.push("focus") }).ok, true);
+  assert.equal(services.focus.scrollIntoView({
+    scrollIntoView: (options) => calls.push(["scroll", options]),
+  }, { block: "center" }).ok, true);
+  view.dispatch({ type: "status.set", note: "下载完成" });
+  view.dispatch({ type: "debug.panel", open: true });
+  view.dispatch({ type: "debug.sectorCalibration", active: true });
+
+  while (timers.length) timers.shift()();
+  assert.deepEqual(committedFingerprint(store), before);
+  assert.equal(view.getSnapshot().status.note, "下载完成");
+  assert.equal(view.getSnapshot().debug.panelOpen, true);
+  assert.equal(view.getSnapshot().debug.sectorCalibration, true);
+  assert.equal(Object.hasOwn(services, "capture"), false);
+  assert.equal(Object.hasOwn(services, "restore"), false);
+  assert.equal(Object.hasOwn(services, "dispatchDeveloperCommand"), false);
 })();
 
-(function testOwnerInputRegistryRoutesOnlyOwnerDeclaredKinds() {
-  const submitted = [];
-  const target = {
-    beginSectorScan(root, count) {
-      root.count += count;
-      return { ok: true, nested: { count: root.count } };
-    },
-  };
-  const registry = servicesApi.createOwnerInputRegistry({
-    clonePresentation: (value) => structuredClone(value),
-    submit(command) {
-      submitted.push(command);
-      return { value: { command } };
+(function testHostFailuresAreStructuredAndRuleNeutral() {
+  const store = stateApi.createStateStore(createState());
+  const before = committedFingerprint(store);
+  const throwingStorage = servicesApi.createStorageService({
+    storage: {
+      getItem() { throw new Error("read poison"); },
+      setItem() { throw new Error("write poison"); },
+      removeItem() { throw new Error("remove poison"); },
     },
   });
-  const port = registry.registerTarget("scan_flow", ["beginSectorScan"], () => target);
-  const root = { count: 1 };
-  const executed = registry.execute(root, { kind: "scan_flow.beginSectorScan", args: [2] });
-  assert.equal(executed.ok, true);
-  assert.equal(executed.value.nested.count, 3);
-  port.beginSectorScan(4);
-  assert.deepEqual(submitted, [{ kind: "scan_flow.beginSectorScan", args: [4] }]);
+  const throwingTimer = servicesApi.createTimerService({
+    setTimeout() { throw new Error("timer poison"); },
+    clearTimeout() { throw new Error("cancel poison"); },
+  });
+  const focus = servicesApi.createFocusService({ timerService: throwingTimer });
 
-  const rejectingRegistry = servicesApi.createOwnerInputRegistry({
-    clonePresentation: (value) => structuredClone(value),
-    submit: () => ({ ok: false, code: "OWNER_INPUT_REJECTED", message: "拒绝测试输入" }),
-  });
-  const rejectingPort = rejectingRegistry.register("test_owner", {
-    reject: () => ({ ok: true }),
-  });
-  assert.deepEqual(rejectingPort.reject(), {
-    ok: false,
-    code: "OWNER_INPUT_REJECTED",
-    message: "拒绝测试输入",
-  });
-
-  assert.equal(registry.execute(root, { kind: "scan_flow.forged" }).code, "BROWSER_OWNER_INPUT_UNKNOWN");
-  assert.equal(registry.execute(root, {
-    kind: "scan_flow.beginSectorScan",
-    domain: "alien_runtime",
-    operation: "beginSectorScan",
-    args: [99],
-  }).code, "BROWSER_OWNER_INPUT_CROSS_DOMAIN");
-  assert.throws(
-    () => registry.registerTarget("scan_flow", ["beginSectorScan"], () => target),
-    /重复 owner/,
-  );
-  assert.throws(
-    () => registry.registerTarget("alien_runtime", ["confirm", "confirm"], () => target),
-    /schema 非法或重复/,
-  );
-  assert.throws(
-    () => registry.register("alien_runtime", { "cross.domain": () => ({ ok: true }) }),
-    /input 名非法/,
-  );
+  assert.equal(throwingStorage.read().code, "BROWSER_STORAGE_READ_FAILED");
+  assert.equal(throwingStorage.write({ safe: true }).code, "BROWSER_STORAGE_WRITE_FAILED");
+  assert.equal(throwingStorage.remove().code, "BROWSER_STORAGE_CLEAR_FAILED");
+  assert.equal(throwingTimer.schedule(() => {}).code, "BROWSER_TIMER_SCHEDULE_FAILED");
+  assert.equal(focus.focus({ focus() { throw new Error("focus poison"); } }).code, "BROWSER_FOCUS_FAILED");
+  assert.equal(focus.scrollIntoView({
+    scrollIntoView() { throw new Error("scroll poison"); },
+  }).code, "BROWSER_SCROLL_FAILED");
+  assert.deepEqual(committedFingerprint(store), before);
 })();
 
-console.log("Browser services composition lifecycle tests passed");
+console.log("Browser services isolation tests passed");

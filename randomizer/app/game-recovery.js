@@ -25,6 +25,7 @@
 
 
   const RECOVERY_SNAPSHOT_VERSION = 2;
+  const BROWSER_CHECKPOINT_SCHEMA_VERSION = "seti-browser-checkpoint-v1";
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -32,6 +33,93 @@
 
   function failure(code, message, details = {}) {
     return { ok: false, code, message, ...details };
+  }
+
+  function requireFunction(source, key, label) {
+    if (typeof source?.[key] !== "function") throw new TypeError(`${label} 缺少 ${key}()`);
+    return source[key].bind(source);
+  }
+
+  function createBrowserCheckpointAdapter(options = {}) {
+    const lifecycle = options.ruleLifecycle;
+    const saveRules = requireFunction(lifecycle, "save", "Rule Composition lifecycle");
+    const validateRules = requireFunction(lifecycle, "validateRestore", "Rule Composition lifecycle");
+    const restoreRules = requireFunction(lifecycle, "restore", "Rule Composition lifecycle");
+    const viewStateStore = options.viewStateStore || null;
+    const viewSchemaVersion = options.viewSchemaVersion;
+    if (!viewSchemaVersion) throw new TypeError("Browser checkpoint adapter 缺少 ViewState schema");
+
+    function capture(captureOptions = {}) {
+      const rules = saveRules(clone(captureOptions.ruleLifecycle || {}));
+      if (!rules?.ok || !rules.envelope?.schemaVersion) {
+        return failure(rules?.code || "BROWSER_RULES_SAVE_FAILED", rules?.message || "Rule Composition save 失败");
+      }
+      const view = viewStateStore?.getSnapshot ? clone(viewStateStore.getSnapshot()) : null;
+      if (view && view.schemaVersion !== viewSchemaVersion) {
+        return failure("BROWSER_VIEW_SCHEMA_UNSUPPORTED", "ViewState schema 不受支持");
+      }
+      return {
+        ok: true,
+        envelope: {
+          schemaVersion: BROWSER_CHECKPOINT_SCHEMA_VERSION,
+          savedAt: (options.now?.() || new Date()).toISOString(),
+          rules: { schemaVersion: rules.envelope.schemaVersion, envelope: clone(rules.envelope) },
+          view: view == null ? null : { schemaVersion: view.schemaVersion, state: view },
+        },
+      };
+    }
+
+    function validateEnvelope(envelope) {
+      if (!envelope || envelope.schemaVersion !== BROWSER_CHECKPOINT_SCHEMA_VERSION) {
+        return failure("BROWSER_RECOVERY_SCHEMA_UNSUPPORTED", "Browser recovery envelope schema 不受支持");
+      }
+      const allowedKeys = ["schemaVersion", "savedAt", "rules", "view"];
+      const unknownKeys = Object.keys(envelope).filter((key) => !allowedKeys.includes(key));
+      if (unknownKeys.length) {
+        return failure("BROWSER_RECOVERY_FIELDS_UNSUPPORTED", "Browser recovery envelope 包含未知字段", { unknownKeys });
+      }
+      if (!envelope.rules?.envelope || envelope.rules.schemaVersion !== envelope.rules.envelope.schemaVersion) {
+        return failure("BROWSER_RECOVERY_RULES_MISSING", "Browser recovery envelope 缺少 Rule Composition 存档");
+      }
+      const rules = validateRules(clone(envelope.rules.envelope));
+      if (!rules?.ok) return failure(rules?.code || "BROWSER_RECOVERY_RULES_INVALID", rules?.message || "Rule Composition 存档无效");
+      if (envelope.view != null) {
+        if (envelope.view.schemaVersion !== viewSchemaVersion || envelope.view.state?.schemaVersion !== viewSchemaVersion) {
+          return failure("BROWSER_RECOVERY_VIEW_INVALID", "ViewState schema 不受支持");
+        }
+        if (typeof viewStateStore?.validate !== "function" || typeof viewStateStore?.restore !== "function") {
+          return failure("BROWSER_RECOVERY_VIEW_PORT_MISSING", "存档包含 ViewState，但宿主没有恢复协议");
+        }
+        const viewValidation = viewStateStore.validate(clone(envelope.view.state));
+        if (!viewValidation?.ok) return failure(viewValidation?.code || "BROWSER_RECOVERY_VIEW_INVALID", viewValidation?.message || "ViewState snapshot 无效");
+      }
+      return { ok: true, rules: clone(envelope.rules.envelope), view: clone(envelope.view?.state ?? null) };
+    }
+
+    function restore(envelope) {
+      const validated = validateEnvelope(envelope);
+      if (!validated.ok) return validated;
+      const beforeRules = saveRules();
+      if (!beforeRules?.ok) return failure(beforeRules?.code || "BROWSER_RULES_SAVE_FAILED", beforeRules?.message || "恢复前 Rule Composition capture 失败");
+      const beforeView = viewStateStore?.getSnapshot ? clone(viewStateStore.getSnapshot()) : null;
+      const rulesResult = restoreRules(clone(validated.rules));
+      if (!rulesResult?.ok) return failure(rulesResult?.code || "BROWSER_RECOVERY_RULES_RESTORE_FAILED", rulesResult?.message || "Rule Composition restore 拒绝恢复");
+      const viewResult = validated.view != null ? viewStateStore.restore(validated.view) : viewStateStore?.clear?.();
+      if (viewResult?.ok === false) {
+        const rollback = restoreRules(clone(beforeRules.envelope));
+        if (rollback?.ok === false) throw new Error("Rule Composition 恢复回滚失败");
+        if (beforeView != null) viewStateStore?.restore?.(beforeView);
+        return failure(viewResult.code || "BROWSER_RECOVERY_VIEW_RESTORE_FAILED", viewResult.message || "ViewState restore port 拒绝恢复");
+      }
+      return {
+        ok: true,
+        stateVersion: rulesResult.projection?.stateVersion ?? null,
+        sessionRestored: Boolean(validated.rules.session),
+        viewRestored: validated.view != null,
+      };
+    }
+
+    return Object.freeze({ capture, validateEnvelope, restore });
   }
 
   function parseRecoverySnapshot(input) {
@@ -52,10 +140,10 @@
       entryId: options.entryId ?? null,
       label: options.label || null,
     };
-    if (typeof options.browserServices?.capture !== "function") {
-      throw new TypeError("GameRecovery 需要 Browser Services composition lifecycle capture()");
+    if (typeof options.browserCheckpointPort?.capture !== "function") {
+      throw new TypeError("GameRecovery 需要 Browser checkpoint capture()");
     }
-    const captured = options.browserServices.capture({
+    const captured = options.browserCheckpointPort.capture({
       ruleLifecycle: clone(options.ruleLifecycleOptions || {}),
     });
     if (!captured?.ok) {
@@ -104,53 +192,36 @@
     };
   }
 
-  function getPersistentGameStorage(windowRef) {
-    try {
-      return windowRef?.localStorage || null;
-    } catch (error) {
+  function readPersistentGamePackage(storageService) {
+    const result = storageService?.read?.();
+    if (!result?.ok) {
+      if (result?.code === "BROWSER_STORAGE_READ_FAILED") storageService?.remove?.();
       return null;
     }
-  }
-
-  function readPersistentGamePackage(storage, storageKey) {
-    if (!storage) return null;
-    try {
-      const raw = storage.getItem(storageKey);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== "object" || parsed.version !== RECOVERY_SNAPSHOT_VERSION) {
-        storage.removeItem(storageKey);
-        return null;
-      }
-      return parsed;
-    } catch (error) {
-      storage.removeItem(storageKey);
+    const parsed = result.value;
+    if (!parsed || typeof parsed !== "object" || parsed.version !== RECOVERY_SNAPSHOT_VERSION) {
+      storageService.remove?.();
       return null;
     }
+    return parsed;
   }
 
   function hasPersistentGameState(saved) {
     return Boolean(saved?.version === RECOVERY_SNAPSHOT_VERSION && saved?.latestSnapshot);
   }
 
-  function clearPersistentGameState(storage, storageKey) {
-    if (!storage) return false;
-    try {
-      storage.removeItem(storageKey);
-      return true;
-    } catch (error) {
-      return false;
-    }
+  function clearPersistentGameState(storageService) {
+    return storageService?.remove?.().ok === true;
   }
 
   function createPersistenceController(options = {}) {
-    const storage = getPersistentGameStorage(options.window);
-    const storageKey = options.storageKey;
+    const storageService = options.storageService || null;
+    const timerService = options.timerService || null;
     let saveTimer = 0;
     let saveSuspended = false;
 
     function read() {
-      return readPersistentGamePackage(storage, storageKey);
+      return readPersistentGamePackage(storageService);
     }
 
     function has() {
@@ -158,7 +229,7 @@
     }
 
     function clear() {
-      return clearPersistentGameState(storage, storageKey);
+      return clearPersistentGameState(storageService);
     }
 
     function setSuspended(value) {
@@ -183,22 +254,21 @@
       if (!saveOptions.force && !isStable()) {
         return { ok: false, skipped: true, message: "当前流程未稳定，保留上一个本地存档" };
       }
-      if (!storage) return { ok: false, message: "当前浏览器不支持本地保存" };
-      try {
-        storage.setItem(storageKey, JSON.stringify(createPackage(saveOptions.label)));
-        return { ok: true };
-      } catch (error) {
-        return { ok: false, message: String(error?.message || error) };
-      }
+      const result = storageService?.write?.(createPackage(saveOptions.label));
+      return result?.ok ? { ok: true } : {
+        ok: false,
+        message: result?.message || "当前浏览器不支持本地保存",
+      };
     }
 
     function schedule(saveOptions = {}) {
       if (saveSuspended) return;
-      if (saveTimer) options.window.clearTimeout(saveTimer);
-      saveTimer = options.window.setTimeout(() => {
+      if (saveTimer) timerService?.cancel?.(saveTimer);
+      const scheduled = timerService?.schedule?.(() => {
         saveTimer = 0;
         saveNow(saveOptions);
       }, options.saveDelayMs);
+      saveTimer = scheduled?.timerId || 0;
     }
 
     function restore() {
@@ -272,7 +342,6 @@
       alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
       context.uiRuntimeState.alienTracePickerState = null;
       context.closeAlienRevealConfirmationOverlay();
-      context.uiRuntimeState.debugAlienTraceModeActive = false;
       context.setActionEffectFlow(workingRoot, null);
       context.clearCompletedEffectFlowForUndo();
       context.uiRuntimeState.effectStepActive = false;
@@ -332,7 +401,7 @@
     function createSnapshot(meta = {}) {
       const projection = options.getRecoveryProjection();
       return createGameRecoverySnapshot({
-        browserServices: options.browserServices,
+        browserCheckpointPort: options.browserCheckpointPort,
         ruleLifecycleOptions: {
           seed: meta.seed ?? "browser-host",
           rngState: meta.rngState || { owner: "browser", state: null },
@@ -386,7 +455,7 @@
     function applySnapshot(snapshot, applyOptions = {}) {
       return applyGameRecoverySnapshot(snapshot, {
         ...applyOptions,
-        browserServices: options.browserServices,
+        browserCheckpointPort: options.browserCheckpointPort,
         onAfterStateRestored: () => {
           options.clearTransientStateForRecovery();
         },
@@ -467,15 +536,15 @@
       );
     }
     if (envelope.browserCheckpoint != null) {
-      const services = options.browserServices;
-      if (!services?.validateEnvelope || !services?.restore || !services?.capture) {
-        return failure("RECOVERY_BROWSER_SERVICES_MISSING", "Browser checkpoint 需要 Browser Services restore 协议");
+      const checkpointPort = options.browserCheckpointPort;
+      if (!checkpointPort?.validateEnvelope || !checkpointPort?.restore || !checkpointPort?.capture) {
+        return failure("RECOVERY_BROWSER_CHECKPOINT_PORT_MISSING", "Browser checkpoint 需要 lifecycle adapter");
       }
-      const validated = services.validateEnvelope(envelope.browserCheckpoint);
+      const validated = checkpointPort.validateEnvelope(envelope.browserCheckpoint);
       if (!validated.ok) return validated;
-      const before = services.capture();
+      const before = checkpointPort.capture();
       if (!before?.ok) return before;
-      const restored = services.restore(envelope.browserCheckpoint);
+      const restored = checkpointPort.restore(envelope.browserCheckpoint);
       if (!restored.ok) return restored;
       options.onAfterStateRestored?.();
       const aiControlResult = options.restoreAiControlSnapshot?.(envelope.runtime?.aiControl || null, {
@@ -507,12 +576,13 @@
   return {
     createRecoveryOwnerInputPort,
     RECOVERY_SNAPSHOT_VERSION,
+    BROWSER_CHECKPOINT_SCHEMA_VERSION,
+    createBrowserCheckpointAdapter,
     createGameRecoverySnapshot,
     normalizeRecoverableActionLogEntry,
     getRecoverableActionLogEntries,
     createActionLogRecoveryPackage,
     createPersistentGamePackage,
-    getPersistentGameStorage,
     readPersistentGamePackage,
     hasPersistentGameState,
     clearPersistentGameState,
