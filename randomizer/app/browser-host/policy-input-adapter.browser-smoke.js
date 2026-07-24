@@ -43,13 +43,14 @@
       viewStateStore: viewStore,
     });
     const policy = SetiHeuristicPolicy.createHeuristicPolicy({ difficulty: "weak_start" });
-    const observation = (score) => SetiOutcomeModel.createDecisionObservation({
+    const observation = (score, probeRouteSummary = null) => SetiOutcomeModel.createDecisionObservation({
       publicState: { players: [{ id: "p1", resources: { score, credits: 0 } }], board: {} },
       selfState: { playerId: "p1", hand: [] },
     }, {
       seatId: "p1",
       stateVersion: boundary.stateVersion,
       decisionVersion: boundary.decisionVersion,
+      probeRouteSummary,
     });
     const driver = SetiBrowserPolicyInputAdapter.createPolicyInputAdapter({
       policy,
@@ -66,19 +67,24 @@
           leaves: [{
             leafId: `leaf:${candidate.actionId}`,
             actionChain: [candidate.actionId],
-            observation: observation(score),
+            observation: observation(score, candidate.family === "launch" ? {
+              endpointActionId: "orbit:chrome-ai",
+              endpointPlanetId: "earth",
+              goalScoreGain: score,
+            } : null),
             legalSuccessors: [],
           }],
         };
       }),
       inputAdapter: input,
     });
-    assert((await driver.runOnce()).ok, "AI Standard Action 提交失败");
+    const firstResult = await driver.runOnce();
+    assert(firstResult.ok, `AI Standard Action 提交失败: ${JSON.stringify(firstResult)}`);
     assert((await driver.runOnce()).ok, "AI Standard Decision 提交失败");
     assert(JSON.stringify(trace) === JSON.stringify([
       "action:launch:chrome-ai", "effect:launch",
-      "decision:choose_reward:chrome-ai:score", "reward:score",
-    ]), "AI 固定 Action/Decision trace 不一致");
+      "decision:choose_reward:chrome-ai:credit", "reward:credit",
+    ]), `AI 固定 Action/Decision trace 不一致: ${JSON.stringify(trace)}`);
     assert(status.textContent === "AI 已完成行动", "AI 展示未跟随共享 session 结果");
     assert(Object.values(forbiddenCalls).every((count) => count === 0), "AI 访问了 renderer/picker resolver");
     document.body.dataset.result = "passed";

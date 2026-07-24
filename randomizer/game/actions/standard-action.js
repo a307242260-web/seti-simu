@@ -440,16 +440,20 @@
     ]);
   }
 
-  function createStage3Definitions(actions = {}) {
-    return Object.freeze([
-      createOptionDefinition("move", actions.move),
-      createOptionDefinition("quick_trade", actions.quickTrade || actions.quick_trade),
-      createOptionDefinition("industry", actions.industry),
-      createOptionDefinition("card_corner", actions.cardCorner || actions.card_corner),
-      createOptionDefinition("place_data", actions.placeData || actions.place_data),
-      createOptionDefinition("runezu_face_symbol", actions.runezuFaceSymbol || actions.runezu_face_symbol),
-      createOptionDefinition("end_turn", actions.endTurn || actions.end_turn),
-    ]);
+  function createStage3Definitions(actions = {}, options = {}) {
+    const excluded = new Set(options.excludeFamilies || []);
+    const entries = [
+      ["move", actions.move],
+      ["quick_trade", actions.quickTrade || actions.quick_trade],
+      ["industry", actions.industry],
+      ["card_corner", actions.cardCorner || actions.card_corner],
+      ["place_data", actions.placeData || actions.place_data],
+      ["runezu_face_symbol", actions.runezuFaceSymbol || actions.runezu_face_symbol],
+      ["end_turn", actions.endTurn || actions.end_turn],
+    ];
+    return Object.freeze(entries
+      .filter(([family]) => !excluded.has(family))
+      .map(([family, action]) => createOptionDefinition(family, action)));
   }
 
   function createConditionalDefinition(family, action) {
@@ -472,7 +476,9 @@
       for (const definition of createStage2Definitions(options.stage2Actions)) registry.register(definition);
     }
     if (options.stage3Actions) {
-      for (const definition of createStage3Definitions(options.stage3Actions)) registry.register(definition);
+      for (const definition of createStage3Definitions(options.stage3Actions, options)) {
+        registry.register(definition);
+      }
     }
     if (options.stage4Actions) {
       for (const definition of createStage4Definitions(options.stage4Actions)) registry.register(definition);

@@ -1023,7 +1023,6 @@
       data,
       cards,
       rocketActions,
-      quickTrades,
       industry,
       abilities,
       aliens,
@@ -1051,6 +1050,7 @@
     }
 
     return actions.createStandardAdapter({
+      excludeFamilies: ["quick_trade"],
       stage2Actions: {
         scan: {
           label: "扫描",
@@ -1154,7 +1154,6 @@
             );
           },
         },
-        quickTrade: actions.standardAction.createQuickTradeProvider({ quickTrades }),
         industry: {
           label: "公司 1x",
           getOptions(actionContext) {

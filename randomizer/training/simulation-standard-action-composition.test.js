@@ -91,24 +91,29 @@ function submitActionToCompletion(composition, action, quick = false) {
 
 function enumerateBrowserProductionPort(state, family) {
   const context = {
+    workingRoot: {
+      playerState: {
+        currentPlayerId: state.turn.currentPlayerId,
+        players: structuredClone(state.players.players),
+      },
+      cardState: structuredClone(state.cards),
+      rocketState: {},
+      match: { decisionVersion: state.match.decisionVersion },
+    },
     playerState: {
       currentPlayerId: state.turn.currentPlayerId,
       players: structuredClone(state.players.players),
     },
     cardState: structuredClone(state.cards),
   };
-  const registry = standardAction.createRegistry({
+  const legacySource = standardAction.createRegistry({
     getAuthority: () => ({
       actorId: state.turn.currentPlayerId,
       stateVersion: state.meta.stateVersion,
       decisionVersion: state.match.decisionVersion,
     }),
   });
-  registry.register(standardAction.createOptionDefinition(
-    "quick_trade",
-    standardAction.createQuickTradeProvider({ quickTrades }),
-  ));
-  registry.register(standardAction.createOptionDefinition(
+  legacySource.register(standardAction.createOptionDefinition(
     "play_card",
     standardAction.createPlayCardProvider({
       players,
@@ -116,7 +121,17 @@ function enumerateBrowserProductionPort(state, family) {
       getCardPlayCost: cardEffects.getCardPlayCost,
     }),
   ));
-  return registry.enumerate(context, { family });
+  const pack = productionComposition.createProductionDomainPack({
+    getStandardActionSource: () => legacySource,
+    productionRules: { quickTrades },
+    getAuthority: () => ({
+      actorId: state.turn.currentPlayerId,
+      stateVersion: state.meta.stateVersion,
+      decisionVersion: state.match.decisionVersion,
+    }),
+  });
+  assert.equal(pack.actionRegistry.ownerId, productionComposition.PACK_ID);
+  return { context, pack, actions: pack.actionRegistry.enumerate(context, { family }) };
 }
 
 const config = {
@@ -130,6 +145,16 @@ const kernel = createSimulationRuleComposition({
 });
 assert.equal(kernel.productionDomainPackId, productionComposition.PACK_ID,
   "Simulation 必须由 game 层 Production Domain Pack 创建");
+assert.equal(
+  kernel.productionActionOwners.quick_trade,
+  `${productionComposition.PACK_ID}:quick_trade`,
+  "Simulation quick_trade 必须由 game pack 拥有",
+);
+assert.equal(
+  kernel.productionActionExecutorOwners.quick_trade,
+  productionComposition.QUICK_TRADE_EXECUTOR_ID,
+  "Simulation quick_trade 必须命中 game-owned executor",
+);
 
 {
   const registryPort = {
@@ -138,12 +163,14 @@ assert.equal(kernel.productionDomainPackId, productionComposition.PACK_ID,
     execute() { return { ok: false }; },
   };
   assert.throws(() => productionComposition.createProductionDomainPack({
-    createStandardActionRegistry: () => registryPort,
+    getStandardActionSource: () => registryPort,
+    productionRules: { quickTrades },
     hostFamilyExecutors: { quick_trade() {} },
   }), /重复 Production family executor: quick_trade/,
   "host 自定义同 family executor 必须 fail-fast");
   assert.throws(() => productionComposition.createProductionDomainPack({
-    createStandardActionRegistry: () => registryPort,
+    getStandardActionSource: () => registryPort,
+    productionRules: { quickTrades },
     additionalDomains: [{
       id: "host-quick-trade",
       families: ["quick_trade"],
@@ -151,6 +178,10 @@ assert.equal(kernel.productionDomainPackId, productionComposition.PACK_ID,
     }],
   }), /重复 Effect domain family: quick_trade/,
   "host 重复安装同 family domain 必须 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    createStandardActionRegistry: () => registryPort,
+  }), /禁止 host 自定义规则 owner: createStandardActionRegistry/,
+  "host 传入已构造 registry factory 必须 fail-fast");
 }
 
 assert.deepEqual(
@@ -221,7 +252,7 @@ kernel.composition.dispose();
   );
   assert.deepEqual(
     identityView(simulationTrades),
-    identityView(enumerateBrowserProductionPort(scenario, "quick_trade")),
+    identityView(enumerateBrowserProductionPort(scenario, "quick_trade").actions),
     "Browser/Simulation 必须共用 quick_trade descriptor identity",
   );
   const richEnvelope = parityKernel.composition.lifecycle.save().envelope;
@@ -239,14 +270,38 @@ kernel.composition.dispose();
     .probeRouteRequirements.candidates.find((candidate) => candidate.gap.energy > 0);
   assert.ok(routeBefore, "11 信用 3 能源代表状态必须存在缺能源路线");
   const energyTrade = simulationTrades.find((action) => action.target.tradeId === "credits-for-energy");
+  const browserProduction = enumerateBrowserProductionPort(scenario, "quick_trade");
+  const browserEnergyTrade = browserProduction.actions
+    .find((action) => action.target.tradeId === "credits-for-energy");
+  const browserTradeResult = browserProduction.pack.actionRegistry.execute(
+    browserProduction.context,
+    browserEnergyTrade,
+  );
+  assert.equal(browserTradeResult.executorId, productionComposition.QUICK_TRADE_EXECUTOR_ID);
   const tradeResult = parityKernel.composition.inputPort.submitQuickAction(energyTrade);
   assert.equal(tradeResult.ok, true);
+  assert.equal(tradeResult.executorId, productionComposition.QUICK_TRADE_EXECUTOR_ID);
   assert.equal(tradeResult.journal.actions.length, 1);
   assert.ok(tradeResult.journal.effects.length >= 1);
+  assert.deepEqual(tradeResult.events, browserTradeResult.events,
+    "Browser/Simulation quick_trade 必须返回同一 game-owned executor result");
+  assert.deepEqual(tradeResult.journal.events, browserTradeResult.events,
+    "Browser/Simulation quick_trade 必须写入同一 journal events");
+  assert.deepEqual(tradeResult.journal.history, browserTradeResult.journalHistory,
+    "Browser/Simulation quick_trade 必须写入同一 journal history");
   const tradePlayer = parityKernel.composition.stateSourcePort.read().state.players.players
     .find((player) => player.id === scenario.turn.currentPlayerId);
+  const browserTradePlayer = players.getCurrentPlayer(browserProduction.context.playerState);
   assert.equal(tradePlayer.resources.credits, 9);
   assert.equal(tradePlayer.resources.energy, 4);
+  assert.deepEqual(
+    { credits: tradePlayer.resources.credits, energy: tradePlayer.resources.energy },
+    {
+      credits: browserTradePlayer.resources.credits,
+      energy: browserTradePlayer.resources.energy,
+    },
+    "Browser/Simulation quick_trade 必须提交同一资源变更",
+  );
   const routeAfter = parityKernel.composition.stateSourcePort.read().state
     .probeRouteRequirements.candidates.find((candidate) => candidate.requirementId === routeBefore.requirementId);
   assert.equal(routeAfter.gap.energy, routeBefore.gap.energy - 1,
@@ -282,7 +337,7 @@ kernel.composition.dispose();
   const directActions = cardKernel.composition.inputPort.enumerateActions({ family: "play_card" });
   assert.deepEqual(
     identityView(directActions),
-    identityView(enumerateBrowserProductionPort(directScenario, "play_card")),
+    identityView(enumerateBrowserProductionPort(directScenario, "play_card").actions),
     "Browser/Simulation 必须共用 play_card descriptor identity",
   );
   const directResult = cardKernel.composition.inputPort.submitAction(directActions[0]);

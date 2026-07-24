@@ -53,7 +53,7 @@
         nextState: result.nextState,
         spawnedEffects,
         events: clone(result.events || []),
-        history: clone(result.history || []),
+        history: clone(result.journalHistory || result.history || []),
         log: clone(result.log ?? (result.message ? { type: "standardAction", message: result.message } : null)),
         irreversible: clone(result.irreversible || null),
       };

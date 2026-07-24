@@ -7,9 +7,13 @@
 ## 已建立的唯一装配义务
 
 - Browser 与 Simulation 都必须调用 `SetiProductionComposition.createProductionComposition()`。
-- 工厂内部创建一次 Standard Action registry port，并安装覆盖全部
+- 工厂内部创建一次 Standard Action registry port；`quick_trade` definition 由 pack 创建并拥有，
+  executor 在 pack 内直接调用 `game/actions/quick-trades.executeTrade`，Browser 仅注入 legacy
+  undo/history 适配，Simulation 仅通过 action context 提供选择端口与随机源。
+  其余未迁移 family 只从显式 legacy input source 合成。工厂同时安装覆盖全部
   `SetiStandardAction.ALL_FAMILIES` 的 Standard Action Effect domain。
-- `ruleOptions` 不接受 `createActionRegistry` / `effectDomains`；host 通过
+- `ruleOptions` 不接受 `createActionRegistry` / `effectDomains`；顶层也拒绝
+  `createStandardActionRegistry`。host 通过
   `actionRegistry`、`standardActionDomain` 或同 family executor/domain 覆盖生产 owner 时 fail-fast。
 - Host 保留的注入面仅用于 state adapter、projection、输入来源、随机源、continuation 与宿主
   services。未迁移的 provider/executor 记录在下表，不能被当作新架构范例。
@@ -18,11 +22,11 @@
 
 | 位置 | 当前 ownership | 后续边界 |
 |---|---|---|
-| `app/action-runtime.js:createBrowserStandardActionAdapter` | 创建 22-family Browser provider registry；包含 enumerate/validate provider | 将每个 family 的规则 provider 迁入 game domain pack；app 只保留 intent/input 映射 |
+| `app/action-runtime.js:createBrowserStandardActionAdapter` | 创建 quick_trade 之外的 Browser legacy input source；包含 enumerate/validate provider | 将每个剩余 family 的规则 provider 迁入 game domain pack；app 只保留 intent/input 映射 |
 | `app/action-runtime.js:createActionRuntime.executeStandardDescriptor` | 按 family 分派 Primary Board、Engine、Quick Turn、Conditional executor | 删除 family 路由；统一调用 production registry/session |
 | `app/primary-board-action-executor.js` | launch/move/orbit/land 规则提交与 working-root 写入 | 迁入相应 game action domain |
 | `app/engine-action-executor.js` | scan/analyze/research/play-card family 执行路由 | 按后续领域迁移项拆入 game domain |
-| `app/quick-turn-action-executor.js` | quick_trade/industry/card_corner/place_data/runezu/end_turn 执行路由与 history | 迁入 game quick/turn domains；Browser 只呈现 continuation |
+| `app/quick-turn-action-executor.js` | industry/card_corner/place_data/runezu/end_turn 执行路由与 history；显式排除 quick_trade | 迁入 game quick/turn domains；Browser 只呈现 continuation |
 | `app/conditional-action-executor.js`、`app/conditional-decision-domain.js` | Decision enumerate/validate/execute 与 pending state-write | Decision owner 迁入正式 game domain/session |
 | `app/browser-pending-decision.js`、`app/card-selection-decision.js` | Browser 事务内打开/读取 DecisionEffect | 迁完对应 family 后删除 Browser rule owner，仅保留 renderer/input adapter |
 | `app/effects/**` | 具体 Effect executor 与 working-root mutation | 逐领域迁入 game effect domains；`app/effects/bootstrap.js` 的注册表随之删除 |
@@ -32,9 +36,9 @@
 
 | 位置 | 当前 ownership | 后续边界 |
 |---|---|---|
-| `training/simulation-rule-composition.js:createSimulationRuleComposition` | 创建并注册各 Standard Action provider；family 执行直接写 working root | provider/executor 逐 family 迁入 game domain pack；Simulation 只提供 random/state adapter/services |
+| `training/simulation-rule-composition.js:createSimulationRuleComposition` | 创建并注册 quick_trade 之外的 legacy Standard Action input source；family 执行直接写 working root | provider/executor 逐 family 迁入 game domain pack；Simulation 只提供 random/state adapter/services |
 | 同文件 `registry.execute` wrapper | land/orbit 奖励、main-action 标记、decisionVersion 写入 | 迁入对应 game domain 的 commit/journal |
-| 同文件 quick_trade/play_card/move/industry/card_corner/pass/end_turn registrations | Simulation 专有规则 executor 与 journal event 组装 | 删除专有 executor，复用 production definition |
+| 同文件 play_card/move/industry/card_corner/pass/end_turn registrations | Simulation 专有规则 executor 与 journal event 组装 | 删除专有 executor，复用 production definition |
 | 同文件 Standard Action continuation | inspect/resolve Decision 并处理 reward/card/industry state-write | Decision owner 迁入 game domains；Simulation 仅提交 choice |
 | `training/simulation-rule-composition.js:createInitialSelectionInputPort` | opening 专用 registry/Decision/state-write | 迁入 setup domain |
 | `app/simulation-env.js` | `legalActions`/`step` 调用 composition input port | 合法 Host adapter，保留；不得加入规则 fallback |

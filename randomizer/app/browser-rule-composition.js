@@ -41,7 +41,10 @@
     );
     const production = productionCompositionApi.createProductionComposition({
       ruleCompositionApi,
-      createStandardActionRegistry: context.createActionRegistry,
+      getStandardActionSource: context.getStandardActionSource,
+      productionRules: context.productionRules,
+      hostServices: context.hostServices,
+      getAuthority: context.getAuthority,
       standardActionDomainOptions: context.standardActionDomainOptions,
       ruleOptions: {
       invariantValidators: [workingStateAdapter.validateSessionBoundary],
@@ -51,6 +54,7 @@
         },
       },
       effectRuntimeApi: context.effectRuntimeApi,
+      createActionContext: context.createActionContext,
       createInitialState(_initialOptions, workingState) {
         return highCouplingState.purifyHighCouplingSlices(createCommittedCandidate(
           workingState,
@@ -171,6 +175,9 @@
     return Object.freeze({
       ...composition,
       productionDomainPackId: production.domainPack.packId,
+      productionActionRegistry: production.domainPack.actionRegistry,
+      productionActionOwners: production.domainPack.actionOwners,
+      productionActionExecutorOwners: production.domainPack.actionExecutorOwners,
       projectionSource,
     });
   }

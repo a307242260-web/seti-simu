@@ -57,6 +57,7 @@
   }
 
   function createQuickTurnActionExecutor(options = {}) {
+    const excludedFamilies = new Set(options.excludeFamilies || []);
     const handlers = {
       quick_trade: options.executeQuickTrade,
       industry: options.executeIndustry,
@@ -66,7 +67,7 @@
       pass: options.executePass,
       end_turn: options.executeEndTurn,
     };
-    for (const family of ACTION_FAMILIES) {
+    for (const family of ACTION_FAMILIES.filter((entry) => !excludedFamilies.has(entry))) {
       if (typeof handlers[family] !== "function") {
         throw new TypeError(`Quick/Turn executor 缺少 ${family} 生产 flow`);
       }
@@ -79,6 +80,12 @@
         return fail(
           "QUICK_TURN_FAMILY_INVALID",
           `Quick/Turn executor 不接受 family: ${descriptor?.family || "<missing>"}`,
+        );
+      }
+      if (excludedFamilies.has(descriptor.family)) {
+        return fail(
+          "QUICK_TURN_FAMILY_OWNED_BY_DOMAIN_PACK",
+          `${descriptor.family} 由 Production Domain Pack 执行`,
         );
       }
       if (typeof executeOptions.validate === "function") {
@@ -102,7 +109,10 @@
       }
     }
 
-    return Object.freeze({ actionFamilies: ACTION_FAMILIES, execute });
+    return Object.freeze({
+      actionFamilies: Object.freeze(ACTION_FAMILIES.filter((family) => !excludedFamilies.has(family))),
+      execute,
+    });
   }
 
   function createQuickTradeFlow(context = {}) {

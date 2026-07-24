@@ -694,11 +694,12 @@ function createForkableHarness() {
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
     executeOwnerInput: () => ({ ok: true }),
-    createActionRegistry: () => ({
+    getStandardActionSource: () => ({
       enumerate() { return []; },
       validate() { return { ok: false }; },
       execute() { return { ok: false }; },
     }),
+    productionRules: { quickTrades: require("../game/actions/quick-trades") },
     browserProjection: {
       visibilityPolicy: (state) => ({
         match: structuredClone(state.match),
@@ -714,6 +715,16 @@ function createForkableHarness() {
     composition.productionDomainPackId,
     require("../game/production-composition").PACK_ID,
     "Browser 必须由 game 层 Production Domain Pack 创建",
+  );
+  assert.equal(
+    composition.productionActionOwners.quick_trade,
+    `${require("../game/production-composition").PACK_ID}:quick_trade`,
+    "Browser quick_trade 必须由 game pack 拥有",
+  );
+  assert.equal(
+    composition.productionActionExecutorOwners.quick_trade,
+    require("../game/production-composition").QUICK_TRADE_EXECUTOR_ID,
+    "Browser quick_trade 必须命中 game-owned executor",
   );
   assert.equal(captured.invariantValidators[0], adapter.validateSessionBoundary);
   assert.deepEqual(

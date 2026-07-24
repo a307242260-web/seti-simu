@@ -1229,35 +1229,6 @@ function createSimulationRuleComposition(options = {}) {
   };
 
   registry.register(standardActionApi.createOptionDefinition(
-    "quick_trade",
-    standardActionApi.createQuickTradeProvider({
-      quickTrades,
-      execute(actionContext, action) {
-        const root = actionContext.workingRoot || actionContext;
-        const result = quickTrades.executeTrade(
-          action.target?.tradeId,
-          createQuickTradeContext(root, options.random),
-        );
-        if (!result.ok) return result;
-        return {
-          ...result,
-          progressed: true,
-          events: [{
-            type: "quick_trade",
-            tradeId: action.target?.tradeId,
-            playerId: root.playerState.currentPlayerId,
-          }],
-          history: [{
-            type: "quick_trade",
-            tradeId: action.target?.tradeId,
-            playerId: root.playerState.currentPlayerId,
-          }],
-        };
-      },
-    }),
-  ));
-
-  registry.register(standardActionApi.createOptionDefinition(
     "play_card",
     standardActionApi.createPlayCardProvider({
       players,
@@ -1864,6 +1835,9 @@ function createSimulationRuleComposition(options = {}) {
       match: workingRoot.match,
       stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
       decisionVersion: workingRoot.match.decisionVersion || 0,
+      beginDiscardSelection: (count, input) => openTradeDiscard(workingRoot, count, input),
+      beginCardSelection: (input) => openTradeCardSelection(workingRoot, input),
+      random: options.random,
       getEarthSectorCoordinate: () => getEarthCoordinate(workingRoot),
       getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
       rotateSolarOrbit(count = 1) {
@@ -2068,7 +2042,17 @@ function createSimulationRuleComposition(options = {}) {
   };
   const production = productionCompositionApi.createProductionComposition({
     ruleCompositionApi: { createRuleComposition },
-    createStandardActionRegistry: () => registry,
+    getStandardActionSource: () => registry,
+    productionRules: { quickTrades },
+    getAuthority(workingState) {
+      const root = workingState.workingRoot || workingState;
+      const pending = root.match.pendingDecision;
+      return {
+        actorId: pending?.playerId || root.playerState.currentPlayerId || null,
+        stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
+        decisionVersion: root.match.decisionVersion || 0,
+      };
+    },
     standardActionDomainOptions: { continuation: simulationContinuation },
     ruleOptions: simulationRuleOptions,
   });
@@ -2086,7 +2070,9 @@ function createSimulationRuleComposition(options = {}) {
 
   const actionContract = Object.freeze({
     coverage() {
-      const registrations = new Map(registry.coverage().map((entry) => [entry.family, entry]));
+      const registrations = new Map(
+        production.domainPack.actionRegistry.coverage().map((entry) => [entry.family, entry]),
+      );
       return SIMULATION_FAMILY_CONTRACTS.map((contract) => Object.freeze({
         ...registrations.get(contract.family),
         obligation: contract.obligation,
@@ -2101,6 +2087,8 @@ function createSimulationRuleComposition(options = {}) {
     newGame,
     actionContract,
     productionDomainPackId: production.domainPack.packId,
+    productionActionOwners: production.domainPack.actionOwners,
+    productionActionExecutorOwners: production.domainPack.actionExecutorOwners,
   });
 }
 

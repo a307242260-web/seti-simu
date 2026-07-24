@@ -413,7 +413,9 @@
     getCommittedContext: getBrowserCommittedContext,
   } = browserWorkingStateAdapter;
   const actionContextFactory = actionRuntimeModule.createActionContextFactory({
-    buildPlutoMarkerContext,
+    buildPlutoMarkerContext: (workingRoot) => (
+      actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] }
+    ),
     getNormalTokenAssetForPlayer: (...args) => getNormalTokenAssetForPlayer(...args),
     getEarthSectorCoordinate: (...args) => getEarthSectorCoordinate(...args),
     solar,
@@ -480,12 +482,10 @@
     getFlowMarkedNebulaIds,
     effectFlowMarkedNebula,
   } = effectFlowModule;
-  const compositionActionRegistry = actionRuntimeModule.createCompositionActionRegistry({
-    getController: () => actionRuntimeController,
-    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
-  });
+  let productionActionRegistry = null;
+  let browserLegacyActionSource = null;
   const enumerateSimulationTurnActionsForRoot = (workingRoot) => (
-    compositionActionRegistry.enumerate(workingRoot)
+    productionActionRegistry.enumerate(createActionContextForWorkingRoot(workingRoot))
       .filter((standardAction) => standardAction.phase !== "conditional")
       .map((standardAction) => ({
         id: standardAction.family,
@@ -665,6 +665,7 @@
       restoreWorkingState: restoreBrowserWorkingState,
       validateSessionBoundary: validateBrowserSessionBoundary,
     },
+    createActionContext: createActionContextForWorkingRoot,
     getCommittedContext: getBrowserCommittedContext,
     browserProjection: {
       visibilityPolicy: browserHostModule.projectionAdapter.defaultVisibilityPolicy,
@@ -672,24 +673,53 @@
       getBrowserReadModelOwner: () => browserReadModelOwner,
       createRenderPresentation: (input) => createBrowserRenderPresentation(input),
     },
-    runWithWorkingState: (workingRoot, operation) => browserPendingDecisionOwner.runRuleTransaction(
-      workingRoot,
+    runWithWorkingState: (actionContext, operation) => browserPendingDecisionOwner.runRuleTransaction(
+      actionContext.workingRoot || actionContext,
       () => cardSelectionDecisionOwner.runRuleTransaction(
-        workingRoot,
+        actionContext.workingRoot || actionContext,
         () => players.runWithScoreGainListener(
-          (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
+          (player, payload) => handlePlayerScoreChanged(
+            actionContext.workingRoot || actionContext,
+            player,
+            payload,
+          ),
           operation,
         ),
       ),
     ),
     executeOwnerInput: browserOwnerInputRegistry.execute,
-    createActionRegistry: () => compositionActionRegistry,
+    getStandardActionSource: () => browserLegacyActionSource,
+    productionRules: { quickTrades },
+    hostServices: {
+      quickTradeHistory: {
+        capture(actionContext) {
+          const player = players.getCurrentPlayer(actionContext.playerState);
+          return historyCommands.captureTradeState(player, actionContext.cardState);
+        },
+        attachPending(actionContext, _descriptor, result, beforeState) {
+          const continuation = result.awaitingDiscard
+            ? getPendingDiscardDecision(actionContext.workingRoot)
+            : readCardSelectionDecision(actionContext.workingRoot);
+          if (continuation && beforeState) continuation.beforeTradeState = beforeState;
+        },
+        recordCompleted(actionContext, descriptor, _result, beforeState) {
+          const player = players.getCurrentPlayer(actionContext.playerState);
+          recordQuickTradeCompletion(
+            descriptor.target?.tradeId,
+            player,
+            beforeState,
+            { workingRoot: actionContext.workingRoot },
+          );
+        },
+      },
+    },
     standardActionDomainOptions: {
       continuation: standardActionContinuation,
       takeOpenedDecisionEffect,
       takeDeferredDecisionEffects,
     },
   });
+  productionActionRegistry = ruleComposition.productionActionRegistry;
   let scheduleResidentDesktopRefresh = () => {};
   const postCommitRefreshCommandKinds = new Set([
     "setup.startInitialSelection",
@@ -719,10 +749,7 @@
     executePlayCard: (_workingRoot, descriptor) => executeStandardPlayCard(descriptor),
   });
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
-    executeQuickTrade: (workingRoot, descriptor) => runQuickTrade(descriptor.target?.tradeId, {
-      workingRoot,
-      standardAction: descriptor,
-    }),
+    excludeFamilies: ["quick_trade"],
     executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
       workingRoot,
       players.getCurrentPlayer(workingRoot.playerState)?.initialSelection?.industry,
@@ -3681,31 +3708,34 @@
     getCurrentActionEffectIndex: () => getActionEffectFlow()?.currentIndex,
     runQuickTrade,
     confirmDataPlacement,
-    standardActionAdapter: actionRuntimeModule.createBrowserStandardActionAdapter({
-      actions, players, scanEffects, data, cards, rocketActions, quickTrades, industry,
-      abilities, aliens, runezu,
-      canStartMainAction,
-      getMainActionStartBlockReason,
-      canAnalyzeDataForPlayer,
-      getAnalyzeActionOptionsForPlayer,
-      getCardPlayCost: (...args) => getCardPlayCost(...args),
-      hasActivePendingSubFlow,
-      getMovableTokensForPlayer: (actionContext, playerId) => (
-        getMovableTokensForPlayerForRoot(actionContext.workingRoot, playerId)
-      ),
-      getRequiredMovePointsForUi: (actionContext, ...args) => (
-        getRequiredMovePointsForUiForRoot(actionContext.workingRoot, ...args)
-      ),
-      canPayForMove,
-      moveRocket,
-      canUseCardCornerQuickActionForRoot: (...args) => canUseCardCornerQuickActionForRoot(...args),
-      getCardCornerQuickActionForCardForRoot: (...args) => getCardCornerQuickActionForCardForRoot(...args),
-      shouldQueueCardCornerMoveQuickActionForRoot: (...args) => shouldQueueCardCornerMoveQuickActionForRoot(...args),
-      canStartCardCornerFreeMoveForRoot: (...args) => canStartCardCornerFreeMoveForRoot(...args),
-      isActionPending,
-      isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
-      createConditionalActionProvider,
-    }),
+    standardActionAdapter: (() => {
+      browserLegacyActionSource = actionRuntimeModule.createBrowserStandardActionAdapter({
+        actions, players, scanEffects, data, cards, rocketActions, industry,
+        abilities, aliens, runezu,
+        canStartMainAction,
+        getMainActionStartBlockReason,
+        canAnalyzeDataForPlayer,
+        getAnalyzeActionOptionsForPlayer,
+        getCardPlayCost: (...args) => getCardPlayCost(...args),
+        hasActivePendingSubFlow,
+        getMovableTokensForPlayer: (actionContext, playerId) => (
+          getMovableTokensForPlayerForRoot(actionContext.workingRoot, playerId)
+        ),
+        getRequiredMovePointsForUi: (actionContext, ...args) => (
+          getRequiredMovePointsForUiForRoot(actionContext.workingRoot, ...args)
+        ),
+        canPayForMove,
+        moveRocket,
+        canUseCardCornerQuickActionForRoot: (...args) => canUseCardCornerQuickActionForRoot(...args),
+        getCardCornerQuickActionForCardForRoot: (...args) => getCardCornerQuickActionForCardForRoot(...args),
+        shouldQueueCardCornerMoveQuickActionForRoot: (...args) => shouldQueueCardCornerMoveQuickActionForRoot(...args),
+        canStartCardCornerFreeMoveForRoot: (...args) => canStartCardCornerFreeMoveForRoot(...args),
+        isActionPending,
+        isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
+        createConditionalActionProvider,
+      });
+      return productionActionRegistry;
+    })(),
   });
 
   const { controller: aiController } = aiBrowserBootstrapModule.createBrowserAiBootstrap({
