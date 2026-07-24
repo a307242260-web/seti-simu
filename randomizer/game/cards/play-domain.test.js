@@ -13,6 +13,8 @@ assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 46);
 assert.deepEqual(playDomain.SLICE_EFFECT_TYPES, [
   cardEffects.REWARD_TYPES.GAIN_RESOURCES,
   cardEffects.REWARD_TYPES.GAIN_DATA,
+  cardEffects.REWARD_TYPES.DRAW_CARDS,
+  cardEffects.REWARD_TYPES.PICK_CARD,
   cardEffects.EFFECT_TYPES.SCAN_NEBULA,
   cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
 ]);
@@ -37,7 +39,7 @@ function createLegacyRoot(cardId) {
       rulesetVersion: "test-v1",
       seed: 158,
       rngState: {},
-      sequences: {},
+      sequences: { card: 100 },
     },
     playerState: {
       currentPlayerId: "p1",
@@ -144,6 +146,8 @@ function semanticState(state) {
       reserved: player.reservedCards.map((card) => card.id),
       mainActionCompleted: player.mainActionCompleted,
     },
+    cardSequence: root.meta.sequences.card,
+    cardRandom: structuredClone(root.meta.rngState.cardPlay || null),
     scans: ["sector-4-a", "sector-3-a"].map((nebulaId) => ({
       nebulaId,
       tokens: data.listNebulaTokens(root.nebulaDataState, nebulaId).map((token) => ({
@@ -325,6 +329,46 @@ function runDirectRewards(browserShape) {
   return semanticState(committed);
 }
 
+function runDrawCards(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_83.webp", browserShape);
+  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(counters.compareAndCommit, 1);
+  assert.equal(result.journal.effects.length, 2);
+  assert.equal(result.journal.rng.length, 1);
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(player.hand.length, 3);
+  assert.deepEqual(player.hand.map((card) => card.id), ["card-100-0", "card-101-0", "card-102-0"]);
+  assert.equal(committed.meta.sequences.card, 103);
+  assert.equal(committed.meta.rngState.cardPlay.cursor, 3);
+  return semanticState(committed);
+}
+
+function runPickCard(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_122.webp", browserShape);
+  const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(opened.ok, true, JSON.stringify(opened));
+  assert.equal(composition.inspect().phase, "awaiting_input");
+  const decision = composition.inspect().session.decision;
+  assert.deepEqual(decision.choices.map((choice) => choice.target.choiceId), ["blind"]);
+  const result = composition.inputPort.submitDecision({
+    decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
+    choice: decision.choices[0],
+  });
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(counters.compareAndCommit, 1);
+  assert.equal(result.journal.decisions.length, 1);
+  const committed = composition.stateSourcePort.getSnapshot();
+  assert.deepEqual(committed.players.players[0].hand.map((card) => card.id), ["card-100-0"]);
+  assert.equal(committed.meta.sequences.card, 101);
+  return semanticState(committed);
+}
+
 assert.deepEqual(
   runFixedScan(true),
   runFixedScan(false),
@@ -339,6 +383,16 @@ assert.deepEqual(
   runDirectRewards(true),
   runDirectRewards(false),
   "Browser 与 Simulation 的资源/数据卡牌原语必须经同一 owner 产生同根结果",
+);
+assert.deepEqual(
+  runDrawCards(true),
+  runDrawCards(false),
+  "Browser 与 Simulation 的盲抽必须共享 committed entity/RNG owner",
+);
+assert.deepEqual(
+  runPickCard(true),
+  runPickCard(false),
+  "Browser 与 Simulation 的精选 Decision 必须共享 committed entity/RNG owner",
 );
 
 {

@@ -34,6 +34,8 @@
   const EFFECT_TYPES = Object.freeze({
     PLAY: "card_play_domain_play",
     DIRECT: "card_play_domain_direct",
+    DRAW_CARDS: "card_play_domain_draw_cards",
+    PICK_CARD: "card_play_domain_pick_card",
     FIXED_NEBULA_SCAN: "card_play_domain_fixed_nebula_scan",
     COLOR_NEBULA_SCAN: "card_play_domain_color_nebula_scan",
   });
@@ -49,8 +51,13 @@
     cardEffects.REWARD_TYPES.GAIN_RESOURCES,
     cardEffects.REWARD_TYPES.GAIN_DATA,
   ]);
+  const CARD_ENTITY_EFFECT_TYPES = Object.freeze([
+    cardEffects.REWARD_TYPES.DRAW_CARDS,
+    cardEffects.REWARD_TYPES.PICK_CARD,
+  ]);
   const SLICE_EFFECT_TYPES = Object.freeze([
     ...DIRECT_EFFECT_TYPES,
+    ...CARD_ENTITY_EFFECT_TYPES,
     cardEffects.EFFECT_TYPES.SCAN_NEBULA,
     cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
   ]);
@@ -105,6 +112,38 @@
         decisionVersion: root?.match?.decisionVersion ?? 0,
       },
     };
+  }
+
+  function hashSeed(value) {
+    let hash = 2166136261;
+    for (const character of String(value ?? "seti-card-play")) {
+      hash ^= character.codePointAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function nextCommittedRandom(root) {
+    if (!root?.meta) throw new TypeError("Card Play deterministic random 缺少 meta");
+    if (!root.meta.rngState || typeof root.meta.rngState !== "object") root.meta.rngState = {};
+    const previous = root.meta.rngState.cardPlay;
+    const state = Number.isSafeInteger(previous?.state)
+      ? previous.state >>> 0
+      : hashSeed(root.meta.seed);
+    const nextState = (state + 0x6D2B79F5) >>> 0;
+    let value = nextState;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    root.meta.rngState.cardPlay = {
+      algorithm: "mulberry32-v1",
+      state: nextState,
+      cursor: (Number(previous?.cursor) || 0) + 1,
+    };
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  }
+
+  function createCommittedCardFactory(root) {
+    return (entry) => cards.createCommittedCardInstance(root, entry);
   }
 
   function createPlayCardProvider() {
@@ -177,28 +216,32 @@
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: EFFECT_TYPES.PLAY }),
-        spawnedEffects: playEffects.map((effect) => ({
-          priority: "direct",
-          effect: DIRECT_EFFECT_TYPES.includes(effect.type)
-            ? {
-              type: EFFECT_TYPES.DIRECT,
-              ownerId: actor.id,
-              payload: { cardEffect: clone(effect), cardInstanceId: playedCard.id },
-            }
-            : effect.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA
-            ? {
-              type: EFFECT_TYPES.FIXED_NEBULA_SCAN,
-              ownerId: actor.id,
-              payload: { cardEffect: clone(effect), cardInstanceId: playedCard.id },
-            }
-            : {
-              type: EFFECT_TYPES.COLOR_NEBULA_SCAN,
-              kind: "decision",
-              decisionKind: "choose_target",
+        spawnedEffects: playEffects.map((effect) => {
+          let type = EFFECT_TYPES.COLOR_NEBULA_SCAN;
+          let decisionKind = "choose_target";
+          if (DIRECT_EFFECT_TYPES.includes(effect.type)) {
+            type = EFFECT_TYPES.DIRECT;
+            decisionKind = null;
+          } else if (effect.type === cardEffects.REWARD_TYPES.DRAW_CARDS) {
+            type = EFFECT_TYPES.DRAW_CARDS;
+            decisionKind = null;
+          } else if (effect.type === cardEffects.REWARD_TYPES.PICK_CARD) {
+            type = EFFECT_TYPES.PICK_CARD;
+            decisionKind = "choose_card";
+          } else if (effect.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA) {
+            type = EFFECT_TYPES.FIXED_NEBULA_SCAN;
+            decisionKind = null;
+          }
+          return {
+            priority: "direct",
+            effect: {
+              type,
+              ...(decisionKind ? { kind: "decision", decisionKind } : {}),
               ownerId: actor.id,
               payload: { cardEffect: clone(effect), cardInstanceId: playedCard.id },
             },
-        })),
+          };
+        }),
         events: [{
           type: "playCard",
           timing: "after_play_card",
@@ -257,6 +300,135 @@
         }],
       };
     });
+
+    runtime.registerExecutor(EFFECT_TYPES.DRAW_CARDS, (state, sessionEffect, workingContext) => {
+      const root = getWorkingRoot(state, workingContext);
+      const effect = sessionEffect.payload?.cardEffect;
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor || effect?.type !== cardEffects.REWARD_TYPES.DRAW_CARDS) {
+        return fail("CARD_DRAW_CONTEXT_STALE", "卡牌盲抽上下文已失效");
+      }
+      const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
+      const result = cards.drawCardsToHand(
+        getSlice(root, "cardState", "cards"),
+        getSlice(root, "playerState", "players"),
+        actor,
+        count,
+        () => nextCommittedRandom(root),
+        { createCardInstance: createCommittedCardFactory(root) },
+      );
+      if (!result.ok && !(result.cards || []).length) return result;
+      return {
+        ok: true,
+        nextState: commitWorkingState(state, { source: effect.type }),
+        irreversible: {
+          code: "hidden_card_reveal",
+          reason: "盲抽翻出新牌",
+        },
+        rng: [{
+          owner: "card_play",
+          effectId: effect.id || null,
+          cursor: root.meta.rngState.cardPlay?.cursor || 0,
+        }],
+        events: [{
+          type: "card_effect",
+          effectId: effect.id || null,
+          effectType: effect.type,
+          playerId: actor.id,
+          count: result.cards?.length || 0,
+        }],
+        history: [{
+          type: "card_effect",
+          effectId: effect.id || null,
+          effectType: effect.type,
+          cardInstanceIds: (result.cards || []).map((card) => card.id),
+          executorId: EXECUTOR_ID,
+        }],
+      };
+    });
+
+    const pickCardExecutor = {
+      getLegalChoices(state, sessionEffect, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
+        const cardState = getSlice(root, "cardState", "cards");
+        const choices = (cardState.publicCards || []).flatMap((card, slotIndex) => (
+          card
+            ? [{
+              family: "choose_card",
+              target: { choiceId: `public:${slotIndex}`, source: "public", slotIndex },
+              payload: { cardInstanceId: card.id },
+              summary: cards.getCardLabel(card),
+            }]
+            : []
+        ));
+        if (cards.getAvailablePool(
+          cardState,
+          getSlice(root, "playerState", "players"),
+        ).length) {
+          choices.push({
+            family: "choose_card",
+            target: { choiceId: "blind", source: "blind" },
+            payload: {},
+            summary: "盲抽 1 张牌",
+          });
+        }
+        return choices;
+      },
+      resolveDecision(state, sessionEffect, choice, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
+        const effect = sessionEffect.payload?.cardEffect;
+        const actor = getActor(root, sessionEffect.ownerId);
+        const legal = pickCardExecutor.getLegalChoices(state, sessionEffect, workingContext)
+          .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
+        if (!actor || effect?.type !== cardEffects.REWARD_TYPES.PICK_CARD || !legal) {
+          return fail("CARD_PICK_CHOICE_STALE", "精选卡牌选择已失效");
+        }
+        const cardState = getSlice(root, "cardState", "cards");
+        const playerState = getSlice(root, "playerState", "players");
+        const random = () => nextCommittedRandom(root);
+        const factoryOptions = { createCardInstance: createCommittedCardFactory(root) };
+        const result = legal.target.source === "public"
+          ? cards.pickFromPublic(
+            cardState,
+            playerState,
+            actor,
+            legal.target.slotIndex,
+            random,
+            factoryOptions,
+          )
+          : cards.blindDraw(cardState, playerState, actor, random, factoryOptions);
+        if (!result.ok) return result;
+        return {
+          ok: true,
+          nextState: commitWorkingState(state, { source: effect.type }),
+          irreversible: legal.target.source === "blind"
+            ? { code: "hidden_card_reveal", reason: "盲抽翻出新牌" }
+            : null,
+          rng: [{
+            owner: "card_play",
+            effectId: effect.id || null,
+            cursor: root.meta.rngState.cardPlay?.cursor || 0,
+          }],
+          events: [{
+            type: "card_effect",
+            effectId: effect.id || null,
+            effectType: effect.type,
+            playerId: actor.id,
+            cardInstanceId: result.card.id,
+            source: legal.target.source,
+          }],
+          history: [{
+            type: "card_effect_decision",
+            effectId: effect.id || null,
+            effectType: effect.type,
+            choiceId: legal.target.choiceId,
+            cardInstanceId: result.card.id,
+            executorId: EXECUTOR_ID,
+          }],
+        };
+      },
+    };
+    runtime.registerExecutor(EFFECT_TYPES.PICK_CARD, pickCardExecutor);
 
     runtime.registerExecutor(EFFECT_TYPES.FIXED_NEBULA_SCAN, (
       state,
@@ -356,6 +528,7 @@
     EXECUTOR_ID,
     REACHABLE_PLAY_EFFECT_TYPES,
     DIRECT_EFFECT_TYPES,
+    CARD_ENTITY_EFFECT_TYPES,
     SLICE_EFFECT_TYPES,
     createPlayCardProvider,
     createExperimentalCardPlayDomain,

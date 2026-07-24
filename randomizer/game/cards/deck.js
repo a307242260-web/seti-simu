@@ -202,6 +202,30 @@
     };
   }
 
+  function createCommittedCardInstance(root, entry, sequence) {
+    if (!root?.meta || !root.meta.sequences || typeof root.meta.sequences !== "object") {
+      throw new TypeError("创建 committed 卡牌实体需要 meta.sequences");
+    }
+    const nextSequence = Number(root.meta.sequences.card);
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("meta.sequences.card 必须是正安全整数");
+    }
+    root.meta.sequences.card = nextSequence + 1;
+    return {
+      id: `card-${nextSequence}-${sequence ?? 0}`,
+      cardId: entry.card_id,
+      set: entry.set,
+      cardName: entry.card_name,
+      src: getCardSrc(entry),
+      faceUp: true,
+      price: entry.price,
+      cardTypeCode: entry.card_type_code,
+      discardActionCode: entry.discard_action_code,
+      scanActionCode: entry.scan_action_code,
+      incomeCode: entry.income_code,
+    };
+  }
+
   function getCatalogEntryForCard(card) {
     if (!card) return null;
     const cardId = getCardId(card);
@@ -601,7 +625,7 @@
     };
   }
 
-  function blindDraw(cardState, playerState, player, random = Math.random) {
+  function blindDraw(cardState, playerState, player, random = Math.random, options = {}) {
     if (!player) {
       return { ok: false, message: "没有当前玩家", card: null };
     }
@@ -611,18 +635,20 @@
       return { ok: false, message: "牌库已无可用卡牌", card: null };
     }
 
-    const card = createCardInstance(result.entry);
+    const createInstance = options.createCardInstance || createCardInstance;
+    const card = createInstance(result.entry);
     addCardToHand(player, card);
     return { ok: true, message: null, card, reshuffled: Boolean(result.reshuffled) };
   }
 
-  function replenishPublicSlot(cardState, playerState, slotIndex, random = Math.random) {
+  function replenishPublicSlot(cardState, playerState, slotIndex, random = Math.random, options = {}) {
     const result = takeRandomEntryForDraw(cardState, playerState, random);
-    cardState.publicCards[slotIndex] = result?.entry ? createCardInstance(result.entry) : null;
+    const createInstance = options.createCardInstance || createCardInstance;
+    cardState.publicCards[slotIndex] = result?.entry ? createInstance(result.entry) : null;
     return cardState.publicCards[slotIndex];
   }
 
-  function pickFromPublic(cardState, playerState, player, slotIndex, random = Math.random) {
+  function pickFromPublic(cardState, playerState, player, slotIndex, random = Math.random, options = {}) {
     if (!player) {
       return { ok: false, message: "没有当前玩家", card: null };
     }
@@ -638,7 +664,7 @@
     }
 
     addCardToHand(player, card);
-    const replenished = replenishPublicSlot(cardState, playerState, index, random);
+    const replenished = replenishPublicSlot(cardState, playerState, index, random, options);
 
     return {
       ok: true,
@@ -675,12 +701,12 @@
     return fillPublicCards(cardState, playerState, random, options);
   }
 
-  function drawCardsToHand(cardState, playerState, player, count, random = Math.random) {
+  function drawCardsToHand(cardState, playerState, player, count, random = Math.random, options = {}) {
     const drawn = [];
     const target = Math.max(0, Math.round(count));
 
     for (let index = 0; index < target; index += 1) {
-      const result = blindDraw(cardState, playerState, player, random);
+      const result = blindDraw(cardState, playerState, player, random, options);
       if (!result.ok) {
         return {
           ok: drawn.length > 0,
@@ -804,6 +830,7 @@
     getCatalogEntryByInput,
     getCatalogEntriesByInputRange,
     createCardInstance,
+    createCommittedCardInstance,
     getNextCardInstanceSequence,
     restoreNextCardInstanceSequence,
     getCatalogEntryForCard,
