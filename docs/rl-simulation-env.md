@@ -13,6 +13,7 @@
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 将 RNG 与稳定编号统一保存到 `coreState.meta`，可在 fresh env 中恢复且不触发浏览器渲染。
 - 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；每个 policy step 附带对应的 Effect Session journal，失败输入不进入 confirmed replay。
+- `quick_trade` 与 `play_card` 的 Browser/Simulation 枚举共用生产 Standard Action provider：快速交易覆盖生产表中的 8 种交易并保留弃牌/选牌 Decision；打牌按真实手牌实体与生产费用支付，直接效果和后续 `choose_reward` 均经 Effect Session journal 后原子提交。
 - Node composition 不创建或安装 `window`、`document`、DOM 元素、overlay、`localStorage` 或 `Image`。
 - simulation 的动作族覆盖矩阵与 taxonomy characterization 不再作为单元测试保留；默认 Node 回归只验证已设计的业务 unit 与唯一 full-flow。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。

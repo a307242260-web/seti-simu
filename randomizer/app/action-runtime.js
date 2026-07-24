@@ -1083,33 +1083,16 @@
           canExecute(actionContext) { return this.getOptions(actionContext); },
           execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
         },
-        playCard: {
-          label: "打牌",
-          getOptions(actionContext) {
-            if (!canStartMainAction(actionContext.workingRoot)) {
-              return { ok: false, message: getMainActionStartBlockReason(actionContext.workingRoot) };
-            }
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const choices = (player?.hand || [])
-              .map((card, handIndex) => ({ card, handIndex, cost: getCardPlayCost(card) }))
-              .filter(({ cost }) => players.canAfford(player, cost))
-              .map(({ card, handIndex, cost }) => ({
-                target: { cardInstanceId: card.id },
-                payload: { cost, handIndex },
-                label: cards.getCardLabel(card),
-              }));
-            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可支付的手牌" };
-          },
-          canExecute(actionContext, option) {
-            const choices = this.getOptions(actionContext);
-            return choices.ok && choices.choices.some((choice) => (
-              choice.target.cardInstanceId === option.target?.cardInstanceId
-            ))
+        playCard: actions.standardAction.createPlayCardProvider({
+          players,
+          cards,
+          getCardPlayCost,
+          canStart(actionContext) {
+            return canStartMainAction(actionContext.workingRoot)
               ? { ok: true }
-              : { ok: false, message: "手牌身份或费用已失效" };
+              : { ok: false, message: getMainActionStartBlockReason(actionContext.workingRoot) };
           },
-          execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
-        },
+        }),
         pass: {
           label: "PASS",
           getOptions(actionContext) {
@@ -1171,21 +1154,7 @@
             );
           },
         },
-        quickTrade: {
-          label: "快速交易",
-          getOptions(actionContext) {
-            const choices = quickTrades.TRADE_ACTIONS
-              .filter((trade) => quickTrades.canExecuteTrade(trade.id, actionContext).ok)
-              .map((trade) => ({
-                target: { tradeId: trade.id },
-                payload: { cost: trade.cost, gain: trade.gain },
-                label: trade.label,
-              }));
-            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可执行的快速交易" };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
+        quickTrade: actions.standardAction.createQuickTradeProvider({ quickTrades }),
         industry: {
           label: "公司 1x",
           getOptions(actionContext) {

@@ -49,7 +49,7 @@ module.exports = Object.freeze({
     ["move:f7dd6eeb", 5], ["choose_payment:9938c7f8", 0],
     ["move:f7dd6eeb", 6], ["choose_payment:9938c7f8", 0],
     ["move:f7dd6eeb", 5], ["choose_payment:9938c7f8", 0],
-    ["research_tech:58603135", 11], ["pass:ff716055", 7],
+    ["research_tech:58603135", 16], ["pass:ff716055", 7],
     ["choose_card:76657bf4", 0], ["end_turn:1f65daa3", 0],
     ["launch:c1616852", 4], ["move:76ddf025", 4],
     ["choose_payment:d008d903", 0], ["move:749cfc96", 4],
@@ -130,7 +130,7 @@ module.exports = Object.freeze({
       revealed: [false, false, false, false, false, false, false, false],
     },
     authority: [25, "seti-simulation-mulberry32-v1", 1542217152, 1],
-    session: [null, "player-brown", null, "turn_action", 31, 45, 45],
+    session: [null, "player-brown", null, "turn_action", 40, 45, 45],
   },
-  finalCheckpointHash: "0889a9a85a17a67c68ab628540ae7ced4412fae08d6093bf51524873b3d65c67",
+  finalCheckpointHash: "08124d7221ca0ef9bd40e8fcbbb69d49bec52efca76889a35cb08867c593c63e",
 });

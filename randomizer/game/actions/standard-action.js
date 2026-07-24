@@ -348,6 +348,89 @@
     };
   }
 
+  function createQuickTradeProvider(options = {}) {
+    const quickTrades = options.quickTrades;
+    if (!Array.isArray(quickTrades?.TRADE_ACTIONS)
+      || typeof quickTrades.canExecuteTrade !== "function") {
+      throw new TypeError("quick_trade production provider 缺少 QuickTrades 规则端口");
+    }
+    return Object.freeze({
+      label: options.label || "快速交易",
+      getOptions(actionContext) {
+        const choices = quickTrades.TRADE_ACTIONS
+          .filter((trade) => quickTrades.canExecuteTrade(trade.id, actionContext).ok)
+          .map((trade) => ({
+            target: { tradeId: trade.id },
+            payload: { cost: trade.cost, gain: trade.gain },
+            label: trade.label,
+          }));
+        return choices.length
+          ? { ok: true, choices }
+          : { ok: false, message: "没有可执行的快速交易" };
+      },
+      canExecute(actionContext, option) {
+        const listed = this.getOptions(actionContext);
+        return listed.ok && listed.choices.some((choice) => (
+          choice.target.tradeId === option.target?.tradeId
+        ))
+          ? { ok: true }
+          : { ok: false, code: "QUICK_TRADE_STALE", message: "快速交易已失效" };
+      },
+      execute(actionContext, option) {
+        if (typeof options.execute !== "function") {
+          return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" };
+        }
+        return options.execute(actionContext, option);
+      },
+    });
+  }
+
+  function createPlayCardProvider(options = {}) {
+    const players = options.players;
+    const cards = options.cards;
+    const getCardPlayCost = options.getCardPlayCost;
+    if (typeof players?.getCurrentPlayer !== "function"
+      || typeof players?.canAfford !== "function"
+      || typeof cards?.getCardLabel !== "function"
+      || typeof getCardPlayCost !== "function") {
+      throw new TypeError("play_card production provider 缺少 cards/players/cost 规则端口");
+    }
+    return Object.freeze({
+      label: options.label || "打牌",
+      getOptions(actionContext) {
+        const startCheck = options.canStart?.(actionContext) || { ok: true };
+        if (!startCheck.ok) return startCheck;
+        const player = players.getCurrentPlayer(actionContext.playerState);
+        const choices = (player?.hand || [])
+          .map((card, handIndex) => ({ card, handIndex, cost: getCardPlayCost(card) }))
+          .filter(({ cost }) => players.canAfford(player, cost))
+          .map(({ card, handIndex, cost }) => ({
+            target: { cardInstanceId: card.id },
+            payload: { cost, handIndex },
+            label: cards.getCardLabel(card),
+          }));
+        return choices.length
+          ? { ok: true, choices }
+          : { ok: false, message: "没有可支付的手牌" };
+      },
+      canExecute(actionContext, option) {
+        const listed = this.getOptions(actionContext);
+        return listed.ok && listed.choices.some((choice) => (
+          choice.target.cardInstanceId === option.target?.cardInstanceId
+          && stableSerialize(choice.payload.cost) === stableSerialize(option.payload?.cost || {})
+        ))
+          ? { ok: true }
+          : { ok: false, code: "PLAY_CARD_STALE", message: "手牌身份或费用已失效" };
+      },
+      execute(actionContext, option) {
+        if (typeof options.execute !== "function") {
+          return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" };
+        }
+        return options.execute(actionContext, option);
+      },
+    });
+  }
+
   function createStage2Definitions(actions = {}) {
     return Object.freeze([
       createOptionDefinition("scan", actions.scan),
@@ -442,6 +525,8 @@
     createStage2Definitions,
     createStage3Definitions,
     createConditionalDefinition,
+    createQuickTradeProvider,
+    createPlayCardProvider,
     createStage4Definitions,
     createReferenceRegistry,
     createRegistryAdapter,

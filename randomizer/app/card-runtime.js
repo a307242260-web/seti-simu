@@ -1041,19 +1041,13 @@
     }
 
     function getCardPrice(card) {
-      const price = Number(card?.price);
-      return Number.isFinite(price) ? Math.max(0, Math.round(price)) : 0;
+      return cardEffects.getCardPrice(card);
     }
 
     function getCardPlayCost(card) {
-      if (card?.futureSpanFreePlay) {
-        return {};
-      }
-      const price = getCardPrice(card);
-      if (banrenma?.isBanrenmaCard?.(card)) {
-        return price > 0 ? { energy: price } : {};
-      }
-      return price > 0 ? { credits: price } : {};
+      return cardEffects.getCardPlayCost(card, {
+        isEnergyCard: (candidate) => banrenma?.isBanrenmaCard?.(candidate),
+      });
     }
 
     function getCardPlayCreditCost(cost) {

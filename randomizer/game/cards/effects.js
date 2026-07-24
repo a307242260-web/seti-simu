@@ -382,6 +382,22 @@
     });
   }
 
+  function getCardPrice(card) {
+    const price = Number(card?.price);
+    return Number.isFinite(price) ? Math.max(0, Math.round(price)) : 0;
+  }
+
+  function getCardPlayCost(card, options = {}) {
+    if (card?.futureSpanFreePlay) return {};
+    const price = getCardPrice(card);
+    const usesEnergy = Boolean(
+      card?.banrenmaCard
+      || options.isEnergyCard?.(card),
+    );
+    if (price <= 0) return {};
+    return usesEnergy ? { energy: price } : { credits: price };
+  }
+
   function aomomoFossilRewardEffect(id, label, count = 1) {
     return effect(id, REWARD_TYPES.GAIN_RESOURCES, label, "aomomoFossil", {
       gain: { aomomoFossils: Math.max(0, Math.round(Number(count) || 0)) },
@@ -3430,6 +3446,7 @@
 
   return Object.freeze({
     EFFECT_TYPES,
+    REWARD_TYPES,
     NEBULA_IDS_BY_COLOR,
     CARD_REFERENCE_MAP,
     MODELS,
@@ -3441,6 +3458,8 @@
     getRuntimeCardTypeCode,
     isReturnUnfinishedTaskTarget,
     getCardMigrationStatus,
+    getCardPrice,
+    getCardPlayCost,
     buildPlayEffects,
     getTemporaryTasks,
     ensureCardEffectState,

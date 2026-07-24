@@ -14,6 +14,8 @@ const planetStats = require("../game/planet-stats");
 const planetRewards = require("../game/actions/planet-rewards");
 const data = require("../game/data");
 const cards = require("../game/cards/deck");
+const cardEffects = require("../game/cards/effects");
+const quickTrades = require("../game/actions/quick-trades");
 const tech = require("../game/tech");
 const industry = require("../game/industry");
 const aliens = require("../game/aliens");
@@ -78,18 +80,10 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
     unavailableReason: "Simulation composition 尚未接入数据分析规则端口",
   },
   { family: "research_tech", obligation: "生产科技规则枚举科技板目标并提交研究" },
-  {
-    family: "play_card",
-    obligation: "打牌必须由生产卡牌规则提供合法描述符",
-    unavailableReason: "Simulation composition 尚未接入卡牌效果执行端口",
-  },
+  { family: "play_card", obligation: "打牌使用生产手牌、费用、卡牌实体与 Effect journal" },
   { family: "pass", obligation: "生产回合规则提交 PASS 并建立预留牌 continuation" },
   { family: "move", obligation: "生产火箭规则枚举移动并建立支付 continuation" },
-  {
-    family: "quick_trade",
-    obligation: "快速交易必须由生产资源规则提供合法描述符",
-    unavailableReason: "Simulation composition 尚未接入快速交易规则端口",
-  },
+  { family: "quick_trade", obligation: "快速交易复用生产资源交易规则并提交真实资源变更" },
   { family: "industry", obligation: "生产公司能力规则枚举并提交公司行动" },
   { family: "card_corner", obligation: "生产卡角规则枚举手牌并提交弃牌收益" },
   {
@@ -106,11 +100,7 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   { family: "choose_card", obligation: "生产 continuation 枚举并提交预留牌选择" },
   { family: "choose_target", obligation: "生产 continuation 枚举并提交移动或科技目标" },
   { family: "choose_payment", obligation: "生产 continuation 枚举并提交弃牌或移动支付" },
-  {
-    family: "choose_reward",
-    obligation: "奖励选择必须由生产效果 continuation 提供合法描述符",
-    unavailableReason: "Simulation composition 尚未接入奖励选择 continuation",
-  },
+  { family: "choose_reward", obligation: "生产效果 continuation 枚举并提交奖励选择" },
   {
     family: "choose_branch",
     obligation: "分支选择必须由生产效果 continuation 提供合法描述符",
@@ -844,16 +834,27 @@ function discardChoices(workingState) {
   if (pending?.kind !== "discard") return [];
   const player = workingState.playerState.players.find((candidate) => candidate.id === pending.playerId);
   if (!player) return [];
-  return player.hand.map((card, handIndex) => ({
+  const count = Math.max(1, Math.round(Number(pending.count) || 1));
+  function combinations(startIndex, selected) {
+    if (selected.length === count) return [selected];
+    const result = [];
+    for (let index = startIndex; index < player.hand.length; index += 1) {
+      result.push(...combinations(index + 1, [...selected, index]));
+    }
+    return result;
+  }
+  return combinations(0, []).map((handIndexes) => ({
     family: "choose_payment",
     target: {
       kind: "discard-hand-cards",
-      choiceId: String(handIndex),
-      handIndexes: [handIndex],
-      cardIds: [card.cardId || card.id || null],
+      choiceId: handIndexes.join("+"),
+      handIndexes,
+      cardIds: handIndexes.map((handIndex) => (
+        player.hand[handIndex]?.cardId || player.hand[handIndex]?.id || null
+      )),
     },
-    payload: { handIndexes: [handIndex] },
-    summary: cards.getCardLabel(card),
+    payload: { handIndexes },
+    summary: handIndexes.map((handIndex) => cards.getCardLabel(player.hand[handIndex])).join(" + "),
   }));
 }
 
@@ -861,6 +862,121 @@ function hasPendingContinuation(workingState) {
   return Object.entries(workingState.match || {}).some(([key, value]) => (
     key !== "decisionVersion" && key !== "actionLog" && Boolean(value)
   ));
+}
+
+function openTradeDiscard(workingState, count, input = {}) {
+  if (hasPendingContinuation(workingState)) {
+    return { ok: false, code: "QUICK_TRADE_PENDING", message: "请先完成当前选择" };
+  }
+  workingState.match.pendingDecision = {
+    kind: "discard",
+    type: "trade",
+    playerId: input.player?.id || workingState.playerState.currentPlayerId,
+    tradeId: input.tradeId,
+    count,
+    required: true,
+  };
+  return { ok: true, message: `请选择 ${count} 张手牌` };
+}
+
+function openTradeCardSelection(workingState, input = {}) {
+  if (hasPendingContinuation(workingState)) {
+    return { ok: false, code: "QUICK_TRADE_PENDING", message: "请先完成当前选择" };
+  }
+  workingState.match.pendingDecision = {
+    kind: "card_selection",
+    type: "trade",
+    playerId: input.player?.id || workingState.playerState.currentPlayerId,
+    tradeId: input.tradeId,
+    allowBlindDraw: Boolean(input.allowBlindDraw),
+  };
+  return { ok: true, message: "请选择一张公共牌" };
+}
+
+function createQuickTradeContext(workingState, random) {
+  return {
+    workingRoot: workingState,
+    playerState: workingState.playerState,
+    cardState: workingState.cardState,
+    rocketState: workingState.rocketState,
+    beginDiscardSelection: (count, input) => openTradeDiscard(workingState, count, input),
+    beginCardSelection: (input) => openTradeCardSelection(workingState, input),
+    random,
+  };
+}
+
+function listCardSelectionChoices(workingState, pending) {
+  if (pending?.kind !== "card_selection") return [];
+  const publicChoices = (workingState.cardState.publicCards || []).flatMap((card, slotIndex) => (
+    card ? [{
+      target: {
+        kind: "trade-card-selection",
+        choiceId: `public:${slotIndex}:${card.id}`,
+        source: "public",
+        slotIndex,
+        cardInstanceId: card.id,
+      },
+      payload: { slotIndex },
+      summary: cards.getCardLabel(card),
+    }] : []
+  ));
+  return pending.allowBlindDraw
+    ? [...publicChoices, {
+      target: {
+        kind: "trade-card-selection",
+        choiceId: "blind",
+        source: "blind",
+      },
+      payload: {},
+      summary: "盲抽 1 张牌",
+    }]
+    : publicChoices;
+}
+
+function listHandCornerRewardChoices(workingState, pending) {
+  if (pending?.kind !== "play_card_effect" || pending.effect?.type !== cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
+    return [];
+  }
+  const player = workingState.playerState.players.find((candidate) => candidate.id === pending.playerId);
+  return (player?.hand || []).flatMap((card, handIndex) => {
+    const reward = cards.getDiscardActionRewardForCard(card);
+    const moveReward = cards.getDiscardActionMoveRewardForCard(card);
+    if (!reward && !moveReward) return [];
+    return [{
+      target: {
+        kind: "play-card-hand-corner-reward",
+        choiceId: card.id,
+        cardInstanceId: card.id,
+      },
+      payload: { handIndex, reward: clone(reward), moveReward: clone(moveReward) },
+      summary: cards.getCardLabel(card),
+    }];
+  });
+}
+
+function applySimulationCardEffect(workingState, player, effect, random) {
+  if (effect.type === cardEffects.REWARD_TYPES.GAIN_RESOURCES) {
+    players.gainResources(player, effect.options?.gain || {});
+    return { ok: true, events: [{ type: "card_effect", effectId: effect.id, effectType: effect.type }] };
+  }
+  if (effect.type === cardEffects.REWARD_TYPES.GAIN_DATA) {
+    const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
+    for (let index = 0; index < count; index += 1) data.gainData(player, { source: "play_card" });
+    return { ok: true, events: [{ type: "card_effect", effectId: effect.id, effectType: effect.type }] };
+  }
+  if (effect.type === cardEffects.REWARD_TYPES.DRAW_CARDS) {
+    const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
+    cards.drawCardsToHand(workingState.cardState, workingState.playerState, player, count, random);
+    return { ok: true, events: [{ type: "card_effect", effectId: effect.id, effectType: effect.type }] };
+  }
+  if (effect.type === cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
+    return { ok: true, pending: { kind: "play_card_effect", playerId: player.id, effect: clone(effect) }, events: [] };
+  }
+  return {
+    ok: false,
+    code: "SIMULATION_CARD_EFFECT_UNSUPPORTED",
+    message: `Simulation play_card 尚未接入卡牌效果 ${effect.type}`,
+  };
 }
 
 function applyCornerReward(workingState, player, reward, source) {
@@ -1111,6 +1227,120 @@ function createSimulationRuleComposition(options = {}) {
     },
   };
 
+  registry.register(standardActionApi.createOptionDefinition(
+    "quick_trade",
+    standardActionApi.createQuickTradeProvider({
+      quickTrades,
+      execute(actionContext, action) {
+        const root = actionContext.workingRoot || actionContext;
+        const result = quickTrades.executeTrade(
+          action.target?.tradeId,
+          createQuickTradeContext(root, options.random),
+        );
+        if (!result.ok) return result;
+        return {
+          ...result,
+          progressed: true,
+          events: [{
+            type: "quick_trade",
+            tradeId: action.target?.tradeId,
+            playerId: root.playerState.currentPlayerId,
+          }],
+          history: [{
+            type: "quick_trade",
+            tradeId: action.target?.tradeId,
+            playerId: root.playerState.currentPlayerId,
+          }],
+        };
+      },
+    }),
+  ));
+
+  registry.register(standardActionApi.createOptionDefinition(
+    "play_card",
+    standardActionApi.createPlayCardProvider({
+      players,
+      cards,
+      getCardPlayCost: cardEffects.getCardPlayCost,
+      canStart(actionContext) {
+        const root = actionContext.workingRoot || actionContext;
+        const player = players.getCurrentPlayer(root.playerState);
+        return !hasPendingContinuation(root) && !player?.mainActionCompleted
+          ? { ok: true }
+          : { ok: false, message: "当前无法开始打牌行动" };
+      },
+      execute(actionContext, action) {
+        const root = actionContext.workingRoot || actionContext;
+        const player = players.getCurrentPlayer(root.playerState);
+        const handIndex = player?.hand?.findIndex((card) => card.id === action.target?.cardInstanceId) ?? -1;
+        const card = handIndex >= 0 ? player.hand[handIndex] : null;
+        if (!card) {
+          return { ok: false, code: "PLAY_CARD_STALE", message: "手牌实体已失效" };
+        }
+        const cost = cardEffects.getCardPlayCost(card);
+        if (stableSerialize(cost) !== stableSerialize(action.payload?.cost || {})) {
+          return { ok: false, code: "PLAY_CARD_COST_STALE", message: "卡牌费用已失效" };
+        }
+        const spent = players.spendResources(player, cost);
+        if (!spent.ok) return spent;
+        const removed = cards.discardFromHandAtIndex(player, handIndex);
+        if (!removed.ok) return removed;
+        const playedCard = removed.card;
+        const model = cardEffects.getCardModel(playedCard);
+        const cardType = cardEffects.getRuntimeCardTypeCode(playedCard);
+        const reserved = [1, 2, 3].includes(cardType) || Boolean(model?.reserveAfterPlay);
+        if (reserved) {
+          cardEffects.ensureCardEffectState(playedCard);
+          player.reservedCards.push(playedCard);
+        } else {
+          cards.addToDiscardPile(root.cardState, playedCard);
+        }
+        const events = [{
+          type: "playCard",
+          timing: "after_play_card",
+          playerId: player.id,
+          cardId: playedCard.cardId || null,
+          sourceCardInstanceId: playedCard.id,
+          price: Number(cost.credits || 0),
+        }];
+        let pending = null;
+        for (const effect of cardEffects.buildPlayEffects(playedCard)) {
+          const applied = applySimulationCardEffect(root, player, effect, options.random);
+          if (!applied.ok) return applied;
+          events.push(...(applied.events || []));
+          if (applied.pending) {
+            if (pending) {
+              return {
+                ok: false,
+                code: "SIMULATION_CARD_MULTIPLE_DECISIONS",
+                message: "单张牌产生多个未完成 Decision",
+              };
+            }
+            pending = applied.pending;
+          }
+        }
+        player.mainActionCompleted = true;
+        return {
+          ok: true,
+          progressed: true,
+          card: clone(playedCard),
+          reserved,
+          events,
+          history: [{
+            type: "play_card",
+            playerId: player.id,
+            cardInstanceId: playedCard.id,
+            cardId: playedCard.cardId || null,
+            cost: clone(cost),
+          }],
+          decisionEffect: pending
+            ? createConditionalDecisionEffect(root, "play_card_effect", pending, "choose_reward")
+            : null,
+        };
+      },
+    }),
+  ));
+
   registry.register({
     family: "move",
     enumerate(context) {
@@ -1226,6 +1456,24 @@ function createSimulationRuleComposition(options = {}) {
             gainData: (targetPlayer) => data.gainData(targetPlayer, { source: "initial_income" }),
           });
         }
+      }
+      if (pending.type === "trade") {
+        delete workingState.match.pendingDecision;
+        const traded = quickTrades.finalizeTradeAfterDiscard(
+          pending.tradeId,
+          createQuickTradeContext(workingState, options.random),
+          player,
+        );
+        if (!traded.ok) return traded;
+        return {
+          ok: true,
+          progressed: true,
+          events: [{
+            type: "quick_trade_payment",
+            tradeId: pending.tradeId,
+            playerId: player.id,
+          }],
+        };
       }
       workingState.match.initialIncomeQueue.shift();
       delete workingState.match.pendingDecision;
@@ -1394,6 +1642,7 @@ function createSimulationRuleComposition(options = {}) {
     enumerate(context) {
       const root = context.workingRoot || context;
       const pending = root.match.pendingDecision;
+      if (pending?.kind === "card_selection") return listCardSelectionChoices(root, pending);
       if (pending?.kind !== "pass_reserve") return [];
       return cards.getPassReservePile(root.cardState, pending.roundNumber).map((card) => ({
         target: { kind: "pass-reserve-card", choiceId: card.id, cardId: card.cardId || card.id || null },
@@ -1407,6 +1656,32 @@ function createSimulationRuleComposition(options = {}) {
     },
     execute(context, action) {
       const root = context.workingRoot || context;
+      const cardSelection = root.match.pendingDecision?.kind === "card_selection"
+        ? root.match.pendingDecision : null;
+      if (cardSelection) {
+        const player = root.playerState.players.find((candidate) => candidate.id === cardSelection.playerId);
+        const picked = action.target?.source === "blind"
+          ? cards.blindDraw(root.cardState, root.playerState, player, options.random)
+          : cards.pickFromPublic(
+            root.cardState,
+            root.playerState,
+            player,
+            Number(action.target?.slotIndex),
+            options.random,
+          );
+        if (!picked?.ok) return picked;
+        delete root.match.pendingDecision;
+        return {
+          ok: true,
+          progressed: true,
+          events: [{
+            type: "quick_trade_card_selected",
+            tradeId: cardSelection.tradeId,
+            playerId: player.id,
+            cardInstanceId: picked.card?.id || null,
+          }],
+        };
+      }
       const pending = root.match.pendingDecision?.kind === "pass_reserve"
         ? root.match.pendingDecision : null;
       const player = root.playerState.players.find((candidate) => candidate.id === pending?.playerId);
@@ -1415,6 +1690,29 @@ function createSimulationRuleComposition(options = {}) {
       delete root.match.pendingDecision;
       player.passCompletionPending = true;
       return { ok: true, progressed: true, events: [{ type: "pass_reserve_pick", playerId: player.id }] };
+    },
+  });
+
+  registry.register({
+    family: "choose_reward",
+    enumerate(context, { request } = {}) {
+      const root = context.workingRoot || context;
+      const pending = request?.payload?.decisionContext?.pending || null;
+      return listHandCornerRewardChoices(root, pending);
+    },
+    validate(context, action, request) {
+      return this.enumerate(context, request).some((candidate) => (
+        candidate.target.choiceId === action.target?.choiceId
+      ))
+        ? { ok: true }
+        : { ok: false, code: "PLAY_CARD_REWARD_STALE", message: "卡牌奖励选择已失效" };
+    },
+    execute() {
+      return {
+        ok: false,
+        code: "PLAY_CARD_REWARD_SESSION_REQUIRED",
+        message: "卡牌奖励必须由 Effect Session continuation 提交",
+      };
     },
   });
 
@@ -1648,6 +1946,39 @@ function createSimulationRuleComposition(options = {}) {
                   resolutionContext.decisionContext.pending,
                   choice,
                 );
+              }
+              if (resolutionContext.decisionContext?.kind === "play_card_effect") {
+                const pending = resolutionContext.decisionContext.pending;
+                const player = _workingState.playerState.players
+                  .find((candidate) => candidate.id === pending?.playerId);
+                if (!player || pending?.effect?.type !== cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
+                  return {
+                    ok: false,
+                    code: "PLAY_CARD_REWARD_STALE",
+                    message: "卡牌奖励上下文已失效",
+                  };
+                }
+                const current = listHandCornerRewardChoices(_workingState, pending)
+                  .find((candidate) => candidate.target.choiceId === choice.target?.choiceId);
+                if (!current) {
+                  return {
+                    ok: false,
+                    code: "PLAY_CARD_REWARD_STALE",
+                    message: "卡牌奖励选择已失效",
+                  };
+                }
+                applyCornerReward(_workingState, player, current.payload.reward, "play_card");
+                applyCornerReward(_workingState, player, current.payload.moveReward, "play_card");
+                return {
+                  ok: true,
+                  progressed: true,
+                  events: [{
+                    type: "card_effect_choice",
+                    effectId: pending.effect.id,
+                    choiceId: current.target.choiceId,
+                    playerId: player.id,
+                  }],
+                };
               }
               if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
                 const moved = rockets.moveRocket(
