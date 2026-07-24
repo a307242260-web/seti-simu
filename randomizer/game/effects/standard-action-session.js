@@ -21,12 +21,6 @@
     const actionFamilies = Object.freeze([...(options.actionFamilies || [])]);
     const continuation = options.continuation || null;
     const commitWorkingState = options.commitWorkingState;
-    const takeOpenedDecisionEffect = options.takeOpenedDecisionEffect;
-    const takeDeferredDecisionEffects = options.takeDeferredDecisionEffects;
-    const takeDeferredEffects = () => (takeDeferredDecisionEffects?.() || []).map((effect) => ({
-      priority: "deferred",
-      effect,
-    }));
     if (typeof runtime?.registerExecutor !== "function") {
       throw new TypeError("standard action domain 缺少 composition Effect runtime");
     }
@@ -40,13 +34,12 @@
     runtime.registerExecutor(EFFECT_TYPE, (workingRoot, effect) => {
       const result = executeRegisteredAction(workingRoot, effect.payload.action);
       if (!result?.ok) return result;
-      const openedDecisionEffect = result.decisionEffect || takeOpenedDecisionEffect?.() || null;
+      const openedDecisionEffect = result.decisionEffect || null;
       const spawnedEffects = [
         ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
         ...(!openedDecisionEffect && continuation
           ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
           : []),
-        ...takeDeferredEffects(),
       ];
       return {
         ok: true,
@@ -106,16 +99,16 @@
           code: "STANDARD_ACTION_CONTINUATION_STALLED",
           message: "Standard Action continuation 未返回推进结果",
         };
-        const openedDecisionEffect = takeOpenedDecisionEffect?.() || null;
         return {
           ok: true,
           nextState: commitWorkingState(workingRoot, result),
           spawnedEffects: [
-            ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
-            ...(!openedDecisionEffect && result.progressed !== false
+            ...(result.decisionEffect
+              ? [{ priority: "direct", effect: clone(result.decisionEffect) }]
+              : []),
+            ...(!result.decisionEffect && result.progressed !== false
               ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
               : []),
-            ...takeDeferredEffects(),
           ],
           events: clone(result.events || []),
         };
@@ -143,16 +136,16 @@
               code: "STANDARD_ACTION_DECISION_RESOLVE_FAILED",
               message: "Standard Action Decision resolve 未返回成功结果",
             };
-            const openedDecisionEffect = takeOpenedDecisionEffect?.() || null;
             return {
               ok: true,
               nextState: commitWorkingState(workingRoot, resolved),
               spawnedEffects: [
-                ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
-                ...(!openedDecisionEffect
+                ...(resolved.decisionEffect
+                  ? [{ priority: "direct", effect: clone(resolved.decisionEffect) }]
+                  : []),
+                ...(!resolved.decisionEffect
                   ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
                   : []),
-                ...takeDeferredEffects(),
               ],
               events: clone(resolved.events || [{
                 type: "standard_action_decision_executed",

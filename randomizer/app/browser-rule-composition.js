@@ -180,10 +180,8 @@
     const installedKernel = productionKernelApi.createProductionKernel({
       hostKind: "browser",
       ruleCompositionApi,
-      productionRules: context.productionRules,
       hostServices: browserHostServices,
       getAuthority: context.getAuthority,
-      standardActionDomainOptions: context.standardActionDomainOptions,
       stateAdapter: browserStateAdapter,
       projectionAdapter: browserProjectionAdapter,
       ruleOptions: {
@@ -203,7 +201,6 @@
         ));
       },
       stateAdapter: browserStateAdapter,
-      runWithWorkingState: context.runWithWorkingState,
       projectWorkingState: true,
       projectState: projectBrowserState,
       createCounterfactualFork: context.counterfactualEnabled === false

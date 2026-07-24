@@ -210,7 +210,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const owner = createHarness(residual, "createResidualDomain");
   const handoff = {
     type: residual.HANDOFF_TYPE,
-    kind: "handoff",
+    kind: "effect",
     ownerId: "p1",
     payload: {
       schemaVersion: residual.HANDOFF_SCHEMA,
@@ -244,7 +244,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const owner = createHarness(residual, "createResidualDomain");
   const result = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
     type: residual.HANDOFF_TYPE,
-    kind: "handoff",
+    kind: "effect",
     ownerId: "p1",
     payload: {
       schemaVersion: residual.HANDOFF_SCHEMA,
@@ -283,7 +283,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
     const owner = createHarness(residual, "createResidualDomain");
     const result = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
       type: residual.HANDOFF_TYPE,
-      kind: "handoff",
+      kind: "effect",
       ownerId: "p1",
       payload: {
         schemaVersion: residual.HANDOFF_SCHEMA,

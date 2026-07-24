@@ -8,8 +8,10 @@
   let probeTurnSession = root.SetiProbeTurnSession;
   let residualDomainSession = root.SetiResidualDomainSession;
   let initialSetup = root.SetiInitialSetup;
+  let cards = root.SetiCards;
+  let quickTradeRules = root.SetiQuickTrades;
   if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession
-    || !probeTurnSession || !residualDomainSession || !initialSetup)
+    || !probeTurnSession || !residualDomainSession || !initialSetup || !cards || !quickTradeRules)
     && typeof require === "function") {
     standardAction = standardAction || require("./actions/standard-action");
     standardActionSession = standardActionSession || require("./effects/standard-action-session");
@@ -18,6 +20,8 @@
     probeTurnSession = probeTurnSession || require("./effects/probe-turn-session");
     residualDomainSession = residualDomainSession || require("./effects/residual-domain-session");
     initialSetup = initialSetup || require("./initial-setup");
+    cards = cards || require("./cards/deck");
+    quickTradeRules = quickTradeRules || require("./actions/quick-trades");
   }
 
   const api = factory(
@@ -28,6 +32,8 @@
     probeTurnSession,
     residualDomainSession,
     initialSetup,
+    cards,
+    quickTradeRules,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
@@ -39,6 +45,8 @@
   probeTurnSession,
   residualDomainSession,
   initialSetup,
+  cards,
+  quickTradeRules,
 ) {
   "use strict";
 
@@ -66,6 +74,266 @@
     if (duplicateExecutors.length) {
       throw new Error(`重复 Production family executor: ${duplicateExecutors.join(", ")}`);
     }
+    const nestedRuleOverrides = [
+      ...(options.productionRules?.conditionalActions ? ["productionRules.conditionalActions"] : []),
+      ...(options.productionRules && !options.productionRules.conditionalActions ? ["productionRules"] : []),
+      ...(options.hostServices?.quickTradeHistory ? ["hostServices.quickTradeHistory"] : []),
+      ...(["continuation", "takeOpenedDecisionEffect", "takeDeferredDecisionEffects"]
+        .filter((key) => options.standardActionDomainOptions?.[key] != null)
+        .map((key) => `standardActionDomainOptions.${key}`)),
+      ...(options.standardActionDomainOptions
+        && !["continuation", "takeOpenedDecisionEffect", "takeDeferredDecisionEffects"]
+          .some((key) => options.standardActionDomainOptions[key] != null)
+        ? ["standardActionDomainOptions"]
+        : []),
+    ];
+    if (nestedRuleOverrides.length) {
+      throw new TypeError(
+        `Production Composition 禁止 host 注入 continuation/Decision/事务规则: ${nestedRuleOverrides.join(", ")}`,
+      );
+    }
+  }
+
+  function clone(value) {
+    return value == null ? value : structuredClone(value);
+  }
+
+  function sameDescriptor(left, right) {
+    return JSON.stringify(left?.target) === JSON.stringify(right?.target)
+      && JSON.stringify(left?.payload || {}) === JSON.stringify(right?.payload || {});
+  }
+
+  function createQuickTradeDecisionSource(quickTrades) {
+    const FAMILIES = Object.freeze(["choose_card", "choose_payment"]);
+
+    function currentPending(context) {
+      const root = context?.workingRoot || context;
+      return root?.match?.pendingDecision?.type === "trade"
+        ? root.match.pendingDecision
+        : null;
+    }
+
+    function resolvePlayer(root, pending) {
+      return root?.playerState?.players
+        ?.find((player) => player.id === pending?.playerId) || null;
+    }
+
+    function openDiscard(root, count, input = {}) {
+      const player = input.player
+        || root.playerState?.players?.find((entry) => entry.id === input.playerId)
+        || root.playerState?.players?.find(
+          (entry) => entry.id === root.playerState?.currentPlayerId,
+        );
+      const required = Math.max(1, Math.round(Number(count) || 0));
+      if (!player || (player.hand || []).length < required) {
+        return { ok: false, code: "QUICK_TRADE_DISCARD_UNAVAILABLE", message: "快速交易弃牌不足" };
+      }
+      root.match.pendingDecision = {
+        kind: "discard",
+        type: "trade",
+        tradeId: input.tradeId,
+        playerId: player.id,
+        count: required,
+        required: true,
+      };
+      return { ok: true, message: `请选择 ${required} 张牌作为快速交易费用` };
+    }
+
+    function openCardSelection(root, input = {}) {
+      const player = input.player
+        || root.playerState?.players?.find((entry) => entry.id === input.playerId)
+        || root.playerState?.players?.find(
+          (entry) => entry.id === root.playerState?.currentPlayerId,
+        );
+      if (!player) {
+        return { ok: false, code: "QUICK_TRADE_CARD_OWNER_MISSING", message: "快速交易选牌 owner 不存在" };
+      }
+      const hasPublicCard = (root.cardState?.publicCards || []).some(Boolean);
+      if (!hasPublicCard && input.allowBlindDraw === false) {
+        return { ok: false, code: "QUICK_TRADE_CARD_UNAVAILABLE", message: "没有可选公共牌" };
+      }
+      root.match.pendingDecision = {
+        kind: "card_selection",
+        type: "trade",
+        tradeId: input.tradeId,
+        playerId: player.id,
+        allowBlindDraw: input.allowBlindDraw !== false,
+      };
+      return { ok: true, message: "请选择 1 张公共牌或盲抽" };
+    }
+
+    function discardChoices(root, pending) {
+      const player = resolvePlayer(root, pending);
+      const hand = player?.hand || [];
+      const required = Math.max(1, Math.round(Number(pending?.count) || 1));
+      const combinations = [];
+      const visit = (start, selected) => {
+        if (selected.length === required) {
+          combinations.push([...selected]);
+          return;
+        }
+        for (let index = start; index <= hand.length - (required - selected.length); index += 1) {
+          selected.push(index);
+          visit(index + 1, selected);
+          selected.pop();
+        }
+      };
+      visit(0, []);
+      return combinations.map((handIndexes) => ({
+        target: {
+          kind: "discard-hand-cards",
+          choiceId: handIndexes.join("+"),
+          cardIds: handIndexes.map((index) => hand[index]?.cardId || hand[index]?.id || null),
+          handIndexes,
+        },
+        payload: { handIndexes },
+        summary: handIndexes.map((index) => cards.getCardLabel(hand[index])).join("、"),
+      }));
+    }
+
+    function cardChoices(root, pending) {
+      const publicChoices = (root.cardState?.publicCards || []).flatMap((card, slotIndex) => (
+        card ? [{
+          target: {
+            kind: "trade-card-selection",
+            choiceId: `public:${slotIndex}`,
+            source: "public",
+            slotIndex,
+            cardInstanceId: card.id,
+          },
+          payload: { slotIndex },
+          summary: cards.getCardLabel(card),
+        }] : []
+      ));
+      return pending.allowBlindDraw
+        ? [...publicChoices, {
+          target: {
+            kind: "trade-card-selection",
+            choiceId: "blind",
+            source: "blind",
+          },
+          payload: {},
+          summary: "盲抽 1 张牌",
+        }]
+        : publicChoices;
+    }
+
+    function enumerate(context, request = {}) {
+      const root = context?.workingRoot || context;
+      const pending = currentPending(context);
+      if (!pending) return [];
+      if (request.family === "choose_payment" && pending.kind === "discard") {
+        return discardChoices(root, pending);
+      }
+      if (request.family === "choose_card" && pending.kind === "card_selection") {
+        return cardChoices(root, pending);
+      }
+      return [];
+    }
+
+    function validate(context, action) {
+      return enumerate(context, { family: action.family }).some(
+        (candidate) => sameDescriptor(candidate, action),
+      )
+        ? { ok: true }
+        : { ok: false, code: "QUICK_TRADE_DECISION_STALE", message: "快速交易 Decision 已失效" };
+    }
+
+    function executeDiscard(context, action, pending) {
+      const root = context?.workingRoot || context;
+      const player = resolvePlayer(root, pending);
+      const handIndexes = [...(action.target?.handIndexes || [])]
+        .sort((left, right) => right - left);
+      for (const handIndex of handIndexes) {
+        const discarded = cards.discardFromHandAtIndex(player, handIndex);
+        if (!discarded?.ok) return discarded;
+        cards.addToDiscardPile(root.cardState, discarded.card);
+      }
+      delete root.match.pendingDecision;
+      const result = quickTrades.finalizeTradeAfterDiscard(
+        pending.tradeId,
+        {
+          ...context,
+          beginCardSelection: (input) => openCardSelection(root, input),
+        },
+        player,
+      );
+      if (!result?.ok) return result;
+      return {
+        ...result,
+        progressed: true,
+        events: [{
+          type: "quick_trade_payment",
+          tradeId: pending.tradeId,
+          playerId: player.id,
+          cardInstanceIds: action.target.cardIds,
+        }],
+      };
+    }
+
+    function executeCardSelection(context, action, pending) {
+      const root = context?.workingRoot || context;
+      const player = resolvePlayer(root, pending);
+      if (!player) {
+        return { ok: false, code: "QUICK_TRADE_CARD_OWNER_MISSING", message: "快速交易选牌 owner 不存在" };
+      }
+      const factoryOptions = typeof cards.createCommittedCardInstance === "function"
+        ? {
+          createCardInstance: (entry, sequence) => (
+            cards.createCommittedCardInstance(root, entry, sequence)
+          ),
+        }
+        : {};
+      const picked = action.target?.source === "blind"
+        ? (typeof context.blindDrawCard === "function"
+          ? context.blindDrawCard(player)
+          : cards.blindDraw(
+            root.cardState,
+            root.playerState,
+            player,
+            context.random,
+            factoryOptions,
+          ))
+        : cards.pickFromPublic(
+          root.cardState,
+          root.playerState,
+          player,
+          Number(action.target?.slotIndex),
+          context.random,
+          factoryOptions,
+        );
+      if (!picked?.ok) return picked;
+      delete root.match.pendingDecision;
+      return {
+        ok: true,
+        progressed: true,
+        message: "快速交易选牌完成",
+        events: [{
+          type: "quick_trade_card_selected",
+          tradeId: pending.tradeId,
+          playerId: player.id,
+          cardInstanceId: picked.card?.id || null,
+        }],
+      };
+    }
+
+    function execute(context, action) {
+      const pending = currentPending(context);
+      const validation = validate(context, action);
+      if (!validation.ok) return validation;
+      return pending.kind === "discard"
+        ? executeDiscard(context, action, pending)
+        : executeCardSelection(context, action, pending);
+    }
+
+    return Object.freeze({
+      families: FAMILIES,
+      enumerate,
+      validate,
+      execute,
+      openDiscard,
+      openCardSelection,
+    });
   }
 
   function createProductionDomainPack(options = {}) {
@@ -77,9 +345,9 @@
       || typeof initialSetupSource.execute !== "function") {
       throw new TypeError("Production Domain Pack 缺少正式 initial setup source");
     }
-    if (!Array.isArray(options.productionRules?.quickTrades?.TRADE_ACTIONS)
-      || typeof options.productionRules.quickTrades.canExecuteTrade !== "function"
-      || typeof options.productionRules.quickTrades.executeTrade !== "function") {
+    if (!Array.isArray(quickTradeRules?.TRADE_ACTIONS)
+      || typeof quickTradeRules.canExecuteTrade !== "function"
+      || typeof quickTradeRules.executeTrade !== "function") {
       throw new TypeError("Production Domain Pack 缺少 quick_trade 生产规则");
     }
     if (typeof standardActionSession?.createStandardActionDomain !== "function") {
@@ -121,32 +389,35 @@
       };
     });
     const ownedRegistry = standardAction.createRegistry({ getAuthority });
-    const quickTrades = options.productionRules.quickTrades;
-    const conditionalActions = options.productionRules.conditionalActions || null;
-    const findConditionalAction = (context, family, action) => (
-      (conditionalActions?.enumerate?.(context, { family }) || []).find((candidate) => (
-        JSON.stringify(candidate.target) === JSON.stringify(action?.target)
-        && JSON.stringify(candidate.payload || {}) === JSON.stringify(action?.payload || {})
-      )) || null
+    const quickTrades = quickTradeRules;
+    const quickTradeDecisionSource = createQuickTradeDecisionSource(quickTrades);
+    const conditionalSources = Object.freeze([initialSetupSource, quickTradeDecisionSource]);
+    const enumerateSourceChoices = (context, family) => conditionalSources.flatMap(
+      (source) => source.families.includes(family)
+        ? source.enumerate(context, { family }).map((candidate) => ({ source, candidate }))
+        : [],
     );
-    const quickTradeHistory = options.hostServices?.quickTradeHistory || null;
+    const findSourceChoice = (context, family, action) => enumerateSourceChoices(context, family)
+      .find(({ candidate }) => sameDescriptor(candidate, action)) || null;
     function executeQuickTrade(actionContext, action) {
       const root = actionContext?.workingRoot || actionContext;
       const beforeDecisionVersion = Number(
         root?.match?.decisionVersion ?? actionContext?.decisionVersion,
       ) || 0;
-      const historySnapshot = quickTradeHistory?.capture?.(actionContext, action) || null;
-      const result = quickTrades.executeTrade(action.target?.tradeId, actionContext);
+      const result = quickTrades.executeTrade(action.target?.tradeId, {
+        ...actionContext,
+        beginDiscardSelection: (count, input) => (
+          quickTradeDecisionSource.openDiscard(root, count, input)
+        ),
+        beginCardSelection: (input) => (
+          quickTradeDecisionSource.openCardSelection(root, input)
+        ),
+      });
       if (!result?.ok) return result;
       if (root?.match && (Number(root.match.decisionVersion) || 0) === beforeDecisionVersion) {
         root.match.decisionVersion = beforeDecisionVersion + 1;
       }
       if (root?.rocketState && result.message) root.rocketState.statusNote = result.message;
-      if (result.awaitingDiscard || result.awaitingCardSelection) {
-        quickTradeHistory?.attachPending?.(actionContext, action, result, historySnapshot);
-      } else {
-        quickTradeHistory?.recordCompleted?.(actionContext, action, result, historySnapshot);
-      }
       const event = {
         type: "quick_trade",
         tradeId: action.target?.tradeId,
@@ -205,53 +476,33 @@
         label: family,
         getOptions(context) {
           if (initialSetupSource.families.includes(family)) {
-            const choices = initialSetupSource.enumerate(context, { family });
-            if (choices.length) {
-              return {
-                ok: true,
-                choices: choices.map((entry) => ({
-                  target: entry.target,
-                  payload: entry.payload,
-                  decision: entry.decision,
-                  label: entry.summary,
-                })),
-              };
-            }
-            const sessionChoices = conditionalActions?.enumerate?.(context, { family }) || [];
-            return sessionChoices.length
-              ? { ok: true, choices: sessionChoices.map((entry) => ({
-                target: entry.target,
-                payload: entry.payload,
-                decision: entry.decision,
-                label: entry.summary,
+            const choices = enumerateSourceChoices(context, family);
+            return choices.length
+              ? { ok: true, choices: choices.map(({ candidate }) => ({
+                target: candidate.target,
+                payload: candidate.payload,
+                decision: candidate.decision,
+                label: candidate.summary,
               })) }
-              : { ok: false, code: "SESSION_DECISION_ONLY", message: "当前没有 initial setup payment" };
+              : { ok: false, code: "SESSION_DECISION_ONLY", message: `当前没有 ${family} source` };
           }
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
         },
         canExecute(context, option) {
           if (initialSetupSource.families.includes(family)) {
-            const candidate = initialSetupSource.enumerate(context, { family }).find((entry) => (
-              JSON.stringify(entry.target) === JSON.stringify(option.target)
-              && JSON.stringify(entry.payload) === JSON.stringify(option.payload)
-            ));
-            if (candidate) return initialSetupSource.validate(context, candidate);
-            const sessionAction = findConditionalAction(context, family, option);
-            return (sessionAction && conditionalActions?.validate?.(context, sessionAction))
-              || { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "initial setup payment 已失效" };
+            const resolved = findSourceChoice(context, family, option);
+            return resolved
+              ? resolved.source.validate(context, { ...option, family })
+              : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
           }
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
         },
         execute(context, action) {
           if (initialSetupSource.families.includes(family)) {
-            const candidate = initialSetupSource.enumerate(context, { family }).find((entry) => (
-              JSON.stringify(entry.target) === JSON.stringify(action.target)
-              && JSON.stringify(entry.payload) === JSON.stringify(action.payload)
-            ));
-            if (candidate) return initialSetupSource.execute(context, candidate);
-            const sessionAction = findConditionalAction(context, family, action);
-            return (sessionAction && conditionalActions?.execute?.(context, sessionAction))
-              || { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "initial setup payment 已失效" };
+            const resolved = findSourceChoice(context, family, action);
+            return resolved
+              ? resolved.source.execute(context, { ...action, family })
+              : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
           }
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 执行` };
         },
@@ -338,8 +589,7 @@
         ));
       },
     });
-    const hostContinuation = options.standardActionDomainOptions?.continuation || null;
-    const productionContinuation = hostContinuation && Object.freeze({
+    const productionContinuation = Object.freeze({
       inspect(context) {
         const setupChoices = INITIAL_SETUP_FAMILIES.flatMap(
           (family) => actionRegistry.enumerate(context, { family }),
@@ -354,10 +604,21 @@
             choices: setupChoices,
           };
         }
-        return hostContinuation.inspect(context?.workingRoot || context);
+        const root = context?.workingRoot || context;
+        return {
+          ok: true,
+          boundary: root?.turnState?.gameEnded ? "terminal" : "turn_action",
+          decisionType: "turn_action",
+          ownerId: root?.playerState?.currentPlayerId || null,
+          choices: [],
+        };
       },
-      executeDeterministic(context, boundary) {
-        return hostContinuation.executeDeterministic(context?.workingRoot || context, boundary);
+      executeDeterministic(_context, boundary) {
+        return {
+          ok: false,
+          code: "PRODUCTION_CONTINUATION_BOUNDARY_UNKNOWN",
+          message: `Production continuation 不支持 boundary: ${boundary?.boundary || "<missing>"}`,
+        };
       },
       resolveDecision(context, choice, decisionContext) {
         const descriptor = choice?.standardAction || choice;
@@ -381,11 +642,12 @@
             candidates: setupCandidates,
           };
         }
-        return hostContinuation.resolveDecision(
-          context?.workingRoot || context,
-          choice,
+        return {
+          ok: false,
+          code: "PRODUCTION_DECISION_SOURCE_UNKNOWN",
+          message: "Decision 不属于任何 Production source",
           decisionContext,
-        );
+        };
       },
     });
 
@@ -395,8 +657,7 @@
       create: standardActionSession.createStandardActionDomain,
       options: Object.freeze({
         actionFamilies: standardFamilies,
-        ...(options.standardActionDomainOptions || {}),
-        ...(productionContinuation ? { continuation: productionContinuation } : {}),
+        continuation: productionContinuation,
       }),
     });
     const cardDomain = Object.freeze({

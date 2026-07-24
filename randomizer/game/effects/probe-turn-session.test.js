@@ -105,7 +105,7 @@ function handoffSummary(entry) {
   assert.equal(result.ok, true);
   assert.deepEqual(handoffSummary(result.spawnedEffects[0]), {
     type: probeTurn.DOMAIN_HANDOFF_EFFECT_TYPE,
-    kind: "handoff",
+    kind: "effect",
     ownerId: "p1",
     schemaVersion: probeTurn.DOMAIN_HANDOFF_SCHEMA_VERSION,
     domain: "company",

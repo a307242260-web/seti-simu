@@ -8,7 +8,6 @@ const stateStoreApi = loadProductionDependency("./state/state-store", "SetiState
 const highCouplingStateApi = loadProductionDependency("./state/high-coupling-slices", "SetiHighCouplingState");
 const effectRuntimeApi = loadProductionDependency("./effects/session-runtime", "SetiEffectSession");
 const standardActionApi = loadProductionDependency("./actions/standard-action", "SetiStandardAction");
-const actions = loadProductionDependency("./actions", "SetiActions");
 const initialGameStateApi = loadProductionDependency("./state/initial-game-state", "SetiInitialGameState");
 const players = loadProductionDependency("./players", "SetiPlayers");
 const solar = loadProductionDependency("../solar-system/core", "SetiSolarSystem");
@@ -18,7 +17,6 @@ const planetRewards = loadProductionDependency("./actions/planet-rewards", "Seti
 const data = loadProductionDependency("./data", "SetiData");
 const cards = loadProductionDependency("./cards/deck", "SetiCards");
 const cardEffects = loadProductionDependency("./cards/effects", "SetiCardEffects");
-const quickTrades = loadProductionDependency("./actions/quick-trades", "SetiQuickTrades");
 const tech = loadProductionDependency("./tech", "SetiTech");
 const industry = loadProductionDependency("./industry", "SetiIndustry");
 const aliens = loadProductionDependency("./aliens", "SetiAliens");
@@ -35,6 +33,7 @@ const productionCompositionApi = loadProductionDependency("./production-composit
 const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
 
 const RULESET_VERSION = "seti-runtime-v1";
+const INTERNAL_RULE_SCOPE = Symbol("seti-production-kernel-rule-scope");
 const DEFAULT_FINAL_SCORE_IDS = Object.freeze(["a", "b", "c", "d"]);
 const INDUSTRY_CARD_FILES = Object.freeze([
   "层云核心.png", "芬威克研究中心.png", "赫利昂联合体.png", "寰宇动力.png",
@@ -135,6 +134,19 @@ function installProductionKernel(options = {}) {
   if (!hostServices || typeof hostServices !== "object" || Array.isArray(hostServices)) {
     throw new TypeError(`Production Kernel ${hostKind} 缺少专属 host services`);
   }
+  if (options.standardActionDomainOptions != null) {
+    throw new TypeError("Production Kernel 禁止 Host 注入 Standard Action continuation/Decision");
+  }
+  if (options.productionRules != null) {
+    throw new TypeError(
+      options.productionRules.conditionalActions != null
+        ? "Production Kernel 禁止 Host 注入 conditional action registry"
+        : "Production Kernel 禁止 Host 注入规则模块",
+    );
+  }
+  if (ruleOptions.runWithWorkingState != null && options[INTERNAL_RULE_SCOPE] !== true) {
+    throw new TypeError("Production Kernel 禁止 Host 注入 working-state rule transaction");
+  }
   if (ruleOptions.stateAdapter && ruleOptions.stateAdapter !== stateAdapter) {
     throw new TypeError(`Production Kernel ${hostKind} state adapter identity 不一致`);
   }
@@ -143,10 +155,8 @@ function installProductionKernel(options = {}) {
   }
   const production = productionCompositionApi.createProductionComposition({
     ruleCompositionApi: options.ruleCompositionApi,
-    productionRules: options.productionRules,
     hostServices,
     getAuthority: options.getAuthority,
-    standardActionDomainOptions: options.standardActionDomainOptions,
     ruleOptions: {
       ...ruleOptions,
       stateAdapter,
@@ -793,292 +803,9 @@ function installOpeningDiscard(workingState) {
   return true;
 }
 
-function discardChoices(workingState) {
-  const pending = workingState.match.pendingDecision;
-  if (pending?.kind !== "discard") return [];
-  const player = workingState.playerState.players.find((candidate) => candidate.id === pending.playerId);
-  if (!player) return [];
-  const count = Math.max(1, Math.round(Number(pending.count) || 1));
-  function combinations(startIndex, selected) {
-    if (selected.length === count) return [selected];
-    const result = [];
-    for (let index = startIndex; index < player.hand.length; index += 1) {
-      result.push(...combinations(index + 1, [...selected, index]));
-    }
-    return result;
-  }
-  return combinations(0, []).map((handIndexes) => ({
-    family: "choose_payment",
-    target: {
-      kind: "discard-hand-cards",
-      choiceId: handIndexes.join("+"),
-      handIndexes,
-      cardIds: handIndexes.map((handIndex) => (
-        player.hand[handIndex]?.cardId || player.hand[handIndex]?.id || null
-      )),
-    },
-    payload: { handIndexes },
-    summary: handIndexes.map((handIndex) => cards.getCardLabel(player.hand[handIndex])).join(" + "),
-  }));
-}
-
-function hasPendingContinuation(workingState) {
-  return Object.entries(workingState.match || {}).some(([key, value]) => (
-    !["decisionVersion", "actionLog", "initialSetup", "initialSetupConfig"].includes(key)
-    && Boolean(value)
-  ));
-}
-
-function openTradeDiscard(workingState, count, input = {}) {
-  if (hasPendingContinuation(workingState)) {
-    return { ok: false, code: "QUICK_TRADE_PENDING", message: "请先完成当前选择" };
-  }
-  workingState.match.pendingDecision = {
-    kind: "discard",
-    type: "trade",
-    playerId: input.player?.id || workingState.playerState.currentPlayerId,
-    tradeId: input.tradeId,
-    count,
-    required: true,
-  };
-  return { ok: true, message: `请选择 ${count} 张手牌` };
-}
-
-function openTradeCardSelection(workingState, input = {}) {
-  if (hasPendingContinuation(workingState)) {
-    return { ok: false, code: "QUICK_TRADE_PENDING", message: "请先完成当前选择" };
-  }
-  workingState.match.pendingDecision = {
-    kind: "card_selection",
-    type: "trade",
-    playerId: input.player?.id || workingState.playerState.currentPlayerId,
-    tradeId: input.tradeId,
-    allowBlindDraw: Boolean(input.allowBlindDraw),
-  };
-  return { ok: true, message: "请选择一张公共牌" };
-}
-
-function createQuickTradeContext(workingState, random) {
-  return {
-    workingRoot: workingState,
-    playerState: workingState.playerState,
-    cardState: workingState.cardState,
-    rocketState: workingState.rocketState,
-    beginDiscardSelection: (count, input) => openTradeDiscard(workingState, count, input),
-    beginCardSelection: (input) => openTradeCardSelection(workingState, input),
-    random,
-  };
-}
-
-function listCardSelectionChoices(workingState, pending) {
-  if (pending?.kind !== "card_selection") return [];
-  const publicChoices = (workingState.cardState.publicCards || []).flatMap((card, slotIndex) => (
-    card ? [{
-      target: {
-        kind: "trade-card-selection",
-        choiceId: `public:${slotIndex}:${card.id}`,
-        source: "public",
-        slotIndex,
-        cardInstanceId: card.id,
-      },
-      payload: { slotIndex },
-      summary: cards.getCardLabel(card),
-    }] : []
-  ));
-  return pending.allowBlindDraw
-    ? [...publicChoices, {
-      target: {
-        kind: "trade-card-selection",
-        choiceId: "blind",
-        source: "blind",
-      },
-      payload: {},
-      summary: "盲抽 1 张牌",
-    }]
-    : publicChoices;
-}
-
 function createSimulationRuleComposition(options = {}) {
   if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
   let composition;
-  const baseRegistry = actions.createStandardRegistry({
-    getAuthority(workingState) {
-      const root = workingState.workingRoot || workingState;
-      const pending = root.match.pendingDecision;
-      return {
-        actorId: pending?.playerId || root.playerState.currentPlayerId || null,
-        stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
-        decisionVersion: root.match.decisionVersion || 0,
-      };
-    },
-  });
-
-  const registry = {
-    register: (...args) => baseRegistry.register(...args),
-    enumerate(context, request) {
-      const root = context?.workingRoot || context;
-      const listed = baseRegistry.enumerate(context, request);
-      const playerId = root?.playerState?.currentPlayerId || null;
-      const passed = (root?.turnState?.passedPlayerIds || []).includes(playerId);
-      const passCompletionPending = root?.playerState?.players
-        ?.find((player) => player.id === playerId)?.passCompletionPending === true;
-      if (!passed && !passCompletionPending) return listed;
-      return listed.filter((action) => (
-        action.phase === "conditional" || action.family === "end_turn"
-      ));
-    },
-    validate: (...args) => baseRegistry.validate(...args),
-    coverage: (...args) => baseRegistry.coverage(...args),
-    execute(context, action) {
-      const root = context.workingRoot || context;
-      const before = root.match.decisionVersion || 0;
-      const result = baseRegistry.execute(context, action);
-      if (result?.ok && (root.match.decisionVersion || 0) === before) {
-        root.match.decisionVersion = before + 1;
-      }
-      return result;
-    },
-  };
-
-  registry.register({
-    family: "choose_payment",
-    enumerate(context) {
-      const root = context.workingRoot || context;
-      return discardChoices(root);
-    },
-    validate(context, action) {
-      const root = context.workingRoot || context;
-      return discardChoices(root).some((choice) => choice.target.choiceId === action.target?.choiceId)
-        ? { ok: true }
-        : { ok: false, code: "SIMULATION_DISCARD_STALE", message: "opening 弃牌选择已失效" };
-    },
-    execute(context, action) {
-      const workingState = context.workingRoot || context;
-      const pending = workingState.match.pendingDecision?.kind === "discard"
-        ? workingState.match.pendingDecision : null;
-      const player = workingState.playerState.players.find((candidate) => candidate.id === pending?.playerId);
-      if (!player) return { ok: false, code: "SIMULATION_DISCARD_OWNER_MISSING", message: "opening 弃牌 owner 不存在" };
-      const indexes = (action.target?.handIndexes || [action.target?.handIndex])
-        .filter(Number.isInteger)
-        .sort((left, right) => right - left);
-      for (const handIndex of indexes) {
-        const result = cards.discardFromHandAtIndex(player, handIndex);
-        if (!result?.ok) return result;
-        cards.addToDiscardPile(workingState.cardState, result.card);
-        const gain = cards.getIncomeGainForCard(result.card);
-        if (gain) {
-          players.gainIncome(player, gain, {
-            blindDraw: (targetPlayer) => cards.blindDraw(
-              workingState.cardState, workingState.playerState, targetPlayer, options.random,
-              {
-                createCardInstance: (entry, sequence) => (
-                  cards.createCommittedCardInstance(workingState, entry, sequence)
-                ),
-              },
-            ),
-            gainData: (targetPlayer) => data.gainData(
-              targetPlayer,
-              { source: "initial_income", root: workingState },
-            ),
-          });
-        }
-      }
-      if (pending.type === "trade") {
-        delete workingState.match.pendingDecision;
-        const traded = quickTrades.finalizeTradeAfterDiscard(
-          pending.tradeId,
-          createQuickTradeContext(workingState, options.random),
-          player,
-        );
-        if (!traded.ok) return traded;
-        return {
-          ok: true,
-          progressed: true,
-          events: [{
-            type: "quick_trade_payment",
-            tradeId: pending.tradeId,
-            playerId: player.id,
-          }],
-        };
-      }
-      workingState.match.initialIncomeQueue.shift();
-      delete workingState.match.pendingDecision;
-      installOpeningDiscard(workingState);
-      return { ok: true, progressed: true, events: [{ type: "opening_discard" }] };
-    },
-  });
-
-  registry.register({
-    family: "choose_card",
-    enumerate(context) {
-      const root = context.workingRoot || context;
-      const pending = root.match.pendingDecision;
-      if (pending?.kind === "card_selection") return listCardSelectionChoices(root, pending);
-      return [];
-    },
-    validate(context, action) {
-      return this.enumerate(context).some((candidate) => candidate.target.choiceId === action.target?.choiceId)
-        ? { ok: true } : { ok: false, code: "PASS_RESERVE_STALE", message: "PASS 预留牌选择已失效" };
-    },
-    execute(context, action) {
-      const root = context.workingRoot || context;
-      const cardSelection = root.match.pendingDecision?.kind === "card_selection"
-        ? root.match.pendingDecision : null;
-      if (cardSelection) {
-        const player = root.playerState.players.find((candidate) => candidate.id === cardSelection.playerId);
-        const picked = action.target?.source === "blind"
-          ? cards.blindDraw(root.cardState, root.playerState, player, options.random, {
-            createCardInstance: (entry, sequence) => (
-              cards.createCommittedCardInstance(root, entry, sequence)
-            ),
-          })
-          : cards.pickFromPublic(
-            root.cardState,
-            root.playerState,
-            player,
-            Number(action.target?.slotIndex),
-            options.random,
-            {
-              createCardInstance: (entry, sequence) => (
-                cards.createCommittedCardInstance(root, entry, sequence)
-              ),
-            },
-          );
-        if (!picked?.ok) return picked;
-        delete root.match.pendingDecision;
-        return {
-          ok: true,
-          progressed: true,
-          events: [{
-            type: "quick_trade_card_selected",
-            tradeId: cardSelection.tradeId,
-            playerId: player.id,
-            cardInstanceId: picked.card?.id || null,
-          }],
-        };
-      }
-      return { ok: false, code: "SIMULATION_CARD_SELECTION_STALE", message: "卡牌选择已失效" };
-    },
-  });
-
-  registry.register({
-    family: "choose_reward",
-    enumerate() { return []; },
-    validate() {
-      return {
-        ok: false,
-        code: "STANDARD_ACTION_NOT_LEGAL",
-        message: "当前没有 Production Composition 外部奖励 Decision",
-      };
-    },
-    execute() {
-      return {
-        ok: false,
-        code: "STANDARD_ACTION_NOT_LEGAL",
-        message: "奖励选择必须由当前 Effect Session Decision 提交",
-      };
-    },
-  });
 
   const stateAdapter = {
     createWorkingState: (initialOptions) => createWorkingState(initialOptions, options.random),
@@ -1117,8 +844,6 @@ function createSimulationRuleComposition(options = {}) {
       match: workingRoot.match,
       stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
       decisionVersion: workingRoot.match.decisionVersion || 0,
-      beginDiscardSelection: (count, input) => openTradeDiscard(workingRoot, count, input),
-      beginCardSelection: (input) => openTradeCardSelection(workingRoot, input),
       random: options.random,
       blindDrawCard(player) {
         return cards.blindDraw(
@@ -1155,42 +880,6 @@ function createSimulationRuleComposition(options = {}) {
       },
     };
   }
-
-  const simulationContinuation = {
-    inspect(workingState) {
-      workingState = workingState.workingRoot || workingState;
-      const choices = composition.inputPort.enumerateActions({})
-        .filter((candidate) => candidate.phase === "conditional");
-      if (choices.length) {
-        return {
-          ok: true,
-          boundary: "conditional_choice",
-          decisionType: "conditional_choice",
-          ownerId: workingState.match.pendingDecision?.playerId || null,
-          family: choices[0].family,
-          choices,
-        };
-      }
-      return {
-        ok: true,
-        boundary: workingState.turnState.gameEnded ? "terminal" : "turn_action",
-        decisionType: "turn_action",
-        ownerId: workingState.playerState.currentPlayerId,
-        choices: [],
-      };
-    },
-    executeDeterministic() {
-      return { ok: false, code: "SIMULATION_RULE_STALLED", message: "Rule Composition 没有可执行的确定性 Effect" };
-    },
-    resolveDecision(_workingState, choice) {
-      _workingState = _workingState.workingRoot || _workingState;
-      const descriptor = choice?.standardAction || choice;
-      return production.domainPack.actionRegistry.execute(
-        createActionContext(_workingState),
-        descriptor,
-      );
-    },
-  };
 
   const simulationRuleOptions = {
     stateStoreApi: {
@@ -1276,9 +965,9 @@ function createSimulationRuleComposition(options = {}) {
   });
   const simulationHostServices = Object.freeze({});
   const installedKernel = installProductionKernel({
+    [INTERNAL_RULE_SCOPE]: true,
     hostKind: "simulation",
     ruleCompositionApi: { createRuleComposition },
-    productionRules: { quickTrades, conditionalActions: registry },
     getAuthority(workingState) {
       const root = workingState.workingRoot || workingState;
       const pending = root.match.pendingDecision;
@@ -1288,7 +977,6 @@ function createSimulationRuleComposition(options = {}) {
         decisionVersion: root.match.decisionVersion || 0,
       };
     },
-    standardActionDomainOptions: { continuation: simulationContinuation },
     stateAdapter,
     projectionAdapter: simulationProjectionAdapter,
     hostServices: simulationHostServices,

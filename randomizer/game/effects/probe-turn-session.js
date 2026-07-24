@@ -322,7 +322,7 @@
       priority: "direct",
       effect: {
         type: DOMAIN_HANDOFF_EFFECT_TYPE,
-        kind: "handoff",
+        kind: "effect",
         ownerId,
         payload: {
           schemaVersion: DOMAIN_HANDOFF_SCHEMA_VERSION,

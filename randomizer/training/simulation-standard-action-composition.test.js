@@ -109,7 +109,6 @@ function enumerateBrowserProductionPort(state, family) {
     cardState: structuredClone(state.cards),
   };
   const pack = productionComposition.createProductionDomainPack({
-    productionRules: { quickTrades },
     getAuthority: () => ({
       actorId: state.turn.currentPlayerId,
       stateVersion: state.meta.stateVersion,
@@ -161,12 +160,10 @@ for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
     execute() { return { ok: false }; },
   };
   assert.throws(() => productionComposition.createProductionDomainPack({
-    productionRules: { quickTrades },
     hostFamilyExecutors: { quick_trade() {} },
   }), /重复 Production family executor: quick_trade/,
   "host 自定义同 family executor 必须 fail-fast");
   assert.throws(() => productionComposition.createProductionDomainPack({
-    productionRules: { quickTrades },
     additionalDomains: [{
       id: "host-quick-trade",
       families: ["quick_trade"],
@@ -178,6 +175,31 @@ for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
     createStandardActionRegistry: () => registryPort,
   }), /禁止 host 自定义规则 owner: createStandardActionRegistry/,
   "host 传入已构造 registry factory 必须 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    productionRules: { quickTrades, conditionalActions: registryPort },
+  }), /productionRules\.conditionalActions/,
+  "host conditional registry 必须在 Production Domain Pack 构造期 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    productionRules: { quickTrades },
+  }), /productionRules/,
+  "host 规则模块必须在 Production Domain Pack 构造期 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    hostServices: { quickTradeHistory: {} },
+  }), /hostServices\.quickTradeHistory/,
+  "host quick-trade history 规则 callback 必须在构造期 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    standardActionDomainOptions: {
+      continuation: {
+        inspect() {},
+        executeDeterministic() {},
+      },
+    },
+  }), /standardActionDomainOptions\.continuation/,
+  "host Standard Action continuation 必须在构造期 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    standardActionDomainOptions: { takeOpenedDecisionEffect() {} },
+  }), /standardActionDomainOptions\.takeOpenedDecisionEffect/,
+  "host Decision side-channel 必须在构造期 fail-fast");
 }
 
 assert.deepEqual(
@@ -482,6 +504,35 @@ for (const family of ["scan", "place_data"]) {
     env.dispose();
   }
   assert.equal(researchExecuted, true, "生产 Standard Action 回归必须实际执行 research_tech");
+}
+
+{
+  const configA = { seed: "seti-171-isolation-a", activePlayerCount: 4 };
+  const configB = { seed: "seti-171-isolation-b", activePlayerCount: 4 };
+  const capture = (env, config) => {
+    const observation = env.reset(config);
+    return {
+      observation,
+      legalActions: env.legalActions(),
+      replay: env.getReplay(),
+    };
+  };
+  const freshLeft = createSimulationEnv();
+  const freshA = capture(freshLeft, configA);
+  freshLeft.dispose();
+  const freshRight = createSimulationEnv();
+  const freshAAgain = capture(freshRight, configA);
+  freshRight.dispose();
+  assert.deepEqual(freshAAgain, freshA, "fresh A/A 必须保持 observation/legal/replay 完全一致");
+
+  const resident = createSimulationEnv();
+  const residentA1 = capture(resident, configA);
+  const residentA2 = capture(resident, configA);
+  assert.deepEqual(residentA2, residentA1, "same-instance A/A 必须清空 pending、journal、RNG 与 sequence");
+  capture(resident, configB);
+  const residentA3 = capture(resident, configA);
+  assert.deepEqual(residentA3, residentA1, "same-instance A/B/A 不得被中间 episode 污染");
+  resident.dispose();
 }
 
 console.log("simulation production Standard Action composition tests passed");

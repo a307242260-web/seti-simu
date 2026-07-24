@@ -58,8 +58,11 @@ Decision effect、quick-trade history 或 working-root rule transaction。
 | `probe_turn` | launch/move/orbit/land/pass/end_turn | probe/turn 自有 payment、target、reserve、reveal | probe-turn journal + turn commit |
 | `residual_domains` | industry/card_corner/runezu_face_symbol | company/card/alien/final Decision；正式 handoff effect 连接其他 domain | residual journal；`augmentEffectResult` 只生成正式 handoff |
 
-跨域 Effect 只通过 domain 返回的 `spawnedEffects`/正式 handoff 进入 Session。Composition
-不得调用 Browser effect dispatcher、Simulation private executor 或 callback continuation。
+跨域 Effect 只通过 domain 返回的 `spawnedEffects`/正式 handoff 进入 Session。handoff
+使用普通 Effect envelope：`type=game_domain_handoff`、`kind=effect`（或省略后由 runtime
+规范化为 `effect`）；`handoff` 只是 payload/domain provenance，绝不是第三种 Session
+Effect kind。Composition 不得调用 Browser effect dispatcher、Simulation private executor
+或 callback continuation。
 
 ## 21 Browser 旧 pending 的目标归属
 
@@ -88,6 +91,7 @@ Composition 上送 DecisionEffect；正式 source/domain 直接构造 choices。
 | Decision identity | Effect Session | stale/late/wrong-owner/removed-choice：公共 Decision 输入零副作用拒绝 |
 | CAS | Effect Session → StateStore | 一个 action/Decision 链多次提交：stateVersion/journal 门禁失败 |
 | replay/recovery | Session journal + lifecycle envelope | 未确认 choice 入 journal、恢复后 choices/cursor 漂移：replay 门禁失败 |
+| cross-domain handoff | `game_domain_handoff` executor | `kind=handoff` 被 runtime 视为未知 Effect：生产 PASS/full-game 必须在真实 drain 中覆盖 |
 
 ## 来源轴与删除证据
 

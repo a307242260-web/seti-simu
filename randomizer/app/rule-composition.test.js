@@ -633,7 +633,6 @@ function createForkableHarness() {
     getCommittedContext: () => ({ seed: "browser-seed" }),
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
-    productionRules: { quickTrades: require("../game/actions/quick-trades") },
     browserProjection: {
       visibilityPolicy: (state) => ({
         match: structuredClone(state.match),

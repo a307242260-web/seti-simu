@@ -484,22 +484,6 @@
     effectFlowMarkedNebula,
   } = effectFlowModule;
   let productionActionRegistry = null;
-  const enumerateSimulationTurnActionsForRoot = (workingRoot) => (
-    productionActionRegistry.enumerate(createActionContextForWorkingRoot(workingRoot))
-      .filter((standardAction) => standardAction.phase !== "conditional")
-      .map((standardAction) => ({
-        id: standardAction.family,
-        kind: standardAction.phase,
-        family: standardAction.family,
-        actionId: standardAction.actionId,
-        actorId: standardAction.actorId,
-        target: structuredClone(standardAction.target || null),
-        payload: structuredClone(standardAction.payload || {}),
-        standardAction: structuredClone(standardAction),
-        available: true,
-        label: standardAction.summary,
-      }))
-  );
   const cardSelectionDecisionOwner = cardSelectionDecisionModule.createCardSelectionDecisionOwner({
     inspectSession: () => ruleComposition.inspect(),
     resolvePlayer: (workingRoot, pending) => (
@@ -524,28 +508,6 @@
       conditionalDecisionDomain.describePendingDecision(workingRoot, kind, pending)
     ),
   });
-  const takeOpenedDecisionEffect = () => {
-    const effects = [
-      cardSelectionDecisionOwner.takeOpenedDecisionEffect(),
-      browserPendingDecisionOwner.takeOpenedDecisionEffect(),
-    ].filter(Boolean);
-    if (effects.length > 1) throw new Error("同一规则事务不能打开多个 DecisionEffect");
-    return effects[0] || null;
-  };
-  const takeDeferredDecisionEffects = () => browserPendingDecisionOwner.takeDeferredDecisionEffects();
-  const standardActionContinuation = conditionalActionExecutorModule.createStandardActionContinuation({
-    enumerateConditionalActionsForRoot: (...args) => enumerateSimulationConditionalActionsForRoot(...args),
-    enumerateTurnActionsForRoot: (...args) => enumerateSimulationTurnActionsForRoot(...args),
-    getCurrentPlayer: (playerState) => players.getCurrentPlayer(playerState),
-    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
-    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
-    advanceDeterministicStateForRoot: (...args) => advanceSimulationDeterministicStateImpl(...args),
-    executeCurrentActionEffectForRoot: (...args) => executeSimulationCurrentActionEffectImpl(...args),
-    executeEffectChoice: (...args) => conditionalActionExecutor.executeEffectChoice(...args),
-    getAlienSpeciesRuntime: () => alienSpeciesRuntime,
-    getEffectExecutors: () => effectExecutors,
-    closeScanTargetPickerForRoot: (...args) => closeScanTargetPickerForRoot(...args),
-  });
   const ruleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
     ruleCompositionApi: ruleCompositionModule,
     productionCompositionApi: productionCompositionModule,
@@ -566,49 +528,6 @@
       getFinalReadModelOwner: () => finalReadModelOwner,
       getBrowserReadModelOwner: () => browserReadModelOwner,
       createRenderPresentation: (input) => createBrowserRenderPresentation(input),
-    },
-    runWithWorkingState: (actionContext, operation) => browserPendingDecisionOwner.runRuleTransaction(
-      actionContext.workingRoot || actionContext,
-      () => cardSelectionDecisionOwner.runRuleTransaction(
-        actionContext.workingRoot || actionContext,
-        () => players.runWithScoreGainListener(
-          (player, payload) => handlePlayerScoreChanged(
-            actionContext.workingRoot || actionContext,
-            player,
-            payload,
-          ),
-          operation,
-        ),
-      ),
-    ),
-    productionRules: { quickTrades },
-    hostServices: {
-      quickTradeHistory: {
-        capture(actionContext) {
-          const player = players.getCurrentPlayer(actionContext.playerState);
-          return historyCommands.captureTradeState(player, actionContext.cardState);
-        },
-        attachPending(actionContext, _descriptor, result, beforeState) {
-          const continuation = result.awaitingDiscard
-            ? getPendingDiscardDecision(actionContext.workingRoot)
-            : readCardSelectionDecision(actionContext.workingRoot);
-          if (continuation && beforeState) continuation.beforeTradeState = beforeState;
-        },
-        recordCompleted(actionContext, descriptor, _result, beforeState) {
-          const player = players.getCurrentPlayer(actionContext.playerState);
-          recordQuickTradeCompletion(
-            descriptor.target?.tradeId,
-            player,
-            beforeState,
-            { workingRoot: actionContext.workingRoot },
-          );
-        },
-      },
-    },
-    standardActionDomainOptions: {
-      continuation: standardActionContinuation,
-      takeOpenedDecisionEffect,
-      takeDeferredDecisionEffects,
     },
   });
   productionActionRegistry = Object.freeze({

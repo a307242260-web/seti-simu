@@ -4,7 +4,11 @@
 
 Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏决策协议。两端只选择语义 action；候选枚举、执行前校验、状态事务、规则结算和下一个决策边界均由无 DOM 的游戏层负责。
 
-当前 15 个顶层 family 与 7 个 conditional family 均已进入同一个 app registry。浏览器 AI 与训练 Policy 选择完整 descriptor，并只通过 `registry.execute` 执行；条件动作由语义 provider 枚举、按 `target.kind` handler 执行。旧 kind switch、simulation 条件总分派器、`payload.legacyAction`、`executeLegacy` 与 runtime bypass 已删除。
+当前 15 个顶层 family 与 7 个 conditional family 均由 game Production Domain Pack
+唯一注册。浏览器 AI 与训练 Policy 选择完整 descriptor，并只通过 Composition input port
+执行；条件动作由 active Effect domain 或 game-owned initial-setup/quick-trade source
+枚举。旧 kind switch、Simulation 私有条件 registry/continuation、Browser Decision
+side-channel、`payload.legacyAction`、`executeLegacy` 与 runtime bypass 已删除。
 
 ## Action envelope
 
@@ -52,7 +56,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `play_card` | main | Standard Action registry；hand-flow adapter | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性 continuation |
 | `pass` | main | Standard Action registry；turn-end adapter | reference | PASS 主动作统一；预留牌/必做效果仍由对应 owner 外显，不由 policy 代选 |
 | `move` | quick | Standard Action registry；interaction adapter | reference | rocket、方向和移动支付入口固定，补充支付继续外显 pending |
-| `quick_trade` | quick | Standard Action registry；`game/actions/quick-trades` | reference | registry 枚举 trade id，复用唯一交易执行器 |
+| `quick_trade` | quick | Production Domain Pack；`game/actions/quick-trades` | reference | game source 拥有 discard/card Decision、费用、实体迁移与 Session journal；Host 不注入 history/continuation |
 | `industry` | quick | Standard Action registry；industry adapter | reference | 统一公司身份、1x 使用标志、picker 与不可逆 history |
 | `card_corner` | quick | Standard Action registry；hand-flow adapter | reference | 统一卡牌实例、角标效果与移动 continuation |
 | `place_data` | quick | Standard Action registry；data ability adapter | reference | 统一槽位候选、bonus、history 与无目标语义 |
@@ -66,7 +70,13 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `choose_final_scoring` | conditional | Standard Action registry；final scoring runtime | reference | 独立 owner、候选、replay 与 terminal 结算 |
 | `accept_optional_effect` | conditional | Standard Action registry；optional effect adapter | reference | 明确 `accept/skip` target，禁止默认取首项 |
 
-`game/actions/index.js#createStandardRegistry` 提供 composition；adapter 只暴露 `enumerate/resolveIntent/execute`。`resolveIntent` 仅服务浏览器 DOM 的窄输入边界，多目标返回 `STANDARD_ACTION_AMBIGUOUS`；浏览器 AI、simulation 与训练 Policy 不使用它。orbit/land 的目标分别固定为 `rocketId + planetId` 与 `rocketId + planetId + type/satelliteId`；research 的目标固定为 `tileId + blueSlot`。
+`game/production-composition.js` 创建唯一 registry、五个 Effect domain 和 deterministic
+continuation；Host 只提供 state/projection adapter 与纯 service，传入 `productionRules`、
+`standardActionDomainOptions`、conditional registry、quick-trade history 或 working-state
+规则 transaction 时构造期失败。`resolveIntent` 仅服务浏览器 DOM 的窄输入边界，多目标返回
+`STANDARD_ACTION_AMBIGUOUS`；浏览器 AI、Simulation 与训练 Policy 不使用它。orbit/land 的
+目标分别固定为 `rocketId + planetId` 与 `rocketId + planetId + type/satelliteId`；research
+的目标固定为 `tileId + blueSlot`。
 
 当前行为证据以 `tools/node-test-inventory.js` 登记的 Action、Session 与领域行为测试为准：各 family 必须覆盖合法候选执行、stale/越权拒绝、失败零污染和浏览器/Policy 同入口；跨模块组合由唯一 full-flow 验证。本文不维护按迁移批次命名的测试清单。
 
