@@ -318,7 +318,6 @@
       endCurrentTurn,
       blockManualAiPendingInputIfNeeded,
       getCurrentActionEffectIndex,
-      runQuickTrade,
       confirmDataPlacement,
       standardActionAdapter,
     } = context;
@@ -1050,7 +1049,6 @@
     }
 
     return actions.createStandardAdapter({
-      excludeFamilies: ["quick_trade"],
       stage2Actions: {
         scan: {
           label: "扫描",

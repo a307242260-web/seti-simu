@@ -440,20 +440,20 @@
     ]);
   }
 
-  function createStage3Definitions(actions = {}, options = {}) {
-    const excluded = new Set(options.excludeFamilies || []);
+  function createStage3Definitions(actions = {}) {
     const entries = [
-      ["move", actions.move],
-      ["quick_trade", actions.quickTrade || actions.quick_trade],
-      ["industry", actions.industry],
-      ["card_corner", actions.cardCorner || actions.card_corner],
-      ["place_data", actions.placeData || actions.place_data],
-      ["runezu_face_symbol", actions.runezuFaceSymbol || actions.runezu_face_symbol],
-      ["end_turn", actions.endTurn || actions.end_turn],
+      ["move", ["move"]],
+      ["quick_trade", ["quickTrade", "quick_trade"]],
+      ["industry", ["industry"]],
+      ["card_corner", ["cardCorner", "card_corner"]],
+      ["place_data", ["placeData", "place_data"]],
+      ["runezu_face_symbol", ["runezuFaceSymbol", "runezu_face_symbol"]],
+      ["end_turn", ["endTurn", "end_turn"]],
     ];
-    return Object.freeze(entries
-      .filter(([family]) => !excluded.has(family))
-      .map(([family, action]) => createOptionDefinition(family, action)));
+    return Object.freeze(entries.flatMap(([family, keys]) => {
+      const configuredKey = keys.find((key) => Object.hasOwn(actions, key));
+      return configuredKey ? [createOptionDefinition(family, actions[configuredKey])] : [];
+    }));
   }
 
   function createConditionalDefinition(family, action) {
@@ -476,9 +476,7 @@
       for (const definition of createStage2Definitions(options.stage2Actions)) registry.register(definition);
     }
     if (options.stage3Actions) {
-      for (const definition of createStage3Definitions(options.stage3Actions, options)) {
-        registry.register(definition);
-      }
+      for (const definition of createStage3Definitions(options.stage3Actions)) registry.register(definition);
     }
     if (options.stage4Actions) {
       for (const definition of createStage4Definitions(options.stage4Actions)) registry.register(definition);

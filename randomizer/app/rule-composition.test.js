@@ -1,11 +1,13 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const browserRuleComposition = require("./browser-rule-composition");
 const stateStoreApi = require("../game/state/state-store");
 const effectRuntimeApi = require("../game/effects/session-runtime");
 const researchTechSession = require("../game/effects/research-tech-session");
 const standardAction = require("../game/actions/standard-action");
+const quickTurnActionExecutor = require("./quick-turn-action-executor");
 const { createRuleComposition, SAVE_SCHEMA_VERSION } = require("../game/rule-composition");
 
 function createState(value = 0) {
@@ -653,6 +655,49 @@ function createForkableHarness() {
     "窄 read model 不得携带 canonical root poison");
   assert.equal(Object.isFrozen(composition.readModelPort.read("matchSummary")), true);
   assert.throws(() => composition.readModelPort.read("canonicalRoot"), /未注册 read model/);
+}
+
+{
+  assert.equal(
+    quickTurnActionExecutor.ACTION_FAMILIES.includes("quick_trade"),
+    false,
+    "Browser legacy Quick/Turn executor 不得继续声明 quick_trade family",
+  );
+  const legacyQuickTurnSource = [
+    quickTurnActionExecutor.createQuickTurnActionExecutor,
+    quickTurnActionExecutor.createQuickTradeFlow,
+  ].map((factory) => factory.toString()).join("\n");
+  for (const forbiddenSource of [
+    "executeQuickTrade",
+    "excludeFamilies",
+    "quickTrades.executeTrade",
+    "options.workingRoot",
+  ]) {
+    assert.equal(
+      legacyQuickTurnSource.includes(forbiddenSource),
+      false,
+      `Browser legacy quick_trade executor 残留禁用实现: ${forbiddenSource}`,
+    );
+  }
+  assert.equal(
+    fs.readFileSync(require.resolve("./action-runtime"), "utf8")
+      .includes('excludeFamilies: ["quick_trade"]'),
+    false,
+    "Browser Standard Action adapter 不得保留 quick_trade exclude 配置",
+  );
+  const dispatched = [];
+  const quickTradeFlow = quickTurnActionExecutor.createQuickTradeFlow({
+    dispatchRuleInput(input) {
+      dispatched.push(input);
+      return { ok: true };
+    },
+  });
+  assert.equal(quickTradeFlow.runQuickTrade("credits-for-energy", { workingRoot: {} }).ok, true);
+  assert.deepEqual(dispatched, [{
+    kind: "standard_intent",
+    family: "quick_trade",
+    selector: { tradeId: "credits-for-energy" },
+  }], "Browser quick_trade UI 壳只能提交公共 standard_intent");
 }
 
 {

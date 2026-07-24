@@ -49,7 +49,6 @@
       stage2Actions: options.stage2Actions || null,
       stage3Actions: options.stage3Actions || null,
       stage4Actions: options.stage4Actions || null,
-      excludeFamilies: options.excludeFamilies || null,
     });
   }
 

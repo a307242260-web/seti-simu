@@ -749,7 +749,6 @@
     executePlayCard: (_workingRoot, descriptor) => executeStandardPlayCard(descriptor),
   });
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
-    excludeFamilies: ["quick_trade"],
     executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
       workingRoot,
       players.getCurrentPlayer(workingRoot.playerState)?.initialSelection?.industry,
@@ -2846,20 +2845,6 @@
   maybeAutoExecuteAomomoRewardEffects = actionEffectOrchestrator.maybeAutoExecuteAomomoRewardEffects;
   const quickTradeFlow = quickTurnActionExecutorModule.createQuickTradeFlow({
     dispatchRuleInput: (...args) => dispatchBrowserRuleInput(...args),
-    blockIncompatiblePendingQuickAction: (...args) => blockIncompatiblePendingQuickAction(...args),
-    getGameplayLockReason: (...args) => getGameplayLockReason(...args),
-    players,
-    historyCommands,
-    quickTrades,
-    createActionContext: createActionContextForWorkingRoot,
-    getPendingDiscardDecision,
-    readCardSelectionDecision,
-    recordQuickTradeCompletion,
-    renderPlayerStats,
-    renderPublicCards: (...args) => renderPublicCards(...args),
-    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
-    updateActionButtons: (...args) => updateActionButtons(...args),
-    renderStateReadout,
   });
   const { runQuickTrade } = quickTradeFlow;
   const {
@@ -3706,7 +3691,6 @@
     endCurrentTurn,
     blockManualAiPendingInputIfNeeded,
     getCurrentActionEffectIndex: () => getActionEffectFlow()?.currentIndex,
-    runQuickTrade,
     confirmDataPlacement,
     standardActionAdapter: (() => {
       browserLegacyActionSource = actionRuntimeModule.createBrowserStandardActionAdapter({

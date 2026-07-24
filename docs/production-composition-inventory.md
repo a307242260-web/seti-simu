@@ -26,7 +26,7 @@
 | `app/action-runtime.js:createActionRuntime.executeStandardDescriptor` | 按 family 分派 Primary Board、Engine、Quick Turn、Conditional executor | 删除 family 路由；统一调用 production registry/session |
 | `app/primary-board-action-executor.js` | launch/move/orbit/land 规则提交与 working-root 写入 | 迁入相应 game action domain |
 | `app/engine-action-executor.js` | scan/analyze/research/play-card family 执行路由 | 按后续领域迁移项拆入 game domain |
-| `app/quick-turn-action-executor.js` | industry/card_corner/place_data/runezu/end_turn 执行路由与 history；显式排除 quick_trade | 迁入 game quick/turn domains；Browser 只呈现 continuation |
+| `app/quick-turn-action-executor.js` | industry/card_corner/place_data/runezu/end_turn 执行路由与 history；不存在 quick_trade handler/working-root 分支 | 迁入 game quick/turn domains；Browser 只呈现 continuation |
 | `app/conditional-action-executor.js`、`app/conditional-decision-domain.js` | Decision enumerate/validate/execute 与 pending state-write | Decision owner 迁入正式 game domain/session |
 | `app/browser-pending-decision.js`、`app/card-selection-decision.js` | Browser 事务内打开/读取 DecisionEffect | 迁完对应 family 后删除 Browser rule owner，仅保留 renderer/input adapter |
 | `app/effects/**` | 具体 Effect executor 与 working-root mutation | 逐领域迁入 game effect domains；`app/effects/bootstrap.js` 的注册表随之删除 |

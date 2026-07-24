@@ -8,8 +8,7 @@
   "use strict";
 
   const ACTION_FAMILIES = Object.freeze([
-    "quick_trade", "industry", "card_corner", "place_data",
-    "runezu_face_symbol", "pass", "end_turn",
+    "industry", "card_corner", "place_data", "runezu_face_symbol", "pass", "end_turn",
   ]);
 
   function clone(value) {
@@ -57,9 +56,7 @@
   }
 
   function createQuickTurnActionExecutor(options = {}) {
-    const excludedFamilies = new Set(options.excludeFamilies || []);
     const handlers = {
-      quick_trade: options.executeQuickTrade,
       industry: options.executeIndustry,
       card_corner: options.executeCardCorner,
       place_data: options.executePlaceData,
@@ -67,7 +64,7 @@
       pass: options.executePass,
       end_turn: options.executeEndTurn,
     };
-    for (const family of ACTION_FAMILIES.filter((entry) => !excludedFamilies.has(entry))) {
+    for (const family of ACTION_FAMILIES) {
       if (typeof handlers[family] !== "function") {
         throw new TypeError(`Quick/Turn executor 缺少 ${family} 生产 flow`);
       }
@@ -80,12 +77,6 @@
         return fail(
           "QUICK_TURN_FAMILY_INVALID",
           `Quick/Turn executor 不接受 family: ${descriptor?.family || "<missing>"}`,
-        );
-      }
-      if (excludedFamilies.has(descriptor.family)) {
-        return fail(
-          "QUICK_TURN_FAMILY_OWNED_BY_DOMAIN_PACK",
-          `${descriptor.family} 由 Production Domain Pack 执行`,
         );
       }
       if (typeof executeOptions.validate === "function") {
@@ -110,76 +101,17 @@
     }
 
     return Object.freeze({
-      actionFamilies: Object.freeze(ACTION_FAMILIES.filter((family) => !excludedFamilies.has(family))),
+      actionFamilies: ACTION_FAMILIES,
       execute,
     });
   }
 
   function createQuickTradeFlow(context = {}) {
-    function runQuickTrade(tradeId, options = {}) {
-      if (!options.workingRoot) {
-        return context.dispatchRuleInput({
-          kind: "standard_intent",
-          family: "quick_trade",
-          selector: { tradeId },
-        });
-      }
-      const workingRoot = options.workingRoot;
-      const { playerState, cardState, rocketState } = workingRoot;
-      const blocked = context.blockIncompatiblePendingQuickAction("quick-trade");
-      if (blocked) return blocked;
-      const gameplayLockReason = context.getGameplayLockReason();
-      if (gameplayLockReason) {
-        rocketState.statusNote = gameplayLockReason;
-        context.renderStateReadout();
-        return { ok: false, message: gameplayLockReason };
-      }
-      const player = context.players.getCurrentPlayer(playerState);
-      const beforeState = context.historyCommands.captureTradeState(player, cardState);
-      const result = context.quickTrades.executeTrade(
-        tradeId,
-        context.createActionContext(workingRoot, options.standardAction),
-      );
-      if (!result.ok) {
-        rocketState.statusNote = result.message;
-        context.renderPlayerStats();
-        context.updateActionButtons();
-        context.renderStateReadout();
-        return result;
-      }
-      if (result.awaitingDiscard) {
-        const continuation = context.getPendingDiscardDecision(workingRoot);
-        if (continuation) {
-          continuation.beforeTradeState = beforeState;
-          if (options.preserveHandIndex !== null && options.preserveHandIndex !== undefined && options.preserveHandIndex !== "") {
-            continuation.preserveHandIndex = Number(options.preserveHandIndex);
-          }
-          if (options.aiReason) continuation.aiReason = options.aiReason;
-        }
-        rocketState.statusNote = result.message;
-        context.renderStateReadout();
-        return result;
-      }
-      if (result.awaitingCardSelection) {
-        const continuation = context.readCardSelectionDecision(workingRoot);
-        if (continuation) {
-          continuation.beforeTradeState = beforeState;
-          if (options.preferBlindDraw) continuation.aiPreferBlindDraw = true;
-          if (options.aiReason) continuation.aiReason = options.aiReason;
-        }
-        rocketState.statusNote = result.message;
-        context.renderStateReadout();
-        return result;
-      }
-      context.recordQuickTradeCompletion(tradeId, player, beforeState, { workingRoot });
-      rocketState.statusNote = result.message;
-      context.renderPlayerStats();
-      context.renderPublicCards();
-      context.updatePublicCardControls();
-      context.updateActionButtons();
-      context.renderStateReadout();
-      return result;
-    }
+    const runQuickTrade = (tradeId) => context.dispatchRuleInput({
+      kind: "standard_intent",
+      family: "quick_trade",
+      selector: { tradeId },
+    });
 
     return Object.freeze({ runQuickTrade });
   }
