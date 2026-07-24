@@ -11,6 +11,8 @@ const data = require("../data");
 
 assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 46);
 assert.deepEqual(playDomain.SLICE_EFFECT_TYPES, [
+  cardEffects.REWARD_TYPES.GAIN_RESOURCES,
+  cardEffects.REWARD_TYPES.GAIN_DATA,
   cardEffects.EFFECT_TYPES.SCAN_NEBULA,
   cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
 ]);
@@ -136,6 +138,7 @@ function semanticState(state) {
     stateVersion: root.meta.stateVersion,
     player: {
       credits: player.resources.credits,
+      publicity: player.resources.publicity,
       availableData: player.resources.availableData,
       hand: player.hand.map((card) => card.id),
       reserved: player.reservedCards.map((card) => card.id),
@@ -301,6 +304,27 @@ function runColorDecisions(browserShape) {
   return semanticState(composition.stateSourcePort.getSnapshot());
 }
 
+function runDirectRewards(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_74.webp", browserShape);
+  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(result.stateVersion, 1);
+  assert.equal(counters.compareAndCommit, 1);
+  assert.equal(result.journal.effects.length, 3);
+  assert.deepEqual(
+    result.journal.events.filter((event) => event.type === "card_effect")
+      .map((event) => event.effectType),
+    [cardEffects.REWARD_TYPES.GAIN_RESOURCES, cardEffects.REWARD_TYPES.GAIN_DATA],
+  );
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(player.resources.credits, 8);
+  assert.equal(player.resources.publicity, 1);
+  assert.equal(player.resources.availableData, 2);
+  return semanticState(committed);
+}
+
 assert.deepEqual(
   runFixedScan(true),
   runFixedScan(false),
@@ -310,6 +334,11 @@ assert.deepEqual(
   runColorDecisions(true),
   runColorDecisions(false),
   "Browser 与 Simulation 的标准 Card Decision 提交结果必须一致",
+);
+assert.deepEqual(
+  runDirectRewards(true),
+  runDirectRewards(false),
+  "Browser 与 Simulation 的资源/数据卡牌原语必须经同一 owner 产生同根结果",
 );
 
 {

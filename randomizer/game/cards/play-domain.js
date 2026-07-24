@@ -6,15 +6,17 @@
   let cardEffects = root.SetiCardEffects;
   let players = root.SetiPlayers;
   let abilities = root.SetiAbilities;
+  let data = root.SetiData;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     cards = cards || require("./deck");
     cardEffects = cardEffects || require("./effects");
     players = players || require("../players");
     abilities = abilities || require("../abilities");
+    data = data || require("../data");
   }
 
-  const api = factory(standardAction, cards, cardEffects, players, abilities);
+  const api = factory(standardAction, cards, cardEffects, players, abilities, data);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiCardPlayDomain = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -23,6 +25,7 @@
   cardEffects,
   players,
   abilities,
+  data,
 ) {
   "use strict";
 
@@ -30,6 +33,7 @@
   const ACTION_FAMILIES = Object.freeze(["play_card"]);
   const EFFECT_TYPES = Object.freeze({
     PLAY: "card_play_domain_play",
+    DIRECT: "card_play_domain_direct",
     FIXED_NEBULA_SCAN: "card_play_domain_fixed_nebula_scan",
     COLOR_NEBULA_SCAN: "card_play_domain_color_nebula_scan",
   });
@@ -41,7 +45,12 @@
     }
     return [...types].sort();
   })());
+  const DIRECT_EFFECT_TYPES = Object.freeze([
+    cardEffects.REWARD_TYPES.GAIN_RESOURCES,
+    cardEffects.REWARD_TYPES.GAIN_DATA,
+  ]);
   const SLICE_EFFECT_TYPES = Object.freeze([
+    ...DIRECT_EFFECT_TYPES,
     cardEffects.EFFECT_TYPES.SCAN_NEBULA,
     cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
   ]);
@@ -170,7 +179,13 @@
         nextState: commitWorkingState(state, { source: EFFECT_TYPES.PLAY }),
         spawnedEffects: playEffects.map((effect) => ({
           priority: "direct",
-          effect: effect.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA
+          effect: DIRECT_EFFECT_TYPES.includes(effect.type)
+            ? {
+              type: EFFECT_TYPES.DIRECT,
+              ownerId: actor.id,
+              payload: { cardEffect: clone(effect), cardInstanceId: playedCard.id },
+            }
+            : effect.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA
             ? {
               type: EFFECT_TYPES.FIXED_NEBULA_SCAN,
               ownerId: actor.id,
@@ -200,6 +215,45 @@
           cardId: playedCard.cardId || null,
           cost: clone(cost),
           reserved,
+        }],
+      };
+    });
+
+    runtime.registerExecutor(EFFECT_TYPES.DIRECT, (state, sessionEffect, workingContext) => {
+      const root = getWorkingRoot(state, workingContext);
+      const effect = sessionEffect.payload?.cardEffect;
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor || !DIRECT_EFFECT_TYPES.includes(effect?.type)) {
+        return fail("CARD_DIRECT_EFFECT_CONTEXT_STALE", "卡牌直接效果上下文已失效");
+      }
+      const options = effect.options || {};
+      let result = null;
+      if (effect.type === cardEffects.REWARD_TYPES.GAIN_RESOURCES) {
+        const gain = clone(options.gain || {});
+        players.gainResources(actor, gain);
+        result = { ok: true, gain };
+      } else if (effect.type === cardEffects.REWARD_TYPES.GAIN_DATA) {
+        const count = Math.max(0, Math.round(Number(options.count) || 0));
+        const results = Array.from({ length: count }, () => (
+          data.gainData(actor, { source: "play_card" })
+        ));
+        result = { ok: true, count, results };
+      }
+      if (!result?.ok) return result;
+      return {
+        ok: true,
+        nextState: commitWorkingState(state, { source: effect.type }),
+        events: [{
+          type: "card_effect",
+          effectId: effect.id || null,
+          effectType: effect.type,
+          playerId: actor.id,
+        }],
+        history: [{
+          type: "card_effect",
+          effectId: effect.id || null,
+          effectType: effect.type,
+          executorId: EXECUTOR_ID,
         }],
       };
     });
@@ -301,6 +355,7 @@
     EFFECT_TYPES,
     EXECUTOR_ID,
     REACHABLE_PLAY_EFFECT_TYPES,
+    DIRECT_EFFECT_TYPES,
     SLICE_EFFECT_TYPES,
     createPlayCardProvider,
     createExperimentalCardPlayDomain,
