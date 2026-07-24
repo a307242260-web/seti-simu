@@ -96,7 +96,7 @@ Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 | `randomizer/index.html` | 传统脚本加载顺序与页面 DOM |
 | `randomizer/app/dependencies.js` | Browser 全局依赖收集和缺项校验 |
 | `randomizer/app.js` | composition root 与端口装配 |
-| `randomizer/app/browser-rule-composition.js` | Browser projection/state adapter |
+| `randomizer/app/browser-rule-composition.js` | Browser Production factory 的窄 Host facade |
 | `randomizer/app/browser-host/input-adapter.js` | 人类 Standard Action/Decision 输入 |
 | `randomizer/app/browser-host/policy-input-adapter.js` | PolicyDecision 到相同输入端口 |
 | `randomizer/app/browser-host/projection-adapter.js` | viewer visibility policy |
@@ -104,17 +104,14 @@ Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 | `randomizer/app/browser-host/resident-renderer.js` | projection 到 DOM 的渲染隔离 |
 | `randomizer/app/browser-host/browser-services.js` | storage/download/timer/focus 独立宿主能力 |
 | `randomizer/app/start-screen.js` | 开始页与初始选择 presentation |
-| `randomizer/app/events.js` | DOM 事件到显式 input callback 的路由 |
-| `randomizer/app/render-runtime.js` | DOM renderer 与纯 ViewState |
 | `randomizer/app/game-recovery.js` | Composition lifecycle + ViewState checkpoint 适配 |
-| `randomizer/app/ai/control-runtime.js` | 不写 player slice 的机器席位/难度配置、generation 与调度状态 |
 | `randomizer/app/ai/browser-bootstrap.js` | Machine Player Host 与 Policy input 装配 |
 | `randomizer/app/public-api.js` | 冻结的 inspect/capture/restore/input facade |
 
-领域 UI 文件如 `card-runtime.js`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、
-`alien-ui.js` 和 `aliens/species-runtime.js` 最终只保留 presentation、ViewState 与正式输入
-映射。若其中仍存在直接规则写入、continuation、history mutation、executor 或 working-root
-参数，它们属于待删除的旧架构，不构成可继续扩展的正式边界。
+旧 `card-runtime.js`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、
+`alien-ui.js`、Host effect/conditional/turn runtime 已物理删除。领域展示统一消费
+viewer-safe projection，交互统一提交 Standard Action/Decision；不得重建兼容 alias、
+continuation、history mutation、executor 或 working-root 参数。
 
 ## 4. 禁止恢复的模式
 

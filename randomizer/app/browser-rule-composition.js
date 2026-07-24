@@ -7,66 +7,24 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  function clone(value) {
+    return value == null ? value : structuredClone(value);
+  }
+
   function createBrowserRuleComposition(context = {}) {
-    const {
-      ruleCompositionApi,
-      stateStoreApi,
-      highCouplingState,
-      initialGameState,
-      workingStateAdapter,
-      getCommittedContext,
-    } = context;
-    const productionCompositionApi = context.productionCompositionApi
-      || (typeof require === "function" ? require("../game/production-composition") : null);
     const productionKernelApi = context.productionKernelApi
       || (typeof require === "function" ? require("../game/production-kernel") : null);
-    if (!ruleCompositionApi?.createRuleComposition
-      || !productionCompositionApi?.createProductionComposition
-      || !productionKernelApi?.createProductionKernel
-      || !workingStateAdapter
-      || !getCommittedContext) {
-      throw new Error("createBrowserRuleComposition requires Production Kernel and Browser adapters");
-    }
     const browserProjection = context.browserProjection;
+    if (!productionKernelApi?.createBrowserProductionKernel) {
+      throw new Error("createBrowserRuleComposition requires game Production Browser factory");
+    }
     if (typeof browserProjection?.visibilityPolicy !== "function"
       || typeof browserProjection?.getFinalReadModelOwner !== "function"
       || typeof browserProjection?.getBrowserReadModelOwner !== "function"
       || typeof browserProjection?.createRenderPresentation !== "function") {
       throw new Error("createBrowserRuleComposition requires explicit Browser projection owners");
     }
-    const createCommittedCandidate = (workingState, metadata, stateVersion) => (
-      initialGameState.createCommittedCandidate(
-        workingState,
-        metadata,
-        stateStoreApi.SCHEMA_VERSION,
-        stateVersion,
-      )
-    );
-    const browserStateAdapter = Object.freeze({
-      createWorkingState: workingStateAdapter.createWorkingState,
-      createCommittedState(workingState, committedState, contextOverrides = {}) {
-        return highCouplingState.purifyHighCouplingSlices(createCommittedCandidate(
-          workingState,
-          { ...getCommittedContext(workingState), ...contextOverrides },
-          committedState.meta.stateVersion,
-        ));
-      },
-      createSavedState(committedState, workingState, contextOverrides = {}) {
-        const savedState = structuredClone(committedState);
-        savedState.meta = {
-          ...savedState.meta,
-          ...getCommittedContext(workingState),
-          ...structuredClone(contextOverrides),
-          schemaVersion: savedState.meta.schemaVersion,
-          stateVersion: savedState.meta.stateVersion,
-        };
-        return savedState;
-      },
-      restoreWorkingState: workingStateAdapter.restoreWorkingState,
-      onCommitted(workingState, committedState) {
-        workingState.meta = structuredClone(committedState.meta);
-      },
-    });
+
     function createEffectPresentation(flow) {
       if (!flow || typeof flow !== "object") return null;
       const safeOptionKeys = [
@@ -89,17 +47,12 @@
           undoable: effect?.undoable !== false,
           options: Object.fromEntries(safeOptionKeys
             .filter((key) => Object.hasOwn(effect?.options || {}, key))
-            .map((key) => [key, structuredClone(effect.options[key])])),
+            .map((key) => [key, clone(effect.options[key])])),
         })),
       };
     }
-    const projectBrowserState = (workingRoot, viewer, inspection, projectionMeta = {}) => {
-      const stateVersion = Number(projectionMeta.stateVersion) || 0;
-      const canonicalCandidate = createCommittedCandidate(
-        workingRoot,
-        { ...getCommittedContext(workingRoot), stateVersion },
-        stateVersion,
-      );
+
+    function projectBrowserState(canonicalState, viewer, inspection) {
       const finalReadModelOwner = browserProjection.getFinalReadModelOwner();
       const browserReadModelOwner = browserProjection.getBrowserReadModelOwner();
       if (!finalReadModelOwner?.project || !browserReadModelOwner?.project) {
@@ -110,52 +63,52 @@
         playerId: null,
         role: "spectator",
       };
-      const visibilityCandidate = structuredClone(canonicalCandidate);
+      const visibilityCandidate = clone(canonicalState);
       visibilityCandidate.match.actionEffectPresentation = createEffectPresentation(
-        canonicalCandidate.match?.actionEffectFlow,
+        canonicalState.match?.actionEffectFlow,
       );
       const visible = browserProjection.visibilityPolicy(
         visibilityCandidate,
         resolvedViewer,
         inspection,
       );
-      const visibleResident = visible.resident || {};
       if (visible.match && Object.hasOwn(visible.match, "actionEffectPresentation")) {
         delete visible.match.actionEffectPresentation;
       }
-      const initialSetup = structuredClone(visibleResident.initialSetup || {
+      const visibleResident = visible.resident || {};
+      const initialSetup = clone(visibleResident.initialSetup || {
         active: false,
         interactive: false,
         currentPlayerId: null,
         offer: null,
         confirmedPlayerIds: [],
       });
-      const presentationPlayers = structuredClone(
+      const presentationPlayers = clone(
         visibleResident.players?.players || Object.values(visible.players || {}),
       );
       const presentationState = {
-        match: structuredClone(visible.match || {}),
-        turn: structuredClone(visibleResident.turn || {}),
+        match: clone(visible.match || {}),
+        turn: clone(visibleResident.turn || {}),
         players: {
           currentPlayerId: visibleResident.players?.currentPlayerId
             ?? visible.match?.currentPlayerId
             ?? null,
           players: presentationPlayers,
         },
-        solarSystem: structuredClone(visibleResident.solar || {}),
-        pieces: structuredClone(visibleResident.pieces || {}),
-        planets: structuredClone(visibleResident.planets || {}),
-        data: structuredClone(visibleResident.data || {}),
-        cards: structuredClone(visibleResident.cards || {}),
-        tech: structuredClone(visibleResident.tech || {}),
-        aliens: structuredClone(visibleResident.aliens || {}),
-        finalScoring: structuredClone(visibleResident.finalScoring || {}),
-        effectPresentation: structuredClone(visibleResident.effectPresentation || null),
+        solarSystem: clone(visibleResident.solar || {}),
+        pieces: clone(visibleResident.pieces || {}),
+        planets: clone(visibleResident.planets || {}),
+        data: clone(visibleResident.data || {}),
+        cards: clone(visibleResident.cards || {}),
+        tech: clone(visibleResident.tech || {}),
+        aliens: clone(visibleResident.aliens || {}),
+        finalScoring: clone(visibleResident.finalScoring || {}),
+        effectPresentation: clone(visibleResident.effectPresentation || null),
       };
-      const finalReadModel = finalReadModelOwner.project(canonicalCandidate);
+      const finalReadModel = finalReadModelOwner.project(canonicalState);
       visible.resident = {
         finalReadModel,
-        browserReadModel: browserReadModelOwner.project(canonicalCandidate, {
+        browserReadModel: browserReadModelOwner.project(canonicalState, {
           viewer: resolvedViewer,
           presentationState,
           presentationPlayers,
@@ -170,65 +123,24 @@
         initialSetup,
       };
       return visible;
-    };
-    const browserProjectionAdapter = Object.freeze({
-      adapterId: "seti-browser-viewer-projection-v1",
-      projectWorkingState: true,
-      projectState: projectBrowserState,
+    }
+
+    const kernel = productionKernelApi.createBrowserProductionKernel({
+      random: context.random || Math.random,
+      seed: context.seed || "browser-host",
+      activePlayerCount: context.activePlayerCount || 4,
+      hostServices: context.hostServices || {},
+      projectBrowserState,
+      counterfactualEnabled: context.counterfactualEnabled,
     });
-    const browserHostServices = Object.freeze({ ...(context.hostServices || {}) });
-    const installedKernel = productionKernelApi.createProductionKernel({
-      hostKind: "browser",
-      ruleCompositionApi,
-      hostServices: browserHostServices,
-      getAuthority: context.getAuthority,
-      stateAdapter: browserStateAdapter,
-      projectionAdapter: browserProjectionAdapter,
-      ruleOptions: {
-      invariantValidators: [workingStateAdapter.validateSessionBoundary],
-      stateStoreApi: {
-        createStateStore(initialState, options) {
-          return highCouplingState.createHighCouplingStateStore(initialState, options);
-        },
-      },
-      effectRuntimeApi: context.effectRuntimeApi,
-      createActionContext: context.createActionContext,
-      createInitialState(_initialOptions, workingState) {
-        return highCouplingState.purifyHighCouplingSlices(createCommittedCandidate(
-          workingState,
-          getCommittedContext(workingState),
-          0,
-        ));
-      },
-      stateAdapter: browserStateAdapter,
-      projectWorkingState: true,
-      projectState: projectBrowserState,
-      createCounterfactualFork: context.counterfactualEnabled === false
-        ? null
-        : (envelope, forkOptions = {}) => {
-          const fork = createBrowserRuleComposition({
-            ...context,
-            counterfactualEnabled: false,
-            initialOptions: { counterfactualSeed: forkOptions.branchKey },
-          });
-          const restored = fork.lifecycle.restore(envelope);
-          if (!restored?.ok) {
-            fork.dispose();
-            throw new Error(restored?.message || restored?.code || "Browser counterfactual fork 恢复失败");
-          }
-          return fork;
-        },
-      initialOptions: context.initialOptions || {},
-      },
-    });
-    const production = Object.freeze({
-      composition: installedKernel.composition,
-      domainPack: installedKernel.domainPack,
-    });
-    const composition = production.composition;
+    const composition = kernel.composition;
     const projectionSource = Object.freeze({
       read(viewer = null) {
-        const projected = composition.projection(viewer);
+        const projected = composition.projection(viewer || {
+          viewerId: "browser:system",
+          playerId: null,
+          role: "spectator",
+        });
         return Object.freeze({
           source: Object.freeze({
             kind: projected.sessionId ? "working" : "committed",
@@ -243,21 +155,14 @@
       },
     });
     return Object.freeze({
-      SAVE_SCHEMA_VERSION: composition.SAVE_SCHEMA_VERSION,
-      inputPort: composition.inputPort,
-      lifecycle: composition.lifecycle,
-      counterfactualPort: composition.counterfactualPort,
-      projection: composition.projection,
-      inspect: composition.inspect,
-      ...(composition.readModelPort ? { readModelPort: composition.readModelPort } : {}),
-      subscribe: composition.subscribe,
-      dispose: composition.dispose,
+      ...composition,
+      newGame: kernel.newGame,
       capabilities: Object.freeze({
-        productionDomainPackId: production.domainPack.packId,
+        productionDomainPackId: kernel.productionDomainPackId,
       }),
       projectionSource,
     });
   }
 
-  return { createBrowserRuleComposition };
+  return Object.freeze({ createBrowserRuleComposition });
 });

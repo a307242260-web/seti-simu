@@ -8,8 +8,7 @@ module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
     entry("randomizer/app/rule-composition.test.js", "architecture/rule-composition", "组合层独占 registry、session 与原子提交", "handler 或 renderer 失败污染 committed state"),
-    entry("randomizer/app/conditional-decision-domain.test.js", "architecture/standard-action", "条件选择统一映射为有 owner/version 的 Standard Action", "stale、错 owner 或未知选择进入领域 handler"),
-    entry("randomizer/app/card-runtime.test.js", "architecture/effect-session", "卡牌移动点先投影到 badge 再打开 Session DecisionEffect", "提前 return 导致 badge 未初始化或旧 match continuation 复活"),
+    entry("randomizer/app/host-architecture-audit.test.js", "architecture/host-source-zero", "Host 规则来源归零且 22 family/5 domain owner 完备", "第二 owner、直接 root 写、改名 bridge 或成功 fallback 重新进入 Host"),
     entry("randomizer/training/simulation-standard-action-composition.test.js", "architecture/standard-action", "生产 composition 唯一注册 22 family 并正式执行", "synthetic registry 掩盖漏注册、错误 phase 或 stale 重放"),
 
     entry("randomizer/game/effects/session-runtime.test.js", "architecture/effect-session", "Effect Session 独占 working copy、队列、Decision 与提交", "多选自动代选、失败 effect 入 journal 或脏提交"),
@@ -39,7 +38,6 @@ module.exports = Object.freeze({
     entry("randomizer/app/browser-host/policy-input-adapter.test.js", "architecture/browser-host", "人类与 Policy 共用正式 Action/Decision 输入", "非法 Policy actionId 仍调用 submit"),
     entry("randomizer/app/browser-host/resident-renderer.test.js", "architecture/browser-host", "resident renderer 单向消费冻结 selector", "renderer 异常撤销或污染规则提交"),
     entry("randomizer/app/public-api.test.js", "architecture/browser-host", "SetiRandomizer 只暴露 viewer-safe inspect/save/restore 与标准输入", "旧 Browser 规则 executor 或可写 projection 重新进入 public facade"),
-    entry("randomizer/app/events.test.js", "architecture/browser-host", "DOM dataset 只路由到 Standard intent/显式 input callback", "disabled、未知 dataset 或旧 pending getter 驱动规则"),
     entry("randomizer/app/game-recovery.test.js", "architecture/browser-host", "Browser recovery 包 round-trip 且瞬态 UI 不入权威状态", "损坏 schema 或 UI 临时态覆盖 composition"),
 
     entry("randomizer/app/simulation-host-contract.test.js", "architecture/simulation-host", "Simulation reset/observe/legalActions/step/reward/terminal/dispose 公共契约", "schema、stale、越权、篡改、terminal/dispose 后调用产生提交"),

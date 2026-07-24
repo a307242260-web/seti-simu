@@ -226,7 +226,16 @@ function createWorkingState(options = {}, random = Math.random) {
   };
   state.match.decisionVersion = 0;
   state.match.actionLog = [];
-  if (options.initialize === true) initializeProductionGame(state, options, random);
+  if (options.prepareBrowser === true) {
+    randomizeBoard(state, random);
+    createCardGame(state, random, 4);
+    state.match.initialSetupConfig = {
+      aiDifficulty: options.aiDifficulty || "laughable",
+      industryLabels: clone(options.industryLabels || []),
+    };
+  } else if (options.initialize === true) {
+    initializeProductionGame(state, options, random);
+  }
   state.meta.sequences = readSequences(state);
   return state;
 }
@@ -803,12 +812,41 @@ function installOpeningDiscard(workingState) {
   return true;
 }
 
-function createSimulationRuleComposition(options = {}) {
-  if (typeof options.random !== "function") throw new TypeError("Simulation Rule Composition 缺少显式 random");
+function createHostCompositionFacade(composition) {
+  return Object.freeze({
+    SAVE_SCHEMA_VERSION: composition.SAVE_SCHEMA_VERSION,
+    inputPort: composition.inputPort,
+    lifecycle: composition.lifecycle,
+    counterfactualPort: composition.counterfactualPort,
+    projection: composition.projection,
+    inspect: composition.inspect,
+    ...(composition.readModelPort ? { readModelPort: composition.readModelPort } : {}),
+    subscribe: composition.subscribe,
+    dispose: composition.dispose,
+  });
+}
+
+function createProductionHostComposition(options = {}) {
+  const hostKind = options.hostKind || "simulation";
+  if (!["browser", "simulation"].includes(hostKind)) {
+    throw new TypeError(`未知 Production Host: ${hostKind}`);
+  }
+  if (typeof options.random !== "function") {
+    throw new TypeError(`${hostKind} Production Composition 缺少显式 random`);
+  }
   let composition;
 
   const stateAdapter = {
-    createWorkingState: (initialOptions) => createWorkingState(initialOptions, options.random),
+    createWorkingState(initialOptions) {
+      const workingState = createWorkingState(initialOptions, options.random);
+      if (typeof options.random.getState === "function") {
+        workingState.meta.rngState = {
+          algorithm: options.rngAlgorithm || "seti-production-rng-v1",
+          state: options.random.getState(),
+        };
+      }
+      return workingState;
+    },
     createProjectionState: (workingState, committedState) => ({
       ...createCommittedState(workingState, committedState.meta.stateVersion),
       probeRouteRequirements: buildProbeRouteRequirements(workingState),
@@ -823,7 +861,14 @@ function createSimulationRuleComposition(options = {}) {
       committedState.meta.stateVersion,
       overrides,
     ),
-    restoreWorkingState,
+    restoreWorkingState(target, source, metadata) {
+      const restored = restoreWorkingState(target, source, metadata);
+      const rngState = restored.meta?.rngState;
+      if (typeof options.random.setState === "function" && Number.isSafeInteger(rngState?.state)) {
+        options.random.setState(rngState.state);
+      }
+      return restored;
+    },
     onCommitted(workingState, committedState) { workingState.meta = clone(committedState.meta); },
   };
 
@@ -881,7 +926,7 @@ function createSimulationRuleComposition(options = {}) {
     };
   }
 
-  const simulationRuleOptions = {
+  const hostRuleOptions = {
     stateStoreApi: {
       createStateStore(initialState, storeOptions) {
         return highCouplingStateApi.createHighCouplingStateStore(initialState, storeOptions);
@@ -894,10 +939,20 @@ function createSimulationRuleComposition(options = {}) {
     runWithWorkingState(context, operation) {
       const workingState = context.workingRoot || context;
       restoreSequences(workingState.meta?.sequences || {});
+      const rngState = workingState.meta?.rngState;
+      if (typeof options.random.setState === "function" && Number.isSafeInteger(rngState?.state)) {
+        options.random.setState(rngState.state);
+      }
       try {
         return operation();
       } finally {
         workingState.meta.sequences = readSequences(workingState);
+        if (typeof options.random.getState === "function") {
+          workingState.meta.rngState = {
+            algorithm: options.rngAlgorithm || rngState?.algorithm || "seti-production-rng-v1",
+            state: options.random.getState(),
+          };
+        }
       }
     },
     projectWorkingState: true,
@@ -911,7 +966,18 @@ function createSimulationRuleComposition(options = {}) {
           ? buildProbeRouteRequirements(state)
           : null,
       };
-      return typeof options.projectCounterfactualState === "function"
+      if (hostKind === "browser") {
+        if (typeof options.projectBrowserState !== "function") {
+          throw new TypeError("Browser Production Composition 缺少 viewer-safe projectBrowserState");
+        }
+        return options.projectBrowserState(
+          projectedState,
+          clone(viewer),
+          clone(_session),
+          clone(projectionContext),
+        );
+      }
+      return typeof options.projectCounterfactualState === "function" && viewer?.role !== "simulation"
         ? options.projectCounterfactualState(projectedState, clone(viewer))
         : projectedState;
     },
@@ -924,8 +990,9 @@ function createSimulationRuleComposition(options = {}) {
           forkOptions.branchKey || "root",
         ].join(":");
         const branchRandom = createCounterfactualRandom(branchKey);
-        const forkKernel = createSimulationRuleComposition({
+        const forkKernel = createProductionHostComposition({
           ...options,
+          hostKind,
           random: branchRandom,
           rngState: {
             algorithm: "seti-counterfactual-mulberry32-v1",
@@ -958,15 +1025,15 @@ function createSimulationRuleComposition(options = {}) {
       initialize: false,
     },
   };
-  const simulationProjectionAdapter = Object.freeze({
-    adapterId: "seti-simulation-projection-v1",
-    projectWorkingState: simulationRuleOptions.projectWorkingState,
-    projectState: simulationRuleOptions.projectState,
+  const hostProjectionAdapter = Object.freeze({
+    adapterId: `seti-${hostKind}-projection-v1`,
+    projectWorkingState: hostRuleOptions.projectWorkingState,
+    projectState: hostRuleOptions.projectState,
   });
-  const simulationHostServices = Object.freeze({});
+  const hostServices = Object.freeze({ ...(options.hostServices || {}) });
   const installedKernel = installProductionKernel({
     [INTERNAL_RULE_SCOPE]: true,
-    hostKind: "simulation",
+    hostKind,
     ruleCompositionApi: { createRuleComposition },
     getAuthority(workingState) {
       const root = workingState.workingRoot || workingState;
@@ -978,9 +1045,9 @@ function createSimulationRuleComposition(options = {}) {
       };
     },
     stateAdapter,
-    projectionAdapter: simulationProjectionAdapter,
-    hostServices: simulationHostServices,
-    ruleOptions: simulationRuleOptions,
+    projectionAdapter: hostProjectionAdapter,
+    hostServices,
+    ruleOptions: hostRuleOptions,
   });
   const production = Object.freeze({
     composition: installedKernel.composition,
@@ -989,12 +1056,22 @@ function createSimulationRuleComposition(options = {}) {
   composition = production.composition;
 
   function newGame(config = {}) {
+    const rngState = config.rngState || (
+      typeof options.random.getState === "function"
+        ? {
+          algorithm: options.rngAlgorithm || "seti-production-rng-v1",
+          state: options.random.getState(),
+        }
+        : undefined
+    );
     return composition.lifecycle.newGame({
       activePlayerCount: config.activePlayerCount || 4,
       seed: config.seed,
-      rngState: config.rngState,
+      rngState,
       aiDifficulty: config.aiDifficulty,
-      initialize: true,
+      initialize: hostKind === "simulation" || config.initialize === true,
+      prepareBrowser: hostKind === "browser",
+      industryLabels: config.industryLabels || [],
     });
   }
 
@@ -1013,7 +1090,7 @@ function createSimulationRuleComposition(options = {}) {
   });
 
   return Object.freeze({
-    composition,
+    composition: createHostCompositionFacade(composition),
     newGame,
     actionContract,
     productionDomainPackId: production.domainPack.packId,
@@ -1022,11 +1099,20 @@ function createSimulationRuleComposition(options = {}) {
   });
 }
 
+function createSimulationRuleComposition(options = {}) {
+  return createProductionHostComposition({ ...options, hostKind: "simulation" });
+}
+
+function createBrowserProductionKernel(options = {}) {
+  return createProductionHostComposition({ ...options, hostKind: "browser" });
+}
+
 const productionKernelApi = Object.freeze({
   createProductionKernel(options = {}) {
     if (options.hostKind === "browser") return installProductionKernel(options);
     return createSimulationRuleComposition({ ...options, hostKind: "simulation" });
   },
+  createBrowserProductionKernel,
   createSimulationRuleComposition,
   installProductionKernel,
 });

@@ -1,119 +1,72 @@
 (function (root, factory) {
   "use strict";
-
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiBrowserCardDecisionUi = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const CARD_DECISION_KINDS = new Set([
-    "choose_card", "choose_payment", "choose_reward", "choose_branch", "accept_optional_effect",
-  ]);
-  const PRESENTATION_KEYS = Object.freeze([
-    "role", "cardId", "image", "cost", "remaining", "reward", "branch", "targetRef", "icon",
-  ]);
-
   function clone(value) {
     return value == null ? value : structuredClone(value);
   }
 
   function isCardDecision(decision) {
-    return decision?.presentationHint === "card" || CARD_DECISION_KINDS.has(decision?.kind || decision?.decisionKind);
-  }
-
-  function pickPresentation(choice) {
-    const source = choice?.presentation || {};
-    const target = choice?.target || {};
-    const payload = choice?.payload || {};
-    const output = {};
-    for (const key of PRESENTATION_KEYS) {
-      const value = source[key] ?? target[key] ?? payload[key];
-      if (value != null) output[key] = clone(value);
-    }
-    return Object.keys(output).length ? output : null;
+    return ["choose_card", "card_selection", "discard", "pass_reserve"].includes(decision?.kind)
+      || decision?.presentationHint === "card";
   }
 
   function createCardDecisionPresenter(options = {}) {
-    const fallback = options.fallback || null;
-    return function presentCardDecision(rawDecision, choice, index) {
-      if (!isCardDecision(rawDecision)) {
-        if (typeof fallback === "function") return fallback(rawDecision, choice, index);
-        const choiceId = choice?.actionId ?? choice?.choiceId ?? choice?.id ?? `choice:${index}`;
-        return {
-          choiceId: String(choiceId),
-          label: choice?.label || choice?.summary || String(choiceId),
-          presentation: pickPresentation(choice),
-          disabledReason: choice?.disabledReason || null,
-        };
-      }
-      const kind = rawDecision.kind || rawDecision.decisionKind;
-      if (!choice?.schemaVersion || !choice?.actionId || choice.family !== kind || choice.actorId !== rawDecision.ownerId) {
-        throw new TypeError(`${kind} card decision choice 缺少 Standard Action identity 或 owner/family 不匹配`);
-      }
+    const fallback = options.fallback;
+    return function present(decision, choice, index) {
+      if (!isCardDecision(decision)) return fallback(decision, choice, index);
+      const card = choice.presentation?.card || choice.target?.card || null;
       return {
-        choiceId: String(choice.actionId),
-        label: choice.summary || choice.label || String(choice.actionId),
-        presentation: pickPresentation(choice),
+        choiceId: String(choice.actionId || choice.choiceId || card?.id || `card:${index}`),
+        label: choice.summary || choice.label || card?.cardName || `卡牌 ${index + 1}`,
+        presentation: {
+          cardId: card?.id || choice.target?.cardId || choice.target?.cardInstanceId || null,
+          cardName: card?.cardName || choice.presentation?.cardName || null,
+          image: card?.src || choice.presentation?.image || null,
+          source: choice.target?.source || null,
+        },
         disabledReason: choice.disabledReason || null,
       };
     };
   }
 
   function renderCardDecision({ decision }) {
-    const choices = decision.choices || [];
     return {
       ok: true,
       type: "card",
-      family: decision.kind,
-      choices: choices.filter((choice) => !["cancel", "skip"].includes(choice?.presentation?.role)).map((choice) => ({
+      choices: decision.choices.map((choice) => ({
         choiceId: choice.choiceId,
         label: choice.label,
-        presentation: clone(choice.presentation),
-        disabledReason: choice.disabledReason || null,
-      })),
-    };
-  }
-
-  function renderGeneric({ decision }) {
-    return {
-      ok: true,
-      type: "choices",
-      choices: (decision.choices || []).map((choice) => ({
-        choiceId: choice.choiceId,
-        label: choice.label,
-        presentation: clone(choice.presentation),
+        cardId: choice.presentation?.cardId || null,
+        cardName: choice.presentation?.cardName || null,
+        image: choice.presentation?.image || null,
         disabledReason: choice.disabledReason || null,
       })),
     };
   }
 
   function registerCardDecisionRenderer(decisionUi, registry) {
-    if (!decisionUi?.createDecisionRendererRegistry) {
-      throw new TypeError("card decision UI 需要通用 Decision renderer registry");
-    }
-    if (!registry?.register || !registry?.resolve) {
-      throw new TypeError("card decision UI 需要可扩展 Decision renderer registry");
+    if (!decisionUi?.createDecisionRendererRegistry || !registry?.register) {
+      throw new TypeError("Card Decision renderer 需要 presentation registry");
     }
     registry.register("card", renderCardDecision, { matches: isCardDecision });
     return registry;
   }
 
   function createCardDecisionRegistry(decisionUi) {
-    if (!decisionUi?.createDecisionRendererRegistry) {
-      throw new TypeError("card decision UI 需要通用 Decision renderer registry");
-    }
-    const registry = registerCardDecisionRenderer(
+    return registerCardDecisionRenderer(
       decisionUi,
       decisionUi.createDecisionRendererRegistry(),
     );
-    registry.register("generic", renderGeneric);
-    return registry;
   }
 
   function createCardDecisionUiController(decisionUi, options = {}) {
     if (!decisionUi?.createDecisionUiController) {
-      throw new TypeError("card decision UI 需要通用 Decision UI controller");
+      throw new TypeError("Card Decision UI 需要通用 Decision controller");
     }
     return decisionUi.createDecisionUiController({
       ...options,
@@ -121,56 +74,12 @@
     });
   }
 
-  function createCardSelectionState(context = {}) {
-    const readCardState = (workingRoot = null) => (
-      workingRoot?.cardState || { ui: context.readCardUiState() }
-    );
-    function isCardSelectionActive(workingRoot = null) {
-      return context.cards.isSelectionActive(readCardState(workingRoot));
-    }
-    function isDiscardSelectionActive(workingRoot = null) {
-      return Boolean(context.getPendingDiscardDecision(workingRoot));
-    }
-    function isPlayCardSelectionActive(workingRoot = null) {
-      return context.cards.isPlayCardSelectionActive(readCardState(workingRoot));
-    }
-    function allowsBlindDrawInSelection() {
-      return context.readCardSelectionDecision()?.allowBlindDraw !== false;
-    }
-    function isPublicScanMultiSelectActive() {
-      const pending = context.readCardSelectionDecision();
-      return isCardSelectionActive() && pending?.type === "public_scan" && (pending.maxSelectable ?? 1) > 1;
-    }
-    function isPublicCornerDiscardSelectionActive() {
-      return isCardSelectionActive() && context.readCardSelectionDecision()?.type === "card_public_corner_discard";
-    }
-    function isPublicCardMultiSelectActive() {
-      return isPublicScanMultiSelectActive() || isPublicCornerDiscardSelectionActive();
-    }
-    function getPublicCardMultiSelectMinSelectable(pending = context.readCardSelectionDecision()) {
-      if (pending?.type === "public_scan") return context.getPublicScanMinSelectable(pending);
-      const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
-      const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || maxSelectable));
-      return Math.min(maxSelectable, requested);
-    }
-    return Object.freeze({
-      isCardSelectionActive,
-      isDiscardSelectionActive,
-      isPlayCardSelectionActive,
-      allowsBlindDrawInSelection,
-      isPublicScanMultiSelectActive,
-      isPublicCornerDiscardSelectionActive,
-      isPublicCardMultiSelectActive,
-      getPublicCardMultiSelectMinSelectable,
-    });
-  }
-
   return Object.freeze({
-    CARD_DECISION_KINDS: Object.freeze([...CARD_DECISION_KINDS]),
+    isCardDecision,
     createCardDecisionPresenter,
+    renderCardDecision,
     registerCardDecisionRenderer,
     createCardDecisionRegistry,
     createCardDecisionUiController,
-    createCardSelectionState,
   });
 });

@@ -48,26 +48,26 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | family | phase | 当前 owner / 入口 | 状态 | 验收重点 |
 |---|---|---|---|---|
 | `launch` | main | `game/actions/launch` | reference | 参考合约已证明 enumerate/validate/execute 共用 `canExecute/execute` |
-| `orbit` | main | Standard Action registry；app/simulation adapter | reference | rocket/planet target 由 registry 枚举；唯一规则执行器为 `game/actions/orbit` |
-| `land` | main | Standard Action registry；app/simulation adapter | reference | rocket/planet/satellite target 由 registry 枚举；唯一规则执行器为 `game/actions/land` |
-| `scan` | main | Standard Action registry；scan-flow adapter | reference | registry 统一入口与支付合法性；sector/card 多选继续外显 pending |
+| `orbit` | main | Production probe-turn domain | reference | rocket/planet target 由 registry 枚举；唯一规则执行器为 `game/actions/orbit` |
+| `land` | main | Production probe-turn domain | reference | rocket/planet/satellite target 由 registry 枚举；唯一规则执行器为 `game/actions/land` |
+| `scan` | main | Production science domain | reference | registry 统一入口与支付合法性；sector/card 多选继续外显 Decision |
 | `analyze` | main | Standard Action registry；ability/effect adapter | reference | 数据来源固定为 computer/requiredSlot，费用写入 payload |
-| `research_tech` | main | Standard Action registry；app/simulation adapter | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |
-| `play_card` | main | Standard Action registry；hand-flow adapter | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性 continuation |
-| `pass` | main | Standard Action registry；turn-end adapter | reference | PASS 主动作统一；预留牌/必做效果仍由对应 owner 外显，不由 policy 代选 |
-| `move` | quick | Standard Action registry；interaction adapter | reference | rocket、方向和移动支付入口固定，补充支付继续外显 pending |
+| `research_tech` | main | Production science domain | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |
+| `play_card` | main | Production card-play domain | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性 continuation |
+| `pass` | main | Production probe-turn domain | reference | PASS 主动作统一；预留牌/必做效果仍由对应 owner 外显，不由 policy 代选 |
+| `move` | quick | Production probe-turn domain | reference | rocket、方向和移动支付入口固定，补充支付继续外显 Decision |
 | `quick_trade` | quick | Production Domain Pack；`game/actions/quick-trades` | reference | game source 拥有 discard/card Decision、费用、实体迁移与 Session journal；Host 不注入 history/continuation |
-| `industry` | quick | Standard Action registry；industry adapter | reference | 统一公司身份、1x 使用标志、picker 与不可逆 history |
-| `card_corner` | quick | Standard Action registry；hand-flow adapter | reference | 统一卡牌实例、角标效果与移动 continuation |
+| `industry` | quick | Production residual domain | reference | 统一公司身份、1x 使用标志、Decision 与 journal |
+| `card_corner` | quick | Production residual domain | reference | 统一卡牌实例、角标效果与移动 continuation |
 | `place_data` | quick | Standard Action registry；data ability adapter | reference | 统一槽位候选、bonus、history 与无目标语义 |
-| `runezu_face_symbol` | quick | Standard Action registry；alien adapter | reference | 统一符号来源、面板目标、分支与痕迹奖励 |
-| `end_turn` | turn_control | Standard Action registry；turn-end adapter | reference | 只在无待决策且主行动完成时合法，统一 owner 推进 |
+| `runezu_face_symbol` | quick | Production residual domain | reference | 统一符号来源、面板目标、分支与痕迹奖励 |
+| `end_turn` | turn_control | Production probe-turn domain | reference | 只在无待决策且主行动完成时合法，统一 owner 推进 |
 | `choose_card` | conditional | Standard Action registry；card pending adapter | reference | 稳定 card/slot 身份，多选保持独立 replay step |
 | `choose_target` | conditional | Standard Action registry；move/scan/alien pending adapter | reference | 按目标类型枚举，registry 入口禁止 UI callback 代执行 |
 | `choose_payment` | conditional | Standard Action registry；discard/resource pending adapter | reference | 支付集合绑定 descriptor 与 authority，执行时重新校验 |
 | `choose_reward` | conditional | Standard Action registry；effect/industry/alien pending adapter | reference | 奖励 identity 与后续 effect chain 稳定 |
 | `choose_branch` | conditional | Standard Action registry；card/alien/confirm pending adapter | reference | 分支使用语义化 target，禁止按钮文案作为协议 |
-| `choose_final_scoring` | conditional | Standard Action registry；final scoring runtime | reference | 独立 owner、候选、replay 与 terminal 结算 |
+| `choose_final_scoring` | conditional | Production continuation | reference | 独立 owner、候选、replay 与 terminal 结算 |
 | `accept_optional_effect` | conditional | Standard Action registry；optional effect adapter | reference | 明确 `accept/skip` target，禁止默认取首项 |
 
 `game/production-composition.js` 创建唯一 registry、五个 Effect domain 和 deterministic

@@ -13,17 +13,6 @@
 
   try {
     assert(SetiBrowserHost.SCHEMA_VERSION === "seti-browser-host-v1", "facade schema 错误");
-    const dependencySource = new Proxy({}, {
-      get(_target, globalName) {
-        if (globalName === "SetiBrowserHost") return SetiBrowserHost;
-        if (globalName === "SetiAliens") {
-          return { jiuzhe: {}, yichangdian: {}, fangzhou: {}, banrenma: {}, chong: {}, amiba: {}, aomomo: {}, runezu: {} };
-        }
-        return {};
-      },
-    });
-    const dependencies = SetiAppDependencies.collectDependencies(dependencySource);
-    assert(dependencies.browserHostModule === SetiBrowserHost, "dependencies 未收集 Browser Host facade");
     const state = SetiStateStore.createCommittedGameState({
       gameId: "seti-73-smoke",
       rulesetVersion: "prototype-2026-07",
@@ -68,19 +57,23 @@
       els: { roundStatusRound: round, roundStatusTurn: turn, playerStats: stats, opponentStatGrid: opponents, publicCardRow: market, tokenLayer: tokens },
     }).renderAll({ projection: residentProjection, viewState: viewStore.getSnapshot() });
     assert(round.textContent === "第 1 轮" && turn.textContent === "第 1 回合", "常驻 round/turn renderer 失败");
-    const actionBarRoot = document.createElement("nav");
-    document.body.append(actionBarRoot);
     const actionCalls = [];
     const actionBarController = SetiBrowserHost.actionBar.createActionBarController({
       dispatchIntent(intent) { actionCalls.push(intent); return { ok: true }; },
       dispatchUndo(command) { actionCalls.push({ kind: "undo", command }); return { ok: true }; },
     });
-    const actionBarRenderer = SetiBrowserHost.actionBar.createActionBarRenderer({
-      document, root: actionBarRoot, controller: actionBarController,
-    });
-    actionBarRenderer.render({
+    const selectedActionBar = SetiBrowserHost.actionBar.selectActionBarProjection(deepFreeze({
+      schemaVersion: "seti-browser-host-v1",
       projectionId: "chrome-action-bar",
       source: { kind: "session", sessionId: "chrome-s1", sessionRevision: 9 },
+      viewer: { viewerId: "chrome-p1", playerId: "p1", role: "player" },
+      match: {},
+      board: {},
+      players: {},
+      cards: {},
+      tech: {},
+      aliens: {},
+      resident: {},
       controls: {
         actions: [
           { schemaVersion: "seti-standard-action-v1", actionId: "launch:chrome", family: "launch", phase: "main", summary: "发射" },
@@ -91,13 +84,12 @@
         canUndo: true,
       },
       feedback: { progress: { completedEffects: 1, remainingEffects: 1, totalEffects: 2, currentEffectType: "choose-tech" } },
-    });
-    actionBarRoot.querySelector("[data-action-id='launch:chrome']").click();
-    actionBarRoot.querySelector("[data-action-bar-intent='undo']").click();
+    }));
+    actionBarController.setProjection(selectedActionBar);
+    actionBarController.activate({ type: "action", actionId: "launch:chrome" });
+    actionBarController.activate({ type: "undo" });
     assert(actionCalls[0].action.actionId === "launch:chrome", "主行动未提交原 Standard Action");
     assert(actionCalls[1].command.sessionRevision === 9, "撤销未携带 session identity");
-    assert(actionBarRoot.querySelector("[data-action-id='end_turn:chrome']").disabled, "结束回合 disabled reason 丢失");
-    assert(actionBarRoot.querySelector("[data-action-bar-progress]").textContent.includes("1/2"), "Effect 进度映射失败");
     const actionBarProjection = SetiBrowserHost.actionBar.selectActionBarProjection(deepFreeze({
       ...structuredClone(projection),
       controls: {

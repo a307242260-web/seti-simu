@@ -8,7 +8,7 @@
 
 ## App 装配层
 
-浏览器入口仍由 `randomizer/index.html` 按 `<script>` 顺序加载，不需要构建步骤。`randomizer/app/dependencies.js` 负责收集 `window.Seti*` 依赖并在脚本顺序错误时提前报错；`randomizer/app/constants.js` 负责静态配置、图标路径、扫描奖励表和 UI 参数；`randomizer/app/dom.js` 负责固定 DOM 元素注册；`randomizer/app/events.js` 负责事件绑定路由；`randomizer/app/public-api.js` 负责组装 `window.SetiRandomizer`；`randomizer/app/ai/browser-bootstrap.js` 负责机器席位 control runtime 与 Machine Player Host 装配。详细边界和后续拆分原则见 `docs/app-architecture.md`。
+浏览器入口仍由 `randomizer/index.html` 按 `<script>` 顺序加载，不需要构建步骤。`randomizer/app/dependencies.js` 只收集 Production Kernel、viewer-safe projection、ViewState、标准输入、renderer 与 Host service；`randomizer/app/dom.js` 负责固定 DOM 元素注册；`randomizer/app/public-api.js` 负责组装 `window.SetiRandomizer`。规则来源、Decision 与提交统一归 `game/production-kernel.js` 和 `game/production-composition.js`。详细边界见 `docs/app-architecture.md`。
 
 ## 效果术语表
 当需要查看某个具体效果术语的效果时参考：docs\effect-glossary.md
@@ -244,7 +244,7 @@ UI 布局：
 
 - 轮：所有玩家各自执行若干回合，直到所有玩家都 PASS 后结束；全部 PASS 后进入下一轮第 1 回合。
 - 回合：一轮内的一次行动圈；每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS。所有未 PASS 玩家在当前行动圈都行动后，真实行动圈编号才递增。
-- `turnState` 属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`game/turn-flow.js` 是轮次推进与太阳系旋转的唯一生产 owner，`app/turn-flow.js` 只保留浏览器读数、初始化与控制端口。它记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
+- `turnState` 属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`game/turn-flow.js` 是轮次推进与太阳系旋转的唯一生产 owner，Browser 只读取 projection。它记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
 - 页面加载时会自动执行原 `set-button` 设置流程：白色玩家固定为初始首位，其余颜色玩家随机洗牌，并重置为第 1 轮第 1 回合。默认人机入口启用 4 名活跃玩家，其中白色为人类玩家，其余 3 个活跃席位为电脑玩家；开始界面可切换为 3 人局，此时白色玩家仍固定参与，其余颜色只随机启用 2 个电脑席位。
 - 新轮开始时，起始玩家按基础顺位顺延到上一轮第二顺位玩家。
 

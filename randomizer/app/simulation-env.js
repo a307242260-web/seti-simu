@@ -85,7 +85,11 @@ function compactEffectSessionJournal(journal) {
 }
 
 function getWorkingProjection(composition) {
-  return composition.stateSourcePort.read().state;
+  return composition.projection({
+    viewerId: "simulation:system",
+    playerId: null,
+    role: "simulation",
+  }).state;
 }
 
 function getTurnState(state) {
@@ -358,12 +362,12 @@ function createSimulationEnv() {
   }
 
   function saveEnvelope() {
-    const beforeVersion = composition.stateSourcePort.getSnapshot().meta.stateVersion;
+    const beforeVersion = getWorkingProjection(composition).meta.stateVersion;
     const result = composition.lifecycle.save({
       rngState: { algorithm: "seti-simulation-mulberry32-v1", state: seededRandom.getState() },
     });
     if (!result.ok) throw new Error(result.message || result.code || "composition save 失败");
-    if (composition.stateSourcePort.getSnapshot().meta.stateVersion !== beforeVersion) {
+    if (getWorkingProjection(composition).meta.stateVersion !== beforeVersion) {
       cachedLegal = null;
       selectors = new Map();
     }

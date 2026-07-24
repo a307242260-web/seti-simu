@@ -273,7 +273,7 @@ module.exports = Object.freeze([
     file: "randomizer/app/aliens/species-runtime.browser-smoke.html",
     resultSelector: "body",
     resultAttribute: "data-result",
-    obligation: "真实 residual 外星揭示由正式 projection 渲染，并由人类 Browser 输入提交正式物种 Decision",
-    counterexample: "Browser 只做空投影、旧 runtime 自行 mutation，或人类点击绕过 residual Decision executor",
+    obligation: "冻结的外星 projection 只由纯 renderer 消费",
+    counterexample: "renderer 读取可写 root、旧 runtime 自行 mutation或恢复规则端口",
   }),
 ]);
