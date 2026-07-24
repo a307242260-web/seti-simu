@@ -343,9 +343,157 @@
       return target;
     }
 
+    function hashSeed(value) {
+      let state = 2166136261;
+      for (const character of String(value ?? "browser-host")) {
+        state ^= character.charCodeAt(0);
+        state = Math.imul(state, 16777619);
+      }
+      return state >>> 0 || 1;
+    }
+
+    function createLifecycleRandom(initialOptions = {}) {
+      const restored = initialOptions.rngState?.lifecycle;
+      let state = Number(restored?.state) >>> 0 || hashSeed(initialOptions.seed);
+      let cursor = Math.max(0, Number(restored?.cursor) || 0);
+      const random = () => {
+        state = Math.imul(state ^ (state >>> 15), 1 | state);
+        state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
+        cursor += 1;
+        return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
+      };
+      random.snapshot = () => Object.freeze({
+        algorithm: "seti-browser-lifecycle-mulberry32-v1",
+        state: state >>> 0,
+        cursor,
+      });
+      return random;
+    }
+
+    function shuffle(values, random) {
+      const result = [...values];
+      for (let index = result.length - 1; index > 0; index -= 1) {
+        const selected = Math.floor(random() * (index + 1));
+        [result[index], result[selected]] = [result[selected], result[index]];
+      }
+      return result;
+    }
+
+    function initializeLifecycleState(state, initialOptions, random) {
+      const {
+        players, solar, data, cards, tech, aliens, finalScoring,
+      } = context.ruleModules;
+      const allPlayerIds = state.playerState.players.map((player) => player.id);
+      const defaultPlayerId = state.playerState.players.find(
+        (player) => player.color === (
+          initialOptions.defaultInitialPlayerColor ?? context.defaultInitialPlayerColor
+        ),
+      )?.id || null;
+      const otherPlayerIds = allPlayerIds.filter((playerId) => playerId !== defaultPlayerId);
+      const orderedPlayerIds = defaultPlayerId
+        ? [defaultPlayerId, ...shuffle(otherPlayerIds, random)]
+        : shuffle(allPlayerIds, random);
+      const activePlayerCount = Math.min(
+        Math.max(1, Math.round(Number(initialOptions.activePlayerCount)
+          || context.defaultActivePlayerCount)),
+        orderedPlayerIds.length,
+      );
+      Object.assign(state.turnState, {
+        turnOrderPlayerIds: orderedPlayerIds,
+        activePlayerCount,
+        activePlayerIds: orderedPlayerIds.slice(0, activePlayerCount),
+        startPlayerId: orderedPlayerIds[0] || null,
+        roundNumber: 1,
+        turnNumber: 1,
+        actionCycleNumber: 1,
+        passedPlayerIds: [],
+        completedTurnPlayerIds: [],
+        cardTurnEventBonuses: [],
+        visitedPlanetsByPlayerId: {},
+        gameEnded: false,
+        gameEndReason: null,
+      });
+      state.playerState.currentPlayerId = state.turnState.startPlayerId;
+
+      const wheelOffsets = context.wheelOffsets || {};
+      for (let wheel = 1; wheel <= 4; wheel += 1) {
+        state.solarState.wheelSteps[wheel] -= Math.floor(
+          random() * 8 + Number(wheelOffsets[wheel] || 0),
+        );
+      }
+      state.solarState.rotation = solar.normalizeRotationState(state.solarState.wheelSteps, 0);
+      const sectorPool = [1, 2, 3, 4];
+      while (sectorPool.length) {
+        const slotId = sectorPool.length;
+        state.solarState.sectorBySlot[slotId] = sectorPool.splice(
+          Math.floor(random() * sectorPool.length),
+          1,
+        )[0];
+      }
+      data.clearNebulaData(state.nebulaDataState);
+      data.fillAllNebulaData(state.nebulaDataState, { source: "setup", root: state });
+      state.solarState.aomomoActive = false;
+      if (context.aomomoClearNebulaId) {
+        data.clearNebulaData(state.nebulaDataState, context.aomomoClearNebulaId);
+      }
+      finalScoring.randomizeTileVariants(
+        state.finalScoringState,
+        initialOptions.finalScoreIds ?? context.finalScoreIds,
+        random,
+      );
+      aliens.randomizeAlienAssignments(state.alienGameState, {
+        random,
+        ...(Array.isArray(initialOptions.alienPoolIds)
+          ? { alienPoolIds: initialOptions.alienPoolIds }
+          : {}),
+      });
+      tech.setupBoardBonuses(state.techGameState, random);
+
+      for (const player of state.playerState.players) {
+        player.hand = [];
+        player.reservedCards = [];
+        player.completedTaskCount = 0;
+        player.resources.handSize = 0;
+      }
+      state.cardState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
+      state.cardState.discardPile = [];
+      state.cardState.drawPileCardIds = [];
+      cards.setSelectionActive(state.cardState, false);
+      cards.setPlayCardSelectionActive(state.cardState, false);
+      cards.setDiscardSelectionActive(state.cardState, false, 0);
+      const cardFactory = {
+        createCardInstance: (entry, sequence) => (
+          cards.createCommittedCardInstance(state, entry, sequence)
+        ),
+      };
+      const activeIds = new Set(state.turnState.activePlayerIds);
+      for (const player of state.playerState.players.filter((candidate) => activeIds.has(candidate.id))) {
+        cards.drawCardsToHand(
+          state.cardState,
+          state.playerState,
+          player,
+          context.defaultInitialHandCount,
+          random,
+          cardFactory,
+        );
+      }
+      cards.ensurePublicCardsFilled(state.cardState, state.playerState, random, cardFactory);
+      cards.preparePassReservePiles(state.cardState, state.playerState, {
+        rounds: context.passReserveRounds,
+        activePlayerCount,
+        random,
+        ...cardFactory,
+      });
+      state.meta.rngState = {
+        ...structuredClone(initialOptions.rngState || {}),
+        lifecycle: random.snapshot(),
+      };
+      return state;
+    }
+
     function createWorkingState(initialOptions = {}) {
       context.resetSequences?.();
-      let random;
+      let random = createLifecycleRandom(initialOptions);
       if (initialOptions.counterfactualSeed != null) {
         let state = 2166136261;
         for (const character of String(initialOptions.counterfactualSeed)) {
@@ -367,10 +515,18 @@
       });
       state.meta = {
         seed: initialOptions.seed ?? "browser-host",
-        rngState: structuredClone(initialOptions.rngState || { owner: "browser", state: null }),
+        rngState: structuredClone(initialOptions.rngState || {}),
+        sequences: {
+          card: 1,
+          dataToken: 1,
+          nebulaToken: 1,
+          nebulaReplacement: 1,
+        },
       };
       state.match.initialSetupConfig = structuredClone(initialOptions.initialSetupConfig || {});
-      return state;
+      return initialOptions.counterfactualSeed == null && initialOptions.initialize !== false
+        ? initializeLifecycleState(state, initialOptions, random)
+        : state;
     }
 
     function validateSessionBoundary(state) {
@@ -425,6 +581,10 @@
       defaultInitialPlayerColor: context.defaultInitialPlayerColor,
       defaultActivePlayerCount: context.defaultActivePlayerCount,
       finalScoreIds: context.finalScoreIds,
+      defaultInitialHandCount: context.defaultInitialHandCount,
+      passReserveRounds: context.passReserveRounds,
+      wheelOffsets: context.wheelOffsets,
+      aomomoClearNebulaId: context.aomomoClearNebulaId,
       resetSequences() {
         const sequenceOwners = context.sequenceOwners || {};
         sequenceOwners.cards?.restoreNextCardInstanceSequence?.(1);

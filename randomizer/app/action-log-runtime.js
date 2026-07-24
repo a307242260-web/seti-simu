@@ -404,7 +404,6 @@
     }
 
     function startActionLogDraft(actionType, label, options = {}) {
-      if (options.source === historySourceMain) context.cancelHandCardContextActions({ silent: true });
       return ensureActionLogDraft({
         ...options,
         actionType,

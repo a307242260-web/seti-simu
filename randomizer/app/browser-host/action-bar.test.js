@@ -8,11 +8,6 @@ assert.throws(
   /DesktopActionBar bootstrap 缺少 owner/,
 );
 
-assert.throws(
-  () => actionBar.createBrowserUndoController({}),
-  /Undo bootstrap 缺少 owner/,
-);
-
 const standard = (family, phase, suffix, disabledReason = null) => ({
   schemaVersion: "seti-standard-action-v1",
   actionId: `${family}:${suffix}`,
@@ -299,90 +294,6 @@ function browserProjection(overrides = {}) {
   assert.equal(els.actionUndoButton.disabled, false);
 })();
 
-(function testUndoControllerOwnsQuickPreCommandsAndMainRollback() {
-  const calls = [];
-  let flow = {
-    historySource: "quick",
-    label: "交换奖励",
-    preHistoryCommandsApplied: false,
-    preHistoryCommands: [
-      { undo() { calls.push("undo:first"); } },
-      { undo() { calls.push("undo:second"); } },
-    ],
-  };
-  let actionPending = false;
-  const actionHistory = {
-    hasUndoableStep: () => false,
-    hasSession: () => actionPending,
-    peekLastUndoableStep: () => null,
-    rollbackSession() { calls.push("rollback"); return { ok: true, message: "已撤销行动" }; },
-  };
-  const quickActionHistory = {
-    hasUndoableStep: () => false,
-    hasSession: () => true,
-    commitSession() { calls.push("commit:quick"); },
-  };
-  const controller = actionBar.createUndoController({
-    actionHistory,
-    quickActionHistory,
-    HISTORY_SOURCE_MAIN: "main",
-    HISTORY_SOURCE_QUICK: "quick",
-    uiRuntimeState: { effectStepActive: true },
-    isTechActionSelectionActive: () => false,
-    getActionEffectFlow: () => flow,
-    isActionPending: () => actionPending,
-    isActionEffectFlowActive: () => Boolean(flow),
-    hasActivePendingSubFlow: () => false,
-    getLatestUndoSource: () => null,
-    hasCurrentMainActionIrreversibleBarrier: () => false,
-    clearHistoryStepOrderForSource: (source) => calls.push(`clear-order:${source}`),
-    clearActionEffectFlow() { flow = null; calls.push("clear-flow"); },
-    refreshAfterHistoryChange: (message) => calls.push(`refresh:${message}`),
-    peekCompletedEffectFlowForUndo: () => null,
-    removeActionLogStepsBySource: (source) => calls.push(`remove-log:${source}`),
-    clearActionPending: () => calls.push("clear-pending"),
-  });
-  const workingRoot = { rocketState: {}, techGameState: { ui: {} } };
-  controller.undoPendingActionForRoot(workingRoot);
-  assert.deepEqual(calls, [
-    "undo:second", "undo:first", "commit:quick", "clear-order:quick",
-    "clear-flow", "refresh:已撤销：交换奖励",
-  ]);
-
-  calls.length = 0;
-  actionPending = true;
-  controller.undoPendingActionForRoot(workingRoot);
-  assert.deepEqual(calls, [
-    "rollback", "clear-order:main", "remove-log:main", "clear-flow",
-    "clear-pending", "refresh:已撤销行动",
-  ]);
-})();
-
-(function testLegacyUndoControllerReportsIrreversibleBarrier() {
-  const calls = [];
-  const controller = actionBar.createUndoController({
-    actionHistory: { hasUndoableStep: () => false, hasSession: () => true, peekLastUndoableStep: () => null },
-    quickActionHistory: { hasUndoableStep: () => false },
-    HISTORY_SOURCE_MAIN: "main",
-    HISTORY_SOURCE_QUICK: "quick",
-    uiRuntimeState: {},
-    isTechActionSelectionActive: () => false,
-    getActionEffectFlow: () => null,
-    isActionPending: () => true,
-    isActionEffectFlowActive: () => false,
-    hasActivePendingSubFlow: () => false,
-    getLatestUndoSource: () => null,
-    hasCurrentMainActionIrreversibleBarrier: () => true,
-    getCurrentActionIrreversibleReason: () => "已翻开隐藏牌",
-    updateActionButtons: () => calls.push("buttons"),
-    renderStateReadout: () => calls.push("readout"),
-  });
-  const workingRoot = { rocketState: {}, techGameState: { ui: {} } };
-  controller.undoPendingActionForRoot(workingRoot);
-  assert.equal(workingRoot.rocketState.statusNote, "不可撤销：已翻开隐藏牌");
-  assert.deepEqual(calls, ["buttons", "readout"]);
-})();
-
 (function testLegacyEffectBarRendersProjectionModel() {
   const createNode = () => ({
     children: [], dataset: {}, classList: { toggle() {} },
@@ -473,7 +384,6 @@ function browserProjection(overrides = {}) {
     readPendingDecision: (kind) => kind === "industry_ability" ? { id: "industry" } : null,
     isIndustryHandSelectionActive: () => false,
     renderStateReadout: () => calls.push("readout"),
-    inputPort: { checkPending: (actionType) => actionType },
   });
   assert.equal(runtime.isActionEffectFlowActive(), true);
   assert.equal(runtime.getGameplayLockReason(), "请先完成初始收入增加");
@@ -484,7 +394,8 @@ function browserProjection(overrides = {}) {
   assert.equal(root.rocketState.statusNote, "请先完成或取消公司 1x 行动");
   assert.ok(calls.includes("cancel-corner"));
   assert.ok(calls.includes("cancel-card"));
-  assert.equal(runtime.blockIncompatiblePendingQuickAction("scan"), "scan");
+  assert.equal(Object.hasOwn(runtime, "blockIncompatiblePendingQuickAction"), false,
+    "Browser Action Bar 不得保留 pending preflight 兼容入口");
   flow = null;
   assert.equal(runtime.isInitialIncomeFlowActive(), false);
 })();

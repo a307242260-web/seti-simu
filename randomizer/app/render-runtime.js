@@ -9,21 +9,6 @@
   root.SetiAppRenderRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  function createCoordinateOwnerInputPort(registry, context = {}) {
-    return registry.register("coordinate", {
-      syncPlanetMarkers: (workingRoot) => (
-        context.getRuntime().syncPlanetOrbitLandMarkers(workingRoot),
-        { ok: true, value: { ok: true } }
-      ),
-      seedReferenceRockets: (workingRoot) => (
-        context.getRuntime().seedDefaultReferenceRockets(workingRoot),
-        { ok: true, value: { ok: true } }
-      ),
-    });
-  }
-
-
-
   const RENDER_CONTEXT_CAPABILITY_INVENTORY = Object.freeze({
     platform: Object.freeze([
       "document", "Image", "getProjection", "assertProjection", "viewState", "enforceCapabilityInventory",
@@ -37,7 +22,7 @@
     scalarOrFreshDtoSelectors: Object.freeze([
       "getPublicCardHeight",
     ]),
-    inputCallbacks: Object.freeze(["handleRocketPointerDown", "syncInteractionFocusChrome", "placeDataToBlueSlot"]),
+    inputCallbacks: Object.freeze(["handleRocketPointerDown", "syncInteractionFocusChrome"]),
     domState: Object.freeze([
       "tokenWidths", "techRenderContext", "sectorElements", "yichangdianAnomalyMarkerElements",
       "chongPlanetFossilMarkerElements", "chongFossilOwnerTokenElements", "runezuBoardSymbolElements", "els",
@@ -439,17 +424,9 @@
       if (!earth) throw new Error("Earth position was not found in BoardCoordinateProjection");
       return { x: earth.x, y: earth.y };
     }
-    function syncPlanetOrbitLandMarkers() {
-      return context.inputPort.syncPlanetMarkers();
-    }
-    function seedDefaultReferenceRockets() {
-      return context.inputPort.seedReferenceRockets();
-    }
     return Object.freeze({
       getMovableTokensForPlayer,
       getEarthSectorCoordinate,
-      syncPlanetOrbitLandMarkers,
-      seedDefaultReferenceRockets,
     });
   }
 
@@ -489,7 +466,6 @@
     }
     function syncCardSelectionChrome() {
       const active = context.isCardSelectionActive();
-      if (active) context.cancelHandCardContextActions({ silent: true });
       els.appWrap?.classList.toggle("card-selection-active", active);
       els.publicCardPanel?.classList.toggle("card-selection-active", active);
       els.publicCardPanel?.classList.toggle("public-card-panel-focused", active);
@@ -513,7 +489,6 @@
     }
     function syncIndustryHandSelectionChrome() {
       const active = context.isIndustryHandSelectionActive();
-      if (active) context.cancelHandCardContextActions({ silent: true });
       els.appWrap?.classList.toggle("industry-hand-selection-active", active);
       els.playerHandPanel?.classList.toggle("industry-hand-selection-active", active);
       els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -1355,12 +1330,6 @@
         button.style.left = `${zone.percentX}%`;
         button.style.top = `${zone.percentY}%`;
         button.style.setProperty("--data-scale", String(zone.scale));
-        if (zone.enabled) {
-          button.addEventListener("click", (event) => {
-            event.stopPropagation();
-            context.placeDataToBlueSlot(zone.blueSlot);
-          });
-        }
         layer.append(button);
       }
     }
@@ -1702,7 +1671,6 @@
   }
 
   return {
-    createCoordinateOwnerInputPort,
     RENDER_CONTEXT_CAPABILITY_INVENTORY,
     cloneSelectorResult,
     createRenderRuntime,

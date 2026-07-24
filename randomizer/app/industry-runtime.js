@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const BROWSER_INPUT_NAMES = Object.freeze([
+  const SESSION_OWNED_METHODS = Object.freeze([
     "cancelIndustryAbilityFlow", "finishIndustryAbilityFlow", "startIndustryAbilityFlow",
     "startIndustryStratusEffectFlow", "startIndustryPublicityPick", "beginIndustryTuringBorrow",
     "failIndustryTuringBorrow", "checkIndustryTuringBorrowTile", "confirmIndustryTuringBorrow",
@@ -27,13 +27,6 @@
     "handleCompanyActionMarkerClick",
   ]);
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze(["industry"]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("industry_runtime input port 需要已校验 registry");
-    }
-    return registry.registerTarget("industry_runtime", BROWSER_INPUT_NAMES, getTarget);
-  }
 
   function createBrowserIndustryStaticContext(dependencies = {}) {
     const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter((key) => !dependencies[key]);
@@ -74,12 +67,12 @@
       clearIndustryRollbackUi: productionDecisionOwnedBySession,
       rollbackPendingIndustryQuickAction: productionDecisionOwnedBySession,
       cancelIndustryAbilityFlow: productionDecisionOwnedBySession,
-      finishIndustryAbilityFlow: () => ({ ok: true }),
+      finishIndustryAbilityFlow: productionDecisionOwnedBySession,
       startIndustryAbilityFlow: () => dispatchIndustry(),
       handleCompanyActionMarkerClick: () => dispatchIndustry(),
       executeIndustryFreeMove: productionDecisionOwnedBySession,
     };
-    for (const name of BROWSER_INPUT_NAMES) {
+    for (const name of SESSION_OWNED_METHODS) {
       if (!runtime[name]) runtime[name] = productionDecisionOwnedBySession;
     }
     return Object.freeze(runtime);
@@ -104,9 +97,7 @@
   }
 
   return Object.freeze({
-    BROWSER_INPUT_NAMES,
     BROWSER_STATIC_DEPENDENCY_KEYS,
-    createBrowserInputPort,
     createBrowserIndustryStaticContext,
     createBrowserIndustryRuntime,
     createIndustryStartupRuntime,

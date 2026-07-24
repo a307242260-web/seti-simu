@@ -8,6 +8,7 @@ const effectRuntimeApi = require("../game/effects/session-runtime");
 const researchTechSession = require("../game/effects/research-tech-session");
 const standardAction = require("../game/actions/standard-action");
 const quickTurnActionExecutor = require("./quick-turn-action-executor");
+const appRuntime = require("./runtime");
 const { createRuleComposition, SAVE_SCHEMA_VERSION } = require("../game/rule-composition");
 
 function createState(value = 0) {
@@ -478,105 +479,6 @@ function createForkableHarness() {
 }
 
 {
-  let commitEvents = 0;
-  const replace = (target, source) => {
-    for (const key of Reflect.ownKeys(target)) delete target[key];
-    Object.assign(target, structuredClone(source));
-  };
-  const composition = createRuleComposition({
-    stateStoreApi,
-    effectRuntimeApi,
-    createActionRegistry: createRegistry,
-    createInitialState: (_options, workingState) => structuredClone(workingState),
-    stateAdapter: {
-      createWorkingState: () => createState(0),
-      createCommittedState: (workingState, committedState) => ({
-        ...structuredClone(workingState),
-        meta: structuredClone(committedState.meta),
-      }),
-      createProjectionState: (workingState) => structuredClone(workingState),
-      restoreWorkingState: replace,
-    },
-    executeOwnerInput(workingState, command) {
-      if (command.kind !== "increment") return { ok: false, code: "UNKNOWN" };
-      workingState.match.value += command.amount;
-      return { ok: true, amount: command.amount };
-    },
-    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
-    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"],
-      () => ({ effects: [{ type: "noop" }] }),
-      { noop: (state) => ({ ok: true, nextState: state }) })],
-  });
-  composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
-  const source = composition.stateSourcePort.read({ viewerId: "test", role: "spectator" });
-  assert.equal(source.state.match.value, 0, "只读 StateSource 必须投影 Composition working state");
-  assert.equal(Object.isFrozen(source), true, "StateSource envelope 必须冻结");
-  assert.equal(Object.hasOwn(composition, "getWorkingState"), false, "Composition 不得公开 mutable working root accessor");
-  const before = composition.projection();
-  composition.inputPort.enumerateActions({ family: "launch" });
-  assert.deepEqual(composition.projection(), before, "枚举必须保持 committed projection 不变");
-  assert.equal(commitEvents, 0, "枚举不得隐式 compare-and-commit");
-  const commandResult = composition.inputPort.submitOwnerInput({ kind: "increment", amount: 4 });
-  assert.equal(commandResult.ok, true);
-  assert.equal(commandResult.stateVersion, 1);
-  assert.equal(composition.stateSourcePort.read().state.match.value, 4);
-  assert.equal(commitEvents, 1, "宿主命令必须由 composition 统一执行一次 CAS");
-  const rejected = composition.inputPort.submitOwnerInput({ kind: "unknown", amount: 99 });
-  assert.equal(rejected.ok, false);
-  assert.equal(composition.stateSourcePort.read().state.match.value, 4, "失败宿主命令必须零污染");
-}
-
-{
-  let commitEvents = 0;
-  let composition = null;
-  let outerArgument = null;
-  let nestedArgument = null;
-  const replace = (target, source) => {
-    for (const key of Reflect.ownKeys(target)) delete target[key];
-    Object.assign(target, structuredClone(source));
-  };
-  composition = createRuleComposition({
-    stateStoreApi,
-    effectRuntimeApi,
-    createActionRegistry: createRegistry,
-    createInitialState: (_options, workingState) => structuredClone(workingState),
-    stateAdapter: {
-      createWorkingState: () => createState(0),
-      createCommittedState: (workingState, committedState) => ({
-        ...structuredClone(workingState),
-        meta: structuredClone(committedState.meta),
-      }),
-      createProjectionState: (workingState) => structuredClone(workingState),
-      restoreWorkingState: replace,
-    },
-    executeOwnerInput(workingState, command) {
-      if (command.kind === "outer") {
-        outerArgument = { owner: workingState.match };
-        const nested = composition.inputPort.submitOwnerInput({ kind: "nested", argument: outerArgument });
-        return nested.ok ? { ok: true } : nested;
-      }
-      if (command.kind === "nested") {
-        nestedArgument = command.argument;
-        assert.equal(nestedArgument, outerArgument, "嵌套命令不得克隆同一事务内的 capability 参数");
-        assert.equal(nestedArgument.owner, workingState.match, "嵌套命令必须复用同一 working candidate identity");
-        workingState.match.value += 3;
-        return { ok: true };
-      }
-      return { ok: false, code: "UNKNOWN" };
-    },
-    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
-    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"],
-      () => ({ effects: [{ type: "noop" }] }),
-      { noop: (state) => ({ ok: true, nextState: state }) })],
-  });
-  composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
-  const result = composition.inputPort.submitOwnerInput({ kind: "outer" });
-  assert.equal(result.ok, true);
-  assert.equal(composition.stateSourcePort.read().state.match.value, 3);
-  assert.equal(commitEvents, 1, "嵌套宿主命令只允许由最外层 composition 执行一次 CAS");
-}
-
-{
   const composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
@@ -731,7 +633,6 @@ function createForkableHarness() {
     getCommittedContext: () => ({ seed: "browser-seed" }),
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
-    executeOwnerInput: () => ({ ok: true }),
     productionRules: { quickTrades: require("../game/actions/quick-trades") },
     browserProjection: {
       visibilityPolicy: (state) => ({
@@ -743,22 +644,20 @@ function createForkableHarness() {
       createRenderPresentation: () => ({}),
     },
   });
-  assert.equal(composition.options, captured);
+  assert.ok(captured, "Browser 必须把冻结后的 ruleOptions 交给 Production Composition");
   assert.equal(
-    composition.productionDomainPackId,
+    composition.capabilities.productionDomainPackId,
     require("../game/production-composition").PACK_ID,
     "Browser 必须由 game 层 Production Domain Pack 创建",
   );
-  assert.equal(
-    composition.productionActionOwners.quick_trade,
-    `${require("../game/production-composition").PACK_ID}:quick_trade`,
-    "Browser quick_trade 必须由 game pack 拥有",
-  );
-  assert.equal(
-    composition.productionActionExecutorOwners.quick_trade,
-    require("../game/production-composition").QUICK_TRADE_EXECUTOR_ID,
-    "Browser quick_trade 必须命中 game-owned executor",
-  );
+  assert.deepEqual(Object.keys(composition.capabilities), ["productionDomainPackId"],
+    "Browser capability 只允许暴露 Production pack identity");
+  for (const forbidden of [
+    "stateSourcePort", "productionActionRegistry", "productionActionOwners",
+    "productionActionExecutorOwners", "executor", "candidate", "selector",
+  ]) {
+    assert.equal(Object.hasOwn(composition, forbidden), false, `Browser facade 不得暴露 ${forbidden}`);
+  }
   assert.equal(captured.invariantValidators[0], adapter.validateSessionBoundary);
   assert.deepEqual(
     captured.effectDomains.flatMap((domain) => domain.families).sort(),
@@ -813,6 +712,56 @@ function createForkableHarness() {
   },
     "Browser projection source 必须只返回显式投影，语义 poison 不得越界");
   assert.equal(composition.projectionSource.read().state.rootPoison, undefined);
+}
+
+{
+  const players = require("../game/players");
+  const solar = require("../solar-system/core");
+  const rockets = require("../game/rockets");
+  const planetStats = require("../game/planet-stats");
+  const data = require("../game/data");
+  const cards = require("../game/cards/deck");
+  const tech = require("../game/tech");
+  const aliens = require("../game/aliens");
+  const finalScoring = require("../game/final-scoring");
+  const turnFlow = require("../game/turn-flow");
+  const initialGameState = require("../game/state/initial-game-state");
+  const adapter = appRuntime.createBrowserWorkingStateAdapter({
+    initialGameState,
+    ruleModules: {
+      players,
+      solar,
+      rocketActions: rockets,
+      planetStats,
+      data,
+      cards,
+      tech,
+      aliens,
+      finalScoring,
+      createTurnState: turnFlow.createTurnState,
+    },
+    defaultInitialPlayerColor: players.DEFAULT_PLAYER_COLOR,
+    defaultActivePlayerCount: 4,
+    defaultInitialHandCount: 5,
+    passReserveRounds: [1, 2, 3],
+    finalScoreIds: ["a", "b", "c", "d"],
+    wheelOffsets: { 1: 0, 2: 0, 3: 0, 4: 0 },
+  });
+  const first = adapter.createWorkingState({ seed: "browser-lifecycle-proof" });
+  const second = adapter.createWorkingState({ seed: "browser-lifecycle-proof" });
+  assert.deepEqual(second, first, "Browser lifecycle 同 seed 必须生成完全相同的 canonical 初始状态");
+  assert.equal(first.turnState.startPlayerId, first.playerState.currentPlayerId);
+  assert.equal(first.turnState.activePlayerIds.length, 4);
+  assert.equal(first.playerState.players.every((player) => player.hand.length === 5), true);
+  assert.equal(first.cardState.publicCards.every(Boolean), true);
+  const cardIds = [
+    ...first.playerState.players.flatMap((player) => player.hand.map((card) => card.id)),
+    ...first.cardState.publicCards.map((card) => card.id),
+    ...Object.values(first.cardState.passReservePiles).flat().map((card) => card.id),
+  ];
+  assert.equal(new Set(cardIds).size, cardIds.length, "Browser lifecycle 必须统一分配 committed card identity");
+  assert.equal(first.meta.sequences.card > cardIds.length, true);
+  assert.equal(first.meta.rngState.lifecycle.algorithm, "seti-browser-lifecycle-mulberry32-v1");
 }
 
 console.log("rule-composition tests passed");

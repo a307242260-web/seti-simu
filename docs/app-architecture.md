@@ -42,6 +42,8 @@ DOM / Browser ViewState
 - visibility policy 在规则 root 离开边界前完成；
 - caller 只得到带 viewer identity 的深冻结投影或窄 DTO；
 - 不公开 `stateSourcePort`、working root、committed root 或任意 root mutation callback；
+- lifecycle `newGame` 由 state adapter 一次性组合正式 game primitive，轮序、棋盘、牌区、
+  RNG 与实体 sequence 随 canonical state 提交；Browser 不再做第二次初始化 mutation；
 - renderer、query 或 Browser service 失败不反向污染规则状态。
 
 ### Presentation

@@ -9,26 +9,6 @@
   root.SetiAppAlienUi = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "openAlienTracePicker", "beginAlienTraceBoardPlacement",
-    "closeAlienTracePicker", "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement",
-    "beginFangzhouTraceGridPlacement", "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement",
-    "beginChongTraceGridPlacement", "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement",
-    "renderAlienTracePickerColorStep", "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice",
-    "handleFangzhouTraceDestinationChoice", "handleFangzhouUnlockTraceChoice", "routeFangzhouAlienTraceGain",
-    "handleStateTraceSlotPlacement", "handleFangzhouTraceSlotPlacement",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("alien_ui input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("alien_ui input port 缺少 owner resolver");
-    return registry.registerTarget("alien_ui", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-
-
   function requireFunction(name, fn) {
     if (typeof fn !== "function") {
       throw new Error(`createAlienUiHelpers requires function: ${name}`);
@@ -1339,8 +1319,6 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
     createAlienUiHelpers,
   };
 });

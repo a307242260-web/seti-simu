@@ -11,61 +11,6 @@
   }
 })(typeof globalThis !== "undefined" ? globalThis : this, function (turnFlow) {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "removePlutoMarker",
-    "executePlutoAction",
-    "openPlutoActionChoicePicker", "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode",
-    "deactivateMoveMode", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
-    "confirmDataPlacement",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("action_interaction input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("action_interaction input port 缺少 owner resolver");
-    return registry.registerTarget("action_interaction", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-  function createInteractionOwnerInputPorts(registry, context = {}) {
-    return Object.freeze({
-      landTarget: registry.register("land_target", {
-        open: (workingRoot, command) => ({
-          ok: true,
-          value: context.clonePresentation(
-            context.openLandTarget(workingRoot, command.options ?? command.args?.[0]),
-          ),
-        }),
-        cancel: (workingRoot) => ({
-          ok: true,
-          value: context.clonePresentation(context.cancelLandTarget(workingRoot)),
-        }),
-      }),
-      dataInteraction: registry.register("data_interaction", {
-        placeBlueSlot: (workingRoot, command) => ({
-          ok: true,
-          value: context.clonePresentation(
-            context.placeDataToBlueSlot(workingRoot, command.blueSlot ?? command.args?.[0]),
-          ),
-        }),
-        openComputerPicker: (workingRoot) => ({
-          ok: true,
-          value: context.clonePresentation(context.openComputerPicker(workingRoot)),
-        }),
-      }),
-      solar: registry.register("solar", {
-        rotate: (workingRoot, command) => ({
-          ok: true,
-          value: context.clonePresentation(
-            context.rotateSolarOrbit(workingRoot, command.count ?? command.args?.[0]),
-          ),
-        }),
-      }),
-    });
-  }
-
-
-
   function createBoardPointerHandlers(context = {}) {
     const required = [
       "getRocketState", "getHighlightedRocketId", "isAiInputLocked", "blockManualInput",
@@ -117,10 +62,6 @@
 
   function createLandTargetPicker(context = {}) {
     const { document, els = {} } = context;
-    if (typeof context.inputPort?.open !== "function"
-      || typeof context.inputPort?.cancel !== "function") {
-      throw new TypeError("land target picker requires narrow inputPort");
-    }
 
     function close(workingRoot = null) {
       if (!els.landTargetOverlay) return;
@@ -129,9 +70,7 @@
     }
 
     function cancel(workingRoot = null) {
-      if (!workingRoot?.match) {
-        return context.inputPort.cancel();
-      }
+      if (!workingRoot?.match) throw new TypeError("land target cancel requires Composition workingRoot.match");
       const pending = context.readPendingDecision?.("land_target") || null;
       close(workingRoot);
       if (pending?.cancelKind === "chong-travel") {
@@ -176,11 +115,7 @@
       return { ok: true, pending: true, message: "请选择登陆目标" };
     }
 
-    function request(options) {
-      return context.inputPort.open(structuredClone(options));
-    }
-
-    return Object.freeze({ close, cancel, open, request });
+    return Object.freeze({ close, cancel, open });
   }
 
   function createMoveUiRuntime(context = {}) {
@@ -514,49 +449,47 @@
     }
     return Object.freeze({
       rotateSolarOrbitForRoot,
-      rotateSolarOrbit: (count) => context.inputPort.rotate(count),
     });
   }
 
   function createActionInteractionPort(context = {}) {
-    const directMethods = [
-      "ensurePlutoCardEffectState", "getPlutoActionState", "addPlutoMarker",
-      "getPlutoChoiceActionLabel", "formatPlutoChoiceLabel", "isDataPoolFull", "getAutoDataPlacementCheck",
-      "getPlutoReservedCards", "collectPlutoMarkers", "buildPlutoMarkerContext",
-      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
-      "getPlutoActionCost", "getAvailablePlutoAction", "getCurrentPlanetActionPlacement",
-    ];
-    const commandFallbacks = {
-      activateMoveMode: false,
-    };
-    const commandMethods = [
-      "removePlutoMarker",
-      "executePlutoAction",
-      "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode",
-      "closeDataPlacePicker", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
-    ];
-    const port = {};
-    for (const name of directMethods) {
-      port[name] = (...args) => context.getRuntime()?.[name](...args);
-    }
-    for (const name of commandMethods) {
-      port[name] = (...args) => context.dispatchCommand(name, args) ?? commandFallbacks[name];
-    }
-    port.continuePendingDataPlacementAfterBonus = (...args) => {
+    const runtime = () => context.getRuntime?.();
+    return Object.freeze({
+      ensurePlutoCardEffectState: (...args) => runtime()?.ensurePlutoCardEffectState(...args),
+      getPlutoActionState: (...args) => runtime()?.getPlutoActionState(...args),
+      addPlutoMarker: (...args) => runtime()?.addPlutoMarker(...args),
+      getPlutoChoiceActionLabel: (...args) => runtime()?.getPlutoChoiceActionLabel(...args),
+      formatPlutoChoiceLabel: (...args) => runtime()?.formatPlutoChoiceLabel(...args),
+      isDataPoolFull: (...args) => runtime()?.isDataPoolFull(...args),
+      getAutoDataPlacementCheck: (...args) => runtime()?.getAutoDataPlacementCheck(...args),
+      getPlutoReservedCards: (...args) => runtime()?.getPlutoReservedCards(...args),
+      collectPlutoMarkers: (...args) => runtime()?.collectPlutoMarkers(...args),
+      buildPlutoMarkerContext: (...args) => runtime()?.buildPlutoMarkerContext(...args),
+      playerHasOwnPlutoLanding: (...args) => runtime()?.playerHasOwnPlutoLanding(...args),
+      buildPlutoMarkerRemovalChoices: (...args) => runtime()?.buildPlutoMarkerRemovalChoices(...args),
+      getPlutoCandidateRockets: (...args) => runtime()?.getPlutoCandidateRockets(...args),
+      getPlutoActionCost: (...args) => runtime()?.getPlutoActionCost(...args),
+      getAvailablePlutoAction: (...args) => runtime()?.getAvailablePlutoAction(...args),
+      getCurrentPlanetActionPlacement: (...args) => runtime()?.getCurrentPlanetActionPlacement(...args),
+      removePlutoMarker: (...args) => runtime()?.removePlutoMarker(...args),
+      executePlutoAction: (...args) => runtime()?.executePlutoAction(...args),
+      scheduleRenderMoveArrows: (...args) => runtime()?.scheduleRenderMoveArrows(...args),
+      clearMoveRocketHighlight: (...args) => runtime()?.clearMoveRocketHighlight(...args),
+      activateMoveMode: (...args) => runtime()?.activateMoveMode(...args) ?? false,
+      deactivateMoveMode: (...args) => runtime()?.deactivateMoveMode(...args),
+      closeDataPlacePicker: (...args) => runtime()?.closeDataPlacePicker(...args),
+      openDataPlacePicker: (...args) => runtime()?.openDataPlacePicker(...args),
+      openAutoDataPlacementPrompt: (...args) => runtime()?.openAutoDataPlacementPrompt(...args),
+      cancelDataPlacePicker: (...args) => runtime()?.cancelDataPlacePicker(...args),
+      continuePendingDataPlacementAfterBonus(...args) {
       const execution = args[1] || {};
-      return execution.workingRoot
-        ? context.getRuntime()?.continuePendingDataPlacementAfterBonus(execution.workingRoot, args[0])
-        : context.dispatchCommand("continuePendingDataPlacementAfterBonus", args);
-    };
-    port.skipPendingDataPlacement = () => context.dispatchCommand("skipPendingDataPlacement", []);
-    port.confirmDataPlacement = (...args) => {
-      const execution = args[2] || {};
-      if (execution.workingRoot) {
-        return context.getRuntime()?.confirmDataPlacement(execution.workingRoot, args[0], args[1], execution);
-      }
-      return context.dispatchCommand("confirmDataPlacement", [args[0], args[1], execution]);
-    };
-    return Object.freeze(port);
+        return runtime()?.continuePendingDataPlacementAfterBonus(execution.workingRoot, args[0]);
+      },
+      skipPendingDataPlacement: (...args) => runtime()?.skipPendingDataPlacement(...args),
+      confirmDataPlacement(target, blueSlot, execution = {}) {
+        return runtime()?.confirmDataPlacement(execution.workingRoot, target, blueSlot, execution);
+      },
+    });
   }
 
   function createDataAnalyzeInteractionRuntime(context = {}) {
@@ -858,10 +791,6 @@
       beginDiscardSelection: requireCapability("handFlowRuntime", "beginDiscardSelection"),
       beginEffectHistoryStep: requireCapability("effectFlowRuntime", "beginEffectHistoryStep"),
       beginQuickActionStep: requireCapability("effectFlowRuntime", "beginQuickActionStep"),
-      blockIncompatiblePendingQuickAction: requireCapability(
-        "actionGuardRuntime",
-        "blockIncompatiblePendingQuickAction",
-      ),
       blockIncompatiblePendingQuickActionForRoot: requireCapability(
         "actionGuardRuntime",
         "blockIncompatiblePendingQuickActionForRoot",
@@ -921,7 +850,6 @@
       beginDiscardSelection,
       beginEffectHistoryStep,
       beginQuickActionStep,
-      blockIncompatiblePendingQuickAction,
       blockIncompatiblePendingQuickActionForRoot,
       buildPlutoChoiceRewardSummary,
       buildPlutoRewardEffectsForAction,
@@ -1982,7 +1910,7 @@
       return confirmPendingDataPlacement(workingRoot, target, blueSlot, execution.pending);
     }
     closeDataPlacePicker(workingRoot);
-    const blocked = blockIncompatiblePendingQuickAction("place-data");
+    const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
     if (blocked) return blocked;
     const actionRocketState = workingRoot.rocketState;
     const player = players.getCurrentPlayer(workingRoot.playerState);
@@ -2066,9 +1994,6 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
-    createInteractionOwnerInputPorts,
     createBoardPointerHandlers,
     createLandTargetPicker,
     createMoveUiRuntime,

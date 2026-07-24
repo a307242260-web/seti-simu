@@ -5,44 +5,6 @@
   root.SetiAppCardRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "beginCardCornerFreeMove", "startCardCornerMoveEffectFlow",
-    "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult",
-    "drawBasicCardToPlayer", "blindDrawCardForPlayer", "drawCardForCurrentPlayer",
-    "pickPublicCardForCurrentPlayer", "updatePublicCardControls",
-    "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick", "handlePublicBlindDrawClick",
-    "renderPassReserveSelection", "syncPassReserveSelectionChrome",
-    "beginPassReserveSelection", "dismissPassReserveSelectionOverlay", "handlePublicCornerDiscardCardClick",
-    "confirmPublicCornerDiscardSelection", "selectDefaultRocketFromCandidates", "executeCardEffectMove",
-    "finishCurrentCardMoveEffectEarly", "resolveCardMoveDirectionDecision",
-    "releaseFutureSpanAfterPlayWithHistory",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("card_runtime input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("card_runtime input port 缺少 owner resolver");
-    return registry.registerTarget("card_runtime", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-  function createPublicCardOwnerInputPort(registry, context = {}) {
-    return registry.register("public_card", {
-      toggleCornerDiscard: (workingRoot, command) => ({
-        ok: true,
-        value: context.clonePresentation(
-          context.toggleCornerDiscard(workingRoot, command.slotIndex ?? command.args?.[0]),
-        ),
-      }),
-      confirmCornerDiscard: (workingRoot) => ({
-        ok: true,
-        value: context.clonePresentation(context.confirmCornerDiscard(workingRoot)),
-      }),
-    });
-  }
-
-
-
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "abilities", "banrenma", "cardEffects", "cards", "data", "fangzhou",
     "historyCommands", "industry", "players", "quickTrades", "rocketActions", "runezu",
@@ -1675,6 +1637,12 @@
         cardState,
         playerState,
         target,
+        undefined,
+        {
+          createCardInstance: (entry, sequence) => (
+            cards.createCommittedCardInstance(workingRoot, entry, sequence)
+          ),
+        },
       );
     }
 
@@ -1750,6 +1718,9 @@
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
       return cards.ensurePublicCardsFilled(cardState, playerState, undefined, {
         skipSlotIndexes: getDelayedPublicRefillSlotIndexes(),
+        createCardInstance: (entry, sequence) => (
+          cards.createCommittedCardInstance(workingRoot, entry, sequence)
+        ),
       });
     }
 
@@ -1840,7 +1811,11 @@
           effectId: `${effect?.id || "public-corner-discard"}-${cardIndex + 1}`,
         });
       });
-      cards.ensurePublicCardsFilled(cardState, playerState);
+      cards.ensurePublicCardsFilled(cardState, playerState, undefined, {
+        createCardInstance: (entry, sequence) => (
+          cards.createCommittedCardInstance(workingRoot, entry, sequence)
+        ),
+      });
       markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
       cards.setSelectionActive(cardState, false);
       openCardSelectionDecision(workingRoot, null);
@@ -2492,9 +2467,6 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
-    createPublicCardOwnerInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserCardRuntime,
     createBrowserCardStaticContext,

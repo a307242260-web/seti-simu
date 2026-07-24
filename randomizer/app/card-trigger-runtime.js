@@ -8,26 +8,7 @@
 
   // Browser 只保留只读 projection helper。任务、type1、bonus、followup 与 cleanup
   // 已由 Production Composition 的 residual/card Effect executor 独占。
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "refreshCardTaskState", "applyType1TriggerMatches", "continueAfterCardTriggerResolution",
-    "applyCardEventBonusReward",
-    "applyPublicityMoveFollowupBonus", "processCardEventBonuses", "processChongTransportArrivalEvents",
-    "settleCardTasksAfterEffect",
-    "removeReservedCardToDiscard", "discardReservedCardIfFinished",
-    "consumeCardTriggerWithSnapshot", "confirmCardTriggerProgress",
-    "prepareCardTriggerRewardEffects", "queueCardTriggerRewardEffects", "openCardTaskCompletionPicker",
-    "openCardTriggerPicker", "applyCardTriggerReward", "beginCardTriggerFreeMove", "applyCardTriggerMatch",
-  ]);
-
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze(["rocketActions"]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("card_trigger input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("card_trigger input port 缺少 owner resolver");
-    return registry.registerTarget("card_trigger", BROWSER_INPUT_NAMES, getTarget);
-  }
 
   function createBrowserCardTriggerStaticContext(dependencies = {}) {
     const missing = BROWSER_STATIC_DEPENDENCY_KEYS.filter(
@@ -217,9 +198,7 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
     BROWSER_STATIC_DEPENDENCY_KEYS,
-    createBrowserInputPort,
     createBrowserCardTriggerStaticContext,
     createBrowserCardTriggerRuntime,
     createCardTriggerRuntime,

@@ -204,7 +204,6 @@
       },
       stateAdapter: browserStateAdapter,
       runWithWorkingState: context.runWithWorkingState,
-      executeOwnerInput: context.executeOwnerInput,
       projectWorkingState: true,
       projectState: projectBrowserState,
       createCounterfactualFork: context.counterfactualEnabled === false
@@ -247,11 +246,18 @@
       },
     });
     return Object.freeze({
-      ...composition,
-      productionDomainPackId: production.domainPack.packId,
-      productionActionRegistry: production.domainPack.actionRegistry,
-      productionActionOwners: production.domainPack.actionOwners,
-      productionActionExecutorOwners: production.domainPack.actionExecutorOwners,
+      SAVE_SCHEMA_VERSION: composition.SAVE_SCHEMA_VERSION,
+      inputPort: composition.inputPort,
+      lifecycle: composition.lifecycle,
+      counterfactualPort: composition.counterfactualPort,
+      projection: composition.projection,
+      inspect: composition.inspect,
+      ...(composition.readModelPort ? { readModelPort: composition.readModelPort } : {}),
+      subscribe: composition.subscribe,
+      dispose: composition.dispose,
+      capabilities: Object.freeze({
+        productionDomainPackId: production.domainPack.packId,
+      }),
       projectionSource,
     });
   }

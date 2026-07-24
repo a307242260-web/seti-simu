@@ -9,21 +9,6 @@
   root.SetiAppGameRecovery = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  function createRecoveryOwnerInputPort(registry, context = {}) {
-    return registry.register("recovery", {
-      clearTransient: (workingRoot) => {
-        const value = context.clearTransient(workingRoot);
-        return { ok: value?.ok !== false, value };
-      },
-      refresh: (workingRoot, command) => {
-        const value = context.refresh(command.message ?? command.args?.[0], workingRoot);
-        return { ok: value?.ok !== false, value };
-      },
-    });
-  }
-
-
-
   const RECOVERY_SNAPSHOT_VERSION = 2;
   const BROWSER_CHECKPOINT_SCHEMA_VERSION = "seti-browser-checkpoint-v1";
 
@@ -310,65 +295,31 @@
   }
 
   function createRecoveryHost(context = {}) {
-    const transientMatchFields = Object.freeze([
-      "type1TriggerEvents", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
-    ]);
-
-    function clearTransientState(workingRoot = null) {
-      if (!workingRoot) return context.inputPort.clearTransient();
-      const alienSpeciesRuntime = context.getAlienSpeciesRuntime?.();
-      const effectExecutors = context.getEffectExecutors?.();
-      const { cardState, techGameState } = workingRoot;
-      for (const field of transientMatchFields) delete workingRoot.match[field];
+    function clearTransientState() {
       context.uiRuntimeState.discardSelectedHandIndexes = [];
       context.uiRuntimeState.passReserveSelectionDismissed = false;
       context.uiRuntimeState.passReserveSelectedCardId = null;
       context.uiRuntimeState.probeSectorSelectedRocketIds = [];
-      alienSpeciesRuntime?.clearJiuzheCardPlayDecisionDraft?.();
       context.uiRuntimeState.jiuzheOpportunityOpen = false;
       context.uiRuntimeState.jiuzheCardViewOpen = false;
-      alienSpeciesRuntime?.clearYichangdianCardGainDecisionDraft?.();
-      effectExecutors?.clearYichangdianCornerAction?.();
-      alienSpeciesRuntime?.clearBanrenmaCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearBanrenmaOpportunityDecisionDraft?.();
-      alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
-      alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
-      alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
-      alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
-      alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
-      alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
       context.uiRuntimeState.alienTracePickerState = null;
       context.closeAlienRevealConfirmationOverlay();
-      context.setActionEffectFlow(workingRoot, null);
-      context.clearCompletedEffectFlowForUndo();
       context.uiRuntimeState.effectStepActive = false;
       context.uiRuntimeState.moveHighlightRocketId = null;
       context.uiRuntimeState.movePaymentSelectedHandIndices = [];
       context.uiRuntimeState.playCardSelection = null;
       context.uiRuntimeState.handCardPlayAction = null;
       context.uiRuntimeState.cardCornerQuickAction = null;
-      context.historyStepOrder.length = 0;
-      context.actionHistory.commitSession();
-      context.quickActionHistory.commitSession();
-      context.cards.setSelectionActive(cardState, false);
-      context.cards.setPlayCardSelectionActive(cardState, false);
-      context.cards.setDiscardSelectionActive(cardState, false, 0);
-      if (techGameState?.ui) techGameState.ui.industryBorrowMode = false;
-      context.tech.setTechSelectionActive(techGameState, false);
       context.interactionChrome.resetAfterRecovery();
       context.closeFinalResultDialog({ silent: true });
+      return { ok: true };
     }
 
-    function refreshAfterRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
-      if (!workingRoot) return context.inputPort.refresh(message);
+    function refreshAfterRecovery(message = "已从行动日志恢复局面") {
       context.setTokenAssetSizes();
       context.renderWheels();
       context.renderSectors();
       context.renderRotateStateToken();
-      context.syncPlanetOrbitLandMarkers();
       context.refreshHelpers.refreshBoardState({ includeSectorNebula: false, includeFinalScore: true, includeTech: true });
       context.renderPublicCards();
       context.updatePublicCardControls();
@@ -386,9 +337,10 @@
       context.syncTechSelectionChrome();
       context.syncIndustryHandSelectionChrome();
       context.syncInteractionFocusChrome();
-      workingRoot.rocketState.statusNote = message;
+      context.setStatusNote?.(message);
       context.refreshHelpers.refreshActionState({ includeStateReadout: true });
       context.renderActionLog();
+      return { ok: true };
     }
 
     return Object.freeze({
@@ -574,7 +526,6 @@
   }
 
   return {
-    createRecoveryOwnerInputPort,
     RECOVERY_SNAPSHOT_VERSION,
     BROWSER_CHECKPOINT_SCHEMA_VERSION,
     createBrowserCheckpointAdapter,

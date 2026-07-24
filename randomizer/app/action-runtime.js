@@ -9,16 +9,6 @@
   root.SetiAppActionRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  function createActionOwnerInputPorts(registry, context = {}) {
-    return Object.freeze({
-      recovery: registry.register("action_recovery", {
-        recoverPending: (workingRoot) => ({
-          ok: true,
-          value: context.clonePresentation(context.recoverPending(workingRoot)),
-        }),
-      }),
-    });
-  }
   function createCompositionActionRegistry(context = {}) {
     function getController() {
       return context.getController?.() || null;
@@ -110,6 +100,12 @@
           workingRoot.cardState,
           workingRoot.playerState,
           slotIndex,
+          undefined,
+          {
+            createCardInstance: (entry, sequence) => (
+              context.cards.createCommittedCardInstance(workingRoot, entry, sequence)
+            ),
+          },
         ),
         beginCardSelection: (pendingAction) => context.beginCardSelection(workingRoot, pendingAction),
         beginDiscardSelection: (count, pendingAction) => context.beginDiscardSelection(workingRoot, count, pendingAction),
@@ -420,7 +416,6 @@
   }
 
   return {
-    createActionOwnerInputPorts,
     createActionRuntime,
     createActionContextFactory,
     createCompositionActionRegistry,

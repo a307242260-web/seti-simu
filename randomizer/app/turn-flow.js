@@ -13,46 +13,6 @@
   root.SetiAppTurnFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (productionTurnFlow) {
   "use strict";
-  function createTurnOwnerInputPort(registry, context = {}) {
-    return registry.register("turn", {
-      setPlayerOrder: (workingRoot, command) => (
-        context.getController().setTurnStatePlayerOrder(
-          workingRoot,
-          command.playerIds ?? command.args?.[0],
-          command.options ?? command.args?.[1],
-        ),
-        { ok: true, value: { ok: true } }
-      ),
-      randomizePlayerOrder: (workingRoot) => (
-        context.getController().randomizePlayerTurnOrder(workingRoot),
-        { ok: true, value: { ok: true } }
-      ),
-      beginNextRound: (workingRoot) => {
-        const value = context.getController().beginNextRound(workingRoot);
-        return { ok: true, value };
-      },
-      advanceAfterAction: (workingRoot, command) => {
-        const value = context.getController().advanceTurnAfterPlayerAction(
-          workingRoot,
-          command.playerId ?? command.args?.[0],
-          command.options ?? command.args?.[1],
-        );
-        return { ok: true, value };
-      },
-      startNewGame: (workingRoot, command) => {
-        const value = context.getController().startNewGame(
-          workingRoot,
-          command.options ?? command.args?.[0],
-        );
-        return { ok: value?.ok !== false, value };
-      },
-      randomizeAll: (workingRoot) => (
-        context.getController().randomizeAll(workingRoot),
-        { ok: true, value: { ok: true } }
-      ),
-    });
-  }
-
   function createTurnState(sourcePlayers, options = {}) {
     return productionTurnFlow.createTurnState(sourcePlayers, options);
   }
@@ -371,7 +331,6 @@
   }
 
   function createTurnHostRuntime(context = {}) {
-    const controller = () => context.getController();
     const readProjection = () => context.assertTurnFlowProjection(context.getTurnFlowProjection());
     function getActiveOrderedPlayerIdsFromReadout() {
       const projection = readProjection();
@@ -380,15 +339,6 @@
     }
     function getRoundOrderPlayerIdsFromReadout() {
       return [...readProjection().roundOrderPlayerIds];
-    }
-    function setTurnStatePlayerOrderFromHost(playerIds, options = {}) {
-      return context.turnInputPort.setPlayerOrder(playerIds, options);
-    }
-    function randomizePlayerTurnOrderFromHost() {
-      return context.turnInputPort.randomizePlayerOrder();
-    }
-    function beginNextRoundFromHost() {
-      return context.turnInputPort.beginNextRound();
     }
     function getDisplayedTurnNumberFromReadout(rawTurnNumber = null) {
       const projection = readProjection();
@@ -401,47 +351,34 @@
     function getActionCycleNumberFromReadout() {
       return readProjection().actionCycleNumber;
     }
-    function advanceTurnAfterPlayerActionFromHost(playerId, options = {}) {
-      if (options.workingRoot) {
-        const operationOptions = { ...options };
-        delete operationOptions.workingRoot;
-        return controller().advanceTurnAfterPlayerAction(options.workingRoot, playerId, operationOptions);
-      }
-      return context.turnInputPort.advanceAfterAction(playerId, { ...options });
-    }
     function startNewGameFromHost(options = {}) {
       const activePlayerCount = Math.min(
         Math.max(1, Math.round(Number(options.activePlayerCount) || context.defaultActivePlayerCount)),
         context.playerColorIds.length,
       );
+      const initialSetupConfig = context.getInitialSetupConfig?.(options) || {};
       const resetResult = context.newGame({
         activePlayerCount,
         defaultInitialPlayerColor: context.defaultInitialPlayerColor,
         finalScoreIds: context.finalScoreIds,
         seed: options.seed,
         rngState: options.rngState,
-        initialSetupConfig: context.getInitialSetupConfig?.(options) || {},
+        alienPoolIds: initialSetupConfig.alienPoolIds,
+        initialSetupConfig,
       });
       if (!resetResult.ok) return resetResult;
-      const startResult = context.turnInputPort.startNewGame({
+      context.prepareBrowserNewGame?.({
         ...options,
         activePlayerCount,
-        compositionStatePrepared: true,
       });
-      if (startResult?.ok === false) return startResult;
       return context.setupInputPort.startInitialSelection();
     }
     return Object.freeze({
       getActiveOrderedPlayerIds: getActiveOrderedPlayerIdsFromReadout,
       getRoundOrderPlayerIds: getRoundOrderPlayerIdsFromReadout,
-      setTurnStatePlayerOrder: setTurnStatePlayerOrderFromHost,
-      randomizePlayerTurnOrder: randomizePlayerTurnOrderFromHost,
-      beginNextRound: beginNextRoundFromHost,
       getDisplayedTurnNumber: getDisplayedTurnNumberFromReadout,
       getActionCycleNumber: getActionCycleNumberFromReadout,
-      advanceTurnAfterPlayerAction: advanceTurnAfterPlayerActionFromHost,
       startNewGame: startNewGameFromHost,
-      randomizeAll: () => context.turnInputPort.randomizeAll(),
       normalizeAiDifficulty: context.normalizeAiDifficulty,
     });
   }
@@ -747,7 +684,6 @@
   }
 
   return {
-    createTurnOwnerInputPort,
     createTurnState,
     getActiveOrderedPlayerIds,
     getRoundOrderPlayerIds,

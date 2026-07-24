@@ -9,22 +9,6 @@
   root.SetiAppEffectChoiceFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "handleConditionalSectorChoice", "handleDiscardIncomeCardChoice", "confirmDiscardAnyForIncome",
-    "handlePayCreditChoice", "handleDiscardCornerRepeatChoice",
-    "handleRemoveOrbitToProbeChoice", "handleProbeSectorScanChoice",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("effect_choice input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("effect_choice input port 缺少 owner resolver");
-    return registry.registerTarget("effect_choice", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-
-
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "cards", "players", "rocketActions", "data", "solar", "planetStats",
     "planetReferenceLayout", "planetRewards", "cardEffects", "historyCommands",
@@ -1123,8 +1107,6 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserEffectChoiceStaticContext,
     createBrowserEffectChoiceFlow,

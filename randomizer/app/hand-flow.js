@@ -9,31 +9,6 @@
   root.SetiAppHandFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "syncDiscardSelectionChrome", "syncHandScanSelectionChrome",
-    "beginSupplementalMovePayment",
-    "syncMovePaymentChrome", "scrollToPlayerHandPanel", "beginMovePaymentSelection",
-    "handleHandCardMovePayment", "resolveMovePaymentDecision", "syncPlayCardSelectionChrome",
-    "handlePlayCardSelect", "confirmPlayCardSelection",
-    "cancelHandCardPlayAction",
-    "clearHandCardContextActions", "cancelHandCardContextActions", "confirmHandCardPlayAction",
-    "syncCardCornerQuickActionChrome", "cancelCardCornerQuickAction",
-    "handleHandCardCornerQuickAction", "beginDiscardSelection",
-    "completeDiscardSelection", "handleHandCardDiscard", "beginPlayCardSelection", "cancelPlayCardSelection",
-    "handleFutureSpanCardPlay",
-    "handleFutureSpanPlayCardSelect",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("hand_flow input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("hand_flow input port 缺少 owner resolver");
-    return registry.registerTarget("hand_flow", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-
-
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "players",
     "cards",
@@ -1899,8 +1874,6 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     BROWSER_STATIC_CONSTANT_KEYS,
     createBrowserHandFlow,

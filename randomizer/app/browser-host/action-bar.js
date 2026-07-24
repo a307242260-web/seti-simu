@@ -5,27 +5,6 @@
   root.SetiBrowserActionBar = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  function createActionBarOwnerInputPorts(registry, context = {}) {
-    return Object.freeze({
-      quickAction: registry.register("quick_action", {
-        checkPending: (workingRoot, command) => ({
-          ok: true,
-          value: context.clonePresentation(
-            context.checkPending(workingRoot, command.actionType ?? command.args?.[0]),
-          ),
-        }),
-      }),
-      history: registry.register("history", {
-        undoPending: (workingRoot) => ({
-          ok: true,
-          value: context.clonePresentation(context.undoPending(workingRoot)),
-        }),
-      }),
-    });
-  }
-
-
-
   const STANDARD_ACTION_SCHEMA = "seti-standard-action-v1";
   const BROWSER_PROJECTION_SCHEMA = "seti-browser-host-v1";
   const ACTION_BAR_PROJECTION_SCHEMA = "seti-action-bar-projection-v1";
@@ -397,7 +376,6 @@
       const model = readProjection();
       const machineLocked = model.seat.machineControlled && !model.seat.automationPaused;
       if (open && (machineLocked || !model.controls.quickActions.some((action) => !action.disabledReason))) return;
-      if (open) context.cancelHandCardContextActions({ silent: true });
       els.quickActionsPanel.hidden = !open;
       els.actionQuickButton.setAttribute("aria-expanded", String(open));
       els.actionQuickButton.classList.add("action-button-ready");
@@ -458,261 +436,6 @@
       ...hostPort,
       getProjection: projectionPort.getProjection,
       dispatchIntent: inputPort.dispatchIntent,
-    });
-  }
-
-  function createUndoController(context = {}) {
-    const {
-      actionHistory,
-      quickActionHistory,
-      HISTORY_SOURCE_MAIN,
-      HISTORY_SOURCE_QUICK,
-      uiRuntimeState,
-    } = context;
-
-    function restoreCompletedEffectFlow(workingRoot, result, source) {
-      const completedFlow = !context.getActionEffectFlow(workingRoot)
-        ? context.takeCompletedEffectFlowForUndo(result.step, source)
-        : null;
-      if (completedFlow) {
-        context.setActionEffectFlow(workingRoot, completedFlow);
-        context.setActionEffectFlowActive(true);
-      }
-      return completedFlow;
-    }
-
-    function undoPendingActionForRoot(workingRoot) {
-      if (context.isTechActionSelectionActive()) {
-        const isResearchTechFlow = context.getActionEffectFlow(workingRoot)?.actionType === "researchTech";
-        const shouldUseHistoryUndo = isResearchTechFlow
-          && (actionHistory.hasUndoableStep() || context.hasCurrentMainActionIrreversibleBarrier());
-        if (shouldUseHistoryUndo) {
-          if (workingRoot.techGameState.ui.pendingTileId) {
-            context.cancelPendingResearchTechTileChoice();
-            return;
-          }
-        } else {
-          context.cancelTechSelection();
-          return;
-        }
-      }
-      if (
-        !context.isActionPending()
-        && !context.isActionEffectFlowActive()
-        && !actionHistory.hasUndoableStep()
-        && !quickActionHistory.hasUndoableStep()
-      ) return;
-
-      if (context.hasActivePendingSubFlow()) {
-        context.cancelActivePendingSubFlowsForRoot(workingRoot);
-        context.refreshAfterHistoryChange();
-        return;
-      }
-
-      const latestUndoSource = context.getLatestUndoSource();
-      const quickFlow = context.getActionEffectFlow(workingRoot);
-      if (
-        !latestUndoSource
-        && quickFlow?.historySource === HISTORY_SOURCE_QUICK
-        && !quickFlow.preHistoryCommandsApplied
-        && quickFlow.preHistoryCommands?.length
-      ) {
-        const flowLabel = quickFlow.label || "快速行动效果";
-        for (let index = quickFlow.preHistoryCommands.length - 1; index >= 0; index -= 1) {
-          quickFlow.preHistoryCommands[index]?.undo?.();
-        }
-        uiRuntimeState.effectStepActive = false;
-        if (quickActionHistory.hasSession() && !quickActionHistory.hasUndoableStep()) {
-          quickActionHistory.commitSession();
-          context.clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-        }
-        context.clearActionEffectFlow(workingRoot);
-        context.refreshAfterHistoryChange(`已撤销：${flowLabel}`);
-        return;
-      }
-
-      if (latestUndoSource === HISTORY_SOURCE_QUICK) {
-        const undoingQuickEffectFlow = context.getActionEffectFlow(workingRoot)?.historySource === HISTORY_SOURCE_QUICK;
-        const result = quickActionHistory.undoLastStep();
-        if (result.ok) {
-          uiRuntimeState.effectStepActive = false;
-          context.forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
-          context.removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
-          const completedQuickEffectFlow = restoreCompletedEffectFlow(workingRoot, result, HISTORY_SOURCE_QUICK);
-          if ((undoingQuickEffectFlow || completedQuickEffectFlow) && context.getActionEffectFlow(workingRoot)) {
-            const effectIndex = result.step?.effectIndex;
-            const hasRevertibleEffectStep = Number.isInteger(effectIndex)
-              && Boolean(context.getActionEffectFlow(workingRoot).effects?.[effectIndex]);
-            if (hasRevertibleEffectStep) context.revertEffectFlowAfterUndo(workingRoot, result.step);
-            else context.clearActionEffectFlow(workingRoot);
-          }
-        }
-        if (result.ok && !quickActionHistory.hasUndoableStep() && !context.isActionEffectFlowActive()) {
-          quickActionHistory.commitSession();
-          context.clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-        }
-        context.refreshAfterHistoryChange(result.ok ? result.message : "已撤销快速行动");
-        return;
-      }
-
-      const mainActionHasIrreversibleBarrier = context.hasCurrentMainActionIrreversibleBarrier();
-      if ((!latestUndoSource && mainActionHasIrreversibleBarrier)
-        || (mainActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep())) {
-        const irreversibleReason = context.getCurrentActionIrreversibleReason();
-        workingRoot.rocketState.statusNote = irreversibleReason
-          ? `不可撤销：${irreversibleReason}`
-          : "当前行动已有不可撤销影响";
-        context.updateActionButtons();
-        context.renderStateReadout();
-        return;
-      }
-
-      if (
-        latestUndoSource === HISTORY_SOURCE_MAIN
-        && mainActionHasIrreversibleBarrier
-        && actionHistory.hasUndoableStep()
-      ) {
-        const result = actionHistory.undoLastStep();
-        if (result.ok) {
-          uiRuntimeState.effectStepActive = false;
-          context.forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          context.removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          restoreCompletedEffectFlow(workingRoot, result, HISTORY_SOURCE_MAIN);
-          context.revertEffectFlowAfterUndo(workingRoot, result.step);
-        }
-        context.refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
-        return;
-      }
-
-      if (context.isActionEffectFlowActive() && actionHistory.hasUndoableStep()) {
-        const result = actionHistory.undoLastStep();
-        if (result.ok) {
-          uiRuntimeState.effectStepActive = false;
-          context.forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          context.removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          context.revertEffectFlowAfterUndo(workingRoot, result.step);
-          if (!context.isActionEffectFlowActive()) context.clearFullyUndoneMainActionSession();
-          context.refreshAfterHistoryChange(result.message);
-          return;
-        }
-      }
-
-      const completedMainFlowUndoStep = actionHistory.peekLastUndoableStep?.() || null;
-      if (
-        latestUndoSource === HISTORY_SOURCE_MAIN
-        && !context.isActionEffectFlowActive()
-        && context.peekCompletedEffectFlowForUndo(completedMainFlowUndoStep, HISTORY_SOURCE_MAIN)
-        && actionHistory.hasUndoableStep()
-      ) {
-        const result = actionHistory.undoLastStep();
-        if (result.ok) {
-          uiRuntimeState.effectStepActive = false;
-          context.forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          context.removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          const completedMainEffectFlow = context.takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
-          if (completedMainEffectFlow) {
-            context.setActionEffectFlow(workingRoot, completedMainEffectFlow);
-            context.setActionEffectFlowActive(true);
-            context.revertEffectFlowAfterUndo(workingRoot, result.step);
-          }
-          if (!context.isActionEffectFlowActive()) context.clearFullyUndoneMainActionSession();
-        }
-        context.refreshAfterHistoryChange(result.ok ? result.message : result.message || "已撤销效果");
-        return;
-      }
-
-      if (context.isActionPending() || actionHistory.hasSession()) {
-        const result = actionHistory.rollbackSession();
-        if (result.ok) {
-          uiRuntimeState.effectStepActive = false;
-          context.clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
-          context.removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
-          context.clearActionEffectFlow(workingRoot);
-          context.clearActionPending();
-        }
-        context.refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
-      }
-    }
-
-    return Object.freeze({ undoPendingActionForRoot });
-  }
-
-  function createBrowserUndoController(options = {}) {
-    const {
-      actionGuardRuntime,
-      actionSessionRuntime,
-      effectFlowRuntime,
-      effectFlowUndoRuntime,
-      historyRefreshRuntime,
-      matchRuntime,
-      pendingSubFlowRuntime,
-      techRuntime,
-      hostPort,
-    } = options;
-    const owners = {
-      actionGuardRuntime,
-      actionSessionRuntime,
-      effectFlowRuntime,
-      effectFlowUndoRuntime,
-      historyRefreshRuntime,
-      matchRuntime,
-      pendingSubFlowRuntime,
-      techRuntime,
-      hostPort,
-    };
-    for (const [name, owner] of Object.entries(owners)) {
-      if (!owner || typeof owner !== "object") {
-        throw new TypeError(`Undo bootstrap 缺少 owner：${name}`);
-      }
-    }
-    const capability = (ownerName, name) => {
-      const value = owners[ownerName][name];
-      if (typeof value !== "function") {
-        throw new TypeError(`Undo ${ownerName} 缺少能力：${name}`);
-      }
-      return value;
-    };
-    return createUndoController({
-      ...hostPort,
-      isTechActionSelectionActive: capability("techRuntime", "isTechActionSelectionActive"),
-      cancelPendingResearchTechTileChoice: capability(
-        "techRuntime",
-        "cancelPendingResearchTechTileChoice",
-      ),
-      cancelTechSelection: capability("techRuntime", "cancelTechSelection"),
-      hasCurrentMainActionIrreversibleBarrier: capability(
-        "actionSessionRuntime",
-        "hasCurrentMainActionIrreversibleBarrier",
-      ),
-      isActionPending: capability("actionSessionRuntime", "isActionPending"),
-      getCurrentActionIrreversibleReason: capability(
-        "actionSessionRuntime",
-        "getCurrentActionIrreversibleReason",
-      ),
-      clearFullyUndoneMainActionSession: capability(
-        "actionSessionRuntime",
-        "clearFullyUndoneMainActionSession",
-      ),
-      clearActionPending: capability("actionSessionRuntime", "clearActionPending"),
-      isActionEffectFlowActive: capability("actionGuardRuntime", "isActionEffectFlowActive"),
-      hasActivePendingSubFlow: capability("pendingSubFlowRuntime", "hasActivePendingSubFlow"),
-      cancelActivePendingSubFlowsForRoot: capability(
-        "pendingSubFlowRuntime",
-        "cancelActivePendingSubFlowsForRoot",
-      ),
-      refreshAfterHistoryChange: capability(
-        "historyRefreshRuntime",
-        "refreshAfterHistoryChange",
-      ),
-      getActionEffectFlow: capability("matchRuntime", "getActionEffectFlow"),
-      setActionEffectFlow: capability("matchRuntime", "setActionEffectFlow"),
-      getLatestUndoSource: capability("effectFlowRuntime", "getLatestUndoSource"),
-      clearHistoryStepOrderForSource: capability(
-        "effectFlowRuntime",
-        "clearHistoryStepOrderForSource",
-      ),
-      forgetLastHistoryStep: capability("effectFlowRuntime", "forgetLastHistoryStep"),
-      revertEffectFlowAfterUndo: capability("effectFlowUndoRuntime", "revertEffectFlowAfterUndo"),
     });
   }
 
@@ -1039,17 +762,12 @@
       return { ok: false, message: workingRoot.rocketState.statusNote };
     }
 
-    function blockIncompatiblePendingQuickAction(actionType) {
-      return context.inputPort.checkPending(actionType);
-    }
-
     return Object.freeze({
       isActionEffectFlowActive,
       isInitialIncomeFlowActive,
       getGameplayLockReason,
       lockAllActionButtons,
       blockIncompatiblePendingQuickActionForRoot,
-      blockIncompatiblePendingQuickAction,
     });
   }
 
@@ -1071,31 +789,6 @@
     return Object.freeze({ refreshAfterHistoryChange });
   }
 
-  function createPendingActionRecoveryRuntime(context = {}) {
-    function recoverForRoot(workingRoot) {
-      if (context.isActionPending()
-        || context.isActionEffectFlowActive()
-        || context.hasActivePendingSubFlow()
-        || !context.actionHistory.hasSession()) {
-        return { ok: false, message: "当前不需要恢复行动待结束状态" };
-      }
-      context.markActionPending();
-      const info = context.actionHistory.getSessionInfo?.() || null;
-      workingRoot.rocketState.statusNote = `${info?.label || "行动"}已恢复为待回合结束状态`;
-      context.updateActionButtons();
-      context.renderStateReadout();
-      return { ok: true, message: workingRoot.rocketState.statusNote, sessionInfo: info };
-    }
-    return Object.freeze({ recoverForRoot });
-  }
-
-  function createUndoPort(context = {}) {
-    return Object.freeze({
-      undoForRoot: (...args) => context.getController().undoPendingActionForRoot(...args),
-      undo: context.submitUndo,
-    });
-  }
-
   function createActionBarPort(context = {}) {
     const methods = [
       "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
@@ -1109,7 +802,6 @@
   }
 
   return Object.freeze({
-    createActionBarOwnerInputPorts,
     ACTION_BAR_PROJECTION_SCHEMA,
     selectActionBarProjection,
     createActionBarModel,
@@ -1117,15 +809,11 @@
     createActionBarRenderer,
     createDesktopActionBarController,
     createBrowserDesktopActionBarController,
-    createUndoController,
-    createBrowserUndoController,
     createActionSessionRuntime,
     createEffectBarRenderer,
     createEffectBarPresentation,
     createActionGuardRuntime,
     createHistoryRefreshRuntime,
-    createPendingActionRecoveryRuntime,
-    createUndoPort,
     createActionBarPort,
   });
 });

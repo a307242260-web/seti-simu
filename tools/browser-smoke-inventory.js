@@ -97,21 +97,53 @@ module.exports = Object.freeze([
       const quickSequence = setupInput.submissionSequence;
       document.querySelector("#action-quick-button")?.click();
       await waitFor(() => Boolean(
-        document.querySelector('[data-quick-trade="energy-for-credit"]:not(:disabled)[data-action-id]'),
-      ), "人类快速行动 descriptor 就绪");
-      document.querySelector('[data-quick-trade="energy-for-credit"]:not(:disabled)[data-action-id]')?.click();
-      await waitFor(() => {
+        document.querySelector('[data-quick-trade="credits-for-energy"]:not(:disabled)[data-action-id]'),
+      ), "人类快速行动 descriptor 就绪 " + JSON.stringify({
+        quickButton: {
+          disabled: document.querySelector("#action-quick-button")?.disabled,
+          title: document.querySelector("#action-quick-button")?.title,
+          expanded: document.querySelector("#action-quick-button")?.getAttribute("aria-expanded"),
+        },
+        trade: {
+          disabled: document.querySelector('[data-quick-trade="credits-for-energy"]')?.disabled,
+          title: document.querySelector('[data-quick-trade="credits-for-energy"]')?.title,
+          actionId: document.querySelector('[data-quick-trade="credits-for-energy"]')?.dataset.actionId,
+        },
+        controls: window.SetiRandomizer.inspect().projection.controls,
+        viewer: window.SetiRandomizer.inspect().projection.viewer,
+        match: window.SetiRandomizer.inspect().projection.match,
+      }));
+      document.querySelector('[data-quick-trade="credits-for-energy"]:not(:disabled)[data-action-id]')?.click();
+      try {
+        await waitFor(() => {
+          const next = window.SetiRandomizer.inspect();
+          return next.input.submissionSequence > quickSequence
+            && next.input.lastResult?.kind === "action"
+            && next.projection.source.phase === "idle";
+        }, "人类快速行动进入 Standard Action input port");
+      } catch (error) {
         const next = window.SetiRandomizer.inspect();
-        return next.input.submissionSequence > quickSequence
-          && next.input.lastResult?.kind === "action"
-          && next.projection.source.phase === "idle";
-      }, "人类快速行动进入 Standard Action input port");
+        throw new Error(error.message + " " + JSON.stringify({
+          input: next.input,
+          source: next.projection.source,
+          decision: next.projection.decision,
+          controls: next.projection.controls,
+          statusNote: document.querySelector("#status-note")?.textContent,
+        }));
+      }
       const beforeInspect = window.SetiRandomizer.inspect();
       const inputSequence = beforeInspect.input.submissionSequence;
       await waitFor(() => {
         const button = document.querySelector("#action-launch-button");
         return Boolean(button && !button.disabled);
-      }, "人类 launch 主行动就绪", 20000);
+      }, "人类 launch 主行动就绪 " + JSON.stringify({
+        title: document.querySelector("#action-launch-button")?.title,
+        disabled: document.querySelector("#action-launch-button")?.disabled,
+        controls: window.SetiRandomizer.inspect().projection.controls,
+        viewer: window.SetiRandomizer.inspect().projection.viewer,
+        match: window.SetiRandomizer.inspect().projection.match,
+        players: window.SetiRandomizer.inspect().projection.players,
+      }), 20000);
       const launchButton = document.querySelector("#action-launch-button");
       if (!launchButton || launchButton.disabled) throw new Error("人类 launch 主行动不可提交");
       launchButton.click();

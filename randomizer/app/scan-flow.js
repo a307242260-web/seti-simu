@@ -9,43 +9,6 @@
   root.SetiAppScanFlow = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "replaceNebulaDataForCurrentPlayer", "executeScanActionFinalizeEffect",
-    "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
-    "settleDelayedPublicRefillsAfterScanFlow",
-    "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
-    "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
-    "closeScanTargetPicker",
-    "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
-    "beginPublicDeckScan", "beginPublicScanForSingleCard", "confirmPublicScanSelection",
-    "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection", "handleHandScanCardClick",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("scan_flow input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("scan_flow input port 缺少 owner resolver");
-    return registry.registerTarget("scan_flow", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-  function createSectorSettlementOwnerInputPort(registry, context = {}) {
-    return registry.register("sector_settlement", {
-      resolveCompleted: (workingRoot, command) => ({
-        ok: true,
-        value: context.clonePresentation(
-          context.resolveCompleted(
-            workingRoot,
-            command.actionType ?? command.args?.[0],
-            command.options ?? command.args?.[1],
-          ),
-        ),
-      }),
-    });
-  }
-
-
-
   function buildSectorScanChoicesForXs(sectorXs, buildSectorScanChoicesForX) {
     return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
   }
@@ -2374,104 +2337,13 @@
     };
   }
 
-  function createSectorSettlementRuntime(context = {}) {
-    const HISTORY_SOURCE_MAIN = context.HISTORY_SOURCE_MAIN || "main";
-    const { data = {}, players = {}, aomomo = null, runezu = null, historyCommands = {} } = context;
-
-    function resolveCompletedSectorSettlementsForRoot(workingRoot, actionType, options = {}) {
-      if (typeof data.settleCompletedSectors !== "function") return null;
-      const { nebulaDataState, playerState, alienGameState } = workingRoot;
-      const beforeNebulaState = structuredClone(nebulaDataState);
-      const beforePlayerState = structuredClone(playerState);
-      const beforeAlienState = structuredClone(alienGameState);
-      const result = data.settleCompletedSectors(nebulaDataState, {
-        players: playerState.players,
-        getPlayerTokenSrc: context.getNormalTokenAssetForPlayer,
-        source: actionType || "mainAction",
-      });
-      if (!result.ok) return null;
-
-      const awarded = new Set();
-      const participantAwardLabels = new Set();
-      for (const settlement of result.settlements || []) {
-        const isAomomoSettlement = settlement.sectorId === aomomo?.NEBULA_ID;
-        for (const participant of settlement.participants || []) {
-          const player = playerState.players.find((item) => item.id === participant.playerId)
-            || playerState.players.find((item) => item.color === participant.playerColor);
-          if (!player) continue;
-          const awardKey = `${settlement.sectorId}:${player.id}`;
-          if (awarded.has(awardKey)) continue;
-          awarded.add(awardKey);
-          if (isAomomoSettlement) {
-            players.gainResources(player, { aomomoFossils: 1 });
-            participantAwardLabels.add("奥陌陌参与结算玩家各获得1化石");
-          } else {
-            players.gainResources(player, { publicity: 1 });
-            participantAwardLabels.add("参与结算玩家各获得1宣传");
-          }
-        }
-        const winner = playerState.players.find((item) => item.id === settlement.winner?.playerId)
-          || playerState.players.find((item) => item.color === settlement.winner?.playerColor);
-        const claim = winner
-          ? runezu?.claimSectorSymbol?.(alienGameState, settlement.sectorId, winner)
-          : null;
-        if (claim?.ok) {
-          if (!Array.isArray(result.runezuSymbolClaims)) result.runezuSymbolClaims = [];
-          result.runezuSymbolClaims.push({
-            sectorId: settlement.sectorId,
-            playerId: winner.id,
-            playerColor: winner.color,
-            symbolId: claim.symbolId,
-          });
-        }
-      }
-      result.participantAwardMessage = [...participantAwardLabels].join("；") || "无参与奖励";
-
-      const source = options.historySource || HISTORY_SOURCE_MAIN;
-      const history = context.getHistoryForSource?.(source);
-      if (history?.hasSession?.()) {
-        history.beginStep({ source, type: "sector_settlement", label: "扇区结算" });
-        history.record(historyCommands.createRestoreObjectCommand(
-          nebulaDataState, beforeNebulaState, "恢复扇区结算前星云状态",
-        ));
-        history.record(historyCommands.createRestoreObjectCommand(
-          playerState, beforePlayerState, "恢复扇区结算前玩家状态",
-        ));
-        history.record(historyCommands.createRestoreObjectCommand(
-          alienGameState, beforeAlienState, "恢复扇区结算前外星人状态",
-        ));
-        const step = history.endStep();
-        if (step) {
-          context.rememberHistoryStep?.(source, step.id);
-          context.appendActionLogStep?.(
-            source,
-            step.label,
-            `${result.message}；${result.participantAwardMessage}`
-              + `${result.runezuSymbolClaims?.length ? `；符文族symbol ${result.runezuSymbolClaims.length}个` : ""}`,
-            context.actionLogOptionsFromHistoryStep?.(step),
-          );
-        }
-      }
-      context.renderSectorNebulaDataBoard?.();
-      context.renderPlayerStats?.();
-      context.renderAlienPanels?.();
-      return result;
-    }
-
-    return Object.freeze({ resolveCompletedSectorSettlementsForRoot });
-  }
-
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
-    createSectorSettlementOwnerInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     BROWSER_STATIC_CONSTANT_KEYS,
     createBrowserScanFlow,
     createBrowserScanStaticContext,
     createScanFlowHelpers,
     createScanAction4Picker,
-    createSectorSettlementRuntime,
     buildSectorScanChoicesForXs,
   };
 });

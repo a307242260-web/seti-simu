@@ -5,27 +5,6 @@
   root.SetiAppEffectExecutorBootstrap = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan",
-    "removePlanetMarkerForChoice", "handleRemovePlanetMarkerChoice",
-    "handleScanAction4Choice", "finishAutomaticRewardEffect",
-    "handleHandCornerChoice",
-    "handleReturnUnfinishedTaskChoice",
-    "insertActionEffectsAfterCurrent", "insertActionEffectsBeforeCurrent",
-    "handleOptionalHandScanChoice", "openYichangdianCornerPicker", "handleYichangdianCornerChoice",
-    "applyAomomoScanCostAndBonus",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("effect_executor input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("effect_executor input port 缺少 owner resolver");
-    return registry.registerTarget("effect_executor", BROWSER_INPUT_NAMES, getTarget);
-  }
-
-
-
   const REQUIRED_CONTEXT_KEYS = Object.freeze({
     movementScan: Object.freeze([
       "INCOME_GAIN_LABELS", "SCORE_SOURCE_KEYS", "abilities", "addPlutoMarker", "aomomo",
@@ -200,5 +179,5 @@
     return Object.freeze({ ...executors, ...dispatcher });
   }
 
-  return { BROWSER_INPUT_NAMES, createBrowserInputPort, REQUIRED_CONTEXT_KEYS, createEffectExecutorSuite };
+  return { REQUIRED_CONTEXT_KEYS, createEffectExecutorSuite };
 });

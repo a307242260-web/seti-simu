@@ -9,23 +9,6 @@
   root.SetiAppFinalUiRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  function createFinalScoreOwnerInputPort(registry, context = {}) {
-    return registry.register("final_score", {
-      syncPendingMarks: (workingRoot) => {
-        const value = context.clonePresentation(context.syncPendingMarks(workingRoot));
-        return { ok: value?.ok !== false, value };
-      },
-      markTile: (workingRoot, command) => {
-        const value = context.clonePresentation(
-          context.markTile(workingRoot, command.tileId ?? command.args?.[0]),
-        );
-        return { ok: value?.ok !== false, value };
-      },
-    });
-  }
-
-
-
   function createFinalUiRuntime(context = {}) {
     const simulation = Boolean(context.simulation);
     const document = simulation ? null : (context.document || root.document);
@@ -488,23 +471,7 @@
     };
   }
 
-  function createFinalUiPort(context = {}) {
-    function syncFinalScorePendingMarks(workingRoot = null) {
-      return workingRoot
-        ? context.runtime.syncFinalScorePendingMarks(workingRoot)
-        : context.inputPort.syncPendingMarks();
-    }
-    function handleFinalScoreTileClick(tileId, workingRoot = null) {
-      return workingRoot
-        ? context.runtime.handleFinalScoreTileClick(workingRoot, tileId)
-        : context.inputPort.markTile(tileId);
-    }
-    return Object.freeze({ syncFinalScorePendingMarks, handleFinalScoreTileClick });
-  }
-
   return {
-    createFinalScoreOwnerInputPort,
     createFinalUiRuntime,
-    createFinalUiPort,
   };
 });

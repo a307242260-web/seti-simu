@@ -18,11 +18,11 @@
     if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
     const handlers = {
       "action-launch-button": () => context.activateAction(button.dataset.actionId),
-      "action-orbit-button": context.orbit,
-      "action-land-button": context.land,
+      "action-orbit-button": () => context.activateAction(button.dataset.actionId),
+      "action-land-button": () => context.activateAction(button.dataset.actionId),
       "action-scan-button": () => context.activateAction(button.dataset.actionId),
       "action-analyze-button": () => context.activateAction(button.dataset.actionId),
-      "action-play-card-button": context.beginPlayCard,
+      "action-play-card-button": () => context.activateAction(button.dataset.actionId),
       "action-research-tech-button": () => context.activateAction(button.dataset.actionId),
     };
     const handler = handlers[button.id];
@@ -86,30 +86,21 @@
       getEventsProjection,
       assertEventsProjection,
       setStatusNote,
-      randomizeAll,
       startNewGameFromStartScreen,
       continueGameFromStartScreen,
       syncStartScreenDebugOption,
       syncStartScreenActionLogOption,
       handleStartAlienOptionChange,
       handleStartIndustryOptionChange,
-      orbitForCurrentPlayer,
-      landForCurrentPlayer,
-      beginPlayCardSelection,
-      researchTechForCurrentPlayer,
       cancelTechSelection,
       toggleQuickPanel,
       activateActionBarAction,
       undoPendingAction,
-      runPlaceDataToComputer,
       closeScanTargetPicker,
       submitHumanActionId,
       closeHumanActionPicker,
-      handleActionEffectButtonClick,
-      skipCurrentActionEffect,
       moveRocket,
       handleBoardPointerDown,
-      handleFinalScoreTileClick,
       openFinalResultDialog,
       downloadActionLogMarkdown,
       minimizeFinalResultDialog,
@@ -172,15 +163,10 @@
     els.startActionLogEnabled?.addEventListener("change", syncStartScreenActionLogOption);
     els.startAlienOptions?.addEventListener("change", handleStartAlienOptionChange);
     els.startIndustryOptions?.addEventListener("change", handleStartIndustryOptionChange);
-    els.spinButton?.addEventListener("click", randomizeAll);
     els.actionBarMain?.addEventListener("click", (event) => routeMainActionButtonClick(event, {
       actionBarMain: els.actionBarMain,
       quickButton: els.actionQuickButton,
-      orbit: orbitForCurrentPlayer,
-      land: landForCurrentPlayer,
       activateAction: activateActionBarAction,
-      beginPlayCard: beginPlayCardSelection,
-      researchTech: researchTechForCurrentPlayer,
     }));
     els.techSelectionCancel?.addEventListener("click", cancelTechSelection);
     els.actionQuickButton.addEventListener("click", toggleQuickPanel);
@@ -207,11 +193,6 @@
       if (!button || button.disabled) return;
       activateActionBarAction(button.dataset.actionId);
     });
-    els.playerBoardDataLayer?.addEventListener("click", (event) => {
-      const token = event.target.closest(".data-token-pool");
-      if (!token) return;
-      runPlaceDataToComputer();
-    });
     els.scanTargetActions?.addEventListener("click", (event) => {
       if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
       const humanAction = event.target.closest("[data-human-action-id]");
@@ -232,12 +213,6 @@
         closeScanTargetPicker();
       }
     });
-    els.actionEffectList?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-effect-index]");
-      if (!button || button.disabled) return;
-      handleActionEffectButtonClick(Number(button.dataset.effectIndex));
-    });
-    els.actionEffectSkipButton?.addEventListener("click", skipCurrentActionEffect);
     els.tokenLayer?.addEventListener("click", (event) => {
       if (event.target.closest(".rocket-token")) {
         event.stopPropagation();

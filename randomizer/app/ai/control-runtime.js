@@ -161,8 +161,6 @@
       runMachinePlayerStep,
       resetGameForAiAutoBattle,
       resetAiStrategyDemandCache = () => {},
-      setTurnStatePlayerOrder,
-      startInitialSelection,
       updateActionButtons,
     } = context;
     if (typeof getRuleProjection !== "function") {
@@ -252,9 +250,9 @@
         || null;
     }
 
-    function getDefaultAiOpponentPlayerIds() {
+    function getDefaultAiOpponentPlayerIds(explicitHumanPlayerId = null) {
       const projection = getRuleProjection();
-      const humanPlayerId = getDefaultHumanPlayerId();
+      const humanPlayerId = explicitHumanPlayerId || getDefaultHumanPlayerId();
       const activeIds = (projection.turn.activePlayerIds || []).filter((playerId) => getPlayerById(playerId));
       const opponents = activeIds.filter((playerId) => playerId !== humanPlayerId);
       if (opponents.length) return opponents;
@@ -265,7 +263,8 @@
     }
 
     function configureDefaultAiOpponent(options = {}) {
-      const aiPlayerIds = getDefaultAiOpponentPlayerIds();
+      const humanPlayerId = options.humanPlayerId || getDefaultHumanPlayerId();
+      const aiPlayerIds = getDefaultAiOpponentPlayerIds(humanPlayerId);
       if (!aiPlayerIds.length) return { ok: false, message: "没有可用的默认电脑玩家" };
       const aiDifficulty = setSeatDifficulties(aiPlayerIds, options.aiDifficulty);
       aiAutoBattleState.enabled = true;
@@ -276,7 +275,7 @@
         `默认电脑玩家：${aiPlayerIds.map(getPlayerLabelById).join("、")}；难度：${getAiDifficultyLabel(aiDifficulty)}`,
         {
           playerIds: aiPlayerIds,
-          humanPlayerId: getDefaultHumanPlayerId(),
+          humanPlayerId,
           aiDifficulty,
           aiDifficultyLabel: getAiDifficultyLabel(aiDifficulty),
           mode: "default-human-vs-ai",
@@ -578,9 +577,11 @@
           if (!resetResult.ok) return resetResult;
         }
         if (options.activePlayerCount && !options.reset) {
-          const playerIds = getRuleProjection().players.players.map((player) => player.id);
-          setTurnStatePlayerOrder(playerIds, { activePlayerCount: options.activePlayerCount });
-          startInitialSelection();
+          return {
+            ok: false,
+            code: "AI_ACTIVE_PLAYER_COUNT_REQUIRES_RESET",
+            message: "修改参赛席位必须通过 Composition lifecycle 新局重置",
+          };
         }
         if (options.stepDelayMs != null) {
           aiAutoBattleState.stepDelayMs = Math.max(0, Math.round(Number(options.stepDelayMs) || 0));

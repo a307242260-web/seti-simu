@@ -9,25 +9,6 @@
   root.SetiAppAlienRuntime = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
-  const BROWSER_INPUT_NAMES = Object.freeze([
-    "confirmAlienTracePlacement", "confirmFangzhouTracePlacement", "handleJiuzheRevealSideEffects",
-    "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects", "handleBanrenmaRevealSideEffects",
-    "handleChongRevealSideEffects", "handleAmibaRevealSideEffects", "handleAomomoRevealSideEffects",
-    "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects", "failMissingAlienTraceTargetPlayer",
-    "confirmYichangdianTracePlacement", "confirmBanrenmaTracePlacement",
-    "confirmAomomoTracePlacement", "confirmChongTracePlacement", "confirmAmibaTracePlacement",
-    "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement", "settleTurnEndAlienRevealEntries",
-    "activateAomomoBoard",
-  ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("alien_runtime input port 需要已校验 registry");
-    }
-    if (typeof getTarget !== "function") throw new TypeError("alien_runtime input port 缺少 owner resolver");
-    return registry.registerTarget("alien_runtime", BROWSER_INPUT_NAMES, getTarget);
-  }
-
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "aliens", "players", "data", "cardEffects", "historyCommands", "jiuzhe",
     "yichangdian", "fangzhou", "banrenma", "chong", "amiba", "aomomo", "runezu",
@@ -1949,8 +1930,6 @@
   }
 
   return {
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserAlienRuntime,
     createBrowserAlienStaticContext,

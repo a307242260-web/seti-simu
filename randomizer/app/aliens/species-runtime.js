@@ -12,7 +12,7 @@
     "renderAomomoCardDisplays", "renderRunezuCardDisplays", "renderBanrenmaBonusMarkers",
     "renderFangzhouCardDisplays", "renderAlienPanels", "alignAlienPanelsToPlanets",
   ]);
-  const INPUT_METHODS = Object.freeze([
+  const SESSION_OWNED_METHODS = Object.freeze([
     "confirmFangzhouCard2Unlock", "openRunezuCardGainDialog", "finishRunezuCardGain",
     "handleRunezuCardGainChoice", "openAmibaCardGainDialog", "finishAmibaCardGain",
     "handleAmibaCardGainChoice", "openAomomoCardGainDialog", "finishAomomoCardGain",
@@ -29,7 +29,13 @@
     "handleRunezuFaceSymbolChoice", "openRunezuSymbolBranchDialog",
     "handleRunezuSymbolBranchChoice",
   ]);
-  const BROWSER_INPUT_NAMES = Object.freeze([...INPUT_METHODS]);
+  const SESSION_DECISION_CHOICE_METHODS = Object.freeze([
+    "handleRunezuCardGainChoice", "handleAmibaCardGainChoice", "handleAomomoCardGainChoice",
+    "handleAmibaSymbolChoice", "handleAmibaTraceRemovalChoice", "handleYichangdianCardGainChoice",
+    "handleBanrenmaCardGainChoice", "handleChongCardGainChoice", "handleChongFossilChoice",
+    "handleJiuzheCardChoice", "handleBanrenmaBonusChoice", "handleBanrenmaCardConditionChoice",
+    "handleRunezuFaceSymbolChoice", "handleRunezuSymbolBranchChoice",
+  ]);
   const PROJECTION_METHODS = Object.freeze([
     "getPendingChongFossilChoice", "getPendingAmibaSymbolChoice",
     "getPendingRunezuSymbolBranch", "getPendingRunezuFaceSymbolPlacement",
@@ -60,13 +66,6 @@
     "openAmibaRewardFollowUps", "openRunezuRewardFollowUps",
     "executeStandardRunezuFaceSymbol", "executeRunezuSymbolRewardEffect",
   ]);
-
-  function createBrowserInputPort(registry, getTarget) {
-    if (typeof registry?.registerTarget !== "function") {
-      throw new TypeError("alien_species input port 需要已校验 registry");
-    }
-    return registry.registerTarget("alien_species", BROWSER_INPUT_NAMES, getTarget);
-  }
 
   function createAlienSpeciesRuntime(context = {}) {
     const {
@@ -336,6 +335,14 @@
       code: "ALIEN_DECISION_INPUT_OWNED_BY_SESSION",
       message: "物种 Decision 只能通过当前 Effect Session identity 提交",
     });
+    function submitSessionDecisionChoice(choiceId) {
+      if (choiceId == null || typeof hostPort.submitActiveDecision !== "function") {
+        return productionDecisionOwnedBySession();
+      }
+      return hostPort.submitActiveDecision("residual-domain", (target) => (
+        String(target?.choiceId) === String(choiceId)
+      ));
+    }
     const emptyDecisionProjection = () => null;
 
     const runtime = {
@@ -372,7 +379,17 @@
       }),
     };
     for (const name of PROJECTION_METHODS) runtime[name] = emptyDecisionProjection;
-    for (const name of INPUT_METHODS) runtime[name] = productionDecisionOwnedBySession;
+    for (const name of SESSION_OWNED_METHODS) runtime[name] = productionDecisionOwnedBySession;
+    for (const name of SESSION_DECISION_CHOICE_METHODS) {
+      runtime[name] = (choiceId) => submitSessionDecisionChoice(choiceId);
+    }
+    runtime.handleJiuzheOpportunitySkip = () => (
+      typeof hostPort.submitActiveDecision === "function"
+        ? hostPort.submitActiveDecision("residual-domain", (target) => (
+          String(target?.choiceId || "").startsWith("skip:")
+        ))
+        : productionDecisionOwnedBySession()
+    );
     for (const name of REMOVED_RULE_METHODS) runtime[name] = productionDecisionOwnedBySession;
     return Object.freeze(runtime);
   }
@@ -404,8 +421,6 @@
   }
 
   return Object.freeze({
-    BROWSER_INPUT_NAMES,
-    createBrowserInputPort,
     createAlienSpeciesPort,
     createAlienSpeciesRuntime,
     createBrowserAlienSpeciesRuntime,

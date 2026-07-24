@@ -151,30 +151,10 @@ assert.equal(rawStorage.removed, true);
   const context = Object.fromEntries(refreshNames.map((name) => [name, () => calls.push(name)]));
   Object.assign(context, {
     uiRuntimeState,
-    inputPort: {
-      clearTransient: () => calls.push("recovery.clearTransient"),
-      refresh: (message) => calls.push(["recovery.refresh", message]),
-    },
-    getAlienSpeciesRuntime: () => ({
-      clearJiuzheCardPlayDecisionDraft: () => calls.push("clear-jiuzhe-draft"),
-    }),
-    getEffectExecutors: () => ({
-      clearYichangdianCornerAction: () => calls.push("clear-yichangdian-corner"),
-    }),
     closeAlienRevealConfirmationOverlay: () => calls.push("close-alien"),
-    setActionEffectFlow: (_root, flow) => calls.push(["effect-flow", flow]),
-    clearCompletedEffectFlowForUndo: () => calls.push("clear-completed-flow"),
-    historyStepOrder: [1, 2],
-    actionHistory: { commitSession: () => calls.push("commit-main") },
-    quickActionHistory: { commitSession: () => calls.push("commit-quick") },
-    cards: {
-      setSelectionActive: () => calls.push("card-select"),
-      setPlayCardSelectionActive: () => calls.push("card-play"),
-      setDiscardSelectionActive: () => calls.push("card-discard"),
-    },
-    tech: { setTechSelectionActive: () => calls.push("tech-select") },
     interactionChrome: { resetAfterRecovery: () => calls.push("reset-chrome") },
     closeFinalResultDialog: () => calls.push("close-final"),
+    setStatusNote: (message) => calls.push(["status", message]),
     refreshHelpers: {
       refreshBoardState: () => calls.push("refresh-board"),
       refreshPlayerPanels: () => calls.push("refresh-players"),
@@ -183,20 +163,17 @@ assert.equal(rawStorage.removed, true);
   });
   const host = recovery.createRecoveryHost(context);
   host.clearTransientStateForRecovery();
-  assert.equal(calls.shift(), "recovery.clearTransient");
   const root = {
     match: { type1TriggerEvents: [] },
     cardState: {}, techGameState: { ui: { industryBorrowMode: true } }, rocketState: {},
   };
   host.clearTransientStateForRecovery(root);
-  assert.deepEqual(root.match, {});
-  assert.ok(calls.includes("clear-jiuzhe-draft"));
-  assert.ok(calls.includes("clear-yichangdian-corner"));
-  assert.deepEqual(context.historyStepOrder, []);
-  assert.equal(root.techGameState.ui.industryBorrowMode, false);
+  assert.deepEqual(root.match, { type1TriggerEvents: [] }, "恢复宿主不得修改 canonical root");
+  assert.equal(root.techGameState.ui.industryBorrowMode, true, "恢复宿主不得修改规则选择态");
   assert.equal(uiRuntimeState.effectStepActive, false);
   host.refreshAfterGameRecovery("恢复成功", root);
-  assert.equal(root.rocketState.statusNote, "恢复成功");
+  assert.equal(root.rocketState.statusNote, undefined, "恢复提示只能写 ViewState");
+  assert.ok(calls.some((entry) => Array.isArray(entry) && entry[0] === "status" && entry[1] === "恢复成功"));
   assert.ok(calls.includes("refresh-board"));
   assert.ok(calls.includes("refresh-actions"));
   assert.ok(calls.includes("renderActionLog"));
