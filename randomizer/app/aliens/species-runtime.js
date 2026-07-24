@@ -331,26 +331,12 @@
       }
     }
 
-    function activeDecisionProjection() {
-      const inspection = hostPort.inspect?.();
-      return inspection?.phase === "awaiting_input" ? inspection.session?.decision || null : null;
-    }
-    function submitSpeciesDecision(...args) {
-      const strings = args.flatMap((arg) => (
-        typeof arg === "string" || typeof arg === "number" ? [String(arg)]
-          : arg && typeof arg === "object" ? Object.values(arg).map(String) : []
-      ));
-      return hostPort.submitActiveDecision?.("residual-domain", (target, candidate) => {
-        const serialized = JSON.stringify({ target, payload: candidate?.payload || {} });
-        return strings.length === 0 || strings.every((value) => serialized.includes(value));
-      }) || { ok: false, code: "ALIEN_DECISION_REQUIRED", message: "当前没有正式物种 Decision" };
-    }
-    function decisionProjection() {
-      const decision = activeDecisionProjection();
-      return decision?.choices?.some((choice) => (
-        (choice.target || choice.standardAction?.target)?.kind === "residual-domain"
-      )) ? structuredClone(decision) : null;
-    }
+    const productionDecisionOwnedBySession = () => ({
+      ok: false,
+      code: "ALIEN_DECISION_INPUT_OWNED_BY_SESSION",
+      message: "物种 Decision 只能通过当前 Effect Session identity 提交",
+    });
+    const emptyDecisionProjection = () => null;
 
     const runtime = {
       getAlienTraceLayer, getAlienJiuzheTraceLayer, getAlienYichangdianCardArea,
@@ -370,24 +356,24 @@
       getChongPlanetLabel: (planetId) => String(planetId || ""),
       formatChongGain: (gain) => JSON.stringify(gain || {}),
       formatChongFossilRewardSummary: (reward) => JSON.stringify(reward || {}),
-      buildJiuzheCardConditionContext: () => decisionProjection(),
+      buildJiuzheCardConditionContext: emptyDecisionProjection,
       getJiuzheCardConditionLabel: () => "",
       buildJiuzheOpportunitySubtitle: () => "",
       getBanrenmaCardConditionLabel: () => "",
-      getReadyBanrenmaCards: () => activeDecisionProjection()?.choices || [],
-      getReadyBanrenmaCardsForOpportunity: () => activeDecisionProjection()?.choices || [],
-      getReadyBanrenmaCardForOpportunity: () => activeDecisionProjection()?.choices?.[0] || null,
-      getActiveAlienSharedOverlayPendingForManualGuard: decisionProjection,
-      openFangzhouCard1Dialog: () => decisionProjection(),
+      getReadyBanrenmaCards: () => [],
+      getReadyBanrenmaCardsForOpportunity: () => [],
+      getReadyBanrenmaCardForOpportunity: () => null,
+      getActiveAlienSharedOverlayPendingForManualGuard: emptyDecisionProjection,
+      openFangzhouCard1Dialog: emptyDecisionProjection,
       randomizeAliens: () => ({
         ok: false,
         code: "ALIEN_INITIALIZATION_OWNED_BY_COMPOSITION",
         message: "外星人分配由 Composition 新局状态创建完成",
       }),
     };
-    for (const name of PROJECTION_METHODS) runtime[name] = decisionProjection;
-    for (const name of INPUT_METHODS) runtime[name] = submitSpeciesDecision;
-    for (const name of REMOVED_RULE_METHODS) runtime[name] = submitSpeciesDecision;
+    for (const name of PROJECTION_METHODS) runtime[name] = emptyDecisionProjection;
+    for (const name of INPUT_METHODS) runtime[name] = productionDecisionOwnedBySession;
+    for (const name of REMOVED_RULE_METHODS) runtime[name] = productionDecisionOwnedBySession;
     return Object.freeze(runtime);
   }
 

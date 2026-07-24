@@ -34,32 +34,11 @@
 
   function createIncomeRuntime(context = {}) {
     const labels = context.INCOME_GAIN_LABELS || {};
-    const hostPort = context.hostPort || context;
-
-    function inspectIncomeDecision() {
-      const inspection = hostPort.inspect?.();
-      if (inspection?.phase !== "awaiting_input") return null;
-      const decision = inspection.session?.decision;
-      return decision?.choices?.some((entry) => {
-        const target = entry.target || entry.standardAction?.target || {};
-        return target.kind === "residual-domain";
-      }) ? decision : null;
-    }
-
-    function submitIncomeDecision(...hints) {
-      const values = hints.flatMap((hint) => (
-        ["string", "number"].includes(typeof hint) ? [String(hint)]
-          : hint && typeof hint === "object" ? Object.values(hint).map(String) : []
-      ));
-      return hostPort.submitActiveDecision?.("residual-domain", (target, candidate) => {
-        const text = JSON.stringify({ target, payload: candidate?.payload || {} });
-        return values.length === 0 || values.every((value) => text.includes(value));
-      }) || {
-        ok: false,
-        code: "INCOME_DECISION_REQUIRED",
-        message: "当前没有正式收入 Decision",
-      };
-    }
+    const productionDecisionOwnedBySession = () => ({
+      ok: false,
+      code: "INCOME_DECISION_INPUT_OWNED_BY_SESSION",
+      message: "收入 Decision 只能通过当前 Effect Session identity 提交",
+    });
 
     function formatIncomeGain(gain) {
       return Object.entries(gain || {})
@@ -95,26 +74,16 @@
       ].join("、");
     }
 
-    function submitIncomeStandardDecision(_player, payload) {
-      return submitIncomeDecision(payload);
-    }
-
     return Object.freeze({
       formatIncomeGain,
       getBlindDrawIrreversible,
       buildIncomeResourceGain,
       formatIncomeResourceSummary,
-      applyIncomeGainWithImmediateRewards: submitIncomeStandardDecision,
-      applyIncomeFromCard: submitIncomeStandardDecision,
-      applyIncomeResourcesForPlayer: submitIncomeStandardDecision,
-      applyIndustryRoundStartBonuses() {
-        return inspectIncomeDecision()
-          ? submitIncomeDecision("round_start")
-          : { ok: true, code: "PRODUCTION_INCOME_ALREADY_SETTLED" };
-      },
-      beginIncomeForCurrentPlayer(_workingRoot, options = {}) {
-        return submitIncomeDecision(options.source || "income");
-      },
+      applyIncomeGainWithImmediateRewards: productionDecisionOwnedBySession,
+      applyIncomeFromCard: productionDecisionOwnedBySession,
+      applyIncomeResourcesForPlayer: productionDecisionOwnedBySession,
+      applyIndustryRoundStartBonuses: productionDecisionOwnedBySession,
+      beginIncomeForCurrentPlayer: productionDecisionOwnedBySession,
     });
   }
 

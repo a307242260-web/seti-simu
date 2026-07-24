@@ -102,7 +102,6 @@
       createActionContext: hostPort.createActionContext,
       listHumanActions: hostPort.listHumanActions,
       submitHumanAction: hostPort.submitHumanAction,
-      submitActiveDecision: hostPort.submitActiveDecision,
       document: hostPort.document,
       els: hostPort.els,
       endEffectHistoryStep: effectFlowRuntime?.endEffectHistoryStep,
@@ -726,8 +725,11 @@
     function cancelTechSelection(workingRoot) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (techGameState.ui.industryBorrowMode) {
-        return context.submitActiveDecision?.("cancel-industry-ability", "cancel")
-          || { ok: false, code: "INDUSTRY_DECISION_REQUIRED", message: "图灵系统 DecisionEffect 不可用" };
+        return {
+          ok: false,
+          code: "INDUSTRY_DECISION_INPUT_OWNED_BY_SESSION",
+          message: "图灵系统 Decision 只能通过当前 Effect Session identity 提交",
+        };
       }
       if (getActionEffectFlow(workingRoot)?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
         const irreversibleReason = getCurrentActionIrreversibleReason?.();
@@ -912,8 +914,11 @@
     function handleSupplyTechTileClick(workingRoot, tileId) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (techGameState.ui.industryBorrowMode) {
-        return context.submitActiveDecision?.("research-tech-tile", String(tileId))
-          || { ok: false, code: "INDUSTRY_DECISION_REQUIRED", message: "图灵系统 DecisionEffect 不可用" };
+        return {
+          ok: false,
+          code: "INDUSTRY_DECISION_INPUT_OWNED_BY_SESSION",
+          message: "图灵系统 Decision 只能通过当前 Effect Session identity 提交",
+        };
       }
       if (!tech.isSupplySelectionActive(techGameState.ui)) return;
 

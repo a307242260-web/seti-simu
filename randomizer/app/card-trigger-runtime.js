@@ -41,22 +41,11 @@
 
   function createCardTriggerRuntime(context = {}) {
     const { rocketActions } = context;
-
-    const hostPort = context.hostPort || context;
-    const submitProductionDecision = (...hints) => (
-      hostPort.submitActiveDecision?.("residual-domain", (target, candidate) => {
-        const values = hints.flatMap((hint) => (
-          ["string", "number"].includes(typeof hint) ? [String(hint)]
-            : hint && typeof hint === "object" ? Object.values(hint).map(String) : []
-        ));
-        const text = JSON.stringify({ target, payload: candidate?.payload || {} });
-        return values.length === 0 || values.every((value) => text.includes(value));
-      }) || {
-        ok: false,
-        code: "CARD_TRIGGER_DECISION_REQUIRED",
-        message: "当前没有正式卡牌触发 Decision",
-      }
-    );
+    const productionDecisionOwnedBySession = () => ({
+      ok: false,
+      code: "CARD_TRIGGER_DECISION_INPUT_OWNED_BY_SESSION",
+      message: "卡牌触发 Decision 只能通过当前 Effect Session identity 提交",
+    });
     const rootOf = (workingRoot) => {
       if (!workingRoot || typeof workingRoot !== "object") {
         throw new TypeError("card-trigger projection requires explicit workingRoot");
@@ -129,13 +118,7 @@
 
     function getReadyCardTasks(workingRoot) {
       rootOf(workingRoot);
-      const decision = hostPort.inspect?.()?.session?.decision;
-      return (decision?.choices || []).filter((entry) => {
-        const target = entry.target || entry.standardAction?.target || {};
-        const payload = entry.payload || entry.standardAction?.payload || {};
-        return target.kind === "residual-domain"
-          && ["card_trigger", "task"].includes(payload.domain || payload.effectType);
-      }).map((entry) => structuredClone(entry));
+      return [];
     }
 
     function refreshCardTaskState(workingRoot) {
@@ -166,21 +149,21 @@
       getReadyCardTasks,
       refreshCardTaskState,
       cloneType1TriggerEvent: (event) => event == null ? event : structuredClone(event),
-      enqueueType1TriggerEvents: submitProductionDecision,
+      enqueueType1TriggerEvents: productionDecisionOwnedBySession,
       isCardTriggerPickSelectionActive: falseValue,
       hasActiveCardTriggerResolution: falseValue,
       isCardTriggerRewardFlowBusy: falseValue,
       getType1TriggerMatchesForEvent: emptyArray,
-      applyType1TriggerMatches: submitProductionDecision,
-      continueAfterCardTriggerResolution: submitProductionDecision,
-      cancelCardTriggerChoice: submitProductionDecision,
+      applyType1TriggerMatches: productionDecisionOwnedBySession,
+      continueAfterCardTriggerResolution: productionDecisionOwnedBySession,
+      cancelCardTriggerChoice: productionDecisionOwnedBySession,
       buildAlienTraceEvent: (_root, input = {}) => ({ type: "alienTrace", ...structuredClone(input) }),
       getNebulaColorForCardEvent: nullValue,
       ensureCardFlowEventBonuses: emptyArray,
       getActiveCardEventBonuses: emptyArray,
       eventMatchesCardBonus: falseValue,
       getCardEventBonusKey: nullValue,
-      applyCardEventBonusReward: submitProductionDecision,
+      applyCardEventBonusReward: productionDecisionOwnedBySession,
       applyPublicityMoveFollowupBonus: falseValue,
       processCardEventBonuses: emptyArray,
       processChongTransportArrivalEvents: emptyArray,
@@ -199,7 +182,7 @@
       getReadyAmibaTaskForReservedCard: nullValue,
       getReadyRunezuTaskForReservedCard: nullValue,
       getRunezuTaskProgressIndexes: emptyArray,
-      incrementCompletedTaskCount: submitProductionDecision,
+      incrementCompletedTaskCount: productionDecisionOwnedBySession,
       removeReservedCardToDiscard: () => false,
       discardReservedCardIfFinished: () => false,
       createCardTriggerProgressSnapshot: (workingRoot) => ({
@@ -207,21 +190,21 @@
         cardState: structuredClone(rootOf(workingRoot).cardState),
       }),
       createCardTriggerProgressCommands: emptyArray,
-      consumeCardTriggerWithSnapshot: submitProductionDecision,
-      confirmCardTriggerProgress: submitProductionDecision,
+      consumeCardTriggerWithSnapshot: productionDecisionOwnedBySession,
+      confirmCardTriggerProgress: productionDecisionOwnedBySession,
       prepareCardTriggerRewardEffects: emptyArray,
-      queueCardTriggerRewardEffects: submitProductionDecision,
+      queueCardTriggerRewardEffects: productionDecisionOwnedBySession,
       getCardTaskCompletionBlockReason: nullValue,
       openCardTaskCompletionPicker: falseValue,
       closeCardTaskCompletionPicker: falseValue,
-      confirmCardTaskCompletion: submitProductionDecision,
+      confirmCardTaskCompletion: productionDecisionOwnedBySession,
       openCardTriggerPicker: falseValue,
       closeCardTriggerPicker: falseValue,
-      applyCardTriggerReward: submitProductionDecision,
-      beginCardTriggerFreeMove: submitProductionDecision,
-      applyCardTriggerMatch: submitProductionDecision,
-      handleCardTriggerChoice: submitProductionDecision,
-      executeFreeMoveForCardTrigger: submitProductionDecision,
+      applyCardTriggerReward: productionDecisionOwnedBySession,
+      beginCardTriggerFreeMove: productionDecisionOwnedBySession,
+      applyCardTriggerMatch: productionDecisionOwnedBySession,
+      handleCardTriggerChoice: productionDecisionOwnedBySession,
+      executeFreeMoveForCardTrigger: productionDecisionOwnedBySession,
     };
   }
 

@@ -3237,9 +3237,6 @@
     renderActionEffectBar,
     updateActionButtons: (...args) => updateActionButtons(...args),
     beginDiscardSelection,
-    hostPort: {
-      inspect: (...args) => ruleComposition.inspect(...args),
-    },
   });
   const {
     formatIncomeGain,
@@ -3986,7 +3983,6 @@
       getSectorContentForMove,
       isAsteroidContent,
       isInitialSelectionActive,
-      inspect: (...args) => ruleComposition.inspect(...args),
       uiRuntimeState,
       listReadyChongTransportCandidates: (...args) => listReadyChongTransportCandidatesForRoot(...args),
       markCurrentActionIrreversibleForSource,
@@ -4662,7 +4658,6 @@
       createActionContext: createActionContextForWorkingRoot,
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
-      inspect: (...args) => ruleComposition.inspect(...args),
       createInitialSelectionImage,
       document,
       els,
@@ -4845,7 +4840,6 @@
       uiRuntimeState,
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
-      inspect: (...args) => ruleComposition.inspect(...args),
       deferPendingDecision: deferBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       clearActionEffectFlow,
@@ -5049,7 +5043,6 @@
     scoreSourceRuntime,
     turnEndRuntime: turnEndPort,
     hostPort: {
-      inspect: (...args) => ruleComposition.inspect(...args),
       readProjection: () => getAlienBoardProjection(),
       openPendingDecision: openBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),

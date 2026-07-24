@@ -44,39 +44,16 @@
   function createIndustryRuntime(context = {}) {
     const industry = context.industry;
     const hostPort = context.hostPort || context;
-    function inspectDecision() {
-      const inspection = hostPort.inspect?.();
-      const decision = inspection?.phase === "awaiting_input" ? inspection.session?.decision : null;
-      return decision?.choices?.some((entry) => (
-        (entry.target || entry.standardAction?.target)?.kind === "residual-domain"
-      )) ? decision : null;
-    }
-    function submitDecision(...args) {
-      const values = args.flatMap((arg) => (
-        typeof arg === "string" || typeof arg === "number" ? [String(arg)]
-          : arg && typeof arg === "object" ? Object.values(arg).map(String) : []
-      ));
-      return hostPort.submitActiveDecision?.("residual-domain", (target, candidate) => {
-        const serialized = JSON.stringify({ target, payload: candidate?.payload || {} });
-        return values.length === 0 || values.every((value) => serialized.includes(value));
-      }) || { ok: false, code: "COMPANY_DECISION_REQUIRED", message: "当前没有正式公司 Decision" };
-    }
+    const productionDecisionOwnedBySession = () => ({
+      ok: false,
+      code: "COMPANY_DECISION_INPUT_OWNED_BY_SESSION",
+      message: "公司 Decision 只能通过当前 Effect Session identity 提交",
+    });
     function dispatchIndustry() {
       const actions = hostPort.listHumanActions?.("industry") || [];
       return actions.length === 1
         ? hostPort.submitHumanAction(actions[0])
         : { ok: false, code: "COMPANY_ACTION_REQUIRED", message: "当前没有唯一正式公司行动" };
-    }
-    function cancelDecision() {
-      const decision = inspectDecision();
-      const choice = decision?.choices?.find((entry) => {
-        const target = entry.target || entry.standardAction?.target || {};
-        const payload = entry.payload || entry.standardAction?.payload || {};
-        return ["cancel", "skip"].includes(target.role || payload.role);
-      });
-      return choice
-        ? submitDecision(choice.target?.choiceId || choice.actionId)
-        : { ok: false, code: "COMPANY_CANCEL_UNAVAILABLE", message: "当前公司 Decision 不可取消" };
     }
     const runtime = {
       createCompanyCardSummary(card) {
@@ -88,26 +65,22 @@
           passiveIds: [...(definition.passiveIds || [])],
         } : null;
       },
-      isIndustryFutureSpanHandSelectionActive: () => Boolean(inspectDecision()),
-      isIndustryHandSelectionActive: () => Boolean(inspectDecision()),
-      canBeginIndustryFutureSpanHandSelection: () => (
-        inspectDecision() ? { ok: true } : { ok: false, code: "COMPANY_DECISION_REQUIRED" }
-      ),
-      getStrategyPassiveSelectableSlotIds: () => (
-        inspectDecision()?.choices?.map((entry) => entry.target?.slotId).filter(Boolean) || []
-      ),
+      isIndustryFutureSpanHandSelectionActive: () => false,
+      isIndustryHandSelectionActive: () => false,
+      canBeginIndustryFutureSpanHandSelection: productionDecisionOwnedBySession,
+      getStrategyPassiveSelectableSlotIds: () => [],
       createIndustryActionRestoreCommand: () => null,
       recordIndustryActionRestoreCommand: () => null,
-      clearIndustryRollbackUi: cancelDecision,
-      rollbackPendingIndustryQuickAction: cancelDecision,
-      cancelIndustryAbilityFlow: cancelDecision,
+      clearIndustryRollbackUi: productionDecisionOwnedBySession,
+      rollbackPendingIndustryQuickAction: productionDecisionOwnedBySession,
+      cancelIndustryAbilityFlow: productionDecisionOwnedBySession,
       finishIndustryAbilityFlow: () => ({ ok: true }),
       startIndustryAbilityFlow: () => dispatchIndustry(),
       handleCompanyActionMarkerClick: () => dispatchIndustry(),
-      executeIndustryFreeMove: submitDecision,
+      executeIndustryFreeMove: productionDecisionOwnedBySession,
     };
     for (const name of BROWSER_INPUT_NAMES) {
-      if (!runtime[name]) runtime[name] = name.startsWith("cancel") ? cancelDecision : submitDecision;
+      if (!runtime[name]) runtime[name] = productionDecisionOwnedBySession;
     }
     return Object.freeze(runtime);
   }

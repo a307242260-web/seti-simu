@@ -41,6 +41,11 @@
 
   function createTurnEndFlow(context = {}) {
     const hostPort = context.hostPort || context;
+    const productionDecisionOwnedBySession = () => ({
+      ok: false,
+      code: "TURN_END_DECISION_INPUT_OWNED_BY_SESSION",
+      message: "回合末 Decision 只能通过当前 Effect Session identity 提交",
+    });
 
     function dispatch(family) {
       const actions = hostPort.listHumanActions?.(family) || [];
@@ -51,32 +56,6 @@
       };
     }
 
-    function inspectDecision() {
-      const inspection = hostPort.inspect?.();
-      return inspection?.phase === "awaiting_input" ? inspection.session?.decision : null;
-    }
-
-    function submitDecision(...hints) {
-      const values = hints.flatMap((hint) => (
-        ["string", "number"].includes(typeof hint) ? [String(hint)]
-          : hint && typeof hint === "object" ? Object.values(hint).map(String) : []
-      ));
-      return hostPort.submitActiveDecision?.("residual-domain", (target, candidate) => {
-        const text = JSON.stringify({ target, payload: candidate?.payload || {} });
-        return values.length === 0 || values.every((value) => text.includes(value));
-      }) || {
-        ok: false,
-        code: "TURN_END_DECISION_REQUIRED",
-        message: "当前没有正式回合末 Decision",
-      };
-    }
-
-    function continueProductionDecision(...hints) {
-      return inspectDecision()
-        ? submitDecision(...hints)
-        : { ok: true, code: "PRODUCTION_TURN_END_SETTLED" };
-    }
-
     return Object.freeze({
       createPassEvent,
       passForCurrentPlayer() {
@@ -85,12 +64,12 @@
       endCurrentTurn() {
         return dispatch("end_turn");
       },
-      executePassFirstRotateEffect: continueProductionDecision,
-      executePassHandLimitEffect: continueProductionDecision,
-      maybeResumeTurnEndAfterReveal: continueProductionDecision,
-      maybeContinuePendingTurnEndRevealFlow: continueProductionDecision,
-      maybeContinueAlienRevealQueuedOpportunities: continueProductionDecision,
-      finishCurrentTurnAfterAlienReveal: continueProductionDecision,
+      executePassFirstRotateEffect: productionDecisionOwnedBySession,
+      executePassHandLimitEffect: productionDecisionOwnedBySession,
+      maybeResumeTurnEndAfterReveal: productionDecisionOwnedBySession,
+      maybeContinuePendingTurnEndRevealFlow: productionDecisionOwnedBySession,
+      maybeContinueAlienRevealQueuedOpportunities: productionDecisionOwnedBySession,
+      finishCurrentTurnAfterAlienReveal: productionDecisionOwnedBySession,
     });
   }
 
