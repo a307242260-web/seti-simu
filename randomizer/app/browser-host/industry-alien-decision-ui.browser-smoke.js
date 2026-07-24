@@ -106,6 +106,7 @@
     });
     const viewStore = SetiBrowserViewStateStore.createViewStateStore();
     let projection = null;
+    let submissionCount = 0;
     function project(viewerId = "p1") {
       projection = projectionAdapter.projectSession(dispatched.session, {
         viewer: { viewerId: `chrome-${viewerId}`, playerId: viewerId, role: "player" },
@@ -116,6 +117,7 @@
     const input = SetiBrowserInputAdapter.createBrowserInputAdapter({
       dispatchAction: () => ({ ok: false, code: "UNUSED" }),
       submitDecision(submission) {
+        submissionCount += 1;
         const decision = flow.inspect(dispatched.session).decision;
         const selected = decision.choices.find((choice) => choice.actionId === submission.choice.choiceId);
         return flow.resolveDecision(dispatched.session, {
@@ -141,9 +143,12 @@
       root.replaceChildren();
       const rebuilt = renderer.render({ projection, viewState: viewStore.getSnapshot() });
       assert(rebuilt.content.choices.length === 2, "清空 DOM 后无法从 ViewState/projection 重建");
+      const beforeFocus = submissionCount;
       root.querySelector("[data-decision-ui-intent='focus-choice']").click();
+      assert(submissionCount === beforeFocus, "多项行业/外星 Decision 聚焦时不得自动代选");
       renderer.render({ projection, viewState: viewStore.getSnapshot() });
       root.querySelector("[data-decision-ui-intent='confirm']").click();
+      assert(submissionCount === beforeFocus + 1, "行业/外星 Decision 只能在显式确认后提交一次");
     }
 
     const opponent = project("p2");

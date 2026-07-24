@@ -88,12 +88,25 @@
     };
   }
 
+  function registerCardDecisionRenderer(decisionUi, registry) {
+    if (!decisionUi?.createDecisionRendererRegistry) {
+      throw new TypeError("card decision UI 需要通用 Decision renderer registry");
+    }
+    if (!registry?.register || !registry?.resolve) {
+      throw new TypeError("card decision UI 需要可扩展 Decision renderer registry");
+    }
+    registry.register("card", renderCardDecision, { matches: isCardDecision });
+    return registry;
+  }
+
   function createCardDecisionRegistry(decisionUi) {
     if (!decisionUi?.createDecisionRendererRegistry) {
       throw new TypeError("card decision UI 需要通用 Decision renderer registry");
     }
-    const registry = decisionUi.createDecisionRendererRegistry();
-    registry.register("card", renderCardDecision, { matches: isCardDecision });
+    const registry = registerCardDecisionRenderer(
+      decisionUi,
+      decisionUi.createDecisionRendererRegistry(),
+    );
     registry.register("generic", renderGeneric);
     return registry;
   }
@@ -155,6 +168,7 @@
   return Object.freeze({
     CARD_DECISION_KINDS: Object.freeze([...CARD_DECISION_KINDS]),
     createCardDecisionPresenter,
+    registerCardDecisionRenderer,
     createCardDecisionRegistry,
     createCardDecisionUiController,
     createCardSelectionState,

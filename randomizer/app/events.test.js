@@ -1,47 +1,14 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { routeProbeDecisionClick, routeMainActionButtonClick } = require("./events");
+const eventsApi = require("./events");
+const { routeMainActionButtonClick } = eventsApi;
 
-function route(dataset, disabled = false) {
-  const calls = [];
-  const button = { dataset, disabled };
-  const event = {
-    target: {
-      closest(selector) {
-        const key = selector.slice(6, -1).replace(/-([a-z])/g, (_match, letter) => letter.toUpperCase());
-        return Object.hasOwn(dataset, key) ? button : null;
-      },
-    },
-  };
-  const handled = routeProbeDecisionClick(event, {
-    handleProbeSectorScanChoice: (rocketId) => calls.push(["sector", rocketId]),
-    confirmProbeSectorScanSelection: () => calls.push(["confirm"]),
-    handleProbeLocationRewardChoice: (rocketId) => calls.push(["location", rocketId]),
-  });
-  return { handled, calls };
-}
-
-assert.deepEqual(route({ probeScanRocketId: "rocket-1" }), {
-  handled: true,
-  calls: [["sector", "rocket-1"]],
-});
-assert.deepEqual(route({ probeScanConfirm: "true" }), {
-  handled: true,
-  calls: [["confirm"]],
-});
-assert.deepEqual(route({ probeLocationRewardRocketId: "rocket-2" }), {
-  handled: true,
-  calls: [["location", "rocket-2"]],
-});
-assert.deepEqual(route({ probeScanRocketId: "rocket-1" }, true), {
-  handled: false,
-  calls: [],
-});
-assert.deepEqual(route({ unrelated: "true" }), {
-  handled: false,
-  calls: [],
-});
+assert.equal(
+  Object.hasOwn(eventsApi, "routeProbeDecisionClick"),
+  false,
+  "专用 probe Decision DOM router 必须物理删除，由通用 Decision UI 持有 choice identity",
+);
 
 {
   const calls = [];

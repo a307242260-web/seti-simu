@@ -108,17 +108,29 @@
     "alien-branch": ({ decision }) => renderDomain("alien-branch", decision, ["branch", "entityRef", "reward", "status"]),
   });
 
-  function createIndustryAlienDecisionRegistry(decisionUi) {
+  function registerIndustryAlienDecisionRenderers(decisionUi, registry) {
     if (!decisionUi?.createDecisionRendererRegistry) {
       throw new TypeError("industry/alien Decision UI 需要通用 renderer registry");
     }
-    const registry = decisionUi.createDecisionRendererRegistry();
+    if (!registry?.register || !registry?.resolve) {
+      throw new TypeError("industry/alien Decision UI 需要可扩展 renderer registry");
+    }
     for (const kind of DECISION_KINDS) {
       const key = RENDERER_KEY_BY_KIND[kind];
       registry.register(key, RENDERERS[key], { matches: (decision) => decision.kind === kind });
     }
     assertRendererCoverage(registry);
     return registry;
+  }
+
+  function createIndustryAlienDecisionRegistry(decisionUi) {
+    if (!decisionUi?.createDecisionRendererRegistry) {
+      throw new TypeError("industry/alien Decision UI 需要通用 renderer registry");
+    }
+    return registerIndustryAlienDecisionRenderers(
+      decisionUi,
+      decisionUi.createDecisionRendererRegistry(),
+    );
   }
 
   function assertRendererCoverage(registry) {
@@ -143,6 +155,7 @@
     RENDERER_KEY_BY_KIND,
     isDomainDecision,
     createDomainDecisionPresenter,
+    registerIndustryAlienDecisionRenderers,
     createIndustryAlienDecisionRegistry,
     assertRendererCoverage,
     createIndustryAlienDecisionUiController,

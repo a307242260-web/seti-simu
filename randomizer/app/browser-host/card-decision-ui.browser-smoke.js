@@ -88,6 +88,7 @@
     });
     const viewStore = SetiBrowserViewStateStore.createViewStateStore();
     let currentProjection = null;
+    let submissionCount = 0;
     function project() {
       currentProjection = projectionAdapter.projectSession(dispatched.session, {
         viewer: { viewerId: "chrome-p1", playerId: "p1", role: "player" },
@@ -98,6 +99,7 @@
     const input = SetiBrowserInputAdapter.createBrowserInputAdapter({
       dispatchAction: () => ({ ok: false }),
       submitDecision(submission) {
+        submissionCount += 1;
         const decision = flow.inspect(dispatched.session).decision;
         const selected = decision.choices.find((entry) => entry.actionId === submission.choice.choiceId);
         return flow.resolveDecision(dispatched.session, {
@@ -119,9 +121,12 @@
     function chooseVisible() {
       project();
       renderer.render({ projection: currentProjection, viewState: viewStore.getSnapshot() });
+      const beforeFocus = submissionCount;
       document.querySelector("[data-decision-ui-intent='focus-choice']").click();
+      assert(submissionCount === beforeFocus, "多项 Card Decision 聚焦时不得自动代选");
       renderer.render({ projection: currentProjection, viewState: viewStore.getSnapshot() });
       document.querySelector("[data-decision-ui-intent='confirm']").click();
+      assert(submissionCount === beforeFocus + 1, "Card Decision 只能在显式确认后提交一次");
     }
     chooseVisible();
     flow.drain(dispatched.session);

@@ -2491,37 +2491,6 @@
     };
   }
 
-  function createPassReserveDecisionPort(context = {}) {
-    const { inspectComposition, submitDecision, getSelectedCardId } = context;
-    if (typeof inspectComposition !== "function"
-      || typeof submitDecision !== "function"
-      || typeof getSelectedCardId !== "function") {
-      throw new TypeError("pass reserve decision port requires composition inspection, submission, and selection");
-    }
-
-    function confirmPassReserveSelection() {
-      const selectedCardId = getSelectedCardId() || null;
-      if (!selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
-      const inspection = inspectComposition();
-      const decision = inspection?.session?.decision || null;
-      const choice = (decision?.choices || []).find((candidate) => {
-        const target = candidate?.target || candidate?.standardAction?.target || null;
-        return target?.kind === "pass-reserve-card" && String(target.choiceId) === String(selectedCardId);
-      });
-      if (inspection?.phase !== "awaiting_input" || !decision || !choice) {
-        return { ok: false, code: "PASS_RESERVE_DECISION_REQUIRED", message: "当前 PASS 选择不在 active Decision 合法项中" };
-      }
-      return submitDecision({
-        decisionId: decision.decisionId,
-        decisionVersion: decision.decisionVersion,
-        ownerId: decision.ownerId,
-        choice,
-      });
-    }
-
-    return Object.freeze({ confirmPassReserveSelection });
-  }
-
   return {
     BROWSER_INPUT_NAMES,
     createBrowserInputPort,
@@ -2531,7 +2500,6 @@
     createBrowserCardStaticContext,
     createCardRuntime,
     createCardSetupController,
-    createPassReserveDecisionPort,
     buildRepeatedCardCornerMoveEffect,
     formatRepeatedCardCornerMoveReward,
   };

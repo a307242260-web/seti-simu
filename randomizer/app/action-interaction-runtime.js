@@ -121,9 +121,6 @@
       || typeof context.inputPort?.cancel !== "function") {
       throw new TypeError("land target picker requires narrow inputPort");
     }
-    if (typeof context.submitChoice !== "function") {
-      throw new TypeError("land target picker requires submitChoice()");
-    }
 
     function close(workingRoot = null) {
       if (!els.landTargetOverlay) return;
@@ -133,7 +130,6 @@
 
     function cancel(workingRoot = null) {
       if (!workingRoot?.match) {
-        if (context.readPendingDecision?.("land_target")) return context.submitCancel();
         return context.inputPort.cancel();
       }
       const pending = context.readPendingDecision?.("land_target") || null;
@@ -184,11 +180,7 @@
       return context.inputPort.open(structuredClone(options));
     }
 
-    function confirm() {
-      return context.submitChoice(Number(els.landTargetSelect?.value));
-    }
-
-    return Object.freeze({ close, cancel, open, request, confirm });
+    return Object.freeze({ close, cancel, open, request });
   }
 
   function createMoveUiRuntime(context = {}) {
@@ -726,16 +718,6 @@
       return { ok: false, message: `未知放置数据续体：${pending.resumeKind || "missing"}` };
     }
     return Object.freeze({ resume });
-  }
-
-  function createLandDecisionPort(context = {}) {
-    function confirm(choiceIndex = 0) {
-      return context.submitActiveDecision(
-        "land-target",
-        (target) => Number(target.choiceId) === Number(choiceIndex),
-      );
-    }
-    return Object.freeze({ confirm });
   }
 
   function createLandTargetDecisionRuntime(context = {}) {
@@ -2105,7 +2087,6 @@
     createDataAnalyzeInteractionRuntime,
     createBoardQueryRuntime,
     createDataPlacementDecisionRuntime,
-    createLandDecisionPort,
     createLandTargetDecisionRuntime,
     BROWSER_ACTION_INTERACTION_STATIC_KEYS,
     createBrowserActionInteractionStaticContext,

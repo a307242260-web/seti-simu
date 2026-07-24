@@ -1888,46 +1888,6 @@
     };
   }
 
-  function createMovePaymentDecisionPort(context = {}) {
-    const { inspectComposition, submitDecision, getSelectedHandIndices } = context;
-    if (typeof inspectComposition !== "function"
-      || typeof submitDecision !== "function"
-      || typeof getSelectedHandIndices !== "function") {
-      throw new TypeError("move payment decision port requires composition inspection, submission, and selection");
-    }
-
-    const normalizeIndexes = (values) => [...(values || [])]
-      .map(Number)
-      .sort((left, right) => left - right);
-
-    function confirmMovePayment() {
-      const inspection = inspectComposition();
-      const decision = inspection?.session?.decision || null;
-      if (!decision || inspection?.phase !== "awaiting_input") {
-        return { ok: false, code: "MOVE_PAYMENT_DECISION_REQUIRED", message: "当前没有等待支付的 DecisionEffect" };
-      }
-      const selected = normalizeIndexes(getSelectedHandIndices());
-      const choice = (decision.choices || []).find((candidate) => {
-        const raw = candidate?.selectedHandIndices
-          || candidate?.payload?.selectedHandIndices
-          || candidate?.standardAction?.payload?.selectedHandIndices
-          || [];
-        return JSON.stringify(normalizeIndexes(raw)) === JSON.stringify(selected);
-      });
-      if (!choice) {
-        return { ok: false, code: "MOVE_PAYMENT_CHOICE_NOT_LEGAL", message: "当前手牌支付组合不在 DecisionEffect 合法选项中" };
-      }
-      return submitDecision({
-        decisionId: decision.decisionId,
-        decisionVersion: decision.decisionVersion,
-        ownerId: decision.ownerId,
-        choice,
-      });
-    }
-
-    return Object.freeze({ confirmMovePayment });
-  }
-
   function createHandIndexDecisionMatcher(expectedIndexes = []) {
     const normalize = (indexes) => [...indexes].map(Number).sort((left, right) => left - right);
     const expected = normalize(expectedIndexes);
@@ -1947,6 +1907,5 @@
     createBrowserHandStaticContext,
     createHandFlow,
     createHandIndexDecisionMatcher,
-    createMovePaymentDecisionPort,
   };
 });

@@ -371,8 +371,6 @@
   const actionInteractionPort = actionInteractionRuntimeModule.createActionInteractionPort({
     getRuntime: () => actionInteractionRuntime,
     dispatchCommand: (name, args) => browserOwnerInputs.action_interaction[name](...args),
-    getPendingDataPlacementDecision: (...args) => getPendingDataPlacementDecision(...args),
-    submitActiveDecision: (...args) => submitActiveCardDecision(...args),
   });
   const {
     getPlutoReservedCards, ensurePlutoCardEffectState, getPlutoActionState, addPlutoMarker,
@@ -740,23 +738,6 @@
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor();
   let actionRuntimeController = null;
   let humanDecisionInputAdapter = null;
-  const submitActiveCardDecision = () => ({
-    ok: false,
-    code: "HUMAN_DECISION_IDENTITY_REQUIRED",
-    message: "旧 Browser Decision resolver 已禁用；请从当前 viewer projection 提交 choice identity",
-  });
-  const submitChoiceById = submitActiveCardDecision;
-  const handleConditionalSectorChoice = submitActiveCardDecision;
-  const confirmDiscardAnyForIncome = submitActiveCardDecision;
-  const handlePayCreditChoice = submitActiveCardDecision;
-  const handleDiscardCornerRepeatChoice = submitActiveCardDecision;
-  const handleRemoveOrbitToProbeChoice = submitActiveCardDecision;
-  const handleRemovePlanetMarkerChoice = submitActiveCardDecision;
-  const handleHandCornerChoice = submitActiveCardDecision;
-  const handleReturnUnfinishedTaskChoice = submitActiveCardDecision;
-  const handleOptionalHandScanChoice = submitActiveCardDecision;
-  const handleScanAction4Choice = submitActiveCardDecision;
-  const abortActiveDecision = submitActiveCardDecision;
   const submitInitialSetupAction = (selector) => {
     const refreshPresentation = () => queueMicrotask(() => {
       scheduleResidentDesktopRefresh();
@@ -765,10 +746,6 @@
       updateActionButtons?.();
       scheduleAiAutoStepIfNeeded?.();
     });
-    const inspection = ruleComposition.inspect();
-    if (inspection.phase === "awaiting_input") {
-      return submitActiveCardDecision();
-    }
     const candidates = ruleComposition.inputPort.enumerateActions({ family: "choose_card" });
     const action = candidates.find((candidate) => Object.entries(selector).every(([key, value]) => (
       JSON.stringify(candidate.target?.[key]) === JSON.stringify(value)
@@ -790,11 +767,14 @@
   );
   const getInitialSetupProjection = (playerId = null) => {
     const resolvedPlayerId = playerId || getTurnFlowProjection().currentPlayerId;
-    return ruleComposition.projection({
+    const setup = ruleComposition.projection({
       viewerId: `browser:setup:${resolvedPlayerId || "spectator"}`,
       playerId: resolvedPlayerId,
       role: resolvedPlayerId ? "player" : "spectator",
     }).state?.resident?.initialSetup || {};
+    return ruleComposition.inspect().phase === "awaiting_input"
+      ? { ...setup, interactive: false }
+      : setup;
   };
   const canConfirmInitialSelection = (offer) => Boolean(
     offer?.selectedIndustryId && offer?.selectedInitialIds?.length === INITIAL_SELECTION_REQUIRED.initial
@@ -928,8 +908,6 @@
     document,
     els,
     inputPort: interactionOwnerInputPorts.landTarget,
-    submitChoice: (choiceIndex) => confirmLandTargetChoice(choiceIndex),
-    submitCancel: () => submitActiveCardDecision("land-target-cancel", () => true),
     openPendingDecision: openBrowserPendingDecision,
     readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
     getPendingOwnerFields: (...args) => getPendingOwnerFields(...args),
@@ -940,7 +918,6 @@
   const cancelLandTargetPicker = landTargetPicker.cancel;
   const openLandTargetPicker = landTargetPicker.open;
   const requestLandTargetPicker = landTargetPicker.request;
-  const confirmLandTargetPicker = landTargetPicker.confirm;
   const getSimulationConditionalPlayer = conditionalDecisionDomainModule.createConditionalPlayerResolver({
     resolvePlayerReference: (...args) => resolvePlayerReference(...args),
     getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
@@ -1237,6 +1214,11 @@
   const residentProjectionAdapter = browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
     stateSource: browserProjectionSource,
     sourceStateIsVisible: true,
+    decisionPresenter: browserHostModule.industryAlienDecisionUi.createDomainDecisionPresenter({
+      fallback: browserHostModule.cardDecisionUi.createCardDecisionPresenter({
+        fallback: browserHostModule.projectionAdapter.defaultDecisionPresenter,
+      }),
+    }),
     createActionContext: ({ state }) => ({ actorId: state?.match?.currentPlayerId ?? null }),
     actionAdapter: {
       enumerate: (projectionContext) => ruleComposition.inputPort.enumerateActions(
@@ -1282,7 +1264,16 @@
       scheduleAiAutoStepIfNeeded?.();
     }),
   });
+  const residentDecisionRegistry = browserHostModule.industryAlienDecisionUi
+    .registerIndustryAlienDecisionRenderers(
+      browserHostModule.decisionUi,
+      browserHostModule.cardDecisionUi.registerCardDecisionRenderer(
+        browserHostModule.decisionUi,
+        browserHostModule.decisionUi.createDefaultDecisionRegistry(),
+      ),
+    );
   const residentDecisionController = browserHostModule.decisionUi.createDecisionUiController({
+    registry: residentDecisionRegistry,
     dispatchIntent: (intent) => (
       intent?.kind === "decision"
         ? humanDecisionInputAdapter.submit(intent.submission)
@@ -2983,10 +2974,8 @@
       updatePlayerHandPanelTitle,
       updateActionButtons: (...args) => updateActionButtons(...args),
       setQuickPanelOpen: (...args) => setQuickPanelOpen(...args),
-      executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
       createActionContext: createActionContextForWorkingRoot,
       recordMainActionIrreversibleBarrier: (...args) => recordMainActionIrreversibleBarrier(...args),
-      submitDiscardDecision: submitActiveCardDecision,
       scrollToPlayerCommandPanel,
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
@@ -3018,11 +3007,6 @@
   const beginMovePaymentSelection = (...args) => browserOwnerInputs.hand_flow.beginMovePaymentSelection(...args);
   const handleHandCardMovePayment = (...args) => browserOwnerInputs.hand_flow.handleHandCardMovePayment(...args);
   const resolveMovePaymentDecision = (...args) => browserOwnerInputs.hand_flow.resolveMovePaymentDecision(...args);
-  const { confirmMovePayment } = handFlowModule.createMovePaymentDecisionPort({
-    inspectComposition: () => ruleComposition.inspect(),
-    submitDecision: (submission) => humanDecisionInputAdapter.submit(submission),
-    getSelectedHandIndices: () => uiRuntimeState.movePaymentSelectedHandIndices || [],
-  });
   const syncPlayCardSelectionChrome = (...args) => browserOwnerInputs.hand_flow.syncPlayCardSelectionChrome(...args);
   const getPendingPlayCardSelection = (workingRoot = null) => (
     workingRoot
@@ -3049,9 +3033,7 @@
   const cancelCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.cancelCardCornerQuickAction(...args);
   const handleHandCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.handleHandCardCornerQuickAction(...args);
   const beginDiscardSelection = (...args) => browserOwnerInputs.hand_flow.beginDiscardSelection(...args);
-  const cancelDiscardSelection = submitActiveCardDecision;
   const completeDiscardSelection = (...args) => browserOwnerInputs.hand_flow.completeDiscardSelection(...args);
-  const finalizePendingDiscardSelection = submitActiveCardDecision;
   const handleHandCardDiscard = (...args) => browserOwnerInputs.hand_flow.handleHandCardDiscard(...args);
   const beginPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.beginPlayCardSelection(...args);
   const cancelPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.cancelPlayCardSelection(...args);
@@ -3162,11 +3144,6 @@
     getPublicScanIconForScanCode,
     openPublicScanNebulaPickerForCurrentQueueItem,
   } = scanFlowHelpers;
-  const scanDecisionPort = scanFlowModule.createScanDecisionPort({
-    inspectComposition: () => ruleComposition.inspect(),
-    submitActiveDecision: (...args) => submitActiveCardDecision(...args),
-  });
-  const executeFreeMoveForScanAction4 = scanDecisionPort.executeFreeMove;
   const getPublicScanMaxSelectable = (...args) => scanFlowHelpers.getPublicScanMaxSelectable(...args);
   const buildReadySectorFinishEffects = (...args) => scanFlowHelpers.buildReadySectorFinishEffects(...args);
   const buildScanFinalizeFollowupEffects = (...args) => scanFlowHelpers.buildScanFinalizeFollowupEffects(...args);
@@ -3206,8 +3183,6 @@
   const hasAomomoScanAtX = (...args) => scanFlowHelpers.hasAomomoScanAtX(...args);
   const buildSectorScanChoicesForX = (...args) => scanFlowHelpers.buildSectorScanChoicesForX(...args);
   const expandScanChoicesWithAomomoTargets = (...args) => browserOwnerInputs.scan_flow.expandScanChoicesWithAomomoTargets(...args);
-  const confirmScanTarget = scanDecisionPort.confirmScanTarget;
-  const handleDrawnHandScanSkip = scanDecisionPort.skipDrawnHandScan;
   const beginSectorScan = (...args) => browserOwnerInputs.scan_flow.beginSectorScan(...args);
   const getSectorOpenDataCount = (...args) => scanFlowHelpers.getSectorOpenDataCount(...args);
   const getSectorReplacedCount = (...args) => scanFlowHelpers.getSectorReplacedCount(...args);
@@ -3237,7 +3212,6 @@
   const handlePublicScanCardClick = (...args) => browserOwnerInputs.scan_flow.handlePublicScanCardClick(...args);
   const beginHandScan = (...args) => browserOwnerInputs.scan_flow.beginHandScan(...args);
   const cancelHandScanSelection = () => abortActiveDecision("已取消手牌扫描");
-  const handleHandScanCardClick = submitActiveCardDecision;
   const incomeRuntime = incomeRuntimeModule.createIncomeRuntime({
     INCOME_GAIN_LABELS,
     players,
@@ -3265,7 +3239,6 @@
     beginDiscardSelection,
     hostPort: {
       inspect: (...args) => ruleComposition.inspect(...args),
-      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
     },
   });
   const {
@@ -3410,11 +3383,6 @@
     getFangzhouUnlockableTraceTypes,
     hasAlienTracePanelPlacementTarget,
   } = alienUiHelpers;
-  const {
-    handleFangzhouTraceDestinationChoice,
-    handleFangzhouUnlockTraceChoice,
-    handleStateTraceSlotPlacement,
-  } = alienUiModule.createAlienDecisionPort({ submitActiveDecision: submitActiveCardDecision });
   const alienRuntimeHelpers = alienRuntimeModule.createBrowserAlienRuntime({
     staticContext: alienRuntimeModule.createBrowserAlienStaticContext(dependencies),
     getAlienSpeciesRuntime: () => alienSpeciesRuntime,
@@ -3934,7 +3902,6 @@
     beginCardMoveEffect: beginCardMoveEffectForRoot,
   } = cardRuntime;
   const beginCardMoveEffect = (effect) => effectFlowOwnerInputPort.beginCardMove(effect);
-  const executeFreeMoveForCardCorner = submitActiveCardDecision;
   const releaseFutureSpanAfterPlayWithHistory = (...args) => browserOwnerInputs.card_runtime
     .releaseFutureSpanAfterPlayWithHistory(...args);
   const {
@@ -3982,11 +3949,6 @@
       ? canBlindDrawForRoot(workingRoot)
       : readBrowserProjection().cards.deckCount > 0
   );
-  const { confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
-    inspectComposition: () => ruleComposition.inspect(),
-    submitDecision: (submission) => humanDecisionInputAdapter.submit(submission),
-    getSelectedCardId: () => uiRuntimeState.passReserveSelectedCardId || null,
-  });
   const {
     selectDefaultRocketFromCandidates,
     executeCardEffectMove,
@@ -4033,7 +3995,6 @@
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       renderActionEffectBar,
       structuredClone,
-      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       updateActionButtons: (...args) => updateActionButtons(...args),
     },
   });
@@ -4134,10 +4095,6 @@
     beginCardTriggerFreeMove,
     applyCardTriggerMatch,
   } = cardTriggerRuntime;
-  const cancelCardTriggerChoice = submitActiveCardDecision;
-  const confirmCardTaskCompletion = submitActiveCardDecision;
-  const handleCardTriggerChoice = submitActiveCardDecision;
-  const executeFreeMoveForCardTrigger = submitActiveCardDecision;
 
   const blockManualAiMovePayment = renderRuntimeModule.createMovePaymentAiGuard({
     getMovePaymentPlayer,
@@ -4431,19 +4388,6 @@
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
 
-  const executeCardMoveForEffect = submitActiveCardDecision;
-
-  const probeDecisionPort = scanFlowModule.createProbeDecisionPort({
-    getPendingProbeSectorScanDecision,
-    submitActiveDecision: submitActiveCardDecision,
-    handleMultiSectorChoice: (...args) => handleProbeSectorScanChoiceCommand(...args),
-    getSelectedRocketIds: () => uiRuntimeState.probeSectorSelectedRocketIds || [],
-  });
-  const {
-    handleSectorChoice: handleProbeSectorScanChoice,
-    confirmSectorSelection: confirmProbeSectorScanSelection,
-    handleLocationRewardChoice: handleProbeLocationRewardChoice,
-  } = probeDecisionPort;
 
   const createEffectExecutorContexts = () => ({
     movementScan: {
@@ -4719,7 +4663,6 @@
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
       inspect: (...args) => ruleComposition.inspect(...args),
-      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       createInitialSelectionImage,
       document,
       els,
@@ -4766,7 +4709,6 @@
     createCompanyCardSummary,
     getStrategyPassiveSelectableSlotIds,
   } = industryRuntime;
-  const executeIndustryFreeMove = submitActiveCardDecision;
 
   const techRuntime = techRuntimeModule.createBrowserTechRuntime({
     staticContext: techRuntimeModule.createBrowserTechStaticContext(dependencies),
@@ -4791,7 +4733,6 @@
       createActionContext: createActionContextForWorkingRoot,
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
-      submitActiveDecision: (kind, choiceId) => submitChoiceById(kind, choiceId),
       document,
       els,
       getPlanetSectorCoordinate,
@@ -4905,7 +4846,6 @@
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
       inspect: (...args) => ruleComposition.inspect(...args),
-      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       deferPendingDecision: deferBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       clearActionEffectFlow,
@@ -5028,10 +4968,6 @@
     },
   });
 
-  const confirmLandTargetChoice = actionInteractionRuntimeModule.createLandDecisionPort({
-    submitActiveDecision: submitActiveCardDecision,
-  }).confirm;
-
   debugRuntimeController = debugRuntimeModule.createBrowserDebugRuntime({
     viewStateStore: residentViewStateStore,
     projectionPort: {
@@ -5115,7 +5051,6 @@
     hostPort: {
       inspect: (...args) => ruleComposition.inspect(...args),
       readProjection: () => getAlienBoardProjection(),
-      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       openPendingDecision: openBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       startScreenState,
@@ -5173,7 +5108,6 @@
     techRenderContext,
     getEventsProjection: () => getEventsProjection(),
     assertEventsProjection: browserHostModule.residentProjection.assertEventsProjection,
-    getActiveDecisionChoices: () => ruleComposition.inspect().session?.decision?.choices || [],
     setStatusNote: setBrowserStatusNote,
     randomizeAll,
     startNewGameFromStartScreen,
@@ -5187,93 +5121,15 @@
     beginPlayCardSelection,
     researchTechForCurrentPlayer,
     cancelTechSelection,
-    confirmLandTargetPicker,
-    cancelLandTargetPicker,
     toggleQuickPanel,
     activateActionBarAction,
     undoPendingAction,
     runPlaceDataToComputer,
-    confirmDataPlacement,
-    cancelDataPlacePicker,
-    skipPendingDataPlacement,
-    handleJiuzheCardChoice,
-    handleJiuzheOpportunitySkip,
-    handleYichangdianCardGainChoice,
-    handleBanrenmaCardGainChoice,
-    handleChongCardGainChoice,
-    handleChongFossilChoice,
-    handleAmibaCardGainChoice,
-    handleAomomoCardGainChoice,
-    handleAmibaSymbolChoice,
-    handleAmibaTraceRemovalChoice,
-    handleRunezuCardGainChoice,
-    handleRunezuFaceSymbolChoice,
-    handleRunezuSymbolBranchChoice,
-    handleBanrenmaBonusChoice,
-    handleBanrenmaCardConditionChoice,
-    handleYichangdianCornerChoice,
-    handleCardTriggerChoice,
-    cancelCardTriggerChoice,
-    confirmCardTaskCompletion,
-    handleProbeSectorScanChoice,
-    confirmProbeSectorScanSelection: (workingRoot, ...args) => effectChoiceFlowHelpers.confirmProbeSectorScanSelection(workingRoot, ...args),
-    handleProbeLocationRewardChoice: (workingRoot, ...args) => effectChoiceFlowHelpers.handleProbeLocationRewardChoice(workingRoot, ...args),
-    handleOptionalHandScanChoice,
-    handleDrawnHandScanSkip,
-    handleRemovePlanetMarkerChoice,
-    handleHandCornerChoice,
-    handleConditionalSectorChoice,
-    handleDiscardIncomeCardChoice,
-    confirmDiscardAnyForIncome,
-    handlePayCreditChoice,
-    handleDiscardCornerRepeatChoice,
-    handleRemoveOrbitToProbeChoice,
-    handleReturnUnfinishedTaskChoice,
-    confirmStrategyPassiveSlotChoice: (slotId) => submitChoiceById("strategy-passive-slot", slotId),
-    cancelStrategyPassiveSlotChoice: () => submitChoiceById("cancel-strategy-passive-slot", "cancel"),
-    confirmScanTarget,
-    closeBanrenmaOpportunityDialog,
-    closeJiuzheCardDialog,
     closeScanTargetPicker,
-    beginJiuzheTraceGridPlacement,
-    beginBanrenmaTraceGridPlacement,
-    routeFangzhouAlienTraceGain,
-    beginChongTraceGridPlacement,
-    beginAmibaTraceGridPlacement,
-    beginAomomoTraceGridPlacement,
-    beginRunezuTraceGridPlacement,
-    beginYichangdianTraceGridPlacement,
-    renderAlienTracePickerColorStep,
-    openFangzhouTraceUseChoice,
-    handleFangzhouTraceDestinationChoice,
-    handleFangzhouUnlockTraceChoice,
-    confirmFangzhouCard2Unlock,
-    beginFangzhouTraceGridPlacement,
-    confirmAlienRevealNotice,
-    handleStateTraceSlotPlacement,
-    handleFangzhouTraceSlotPlacement,
-    confirmAlienTracePlacement,
-    closeAlienTracePicker,
-    confirmBanrenmaTracePlacement,
-    confirmYichangdianTracePlacement,
-    confirmFangzhouTracePlacement,
-    confirmChongTracePlacement,
-    confirmAmibaTracePlacement,
-    confirmAomomoTracePlacement,
-    confirmRunezuTracePlacement,
-    openRunezuFaceSymbolActionPicker,
     submitHumanActionId: (actionId) => humanActionInputAdapter.submitActionId(actionId),
     closeHumanActionPicker,
-    confirmJiuzheTracePlacement,
-    handleScanAction4Choice,
-    closeScanAction4Picker,
     handleActionEffectButtonClick,
     skipCurrentActionEffect,
-    executeFreeMoveForCardTrigger,
-    executeIndustryFreeMove,
-    executeFreeMoveForCardCorner,
-    executeFreeMoveForScanAction4,
-    executeCardMoveForEffect,
     moveRocket,
     handleBoardPointerDown,
     handleFinalScoreTileClick,
@@ -5291,11 +5147,9 @@
     handlePublicBlindDrawClick,
     handlePublicCardClick,
     selectPassReserveCard,
-    confirmPassReserveSelection,
     dismissPassReserveSelectionOverlay,
     cancelCardSelection,
     confirmPublicScanSelection,
-    cancelDiscardSelection,
     confirmPlayCardSelection: () => {
       const cardId = getPendingPlayCardSelection()?.card?.id;
       const actions = listHumanLegalActions("play_card")
@@ -5321,7 +5175,6 @@
         ? submitHumanAction(actions[0])
         : { ok: false, code: "HUMAN_CARD_CORNER_NOT_LEGAL", message: "所选弃牌角标已不在当前 legal set 中" };
     },
-    cancelHandScanSelection,
     getCurrentPlayer,
     getInterfacePlayer,
     isAiAutomationInputLocked,
@@ -5331,26 +5184,11 @@
     getReadyChongTaskForReservedCard,
     openChongTraceTaskCompletionPicker,
     openCardTaskCompletionPicker,
-    confirmMovePayment,
-    cancelMovePaymentSelection,
-    isDiscardSelectionActive,
-    handleHandCardDiscard,
-    isMovePaymentSelectionActive,
-    handleHandCardMovePayment,
-    isHandScanSelectionActive,
-    handleHandScanCardClick,
-    isIndustryFutureSpanHandSelectionActive: (...args) => industryRuntime.isIndustryFutureSpanHandSelectionActive(...args),
-    handleIndustryFutureSpanHandClick,
-    isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
-    handleIndustryDeepspaceHandClick,
     isPlayCardSelectionActive,
     handlePlayCardSelect,
     handleHandCardCornerQuickAction,
-    confirmTechBlueSlotChoice,
-    closeTechBlueSlotPicker,
     renderStateReadout,
     syncTechRenderContext,
-    handleSupplyTechTileClick,
     setLogOpen,
     setReportTab,
     renderAlienPanels,

@@ -111,6 +111,22 @@ function projectDecision(decision, viewer = { viewerId: "viewer-p1", playerId: "
   }
 })();
 
+(function testDomainRenderersExtendResidentDefaultRegistry() {
+  const registry = domainUiApi.registerIndustryAlienDecisionRenderers(
+    decisionUiApi,
+    decisionUiApi.createDefaultDecisionRegistry(),
+  );
+  const projection = projectDecision(rawDecision("industry_picker", { companyId: "turing" }));
+  const model = registry.render({ projection, viewState: {} });
+  assert.equal(model.ok, true);
+  assert.equal(model.rendererKey, "industry");
+  assert.equal(
+    registry.resolve({ kind: "unrelated-decision" }).key,
+    "generic",
+    "领域 renderer 注册不得移除 resident 默认 fallback",
+  );
+})();
+
 (function testVisibilityAndProjectionDoNotLeakOwnerChoices() {
   const decision = rawDecision("alien_card_gain", {
     speciesId: "yichangdian",

@@ -130,6 +130,18 @@ function projectDecision(decision, viewer) {
   assert.equal(ruleCalls, 0, "render/ViewState 重建不得调用规则端口");
 })();
 
+(function testCardRendererExtendsResidentDefaultRegistry() {
+  const registry = cardDecisionUiApi.registerCardDecisionRenderer(
+    decisionUiApi,
+    decisionUiApi.createDefaultDecisionRegistry(),
+  );
+  const projection = projectDecision(rawDecision("choose_card", "p1", [
+    actionChoice("choose_card", "p1", "public-a", { cardId: "public-a" }),
+  ]), { viewerId: "viewer-p1", playerId: "p1", role: "player" });
+  assert.equal(registry.render({ projection, viewState: {} }).rendererKey, "card");
+  assert.equal(registry.resolve({ kind: "unrelated-decision" }).key, "generic");
+})();
+
 (function testSequentialCardDecisionsStopAtTheirActualOwners() {
   const payment = rawDecision("choose_payment", "p1", [
     actionChoice("choose_payment", "p1", "energy", { cost: { energy: 1 } }),
