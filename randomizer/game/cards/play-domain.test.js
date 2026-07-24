@@ -3,6 +3,10 @@
 const assert = require("node:assert/strict");
 const playDomain = require("./play-domain");
 const cardEffects = require("./effects");
+const standardAction = require("../actions/standard-action");
+const stateStoreApi = require("../state/state-store");
+const effectRuntimeApi = require("../effects/session-runtime");
+const { createRuleComposition } = require("../rule-composition");
 const data = require("../data");
 
 assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 46);
@@ -11,7 +15,7 @@ assert.deepEqual(playDomain.SLICE_EFFECT_TYPES, [
   cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
 ]);
 
-function createRoot(cardId) {
+function createLegacyRoot(cardId) {
   const card = {
     id: `instance:${cardId}`,
     cardId,
@@ -19,9 +23,20 @@ function createRoot(cardId) {
     cardTypeCode: cardEffects.getRuntimeCardTypeCode({ cardId }),
   };
   const nebulaDataState = data.createDefaultNebulaDataState();
-  data.fillNebulaData(nebulaDataState, "sector-4-a", { source: "test" });
-  data.fillNebulaData(nebulaDataState, "sector-3-a", { source: "test" });
+  for (const nebulaId of new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat())) {
+    for (let index = 0; index < 4; index += 1) {
+      data.fillNebulaData(nebulaDataState, nebulaId, { source: "test" });
+    }
+  }
   return {
+    meta: {
+      stateVersion: 0,
+      gameId: `card-play:${cardId}`,
+      rulesetVersion: "test-v1",
+      seed: 158,
+      rngState: {},
+      sequences: {},
+    },
     playerState: {
       currentPlayerId: "p1",
       players: [{
@@ -44,129 +59,267 @@ function createRoot(cardId) {
     planetStatsState: {},
     techGameState: {},
     alienGameState: {},
-    turnState: {},
-    match: {},
+    turnState: { currentPlayerId: "p1" },
+    match: { decisionVersion: 0 },
   };
 }
 
-function createHarness(root, browserAdapter) {
-  const executors = new Map();
-  playDomain.createExperimentalCardPlayDomain({
-    runtime: {
-      registerExecutor(type, executor) {
-        executors.set(type, typeof executor === "function" ? { execute: executor } : executor);
-      },
-    },
-    commitWorkingState(state) {
-      return structuredClone(browserAdapter ? root : state);
-    },
+function toCommitted(root, stateVersion = root.meta?.stateVersion ?? 0) {
+  return stateStoreApi.createCommittedGameState({
+    stateVersion,
+    gameId: root.meta.gameId,
+    rulesetVersion: root.meta.rulesetVersion,
+    seed: root.meta.seed,
+    rngState: root.meta.rngState,
+    sequences: root.meta.sequences,
+    match: root.match,
+    turn: root.turnState,
+    players: root.playerState,
+    solarSystem: root.solarState,
+    pieces: root.rocketState,
+    planets: root.planetStatsState,
+    data: root.nebulaDataState,
+    cards: root.cardState,
+    tech: root.techGameState,
+    aliens: root.alienGameState,
+    finalScoring: {},
   });
+}
+
+function fromCommitted(state) {
   return {
-    executors,
-    invoke(operation, state, ...args) {
-      return operation(state, ...args, browserAdapter ? { workingRoot: root } : root);
+    meta: structuredClone(state.meta),
+    playerState: structuredClone(state.players),
+    cardState: structuredClone(state.cards),
+    rocketState: structuredClone(state.pieces),
+    solarState: structuredClone(state.solarSystem),
+    nebulaDataState: structuredClone(state.data),
+    planetStatsState: structuredClone(state.planets),
+    techGameState: structuredClone(state.tech),
+    alienGameState: structuredClone(state.aliens),
+    turnState: structuredClone(state.turn),
+    match: structuredClone(state.match),
+  };
+}
+
+function restoreObject(target, source) {
+  for (const key of Object.keys(target)) delete target[key];
+  Object.assign(target, structuredClone(source));
+}
+
+function createActionContext(root) {
+  const playerState = root.playerState || root.players;
+  return {
+    workingRoot: root,
+    playerState,
+    cardState: root.cardState || root.cards,
+    rocketState: root.rocketState || root.pieces,
+    solarState: root.solarState || root.solarSystem,
+    nebulaDataState: root.nebulaDataState || root.data,
+    planetStatsState: root.planetStatsState || root.planets,
+    techGameState: root.techGameState || root.tech,
+    alienGameState: root.alienGameState || root.aliens,
+    turnState: root.turnState || root.turn,
+    match: root.match,
+    standardActionAuthority: {
+      actorId: playerState.currentPlayerId,
+      stateVersion: root.meta.stateVersion,
+      decisionVersion: root.match.decisionVersion,
     },
   };
 }
 
-function actionFor(root) {
+function semanticState(state) {
+  const root = state.playerState ? state : fromCommitted(state);
   const player = root.playerState.players[0];
-  const card = player.hand[0];
   return {
-    family: "play_card",
-    actorId: player.id,
-    target: { cardInstanceId: card.id },
-    payload: { cost: cardEffects.getCardPlayCost(card) },
+    stateVersion: root.meta.stateVersion,
+    player: {
+      credits: player.resources.credits,
+      availableData: player.resources.availableData,
+      hand: player.hand.map((card) => card.id),
+      reserved: player.reservedCards.map((card) => card.id),
+      mainActionCompleted: player.mainActionCompleted,
+    },
+    scans: ["sector-4-a", "sector-3-a"].map((nebulaId) => ({
+      nebulaId,
+      tokens: data.listNebulaTokens(root.nebulaDataState, nebulaId).map((token) => ({
+        slotIndex: token.slotIndex,
+        replacedByPlayerId: token.replacedByPlayerId || null,
+      })),
+    })),
   };
 }
 
-function runFixedScan(browserAdapter) {
-  const root = createRoot("b_1.webp");
-  const state = browserAdapter ? { committed: true } : root;
-  const harness = createHarness(root, browserAdapter);
-  const action = actionFor(root);
-  const play = harness.invoke(
-    harness.executors.get(playDomain.EFFECT_TYPES.PLAY).execute,
-    state,
-    { ownerId: "p1", payload: { action } },
-  );
-  assert.equal(play.ok, true);
-  assert.equal(root.playerState.players[0].resources.credits, 8);
-  assert.equal(root.playerState.players[0].hand.length, 0);
-  assert.equal(root.playerState.players[0].reservedCards.length, 1);
-  assert.equal(play.spawnedEffects.length, 2);
-  const scan = harness.invoke(
-    harness.executors.get(playDomain.EFFECT_TYPES.FIXED_NEBULA_SCAN).execute,
-    state,
-    { ownerId: "p1", payload: play.spawnedEffects[0].effect.payload },
-  );
-  assert.equal(scan.ok, true);
-  assert.equal(
-    data.listNebulaTokens(root.nebulaDataState, "sector-4-a")[0].replacedByPlayerColor,
-    "brown",
-  );
-  assert.equal(root.playerState.players[0].resources.availableData, 1);
-  return {
-    player: {
-      credits: root.playerState.players[0].resources.credits,
-      availableData: root.playerState.players[0].resources.availableData,
-      hand: root.playerState.players[0].hand.map((card) => card.id),
-      reserved: root.playerState.players[0].reservedCards.map((card) => card.id),
-      mainActionCompleted: root.playerState.players[0].mainActionCompleted,
+function createIntegratedComposition(cardId, browserShape) {
+  const initialLegacy = createLegacyRoot(cardId);
+  const counters = { compareAndCommit: 0 };
+  const instrumentedStateStoreApi = {
+    createStateStore(initialState, options) {
+      const store = stateStoreApi.createStateStore(initialState, options);
+      return Object.freeze({
+        ...store,
+        compareAndCommit(baseVersion, candidate, metadata) {
+          counters.compareAndCommit += 1;
+          return store.compareAndCommit(baseVersion, candidate, metadata);
+        },
+      });
     },
-    scan: data.listNebulaTokens(root.nebulaDataState, "sector-4-a").map((token) => ({
-      slotIndex: token.slotIndex,
-      replacedByPlayerId: token.replacedByPlayerId || null,
-    })),
-    playEvents: play.events,
-    scanEvents: scan.events,
   };
+  const provider = playDomain.createPlayCardProvider();
+  const options = {
+    stateStoreApi: instrumentedStateStoreApi,
+    effectRuntimeApi,
+    createInitialState(_options, workingState) {
+      return browserShape ? toCommitted(workingState) : toCommitted(initialLegacy);
+    },
+    createActionContext,
+    createActionRegistry() {
+      const registry = standardAction.createRegistry({
+        getAuthority: (context) => context.standardActionAuthority,
+      });
+      registry.register(standardAction.createOptionDefinition("play_card", provider));
+      return registry;
+    },
+    effectDomains: [{
+      id: "card_play_test_boundary",
+      families: ["play_card"],
+      create: playDomain.createExperimentalCardPlayDomain,
+    }],
+    projectState: semanticState,
+  };
+  if (browserShape) {
+    options.projectWorkingState = true;
+    options.stateAdapter = {
+      createWorkingState: () => structuredClone(initialLegacy),
+      createCommittedState(workingState, committedState) {
+        return toCommitted(workingState, committedState.meta.stateVersion);
+      },
+      restoreWorkingState(workingState, source) {
+        restoreObject(
+          workingState,
+          source.playerState ? source : fromCommitted(source),
+        );
+      },
+      createProjectionState: (workingState) => structuredClone(workingState),
+      onCommitted(workingState, committedState) {
+        workingState.meta.stateVersion = committedState.meta.stateVersion;
+      },
+    };
+  }
+  const composition = createRuleComposition(options);
+  return { composition, counters };
+}
+
+function getOnlyPlayAction(composition) {
+  const actions = composition.inputPort.enumerateActions({ family: "play_card" });
+  assert.equal(actions.length, 1);
+  const action = actions[0];
+  assert.equal(action.schemaVersion, standardAction.SCHEMA_VERSION);
+  assert.equal(action.family, "play_card");
+  assert.equal(action.actorId, "p1");
+  assert.equal(action.stateVersion, 0);
+  assert.equal(action.decisionVersion, 0);
+  return action;
+}
+
+function runFixedScan(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_1.webp", browserShape);
+  const action = getOnlyPlayAction(composition);
+  const wrongOwner = composition.inputPort.submitAction({ ...action, actorId: "p2" });
+  assert.equal(wrongOwner.ok, false);
+  assert.equal(wrongOwner.code, "STANDARD_ACTION_ACTOR_MISMATCH");
+  assert.equal(composition.stateSourcePort.getSnapshot().meta.stateVersion, 0);
+  assert.equal(counters.compareAndCommit, 0);
+
+  const result = composition.inputPort.submitAction(action);
+  assert.equal(result.ok, true);
+  assert.equal(result.phase, "completed");
+  assert.equal(result.stateVersion, 1);
+  assert.equal(counters.compareAndCommit, 1, "费用、迁牌与两个扫描 Effect 只能整体 CAS 一次");
+  assert.equal(result.journal.actions.length, 1);
+  assert.equal(result.journal.effects.length, 3);
+  assert.equal(result.journal.events.filter((event) => event.type === "signalMarked").length, 2);
+  const committed = composition.stateSourcePort.getSnapshot();
+  assert.equal(committed.players.players[0].resources.credits, 8);
+  assert.equal(committed.players.players[0].hand.length, 0);
+  assert.equal(committed.players.players[0].reservedCards.length, 1);
+  return semanticState(committed);
+}
+
+function runColorDecisions(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_3.webp", browserShape);
+  const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(opened.ok, true);
+  assert.equal(composition.inspect().phase, "awaiting_input");
+  assert.equal(counters.compareAndCommit, 0, "Decision 未完成前不得提交费用或手牌迁移");
+
+  const first = composition.inspect().session.decision;
+  assert.equal(first.ownerId, "p1");
+  assert.deepEqual(first.choices.map((choice) => choice.target.nebulaId), ["sector-4-a", "sector-3-a"]);
+  const beforeInvalid = composition.stateSourcePort.getSnapshot();
+  const stale = composition.inputPort.submitDecision({
+    decisionId: first.decisionId,
+    decisionVersion: first.decisionVersion + 1,
+    ownerId: first.ownerId,
+    choice: first.choices[0],
+  });
+  assert.equal(stale.code, "EFFECT_DECISION_STALE");
+  const wrongOwner = composition.inputPort.submitDecision({
+    decisionId: first.decisionId,
+    decisionVersion: first.decisionVersion,
+    ownerId: "p2",
+    choice: first.choices[0],
+  });
+  assert.equal(wrongOwner.code, "EFFECT_DECISION_OWNER_MISMATCH");
+  const unknownChoice = composition.inputPort.submitDecision({
+    decisionId: first.decisionId,
+    decisionVersion: first.decisionVersion,
+    ownerId: first.ownerId,
+    choice: { family: "choose_target", target: { choiceId: "unknown", nebulaId: "unknown" }, payload: {} },
+  });
+  assert.equal(unknownChoice.code, "EFFECT_DECISION_NOT_LEGAL");
+  assert.deepEqual(composition.stateSourcePort.getSnapshot(), beforeInvalid);
+  assert.equal(counters.compareAndCommit, 0);
+
+  let terminal = null;
+  for (let index = 0; index < 4; index += 1) {
+    const decision = composition.inspect().session.decision;
+    terminal = composition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
+      choice: decision.choices[index % decision.choices.length],
+    });
+    assert.equal(terminal.ok, true, JSON.stringify(terminal));
+  }
+  assert.equal(terminal.phase, "completed");
+  assert.equal(terminal.stateVersion, 1);
+  assert.equal(terminal.journal.decisions.length, 4);
+  assert.equal(terminal.journal.replay.filter((step) => step.kind === "decision").length, 4);
+  assert.equal(counters.compareAndCommit, 1);
+  return semanticState(composition.stateSourcePort.getSnapshot());
 }
 
 assert.deepEqual(
   runFixedScan(true),
   runFixedScan(false),
-  "Browser working adapter 与 Simulation 直根必须命中同一 owner 并产生同根结果",
+  "Browser working root 与 Simulation committed root 必须经同一 owner 产生同根结果",
+);
+assert.deepEqual(
+  runColorDecisions(true),
+  runColorDecisions(false),
+  "Browser 与 Simulation 的标准 Card Decision 提交结果必须一致",
 );
 
 {
-  const root = createRoot("b_3.webp");
-  const harness = createHarness(root, false);
-  const action = actionFor(root);
-  const play = harness.invoke(
-    harness.executors.get(playDomain.EFFECT_TYPES.PLAY).execute,
-    root,
-    { ownerId: "p1", payload: { action } },
-  );
-  assert.equal(play.ok, true);
-  assert.equal(play.spawnedEffects.length, 4);
-  const decision = play.spawnedEffects[0].effect;
-  assert.equal(decision.kind, "decision");
-  const executor = harness.executors.get(playDomain.EFFECT_TYPES.COLOR_NEBULA_SCAN);
-  const choices = harness.invoke(executor.getLegalChoices, root, decision);
-  assert.deepEqual(choices.map((choice) => choice.target.nebulaId), ["sector-4-a", "sector-3-a"]);
-  const resolved = harness.invoke(executor.resolveDecision, root, decision, choices[0]);
-  assert.equal(resolved.ok, true);
-  assert.equal(
-    data.listNebulaTokens(root.nebulaDataState, "sector-4-a")[0].replacedByPlayerColor,
-    "brown",
-  );
-  assert.equal(resolved.history[0].choiceId, "sector-4-a");
-}
-
-{
-  const root = createRoot("dlc_2.png");
-  const before = structuredClone(root);
-  const harness = createHarness(root, false);
-  const action = actionFor(root);
-  const result = harness.invoke(
-    harness.executors.get(playDomain.EFFECT_TYPES.PLAY).execute,
-    root,
-    { ownerId: "p1", payload: { action } },
-  );
+  const { composition, counters } = createIntegratedComposition("dlc_2.png", false);
+  const before = composition.stateSourcePort.getSnapshot();
+  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(result.ok, false);
-  assert.equal(result.code, "CARD_PLAY_SLICE_UNSUPPORTED");
-  assert.deepEqual(root, before, "未覆盖类型必须在费用和实体迁移前 fail-closed");
+  assert.equal(result.failure.code, "CARD_PLAY_SLICE_UNSUPPORTED");
+  assert.deepEqual(composition.stateSourcePort.getSnapshot(), before);
+  assert.equal(counters.compareAndCommit, 0, "未覆盖类型必须在费用和实体迁移提交前 fail-closed");
 }
 
-console.log("card play domain representative slice tests passed");
+console.log("card play domain production composition slice tests passed");

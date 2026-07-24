@@ -680,6 +680,13 @@
       if (submission?.decisionId !== snapshot.decisionId || submission?.decisionVersion !== snapshot.decisionVersion) {
         return fail("EFFECT_DECISION_STALE", "Decision 已过期", { decision: snapshot });
       }
+      if (submission?.ownerId != null && submission.ownerId !== snapshot.ownerId) {
+        return fail("EFFECT_DECISION_OWNER_MISMATCH", "Decision 提交者不是当前 owner", {
+          expectedOwnerId: snapshot.ownerId,
+          submittedOwnerId: submission.ownerId,
+          decision: snapshot,
+        });
+      }
       const executor = executors.get(effect.type);
       if (typeof executor?.resolveDecision !== "function") {
         return abort(session, {

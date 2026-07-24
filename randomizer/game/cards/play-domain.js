@@ -66,25 +66,35 @@
     return workingContext?.workingRoot || workingContext || state;
   }
 
+  function getSlice(root, browserKey, committedKey) {
+    return root?.[browserKey] || root?.[committedKey] || {};
+  }
+
   function getActor(root, actorId = null) {
-    const resolvedId = actorId || root?.playerState?.currentPlayerId || null;
-    return (root?.playerState?.players || []).find((player) => player.id === resolvedId) || null;
+    const playerState = getSlice(root, "playerState", "players");
+    const resolvedId = actorId || playerState.currentPlayerId || root?.turn?.currentPlayerId || null;
+    return (playerState.players || []).find((player) => player.id === resolvedId) || null;
   }
 
   function createActionContext(root, actorId) {
+    const playerState = getSlice(root, "playerState", "players");
     return {
       workingRoot: root,
-      playerState: root.playerState,
-      cardState: root.cardState,
-      rocketState: root.rocketState,
-      solarState: root.solarState,
-      nebulaDataState: root.nebulaDataState,
-      planetStatsState: root.planetStatsState,
-      techGameState: root.techGameState,
-      alienGameState: root.alienGameState,
-      turnState: root.turnState,
+      playerState,
+      cardState: getSlice(root, "cardState", "cards"),
+      rocketState: getSlice(root, "rocketState", "pieces"),
+      solarState: getSlice(root, "solarState", "solarSystem"),
+      nebulaDataState: getSlice(root, "nebulaDataState", "data"),
+      planetStatsState: getSlice(root, "planetStatsState", "planets"),
+      techGameState: getSlice(root, "techGameState", "tech"),
+      alienGameState: getSlice(root, "alienGameState", "aliens"),
+      turnState: getSlice(root, "turnState", "turn"),
       match: root.match,
-      standardActionAuthority: { actorId },
+      standardActionAuthority: {
+        actorId,
+        stateVersion: root?.meta?.stateVersion ?? 0,
+        decisionVersion: root?.match?.decisionVersion ?? 0,
+      },
     };
   }
 
@@ -152,7 +162,7 @@
         cardEffects.ensureCardEffectState(playedCard);
         actor.reservedCards.push(playedCard);
       } else {
-        cards.addToDiscardPile(root.cardState, playedCard);
+        cards.addToDiscardPile(getSlice(root, "cardState", "cards"), playedCard);
       }
       actor.mainActionCompleted = true;
       return {
