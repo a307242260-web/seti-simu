@@ -602,7 +602,7 @@
       let validated;
       if (restoreOptions.trustedFork === true) {
         try {
-          const state = JSON.parse(envelope.committedState);
+          const state = restoreOptions.trustedState || JSON.parse(envelope.committedState);
           const restoredSession = envelope.session == null
             ? null
             : runtime.restoreCheckpoint(clone(envelope.session));
@@ -702,9 +702,15 @@
           : Date.now()
       );
       let reusableFork = null;
+      const parsedStateByBytes = new Map();
+      function getTrustedState(envelope) {
+        const bytes = envelope.committedState;
+        if (!parsedStateByBytes.has(bytes)) parsedStateByBytes.set(bytes, JSON.parse(bytes));
+        return parsedStateByBytes.get(bytes);
+      }
       if (options.reuseCounterfactualFork === true) {
         const forkStartedAt = now();
-        reusableFork = options.createCounterfactualFork(clone(saved.envelope), {
+        reusableFork = options.createCounterfactualFork(saved.envelope, {
           branchKey: stableHash({ canonicalBefore, pool: true }),
         });
         timing.forkMilliseconds += now() - forkStartedAt;
@@ -727,14 +733,15 @@
         try {
           const branchKey = stableHash({ canonicalBefore, actionId: action.actionId, chain });
           const forkStartedAt = now();
-          fork = reusableFork || options.createCounterfactualFork(clone(envelope), { branchKey });
+          fork = reusableFork || options.createCounterfactualFork(envelope, { branchKey });
           const composition = fork?.composition || fork;
           if (reusableFork) {
             reusableFork.resetBranch?.(branchKey);
-            const restored = composition.lifecycle.restore(clone(envelope), {
+            const restored = composition.lifecycle.restore(envelope, {
               silent: true,
               inPlace: true,
               trustedFork: true,
+              trustedState: getTrustedState(envelope),
             });
             if (!restored?.ok) {
               return {
@@ -759,6 +766,7 @@
             ? composition.inputPort.submitDecision({
               decisionId: inspection.session.decision.decisionId,
               decisionVersion: inspection.session.decision.decisionVersion,
+              ownerId: inspection.session.decision.ownerId,
               choice: current,
             })
             : composition.inputPort.submitAction(current);

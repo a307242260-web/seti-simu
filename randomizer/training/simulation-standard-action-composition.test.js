@@ -29,6 +29,7 @@ function finishOpening(kernel) {
     const submitted = kernel.composition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
       choice: decision.choices[0],
     });
     assert.equal(submitted.ok, true, `opening Decision ${step} 必须可提交`);
@@ -81,6 +82,7 @@ function submitActionToCompletion(composition, action, quick = false) {
     result = composition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
       choice: decision.choices[0],
     });
     assert.equal(result.ok, true);
@@ -211,6 +213,7 @@ const before = kernel.composition.stateSourcePort.read().state;
 const submitted = kernel.composition.inputPort.submitDecision({
   decisionId: inspection.session.decision.decisionId,
   decisionVersion: inspection.session.decision.decisionVersion,
+  ownerId: inspection.session.decision.ownerId,
   choice: openingAction,
 });
 assert.equal(submitted.ok, true, "生产 composition 必须正式执行已注册 Standard Action");
@@ -220,6 +223,7 @@ assert.notDeepEqual(after.match.initialIncomeQueue, before.match.initialIncomeQu
 const stale = kernel.composition.inputPort.submitDecision({
   decisionId: inspection.session.decision.decisionId,
   decisionVersion: inspection.session.decision.decisionVersion,
+  ownerId: inspection.session.decision.ownerId,
   choice: openingAction,
 });
 assert.equal(stale.ok, false, "过期 Decision 必须在 handler 前拒绝");
@@ -368,7 +372,7 @@ kernel.composition.dispose();
   assert.equal(cardKernel.composition.inspect().phase, "awaiting_input");
   const decision = cardKernel.composition.inspect().session.decision;
   assert.equal(decision.ownerId, decisionScenario.turn.currentPlayerId);
-  assert.equal(decision.decisionKind, "choose_reward");
+  assert.equal(decision.decisionKind, "choose_card");
   assert.equal(decision.choices.length, 1);
   const committedBeforeInvalid = cardKernel.composition.stateSourcePort.read().state;
   const illegal = structuredClone(decision.choices[0]);
@@ -377,6 +381,7 @@ kernel.composition.dispose();
   const invalid = cardKernel.composition.inputPort.submitDecision({
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: illegal,
   });
   assert.equal(invalid.ok, false, "未知/错 owner choice 必须 fail-closed");
@@ -385,11 +390,15 @@ kernel.composition.dispose();
   const resolved = cardKernel.composition.inputPort.submitDecision({
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: decision.choices[0],
   });
   assert.equal(resolved.ok, true);
   assert.equal(resolved.journal.decisions.length, 1);
-  assert.ok(resolved.journal.events.some((event) => event.type === "card_effect_choice"));
+  assert.ok(resolved.journal.events.some((event) => (
+    event.type === "card_effect"
+    && event.effectType === cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD
+  )));
   const resolvedPlayer = cardKernel.composition.stateSourcePort.read().state.players.players
     .find((player) => player.id === decisionScenario.turn.currentPlayerId);
   assert.equal(resolvedPlayer.resources.credits, 19);

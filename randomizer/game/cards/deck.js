@@ -553,6 +553,7 @@
     const activePlayerCount = Math.max(1, Math.round(Number(options.activePlayerCount) || 1));
     const cardsPerPile = activePlayerCount + 1;
     const random = options.random || Math.random;
+    const createInstance = options.createCardInstance || createCardInstance;
 
     cardState.passReservePiles = {};
     const piles = ensurePassReservePiles(cardState);
@@ -563,7 +564,7 @@
       for (let index = 0; index < cardsPerPile; index += 1) {
         const result = takeRandomEntryForDraw(cardState, playerState, random);
         if (!result?.entry) break;
-        pile.push(createCardInstance(result.entry, `pass-${roundNumber}-${index + 1}`));
+        pile.push(createInstance(result.entry, `pass-${roundNumber}-${index + 1}`));
       }
     }
 
@@ -691,7 +692,7 @@
     for (let index = 0; index < PUBLIC_CARD_COUNT; index += 1) {
       if (skipSlotIndexes.has(index)) continue;
       if (!cardState.publicCards[index]) {
-        replenishPublicSlot(cardState, playerState, index, random);
+        replenishPublicSlot(cardState, playerState, index, random, options);
       }
     }
     return cardState.publicCards.slice();

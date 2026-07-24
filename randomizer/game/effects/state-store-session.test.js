@@ -198,6 +198,7 @@ function dispatchSteps(runtime, family, steps, meta = {}) {
   assert.equal(research.resolveDecision(dispatched.session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: { tileId: "orange-1" },
   }).ok, true);
   assert.equal(research.drain(dispatched.session).ok, true);
@@ -301,11 +302,13 @@ function dispatchSteps(runtime, family, steps, meta = {}) {
   assert.equal(runtime.resolveDecision(left.session, {
     decisionId: leftDecision.decisionId,
     decisionVersion: leftDecision.decisionVersion,
+    ownerId: leftDecision.ownerId,
     choice: { turn: 2 },
   }).ok, true);
   const conflict = runtime.resolveDecision(right.session, {
     decisionId: rightDecision.decisionId,
     decisionVersion: rightDecision.decisionVersion,
+    ownerId: rightDecision.ownerId,
     choice: { turn: 3 },
   });
   assert.equal(conflict.code, "STATE_VERSION_CONFLICT");

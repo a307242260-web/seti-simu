@@ -25,6 +25,7 @@ function submitCurrentDecision(runtime, session, choice) {
   return runtime.resolveDecision(session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice,
   });
 }

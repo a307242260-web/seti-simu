@@ -1030,7 +1030,6 @@
       getMainActionStartBlockReason,
       canAnalyzeDataForPlayer,
       getAnalyzeActionOptionsForPlayer,
-      getCardPlayCost,
       hasActivePendingSubFlow,
       getMovableTokensForPlayer,
       getRequiredMovePointsForUi,
@@ -1081,16 +1080,6 @@
           canExecute(actionContext) { return this.getOptions(actionContext); },
           execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
         },
-        playCard: actions.standardAction.createPlayCardProvider({
-          players,
-          cards,
-          getCardPlayCost,
-          canStart(actionContext) {
-            return canStartMainAction(actionContext.workingRoot)
-              ? { ok: true }
-              : { ok: false, message: getMainActionStartBlockReason(actionContext.workingRoot) };
-          },
-        }),
         pass: {
           label: "PASS",
           getOptions(actionContext) {

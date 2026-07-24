@@ -2555,6 +2555,7 @@
       return submitDecision({
         decisionId: decision.decisionId,
         decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId,
         choice,
       });
     }

@@ -175,99 +175,9 @@
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
     const getActionEffectFlow = (workingRoot) => workingRoot.match?.actionEffectFlow || null;
 
-    function executeCardEffect(workingRoot, effect) {
+    function executeSpeciesEffect(workingRoot, effect) {
       const types = cardEffects.EFFECT_TYPES;
       switch (effect.type) {
-        case types.SCAN_NEBULA:
-          return executeCardFixedNebulaScanEffect(workingRoot, effect);
-        case types.SCAN_COLOR_CHOICE:
-        case "card_color_scan":
-          return openCardColorScanEffect(workingRoot, effect);
-        case types.PUBLIC_SCAN:
-          return openCardPublicScanEffect(workingRoot, effect);
-        case types.ANY_SECTOR_SCAN:
-          return openCardAnySectorScanEffect(workingRoot, effect);
-        case types.SCAN_ACTION:
-          return expandCardScanActionEffect(workingRoot, effect);
-        case types.RESEARCH_TECH:
-          return executeCardResearchTechEffect(workingRoot, effect);
-        case types.CARD_ORBIT:
-          return executeCardOrbitEffect(workingRoot, effect);
-        case types.CARD_LAND:
-          return executeCardLandEffect(workingRoot, effect);
-        case types.REMOVE_PLANET_MARKER:
-          return openRemovePlanetMarkerPicker(workingRoot, effect);
-        case types.PROBE_SECTOR_SCAN:
-          return executeProbeSectorScanEffect(workingRoot, effect);
-        case types.PLANET_SECTOR_SCAN:
-          return executePlanetSectorScanEffect(workingRoot, effect);
-        case types.SECTOR_X_SCAN:
-          return executeSectorXScanEffect(workingRoot, effect);
-        case types.INCOME:
-          return openCardIncomeEffect(workingRoot, effect);
-        case types.REGISTER_EVENT_BONUS:
-          return executeRegisterEventBonusEffect(workingRoot, effect);
-        case types.COUNT_HAND_INCOME_RESOURCE:
-          return executeCountHandIncomeResourceEffect(workingRoot, effect);
-        case types.COUNT_CURRENT_INCOME_RESOURCE:
-          return executeCountCurrentIncomeResourceEffect(workingRoot, effect);
-        case types.COUNT_ALIENS_RESOURCE:
-          return executeCountAliensResourceEffect(workingRoot, effect);
-        case types.TUCK_PLAYED_CARD_TO_INCOME:
-          return executeTuckPlayedCardToIncomeEffect(workingRoot, effect);
-        case types.PICK_CARD_CORNER_REWARD:
-          return executePickCardCornerRewardEffect(workingRoot, effect);
-        case types.FREE_MOVE:
-        case types.CARD_MOVE:
-          return beginCardMoveEffect(effect);
-        case types.DRAW_THEN_SCAN:
-          return openCardDrawThenScanEffect(workingRoot, effect);
-        case types.DRAW_THEN_DISCARD_ACTION:
-          return executeCardDrawThenDiscardActionEffect(workingRoot, effect);
-        case types.CONDITIONAL_REWARD:
-          return executeConditionalRewardEffect(workingRoot, effect);
-        case types.OPTIONAL_DISCARD_SCAN:
-          return executeOptionalDiscardScanEffect(workingRoot, effect);
-        case types.HAND_SCAN:
-          return executeHandScanEffect(workingRoot, effect);
-        case types.COUNT_HAND_CORNER_MOVE:
-          return executeCountHandCornerMoveEffect(workingRoot, effect);
-        case types.CHOOSE_HAND_CORNER_REWARD:
-          return executeChooseHandCornerRewardEffect(workingRoot, effect);
-        case types.DISCARD_PUBLIC_CORNER_REWARDS:
-          return executeDiscardPublicCornerRewardsEffect(workingRoot, effect);
-        case types.RETURN_PLAYED_CARD_TO_HAND_IF:
-          return executeReturnPlayedCardToHandIfEffect(workingRoot, effect);
-        case types.LANDING_SECTOR_SCAN:
-          return executeLandingSectorScanEffect(workingRoot, effect);
-        case types.CONDITIONAL_SECTOR_SCAN:
-          return executeConditionalSectorScanEffect(workingRoot, effect);
-        case types.DISCARD_ANY_FOR_INCOME:
-          return executeDiscardAnyForIncomeEffect(workingRoot, effect);
-        case types.PAY_CREDITS_FOR_REWARD:
-          return executePayCreditsForRewardEffect(workingRoot, effect);
-        case types.DISCARD_CARD_CORNER_REPEAT:
-          return executeDiscardCardCornerRepeatEffect(workingRoot, effect);
-        case types.REMOVE_ORBIT_TO_PROBE:
-          return executeRemoveOrbitToProbeEffect(workingRoot, effect);
-        case types.RETURN_UNFINISHED_TASK_TO_HAND:
-          return executeReturnUnfinishedTaskToHandEffect(workingRoot, effect);
-        case types.COUNT_TECH_TYPES_REWARD:
-          return executeCountTechTypesRewardEffect(workingRoot, effect);
-        case types.COUNT_OWNED_TECH_REWARD:
-          return executeCountOwnedTechRewardEffect(workingRoot, effect);
-        case types.COUNT_ROCKETS_REWARD:
-          return executeCountRocketsRewardEffect(workingRoot, effect);
-        case types.DISCARD_ALL_HAND:
-          return executeDiscardAllHandEffect(workingRoot, effect);
-        case types.PROBE_STACK_REWARD:
-          return executeProbeStackRewardEffect(workingRoot, effect);
-        case types.PROBE_LOCATION_REWARD:
-          return executeProbeLocationRewardEffect(workingRoot, effect);
-        case types.EARTH_SECTOR_CONTENT_MOVE:
-          return executeEarthSectorContentMoveEffect(workingRoot, effect);
-        case types.PLUTO_RESERVE:
-          return executePlutoReserveEffect(workingRoot, effect);
         case types.YICHANGDIAN_NEXT_ANOMALY_REWARD:
           return executeYichangdianNextAnomalyRewardEffect(workingRoot, effect);
         case types.YICHANGDIAN_ANOMALY_SIGNAL_SCORE:
@@ -723,8 +633,8 @@
       const techResult = executeResearchTechEffect(workingRoot, effect);
       if (techResult) return techResult;
 
-      const cardResult = executeCardEffect(workingRoot, effect);
-      if (cardResult) return cardResult;
+      const speciesResult = executeSpeciesEffect(workingRoot, effect);
+      if (speciesResult) return speciesResult;
 
       const rewardResult = planetRewards?.EFFECT_TYPES ? executePlanetRewardEffect(workingRoot, effect) : null;
       if (rewardResult) return rewardResult;
@@ -919,7 +829,6 @@
     }
 
     return {
-      executeCardEffect,
       openPickCardRewardEffect,
       openTechBonusPickCardEffect,
       openInitialIncomeEffect,

@@ -165,18 +165,21 @@ function getAction(registry, state, family, kind) {
   assert.equal(runtime.resolveDecision(dispatched.session, {
     decisionId: before.decisionId,
     decisionVersion: before.decisionVersion,
+    ownerId: before.ownerId,
     choice: { target: "blue" },
   }).code, "EFFECT_DECISION_STALE");
   assert.deepEqual(dispatched.session, stableCheckpoint, "stale choice 拒绝必须无副作用");
   assert.equal(runtime.resolveDecision(dispatched.session, {
     decisionId: after.decisionId,
     decisionVersion: after.decisionVersion,
+    ownerId: after.ownerId,
     choice: { target: "blue" },
   }).code, "EFFECT_DECISION_NOT_LEGAL");
   assert.deepEqual(dispatched.session, stableCheckpoint, "过期合法项拒绝必须无副作用");
   assert.equal(runtime.resolveDecision(dispatched.session, {
     decisionId: after.decisionId,
     decisionVersion: after.decisionVersion,
+    ownerId: after.ownerId,
     choice: { target: "orange" },
   }).ok, true);
   assert.equal(dispatched.session.committedState.chosenTarget, "orange");
@@ -208,6 +211,7 @@ function getAction(registry, state, family, kind) {
   assert.equal(runtime.resolveDecision(dispatched.session, {
     decisionId: quickDecision.decisionId,
     decisionVersion: quickDecision.decisionVersion,
+    ownerId: quickDecision.ownerId,
     choice: { amount: 2 },
   }).ok, true);
   assert.equal(runtime.drain(dispatched.session).ok, true);
@@ -269,6 +273,7 @@ function getAction(registry, state, family, kind) {
     runtime.resolveDecision(dispatched.session, {
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
       choice: clone(decision.choices[0]),
     });
     return {

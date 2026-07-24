@@ -40,7 +40,7 @@ function createState() {
     rulesetVersion: "prototype-2026-07",
     seed: 84,
     rngState: { owner: "test", state: 84 },
-    sequences: { rocket: 2, card: 3 },
+    sequences: { rocket: 2, card: 3, dataToken: 8 },
     match: { playerOrder: ["p1", "p2"] },
     turn: {
       activePlayerCount: 2,
@@ -61,6 +61,10 @@ function createState() {
           hand: [card("card-1-hand", "b_1.webp")],
           reservedCards: [card("card-2-reserved", "b_2.webp")],
           techState: playerTech.createPlayerTechState(),
+          dataState: {
+            poolTokens: [{ id: "data-token-7", index: 1, slotIndex: 1 }],
+            placedTokens: [], discardedCount: 0,
+          },
         },
         {
           id: "p2", color: "green", resources: { credits: 10, energy: 10, handSize: 0, score: 0 },
@@ -123,6 +127,7 @@ function bytes(store) {
   assert.ok(purified.tech.stacks[TECH_TILE_ID]);
   assert.equal(purified.meta.sequences.rocket, 2);
   assert.equal(purified.meta.sequences.card, 3);
+  assert.equal(purified.meta.sequences.dataToken, 8);
   assert.equal(JSON.stringify(purified).includes("cardTaskState"), false);
   assert.equal(JSON.stringify(purified).includes("setupSelectionState"), false);
 })();

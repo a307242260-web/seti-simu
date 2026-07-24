@@ -516,6 +516,7 @@ function createSimulationEnv() {
         ? composition.inputPort.submitDecision({
           decisionId: inspection.session.decision.decisionId,
           decisionVersion: inspection.session.decision.decisionVersion,
+          ownerId: inspection.session.decision.ownerId,
           choice: selector,
         })
         : composition.inputPort.submitAction(selector);

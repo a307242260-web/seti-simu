@@ -3471,9 +3471,11 @@
     countTraceMarkers,
     consolidateCardMoveEffects,
     countRocketsForReward,
+    countTraceMarkers,
     getProbeStackRewardMatch,
     hasProbeStackReward,
     getMatchingConditionalSectorXs,
+    taskConditionMet,
     areAllTriggersConsumed,
     getConsumedTriggerIndexes,
   });

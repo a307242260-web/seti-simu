@@ -43,7 +43,7 @@
     "tech.board": "committed",
     "tech.ui/pendingTileId/selected*/allowedTechTypes": "session-owned/host-only:excluded",
     "setupSelectionState": "setup-session-owned:excluded",
-    "meta.sequences.card/rocket": "committed deterministic domain id allocation",
+    "meta.sequences.card/dataToken/rocket": "committed deterministic domain id allocation",
   });
   const HOST_KEYS = new Set([
     "ui", "statusNote", "tokenSrc", "src", "cardName", "colorLabel", "playerLabel",
@@ -110,6 +110,22 @@
     }
   }
 
+  function visitDataTokens(state, visitor) {
+    const players = Array.isArray(state?.players?.players) ? state.players.players : [];
+    players.forEach((player, playerIndex) => {
+      for (const key of ["poolTokens", "placedTokens"]) {
+        (player?.dataState?.[key] || []).forEach((token, index) => (
+          visitor(token, `$.players.players[${playerIndex}].dataState.${key}[${index}]`)
+        ));
+      }
+    });
+  }
+
+  function inferDataTokenSequence(value) {
+    const match = String(value ?? "").match(/^data-token-(?:recovered-)?(\d+)$/);
+    return match ? Number(match[1]) : 0;
+  }
+
   function purifyPlayers(players) {
     const result = stripKeys(players || {}, new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]));
     delete result.currentPlayerId;
@@ -159,6 +175,18 @@
     );
     if (hasCardInstance || Object.hasOwn(result.meta.sequences, "card")) {
       result.meta.sequences.card = Math.max(Number(result.meta.sequences.card) || 0, maxCardSequence + 1);
+    }
+    let maxDataTokenSequence = 0;
+    let hasDataToken = false;
+    visitDataTokens(result, (token) => {
+      hasDataToken = true;
+      maxDataTokenSequence = Math.max(maxDataTokenSequence, inferDataTokenSequence(token?.id));
+    });
+    if (hasDataToken || Object.hasOwn(result.meta.sequences, "dataToken")) {
+      result.meta.sequences.dataToken = Math.max(
+        Number(result.meta.sequences.dataToken) || 0,
+        maxDataTokenSequence + 1,
+      );
     }
     result.meta.sequences.rocket = Math.max(Number(result.meta.sequences.rocket) || 0, maxRocketSequence + 1);
     return result;
@@ -302,6 +330,24 @@
     });
   }
 
+  function validateDataTokens(state, errors) {
+    const ids = new Set();
+    let maximum = 0;
+    visitDataTokens(state, (token, path) => {
+      const id = String(token?.id || "");
+      const sequence = inferDataTokenSequence(id);
+      if (!id || !sequence || ids.has(id)) {
+        errors.push(error(`${path}.id`, "STATE_DATA_TOKEN_ID_INVALID", "数据实体 id 必须符合 data-token-N 且全局唯一"));
+      }
+      ids.add(id);
+      maximum = Math.max(maximum, sequence);
+    });
+    const nextSequence = Number(state?.meta?.sequences?.dataToken);
+    if (ids.size && (!Number.isSafeInteger(nextSequence) || nextSequence <= maximum)) {
+      errors.push(error("$.meta.sequences.dataToken", "STATE_DATA_TOKEN_SEQUENCE_INVALID", "dataToken sequence 必须覆盖全部 committed 数据实体"));
+    }
+  }
+
   function validateTech(state, playerIds, errors) {
     const stacks = state?.tech?.stacks || {};
     for (const [tileId, stack] of Object.entries(stacks)) {
@@ -360,6 +406,7 @@
     const playerIds = validatePlayers(state, errors);
     validatePieces(state, playerIds, errors);
     validateCards(state, errors);
+    validateDataTokens(state, errors);
     validateTech(state, playerIds, errors);
     return errors.length ? { ok: false, errors } : { ok: true };
   }

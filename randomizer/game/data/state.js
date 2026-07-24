@@ -46,6 +46,18 @@
     return { poolTokens: [], placedTokens: [], discardedCount: 0 };
   }
 
+  function takeCommittedDataTokenSequence(root) {
+    if (!root?.meta || !root.meta.sequences || typeof root.meta.sequences !== "object") {
+      throw new TypeError("创建 committed 数据实体需要 meta.sequences");
+    }
+    const nextSequence = Number(root.meta.sequences.dataToken);
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("meta.sequences.dataToken 必须是正安全整数");
+    }
+    root.meta.sequences.dataToken = nextSequence + 1;
+    return nextSequence;
+  }
+
   function rememberDataTokenSequence(id) {
     const match = /^data-token-(?:recovered-)?(\d+)$/.exec(String(id || ""));
     if (!match) return;
@@ -337,12 +349,17 @@
       return { ok: false, message: "数据池没有可用槽位" };
     }
 
-    dataTokenSequence += 1;
-    const token = normalizePoolToken({
-      id: `data-token-${dataTokenSequence}`,
+    const committedSequence = options.root
+      ? takeCommittedDataTokenSequence(options.root)
+      : null;
+    if (committedSequence == null) dataTokenSequence += 1;
+    const token = {
+      id: `data-token-${committedSequence ?? dataTokenSequence}`,
       index: getNextDataIndex(dataState),
       slotIndex,
-    }, dataState.poolTokens.length);
+      percentX: layout.percentX,
+      percentY: layout.percentY,
+    };
 
     dataState.poolTokens.push(token);
     syncAvailableDataCount(player);
@@ -608,6 +625,7 @@
     ANALYZE_ENERGY_COST,
     ANALYZE_REQUIRED_COMPUTER_SLOT,
     createDefaultDataState,
+    takeCommittedDataTokenSequence,
     getNextDataTokenSequence,
     restoreNextDataTokenSequence,
     normalizeDataState,

@@ -306,6 +306,7 @@ function createForkableHarness() {
         assert.equal(direct.inputPort.submitDecision({
           decisionId: decision.decisionId,
           decisionVersion: decision.decisionVersion,
+          ownerId: decision.ownerId,
           choice,
         }).ok, true);
         directLeaves.push(direct.projection().state);
@@ -347,6 +348,7 @@ function createForkableHarness() {
   const completed = composition.inputPort.submitDecision({
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: decision.choices.find((choice) => choice.id === "right"),
   });
   assert.equal(completed.ok, true);
@@ -442,6 +444,7 @@ function createForkableHarness() {
   const completed = composition.inputPort.submitDecision({
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: decision.choices[0],
   });
   assert.equal(completed.ok, true);
@@ -773,9 +776,14 @@ function createForkableHarness() {
   );
   assert.equal(captured.invariantValidators[0], adapter.validateSessionBoundary);
   assert.deepEqual(
-    captured.effectDomains[0].families,
-    standardAction.ALL_FAMILIES,
+    captured.effectDomains.flatMap((domain) => domain.families).sort(),
+    [...standardAction.ALL_FAMILIES].sort(),
     "Browser 必须由 production Domain Pack 安装全部 Standard Action family",
+  );
+  assert.equal(
+    captured.effectDomains.find((domain) => domain.families.includes("play_card")).id,
+    require("../game/cards/play-domain").DOMAIN_ID,
+    "play_card 必须由独立 game-owned Card Play Domain 唯一拥有",
   );
   const initial = captured.createInitialState({}, { match: {}, turn: {} });
   assert.equal(initial.meta.seed, "browser-seed");

@@ -145,6 +145,7 @@ function resolveCurrent(harness, session, choiceIndex = 0) {
   return harness.flow.resolveDecision(session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: decision.choices[choiceIndex],
   });
 }
@@ -215,6 +216,7 @@ function resolveCurrent(harness, session, choiceIndex = 0) {
   const result = harness.flow.resolveDecision(session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion + 1,
+    ownerId: decision.ownerId,
     choice: decision.choices[0],
   });
   assert.equal(result.ok, false);

@@ -746,7 +746,6 @@
     createActionContext: createActionContextForWorkingRoot,
     getAnalyzeActionOptions: getAnalyzeActionOptionsForPlayer,
     executeScan: (workingRoot, descriptor) => executeMainScanAction(workingRoot, descriptor),
-    executePlayCard: (_workingRoot, descriptor) => executeStandardPlayCard(descriptor),
   });
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
     executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
@@ -2993,9 +2992,7 @@
   const handleHandCardDiscard = (...args) => browserOwnerInputs.hand_flow.handleHandCardDiscard(...args);
   const beginPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.beginPlayCardSelection(...args);
   const cancelPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.cancelPlayCardSelection(...args);
-  const executeStandardPlayCard = (...args) => browserOwnerInputs.hand_flow.executeStandardPlayCard(...args);
   const handleFutureSpanCardPlay = (...args) => browserOwnerInputs.hand_flow.handleFutureSpanCardPlay(...args);
-  const handleHandCardPlay = (...args) => browserOwnerInputs.hand_flow.handleHandCardPlay(...args);
   const handleFutureSpanPlayCardSelect = (...args) => browserOwnerInputs.hand_flow.handleFutureSpanPlayCardSelect(...args);
   const effectSkipRuntime = effectFlowModule.createEffectSkipRuntime({
     industry,
@@ -5457,7 +5454,6 @@
       cancelDiscardSelection,
       cancelPlayCardSelection,
       pickPublicCardForCurrentPlayer,
-      handleHandCardPlay: confirmHandCardPlayAction,
       discardCardFromCurrentPlayer,
       undoPendingAction,
       endCurrentTurn,

@@ -154,7 +154,7 @@ function createModules() {
 
 function createWorkingState(options = {}, random = Math.random) {
   restoreSequences({
-    actionLog: 1, card: 1, dataToken: 1, finalMark: 1, handCard: 1,
+    actionLog: 1, finalMark: 1, handCard: 1,
     historyStep: 1, nebulaReplacement: 1, nebulaToken: 1, rocket: 1,
   });
   const state = initialGameStateApi.createSessionState(createModules(), {
@@ -166,6 +166,7 @@ function createWorkingState(options = {}, random = Math.random) {
   state.meta = {
     seed: options.seed ?? "seti-simulation",
     rngState: clone(options.rngState || { algorithm: "seti-simulation-mulberry32-v1", state: 1 }),
+    sequences: { card: 1, dataToken: 1 },
   };
   state.match.decisionVersion = 0;
   state.match.actionLog = [];
@@ -343,6 +344,9 @@ function createInitialSelectionInputPort() {
         || input.decisionVersion !== activeDecision.decisionVersion) {
         return { ok: false, code: "INITIAL_SELECTION_DECISION_STALE", message: "初始选择 Decision 版本已失效" };
       }
+      if (input.ownerId !== activeDecision.player.id) {
+        return { ok: false, code: "INITIAL_SELECTION_DECISION_OWNER_MISMATCH", message: "初始选择 Decision owner 不匹配" };
+      }
       return registry.execute({}, input.choice);
     },
   });
@@ -375,6 +379,7 @@ function submitOpeningPlans(workingState, offers, selectedPlans, aiDifficulty) {
     const submitted = inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
       choice,
     });
     if (!submitted?.ok) throw new Error(submitted?.message || "初始选择提交失败");
@@ -391,7 +396,17 @@ function resolveOpeningRules(workingState, random) {
     alienGameState: workingState.alienGameState,
     techGameState: workingState.techGameState,
     blindDrawCard(player) {
-      return cards.blindDraw(workingState.cardState, workingState.playerState, player, random);
+      return cards.blindDraw(
+        workingState.cardState,
+        workingState.playerState,
+        player,
+        random,
+        {
+          createCardInstance: (entry, sequence) => (
+            cards.createCommittedCardInstance(workingState, entry, sequence)
+          ),
+        },
+      );
     },
     getEarthSectorCoordinate: () => getEarthCoordinate(workingState),
     launchRocketAtEarth(player) {
@@ -502,8 +517,8 @@ function readSequences(workingState) {
   const nebulaSequences = data.getDeterministicSequences?.() || {};
   return {
     actionLog: (workingState.match.actionLog || []).length + 1,
-    card: cards.getNextCardInstanceSequence(),
-    dataToken: data.getNextDataTokenSequence(),
+    card: workingState.meta?.sequences?.card ?? cards.getNextCardInstanceSequence(),
+    dataToken: workingState.meta?.sequences?.dataToken ?? data.getNextDataTokenSequence(),
     finalMark: finalScoring.getNextFinalMarkSequence(),
     handCard: players.getNextHandCardSequence(),
     historyStep: actionHistory.getNextHistoryStepSequence(),
@@ -790,6 +805,11 @@ function activePlayers(workingState) {
 }
 
 function createCardGame(workingState, random, handCount = 5) {
+  const factoryOptions = {
+    createCardInstance: (entry, sequence) => (
+      cards.createCommittedCardInstance(workingState, entry, sequence)
+    ),
+  };
   for (const player of workingState.playerState.players) {
     player.hand = [];
     player.reservedCards = [];
@@ -800,13 +820,26 @@ function createCardGame(workingState, random, handCount = 5) {
   workingState.cardState.discardPile = [];
   workingState.cardState.drawPileCardIds = [];
   for (const player of activePlayers(workingState)) {
-    cards.drawCardsToHand(workingState.cardState, workingState.playerState, player, handCount, random);
+    cards.drawCardsToHand(
+      workingState.cardState,
+      workingState.playerState,
+      player,
+      handCount,
+      random,
+      factoryOptions,
+    );
   }
-  cards.ensurePublicCardsFilled(workingState.cardState, workingState.playerState, random);
+  cards.ensurePublicCardsFilled(
+    workingState.cardState,
+    workingState.playerState,
+    random,
+    factoryOptions,
+  );
   cards.preparePassReservePiles(workingState.cardState, workingState.playerState, {
     rounds: [1, 2, 3],
     activePlayerCount: workingState.turnState.activePlayerCount,
     random,
+    ...factoryOptions,
   });
 }
 
@@ -934,58 +967,12 @@ function listCardSelectionChoices(workingState, pending) {
     : publicChoices;
 }
 
-function listHandCornerRewardChoices(workingState, pending) {
-  if (pending?.kind !== "play_card_effect" || pending.effect?.type !== cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
-    return [];
-  }
-  const player = workingState.playerState.players.find((candidate) => candidate.id === pending.playerId);
-  return (player?.hand || []).flatMap((card, handIndex) => {
-    const reward = cards.getDiscardActionRewardForCard(card);
-    const moveReward = cards.getDiscardActionMoveRewardForCard(card);
-    if (!reward && !moveReward) return [];
-    return [{
-      target: {
-        kind: "play-card-hand-corner-reward",
-        choiceId: card.id,
-        cardInstanceId: card.id,
-      },
-      payload: { handIndex, reward: clone(reward), moveReward: clone(moveReward) },
-      summary: cards.getCardLabel(card),
-    }];
-  });
-}
-
-function applySimulationCardEffect(workingState, player, effect, random) {
-  if (effect.type === cardEffects.REWARD_TYPES.GAIN_RESOURCES) {
-    players.gainResources(player, effect.options?.gain || {});
-    return { ok: true, events: [{ type: "card_effect", effectId: effect.id, effectType: effect.type }] };
-  }
-  if (effect.type === cardEffects.REWARD_TYPES.GAIN_DATA) {
-    const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
-    for (let index = 0; index < count; index += 1) data.gainData(player, { source: "play_card" });
-    return { ok: true, events: [{ type: "card_effect", effectId: effect.id, effectType: effect.type }] };
-  }
-  if (effect.type === cardEffects.REWARD_TYPES.DRAW_CARDS) {
-    const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
-    cards.drawCardsToHand(workingState.cardState, workingState.playerState, player, count, random);
-    return { ok: true, events: [{ type: "card_effect", effectId: effect.id, effectType: effect.type }] };
-  }
-  if (effect.type === cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
-    return { ok: true, pending: { kind: "play_card_effect", playerId: player.id, effect: clone(effect) }, events: [] };
-  }
-  return {
-    ok: false,
-    code: "SIMULATION_CARD_EFFECT_UNSUPPORTED",
-    message: `Simulation play_card 尚未接入卡牌效果 ${effect.type}`,
-  };
-}
-
 function applyCornerReward(workingState, player, reward, source) {
   if (!reward) return;
   if (reward.gain && Object.keys(reward.gain).length) players.gainResources(player, reward.gain);
   const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
   for (let index = 0; index < dataCount; index += 1) {
-    data.gainData(player, { source });
+    data.gainData(player, { source, root: workingState });
   }
 }
 
@@ -1228,91 +1215,6 @@ function createSimulationRuleComposition(options = {}) {
     },
   };
 
-  registry.register(standardActionApi.createOptionDefinition(
-    "play_card",
-    standardActionApi.createPlayCardProvider({
-      players,
-      cards,
-      getCardPlayCost: cardEffects.getCardPlayCost,
-      canStart(actionContext) {
-        const root = actionContext.workingRoot || actionContext;
-        const player = players.getCurrentPlayer(root.playerState);
-        return !hasPendingContinuation(root) && !player?.mainActionCompleted
-          ? { ok: true }
-          : { ok: false, message: "当前无法开始打牌行动" };
-      },
-      execute(actionContext, action) {
-        const root = actionContext.workingRoot || actionContext;
-        const player = players.getCurrentPlayer(root.playerState);
-        const handIndex = player?.hand?.findIndex((card) => card.id === action.target?.cardInstanceId) ?? -1;
-        const card = handIndex >= 0 ? player.hand[handIndex] : null;
-        if (!card) {
-          return { ok: false, code: "PLAY_CARD_STALE", message: "手牌实体已失效" };
-        }
-        const cost = cardEffects.getCardPlayCost(card);
-        if (stableSerialize(cost) !== stableSerialize(action.payload?.cost || {})) {
-          return { ok: false, code: "PLAY_CARD_COST_STALE", message: "卡牌费用已失效" };
-        }
-        const spent = players.spendResources(player, cost);
-        if (!spent.ok) return spent;
-        const removed = cards.discardFromHandAtIndex(player, handIndex);
-        if (!removed.ok) return removed;
-        const playedCard = removed.card;
-        const model = cardEffects.getCardModel(playedCard);
-        const cardType = cardEffects.getRuntimeCardTypeCode(playedCard);
-        const reserved = [1, 2, 3].includes(cardType) || Boolean(model?.reserveAfterPlay);
-        if (reserved) {
-          cardEffects.ensureCardEffectState(playedCard);
-          player.reservedCards.push(playedCard);
-        } else {
-          cards.addToDiscardPile(root.cardState, playedCard);
-        }
-        const events = [{
-          type: "playCard",
-          timing: "after_play_card",
-          playerId: player.id,
-          cardId: playedCard.cardId || null,
-          sourceCardInstanceId: playedCard.id,
-          price: Number(cost.credits || 0),
-        }];
-        let pending = null;
-        for (const effect of cardEffects.buildPlayEffects(playedCard)) {
-          const applied = applySimulationCardEffect(root, player, effect, options.random);
-          if (!applied.ok) return applied;
-          events.push(...(applied.events || []));
-          if (applied.pending) {
-            if (pending) {
-              return {
-                ok: false,
-                code: "SIMULATION_CARD_MULTIPLE_DECISIONS",
-                message: "单张牌产生多个未完成 Decision",
-              };
-            }
-            pending = applied.pending;
-          }
-        }
-        player.mainActionCompleted = true;
-        return {
-          ok: true,
-          progressed: true,
-          card: clone(playedCard),
-          reserved,
-          events,
-          history: [{
-            type: "play_card",
-            playerId: player.id,
-            cardInstanceId: playedCard.id,
-            cardId: playedCard.cardId || null,
-            cost: clone(cost),
-          }],
-          decisionEffect: pending
-            ? createConditionalDecisionEffect(root, "play_card_effect", pending, "choose_reward")
-            : null,
-        };
-      },
-    }),
-  ));
-
   registry.register({
     family: "move",
     enumerate(context) {
@@ -1424,8 +1326,16 @@ function createSimulationRuleComposition(options = {}) {
           players.gainIncome(player, gain, {
             blindDraw: (targetPlayer) => cards.blindDraw(
               workingState.cardState, workingState.playerState, targetPlayer, options.random,
+              {
+                createCardInstance: (entry, sequence) => (
+                  cards.createCommittedCardInstance(workingState, entry, sequence)
+                ),
+              },
             ),
-            gainData: (targetPlayer) => data.gainData(targetPlayer, { source: "initial_income" }),
+            gainData: (targetPlayer) => data.gainData(
+              targetPlayer,
+              { source: "initial_income", root: workingState },
+            ),
           });
         }
       }
@@ -1633,13 +1543,22 @@ function createSimulationRuleComposition(options = {}) {
       if (cardSelection) {
         const player = root.playerState.players.find((candidate) => candidate.id === cardSelection.playerId);
         const picked = action.target?.source === "blind"
-          ? cards.blindDraw(root.cardState, root.playerState, player, options.random)
+          ? cards.blindDraw(root.cardState, root.playerState, player, options.random, {
+            createCardInstance: (entry, sequence) => (
+              cards.createCommittedCardInstance(root, entry, sequence)
+            ),
+          })
           : cards.pickFromPublic(
             root.cardState,
             root.playerState,
             player,
             Number(action.target?.slotIndex),
             options.random,
+            {
+              createCardInstance: (entry, sequence) => (
+                cards.createCommittedCardInstance(root, entry, sequence)
+              ),
+            },
           );
         if (!picked?.ok) return picked;
         delete root.match.pendingDecision;
@@ -1667,23 +1586,19 @@ function createSimulationRuleComposition(options = {}) {
 
   registry.register({
     family: "choose_reward",
-    enumerate(context, { request } = {}) {
-      const root = context.workingRoot || context;
-      const pending = request?.payload?.decisionContext?.pending || null;
-      return listHandCornerRewardChoices(root, pending);
-    },
-    validate(context, action, request) {
-      return this.enumerate(context, request).some((candidate) => (
-        candidate.target.choiceId === action.target?.choiceId
-      ))
-        ? { ok: true }
-        : { ok: false, code: "PLAY_CARD_REWARD_STALE", message: "卡牌奖励选择已失效" };
+    enumerate() { return []; },
+    validate() {
+      return {
+        ok: false,
+        code: "STANDARD_ACTION_NOT_LEGAL",
+        message: "当前没有 Production Composition 外部奖励 Decision",
+      };
     },
     execute() {
       return {
         ok: false,
-        code: "PLAY_CARD_REWARD_SESSION_REQUIRED",
-        message: "卡牌奖励必须由 Effect Session continuation 提交",
+        code: "STANDARD_ACTION_NOT_LEGAL",
+        message: "奖励选择必须由当前 Effect Session Decision 提交",
       };
     },
   });
@@ -1714,7 +1629,11 @@ function createSimulationRuleComposition(options = {}) {
         additionalPublicScan: income.additionalPublicScan || 0,
       });
       for (let index = 0; index < Math.max(0, Math.round(Number(income.handSize) || 0)); index += 1) {
-        cards.blindDraw(root.cardState, root.playerState, player, options.random);
+        cards.blindDraw(root.cardState, root.playerState, player, options.random, {
+          createCardInstance: (entry, sequence) => (
+            cards.createCommittedCardInstance(root, entry, sequence)
+          ),
+        });
       }
       const companyLabel = player.initialSelection?.industry?.label || null;
       if (companyLabel === "图灵系统") players.gainResources(player, { publicity: 2 });
@@ -1895,39 +1814,6 @@ function createSimulationRuleComposition(options = {}) {
           resolutionContext.decisionContext.pending,
           choice,
         );
-      }
-      if (resolutionContext.decisionContext?.kind === "play_card_effect") {
-        const pending = resolutionContext.decisionContext.pending;
-        const player = _workingState.playerState.players
-          .find((candidate) => candidate.id === pending?.playerId);
-        if (!player || pending?.effect?.type !== cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
-          return {
-            ok: false,
-            code: "PLAY_CARD_REWARD_STALE",
-            message: "卡牌奖励上下文已失效",
-          };
-        }
-        const current = listHandCornerRewardChoices(_workingState, pending)
-          .find((candidate) => candidate.target.choiceId === choice.target?.choiceId);
-        if (!current) {
-          return {
-            ok: false,
-            code: "PLAY_CARD_REWARD_STALE",
-            message: "卡牌奖励选择已失效",
-          };
-        }
-        applyCornerReward(_workingState, player, current.payload.reward, "play_card");
-        applyCornerReward(_workingState, player, current.payload.moveReward, "play_card");
-        return {
-          ok: true,
-          progressed: true,
-          events: [{
-            type: "card_effect_choice",
-            effectId: pending.effect.id,
-            choiceId: current.target.choiceId,
-            playerId: player.id,
-          }],
-        };
       }
       if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
         const moved = rockets.moveRocket(

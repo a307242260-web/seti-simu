@@ -206,6 +206,7 @@
             ? inputAdapter.submitDecision({
               decisionId: fresh.boundary.decisionId,
               decisionVersion: fresh.boundary.decisionVersion,
+              ownerId: fresh.boundary.actorId,
               choice: clone(action),
             })
             : inputAdapter.dispatchAction(clone(action));

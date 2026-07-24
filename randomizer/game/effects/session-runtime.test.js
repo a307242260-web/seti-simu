@@ -140,6 +140,7 @@ function actionGroup(effects) {
   assert.equal(runtime.resolveDecision(dispatched.session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: { tech: "blue" },
   }).ok, true);
   assert.equal(runtime.drain(dispatched.session).ok, true);
@@ -176,12 +177,14 @@ function actionGroup(effects) {
   const stale = runtime.resolveDecision(dispatched.session, {
     decisionId: before.decisionId,
     decisionVersion: before.decisionVersion,
+    ownerId: before.ownerId,
     choice: { tech: "blue" },
   });
   assert.equal(stale.code, "EFFECT_DECISION_STALE");
   const illegal = runtime.resolveDecision(dispatched.session, {
     decisionId: after.decisionId,
     decisionVersion: after.decisionVersion,
+    ownerId: after.ownerId,
     choice: { tech: "blue" },
   });
   assert.equal(illegal.code, "EFFECT_DECISION_NOT_LEGAL");

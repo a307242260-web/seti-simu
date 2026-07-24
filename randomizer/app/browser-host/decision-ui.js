@@ -88,6 +88,7 @@
         identity: {
           decisionId: decision.decisionId,
           decisionVersion: decision.decisionVersion,
+          ownerId: decision.ownerId,
           projectionId: input.projection.projectionId,
         },
         shell: {
@@ -251,6 +252,7 @@
           submission: {
             decisionId: model.identity.decisionId,
             decisionVersion: model.identity.decisionVersion,
+            ownerId: model.identity.ownerId,
             choice: { choiceId },
           },
         });
@@ -264,6 +266,7 @@
           submission: {
             decisionId: model.identity.decisionId,
             decisionVersion: model.identity.decisionVersion,
+            ownerId: model.identity.ownerId,
             choice: { choiceId: model.controls.cancelChoiceId },
           },
         });

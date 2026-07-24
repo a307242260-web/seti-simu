@@ -20,7 +20,7 @@
     "getPendingCardCornerQuickAction", "syncCardCornerQuickActionChrome", "cancelCardCornerQuickAction",
     "handleHandCardCornerQuickAction", "confirmCardCornerQuickAction", "beginDiscardSelection",
     "completeDiscardSelection", "handleHandCardDiscard", "beginPlayCardSelection", "cancelPlayCardSelection",
-    "executeStandardPlayCard", "handleFutureSpanCardPlay", "handleHandCardPlay",
+    "handleFutureSpanCardPlay",
     "handleFutureSpanPlayCardSelect",
   ]);
 
@@ -980,7 +980,7 @@
           { payload: { handIndex: pending.handIndex, cost: getCardPlayCost(pending.card) } },
         );
       }
-      return handleHandCardPlay(workingRoot, pending.handIndex);
+      return { ok: false, code: "CARD_PLAY_INPUT_PORT_REQUIRED", message: "打牌必须通过 Production Composition" };
     }
 
     function getPendingHandCardPlayAction(workingRoot) {
@@ -1593,17 +1593,6 @@
       return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function executeStandardPlayCard(workingRoot, descriptor) {
-      const currentPlayer = players.getCurrentPlayer(workingRoot?.playerState);
-      const handIndex = (currentPlayer?.hand || [])
-        .findIndex((card) => card.id === descriptor?.target?.cardInstanceId);
-      return handleHandCardPlay(workingRoot, handIndex, {
-        workingRoot,
-        standardAction: descriptor,
-        bypassSelection: true,
-      });
-    }
-
     function cancelPlayCardSelection(workingRoot) {
       if (!isPlayCardSelectionActive()) return;
       setPlayCardSelection(workingRoot, null);
@@ -1641,7 +1630,13 @@
 
       let result = null;
       try {
-        result = handleHandCardPlay(workingRoot, handIndex);
+        result = typeof context.dispatchStandardIntent === "function"
+          ? context.dispatchStandardIntent(
+            "play_card",
+            { cardInstanceId: playedCard.id },
+            { payload: { handIndex, cost: getCardPlayCost(playedCard) } },
+          )
+          : { ok: false, code: "CARD_PLAY_INPUT_PORT_REQUIRED", message: "打牌必须通过 Production Composition" };
       } finally {
         futureSpanPlayBeforePlayer = null;
         delete playedCard.futureSpanFreePlay;
@@ -1661,134 +1656,6 @@
         renderStateReadout();
       }
       return result;
-    }
-
-    function handleHandCardPlay(workingRoot, handIndex, execution = {}) {
-      if (!execution.bypassSelection && !isPlayCardSelectionActive()) return;
-
-      const actionCardState = workingRoot?.cardState || ruleCardState(workingRoot);
-      const actionAlienGameState = workingRoot?.alienGameState || ruleAlienGameState(workingRoot);
-      const actionRocketState = workingRoot?.rocketState || ruleRocketState(workingRoot);
-      const currentPlayer = workingRoot
-        ? players.getCurrentPlayer(workingRoot.playerState)
-        : getCurrentPlayer(workingRoot);
-      const removeIndex = Math.round(handIndex);
-      const card = currentPlayer?.hand?.[removeIndex];
-      if (!card) {
-        actionRocketState.statusNote = "无效的手牌位置";
-        renderStateReadout();
-        return { ok: false, message: actionRocketState.statusNote };
-      }
-
-      if (fangzhou?.isFangzhouCard2?.(card)) {
-        return handleFangzhouCard2Play(workingRoot, removeIndex, execution);
-      }
-      if (banrenma?.isBanrenmaCard?.(card)) {
-        return handleBanrenmaCardPlay(workingRoot, removeIndex, execution);
-      }
-      if (chong?.isChongCard?.(card)) {
-        return handleChongCardPlay(workingRoot, removeIndex, execution);
-      }
-      if (amiba?.isAmibaCard?.(card)) {
-        return handleAmibaCardPlay(workingRoot, removeIndex, execution);
-      }
-      if (aomomo?.isAomomoCard?.(card)) {
-        return handleAomomoCardPlay(workingRoot, removeIndex, execution);
-      }
-      if (runezu?.isRunezuCard?.(card)) {
-        return handleRunezuCardPlay(workingRoot, removeIndex, execution);
-      }
-
-      const cost = getCardPlayCost(card);
-      if (!players.canAfford(currentPlayer, cost)) {
-        actionRocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-        renderStateReadout();
-        return { ok: false, message: actionRocketState.statusNote };
-      }
-
-      const beforePlayer = getPlayCardBeforePlayerSnapshot(workingRoot, currentPlayer);
-      const beforeCardState = {
-        publicCards: actionCardState.publicCards.slice(),
-        discardPile: (actionCardState.discardPile || []).slice(),
-      };
-      const spendResult = players.spendResources(currentPlayer, cost);
-      if (!spendResult.ok) {
-        actionRocketState.statusNote = spendResult.message;
-        renderStateReadout();
-        return spendResult;
-      }
-
-      const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-      if (!removeResult.ok) {
-        players.gainResources(currentPlayer, cost);
-        actionRocketState.statusNote = removeResult.message;
-        renderStateReadout();
-        return removeResult;
-      }
-
-      const playedCard = removeResult.card;
-      const typeCode = getCardTypeCode(playedCard);
-      const model = cardEffects.getCardModel?.(playedCard);
-      const shouldReserve = [1, 2, 3].includes(typeCode) || Boolean(model?.reserveAfterPlay);
-      const playEffects = cardEffects.buildPlayEffects(playedCard);
-      const temporaryTasks = cardEffects.getTemporaryTasks(playedCard);
-      if (shouldReserve) {
-        if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-        cardEffects.ensureCardEffectState(playedCard);
-        currentPlayer.reservedCards.push(playedCard);
-      } else {
-        cards.addToDiscardPile(actionCardState, playedCard);
-      }
-
-      cards.setPlayCardSelectionActive(actionCardState, false);
-      setPlayCardSelection(workingRoot, null);
-      actionRocketState.statusNote = shouldReserve
-        ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
-        : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-      const industryPassiveResult = applyIndustryPlayCardPassives(workingRoot, playedCard, typeCode);
-      const playFlowQueue = buildPlayCardEffectFlowQueue(workingRoot, currentPlayer, playedCard, playEffects);
-      const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-      const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-      syncPlayCardSelectionChrome(workingRoot);
-      renderPlayerStats();
-      recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, null, { workingRoot });
-      if (playFlowQueue.effects.length) {
-        startPlayCardEffectFlow("play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-          workingRoot,
-          actionType: "playCard",
-          card: playedCard,
-          temporaryTasks,
-          industryPlayedCard: playedCard,
-          deferredEndEffects: playFlowQueue.deferredEndEffects,
-          immediatePlayCardEvent,
-          playCardEvent,
-          futureSpanPlayedCard: Boolean(playedCard.futureSpanFreePlay),
-        });
-      } else {
-        settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-        settleCardTasksAfterEffect({
-          events: [playCardEvent],
-          render: false,
-        });
-        markActionPending();
-        updateActionButtons();
-        renderStateReadout();
-      }
-      appendIndustryPlayPassiveStatus(workingRoot, industryPassiveResult);
-      return {
-        ok: true,
-        card: playedCard,
-        reserved: shouldReserve,
-        message: actionRocketState.statusNote,
-        effects: structuredClone(playFlowQueue.effects || []),
-        events: [immediatePlayCardEvent, playCardEvent],
-        history: [{
-          type: "play_card",
-          playerId: currentPlayer.id,
-          beforePlayer,
-          beforeCardState,
-        }],
-      };
     }
 
     function handleAlienHandCardPlay(workingRoot, handIndex, config = {}, execution = {}) {
@@ -2215,9 +2082,7 @@
       handleHandCardDiscard,
       beginPlayCardSelection,
       cancelPlayCardSelection,
-      executeStandardPlayCard,
       handleFutureSpanCardPlay,
-      handleHandCardPlay,
       handleFutureSpanPlayCardSelect,
       handleHandScanCardClick,
     };
@@ -2255,6 +2120,7 @@
       return submitDecision({
         decisionId: decision.decisionId,
         decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId,
         choice,
       });
     }

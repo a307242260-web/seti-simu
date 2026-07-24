@@ -91,8 +91,8 @@ function projection(choices, overrides = {}) {
   controller.dispatchUiIntent({ type: "confirm" }, inputState);
   controller.dispatchUiIntent({ type: "cancel" }, inputState);
   assert.deepEqual(submitted, [
-    { decisionId: "research:effect:2", decisionVersion: 3, choice: { choiceId: "blue2@slot-b" } },
-    { decisionId: "research:effect:2", decisionVersion: 3, choice: { choiceId: "skip" } },
+    { decisionId: "research:effect:2", decisionVersion: 3, ownerId: "p1", choice: { choiceId: "blue2@slot-b" } },
+    { decisionId: "research:effect:2", decisionVersion: 3, ownerId: "p1", choice: { choiceId: "skip" } },
   ]);
 })();
 

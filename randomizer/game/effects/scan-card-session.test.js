@@ -207,6 +207,7 @@ function choose(harness, session, choiceId) {
   const resolved = harness.resolveDecision(session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice,
   });
   assert.equal(resolved.ok, true);

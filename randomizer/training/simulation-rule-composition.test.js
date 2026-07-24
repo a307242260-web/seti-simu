@@ -54,6 +54,7 @@ assert.equal(matches.length, 1, "opening cardId/handIndex 必须唯一解析");
 const result = kernel.composition.inputPort.submitDecision({
   decisionId: inspection.session.decision.decisionId,
   decisionVersion: inspection.session.decision.decisionVersion,
+  ownerId: inspection.session.decision.ownerId,
   choice: matches[0],
 });
 assert.equal(result.ok, true, "Composition 必须接受 opening 明确弃牌 Decision");

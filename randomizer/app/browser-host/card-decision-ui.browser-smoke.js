@@ -103,6 +103,7 @@
         return flow.resolveDecision(dispatched.session, {
           decisionId: submission.decisionId,
           decisionVersion: submission.decisionVersion,
+          ownerId: submission.ownerId,
           choice: selected,
         });
       },

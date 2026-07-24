@@ -160,7 +160,10 @@
 
     const shouldGainData = options.gainData !== false;
     const gainResult = shouldGainData
-      ? data.gainData(currentPlayer, { source: options.source || "scan" })
+      ? data.gainData(currentPlayer, {
+        source: options.source || "scan",
+        ...(context.workingRoot ? { root: context.workingRoot } : {}),
+      })
       : { ok: true, skipped: true, message: "未获得数据" };
     const commands = [
       historyCommands.createNebulaReplaceCommand(

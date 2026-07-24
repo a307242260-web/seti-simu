@@ -354,6 +354,7 @@
     }
 
     function createWorkingState(initialOptions = {}) {
+      context.resetSequences?.();
       let random;
       if (initialOptions.counterfactualSeed != null) {
         let state = 2166136261;
@@ -432,6 +433,18 @@
       defaultInitialPlayerColor: context.defaultInitialPlayerColor,
       defaultActivePlayerCount: context.defaultActivePlayerCount,
       finalScoreIds: context.finalScoreIds,
+      resetSequences() {
+        const sequenceOwners = context.sequenceOwners || {};
+        sequenceOwners.cards?.restoreNextCardInstanceSequence?.(1);
+        sequenceOwners.players?.restoreNextHandCardSequence?.(1);
+        sequenceOwners.finalScoring?.restoreNextFinalMarkSequence?.(1);
+        sequenceOwners.data?.restoreNextDataTokenSequence?.(1);
+        sequenceOwners.data?.restoreDeterministicSequences?.({
+          nebulaToken: 1,
+          nebulaReplacement: 1,
+        });
+        sequenceOwners.history?.restoreNextHistoryStepSequence?.(1);
+      },
       restoreSequences(sequences) {
         const sequenceOwners = context.sequenceOwners || {};
         if (Number.isSafeInteger(sequences.card)) sequenceOwners.cards?.restoreNextCardInstanceSequence?.(sequences.card);
@@ -451,10 +464,12 @@
         seed: rootState?.meta?.seed ?? "browser-host",
         rngState: structuredClone(rootState?.meta?.rngState || { owner: "browser", state: null }),
         sequences: {
-          card: context.cards?.getNextCardInstanceSequence?.(),
+          card: rootState?.meta?.sequences?.card
+            ?? context.cards?.getNextCardInstanceSequence?.(),
           handCard: context.players?.getNextHandCardSequence?.(),
           finalMark: context.finalScoring?.getNextFinalMarkSequence?.(),
-          dataToken: context.data?.getNextDataTokenSequence?.(),
+          dataToken: rootState?.meta?.sequences?.dataToken
+            ?? context.data?.getNextDataTokenSequence?.(),
           ...deterministicSequences,
           historyStep: context.history?.getNextHistoryStepSequence?.(),
           actionLog: context.getActionLogSequence?.(),

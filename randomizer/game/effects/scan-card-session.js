@@ -586,6 +586,7 @@
           const resolved = runtime.resolveDecision(dispatched.session, {
             decisionId: snapshot.decisionId,
             decisionVersion: snapshot.decisionVersion,
+            ownerId: snapshot.ownerId,
             choice: clone(recorded.choice),
           });
           if (!resolved.ok) return resolved;

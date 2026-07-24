@@ -24,6 +24,7 @@
     Object.freeze({ key: "gameRecoveryModule", globalName: "SetiAppGameRecovery" }),
     Object.freeze({ key: "ruleCompositionModule", globalName: "SetiRuleComposition" }),
     Object.freeze({ key: "productionCompositionModule", globalName: "SetiProductionComposition" }),
+    Object.freeze({ key: "cardPlayDomain", globalName: "SetiCardPlayDomain" }),
     Object.freeze({ key: "browserRuleCompositionModule", globalName: "SetiAppBrowserRuleComposition" }),
     Object.freeze({ key: "runtimeModule", globalName: "SetiAppRuntime" }),
     Object.freeze({ key: "refreshModule", globalName: "SetiAppRefresh" }),

@@ -41,28 +41,37 @@
     };
   }
 
-  function getPlayerRocketSequenceSet(rocketState, playerId) {
+  function getPlayerRocketSequences(rocketState, playerId) {
     if (!playerId) return null;
-    if (!rocketState.playerRocketSequences[playerId]) {
-      rocketState.playerRocketSequences[playerId] = new Set();
+    const current = rocketState.playerRocketSequences[playerId];
+    if (!Array.isArray(current)) {
+      rocketState.playerRocketSequences[playerId] = current instanceof Set
+        ? [...current].sort((left, right) => left - right)
+        : [];
     }
     return rocketState.playerRocketSequences[playerId];
   }
 
   function allocatePlayerRocketSequence(rocketState, playerId) {
-    const used = getPlayerRocketSequenceSet(rocketState, playerId);
+    const used = getPlayerRocketSequences(rocketState, playerId);
     if (!used) return null;
 
     let sequence = 1;
-    while (used.has(sequence)) sequence += 1;
-    used.add(sequence);
+    while (used.includes(sequence)) sequence += 1;
+    used.push(sequence);
+    used.sort((left, right) => left - right);
     return sequence;
   }
 
   function releasePlayerRocketSequence(rocketState, playerId, sequence) {
     const used = rocketState.playerRocketSequences?.[playerId];
     if (!used || !Number.isInteger(sequence)) return;
-    used.delete(sequence);
+    if (used instanceof Set) {
+      used.delete(sequence);
+      return;
+    }
+    const index = used.indexOf(sequence);
+    if (index >= 0) used.splice(index, 1);
   }
 
   function isControllablePlayerRocket(rocket) {

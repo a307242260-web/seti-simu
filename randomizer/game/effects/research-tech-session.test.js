@@ -120,6 +120,7 @@ function runFixedTrace(api = researchTechSession) {
   const resolved = harness.resolveDecision(session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: { tileId: "purple1" },
   });
   assert.equal(resolved.ok, true);
@@ -171,6 +172,7 @@ function runFixedTrace(api = researchTechSession) {
   harness.resolveDecision(session, {
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
     choice: { tileId: "purple1" },
   });
   const failed = harness.drain(session);

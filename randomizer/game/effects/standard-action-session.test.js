@@ -152,6 +152,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
   const resolved = decisionComposition.inputPort.submitDecision({
     decisionId: inspection.session.decision.decisionId,
     decisionVersion: inspection.session.decision.decisionVersion,
+    ownerId: inspection.session.decision.ownerId,
     choice: inspection.session.decision.choices[1],
   });
   assert.equal(resolved.ok, true);
@@ -235,6 +236,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
   const resolved = singleChoiceComposition.inputPort.submitDecision({
     decisionId: inspection.session.decision.decisionId,
     decisionVersion: inspection.session.decision.decisionVersion,
+    ownerId: inspection.session.decision.ownerId,
     choice: inspection.session.decision.choices[0],
   });
   assert.equal(resolved.ok, true);

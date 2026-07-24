@@ -7,7 +7,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const ACTION_FAMILIES = Object.freeze(["research_tech", "scan", "analyze", "play_card"]);
+  const ACTION_FAMILIES = Object.freeze(["research_tech", "scan", "analyze"]);
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -67,9 +67,6 @@
     if (typeof options.executeScan !== "function") {
       throw new TypeError("Engine Action executor 缺少 scan production flow");
     }
-    if (typeof options.executePlayCard !== "function") {
-      throw new TypeError("Engine Action executor 缺少 play_card production flow");
-    }
 
     function executeFamily(workingRoot, descriptor) {
       const context = options.createActionContext(workingRoot, descriptor);
@@ -96,7 +93,7 @@
         }
         return result;
       }
-      return options.executePlayCard(workingRoot, clone(descriptor));
+      return fail("ENGINE_ACTION_FAMILY_INVALID", `Engine Action executor 不接受 family: ${descriptor.family}`);
     }
 
     function execute(workingRoot, descriptor, executeOptions = {}) {

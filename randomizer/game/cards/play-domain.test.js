@@ -8,16 +8,28 @@ const stateStoreApi = require("../state/state-store");
 const effectRuntimeApi = require("../effects/session-runtime");
 const { createRuleComposition } = require("../rule-composition");
 const data = require("../data");
+const players = require("../players");
+const tech = require("../tech");
+const solar = require("../../solar-system/core");
+const rockets = require("../rockets");
 
 assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 46);
-assert.deepEqual(playDomain.SLICE_EFFECT_TYPES, [
-  cardEffects.REWARD_TYPES.GAIN_RESOURCES,
-  cardEffects.REWARD_TYPES.GAIN_DATA,
-  cardEffects.REWARD_TYPES.DRAW_CARDS,
-  cardEffects.REWARD_TYPES.PICK_CARD,
-  cardEffects.EFFECT_TYPES.SCAN_NEBULA,
-  cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
-]);
+assert.deepEqual(
+  playDomain.OWNED_PLAY_EFFECT_TYPES,
+  playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES,
+  "Production Card Play owner 必须一次覆盖实际牌库递归 effect 闭包",
+);
+assert.equal(
+  playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES.length,
+  47,
+  "182 张牌的递归 effect 闭包必须包含 46 个顶层类型与嵌套探测器计数奖励",
+);
+assert.ok(
+  playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES.includes(
+    cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD,
+  ),
+  "嵌套 card_count_rockets_reward 必须属于 Production Card Play owner",
+);
 
 function createLegacyRoot(cardId) {
   const card = {
@@ -26,20 +38,34 @@ function createLegacyRoot(cardId) {
     price: 2,
     cardTypeCode: cardEffects.getRuntimeCardTypeCode({ cardId }),
   };
+  data.restoreDeterministicSequences({ nebulaToken: 1, nebulaReplacement: 1 });
   const nebulaDataState = data.createDefaultNebulaDataState();
+  const techGameState = tech.createState(() => 0);
+  for (const stack of Object.values(techGameState.board.stacks)) {
+    stack.bonusQueue[stack.bonusIndex] = "bonus_3f";
+    stack.bonusId = "bonus_3f";
+  }
   for (const nebulaId of new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat())) {
     for (let index = 0; index < 4; index += 1) {
       data.fillNebulaData(nebulaDataState, nebulaId, { source: "test" });
     }
   }
-  return {
+  const extraHand = cardId === "b_41.webp" || cardId === "dlc_34.png"
+    ? [{ id: "income-energy-card", cardId: "b_2.webp", incomeCode: 1 }]
+    : cardId === "dlc_32.png"
+      ? [
+        { id: "discard-a", cardId: "b_2.webp", incomeCode: 1 },
+        { id: "discard-b", cardId: "b_3.webp", incomeCode: 0 },
+      ]
+      : [];
+  const root = {
     meta: {
       stateVersion: 0,
       gameId: `card-play:${cardId}`,
       rulesetVersion: "test-v1",
       seed: 158,
       rngState: {},
-      sequences: { card: 100 },
+      sequences: { card: 100, dataToken: 200 },
     },
     playerState: {
       currentPlayerId: "p1",
@@ -50,22 +76,29 @@ function createLegacyRoot(cardId) {
           credits: 10, energy: 10, publicity: 0, score: 0,
           availableData: 0, computerCapacity: 5, handSize: 1,
         },
-        income: {},
-        hand: [card],
+        income: cardId === "b_42.webp" ? { energy: 3 } : {},
+        hand: [card, ...extraHand],
         reservedCards: [],
+        techState: cardId === "dlc_34.png"
+          ? players.normalizePlayerTechState({
+            ownedTiles: { blue1: true, blue2: true, orange1: true },
+          })
+          : players.normalizePlayerTechState(null),
         mainActionCompleted: false,
       }],
     },
     cardState: { discardPile: [], publicCards: [] },
-    rocketState: {},
-    solarState: { sectorBySlot: {} },
+    rocketState: rockets.createRocketState(),
+    solarState: solar.createBaselineState(),
     nebulaDataState,
     planetStatsState: {},
-    techGameState: {},
+    techGameState,
     alienGameState: {},
     turnState: { currentPlayerId: "p1" },
     match: { decisionVersion: 0 },
   };
+  root.playerState.players[0].resources.handSize = root.playerState.players[0].hand.length;
+  return root;
 }
 
 function toCommitted(root, stateVersion = root.meta?.stateVersion ?? 0) {
@@ -140,20 +173,34 @@ function semanticState(state) {
     stateVersion: root.meta.stateVersion,
     player: {
       credits: player.resources.credits,
+      energy: player.resources.energy,
       publicity: player.resources.publicity,
       availableData: player.resources.availableData,
       hand: player.hand.map((card) => card.id),
       reserved: player.reservedCards.map((card) => card.id),
       mainActionCompleted: player.mainActionCompleted,
+      income: structuredClone(player.income || {}),
     },
-    cardSequence: root.meta.sequences.card,
+    discard: (root.cardState.discardPile || []).map((card) => card.id),
+    sequences: structuredClone(root.meta.sequences),
     cardRandom: structuredClone(root.meta.rngState.cardPlay || null),
+    dataTokens: (player.dataState?.poolTokens || []).map((token) => ({
+      id: token.id,
+      index: token.index,
+      slotIndex: token.slotIndex,
+    })),
     scans: ["sector-4-a", "sector-3-a"].map((nebulaId) => ({
       nebulaId,
       tokens: data.listNebulaTokens(root.nebulaDataState, nebulaId).map((token) => ({
         slotIndex: token.slotIndex,
         replacedByPlayerId: token.replacedByPlayerId || null,
       })),
+    })),
+    rockets: (root.rocketState.rockets || []).map((rocket) => ({
+      id: rocket.id,
+      playerId: rocket.playerId,
+      sectorX: rocket.sectorX,
+      sectorY: rocket.sectorY,
     })),
   };
 }
@@ -220,8 +267,11 @@ function createIntegratedComposition(cardId, browserShape) {
 
 function getOnlyPlayAction(composition) {
   const actions = composition.inputPort.enumerateActions({ family: "play_card" });
-  assert.equal(actions.length, 1);
-  const action = actions[0];
+  assert.ok(actions.length >= 1);
+  const action = actions.find((candidate) => (
+    String(candidate.target.cardInstanceId).startsWith("instance:")
+  ));
+  assert.ok(action);
   assert.equal(action.schemaVersion, standardAction.SCHEMA_VERSION);
   assert.equal(action.family, "play_card");
   assert.equal(action.actorId, "p1");
@@ -326,7 +376,22 @@ function runDirectRewards(browserShape) {
   assert.equal(player.resources.credits, 8);
   assert.equal(player.resources.publicity, 1);
   assert.equal(player.resources.availableData, 2);
-  return semanticState(committed);
+  assert.deepEqual(
+    player.dataState.poolTokens.map((token) => token.id),
+    ["data-token-200", "data-token-201"],
+  );
+  assert.equal(committed.meta.sequences.dataToken, 202);
+  const saved = composition.lifecycle.save();
+  assert.equal(saved.ok, true, JSON.stringify(saved));
+  const restoredComposition = createIntegratedComposition("b_74.webp", browserShape).composition;
+  const restored = restoredComposition.lifecycle.restore(saved.envelope, { silent: true });
+  assert.equal(restored.ok, true, JSON.stringify(restored));
+  assert.deepEqual(
+    restoredComposition.stateSourcePort.getSnapshot(),
+    committed,
+    "Card Play committed data entity 必须在 save/restore 后逐字段一致",
+  );
+  return { semantic: semanticState(committed), committed };
 }
 
 function runDrawCards(browserShape) {
@@ -369,6 +434,91 @@ function runPickCard(browserShape) {
   return semanticState(committed);
 }
 
+function runDerivedRewards(cardId, browserShape) {
+  const { composition, counters } = createIntegratedComposition(cardId, browserShape);
+  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(counters.compareAndCommit, 1);
+  return {
+    state: semanticState(composition.stateSourcePort.getSnapshot()),
+    result,
+    committed: composition.stateSourcePort.getSnapshot(),
+  };
+}
+
+function runIncomeAndTechCount(browserShape) {
+  const { composition, counters } = createIntegratedComposition("dlc_34.png", browserShape);
+  const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(opened.ok, true, JSON.stringify(opened));
+  assert.equal(composition.inspect().phase, "awaiting_input");
+  const decision = composition.inspect().session.decision;
+  assert.deepEqual(decision.choices.map((choice) => choice.target.cardInstanceId), ["income-energy-card"]);
+  const result = composition.inputPort.submitDecision({
+    decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
+    choice: decision.choices[0],
+  });
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(counters.compareAndCommit, 1);
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(player.income.energy, 1);
+  assert.equal(player.resources.energy, 11);
+  assert.equal(player.hand.length, 2);
+  assert.equal(committed.meta.sequences.card, 102);
+  assert.equal(result.journal.decisions.length, 1);
+  return semanticState(committed);
+}
+
+function runResearchTech(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_4.webp", browserShape);
+  const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(opened.ok, true, JSON.stringify(opened));
+  assert.equal(composition.inspect().phase, "awaiting_input");
+  const decision = composition.inspect().session.decision;
+  assert.ok(decision.choices.length > 0);
+  assert.ok(decision.choices.every((choice) => choice.target.tileId.startsWith("blue")));
+  const result = composition.inputPort.submitDecision({
+    decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
+    choice: decision.choices[0],
+  });
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(counters.compareAndCommit, 1);
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(player.techState.ownedTiles[decision.choices[0].target.tileId], true);
+  assert.equal(result.journal.decisions.length, 1);
+  return semanticState(committed);
+}
+
+function runLaunchAndPick(browserShape) {
+  const { composition, counters } = createIntegratedComposition("b_21.webp", browserShape);
+  const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(opened.ok, true, JSON.stringify(opened));
+  assert.equal(composition.inspect().phase, "awaiting_input");
+  const decision = composition.inspect().session.decision;
+  const result = composition.inputPort.submitDecision({
+    decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
+    choice: decision.choices.find((choice) => choice.target.choiceId === "blind"),
+  });
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(counters.compareAndCommit, 1);
+  const committed = composition.stateSourcePort.getSnapshot();
+  assert.equal(committed.pieces.rockets.length, 1);
+  assert.equal(committed.players.players[0].hand.length, 1);
+  assert.ok(result.journal.events.some((event) => event.type === "launch"));
+  return semanticState(committed);
+}
+
 assert.deepEqual(
   runFixedScan(true),
   runFixedScan(false),
@@ -394,15 +544,81 @@ assert.deepEqual(
   runPickCard(false),
   "Browser 与 Simulation 的精选 Decision 必须共享 committed entity/RNG owner",
 );
-
-{
-  const { composition, counters } = createIntegratedComposition("dlc_2.png", false);
-  const before = composition.stateSourcePort.getSnapshot();
-  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
-  assert.equal(result.ok, false);
-  assert.equal(result.failure.code, "CARD_PLAY_SLICE_UNSUPPORTED");
-  assert.deepEqual(composition.stateSourcePort.getSnapshot(), before);
-  assert.equal(counters.compareAndCommit, 0, "未覆盖类型必须在费用和实体迁移提交前 fail-closed");
+for (const cardId of ["b_41.webp", "b_42.webp", "b_139.webp", "dlc_32.png"]) {
+  const browser = runDerivedRewards(cardId, true);
+  const simulation = runDerivedRewards(cardId, false);
+  assert.deepEqual(
+    browser.state,
+    simulation.state,
+    `${cardId} 的派生奖励必须经 Browser/Simulation 同一 owner`,
+  );
+  if (cardId === "b_41.webp") {
+    assert.equal(browser.committed.players.players[0].resources.energy, 11);
+  } else if (cardId === "b_42.webp") {
+    const player = browser.committed.players.players[0];
+    assert.equal(player.resources.energy, 14);
+    assert.equal(player.income.energy, 4);
+    assert.equal(browser.committed.cards.discardPile.length, 0);
+  } else if (cardId === "b_139.webp") {
+    assert.deepEqual(
+      browser.committed.players.players[0].reservedCards[0].cardEffectState.pluto,
+      { orbitDone: false, landDone: false },
+    );
+  } else if (cardId === "dlc_32.png") {
+    const player = browser.committed.players.players[0];
+    assert.equal(player.resources.publicity, 1);
+    assert.equal(player.hand.length, 2);
+    assert.equal(browser.committed.cards.discardPile.length, 3);
+    assert.equal(browser.committed.meta.sequences.card, 102);
+  }
 }
+assert.deepEqual(
+  runIncomeAndTechCount(true),
+  runIncomeAndTechCount(false),
+  "收入选牌与科技类型计数盲抽必须经 Browser/Simulation 同一 owner",
+);
+assert.deepEqual(
+  runResearchTech(true),
+  runResearchTech(false),
+  "科技 Card Decision 必须调用同一 game-owned resolver 并产生同根提交",
+);
+assert.deepEqual(
+  runLaunchAndPick(true),
+  runLaunchAndPick(false),
+  "发射能力与后续精选 Decision 必须经同一 game-owned owner 链",
+);
 
-console.log("card play domain production composition slice tests passed");
+const exhaustiveCardIds = Object.keys(cardEffects.CARD_REFERENCE_MAP).sort();
+const exhaustiveEffectTypes = new Set();
+for (const cardId of exhaustiveCardIds) {
+  const { composition, counters } = createIntegratedComposition(cardId, false);
+  let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  let guard = 0;
+  while (result.ok && composition.inspect().phase === "awaiting_input") {
+    const decision = composition.inspect().session.decision;
+    assert.ok(decision.choices.length > 0, `${cardId} 不得产生空 Decision`);
+    result = composition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
+      choice: decision.choices[0],
+    });
+    guard += 1;
+    assert.ok(guard < 100, `${cardId} Decision 链不得无限循环`);
+  }
+  assert.equal(result.ok, true, `${cardId}: ${JSON.stringify(result)}`);
+  assert.equal(result.phase, "completed", `${cardId} 必须完成完整 Card Play Session`);
+  assert.equal(counters.compareAndCommit, 1, `${cardId} 必须且只能 CAS 一次`);
+  for (const effect of cardEffects.buildPlayEffects({ cardId })) {
+    exhaustiveEffectTypes.add(effect.type);
+  }
+  composition.dispose();
+}
+assert.equal(exhaustiveCardIds.length, 182, "基础牌与 DLC 牌必须逐张进入正式 composition");
+assert.deepEqual(
+  [...exhaustiveEffectTypes].sort(),
+  [...playDomain.REACHABLE_PLAY_EFFECT_TYPES].sort(),
+  "逐张 composition 证明必须覆盖 46/46 可达 top-level effect type",
+);
+
+console.log("card play domain production composition tests passed");

@@ -3,17 +3,20 @@
 
   let standardAction = root.SetiStandardAction;
   let standardActionSession = root.SetiStandardActionSession;
-  if ((!standardAction || !standardActionSession) && typeof require === "function") {
+  let cardPlayDomain = root.SetiCardPlayDomain;
+  if ((!standardAction || !standardActionSession || !cardPlayDomain) && typeof require === "function") {
     standardAction = standardAction || require("./actions/standard-action");
     standardActionSession = standardActionSession || require("./effects/standard-action-session");
+    cardPlayDomain = cardPlayDomain || require("./cards/play-domain");
   }
 
-  const api = factory(standardAction, standardActionSession);
+  const api = factory(standardAction, standardActionSession, cardPlayDomain);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction,
   standardActionSession,
+  cardPlayDomain,
 ) {
   "use strict";
 
@@ -61,7 +64,10 @@
         familyOwners.set(family, owner);
       }
     };
-    claimFamilies("standard_action", standardAction.ALL_FAMILIES);
+    const standardFamilies = standardAction.ALL_FAMILIES
+      .filter((family) => family !== "play_card");
+    claimFamilies("standard_action", standardFamilies);
+    claimFamilies(cardPlayDomain.DOMAIN_ID, cardPlayDomain.ACTION_FAMILIES);
     for (const descriptor of options.additionalDomains || []) {
       claimFamilies(descriptor?.id || "host_domain", descriptor?.families || []);
     }
@@ -136,6 +142,8 @@
       },
       execute: executeQuickTrade,
     }));
+    const playCardProvider = cardPlayDomain.createPlayCardProvider();
+    ownedRegistry.register(standardAction.createOptionDefinition("play_card", playCardProvider));
     const requireSource = () => {
       const source = options.getStandardActionSource();
       if (typeof source?.enumerate !== "function"
@@ -145,21 +153,26 @@
       }
       return source;
     };
-    const isOwned = (action) => action?.family === "quick_trade";
+    const isOwned = (action) => ["quick_trade", "play_card"].includes(action?.family);
     const actionRegistry = Object.freeze({
       ownerId: PACK_ID,
       enumerate(context, request = {}) {
-        if (request.family === "quick_trade") return ownedRegistry.enumerate(context, request);
+        if (["quick_trade", "play_card"].includes(request.family)) {
+          return ownedRegistry.enumerate(context, request);
+        }
         if (request.family) {
           return requireSource().enumerate(context, request).filter((action) => !isOwned(action));
         }
         const legacy = standardAction.ALL_FAMILIES
-          .filter((family) => family !== "quick_trade")
+          .filter((family) => !["quick_trade", "play_card"].includes(family))
           .flatMap((family) => requireSource().enumerate(context, { ...request, family }))
           .filter((action) => !isOwned(action));
         const quickActions = ownedRegistry.enumerate(context, { ...request, family: "quick_trade" });
+        const playActions = ownedRegistry.enumerate(context, { ...request, family: "play_card" });
         const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
-        for (const action of [...legacy, ...quickActions]) byFamily.get(action.family)?.push(action);
+        for (const action of [...legacy, ...quickActions, ...playActions]) {
+          byFamily.get(action.family)?.push(action);
+        }
         return standardAction.ALL_FAMILIES.flatMap((family) => byFamily.get(family));
       },
       validate(context, action) {
@@ -191,13 +204,16 @@
       coverage() {
         const legacy = typeof requireSource().coverage === "function"
           ? requireSource().coverage().filter((entry) => (
-            entry.registered && entry.family !== "quick_trade"
+            entry.registered && !["quick_trade", "play_card"].includes(entry.family)
           ))
           : [];
         const byFamily = new Map(legacy.map((entry) => [entry.family, entry]));
         const ownedQuickTrade = ownedRegistry.coverage()
           .find((entry) => entry.family === "quick_trade");
         byFamily.set("quick_trade", ownedQuickTrade);
+        const ownedPlayCard = ownedRegistry.coverage()
+          .find((entry) => entry.family === "play_card");
+        byFamily.set("play_card", ownedPlayCard);
         return standardAction.ALL_FAMILIES.map((family) => (
           byFamily.get(family) || {
             family,
@@ -210,14 +226,23 @@
 
     const standardDomain = Object.freeze({
       id: "standard_action",
-      families: standardAction.ALL_FAMILIES,
+      families: standardFamilies,
       create: standardActionSession.createStandardActionDomain,
       options: Object.freeze({
-        actionFamilies: standardAction.ALL_FAMILIES,
+        actionFamilies: standardFamilies,
         ...(options.standardActionDomainOptions || {}),
       }),
     });
-    const effectDomains = Object.freeze([standardDomain, ...(options.additionalDomains || [])]);
+    const cardDomain = Object.freeze({
+      id: cardPlayDomain.DOMAIN_ID,
+      families: cardPlayDomain.ACTION_FAMILIES,
+      create: cardPlayDomain.createExperimentalCardPlayDomain,
+    });
+    const effectDomains = Object.freeze([
+      standardDomain,
+      cardDomain,
+      ...(options.additionalDomains || []),
+    ]);
     return Object.freeze({
       packId: PACK_ID,
       actionRegistry,
@@ -225,10 +250,12 @@
       familyOwners: Object.freeze(Object.fromEntries(familyOwners)),
       actionOwners: Object.freeze({
         quick_trade: `${PACK_ID}:quick_trade`,
+        play_card: cardPlayDomain.EXECUTOR_ID,
         legacy: "host_input_source",
       }),
       actionExecutorOwners: Object.freeze({
         quick_trade: QUICK_TRADE_EXECUTOR_ID,
+        play_card: cardPlayDomain.EXECUTOR_ID,
       }),
     });
   }

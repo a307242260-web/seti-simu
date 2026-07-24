@@ -432,12 +432,16 @@
   }
 
   function createStage2Definitions(actions = {}) {
-    return Object.freeze([
-      createOptionDefinition("scan", actions.scan),
-      createOptionDefinition("analyze", actions.analyze),
-      createOptionDefinition("play_card", actions.playCard || actions.play_card),
-      createOptionDefinition("pass", actions.pass),
-    ]);
+    const entries = [
+      ["scan", ["scan"]],
+      ["analyze", ["analyze"]],
+      ["play_card", ["playCard", "play_card"]],
+      ["pass", ["pass"]],
+    ];
+    return Object.freeze(entries.flatMap(([family, keys]) => {
+      const configuredKey = keys.find((key) => Object.hasOwn(actions, key));
+      return configuredKey ? [createOptionDefinition(family, actions[configuredKey])] : [];
+    }));
   }
 
   function createStage3Definitions(actions = {}) {
