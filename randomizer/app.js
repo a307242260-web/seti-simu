@@ -222,6 +222,18 @@
   const cardSelectionDecisionModule = window.SetiCardSelectionDecision;
   const browserPendingDecisionModule = window.SetiBrowserPendingDecision;
   const standardActionModule = window.SetiStandardAction;
+  let humanActionInputAdapter = null;
+  function submitHumanAction(action) {
+    return humanActionInputAdapter
+      ? humanActionInputAdapter.submit(action)
+      : { ok: false, code: "HUMAN_ACTION_INPUT_UNAVAILABLE", message: "人类 Action input adapter 尚未装配" };
+  }
+  function listHumanLegalActions(family = null) {
+    const actions = humanActionInputAdapter
+      ? humanActionInputAdapter.listLegalActions()
+      : ruleComposition.inputPort.enumerateActions({});
+    return family == null ? actions : actions.filter((action) => action.family === family);
+  }
   const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
   const browserOwnerInputRegistry = browserHostModule.legacyOwnerInputRegistry.createOwnerInputRegistry({
     clonePresentation: cloneResidentPresentation,
@@ -392,7 +404,8 @@
         .openComputerPicker(...args),
     },
     getCurrentPlayer: (...args) => getCurrentPlayer(...args),
-    runAction: (...args) => runAction(...args),
+    listHumanActions: (family) => listHumanLegalActions(family),
+    submitHumanAction,
     startCardEffectFlow: (...args) => startCardEffectFlow(...args),
   });
   const {
@@ -405,8 +418,7 @@
   } = dataAnalyzeInteractionRuntime;
   const landTargetDecisionRuntime = actionInteractionRuntimeModule.createLandTargetDecisionRuntime({
     executePlutoAction: (...args) => actionInteractionRuntime.executePlutoAction(...args),
-    runAction: (...args) => runAction(...args),
-    submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
+    submitAction: (...args) => submitHumanAction(...args),
     getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
     effectExecutors: () => effectExecutors,
     getPendingLandTargetDecision: (...args) => getPendingLandTargetDecision(...args),
@@ -478,9 +490,9 @@
     isAiInputLocked: (...args) => isAiAutomationInputLocked(...args),
     blockManualAiInput: (...args) => blockManualAiAutomationInput(...args),
     getHighlightedRocketId: () => uiRuntimeState.moveHighlightRocketId,
-    enumerateActions: (...args) => ruleComposition.inputPort.enumerateActions(...args),
-    submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
-    submitQuickAction: (...args) => ruleComposition.inputPort.submitQuickAction(...args),
+    enumerateActions: ({ family } = {}) => listHumanLegalActions(family),
+    submitAction: (...args) => submitHumanAction(...args),
+    submitQuickAction: (...args) => submitHumanAction(...args),
     beginMovePaymentSelection: (...args) => beginMovePaymentSelection(...args),
   });
   const {
@@ -727,20 +739,6 @@
   const browserRuleLifecycle = ruleComposition.lifecycle;
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor();
   let actionRuntimeController = null;
-  const ruleInputDispatcher = browserHostModule.inputAdapter.createRuleInputDispatcher({
-    standardActionSchemaVersion: standardActionModule.SCHEMA_VERSION,
-    inspect: (...args) => ruleComposition.inspect(...args),
-    createRecoverySnapshot: (...args) => createGameRecoverySnapshot(...args),
-    enumerateActions: (...args) => ruleComposition.inputPort.enumerateActions(...args),
-    dispatchRuntimeAction: (...args) => actionRuntimeController.dispatchAction(...args),
-    submitQuickAction: (...args) => ruleComposition.inputPort.submitQuickAction(...args),
-    submitAction: (...args) => ruleComposition.inputPort.submitAction(...args),
-  });
-  const dispatchBrowserRuleInput = ruleInputDispatcher.dispatch;
-  const standardIntentPort = browserHostModule.inputAdapter.createStandardIntentPort({
-    dispatch: dispatchBrowserRuleInput,
-  });
-  const runAction = standardIntentPort.runAction;
   const activeDecisionPort = browserHostModule.inputAdapter.createActiveDecisionPort({
     inspect: (...args) => ruleComposition.inspect(...args),
     submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
@@ -1284,6 +1282,21 @@
     submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
     viewStateStore: residentViewStateStore,
     refreshProjection: () => residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }),
+  });
+  humanActionInputAdapter = browserHostModule.inputAdapter.createHumanActionInputAdapter({
+    readLegalActions: () => ruleComposition.inputPort.enumerateActions({}),
+    beforeDispatch: () => {
+      if (ruleComposition.inspect().phase === "idle") {
+        createGameRecoverySnapshot({ label: "人类 Standard Action 开始前稳定恢复点" });
+      }
+    },
+    dispatchAction: (action) => residentInputAdapter.dispatchAction(action),
+    afterDispatch: () => queueMicrotask(() => {
+      scheduleResidentDesktopRefresh();
+      updateActionButtons?.();
+      renderStateReadout?.();
+      scheduleAiAutoStepIfNeeded?.();
+    }),
   });
   const residentDecisionController = browserHostModule.decisionUi.createDecisionUiController({
     dispatchIntent: (intent) => {
@@ -2924,10 +2937,6 @@
     startResearchTechEffectFlow,
   } = actionEffectOrchestrator;
   maybeAutoExecuteAomomoRewardEffects = actionEffectOrchestrator.maybeAutoExecuteAomomoRewardEffects;
-  const quickTradeFlow = quickTurnActionExecutorModule.createQuickTradeFlow({
-    dispatchRuleInput: (...args) => dispatchBrowserRuleInput(...args),
-  });
-  const { runQuickTrade } = quickTradeFlow;
   const {
     resetActionBriefingState,
     rememberActionBriefingEntry,
@@ -3017,10 +3026,8 @@
         handFlowModule.createHandIndexDecisionMatcher(handIndexes),
       ),
       scrollToPlayerCommandPanel,
-      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
-        || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
-      ),
+      listHumanActions: (family) => listHumanLegalActions(family),
+      submitHumanAction,
       blockManualAiMovePayment: (...args) => blockManualAiMovePayment(...args),
       blockIncompatiblePendingQuickAction: (...args) => blockIncompatiblePendingQuickAction(...args),
       requestAnimationFrame,
@@ -3062,7 +3069,6 @@
   );
   const handlePlayCardSelect = (...args) => browserOwnerInputs.hand_flow.handlePlayCardSelect(...args);
   const confirmPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.confirmPlayCardSelection(...args);
-  const executeStandardCardCornerAction = (...args) => browserOwnerInputs.hand_flow.executeStandardCardCornerAction(...args);
   const getPendingHandCardPlayAction = (workingRoot = null) => (
     workingRoot
       ? handFlowHelpers.getPendingHandCardPlayAction(workingRoot)
@@ -3080,7 +3086,6 @@
   const syncCardCornerQuickActionChrome = (...args) => browserOwnerInputs.hand_flow.syncCardCornerQuickActionChrome(...args);
   const cancelCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.cancelCardCornerQuickAction(...args);
   const handleHandCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.handleHandCardCornerQuickAction(...args);
-  const confirmCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.confirmCardCornerQuickAction(...args);
   const beginDiscardSelection = (...args) => browserOwnerInputs.hand_flow.beginDiscardSelection(...args);
   const cancelDiscardSelection = () => submitActiveCardDecision("cancel-discard-selection", () => true);
   const completeDiscardSelection = (...args) => browserOwnerInputs.hand_flow.completeDiscardSelection(...args);
@@ -4647,6 +4652,8 @@
 
   const actionRuntimePort = actionRuntimeModule.createActionRuntimePort({
     getController: () => actionRuntimeController,
+    listHumanActions: (family) => listHumanLegalActions(family),
+    submitHumanAction,
   });
   const { handleActionEffectButtonClickForRoot, beginScanAction } = actionRuntimePort;
 
@@ -4783,9 +4790,8 @@
       SCORE_SOURCE_KEYS,
       beginScanAction,
       createActionContext: createActionContextForWorkingRoot,
-      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
-      ),
+      listHumanActions: (family) => listHumanLegalActions(family),
+      submitHumanAction,
       inspect: (...args) => ruleComposition.inspect(...args),
       submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       createInitialSelectionImage,
@@ -4862,17 +4868,14 @@
       HISTORY_SOURCE_QUICK,
       actionHistory,
       createActionContext: createActionContextForWorkingRoot,
-      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
-        || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
-      ),
+      listHumanActions: (family) => listHumanLegalActions(family),
+      submitHumanAction,
       submitActiveDecision: (kind, choiceId) => submitChoiceById(kind, choiceId),
       document,
       els,
       getPlanetSectorCoordinate,
       normalizeResourceCost,
       renderActionEffectBar,
-      runAction,
       techRenderContext,
       uiRuntimeState,
     },
@@ -4931,7 +4934,7 @@
   const {
     setActionButtonState, setTurnActionButtonState, setQuickActionButtonEnabled, updateActionButtons,
     isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
-    activateFamily: activateActionBarFamily,
+    activateAction: activateActionBarAction,
   } = actionBarPort;
 
   const recoverPendingActionFromOpenHistoryForAiForRoot = browserHostModule.actionBar.createPendingActionRecoveryRuntime({
@@ -4978,9 +4981,8 @@
       quickActionHistory,
       els,
       uiRuntimeState,
-      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
-      ),
+      listHumanActions: (family) => listHumanLegalActions(family),
+      submitHumanAction,
       inspect: (...args) => ruleComposition.inspect(...args),
       submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       deferPendingDecision: deferBrowserPendingDecision,
@@ -5024,7 +5026,6 @@
     actionPort: {
       beginCardSelection,
       createActionContext: createActionContextForWorkingRoot,
-      runAction,
       validateIndustryHuanyuMoveRocket,
     },
     openPendingDecision: openBrowserPendingDecision,
@@ -5050,10 +5051,6 @@
       tokenWidths,
       uiRuntimeState,
       updateActionButtons,
-      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
-        || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
-      ),
     },
   });
 
@@ -5074,7 +5071,9 @@
       getProjection: getDesktopActionBarProjection,
     },
     inputPort: {
-      dispatchIntent: (...args) => residentInputAdapter.dispatchIntent(...args),
+      dispatchIntent: (intent) => intent?.kind === "action"
+        ? submitHumanAction(intent.action)
+        : residentInputAdapter.dispatchIntent(intent),
     },
     hostPort: {
       els,
@@ -5128,6 +5127,35 @@
       renderSectorNebulaDataBoard,
     },
   });
+
+  const closeHumanActionPicker = () => {
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+    els.scanTargetActions?.replaceChildren();
+  };
+  const openRunezuFaceSymbolActionPicker = (alienSlotId, position) => {
+    const actions = listHumanLegalActions("runezu_face_symbol").filter((action) => (
+      Number(action.target?.alienSlotId) === Number(alienSlotId)
+      && Number(action.target?.position) === Number(position)
+    ));
+    if (actions.length === 1) return submitHumanAction(actions[0]);
+    if (!actions.length) {
+      return { ok: false, code: "HUMAN_RUNEZU_ACTION_NOT_LEGAL", message: "该符文族位置已失效" };
+    }
+    if (!els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, code: "HUMAN_ACTION_PICKER_UNAVAILABLE", message: "人类 Action picker 未装配" };
+    }
+    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "选择要放置的符文族面部符号";
+    els.scanTargetActions.replaceChildren(...actions.map((action) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "scan-target-action";
+      button.dataset.humanActionId = action.actionId;
+      button.textContent = action.summary || action.target?.symbolId || "放置符号";
+      return button;
+    }));
+    els.scanTargetOverlay.hidden = false;
+    return { ok: true, awaitingActionChoice: true };
+  };
 
   const appEventState = window.SetiAppEvents.createAppEventState({
     pending: {
@@ -5241,7 +5269,7 @@
     confirmLandTargetPicker,
     cancelLandTargetPicker,
     toggleQuickPanel,
-    activateActionBarFamily,
+    activateActionBarAction,
     undoPendingAction,
     runPlaceDataToComputer,
     confirmDataPlacement,
@@ -5312,7 +5340,9 @@
     confirmAmibaTracePlacement,
     confirmAomomoTracePlacement,
     confirmRunezuTracePlacement,
-    openRunezuFaceSymbolPlacement,
+    openRunezuFaceSymbolActionPicker,
+    submitHumanActionId: (actionId) => humanActionInputAdapter.submitActionId(actionId),
+    closeHumanActionPicker,
     confirmJiuzheTracePlacement,
     handleScanAction4Choice,
     closeScanAction4Picker,
@@ -5345,18 +5375,31 @@
     cancelCardSelection,
     confirmPublicScanSelection,
     cancelDiscardSelection,
-    confirmPlayCardSelection: () => (
-      getPendingPlayCardSelection()?.card?.id
-        ? dispatchBrowserRuleInput({
-          kind: "standard_intent",
-          family: "play_card",
-          selector: { cardInstanceId: getPendingPlayCardSelection().card.id },
-        })
-        : confirmPlayCardSelection()
-    ),
+    confirmPlayCardSelection: () => {
+      const cardId = getPendingPlayCardSelection()?.card?.id;
+      const actions = listHumanLegalActions("play_card")
+        .filter((action) => String(action.target?.cardInstanceId) === String(cardId));
+      return actions.length === 1
+        ? submitHumanAction(actions[0])
+        : { ok: false, code: "HUMAN_PLAY_CARD_NOT_LEGAL", message: "所选手牌已不在当前 legal set 中" };
+    },
     cancelPlayCardSelection,
-    confirmHandCardPlayAction,
-    confirmCardCornerQuickAction,
+    confirmHandCardPlayAction: () => {
+      const cardId = getPendingHandCardPlayAction()?.card?.id;
+      const actions = listHumanLegalActions("play_card")
+        .filter((action) => String(action.target?.cardInstanceId) === String(cardId));
+      return actions.length === 1
+        ? submitHumanAction(actions[0])
+        : { ok: false, code: "HUMAN_PLAY_CARD_NOT_LEGAL", message: "所选手牌已不在当前 legal set 中" };
+    },
+    confirmCardCornerQuickAction: () => {
+      const cardId = getPendingCardCornerQuickAction()?.card?.id;
+      const actions = listHumanLegalActions("card_corner")
+        .filter((action) => String(action.target?.cardInstanceId) === String(cardId));
+      return actions.length === 1
+        ? submitHumanAction(actions[0])
+        : { ok: false, code: "HUMAN_CARD_CORNER_NOT_LEGAL", message: "所选弃牌角标已不在当前 legal set 中" };
+    },
     cancelHandScanSelection,
     getCurrentPlayer,
     getInterfacePlayer,
@@ -5423,7 +5466,7 @@
       inspectInput: () => residentInputAdapter.inspectInputState(),
       capture: () => browserCheckpointPort.capture(),
       restore: (envelope) => browserCheckpointPort.restore(envelope),
-      dispatchAction: (action) => residentInputAdapter.dispatchAction(action),
+      dispatchAction: (action) => submitHumanAction(action),
       submitDecision: (submission) => residentInputAdapter.submitDecision(submission),
     },
   });

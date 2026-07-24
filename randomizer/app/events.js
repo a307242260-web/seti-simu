@@ -39,13 +39,13 @@
     if (button === context.quickButton) return false;
     if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
     const handlers = {
-      "action-launch-button": () => context.activateFamily("launch"),
+      "action-launch-button": () => context.activateAction(button.dataset.actionId),
       "action-orbit-button": context.orbit,
       "action-land-button": context.land,
-      "action-scan-button": () => context.activateFamily("scan"),
-      "action-analyze-button": () => context.activateFamily("analyze"),
+      "action-scan-button": () => context.activateAction(button.dataset.actionId),
+      "action-analyze-button": () => context.activateAction(button.dataset.actionId),
       "action-play-card-button": context.beginPlayCard,
-      "action-research-tech-button": context.researchTech,
+      "action-research-tech-button": () => context.activateAction(button.dataset.actionId),
     };
     const handler = handlers[button.id];
     if (typeof handler !== "function") return false;
@@ -124,7 +124,7 @@
       confirmLandTargetPicker,
       cancelLandTargetPicker,
       toggleQuickPanel,
-      activateActionBarFamily,
+      activateActionBarAction,
       undoPendingAction,
       runPlaceDataToComputer,
       confirmDataPlacement,
@@ -181,7 +181,9 @@
       confirmAmibaTracePlacement,
       confirmAomomoTracePlacement,
       confirmRunezuTracePlacement,
-      openRunezuFaceSymbolPlacement,
+      openRunezuFaceSymbolActionPicker,
+      submitHumanActionId,
+      closeHumanActionPicker,
       confirmJiuzheTracePlacement,
       handleScanAction4Choice,
       closeScanAction4Picker,
@@ -284,7 +286,7 @@
       quickButton: els.actionQuickButton,
       orbit: orbitForCurrentPlayer,
       land: landForCurrentPlayer,
-      activateFamily: activateActionBarFamily,
+      activateAction: activateActionBarAction,
       beginPlayCard: beginPlayCardSelection,
       researchTech: researchTechForCurrentPlayer,
     }));
@@ -297,11 +299,11 @@
     els.actionQuickButton.addEventListener("click", toggleQuickPanel);
     els.actionPassButton?.addEventListener("click", () => {
       if (els.actionPassButton.disabled) return;
-      activateActionBarFamily("pass");
+      activateActionBarAction(els.actionPassButton.dataset.actionId);
     });
     els.actionConfirmButton?.addEventListener("click", () => {
       if (els.actionConfirmButton.disabled) return;
-      activateActionBarFamily("end_turn");
+      activateActionBarAction(els.actionConfirmButton.dataset.actionId);
     });
     els.actionUndoButton?.addEventListener("click", () => {
       if (els.actionUndoButton.disabled) return;
@@ -316,7 +318,7 @@
     els.quickActionsTrades.addEventListener("click", (event) => {
       const button = event.target.closest("[data-quick-trade]");
       if (!button || button.disabled) return;
-      activateActionBarFamily("quick_trade", { tradeId: button.dataset.quickTrade });
+      activateActionBarAction(button.dataset.actionId);
     });
     els.playerBoardDataLayer?.addEventListener("click", (event) => {
       const token = event.target.closest(".data-token-pool");
@@ -341,6 +343,12 @@
     });
     els.scanTargetActions?.addEventListener("click", (event) => {
       if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
+      const humanAction = event.target.closest("[data-human-action-id]");
+      if (humanAction && !humanAction.disabled) {
+        submitHumanActionId(humanAction.dataset.humanActionId);
+        closeHumanActionPicker();
+        return;
+      }
       if (routeProbeDecisionClick(event, {
         handleProbeSectorScanChoice,
         confirmProbeSectorScanSelection,
@@ -692,7 +700,7 @@
         }
         const runezuFaceButton = event.target.closest("[data-runezu-face-symbol-slot]");
         if (runezuFaceButton && !runezuFaceButton.disabled && runezuFaceButton.classList.contains("is-placeable")) {
-          openRunezuFaceSymbolPlacement(
+          openRunezuFaceSymbolActionPicker(
             Number(runezuFaceButton.dataset.alienSlot),
             Number(runezuFaceButton.dataset.runezuFaceSymbolPosition),
           );

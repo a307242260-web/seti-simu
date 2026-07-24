@@ -100,7 +100,8 @@
       confirmIndustryTuringBorrow: industryRuntime?.confirmIndustryTuringBorrow,
       countOwnedTechByType: effectExecutorPort?.countOwnedTechByType,
       createActionContext: hostPort.createActionContext,
-      dispatchStandardIntent: hostPort.dispatchStandardIntent,
+      listHumanActions: hostPort.listHumanActions,
+      submitHumanAction: hostPort.submitHumanAction,
       submitActiveDecision: hostPort.submitActiveDecision,
       document: hostPort.document,
       els: hostPort.els,
@@ -130,7 +131,6 @@
       renderWheels: renderRuntime?.renderWheels,
       removePlutoMarker: actionInteraction("removePlutoMarker"),
       restoreObjectSnapshot: cardRuntime?.restoreObjectSnapshot,
-      runAction: hostPort.runAction,
       setQuickPanelOpen: actionBar("setQuickPanelOpen"),
       skipActionEffectWithMessage: effectSkipRuntime?.skipWithMessage,
       startCardEffectFlow: effectFlowRuntime?.startCardEffectFlow,
@@ -873,20 +873,14 @@
       if (blueSlot != null) options.blueSlot = blueSlot;
 
       const needsBlueSlotDecision = blueSlot == null && tech.getTechType?.(tileId) === "blue";
+      const matchingActions = (context.listHumanActions?.("research_tech") || []).filter((action) => (
+        String(action.target?.tileId) === String(tileId)
+        && String(action.target?.blueSlot ?? "") === String(blueSlot ?? "")
+      ));
       const result = actions?.createStandardAdapter && !needsBlueSlotDecision
-        ? context.dispatchStandardIntent?.(
-          "research_tech",
-          { tileId, ...(blueSlot == null ? {} : { blueSlot }) },
-          {
-            payload: {
-              selectionOnly: true,
-              skipCost: Boolean(options.skipCost),
-              ...(techGameState.ui.allowedTechTypes
-                ? { techTypes: [...techGameState.ui.allowedTechTypes] }
-                : {}),
-            },
-          },
-        ) || { ok: false, code: "STANDARD_ACTION_EXECUTOR_REQUIRED", message: "科技行动 executor 未装配" }
+        ? (matchingActions.length === 1
+          ? context.submitHumanAction(matchingActions[0])
+          : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "科技片不在当前 legal set 中" })
         : abilities.executeAbility("researchTechSelect", createActionContext(workingRoot), options);
       if (result.needsBlueSlotChoice) {
         techGameState.ui.pendingTileId = tileId;
@@ -951,7 +945,10 @@
     }
 
     function researchTechForCurrentPlayer() {
-      return hostPort.dispatchStandardIntent("research_tech", { kind: "research-tech" });
+      const actions = hostPort.listHumanActions?.("research_tech") || [];
+      return actions.length === 1
+        ? hostPort.submitHumanAction(actions[0])
+        : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "当前没有唯一研究科技行动" };
     }
 
     function commitSelectedResearchTech() {

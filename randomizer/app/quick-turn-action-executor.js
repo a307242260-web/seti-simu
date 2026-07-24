@@ -25,15 +25,5 @@
     });
   }
 
-  function createQuickTradeFlow(context = {}) {
-    const runQuickTrade = (tradeId) => context.dispatchRuleInput({
-      kind: "standard_intent",
-      family: "quick_trade",
-      selector: { tradeId },
-    });
-
-    return Object.freeze({ runQuickTrade });
-  }
-
-  return Object.freeze({ ACTION_FAMILIES, createQuickTurnActionExecutor, createQuickTradeFlow });
+  return Object.freeze({ ACTION_FAMILIES, createQuickTurnActionExecutor });
 });

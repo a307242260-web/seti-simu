@@ -42,11 +42,12 @@
   function createTurnEndFlow(context = {}) {
     const hostPort = context.hostPort || context;
 
-    function dispatch(family, selector = {}, payload = {}) {
-      return hostPort.dispatchStandardIntent?.(family, selector, payload) || {
+    function dispatch(family) {
+      const actions = hostPort.listHumanActions?.(family) || [];
+      return actions.length === 1 ? hostPort.submitHumanAction(actions[0]) : {
         ok: false,
         code: "TURN_END_PRODUCTION_OWNER_REQUIRED",
-        message: "正式回合 owner 尚未装配",
+        message: "当前没有唯一正式回合行动",
       };
     }
 
@@ -78,11 +79,11 @@
 
     return Object.freeze({
       createPassEvent,
-      passForCurrentPlayer(_workingRoot, execution = {}) {
-        return dispatch("pass", execution.selector || {}, execution.payload || {});
+      passForCurrentPlayer() {
+        return dispatch("pass");
       },
-      endCurrentTurn(_workingRoot, execution = {}) {
-        return dispatch("end_turn", execution.selector || {}, execution.payload || {});
+      endCurrentTurn() {
+        return dispatch("end_turn");
       },
       executePassFirstRotateEffect: continueProductionDecision,
       executePassHandLimitEffect: continueProductionDecision,

@@ -47,6 +47,7 @@ assert.deepEqual(route({ unrelated: "true" }), {
   const calls = [];
   const button = {
     id: "action-scan-button",
+    dataset: { actionId: "scan:current" },
     disabled: false,
     getAttribute: () => "false",
   };
@@ -55,10 +56,10 @@ assert.deepEqual(route({ unrelated: "true" }), {
   }, {
     actionBarMain: { contains: (candidate) => candidate === button },
     quickButton: null,
-    activateFamily: (family) => calls.push(family),
+    activateAction: (actionId) => calls.push(actionId),
   });
   assert.equal(handled, true);
-  assert.deepEqual(calls, ["scan"]);
+  assert.deepEqual(calls, ["scan:current"]);
 }
 
 console.log("events tests passed");

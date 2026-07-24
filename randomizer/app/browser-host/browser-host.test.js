@@ -660,33 +660,7 @@ const adapter = inputApi.createBrowserInputAdapter({
   assert.equal(calls.decision.length, 1);
 })();
 
-(function testLegacyRuleInputDispatcherOwnsStableSnapshotAndStandardRouting() {
-  let phase = "idle";
-  const calls = [];
-  const dispatcher = inputApi.createRuleInputDispatcher({
-    standardActionSchemaVersion: "seti-standard-action-v1",
-    inspect: () => ({ phase }),
-    createRecoverySnapshot: (options) => { calls.push(["snapshot", options.label]); return {}; },
-    enumerateActions: () => [{ actionId: "pass:1" }],
-    dispatchRuntimeAction: (action) => ({ ok: true, action: {
-      schemaVersion: "seti-standard-action-v1", actionId: `${action.family}:1`, family: action.family, phase: "main",
-    } }),
-    submitAction: (action) => { calls.push(["main", action.actionId]); phase = "idle"; return { ok: true }; },
-    submitQuickAction: (action) => { calls.push(["quick", action.actionId]); return { ok: true }; },
-  });
-  assert.equal(dispatcher.dispatch({ kind: "standard_enumerate" }).candidates.length, 1);
-  assert.equal(dispatcher.dispatch({ kind: "standard_intent", family: "pass" }).ok, true);
-  assert.deepEqual(calls, [["snapshot", "Standard Action 开始前稳定恢复点"], ["main", "pass:1"]]);
-})();
-
-(function testStandardIntentAndActiveDecisionPortsOwnBrowserInputMapping() {
-  const dispatched = [];
-  const standard = inputApi.createStandardIntentPort({
-    dispatch(request) { dispatched.push(request); return { ok: true }; },
-  });
-  standard.runAction("land", { rocketId: 3, target: { type: "satellite", satelliteId: "s1" } });
-  assert.deepEqual(dispatched[0].selector, { rocketId: 3, type: "satellite", satelliteId: "s1" });
-
+(function testActiveDecisionPortOwnsBrowserDecisionMapping() {
   const submissions = [];
   const decisions = inputApi.createActiveDecisionPort({
     inspect: () => ({
@@ -702,6 +676,73 @@ const adapter = inputApi.createBrowserInputAdapter({
   assert.equal(decisions.submitDirectional("industry-free-move", 1, 0, 7).ok, true);
   assert.equal(submissions[0].decisionVersion, 2);
   assert.equal(decisions.submit("unknown", () => true).code, "CARD_DECISION_REQUIRED");
+})();
+
+(function testHumanActionInputAdapterOnlyDispatchesCurrentCompleteDescriptor() {
+  const dispatched = [];
+  let legal = [{
+    schemaVersion: "seti-standard-action-v1",
+    actionId: "move:p1:r7:cw:v3",
+    family: "move",
+    phase: "quick",
+    actorId: "p1",
+    stateVersion: 3,
+    decisionVersion: 8,
+    target: { rocketId: 7, deltaX: 1, deltaY: 0 },
+    payload: { cost: { energy: 1 } },
+    summary: "顺时针移动",
+    disabledReason: null,
+  }];
+  const adapter = inputApi.createHumanActionInputAdapter({
+    readLegalActions: () => legal,
+    dispatchAction(action) {
+      dispatched.push(action);
+      return { ok: true };
+    },
+  });
+  const current = structuredClone(legal[0]);
+  assert.equal(adapter.submit(current).ok, true);
+  assert.deepEqual(dispatched, [current], "唯一 action port 必须收到 current legal set 的完整 descriptor");
+
+  assert.equal(adapter.submit({ ...current, actorId: "p2" }).code, "HUMAN_ACTION_WRONG_ACTOR");
+  assert.equal(adapter.submit({ ...current, stateVersion: 2 }).code, "HUMAN_ACTION_STALE");
+  assert.equal(adapter.submit({ ...current, payload: { cost: { energy: 0 } } }).code, "HUMAN_ACTION_DESCRIPTOR_STALE");
+  legal = [];
+  assert.equal(adapter.submit(current).code, "HUMAN_ACTION_REMOVED");
+  assert.equal(dispatched.length, 1, "stale/wrong actor/removed/tampered action 必须零提交");
+})();
+
+(function testHumanActionInputAdapterCoversEveryTopLevelHumanFamily() {
+  const families = [
+    "launch", "orbit", "land", "scan", "analyze", "research_tech", "play_card", "pass",
+    "move", "quick_trade", "industry", "card_corner", "place_data",
+    "runezu_face_symbol", "end_turn",
+  ];
+  const legal = families.map((family, index) => ({
+    schemaVersion: "seti-standard-action-v1",
+    actionId: `${family}:p1:v9:${index}`,
+    family,
+    phase: ["move", "quick_trade", "card_corner", "place_data", "runezu_face_symbol"].includes(family)
+      ? "quick" : "main",
+    actorId: "p1",
+    stateVersion: 9,
+    decisionVersion: 4,
+    target: { identity: index },
+    payload: { proof: family },
+    summary: family,
+    disabledReason: null,
+  }));
+  const dispatched = [];
+  const adapter = inputApi.createHumanActionInputAdapter({
+    readLegalActions: () => legal,
+    dispatchAction(action) { dispatched.push(action); return { ok: true }; },
+  });
+  for (const action of legal) assert.equal(adapter.submit(structuredClone(action)).ok, true);
+  assert.deepEqual(
+    dispatched.map((action) => action.family),
+    families,
+    "15 family 必须逐项提交 current legal set 的完整 descriptor",
+  );
 })();
 
 console.log("browser host reference core tests passed");

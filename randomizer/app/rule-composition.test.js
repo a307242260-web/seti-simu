@@ -666,10 +666,8 @@ function createForkableHarness() {
     false,
     "Browser legacy Quick/Turn executor 不得继续声明 quick_trade family",
   );
-  const legacyQuickTurnSource = [
-    quickTurnActionExecutor.createQuickTurnActionExecutor,
-    quickTurnActionExecutor.createQuickTradeFlow,
-  ].map((factory) => factory.toString()).join("\n");
+  const legacyQuickTurnSource = quickTurnActionExecutor
+    .createQuickTurnActionExecutor.toString();
   for (const forbiddenSource of [
     "executeQuickTrade",
     "excludeFamilies",
@@ -688,19 +686,11 @@ function createForkableHarness() {
     false,
     "Browser Standard Action adapter 不得保留 quick_trade exclude 配置",
   );
-  const dispatched = [];
-  const quickTradeFlow = quickTurnActionExecutor.createQuickTradeFlow({
-    dispatchRuleInput(input) {
-      dispatched.push(input);
-      return { ok: true };
-    },
-  });
-  assert.equal(quickTradeFlow.runQuickTrade("credits-for-energy", { workingRoot: {} }).ok, true);
-  assert.deepEqual(dispatched, [{
-    kind: "standard_intent",
-    family: "quick_trade",
-    selector: { tradeId: "credits-for-energy" },
-  }], "Browser quick_trade UI 壳只能提交公共 standard_intent");
+  assert.equal(
+    Object.hasOwn(quickTurnActionExecutor, "createQuickTradeFlow"),
+    false,
+    "Browser 不得保留 quick_trade family/selector executor",
+  );
 }
 
 {

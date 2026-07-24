@@ -15,10 +15,10 @@
     "syncMovePaymentChrome", "scrollToPlayerHandPanel", "beginMovePaymentSelection",
     "handleHandCardMovePayment", "resolveMovePaymentDecision", "syncPlayCardSelectionChrome",
     "handlePlayCardSelect", "confirmPlayCardSelection",
-    "executeStandardCardCornerAction", "cancelHandCardPlayAction",
+    "cancelHandCardPlayAction",
     "clearHandCardContextActions", "cancelHandCardContextActions", "confirmHandCardPlayAction",
     "syncCardCornerQuickActionChrome", "cancelCardCornerQuickAction",
-    "handleHandCardCornerQuickAction", "confirmCardCornerQuickAction", "beginDiscardSelection",
+    "handleHandCardCornerQuickAction", "beginDiscardSelection",
     "completeDiscardSelection", "handleHandCardDiscard", "beginPlayCardSelection", "cancelPlayCardSelection",
     "handleFutureSpanCardPlay",
     "handleFutureSpanPlayCardSelect",
@@ -231,7 +231,8 @@
       readPendingDecision: hostPort.readPendingDecision,
       scrollToPlayerCommandPanel: hostPort.scrollToPlayerCommandPanel,
       getCardTypeCode: card("getCardTypeCode"),
-      dispatchStandardIntent: hostPort.dispatchStandardIntent,
+      listHumanActions: hostPort.listHumanActions,
+      submitHumanAction: hostPort.submitHumanAction,
       blockManualAiMovePayment: hostPort.blockManualAiMovePayment,
       blockIncompatiblePendingQuickAction: hostPort.blockIncompatiblePendingQuickAction,
       recordQuickTradeCompletion: effectFlowRuntime?.recordQuickTradeCompletion,
@@ -967,14 +968,11 @@
       if (pending.source === "future_span") {
         return handleFutureSpanCardPlay(workingRoot);
       }
-      if (typeof context.dispatchStandardIntent === "function") {
-        return context.dispatchStandardIntent(
-          "play_card",
-          { cardInstanceId: pending.card.id },
-          { payload: { handIndex: pending.handIndex, cost: getCardPlayCost(pending.card) } },
-        );
-      }
-      return { ok: false, code: "CARD_PLAY_INPUT_PORT_REQUIRED", message: "打牌必须通过 Production Composition" };
+      const actions = context.listHumanActions("play_card")
+        .filter((action) => action.target?.cardInstanceId === pending.card.id);
+      return actions.length === 1
+        ? context.submitHumanAction(actions[0])
+        : { ok: false, code: "CARD_PLAY_INPUT_PORT_REQUIRED", message: "手牌不在当前 Production legal set 中" };
     }
 
     function getPendingHandCardPlayAction(workingRoot) {
@@ -1134,194 +1132,6 @@
       return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function executeStandardCardCornerAction(workingRoot, descriptor) {
-      const currentPlayer = players.getCurrentPlayer(workingRoot?.playerState);
-      const handIndex = (currentPlayer?.hand || [])
-        .findIndex((card) => card.id === descriptor?.target?.cardInstanceId);
-      const card = handIndex >= 0 ? currentPlayer.hand[handIndex] : null;
-      const cornerAction = getCardCornerQuickActionForCard(card);
-      if (!card || !cornerAction) {
-        return { ok: false, code: "CARD_CORNER_TARGET_STALE", message: "卡牌或弃牌角标已失效" };
-      }
-      return confirmCardCornerQuickAction(workingRoot, {
-        workingRoot,
-        standardAction: descriptor,
-        action: { handIndex, cardId: card.id, ...cornerAction, card },
-      });
-    }
-
-    function confirmCardCornerQuickAction(workingRoot, execution = {}) {
-      if (!execution.workingRoot && !canUseCardCornerQuickAction()) {
-        return { ok: false, message: "当前无法使用卡牌快速行动" };
-      }
-
-      const actionPlayerState = workingRoot?.playerState || context.playerState;
-      const actionCardState = workingRoot?.cardState || ruleCardState(workingRoot);
-      const actionAlienGameState = workingRoot?.alienGameState || ruleAlienGameState(workingRoot);
-      const actionRocketState = workingRoot?.rocketState || ruleRocketState(workingRoot);
-      const action = execution.action || getPendingCardCornerQuickAction(workingRoot);
-      const currentPlayer = workingRoot
-        ? players.getCurrentPlayer(actionPlayerState)
-        : getCurrentPlayer(workingRoot);
-      if (!action || !currentPlayer) {
-        actionRocketState.statusNote = "没有待确认的卡牌快速行动";
-        renderStateReadout();
-        return { ok: false, message: actionRocketState.statusNote };
-      }
-
-      const queueMoveEffect = shouldQueueCardCornerMoveQuickAction(action, currentPlayer);
-      if (action.actionKind === "move" && !queueMoveEffect) {
-        const moveCheck = canStartCardCornerFreeMove();
-        if (!moveCheck.ok) {
-          actionRocketState.statusNote = moveCheck.message;
-          renderStateReadout();
-          return moveCheck;
-        }
-      }
-
-      if (action.actionKind === "fangzhou_basic") {
-        const beforePlayer = structuredClone(currentPlayer);
-        const beforeAlienState = structuredClone(actionAlienGameState);
-        beginQuickActionStep("card-corner", `卡牌快速行动：${action.label}`);
-        const discardResult = cards.discardFromHandAtIndex(currentPlayer, action.handIndex);
-        if (!discardResult.ok) {
-          quickActionHistory.undoLastStep();
-          if (!quickActionHistory.hasUndoableStep()) {
-            quickActionHistory.commitSession();
-            clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-          }
-          actionRocketState.statusNote = discardResult.message;
-          syncCardCornerQuickActionChrome(workingRoot);
-          renderStateReadout();
-          return discardResult;
-        }
-        cards.addToDiscardPile(actionCardState, discardResult.card);
-        context.recordQuickHistoryCommand?.(historyCommands.createRestorePlayerCommand(
-          currentPlayer,
-          beforePlayer,
-          "恢复方舟弃牌快速行动前玩家状态",
-        ));
-        context.recordQuickHistoryCommand?.(historyCommands.createRestoreObjectCommand(
-          actionAlienGameState,
-          beforeAlienState,
-          "恢复方舟弃牌快速行动前外星人状态",
-        ));
-        completeQuickActionStep();
-        setCardCornerQuickAction(workingRoot, null);
-        syncCardCornerQuickActionChrome(workingRoot);
-        const rewardResult = applyFangzhouCard1Rewards(currentPlayer, context.getDiscardCornerRewardMultiplier?.(currentPlayer) || 1, "basic", "方舟弃牌基础奖励", {
-          historySource: HISTORY_SOURCE_QUICK,
-          consumesMainAction: false,
-          scoreSourceKey: SCORE_SOURCE_KEYS.ALIEN_CARD_QUICK,
-        });
-        actionRocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardResult.message}`;
-        renderPlayerStats();
-        renderPlayerHand();
-        renderAlienPanels();
-        renderPublicCards();
-        updatePublicCardControls();
-        updateActionButtons();
-        renderStateReadout();
-        return rewardResult;
-      }
-
-      const beforePlayer = structuredClone(currentPlayer);
-      const beforeCardState = {
-        publicCards: actionCardState.publicCards.slice(),
-        discardPile: (actionCardState.discardPile || []).slice(),
-      };
-
-      beginQuickActionStep("card-corner", `卡牌快速行动：${action.label}`);
-      const discardResult = cards.discardFromHandAtIndex(currentPlayer, action.handIndex);
-      if (!discardResult.ok) {
-        quickActionHistory.undoLastStep();
-        if (!quickActionHistory.hasUndoableStep()) {
-          quickActionHistory.commitSession();
-          clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-        }
-        actionRocketState.statusNote = discardResult.message;
-        syncCardCornerQuickActionChrome(workingRoot);
-        renderStateReadout();
-        return discardResult;
-      }
-
-      cards.addToDiscardPile(actionCardState, discardResult.card);
-      if (Object.keys(action.reward?.gain || {}).length) {
-        players.gainResources(currentPlayer, action.reward.gain);
-        addScoreSourceFromGain(
-          currentPlayer,
-          isAlienFamilyCard(discardResult.card) ? SCORE_SOURCE_KEYS.ALIEN_CARD_QUICK : SCORE_SOURCE_KEYS.CARD_QUICK,
-          action.reward.gain,
-        );
-      }
-      if (Object.keys(action.moveReward?.gain || {}).length) {
-        players.gainResources(currentPlayer, action.moveReward.gain);
-        addScoreSourceFromGain(
-          currentPlayer,
-          isAlienFamilyCard(discardResult.card) ? SCORE_SOURCE_KEYS.ALIEN_CARD_QUICK : SCORE_SOURCE_KEYS.CARD_QUICK,
-          action.moveReward.gain,
-        );
-      }
-      const dataResults = [];
-      const dataCount = Math.max(0, Math.round(action.reward?.dataCount || 0));
-      for (let index = 0; index < dataCount; index += 1) {
-        dataResults.push(data.gainData(currentPlayer, { source: "card_corner" }));
-      }
-
-      context.recordQuickHistoryCommand?.(historyCommands.createRestorePlayerCommand(
-        currentPlayer,
-        beforePlayer,
-        "恢复卡牌快速行动前玩家状态",
-      ));
-      context.recordQuickHistoryCommand?.(historyCommands.createRestorePublicCardsCommand(
-        actionCardState,
-        beforeCardState.publicCards,
-        beforeCardState.discardPile,
-      ));
-      completeQuickActionStep();
-
-      setCardCornerQuickAction(workingRoot, null);
-      syncCardCornerQuickActionChrome(workingRoot);
-      const rewardText = action.actionKind === "move"
-        ? [context.formatPlanetRewardGain?.(action.moveReward?.gain || {}), `${action.moveReward?.movementPoints || 1}移动`]
-          .filter(Boolean)
-          .join("、")
-        : formatCardCornerRewardMessage(action.reward, dataResults);
-      const cornerEvent = {
-        type: "cardCorner",
-        ...createCardCornerTriggerEventFields(action.reward, action.moveReward, {
-          cornerCode: action.reward?.code ?? action.moveReward?.code ?? null,
-          rewardMultiplier: action.rewardMultiplier,
-        }),
-        playerId: currentPlayer.id || null,
-        playerColor: currentPlayer.color || null,
-        source: "card_corner",
-      };
-      actionRocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardText}`;
-      renderPlayerStats();
-      renderPlayerHand();
-      renderPublicCards();
-      updatePublicCardControls();
-      updateActionButtons();
-      renderStateReadout();
-      if (action.actionKind === "move") {
-        if (queueMoveEffect) {
-          startCardCornerMoveEffectFlow(action, discardResult.card, cornerEvent);
-        } else {
-          beginCardCornerFreeMove(action, discardResult.card, [cornerEvent]);
-        }
-      } else {
-        settleCardTasksAfterEffect({ events: [cornerEvent], render: false });
-      }
-      return {
-        ok: true,
-        card: discardResult.card,
-        reward: action.reward,
-        moveReward: action.moveReward,
-        dataResults,
-        message: actionRocketState.statusNote,
-      };
-    }
 
     function beginDiscardSelection(workingRoot, count, pendingAction = null) {
       if (isTechTilePickingActive()) return { ok: false, message: "请先完成科技选择" };
@@ -1624,13 +1434,11 @@
 
       let result = null;
       try {
-        result = typeof context.dispatchStandardIntent === "function"
-          ? context.dispatchStandardIntent(
-            "play_card",
-            { cardInstanceId: playedCard.id },
-            { payload: { handIndex, cost: getCardPlayCost(playedCard) } },
-          )
-          : { ok: false, code: "CARD_PLAY_INPUT_PORT_REQUIRED", message: "打牌必须通过 Production Composition" };
+        const actions = context.listHumanActions("play_card")
+          .filter((action) => action.target?.cardInstanceId === playedCard.id);
+        result = actions.length === 1
+          ? context.submitHumanAction(actions[0])
+          : { ok: false, code: "CARD_PLAY_INPUT_PORT_REQUIRED", message: "目标牌不在当前 Production legal set 中" };
       } finally {
         futureSpanPlayBeforePlayer = null;
         delete playedCard.futureSpanFreePlay;
@@ -2066,9 +1874,7 @@
       getPendingCardCornerQuickAction,
       syncCardCornerQuickActionChrome,
       cancelCardCornerQuickAction,
-      executeStandardCardCornerAction,
       handleHandCardCornerQuickAction,
-      confirmCardCornerQuickAction,
       beginDiscardSelection,
       cancelDiscardSelection,
       completeDiscardSelection,

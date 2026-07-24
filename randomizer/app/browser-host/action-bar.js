@@ -35,7 +35,7 @@
   ]);
   const ACTION_KEYS = Object.freeze([
     "schemaVersion", "actionId", "family", "phase", "actorId", "stateVersion",
-    "decisionVersion", "target", "payload", "summary", "disabledReason",
+    "decisionVersion", "target", "payload", "decision", "summary", "disabledReason",
   ]);
 
   function clone(value) {
@@ -86,6 +86,7 @@
       decisionVersion: action.decisionVersion,
       target: clone(action.target ?? null),
       payload: clone(action.payload || {}),
+      decision: clone(action.decision || null),
       summary: action.summary || action.family,
       disabledReason: action.disabledReason || null,
     });
@@ -334,13 +335,6 @@
       ];
     }
 
-    function matchesSelector(action, selector = {}) {
-      return Object.entries(selector).every(([key, value]) => (
-        JSON.stringify(action.target?.[key]) === JSON.stringify(value)
-        || JSON.stringify(action.payload?.[key]) === JSON.stringify(value)
-      ));
-    }
-
     function activateAction(actionId) {
       const action = listActions(readProjection()).find((candidate) => (
         String(candidate.actionId) === String(actionId)
@@ -352,20 +346,6 @@
         return fail("ACTION_BAR_ACTION_DISABLED", action.disabledReason, { actionId });
       }
       return context.dispatchIntent({ kind: "action", action: clone(action) });
-    }
-
-    function activateFamily(family, selector = {}) {
-      const matches = listActions(readProjection()).filter((action) => (
-        action.family === family && !action.disabledReason && matchesSelector(action, selector)
-      ));
-      if (matches.length !== 1) {
-        return fail(
-          matches.length ? "ACTION_BAR_ACTION_AMBIGUOUS" : "ACTION_BAR_ACTION_NOT_LEGAL",
-          matches.length ? `${family} 当前有多个合法 Action` : `${family} 当前没有合法 Action`,
-          { family },
-        );
-      }
-      return activateAction(matches[0].actionId);
     }
 
     function setActionButtonState(button, enabled, reason) {
@@ -435,15 +415,19 @@
       const lockReason = machineLocked ? "电脑玩家自动行动中" : "当前无法执行此行动";
       for (const button of mainButtons) {
         const family = mainFamilies.get(button);
-        const enabled = !machineLocked && model.controls.actions.some((action) => (
+        const legal = model.controls.actions.filter((action) => (
           action.family === family && !action.disabledReason
         ));
+        const enabled = !machineLocked && legal.length > 0;
+        button.dataset.actionId = legal.length === 1 ? legal[0].actionId : "";
         setActionButtonState(button, enabled, enabled ? "" : lockReason);
       }
-      const passEnabled = !machineLocked
-        && model.controls.actions.some((action) => action.family === "pass" && !action.disabledReason);
-      const endTurnEnabled = !machineLocked
-        && model.controls.actions.some((action) => action.family === "end_turn" && !action.disabledReason);
+      const pass = model.controls.actions.find((action) => action.family === "pass" && !action.disabledReason);
+      const endTurn = model.controls.actions.find((action) => action.family === "end_turn" && !action.disabledReason);
+      const passEnabled = !machineLocked && Boolean(pass);
+      const endTurnEnabled = !machineLocked && Boolean(endTurn);
+      if (els.actionPassButton) els.actionPassButton.dataset.actionId = pass?.actionId || "";
+      if (els.actionConfirmButton) els.actionConfirmButton.dataset.actionId = endTurn?.actionId || "";
       setTurnActionButtonState(els.actionPassButton, passEnabled);
       setTurnActionButtonState(els.actionConfirmButton, endTurnEnabled, endTurnEnabled);
       setTurnActionButtonState(els.actionUndoButton, !machineLocked && model.controls.canUndo);
@@ -458,7 +442,7 @@
     return Object.freeze({
       setActionButtonState, setTurnActionButtonState, setQuickActionButtonEnabled,
       updateActionButtons, isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
-      activateAction, activateFamily,
+      activateAction,
     });
   }
 
@@ -1116,7 +1100,7 @@
     const methods = [
       "setActionButtonState", "setTurnActionButtonState", "setQuickActionButtonEnabled",
       "updateActionButtons", "isQuickPanelOpen", "setQuickPanelOpen", "toggleQuickPanel", "updateQuickPanel",
-      "activateAction", "activateFamily",
+      "activateAction",
     ];
     return Object.freeze(Object.fromEntries(methods.map((name) => [
       name,

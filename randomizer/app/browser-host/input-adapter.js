@@ -8,6 +8,11 @@
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-host-v1";
+  const STANDARD_ACTION_SCHEMA = "seti-standard-action-v1";
+  const STANDARD_ACTION_KEYS = Object.freeze([
+    "schemaVersion", "actionId", "family", "phase", "actorId", "stateVersion",
+    "decisionVersion", "target", "payload", "decision", "summary", "disabledReason",
+  ]);
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -17,6 +22,105 @@
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
     for (const child of Object.values(value)) deepFreeze(child);
     return Object.freeze(value);
+  }
+
+  function stableSerialize(value) {
+    if (value == null || typeof value !== "object") return JSON.stringify(value);
+    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+    return `{${Object.keys(value).sort().map((key) => (
+      `${JSON.stringify(key)}:${stableSerialize(value[key])}`
+    )).join(",")}}`;
+  }
+
+  function comparableAction(action) {
+    const unknownKeys = Object.keys(action || {})
+      .filter((key) => !STANDARD_ACTION_KEYS.includes(key));
+    if (unknownKeys.length) return null;
+    return {
+      schemaVersion: action.schemaVersion,
+      actionId: action.actionId,
+      family: action.family,
+      phase: action.phase,
+      actorId: action.actorId,
+      stateVersion: action.stateVersion,
+      decisionVersion: action.decisionVersion,
+      target: action.target ?? null,
+      payload: action.payload || {},
+      decision: action.decision || null,
+      summary: action.summary || action.family,
+      disabledReason: action.disabledReason || null,
+    };
+  }
+
+  function createHumanActionInputAdapter(options = {}) {
+    if (typeof options.readLegalActions !== "function") {
+      throw new TypeError("HumanActionInputAdapter 需要 readLegalActions()");
+    }
+    if (typeof options.dispatchAction !== "function") {
+      throw new TypeError("HumanActionInputAdapter 需要唯一 dispatchAction port");
+    }
+    const beforeDispatch = typeof options.beforeDispatch === "function"
+      ? options.beforeDispatch : () => {};
+    const afterDispatch = typeof options.afterDispatch === "function"
+      ? options.afterDispatch : () => {};
+
+    function listLegalActions() {
+      const actions = options.readLegalActions();
+      if (!Array.isArray(actions)) {
+        throw new TypeError("HumanActionInputAdapter legal set 必须是数组");
+      }
+      return deepFreeze(actions.map((action) => clone(action)));
+    }
+
+    function reject(code, message, action) {
+      return {
+        ok: false,
+        code,
+        message,
+        actionId: action?.actionId ?? null,
+      };
+    }
+
+    function submit(action) {
+      if (!action || action.schemaVersion !== STANDARD_ACTION_SCHEMA
+        || !action.actionId || !action.actorId
+        || !Number.isSafeInteger(action.stateVersion)
+        || !Number.isSafeInteger(action.decisionVersion)) {
+        return reject("HUMAN_ACTION_DESCRIPTOR_INVALID", "人类输入必须提交完整 Standard Action descriptor", action);
+      }
+      const legal = listLegalActions();
+      const current = legal.find((candidate) => String(candidate.actionId) === String(action.actionId));
+      if (!current) {
+        return reject("HUMAN_ACTION_REMOVED", "该行动已不在当前 legal set 中", action);
+      }
+      if (current.actorId !== action.actorId) {
+        return reject("HUMAN_ACTION_WRONG_ACTOR", "该行动不属于当前 actor", action);
+      }
+      if (current.stateVersion !== action.stateVersion
+        || current.decisionVersion !== action.decisionVersion) {
+        return reject("HUMAN_ACTION_STALE", "该行动的状态版本已失效", action);
+      }
+      const currentComparable = comparableAction(current);
+      const submittedComparable = comparableAction(action);
+      if (!currentComparable || !submittedComparable
+        || stableSerialize(currentComparable) !== stableSerialize(submittedComparable)) {
+        return reject("HUMAN_ACTION_DESCRIPTOR_STALE", "该行动 descriptor 与当前 legal set 不一致", action);
+      }
+      beforeDispatch(clone(current));
+      const result = options.dispatchAction(clone(current));
+      afterDispatch(clone(result), clone(current));
+      return result;
+    }
+
+    function submitActionId(actionId) {
+      const action = listLegalActions()
+        .find((candidate) => String(candidate.actionId) === String(actionId));
+      return action
+        ? submit(action)
+        : reject("HUMAN_ACTION_REMOVED", "该行动已不在当前 legal set 中", { actionId });
+    }
+
+    return Object.freeze({ listLegalActions, submit, submitActionId });
   }
 
   function createBrowserInputAdapter(options = {}) {
@@ -99,77 +203,6 @@
     });
   }
 
-  function createRuleInputDispatcher(options = {}) {
-    let stableRecoverySnapshot = null;
-
-    function ensureStableRecoverySnapshot() {
-      if (options.inspect().phase === "idle" && !stableRecoverySnapshot) {
-        stableRecoverySnapshot = options.createRecoverySnapshot({
-          label: "Standard Action 开始前稳定恢复点",
-        });
-      }
-    }
-
-    function dispatch(request, fallbackOptions = null, explicitActionContext = null) {
-      const action = typeof request === "string"
-        ? { kind: request, payload: fallbackOptions || null }
-        : { ...(request || {}) };
-      if (action.kind === "standard_enumerate") {
-        ensureStableRecoverySnapshot();
-        return { ok: true, candidates: options.enumerateActions(action.payload || {}) };
-      }
-      if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
-        return options.dispatchRuntimeAction(action, fallbackOptions, explicitActionContext);
-      }
-      let descriptor = action.standardAction
-        || (action.schemaVersion === options.standardActionSchemaVersion ? action : null);
-      if (action.kind === "standard_intent") {
-        ensureStableRecoverySnapshot();
-        const resolved = options.dispatchRuntimeAction({
-          kind: "standard_resolve",
-          family: action.family,
-          selector: action.selector || {},
-          payload: action.payload || {},
-        }, fallbackOptions, explicitActionContext);
-        if (!resolved?.ok) return resolved;
-        descriptor = resolved.action;
-      }
-      if (descriptor) {
-        if (options.inspect().phase === "idle") ensureStableRecoverySnapshot();
-        const result = descriptor.phase === "quick"
-          ? options.submitQuickAction(descriptor)
-          : options.submitAction(descriptor);
-        if (options.inspect().phase === "idle") stableRecoverySnapshot = null;
-        return result;
-      }
-      return options.dispatchRuntimeAction(action, fallbackOptions, explicitActionContext);
-    }
-
-    return Object.freeze({ dispatch });
-  }
-
-  function createStandardIntentPort(options = {}) {
-    if (typeof options.dispatch !== "function") {
-      throw new TypeError("StandardIntentPort 需要 dispatch port");
-    }
-    function runAction(actionId, actionOptions = {}) {
-      const selector = actionOptions.selector || (actionId === "land"
-        ? {
-          ...(actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }),
-          ...(actionOptions.target?.type ? { type: actionOptions.target.type } : {}),
-          ...(actionOptions.target?.satelliteId ? { satelliteId: actionOptions.target.satelliteId } : {}),
-        }
-        : (actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }));
-      return options.dispatch({
-        kind: "standard_intent",
-        family: actionId,
-        selector,
-        payload: actionOptions.payload || actionOptions,
-      });
-    }
-    return Object.freeze({ runAction });
-  }
-
   function createActiveDecisionPort(options = {}) {
     if (typeof options.inspect !== "function" || typeof options.submitDecision !== "function") {
       throw new TypeError("ActiveDecisionPort 需要 inspect/submitDecision ports");
@@ -203,9 +236,9 @@
 
   return Object.freeze({
     SCHEMA_VERSION,
+    STANDARD_ACTION_SCHEMA,
     createBrowserInputAdapter,
-    createRuleInputDispatcher,
-    createStandardIntentPort,
+    createHumanActionInputAdapter,
     createActiveDecisionPort,
   });
 });

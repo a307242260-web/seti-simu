@@ -61,9 +61,11 @@
         return values.length === 0 || values.every((value) => serialized.includes(value));
       }) || { ok: false, code: "COMPANY_DECISION_REQUIRED", message: "当前没有正式公司 Decision" };
     }
-    function dispatchIndustry(selector = {}) {
-      return hostPort.dispatchStandardIntent?.("industry", selector)
-        || { ok: false, code: "COMPANY_ACTION_REQUIRED", message: "当前没有正式公司行动" };
+    function dispatchIndustry() {
+      const actions = hostPort.listHumanActions?.("industry") || [];
+      return actions.length === 1
+        ? hostPort.submitHumanAction(actions[0])
+        : { ok: false, code: "COMPANY_ACTION_REQUIRED", message: "当前没有唯一正式公司行动" };
     }
     function cancelDecision() {
       const decision = inspectDecision();
@@ -100,11 +102,8 @@
       rollbackPendingIndustryQuickAction: cancelDecision,
       cancelIndustryAbilityFlow: cancelDecision,
       finishIndustryAbilityFlow: () => ({ ok: true }),
-      startIndustryAbilityFlow: (_root, flow) => dispatchIndustry({
-        companyId: flow?.companyId || flow?.label,
-        abilityId: flow?.abilityId,
-      }),
-      handleCompanyActionMarkerClick: (_root, companyId) => dispatchIndustry({ companyId }),
+      startIndustryAbilityFlow: () => dispatchIndustry(),
+      handleCompanyActionMarkerClick: () => dispatchIndustry(),
       executeIndustryFreeMove: submitDecision,
     };
     for (const name of BROWSER_INPUT_NAMES) {

@@ -51,11 +51,10 @@
       return context.getController().handleActionEffectButtonClick(workingRoot, effectIndex);
     }
     function beginScanAction() {
-      return context.getController()?.dispatchAction({
-        kind: "standard_intent",
-        family: "scan",
-        selector: { kind: "standard-scan" },
-      }) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" };
+      const actions = context.listHumanActions?.("scan") || [];
+      return actions.length === 1
+        ? context.submitHumanAction(actions[0])
+        : { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "当前没有唯一扫描行动" };
     }
     return Object.freeze({ handleActionEffectButtonClickForRoot, beginScanAction });
   }
@@ -373,17 +372,6 @@
           ),
         };
       }
-      if (action.kind === "standard_resolve") {
-        if (!standardActionAdapter) {
-          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
-        }
-        return standardActionAdapter.resolveIntent(
-          explicitActionContext || createActionContext(),
-          action.family,
-          action.selector || {},
-          action.payload || {},
-        );
-      }
       if (action.kind === "standard_validate") {
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
@@ -399,21 +387,6 @@
           standardContext,
           descriptor,
         );
-      }
-      if (action.kind === "standard_intent") {
-        if (!standardActionAdapter) {
-          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
-        }
-        const standardContext = explicitActionContext || createActionContext();
-        const resolved = standardActionAdapter.resolveIntent(
-          standardContext,
-          action.family,
-          action.selector || {},
-          action.payload || {},
-        );
-        return resolved.ok
-          ? executeStandardDescriptor(standardContext, resolved.action)
-          : resolved;
       }
       const standardDescriptor = action.standardAction
         || (action.schemaVersion === "seti-standard-action-v1" ? action : null);

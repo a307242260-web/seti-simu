@@ -274,7 +274,7 @@ function browserProjection(overrides = {}) {
   assert.equal(els.quickActionsPanel.hidden, false);
   assert.equal(trade.disabled, false);
   assert.equal(trade.dataset.actionId, "quick_trade:trade");
-  assert.equal(controller.activateFamily("quick_trade", { tradeId: "energy" }).ok, true);
+  assert.equal(controller.activateAction(trade.dataset.actionId).ok, true);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].kind, "action");
   assert.equal(calls[0].action.actionId, "quick_trade:trade");

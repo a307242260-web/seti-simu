@@ -81,15 +81,27 @@ module.exports = Object.freeze([
       if (setupInput.submissionSequence < 16 || setupInput.lastResult?.kind !== "decision") {
         throw new Error("真实初始选择未进入 Standard Action/Decision input facade: " + JSON.stringify(setupInput));
       }
+      const quickSequence = setupInput.submissionSequence;
+      document.querySelector("#action-quick-button")?.click();
+      await waitFor(() => Boolean(
+        document.querySelector('[data-quick-trade="energy-for-credit"]:not(:disabled)[data-action-id]'),
+      ), "人类快速行动 descriptor 就绪");
+      document.querySelector('[data-quick-trade="energy-for-credit"]:not(:disabled)[data-action-id]')?.click();
+      await waitFor(() => {
+        const next = window.SetiRandomizer.inspect();
+        return next.input.submissionSequence > quickSequence
+          && next.input.lastResult?.kind === "action"
+          && next.projection.source.phase === "idle";
+      }, "人类快速行动进入 Standard Action input port");
       const beforeInspect = window.SetiRandomizer.inspect();
       const inputSequence = beforeInspect.input.submissionSequence;
       await waitFor(() => {
-        const button = document.querySelector("#action-pass-button");
+        const button = document.querySelector("#action-launch-button");
         return Boolean(button && !button.disabled);
-      }, "人类 PASS 主行动就绪", 20000);
-      const passButton = document.querySelector("#action-pass-button");
-      if (!passButton || passButton.disabled) throw new Error("人类 PASS 主行动不可提交");
-      passButton.click();
+      }, "人类 launch 主行动就绪", 20000);
+      const launchButton = document.querySelector("#action-launch-button");
+      if (!launchButton || launchButton.disabled) throw new Error("人类 launch 主行动不可提交");
+      launchButton.click();
       await waitFor(() => {
         const next = window.SetiRandomizer.inspect();
         return next.input.submissionSequence > inputSequence
@@ -121,6 +133,35 @@ module.exports = Object.freeze([
       };
       const missing = Object.entries(required).filter(([, ok]) => !ok).map(([name]) => name);
       if (missing.length) throw new Error("真实页面 renderer 缺失: " + missing.join(", "));
+      for (let guard = 0; guard < 8; guard += 1) {
+        const current = window.SetiRandomizer.inspect();
+        if (current.projection.source.phase !== "awaiting_input") break;
+        const decisionId = current.projection.decision?.decisionId;
+        await waitFor(() => Boolean(
+          document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]'),
+        ), "主行动后续 Decision DOM choice");
+        document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]')?.click();
+        await waitFor(() => Boolean(
+          document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)'),
+        ), "主行动后续 Decision 确认");
+        document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)')?.click();
+        await waitFor(() => {
+          const next = window.SetiRandomizer.inspect();
+          return next.projection.source.phase !== "awaiting_input"
+            || next.projection.decision?.decisionId !== decisionId;
+        }, "主行动后续 Decision 推进");
+      }
+      await waitFor(() => {
+        const button = document.querySelector("#action-confirm-button");
+        return Boolean(button && !button.disabled && button.dataset.actionId);
+      }, "人类 end_turn descriptor 就绪");
+      const endTurnSequence = window.SetiRandomizer.inspect().input.submissionSequence;
+      document.querySelector("#action-confirm-button").click();
+      await waitFor(() => {
+        const next = window.SetiRandomizer.inspect();
+        return next.input.submissionSequence > endTurnSequence
+          && next.input.lastResult?.kind === "action";
+      }, "人类 end_turn 进入 Standard Action input port");
       const captured = window.SetiRandomizer.capture();
       if (!captured.ok) throw new Error("真实页面保存失败");
       const restored = window.SetiRandomizer.restore(captured.envelope);
@@ -136,10 +177,10 @@ module.exports = Object.freeze([
         || JSON.stringify(beforeRenderFailure) !== JSON.stringify(afterRenderFailure)) {
         throw new Error("renderer 抛错污染规则状态");
       }
-      window.__setiFullParitySmoke = { ok: true, required };
+      window.__setiFullParitySmoke = { ok: true, required, humanActions: ["quick_trade", "launch", "end_turn"] };
     })()`,
     successExpression: "window.__setiFullParitySmoke?.ok === true",
-    obligation: "真实 index.html 覆盖 viewer 隐私、完整页面 renderer、人类主行动/多步 Decision、保存恢复和 renderer 异常隔离",
+    obligation: "真实 index.html 覆盖 viewer 隐私、完整页面 renderer、人类主/快/回合动作、多步 Decision、保存恢复和 renderer 异常隔离",
     counterexample: "极简壳、空 renderer、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
   }),
   Object.freeze({

@@ -1,6 +1,6 @@
 # SETI-168 Browser 人类 Standard Action 输入迁移矩阵
 
-状态：设计冻结（2026-07-25，生产 patch 前基线 `dev@f1f9378`）。
+状态：已实现并验收（2026-07-25；设计冻结基线 `dev@f1f9378`，矩阵提交 `3bf1444`）。
 
 ## 范围与有限来源
 
@@ -87,3 +87,21 @@ Standard Action 的 committed state、费用、RNG、实体 id、sequence、Deci
 - `window.SetiRandomizer.input.dispatchAction` 复用唯一 Human adapter，不提供 family/selector API。
 - 不修改 `randomizer/game/**` provider/executor；Production Composition 的 committed state、
   Effect journal、Decision 与恢复行为保持既有契约。
+
+## 验收证据
+
+- `createHumanActionInputAdapter` 是人类 Action 唯一 Browser boundary：提交前重读 current legal
+  set，对 schema/actionId/actor/stateVersion/decisionVersion/target/payload/decision/summary
+  完整重验；removed、wrong actor、stale、篡改均不调用底层 dispatch。
+- BrowserProjection 与 Action Bar 保留完整 Standard Action 的 `decision` 字段，不再把残缺 DTO
+  伪装为可提交 descriptor；固定按钮、quick trade 和符文族 picker 绑定当前 actionId，多目标
+  orbit/land picker 保存完整 descriptor。
+- 15 family 的 unit 逐项通过同一 adapter；tampered/stale/wrong actor/removed dispatch spy 为 0。
+- 结构审计：Browser 生产代码中的 `standard_intent`、`standard_resolve`、
+  `createStandardIntentPort`、`createRuleInputDispatcher`、`activateFamily`、
+  `matchesSelector`、`createQuickTradeFlow` 残留均为 0。
+- `node --check randomizer/app.js` 通过；`node tools/run_node_tests.js` 为
+  `75/75 unit + 1/1 full-flow`。
+- 真实 Chrome `production-browser-full-parity 1/1`：真实 index.html 依次通过 DOM
+  `quick_trade → launch → end_turn`，三次输入的 `lastResult.kind` 均为 `action`，同时继续覆盖
+  viewer 隐私、完整 renderer、初始多步 Decision、保存恢复和 renderer 异常隔离。

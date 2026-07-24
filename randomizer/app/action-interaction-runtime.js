@@ -600,7 +600,10 @@
     }
 
     function runPlaceDataToComputer() {
-      return context.dispatchStandardIntent("place_data", { kind: "place-data" });
+      const actions = context.listHumanActions("place_data");
+      return actions.length === 1
+        ? context.submitHumanAction(actions[0])
+        : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "当前没有唯一可用的放置数据行动" };
     }
 
     function canAnalyzeDataForPlayer(player = context.getCurrentPlayer()) {
@@ -616,7 +619,10 @@
     }
 
     function analyzeDataForCurrentPlayer() {
-      return context.dispatchStandardIntent("analyze", { kind: "computer" });
+      const actions = context.listHumanActions("analyze");
+      return actions.length === 1
+        ? context.submitHumanAction(actions[0])
+        : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "当前没有唯一可用的分析行动" };
     }
 
     function startAnalyzeDataRewardFlow(workingRoot) {
@@ -918,7 +924,6 @@
       renderRockets: requireCapability("renderRuntime", "renderRockets"),
       renderStateReadout: requireCapability("renderRuntime", "renderStateReadout"),
       resumeDataPlacementDecision: requireCapability("dataPlacementPort", "resume"),
-      runAction: requireCapability("actionPort", "runAction"),
       settleCardTasksAfterEffect: requireCapability("cardTriggerPort", "settleCardTasksAfterEffect"),
       startCardEffectFlow: requireCapability("effectFlowRuntime", "startCardEffectFlow"),
       syncInteractionFocusChrome: requireCapability("interactionChrome", "syncInteractionFocusChrome"),

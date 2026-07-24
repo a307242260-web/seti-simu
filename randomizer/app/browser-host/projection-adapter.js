@@ -225,6 +225,7 @@
       decisionVersion: action.decisionVersion,
       target: clone(action.target || null),
       payload: clone(action.payload || {}),
+      decision: clone(action.decision || null),
       summary: action.summary || action.family,
       disabledReason: action.disabledReason || null,
     };
