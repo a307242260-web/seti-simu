@@ -29,6 +29,7 @@ const planetReferenceLayout = require("../game/planet-reference-layout");
 const rocketAbility = require("../game/abilities/rocket");
 const planetAbility = require("../game/abilities/planet");
 const { createRuleComposition } = require("../game/rule-composition");
+const productionCompositionApi = require("../game/production-composition");
 
 const RULESET_VERSION = "seti-runtime-v1";
 const DEFAULT_FINAL_SCORE_IDS = Object.freeze(["a", "b", "c", "d"]);
@@ -1886,14 +1887,115 @@ function createSimulationRuleComposition(options = {}) {
     };
   }
 
-  composition = createRuleComposition({
+  const simulationContinuation = {
+    inspect(workingState) {
+      workingState = workingState.workingRoot || workingState;
+      const choices = composition.inputPort.enumerateActions({})
+        .filter((candidate) => candidate.phase === "conditional");
+      if (choices.length) {
+        return {
+          ok: true,
+          boundary: "conditional_choice",
+          decisionType: "conditional_choice",
+          ownerId: workingState.match.pendingDecision?.playerId || null,
+          family: choices[0].family,
+          choices,
+        };
+      }
+      return {
+        ok: true,
+        boundary: workingState.turnState.gameEnded ? "terminal" : "turn_action",
+        decisionType: "turn_action",
+        ownerId: workingState.playerState.currentPlayerId,
+        choices: [],
+      };
+    },
+    executeDeterministic() {
+      return { ok: false, code: "SIMULATION_RULE_STALLED", message: "Rule Composition 没有可执行的确定性 Effect" };
+    },
+    resolveDecision(_workingState, choice, resolutionContext = {}) {
+      _workingState = _workingState.workingRoot || _workingState;
+      if (resolutionContext.decisionContext?.kind === "planet_reward_alien_trace") {
+        return applyAlienTraceChoice(
+          _workingState,
+          resolutionContext.decisionContext.pending,
+          choice,
+        );
+      }
+      if (resolutionContext.decisionContext?.kind === "play_card_effect") {
+        const pending = resolutionContext.decisionContext.pending;
+        const player = _workingState.playerState.players
+          .find((candidate) => candidate.id === pending?.playerId);
+        if (!player || pending?.effect?.type !== cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
+          return {
+            ok: false,
+            code: "PLAY_CARD_REWARD_STALE",
+            message: "卡牌奖励上下文已失效",
+          };
+        }
+        const current = listHandCornerRewardChoices(_workingState, pending)
+          .find((candidate) => candidate.target.choiceId === choice.target?.choiceId);
+        if (!current) {
+          return {
+            ok: false,
+            code: "PLAY_CARD_REWARD_STALE",
+            message: "卡牌奖励选择已失效",
+          };
+        }
+        applyCornerReward(_workingState, player, current.payload.reward, "play_card");
+        applyCornerReward(_workingState, player, current.payload.moveReward, "play_card");
+        return {
+          ok: true,
+          progressed: true,
+          events: [{
+            type: "card_effect_choice",
+            effectId: pending.effect.id,
+            choiceId: current.target.choiceId,
+            playerId: player.id,
+          }],
+        };
+      }
+      if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
+        const moved = rockets.moveRocket(
+          _workingState.rocketState,
+          choice.target?.rocketId,
+          choice.payload?.deltaX,
+          choice.payload?.deltaY,
+        );
+        if (!moved.ok) return moved;
+        return {
+          ok: true,
+          progressed: true,
+          events: [{ type: "card_corner_move", rocketId: choice.target?.rocketId }],
+        };
+      }
+      if (resolutionContext.decisionContext?.kind === "industry_ability") {
+        const player = players.getCurrentPlayer(_workingState.playerState);
+        const tileId = choice.target?.tileId;
+        if (!tileId) {
+          return { ok: false, code: "INDUSTRY_TECH_STALE", message: "借用科技选择已失效" };
+        }
+        player.industryBorrowedTechTileId = tileId;
+        player.industryBorrowedTechRound = _workingState.turnState.roundNumber;
+        player.industryBorrowedTechTurn = _workingState.turnState.turnNumber;
+        return {
+          ok: true,
+          progressed: true,
+          events: [{ type: "industry_borrow_tech", tileId }],
+        };
+      }
+      const descriptor = choice?.standardAction || choice;
+      return registry.execute(_workingState, descriptor);
+    },
+  };
+
+  const simulationRuleOptions = {
     stateStoreApi: {
       createStateStore(initialState, storeOptions) {
         return highCouplingStateApi.createHighCouplingStateStore(initialState, storeOptions);
       },
     },
     effectRuntimeApi,
-    createActionRegistry: () => registry,
     createActionContext,
     createInitialState(_initialOptions, workingState) { return createCommittedState(workingState, 0); },
     stateAdapter,
@@ -1906,116 +2008,6 @@ function createSimulationRuleComposition(options = {}) {
         workingState.meta.sequences = readSequences(workingState);
       }
     },
-    effectDomains: [{
-      families: standardActionApi.ALL_FAMILIES,
-      create(domainOptions) {
-        return standardActionDomainApi.createStandardActionDomain({
-          ...domainOptions,
-          actionFamilies: standardActionApi.ALL_FAMILIES,
-          continuation: {
-            inspect(workingState) {
-              workingState = workingState.workingRoot || workingState;
-              const choices = composition.inputPort.enumerateActions({})
-                .filter((candidate) => candidate.phase === "conditional");
-              if (choices.length) {
-                return {
-                  ok: true,
-                  boundary: "conditional_choice",
-                  decisionType: "conditional_choice",
-                  ownerId: workingState.match.pendingDecision?.playerId || null,
-                  family: choices[0].family,
-                  choices,
-                };
-              }
-              return {
-                ok: true,
-                boundary: workingState.turnState.gameEnded ? "terminal" : "turn_action",
-                decisionType: "turn_action",
-                ownerId: workingState.playerState.currentPlayerId,
-                choices: [],
-              };
-            },
-            executeDeterministic() {
-              return { ok: false, code: "SIMULATION_RULE_STALLED", message: "Rule Composition 没有可执行的确定性 Effect" };
-            },
-            resolveDecision(_workingState, choice, resolutionContext = {}) {
-              _workingState = _workingState.workingRoot || _workingState;
-              if (resolutionContext.decisionContext?.kind === "planet_reward_alien_trace") {
-                return applyAlienTraceChoice(
-                  _workingState,
-                  resolutionContext.decisionContext.pending,
-                  choice,
-                );
-              }
-              if (resolutionContext.decisionContext?.kind === "play_card_effect") {
-                const pending = resolutionContext.decisionContext.pending;
-                const player = _workingState.playerState.players
-                  .find((candidate) => candidate.id === pending?.playerId);
-                if (!player || pending?.effect?.type !== cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD) {
-                  return {
-                    ok: false,
-                    code: "PLAY_CARD_REWARD_STALE",
-                    message: "卡牌奖励上下文已失效",
-                  };
-                }
-                const current = listHandCornerRewardChoices(_workingState, pending)
-                  .find((candidate) => candidate.target.choiceId === choice.target?.choiceId);
-                if (!current) {
-                  return {
-                    ok: false,
-                    code: "PLAY_CARD_REWARD_STALE",
-                    message: "卡牌奖励选择已失效",
-                  };
-                }
-                applyCornerReward(_workingState, player, current.payload.reward, "play_card");
-                applyCornerReward(_workingState, player, current.payload.moveReward, "play_card");
-                return {
-                  ok: true,
-                  progressed: true,
-                  events: [{
-                    type: "card_effect_choice",
-                    effectId: pending.effect.id,
-                    choiceId: current.target.choiceId,
-                    playerId: player.id,
-                  }],
-                };
-              }
-              if (resolutionContext.decisionContext?.kind === "card_corner_free_move") {
-                const moved = rockets.moveRocket(
-                  _workingState.rocketState,
-                  choice.target?.rocketId,
-                  choice.payload?.deltaX,
-                  choice.payload?.deltaY,
-                );
-                if (!moved.ok) return moved;
-                return {
-                  ok: true,
-                  progressed: true,
-                  events: [{ type: "card_corner_move", rocketId: choice.target?.rocketId }],
-                };
-              }
-              if (resolutionContext.decisionContext?.kind === "industry_ability") {
-                const player = players.getCurrentPlayer(_workingState.playerState);
-                const tileId = choice.target?.tileId;
-                if (!tileId) {
-                  return { ok: false, code: "INDUSTRY_TECH_STALE", message: "借用科技选择已失效" };
-                }
-                player.industryBorrowedTechTileId = tileId;
-                player.industryBorrowedTechRound = _workingState.turnState.roundNumber;
-                player.industryBorrowedTechTurn = _workingState.turnState.turnNumber;
-                return {
-                  ok: true,
-                  progressed: true,
-                  events: [{ type: "industry_borrow_tech", tileId }],
-                };
-              }
-              const descriptor = choice?.standardAction || choice;
-              return registry.execute(_workingState, descriptor);
-            },
-          },
-        });
-      },
-    }],
     projectWorkingState: true,
     projectState(state, viewer, _session, projectionContext = {}) {
       const committed = state?.playerState
@@ -2073,7 +2065,14 @@ function createSimulationRuleComposition(options = {}) {
       rngState: options.rngState,
       initialize: false,
     },
+  };
+  const production = productionCompositionApi.createProductionComposition({
+    ruleCompositionApi: { createRuleComposition },
+    createStandardActionRegistry: () => registry,
+    standardActionDomainOptions: { continuation: simulationContinuation },
+    ruleOptions: simulationRuleOptions,
   });
+  composition = production.composition;
 
   function newGame(config = {}) {
     return composition.lifecycle.newGame({
@@ -2097,7 +2096,12 @@ function createSimulationRuleComposition(options = {}) {
     },
   });
 
-  return Object.freeze({ composition, newGame, actionContract });
+  return Object.freeze({
+    composition,
+    newGame,
+    actionContract,
+    productionDomainPackId: production.domainPack.packId,
+  });
 }
 
 module.exports = { createSimulationRuleComposition };

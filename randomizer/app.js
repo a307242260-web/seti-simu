@@ -50,6 +50,7 @@
     actionLogRuntimeModule,
     gameRecoveryModule,
     ruleCompositionModule,
+    productionCompositionModule,
     browserRuleCompositionModule,
     runtimeModule,
     refreshModule,
@@ -208,7 +209,6 @@
   const effectSessionRuntimeModule = window.SetiEffectSession;
   const cardSelectionDecisionModule = window.SetiCardSelectionDecision;
   const browserPendingDecisionModule = window.SetiBrowserPendingDecision;
-  const standardActionSessionModule = window.SetiStandardActionSession;
   const standardActionModule = window.SetiStandardAction;
   const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
   const browserOwnerInputRegistry = browserHostModule.browserServices.createOwnerInputRegistry({
@@ -655,6 +655,7 @@
 
   const ruleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
     ruleCompositionApi: ruleCompositionModule,
+    productionCompositionApi: productionCompositionModule,
     stateStoreApi: stateStoreModule,
     highCouplingState: highCouplingStateModule,
     initialGameState: initialGameStateModule,
@@ -683,15 +684,10 @@
     ),
     executeOwnerInput: browserOwnerInputRegistry.execute,
     createActionRegistry: () => compositionActionRegistry,
-    standardActionDomain: {
-      create: standardActionSessionModule.createStandardActionDomain,
-      families: standardActionModule.ALL_FAMILIES,
-      options: {
-        actionFamilies: standardActionModule.ALL_FAMILIES,
-        continuation: standardActionContinuation,
-        takeOpenedDecisionEffect,
-        takeDeferredDecisionEffects,
-      },
+    standardActionDomainOptions: {
+      continuation: standardActionContinuation,
+      takeOpenedDecisionEffect,
+      takeDeferredDecisionEffects,
     },
   });
   let scheduleResidentDesktopRefresh = () => {};

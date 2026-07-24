@@ -8,6 +8,7 @@ const cardEffects = require("../game/cards/effects");
 const players = require("../game/players");
 const { createSimulationEnv } = require("../app/simulation-env");
 const { createSimulationRuleComposition } = require("./simulation-rule-composition");
+const productionComposition = require("../game/production-composition");
 
 function createSeededRandom(seed) {
   let state = [...String(seed)].reduce(
@@ -127,6 +128,30 @@ const kernel = createSimulationRuleComposition({
   ...config,
   random: createSeededRandom(config.seed),
 });
+assert.equal(kernel.productionDomainPackId, productionComposition.PACK_ID,
+  "Simulation 必须由 game 层 Production Domain Pack 创建");
+
+{
+  const registryPort = {
+    enumerate() { return []; },
+    validate() { return { ok: false }; },
+    execute() { return { ok: false }; },
+  };
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    createStandardActionRegistry: () => registryPort,
+    hostFamilyExecutors: { quick_trade() {} },
+  }), /重复 Production family executor: quick_trade/,
+  "host 自定义同 family executor 必须 fail-fast");
+  assert.throws(() => productionComposition.createProductionDomainPack({
+    createStandardActionRegistry: () => registryPort,
+    additionalDomains: [{
+      id: "host-quick-trade",
+      families: ["quick_trade"],
+      create() {},
+    }],
+  }), /重复 Effect domain family: quick_trade/,
+  "host 重复安装同 family domain 必须 fail-fast");
+}
 
 assert.deepEqual(
   kernel.actionContract.coverage().map(({ family, registered }) => ({ family, registered })),
@@ -284,7 +309,7 @@ kernel.composition.dispose();
   const decisionAction = cardKernel.composition.inputPort.enumerateActions({ family: "play_card" })
     .find((action) => action.target.cardInstanceId === decisionCard.id);
   const opened = cardKernel.composition.inputPort.submitAction(decisionAction);
-  assert.equal(opened.ok, true);
+  assert.equal(opened.ok, true, JSON.stringify(opened));
   assert.equal(cardKernel.composition.inspect().phase, "awaiting_input");
   const decision = cardKernel.composition.inspect().session.decision;
   assert.equal(decision.ownerId, decisionScenario.turn.currentPlayerId);

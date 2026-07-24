@@ -16,7 +16,12 @@
       workingStateAdapter,
       getCommittedContext,
     } = context;
-    if (!ruleCompositionApi?.createRuleComposition || !workingStateAdapter || !getCommittedContext) {
+    const productionCompositionApi = context.productionCompositionApi
+      || (typeof require === "function" ? require("../game/production-composition") : null);
+    if (!ruleCompositionApi?.createRuleComposition
+      || !productionCompositionApi?.createProductionComposition
+      || !workingStateAdapter
+      || !getCommittedContext) {
       throw new Error("createBrowserRuleComposition requires rule composition and state adapters");
     }
     const browserProjection = context.browserProjection;
@@ -34,7 +39,11 @@
         stateVersion,
       )
     );
-    const composition = ruleCompositionApi.createRuleComposition({
+    const production = productionCompositionApi.createProductionComposition({
+      ruleCompositionApi,
+      createStandardActionRegistry: context.createActionRegistry,
+      standardActionDomainOptions: context.standardActionDomainOptions,
+      ruleOptions: {
       invariantValidators: [workingStateAdapter.validateSessionBoundary],
       stateStoreApi: {
         createStateStore(initialState, options) {
@@ -76,8 +85,6 @@
       },
       runWithWorkingState: context.runWithWorkingState,
       executeOwnerInput: context.executeOwnerInput,
-      createActionRegistry: context.createActionRegistry,
-      effectDomains: [context.standardActionDomain],
       projectWorkingState: true,
       projectState(workingRoot, viewer, inspection, projectionMeta = {}) {
         const stateVersion = Number(projectionMeta.stateVersion) || 0;
@@ -142,7 +149,9 @@
           return fork;
         },
       initialOptions: context.initialOptions || {},
+      },
     });
+    const composition = production.composition;
     const projectionSource = Object.freeze({
       read(viewer = null) {
         const projected = composition.projection(viewer);
@@ -159,7 +168,11 @@
         });
       },
     });
-    return Object.freeze({ ...composition, projectionSource });
+    return Object.freeze({
+      ...composition,
+      productionDomainPackId: production.domainPack.packId,
+      projectionSource,
+    });
   }
 
   return { createBrowserRuleComposition };

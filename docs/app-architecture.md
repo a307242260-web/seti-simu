@@ -8,6 +8,13 @@
 
 Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。旧 Browser AI action executor 已删除；`app/simulation-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
 
+Browser 与 Simulation 的生产装配统一从
+`game/production-composition.js:createProductionComposition` 进入。该工厂拥有 Standard Action
+registry port 与 Effect domain pack 的安装权，并拒绝 host 注入第二个同 family owner。仍位于
+`app/**`、`training/**` 的 legacy provider/executor 与 state-write 迁移债务见
+[`production-composition-inventory.md`](./production-composition-inventory.md)；清单中的残留不构成
+允许新增 host 规则 owner 的先例。
+
 Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-action-executor.js` 统一接收 Browser authority 的显式 working root 与 Standard Action descriptor。Browser 按钮和 AI descriptor 都经 `action-runtime` 进入该 executor；移动支付仍由宿主收集，但最终规则写入也回到同一 executor。该边界不读取 DOM、旧 Decision store 或 `app.js` 全局规则 slice，stale 与失败不得污染传入 root。
 
 通用 pending 容器和字段豁免表不属于生产架构。规则选择与流程状态只进入 Browser Composition working root / Effect Session；PASS overlay 的临时关闭状态位于 `runtime.ui`，扫描关联序号位于 `runtime.browserHost`。

@@ -5,6 +5,7 @@ const browserRuleComposition = require("./browser-rule-composition");
 const stateStoreApi = require("../game/state/state-store");
 const effectRuntimeApi = require("../game/effects/session-runtime");
 const researchTechSession = require("../game/effects/research-tech-session");
+const standardAction = require("../game/actions/standard-action");
 const { createRuleComposition, SAVE_SCHEMA_VERSION } = require("../game/rule-composition");
 
 function createState(value = 0) {
@@ -693,8 +694,11 @@ function createForkableHarness() {
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
     executeOwnerInput: () => ({ ok: true }),
-    createActionRegistry: () => ({}),
-    standardActionDomain: { families: ["launch"] },
+    createActionRegistry: () => ({
+      enumerate() { return []; },
+      validate() { return { ok: false }; },
+      execute() { return { ok: false }; },
+    }),
     browserProjection: {
       visibilityPolicy: (state) => ({
         match: structuredClone(state.match),
@@ -706,8 +710,17 @@ function createForkableHarness() {
     },
   });
   assert.equal(composition.options, captured);
+  assert.equal(
+    composition.productionDomainPackId,
+    require("../game/production-composition").PACK_ID,
+    "Browser 必须由 game 层 Production Domain Pack 创建",
+  );
   assert.equal(captured.invariantValidators[0], adapter.validateSessionBoundary);
-  assert.equal(captured.effectDomains[0].families[0], "launch");
+  assert.deepEqual(
+    captured.effectDomains[0].families,
+    standardAction.ALL_FAMILIES,
+    "Browser 必须由 production Domain Pack 安装全部 Standard Action family",
+  );
   const initial = captured.createInitialState({}, { match: {}, turn: {} });
   assert.equal(initial.meta.seed, "browser-seed");
   assert.equal(initial.meta.schemaVersion, 3);
