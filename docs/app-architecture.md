@@ -1,172 +1,135 @@
-# App 架构边界
+# Browser App 架构契约
 
-本文档说明浏览器入口层的职责边界。这里的 app 指 `randomizer/index.html` 加载后由 `randomizer/app/**` 和 `randomizer/app.js` 组成的页面装配层；核心规则仍以 `randomizer/game/**` 为准。
+本文是 `randomizer/index.html`、`randomizer/app/**` 与 `randomizer/app.js` 的当前权威契约。
+公共规则、状态、Action、Decision 与 Effect 以 `randomizer/game/**` 为唯一 owner；Browser
+只是宿主，不拥有第二套规则。
 
-如果你需要看“当前 app 层到底还剩哪些逻辑、top-down 模块该怎么拆”，优先再读 [docs/app-topdown-architecture.md](./app-topdown-architecture.md)。
+全局依赖方向、StateStore 与 Machine Player Host 关系见
+[`project-architecture.md`](./project-architecture.md)。页面投影和输入细节见
+[`browser-host-ui.md`](./browser-host-ui.md)。
 
-浏览器的 View、Input Adapter、ViewState、可见性边界和 proof obligations 见 [docs/browser-host-ui.md](./browser-host-ui.md)。本文件与该契约都描述当前生产装配。
+## 1. 唯一依赖方向
 
-Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。旧 Browser AI action executor 已删除；`app/simulation-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
+```text
+DOM / Browser ViewState
+        │
+        ├── read ──> viewer-safe BrowserProjection / narrow DTO
+        │
+        └── input ─> Standard Action / Decision / Composition lifecycle
+                                      │
+                                      ▼
+                            Production Composition
+                                      │
+                     Effect Session -> StateStore commit
+```
 
-Browser 与 Simulation 的生产装配统一从
-`game/production-composition.js:createProductionComposition` 进入。该工厂拥有 Standard Action
-registry port 与 Effect domain pack 的安装权，并拒绝 host 注入第二个同 family owner。opening
-公司/初始牌 offer、选择、确认及初始收入结算由 `game/initial-setup.js` 的唯一
-`initial_setup` owner 提供 `choose_card/choose_payment` definition；Browser 与 Simulation
-共用同一 enumerate/validate/execute。Browser 只取得 viewer-safe setup presentation，
-`start-screen.js` 只渲染并把 DOM 点击提交为正式 Standard Action/Decision。其他 conditional
-family 只由当前 Effect Session Decision 产生。
-首个迁入的 `quick_trade` 由 pack 创建 definition，并在 game-owned executor 内直接调用
-`game/actions/quick-trades.executeTrade`；Browser 只提供 undo/history 适配，Simulation 只提供
-action context 中的选择端口与随机源，两端不得再创建该 family 的 provider 或 executor。
+- `randomizer/game/production-composition.js` 与 `production-kernel.js` 安装 22 个 Standard
+  Action family、Effect domain、Decision owner 和唯一提交链。
+- Browser 与 Simulation 共用 Production rules、Action identity、Decision 和 commit 语义，
+  但各自拥有不同的 projection、ViewState、存储与宿主服务。
+- Browser 不得取得 canonical committed root、working root、StateStore CAS、规则 executor
+  或可提交任意方法名的通用 command registry。
 
-Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-action-executor.js` 统一接收 Browser authority 的显式 working root 与 Standard Action descriptor。Browser 按钮和 AI descriptor 都经 `action-runtime` 进入该 executor；移动支付仍由宿主收集，但最终规则写入也回到同一 executor。该边界不读取 DOM、旧 Decision store 或 `app.js` 全局规则 slice，stale 与失败不得污染传入 root。
+## 2. Browser 只允许四类职责
 
-通用 pending 容器和字段豁免表不属于生产架构。规则选择与流程状态只进入 Browser Composition working root / Effect Session；PASS overlay 的临时关闭状态位于 `runtime.ui`，扫描关联序号位于 `runtime.browserHost`。
+### Composition
 
-机器玩家公共选择边界位于 `game/ai/policy-port.js`：Browser/Simulation Host 负责构造当前 viewer 的只读 `DecisionContext`、控制 deadline/AbortSignal/恢复失效，并在 `PolicyDecision` 返回后调用公共 validator；Policy 不依赖 app、DOM、Effect Session 或 StateStore。Host 只有在 validator 与 registry 复核通过后才能显式提交 descriptor。详见 `docs/policy-port-contract.md`。
+`randomizer/app.js` 负责收集传统脚本依赖、创建 Production Composition、Browser Host、
+领域 renderer/controller，并连接启动生命周期。它可以装配端口，但不能实现领域规则。
 
-## 当前加载层次
+`randomizer/app/browser-rule-composition.js` 只负责 Browser 专属 state/projection adapter：
 
-1. `randomizer/index.html` 按传统 `<script>` 顺序加载，无构建步骤，也不使用 ES module。
-2. `randomizer/solar-system/**`、`randomizer/game/**` 先注册各自的 `window.Seti*` 全局模块。
-3. `randomizer/app/alien-trace-reward-flow.js` 编排痕迹奖励的方舟解锁、面板放置与无目标落空分支。
-4. `randomizer/app/dependencies.js` 收集并校验 app 层需要的全局模块。
-5. `randomizer/app/constants.js` 创建 app 层静态配置、图标路径和 UI 参数；扇区奖励规则与纯 descriptor 由 `game/data` 提供。
-6. `randomizer/app/dom.js` 集中查询页面上的固定 DOM 节点。
-7. Browser 生产入口直接装配真实 DOM/render runtime，并只通过 `BrowserProjection.resident` 的深冻结 selector 读取规则视图；Simulation 直接创建 rules-only Composition，不加载 `app.js`，生产入口不再保留 `simulationMode` 或 no-op DOM/view adapter 分支。
-8. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
-8. `randomizer/app/start-screen.js` 处理开始界面选项同步、入口按钮和继续游戏恢复。
-9. `randomizer/app/rule-composition.js` 建立 Browser 唯一 StateStore、Standard Action registry、Effect runtime 与 active Session；`randomizer/app/turn-flow.js` 只通过其 lifecycle 重置新局。PASS、回合末揭示、收入与跨轮结算由 Production Composition residual Effect Session 执行。
-10. `randomizer/app/card-runtime.js` 与 `scan-flow.js` 承接卡牌、扫描的人类交互；`card-trigger-runtime.js`、`income-runtime.js` 只保留只读 projection/helper 和正式 Decision 输入桥接，不拥有任务、触发或收入规则。
-11. `randomizer/app/tech-runtime.js` 承接科技选择交互；`industry-runtime.js` 只呈现公司投影并把公司按钮/Decision 输入提交给 Production Composition，不拥有公司规则、draft 或回滚。
-12. `randomizer/app/action-briefing.js` 封装 AI 行动简报的条目归纳、scan 目标摘要和 overlay 渲染控制器。
-13. `randomizer/app/action-log-export.js` 生成行动日志 Markdown 和下载文件名。
-14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
-15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
-    终局、日志与恢复只读取 BrowserProjection 的窄 runtime selector；终局规则派生由
-    `randomizer/game/final-read-model.js` 在 Browser Composition 投影边界内从显式 working root 一次生成，Browser runtime
-    不再接收计分 slices 或拼装第二个 rule root。
-16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-17. `randomizer/app/ai/control-runtime.js` 封装机器席位配置、快照/恢复与调度；`ai/browser-bootstrap.js` 直接装配 control runtime、Browser Machine Player Host、Composition boundary reader 与 PolicyInputAdapter。Browser 不加载 controller adapter、legacy valuation/candidate、pending resolver、report/tuning 或 batch/A-B runtime。
-18. `randomizer/app/conditional-decision-domain.js` 构建条件动作的 owner/version/choices/followup；`conditional-action-executor.js` 只负责 descriptor 校验、stale 检查和失败原子恢复。`randomizer/app/effects/**` 继续按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
-19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
-20. `randomizer/app/aliens/species-runtime.js` 从正式 `alienBoard` projection 渲染八物种面板、痕迹、牌与标记，并把人类点击提交为 residual Decision；奖励、合法性、任务、机会与 followup 均由 Production Composition 唯一拥有。
-21. `randomizer/app/action-interaction-runtime.js` 承接冥王星行动、移动箭头 UI 与数据放置 picker。
-22. `randomizer/app/score-source-runtime.js` 承接初始、扫描、科技、外星人和行动效果的分数来源账本及撤销命令。
-23. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。常驻玩家统计与 readout 已进入 `browser-host/player-stats-ui.js`，Action Bar/quick panel/effect bar 进入 `browser-host/action-bar.js`，下载进入 `browser-host/browser-services.js`，布局、交互焦点和恢复 chrome 进入 `render-runtime.js`，初始选择 UI/readout 进入 `start-screen.js`，登陆 picker 与扫描行动 picker 分别进入 `action-interaction-runtime.js`、`scan-flow.js`。
+- visibility policy 在规则 root 离开边界前完成；
+- caller 只得到带 viewer identity 的深冻结投影或窄 DTO；
+- 不公开 `stateSourcePort`、working root、committed root 或任意 root mutation callback；
+- renderer、query 或 Browser service 失败不反向污染规则状态。
 
-## 文件职责
+### Presentation
 
-- `randomizer/app/runtime.js`：创建 Decision Session、纯 UI 状态与 Browser Host 内部状态；不得恢复通用 `pending` 容器或把规则事实塞入 UI/host state。
-- `randomizer/app/browser-rule-composition.js`：把 Browser working-state adapter、committed/save metadata 与 rules-only Composition factory 连接起来；不读取 DOM、恢复 UI、AI controller 或领域 renderer。
-- `randomizer/app/render-runtime.js`：传统 DOM renderer 的兼容外壳；生产 context 只接收 `getProjection()`、纯 ViewState 与显式 capability inventory 中的纯模块、DOM-only helper、标量/新 DTO selector、输入 callback，不接收 `browserRuleState/workingState/playerState/turnState/cardState/...` 或复合 root reader/writer。未分类能力在生产 bootstrap 时 fail-fast；对象型窄 selector 必须在 composition 边界返回新 identity。旧领域 readout 若会 normalize 输入，只能处理 projection 的一次性克隆；补牌、机会排队、AI 调度等规则推进不得由 renderer 触发。
-- `randomizer/app/rule-composition.js`：Browser 唯一规则 composition；内部独占 StateStore、Standard Action registry、Effect runtime 与 active Session，向生产 caller 只暴露 `inputPort`、viewer-safe `projectionSource`、固定名称的窄 `readModelPort` 和 `lifecycle.newGame/save/validateRestore/restore`。Browser 不装配 canonical `stateSourcePort`；规则 owner 在 composition 内显式接收 working root，展示与 AI caller 只能读取深冻结 DTO。稳定 working root 由 composition 内部 state adapter 原位水合，宿主不得执行 slices 回灌；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。
-- `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
-- `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；科技/分析在边界内直连规则 action/ability，扫描与打牌分别下沉到 `scan-flow.js` / `hand-flow.js` 的显式 root 入口，`app.js` 只负责装配。Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
-- `randomizer/app/quick-turn-action-executor.js`：公司 1x、弃牌角标、放置数据、符文族面部 symbol、PASS 与结束回合的 legacy working-root 边界；已由 game pack 拥有的 `quick_trade` handler/working-root 分支已物理删除，Browser `runQuickTrade` 只映射为公共 `standard_intent`。其余 Browser/AI descriptor 暂时共用该原子入口；Quick family 只写 caller root 与 quick history，不推进 turn，PASS 只完成主行动，只有 `end_turn` 推进 turn/current player；stale 与失败会恢复完整 working root。
-- `randomizer/app/conditional-decision-domain.js`：扫描/卡牌、公司/外星人、科技/终局等 conditional family 的 owner、choices 与 followup 唯一生产定义；图灵科技借用、公司免费移动和策略奖励槽直接消费 Session Decision context，不在 match 中保存第二份等待状态。
-- `randomizer/app/conditional-action-executor.js`：七类 conditional family 的 descriptor validation 与 working-root 原子边界。Browser、Policy 与 replay 提交同一个 Standard Action/Decision identity；stale、未知 followup、规则失败或异常均 fail-closed 并恢复完整 working root。宿主恢复产生的 composition stateVersion 不覆盖 Effect Session 内已确认的 domain decision identity。
-- `randomizer/app/dependencies.js`：唯一的 app 入口依赖表。新增或删除 `window.Seti*` 依赖时先改这里，让脚本顺序错误能尽早报错。
-- `randomizer/app/browser-host/decision-ui.js`：统一 Decision shell、renderer registry、科技 presentation 与 focus/confirm/cancel intent；只消费 `BrowserProjection + ViewState`，不得枚举领域合法项或续跑 Effect queue。
-- `randomizer/app/browser-host/action-bar.js`：统一 Standard Action/undo controls，并承接传统 Action Bar、quick panel 与 Effect Bar 的 DOM presentation；只通过注入的窄 selector/port 读取状态和提交输入，不持有 working root。
-- `randomizer/app/browser-host/browser-services.js`：承接恢复 envelope、local persistence、下载和 debug/public facade 窄端口；Browser 下载端口独占 Blob/URL/临时节点生命周期。
-- `randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八物种的领域 presentation registry；只把标准 Decision choices 映射为公司、痕迹、机会、牌、任务和分支视图，不读取旧 pending 或领域 continuation。
-- `randomizer/game/effects/industry-alien-session.js`：公司/外星人 Decision schema 与 Effect Session adapter；机会队列、痕迹奖励、followup、history/rollback 由 session journal/priority/barrier 统一负责。
-- `randomizer/app/alien-trace-reward-flow.js`：只决定痕迹奖励应进入方舟解锁、面板放置还是无目标落空；无目标时必须结束当前奖励节点，包括 `required` / 不可跳过节点。
-- `randomizer/app/constants.js`：只放静态常量和依赖派生常量；扇区奖励表直接引用 `game/data` 的唯一规则定义。不要在这里读写游戏状态、DOM 或 pending 流程。
-- `randomizer/app/dom.js`：只收集固定 DOM 元素和 NodeList。新增 HTML id、overlay、按钮或常驻区域时先在这里登记。
-- `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
-- `randomizer/app/start-screen.js`：处理开始界面选项、继续游戏入口、新局入口壳层与初始选择 presentation；只消费 viewer-safe setup projection，并把点击提交给 Standard Action/Decision input facade，不持有 setup 规则或 working root。
-- `randomizer/app/turn-flow.js`：只通过 Browser Rule Composition lifecycle 重置新局，并处理随机化和回合推进壳层；不得再直接创建或恢复各领域长期 state。
-- `randomizer/app/turn-end-flow.js`：只把 PASS/end-turn 与揭示后人类选择提交给正式 Standard Action/Decision；PASS 队列、揭示、收入、cleanup 与跨轮推进均在 Production Composition 内完成。
-- `randomizer/app/action-interaction-runtime.js`：处理冥王星交互、移动箭头和数据放置 picker；登陆目标与数据放置只消费 Session Decision payload，不拥有规则等待状态。
-- `randomizer/app/score-source-runtime.js`：处理分数来源账本、扫描/初始选择记账和 history 撤销命令；只写调用方显式 player/root，不读取 DOM。
-- `randomizer/app/action-briefing.js`：只处理 AI 行动简报的数据归纳、摘要文案和 overlay 开关；不要在这里执行规则结算或直接修改行动日志源数据。
-- `randomizer/app/alien-ui.js`：只处理外星人揭示弹层、痕迹选择器、方舟分流和“进入某物种放置模式”的 UI 壳层；不实现物种奖励、dialog 或具体面板渲染。
-- `randomizer/app/aliens/species-runtime.js`：真实渲染正式 `alienBoard` projection，并由 `createAlienSpeciesPort` 统一区分只读/DOM 调用与已校验的人类 Decision 输入；不持有物种规则 mutation、合法性、奖励、机会队列或本地 draft。
+renderer、picker、Action Bar、玩家面板、卡牌/科技/扫描/外星人界面只消费当前 viewer 的
+投影和独立 ViewState。
 
-Browser 规则写入由真实 owner 模块各自声明 `BROWSER_INPUT_NAMES` 或显式 handler factory；
-`app.js` 只装配这些 owner-local port，`browser-services.js` 只负责注册、重复 kind 检查与未知
-kind / `domain` / `operation` 字段的 fail-closed。生产代码不得恢复中央 command 总表、通用
-`domain_command`，也不得向业务 runtime 注入可提交任意字符串 kind 的入口。
-- `randomizer/app/tech-runtime.js`：处理科技供应区选择、蓝槽 picker、确认/取消/undo 恢复和海盗科技标记交互；规则判断仍委托 `game/tech/**` 与 `game/industry/**`。
-- `randomizer/app/industry-runtime.js`：只读公司定义与正式 Decision projection；公司按钮提交 `industry` Standard Action，其余人类选择统一提交 residual Decision，不持有公司 mutation、picker draft 或 history。
-- `randomizer/app/action-log-runtime.js`：处理行动日志草稿、步骤、entry、导入组装及日志列表/tab 的 DOM 展示；通过显式参数接收 turn/player/history 与 view 上下文，不直接抓 app 闭包。
-- `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。
-- `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；规则状态、活跃 Session、RNG 与确定性序列统一由 Browser Composition lifecycle 原子保存/恢复，模块不接受 StateStore-only snapshot，也不在 composition 外回灌序列。UI 刷新通过显式回调注入。
-- `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，不暴露 Simulation reset/step/checkpoint/Decision API，也不返回 mutable working root。
-- `randomizer/app/ai/control-runtime.js`：机器席位控制层。唯一持有席位配置、scheduler 标志与策略权重；scheduler 只请求 Browser Machine Player Host 执行一次公共 Policy 输入，不读取或解析旧 pending。
-- `randomizer/app/ai/browser-bootstrap.js`：Browser Machine Player 装配边界。从 Composition inspection/projection 构造 Action/Decision boundary，连接公共 PolicyInputAdapter/Machine Player Host 和 BrowserInputAdapter；人类席位拒绝创建 Policy 请求，lifecycle 变化统一使在途 generation 失效。
-- `randomizer/app/ai/control-runtime.js`：机器席位配置、快照/恢复、pending owner 与自动调度。
-- `randomizer/app/ai/browser-bootstrap.js`：直接创建 control runtime，并装配 Machine Player Host 与 PolicyInputAdapter；不接收规则 helper、pending callback 或旧 controller context。
-- `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
-- `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
-- `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
-- `randomizer/app/effects/dispatcher.js`：卡牌、星球奖励、科技、公司和扫描 effect 的顶层分发；不得在 `app.js` 重建巨型 type switch。
-- `randomizer/app/effects/bootstrap.js`：按 movement/scan、reward、alien、dispatcher 四个 owner 建立隔离 capability scope 并装配 executor suite；缺失能力在创建期 fail-fast，领域 executor 不共享可枚举的巨型 context。
-- `randomizer/app/card-runtime.js`：卡牌选择、打牌/弃牌、角标快速行动、卡牌移动、公共牌控制与 PASS 预留选择；卡牌移动与角标免费移动只创建纯数据 DecisionEffect，等待态由 active Session projection 唯一暴露。
-- `randomizer/app/card-trigger-runtime.js`：只保留任务展示所需的纯 projection helper，并把人类触发选择提交给 residual Decision；事件、任务、bonus、followup 与 cleanup 由 Production Composition 执行。
-- `randomizer/app/income-runtime.js`：只保留浏览器收入展示和输入桥接；正式收入结算由 Production residual domain 执行。
-- `randomizer/app/scan-flow.js`：公共牌/手牌扫描、扫描目标、扇区结算、延迟补牌及扫描收尾；扫描 pending 的确认、取消和续跑在该 flow 内完成。
-- `randomizer/app.js`：Browser composition root。只收集依赖、实例化 Composition/Browser Host/领域 runtime、注入显式 context/handler 并启动页面；Host command switch、continuation、卡牌/收入/扫描/任务触发、外星人/公司/debug、具体渲染、公开 API 或 AI 策略正文均不得回流。
-- `randomizer/app.js` 只负责 Browser UI 与 Browser composition 装配；Simulation 不加载该入口。
-- `randomizer/app/render-runtime.js`：承接卡牌 hover、玩家/对手面板、手牌/保留牌、数据板、状态读出、火箭/marker、棋盘坐标转换与引用贴图适配；`app.js` 只保留渲染调度和跨 flow 刷新组合。
+Presentation helper 必须满足：
 
-## 仍需拆分的高耦合区
+- 输入是 projection/DTO 的隔离副本；
+- 不补规则默认值、不推进 Effect、不排队机会、不调度 AI；
+- 不通过“冻结后写不进去”证明安全，而是在签名上没有规则写端口；
+- 隐藏牌序、对手手牌、未来 RNG、executor、checkpoint 和 canonical metadata 不进入 DTO。
 
-- AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；Browser 推进只走 `browser-bootstrap` 的 Machine Player Host。纯估值、目标/需求、规划和竞速位于 `randomizer/game/ai/**`，game AI 模块不得读取 DOM。
-- 八物种共用机会队列、任务、奖励与 followup 已进入 Production Composition；Browser species runtime 仅维护真实投影渲染和人类输入适配，不再是规则拆分债务。
-- 旧 `app/ai-controller.js`、`final-score-ai-runtime.js`、pending helper、report/tuning helper 与 `game/ai` legacy valuation/candidate 域均已物理删除；新增 Browser 接线不得恢复这些全局模块、fallback 或 controller API。
-- 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
-- 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
+### Input
 
-## 后续拆分原则
+人类与机器席位共用同一条输入链：
 
-- 保持无构建、全局命名空间风格，除非一次性迁移计划明确覆盖全部脚本加载顺序和测试方式。
-- 从 `app.js` 抽代码时优先选择低耦合边界：静态配置、DOM 注册、事件绑定、公开调试 API、日志渲染、AI 自动机适配层。
-- 规则语义仍落在 `randomizer/game/**` 或对应机制文档；`app.js` 只负责把 UI 操作路由到规则模块并把结果展示出来。
-- 抽出的 app 模块应采用 `window.SetiApp*` 命名，必要时同时支持 `module.exports`，方便 Node 语法检查或后续单测。
-- 大块迁移不要顺手改规则、文案或常量值。先做无行为移动，通过回归后再做功能性调整。
+- 普通行动提交完整 Standard Action descriptor；
+- 多步选择提交 active Decision 的 owner、version 与 choice identity；
+- 新局、保存和恢复只调用 Composition lifecycle；
+- Browser 不根据 label、selector 或旧 pending 猜测 legal choice；
+- stale、wrong-owner、removed-choice、unknown family 必须零副作用失败。
 
-## AI Stage 1 迁移记录
+不得创建按字符串方法名转发旧 runtime target 的所谓 `StandardInputRegistry`。只有最终调用
+正式 `dispatchAction` / `submitDecision` 的端口才是规则输入。
 
-以下 Stage 1～5 仅记录当时的拆分过程与旧文件归属，不描述当前 Browser 生产接线；当前边界以上文“当前加载层次 / 文件职责”为准。
+### Browser services
 
-- 行数：`app/ai-controller.js` 从 Stage 0 的 22,960 行降为 22,434 行；新增 `app/ai/control-runtime.js` 659 行，低于 3,000 行边界。
-- 控制状态与配置：迁出 `aiAutoBattleState`、scheduler 四状态、`normalize/get/applyAiDifficulty*`、`configureDefaultAiOpponent`、`configureAiAutoBattle` 和玩家解析/配置函数。
-- 策略权重与 seed：迁出权重默认值、`get/normalize/configure/resetAiStrategyWeights`、难度默认权重选择、`hash/create/runWithAiRandomSeed` 与 `getAiBatchSeed`。
-- 快照与调度：迁出 `create/restoreAiControlSnapshot`、恢复 fallback/disable、pending owner/automation player 判定、自动运行开关、`schedule/runScheduledAiAutoStep`。
-- 保持边界：具体 pending resolver、候选估值、自动对战循环、批跑/A/B/调参仍在 `ai-controller.js`；runtime 只通过显式 state/getter/callback 注入访问它们。
+Browser service 可以操作：
 
-## AI Stage 2 迁移记录
+- `localStorage` 与保存 envelope；
+- 下载、Blob/URL 生命周期；
+- timer、resize、focus、overlay 等 UI 能力；
+- status/debug ViewState；
+- Machine Player Host 的席位配置与调度状态。
 
-- 行数：`app/ai-controller.js` 从 22,434 行降为 21,089 行；新增 `battle-log.js` 223 行、`battle-report.js` 175 行、`tuning-history.js` 221 行、`experiment-runner.js` 932 行，均低于 3,000 行边界。
-- 日志/报告：迁出日志 compact/record/bug、player result、pending 汇总与 report/progress/analysis schema。
-- 调参/runner：当时迁出 history persistence、recommendation/apply，以及 single battle、batch、同 seed A/B 和 tuning cycle；runner 后续已物理删除，只保留仍有 caller 的记录/格式化能力。
-- 保持边界：controller API、默认值、seed 派生、权重恢复、bug/block 判定和报告 schema 保持不变；controller 只以显式 context 装配领域 runtime。
+Browser service 不接收 projection root 或规则 input port，不执行收入、回合、扫描、卡牌、
+科技、公司、外星人、undo/recovery 等规则 mutation。规则恢复只调用 Composition lifecycle。
 
-## AI Stage 3 迁移记录
+## 3. 文件职责
 
-- 规则边界：资源/收入/交易、卡牌/任务、扫描/数据、路线/星球、科技、终局节奏与外星人估值均通过显式 context 迁入 `game/ai/**`；app 层只保留 pending、DOM、确认/执行和顶层行动 adapter。
-- 行数：`app/ai-controller.js` 从 21,089 行降为 5,686 行；`app/ai-controller.test.js` 从 10,295 行降为 1,033 行，完整集成回归迁至 `ai-controller.integration.test.js`。
-- 删除证据：`game/ai/ai-domain-migration.test.js` 校验迁移函数体不再出现在控制器、生产模块不读 DOM、单模块少于 3,000 行且浏览器入口已装配。
+| 位置 | 职责 |
+|---|---|
+| `randomizer/index.html` | 传统脚本加载顺序与页面 DOM |
+| `randomizer/app/dependencies.js` | Browser 全局依赖收集和缺项校验 |
+| `randomizer/app.js` | composition root 与端口装配 |
+| `randomizer/app/browser-rule-composition.js` | Browser projection/state adapter |
+| `randomizer/app/browser-host/input-adapter.js` | 人类 Standard Action/Decision 输入 |
+| `randomizer/app/browser-host/policy-input-adapter.js` | PolicyDecision 到相同输入端口 |
+| `randomizer/app/browser-host/projection-adapter.js` | viewer visibility policy |
+| `randomizer/app/browser-host/resident-projection.js` | 窄 resident DTO |
+| `randomizer/app/browser-host/resident-renderer.js` | projection 到 DOM 的渲染隔离 |
+| `randomizer/app/browser-host/browser-services.js` | 保存、下载与独立宿主服务 |
+| `randomizer/app/start-screen.js` | 开始页与初始选择 presentation |
+| `randomizer/app/events.js` | DOM 事件到显式 input callback 的路由 |
+| `randomizer/app/render-runtime.js` | DOM renderer 与纯 ViewState |
+| `randomizer/app/game-recovery.js` | save/restore envelope 和 lifecycle 适配 |
+| `randomizer/app/ai/control-runtime.js` | 机器席位配置、generation 与调度状态 |
+| `randomizer/app/ai/browser-bootstrap.js` | Machine Player Host 与 Policy input 装配 |
+| `randomizer/app/public-api.js` | 冻结的 inspect/capture/restore/input facade |
 
-## AI Stage 4 迁移记录
+领域 UI 文件如 `card-runtime.js`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、
+`alien-ui.js` 和 `aliens/species-runtime.js` 最终只保留 presentation、ViewState 与正式输入
+映射。若其中仍存在直接规则写入、continuation、history mutation、executor 或 working-root
+参数，它们属于待删除的旧架构，不构成可继续扩展的正式边界。
 
-- resolver：初始/收入/弃牌/PASS/卡牌选择与触发迁入 `initial-card-pending.js`；移动、扫描、数据、科技、公司与外星人 pending 迁入 `interaction-pending.js`。
-- executor：顶层候选执行迁入 `action-executor.js`，pending 优先级、效果恢复与 `runAiAutomationStep` 迁入 `automation-runtime.js`。
-- 状态边界：pending 与回合状态继续由 `app.js` 单一持有；四个模块只接收按 `REQUIRED_CONTEXT_KEYS` 筛选后的显式 context。
-- 删除证据：控制器 5,686 → 1,961 行；`app/ai/pending-domain-migration.test.js` 校验函数体删除、浏览器装配、行数和状态所有权。
+## 4. 禁止恢复的模式
 
-## AI Stage 5 收口记录
+- Browser `OwnerInput`、通用 target registry 或任意方法名 dispatch；
+- `createReadoutRoot`、传统 slice root、canonical root clone 作为 renderer context；
+- Browser 专有 Action provider、executor、Decision resolver 或 deterministic drain；
+- render-time 补状态、结算奖励、恢复 pending、续跑 Effect 或调度 Policy；
+- Simulation adapter、no-op DOM、headless shim 或训练专用规则进入 Browser；
+- public API 暴露规则 helper、mutable state、候选 selector 或调试 mutation；
+- 以入口行数、文件迁出、禁词搜索或改名代替 owner/行为证明。
 
-- composition：controller 按 runtime 的 `REQUIRED_CONTEXT_KEYS` 严格校验并注入 context，缺失依赖不再被静默过滤；深空换牌阈值按既有口径 `10` 补入显式 binding。
-- 测试：10,295 行集成测试拆为 pending、alien、action、strategy 四份 2,500 行以内的领域回归，共享 harness/fixture 独立维护；automation 与 action executor 增加直接模块契约测试。
-- Stage 5 的 controller 拆分数字仅为历史迁移记录；当前 Browser 已进一步删除旧 action/automation/experiment runner 模块、public candidate/batch/A-B/tuning API 与 pending 顺序推进器，不能再把当时的稳定 API/pending 顺序描述当作现状。历史证据见 `docs/ai-controller-migration-stage5.md`。
+## 5. 变更验收
 
-## 验证要求
+修改 Browser 架构时，先写清有限 owner 集合、旧入口删除清单和可失败义务。实现完成后按顺序
+验证：
 
-- 修改 `randomizer/app/**` 或 `randomizer/app.js` 后，至少运行对应 `node --check`。
-- 若变更影响脚本加载、DOM 查询、事件绑定或首屏初始化，需要用本地静态服务器做浏览器烟测。
-- 跨流程拆分时运行 `node tools/run_node_tests.js` 全量 Node 回归。
+1. 相关窄 unit：projection 隐私、input identity、service 隔离、renderer 失败隔离。
+2. `node --check randomizer/app.js`。
+3. `node tools/run_node_tests.js`。
+4. 真实 `index.html` 的必要 Chrome smoke。
+5. 涉及跨宿主规则时，补 Browser/Simulation 同 descriptor、Decision、journal 与 committed
+   checkpoint parity。
+
+测试用于验证已经推导出的架构，不用于逐次发现下一个待迁移 handler。跨域任务必须按一个
+Production domain 的完整纵向链交付，旧路径物理删除后再开启下一域。

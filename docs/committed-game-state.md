@@ -6,7 +6,7 @@
 
 Browser 由 `app/rule-composition.js` 持有唯一 StateStore、Standard Action registry、Effect runtime 与 active Session。启动时各领域 factory 只用于构造 composition 的首个 working candidate；`app.js`、turn flow 和 AI reset 不再各自创建长期切片。传统规则函数收到的同名对象是 composition 当前 working root 的窄引用，不是另一份 committed owner。Action、Quick 与 conditional descriptor 统一经 `inputPort` 进入并在 Effect runtime 的工作副本上原子提交；Browser caller 不取得 serialize/deserialize/restore/raw CAS。保存与恢复统一使用 composition lifecycle envelope，旧 StateStore-only schema 直接拒绝；恢复校验通过后由 composition 内部原位水合窄引用，以保持已装配 callback 的对象 identity，宿主不执行 slices 回灌。
 
-Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 3/4 由 low/high coupling purifier 冻结各领域切片与跨切片 invariant。Stage 6 把 StateStore 作为 Effect Session 的一等端口：store-backed session 只从 `beginWorkingCopy()` 建立 base/working state，并且只有 queue 清空、无等待输入且 runtime 校验通过后才调用一次 `compareAndCommit()`。Stage 8 已删除旧 10/12-slice adapter；recovery/simulation 只接受当前 committed schema。
+StateStore 固定 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义；low/high coupling purifier 固定各领域切片与跨切片 invariant。Effect Session 只从 `beginWorkingCopy()` 建立 base/working state，并且只有 queue 清空、无等待输入且 runtime 校验通过后才调用一次 `compareAndCommit()`。recovery 与 simulation 只接受当前 committed schema。
 
 ```text
 StateStore (唯一 committed owner)
@@ -63,7 +63,7 @@ Browser and training hosts own projections, observations and policy/UI state.
 | mark label、asset、`placedAt` | host-only / derived | 保存时删除 |
 | `finalScoringState.pendingMarks` | session-owned | 永不提交；由当前 Decision Session 持有 |
 
-Stage 3 不净化 `players/pieces/cards/tech` 的内部字段；它们由 Stage 4 接管。`pieces` 仅作为本阶段跨切片引用的只读一端，用于校验棋子 id/owner、active rocket 和 planet reference。
+低耦合 purifier 不净化 `players/pieces/cards/tech` 的内部字段；它们由高耦合 purifier 接管。`pieces` 在这里仅作为跨切片引用的只读一端，用于校验棋子 id/owner、active rocket 和 planet reference。
 
 ## 高耦合切片 ownership
 
@@ -110,7 +110,7 @@ reference core 直接强制以下不变量：
 
 跨领域不变量由 `invariantValidators` 注入，例如：玩家资源不得为负、科技 tile 只能位于供应板或一个玩家处、棋子与星球占位一致、牌实例只能位于唯一容器。validator 只读取隔离副本，不能修改 candidate 或 committed state。
 
-Stage 3 在 reference core 之上追加：
+跨切片 validator 在 reference core 之上追加：
 
 1. turn 顺位、active、passed、completed、start/current 玩家引用存在且集合无重复；`activePlayerCount` 与 active 数组长度一致。
 2. 棋子 id 唯一，active rocket 必须存在，棋子与星球标记的 owner/planet reference 必须指向现有实体。
@@ -125,7 +125,7 @@ Stage 3 在 reference core 之上追加：
 - StateStore、recovery 与 simulation checkpoint 只接受当前 schema；旧、缺失或未知版本直接拒绝。
 - 新存档只写 `serialize()` 的 committed snapshot；Effect queue、DecisionEffect 和 journal 由各自协议持有。
 
-## Stage 0 proof obligations
+## StateStore proof obligations
 
 | 验收条款 | 可证伪命题与最小反例 | 唯一责任点 | 证据 |
 |---|---|---|---|
@@ -137,19 +137,19 @@ Stage 3 在 reference core 之上追加：
 | 版本拒绝不猜测 | 损坏 JSON、旧/缺失/未知版本均不返回 state | `deserialize` | round-trip、v0、缺版本、损坏测试 |
 | 宿主隔离 | import/create/commit 不访问 document、localStorage、Policy 或 Action/Effect 类型 | 独立 state module | Node 直接测试 + 依赖结构检查 |
 
-## Stage 3 proof obligations
+## 低耦合切片 proof obligations
 
 | 验收条款 | 可证伪命题 | 最小反例 | 责任点 | 证据 |
 |---|---|---|---|---|
 | 每个领域字段有 ownership | 六组低耦合切片的 committed/session/host/derived 分类均可查询 | `pendingMarks` 或 `wheelSteps` 进入 serialized bytes | `FIELD_OWNERSHIP` + purifier | ownership/净化断言 |
 | 正式路径不双写 | 领域行为只取得 snapshot 派生 projection 和一个 working copy；成功只替换一次 root | mutator 修改输入后 committed 在 compare 前已变化 | working-copy mutator | 提交前 snapshot 不变、成功 version +1 |
 | 盘面/回合/外星人/终局 parity | 同一基线执行太阳轮转、星球 marker、回合推进、外星人揭示和 final mark 后，serialize→recover→project 的规则事实一致 | 恢复后 marker count/order、current player 或 reveal 丢失 | domain mutator + recovery port | 真实领域函数组合 trace 测试 |
-| invariant 失败零污染 | 玩家引用、active count、token slot、trace count、final slot 或 host field 任一非法时 bytes 不变 | 缺失 player、重复 slot、额外 marker 计数漂移 | Stage 3 validator + StateStore commit | 逐类失败前后 canonical bytes |
+| invariant 失败零污染 | 玩家引用、active count、token slot、trace count、final slot 或 host field 任一非法时 bytes 不变 | 缺失 player、重复 slot、额外 marker 计数漂移 | 跨切片 validator + StateStore commit | 逐类失败前后 canonical bytes |
 | 版本只成功递增 | 两份相同 baseVersion working copy 仅首份可提交 | stale writer 覆盖新 turn | StateStore CAS | winner version=1、loser conflict、事实保持 winner |
 
 固定行为 trace 位于 `randomizer/game/state/low-coupling-slices.test.js`。它调用现有 solar、planet、alien、final-scoring 领域函数，而不是只检查静态 schema；浏览器装配由 recovery port 与真实 Chrome smoke 验证。
 
-## Stage 4 proof obligations
+## 高耦合切片 proof obligations
 
 | 验收条款 | 可证伪命题 | 最小反例 | 责任点 | 证据 |
 |---|---|---|---|---|
@@ -162,24 +162,13 @@ Stage 3 在 reference core 之上追加：
 
 固定 trace 位于 `randomizer/game/state/high-coupling-slices.test.js`。它刻意调用现有 `tech/board-state`、`tech/player-tech`、`cards/deck`、`rockets` 与 `planet-stats` 领域函数，证明的是行为组合和一次根提交，不以静态 ownership label 代替执行证据。
 
-## Stage 6 Effect Session 原子提交
+## Effect Session 原子提交
 
 `randomizer/game/effects/session-runtime.js` 的 `stateStore` 模式是唯一生产提交边界。`dispatchStoredAction()` 不接受宿主拼出的第二份权威状态，而是调用 `beginWorkingCopy()` 捕获同 schema candidate 和 baseVersion。确定性 Effect、DecisionEffect、quick interrupt、journal 与 barrier 都只修改 session working copy；只有稳定提交边界调用 CAS。
 
 CAS 成功返回的递增版本 snapshot 同时成为 `session.committedState`，随后 session 才进入 `completed`。commit event 的 `metadata.sessionId/journal` 是提交当刻的稳定审计副本，因此 event snapshot、session committedState 与 journal 可直接对齐。版本冲突、schema/invariant 拒绝、不可序列化 metadata、executor/decision 失败与 barrier failure 都不得调用旧切片替换入口；屏障前恢复 base working copy，屏障后保留 working/journal 进入 `irreversible_locked`，两者均不污染 StateStore。
 
 行为矩阵在 `randomizer/game/effects/state-store-session.test.js`：同版本双 session、研究科技/卡牌/盘面多切片、逐步骤 poison、invariant、barrier、commit event/journal 和旧直写 spy。浏览器 UMD 装配由 `state-store-session.browser-smoke.html` 验证。
-
-## 分阶段覆盖矩阵
-
-| 阶段 | 边界 | 目标 | 完成证据 |
-|---|---|---|---|
-| 3 | solar/turn/planet/nebula/alien/final scoring | `low-coupling-slices.js` 纯领域切片 | 行为 parity、跨切片 invariant、失败零污染与恢复测试 |
-| 4 | players/rockets/cards/tech | players/pieces/cards/tech | 已完成：UI 字段、`statusNote`、task index 迁出；实例 id、领域 sequence 与跨切片 invariant 纳管 |
-| 5 | `Math.random`、模块序列、cache | meta.rngState/sequences 或派生层 | 同实例 A/A、A/B/A 和非零 checkpoint fork parity |
-| 6 | Effect Session working state | `beginWorkingCopy` + `compareAndCommit` | session 不直接替换 committed root |
-| 7 | browser/simulation/RL 读写入口 | projection/observation from same schema | UI/AI resolver 规则调用为 0 |
-| 8 | recovery/simulation 持久化 | current schema only | 非当前 schema 读取统一 fail-closed |
 
 ## Recovery / Simulation 零兼容边界
 

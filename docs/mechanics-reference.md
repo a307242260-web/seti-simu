@@ -2,7 +2,9 @@
 
 本文档从根目录 `AGENTS.md` 迁出，保留较完整的机制说明，供需要深入理解实现细节时查阅。根目录 `AGENTS.md` 只维护快速入口、代码地图和详细资料路径。
 
-这份文档给后续 agent / 工程师一个当前代码底层机制的入口。仓库当前是一个无构建步骤的浏览器原型，核心逻辑在 `randomizer/game/**`，app 装配层在 `randomizer/app/**`，入口 UI 与流程编排在 `randomizer/app.js`。每次代码和框架修改后记得检查和补齐本文档。
+这份文档给后续 agent / 工程师一个当前玩法机制入口。唯一规则与状态 owner 位于
+`randomizer/game/**`；`randomizer/app/**` 与 `randomizer/app.js` 只负责 Browser Host
+和装配。架构边界以 `docs/project-architecture.md` 与 `docs/app-architecture.md` 为准。
 
 ## App 装配层
 
@@ -40,7 +42,8 @@
 
 ### 初始选择状态
 
-初始选择由 `randomizer/app.js` 中的 `setupSelectionState` 管理，并渲染在任务/保留牌区顶部：
+初始选择由 Production Composition 的 setup session 管理，Browser 只渲染候选并提交
+Decision：
 
 - 页面加载后自动执行原 `set-button` 的随机设置流程（玩家顺位、转盘、扇区、星云数据、终局计分、外星人、科技 bonus），不再显示或依赖 `set-button`。
 - 按当前启用玩家发放初始选择：开始界面“人数”默认 4 人局，可切换为 3 人局；3 人局只启用白色玩家和随机两名电脑玩家，剩余未参与颜色保留为中立 token 来源。开始界面“电脑难度”默认“令人发笑的”，可切换为“开始弱小的”；难度只影响启发式决策配置，不提供公司或资源补强。开始界面“公司”选项决定本局可能随机出现的 11 张正式公司牌（默认全选，至少 2 张）。每名启用玩家（包括机器人）从正式公司池获得 2 张候选并选 1 张。若公司池数量足够覆盖所有候选，则本次发放不重复；若只勾选了较小公司池，不同玩家之间可重复出现同一公司。`assets/initial_card/split` 初始牌仍为每人 3 张选 2 张。
@@ -72,10 +75,11 @@
 
 初始效果结算：
 
-- 公司牌和初始牌效果由 `randomizer/game/initial-cards.js` 管理，入口为 `resolveInitialSelections(context, { playerIds })`；`app.js` 在所有启用玩家确认后调用它。
+- 公司牌和初始牌效果由 `randomizer/game/initial-cards.js` 管理；所有启用玩家确认后由
+  Production Composition 在 setup session 中结算。
 - 公司牌会重设该玩家的初始资源和初始收入水平，取代玩家模型默认资源；初始收入水平只写入 `player.income`，不会在游戏开始时自动获得资源或抽牌。
 - 公司牌重设资源后、初始牌结算前，会按初始顺位给予默认分：1 / 2 / 3 / 4 号位分别获得 1 / 2 / 3 / 4 分；之后初始牌或其他初始效果获得的分数继续累加。
-- 公司牌的盲抽、数据和发射效果会先结算；所有玩家的公司牌和初始牌都结算完成后，再按公司牌记录的“收入增加”次数在效果栏依次排队展示，玩家每次点击 1 个收入效果后弃 1 张手牌并按该牌收入角标结算。每次收入增加立即按当前收入水平结算，因此盲抽收入增加拿到的新牌可用于后续收入增加选择。**初始收入队列未全部完成前**，主要行动、公司 1x、快速交易、放置数据、移动、手牌角标快速行动等均锁定。初始收入是 setup 流程，不占用或遗留主行动 `actionHistory` 会话。
+- 公司牌的盲抽、数据和发射效果会先结算；所有玩家的公司牌和初始牌都结算完成后，再按公司牌记录的“收入增加”次数依次处理。每次收入增加立即按当前收入水平结算，因此盲抽收入增加拿到的新牌可用于后续收入增加选择。**初始收入队列未全部完成前**，主要行动、公司 1x、快速交易、放置数据、移动、手牌角标快速行动等均锁定。初始收入属于 setup session，不进入正常回合 session。
 - 寰宇动力的 2 次初始发射直接在地球扇区放置火箭，不消耗资源，也不受普通发射行动的火箭数量上限限制。
 - 扫描类初始牌会替换指定星云的下一个数据 token 并获得数据；若指定星云已无可替换数据，则追加扇区扫描计数标记且不获得数据。若本批初始牌扫描导致扇区完成，所有初始牌结算完后再统一触发扇区结算。
 - 额外环绕器只写入 `planetStatsState` 并同步行星参考图标记，不触发环绕奖励；同时计入玩家 `orbitCount`。
@@ -84,7 +88,8 @@
 
 ### 终局计分状态
 
-终局计分由 `randomizer/game/final-scoring.js` 管理标记流程，由 `randomizer/game/end-game-scoring.js` 管理实时计分，并由 `randomizer/app.js` 渲染到左侧终局计分板块与玩家状态栏：
+终局计分由 `randomizer/game/final-scoring.js` 管理标记流程，由
+`randomizer/game/end-game-scoring.js` 管理实时计分；Browser 从 `finalReadModel` 投影渲染：
 
 - 门槛为 25 / 50 / 70 分；玩家分数达到或超过门槛时，会生成一个待标记终局计分机会。
 - 玩家每次待标记机会可以选择 1 个终局计分板块放置自己的 `normal_token`。
@@ -293,14 +298,16 @@ UI 布局：
 - `buildOrbitRewardEffects(planetId, markerSequence)`：环绕奖励。普通星球若 `markerSequence === 1`，先插入“首次环绕 +3 分”，再按星球固定奖励顺序生成效果节点。奥陌陌使用专属环绕奖励：首次环绕额外获得 1 张奥陌陌牌，每次环绕获得 10 分、1 化石和只扫描 `aomomo` 本体的奥陌陌扇区扫描。
 - `buildPlanetLandRewardEffects(planetId, markerSequence)`：主星登陆奖励。除火星外，普通星球只有首次登陆额外获得数据；火星第 1 次额外 2 数据，第 2 次额外 1 数据。奥陌陌登陆固定获得 9 分和 2 化石，第 1/2/3 次登陆分别额外获得 3/2/1 个数据。
 - `buildSatelliteLandRewardEffects(satelliteId)`：卫星登陆奖励。
-- `buildRewardEffectsForAction(actionId, result)`：`app.js` 在 `orbitProbe` / `landProbe` 成功后调用，生成奖励效果链。
+- `buildRewardEffectsForAction(actionId, result)`：Production domain 在 `orbitProbe` /
+  `landProbe` 成功后生成奖励 Effect。
 - 多个环绕/登陆目标需要选择时，下拉选项会在位置名后显示按当前下一枚标记序号计算的地点奖励摘要；卡牌来源追加的登陆后奖励也会并入对应位置摘要。
 - 奥陌陌环绕/登陆的标记存于外星人面板，但能力结果仍发出 `planetId: "aomomo"` 的 `orbit` / `land` 事件，并计入通用星球环绕/登陆任务与终局统计。
 
 执行流：
 
 - `orbitProbe` / `landProbe` 仍只负责支付成本、移除火箭、放置环绕/登陆/卫星标记，并返回可撤销命令。
-- `app.js` 在环绕/登陆成功后，先把标记动作作为 `action_start` 步骤写入 `actionHistory`，再启动奖励效果链。
+- Production Composition 在同一 Effect Session 中依次提交标记与地点奖励；Browser 不插入
+  history 或续跑奖励。
 - 奖励效果链默认逐个点击执行；奥陌陌环绕/登陆会自动打开或结算专属地点奖励。全部完成后才允许继续快速行动或点击“回合结束”。
 - 自动奖励（分数、能量、宣传、数据、盲抽）直接结算并写入撤销命令。
 - 选择型奖励复用现有 UI：精选卡牌、收入弃牌、星云二选一、外星人痕迹选择；选择完成后推进当前奖励节点。
@@ -336,51 +343,28 @@ UI 布局：
 - 无紫色科技：地球所在扇区扫描 + 公共牌区扫描。
 - 公共牌区扫描默认弃 1 张选 2 选 1 星云；玩家每有 1 个 `additionalPublicScan` 可多选 1 张公共牌（最多 2 个，即最多弃 3 张），弃牌后按张数依次弹出多组 2 选 1 星云（可重复）。扫描行动内的公共牌区扫描只弃牌并留下空牌位，不立刻补牌。
 - 扫描 flow 完成后会检查本次扫描标记过且已填满的扇区，并插入对应完成扇区节点、扇区奖励节点；本次公共扫描留下的空公共牌位不作为效果节点，等这些后续节点和跨玩家奖励全部完成后自动补牌。自动补牌翻出新公共牌后标记为 `hidden_card_reveal` 不可撤销边界。
-- 普通卡牌的公共牌区扫描也使用延迟补牌：多次公共扫描牌会先选完并弃完本次扫描的公共牌，再依次执行星云选择；卡牌效果和临时奖励全部完成后才统一补充空公共牌位。调试公共扫描不带 `scanRunId`，仍按“弃牌 -> 扫描 -> 立即补牌”的旧路径结算。
+- 普通卡牌的公共牌区扫描也使用延迟补牌：多次公共扫描牌会先选完并弃完本次扫描的公共牌，再依次执行星云选择；卡牌效果和临时奖励全部完成后才统一补充空公共牌位。调试入口也必须提交相同 Production action/effect，不保留即时补牌旁路。
 - 紫1：获得时立刻获得 2 数据；地球扇区扫描升级为“地球及相邻扇区三选一”。
 - 扫描行动中的紫色科技追加节点固定按“紫4 -> 紫2 -> 紫3”结算；扫描主行动和卡牌/外星人展开的扫描行动共用该顺序。卡牌/外星人来源只免扫描主行动基础费用，不免紫4发射的 1 能量、紫2的 1 宣传或紫3的手牌消耗。
 - 紫4：额外增加“发射/移动”效果；发射消耗 1 能量，移动免费提供 1 点移动力；能量不足时不能选择发射，只能移动或跳过。从小行星移出且没有橙2时，可额外补 1 张移动牌或 1 能量凑足 2 点移动力。
 - 紫2：额外增加水星所在扇区扫描，消耗 1 宣传；宣传不足时只能跳过该效果。
 - 紫3：额外增加手牌扫描；若当前手牌没有可扫描角标，节点直接跳过。
 
-每个效果在 UI 中是 `pendingActionEffectFlow.effects[]` 的一个能力链节点。节点可以完成或跳过；可撤销节点完成后会写入 `actionHistory`，撤销会回到该节点重新等待触发。全部处理完后，主行动进入“可回合结束/可快速行动”状态。在效果队列之间允许执行快速行动；快速行动撤销后，扫描队列仍停留在原来的主行动流程中。
+每个扫描效果都进入同一 Effect Session。节点可以完成或按规则跳过；可撤销节点由 session
+journal 记录，撤销后回到相应 Decision/Effect 边界。全部处理完后，主行动进入“可回合结束/
+可快速行动”状态；快速行动作为 session interrupt 执行，不创建第二套 pending 或事务历史。
 
 ## 撤销机制
 
-撤销由 `randomizer/game/history/action-history.js` 实现。当前有两条并行的事务历史：
+撤销、主/快速行动顺序、RNG/replay cursor 与不可逆屏障统一由 Effect Session journal
+管理，详见 `docs/effect-session-runtime.md`。可撤销步骤恢复该 Effect 之前的 working state、
+queue、journal 与 RNG cursor；抽牌、翻牌、揭示等隐藏信息一旦公开便写入不可逆屏障，不能
+伪回滚到屏障之前。快速行动与主行动共用同一 journal 顺序，不能建立独立 history 来绕过
+屏障。
 
-- `actionHistory`：主行动会话，控制主行动撤销与回合结束提交。
-- `quickActionHistory`：快速行动会话，记录快速交易、放置数据、移动等快速步骤。
-- `historyStepOrder`：行动历史适配层的轻量顺序栈，记录 `{ source, stepId }`，用于在主/快速行动交错时按最近完成步骤撤销。
-- `randomizer/game/history/transactions.js`：历史辅助层，提供能力结果记录、不可撤销屏障标记、组合状态快照恢复等工具；新增复杂机制优先复用它或同等语义，而不是直接操作两套 history。
-
-`createActionHistory()` 提供的会话 API：
-
-- `beginSession(actionType, label)`：开始一个行动会话。
-- `beginStep(meta)`：开始一个步骤，支持 `source`、`undoable: false`、`irreversibleCode`、`irreversibleReason`。
-- `record(command)`：记录命令，命令必须有 `undo()`。
-- `endStep()`：结束当前步骤。
-- `undoLastStep()`：撤销当前会话最后一步。
-- `rollbackSession()`：撤销整个当前行动；若会话中已有不可撤销屏障则直接失败，不会先撤掉屏障之后的步骤再返回失败。
-- `hasIrreversibleBarrier()`：查询当前会话是否已经记录不可撤销屏障，用于 app 层决定只能单步撤销屏障之后的效果，不能整段回滚。
-- `commitSession()`：确认或结束会话，清空当前会话。
-
-回合结束会 `commitSession()` 主行动的 `actionHistory`，并清空快速行动历史。快速行动没有确认按钮；当快速行动步骤都被撤销后，`quickActionHistory` 会自动提交清空。精选/盲抽/补牌等确认产生新信息后写入不可撤销屏障。
-快速行动自己的不可撤销屏障会提交并封住该次 quick 历史；只有它发生在当前主行动会话之后时，才会阻断这个主行动继续撤销，避免 quick 的隐藏信息边界污染后续新开的主行动。
-
-具体撤销命令在 `randomizer/game/history/commands.js`：
-
-- 资源支付撤销：退回资源。
-- 星云替换撤销：恢复 token 原 owner。
-- 获得数据撤销：移除数据池 token，或回退弃置计数。
-- 公共牌/手牌扫描撤销：恢复牌区、手牌、弃牌堆；完整扫描行动内的公共牌扫描弃牌与星云替换可撤销，公共区留空直到扫描 flow 收尾自动补牌。若扫描完成后已经排入 `sector_finish_scan` 但还未结算，撤销扫描会同步剪掉该尾部结算节点，避免旧扇区奖励卡在队列中。自动补牌翻出新公共牌后标记为 `hidden_card_reveal` 不可撤销屏障。普通卡牌公共扫描即时补牌，仍在补牌时进入同一不可撤销边界；手牌扫描弃牌不翻新牌，仍可撤销。
-- 发射撤销：移除火箭并恢复 `nextRocketId` / `activeRocketId`。
-- 移动撤销：恢复火箭移动前快照。
-- 交易、分析、放置数据撤销：恢复对应快照。
-- 通用快照撤销：恢复玩家、火箭状态、星球状态等对象快照，用于原子能力的复合副作用。
-
-新增能力函数必须只返回 `commands`，不直接写入 `actionHistory`。调用方负责在当前 session/step 中记录这些命令。
-能力必须显式返回 `undoable`；`undoable: false` 或带 `irreversible` 的能力成功后写入不可撤销屏障，失败时必须自行恢复到执行前状态。
+能力函数只修改传入的 Effect Session working state，并返回结构化结果；不得取得 Browser
+history、committed root 或独立队列。可撤销性和不可逆屏障由 Effect metadata 与 session
+journal 统一处理。
 
 移动撤销细节：
 
@@ -392,13 +376,6 @@ UI 布局：
 
 新增能力层位于 `randomizer/game/abilities/`：
 
-- `chain.js`：
-  - `startAbilityChain(chainId, label, nodes)`
-  - `getCurrentChainNode(chain)`
-  - `resolveCurrentChainNode(chain, result)`
-  - `skipCurrentChainNode(chain)`
-  - `undoLastChainStep(chain)`
-  - `finishAbilityChain(chain)`
 - `rocket.js`：
   - `launchProbe(context, options)`
   - `moveProbe(context, options)`
@@ -442,7 +419,7 @@ UI 布局：
 
 参数约定：
 
-- `context` 复用 `app.js` 的状态上下文，不引入新状态副本。
+- `context` 来自当前 Effect Session working state，不得读取 Browser root 或模块全局状态。
 - `options.cost` 覆盖默认支付成本。
 - `options.skipCost === true` 表示对应原子能力免费触发；卡牌/外星人展开扫描行动时，`skipCost` 只表示不支付扫描主行动基础费用，不会自动免紫2/紫3/紫4追加费用。
 - `options.movementPoints` 表示本次移动实际提供的移动力；未传时按能量成本推导，免费移动默认为 1。UI 在调用普通移动能力前会把效果移动力、弃掉的移动牌和支付的能量合并成实际移动力。
@@ -450,7 +427,7 @@ UI 布局：
 - `options.historyLabel` 用于生成撤销命令文案。
 - `options.gainData === false` 表示星云扫描只替换/放置 token，不获得数据；未传时默认获得数据。
 - `options.techType` / `options.techTypes` 用于限制科技行动可选颜色；默认不限制，支持 `blue`、`orange`、`purple`，也兼容 `color` / `colors` 别名。
-- 需要玩家选择的流程由 UI 打开 overlay，能力函数只结算已经确定的目标。
+- 需要玩家选择的流程产生正式 Decision；Browser overlay 只展示 choices 并提交 identity。
 
 行动可以被视为特殊能力编排器：
 
@@ -460,19 +437,19 @@ UI 布局：
 - 正常快速移动：`moveProbe(context, { cost: { energy: 1 }, movementPoints: 1, rocketId, deltaX, deltaY })`。
 - 弃移动牌/紫4扫描移动：`moveProbe(context, { cost, movementPoints, rocketId, deltaX, deltaY })`；其中 `movementPoints` 是效果移动力与补充支付合计后的点数，`cost` 只记录实际消耗的能量。
 - 扇区扫描：`scanSector(context, { nebulaId })` 或 `scanSector(context, { sectorX })`。
-- 公共/手牌扫描：UI 先选择牌和目标星云，再调用扫描能力。完整扫描行动的公共扫描使用 `scanRunId` 延迟补公共牌，结算为“弃除来源牌 + 星云扫描 + 可选获得数据”，补牌在扫描 flow 末尾自动执行，不进入效果队列；若目标星云已无可替换数据，星云扫描改为追加扇区扫描计数标记且不获得数据。普通公共扫描仍调用 `scanPublicCard` 即时补牌。手牌扫描结算“星云扫描 + 可选获得数据 + 弃除来源牌”。
+- 公共/手牌扫描：Decision 先确定牌和目标星云，再由扫描 domain 结算。完整扫描行动的公共扫描延迟补公共牌，结算为“弃除来源牌 + 星云扫描 + 可选获得数据”；若目标星云已无可替换数据，星云扫描改为追加扇区扫描计数标记且不获得数据。手牌扫描结算“星云扫描 + 可选获得数据 + 弃除来源牌”。
 - 科技行动：`researchTechPrepare` 进入选择效果链，默认允许全部颜色科技，也可传 `techType` / `techTypes` 限制颜色；`researchTechSelect` 支付 6 宣传并锁定本次选择，但不从供应区拿走科技片，且 `undoable: true`；`researchTechTake` 才实际拿取并放置科技片，会露出下一张 bonus，`undoable: false`；`researchTechRotate` 执行太阳系旋转并结算火箭随盘旋转/镂空推动，`undoable: false`；橙1/紫1分别追加标准「发射」「数据」效果节点；`researchTechBonus` 结算 bonus 与首拿 +2 分，`undoable: false`。
 
 ## 卡牌模型
 
 - 人工卡牌描述转可执行 DSL 的规范参考：`docs\card-modeling-dsl-spec.md`。后续新增卡牌模型时，先按该文档约束人工描述和 agent 转换，尤其要明确效果节点 `kind`、费用策略、任务类型和队列结束结算时机。
-- 卡牌源数据保持 CSV，方便手工校对和继续补内容。当前 `assets/cards/card_model.csv` 主要承载本仓库资产编号、费用、角标和切图元数据；浏览器实际加载的 `randomizer/game/card-catalog.js` 和 Node 回退用的 `assets/cards/card_model.json` 由 `python tools/build_card_catalog_js.py` 从该 CSV 生成，改 CSV 后必须同步生成。效果语义按 `D:\code\ender_seti\seti` 参考实现迁移到 `randomizer/game/cards/effects.js`。
-- `randomizer/game/cards/effects.js` 维护 `CARD_REFERENCE_MAP`、`MODELS` 和 `DEFERRED_CARD_MODELS`：`CARD_REFERENCE_MAP` 固化 `b_N.webp` 与 `dlc_N.png` 的来源资料；`b_1`-`b_70` 主要来自 ender_seti 参考实现，`b_71`-`b_140` 来自本仓库 `assets/cards/cards_71.md` / `card_model.csv`，`dlc_1`-`dlc_42` 来自 `assets/cards/dlc_cards.md` / `card_model.csv`；`MODELS` 是已可执行模型；`DEFERRED_CARD_MODELS` 记录当前原型缺能力而遗留的卡牌、参考类和缺失能力。打牌时通过 `getRuntimeCardTypeCode(card, fallback)` 优先使用模型类型，避免 CSV 类型与参考实现冲突导致误入任务区。
-- `randomizer/game/cards/task-state.js` 维护 1 / 2 型任务统一状态：`refreshTaskState` 汇总当前玩家 2 型可完成任务与 1 型保留牌触发进度；`collectType1TriggerMatches` 聚合事件触发的 1 型匹配。`app.js` 在每次主行动效果结算（`completeCurrentActionEffect`）及快速行动/调试等状态变更后调用 `settleCardTasksAfterEffect`：先刷新 2 型高亮，再按 events 逐个处理 1 型触发。单个事件若命中同条件多槽仍只选 1 个；同一次扫描行动内多个不同颜色/不同事件会排队依次触发，因此 `b_25.webp` 扫描黄/红/蓝不同扇区可以分别完成对应触发。多点卡牌移动期间的访问事件会先累积，玩家可点击“结束移动”放弃剩余移动力并在移动效果结束时统一结算 1 型触发，避免中途弹窗打断移动池。1 型触发产生的卡牌效果类奖励会插入当前效果队列；移动奖励使用标准卡牌移动节点，撤销后恢复该奖励节点而不是丢失触发时机。
+- 卡牌源数据保持 CSV，方便手工校对和继续补内容。`assets/cards/card_model.csv` 承载资产编号、费用、角标和切图元数据；浏览器加载的 `randomizer/game/card-catalog.js` 和 Node 使用的 `assets/cards/card_model.json` 由 `python tools/build_card_catalog_js.py` 生成，改 CSV 后必须同步生成。
+- `randomizer/game/cards/effects.js` 维护卡牌来源映射与可执行模型；实现状态以该文件和当前测试 inventory 为准，不再引用仓库外资料路径或已删除的中间说明文档。
+- `randomizer/game/cards/task-state.js` 维护 1 / 2 型任务统一状态。任务匹配产生正式 Effect/Decision，并由 Production Composition 在同一 session 内结算；Browser 只展示 projection 和提交选择，不负责刷新任务、续跑队列或修改任务状态。
 - 半人马 8 号牌只选择 1 次扇区，然后把同一扇区中选定的星云目标固化为两个连续扫描节点；不能在两次扫描之间改选其它扇区，两个节点都保持原打牌玩家为执行者。
 - 当前基础牌 `b_1.webp` 到 `b_70.webp` 已全部建立参考映射并建模为 `implemented`；实现状态以 `randomizer/game/cards/effects.js` 和 `effects.test.js` 为准。已迁移模型遵循：
   - 0 型卡：打出后展开为 `play_effect` 效果队列，复用现有扫描、公共牌扫描、盲抽、科技、发射、卡牌内免费移动等效果执行器。
-  - 1 型卡：打出后进入保留牌区，并在移动等事件完成瞬间检查触发条件；若单个事件命中多个同条件触发槽，会弹出触发选择，只结算 1 个，也可以取消。已结算的触发槽会在牌面标记序号；全部触发槽结算后，完成任务数 +1 并移除该牌。触发槽消耗、任务移牌和完成任务数变化会随对应快速/效果历史记录；卡牌效果类触发会把奖励节点插入当前效果队列，并把触发进度作为该奖励节点的前置历史命令记录，撤销奖励节点时回到该奖励效果节点。触发精选或盲抽属于隐藏信息边界，会写入不可撤销 quick step。
+  - 1 型卡：打出后进入保留牌区，并在移动等事件完成瞬间检查触发条件；若单个事件命中多个同条件触发槽，会弹出触发选择，只结算 1 个，也可以取消。已结算的触发槽会在牌面标记序号；全部触发槽结算后，完成任务数 +1 并移除该牌。触发槽消耗、任务移牌、奖励与撤销均进入同一 session journal；精选或盲抽属于隐藏信息边界。
   - 2 型卡：打出后进入保留牌区，并注册长期任务；状态条件满足后不自动结算，而是在任务区蓝色高亮。玩家点击该牌确认完成后，完成任务数 +1、移除该牌，并启动任务奖励队列。
   - `dlc_29.png`（废弃任务）只能选择仍未完成的 1/2 型任务牌；半人马牌不属于任务牌，不能选择。半人马牌达成分数阈值后的手动结算也不计入完成任务数：确认弃牌作为快速步骤记录，条件奖励用不消耗主要行动的快速效果队列结算，撤销奖励节点时恢复奖励队列，撤销确认步骤时恢复保留牌与阈值标记。虫族化石搬运任务一旦已经拾取化石并生成搬运棋子，直到完成前都不能被该效果返回手牌。
   - 半人马顶部分数 mark 达标后选择顶部奖励；若达标发生在当前效果队列中，顶部奖励作为 mark 图标效果节点插入队列，避免与正在进行的拿牌、痕迹放置等子流程同时弹出。
@@ -487,12 +464,6 @@ UI 布局：
 - 重点语义：`b_5.webp` / `b_6.webp` 的“完成扇区”按本次卡牌效果链中显式完成的扇区 settlement 判断，不作为后续可触发任务；`b_7.webp` 是“盲抽 1 张并立刻用该牌弃牌扫描”重复 3 次，抽牌后该节点不可撤销，跳过也会弃掉刚抽到的牌；`b_9.webp` 的“扫描行动”按卡牌效果解释为不重复支付扫描行动基础费用，只展开扫描行动的后续效果，并使用完整扫描行动的延迟补牌/完成扇区调度，但紫2/紫3/紫4追加费用仍按紫科技规则支付；`b_11.webp`、`b_24.webp`、`b_62.webp`、`b_73.webp`、`b_76.webp`、`b_108.webp`、`b_131.webp` 会先登记本回合访问奖励再执行牌自带移动，之后通过支付能量、弃移动角标或其它免费移动访问相应目标也能触发一次奖励；`b_124.webp` 本回合所有移动都无视移出小行星的额外移动力惩罚；`b_125.webp` 本回合第一次同环移动获得 3 分和 1 宣传。`b_16.webp`、`b_17.webp`、`b_18.webp` 的多点 `card_move` 保持为单个效果图标并用角标显示剩余移动力；`b_20.webp` 监听发射事件，`b_25.webp` 监听黄色/红色/蓝色扇区扫描事件并奖励免费移动；`b_29.webp` 可重复登陆主星或已登陆卫星，但卫星登陆仍需橙 4，主星地点奖励按首登陆结算；首次登陆主星或卫星时标记放在正常首位置，只有该首位置已有标记时，重复贴图才复用原登陆/卫星槽并向右偏移半个登陆器宽度；`b_49.webp` 引力弹弓触发时，访问非地球行星仍先按默认规则获得 1 宣传，再动态追加 1 个“支付 1 宣传，1 移动”的可跳过效果；每次访问都可追加，且该支付移动若再次访问非地球行星也会先获得宣传并继续追加同类效果；`b_94.webp` 是先盲抽 1 张（不是精选，抽牌后不可撤回），再追加 3 个可选手牌扫描节点，玩家每次可弃 1 张当前手牌按右上角扫描，也可跳过，因此整体等价于“弃掉最多 3 张手牌进行弃牌扫描”。
 - `b_16.webp`、`b_17.webp`、`b_18.webp` 均为“1 移动后扫描一个指定颜色扇区 1 次”，颜色分别是蓝色、红色、黄色，且扫描会获得数据。
 - 外星人卡牌分析由 `tools/analyze_alien_cards.py` 在每个外星人目录下分别生成 `card_analysis.csv`、`card_model.csv` 和 `card_model.json`；默认排除 `半人马`、`九折`、`方舟`，左上角有两个符号时按第二个标准符号判定弃牌收益。
-
-## 后续改造方向
-
-- `orbit`、`land`、`analyze`、`researchTech` 已拆成能力函数；后续继续处理 `playCard`，并让卡牌/科技通过 `cost` 参数触发低费或免费版本。
-- 将扫描第二格 +2 分、推广和扇区奖励做成 `onSignalMarked` / `onSectorCompleted` 事件能力。
-- 将 UI 的 overlay 选择与底层 ability 彻底分离，使能力函数可被测试、AI agent 和模拟器复用。
 
 ## 验证命令
 
