@@ -20,7 +20,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 2. `randomizer/solar-system/**`、`randomizer/game/**` 先注册各自的 `window.Seti*` 全局模块。
 3. `randomizer/app/alien-trace-reward-flow.js` 编排痕迹奖励的方舟解锁、面板放置与无目标落空分支。
 4. `randomizer/app/dependencies.js` 收集并校验 app 层需要的全局模块。
-5. `randomizer/app/constants.js` 创建 app 层静态配置、图标路径、扫描/扇区奖励表和 UI 参数。
+5. `randomizer/app/constants.js` 创建 app 层静态配置、图标路径和 UI 参数；扇区奖励规则与纯 descriptor 由 `game/data` 提供。
 6. `randomizer/app/dom.js` 集中查询页面上的固定 DOM 节点。
 7. Browser 生产入口直接装配真实 DOM/render runtime，并只通过 `BrowserProjection.resident` 的深冻结 selector 读取规则视图；Simulation 直接创建 rules-only Composition，不加载 `app.js`，生产入口不再保留 `simulationMode` 或 no-op DOM/view adapter 分支。
 8. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
@@ -62,7 +62,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八物种的领域 presentation registry；只把标准 Decision choices 映射为公司、痕迹、机会、牌、任务和分支视图，不读取旧 pending 或领域 continuation。
 - `randomizer/game/effects/industry-alien-session.js`：公司/外星人 Decision schema 与 Effect Session adapter；机会队列、痕迹奖励、followup、history/rollback 由 session journal/priority/barrier 统一负责。
 - `randomizer/app/alien-trace-reward-flow.js`：只决定痕迹奖励应进入方舟解锁、面板放置还是无目标落空；无目标时必须结束当前奖励节点，包括 `required` / 不可跳过节点。
-- `randomizer/app/constants.js`：只放静态常量和依赖派生常量。不要在这里读写游戏状态、DOM 或 pending 流程。
+- `randomizer/app/constants.js`：只放静态常量和依赖派生常量；扇区奖励表直接引用 `game/data` 的唯一规则定义。不要在这里读写游戏状态、DOM 或 pending 流程。
 - `randomizer/app/dom.js`：只收集固定 DOM 元素和 NodeList。新增 HTML id、overlay、按钮或常驻区域时先在这里登记。
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
 - `randomizer/app/start-screen.js`：处理开始界面选项、继续游戏入口、新局入口壳层与初始选择 Browser Host adapter；规则结算仍委托 `action-runtime`，不得复制恢复逻辑。

@@ -186,6 +186,7 @@ UI 布局：
 星云数据由 `randomizer/game/data/nebula-state.js` 管理：
 
 - `nebulaDataState.nebulae[nebulaId].tokens[]`：星云上的数据 token。
+- 普通扇区胜者奖励表、首次/后续奖励判定与结算后的纯奖励 descriptor 也由该模块唯一提供；Browser 扫描 flow 只把 descriptor 转成对应效果节点。
 - 每个 token 记录 `slotIndex`、坐标，以及是否已被某玩家替换。
 - `fillNebulaData` 会按星云容量填充数据。
 - `replaceNextNebulaDataToken` 会按 `slotIndex` 从小到大替换第一个未替换 token。

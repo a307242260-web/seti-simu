@@ -14,6 +14,7 @@
   function createAppConstants(dependencies = {}) {
     const {
       aliens,
+      data,
       players,
       rocketActions,
       planetReferenceLayout,
@@ -200,40 +201,7 @@
         black: "black_finish_scan",
         aomomo: "sector_finish_scan",
       }),
-      SECTOR_WIN_REWARDS: Object.freeze({
-        "sector-1-b": Object.freeze({
-          first: Object.freeze([{ resource: "score", amount: 2 }, { traceType: "pink" }]),
-          repeat: Object.freeze([{ resource: "score", amount: 5 }]),
-        }),
-        "sector-4-b": Object.freeze({
-          first: Object.freeze([{ resource: "score", amount: 3 }, { traceType: "pink" }]),
-          repeat: Object.freeze([{ traceType: "pink" }]),
-        }),
-        "sector-2-b": Object.freeze({
-          first: Object.freeze([{ traceType: "pink" }]),
-          repeat: Object.freeze([{ resource: "score", amount: 3 }]),
-        }),
-        "sector-3-a": Object.freeze({
-          first: Object.freeze([{ traceType: "pink" }]),
-          repeat: Object.freeze([{ resource: "score", amount: 3 }]),
-        }),
-        "sector-1-a": Object.freeze({
-          first: Object.freeze([{ traceType: "pink" }]),
-          repeat: Object.freeze([{ resource: "score", amount: 3 }]),
-        }),
-        "sector-4-a": Object.freeze({
-          first: Object.freeze([{ traceType: "pink" }]),
-          repeat: Object.freeze([{ traceType: "pink" }]),
-        }),
-        "sector-2-a": Object.freeze({
-          first: Object.freeze([{ traceType: "pink" }]),
-          repeat: Object.freeze([{ traceType: "pink" }]),
-        }),
-        "sector-3-b": Object.freeze({
-          first: Object.freeze([{ traceType: "pink" }]),
-          repeat: Object.freeze([{ traceType: "pink" }]),
-        }),
-      }),
+      SECTOR_WIN_REWARDS: data.SECTOR_WIN_REWARDS,
       ROCKET_SURFACE: rocketActions.ROCKET_SURFACE,
       PLANETS_REFERENCE_SIZE: planetReferenceLayout.PLANETS_REFERENCE_SIZE,
       REFERENCE_PLACEMENT_KIND_LABELS: Object.freeze({

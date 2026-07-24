@@ -674,15 +674,6 @@
         });
     }
 
-    function getSectorWinnerRewardKey(settlement) {
-      const config = data.getSectorWinMarkerConfig?.(settlement?.sectorId);
-      if (config?.firstKind === "circle" && Number(settlement?.settlementNumber) === 1) {
-        return "first";
-      }
-      if (config?.firstKind !== "circle") return "repeat";
-      return "repeat";
-    }
-
     function createTargetResourceEffect(id, label, icon, target, gain) {
       return {
         id,
@@ -697,6 +688,10 @@
           targetPlayerColor: target?.color || null,
         },
       };
+    }
+
+    function getSectorWinnerRewardKey(settlement) {
+      return data.getSectorWinnerRewardKey(settlement);
     }
 
     function createTargetPinkTraceEffect(id, label, target) {
@@ -719,58 +714,28 @@
       requireWorkingRoot(workingRoot);
       if (!settlement?.ok) return [];
       const sectorLabel = data.getNebulaLabel(settlement.sectorId);
-      const effects = [];
-      const participants = settlement.participants || [];
-
-      if (settlement.sectorId === aomomo?.NEBULA_ID) {
-        for (const participant of participants) {
-          const player = resolveWorkingPlayerReference(workingRoot, participant);
-          if (!player) continue;
-          effects.push(createTargetResourceEffect(
-            `sector-${settlement.sectorId}-fossil-${player.id}-${settlement.settlementNumber}`,
-            `${sectorLabel}参与奖励：${player.colorLabel || player.name} +1化石`,
-            "aomomoFossil",
+      return data.buildSectorRewardDescriptors(settlement).flatMap((reward, index) => {
+        const player = resolveWorkingPlayerReference(workingRoot, reward.owner);
+        if (!player) return [];
+        const isWinner = reward.owner?.playerId === settlement.winner?.playerId;
+        if (reward.kind === "alien_trace") {
+          return [createTargetPinkTraceEffect(
+            `sector-${settlement.sectorId}-winner-${reward.traceType}-trace-${settlement.settlementNumber}`,
+            `${sectorLabel}赢家奖励：${player.colorLabel || player.name}放置${reward.traceType === "pink" ? "粉色" : reward.traceType}外星人痕迹`,
             player,
-            { aomomoFossils: 1 },
-          ));
+          )];
         }
-        return effects;
-      }
-
-      for (const participant of participants) {
-        const player = resolveWorkingPlayerReference(workingRoot, participant);
-        if (!player) continue;
-        effects.push(createTargetResourceEffect(
-          `sector-${settlement.sectorId}-publicity-${player.id}-${settlement.settlementNumber}`,
-          `${sectorLabel}参与奖励：${player.colorLabel || player.name} +1宣传`,
-          "publicity",
+        const [resource, amount] = Object.entries(reward.gain || {})[0] || [];
+        if (!resource) return [];
+        const labels = { score: "分", publicity: "宣传", aomomoFossils: "化石" };
+        return [createTargetResourceEffect(
+          `sector-${settlement.sectorId}-${isWinner ? "winner" : "participant"}-${resource}-${player.id}-${settlement.settlementNumber}-${index}`,
+          `${sectorLabel}${isWinner ? "赢家" : "参与"}奖励：${player.colorLabel || player.name} +${amount}${labels[resource] || resource}`,
+          resource === "aomomoFossils" ? "aomomoFossil" : resource,
           player,
-          { publicity: 1 },
-        ));
-      }
-
-      const winner = resolveWorkingPlayerReference(workingRoot, settlement.winner || {});
-      const rewardConfig = SECTOR_WIN_REWARDS[settlement.sectorId];
-      const rewards = rewardConfig?.[getSectorWinnerRewardKey(settlement)] || [];
-      for (const reward of rewards) {
-        if (!winner) continue;
-        if (reward.resource) {
-          effects.push(createTargetResourceEffect(
-            `sector-${settlement.sectorId}-winner-${reward.resource}-${settlement.settlementNumber}`,
-            `${sectorLabel}赢家奖励：${winner.colorLabel || winner.name} +${reward.amount}${reward.resource === "score" ? "分" : ""}`,
-            reward.resource === "score" ? "score" : reward.resource,
-            winner,
-            { [reward.resource]: reward.amount },
-          ));
-        } else if (reward.traceType === "pink") {
-          effects.push(createTargetPinkTraceEffect(
-            `sector-${settlement.sectorId}-winner-pink-trace-${settlement.settlementNumber}`,
-            `${sectorLabel}赢家奖励：${winner.colorLabel || winner.name}放置粉色外星人痕迹`,
-            winner,
-          ));
-        }
-      }
-      return effects;
+          reward.gain,
+        )];
+      });
     }
 
     function buildScanFinalizeFollowupEffects(workingRoot, _scanRunId, flow = getActionEffectFlow(workingRoot)) {

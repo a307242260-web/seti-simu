@@ -40,6 +40,77 @@
   const AOMOMO_NEBULA_ID = "aomomo";
   const NEBULA_SECOND_SLOT_INDEX = 2;
   const NEBULA_SECOND_SLOT_SCORE = 2;
+  const SECTOR_WIN_REWARDS = Object.freeze({
+    "sector-1-b": Object.freeze({
+      first: Object.freeze([{ resource: "score", amount: 2 }, { traceType: "pink" }]),
+      repeat: Object.freeze([{ resource: "score", amount: 5 }]),
+    }),
+    "sector-4-b": Object.freeze({
+      first: Object.freeze([{ resource: "score", amount: 3 }, { traceType: "pink" }]),
+      repeat: Object.freeze([{ traceType: "pink" }]),
+    }),
+    "sector-2-b": Object.freeze({
+      first: Object.freeze([{ traceType: "pink" }]),
+      repeat: Object.freeze([{ resource: "score", amount: 3 }]),
+    }),
+    "sector-3-a": Object.freeze({
+      first: Object.freeze([{ traceType: "pink" }]),
+      repeat: Object.freeze([{ resource: "score", amount: 3 }]),
+    }),
+    "sector-1-a": Object.freeze({
+      first: Object.freeze([{ traceType: "pink" }]),
+      repeat: Object.freeze([{ resource: "score", amount: 3 }]),
+    }),
+    "sector-4-a": Object.freeze({
+      first: Object.freeze([{ traceType: "pink" }]),
+      repeat: Object.freeze([{ traceType: "pink" }]),
+    }),
+    "sector-2-a": Object.freeze({
+      first: Object.freeze([{ traceType: "pink" }]),
+      repeat: Object.freeze([{ traceType: "pink" }]),
+    }),
+    "sector-3-b": Object.freeze({
+      first: Object.freeze([{ traceType: "pink" }]),
+      repeat: Object.freeze([{ traceType: "pink" }]),
+    }),
+  });
+
+  function getSectorWinnerRewardKey(settlement) {
+    const config = nebulaPlacement.getSectorWinMarkerConfig?.(settlement?.sectorId);
+    return config?.firstKind === "circle" && Number(settlement?.settlementNumber) === 1
+      ? "first"
+      : "repeat";
+  }
+
+  function buildSectorRewardDescriptors(settlement) {
+    if (!settlement?.ok) return [];
+    if (settlement.sectorId === AOMOMO_NEBULA_ID) {
+      return (settlement.participants || []).map((owner) => ({
+        kind: "resource",
+        owner: { ...owner },
+        gain: { aomomoFossils: 1 },
+      }));
+    }
+    const descriptors = (settlement.participants || []).map((owner) => ({
+      kind: "resource",
+      owner: { ...owner },
+      gain: { publicity: 1 },
+    }));
+    for (const reward of SECTOR_WIN_REWARDS[settlement.sectorId]?.[getSectorWinnerRewardKey(settlement)] || []) {
+      descriptors.push(reward.resource
+        ? {
+          kind: "resource",
+          owner: { ...(settlement.winner || {}) },
+          gain: { [reward.resource]: reward.amount },
+        }
+        : {
+          kind: "alien_trace",
+          owner: { ...(settlement.winner || {}) },
+          traceType: reward.traceType,
+        });
+    }
+    return descriptors;
+  }
 
   function getNebulaSecondSlotScoreReward(slotIndex) {
     return Number(slotIndex) === NEBULA_SECOND_SLOT_INDEX ? NEBULA_SECOND_SLOT_SCORE : 0;
@@ -795,6 +866,9 @@
 
   return Object.freeze({
     AOMOMO_NEBULA_ID,
+    SECTOR_WIN_REWARDS,
+    getSectorWinnerRewardKey,
+    buildSectorRewardDescriptors,
     NEBULA_SECOND_SLOT_INDEX,
     NEBULA_SECOND_SLOT_SCORE,
     getNebulaSecondSlotScoreReward,
