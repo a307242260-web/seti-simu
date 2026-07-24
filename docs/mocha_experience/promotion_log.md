@@ -1147,3 +1147,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `rg` 复核新增长期规则、经验条目和 promotion decision 均包含提交基线、双账门禁、残留计数及三问校准法；未修改生产代码或测试。
 - observed_outcome: 待 SETI-139 及后续清理链验证；当前已把“局部竖切片成功不能外推整体完成”从聊天结论变为项目级约束。
 - keep_or_revise: 保留；后续若 residual inventory 自动化成熟，补充机器生成的计数来源，但不改变完成度必须双账报告的原则。
+
+- date: 2026-07-24
+- source: SETI-158 owner 指出领航不应采用“少量效果→测试→checkpoint→停 run”，并追溯 SETI-124/135/136 已多次出现同类重构失控
+- promoted_to: agent_prompt, loop_template
+- promotion_decision: promote
+- target_agent: 领航
+- target_component: 复杂 coding issue 的 implementation 设计冻结与批量执行协议
+- target_file: 领航 agent `13e5c469-264f-4a3c-837d-2cbc26bbba19` instructions；docs/implementation-proof-obligations.md；docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 对已有完整旧实现且具有有限语义目录的复杂迁移，首个生产 patch 前必须冻结全量 migration matrix；禁止用逐 handler 测试失败发现设计，改为按 owner/事务语义批量实现并集中验证。
+- applied_change: 领航 instruction 增加复杂 implementation 三阶段协议；项目 proof-obligation 文档增加触发条件、矩阵字段、设计冻结/批量实现/集中验证顺序和 review checklist；coding experience 记录 SETI-158 与此前重构的重复证据。
+- expected_effect: 领航在复杂迁移中先闭合状态、RNG/sequence、Decision、事务和删除契约，再一次性实施；减少碎提交、重复上下文读取和“局部绿后再发现根边界”的返工。
+- evaluation_window: SETI-158 剩余执行及后续 2 个满足触发条件的复杂 coding issue
+- success_signal: 每个适用 issue 在生产 patch 前有一份可复核的完整 matrix；实现期间不再按每 1～2 个类型提交或全量测试；根契约不由测试首次发现；每个 issue 最多 1～5 个语义完整提交，旧路径与债务计数按设计归零。
+- rollback_condition: 若连续 2 个适用 issue 的 matrix 只复制自然语言、无法减少返工，或对边界清楚的小任务造成显著空转，则收窄触发条件或把 matrix 改为自动从目录生成；不回退到逐 handler 猜测。
+- risk: 过度设计可能拖慢小改动；因此仅对有限目录、跨多 owner/状态边界或要求完整删除旧入口的复杂 implementation 触发，普通 bugfix 与单一 handler 修改不适用。
+- evidence_before: SETI-158 runs 先后以 2/46、4/46、6/46、11/46 扩展；`6dfe65c` 的摘要 parity 漏掉全局 data token sequence，`05e4c40` 的人工 owner 反例未覆盖真实 adapter；当前 run 在根契约未修时继续横向迁移。SETI-124/135/136 已出现数百个碎提交、入口反复搬运和 owner 多轮纠偏。
+- owner_or_agent_decision: owner 明确将其判断为领航硬伤并要求避免与提升；重复证据已跨多个大型重构 issue，决定立即 promote，不再保留为 candidate/reject。
+- applied_at: 2026-07-24
+- verification: 检查领航远端 instructions 包含“设计冻结/批量实现/集中验证”；`rg` 检查 proof-obligation 文档包含 migration matrix 与禁止探索式调试；SETI-158 新 run 首段必须先输出完整 46 类 matrix 路径，未完成前不得出现生产 patch。
+- observed_outcome: 待 SETI-158 重启及后续 2 个复杂 issue 观察。
+- keep_or_revise: 进入评估窗口；若 SETI-158 仍先 patch 后补 matrix，立即中断并考虑把 design artifact 加入 issue-workflow 的结构化开工前置，而不是继续追加 prompt 文本。
