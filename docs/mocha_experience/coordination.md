@@ -22,6 +22,16 @@
 - promotion_status: promote
 - decision: 项目长期记忆新增双账门禁。以后每轮架构里程碑收口后，先固定提交基线并重跑全仓 residual inventory，再决定下一组 issue；整体完成度必须同时报告新主链义务和旧路径归零情况。没有全仓 residual 证据时只允许汇报局部里程碑，不得给整体百分比。owner 可用“新主链义务表在哪里、旧路径残留计数在哪里、基于哪个提交”三问快速校准结论。
 
+## 2026-07-25：架构迁移拆单必须同时覆盖目标 owner 与来源入口
+
+- date: 2026-07-25
+- source_issue: SETI-161、SETI-162、SETI-163、SETI-164，以及 owner 对“为何前次拆分没有做全”的复审
+- observation: 复杂迁移若只按目标 domain/owner 拆子 issue，即使每个目标域都完成并通过测试，也可能遗漏来源侧 generic facade、字符串 registry、public API 和根 authority。父级拆单前必须同时冻结“新责任去向”和“旧入口删除”两条有限集合，并把每一行唯一分配给实现子项；最终审计不能承担首次枚举残留的职责。
+- evidence: SETI-162 建立共享 Production Composition，SETI-158～160/163 分别完成 card、science、probe-turn、residual domain，阶段结论均称 Browser 只剩 presentation/input；SETI-164 全局调用图复审却首次发现 15 个 target facade、17 个显式 owner 和 `submitOwnerInput/executeOwnerInput` 通用根事务。其后 9 个 run 被取消，工作树形成 34 文件、约 +1034/-724 的混合底稿，并把旧字符串调用机械改名为 `PresentationInputRegistry`。这证明目标轴完成不等于来源轴归零，也证明把全局删除审计后置会让最终验收退化成新的大型 implementation。
+- promote_to: loop_template
+- promotion_status: promote
+- decision: 更新 `docs/implementation-proof-obligations.md`：复杂父子迁移在建单前必须建立目标轴与来源轴双矩阵，每行唯一归属一个子 issue；子项同时验收新 owner 与对应旧入口删除；最终审计只做组合复核，若首次发现成片残留则停止并重新拆分。该规则补充既有“双账完成度”和“设计冻结”门禁，不重复修改 agent prompt、watcher 或 issue-workflow。
+
 ## 2026-07-21：总控关单复用子项证据并延后经验沉淀
 
 - date: 2026-07-21

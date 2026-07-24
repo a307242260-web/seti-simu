@@ -1169,3 +1169,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `rg` 已确认 source-of-truth、Codex、Claude 三份全局规则均包含“复杂实现先冻结完整设计”与“有限集合必须覆盖完整执行闭包”；检查领航远端 instructions 包含“设计冻结/批量实现/集中验证”；`rg` 检查 proof-obligation 文档包含 migration matrix 与禁止探索式调试；SETI-158 新 run 首段已先输出 matrix，再进入生产 patch。
 - observed_outcome: 待 SETI-158 重启及后续 2 个复杂 issue 观察。
 - keep_or_revise: 进入评估窗口；若 SETI-158 仍先 patch 后补 matrix，立即中断并考虑把 design artifact 加入 issue-workflow 的结构化开工前置，而不是继续追加 prompt 文本。
+
+- date: 2026-07-25
+- source: SETI-161～164 的父子 issue 描述、完成 metadata、SETI-164 九次取消 run、混合工作树 diff，以及 owner 对“为何之前拆分没有做全”的复审
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航、总控及负责复杂架构迁移拆单与验收的 agent
+- target_component: 复杂迁移父子 issue 的双轴分区与最终审计边界
+- target_file: docs/implementation-proof-obligations.md；docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 在既有完整 migration matrix 上增加目标轴与来源轴：新 owner/domain/protocol 和旧 facade/registry/public API/state-write/fallback 必须分别形成有限集合，每行唯一归属一个实现子 issue；最终审计不得首次承担成片迁移。
+- applied_change: proof-obligation loop 新增父子拆单双轴规则、唯一归属、子项双向验收和最终审计失败回退；coordination experience 记录 SETI-161～164 的直接反例。本次不修改 agent prompt、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续架构迁移不会只完成目标 domain 后把来源侧兼容入口遗漏到最终验收；子 issue 的完成结论可机械汇总，最终 audit 保持小而有限。
+- evaluation_window: SETI-164 新拆分链及后续 2 个跨 3 个以上 owner、要求物理删除旧入口的父级迁移
+- success_signal: 建单前存在两条完整 inventory；每行恰好归属一个 child；每个 child 关闭时对应目标义务成立且来源残留为零；最终 audit 不首次发现同类残留批次，也不产生新的大型实现 diff。
+- rollback_condition: 若后续 2 个适用父级证明来源与目标天然一一对应、双轴只重复同一清单，可合并展示为一张带 source/target/child 字段的矩阵；不得取消来源入口全量分区和唯一归属要求。
+- risk: 对单文件修复或单一已知入口使用双轴矩阵会增加无效文档负担，因此只适用于复杂父子迁移；普通 bugfix 继续使用窄 proof obligation。
+- evidence_before: SETI-162 与 SETI-158～160/163 已完成共享 composition 和四类规则 domain，但 SETI-164 才首次枚举出 15 个 target facade、17 个 owner 与通用 OwnerInput 根事务；连续纠偏后出现九次取消 run和 34 文件约 +1034/-724 的混合底稿，旧方法被机械改名为 Presentation registry。
+- owner_or_agent_decision: owner 明确要求吸取本轮拆分不全的经验并开始下一步；重复证据已跨 SETI-2/56、SETI-123/137～139 和 SETI-161～164，决定直接 promote 到 loop template。
+- applied_at: 2026-07-25
+- verification: `rg` 检查 loop template 同时包含目标轴、来源轴、唯一归属、子项双向验收和最终审计回退；SETI-164 混合底稿已清理，后续子 issue 将按接口义务而非重复按 game domain 分区。
+- observed_outcome: 待 SETI-164 新拆分链验证。
+- keep_or_revise: 进入评估窗口；若第一批子 issue 仍出现未归属 generic facade，立即停止并补全来源 inventory，不继续追加兼容层。
