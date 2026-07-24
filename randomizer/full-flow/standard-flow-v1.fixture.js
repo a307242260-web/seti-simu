@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = Object.freeze({
-  schemaVersion: "seti-standard-full-flow-v4",
+  schemaVersion: "seti-standard-full-flow-v6",
   config: {
     seed: "seti-116-standard-flow-v2",
     activePlayerCount: 4,
@@ -139,5 +139,5 @@ module.exports = Object.freeze({
     authority: [8, "seti-simulation-mulberry32-v1", 2769567738, 1],
     session: [null, "player-white", null, "turn_action", 11, 18, 18],
   },
-  finalCheckpointHash: "f8de76606d41d914dd0810ec227fa4c64447adda6b885666678fc97e48532e1d",
+  finalCheckpointHash: "5687ed6b4d5d0378474f32942fc8cf1b869af8d69c754497df6d904189e520af",
 });

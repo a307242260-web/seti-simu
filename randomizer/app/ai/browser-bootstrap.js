@@ -66,7 +66,7 @@
         playerId: seatId,
         role: "player",
       });
-      const decision = source.decision || inspection.session?.decision || null;
+      const decision = inspection.session?.decision || source.decision || null;
       if (inspection.phase === "awaiting_input" && decision) {
         const legalActions = (decision.choices || [])
           .map((choice) => choice?.standardAction || choice?.action || choice)
@@ -75,7 +75,10 @@
           kind: "decision",
           actorId: decision.ownerId,
           stateVersion: legalActions[0]?.stateVersion ?? source.source.stateVersion,
-          decisionVersion: decision.decisionVersion,
+          decisionVersion: legalActions[0]?.decisionVersion ?? 0,
+          ...(decision.decisionVersion === (legalActions[0]?.decisionVersion ?? 0)
+            ? {}
+            : { submissionDecisionVersion: decision.decisionVersion }),
           decisionId: decision.decisionId,
           legalActions,
         };
@@ -122,8 +125,8 @@
     function currentSeatId() {
       const inspection = ruleComposition.inspect();
       const source = projectionSource.read();
-      return source.decision?.ownerId
-        ?? inspection.session?.decision?.ownerId
+      return inspection.session?.decision?.ownerId
+        ?? source.decision?.ownerId
         ?? source.state?.match?.currentPlayerId
         ?? null;
     }
@@ -135,19 +138,26 @@
           readBoundary: () => readBoundary(seatId),
           readObservation: () => {
             const boundary = readBoundary(seatId);
-            return outcomeModel.createDecisionObservation(projectionAdapter.projectSource({
+            const projected = projectionAdapter.projectSource({
               viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-            }), {
+            });
+            return outcomeModel.createDecisionObservation(projected, {
               seatId,
               stateVersion: boundary.stateVersion,
               decisionVersion: boundary.decisionVersion,
             });
           },
           readActionOutcomes: (boundary) => outcomeModel.projectOutcomeObservations(
-            ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
-              viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-              confidence: "low",
-            }),
+            boundary.legalActions.every((action) => (
+              ["choose_card", "choose_payment"].includes(action.family)
+              && ["select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
+                .includes(action.target?.kind)
+            ))
+              ? []
+              : ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
+                viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+                confidence: "low",
+              }),
             {
               seatId,
               stateVersion: boundary.stateVersion,
@@ -245,7 +255,8 @@
       resetAiStrategyDemandCache: () => {},
       setPlayerAiDifficulty: (playerId, difficulty, label) => context.inputPort
         .setPlayerDifficulty(playerId, difficulty, label),
-      runMachinePlayerStepThroughComposition: (options) => machinePlayerPort.runOnce(options),
+      runMachinePlayerStep: (options) => machinePlayerPort.runOnce(options),
+      getFormalInputOwnerId: () => machinePlayerPort.inspect().seatId,
       getRuleProjection: () => {
         return structuredClone(readAiControlProjection());
       },

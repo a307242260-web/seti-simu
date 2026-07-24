@@ -103,6 +103,19 @@
       Number(rotationSource.wheel3Steps) || 0,
       Number(rotationSource.wheel4Steps) || 0,
     ];
+    const setup = state?.match?.initialSetup || null;
+    const setupCurrentPlayerId = setup?.currentPlayerId == null
+      ? null
+      : String(setup.currentPlayerId);
+    const setupPresentation = {
+      active: setup?.phase === "selecting",
+      interactive: setup?.phase === "selecting" && setupCurrentPlayerId === playerId,
+      currentPlayerId: setupCurrentPlayerId,
+      offer: setup?.phase === "selecting" && setupCurrentPlayerId === playerId
+        ? clone(setup.offersByPlayerId?.[setupCurrentPlayerId] || null)
+        : null,
+      confirmedPlayerIds: clone(setup?.confirmedPlayerIds || []),
+    };
 
     return {
       match: {
@@ -179,6 +192,7 @@
           "fangzhou", "chong", "amiba", "aomomo", "runezu", "revealedSlotIds",
         ]),
         finalScoring: clone(state?.finalScoring || {}),
+        initialSetup: setupPresentation,
       },
       feedback: { events: [], logs: [], progress: null, notices: [] },
     };

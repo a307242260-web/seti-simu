@@ -153,18 +153,18 @@
       throw new TypeError("StandardIntentPort 需要 dispatch port");
     }
     function runAction(actionId, actionOptions = {}) {
-      const selector = actionId === "land"
+      const selector = actionOptions.selector || (actionId === "land"
         ? {
           ...(actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }),
           ...(actionOptions.target?.type ? { type: actionOptions.target.type } : {}),
           ...(actionOptions.target?.satelliteId ? { satelliteId: actionOptions.target.satelliteId } : {}),
         }
-        : (actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) });
+        : (actionOptions.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }));
       return options.dispatch({
         kind: "standard_intent",
         family: actionId,
         selector,
-        payload: actionOptions,
+        payload: actionOptions.payload || actionOptions,
       });
     }
     return Object.freeze({ runAction });

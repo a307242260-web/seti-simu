@@ -257,9 +257,20 @@
   function createDesktopRenderPort(context = {}) {
     return function render() {
       const input = context.createRenderInput();
-      if (!input) return;
-      context.renderer.renderAll(input);
-      context.decisionRenderer.render(input);
+      if (!input) return Object.freeze({ ok: true, rendered: false });
+      try {
+        context.renderer.renderAll(input);
+        context.decisionRenderer.render(input);
+        return Object.freeze({ ok: true, rendered: true });
+      } catch (error) {
+        const failure = Object.freeze({
+          ok: false,
+          code: "BROWSER_RENDER_FAILED",
+          message: error?.message || "Browser renderer 失败",
+        });
+        context.onRenderError?.(failure, error);
+        return failure;
+      }
     };
   }
 

@@ -46,15 +46,6 @@
     };
   }
 
-  function createSelectionState() {
-    return {
-      phase: "selecting",
-      currentPlayerId: null,
-      offersByPlayerId: {},
-      confirmedPlayerIds: [],
-    };
-  }
-
   function createUiState() {
     return {
       passReserveSelectionDismissed: false,
@@ -89,7 +80,6 @@
       actionLog: createActionLogState(),
       actionBriefing: createActionBriefingState(),
       startScreen: createStartScreenState(options),
-      selection: createSelectionState(),
       ui: createUiState(),
       browserHost: createBrowserHostState(),
     };
@@ -379,6 +369,7 @@
         seed: initialOptions.seed ?? "browser-host",
         rngState: structuredClone(initialOptions.rngState || { owner: "browser", state: null }),
       };
+      state.match.initialSetupConfig = structuredClone(initialOptions.initialSetupConfig || {});
       return state;
     }
 
@@ -487,7 +478,6 @@
     createActionLogState,
     createActionBriefingState,
     createStartScreenState,
-    createSelectionState,
     createUiState,
     createBrowserHostState,
     createBrowserMatchRuntime,

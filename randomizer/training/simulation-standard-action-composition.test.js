@@ -109,7 +109,6 @@ function enumerateBrowserProductionPort(state, family) {
     cardState: structuredClone(state.cards),
   };
   const pack = productionComposition.createProductionDomainPack({
-    initialSetupSource: productionComposition.createInitialSetupSource(),
     productionRules: { quickTrades },
     getAuthority: () => ({
       actorId: state.turn.currentPlayerId,
@@ -162,13 +161,11 @@ for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
     execute() { return { ok: false }; },
   };
   assert.throws(() => productionComposition.createProductionDomainPack({
-    initialSetupSource: productionComposition.createInitialSetupSource(),
     productionRules: { quickTrades },
     hostFamilyExecutors: { quick_trade() {} },
   }), /重复 Production family executor: quick_trade/,
   "host 自定义同 family executor 必须 fail-fast");
   assert.throws(() => productionComposition.createProductionDomainPack({
-    initialSetupSource: productionComposition.createInitialSetupSource(),
     productionRules: { quickTrades },
     additionalDomains: [{
       id: "host-quick-trade",

@@ -96,6 +96,62 @@ const validation = policyPort.validatePolicyDecision(current, first, {
 });
 assert.equal(validation.ok, true);
 
+function setupAction(actionId, target) {
+  return {
+    ...action(actionId, "choose_card"),
+    phase: "conditional",
+    target,
+  };
+}
+
+const setupLegalActions = [
+  setupAction("setup:industry", {
+    kind: "select_initial_card",
+    selectionKind: "industry",
+    cardId: "industry:a",
+  }),
+  setupAction("setup:initial-a", {
+    kind: "select_initial_card",
+    selectionKind: "initial",
+    cardId: "initial:a",
+  }),
+  setupAction("setup:initial-b", {
+    kind: "select_initial_card",
+    selectionKind: "initial",
+    cardId: "initial:b",
+  }),
+];
+const setupContext = policyPort.createDecisionContext({
+  requestId: "heuristic-policy-initial-setup",
+  seatId: "p1",
+  stateVersion: 7,
+  decisionVersion: 3,
+  observation: outcomeModel.createDecisionObservation({
+    publicState: {
+      players: [{ id: "p1", resources: {} }],
+      resident: {
+        initialSetup: {
+          active: true,
+          offer: {
+            selectedIndustryId: null,
+            selectedInitialIds: [],
+          },
+        },
+      },
+    },
+    selfState: { id: "p1", hand: [] },
+  }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 }),
+  legalActions: setupLegalActions,
+  actionOutcomes: [],
+});
+const setupPolicy = heuristicPolicy.createHeuristicPolicy({ difficulty: "contract-test" });
+assert.equal(setupPolicy.decide(setupContext).actionId, "setup:industry");
+assert.equal(
+  setupPolicy.decide(structuredClone(setupContext)).actionId,
+  "setup:industry",
+  "initial_setup Policy 选择必须只由 viewer-safe observation 决定，不得依赖宿主闭包进度",
+);
+
 const inventoryObservation = outcomeModel.createDecisionObservation({
   publicState: {
     players: [{

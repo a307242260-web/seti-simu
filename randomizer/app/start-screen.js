@@ -9,29 +9,6 @@
   root.SetiAppStartScreen = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-  function createSetupOwnerInputPort(registry, context = {}) {
-    return registry.register("setup", {
-      startInitialSelection: (workingRoot) => (
-        context.getActionRuntime().startInitialSelection(workingRoot),
-        { ok: true, value: { ok: true } }
-      ),
-      selectInitialCard: (workingRoot, command) => (
-        context.getActionRuntime().handleInitialSelectionCardClick(
-          workingRoot,
-          command.selectionKind ?? command.args?.[0],
-          command.cardId ?? command.args?.[1],
-        ),
-        { ok: true, value: { ok: true } }
-      ),
-      confirmInitialSelection: (workingRoot) => (
-        context.getActionRuntime().confirmInitialSelectionForCurrentPlayer(workingRoot),
-        { ok: true, value: { ok: true } }
-      ),
-    });
-  }
-
-
-
   function stripAssetExtension(value) {
     return String(value || "").replace(/\.[^./\\]+$/, "");
   }
@@ -154,65 +131,6 @@
     return canContinue;
   }
 
-  function createInitialSelectionHost(context = {}) {
-    const getRuntime = () => {
-      const runtime = context.getActionRuntime?.();
-      if (!runtime) throw new Error("initial selection action runtime is not ready");
-      return runtime;
-    };
-    const getTurnFlow = () => {
-      const projection = context.getTurnFlowProjection?.();
-      if (!projection) throw new Error("initial selection turn projection is not ready");
-      return projection;
-    };
-
-    function getPlayerIds(workingRoot = null) {
-      return workingRoot
-        ? getRuntime().getInitialSelectionPlayerIds(workingRoot)
-        : [...getTurnFlow().activePlayerIds];
-    }
-    function isActive() {
-      return getRuntime().isInitialSelectionActive();
-    }
-    function getOffer(playerId = null, workingRoot = null) {
-      const resolvedPlayerId = playerId
-        ?? (workingRoot ? workingRoot.playerState.currentPlayerId : getTurnFlow().currentPlayerId);
-      return getRuntime().getInitialSelectionOffer(resolvedPlayerId);
-    }
-    function isConfirmed(playerId = null, workingRoot = null) {
-      const resolvedPlayerId = playerId
-        ?? (workingRoot ? workingRoot.playerState.currentPlayerId : getTurnFlow().currentPlayerId);
-      return getRuntime().isInitialSelectionConfirmed(resolvedPlayerId);
-    }
-    function canConfirm(offer) {
-      return getRuntime().canConfirmInitialSelection(offer);
-    }
-    function getCardFromOffer(offer, kind, cardId) {
-      return getRuntime().getCardFromInitialOffer(offer, kind, cardId);
-    }
-    function start() {
-      return context.inputPort.startInitialSelection();
-    }
-    function selectCard(kind, cardId) {
-      return context.inputPort.selectInitialCard(kind, cardId);
-    }
-    function confirm() {
-      return context.inputPort.confirmInitialSelection();
-    }
-
-    return Object.freeze({
-      canConfirm,
-      confirm,
-      getCardFromOffer,
-      getOffer,
-      getPlayerIds,
-      isActive,
-      isConfirmed,
-      selectCard,
-      start,
-    });
-  }
-
   function createInitialSelectionUi(context = {}) {
     const document = context.document;
     const canConfirm = context.canConfirm;
@@ -330,7 +248,7 @@
       }
     }
     return function getInitialSelectionReadoutLines() {
-      const state = context.state || {};
+      const state = context.getState?.() || context.state || {};
       const lines = [
         "初始选择",
         `状态=${state.phase === "selecting" ? "选择中" : "已完成"} 当前=${state.currentPlayerId ? context.getPlayerLabel(state.currentPlayerId) : "无"}`,
@@ -543,7 +461,6 @@
   }
 
   return {
-    createSetupOwnerInputPort,
     normalizeAiDifficulty,
     normalizeStartPlayerCount,
     getSelectedStartAlienIds,
@@ -555,7 +472,6 @@
     updateStartScreenContinueButton,
     createInitialSelectionUi,
     createInitialSelectionReadout,
-    createInitialSelectionHost,
     createStartScreenController,
   };
 });

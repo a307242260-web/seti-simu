@@ -65,6 +65,23 @@
 6. `training/simulation-rule-composition.js` 只安装 Simulation 专属 state/projection adapter 与 host services；不得枚举/执行 family、构造 Decision、skip unsupported 或 fallback score。
 7. 静态禁止生产路径中的 `unavailable/unsupported/generic pending/no_legal_choice` 兼容分支、host family executor map、Browser rule callbacks、Simulation private provider。未知输入必须由 game Composition 返回结构化 fail-closed。
 
+### Browser public API 全导出审计（冻结）
+
+`HEAD=d73adb7` 的 `public-api.js` 返回对象已逐项审计，收口后的顶层键只允许
+`schemaVersion / inspect / capture / restore / input`；`input` 只允许
+`dispatchAction / submitDecision`，且二者只接收完整 Standard descriptor/submission。
+
+| 旧导出组 | 审计结论 | 删除/保留证据 |
+|---|---|---|
+| `getBrowserProjection/getState/getAiDebugState/getPlayerState/getTurnState/getCardState/getSolarSnapshot/getRocketCoordinates/getPlanetStatsState/getTechSnapshot/getAlienState/getFinalScoringState/getCurrentPlayer` | 分散 inspect 会扩大、漂移 viewer schema | 删除，统一为深冻结 `inspect().projection` |
+| `browserServices`、action log/recovery/download API | 整体 services facade 含 debug/download 等超额能力 | 删除对象透传，只保留 `capture/restore` |
+| `startNewGame/startInitialSelection/selectInitialSelectionCard/confirmInitialSelection` 与 initial offer/state | setup 规则入口只能由真实 DOM 经正式 `choose_card/choose_payment` Action/Decision facade 提交 | public helper、`createSetupOwnerInputPort`、`action-runtime` setup mutation 与 Browser conditional 委托全部删除；Chrome 断言 input submission，不允许 `setup.*` OwnerInput |
+| `runAction/runQuickTrade/endCurrentTurn/passTurn/dispatchRuntimeAction/undoPendingAction` | 顶层规则 executor/逃生 dispatcher | 全部删除；只允许完整 Standard Action descriptor 进入 `input.dispatchAction` |
+| launch/orbit/land/move/scan/analyze/research/data/card/income/alien/final-score 及 picker/cancel/confirm 导出 | 领域规则 executor 或规则流程控制 | 全部删除；DOM/Decision renderer 内部提交正式端口 |
+| randomize/rotate/debug add/reveal/switch/toggle 等 mutation | debug 规则写入口 | 全部删除；debug 只能走 Browser services 内部受控 command port，不进入 public facade |
+| 坐标、layout override、DOM sync/render、legal option getter | viewer 工具但不是稳定窄 read model，部分还构造 legal set/触发 renderer | 全部删除；展示只读 BrowserProjection 与 resident renderer |
+| `input.dispatchAction/submitDecision` | 标准输入 facade | 保留；clone 入参/返回值，不接受 family helper、setup 或 owner input |
+
 ## Proof obligations 与集中验收
 
 1. 自动 architecture audit 从 runtime 双向比较 22 family/5 domain；Host 自定义 owner/executor、未知 family/effect/Decision、Browser 暴露 canonical source、两 Host 共用 projection adapter 的负向 fixture 必须失败。
@@ -73,3 +90,18 @@
 4. checkpoint/replay 覆盖 fresh A/A、same instance A/A、A/B/A、非零 fork 与 worker recovery。
 5. Chrome 必须加载真实 `randomizer/index.html`，验证隐藏 deck/他人手牌不泄漏，太阳系/火箭、玩家资源/手牌、公共牌、科技、扫描/数据、八物种、终局计分真实渲染，人类主行动与多步 Decision，保存恢复，以及 renderer throw 前后 committed version/state 不变；Browser 只读深冻结 BrowserProjection/resident read models。
 6. 最终执行 `node --check randomizer/app.js`、全部 Node inventory、唯一 full-flow、全部 Browser smoke、fixed-seed machine game、`git diff --check`，并输出旧文件/符号删除清单。
+
+## 2026-07-24 OwnerInput 复审
+
+- `initial_setup` 的 Browser 旁路已归零：`createSetupOwnerInputPort`、`action-runtime` setup mutation、
+  `browserInitialSetupSource` 的 conditional executor 委托以及 `setup.*` smoke audit 均无生产命中。
+- 当前生产装配仍有 15 个 `createBrowserInputPort` facade，以及 17 个显式
+  `registry.register(...)` OwnerInput owner。它们混合了只读 query、Browser ViewState/service
+  command 和仍会修改 working root 的规则 command；不能把“OwnerInput registry 已统一”当作
+  app-only 边界完成证据。
+- 对高风险模块的机械 mutation 候选扫描
+  (`action-runtime/action-interaction/scan/turn/effect/card/alien/debug/final/render`) 仍有 222 处。
+  该数字只用于定位，不等同于 222 个独立规则；后续必须按上方 22-family/5-domain 冻结矩阵逐项
+  判定 production owner，删除规则 mutation，并把合法 read/query/view/service 留在窄 adapter。
+- 因此本轮只闭合 `initial_setup` 纠偏及其 Browser/Simulation/Policy/DOM 组合证据；
+  SETI-164 的全量旧路径删除义务仍以本节残余为阻断项，不得据此宣称整项完成。

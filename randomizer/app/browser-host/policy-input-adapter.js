@@ -109,6 +109,11 @@
       actorId,
       stateVersion,
       decisionVersion,
+      ...(raw.kind === "decision"
+        && raw.submissionDecisionVersion != null
+        && raw.submissionDecisionVersion !== decisionVersion
+        ? { submissionDecisionVersion: raw.submissionDecisionVersion }
+        : {}),
       decisionId: raw.kind === "decision" ? raw.decisionId : null,
       legalActions,
     });
@@ -119,6 +124,8 @@
       && left.actorId === right.actorId
       && left.stateVersion === right.stateVersion
       && left.decisionVersion === right.decisionVersion
+      && (left.submissionDecisionVersion ?? left.decisionVersion)
+        === (right.submissionDecisionVersion ?? right.decisionVersion)
       && left.decisionId === right.decisionId;
   }
 
@@ -193,6 +200,9 @@
               inputSchemaVersion: SCHEMA_VERSION,
               boundaryKind: boundary.kind,
               decisionId: boundary.decisionId,
+              ...(boundary.submissionDecisionVersion == null
+                ? {}
+                : { submissionDecisionVersion: boundary.submissionDecisionVersion }),
             },
             boundary,
           });
@@ -205,7 +215,8 @@
           return input.boundary.kind === "decision"
             ? inputAdapter.submitDecision({
               decisionId: fresh.boundary.decisionId,
-              decisionVersion: fresh.boundary.decisionVersion,
+              decisionVersion: fresh.boundary.submissionDecisionVersion
+                ?? fresh.boundary.decisionVersion,
               ownerId: fresh.boundary.actorId,
               choice: clone(action),
             })

@@ -77,6 +77,7 @@
       players: clone(source?.players || {}),
       tech: clone(source?.tech || {}),
       aliens: clone(source?.aliens || {}),
+      resident: clone(source?.resident || {}),
     };
   }
 

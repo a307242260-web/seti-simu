@@ -11,6 +11,135 @@ module.exports = Object.freeze([
     counterexample: "app.js 初始化异常导致公开 API 或事件未装配，或点击后启动页/初始选择状态错误",
   }),
   Object.freeze({
+    id: "production-browser-full-parity",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",
+    actionExpression: `(async () => {
+      const waitFor = async (predicate, label, timeout = 12000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      document.querySelector("#start-screen-start-button").click();
+      await waitFor(() => document.querySelectorAll(".initial-selection-card-button").length >= 5, "真人初始选择");
+      const inputBefore = window.SetiRandomizer.inspect().input.submissionSequence;
+      document.querySelector(".initial-selection-section-industry .initial-selection-card-button:not(:disabled)")?.click();
+      await waitFor(() => Boolean(document.querySelector(".initial-selection-section-industry .initial-selection-card-button.is-selected")), "公司 DOM 选择");
+      document.querySelector(".initial-selection-section-initial .initial-selection-card-button:not(:disabled):not(.is-selected)")?.click();
+      await waitFor(() => document.querySelectorAll(".initial-selection-section-initial .initial-selection-card-button.is-selected").length === 1, "第一张初始牌 DOM 选择");
+      document.querySelector(".initial-selection-section-initial .initial-selection-card-button:not(:disabled):not(.is-selected)")?.click();
+      await waitFor(() => document.querySelectorAll(".initial-selection-section-initial .initial-selection-card-button.is-selected").length === 2, "第二张初始牌 DOM 选择");
+      const confirm = document.querySelector(".initial-selection-confirm:not(:disabled)");
+      if (!confirm) throw new Error("初始选择确认按钮未启用");
+      confirm.click();
+      await waitFor(() => {
+        const input = window.SetiRandomizer.inspect().input;
+        return input.submissionSequence >= inputBefore + 16
+          && input.lastResult?.kind === "decision";
+      }, "initial_setup Standard Action/Decision input facade");
+      for (let guard = 0; guard < 12; guard += 1) {
+        const beforePayment = window.SetiRandomizer.inspect();
+        if (beforePayment.projection.source.phase === "idle") break;
+        const decision = beforePayment.projection.decision;
+        if (decision?.kind !== "choose_payment") {
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          continue;
+        }
+        if (decision.ownerId !== beforePayment.projection.viewer.playerId) {
+          await waitFor(() => {
+            const next = window.SetiRandomizer.inspect();
+            return next.projection.source.phase === "idle"
+              || next.projection.decision?.decisionId !== decision.decisionId;
+          }, "AI 初始收入 Decision");
+          continue;
+        }
+        const choice = document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]');
+        if (!choice) throw new Error("初始收入 Decision 缺少 DOM choice");
+        choice.click();
+        await waitFor(() => Boolean(
+          document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)'),
+        ), "初始收入 Decision 确认按钮");
+        const paymentConfirm = document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)');
+        if (!paymentConfirm) throw new Error("初始收入 Decision 确认按钮未启用");
+        paymentConfirm.click();
+        await waitFor(() => {
+          const next = window.SetiRandomizer.inspect();
+          return next.projection.source.phase === "idle"
+            || next.projection.decision?.decisionId !== decision.decisionId;
+        }, "真人初始收入 Decision");
+      }
+      await waitFor(() => window.SetiRandomizer.inspect().projection.source.phase === "idle", "完成初始结算");
+      await waitFor(() => !document.querySelector(".initial-selection-picker"), "完成多席位 Decision");
+      await waitFor(() => document.querySelector("#player-stats")?.children.length > 0, "玩家资源 renderer");
+      const setupInput = window.SetiRandomizer.inspect().input;
+      if (setupInput.submissionSequence < 17 || setupInput.lastResult?.kind !== "decision") {
+        throw new Error("真实初始选择未进入 Standard Action/Decision input facade: " + JSON.stringify(setupInput));
+      }
+      const beforeInspect = window.SetiRandomizer.inspect();
+      const inputSequence = beforeInspect.input.submissionSequence;
+      await waitFor(() => {
+        const button = document.querySelector("#action-pass-button");
+        return Boolean(button && !button.disabled);
+      }, "人类 PASS 主行动就绪", 20000);
+      const passButton = document.querySelector("#action-pass-button");
+      if (!passButton || passButton.disabled) throw new Error("人类 PASS 主行动不可提交");
+      passButton.click();
+      await waitFor(() => {
+        const next = window.SetiRandomizer.inspect();
+        return next.input.submissionSequence > inputSequence
+          && next.input.lastResult?.kind === "action";
+      }, "人类主行动进入 Standard Action input port");
+      const projection = window.SetiRandomizer.inspect().projection;
+      const renderProjection = projection.resident?.browserReadModel?.render || {};
+      const serialized = JSON.stringify(projection);
+      const opponents = Object.values(projection.players || {}).filter(
+        (entry) => String(entry?.id) !== String(projection.viewer?.playerId),
+      );
+      if (serialized.includes('"drawPile"') || serialized.includes('"deck"')
+        || opponents.some((entry) => Object.hasOwn(entry || {}, "hand"))) {
+        throw new Error("BrowserProjection 泄漏隐藏 deck 或他人手牌");
+      }
+      const required = {
+        solar: document.querySelector("#wheel-1")?.dataset.projectionRotation != null,
+        rockets: Boolean(document.querySelector("#token-layer")),
+        players: document.querySelector("#player-stats")?.children.length > 0,
+        hand: Boolean(document.querySelector("#player-hand-fan")),
+        publicCards: document.querySelector("#public-card-row")?.children.length > 0,
+        tech: document.querySelectorAll("[data-tech-id][data-projection-available]").length >= 12,
+        scanData: Boolean(document.querySelector("#player-board-data-layer"))
+          && Boolean(renderProjection.dataPresentation),
+        aliens: document.querySelectorAll(".alien-panel[data-alien-slot]").length === 2
+          && Boolean(renderProjection.markerPresentation),
+        scoring: document.querySelectorAll("#final-score-grid .final-score-tile").length === 4
+          && Boolean(renderProjection.finalScorePresentation),
+      };
+      const missing = Object.entries(required).filter(([, ok]) => !ok).map(([name]) => name);
+      if (missing.length) throw new Error("真实页面 renderer 缺失: " + missing.join(", "));
+      const captured = window.SetiRandomizer.capture();
+      if (!captured.ok) throw new Error("真实页面保存失败");
+      const restored = window.SetiRandomizer.restore(captured.envelope);
+      if (!restored.ok) throw new Error("真实页面恢复失败");
+      const beforeRenderFailure = window.SetiRandomizer.inspect().projection.source;
+      const renderFailure = window.SetiBrowserResidentRenderer.createDesktopRenderPort({
+        createRenderInput: () => ({ projection, viewState: {} }),
+        renderer: { renderAll() { throw new Error("index renderer canary"); } },
+        decisionRenderer: { render() {} },
+      })();
+      const afterRenderFailure = window.SetiRandomizer.inspect().projection.source;
+      if (renderFailure.code !== "BROWSER_RENDER_FAILED"
+        || JSON.stringify(beforeRenderFailure) !== JSON.stringify(afterRenderFailure)) {
+        throw new Error("renderer 抛错污染规则状态");
+      }
+      window.__setiFullParitySmoke = { ok: true, required };
+    })()`,
+    successExpression: "window.__setiFullParitySmoke?.ok === true",
+    obligation: "真实 index.html 覆盖 viewer 隐私、完整页面 renderer、人类主行动/多步 Decision、保存恢复和 renderer 异常隔离",
+    counterexample: "极简壳、空 renderer、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
+  }),
+  Object.freeze({
     id: "page-projection-action",
     file: "randomizer/app/browser-host/browser-host.browser-smoke.html",
     resultSelector: "body",

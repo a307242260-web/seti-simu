@@ -49,6 +49,7 @@
     gameRecoveryModule,
     ruleCompositionModule,
     productionCompositionModule,
+    productionKernelModule,
     browserRuleCompositionModule,
     runtimeModule,
     refreshModule,
@@ -186,7 +187,6 @@
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
-  const setupSelectionState = runtime.selection;
   const uiRuntimeState = runtime.ui;
   const browserHostState = runtime.browserHost;
   let turnEndFlow = null;
@@ -480,29 +480,6 @@
     effectFlowMarkedNebula,
   } = effectFlowModule;
   let productionActionRegistry = null;
-  const browserInitialSetupSource = productionCompositionModule.createInitialSetupSource(
-    Object.fromEntries(["choose_card", "choose_payment"].map((family) => [family, {
-      enumerate(actionContext) {
-        const result = conditionalActionExecutor.getOptions(
-          actionContext.workingRoot || actionContext,
-          family,
-        );
-        return result?.ok ? result.choices : [];
-      },
-      validate(actionContext, action) {
-        return conditionalActionExecutor.validate(
-          actionContext.workingRoot || actionContext,
-          action,
-        );
-      },
-      execute(actionContext, action) {
-        return conditionalActionExecutor.execute(
-          actionContext.workingRoot || actionContext,
-          action,
-        );
-      },
-    }])),
-  );
   const enumerateSimulationTurnActionsForRoot = (workingRoot) => (
     productionActionRegistry.enumerate(createActionContextForWorkingRoot(workingRoot))
       .filter((standardAction) => standardAction.phase !== "conditional")
@@ -571,9 +548,6 @@
     browserOwnerInputRegistry,
     { buildFinalSummary: (...args) => buildFinalScoreSummaryLinesForRoot(...args) },
   );
-  const setupOwnerInputPort = startScreenModule.createSetupOwnerInputPort(browserOwnerInputRegistry, {
-    getActionRuntime: () => actionRuntimeController,
-  });
   const coordinateOwnerInputPort = renderRuntimeModule.createCoordinateOwnerInputPort(
     browserOwnerInputRegistry,
     { getRuntime: () => coordinateRuntime },
@@ -673,6 +647,7 @@
   const ruleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
     ruleCompositionApi: ruleCompositionModule,
     productionCompositionApi: productionCompositionModule,
+    productionKernelApi: productionKernelModule,
     stateStoreApi: stateStoreModule,
     highCouplingState: highCouplingStateModule,
     initialGameState: initialGameStateModule,
@@ -705,7 +680,6 @@
       ),
     ),
     executeOwnerInput: browserOwnerInputRegistry.execute,
-    initialSetupSource: browserInitialSetupSource,
     productionRules: { quickTrades },
     hostServices: {
       quickTradeHistory: {
@@ -738,17 +712,8 @@
   });
   productionActionRegistry = ruleComposition.productionActionRegistry;
   let scheduleResidentDesktopRefresh = () => {};
-  const postCommitRefreshCommandKinds = new Set([
-    "setup.startInitialSelection",
-    "setup.selectInitialCard",
-    "setup.confirmInitialSelection",
-  ]);
   function submitRegisteredBrowserInput(...args) {
-    const result = ruleComposition.inputPort.submitOwnerInput(...args);
-    if (result?.ok !== false && postCommitRefreshCommandKinds.has(args[0]?.kind)) {
-      scheduleResidentDesktopRefresh();
-    }
-    return result;
+    return ruleComposition.inputPort.submitOwnerInput(...args);
   }
   const browserRuleLifecycle = ruleComposition.lifecycle;
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor();
@@ -799,41 +764,91 @@
     code: "BROWSER_DECISION_CANCELLED",
     message,
   });
-  const initialSelectionHost = startScreenModule.createInitialSelectionHost({
-    getActionRuntime: () => actionRuntimeController,
-    getTurnFlowProjection: () => getTurnFlowProjection(),
-    inputPort: setupOwnerInputPort,
+  const submitInitialSetupAction = (selector) => {
+    const refreshPresentation = () => queueMicrotask(() => {
+      scheduleResidentDesktopRefresh();
+      renderReservedCards?.();
+      renderStateReadout?.();
+      updateActionButtons?.();
+      scheduleAiAutoStepIfNeeded?.();
+    });
+    const inspection = ruleComposition.inspect();
+    if (inspection.phase === "awaiting_input") {
+      const decision = inspection.session?.decision || null;
+      const choice = (decision?.choices || []).find((candidate) => (
+        Object.entries(selector).every(([key, value]) => (
+          JSON.stringify(candidate.target?.[key]) === JSON.stringify(value)
+        ))
+      ));
+      const result = choice
+        ? residentInputAdapter.submitDecision({
+          decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion,
+          ownerId: decision.ownerId,
+          choice,
+        })
+        : { ok: false, code: "INITIAL_SETUP_DECISION_NOT_LEGAL", message: "初始选择 Decision 已失效" };
+      if (result?.ok !== false) refreshPresentation();
+      return result;
+    }
+    const candidates = ruleComposition.inputPort.enumerateActions({ family: "choose_card" });
+    const action = candidates.find((candidate) => Object.entries(selector).every(([key, value]) => (
+      JSON.stringify(candidate.target?.[key]) === JSON.stringify(value)
+    )));
+    const result = action
+      ? residentInputAdapter.dispatchAction(action)
+      : { ok: false, code: "INITIAL_SETUP_ACTION_NOT_LEGAL", message: "初始选择输入已失效" };
+    if (result?.ok !== false) refreshPresentation();
+    return result;
+  };
+  const startInitialSelection = () => submitInitialSetupAction({ kind: "start_initial_setup" });
+  const handleInitialSelectionCardClick = (kind, cardId) => submitInitialSetupAction({
+    kind: "select_initial_card",
+    selectionKind: kind,
+    cardId,
   });
-  const {
-    canConfirm: canConfirmInitialSelection,
-    confirm: confirmInitialSelectionForCurrentPlayer,
-    getCardFromOffer: getCardFromInitialOffer,
-    getOffer: getInitialSelectionOffer,
-    getPlayerIds: getInitialSelectionPlayerIds,
-    isActive: isInitialSelectionActive,
-    isConfirmed: isInitialSelectionConfirmed,
-    selectCard: handleInitialSelectionCardClick,
-    start: startInitialSelection,
-  } = initialSelectionHost;
-  const resolveInitialSelectionEffects = actionRuntimeModule.createInitialSelectionEffectsResolver({
-    initialCards,
-    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
-    getPlayerIds: (...args) => getInitialSelectionPlayerIds(...args),
-    resolveCompletedSectorSettlements: (...args) => resolveCompletedSectorSettlements(...args),
-    recordScoreSources: (...args) => recordInitialSelectionScoreSources(...args),
-  });
+  const confirmInitialSelectionForCurrentPlayer = () => (
+    submitInitialSetupAction({ kind: "confirm_initial_setup" })
+  );
+  const getInitialSetupProjection = (playerId = null) => {
+    const resolvedPlayerId = playerId || getTurnFlowProjection().currentPlayerId;
+    return ruleComposition.projection({
+      viewerId: `browser:setup:${resolvedPlayerId || "spectator"}`,
+      playerId: resolvedPlayerId,
+      role: resolvedPlayerId ? "player" : "spectator",
+    }).state?.resident?.initialSetup || {};
+  };
+  const canConfirmInitialSelection = (offer) => Boolean(
+    offer?.selectedIndustryId && offer?.selectedInitialIds?.length === INITIAL_SELECTION_REQUIRED.initial
+  );
+  const getCardFromInitialOffer = (offer, kind, cardId) => (
+    (kind === "industry" ? offer?.industryOptions : offer?.initialOptions)
+      ?.find((card) => card.id === cardId) || null
+  );
+  const getInitialSelectionOffer = (playerId = null) => getInitialSetupProjection(playerId).offer || null;
+  const getInitialSelectionPlayerIds = () => [...(getTurnFlowProjection().activePlayerIds || [])];
+  const isInitialSelectionActive = () => (
+    ruleComposition.readModelPort.read("initialSetupStatus").active === true
+  );
+  const isInitialSelectionConfirmed = (playerId) => (
+    getInitialSetupProjection(playerId).confirmedPlayerIds?.includes(playerId) === true
+  );
   let turnFlowController = null;
   const turnHostRuntime = turnFlowModule.createTurnHostRuntime({
     getController: () => turnFlowController,
     getTurnFlowProjection: () => getTurnFlowProjection(),
     assertTurnFlowProjection: browserHostModule.residentProjection.assertTurnFlowProjection,
     turnInputPort: turnOwnerInputPort,
-    setupInputPort: setupOwnerInputPort,
+    setupInputPort: { startInitialSelection },
     newGame: (...args) => browserRuleLifecycle.newGame(...args),
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
     finalScoreIds: FINAL_SCORE_IDS,
     playerColorIds: players.PLAYER_COLOR_IDS,
+    getInitialSetupConfig: (options = {}) => ({
+      aiDifficulty: options.aiDifficulty || startScreenState.aiDifficulty,
+      industryLabels: [...(startScreenState.selectedIndustryLabels || [])],
+    }),
     normalizeAiDifficulty: (value) => startScreenModule.normalizeAiDifficulty(value, {
       weakStartValue: AI_DIFFICULTY_WEAK_START,
       defaultValue: AI_DIFFICULTY_LAUGHABLE,
@@ -1261,9 +1276,30 @@
     refreshProjection: () => residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }),
   });
   const residentDecisionController = browserHostModule.decisionUi.createDecisionUiController({
-    dispatchIntent: (intent) => (
-      (result) => (queueMicrotask(renderResidentDesktop), result)
-    )(residentInputAdapter.dispatchIntent(intent)),
+    dispatchIntent: (intent) => {
+      let resolvedIntent = intent;
+      const choiceId = intent?.kind === "decision" ? intent.submission?.choice?.choiceId : null;
+      if (choiceId) {
+        const legalChoice = (ruleComposition.inspect().session?.decision?.choices || [])
+          .find((choice) => String(choice?.actionId || choice?.choiceId) === String(choiceId));
+        if (legalChoice) {
+          resolvedIntent = {
+            ...intent,
+            submission: { ...intent.submission, choice: legalChoice },
+          };
+        }
+      }
+      return (
+      (result) => {
+        queueMicrotask(() => {
+          renderResidentDesktop();
+          updateActionButtons?.();
+          scheduleAiAutoStepIfNeeded?.();
+        });
+        return result;
+      }
+      )(residentInputAdapter.dispatchIntent(resolvedIntent));
+    },
   });
   const residentDecisionRenderer = browserHostModule.decisionUi.createDecisionDomRenderer({
     root: document.getElementById("compositionDecisionRoot"),
@@ -1379,7 +1415,7 @@
   } = browserContextRuntime;
 
   const residentPresentationBuilder = browserHostModule.residentProjection.createResidentPresentationBuilder({
-    setupSelectionState, cardTaskState, cardEffects, players, banrenma, jiuzhe, cards, fangzhou,
+    cardTaskState, cardEffects, players, banrenma, jiuzhe, cards, fangzhou,
     resourceIconSrc: RESOURCE_ICON_SRC,
     clonePresentation: cloneResidentPresentation,
     isAiPlayer: (playerId) => isAiAutoBattlePlayer?.(playerId),
@@ -1401,6 +1437,7 @@
     turnFlow,
     boardCoordinate,
     viewer,
+    initialSetup,
   }) {
     const getProjectedCompanyBaseIncome = (player) => players.normalizeIncome(
       initialCards.getIndustryEffect?.(player?.initialSelection?.industry)?.baseIncome || null,
@@ -1411,6 +1448,7 @@
         players: sourcePlayers,
       },
       aliens: state.aliens || {},
+      initialSetup: structuredClone(initialSetup || {}),
     };
     const interfacePlayer = sourcePlayers.find(
       (player) => String(player?.id) === String(viewer?.playerId),
@@ -2362,7 +2400,13 @@
     buildPlayerFangzhouStatNodes,
   } = playerStatsUi;
   const getInitialSelectionReadoutLines = startScreenModule.createInitialSelectionReadout({
-    state: setupSelectionState,
+    getState: () => {
+      const setup = getInitialSetupProjection();
+      return {
+        phase: setup.active ? "selecting" : "complete",
+        currentPlayerId: setup.currentPlayerId || null,
+      };
+    },
     getPlayerIds: () => getInitialSelectionPlayerIds(),
     getPlayerLabel: (playerId) => getPlayerLabelById(playerId),
     getPlayer: (playerId) => getPlayerById(playerId),
@@ -3467,7 +3511,7 @@
       cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow(...args),
       closeFinalResultDialog,
       configureDefaultAiOpponent: (...args) => configureDefaultAiOpponent(...args),
-      startInitialSelection: (workingRoot) => actionRuntimeController.startInitialSelection(workingRoot),
+      startInitialSelection: () => startInitialSelection(),
       seedDefaultReferenceRockets: (workingRoot) => coordinateRuntime.seedDefaultReferenceRockets(workingRoot),
     },
     scorePort: {
@@ -3477,7 +3521,6 @@
     },
     hostPort: {
       uiRuntimeState,
-      setupSelectionState,
       startScreenState,
       historyStepOrder,
       cardTaskState,
@@ -3536,29 +3579,9 @@
     syncIndustryOptions: syncStartScreenIndustryOptions,
     updateContinueButton: updateStartScreenContinueButton,
   } = startScreenController;
-  const initialIncomeFlow = actionRuntimeModule.createInitialIncomeFlow({
-    abilities,
-    setActionEffectFlow,
-    getActionEffectFlow,
-    assignEffectFlowOwner,
-    setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
-    renderDebugPlayerSwitch,
-    renderPlayerStats,
-    renderPlayerHand,
-    activateNextActionEffect,
-  });
-  const { startInitialIncomeEffectFlow } = initialIncomeFlow;
   actionRuntimeController = actionRuntimeModule.createActionRuntime({
-    setupSelectionState,
     startScreenState,
     actionLogState,
-    INITIAL_SELECTION_REQUIRED,
-    INITIAL_CARD_COUNT,
-    INITIAL_SELECTION_CARD_SIZE,
-    MIN_START_INDUSTRY_POOL_SIZE,
-    INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
-    INDUSTRY_CARD_FILES,
-    HISTORY_SOURCE_SETUP,
     ACTION_LOG_DEFAULT_LABELS,
     getCurrentPlayer,
     getPlayerById,
@@ -3578,19 +3601,7 @@
     updateActionButtons: (...args) => updateActionButtons(...args),
     renderStateReadout,
     schedulePersistentGameStateSave,
-    resolveInitialSelectionEffects,
-    applyIndustryRoundStartBonuses: (workingRoot, ...args) => (
-      applyIndustryRoundStartBonusesForRoot?.(workingRoot, ...args)
-    ),
-    startInitialIncomeEffectFlow,
-    applyIndustryStartupPassives: (...args) => applyIndustryStartupPassives(...args),
-    appendConfirmedActionLogEntry,
-    isInitialIncomeFlowActive: (...args) => isInitialIncomeFlowActive(...args),
     renderActionLog,
-    refreshLatestActionLogRecoverySnapshot,
-    scrollToPlayerCommandPanel,
-    normalizeActionLogText,
-    industry,
     canStartMainAction,
     getMainActionStartBlockReason,
     getAnalyzeActionOptionsForPlayer,
@@ -3661,6 +3672,7 @@
       isGameEnded,
       isUiBlockingAiAutomation: isActionBriefingOpen,
       isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
+      refreshCompositionPresentation: () => scheduleResidentDesktopRefresh(),
       renderStateReadout,
       resetGameForAiAutoBattle(options = {}) {
         const activePlayerCount = Math.min(
@@ -5285,113 +5297,14 @@
     savePersistentGameStateNow,
     publicApiContext: {
       structuredClone,
-      solar,
-      rocketActions,
-      planetReferenceLayout,
-      planetStats,
-      abilities,
-      tech,
-      data,
-      aliens,
-      actionHistory,
-      setupSelectionState,
-      buildFinalResultPlayerSummaries,
-      randomizeAll,
-      rotateSolarOrbit,
-      launchRocketForCurrentPlayer,
-      orbitForCurrentPlayer,
-      landForCurrentPlayer,
-      addDebugIncome,
-      addDebugScore,
-      executeIncomeForCurrentPlayer,
-      addDebugData,
-      addDebugCardByInput,
-      fillDebugNebulaData,
-      toggleSectorWinDebug,
-      beginSectorScan,
-      openDebugQuickSectorScanPicker,
-      runDebugQuickSectorScan,
-      beginPublicDeckScan,
-      beginHandScan,
-      replaceNebulaDataForCurrentPlayer,
-      switchCurrentPlayerColor,
-      handleAiTakeoverFailsafe,
-      handleForceSkipTurnFailsafe,
-      runPlaceDataToComputer,
-      analyzeDataForCurrentPlayer,
-      handleFinalScoreTileClick,
-      openAlienTracePicker,
-      maybeRevealAlienAfterTrace,
-      getCurrentPlayer,
-      handleJiuzheRevealSideEffects,
-      handleYichangdianRevealSideEffects,
-      handleFangzhouRevealSideEffects,
-      handleBanrenmaRevealSideEffects,
-      handleChongRevealSideEffects,
-      handleAmibaRevealSideEffects,
-      handleAomomoRevealSideEffects,
-      handleRunezuRevealSideEffects,
-      renderAlienPanels,
-      renderRockets,
-      renderPlayerStats,
-      renderStateReadout,
-      revealJiuzheForDebug,
-      revealYichangdianForDebug,
-      revealFangzhouForDebug,
-      revealBanrenmaForDebug,
-      revealChongForDebug,
-      revealAmibaForDebug,
-      revealAomomoForDebug,
-      revealRunezuForDebug,
-      randomizeAliens,
-      startNewGame,
-      startInitialSelection,
-      getInitialSelectionOffer,
-      handleInitialSelectionCardClick,
-      confirmInitialSelectionForCurrentPlayer,
-      drawCardForCurrentPlayer,
-      blindDrawCardForPlayer,
-      beginCardSelection,
-      beginDiscardSelection,
-      beginPlayCardSelection,
-      beginIncomeForCurrentPlayer,
-      cancelCardSelection,
-      cancelDiscardSelection,
-      cancelPlayCardSelection,
-      pickPublicCardForCurrentPlayer,
-      discardCardFromCurrentPlayer,
-      undoPendingAction,
-      endCurrentTurn: () => runAction("end_turn"),
-      passForCurrentPlayer: () => runAction("pass"),
-      runAction,
-      dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
-      runQuickTrade,
-      toggleQuickPanel,
-      moveRocket,
-      moveActiveRocket,
-      getBoardPointFromClientPosition,
-      getPolarPointFromClientPosition,
-      createRocketSnapshot,
-      buildPlanetOrbitLandReferenceData,
-      syncPlanetOrbitLandMarkers,
-      enumerateActions: (request) => ruleComposition.inputPort.enumerateActions(request),
-      getPlanetsReferencePointFromClientPosition,
-      getPlanetsReferenceDimensions,
-      renderRocketElement,
-      updateActionButtons,
-      getRecoverableActionLog,
-      createActionLogRecoveryPackage,
-      getActionLogMarkdown,
-      downloadActionLogMarkdown,
-      createGameRecoverySnapshot,
-      applyGameRecoverySnapshot,
-      recoverFromActionLog,
-      toggleCheatMode,
-      researchTechForCurrentPlayer,
-      getBrowserProjection: () => residentProjectionAdapter.projectSource({
+      inspectProjection: () => residentProjectionAdapter.projectSource({
         viewer: getResidentViewer(),
       }),
-      browserServices: residentBrowserServices.createPublicFacade(),
+      inspectInput: () => residentInputAdapter.inspectInputState(),
+      capture: () => residentBrowserServices.capture(),
+      restore: (envelope) => residentBrowserServices.restore(envelope),
+      dispatchAction: (action) => residentInputAdapter.dispatchAction(action),
+      submitDecision: (submission) => residentInputAdapter.submitDecision(submission),
     },
   });
 

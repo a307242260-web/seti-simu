@@ -13,8 +13,15 @@ const repositoryRoot = path.resolve(__dirname, "..");
 const args = process.argv.slice(2);
 let chromePath = process.env.CHROME_PATH || null;
 let listOnly = false;
+const matches = [];
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === "--list") listOnly = true;
+  else if (args[index] === "--match") {
+    const value = args[index + 1];
+    if (!value) throw new Error("--match 需要 smoke id 子串");
+    matches.push(value);
+    index += 1;
+  }
   else if (args[index] === "--chrome") {
     chromePath = args[index + 1];
     if (!chromePath) throw new Error("--chrome 需要可执行文件路径");
@@ -220,7 +227,7 @@ async function runInteractiveSmoke(cdp, smoke, getUncaughtException) {
     awaitPromise: true,
     returnByValue: true,
     expression: smoke.actionExpression,
-  });
+  }, 60000);
   if (evaluated.exceptionDetails) {
     throw new Error(`${smoke.id} 操作异常：${evaluated.exceptionDetails.text || "unknown"}`);
   }
@@ -233,11 +240,15 @@ async function runInteractiveSmoke(cdp, smoke, getUncaughtException) {
 
 async function main() {
   validateInventory();
+  const selectedInventory = inventory.filter(
+    (smoke) => matches.length === 0 || matches.some((value) => smoke.id.includes(value)),
+  );
+  if (!selectedInventory.length) throw new Error("没有匹配的 Chrome smoke");
   if (listOnly) {
-    for (const smoke of inventory) {
+    for (const smoke of selectedInventory) {
       process.stdout.write(`${smoke.id}\t${smoke.file}\t${smoke.obligation}\t${smoke.counterexample}\n`);
     }
-    process.stdout.write(`COUNT browserSmoke=${inventory.length}\n`);
+    process.stdout.write(`COUNT browserSmoke=${selectedInventory.length}\n`);
     return;
   }
   const executable = findChrome();
@@ -275,7 +286,7 @@ async function main() {
         uncaughtExceptions.push(message.params?.exceptionDetails || {});
       }
     });
-    for (const smoke of inventory) {
+    for (const smoke of selectedInventory) {
       uncaughtExceptions = [];
       const url = `http://127.0.0.1:${server.address().port}/${smoke.file}`;
       await cdp.send("Page.navigate", { url });
@@ -287,7 +298,7 @@ async function main() {
       }
       process.stdout.write(`PASS ${smoke.id} ${result.href}\n`);
     }
-    process.stdout.write(`SUMMARY browserSmoke passed=${inventory.length} failed=0 total=${inventory.length}\n`);
+    process.stdout.write(`SUMMARY browserSmoke passed=${selectedInventory.length} failed=0 total=${selectedInventory.length}\n`);
   } finally {
     cdp?.close();
     await new Promise((resolve) => server.close(resolve));

@@ -451,7 +451,10 @@ function createSimulationEnv() {
       if (viewerPlayerId && viewerPlayerId !== actorPlayerId) return [];
       selectors = new Map();
       const stateVersion = getWorkingProjection(composition).meta?.stateVersion || 0;
-      const decisionVersion = getWorkingProjection(composition).match?.decisionVersion || 0;
+      const inspection = composition.inspect();
+      const decisionVersion = inspection.phase === "awaiting_input"
+        ? inspection.session?.decision?.decisionVersion ?? 0
+        : getWorkingProjection(composition).match?.decisionVersion || 0;
       cachedLegal = descriptors.map((descriptor) => ({ descriptor, action: normalizeDescriptor(descriptor, actorPlayerId) }))
         .filter((entry) => entry.action)
         .sort((left, right) => left.action.actionId.localeCompare(right.action.actionId))
@@ -614,14 +617,21 @@ function createSimulationEnv() {
       const beforeObservation = lastObservation || observeWithActions(undefined, beforeActions);
       if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
       const policyObservation = standardObservation(beforeObservation, beforeActions[0].actorPlayerId, beforeActions);
-      const actionOutcomes = outcomeModel.projectOutcomeObservations(
-        evaluateActionOutcomes.call(this, beforeActions),
-        {
-          seatId: beforeActions[0].actorPlayerId,
-          stateVersion: beforeActions[0].stateVersion,
-          decisionVersion: beforeActions[0].decisionVersion,
-        },
-      );
+      const initialSetupBoundary = beforeActions.every((action) => (
+        ["choose_card", "choose_payment"].includes(action.family)
+        && ["select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
+          .includes(action.target?.kind)
+      ));
+      const actionOutcomes = initialSetupBoundary
+        ? []
+        : outcomeModel.projectOutcomeObservations(
+          evaluateActionOutcomes.call(this, beforeActions),
+          {
+            seatId: beforeActions[0].actorPlayerId,
+            stateVersion: beforeActions[0].stateVersion,
+            decisionVersion: beforeActions[0].decisionVersion,
+          },
+        );
       const selection = policyAdapter.runDecision(policyObservation, beforeActions, {
         seed,
         episodeId: config?.episodeId || null,

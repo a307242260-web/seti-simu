@@ -163,6 +163,21 @@ function createProjection() {
   assert.throws(() => renderer.renderAll({ projection: createProjection() }), /ViewState/);
 })();
 
+(function testDesktopRendererFailureIsIsolatedFromRuleState() {
+  const committed = { stateVersion: 11, score: 7 };
+  const failures = [];
+  const port = rendererApi.createDesktopRenderPort({
+    createRenderInput: () => ({ projection: createProjection(), viewState: {} }),
+    renderer: { renderAll() { throw new Error("renderer canary"); } },
+    decisionRenderer: { render() { committed.score = 99; } },
+    onRenderError: (failure) => failures.push(failure),
+  });
+  const result = port();
+  assert.deepEqual(committed, { stateVersion: 11, score: 7 }, "renderer 抛错不得触碰规则状态");
+  assert.equal(result.code, "BROWSER_RENDER_FAILED");
+  assert.equal(failures[0].message, "renderer canary");
+})();
+
 (function testCurrentPlayerResourcesUseIconsAndHideZeroSpecialTokens() {
   const fixture = createFixture();
   const renderer = rendererApi.createResidentRenderer(fixture);
@@ -216,10 +231,6 @@ function createProjection() {
 
 (function testResidentPresentationBuilderKeepsDomainProjectionOutOfBootstrap() {
   const builder = projectionApi.createResidentPresentationBuilder({
-    setupSelectionState: {
-      phase: "selecting", currentPlayerId: "p1",
-      offersByPlayerId: { p1: { industryCards: [{ id: "industry-1" }] } },
-    },
     cardTaskState: { readyType2ByCardId: { task1: true } },
     cardEffects: {
       getConsumedTriggerIndexes: () => [0],
@@ -230,7 +241,10 @@ function createProjection() {
     getCardTypeCode: () => 2,
     isAiPlayer: () => false,
   });
-  const resident = { players: { players: [{
+  const resident = { initialSetup: {
+    active: true, interactive: true, currentPlayerId: "p1",
+    offer: { industryCards: [{ id: "industry-1" }] },
+  }, players: { players: [{
     id: "p1", colorLabel: "白色", completedTaskCount: 1,
     initialSelection: { industry: { id: "industry-1" } },
     reservedCards: [{ id: "task1", cardName: "任务一", src: "task.webp" }],

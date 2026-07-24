@@ -40,7 +40,7 @@
 | 同文件 `registry.execute` wrapper | land/orbit 奖励、main-action 标记、decisionVersion 写入 | 迁入对应 game domain 的 commit/journal |
 | 同文件 play_card/move/industry/card_corner/pass/end_turn registrations | Simulation 专有规则 executor 与 journal event 组装 | 删除专有 executor，复用 production definition |
 | 同文件 Standard Action continuation | inspect/resolve Decision 并处理 reward/card/industry state-write | Decision owner 迁入 game domains；Simulation 仅提交 choice |
-| `training/simulation-rule-composition.js:createInitialSelectionInputPort` | opening 专用 registry/Decision/state-write | 迁入 setup domain |
+| `game/initial-setup.js` | opening 的公司/初始牌与初始收入唯一 Production owner | 已迁移；Browser/Simulation 只提交正式 `choose_card/choose_payment` Action/Decision |
 | `app/simulation-env.js` | `legalActions`/`step` 调用 composition input port | 合法 Host adapter，保留；不得加入规则 fallback |
 | `training/simulation-worker.js` | worker operation dispatch | 合法宿主协议，保留；不得创建 registry/domain |
 

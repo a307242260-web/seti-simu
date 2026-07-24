@@ -63,7 +63,36 @@
     ));
   }
 
-  function assertContext(context) {
+  function selectInitialSetupAction(context) {
+    const actions = context.legalActions || [];
+    const confirm = actions.find((action) => action.target?.kind === "confirm_initial_setup");
+    if (confirm) return confirm;
+    const setup = context.observation?.publicState?.resident?.initialSetup;
+    const offer = setup?.offer;
+    if (setup?.active && offer && !offer.selectedIndustryId) {
+      return actions.find((action) => (
+        action.target?.kind === "select_initial_card"
+        && action.target?.selectionKind === "industry"
+      )) || null;
+    }
+    const selectedInitialIds = new Set(offer?.selectedInitialIds || []);
+    if (setup?.active && offer && selectedInitialIds.size < 2) {
+      return actions.find((action) => (
+        action.target?.kind === "select_initial_card"
+        && action.target?.selectionKind === "initial"
+        && !selectedInitialIds.has(action.target?.cardId)
+      )) || null;
+    }
+    if (actions.length > 0 && actions.every((action) => (
+      action.family === "choose_payment"
+      && action.target?.kind === "discard-hand-cards"
+    ))) {
+      return actions[0];
+    }
+    return null;
+  }
+
+  function assertContext(context, options = {}) {
     if (context?.schemaVersion !== policyPort.CONTEXT_SCHEMA_VERSION) {
       throw new HeuristicPolicyError("HEURISTIC_POLICY_CONTEXT_INVALID", "Heuristic Policy 需要公共 DecisionContext");
     }
@@ -80,13 +109,15 @@
         { families: unknownFamilies },
       );
     }
-    try {
-      outcomeModel.assertOutcomeSet(context.actionOutcomes, context.legalActions);
-    } catch (error) {
-      throw new HeuristicPolicyError(
-        "HEURISTIC_POLICY_OUTCOME_INVALID",
-        error?.message || "Heuristic Policy 需要与 legal set 对齐的标准 outcome",
-      );
+    if (options.skipOutcomeValidation !== true) {
+      try {
+        outcomeModel.assertOutcomeSet(context.actionOutcomes, context.legalActions);
+      } catch (error) {
+        throw new HeuristicPolicyError(
+          "HEURISTIC_POLICY_OUTCOME_INVALID",
+          error?.message || "Heuristic Policy 需要与 legal set 对齐的标准 outcome",
+        );
+      }
     }
     const malformed = context.legalActions.find((action) => (
       standardAction.PHASE_BY_FAMILY[action.family] !== action.phase
@@ -113,10 +144,10 @@
       config: Object.freeze({ difficulty, evaluationParameters }),
       configChecksum: stableHash({ difficulty, evaluationParameters }),
     });
-
     function decide(context) {
-      assertContext(context);
-      const selected = heuristicEvaluator.selectLegalAction(context, {
+      const setupSelection = selectInitialSetupAction(context);
+      assertContext(context, { skipOutcomeValidation: Boolean(setupSelection) });
+      const selected = setupSelection || heuristicEvaluator.selectLegalAction(context, {
         evaluateAction,
         isFeasible: isObservationFeasible,
       });

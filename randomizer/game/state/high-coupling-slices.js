@@ -42,7 +42,7 @@
     "cardTaskState": "derived:rebuildCardTaskIndex",
     "tech.board": "committed",
     "tech.ui/pendingTileId/selected*/allowedTechTypes": "session-owned/host-only:excluded",
-    "setupSelectionState": "setup-session-owned:excluded",
+    "match.initialSetup": "committed initial_setup owner state",
     "meta.sequences.card/dataToken/rocket": "committed deterministic domain id allocation",
   });
   const HOST_KEYS = new Set([

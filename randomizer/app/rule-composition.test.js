@@ -742,7 +742,6 @@ function createForkableHarness() {
     effectRuntimeApi: {},
     runWithWorkingState: (_root, operation) => operation(),
     executeOwnerInput: () => ({ ok: true }),
-    initialSetupSource: require("../game/production-composition").createInitialSetupSource(),
     productionRules: { quickTrades: require("../game/actions/quick-trades") },
     browserProjection: {
       visibilityPolicy: (state) => ({
@@ -793,14 +792,34 @@ function createForkableHarness() {
   }, null, null, { stateVersion: 2 }), {
     match: { a: 1 },
     hasRootPoison: false,
-    resident: { finalReadModel: { final: true }, browserReadModel: { browser: true } },
+    resident: {
+      finalReadModel: { final: true },
+      browserReadModel: { browser: true },
+      initialSetup: {
+        active: false,
+        interactive: false,
+        currentPlayerId: null,
+        offer: null,
+        confirmedPlayerIds: [],
+      },
+    },
   });
   assert.equal(Object.prototype.hasOwnProperty.call(composition, "stateSourcePort"), false,
     "Browser composition 不得暴露 canonical root state source");
   assert.deepEqual(composition.projectionSource.read().state, {
     match: { value: 9 },
     hasRootPoison: false,
-    resident: { finalReadModel: { final: true }, browserReadModel: { browser: true } },
+    resident: {
+      finalReadModel: { final: true },
+      browserReadModel: { browser: true },
+      initialSetup: {
+        active: false,
+        interactive: false,
+        currentPlayerId: null,
+        offer: null,
+        confirmedPlayerIds: [],
+      },
+    },
   },
     "Browser projection source 必须只返回显式投影，语义 poison 不得越界");
   assert.equal(composition.projectionSource.read().state.rootPoison, undefined);

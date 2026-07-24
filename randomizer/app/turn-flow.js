@@ -427,6 +427,7 @@
         finalScoreIds: context.finalScoreIds,
         seed: options.seed,
         rngState: options.rngState,
+        initialSetupConfig: context.getInitialSetupConfig?.(options) || {},
       });
       if (!resetResult.ok) return resetResult;
       const startResult = context.turnInputPort.startNewGame({
@@ -465,7 +466,6 @@
     const {
       players,
       uiRuntimeState,
-      setupSelectionState,
       cards,
       industry,
       finalScoring,
@@ -663,12 +663,6 @@
         }
       }
       restoreMutableObject(cardTaskState, cardTaskStateModule.createTaskState());
-      restoreMutableObject(setupSelectionState, {
-        phase: "selecting",
-        currentPlayerId: null,
-        offersByPlayerId: {},
-        confirmedPlayerIds: [],
-      });
       historyStepOrder.length = 0;
       resetScanRunSequence();
       resetActionLog();

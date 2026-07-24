@@ -38,6 +38,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/browser-host/player-stats-ui.test.js", "architecture/browser-host", "常驻玩家统计只读 projection", "渲染 normalize 反向修改玩家规则数据"),
     entry("randomizer/app/browser-host/policy-input-adapter.test.js", "architecture/browser-host", "人类与 Policy 共用正式 Action/Decision 输入", "非法 Policy actionId 仍调用 submit"),
     entry("randomizer/app/browser-host/resident-renderer.test.js", "architecture/browser-host", "resident renderer 单向消费冻结 selector", "renderer 异常撤销或污染规则提交"),
+    entry("randomizer/app/public-api.test.js", "architecture/browser-host", "SetiRandomizer 只暴露 viewer-safe inspect/save/restore 与标准输入", "旧 Browser 规则 executor 或可写 projection 重新进入 public facade"),
     entry("randomizer/app/events.test.js", "architecture/browser-host", "DOM dataset 只路由到 Standard intent/显式 input callback", "disabled、未知 dataset 或旧 pending getter 驱动规则"),
     entry("randomizer/app/game-recovery.test.js", "architecture/browser-host", "Browser recovery 包 round-trip 且瞬态 UI 不入权威状态", "损坏 schema 或 UI 临时态覆盖 composition"),
 

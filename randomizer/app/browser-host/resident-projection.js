@@ -405,26 +405,27 @@
 
   function createResidentPresentationBuilder(context = {}) {
     const {
-      setupSelectionState = {}, cardTaskState = {}, cardEffects = {}, players = {},
+      cardTaskState = {}, cardEffects = {}, players = {},
       banrenma = {}, jiuzhe = {}, cards = {}, fangzhou = {}, resourceIconSrc = {},
     } = context;
     const clonePresentationValue = context.clonePresentation || clonePresentation;
 
     function createInitialSelection(viewer, resident) {
-      const active = setupSelectionState.phase === "selecting";
-      const currentPlayerId = setupSelectionState.currentPlayerId == null
+      const setupPresentation = resident.initialSetup || {};
+      const active = setupPresentation.active === true;
+      const currentPlayerId = setupPresentation.currentPlayerId == null
         ? null
-        : String(setupSelectionState.currentPlayerId);
+        : String(setupPresentation.currentPlayerId);
       const viewerPlayerId = viewer?.playerId == null ? null : String(viewer.playerId);
       const projectedPlayer = resident.players.players.find(
         (player) => String(player?.id) === viewerPlayerId,
       );
       const offer = active && currentPlayerId === viewerPlayerId
-        ? clonePresentationValue(setupSelectionState.offersByPlayerId?.[currentPlayerId] || null)
+        ? clonePresentationValue(setupPresentation.offer || null)
         : null;
       return {
         active,
-        interactive: active && !context.isAiPlayer?.(currentPlayerId),
+        interactive: setupPresentation.interactive === true && !context.isAiPlayer?.(currentPlayerId),
         currentPlayerId,
         offer,
         selectedCards: clonePresentationValue(

@@ -25,70 +25,6 @@
       }),
     });
   }
-
-
-
-  function stripAssetExtension(value) {
-    return String(value || "").replace(/\.[^.]+$/, "");
-  }
-
-  function shuffleList(items, random = Math.random) {
-    const result = [...(items || [])];
-    for (let index = result.length - 1; index > 0; index -= 1) {
-      const pickIndex = Math.floor(random() * (index + 1));
-      [result[index], result[pickIndex]] = [result[pickIndex], result[index]];
-    }
-    return result;
-  }
-
-  function createInitialIncomeFlow(context = {}) {
-    function buildEffectNodes(entries = []) {
-      const effects = [];
-      for (const entry of entries) {
-        const total = Math.max(0, Math.round(Number(entry?.count) || 0));
-        if (!entry?.playerId || total <= 0) continue;
-        const companyLabel = entry.label || "公司牌";
-        for (let sequence = 1; sequence <= total; sequence += 1) {
-          effects.push({
-            id: `initial-income-${entry.playerId}-${sequence}`,
-            type: "initial_income",
-            icon: "income",
-            label: `${companyLabel}：收入增加 ${sequence}/${total}`,
-            status: "pending",
-            undoable: false,
-            options: { playerId: entry.playerId, companyLabel, sequence, total },
-          });
-        }
-      }
-      return effects;
-    }
-
-    function start(workingRoot, entries = []) {
-      const effects = buildEffectNodes(entries);
-      if (!effects.length) return false;
-      context.setActionEffectFlow(workingRoot, context.abilities.chain.startAbilityChain(
-        "initialIncome",
-        "初始收入增加",
-        effects,
-      ));
-      const flow = context.getActionEffectFlow(workingRoot);
-      flow.actionType = "initialIncome";
-      flow.playerId = effects[0]?.options?.playerId || null;
-      context.assignEffectFlowOwner(flow, flow.playerId);
-      const firstPlayer = (workingRoot.playerState.players || []).find((player) => player.id === flow.playerId) || null;
-      if (firstPlayer) workingRoot.playerState.currentPlayerId = firstPlayer.id;
-      context.setActionEffectFlowActive(true);
-      workingRoot.rocketState.statusNote = "初始收入增加：请依次点击收入效果";
-      context.renderDebugPlayerSwitch();
-      context.renderPlayerStats();
-      context.renderPlayerHand();
-      context.activateNextActionEffect(workingRoot);
-      return true;
-    }
-
-    return Object.freeze({ buildInitialIncomeEffectNodes: buildEffectNodes, startInitialIncomeEffectFlow: start });
-  }
-
   function createCompositionActionRegistry(context = {}) {
     function getController() {
       return context.getController?.() || null;
@@ -128,31 +64,6 @@
       }) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" };
     }
     return Object.freeze({ handleActionEffectButtonClickForRoot, beginScanAction });
-  }
-
-  function createInitialSelectionEffectsResolver(context = {}) {
-    return function resolveInitialSelectionEffects(workingRoot) {
-      if (!context.initialCards?.resolveInitialSelections) return null;
-      const result = context.initialCards.resolveInitialSelections({
-        ...context.createActionContext(workingRoot),
-        alienGameState: workingRoot.alienGameState,
-      }, {
-        playerIds: context.getPlayerIds(workingRoot),
-      });
-      const hasSignalMarked = (result.events || []).some((event) => event?.type === "signalMarked");
-      const settlement = hasSignalMarked
-        ? context.resolveCompletedSectorSettlements("initialSelection", {
-          markMainActionIrreversible: false,
-        })
-        : null;
-      context.recordScoreSources(result);
-      if (!settlement?.ok) return result;
-      return {
-        ...result,
-        settlement,
-        message: `${result.message}；${settlement.message}；${settlement.participantAwardMessage || "参与结算玩家各获得1宣传"}`,
-      };
-    };
   }
 
   function createActionContextFactory(context = {}) {
@@ -223,24 +134,8 @@
   }
 
   function createActionRuntime(context = {}) {
-    if (!context.setupSelectionState) {
-      throw new Error("createActionRuntime requires setupSelectionState");
-    }
     const {
-      setupSelectionState,
-      INITIAL_SELECTION_REQUIRED = { initial: 2 },
-      INITIAL_CARD_COUNT = 12,
-      INITIAL_SELECTION_CARD_SIZE = {
-        industry: { width: 0, height: 0 },
-        initial: { width: 0, height: 0 },
-      },
-      MIN_START_INDUSTRY_POOL_SIZE = 2,
-      INITIAL_SELECTION_INDUSTRY_OPTION_COUNT = 2,
-      INDUSTRY_CARD_FILES = [],
-      HISTORY_SOURCE_SETUP = "setup",
       ACTION_LOG_DEFAULT_LABELS = {},
-      stripAssetExtension: stripAssetExtensionOption = stripAssetExtension,
-      shuffleList: shuffleListOption = shuffleList,
       getCurrentPlayer,
       getPlayerById,
       getPlayerLabelById,
@@ -258,18 +153,8 @@
       updateActionButtons,
       renderStateReadout,
       schedulePersistentGameStateSave,
-      resolveInitialSelectionEffects,
-      applyIndustryRoundStartBonuses,
-      startInitialIncomeEffectFlow,
-      applyIndustryStartupPassives,
-      appendConfirmedActionLogEntry,
       actionLogState,
-      isInitialIncomeFlowActive,
       renderActionLog,
-      refreshLatestActionLogRecoverySnapshot,
-      scrollToPlayerCommandPanel,
-      normalizeActionLogText = (value) => String(value || "").trim(),
-      industry,
       canStartMainAction,
       getMainActionStartBlockReason,
       getAnalyzeActionOptionsForPlayer,
@@ -332,335 +217,6 @@
         meta: standardContext.metaState,
         match: standardContext.matchState,
       };
-    }
-
-    function createIndustrySelectionCard(fileName) {
-      return {
-        id: `industry:${fileName}`,
-        kind: "industry",
-        label: stripAssetExtensionOption(fileName),
-        src: `../assets/industry/${fileName}`,
-        width: INITIAL_SELECTION_CARD_SIZE.industry.width,
-        height: INITIAL_SELECTION_CARD_SIZE.industry.height,
-      };
-    }
-
-    function createInitialSelectionCard(index) {
-      return {
-        id: `initial:${index}`,
-        kind: "initial",
-        label: `初始牌 ${index}`,
-        src: `../assets/initial_card/split/${index}.png`,
-        width: INITIAL_SELECTION_CARD_SIZE.initial.width,
-        height: INITIAL_SELECTION_CARD_SIZE.initial.height,
-      };
-    }
-
-    function normalizeStartIndustryLabels(industryLabels) {
-      const allLabels = INDUSTRY_CARD_FILES.map(stripAssetExtensionOption);
-      if (!Array.isArray(industryLabels)) return allLabels;
-      const requested = new Set(industryLabels.map((label) => String(label)));
-      const selectedLabels = allLabels.filter((label) => requested.has(label));
-      return selectedLabels.length >= MIN_START_INDUSTRY_POOL_SIZE ? selectedLabels : allLabels;
-    }
-
-    function getSelectedStartIndustryCardFiles() {
-      const selectedLabels = new Set(normalizeStartIndustryLabels(context.startScreenState?.selectedIndustryLabels));
-      return INDUSTRY_CARD_FILES.filter((fileName) => selectedLabels.has(stripAssetExtensionOption(fileName)));
-    }
-
-    function createIndustrySelectionOffers(playerIds = []) {
-      const poolFiles = getSelectedStartIndustryCardFiles();
-      const requiredCount = playerIds.length * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT;
-      const sharedDeck = poolFiles.length >= requiredCount
-        ? shuffleListOption(poolFiles).slice(0, requiredCount)
-        : null;
-      const offersByPlayerId = {};
-
-      playerIds.forEach((playerId, index) => {
-        const optionFiles = sharedDeck
-          ? sharedDeck.slice(
-            index * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
-            index * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT + INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
-          )
-          : shuffleListOption(poolFiles).slice(0, INITIAL_SELECTION_INDUSTRY_OPTION_COUNT);
-        offersByPlayerId[playerId] = optionFiles.map(createIndustrySelectionCard);
-      });
-
-      return offersByPlayerId;
-    }
-
-    function getInitialSelectionPlayerIds(workingRoot) {
-      const { playerState, turnState } = workingRoot;
-      const activeIds = Array.isArray(turnState.activePlayerIds)
-        ? turnState.activePlayerIds.filter((playerId) => (
-          playerState.players.some((player) => player.id === playerId)
-        ))
-        : [];
-      if (activeIds.length) return activeIds;
-      return playerState.currentPlayerId ? [playerState.currentPlayerId] : [];
-    }
-
-    function isInitialSelectionActive() {
-      return setupSelectionState.phase === "selecting";
-    }
-
-    function getInitialSelectionOffer(playerId) {
-      return setupSelectionState.offersByPlayerId[playerId] || null;
-    }
-
-    function isInitialSelectionConfirmed(playerId) {
-      return setupSelectionState.confirmedPlayerIds.includes(playerId)
-        || Boolean(getInitialSelectionOffer(playerId)?.confirmed);
-    }
-
-    function canConfirmInitialSelection(offer) {
-      return Boolean(
-        offer?.selectedIndustryId
-        && Array.isArray(offer.selectedInitialIds)
-        && offer.selectedInitialIds.length === INITIAL_SELECTION_REQUIRED.initial,
-      );
-    }
-
-    function getCardFromInitialOffer(offer, kind, cardId) {
-      const options = kind === "industry" ? offer?.industryOptions : offer?.initialOptions;
-      return (options || []).find((card) => card.id === cardId) || null;
-    }
-
-    function getInitialEffectLogSource(result) {
-      if (result?.effect?.label) return result.effect.label;
-      if (result?.cardNumber) return `初始牌 ${result.cardNumber}`;
-      return result?.card?.label || "初始效果";
-    }
-
-    function formatInitialEffectLogDetail(result) {
-      const playerLabel = getPlayerLabelById(result?.playerId)
-        || result?.playerColorLabel
-        || "玩家";
-      const source = getInitialEffectLogSource(result);
-      const detailMessages = (result?.results || [])
-        .map((entry) => normalizeActionLogText(entry?.message))
-        .filter(Boolean);
-      const detail = detailMessages.length
-        ? detailMessages.join("；")
-        : normalizeActionLogText(result?.message);
-      return `${playerLabel} ${source}${detail ? `：${detail}` : ""}`;
-    }
-
-    function buildInitialEffectLogSteps(initialResult) {
-      const resultEntries = Array.isArray(initialResult?.results)
-        ? initialResult.results
-        : [];
-      if (!resultEntries.length) {
-        return initialResult?.message
-          ? [`结算初始效果：${initialResult.message}`]
-          : [];
-      }
-      return resultEntries.map((result) => `结算初始效果：${formatInitialEffectLogDetail(result)}`);
-    }
-
-    function recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialResult = null) {
-      const initialLabels = selectedInitialCards.map((card) => card.label).filter(Boolean);
-      const steps = [];
-      if (selectedIndustry?.label) {
-        steps.push({
-          source: HISTORY_SOURCE_SETUP,
-          text: `选择公司：${selectedIndustry.label}`,
-        });
-      }
-      if (initialLabels.length) {
-        steps.push({
-          source: HISTORY_SOURCE_SETUP,
-          text: `移出初始牌：${initialLabels.join("、")}`,
-        });
-      }
-      for (const text of buildInitialEffectLogSteps(initialResult)) {
-        steps.push({
-          source: HISTORY_SOURCE_SETUP,
-          text,
-        });
-      }
-      appendConfirmedActionLogEntry?.({
-        title: "初始选择",
-        player,
-        actionType: "initialSelection",
-        actionLabel: "初始选择",
-        steps,
-      });
-    }
-
-    function startInitialSelection(workingRoot) {
-      const { playerState, rocketState } = workingRoot;
-      const playerIds = getInitialSelectionPlayerIds(workingRoot);
-      const industryOffersByPlayerId = createIndustrySelectionOffers(playerIds);
-      const initialDeck = shuffleList(
-        Array.from({ length: INITIAL_CARD_COUNT }, (_item, index) => createInitialSelectionCard(index + 1)),
-      );
-
-      setupSelectionState.phase = playerIds.length ? "selecting" : "complete";
-      setupSelectionState.currentPlayerId = playerIds[0] || null;
-      setupSelectionState.offersByPlayerId = {};
-      setupSelectionState.confirmedPlayerIds = [];
-
-      playerIds.forEach((playerId, index) => {
-        const player = playerState.players.find((entry) => entry.id === playerId) || null;
-        if (player) player.initialSelection = null;
-        setupSelectionState.offersByPlayerId[playerId] = {
-          playerId,
-          industryOptions: industryOffersByPlayerId[playerId] || [],
-          initialOptions: initialDeck.slice(index * 3, index * 3 + 3),
-          selectedIndustryId: null,
-          selectedInitialIds: [],
-          confirmed: false,
-        };
-      });
-
-      if (setupSelectionState.currentPlayerId) {
-        playerState.currentPlayerId = setupSelectionState.currentPlayerId;
-        rocketState.statusNote = "请完成初始选择：公司 2 选 1，初始牌 3 选 2。";
-      }
-
-      ensurePublicCardsFilledRespectingDelayedRefills?.();
-      renderReservedCards?.();
-      renderPublicCards?.();
-      renderDebugPlayerSwitch?.();
-      renderPlayerStats?.();
-      updateActionButtons?.();
-      renderStateReadout?.();
-      schedulePersistentGameStateSave?.({ label: "初始选择开始" });
-    }
-
-    function handleInitialSelectionCardClick(workingRoot, kind, cardId) {
-      if (!isInitialSelectionActive()) return;
-
-      const playerId = workingRoot.playerState.currentPlayerId;
-      const offer = getInitialSelectionOffer(playerId);
-      if (!offer || offer.confirmed) return;
-
-      if (kind === "industry") {
-        offer.selectedIndustryId = cardId;
-      } else if (kind === "initial") {
-        const selected = offer.selectedInitialIds;
-        const existingIndex = selected.indexOf(cardId);
-        if (existingIndex >= 0) {
-          selected.splice(existingIndex, 1);
-        } else if (selected.length < INITIAL_SELECTION_REQUIRED.initial) {
-          selected.push(cardId);
-        }
-      }
-
-      renderReservedCards?.();
-      renderStateReadout?.();
-      schedulePersistentGameStateSave?.({ label: "初始选择更新" });
-    }
-
-    function confirmInitialSelectionForCurrentPlayer(workingRoot) {
-      if (!isInitialSelectionActive()) return;
-
-      const { playerState, rocketState, turnState } = workingRoot;
-      const player = playerState.players.find((entry) => entry.id === playerState.currentPlayerId) || null;
-      const offer = getInitialSelectionOffer(player?.id);
-      if (!player || !offer || offer.confirmed) return;
-
-      if (!canConfirmInitialSelection(offer)) {
-        rocketState.statusNote = "初始选择未完成：请选择 1 张公司和 2 张初始牌。";
-        renderStateReadout?.();
-        return;
-      }
-
-      const selectedIndustry = getCardFromInitialOffer(offer, "industry", offer.selectedIndustryId);
-      const selectedInitialCards = offer.selectedInitialIds
-        .map((cardId) => getCardFromInitialOffer(offer, "initial", cardId))
-        .filter(Boolean);
-
-      offer.confirmed = true;
-      if (!setupSelectionState.confirmedPlayerIds.includes(player.id)) {
-        setupSelectionState.confirmedPlayerIds.push(player.id);
-      }
-      player.initialSelection = {
-        industry: selectedIndustry ? { ...selectedIndustry } : null,
-        removedInitialCards: selectedInitialCards.map((card) => ({ ...card })),
-      };
-
-      if (industry?.shouldInitializeStrategyPassiveMarkers?.(player)) {
-        industry.initializeStrategyPassiveMarkers(player);
-      }
-      if (industry?.shouldInitializeHeliosPassiveMarkers?.(player)) {
-        industry.initializeHeliosPassiveMarkers(player);
-      }
-      if (industry?.shouldInitializeAlienLabPanels?.(player)) {
-        industry.initializeAlienLabPanels(player);
-      }
-      if (industry?.shouldInitializeFutureSpan?.(player)) {
-        industry.initializeFutureSpanState(player);
-      }
-      const remainingPlayerId = getInitialSelectionPlayerIds(workingRoot)
-        .find((playerId) => !isInitialSelectionConfirmed(playerId));
-      let initialSelectionCompleted = false;
-      if (remainingPlayerId) {
-        recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards);
-        setupSelectionState.currentPlayerId = remainingPlayerId;
-        playerState.currentPlayerId = remainingPlayerId;
-        rocketState.statusNote = `已确认 ${player.colorLabel}玩家，轮到 ${getPlayerLabelById(remainingPlayerId)} 初始选择。`;
-      } else {
-        initialSelectionCompleted = true;
-        setupSelectionState.phase = "complete";
-        setupSelectionState.currentPlayerId = null;
-        playerState.currentPlayerId = turnState.startPlayerId || playerState.currentPlayerId;
-        const initialResult = resolveInitialSelectionEffects?.(workingRoot);
-        const roundStartResult = applyIndustryRoundStartBonuses?.(
-          workingRoot,
-          turnState.roundNumber,
-          { appendLog: false },
-        ) || { results: [] };
-        const initialLogResult = roundStartResult.results.length
-          ? {
-            ...(initialResult || { ok: roundStartResult.ok, results: [], message: "" }),
-            ok: Boolean((initialResult?.ok ?? true) && roundStartResult.ok),
-            results: [
-              ...(initialResult?.results || []),
-              ...roundStartResult.results,
-            ],
-            message: [initialResult?.message, roundStartResult.message].filter(Boolean).join("；"),
-          }
-          : initialResult;
-        recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialLogResult);
-        const incomeStarted = startInitialIncomeEffectFlow?.(
-          workingRoot,
-          initialResult?.pendingIncomeIncreases || [],
-        );
-        applyIndustryStartupPassives?.(workingRoot);
-        if (!incomeStarted) {
-          rocketState.statusNote = initialResult?.message
-            ? `所有玩家已完成初始选择，${initialResult.message}，游戏开始。`
-            : "所有玩家已完成初始选择，游戏开始。";
-        }
-      }
-
-      renderDebugPlayerSwitch?.();
-      renderPlayerStats?.();
-      renderTechBoard?.();
-      renderSectorNebulaDataBoard?.();
-      syncPlanetOrbitLandMarkers?.();
-      renderAlienPanels?.();
-      renderPublicCards?.();
-      renderReservedCards?.();
-      renderPlayerHand?.();
-      renderRockets?.();
-      syncInteractionFocusChrome?.();
-      updateActionButtons?.();
-      renderStateReadout?.();
-      if (initialSelectionCompleted) {
-        scrollToPlayerCommandPanel?.();
-      }
-      if (isInitialIncomeFlowActive?.()) {
-        const latestEntry = actionLogState?.entries?.[actionLogState.entries.length - 1];
-        if (latestEntry) delete latestEntry.recoverySnapshot;
-        renderActionLog?.();
-      } else {
-        refreshLatestActionLogRecoverySnapshot?.("初始选择后状态");
-      }
-      schedulePersistentGameStateSave?.({ label: "初始选择确认" });
     }
 
     function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
@@ -881,9 +437,6 @@
       }
       const kind = action.kind || action.id || null;
       switch (kind) {
-        case "confirmInitialSelection":
-        case "confirm_initial_selection":
-          return confirmInitialSelectionForCurrentPlayer();
         case "effect_step":
           return handleActionEffectButtonClick(explicitActionContext, action.effectIndex);
         default:
@@ -892,17 +445,6 @@
     }
 
     return {
-      createIndustrySelectionCard,
-      createInitialSelectionCard,
-      getInitialSelectionPlayerIds,
-      isInitialSelectionActive,
-      getInitialSelectionOffer,
-      isInitialSelectionConfirmed,
-      canConfirmInitialSelection,
-      getCardFromInitialOffer,
-      startInitialSelection,
-      handleInitialSelectionCardClick,
-      confirmInitialSelectionForCurrentPlayer,
       runAction,
       executeStandardDescriptor,
       handleActionEffectButtonClick,
@@ -913,12 +455,8 @@
   return {
     createActionOwnerInputPorts,
     createActionRuntime,
-    createInitialIncomeFlow,
-    createInitialSelectionEffectsResolver,
     createActionContextFactory,
     createCompositionActionRegistry,
     createActionRuntimePort,
-    shuffleList,
-    stripAssetExtension,
   };
 });

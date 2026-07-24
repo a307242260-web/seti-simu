@@ -157,6 +157,7 @@
       getCurrentActionEffect,
       getCurrentPlayer,
       getEffectOwnerPlayer,
+      getFormalInputOwnerId = () => null,
       getPlayerByColor,
       getPlayerById,
       getPlayerLabelById,
@@ -165,6 +166,7 @@
       isIndustryHandSelectionActive,
       recordAiAutoBattleLog,
       recordAiAutoBattleBug,
+      refreshCompositionPresentation = () => {},
       renderStateReadout,
       runMachinePlayerStep,
       resetGameForAiAutoBattle,
@@ -377,6 +379,8 @@
     }
 
     function getPendingAutomationPlayerId() {
+      const formalInputOwnerId = getFormalInputOwnerId();
+      if (formalInputOwnerId) return formalInputOwnerId;
       if (state.pendingDiscardAction?.playerId) return state.pendingDiscardAction.playerId;
       if (state.pendingCardSelectionDecision?.playerId) return state.pendingCardSelectionDecision.playerId;
       const sharedPendingEntries = [
@@ -443,6 +447,8 @@
         renderStateReadout();
         return;
       }
+      refreshCompositionPresentation();
+      updateActionButtons();
       if (!result?.done && !isGameEnded()) scheduleAiAutoStepIfNeeded();
     }
 

@@ -160,7 +160,10 @@ function runFixedBoardTurnReport(options = {}) {
       const valuationMilliseconds = performance.now() - valuationStartedAt;
       const counterfactualTiming = env.getCounterfactualDiagnostics() || {};
       if (Number(counterfactualTiming.totalMilliseconds) > 1000) {
-        throw new Error(`fixed-board 单次决策 ${counterfactualTiming.totalMilliseconds}ms 超过 1s 门禁`);
+        throw new Error(
+          `fixed-board 第${decisionCount}次 ${chosen.family}/${chosen.actionId} `
+          + `单次决策 ${counterfactualTiming.totalMilliseconds}ms 超过 1s 门禁`,
+        );
       }
       const chosenEvaluation = rankedEvaluations.find((candidate) => candidate.actionId === chosen.actionId) || null;
       const record = {

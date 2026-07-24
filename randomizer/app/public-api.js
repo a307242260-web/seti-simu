@@ -11,288 +11,60 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
-  function createPublicApi(context) {
-    if (!context) {
-      throw new Error("createPublicApi requires app context");
-    }
+  const SCHEMA_VERSION = "seti-browser-public-facade-v1";
 
-    const {
-      structuredClone = root.structuredClone,
-      solar,
-      rocketActions,
-      planetReferenceLayout,
-      planetStats,
-      tech,
-      data,
-      aliens,
-      actionHistory,
-      setupSelectionState,
-      buildFinalResultPlayerSummaries,
-      randomizeAll,
-      rotateSolarOrbit,
-      launchRocketForCurrentPlayer,
-      orbitForCurrentPlayer,
-      landForCurrentPlayer,
-      addDebugIncome,
-      addDebugScore,
-      executeIncomeForCurrentPlayer,
-      addDebugData,
-      addDebugCardByInput,
-      fillDebugNebulaData,
-      toggleSectorWinDebug,
-      beginSectorScan,
-      openDebugQuickSectorScanPicker,
-      runDebugQuickSectorScan,
-      beginPublicDeckScan,
-      beginHandScan,
-      replaceNebulaDataForCurrentPlayer,
-      switchCurrentPlayerColor,
-      runPlaceDataToComputer,
-      analyzeDataForCurrentPlayer,
-      handleFinalScoreTileClick,
-      openAlienTracePicker,
-      maybeRevealAlienAfterTrace,
-      getCurrentPlayer,
-      handleJiuzheRevealSideEffects,
-      handleYichangdianRevealSideEffects,
-      handleFangzhouRevealSideEffects,
-      handleBanrenmaRevealSideEffects,
-      handleChongRevealSideEffects,
-      handleAmibaRevealSideEffects,
-      handleAomomoRevealSideEffects,
-      handleRunezuRevealSideEffects,
-      renderAlienPanels,
-      renderRockets,
-      renderPlayerStats,
-      renderStateReadout,
-      revealJiuzheForDebug,
-      revealYichangdianForDebug,
-      revealFangzhouForDebug,
-      revealBanrenmaForDebug,
-      revealChongForDebug,
-      revealAmibaForDebug,
-      revealAomomoForDebug,
-      revealRunezuForDebug,
-      randomizeAliens,
-      startNewGame,
-      startInitialSelection,
-      getInitialSelectionOffer,
-      handleInitialSelectionCardClick,
-      confirmInitialSelectionForCurrentPlayer,
-      drawCardForCurrentPlayer,
-      blindDrawCardForPlayer,
-      beginCardSelection,
-      beginDiscardSelection,
-      beginPlayCardSelection,
-      beginIncomeForCurrentPlayer,
-      cancelCardSelection,
-      cancelDiscardSelection,
-      cancelPlayCardSelection,
-      pickPublicCardForCurrentPlayer,
-      discardCardFromCurrentPlayer,
-      undoPendingAction,
-      endCurrentTurn,
-      passForCurrentPlayer,
-      runAction,
-      runQuickTrade,
-      toggleQuickPanel,
-      moveRocket,
-      moveActiveRocket,
-      getBoardPointFromClientPosition,
-      getPolarPointFromClientPosition,
-      createRocketSnapshot,
-      buildPlanetOrbitLandReferenceData,
-      syncPlanetOrbitLandMarkers,
-      enumerateActions,
-      getPlanetsReferencePointFromClientPosition,
-      getPlanetsReferenceDimensions,
-      renderRocketElement,
-      updateActionButtons,
-      getRecoverableActionLog,
-      createActionLogRecoveryPackage,
-      getActionLogMarkdown,
-      downloadActionLogMarkdown,
-      createGameRecoverySnapshot,
-      applyGameRecoverySnapshot,
-      recoverFromActionLog,
-      toggleCheatMode,
-      researchTechForCurrentPlayer,
-      dispatchRuntimeAction,
-      getBrowserProjection,
-      browserServices,
-    } = context;
-
-    function readBrowserProjection() {
-      return typeof getBrowserProjection === "function"
-        ? structuredClone(getBrowserProjection())
-        : null;
-    }
-
-    return {
-      randomize: randomizeAll,
-      rotateSolarOrbit,
-      launchRocket: launchRocketForCurrentPlayer,
-      orbitRocket: orbitForCurrentPlayer,
-      landRocket: landForCurrentPlayer,
-      addDebugIncome,
-      addDebugScore,
-      executeIncomeForCurrentPlayer,
-      addDebugData,
-      addDebugCardByInput,
-      fillDebugNebulaData,
-      toggleSectorWinDebug,
-      beginSectorScan,
-      openDebugQuickSectorScanPicker,
-      runDebugQuickSectorScan,
-      beginPublicDeckScan,
-      beginHandScan,
-      replaceNebulaDataForCurrentPlayer,
-      switchCurrentPlayerColor,
-      getNebulaSlotLayoutOverrides: () => structuredClone(data.listNebulaSlotLayoutOverrides()),
-      getSectorWinMarkerLayoutOverrides: () => structuredClone(data.listSectorWinMarkerLayoutOverrides?.() || []),
-      placeDataToComputer: runPlaceDataToComputer,
-      analyzeDataForCurrentPlayer,
-      getDataSlotLayoutOverrides: () => structuredClone(data.listSlotLayoutOverrides()),
-      getAlienTraceLayoutOverrides: () => structuredClone(aliens.listTraceMarkerLayoutOverrides()),
-      getAlienExtraTraceLayoutOverrides: () => structuredClone(aliens.listExtraTraceMarkerLayoutOverrides()),
-      getJiuzheTraceLayoutOverrides: () => structuredClone(aliens.listJiuzheTraceMarkerLayoutOverrides?.() || []),
-      getYichangdianTraceLayoutOverrides: () => structuredClone(aliens.listYichangdianTraceMarkerLayoutOverrides?.() || []),
-      getFangzhouTraceLayoutOverrides: () => structuredClone(aliens.listFangzhouTraceMarkerLayoutOverrides?.() || []),
-      getChongTraceLayoutOverrides: () => structuredClone(aliens.listChongTraceMarkerLayoutOverrides?.() || []),
-      getAmibaTraceLayoutOverrides: () => structuredClone(aliens.listAmibaTraceMarkerLayoutOverrides?.() || []),
-      getAmibaSymbolLayoutOverrides: () => structuredClone(aliens.listAmibaSymbolMarkerLayoutOverrides?.() || []),
-      getAomomoTraceLayoutOverrides: () => structuredClone(aliens.listAomomoTraceMarkerLayoutOverrides?.() || []),
-      getAomomoOrbitLayoutOverrides: () => structuredClone(aliens.listAomomoOrbitMarkerLayoutOverrides?.() || []),
-      getAomomoLandingLayoutOverrides: () => structuredClone(aliens.listAomomoLandingMarkerLayoutOverrides?.() || []),
-      getRunezuTraceLayoutOverrides: () => structuredClone(aliens.listRunezuTraceMarkerLayoutOverrides?.() || []),
-      getRunezuPanelSymbolLayoutOverrides: () => structuredClone(aliens.listRunezuPanelSymbolMarkerLayoutOverrides?.() || []),
-      getRunezuFaceSymbolLayoutOverrides: () => structuredClone(aliens.listRunezuFaceSymbolMarkerLayoutOverrides?.() || []),
-      getBrowserProjection: () => readBrowserProjection(),
-      browserServices: browserServices || null,
-      getAlienState: () => readBrowserProjection()?.resident?.aliens || {},
-      revealJiuzheForDebug,
-      revealYichangdianForDebug,
-      revealFangzhouForDebug,
-      revealBanrenmaForDebug,
-      revealChongForDebug,
-      revealAmibaForDebug,
-      revealAomomoForDebug,
-      revealRunezuForDebug,
-      getFinalScoringState: () => readBrowserProjection()?.resident?.finalScoring || {},
-      markFinalScoreTile: handleFinalScoreTileClick,
-      openAlienTracePicker,
-      randomizeAliens,
-      startNewGame,
-      startInitialSelection,
-      getInitialSelectionState: () => structuredClone(setupSelectionState),
-      getInitialSelectionOffer: (playerId) => structuredClone(getInitialSelectionOffer?.(playerId) || null),
-      selectInitialSelectionCard: (kind, cardId) => handleInitialSelectionCardClick?.(kind, cardId),
-      confirmInitialSelection: () => confirmInitialSelectionForCurrentPlayer?.(),
-      drawCardForCurrentPlayer,
-      blindDrawCardForPlayer,
-      beginCardSelection,
-      beginDiscardSelection,
-      beginPlayCardSelection,
-      beginIncomeForCurrentPlayer,
-      cancelCardSelection,
-      cancelDiscardSelection,
-      cancelPlayCardSelection,
-      pickPublicCardForCurrentPlayer,
-      discardCardFromCurrentPlayer,
-      getCardState: () => readBrowserProjection()?.resident?.cards || {},
-      actionHistory,
-      undoPendingAction,
-      endCurrentTurn,
-      passTurn: passForCurrentPlayer,
-      runAction,
-      runQuickTrade,
-      toggleQuickPanel,
-      moveRocket,
-      moveActiveRocket,
-      getSectorLaunchSlots: (x, y) => solar.getSectorLaunchSlots(x, y),
-      getSectorLaunchSlot: (x, y, slotIndex) => solar.getSectorLaunchSlot(x, y, slotIndex),
-      screenToBoardPoint: (clientX, clientY) => getBoardPointFromClientPosition(clientX, clientY),
-      screenToPolarPoint: (clientX, clientY) => getPolarPointFromClientPosition(clientX, clientY),
-      solarGridToGlobalPoint: (x, y) => solar.solarGridToGlobalPoint(x, y),
-      solarGridToPolarPoint: (x, y) => solar.solarGridToPolarPoint(x, y),
-      polarToGlobalPoint: (radius, angleDegrees) => solar.polarToGlobalPoint(radius, angleDegrees),
-      globalPointToPolarPoint: (point) => solar.globalPointToPolarPoint(point),
-      getSolarCellBoundary: (x, y) => solar.getSolarCellBoundary(x, y),
-      getSolarCellBoundaries: () => solar.collectSolarCellBoundaries(),
-      getSectorCoordinateBoundary: (x, y) => solar.getSectorCoordinateBoundary(x, y),
-      getSectorCoordinateBoundaries: () => solar.collectSectorCoordinateBoundaries(),
-      resolveSectorCoordinateFromPolarPoint: (point) => solar.resolveSectorCoordinateFromPolarPoint(point),
-      resolveSectorCoordinateFromGlobalPoint: (point) => solar.resolveSectorCoordinateFromGlobalPoint(point),
-      getSolarSnapshot: () => readBrowserProjection()?.resident?.solar || {},
-      getRocketCoordinates: () => structuredClone(
-        readBrowserProjection()?.resident?.pieces?.rockets || [],
-      ),
-      getPlanetReferenceCenters: () => structuredClone(planetReferenceLayout.PLANET_REFERENCE_CENTERS),
-      getPlanetOrbitLandReferenceData: () => structuredClone(buildPlanetOrbitLandReferenceData()),
-      getGeneratedPlanetReferencePlacements: () => structuredClone(planetReferenceLayout.listAllOrbitLandSlots()),
-      syncPlanetOrbitLandMarkers,
-      getLandOptions: () => {
-        const choices = (enumerateActions?.({ family: "land" }) || []).map((action) => ({
-          actionId: action.actionId,
-          target: structuredClone(action.target || {}),
-          rocketId: action.target?.rocketId ?? null,
-          planetId: action.target?.planetId ?? null,
-          label: action.summary || "登陆",
-        }));
-        if (!choices.length) return { ok: false, message: "当前没有可登陆目标", choices: [] };
-        return {
-          ok: true,
-          choices,
-          needsChoice: choices.length > 1,
-          defaultTarget: structuredClone(choices[0].target),
-          defaultRocketId: choices[0].rocketId,
-        };
-      },
-      clientToPlanetsReferencePoint: (clientX, clientY) => getPlanetsReferencePointFromClientPosition(clientX, clientY),
-      getPlayerState: () => {
-        const projection = readBrowserProjection();
-        return {
-          players: Object.values(projection.players || {}),
-          currentPlayerId: projection.match?.currentPlayerId ?? null,
-        };
-      },
-      getFinalScoreSummaries: () => structuredClone(
-        typeof buildFinalResultPlayerSummaries === "function"
-          ? buildFinalResultPlayerSummaries().map((summary) => ({
-            playerId: summary.player?.id || null,
-            baseScore: Number(summary.breakdown?.baseScore) || 0,
-            totalScore: Number(summary.breakdown?.totalScore) || 0,
-            breakdown: summary.breakdown || null,
-          }))
-          : [],
-      ),
-      getTurnState: () => readBrowserProjection()?.match || {},
-      getActionLog: (options = {}) => getRecoverableActionLog(options),
-      getActionLogRecoveryPackage: createActionLogRecoveryPackage,
-      getActionLogMarkdown,
-      downloadActionLogMarkdown,
-      createRecoverySnapshot: createGameRecoverySnapshot,
-      restoreRecoverySnapshot: applyGameRecoverySnapshot,
-      recoverFromActionLog,
-      dispatchRuntimeAction,
-      getPlanetStatsState: () => readBrowserProjection()?.resident?.planets || {},
-      getCurrentPlayer: () => {
-        const projection = readBrowserProjection();
-        return structuredClone(
-          projection.players?.[projection.viewer?.playerId]
-          || Object.values(projection.players || {}).find(
-            (player) => String(player?.id) === String(projection.match?.currentPlayerId),
-          )
-          || null,
-        );
-      },
-      getAiDebugState: () => readBrowserProjection(),
-      getState: () => readBrowserProjection(),
-      toggleCheatMode,
-      getTechSnapshot: () => readBrowserProjection()?.tech || {},
-      researchTech: researchTechForCurrentPlayer,
-    };
+  function clone(value, structuredClone = root.structuredClone) {
+    return value == null ? value : structuredClone(value);
   }
 
-  return { createPublicApi };
+  function deepFreeze(value) {
+    if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+    for (const child of Object.values(value)) deepFreeze(child);
+    return Object.freeze(value);
+  }
+
+  function requireFunction(value, label) {
+    if (typeof value !== "function") {
+      throw new TypeError(`SetiRandomizer 缺少 ${label} port`);
+    }
+    return value;
+  }
+
+  function createPublicApi(context = {}) {
+    const structuredClone = context.structuredClone || root.structuredClone;
+    const inspectProjection = requireFunction(context.inspectProjection, "viewer-safe inspect");
+    const inspectInput = requireFunction(context.inspectInput, "input inspect");
+    const capture = requireFunction(context.capture, "capture");
+    const restore = requireFunction(context.restore, "restore");
+    const dispatchAction = requireFunction(context.dispatchAction, "Standard Action");
+    const submitDecision = requireFunction(context.submitDecision, "Standard Decision");
+
+    const input = Object.freeze({
+      dispatchAction(action) {
+        return clone(dispatchAction(clone(action, structuredClone)), structuredClone);
+      },
+      submitDecision(submission) {
+        return clone(submitDecision(clone(submission, structuredClone)), structuredClone);
+      },
+    });
+
+    return Object.freeze({
+      schemaVersion: SCHEMA_VERSION,
+      inspect() {
+        return deepFreeze({
+          projection: clone(inspectProjection(), structuredClone),
+          input: clone(inspectInput(), structuredClone),
+        });
+      },
+      capture() {
+        return deepFreeze(clone(capture(), structuredClone));
+      },
+      restore(envelope) {
+        return deepFreeze(clone(restore(clone(envelope, structuredClone)), structuredClone));
+      },
+      input,
+    });
+  }
+
+  return Object.freeze({ SCHEMA_VERSION, createPublicApi });
 });
