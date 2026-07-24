@@ -123,6 +123,97 @@
     return Object.freeze({ listLegalActions, submit, submitActionId });
   }
 
+  function createHumanDecisionInputAdapter(options = {}) {
+    if (typeof options.readDecisionProjection !== "function") {
+      throw new TypeError("HumanDecisionInputAdapter 需要 readDecisionProjection()");
+    }
+    if (typeof options.readActiveDecision !== "function") {
+      throw new TypeError("HumanDecisionInputAdapter 需要 readActiveDecision()");
+    }
+    if (typeof options.submitDecision !== "function") {
+      throw new TypeError("HumanDecisionInputAdapter 需要唯一 submitDecision port");
+    }
+    const beforeSubmit = typeof options.beforeSubmit === "function"
+      ? options.beforeSubmit : () => {};
+    const afterSubmit = typeof options.afterSubmit === "function"
+      ? options.afterSubmit : () => {};
+
+    function reject(code, message, submission) {
+      return {
+        ok: false,
+        code,
+        message,
+        decisionId: submission?.decisionId ?? null,
+        choiceId: submission?.choice?.choiceId ?? null,
+      };
+    }
+
+    function choiceIdentity(choice) {
+      return choice?.actionId ?? choice?.choiceId ?? null;
+    }
+
+    function submit(submission) {
+      const choiceKeys = Object.keys(submission?.choice || {});
+      if (!submission?.decisionId
+        || !Number.isSafeInteger(submission.decisionVersion)
+        || !submission.ownerId
+        || choiceKeys.length !== 1
+        || choiceKeys[0] !== "choiceId"
+        || submission.choice.choiceId == null) {
+        return reject(
+          "HUMAN_DECISION_SUBMISSION_INVALID",
+          "人类 Decision 输入必须只提交 decisionId/version/owner/choice identity",
+          submission,
+        );
+      }
+
+      const projected = clone(options.readDecisionProjection());
+      if (!projected) {
+        return reject("HUMAN_DECISION_REMOVED", "当前 viewer 没有可提交的 Decision", submission);
+      }
+      if (submission.ownerId !== projected.ownerId) {
+        return reject("HUMAN_DECISION_WRONG_OWNER", "Decision 不属于当前 viewer", submission);
+      }
+      if (submission.decisionId !== projected.decisionId
+        || submission.decisionVersion !== projected.decisionVersion) {
+        return reject("HUMAN_DECISION_STALE", "Decision identity 已失效", submission);
+      }
+      const projectedChoice = (projected.choices || []).find((choice) => (
+        String(choice.choiceId) === String(submission.choice.choiceId)
+      ));
+      if (!projectedChoice || projectedChoice.disabledReason) {
+        return reject("HUMAN_DECISION_CHOICE_REMOVED", "choice 不在当前 viewer legal set 中", submission);
+      }
+
+      const active = clone(options.readActiveDecision());
+      if (!active
+        || active.decisionId !== projected.decisionId
+        || active.decisionVersion !== projected.decisionVersion
+        || active.ownerId !== projected.ownerId) {
+        return reject("HUMAN_DECISION_STALE", "active Effect Session Decision 已变化", submission);
+      }
+      const legalChoice = (active.choices || []).find((choice) => (
+        String(choiceIdentity(choice)) === String(projectedChoice.choiceId)
+      ));
+      if (!legalChoice) {
+        return reject("HUMAN_DECISION_CHOICE_REMOVED", "choice 已从 active Decision 移除", submission);
+      }
+
+      const normalized = {
+        decisionId: active.decisionId,
+        decisionVersion: active.decisionVersion,
+        ownerId: active.ownerId,
+        choice: legalChoice,
+      };
+      beforeSubmit(clone(normalized));
+      const result = options.submitDecision(clone(normalized));
+      afterSubmit(clone(result), clone(normalized));
+      return result;
+    }
+
+    return Object.freeze({ submit });
+  }
+
   function createBrowserInputAdapter(options = {}) {
     const actionPort = options.dispatchAction;
     const decisionPort = options.submitDecision;
@@ -203,42 +294,11 @@
     });
   }
 
-  function createActiveDecisionPort(options = {}) {
-    if (typeof options.inspect !== "function" || typeof options.submitDecision !== "function") {
-      throw new TypeError("ActiveDecisionPort 需要 inspect/submitDecision ports");
-    }
-    function submit(kind, matches) {
-      const inspection = options.inspect();
-      const decision = inspection.session?.decision || null;
-      const choice = (decision?.choices || []).find((candidate) => {
-        const target = candidate?.target || candidate?.standardAction?.target || null;
-        return target?.kind === kind && matches(target, candidate);
-      });
-      if (inspection.phase !== "awaiting_input" || !decision || !choice) {
-        return { ok: false, code: "CARD_DECISION_REQUIRED", message: "当前输入不在 active Decision 合法项中" };
-      }
-      return options.submitDecision({
-        decisionId: decision.decisionId,
-        decisionVersion: decision.decisionVersion,
-        ownerId: decision.ownerId,
-        choice,
-      });
-    }
-    function submitDirectional(kind, deltaX, deltaY, rocketId) {
-      const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
-      return submit(
-        kind,
-        (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
-      );
-    }
-    return Object.freeze({ submit, submitDirectional });
-  }
-
   return Object.freeze({
     SCHEMA_VERSION,
     STANDARD_ACTION_SCHEMA,
     createBrowserInputAdapter,
     createHumanActionInputAdapter,
-    createActiveDecisionPort,
+    createHumanDecisionInputAdapter,
   });
 });

@@ -9,6 +9,10 @@
 
   const SCHEMA_VERSION = "seti-browser-host-v1";
   const POLICY_ID = "seti-browser-default-deny-v1";
+  const CONDITIONAL_FAMILIES = new Set([
+    "choose_card", "choose_target", "choose_payment", "choose_reward", "choose_branch",
+    "choose_final_scoring", "accept_optional_effect",
+  ]);
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -242,6 +246,16 @@
   }
 
   function defaultDecisionPresenter(rawDecision, choice, index) {
+    const decisionKind = rawDecision?.kind || rawDecision?.decisionKind || null;
+    if (CONDITIONAL_FAMILIES.has(decisionKind)
+      && (!choice?.schemaVersion
+        || !choice?.actionId
+        || choice.family !== decisionKind
+        || choice.actorId !== rawDecision.ownerId)) {
+      throw new TypeError(
+        `${decisionKind} Decision choice 缺少 Standard Action identity 或 owner/family 不匹配`,
+      );
+    }
     const choiceId = choiceIdentity(choice, index);
     let inferredPresentation = null;
     if (choice?.tileId != null) {

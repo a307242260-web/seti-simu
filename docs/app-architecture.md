@@ -62,6 +62,9 @@ Presentation helper 必须满足：
 
 - 普通行动提交完整 Standard Action descriptor；
 - 多步选择提交 active Decision 的 owner、version 与 choice identity；
+- 人类 Decision 统一经 `createHumanDecisionInputAdapter` 重读当前 viewer-safe projection，
+  精确校验 `decisionId/decisionVersion/ownerId/choiceId` 后，才把 identity 对齐到 active
+  Effect Session 的正式 choice；DOM 与 public facade 不读取完整 legal choice；
 - 新局、保存和恢复只调用 Composition lifecycle；
 - Browser 不根据 label、selector 或旧 pending 猜测 legal choice；
 - stale、wrong-owner、removed-choice、unknown family 必须零副作用失败。

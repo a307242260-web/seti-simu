@@ -660,22 +660,127 @@ const adapter = inputApi.createBrowserInputAdapter({
   assert.equal(calls.decision.length, 1);
 })();
 
-(function testActiveDecisionPortOwnsBrowserDecisionMapping() {
+(function testHumanDecisionInputOnlySubmitsCurrentViewerChoiceIdentity() {
   const submissions = [];
-  const decisions = inputApi.createActiveDecisionPort({
-    inspect: () => ({
-      phase: "awaiting_input",
-      session: { decision: {
-        decisionId: "d1",
-        decisionVersion: 2,
-        choices: [{ target: { kind: "industry-free-move", rocketId: 7, direction: "cw" } }],
-      } },
-    }),
+  let projected = {
+    decisionId: "d1",
+    decisionVersion: 2,
+    ownerId: "p1",
+    choices: [
+      { choiceId: "choose_target:left", label: "左" },
+      { choiceId: "choose_target:right", label: "右" },
+    ],
+  };
+  let active = {
+    decisionId: "d1",
+    decisionVersion: 2,
+    ownerId: "p1",
+    choices: ["left", "right"].map((side) => ({
+      schemaVersion: "seti-standard-action-v1",
+      actionId: `choose_target:${side}`,
+      family: "choose_target",
+      phase: "conditional",
+      actorId: "p1",
+      stateVersion: 3,
+      decisionVersion: 2,
+      target: { side },
+      payload: {},
+      summary: side,
+    })),
+  };
+  const decisions = inputApi.createHumanDecisionInputAdapter({
+    readDecisionProjection: () => projected,
+    readActiveDecision: () => active,
     submitDecision(submission) { submissions.push(submission); return { ok: true }; },
   });
-  assert.equal(decisions.submitDirectional("industry-free-move", 1, 0, 7).ok, true);
+  const identity = {
+    decisionId: "d1",
+    decisionVersion: 2,
+    ownerId: "p1",
+    choice: { choiceId: "choose_target:right" },
+  };
+  assert.equal(decisions.submit(identity).ok, true);
   assert.equal(submissions[0].decisionVersion, 2);
-  assert.equal(decisions.submit("unknown", () => true).code, "CARD_DECISION_REQUIRED");
+  assert.equal(submissions[0].choice.actionId, "choose_target:right");
+
+  assert.equal(decisions.submit({ ...identity, ownerId: "p2" }).code, "HUMAN_DECISION_WRONG_OWNER");
+  assert.equal(decisions.submit({ ...identity, decisionVersion: 1 }).code, "HUMAN_DECISION_STALE");
+  assert.equal(decisions.submit({
+    ...identity,
+    choice: { choiceId: "choose_target:removed" },
+  }).code, "HUMAN_DECISION_CHOICE_REMOVED");
+  assert.equal(decisions.submit({
+    ...identity,
+    choice: { choiceId: "choose_target:right", target: { side: "left" } },
+  }).code, "HUMAN_DECISION_SUBMISSION_INVALID");
+  projected = null;
+  assert.equal(decisions.submit(identity).code, "HUMAN_DECISION_REMOVED");
+  projected = {
+    decisionId: "d1", decisionVersion: 2, ownerId: "p1",
+    choices: [{ choiceId: "choose_target:right", label: "右" }],
+  };
+  active = { ...active, decisionVersion: 3 };
+  assert.equal(decisions.submit(identity).code, "HUMAN_DECISION_STALE");
+  assert.equal(submissions.length, 1, "stale/wrong-owner/removed/tampered choice 必须零提交");
+})();
+
+(function testEveryConditionalFamilyProjectsOnlyStandardIdentityToCurrentOwner() {
+  const families = [
+    "choose_card", "choose_target", "choose_payment", "choose_reward", "choose_branch",
+    "choose_final_scoring", "accept_optional_effect",
+  ];
+  for (const family of families) {
+    const state = createState();
+    const choice = {
+      schemaVersion: "seti-standard-action-v1",
+      actionId: `${family}:p1:proof`,
+      family,
+      phase: "conditional",
+      actorId: "p1",
+      stateVersion: 0,
+      decisionVersion: 4,
+      target: { proof: family },
+      payload: {},
+      summary: family,
+    };
+    const decision = {
+      decisionId: `decision:${family}`,
+      decisionVersion: 4,
+      ownerId: "p1",
+      decisionKind: family,
+      choices: [choice],
+    };
+    const adapter = projectionApi.createBrowserProjectionAdapter({
+      stateStore: { getSnapshot: () => state },
+      sessionRuntime: {
+        inspect: () => ({
+          ok: true, sessionId: "conditional-proof", phase: "awaiting_input",
+          revision: 4, decision,
+        }),
+        observe: () => ({
+          sessionId: "conditional-proof", phase: "awaiting_input",
+          revision: 4, state, decision,
+        }),
+      },
+    });
+    const owner = adapter.projectSession({}, {
+      viewer: { viewerId: "viewer-p1", playerId: "p1", role: "player" },
+    });
+    assert.equal(owner.decision.choices[0].choiceId, choice.actionId, family);
+    const other = adapter.projectSession({}, {
+      viewer: { viewerId: "viewer-p2", playerId: "p2", role: "player" },
+    });
+    assert.deepEqual(other.decision.choices, [], `${family} 非 owner 不得看到 choices`);
+
+    decision.choices = [{ choiceId: "legacy", family, actorId: "p1" }];
+    assert.throws(
+      () => adapter.projectSession({}, {
+        viewer: { viewerId: "viewer-p1", playerId: "p1", role: "player" },
+      }),
+      /Standard Action identity/,
+      `${family} 不得回退到 Browser choice builder identity`,
+    );
+  }
 })();
 
 (function testHumanActionInputAdapterOnlyDispatchesCurrentCompleteDescriptor() {

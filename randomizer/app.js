@@ -739,38 +739,24 @@
   const browserRuleLifecycle = ruleComposition.lifecycle;
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor();
   let actionRuntimeController = null;
-  const activeDecisionPort = browserHostModule.inputAdapter.createActiveDecisionPort({
-    inspect: (...args) => ruleComposition.inspect(...args),
-    submitDecision: (...args) => ruleComposition.inputPort.submitDecision(...args),
+  let humanDecisionInputAdapter = null;
+  const submitActiveCardDecision = () => ({
+    ok: false,
+    code: "HUMAN_DECISION_IDENTITY_REQUIRED",
+    message: "旧 Browser Decision resolver 已禁用；请从当前 viewer projection 提交 choice identity",
   });
-  const submitActiveCardDecision = activeDecisionPort.submit;
-  const submitChoiceById = (kind, choiceId) => submitActiveCardDecision(
-    kind,
-    (target) => String(target.choiceId) === String(choiceId),
-  );
-  const handleConditionalSectorChoice = (sectorX) => submitChoiceById("conditional-sector", sectorX);
-  const confirmDiscardAnyForIncome = (
-    cardIds = uiRuntimeState.discardIncomeSelectedCardIds || []
-  ) => {
-    const expected = [...cardIds].map(String).sort();
-    return submitActiveCardDecision("confirm-discard-income", (target) => {
-      const actual = [...(target.cardIds || [])].map(String).sort();
-      return actual.length === expected.length
-        && actual.every((cardId, index) => cardId === expected[index]);
-    });
-  };
-  const handlePayCreditChoice = (choiceId) => submitChoiceById("pay-credit-reward", choiceId);
-  const handleDiscardCornerRepeatChoice = (cardId) => submitChoiceById("discard-corner-repeat", cardId);
-  const handleRemoveOrbitToProbeChoice = (choiceId) => submitChoiceById("remove-orbit-to-probe", choiceId);
-  const handleRemovePlanetMarkerChoice = (choiceId) => submitChoiceById("remove-planet-marker", choiceId);
-  const handleHandCornerChoice = (choiceId) => submitChoiceById("hand-corner-choice", choiceId);
-  const handleReturnUnfinishedTaskChoice = (cardId) => submitChoiceById("return-unfinished-task", cardId);
-  const handleOptionalHandScanChoice = (choiceId) => submitChoiceById("optional-hand-scan", choiceId);
-  const handleScanAction4Choice = (choiceId) => submitChoiceById(`scan-action-${choiceId}`, choiceId);
-  const abortActiveDecision = (message) => ruleComposition.inputPort.abort({
-    code: "BROWSER_DECISION_CANCELLED",
-    message,
-  });
+  const submitChoiceById = submitActiveCardDecision;
+  const handleConditionalSectorChoice = submitActiveCardDecision;
+  const confirmDiscardAnyForIncome = submitActiveCardDecision;
+  const handlePayCreditChoice = submitActiveCardDecision;
+  const handleDiscardCornerRepeatChoice = submitActiveCardDecision;
+  const handleRemoveOrbitToProbeChoice = submitActiveCardDecision;
+  const handleRemovePlanetMarkerChoice = submitActiveCardDecision;
+  const handleHandCornerChoice = submitActiveCardDecision;
+  const handleReturnUnfinishedTaskChoice = submitActiveCardDecision;
+  const handleOptionalHandScanChoice = submitActiveCardDecision;
+  const handleScanAction4Choice = submitActiveCardDecision;
+  const abortActiveDecision = submitActiveCardDecision;
   const submitInitialSetupAction = (selector) => {
     const refreshPresentation = () => queueMicrotask(() => {
       scheduleResidentDesktopRefresh();
@@ -781,22 +767,7 @@
     });
     const inspection = ruleComposition.inspect();
     if (inspection.phase === "awaiting_input") {
-      const decision = inspection.session?.decision || null;
-      const choice = (decision?.choices || []).find((candidate) => (
-        Object.entries(selector).every(([key, value]) => (
-          JSON.stringify(candidate.target?.[key]) === JSON.stringify(value)
-        ))
-      ));
-      const result = choice
-        ? residentInputAdapter.submitDecision({
-          decisionId: decision.decisionId,
-          decisionVersion: decision.decisionVersion,
-          ownerId: decision.ownerId,
-          choice,
-        })
-        : { ok: false, code: "INITIAL_SETUP_DECISION_NOT_LEGAL", message: "初始选择 Decision 已失效" };
-      if (result?.ok !== false) refreshPresentation();
-      return result;
+      return submitActiveCardDecision();
     }
     const candidates = ruleComposition.inputPort.enumerateActions({ family: "choose_card" });
     const action = candidates.find((candidate) => Object.entries(selector).every(([key, value]) => (
@@ -1298,31 +1269,25 @@
       scheduleAiAutoStepIfNeeded?.();
     }),
   });
+  humanDecisionInputAdapter = browserHostModule.inputAdapter.createHumanDecisionInputAdapter({
+    readDecisionProjection: () => (
+      residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }).decision
+    ),
+    readActiveDecision: () => ruleComposition.inspect().session?.decision || null,
+    submitDecision: (submission) => residentInputAdapter.submitDecision(submission),
+    afterSubmit: () => queueMicrotask(() => {
+      renderResidentDesktop();
+      renderInitialSelectionArea?.();
+      updateActionButtons?.();
+      scheduleAiAutoStepIfNeeded?.();
+    }),
+  });
   const residentDecisionController = browserHostModule.decisionUi.createDecisionUiController({
-    dispatchIntent: (intent) => {
-      let resolvedIntent = intent;
-      const choiceId = intent?.kind === "decision" ? intent.submission?.choice?.choiceId : null;
-      if (choiceId) {
-        const legalChoice = (ruleComposition.inspect().session?.decision?.choices || [])
-          .find((choice) => String(choice?.actionId || choice?.choiceId) === String(choiceId));
-        if (legalChoice) {
-          resolvedIntent = {
-            ...intent,
-            submission: { ...intent.submission, choice: legalChoice },
-          };
-        }
-      }
-      return (
-      (result) => {
-        queueMicrotask(() => {
-          renderResidentDesktop();
-          updateActionButtons?.();
-          scheduleAiAutoStepIfNeeded?.();
-        });
-        return result;
-      }
-      )(residentInputAdapter.dispatchIntent(resolvedIntent));
-    },
+    dispatchIntent: (intent) => (
+      intent?.kind === "decision"
+        ? humanDecisionInputAdapter.submit(intent.submission)
+        : residentInputAdapter.dispatchIntent(intent)
+    ),
   });
   const residentDecisionRenderer = browserHostModule.decisionUi.createDecisionDomRenderer({
     root: document.getElementById("compositionDecisionRoot"),
@@ -3021,10 +2986,7 @@
       executeIndustryFreeMove: (...args) => executeIndustryFreeMove(...args),
       createActionContext: createActionContextForWorkingRoot,
       recordMainActionIrreversibleBarrier: (...args) => recordMainActionIrreversibleBarrier(...args),
-      submitDiscardDecision: (handIndexes) => submitActiveCardDecision(
-        "discard-hand-cards",
-        handFlowModule.createHandIndexDecisionMatcher(handIndexes),
-      ),
+      submitDiscardDecision: submitActiveCardDecision,
       scrollToPlayerCommandPanel,
       listHumanActions: (family) => listHumanLegalActions(family),
       submitHumanAction,
@@ -3058,7 +3020,7 @@
   const resolveMovePaymentDecision = (...args) => browserOwnerInputs.hand_flow.resolveMovePaymentDecision(...args);
   const { confirmMovePayment } = handFlowModule.createMovePaymentDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
-    submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
+    submitDecision: (submission) => humanDecisionInputAdapter.submit(submission),
     getSelectedHandIndices: () => uiRuntimeState.movePaymentSelectedHandIndices || [],
   });
   const syncPlayCardSelectionChrome = (...args) => browserOwnerInputs.hand_flow.syncPlayCardSelectionChrome(...args);
@@ -3087,14 +3049,9 @@
   const cancelCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.cancelCardCornerQuickAction(...args);
   const handleHandCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.handleHandCardCornerQuickAction(...args);
   const beginDiscardSelection = (...args) => browserOwnerInputs.hand_flow.beginDiscardSelection(...args);
-  const cancelDiscardSelection = () => submitActiveCardDecision("cancel-discard-selection", () => true);
+  const cancelDiscardSelection = submitActiveCardDecision;
   const completeDiscardSelection = (...args) => browserOwnerInputs.hand_flow.completeDiscardSelection(...args);
-  const finalizePendingDiscardSelection = (selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes || []) => (
-    submitActiveCardDecision(
-      "discard-hand-cards",
-      handFlowModule.createHandIndexDecisionMatcher(selectedHandIndexes),
-    )
-  );
+  const finalizePendingDiscardSelection = submitActiveCardDecision;
   const handleHandCardDiscard = (...args) => browserOwnerInputs.hand_flow.handleHandCardDiscard(...args);
   const beginPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.beginPlayCardSelection(...args);
   const cancelPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.cancelPlayCardSelection(...args);
@@ -3280,10 +3237,7 @@
   const handlePublicScanCardClick = (...args) => browserOwnerInputs.scan_flow.handlePublicScanCardClick(...args);
   const beginHandScan = (...args) => browserOwnerInputs.scan_flow.beginHandScan(...args);
   const cancelHandScanSelection = () => abortActiveDecision("已取消手牌扫描");
-  const handleHandScanCardClick = (handIndex) => submitActiveCardDecision(
-    "hand-scan-card",
-    (target) => Number(target.handIndex) === Number(handIndex),
-  );
+  const handleHandScanCardClick = submitActiveCardDecision;
   const incomeRuntime = incomeRuntimeModule.createIncomeRuntime({
     INCOME_GAIN_LABELS,
     players,
@@ -3419,11 +3373,7 @@
     hasAlienTracePanelPlacementTarget: hasAlienTracePanelPlacementTargetForRoot,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
-  const confirmAlienRevealNotice = () => (
-    browserPendingDecisionOwner.read("turn_end_reveal")
-      ? submitActiveCardDecision("turn-end-reveal-confirm", () => true)
-      : confirmAlienRevealNoticeUi()
-  );
+  const confirmAlienRevealNotice = confirmAlienRevealNoticeUi;
   const {
     openAlienTracePicker,
     closeAlienTracePicker,
@@ -3984,12 +3934,7 @@
     beginCardMoveEffect: beginCardMoveEffectForRoot,
   } = cardRuntime;
   const beginCardMoveEffect = (effect) => effectFlowOwnerInputPort.beginCardMove(effect);
-  const executeFreeMoveForCardCorner = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
-    "card-corner-free-move",
-    (target, choice) => String(target.rocketId) === String(rocketId)
-      && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
-      && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
-  );
+  const executeFreeMoveForCardCorner = submitActiveCardDecision;
   const releaseFutureSpanAfterPlayWithHistory = (...args) => browserOwnerInputs.card_runtime
     .releaseFutureSpanAfterPlayWithHistory(...args);
   const {
@@ -4039,7 +3984,7 @@
   );
   const { confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
-    submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
+    submitDecision: (submission) => humanDecisionInputAdapter.submit(submission),
     getSelectedCardId: () => uiRuntimeState.passReserveSelectedCardId || null,
   });
   const {
@@ -4189,24 +4134,10 @@
     beginCardTriggerFreeMove,
     applyCardTriggerMatch,
   } = cardTriggerRuntime;
-  const cancelCardTriggerChoice = () => submitActiveCardDecision(
-    "card-trigger-cancel",
-    (target) => target.choiceId === "cancel",
-  );
-  const confirmCardTaskCompletion = (choiceId = "confirm") => submitActiveCardDecision(
-    "card-task-completion",
-    (target) => String(target.choiceId) === String(choiceId),
-  );
-  const handleCardTriggerChoice = (choiceIndex) => submitActiveCardDecision(
-    "card-trigger",
-    (target) => Number(target.choiceIndex) === Number(choiceIndex),
-  );
-  const executeFreeMoveForCardTrigger = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
-    "card-trigger-free-move",
-    (target, choice) => String(target.rocketId) === String(rocketId)
-      && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
-      && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
-  );
+  const cancelCardTriggerChoice = submitActiveCardDecision;
+  const confirmCardTaskCompletion = submitActiveCardDecision;
+  const handleCardTriggerChoice = submitActiveCardDecision;
+  const executeFreeMoveForCardTrigger = submitActiveCardDecision;
 
   const blockManualAiMovePayment = renderRuntimeModule.createMovePaymentAiGuard({
     getMovePaymentPlayer,
@@ -4500,12 +4431,7 @@
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
 
-  const executeCardMoveForEffect = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
-    "card-effect-move",
-    deltaX,
-    deltaY,
-    rocketId,
-  );
+  const executeCardMoveForEffect = submitActiveCardDecision;
 
   const probeDecisionPort = scanFlowModule.createProbeDecisionPort({
     getPendingProbeSectorScanDecision,
@@ -4840,12 +4766,7 @@
     createCompanyCardSummary,
     getStrategyPassiveSelectableSlotIds,
   } = industryRuntime;
-  const executeIndustryFreeMove = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
-    "industry-free-move",
-    deltaX,
-    deltaY,
-    rocketId,
-  );
+  const executeIndustryFreeMove = submitActiveCardDecision;
 
   const techRuntime = techRuntimeModule.createBrowserTechRuntime({
     staticContext: techRuntimeModule.createBrowserTechStaticContext(dependencies),
@@ -5467,7 +5388,7 @@
       capture: () => browserCheckpointPort.capture(),
       restore: (envelope) => browserCheckpointPort.restore(envelope),
       dispatchAction: (action) => submitHumanAction(action),
-      submitDecision: (submission) => residentInputAdapter.submitDecision(submission),
+      submitDecision: (submission) => humanDecisionInputAdapter.submit(submission),
     },
   });
 

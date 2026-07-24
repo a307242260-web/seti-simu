@@ -24,17 +24,30 @@ module.exports = Object.freeze([
         throw new Error("等待超时: " + label);
       };
       document.querySelector("#start-screen-start-button").click();
-      await waitFor(() => document.querySelectorAll(".initial-selection-card-button").length >= 5, "真人初始选择");
       const inputBefore = window.SetiRandomizer.inspect().input.submissionSequence;
-      document.querySelector(".initial-selection-section-industry .initial-selection-card-button:not(:disabled)")?.click();
-      await waitFor(() => Boolean(document.querySelector(".initial-selection-section-industry .initial-selection-card-button.is-selected")), "公司 DOM 选择");
-      document.querySelector(".initial-selection-section-initial .initial-selection-card-button:not(:disabled):not(.is-selected)")?.click();
-      await waitFor(() => document.querySelectorAll(".initial-selection-section-initial .initial-selection-card-button.is-selected").length === 1, "第一张初始牌 DOM 选择");
-      document.querySelector(".initial-selection-section-initial .initial-selection-card-button:not(:disabled):not(.is-selected)")?.click();
-      await waitFor(() => document.querySelectorAll(".initial-selection-section-initial .initial-selection-card-button.is-selected").length === 2, "第二张初始牌 DOM 选择");
-      const confirm = document.querySelector(".initial-selection-confirm:not(:disabled)");
-      if (!confirm) throw new Error("初始选择确认按钮未启用");
-      confirm.click();
+      const submitVisibleDecision = async (label, predicate) => {
+        await waitFor(() => [...document.querySelectorAll(
+          '#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]:not(:disabled)',
+        )].some(predicate), label + " choice");
+        const choice = [...document.querySelectorAll(
+          '#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]:not(:disabled)',
+        )].find(predicate);
+        const beforeId = window.SetiRandomizer.inspect().projection.decision?.decisionId;
+        choice.click();
+        await waitFor(() => Boolean(
+          document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)'),
+        ), label + " confirm");
+        document.querySelector(
+          '#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)',
+        ).click();
+        await waitFor(() => (
+          window.SetiRandomizer.inspect().projection.decision?.decisionId !== beforeId
+        ), label + " advance");
+      };
+      await submitVisibleDecision("公司 DOM Decision", (button) => button.textContent.startsWith("选择公司"));
+      await submitVisibleDecision("第一张初始牌 DOM Decision", (button) => button.textContent.startsWith("选择："));
+      await submitVisibleDecision("第二张初始牌 DOM Decision", (button) => button.textContent.startsWith("选择："));
+      await submitVisibleDecision("初始选择确认 DOM Decision", (button) => button.textContent === "确认初始选择");
       await waitFor(() => {
         const input = window.SetiRandomizer.inspect().input;
         return input.submissionSequence >= inputBefore + 15
