@@ -79,12 +79,26 @@ function createProjectionWithFinalReadModel() {
     stateStore: stateApi.createStateStore(createState()),
     visibilityPolicy(state, viewer, context) {
       const visible = projectionApi.defaultVisibilityPolicy(state, viewer, context);
+      const presentationPlayers = visible.resident.players.players;
       visible.resident = {
         finalReadModel: createFinalReadModel(),
         browserReadModel: browserReadModelOwner.project(state, {
           viewer,
-          createHandPresentation: (player) => player?.hand || [],
-          createReservedCardItems: (player) => player?.reservedCards || [],
+          presentationPlayers,
+          presentationState: {
+            match: visible.match,
+            turn: visible.resident.turn,
+            players: visible.resident.players,
+            solarSystem: visible.resident.solar,
+            pieces: visible.resident.pieces,
+            planets: visible.resident.planets,
+            data: visible.resident.data,
+            cards: visible.resident.cards,
+            tech: visible.resident.tech,
+            aliens: visible.resident.aliens,
+            finalScoring: visible.resident.finalScoring,
+            effectPresentation: visible.resident.effectPresentation,
+          },
         }),
       };
       return visible;
@@ -200,6 +214,50 @@ function createState() {
   });
 }
 
+(function testRenderBuilderOnlyReceivesFrozenViewerSafePresentation() {
+  const state = structuredClone(createState());
+  const before = JSON.stringify(state);
+  const owner = browserReadModelApi.createBrowserReadModelOwner({
+    solar: {
+      createSolarSnapshot: () => ({ planetLocations: [], visibleContents: [] }),
+    },
+    aliens: {
+      ALIEN_SLOT_IDS: [],
+      getAlienSlot: () => null,
+    },
+    tech: {
+      isSupplySelectionActive: () => false,
+      listTakeableTiles: () => [],
+    },
+  });
+  const presentationPlayers = [{
+    id: "p1", name: "一号", resources: { credits: 5 }, hand: ["own-card"],
+  }];
+  const presentationState = {
+    match: { status: "playing" },
+    turn: { roundNumber: 2, turnNumber: 3, currentPlayerId: "p1" },
+    players: { currentPlayerId: "p1", players: presentationPlayers },
+    cards: { ui: {} },
+  };
+  assert.throws(
+    () => owner.project(state, {
+      presentationState,
+      presentationPlayers,
+      createRenderPresentation(input) {
+        assert.equal(Object.isFrozen(input.state), true);
+        assert.equal(Object.isFrozen(input.players), true);
+        const serialized = JSON.stringify(input);
+        assert.equal(serialized.includes("DECK_ORDER_CANARY"), false);
+        assert.equal(serialized.includes("OPPONENT_HAND_CANARY"), false);
+        input.state.match.status = "poison";
+        return {};
+      },
+    }),
+    TypeError,
+  );
+  assert.equal(JSON.stringify(state), before, "renderer 异常不得改写 canonical bytes");
+})();
+
 (function testCommittedProjectionIsDefaultDenyFrozenAndIsolated() {
   const store = stateApi.createStateStore(createState());
   let snapshotCalls = 0;
@@ -309,6 +367,11 @@ function createState() {
   const turn = residentProjectionApi.selectTurnFlowProjection(projection);
   const board = residentProjectionApi.selectBoardCoordinateProjection(projection);
   const render = residentProjectionApi.selectRenderProjection(projection);
+  const playerTurn = residentProjectionApi.selectPlayerTurnProjection(projection);
+  const effectPresentation = residentProjectionApi.selectEffectPresentation(projection);
+  const cardUi = residentProjectionApi.selectCardUiProjection(projection);
+  const solarBriefing = residentProjectionApi.selectSolarBriefingProjection(projection);
+  const alienBoard = residentProjectionApi.selectAlienBoardProjection(projection);
 
   assert.deepEqual(Object.keys(actionInteraction).sort(), [
     "activeRocketId", "identity", "industryBorrowMode", "schemaVersion",
@@ -327,9 +390,19 @@ function createState() {
   assert.deepEqual(Object.keys(render.markerPresentation).sort(), [
     "anomalies", "planetFossils", "runezuSymbols",
   ]);
-  for (const dto of [events, actionInteraction, turn, board, render]) {
+  assert.equal(playerTurn.schemaVersion, "seti-player-turn-projection-v1");
+  assert.equal(playerTurn.value.players.players.some((player) => player.privateGoal === "OPPONENT_GOAL_CANARY"), false);
+  assert.equal(effectPresentation.schemaVersion, "seti-effect-presentation-v1");
+  assert.equal(cardUi.schemaVersion, "seti-card-ui-projection-v1");
+  assert.equal(solarBriefing.schemaVersion, "seti-solar-briefing-projection-v1");
+  assert.equal(alienBoard.schemaVersion, "seti-alien-board-projection-v1");
+  for (const dto of [
+    events, actionInteraction, turn, board, render,
+    playerTurn, effectPresentation, cardUi, solarBriefing, alienBoard,
+  ]) {
     assert.equal(Object.isFrozen(dto), true);
     assert.equal(JSON.stringify(dto).includes("ruleRoot"), false);
+    assert.equal(JSON.stringify(dto).includes("OPPONENT_HAND_CANARY"), false);
   }
 
   assert.throws(

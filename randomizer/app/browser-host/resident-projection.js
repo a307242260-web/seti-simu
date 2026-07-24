@@ -22,6 +22,11 @@
     turnFlow: "seti-turn-flow-projection-v1",
     boardCoordinate: "seti-board-coordinate-projection-v1",
     render: "seti-render-projection-v1",
+    playerTurn: "seti-player-turn-projection-v1",
+    effectPresentation: "seti-effect-presentation-v1",
+    cardUi: "seti-card-ui-projection-v1",
+    solarBriefing: "seti-solar-briefing-projection-v1",
+    alienBoard: "seti-alien-board-projection-v1",
   });
   const FINAL_READ_MODEL_SCHEMA = "seti-final-read-model-v1";
   const BROWSER_READ_MODEL_SCHEMA = "seti-browser-read-model-v1";
@@ -102,6 +107,11 @@
       "playerPanels", "turnPresentation", "cardPanels", "dataPresentation",
       "markerPresentation", "techTilePresentation", "finalScorePresentation", "readoutLines",
     ]),
+    playerTurn: Object.freeze(["schemaVersion", "identity", "value"]),
+    effectPresentation: Object.freeze(["schemaVersion", "identity", "value"]),
+    cardUi: Object.freeze(["schemaVersion", "identity", "value"]),
+    solarBriefing: Object.freeze(["schemaVersion", "identity", "value"]),
+    alienBoard: Object.freeze(["schemaVersion", "identity", "value"]),
   });
 
   function clone(value) {
@@ -236,8 +246,13 @@
     assertDeepFrozen(readModel, "browserReadModel");
     assertExactKeys(
       readModel,
-      ["schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "render"],
+      ["schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "runtime", "render"],
       "browserReadModel",
+    );
+    assertExactKeys(
+      readModel.runtime,
+      ["playerTurn", "effectPresentation", "cardUi", "solarBriefing", "alienBoard"],
+      "browserReadModel.runtime",
     );
     assertExactKeys(readModel.render, BROWSER_RENDER_KEYS, "browserReadModel.render");
     for (const [key, keys] of Object.entries(BROWSER_RENDER_CHILD_KEYS)) {
@@ -245,6 +260,36 @@
     }
     return readModel;
   }
+
+  function selectRuntimeProjection(browserProjection, key, schemaVersion) {
+    const projection = assertCanonicalBrowserProjection(browserProjection);
+    const readModel = getBrowserReadModel(projection);
+    return deepFreeze({
+      schemaVersion,
+      identity: createRuntimeIdentity(projection),
+      value: clone(readModel.runtime[key]),
+    });
+  }
+
+  const selectPlayerTurnProjection = (projection) => (
+    selectRuntimeProjection(projection, "playerTurn", RUNTIME_PROJECTION_SCHEMAS.playerTurn)
+  );
+  const selectEffectPresentation = (projection) => (
+    selectRuntimeProjection(
+      projection,
+      "effectPresentation",
+      RUNTIME_PROJECTION_SCHEMAS.effectPresentation,
+    )
+  );
+  const selectCardUiProjection = (projection) => (
+    selectRuntimeProjection(projection, "cardUi", RUNTIME_PROJECTION_SCHEMAS.cardUi)
+  );
+  const selectSolarBriefingProjection = (projection) => (
+    selectRuntimeProjection(projection, "solarBriefing", RUNTIME_PROJECTION_SCHEMAS.solarBriefing)
+  );
+  const selectAlienBoardProjection = (projection) => (
+    selectRuntimeProjection(projection, "alienBoard", RUNTIME_PROJECTION_SCHEMAS.alienBoard)
+  );
 
   function getFinalReadModel(projection) {
     const readModel = projection.resident?.finalReadModel;
@@ -425,7 +470,8 @@
         : null;
       return {
         active,
-        interactive: setupPresentation.interactive === true && !context.isAiPlayer?.(currentPlayerId),
+        interactive: setupPresentation.interactive === true
+          && !context.isAiPlayer?.(currentPlayerId, projectedPlayer),
         currentPlayerId,
         offer,
         selectedCards: clonePresentationValue(
@@ -565,6 +611,11 @@
     selectTurnFlowProjection,
     selectBoardCoordinateProjection,
     selectRenderProjection,
+    selectPlayerTurnProjection,
+    selectEffectPresentation,
+    selectCardUiProjection,
+    selectSolarBriefingProjection,
+    selectAlienBoardProjection,
     assertEventsProjection,
     assertActionInteractionProjection,
     assertTurnFlowProjection,

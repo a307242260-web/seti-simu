@@ -6,14 +6,12 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan", "getPlanetName",
-    "markerBelongsToPlayer", "playerHasOwnOrbitMarkerAtPlanet", "markerOwnerLabel",
-    "buildPlanetMarkerRemovalChoices", "removePlanetMarkerForChoice", "handleRemovePlanetMarkerChoice",
-    "handleScanAction4Choice", "formatPlanetRewardGain", "finishAutomaticRewardEffect",
-    "buildPlutoRewardEffectsForAction", "buildPlutoChoiceRewardSummary", "handleHandCornerChoice",
-    "getSectorXsMatchingCondition", "sectorXHasAvailableScanTarget", "isAlienFamilyCard",
-    "handleReturnUnfinishedTaskChoice", "countOwnedTechByType", "enrichScanResultEvents",
-    "getPlayerCompanyBaseIncome", "insertActionEffectsAfterCurrent", "insertActionEffectsBeforeCurrent",
+    "executeSectorXScanEffect", "maybeReturnPlayedCardToHandAfterSectorScan",
+    "removePlanetMarkerForChoice", "handleRemovePlanetMarkerChoice",
+    "handleScanAction4Choice", "finishAutomaticRewardEffect",
+    "handleHandCornerChoice",
+    "handleReturnUnfinishedTaskChoice",
+    "insertActionEffectsAfterCurrent", "insertActionEffectsBeforeCurrent",
     "handleOptionalHandScanChoice", "openYichangdianCornerPicker", "handleYichangdianCornerChoice",
     "applyAomomoScanCostAndBonus",
   ]);

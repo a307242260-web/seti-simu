@@ -12,9 +12,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (turnFlow) {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
-    "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
-    "getPlutoActionCost", "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement",
+    "removePlutoMarker",
+    "executePlutoAction",
     "openPlutoActionChoicePicker", "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode",
     "deactivateMoveMode", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
     "confirmDataPlacement",
@@ -40,15 +39,6 @@
         cancel: (workingRoot) => ({
           ok: true,
           value: context.clonePresentation(context.cancelLandTarget(workingRoot)),
-        }),
-      }),
-      boardQuery: registry.register("board_query", {
-        currentPlanet: (workingRoot, command) => ({
-          ok: true,
-          value: context.getRocketCurrentPlanet(
-            workingRoot,
-            command.rocketId ?? command.args?.[0],
-          ),
         }),
       }),
       dataInteraction: registry.register("data_interaction", {
@@ -540,23 +530,16 @@
     const directMethods = [
       "ensurePlutoCardEffectState", "getPlutoActionState", "addPlutoMarker",
       "getPlutoChoiceActionLabel", "formatPlutoChoiceLabel", "isDataPoolFull", "getAutoDataPlacementCheck",
+      "getPlutoReservedCards", "collectPlutoMarkers", "buildPlutoMarkerContext",
+      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
+      "getPlutoActionCost", "getAvailablePlutoAction", "getCurrentPlanetActionPlacement",
     ];
     const commandFallbacks = {
-      getPlutoReservedCards: [],
-      collectPlutoMarkers: [],
-      buildPlutoMarkerContext: { plutoMarkers: [] },
-      playerHasOwnPlutoLanding: false,
-      buildPlutoMarkerRemovalChoices: [],
-      getPlutoCandidateRockets: [],
-      getPlutoActionCost: {},
-      getAvailablePlutoAction: { ok: false },
-      getCurrentPlanetActionPlacement: { ok: false },
       activateMoveMode: false,
     };
     const commandMethods = [
-      "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
-      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets", "getPlutoActionCost",
-      "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement",
+      "removePlutoMarker",
+      "executePlutoAction",
       "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode",
       "closeDataPlacePicker", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
     ];
@@ -692,7 +675,15 @@
     }
 
     function getRocketCurrentPlanetId(rocketId) {
-      return context.inputPort.currentPlanet(rocketId);
+      const projection = context.getBoardCoordinateProjection();
+      const rocket = projection.tokens.find((item) => Number(item.id) === Number(rocketId));
+      const coordinate = rocket?.sectorCoordinate || rocket?.slotSectorCoordinate
+        || (rocket?.x != null && rocket?.y != null ? { x: rocket.x, y: rocket.y } : null);
+      if (!coordinate) return null;
+      const planet = projection.planetLocations.find((item) => (
+        Number(item.x) === Number(coordinate.x) && Number(item.y) === Number(coordinate.y)
+      ));
+      return planet?.planetId || null;
     }
 
     return Object.freeze({ getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId });

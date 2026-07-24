@@ -69,7 +69,10 @@
     for (const [id, player] of playerEntries) {
       const visiblePlayer = id === playerId
         ? clone(player)
-        : pick(player, ["id", "name", "color", "colorLabel", "score", "resources", "income", "passed", "eliminated"]);
+        : pick(player, [
+          "id", "name", "color", "colorLabel", "score", "resources", "income",
+          "passed", "eliminated", "aiEnabled", "aiDifficulty", "aiDifficultyLabel",
+        ]);
       players[id] = {
         ...visiblePlayer,
         id: String(player?.id ?? id),
@@ -192,6 +195,7 @@
           "fangzhou", "chong", "amiba", "aomomo", "runezu", "revealedSlotIds",
         ]),
         finalScoring: clone(state?.finalScoring || {}),
+        effectPresentation: clone(state?.match?.actionEffectPresentation || null),
         initialSetup: setupPresentation,
       },
       feedback: { events: [], logs: [], progress: null, notices: [] },

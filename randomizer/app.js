@@ -189,6 +189,9 @@
   const startScreenState = runtime.startScreen;
   const uiRuntimeState = runtime.ui;
   const browserHostState = runtime.browserHost;
+  const isBrowserHostAiPlayer = (playerId) => (
+    browserHostState.aiPlayerIds.some((id) => String(id) === String(playerId))
+  );
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
   let cardTriggerRuntime = null;
@@ -262,14 +265,50 @@
   const {
     executeSectorXScanEffect,
     maybeReturnPlayedCardToHandAfterSectorScan,
+    removePlanetMarkerForChoice,
+    finishAutomaticRewardEffect,
+    insertActionEffectsAfterCurrent,
+    insertActionEffectsBeforeCurrent,
+    openYichangdianCornerPicker,
+    handleYichangdianCornerChoice,
+    applyAomomoScanCostAndBonus,
+  } = effectExecutorCommandPort;
+  const getPlanetName = (...args) => effectExecutors.getPlanetName(...args);
+  const markerBelongsToPlayer = (...args) => effectExecutors.markerBelongsToPlayer(...args);
+  const playerHasOwnOrbitMarkerAtPlanet = (...args) => (
+    effectExecutors.playerHasOwnOrbitMarkerAtPlanet(...args)
+  );
+  const markerOwnerLabel = (...args) => effectExecutors.markerOwnerLabel(...args);
+  const buildPlanetMarkerRemovalChoices = (...args) => (
+    effectExecutors.buildPlanetMarkerRemovalChoices(...args)
+  );
+  const formatPlanetRewardGain = (...args) => effectExecutors.formatPlanetRewardGain(...args);
+  const buildPlutoRewardEffectsForAction = (...args) => (
+    effectExecutors.buildPlutoRewardEffectsForAction(...args)
+  );
+  const buildPlutoChoiceRewardSummary = (...args) => (
+    effectExecutors.buildPlutoChoiceRewardSummary(...args)
+  );
+  const getSectorXsMatchingCondition = (...args) => (
+    effectExecutors.getSectorXsMatchingCondition(...args)
+  );
+  const sectorXHasAvailableScanTarget = (...args) => (
+    effectExecutors.sectorXHasAvailableScanTarget(...args)
+  );
+  const isAlienFamilyCard = (...args) => effectExecutors.isAlienFamilyCard(...args);
+  const countOwnedTechByType = (...args) => effectExecutors.countOwnedTechByType(...args);
+  const enrichScanResultEvents = (...args) => effectExecutors.enrichScanResultEvents(...args);
+  const getPlayerCompanyBaseIncome = (...args) => (
+    effectExecutors.getPlayerCompanyBaseIncome(...args)
+  );
+  const effectExecutorRuntimePort = Object.freeze({
+    ...effectExecutorCommandPort,
     getPlanetName,
     markerBelongsToPlayer,
     playerHasOwnOrbitMarkerAtPlanet,
     markerOwnerLabel,
     buildPlanetMarkerRemovalChoices,
-    removePlanetMarkerForChoice,
     formatPlanetRewardGain,
-    finishAutomaticRewardEffect,
     buildPlutoRewardEffectsForAction,
     buildPlutoChoiceRewardSummary,
     getSectorXsMatchingCondition,
@@ -278,12 +317,7 @@
     countOwnedTechByType,
     enrichScanResultEvents,
     getPlayerCompanyBaseIncome,
-    insertActionEffectsAfterCurrent,
-    insertActionEffectsBeforeCurrent,
-    openYichangdianCornerPicker,
-    handleYichangdianCornerChoice,
-    applyAomomoScanCostAndBonus,
-  } = effectExecutorCommandPort;
+  });
   const turnEndPort = turnEndFlowModule.createTurnEndPort({
     getRuntime: () => turnEndFlow,
     dispatchCommand: (name, args) => browserOwnerInputs.turn_end[name](...args),
@@ -296,6 +330,10 @@
   const debugPort = debugRuntimeModule.createDebugPort({
     dispatchCommand: (name, args) => browserOwnerInputs.debug[name](...args),
     getEventsProjection: () => getEventsProjection(),
+    getFailsafePendingOwnerPlayer: () => {
+      const ownerId = ruleComposition.inspect()?.session?.decision?.ownerId || null;
+      return ownerId ? getPlayerById(ownerId) : null;
+    },
   });
   const {
     addDebugCardByInput, addDebugData, addDebugIncome, addDebugScore, fillDebugNebulaData,
@@ -505,7 +543,9 @@
     ),
     getCardLabel: (card) => cards.getCardLabel(card),
     getSelectedPublicSlots: () => uiRuntimeState.publicCardSelectedSlots || [],
-    getPublicScanChoicesForCard: (card) => getPublicScanChoicesForCard(card),
+    getPublicScanChoicesForCard: (workingRoot, card) => (
+      scanFlowHelpers.getPublicScanChoicesForCard(workingRoot, card)
+    ),
     getPublicScanMinSelectable: (pending) => getPublicScanMinSelectable(pending),
     getPublicCardMultiSelectMinSelectable: (pending) => getPublicCardMultiSelectMinSelectable(pending),
     canBlindDraw: (workingRoot) => canBlindDrawForRoot(workingRoot),
@@ -544,10 +584,6 @@
   const turnOwnerInputPort = turnFlowModule.createTurnOwnerInputPort(browserOwnerInputRegistry, {
     getController: () => turnFlowController,
   });
-  const turnReadoutOwnerInputPort = turnFlowModule.createTurnReadoutOwnerInputPort(
-    browserOwnerInputRegistry,
-    { buildFinalSummary: (...args) => buildFinalScoreSummaryLinesForRoot(...args) },
-  );
   const coordinateOwnerInputPort = renderRuntimeModule.createCoordinateOwnerInputPort(
     browserOwnerInputRegistry,
     { getRuntime: () => coordinateRuntime },
@@ -562,7 +598,6 @@
     browserOwnerInputRegistry,
     {
       clonePresentation: cloneResidentPresentation,
-      getRequiredMovePoints: (...args) => getRequiredMovePointsForUiForRoot(...args),
       recoverPending: (...args) => recoverPendingActionFromOpenHistoryForAiForRoot(...args),
     },
   );
@@ -600,13 +635,6 @@
       clonePresentation: cloneResidentPresentation,
       checkPending: (...args) => blockIncompatiblePendingQuickActionForRoot(...args),
       undoPending: (...args) => undoPendingActionForRoot(...args),
-    },
-  );
-  const chongTransportOwnerInputPort = alienRuntimeModule.createChongTransportOwnerInputPort(
-    browserOwnerInputRegistry,
-    {
-      clonePresentation: cloneResidentPresentation,
-      listReady: (...args) => listReadyChongTransportCandidatesForRoot(...args),
     },
   );
   const recoveryOwnerInputPort = gameRecoveryModule.createRecoveryOwnerInputPort(
@@ -828,7 +856,7 @@
   const getInitialSelectionOffer = (playerId = null) => getInitialSetupProjection(playerId).offer || null;
   const getInitialSelectionPlayerIds = () => [...(getTurnFlowProjection().activePlayerIds || [])];
   const isInitialSelectionActive = () => (
-    ruleComposition.readModelPort.read("initialSetupStatus").active === true
+    getInitialSetupProjection().active === true
   );
   const isInitialSelectionConfirmed = (playerId) => (
     getInitialSetupProjection(playerId).confirmedPlayerIds?.includes(playerId) === true
@@ -860,7 +888,7 @@
     advanceTurnAfterPlayerAction, startNewGame, randomizeAll, normalizeAiDifficulty,
   } = turnHostRuntime;
   const browserMatchRuntime = runtimeModule.createBrowserMatchRuntime({
-    readActionEffectFlow: () => ruleComposition.readModelPort.read("actionEffectFlow"),
+    readActionEffectFlow: () => getEffectPresentationProjection(),
     uiRuntimeState: runtime.ui,
   });
   const {
@@ -1175,7 +1203,7 @@
     hasCurrentMainActionIrreversibleBarrier, getMainActionStartBlockReason, canStartMainAction,
   } = actionSessionRuntime;
   const cardSelectionState = browserHostModule.cardDecisionUi.createCardSelectionState({
-    readCardUiState: () => ruleComposition.readModelPort.read("cardUi"),
+    readCardUiState: () => getCardUiProjection(),
     cards,
     getPendingDiscardDecision,
     readCardSelectionDecision,
@@ -1317,44 +1345,84 @@
     }),
   });
 
-  const getResidentViewer = browserHostModule.residentProjection.createViewerResolver({
-    getInterfacePlayer: () => getInterfacePlayer(),
-  });
+  const getResidentViewer = () => {
+    const playerId = browserHostState.viewerPlayerId;
+    return Object.freeze({
+      viewerId: `browser:${playerId || "spectator"}`,
+      playerId: playerId == null ? null : String(playerId),
+      role: playerId == null ? "spectator" : "player",
+    });
+  };
+  const resolveProjectedInterfacePlayerId = (projection) => {
+    const playerTurn = projection?.resident?.browserReadModel?.runtime?.playerTurn;
+    const sourcePlayers = playerTurn?.players?.players || [];
+    const currentPlayer = sourcePlayers.find(
+      (player) => String(player?.id) === String(playerTurn?.turn?.currentPlayerId),
+    ) || null;
+    if (!currentPlayer) return null;
+    const isAiPlayer = (player) => isBrowserHostAiPlayer(player?.id);
+    if (!isAiPlayer(currentPlayer)) return currentPlayer.id;
+    const activeIds = new Set(playerTurn.turn?.activePlayerIds || []);
+    return sourcePlayers.find((player) => activeIds.has(player.id) && !isAiPlayer(player))?.id
+      || sourcePlayers.find((player) => !isAiPlayer(player))?.id
+      || currentPlayer.id;
+  };
   let browserProjectionReadActive = false;
-  const getCanonicalBrowserProjection = () => {
+  const readBrowserProjection = () => {
     if (browserProjectionReadActive) {
       throw new Error("BrowserProjection owner 禁止在 projection 构造期间递归读取 projection");
     }
     browserProjectionReadActive = true;
     try {
-      return residentProjectionAdapter.projectSource({ viewer: getResidentViewer() });
+      let projection = residentProjectionAdapter.projectSource({ viewer: getResidentViewer() });
+      const interfacePlayerId = resolveProjectedInterfacePlayerId(projection);
+      if (String(interfacePlayerId || "") !== String(browserHostState.viewerPlayerId || "")) {
+        browserHostState.viewerPlayerId = interfacePlayerId;
+        projection = residentProjectionAdapter.projectSource({ viewer: getResidentViewer() });
+      }
+      return projection;
     } finally {
       browserProjectionReadActive = false;
     }
   };
   const getFinalUiProjection = () => (
-    browserHostModule.residentProjection.selectFinalUiProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectFinalUiProjection(readBrowserProjection())
   );
   const getFinalScoreAiProjection = () => (
-    browserHostModule.residentProjection.selectFinalScoreAiProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectFinalScoreAiProjection(readBrowserProjection())
   );
   const getActionLogProjection = () => (
-    browserHostModule.residentProjection.selectActionLogProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectActionLogProjection(readBrowserProjection())
   );
   const getRecoveryProjection = () => (
-    browserHostModule.residentProjection.selectRecoveryProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectRecoveryProjection(readBrowserProjection())
   );
   const getEventsProjection = () => (
-    browserHostModule.residentProjection.selectEventsProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectEventsProjection(readBrowserProjection())
   );
   const getActionInteractionProjection = () => (
-    browserHostModule.residentProjection.selectActionInteractionProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectActionInteractionProjection(readBrowserProjection())
   );
   const getTurnFlowProjection = () => (
-    browserHostModule.residentProjection.selectTurnFlowProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectTurnFlowProjection(readBrowserProjection())
   );
   const getBoardCoordinateProjection = () => (
-    browserHostModule.residentProjection.selectBoardCoordinateProjection(getCanonicalBrowserProjection())
+    browserHostModule.residentProjection.selectBoardCoordinateProjection(readBrowserProjection())
+  );
+  const getPlayerTurnProjection = () => (
+    browserHostModule.residentProjection.selectPlayerTurnProjection(readBrowserProjection()).value
+  );
+  const getEffectPresentationProjection = () => (
+    browserHostModule.residentProjection.selectEffectPresentation(readBrowserProjection()).value
+  );
+  const getCardUiProjection = () => (
+    browserHostModule.residentProjection.selectCardUiProjection(readBrowserProjection()).value
+  );
+  const getSolarBriefingProjection = () => (
+    browserHostModule.residentProjection.selectSolarBriefingProjection(readBrowserProjection()).value
+  );
+  const getAlienBoardProjection = () => (
+    browserHostModule.residentProjection.selectAlienBoardProjection(readBrowserProjection()).value
   );
   const getProjectedFinalScoreBreakdown = (playerOrId) => {
     const playerId = typeof playerOrId === "object"
@@ -1363,7 +1431,7 @@
     return getFinalUiProjection().players.find((entry) => String(entry.id) === String(playerId))?.breakdown
       || { totalScore: Number(playerOrId?.resources?.score) || 0 };
   };
-  const readPlayerTurnState = () => ruleComposition.readModelPort.read("playerTurn");
+  const readPlayerTurnState = () => getPlayerTurnProjection();
   const playerLookupRuntime = runtimeModule.createPlayerLookupRuntime({
     players,
     uiRuntimeState,
@@ -1418,15 +1486,15 @@
     cardTaskState, cardEffects, players, banrenma, jiuzhe, cards, fangzhou,
     resourceIconSrc: RESOURCE_ICON_SRC,
     clonePresentation: cloneResidentPresentation,
-    isAiPlayer: (playerId) => isAiAutoBattlePlayer?.(playerId),
-    getReadyChongTask: (...args) => getReadyChongTaskForReservedCard?.(...args),
-    getReadyAmibaTask: (...args) => getReadyAmibaTaskForReservedCard?.(...args),
-    getReadyRunezuTask: (...args) => getReadyRunezuTaskForReservedCard?.(...args),
-    getTaskBlockReason: () => getCardTaskCompletionBlockReason?.() || null,
-    getRunezuTaskProgressIndexes: (...args) => getRunezuTaskProgressIndexes?.(...args),
+    isAiPlayer: (_playerId, player) => Boolean(player?.aiEnabled),
+    getReadyChongTask: () => null,
+    getReadyAmibaTask: () => null,
+    getReadyRunezuTask: () => null,
+    getTaskBlockReason: () => null,
+    getRunezuTaskProgressIndexes: () => [],
     getPlutoActionState,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
-    isDebugAlienTraceMode: () => isDebugAlienTraceMode?.() || false,
+    isDebugAlienTraceMode: () => Boolean(uiRuntimeState.debugAlienTraceModeActive),
   });
   const createInitialSelectionProjection = residentPresentationBuilder.createInitialSelection;
   const createReservedCardProjection = residentPresentationBuilder.createReservedCards;
@@ -1437,6 +1505,7 @@
     turnFlow,
     boardCoordinate,
     viewer,
+    finalReadModel,
     initialSetup,
   }) {
     const getProjectedCompanyBaseIncome = (player) => players.normalizeIncome(
@@ -1458,20 +1527,26 @@
     const handCount = Array.isArray(interfacePlayer?.hand)
       ? interfacePlayer.hand.length
       : Math.max(0, Math.round(Number(interfacePlayer?.resources?.handSize) || 0));
-    const selectionActive = Boolean(isCardSelectionActive?.());
-    const allowsBlindDraw = selectionActive && Boolean(allowsBlindDrawInSelection?.());
-    const blindDrawAvailable = Boolean(canBlindDraw?.());
-    const finalReadModel = finalReadModelOwner.project(state);
+    const selectionActive = Boolean(
+      state.cards?.ui?.selectionActive
+      || state.cards?.ui?.cardSelectionActive
+      || state.cards?.ui?.playCardSelectionActive,
+    );
+    const allowsBlindDraw = selectionActive && state.cards?.ui?.allowsBlindDraw !== false;
+    const blindDrawAvailable = Number(state.cards?.drawPileCount) > 0;
     const actualCurrentPlayer = sourcePlayers.find(
       (player) => String(player?.id) === String(turnFlow.currentPlayerId),
     ) || null;
     const playerById = new Map(sourcePlayers.map((player) => [String(player?.id), player]));
     const selectedPublicSlots = new Set(uiRuntimeState.publicCardSelectedSlots || []);
-    const movePayment = getPendingMovePayment?.();
-    const discardDecision = getPendingDiscardDecision?.();
-    const handScanDecision = getPendingHandScanDecision?.();
-    const scanTargetDecision = getPendingScanTargetDecision?.()
-      || browserPendingDecisionOwner.read("public_scan");
+    const publicMultiSelectActive = Boolean(
+      state.cards?.ui?.publicScanMultiSelectActive
+      || state.cards?.ui?.publicCornerDiscardSelectionActive,
+    );
+    const movePayment = null;
+    const discardDecision = null;
+    const handScanDecision = null;
+    const scanTargetDecision = null;
     const playCardSelection = uiRuntimeState.playCardSelection || null;
     const cardCornerAction = uiRuntimeState.cardCornerQuickAction || null;
     const handCardPlayAction = uiRuntimeState.handCardPlayAction || null;
@@ -1489,10 +1564,14 @@
       && Number.isInteger(Number(scanTargetDecision.handIndex))
       ? Number(scanTargetDecision.handIndex)
       : null;
+    const industryHandActive = Boolean(state.cards?.ui?.industryHandSelectionActive);
+    const futureSpanHandActive = Boolean(state.cards?.ui?.industryFutureSpanHandSelectionActive);
     const cardCornerActionEnabled = actualCurrentPlayer?.id === interfacePlayer?.id
-      && canUseCardCornerQuickAction();
-    const industryHandActive = Boolean(industryRuntime?.isIndustryHandSelectionActive?.());
-    const futureSpanHandActive = Boolean(industryRuntime?.isIndustryFutureSpanHandSelectionActive?.());
+      && !selectionActive
+      && !discardActive
+      && !movePaymentActive
+      && !handScanActive
+      && !industryHandActive;
     const handPickActive = discardActive
       || playActive
       || movePaymentActive
@@ -1556,8 +1635,10 @@
         view.ariaLabel = moveCard ? `${label}（移动牌，点击选择弃置）` : label;
         view.title = moveCard ? "弃置此牌以支付移动" : "";
       } else if (cardCornerActionEnabled) {
-        const quickAction = getCardCornerQuickActionForCard(card);
-        const playAction = getHandCardPlayActionForCard(card, actualCurrentPlayer);
+        const quickAction = null;
+        const playAction = players.canAfford(actualCurrentPlayer, playCost)
+          ? { actionKind: "play", label: "打出", cost: playCost }
+          : null;
         view.selected = cardCornerAction?.cardId === card.id || handCardPlayAction?.cardId === card.id;
         if (quickAction || playAction) {
           if (quickAction) view.classNames.push("is-corner-action-card");
@@ -1612,13 +1693,14 @@
     }
 
     function createPlayerPanel(player) {
+      const presentationPlayer = structuredClone(player);
       const finalPlayer = finalReadModel.players.find(
         (entry) => String(entry.id) === String(player?.id),
       );
       const color = players.getPlayerColorDefinition(player?.color);
       const resources = player?.resources || players.DEFAULT_RESOURCES;
       const income = players.normalizeIncome(player?.income || null);
-      const placedData = data.listComputerPlacedTokens?.(player)?.length || 0;
+      const placedData = data.listComputerPlacedTokens?.(presentationPlayer)?.length || 0;
       const totalData = Object.keys(data.COMPUTER_DATA_SLOTS || {}).length || 6;
       const showAomomo = Boolean(
         state.solarSystem?.aomomoActive
@@ -1673,7 +1755,11 @@
         player?.aiEnabled ? "(电脑)" : ""
       }`;
       const opponentStats = {
-        orbitLand: endGameScoring.countOrbitOrLandMarkers(player, state.planets || {}, buildPlutoMarkerContext()),
+        orbitLand: endGameScoring.countOrbitOrLandMarkers(player, state.planets || {}, {
+          plutoMarkers: actionInteractionRuntime?.collectPlutoMarkersFromPlayerProjection({
+            players: sourcePlayers,
+          }) || [],
+        }),
         sectorWins: OPPONENT_SECTOR_WIN_STATS.map(({ color: sectorColor, label, iconKey }) => ({
           label,
           value: endGameScoring.countSectorWinsByColor(player, state.data || {}, sectorColor),
@@ -1749,8 +1835,9 @@
 
     function createPlayerDataPresentation(player) {
       if (!player) return { playerTokens: [], blueDropZones: [] };
+      const presentationPlayer = structuredClone(player);
       const playerTokens = [];
-      for (const token of data.listPoolTokens(player)) {
+      for (const token of data.listPoolTokens(presentationPlayer)) {
         const layout = data.getEffectivePoolSlotLayout(token.slotIndex);
         if (!layout) continue;
         playerTokens.push({
@@ -1769,7 +1856,7 @@
           scale: (layout.scalePercent / 100) * data.DATA_TOKEN_DISPLAY_SCALE,
         });
       }
-      for (const token of data.listPlacedTokens(player)) {
+      for (const token of data.listPlacedTokens(presentationPlayer)) {
         const blue = token.placementKind === "blueBonus";
         const layout = blue
           ? data.getBlueBonusDataSlotLayout(token.blueSlot)
@@ -1793,15 +1880,20 @@
           scale: (layout.scalePercent / 100) * data.DATA_TOKEN_DISPLAY_SCALE,
         });
       }
-      const eligible = new Set(data.listEligibleBlueBonusSlots(player));
-      const hasPoolData = data.listPoolTokens(player).length > 0;
+      const hasTechState = Boolean(presentationPlayer.techState);
+      const eligible = new Set(
+        hasTechState ? data.listEligibleBlueBonusSlots(presentationPlayer) : [],
+      );
+      const hasPoolData = data.listPoolTokens(presentationPlayer).length > 0;
       const blueDropZones = [];
       for (const blueSlot of [1, 2, 3, 4]) {
-        if (!data.hasBlueTechInBoardSlot(player, blueSlot)) continue;
-        if (data.listBlueBonusPlacedTokens(player).some((token) => token.blueSlot === blueSlot)) continue;
+        if (!hasTechState) continue;
+        if (!data.hasBlueTechInBoardSlot(presentationPlayer, blueSlot)) continue;
+        if (data.listBlueBonusPlacedTokens(presentationPlayer)
+          .some((token) => token.blueSlot === blueSlot)) continue;
         const layout = data.getBlueBonusDataSlotLayout(blueSlot);
         if (!layout) continue;
-        const tileId = data.getBlueTechTileInBoardSlot(player, blueSlot);
+        const tileId = data.getBlueTechTileInBoardSlot(presentationPlayer, blueSlot);
         const required = data.getRequiredComputerSlotForBlueBonus(blueSlot);
         const enabled = eligible.has(blueSlot) && hasPoolData;
         blueDropZones.push({
@@ -1969,10 +2061,10 @@
       `基础顺位 ${turnFlow.turnOrderPlayerIds.map((id) => turnFlow.playerLabelsById[String(id)] || id).join(" > ") || "无"}`,
       `本轮顺位 ${turnFlow.roundOrderPlayerIds.map((id) => turnFlow.playerLabelsById[String(id)] || id).join(" > ") || "无"}`,
       "",
-      ...finalScoring.getReadoutLines(state.finalScoring || {}),
+      ...finalScoring.getReadoutLines(structuredClone(state.finalScoring || {})),
       "",
       "星球统计",
-      ...planetStats.formatPlanetStatsLines(state.planets || {}),
+      ...planetStats.formatPlanetStatsLines(structuredClone(state.planets || {})),
       "",
       ...getRocketCoordinateReadoutLines({
         rockets: boardCoordinate.tokens,
@@ -1980,25 +2072,23 @@
         statusNote: state.pieces?.statusNote || null,
       }),
       "",
-      ...tech.getReadoutLines(state.tech || {}, {
+      ...tech.getReadoutLines(structuredClone(state.tech || {}), {
         currentPlayerId: turnFlow.currentPlayerId,
-        players: sourcePlayers,
+        players: structuredClone(sourcePlayers),
       }),
       "",
       ...data.getReadoutLines({
         currentPlayerId: turnFlow.currentPlayerId,
-        players: sourcePlayers,
+        players: structuredClone(sourcePlayers),
       }),
       "",
-      ...data.getNebulaReadoutLines(state.data || {}),
+      ...data.getNebulaReadoutLines(structuredClone(state.data || {})),
       "",
-      ...data.getSectorSettlementReadoutLines(state.data || {}),
+      ...data.getSectorSettlementReadoutLines(structuredClone(state.data || {})),
       "",
-      ...aliens.getReadoutLines(state.aliens || {}),
+      ...aliens.getReadoutLines(structuredClone(state.aliens || {})),
       "",
-      ...(industry.getReadoutLines?.(interfacePlayer, turnFlow.roundNumber) || []),
-      ...(actionHistory.hasSession() ? ["", "行动指令栈", ...actionHistory.getTrace()] : []),
-      ...(quickActionHistory.hasSession() ? ["", "快速行动指令栈", ...quickActionHistory.getTrace()] : []),
+      ...(industry.getReadoutLines?.(structuredClone(interfacePlayer), turnFlow.roundNumber) || []),
     ];
 
     return {
@@ -2054,8 +2144,10 @@
             isPlanetMarker: Boolean(token.referencePlacement?.isPlanetMarker),
             isChongFossil: token.kind === rocketActions.ROCKET_KIND?.CHONG_FOSSIL,
             isMoveTarget: token.id === uiRuntimeState.moveHighlightRocketId,
-            isMoveCandidate: isRocketMoveCandidate(token),
-            isMoveMuted: isRocketMoveMuted(token),
+            isMoveCandidate: uiRuntimeState.moveHighlightRocketId != null
+              && token.id === uiRuntimeState.moveHighlightRocketId,
+            isMoveMuted: uiRuntimeState.moveHighlightRocketId != null
+              && token.id !== uiRuntimeState.moveHighlightRocketId,
             isMoveSelectable: token.playerId === interfacePlayer?.id && token.movable,
             ownerTokenSrc: getNormalTokenAssetForPlayer(playerById.get(String(token.playerId)) || token),
           };
@@ -2073,12 +2165,12 @@
           label: card?.cardName || `公共牌 ${index + 1}`,
           empty: !card,
           selectable: selectionActive,
-          selected: Boolean(isPublicCardMultiSelectActive?.() && selectedPublicSlots.has(index)),
+          selected: Boolean(publicMultiSelectActive && selectedPublicSlots.has(index)),
         })),
         handCards: hand.map(createHandCardView),
         publicControls: {
           selectionActive,
-          multiSelectActive: Boolean(isPublicCardMultiSelectActive?.()),
+          multiSelectActive: publicMultiSelectActive,
           blindDrawEnabled: selectionActive && allowsBlindDraw && blindDrawAvailable,
           blindDrawReason: !selectionActive
             ? "请先进入精选"
@@ -2089,7 +2181,7 @@
         handPanel: {
           count: handCount,
           overLimit: handCount > 4,
-          hint: getPlayerHandPanelTitleHint?.() || "",
+          hint: state.cards?.ui?.handPanelHint || "",
           empty: hand.length === 0,
           contextActionReady: Boolean(cardCornerAction || handCardPlayAction),
         },
@@ -2186,7 +2278,7 @@
   }
 
   const createResidentRenderInput = () => {
-    const projection = getCanonicalBrowserProjection();
+    const projection = readBrowserProjection();
     residentViewStateStore.reconcileProjection(projection);
     return { projection, viewState: residentViewStateStore.getSnapshot() };
   };
@@ -2196,7 +2288,7 @@
     getTurnFlowProjection: () => getTurnFlowProjection(),
     assertTurnFlowProjection: browserHostModule.residentProjection.assertTurnFlowProjection,
     computePlayerFinalScoreBreakdown: (player) => getProjectedFinalScoreBreakdown(player),
-    inputPort: turnReadoutOwnerInputPort,
+    getFinalUiProjection: () => getFinalUiProjection(),
     createResidentRenderInput,
     renderResidentRoundStatus: (...args) => residentDesktopRenderer.renderRoundStatus(...args),
     getDisplayedTurnNumber,
@@ -2712,7 +2804,7 @@
     getTurnState: () => getTurnFlowProjection(),
     HISTORY_SOURCE_MAIN,
     solar,
-    getSolarState: () => ruleComposition.readModelPort.read("solarBriefing"),
+    getSolarState: () => getSolarBriefingProjection(),
     data,
     aomomo,
     getAomomoCurrentX: (...args) => getAomomoCurrentX(...args),
@@ -2900,7 +2992,7 @@
     actionSessionRuntime,
     browserContextRuntime,
     cardSelectionState,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     interactionChrome,
@@ -2944,13 +3036,19 @@
   });
   const beginSupplementalMovePaymentForRoot = handFlowHelpers.beginSupplementalMovePayment;
   const syncDiscardSelectionChrome = (...args) => browserOwnerInputs.hand_flow.syncDiscardSelectionChrome(...args);
-  const isHandScanSelectionActive = (...args) => browserOwnerInputs.hand_flow.isHandScanSelectionActive(...args);
+  const isHandScanSelectionActive = () => Boolean(getPendingHandScanDecision());
   const syncHandScanSelectionChrome = (...args) => browserOwnerInputs.hand_flow.syncHandScanSelectionChrome(...args);
   const isMovePaymentSelectionActive = () => Boolean(
     getPendingMovePayment(),
   );
-  const getMovePaymentPlayer = (...args) => browserOwnerInputs.hand_flow.getMovePaymentPlayer(...args);
-  const isMovePaymentLockedForAiAutomation = (...args) => browserOwnerInputs.hand_flow.isMovePaymentLockedForAiAutomation(...args);
+  const getMovePaymentPlayer = (workingRoot = null) => {
+    if (workingRoot) return handFlowHelpers.getMovePaymentPlayer(workingRoot);
+    const pending = getPendingMovePayment();
+    return pending?.playerId ? getPlayerById(pending.playerId) : pending?.player || getCurrentPlayer();
+  };
+  const isMovePaymentLockedForAiAutomation = () => Boolean(
+    isPendingLockedForAiAutomation?.(getPendingMovePayment()),
+  );
   const beginSupplementalMovePayment = (...args) => browserOwnerInputs.hand_flow.beginSupplementalMovePayment(...args);
   const syncMovePaymentChrome = (...args) => browserOwnerInputs.hand_flow.syncMovePaymentChrome(...args);
   const scrollToPlayerHandPanel = (...args) => browserOwnerInputs.hand_flow.scrollToPlayerHandPanel(...args);
@@ -2964,16 +3062,28 @@
     getSelectedHandIndices: () => uiRuntimeState.movePaymentSelectedHandIndices || [],
   });
   const syncPlayCardSelectionChrome = (...args) => browserOwnerInputs.hand_flow.syncPlayCardSelectionChrome(...args);
-  const getPendingPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.getPendingPlayCardSelection(...args);
+  const getPendingPlayCardSelection = (workingRoot = null) => (
+    workingRoot
+      ? handFlowHelpers.getPendingPlayCardSelection(workingRoot)
+      : structuredClone(uiRuntimeState.playCardSelection || null)
+  );
   const handlePlayCardSelect = (...args) => browserOwnerInputs.hand_flow.handlePlayCardSelect(...args);
   const confirmPlayCardSelection = (...args) => browserOwnerInputs.hand_flow.confirmPlayCardSelection(...args);
   const executeStandardCardCornerAction = (...args) => browserOwnerInputs.hand_flow.executeStandardCardCornerAction(...args);
-  const getPendingHandCardPlayAction = (...args) => browserOwnerInputs.hand_flow.getPendingHandCardPlayAction(...args);
+  const getPendingHandCardPlayAction = (workingRoot = null) => (
+    workingRoot
+      ? handFlowHelpers.getPendingHandCardPlayAction(workingRoot)
+      : structuredClone(uiRuntimeState.handCardPlayAction || null)
+  );
   const cancelHandCardPlayAction = (...args) => browserOwnerInputs.hand_flow.cancelHandCardPlayAction(...args);
   const clearHandCardContextActions = (...args) => browserOwnerInputs.hand_flow.clearHandCardContextActions(...args);
   const cancelHandCardContextActions = (...args) => browserOwnerInputs.hand_flow.cancelHandCardContextActions(...args);
   const confirmHandCardPlayAction = (...args) => browserOwnerInputs.hand_flow.confirmHandCardPlayAction(...args);
-  const getPendingCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.getPendingCardCornerQuickAction(...args);
+  const getPendingCardCornerQuickAction = (workingRoot = null) => (
+    workingRoot
+      ? handFlowHelpers.getPendingCardCornerQuickAction(workingRoot)
+      : structuredClone(uiRuntimeState.cardCornerQuickAction || null)
+  );
   const syncCardCornerQuickActionChrome = (...args) => browserOwnerInputs.hand_flow.syncCardCornerQuickActionChrome(...args);
   const cancelCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.cancelCardCornerQuickAction(...args);
   const handleHandCardCornerQuickAction = (...args) => browserOwnerInputs.hand_flow.handleHandCardCornerQuickAction(...args);
@@ -3028,7 +3138,7 @@
     browserContextRuntime,
     cardSelectionDecisionOwner,
     cardSelectionState,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     effectSkipRuntime,
@@ -3103,18 +3213,18 @@
     submitActiveDecision: (...args) => submitActiveCardDecision(...args),
   });
   const executeFreeMoveForScanAction4 = scanDecisionPort.executeFreeMove;
-  const getPublicScanMaxSelectable = (...args) => browserOwnerInputs.scan_flow.getPublicScanMaxSelectable(...args);
-  const buildReadySectorFinishEffects = (...args) => browserOwnerInputs.scan_flow.buildReadySectorFinishEffects(...args);
-  const buildScanFinalizeFollowupEffects = (...args) => browserOwnerInputs.scan_flow.buildScanFinalizeFollowupEffects(...args);
+  const getPublicScanMaxSelectable = (...args) => scanFlowHelpers.getPublicScanMaxSelectable(...args);
+  const buildReadySectorFinishEffects = (...args) => scanFlowHelpers.buildReadySectorFinishEffects(...args);
+  const buildScanFinalizeFollowupEffects = (...args) => scanFlowHelpers.buildScanFinalizeFollowupEffects(...args);
   const replaceNebulaDataForCurrentPlayer = (...args) => browserOwnerInputs.scan_flow.replaceNebulaDataForCurrentPlayer(...args);
-  const getSectorFinishWinnerTarget = (...args) => browserOwnerInputs.scan_flow.getSectorFinishWinnerTarget(...args);
+  const getSectorFinishWinnerTarget = (...args) => scanFlowHelpers.getSectorFinishWinnerTarget(...args);
   const executeScanActionFinalizeEffect = (...args) => browserOwnerInputs.scan_flow.executeScanActionFinalizeEffect(...args);
   const executeSectorFinishScanEffect = (...args) => browserOwnerInputs.scan_flow.executeSectorFinishScanEffect(...args);
   const replenishDelayedPublicRefillSlots = (...args) => browserOwnerInputs.scan_flow.replenishDelayedPublicRefillSlots(...args);
   const executeScanPublicRefillEffect = (...args) => browserOwnerInputs.scan_flow.executeScanPublicRefillEffect(...args);
   const settleDelayedPublicRefillsAfterScanFlow = (...args) => browserOwnerInputs.scan_flow.settleDelayedPublicRefillsAfterScanFlow(...args);
-  const buildEndOfFlowFollowupEffects = (...args) => browserOwnerInputs.scan_flow.buildEndOfFlowFollowupEffects(...args);
-  const shouldAppendQueuedSectorFinishEffects = (...args) => browserOwnerInputs.scan_flow.shouldAppendQueuedSectorFinishEffects(...args);
+  const buildEndOfFlowFollowupEffects = (...args) => scanFlowHelpers.buildEndOfFlowFollowupEffects(...args);
+  const shouldAppendQueuedSectorFinishEffects = (...args) => scanFlowHelpers.shouldAppendQueuedSectorFinishEffects(...args);
   const appendEndOfFlowSectorFinishEffects = (...args) => browserOwnerInputs.scan_flow.appendEndOfFlowSectorFinishEffects(...args);
   const discardPublicScanCard = (...args) => browserOwnerInputs.scan_flow.discardPublicScanCard(...args);
   const discardHandScanCard = (...args) => browserOwnerInputs.scan_flow.discardHandScanCard(...args);
@@ -3122,26 +3232,51 @@
   const restoreYichangdianCornerPickerIfPending = (...args) => browserOwnerInputs.scan_flow.restoreYichangdianCornerPickerIfPending(...args);
   const closeScanTargetPickerForRoot = scanFlowHelpers.closeScanTargetPicker;
   const closeScanTargetPicker = (...args) => browserOwnerInputs.scan_flow.closeScanTargetPicker(...args);
-  const nebulaHasScannableData = (...args) => browserOwnerInputs.scan_flow.nebulaHasScannableData(...args);
-  const buildNebulaScanChoice = (...args) => browserOwnerInputs.scan_flow.buildNebulaScanChoice(...args);
-  const isAomomoActive = (...args) => browserOwnerInputs.scan_flow.isAomomoActive(...args);
-  const getAomomoPlanetLocation = (...args) => browserOwnerInputs.scan_flow.getAomomoPlanetLocation(...args);
-  const getAomomoCurrentX = (...args) => browserOwnerInputs.scan_flow.getAomomoCurrentX(...args);
-  const getNebulaCurrentX = (...args) => browserOwnerInputs.scan_flow.getNebulaCurrentX(...args);
-  const getSectorScanTargetLabel = (...args) => browserOwnerInputs.scan_flow.getSectorScanTargetLabel(...args);
-  const buildAomomoScanChoiceForX = (...args) => browserOwnerInputs.scan_flow.buildAomomoScanChoiceForX(...args);
-  const hasAomomoScanAtX = (...args) => browserOwnerInputs.scan_flow.hasAomomoScanAtX(...args);
-  const buildSectorScanChoicesForX = (...args) => browserOwnerInputs.scan_flow.buildSectorScanChoicesForX(...args);
+  const nebulaHasScannableData = (...args) => scanFlowHelpers.nebulaHasScannableData(...args);
+  const buildNebulaScanChoice = (...args) => scanFlowHelpers.buildNebulaScanChoice(...args);
+  const isAomomoActive = (...args) => scanFlowHelpers.isAomomoActive(...args);
+  const getAomomoPlanetLocation = (workingRoot = null) => {
+    if (workingRoot) return scanFlowHelpers.getAomomoPlanetLocation(workingRoot);
+    return getBoardCoordinateProjection().planetLocations.find(
+      (planet) => planet.planetId === aomomo?.PLANET_ID,
+    ) || null;
+  };
+  const getAomomoCurrentX = (workingRoot = null) => {
+    if (workingRoot) return scanFlowHelpers.getAomomoCurrentX(workingRoot);
+    const location = getAomomoPlanetLocation();
+    return location ? solar.mod8(location.x) : null;
+  };
+  const getNebulaCurrentX = (...args) => scanFlowHelpers.getNebulaCurrentX(...args);
+  const getSectorScanTargetLabel = (...args) => scanFlowHelpers.getSectorScanTargetLabel(...args);
+  const buildAomomoScanChoiceForX = (...args) => scanFlowHelpers.buildAomomoScanChoiceForX(...args);
+  const hasAomomoScanAtX = (...args) => scanFlowHelpers.hasAomomoScanAtX(...args);
+  const buildSectorScanChoicesForX = (...args) => scanFlowHelpers.buildSectorScanChoicesForX(...args);
   const expandScanChoicesWithAomomoTargets = (...args) => browserOwnerInputs.scan_flow.expandScanChoicesWithAomomoTargets(...args);
   const confirmScanTarget = scanDecisionPort.confirmScanTarget;
   const handleDrawnHandScanSkip = scanDecisionPort.skipDrawnHandScan;
   const beginSectorScan = (...args) => browserOwnerInputs.scan_flow.beginSectorScan(...args);
-  const getSectorOpenDataCount = (...args) => browserOwnerInputs.scan_flow.getSectorOpenDataCount(...args);
-  const getSectorReplacedCount = (...args) => browserOwnerInputs.scan_flow.getSectorReplacedCount(...args);
-  const getSectorExtraMarkCount = (...args) => browserOwnerInputs.scan_flow.getSectorExtraMarkCount(...args);
-  const getPublicScanChoicesForCard = (...args) => browserOwnerInputs.scan_flow.getPublicScanChoicesForCard(...args);
-  const hasHandScanTargetCard = (...args) => browserOwnerInputs.scan_flow.hasHandScanTargetCard(...args);
-  const createPublicScanPendingAction = (...args) => browserOwnerInputs.scan_flow.createPublicScanPendingAction(...args);
+  const getSectorOpenDataCount = (...args) => scanFlowHelpers.getSectorOpenDataCount(...args);
+  const getSectorReplacedCount = (...args) => scanFlowHelpers.getSectorReplacedCount(...args);
+  const getSectorExtraMarkCount = (...args) => scanFlowHelpers.getSectorExtraMarkCount(...args);
+  const getPublicScanChoicesForCard = (rootOrCard, explicitCard = null) => {
+    if (rootOrCard?.playerState && explicitCard) {
+      return scanFlowHelpers.getPublicScanChoicesForCard(rootOrCard, explicitCard);
+    }
+    const card = explicitCard || rootOrCard;
+    const scanCode = Number(card?.scanActionCode);
+    const targets = appConstants.PUBLIC_SCAN_TARGETS_BY_CODE?.[scanCode];
+    return targets ? {
+      ok: true,
+      scanCode,
+      scanLabel: appConstants.PUBLIC_SCAN_CODE_LABELS?.[scanCode] || `扫描${scanCode}`,
+      choices: [],
+    } : {
+      ok: false,
+      message: `无法识别卡牌右上角扫描效果：${cards.getCardLabel(card) || "未知卡牌"}`,
+    };
+  };
+  const hasHandScanTargetCard = (...args) => scanFlowHelpers.hasHandScanTargetCard(...args);
+  const createPublicScanPendingAction = (...args) => scanFlowHelpers.createPublicScanPendingAction(...args);
   const beginPublicDeckScan = (...args) => browserOwnerInputs.scan_flow.beginPublicDeckScan(...args);
   const beginPublicScanForSingleCard = (...args) => browserOwnerInputs.scan_flow.beginPublicScanForSingleCard(...args);
   const confirmPublicScanSelection = (...args) => browserOwnerInputs.scan_flow.confirmPublicScanSelection(...args);
@@ -3293,19 +3428,6 @@
       : confirmAlienRevealNoticeUi()
   );
   const {
-    buildAlienRevealNoticeEntry,
-    getAlienTracePickerPlayer,
-    canPlaceJiuzheTrace,
-    canPlaceYichangdianTrace,
-    canPlaceFangzhouTrace,
-    canPlaceBanrenmaTrace,
-    canPlaceChongTrace,
-    canPlaceAmibaTrace,
-    canPlaceAomomoTrace,
-    canPlaceRunezuTrace,
-    canPlaceRunezuFaceSymbol,
-    canPlaceStateTrace,
-    canPlaceAnyStateExtraTrace,
     openAlienTracePicker,
     closeAlienTracePicker,
     beginAlienTraceBoardPlacement,
@@ -3322,10 +3444,25 @@
     openFangzhouTraceDestinationChoice,
     routeFangzhouAlienTraceGain,
     handleFangzhouTraceSlotPlacement,
+  } = browserOwnerInputs.alien_ui;
+  const {
+    buildAlienRevealNoticeEntry,
+    getAlienTracePickerPlayer,
+    canPlaceJiuzheTrace,
+    canPlaceYichangdianTrace,
+    canPlaceFangzhouTrace,
+    canPlaceBanrenmaTrace,
+    canPlaceChongTrace,
+    canPlaceAmibaTrace,
+    canPlaceAomomoTrace,
+    canPlaceRunezuTrace,
+    canPlaceRunezuFaceSymbol,
+    canPlaceStateTrace,
+    canPlaceAnyStateExtraTrace,
     getEligibleAlienSlotIdsForTraceEffect,
     getFangzhouUnlockableTraceTypes,
     hasAlienTracePanelPlacementTarget,
-  } = browserOwnerInputs.alien_ui;
+  } = alienUiHelpers;
   const {
     handleFangzhouTraceDestinationChoice,
     handleFangzhouUnlockTraceChoice,
@@ -3340,7 +3477,7 @@
     getTurnEndRuntime: () => turnEndPort,
     alienUiRuntime: alienUiHelpers,
     browserContextRuntime,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     playerEffectOwnerRuntime,
     playerLookupRuntime,
@@ -3367,7 +3504,6 @@
     handleRunezuRevealSideEffects,
     handleAlienRevealSideEffects,
     failMissingAlienTraceTargetPlayer,
-    getAlienTraceActionPlayer,
     confirmYichangdianTracePlacement,
     confirmBanrenmaTracePlacement,
     confirmAomomoTracePlacement,
@@ -3378,6 +3514,11 @@
     settleTurnEndAlienRevealEntries,
     activateAomomoBoard,
   } = browserOwnerInputs.alien_runtime;
+  const getAlienTraceActionPlayer = (workingRoot = null) => {
+    if (workingRoot) return alienRuntimeHelpers.getAlienTraceActionPlayer(workingRoot);
+    const ownerId = readBrowserProjection().decision?.ownerId || null;
+    return ownerId ? getPlayerById(ownerId) : null;
+  };
 
   const cardSetupController = cardRuntimeModule.createCardSetupController({
     cards,
@@ -3510,7 +3651,11 @@
       randomizeAliens: (...args) => randomizeAliens(...args),
       cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow(...args),
       closeFinalResultDialog,
-      configureDefaultAiOpponent: (...args) => configureDefaultAiOpponent(...args),
+      configureDefaultAiOpponent: (...args) => {
+        const result = configureDefaultAiOpponent(...args);
+        browserHostState.aiPlayerIds = [...(result?.playerIds || [])];
+        return result;
+      },
       startInitialSelection: () => startInitialSelection(),
       seedDefaultReferenceRockets: (workingRoot) => coordinateRuntime.seedDefaultReferenceRockets(workingRoot),
     },
@@ -3563,7 +3708,15 @@
     setReportTab,
     resize: (...args) => resize(...args),
     setLogOpen,
-    startNewGame,
+    startNewGame: (...args) => {
+      const result = startNewGame(...args);
+      queueMicrotask(() => {
+        const pendingStart = ruleComposition.inputPort.enumerateActions({ family: "choose_card" })
+          .some((action) => action.target?.kind === "start_initial_setup");
+        if (pendingStart) startInitialSelection();
+      });
+      return result;
+    },
   });
   const {
     applyOptions: applyStartScreenOptions,
@@ -3672,7 +3825,10 @@
       isGameEnded,
       isUiBlockingAiAutomation: isActionBriefingOpen,
       isIndustryHandSelectionActive: (...args) => industryRuntime.isIndustryHandSelectionActive(...args),
-      refreshCompositionPresentation: () => scheduleResidentDesktopRefresh(),
+      refreshCompositionPresentation: () => {
+        scheduleResidentDesktopRefresh();
+        window.setTimeout(() => scheduleResidentDesktopRefresh(), 0);
+      },
       renderStateReadout,
       resetGameForAiAutoBattle(options = {}) {
         const activePlayerCount = Math.min(
@@ -3718,7 +3874,7 @@
     cardSelectionDecisionOwner,
     cardHoverPreviewRuntime,
     cardSelectionState,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     effectSkipRuntime,
@@ -3842,18 +3998,8 @@
   const releaseFutureSpanAfterPlayWithHistory = (...args) => browserOwnerInputs.card_runtime
     .releaseFutureSpanAfterPlayWithHistory(...args);
   const {
-    getDiscardCornerRewardMultiplier,
-    getCardCornerQuickActionForCard,
-    shouldQueueCardCornerMoveQuickAction,
-    canUseCardCornerQuickAction,
-    canStartCardCornerFreeMove,
     beginCardCornerFreeMove,
     startCardCornerMoveEffectFlow,
-    hasFutureSpanEligibleHandCard,
-    hasPlayableFutureSpanCard,
-    getStandardPlayCardActionBlockReason,
-    getPlayCardSelectionBlockReason,
-    getHandCardPlayActionForCard,
     beginCardSelection,
     cancelCardSelection,
     finalizeCardSelectionResult,
@@ -3861,12 +4007,10 @@
     blindDrawCardForPlayer,
     drawCardForCurrentPlayer,
     pickPublicCardForCurrentPlayer,
-    canBlindDraw,
     updatePublicCardControls,
     ensurePublicCardsFilledRespectingDelayedRefills,
     handlePublicCardClick,
     handlePublicBlindDrawClick,
-    getPassReserveSelectionCards,
     renderPassReserveSelection,
     syncPassReserveSelectionChrome,
     beginPassReserveSelection,
@@ -3875,6 +4019,29 @@
     handlePublicCornerDiscardCardClick,
     confirmPublicCornerDiscardSelection,
   } = browserOwnerInputs.card_runtime;
+  const {
+    getDiscardCornerRewardMultiplier,
+    getCardCornerQuickActionForCard,
+    shouldQueueCardCornerMoveQuickAction,
+    canUseCardCornerQuickAction: canUseCardCornerQuickActionRule,
+    canStartCardCornerFreeMove,
+    hasFutureSpanEligibleHandCard,
+    hasPlayableFutureSpanCard,
+    getStandardPlayCardActionBlockReason,
+    getPlayCardSelectionBlockReason,
+    getHandCardPlayActionForCard,
+    getPassReserveSelectionCards,
+  } = cardRuntime;
+  const canUseCardCornerQuickAction = (workingRoot = null) => (
+    workingRoot
+      ? canUseCardCornerQuickActionRule(workingRoot)
+      : Boolean(uiRuntimeState.cardCornerQuickAction)
+  );
+  const canBlindDraw = (workingRoot = null) => (
+    workingRoot
+      ? canBlindDrawForRoot(workingRoot)
+      : readBrowserProjection().cards.deckCount > 0
+  );
   const { confirmPassReserveSelection } = cardRuntimeModule.createPassReserveDecisionPort({
     inspectComposition: () => ruleComposition.inspect(),
     submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
@@ -3884,8 +4051,8 @@
     selectDefaultRocketFromCandidates,
     executeCardEffectMove,
     finishCurrentCardMoveEffectEarly,
-    getMovableTokensForCardMoveEffect,
   } = browserOwnerInputs.card_runtime;
+  const { getMovableTokensForCardMoveEffect } = cardRuntime;
   cardTriggerRuntime = cardTriggerRuntimeModule.createBrowserCardTriggerRuntime({
     staticContext: cardTriggerRuntimeModule.createBrowserCardTriggerStaticContext(dependencies),
     getActionInteractionRuntime: () => actionInteractionRuntime,
@@ -3894,7 +4061,7 @@
     actionSessionRuntime,
     cardRuntime,
     cardSelectionState,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     handFlowRuntime: handFlowHelpers,
@@ -4026,7 +4193,7 @@
     applyCardTriggerReward,
     beginCardTriggerFreeMove,
     applyCardTriggerMatch,
-  } = browserOwnerInputs.card_trigger;
+  } = cardTriggerRuntime;
   const cancelCardTriggerChoice = () => submitActiveCardDecision(
     "card-trigger-cancel",
     (target) => target.choiceId === "cancel",
@@ -4051,8 +4218,25 @@
     blockManualInput: blockManualAiAutomationInput,
   });
 
-  const getRequiredMovePointsForUi = (...args) => actionOwnerInputPorts.probeQuery
-    .getRequiredMovePoints(...args);
+  const getRequiredMovePointsForUi = (player, rocketId, _deltaX, _deltaY, options = {}) => {
+    const board = getBoardCoordinateProjection();
+    const rocket = board.tokens.find((item) => String(item?.id) === String(rocketId));
+    const from = rocket?.sectorCoordinate || rocket?.slotSectorCoordinate || null;
+    if (!from) return 1;
+    const fromContent = board.visibleContents.find((item) => (
+      Number(item?.x) === Number(from.x) && Number(item?.y) === Number(from.y)
+    ))?.content || null;
+    const turn = getTurnFlowProjection();
+    if (!options.ignoreAsteroidRestriction
+      && isAsteroidContent(fromContent)
+      && !players.playerOwnsTech(player, "orange2", {
+        roundNumber: turn.roundNumber,
+        turnNumber: turn.turnNumber,
+      })) {
+      return 2;
+    }
+    return 1;
+  };
 
   const getNormalTokenAssetForPlayer = (player) => (
     players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
@@ -4153,13 +4337,12 @@
   const boardQueryRuntime = actionInteractionRuntimeModule.createBoardQueryRuntime({
     rocketActions,
     getBoardCoordinateProjection: () => getBoardCoordinateProjection(),
-    inputPort: interactionOwnerInputPorts.boardQuery,
   });
   const { getPlanetSectorCoordinate, getRocketCurrentPlanetIdForRoot, getRocketCurrentPlanetId } = boardQueryRuntime;
   const chongTransportRuntime = alienRuntimeModule.createChongTransportRuntime({
     chong,
     getRocketCurrentPlanetIdForRoot,
-    inputPort: chongTransportOwnerInputPort,
+    getDecisionProjection: () => readBrowserProjection().decision,
   });
   const {
     listReadyForRoot: listReadyChongTransportCandidatesForRoot,
@@ -4594,7 +4777,7 @@
     cardHoverPreviewRuntime,
     cardRuntime,
     cardSelectionState,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     handFlowRuntime: handFlowHelpers,
@@ -4643,18 +4826,25 @@
     startIndustryPublicityPick, beginIndustryTuringBorrow, failIndustryTuringBorrow,
     checkIndustryTuringBorrowTile, confirmIndustryTuringBorrow, openIndustryHeliosTechPicker,
     confirmIndustryHeliosRemoveTech, startIndustryHuanyuMoveEffectFlow, beginIndustryHuanyuFreeMoves,
-    canBeginIndustryFutureSpanHandSelection, beginIndustryFutureSpanHandSelection,
+    beginIndustryFutureSpanHandSelection,
     handleIndustryFutureSpanHandClick, handleIndustryDeepspaceHandClick, finalizeIndustryDeepspaceSwap,
     handleAlienLabPanelClick, maybeConsumeAlienLabPanelForMainAction, maybeApplyIndustryLaunchScan,
-    startLaunchSectorFinishEffectFlow, appendIndustryPlayPassiveStatus, buildIndustryPlayCardAppendEffects,
-    buildPlayCardEffectFlowQueue, applyIndustryPlayCardPassives, completeIndustryAbilityQuickStep,
+    startLaunchSectorFinishEffectFlow, appendIndustryPlayPassiveStatus,
+    applyIndustryPlayCardPassives, completeIndustryAbilityQuickStep,
     commitIrreversibleIndustryQuickAction, tryInjectSentinelPlayCornerEffectAfterArm,
-    executeIndustryStratusCornerEffect, executeIndustrySentinelCornerEffect, createCompanyCardSummary,
-    executeIndustryHeliosPassiveRewardEffect, getStrategyPassiveSelectableSlotIds,
+    executeIndustryStratusCornerEffect, executeIndustrySentinelCornerEffect,
+    executeIndustryHeliosPassiveRewardEffect,
     cancelStrategyPassiveSlotChoice, openStrategyPassiveSlotChoice, confirmStrategyPassiveSlotChoice,
     finishIndustryStrategyPassiveRewardEffect, executeIndustryStrategyPassiveRewardEffect,
     handleStrategyPassiveSlotClick, handleCompanyActionMarkerClick,
   } = industryCommands;
+  const {
+    canBeginIndustryFutureSpanHandSelection,
+    buildIndustryPlayCardAppendEffects,
+    buildPlayCardEffectFlowQueue,
+    createCompanyCardSummary,
+    getStrategyPassiveSelectableSlotIds,
+  } = industryRuntime;
   const executeIndustryFreeMove = (deltaX, deltaY, rocketId) => activeDecisionPort.submitDirectional(
     "industry-free-move",
     deltaX,
@@ -4670,7 +4860,7 @@
     browserLayoutRuntime,
     cardRuntime,
     coordinatePort,
-    effectExecutorPort: effectExecutorCommandPort,
+    effectExecutorPort: effectExecutorRuntimePort,
     effectFlowRuntime: effectFlowRuntimePort,
     effectHistoryPort,
     effectSkipRuntime,
@@ -4710,14 +4900,32 @@
   const getResearchTechSelectionOptions = () => techRuntime.getResearchTechSelectionOptions();
   const shouldSkipCurrentResearchTechCost = () => techRuntime.shouldSkipCurrentResearchTechCost();
   const {
-    isTechActionSelectionActive, isTechTilePickingActive, syncTechSelectionChrome, renderTechBoard,
-    closeTechBlueSlotPicker, isTechTileOwnedByOtherPlayer, appendResearchTechFollowupEffects,
+    syncTechSelectionChrome, renderTechBoard,
+    closeTechBlueSlotPicker, appendResearchTechFollowupEffects,
     onTechTileSelected, onTechTileTaken, clearResearchTechSelectionState, restoreResearchTechSelectionAfterUndo,
     cancelPendingResearchTechTileChoice, cancelTechSelection, openTechBlueSlotPicker, finalizeTechTakeResult,
     commitResearchTechSelectionResult, selectResearchTechTileForCurrentFlow, confirmTechBlueSlotChoice,
     handleSupplyTechTileClick,
     setCheatModeOpen, toggleCheatMode,
   } = browserOwnerInputs.tech_runtime;
+  const {
+    isTechActionSelectionActive: isTechActionSelectionActiveForRoot,
+    isTechTilePickingActive: isTechTilePickingActiveForRoot,
+    isTechTileOwnedByOtherPlayer: isTechTileOwnedByOtherPlayerForRoot,
+  } = techRuntime;
+  const hasProjectedTechDecision = () => {
+    const decision = readBrowserProjection().decision;
+    return Boolean(decision?.choices?.some((choice) => choice.presentation?.tileId));
+  };
+  const isTechActionSelectionActive = (workingRoot = null) => (
+    workingRoot ? isTechActionSelectionActiveForRoot(workingRoot) : hasProjectedTechDecision()
+  );
+  const isTechTilePickingActive = (workingRoot = null) => (
+    workingRoot ? isTechTilePickingActiveForRoot(workingRoot) : hasProjectedTechDecision()
+  );
+  const isTechTileOwnedByOtherPlayer = (workingRoot, ...args) => (
+    isTechTileOwnedByOtherPlayerForRoot(workingRoot, ...args)
+  );
 
   const placeDataToBlueSlot = (...args) => interactionOwnerInputPorts.dataInteraction
     .placeBlueSlot(...args);
@@ -5015,7 +5223,7 @@
     turnEndRuntime: turnEndPort,
     hostPort: {
       inspect: (...args) => ruleComposition.inspect(...args),
-      readProjection: () => ruleComposition.readModelPort.read("alienBoard"),
+      readProjection: () => getAlienBoardProjection(),
       submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       openPendingDecision: openBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
@@ -5297,9 +5505,11 @@
     savePersistentGameStateNow,
     publicApiContext: {
       structuredClone,
-      inspectProjection: () => residentProjectionAdapter.projectSource({
-        viewer: getResidentViewer(),
-      }),
+      inspectProjection: () => {
+        const projection = readBrowserProjection();
+        queueMicrotask(() => scheduleResidentDesktopRefresh());
+        return projection;
+      },
       inspectInput: () => residentInputAdapter.inspectInputState(),
       capture: () => residentBrowserServices.capture(),
       restore: (envelope) => residentBrowserServices.restore(envelope),

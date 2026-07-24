@@ -6,18 +6,15 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard",
-    "shouldQueueCardCornerMoveQuickAction", "canUseCardCornerQuickAction", "canStartCardCornerFreeMove",
-    "beginCardCornerFreeMove", "startCardCornerMoveEffectFlow", "hasFutureSpanEligibleHandCard",
-    "hasPlayableFutureSpanCard", "getStandardPlayCardActionBlockReason", "getPlayCardSelectionBlockReason",
-    "getHandCardPlayActionForCard", "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult",
+    "beginCardCornerFreeMove", "startCardCornerMoveEffectFlow",
+    "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult",
     "drawBasicCardToPlayer", "blindDrawCardForPlayer", "drawCardForCurrentPlayer",
-    "pickPublicCardForCurrentPlayer", "canBlindDraw", "updatePublicCardControls",
+    "pickPublicCardForCurrentPlayer", "updatePublicCardControls",
     "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick", "handlePublicBlindDrawClick",
-    "getPassReserveSelectionCards", "renderPassReserveSelection", "syncPassReserveSelectionChrome",
+    "renderPassReserveSelection", "syncPassReserveSelectionChrome",
     "beginPassReserveSelection", "dismissPassReserveSelectionOverlay", "handlePublicCornerDiscardCardClick",
     "confirmPublicCornerDiscardSelection", "selectDefaultRocketFromCandidates", "executeCardEffectMove",
-    "finishCurrentCardMoveEffectEarly", "resolveCardMoveDirectionDecision", "getMovableTokensForCardMoveEffect",
+    "finishCurrentCardMoveEffectEarly", "resolveCardMoveDirectionDecision",
     "releaseFutureSpanAfterPlayWithHistory",
   ]);
 

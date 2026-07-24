@@ -11,12 +11,6 @@
   "use strict";
   function createActionOwnerInputPorts(registry, context = {}) {
     return Object.freeze({
-      probeQuery: registry.register("probe_query", {
-        getRequiredMovePoints: (workingRoot, command) => ({
-          ok: true,
-          value: context.getRequiredMovePoints(workingRoot, ...(command.args || [])),
-        }),
-      }),
       recovery: registry.register("action_recovery", {
         recoverPending: (workingRoot) => ({
           ok: true,

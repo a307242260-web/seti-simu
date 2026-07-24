@@ -31,6 +31,7 @@
   }
 
   function migrateOwnedTiles(source = {}) {
+    source = source || {};
     const ownedTiles = {};
 
     if (source.ownedTiles && typeof source.ownedTiles === "object") {
@@ -72,6 +73,7 @@
   }
 
   function createPlayerTechState(source = {}) {
+    source = source || {};
     rejectLegacyTechState(source);
     const ownedTiles = migrateOwnedTiles(source);
     return {

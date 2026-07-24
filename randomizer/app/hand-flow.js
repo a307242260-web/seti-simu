@@ -10,14 +10,14 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "syncDiscardSelectionChrome", "isHandScanSelectionActive", "syncHandScanSelectionChrome",
-    "getMovePaymentPlayer", "isMovePaymentLockedForAiAutomation", "beginSupplementalMovePayment",
+    "syncDiscardSelectionChrome", "syncHandScanSelectionChrome",
+    "beginSupplementalMovePayment",
     "syncMovePaymentChrome", "scrollToPlayerHandPanel", "beginMovePaymentSelection",
     "handleHandCardMovePayment", "resolveMovePaymentDecision", "syncPlayCardSelectionChrome",
-    "getPendingPlayCardSelection", "handlePlayCardSelect", "confirmPlayCardSelection",
-    "executeStandardCardCornerAction", "getPendingHandCardPlayAction", "cancelHandCardPlayAction",
+    "handlePlayCardSelect", "confirmPlayCardSelection",
+    "executeStandardCardCornerAction", "cancelHandCardPlayAction",
     "clearHandCardContextActions", "cancelHandCardContextActions", "confirmHandCardPlayAction",
-    "getPendingCardCornerQuickAction", "syncCardCornerQuickActionChrome", "cancelCardCornerQuickAction",
+    "syncCardCornerQuickActionChrome", "cancelCardCornerQuickAction",
     "handleHandCardCornerQuickAction", "confirmCardCornerQuickAction", "beginDiscardSelection",
     "completeDiscardSelection", "handleHandCardDiscard", "beginPlayCardSelection", "cancelPlayCardSelection",
     "handleFutureSpanCardPlay",

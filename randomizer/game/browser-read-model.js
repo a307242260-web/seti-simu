@@ -9,7 +9,10 @@
 
   const SCHEMA_VERSION = "seti-browser-read-model-v1";
   const READ_MODEL_KEYS = Object.freeze([
-    "schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "render",
+    "schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "runtime", "render",
+  ]);
+  const RUNTIME_KEYS = Object.freeze([
+    "playerTurn", "effectPresentation", "cardUi", "solarBriefing", "alienBoard",
   ]);
   const EVENT_KEYS = Object.freeze([
     "alienRoutesBySlotId", "fangzhouRevealedSlotId", "aomomoRevealedSlotId", "clickableTechTileIds",
@@ -245,13 +248,39 @@
     };
   }
 
+  function createRuntime(presentationState, turnFlow) {
+    const players = listPlayers(presentationState);
+    const playerState = {
+      currentPlayerId: turnFlow.currentPlayerId,
+      players: clone(players),
+    };
+    return {
+      playerTurn: {
+        players: playerState,
+        turn: clone(turnFlow),
+      },
+      effectPresentation: clone(presentationState?.effectPresentation || null),
+      cardUi: clone(presentationState?.cards?.ui || {}),
+      solarBriefing: {
+        sectorBySlot: clone(presentationState?.solarSystem?.sectorBySlot || {}),
+      },
+      alienBoard: {
+        alienGameState: clone(presentationState?.aliens || {}),
+        playerState,
+      },
+    };
+  }
+
   function createRender(state, options, players, turnFlow, boardCoordinate) {
+    const presentationState = deepFreeze(clone(options.presentationState || state));
+    const presentationPlayers = deepFreeze(clone(options.presentationPlayers || players));
     const render = options.createRenderPresentation?.({
-      state,
-      players,
+      state: presentationState,
+      players: presentationPlayers,
       turnFlow,
       boardCoordinate,
       viewer: options.viewer || null,
+      finalReadModel: deepFreeze(clone(options.finalReadModel || null)),
     }) || createFallbackRender(turnFlow, boardCoordinate);
     return clone(render);
   }
@@ -309,6 +338,7 @@
     );
     assertExactKeys(readModel.turnFlow, TURN_FLOW_KEYS, "BrowserReadModel.turnFlow");
     assertExactKeys(readModel.boardCoordinate, BOARD_COORDINATE_KEYS, "BrowserReadModel.boardCoordinate");
+    assertExactKeys(readModel.runtime, RUNTIME_KEYS, "BrowserReadModel.runtime");
     for (const token of readModel.boardCoordinate.tokens) {
       assertExactKeys(token, TOKEN_KEYS, "BrowserReadModel.boardCoordinate.token");
     }
@@ -340,6 +370,7 @@
       const players = listPlayers(state);
       const turnFlow = createTurnFlow(state, players);
       const boardCoordinate = createBoardCoordinate(ownerContext, state);
+      const presentationState = options.presentationState || state;
       const readModel = deepFreeze({
         schemaVersion: SCHEMA_VERSION,
         events: createEvents(ownerContext, state, players, turnFlow),
@@ -349,6 +380,7 @@
         },
         turnFlow,
         boardCoordinate,
+        runtime: createRuntime(presentationState, turnFlow),
         render: createRender(state, options, players, turnFlow, boardCoordinate),
       });
       return assertReadModel(readModel);
@@ -364,6 +396,7 @@
     ACTION_INTERACTION_KEYS,
     TURN_FLOW_KEYS,
     BOARD_COORDINATE_KEYS,
+    RUNTIME_KEYS,
     TOKEN_KEYS,
     RENDER_KEYS,
     assertReadModel,

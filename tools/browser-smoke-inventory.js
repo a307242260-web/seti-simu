@@ -37,7 +37,7 @@ module.exports = Object.freeze([
       confirm.click();
       await waitFor(() => {
         const input = window.SetiRandomizer.inspect().input;
-        return input.submissionSequence >= inputBefore + 16
+        return input.submissionSequence >= inputBefore + 15
           && input.lastResult?.kind === "decision";
       }, "initial_setup Standard Action/Decision input facade");
       for (let guard = 0; guard < 12; guard += 1) {
@@ -56,6 +56,9 @@ module.exports = Object.freeze([
           }, "AI 初始收入 Decision");
           continue;
         }
+        await waitFor(() => Boolean(
+          document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]'),
+        ), "初始收入 Decision DOM choice");
         const choice = document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]');
         if (!choice) throw new Error("初始收入 Decision 缺少 DOM choice");
         choice.click();
@@ -75,7 +78,7 @@ module.exports = Object.freeze([
       await waitFor(() => !document.querySelector(".initial-selection-picker"), "完成多席位 Decision");
       await waitFor(() => document.querySelector("#player-stats")?.children.length > 0, "玩家资源 renderer");
       const setupInput = window.SetiRandomizer.inspect().input;
-      if (setupInput.submissionSequence < 17 || setupInput.lastResult?.kind !== "decision") {
+      if (setupInput.submissionSequence < 16 || setupInput.lastResult?.kind !== "decision") {
         throw new Error("真实初始选择未进入 Standard Action/Decision input facade: " + JSON.stringify(setupInput));
       }
       const beforeInspect = window.SetiRandomizer.inspect();

@@ -67,6 +67,32 @@
         workingState.meta = structuredClone(committedState.meta);
       },
     });
+    function createEffectPresentation(flow) {
+      if (!flow || typeof flow !== "object") return null;
+      const safeOptionKeys = [
+        "cost", "playerId", "playerColor", "targetPlayerId", "targetPlayerColor", "skippable",
+      ];
+      return {
+        actionType: flow.actionType || null,
+        label: flow.label || null,
+        historySource: flow.historySource || null,
+        currentIndex: Number.isInteger(flow.currentIndex) ? flow.currentIndex : 0,
+        completed: Boolean(flow.completed),
+        effects: (flow.effects || []).map((effect) => ({
+          id: effect?.id || null,
+          type: effect?.type || null,
+          label: effect?.label || null,
+          status: effect?.status || null,
+          icon: effect?.icon || null,
+          badge: effect?.badge ?? null,
+          required: Boolean(effect?.required),
+          undoable: effect?.undoable !== false,
+          options: Object.fromEntries(safeOptionKeys
+            .filter((key) => Object.hasOwn(effect?.options || {}, key))
+            .map((key) => [key, structuredClone(effect.options[key])])),
+        })),
+      };
+    }
     const projectBrowserState = (workingRoot, viewer, inspection, projectionMeta = {}) => {
       const stateVersion = Number(projectionMeta.stateVersion) || 0;
       const canonicalCandidate = createCommittedCandidate(
@@ -84,22 +110,56 @@
         playerId: null,
         role: "spectator",
       };
+      const visibilityCandidate = structuredClone(canonicalCandidate);
+      visibilityCandidate.match.actionEffectPresentation = createEffectPresentation(
+        canonicalCandidate.match?.actionEffectFlow,
+      );
       const visible = browserProjection.visibilityPolicy(
-        canonicalCandidate,
+        visibilityCandidate,
         resolvedViewer,
         inspection,
       );
-      const initialSetup = structuredClone(visible.resident?.initialSetup || {
+      const visibleResident = visible.resident || {};
+      if (visible.match && Object.hasOwn(visible.match, "actionEffectPresentation")) {
+        delete visible.match.actionEffectPresentation;
+      }
+      const initialSetup = structuredClone(visibleResident.initialSetup || {
         active: false,
         interactive: false,
         currentPlayerId: null,
         offer: null,
         confirmedPlayerIds: [],
       });
+      const presentationPlayers = structuredClone(
+        visibleResident.players?.players || Object.values(visible.players || {}),
+      );
+      const presentationState = {
+        match: structuredClone(visible.match || {}),
+        turn: structuredClone(visibleResident.turn || {}),
+        players: {
+          currentPlayerId: visibleResident.players?.currentPlayerId
+            ?? visible.match?.currentPlayerId
+            ?? null,
+          players: presentationPlayers,
+        },
+        solarSystem: structuredClone(visibleResident.solar || {}),
+        pieces: structuredClone(visibleResident.pieces || {}),
+        planets: structuredClone(visibleResident.planets || {}),
+        data: structuredClone(visibleResident.data || {}),
+        cards: structuredClone(visibleResident.cards || {}),
+        tech: structuredClone(visibleResident.tech || {}),
+        aliens: structuredClone(visibleResident.aliens || {}),
+        finalScoring: structuredClone(visibleResident.finalScoring || {}),
+        effectPresentation: structuredClone(visibleResident.effectPresentation || null),
+      };
+      const finalReadModel = finalReadModelOwner.project(canonicalCandidate);
       visible.resident = {
-        finalReadModel: finalReadModelOwner.project(canonicalCandidate),
+        finalReadModel,
         browserReadModel: browserReadModelOwner.project(canonicalCandidate, {
           viewer: resolvedViewer,
+          presentationState,
+          presentationPlayers,
+          finalReadModel,
           createHandPresentation: (player) => player?.hand || [],
           createReservedCardItems: (player) => player?.reservedCards || [],
           createRenderPresentation: (input) => browserProjection.createRenderPresentation({
@@ -111,33 +171,10 @@
       };
       return visible;
     };
-    const browserReadModels = Object.freeze({
-      actionEffectFlow: (workingRoot) => structuredClone(workingRoot.match?.actionEffectFlow || null),
-      cardUi: (workingRoot) => structuredClone(workingRoot.cardState?.ui || {}),
-      playerTurn: (workingRoot) => ({
-        players: structuredClone(workingRoot.playerState || { currentPlayerId: null, players: [] }),
-        turn: {
-          ...structuredClone(workingRoot.turnState || {}),
-          currentPlayerId: workingRoot.playerState?.currentPlayerId ?? null,
-        },
-      }),
-      solarBriefing: (workingRoot) => ({
-        sectorBySlot: structuredClone(workingRoot.solarState?.sectorBySlot || {}),
-      }),
-      initialSetupStatus: (workingRoot) => ({
-        active: workingRoot.match?.initialSetup?.phase === "selecting",
-        currentPlayerId: workingRoot.match?.initialSetup?.currentPlayerId || null,
-      }),
-      alienBoard: (workingRoot) => ({
-        alienGameState: structuredClone(workingRoot.alienGameState || {}),
-        playerState: structuredClone(workingRoot.playerState || { currentPlayerId: null, players: [] }),
-      }),
-    });
     const browserProjectionAdapter = Object.freeze({
       adapterId: "seti-browser-viewer-projection-v1",
       projectWorkingState: true,
       projectState: projectBrowserState,
-      readModels: browserReadModels,
     });
     const browserHostServices = Object.freeze({ ...(context.hostServices || {}) });
     const installedKernel = productionKernelApi.createProductionKernel({
@@ -170,7 +207,6 @@
       executeOwnerInput: context.executeOwnerInput,
       projectWorkingState: true,
       projectState: projectBrowserState,
-      readModels: browserReadModels,
       createCounterfactualFork: context.counterfactualEnabled === false
         ? null
         : (envelope, forkOptions = {}) => {

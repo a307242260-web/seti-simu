@@ -53,17 +53,6 @@
     });
   }
 
-  function createTurnReadoutOwnerInputPort(registry, context = {}) {
-    return registry.register("turn_readout", {
-      buildFinalSummary: (workingRoot) => ({
-        ok: true,
-        value: context.buildFinalSummary(workingRoot),
-      }),
-    });
-  }
-
-
-
   function createTurnState(sourcePlayers, options = {}) {
     return productionTurnFlow.createTurnState(sourcePlayers, options);
   }
@@ -219,7 +208,12 @@
       );
     }
     function buildFinalScoreSummaryLinesFromHost() {
-      return context.inputPort.buildFinalSummary() || [];
+      const projection = context.getFinalUiProjection();
+      return (projection.players || [])
+        .filter((player) => projection.turn.activePlayerIds.includes(player.id))
+        .map((player) => (
+          `${player.colorLabel || player.name || player.id}：${player.breakdown?.totalScore || 0} 分`
+        ));
     }
     function renderRoundStatus() {
       const input = context.createResidentRenderInput();
@@ -435,7 +429,7 @@
         activePlayerCount,
         compositionStatePrepared: true,
       });
-      if (!startResult?.ok) return startResult;
+      if (startResult?.ok === false) return startResult;
       return context.setupInputPort.startInitialSelection();
     }
     return Object.freeze({
@@ -755,7 +749,6 @@
 
   return {
     createTurnOwnerInputPort,
-    createTurnReadoutOwnerInputPort,
     createTurnState,
     getActiveOrderedPlayerIds,
     getRoundOrderPlayerIds,

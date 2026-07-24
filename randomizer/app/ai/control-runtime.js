@@ -438,6 +438,16 @@
       } finally {
         schedulerState.inProgress = false;
       }
+      if (result?.ok === false && String(result.code || "").includes("STALE")) {
+        refreshCompositionPresentation();
+        if (!isGameEnded()) scheduleAiAutoStepIfNeeded();
+        return;
+      }
+      if ((result?.blocked || result?.ok === false)
+        && !isAiAutoBattlePlayer(getPendingAutomationPlayerId())) {
+        refreshCompositionPresentation();
+        return;
+      }
       if (result?.blocked || result?.ok === false) {
         schedulerState.pausedOnBug = true;
         const bug = recordAiAutoBattleBug(result.message || "默认 AI 自动行动阻塞", {

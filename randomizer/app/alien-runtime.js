@@ -14,7 +14,7 @@
     "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects", "handleBanrenmaRevealSideEffects",
     "handleChongRevealSideEffects", "handleAmibaRevealSideEffects", "handleAomomoRevealSideEffects",
     "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects", "failMissingAlienTraceTargetPlayer",
-    "getAlienTraceActionPlayer", "confirmYichangdianTracePlacement", "confirmBanrenmaTracePlacement",
+    "confirmYichangdianTracePlacement", "confirmBanrenmaTracePlacement",
     "confirmAomomoTracePlacement", "confirmChongTracePlacement", "confirmAmibaTracePlacement",
     "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement", "settleTurnEndAlienRevealEntries",
     "activateAomomoBoard",
@@ -27,23 +27,6 @@
     if (typeof getTarget !== "function") throw new TypeError("alien_runtime input port 缺少 owner resolver");
     return registry.registerTarget("alien_runtime", BROWSER_INPUT_NAMES, getTarget);
   }
-
-  function createChongTransportOwnerInputPort(registry, context = {}) {
-    return registry.register("chong_transport", {
-      listReady: (workingRoot, command) => ({
-        ok: true,
-        value: context.clonePresentation(
-          context.listReady(
-            workingRoot,
-            command.player ?? command.args?.[0],
-            command.task ?? command.args?.[1],
-          ),
-        ),
-      }),
-    });
-  }
-
-
 
   const BROWSER_STATIC_DEPENDENCY_KEYS = Object.freeze([
     "aliens", "players", "data", "cardEffects", "historyCommands", "jiuzhe",
@@ -1916,7 +1899,14 @@
     }
 
     function listReady(player, task) {
-      return context.inputPort.listReady(player, task) || [];
+      const choices = context.getDecisionProjection()?.choices || [];
+      return choices.filter((choice) => {
+        const presentation = choice.presentation || {};
+        return (!player?.id || String(presentation.playerId || player.id) === String(player.id))
+          && (!task?.destinationPlanetId
+            || String(presentation.destinationPlanetId || task.destinationPlanetId)
+              === String(task.destinationPlanetId));
+      });
     }
 
     return Object.freeze({ listReadyForRoot, listReady });
@@ -1961,7 +1951,6 @@
   return {
     BROWSER_INPUT_NAMES,
     createBrowserInputPort,
-    createChongTransportOwnerInputPort,
     BROWSER_STATIC_DEPENDENCY_KEYS,
     createBrowserAlienRuntime,
     createBrowserAlienStaticContext,

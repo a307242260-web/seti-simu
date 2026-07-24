@@ -10,18 +10,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
-    "replaceNebulaDataForCurrentPlayer", "getSectorFinishWinnerTarget", "executeScanActionFinalizeEffect",
+    "replaceNebulaDataForCurrentPlayer", "executeScanActionFinalizeEffect",
     "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
-    "settleDelayedPublicRefillsAfterScanFlow", "buildEndOfFlowFollowupEffects",
-    "shouldAppendQueuedSectorFinishEffects", "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
+    "settleDelayedPublicRefillsAfterScanFlow",
+    "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
     "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
-    "closeScanTargetPicker", "nebulaHasScannableData", "buildNebulaScanChoice", "isAomomoActive",
-    "getAomomoPlanetLocation", "getAomomoCurrentX", "getNebulaCurrentX", "getSectorScanTargetLabel",
-    "buildAomomoScanChoiceForX", "hasAomomoScanAtX", "buildSectorScanChoicesForX",
+    "closeScanTargetPicker",
     "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
-    "getSectorOpenDataCount", "getSectorReplacedCount", "getSectorExtraMarkCount",
-    "getPublicScanChoicesForCard", "hasHandScanTargetCard", "createPublicScanPendingAction",
     "beginPublicDeckScan", "beginPublicScanForSingleCard", "confirmPublicScanSelection",
     "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection", "handleHandScanCardClick",
   ]);

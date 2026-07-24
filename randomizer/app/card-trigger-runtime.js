@@ -9,14 +9,12 @@
   // Browser 只保留只读 projection helper。任务、type1、bonus、followup 与 cleanup
   // 已由 Production Composition 的 residual/card Effect executor 独占。
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "buildCardTaskContext", "buildPlayerDataTotals", "buildProbeLocationIndex", "getReadyCardTasks",
     "refreshCardTaskState", "applyType1TriggerMatches", "continueAfterCardTriggerResolution",
-    "buildAlienTraceEvent", "getActiveCardEventBonuses", "applyCardEventBonusReward",
+    "applyCardEventBonusReward",
     "applyPublicityMoveFollowupBonus", "processCardEventBonuses", "processChongTransportArrivalEvents",
-    "buildChongPositionArrivalEvents", "settleCardTasksAfterEffect", "getReadyTaskForReservedCard",
-    "getReadyChongTaskForReservedCard", "getReadyAmibaTaskForReservedCard", "getReadyRunezuTaskForReservedCard",
-    "removeReservedCardToDiscard", "discardReservedCardIfFinished", "createCardTriggerProgressSnapshot",
-    "createCardTriggerProgressCommands", "consumeCardTriggerWithSnapshot", "confirmCardTriggerProgress",
+    "settleCardTasksAfterEffect",
+    "removeReservedCardToDiscard", "discardReservedCardIfFinished",
+    "consumeCardTriggerWithSnapshot", "confirmCardTriggerProgress",
     "prepareCardTriggerRewardEffects", "queueCardTriggerRewardEffects", "openCardTaskCompletionPicker",
     "openCardTriggerPicker", "applyCardTriggerReward", "beginCardTriggerFreeMove", "applyCardTriggerMatch",
   ]);

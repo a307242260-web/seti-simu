@@ -72,6 +72,8 @@
   function createBrowserHostState() {
     return {
       scanRunSequence: 0,
+      viewerPlayerId: null,
+      aiPlayerIds: [],
     };
   }
 

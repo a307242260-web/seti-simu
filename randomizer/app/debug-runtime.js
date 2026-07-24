@@ -12,7 +12,7 @@
   const BROWSER_INPUT_NAMES = Object.freeze([
     "runDebugQuickSectorScan", "openDebugQuickSectorScanPicker", "setDebugOpen", "setDebugPlayerMenuOpen",
     "renderDebugPlayerSwitch", "selectDefaultRocketForCurrentPlayer", "switchCurrentPlayerColor",
-    "getFailsafePendingOwnerPlayer", "handleAiTakeoverFailsafe", "handleForceSkipTurnFailsafe",
+    "handleAiTakeoverFailsafe", "handleForceSkipTurnFailsafe",
     "addDebugIncome", "addDebugData", "addDebugScore", "addDebugCardByInput", "promptDebugGainCard",
     "revealJiuzheForDebug", "revealYichangdianForDebug", "revealFangzhouForDebug", "revealBanrenmaForDebug",
     "revealChongForDebug", "revealAmibaForDebug", "revealAomomoForDebug", "revealRunezuForDebug",
@@ -1367,7 +1367,7 @@
     const commandMethods = [
       "runDebugQuickSectorScan", "openDebugQuickSectorScanPicker", "setDebugOpen",
       "setDebugPlayerMenuOpen", "renderDebugPlayerSwitch", "selectDefaultRocketForCurrentPlayer",
-      "switchCurrentPlayerColor", "getFailsafePendingOwnerPlayer", "handleAiTakeoverFailsafe",
+      "switchCurrentPlayerColor", "handleAiTakeoverFailsafe",
       "handleForceSkipTurnFailsafe", "addDebugIncome", "addDebugData", "addDebugScore",
       "addDebugCardByInput", "promptDebugGainCard", "revealJiuzheForDebug", "revealYichangdianForDebug",
       "revealFangzhouForDebug", "revealBanrenmaForDebug", "revealChongForDebug", "revealAmibaForDebug",
@@ -1378,6 +1378,9 @@
       name,
       (...args) => context.dispatchCommand(name, args),
     ]));
+    port.getFailsafePendingOwnerPlayer = (...args) => (
+      context.getFailsafePendingOwnerPlayer?.(...args) || null
+    );
     port.handleDebugQuickSectorScanChoice = (button) => context.dispatchCommand(
       "handleDebugQuickSectorScanChoice",
       [{ ...(button?.dataset || {}) }],

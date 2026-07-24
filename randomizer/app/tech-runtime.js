@@ -10,8 +10,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "isTechActionSelectionActive", "isTechTilePickingActive", "syncTechSelectionChrome", "renderTechBoard",
-    "closeTechBlueSlotPicker", "isTechTileOwnedByOtherPlayer", "appendResearchTechFollowupEffects",
+    "syncTechSelectionChrome", "renderTechBoard",
+    "closeTechBlueSlotPicker", "appendResearchTechFollowupEffects",
     "onTechTileSelected", "onTechTileTaken", "clearResearchTechSelectionState",
     "restoreResearchTechSelectionAfterUndo", "cancelPendingResearchTechTileChoice", "cancelTechSelection",
     "openTechBlueSlotPicker", "finalizeTechTakeResult", "commitResearchTechSelectionResult",

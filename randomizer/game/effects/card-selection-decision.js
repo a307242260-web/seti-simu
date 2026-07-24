@@ -85,7 +85,8 @@
         card
           && !selectedSlots.has(slotIndex)
           && selectedSlots.size < maxSelectable
-          && (pending.type !== "public_scan" || options.getPublicScanChoicesForCard?.(card)?.ok)
+          && (pending.type !== "public_scan"
+            || options.getPublicScanChoicesForCard?.(workingRoot, card)?.ok)
           ? [attach({
             id: "conditionalChoice",
             family: "choose_card",

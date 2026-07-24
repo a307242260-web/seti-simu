@@ -10,18 +10,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
-    "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
-    "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
-    "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
-    "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "beginAlienTraceBoardPlacement",
+    "openAlienTracePicker", "beginAlienTraceBoardPlacement",
     "closeAlienTracePicker", "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement",
     "beginFangzhouTraceGridPlacement", "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement",
     "beginChongTraceGridPlacement", "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement",
     "renderAlienTracePickerColorStep", "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice",
     "handleFangzhouTraceDestinationChoice", "handleFangzhouUnlockTraceChoice", "routeFangzhouAlienTraceGain",
     "handleStateTraceSlotPlacement", "handleFangzhouTraceSlotPlacement",
-    "getEligibleAlienSlotIdsForTraceEffect", "getFangzhouUnlockableTraceTypes",
-    "hasAlienTracePanelPlacementTarget",
   ]);
 
   function createBrowserInputPort(registry, getTarget) {

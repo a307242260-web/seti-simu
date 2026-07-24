@@ -29,7 +29,7 @@
     "handleRunezuFaceSymbolChoice", "openRunezuSymbolBranchDialog",
     "handleRunezuSymbolBranchChoice",
   ]);
-  const BROWSER_INPUT_NAMES = Object.freeze([...RENDER_METHODS, ...INPUT_METHODS]);
+  const BROWSER_INPUT_NAMES = Object.freeze([...INPUT_METHODS]);
   const PROJECTION_METHODS = Object.freeze([
     "getPendingChongFossilChoice", "getPendingAmibaSymbolChoice",
     "getPendingRunezuSymbolBranch", "getPendingRunezuFaceSymbolPlacement",
