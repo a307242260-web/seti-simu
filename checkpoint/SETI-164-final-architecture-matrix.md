@@ -1,12 +1,13 @@
 # SETI-164 最终架构收口矩阵
 
-状态：设计冻结（2026-07-24）。本文件把 SETI-158/159/160/163 的领域矩阵合并为最终组合义务；首个生产 patch 前以当前 `HEAD=16933d6` 的完整 `randomizer/app/**`、`randomizer/game/**`、`randomizer/training/**` 和 HTML 脚本清单机械复核。测试用于验证此矩阵，不用于首次发现 owner、state、RNG 或 Decision 契约。
+状态：纠偏后重新冻结（2026-07-24）。本文件把 SETI-158/159/160/163 的领域矩阵合并为最终组合义务；以当前 `HEAD=0b2ff69` 的完整 `randomizer/app/**`、`randomizer/game/**`、`randomizer/training/**` 和 HTML 脚本清单机械复核。旧 run 删除 Browser UI runtime、让 Browser 读取 canonical state、复用 Simulation projection 的方案已明确废弃。测试用于验证本矩阵，不用于首次发现 owner、state、RNG、visibility 或 Decision 契约。
 
 ## 根契约与有限集合
 
 - Standard Action 的有限全集只来自 `game/actions/standard-action.js::ALL_FAMILIES`，共 22 项。Production Domain Pack 必须对全集逐项登记唯一 provider、executor 与 Effect domain，Browser/Simulation 不得补 family、executor 或 choices。
 - Effect domain 的有限全集只来自 `game/production-composition.js::effectDomains`：`standard_action`、`card_play`、`science`、`probe_turn`、`residual`。重复 owner 构造期失败；未知 family/domain/effect/Decision fail-closed。
-- committed root 只由 Composition StateStore/Effect Session CAS 修改。Browser 只可读取正式 projection、提交 Standard Action/Decision、保存/恢复 envelope、渲染和隔离渲染异常；Simulation 只可提供 seed/config、Policy 输入、批跑、checkpoint/replay 与报告。
+- Production Kernel 只共享 Production domains、registry、Effect Session、state commit 与 replay 协议；不得把任一 Host 的 projection 当成公共规则状态。Kernel 构造时必须显式接收 Browser/Simulation 各自的 state adapter、projection adapter 与 host services，重复规则 owner 在构造期失败。
+- committed root 只由 Composition StateStore/Effect Session CAS 修改。Browser composition 对外不得暴露 `stateSourcePort`、working root 或 committed root，只可消费经 Browser visibility policy 处理、带 viewer identity、深冻结的 `BrowserProjection`/resident read models，提交 Standard Action/Decision、保存/恢复 envelope、渲染和隔离渲染异常。Simulation projection/state adapter 只服务 Policy、批跑、checkpoint/replay 与报告，不能被 Browser 复用。
 - RNG、实体 id、effect sequence、stateVersion、decisionVersion 与 journal cursor 都属于 committed/replay 协议。stale、late、wrong-owner、removed-choice 必须零副作用；非等价选择必须停在正式 Decision。
 - 子项验收 commit 为 `fd6f7a2`（composition）、`56a678a`（card）、`084bada`（science）、`02f34c9`（probe/turn）、`16933d6`（residual）。最终审计只复用这些提交后未变化的领域内部证明；对跨域组合、最终残留、Host parity、terminal/recovery 和 Chrome 重新验收。
 
@@ -43,31 +44,32 @@
 
 | 关系/边界 | 必须成立 | 最小反例 | 证据 |
 |---|---|---|---|
-| Browser vs Simulation capability | 同 22 family、5 domain、owner/executor identity | 任一 Host 多/少 family 或注入 executor | 自动 capability matrix |
-| same root / every legal action | descriptor identity、费用、目标、执行结果、journal、next Decision、committed state 相等 | 同 checkpoint 某 action 只在一侧可执行 | 同 checkpoint 逐 action fork |
+| Browser vs Simulation capability | 同 22 family、5 domain、owner/executor identity；projection/state adapter 与 host services 身份必须不同 | 任一 Host 多/少 family、注入 executor，或两 Host 共用 projection | 自动 capability matrix + adapter identity 断言 |
+| same canonical checkpoint / every legal action | Kernel 内部从同一 canonical checkpoint 比较 descriptor identity、费用、目标、执行结果、journal、next Decision、committed state；Browser 侧只能看到 viewer-safe projection | Browser 为做 parity 取得 root，或同 checkpoint 某 action只在一侧可执行 | Kernel counterfactual fork 逐 action + Browser facade 泄漏负向测试 |
 | fresh A/A | state、legal、RNG、id、cursor 相等 | 未纳入 seed 的随机源 | reset parity |
 | same instance A/A 与 A/B/A | reset 清空模块闭包/cache/pending | B 污染第二次 A | 常驻 env reset matrix |
 | non-zero checkpoint fork | 至少一个真实 policy action 后 state/legal/RNG/journal cursor 相等 | 仅 opening checkpoint 通过 | checkpoint/replay test |
 | crash/timeout recovery | 只重放确认 action；失败 action 不入 journal | stale worker response 被提交 | worker recovery test |
 | terminal full game | 正式建局运行到 `game_end`，每玩家有 finalScore/scoreSources | max-step/recover/score fallback 假终局 | 多 seed terminal contract |
-| real Chrome | 人类输入走同 Standard Action/Decision；保存恢复；renderer 异常不破坏规则 authority | UI callback 直写或 renderer throw 中断 commit | Chrome smoke |
+| real Chrome index.html | 隐藏 deck/他人手牌不可见；太阳系/火箭、玩家/资源/手牌、公共牌、科技、扫描/数据、外星人、终局计分均由真实 projection renderer 呈现；人类主行动与多步 Decision 走正式 input adapter；保存恢复；renderer 异常不破坏规则 authority | 极简壳/空 renderer、UI callback 直写、root 泄漏或 renderer throw 中断 commit | 真实 `randomizer/index.html` Chrome 验收 |
 
 ## 旧路径物理删除矩阵
 
 以下是从当前 HTML、`app/dependencies.js`、`app.js` production 装配与源码 mutation 扫描机械导出的有限删除集合；不能以“新 owner 已存在”或“当前未命中”替代物理删除。
 
-1. 删除完整 Browser rule executor/Decision owner：`app/conditional-decision-domain.js`、`app/conditional-action-executor.js`、`app/quick-turn-action-executor.js`、`app/effects/{bootstrap,dispatcher,movement-scan,rewards,aliens}.js`，以及 HTML/dependency/app.js 装配。
-2. `app/scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、`income-runtime.js`、`card-trigger-runtime.js`、`turn-end-flow.js`、`hand-flow.js`、`alien-runtime.js`、`alien-trace-reward-flow.js`、`alien-ui.js`、`aliens/species-runtime.js` 只保留 projection/render/input adapter；任何 committed state mutation、legal/choice builder、effect executor、history/continuation/pending owner 物理删除。
-3. `app/action-runtime.js`、`action-interaction-runtime.js`、`effect-flow.js`、`effect-choice-flow.js`、`score-source-runtime.js` 只保留输入/展示/只读投影；旧 action/effect/session rule continuation 物理删除。
-4. `app/public-api.js` 只允许 debug/inspect/save/restore 与标准输入端口；不得暴露直接规则 executor。
-5. `training/simulation-rule-composition.js` 只负责 host state/config/RNG 与安装 Production Composition；不得枚举/执行 family、构造 Decision、skip unsupported 或 fallback score。
-6. 静态禁止生产路径中的 `unavailable/unsupported/generic pending/no_legal_choice` 兼容分支、host family executor map、Browser rule callbacks、Simulation private provider。未知输入必须由 game Composition 返回结构化 fail-closed。
+1. `app/browser-rule-composition.js` 只安装 Browser 专属 state/projection adapter 与 host services，并从 game Production Kernel 取得 Composition；公开返回值不得含 `stateSourcePort`。`app.js` 只持有 `projectionSource` 与窄 read-model/input/lifecycle ports。
+2. `app/conditional-decision-domain.js`、`conditional-action-executor.js`、`effects/**`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、`income-runtime.js`、`card-trigger-runtime.js`、`turn-end-flow.js`、`hand-flow.js`、`alien-runtime.js`、`alien-trace-reward-flow.js`、`alien-ui.js`、`aliens/species-runtime.js` 不得整文件删除：保留真实 projection renderer、DOM picker、Standard Action/Decision input adapter；逐函数删除 committed state mutation、legal/choice builder、effect executor、history/continuation/pending owner。
+3. `app/action-runtime.js`、`action-interaction-runtime.js`、`effect-flow.js`、`effect-choice-flow.js`、`score-source-runtime.js` 同样保留输入/展示/只读投影；旧 action/effect/session rule continuation 物理删除。删除证据按禁用符号/可达 owner，而不是“文件不存在”。
+4. `app/render-runtime.js`、`browser-host/resident-renderer.js`、`final-ui-runtime.js`、`start-screen.js` 与真实 DOM 结构是功能 parity 的正式资产；不得以通用 choice renderer、空 renderer 或只显示回合/按钮的壳替代。
+5. `app/public-api.js` 只允许 viewer-safe inspect/save/restore 与标准输入端口；不得暴露 `stateSourcePort`、working/committed root 或直接规则 executor。
+6. `training/simulation-rule-composition.js` 只安装 Simulation 专属 state/projection adapter 与 host services；不得枚举/执行 family、构造 Decision、skip unsupported 或 fallback score。
+7. 静态禁止生产路径中的 `unavailable/unsupported/generic pending/no_legal_choice` 兼容分支、host family executor map、Browser rule callbacks、Simulation private provider。未知输入必须由 game Composition 返回结构化 fail-closed。
 
 ## Proof obligations 与集中验收
 
-1. 自动 architecture audit 从源码与 runtime 双向比较 22 family/5 domain；Host 自定义 owner/executor、未知 family/effect/Decision 的负向 fixture 必须失败。
+1. 自动 architecture audit 从 runtime 双向比较 22 family/5 domain；Host 自定义 owner/executor、未知 family/effect/Decision、Browser 暴露 canonical source、两 Host 共用 projection adapter 的负向 fixture 必须失败。
 2. capability parity 从同一 checkpoint 对每 family 的全部实体、方向、目标、费用和 descriptor identity 做集合相等，再逐 action fork 比较 result、journal、next Decision 与 committed state。
 3. terminal runner 必须从正式 setup 开始自然到正式 `game_end`；禁止 max-step 强制终局、recover/skip、临时 score 或首项代选。
 4. checkpoint/replay 覆盖 fresh A/A、same instance A/A、A/B/A、非零 fork 与 worker recovery。
-5. Chrome 覆盖真实人类 Standard Action/Decision、保存恢复、八物种渲染和 renderer throw 隔离；Browser 规则 state 仅来自 Composition projection。
+5. Chrome 必须加载真实 `randomizer/index.html`，验证隐藏 deck/他人手牌不泄漏，太阳系/火箭、玩家资源/手牌、公共牌、科技、扫描/数据、八物种、终局计分真实渲染，人类主行动与多步 Decision，保存恢复，以及 renderer throw 前后 committed version/state 不变；Browser 只读深冻结 BrowserProjection/resident read models。
 6. 最终执行 `node --check randomizer/app.js`、全部 Node inventory、唯一 full-flow、全部 Browser smoke、fixed-seed machine game、`git diff --check`，并输出旧文件/符号删除清单。
