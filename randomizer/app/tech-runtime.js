@@ -16,9 +16,6 @@
     "restoreResearchTechSelectionAfterUndo", "cancelPendingResearchTechTileChoice", "cancelTechSelection",
     "openTechBlueSlotPicker", "finalizeTechTakeResult", "commitResearchTechSelectionResult",
     "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice", "handleSupplyTechTileClick",
-    "executeIndustryPiratesRaidMarkerEffect", "handlePiratesRaidTechMarkerClick",
-    "executeIndustryPiratesRaidPublicityEffect", "startIndustryPiratesRaidLaunchFlow",
-    "buildPiratesRaidLaunchChoices", "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice",
     "setCheatModeOpen", "toggleCheatMode",
   ]);
 
@@ -229,7 +226,6 @@
       readPendingDecision,
     } = context;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
-    const getPiratesRaidDecision = () => readPendingDecision?.("pirates_raid") || null;
 
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
@@ -785,7 +781,6 @@
         canTakeTile: (tileId) => {
           if (!currentPlayer?.techState) return false;
           if (!tech.isSupplySelectionActive(techGameState.ui)) return false;
-          if (industry?.isTechBlockedByPirates?.(currentPlayer, tileId)) return false;
           const selectionOptions = getResearchTechSelectionOptions(workingRoot);
           if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) return false;
           return tech.resolver.canTakeTile(
@@ -797,7 +792,6 @@
         },
       });
       syncTechSelectionChrome(workingRoot);
-      renderPiratesRaidTechMarkers(workingRoot, currentPlayer);
       renderRunezuBoardSymbols();
     }
 
@@ -932,13 +926,6 @@
 
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (currentPlayer?.techState) {
-        if (industry?.isTechBlockedByPirates?.(currentPlayer, tileId)) {
-          const message = "星际海盗掠夺标记封锁了该科技";
-          techGameState.ui.statusNote = message;
-          rocketState.statusNote = message;
-          renderStateReadout();
-          return { ok: false, message };
-        }
         const selectionOptions = getResearchTechSelectionOptions(workingRoot);
         if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) {
           const message = "这张牌只能选择其他玩家已研究过的科技";
@@ -964,363 +951,7 @@
       return selectResearchTechTileForCurrentFlow(workingRoot, tileId);
     }
 
-    function isPiratesRaidPlacementActiveForPlayer(workingRoot, player) {
-      return Boolean(
-        getPiratesRaidDecision(workingRoot)
-        && player
-        && getPiratesRaidDecision(workingRoot).playerId === player.id,
-      );
-    }
-
-    function renderPiratesRaidTechMarkers(workingRoot, player) {
-      const layer = els.playerBoardTechLayer;
-      if (!layer) return;
-      layer.querySelectorAll(".pirates-raid-tech-marker-button").forEach((element) => element.remove());
-      if (!industry?.shouldShowPiratesRaidMarkers?.(player)) return;
-
-      const active = isPiratesRaidPlacementActiveForPlayer(workingRoot, player);
-      const targetPlanetId = getPiratesRaidDecision(workingRoot)?.planetId || null;
-      const markerSrc = industry.PIRATES_RAID_MARKER_SRC || "../assets/industry/掠夺标记.png";
-      for (const tileId of industry.listPiratesRaidBlockedTechTiles?.(player) || []) {
-        const layout = tech.getPlacementLayout?.(tileId);
-        if (!layout) continue;
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "pirates-raid-tech-marker-button";
-        button.dataset.piratesRaidTech = tileId;
-        button.style.left = `${layout.percentX}%`;
-        button.style.top = `${layout.percentY}%`;
-        button.style.setProperty("--pirates-raid-tech-scale", String((layout.scalePercent || 36.14) / 100));
-        const canPlace = active && industry.canPlacePiratesRaidMarker?.(player, tileId, targetPlanetId)?.ok;
-        button.disabled = !canPlace;
-        button.title = canPlace
-          ? `放置 ${tileId} 掠夺标记到 ${getPlanetName(targetPlanetId)}`
-          : `${tileId} 被星际海盗掠夺标记封锁`;
-        button.setAttribute("aria-label", button.title);
-        button.classList.toggle("is-placeable", canPlace);
-
-        const image = document.createElement("img");
-        image.className = "pirates-raid-tech-marker";
-        image.src = markerSrc;
-        image.alt = "";
-        image.decoding = "async";
-        image.draggable = false;
-        button.append(image);
-        layer.append(button);
-      }
-    }
-
-    function getCurrentPiratesRaidMarkerEffect(workingRoot) {
-      const effect = getCurrentActionEffect(workingRoot);
-      if (!effect || effect.type !== "industry_pirates_raid_marker" || effect.status !== "active") return null;
-      if (getPiratesRaidDecision(workingRoot) && getPiratesRaidDecision(workingRoot).effectId !== effect.id) return null;
-      return effect;
-    }
-
-    function executeIndustryPiratesRaidMarkerEffect(workingRoot, effect) {
-      const { rocketState } = requireWorkingRoot(workingRoot);
-      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
-      const planetId = effect.options?.planetId || null;
-      if (!player || !planetId) {
-        rocketState.statusNote = "星际海盗：缺少掠夺目标";
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
-      }
-      const blocked = industry.listPiratesRaidBlockedTechTiles?.(player) || [];
-      if (!blocked.length) {
-        return skipActionEffectWithMessage(workingRoot, effect, "星际海盗：没有可放置的掠夺标记，已跳过", {
-          reason: "no_pirates_raid_marker",
-        });
-      }
-      openPendingDecision(workingRoot, "pirates_raid", {
-        effectId: effect.id,
-        playerId: player.id,
-        playerColor: player.color,
-        planetId,
-      });
-      rocketState.statusNote = `${effect.label}：请选择玩家面板上的掠夺标记放置到 ${getPlanetName(planetId)}`;
-      renderTechBoard(workingRoot);
-      syncInteractionFocusChrome();
-      renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
-    }
-
-    function handlePiratesRaidTechMarkerClick(workingRoot, tileId, pendingOverride = null) {
-      const { rocketState } = requireWorkingRoot(workingRoot);
-      const effect = getCurrentPiratesRaidMarkerEffect(workingRoot);
-      const pending = pendingOverride || getPiratesRaidDecision(workingRoot);
-      if (!effect || !pending) {
-        return { ok: false, message: "没有待放置的掠夺标记" };
-      }
-      const player = resolveWorkingPlayerReference(workingRoot, pending);
-      const planetId = pending.planetId;
-      const check = industry.canPlacePiratesRaidMarker?.(player, tileId, planetId);
-      if (!check?.ok) {
-        rocketState.statusNote = check?.message || "无法放置该掠夺标记";
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
-      }
-
-      beginEffectHistoryStep(workingRoot, effect.label);
-      const beforePlayer = structuredClone(player);
-      const result = industry.placePiratesRaidMarker(player, tileId, planetId);
-      if (!result.ok) {
-        endEffectHistoryStep(workingRoot);
-        rocketState.statusNote = result.message;
-        renderStateReadout();
-        return result;
-      }
-      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复星际海盗掠夺标记放置前玩家状态",
-      ));
-      return finishAutomaticRewardEffect(effect, {
-        ok: true,
-        undoable: true,
-        message: `${effect.label}：${tileId} -> ${getPlanetName(planetId)}`,
-        payload: { tileId, planetId },
-      }, [renderTechBoard, renderRockets]);
-    }
-
-    function executeIndustryPiratesRaidPublicityEffect(workingRoot, effect) {
-      const { rocketState } = requireWorkingRoot(workingRoot);
-      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
-      if (!player) {
-        rocketState.statusNote = "星际海盗：没有目标玩家";
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
-      }
-      const gain = effect.options?.gain || { publicity: industry?.PIRATES_RAID_PUBLICITY_GAIN || 3 };
-      beginEffectHistoryStep(workingRoot, effect.label);
-      const beforePlayer = structuredClone(player);
-      players.gainResources(player, gain);
-      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复星际海盗宣传奖励前玩家状态",
-      ));
-      return finishAutomaticRewardEffect(effect, {
-        ok: true,
-        undoable: true,
-        message: `${effect.label}：${formatPlanetRewardGain(gain)}`,
-        payload: { gain },
-      });
-    }
-
-    function startIndustryPiratesRaidLaunchFlow(workingRoot, flow, options = {}) {
-      const { cardState, rocketState, turnState } = requireWorkingRoot(workingRoot);
-      const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
-      const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
-      uiRuntimeState.publicCardSelectedSlots = [];
-      uiRuntimeState.cardSelectionType = null;
-      cards.setSelectionActive(cardState, false);
-      syncCardSelectionChrome();
-
-      if (!nodes.length) {
-        rocketState.statusNote = "星际海盗：没有可结算的掠夺发射效果";
-        renderStateReadout();
-        return false;
-      }
-
-      const preHistoryCommands = [];
-      if (options.markerRestoreCommand) preHistoryCommands.push(options.markerRestoreCommand);
-      const started = startCardEffectFlow(
-        "industry-pirates-raid-launch",
-        flow.label || "星际海盗",
-        nodes,
-        {
-          workingRoot,
-          actionType: "industryPiratesRaid",
-          historySource: HISTORY_SOURCE_QUICK,
-          consumesMainAction: false,
-          preHistoryCommands,
-        },
-      );
-      if (started) {
-        rocketState.statusNote = flow.message || "星际海盗：请选择已有掠夺标记主星上的己方环绕或登陆标记";
-        renderActionEffectBar();
-        updateActionButtons();
-        renderStateReadout();
-      }
-      return started;
-    }
-
-    function buildPiratesRaidLaunchChoices(workingRoot, effect) {
-      requireWorkingRoot(workingRoot);
-      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
-      return buildWorkingPlanetMarkerRemovalChoices(workingRoot, {
-        options: {
-          owner: "current",
-          markerKinds: ["orbit", "land"],
-          ...(effect.options || {}),
-        },
-      }).filter((choice) => (
-        choice.planetId
-        && (choice.kind === "orbit" || choice.kind === "land")
-        && industry?.canUsePiratesRaidLaunchOnPlanet?.(player, choice.planetId)
-      ));
-    }
-
-    function executeIndustryPiratesRaidLaunchEffect(workingRoot, effect) {
-      const { rocketState } = requireWorkingRoot(workingRoot);
-      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
-      const cost = normalizeResourceCost(effect.options?.cost || industry?.PIRATES_RAID_ACTIVE_COST || { credits: 1 }) || {};
-      if (!players.canAfford(player, cost)) {
-        rocketState.statusNote = `星际海盗：资源不足，需要 ${players.formatResourceCost(cost)}`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
-      }
-      const choices = buildPiratesRaidLaunchChoices(workingRoot, effect);
-      if (!choices.length) {
-        rocketState.statusNote = "星际海盗：没有位于已掠夺主星的己方环绕或登陆标记";
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
-      }
-      openScanTargetDecision(workingRoot, { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices });
-      if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "星际海盗";
-      if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个已有掠夺标记主星上的己方环绕或登陆标记，移除后消耗 1 信用点并在该星球当前扇区免费发射。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
-      els.scanTargetActions.replaceChildren(...choices.map((choice) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.piratesRaidLaunchChoice = choice.id;
-        button.innerHTML = `${choice.label}<small>${choice.description || "己方标记"}；移除并免费发射</small>`;
-        return button;
-      }));
-      els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = `${effect.label}：请选择已有掠夺标记主星上要移除的己方标记`;
-      renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
-    }
-
-    function getPiratesRaidLaunchCoordinate(choice) {
-      if (choice.kind === "plutoOrbit" || choice.kind === "plutoLand") {
-        if (choice.sectorX == null || choice.sectorY == null) return null;
-        return { x: choice.sectorX, y: choice.sectorY };
-      }
-      return getPlanetSectorCoordinate(choice.planetId);
-    }
-
-    function handlePiratesRaidLaunchChoice(workingRoot, choiceId, pendingOverride = null) {
-      const { planetStatsState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = pendingOverride || getScanTargetDecision();
-      if (pending?.type !== "industry_pirates_raid_launch") {
-        return { ok: false, message: "没有待处理的星际海盗发射" };
-      }
-      const choice = pending.choices.find((item) => item.id === choiceId);
-      const effect = pending.effect;
-      closeScanTargetPicker(workingRoot);
-      if (!choice) return { ok: false, message: "无效标记" };
-
-      const player = resolveWorkingPlayerReference(workingRoot, pending)
-        || getWorkingEffectOwnerPlayer(workingRoot, effect);
-      return (() => {
-        const cost = normalizeResourceCost(effect.options?.cost || industry?.PIRATES_RAID_ACTIVE_COST || { credits: 1 }) || {};
-        if (!players.canAfford(player, cost)) {
-          rocketState.statusNote = `星际海盗：资源不足，需要 ${players.formatResourceCost(cost)}`;
-          renderStateReadout();
-          return { ok: false, message: rocketState.statusNote };
-        }
-        const coordinate = getPiratesRaidLaunchCoordinate(choice);
-        if (!coordinate) {
-          rocketState.statusNote = "星际海盗：找不到该星球当前扇区";
-          renderStateReadout();
-          return { ok: false, message: rocketState.statusNote };
-        }
-
-        beginEffectHistoryStep(workingRoot, effect.label);
-        const beforePlayer = structuredClone(player);
-        const beforePlanetStats = structuredClone(planetStatsState);
-        const beforePlayerState = choice.kind === "plutoOrbit" || choice.kind === "plutoLand"
-          ? structuredClone(playerState)
-          : null;
-        const beforeRocketState = structuredClone(rocketState);
-        const spend = players.spendResources(player, cost);
-        if (!spend.ok) {
-          endEffectHistoryStep(workingRoot);
-          rocketState.statusNote = spend.message;
-          renderStateReadout();
-          return spend;
-        }
-        const remove = removeWorkingPlanetMarker(workingRoot, choice, player, "current");
-        if (!remove.ok) {
-          restoreObjectSnapshot(player, beforePlayer);
-          if (beforePlayerState) restoreObjectSnapshot(playerState, beforePlayerState);
-          else restoreObjectSnapshot(planetStatsState, beforePlanetStats);
-          endEffectHistoryStep(workingRoot);
-          rocketState.statusNote = remove.message;
-          renderStateReadout();
-          return remove;
-        }
-        const place = rocketActions.launchRocketAtSector(rocketState, coordinate, {
-          playerId: player.id,
-          color: player.color,
-        });
-        if (!place.ok) {
-          restoreObjectSnapshot(player, beforePlayer);
-          if (beforePlayerState) restoreObjectSnapshot(playerState, beforePlayerState);
-          else restoreObjectSnapshot(planetStatsState, beforePlanetStats);
-          restoreObjectSnapshot(rocketState, beforeRocketState);
-          endEffectHistoryStep(workingRoot);
-          rocketState.statusNote = place.message;
-          renderStateReadout();
-          return place;
-        }
-
-        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
-          player,
-          beforePlayer,
-          "恢复星际海盗发射前玩家状态",
-        ));
-        if (beforePlayerState) {
-          recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
-            playerState,
-            beforePlayerState,
-            "恢复星际海盗移除冥王星标记前玩家状态",
-          ));
-        } else {
-          recordHistoryCommand(workingRoot, historyCommands.createRestorePlanetStatsCommand(
-            planetStatsState,
-            beforePlanetStats,
-            "恢复星际海盗移除星球标记前状态",
-          ));
-        }
-        recordHistoryCommand(workingRoot, historyCommands.createRestoreRocketStateCommand(
-          rocketState,
-          beforeRocketState,
-          "恢复星际海盗发射前探测器状态",
-        ));
-        const launchResult = {
-          ok: true,
-          undoable: true,
-          message: place.message,
-          commands: [],
-          events: [{
-            type: "launch",
-            playerId: player.id,
-            playerColor: player.color,
-            source: "industry_pirates_raid",
-            rocketId: place.rocket?.id || null,
-          }],
-          payload: { rocketId: place.rocket?.id || null },
-        };
-        maybeApplyIndustryLaunchScan(workingRoot, launchResult);
-        recordAbilityCommands(launchResult, undefined, workingRoot);
-        renderRockets();
-        syncPlanetOrbitLandMarkers();
-        return finishAutomaticRewardEffect(effect, {
-          ok: true,
-          undoable: true,
-          message: `${effect.label}：移除 ${choice.label}，${launchResult.message}`,
-          events: launchResult.events || [],
-          payload: { choice, rocketId: place.rocket?.id || null, cost },
-        }, [renderRockets]);
-      })();
-    }
-
-    function setCheatModeOpen(workingRoot, open) {
+     function setCheatModeOpen(workingRoot, open) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       tech.setCheatModeEnabled(techGameState, open);
       els.debugCheatButton?.setAttribute("aria-pressed", String(open));
@@ -1370,17 +1001,6 @@
       selectResearchTechTileForCurrentFlow,
       confirmTechBlueSlotChoice,
       handleSupplyTechTileClick,
-      isPiratesRaidPlacementActiveForPlayer,
-      renderPiratesRaidTechMarkers,
-      getCurrentPiratesRaidMarkerEffect,
-      executeIndustryPiratesRaidMarkerEffect,
-      handlePiratesRaidTechMarkerClick,
-      executeIndustryPiratesRaidPublicityEffect,
-      startIndustryPiratesRaidLaunchFlow,
-      buildPiratesRaidLaunchChoices,
-      executeIndustryPiratesRaidLaunchEffect,
-      getPiratesRaidLaunchCoordinate,
-      handlePiratesRaidLaunchChoice,
       setCheatModeOpen,
       toggleCheatMode,
       researchTechForCurrentPlayer,

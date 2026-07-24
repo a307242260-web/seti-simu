@@ -1119,9 +1119,7 @@
     }
 
     function getStandardPlayCardActionBlockReason(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
-      return industry?.blocksStandardPlayCardAction?.(player)
-        ? "原教旨主义：不能使用打牌主要行动"
-        : null;
+      return null;
     }
 
     function formatCardPlayCost(cost) {
@@ -1211,8 +1209,6 @@
           ? "未来跨度研究所：精选 1 张公共牌，并提高目标分"
         : pendingAction?.type === "industry_deepspace_public"
           ? "深空探测：请选择 1 张公共牌完成交换"
-        : pendingAction?.type === "fundamentalism_exchange_pick"
-          ? "原教旨主义：精选 1 张公共牌"
         : allowsBlindDrawInSelection()
         ? "精选：从公共牌区选一张牌，或点击盲抽"
         : "精选：从公共牌区选一张牌";
@@ -1326,15 +1322,6 @@
           };
           completeCurrentActionEffect(workingRoot, "skipped");
         }
-      } else if (pending?.type === "fundamentalism_exchange_pick") {
-        const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
-        if (pendingPlayer && pending.beforePlayerState) {
-          restoreObjectSnapshot(pendingPlayer, pending.beforePlayerState);
-        }
-        if (pending.beforeCardState) {
-          restoreObjectSnapshot(cardState, pending.beforeCardState);
-        }
-        rocketState.statusNote = "已取消原教旨主义精选兑换";
       } else if (pending?.type?.startsWith?.("industry_")) {
         return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       } else {
@@ -1660,31 +1647,6 @@
           : (advanceResult?.message || "未来跨度目标分更新失败");
         finishIndustryAbilityFlow(workingRoot, rocketState.statusNote, { irreversible: true });
         commitIrreversibleIndustryQuickAction("未来跨度研究所：精选", rocketState.statusNote);
-      }
-      if (pending?.type === "fundamentalism_exchange_pick") {
-        const player = getCardSelectionPlayer(workingRoot, pending);
-        beginEffectHistoryStep(workingRoot, pending.effectLabel || "原教旨主义：精选兑换");
-        recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
-          player,
-          pending.beforePlayerState,
-          "恢复原教旨主义精选兑换前玩家状态",
-        ));
-        recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
-          cardState,
-          pending.beforeCardState,
-          "恢复原教旨主义精选兑换前牌区",
-        ));
-        rocketState.statusNote = `原教旨主义：3分换1精选，获得 ${cards.getCardLabel(result.card)}`;
-        if (getCurrentActionEffect(workingRoot)) {
-          getCurrentActionEffect(workingRoot).result = {
-            ok: true,
-            undoable: false,
-            irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
-            message: rocketState.statusNote,
-            payload: { card: result.card, replenished: result.replenished || null, choiceId: pending.choiceId || null },
-          };
-        }
-        completeCurrentActionEffect(workingRoot);
       }
       ensurePublicCardsFilledRespectingDelayedRefills(workingRoot);
       syncCardSelectionChrome();

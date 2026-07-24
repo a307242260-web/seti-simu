@@ -135,11 +135,11 @@ assert.equal(playerTransports.length, 1);
 assert.equal(playerTransports[0].fossil.fossilId, fossil.fossilId);
 const visited = chong.markTransportedFossilDelivered(transportState, 42, "earth");
 assert.equal(visited.ok, true);
-assert.equal(visited.fossil.status, "transported");
-assert.equal(chong.getActiveTransportForCard(transportState, "card-0").delivered, false);
+assert.equal(visited.fossil.status, "delivered");
+assert.equal(chong.getActiveTransportForCard(transportState, "card-0").delivered, true);
 assert.equal(transportState.chong.panelFossilSlots[1], undefined);
 const readyTransport = chong.getDeliveredTransportForCard(transportState, "card-0");
-assert.equal(readyTransport, null);
+assert.equal(readyTransport.rocketId, 42);
 const completed = chong.completeTransportedFossil(transportState, 42, {
   cardId: "card-other",
   destinationPlanetId: "mars",

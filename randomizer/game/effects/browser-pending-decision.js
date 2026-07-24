@@ -27,7 +27,6 @@
     "industry_free_move",
     "strategy_slot",
     "alien_trace",
-    "pirates_raid",
     "land_target",
     "data_placement",
     "turn_end_reveal",

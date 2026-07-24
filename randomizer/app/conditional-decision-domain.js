@@ -114,11 +114,8 @@
       handleDiscardIncomeCardChoice,
       confirmDiscardAnyForIncome,
       handlePayCreditChoice,
-      handleFundamentalismExchangeChoice,
       handleOptionalHandScanChoice,
       handleHandCornerChoice,
-      handlePiratesRaidLaunchChoice,
-      handlePiratesRaidTechMarkerClick,
       confirmScanTarget,
       handleDrawnHandScanSkip,
       confirmPassReserveSelection,
@@ -688,18 +685,6 @@
         }] : []),
       };
     }
-    if (kind === "pirates_raid") {
-      const player = getSimulationConditionalPlayer(workingRoot, pending);
-      return {
-        actorPlayer: player,
-        candidates: (industry.listPiratesRaidBlockedTechTiles?.(player) || []).map((tileId) => ({
-          id: "conditionalChoice",
-          family: "choose_target",
-          label: `放置掠夺标记：${tileId}`,
-          target: { kind: "pirates-raid-marker", choiceId: tileId, tileId },
-        })),
-      };
-    }
     if (kind === "turn_end_reveal") {
       return {
         actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
@@ -897,17 +882,6 @@
         });
         return { actorPlayer: player, candidates };
       }
-      if (pending.type === "industry_fundamentalism_exchange") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
-          candidates: (pending.choices || []).filter((choice) => !choice.disabled).map((choice) => ({
-            id: "conditionalChoice",
-            family: "choose_reward",
-            label: choice.label,
-            target: { kind: "fundamentalism-exchange", choiceId: choice.id },
-          })),
-        };
-      }
       if (pending.type === "optional_hand_scan") {
         return {
           actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
@@ -939,17 +913,6 @@
               target: { kind: "hand-corner-choice", choiceId: choice },
             }] : []
           )),
-        };
-      }
-      if (pending.type === "industry_pirates_raid_launch") {
-        return {
-          actorPlayer: getSimulationConditionalPlayer(workingRoot, pending),
-          candidates: (pending.choices || []).map((choice) => ({
-            id: "conditionalChoice",
-            family: "choose_target",
-            label: choice.label,
-            target: { kind: "pirates-raid-launch", choiceId: choice.id },
-          })),
         };
       }
       return {
@@ -1227,7 +1190,6 @@
         player?.techState,
         { techTypes: workingRoot.techGameState.ui.allowedTechTypes },
       ).flatMap((tileId) => {
-        if (industry?.isTechBlockedByPirates?.(player, tileId)) return [];
         if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) return [];
         return [{
           id: "conditionalChoice",
@@ -1246,22 +1208,6 @@
         });
       }
       return { actorPlayer: player, candidates };
-    }
-    if (kind === "pirates_raid") {
-      const player = getSimulationConditionalPlayer(workingRoot, pending);
-      return {
-        actorPlayer: player,
-        candidates: (industry.listPiratesRaidBlockedTechTiles?.(player) || []).map((tileId) => ({
-          id: "conditionalChoice",
-          family: "choose_target",
-          label: `放置掠夺标记：${tileId}`,
-          target: {
-            kind: "pirates-raid-launch",
-            choiceId: tileId,
-            tileId,
-          },
-        })),
-      };
     }
     if (kind === "turn_end_reveal") {
       return {
@@ -1546,11 +1492,6 @@
       action.target.choiceId,
       action.decisionContext?.pending,
     ),
-    "fundamentalism-exchange": (action, workingRoot) => handleFundamentalismExchangeChoice(
-      workingRoot,
-      action.target.choiceId,
-      action.decisionContext?.pending,
-    ),
     "optional-hand-scan": (action, workingRoot) => handleOptionalHandScanChoice(
       workingRoot,
       action.target.choiceId,
@@ -1559,16 +1500,6 @@
     "hand-corner-choice": (action, workingRoot) => handleHandCornerChoice(
       workingRoot,
       action.target.choiceId,
-      action.decisionContext?.pending,
-    ),
-    "pirates-raid-launch": (action, workingRoot) => handlePiratesRaidLaunchChoice(
-      workingRoot,
-      action.target.choiceId,
-      action.decisionContext?.pending,
-    ),
-    "pirates-raid-marker": (action, workingRoot) => handlePiratesRaidTechMarkerClick(
-      workingRoot,
-      action.target.tileId || action.target.choiceId,
       action.decisionContext?.pending,
     ),
     "scan-target": (action, workingRoot) => confirmScanTarget(

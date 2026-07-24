@@ -43,7 +43,7 @@
       "playerTokens", "blueDropZones", "sectorTokensBySectorId", "aomomoTokens",
     ]),
     markerPresentation: Object.freeze([
-      "piratesRaid", "anomalies", "planetFossils", "runezuSymbols",
+      "anomalies", "planetFossils", "runezuSymbols",
     ]),
     techTilePresentation: Object.freeze(["supplyTiles", "playerTiles"]),
     finalScorePresentation: Object.freeze(["breakdownsByPlayerId"]),

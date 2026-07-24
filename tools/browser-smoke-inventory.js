@@ -50,4 +50,12 @@ module.exports = Object.freeze([
     obligation: "真实 DOM 公司/外星多 Decision、owner 隐私与固定 session trace",
     counterexample: "非 owner 看到选择、旧 resolver 被调用或 journal 丢步骤",
   }),
+  Object.freeze({
+    id: "alien-production-projection-input",
+    file: "randomizer/app/aliens/species-runtime.browser-smoke.html",
+    resultSelector: "body",
+    resultAttribute: "data-result",
+    obligation: "真实 residual 外星揭示由正式 projection 渲染，并由人类 Browser 输入提交正式物种 Decision",
+    counterexample: "Browser 只做空投影、旧 runtime 自行 mutation，或人类点击绕过 residual Decision executor",
+  }),
 ]);

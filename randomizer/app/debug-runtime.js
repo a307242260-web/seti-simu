@@ -61,7 +61,7 @@
       "closeScanAction4Picker", "closeLandTargetPicker", "closeAlienTracePicker",
       "clearActionEffectFlow", "clearActionPending", "clearMoveRocketHighlight",
       "readPendingDecision",
-      "resolveCompletedSectorSettlements", "maybeStartFundamentalismRoundStartIncomeFlow",
+      "resolveCompletedSectorSettlements",
       "maybeOpenActionBriefingForCompletedCycle", "maybeAutoOpenFinalResultDialog",
       "clearTransientStateForRecovery", "advanceTurnAfterPlayerAction",
       "applyIndustryRoundStartBonuses", "activateAomomoBoard",
@@ -237,7 +237,6 @@
       clearActionPending,
       clearMoveRocketHighlight,
       resolveCompletedSectorSettlements,
-      maybeStartFundamentalismRoundStartIncomeFlow,
       maybeOpenActionBriefingForCompletedCycle,
       maybeAutoOpenFinalResultDialog,
       clearTransientStateForRecovery,
@@ -1162,7 +1161,6 @@
         decisionInput.readPendingDecision?.("land_target"),
         decisionInput.readPendingDecision?.("data_placement"),
         decisionInput.readPendingDecision?.("strategy_slot"),
-        decisionInput.readPendingDecision?.("pirates_raid"),
         decisionInput.readPendingDecision?.("industry_free_move"),
       ];
       for (const pending of pendingEntries) {
@@ -1314,7 +1312,6 @@
       ].filter(Boolean).join("；");
       renderAfterFailsafeControl(workingRoot, message, { saveLabel: "强制跳过后状态" });
       if (!advanceResult.gameEnded) {
-        maybeStartFundamentalismRoundStartIncomeFlow?.(nextPlayer, ruleTurnState(workingRoot).roundNumber);
         if (!maybeOpenActionBriefingForCompletedCycle?.(advanceResult)) {
           scheduleAiAutoStepIfNeeded?.();
         }

@@ -598,10 +598,6 @@
       if (industry?.shouldInitializeFutureSpan?.(player)) {
         industry.initializeFutureSpanState(player);
       }
-      if (industry?.shouldInitializePiratesRaidMarkers?.(player)) {
-        industry.initializePiratesRaidMarkers(player);
-      }
-
       const remainingPlayerId = getInitialSelectionPlayerIds(workingRoot)
         .find((playerId) => !isInitialSelectionConfirmed(playerId));
       let initialSelectionCompleted = false;
@@ -1026,95 +1022,36 @@
             );
           },
         },
-        industry: {
-          label: "公司 1x",
-          getOptions(actionContext) {
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const companyCard = player?.initialSelection?.industry || null;
-            const layout = industry.getIndustryActionMarkerLayout?.(companyCard);
-            const markCheck = industry.canMarkIndustryAction?.(player, actionContext.turnState.roundNumber, {
-              turnNumber: actionContext.turnState.turnNumber,
-              hasMarker: Boolean(layout),
-              industryCard: companyCard,
-              requireIndustryCard: true,
-            });
-            const abilityCheck = industry.canStartActiveAbility?.(player, companyCard?.label);
-            if (!markCheck?.ok || !abilityCheck?.ok) return markCheck?.ok ? abilityCheck : markCheck;
-            return {
-              ok: true,
-              choices: [{ target: { companyLabel: companyCard.label }, label: companyCard.label }],
-            };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
-        cardCorner: {
-          label: "弃牌角标",
-          getOptions(actionContext) {
-            if (!canUseCardCornerQuickActionForRoot(actionContext.workingRoot)) {
-              return { ok: false, message: "当前无法使用卡牌快速行动" };
-            }
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const choices = (player?.hand || []).map((card, handIndex) => ({
-              card,
-              handIndex,
-              action: getCardCornerQuickActionForCardForRoot(actionContext.workingRoot, card),
-            }))
-              .filter(({ action }) => Boolean(action))
-              .filter(({ action }) => action.actionKind !== "move"
-                || shouldQueueCardCornerMoveQuickActionForRoot(actionContext.workingRoot, action, player)
-                || canStartCardCornerFreeMoveForRoot(actionContext.workingRoot).ok)
-              .map(({ card, handIndex, action }) => ({
-                target: { cardInstanceId: card.id },
-                payload: { handIndex, actionKind: action.actionKind, symbolId: action.symbolId || null },
-                label: action.label,
-              }));
-            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可用弃牌角标" };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
-        runezuFaceSymbol: {
-          label: "符文族面部符号",
-          getOptions(actionContext) {
-            const player = players.getCurrentPlayer(actionContext.playerState);
-            const choices = (aliens.ALIEN_SLOT_IDS || []).flatMap((alienSlotId) => (
-              runezu.isRunezuRevealedSlot(actionContext.alienGameState, alienSlotId)
-                ? (runezu.FACE_SYMBOL_POSITIONS || []).flatMap((position) => {
-                  const check = runezu.canPlaceFaceSymbol(actionContext.alienGameState, position, player);
-                  return (check.ok ? check.choices : []).map((choice) => ({
-                    target: {
-                      alienSlotId: Number(alienSlotId),
-                      position: Number(position),
-                      symbolId: choice.symbolId,
-                    },
-                    label: `${runezu.formatSymbolLabel(choice.symbolId)} → ${position}`,
-                  }));
-                })
-                : []
-            ));
-            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可放置的符文族面部符号" };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
-        endTurn: {
-          label: "结束回合",
-          getOptions(actionContext) {
-            const legal = isActionPending() && !isActionEffectFlowActive(actionContext.workingRoot)
-              && !hasActivePendingSubFlow(actionContext.workingRoot);
-            return legal
-              ? { ok: true, choices: [{ target: { kind: "end-turn" }, label: "结束回合" }] }
-              : { ok: false, message: "主行动未完成或仍有待决选择" };
-          },
-          canExecute(actionContext) { return this.getOptions(actionContext); },
-          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
-        },
       },
       stage4Actions: Object.fromEntries(
         actions.standardAction.CONDITIONAL_FAMILIES.map((family) => [
           family,
-          createConditionalActionProvider(family),
+          family === "choose_payment"
+            ? createConditionalActionProvider(family)
+            : {
+              label: family,
+              getOptions() {
+                return {
+                  ok: false,
+                  code: "SESSION_DECISION_ONLY",
+                  message: `${family} 只由 Effect Session Decision 产生`,
+                };
+              },
+              canExecute() {
+                return {
+                  ok: false,
+                  code: "SESSION_DECISION_ONLY",
+                  message: `${family} 只由 Effect Session Decision 执行`,
+                };
+              },
+              execute() {
+                return {
+                  ok: false,
+                  code: "SESSION_DECISION_ONLY",
+                  message: `${family} 只由 Effect Session Decision 执行`,
+                };
+              },
+            },
         ]),
       ),
     });

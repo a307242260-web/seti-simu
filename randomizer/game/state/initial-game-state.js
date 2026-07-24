@@ -16,6 +16,14 @@
       players: modules.players.PLAYER_COLOR_IDS.map((color) => ({ color })),
       currentPlayerColor: options.defaultInitialPlayerColor,
     });
+    const alienGameState = modules.aliens.createDefaultAlienState();
+    const randomizedAliens = modules.aliens.randomizeAlienAssignments(alienGameState, {
+      alienPoolIds: options.alienPoolIds,
+      random: options.random,
+    });
+    if (!randomizedAliens?.ok) {
+      throw new Error(randomizedAliens?.message || "外星人初始分配失败");
+    }
     return {
       meta: {},
       match: {},
@@ -30,7 +38,7 @@
       nebulaDataState: modules.data.createDefaultNebulaDataState(),
       cardState: modules.cards.createCardState(),
       techGameState: modules.tech.createState(options.random),
-      alienGameState: modules.aliens.createDefaultAlienState(),
+      alienGameState,
       finalScoringState: modules.finalScoring.createFinalScoringState(options.finalScoreIds || []),
     };
   }

@@ -325,7 +325,7 @@ function createState() {
     "aomomoTokens", "blueDropZones", "playerTokens", "sectorTokensBySectorId",
   ]);
   assert.deepEqual(Object.keys(render.markerPresentation).sort(), [
-    "anomalies", "piratesRaid", "planetFossils", "runezuSymbols",
+    "anomalies", "planetFossils", "runezuSymbols",
   ]);
   for (const dto of [events, actionInteraction, turn, board, render]) {
     assert.equal(Object.isFrozen(dto), true);

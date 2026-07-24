@@ -136,6 +136,10 @@
         solarBriefing: (workingRoot) => ({
           sectorBySlot: structuredClone(workingRoot.solarState?.sectorBySlot || {}),
         }),
+        alienBoard: (workingRoot) => ({
+          alienGameState: structuredClone(workingRoot.alienGameState || {}),
+          playerState: structuredClone(workingRoot.playerState || { currentPlayerId: null, players: [] }),
+        }),
       },
       createCounterfactualFork: context.counterfactualEnabled === false
         ? null

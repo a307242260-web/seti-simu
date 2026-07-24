@@ -320,7 +320,6 @@
       actor.techState || players.normalizePlayerTechState(null),
       options.techTypes?.length ? { techTypes: options.techTypes } : {},
     );
-    tileIds = tileIds.filter((tileId) => !industryPassives?.isTechBlockedByPirates?.(actor, tileId));
     if (options.researchedByOthersOnly) {
       const playerState = getSlice(root, "playerState", "players");
       tileIds = tileIds.filter((tileId) => playerState.players.some((player) => (

@@ -1481,16 +1481,20 @@
         event.count = count;
         event.amount = amount;
       } else if (effect.type === cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS) {
-        if (!Array.isArray(root.match.cardTurnEventBonuses)) {
-          root.match.cardTurnEventBonuses = [];
+        const bonusState = root.turnState || root.turn || root.match;
+        const bonusOptions = options.bonus || options;
+        if (!Array.isArray(bonusState.cardTurnEventBonuses)) {
+          bonusState.cardTurnEventBonuses = [];
         }
-        root.match.cardTurnEventBonuses.push({
+        bonusState.cardTurnEventBonuses.push({
+          ...clone(bonusOptions),
+          id: effect.id,
           effectId: effect.id,
+          playerId: actor.id,
           ownerId: actor.id,
-          event: clone(options.event || {}),
-          reward: clone(options.reward || null),
-          duration: options.duration || "flow",
+          duration: bonusOptions.duration || "flow",
           usedKeys: [],
+          claimedKeys: [],
         });
       } else if (effect.type === cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF) {
         const met = options.condition?.type === "lastLandingHadAnyMarker"

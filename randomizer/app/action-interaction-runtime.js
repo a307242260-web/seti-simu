@@ -242,7 +242,6 @@
       if (context.isTechTilePickingActive() || context.getActionInteractionProjection().industryBorrowMode) {
         return INTERACTION_FOCUS.TECH_PANEL;
       }
-      if (context.getPendingPiratesRaidDecision()) return INTERACTION_FOCUS.PLAYER_BOARD;
       if (isBoardRocketInteractionActive()) return INTERACTION_FOCUS.BOARD_ROCKETS;
       if ((context.canUseCardCornerQuickAction() && context.getPendingCardCornerQuickAction())
         || context.getPendingHandCardPlayAction()) {

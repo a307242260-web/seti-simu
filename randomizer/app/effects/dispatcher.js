@@ -69,13 +69,8 @@
       executeGainDataRewardEffect,
       executeGainResourcesRewardEffect,
       executeHandScanEffect,
-      executeHuanyuSuperdrivePassLaunchEffect,
       executeImprovedEarthSectorScanEffect,
-      executeIndustryFundamentalismExchangeEffect,
       executeIndustryHeliosPassiveRewardEffect,
-      executeIndustryPiratesRaidLaunchEffect,
-      executeIndustryPiratesRaidMarkerEffect,
-      executeIndustryPiratesRaidPublicityEffect,
       executeIndustrySentinelCornerEffect,
       executeIndustryStrategyPassiveRewardEffect,
       executeIndustryStratusCornerEffect,
@@ -325,39 +320,6 @@
           message: `${effect.label}：没有手牌可作为收入，已跳过`,
           payload: { reason: result.message || null },
         });
-      }
-      return result;
-    }
-
-    function openFundamentalismRoundStartIncomeEffect(workingRoot, effect) {
-      const incomePlayer = getEffectOwnerPlayer(workingRoot, effect);
-      const round = Math.max(1, Math.round(Number(effect?.options?.roundNumber || ruleTurnState(workingRoot).roundNumber) || 1));
-      if (!incomePlayer?.hand?.length) {
-        if (incomePlayer) incomePlayer.industryFundamentalismRoundStartIncomeRound = round;
-        return finishAutomaticRewardEffect(workingRoot, effect, {
-          ok: true,
-          undoable: true,
-          skipped: true,
-          message: `原教旨主义：第${round}轮开始没有手牌可作为收入，已跳过`,
-          payload: { roundNumber: round, skipped: true },
-        });
-      }
-
-      const result = beginDiscardSelection(workingRoot, 1, {
-        type: "industry_fundamentalism_income",
-        player: incomePlayer,
-        required: true,
-        fromEffectFlow: true,
-        effectLabel: effect.label,
-        beforePlayerState: structuredClone(incomePlayer),
-        beforeCardState: structuredClone(ruleCardState(workingRoot)),
-        roundNumber: round,
-      });
-      if (!result.ok) {
-        ruleRocketState(workingRoot).statusNote = result.message;
-        renderStateReadout();
-        effect.result = { ok: false, undoable: true, message: result.message };
-        completeCurrentActionEffect(workingRoot, "skipped");
       }
       return result;
     }
@@ -658,8 +620,6 @@
           return executePassFirstRotateEffect(effect);
         case "pass_reserve_pick":
           return beginPassReserveSelection(effect);
-        case "industry_huanyu_superdrive_launch":
-          return executeHuanyuSuperdrivePassLaunchEffect(workingRoot, effect);
         case "industry_stratus_corner":
           return executeIndustryStratusCornerEffect(effect);
         case "industry_sentinel_corner":
@@ -668,14 +628,6 @@
           return executeIndustryHeliosPassiveRewardEffect(effect);
         case "industry_strategy_passive_reward":
           return executeIndustryStrategyPassiveRewardEffect(effect);
-        case "industry_fundamentalism_exchange":
-          return executeIndustryFundamentalismExchangeEffect(workingRoot, effect);
-        case "industry_pirates_raid_marker":
-          return executeIndustryPiratesRaidMarkerEffect(effect);
-        case "industry_pirates_raid_publicity":
-          return executeIndustryPiratesRaidPublicityEffect(effect);
-        case "industry_pirates_raid_launch":
-          return executeIndustryPiratesRaidLaunchEffect(effect);
         case "fangzhou_launch": {
           beginEffectHistoryStep(workingRoot, effect.label);
           const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
@@ -733,8 +685,6 @@
         }
         case "initial_income":
           return openInitialIncomeEffect(workingRoot, effect);
-        case "industry_fundamentalism_income":
-          return openFundamentalismRoundStartIncomeEffect(workingRoot, effect);
         case scanEffects.EFFECT_TYPES.PAY_SCAN_COST: {
           beginEffectHistoryStep(workingRoot, effect.label);
           const result = abilities.executeAbility("payScanCost", createActionContext(workingRoot), {
@@ -833,7 +783,6 @@
       openTechBonusPickCardEffect,
       openInitialIncomeEffect,
       openCardIncomeEffect,
-      openFundamentalismRoundStartIncomeEffect,
       openIncomeRewardEffect,
       executeBanrenmaGainIncomeEffect,
       openNebulaChoiceRewardEffect,

@@ -11,7 +11,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SKIPPED_ACTIVE_LABELS = Object.freeze(["异星实验室", "作弊实验室"]);
+  const SKIPPED_ACTIVE_LABELS = Object.freeze(["异星实验室"]);
 
   const INDUSTRY_DEFINITIONS = Object.freeze({
     "层云核心": Object.freeze({
@@ -31,11 +31,6 @@
     }),
     "寰宇动力": Object.freeze({
       label: "寰宇动力",
-      activeAbilityId: "huanyu_free_moves",
-      passiveIds: Object.freeze(["huanyu_rocket_limit"]),
-    }),
-    "寰宇超动力": Object.freeze({
-      label: "寰宇超动力",
       activeAbilityId: "huanyu_free_moves",
       passiveIds: Object.freeze(["huanyu_rocket_limit"]),
     }),
@@ -69,35 +64,10 @@
       activeAbilityId: null,
       passiveIds: Object.freeze(["alien_lab_panels"]),
     }),
-    "作弊实验室": Object.freeze({
-      label: "作弊实验室",
-      activeAbilityId: null,
-      passiveIds: Object.freeze(["alien_lab_panels"]),
-    }),
     "宇宙战略集团": Object.freeze({
       label: "宇宙战略集团",
       activeAbilityId: "strategy_pick_card",
       passiveIds: Object.freeze(["strategy_passive_reward_slots"]),
-    }),
-    "宇宙大战略集团": Object.freeze({
-      label: "宇宙大战略集团",
-      activeAbilityId: "strategy_pick_card",
-      passiveIds: Object.freeze(["strategy_passive_reward_slots"]),
-    }),
-    "原教旨主义": Object.freeze({
-      label: "原教旨主义",
-      activeAbilityId: "fundamentalism_score_exchange",
-      passiveIds: Object.freeze([
-        "fundamentalism_round_start_income",
-        "fundamentalism_disable_play_card_action",
-        "fundamentalism_double_discard_corner",
-        "fundamentalism_income_task_completion",
-      ]),
-    }),
-    "星际海盗": Object.freeze({
-      label: "星际海盗",
-      activeAbilityId: "pirates_raid_launch",
-      passiveIds: Object.freeze(["pirates_raid_markers"]),
     }),
   });
 

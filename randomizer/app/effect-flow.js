@@ -82,7 +82,6 @@
         || context.getPendingCardTaskCompletion(workingRoot)
         || context.hasAlienDecision()
         || context.readPendingDecision("strategy_slot")
-        || context.getPendingPiratesRaidDecision(workingRoot)
         || context.getPendingCardTriggerFreeMove(workingRoot)
         || context.getPendingCardCornerFreeMove(workingRoot)
         || context.isScanAction4Open()
@@ -848,11 +847,7 @@
       const scoredPlanetEffects = options.scoreSourceKey
         ? context.addScoreSourceToEffects(planetEffects, options.scoreSourceKey)
         : planetEffects;
-      const player = options.player || context.getCurrentPlayer();
-      return [
-        ...scoredPlanetEffects,
-        ...(industry?.buildPiratesRaidMarkerEffectNodes?.(player, result?.planetId, actionType, result) || []),
-      ];
+      return scoredPlanetEffects;
     }
 
     function claimRunezuPlanetSymbolForTravelResult(workingRoot, actionType, result, fallbackPlayer = null) {
@@ -1151,18 +1146,6 @@
       }
       if (context.isCardSelectionActive?.()
         && (context.getActionEffectFlow?.(workingRoot) || context.isCardTriggerPickSelectionActive?.())) {
-        const pending = context.readCardSelectionDecision?.(workingRoot);
-        if (pending?.type === "fundamentalism_exchange_pick") {
-          const pendingPlayer = context.resolvePlayerReference?.({
-            playerId: pending.playerId, playerColor: pending.playerColor,
-          });
-          if (pendingPlayer && pending.beforePlayerState) {
-            context.restoreObjectSnapshot?.(pendingPlayer, pending.beforePlayerState);
-          }
-          if (pending.beforeCardState) {
-            context.restoreObjectSnapshot?.(workingRoot.cardState, pending.beforeCardState);
-          }
-        }
         context.setCardSelectionActive?.(workingRoot.cardState, false);
         context.syncCardSelectionChrome?.();
       }
@@ -1180,10 +1163,6 @@
       if (context.getPendingDataPlacementDecision?.(workingRoot)) context.closeDataPlacePicker?.();
       delete workingRoot.match.type1TriggerEvents;
       context.clearYichangdianCornerAction?.();
-      context.clearAlienDecisionDrafts?.();
-      if (context.getPendingPiratesRaidDecision?.(workingRoot)) {
-        context.renderTechBoard?.(workingRoot);
-      }
     }
 
     return Object.freeze({ cancelActiveEffectSubFlowsForRoot });

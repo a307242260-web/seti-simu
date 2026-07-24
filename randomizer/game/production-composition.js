@@ -6,16 +6,26 @@
   let cardPlayDomain = root.SetiCardPlayDomain;
   let scienceSession = root.SetiScienceSession;
   let probeTurnSession = root.SetiProbeTurnSession;
-  if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession || !probeTurnSession)
+  let residualDomainSession = root.SetiResidualDomainSession;
+  if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession
+    || !probeTurnSession || !residualDomainSession)
     && typeof require === "function") {
     standardAction = standardAction || require("./actions/standard-action");
     standardActionSession = standardActionSession || require("./effects/standard-action-session");
     cardPlayDomain = cardPlayDomain || require("./cards/play-domain");
     scienceSession = scienceSession || require("./effects/science-session");
     probeTurnSession = probeTurnSession || require("./effects/probe-turn-session");
+    residualDomainSession = residualDomainSession || require("./effects/residual-domain-session");
   }
 
-  const api = factory(standardAction, standardActionSession, cardPlayDomain, scienceSession, probeTurnSession);
+  const api = factory(
+    standardAction,
+    standardActionSession,
+    cardPlayDomain,
+    scienceSession,
+    probeTurnSession,
+    residualDomainSession,
+  );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -24,6 +34,7 @@
   cardPlayDomain,
   scienceSession,
   probeTurnSession,
+  residualDomainSession,
 ) {
   "use strict";
 
@@ -53,8 +64,18 @@
   function createProductionDomainPack(options = {}) {
     assertNoHostRuleOverrides(options);
     if (typeof options.getStandardActionSource !== "function") {
-      throw new TypeError("Production Domain Pack 缺少 legacy Standard Action input source");
+      throw new TypeError("Production Domain Pack 缺少 initial setup Standard Action source resolver");
     }
+    const getInitialSetupSource = () => {
+      const source = options.getStandardActionSource();
+      if (!source
+        || typeof source.enumerate !== "function"
+        || typeof source.validate !== "function"
+        || typeof source.execute !== "function") {
+        throw new TypeError("Production Domain Pack 尚未装配 initial setup Standard Action source");
+      }
+      return source;
+    };
     if (!Array.isArray(options.productionRules?.quickTrades?.TRADE_ACTIONS)
       || typeof options.productionRules.quickTrades.canExecuteTrade !== "function"
       || typeof options.productionRules.quickTrades.executeTrade !== "function") {
@@ -76,17 +97,16 @@
       "play_card",
       ...scienceSession.ACTION_FAMILIES,
       ...probeTurnSession.ACTION_FAMILIES,
+      ...residualDomainSession.ACTION_FAMILIES,
     ]);
-    const standardFamilies = standardAction.ALL_FAMILIES
-      .filter((family) => ![
-        "play_card",
-        ...scienceSession.ACTION_FAMILIES,
-        ...probeTurnSession.ACTION_FAMILIES,
-      ].includes(family));
+    const placeholderFamilies = standardAction.ALL_FAMILIES
+      .filter((family) => !ownedFamilies.has(family));
+    const standardFamilies = Object.freeze(["quick_trade", ...placeholderFamilies]);
     claimFamilies("standard_action", standardFamilies);
     claimFamilies(cardPlayDomain.DOMAIN_ID, cardPlayDomain.ACTION_FAMILIES);
     claimFamilies(scienceSession.DOMAIN_ID, scienceSession.ACTION_FAMILIES);
     claimFamilies(probeTurnSession.DOMAIN_ID, probeTurnSession.ACTION_FAMILIES);
+    claimFamilies(residualDomainSession.DOMAIN_ID, residualDomainSession.ACTION_FAMILIES);
     for (const descriptor of options.additionalDomains || []) {
       claimFamilies(descriptor?.id || "host_domain", descriptor?.families || []);
     }
@@ -169,29 +189,58 @@
     for (const definition of probeTurnSession.createActionDefinitions()) {
       ownedRegistry.register(definition);
     }
-    const requireSource = () => {
-      const source = options.getStandardActionSource();
-      if (typeof source?.enumerate !== "function"
-        || typeof source?.validate !== "function"
-        || typeof source?.execute !== "function") {
-        throw new TypeError("legacy Standard Action input source 尚未装配");
-      }
-      return source;
-    };
-    const isOwned = (action) => ownedFamilies.has(action?.family);
+    for (const definition of residualDomainSession.createActionDefinitions()) {
+      ownedRegistry.register(definition);
+    }
+    for (const family of placeholderFamilies) {
+      ownedRegistry.register(standardAction.createOptionDefinition(family, {
+        label: family,
+        getOptions(context) {
+          if (family === "choose_payment") {
+            const choices = getInitialSetupSource().enumerate(context, { family });
+            return choices.length
+              ? { ok: true, choices: choices.map((entry) => ({
+                target: entry.target,
+                payload: entry.payload,
+                decision: entry.decision,
+                label: entry.summary,
+              })) }
+              : { ok: false, code: "SESSION_DECISION_ONLY", message: "当前没有 initial setup payment" };
+          }
+          return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
+        },
+        canExecute(context, option) {
+          if (family === "choose_payment") {
+            const source = getInitialSetupSource();
+            const candidate = source.enumerate(context, { family }).find((entry) => (
+              JSON.stringify(entry.target) === JSON.stringify(option.target)
+              && JSON.stringify(entry.payload) === JSON.stringify(option.payload)
+            ));
+            return candidate ? source.validate(context, candidate) : {
+              ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "initial setup payment 已失效",
+            };
+          }
+          return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
+        },
+        execute(context, action) {
+          if (family === "choose_payment") {
+            const source = getInitialSetupSource();
+            const candidate = source.enumerate(context, { family }).find((entry) => (
+              JSON.stringify(entry.target) === JSON.stringify(action.target)
+              && JSON.stringify(entry.payload) === JSON.stringify(action.payload)
+            ));
+            return candidate
+              ? source.execute(context, candidate)
+              : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "initial setup payment 已失效" };
+          }
+          return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 执行` };
+        },
+      }));
+    }
     const actionRegistry = Object.freeze({
       ownerId: PACK_ID,
       enumerate(context, request = {}) {
-        if (ownedFamilies.has(request.family)) {
-          return ownedRegistry.enumerate(context, request);
-        }
-        if (request.family) {
-          return requireSource().enumerate(context, request).filter((action) => !isOwned(action));
-        }
-        const legacy = standardAction.ALL_FAMILIES
-          .filter((family) => !ownedFamilies.has(family))
-          .flatMap((family) => requireSource().enumerate(context, { ...request, family }))
-          .filter((action) => !isOwned(action));
+        if (request.family) return ownedRegistry.enumerate(context, request);
         const quickActions = ownedRegistry.enumerate(context, { ...request, family: "quick_trade" });
         const playActions = ownedRegistry.enumerate(context, { ...request, family: "play_card" });
         const scienceActions = scienceSession.ACTION_FAMILIES.flatMap(
@@ -200,21 +249,30 @@
         const probeTurnActions = probeTurnSession.ACTION_FAMILIES.flatMap(
           (family) => ownedRegistry.enumerate(context, { ...request, family }),
         );
+        const residualActions = residualDomainSession.ACTION_FAMILIES.flatMap(
+          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+        );
+        const placeholderActions = placeholderFamilies.flatMap(
+          (family) => ownedRegistry.enumerate(context, { ...request, family }),
+        );
         const byFamily = new Map(standardAction.ALL_FAMILIES.map((family) => [family, []]));
-        for (const action of [...legacy, ...quickActions, ...playActions, ...scienceActions, ...probeTurnActions]) {
+        for (const action of [
+          ...quickActions,
+          ...playActions,
+          ...scienceActions,
+          ...probeTurnActions,
+          ...residualActions,
+          ...placeholderActions,
+        ]) {
           byFamily.get(action.family)?.push(action);
         }
         return standardAction.ALL_FAMILIES.flatMap((family) => byFamily.get(family));
       },
       validate(context, action) {
-        return isOwned(action)
-          ? ownedRegistry.validate(context, action)
-          : requireSource().validate(context, action);
+        return ownedRegistry.validate(context, action);
       },
       execute(context, action) {
-        return isOwned(action)
-          ? ownedRegistry.execute(context, action)
-          : requireSource().execute(context, action);
+        return ownedRegistry.execute(context, action);
       },
       resolveIntent(context, family, selector = {}, request = {}) {
         const candidates = this.enumerate(context, { ...request, family });
@@ -233,12 +291,9 @@
         return validation.ok ? { ok: true, action: matches[0] } : validation;
       },
       coverage() {
-        const legacy = typeof requireSource().coverage === "function"
-          ? requireSource().coverage().filter((entry) => (
-            entry.registered && !ownedFamilies.has(entry.family)
-          ))
-          : [];
-        const byFamily = new Map(legacy.map((entry) => [entry.family, entry]));
+        const byFamily = new Map(
+          ownedRegistry.coverage().map((entry) => [entry.family, entry]),
+        );
         const ownedQuickTrade = ownedRegistry.coverage()
           .find((entry) => entry.family === "quick_trade");
         byFamily.set("quick_trade", ownedQuickTrade);
@@ -249,6 +304,9 @@
           byFamily.set(family, ownedRegistry.coverage().find((entry) => entry.family === family));
         }
         for (const family of probeTurnSession.ACTION_FAMILIES) {
+          byFamily.set(family, ownedRegistry.coverage().find((entry) => entry.family === family));
+        }
+        for (const family of residualDomainSession.ACTION_FAMILIES) {
           byFamily.set(family, ownedRegistry.coverage().find((entry) => entry.family === family));
         }
         return standardAction.ALL_FAMILIES.map((family) => (
@@ -285,11 +343,17 @@
       families: probeTurnSession.ACTION_FAMILIES,
       create: probeTurnSession.createProbeTurnDomain,
     });
+    const residualDomain = Object.freeze({
+      id: residualDomainSession.DOMAIN_ID,
+      families: residualDomainSession.ACTION_FAMILIES,
+      create: residualDomainSession.createResidualDomain,
+    });
     const effectDomains = Object.freeze([
       standardDomain,
       cardDomain,
       scienceDomain,
       probeTurnDomain,
+      residualDomain,
       ...(options.additionalDomains || []),
     ]);
     return Object.freeze({
@@ -310,7 +374,7 @@
         land: probeTurnSession.EXECUTOR_ID,
         pass: probeTurnSession.EXECUTOR_ID,
         end_turn: probeTurnSession.EXECUTOR_ID,
-        legacy: "host_input_source",
+        industry: residualDomainSession.EXECUTOR_ID,
       }),
       actionExecutorOwners: Object.freeze({
         quick_trade: QUICK_TRADE_EXECUTOR_ID,
@@ -325,6 +389,7 @@
         land: probeTurnSession.EXECUTOR_ID,
         pass: probeTurnSession.EXECUTOR_ID,
         end_turn: probeTurnSession.EXECUTOR_ID,
+        industry: residualDomainSession.EXECUTOR_ID,
       }),
     });
   }
@@ -343,6 +408,7 @@
       ...ruleOptions,
       createActionRegistry: () => domainPack.actionRegistry,
       effectDomains: domainPack.effectDomains,
+      transformEffectResult: residualDomainSession.augmentEffectResult,
     });
     return Object.freeze({ composition, domainPack });
   }

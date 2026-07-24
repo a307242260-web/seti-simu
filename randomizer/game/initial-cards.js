@@ -149,13 +149,6 @@
       incomeIncreaseCount: 2,
       baseIncome: Object.freeze({ credits: 3, energy: 1, handSize: 1 }),
     }),
-    "寰宇超动力": Object.freeze({
-      label: "寰宇超动力",
-      resources: Object.freeze({ publicity: 3, credits: 2, energy: 2 }),
-      launchCount: 2,
-      incomeIncreaseCount: 2,
-      baseIncome: Object.freeze({ credits: 3, energy: 1, handSize: 1 }),
-    }),
     "任务中继站": Object.freeze({
       label: "任务中继站",
       resources: Object.freeze({ publicity: 2, credits: 3, energy: 2 }),
@@ -197,42 +190,12 @@
       incomeIncreaseCount: 3,
       baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
     }),
-    "作弊实验室": Object.freeze({
-      label: "作弊实验室",
-      resources: Object.freeze({ publicity: 1, credits: 2, energy: 2 }),
-      blindDraw: 1,
-      incomeIncreaseCount: 3,
-      baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
-    }),
     "宇宙战略集团": Object.freeze({
       label: "宇宙战略集团",
       resources: Object.freeze({ publicity: 1, credits: 4, energy: 2 }),
       blindDraw: 1,
       incomeIncreaseCount: 2,
       baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
-    }),
-    "宇宙大战略集团": Object.freeze({
-      label: "宇宙大战略集团",
-      resources: Object.freeze({ publicity: 1, credits: 4, energy: 2 }),
-      blindDraw: 1,
-      incomeIncreaseCount: 2,
-      baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
-    }),
-    "原教旨主义": Object.freeze({
-      label: "原教旨主义",
-      resources: Object.freeze({ credits: 2, energy: 2, publicity: 2 }),
-      blindDraw: 3,
-      incomeIncreaseCount: 2,
-      baseIncome: Object.freeze({ credits: 2, energy: 2 }),
-    }),
-    "星际海盗": Object.freeze({
-      label: "星际海盗",
-      resources: Object.freeze({ credits: 3, energy: 2 }),
-      blindDraw: 1,
-      startupTechTileId: "orange1",
-      launchCount: 1,
-      incomeIncreaseCount: 2,
-      baseIncome: Object.freeze({ credits: 2, energy: 2, handSize: 1 }),
     }),
   });
 

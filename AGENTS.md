@@ -30,17 +30,17 @@
 - `randomizer/app/debug-runtime.js`：debug / calibration / quick sector scan / failsafe / alien reveal 调试入口与开发辅助壳层。
 - `randomizer/app/start-screen.js`：开始界面选项同步、继续游戏入口与新局启动壳层。
 - `randomizer/app/turn-flow.js`：新局初始化、随机化装配与 round / turn 推进壳层。
-- `randomizer/app/turn-end-flow.js`：PASS 必做效果、回合末外星人揭示、收入与跨轮收尾。
+- `randomizer/app/turn-end-flow.js`：PASS/end-turn 与回合末 Decision 的 Browser 输入桥接；正式揭示、收入和跨轮收尾由 Production Composition 拥有。
 - `randomizer/app/action-interaction-runtime.js`：冥王星行动、移动箭头 UI 与数据放置 picker。
 - `randomizer/app/score-source-runtime.js`：初始、扫描、科技、外星人和行动效果的分数来源账本与撤销命令。
 - `randomizer/app/card-runtime.js`：手牌出牌、弃牌角标、公共牌选择、PASS 预留与卡牌移动运行时。
-- `randomizer/app/card-trigger-runtime.js`：卡牌任务、触发匹配、奖励队列和确认/取消/续跑运行时。
-- `randomizer/app/income-runtime.js`：卡牌收入、轮开始收入和公司轮开始收益运行时。
+- `randomizer/app/card-trigger-runtime.js`：卡牌任务只读 projection 与正式 residual Decision 输入桥接。
+- `randomizer/app/income-runtime.js`：收入展示 helper 与正式 residual Decision 输入桥接。
 - `randomizer/app/scan-flow.js`：扫描目标、扇区结算、延迟补牌与公共牌/手牌扫描运行时。
 - `randomizer/app/tech-runtime.js`：科技选择、蓝槽确认、取消/撤销恢复与海盗科技标记运行时。
-- `randomizer/app/industry-runtime.js`：公司 1x、被动奖励、picker、pending 与 quick history 回滚运行时。
+- `randomizer/app/industry-runtime.js`：公司 projection 与 Standard Action/Decision 输入桥接。
 - `randomizer/app/alien-ui.js`：外星人揭示提示、痕迹 picker、方舟用途分流与各物种痕迹放置模式 UI 壳层。
-- `randomizer/app/aliens/species-runtime.js`：八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 与具体面板渲染；通过显式 context 接收 app 编排依赖。
+- `randomizer/app/aliens/species-runtime.js`：从正式 projection 真实渲染八物种盘面，并把人类输入提交为 Standard Action/Decision。
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。

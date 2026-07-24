@@ -656,6 +656,7 @@
           activePlayerCount,
           defaultInitialPlayerColor,
           finalScoreIds,
+          alienPoolIds: startScreenState.selectedAlienIds,
         });
         if (!resetResult.ok) {
           throw new Error(`StateStore 新局重置失败：${resetResult.code || "unknown"}`);
@@ -697,7 +698,6 @@
       renderWheels?.();
       renderSectorNebulaDataBoard?.();
       randomizeFinalScores?.(workingRoot);
-      randomizeAliens?.();
       tech.setupBoardBonuses(techGameState);
       renderRoundStatus?.();
       renderRotateStateToken?.();

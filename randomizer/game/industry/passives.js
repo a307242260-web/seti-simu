@@ -2,21 +2,18 @@
   "use strict";
 
   let catalog = root.SetiIndustryCatalog;
-  let state = root.SetiIndustryState;
-
   if (typeof require === "function") {
     catalog = catalog || require("./catalog");
-    state = state || require("./state");
   }
 
-  const api = factory(catalog, state);
+  const api = factory(catalog);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiIndustryPassives = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, state) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
   "use strict";
 
   const FENWICK_RESEARCH_COST = 5;
@@ -26,16 +23,6 @@
   const HUANYU_ROCKET_LIMIT_BONUS = 1;
   const MISSION_PLAY_PUBLICITY_GAIN = 1;
   const TURING_BLUE_TECH_PUBLICITY_GAIN = 1;
-  const CHEAT_LAB_PERMANENT_PASSIVE_ID = "cheat_lab_permanent_panels";
-  const CHEAT_LAB_ROUND_START_PASSIVE_ID = "cheat_lab_round_start";
-  const HUANYU_SUPERDRIVE_ROUND_START_PASSIVE_ID = "huanyu_superdrive_round_start";
-  const HUANYU_SUPERDRIVE_PASS_LAUNCH_PASSIVE_ID = "huanyu_superdrive_pass_launch";
-  const GRAND_STRATEGY_ROUND_START_PASSIVE_ID = "grand_strategy_round_start";
-  const FUNDAMENTALISM_ROUND_START_INCOME_PASSIVE_ID = "fundamentalism_round_start_income";
-  const FUNDAMENTALISM_DISABLE_PLAY_CARD_PASSIVE_ID = "fundamentalism_disable_play_card_action";
-  const FUNDAMENTALISM_DOUBLE_DISCARD_CORNER_PASSIVE_ID = "fundamentalism_double_discard_corner";
-  const FUNDAMENTALISM_INCOME_TASK_COMPLETION_PASSIVE_ID = "fundamentalism_income_task_completion";
-  const PIRATES_RAID_PASSIVE_ID = "pirates_raid_markers";
 
   function playerHasPassive(player, passiveId) {
     const definition = catalog.getPlayerIndustryDefinition(player);
@@ -46,45 +33,8 @@
     return playerHasPassive(player, "huanyu_rocket_limit") ? HUANYU_ROCKET_LIMIT_BONUS : 0;
   }
 
-  function hasHuanyuSuperdriveRoundStart(player) {
-    return playerHasPassive(player, HUANYU_SUPERDRIVE_ROUND_START_PASSIVE_ID);
-  }
-
-  function shouldLaunchAfterPassWithHuanyuSuperdrive(player) {
-    return playerHasPassive(player, HUANYU_SUPERDRIVE_PASS_LAUNCH_PASSIVE_ID);
-  }
-
-  function hasCheatLabRoundStart(player) {
-    return playerHasPassive(player, CHEAT_LAB_ROUND_START_PASSIVE_ID);
-  }
-
-  function hasGrandStrategyRoundStart(player) {
-    return playerHasPassive(player, GRAND_STRATEGY_ROUND_START_PASSIVE_ID);
-  }
-
-  function hasFundamentalismRoundStartIncome(player) {
-    return playerHasPassive(player, FUNDAMENTALISM_ROUND_START_INCOME_PASSIVE_ID);
-  }
-
-  function blocksStandardPlayCardAction(player) {
-    return playerHasPassive(player, FUNDAMENTALISM_DISABLE_PLAY_CARD_PASSIVE_ID);
-  }
-
-  function shouldDoubleDiscardCornerRewards(player) {
-    return playerHasPassive(player, FUNDAMENTALISM_DOUBLE_DISCARD_CORNER_PASSIVE_ID);
-  }
-
-  function shouldCompleteIncomeTaskCards(player) {
-    return playerHasPassive(player, FUNDAMENTALISM_INCOME_TASK_COMPLETION_PASSIVE_ID);
-  }
-
-  function hasPermanentAlienLabPanels(player) {
-    return playerHasPassive(player, CHEAT_LAB_PERMANENT_PASSIVE_ID);
-  }
-
   function hasActiveAlienLabPanel(player, panelId) {
     if (!playerHasPassive(player, "alien_lab_panels")) return false;
-    if (hasPermanentAlienLabPanels(player)) return true;
     return player?.industryAlienLabPanels?.[panelId] !== false;
   }
 
@@ -182,45 +132,6 @@
     return !player?.industryFutureSpanInitialized;
   }
 
-  function hasPiratesRaidMarkers(player) {
-    return playerHasPassive(player, PIRATES_RAID_PASSIVE_ID);
-  }
-
-  function shouldShowPiratesRaidMarkers(player) {
-    if (!hasPiratesRaidMarkers(player)) return false;
-    return Boolean(player?.initialSelection?.industry);
-  }
-
-  function shouldInitializePiratesRaidMarkers(player) {
-    if (!shouldShowPiratesRaidMarkers(player)) return false;
-    return !player?.industryPiratesRaidInitialized;
-  }
-
-  function isTechBlockedByPirates(player, tileId) {
-    if (!hasPiratesRaidMarkers(player)) return false;
-    return Boolean(state?.isPiratesRaidTechBlocked?.(player, tileId));
-  }
-
-  function hasPiratesRaidPlanetMarker(player, planetId) {
-    if (!hasPiratesRaidMarkers(player)) return false;
-    return Boolean(state?.hasPiratesRaidPlanetMarker?.(player, planetId));
-  }
-
-  function hasAnyPiratesRaidPlanetMarker(player) {
-    if (!hasPiratesRaidMarkers(player)) return false;
-    return (state?.listPiratesRaidPlanetMarkers?.(player) || []).length > 0;
-  }
-
-  function canUsePiratesRaidLaunchOnPlanet(player, planetId) {
-    return hasPiratesRaidPlanetMarker(player, planetId);
-  }
-
-  function shouldQueuePiratesRaidForPlanet(player, planetId) {
-    if (!hasPiratesRaidMarkers(player)) return false;
-    if (!planetId || state?.hasPiratesRaidPlanetMarker?.(player, planetId)) return false;
-    return (state?.listPiratesRaidBlockedTechTiles?.(player) || []).length > 0;
-  }
-
   function normalizeRoundNumber(roundNumber) {
     return Math.max(0, Math.round(Number(roundNumber) || 0));
   }
@@ -272,21 +183,10 @@
     ALIEN_LAB_LAUNCH_COST,
     ALIEN_LAB_SCAN_COST,
     HUANYU_ROCKET_LIMIT_BONUS,
-    PIRATES_RAID_PASSIVE_ID,
-    GRAND_STRATEGY_ROUND_START_PASSIVE_ID,
     getRocketLimitBonus,
-    hasHuanyuSuperdriveRoundStart,
-    shouldLaunchAfterPassWithHuanyuSuperdrive,
-    hasCheatLabRoundStart,
-    hasGrandStrategyRoundStart,
-    hasFundamentalismRoundStartIncome,
-    blocksStandardPlayCardAction,
-    shouldDoubleDiscardCornerRewards,
-    shouldCompleteIncomeTaskCards,
     getResearchPublicityCost,
     getStandardLaunchCost,
     getStandardScanCost,
-    hasPermanentAlienLabPanels,
     hasActiveAlienLabPanel,
     canAnalyzeWithoutEnergy,
     shouldScanEarthOnLaunch,
@@ -303,14 +203,6 @@
     shouldInitializeAlienLabPanels,
     shouldShowFutureSpanPanel,
     shouldInitializeFutureSpan,
-    hasPiratesRaidMarkers,
-    shouldShowPiratesRaidMarkers,
-    shouldInitializePiratesRaidMarkers,
-    isTechBlockedByPirates,
-    hasPiratesRaidPlanetMarker,
-    hasAnyPiratesRaidPlanetMarker,
-    canUsePiratesRaidLaunchOnPlanet,
-    shouldQueuePiratesRaidForPlanet,
     isSentinelCornerArmed,
     getBorrowedTechTileId,
     playerHasTechEffect,

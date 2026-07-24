@@ -11,7 +11,7 @@
   "use strict";
   const BROWSER_INPUT_NAMES = Object.freeze([
     "handleConditionalSectorChoice", "handleDiscardIncomeCardChoice", "confirmDiscardAnyForIncome",
-    "handlePayCreditChoice", "handleFundamentalismExchangeChoice", "handleDiscardCornerRepeatChoice",
+    "handlePayCreditChoice", "handleDiscardCornerRepeatChoice",
     "handleRemoveOrbitToProbeChoice", "handleProbeSectorScanChoice",
   ]);
 
@@ -626,187 +626,6 @@
       });
     }
 
-    function getFundamentalismExchangeChoiceSpecs(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
-      const score = Number(player?.resources?.score) || 0;
-      const credits = Number(player?.resources?.credits) || 0;
-      const energy = Number(player?.resources?.energy) || 0;
-      const handCount = Array.isArray(player?.hand) ? player.hand.length : 0;
-      const publicCount = Array.isArray(ruleCardState(workingRoot).publicCards) ? ruleCardState(workingRoot).publicCards.length : 0;
-      return [
-        { id: "score_to_credits", label: "3分换1信用点", description: "消耗3分，获得1信用点", cost: { score: 3 }, gain: { credits: 1 }, disabled: score < 3 },
-        { id: "score_to_energy", label: "3分换1能量", description: "消耗3分，获得1能量", cost: { score: 3 }, gain: { energy: 1 }, disabled: score < 3 },
-        { id: "score_to_card", label: "3分换1精选", description: "消耗3分，精选1张公共牌", cost: { score: 3 }, pickCard: true, disabled: score < 3 || publicCount <= 0 },
-        { id: "credits_to_score", label: "1信用点换3分", description: "消耗1信用点，获得3分", cost: { credits: 1 }, gain: { score: 3 }, disabled: credits < 1 },
-        { id: "energy_to_score", label: "1能量换3分", description: "消耗1能量，获得3分", cost: { energy: 1 }, gain: { score: 3 }, disabled: energy < 1 },
-        { id: "card_to_score", label: "弃1牌换3分", description: "弃1张手牌，获得3分", discardCard: true, gain: { score: 3 }, disabled: handCount < 1 },
-      ];
-    }
-
-    function getFundamentalismExchangeChoice(workingRoot, choiceId, player = players.getCurrentPlayer(workingRoot.playerState)) {
-      return getFundamentalismExchangeChoiceSpecs(workingRoot, player).find((choice) => choice.id === choiceId) || null;
-    }
-
-    function executeIndustryFundamentalismExchangeEffect(workingRoot, effect) {
-      const player = getEffectOwnerPlayer(workingRoot, effect);
-      const choices = getFundamentalismExchangeChoiceSpecs(workingRoot, player);
-      openScanTargetDecision(workingRoot, {
-        ...getPendingOwnerFields(workingRoot, effect, player),
-        type: "industry_fundamentalism_exchange",
-        effect,
-        choices,
-      });
-      setOverlayContent(effect.label || "原教旨主义", "选择一次分数/资源兑换。资源不足的选项不可用。");
-      const buttons = choices.map((choice) => {
-        const button = createButton();
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.fundamentalismExchange = choice.id;
-        button.disabled = Boolean(choice.disabled);
-        button.title = choice.disabled ? "当前分数、资源或手牌不足" : "";
-        button.innerHTML = `${choice.label}<small>${choice.description}</small>`;
-        return button;
-      });
-      openOverlayWithButtons(buttons);
-      ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择兑换方式`;
-      renderStateReadout();
-      return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
-    }
-
-    function formatFundamentalismExchangeCost(cost) {
-      const normalizedCost = normalizeResourceCost(cost) || {};
-      const scoreCost = Math.max(0, Math.round(Number(normalizedCost.score) || 0));
-      const resourceCost = { ...normalizedCost };
-      delete resourceCost.score;
-      const parts = [];
-      if (scoreCost) parts.push(`${scoreCost}分`);
-      const resourceText = players.formatResourceCost(resourceCost);
-      if (resourceText) parts.push(resourceText);
-      return parts.join(" + ");
-    }
-
-    function canAffordFundamentalismExchangeCost(player, cost) {
-      const normalizedCost = normalizeResourceCost(cost) || {};
-      const scoreCost = Math.max(0, Math.round(Number(normalizedCost.score) || 0));
-      if (scoreCost > 0 && (Number(player?.resources?.score) || 0) < scoreCost) return false;
-      const resourceCost = { ...normalizedCost };
-      delete resourceCost.score;
-      return players.canAfford(player, resourceCost);
-    }
-
-    function spendFundamentalismExchangeCost(player, cost) {
-      const normalizedCost = normalizeResourceCost(cost) || {};
-      if (!Object.keys(normalizedCost).length) return { ok: true };
-      if (!canAffordFundamentalismExchangeCost(player, normalizedCost)) {
-        return { ok: false, message: `资源不足，需要 ${formatFundamentalismExchangeCost(normalizedCost)}` };
-      }
-      const scoreCost = Math.max(0, Math.round(Number(normalizedCost.score) || 0));
-      const resourceCost = { ...normalizedCost };
-      delete resourceCost.score;
-      if (scoreCost) {
-        player.resources.score = (Number(player.resources.score) || 0) - scoreCost;
-        addPlayerScoreSource(player, SCORE_SOURCE_KEYS.INDUSTRY_EFFECT, -scoreCost);
-      }
-      if (!Object.keys(resourceCost).length) return { ok: true };
-      return players.spendResources(player, resourceCost);
-    }
-
-    function completeFundamentalismImmediateExchange(workingRoot, effect, player, choice) {
-      beginEffectHistoryStep(workingRoot, effect.label);
-      const beforePlayer = structuredClone(player);
-      const spend = spendFundamentalismExchangeCost(player, choice.cost);
-      if (!spend.ok) {
-        endEffectHistoryStep(workingRoot);
-        ruleRocketState(workingRoot).statusNote = spend.message;
-        renderStateReadout();
-        return spend;
-      }
-      if (choice.gain && Object.keys(choice.gain).length) {
-        players.gainResources(player, choice.gain);
-        addScoreSourceFromGain(player, SCORE_SOURCE_KEYS.INDUSTRY_EFFECT, choice.gain);
-      }
-      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复原教旨主义兑换前玩家状态",
-      ));
-      return finishAutomaticRewardEffect(effect, {
-        ok: true,
-        undoable: true,
-        message: `原教旨主义：${choice.label}`,
-        payload: { choiceId: choice.id, cost: choice.cost || null, gain: choice.gain || null },
-      }, [renderPlayerHand]);
-    }
-
-    function startFundamentalismPickExchange(workingRoot, effect, player, choice) {
-      const beforePlayer = structuredClone(player);
-      const beforeCardState = structuredClone(ruleCardState(workingRoot));
-      const spend = spendFundamentalismExchangeCost(player, choice.cost);
-      if (!spend.ok) {
-        ruleRocketState(workingRoot).statusNote = spend.message;
-        renderStateReadout();
-        return spend;
-      }
-      const result = beginCardSelection({
-        type: "fundamentalism_exchange_pick",
-        player,
-        effect,
-        effectLabel: effect.label,
-        beforePlayerState: beforePlayer,
-        beforeCardState,
-        choiceId: choice.id,
-        allowBlindDraw: false,
-        fromEffectFlow: true,
-      });
-      if (!result.ok) {
-        restoreObjectSnapshot(player, beforePlayer);
-        restoreObjectSnapshot(ruleCardState(workingRoot), beforeCardState);
-        ruleRocketState(workingRoot).statusNote = result.message;
-        renderStateReadout();
-        return result;
-      }
-      ruleRocketState(workingRoot).statusNote = `原教旨主义：${choice.label}，请选择公共牌`;
-      renderPlayerStats();
-      renderStateReadout();
-      return result;
-    }
-
-    function startFundamentalismDiscardExchange(workingRoot, effect, player) {
-      const result = beginDiscardSelection(workingRoot, 1, {
-        type: "industry_fundamentalism_score_discard",
-        player,
-        fromEffectFlow: true,
-        effectLabel: effect.label,
-        beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(ruleCardState(workingRoot)),
-      });
-      if (result.ok) {
-        ruleRocketState(workingRoot).statusNote = "原教旨主义：请选择 1 张手牌弃掉换 3 分";
-        renderStateReadout();
-      }
-      return result;
-    }
-
-    function handleFundamentalismExchangeChoice(workingRoot, choiceId, pendingOverride = null) {
-      const pending = pendingOverride || getScanTargetDecision();
-      if (pending?.type !== "industry_fundamentalism_exchange") {
-        return { ok: false, message: "没有待处理的原教旨主义兑换" };
-      }
-      const effect = pending.effect;
-      closeScanTargetPicker(workingRoot);
-      return withPendingOwnerPlayer(workingRoot, pending, (player) => {
-        const choice = getFundamentalismExchangeChoice(workingRoot, choiceId, player);
-        if (!choice) return { ok: false, message: "未知兑换方式" };
-        if (choice.disabled) {
-          ruleRocketState(workingRoot).statusNote = "当前分数、资源或手牌不足，无法执行该兑换";
-          renderStateReadout();
-          return { ok: false, message: ruleRocketState(workingRoot).statusNote };
-        }
-        if (choice.pickCard) return startFundamentalismPickExchange(workingRoot, effect, player, choice);
-        if (choice.discardCard) return startFundamentalismDiscardExchange(workingRoot, effect, player);
-        return completeFundamentalismImmediateExchange(workingRoot, effect, player, choice);
-      });
-    }
-
     function isAlienFamilyCard(card) {
       const setText = String(card?.set || "");
       const cardId = String(card?.cardId || "");
@@ -1291,8 +1110,6 @@
       confirmDiscardAnyForIncome,
       executePayCreditsForRewardEffect,
       handlePayCreditChoice,
-      executeIndustryFundamentalismExchangeEffect,
-      handleFundamentalismExchangeChoice,
       executeDiscardCardCornerRepeatEffect,
       handleDiscardCornerRepeatChoice,
       executeRemoveOrbitToProbeEffect,

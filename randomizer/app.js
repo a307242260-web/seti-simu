@@ -172,7 +172,6 @@
   } = appConstants;
   const BANRENMA_PANEL_BONUS_EFFECT_TYPE = "banrenma_panel_bonus";
   const JIUZHE_THRESHOLD_CARD_EFFECT_TYPE = "jiuzhe_threshold_card";
-  const FUNDAMENTALISM_ROUND_START_ROUNDS = Object.freeze([2, 3, 4]);
   const AI_DIFFICULTY_LAUGHABLE = "laughable";
   const AI_DIFFICULTY_WEAK_START = "weak_start";
   const HISTORY_SOURCE_MAIN = "main";
@@ -730,14 +729,7 @@
     return result;
   }
   const browserRuleLifecycle = ruleComposition.lifecycle;
-  const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
-    executeIndustry: (workingRoot) => industryRuntime.handleCompanyActionMarkerClick(
-      workingRoot,
-      players.getCurrentPlayer(workingRoot.playerState)?.initialSelection?.industry,
-    ) || { ok: true, progressed: true },
-    executeCardCorner: (_workingRoot, descriptor) => executeStandardCardCornerAction(descriptor),
-    executeRunezuFaceSymbol: (workingRoot, descriptor) => executeStandardRunezuFaceSymbol(workingRoot, descriptor),
-  });
+  const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor();
   let actionRuntimeController = null;
   const ruleInputDispatcher = browserHostModule.inputAdapter.createRuleInputDispatcher({
     standardActionSchemaVersion: standardActionModule.SCHEMA_VERSION,
@@ -774,16 +766,12 @@
     });
   };
   const handlePayCreditChoice = (choiceId) => submitChoiceById("pay-credit-reward", choiceId);
-  const handleFundamentalismExchangeChoice = (choiceId) => (
-    submitChoiceById("fundamentalism-exchange", choiceId)
-  );
   const handleDiscardCornerRepeatChoice = (cardId) => submitChoiceById("discard-corner-repeat", cardId);
   const handleRemoveOrbitToProbeChoice = (choiceId) => submitChoiceById("remove-orbit-to-probe", choiceId);
   const handleRemovePlanetMarkerChoice = (choiceId) => submitChoiceById("remove-planet-marker", choiceId);
   const handleHandCornerChoice = (choiceId) => submitChoiceById("hand-corner-choice", choiceId);
   const handleReturnUnfinishedTaskChoice = (cardId) => submitChoiceById("return-unfinished-task", cardId);
   const handleOptionalHandScanChoice = (choiceId) => submitChoiceById("optional-hand-scan", choiceId);
-  const handlePiratesRaidLaunchChoice = (choiceId) => submitChoiceById("pirates-raid-launch", choiceId);
   const handleScanAction4Choice = (choiceId) => submitChoiceById(`scan-action-${choiceId}`, choiceId);
   const abortActiveDecision = (message) => ruleComposition.inputPort.abort({
     code: "BROWSER_DECISION_CANCELLED",
@@ -857,7 +845,6 @@
   const getPendingDataPlacementDecision = () => browserPendingDecisionOwner.read("data_placement");
   const getPendingLandTargetDecision = () => browserPendingDecisionOwner.read("land_target");
   const getPendingAlienTraceDecision = () => browserPendingDecisionOwner.read("alien_trace");
-  const getPendingPiratesRaidDecision = () => browserPendingDecisionOwner.read("pirates_raid");
   const hasTurnEndRevealDecision = () => Boolean(browserPendingDecisionOwner.read("turn_end_reveal"));
   const getPublicScanQueueSession = () => (
     browserPendingDecisionOwner.read("public_scan")?.publicScanQueue || null
@@ -889,7 +876,6 @@
       || getPendingRunezuSymbolBranch() || getPendingRunezuFaceSymbolPlacement()
     ),
     readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
-    getPendingPiratesRaidDecision,
     getPendingCardTriggerFreeMove, getPendingCardCornerFreeMove,
     isScanAction4Open: () => Boolean(els.scanAction4Overlay && !els.scanAction4Overlay.hidden),
     isLandTargetOpen: () => Boolean(els.landTargetOverlay && !els.landTargetOverlay.hidden),
@@ -922,7 +908,6 @@
     hasActivePendingSubFlow,
     cancelActivePendingSubFlowsForRoot,
   } = pendingSubFlowRuntime;
-  const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const landTargetPicker = actionInteractionRuntimeModule.createLandTargetPicker({
     document,
@@ -1055,20 +1040,11 @@
     handlePayCreditChoice: (workingRoot, ...args) => (
       effectChoiceFlowHelpers.handlePayCreditChoice(workingRoot, ...args)
     ),
-    handleFundamentalismExchangeChoice: (workingRoot, ...args) => (
-      effectChoiceFlowHelpers.handleFundamentalismExchangeChoice(workingRoot, ...args)
-    ),
     handleOptionalHandScanChoice: (workingRoot, ...args) => (
       effectExecutors.handleOptionalHandScanChoice(workingRoot, ...args)
     ),
     handleHandCornerChoice: (workingRoot, ...args) => (
       effectExecutors.handleHandCornerChoice(workingRoot, ...args)
-    ),
-    handlePiratesRaidLaunchChoice: (workingRoot, ...args) => (
-      techRuntime.handlePiratesRaidLaunchChoice(workingRoot, ...args)
-    ),
-    handlePiratesRaidTechMarkerClick: (workingRoot, ...args) => (
-      techRuntime.handlePiratesRaidTechMarkerClick(workingRoot, ...args)
     ),
     handleScanAction4Choice: (workingRoot, ...args) => (
       effectExecutors.handleScanAction4Choice(workingRoot, ...args)
@@ -2106,23 +2082,6 @@
           }) : [],
       },
       markerPresentation: {
-        piratesRaid: sourcePlayers.flatMap((player) => (
-          industry.shouldShowPiratesRaidMarkers?.(player)
-            ? (industry.listPiratesRaidPlanetMarkers?.(player) || []).map((marker) => {
-              const center = planetReferenceLayout.PLANET_REFERENCE_CENTERS?.[marker.planetId];
-              return center ? {
-                playerId: marker.playerId || player.id || "",
-                playerColor: marker.playerColor || player.color || "",
-                planetId: marker.planetId,
-                tileId: marker.tileId,
-                imageSrc: industry.PIRATES_RAID_MARKER_SRC || "../assets/industry/掠夺标记.png",
-                title: `星际海盗：${marker.tileId} 掠夺标记 @ ${getPlanetName(marker.planetId)}`,
-                leftPercent: ((center.x - 70) / PLANETS_REFERENCE_SIZE.width) * 100,
-                topPercent: (center.y / PLANETS_REFERENCE_SIZE.height) * 100,
-              } : null;
-            }).filter(Boolean)
-            : []
-        )),
         anomalies: (state.aliens?.yichangdian?.anomalies || []).map((anomaly) => {
           const point = aliens.getYichangdianAnomalyMarkerBoardPoint?.(solar, anomaly)
             || solar.solarGridToGlobalPoint(anomaly.sectorX, anomaly.y || 4);
@@ -2433,7 +2392,6 @@
     renderChongFossilOwnerTokenForRocket,
     renderChongFossilOwnerTokens,
     renderRockets,
-    renderPiratesRaidPlanetMarkers,
     renderYichangdianAnomalyMarkers,
     renderChongPlanetFossilMarkers,
     renderRunezuBoardSymbols,
@@ -2475,7 +2433,6 @@
     isHandScanSelectionActive: (...args) => isHandScanSelectionActive(...args),
     isCardSelectionActive,
     isTechTilePickingActive: (...args) => isTechTilePickingActive(...args),
-    getPendingPiratesRaidDecision,
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
     getPendingCardCornerQuickAction: (...args) => getPendingCardCornerQuickAction(...args),
     getPendingHandCardPlayAction: (...args) => getPendingHandCardPlayAction(...args),
@@ -3149,42 +3106,31 @@
     renderInitialSelectionArea,
     renderStateReadout,
     getPlayerLabelById,
-    FUNDAMENTALISM_ROUND_START_ROUNDS,
     getCurrentPlayer,
     HISTORY_SOURCE_QUICK,
     startCardEffectFlow,
     renderActionEffectBar,
     updateActionButtons: (...args) => updateActionButtons(...args),
     beginDiscardSelection,
+    hostPort: {
+      inspect: (...args) => ruleComposition.inspect(...args),
+      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
+    },
   });
   const {
     formatIncomeGain,
     getBlindDrawIrreversible,
     applyIncomeGainWithImmediateRewards,
-    maybeCompleteFundamentalismIncomeTaskCard,
     applyIncomeFromCard,
     buildIncomeResourceGain,
     formatIncomeResourceSummary,
     applyIncomeResourcesForPlayer,
-    hasHuanyuSuperdriveRoundStartPending,
-    applyHuanyuSuperdriveRoundStartForPlayer,
-    hasCheatLabRoundStartPending,
-    applyCheatLabRoundStartForPlayer,
-    hasGrandStrategyRoundStartPending,
-    countStrategyPassiveSlotTokens,
-    applyGrandStrategyRoundStartForPlayer,
-    appendIndustryRoundStartLog,
     applyIndustryRoundStartBonuses: applyIndustryRoundStartBonusesForRoot,
-    getFundamentalismRoundStartIncomeRound,
-    hasFundamentalismRoundStartIncomePending,
-    buildFundamentalismRoundStartIncomeEffect,
-    maybeStartFundamentalismRoundStartIncomeFlow: maybeStartFundamentalismRoundStartIncomeFlowForRoot,
     beginIncomeForCurrentPlayer: beginIncomeForCurrentPlayerForRoot,
   } = incomeRuntime;
   const {
     beginIncomeForCurrentPlayer,
     applyIndustryRoundStartBonuses,
-    maybeStartFundamentalismRoundStartIncomeFlow,
   } = browserOwnerInputs.income_runtime;
   const {
     confirmAlienTracePlacement,
@@ -3967,6 +3913,7 @@
       getSectorContentForMove,
       isAsteroidContent,
       isInitialSelectionActive,
+      inspect: (...args) => ruleComposition.inspect(...args),
       uiRuntimeState,
       listReadyChongTransportCandidates: (...args) => listReadyChongTransportCandidatesForRoot(...args),
       markCurrentActionIrreversibleForSource,
@@ -3975,6 +3922,7 @@
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       renderActionEffectBar,
       structuredClone,
+      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       updateActionButtons: (...args) => updateActionButtons(...args),
     },
   });
@@ -4266,8 +4214,6 @@
     getPendingDataPlacementDecision,
     closeDataPlacePicker,
     clearYichangdianCornerAction: () => effectExecutors?.clearYichangdianCornerAction?.(),
-    clearAlienDecisionDrafts: () => alienSpeciesRuntime?.clearAlienDecisionDrafts?.(),
-    getPendingPiratesRaidDecision,
     renderTechBoard: (...args) => renderTechBoard(...args),
   });
   const cancelActiveEffectSubFlowsForRoot = effectSubFlowCancellationRuntime.cancelActiveEffectSubFlowsForRoot;
@@ -4492,9 +4438,6 @@
       completeCurrentActionEffect, createActionContext: createActionContextForWorkingRoot,
       createPublicScanPendingAction, endEffectHistoryStep, executeBanrenmaPanelBonusEffect,
       executeIndustryHeliosPassiveRewardEffect: (...args) => executeIndustryHeliosPassiveRewardEffect(...args),
-      executeIndustryPiratesRaidLaunchEffect: (...args) => executeIndustryPiratesRaidLaunchEffect(...args),
-      executeIndustryPiratesRaidMarkerEffect: (...args) => executeIndustryPiratesRaidMarkerEffect(...args),
-      executeIndustryPiratesRaidPublicityEffect: (...args) => executeIndustryPiratesRaidPublicityEffect(...args),
       executeIndustrySentinelCornerEffect: (...args) => executeIndustrySentinelCornerEffect(...args),
       executeIndustryStrategyPassiveRewardEffect: (...args) => executeIndustryStrategyPassiveRewardEffect(...args),
       executeIndustryStratusCornerEffect: (...args) => executeIndustryStratusCornerEffect(...args),
@@ -4666,6 +4609,8 @@
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
       ),
+      inspect: (...args) => ruleComposition.inspect(...args),
+      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       createInitialSelectionImage,
       document,
       els,
@@ -4690,7 +4635,7 @@
   const {
     createIndustryActionRestoreCommand, recordIndustryActionRestoreCommand, clearIndustryRollbackUi,
     rollbackPendingIndustryQuickAction, cancelIndustryAbilityFlow, finishIndustryAbilityFlow,
-    startIndustryAbilityFlow, startIndustryStratusEffectFlow, startIndustryFundamentalismExchangeFlow,
+    startIndustryAbilityFlow, startIndustryStratusEffectFlow,
     startIndustryPublicityPick, beginIndustryTuringBorrow, failIndustryTuringBorrow,
     checkIndustryTuringBorrowTile, confirmIndustryTuringBorrow, openIndustryHeliosTechPicker,
     confirmIndustryHeliosRemoveTech, startIndustryHuanyuMoveEffectFlow, beginIndustryHuanyuFreeMoves,
@@ -4753,10 +4698,6 @@
     isTechAwaitingConfirm,
     isGeneratedResearchTechFollowupEffect,
     countOwnedTechByTypeAfterSelection,
-    isPiratesRaidPlacementActiveForPlayer,
-    renderPiratesRaidTechMarkers,
-    getCurrentPiratesRaidMarkerEffect,
-    getPiratesRaidLaunchCoordinate,
     researchTechForCurrentPlayer,
     commitSelectedResearchTech
   } = techRuntime;
@@ -4770,17 +4711,9 @@
     onTechTileSelected, onTechTileTaken, clearResearchTechSelectionState, restoreResearchTechSelectionAfterUndo,
     cancelPendingResearchTechTileChoice, cancelTechSelection, openTechBlueSlotPicker, finalizeTechTakeResult,
     commitResearchTechSelectionResult, selectResearchTechTileForCurrentFlow, confirmTechBlueSlotChoice,
-    handleSupplyTechTileClick, executeIndustryPiratesRaidMarkerEffect,
-    handlePiratesRaidTechMarkerClick: handlePiratesRaidTechMarkerClickForRoot,
-    executeIndustryPiratesRaidPublicityEffect, startIndustryPiratesRaidLaunchFlow, buildPiratesRaidLaunchChoices,
-    executeIndustryPiratesRaidLaunchEffect,
+    handleSupplyTechTileClick,
     setCheatModeOpen, toggleCheatMode,
   } = browserOwnerInputs.tech_runtime;
-  const handlePiratesRaidTechMarkerClick = (tileId) => (
-    getPendingPiratesRaidDecision()
-      ? submitActiveCardDecision("pirates-raid-marker", (target) => String(target.tileId) === String(tileId))
-      : { ok: false, message: "没有待放置的掠夺标记" }
-  );
 
   const placeDataToBlueSlot = (...args) => interactionOwnerInputPorts.dataInteraction
     .placeBlueSlot(...args);
@@ -4845,6 +4778,11 @@
       quickActionHistory,
       els,
       uiRuntimeState,
+      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
+        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
+      ),
+      inspect: (...args) => ruleComposition.inspect(...args),
+      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       deferPendingDecision: deferBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       clearActionEffectFlow,
@@ -5002,7 +4940,6 @@
       clearActionPending,
       clearMoveRocketHighlight,
       resolveCompletedSectorSettlements,
-      maybeStartFundamentalismRoundStartIncomeFlow,
       maybeOpenActionBriefingForCompletedCycle,
       maybeAutoOpenFinalResultDialog,
       clearTransientStateForRecovery,
@@ -5073,6 +5010,9 @@
     scoreSourceRuntime,
     turnEndRuntime: turnEndPort,
     hostPort: {
+      inspect: (...args) => ruleComposition.inspect(...args),
+      readProjection: () => ruleComposition.readModelPort.read("alienBoard"),
+      submitActiveDecision: (...args) => submitActiveCardDecision(...args),
       openPendingDecision: openBrowserPendingDecision,
       readPendingDecision: (kind) => browserPendingDecisionOwner.read(kind),
       startScreenState,
@@ -5088,6 +5028,7 @@
       document,
       els,
       renderActionEffectBar,
+      renderRunezuBoardSymbols,
       setScanTargetActionLayout,
       updateActionButtons,
       window,
@@ -5188,12 +5129,9 @@
     handleDiscardIncomeCardChoice,
     confirmDiscardAnyForIncome,
     handlePayCreditChoice,
-    handleFundamentalismExchangeChoice,
     handleDiscardCornerRepeatChoice,
     handleRemoveOrbitToProbeChoice,
-    handlePiratesRaidLaunchChoice,
     handleReturnUnfinishedTaskChoice,
-    handlePiratesRaidTechMarkerClick,
     confirmStrategyPassiveSlotChoice: (slotId) => submitChoiceById("strategy-passive-slot", slotId),
     cancelStrategyPassiveSlotChoice: () => submitChoiceById("cancel-strategy-passive-slot", "cancel"),
     confirmScanTarget,

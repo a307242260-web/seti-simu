@@ -53,10 +53,6 @@ const { createBrowserPendingDecisionOwner } = require("../game/effects/browser-p
   const fixture = createFixture();
   fixture.state.finalPending = false;
   fixture.state.probePending = false;
-  fixture.domain.describePendingDecision(fixture.root, "pirates_raid", {
-    playerId: "move-owner",
-    planetId: "earth",
-  });
   const turnEnd = fixture.domain.describePendingDecision(fixture.root, "turn_end_reveal", {
     playerId: "move-owner",
     endingPlayerId: "move-owner",
@@ -181,9 +177,7 @@ function createFixture() {
         listTakeableTiles: () => ["orange1", "purple1"],
         getAvailableBlueSlots: () => [],
       },
-      industry: {
-        isTechBlockedByPirates: () => false,
-      },
+      industry: {},
       handleSupplyTechTileClick: (workingRoot, tileId) => {
         state.techCalls.push([workingRoot, tileId]);
         workingRoot.techGameState.ui.techSelectionActive = false;

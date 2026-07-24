@@ -190,10 +190,29 @@
       const contextualizeExecutor = (executor) => {
         const wrap = (operation) => (state, ...args) => {
           const workingContext = actionContext(state);
-          return runWithWorkingStateContext(
+          const result = runWithWorkingStateContext(
             workingContext,
             () => operation(state, ...args, workingContext),
           );
+          if (typeof options.transformEffectResult !== "function") return result;
+          const transformed = options.transformEffectResult(
+            workingContext,
+            result,
+            args[0] || null,
+          );
+          if (transformed !== result && transformed?.ok === true && transformed.nextState) {
+            return {
+              ...transformed,
+              nextState: stateAdapter
+                ? stateAdapter.createCommittedState(
+                  workingState,
+                  state,
+                  { source: "effect_result_transform" },
+                )
+                : clone(state),
+            };
+          }
+          return transformed;
         };
         if (typeof executor === "function") return wrap(executor);
         if (!executor || typeof executor !== "object") return executor;
@@ -432,10 +451,8 @@
 
     function submitDecision(submission, submitOptions = {}) {
       if (!activeSession) return fail("RULE_COMPOSITION_SESSION_REQUIRED", "当前没有等待输入的规则 Session");
-      return advanceSession(
-        runtime.resolveDecision(activeSession, clone(submission)),
-        submitOptions.autoDrain !== false,
-      );
+      const resolved = runtime.resolveDecision(activeSession, clone(submission));
+      return advanceSession(resolved, submitOptions.autoDrain !== false);
     }
 
     function enumerateActions(request = {}) {

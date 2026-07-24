@@ -372,6 +372,7 @@
         defaultInitialPlayerColor: initialOptions.defaultInitialPlayerColor ?? context.defaultInitialPlayerColor,
         activePlayerCount: initialOptions.activePlayerCount ?? context.defaultActivePlayerCount,
         finalScoreIds: initialOptions.finalScoreIds ?? context.finalScoreIds,
+        alienPoolIds: initialOptions.alienPoolIds,
         random,
       });
       state.meta = {

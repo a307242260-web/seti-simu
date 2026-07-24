@@ -168,7 +168,7 @@
     const panelStrip = document.createElement("div");
     panelStrip.className = "company-alien-lab-panel-strip";
     const permanentPanels = passives.hasPermanentAlienLabPanels?.(player) === true;
-    panelStrip.setAttribute("aria-label", permanentPanels ? "作弊实验室永久板块" : "异星实验室板块");
+    panelStrip.setAttribute("aria-label", permanentPanels ? "异星实验室永久板块" : "异星实验室板块");
 
     for (const panelId of state.ALIEN_LAB_PANEL_IDS || []) {
       const asset = ALIEN_LAB_PANEL_ASSETS[panelId];

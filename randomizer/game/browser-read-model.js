@@ -47,7 +47,7 @@
     "playerTokens", "blueDropZones", "sectorTokensBySectorId", "aomomoTokens",
   ]);
   const MARKER_PRESENTATION_KEYS = Object.freeze([
-    "piratesRaid", "anomalies", "planetFossils", "runezuSymbols",
+    "anomalies", "planetFossils", "runezuSymbols",
   ]);
   const TECH_TILE_PRESENTATION_KEYS = Object.freeze(["supplyTiles", "playerTiles"]);
   const FINAL_SCORE_PRESENTATION_KEYS = Object.freeze(["breakdownsByPlayerId"]);
@@ -235,7 +235,6 @@
         aomomoTokens: [],
       },
       markerPresentation: {
-        piratesRaid: [],
         anomalies: [],
         planetFossils: [],
         runezuSymbols: [],

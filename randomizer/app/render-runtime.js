@@ -865,28 +865,6 @@
       }
     }
 
-    function renderPiratesRaidPlanetMarkers() {
-      const layer = els.planetsTokenLayer;
-      if (!layer) return;
-      layer.querySelectorAll(".pirates-raid-planet-marker").forEach((element) => element.remove());
-      for (const marker of markerPresentation().piratesRaid || []) {
-        const element = document.createElement("img");
-        element.className = "pirates-raid-planet-marker";
-        element.src = marker.imageSrc;
-        element.alt = "";
-        element.decoding = "async";
-        element.draggable = false;
-        element.dataset.playerId = marker.playerId;
-        element.dataset.playerColor = marker.playerColor;
-        element.dataset.planetId = marker.planetId;
-        element.dataset.techTileId = marker.tileId;
-        element.title = marker.title;
-        element.style.left = `${marker.leftPercent}%`;
-        element.style.top = `${marker.topPercent}%`;
-        layer.append(element);
-      }
-    }
-
     function renderYichangdianAnomalyMarkers() {
       if (!els.tokenLayer) return;
       const activeKeys = new Set();
@@ -1047,7 +1025,6 @@
       renderYichangdianAnomalyMarkers();
       renderChongPlanetFossilMarkers();
       renderChongFossilOwnerTokens();
-      renderPiratesRaidPlanetMarkers();
       renderRunezuBoardSymbols();
     }
 
@@ -1703,7 +1680,6 @@
       renderRocketElement: withProjection(renderRocketElement),
       renderChongFossilOwnerTokenForRocket: withProjection(renderChongFossilOwnerTokenForRocket),
       renderChongFossilOwnerTokens: withProjection(renderChongFossilOwnerTokens),
-      renderPiratesRaidPlanetMarkers: withProjection(renderPiratesRaidPlanetMarkers),
       renderYichangdianAnomalyMarkers: withProjection(renderYichangdianAnomalyMarkers),
       renderChongPlanetFossilMarkers: withProjection(renderChongPlanetFossilMarkers),
       renderRunezuBoardSymbols: withProjection(renderRunezuBoardSymbols),

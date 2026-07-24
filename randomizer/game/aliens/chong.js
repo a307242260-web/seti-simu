@@ -707,6 +707,12 @@
     }
     fossil.lastVisitedPlanetId = planetId || null;
     task.lastVisitedPlanetId = planetId || null;
+    if (planetId && planetId === task.destinationPlanetId) {
+      fossil.status = "delivered";
+      fossil.readyToComplete = true;
+      fossil.deliveredRocketId = Number(rocketId);
+      task.delivered = true;
+    }
     return {
       ok: true,
       fossil,

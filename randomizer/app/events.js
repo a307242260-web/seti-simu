@@ -147,12 +147,9 @@
       handleDiscardIncomeCardChoice,
       confirmDiscardAnyForIncome,
       handlePayCreditChoice,
-      handleFundamentalismExchangeChoice,
       handleDiscardCornerRepeatChoice,
       handleRemoveOrbitToProbeChoice,
-      handlePiratesRaidLaunchChoice,
       handleReturnUnfinishedTaskChoice,
-      handlePiratesRaidTechMarkerClick,
       confirmStrategyPassiveSlotChoice,
       cancelStrategyPassiveSlotChoice,
       confirmScanTarget,
@@ -355,11 +352,6 @@
       if (!token) return;
       runPlaceDataToComputer();
     });
-    els.playerBoardTechLayer?.addEventListener("click", (event) => {
-      const marker = event.target.closest("[data-pirates-raid-tech]");
-      if (!marker || marker.disabled) return;
-      handlePiratesRaidTechMarkerClick(marker.dataset.piratesRaidTech);
-    });
     els.dataPlaceActions?.addEventListener("click", (event) => {
       const skipButton = event.target.closest("[data-place-skip]");
       if (skipButton && !skipButton.disabled) {
@@ -462,12 +454,6 @@
         return;
       }
 
-      const fundamentalismExchange = event.target.closest("[data-fundamentalism-exchange]");
-      if (fundamentalismExchange && !fundamentalismExchange.disabled) {
-        handleFundamentalismExchangeChoice(fundamentalismExchange.dataset.fundamentalismExchange);
-        return;
-      }
-
       const discardCornerCard = event.target.closest("[data-discard-corner-card-id]");
       if (discardCornerCard && !discardCornerCard.disabled) {
         handleDiscardCornerRepeatChoice(discardCornerCard.dataset.discardCornerCardId);
@@ -477,12 +463,6 @@
       const removeOrbitToProbe = event.target.closest("[data-remove-orbit-to-probe]");
       if (removeOrbitToProbe && !removeOrbitToProbe.disabled) {
         handleRemoveOrbitToProbeChoice(removeOrbitToProbe.dataset.removeOrbitToProbe);
-        return;
-      }
-
-      const piratesRaidLaunch = event.target.closest("[data-pirates-raid-launch-choice]");
-      if (piratesRaidLaunch && !piratesRaidLaunch.disabled) {
-        handlePiratesRaidLaunchChoice(piratesRaidLaunch.dataset.piratesRaidLaunchChoice);
         return;
       }
 
