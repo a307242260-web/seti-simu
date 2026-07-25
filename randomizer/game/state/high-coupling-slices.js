@@ -35,7 +35,6 @@
     "players.players.*.hand/reservedCards/techState": "committed",
     "players.currentPlayerId/player labels/assets": "turn-owned/host-only:excluded",
     "pieces.rockets/activeRocketId/playerRocketSequences": "committed",
-    "pieces.nextRocketId": "meta.sequences.rocket",
     "pieces.statusNote/tokenSrc/label": "host-only:excluded",
     "cards.publicCards/discardPile/drawPileCardIds/passReservePiles": "committed",
     "cards.ui/selection*": "session-owned:excluded",
@@ -134,7 +133,6 @@
 
   function purifyPieces(pieces) {
     const result = stripKeys(pieces || {}, new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]));
-    delete result.nextRocketId;
     const normalized = {};
     for (const [playerId, sequences] of Object.entries(result.playerRocketSequences || {})) {
       normalized[playerId] = normalizeSequenceList(sequences, `pieces.playerRocketSequences.${playerId}`);
@@ -400,7 +398,7 @@
   function validateHighCouplingInvariants(state) {
     const errors = [];
     scanForbidden(state?.players, "$.players", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
-    scanForbidden(state?.pieces, "$.pieces", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS, "nextRocketId"]), errors);
+    scanForbidden(state?.pieces, "$.pieces", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
     scanForbidden(state?.cards, "$.cards", new Set([...HOST_KEYS, ...CARD_SELECTION_KEYS, ...DERIVED_TASK_KEYS]), errors);
     scanForbidden(state?.tech, "$.tech", new Set([...HOST_KEYS, ...TECH_SELECTION_KEYS, ...DERIVED_TASK_KEYS]), errors);
     const playerIds = validatePlayers(state, errors);

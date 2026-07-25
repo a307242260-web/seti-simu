@@ -21,6 +21,8 @@ const RESIDUALS = Object.freeze({
   legacyRootSlices: /\b(?:playerState|turnState|solarState|rocketState|planetStatsState|nebulaDataState|cardState|techGameState|alienGameState|finalScoringState)\b/g,
   parallelDecisionState: /\b(?:pendingDecision|initialIncomeQueue)\b/g,
   legacyExecutionFacilities: /\b(?:SetiActionHistory|SetiHistoryCommands|SetiAbilityChain|createActionHistory|historyStep|actionEffectFlow)\b/g,
+  moduleLocalIdentityOwners: /\b(?:cardInstanceSequence|handCardSequence|dataTokenSequence|nebulaTokenSequence|nebulaReplacementSequence|getNextCardInstanceSequence|restoreNextCardInstanceSequence|getNextHandCardSequence|restoreNextHandCardSequence|getNextFinalMarkSequence|restoreNextFinalMarkSequence|getNextDataTokenSequence|restoreNextDataTokenSequence|getDeterministicSequences|restoreDeterministicSequences|nextRocketId)\b/g,
+  localIdentityFallbacks: /\b(?:createLocalCardInstance|takeLocalDataTokenSequence|createRecoveredPoolToken|takeFinalMarkSequence)\b/g,
   ruleOwnedPresentationState: /\b(?:statusNote|techSelectionActive|pendingTileId|selectedTileId|selectedBlueSlot|selectionActive|discardSelectionActive|playCardSelectionActive)\b/g,
 });
 

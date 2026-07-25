@@ -2,22 +2,27 @@
   "use strict";
 
   let solar = root.SetiSolarSystem;
-  if (!solar && typeof require === "function") {
+  let stateSequences = root.SetiStateSequences;
+  if ((!solar || !stateSequences) && typeof require === "function") {
     solar = require("../solar-system/core");
+    stateSequences = stateSequences || require("./state/sequences");
   }
 
-  const api = factory(solar);
+  const api = factory(solar, stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiRocketActions = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (solar) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (solar, stateSequences) {
   "use strict";
 
   if (!solar) {
     throw new Error("SetiSolarSystem is required before SetiRocketActions");
+  }
+  if (!stateSequences) {
+    throw new Error("SetiStateSequences is required before SetiRocketActions");
   }
 
   const SECTOR_RING_MIN = 1;
@@ -33,7 +38,6 @@
 
   function createRocketState() {
     return {
-      nextRocketId: 1,
       activeRocketId: null,
       rockets: [],
       playerRocketSequences: {},
@@ -313,7 +317,7 @@
     const sectorX = solar.mod8(sectorCoordinate.x);
     const sectorY = clamp(Number(sectorCoordinate.y), SECTOR_RING_MIN, SECTOR_RING_MAX);
     const rocket = {
-      id: rocketState.nextRocketId,
+      id: stateSequences.peek(source.root, "rocket"),
       playerId: source.playerId || null,
       color: source.color || null,
     };
@@ -324,10 +328,10 @@
       return { ok: false, rocket: null, message };
     }
 
+    stateSequences.take(source.root, "rocket");
     rocket.launchGrid = { x: sectorX, y: sectorY };
     rocket.launchSectorCoordinate = { x: sectorX, y: sectorY };
     rocket.playerSequence = allocatePlayerRocketSequence(rocketState, rocket.playerId);
-    rocketState.nextRocketId += 1;
     rocketState.activeRocketId = rocket.id;
     rocketState.rockets.push(rocket);
 
@@ -340,7 +344,7 @@
     const sectorX = solar.mod8(sectorCoordinate.x);
     const sectorY = clamp(Number(sectorCoordinate.y), SECTOR_RING_MIN, SECTOR_RING_MAX);
     const rocket = {
-      id: rocketState.nextRocketId,
+      id: stateSequences.peek(input.root, "rocket"),
       kind: input.kind || ROCKET_KIND.CHONG_FOSSIL,
       playerId: input.playerId || null,
       color: input.color || null,
@@ -356,9 +360,9 @@
       return { ok: false, rocket: null, message };
     }
 
+    stateSequences.take(input.root, "rocket");
     rocket.launchGrid = { x: sectorX, y: sectorY };
     rocket.launchSectorCoordinate = { x: sectorX, y: sectorY };
-    rocketState.nextRocketId += 1;
     rocketState.activeRocketId = rocket.id;
     rocketState.rockets.push(rocket);
 

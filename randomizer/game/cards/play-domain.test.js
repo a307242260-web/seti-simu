@@ -39,7 +39,21 @@ function createLegacyRoot(cardId) {
     price: 2,
     cardTypeCode: cardEffects.getRuntimeCardTypeCode({ cardId }),
   };
-  data.restoreDeterministicSequences({ nebulaToken: 1, nebulaReplacement: 1 });
+  const meta = {
+    stateVersion: 0,
+    gameId: `card-play:${cardId}`,
+    rulesetVersion: "test-v1",
+    seed: 158,
+    rngState: {},
+    sequences: {
+      card: 100,
+      dataToken: 200,
+      finalMark: 1,
+      nebulaToken: 1,
+      nebulaReplacement: 1,
+      rocket: 1,
+    },
+  };
   const nebulaDataState = data.createDefaultNebulaDataState();
   const techGameState = tech.createState(() => 0);
   for (const stack of Object.values(techGameState.board.stacks)) {
@@ -48,7 +62,7 @@ function createLegacyRoot(cardId) {
   }
   for (const nebulaId of new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat())) {
     for (let index = 0; index < 4; index += 1) {
-      data.fillNebulaData(nebulaDataState, nebulaId, { source: "test" });
+      data.fillNebulaData(nebulaDataState, nebulaId, { source: "test", root: { meta } });
     }
   }
   const extraHand = cardId === "b_41.webp" || cardId === "dlc_34.png"
@@ -60,18 +74,7 @@ function createLegacyRoot(cardId) {
       ]
       : [];
   const root = {
-    meta: {
-      stateVersion: 0,
-      gameId: `card-play:${cardId}`,
-      rulesetVersion: "test-v1",
-      seed: 158,
-      rngState: {},
-      sequences: {
-        card: 100,
-        dataToken: 200,
-        ...data.getDeterministicSequences(),
-      },
-    },
+    meta,
     playerState: {
       currentPlayerId: "p1",
       players: [{

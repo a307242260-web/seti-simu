@@ -5,6 +5,7 @@ const loadProductionDependency = (path, globalName) => (
   typeof require === "function" ? require(path) : productionRoot[globalName]
 );
 const stateStoreApi = loadProductionDependency("./state/state-store", "SetiStateStore");
+const stateSequences = loadProductionDependency("./state/sequences", "SetiStateSequences");
 const highCouplingStateApi = loadProductionDependency("./state/high-coupling-slices", "SetiHighCouplingState");
 const effectRuntimeApi = loadProductionDependency("./effects/session-runtime", "SetiEffectSession");
 const standardActionApi = loadProductionDependency("./actions/standard-action", "SetiStandardAction");
@@ -208,10 +209,6 @@ function createModules() {
 }
 
 function createWorkingState(options = {}, random = Math.random) {
-  restoreSequences({
-    actionLog: 1, finalMark: 1, handCard: 1,
-    nebulaReplacement: 1, nebulaToken: 1, rocket: 1,
-  });
   const state = initialGameStateApi.createSessionState(createModules(), {
     defaultInitialPlayerColor: players.DEFAULT_PLAYER_COLOR,
     activePlayerCount: options.activePlayerCount || 4,
@@ -221,7 +218,15 @@ function createWorkingState(options = {}, random = Math.random) {
   state.meta = {
     seed: options.seed ?? "seti-simulation",
     rngState: clone(options.rngState || { algorithm: "seti-simulation-mulberry32-v1", state: 1 }),
-    sequences: { card: 1, dataToken: 1 },
+    sequences: {
+      actionLog: 1,
+      card: 1,
+      dataToken: 1,
+      finalMark: 1,
+      nebulaReplacement: 1,
+      nebulaToken: 1,
+      rocket: 1,
+    },
   };
   state.match.decisionVersion = 0;
   state.match.actionLog = [];
@@ -286,7 +291,7 @@ function randomizeBoard(workingState, random) {
     workingState.solarState.sectorBySlot[slotId] = sectorId;
   }
   data.clearNebulaData(workingState.nebulaDataState);
-  data.fillAllNebulaData(workingState.nebulaDataState, { source: "setup" });
+  data.fillAllNebulaData(workingState.nebulaDataState, { source: "setup", root: workingState });
   finalScoring.randomizeTileVariants(workingState.finalScoringState, DEFAULT_FINAL_SCORE_IDS, random);
   aliens.randomizeAlienAssignments(workingState.alienGameState);
   tech.setupBoardBonuses(workingState.techGameState, random);
@@ -306,7 +311,7 @@ function syncPlanetRockets(workingState) {
       const slot = planetReferenceLayout.getPlanetSlot(planetId, "orbit", marker.sequence);
       if (!slot) continue;
       const rocket = {
-        id: workingState.rocketState.nextRocketId++, playerId: marker.playerId, color: marker.color,
+        id: stateSequences.take(workingState, "rocket"), playerId: marker.playerId, color: marker.color,
         referencePlacement: { ...slot, isPlanetMarker: true, playerId: marker.playerId, color: marker.color,
           referenceOffsetTokenWidths: 0, planetId, kind: "orbit", sequence: marker.sequence },
       };
@@ -427,7 +432,6 @@ function chooseInitialSelections(workingState, options, random) {
       const forkPlans = selectedPlans.map((selected, index) => (
         index === playerIndex ? candidate : selected
       ));
-      restoreSequences(rootSequences);
       submitOpeningPlans(
         fork,
         forkPlans,
@@ -448,7 +452,6 @@ function chooseInitialSelections(workingState, options, random) {
     ));
     selectedPlans[playerIndex] = evaluated[0].candidate;
   }
-  restoreSequences(rootSequences);
   submitOpeningPlans(workingState, selectedPlans, aiDifficulty, random);
 }
 
@@ -462,28 +465,15 @@ function initializeProductionGame(workingState, options, random) {
 }
 
 function readSequences(workingState) {
-  const nebulaSequences = data.getDeterministicSequences?.() || {};
   return {
     actionLog: (workingState.match.actionLog || []).length + 1,
-    card: workingState.meta?.sequences?.card ?? cards.getNextCardInstanceSequence(),
-    dataToken: workingState.meta?.sequences?.dataToken ?? data.getNextDataTokenSequence(),
-    finalMark: finalScoring.getNextFinalMarkSequence(),
-    handCard: players.getNextHandCardSequence(),
-    nebulaReplacement: nebulaSequences.nebulaReplacement || 1,
-    nebulaToken: nebulaSequences.nebulaToken || 1,
-    rocket: workingState.rocketState.nextRocketId || 1,
+    card: workingState.meta?.sequences?.card ?? 1,
+    dataToken: workingState.meta?.sequences?.dataToken ?? 1,
+    finalMark: workingState.meta?.sequences?.finalMark ?? 1,
+    nebulaReplacement: workingState.meta?.sequences?.nebulaReplacement ?? 1,
+    nebulaToken: workingState.meta?.sequences?.nebulaToken ?? 1,
+    rocket: workingState.meta?.sequences?.rocket ?? 1,
   };
-}
-
-function restoreSequences(sequences = {}) {
-  cards.restoreNextCardInstanceSequence(sequences.card || 1);
-  players.restoreNextHandCardSequence(sequences.handCard || 1);
-  finalScoring.restoreNextFinalMarkSequence(sequences.finalMark || 1);
-  data.restoreNextDataTokenSequence(sequences.dataToken || 1);
-  data.restoreDeterministicSequences({
-    nebulaReplacement: sequences.nebulaReplacement || 1,
-    nebulaToken: sequences.nebulaToken || 1,
-  });
 }
 
 function sequenceSnapshot(workingState) {
@@ -737,11 +727,9 @@ function restoreWorkingState(target, source, metadata = {}) {
       else if (target[key] && typeof target[key] === "object") replaceMutable(target[key], source[key]);
       else target[key] = clone(source[key]);
     }
-    restoreSequences(target.meta?.sequences || {});
     return target;
   }
   initialGameStateApi.restoreSessionState(target, source, replaceMutable);
-  restoreSequences(source.meta?.sequences || {});
   return target;
 }
 
@@ -935,7 +923,6 @@ function createProductionHostComposition(options = {}) {
     stateAdapter,
     runWithWorkingState(context, operation) {
       const workingState = context.workingRoot || context;
-      restoreSequences(workingState.meta?.sequences || {});
       const rngState = workingState.meta?.rngState;
       if (typeof options.random.setState === "function" && Number.isSafeInteger(rngState?.state)) {
         options.random.setState(rngState.state);

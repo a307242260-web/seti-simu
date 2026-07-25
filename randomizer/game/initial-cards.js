@@ -340,7 +340,10 @@
           ? context.blindDrawCard(targetPlayer)
           : cards.blindDraw(context.cardState, context.playerState, targetPlayer)
       ),
-      gainData: (targetPlayer) => data.gainData(targetPlayer, { source: "initial_card" }),
+      gainData: (targetPlayer) => data.gainData(targetPlayer, {
+        source: "initial_card",
+        root: context?.workingRoot,
+      }),
     });
     const labels = {
       credits: "信用点",
@@ -358,10 +361,10 @@
     });
   }
 
-  function applyDataGain(player, count, results) {
+  function applyDataGain(context, player, count, results) {
     const target = Math.max(0, Math.round(Number(count) || 0));
     for (let index = 0; index < target; index += 1) {
-      const result = data.gainData(player, { source: "initial_card" });
+      const result = data.gainData(player, { source: "initial_card", root: context?.workingRoot });
       pushResult(results, {
         ...result,
         type: "data",
@@ -395,6 +398,7 @@
         result = rockets.launchRocketAtSector(context.rocketState, context.getEarthSectorCoordinate(), {
           playerId: player.id,
           color: player.color,
+          root: context.workingRoot || context,
         });
       } else {
         result = { ok: false, message: "缺少发射上下文" };
@@ -449,6 +453,7 @@
   function replaceNextSectorData(context, player, nebulaId) {
     const nextToken = data.getNextReplaceableNebulaToken(context.nebulaDataState, nebulaId);
     const options = {
+      root: context?.workingRoot,
       playerColor: player.color,
       playerLabel: player.colorLabel,
       playerTokenSrc: getTokenSrc(context, player),
@@ -462,7 +467,7 @@
         options,
       );
       if (!replaceResult.ok) return replaceResult;
-      const gainResult = data.gainData(player, { source: "initial_card" });
+      const gainResult = data.gainData(player, { source: "initial_card", root: context?.workingRoot });
       return {
         ...replaceResult,
         ok: true,
@@ -576,7 +581,7 @@
 
     applyResources(player, effect.resources, results);
     applyIncome(context, player, effect.income, results);
-    applyDataGain(player, effect.dataGain, results);
+    applyDataGain(context, player, effect.dataGain, results);
     applyBlindDraw(context, player, effect.blindDraw, results);
     applySectorScan(context, player, effect.scan, results, events);
     applyOrbitMarker(context, player, effect.orbitPlanetId, results);
@@ -619,7 +624,7 @@
     setBaseIncome(player, effect.baseIncome, results);
     applyStartupTech(context, player, effect.startupTechTileId, results);
     applyResources(player, effect.resources, results);
-    applyDataGain(player, effect.dataGain, results);
+    applyDataGain(context, player, effect.dataGain, results);
     applyBlindDraw(context, player, effect.blindDraw, results);
     applyLaunches(context, player, effect.launchCount, results);
 

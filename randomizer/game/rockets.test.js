@@ -2,10 +2,16 @@ const assert = require("node:assert/strict");
 require("../solar-system/core");
 const rockets = require("./rockets");
 
+function createRoot() {
+  return { meta: { sequences: { rocket: 1 } } };
+}
+
 const rocketState = rockets.createRocketState();
+const root = createRoot();
 const launched = rockets.launchRocketAtSector(rocketState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root,
 });
 
 assert.equal(launched.ok, true);
@@ -25,10 +31,12 @@ assert.deepEqual(
 assert.deepEqual(rockets.serializeSectorOccupancy(rocketState), { "6,1": [4] });
 
 const fullSectorState = rockets.createRocketState();
+const fullSectorRoot = createRoot();
 for (let i = 0; i < 9; i += 1) {
   const result = rockets.launchRocketAtSector(fullSectorState, { x: 0, y: 1 }, {
     playerId: "player-white",
     color: "white",
+    root: fullSectorRoot,
   });
   assert.equal(result.ok, true);
 }
@@ -41,34 +49,41 @@ assert.deepEqual(
 const blocked = rockets.launchRocketAtSector(fullSectorState, { x: 0, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root: fullSectorRoot,
 });
 assert.equal(blocked.ok, false);
 assert.equal(fullSectorState.rockets.length, 9);
-assert.equal(fullSectorState.nextRocketId, 10);
+assert.equal(fullSectorRoot.meta.sequences.rocket, 10);
 assert.match(blocked.message, /已满/);
 
 const reuseState = rockets.createRocketState();
+const reuseRoot = createRoot();
 const firstLaunch = rockets.launchRocketAtSector(reuseState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root: reuseRoot,
 });
 rockets.removeRocket(reuseState, firstLaunch.rocket.id);
 const secondLaunch = rockets.launchRocketAtSector(reuseState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root: reuseRoot,
 });
 assert.equal(secondLaunch.rocket.playerSequence, 1);
 
 const fossilState = rockets.createRocketState();
+const fossilRoot = createRoot();
 const standard = rockets.launchRocketAtSector(fossilState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root: fossilRoot,
 });
 const fossil = rockets.createMovableTokenAtSector(fossilState, { x: 5, y: 1 }, {
   kind: rockets.ROCKET_KIND.CHONG_FOSSIL,
   playerId: "player-white",
   color: "white",
   fossilId: "fossil_01",
+  root: fossilRoot,
 });
 assert.equal(standard.ok, true);
 assert.equal(fossil.ok, true);

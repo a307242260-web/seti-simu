@@ -1,30 +1,29 @@
 (function (root, factory) {
   "use strict";
 
-  const api = factory();
+  let stateSequences = root.SetiStateSequences;
+  if (!stateSequences && typeof require === "function") {
+    stateSequences = require("./state/sequences");
+  }
+  const api = factory(stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiFinalScoring = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (stateSequences) {
   "use strict";
 
   const FINAL_SCORE_THRESHOLDS = Object.freeze([25, 50, 70]);
   const DEFAULT_TILE_IDS = Object.freeze(["a", "b", "c", "d"]);
-  let markSequence = 0;
-
-  function getNextFinalMarkSequence() {
-    return markSequence + 1;
-  }
-
-  function restoreNextFinalMarkSequence(nextSequence) {
-    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
-      throw new TypeError("finalMark 序列必须是正安全整数");
-    }
-    markSequence = nextSequence - 1;
-    return getNextFinalMarkSequence();
+  function takeFinalMarkSequence(state, options) {
+    if (options?.root) return stateSequences.take(options.root, "finalMark");
+    return Object.values(state?.tiles || {}).flatMap((tile) => tile?.marks || [])
+      .reduce((maximum, mark) => {
+        const match = /^final-mark-(\d+)$/.exec(String(mark?.id || ""));
+        return match ? Math.max(maximum, Number(match[1])) : maximum;
+      }, 0) + 1;
   }
 
   function normalizeTileId(tileId) {
@@ -247,7 +246,7 @@
       ? tile.marks.filter((mark) => Number(mark.slotIndex) === 3).length + 1
       : null;
 
-    markSequence += 1;
+    const markSequence = takeFinalMarkSequence(state, options);
     const mark = {
       id: `final-mark-${markSequence}`,
       tileId: normalizedTileId,
@@ -290,7 +289,7 @@
       ? tile.marks.filter((mark) => Number(mark.slotIndex) === 3).length + 1
       : null;
 
-    markSequence += 1;
+    const markSequence = takeFinalMarkSequence(state, options);
     const mark = {
       id: `final-mark-${markSequence}`,
       tileId: normalizedTileId,
@@ -318,8 +317,6 @@
     FINAL_SCORE_THRESHOLDS,
     DEFAULT_TILE_IDS,
     createFinalScoringState,
-    getNextFinalMarkSequence,
-    restoreNextFinalMarkSequence,
     ensureFinalScoringState,
     getReachedThresholds,
     syncPendingMarks,

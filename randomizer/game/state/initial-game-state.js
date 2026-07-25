@@ -88,7 +88,6 @@
     replaceMutableObject(sessionState.turnState, restoredTurn);
     replaceMutableObject(sessionState.rocketState, {
       ...read("pieces"),
-      nextRocketId: read("meta").sequences.rocket,
       playerRocketSequences: Object.fromEntries(Object.entries(
         read("pieces").playerRocketSequences || {},
       ).map(([playerId, values]) => [playerId, new Set(values)])),

@@ -55,6 +55,16 @@ node tools/report_architecture_residuals.js
 - 删除终局计分、宇宙战略集团、赫利昂和扇区结算中无生产消费者的文本 readout API，以及对应导出和结构型测试断言。
 - `legacyExecutionFacilities` 从 1 处 / 1 文件下降到 0；这只证明已识别的旧执行设施族清零，M3 仍需完成全生产导出消费者审计后才能关单。
 
+### 2026-07-25：删除模块级实体编号 owner
+
+- 新增唯一 `game/state/sequences.js`，所有生产实体编号只从当前 canonical `meta.sequences` 读取和递增。
+- 删除卡牌、数据 token、星云 token/替换顺序、终局标记、手牌占位和火箭的模块闭包序列，以及全部 get/restore 接口和恢复接线。
+- 删除 `pieces.nextRocketId`；火箭编号不再同时存在于 pieces 和 committed metadata。
+- 删除已经失去测试对象的 `deterministic-sequences.test.js`；checkpoint、反事实 fork 和 full-flow 现在直接验证 canonical 序列。
+- 已识别模块闭包编号 owner 从 90 处 / 12 个生产文件下降到 0；全仓审计同时新增识别出 standalone/recovery 的本地编号 fallback，已单列为 `localIdentityFallbacks`，因此 M1 仍未完成。
+- 完整 checkpoint 结构差异仅为删除无消费者的 `meta.sequences.handCard`，最终权威盘面逐字段无变化；固定 checkpoint hash 已据此更新。
+- Node 回归通过：61/61 unit、1/1 full-flow；真实 Chrome smoke 3/3 通过。
+
 ## 每轮更新格式
 
 每轮实现后必须记录：

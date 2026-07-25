@@ -75,7 +75,6 @@ function createState() {
     },
     solarSystem: {},
     pieces: {
-      nextRocketId: 2,
       activeRocketId: 1,
       rockets: [{
         id: 1, playerId: "p1", color: "blue", playerSequence: 1,
@@ -119,7 +118,6 @@ function bytes(store) {
   assert.equal(Object.hasOwn(purified.players.players[0], "colorLabel"), false);
   assert.equal(Object.hasOwn(purified.players.players[0].hand[0], "src"), false);
   assert.equal(Object.hasOwn(purified.pieces, "statusNote"), false);
-  assert.equal(Object.hasOwn(purified.pieces, "nextRocketId"), false);
   assert.deepEqual(purified.pieces.playerRocketSequences, { p1: [1], p2: [] });
   assert.equal(Object.hasOwn(purified.cards, "ui"), false);
   assert.equal(Object.hasOwn(purified.cards, "selectedCardIds"), false);

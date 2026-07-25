@@ -250,7 +250,7 @@
     return nodes;
   }
 
-  function applyCornerReward(players, data, player, reward) {
+  function applyCornerReward(players, data, player, reward, options = {}) {
     const results = [];
     if (!reward || !player) {
       return { ok: false, message: "没有可结算的弃牌角标奖励", results };
@@ -261,7 +261,7 @@
       }
       const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
       for (let index = 0; index < dataCount; index += 1) {
-        results.push(data.gainData(player, { source: "industry_corner" }));
+        results.push(data.gainData(player, { source: "industry_corner", root: options.root }));
       }
       const parts = [];
       if (reward.gain?.publicity) parts.push(`宣传+${reward.gain.publicity}`);
@@ -305,7 +305,7 @@
     }
     const dataCount = Math.max(0, Math.round(Number(gain.availableData) || 0));
     for (let index = 0; index < dataCount; index += 1) {
-      dataResults.push(data.gainData(player, { source: "industry_income" }));
+      dataResults.push(data.gainData(player, { source: "industry_income", root: options.root }));
     }
     const handCount = Math.max(0, Math.round(Number(gain.handSize) || 0));
     if (handCount > 0) {

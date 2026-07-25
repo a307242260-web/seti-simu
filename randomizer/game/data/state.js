@@ -5,22 +5,30 @@
   let players = root.SetiPlayers;
   let playerTech = root.SetiPlayerTech;
   let catalog = root.SetiTechCatalog;
+  let stateSequences = root.SetiStateSequences;
 
   if (typeof require === "function") {
     placement = placement || require("./placement");
     players = players || require("../players");
     playerTech = playerTech || require("../tech/player-tech");
     catalog = catalog || require("../tech/catalog");
+    stateSequences = stateSequences || require("../state/sequences");
   }
 
-  const api = factory(placement, players, playerTech, catalog);
+  const api = factory(placement, players, playerTech, catalog, stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiDataState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, players, playerTech, catalog) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  placement,
+  players,
+  playerTech,
+  catalog,
+  stateSequences,
+) {
   "use strict";
 
   const DATA_TOKEN_SRC = "../assets/tokens/data.png";
@@ -28,40 +36,16 @@
   const PLACEMENT_KIND_BLUE_BONUS = "blueBonus";
   const ANALYZE_ENERGY_COST = 1;
   const ANALYZE_REQUIRED_COMPUTER_SLOT = 6;
-  let dataTokenSequence = 0;
-
-  function getNextDataTokenSequence() {
-    return dataTokenSequence + 1;
-  }
-
-  function restoreNextDataTokenSequence(nextSequence) {
-    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
-      throw new TypeError("dataToken 序列必须是正安全整数");
-    }
-    dataTokenSequence = nextSequence - 1;
-    return getNextDataTokenSequence();
-  }
-
   function createDefaultDataState() {
     return { poolTokens: [], placedTokens: [], discardedCount: 0 };
   }
 
-  function takeCommittedDataTokenSequence(root) {
-    if (!root?.meta || !root.meta.sequences || typeof root.meta.sequences !== "object") {
-      throw new TypeError("创建 committed 数据实体需要 meta.sequences");
-    }
-    const nextSequence = Number(root.meta.sequences.dataToken);
-    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
-      throw new TypeError("meta.sequences.dataToken 必须是正安全整数");
-    }
-    root.meta.sequences.dataToken = nextSequence + 1;
-    return nextSequence;
-  }
-
-  function rememberDataTokenSequence(id) {
-    const match = /^data-token-(?:recovered-)?(\d+)$/.exec(String(id || ""));
-    if (!match) return;
-    dataTokenSequence = Math.max(dataTokenSequence, Math.round(Number(match[1])) || 0);
+  function takeLocalDataTokenSequence(dataState) {
+    return [...(dataState?.poolTokens || []), ...(dataState?.placedTokens || [])]
+      .reduce((maximum, token) => {
+        const match = /^data-token-(?:recovered-)?(\d+)$/.exec(String(token?.id || ""));
+        return match ? Math.max(maximum, Number(match[1])) : maximum;
+      }, 0) + 1;
   }
 
   function getPlacementKind(token) {
@@ -72,7 +56,6 @@
 
   function normalizePoolToken(token, index) {
     const source = token || {};
-    rememberDataTokenSequence(source.id);
     const slotIndex = Number(source.slotIndex);
     const layout = placement.getDataPoolSlotLayout(slotIndex);
     return {
@@ -86,7 +69,6 @@
 
   function normalizePlacedToken(token, index) {
     const source = token || {};
-    rememberDataTokenSequence(source.id);
     const placementKind = getPlacementKind(source);
 
     if (placementKind === PLACEMENT_KIND_BLUE_BONUS) {
@@ -143,9 +125,9 @@
   }
 
   function createRecoveredPoolToken(dataState, slotIndex) {
-    dataTokenSequence += 1;
+    const sequence = takeLocalDataTokenSequence(dataState);
     return normalizePoolToken({
-      id: `data-token-recovered-${dataTokenSequence}`,
+      id: `data-token-recovered-${sequence}`,
       index: getNextDataIndex(dataState),
       slotIndex,
     }, dataState.poolTokens.length);
@@ -350,11 +332,10 @@
     }
 
     const committedSequence = options.root
-      ? takeCommittedDataTokenSequence(options.root)
-      : null;
-    if (committedSequence == null) dataTokenSequence += 1;
+      ? stateSequences.take(options.root, "dataToken")
+      : takeLocalDataTokenSequence(dataState);
     const token = {
-      id: `data-token-${committedSequence ?? dataTokenSequence}`,
+      id: `data-token-${committedSequence}`,
       index: getNextDataIndex(dataState),
       slotIndex,
       percentX: layout.percentX,
@@ -625,9 +606,6 @@
     ANALYZE_ENERGY_COST,
     ANALYZE_REQUIRED_COMPUTER_SLOT,
     createDefaultDataState,
-    takeCommittedDataTokenSequence,
-    getNextDataTokenSequence,
-    restoreNextDataTokenSequence,
     normalizeDataState,
     ensurePlayerDataState,
     syncAvailableDataCount,

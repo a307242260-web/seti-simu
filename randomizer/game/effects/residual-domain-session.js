@@ -391,8 +391,7 @@
   function drawOptions(root) {
     return {
       createCardInstance(entry) {
-        root.meta.cardInstanceSequence = (Number(root.meta.cardInstanceSequence) || 0) + 1;
-        return cards.createCardInstance(entry, root.meta.cardInstanceSequence);
+        return cards.createCommittedCardInstance(root, entry);
       },
     };
   }
@@ -405,7 +404,13 @@
     const spawnedEffects = [];
     let irreversible = null;
     if (step === "stratus_corner") {
-      const applied = industryAbilities.applyCornerReward(players, data, player, payload.node?.options?.reward);
+      const applied = industryAbilities.applyCornerReward(
+        players,
+        data,
+        player,
+        payload.node?.options?.reward,
+        { root },
+      );
       if (!applied.ok) return applied;
       if (applied.pendingFreeMove) {
         spawnedEffects.push(decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
@@ -429,6 +434,7 @@
       const [card] = player.hand.splice(index, 1);
       cards.addToDiscardPile(root.cardState, card);
       const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, card, {
+        root,
         blindDraw: () => cards.blindDraw(
           root.cardState, root.playerState, player, () => nextRandom(root), drawOptions(root),
         ),
@@ -473,6 +479,7 @@
         player.hand.splice(index, 1);
         cards.addToDiscardPile(root.cardState, picked.card);
         const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, picked.card, {
+          root,
           blindDraw: () => cards.blindDraw(
             root.cardState, root.playerState, player, () => nextRandom(root), drawOptions(root),
           ),
@@ -480,7 +487,11 @@
         if (!gained.ok) return gained;
       } else if (payload.abilityId === "fenwick_publicity_pick_corner") {
         const applied = industryAbilities.applyCornerReward(
-          players, data, player, industryAbilities.getCornerReward(cards, picked.card),
+          players,
+          data,
+          player,
+          industryAbilities.getCornerReward(cards, picked.card),
+          { root },
         );
         if (!applied.ok) return applied;
         if (applied.pendingFreeMove) spawnedEffects.push(decision(
@@ -842,7 +853,7 @@
         } else if (effect.type === "gain_data") {
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let dataIndex = 0; dataIndex < count; dataIndex += 1) {
-            const gained = data.gainData(player, { source: "card_trigger" });
+            const gained = data.gainData(player, { source: "card_trigger", root });
             if (!gained.ok) return gained;
           }
         } else if (effect.type === "draw_cards") {
@@ -1525,7 +1536,7 @@
         if (!legal || !player) return fail("FINAL_MARK_STALE", "终局标记 Decision 已失效");
         const marked = finalScoring.markTile(
           root.finalScoringState, legal.target.tileId, player,
-          { placedAt: root.meta?.logicalTime || null },
+          { placedAt: root.meta?.logicalTime || null, root },
         );
         if (!marked.ok) return marked;
         if (!listPendingFinalOwners(root).length) settleFinalScores(root);

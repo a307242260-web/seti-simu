@@ -15,7 +15,7 @@ function createRoot() {
       stateVersion: 3,
       seed: "seti-163-residual-proof",
       rngState: {},
-      cardInstanceSequence: 0,
+      sequences: { card: 1, finalMark: 1 },
       logicalTime: "2026-07-24T00:00:00.000Z",
     },
     match: { decisionVersion: 7 },

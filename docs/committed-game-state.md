@@ -73,7 +73,7 @@ Browser and training hosts own projections, observations and policy/UI state.
 |---|---|---|
 | `playerState.players` 资源、手牌、预留牌、科技归属 | committed `players` | 玩家 id/颜色唯一；资源非负；`handSize` 与 hand 一致；展示 label/asset 排除 |
 | `rocketState.rockets/activeRocketId/playerRocketSequences` | committed `pieces` | 棋子 id 唯一；owner、active、玩家序号有效；`Set` 保存为排序数组 |
-| `rocketState.nextRocketId` | committed `meta.sequences.rocket` | 必须覆盖现有领域 id；`statusNote`、token asset、label 排除 |
+| 火箭实体编号 | committed `meta.sequences.rocket` | `pieces` 不保存第二份 counter；`statusNote`、token asset、label 排除 |
 | 星球转换的 `pieceId/sourcePieceId` | committed `planets` cross-reference | 保留棋子的 marker 必须引用现有 piece；消费棋子的 marker 要求 source piece 已从 pieces 移除 |
 | 卡实例、公共牌、弃牌、PASS 预留、牌库顺序 | committed `players/cards` | 实例 `id` 全局唯一；同一 `cardId` 只能位于一个容器；牌库不得与 live/discard 重叠 |
 | `cardState.ui/selection*` | session/host-owned | 保存时删除，直接提交时 fail-closed |

@@ -78,20 +78,7 @@
     additionalPublicScan: 0,
   });
   const CARD_BACK_SRC = "../assets/cards/card_back.png";
-  let handCardSequence = 0;
   let scoreGainListener = null;
-
-  function getNextHandCardSequence() {
-    return handCardSequence + 1;
-  }
-
-  function restoreNextHandCardSequence(nextSequence) {
-    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
-      throw new TypeError("handCard 序列必须是正安全整数");
-    }
-    handCardSequence = nextSequence - 1;
-    return getNextHandCardSequence();
-  }
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -107,10 +94,9 @@
     return PLAYER_COLORS[key] ? key : DEFAULT_PLAYER_COLOR;
   }
 
-  function createHandCard(index) {
-    handCardSequence += 1;
+  function createHandCard(playerId, index) {
     return {
-      id: `hand-card-${handCardSequence}-${index}`,
+      id: `hand-card-${playerId}-${index + 1}`,
       src: CARD_BACK_SRC,
       faceUp: false,
     };
@@ -137,13 +123,13 @@
     return normalized;
   }
 
-  function normalizeHand(sourceHand, handSize) {
+  function normalizeHand(sourceHand, handSize, playerId) {
     if (Array.isArray(sourceHand) && sourceHand.length > 0) {
       return sourceHand.map(normalizeHandCard);
     }
 
     const count = Math.max(0, Math.round(normalizeNumber(handSize, 0)));
-    return Array.from({ length: count }, (_, index) => createHandCard(index));
+    return Array.from({ length: count }, (_, index) => createHandCard(playerId, index));
   }
 
   function syncHandSize(player) {
@@ -236,10 +222,11 @@
     const source = input || {};
     const color = normalizePlayerColor(source.color);
     const definition = PLAYER_COLORS[color];
+    const playerId = source.id || `player-${color}`;
     const orbitCount = normalizeNumber(source.orbitCount, 0);
     const resources = normalizeResources(source.resources);
     const income = normalizeIncome(source.income);
-    const hand = normalizeHand(source.hand, resources.handSize);
+    const hand = normalizeHand(source.hand, resources.handSize, playerId);
     const reservedCards = Array.isArray(source.reservedCards)
       ? source.reservedCards.map(normalizeHandCard)
       : [];
@@ -247,7 +234,7 @@
     resources.handSize = hand.length;
 
     return {
-      id: source.id || `player-${color}`,
+      id: playerId,
       color,
       colorLabel: definition.label,
       name: source.name || `${definition.label}玩家`,
@@ -362,8 +349,9 @@
     }
     if (reward.handSize != null) {
       const addCount = Math.max(0, Math.round(reward.handSize));
+      const firstIndex = player.hand.length;
       for (let index = 0; index < addCount; index += 1) {
-        player.hand.push(createHandCard(player.hand.length + index));
+        player.hand.push(createHandCard(player.id, firstIndex + index));
       }
       syncHandSize(player);
     }
@@ -538,8 +526,6 @@
     normalizeIncome,
     normalizeScoreSources,
     createPlayer,
-    getNextHandCardSequence,
-    restoreNextHandCardSequence,
     createPlayerState,
     getCurrentPlayer,
     getPlayerColorDefinition,

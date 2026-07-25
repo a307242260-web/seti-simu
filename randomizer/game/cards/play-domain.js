@@ -1930,7 +1930,7 @@
           const launched = rockets.launchRocketAtSector(
             getWorkingSlice(root, "rocketState"),
             location,
-            { playerId: actor.id, color: actor.color },
+            { playerId: actor.id, color: actor.color, root },
           );
           if (!launched.ok) return launched;
         }

@@ -2,23 +2,25 @@
   "use strict";
 
   let catalog = root.SetiCardCatalog;
+  let stateSequences = root.SetiStateSequences;
 
-  if (!catalog && typeof require === "function") {
+  if ((!catalog || !stateSequences) && typeof require === "function") {
     try {
-      catalog = require("../../../assets/cards/card_model.json");
+      catalog = catalog || require("../../../assets/cards/card_model.json");
     } catch (_error) {
       catalog = [];
     }
+    stateSequences = stateSequences || require("../state/sequences");
   }
 
-  const api = factory(Array.isArray(catalog) ? catalog : []);
+  const api = factory(Array.isArray(catalog) ? catalog : [], stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiCards = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (CARD_CATALOG) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (CARD_CATALOG, stateSequences) {
   "use strict";
 
   const PUBLIC_CARD_COUNT = 3;
@@ -76,20 +78,6 @@
     5: 2,
   });
   const CARD_CATALOG_BY_ID = new Map(CARD_CATALOG.map((entry) => [entry.card_id, entry]));
-
-  let cardInstanceSequence = 0;
-
-  function getNextCardInstanceSequence() {
-    return cardInstanceSequence + 1;
-  }
-
-  function restoreNextCardInstanceSequence(nextSequence) {
-    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
-      throw new TypeError("card 序列必须是正安全整数");
-    }
-    cardInstanceSequence = nextSequence - 1;
-    return getNextCardInstanceSequence();
-  }
 
   function getCardSrc(entry) {
     return `${CARD_BASE_PATH}/${entry.set}/split/${entry.card_id}`;
@@ -186,9 +174,11 @@
   }
 
   function createCardInstance(entry, sequence) {
-    cardInstanceSequence += 1;
+    if (sequence == null || String(sequence).length === 0) {
+      throw new TypeError("创建非权威卡牌实例需要显式测试序列");
+    }
     return {
-      id: `card-${cardInstanceSequence}-${sequence ?? 0}`,
+      id: `card-${sequence}`,
       cardId: entry.card_id,
       set: entry.set,
       cardName: entry.card_name,
@@ -203,27 +193,28 @@
   }
 
   function createCommittedCardInstance(root, entry, sequence) {
-    if (!root?.meta || !root.meta.sequences || typeof root.meta.sequences !== "object") {
-      throw new TypeError("创建 committed 卡牌实体需要 meta.sequences");
+    const nextSequence = stateSequences.take(root, "card");
+    return createCardInstance(entry, `${nextSequence}-${sequence ?? 0}`);
+  }
+
+  function createLocalCardInstance(cardState, playerState, entry, sequence = 0) {
+    const instanceIds = [];
+    for (const player of playerState?.players || []) {
+      for (const list of [player.hand, player.reservedCards]) {
+        for (const card of list || []) instanceIds.push(card?.id);
+      }
+      instanceIds.push(player?.industryFutureSpan?.card?.id);
     }
-    const nextSequence = Number(root.meta.sequences.card);
-    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
-      throw new TypeError("meta.sequences.card 必须是正安全整数");
+    for (const card of cardState?.publicCards || []) instanceIds.push(card?.id);
+    for (const card of cardState?.discardPile || []) instanceIds.push(card?.id);
+    for (const pile of Object.values(cardState?.passReservePiles || {})) {
+      for (const card of pile || []) instanceIds.push(card?.id);
     }
-    root.meta.sequences.card = nextSequence + 1;
-    return {
-      id: `card-${nextSequence}-${sequence ?? 0}`,
-      cardId: entry.card_id,
-      set: entry.set,
-      cardName: entry.card_name,
-      src: getCardSrc(entry),
-      faceUp: true,
-      price: entry.price,
-      cardTypeCode: entry.card_type_code,
-      discardActionCode: entry.discard_action_code,
-      scanActionCode: entry.scan_action_code,
-      incomeCode: entry.income_code,
-    };
+    const next = instanceIds.reduce((maximum, id) => {
+      const match = /^card-local-(\d+)-/.exec(String(id || ""));
+      return match ? Math.max(maximum, Number(match[1])) : maximum;
+    }, 0) + 1;
+    return createCardInstance(entry, `local-${next}-${sequence}`);
   }
 
   function getCatalogEntryForCard(card) {
@@ -553,7 +544,8 @@
     const activePlayerCount = Math.max(1, Math.round(Number(options.activePlayerCount) || 1));
     const cardsPerPile = activePlayerCount + 1;
     const random = options.random || Math.random;
-    const createInstance = options.createCardInstance || createCardInstance;
+    const createInstance = options.createCardInstance
+      || ((entry, sequence) => createLocalCardInstance(cardState, playerState, entry, sequence));
 
     cardState.passReservePiles = {};
     const piles = ensurePassReservePiles(cardState);
@@ -636,7 +628,8 @@
       return { ok: false, message: "牌库已无可用卡牌", card: null };
     }
 
-    const createInstance = options.createCardInstance || createCardInstance;
+    const createInstance = options.createCardInstance
+      || ((entry, sequence) => createLocalCardInstance(cardState, playerState, entry, sequence));
     const card = createInstance(result.entry);
     addCardToHand(player, card);
     return { ok: true, message: null, card, reshuffled: Boolean(result.reshuffled) };
@@ -644,7 +637,8 @@
 
   function replenishPublicSlot(cardState, playerState, slotIndex, random = Math.random, options = {}) {
     const result = takeRandomEntryForDraw(cardState, playerState, random);
-    const createInstance = options.createCardInstance || createCardInstance;
+    const createInstance = options.createCardInstance
+      || ((entry, sequence) => createLocalCardInstance(cardState, playerState, entry, sequence));
     cardState.publicCards[slotIndex] = result?.entry ? createInstance(result.entry) : null;
     return cardState.publicCards[slotIndex];
   }
@@ -832,8 +826,6 @@
     getCatalogEntriesByInputRange,
     createCardInstance,
     createCommittedCardInstance,
-    getNextCardInstanceSequence,
-    restoreNextCardInstanceSequence,
     getCatalogEntryForCard,
     getIncomeCodeForCard,
     getIncomeGainForCard,

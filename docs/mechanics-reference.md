@@ -112,7 +112,7 @@ Decision：
 
 - `rocketState.rockets[]`：太阳系主盘上的玩家飞船，或行星参考图上的标记。
 - `activeRocketId`：当前内部选中飞船；移动完成后会清空，玩家若要继续移动必须重新点击火箭。
-- `nextRocketId`：全局火箭 id 自增。
+- 火箭实体 id 由 canonical `meta.sequences.rocket` 分配；`rocketState` 不再持有第二份编号状态。
 - `playerRocketSequences`：每位玩家自己的 R1/R2 序号池。
 
 主盘火箭使用扇区坐标 `{ x: 0..7, y: 1..4 }` 和 `slotIndex` 表示位置。每个扇区有 9 个发射/停靠槽，放置优先级为中心、四角、四边。

@@ -50,6 +50,7 @@ function createContext(overrides) {
   const planetStatsState = planetStats.createPlanetStatsState();
 
   const base = {
+    meta: { sequences: { rocket: 1 } },
     solarState,
     playerState,
     rocketState,
@@ -114,6 +115,7 @@ function createAomomoVisibleContextWithStalePlanetList() {
   const launch = rockets.launchRocketAtSector(context.rocketState, planet, {
     playerId: currentPlayer.id,
     color: currentPlayer.color,
+    root: context,
   });
   assert.equal(launch.ok, true, launch.message);
   context.getPlanetLocations = () => solar.createSolarSnapshot(context.solarState)

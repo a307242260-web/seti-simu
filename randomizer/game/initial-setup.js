@@ -210,6 +210,7 @@
       ? actionContext.random
       : createRandom(`${rootState.meta?.seed || "browser-host"}:initial-settlement`);
     const result = initialCards.resolveInitialSelections({
+      workingRoot: rootState,
       playerState: rootState.playerState,
       cardState: rootState.cardState,
       rocketState: rootState.rocketState,
@@ -241,6 +242,7 @@
         return rockets.launchRocketAtSector(rootState.rocketState, earthCoordinate(rootState), {
           playerId: player.id,
           color: player.color,
+          root: rootState,
         });
       },
     }, { playerIds: activePlayerIds(rootState) });

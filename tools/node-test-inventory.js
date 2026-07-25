@@ -19,7 +19,6 @@ module.exports = Object.freeze({
     entry("randomizer/game/effects/residual-domain-session.test.js", "architecture/effect-session", "公司、外星人、收入、卡牌触发与终局消费真实 handoff 并由统一 Session 提交", "effectType 错读、公司误耗主行动、任务空结算或终局未写玩家正式结果"),
 
     entry("randomizer/game/state/state-store.test.js", "architecture/state-store", "StateStore 快照隔离、版本单调与 CAS", "修改只读快照或旧版本提交污染权威状态"),
-    entry("randomizer/game/state/deterministic-sequences.test.js", "architecture/state-store", "序列号随 checkpoint 确定性恢复", "恢复后实体 identity 漂移或重复"),
     entry("randomizer/game/state/high-coupling-slices.test.js", "architecture/state-store", "高耦合 slices 以单一 root 原位水合", "restore 替换 root identity 或漏掉耦合 slice"),
     entry("randomizer/game/state/low-coupling-slices.test.js", "architecture/state-store", "低耦合 slices 按 schema 克隆与恢复", "未知 slice 被猜测接受或共享可写引用"),
 

@@ -384,14 +384,12 @@
       };
     }
 
-    const undoState = {
-      nextRocketId: context.rocketState.nextRocketId,
-      activeRocketId: context.rocketState.activeRocketId,
-    };
+    const undoState = { activeRocketId: context.rocketState.activeRocketId };
     const earthSector = options.sectorCoordinate || context.getEarthSectorCoordinate();
     const launchResult = rockets.launchRocketAtSector(context.rocketState, earthSector, {
       playerId: currentPlayer.id,
       color: currentPlayer.color,
+      root: context.workingRoot || context,
     });
 
     if (!launchResult.ok) {
@@ -405,7 +403,6 @@
     const spendResult = spendCost(currentPlayer, cost);
     if (!spendResult.ok) {
       rockets.removeRocket(context.rocketState, launchResult.rocket.id);
-      context.rocketState.nextRocketId = undoState.nextRocketId;
       context.rocketState.activeRocketId = undoState.activeRocketId;
       return {
         ok: false,

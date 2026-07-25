@@ -2,58 +2,40 @@
   "use strict";
 
   let nebulaPlacement = root.SetiNebulaDataPlacement;
+  let stateSequences = root.SetiStateSequences;
 
   if (typeof require === "function") {
     nebulaPlacement = nebulaPlacement || require("./nebula-placement");
+    stateSequences = stateSequences || require("../state/sequences");
   }
 
-  const api = factory(nebulaPlacement);
+  const api = factory(nebulaPlacement, stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiNebulaDataState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (nebulaPlacement) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (nebulaPlacement, stateSequences) {
   "use strict";
 
-  let nebulaTokenSequence = 0;
-  let nebulaReplacementSequence = 0;
-
-  function takeSequence(options, key) {
-    const sequences = options?.root?.meta?.sequences;
-    if (sequences && typeof sequences === "object") {
-      const value = Number(sequences[key]);
-      if (!Number.isSafeInteger(value) || value < 1) {
-        throw new TypeError(`meta.sequences.${key} 必须是正安全整数`);
-      }
-      sequences[key] = value + 1;
-      return value;
-    }
+  function takeSequence(state, options, key) {
+    if (options?.root) return stateSequences.take(options.root, key);
     if (key === "nebulaToken") {
-      nebulaTokenSequence += 1;
-      return nebulaTokenSequence;
+      return Object.values(state?.nebulae || {}).flatMap((bucket) => bucket?.tokens || [])
+        .reduce((maximum, token) => {
+          const match = /^nebula-data-(\d+)$/.exec(String(token?.id || ""));
+          return match ? Math.max(maximum, Number(match[1])) : maximum;
+        }, 0) + 1;
     }
-    nebulaReplacementSequence += 1;
-    return nebulaReplacementSequence;
-  }
-
-  function getDeterministicSequences() {
-    return {
-      nebulaToken: nebulaTokenSequence + 1,
-      nebulaReplacement: nebulaReplacementSequence + 1,
-    };
-  }
-
-  function restoreDeterministicSequences(sequences) {
-    for (const key of ["nebulaToken", "nebulaReplacement"]) {
-      if (!Number.isSafeInteger(sequences?.[key]) || sequences[key] < 1) {
-        throw new TypeError(`${key} 序列必须是正安全整数`);
-      }
-    }
-    nebulaTokenSequence = sequences.nebulaToken - 1;
-    nebulaReplacementSequence = sequences.nebulaReplacement - 1;
-    return getDeterministicSequences();
+    const replacements = [
+      ...Object.values(state?.nebulae || {}).flatMap((bucket) => bucket?.tokens || []),
+      ...Object.values(state?.sectorExtraMarks || {}).flatMap((marks) => marks || []),
+    ];
+    return replacements.reduce(
+      (maximum, item) => Math.max(maximum, Number(item?.replacementOrder) || 0),
+      0,
+    ) + 1;
   }
   const AOMOMO_NEBULA_ID = "aomomo";
   const NEBULA_SECOND_SLOT_INDEX = 2;
@@ -344,7 +326,7 @@
       const layout = nebulaPlacement.getNebulaDataSlotLayout(nebulaId, slotIndex);
       if (!slotIndex || !layout) break;
 
-      const sequence = takeSequence(options, "nebulaToken");
+      const sequence = takeSequence(state, options, "nebulaToken");
       const token = normalizeNebulaToken({
         id: `nebula-data-${sequence}`,
         index: getNextNebulaDataIndex(state),
@@ -515,7 +497,7 @@
       return { ok: false, message: `未知扇区 ${sectorId}` };
     }
 
-    const replacementSequence = takeSequence(options, "nebulaReplacement");
+    const replacementSequence = takeSequence(state, options, "nebulaReplacement");
     const playerColor = options.playerColor || player.color || null;
     const playerLabel = options.playerLabel || player.colorLabel || player.name || playerColor || "玩家";
     const mark = {
@@ -595,7 +577,7 @@
     const layout = nebulaPlacement.getNebulaDataSlotLayout(nebulaId, 1);
     if (!layout || !participant) return null;
 
-    const tokenSequence = takeSequence(options, "nebulaToken");
+    const tokenSequence = takeSequence(state, options, "nebulaToken");
     return normalizeNebulaToken({
       id: `nebula-data-${tokenSequence}`,
       index: getNextNebulaDataIndex(state),
@@ -831,7 +813,7 @@
     token.replacedByPlayerColor = playerColor;
     token.replacedByPlayerLabel = playerLabel;
     token.playerTokenSrc = tokenSrc;
-    const replacementSequence = takeSequence(options, "nebulaReplacement");
+    const replacementSequence = takeSequence(state, options, "nebulaReplacement");
     token.replacedAt = options.replacedAt || `sequence:${replacementSequence}`;
     token.replacementOrder = options.replacementOrder || replacementSequence;
     rebuildNebulaStats(bucket);
@@ -866,8 +848,6 @@
     getNebulaSecondSlotScoreReward,
     getNebulaSlotScoreReward,
     createDefaultNebulaDataState,
-    getDeterministicSequences,
-    restoreDeterministicSequences,
     createDefaultSectorSettlementState,
     normalizeNebulaDataState,
     listNebulaTokens,

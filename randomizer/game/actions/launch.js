@@ -81,6 +81,7 @@
     const launchResult = rockets.launchRocketAtSector(context.rocketState, earthSector, {
       playerId: currentPlayer.id,
       color: currentPlayer.color,
+      root: context.workingRoot || context,
     });
 
     if (!launchResult.ok) {

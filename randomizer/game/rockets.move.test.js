@@ -3,13 +3,16 @@ require("../solar-system/core");
 const rockets = require("./rockets");
 
 const rocketState = rockets.createRocketState();
+const root = { meta: { sequences: { rocket: 1 } } };
 rockets.launchRocketAtSector(rocketState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root,
 });
 rockets.launchRocketAtSector(rocketState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
+  root,
 });
 
 const blockedMove = rockets.canMoveRocket(rocketState, 2, 0, -1);

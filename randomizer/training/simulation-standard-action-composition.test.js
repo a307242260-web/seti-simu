@@ -37,8 +37,10 @@ function finishOpening(kernel) {
   assert.equal(kernel.composition.inspect().phase, "idle");
 }
 
+let scenarioCardSequence = 0;
 function createCard(cardInput) {
-  const card = cards.createCardInstance(cards.getCatalogEntryByInput(cardInput), 0);
+  scenarioCardSequence += 1;
+  const card = cards.createCardInstance(cards.getCatalogEntryByInput(cardInput), `scenario-${scenarioCardSequence}`);
   delete card.cardName;
   delete card.src;
   return card;
