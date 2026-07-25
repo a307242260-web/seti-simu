@@ -30,6 +30,10 @@
       .join(" · ");
   }
 
+  function getRenderModel(projection) {
+    return projection.resident?.browserReadModel?.render || null;
+  }
+
   function createResidentRenderer(options = {}) {
     const document = options.document;
     const els = options.els || {};
@@ -72,8 +76,8 @@
       return item;
     }
 
-    function getPlayerPanels(projection) {
-      return projection.resident?.browserReadModel?.render?.playerPanels || null;
+  function getPlayerPanels(projection) {
+      return getRenderModel(projection)?.playerPanels || null;
     }
 
     function visibleCurrentResourceStats(player) {
@@ -143,27 +147,71 @@
     function renderPublicCards(input) {
       const projection = assertInput(input);
       if (!els.publicCardRow) return;
-      const cards = projection.cards?.market || [];
+      const projectedCards = getRenderModel(projection)?.cardPanels?.publicCards;
+      const fallbackCards = projection.cards?.market || [];
+      const cards = projectedCards || fallbackCards.map((card) => ({
+          id: card?.id || card?.cardId,
+          imageSrc: card?.src || "",
+          label: card?.cardName || card?.id || card?.cardId || "公共牌",
+          empty: !card,
+      }));
       els.publicCardRow.replaceChildren(...cards.map((card, index) => {
         const slot = document.createElement("div");
         slot.className = "public-card-slot";
         slot.dataset.publicSlot = String(index);
-        if (!card) {
+        if (!card || card.empty) {
           slot.classList.add("is-empty");
           slot.setAttribute("aria-hidden", "true");
           return slot;
         }
         const image = document.createElement("img");
         image.className = "public-card";
-        image.src = card.src || "";
-        image.alt = card.cardName || `公共牌 ${index + 1}`;
+        image.src = card.imageSrc || "";
+        image.alt = card.label || `公共牌 ${index + 1}`;
         image.width = 747;
         image.height = 1040;
         image.decoding = "async";
-        image.dataset.cardId = text(card.id || card.cardId);
+        image.dataset.cardId = text(card.id);
         slot.append(image);
         return slot;
       }));
+    }
+
+    function createCardImage(card, className) {
+      const image = document.createElement("img");
+      image.className = className;
+      image.dataset.cardId = text(card?.id);
+      image.src = card?.imageSrc || "";
+      image.alt = card?.label || "卡牌";
+      image.width = 747;
+      image.height = 1040;
+      image.decoding = "async";
+      return image;
+    }
+
+    function renderPrivateCards(input) {
+      const projection = assertInput(input);
+      const cards = getRenderModel(projection)?.cardPanels || {};
+      const handCards = cards.handCards || [];
+      const reservedCards = cards.reservedCards?.items || [];
+      if (els.playerHandFan) {
+        els.playerHandFan.replaceChildren(...handCards.map((card) => (
+          createCardImage(card, "player-hand-card")
+        )));
+      }
+      if (els.reservedCardFan) {
+        els.reservedCardFan.replaceChildren(...reservedCards.map((card) => (
+          createCardImage(card, "reserved-card")
+        )));
+      }
+      els.playerHandPanel?.classList.toggle("is-empty", handCards.length === 0);
+      els.reservedCardPanel?.classList.toggle("is-empty", reservedCards.length === 0);
+      if (els.playerHandPanelHandCount) {
+        els.playerHandPanelHandCount.textContent = `(${handCards.length})`;
+      }
+      if (els.playerHandPanelTitleHint) {
+        els.playerHandPanelTitleHint.textContent = "";
+      }
     }
 
     function renderSolarSystem(input) {
@@ -241,6 +289,7 @@
       renderFinalScoring(input);
       renderTechSupply(input);
       renderPublicCards(input);
+      renderPrivateCards(input);
     }
 
     return Object.freeze({
@@ -251,6 +300,7 @@
       renderFinalScoring,
       renderTechSupply,
       renderPublicCards,
+      renderPrivateCards,
     });
   }
 

@@ -53,6 +53,22 @@
     const publicCards = state.cards?.publicCards || state.cards?.publicMarket || [];
     const own = players.find((player) => String(player?.id) === String(viewerId)) || null;
     const finalPlayers = input.finalReadModel?.players || [];
+    const resourceIcons = {
+      credits: "../assets/symbol/effect/credits.webp",
+      energy: "../assets/symbol/effect/energy.webp",
+      publicity: "../assets/symbol/effect/publicity.webp",
+      availableData: "../assets/symbol/effect/data.webp",
+      additionalPublicScan: "../assets/symbol/effect/scan_action.webp",
+      aomomoFossils: "../assets/aliens/奥陌陌/fossil.webp",
+    };
+    const resourceLabels = {
+      credits: "信用点",
+      energy: "能量",
+      publicity: "宣传",
+      availableData: "可用数据",
+      additionalPublicScan: "额外公共扫描",
+      aomomoFossils: "奥陌陌化石",
+    };
     return {
       boardChrome: {
         wheelTransforms: [],
@@ -74,13 +90,21 @@
         players: players.map((player) => ({
           ...structuredClone(player),
           displayName: player.colorLabel || player.name || player.id,
+          uiColor: player.uiColor || player.colorConfig?.uiColor || "",
           score: Number(player.resources?.score || player.score || 0),
-          resourceStats: [],
+          resourceStats: Object.keys(resourceLabels).map((key) => ({
+            label: resourceLabels[key],
+            value: key === "publicity"
+              ? `${Number(player.resources?.publicity) || 0}/10`
+              : Number(player.resources?.[key]) || 0,
+            iconSrc: resourceIcons[key],
+          })),
         })),
       },
       turnPresentation: structuredClone(input.turnFlow || {}),
       cardPanels: {
         publicCards: publicCards.map((card, index) => ({
+          id: card?.id || card?.cardId || `public-card-${index + 1}`,
           imageSrc: card?.src || "",
           label: card?.cardName || `公共牌 ${index + 1}`,
           empty: !card,
@@ -95,7 +119,13 @@
         publicControls: {},
         handPanel: { count: own?.hand?.length || 0, empty: !own?.hand?.length },
         initialSelection: structuredClone(input.initialSetup || {}),
-        reservedCards: { items: structuredClone(own?.reservedCards || []) },
+        reservedCards: {
+          items: (own?.reservedCards || []).map((card) => ({
+            id: card.id,
+            imageSrc: card.src || "",
+            label: card.cardName || card.id,
+          })),
+        },
       },
       dataPresentation: {
         playerTokens: [],

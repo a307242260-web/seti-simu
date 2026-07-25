@@ -66,6 +66,12 @@ function createFixture() {
     playerStats: createElement("div"),
     opponentStatGrid: createElement("div"),
     publicCardRow: createElement("div"),
+    playerHandPanel: createElement("section"),
+    playerHandFan: createElement("div"),
+    reservedCardPanel: createElement("section"),
+    reservedCardFan: createElement("div"),
+    playerHandPanelHandCount: createElement("span"),
+    playerHandPanelTitleHint: createElement("span"),
     tokenLayer: createElement("div"),
     wheels: { 1: createElement("div"), 2: createElement("div") },
     finalScoreTileWraps: [finalWrap],
@@ -212,6 +218,32 @@ function createProjection() {
     fixture.els.playerStats.children[0].children.slice(1).map((node) => node.attributes["aria-label"]),
     ["信用点 10", "能量 9", "宣传 2/10", "可用数据 3", "额外公共扫描 1", "奥陌陌化石 2"],
   );
+})();
+
+(function testPrivateCardsAreRebuiltFromViewerSafeRenderProjection() {
+  const fixture = createFixture();
+  const renderer = rendererApi.createResidentRenderer(fixture);
+  const projection = {
+    schemaVersion: rendererApi.SCHEMA_VERSION,
+    resident: {
+      browserReadModel: {
+        render: {
+          cardPanels: {
+            handCards: [{ id: "hand-1", imageSrc: "hand.webp", label: "手牌" }],
+            reservedCards: {
+              items: [{ id: "reserved-1", imageSrc: "reserved.webp", label: "保留牌" }],
+            },
+          },
+        },
+      },
+    },
+  };
+  renderer.renderPrivateCards({ projection, viewState: {} });
+  assert.equal(fixture.els.playerHandFan.children[0].dataset.cardId, "hand-1");
+  assert.equal(fixture.els.reservedCardFan.children[0].dataset.cardId, "reserved-1");
+  assert.equal(fixture.els.playerHandPanelHandCount.textContent, "(1)");
+  assert.equal(fixture.els.playerHandPanel.className.includes("is-empty"), false);
+  assert.equal(fixture.els.reservedCardPanel.className.includes("is-empty"), false);
 })();
 
 console.log("resident-renderer tests passed");
