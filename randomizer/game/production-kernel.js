@@ -253,17 +253,6 @@ function randomizeBoard(workingState, random) {
   workingState.turn.activePlayerIds = order.slice(0, workingState.turn.activePlayerCount);
   workingState.turn.startPlayerId = workingState.turn.activePlayerIds[0] || null;
   workingState.turn.currentPlayerId = workingState.turn.startPlayerId;
-  // 当前固定 seed 契约仍包含正式发牌前的 PASS 牌堆随机抽样；实体随后由 createCardGame 重建。
-  cards.preparePassReservePiles(workingState.cards, workingState.players, {
-    rounds: [1, 2, 3],
-    activePlayerCount: workingState.turn.activePlayerCount,
-    random,
-    createCardInstance: (entry, sequence) => cards.createCardInstance(
-      entry,
-      `discarded-rng-${sequence}`,
-    ),
-  });
-
   const wheelSteps = [0, 0, 0, 0, 0];
   const wheelOffsets = [0, 0, 20, 11, 4];
   for (let wheel = 1; wheel <= 4; wheel += 1) {

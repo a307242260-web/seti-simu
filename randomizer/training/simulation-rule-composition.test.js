@@ -36,18 +36,24 @@ assert.equal(kernel.composition.inputPort.beginDrain().ok, true);
 const openingPlayerId = "player-white";
 const before = kernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state;
 const beforePlayer = before.players.players.find((player) => player.id === openingPlayerId);
-const selectedEntity = beforePlayer.hand.find((card) => card.cardId === "b_77.webp");
-assert.ok(selectedEntity, "opening 明确选择必须仍在手牌");
 const originalEntityIds = new Set(beforePlayer.hand.map((card) => card.id));
 const discardCount = before.cards.discardPile.length;
 
 const inspection = kernel.composition.inspect();
 assert.equal(inspection.phase, "awaiting_input");
+const selectedChoice = inspection.session.decision.choices.find((choice) => (
+  choice.family === "choose_payment" && choice.actorId === openingPlayerId
+));
+assert.ok(selectedChoice, "opening 必须为当前玩家枚举至少一个明确弃牌选择");
+const selectedCardId = selectedChoice.target.cardIds[0];
+const selectedHandIndex = selectedChoice.target.handIndexes[0];
+const selectedEntity = beforePlayer.hand[selectedHandIndex];
+assert.equal(selectedEntity.cardId, selectedCardId, "opening choice 必须引用当前 canonical 手牌实体");
 const matches = inspection.session.decision.choices.filter((choice) => (
   choice.family === "choose_payment"
   && choice.actorId === openingPlayerId
-  && choice.target?.cardIds?.includes("b_77.webp")
-  && choice.target?.handIndexes?.includes(2)
+  && choice.target?.cardIds?.includes(selectedCardId)
+  && choice.target?.handIndexes?.includes(selectedHandIndex)
 ));
 assert.equal(matches.length, 1, "opening cardId/handIndex 必须唯一解析");
 
@@ -71,7 +77,7 @@ assert.equal(
 assert.equal(after.cards.discardPile.length, discardCount + 1, "明确弃牌后 discard 必须增加 1");
 assert.equal(
   kernel.composition.inspect().session.decision.choices.some((choice) => (
-    choice.target?.cardIds?.includes("b_77.webp")
+    choice.target?.cardIds?.includes(selectedCardId)
   )),
   false,
   "下一 Composition Decision 不得再次枚举已弃卡",

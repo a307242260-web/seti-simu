@@ -180,10 +180,23 @@ try {
     assert.equal(landingEvaluation.selectable, true);
     assert.match(landingEvaluation.probeRouteSummary.endpointActionId, /^land:/);
     const rootAssets = projectedLanding.rootObservation.outcomeProjection.assets;
-    assert.equal(projectedLanding.leaves.every((leaf) => (
-      leaf.observation.outcomeProjection.assets.ordinaryCards === rootAssets.ordinaryCards
-      && leaf.observation.outcomeProjection.assets.alienCards === rootAssets.alienCards + 1
-    )), true, "标准叶中的黄色痕迹奖励牌必须只进入 alienCards");
+    const yellowTraceAssetDeltas = projectedLanding.leaves.map((leaf) => {
+      const assets = leaf.observation.outcomeProjection.assets;
+      assert.equal(assets.ordinaryCards, rootAssets.ordinaryCards,
+        "黄色痕迹奖励不得进入普通牌");
+      return {
+        alienCards: assets.alienCards - rootAssets.alienCards,
+        publicity: assets.publicity - rootAssets.publicity,
+      };
+    });
+    assert.equal(yellowTraceAssetDeltas.every(({ alienCards, publicity }) => (
+      (alienCards === 0 || alienCards === 1) && alienCards === publicity
+    )), true, "只有首枚黄色痕迹同时获得 1 宣传和 1 外星人牌");
+    assert.deepEqual(
+      [...new Set(yellowTraceAssetDeltas.map(({ alienCards }) => alienCards))].sort(),
+      [0, 1],
+      "同根两个槽位必须分别证明首枚奖励与非首枚零奖励",
+    );
     assert.deepEqual(sandbox.createCheckpoint(), before, "土星候选评估不得污染 canonical root");
 
     const directLanding = actual.legalActions().find((action) => action.actionId === landing.actionId);

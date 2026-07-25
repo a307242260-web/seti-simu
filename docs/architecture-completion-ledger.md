@@ -30,7 +30,7 @@ node tools/report_architecture_residuals.js
 
 | 里程碑 | 审计基线 | 完成证明 | 当前状态 |
 |---|---|---|---|
-| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 进行中：旧 root/adapter/slice/模块 ID owner 已清零；冗余 RNG 初始化仍有 1 处 |
+| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 已完成：5 个已识别残留族群均为 0；61/61 unit、1/1 full-flow |
 | M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 未完成 |
 | M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 未完成 |
 | M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 未完成 |
@@ -89,6 +89,15 @@ node tools/report_architecture_residuals.js
 - 本批修改 66 个文件，新增 1757 行、删除 2298 行，净删除 541 行；未新增 adapter、兼容 fallback 或第二状态 owner。
 - 固定 full-flow 最终业务盘面逐字段不变；权威版本 8→7 是删除一次无状态变化的旧 adapter 提交，checkpoint hash 已更新为新的 canonical bytes。
 - 验证通过：全部生产 JavaScript `node --check`、61/61 unit、1/1 full-flow、`git diff --check`。
+
+### 2026-07-25：删除无业务消费者的 RNG 兼容初始化
+
+- 删除正式卡牌初始化前创建并立即丢弃整套 PASS 牌堆的旧逻辑；随机源不再为维持历史 fixture 偏移而消耗。
+- `redundantInitializationCompatibility` 从 1 处 / 1 文件下降到 0；至此 M1 的 `legacyWorkingRoot`、`legacyRootSlices`、`moduleLocalIdentityOwners`、`localIdentityFallbacks`、`redundantInitializationCompatibility` 全部为 0。
+- 固定 seed 的实际牌局、起始资源和 Action identity 因删除无意义随机消耗而按新 RNG 轨迹变化；重新从真实合法集合固化 19 次输入的竖切，而非保留旧 actionId：10 个开局 Decision、发射、4 次移动及支付。
+- 两个依赖旧随机偏移的测试改为行为断言：opening 选择当前真实 canonical 手牌实体；黄色痕迹在同根两个槽位同时证明“首枚 +1 宣传/+1 外星人牌”和“非首枚零奖励”。
+- 本批生产代码净删除 11 行；连同 fixture 和测试共修改 4 个文件，新增 107 行、删除 97 行。
+- 验证通过：61/61 unit、1/1 full-flow；最终 `blocked=false`、Effect Session 清空，19 次输入对应 19 份 journal。
 
 ## 每轮更新格式
 
