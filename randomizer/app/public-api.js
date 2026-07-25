@@ -38,6 +38,9 @@
     const restore = requireFunction(context.restore, "restore");
     const dispatchAction = requireFunction(context.dispatchAction, "Standard Action");
     const submitDecision = requireFunction(context.submitDecision, "Standard Decision");
+    const inspectMachinePlayer = typeof context.inspectMachinePlayer === "function"
+      ? context.inspectMachinePlayer
+      : () => null;
 
     const input = Object.freeze({
       dispatchAction(action) {
@@ -54,6 +57,7 @@
         return deepFreeze({
           projection: clone(inspectProjection(), structuredClone),
           input: clone(inspectInput(), structuredClone),
+          machinePlayer: clone(inspectMachinePlayer(), structuredClone),
         });
       },
       capture() {

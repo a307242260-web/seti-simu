@@ -74,17 +74,16 @@ Presentation helper 必须满足：
 不得创建按字符串方法名转发旧 runtime target 的所谓 `StandardInputRegistry`。只有最终调用
 正式 `dispatchAction` / `submitDecision` 的端口才是规则输入。
 
-### Browser services
+### Browser 能力与恢复
 
-Browser service 可以操作：
+Browser composition root 可以使用 timer、focus、overlay 等纯宿主能力，但这些能力不形成通用
+service registry，也不能取得规则写端口。当前保存恢复只有一个显式组合点：
 
-- `localStorage` 中的隔离 envelope（service 只把它视为可克隆 payload）；
-- 下载、Blob/URL 生命周期；
-- timer、resize、focus、overlay 等 UI 能力；
-- status/debug ViewState；
-- Machine Player Host 的席位配置与调度状态。
+- `game-recovery.js` 只组合 Composition lifecycle envelope 与独立 ViewState；
+- Machine Player Host 的席位与调度状态只归 `browser-bootstrap.js`；
+- timer、focus、overlay 与 status 只影响 ViewState 或调度，不执行规则。
 
-Browser service 不接收 projection root 或规则 input port，不执行收入、回合、扫描、卡牌、
+这些 Browser 能力不接收 projection root 或规则 input port，不执行收入、回合、扫描、卡牌、
 科技、公司、外星人、undo/recovery 等规则 mutation，也不接 Composition lifecycle、
 StateStore 或 Effect Session。`game-recovery.js` 的显式 checkpoint adapter 才能把正式
 Composition lifecycle envelope 与独立 ViewState 组合/恢复。
@@ -100,10 +99,7 @@ Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 | `randomizer/app/browser-host/input-adapter.js` | 人类 Standard Action/Decision 输入 |
 | `randomizer/app/browser-host/policy-input-adapter.js` | PolicyDecision 到相同输入端口 |
 | `randomizer/app/browser-host/projection-adapter.js` | viewer visibility policy |
-| `randomizer/app/browser-host/resident-projection.js` | 窄 resident DTO |
 | `randomizer/app/browser-host/resident-renderer.js` | projection 到 DOM 的渲染隔离 |
-| `randomizer/app/browser-host/browser-services.js` | storage/download/timer/focus 独立宿主能力 |
-| `randomizer/app/start-screen.js` | 开始页与初始选择 presentation |
 | `randomizer/app/game-recovery.js` | Composition lifecycle + ViewState checkpoint 适配 |
 | `randomizer/app/ai/browser-bootstrap.js` | Machine Player Host 与 Policy input 装配 |
 | `randomizer/app/public-api.js` | 冻结的 inspect/capture/restore/input facade |

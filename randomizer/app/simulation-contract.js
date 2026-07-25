@@ -37,8 +37,9 @@ function compactObject(value) {
 }
 
 function normalizeTurnCandidate(candidate, actorPlayerId) {
-  const standardAction = candidate?.standardAction
-    || (candidate?.schemaVersion === "seti-standard-action-v1" ? candidate : null);
+  const standardAction = candidate?.schemaVersion === "seti-standard-action-v1"
+    ? candidate
+    : null;
   if (
     standardAction
     && standardAction.schemaVersion === "seti-standard-action-v1"
@@ -69,8 +70,9 @@ function normalizeTurnCandidate(candidate, actorPlayerId) {
 }
 
 function normalizeConditionalCandidate(candidate, actorPlayerId) {
-  const standardAction = candidate?.standardAction
-    || (candidate?.schemaVersion === "seti-standard-action-v1" ? candidate : null);
+  const standardAction = candidate?.schemaVersion === "seti-standard-action-v1"
+    ? candidate
+    : null;
   if (
     standardAction
     && standardAction.schemaVersion === "seti-standard-action-v1"

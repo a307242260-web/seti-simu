@@ -4,7 +4,7 @@
 
 Effect Session 是 Standard Action 与浏览器/训练宿主之间唯一共享的流程执行协议。本契约从 Action 已被接受并生成 Effect Group 开始，负责队列顺序、外部选择、快速行动、working state、提交/回滚、事件和 replay journal。
 
-Effect Session reference core 位于 `randomizer/game/effects/session-runtime.js`。研究科技贯穿链位于 `research-tech-session.js`，扫描与打牌代表链位于 `scan-card-session.js`，Quick Action 中断入口位于 `quick-action-session.js`；main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier 统一由 session runtime 与 journal 管理。Browser 与 Simulation 都由各自的 Rule Composition 直接持有 StateStore、Effect runtime 与唯一 active Session；宿主只提交 Standard Action/Decision 并读取只读 projection/source port。
+Effect Session reference core 位于 `randomizer/game/effects/session-runtime.js`。生产规则恰由五个 domain 组成：`standard-action-session.js`、`cards/play-domain.js`、`science-session.js`、`probe-turn-session.js` 与 `residual-domain-session.js`。main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier 统一由 session runtime 与 journal 管理。Browser 与 Simulation 都由各自的 Rule Composition 直接持有 StateStore、Effect runtime 与唯一 active Session；宿主只提交 Standard Action/Decision 并读取只读 projection/source port。
 
 核心的禁止依赖：DOM、overlay/button、localStorage、render callback、AI
 valuation/planner、具体 Policy、领域 continuation。Production executor/domain 只能由
@@ -172,7 +172,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 浏览器 adapter 的目标形态是 `click -> Standard Action/Decision -> runtime`，render 只消费 `observe()`。训练 adapter 已固定为 `step(action) -> dispatch/resolve -> drain -> observation/reward/replay`，并由 `Rule Composition` 统一 Action、Decision、deterministic Effect、checkpoint 和 confirmed journal；两端不得各自拥有 pending resolver。
 
-公司/外星人领域 adapter 位于 `randomizer/game/effects/industry-alien-session.js`。它不新增第二套 choice identity：公司 picker、痕迹、机会、牌、任务和物种分支分别映射到既有 conditional Standard Action family，并以六类 `decisionKind` 暴露 presentation 语义。领域 followup 只能声明为 direct/trigger/deferred 的 Decision 或 Effect；未知 kind/species/family/followup 一律终止 session。八物种与公司的当前行为证据以测试 inventory 中登记的领域测试为准。
+公司、外星人、数据、卡牌后续等剩余领域统一位于 `randomizer/game/effects/residual-domain-session.js`。它不新增第二套 choice identity：picker、痕迹、机会、牌、任务和物种分支分别映射到既有 conditional Standard Action family，并以 `decisionKind` 暴露 presentation 语义。领域 followup 只能产生标准 Decision 或 Effect；未知 kind/species/family/followup 一律终止 session。
 
 ## 旧流程删除状态
 

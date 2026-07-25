@@ -3,8 +3,6 @@
 const assert = require("node:assert/strict");
 const stateStoreApi = require("../state/state-store");
 const effectRuntimeApi = require("./session-runtime");
-const cardSelection = require("./card-selection-decision");
-const browserPendingDecision = require("./browser-pending-decision");
 const standardActionDomain = require("./standard-action-session");
 const { createRuleComposition } = require("../rule-composition");
 
@@ -104,7 +102,6 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
               return { ok: true, boundary: "turn_action", decisionType: "turn_action", candidates: [] };
             }
             const choice = (id) => ({
-              standardAction: {
                 schemaVersion: "seti-standard-action-v1",
                 actionId: `choose_target:${id}`,
                 family: "choose_target",
@@ -112,7 +109,6 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
                 actorId: "p1",
                 target: { choiceId: id },
                 payload: {},
-              },
             });
             return {
               ok: true,
@@ -125,7 +121,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
           executeDeterministic: () => ({ ok: false, code: "UNEXPECTED_DETERMINISTIC_STEP" }),
           resolveDecision(root, choice) {
             sessionOwnedResolveCalls += 1;
-            root.match.actions.push(choice.standardAction.actionId);
+            root.match.actions.push(choice.actionId);
             root.match.phase = "turn";
             return { ok: true };
           },
@@ -146,7 +142,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
   const inspection = decisionComposition.inspect();
   assert.equal(inspection.phase, "awaiting_input");
   assert.deepEqual(
-    inspection.session.decision.choices.map((choice) => choice.standardAction.actionId),
+    inspection.session.decision.choices.map((choice) => choice.actionId),
     ["choose_target:left", "choose_target:right"],
   );
   const resolved = decisionComposition.inputPort.submitDecision({
@@ -198,7 +194,6 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
               decisionType: "conditional_choice",
               ownerId: "p1",
               candidates: [{
-                standardAction: {
                   schemaVersion: "seti-standard-action-v1",
                   actionId: "choose_target:only",
                   family: "choose_target",
@@ -206,7 +201,6 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
                   actorId: "p1",
                   target: { choiceId: "only" },
                   payload: {},
-                },
               }],
             };
           },
@@ -242,180 +236,6 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
   assert.equal(resolved.ok, true);
   assert.equal(resolved.phase, "completed");
   assert.equal(resolveCalls, 1);
-}
-
-function createCardSelectionOwner(overrides = {}) {
-  let inspection = null;
-  const owner = cardSelection.createCardSelectionDecisionOwner({
-    inspectSession: () => inspection,
-    resolvePlayer: (root, pending) => root.players.find((player) => player.id === pending.playerId),
-    getCardLabel: (card) => card.label,
-    getSelectedPublicSlots: () => overrides.selectedSlots || [],
-    getPublicScanChoicesForCard: () => ({ ok: true }),
-    getPublicScanMinSelectable: () => 1,
-    getPublicCardMultiSelectMinSelectable: () => 1,
-    canBlindDraw: () => true,
-    isFutureSpanEligibleHandCard: (card) => card.eligible,
-  });
-  return {
-    owner,
-    setInspection(value) { inspection = value; },
-  };
-}
-
-{
-  const harness = createCardSelectionOwner();
-  const root = {
-    players: [{ id: "p1", color: "blue", hand: [] }],
-    cardState: { publicCards: [{ id: "c1", label: "卡牌一" }] },
-  };
-  let effect;
-  harness.owner.runRuleTransaction(root, () => {
-    harness.owner.open(root, {
-      type: "public_scan",
-      player: root.players[0],
-      allowBlindDraw: false,
-    });
-    effect = harness.owner.takeOpenedDecisionEffect();
-  });
-  assert.equal(effect.ownerId, "p1");
-  assert.equal(effect.kind, "decision");
-  assert.equal(effect.payload.choices.length, 1);
-  assert.equal(effect.payload.choices[0].target.cardId, "c1");
-  assert.deepEqual(effect.payload.choices[0].cardSelection, {
-    type: "public_scan",
-    playerId: "p1",
-    playerColor: "blue",
-    effectId: null,
-    allowBlindDraw: false,
-  });
-  assert.equal(harness.owner.read(), null);
-}
-
-{
-  const harness = createCardSelectionOwner();
-  const root = {
-    players: [{ id: "p1", color: "blue", hand: [] }],
-    cardState: { publicCards: [] },
-  };
-  assert.throws(
-    () => harness.owner.open(root, { type: "public_scan", playerId: "p1" }),
-    /只能在当前规则事务内 open/,
-  );
-  harness.owner.runRuleTransaction(root, () => {
-    harness.owner.open(root, { type: "public_scan", playerId: "p1" });
-  });
-  assert.equal(harness.owner.takeOpenedDecisionEffect(), null);
-  assert.equal(harness.owner.read(), null);
-}
-
-{
-  const harness = createCardSelectionOwner();
-  harness.setInspection({
-    session: {
-      currentEffect: {
-        kind: "decision",
-        type: cardSelection.DECISION_EFFECT_TYPE,
-        payload: {
-          cardSelection: {
-            type: "industry_future_hand",
-            playerId: "p1",
-            allowBlindDraw: false,
-          },
-        },
-      },
-    },
-  });
-  assert.deepEqual(harness.owner.read(), {
-    type: "industry_future_hand",
-    playerId: "p1",
-    allowBlindDraw: false,
-  });
-}
-
-{
-  const harness = createCardSelectionOwner({ selectedSlots: [0] });
-  const root = {
-    players: [{ id: "p1", hand: [] }],
-    cardState: { publicCards: [{ id: "c1", label: "一" }, { id: "c2", label: "二" }] },
-  };
-  let effect;
-  harness.owner.runRuleTransaction(root, () => {
-    harness.owner.open(root, {
-      type: "card_public_corner_discard",
-      playerId: "p1",
-      minSelectable: 1,
-      maxSelectable: 2,
-      allowBlindDraw: false,
-    });
-    effect = harness.owner.takeOpenedDecisionEffect();
-  });
-  assert.deepEqual(effect.payload.choices.map((choice) => choice.target.kind), [
-    "public-card",
-    "confirm-public-corner-discard",
-  ]);
-  assert.equal(effect.payload.choices.every((choice) => (
-    choice.cardSelection.type === "card_public_corner_discard"
-  )), true);
-}
-
-{
-  let inspection = { session: { decision: null } };
-  const owner = browserPendingDecision.createBrowserPendingDecisionOwner({
-    inspectSession: () => inspection,
-    enumerate(_workingRoot, kind, pending) {
-      return {
-        actorPlayer: { id: pending.playerId },
-        candidates: [{
-          family: kind === "hand_scan" ? "choose_card" : "choose_payment",
-          target: { kind, choiceId: "legal" },
-        }],
-      };
-    },
-  });
-  const root = {};
-  for (const kind of browserPendingDecision.SUPPORTED_KINDS) {
-    let effect;
-    owner.runRuleTransaction(root, () => {
-      owner.open(root, kind, { playerId: "p1", marker: kind });
-      effect = owner.takeOpenedDecisionEffect();
-    });
-    assert.equal(effect.kind, "decision");
-    assert.equal(effect.ownerId, "p1");
-    assert.deepEqual(effect.payload.choices[0].decisionContext, {
-      kind,
-      pending: { playerId: "p1", marker: kind },
-    });
-    inspection = {
-      session: {
-        decision: {
-          choices: structuredClone(effect.payload.choices),
-        },
-      },
-    };
-    assert.equal(owner.read(kind).marker, kind, "Browser 必须从同一 Decision snapshot 读取等待态");
-  }
-  assert.throws(
-    () => owner.open(root, "discard", { playerId: "p1" }),
-    /当前规则事务/,
-  );
-}
-
-{
-  const root = { match: { stable: true }, playerState: { players: [{ id: "p1" }] } };
-  const before = structuredClone(root);
-  const owner = browserPendingDecision.createBrowserPendingDecisionOwner({
-    inspectSession: () => ({ session: { decision: null } }),
-    enumerate: () => ({ actorPlayer: { id: "p1" }, candidates: [] }),
-  });
-  owner.runRuleTransaction(root, () => {
-    assert.throws(
-      () => owner.open(root, "scan_target", { playerId: "p1" }),
-      /没有合法选项/,
-    );
-    assert.equal(owner.takeOpenedDecisionEffect(), null);
-  });
-  assert.deepEqual(root, before, "DecisionEffect 打开失败不得污染 working root");
 }
 
 console.log("standard action Effect Session tests passed");

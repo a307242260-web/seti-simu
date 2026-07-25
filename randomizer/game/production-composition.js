@@ -621,7 +621,7 @@
         };
       },
       resolveDecision(context, choice, decisionContext) {
-        const descriptor = choice?.standardAction || choice;
+        const descriptor = choice;
         const setupCandidates = INITIAL_SETUP_FAMILIES.includes(descriptor?.family)
           ? actionRegistry.enumerate(context, { family: descriptor.family })
           : [];

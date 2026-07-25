@@ -152,6 +152,38 @@ assert.equal(
   "initial_setup Policy 选择必须只由 viewer-safe observation 决定，不得依赖宿主闭包进度",
 );
 
+const settledFallbackAction = action("launch:fallback", "launch");
+const settledFallbackObservation = observation(0, 0);
+const settledFallbackContext = policyPort.createDecisionContext({
+  requestId: "heuristic-policy-settled-fallback",
+  seatId: "p1",
+  stateVersion: 7,
+  decisionVersion: 3,
+  observation: settledFallbackObservation,
+  legalActions: [settledFallbackAction],
+  actionOutcomes: [{
+    schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+    actionId: settledFallbackAction.actionId,
+    status: "settled",
+    confidence: "low",
+    code: null,
+    rootObservation: settledFallbackObservation,
+    leaves: [{
+      leafId: "settled-fallback-leaf",
+      status: "settled",
+      actionChain: [settledFallbackAction.actionId],
+      observation: settledFallbackObservation,
+    }],
+  }],
+});
+const settledFallbackDecision = setupPolicy.decide(settledFallbackContext);
+assert.equal(settledFallbackDecision.actionId, settledFallbackAction.actionId);
+assert.equal(
+  settledFallbackDecision.diagnostics.reasonCode,
+  "heuristic:settled-fallback:launch",
+  "估值无可选路线时只能降级到已有 settled 标准执行结果",
+);
+
 const inventoryObservation = outcomeModel.createDecisionObservation({
   publicState: {
     players: [{

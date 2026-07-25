@@ -40,11 +40,6 @@
   const AOMOMO_PLANET_ID = "aomomo";
 
   function getAomomo() {
-    if (aomomo) return aomomo;
-    const source = typeof globalThis !== "undefined"
-      ? globalThis
-      : (typeof window !== "undefined" ? window : null);
-    aomomo = source?.SetiAlienAomomo || null;
     return aomomo;
   }
 

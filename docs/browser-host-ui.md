@@ -29,17 +29,13 @@ PolicyDecision ─> PolicyInputAdapter ─> 同一 Action / Decision port
 4. 非 decision owner 看不到隐藏 choices；对手只看到公开统计和手牌数量。
 5. renderer 需要新字段时必须先声明 viewer 可见性，不能复制完整 state 后删少量字段。
 
-`resident-projection.js` 只校验/冻结规范 BrowserProjection（或显式 viewer-safe projection 结果），传统 `playerState/turnState/cardState/...` key 会结构化拒绝。Browser composition 不暴露 canonical `stateSourcePort`；少数非渲染控制需求只能通过固定名称、深冻结的窄 `readModelPort` DTO 获取。`resident-renderer.js` 负责 round/turn、玩家公开统计、太阳系棋子、终局板、科技供应与公共牌。Decision renderer registry 负责 action bar、研究科技、扫描/数据/登陆、卡牌、公司和八种外星人 choice presentation。renderer 只接受 `{ projection, viewState }`。
+`projection-adapter.js` 校验、复制并冻结规范 BrowserProjection，传统 `playerState/turnState/cardState/...` root 会结构化拒绝。Browser composition 不暴露 canonical `stateSourcePort` 或 working root。`resident-renderer.js` 负责 round/turn、玩家公开统计、太阳系棋子、终局板、科技供应与公共牌。Decision renderer registry 负责 action bar、研究科技、扫描/数据/登陆、卡牌、公司和八种外星人 choice presentation。renderer 只接受 `{ projection, viewState }`。
 
-终局 UI、终局 AI、行动日志与恢复另消费字段白名单 runtime selector。规则层
+终局 UI、机器玩家与恢复只消费字段白名单 projection。规则层
 `game/final-read-model.js` 在 composition 投影边界内从显式 working root 派生终局分解、合法标记、公式 base/multiplier
 和 AI 所需指标，再作为深冻结 `finalReadModel` 进入 BrowserProjection；这些 runtime selector
 不得取得 solar/pieces/planets/data/cards/tech/aliens/finalScoring slices，也不得重建 readout root。
-日志与恢复 selector 只暴露轮次、玩家标签、资源影响标量和 checkpoint metadata。
-
-传统玩家统计 DOM 由 `player-stats-ui.js` 承接，只接收深冻结 readout/projection 与显示用窄 selector；它不持有 working root，也不提交规则输入。
-
-传统 `app/render-runtime.js` 的生产装配也遵循同一读取边界：它只保存 `getProjection()` provider 和 ViewState，通过 `BrowserProjection.resident` 的只读 selector 兼容尚未迁走的 DOM 细节。provider 会剥离 callback/executor，隐藏对手手牌与牌库顺序，并在一次 render 调用内固定同一 projection；不得把 mutable root 或长期 slice 换名塞回 context。会补数据、排机会或续跑 AI 的旧 render-time 副作用已经删除，规则 flow 必须在进入刷新前完成这些推进。
+恢复只持有 Composition lifecycle checkpoint 与独立 ViewState，不读取传统规则切片。
 
 ### Action Bar 冻结 DTO
 
@@ -79,16 +75,10 @@ committed/session state、legal set、decision owner 或 replay cursor。规则�
 
 规则相关 identity 不能藏在 ViewState。当前 PASS dismiss 位于正式 `runtime.ui`，扫描展示关联位于 `runtime.browserHost`；二者不承担合法性或流程推进。
 
-## Browser Services 与恢复
+## Browser checkpoint 与恢复
 
-`app/browser-host/browser-services.js` 只负责 local persistence、下载、timer 和 focus
-capability。它不接 projection、StateStore、Effect Session、规则 input 或 Composition
-lifecycle，也没有通用 service/debug command registry：
-
-- storage service 只读写可克隆 payload，不理解规则或 ViewState schema；
-- download service 独占 Blob/URL 生命周期，timer service 负责 revoke/scheduler/debounce；
-- focus/scroll DOM effect 只经 focus service，focus identity 仍归 ViewState；
-- storage/download/timer/focus 失败返回结构化错误，不触碰规则状态。
+生产 Browser 不保留通用 Browser Services 或 debug command registry。timer、focus、overlay
+等能力只存在于 composition root 的窄调度和 ViewState 边界，不理解规则 schema。
 
 `app/game-recovery.js::createBrowserCheckpointAdapter` 是唯一 Browser checkpoint 组合点：
 
@@ -105,7 +95,7 @@ lifecycle，也没有通用 service/debug command registry：
 | 常驻状态 | Browser Composition / projectionSource | projection + resident renderer |
 | Action bar / PASS / quick / undo | Standard Action / Effect Session | controls presentation + input adapter |
 | 通用 choice、科技、扫描、卡牌 | Effect Session | Decision presentation |
-| 公司与外星人 | `industry-alien-session.js` | 领域 presentation registry |
+| 公司与外星人 | `residual-domain-session.js` | Decision presentation registry |
 | 人类席位 | 当前 BrowserInputAdapter | DOM identity -> Action/Decision |
 | 机器席位 | Machine Player Host | PolicyDecision -> 同一 Action/Decision |
 | 保存与恢复 | Composition lifecycle + session checkpoint | GameRecovery checkpoint adapter / ViewState |
@@ -124,7 +114,7 @@ lifecycle，也没有通用 service/debug command registry：
 
 ## 验证
 
-- Node：projection/input/action-bar/Decision/Policy/Browser Services 合约与 poison tests。
+- Node：projection/input/action-bar/Decision/Policy/checkpoint 合约与 poison tests。
 - Chrome：常驻渲染、Action/Decision、人类输入、Policy 输入和 recovery smoke。
 - 完整局：固定 seed 四席机器终局，`blocked=false`、`bugCount=0`。
 - 回归：全量 `node tools/run_node_tests.js`；Browser Host 的状态边界由行为 unit 覆盖。

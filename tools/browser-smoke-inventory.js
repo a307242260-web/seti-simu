@@ -201,12 +201,25 @@ module.exports = Object.freeze([
         return Boolean(button && !button.disabled && button.dataset.actionId);
       }, "人类 end_turn descriptor 就绪");
       const endTurnSequence = window.SetiRandomizer.inspect().input.submissionSequence;
+      const machineSubmissionCount = window.SetiRandomizer.inspect().machinePlayer.drivers
+        .flatMap((driver) => driver.host.diagnostics || [])
+        .filter((event) => event.type === "decision_submitted").length;
       document.querySelector("#action-confirm-button").click();
       await waitFor(() => {
         const next = window.SetiRandomizer.inspect();
         return next.input.submissionSequence > endTurnSequence
           && next.input.lastResult?.kind === "action";
       }, "人类 end_turn 进入 Standard Action input port");
+      try {
+        await waitFor(() => window.SetiRandomizer.inspect().machinePlayer.drivers
+          .flatMap((driver) => driver.host.diagnostics || [])
+          .filter((event) => event.type === "decision_submitted").length > machineSubmissionCount,
+        "机器席位通过 Machine Player Host 提交标准输入", 20000);
+      } catch (error) {
+        throw new Error(error.message + " " + JSON.stringify(
+          window.SetiRandomizer.inspect().machinePlayer,
+        ));
+      }
       const captured = window.SetiRandomizer.capture();
       if (!captured.ok) throw new Error("真实页面保存失败");
       const restored = window.SetiRandomizer.restore(captured.envelope);
@@ -225,24 +238,8 @@ module.exports = Object.freeze([
       window.__setiFullParitySmoke = { ok: true, required, humanActions: ["quick_trade", "launch", "end_turn"] };
     })()`,
     successExpression: "window.__setiFullParitySmoke?.ok === true",
-    obligation: "真实 index.html 覆盖 viewer 隐私、完整页面 renderer、人类主/快/回合动作、多步 Decision、保存恢复和 renderer 异常隔离",
-    counterexample: "极简壳、空 renderer、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
-  }),
-  Object.freeze({
-    id: "page-projection-action",
-    file: "randomizer/app/browser-host/browser-host.browser-smoke.html",
-    resultSelector: "body",
-    resultAttribute: "data-result",
-    obligation: "真实页面装配、projection 隐私、人类 Action 与 resident renderer",
-    counterexample: "隐藏 deck 泄漏、ViewState 进入规则端口或 DOM Action 未原样提交",
-  }),
-  Object.freeze({
-    id: "human-card-decision",
-    file: "randomizer/app/browser-host/card-decision-ui.browser-smoke.html",
-    resultSelector: "#card-decision-smoke-result",
-    resultAttribute: "data-ok",
-    obligation: "真实 DOM 多步卡牌 Decision 经公共输入端口推进",
-    counterexample: "清空 DOM 后无法重建、非候选 choice 或隐藏手牌泄漏",
+    obligation: "真实 index.html 覆盖 viewer 隐私、完整页面 renderer、人类主/快/回合动作、机器席位标准输入、多步 Decision、保存恢复和 renderer 异常隔离",
+    counterexample: "极简壳、空 renderer、Browser 机器席位未接 Machine Player Host、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
   }),
   Object.freeze({
     id: "policy-input",
@@ -251,29 +248,5 @@ module.exports = Object.freeze([
     resultAttribute: "data-result",
     obligation: "Policy 在 Chrome 中只经与人类共用的 Action/Decision input port",
     counterexample: "Policy 访问 renderer/picker 或绕过正式提交端口",
-  }),
-  Object.freeze({
-    id: "save-recovery",
-    file: "randomizer/app/browser-host/browser-services.browser-smoke.html",
-    resultSelector: "body",
-    resultAttribute: "data-result",
-    obligation: "真实 reload 后恢复 composition envelope 与独立 ViewState",
-    counterexample: "刷新丢失 committed state、ViewState 或 facade 泄漏 authority",
-  }),
-  Object.freeze({
-    id: "industry-alien-decision",
-    file: "randomizer/app/browser-host/industry-alien-decision-ui.browser-smoke.html",
-    resultSelector: "#industry-alien-decision-smoke-result",
-    resultAttribute: "data-ok",
-    obligation: "真实 DOM 公司/外星多 Decision、owner 隐私与固定 session trace",
-    counterexample: "非 owner 看到选择、旧 resolver 被调用或 journal 丢步骤",
-  }),
-  Object.freeze({
-    id: "alien-production-projection-input",
-    file: "randomizer/app/aliens/species-runtime.browser-smoke.html",
-    resultSelector: "body",
-    resultAttribute: "data-result",
-    obligation: "冻结的外星 projection 只由纯 renderer 消费",
-    counterexample: "renderer 读取可写 root、旧 runtime 自行 mutation或恢复规则端口",
   }),
 ]);

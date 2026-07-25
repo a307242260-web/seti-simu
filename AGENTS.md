@@ -23,25 +23,20 @@
 
 - `randomizer/index.html`：浏览器页面入口。
 - `randomizer/app/dependencies.js`：app 层全局模块依赖收集与脚本顺序校验。
-- `randomizer/app/constants.js`：app 层静态配置、图标路径、奖励表和 UI 参数。
 - `randomizer/app/dom.js`：固定 DOM 元素注册表。
-- `randomizer/app/start-screen.js`：开始界面选项同步、继续游戏入口与新局启动壳层。
-- `randomizer/app/aliens/species-runtime.js`：只从正式 projection 渲染物种盘面。
-- `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
-- `randomizer/app/ai/browser-bootstrap.js`：Browser AI controller state、Composition step adapter 与 AI Host command facade 的窄装配 owner；创建期校验必需端口。
+- `randomizer/app/ai/browser-bootstrap.js`：Browser Machine Player Host、公共 Policy 与标准输入端口的窄装配 owner；创建期校验必需端口。
 - 旧 `randomizer/app/ai-controller.js`、pending/automation/action-executor、report/tuning runtime 与 legacy valuation/candidate 域已物理删除；Browser 机器席位不得恢复 candidate/selector/pending automation 旁路。
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
 - `randomizer/game/ai/machine-player-host.js`：浏览器与 Simulation 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
-- `randomizer/game/ai/selection-evaluator.js`：setup、弃牌、支付、科技与外星人 legal choice 的纯估值；不拥有选择或提交权，结果必须经公共 Policy 端口。
-- `randomizer/game/ai/heuristic-evaluator.js`：直接从公共 observation/legal descriptors 计算策略分与稳定排序；不得恢复 legacy candidate 或 selector adapter。
+- `randomizer/game/ai/heuristic-evaluator.js`、`expected-score-evaluator.js`：只消费公共 observation、legal descriptors 与标准反事实 outcome，负责纯估值和稳定排序；不得恢复 legacy candidate 或 selector adapter。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `randomizer/training/worker-protocol.js`、`simulation-worker.js`、`worker-pool.js`：Python/PyTorch 常驻采样协议、隔离 worker、超时/背压/崩溃恢复与批量请求。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。
 - `tools/run_rl_worker_server.js`、`tools/rl_worker_client.py`：Node JSONL worker 服务与 Python 标准库客户端；`tools/benchmark_rl_workers.js` 为分项吞吐闸门。
 - `randomizer/app.js`：Browser Production composition、projection/ViewState、标准输入、服务与渲染的窄装配根。
-- `randomizer/game/effects/industry-alien-session.js`、`randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八种外星人的标准 Decision/Effect Session adapter 和只读领域 renderer；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
+- `randomizer/game/effects/residual-domain-session.js`、`randomizer/app/browser-host/decision-ui.js`：公司、卡牌、数据与八种外星人的标准 Decision/Effect owner 和只读 presentation；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
 - `randomizer/app/browser-host/policy-input-adapter.js`：把公共 PolicyDecision 映射回与玩家相同的 Standard Action/Decision 输入端口；提交前重验 boundary，未知/stale fail-closed。
 - `randomizer/game/production-kernel.js`、`randomizer/game/production-composition.js`：Browser/Simulation 共用的唯一 Production factory、22 family registry、五个 domain、Decision 与提交链。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
@@ -57,16 +52,15 @@
 - `randomizer/game/actions/**`：主行动和快速行动的效果构建、奖励表与交易逻辑。
 - `randomizer/game/history/**`：主行动/快速行动事务历史、撤销命令和不可撤销屏障。
 - `randomizer/game/cards/**`：卡牌牌库、效果模型、任务状态和卡牌触发结算。
-- `randomizer/game/data/**`：数据池、计算机放置、星云数据 token、扇区结算与渲染。
-- `randomizer/game/tech/**`：科技供应区、玩家科技板、bonus、放置与渲染。
-- `randomizer/game/industry/**`：公司牌目录、1x 主动能力、被动钩子、标记槽和渲染。
-- `randomizer/game/aliens/**`：外星人通用状态、揭示、痕迹、渲染与物种专属机制。
+- `randomizer/game/data/**`：数据池、计算机放置、星云数据 token 与扇区结算规则。
+- `randomizer/game/tech/**`：科技供应区、玩家科技板、bonus 与放置规则。
+- `randomizer/game/industry/**`：公司牌目录、1x 主动能力、被动钩子与标记槽规则。
+- `randomizer/game/aliens/**`：外星人通用状态、揭示、痕迹与物种专属机制。DOM 渲染统一位于 `randomizer/app/browser-host/**`。
 
 ## 常见任务入口
 
 - 改回合、PASS、主行动锁定、效果栏或日志：先读 `randomizer/app.js` 和 `randomizer/game/history/**`。
-- 改 app 框架、脚本依赖、常量、DOM、事件绑定或公开 API：先读 `docs/app-architecture.md` 和 `randomizer/app/**`。
-- 改 debug 面板、failsafe、快速扇区扫描、外星人调试揭示或校准入口：先读 `randomizer/app/debug-runtime.js` 和 `docs/app-topdown-architecture.md`。
+- 改 app 框架、脚本依赖、DOM、事件绑定或公开 API：先读 `docs/app-architecture.md` 和 `randomizer/app/**`。
 - 改发射、移动、环绕、登陆或星球奖励：先读 `randomizer/game/abilities/**`、`randomizer/game/actions/planet-rewards.js`、`randomizer/game/rockets.js`。
 - 改扫描、星云、数据池或扇区结算：先读 `randomizer/game/actions/scan-effects.js` 和 `randomizer/game/data/**`。
 - 改打牌、任务卡、弃牌角标或卡牌 DSL：先读 `randomizer/game/cards/**` 和卡牌相关文档。
@@ -114,7 +108,6 @@ node tools/run_node_tests.js
 
 ```powershell
 node --check randomizer/game/history/action-history.js
-node --check randomizer/game/history/transactions.js
 node --check randomizer/game/abilities/scan.js
 ```
 

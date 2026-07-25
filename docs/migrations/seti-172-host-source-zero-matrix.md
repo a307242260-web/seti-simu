@@ -94,11 +94,11 @@ rg -n 'workingRoot|stateSourcePort|create[A-Za-z]*(Executor|Provider)|execute[A-
 | `app/simulation-env.js` `getWorkingProjection/stateSourcePort` | Simulation 读取 private committed/working root | `composition.projection/inspect/lifecycle` | `stateSourcePort` 引用归零 |
 | `training/**` | policy/self-play/worker/checkpoint/report | 只调用 Simulation Host/Composition | 禁止 provider/executor/conditional registry 与规则 fallback |
 
-允许保留且必须为纯 Host 的模块：`browser-host/projection-adapter.js`、
-`view-state-store.js`、`input-adapter.js`、`policy-input-adapter.js`、纯化后的
-`action-bar.js`/`decision-ui.js`、`resident-projection.js`、`resident-renderer.js`、
-`browser-services.js`、`game-recovery.js`、`public-api.js`、AI control/bootstrap、
-storage/download/timer/focus、训练 policy/batch/report/worker protocol。
+最终保留的纯 Host 模块：`browser-host/projection-adapter.js`、
+`view-state-store.js`、`input-adapter.js`、`policy-input-adapter.js`、
+`action-bar.js`/`decision-ui.js`、`resident-renderer.js`、`game-recovery.js`、
+`public-api.js` 与 `ai/browser-bootstrap.js`。旧 resident root 重建、通用 Browser
+services、control runtime 与 storage/download facade 均未进入最终生产架构。
 
 ## Proof obligations
 

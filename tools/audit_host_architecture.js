@@ -15,13 +15,40 @@ const EXPECTED_DOMAINS = Object.freeze([
   "residual_domains",
 ]);
 const DELETED_RUNTIME_FILES = Object.freeze([
+  "randomizer/app/action-briefing.js",
+  "randomizer/app/action-log-export.js",
   "randomizer/app/action-runtime.js",
+  "randomizer/app/aliens/species-runtime.js",
+  "randomizer/app/bootstrap.js",
+  "randomizer/app/browser-host/browser-services.js",
+  "randomizer/app/browser-host/card-decision-ui.js",
+  "randomizer/app/browser-host/index.js",
+  "randomizer/app/browser-host/industry-alien-decision-ui.js",
+  "randomizer/app/browser-host/player-stats-ui.js",
+  "randomizer/app/browser-host/resident-projection.js",
   "randomizer/app/conditional-action-executor.js",
   "randomizer/app/conditional-decision-domain.js",
+  "randomizer/app/constants.js",
   "randomizer/app/effect-flow.js",
   "randomizer/app/effect-choice-flow.js",
   "randomizer/app/quick-turn-action-executor.js",
+  "randomizer/app/refresh.js",
   "randomizer/app/runtime.js",
+  "randomizer/app/start-screen.js",
+  "randomizer/game/aliens/render.js",
+  "randomizer/game/basic-cards.js",
+  "randomizer/game/data/nebula-render.js",
+  "randomizer/game/data/render.js",
+  "randomizer/game/effects/browser-pending-decision.js",
+  "randomizer/game/effects/card-selection-decision.js",
+  "randomizer/game/effects/industry-alien-session.js",
+  "randomizer/game/effects/quick-action-session.js",
+  "randomizer/game/effects/research-tech-session.js",
+  "randomizer/game/effects/scan-card-session.js",
+  "randomizer/game/history/transactions.js",
+  "randomizer/game/industry/render.js",
+  "randomizer/game/state/host-source.js",
+  "randomizer/game/tech/render.js",
 ]);
 const FORBIDDEN_HOST_PATTERNS = Object.freeze([
   ["private root", /\b(?:workingRoot|committedRoot|stateSourcePort|runWithWorkingState)\b/],
@@ -59,6 +86,56 @@ function productionHostFiles() {
     .filter((file) => !file.endsWith(".test.js"))
     .filter((file) => !file.endsWith(".browser-smoke.js"))
     .sort();
+}
+
+function assertBrowserEntryScripts() {
+  const source = fs.readFileSync(path.join(ROOT, "randomizer/index.html"), "utf8");
+  const scripts = [...source.matchAll(/<script\s+src="([^"]+)"/g)]
+    .map((match) => match[1].split("?")[0])
+    .filter((entry) => entry.startsWith("./"));
+  if (new Set(scripts).size !== scripts.length) {
+    throw new Error("Browser 入口存在重复 script");
+  }
+  for (const script of scripts) {
+    const absolute = path.join(ROOT, "randomizer", script.slice(2));
+    if (!fs.existsSync(absolute)) throw new Error(`Browser 入口引用不存在脚本: ${script}`);
+  }
+  return scripts;
+}
+
+function assertBrowserMachinePlayerWiring() {
+  const app = fs.readFileSync(path.join(ROOT, "randomizer/app.js"), "utf8");
+  const bootstrap = fs.readFileSync(path.join(ROOT, "randomizer/app/ai/browser-bootstrap.js"), "utf8");
+  const required = [
+    ["Browser bootstrap", app, "createBrowserAiBootstrap"],
+    ["Machine Player run", app, "machinePlayerPort.runOnce"],
+    ["Policy input adapter", bootstrap, "createPolicyInputAdapter"],
+    ["Machine Player Host boundary", bootstrap, "createBrowserMachinePlayerPort"],
+  ];
+  for (const [label, source, token] of required) {
+    if (!source.includes(token)) throw new Error(`${label} 未接入生产 Browser composition`);
+  }
+  for (const token of ["openingAutomation", "aiControlRuntimeModule", "choices[0].standardAction"]) {
+    if (app.includes(token) || bootstrap.includes(token)) {
+      throw new Error(`Browser Machine Player 恢复旧旁路: ${token}`);
+    }
+  }
+}
+
+function assertGameHasNoBrowserRuntime() {
+  const files = walk(path.join(ROOT, "randomizer/game"))
+    .filter((file) => file.endsWith(".js"))
+    .filter((file) => !file.endsWith(".test.js"))
+    .filter((file) => !file.endsWith(".browser-smoke.js"));
+  for (const file of files) {
+    const source = fs.readFileSync(file, "utf8");
+    if (/\b(?:document|window)\./.test(source) || /\bsource\?\.Seti[A-Za-z0-9]+/.test(source)) {
+      throw new Error(`规则模块残留 Browser runtime: ${path.relative(ROOT, file)}`);
+    }
+    if (/\bfunction getSlice\(root,\s*browserKey,\s*committedKey\)/.test(source)) {
+      throw new Error(`规则模块恢复双 root 兼容: ${path.relative(ROOT, file)}`);
+    }
+  }
 }
 
 function assertProductionPack() {
@@ -119,6 +196,9 @@ function runAudit() {
   for (const relative of DELETED_RUNTIME_FILES) {
     if (fs.existsSync(path.join(ROOT, relative))) throw new Error(`旧规则入口仍存在: ${relative}`);
   }
+  const browserScripts = assertBrowserEntryScripts();
+  assertBrowserMachinePlayerWiring();
+  assertGameHasNoBrowserRuntime();
   assertNegativeFixtures();
   return Object.freeze({
     ok: true,
@@ -126,6 +206,7 @@ function runAudit() {
     domainIds: pack.effectDomains.map((domain) => domain.id),
     auditedHostFiles: files.length,
     deletedRuntimeFiles: DELETED_RUNTIME_FILES.length,
+    browserScriptCount: browserScripts.length,
   });
 }
 

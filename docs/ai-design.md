@@ -35,8 +35,8 @@ Rule Composition
   探测器目标摘要。
 - `game/ai/expected-score-evaluator.js`：只从真实标准叶识别正分环绕/登陆终点、路线实耗、
   缺口和唯一下一步；库存、宣传、卡牌不折算统一 V/Q。
-- `game/ai/heuristic-evaluator.js`：只选择 `settled + selectable` 的目标步骤；失败或 unresolved
-  候选 fail-closed，同一目标分才按实耗与稳定 actionId 决胜。
+- `game/ai/heuristic-evaluator.js`：优先选择 `settled + selectable` 的目标步骤；失败或 unresolved
+  候选不可进入排序。同一目标分才按实耗与稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
   Standard Action registry、Effect Session、Decision 与 commit 语义。
 - Simulation setup 选择也进入隔离规则 fork：提交标准 setup Decision、执行正式初始结算，再以同一
@@ -47,8 +47,7 @@ Rule Composition
 - setup 不消费对局 RNG 之外的未来随机数；probe-goal Policy 改变初始选择语义时，唯一 full-flow
   必须提升 schema/policy provenance，并用 `openingSemanticChoices` 固化开局弃牌实体，完整重放
   后同时核对最终权威盘面与 checkpoint bytes，不能只刷新初始快照或 hash。
-- `app/ai/control-runtime.js`：机器席位配置、难度、快照/恢复、pending owner 与自动调度。
-- `app/ai/browser-bootstrap.js`：control runtime、Browser Machine Player Host 与 PolicyInputAdapter 的窄装配 owner。
+- `app/ai/browser-bootstrap.js`：Browser Machine Player Host、席位判断、Rule Composition boundary 与 PolicyInputAdapter 的窄装配 owner。
 - `app/browser-host/policy-input-adapter.js`：把已验证 PolicyDecision 映射回玩家共用的 Standard Action/Decision input port。
 
 `game/ai/index.js` 只聚合以上 Policy/Host/evaluator 模块。不得向其中重新加入 legacy valuation、candidate、planner、analytics 或 controller adapter。
@@ -101,7 +100,9 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 信用、能源和移动只用于报告该标准路线的实耗、余步和可执行缺口；宣传与卡牌不直接计分。
 当标准叶真实取得橙色科技，且当前存在因资源耗尽未完成的探测器路线时，该科技行动可作为
 补缺步骤；它自身的分数不参与探测器目标排序。其他扫描、数据、科技和库存路径本阶段不估值。
-完成主要行动后规则要求的 PASS/结束回合只是控制流兜底，不继承探测器目标收益。
+若目标估值暂时没有可选路线，Policy 只能从已有 `settled` 标准执行结果中确定性降级；
+`failed/unresolved/stale` 结果仍不可选。该降级只保证机器席位经统一基础架构继续推进，
+不把资源库存或猜测收益伪装成 Q。完成主要行动后规则要求的 PASS/结束回合不继承探测器目标收益。
 
 反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
 StateStore、working state、Effect Session 与独立分支 RNG，再调用生产 registry/executor。
@@ -109,17 +110,16 @@ StateStore、working state、Effect Session 与独立分支 RNG，再调用生�
 运行报告记录候选数及 fork/执行/投影/估值分项耗时；耗时是诊断数据，不属于 outcome 语义，
 不得影响候选等价性或排序。
 
-## 4. Control 与规则边界
+## 4. Browser 调度与规则边界
 
-control runtime 可以：
+Browser bootstrap 可以：
 
 - 标记哪些 seat 由机器控制；
-- 保存/恢复难度与自动调度状态；
 - 在 Rule Composition lifecycle 后失效旧 Policy 请求；
 - 调度下一次 Machine Player Host 请求；
 - 在 Policy/Host 失败时暂停。
 
-control runtime 不可以：
+Browser bootstrap 不可以：
 
 - 枚举或评分候选；
 - 解析 pending；

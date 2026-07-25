@@ -66,7 +66,7 @@ Decision：
 - 异星实验室：公司牌上显示蓝/黄/粉三块专属板块。正面时分别把标准发射改为 1 信用点、标准扫描改为 2 能量、标准研究科技改为 4 宣传；正面板块高亮且可点击，点击等同触发对应主要行动。执行对应标准主行动后该板块翻背。获得同色外星痕迹时对应板块翻回正面。该公司没有普通 1x 圆标。
 - 玩家运行时字段：`industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn`（图灵借用）、`industrySentinelArmedRound` / `industrySentinelArmedTurn`（哨兵当前回合武装）、`industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` / `industryPlayedCardRound` / `industryPlayedCardTurn`（当前回合打牌快照）、`industryAlienLabPanels`（异星实验室三色板块）、`industryFutureSpan`（未来跨度扣下的牌、目标分与打出状态）。回合结束时清空当前玩家的图灵借用和哨兵武装/打牌快照；新轮开始时清空轮内状态。
 - 公司 1x 的标记、能力、Decision、撤销和不可逆边界统一由 Production Effect Session 管理。公共牌补牌和盲抽确认后建立不可逆屏障。
-- 交互聚焦：`app/render-runtime.js` 的 interaction chrome 根据进行中的流程在 `#app-wrap` 上设置 `data-interaction-focus`（`public-cards` / `hand-cards` / `tech-panel` / `board-rockets`）；`style.css` 会暗化非目标区域。`hand-cards` 聚焦时不能暗化或禁用 `.player-command` 父容器，需只暗化手牌区的兄弟控件，保证收入弃牌、打牌选牌、移动弃牌支付、手牌扫描等流程中手牌区保持高亮可点。公司牌 1x 可放置时仅用牌面蓝色高亮（`is-action-marker-pending`），不自动进入全屏聚焦以免遮挡行动按钮。
+- Browser 交互只根据当前 Standard Decision projection 渲染可选项；旧 `data-interaction-focus`、公司标记 pending class 与 render-time chrome 已删除，不能再由 DOM class 承担规则可操作性。
 - 选择公司后，保留牌区右侧分两行显示：第一行放 1 / 2 型任务牌，并按手牌区方式在牌多时部分覆盖；第二行放 3 型终局计分牌以及声明 `displayRow: "bottom"` 的特殊保留牌（当前为 b139 冥王星）。
 
 数据获得满池提示：

@@ -102,4 +102,4 @@ StateStore.compareAndCommit
 - 禁用状态 adapter、旧切片 projection、旧 candidate/selector 和 migration 元数据的生产引用为 0。
 - 新存档 round-trip、非零 checkpoint fork、replay/RNG/cursor parity 通过。
 - 旧/未知 schema、stale decision、非法 Policy 输出和未知 family 全部 fail-closed。
-- 固定 seed Browser/Simulation parity、完整 simulation、多席 Chrome 与 Browser Services recovery 通过。
+- 固定 seed Browser/Simulation parity、完整 simulation、多席 Chrome 与 Composition checkpoint recovery 通过。

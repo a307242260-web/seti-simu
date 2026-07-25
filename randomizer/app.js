@@ -8,6 +8,10 @@
     projectionAdapter,
     viewStateStore,
     inputAdapter,
+    policyInputAdapter,
+    browserAiBootstrap,
+    outcomeModel,
+    heuristicPolicy,
     actionBar,
     decisionUi,
     residentRenderer,
@@ -26,11 +30,9 @@
   const document = window.document;
   const els = dom.collectElements(document);
   const humanSeat = { playerId: null };
-  let openingAutomation = false;
   let automationScheduled = false;
-  let automationSteps = 0;
   let refreshScheduled = false;
-  const openingPolicyState = new Map();
+  let aiDifficulty = "laughable";
 
   function createBrowserRandom(initialState = 1) {
     let state = Number(initialState) >>> 0 || 1;
@@ -185,6 +187,18 @@
     submitDecision: (submission) => residentInput.submitDecision(submission),
     afterSubmit: () => scheduleRefreshAndAutomation(),
   });
+  const browserAi = browserAiBootstrap.createBrowserAiBootstrap({
+    ruleComposition,
+    outcomeModel,
+    policyInputAdapterModule: policyInputAdapter,
+    projectionAdapter: canonicalProjection,
+    inputAdapter: residentInput,
+    createPolicy: () => heuristicPolicy.createHeuristicPolicy({ difficulty: aiDifficulty }),
+    projectionSource: ruleComposition.projectionSource,
+    isMachineSeat: (seatId) => (
+      humanSeat.playerId != null && String(seatId) !== String(humanSeat.playerId)
+    ),
+  });
 
   const decisionController = decisionUi.createDecisionUiController({
     dispatchIntent(intent) {
@@ -268,56 +282,23 @@
     });
   }
 
-  function automateOpeningSeat() {
-    automationScheduled = false;
-    if (!openingAutomation) return;
-    automationSteps += 1;
-    if (automationSteps > 64) {
-      openingAutomation = false;
-      throw new Error("机器席位初始 Policy 超过 64 步上限");
-    }
-    const inspection = ruleComposition.inspect();
-    const decision = inspection.session?.decision || null;
-    if (inspection.phase === "awaiting_input" && decision) {
-      if (String(decision.ownerId) === String(humanSeat.playerId)) return;
-      const choices = (decision.choices || []).filter((entry) => !entry.disabledReason);
-      const ownerKey = String(decision.ownerId);
-      const policyState = openingPolicyState.get(ownerKey) || { company: false, initialCards: 0 };
-      let choice = null;
-      if ((decision.kind || decision.decisionKind) === "choose_card") {
-        if (!policyState.company) {
-          choice = choices.find((entry) => String(entry.summary || "").startsWith("选择公司："));
-          policyState.company = Boolean(choice);
-        } else if (policyState.initialCards < 2) {
-          choice = choices.find((entry) => String(entry.summary || "").startsWith("选择："));
-          if (choice) policyState.initialCards += 1;
-        } else {
-          choice = choices.find((entry) => entry.target?.kind === "confirm_initial_setup");
-        }
-        openingPolicyState.set(ownerKey, policyState);
-      }
-      choice ||= choices[0] || null;
-      if (!choice) throw new Error("机器席位初始 Decision 没有合法 choice");
-      const result = residentInput.submitDecision({
-        decisionId: decision.decisionId,
-        decisionVersion: decision.decisionVersion,
-        ownerId: decision.ownerId,
-        choice,
-      });
-      if (result?.ok === false) throw new Error(result.message || result.code);
-      scheduleRefreshAndAutomation();
-      return;
-    }
-    const projection = readProjection();
-    if (!projection.resident?.initialSetup?.active && inspection.phase === "idle") {
-      openingAutomation = false;
-    }
-  }
-
   function scheduleAutomation() {
-    if (automationScheduled || !openingAutomation) return;
+    if (automationScheduled) return;
+    const seatId = browserAi.machinePlayerPort.inspect().seatId;
+    if (!seatId || String(seatId) === String(humanSeat.playerId)) return;
     automationScheduled = true;
-    window.setTimeout(automateOpeningSeat, 0);
+    window.setTimeout(async () => {
+      let result;
+      try {
+        result = await browserAi.machinePlayerPort.runOnce();
+      } finally {
+        automationScheduled = false;
+      }
+      if (result?.ok) scheduleRefreshAndAutomation();
+      else if (result?.code !== "BROWSER_MACHINE_SEAT_NOT_CONTROLLED") {
+        console.error("Browser Machine Player 已暂停", result);
+      }
+    }, 0);
   }
 
   function scheduleRefreshAndAutomation() {
@@ -333,10 +314,11 @@
 
   function startNewGame() {
     const activePlayerCount = Math.max(2, Math.min(4, Number(els.startPlayerCount?.value) || 4));
+    aiDifficulty = els.startAiDifficulty?.value || "laughable";
     browserRandom.setState(1);
     const result = ruleComposition.newGame({
       activePlayerCount,
-      aiDifficulty: els.startAiDifficulty?.value || "laughable",
+      aiDifficulty,
       rngState: {
         algorithm: "seti-browser-mulberry32-v1",
         state: browserRandom.getState(),
@@ -351,9 +333,6 @@
     humanSeat.playerId = spectator.match?.currentPlayerId
       || Object.keys(spectator.players || {})[0]
       || null;
-    openingPolicyState.clear();
-    automationSteps = 0;
-    openingAutomation = true;
     const startAction = findSingleAction(
       "choose_card",
       (action) => action.target?.kind === "start_initial_setup",
@@ -403,6 +382,7 @@
     structuredClone,
     inspectProjection: readProjection,
     inspectInput: () => residentInput.inspectInputState(),
+    inspectMachinePlayer: () => browserAi.machinePlayerPort.inspect(),
     capture: () => browserCheckpoint.capture(),
     restore(envelope) {
       const result = browserCheckpoint.restore(envelope);

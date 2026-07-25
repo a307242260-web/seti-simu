@@ -1,11 +1,11 @@
 const assert = require("node:assert/strict");
 
-require("../basic-cards");
+require("../cards/deck");
 require("../players");
 require("./catalog");
 require("./bonuses");
 
-const basicCards = require("../basic-cards");
+const cards = require("../cards/deck");
 const players = require("../players");
 const bonuses = require("./bonuses");
 
@@ -27,7 +27,10 @@ function createPlayer(overrides = {}) {
 function createDrawHelper() {
   return {
     drawBasicCardToPlayer(player) {
-      return basicCards.drawRandomBasicCardToHand(player.hand);
+      const entry = cards.CARD_CATALOG.find((card) => card.set === "basic");
+      const drawn = cards.createCardInstance(entry, player.hand.length + 1);
+      player.hand.push(drawn);
+      return { ok: true, card: drawn };
     },
   };
 }

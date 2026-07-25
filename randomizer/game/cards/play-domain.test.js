@@ -210,7 +210,7 @@ function semanticState(state) {
   };
 }
 
-function createIntegratedComposition(cardId, browserShape) {
+function createIntegratedComposition(cardId) {
   const initialLegacy = createLegacyRoot(cardId);
   const counters = { compareAndCommit: 0 };
   const instrumentedStateStoreApi = {
@@ -230,7 +230,7 @@ function createIntegratedComposition(cardId, browserShape) {
     stateStoreApi: instrumentedStateStoreApi,
     effectRuntimeApi,
     createInitialState(_options, workingState) {
-      return browserShape ? toCommitted(workingState) : toCommitted(initialLegacy);
+      return toCommitted(workingState);
     },
     createActionContext,
     createActionRegistry() {
@@ -253,10 +253,8 @@ function createIntegratedComposition(cardId, browserShape) {
       },
     ],
     projectState: semanticState,
-  };
-  if (browserShape) {
-    options.projectWorkingState = true;
-    options.stateAdapter = {
+    projectWorkingState: true,
+    stateAdapter: {
       createWorkingState: () => structuredClone(initialLegacy),
       createCommittedState(workingState, committedState) {
         return toCommitted(workingState, committedState.meta.stateVersion);
@@ -271,8 +269,8 @@ function createIntegratedComposition(cardId, browserShape) {
       onCommitted(workingState, committedState) {
         workingState.meta.stateVersion = committedState.meta.stateVersion;
       },
-    };
-  }
+    },
+  };
   const composition = createRuleComposition(options);
   return { composition, counters };
 }
@@ -292,8 +290,8 @@ function getOnlyPlayAction(composition) {
   return action;
 }
 
-function runFixedScan(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_1.webp", browserShape);
+function runFixedScan() {
+  const { composition, counters } = createIntegratedComposition("b_1.webp");
   const action = getOnlyPlayAction(composition);
   const wrongOwner = composition.inputPort.submitAction({ ...action, actorId: "p2" });
   assert.equal(wrongOwner.ok, false);
@@ -316,8 +314,8 @@ function runFixedScan(browserShape) {
   return semanticState(committed);
 }
 
-function runColorDecisions(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_3.webp", browserShape);
+function runColorDecisions() {
+  const { composition, counters } = createIntegratedComposition("b_3.webp");
   const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(opened.ok, true);
   assert.equal(composition.inspect().phase, "awaiting_input");
@@ -370,8 +368,8 @@ function runColorDecisions(browserShape) {
   return semanticState(composition.stateSourcePort.getSnapshot());
 }
 
-function runDirectRewards(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_74.webp", browserShape);
+function runDirectRewards() {
+  const { composition, counters } = createIntegratedComposition("b_74.webp");
   const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(result.ok, true, JSON.stringify(result));
   assert.equal(result.phase, "completed");
@@ -395,7 +393,7 @@ function runDirectRewards(browserShape) {
   assert.equal(committed.meta.sequences.dataToken, 202);
   const saved = composition.lifecycle.save();
   assert.equal(saved.ok, true, JSON.stringify(saved));
-  const restoredComposition = createIntegratedComposition("b_74.webp", browserShape).composition;
+  const restoredComposition = createIntegratedComposition("b_74.webp").composition;
   const restored = restoredComposition.lifecycle.restore(saved.envelope, { silent: true });
   assert.equal(restored.ok, true, JSON.stringify(restored));
   assert.deepEqual(
@@ -406,8 +404,8 @@ function runDirectRewards(browserShape) {
   return { semantic: semanticState(committed), committed };
 }
 
-function runDrawCards(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_83.webp", browserShape);
+function runDrawCards() {
+  const { composition, counters } = createIntegratedComposition("b_83.webp");
   const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(result.ok, true, JSON.stringify(result));
   assert.equal(result.phase, "completed");
@@ -423,8 +421,8 @@ function runDrawCards(browserShape) {
   return semanticState(committed);
 }
 
-function runPickCard(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_122.webp", browserShape);
+function runPickCard() {
+  const { composition, counters } = createIntegratedComposition("b_122.webp");
   const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(opened.ok, true, JSON.stringify(opened));
   assert.equal(composition.inspect().phase, "awaiting_input");
@@ -446,8 +444,8 @@ function runPickCard(browserShape) {
   return semanticState(committed);
 }
 
-function runDerivedRewards(cardId, browserShape) {
-  const { composition, counters } = createIntegratedComposition(cardId, browserShape);
+function runDerivedRewards(cardId) {
+  const { composition, counters } = createIntegratedComposition(cardId);
   const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(result.ok, true, JSON.stringify(result));
   assert.equal(result.phase, "completed");
@@ -459,8 +457,8 @@ function runDerivedRewards(cardId, browserShape) {
   };
 }
 
-function runIncomeAndTechCount(browserShape) {
-  const { composition, counters } = createIntegratedComposition("dlc_34.png", browserShape);
+function runIncomeAndTechCount() {
+  const { composition, counters } = createIntegratedComposition("dlc_34.png");
   const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(opened.ok, true, JSON.stringify(opened));
   assert.equal(composition.inspect().phase, "awaiting_input");
@@ -485,8 +483,8 @@ function runIncomeAndTechCount(browserShape) {
   return semanticState(committed);
 }
 
-function runResearchTech(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_4.webp", browserShape);
+function runResearchTech() {
+  const { composition, counters } = createIntegratedComposition("b_4.webp");
   const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(opened.ok, true, JSON.stringify(opened));
   assert.equal(composition.inspect().phase, "awaiting_input");
@@ -509,8 +507,8 @@ function runResearchTech(browserShape) {
   return semanticState(committed);
 }
 
-function runLaunchAndPick(browserShape) {
-  const { composition, counters } = createIntegratedComposition("b_21.webp", browserShape);
+function runLaunchAndPick() {
+  const { composition, counters } = createIntegratedComposition("b_21.webp");
   const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(opened.ok, true, JSON.stringify(opened));
   assert.equal(composition.inspect().phase, "awaiting_input");
@@ -531,39 +529,13 @@ function runLaunchAndPick(browserShape) {
   return semanticState(committed);
 }
 
-assert.deepEqual(
-  runFixedScan(true),
-  runFixedScan(false),
-  "Browser working root 与 Simulation committed root 必须经同一 owner 产生同根结果",
-);
-assert.deepEqual(
-  runColorDecisions(true),
-  runColorDecisions(false),
-  "Browser 与 Simulation 的标准 Card Decision 提交结果必须一致",
-);
-assert.deepEqual(
-  runDirectRewards(true),
-  runDirectRewards(false),
-  "Browser 与 Simulation 的资源/数据卡牌原语必须经同一 owner 产生同根结果",
-);
-assert.deepEqual(
-  runDrawCards(true),
-  runDrawCards(false),
-  "Browser 与 Simulation 的盲抽必须共享 committed entity/RNG owner",
-);
-assert.deepEqual(
-  runPickCard(true),
-  runPickCard(false),
-  "Browser 与 Simulation 的精选 Decision 必须共享 committed entity/RNG owner",
-);
+runFixedScan();
+runColorDecisions();
+runDirectRewards();
+runDrawCards();
+runPickCard();
 for (const cardId of ["b_41.webp", "b_42.webp", "b_139.webp", "dlc_32.png"]) {
-  const browser = runDerivedRewards(cardId, true);
-  const simulation = runDerivedRewards(cardId, false);
-  assert.deepEqual(
-    browser.state,
-    simulation.state,
-    `${cardId} 的派生奖励必须经 Browser/Simulation 同一 owner`,
-  );
+  const browser = runDerivedRewards(cardId);
   if (cardId === "b_41.webp") {
     assert.equal(browser.committed.players.players[0].resources.energy, 11);
   } else if (cardId === "b_42.webp") {
@@ -584,26 +556,14 @@ for (const cardId of ["b_41.webp", "b_42.webp", "b_139.webp", "dlc_32.png"]) {
     assert.equal(browser.committed.meta.sequences.card, 102);
   }
 }
-assert.deepEqual(
-  runIncomeAndTechCount(true),
-  runIncomeAndTechCount(false),
-  "收入选牌与科技类型计数盲抽必须经 Browser/Simulation 同一 owner",
-);
-assert.deepEqual(
-  runResearchTech(true),
-  runResearchTech(false),
-  "科技 Card Decision 必须调用同一 game-owned resolver 并产生同根提交",
-);
-assert.deepEqual(
-  runLaunchAndPick(true),
-  runLaunchAndPick(false),
-  "发射能力与后续精选 Decision 必须经同一 game-owned owner 链",
-);
+runIncomeAndTechCount();
+runResearchTech();
+runLaunchAndPick();
 
 const exhaustiveCardIds = Object.keys(cardEffects.CARD_REFERENCE_MAP).sort();
 const exhaustiveEffectTypes = new Set();
 for (const cardId of exhaustiveCardIds) {
-  const { composition, counters } = createIntegratedComposition(cardId, false);
+  const { composition, counters } = createIntegratedComposition(cardId);
   let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   let guard = 0;
   while (result.ok && composition.inspect().phase === "awaiting_input") {

@@ -22,7 +22,7 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v4";
+  const POLICY_VERSION = "seti-heuristic-policy-v5";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
 
@@ -131,6 +131,19 @@
     }
   }
 
+  function selectSettledFallbackAction(context) {
+    const settledIds = new Set((context.actionOutcomes || [])
+      .filter((outcome) => outcome?.status === "settled" && (outcome.leaves?.length || 0) > 0)
+      .map((outcome) => outcome.actionId));
+    const phasePriority = { conditional: 0, main: 1, quick: 2 };
+    return (context.legalActions || [])
+      .filter((action) => settledIds.has(action.actionId))
+      .sort((left, right) => (
+        (phasePriority[left.phase] ?? 3) - (phasePriority[right.phase] ?? 3)
+        || String(left.actionId).localeCompare(String(right.actionId))
+      ))[0] || null;
+  }
+
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const evaluationParameters = expectedScoreEvaluator.mergeParameters(options.evaluationParameters);
@@ -147,10 +160,11 @@
     function decide(context) {
       const setupSelection = selectInitialSetupAction(context);
       assertContext(context, { skipOutcomeValidation: Boolean(setupSelection) });
-      const selected = setupSelection || heuristicEvaluator.selectLegalAction(context, {
+      const evaluatedSelection = setupSelection || heuristicEvaluator.selectLegalAction(context, {
         evaluateAction,
         isFeasible: isObservationFeasible,
       });
+      const selected = evaluatedSelection || selectSettledFallbackAction(context);
       if (!selected) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_SELECTION", "Heuristic Policy 未能选择 legal descriptor");
       }
@@ -160,7 +174,9 @@
         policyVersion: POLICY_VERSION,
         modelChecksum: null,
         diagnostics: {
-          reasonCode: `heuristic:${selected.family}`,
+          reasonCode: evaluatedSelection
+            ? `heuristic:${selected.family}`
+            : `heuristic:settled-fallback:${selected.family}`,
           traceId: `${context.requestId}:${provenance.configChecksum}`,
         },
       });

@@ -100,8 +100,8 @@
     return workingContext?.workingRoot || workingContext || state;
   }
 
-  function getSlice(root, browserKey, committedKey) {
-    return root?.[browserKey] || root?.[committedKey] || {};
+  function getWorkingSlice(root, key) {
+    return root?.[key] || {};
   }
 
   function getTechGameState(root) {
@@ -112,31 +112,31 @@
   }
 
   function getActor(root, actorId = null) {
-    const playerState = getSlice(root, "playerState", "players");
+    const playerState = getWorkingSlice(root, "playerState");
     const resolvedId = actorId || playerState.currentPlayerId || root?.turn?.currentPlayerId || null;
     return (playerState.players || []).find((player) => player.id === resolvedId) || null;
   }
 
   function createActionContext(root, actorId) {
-    const playerState = getSlice(root, "playerState", "players");
+    const playerState = getWorkingSlice(root, "playerState");
     const techGameState = getTechGameState(root);
-    const solarState = getSlice(root, "solarState", "solarSystem");
+    const solarState = getWorkingSlice(root, "solarState");
     const actionPlayerState = actorId === playerState.currentPlayerId
       ? playerState
       : { ...playerState, currentPlayerId: actorId, players: playerState.players };
     const context = {
       workingRoot: root,
       playerState: actionPlayerState,
-      cardState: getSlice(root, "cardState", "cards"),
-      rocketState: getSlice(root, "rocketState", "pieces"),
+      cardState: getWorkingSlice(root, "cardState"),
+      rocketState: getWorkingSlice(root, "rocketState"),
       solarState,
-      nebulaDataState: getSlice(root, "nebulaDataState", "data"),
-      planetStatsState: getSlice(root, "planetStatsState", "planets"),
+      nebulaDataState: getWorkingSlice(root, "nebulaDataState"),
+      planetStatsState: getWorkingSlice(root, "planetStatsState"),
       techGameState,
       techBoardState: techGameState.board,
       techUiState: techGameState.ui,
-      alienGameState: getSlice(root, "alienGameState", "aliens"),
-      turnState: getSlice(root, "turnState", "turn"),
+      alienGameState: getWorkingSlice(root, "alienGameState"),
+      turnState: getWorkingSlice(root, "turnState"),
       match: root.match,
       standardActionAuthority: {
         actorId,
@@ -263,13 +263,13 @@
   }
 
   function listNebulaChoices(root, options = {}) {
-    const nebulaState = getSlice(root, "nebulaDataState", "data");
+    const nebulaState = getWorkingSlice(root, "nebulaDataState");
     let nebulaIds = options.nebulaIds || [];
     if (options.sectorX != null) {
       const found = solar.getNebulaAtCoordinate(
         solar.mod8(options.sectorX),
         5,
-        getSlice(root, "solarState", "solarSystem").sectorBySlot,
+        getWorkingSlice(root, "solarState").sectorBySlot,
       );
       nebulaIds = found ? [found.id] : [];
     }
@@ -321,7 +321,7 @@
       options.techTypes?.length ? { techTypes: options.techTypes } : {},
     );
     if (options.researchedByOthersOnly) {
-      const playerState = getSlice(root, "playerState", "players");
+      const playerState = getWorkingSlice(root, "playerState");
       tileIds = tileIds.filter((tileId) => playerState.players.some((player) => (
         player.id !== actor.id && Boolean(player.techState?.ownedTiles?.[tileId])
       )));
@@ -415,7 +415,7 @@
       firstTake: Boolean(result.firstTake),
     }];
     const runezuClaim = aliens.runezu?.claimTechSymbol?.(
-      getSlice(root, "alienGameState", "aliens"),
+      getWorkingSlice(root, "alienGameState"),
       result.tileId,
       actor,
       { claimedAt: `state:${root.meta?.stateVersion ?? 0}:tech:${result.tileId}` },
@@ -473,7 +473,7 @@
 
   function listAlienTraceChoices(root, actorId, traceType) {
     const actor = getActor(root, actorId);
-    const alienState = getSlice(root, "alienGameState", "aliens");
+    const alienState = getWorkingSlice(root, "alienGameState");
     if (!actor) return [];
     const choices = [];
     for (const alienSlotId of aliens.ALIEN_SLOT_IDS || []) {
@@ -516,7 +516,7 @@
 
   function placeAlienTrace(root, actorId, choice) {
     const actor = getActor(root, actorId);
-    const alienState = getSlice(root, "alienGameState", "aliens");
+    const alienState = getWorkingSlice(root, "alienGameState");
     const legal = listAlienTraceChoices(root, actorId, choice?.target?.traceType)
       .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
     if (!actor || !legal) return fail("SCIENCE_TRACE_CHOICE_STALE", "外星人痕迹选择已失效");
@@ -672,7 +672,7 @@
       const queue = scanEffects.buildScanEffectQueue(actor, {
         fullScanAction: true,
         includeFinalize: true,
-        turnState: getSlice(root, "turnState", "turn"),
+        turnState: getWorkingSlice(root, "turnState"),
       });
       return queue.map((entry) => {
         if ([scanEffects.EFFECT_TYPES.EARTH_SECTOR_SCAN,
@@ -681,7 +681,7 @@
           const planetId = entry.type === scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN
             ? "mercury"
             : "earth";
-          const planet = solar.createSolarSnapshot(getSlice(root, "solarState", "solarSystem"))
+          const planet = solar.createSolarSnapshot(getWorkingSlice(root, "solarState"))
             .planetLocations.find((candidate) => candidate.planetId === planetId);
           if (entry.options?.cost && !players.canAfford(actor, entry.options.cost)) return null;
           if (!listNebulaChoices(root, { sectorX: planet?.x, gainData: true }).length) return null;
@@ -726,7 +726,7 @@
         ));
       }
       const context = createActionContext(root, actor.id);
-      for (const rocket of getSlice(root, "rocketState", "pieces").rockets || []) {
+      for (const rocket of getWorkingSlice(root, "rocketState").rockets || []) {
         if (rocket.playerId !== actor.id) continue;
         for (const move of abilities.rocket.listMoveRequirements(context, actor, rocket.id)) {
           if (move.requiredMovePoints > 1) continue;
@@ -759,7 +759,7 @@
     }
 
     function listPickCardChoices(root) {
-      return (getSlice(root, "cardState", "cards").publicCards || []).flatMap((card, index) => (
+      return (getWorkingSlice(root, "cardState").publicCards || []).flatMap((card, index) => (
         card ? [makeChoice(
           "choose_card",
           `pick:${card.id}`,
@@ -849,7 +849,7 @@
     });
 
     function publicScanChoices(root) {
-      const cardState = getSlice(root, "cardState", "cards");
+      const cardState = getWorkingSlice(root, "cardState");
       return (cardState.publicCards || []).flatMap((card, publicSlotIndex) => {
         if (!card) return [];
         const code = Number(card.scanActionCode ?? cards.getCatalogEntryForCard(card)?.scan_action_code);
@@ -897,7 +897,7 @@
           .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
         if (!legal) return fail("SCIENCE_PUBLIC_SCAN_STALE", "公共牌扫描选择已失效");
         const actor = getActor(root, effect.ownerId);
-        const cardState = getSlice(root, "cardState", "cards");
+        const cardState = getWorkingSlice(root, "cardState");
         const card = cardState.publicCards[legal.target.publicSlotIndex];
         const result = executeNebulaScan(root, actor.id, makeChoice(
           "choose_target",
@@ -910,7 +910,7 @@
         cards.addToDiscardPile(cardState, card);
         const replenished = cards.replenishPublicSlot(
           cardState,
-          getSlice(root, "playerState", "players"),
+          getWorkingSlice(root, "playerState"),
           legal.target.publicSlotIndex,
           () => nextCommittedRandom(root),
           { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
@@ -979,7 +979,7 @@
         const index = actor.hand.findIndex((card) => card.id === legal.target.cardInstanceId);
         const removed = cards.discardFromHandAtIndex(actor, index);
         if (!removed.ok) return removed;
-        cards.addToDiscardPile(getSlice(root, "cardState", "cards"), removed.card);
+        cards.addToDiscardPile(getWorkingSlice(root, "cardState"), removed.card);
         return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
           spawnedEffects: [{ priority: "direct", effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id } }],
           events: clone(result.events || []),
@@ -1007,7 +1007,7 @@
         const actor = getActor(root, effect.ownerId);
         const spawnedEffects = [];
         if (legal.target.mode === "launch" && industryPassives?.shouldScanEarthOnLaunch?.(actor)) {
-          const earth = solar.createSolarSnapshot(getSlice(root, "solarState", "solarSystem"))
+          const earth = solar.createSolarSnapshot(getWorkingSlice(root, "solarState"))
             .planetLocations.find((planet) => planet.planetId === "earth");
           if (listNebulaChoices(root, { sectorX: earth?.x, gainData: true }).length) {
             spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_TARGET, actor.id, {
@@ -1026,8 +1026,8 @@
 
     runtime.registerExecutor(EFFECT_TYPES.SETTLE, (state, effect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
-      const nebulaState = getSlice(root, "nebulaDataState", "data");
-      const playerState = getSlice(root, "playerState", "players");
+      const nebulaState = getWorkingSlice(root, "nebulaDataState");
+      const playerState = getWorkingSlice(root, "playerState");
       const result = data.settleCompletedSectors(nebulaState, {
         players: playerState.players,
         source: "science",
@@ -1041,7 +1041,7 @@
           || playerState.players.find((player) => player.color === settlement.winner?.playerColor);
         const runezuClaim = winner
           ? aliens.runezu?.claimSectorSymbol?.(
-            getSlice(root, "alienGameState", "aliens"),
+            getWorkingSlice(root, "alienGameState"),
             settlement.sectorId,
             winner,
             { claimedAt: `state:${root.meta?.stateVersion ?? 0}:sector:${settlement.sectorId}` },
@@ -1137,11 +1137,11 @@
         const gain = cards.getIncomeGainForCard(card);
         const discarded = cards.discardFromHandAtIndex(actor, handIndex);
         if (!discarded.ok) return discarded;
-        cards.addToDiscardPile(getSlice(root, "cardState", "cards"), discarded.card);
+        cards.addToDiscardPile(getWorkingSlice(root, "cardState"), discarded.card);
         const result = players.gainIncome(actor, gain, {
           blindDraw: (target) => cards.blindDraw(
-            getSlice(root, "cardState", "cards"),
-            getSlice(root, "playerState", "players"),
+            getWorkingSlice(root, "cardState"),
+            getWorkingSlice(root, "playerState"),
             target,
             () => nextCommittedRandom(root),
             { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
@@ -1167,8 +1167,8 @@
         const actor = getActor(root, effect.ownerId);
         if (!actor || !legal) return fail("SCIENCE_PICK_CARD_STALE", "精选牌选择已失效");
         const result = cards.pickFromPublic(
-          getSlice(root, "cardState", "cards"),
-          getSlice(root, "playerState", "players"),
+          getWorkingSlice(root, "cardState"),
+          getWorkingSlice(root, "playerState"),
           actor,
           legal.target.publicSlotIndex,
           () => nextCommittedRandom(root),

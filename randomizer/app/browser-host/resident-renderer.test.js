@@ -1,12 +1,10 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const projectionApi = require("./resident-projection");
 const rendererApi = require("./resident-renderer");
 const viewStateApi = require("./view-state-store");
 const coreProjectionApi = require("./projection-adapter");
 const stateApi = require("../../game/state/state-store");
-const sourceApi = require("../../game/state/host-source");
 
 function createClassList(element) {
   const values = new Set();
@@ -91,10 +89,8 @@ function createProjection() {
     tech: { board: { stacks: { blue1: { available: false } } } },
   });
   const store = stateApi.createStateStore(state);
-  const source = sourceApi.createHostStateSource({ stateStore: store });
-  const canonical = coreProjectionApi.createBrowserProjectionAdapter({ stateSource: source })
-    .projectSource({ viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" } });
-  return projectionApi.createResidentProjection({ projection: canonical });
+  return coreProjectionApi.createBrowserProjectionAdapter({ stateStore: store })
+    .projectCommitted({ viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" } });
 }
 
 (function testResidentProjectionAndRendererRebuildAreIsolated() {
@@ -121,17 +117,6 @@ function createProjection() {
   assert.equal(fixture.els.roundStatusRound.textContent, "第 2 轮");
   assert.equal(fixture.els.publicCardRow.children[0].children[0].dataset.cardId, "public-1");
   assert.equal(fixture.els.techTiles[0].hidden, true);
-})();
-
-(function testUnknownInputRejectedWithoutReadingPoisonGetters() {
-  const forged = {};
-  Object.defineProperty(forged, "playerState", {
-    enumerable: true,
-    get() { throw new Error("legacy getter touched"); },
-  });
-  const rejected = projectionApi.createResidentProjection(forged);
-  assert.equal(rejected.code, "RESIDENT_PROJECTION_INPUT_FIELDS_INVALID");
-  assert.deepEqual(rejected.unknownKeys, ["playerState"]);
 })();
 
 (function testDefaultProjectionSupportsCommittedArraySlicesWithoutLeaks() {
@@ -227,38 +212,6 @@ function createProjection() {
     fixture.els.playerStats.children[0].children.slice(1).map((node) => node.attributes["aria-label"]),
     ["信用点 10", "能量 9", "宣传 2/10", "可用数据 3", "额外公共扫描 1", "奥陌陌化石 2"],
   );
-})();
-
-(function testResidentPresentationBuilderKeepsDomainProjectionOutOfBootstrap() {
-  const builder = projectionApi.createResidentPresentationBuilder({
-    cardTaskState: { readyType2ByCardId: { task1: true } },
-    cardEffects: {
-      getConsumedTriggerIndexes: () => [0],
-      getCardModel: () => ({}),
-    },
-    players: { CARD_BACK_SRC: "back.webp" },
-    cards: { getCardLabel: (card) => card.cardName },
-    getCardTypeCode: () => 2,
-    isAiPlayer: () => false,
-  });
-  const resident = { initialSetup: {
-    active: true, interactive: true, currentPlayerId: "p1",
-    offer: { industryCards: [{ id: "industry-1" }] },
-  }, players: { players: [{
-    id: "p1", colorLabel: "白色", completedTaskCount: 1,
-    initialSelection: { industry: { id: "industry-1" } },
-    reservedCards: [{ id: "task1", cardName: "任务一", src: "task.webp" }],
-  }] }, aliens: {} };
-  const viewer = { playerId: "p1" };
-  assert.deepEqual(builder.createInitialSelection(viewer, resident), {
-    active: true, interactive: true, currentPlayerId: "p1",
-    offer: { industryCards: [{ id: "industry-1" }] },
-    selectedCards: [{ id: "industry-1" }],
-  });
-  const reserved = builder.createReservedCards(viewer, resident);
-  assert.equal(reserved.title, "初始选择 · 白色玩家");
-  assert.equal(reserved.rows[0].items[0].ready, true);
-  assert.deepEqual(reserved.rows[0].items[0].progressIndexes, [0]);
 })();
 
 console.log("resident-renderer tests passed");

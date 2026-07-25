@@ -25,8 +25,9 @@
 - `randomizer/game/aliens/randomizer.js`：设置阶段重置槽位和本局揭示池，主动发现时从揭示池随机选择不重复的外星人。
 - `randomizer/game/aliens/placement.js`：公共首痕迹坐标和各外星人正面格位坐标。
 - `randomizer/game/aliens/<alien>.js`：物种专属状态、揭示初始化、痕迹放置、奖励、卡牌模型。
-- `randomizer/app/aliens/species-runtime.js`：物种奖励、overlay/dialog、机会队列、followup、撤销/日志适配与具体面板渲染。
-- `randomizer/app.js`：注入显式 context，并保留跨域流程与顶层调度。
+- `randomizer/game/effects/residual-domain-session.js`：物种奖励、机会队列、followup、撤销与 journal 的唯一规则 owner。
+- `randomizer/app/browser-host/decision-ui.js`、`resident-renderer.js`：只消费 BrowserProjection 的物种 Decision 与面板 presentation。
+- `randomizer/app.js`：只装配 Production Composition、投影、输入与 DOM。
 
 外星人专属状态统一挂在 `alienGameState.<alienId>`。状态字段应能完整表达 UI 和规则，不依赖 DOM 作为权威数据。
 

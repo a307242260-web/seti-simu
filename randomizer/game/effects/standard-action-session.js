@@ -149,13 +149,12 @@
               ],
               events: clone(resolved.events || [{
                 type: "standard_action_decision_executed",
-                family: choice?.family || choice?.standardAction?.family || null,
-                actionId: choice?.standardAction?.actionId || choice?.actionId || null,
+                family: choice?.family || null,
+                actionId: choice?.actionId || null,
               }]),
             };
           }
-          const descriptor = choice?.standardAction || choice;
-          const result = executeRegisteredAction(workingRoot, descriptor);
+          const result = executeRegisteredAction(workingRoot, choice);
           if (!result?.ok) return result;
           return {
             ok: true,
@@ -163,8 +162,8 @@
             spawnedEffects: [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
             events: [{
               type: "standard_action_decision_executed",
-              family: descriptor?.family || null,
-              actionId: descriptor?.actionId || null,
+              family: choice?.family || null,
+              actionId: choice?.actionId || null,
             }],
           };
         },

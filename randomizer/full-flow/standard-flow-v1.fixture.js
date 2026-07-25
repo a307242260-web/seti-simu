@@ -7,12 +7,12 @@ module.exports = Object.freeze({
     activePlayerCount: 4,
     aiDifficulty: "weak_start",
     offlineTeacher: true,
-    policyVersion: "seti-heuristic-policy-v4",
-    opponentIdentity: "seti-heuristic-policy-v4",
+    policyVersion: "seti-heuristic-policy-v5",
+    opponentIdentity: "seti-heuristic-policy-v5",
   },
   policyProvenance: {
     type: "heuristic",
-    version: "seti-heuristic-policy-v4",
+    version: "seti-heuristic-policy-v5",
     config: {
       difficulty: "weak_start",
       evaluationParameters: { parameterVersion: "seti-probe-goal-v1" },
@@ -139,5 +139,5 @@ module.exports = Object.freeze({
     authority: [8, "seti-simulation-mulberry32-v1", 2769567738, 1],
     session: [null, "player-white", null, "turn_action", 11, 18, 18],
   },
-  finalCheckpointHash: "5687ed6b4d5d0378474f32942fc8cf1b869af8d69c754497df6d904189e520af",
+  finalCheckpointHash: "4c2d40fb4bf3a6c1d550539d92f490fa8be1c67ec5e86bc75684c890c0c23543",
 });

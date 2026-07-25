@@ -7,12 +7,12 @@ require("./placement");
 require("./bonuses");
 require("./resolver");
 require("../players");
-require("../basic-cards");
+require("../cards/deck");
 require("./index");
 
 const tech = require("./index");
 const players = require("../players");
-const basicCards = require("../basic-cards");
+const cards = require("../cards/deck");
 const playerTech = require("./player-tech");
 
 assert.throws(
@@ -43,7 +43,10 @@ function createContext(publicity = 6) {
       this.solarState.rotation.rotationCount += count;
     },
     drawBasicCardToPlayer(player) {
-      return basicCards.drawRandomBasicCardToHand(player.hand);
+      const entry = cards.CARD_CATALOG.find((card) => card.set === "basic");
+      const drawn = cards.createCardInstance(entry, player.hand.length + 1);
+      player.hand.push(drawn);
+      return { ok: true, card: drawn };
     },
     ensurePlayerTechState(player) {
       if (!player.techState) player.techState = players.normalizePlayerTechState(null);
@@ -137,7 +140,10 @@ const autoContext = {
   solarState: { rotation: { rotationCount: 0 } },
   rotateSolarOrbit() {},
   drawBasicCardToPlayer(player) {
-    return basicCards.drawRandomBasicCardToHand(player.hand);
+    const entry = cards.CARD_CATALOG.find((card) => card.set === "basic");
+    const drawn = cards.createCardInstance(entry, player.hand.length + 1);
+    player.hand.push(drawn);
+    return { ok: true, card: drawn };
   },
   ensurePlayerTechState(player) {
     if (!player.techState) player.techState = players.normalizePlayerTechState(null);

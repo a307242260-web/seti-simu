@@ -16,18 +16,26 @@ require("../tech/player-tech");
 require("../tech/placement");
 require("../tech/bonuses");
 require("../tech/resolver");
-require("../basic-cards");
+require("../cards/deck");
 require("../tech/index");
 require("./research-tech");
 
 const solar = require("../../solar-system/core");
 const tech = require("../tech/index");
 const players = require("../players");
-const basicCards = require("../basic-cards");
+const cards = require("../cards/deck");
 const rockets = require("../rockets");
 const planetStats = require("../planet-stats");
 const aomomo = require("../aliens/aomomo");
 const actions = require("./index");
+
+function drawBasicCardToHand(hand) {
+  const existing = new Set(hand.map((card) => card.cardId));
+  const entry = cards.CARD_CATALOG.find((card) => card.set === "basic" && !existing.has(card.card_id));
+  const card = cards.createCardInstance(entry, hand.length + 1);
+  hand.push(card);
+  return { ok: true, card };
+}
 
 function createContext(overrides) {
   const solarState = solar.createBaselineState();
@@ -62,7 +70,7 @@ function createContext(overrides) {
       solarState.wheelSteps = solar.rotationToWheelSteps(solarState.rotation);
     },
     drawBasicCardToPlayer(player) {
-      return basicCards.drawRandomBasicCardToHand(player.hand);
+      return drawBasicCardToHand(player.hand);
     },
     beginCardSelection() {
       return { ok: true, message: "精选：从公共牌区选一张牌，或点击盲抽" };

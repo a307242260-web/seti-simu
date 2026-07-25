@@ -52,7 +52,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 ## Composition root
 
-`randomizer/app.js` 是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host/领域 runtime、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、Policy、DOM renderer 或 simulation 入口。机器席位由 `app/ai/browser-bootstrap.js` 直接装配 control runtime 与 Machine Player Host；旧 controller、resolver、automation、report/tuning 和 valuation/candidate 域不属于生产架构。
+`randomizer/app.js` 是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、规则 runtime 或 simulation 入口。机器席位由 `app/ai/browser-bootstrap.js` 直接装配 Machine Player Host、公共 Policy 与标准输入适配器；旧 controller、resolver、pending automation、report/tuning 和 valuation/candidate 域不属于生产架构。
 
 传统 `window.Seti*` 只作为无构建脚本的模块注册方式。是否使用全局命名空间不改变状态 owner，也不能成为跨局可变事实或隐藏 fallback 的理由。
 
@@ -62,7 +62,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 - `node tools/run_node_tests.js`
 - `node tools/run_browser_smokes.js`
 - 固定 seed simulation 完整局、非零 checkpoint/replay fork、Browser/Simulation parity
-- 真实 Chrome 人类输入 smoke、机器席位完整局与 Browser Services recovery smoke
+- 真实 Chrome 人类输入、机器席位标准提交与 Composition checkpoint recovery smoke
 
 更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-simulation-env.md`。
 

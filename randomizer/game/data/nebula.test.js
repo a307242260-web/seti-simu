@@ -5,7 +5,6 @@ require("./nebula-state");
 require("./index");
 
 const data = require("./index");
-const solar = require("../../solar-system/core");
 
 assert.equal(data.getNebulaCapacity("sector-2-a"), 6);
 assert.equal(data.getNebulaCapacity("sector-3-b"), 6);
@@ -115,42 +114,6 @@ assert.equal(aomomoArcSlot2.angularFraction, 0.3587);
 assert.equal(aomomoArcSlot3.radialFraction, 0.6121);
 assert.equal(aomomoArcSlot3.angularFraction, 0.5162);
 
-const aomomoBoardSlot1 = data.getEffectiveAomomoBoardSlotLayout(1, null, {
-  aomomoActive: true,
-  rotation: { wheel1Steps: 0, wheel2Steps: 0, wheel3Steps: 6, wheel4Steps: 0 },
-}, solar);
-assert.equal(aomomoBoardSlot1.displayX, 3);
-assert.equal(aomomoBoardSlot1.percentX, 63.91);
-assert.equal(aomomoBoardSlot1.percentY, 69.21);
-const aomomoBoardSlot2 = data.getEffectiveAomomoBoardSlotLayout(2, null, {
-  aomomoActive: true,
-  rotation: { wheel1Steps: 0, wheel2Steps: 0, wheel3Steps: 6, wheel4Steps: 0 },
-}, solar);
-assert.equal(aomomoBoardSlot2.percentX, 61.38);
-assert.equal(aomomoBoardSlot2.percentY, 70.65);
-const aomomoBoardSlot3 = data.getEffectiveAomomoBoardSlotLayout(3, null, {
-  aomomoActive: true,
-  rotation: { wheel1Steps: 0, wheel2Steps: 0, wheel3Steps: 6, wheel4Steps: 0 },
-}, solar);
-assert.equal(aomomoBoardSlot3.percentX, 58.73);
-assert.equal(aomomoBoardSlot3.percentY, 71.86);
-const aomomoSlot1DragOverride = data.getAomomoRelativePositionFromBoard({
-  percentX: aomomoBoardSlot1.percentX,
-  percentY: aomomoBoardSlot1.percentY,
-  boardPercentX: aomomoBoardSlot1.percentX,
-  boardPercentY: aomomoBoardSlot1.percentY,
-}, aomomoBoardSlot1.displayX, solar);
-assert.equal(aomomoSlot1DragOverride.radialFraction, 0.6379);
-assert.equal(aomomoSlot1DragOverride.angularFraction, 0.202);
-const aomomoBoardSlot1Rotated = data.getEffectiveAomomoBoardSlotLayout(1, null, {
-  aomomoActive: true,
-  rotation: { wheel1Steps: 0, wheel2Steps: 0, wheel3Steps: 7, wheel4Steps: 0 },
-}, solar);
-assert.equal(aomomoBoardSlot1Rotated.percentX, 46.25);
-assert.equal(aomomoBoardSlot1Rotated.percentY, 73.42);
-assert.notEqual(aomomoBoardSlot1Rotated.percentX, aomomoBoardSlot1.percentX);
-assert.notEqual(aomomoBoardSlot1Rotated.percentY, aomomoBoardSlot1.percentY);
-
 const nebulaDataState = data.createDefaultNebulaDataState();
 
 const siriusFill = data.fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
@@ -183,16 +146,6 @@ for (const nebulaId of data.NEBULA_IDS) {
     assert.equal(token.percentY, layout.percentY);
   }
 }
-
-const emptyReadout = data.getNebulaReadoutLines(data.createDefaultNebulaDataState());
-assert.ok(emptyReadout.some((line) => line.includes("星云数据")));
-assert.equal(emptyReadout.filter((line) => line.startsWith("[")).length, data.NEBULA_IDS.length);
-assert.ok(emptyReadout.some((line) => line.includes("[南河三] 0/5")));
-assert.ok(emptyReadout.some((line) => line.includes("局部坐标")));
-
-const readout = data.getNebulaReadoutLines(nebulaDataState);
-assert.ok(readout.some((line) => line.includes("[天狼星A] 6/6")));
-assert.ok(readout.some((line) => line.includes("序号") && line.includes("局部坐标")));
 
 const scanState = data.createDefaultNebulaDataState();
 data.fillNebulaData(scanState, "sector-1-a", { source: "debug" });
@@ -230,18 +183,6 @@ assert.equal(aomomoFirst.slotIndex, 1);
 assert.equal(aomomoFirst.scoreAwarded, 1);
 assert.equal(aomomoPlayer.resources.score, 1);
 assert.equal(aomomoFirst.token.replacedByPlayerColor, "white");
-const replacedAomomoSlot1 = data.getEffectiveAomomoBoardSlotLayout(aomomoFirst.slotIndex, aomomoFirst.token, {
-  aomomoActive: true,
-  rotation: { wheel1Steps: 0, wheel2Steps: 0, wheel3Steps: 6, wheel4Steps: 0 },
-}, solar);
-assert.equal(replacedAomomoSlot1.percentX, 63.91);
-assert.equal(replacedAomomoSlot1.percentY, 69.21);
-const replacedAomomoSlot1Rotated = data.getEffectiveAomomoBoardSlotLayout(aomomoFirst.slotIndex, aomomoFirst.token, {
-  aomomoActive: true,
-  rotation: { wheel1Steps: 0, wheel2Steps: 0, wheel3Steps: 7, wheel4Steps: 0 },
-}, solar);
-assert.equal(replacedAomomoSlot1Rotated.percentX, 46.25);
-assert.equal(replacedAomomoSlot1Rotated.percentY, 73.42);
 const aomomoSecond = data.replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
 assert.equal(aomomoSecond.slotIndex, 2);
 assert.equal(aomomoSecond.scoreAwarded, 0);
@@ -295,10 +236,6 @@ assert.equal(scanPlayer.resources.score, 2);
 const replacementStats = data.getNebulaReplacementStats(scanState, "sector-1-a");
 assert.equal(replacementStats.playerTokenCounts.blue, 2);
 assert.equal(replacementStats.lastReplacedPlayerColor, "blue");
-assert.ok(
-  data.getNebulaReadoutLines(scanState).some((line) => line.includes("token=blue:2")),
-);
-
 const settlementState = data.createDefaultNebulaDataState();
 const settlementPlayers = [
   { id: "player-blue", color: "blue", colorLabel: "蓝色" },

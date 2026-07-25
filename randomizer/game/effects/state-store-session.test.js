@@ -2,7 +2,6 @@
 
 const assert = require("node:assert/strict");
 const { createRuntime } = require("./session-runtime");
-const { createResearchTechRuntime } = require("./research-tech-session");
 const {
   createCommittedGameState,
   createStateStore,
@@ -157,58 +156,6 @@ function dispatchSteps(runtime, family, steps, meta = {}) {
     assert.equal(events[0].metadata.sessionId, `${proofCase.family}-session`);
     proofCase.assertState(authority.getSnapshot());
   }
-})();
-
-(function testResearchFacadeStartsFromStateStoreWorkingCopy() {
-  const authority = createStateStore(createState());
-  const store = instrumentStore(authority);
-  const research = createResearchTechRuntime({
-    stateStore: store,
-    actionRegistry: {
-      validate(state, action) {
-        return state.meta.stateVersion === action.stateVersion
-          ? { ok: true }
-          : { ok: false, code: "STANDARD_ACTION_STALE", message: "action 已过期" };
-      },
-    },
-    rotate(state) {
-      state.solarSystem.rotation += 1;
-      return { ok: true, nextState: state };
-    },
-    listChoices: (state) => state.tech.supply.orange.map((tileId) => ({ tileId })),
-    place(state, choice) {
-      state.tech.supply.orange = state.tech.supply.orange.filter((tileId) => tileId !== choice.tileId);
-      state.players.p1.techTileIds.push(choice.tileId);
-      return { ok: true, nextState: state, placement: choice };
-    },
-    buildImmediateRewards: () => [{ credits: 2 }],
-    applyImmediateReward(state, reward) {
-      state.players.p1.resources.credits += reward.credits;
-      return { ok: true, nextState: state };
-    },
-  });
-  const dispatched = research.dispatch(null, {
-    family: "research_tech",
-    actorId: "p1",
-    stateVersion: authority.getSnapshot().meta.stateVersion,
-  });
-  assert.equal(research.drain(dispatched.session).ok, true);
-  const decision = research.inspect(dispatched.session).decision;
-  assert.deepEqual(decision.choices, [{ tileId: "orange-1" }]);
-  assert.equal(research.resolveDecision(dispatched.session, {
-    decisionId: decision.decisionId,
-    decisionVersion: decision.decisionVersion,
-    ownerId: decision.ownerId,
-    choice: { tileId: "orange-1" },
-  }).ok, true);
-  assert.equal(research.drain(dispatched.session).ok, true);
-  const committed = authority.getSnapshot();
-  assert.equal(committed.solarSystem.rotation, 1);
-  assert.deepEqual(committed.tech.supply.orange, []);
-  assert.deepEqual(committed.players.p1.techTileIds, ["orange-1"]);
-  assert.equal(committed.players.p1.resources.credits, 7);
-  assert.equal(store.counters.compareAndCommit, 1);
-  assert.equal(store.counters.legacyDirectWrite, 0);
 })();
 
 (function testStandardActionMustValidateBeforeQueueAndCommitOnce() {

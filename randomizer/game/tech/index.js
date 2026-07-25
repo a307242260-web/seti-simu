@@ -7,7 +7,6 @@
   let placement = root.SetiTechPlacement;
   let bonuses = root.SetiTechBonuses;
   let resolver = root.SetiTechResolver;
-  let render = root.SetiTechRender;
 
   if (typeof require === "function") {
     catalog = catalog || require("./catalog");
@@ -16,10 +15,9 @@
     placement = placement || require("./placement");
     bonuses = bonuses || require("./bonuses");
     resolver = resolver || require("./resolver");
-    render = render || require("./render");
   }
 
-  const api = factory(catalog, boardState, playerTech, placement, bonuses, resolver, render);
+  const api = factory(catalog, boardState, playerTech, placement, bonuses, resolver);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -33,7 +31,6 @@
   placement,
   bonuses,
   resolver,
-  render,
 ) {
   "use strict";
 
@@ -106,71 +103,6 @@
     return requestTakeTech(context, gameState, tileId, { blueSlot });
   }
 
-  function getReadoutLines(gameState, playerState) {
-    const board = gameState.board;
-    const ui = gameState.ui;
-    const currentPlayer = playerState?.players?.find((p) => p.id === playerState.currentPlayerId)
-      || playerState?.players?.[0]
-      || null;
-
-    const supplyStacks = boardState.listSupplyStacks(board);
-    const hasOwned = currentPlayer?.techState
-      ? playerTech.listOwnedTileIds(currentPlayer.techState).length > 0
-      : false;
-
-    if (!supplyStacks.length && !hasOwned && !ui.statusNote) {
-      return [];
-    }
-
-    const lines = ["科技状态"];
-
-    lines.push("[槽位供给]");
-    for (const tileId of catalog.TECH_TILE_IDS) {
-      const stack = board.stacks[tileId];
-      const remaining = boardState.getRemainingForSlot(board, tileId);
-      const claimer = stack?.firstTakeClaimedBy;
-      lines.push(
-        `${tileId} 剩余 ${remaining}/${catalog.PIECES_PER_SLOT}`
-        + ` ${claimer ? `首拿 ${claimer}` : "首拿未领"}`,
-      );
-    }
-
-    if (currentPlayer?.techState) {
-      const ownedTileIds = playerTech.listOwnedTileIds(currentPlayer.techState);
-      lines.push(`[当前玩家科技] ${ownedTileIds.length}/${catalog.TECH_TILE_IDS.length}`);
-      if (ownedTileIds.length) {
-        lines.push(...ownedTileIds);
-      } else {
-        lines.push("无");
-      }
-    }
-
-    if (hasOwned && currentPlayer?.techState) {
-      lines.push("[玩家版图]");
-      for (const tileId of playerTech.listOwnedTileIds(currentPlayer.techState)) {
-        const blueSlot = playerTech.getBlueBoardSlot(currentPlayer.techState, tileId);
-        const layout = placement.getPlacementLayout(tileId, blueSlot);
-        if (!layout) continue;
-        const slotLabel = blueSlot ? ` 槽位${blueSlot}` : "";
-        lines.push(`${tileId} @玩家版图${slotLabel} 中心 ${layout.percentX}%,${layout.percentY}%`);
-      }
-    }
-
-    if (supplyStacks.length) {
-      lines.push("[待拿取科技信息]");
-      lines.push(...supplyStacks.map((stack) => {
-        const bonusLabel = catalog.BONUS_LABELS[stack.bonusId] || stack.bonusId;
-        const remaining = boardState.getRemainingForSlot(board, stack.tileId);
-        const firstTake = boardState.isFirstTakeAvailable(board, stack.tileId) ? " 可首拿+2分" : "";
-        return `${stack.tileId} 剩${remaining} 奖励 ${bonusLabel}${firstTake}`;
-      }));
-    }
-
-    if (ui.statusNote) lines.push(ui.statusNote);
-
-    return lines;
-  }
-
   function getSnapshot(gameState) {
     return {
       board: boardState.getSnapshot(gameState.board),
@@ -193,11 +125,6 @@
     getPlacementLayout: placement.getPlacementLayout,
     listTakeableTiles: resolver.listTakeableTiles,
     listAvailableTypes: resolver.listAvailableTypes,
-    renderAll: render.renderAll,
-    bindSupplyTileClicks: render.bindSupplyTileClicks,
-    isSupplySelectionActive: render.isSupplySelectionActive,
-    resetPlayerBoardTiles: render.resetPlayerBoardTiles,
-    getReadoutLines,
     getSnapshot,
     isInSupply: boardState.isInSupply,
     isSlotAvailable: boardState.isSlotAvailable,

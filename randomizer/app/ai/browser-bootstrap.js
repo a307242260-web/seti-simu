@@ -12,7 +12,6 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
-    "aiControlRuntimeModule",
     "ruleComposition",
     "outcomeModel",
     "policyInputAdapterModule",
@@ -20,9 +19,7 @@
     "inputAdapter",
     "createPolicy",
     "projectionSource",
-    "readAiControlProjection",
-    "stateOwners",
-    "controlContext",
+    "isMachineSeat",
   ]);
 
   function fail(code, message, details = {}) {
@@ -51,9 +48,7 @@
       });
       const decision = inspection.session?.decision || source.decision || null;
       if (inspection.phase === "awaiting_input" && decision) {
-        const legalActions = (decision.choices || [])
-          .map((choice) => choice?.standardAction || choice?.action || choice)
-          .filter(Boolean);
+        const legalActions = (decision.choices || []).filter(Boolean);
         return {
           kind: "decision",
           actorId: decision.ownerId,
@@ -70,12 +65,14 @@
       if (source.state?.match?.terminal) {
         return { kind: "terminal", terminal: { phase: "completed" } };
       }
+      const legalActions = composition.inputPort.enumerateActions({ actorId });
       return {
         kind: "action",
         actorId,
-        stateVersion: source.source.stateVersion,
-        decisionVersion: Math.max(0, Number(source.state?.match?.decisionVersion) || 0),
-        legalActions: composition.inputPort.enumerateActions({ actorId }),
+        stateVersion: legalActions[0]?.stateVersion ?? source.source.stateVersion,
+        decisionVersion: legalActions[0]?.decisionVersion
+          ?? Math.max(0, Number(source.state?.match?.decisionVersion) || 0),
+        legalActions,
       };
     };
   }
@@ -104,12 +101,14 @@
     const drivers = new Map();
     let generation = 0;
     let lastResult = null;
+    let lastOutcomeSummary = null;
 
     function currentSeatId() {
       const inspection = ruleComposition.inspect();
       const source = projectionSource.read();
-      return inspection.session?.decision?.ownerId
-        ?? source.decision?.ownerId
+      return (inspection.phase === "awaiting_input"
+        ? inspection.session?.decision?.ownerId ?? source.decision?.ownerId
+        : null)
         ?? source.state?.match?.currentPlayerId
         ?? null;
     }
@@ -130,23 +129,44 @@
               decisionVersion: boundary.decisionVersion,
             });
           },
-          readActionOutcomes: (boundary) => outcomeModel.projectOutcomeObservations(
-            boundary.legalActions.every((action) => (
+          readActionOutcomes: (boundary) => {
+            const outcomes = outcomeModel.projectOutcomeObservations(
+              boundary.legalActions.every((action) => (
               ["choose_card", "choose_payment"].includes(action.family)
               && ["select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
                 .includes(action.target?.kind)
-            ))
-              ? []
-              : ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
-                viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-                confidence: "low",
-              }),
-            {
+              ))
+                ? []
+                : ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
+                  viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+                  confidence: "low",
+                  maxDepth: 2,
+                  maxLeaves: 4,
+                }),
+              {
+                seatId,
+                stateVersion: boundary.stateVersion,
+                decisionVersion: boundary.decisionVersion,
+              },
+            );
+            lastOutcomeSummary = Object.freeze({
               seatId,
-              stateVersion: boundary.stateVersion,
-              decisionVersion: boundary.decisionVersion,
-            },
-          ),
+              actions: Object.freeze(boundary.legalActions.map((action) => ({
+                actionId: action.actionId,
+                family: action.family,
+                outcome: (() => {
+                  const outcome = outcomes.find((candidate) => candidate.actionId === action.actionId);
+                  return {
+                    status: outcome?.status || "missing",
+                    code: outcome?.code || null,
+                    leaves: outcome?.leaves?.length || 0,
+                  };
+                })(),
+              }))),
+              timing: ruleComposition.counterfactualPort.getDiagnostics?.() || null,
+            });
+            return outcomes;
+          },
           inputAdapter,
           onPause: options.onPause,
           onDiagnostic: options.onDiagnostic,
@@ -190,6 +210,7 @@
           seatId,
           host: driver.inspect(),
         }))),
+        lastOutcomeSummary: structuredClone(lastOutcomeSummary),
         lastResult: structuredClone(lastResult),
       });
     }
@@ -206,7 +227,6 @@
     }
 
     const {
-      aiControlRuntimeModule,
       ruleComposition,
       outcomeModel,
       policyInputAdapterModule,
@@ -214,12 +234,8 @@
       inputAdapter,
       createPolicy,
       projectionSource,
-      readAiControlProjection,
-      stateOwners,
-      controlContext,
+      isMachineSeat,
     } = context;
-    const state = aiControlRuntimeModule.createAiControllerState(stateOwners);
-    let controller = null;
     const machinePlayerPort = createBrowserMachinePlayerPort({
       ruleComposition,
       outcomeModel,
@@ -228,28 +244,7 @@
       projectionAdapter,
       inputAdapter,
       createPolicy,
-      isMachineSeat: (seatId) => Boolean(controller?.isAiAutoBattlePlayer?.(seatId)),
-    });
-    const controlRuntime = aiControlRuntimeModule.createAiControlRuntime({
-      ...controlContext,
-      state,
-      recordAiAutoBattleLog: () => null,
-      recordAiAutoBattleBug: () => null,
-      resetAiStrategyDemandCache: () => {},
-      runMachinePlayerStep: (options) => machinePlayerPort.runOnce(options),
-      getFormalInputOwnerId: () => machinePlayerPort.inspect().seatId,
-      getRuleProjection: () => {
-        return structuredClone(readAiControlProjection());
-      },
-    });
-    controller = Object.freeze({
-      ...controlRuntime,
-      getPlayerAgentLabel(playerId) {
-        const player = controlContext.getPlayerById(playerId);
-        return controlRuntime.isAiAutoBattlePlayer(playerId)
-          ? `${player?.colorLabel || "电脑玩家"}AI`
-          : "人类";
-      },
+      isMachineSeat,
     });
     ruleComposition.subscribe((event) => {
       if (event?.source === "lifecycle") {
@@ -257,7 +252,7 @@
       }
     });
 
-    return Object.freeze({ controller, machinePlayerPort });
+    return Object.freeze({ machinePlayerPort });
   }
 
   return {
