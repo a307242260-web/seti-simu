@@ -60,6 +60,10 @@ function createFixture() {
   finalWrap.append(finalLayer);
   const techTile = createElement("img");
   techTile.dataset.techId = "blue1";
+  const techBonus = createElement("img");
+  techBonus.dataset.techBonusFor = "blue1";
+  const finalTile = createElement("img");
+  finalTile.dataset.finalId = "a";
   const els = {
     roundStatusRound: createElement("span"),
     roundStatusTurn: createElement("span"),
@@ -73,9 +77,15 @@ function createFixture() {
     playerHandPanelHandCount: createElement("span"),
     playerHandPanelTitleHint: createElement("span"),
     tokenLayer: createElement("div"),
+    planetsTokenLayer: createElement("div"),
     wheels: { 1: createElement("div"), 2: createElement("div") },
+    sectorWraps: { 1: createElement("div"), 2: createElement("div") },
     finalScoreTileWraps: [finalWrap],
+    finalScoreTiles: [finalTile],
     techTiles: [techTile],
+    techBonuses: [techBonus],
+    playerBoardTechLayer: createElement("div"),
+    playerBoardDataLayer: createElement("div"),
   };
   return { document, els };
 }
@@ -244,6 +254,97 @@ function createProjection() {
   assert.equal(fixture.els.playerHandPanelHandCount.textContent, "(1)");
   assert.equal(fixture.els.playerHandPanel.className.includes("is-empty"), false);
   assert.equal(fixture.els.reservedCardPanel.className.includes("is-empty"), false);
+})();
+
+(function testTechAndDataAreRebuiltFromRenderProjection() {
+  const fixture = createFixture();
+  const renderer = rendererApi.createResidentRenderer(fixture);
+  const projection = {
+    schemaVersion: rendererApi.SCHEMA_VERSION,
+    resident: {
+      browserReadModel: {
+        render: {
+          techTilePresentation: {
+            supplyTiles: [{
+              tileId: "blue1",
+              remaining: 3,
+              bonusImageSrc: "bonus.webp",
+            }],
+            playerTiles: [{
+              tileId: "blue2",
+              imageSrc: "blue2.webp",
+              disabled: false,
+              layout: { percentX: 49, percentY: 74 },
+            }],
+          },
+          dataPresentation: {
+            playerTokens: [{
+              id: "data-1",
+              imageSrc: "data.webp",
+              placementKind: "computer",
+              percentX: 35,
+              percentY: 68,
+            }],
+          },
+        },
+      },
+    },
+  };
+  const input = { projection, viewState: {} };
+  renderer.renderTechSupply(input);
+  renderer.renderPlayerData(input);
+  assert.equal(fixture.els.techTiles[0].hidden, false);
+  assert.equal(fixture.els.techTiles[0].dataset.remaining, "3");
+  assert.equal(fixture.els.techBonuses[0].src, "bonus.webp");
+  assert.equal(fixture.els.playerBoardTechLayer.children[0].dataset.techId, "blue2");
+  assert.equal(fixture.els.playerBoardTechLayer.children[0].style.values["--x"], "49%");
+  assert.equal(fixture.els.playerBoardDataLayer.children[0].dataset.tokenId, "data-1");
+  assert.equal(fixture.els.playerBoardDataLayer.children[0].style.values["--y"], "68%");
+})();
+
+(function testBoardChromeAndTokensAreRebuiltFromRenderProjection() {
+  const fixture = createFixture();
+  const renderer = rendererApi.createResidentRenderer(fixture);
+  const projection = {
+    schemaVersion: rendererApi.SCHEMA_VERSION,
+    resident: {
+      browserReadModel: {
+        render: {
+          boardChrome: {
+            wheelTransforms: [{ wheelId: 1, degrees: -45 }],
+            sectors: [{ slotId: 1, sectorId: 3 }],
+          },
+          tokenPresentation: {
+            tokens: [{
+              id: "rocket-1",
+              playerId: "p1",
+              color: "blue",
+              target: "solar-board",
+              percentX: 42,
+              percentY: 31,
+              imageSrc: "rocket.webp",
+            }, {
+              id: "planet:venus:orbit:1",
+              playerId: "p1",
+              color: "blue",
+              kind: "planet-marker",
+              referenceKind: "orbit",
+              target: "planets-reference",
+              percentX: 9,
+              percentY: 22,
+              imageSrc: "token.webp",
+            }],
+          },
+        },
+      },
+    },
+  };
+  renderer.renderSolarSystem({ projection, viewState: {} });
+  assert.equal(fixture.els.wheels[1].style.values.transform, "rotate(-45deg)");
+  assert.equal(fixture.els.sectorWraps[1].children[0].className, "sector sector-3");
+  assert.equal(fixture.els.tokenLayer.children[0].style.values.left, "42%");
+  assert.equal(fixture.els.planetsTokenLayer.children[0].dataset.pieceId, "planet:venus:orbit:1");
+  assert.match(fixture.els.planetsTokenLayer.children[0].className, /is-reference-orbit/);
 })();
 
 console.log("resident-renderer tests passed");

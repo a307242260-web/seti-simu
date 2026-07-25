@@ -163,14 +163,22 @@ module.exports = Object.freeze([
         throw new Error("BrowserProjection 泄漏隐藏 deck 或他人手牌");
       }
       const required = {
-        solar: document.querySelector("#wheel-1")?.dataset.projectionRotation != null,
-        rockets: Boolean(document.querySelector("#token-layer")),
+        solar: document.querySelector("#wheel-1")?.style.transform.startsWith("rotate(")
+          && document.querySelectorAll(".sector-wrap > .sector[data-sector-id]").length === 4,
+        rockets: Array.isArray(renderProjection.tokenPresentation?.tokens),
         players: document.querySelector("#player-stats")?.children.length > 0,
-        hand: Boolean(document.querySelector("#player-hand-fan")),
-        publicCards: document.querySelector("#public-card-row")?.children.length > 0,
-        tech: document.querySelectorAll("[data-tech-id][data-projection-available]").length >= 12,
+        hand: document.querySelectorAll("#player-hand-fan .player-hand-card").length > 0
+          && [...document.querySelectorAll("#player-hand-fan .player-hand-card")]
+            .every((image) => image.src.includes("/assets/cards/")),
+        publicCards: [...document.querySelectorAll("#public-card-row .public-card")]
+          .every((image) => image.src.includes("/assets/cards/"))
+          && document.querySelectorAll("#public-card-row .public-card").length === 3,
+        tech: document.querySelectorAll("[data-tech-id][data-projection-available]").length >= 12
+          && document.querySelectorAll(".tech-bonus:not([hidden])").length === 12
+          && [...document.querySelectorAll(".tech-bonus:not([hidden])")]
+            .every((image) => image.src.includes("/assets/tech_tile/bonus_")),
         scanData: Boolean(document.querySelector("#player-board-data-layer"))
-          && Boolean(renderProjection.dataPresentation),
+          && Array.isArray(renderProjection.dataPresentation?.playerTokens),
         aliens: document.querySelectorAll(".alien-panel[data-alien-slot]").length === 2
           && Boolean(renderProjection.markerPresentation),
         scoring: document.querySelectorAll("#final-score-grid .final-score-tile").length === 4
@@ -196,6 +204,15 @@ module.exports = Object.freeze([
             || next.projection.decision?.decisionId !== decisionId;
         }, "主行动后续 Decision 推进");
       }
+      await waitFor(() => {
+        const token = document.querySelector("#token-layer .browser-projection-token");
+        return Boolean(
+          token
+          && token.src.includes("/assets/tokens/rocket-")
+          && token.style.left.endsWith("%")
+          && token.style.top.endsWith("%"),
+        );
+      }, "发射结果由 BrowserProjection 渲染为太阳系火箭");
       await waitFor(() => {
         const button = document.querySelector("#action-confirm-button");
         return Boolean(button && !button.disabled && button.dataset.actionId);

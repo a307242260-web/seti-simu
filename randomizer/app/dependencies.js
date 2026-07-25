@@ -28,7 +28,10 @@
     ["finalScoring", "SetiFinalScoring"],
     ["endGameScoring", "SetiEndGameScoring"],
     ["cardEffects", "SetiCardEffects"],
+    ["cards", "SetiCards"],
     ["solar", "SetiSolarSystem"],
+    ["planetReferenceLayout", "SetiPlanetReferenceLayout"],
+    ["planetStats", "SetiPlanetStats"],
     ["aliens", "SetiAliens"],
     ["tech", "SetiTech"],
   ]);

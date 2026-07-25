@@ -33,7 +33,7 @@ node tools/report_architecture_residuals.js
 | M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 已完成：5 个已识别残留族群均为 0；61/61 unit、1/1 full-flow |
 | M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 已完成：并行决策状态 28→0，规则层展示状态 40→0；61/61 unit、1/1 full-flow、3/3 Chrome |
 | M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 未完成 |
-| M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 进行中：DOM 注册 160→63，静态无消费者注册 131→28；卡牌/资源投影已接通 |
+| M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 进行中：DOM 注册 160→62，静态无消费者注册 131→21；卡牌、资源、科技、数据与太阳系投影已接通 |
 | M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 未完成 |
 
 ## 实施记录
@@ -130,6 +130,16 @@ node tools/report_architecture_residuals.js
 - DOM 注册从 160 降到 63，静态无消费者注册从 131 降到 28；剩余 28 个全部进入 M4 的盘面、数据、科技、外星人和计分展示矩阵，不能在未接通 projection 前直接删除。
 - 首次全量回归被源码审计误把同一行 `projection.cards...map(() => ...)` 的箭头识别为规则写入；仅调整只读 fallback 的换行后审计恢复通过，没有放宽门禁。
 - 验证通过：61/61 unit、1/1 full-flow、3/3 真实 Chrome smoke、`node --check`、`git diff --check`。内置浏览器技能安装路径不存在，因此本批没有把自动 smoke 记作人工视觉截图；视觉证据留在 M4 最终动态展示验收。
+
+### 2026-07-25：Browser 盘面、科技与数据展示切换到 Projection
+
+- 修复卡牌实例只有 canonical `cardId` 时旧 renderer 得不到图片的真实缺口；公共牌、手牌和保留牌现在通过卡牌 catalog 生成 viewer-safe 图片 DTO。
+- 科技供应、首拿 bonus、玩家已拥有科技和玩家数据 token 改由 `BrowserReadModel.render` DTO 重建；物理删除旧可拖拽数据 token、蓝色 drop zone 和旧科技选择状态对应的 CSS。
+- 太阳系四层轮盘旋转、四个扇区、火箭、星球参考区火箭，以及环绕/登陆/卫星标记统一由 canonical state 派生为 `boardChrome/tokenPresentation`，renderer 不再回退读取 `projection.board.pieces.public`。
+- Chrome 门禁从“存在空容器/空 DTO”加强为真实图片路径、12 个科技 bonus、4 个动态扇区，以及完成发射 Decision 后火箭具有真实图片和百分比坐标；本批首次确认旧 renderer 写入的 `--x/--y` 没有 CSS 消费者，现已改为实际 `left/top`。
+- DOM 注册从 63 降到 62，静态无消费者注册从 28 降到 21；八个已识别旧架构残留族群继续保持 0。
+- 本批修改 7 个生产/验证文件及本账本，新增 420 行、删除 96 行；新增代码是投影派生和动态 renderer，不新增规则 owner、兼容 adapter 或 Browser 规则状态。
+- 验证通过：61/61 unit、1/1 full-flow、3/3 真实 Chrome smoke、`node --check`、`git diff --check`。M4 尚余外星人动态展示、终局板块动态状态、无消费者 DOM/CSS 清理与最终视觉证据。
 
 ## 每轮更新格式
 

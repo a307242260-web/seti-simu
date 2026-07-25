@@ -23,7 +23,10 @@
     finalScoring,
     endGameScoring,
     cardEffects,
+    cards,
     solar,
+    planetReferenceLayout,
+    planetStats,
     aliens,
     tech,
   } = dependencies;
@@ -53,6 +56,120 @@
     const publicCards = state.cards?.publicCards || state.cards?.publicMarket || [];
     const own = players.find((player) => String(player?.id) === String(viewerId)) || null;
     const finalPlayers = input.finalReadModel?.players || [];
+    const playerColors = {
+      blue: "#4da3ff",
+      green: "#56d37a",
+      brown: "#b2845a",
+      white: "#f3f5ef",
+    };
+    const rocketAssets = {
+      blue: "../assets/tokens/rocket-blue.png",
+      green: "../assets/tokens/rocket-green.png",
+      brown: "../assets/tokens/rocket-brown.png",
+      white: "../assets/tokens/rocket-white.png",
+    };
+    const markerAssets = {
+      orbit: {
+        blue: "../assets/tokens/normal_token-blue.png",
+        green: "../assets/tokens/normal_token-green.png",
+        brown: "../assets/tokens/normal_token-brown.png",
+        white: "../assets/tokens/normal_token-white.png",
+      },
+      land: {
+        blue: "../assets/tokens/landding-blue.png",
+        green: "../assets/tokens/landding-green.png",
+        brown: "../assets/tokens/landding-brown.png",
+        white: "../assets/tokens/landding-white.png",
+      },
+      satellite: {
+        blue: "../assets/tokens/satellite-blue.png",
+        green: "../assets/tokens/satellite-green.png",
+        brown: "../assets/tokens/satellite-brown.png",
+        white: "../assets/tokens/satellite-white.png",
+      },
+    };
+    function presentBoardToken(token) {
+      const reference = token.surface === "planets-reference" ? token.planetsReference : null;
+      const boardPoint = !reference
+        && Number.isFinite(Number(token.radius))
+        && Number.isFinite(Number(token.angleDegrees))
+        ? solar.polarToGlobalPoint(Number(token.radius), Number(token.angleDegrees))
+        : null;
+      return {
+        ...structuredClone(token),
+        target: reference ? "planets-reference" : "solar-board",
+        percentX: reference
+          ? Number(reference.percentX)
+          : boardPoint
+            ? (Number(boardPoint.x) / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100
+            : null,
+        percentY: reference
+          ? Number(reference.percentY)
+          : boardPoint
+            ? (Number(boardPoint.y) / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100
+            : null,
+        imageSrc: token.tokenSrc || rocketAssets[token.color] || "../assets/tokens/rocket.png",
+      };
+    }
+    function presentPlanetMarkers() {
+      const result = [];
+      for (const planetId of planetStats.PLANET_IDS) {
+        for (const kind of ["orbit", "land"]) {
+          const markers = kind === "orbit"
+            ? planetStats.getPlanetOrbitMarkers(state.planets, planetId)
+            : planetStats.getPlanetLandingMarkers(state.planets, planetId);
+          for (const marker of markers) {
+            if (!marker.displayed) continue;
+            const placement = planetReferenceLayout.getPlanetSlot(
+              planetId,
+              kind,
+              marker.displaySlot,
+            );
+            if (!placement) continue;
+            result.push({
+              id: `planet:${planetId}:${kind}:${marker.sequence}`,
+              playerId: marker.playerId,
+              color: marker.color,
+              kind: "planet-marker",
+              referenceKind: kind,
+              target: "planets-reference",
+              percentX: (placement.x / planetReferenceLayout.PLANETS_REFERENCE_SIZE.width) * 100,
+              percentY: (placement.y / planetReferenceLayout.PLANETS_REFERENCE_SIZE.height) * 100,
+              referenceOffsetTokenWidths: Number(marker.referenceOffsetTokenWidths) || 0,
+              imageSrc: markerAssets[kind][marker.color] || markerAssets[kind].white,
+            });
+          }
+        }
+        for (const marker of planetStats.getSatelliteLandingMarkers(state.planets, planetId)) {
+          const placement = planetReferenceLayout.getSatellitePlacement(
+            planetId,
+            marker.satelliteId,
+          );
+          if (!placement) continue;
+          result.push({
+            id: `planet:${planetId}:satellite:${marker.satelliteId}`,
+            playerId: marker.playerId,
+            color: marker.color,
+            kind: "planet-marker",
+            referenceKind: "satellite",
+            target: "planets-reference",
+            percentX: (placement.x / planetReferenceLayout.PLANETS_REFERENCE_SIZE.width) * 100,
+            percentY: (placement.y / planetReferenceLayout.PLANETS_REFERENCE_SIZE.height) * 100,
+            referenceOffsetTokenWidths: Number(marker.referenceOffsetTokenWidths) || 0,
+            imageSrc: markerAssets.satellite[marker.color] || markerAssets.satellite.white,
+          });
+        }
+      }
+      return result;
+    }
+    function presentCard(card, fallbackLabel) {
+      const entry = cards.getCatalogEntryForCard(card);
+      return {
+        id: card?.id || card?.cardId || fallbackLabel,
+        imageSrc: card?.src || (entry ? cards.getCardSrc(entry) : ""),
+        label: card?.cardName || entry?.card_name || card?.cardId || fallbackLabel,
+      };
+    }
     const resourceIcons = {
       credits: "../assets/symbol/effect/credits.webp",
       energy: "../assets/symbol/effect/energy.webp",
@@ -71,18 +188,23 @@
     };
     return {
       boardChrome: {
-        wheelTransforms: [],
-        sectors: [],
+        wheelTransforms: [1, 2, 3, 4].map((wheelId) => ({
+          wheelId,
+          degrees: solar.getWheelStep(state.solarSystem?.rotation, wheelId) * 45,
+        })),
+        sectors: Object.entries(state.solarSystem?.sectorBySlot || {}).map(
+          ([slotId, sectorId]) => ({ slotId: Number(slotId), sectorId: Number(sectorId) }),
+        ),
         aomomoWheelImageSrc: null,
-        rotateTokenSlot: null,
+        rotateTokenSlot: Number(state.solarSystem?.rotation?.rotationCount) || 0,
       },
       tokenPresentation: {
         activeRocketId: input.boardCoordinate?.activeRocketId || null,
         draggingRocketId: null,
-        tokens: (input.boardCoordinate?.tokens || []).map((token) => ({
-          ...structuredClone(token),
-          imageSrc: token.tokenSrc || token.src || "",
-        })),
+        tokens: [
+          ...(input.boardCoordinate?.tokens || []).map(presentBoardToken),
+          ...presentPlanetMarkers(),
+        ],
       },
       playerPanels: {
         currentPlayerId: input.turnFlow?.currentPlayerId || null,
@@ -90,7 +212,7 @@
         players: players.map((player) => ({
           ...structuredClone(player),
           displayName: player.colorLabel || player.name || player.id,
-          uiColor: player.uiColor || player.colorConfig?.uiColor || "",
+          uiColor: player.uiColor || playerColors[player.color] || "",
           score: Number(player.resources?.score || player.score || 0),
           resourceStats: Object.keys(resourceLabels).map((key) => ({
             label: resourceLabels[key],
@@ -104,37 +226,58 @@
       turnPresentation: structuredClone(input.turnFlow || {}),
       cardPanels: {
         publicCards: publicCards.map((card, index) => ({
-          id: card?.id || card?.cardId || `public-card-${index + 1}`,
-          imageSrc: card?.src || "",
-          label: card?.cardName || `公共牌 ${index + 1}`,
+          ...presentCard(card, `公共牌 ${index + 1}`),
           empty: !card,
           selectable: false,
           selected: false,
         })),
-        handCards: (own?.hand || []).map((card) => ({
-          id: card.id,
-          imageSrc: card.src || "",
-          label: card.cardName || card.id,
-        })),
+        handCards: (own?.hand || []).map((card, index) => (
+          presentCard(card, `手牌 ${index + 1}`)
+        )),
         publicControls: {},
         handPanel: { count: own?.hand?.length || 0, empty: !own?.hand?.length },
         initialSelection: structuredClone(input.initialSetup || {}),
         reservedCards: {
-          items: (own?.reservedCards || []).map((card) => ({
-            id: card.id,
-            imageSrc: card.src || "",
-            label: card.cardName || card.id,
-          })),
+          items: (own?.reservedCards || []).map((card, index) => (
+            presentCard(card, `保留牌 ${index + 1}`)
+          )),
         },
       },
       dataPresentation: {
-        playerTokens: [],
+        playerTokens: [
+          ...(own?.dataState?.poolTokens || []).map((token) => ({
+            ...structuredClone(token),
+            placementKind: "pool",
+            imageSrc: "../assets/tokens/data.png",
+          })),
+          ...(own?.dataState?.placedTokens || []).map((token) => ({
+            ...structuredClone(token),
+            imageSrc: "../assets/tokens/data.png",
+          })),
+        ],
         blueDropZones: [],
         sectorTokensBySectorId: {},
         aomomoTokens: [],
       },
       markerPresentation: { anomalies: [], planetFossils: [], runezuSymbols: [] },
-      techTilePresentation: { supplyTiles: [], playerTiles: [] },
+      techTilePresentation: {
+        supplyTiles: Object.values(state.tech?.stacks || {}).map((stack) => ({
+          tileId: stack.tileId,
+          remaining: Number(stack.remaining) || 0,
+          bonusId: stack.bonusId || null,
+          bonusImageSrc: stack.bonusId ? `../assets/tech_tile/${stack.bonusId}.png` : "",
+          firstTakeAvailable: stack.firstTakeClaimedBy == null,
+        })),
+        playerTiles: Object.keys(own?.techState?.ownedTiles || {}).map((tileId) => {
+          const blueSlot = own?.techState?.blueBoardSlots?.[tileId] || null;
+          return {
+            tileId,
+            imageSrc: `../assets/tech_tile/${tileId}.png`,
+            disabled: Boolean(own?.techState?.disabledTiles?.[tileId]),
+            layout: structuredClone(tech.getPlacementLayout(tileId, blueSlot)),
+          };
+        }),
+      },
       finalScorePresentation: {
         breakdownsByPlayerId: Object.fromEntries(finalPlayers.map((player) => [
           String(player.id),
