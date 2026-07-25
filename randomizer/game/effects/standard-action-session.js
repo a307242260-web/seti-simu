@@ -31,8 +31,8 @@
       throw new TypeError("standard action domain 必须声明 actionFamilies");
     }
 
-    runtime.registerExecutor(EFFECT_TYPE, (workingRoot, effect) => {
-      const result = executeRegisteredAction(workingRoot, effect.payload.action);
+    runtime.registerExecutor(EFFECT_TYPE, (canonicalState, effect) => {
+      const result = executeRegisteredAction(canonicalState, effect.payload.action);
       if (!result?.ok) return result;
       const openedDecisionEffect = result.decisionEffect || null;
       const spawnedEffects = [
@@ -59,7 +59,7 @@
         throw new TypeError("standard action continuation 缺少 inspect/executeDeterministic/commitWorkingState");
       }
 
-      runtime.registerExecutor(CONTINUE_EFFECT_TYPE, (workingRoot, _effect, compositionWorkingRoot) => {
+      runtime.registerExecutor(CONTINUE_EFFECT_TYPE, (canonicalState, _effect, compositionWorkingRoot) => {
         if (!compositionWorkingRoot) {
           return {
             ok: false,
@@ -74,7 +74,7 @@
         if (boundary?.decisionType === "conditional_choice" && choices.length) {
           return {
             ok: true,
-            nextState: structuredClone(workingRoot),
+            nextState: structuredClone(canonicalState),
             spawnedEffects: [{
               priority: "direct",
               effect: {
@@ -91,7 +91,7 @@
           };
         }
         if (boundary?.boundary === "turn_action" || boundary?.boundary === "terminal") {
-          return { ok: true, nextState: structuredClone(workingRoot) };
+          return { ok: true, nextState: structuredClone(canonicalState) };
         }
         const result = continuation.executeDeterministic(compositionWorkingRoot, boundary);
         if (!result || result.ok === false) return result || {
@@ -101,7 +101,7 @@
         };
         return {
           ok: true,
-          nextState: commitWorkingState(workingRoot, result),
+          nextState: commitWorkingState(canonicalState, result),
           spawnedEffects: [
             ...(result.decisionEffect
               ? [{ priority: "direct", effect: clone(result.decisionEffect) }]
@@ -118,7 +118,7 @@
         getLegalChoices(_workingRoot, effect) {
           return clone(effect.payload?.choices || []);
         },
-        resolveDecision(workingRoot, _effect, choice, compositionWorkingRoot) {
+        resolveDecision(canonicalState, _effect, choice, compositionWorkingRoot) {
           if (typeof continuation.resolveDecision === "function") {
             if (!compositionWorkingRoot) {
               return {
@@ -138,7 +138,7 @@
             };
             return {
               ok: true,
-              nextState: commitWorkingState(workingRoot, resolved),
+              nextState: commitWorkingState(canonicalState, resolved),
               spawnedEffects: [
                 ...(resolved.decisionEffect
                   ? [{ priority: "direct", effect: clone(resolved.decisionEffect) }]
@@ -154,7 +154,7 @@
               }]),
             };
           }
-          const result = executeRegisteredAction(workingRoot, choice);
+          const result = executeRegisteredAction(canonicalState, choice);
           if (!result?.ok) return result;
           return {
             ok: true,

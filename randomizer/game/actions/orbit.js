@@ -58,8 +58,8 @@
     const aomomoApi = getAomomo();
     const isAomomoPlanet = isAomomoPlanetId(placement.planet.planetId);
     return isAomomoPlanet
-      ? Boolean(aomomoApi?.canAddOrbitMarker?.(context.alienGameState))
-      : planetStats.canAddOrbitMarker(context.planetStatsState, placement.planet.planetId);
+      ? Boolean(aomomoApi?.canAddOrbitMarker?.(context.aliens))
+      : planetStats.canAddOrbitMarker(context.planets, placement.planet.planetId);
   }
 
   function buildOrbitChoice(placement) {
@@ -118,29 +118,26 @@
   function execute(context, options = {}) {
     const check = getOrbitOptions(context, options);
     if (!check.ok) {
-      context.rocketState.statusNote = check.message;
       return { ok: false, actionId: ACTION_ID, message: check.message };
     }
 
     const rocketId = getRequestedRocketId(options) ?? check.defaultRocketId;
     const placement = shared.getRocketPlanet(context, { rocketId });
     if (!placement.ok) {
-      context.rocketState.statusNote = placement.message;
       return { ok: false, actionId: ACTION_ID, message: placement.message };
     }
     const currentPlayer = placement.currentPlayer;
     const snapshots = {
       player: structuredClone(currentPlayer),
-      rocketState: structuredClone(context.rocketState),
-      planetStatsState: structuredClone(context.planetStatsState),
-      alienGameState: context.alienGameState ? structuredClone(context.alienGameState) : null,
+      pieces: structuredClone(context.pieces),
+      planets: structuredClone(context.planets),
+      aliens: context.aliens ? structuredClone(context.aliens) : null,
     };
     const spendResult = players.spendResources(currentPlayer, {
       credits: CREDIT_COST,
       energy: ENERGY_COST,
     });
     if (!spendResult.ok) {
-      context.rocketState.statusNote = spendResult.message;
       return { ok: false, actionId: ACTION_ID, message: spendResult.message };
     }
 
@@ -155,27 +152,24 @@
     const isAomomoPlanet = isAomomoPlanetId(placement.planet.planetId);
     if (isAomomoPlanet && !aomomoApi?.addOrbitMarker) {
       const message = "奥陌陌模块未加载";
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
     const markerResult = isAomomoPlanet
-      ? aomomoApi.addOrbitMarker(context.alienGameState, currentPlayer)
+      ? aomomoApi.addOrbitMarker(context.aliens, currentPlayer)
       : planetStats.addPlanetOrbitMarker(
-        context.planetStatsState,
+        context.planets,
         placement.planet.planetId,
         currentPlayer,
       );
     if (!markerResult.ok) {
       currentPlayer.resources.credits += CREDIT_COST;
       currentPlayer.resources.energy += ENERGY_COST;
-      context.rocketState.statusNote = markerResult.message;
       return { ok: false, actionId: ACTION_ID, message: markerResult.message };
     }
 
-    players.incrementPlayerOrbitCount(context.playerState, currentPlayer.id);
+    players.incrementPlayerOrbitCount(context.players, currentPlayer.id);
 
     const message = `环绕 ${placement.planet.name}，消耗 ${CREDIT_COST} 信用点 + ${ENERGY_COST} 能量，移除火箭，${formatMarkerDisplayNote(markerResult.marker)}`;
-    context.rocketState.statusNote = message;
     return {
       ok: true,
       actionId: ACTION_ID,

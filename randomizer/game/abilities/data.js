@@ -73,7 +73,7 @@
   }
 
   function placeData(context, options = {}) {
-    const player = players.getCurrentPlayer(context.playerState);
+    const player = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!player) return { ok: false, abilityId: "placeData", message: "没有当前玩家" };
 
     const choiceResult = listPlacementChoices(player);
@@ -127,7 +127,7 @@
   }
 
   function analyzeData(context, options = {}) {
-    const player = players.getCurrentPlayer(context.playerState);
+    const player = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!player) return { ok: false, abilityId: "analyzeData", message: "没有当前玩家" };
 
     const freeEnergy = Boolean(options.skipCost) || Boolean(getIndustryPassives()?.canAnalyzeWithoutEnergy?.(player));

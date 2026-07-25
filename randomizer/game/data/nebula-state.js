@@ -154,10 +154,6 @@
     return settlements.sectors[key];
   }
 
-  function createEmptyPlayerTokenCounts() {
-    return {};
-  }
-
   function ensureSectorExtraMarkList(state, sectorId) {
     if (!state.sectorExtraMarks || typeof state.sectorExtraMarks !== "object") {
       state.sectorExtraMarks = {};
@@ -187,11 +183,10 @@
     return token?.replacedByPlayerColor || token?.playerColor || null;
   }
 
-  function rebuildNebulaStats(bucket) {
-    const counts = createEmptyPlayerTokenCounts();
+  function deriveNebulaStats(bucket) {
+    const counts = {};
     let lastReplacedPlayerId = null;
     let lastReplacedPlayerColor = null;
-    let lastReplacedPlayerLabel = null;
 
     for (const token of bucket.tokens || []) {
       const color = getTokenOwnerColor(token);
@@ -199,46 +194,35 @@
       counts[color] = (counts[color] || 0) + 1;
       lastReplacedPlayerId = token.replacedByPlayerId || token.playerId || null;
       lastReplacedPlayerColor = color;
-      lastReplacedPlayerLabel = token.replacedByPlayerLabel || token.playerLabel || null;
     }
 
-    bucket.playerTokenCounts = counts;
-    bucket.lastReplacedPlayerId = lastReplacedPlayerId;
-    bucket.lastReplacedPlayerColor = lastReplacedPlayerColor;
-    bucket.lastReplacedPlayerLabel = lastReplacedPlayerLabel;
-    return bucket;
+    return {
+      playerTokenCounts: counts,
+      lastReplacedPlayerId,
+      lastReplacedPlayerColor,
+    };
   }
 
   function ensureNebulaBucket(state, nebulaId) {
     if (!state.nebulae[nebulaId]) {
       state.nebulae[nebulaId] = {
         tokens: [],
-        playerTokenCounts: createEmptyPlayerTokenCounts(),
-        lastReplacedPlayerId: null,
-        lastReplacedPlayerColor: null,
-        lastReplacedPlayerLabel: null,
       };
     } else if (!Array.isArray(state.nebulae[nebulaId].tokens)) {
       state.nebulae[nebulaId].tokens = [];
     }
-    return rebuildNebulaStats(state.nebulae[nebulaId]);
+    return state.nebulae[nebulaId];
   }
 
   function normalizeNebulaToken(token, nebulaId, index) {
     const slotIndex = Number(token?.slotIndex);
-    const layout = nebulaPlacement.getNebulaDataSlotLayout(nebulaId, slotIndex);
     return {
       id: token?.id || `nebula-data-${nebulaId}-${index + 1}`,
       index: Number.isInteger(token?.index) ? token.index : index + 1,
       nebulaId,
       slotIndex,
-      percentX: token?.percentX ?? layout?.percentX ?? null,
-      percentY: token?.percentY ?? layout?.percentY ?? null,
       replacedByPlayerId: token?.replacedByPlayerId || token?.playerId || null,
       replacedByPlayerColor: token?.replacedByPlayerColor || token?.playerColor || null,
-      replacedByPlayerLabel: token?.replacedByPlayerLabel || token?.playerLabel || null,
-      playerTokenSrc: token?.playerTokenSrc || token?.tokenSrc || null,
-      replacedAt: token?.replacedAt || null,
       replacementOrder: Number.isFinite(Number(token?.replacementOrder)) ? Number(token.replacementOrder) : null,
     };
   }
@@ -250,9 +234,9 @@
       const bucket = sourceNebulae[nebulaId];
       if (!bucket) continue;
       const tokens = Array.isArray(bucket.tokens) ? bucket.tokens : [];
-      nebulae[nebulaId] = rebuildNebulaStats({
+      nebulae[nebulaId] = {
         tokens: tokens.map((token, index) => normalizeNebulaToken(token, nebulaId, index)),
-      });
+      };
     }
     const normalized = {
       nebulae,
@@ -322,8 +306,6 @@
       added.push({ token, layout });
     }
 
-    rebuildNebulaStats(bucket);
-
     if (!added.length) {
       return {
         ok: false,
@@ -374,7 +356,6 @@
     if (nebulaId) {
       if (state.nebulae[nebulaId]) {
         state.nebulae[nebulaId].tokens = [];
-        rebuildNebulaStats(state.nebulae[nebulaId]);
       }
       if (state.sectorExtraMarks?.[nebulaId]) {
         state.sectorExtraMarks[nebulaId] = [];
@@ -386,32 +367,16 @@
     state.sectorSettlements = createDefaultSectorSettlementState();
   }
 
-  function updateNebulaTokenPosition(state, nebulaId, slotIndex, position) {
-    const bucket = ensureNebulaBucket(state, nebulaId);
-    const token = bucket.tokens.find((item) => item.slotIndex === Number(slotIndex));
-    if (!token) return null;
-    token.percentX = position.percentX;
-    token.percentY = position.percentY;
-    return token;
-  }
-
   function getNebulaReplacementStats(state, nebulaId) {
     const bucket = state?.nebulae?.[nebulaId];
     if (!bucket) {
       return {
-        playerTokenCounts: createEmptyPlayerTokenCounts(),
+        playerTokenCounts: {},
         lastReplacedPlayerId: null,
         lastReplacedPlayerColor: null,
-        lastReplacedPlayerLabel: null,
       };
     }
-    rebuildNebulaStats(bucket);
-    return {
-      playerTokenCounts: { ...(bucket.playerTokenCounts || {}) },
-      lastReplacedPlayerId: bucket.lastReplacedPlayerId || null,
-      lastReplacedPlayerColor: bucket.lastReplacedPlayerColor || null,
-      lastReplacedPlayerLabel: bucket.lastReplacedPlayerLabel || null,
-    };
+    return deriveNebulaStats(bucket);
   }
 
   function getNextReplaceableNebulaToken(state, nebulaId) {
@@ -422,8 +387,7 @@
 
   function getTokenReplacementRank(token) {
     if (Number.isFinite(Number(token?.replacementOrder))) return Number(token.replacementOrder);
-    const parsedTime = Date.parse(token?.replacedAt || "");
-    return Number.isFinite(parsedTime) ? parsedTime : 0;
+    return 0;
   }
 
   function addPlayerCountEntry(countsByPlayer, mark) {
@@ -436,8 +400,7 @@
         playerKey: key,
         playerId: mark.replacedByPlayerId || mark.playerId || null,
         playerColor: color,
-        playerLabel: mark.replacedByPlayerLabel || mark.playerLabel || color,
-        playerTokenSrc: mark.playerTokenSrc || null,
+        playerLabel: color,
         count: 0,
         latestReplacementOrder: rank,
       };
@@ -447,8 +410,7 @@
       countsByPlayer[key].latestReplacementOrder = rank;
       countsByPlayer[key].playerId = mark.replacedByPlayerId || mark.playerId || countsByPlayer[key].playerId;
       countsByPlayer[key].playerColor = color;
-      countsByPlayer[key].playerLabel = mark.replacedByPlayerLabel || mark.playerLabel || countsByPlayer[key].playerLabel;
-      countsByPlayer[key].playerTokenSrc = mark.playerTokenSrc || countsByPlayer[key].playerTokenSrc;
+      countsByPlayer[key].playerLabel = color;
     }
   }
 
@@ -484,15 +446,11 @@
 
     const replacementSequence = takeSequence(state, options, "nebulaReplacement");
     const playerColor = options.playerColor || player.color || null;
-    const playerLabel = options.playerLabel || player.colorLabel || player.name || playerColor || "玩家";
     const mark = {
       id: options.id || `sector-extra-mark-${normalizedSectorId}-${replacementSequence}`,
       sectorId: normalizedSectorId,
       replacedByPlayerId: player.id || null,
       replacedByPlayerColor: playerColor,
-      replacedByPlayerLabel: playerLabel,
-      playerTokenSrc: options.playerTokenSrc || options.tokenSrc || null,
-      replacedAt: options.replacedAt || `sequence:${replacementSequence}`,
       replacementOrder: options.replacementOrder || replacementSequence,
     };
     ensureSectorExtraMarkList(state, normalizedSectorId).push(mark);
@@ -503,7 +461,7 @@
       mark,
       player,
       stats: getSectorTokenStats(state, normalizedSectorId),
-      message: `扇区${normalizedSectorId} 额外标记已添加为${playerLabel}token`,
+      message: `扇区${normalizedSectorId} 额外标记已添加为${playerColor || "玩家"}token`,
     };
   }
 
@@ -525,21 +483,6 @@
     if (!capacity || tokens.length !== capacity) return false;
     if (tokens.some((token) => !getTokenOwnerColor(token))) return false;
     return true;
-  }
-
-  function findPlayerForSettlement(participant, options = {}) {
-    const allPlayers = Array.isArray(options.players) ? options.players : [];
-    return allPlayers.find((player) => player.id === participant?.playerId)
-      || allPlayers.find((player) => player.color === participant?.playerColor)
-      || null;
-  }
-
-  function getSettlementPlayerTokenSrc(participant, options = {}) {
-    const player = findPlayerForSettlement(participant, options);
-    if (typeof options.getPlayerTokenSrc === "function") {
-      return options.getPlayerTokenSrc(player || participant);
-    }
-    return participant?.playerTokenSrc || player?.playerTokenSrc || null;
   }
 
   function hasFirstWinCircle(sectorId) {
@@ -569,9 +512,6 @@
       slotIndex: 1,
       replacedByPlayerId: participant.playerId,
       replacedByPlayerColor: participant.playerColor,
-      replacedByPlayerLabel: participant.playerLabel,
-      playerTokenSrc: getSettlementPlayerTokenSrc(participant, options),
-      replacedAt: options.settledAt || `sequence:${tokenSequence}`,
       replacementOrder: participant.latestReplacementOrder,
     }, nebulaId, 0);
   }
@@ -581,7 +521,6 @@
     if (!nebulaId) return [];
     const bucket = ensureNebulaBucket(state, nebulaId);
     bucket.tokens = [];
-    rebuildNebulaStats(bucket);
     if (state.sectorExtraMarks) {
       state.sectorExtraMarks[nebulaId] = [];
     }
@@ -590,7 +529,6 @@
       const token = createRetainedSectorToken(state, nebulaId, retainedParticipant, options);
       if (token) {
         bucket.tokens.push(token);
-        rebuildNebulaStats(bucket);
       }
     }
 
@@ -662,8 +600,6 @@
       const sectorRecord = ensureSectorSettlementRecord(state, normalizedSectorId);
       sectorRecord.settlementCount += 1;
       const settlementNumber = sectorRecord.settlementCount;
-      sectorRecord.lastWinner = null;
-
       const fillResults = resetSectorNebulaData(state, normalizedSectorId, null, {
         ...options,
         settledAt: options.settledAt || new Date().toISOString(),
@@ -690,14 +626,10 @@
       settlementNumber,
       playerId: winner.playerId,
       playerColor: winner.playerColor,
-      playerLabel: winner.playerLabel,
-      playerTokenSrc: getSettlementPlayerTokenSrc(winner, options),
       slotKind: markerSlot.slotKind,
       markerIndex: markerSlot.markerIndex,
     };
     sectorRecord.winners.push(winnerRecord);
-    sectorRecord.lastWinner = winnerRecord;
-
     const winnerKey = winner.playerId || winner.playerColor;
     const settlements = ensureSectorSettlementState(state);
     if (!settlements.winsByPlayerId[winnerKey]) settlements.winsByPlayerId[winnerKey] = [];
@@ -747,24 +679,6 @@
     return Array.isArray(winners) ? winners.map((winner) => ({ ...winner })) : [];
   }
 
-  function revertNebulaTokenReplacement(state, nebulaId, tokenId, before = {}) {
-    const bucket = state?.nebulae?.[nebulaId];
-    if (!bucket) return { ok: false, message: `未知星云 ${nebulaId}` };
-
-    const token = bucket.tokens.find((item) => item.id === tokenId);
-    if (!token) return { ok: false, message: `未找到星云数据 ${tokenId}` };
-
-    token.replacedByPlayerId = before.replacedByPlayerId ?? null;
-    token.replacedByPlayerColor = before.replacedByPlayerColor ?? null;
-    token.replacedByPlayerLabel = before.replacedByPlayerLabel ?? null;
-    token.playerTokenSrc = before.playerTokenSrc ?? null;
-    token.replacedAt = before.replacedAt ?? null;
-    token.replacementOrder = before.replacementOrder ?? null;
-    rebuildNebulaStats(bucket);
-
-    return { ok: true, nebulaId, tokenId, token };
-  }
-
   function replaceNextNebulaDataToken(state, nebulaId, player, options = {}) {
     const capacity = nebulaPlacement.getNebulaCapacity(nebulaId);
     if (!capacity) {
@@ -794,15 +708,10 @@
     const token = bucket.tokens.find((item) => item.id === next.id);
     const playerColor = options.playerColor || player.color || null;
     const playerLabel = options.playerLabel || player.colorLabel || player.name || playerColor || "玩家";
-    const tokenSrc = options.playerTokenSrc || options.tokenSrc || null;
     token.replacedByPlayerId = player.id || null;
     token.replacedByPlayerColor = playerColor;
-    token.replacedByPlayerLabel = playerLabel;
-    token.playerTokenSrc = tokenSrc;
     const replacementSequence = takeSequence(state, options, "nebulaReplacement");
-    token.replacedAt = options.replacedAt || `sequence:${replacementSequence}`;
     token.replacementOrder = options.replacementOrder || replacementSequence;
-    rebuildNebulaStats(bucket);
 
     const label = nebulaPlacement.getNebulaLabel(nebulaId);
     const scoreReward = getNebulaSlotScoreReward(nebulaId, token.slotIndex);
@@ -841,7 +750,6 @@
     fillNebulaData,
     fillAllNebulaData,
     clearNebulaData,
-    updateNebulaTokenPosition,
     addSectorExtraMark,
     removeSectorExtraMark,
     listSectorExtraMarks,
@@ -855,7 +763,6 @@
     settleCompletedSectors,
     getNebulaReplacementStats,
     getNextReplaceableNebulaToken,
-    revertNebulaTokenReplacement,
     replaceNextNebulaDataToken,
   });
 });

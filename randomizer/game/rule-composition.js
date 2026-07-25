@@ -50,7 +50,6 @@
     const effectRuntimeApi = options.effectRuntimeApi;
     const createActionRegistry = options.createActionRegistry;
     const createInitialState = options.createInitialState;
-    const stateAdapter = options.stateAdapter || null;
     if (typeof stateStoreApi?.createStateStore !== "function") {
       throw new TypeError("Rule Composition 缺少 StateStore factory");
     }
@@ -75,20 +74,11 @@
     if (!actionRegistry?.enumerate || !actionRegistry?.validate) {
       throw new TypeError("createActionRegistry() 未返回 Standard Action registry");
     }
-    if (stateAdapter && (typeof stateAdapter.createWorkingState !== "function"
-      || typeof stateAdapter.createCommittedState !== "function"
-      || typeof stateAdapter.restoreWorkingState !== "function")) {
-      throw new TypeError("Rule Composition stateAdapter 缺少 working/committed/restore 原子协议");
-    }
     const storeOptions = Object.freeze({ invariantValidators: [...(options.invariantValidators || [])] });
-    let workingState = stateAdapter
-      ? stateAdapter.createWorkingState(clone(options.initialOptions || {}))
-      : null;
     let store = stateStoreApi.createStateStore(
-      clone(createInitialState(clone(options.initialOptions || {}), workingState)),
+      clone(createInitialState(clone(options.initialOptions || {}))),
       storeOptions,
     );
-    if (stateAdapter) stateAdapter.restoreWorkingState(workingState, store.getSnapshot(), { reason: "initial" });
     let runtime = null;
     let activeSession = null;
     let activeFamily = null;
@@ -101,11 +91,6 @@
     let lastCounterfactualDiagnostics = null;
 
     function actionContext(state) {
-      if (stateAdapter) {
-        return typeof options.createActionContext === "function"
-          ? options.createActionContext(workingState)
-          : workingState;
-      }
       return typeof options.createActionContext === "function"
         ? options.createActionContext(state)
         : state;
@@ -128,24 +113,19 @@
         return fail("RULE_COMPOSITION_ACTION_EXECUTOR_MISSING", "Standard Action registry 缺少 execute()");
       }
       const nextState = clone(state);
-      const beforeWorkingState = stateAdapter ? clone(workingState) : null;
       const workingContext = actionContext(nextState);
       const result = runWithWorkingStateContext(
         workingContext,
         () => actionRegistry.execute(workingContext, clone(action)),
       );
       if (!result || result.ok !== true) {
-        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "action_rejected" });
         return result?.ok === false
           ? result
           : fail("RULE_COMPOSITION_ACTION_EXECUTION_FAILED", "Standard Action execute() 未返回成功结果");
       }
-      const committedState = stateAdapter
-        ? stateAdapter.createCommittedState(workingState, nextState)
-        : nextState;
+      const committedState = nextState;
       const validation = store.validate(committedState);
       if (!validation.ok) {
-        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "state_invalid" });
         return deepFreeze(clone(validation));
       }
       lastActionResult = clone(result);
@@ -162,7 +142,6 @@
     function bindStoreEvents() {
       unsubscribeStore?.();
       unsubscribeStore = store.subscribe((event) => {
-        stateAdapter?.onCommitted?.(workingState, clone(event.snapshot), clone(event));
         publish({ source: "committed", event });
       });
     }
@@ -173,7 +152,7 @@
         validateState: (state) => store.validate(state),
         projectState: (state, viewer, inspection) => (
           options.projectState(
-            clone(stateAdapter && options.projectWorkingState ? workingState : state),
+            clone(state),
             clone(viewer),
             clone(inspection),
             { stateVersion: state?.meta?.stateVersion ?? store.getSnapshot().meta.stateVersion },
@@ -187,22 +166,25 @@
             workingContext,
             () => operation(state, ...args, workingContext),
           );
-          if (typeof options.transformEffectResult !== "function") return result;
-          const transformed = options.transformEffectResult(
-            workingContext,
-            result,
-            args[0] || null,
+          if (result?.ok === true && result.nextState?.meta && state?.meta) {
+            result.nextState.meta = clone(state.meta);
+          }
+          if (typeof options.transformEffectResult !== "function"
+            || result?.ok !== true
+            || !result.nextState) return result;
+          const transformedContext = actionContext(result.nextState);
+          const transformed = runWithWorkingStateContext(
+            transformedContext,
+            () => options.transformEffectResult(
+              transformedContext,
+              result,
+              args[0] || null,
+            ),
           );
-          if (transformed !== result && transformed?.ok === true && transformed.nextState) {
+          if (transformed !== result && transformed?.ok === true) {
             return {
               ...transformed,
-              nextState: stateAdapter
-                ? stateAdapter.createCommittedState(
-                  workingState,
-                  state,
-                  { source: "effect_result_transform" },
-                )
-                : clone(state),
+              nextState: clone(transformed.nextState || result.nextState),
             };
           }
           return transformed;
@@ -227,10 +209,8 @@
           ...(descriptor.options || {}),
           runtime: Object.freeze({ ...next, registerExecutor: registerContextualExecutor }),
           executeRegisteredAction,
-          commitWorkingState(state, context = {}) {
-            return stateAdapter
-              ? stateAdapter.createCommittedState(workingState, state, clone(context))
-              : clone(state);
+          commitWorkingState(state, _context = {}) {
+            return clone(state);
           },
         });
         if (typeof domain?.createEffectGroup !== "function") {
@@ -272,7 +252,7 @@
     function committedProjection(viewer = null) {
       const state = store.getSnapshot();
       const projected = options.projectState(
-        clone(stateAdapter && options.projectWorkingState ? workingState : state),
+        clone(state),
         clone(viewer),
         null,
         { stateVersion: state.meta.stateVersion },
@@ -297,13 +277,10 @@
     }
 
     function readStateSource(viewer = null) {
-      if (stateAdapter && typeof stateAdapter.createProjectionState !== "function") {
-        throw new TypeError("Rule Composition 未配置 canonical state source");
-      }
       const committed = store.getSnapshot();
-      const projectedState = stateAdapter
-        ? stateAdapter.createProjectionState(workingState, committed)
-        : (activeSession ? runtime.observe(activeSession, clone(viewer))?.state : committed);
+      const projectedState = activeSession
+        ? runtime.observe(activeSession, clone(viewer))?.state
+        : committed;
       const inspection = activeSession ? runtime.inspect(activeSession) : null;
       const observation = activeSession ? runtime.observe(activeSession, clone(viewer)) : null;
       return deepFreeze({
@@ -353,7 +330,6 @@
     function submitAction(action, submitOptions = {}) {
       if (activeSession) return fail("RULE_COMPOSITION_SESSION_ACTIVE", "已有规则 Session 正在执行");
       lastActionResult = null;
-      const beforeWorkingState = stateAdapter ? clone(workingState) : null;
       const dispatched = runtime.dispatchStandardAction(
         clone(action),
         {
@@ -376,16 +352,12 @@
         { source: "browser-input", ...clone(submitOptions.metadata || {}) },
       );
       if (!dispatched?.ok) {
-        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "action_dispatch_rejected" });
         return deepFreeze(clone(dispatched));
       }
       activeSession = dispatched.session;
       activeFamily = action.family;
       publish({ source: "session", event: { type: "opened", family: activeFamily } });
       const result = advanceSession(dispatched, submitOptions.autoDrain !== false);
-      if (result?.ok === false && stateAdapter && !activeSession) {
-        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "action_session_aborted" });
-      }
       return result;
     }
 
@@ -480,29 +452,7 @@
     }
 
     function save(saveOptions = {}) {
-      let committed = store.getSnapshot();
-      let saveState = activeSession && typeof stateAdapter?.createSavedState === "function"
-        ? stateAdapter.createSavedState(committed, workingState, clone(saveOptions))
-        : committed;
-      if (!activeSession && stateAdapter) {
-        const candidate = stateAdapter.createCommittedState(workingState, committed, clone(saveOptions));
-        candidate.meta.stateVersion = committed.meta.stateVersion;
-        const committedSerialized = store.serialize(committed);
-        const candidateSerialized = store.serialize(candidate);
-        if (!candidateSerialized.ok) return deepFreeze(clone(candidateSerialized));
-        if (!committedSerialized.ok || committedSerialized.serialized !== candidateSerialized.serialized) {
-          const settled = store.compareAndCommit(
-            committed.meta.stateVersion,
-            candidate,
-            { source: "browser-composition-save-stable-boundary" },
-          );
-          if (!settled.ok) return deepFreeze(clone(settled));
-          committed = store.getSnapshot();
-          saveState = committed;
-        } else {
-          saveState = candidate;
-        }
-      }
+      const saveState = store.getSnapshot();
       const validation = store.validate(saveState);
       if (!validation.ok) return deepFreeze(clone(validation));
       const serialized = store.serialize(saveState);
@@ -572,9 +522,6 @@
       } else {
         installStore(validated.state);
       }
-      if (stateAdapter) stateAdapter.restoreWorkingState(workingState, validated.state, {
-        reason: restoreOptions.inPlace === true ? "counterfactual_restore" : "restore",
-      });
       if (validated.session) {
         const restored = runtime.restoreCheckpoint(clone(envelope.session));
         if (!restored?.ok) throw new Error("已预验证的 Effect Session 恢复失败");
@@ -589,20 +536,14 @@
 
     function newGame(initialOptions = {}) {
       let initialState;
-      let nextWorkingState = null;
       try {
-        nextWorkingState = stateAdapter ? stateAdapter.createWorkingState(clone(initialOptions)) : null;
-        initialState = createInitialState(clone(initialOptions), nextWorkingState);
+        initialState = createInitialState(clone(initialOptions));
       }
       catch (error) { return fail("RULE_COMPOSITION_NEW_GAME_FAILED", error?.message || "新局状态创建失败"); }
       const previousVersion = store.getSnapshot().meta.stateVersion;
       if (initialState?.meta) initialState.meta.stateVersion = previousVersion + 1;
       try { installStore(initialState); }
       catch (error) { return fail("RULE_COMPOSITION_NEW_GAME_INVALID", error?.message || "新局状态无效"); }
-      if (stateAdapter) stateAdapter.restoreWorkingState(workingState, nextWorkingState, {
-        reason: "new_game",
-        committedState: initialState,
-      });
       publish({ source: "lifecycle", event: { type: "new_game" } });
       return deepFreeze({ ok: true, projection: committedProjection() });
     }
@@ -923,8 +864,7 @@
       getDiagnostics: () => clone(lastCounterfactualDiagnostics),
     });
 
-    const stateSourcePort = !stateAdapter || typeof stateAdapter.createProjectionState === "function"
-      ? Object.freeze({
+    const stateSourcePort = Object.freeze({
         getSnapshot: () => store.getSnapshot(),
         read: readStateSource,
         project(projector, viewer = null) {
@@ -936,8 +876,7 @@
           if (typeof listener !== "function") throw new TypeError("Rule Composition state source subscriber 必须是函数");
           return store.subscribe(listener);
         },
-      })
-      : null;
+      });
     const readModelEntries = Object.entries(options.readModels || {});
     for (const [name, reader] of readModelEntries) {
       if (typeof reader !== "function") throw new TypeError(`Rule Composition read model ${name} 必须是函数`);
@@ -947,7 +886,8 @@
         read(name) {
           const reader = options.readModels?.[name];
           if (typeof reader !== "function") throw new TypeError(`Rule Composition 未注册 read model: ${name}`);
-          return deepFreeze(clone(reader(workingState, {
+          const state = activeSession ? activeSession.workingState : store.getSnapshot();
+          return deepFreeze(clone(reader(state, {
             phase: activeSession?.phase || "idle",
             stateVersion: store.getSnapshot().meta.stateVersion,
           })));
@@ -962,7 +902,7 @@
       counterfactualPort,
       projection,
       inspect,
-      ...(stateSourcePort ? { stateSourcePort } : {}),
+      stateSourcePort,
       ...(readModelPort ? { readModelPort } : {}),
       subscribe(listener) {
         if (typeof listener !== "function") throw new TypeError("Rule Composition subscriber 必须是函数");

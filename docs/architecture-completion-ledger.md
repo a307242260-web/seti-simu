@@ -23,14 +23,14 @@ node tools/report_architecture_residuals.js
 
 - 生产 JavaScript 均可由 Browser script 或 Node 生产入口到达；“被加载”不能代替真实生产消费者证明。
 - Standard Action registry 当前登记 22 个 family，Effect Session 当前登记 5 个 production domain。
-- Node 当前 64/64 unit、1/1 full-flow 通过；Chrome smoke 当前 3/3 通过，但 smoke 中部分展示检查只验证静态容器或空 DTO 存在。
+- Node 当前 61/61 unit、1/1 full-flow 通过；Chrome smoke 最近一次为 3/3，但 smoke 中部分展示检查只验证静态容器或空 DTO 存在，M4/M5 仍需重做动态证据。
 - `randomizer/app/dom.js` 的 160 个顶层 DOM key 中，有 131 个在生产 JavaScript 中没有静态消费者。
 
 ## 里程碑账本
 
 | 里程碑 | 审计基线 | 完成证明 | 当前状态 |
 |---|---|---|---|
-| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 未完成 |
+| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 进行中：旧 root/adapter/slice/模块 ID owner 已清零；冗余 RNG 初始化仍有 1 处 |
 | M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 未完成 |
 | M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 未完成 |
 | M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 未完成 |
@@ -74,6 +74,21 @@ node tools/report_architecture_residuals.js
 - `localIdentityFallbacks` 从 12 处 / 3 个生产文件下降到 0；此外删除了此前未被该模式捕获的 1 个星云通用 fallback。
 - 新审计发现正式发牌前仍会创建并立即丢弃一批 PASS 牌来维持历史 RNG 轨迹，已单列为 `redundantInitializationCompatibility`，因此 M1 仍未完成。
 - Node 回归通过：61/61 unit、1/1 full-flow；真实 Chrome smoke 3/3 通过。
+
+### 2026-07-25：规则域直接切换到 Effect Session canonical state
+
+- `createInitialState()` 现在直接创建唯一 canonical root；物理删除 session/committed 双结构转换、`stateAdapter`、`projectWorkingState` 和长期额外 working root。
+- 生产规则、Effect domain、恢复、反事实 fork、Standard/Quick Action 统一直接读写 `meta/match/turn/players/solarSystem/pieces/planets/data/cards/tech/aliens/finalScoring`。
+- 修复旧事件增强钩子覆盖 executor canonical `nextState` 的真实缺陷：后续卡牌触发现在继续作用于同一个 `nextState`，快速交易 11 信用/3 能量可正确提交为 9 信用/4 能量。
+- 星云 token 只保存 owner、槽位和替换顺序；删除坐标、玩家标签、图片、时间戳、bucket 统计、旧位置修改与回滚 API。统计与排名改为按 canonical token 派生。
+- 星球 marker 删除派生计数、展示序号和旧 piece 转换字段；特殊奖励槽只保存规则字段 `rewardSlot`，Browser 展示槽与碰撞偏移由读取时派生。
+- 太阳系规则状态只保存 `rotation`；删除所有生产 `wheelSteps` 写入，Browser projection 从 rotation 派生。
+- `legacyWorkingRoot` 从 87 处 / 2 文件下降到 0；`legacyRootSlices` 从 1391 处 / 35 文件下降到 0。
+- `ruleOwnedPresentationState` 从 126 处 / 17 文件下降到 40 处 / 5 文件；剩余项必须逐个区分真实规则层展示状态和用于拒绝旧字段的门禁定义，不能把模式计数直接当作完成。
+- `parallelDecisionState` 从 29 处 / 7 文件下降到 28 处 / 7 文件；该族属于 M2，尚未开始正式迁移。
+- 本批修改 66 个文件，新增 1757 行、删除 2298 行，净删除 541 行；未新增 adapter、兼容 fallback 或第二状态 owner。
+- 固定 full-flow 最终业务盘面逐字段不变；权威版本 8→7 是删除一次无状态变化的旧 adapter 提交，checkpoint hash 已更新为新的 canonical bytes。
+- 验证通过：全部生产 JavaScript `node --check`、61/61 unit、1/1 full-flow、`git diff --check`。
 
 ## 每轮更新格式
 

@@ -7,21 +7,21 @@
   let planetStats = root.SetiPlanetStats;
   let aliens = root.SetiAliens;
   let rockets = root.SetiRocketActions;
-  let techBoardState = root.SetiTechBoardState;
+  let techBoard = root.SetiTechBoardState;
   let playerTech = root.SetiPlayerTech;
 
-  if ((!players || !cards || !data || !planetStats || !aliens || !rockets || !techBoardState || !playerTech) && typeof require === "function") {
+  if ((!players || !cards || !data || !planetStats || !aliens || !rockets || !techBoard || !playerTech) && typeof require === "function") {
     players = players || require("./players");
     cards = cards || require("./cards/deck");
     data = data || require("./data");
     planetStats = planetStats || require("./planet-stats");
     aliens = aliens || require("./aliens");
     rockets = rockets || require("./rockets");
-    techBoardState = techBoardState || require("./tech/board-state");
+    techBoard = techBoard || require("./tech/board-state");
     playerTech = playerTech || require("./tech/player-tech");
   }
 
-  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoardState, playerTech);
+  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoard, playerTech);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -35,7 +35,7 @@
   planetStats,
   aliens,
   rockets,
-  techBoardState,
+  techBoard,
   playerTech,
 ) {
   "use strict";
@@ -237,7 +237,7 @@
   }
 
   function getPlayerById(context, playerId) {
-    return (context?.playerState?.players || []).find((player) => player.id === playerId) || null;
+    return (context?.players?.players || []).find((player) => player.id === playerId) || null;
   }
 
   function attachPlayerResult(result, player) {
@@ -339,16 +339,16 @@
         typeof context?.blindDrawCard === "function"
           ? context.blindDrawCard(targetPlayer)
           : cards.blindDraw(
-            context.cardState,
-            context.playerState,
+            context.cards,
+            context.players,
             targetPlayer,
             Math.random,
-            { root: context?.workingRoot },
+            { root: context?.state },
           )
       ),
       gainData: (targetPlayer) => data.gainData(targetPlayer, {
         source: "initial_card",
-        root: context?.workingRoot,
+        root: context?.state,
       }),
     });
     const labels = {
@@ -370,7 +370,7 @@
   function applyDataGain(context, player, count, results) {
     const target = Math.max(0, Math.round(Number(count) || 0));
     for (let index = 0; index < target; index += 1) {
-      const result = data.gainData(player, { source: "initial_card", root: context?.workingRoot });
+      const result = data.gainData(player, { source: "initial_card", root: context?.state });
       pushResult(results, {
         ...result,
         type: "data",
@@ -384,11 +384,11 @@
       const result = typeof context?.blindDrawCard === "function"
         ? context.blindDrawCard(player)
         : cards.blindDraw(
-          context.cardState,
-          context.playerState,
+          context.cards,
+          context.players,
           player,
           Math.random,
-          { root: context?.workingRoot },
+          { root: context?.state },
         );
       pushResult(results, {
         ...result,
@@ -406,11 +406,11 @@
       let result;
       if (typeof context?.launchRocketAtEarth === "function") {
         result = context.launchRocketAtEarth(player);
-      } else if (context?.rocketState && typeof context?.getEarthSectorCoordinate === "function") {
-        result = rockets.launchRocketAtSector(context.rocketState, context.getEarthSectorCoordinate(), {
+      } else if (context?.pieces && typeof context?.getEarthSectorCoordinate === "function") {
+        result = rockets.launchRocketAtSector(context.pieces, context.getEarthSectorCoordinate(), {
           playerId: player.id,
           color: player.color,
-          root: context.workingRoot || context,
+          root: context.state || context,
         });
       } else {
         result = { ok: false, message: "缺少发射上下文" };
@@ -441,9 +441,9 @@
       return;
     }
 
-    const board = context?.techBoardState || context?.techGameState?.board;
-    const supplyResult = board && techBoardState?.consumeStartupTileWithoutRewards
-      ? techBoardState.consumeStartupTileWithoutRewards(board, tileId)
+    const board = context?.tech;
+    const supplyResult = board && techBoard?.consumeStartupTileWithoutRewards
+      ? techBoard.consumeStartupTileWithoutRewards(board, tileId)
       : { ok: true, skippedBonusId: null, message: "未连接科技供应" };
     if (!supplyResult.ok) {
       pushResult(results, { ...supplyResult, type: "startupTech" });
@@ -463,9 +463,9 @@
   }
 
   function replaceNextSectorData(context, player, nebulaId) {
-    const nextToken = data.getNextReplaceableNebulaToken(context.nebulaDataState, nebulaId);
+    const nextToken = data.getNextReplaceableNebulaToken(context.data, nebulaId);
     const options = {
-      root: context?.workingRoot,
+      root: context?.state,
       playerColor: player.color,
       playerLabel: player.colorLabel,
       playerTokenSrc: getTokenSrc(context, player),
@@ -473,13 +473,13 @@
     };
     if (nextToken) {
       const replaceResult = data.replaceNextNebulaDataToken(
-        context.nebulaDataState,
+        context.data,
         nebulaId,
         player,
         options,
       );
       if (!replaceResult.ok) return replaceResult;
-      const gainResult = data.gainData(player, { source: "initial_card", root: context?.workingRoot });
+      const gainResult = data.gainData(player, { source: "initial_card", root: context?.state });
       return {
         ...replaceResult,
         ok: true,
@@ -492,7 +492,7 @@
     if (typeof data.addSectorExtraMark !== "function") {
       return { ok: false, type: "scan", message: `${data.getNebulaLabel(nebulaId)}没有可替换的数据` };
     }
-    const extraResult = data.addSectorExtraMark(context.nebulaDataState, nebulaId, player, options);
+    const extraResult = data.addSectorExtraMark(context.data, nebulaId, player, options);
     return {
       ...extraResult,
       type: "scan",
@@ -513,9 +513,9 @@
 
   function applyOrbitMarker(context, player, planetId, results) {
     if (!planetId) return;
-    const result = planetStats.addPlanetOrbitMarker(context.planetStatsState, planetId, player);
+    const result = planetStats.addPlanetOrbitMarker(context.planets, planetId, player);
     if (result.ok) {
-      players.incrementPlayerOrbitCount(context.playerState, player.id);
+      players.incrementPlayerOrbitCount(context.players, player.id);
     }
     pushResult(results, {
       ...result,
@@ -548,16 +548,16 @@
   }
 
   function applyAlienTrace(context, player, trace, results, events) {
-    if (!trace || !context.alienGameState) return;
+    if (!trace || !context.aliens) return;
     const result = aliens.placeFirstTrace(
-      context.alienGameState,
+      context.aliens,
       trace.alienSlotId,
       trace.traceType,
       player.color,
     );
     let revealResult = null;
     if (result.ok && result.readyToReveal) {
-      revealResult = aliens.revealAlien(context.alienGameState, trace.alienSlotId);
+      revealResult = aliens.revealAlien(context.aliens, trace.alienSlotId);
     }
     pushResult(results, {
       ...result,
@@ -657,8 +657,8 @@
   function resolveInitialSelections(context, options = {}) {
     const sourcePlayerIds = Array.isArray(options.playerIds) && options.playerIds.length
       ? options.playerIds
-      : (context?.playerState?.players || []).map((player) => player.id);
-    const originalPlayerId = context?.playerState?.currentPlayerId || null;
+      : (context?.players?.players || []).map((player) => player.id);
+    const originalPlayerId = context?.turn?.currentPlayerId || null;
     const results = [];
     const events = [];
     const pendingIncomeIncreases = [];
@@ -668,7 +668,7 @@
       const selectedInitialCards = player?.initialSelection?.removedInitialCards || [];
       if (!player) continue;
 
-      context.playerState.currentPlayerId = player.id;
+      context.turn.currentPlayerId = player.id;
       const industryResult = resolveIndustryEffect(context, player, player.initialSelection?.industry);
       results.push(attachPlayerResult(industryResult, player));
       results.push(attachPlayerResult(resolveTurnOrderScoreEffect(player, positionIndex), player));
@@ -686,8 +686,8 @@
       }
     }
 
-    if (context?.playerState && originalPlayerId) {
-      context.playerState.currentPlayerId = originalPlayerId;
+    if (context?.players && originalPlayerId) {
+      context.turn.currentPlayerId = originalPlayerId;
     }
 
     const failed = results.filter((result) => !result.ok);

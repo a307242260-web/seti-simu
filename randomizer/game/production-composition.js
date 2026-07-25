@@ -107,22 +107,22 @@
     const FAMILIES = Object.freeze(["choose_card", "choose_payment"]);
 
     function currentPending(context) {
-      const root = context?.workingRoot || context;
+      const root = context?.state || context;
       return root?.match?.pendingDecision?.type === "trade"
         ? root.match.pendingDecision
         : null;
     }
 
     function resolvePlayer(root, pending) {
-      return root?.playerState?.players
+      return root?.players?.players
         ?.find((player) => player.id === pending?.playerId) || null;
     }
 
     function openDiscard(root, count, input = {}) {
       const player = input.player
-        || root.playerState?.players?.find((entry) => entry.id === input.playerId)
-        || root.playerState?.players?.find(
-          (entry) => entry.id === root.playerState?.currentPlayerId,
+        || root.players?.players?.find((entry) => entry.id === input.playerId)
+        || root.players?.players?.find(
+          (entry) => entry.id === root.turn?.currentPlayerId,
         );
       const required = Math.max(1, Math.round(Number(count) || 0));
       if (!player || (player.hand || []).length < required) {
@@ -141,14 +141,14 @@
 
     function openCardSelection(root, input = {}) {
       const player = input.player
-        || root.playerState?.players?.find((entry) => entry.id === input.playerId)
-        || root.playerState?.players?.find(
-          (entry) => entry.id === root.playerState?.currentPlayerId,
+        || root.players?.players?.find((entry) => entry.id === input.playerId)
+        || root.players?.players?.find(
+          (entry) => entry.id === root.turn?.currentPlayerId,
         );
       if (!player) {
         return { ok: false, code: "QUICK_TRADE_CARD_OWNER_MISSING", message: "快速交易选牌 owner 不存在" };
       }
-      const hasPublicCard = (root.cardState?.publicCards || []).some(Boolean);
+      const hasPublicCard = (root.cards?.publicCards || []).some(Boolean);
       if (!hasPublicCard && input.allowBlindDraw === false) {
         return { ok: false, code: "QUICK_TRADE_CARD_UNAVAILABLE", message: "没有可选公共牌" };
       }
@@ -192,7 +192,7 @@
     }
 
     function cardChoices(root, pending) {
-      const publicChoices = (root.cardState?.publicCards || []).flatMap((card, slotIndex) => (
+      const publicChoices = (root.cards?.publicCards || []).flatMap((card, slotIndex) => (
         card ? [{
           target: {
             kind: "trade-card-selection",
@@ -219,7 +219,7 @@
     }
 
     function enumerate(context, request = {}) {
-      const root = context?.workingRoot || context;
+      const root = context?.state || context;
       const pending = currentPending(context);
       if (!pending) return [];
       if (request.family === "choose_payment" && pending.kind === "discard") {
@@ -240,14 +240,14 @@
     }
 
     function executeDiscard(context, action, pending) {
-      const root = context?.workingRoot || context;
+      const root = context?.state || context;
       const player = resolvePlayer(root, pending);
       const handIndexes = [...(action.target?.handIndexes || [])]
         .sort((left, right) => right - left);
       for (const handIndex of handIndexes) {
         const discarded = cards.discardFromHandAtIndex(player, handIndex);
         if (!discarded?.ok) return discarded;
-        cards.addToDiscardPile(root.cardState, discarded.card);
+        cards.addToDiscardPile(root.cards, discarded.card);
       }
       delete root.match.pendingDecision;
       const result = quickTrades.finalizeTradeAfterDiscard(
@@ -272,7 +272,7 @@
     }
 
     function executeCardSelection(context, action, pending) {
-      const root = context?.workingRoot || context;
+      const root = context?.state || context;
       const player = resolvePlayer(root, pending);
       if (!player) {
         return { ok: false, code: "QUICK_TRADE_CARD_OWNER_MISSING", message: "快速交易选牌 owner 不存在" };
@@ -288,15 +288,15 @@
         ? (typeof context.blindDrawCard === "function"
           ? context.blindDrawCard(player)
           : cards.blindDraw(
-            root.cardState,
-            root.playerState,
+            root.cards,
+            root.players,
             player,
             context.random,
             factoryOptions,
           ))
         : cards.pickFromPublic(
-          root.cardState,
-          root.playerState,
+          root.cards,
+          root.players,
           player,
           Number(action.target?.slotIndex),
           context.random,
@@ -383,7 +383,7 @@
     const getAuthority = options.getAuthority || ((context) => {
       const explicit = context?.standardActionAuthority || null;
       return {
-        actorId: explicit?.actorId || context?.playerState?.currentPlayerId || null,
+        actorId: explicit?.actorId || context?.turn?.currentPlayerId || null,
         stateVersion: explicit?.stateVersion ?? context?.stateVersion ?? 0,
         decisionVersion: explicit?.decisionVersion ?? context?.decisionVersion ?? 0,
       };
@@ -400,7 +400,7 @@
     const findSourceChoice = (context, family, action) => enumerateSourceChoices(context, family)
       .find(({ candidate }) => sameDescriptor(candidate, action)) || null;
     function executeQuickTrade(actionContext, action) {
-      const root = actionContext?.workingRoot || actionContext;
+      const root = actionContext?.state || actionContext;
       const beforeDecisionVersion = Number(
         root?.match?.decisionVersion ?? actionContext?.decisionVersion,
       ) || 0;
@@ -417,11 +417,10 @@
       if (root?.match && (Number(root.match.decisionVersion) || 0) === beforeDecisionVersion) {
         root.match.decisionVersion = beforeDecisionVersion + 1;
       }
-      if (root?.rocketState && result.message) root.rocketState.statusNote = result.message;
       const event = {
         type: "quick_trade",
         tradeId: action.target?.tradeId,
-        playerId: action.actorId || actionContext?.playerState?.currentPlayerId || null,
+        playerId: action.actorId || actionContext?.turn?.currentPlayerId || null,
         executorId: QUICK_TRADE_EXECUTOR_ID,
       };
       return {
@@ -437,13 +436,13 @@
       execute: executeQuickTrade,
     });
     function canOfferQuickTrade(actionContext) {
-      const root = actionContext?.workingRoot || actionContext;
+      const root = actionContext?.state || actionContext;
       const actorId = actionContext?.standardActionAuthority?.actorId
-        || actionContext?.playerState?.currentPlayerId
+        || actionContext?.turn?.currentPlayerId
         || null;
-      const actor = actionContext?.playerState?.players
+      const actor = actionContext?.players?.players
         ?.find((player) => player.id === actorId) || null;
-      const passed = root?.turnState?.passedPlayerIds?.includes(actorId);
+      const passed = root?.turn?.passedPlayerIds?.includes(actorId);
       return !passed && actor?.passCompletionPending !== true;
     }
     ownedRegistry.register(standardAction.createOptionDefinition("quick_trade", {
@@ -604,12 +603,12 @@
             choices: setupChoices,
           };
         }
-        const root = context?.workingRoot || context;
+        const root = context?.state || context;
         return {
           ok: true,
-          boundary: root?.turnState?.gameEnded ? "terminal" : "turn_action",
+          boundary: root?.turn?.gameEnded ? "terminal" : "turn_action",
           decisionType: "turn_action",
-          ownerId: root?.playerState?.currentPlayerId || null,
+          ownerId: root?.turn?.currentPlayerId || null,
           choices: [],
         };
       },

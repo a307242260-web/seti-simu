@@ -381,12 +381,12 @@
     const cardCountsByPlayer = {};
     const deck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     for (const player of targetPlayers) {
-      const playerState = getPlayerJiuzheState(alienState, player, true);
+      const playersState = getPlayerJiuzheState(alienState, player, true);
       const playerKey = getPlayerKey(player);
       const extraCount = getExtraDealCountForPlayer(extraCardsByPlayer, player);
       const dealCount = baseCardsPerPlayer + extraCount;
-      playerState.cards = deck.splice(0, dealCount).map(createPlayerCard);
-      cardCountsByPlayer[playerKey] = playerState.cards.length;
+      playersState.cards = deck.splice(0, dealCount).map(createPlayerCard);
+      cardCountsByPlayer[playerKey] = playersState.cards.length;
     }
     jiuzhe.cardsDealt = true;
     const extraTotal = targetPlayers.reduce(
@@ -446,8 +446,8 @@
     for (const player of activePlayers || []) {
       const playerId = getPlayerKey(player);
       if (!playerId) continue;
-      const playerState = getPlayerJiuzheState(alienState, player, true);
-      playerState.revealPlaysRemaining = revealOpportunityCounts[playerId] || 0;
+      const playersState = getPlayerJiuzheState(alienState, player, true);
+      playersState.revealPlaysRemaining = revealOpportunityCounts[playerId] || 0;
     }
 
     return {
@@ -487,13 +487,13 @@
     card.playedBy = options.reason || "manual";
     addThreat(alienState, player, card.threat || 0);
 
-    const playerState = getPlayerJiuzheState(alienState, player, true);
+    const playersState = getPlayerJiuzheState(alienState, player, true);
     if (options.reason === "reveal") {
-      playerState.revealPlaysRemaining = Math.max(0, (playerState.revealPlaysRemaining || 0) - 1);
+      playersState.revealPlaysRemaining = Math.max(0, (playersState.revealPlaysRemaining || 0) - 1);
     } else if (options.reason === "freeThreshold") {
-      playerState.freeThresholdUsed = true;
+      playersState.freeThresholdUsed = true;
     } else if (options.reason === "paidThreshold") {
-      playerState.paidThresholdUsed = true;
+      playersState.paidThresholdUsed = true;
     }
 
     return {
@@ -504,33 +504,33 @@
   }
 
   function declineOpportunity(alienState, player, reason) {
-    const playerState = getPlayerJiuzheState(alienState, player, true);
-    if (!playerState) return { ok: false, message: "没有玩家九折状态" };
+    const playersState = getPlayerJiuzheState(alienState, player, true);
+    if (!playersState) return { ok: false, message: "没有玩家九折状态" };
     if (reason === "reveal") {
-      playerState.revealPlaysRemaining = Math.max(0, (playerState.revealPlaysRemaining || 0) - 1);
+      playersState.revealPlaysRemaining = Math.max(0, (playersState.revealPlaysRemaining || 0) - 1);
     } else if (reason === "freeThreshold") {
-      playerState.freeThresholdDeclined = true;
+      playersState.freeThresholdDeclined = true;
     } else if (reason === "paidThreshold") {
-      playerState.paidThresholdDeclined = true;
+      playersState.paidThresholdDeclined = true;
     }
     return { ok: true, message: "已放弃九折打出机会" };
   }
 
   function getPendingOpportunity(alienState, player) {
     const jiuzhe = alienState?.jiuzhe;
-    const playerState = getPlayerJiuzheState(alienState, player, false);
-    if (!jiuzhe || !playerState || !getUnplayedCards(alienState, player).length) return null;
+    const playersState = getPlayerJiuzheState(alienState, player, false);
+    if (!jiuzhe || !playersState || !getUnplayedCards(alienState, player).length) return null;
 
-    if ((playerState.revealPlaysRemaining || 0) > 0) {
-      return { reason: "reveal", cost: {}, label: "九折展示：免费打出", remaining: playerState.revealPlaysRemaining };
+    if ((playersState.revealPlaysRemaining || 0) > 0) {
+      return { reason: "reveal", cost: {}, label: "九折展示：免费打出", remaining: playersState.revealPlaysRemaining };
     }
 
     const score = Number(player?.resources?.score) || 0;
     if (
       jiuzhe.freeScoreThreshold != null
       && score >= jiuzhe.freeScoreThreshold
-      && !playerState.freeThresholdUsed
-      && !playerState.freeThresholdDeclined
+      && !playersState.freeThresholdUsed
+      && !playersState.freeThresholdDeclined
     ) {
       return { reason: "freeThreshold", cost: {}, label: `达到 ${jiuzhe.freeScoreThreshold} 分：免费打出` };
     }
@@ -538,8 +538,8 @@
     if (
       jiuzhe.paidScoreThreshold != null
       && score >= jiuzhe.paidScoreThreshold
-      && !playerState.paidThresholdUsed
-      && !playerState.paidThresholdDeclined
+      && !playersState.paidThresholdUsed
+      && !playersState.paidThresholdDeclined
     ) {
       return { reason: "paidThreshold", cost: { credits: 1 }, label: `达到 ${jiuzhe.paidScoreThreshold} 分：1信用点打出` };
     }
@@ -576,12 +576,12 @@
     return markers[extraIndex] || { ownerPlayerColor: traceSlot?.ownerPlayerColor || null };
   }
 
-  function countSectorWinsByColor(player, nebulaDataState, color) {
+  function countSectorWinsByColor(player, dataState, color) {
     const sectorIds = NEBULA_IDS_BY_COLOR[color] || [];
     const playerKeys = getPlayerKeys(player);
     let count = 0;
     for (const key of playerKeys) {
-      for (const win of nebulaDataState?.sectorSettlements?.winsByPlayerId?.[key] || []) {
+      for (const win of dataState?.sectorSettlements?.winsByPlayerId?.[key] || []) {
         if (sectorIds.includes(win.sectorId)) count += 1;
       }
     }
@@ -595,7 +595,7 @@
 
   function countAomomoMarkers(player, context = {}, kind = "all") {
     const playerKeys = getPlayerKeys(player);
-    const aomomoState = context?.alienGameState?.aomomo || {};
+    const aomomoState = context?.aliens?.aomomo || {};
     let count = 0;
     if (kind === "all" || kind === "orbit") {
       count += (aomomoState.orbitMarkers || [])
@@ -608,10 +608,10 @@
     return count;
   }
 
-  function countOrbitMarkers(player, planetStatsState, context = {}) {
+  function countOrbitMarkers(player, planetsState, context = {}) {
     const playerKeys = getPlayerKeys(player);
     let count = countAomomoMarkers(player, context, "orbit");
-    for (const planet of Object.values(planetStatsState?.planets || {})) {
+    for (const planet of Object.values(planetsState?.planets || {})) {
       count += (planet.orbitMarkers || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
     }
     return count;
@@ -627,23 +627,23 @@
     }).length;
   }
 
-  function countLandingMarkers(player, planetStatsState, context = {}) {
+  function countLandingMarkers(player, planetsState, context = {}) {
     const playerKeys = getPlayerKeys(player);
     let count = countPlutoMarkers(player, context, "land") + countAomomoMarkers(player, context, "land");
-    for (const planet of Object.values(planetStatsState?.planets || {})) {
+    for (const planet of Object.values(planetsState?.planets || {})) {
       count += (planet.landingMarkers || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
       count += (planet.satelliteLandings || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
     }
     return count;
   }
 
-  function maxSamePlanetOrbitOrLand(player, planetStatsState, context = {}) {
+  function maxSamePlanetOrbitOrLand(player, planetsState, context = {}) {
     const playerKeys = getPlayerKeys(player);
     let max = Math.max(
       countPlutoMarkers(player, context, "all"),
       countAomomoMarkers(player, context, "all"),
     );
-    for (const planet of Object.values(planetStatsState?.planets || {})) {
+    for (const planet of Object.values(planetsState?.planets || {})) {
       const count = [
         ...(planet.orbitMarkers || []),
         ...(planet.landingMarkers || []),
@@ -732,10 +732,10 @@
     return total;
   }
 
-  function countGenericTraceMarkers(player, alienGameState, traceType, options = {}) {
+  function countGenericTraceMarkers(player, aliensState, traceType, options = {}) {
     const playerKeys = getPlayerKeys(player);
     let count = 0;
-    for (const [slotId, slot] of Object.entries(alienGameState?.aliens || {})) {
+    for (const [slotId, slot] of Object.entries(aliensState?.aliens || {})) {
       if (options.excludeSlotId != null && Number(slotId) === Number(options.excludeSlotId)) continue;
       const traceSlot = slot?.traces?.[traceType];
       if (!traceSlot?.firstPlaced) continue;
@@ -783,13 +783,13 @@
     let current = 0;
     switch (condition.type) {
       case "jiuzheTraceCount":
-        current = countJiuzheTraces(context.alienGameState, player);
+        current = countJiuzheTraces(context.aliens, player);
         break;
       case "samePlanetOrbitOrLand":
-        current = maxSamePlanetOrbitOrLand(player, context.planetStatsState, context);
+        current = maxSamePlanetOrbitOrLand(player, context.planets, context);
         break;
       case "sectorWinsByColor":
-        current = countSectorWinsByColor(player, context.nebulaDataState, condition.color);
+        current = countSectorWinsByColor(player, context.data, condition.color);
         break;
       case "techCount":
         current = countOwnedTech(player, condition.techType);
@@ -799,18 +799,18 @@
         current = countIncomeIncreases(player, context);
         break;
       case "landingCount":
-        current = countLandingMarkers(player, context.planetStatsState, context);
+        current = countLandingMarkers(player, context.planets, context);
         break;
       case "sameColorTraceCount":
         current = Math.max(0, ...TRACE_TYPES.map((traceType) => (
-          countAllTraceMarkersByColor(player, context.alienGameState, traceType)
+          countAllTraceMarkersByColor(player, context.aliens, traceType)
         )));
         break;
       case "otherAlienTraceCount":
-        current = countOtherAlienTraces(player, context.alienGameState);
+        current = countOtherAlienTraces(player, context.aliens);
         break;
       case "orbitCount":
-        current = countOrbitMarkers(player, context.planetStatsState, context) + countPlutoMarkers(player, context, "orbit");
+        current = countOrbitMarkers(player, context.planets, context) + countPlutoMarkers(player, context, "orbit");
         break;
       case "completedTasks":
         current = Number(player?.completedTaskCount) || 0;
@@ -840,7 +840,7 @@
     let total = 0;
     for (const card of cards) {
       if (!card.played) continue;
-      const achieved = isCardConditionMet(card, player, { ...context, alienGameState: context.alienGameState || alienState });
+      const achieved = isCardConditionMet(card, player, { ...context, aliens: context.aliens || alienState });
       const score = achieved ? (Number(card.score) || 0) : 0;
       total += score;
       scoredCards.push({ cardIndex: card.index, achieved, score, threat: card.threat || 0 });

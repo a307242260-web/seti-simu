@@ -6,9 +6,9 @@ function createRoot() {
   return { meta: { sequences: { rocket: 1 } } };
 }
 
-const rocketState = rockets.createRocketState();
+const piecesState = rockets.createRocketState();
 const root = createRoot();
-const launched = rockets.launchRocketAtSector(rocketState, { x: 5, y: 1 }, {
+const launched = rockets.launchRocketAtSector(piecesState, { x: 5, y: 1 }, {
   playerId: "player-white",
   color: "white",
   root,
@@ -19,16 +19,16 @@ assert.equal(launched.rocket.id, 1);
 assert.equal(launched.rocket.playerSequence, 1);
 assert.equal(launched.rocket.playerId, "player-white");
 assert.equal(launched.rocket.color, "white");
-assert.equal(rocketState.activeRocketId, 1);
-assert.deepEqual(rockets.serializeSectorOccupancy(rocketState), { "5,1": [4] });
+assert.equal(piecesState.activeRocketId, 1);
+assert.deepEqual(rockets.serializeSectorOccupancy(piecesState), { "5,1": [4] });
 
-const moved = rockets.moveActiveRocket(rocketState, 1, 0);
+const moved = rockets.moveActiveRocket(piecesState, 1, 0);
 assert.equal(moved.ok, true);
 assert.deepEqual(
   rockets.createRocketSnapshot(moved.rocket).slotSectorCoordinate,
   { x: 6, y: 1 },
 );
-assert.deepEqual(rockets.serializeSectorOccupancy(rocketState), { "6,1": [4] });
+assert.deepEqual(rockets.serializeSectorOccupancy(piecesState), { "6,1": [4] });
 
 const fullSectorState = rockets.createRocketState();
 const fullSectorRoot = createRoot();

@@ -119,7 +119,7 @@
       turnNumber,
       displayedTurnNumber: Math.floor((turnNumber - 1) / activeCount) + 1,
       actionCycleNumber: Math.max(1, Number(turn.actionCycleNumber ?? turn.actionCycle) || 1),
-      currentPlayerId: turn.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+      currentPlayerId: turn.currentPlayerId ?? null,
       turnOrderPlayerIds,
       activePlayerIds,
       roundOrderPlayerIds,
@@ -250,13 +250,13 @@
 
   function createRuntime(presentationState, turnFlow) {
     const players = listPlayers(presentationState);
-    const playerState = {
+    const playersState = {
       currentPlayerId: turnFlow.currentPlayerId,
       players: clone(players),
     };
     return {
       playerTurn: {
-        players: playerState,
+        players: playersState,
         turn: clone(turnFlow),
       },
       cardUi: clone(presentationState?.cards?.ui || {}),
@@ -264,8 +264,8 @@
         sectorBySlot: clone(presentationState?.solarSystem?.sectorBySlot || {}),
       },
       alienBoard: {
-        alienGameState: clone(presentationState?.aliens || {}),
-        playerState,
+        aliens: clone(presentationState?.aliens || {}),
+        playersState,
       },
     };
   }

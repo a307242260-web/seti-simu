@@ -444,16 +444,16 @@
     return player.income;
   }
 
-  function incrementPlayerOrbitCount(playerState, playerId) {
-    const player = playerState.players.find((item) => item.id === playerId);
+  function incrementPlayerOrbitCount(playersState, playerId) {
+    const player = playersState.players.find((item) => item.id === playerId);
     if (!player) return false;
     player.orbitCount += 1;
     return true;
   }
 
   function normalizeTurnContext(options = {}) {
-    const source = options?.turnState && typeof options.turnState === "object"
-      ? options.turnState
+    const source = options?.turn && typeof options.turn === "object"
+      ? options.turn
       : options;
     const hasRoundNumber = source?.roundNumber != null;
     const hasTurnNumber = source?.turnNumber != null;
@@ -502,10 +502,11 @@
     };
   }
 
-  function getCurrentPlayer(playerState) {
-    if (!playerState || !Array.isArray(playerState.players)) return null;
-    return playerState.players.find((player) => player.id === playerState.currentPlayerId)
-      || playerState.players[0]
+  function getCurrentPlayer(playersState, currentPlayerId = null) {
+    if (!playersState || !Array.isArray(playersState.players)) return null;
+    const resolvedPlayerId = currentPlayerId ?? playersState.currentPlayerId ?? null;
+    return playersState.players.find((player) => player.id === resolvedPlayerId)
+      || playersState.players[0]
       || null;
   }
 

@@ -54,11 +54,11 @@
     Number(card?.discardActionCode) === 2
     || Boolean(cards.getDiscardActionMoveRewardForCard?.(card))
   );
-  const getRoot = (state, context) => context?.workingRoot || context || state;
-  const slice = (root, browserKey, committedKey) => root?.[browserKey] || root?.[committedKey] || {};
+  const getRoot = (state, context) => context?.state || context || state;
+  const slice = (root, key) => root?.[key] || {};
   const actor = (root, actorId) => {
-    const state = slice(root, "playerState", "players");
-    const id = actorId || state.currentPlayerId || root?.turn?.currentPlayerId;
+    const state = slice(root, "players");
+    const id = actorId || root?.turn?.currentPlayerId;
     return (state.players || []).find((entry) => entry.id === id) || null;
   };
   function nextRandom(root) {
@@ -79,27 +79,25 @@
     return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
   }
   function actionContext(root, actorId) {
-    const playerState = slice(root, "playerState", "players");
-    const solarState = slice(root, "solarState", "solarSystem");
-    const resolvedPlayerState = actorId === playerState.currentPlayerId
-      ? playerState : { ...playerState, currentPlayerId: actorId, players: playerState.players };
+    const playersState = slice(root, "players");
+    const solarSystemState = slice(root, "solarSystem");
     const context = {
-      workingRoot: root,
-      playerState: resolvedPlayerState,
-      rocketState: slice(root, "rocketState", "pieces"),
-      planetStatsState: slice(root, "planetStatsState", "planets"),
-      alienGameState: slice(root, "alienGameState", "aliens"),
-      nebulaDataState: slice(root, "nebulaDataState", "data"),
-      cardState: slice(root, "cardState", "cards"),
-      solarState,
-      turnState: slice(root, "turnState", "turn"),
-      techGameState: root.techGameState || root.tech || {},
+      state: root,
+      players: playersState,
+      pieces: slice(root, "pieces"),
+      planets: slice(root, "planets"),
+      aliens: slice(root, "aliens"),
+      data: slice(root, "data"),
+      cards: slice(root, "cards"),
+      solarSystem: solarSystemState,
+      turn: { ...slice(root, "turn"), currentPlayerId: actorId || root.turn?.currentPlayerId },
+      tech: root.tech || {},
       standardActionAuthority: {
         actorId,
         stateVersion: root.meta?.stateVersion ?? 0,
         decisionVersion: root.match?.decisionVersion ?? 0,
       },
-      getPlanetLocations: () => solar.createSolarSnapshot(solarState).planetLocations,
+      getPlanetLocations: () => solar.createSolarSnapshot(solarSystemState).planetLocations,
     };
     context.getEarthSectorCoordinate = () => {
       const earth = context.getPlanetLocations().find((planet) => planet.planetId === "earth");
@@ -122,7 +120,7 @@
     definitions.push(standardAction.createOptionDefinition("launch", {
       label: "发射",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const player = actor(root, context.standardActionAuthority?.actorId);
         const start = canStart(root, player);
         if (!start.ok) return start;
@@ -135,7 +133,7 @@
     definitions.push(standardAction.createOptionDefinition("move", {
       label: "移动",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const player = actor(root, context.standardActionAuthority?.actorId);
         if (!player) return fail("PROBE_TURN_ACTOR_MISSING", "没有当前玩家");
         if (root.match?.pendingDecision) return fail("PROBE_TURN_PENDING_DECISION", "请先完成当前选择");
@@ -143,7 +141,7 @@
         const directionOrder = new Map(
           (abilities.rocket.MOVE_DIRECTIONS || []).map((direction, index) => [direction.id, index]),
         );
-        const choices = (actionCtx.rocketState.rockets || [])
+        const choices = (actionCtx.pieces.rockets || [])
           .filter((rocket) => rocket.playerId === player.id && rocket.surface === "solar-board")
           .sort((left, right) => String(left.id).localeCompare(String(right.id), undefined, { numeric: true }))
           .flatMap((rocket) => (
@@ -182,7 +180,7 @@
       definitions.push(standardAction.createOptionDefinition(family, {
         label: family === "orbit" ? "环绕" : "登陆",
         getOptions(context) {
-          const root = context.workingRoot || context;
+          const root = context.state || context;
           const player = actor(root, context.standardActionAuthority?.actorId);
           const start = canStart(root, player);
           if (!start.ok) return start;
@@ -218,11 +216,11 @@
     definitions.push(standardAction.createOptionDefinition("pass", {
       label: "PASS",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const player = actor(root, context.standardActionAuthority?.actorId);
         const start = canStart(root, player);
         if (!start.ok) return start;
-        return !(slice(root, "turnState", "turn").passedPlayerIds || []).includes(player.id)
+        return !(slice(root, "turn", "turn").passedPlayerIds || []).includes(player.id)
           ? { ok: true, choices: [{ target: { kind: "pass" }, label: "PASS" }] }
           : fail("PROBE_PASS_STALE", "玩家本轮已经 PASS");
       },
@@ -232,7 +230,7 @@
     definitions.push(standardAction.createOptionDefinition("end_turn", {
       label: "结束回合",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const player = actor(root, context.standardActionAuthority?.actorId);
         return player?.mainActionCompleted || player?.passCompletionPending
           ? { ok: true, choices: [{ target: { kind: "end-turn" }, label: "结束回合" }] }
@@ -271,8 +269,8 @@
       const events = [];
       for (let index = 0; index < Math.max(0, Number(options.count) || 0); index += 1) {
         const result = cards.blindDraw(
-          slice(root, "cardState", "cards"),
-          slice(root, "playerState", "players"),
+          slice(root, "cards", "cards"),
+          slice(root, "players", "players"),
           player,
           () => nextRandom(root),
           { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
@@ -336,7 +334,7 @@
 
   function buildPassEffects(root, player) {
     const effects = [];
-    const turn = slice(root, "turnState", "turn");
+    const turn = slice(root, "turn", "turn");
     effects.push(domainHandoff("company", "company_pass", player.id, {
       roundNumber: turn.roundNumber,
       turnNumber: turn.turnNumber,
@@ -362,7 +360,7 @@
           effect: { type: EFFECT_TYPES.PASS, ownerId: player.id, payload: { kind: "first-rotation" } },
         });
       }
-      const reserve = cards.getPassReservePile(slice(root, "cardState", "cards"), turn.roundNumber);
+      const reserve = cards.getPassReservePile(slice(root, "cards", "cards"), turn.roundNumber);
       if (reserve.length) {
         effects.push({
           priority: "direct",
@@ -438,7 +436,7 @@
           history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
         });
       } else {
-        const turn = slice(root, "turnState", "turn");
+        const turn = slice(root, "turn", "turn");
         const didPass = (turn.passedPlayerIds || []).includes(player.id);
         const boundary = {
           roundNumber: turn.roundNumber,
@@ -487,7 +485,7 @@
       const root = getRoot(state, workingContext);
       const player = actor(root, effect.ownerId);
       if (!player) return fail("PROBE_TURN_ADVANCE_OWNER_STALE", "回合推进 owner 已失效");
-      const previousRoundNumber = Number(slice(root, "turnState", "turn").roundNumber) || 1;
+      const previousRoundNumber = Number(slice(root, "turn", "turn").roundNumber) || 1;
       player.mainActionCompleted = false;
       player.passCompletionPending = false;
       const transition = turnFlow.advanceTurnAfterPlayerAction(root, player.id, {
@@ -498,7 +496,7 @@
       if (next) next.mainActionCompleted = false;
       const transitionPayload = {
         previousRoundNumber,
-        roundNumber: slice(root, "turnState", "turn").roundNumber,
+        roundNumber: slice(root, "turn", "turn").roundNumber,
         nextPlayerId: transition.nextPlayerId,
         roundAdvanced: Boolean(transition.roundAdvanced),
         gameEnded: Boolean(transition.gameEnded),
@@ -567,7 +565,7 @@
           }
           const discarded = cards.discardFromHandAtIndex(player, index);
           if (!discarded.ok) return discarded;
-          cards.addToDiscardPile(slice(root, "cardState", "cards"), discarded.card);
+          cards.addToDiscardPile(slice(root, "cards", "cards"), discarded.card);
           removedCardCount += 1;
         }
         if (removedCardCount !== cardIds.size) {
@@ -622,7 +620,7 @@
         planetRewards.EFFECT_TYPES.CHOOSE_COLORED_NEBULA_SCAN,
       ].includes(reward.type)) {
         const planet = rewardOptions.planetId
-          ? solar.createSolarSnapshot(slice(root, "solarState", "solarSystem")).planetLocations
+          ? solar.createSolarSnapshot(slice(root, "solarSystem", "solarSystem")).planetLocations
             .find((candidate) => candidate.planetId === rewardOptions.planetId)
           : null;
         delegated = {
@@ -667,7 +665,7 @@
           if (!selectedIds.has(player.hand[index]?.id)) continue;
           const removed = cards.discardFromHandAtIndex(player, index);
           if (!removed.ok) return removed;
-          cards.addToDiscardPile(slice(root, "cardState", "cards"), removed.card);
+          cards.addToDiscardPile(slice(root, "cards", "cards"), removed.card);
           discarded.push(removed.card.id);
         }
         if (discarded.length !== count) return fail("PROBE_PASS_DISCARD_STALE", "PASS 弃牌数量已失效");
@@ -697,7 +695,7 @@
     runtime.registerExecutor(EFFECT_TYPES.PASS_COMMIT, (state, effect, workingContext) => {
       const root = getRoot(state, workingContext);
       const player = actor(root, effect.ownerId);
-      const turn = slice(root, "turnState", "turn");
+      const turn = slice(root, "turn", "turn");
       if (!player || (turn.passedPlayerIds || []).includes(player.id)) {
         return fail("PROBE_PASS_COMMIT_STALE", "PASS 提交已失效");
       }
@@ -715,7 +713,7 @@
         root,
         effect.ownerId,
         cards.getPassReservePile(
-          slice(root, "cardState", "cards"),
+          slice(root, "cards", "cards"),
           effect.payload?.roundNumber,
         ).map((card) => ({
           family: "choose_card",
@@ -738,7 +736,7 @@
         const player = actor(root, effect.ownerId);
         if (!legal || !player) return fail("PROBE_PASS_RESERVE_STALE", "PASS 预留牌选择已失效");
         const picked = cards.pickPassReserveCard(
-          slice(root, "cardState", "cards"),
+          slice(root, "cards", "cards"),
           player,
           effect.payload?.roundNumber,
           legal.target.choiceId,

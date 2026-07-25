@@ -2762,15 +2762,15 @@
     return matches;
   }
 
-  function countSectorWinsByColor(player, nebulaDataState, color) {
+  function countSectorWinsByColor(player, dataState, color) {
     const mod = getEndGameScoring();
-    if (mod) return mod.countSectorWinsByColor(player, nebulaDataState, color);
+    if (mod) return mod.countSectorWinsByColor(player, dataState, color);
     return 0;
   }
 
-  function countSectorWins(player, nebulaDataState) {
+  function countSectorWins(player, dataState) {
     const mod = getEndGameScoring();
-    if (mod?.countSectorWins) return mod.countSectorWins(player, nebulaDataState);
+    if (mod?.countSectorWins) return mod.countSectorWins(player, dataState);
     return 0;
   }
 
@@ -2875,9 +2875,9 @@
     return getProbeStackRewardMatch(rockets, player, options).conditionMet;
   }
 
-  function countTraceMarkers(player, alienGameState, traceType) {
+  function countTraceMarkers(player, aliensState, traceType) {
     const mod = getEndGameScoring();
-    if (mod) return mod.countTraceMarkers(player, alienGameState, traceType);
+    if (mod) return mod.countTraceMarkers(player, aliensState, traceType);
     return 0;
   }
 
@@ -2908,7 +2908,7 @@
 
   function countAomomoPlanetMarkers(player, context = {}, kind = "all") {
     const aomomo = getAomomo();
-    if (!aomomo || !context?.alienGameState) return 0;
+    if (!aomomo || !context?.aliens) return 0;
     const playerKeys = aomomo.getPlayerKeys ? aomomo.getPlayerKeys(player) : getPlayerKeys(player);
     const markerMatches = (marker) => (
       aomomo.markerBelongsToPlayer
@@ -2917,25 +2917,25 @@
     );
     let count = 0;
     if (kind === "all" || kind === "orbit") {
-      count += (aomomo.listOrbitMarkers?.(context.alienGameState) || []).filter(markerMatches).length;
+      count += (aomomo.listOrbitMarkers?.(context.aliens) || []).filter(markerMatches).length;
     }
     if (kind === "all" || kind === "land") {
-      count += (aomomo.listLandingMarkers?.(context.alienGameState) || []).filter(markerMatches).length;
+      count += (aomomo.listLandingMarkers?.(context.aliens) || []).filter(markerMatches).length;
     }
     return count;
   }
 
-  function playerHasPlanetOrbitOrLand(player, planetStatsState, planetId, context = {}) {
+  function playerHasPlanetOrbitOrLand(player, planetsState, planetId, context = {}) {
     if (planetId === "pluto") return countPlutoMarkers(player, context, "all") > 0;
     if (isAomomoPlanetId(planetId) && countAomomoPlanetMarkers(player, context, "all") > 0) return true;
     const mod = getEndGameScoring();
-    if (mod) return mod.countPlanetOrbitOrLand(player, planetStatsState, planetId, context) > 0;
+    if (mod) return mod.countPlanetOrbitOrLand(player, planetsState, planetId, context) > 0;
     return false;
   }
 
-  function countDistinctSignalSectors(player, nebulaDataState) {
+  function countDistinctSignalSectors(player, dataState) {
     const mod = getEndGameScoring();
-    if (mod) return mod.countDistinctSignalSectors(player, nebulaDataState);
+    if (mod) return mod.countDistinctSignalSectors(player, dataState);
     return 0;
   }
 
@@ -2946,18 +2946,18 @@
       || playerKeys.has(token?.playerColor);
   }
 
-  function playerHasSignalInNebula(player, nebulaDataState, nebulaId) {
+  function playerHasSignalInNebula(player, dataState, nebulaId) {
     const playerKeys = getPlayerKeys(player);
-    const tokens = nebulaDataState?.nebulae?.[nebulaId]?.tokens || [];
+    const tokens = dataState?.nebulae?.[nebulaId]?.tokens || [];
     if (tokens.some((token) => tokenBelongsToPlayer(token, playerKeys))) return true;
-    const marks = nebulaDataState?.sectorExtraMarks?.[nebulaId] || [];
+    const marks = dataState?.sectorExtraMarks?.[nebulaId] || [];
     return marks.some((mark) => tokenBelongsToPlayer(mark, playerKeys));
   }
 
-  function countPlayerSignalsInNebula(player, nebulaDataState, nebulaId) {
+  function countPlayerSignalsInNebula(player, dataState, nebulaId) {
     const playerKeys = getPlayerKeys(player);
-    const tokens = nebulaDataState?.nebulae?.[nebulaId]?.tokens || [];
-    const marks = nebulaDataState?.sectorExtraMarks?.[nebulaId] || [];
+    const tokens = dataState?.nebulae?.[nebulaId]?.tokens || [];
+    const marks = dataState?.sectorExtraMarks?.[nebulaId] || [];
     return tokens.filter((token) => tokenBelongsToPlayer(token, playerKeys)).length
       + marks.filter((mark) => tokenBelongsToPlayer(mark, playerKeys)).length;
   }
@@ -2977,21 +2977,21 @@
     return matches;
   }
 
-  function playerHasSignalInColor(player, nebulaDataState, color) {
+  function playerHasSignalInColor(player, dataState, color) {
     return (NEBULA_IDS_BY_COLOR[color] || []).some((nebulaId) => (
-      playerHasSignalInNebula(player, nebulaDataState, nebulaId)
+      playerHasSignalInNebula(player, dataState, nebulaId)
     ));
   }
 
-  function playerHasSignalsInAllColors(player, nebulaDataState) {
+  function playerHasSignalsInAllColors(player, dataState) {
     return Object.keys(NEBULA_IDS_BY_COLOR).every((color) => (
-      playerHasSignalInColor(player, nebulaDataState, color)
+      playerHasSignalInColor(player, dataState, color)
     ));
   }
 
-  function playerHasSignalOrWinInAllSectors(player, nebulaDataState) {
+  function playerHasSignalOrWinInAllSectors(player, dataState) {
     const playerKeys = getPlayerKeys(player);
-    const wins = nebulaDataState?.sectorSettlements?.winsByPlayerId || {};
+    const wins = dataState?.sectorSettlements?.winsByPlayerId || {};
     const wonSectors = new Set();
     for (const key of playerKeys) {
       for (const win of wins[key] || []) {
@@ -2999,7 +2999,7 @@
       }
     }
     return Object.values(NEBULA_IDS_BY_COLOR).flat().every((nebulaId) => (
-      wonSectors.has(nebulaId) || playerHasSignalInNebula(player, nebulaDataState, nebulaId)
+      wonSectors.has(nebulaId) || playerHasSignalInNebula(player, dataState, nebulaId)
     ));
   }
 
@@ -3036,17 +3036,17 @@
     return entries;
   }
 
-  function listRevealedFaceTraceEntries(alienGameState, alienSlotId, traceType = null) {
-    const slot = alienGameState?.aliens?.[alienSlotId];
+  function listRevealedFaceTraceEntries(aliensState, alienSlotId, traceType = null) {
+    const slot = aliensState?.aliens?.[alienSlotId];
     if (!slot?.revealed) return [];
     const module = getAlienTraceModuleByAlienId(slot.alienId || slot.assignedAlienId);
     if (!module) return [];
     if (module.listTraceEntries) {
-      return module.listTraceEntries(alienGameState, alienSlotId, traceType) || [];
+      return module.listTraceEntries(aliensState, alienSlotId, traceType) || [];
     }
     if (module.getTraceGrid) {
       return listGridTraceEntries(
-        module.getTraceGrid(alienGameState, alienSlotId),
+        module.getTraceGrid(aliensState, alienSlotId),
         traceType,
         module.TRACE_TYPES || ["pink", "yellow", "blue"],
         module.TRACE_POSITIONS || [1, 2, 3, 4, 5],
@@ -3055,15 +3055,15 @@
     return [];
   }
 
-  function alienSlotHasTrace(alienGameState, alienSlotId, slot, traceType) {
+  function alienSlotHasTrace(aliensState, alienSlotId, slot, traceType) {
     return Boolean(slot?.traces?.[traceType]?.firstPlaced)
-      || listRevealedFaceTraceEntries(alienGameState, alienSlotId, traceType).length > 0;
+      || listRevealedFaceTraceEntries(aliensState, alienSlotId, traceType).length > 0;
   }
 
-  function alienSlotHasPlayerTrace(alienGameState, alienSlotId, slot, playerKeys, traceType) {
+  function alienSlotHasPlayerTrace(aliensState, alienSlotId, slot, playerKeys, traceType) {
     if (countStateTraceMarkersForPlayer(slot, traceType, playerKeys) > 0) return true;
     if (traceBelongsToPlayer(slot?.traces?.[traceType], playerKeys)) return true;
-    return listRevealedFaceTraceEntries(alienGameState, alienSlotId, traceType)
+    return listRevealedFaceTraceEntries(aliensState, alienSlotId, traceType)
       .some((entry) => markerBelongsToPlayer(entry, playerKeys));
   }
 
@@ -3080,32 +3080,32 @@
     return count;
   }
 
-  function countAlienSlotTraceMarkersForPlayer(alienGameState, alienSlotId, slot, playerKeys, traceTypes = null) {
+  function countAlienSlotTraceMarkersForPlayer(aliensState, alienSlotId, slot, playerKeys, traceTypes = null) {
     const types = Array.isArray(traceTypes) && traceTypes.length
       ? traceTypes
       : ["yellow", "pink", "blue"];
     let count = 0;
     for (const traceType of types) {
       count += countStateTraceMarkersForPlayer(slot, traceType, playerKeys);
-      count += listRevealedFaceTraceEntries(alienGameState, alienSlotId, traceType)
+      count += listRevealedFaceTraceEntries(aliensState, alienSlotId, traceType)
         .filter((entry) => markerBelongsToPlayer(entry, playerKeys))
         .length;
     }
     return count;
   }
 
-  function allAliensHaveTrace(alienGameState, traceType) {
-    const entries = Object.entries(alienGameState?.aliens || {});
+  function allAliensHaveTrace(aliensState, traceType) {
+    const entries = Object.entries(aliensState?.aliens || {});
     return entries.length > 0 && entries.every(([slotId, slot]) => (
-      alienSlotHasTrace(alienGameState, slotId, slot, traceType)
+      alienSlotHasTrace(aliensState, slotId, slot, traceType)
     ));
   }
 
-  function allAliensHavePlayerTrace(player, alienGameState, traceType) {
-    const slots = Object.entries(alienGameState?.aliens || {});
+  function allAliensHavePlayerTrace(player, aliensState, traceType) {
+    const slots = Object.entries(aliensState?.aliens || {});
     const playerKeys = getPlayerKeys(player);
     return slots.length > 0 && slots.every(([slotId, slot]) => (
-      alienSlotHasPlayerTrace(alienGameState, slotId, slot, playerKeys, traceType)
+      alienSlotHasPlayerTrace(aliensState, slotId, slot, playerKeys, traceType)
     ));
   }
 
@@ -3170,11 +3170,11 @@
     return false;
   }
 
-  function countPlayerPlanetMarkers(player, planetStatsState, kind = "all", context = {}) {
+  function countPlayerPlanetMarkers(player, planetsState, kind = "all", context = {}) {
     const playerKeys = getPlayerKeys(player);
     const aomomoMarkerCount = countAomomoPlanetMarkers(player, context, kind);
     let count = countPlutoMarkers(player, context, kind) + aomomoMarkerCount;
-    for (const [planetId, record] of Object.entries(planetStatsState?.planets || {})) {
+    for (const [planetId, record] of Object.entries(planetsState?.planets || {})) {
       if (isAomomoPlanetId(planetId) && aomomoMarkerCount > 0) continue;
       if (kind === "all" || kind === "orbit") {
         count += (record.orbitMarkers || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
@@ -3187,7 +3187,7 @@
     return count;
   }
 
-  function playerHasSamePlanetOrbitAndLand(player, planetStatsState, context = {}) {
+  function playerHasSamePlanetOrbitAndLand(player, planetsState, context = {}) {
     const playerKeys = getPlayerKeys(player);
     const hasPlutoOrbit = (context?.plutoMarkers || []).some((marker) => (
       marker.kind === "orbit" && markerMatchesPlayer(marker, playerKeys)
@@ -3199,7 +3199,7 @@
     const hasAomomoOrbit = countAomomoPlanetMarkers(player, context, "orbit") > 0;
     const hasAomomoLand = countAomomoPlanetMarkers(player, context, "land") > 0;
     if (hasAomomoOrbit && hasAomomoLand) return true;
-    return Object.entries(planetStatsState?.planets || {}).some(([planetId, record]) => {
+    return Object.entries(planetsState?.planets || {}).some(([planetId, record]) => {
       if (isAomomoPlanetId(planetId) && (hasAomomoOrbit || hasAomomoLand)) return false;
       const hasOrbit = (record.orbitMarkers || []).some((marker) => markerBelongsToPlayer(marker, playerKeys));
       const hasLand = (record.landingMarkers || []).some((marker) => markerBelongsToPlayer(marker, playerKeys))
@@ -3208,48 +3208,48 @@
     });
   }
 
-  function playerHasAllPlanetOrbitOrLand(player, planetStatsState, planetIds, context = {}) {
-    return (planetIds || []).every((planetId) => playerHasPlanetOrbitOrLand(player, planetStatsState, planetId, context));
+  function playerHasAllPlanetOrbitOrLand(player, planetsState, planetIds, context = {}) {
+    return (planetIds || []).every((planetId) => playerHasPlanetOrbitOrLand(player, planetsState, planetId, context));
   }
 
-  function countCompletedSectorColors(player, nebulaDataState) {
+  function countCompletedSectorColors(player, dataState) {
     return Object.keys(NEBULA_IDS_BY_COLOR).map((color) => ({
       color,
-      count: countSectorWinsByColor(player, nebulaDataState, color),
+      count: countSectorWinsByColor(player, dataState, color),
     }));
   }
 
-  function slotHasPlayerTraceSet(alienGameState, slotId, slot, playerKeys, traceTypes) {
+  function slotHasPlayerTraceSet(aliensState, slotId, slot, playerKeys, traceTypes) {
     return (traceTypes || []).every((traceType) => (
-      alienSlotHasPlayerTrace(alienGameState, slotId, slot, playerKeys, traceType)
+      alienSlotHasPlayerTrace(aliensState, slotId, slot, playerKeys, traceType)
     ));
   }
 
-  function playerHasSingleAlienTraceSet(player, alienGameState, traceTypes) {
+  function playerHasSingleAlienTraceSet(player, aliensState, traceTypes) {
     const playerKeys = getPlayerKeys(player);
-    return Object.entries(alienGameState?.aliens || {})
-      .some(([slotId, slot]) => slotHasPlayerTraceSet(alienGameState, slotId, slot, playerKeys, traceTypes));
+    return Object.entries(aliensState?.aliens || {})
+      .some(([slotId, slot]) => slotHasPlayerTraceSet(aliensState, slotId, slot, playerKeys, traceTypes));
   }
 
-  function playerHasSingleAlienTraceCount(player, alienGameState, count, traceTypes = null) {
+  function playerHasSingleAlienTraceCount(player, aliensState, count, traceTypes = null) {
     const playerKeys = getPlayerKeys(player);
     const required = Math.max(1, Math.round(Number(count || 1)));
-    return Object.entries(alienGameState?.aliens || {}).some(([slotId, slot]) => (
-      countAlienSlotTraceMarkersForPlayer(alienGameState, slotId, slot, playerKeys, traceTypes) >= required
+    return Object.entries(aliensState?.aliens || {}).some(([slotId, slot]) => (
+      countAlienSlotTraceMarkersForPlayer(aliensState, slotId, slot, playerKeys, traceTypes) >= required
     ));
   }
 
-  function playerHasYichangdianAllTraceTypes(player, alienGameState) {
+  function playerHasYichangdianAllTraceTypes(player, aliensState) {
     const yichangdian = getYichangdian();
     if (!yichangdian?.playerHasAllTraceTypes) return false;
-    return yichangdian.playerHasAllTraceTypes(alienGameState, player);
+    return yichangdian.playerHasAllTraceTypes(aliensState, player);
   }
 
-  function playerHasAomomoLanding(player, alienGameState) {
+  function playerHasAomomoLanding(player, aliensState) {
     const aomomo = getAomomo();
     if (!aomomo?.listLandingMarkers || !aomomo?.markerBelongsToPlayer) return false;
     const keys = aomomo.getPlayerKeys ? aomomo.getPlayerKeys(player) : getPlayerKeys(player);
-    return aomomo.listLandingMarkers(alienGameState)
+    return aomomo.listLandingMarkers(aliensState)
       .some((marker) => aomomo.markerBelongsToPlayer(marker, keys));
   }
 
@@ -3257,72 +3257,72 @@
     return (Number(player?.resources?.aomomoFossils) || 0) >= Number(count || 1);
   }
 
-  function playerHasAomomoAllTraceTypes(player, alienGameState) {
+  function playerHasAomomoAllTraceTypes(player, aliensState) {
     const aomomo = getAomomo();
     if (!aomomo?.playerHasAllTraceTypes) return false;
-    return aomomo.playerHasAllTraceTypes(alienGameState, player);
+    return aomomo.playerHasAllTraceTypes(aliensState, player);
   }
 
-  function playerHasAomomoFossilSpendingTrace(player, alienGameState) {
+  function playerHasAomomoFossilSpendingTrace(player, aliensState) {
     const aomomo = getAomomo();
     if (!aomomo?.playerHasFossilSpendingTrace) return false;
-    return aomomo.playerHasFossilSpendingTrace(alienGameState, player);
+    return aomomo.playerHasFossilSpendingTrace(aliensState, player);
   }
 
-  function playerHasAomomoSignalCount(player, nebulaDataState, count = 1) {
+  function playerHasAomomoSignalCount(player, dataState, count = 1) {
     const aomomo = getAomomo();
     const nebulaId = aomomo?.NEBULA_ID || "aomomo";
-    return countPlayerSignalsInNebula(player, nebulaDataState, nebulaId) >= Number(count || 1);
+    return countPlayerSignalsInNebula(player, dataState, nebulaId) >= Number(count || 1);
   }
 
   function taskConditionMet(task, player, context) {
     const condition = task?.condition;
     if (!condition) return false;
     if (condition.type === "completedSectorsByColor") {
-      return countSectorWinsByColor(player, context.nebulaDataState, condition.color) >= Number(condition.count || 1);
+      return countSectorWinsByColor(player, context.data, condition.color) >= Number(condition.count || 1);
     }
     if (condition.type === "completedSectors") {
-      return countSectorWins(player, context.nebulaDataState) >= Number(condition.count || 1);
+      return countSectorWins(player, context.data) >= Number(condition.count || 1);
     }
     if (condition.type === "allAliensHaveTrace") {
-      return allAliensHaveTrace(context.alienGameState, condition.traceType);
+      return allAliensHaveTrace(context.aliens, condition.traceType);
     }
     if (condition.type === "allAliensHavePlayerTrace") {
-      return allAliensHavePlayerTrace(player, context.alienGameState, condition.traceType);
+      return allAliensHavePlayerTrace(player, context.aliens, condition.traceType);
     }
     if (condition.type === "traceCount") {
-      return countTraceMarkers(player, context.alienGameState, condition.traceType) >= Number(condition.count || 1);
+      return countTraceMarkers(player, context.aliens, condition.traceType) >= Number(condition.count || 1);
     }
     if (condition.type === "techCount") {
       return countOwnedTech(player, condition.techType) >= Number(condition.count || 1);
     }
     if (condition.type === "planetOrbitOrLand") {
-      if (!playerHasPlanetOrbitOrLand(player, context.planetStatsState, condition.planetId, context)) return false;
+      if (!playerHasPlanetOrbitOrLand(player, context.planets, condition.planetId, context)) return false;
       return Number(condition.count || 1) <= 1;
     }
     if (condition.type === "planetOrbitOrLandAll") {
-      return playerHasAllPlanetOrbitOrLand(player, context.planetStatsState, condition.planetIds || [], context);
+      return playerHasAllPlanetOrbitOrLand(player, context.planets, condition.planetIds || [], context);
     }
     if (condition.type === "samePlanetOrbitAndLand") {
-      return playerHasSamePlanetOrbitAndLand(player, context.planetStatsState, context);
+      return playerHasSamePlanetOrbitAndLand(player, context.planets, context);
     }
     if (condition.type === "orbitCount") {
-      return countPlayerPlanetMarkers(player, context.planetStatsState, "orbit", context) >= Number(condition.count || 1);
+      return countPlayerPlanetMarkers(player, context.planets, "orbit", context) >= Number(condition.count || 1);
     }
     if (condition.type === "landingCount") {
-      return countPlayerPlanetMarkers(player, context.planetStatsState, "land", context) >= Number(condition.count || 1);
+      return countPlayerPlanetMarkers(player, context.planets, "land", context) >= Number(condition.count || 1);
     }
     if (condition.type === "orbitOrLandCount") {
-      return countPlayerPlanetMarkers(player, context.planetStatsState, "all", context) >= Number(condition.count || 1);
+      return countPlayerPlanetMarkers(player, context.planets, "all", context) >= Number(condition.count || 1);
     }
     if (condition.type === "distinctSignalSectors") {
-      return countDistinctSignalSectors(player, context.nebulaDataState) >= Number(condition.count || 1);
+      return countDistinctSignalSectors(player, context.data) >= Number(condition.count || 1);
     }
     if (condition.type === "signalsInAllColors") {
-      return playerHasSignalsInAllColors(player, context.nebulaDataState);
+      return playerHasSignalsInAllColors(player, context.data);
     }
     if (condition.type === "signalsOrWinsInAllSectors") {
-      return playerHasSignalOrWinInAllSectors(player, context.nebulaDataState);
+      return playerHasSignalOrWinInAllSectors(player, context.data);
     }
     if (condition.type === "resourceThreshold") {
       const value = Number(player?.resources?.[condition.resource]) || 0;
@@ -3363,37 +3363,37 @@
       return (player?.hand || []).length === 0;
     }
     if (condition.type === "completedSameSectorColor") {
-      return countCompletedSectorColors(player, context.nebulaDataState)
+      return countCompletedSectorColors(player, context.data)
         .some((entry) => entry.count >= Number(condition.count || 1));
     }
     if (condition.type === "singleAlienTraceSet") {
-      return playerHasSingleAlienTraceSet(player, context.alienGameState, condition.traceTypes || []);
+      return playerHasSingleAlienTraceSet(player, context.aliens, condition.traceTypes || []);
     }
     if (condition.type === "singleAlienTraceCount") {
       return playerHasSingleAlienTraceCount(
         player,
-        context.alienGameState,
+        context.aliens,
         condition.count,
         condition.traceTypes || null,
       );
     }
     if (condition.type === "yichangdianAllTraceTypes") {
-      return playerHasYichangdianAllTraceTypes(player, context.alienGameState);
+      return playerHasYichangdianAllTraceTypes(player, context.aliens);
     }
     if (condition.type === "aomomoLanding") {
-      return playerHasAomomoLanding(player, context.alienGameState);
+      return playerHasAomomoLanding(player, context.aliens);
     }
     if (condition.type === "aomomoFossils") {
       return playerHasAomomoFossils(player, condition.count);
     }
     if (condition.type === "aomomoAllTraceTypes") {
-      return playerHasAomomoAllTraceTypes(player, context.alienGameState);
+      return playerHasAomomoAllTraceTypes(player, context.aliens);
     }
     if (condition.type === "aomomoFossilSpendingTrace") {
-      return playerHasAomomoFossilSpendingTrace(player, context.alienGameState);
+      return playerHasAomomoFossilSpendingTrace(player, context.aliens);
     }
     if (condition.type === "aomomoSignalCount") {
-      return playerHasAomomoSignalCount(player, context.nebulaDataState, condition.count);
+      return playerHasAomomoSignalCount(player, context.data, condition.count);
     }
     return false;
   }

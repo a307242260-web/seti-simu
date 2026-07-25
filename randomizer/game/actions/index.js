@@ -37,7 +37,7 @@
   function getDefaultAuthority(context) {
     const explicit = context.standardActionAuthority || null;
     return {
-      actorId: explicit?.actorId || context.playerState?.currentPlayerId || null,
+      actorId: explicit?.actorId || context.turn?.currentPlayerId || null,
       stateVersion: explicit?.stateVersion ?? context.stateVersion ?? 0,
       decisionVersion: explicit?.decisionVersion ?? context.decisionVersion ?? 0,
     };

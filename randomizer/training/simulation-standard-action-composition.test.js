@@ -102,28 +102,21 @@ function submitActionToCompletion(composition, action, quick = false) {
       ownerId: decision.ownerId,
       choice: decision.choices[0],
     });
-    assert.equal(result.ok, true);
+    assert.equal(result.ok, true, JSON.stringify(result.failure || result));
   }
   assert.notEqual(composition.inspect().phase, "awaiting_input", "代表行动不得遗留未完成 Decision");
   return result;
 }
 
 function enumerateBrowserProductionPort(state, family) {
+  const canonicalState = structuredClone(state);
   const context = {
-    workingRoot: {
-      playerState: {
-        currentPlayerId: state.turn.currentPlayerId,
-        players: structuredClone(state.players.players),
-      },
-      cardState: structuredClone(state.cards),
-      rocketState: {},
-      match: { decisionVersion: state.match.decisionVersion },
-    },
-    playerState: {
-      currentPlayerId: state.turn.currentPlayerId,
-      players: structuredClone(state.players.players),
-    },
-    cardState: structuredClone(state.cards),
+    state: canonicalState,
+    players: canonicalState.players,
+    cards: canonicalState.cards,
+    pieces: canonicalState.pieces,
+    turn: canonicalState.turn,
+    match: canonicalState.match,
   };
   const pack = productionComposition.createProductionDomainPack({
     getAuthority: () => ({
@@ -236,7 +229,8 @@ for (const entry of kernel.actionContract.coverage()) {
 }
 
 assert.equal(kernel.newGame(config).ok, true);
-assert.equal(kernel.composition.inputPort.beginDrain().ok, true);
+const openingDrain = kernel.composition.inputPort.beginDrain();
+assert.equal(openingDrain.ok, true, JSON.stringify(openingDrain));
 const inspection = kernel.composition.inspect();
 const openingAction = inspection.session.decision.choices.find(
   (choice) => choice.family === "choose_payment",
@@ -388,7 +382,10 @@ for (const family of ["scan", "place_data"]) {
     "Browser/Simulation quick_trade 必须写入同一 journal history");
   const tradePlayer = parityKernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state.players.players
     .find((player) => player.id === scenario.turn.currentPlayerId);
-  const browserTradePlayer = players.getCurrentPlayer(browserProduction.context.playerState);
+  const browserTradePlayer = players.getCurrentPlayer(
+    browserProduction.context.players,
+    browserProduction.context.turn.currentPlayerId,
+  );
   assert.equal(tradePlayer.resources.credits, 9);
   assert.equal(tradePlayer.resources.energy, 4);
   assert.deepEqual(

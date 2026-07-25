@@ -94,7 +94,6 @@
     fillNebulaData: nebulaState.fillNebulaData,
     fillAllNebulaData: nebulaState.fillAllNebulaData,
     clearNebulaData: nebulaState.clearNebulaData,
-    updateNebulaTokenPosition: nebulaState.updateNebulaTokenPosition,
     addSectorExtraMark: nebulaState.addSectorExtraMark,
     removeSectorExtraMark: nebulaState.removeSectorExtraMark,
     listSectorExtraMarks: nebulaState.listSectorExtraMarks,
@@ -116,7 +115,6 @@
     getNebulaSlotScoreReward: nebulaState.getNebulaSlotScoreReward,
     getNebulaReplacementStats: nebulaState.getNebulaReplacementStats,
     getNextReplaceableNebulaToken: nebulaState.getNextReplaceableNebulaToken,
-    revertNebulaTokenReplacement: nebulaState.revertNebulaTokenReplacement,
     replaceNextNebulaDataToken: nebulaState.replaceNextNebulaDataToken,
   });
 });

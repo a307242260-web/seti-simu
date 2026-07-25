@@ -144,36 +144,35 @@ assert.equal(aomomoArcSlot2.angularFraction, 0.3587);
 assert.equal(aomomoArcSlot3.radialFraction, 0.6121);
 assert.equal(aomomoArcSlot3.angularFraction, 0.5162);
 
-const nebulaDataState = data.createDefaultNebulaDataState();
+const dataState = data.createDefaultNebulaDataState();
 
-const siriusFill = fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
+const siriusFill = fillNebulaData(dataState, "sector-2-a", { source: "debug" });
 assert.equal(siriusFill.ok, true);
 assert.equal(siriusFill.added.length, 6);
-assert.equal(data.listNebulaTokens(nebulaDataState, "sector-2-a").length, 6);
+assert.equal(data.listNebulaTokens(dataState, "sector-2-a").length, 6);
 
-const siriusOverflow = fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
+const siriusOverflow = fillNebulaData(dataState, "sector-2-a", { source: "debug" });
 assert.equal(siriusOverflow.ok, false);
 
-const vegaFill = fillNebulaData(nebulaDataState, "sector-1-b", { source: "debug" });
+const vegaFill = fillNebulaData(dataState, "sector-1-b", { source: "debug" });
 assert.equal(vegaFill.ok, true);
 assert.equal(vegaFill.added.length, 4);
 
-const allFill = fillAllNebulaData(nebulaDataState, { source: "debug" });
+const allFill = fillAllNebulaData(dataState, { source: "debug" });
 assert.equal(allFill.ok, true);
 assert.equal(
-  data.listAllNebulaTokens(nebulaDataState).length,
+  data.listAllNebulaTokens(dataState).length,
   data.NEBULA_IDS.reduce((sum, nebulaId) => sum + data.getNebulaCapacity(nebulaId), 0),
 );
 
 for (const nebulaId of data.NEBULA_IDS) {
   const capacity = data.getNebulaCapacity(nebulaId);
-  const tokens = data.listNebulaTokens(nebulaDataState, nebulaId);
+  const tokens = data.listNebulaTokens(dataState, nebulaId);
   assert.equal(tokens.length, capacity, `${nebulaId} should have ${capacity} tokens`);
   for (const token of tokens) {
     const layout = data.getNebulaDataSlotLayout(nebulaId, token.slotIndex);
     assert.ok(layout, `${nebulaId} slot ${token.slotIndex} has layout`);
-    assert.equal(token.percentX, layout.percentX);
-    assert.equal(token.percentY, layout.percentY);
+    assert.ok(layout);
   }
 }
 
@@ -194,7 +193,6 @@ assert.equal(firstReplace.secondSlotScore, 0);
 assert.equal(firstReplace.scoreAwarded, 0);
 assert.equal(scanPlayer.resources.score, 0);
 assert.equal(firstReplace.token.replacedByPlayerColor, "blue");
-assert.equal(firstReplace.token.playerTokenSrc, "../assets/tokens/normal_token-blue.png");
 assert.equal(data.getNebulaSecondSlotScoreReward(1), 0);
 assert.equal(data.getNebulaSecondSlotScoreReward(2), data.NEBULA_SECOND_SLOT_SCORE);
 assert.equal(data.NEBULA_SECOND_SLOT_SCORE, 2);
@@ -305,7 +303,6 @@ assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].settlementC
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners.length, 1);
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[0].slotKind, "circle");
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[0].markerIndex, 1);
-assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[0].playerTokenSrc, "token-white.png");
 assert.deepEqual(settlementState.sectorSettlements.winsByPlayerId["player-white"], [
   { sectorId: "sector-1-a", settlementNumber: 1 },
 ]);
@@ -314,7 +311,6 @@ assert.equal(data.listNebulaTokens(settlementState, "sector-1-a").length, 5);
 const retained = data.listNebulaTokens(settlementState, "sector-1-a")
   .find((token) => token.slotIndex === 1);
 assert.equal(retained.replacedByPlayerColor, "blue");
-assert.equal(retained.playerTokenSrc, "token-blue.png");
 
 [
   settlementPlayers[1],
@@ -336,7 +332,6 @@ assert.equal(secondSettleResult.settlementNumber, 2);
 assert.equal(secondSettleResult.winner.playerColor, "green");
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[1].slotKind, "bar");
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[1].markerIndex, 1);
-assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[1].playerTokenSrc, "token-green.png");
 
 const stripOnlyState = data.createDefaultNebulaDataState();
 fillNebulaData(stripOnlyState, "sector-2-a", { source: "test" });
@@ -443,13 +438,5 @@ assert.deepEqual(
   ["sector-1-b", "sector-1-a", "aomomo"],
   "completed sectors won by the current player should be settled before other-player and winnerless sectors",
 );
-
-data.updateNebulaTokenPosition(nebulaDataState, "sector-2-a", 1, {
-  percentX: 12.34,
-  percentY: 56.78,
-});
-const moved = data.listNebulaTokens(nebulaDataState, "sector-2-a").find((token) => token.slotIndex === 1);
-assert.equal(moved.percentX, 12.34);
-assert.equal(moved.percentY, 56.78);
 
 console.log("nebula.test.js: all tests passed");

@@ -32,7 +32,7 @@
   const SCAN_COST = Object.freeze({ credits: 1, energy: 2 });
 
   function getCurrentPlayer(context) {
-    return players.getCurrentPlayer(context.playerState);
+    return players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
   }
 
   function getPlayerTokenSrc(context, player, options) {
@@ -49,7 +49,7 @@
       const nebula = solar.getNebulaAtCoordinate(
         Number(options.sectorX),
         5,
-        context.solarState?.sectorBySlot,
+        context.solarSystem?.sectorBySlot,
       );
       return nebula?.id || null;
     }
@@ -57,7 +57,7 @@
   }
 
   function hasScannableNebulaData(context, nebulaId) {
-    return (data.listNebulaTokens?.(context.nebulaDataState, nebulaId) || []).length > 0;
+    return (data.listNebulaTokens?.(context.data, nebulaId) || []).length > 0;
   }
 
   function scanNebula(context, options = {}) {
@@ -67,19 +67,19 @@
     if (!currentPlayer) {
       return { ok: false, abilityId: "scanNebula", message: "没有当前玩家" };
     }
-    if (!context.nebulaDataState) {
+    if (!context.data) {
       return { ok: false, abilityId: "scanNebula", message: "星云状态未初始化" };
     }
     if (!nebulaId) {
       return { ok: false, abilityId: "scanNebula", message: "没有可扫描星云" };
     }
 
-    const nextToken = data.getNextReplaceableNebulaToken(context.nebulaDataState, nebulaId);
+    const nextToken = data.getNextReplaceableNebulaToken(context.data, nebulaId);
     const scanOptions = {
       playerColor: options.playerColor || currentPlayer.color,
       playerLabel: options.playerLabel || currentPlayer.colorLabel,
       playerTokenSrc: getPlayerTokenSrc(context, currentPlayer, options),
-      ...(context.workingRoot ? { root: context.workingRoot } : {}),
+      ...(context.state ? { root: context.state } : {}),
     };
 
     if (!nextToken) {
@@ -92,7 +92,7 @@
         };
       }
 
-      const extraResult = data.addSectorExtraMark(context.nebulaDataState, nebulaId, currentPlayer, scanOptions);
+      const extraResult = data.addSectorExtraMark(context.data, nebulaId, currentPlayer, scanOptions);
       if (!extraResult.ok) {
         return {
           ok: false,
@@ -134,7 +134,7 @@
     }
 
     const replaceResult = data.replaceNextNebulaDataToken(
-      context.nebulaDataState,
+      context.data,
       nebulaId,
       currentPlayer,
       scanOptions,
@@ -152,7 +152,7 @@
     const gainResult = shouldGainData
       ? data.gainData(currentPlayer, {
         source: options.source || "scan",
-        ...(context.workingRoot ? { root: context.workingRoot } : {}),
+        ...(context.state ? { root: context.state } : {}),
       })
       : { ok: true, skipped: true, message: "未获得数据" };
     const label = data.getNebulaLabel(nebulaId);
@@ -211,14 +211,14 @@
     }
 
     const slotIndex = Number(options.publicSlotIndex);
-    const cardState = context.cardState;
-    const card = options.card || cardState?.publicCards?.[slotIndex] || null;
-    if (cardState && card && Number.isInteger(slotIndex)) {
-      if (!Array.isArray(cardState.discardPile)) cardState.discardPile = [];
-      cardState.discardPile.push(card);
+    const cardsState = context.cards;
+    const card = options.card || cardsState?.publicCards?.[slotIndex] || null;
+    if (cardsState && card && Number.isInteger(slotIndex)) {
+      if (!Array.isArray(cardsState.discardPile)) cardsState.discardPile = [];
+      cardsState.discardPile.push(card);
       let replenished = null;
-      if (cardState.publicCards?.[slotIndex]?.id === card.id) {
-        cardState.publicCards[slotIndex] = null;
+      if (cardsState.publicCards?.[slotIndex]?.id === card.id) {
+        cardsState.publicCards[slotIndex] = null;
         if (typeof context.replenishPublicSlot === "function") {
           replenished = context.replenishPublicSlot(slotIndex);
         }
@@ -256,13 +256,13 @@
     const player = options.player || getCurrentPlayer(context);
     const handIndex = Number(options.handIndex);
     const card = options.card || player?.hand?.[handIndex] || null;
-    if (context.cardState && player && card && Number.isInteger(handIndex)) {
+    if (context.cards && player && card && Number.isInteger(handIndex)) {
       const discardIndex = player.hand?.findIndex((item) => item.id === card.id);
       const resolvedIndex = discardIndex >= 0 ? discardIndex : handIndex;
       const discarded = player.hand.splice(resolvedIndex, 1)[0];
       player.resources.handSize = player.hand.length;
-      if (!Array.isArray(context.cardState.discardPile)) context.cardState.discardPile = [];
-      context.cardState.discardPile.push(discarded);
+      if (!Array.isArray(context.cards.discardPile)) context.cards.discardPile = [];
+      context.cards.discardPile.push(discarded);
 
       result.payload.card = discarded;
       result.message += `；弃除手牌 ${discarded.cardName || discarded.cardId || discarded.id}`;

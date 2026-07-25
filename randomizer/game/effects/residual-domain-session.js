@@ -96,11 +96,11 @@
 
   const clone = (value) => value == null ? value : structuredClone(value);
   const fail = (code, message, details = {}) => ({ ok: false, code, message, ...details });
-  const getRoot = (state, context) => context?.workingRoot || context || state;
-  const actor = (root, ownerId) => (root.playerState?.players || [])
+  const getRoot = (state, context) => context?.state || context || state;
+  const actor = (root, ownerId) => (root.players?.players || [])
     .find((player) => player.id === ownerId) || null;
-  const roundOf = (root) => Math.max(1, Number(root.turnState?.roundNumber) || 1);
-  const turnOf = (root) => Math.max(1, Number(root.turnState?.turnNumber) || 1);
+  const roundOf = (root) => Math.max(1, Number(root.turn?.roundNumber) || 1);
+  const turnOf = (root) => Math.max(1, Number(root.turn?.turnNumber) || 1);
 
   function nextRandom(root) {
     if (!root.meta) throw new TypeError("Residual domain RNG 缺少 committed meta");
@@ -139,7 +139,7 @@
   function canStartCompany(root, player) {
     if (!player) return fail("COMPANY_OWNER_MISSING", "没有当前玩家");
     if (root.match?.pendingDecision) return fail("COMPANY_PENDING_DECISION", "请先完成当前选择");
-    if ((root.turnState?.passedPlayerIds || []).includes(player.id) || player.passCompletionPending) {
+    if ((root.turn?.passedPlayerIds || []).includes(player.id) || player.passCompletionPending) {
       return fail("COMPANY_AFTER_PASS", "PASS 后不能执行公司行动");
     }
     const label = industry.getPlayerIndustryLabel(player);
@@ -154,10 +154,10 @@
     return [standardAction.createOptionDefinition("industry", {
       label: "公司",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const owner = context.standardActionAuthority?.actorId
-          || context.playerState?.currentPlayerId
-          || root.playerState?.currentPlayerId;
+          || context.turn?.currentPlayerId
+          || root.turn?.currentPlayerId;
         const check = canStartCompany(root, actor(root, owner));
         return check.ok ? {
           ok: true,
@@ -181,13 +181,13 @@
     }), standardAction.createOptionDefinition("card_corner", {
       label: "弃牌角标",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const ownerId = context.standardActionAuthority?.actorId
-          || context.playerState?.currentPlayerId
-          || root.playerState?.currentPlayerId;
+          || context.turn?.currentPlayerId
+          || root.turn?.currentPlayerId;
         const player = actor(root, ownerId);
         if (!player || root.match?.pendingDecision
-          || (root.turnState?.passedPlayerIds || []).includes(ownerId)) {
+          || (root.turn?.passedPlayerIds || []).includes(ownerId)) {
           return fail("CARD_CORNER_BLOCKED", "当前不能执行弃牌角标");
         }
         const multiplier = industry.shouldDoubleDiscardCornerRewards?.(player) ? 2 : 1;
@@ -226,19 +226,19 @@
     }), standardAction.createOptionDefinition("runezu_face_symbol", {
       label: "符文族面部符号",
       getOptions(context) {
-        const root = context.workingRoot || context;
+        const root = context.state || context;
         const ownerId = context.standardActionAuthority?.actorId
-          || context.playerState?.currentPlayerId
-          || root.playerState?.currentPlayerId;
+          || context.turn?.currentPlayerId
+          || root.turn?.currentPlayerId;
         const player = actor(root, ownerId);
         if (!player || root.match?.pendingDecision
-          || (root.turnState?.passedPlayerIds || []).includes(ownerId)) {
+          || (root.turn?.passedPlayerIds || []).includes(ownerId)) {
           return fail("RUNEZU_FACE_BLOCKED", "当前不能放置符文族面部符号");
         }
         const choices = (aliens.ALIEN_SLOT_IDS || []).flatMap((slotId) => (
-          runezu.isRunezuRevealedSlot(root.alienGameState, slotId)
+          runezu.isRunezuRevealedSlot(root.aliens, slotId)
             ? (runezu.FACE_SYMBOL_POSITIONS || []).flatMap((position) => {
-              const check = runezu.canPlaceFaceSymbol(root.alienGameState, position, player);
+              const check = runezu.canPlaceFaceSymbol(root.aliens, position, player);
               return check.ok ? check.choices.map((entry) => ({
                 target: { alienSlotId: Number(slotId), position: Number(position), symbolId: entry.symbolId },
                 label: `${runezu.formatSymbolLabel(entry.symbolId)} → ${position}`,
@@ -281,7 +281,7 @@
       case "sentinel_arm_play_corner":
         return [];
       case "stratus_public_corners":
-        return industryAbilities.buildStratusPublicCornerEffectNodes(cards, root.cardState.publicCards)
+        return industryAbilities.buildStratusPublicCornerEffectNodes(cards, root.cards.publicCards)
           .map((node, index) => decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
             ...common, step: "stratus_corner", node, index,
           }, "choose_reward"));
@@ -326,7 +326,7 @@
     if (payload.step === "turing_tech") {
       const slots = (tech.TECH_TILE_IDS || [])
         .filter((tileId) => /^(orange|purple)/.test(tileId))
-        .filter((tileId) => tech.isSlotAvailable(root.techGameState?.board, tileId));
+        .filter((tileId) => tech.isSlotAvailable(root.tech, tileId));
       return formalize(root, player.id, slots.map((tileId) => choice(
         "choose_target", `tech:${tileId}`, { tileId }, {}, `借用 ${tileId}`,
       )));
@@ -351,7 +351,7 @@
         ? 2
         : payload.abilityId === "fenwick_publicity_pick_corner" ? 1 : 0;
       if (publicityCost && !players.canAfford(player, { publicity: publicityCost })) return [];
-      return formalize(root, player.id, (root.cardState.publicCards || []).flatMap((card, slotIndex) => (
+      return formalize(root, player.id, (root.cards.publicCards || []).flatMap((card, slotIndex) => (
         card ? [choice(
           "choose_card", `public:${slotIndex}:${card.id}`, { slotIndex, cardInstanceId: card.id },
           payload.step === "swap_public" ? { handCardInstanceId: payload.handCardInstanceId } : {},
@@ -361,19 +361,19 @@
     }
     if (payload.step === "free_move") {
       const used = new Set(payload.usedRocketIds || []);
-      const choices = (root.rocketState?.rockets || []).flatMap((rocket) => {
+      const choices = (root.pieces?.rockets || []).flatMap((rocket) => {
         if (rocket.playerId !== player.id || rocket.surface !== "solar-board" || used.has(rocket.id)) return [];
         const context = {
-          workingRoot: root,
-          playerState: { ...root.playerState, currentPlayerId: player.id },
-          rocketState: root.rocketState,
-          planetStatsState: root.planetStatsState,
-          alienGameState: root.alienGameState,
-          nebulaDataState: root.nebulaDataState,
-          cardState: root.cardState,
-          solarState: root.solarState,
-          turnState: root.turnState,
-          techGameState: root.techGameState,
+          state: root,
+          players: root.players,
+          pieces: root.pieces,
+          planets: root.planets,
+          aliens: root.aliens,
+          data: root.data,
+          cards: root.cards,
+          solarSystem: root.solarSystem,
+          turn: { ...root.turn, currentPlayerId: player.id },
+          tech: root.tech,
         };
         return gameAbilities.rocket.listMoveRequirements(context, player, rocket.id)
           ?.filter((move) => Number(move.requiredMovePoints) <= 1)
@@ -432,11 +432,11 @@
       const index = player.hand.findIndex((card) => card.id === target.cardInstanceId);
       if (index < 0) return fail("COMPANY_INCOME_CARD_STALE", "收入牌已失效");
       const [card] = player.hand.splice(index, 1);
-      cards.addToDiscardPile(root.cardState, card);
+      cards.addToDiscardPile(root.cards, card);
       const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, card, {
         root,
         blindDraw: () => cards.blindDraw(
-          root.cardState, root.playerState, player, () => nextRandom(root), drawOptions(root),
+          root.cards, root.players, player, () => nextRandom(root), drawOptions(root),
         ),
       });
       if (!gained.ok) return gained;
@@ -450,14 +450,14 @@
       }, "choose_card"));
     } else if (step === "swap_public") {
       const handIndex = player.hand.findIndex((card) => card.id === payload.handCardInstanceId);
-      const publicCard = root.cardState.publicCards[target.slotIndex];
+      const publicCard = root.cards.publicCards[target.slotIndex];
       if (handIndex < 0 || publicCard?.id !== target.cardInstanceId) {
         return fail("COMPANY_SWAP_STALE", "交换牌已失效");
       }
-      root.cardState.publicCards[target.slotIndex] = player.hand[handIndex];
+      root.cards.publicCards[target.slotIndex] = player.hand[handIndex];
       player.hand[handIndex] = publicCard;
     } else if (step === "public_card") {
-      if (root.cardState.publicCards[target.slotIndex]?.id !== target.cardInstanceId) {
+      if (root.cards.publicCards[target.slotIndex]?.id !== target.cardInstanceId) {
         return fail("COMPANY_PUBLIC_CARD_STALE", "公共牌已失效");
       }
       if (payload.abilityId === "mission_publicity_pick_income") {
@@ -466,7 +466,7 @@
         players.spendResources(player, { publicity: 1 });
       }
       const picked = cards.pickFromPublic(
-        root.cardState, root.playerState, player, target.slotIndex,
+        root.cards, root.players, player, target.slotIndex,
         () => nextRandom(root), drawOptions(root),
       );
       if (!picked.ok) return picked;
@@ -477,11 +477,11 @@
       if (payload.abilityId === "mission_publicity_pick_income") {
         const index = player.hand.findIndex((card) => card.id === picked.card.id);
         player.hand.splice(index, 1);
-        cards.addToDiscardPile(root.cardState, picked.card);
+        cards.addToDiscardPile(root.cards, picked.card);
         const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, picked.card, {
           root,
           blindDraw: () => cards.blindDraw(
-            root.cardState, root.playerState, player, () => nextRandom(root), drawOptions(root),
+            root.cards, root.players, player, () => nextRandom(root), drawOptions(root),
           ),
         });
         if (!gained.ok) return gained;
@@ -506,16 +506,16 @@
       }
     } else if (step === "free_move") {
       const context = {
-        workingRoot: root,
-        playerState: { ...root.playerState, currentPlayerId: player.id },
-        rocketState: root.rocketState,
-        planetStatsState: root.planetStatsState,
-        alienGameState: root.alienGameState,
-        nebulaDataState: root.nebulaDataState,
-        cardState: root.cardState,
-        solarState: root.solarState,
-        turnState: root.turnState,
-        techGameState: root.techGameState,
+        state: root,
+        players: root.players,
+        pieces: root.pieces,
+        planets: root.planets,
+        aliens: root.aliens,
+        data: root.data,
+        cards: root.cards,
+        solarSystem: root.solarSystem,
+        turn: { ...root.turn, currentPlayerId: player.id },
+        tech: root.tech,
       };
       const moved = gameAbilities.executeAbility("moveProbe", context, {
         rocketId: target.rocketId,
@@ -543,21 +543,21 @@
       return fail("ALIEN_SPECIES_UNKNOWN", `未知物种: ${speciesId}`);
     }
     const module = SPECIES_MODULES[speciesId];
-    const allPlayers = root.playerState.players || [];
+    const allPlayers = root.players.players || [];
     if (!options.alreadyRevealed) {
-      const revealed = aliens.revealAlien(root.alienGameState, slotId, module.ALIEN_ID);
+      const revealed = aliens.revealAlien(root.aliens, slotId, module.ALIEN_ID);
       if (!revealed.ok) return revealed;
     }
     const random = () => nextRandom(root);
     const args = {
-      jiuzhe: [root.alienGameState, slotId, owner, allPlayers, random],
-      yichangdian: [root.alienGameState, slotId, owner, root.solarState?.earthSectorX || 1, random],
-      banrenma: [root.alienGameState, slotId, owner, allPlayers, random],
-      fangzhou: [root.alienGameState, slotId, owner, allPlayers, random],
-      chong: [root.alienGameState, slotId, owner, random],
-      amiba: [root.alienGameState, slotId, owner, random],
-      aomomo: [root.alienGameState, slotId, owner, random],
-      runezu: [root.alienGameState, slotId, owner, { random }],
+      jiuzhe: [root.aliens, slotId, owner, allPlayers, random],
+      yichangdian: [root.aliens, slotId, owner, root.solarSystem?.earthSectorX || 1, random],
+      banrenma: [root.aliens, slotId, owner, allPlayers, random],
+      fangzhou: [root.aliens, slotId, owner, allPlayers, random],
+      chong: [root.aliens, slotId, owner, random],
+      amiba: [root.aliens, slotId, owner, random],
+      aomomo: [root.aliens, slotId, owner, random],
+      runezu: [root.aliens, slotId, owner, { random }],
     };
     const initializer = module?.[`initialize${speciesId[0].toUpperCase()}${speciesId.slice(1)}Reveal`];
     if (typeof initializer !== "function") {
@@ -567,7 +567,7 @@
     if (!initialized.ok) return initialized;
     const grants = !["jiuzhe", "fangzhou"].includes(speciesId)
       ? aliens.grantAlienCardsForFirstTraces(
-        root.alienGameState,
+        root.aliens,
         slotId,
         allPlayers,
         module,
@@ -589,10 +589,10 @@
   function revealReadyAliens(root, owner) {
     const revealed = [];
     for (const slotId of [1, 2]) {
-      const slot = aliens.getAlienSlot(root.alienGameState, slotId);
+      const slot = aliens.getAlienSlot(root.aliens, slotId);
       if (!slot || slot.revealed || !aliens.isAlienReadyToReveal(slot)) continue;
       const picked = aliens.revealRandomAlien(
-        root.alienGameState,
+        root.aliens,
         slotId,
         () => nextRandom(root),
       );
@@ -615,12 +615,12 @@
 
   function buildCardTaskContext(root) {
     return {
-      nebulaDataState: root.nebulaDataState,
-      alienGameState: root.alienGameState,
-      planetStatsState: root.planetStatsState,
+      data: root.data,
+      aliens: root.aliens,
+      planets: root.planets,
       probeLocations: root.match?.probeLocations || {},
       probeLocationDetails: root.match?.probeLocationDetails || [],
-      dataTotals: Object.fromEntries((root.playerState.players || []).flatMap((player) => {
+      dataTotals: Object.fromEntries((root.players.players || []).flatMap((player) => {
         const available = Number(player.resources?.availableData) || 0;
         const placed = Number(player.resources?.placedData) || 0;
         return [[player.id, available + placed], [player.color, available + placed]];
@@ -678,10 +678,10 @@
       if (chong.isChongCard(card) && !card.chongTaskCompleted) {
         const task = card.chongTask || chong.getCardTask(card);
         const deliveredTransport = task?.kind === "transport"
-          ? chong.getDeliveredTransportForCard(root.alienGameState, card.id)
+          ? chong.getDeliveredTransportForCard(root.aliens, card.id)
           : null;
         const ready = task?.kind === "trace"
-          ? chong.isTraceTaskReady(root.alienGameState, player, task)
+          ? chong.isTraceTaskReady(root.aliens, player, task)
           : task?.kind === "transport"
             ? Boolean(deliveredTransport)
             : false;
@@ -699,9 +699,9 @@
           } : {}),
         });
       } else if (amiba.isAmibaCard(card) && !card.amibaTaskCompleted
-        && amiba.isTheoryTaskReady(root.alienGameState, player)) {
+        && amiba.isTheoryTaskReady(root.aliens, player)) {
         const task = card.amibaTask || amiba.getCardTask(card);
-        const reward = amiba.getTheoryTaskReward(root.alienGameState);
+        const reward = amiba.getTheoryTaskReward(root.aliens);
         tasks.push({
           kind: "amiba_task",
           cardInstanceId: card.id,
@@ -710,7 +710,7 @@
           label: task?.label || cards.getCardLabel(card),
         });
       } else if (runezu.isRunezuCard(card)) {
-        const ready = runezu.getReadyThreeTraceTask(card, root.alienGameState, player);
+        const ready = runezu.getReadyThreeTraceTask(card, root.aliens, player);
         if (ready) tasks.push({
           kind: "runezu_task",
           cardInstanceId: card.id,
@@ -720,7 +720,7 @@
         });
       }
     }
-    const triggers = (root.turnState?.type1TriggerEvents || []).flatMap((event) => (
+    const triggers = (root.turn?.type1TriggerEvents || []).flatMap((event) => (
       cardTaskState.collectType1TriggerMatches(player, [event], cardEffects)
         .map((match) => ({
           kind: "trigger",
@@ -860,7 +860,7 @@
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let drawIndex = 0; drawIndex < count; drawIndex += 1) {
             const drawn = cards.blindDraw(
-              root.cardState, root.playerState, player, () => nextRandom(root), drawOptions(root),
+              root.cards, root.players, player, () => nextRandom(root), drawOptions(root),
             );
             if (!drawn.ok) return drawn;
           }
@@ -896,7 +896,7 @@
     if (reward?.symbolId) runezu.gainPlayerSymbol(player, reward.symbolId);
     if (reward?.panelSymbol && reward?.panelSymbolSlotId) {
       const taken = runezu.takePanelSymbol(
-        root.alienGameState,
+        root.aliens,
         reward.panelSymbolSlotId,
         player,
         { refill: Boolean(reward.refillPanelSymbol), random: () => nextRandom(root) },
@@ -950,7 +950,7 @@
       irreversible = applied.irreversible;
     } else if (action.payload?.kind === "runezu_symbol") {
       const resolved = runezu.getTraceFaceRewardForSymbol(
-        root.alienGameState,
+        root.aliens,
         action.payload.symbolId,
       );
       reward = resolved.ok ? resolved.reward : null;
@@ -962,7 +962,7 @@
       }
     } else if (action.payload?.kind === "fangzhou_basic") {
       const flip = SPECIES_MODULES.fangzhou.flipCard1Reward(
-        root.alienGameState,
+        root.aliens,
         "basic",
         () => nextRandom(root),
       );
@@ -988,7 +988,7 @@
     }
     const removed = cards.discardFromHandAtIndex(player, handIndex);
     if (!removed.ok) return removed;
-    cards.addToDiscardPile(root.cardState, removed.card);
+    cards.addToDiscardPile(root.cards, removed.card);
     return {
       ok: true,
       spawnedEffects,
@@ -1007,7 +1007,7 @@
 
   function executeRunezuFace(root, action, player) {
     const placed = runezu.placePlayerSymbolOnFace(
-      root.alienGameState,
+      root.aliens,
       action.target?.position,
       player,
       action.target?.symbolId,
@@ -1048,7 +1048,7 @@
 
   function augmentEffectResult(root, executorResult, sourceEffect) {
     if (!executorResult || executorResult.ok !== true || !Array.isArray(executorResult.events)
-      || !executorResult.events.length || !root?.playerState) {
+      || !executorResult.events.length || !root?.players) {
       return executorResult;
     }
     const events = executorResult.events.filter((event) => event?.type);
@@ -1059,7 +1059,7 @@
       for (const event of events) {
         if (event.type === "visitPlanet" && event.rocketId != null) {
           chong.markTransportedFossilDelivered(
-            root.alienGameState,
+            root.aliens,
             event.rocketId,
             event.planetId || null,
           );
@@ -1098,12 +1098,12 @@
           const index = owner.reservedCards.findIndex((entry) => entry.id === card.id);
           if (index >= 0) {
             owner.reservedCards.splice(index, 1);
-            cards.addToDiscardPile(root.cardState, card);
+            cards.addToDiscardPile(root.cards, card);
             owner.completedTaskCount = (Number(owner.completedTaskCount) || 0) + 1;
           }
         }
       }
-      for (const bonus of root.turnState.cardTurnEventBonuses || []) {
+      for (const bonus of root.turn.cardTurnEventBonuses || []) {
         if ((bonus.ownerId || bonus.playerId) !== owner.id) continue;
         for (const event of events) {
           if (!eventMatchesBonus(event, bonus)) continue;
@@ -1172,7 +1172,7 @@
     } else if (settlement.kind === "chong_task") {
       if (settlement.rocketId != null) {
         const transport = chong.completeTransportedFossil(
-          root.alienGameState,
+          root.aliens,
           settlement.rocketId,
           {
             cardId: card.id,
@@ -1192,7 +1192,7 @@
     if (!consumed) return fail("CARD_RULE_ALREADY_CONSUMED", "卡牌规则已经结算");
     if (settlement.kind !== "trigger" || cardEffects.areAllTriggersConsumed(card)) {
       player.reservedCards.splice(cardIndex, 1);
-      cards.addToDiscardPile(root.cardState, card);
+      cards.addToDiscardPile(root.cards, card);
       player.completedTaskCount = (Number(player.completedTaskCount) || 0) + 1;
     }
     const applied = applyFormalCardEffects(
@@ -1206,10 +1206,10 @@
 
   function settleFinalScores(root) {
     const scores = [];
-    for (const player of root.playerState.players || []) {
+    for (const player of root.players.players || []) {
       const breakdown = endGameScoring.computePlayerFinalScore({
         ...root,
-        players: root.playerState.players,
+        players: root.players.players,
         currentPlayer: player,
         cardEffects,
         getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(
@@ -1231,13 +1231,13 @@
   }
 
   function listPendingFinalOwners(root) {
-    return (root.playerState.players || []).filter((player) => (
-      finalScoring.getPendingMarksForPlayer(root.finalScoringState, player.id).length
+    return (root.players.players || []).filter((player) => (
+      finalScoring.getPendingMarksForPlayer(root.finalScoring, player.id).length
     ));
   }
 
   function aomomoCardChoices(root, ownerId) {
-    const state = aomomo.ensureAomomoState(root.alienGameState);
+    const state = aomomo.ensureAomomoState(root.aliens);
     const displayed = state.displayedCardIndex == null
       ? []
       : [choice(
@@ -1271,7 +1271,7 @@
       const drawnCards = [];
       for (let index = 0; index < Math.max(0, Number(income.handSize) || 0); index += 1) {
         const drawn = cards.blindDraw(
-          root.cardState, root.playerState, owner, () => nextRandom(root), drawOptions(root),
+          root.cards, root.players, owner, () => nextRandom(root), drawOptions(root),
         );
         if (!drawn.ok) return drawn;
         drawnCards.push(drawn.card);
@@ -1299,7 +1299,7 @@
       };
     }
     if (payload.domain === "company" && effectType === "round_start") {
-      industry.resetAllIndustryActionMarks(root.playerState.players);
+      industry.resetAllIndustryActionMarks(root.players.players);
       return { ok: true };
     }
     if (payload.domain === "company"
@@ -1311,13 +1311,13 @@
       return { ok: true };
     }
     if (payload.domain === "card_trigger" && effectType === "round_transition") {
-      delete root.turnState.type1TriggerEvents;
-      root.turnState.cardTurnEventBonuses = [];
+      delete root.turn.type1TriggerEvents;
+      root.turn.cardTurnEventBonuses = [];
       return { ok: true };
     }
     if (payload.domain === "card_trigger" && effectType === "turn_end") {
       const cardSettlements = listCardSettlements(root, effect.ownerId);
-      root.turnState.cardTurnEventBonuses = (root.turnState.cardTurnEventBonuses || [])
+      root.turn.cardTurnEventBonuses = (root.turn.cardTurnEventBonuses || [])
         .filter((bonus) => (bonus.ownerId || bonus.playerId) !== effect.ownerId);
       return { ok: true, cardSettlements };
     }
@@ -1349,7 +1349,7 @@
       const method = module[`place${speciesId[0].toUpperCase()}${speciesId.slice(1)}Trace`];
       if (typeof method !== "function") return fail("ALIEN_TRACE_OWNER_MISSING", `${speciesId} 缺少痕迹 owner`);
       return method(
-        root.alienGameState,
+        root.aliens,
         Number(payload.data.slotId),
         payload.data.traceType,
         Number(payload.data.position),
@@ -1358,10 +1358,10 @@
       );
     }
     if (payload.domain === "final_scoring" && effectType === "sync_marks") {
-      return finalScoring.syncPendingMarks(root.finalScoringState, root.playerState.players);
+      return finalScoring.syncPendingMarks(root.finalScoring, root.players.players);
     }
     if (payload.domain === "final_scoring" && effectType === "game_end") {
-      finalScoring.syncPendingMarks(root.finalScoringState, root.playerState.players);
+      finalScoring.syncPendingMarks(root.finalScoring, root.players.players);
       if (!listPendingFinalOwners(root).length) settleFinalScores(root);
       return { ok: true };
     }
@@ -1500,8 +1500,8 @@
           return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
         }
         const gained = legal.target.source === "display"
-          ? aomomo.takeDisplayedCard(root.alienGameState, () => nextRandom(root))
-          : aomomo.blindDrawCard(root.alienGameState, () => nextRandom(root));
+          ? aomomo.takeDisplayedCard(root.aliens, () => nextRandom(root))
+          : aomomo.blindDrawCard(root.aliens, () => nextRandom(root));
         if (!gained.ok || !gained.card) return gained;
         player.hand.push(gained.card);
         player.resources.handSize = player.hand.length;
@@ -1523,7 +1523,7 @@
         const player = actor(root, effect.ownerId);
         if (!player) return [];
         return formalize(root, player.id, finalScoring.DEFAULT_TILE_IDS.flatMap((tileId) => (
-          finalScoring.canMarkTile(root.finalScoringState, tileId, player).ok
+          finalScoring.canMarkTile(root.finalScoring, tileId, player).ok
             ? [choice("choose_target", `final:${tileId}`, { tileId }, {}, `标记 ${tileId.toUpperCase()}`)]
             : []
         )));
@@ -1535,13 +1535,13 @@
         const player = actor(root, effect.ownerId);
         if (!legal || !player) return fail("FINAL_MARK_STALE", "终局标记 Decision 已失效");
         const marked = finalScoring.markTile(
-          root.finalScoringState, legal.target.tileId, player,
+          root.finalScoring, legal.target.tileId, player,
           { placedAt: root.meta?.logicalTime || null, root },
         );
         if (!marked.ok) return marked;
         if (!listPendingFinalOwners(root).length) settleFinalScores(root);
         const hasMoreForOwner = finalScoring
-          .getPendingMarksForPlayer(root.finalScoringState, player.id).length > 0;
+          .getPendingMarksForPlayer(root.finalScoring, player.id).length > 0;
         return result(state, root, "final_mark", {
           spawnedEffects: hasMoreForOwner
             ? [decision(EFFECT_TYPES.FINAL_MARK, player.id, {})]

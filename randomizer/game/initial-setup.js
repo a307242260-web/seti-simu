@@ -99,9 +99,9 @@
   }
 
   function activePlayerIds(rootState) {
-    const known = new Set((rootState.playerState?.players || []).map((player) => player.id));
-    const active = (rootState.turnState?.activePlayerIds || []).filter((playerId) => known.has(playerId));
-    return active.length ? active : [rootState.playerState?.currentPlayerId].filter(Boolean);
+    const known = new Set((rootState.players?.players || []).map((player) => player.id));
+    const active = (rootState.turn?.activePlayerIds || []).filter((playerId) => known.has(playerId));
+    return active.length ? active : [rootState.turn?.currentPlayerId].filter(Boolean);
   }
 
   function setupState(rootState) {
@@ -163,7 +163,7 @@
         selectedInitialIds: [],
         confirmed: false,
       };
-      const player = rootState.playerState.players.find((candidate) => candidate.id === playerId);
+      const player = rootState.players.players.find((candidate) => candidate.id === playerId);
       if (player) player.initialSelection = null;
     });
     rootState.match.initialSetup = {
@@ -173,10 +173,7 @@
       confirmedPlayerIds: [],
       offersByPlayerId,
     };
-    if (playerIds[0]) rootState.playerState.currentPlayerId = playerIds[0];
-    rootState.rocketState.statusNote = playerIds.length
-      ? "请完成初始选择：公司 2 选 1，初始牌 3 选 2。"
-      : "没有需要完成初始选择的玩家。";
+    if (playerIds[0]) rootState.turn.currentPlayerId = playerIds[0];
     return {
       ok: true,
       progressed: true,
@@ -200,7 +197,7 @@
   }
 
   function earthCoordinate(rootState) {
-    const earth = solar.createSolarSnapshot(rootState.solarState).planetLocations
+    const earth = solar.createSolarSnapshot(rootState.solarSystem).planetLocations
       .find((planet) => planet.planetId === "earth");
     return earth ? { x: earth.x, y: earth.y } : { x: 1, y: 1 };
   }
@@ -210,19 +207,20 @@
       ? actionContext.random
       : createRandom(`${rootState.meta?.seed || "browser-host"}:initial-settlement`);
     const result = initialCards.resolveInitialSelections({
-      workingRoot: rootState,
-      playerState: rootState.playerState,
-      cardState: rootState.cardState,
-      rocketState: rootState.rocketState,
-      nebulaDataState: rootState.nebulaDataState,
-      planetStatsState: rootState.planetStatsState,
-      alienGameState: rootState.alienGameState,
-      techGameState: rootState.techGameState,
+      state: rootState,
+      players: rootState.players,
+      cards: rootState.cards,
+      pieces: rootState.pieces,
+      data: rootState.data,
+      planets: rootState.planets,
+      aliens: rootState.aliens,
+      tech: rootState.tech,
+      turn: rootState.turn,
       blindDrawCard(player) {
         if (typeof actionContext?.blindDrawCard === "function") return actionContext.blindDrawCard(player);
         return cards.blindDraw(
-          rootState.cardState,
-          rootState.playerState,
+          rootState.cards,
+          rootState.players,
           player,
           random,
           typeof cards.createCommittedCardInstance === "function"
@@ -239,7 +237,7 @@
         if (typeof actionContext?.launchRocketAtEarth === "function") {
           return actionContext.launchRocketAtEarth(player);
         }
-        return rockets.launchRocketAtSector(rootState.rocketState, earthCoordinate(rootState), {
+        return rockets.launchRocketAtSector(rootState.pieces, earthCoordinate(rootState), {
           playerId: player.id,
           color: player.color,
           root: rootState,
@@ -256,15 +254,15 @@
 
   function installNextIncomeDecision(rootState) {
     const next = rootState.match.initialIncomeQueue?.[0] || null;
-    const player = rootState.playerState.players.find((candidate) => candidate.id === next?.playerId);
+    const player = rootState.players.players.find((candidate) => candidate.id === next?.playerId);
     if (!next || !player) {
       delete rootState.match.pendingDecision;
       delete rootState.match.initialIncomeQueue;
-      rootState.playerState.currentPlayerId = rootState.turnState.startPlayerId
-        || rootState.playerState.currentPlayerId;
+      rootState.turn.currentPlayerId = rootState.turn.startPlayerId
+        || rootState.turn.currentPlayerId;
       return false;
     }
-    rootState.playerState.currentPlayerId = player.id;
+    rootState.turn.currentPlayerId = player.id;
     rootState.match.pendingDecision = {
       kind: "discard",
       type: "initial_income",
@@ -277,7 +275,7 @@
 
   function confirm(rootState, actionContext) {
     const setup = setupState(rootState);
-    const player = rootState.playerState.players.find(
+    const player = rootState.players.players.find(
       (candidate) => candidate.id === setup?.currentPlayerId,
     );
     const offer = offerFor(rootState, player?.id);
@@ -305,8 +303,7 @@
     );
     if (nextPlayerId) {
       setup.currentPlayerId = nextPlayerId;
-      rootState.playerState.currentPlayerId = nextPlayerId;
-      rootState.rocketState.statusNote = "上一位玩家已确认，轮到下一位玩家完成初始选择。";
+      rootState.turn.currentPlayerId = nextPlayerId;
       return {
         ok: true,
         progressed: true,
@@ -315,13 +312,10 @@
     }
     setup.phase = "complete";
     setup.currentPlayerId = null;
-    rootState.playerState.currentPlayerId = rootState.turnState.startPlayerId
-      || rootState.playerState.currentPlayerId;
+    rootState.turn.currentPlayerId = rootState.turn.startPlayerId
+      || rootState.turn.currentPlayerId;
     const settlement = resolveSelections(rootState, actionContext);
     if (!settlement?.ok) return settlement;
-    rootState.rocketState.statusNote = rootState.match.pendingDecision
-      ? "所有玩家已完成初始选择，请完成初始收入结算。"
-      : "所有玩家已完成初始选择，游戏开始。";
     return {
       ok: true,
       progressed: true,
@@ -400,7 +394,7 @@
   function paymentChoices(rootState) {
     const pending = rootState.match?.pendingDecision;
     if (pending?.type !== "initial_income" || pending.kind !== "discard") return [];
-    const player = rootState.playerState.players.find((candidate) => candidate.id === pending.playerId);
+    const player = rootState.players.players.find((candidate) => candidate.id === pending.playerId);
     return (player?.hand || []).map((card, handIndex) => ({
       target: {
         kind: "discard-hand-cards",
@@ -415,7 +409,7 @@
 
   function executePayment(rootState, actionContext, action) {
     const pending = rootState.match?.pendingDecision;
-    const player = rootState.playerState.players.find((candidate) => candidate.id === pending?.playerId);
+    const player = rootState.players.players.find((candidate) => candidate.id === pending?.playerId);
     const handIndex = action.target?.handIndexes?.[0];
     if (!player || !Number.isInteger(handIndex)
       || (player.hand[handIndex]?.cardId || player.hand[handIndex]?.id) !== action.target?.cardIds?.[0]) {
@@ -423,7 +417,7 @@
     }
     const discarded = cards.discardFromHandAtIndex(player, handIndex);
     if (!discarded?.ok) return discarded;
-    cards.addToDiscardPile(rootState.cardState, discarded.card);
+    cards.addToDiscardPile(rootState.cards, discarded.card);
     const gain = cards.getIncomeGainForCard(discarded.card);
     if (gain) {
       players.gainIncome(player, gain, {
@@ -431,8 +425,8 @@
           typeof actionContext?.blindDrawCard === "function"
             ? actionContext.blindDrawCard(targetPlayer)
             : cards.blindDraw(
-              rootState.cardState,
-              rootState.playerState,
+              rootState.cards,
+              rootState.players,
               targetPlayer,
               createRandom(`${rootState.meta?.seed || "browser-host"}:initial-income:${player.id}`),
               typeof cards.createCommittedCardInstance === "function"
@@ -465,7 +459,7 @@
       ownerId: OWNER_ID,
       families: FAMILIES,
       enumerate(actionContext, request = {}) {
-        const rootState = actionContext?.workingRoot || actionContext;
+        const rootState = actionContext?.state || actionContext;
         return request.family === "choose_card"
           ? selectionChoices(rootState)
           : request.family === "choose_payment"
@@ -473,7 +467,7 @@
             : [];
       },
       validate(actionContext, action) {
-        const rootState = actionContext?.workingRoot || actionContext;
+        const rootState = actionContext?.state || actionContext;
         const family = action.family || (
           Array.isArray(action.target?.handIndexes) ? "choose_payment" : "choose_card"
         );
@@ -486,7 +480,7 @@
           : { ok: false, code: "INITIAL_SETUP_ACTION_STALE", message: "initial_setup action 已失效" };
       },
       execute(actionContext, action) {
-        const rootState = actionContext?.workingRoot || actionContext;
+        const rootState = actionContext?.state || actionContext;
         const family = action.family || (
           Array.isArray(action.target?.handIndexes) ? "choose_payment" : "choose_card"
         );

@@ -40,28 +40,23 @@
   }
 
   function createRuleContext(state, context) {
-    const players = {
-      currentPlayerId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
-      players: listPlayers(state),
-    };
+    const players = { ...(state?.players || {}), players: listPlayers(state) };
     const pieces = state?.pieces || {};
     const probeLocationData = context.buildProbeLocationIndex?.(
       pieces,
       state?.solarSystem || {},
     ) || { index: {}, details: [] };
     return {
-      solarState: state?.solarSystem || {},
-      playerState: players,
-      cardState: state?.cards || {},
-      rocketState: pieces,
-      planetStatsState: state?.planets || {},
-      nebulaDataState: state?.data || {},
-      alienGameState: state?.aliens || {},
-      finalScoringState: state?.finalScoring || {},
-      techGameState: state?.tech || {},
-      techBoardState: state?.tech?.board || {},
-      techUiState: state?.tech?.ui || {},
-      turnState: state?.turn || {},
+      solarSystem: state?.solarSystem || {},
+      players: players,
+      cards: state?.cards || {},
+      pieces: pieces,
+      planets: state?.planets || {},
+      data: state?.data || {},
+      aliens: state?.aliens || {},
+      finalScoring: state?.finalScoring || {},
+      tech: state?.tech || {},
+      turn: state?.turn || {},
       matchState: state?.match || {},
       roundNumber: state?.turn?.roundNumber ?? state?.turn?.round ?? 1,
       turnNumber: state?.turn?.turnNumber ?? state?.turn?.turn ?? 1,
@@ -88,7 +83,7 @@
       traceType,
       Math.max(0, Math.round(number(endGameScoring.countTraceMarkers(
         player,
-        ruleContext.alienGameState,
+        ruleContext.aliens,
         traceType,
       )))),
     ]));
@@ -108,12 +103,12 @@
       techCounts,
       orbitLandCount: Math.max(0, Math.round(number(endGameScoring.countOrbitOrLandMarkers(
         player,
-        ruleContext.planetStatsState,
+        ruleContext.planets,
         ruleContext,
       )))),
       sectorWins: Math.max(0, Math.round(number(endGameScoring.countSectorWins(
         player,
-        ruleContext.nebulaDataState,
+        ruleContext.data,
       )))),
     };
   }
@@ -130,7 +125,7 @@
       }
       const ruleContext = createRuleContext(state, context);
       const players = listPlayers(state);
-      const finalState = ruleContext.finalScoringState;
+      const finalState = ruleContext.finalScoring;
       const thresholds = Array.isArray(finalState.thresholds)
         ? finalState.thresholds.map(number)
         : [...(finalScoring.FINAL_SCORE_THRESHOLDS || [])];
@@ -212,7 +207,7 @@
           Math.max(1, number(state?.turn?.turnNumber ?? state?.turn?.turn ?? 1)) - 1
         ) / Math.max(1, state?.turn?.activePlayerIds?.length || players.length || 1)) + 1,
         actionCycleNumber: number(state?.turn?.actionCycleNumber ?? state?.turn?.actionCycle ?? 1),
-        currentPlayerId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+        currentPlayerId: state?.turn?.currentPlayerId ?? null,
         activePlayerIds: clone(state?.turn?.activePlayerIds || []),
         passedPlayerIds: clone(state?.turn?.passedPlayerIds || []),
         completedTurnPlayerIds: clone(state?.turn?.completedTurnPlayerIds || []),

@@ -16,14 +16,14 @@ function gainCanonicalData(player, options = {}) {
   return data.gainData(player, { ...options, root });
 }
 
-const playerState = players.createPlayerState({
+const playersState = players.createPlayerState({
   currentPlayer: {
     color: "white",
     resources: { availableData: 0, energy: 10 },
   },
 });
 
-const player = players.getCurrentPlayer(playerState);
+const player = players.getCurrentPlayer(playersState);
 
 const first = gainCanonicalData(player, { source: "debug" });
 assert.equal(first.ok, true);

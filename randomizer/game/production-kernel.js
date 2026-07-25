@@ -116,17 +116,11 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
 
 function installProductionKernel(options = {}) {
   const hostKind = options.hostKind;
-  const stateAdapter = options.stateAdapter;
   const projectionAdapter = options.projectionAdapter;
   const hostServices = options.hostServices;
   const ruleOptions = options.ruleOptions || {};
   if (!["browser", "simulation"].includes(hostKind)) {
     throw new TypeError("Production Kernel 需要显式 hostKind: browser 或 simulation");
-  }
-  if (!stateAdapter || typeof stateAdapter.createWorkingState !== "function"
-    || typeof stateAdapter.createCommittedState !== "function"
-    || typeof stateAdapter.restoreWorkingState !== "function") {
-    throw new TypeError(`Production Kernel ${hostKind} 缺少专属 state adapter`);
   }
   if (!projectionAdapter || typeof projectionAdapter.projectState !== "function") {
     throw new TypeError(`Production Kernel ${hostKind} 缺少专属 projection adapter`);
@@ -147,9 +141,6 @@ function installProductionKernel(options = {}) {
   if (ruleOptions.runWithWorkingState != null && options[INTERNAL_RULE_SCOPE] !== true) {
     throw new TypeError("Production Kernel 禁止 Host 注入 working-state rule transaction");
   }
-  if (ruleOptions.stateAdapter && ruleOptions.stateAdapter !== stateAdapter) {
-    throw new TypeError(`Production Kernel ${hostKind} state adapter identity 不一致`);
-  }
   if (ruleOptions.projectState && ruleOptions.projectState !== projectionAdapter.projectState) {
     throw new TypeError(`Production Kernel ${hostKind} projection adapter identity 不一致`);
   }
@@ -159,8 +150,6 @@ function installProductionKernel(options = {}) {
     getAuthority: options.getAuthority,
     ruleOptions: {
       ...ruleOptions,
-      stateAdapter,
-      projectWorkingState: projectionAdapter.projectWorkingState === true,
       projectState: projectionAdapter.projectState,
       readModels: projectionAdapter.readModels || ruleOptions.readModels,
     },
@@ -169,7 +158,6 @@ function installProductionKernel(options = {}) {
     hostKind,
     composition: production.composition,
     domainPack: production.domainPack,
-    stateAdapter,
     projectionAdapter,
     hostServices,
   });
@@ -187,12 +175,6 @@ function stableSerialize(value) {
   )).join(",")}}`;
 }
 
-function replaceMutable(target, source) {
-  for (const key of Reflect.ownKeys(target || {})) delete target[key];
-  Object.assign(target, clone(source || {}));
-  return target;
-}
-
 function createModules() {
   return {
     players,
@@ -208,14 +190,15 @@ function createModules() {
   };
 }
 
-function createWorkingState(options = {}, random = Math.random) {
-  const state = initialGameStateApi.createSessionState(createModules(), {
+function buildInitialState(options = {}, random = Math.random) {
+  const state = initialGameStateApi.createInitialState(createModules(), {
     defaultInitialPlayerColor: players.DEFAULT_PLAYER_COLOR,
     activePlayerCount: options.activePlayerCount || 4,
     finalScoreIds: DEFAULT_FINAL_SCORE_IDS,
     random,
-  });
-  state.meta = {
+    schemaVersion: stateStoreApi.SCHEMA_VERSION,
+    gameId: "seti-simulation-runtime",
+    rulesetVersion: RULESET_VERSION,
     seed: options.seed ?? "seti-simulation",
     rngState: clone(options.rngState || { algorithm: "seti-simulation-mulberry32-v1", state: 1 }),
     sequences: {
@@ -227,7 +210,7 @@ function createWorkingState(options = {}, random = Math.random) {
       nebulaToken: 1,
       rocket: 1,
     },
-  };
+  });
   state.match.decisionVersion = 0;
   state.match.actionLog = [];
   if (options.prepareBrowser === true) {
@@ -241,7 +224,7 @@ function createWorkingState(options = {}, random = Math.random) {
     initializeProductionGame(state, options, random);
   }
   state.meta.sequences = readSequences(state);
-  return state;
+  return highCouplingStateApi.purifyHighCouplingSlices(state);
 }
 
 function shuffle(items, random) {
@@ -261,19 +244,19 @@ function createSelectionCard(kind, value) {
 }
 
 function randomizeBoard(workingState, random) {
-  const defaultPlayerId = workingState.playerState.players
+  const defaultPlayerId = workingState.players.players
     .find((player) => player.color === players.DEFAULT_PLAYER_COLOR)?.id || null;
-  const others = workingState.playerState.players.map((player) => player.id)
+  const others = workingState.players.players.map((player) => player.id)
     .filter((playerId) => playerId !== defaultPlayerId);
   const order = defaultPlayerId ? [defaultPlayerId, ...shuffle(others, random)] : shuffle(others, random);
-  workingState.turnState.turnOrderPlayerIds = order;
-  workingState.turnState.activePlayerIds = order.slice(0, workingState.turnState.activePlayerCount);
-  workingState.turnState.startPlayerId = workingState.turnState.activePlayerIds[0] || null;
-  workingState.playerState.currentPlayerId = workingState.turnState.startPlayerId;
+  workingState.turn.turnOrderPlayerIds = order;
+  workingState.turn.activePlayerIds = order.slice(0, workingState.turn.activePlayerCount);
+  workingState.turn.startPlayerId = workingState.turn.activePlayerIds[0] || null;
+  workingState.turn.currentPlayerId = workingState.turn.startPlayerId;
   // 当前固定 seed 契约仍包含正式发牌前的 PASS 牌堆随机抽样；实体随后由 createCardGame 重建。
-  cards.preparePassReservePiles(workingState.cardState, workingState.playerState, {
+  cards.preparePassReservePiles(workingState.cards, workingState.players, {
     rounds: [1, 2, 3],
-    activePlayerCount: workingState.turnState.activePlayerCount,
+    activePlayerCount: workingState.turn.activePlayerCount,
     random,
     createCardInstance: (entry, sequence) => cards.createCardInstance(
       entry,
@@ -281,36 +264,36 @@ function randomizeBoard(workingState, random) {
     ),
   });
 
-  workingState.solarState.wheelSteps = workingState.solarState.wheelSteps || [0, 0, 0, 0, 0];
+  const wheelSteps = [0, 0, 0, 0, 0];
   const wheelOffsets = [0, 0, 20, 11, 4];
   for (let wheel = 1; wheel <= 4; wheel += 1) {
-    workingState.solarState.wheelSteps[wheel] -= Math.floor(random() * 8 + wheelOffsets[wheel]);
+    wheelSteps[wheel] -= Math.floor(random() * 8 + wheelOffsets[wheel]);
   }
-  workingState.solarState.rotation = solar.normalizeRotationState(workingState.solarState.wheelSteps, 0);
+  workingState.solarSystem.rotation = solar.normalizeRotationState(wheelSteps, 0);
   const sectors = [1, 2, 3, 4];
   while (sectors.length) {
     const slotId = sectors.length;
     const sectorId = sectors.splice(Math.floor(random() * sectors.length), 1)[0];
-    workingState.solarState.sectorBySlot[slotId] = sectorId;
+    workingState.solarSystem.sectorBySlot[slotId] = sectorId;
   }
-  data.clearNebulaData(workingState.nebulaDataState);
-  data.fillAllNebulaData(workingState.nebulaDataState, { source: "setup", root: workingState });
-  finalScoring.randomizeTileVariants(workingState.finalScoringState, DEFAULT_FINAL_SCORE_IDS, random);
-  aliens.randomizeAlienAssignments(workingState.alienGameState);
-  tech.setupBoardBonuses(workingState.techGameState, random);
+  data.clearNebulaData(workingState.data);
+  data.fillAllNebulaData(workingState.data, { source: "setup", root: workingState });
+  finalScoring.randomizeTileVariants(workingState.finalScoring, DEFAULT_FINAL_SCORE_IDS, random);
+  aliens.randomizeAlienAssignments(workingState.aliens);
+  tech.boardState.setupBoardBonuses(workingState.tech, random);
 }
 
 function getEarthCoordinate(workingState) {
-  const earth = solar.createSolarSnapshot(workingState.solarState).planetLocations
+  const earth = solar.createSolarSnapshot(workingState.solarSystem).planetLocations
     .find((planet) => planet.planetId === "earth");
   return earth ? { x: earth.x, y: earth.y } : { x: 1, y: 1 };
 }
 
 function syncPlanetRockets(workingState) {
-  workingState.rocketState.rockets = workingState.rocketState.rockets
+  workingState.pieces.rockets = workingState.pieces.rockets
     .filter((rocket) => rocket.surface !== "planets-reference");
   for (const planetId of planetReferenceLayout.PLANET_ORDER) {
-    for (const marker of planetStats.getPlanetOrbitMarkers(workingState.planetStatsState, planetId)) {
+    for (const marker of planetStats.getPlanetOrbitMarkers(workingState.planets, planetId)) {
       const slot = planetReferenceLayout.getPlanetSlot(planetId, "orbit", marker.sequence);
       if (!slot) continue;
       const rocket = {
@@ -318,8 +301,8 @@ function syncPlanetRockets(workingState) {
         referencePlacement: { ...slot, isPlanetMarker: true, playerId: marker.playerId, color: marker.color,
           referenceOffsetTokenWidths: 0, planetId, kind: "orbit", sequence: marker.sequence },
       };
-      workingState.rocketState.rockets.push(rocket);
-      rockets.placeRocketAtPlanetsReferencePoint(workingState.rocketState, rocket.id, {
+      workingState.pieces.rockets.push(rocket);
+      rockets.placeRocketAtPlanetsReferencePoint(workingState.pieces, rocket.id, {
         x: slot.x, y: slot.y, width: 1672, height: 941,
       });
     }
@@ -340,7 +323,7 @@ function getInitialPairs(cardsToChoose = [], count = 2) {
 
 function submitOpeningPlans(workingState, selectedPlans, aiDifficulty, random) {
   const source = initialSetup.createSource();
-  const setupContext = { workingRoot: workingState, random };
+  const setupContext = { state: workingState, random };
   workingState.match.initialSetupConfig = { aiDifficulty };
   if (!workingState.match.initialSetup) {
     const started = source.execute(setupContext, {
@@ -374,8 +357,8 @@ function submitOpeningPlans(workingState, selectedPlans, aiDifficulty, random) {
 }
 
 function createOpeningObservation(workingState, playerId) {
-  const player = workingState.playerState.players.find((candidate) => candidate.id === playerId);
-  const publicPlayers = workingState.playerState.players.map((candidate) => ({
+  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
+  const publicPlayers = workingState.players.players.map((candidate) => ({
     id: candidate.id,
     playerId: candidate.id,
     resources: clone(candidate.resources || {}),
@@ -387,8 +370,8 @@ function createOpeningObservation(workingState, playerId) {
       match: { terminal: false },
       players: publicPlayers,
       board: {
-        rockets: clone(workingState.rocketState.rockets || []),
-        aliens: clone(workingState.alienGameState || {}),
+        rockets: clone(workingState.pieces.rockets || []),
+        aliens: clone(workingState.aliens || {}),
       },
     },
     selfState: {
@@ -405,7 +388,7 @@ function createOpeningObservation(workingState, playerId) {
 function chooseInitialSelections(workingState, options, random) {
   const source = initialSetup.createSource();
   workingState.match.initialSetupConfig = { aiDifficulty: options.aiDifficulty || "laughable" };
-  const started = source.execute({ workingRoot: workingState, random }, {
+  const started = source.execute({ state: workingState, random }, {
     family: "choose_card",
     target: { kind: "start_initial_setup" },
     payload: {},
@@ -479,32 +462,6 @@ function readSequences(workingState) {
   };
 }
 
-function sequenceSnapshot(workingState) {
-  return clone(workingState.meta?.sequences || readSequences(workingState));
-}
-
-function committedContext(workingState, overrides = {}) {
-  return {
-    gameId: "seti-simulation-runtime",
-    rulesetVersion: RULESET_VERSION,
-    seed: workingState.meta?.seed ?? "seti-simulation",
-    rngState: clone(overrides.rngState || workingState.meta?.rngState || {}),
-    sequences: sequenceSnapshot(workingState),
-    ...clone(overrides),
-  };
-}
-
-function createCommittedState(workingState, stateVersion, overrides = {}) {
-  return highCouplingStateApi.purifyHighCouplingSlices(
-    initialGameStateApi.createCommittedCandidate(
-      workingState,
-      committedContext(workingState, overrides),
-      stateStoreApi.SCHEMA_VERSION,
-      stateVersion,
-    ),
-  );
-}
-
 function rewardScore(effects) {
   return (effects || []).reduce((total, effect) => (
     total + Number(effect?.options?.gain?.score || 0)
@@ -528,22 +485,21 @@ function productionProbeDirections(player, coordinate) {
 }
 
 function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
-  const player = requestedPlayerId == null
-    ? players.getCurrentPlayer(workingState.playerState)
-    : workingState.playerState.players.find((candidate) => candidate.id === requestedPlayerId);
-  if (!player || workingState.turnState.gameEnded) return null;
+  const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
+  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
+  if (!player || workingState.turn.gameEnded) return null;
   const context = {
-    workingRoot: workingState,
-    solarState: workingState.solarState,
-    playerState: workingState.playerState,
-    rocketState: workingState.rocketState,
-    planetStatsState: workingState.planetStatsState,
-    alienGameState: workingState.alienGameState,
-    turnState: workingState.turnState,
-    getPlanetLocations: () => solar.createSolarSnapshot(workingState.solarState).planetLocations,
+    state: workingState,
+    solarSystem: workingState.solarSystem,
+    players: workingState.players,
+    pieces: workingState.pieces,
+    planets: workingState.planets,
+    aliens: workingState.aliens,
+    turn: workingState.turn,
+    getPlanetLocations: () => solar.createSolarSnapshot(workingState.solarSystem).planetLocations,
   };
   const earth = getEarthCoordinate(workingState);
-  const activeRockets = rockets.getRocketsForPlayer(workingState.rocketState, player.id)
+  const activeRockets = rockets.getRocketsForPlayer(workingState.pieces, player.id)
     .filter((rocket) => rocket.surface === "solar-board");
   const sources = activeRockets.map((rocket) => ({
     sourceId: `rocket:${rocket.id}`,
@@ -552,10 +508,10 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     coordinate: rockets.getRocketSectorCoordinate(rocket),
   }));
   const activeCount = rocketAbility.getActiveRocketCountForPlayer
-    ? rocketAbility.getActiveRocketCountForPlayer(workingState.rocketState, player.id)
+    ? rocketAbility.getActiveRocketCountForPlayer(workingState.pieces, player.id)
     : activeRockets.length;
   const launchSlotAvailable = rockets.findAvailableSlotIndex(
-    workingState.rocketState,
+    workingState.pieces,
     earth.x,
     earth.y,
   ) !== null;
@@ -583,7 +539,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
       const visible = solar.resolveVisibleContent(
         route.coordinate.x,
         route.coordinate.y,
-        workingState.solarState,
+        workingState.solarSystem,
       )?.content;
       if (visible?.kind === solar.layout.CONTENT_KIND.PLANET && visible.planetId !== "earth") {
         const planet = solar.layout.PLANETS[visible.planetId] || {};
@@ -675,7 +631,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
       }
       for (const direction of productionProbeDirections(player, route.coordinate)) {
         const move = rockets.canMoveFromCoordinate(
-          workingState.rocketState,
+          workingState.pieces,
           route.coordinate,
           direction.deltaX,
           direction.deltaY,
@@ -688,7 +644,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
         const destination = solar.resolveVisibleContent(
           move.to.x,
           move.to.y,
-          workingState.solarState,
+          workingState.solarSystem,
         )?.content;
         queue.push({
           coordinate: move.to,
@@ -723,22 +679,9 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
   };
 }
 
-function restoreWorkingState(target, source, metadata = {}) {
-  if (source?.playerState && source?.turnState) {
-    for (const key of Object.keys(source)) {
-      if (key === "meta") target.meta = clone(metadata.committedState?.meta || source.meta || {});
-      else if (target[key] && typeof target[key] === "object") replaceMutable(target[key], source[key]);
-      else target[key] = clone(source[key]);
-    }
-    return target;
-  }
-  initialGameStateApi.restoreSessionState(target, source, replaceMutable);
-  return target;
-}
-
 function activePlayers(workingState) {
-  const active = new Set(workingState.turnState.activePlayerIds || []);
-  return (workingState.playerState.players || []).filter((player) => active.has(player.id));
+  const active = new Set(workingState.turn.activePlayerIds || []);
+  return (workingState.players.players || []).filter((player) => active.has(player.id));
 }
 
 function createCardGame(workingState, random, handCount = 5) {
@@ -747,19 +690,19 @@ function createCardGame(workingState, random, handCount = 5) {
       cards.createCommittedCardInstance(workingState, entry, sequence)
     ),
   };
-  for (const player of workingState.playerState.players) {
+  for (const player of workingState.players.players) {
     player.hand = [];
     player.reservedCards = [];
     player.completedTaskCount = 0;
     player.resources.handSize = 0;
   }
-  workingState.cardState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
-  workingState.cardState.discardPile = [];
-  workingState.cardState.drawPileCardIds = [];
+  workingState.cards.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
+  workingState.cards.discardPile = [];
+  workingState.cards.drawPileCardIds = [];
   for (const player of activePlayers(workingState)) {
     cards.drawCardsToHand(
-      workingState.cardState,
-      workingState.playerState,
+      workingState.cards,
+      workingState.players,
       player,
       handCount,
       random,
@@ -767,14 +710,14 @@ function createCardGame(workingState, random, handCount = 5) {
     );
   }
   cards.ensurePublicCardsFilled(
-    workingState.cardState,
-    workingState.playerState,
+    workingState.cards,
+    workingState.players,
     random,
     factoryOptions,
   );
-  cards.preparePassReservePiles(workingState.cardState, workingState.playerState, {
+  cards.preparePassReservePiles(workingState.cards, workingState.players, {
     rounds: [1, 2, 3],
-    activePlayerCount: workingState.turnState.activePlayerCount,
+    activePlayerCount: workingState.turn.activePlayerCount,
     random,
     ...factoryOptions,
   });
@@ -782,14 +725,14 @@ function createCardGame(workingState, random, handCount = 5) {
 
 function installOpeningDiscard(workingState) {
   const next = workingState.match.initialIncomeQueue?.[0] || null;
-  const player = workingState.playerState.players.find((candidate) => candidate.id === next?.playerId) || null;
+  const player = workingState.players.players.find((candidate) => candidate.id === next?.playerId) || null;
   if (!next || !player) {
     delete workingState.match.pendingDecision;
     delete workingState.match.initialIncomeQueue;
-    workingState.playerState.currentPlayerId = workingState.turnState.startPlayerId;
+    workingState.turn.currentPlayerId = workingState.turn.startPlayerId;
     return false;
   }
-  workingState.playerState.currentPlayerId = player.id;
+  workingState.turn.currentPlayerId = player.id;
   workingState.match.pendingDecision = {
     kind: "discard",
     type: "initial_income",
@@ -824,86 +767,48 @@ function createProductionHostComposition(options = {}) {
   }
   let composition;
 
-  const stateAdapter = {
-    createWorkingState(initialOptions) {
-      const workingState = createWorkingState(initialOptions, options.random);
-      if (typeof options.random.getState === "function") {
-        workingState.meta.rngState = {
-          algorithm: options.rngAlgorithm || "seti-production-rng-v1",
-          state: options.random.getState(),
-        };
-      }
-      return workingState;
-    },
-    createProjectionState: (workingState, committedState) => ({
-      ...createCommittedState(workingState, committedState.meta.stateVersion),
-      probeRouteRequirements: buildProbeRouteRequirements(workingState),
-    }),
-    createCommittedState: (workingState, committedState, overrides) => createCommittedState(
-      workingState,
-      committedState.meta.stateVersion,
-      overrides,
-    ),
-    createSavedState: (committedState, workingState, overrides) => createCommittedState(
-      workingState,
-      committedState.meta.stateVersion,
-      overrides,
-    ),
-    restoreWorkingState(target, source, metadata) {
-      const restored = restoreWorkingState(target, source, metadata);
-      const rngState = restored.meta?.rngState;
-      if (typeof options.random.setState === "function" && Number.isSafeInteger(rngState?.state)) {
-        options.random.setState(rngState.state);
-      }
-      return restored;
-    },
-    onCommitted(workingState, committedState) { workingState.meta = clone(committedState.meta); },
-  };
-
-  function createActionContext(workingRoot) {
+  function createActionContext(state) {
     return {
-      workingRoot,
-      solarState: workingRoot.solarState,
-      playerState: workingRoot.playerState,
-      rocketState: workingRoot.rocketState,
-      planetStatsState: workingRoot.planetStatsState,
-      nebulaDataState: workingRoot.nebulaDataState,
-      cardState: workingRoot.cardState,
-      techGameState: workingRoot.techGameState,
-      techBoardState: workingRoot.techGameState.board,
-      alienGameState: workingRoot.alienGameState,
-      finalScoringState: workingRoot.finalScoringState,
-      turnState: workingRoot.turnState,
-      match: workingRoot.match,
+      state,
+      solarSystem: state.solarSystem,
+      players: state.players,
+      pieces: state.pieces,
+      planets: state.planets,
+      data: state.data,
+      cards: state.cards,
+      tech: state.tech,
+      aliens: state.aliens,
+      finalScoring: state.finalScoring,
+      turn: state.turn,
+      match: state.match,
       stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
-      decisionVersion: workingRoot.match.decisionVersion || 0,
+      decisionVersion: state.match.decisionVersion || 0,
       random: options.random,
       blindDrawCard(player) {
         return cards.blindDraw(
-          workingRoot.cardState,
-          workingRoot.playerState,
+          state.cards,
+          state.players,
           player,
           options.random,
           {
             createCardInstance: (entry, sequence) => (
-              cards.createCommittedCardInstance(workingRoot, entry, sequence)
+              cards.createCommittedCardInstance(state, entry, sequence)
             ),
           },
         );
       },
-      getEarthSectorCoordinate: () => getEarthCoordinate(workingRoot),
-      getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
+      getEarthSectorCoordinate: () => getEarthCoordinate(state),
+      getPlanetLocations: () => solar.createSolarSnapshot(state.solarSystem).planetLocations,
       rotateSolarOrbit(count = 1) {
-        const beforeRotation = clone(workingRoot.solarState.rotation);
-        workingRoot.solarState.rotation = solar.applySolarOrbitRotation(
-          workingRoot.solarState.rotation,
+        const beforeRotation = clone(state.solarSystem.rotation);
+        state.solarSystem.rotation = solar.applySolarOrbitRotation(
+          state.solarSystem.rotation,
           count,
         );
-        workingRoot.solarState.wheelSteps = solar.rotationToWheelSteps(workingRoot.solarState.rotation);
         const settlement = rocketAbility.settleRocketsAfterSolarRotation(
-          workingRoot,
+          state,
           beforeRotation,
-          workingRoot.solarState.rotation,
+          state.solarSystem.rotation,
         );
         return {
           ok: settlement?.ok !== false,
@@ -922,10 +827,20 @@ function createProductionHostComposition(options = {}) {
     },
     effectRuntimeApi,
     createActionContext,
-    createInitialState(_initialOptions, workingState) { return createCommittedState(workingState, 0); },
-    stateAdapter,
+    createInitialState(initialOptions) {
+      const state = buildInitialState(initialOptions, options.random);
+      if (typeof options.random.getState === "function") {
+        state.meta.rngState = {
+          algorithm: options.rngAlgorithm
+            || state.meta.rngState?.algorithm
+            || "seti-production-rng-v1",
+          state: options.random.getState(),
+        };
+      }
+      return state;
+    },
     runWithWorkingState(context, operation) {
-      const workingState = context.workingRoot || context;
+      const workingState = context.state || context;
       const rngState = workingState.meta?.rngState;
       if (typeof options.random.setState === "function" && Number.isSafeInteger(rngState?.state)) {
         options.random.setState(rngState.state);
@@ -942,16 +857,10 @@ function createProductionHostComposition(options = {}) {
         }
       }
     },
-    projectWorkingState: true,
     projectState(state, viewer, _session, projectionContext = {}) {
-      const committed = state?.playerState
-        ? createCommittedState(state, projectionContext.stateVersion || 0)
-        : clone(state);
       const projectedState = {
-        ...committed,
-        probeRouteRequirements: state?.playerState
-          ? buildProbeRouteRequirements(state)
-          : null,
+        ...clone(state),
+        probeRouteRequirements: buildProbeRouteRequirements(state),
       };
       if (hostKind === "browser") {
         if (typeof options.projectBrowserState !== "function") {
@@ -1014,7 +923,6 @@ function createProductionHostComposition(options = {}) {
   };
   const hostProjectionAdapter = Object.freeze({
     adapterId: `seti-${hostKind}-projection-v1`,
-    projectWorkingState: hostRuleOptions.projectWorkingState,
     projectState: hostRuleOptions.projectState,
   });
   const hostServices = Object.freeze({ ...(options.hostServices || {}) });
@@ -1022,16 +930,15 @@ function createProductionHostComposition(options = {}) {
     [INTERNAL_RULE_SCOPE]: true,
     hostKind,
     ruleCompositionApi: { createRuleComposition },
-    getAuthority(workingState) {
-      const root = workingState.workingRoot || workingState;
+    getAuthority(state) {
+      const root = state.state || state;
       const pending = root.match.pendingDecision;
       return {
-        actorId: pending?.playerId || root.playerState.currentPlayerId || null,
+        actorId: pending?.playerId || root.turn.currentPlayerId || null,
         stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
         decisionVersion: root.match.decisionVersion || 0,
       };
     },
-    stateAdapter,
     projectionAdapter: hostProjectionAdapter,
     hostServices,
     ruleOptions: hostRuleOptions,
@@ -1043,7 +950,7 @@ function createProductionHostComposition(options = {}) {
   composition = production.composition;
 
   function newGame(config = {}) {
-    const rngState = config.rngState || (
+    const rngState = config.rngState || options.rngState || (
       typeof options.random.getState === "function"
         ? {
           algorithm: options.rngAlgorithm || "seti-production-rng-v1",

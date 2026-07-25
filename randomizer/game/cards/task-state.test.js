@@ -6,15 +6,15 @@ const b1 = { id: "card-b1", cardId: "b_1.webp" };
 const b2 = { id: "card-b2", cardId: "b_2.webp" };
 
 const sectorContext = {
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         p1: [{ sectorId: "sector-4-a" }, { sectorId: "sector-3-a" }],
       },
     },
   },
-  alienGameState: {},
-  planetStatsState: {},
+  aliens: {},
+  planets: {},
 };
 
 const taskPlayer = {

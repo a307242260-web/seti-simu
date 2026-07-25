@@ -50,10 +50,10 @@
   }
 
   function canExecute(context) {
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
     const rocketLimit = getRocketLimitForPlayer(currentPlayer, context);
-    const activeRocketCount = rockets.getRocketsForPlayer(context.rocketState, currentPlayer.id).length;
+    const activeRocketCount = rockets.getRocketsForPlayer(context.pieces, currentPlayer.id).length;
     if (activeRocketCount >= rocketLimit) {
       return { ok: false, message: `火箭数量已达上限（${activeRocketCount}/${rocketLimit}）` };
     }
@@ -67,21 +67,20 @@
   function execute(context) {
     const check = canExecute(context);
     if (!check.ok) {
-      context.rocketState.statusNote = check.message;
       return { ok: false, actionId: ACTION_ID, message: check.message };
     }
 
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     const snapshots = {
       player: structuredClone(currentPlayer),
-      rocketState: structuredClone(context.rocketState),
+      pieces: structuredClone(context.pieces),
     };
     const cost = getLaunchCostForPlayer(currentPlayer);
     const earthSector = context.getEarthSectorCoordinate();
-    const launchResult = rockets.launchRocketAtSector(context.rocketState, earthSector, {
+    const launchResult = rockets.launchRocketAtSector(context.pieces, earthSector, {
       playerId: currentPlayer.id,
       color: currentPlayer.color,
-      root: context.workingRoot || context,
+      root: context.state || context,
     });
 
     if (!launchResult.ok) {
@@ -94,8 +93,7 @@
 
     const spendResult = players.spendResources(currentPlayer, cost);
     if (!spendResult.ok) {
-      rockets.removeRocket(context.rocketState, launchResult.rocket.id);
-      context.rocketState.statusNote = spendResult.message;
+      rockets.removeRocket(context.pieces, launchResult.rocket.id);
       return {
         ok: false,
         actionId: ACTION_ID,
@@ -104,7 +102,6 @@
     }
 
     const message = `${launchResult.message}，消耗 ${players.formatResourceCost(cost)}`;
-    context.rocketState.statusNote = message;
     return {
       ok: true,
       actionId: ACTION_ID,

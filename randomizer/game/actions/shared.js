@@ -40,7 +40,7 @@
     if (!sectorCoordinate || typeof solar.resolveVisibleContent !== "function") return null;
     const sectorX = solar.mod8(sectorCoordinate.x);
     const sectorY = Number(sectorCoordinate.y);
-    const visible = solar.resolveVisibleContent(sectorX, sectorY, context?.solarState);
+    const visible = solar.resolveVisibleContent(sectorX, sectorY, context?.solarSystem);
     const content = visible?.content || {};
     if (content.kind !== solar.layout.CONTENT_KIND.PLANET) return null;
     const planet = solar.layout.PLANETS[content.planetId] || {};
@@ -57,12 +57,12 @@
   }
 
   function getActiveRocketForPlayer(context) {
-    const rocket = rockets.getActiveRocket(context.rocketState);
+    const rocket = rockets.getActiveRocket(context.pieces);
     if (!rocket) {
       return { ok: false, rocket: null, message: "没有可操作的当前火箭" };
     }
 
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (rocket.playerId && currentPlayer && rocket.playerId !== currentPlayer.id) {
       return { ok: false, rocket, message: "当前火箭不属于本玩家" };
     }
@@ -129,15 +129,15 @@
   }
 
   function listPlayerRocketPlanetPlacements(context, options = {}) {
-    const currentPlayer = options.currentPlayer || players.getCurrentPlayer(context.playerState);
+    const currentPlayer = options.currentPlayer || players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return [];
 
     const requestedRocketId = options.rocketId == null ? null : Number(options.rocketId);
-    const activeRocketId = context.rocketState?.activeRocketId ?? null;
+    const activeRocketId = context.pieces?.activeRocketId ?? null;
     const preferredRocketId = options.preferredRocketId == null ? requestedRocketId : Number(options.preferredRocketId);
     const candidates = Number.isInteger(requestedRocketId)
-      ? (context.rocketState?.rockets || []).filter((rocket) => rocket.id === requestedRocketId)
-      : rockets.getRocketsForPlayer(context.rocketState, currentPlayer.id);
+      ? (context.pieces?.rockets || []).filter((rocket) => rocket.id === requestedRocketId)
+      : rockets.getRocketsForPlayer(context.pieces, currentPlayer.id);
 
     const placements = candidates
       .map((rocket) => getRocketPlanetForRocket(context, rocket, currentPlayer))
@@ -147,9 +147,9 @@
 
   function getRocketPlanet(context, options = {}) {
     const requestedRocketId = options.rocketId == null ? null : Number(options.rocketId);
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (Number.isInteger(requestedRocketId)) {
-      const rocket = (context.rocketState?.rockets || []).find((item) => item.id === requestedRocketId) || null;
+      const rocket = (context.pieces?.rockets || []).find((item) => item.id === requestedRocketId) || null;
       if (!rocket) {
         return { ok: false, rocket: null, currentPlayer, message: `火箭 R${requestedRocketId} 不存在` };
       }
@@ -174,7 +174,7 @@
   }
 
   function removeRocketFromState(context, rocketId) {
-    return rockets.removeRocket(context.rocketState, rocketId);
+    return rockets.removeRocket(context.pieces, rocketId);
   }
 
   return Object.freeze({

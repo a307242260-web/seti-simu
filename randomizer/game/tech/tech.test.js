@@ -26,7 +26,7 @@ assert.throws(
 
 function createContext(publicity = 6) {
   const techGameState = tech.createState();
-  const playerState = players.createPlayerState({
+  const playersState = players.createPlayerState({
     currentPlayer: {
       color: "white",
       resources: { credits: 10, energy: 10, publicity, score: 0 },
@@ -34,13 +34,12 @@ function createContext(publicity = 6) {
   });
 
   return {
-    techGameState,
-    techBoardState: techGameState.board,
-    techUiState: techGameState.ui,
-    playerState,
-    solarState: { rotation: { rotationCount: 0 } },
+    tech: techGameState.board,
+    players: playersState,
+    turn: { currentPlayerId: playersState.currentPlayerId },
+    solarSystem: { rotation: { rotationCount: 0 } },
     rotateSolarOrbit(count) {
-      this.solarState.rotation.rotationCount += count;
+      this.solarSystem.rotation.rotationCount += count;
     },
     drawBasicCardToPlayer(player) {
       const entry = cards.CARD_CATALOG.find((card) => card.set === "basic");
@@ -66,19 +65,19 @@ for (const techType of tech.TECH_TYPES) {
 }
 
 const context = createContext(10);
-const board = context.techGameState.board;
-const player = players.getCurrentPlayer(context.playerState);
+const board = context.tech;
+const player = players.getCurrentPlayer(context.players);
 context.ensurePlayerTechState(player);
 
 const previewContext = createContext(10);
-const previewPlayer = players.getCurrentPlayer(previewContext.playerState);
+const previewPlayer = players.getCurrentPlayer(previewContext.players);
 previewContext.ensurePlayerTechState(previewPlayer);
-const previewBonus = previewContext.techGameState.board.stacks.purple1.bonusId;
+const previewBonus = previewContext.tech.stacks.purple1.bonusId;
 const previewSelect = tech.resolver.selectTechTile(previewContext, { tileId: "purple1" });
 assert.equal(previewSelect.ok, true);
 assert.equal(previewSelect.bonusId, previewBonus);
-assert.equal(previewContext.techGameState.board.stacks.purple1.remaining, 4);
-assert.equal(previewContext.techGameState.board.stacks.purple1.bonusId, previewBonus);
+assert.equal(previewContext.tech.stacks.purple1.remaining, 4);
+assert.equal(previewContext.tech.stacks.purple1.bonusId, previewBonus);
 assert.equal(previewPlayer.resources.publicity, 10);
 assert.equal(previewPlayer.techState.ownedTiles.purple1, undefined);
 const previewTake = tech.resolver.takeSelectedTechTile(previewContext, {
@@ -87,7 +86,7 @@ const previewTake = tech.resolver.takeSelectedTechTile(previewContext, {
   firstTake: previewSelect.firstTake,
 });
 assert.equal(previewTake.ok, true);
-assert.equal(previewContext.techGameState.board.stacks.purple1.remaining, 3);
+assert.equal(previewContext.tech.stacks.purple1.remaining, 3);
 assert.equal(previewPlayer.techState.ownedTiles.purple1, true);
 
 const pickBlue1 = tech.resolver.executeTakeTech(context, { tileId: "blue1" });
@@ -133,11 +132,10 @@ const autoPlayerState = players.createPlayerState({
   },
 });
 const autoContext = {
-  techGameState: autoSlotContext,
-  techBoardState: autoSlotContext.board,
-  techUiState: autoSlotContext.ui,
-  playerState: autoPlayerState,
-  solarState: { rotation: { rotationCount: 0 } },
+  tech: autoSlotContext.board,
+  players: autoPlayerState,
+  turn: { currentPlayerId: autoPlayerState.currentPlayerId },
+  solarSystem: { rotation: { rotationCount: 0 } },
   rotateSolarOrbit() {},
   drawBasicCardToPlayer(player) {
     const entry = cards.CARD_CATALOG.find((card) => card.set === "basic");
@@ -162,19 +160,19 @@ const takeBlue1Again = tech.resolver.executeTakeTech(context, { tileId: "blue1" 
 assert.equal(takeBlue1Again.ok, false);
 
 const turingBorrowFilterContext = createContext(10);
-const turingBorrowPlayer = players.getCurrentPlayer(turingBorrowFilterContext.playerState);
+const turingBorrowPlayer = players.getCurrentPlayer(turingBorrowFilterContext.players);
 turingBorrowFilterContext.ensurePlayerTechState(turingBorrowPlayer);
 const turingBorrowOptions = { techTypes: ["orange", "purple"] };
 assert.equal(
-  tech.resolver.canTakeTile(turingBorrowFilterContext.techGameState.board, turingBorrowPlayer.techState, "blue1", turingBorrowOptions).ok,
+  tech.resolver.canTakeTile(turingBorrowFilterContext.tech, turingBorrowPlayer.techState, "blue1", turingBorrowOptions).ok,
   false,
 );
 assert.equal(
-  tech.resolver.canTakeTile(turingBorrowFilterContext.techGameState.board, turingBorrowPlayer.techState, "orange1", turingBorrowOptions).ok,
+  tech.resolver.canTakeTile(turingBorrowFilterContext.tech, turingBorrowPlayer.techState, "orange1", turingBorrowOptions).ok,
   true,
 );
 assert.equal(
-  tech.resolver.canTakeTile(turingBorrowFilterContext.techGameState.board, turingBorrowPlayer.techState, "purple1", turingBorrowOptions).ok,
+  tech.resolver.canTakeTile(turingBorrowFilterContext.tech, turingBorrowPlayer.techState, "purple1", turingBorrowOptions).ok,
   true,
 );
 
@@ -205,7 +203,7 @@ assert.equal(startupBoard.stacks.orange1.firstTakeClaimedBy, null);
 assert.equal(tech.boardState.isFirstTakeAvailable(startupBoard, "orange1"), true);
 
 const context3 = createContext(10);
-const player3 = players.getCurrentPlayer(context3.playerState);
+const player3 = players.getCurrentPlayer(context3.players);
 context3.ensurePlayerTechState(player3);
 const firstOrange = tech.resolver.executeTakeTech(context3, { tileId: "orange1" });
 assert.equal(firstOrange.ok, true);
@@ -218,26 +216,26 @@ assert.equal(secondOrange.ok, true);
 assert.equal(tech.playerTech.listOwnedTileIds(player3.techState).length, 2);
 
 const context4 = createContext(12);
-const playerA = players.getCurrentPlayer(context4.playerState);
+const playerA = players.getCurrentPlayer(context4.players);
 context4.ensurePlayerTechState(playerA);
 const takeOrange1 = tech.resolver.executeTakeTech(context4, { tileId: "orange1" });
 assert.equal(takeOrange1.firstTake, true);
 
-context4.playerState.players.push({
+context4.players.players.push({
   id: "player-b",
   color: "black",
   resources: { credits: 10, energy: 10, publicity: 12, score: 0 },
   techState: players.normalizePlayerTechState(null),
 });
-context4.playerState.currentPlayerId = "player-b";
-const playerB = players.getCurrentPlayer(context4.playerState);
+context4.turn.currentPlayerId = "player-b";
+const playerB = players.getCurrentPlayer(context4.players, context4.turn.currentPlayerId);
 const takeOrange2 = tech.resolver.executeTakeTech(context4, { tileId: "orange2" });
 assert.equal(takeOrange2.ok, true);
 assert.equal(takeOrange2.firstTake, true);
-assert.equal(context4.techGameState.board.stacks.orange2.firstTakeClaimedBy, playerB.id);
+assert.equal(context4.tech.stacks.orange2.firstTakeClaimedBy, playerB.id);
 
 const disableContext = createContext(10);
-const disablePlayer = players.getCurrentPlayer(disableContext.playerState);
+const disablePlayer = players.getCurrentPlayer(disableContext.players);
 disableContext.ensurePlayerTechState(disablePlayer);
 const takeOrange1ForDisable = tech.resolver.executeTakeTech(disableContext, {
   tileId: "orange1",
@@ -253,12 +251,12 @@ assert.equal(tech.playerTech.playerHasActiveTile(disablePlayer.techState, "orang
 assert.equal(tech.playerTech.listOwnedTileIds(disablePlayer.techState).includes("orange1"), true);
 assert.equal(tech.playerTech.canPlayerTakeTile(disablePlayer.techState, "orange1"), false);
 assert.equal(
-  tech.resolver.canTakeTile(disableContext.techGameState.board, disablePlayer.techState, "orange1").ok,
+  tech.resolver.canTakeTile(disableContext.tech, disablePlayer.techState, "orange1").ok,
   false,
 );
 assert.equal(tech.playerTech.canPlayerTakeTile(disablePlayer.techState, "orange2"), true);
 assert.equal(
-  tech.resolver.canTakeTile(disableContext.techGameState.board, disablePlayer.techState, "orange2").ok,
+  tech.resolver.canTakeTile(disableContext.tech, disablePlayer.techState, "orange2").ok,
   true,
 );
 

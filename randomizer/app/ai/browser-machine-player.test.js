@@ -42,6 +42,6 @@ assert.deepEqual(readBoundary("p1"), {
 
 const source = fs.readFileSync(path.join(__dirname, "browser-bootstrap.js"), "utf8");
 assert.equal(source.includes("stateSourcePort"), false);
-assert.equal(source.includes("workingRoot"), false);
+assert.equal(source.includes("canonicalState"), false);
 assert.equal(source.includes("executeLegacy"), false);
 console.log("browser machine player tests passed");

@@ -57,8 +57,8 @@
 
   function getTurnContext(options = {}) {
     return {
-      roundNumber: options.roundNumber ?? options.turnState?.roundNumber,
-      turnNumber: options.turnNumber ?? options.turnState?.turnNumber,
+      roundNumber: options.roundNumber ?? options.turn?.roundNumber,
+      turnNumber: options.turnNumber ?? options.turn?.turnNumber,
     };
   }
 

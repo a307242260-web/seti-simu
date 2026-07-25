@@ -19,7 +19,7 @@ function createRoot() {
       logicalTime: "2026-07-24T00:00:00.000Z",
     },
     match: { decisionVersion: 7 },
-    playerState: {
+    players: {
       currentPlayerId: "p1",
       players: [
         {
@@ -51,7 +51,7 @@ function createRoot() {
         },
       ],
     },
-    turnState: {
+    turn: {
       roundNumber: 4,
       turnNumber: 3,
       actionCycleNumber: 2,
@@ -64,13 +64,13 @@ function createRoot() {
       cardTurnEventBonuses: [],
       visitedPlanetsByPlayerId: {},
     },
-    cardState: { publicCards: [], drawPile: [], discardPile: [] },
-    alienGameState: {},
-    finalScoringState: finalScoring.createFinalScoringState(),
-    rocketState: { rockets: [], statusNote: "" },
-    solarState: {},
-    planetStatsState: {},
-    nebulaDataState: {
+    cards: { publicCards: [], drawPile: [], discardPile: [] },
+    aliens: {},
+    finalScoring: finalScoring.createFinalScoringState(),
+    pieces: { rockets: [], statusNote: "" },
+    solarSystem: {},
+    planets: {},
+    data: {
       sectorSettlements: {
         winsByPlayerId: {
           p1: [{ sectorId: "sector-4-a" }, { sectorId: "sector-3-a" }],
@@ -97,7 +97,7 @@ function createHarness(module, createDomain) {
 }
 
 function execute(executor, root, effect) {
-  return executor.execute(root, effect, { workingRoot: root });
+  return executor.execute(root, effect, { state: root });
 }
 
 function settleFinalMarkEffects(owner, root, spawnedEffects) {
@@ -106,9 +106,9 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
     const effect = queue.shift().effect;
     if (effect.type !== residual.EFFECT_TYPES.FINAL_MARK) continue;
     const executor = owner.executors.get(residual.EFFECT_TYPES.FINAL_MARK);
-    const selected = executor.getLegalChoices(root, effect, { workingRoot: root })[0];
+    const selected = executor.getLegalChoices(root, effect, { state: root })[0];
     assert.ok(selected, "终局标记必须有正式合法选择");
-    const settled = executor.resolveDecision(root, effect, selected, { workingRoot: root });
+    const settled = executor.resolveDecision(root, effect, selected, { state: root });
     assert.equal(settled.ok, true);
     queue.push(...(settled.spawnedEffects || []));
   }
@@ -116,8 +116,8 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
 
 (function proofConsumesRealSeti160HandoffsByEffectType() {
   const root = createRoot();
-  root.turnState.roundNumber = 3;
-  root.playerState.players[0].mainActionCompleted = true;
+  root.turn.roundNumber = 3;
+  root.players.players[0].mainActionCompleted = true;
   const probe = createHarness(probeTurn, "createProbeTurnDomain");
   const owner = createHarness(residual, "createResidualDomain");
   const endTurn = execute(probe.executors.get(probeTurn.EFFECT_TYPES.EXECUTE), root, {
@@ -145,7 +145,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   for (const handoff of handoffs) {
     assert.equal(execute(owner.executors.get(residual.HANDOFF_TYPE), root, handoff).ok, true);
   }
-  assert.equal(root.playerState.players[0].resources.credits, 6);
+  assert.equal(root.players.players[0].resources.credits, 6);
 })();
 
 (function proofConsumesRealRoundTransitionAndGameEndSequence() {
@@ -154,9 +154,9 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
     [4, ["final_scoring:game_end"]],
   ]) {
     const root = createRoot();
-    root.turnState.roundNumber = roundNumber;
-    root.turnState.passedPlayerIds = ["p2"];
-    root.playerState.players[0].passCompletionPending = true;
+    root.turn.roundNumber = roundNumber;
+    root.turn.passedPlayerIds = ["p2"];
+    root.players.players[0].passCompletionPending = true;
     const probe = createHarness(probeTurn, "createProbeTurnDomain");
     const owner = createHarness(residual, "createResidualDomain");
     const advanced = execute(
@@ -174,14 +174,14 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
       settleFinalMarkEffects(owner, root, settled.spawnedEffects);
     }
     if (roundNumber === 4) {
-      assert.equal(root.playerState.players.every((player) => Number.isFinite(player.finalScore)), true);
+      assert.equal(root.players.players.every((player) => Number.isFinite(player.finalScore)), true);
     }
   }
 })();
 
 (function proofIndustryIsQuickAndZeroDecisionFlowCompletes() {
   const root = createRoot();
-  root.turnState.passedPlayerIds = [];
+  root.turn.passedPlayerIds = [];
   const owner = createHarness(residual, "createResidualDomain");
   const result = execute(owner.executors.get(residual.EFFECT_TYPES.EXECUTE), root, {
     ownerId: "p1",
@@ -201,8 +201,8 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   });
   assert.equal(result.ok, true);
   assert.equal(result.spawnedEffects.length, 0);
-  assert.equal(root.playerState.players[0].mainActionCompleted, false);
-  assert.equal(root.playerState.players[0].industrySentinelArmedRound, 4);
+  assert.equal(root.players.players[0].mainActionCompleted, false);
+  assert.equal(root.players.players[0].industrySentinelArmedRound, 4);
 })();
 
 (function proofTurnEndCardTaskRunsInProductionOwner() {
@@ -224,19 +224,19 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(started.spawnedEffects.length, 1);
   const taskEffect = started.spawnedEffects[0].effect;
   const taskExecutor = owner.executors.get(residual.EFFECT_TYPES.CARD_DECISION);
-  const choices = taskExecutor.getLegalChoices(root, taskEffect, { workingRoot: root });
+  const choices = taskExecutor.getLegalChoices(root, taskEffect, { state: root });
   const confirm = choices.find((choice) => choice.target.choiceId.startsWith("confirm:"));
   assert.ok(confirm);
   const completed = taskExecutor.resolveDecision(
-    root, taskEffect, confirm, { workingRoot: root },
+    root, taskEffect, confirm, { state: root },
   );
   assert.equal(completed.ok, true);
   assert.deepEqual(
-    root.cardState.discardPile.map((card) => card.id),
+    root.cards.discardPile.map((card) => card.id),
     ["task-b1"],
   );
-  assert.equal(root.playerState.players[0].resources.score, 34);
-  assert.equal(root.playerState.players[0].scoreSources.taskCardScore, 4);
+  assert.equal(root.players.players[0].resources.score, 34);
+  assert.equal(root.players.players[0].scoreSources.taskCardScore, 4);
 })();
 
 (function proofGameEndWritesEveryPlayerFinalContract() {
@@ -255,7 +255,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   });
   assert.equal(result.ok, true);
   settleFinalMarkEffects(owner, root, result.spawnedEffects);
-  for (const player of root.playerState.players) {
+  for (const player of root.players.players) {
     assert.equal(Number.isFinite(player.finalScore), true);
     assert.equal(player.finalScore, player.finalScoreBreakdown.totalScore);
     assert.deepEqual(Object.keys(player.scoreSources).sort(), [
@@ -271,10 +271,10 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
 (function proofAllEightSpeciesRevealThroughProductionOwner() {
   for (const speciesId of residual.SPECIES_IDS) {
     const root = createRoot();
-    root.alienGameState = aliens.createDefaultAlienState();
+    root.aliens = aliens.createDefaultAlienState();
     for (const traceType of aliens.TRACE_TYPES) {
       assert.equal(aliens.placeFirstTrace(
-        root.alienGameState,
+        root.aliens,
         1,
         traceType,
         traceType === "pink" ? "white" : "brown",
@@ -293,7 +293,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
       },
     });
     assert.equal(result.ok, true, `${speciesId} 必须由 residual owner 揭示: ${JSON.stringify(result)}`);
-    assert.equal(aliens.getAlienSlot(root.alienGameState, 1).revealed, true);
+    assert.equal(aliens.getAlienSlot(root.aliens, 1).revealed, true);
   }
 })();
 
@@ -301,7 +301,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const root = createRoot();
   const triggerCard = { id: "trigger-b140", cardId: "b_140.webp" };
   cardEffects.ensureCardEffectState(triggerCard);
-  root.playerState.players[0].reservedCards = [triggerCard];
+  root.players.players[0].reservedCards = [triggerCard];
   const augmented = residual.augmentEffectResult(root, {
     ok: true,
     nextState: {},
@@ -315,10 +315,10 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const owner = createHarness(residual, "createResidualDomain");
   const executor = owner.executors.get(residual.EFFECT_TYPES.CARD_DECISION);
   const first = decisions[0].effect;
-  const confirm = executor.getLegalChoices(root, first, { workingRoot: root })
+  const confirm = executor.getLegalChoices(root, first, { state: root })
     .find((entry) => entry.target.choiceId.startsWith("confirm:"));
   assert.ok(confirm);
-  const settled = executor.resolveDecision(root, first, confirm, { workingRoot: root });
+  const settled = executor.resolveDecision(root, first, confirm, { state: root });
   assert.equal(settled.ok, true);
 })();
 

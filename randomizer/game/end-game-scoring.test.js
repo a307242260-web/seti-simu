@@ -39,10 +39,10 @@ assert.equal(markResult.mark.slotIndex, 1);
 
 const tileContext = {
   currentPlayer: white,
-  finalScoringState: state,
-  nebulaDataState: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
-  alienGameState: { aliens: {} },
-  planetStatsState: { planets: {} },
+  finalScoring: state,
+  data: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
+  aliens: { aliens: {} },
+  planets: { planets: {} },
   cardEffects,
   getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(card, 0),
 };
@@ -101,7 +101,7 @@ finalScoring.syncPendingMarks(incomeIncreaseState, [incomeIncreasePlayer]);
 markTile(incomeIncreaseState, "a", incomeIncreasePlayer, { tokenSrc: "white.png" });
 const incomeIncreaseTile = endGameScoring.computePlayerTileScore(incomeIncreaseState, incomeIncreasePlayer, {
   ...baseIncomeContext,
-  finalScoringState: incomeIncreaseState,
+  finalScoring: incomeIncreaseState,
   currentPlayer: incomeIncreasePlayer,
 }).tiles[0];
 assert.equal(incomeIncreaseTile.baseValue, 2);
@@ -178,21 +178,21 @@ aomomo.addLandingMarker(aomomoMarkerState, white);
 aomomo.addLandingMarker(aomomoMarkerState, white);
 assert.equal(
   endGameScoring.countPlanetOrbitOrLand(white, { planets: {} }, aomomo.PLANET_ID, {
-    alienGameState: aomomoMarkerState,
+    aliens: aomomoMarkerState,
   }),
   3,
   "Aomomo panel orbit/land markers should count as that player's planet markers",
 );
 assert.equal(
   endGameScoring.countOrbitOrLandMarkers(white, { planets: {} }, {
-    alienGameState: aomomoMarkerState,
+    aliens: aomomoMarkerState,
   }),
   3,
   "global orbit/land marker count should include Aomomo panel markers",
 );
 assert.equal(
   endGameScoring.countPlanetLandingPairs(white, { planets: {} }, 2, {
-    alienGameState: aomomoMarkerState,
+    aliens: aomomoMarkerState,
   }),
   1,
   "duplicate Aomomo landings should count as same-planet landing pairs",
@@ -226,7 +226,7 @@ const cardPlayer = player({
 const cardContext = {
   ...tileContext,
   currentPlayer: cardPlayer,
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         white: [{ sectorId: "sector-2-b" }, { sectorId: "sector-3-b" }],
@@ -245,7 +245,7 @@ const signalPlayer = player({
 const signalContext = {
   ...tileContext,
   currentPlayer: signalPlayer,
-  nebulaDataState: {
+  data: {
     sectorSettlements: { winsByPlayerId: {} },
     nebulae: {
       "sector-1-a": {
@@ -265,7 +265,7 @@ assert.equal(
 
 const finalScore = endGameScoring.computePlayerFinalScore({
   ...signalContext,
-  finalScoringState: finalScoring.createFinalScoringState(),
+  finalScoring: finalScoring.createFinalScoringState(),
   currentPlayer: player({
     id: "player-final",
     color: "white",
@@ -311,10 +311,10 @@ jiuzhe.addThreat(jiuzheState, threatPlayerB, 4);
 const jiuzheFinal = endGameScoring.computePlayerFinalScore({
   currentPlayer: threatPlayerA,
   players: [threatPlayerA, threatPlayerB],
-  finalScoringState: finalScoring.createFinalScoringState(),
-  nebulaDataState: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
-  alienGameState: jiuzheState,
-  planetStatsState: { planets: {} },
+  finalScoring: finalScoring.createFinalScoringState(),
+  data: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
+  aliens: jiuzheState,
+  planets: { planets: {} },
   cardEffects,
   getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(card, 0),
 });
@@ -350,10 +350,10 @@ jiuzhe.getPlayerJiuzheState(jiuzheNoPenaltyState, jiuzheNoPenaltyPlayer, true).c
 const jiuzheNoPenaltyFinal = endGameScoring.computePlayerFinalScore({
   currentPlayer: jiuzheNoPenaltyPlayer,
   players: [jiuzheNoPenaltyPlayer],
-  finalScoringState: finalScoring.createFinalScoringState(),
-  nebulaDataState: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
-  alienGameState: jiuzheNoPenaltyState,
-  planetStatsState: { planets: {} },
+  finalScoring: finalScoring.createFinalScoringState(),
+  data: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
+  aliens: jiuzheNoPenaltyState,
+  planets: { planets: {} },
   cardEffects,
   getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(card, 0),
 });
@@ -439,7 +439,7 @@ assert.equal(
 assert.equal(
   endGameScoring.getFormulaBaseValue("b1", banrenmaTracePlayer, {
     ...tileContext,
-    alienGameState: banrenmaTraceState,
+    aliens: banrenmaTraceState,
   }),
   2,
   "b1 should use all state and revealed-face trace markers when taking the minimum color count",
@@ -450,9 +450,9 @@ finalScoring.syncPendingMarks(banrenmaB1State, [banrenmaTracePlayer]);
 markTile(banrenmaB1State, "b", banrenmaTracePlayer, { tokenSrc: "white.png" });
 const banrenmaB1Tile = endGameScoring.computePlayerTileScore(banrenmaB1State, banrenmaTracePlayer, {
   ...tileContext,
-  finalScoringState: banrenmaB1State,
+  finalScoring: banrenmaB1State,
   currentPlayer: banrenmaTracePlayer,
-  alienGameState: banrenmaTraceState,
+  aliens: banrenmaTraceState,
 }).tiles.find((entry) => entry.tileId === "b");
 assert.equal(banrenmaB1Tile.baseValue, 2);
 assert.equal(banrenmaB1Tile.score, 16, "b1 slot 1 should score minimum trace count 2 * 8");
@@ -534,7 +534,7 @@ const chongPlayer = player({
 const chongScore = endGameScoring.computePlayerCardScore(chongPlayer, {
   ...tileContext,
   currentPlayer: chongPlayer,
-  alienGameState: chongState,
+  aliens: chongState,
   getCardTypeCode: (card) => card.cardTypeCode,
 });
 assert.equal(chongScore.total, 3, "生态系统研究 should score 1 per owned Chong trace");
@@ -562,7 +562,7 @@ const aomomoPlayer = player({
 const aomomoScore = endGameScoring.computePlayerCardScore(aomomoPlayer, {
   ...tileContext,
   currentPlayer: aomomoPlayer,
-  alienGameState: aomomoState,
+  aliens: aomomoState,
   getCardTypeCode: (card) => card.cardTypeCode,
 });
 assert.equal(aomomoScore.total, 3, "奥陌陌8 should score state first, state extra, and face traces");
@@ -573,7 +573,7 @@ const marsCardPlayer = player({
 assert.equal(endGameScoring.computePlayerCardScore(marsCardPlayer, {
   ...tileContext,
   currentPlayer: marsCardPlayer,
-  planetStatsState: {
+  planets: {
     planets: {
       mars: {
         orbitMarkers: [{ playerId: "player-white" }],
@@ -602,7 +602,7 @@ const blueBlackPlayer = player({
 assert.equal(endGameScoring.computePlayerCardScore(blueBlackPlayer, {
   ...tileContext,
   currentPlayer: blueBlackPlayer,
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         white: [{ sectorId: "sector-2-a" }, { sectorId: "sector-1-a" }, { sectorId: "sector-1-b" }],
@@ -622,7 +622,7 @@ const unmarkedPlayer = player({
 assert.equal(endGameScoring.computePlayerCardScore(unmarkedPlayer, {
   ...tileContext,
   currentPlayer: unmarkedPlayer,
-  finalScoringState: unmarkedState,
+  finalScoring: unmarkedState,
 }).total, 29);
 
 const dlcResourcePlayer = player({
@@ -643,7 +643,7 @@ const dlcLandingPlayer = player({
 assert.equal(endGameScoring.computePlayerCardScore(dlcLandingPlayer, {
   ...tileContext,
   currentPlayer: dlcLandingPlayer,
-  planetStatsState: {
+  planets: {
     planets: {
       mars: {
         orbitMarkers: [],
@@ -665,7 +665,7 @@ const dlcGrandTourPlayer = player({
 assert.equal(endGameScoring.computePlayerCardScore(dlcGrandTourPlayer, {
   ...tileContext,
   currentPlayer: dlcGrandTourPlayer,
-  planetStatsState: {
+  planets: {
     planets: {
       mars: {
         orbitMarkers: [{ playerId: "player-white" }],

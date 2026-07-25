@@ -93,7 +93,7 @@ function getWorkingProjection(composition) {
 }
 
 function getTurnState(state) {
-  return { ...clone(state.turn || {}), currentPlayerId: state.players?.currentPlayerId || state.turn?.currentPlayerId || null };
+  return clone(state.turn || {});
 }
 
 const PROBE_ROUTE_FAMILIES = new Set(["launch", "move", "orbit", "land"]);
@@ -192,18 +192,18 @@ function buildDecisionFromState(state, legalActions) {
 }
 
 function buildDecision(api, legalActions) {
-  const turnState = api.getTurnState();
-  if (turnState.gameEnded) return null;
+  const turnSlice = api.getTurnState();
+  if (turnSlice.gameEnded) return null;
   const owner = api.getSimulationDecisionOwnerState?.(
     legalActions[0]?.actorPlayerId ? { id: legalActions[0].actorPlayerId } : null,
   ) || null;
-  const actorPlayerId = owner?.actorPlayerId || legalActions[0]?.actorPlayerId || turnState.currentPlayerId || null;
+  const actorPlayerId = owner?.actorPlayerId || legalActions[0]?.actorPlayerId || turnSlice.currentPlayerId || null;
   if (!actorPlayerId) return null;
   return {
     actorPlayerId,
     pendingOwnerPlayerId: owner?.pendingOwnerPlayerId || null,
     effectOwnerPlayerId: owner?.effectOwnerPlayerId || null,
-    currentPlayerId: owner?.currentPlayerId || turnState.currentPlayerId || null,
+    currentPlayerId: owner?.currentPlayerId || turnSlice.currentPlayerId || null,
     source: owner?.source || "current_player",
     decisionType: legalActions[0]?.decisionType || "turn_action",
     choiceCount: legalActions.length,
@@ -212,7 +212,7 @@ function buildDecision(api, legalActions) {
 
 function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
   const turn = getTurnState(state);
-  const playerState = state.players || { players: [] };
+  const playersState = state.players || { players: [] };
   const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorPlayerId || turn.currentPlayerId || null;
   const decision = buildDecisionFromState(state, legalActions);
   return {
@@ -227,7 +227,7 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       passedPlayerIds: [...(turn.passedPlayerIds || [])],
       completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
       activePlayerIds: [...(turn.activePlayerIds || [])],
-      players: (playerState.players || []).map((player) => sanitizePublicPlayer(player, null)),
+      players: (playersState.players || []).map((player) => sanitizePublicPlayer(player, null)),
       board: {
         rockets: clone(state.pieces?.rockets || []),
         planets: clone(state.planets || {}),
@@ -241,7 +241,7 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       pending: decision,
     },
     selfState: sanitizeSelfPlayer(
-      (playerState.players || []).find((player) => player.id === perspectivePlayerId) || null,
+      (playersState.players || []).find((player) => player.id === perspectivePlayerId) || null,
     ),
     decision,
     actionHistorySummary: { count: (state.match?.actionLog || []).length },

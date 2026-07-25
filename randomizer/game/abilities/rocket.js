@@ -70,13 +70,13 @@
     return baseLimit + bonus;
   }
 
-  function getActiveRocketCountForPlayer(rocketState, playerId) {
-    return rockets.getRocketsForPlayer(rocketState, playerId).length;
+  function getActiveRocketCountForPlayer(piecesState, playerId) {
+    return rockets.getRocketsForPlayer(piecesState, playerId).length;
   }
 
   function getVisibleContent(context, coordinate) {
     if (!coordinate || !solar?.resolveVisibleContent) return null;
-    return solar.resolveVisibleContent(coordinate.x, coordinate.y, context.solarState)?.content || null;
+    return solar.resolveVisibleContent(coordinate.x, coordinate.y, context.solarSystem)?.content || null;
   }
 
   function isAsteroidContent(content) {
@@ -105,13 +105,13 @@
     return content?.kind === solar?.layout?.CONTENT_KIND?.HOLE;
   }
 
-  function getPlayerById(playerState, playerId) {
-    return (playerState?.players || []).find((player) => player.id === playerId) || null;
+  function getPlayerById(playersState, playerId) {
+    return (playersState?.players || []).find((player) => player.id === playerId) || null;
   }
 
   function buildSolarInputWithRotation(context, rotation) {
     return {
-      ...(context.solarState || {}),
+      ...(context.solarSystem || {}),
       rotation,
     };
   }
@@ -194,9 +194,9 @@
     return null;
   }
 
-  function getOccupiedSlotsExcludingMoving(rocketState, movingRocketIds, reservedSlots) {
+  function getOccupiedSlotsExcludingMoving(piecesState, movingRocketIds, reservedSlots) {
     const occupied = new Map();
-    for (const rocket of rocketState.rockets || []) {
+    for (const rocket of piecesState.rockets || []) {
       if (movingRocketIds.has(rocket.id)) continue;
       if (!Number.isInteger(rocket.sectorX) || !Number.isInteger(rocket.sectorY)) continue;
       if (!Number.isInteger(rocket.slotIndex)) continue;
@@ -211,9 +211,9 @@
     return occupied;
   }
 
-  function reserveRotationDestinationSlot(rocketState, movingRocketIds, reservedSlots, to) {
+  function reserveRotationDestinationSlot(piecesState, movingRocketIds, reservedSlots, to) {
     const key = `${to.x},${to.y}`;
-    const occupied = getOccupiedSlotsExcludingMoving(rocketState, movingRocketIds, reservedSlots);
+    const occupied = getOccupiedSlotsExcludingMoving(piecesState, movingRocketIds, reservedSlots);
     const occupiedSlots = occupied.get(key) || new Set();
     for (const slotIndex of solar.LAUNCH_SLOT_PRIORITY) {
       if (occupiedSlots.has(slotIndex)) continue;
@@ -288,7 +288,7 @@
   }
 
   function resolveMoveGeometry(context, rocketId, deltaX, deltaY) {
-    const rocket = context.rocketState.rockets.find((item) => item.id === rocketId);
+    const rocket = context.pieces.rockets.find((item) => item.id === rocketId);
     const from = rockets.getRocketSectorCoordinate(rocket);
     if (!rocket || !from) return { rocket, from: null, to: null, fromContent: null, toContent: null };
     const to = {
@@ -330,7 +330,7 @@
     return MOVE_DIRECTIONS
       .filter((direction) => (
         rockets.canMoveRocket?.(
-          context.rocketState,
+          context.pieces,
           rocketId,
           direction.deltaX,
           direction.deltaY,
@@ -360,14 +360,14 @@
   }
 
   function launchProbe(context, options = {}) {
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) {
       return { ok: false, abilityId: "launchProbe", message: "没有当前玩家" };
     }
 
     const cost = getLaunchCost(context, currentPlayer, options);
     const rocketLimit = getRocketLimitForPlayer(currentPlayer, context);
-    const activeRocketCount = getActiveRocketCountForPlayer(context.rocketState, currentPlayer.id);
+    const activeRocketCount = getActiveRocketCountForPlayer(context.pieces, currentPlayer.id);
     if (!options.ignoreRocketLimit && activeRocketCount >= rocketLimit) {
       return {
         ok: false,
@@ -384,12 +384,12 @@
       };
     }
 
-    const undoState = { activeRocketId: context.rocketState.activeRocketId };
+    const undoState = { activeRocketId: context.pieces.activeRocketId };
     const earthSector = options.sectorCoordinate || context.getEarthSectorCoordinate();
-    const launchResult = rockets.launchRocketAtSector(context.rocketState, earthSector, {
+    const launchResult = rockets.launchRocketAtSector(context.pieces, earthSector, {
       playerId: currentPlayer.id,
       color: currentPlayer.color,
-      root: context.workingRoot || context,
+      root: context.state || context,
     });
 
     if (!launchResult.ok) {
@@ -402,8 +402,8 @@
 
     const spendResult = spendCost(currentPlayer, cost);
     if (!spendResult.ok) {
-      rockets.removeRocket(context.rocketState, launchResult.rocket.id);
-      context.rocketState.activeRocketId = undoState.activeRocketId;
+      rockets.removeRocket(context.pieces, launchResult.rocket.id);
+      context.pieces.activeRocketId = undoState.activeRocketId;
       return {
         ok: false,
         abilityId: "launchProbe",
@@ -413,7 +413,6 @@
 
     const costText = hasCost(cost) ? `，消耗 ${players.formatResourceCost(cost)}` : "";
     const message = `${launchResult.message}${costText}`;
-    context.rocketState.statusNote = message;
 
     return {
       ok: true,
@@ -435,10 +434,10 @@
   }
 
   function moveProbe(context, options = {}) {
-    const rocketId = Number(options.rocketId ?? context.rocketState.activeRocketId);
+    const rocketId = Number(options.rocketId ?? context.pieces.activeRocketId);
     const deltaX = Number(options.deltaX || 0);
     const deltaY = Number(options.deltaY || 0);
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     const cost = resolveCost(options, DEFAULT_MOVE_COST);
 
     if (!currentPlayer) {
@@ -455,7 +454,7 @@
       };
     }
 
-    const moveCheck = rockets.canMoveRocket(context.rocketState, rocketId, deltaX, deltaY);
+    const moveCheck = rockets.canMoveRocket(context.pieces, rocketId, deltaX, deltaY);
     if (!moveCheck.ok) {
       return { ok: false, abilityId: "moveProbe", message: moveCheck.message };
     }
@@ -480,7 +479,7 @@
       };
     }
 
-    const moveResult = rockets.moveRocket(context.rocketState, rocketId, deltaX, deltaY);
+    const moveResult = rockets.moveRocket(context.pieces, rocketId, deltaX, deltaY);
     if (!moveResult.ok) {
       if (hasCost(cost)) players.gainResources(currentPlayer, cost);
       return {
@@ -503,7 +502,6 @@
     const movePointText = requiredMovePoints > 1 ? `，需要 ${requiredMovePoints} 点移动力` : "";
     const rewardText = rewardNotes.length ? `，${rewardNotes.join("，")}` : "";
     const message = `${moveResult.message}${costText}${movePointText}${rewardText}`;
-    context.rocketState.statusNote = message;
 
     return {
       ok: true,
@@ -536,7 +534,7 @@
   }
 
   function settleRocketsAfterSolarRotation(context, beforeRotation, afterRotation) {
-    if (!context?.rocketState || !context?.solarState || !context?.playerState) {
+    if (!context?.pieces || !context?.solarSystem || !context?.players) {
       return {
         ok: true,
         abilityId: "settleRocketsAfterSolarRotation",
@@ -546,7 +544,7 @@
       };
     }
 
-    const plans = (context.rocketState.rockets || [])
+    const plans = (context.pieces.rockets || [])
       .filter((rocket) => rockets.isMovablePlayerToken(rocket) || rockets.isControllablePlayerRocket(rocket))
       .map((rocket) => resolveRocketRotationPlan(context, rocket, beforeRotation, afterRotation))
       .filter((plan) => plan && (plan.from.x !== plan.to.x || plan.from.y !== plan.to.y));
@@ -569,7 +567,7 @@
 
     for (const plan of plans) {
       const slotIndex = reserveRotationDestinationSlot(
-        context.rocketState,
+        context.pieces,
         movingRocketIds,
         reservedSlots,
         plan.to,
@@ -579,7 +577,7 @@
         continue;
       }
 
-      const player = getPlayerById(context.playerState, plan.rocket.playerId);
+      const player = getPlayerById(context.players, plan.rocket.playerId);
       const beforeRocket = structuredClone(plan.rocket);
       const beforePlayer = player ? structuredClone(player) : null;
       rockets.assignRocketToSlot(plan.rocket, plan.to.x, plan.to.y, slotIndex);
@@ -611,7 +609,6 @@
     }
 
     const message = notes.length ? `太阳系旋转：${notes.join("；")}` : "太阳系旋转";
-    context.rocketState.statusNote = message;
     return {
       ok: true,
       abilityId: "settleRocketsAfterSolarRotation",

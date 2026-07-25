@@ -103,7 +103,7 @@
     }
     const solarSource = state?.solarSystem || {};
     const rotationSource = solarSource.rotation || {};
-    const derivedWheelSteps = solarSource.wheelSteps || [
+    const derivedWheelSteps = [
       0,
       Number(rotationSource.wheel1Steps) || 0,
       Number(rotationSource.wheel2Steps) || 0,
@@ -133,8 +133,8 @@
         roundNumber: Number(state?.turn?.roundNumber ?? state?.turn?.round ?? state?.match?.round ?? 1),
         turnNumber: Number(state?.turn?.turnNumber ?? state?.turn?.turn ?? state?.match?.turn ?? 1),
         actionCycleNumber: Number(state?.turn?.actionCycleNumber ?? state?.turn?.actionCycle ?? 1),
-        currentPlayerId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
-        activePlayerId: state?.turn?.activePlayerId ?? state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+        currentPlayerId: state?.turn?.currentPlayerId ?? null,
+        activePlayerId: state?.turn?.activePlayerId ?? state?.turn?.currentPlayerId ?? null,
         terminal: Boolean(state?.turn?.gameEnded ?? state?.match?.terminal),
       },
       board: {
@@ -176,7 +176,7 @@
           "completedTurnPlayerIds", "phase", "gameEnded", "gameEndReason",
         ]),
         players: {
-          currentPlayerId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+          currentPlayerId: state?.turn?.currentPlayerId ?? null,
           players: Object.values(players).map(clone),
         },
         solar: {

@@ -39,11 +39,11 @@
   }
 
   function getEnergyCost(context, planetId) {
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     const aomomoApi = getAomomo();
     const hasOrbit = isAomomoPlanetId(planetId)
-      ? (aomomoApi?.countOrbitMarkers?.(context.alienGameState) || 0) > 0
-      : planetStats.getPlanetOrbitCount(context.planetStatsState, planetId) > 0;
+      ? (aomomoApi?.countOrbitMarkers?.(context.aliens) || 0) > 0
+      : planetStats.getPlanetOrbitCount(context.planets, planetId) > 0;
     const orbitDiscount = hasOrbit ? 1 : 0;
     const techDiscount = players.playerOwnsTech(currentPlayer, "orange3", context) ? ORANGE3_LAND_DISCOUNT : 0;
     return Math.max(0, BASE_ENERGY_COST - orbitDiscount - techDiscount);
@@ -92,7 +92,7 @@
     const aomomoApi = getAomomo();
 
     if (isAomomoPlanetId(planetId)) {
-      if (aomomoApi?.canAddLandingMarker?.(context.alienGameState)) {
+      if (aomomoApi?.canAddLandingMarker?.(context.aliens)) {
         choices.push({
           target: targetWithRocketId({ type: "planet" }, placement.rocket.id),
           rocketId: placement.rocket.id,
@@ -102,7 +102,7 @@
           label: `登陆${placement.planet.name}（${rocketLabel}，${energyCost}能量）`,
         });
       }
-    } else if (planetStats.canAddLandingMarker(context.planetStatsState, planetId)) {
+    } else if (planetStats.canAddLandingMarker(context.planets, planetId)) {
       choices.push({
         target: targetWithRocketId({ type: "planet" }, placement.rocket.id),
         rocketId: placement.rocket.id,
@@ -114,7 +114,7 @@
     }
 
     if (!isAomomoPlanetId(planetId) && canLandOnSatellites(placement.currentPlayer, { ...context, ...options })) {
-      for (const satellite of planetStats.getAvailableSatellitesForLanding(context.planetStatsState, planetId)) {
+      for (const satellite of planetStats.getAvailableSatellitesForLanding(context.planets, planetId)) {
         choices.push({
           target: targetWithRocketId({ type: "satellite", satelliteId: satellite.satelliteId }, placement.rocket.id),
           rocketId: placement.rocket.id,
@@ -176,27 +176,23 @@
   function execute(context, options) {
     const check = getLandOptions(context, options);
     if (!check.ok) {
-      context.rocketState.statusNote = check.message;
       return { ok: false, actionId: ACTION_ID, message: check.message };
     }
 
     const landOptions = check;
     if (!landOptions.ok) {
-      context.rocketState.statusNote = landOptions.message;
       return { ok: false, actionId: ACTION_ID, message: landOptions.message };
     }
 
     const target = normalizeLandTarget(options?.target || landOptions.defaultTarget);
     if (!target) {
       const message = "未选择有效的登陆目标";
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
 
     const rocketId = getRequestedRocketId(options || {}) ?? landOptions.defaultRocketId;
     const placement = shared.getRocketPlanet(context, { rocketId });
     if (!placement.ok) {
-      context.rocketState.statusNote = placement.message;
       return { ok: false, actionId: ACTION_ID, message: placement.message };
     }
     const currentPlayer = placement.currentPlayer;
@@ -204,44 +200,38 @@
     const energyCost = getEnergyCost(context, planetId);
     const snapshots = {
       player: structuredClone(currentPlayer),
-      rocketState: structuredClone(context.rocketState),
-      planetStatsState: structuredClone(context.planetStatsState),
-      alienGameState: context.alienGameState ? structuredClone(context.alienGameState) : null,
+      pieces: structuredClone(context.pieces),
+      planets: structuredClone(context.planets),
+      aliens: context.aliens ? structuredClone(context.aliens) : null,
     };
 
     const aomomoApi = getAomomo();
     const isAomomoPlanet = isAomomoPlanetId(planetId);
     if (target.type === "planet" && isAomomoPlanet && !aomomoApi?.canAddLandingMarker) {
       const message = "奥陌陌模块未加载";
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
-    if (target.type === "planet" && isAomomoPlanet && !aomomoApi.canAddLandingMarker(context.alienGameState)) {
+    if (target.type === "planet" && isAomomoPlanet && !aomomoApi.canAddLandingMarker(context.aliens)) {
       const message = `${placement.planet.name} 登陆槽位已满`;
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
 
-    if (target.type === "planet" && !isAomomoPlanet && !planetStats.canAddLandingMarker(context.planetStatsState, planetId)) {
+    if (target.type === "planet" && !isAomomoPlanet && !planetStats.canAddLandingMarker(context.planets, planetId)) {
       const message = `${placement.planet.name} 不支持主星登陆`;
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
 
-    if (target.type === "satellite" && !planetStats.canLandOnSatellite(context.planetStatsState, planetId, target.satelliteId)) {
+    if (target.type === "satellite" && !planetStats.canLandOnSatellite(context.planets, planetId, target.satelliteId)) {
       const message = `${placement.planet.name} 的该卫星不可登陆`;
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
     if (target.type === "satellite" && !canLandOnSatellites(currentPlayer, context)) {
       const message = "需要橙色4号科技才能登陆卫星";
-      context.rocketState.statusNote = message;
       return { ok: false, actionId: ACTION_ID, message };
     }
 
     const spendResult = players.spendResources(currentPlayer, { energy: energyCost });
     if (!spendResult.ok) {
-      context.rocketState.statusNote = spendResult.message;
       return { ok: false, actionId: ACTION_ID, message: spendResult.message };
     }
 
@@ -259,7 +249,7 @@
 
     if (target.type === "satellite") {
       markerResult = planetStats.addSatelliteLandingMarker(
-        context.planetStatsState,
+        context.planets,
         planetId,
         target.satelliteId,
         currentPlayer,
@@ -268,13 +258,13 @@
       satelliteId = target.satelliteId;
       targetLabel = markerResult.marker?.satelliteName || target.satelliteId;
     } else if (isAomomoPlanet) {
-      markerResult = aomomoApi.addLandingMarker(context.alienGameState, currentPlayer);
+      markerResult = aomomoApi.addLandingMarker(context.aliens, currentPlayer);
       markerKind = "aomomo-land";
       markerSequence = markerResult.marker?.sequence || null;
       targetLabel = placement.planet.name;
     } else {
       markerResult = planetStats.addPlanetLandingMarker(
-        context.planetStatsState,
+        context.planets,
         planetId,
         currentPlayer,
       );
@@ -285,14 +275,13 @@
 
     if (!markerResult.ok) {
       currentPlayer.resources.energy += energyCost;
-      context.rocketState.statusNote = markerResult.message;
       return { ok: false, actionId: ACTION_ID, message: markerResult.message };
     }
 
     const discountParts = [];
     const hasOrbit = isAomomoPlanet
-      ? aomomoApi.countOrbitMarkers(context.alienGameState) > 0
-      : planetStats.getPlanetOrbitCount(context.planetStatsState, planetId) > 0;
+      ? aomomoApi.countOrbitMarkers(context.aliens) > 0
+      : planetStats.getPlanetOrbitCount(context.planets, planetId) > 0;
     if (hasOrbit) discountParts.push("有环绕，消耗-1");
     if (players.playerOwnsTech(currentPlayer, "orange3", context)) discountParts.push("橙色3，消耗-1");
     const discountNote = discountParts.length ? `（${discountParts.join("；")}）` : "";
@@ -300,7 +289,6 @@
       ? `显示卫星登陆标记 ${targetLabel}`
       : formatMarkerDisplayNote(markerResult.marker);
     const message = `登陆 ${targetLabel}，消耗 ${energyCost} 能量${discountNote}，移除火箭，${markerNote}`;
-    context.rocketState.statusNote = message;
     return {
       ok: true,
       actionId: ACTION_ID,

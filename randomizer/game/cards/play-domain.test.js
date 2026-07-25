@@ -32,7 +32,7 @@ assert.ok(
   "嵌套 card_count_rockets_reward 必须属于 Production Card Play owner",
 );
 
-function createLegacyRoot(cardId) {
+function createCanonicalState(cardId) {
   const card = {
     id: `instance:${cardId}`,
     cardId,
@@ -54,7 +54,7 @@ function createLegacyRoot(cardId) {
       rocket: 1,
     },
   };
-  const nebulaDataState = data.createDefaultNebulaDataState();
+  const dataState = data.createDefaultNebulaDataState();
   const techGameState = tech.createState(() => 0);
   for (const stack of Object.values(techGameState.board.stacks)) {
     stack.bonusQueue[stack.bonusIndex] = "bonus_3f";
@@ -62,7 +62,7 @@ function createLegacyRoot(cardId) {
   }
   for (const nebulaId of new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat())) {
     for (let index = 0; index < 4; index += 1) {
-      data.fillNebulaData(nebulaDataState, nebulaId, { source: "test", root: { meta } });
+      data.fillNebulaData(dataState, nebulaId, { source: "test", root: { meta } });
     }
   }
   const extraHand = cardId === "b_41.webp" || cardId === "dlc_34.png"
@@ -75,8 +75,7 @@ function createLegacyRoot(cardId) {
       : [];
   const root = {
     meta,
-    playerState: {
-      currentPlayerId: "p1",
+    players: {
       players: [{
         id: "p1",
         color: "brown",
@@ -95,17 +94,17 @@ function createLegacyRoot(cardId) {
         mainActionCompleted: false,
       }],
     },
-    cardState: { discardPile: [], publicCards: [] },
-    rocketState: rockets.createRocketState(),
-    solarState: solar.createBaselineState(),
-    nebulaDataState,
-    planetStatsState: {},
-    techGameState,
-    alienGameState: {},
-    turnState: { currentPlayerId: "p1" },
+    cards: { discardPile: [], publicCards: [] },
+    pieces: rockets.createRocketState(),
+    solarSystem: solar.createBaselineState(),
+    data: dataState,
+    planets: {},
+    tech: techGameState.board,
+    aliens: {},
+    turn: { currentPlayerId: "p1" },
     match: { decisionVersion: 0 },
   };
-  root.playerState.players[0].resources.handSize = root.playerState.players[0].hand.length;
+  root.players.players[0].resources.handSize = root.players.players[0].hand.length;
   return root;
 }
 
@@ -118,56 +117,34 @@ function toCommitted(root, stateVersion = root.meta?.stateVersion ?? 0) {
     rngState: root.meta.rngState,
     sequences: root.meta.sequences,
     match: root.match,
-    turn: root.turnState,
-    players: root.playerState,
-    solarSystem: root.solarState,
-    pieces: root.rocketState,
-    planets: root.planetStatsState,
-    data: root.nebulaDataState,
-    cards: root.cardState,
-    tech: root.techGameState,
-    aliens: root.alienGameState,
+    turn: root.turn,
+    players: root.players,
+    solarSystem: root.solarSystem,
+    pieces: root.pieces,
+    planets: root.planets,
+    data: root.data,
+    cards: root.cards,
+    tech: root.tech,
+    aliens: root.aliens,
     finalScoring: {},
   });
 }
 
-function fromCommitted(state) {
-  return {
-    meta: structuredClone(state.meta),
-    playerState: structuredClone(state.players),
-    cardState: structuredClone(state.cards),
-    rocketState: structuredClone(state.pieces),
-    solarState: structuredClone(state.solarSystem),
-    nebulaDataState: structuredClone(state.data),
-    planetStatsState: structuredClone(state.planets),
-    techGameState: structuredClone(state.tech),
-    alienGameState: structuredClone(state.aliens),
-    turnState: structuredClone(state.turn),
-    match: structuredClone(state.match),
-  };
-}
-
-function restoreObject(target, source) {
-  for (const key of Object.keys(target)) delete target[key];
-  Object.assign(target, structuredClone(source));
-}
-
 function createActionContext(root) {
-  const playerState = root.playerState || root.players;
   return {
-    workingRoot: root,
-    playerState,
-    cardState: root.cardState || root.cards,
-    rocketState: root.rocketState || root.pieces,
-    solarState: root.solarState || root.solarSystem,
-    nebulaDataState: root.nebulaDataState || root.data,
-    planetStatsState: root.planetStatsState || root.planets,
-    techGameState: root.techGameState || root.tech,
-    alienGameState: root.alienGameState || root.aliens,
-    turnState: root.turnState || root.turn,
+    state: root,
+    players: root.players,
+    cards: root.cards,
+    pieces: root.pieces,
+    solarSystem: root.solarSystem,
+    data: root.data,
+    planets: root.planets,
+    tech: root.tech,
+    aliens: root.aliens,
+    turn: root.turn,
     match: root.match,
     standardActionAuthority: {
-      actorId: playerState.currentPlayerId,
+      actorId: root.turn.currentPlayerId,
       stateVersion: root.meta.stateVersion,
       decisionVersion: root.match.decisionVersion,
     },
@@ -175,10 +152,9 @@ function createActionContext(root) {
 }
 
 function semanticState(state) {
-  const root = state.playerState ? state : fromCommitted(state);
-  const player = root.playerState.players[0];
+  const player = state.players.players[0];
   return {
-    stateVersion: root.meta.stateVersion,
+    stateVersion: state.meta.stateVersion,
     player: {
       credits: player.resources.credits,
       energy: player.resources.energy,
@@ -189,9 +165,9 @@ function semanticState(state) {
       mainActionCompleted: player.mainActionCompleted,
       income: structuredClone(player.income || {}),
     },
-    discard: (root.cardState.discardPile || []).map((card) => card.id),
-    sequences: structuredClone(root.meta.sequences),
-    cardRandom: structuredClone(root.meta.rngState.cardPlay || null),
+    discard: (state.cards.discardPile || []).map((card) => card.id),
+    sequences: structuredClone(state.meta.sequences),
+    cardRandom: structuredClone(state.meta.rngState.cardPlay || null),
     dataTokens: (player.dataState?.poolTokens || []).map((token) => ({
       id: token.id,
       index: token.index,
@@ -199,12 +175,12 @@ function semanticState(state) {
     })),
     scans: ["sector-4-a", "sector-3-a"].map((nebulaId) => ({
       nebulaId,
-      tokens: data.listNebulaTokens(root.nebulaDataState, nebulaId).map((token) => ({
+      tokens: data.listNebulaTokens(state.data, nebulaId).map((token) => ({
         slotIndex: token.slotIndex,
         replacedByPlayerId: token.replacedByPlayerId || null,
       })),
     })),
-    rockets: (root.rocketState.rockets || []).map((rocket) => ({
+    rockets: (state.pieces.rockets || []).map((rocket) => ({
       id: rocket.id,
       playerId: rocket.playerId,
       sectorX: rocket.sectorX,
@@ -214,7 +190,7 @@ function semanticState(state) {
 }
 
 function createIntegratedComposition(cardId) {
-  const initialLegacy = createLegacyRoot(cardId);
+  const initialState = toCommitted(createCanonicalState(cardId));
   const counters = { compareAndCommit: 0 };
   const instrumentedStateStoreApi = {
     createStateStore(initialState, options) {
@@ -232,9 +208,7 @@ function createIntegratedComposition(cardId) {
   const options = {
     stateStoreApi: instrumentedStateStoreApi,
     effectRuntimeApi,
-    createInitialState(_options, workingState) {
-      return toCommitted(workingState);
-    },
+    createInitialState() { return structuredClone(initialState); },
     createActionContext,
     createActionRegistry() {
       const registry = standardAction.createRegistry({
@@ -256,23 +230,6 @@ function createIntegratedComposition(cardId) {
       },
     ],
     projectState: semanticState,
-    projectWorkingState: true,
-    stateAdapter: {
-      createWorkingState: () => structuredClone(initialLegacy),
-      createCommittedState(workingState, committedState) {
-        return toCommitted(workingState, committedState.meta.stateVersion);
-      },
-      restoreWorkingState(workingState, source) {
-        restoreObject(
-          workingState,
-          source.playerState ? source : fromCommitted(source),
-        );
-      },
-      createProjectionState: (workingState) => structuredClone(workingState),
-      onCommitted(workingState, committedState) {
-        workingState.meta.stateVersion = committedState.meta.stateVersion;
-      },
-    },
   };
   const composition = createRuleComposition(options);
   return { composition, counters };

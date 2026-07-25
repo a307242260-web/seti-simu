@@ -12,8 +12,7 @@ function createRoot({
   return {
     meta: { stateVersion: 1, seed: "probe-turn-owner-boundary", rngState: {} },
     match: { decisionVersion: 0 },
-    playerState: {
-      currentPlayerId,
+    players: {
       players: [
         {
           id: "p1",
@@ -33,7 +32,8 @@ function createRoot({
         },
       ],
     },
-    turnState: {
+    turn: {
+      currentPlayerId,
       roundNumber,
       turnNumber: 1,
       actionCycleNumber: 1,
@@ -45,7 +45,7 @@ function createRoot({
       cardTurnEventBonuses: [],
       visitedPlanetsByPlayerId: {},
     },
-    cardState: {},
+    cards: {},
   };
 }
 
@@ -88,7 +88,7 @@ function handoffSummary(entry) {
 
 (function testPassStartsWithVersionedCompanyHandoff() {
   const root = createRoot();
-  root.playerState.players[0].mainActionCompleted = false;
+  root.players.players[0].mainActionCompleted = false;
   const { executors } = createHarness();
   const execute = executors.get(probeTurn.EFFECT_TYPES.EXECUTE).execute;
   const result = execute(root, {
@@ -101,7 +101,7 @@ function handoffSummary(entry) {
         target: { kind: "pass" },
       },
     },
-  }, { workingRoot: root });
+  }, { state: root });
   assert.equal(result.ok, true);
   assert.deepEqual(handoffSummary(result.spawnedEffects[0]), {
     type: probeTurn.DOMAIN_HANDOFF_EFFECT_TYPE,
@@ -121,7 +121,7 @@ function handoffSummary(entry) {
   const result = execute(root, {
     ownerId: "p1",
     payload: { action: endTurnAction() },
-  }, { workingRoot: root });
+  }, { state: root });
   assert.equal(result.ok, true);
   assert.deepEqual(
     result.spawnedEffects.slice(0, -1).map((entry) => (
@@ -148,7 +148,7 @@ function handoffSummary(entry) {
     const result = executeReward(root, {
       ownerId: "p1",
       payload: { reward: { type: rewardType, options: {} } },
-    }, { workingRoot: root });
+    }, { state: root });
     assert.equal(result.ok, true);
     assert.deepEqual(
       `${result.spawnedEffects[0].effect.payload.domain}:${result.spawnedEffects[0].effect.payload.effectType}`,
@@ -164,10 +164,10 @@ function handoffSummary(entry) {
   const result = advance(root, {
     ownerId: "p1",
     payload: { didPass: true },
-  }, { workingRoot: root });
+  }, { state: root });
   assert.equal(result.ok, true);
-  assert.equal(root.turnState.roundNumber, 4);
-  assert.equal(root.playerState.currentPlayerId, "p2");
+  assert.equal(root.turn.roundNumber, 4);
+  assert.equal(root.turn.currentPlayerId, "p2");
   assert.deepEqual(
     result.spawnedEffects.map((entry) => (
       `${entry.effect.payload.domain}:${entry.effect.payload.effectType}`

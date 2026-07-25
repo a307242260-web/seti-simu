@@ -31,7 +31,7 @@
   }
 
   function getPlayerTechState(context) {
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
 
     if (!currentPlayer.techState && context.ensurePlayerTechState) {
@@ -54,7 +54,7 @@
     const check = canExecute(context, options);
     if (!check.ok) return check;
 
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     const choices = check.takeable.flatMap((tileId) => {
       if (catalog.getTechType(tileId) !== "blue") {
         return [{ tileId, blueSlot: null, label: `研究 ${tileId}` }];
@@ -76,10 +76,10 @@
     const playerResult = getPlayerTechState(context);
     if (!playerResult.ok) return playerResult;
 
-    const board = context.techBoardState;
+    const board = context.tech;
     if (!board) return { ok: false, message: "科技版图状态未初始化" };
 
-    const cheatMode = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
+    const cheatMode = Boolean(options.skipCost);
     const researchCost = resolver.getResearchPublicityCost?.(playerResult.currentPlayer)
       ?? catalog.RESEARCH_PUBLICITY_COST;
     if (!cheatMode && !players.canAfford(playerResult.currentPlayer, { publicity: researchCost })) {
@@ -109,12 +109,11 @@
         if (!playerResult.ok) return playerResult;
         const snapshots = {
           player: structuredClone(playerResult.currentPlayer),
-          board: structuredClone(context.techBoardState),
-          ui: context.techUiState ? structuredClone(context.techUiState) : null,
+          board: structuredClone(context.tech),
         };
         const researchCost = resolver.getResearchPublicityCost?.(playerResult.currentPlayer)
           ?? catalog.RESEARCH_PUBLICITY_COST;
-        if (!options.skipCost && !context.techUiState?.cheatModeEnabled) {
+        if (!options.skipCost) {
           const spend = players.spendResources(playerResult.currentPlayer, { publicity: researchCost });
           if (!spend.ok) return spend;
         }
@@ -125,14 +124,8 @@
         });
         if (!result.ok || result.needsBlueSlotChoice) {
           restoreObject(playerResult.currentPlayer, snapshots.player);
-          restoreObject(context.techBoardState, snapshots.board);
-          restoreObject(context.techUiState, snapshots.ui);
+          restoreObject(context.tech, snapshots.board);
           return result;
-        }
-        if (context.techUiState) {
-          context.techUiState.techSelectionActive = false;
-          context.techUiState.pendingTileId = null;
-          context.techUiState.allowedTechTypes = null;
         }
         return {
           ...result,
@@ -159,16 +152,7 @@
 
     const techTypeOptions = buildTechTypeOptions(options);
     const check = canExecute(context, techTypeOptions);
-    if (!check.ok) {
-      if (context.techUiState) context.techUiState.statusNote = check.message;
-      return { ok: false, actionId: ACTION_ID, message: check.message };
-    }
-
-    if (context.techUiState) {
-      context.techUiState.techSelectionActive = true;
-      context.techUiState.allowedTechTypes = techTypeOptions.techTypes ? [...techTypeOptions.techTypes] : null;
-      context.techUiState.statusNote = "请选择要研究的科技板块";
-    }
+    if (!check.ok) return { ok: false, actionId: ACTION_ID, message: check.message };
 
     return {
       ok: true,

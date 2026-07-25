@@ -177,12 +177,10 @@
       tileId,
       blueSlot = null,
     } = options;
-    const effectiveOptions = normalizeTechTypeFilter(options)
-      ? options
-      : { ...options, allowedTechTypes: context.techUiState?.allowedTechTypes || null };
+    const effectiveOptions = options;
 
-    const board = context.techBoardState;
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const board = context.tech;
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
     if (!board) return { ok: false, message: "科技版图状态未初始化" };
 
@@ -218,13 +216,6 @@
     if (!bonusId) return { ok: false, message: `${tileId} 无可用奖励` };
     const firstTake = boardState.isFirstTakeAvailable(board, tileId);
 
-    if (context.techUiState) {
-      context.techUiState.pendingTileId = null;
-      context.techUiState.selectedTileId = tileId;
-      context.techUiState.selectedBlueSlot = resolvedBlueSlot;
-      context.techUiState.statusNote = `已选择科技：${tileId}`;
-    }
-
     return {
       ok: true,
       tileId,
@@ -252,12 +243,10 @@
       expectedBonusId = null,
       expectedFirstTake = null,
     } = options;
-    const effectiveOptions = normalizeTechTypeFilter(options)
-      ? options
-      : { ...options, allowedTechTypes: context.techUiState?.allowedTechTypes || null };
+    const effectiveOptions = options;
 
-    const board = context.techBoardState;
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const board = context.tech;
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
     if (!board) return { ok: false, message: "科技版图状态未初始化" };
 
@@ -318,13 +307,6 @@
       return record;
     }
 
-    if (context.techUiState) {
-      context.techUiState.pendingTileId = null;
-      context.techUiState.selectedTileId = tileId;
-      context.techUiState.selectedBlueSlot = resolvedBlueSlot;
-      context.techUiState.statusNote = `已获得科技：${tileId}`;
-    }
-
     return {
       ok: true,
       tileId,
@@ -365,7 +347,7 @@
       firstTake = false,
       skipCardSelection = false,
     } = options;
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
 
     const bonusEffect = catalog.BONUS_EFFECTS[bonusId];
@@ -403,23 +385,21 @@
   }
 
   function executeTakeTech(context, options = {}) {
-    const currentPlayerBefore = players.getCurrentPlayer(context.playerState);
+    const currentPlayerBefore = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     const snapshots = {
       player: currentPlayerBefore ? structuredClone(currentPlayerBefore) : null,
-      board: context.techBoardState ? structuredClone(context.techBoardState) : null,
-      ui: context.techUiState ? structuredClone(context.techUiState) : null,
-      solarState: context.solarState ? structuredClone(context.solarState) : null,
+      board: context.tech ? structuredClone(context.tech) : null,
+      solarSystem: context.solarSystem ? structuredClone(context.solarSystem) : null,
     };
     function restoreSnapshots() {
-      const currentPlayer = players.getCurrentPlayer(context.playerState);
+      const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
       if (currentPlayer && snapshots.player) {
         for (const key of Object.keys(currentPlayer)) delete currentPlayer[key];
         Object.assign(currentPlayer, structuredClone(snapshots.player));
       }
       for (const [target, snapshot] of [
-        [context.techBoardState, snapshots.board],
-        [context.techUiState, snapshots.ui],
-        [context.solarState, snapshots.solarState],
+        [context.tech, snapshots.board],
+        [context.solarSystem, snapshots.solarSystem],
       ]) {
         if (!target || !snapshot) continue;
         for (const key of Object.keys(target)) delete target[key];
@@ -431,8 +411,8 @@
     if (!selectResult.ok || selectResult.needsBlueSlotChoice) return selectResult;
 
     if (!options.skipCost) {
-      const researchCost = getResearchPublicityCost(players.getCurrentPlayer(context.playerState));
-      const spend = players.spendResources(players.getCurrentPlayer(context.playerState), { publicity: researchCost });
+      const researchCost = getResearchPublicityCost(players.getCurrentPlayer(context.players, context.turn?.currentPlayerId));
+      const spend = players.spendResources(players.getCurrentPlayer(context.players, context.turn?.currentPlayerId), { publicity: researchCost });
       if (!spend.ok) {
         restoreSnapshots();
         return spend;
@@ -469,9 +449,9 @@
     }
 
     return buildTakeResult(
-      context.techBoardState,
-      players.getCurrentPlayer(context.playerState),
-      players.getCurrentPlayer(context.playerState).techState,
+      context.tech,
+      players.getCurrentPlayer(context.players, context.turn?.currentPlayerId),
+      players.getCurrentPlayer(context.players, context.turn?.currentPlayerId).techState,
       {
         tileId: selectResult.tileId,
         techType: takeResult.techType,

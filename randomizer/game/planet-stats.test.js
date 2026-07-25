@@ -30,8 +30,7 @@ const overflowLanding = planetStats.getPlanetLandingMarkers(state, "venus")[5];
 assert.equal(overflowLanding.sequence, 6);
 assert.equal(overflowLanding.displayed, false);
 const forcedLanding = planetStats.addPlanetLandingMarker(state, "venus", player, {
-  forceDisplaySlot: true,
-  displaySlot: 1,
+  rewardSlot: 1,
   referenceOffsetTokenWidths: 0.5,
 });
 assert.equal(forcedLanding.ok, true);

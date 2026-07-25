@@ -41,23 +41,22 @@
       activeRocketId: null,
       rockets: [],
       playerRocketSequences: {},
-      statusNote: null,
     };
   }
 
-  function getPlayerRocketSequences(rocketState, playerId) {
+  function getPlayerRocketSequences(piecesState, playerId) {
     if (!playerId) return null;
-    const current = rocketState.playerRocketSequences[playerId];
+    const current = piecesState.playerRocketSequences[playerId];
     if (!Array.isArray(current)) {
-      rocketState.playerRocketSequences[playerId] = current instanceof Set
+      piecesState.playerRocketSequences[playerId] = current instanceof Set
         ? [...current].sort((left, right) => left - right)
         : [];
     }
-    return rocketState.playerRocketSequences[playerId];
+    return piecesState.playerRocketSequences[playerId];
   }
 
-  function allocatePlayerRocketSequence(rocketState, playerId) {
-    const used = getPlayerRocketSequences(rocketState, playerId);
+  function allocatePlayerRocketSequence(piecesState, playerId) {
+    const used = getPlayerRocketSequences(piecesState, playerId);
     if (!used) return null;
 
     let sequence = 1;
@@ -67,8 +66,8 @@
     return sequence;
   }
 
-  function releasePlayerRocketSequence(rocketState, playerId, sequence) {
-    const used = rocketState.playerRocketSequences?.[playerId];
+  function releasePlayerRocketSequence(piecesState, playerId, sequence) {
+    const used = piecesState.playerRocketSequences?.[playerId];
     if (!used || !Number.isInteger(sequence)) return;
     if (used instanceof Set) {
       used.delete(sequence);
@@ -219,9 +218,9 @@
   }
 
   /** 状态记录器：扫描当前火箭，得到「每个扇区 -> 已占用槽位」的实时占用表。 */
-  function getSectorOccupancy(rocketState, excludeRocketId) {
+  function getSectorOccupancy(piecesState, excludeRocketId) {
     const occupancy = new Map();
-    for (const rocket of rocketState.rockets) {
+    for (const rocket of piecesState.rockets) {
       if (rocket.id === excludeRocketId) continue;
       if (!Number.isInteger(rocket.sectorX) || !Number.isInteger(rocket.sectorY)) continue;
       if (!Number.isInteger(rocket.slotIndex)) continue;
@@ -232,14 +231,14 @@
     return occupancy;
   }
 
-  function getOccupiedSlotIndices(rocketState, sectorX, sectorY, excludeRocketId) {
-    const slots = getSectorOccupancy(rocketState, excludeRocketId).get(sectorKey(sectorX, sectorY));
+  function getOccupiedSlotIndices(piecesState, sectorX, sectorY, excludeRocketId) {
+    const slots = getSectorOccupancy(piecesState, excludeRocketId).get(sectorKey(sectorX, sectorY));
     return slots ? new Set(slots.keys()) : new Set();
   }
 
   /** 按优先顺序（中心->四角->四边）返回该扇区第一个空闲槽位；满了返回 null。 */
-  function findAvailableSlotIndex(rocketState, sectorX, sectorY, excludeRocketId) {
-    const occupied = getOccupiedSlotIndices(rocketState, sectorX, sectorY, excludeRocketId);
+  function findAvailableSlotIndex(piecesState, sectorX, sectorY, excludeRocketId) {
+    const occupied = getOccupiedSlotIndices(piecesState, sectorX, sectorY, excludeRocketId);
     for (const slotIndex of solar.LAUNCH_SLOT_PRIORITY) {
       if (!occupied.has(slotIndex)) return slotIndex;
     }
@@ -295,8 +294,8 @@
   }
 
   /** 把火箭放进目标扇区的优先空位；扇区已满则不放置并返回 false。 */
-  function placeRocketByPriority(rocketState, rocket, sectorX, sectorY) {
-    const slotIndex = findAvailableSlotIndex(rocketState, sectorX, sectorY, rocket.id);
+  function placeRocketByPriority(piecesState, rocket, sectorX, sectorY) {
+    const slotIndex = findAvailableSlotIndex(piecesState, sectorX, sectorY, rocket.id);
     if (slotIndex === null) return false;
     assignRocketToSlot(rocket, sectorX, sectorY, slotIndex);
     return true;
@@ -312,7 +311,7 @@
     return resolution.sectorCoordinate || { x: 0, y: SECTOR_RING_MIN };
   }
 
-  function launchRocketAtSector(rocketState, sectorCoordinate, input) {
+  function launchRocketAtSector(piecesState, sectorCoordinate, input) {
     const source = input || {};
     const sectorX = solar.mod8(sectorCoordinate.x);
     const sectorY = clamp(Number(sectorCoordinate.y), SECTOR_RING_MIN, SECTOR_RING_MAX);
@@ -322,25 +321,23 @@
       color: source.color || null,
     };
 
-    if (!placeRocketByPriority(rocketState, rocket, sectorX, sectorY)) {
+    if (!placeRocketByPriority(piecesState, rocket, sectorX, sectorY)) {
       const message = `扇区[${sectorX},${sectorY}]已满，无法发射`;
-      rocketState.statusNote = message;
       return { ok: false, rocket: null, message };
     }
 
     stateSequences.take(source.root, "rocket");
     rocket.launchGrid = { x: sectorX, y: sectorY };
     rocket.launchSectorCoordinate = { x: sectorX, y: sectorY };
-    rocket.playerSequence = allocatePlayerRocketSequence(rocketState, rocket.playerId);
-    rocketState.activeRocketId = rocket.id;
-    rocketState.rockets.push(rocket);
+    rocket.playerSequence = allocatePlayerRocketSequence(piecesState, rocket.playerId);
+    piecesState.activeRocketId = rocket.id;
+    piecesState.rockets.push(rocket);
 
     const message = `发射 ${formatRocketLabel(rocket)} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
-    rocketState.statusNote = message;
     return { ok: true, rocket, message };
   }
 
-  function createMovableTokenAtSector(rocketState, sectorCoordinate, input = {}) {
+  function createMovableTokenAtSector(piecesState, sectorCoordinate, input = {}) {
     const sectorX = solar.mod8(sectorCoordinate.x);
     const sectorY = clamp(Number(sectorCoordinate.y), SECTOR_RING_MIN, SECTOR_RING_MAX);
     const rocket = {
@@ -354,44 +351,41 @@
       cargo: input.cargo ? { ...input.cargo } : null,
     };
 
-    if (!placeRocketByPriority(rocketState, rocket, sectorX, sectorY)) {
+    if (!placeRocketByPriority(piecesState, rocket, sectorX, sectorY)) {
       const message = `扇区[${sectorX},${sectorY}]已满，无法放置移动棋子`;
-      rocketState.statusNote = message;
       return { ok: false, rocket: null, message };
     }
 
     stateSequences.take(input.root, "rocket");
     rocket.launchGrid = { x: sectorX, y: sectorY };
     rocket.launchSectorCoordinate = { x: sectorX, y: sectorY };
-    rocketState.activeRocketId = rocket.id;
-    rocketState.rockets.push(rocket);
+    piecesState.activeRocketId = rocket.id;
+    piecesState.rockets.push(rocket);
 
     const message = `放置 ${formatRocketLabel(rocket)} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
-    rocketState.statusNote = message;
     return { ok: true, rocket, message };
   }
 
-  function setActiveRocket(rocketState, rocketId) {
-    const rocket = rocketState.rockets.find((item) => item.id === rocketId);
+  function setActiveRocket(piecesState, rocketId) {
+    const rocket = piecesState.rockets.find((item) => item.id === rocketId);
     if (!rocket) {
       const message = `火箭 R${rocketId} 不存在`;
-      rocketState.statusNote = message;
       return { ok: false, rocket: null, message };
     }
 
-    rocketState.activeRocketId = rocket.id;
+    piecesState.activeRocketId = rocket.id;
     return { ok: true, rocket, message: null };
   }
 
-  function getRocketsForPlayer(rocketState, playerId) {
-    return rocketState.rockets
+  function getRocketsForPlayer(piecesState, playerId) {
+    return piecesState.rockets
       .filter(isControllablePlayerRocket)
       .filter((rocket) => !playerId || rocket.playerId === playerId)
       .sort((left, right) => left.playerSequence - right.playerSequence);
   }
 
-  function getMovableTokensForPlayer(rocketState, playerId) {
-    return rocketState.rockets
+  function getMovableTokensForPlayer(piecesState, playerId) {
+    return piecesState.rockets
       .filter(isMovablePlayerToken)
       .filter((rocket) => !playerId || rocket.playerId === playerId)
       .sort((left, right) => {
@@ -401,8 +395,8 @@
       });
   }
 
-  function canMoveRocket(rocketState, rocketId, deltaX, deltaY) {
-    const rocket = rocketState.rockets.find((item) => item.id === rocketId);
+  function canMoveRocket(piecesState, rocketId, deltaX, deltaY) {
+    const rocket = piecesState.rockets.find((item) => item.id === rocketId);
     if (!rocket) {
       const message = `火箭 R${rocketId} 不存在`;
       return { ok: false, rocket: null, message };
@@ -414,10 +408,10 @@
       return { ok: false, rocket, message };
     }
 
-    return { ...canMoveFromCoordinate(rocketState, current, deltaX, deltaY, rocket.id), rocket };
+    return { ...canMoveFromCoordinate(piecesState, current, deltaX, deltaY, rocket.id), rocket };
   }
 
-  function canMoveFromCoordinate(rocketState, current, deltaX, deltaY, movingRocketId = null) {
+  function canMoveFromCoordinate(piecesState, current, deltaX, deltaY, movingRocketId = null) {
     if (!current) return { ok: false, message: "缺少移动起点" };
     const sectorX = solar.mod8(current.x + Number(deltaX || 0));
     const sectorY = clamp(current.y + Number(deltaY || 0), SECTOR_RING_MIN, SECTOR_RING_MAX);
@@ -426,31 +420,29 @@
       return { ok: false, message: "已在边界，无法继续移动" };
     }
 
-    if (findAvailableSlotIndex(rocketState, sectorX, sectorY, movingRocketId) === null) {
+    if (findAvailableSlotIndex(piecesState, sectorX, sectorY, movingRocketId) === null) {
       return { ok: false, message: `扇区[${sectorX},${sectorY}]已满，无法移动` };
     }
 
     return { ok: true, to: { x: sectorX, y: sectorY }, message: null };
   }
 
-  function moveRocket(rocketState, rocketId, deltaX, deltaY) {
-    const activation = setActiveRocket(rocketState, rocketId);
+  function moveRocket(piecesState, rocketId, deltaX, deltaY) {
+    const activation = setActiveRocket(piecesState, rocketId);
     if (!activation.ok) return activation;
-    return moveActiveRocket(rocketState, deltaX, deltaY);
+    return moveActiveRocket(piecesState, deltaX, deltaY);
   }
 
-  function moveActiveRocket(rocketState, deltaX, deltaY) {
-    const rocket = rocketState.rockets.find((item) => item.id === rocketState.activeRocketId);
+  function moveActiveRocket(piecesState, deltaX, deltaY) {
+    const rocket = piecesState.rockets.find((item) => item.id === piecesState.activeRocketId);
     if (!rocket) {
       const message = "没有可移动的当前火箭";
-      rocketState.statusNote = message;
       return { ok: false, rocket: null, message };
     }
 
     const current = getRocketSectorCoordinate(rocket);
     if (!current) {
       const message = `R${rocket.id} 不在主盘扇区内，无法用快捷按钮移动`;
-      rocketState.statusNote = message;
       return { ok: false, rocket, message };
     }
     const sectorX = solar.mod8(current.x + Number(deltaX || 0));
@@ -458,23 +450,20 @@
 
     if (sectorX === rocket.sectorX && sectorY === rocket.sectorY) {
       const message = `R${rocket.id} 已在边界，无法继续移动`;
-      rocketState.statusNote = message;
       return { ok: false, rocket, message };
     }
 
-    if (!placeRocketByPriority(rocketState, rocket, sectorX, sectorY)) {
+    if (!placeRocketByPriority(piecesState, rocket, sectorX, sectorY)) {
       const message = `扇区[${sectorX},${sectorY}]已满，R${rocket.id} 保持原位`;
-      rocketState.statusNote = message;
       return { ok: false, rocket, message };
     }
 
     const message = `${formatRocketLabel(rocket)} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
-    rocketState.statusNote = message;
     return { ok: true, rocket, message };
   }
 
-  function placeRocketAtBoardPoint(rocketState, rocketId, boardPoint) {
-    const activation = setActiveRocket(rocketState, rocketId);
+  function placeRocketAtBoardPoint(piecesState, rocketId, boardPoint) {
+    const activation = setActiveRocket(piecesState, rocketId);
     if (!activation.ok) return activation;
 
     assignRocketToBoardPoint(activation.rocket, boardPoint);
@@ -483,57 +472,53 @@
       ? ` -> 扇区[${snapshot.sectorCoordinate.x},${snapshot.sectorCoordinate.y}]`
       : " -> 主盘扇区外";
     const message = `手动放置 R${activation.rocket.id} 主盘[${snapshot.board.x},${snapshot.board.y}]${sectorText}`;
-    rocketState.statusNote = message;
     return { ok: true, rocket: activation.rocket, message };
   }
 
-  function placeRocketAtPlanetsReferencePoint(rocketState, rocketId, point) {
-    const activation = setActiveRocket(rocketState, rocketId);
+  function placeRocketAtPlanetsReferencePoint(piecesState, rocketId, point) {
+    const activation = setActiveRocket(piecesState, rocketId);
     if (!activation.ok) return activation;
 
     assignRocketToPlanetsReferencePoint(activation.rocket, point);
     const reference = activation.rocket.planetsReference;
     const message = `手动放置 R${activation.rocket.id} planets贴图[${reference.x},${reference.y}] (${reference.percentX}%,${reference.percentY}%)`;
-    rocketState.statusNote = message;
     return { ok: true, rocket: activation.rocket, message };
   }
 
-  function getActiveRocket(rocketState) {
-    if (!rocketState?.activeRocketId) return null;
-    return rocketState.rockets.find((rocket) => rocket.id === rocketState.activeRocketId) || null;
+  function getActiveRocket(piecesState) {
+    if (!piecesState?.activeRocketId) return null;
+    return piecesState.rockets.find((rocket) => rocket.id === piecesState.activeRocketId) || null;
   }
 
-  function removeRocket(rocketState, rocketId) {
-    const index = rocketState.rockets.findIndex((rocket) => rocket.id === rocketId);
+  function removeRocket(piecesState, rocketId) {
+    const index = piecesState.rockets.findIndex((rocket) => rocket.id === rocketId);
     if (index === -1) {
       const message = `火箭 R${rocketId} 不存在`;
-      rocketState.statusNote = message;
       return { ok: false, rocketId, message };
     }
 
-    const removedRocket = rocketState.rockets[index];
+    const removedRocket = piecesState.rockets[index];
     if (isControllablePlayerRocket(removedRocket)) {
       releasePlayerRocketSequence(
-        rocketState,
+        piecesState,
         removedRocket.playerId,
         removedRocket.playerSequence,
       );
     }
 
-    rocketState.rockets.splice(index, 1);
-    if (rocketState.activeRocketId === rocketId) {
-      const next = rocketState.rockets[rocketState.rockets.length - 1];
-      rocketState.activeRocketId = next ? next.id : null;
+    piecesState.rockets.splice(index, 1);
+    if (piecesState.activeRocketId === rocketId) {
+      const next = piecesState.rockets[piecesState.rockets.length - 1];
+      piecesState.activeRocketId = next ? next.id : null;
     }
 
     const message = `移除 R${rocketId}`;
-    rocketState.statusNote = message;
     return { ok: true, rocketId, message };
   }
 
-  function serializeSectorOccupancy(rocketState) {
+  function serializeSectorOccupancy(piecesState) {
     return Object.fromEntries(
-      [...getSectorOccupancy(rocketState).entries()].map(([key, slots]) => [
+      [...getSectorOccupancy(piecesState).entries()].map(([key, slots]) => [
         key,
         [...slots.keys()].sort((a, b) => a - b),
       ]),

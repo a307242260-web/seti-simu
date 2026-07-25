@@ -39,7 +39,7 @@
   }
 
   function getPlayerTechState(context) {
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
     if (!currentPlayer.techState && context.ensurePlayerTechState) {
       context.ensurePlayerTechState(currentPlayer);
@@ -50,29 +50,24 @@
 
   function buildTechTypeOptions(context, options = {}) {
     const allowedTechTypes = tech.resolver.normalizeTechTypeFilter(options)
-      || tech.resolver.normalizeTechTypeFilter(context.techUiState || {})
       || null;
     return allowedTechTypes ? { techTypes: allowedTechTypes } : {};
   }
 
   function researchTechPrepare(context, options = {}) {
     const playerResult = getPlayerTechState(context);
-    if (!playerResult.ok) {
-      if (context.techUiState) context.techUiState.statusNote = playerResult.message;
-      return { ok: false, abilityId: "researchTechPrepare", message: playerResult.message };
-    }
+    if (!playerResult.ok) return { ok: false, abilityId: "researchTechPrepare", message: playerResult.message };
 
-    const board = context.techBoardState;
+    const board = context.tech;
     if (!board) return { ok: false, abilityId: "researchTechPrepare", message: "科技版图状态未初始化" };
 
-    const skipCost = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
+    const skipCost = Boolean(options.skipCost);
     const researchCost = getIndustryPassives()?.getResearchPublicityCost?.(
       playerResult.currentPlayer,
       tech.RESEARCH_PUBLICITY_COST,
     ) ?? tech.RESEARCH_PUBLICITY_COST;
     if (!skipCost && !players.canAfford(playerResult.currentPlayer, { publicity: researchCost })) {
       const message = `宣传不足，研究科技需要 ${researchCost} 宣传`;
-      if (context.techUiState) context.techUiState.statusNote = message;
       return { ok: false, abilityId: "researchTechPrepare", message };
     }
 
@@ -82,22 +77,12 @@
       const message = techTypeOptions.techTypes
         ? "没有符合颜色限制的可研究科技板块"
         : "没有可研究的科技板块";
-      if (context.techUiState) context.techUiState.statusNote = message;
       return {
         ok: false,
         abilityId: "researchTechPrepare",
         reason: "no_takeable_tech",
         message,
       };
-    }
-
-    if (context.techUiState) {
-      context.techUiState.techSelectionActive = true;
-      context.techUiState.selectedTileId = null;
-      context.techUiState.selectedBlueSlot = null;
-      context.techUiState.pendingTileId = null;
-      context.techUiState.allowedTechTypes = techTypeOptions.techTypes ? [...techTypeOptions.techTypes] : null;
-      context.techUiState.statusNote = "请选择要研究的科技板块";
     }
 
     return {
@@ -120,7 +105,7 @@
     if (!playerResult.ok) return { ok: false, abilityId: "researchTechSelect", message: playerResult.message };
     const techTypeOptions = buildTechTypeOptions(context, options);
     const canTake = tech.resolver.canTakeTile(
-      context.techBoardState,
+      context.tech,
       playerResult.currentPlayer.techState,
       tileId,
       techTypeOptions,
@@ -131,11 +116,6 @@
     if (canTake.techType === "blue" && blueSlot == null) {
       const availableSlots = tech.getAvailableBlueSlots(playerResult.currentPlayer.techState);
       if (availableSlots.length > 1) {
-        if (context.techUiState) {
-          context.techUiState.pendingTileId = tileId;
-          context.techUiState.selectedTileId = tileId;
-          context.techUiState.statusNote = `请选择 ${tileId} 的蓝色放置位置`;
-        }
         return {
           ok: true,
           abilityId: "researchTechSelect",
@@ -154,17 +134,9 @@
 
     const snapshots = {
       player: structuredClone(playerResult.currentPlayer),
-      board: structuredClone(context.techBoardState),
-      ui: structuredClone(context.techUiState),
+      board: structuredClone(context.tech),
     };
-    if (snapshots.ui) {
-      snapshots.ui.techSelectionActive = true;
-      snapshots.ui.pendingTileId = null;
-      snapshots.ui.selectedTileId = null;
-      snapshots.ui.selectedBlueSlot = null;
-      snapshots.ui.statusNote = "请选择要研究的科技板块";
-    }
-    const skipCost = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
+    const skipCost = Boolean(options.skipCost);
     const researchCost = getIndustryPassives()?.getResearchPublicityCost?.(
       playerResult.currentPlayer,
       tech.RESEARCH_PUBLICITY_COST,
@@ -173,8 +145,7 @@
       const spend = players.spendResources(playerResult.currentPlayer, { publicity: researchCost });
       if (!spend.ok) {
         restoreObject(playerResult.currentPlayer, snapshots.player);
-        restoreObject(context.techBoardState, snapshots.board);
-        restoreObject(context.techUiState, snapshots.ui);
+        restoreObject(context.tech, snapshots.board);
         return {
           ok: false,
           abilityId: "researchTechSelect",
@@ -186,22 +157,12 @@
     const result = tech.resolver.selectTechTile(context, { tileId, blueSlot, ...techTypeOptions });
     if (!result.ok || result.needsBlueSlotChoice) {
       restoreObject(playerResult.currentPlayer, snapshots.player);
-      restoreObject(context.techBoardState, snapshots.board);
-      restoreObject(context.techUiState, snapshots.ui);
+      restoreObject(context.tech, snapshots.board);
       return {
         ok: false,
         abilityId: "researchTechSelect",
         message: result.message || "科技选择失败",
       };
-    }
-
-    if (context.techUiState) {
-      context.techUiState.techSelectionActive = false;
-      context.techUiState.selectedTileId = result.tileId;
-      context.techUiState.selectedBlueSlot = result.blueSlot;
-      context.techUiState.pendingTileId = null;
-      context.techUiState.allowedTechTypes = null;
-      context.techUiState.statusNote = result.message;
     }
 
     return {
@@ -228,8 +189,7 @@
 
     const snapshots = {
       player: structuredClone(playerResult.currentPlayer),
-      board: structuredClone(context.techBoardState),
-      ui: structuredClone(context.techUiState),
+      board: structuredClone(context.tech),
     };
 
     const result = tech.resolver.takeSelectedTechTile(context, {
@@ -242,22 +202,12 @@
 
     if (!result.ok || result.needsBlueSlotChoice) {
       restoreObject(playerResult.currentPlayer, snapshots.player);
-      restoreObject(context.techBoardState, snapshots.board);
-      restoreObject(context.techUiState, snapshots.ui);
+      restoreObject(context.tech, snapshots.board);
       return {
         ok: false,
         abilityId: "researchTechTake",
         message: result.message || "科技拿取失败",
       };
-    }
-
-    if (context.techUiState) {
-      context.techUiState.techSelectionActive = false;
-      context.techUiState.selectedTileId = result.tileId;
-      context.techUiState.selectedBlueSlot = result.blueSlot;
-      context.techUiState.pendingTileId = null;
-      context.techUiState.allowedTechTypes = null;
-      context.techUiState.statusNote = result.message;
     }
 
     return {
@@ -284,8 +234,8 @@
 
   function researchTechRotate(context) {
     let beforeRotation = null;
-    if (context?.solarState?.rotation) {
-      beforeRotation = structuredClone(context.solarState.rotation);
+    if (context?.solarSystem?.rotation) {
+      beforeRotation = structuredClone(context.solarSystem.rotation);
     }
     const result = tech.resolver.rotateForResearch(context, 1);
     let rotationSettlement = null;
@@ -295,12 +245,12 @@
       && !result.payload?.rotationSettlement
       && !result.payload?.rotationSettlements
       && rocketAbility?.settleRocketsAfterSolarRotation
-      && context?.solarState?.rotation
+      && context?.solarSystem?.rotation
     ) {
       rotationSettlement = rocketAbility.settleRocketsAfterSolarRotation(
         context,
         beforeRotation,
-        context.solarState.rotation,
+        context.solarSystem.rotation,
       );
     }
     return {

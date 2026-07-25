@@ -366,7 +366,7 @@
       getOptions(actionContext) {
         const startCheck = options.canStart?.(actionContext) || { ok: true };
         if (!startCheck.ok) return startCheck;
-        const player = players.getCurrentPlayer(actionContext.playerState);
+        const player = players.getCurrentPlayer(actionContext.players, actionContext.turn?.currentPlayerId);
         const choices = (player?.hand || [])
           .map((card, handIndex) => ({ card, handIndex, cost: getCardPlayCost(card) }))
           .filter(({ cost }) => players.canAfford(player, cost))

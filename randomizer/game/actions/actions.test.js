@@ -38,37 +38,36 @@ function drawBasicCardToHand(hand) {
 }
 
 function createContext(overrides) {
-  const solarState = solar.createBaselineState();
+  const solarSystemState = solar.createBaselineState();
   const techGameState = tech.createState();
-  const playerState = players.createPlayerState({
+  const playersState = players.createPlayerState({
     currentPlayer: {
       color: "white",
       resources: { credits: 10, energy: 10, publicity: 10 },
     },
   });
-  const rocketState = rockets.createRocketState();
-  const planetStatsState = planetStats.createPlanetStatsState();
+  const piecesState = rockets.createRocketState();
+  const planetsState = planetStats.createPlanetStatsState();
 
   const base = {
     meta: { sequences: { rocket: 1 } },
-    solarState,
-    playerState,
-    rocketState,
-    planetStatsState,
-    techGameState,
-    techBoardState: techGameState.board,
-    techUiState: techGameState.ui,
+    solarSystem: solarSystemState,
+    players: playersState,
+    pieces: piecesState,
+    planets: planetsState,
+    tech: techGameState.board,
+    turn: { currentPlayerId: playersState.currentPlayerId },
     getEarthSectorCoordinate() {
-      const snapshot = solar.createSolarSnapshot(solarState);
+      const snapshot = solar.createSolarSnapshot(solarSystemState);
       const earth = snapshot.planetLocations.find((planet) => planet.planetId === "earth");
       return { x: earth.x, y: earth.y };
     },
     getPlanetLocations() {
-      return solar.createSolarSnapshot(solarState).planetLocations;
+      return solar.createSolarSnapshot(solarSystemState).planetLocations;
     },
     rotateSolarOrbit(count) {
-      solarState.rotation = solar.applySolarOrbitRotation(solarState.rotation, count || 1);
-      solarState.wheelSteps = solar.rotationToWheelSteps(solarState.rotation);
+      solarSystemState.rotation = solar.applySolarOrbitRotation(solarSystemState.rotation, count || 1);
+      solarSystemState.wheelSteps = solar.rotationToWheelSteps(solarSystemState.rotation);
     },
     drawBasicCardToPlayer(player) {
       return drawBasicCardToHand(player.hand);
@@ -91,34 +90,34 @@ function launchToPlanet(context, planetId) {
   const planet = context.getPlanetLocations().find((item) => item.planetId === planetId);
   assert.ok(planet, `planet ${planetId} not found`);
 
-  const moveResult = rockets.moveActiveRocket(context.rocketState, planet.x - launch.rocket.sectorX, planet.y - launch.rocket.sectorY);
+  const moveResult = rockets.moveActiveRocket(context.pieces, planet.x - launch.rocket.sectorX, planet.y - launch.rocket.sectorY);
   assert.equal(moveResult.ok, true, moveResult.message);
   return { launch, planet, rocket: moveResult.rocket };
 }
 
 function createAomomoVisibleContextWithStalePlanetList() {
   const context = createContext({
-    alienGameState: {
+    aliens: {
       aliens: {
         1: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
       },
       aomomo: aomomo.createAomomoState(),
     },
   });
-  context.solarState.aomomoActive = true;
-  const currentPlayer = players.getCurrentPlayer(context.playerState);
-  aomomo.initializeAomomoReveal(context.alienGameState, 1, currentPlayer);
-  const planet = solar.createSolarSnapshot(context.solarState)
+  context.solarSystem.aomomoActive = true;
+  const currentPlayer = players.getCurrentPlayer(context.players);
+  aomomo.initializeAomomoReveal(context.aliens, 1, currentPlayer);
+  const planet = solar.createSolarSnapshot(context.solarSystem)
     .planetLocations
     .find((item) => item.planetId === aomomo.PLANET_ID);
   assert.ok(planet, "aomomo planet should be visible in the solar snapshot");
-  const launch = rockets.launchRocketAtSector(context.rocketState, planet, {
+  const launch = rockets.launchRocketAtSector(context.pieces, planet, {
     playerId: currentPlayer.id,
     color: currentPlayer.color,
     root: context,
   });
   assert.equal(launch.ok, true, launch.message);
-  context.getPlanetLocations = () => solar.createSolarSnapshot(context.solarState)
+  context.getPlanetLocations = () => solar.createSolarSnapshot(context.solarSystem)
     .planetLocations
     .filter((item) => item.planetId !== aomomo.PLANET_ID);
   return context;
@@ -128,16 +127,16 @@ const context = createContext();
 const launchResult = actions.execute("launch", context);
 assert.equal(launchResult.ok, true);
 assert.equal(launchResult.rocket.playerSequence, 1);
-assert.equal(players.getCurrentPlayer(context.playerState).resources.credits, 8);
+assert.equal(players.getCurrentPlayer(context.players).resources.credits, 8);
 const blockedSecondLaunch = actions.execute("launch", context);
 assert.equal(blockedSecondLaunch.ok, false);
 assert.match(blockedSecondLaunch.message, /火箭数量已达上限/);
 
 const orange1LaunchContext = createContext();
-players.getCurrentPlayer(orange1LaunchContext.playerState).techState.ownedTiles.orange1 = true;
+players.getCurrentPlayer(orange1LaunchContext.players).techState.ownedTiles.orange1 = true;
 assert.equal(actions.execute("launch", orange1LaunchContext).ok, true);
 assert.equal(actions.execute("launch", orange1LaunchContext).ok, true);
-assert.equal(orange1LaunchContext.rocketState.rockets.length, 2);
+assert.equal(orange1LaunchContext.pieces.rockets.length, 2);
 
 const noRocketContext = createContext();
 const blockedOrbit = actions.execute("orbit", noRocketContext);
@@ -146,7 +145,7 @@ assert.match(blockedOrbit.message, /当前火箭/);
 
 const referenceContext = createContext();
 actions.execute("launch", referenceContext);
-rockets.placeRocketAtPlanetsReferencePoint(referenceContext.rocketState, 1, {
+rockets.placeRocketAtPlanetsReferencePoint(referenceContext.pieces, 1, {
   x: 836,
   y: 470.5,
   width: 1672,
@@ -160,34 +159,34 @@ const marsContext = createContext();
 launchToPlanet(marsContext, "mars");
 const orbitResult = actions.execute("orbit", marsContext);
 assert.equal(orbitResult.ok, true);
-assert.equal(marsContext.rocketState.rockets.length, 0);
-assert.equal(planetStats.getPlanetOrbitCount(marsContext.planetStatsState, "mars"), 1);
-assert.equal(players.getCurrentPlayer(marsContext.playerState).orbitCount, 1);
-assert.equal(players.getCurrentPlayer(marsContext.playerState).resources.credits, 7);
-assert.equal(players.getCurrentPlayer(marsContext.playerState).resources.energy, 9);
+assert.equal(marsContext.pieces.rockets.length, 0);
+assert.equal(planetStats.getPlanetOrbitCount(marsContext.planets, "mars"), 1);
+assert.equal(players.getCurrentPlayer(marsContext.players).orbitCount, 1);
+assert.equal(players.getCurrentPlayer(marsContext.players).resources.credits, 7);
+assert.equal(players.getCurrentPlayer(marsContext.players).resources.energy, 9);
 
 const fullOrbitContext = createContext();
 for (let index = 0; index < 5; index += 1) {
-  assert.equal(planetStats.addPlanetOrbitMarker(fullOrbitContext.planetStatsState, "mars", players.getCurrentPlayer(fullOrbitContext.playerState)).ok, true);
+  assert.equal(planetStats.addPlanetOrbitMarker(fullOrbitContext.planets, "mars", players.getCurrentPlayer(fullOrbitContext.players)).ok, true);
 }
 launchToPlanet(fullOrbitContext, "mars");
 assert.equal(actions.canExecute("orbit", fullOrbitContext).ok, true);
 const overflowOrbit = actions.execute("orbit", fullOrbitContext);
 assert.equal(overflowOrbit.ok, true, overflowOrbit.message);
 assert.equal(overflowOrbit.markerSequence, 6);
-assert.equal(planetStats.getPlanetOrbitMarkers(fullOrbitContext.planetStatsState, "mars")[5].displayed, false);
+assert.equal(planetStats.getPlanetOrbitMarkers(fullOrbitContext.planets, "mars")[5].displayed, false);
 
 const inactiveOrbitContext = createContext();
 launchToPlanet(inactiveOrbitContext, "mars");
-inactiveOrbitContext.rocketState.activeRocketId = null;
+inactiveOrbitContext.pieces.activeRocketId = null;
 const inactiveOrbitCheck = actions.canExecute("orbit", inactiveOrbitContext);
 assert.equal(inactiveOrbitCheck.ok, true);
 const inactiveOrbitResult = actions.execute("orbit", inactiveOrbitContext);
 assert.equal(inactiveOrbitResult.ok, true);
-assert.equal(planetStats.getPlanetOrbitCount(inactiveOrbitContext.planetStatsState, "mars"), 1);
+assert.equal(planetStats.getPlanetOrbitCount(inactiveOrbitContext.planets, "mars"), 1);
 
 const multiOrbitContext = createContext();
-players.getCurrentPlayer(multiOrbitContext.playerState).techState.ownedTiles.orange1 = true;
+players.getCurrentPlayer(multiOrbitContext.players).techState.ownedTiles.orange1 = true;
 const multiOrbitMars = launchToPlanet(multiOrbitContext, "mars").rocket;
 const multiOrbitVenus = launchToPlanet(multiOrbitContext, "venus").rocket;
 const multiOrbitOptions = actions.getOrbitOptions(multiOrbitContext);
@@ -196,49 +195,49 @@ assert.equal(multiOrbitOptions.needsChoice, true);
 const selectedOrbit = actions.execute("orbit", multiOrbitContext, { rocketId: multiOrbitMars.id });
 assert.equal(selectedOrbit.ok, true);
 assert.equal(selectedOrbit.removedRocketId, multiOrbitMars.id);
-assert.equal(planetStats.getPlanetOrbitCount(multiOrbitContext.planetStatsState, "mars"), 1);
-assert.equal(planetStats.getPlanetOrbitCount(multiOrbitContext.planetStatsState, "venus"), 0);
-assert.equal(multiOrbitContext.rocketState.rockets.some((rocket) => rocket.id === multiOrbitVenus.id), true);
+assert.equal(planetStats.getPlanetOrbitCount(multiOrbitContext.planets, "mars"), 1);
+assert.equal(planetStats.getPlanetOrbitCount(multiOrbitContext.planets, "venus"), 0);
+assert.equal(multiOrbitContext.pieces.rockets.some((rocket) => rocket.id === multiOrbitVenus.id), true);
 
 const aomomoOrbitContext = createAomomoVisibleContextWithStalePlanetList();
 const aomomoOrbitOptions = actions.getOrbitOptions(aomomoOrbitContext);
 assert.equal(aomomoOrbitOptions.ok, true, aomomoOrbitOptions.message);
-assert.equal(aomomoOrbitOptions.defaultRocketId, aomomoOrbitContext.rocketState.rockets[0].id);
+assert.equal(aomomoOrbitOptions.defaultRocketId, aomomoOrbitContext.pieces.rockets[0].id);
 assert.equal(aomomoOrbitOptions.choices[0].planetId, aomomo.PLANET_ID);
 const aomomoOrbitResult = actions.execute("orbit", aomomoOrbitContext);
 assert.equal(aomomoOrbitResult.ok, true, aomomoOrbitResult.message);
 assert.equal(aomomoOrbitResult.markerKind, "aomomo-orbit");
-assert.equal(aomomo.countOrbitMarkers(aomomoOrbitContext.alienGameState), 1);
+assert.equal(aomomo.countOrbitMarkers(aomomoOrbitContext.aliens), 1);
 
 const landContext = createContext();
 launchToPlanet(landContext, "venus");
 const landWithoutOrbit = actions.execute("land", landContext);
 assert.equal(landWithoutOrbit.ok, true);
-assert.equal(planetStats.getPlanetLandingCount(landContext.planetStatsState, "venus"), 1);
-assert.equal(players.getCurrentPlayer(landContext.playerState).resources.energy, 7);
+assert.equal(planetStats.getPlanetLandingCount(landContext.planets, "venus"), 1);
+assert.equal(players.getCurrentPlayer(landContext.players).resources.energy, 7);
 
 const fullLandContext = createContext();
 for (let index = 0; index < 5; index += 1) {
-  assert.equal(planetStats.addPlanetLandingMarker(fullLandContext.planetStatsState, "venus", players.getCurrentPlayer(fullLandContext.playerState)).ok, true);
+  assert.equal(planetStats.addPlanetLandingMarker(fullLandContext.planets, "venus", players.getCurrentPlayer(fullLandContext.players)).ok, true);
 }
 launchToPlanet(fullLandContext, "venus");
 assert.equal(actions.canExecute("land", fullLandContext).ok, true);
 const overflowLand = actions.execute("land", fullLandContext);
 assert.equal(overflowLand.ok, true, overflowLand.message);
 assert.equal(overflowLand.markerSequence, 6);
-assert.equal(planetStats.getPlanetLandingMarkers(fullLandContext.planetStatsState, "venus")[5].displayed, false);
+assert.equal(planetStats.getPlanetLandingMarkers(fullLandContext.planets, "venus")[5].displayed, false);
 
 const inactiveLandContext = createContext();
 launchToPlanet(inactiveLandContext, "venus");
-inactiveLandContext.rocketState.activeRocketId = null;
+inactiveLandContext.pieces.activeRocketId = null;
 const inactiveLandCheck = actions.canExecute("land", inactiveLandContext);
 assert.equal(inactiveLandCheck.ok, true);
 const inactiveLandResult = actions.execute("land", inactiveLandContext);
 assert.equal(inactiveLandResult.ok, true);
-assert.equal(planetStats.getPlanetLandingCount(inactiveLandContext.planetStatsState, "venus"), 1);
+assert.equal(planetStats.getPlanetLandingCount(inactiveLandContext.planets, "venus"), 1);
 
 const multiLandContext = createContext();
-players.getCurrentPlayer(multiLandContext.playerState).techState.ownedTiles.orange1 = true;
+players.getCurrentPlayer(multiLandContext.players).techState.ownedTiles.orange1 = true;
 const multiLandMars = launchToPlanet(multiLandContext, "mars").rocket;
 const multiLandVenus = launchToPlanet(multiLandContext, "venus").rocket;
 const multiLandOptions = actions.getLandOptions(multiLandContext);
@@ -249,19 +248,19 @@ assert.ok(multiLandMarsChoice);
 const selectedLand = actions.execute("land", multiLandContext, { target: multiLandMarsChoice.target });
 assert.equal(selectedLand.ok, true);
 assert.equal(selectedLand.removedRocketId, multiLandMars.id);
-assert.equal(planetStats.getPlanetLandingCount(multiLandContext.planetStatsState, "mars"), 1);
-assert.equal(planetStats.getPlanetLandingCount(multiLandContext.planetStatsState, "venus"), 0);
-assert.equal(multiLandContext.rocketState.rockets.some((rocket) => rocket.id === multiLandVenus.id), true);
+assert.equal(planetStats.getPlanetLandingCount(multiLandContext.planets, "mars"), 1);
+assert.equal(planetStats.getPlanetLandingCount(multiLandContext.planets, "venus"), 0);
+assert.equal(multiLandContext.pieces.rockets.some((rocket) => rocket.id === multiLandVenus.id), true);
 
 const aomomoLandContext = createAomomoVisibleContextWithStalePlanetList();
 const aomomoLandOptions = actions.getLandOptions(aomomoLandContext);
 assert.equal(aomomoLandOptions.ok, true, aomomoLandOptions.message);
-assert.equal(aomomoLandOptions.defaultTarget.rocketId, aomomoLandContext.rocketState.rockets[0].id);
+assert.equal(aomomoLandOptions.defaultTarget.rocketId, aomomoLandContext.pieces.rockets[0].id);
 assert.equal(aomomoLandOptions.choices[0].planetId, aomomo.PLANET_ID);
 const aomomoLandResult = actions.execute("land", aomomoLandContext);
 assert.equal(aomomoLandResult.ok, true, aomomoLandResult.message);
 assert.equal(aomomoLandResult.markerKind, "aomomo-land");
-assert.equal(aomomo.countLandingMarkers(aomomoLandContext.alienGameState), 1);
+assert.equal(aomomo.countLandingMarkers(aomomoLandContext.aliens), 1);
 
 const discountedLandContext = createContext();
 launchToPlanet(discountedLandContext, "jupiter");
@@ -270,33 +269,33 @@ launchToPlanet(discountedLandContext, "jupiter");
 const discountedLand = actions.execute("land", discountedLandContext, { target: { type: "planet" } });
 assert.equal(discountedLand.ok, true);
 assert.equal(discountedLand.cost.energy, 2);
-assert.equal(planetStats.getPlanetLandingCount(discountedLandContext.planetStatsState, "jupiter"), 1);
+assert.equal(planetStats.getPlanetLandingCount(discountedLandContext.planets, "jupiter"), 1);
 
 const marsSatelliteContext = createContext();
-players.getCurrentPlayer(marsSatelliteContext.playerState).techState.ownedTiles.orange4 = true;
+players.getCurrentPlayer(marsSatelliteContext.players).techState.ownedTiles.orange4 = true;
 launchToPlanet(marsSatelliteContext, "mars");
 const marsSatelliteLand = actions.execute("land", marsSatelliteContext, {
   target: { type: "satellite", satelliteId: "phobos-deimos" },
 });
 assert.equal(marsSatelliteLand.ok, true);
 assert.equal(marsSatelliteLand.markerKind, "satellite");
-assert.equal(planetStats.getSatelliteLandingMarkers(marsSatelliteContext.planetStatsState, "mars").length, 1);
-assert.equal(marsSatelliteContext.rocketState.rockets.length, 0);
+assert.equal(planetStats.getSatelliteLandingMarkers(marsSatelliteContext.planets, "mars").length, 1);
+assert.equal(marsSatelliteContext.pieces.rockets.length, 0);
 
 const orbitReuseContext = createContext();
 actions.execute("launch", orbitReuseContext);
-const firstRocketSequence = orbitReuseContext.rocketState.rockets[0].playerSequence;
+const firstRocketSequence = orbitReuseContext.pieces.rockets[0].playerSequence;
 rockets.moveActiveRocket(
-  orbitReuseContext.rocketState,
-  orbitReuseContext.getPlanetLocations().find((item) => item.planetId === "venus").x - orbitReuseContext.rocketState.rockets[0].sectorX,
-  orbitReuseContext.getPlanetLocations().find((item) => item.planetId === "venus").y - orbitReuseContext.rocketState.rockets[0].sectorY,
+  orbitReuseContext.pieces,
+  orbitReuseContext.getPlanetLocations().find((item) => item.planetId === "venus").x - orbitReuseContext.pieces.rockets[0].sectorX,
+  orbitReuseContext.getPlanetLocations().find((item) => item.planetId === "venus").y - orbitReuseContext.pieces.rockets[0].sectorY,
 );
 actions.execute("orbit", orbitReuseContext);
 actions.execute("launch", orbitReuseContext);
-assert.equal(orbitReuseContext.rocketState.rockets[0].playerSequence, firstRocketSequence);
+assert.equal(orbitReuseContext.pieces.rockets[0].playerSequence, firstRocketSequence);
 
 const poorContext = createContext({
-  playerState: players.createPlayerState({
+  players: players.createPlayerState({
     currentPlayer: {
       color: "white",
       resources: { credits: 0, energy: 0 },
@@ -313,7 +312,7 @@ assert.equal(researchStart.ok, true);
 assert.equal(researchStart.awaitingTileSelection, true);
 
 const blueSelectionContext = createContext();
-const blueSelectionPlayer = players.getCurrentPlayer(blueSelectionContext.playerState);
+const blueSelectionPlayer = players.getCurrentPlayer(blueSelectionContext.players);
 const blueSelectionPublicity = blueSelectionPlayer.resources.publicity;
 const blueSelection = actions.execute("researchTech", blueSelectionContext, {
   tileId: "blue1",
@@ -338,7 +337,7 @@ assert.equal(blueSelectionConfirmed.blueSlot, 2);
 const researchTake = actions.execute("researchTech", researchContext, { tileId: "purple1" });
 assert.equal(researchTake.ok, true);
 assert.equal(researchTake.techType, "purple");
-const researchPlayer = researchContext.playerState.players[0];
+const researchPlayer = researchContext.players.players[0];
 const bonusPublicity = researchTake.bonusId === "bonus_1m" ? 1 : 0;
 assert.equal(researchPlayer.resources.publicity, 10 - 6 + bonusPublicity);
 if (researchTake.bonusId === "bonus_3f") {

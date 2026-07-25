@@ -94,7 +94,7 @@
     const trade = getTradeAction(tradeId);
     if (!trade) return { ok: false, message: `未知快速交易: ${tradeId}` };
 
-    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
     if (!players.canAfford(currentPlayer, trade.cost)) {
       return {

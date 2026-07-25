@@ -453,12 +453,12 @@
   }
 
   function dealPlayerCard2(alienState, player, random = Math.random) {
-    const playerState = ensurePlayerCard2State(alienState, player);
-    if (!playerState) return [];
+    const playersState = ensurePlayerCard2State(alienState, player);
+    if (!playersState) return [];
     const dealt = [];
     for (const traceType of TRACE_TYPES) {
       const variant = pickRandomVariant(random);
-      playerState.cards[traceType] = {
+      playersState.cards[traceType] = {
         variant,
         status: "locked",
         unlocked: false,
@@ -470,10 +470,10 @@
 
   function getPlayerCard2Reserved(alienState, player) {
     const key = getPlayerKey(player);
-    const playerState = alienState?.fangzhou?.playerCard2ById?.[key];
-    if (!playerState) return [];
+    const playersState = alienState?.fangzhou?.playerCard2ById?.[key];
+    if (!playersState) return [];
     return TRACE_TYPES.map((traceType) => {
-      const entry = playerState.cards[traceType];
+      const entry = playersState.cards[traceType];
       if (!entry?.variant || entry.unlocked) return null;
       return {
         ...createCard2Definition(traceType, entry.variant),
@@ -516,8 +516,8 @@
     if (!key || !TRACE_TYPES.includes(traceType)) {
       return { ok: false, message: "无法解锁方舟卡牌" };
     }
-    const playerState = ensurePlayerCard2State(alienState, player);
-    const entry = playerState.cards[traceType];
+    const playersState = ensurePlayerCard2State(alienState, player);
+    const entry = playersState.cards[traceType];
     if (!entry?.variant) {
       return { ok: false, message: "没有对应的方舟解锁牌" };
     }
@@ -527,15 +527,15 @@
 
     entry.unlocked = true;
     entry.status = "unlocked";
-    playerState.unlockCount += 1;
-    fangzhou.unlockCountByPlayerId[key] = playerState.unlockCount;
+    playersState.unlockCount += 1;
+    fangzhou.unlockCountByPlayerId[key] = playersState.unlockCount;
     const handCard = createCard2HandCard(alienState, player, traceType);
     return {
       ok: true,
       traceType,
-      unlockCount: playerState.unlockCount,
+      unlockCount: playersState.unlockCount,
       handCard,
-      message: `解锁方舟${placement.getTraceTypeLabel(traceType)}牌，解锁数目 ${playerState.unlockCount}`,
+      message: `解锁方舟${placement.getTraceTypeLabel(traceType)}牌，解锁数目 ${playersState.unlockCount}`,
     };
   }
 

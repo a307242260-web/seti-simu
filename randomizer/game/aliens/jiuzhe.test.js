@@ -51,9 +51,9 @@ assert.equal(
 const purpleCard = { index: 3 };
 assert.equal(
   jiuzhe.isCardConditionMet(purpleCard, white, {
-    alienGameState: alienState,
-    planetStatsState: { planets: {} },
-    nebulaDataState: { sectorSettlements: { winsByPlayerId: {} } },
+    aliens: alienState,
+    planets: { planets: {} },
+    data: { sectorSettlements: { winsByPlayerId: {} } },
   }),
   true,
   "purple tech condition should be met",
@@ -95,9 +95,9 @@ assert.equal(
 
 assert.equal(
   jiuzhe.isCardConditionMet({ index: 1 }, white, {
-    alienGameState: alienState,
-    planetStatsState: { planets: {} },
-    nebulaDataState: { sectorSettlements: { winsByPlayerId: {} } },
+    aliens: alienState,
+    planets: { planets: {} },
+    data: { sectorSettlements: { winsByPlayerId: {} } },
     plutoMarkers: [
       { kind: "orbit", planetId: "pluto", playerId: "player-white" },
       { kind: "land", planetId: "pluto", playerId: "player-white", sequence: 1 },
@@ -116,8 +116,8 @@ assert.equal(
     landingMarkers: [marker(), marker()],
   };
   const aomomoConditionContext = {
-    alienGameState: aomomoConditionState,
-    planetStatsState: {
+    aliens: aomomoConditionState,
+    planets: {
       planets: {
         mars: {
           orbitMarkers: [marker(), marker()],
@@ -202,7 +202,7 @@ assert.equal(
 
   const marker = () => ({ playerId: progressPlayer.id, playerColor: progressPlayer.color });
   const progressContext = {
-    alienGameState: progressAlienState,
+    aliens: progressAlienState,
     companyBaseIncome: {
       credits: 2,
       energy: 1,
@@ -211,7 +211,7 @@ assert.equal(
       availableData: 0,
       additionalPublicScan: 0,
     },
-    planetStatsState: {
+    planets: {
       planets: {
         mars: { orbitMarkers: [marker(), marker()], landingMarkers: [], satelliteLandings: [] },
         venus: { orbitMarkers: [], landingMarkers: [marker()], satelliteLandings: [marker()] },
@@ -222,7 +222,7 @@ assert.equal(
       { ...marker(), kind: "land", planetId: "pluto", sequence: 1 },
       { ...marker(), kind: "land", planetId: "pluto", sequence: 2 },
     ],
-    nebulaDataState: {
+    data: {
       sectorSettlements: {
         winsByPlayerId: {
           [progressPlayer.id]: [

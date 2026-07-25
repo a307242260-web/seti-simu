@@ -88,14 +88,14 @@ const taskPlayer = {
 };
 cardEffects.ensureCardEffectState(b1);
 const ready = cardEffects.collectReadyTasks(taskPlayer, {
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         p1: [{ sectorId: "sector-4-a" }, { sectorId: "sector-3-a" }],
       },
     },
   },
-  alienGameState: {},
+  aliens: {},
 });
 assert.equal(ready.length, 1);
 assert.equal(ready[0].effects[0].type, "gain_resources");
@@ -104,8 +104,8 @@ const b4 = { id: "card-b4", cardId: "b_4.webp" };
 const alienReadyPlayer = { id: "p1", color: "red", reservedCards: [b4] };
 cardEffects.ensureCardEffectState(b4);
 assert.equal(cardEffects.collectReadyTasks(alienReadyPlayer, {
-  nebulaDataState: {},
-  alienGameState: {
+  data: {},
+  aliens: {
     aliens: {
       1: { traces: { blue: { firstPlaced: true, ownerPlayerId: "p2", ownerPlayerColor: "blue" } } },
       2: { traces: { blue: { firstPlaced: true, ownerPlayerId: "p2", ownerPlayerColor: "blue" } } },
@@ -113,8 +113,8 @@ assert.equal(cardEffects.collectReadyTasks(alienReadyPlayer, {
   },
 }).length, 0);
 assert.equal(cardEffects.collectReadyTasks(alienReadyPlayer, {
-  nebulaDataState: {},
-  alienGameState: {
+  data: {},
+  aliens: {
     aliens: {
       1: { traces: { blue: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red" } } },
       2: { traces: { blue: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red" } } },
@@ -126,8 +126,8 @@ const b8 = { id: "card-b8", cardId: "b_8.webp" };
 const yellowAlienReadyPlayer = { id: "p1", color: "red", reservedCards: [b8] };
 cardEffects.ensureCardEffectState(b8);
 assert.equal(cardEffects.collectReadyTasks(yellowAlienReadyPlayer, {
-  nebulaDataState: {},
-  alienGameState: {
+  data: {},
+  aliens: {
     aliens: {
       1: { traces: { yellow: { firstPlaced: true, ownerPlayerId: "p2", ownerPlayerColor: "blue" } } },
       2: { traces: { yellow: { firstPlaced: true, ownerPlayerId: "p2", ownerPlayerColor: "blue" } } },
@@ -135,8 +135,8 @@ assert.equal(cardEffects.collectReadyTasks(yellowAlienReadyPlayer, {
   },
 }).length, 0);
 assert.equal(cardEffects.collectReadyTasks(yellowAlienReadyPlayer, {
-  nebulaDataState: {},
-  alienGameState: {
+  data: {},
+  aliens: {
     aliens: {
       1: { traces: { yellow: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red" } } },
       2: { traces: { yellow: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red" } } },
@@ -402,24 +402,24 @@ const b12 = { id: "card-b12", cardId: "b_12.webp" };
 const blueTracePlayer = { id: "p1", color: "red", reservedCards: [b12] };
 cardEffects.ensureCardEffectState(b12);
 assert.equal(cardEffects.collectReadyTasks(blueTracePlayer, {
-  nebulaDataState: {},
-  alienGameState: {
+  data: {},
+  aliens: {
     aliens: {
       1: { traces: { blue: { firstPlaced: true, ownerPlayerColor: "red", extraCount: 1 } } },
       2: { traces: { blue: { firstPlaced: true, ownerPlayerColor: "red", extraCount: 0 } } },
     },
   },
-  planetStatsState: {},
+  planets: {},
 }).length, 1);
 assert.equal(cardEffects.collectReadyTasks(blueTracePlayer, {
-  nebulaDataState: {},
-  alienGameState: {
+  data: {},
+  aliens: {
     aliens: {
       1: { traces: { blue: { firstPlaced: true, ownerPlayerId: "p2", ownerPlayerColor: "blue", extraCount: 2 } } },
       2: { traces: { blue: { firstPlaced: true, ownerPlayerId: "p2", ownerPlayerColor: "blue", extraCount: 1 } } },
     },
   },
-  planetStatsState: {},
+  planets: {},
 }).length, 0);
 
 const b15 = { id: "card-b15", cardId: "b_15.webp" };
@@ -427,24 +427,24 @@ const blackSectorPlayer = { id: "p1", color: "red", reservedCards: [b15] };
 cardEffects.ensureCardEffectState(b15);
 assert.equal(cardEffects.buildPlayEffects(b15)[0].options.nebulaId, "sector-4-b");
 assert.equal(cardEffects.collectReadyTasks(blackSectorPlayer, {
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         p1: [{ sectorId: "sector-1-b" }],
       },
     },
   },
-  alienGameState: {},
+  aliens: {},
 }).length, 1);
 assert.equal(cardEffects.collectReadyTasks(blackSectorPlayer, {
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         p2: [{ sectorId: "sector-1-b" }],
       },
     },
   },
-  alienGameState: {},
+  aliens: {},
 }).length, 0);
 
 for (const { cardId, color, icon, label } of [
@@ -478,9 +478,9 @@ const purpleTechPlayer = {
 };
 cardEffects.ensureCardEffectState(b19);
 assert.equal(cardEffects.collectReadyTasks(purpleTechPlayer, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {},
+  data: {},
+  aliens: {},
+  planets: {},
 }).length, 1);
 
 const b19Effects = cardEffects.buildPlayEffects({ cardId: "b_19.webp" });
@@ -497,9 +497,9 @@ cardEffects.ensureCardEffectState(b21);
 assert.equal(cardEffects.buildPlayEffects(b21)[0].type, "launch");
 assert.equal(cardEffects.buildPlayEffects(b21)[1].type, "pick_card");
 assert.equal(cardEffects.collectReadyTasks(saturnPlayer, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       saturn: {
         orbitMarkers: [{ playerId: "p1", color: "red" }],
@@ -510,9 +510,9 @@ assert.equal(cardEffects.collectReadyTasks(saturnPlayer, {
   },
 }).length, 1);
 assert.equal(cardEffects.collectReadyTasks(saturnPlayer, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       saturn: {
         orbitMarkers: [{ playerId: "p2", color: "blue" }],
@@ -532,7 +532,7 @@ const b22Effects = cardEffects.buildPlayEffects(b22);
 assert.equal(b22Effects.length, 2);
 assert.equal(b22Effects.every((effect) => effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN), true);
 assert.equal(cardEffects.collectReadyTasks(signalPlayer, {
-  nebulaDataState: {
+  data: {
     nebulae: {
       "sector-1-a": { tokens: [{ replacedByPlayerId: "p1" }] },
       "sector-2-a": { tokens: [{ replacedByPlayerId: "p1" }] },
@@ -540,8 +540,8 @@ assert.equal(cardEffects.collectReadyTasks(signalPlayer, {
       "sector-4-a": { tokens: [{ playerColor: "red" }] },
     },
   },
-  alienGameState: {},
-  planetStatsState: {},
+  aliens: {},
+  planets: {},
 }).length, 1);
 
 const b23Effects = cardEffects.buildPlayEffects({ cardId: "b_23.webp" });
@@ -575,17 +575,17 @@ for (const [cardId, planetId] of Object.entries({
 const b83 = { id: "card-b83", cardId: "b_83.webp" };
 cardEffects.ensureCardEffectState(b83);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", hand: [], reservedCards: [b83] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {},
+  data: {},
+  aliens: {},
+  planets: {},
 }).length, 1);
 
 const b85 = { id: "card-b85", cardId: "b_85.webp" };
 cardEffects.ensureCardEffectState(b85);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b85] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       neptune: { orbitMarkers: [{ playerId: "p1" }], landingMarkers: [], satelliteLandings: [] },
       uranus: { orbitMarkers: [], landingMarkers: [{ playerId: "p1" }], satelliteLandings: [] },
@@ -600,9 +600,9 @@ assert.equal(b88Effects[0].options.returnToHandIfSignalCount, 1);
 const b95 = { id: "card-b95", cardId: "b_95.webp" };
 cardEffects.ensureCardEffectState(b95);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b95] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       mars: { orbitMarkers: [{ playerId: "p1" }], landingMarkers: [{ playerId: "p1" }], satelliteLandings: [] },
     },
@@ -612,9 +612,9 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
 const b95Pluto = { id: "card-b95-pluto", cardId: "b_95.webp" };
 cardEffects.ensureCardEffectState(b95Pluto);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b95Pluto] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: { planets: {} },
+  data: {},
+  aliens: {},
+  planets: { planets: {} },
   plutoMarkers: [
     { kind: "orbit", planetId: "pluto", playerId: "p1" },
     { kind: "land", planetId: "pluto", playerId: "p1" },
@@ -624,9 +624,9 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
 const b116Pluto = { id: "card-b116-pluto", cardId: "b_116.webp" };
 cardEffects.ensureCardEffectState(b116Pluto);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b116Pluto] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       mars: { orbitMarkers: [], landingMarkers: [{ playerId: "p1" }], satelliteLandings: [] },
     },
@@ -637,9 +637,9 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
   ],
 }).length, 1);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b116Pluto] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       mars: { orbitMarkers: [], landingMarkers: [{ playerId: "p2", color: "blue" }], satelliteLandings: [] },
     },
@@ -653,9 +653,9 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
 const b117 = { id: "card-b117", cardId: "b_117.webp" };
 cardEffects.ensureCardEffectState(b117);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b117] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       mars: { orbitMarkers: [{ playerId: "p1" }], landingMarkers: [{ playerId: "p1" }], satelliteLandings: [] },
       saturn: { orbitMarkers: [{ playerId: "p1" }], landingMarkers: [{ playerId: "p1" }], satelliteLandings: [{ playerId: "p1" }] },
@@ -663,9 +663,9 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
   },
 }).length, 1);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b117] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {
+  data: {},
+  aliens: {},
+  planets: {
     planets: {
       mars: { orbitMarkers: [{ playerId: "p2" }], landingMarkers: [{ playerId: "p2" }], satelliteLandings: [] },
       saturn: { orbitMarkers: [{ playerId: "p2" }], landingMarkers: [{ playerId: "p2" }], satelliteLandings: [{ playerId: "p2" }] },
@@ -676,9 +676,9 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
 const b101 = { id: "card-b101", cardId: "b_101.webp" };
 cardEffects.ensureCardEffectState(b101);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b101] }, {
-  nebulaDataState: {},
-  alienGameState: {},
-  planetStatsState: {},
+  data: {},
+  aliens: {},
+  planets: {},
   probeLocationDetails: [{ playerId: "p1", locationType: "empty", distanceFromEarth: 5 }],
 }).length, 1);
 
@@ -704,15 +704,15 @@ assert.equal(cardEffects.collectMatchingTriggers({ id: "p1", color: "red", reser
 const b135 = { id: "card-b135", cardId: "b_135.webp" };
 cardEffects.ensureCardEffectState(b135);
 assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCards: [b135] }, {
-  nebulaDataState: {
+  data: {
     sectorSettlements: {
       winsByPlayerId: {
         p1: [{ sectorId: "sector-2-a" }, { sectorId: "sector-1-a" }],
       },
     },
   },
-  alienGameState: {},
-  planetStatsState: {},
+  aliens: {},
+  planets: {},
 }).length, 1);
 
 const b138 = { id: "card-b138", cardId: "b_138.webp" };
@@ -944,9 +944,9 @@ assert.deepEqual(
 
 function collectReadyTaskIds(player, context) {
   return cardEffects.collectReadyTasks(player, {
-    nebulaDataState: {},
-    alienGameState: {},
-    planetStatsState: {},
+    data: {},
+    aliens: {},
+    planets: {},
     ...context,
   }).map((readyTask) => readyTask.task.id);
 }
@@ -1072,7 +1072,7 @@ assert.deepEqual(collectReadyTaskIds(
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-dlc9", cardId: "dlc_9.png" }] },
   {
-    nebulaDataState: {
+    data: {
       sectorSettlements: {
         winsByPlayerId: {
           p1: [{ sectorId: "sector-1-a" }, { sectorId: "sector-2-a" }, { sectorId: "sector-3-a" }],
@@ -1100,7 +1100,7 @@ assert.deepEqual(collectReadyTaskIds(
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-dlc41", cardId: "dlc_41.png" }] },
   {
-    nebulaDataState: {
+    data: {
       nebulae: {
         "sector-4-a": { tokens: [{ replacedByPlayerId: "p1" }] },
         "sector-2-b": { tokens: [{ replacedByPlayerId: "p1" }] },
@@ -1114,7 +1114,7 @@ assert.deepEqual(collectReadyTaskIds(
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-dlc42", cardId: "dlc_42.png" }] },
   {
-    nebulaDataState: {
+    data: {
       nebulae: {
         "sector-4-a": { tokens: [{ replacedByPlayerId: "p1" }] },
         "sector-3-a": { tokens: [{ replacedByPlayerId: "p1" }] },
@@ -1138,7 +1138,7 @@ const playerTraceState = {
 };
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-b46", cardId: "b_46.webp" }] },
-  { alienGameState: playerTraceState },
+  { aliens: playerTraceState },
 ), ["b46-all-pink-task"]);
 
 const mixedAllPinkPlayer = { id: "p1", color: "red", reservedCards: [{ id: "card-b46-mixed", cardId: "b_46.webp" }] };
@@ -1151,7 +1151,7 @@ mixedAllPinkState.aliens[2] = {
 assert.equal(aomomo.placeAomomoTrace(mixedAllPinkState, 1, "pink", 2, mixedAllPinkPlayer).ok, true);
 assert.deepEqual(collectReadyTaskIds(
   mixedAllPinkPlayer,
-  { alienGameState: mixedAllPinkState },
+  { aliens: mixedAllPinkState },
 ), ["b46-all-pink-task"]);
 
 const b52Effects = cardEffects.buildPlayEffects({ cardId: "b_52.webp" });
@@ -1187,7 +1187,7 @@ const singleAlienTraceState = {
 };
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-b67", cardId: "b_67.webp" }] },
-  { alienGameState: singleAlienTraceState },
+  { aliens: singleAlienTraceState },
 ), ["b67-three-traces-task"]);
 
 const splitExtraOwnerTraceState = {
@@ -1224,7 +1224,7 @@ mixedSingleAlienTraceState.aliens[1].traces = {
 assert.equal(aomomo.placeAomomoTrace(mixedSingleAlienTraceState, 1, "blue", 2, mixedSingleAlienTracePlayer).ok, true);
 assert.deepEqual(collectReadyTaskIds(
   mixedSingleAlienTracePlayer,
-  { alienGameState: mixedSingleAlienTraceState },
+  { aliens: mixedSingleAlienTraceState },
 ), ["b67-three-traces-task"]);
 const splitAlienTraceState = {
   aliens: {
@@ -1242,12 +1242,12 @@ const splitAlienTraceState = {
 };
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-b67-split", cardId: "b_67.webp" }] },
-  { alienGameState: splitAlienTraceState },
+  { aliens: splitAlienTraceState },
 ), []);
 assert.equal(
   cardEffects.collectReadyTasks(
     { id: "p1", color: "red", resources: { publicity: 7 }, reservedCards: [{ id: "card-b68", cardId: "b_68.webp" }] },
-    { nebulaDataState: {}, alienGameState: {}, planetStatsState: {} },
+    { data: {}, aliens: {}, planets: {} },
   ).length,
   0,
 );
@@ -1306,30 +1306,30 @@ assert.equal(aomomo9Effects[0].options.bonus.onceKey, undefined);
 assert.equal(aomomo9Effects[1].type, cardEffects.EFFECT_TYPES.SCAN_ACTION);
 
 function createAomomoAlienState(triggerPlayer) {
-  const alienGameState = {
+  const aliensState = {
     aliens: {
       1: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
     },
     aomomo: aomomo.createAomomoState(),
   };
-  const result = aomomo.initializeAomomoReveal(alienGameState, 1, triggerPlayer, () => 0);
+  const result = aomomo.initializeAomomoReveal(aliensState, 1, triggerPlayer, () => 0);
   assert.equal(result.ok, true);
-  return alienGameState;
+  return aliensState;
 }
 
-function collectAomomoReadyTaskIds(player, alienGameState) {
+function collectAomomoReadyTaskIds(player, aliensState) {
   return cardEffects.collectReadyTasks(player, {
-    nebulaDataState: {},
-    alienGameState,
-    planetStatsState: {},
+    data: {},
+    aliens: aliensState,
+    planets: {},
   }).map((readyTask) => readyTask.task.id);
 }
 
 function collectAomomoReadyTaskIdsWithContext(player, context = {}) {
   return cardEffects.collectReadyTasks(player, {
-    nebulaDataState: context.nebulaDataState || {},
-    alienGameState: context.alienGameState || {},
-    planetStatsState: context.planetStatsState || {},
+    data: context.data || {},
+    aliens: context.aliens || {},
+    planets: context.planets || {},
   }).map((readyTask) => readyTask.task.id);
 }
 
@@ -1367,9 +1367,9 @@ const aomomoOrbitCountPlayer = {
 const aomomoOrbitCountState = createAomomoAlienState(aomomoOrbitCountPlayer);
 assert.equal(aomomo.addOrbitMarker(aomomoOrbitCountState, aomomoOrbitCountPlayer).ok, true);
 assert.deepEqual(cardEffects.collectReadyTasks(aomomoOrbitCountPlayer, {
-  nebulaDataState: {},
-  alienGameState: aomomoOrbitCountState,
-  planetStatsState: {
+  data: {},
+  aliens: aomomoOrbitCountState,
+  planets: {
     planets: {
       mars: { orbitMarkers: [{ playerId: "p1" }], landingMarkers: [], satelliteLandings: [] },
     },
@@ -1422,7 +1422,7 @@ const aomomoSignalPlayer = {
 };
 assert.deepEqual(collectAomomoReadyTaskIdsWithContext(aomomoSignalPlayer), []);
 assert.deepEqual(collectAomomoReadyTaskIdsWithContext(aomomoSignalPlayer, {
-  nebulaDataState: {
+  data: {
     nebulae: {
       aomomo: {
         tokens: [{ replacedByPlayerId: "p1", replacedByPlayerColor: "white" }],
@@ -1483,7 +1483,7 @@ const yichangdianTaskState = {
   yichangdian: { ...yichangdian.createYichangdianState(), revealedSlotId: 1 },
 };
 assert.deepEqual(collectReadyTaskIds(yichangdianTaskPlayer, {
-  alienGameState: yichangdianTaskState,
+  aliens: yichangdianTaskState,
 }), ["y1-all-trace-types"]);
 
 const aomomo9 = { id: "card-aomomo-9", cardId: "aomomo_9.webp", aomomoCard: true };

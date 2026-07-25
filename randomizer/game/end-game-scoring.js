@@ -218,12 +218,12 @@
     return Number(player?.resources?.score) || 0;
   }
 
-  function countSectorWinsByColor(player, nebulaDataState, color) {
+  function countSectorWinsByColor(player, dataState, color) {
     const sectorIds = color === "any"
       ? Object.values(NEBULA_IDS_BY_COLOR).flat()
       : (NEBULA_IDS_BY_COLOR[color] || []);
     const playerKeys = getPlayerKeys(player);
-    const wins = nebulaDataState?.sectorSettlements?.winsByPlayerId || {};
+    const wins = dataState?.sectorSettlements?.winsByPlayerId || {};
     let count = 0;
     for (const key of playerKeys) {
       for (const win of wins[key] || []) {
@@ -233,9 +233,9 @@
     return count;
   }
 
-  function countSectorWins(player, nebulaDataState) {
+  function countSectorWins(player, dataState) {
     const playerKeys = getPlayerKeys(player);
-    const wins = nebulaDataState?.sectorSettlements?.winsByPlayerId || {};
+    const wins = dataState?.sectorSettlements?.winsByPlayerId || {};
     let count = 0;
     for (const key of playerKeys) {
       count += (wins[key] || []).length;
@@ -264,30 +264,30 @@
     return count;
   }
 
-  function countTraceMarkers(player, alienGameState, traceType) {
+  function countTraceMarkers(player, aliensState, traceType) {
     const playerKeys = getPlayerKeys(player);
     let count = 0;
     const jiuzheModule = getJiuzheModule();
-    const jiuzheSlotId = alienGameState?.jiuzhe?.revealedSlotId;
+    const jiuzheSlotId = aliensState?.jiuzhe?.revealedSlotId;
     const yichangdianModule = getYichangdianModule();
-    const yichangdianSlotId = alienGameState?.yichangdian?.revealedSlotId;
+    const yichangdianSlotId = aliensState?.yichangdian?.revealedSlotId;
     const fangzhouModule = getFangzhouModule();
-    const fangzhouSlotId = alienGameState?.fangzhou?.revealedSlotId;
+    const fangzhouSlotId = aliensState?.fangzhou?.revealedSlotId;
     const banrenmaModule = getBanrenmaModule();
-    const banrenmaSlotId = alienGameState?.banrenma?.revealedSlotId;
+    const banrenmaSlotId = aliensState?.banrenma?.revealedSlotId;
     const chongModule = getChongModule();
-    const chongSlotId = alienGameState?.chong?.revealedSlotId;
+    const chongSlotId = aliensState?.chong?.revealedSlotId;
     const amibaModule = getAmibaModule();
-    const amibaSlotId = alienGameState?.amiba?.revealedSlotId;
+    const amibaSlotId = aliensState?.amiba?.revealedSlotId;
     const aomomoModule = getAomomoModule();
-    const aomomoSlotId = alienGameState?.aomomo?.revealedSlotId;
+    const aomomoSlotId = aliensState?.aomomo?.revealedSlotId;
     const runezuModule = getRunezuModule();
-    const runezuSlotId = alienGameState?.runezu?.revealedSlotId;
-    for (const [slotId, slot] of Object.entries(alienGameState?.aliens || {})) {
+    const runezuSlotId = aliensState?.runezu?.revealedSlotId;
+    for (const [slotId, slot] of Object.entries(aliensState?.aliens || {})) {
       const stateTraceCount = countStateTraceMarkersForPlayer(slot, traceType, playerKeys);
       if (jiuzheModule && jiuzheSlotId != null && Number(slotId) === Number(jiuzheSlotId)) {
         count += stateTraceCount;
-        const grid = jiuzheModule.getTraceGrid(alienGameState, jiuzheSlotId);
+        const grid = jiuzheModule.getTraceGrid(aliensState, jiuzheSlotId);
         for (const position of jiuzheModule.TRACE_POSITIONS || []) {
           const entry = grid?.[traceType]?.[position];
           if (entry && markerBelongsToPlayer(entry, playerKeys)) count += 1;
@@ -296,43 +296,43 @@
       }
       if (yichangdianModule && yichangdianSlotId != null && Number(slotId) === Number(yichangdianSlotId)) {
         count += stateTraceCount;
-        const entries = yichangdianModule.listTraceEntries(alienGameState, yichangdianSlotId, traceType);
+        const entries = yichangdianModule.listTraceEntries(aliensState, yichangdianSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (fangzhouModule && fangzhouSlotId != null && Number(slotId) === Number(fangzhouSlotId)) {
         count += stateTraceCount;
-        const entries = fangzhouModule.listTraceEntries(alienGameState, fangzhouSlotId, traceType);
+        const entries = fangzhouModule.listTraceEntries(aliensState, fangzhouSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (banrenmaModule && banrenmaSlotId != null && Number(slotId) === Number(banrenmaSlotId)) {
         count += stateTraceCount;
-        const entries = banrenmaModule.listTraceEntries(alienGameState, banrenmaSlotId, traceType);
+        const entries = banrenmaModule.listTraceEntries(aliensState, banrenmaSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (chongModule && chongSlotId != null && Number(slotId) === Number(chongSlotId)) {
         count += stateTraceCount;
-        const entries = chongModule.listTraceEntries(alienGameState, chongSlotId, traceType);
+        const entries = chongModule.listTraceEntries(aliensState, chongSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (amibaModule && amibaSlotId != null && Number(slotId) === Number(amibaSlotId)) {
         count += stateTraceCount;
-        const entries = amibaModule.listTraceEntries(alienGameState, amibaSlotId, traceType);
+        const entries = amibaModule.listTraceEntries(aliensState, amibaSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (aomomoModule && aomomoSlotId != null && Number(slotId) === Number(aomomoSlotId)) {
         count += stateTraceCount;
-        const entries = aomomoModule.listTraceEntries(alienGameState, aomomoSlotId, traceType);
+        const entries = aomomoModule.listTraceEntries(aliensState, aomomoSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
       if (runezuModule && runezuSlotId != null && Number(slotId) === Number(runezuSlotId)) {
         count += stateTraceCount;
-        const entries = runezuModule.listTraceEntries(alienGameState, runezuSlotId, traceType);
+        const entries = runezuModule.listTraceEntries(aliensState, runezuSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
@@ -398,7 +398,7 @@
 
   function countAomomoMarkers(player, context = {}, kind = "all") {
     const aomomoModule = getAomomoModule();
-    if (!aomomoModule || !context?.alienGameState) return 0;
+    if (!aomomoModule || !context?.aliens) return 0;
     const playerKeys = aomomoModule.getPlayerKeys
       ? aomomoModule.getPlayerKeys(player)
       : getPlayerKeys(player);
@@ -409,46 +409,46 @@
     );
     let count = 0;
     if (kind === "all" || kind === "orbit") {
-      count += (aomomoModule.listOrbitMarkers?.(context.alienGameState) || []).filter(markerMatches).length;
+      count += (aomomoModule.listOrbitMarkers?.(context.aliens) || []).filter(markerMatches).length;
     }
     if (kind === "all" || kind === "land") {
-      count += (aomomoModule.listLandingMarkers?.(context.alienGameState) || []).filter(markerMatches).length;
+      count += (aomomoModule.listLandingMarkers?.(context.aliens) || []).filter(markerMatches).length;
     }
     return count;
   }
 
-  function countAomomoOrLegacyPlanetRecordMarkers(player, planetStatsState, context = {}, kind = "all") {
+  function countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context = {}, kind = "all") {
     const panelCount = countAomomoMarkers(player, context, kind);
     if (panelCount > 0) return panelCount;
     const aomomoModule = getAomomoModule();
     const planetId = aomomoModule?.PLANET_ID || "aomomo";
-    return countPlanetRecordMarkers(player, planetStatsState?.planets?.[planetId], kind);
+    return countPlanetRecordMarkers(player, planetsState?.planets?.[planetId], kind);
   }
 
-  function countPlanetOrbitOrLand(player, planetStatsState, planetId, context = {}) {
+  function countPlanetOrbitOrLand(player, planetsState, planetId, context = {}) {
     if (planetId === "pluto") return countPlutoMarkers(player, context, "all");
     if (isAomomoPlanetId(planetId)) {
-      return countAomomoOrLegacyPlanetRecordMarkers(player, planetStatsState, context, "all");
+      return countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context, "all");
     }
-    const record = planetStatsState?.planets?.[planetId];
+    const record = planetsState?.planets?.[planetId];
     return countPlanetRecordMarkers(player, record, "all");
   }
 
-  function countOrbitOrLandMarkers(player, planetStatsState, context = {}) {
-    const planets = planetStatsState?.planets || {};
+  function countOrbitOrLandMarkers(player, planetsState, context = {}) {
+    const planets = planetsState?.planets || {};
     return Object.keys(planets).reduce((total, planetId) => {
       if (isAomomoPlanetId(planetId)) return total;
-      return total + countPlanetOrbitOrLand(player, planetStatsState, planetId, context);
+      return total + countPlanetOrbitOrLand(player, planetsState, planetId, context);
     }, countPlutoMarkers(player, context, "all")
-      + countAomomoOrLegacyPlanetRecordMarkers(player, planetStatsState, context, "all"));
+      + countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context, "all"));
   }
 
-  function countPlanetLandingPairs(player, planetStatsState, minCount = 2, context = {}) {
-    const planets = planetStatsState?.planets || {};
+  function countPlanetLandingPairs(player, planetsState, minCount = 2, context = {}) {
+    const planets = planetsState?.planets || {};
     const playerKeys = getPlayerKeys(player);
     const required = Math.max(1, Math.round(Number(minCount) || 2));
     let count = countPlutoMarkers(player, context, "land") >= required ? 1 : 0;
-    if (countAomomoOrLegacyPlanetRecordMarkers(player, planetStatsState, context, "land") >= required) count += 1;
+    if (countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context, "land") >= required) count += 1;
     for (const [planetId, record] of Object.entries(planets)) {
       if (isAomomoPlanetId(planetId)) continue;
       const landingCount = (record?.landingMarkers || []).filter((marker) => (
@@ -459,10 +459,10 @@
     return count;
   }
 
-  function countDistinctSignalSectors(player, nebulaDataState) {
+  function countDistinctSignalSectors(player, dataState) {
     const playerKeys = getPlayerKeys(player);
     const sectorIds = new Set();
-    for (const [nebulaId, bucket] of Object.entries(nebulaDataState?.nebulae || {})) {
+    for (const [nebulaId, bucket] of Object.entries(dataState?.nebulae || {})) {
       const hasToken = (bucket?.tokens || []).some((token) => (
         playerKeys.has(token.replacedByPlayerId)
         || playerKeys.has(token.playerId)
@@ -471,7 +471,7 @@
       ));
       if (hasToken) sectorIds.add(nebulaId);
     }
-    for (const [sectorId, marks] of Object.entries(nebulaDataState?.sectorExtraMarks || {})) {
+    for (const [sectorId, marks] of Object.entries(dataState?.sectorExtraMarks || {})) {
       const hasExtra = (marks || []).some((mark) => (
         playerKeys.has(mark.replacedByPlayerId)
         || playerKeys.has(mark.playerId)
@@ -497,14 +497,14 @@
   }
 
   function scoreUnmarkedFinalRightmost(player, context) {
-    if (!finalScoring || !context?.finalScoringState) return 0;
-    finalScoring.ensureFinalScoringState(context.finalScoringState);
+    if (!finalScoring || !context?.finalScoring) return 0;
+    finalScoring.ensureFinalScoringState(context.finalScoring);
     const playerId = getPlayerId(player);
     let total = 0;
-    for (const tile of Object.values(context.finalScoringState.tiles || {})) {
+    for (const tile of Object.values(context.finalScoring.tiles || {})) {
       const marked = (tile.marks || []).some((entry) => entry.playerId === playerId);
       if (marked) continue;
-      const variant = finalScoring.getTileVariant(context.finalScoringState, tile.id);
+      const variant = finalScoring.getTileVariant(context.finalScoring, tile.id);
       const formulaId = getFormulaId(tile.id, variant);
       const baseValue = getFormulaBaseValue(formulaId, player, context, {
         getCardTypeCode: context.getCardTypeCode,
@@ -610,14 +610,14 @@
         );
       case "b1":
         return Math.min(
-          countTraceMarkers(player, context.alienGameState, "yellow"),
-          countTraceMarkers(player, context.alienGameState, "pink"),
-          countTraceMarkers(player, context.alienGameState, "blue"),
+          countTraceMarkers(player, context.aliens, "yellow"),
+          countTraceMarkers(player, context.aliens, "pink"),
+          countTraceMarkers(player, context.aliens, "blue"),
         );
       case "b2":
         return Math.min(
-          countOrbitOrLandMarkers(player, context.planetStatsState, context),
-          countSectorWins(player, context.nebulaDataState),
+          countOrbitOrLandMarkers(player, context.planets, context),
+          countSectorWins(player, context.data),
         );
       case "c1":
         return Math.max(0, Math.round(Number(player?.completedTaskCount) || 0));
@@ -694,28 +694,28 @@
     switch (rule.kind) {
       case "sectorWinsByColor":
         if (!scorePer) return 0;
-        return scorePer * countSectorWinsByColor(player, context.nebulaDataState, rule.color);
+        return scorePer * countSectorWinsByColor(player, context.data, rule.color);
       case "traceCount":
         if (!scorePer) return 0;
-        return scorePer * countTraceMarkers(player, context.alienGameState, rule.traceType);
+        return scorePer * countTraceMarkers(player, context.aliens, rule.traceType);
       case "techCount":
         if (!scorePer) return 0;
         return scorePer * countOwnedTech(player, rule.techType);
       case "distinctSignalSectors":
         if (!scorePer) return 0;
-        return scorePer * countDistinctSignalSectors(player, context.nebulaDataState);
+        return scorePer * countDistinctSignalSectors(player, context.data);
       case "planetOrbitOrLand":
         if (!scorePer) return 0;
-        return scorePer * countPlanetOrbitOrLand(player, context.planetStatsState, rule.planetId, context);
+        return scorePer * countPlanetOrbitOrLand(player, context.planets, rule.planetId, context);
       case "remainingResource":
         if (!scorePer) return 0;
         return scorePer * Math.max(0, Math.round(Number(player?.resources?.[rule.resource]) || 0));
       case "planetLandingPairs":
         if (!scorePer) return 0;
-        return scorePer * countPlanetLandingPairs(player, context.planetStatsState, rule.count, context);
+        return scorePer * countPlanetLandingPairs(player, context.planets, rule.count, context);
       case "allOrbitOrLand":
         if (!scorePer) return 0;
-        return scorePer * countOrbitOrLandMarkers(player, context.planetStatsState, context);
+        return scorePer * countOrbitOrLandMarkers(player, context.planets, context);
       case "probeLocation":
         return playerHasProbeLocation(player, context, rule.locationType) ? Number(rule.score) || 0 : 0;
       case "unmarkedFinalRightmost":
@@ -723,20 +723,20 @@
       case "chongTraceCount": {
         if (!scorePer) return 0;
         const chongModule = getChongModule();
-        if (!chongModule || !context.alienGameState) return 0;
-        return scorePer * chongModule.countTraceMarkers(context.alienGameState, player, null);
+        if (!chongModule || !context.aliens) return 0;
+        return scorePer * chongModule.countTraceMarkers(context.aliens, player, null);
       }
       case "amibaTraceCount": {
         if (!scorePer) return 0;
         const amibaModule = getAmibaModule();
-        if (!amibaModule || !context.alienGameState) return 0;
-        return scorePer * amibaModule.countTraceMarkers(context.alienGameState, player, rule.traceType);
+        if (!amibaModule || !context.aliens) return 0;
+        return scorePer * amibaModule.countTraceMarkers(context.aliens, player, rule.traceType);
       }
       case "aomomoTraceCount": {
         if (!scorePer) return 0;
         const aomomoModule = getAomomoModule();
-        if (!aomomoModule || !context.alienGameState) return 0;
-        return scorePer * aomomoModule.countTraceMarkers(context.alienGameState, player, null);
+        if (!aomomoModule || !context.aliens) return 0;
+        return scorePer * aomomoModule.countTraceMarkers(context.aliens, player, null);
       }
       case "runezuMaxSameSymbolCount": {
         const runezuModule = getRunezuModule();
@@ -753,21 +753,21 @@
     }
   }
 
-  function computePlayerTileScore(finalScoringState, player, context = {}) {
+  function computePlayerTileScore(finalScoringSlice, player, context = {}) {
     if (!finalScoring) {
       return { total: 0, tiles: [] };
     }
 
-    finalScoring.ensureFinalScoringState(finalScoringState);
+    finalScoring.ensureFinalScoringState(finalScoringSlice);
     const playerId = getPlayerId(player);
     const tiles = [];
     let total = 0;
 
-    for (const tile of Object.values(finalScoringState.tiles || {})) {
+    for (const tile of Object.values(finalScoringSlice.tiles || {})) {
       const mark = (tile.marks || []).find((entry) => entry.playerId === playerId);
       if (!mark) continue;
 
-      const variant = finalScoring.getTileVariant(finalScoringState, tile.id);
+      const variant = finalScoring.getTileVariant(finalScoringSlice, tile.id);
       const formulaId = getFormulaId(tile.id, variant);
       const baseValue = getFormulaBaseValue(formulaId, player, context, {
         getCardTypeCode: context.getCardTypeCode,
@@ -815,26 +815,26 @@
 
   function computePlayerJiuzheScore(player, context = {}) {
     const jiuzheModule = getJiuzheModule();
-    if (!jiuzheModule || !context.alienGameState) return { total: 0, cards: [] };
-    return jiuzheModule.scorePlayedCards(context.alienGameState, player, context);
+    if (!jiuzheModule || !context.aliens) return { total: 0, cards: [] };
+    return jiuzheModule.scorePlayedCards(context.aliens, player, context);
   }
 
   function computePlayerRunezuSymbolScore(player, context = {}) {
     const runezuModule = getRunezuModule();
-    if (!runezuModule || !context.alienGameState?.runezu?.revealInitialized) return 0;
+    if (!runezuModule || !context.aliens?.runezu?.revealInitialized) return 0;
     return runezuModule.scorePlayerSymbols(player);
   }
 
   function shouldApplyJiuzheThreatPenalty(player, context = {}) {
     const jiuzheModule = getJiuzheModule();
-    if (!jiuzheModule || !context.alienGameState) return false;
-    const allPlayers = context.players || context.playerState?.players || [player];
-    return jiuzheModule.shouldApplyThreatPenalty(context.alienGameState, player, allPlayers);
+    if (!jiuzheModule || !context.aliens) return false;
+    const allPlayers = context.players || context.players?.players || [player];
+    return jiuzheModule.shouldApplyThreatPenalty(context.aliens, player, allPlayers);
   }
 
   function computePlayerFinalScore(context = {}, player = context.currentPlayer) {
     const baseScore = getBaseScore(player);
-    const tileResult = computePlayerTileScore(context.finalScoringState, player, context);
+    const tileResult = computePlayerTileScore(context.finalScoring, player, context);
     const cardResult = computePlayerCardScore(player, context);
     const jiuzheResult = computePlayerJiuzheScore(player, context);
     const runezuSymbolScore = computePlayerRunezuSymbolScore(player, context);
@@ -843,7 +843,7 @@
     const jiuzheCardScore = jiuzheResult.total;
     const prePenaltyTotalScore = baseScore + tileScore + cardScore + jiuzheCardScore + runezuSymbolScore;
     const jiuzheModule = getJiuzheModule();
-    const jiuzheThreat = jiuzheModule?.getThreat?.(context.alienGameState, player) || 0;
+    const jiuzheThreat = jiuzheModule?.getThreat?.(context.aliens, player) || 0;
     const jiuzhePenaltyApplied = shouldApplyJiuzheThreatPenalty(player, context);
     const totalScore = jiuzhePenaltyApplied
       ? Math.ceil(prePenaltyTotalScore * 0.9)

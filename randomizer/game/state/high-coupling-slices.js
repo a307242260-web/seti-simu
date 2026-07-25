@@ -274,9 +274,6 @@
           if (marker?.pieceId != null && !pieceIds.has(String(marker.pieceId))) {
             errors.push(error(`$.planets.planets.${planetId}.${kind}[${index}].pieceId`, "STATE_PIECE_PLANET_MISMATCH", "星球标记引用的棋子不存在"));
           }
-          if (marker?.sourcePieceId != null && pieceIds.has(String(marker.sourcePieceId))) {
-            errors.push(error(`$.planets.planets.${planetId}.${kind}[${index}].sourcePieceId`, "STATE_PIECE_PLANET_MISMATCH", "已转为星球标记的棋子不得仍留在 pieces"));
-          }
         });
       }
     }

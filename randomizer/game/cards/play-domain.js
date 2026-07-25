@@ -167,7 +167,7 @@
   }
 
   function getWorkingRoot(state, workingContext) {
-    return workingContext?.workingRoot || workingContext || state;
+    return workingContext?.state || workingContext || state;
   }
 
   function getScienceDomain() {
@@ -182,32 +182,26 @@
   }
 
   function getActor(root, actorId = null) {
-    const playerState = getWorkingSlice(root, "playerState");
-    const resolvedId = actorId || playerState.currentPlayerId || root?.turn?.currentPlayerId || null;
-    return (playerState.players || []).find((player) => player.id === resolvedId) || null;
+    const playersState = getWorkingSlice(root, "players");
+    const resolvedId = actorId || root?.turn?.currentPlayerId || null;
+    return (playersState.players || []).find((player) => player.id === resolvedId) || null;
   }
 
   function createActionContext(root, actorId) {
-    const playerState = getWorkingSlice(root, "playerState");
-    const techGameState = getWorkingSlice(root, "techGameState");
-    const solarState = getWorkingSlice(root, "solarState");
-    const rocketState = getWorkingSlice(root, "rocketState");
-    const actionPlayerState = actorId === playerState.currentPlayerId
-      ? playerState
-      : { ...playerState, currentPlayerId: actorId, players: playerState.players };
+    const playersState = getWorkingSlice(root, "players");
+    const solarSystemState = getWorkingSlice(root, "solarSystem");
+    const piecesState = getWorkingSlice(root, "pieces");
     const context = {
-      workingRoot: root,
-      playerState: actionPlayerState,
-      cardState: getWorkingSlice(root, "cardState"),
-      rocketState,
-      solarState,
-      nebulaDataState: getWorkingSlice(root, "nebulaDataState"),
-      planetStatsState: getWorkingSlice(root, "planetStatsState"),
-      techGameState,
-      techBoardState: techGameState.board,
-      techUiState: techGameState.ui,
-      alienGameState: getWorkingSlice(root, "alienGameState"),
-      turnState: getWorkingSlice(root, "turnState"),
+      state: root,
+      players: playersState,
+      cards: getWorkingSlice(root, "cards"),
+      pieces: piecesState,
+      solarSystem: solarSystemState,
+      data: getWorkingSlice(root, "data"),
+      planets: getWorkingSlice(root, "planets"),
+      tech: getWorkingSlice(root, "tech"),
+      aliens: getWorkingSlice(root, "aliens"),
+      turn: { ...getWorkingSlice(root, "turn"), currentPlayerId: actorId || root.turn?.currentPlayerId },
       match: root.match,
       ensurePlayerTechState(player) {
         if (!player.techState) player.techState = players.normalizePlayerTechState(null);
@@ -218,24 +212,23 @@
         decisionVersion: root?.match?.decisionVersion ?? 0,
       },
     };
-    context.getPlanetLocations = () => solar.createSolarSnapshot(solarState).planetLocations;
+    context.getPlanetLocations = () => solar.createSolarSnapshot(solarSystemState).planetLocations;
     context.getEarthSectorCoordinate = () => {
       const earth = context.getPlanetLocations()
         .find((planet) => planet.planetId === "earth");
       return earth ? { x: earth.x, y: earth.y } : null;
     };
     context.rotateSolarOrbit = (count = 1) => {
-      const beforeRotation = clone(solarState.rotation);
-      solarState.rotation = solar.applySolarOrbitRotation(solarState.rotation, count);
-      solarState.wheelSteps = solar.rotationToWheelSteps(solarState.rotation);
+      const beforeRotation = clone(solarSystemState.rotation);
+      solarSystemState.rotation = solar.applySolarOrbitRotation(solarSystemState.rotation, count);
       return abilities.rocket.settleRocketsAfterSolarRotation(
         context,
         beforeRotation,
-        solarState.rotation,
+        solarSystemState.rotation,
       );
     };
     context.drawBasicCardToPlayer = (player) => cards.blindDraw(
-      context.cardState,
+      context.cards,
       actionPlayerState,
       player,
       () => nextCommittedRandom(root),
@@ -282,7 +275,7 @@
       cards,
       getCardPlayCost: cardEffects.getCardPlayCost,
       canStart(actionContext) {
-        const root = actionContext?.workingRoot || actionContext;
+        const root = actionContext?.state || actionContext;
         const actor = getActor(root, actionContext?.standardActionAuthority?.actorId);
         return actor && !actor.mainActionCompleted
           ? { ok: true }
@@ -444,7 +437,7 @@
         cardEffects.ensureCardEffectState(playedCard);
         actor.reservedCards.push(playedCard);
       } else {
-        cards.addToDiscardPile(getWorkingSlice(root, "cardState"), playedCard);
+        cards.addToDiscardPile(getWorkingSlice(root, "cards"), playedCard);
       }
       actor.mainActionCompleted = true;
       return {
@@ -517,14 +510,14 @@
         if (gain[resource] > 0) players.gainResources(actor, gain);
         result = { ok: true, count, currentIncomeCount, baseIncomeCount, gain };
       } else if (effect.type === cardEffects.EFFECT_TYPES.TUCK_PLAYED_CARD_TO_INCOME) {
-        const cardState = getWorkingSlice(root, "cardState");
+        const cardsState = getWorkingSlice(root, "cards");
         const cardInstanceId = sessionEffect.payload?.cardInstanceId;
-        const discardIndex = (cardState.discardPile || [])
+        const discardIndex = (cardsState.discardPile || [])
           .findIndex((card) => card.id === cardInstanceId);
         if (discardIndex < 0) {
           return fail("CARD_TUCK_TARGET_STALE", "当前打出的卡牌不在弃牌堆");
         }
-        const [playedCard] = cardState.discardPile.splice(discardIndex, 1);
+        const [playedCard] = cardsState.discardPile.splice(discardIndex, 1);
         const gain = cards.getIncomeGainForCard(playedCard);
         if (!gain) return fail("CARD_TUCK_INCOME_UNKNOWN", "当前卡牌没有可识别收入");
         const drawnCards = [];
@@ -532,8 +525,8 @@
         players.gainIncome(actor, gain, {
           blindDraw(targetPlayer) {
             const draw = cards.blindDraw(
-              cardState,
-              getWorkingSlice(root, "playerState"),
+              cardsState,
+              getWorkingSlice(root, "players"),
               targetPlayer,
               () => nextCommittedRandom(root),
               { createCardInstance: createCommittedCardFactory(root) },
@@ -564,12 +557,12 @@
         };
         result = { ok: true, cardInstanceId };
       } else if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_ALL_HAND) {
-        const cardState = getWorkingSlice(root, "cardState");
+        const cardsState = getWorkingSlice(root, "cards");
         const discarded = [];
         while ((actor.hand || []).length) {
           const removed = cards.discardFromHandAtIndex(actor, actor.hand.length - 1);
           if (!removed.ok) break;
-          cards.addToDiscardPile(cardState, removed.card);
+          cards.addToDiscardPile(cardsState, removed.card);
           discarded.push(removed.card);
         }
         spawnedEffects = (options.rewards || []).map((reward) => (
@@ -627,8 +620,8 @@
         const drawnCards = [];
         if (options.reward === "draw") {
           const drawResult = cards.drawCardsToHand(
-            getWorkingSlice(root, "cardState"),
-            getWorkingSlice(root, "playerState"),
+            getWorkingSlice(root, "cards"),
+            getWorkingSlice(root, "players"),
             actor,
             count,
             () => nextCommittedRandom(root),
@@ -684,14 +677,14 @@
         if (!removed.ok) return removed;
         const gain = cards.getIncomeGainForCard(removed.card);
         if (!gain) return fail("CARD_INCOME_UNKNOWN", "所选卡牌没有可识别收入");
-        cards.addToDiscardPile(getWorkingSlice(root, "cardState"), removed.card);
+        cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
         const drawnCards = [];
         const dataResults = [];
         players.gainIncome(actor, gain, {
           blindDraw(targetPlayer) {
             const draw = cards.blindDraw(
-              getWorkingSlice(root, "cardState"),
-              getWorkingSlice(root, "playerState"),
+              getWorkingSlice(root, "cards"),
+              getWorkingSlice(root, "players"),
               targetPlayer,
               () => nextCommittedRandom(root),
               { createCardInstance: createCommittedCardFactory(root) },
@@ -772,8 +765,8 @@
       }
       const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
       const result = cards.drawCardsToHand(
-        getWorkingSlice(root, "cardState"),
-        getWorkingSlice(root, "playerState"),
+        getWorkingSlice(root, "cards"),
+        getWorkingSlice(root, "players"),
         actor,
         count,
         () => nextCommittedRandom(root),
@@ -812,8 +805,8 @@
     const pickCardExecutor = {
       getLegalChoices(state, sessionEffect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const cardState = getWorkingSlice(root, "cardState");
-        const choices = (cardState.publicCards || []).flatMap((card, slotIndex) => (
+        const cardsState = getWorkingSlice(root, "cards");
+        const choices = (cardsState.publicCards || []).flatMap((card, slotIndex) => (
           card
             ? [{
               family: "choose_card",
@@ -824,8 +817,8 @@
             : []
         ));
         if (cards.getAvailablePool(
-          cardState,
-          getWorkingSlice(root, "playerState"),
+          cardsState,
+          getWorkingSlice(root, "players"),
         ).length) {
           choices.push({
             family: "choose_card",
@@ -845,20 +838,20 @@
         if (!actor || effect?.type !== cardEffects.REWARD_TYPES.PICK_CARD || !legal) {
           return fail("CARD_PICK_CHOICE_STALE", "精选卡牌选择已失效");
         }
-        const cardState = getWorkingSlice(root, "cardState");
-        const playerState = getWorkingSlice(root, "playerState");
+        const cardsState = getWorkingSlice(root, "cards");
+        const playersState = getWorkingSlice(root, "players");
         const random = () => nextCommittedRandom(root);
         const factoryOptions = { createCardInstance: createCommittedCardFactory(root) };
         const result = legal.target.source === "public"
           ? cards.pickFromPublic(
-            cardState,
-            playerState,
+            cardsState,
+            playersState,
             actor,
             legal.target.slotIndex,
             random,
             factoryOptions,
           )
-          : cards.blindDraw(cardState, playerState, actor, random, factoryOptions);
+          : cards.blindDraw(cardsState, playersState, actor, random, factoryOptions);
         if (!result.ok) return result;
         return {
           ok: true,
@@ -1050,7 +1043,7 @@
     }
 
     function listPlayerRockets(root, ownerId, options = {}) {
-      const all = getWorkingSlice(root, "rocketState").rockets || [];
+      const all = getWorkingSlice(root, "pieces").rockets || [];
       return all.filter((rocket) => (
         options.owner === "any" || rocket.playerId === ownerId
       ));
@@ -1147,7 +1140,7 @@
 
     function getNebulaSectorX(root, nebulaId) {
       const locations = solar.createSolarSnapshot(
-        getWorkingSlice(root, "solarState"),
+        getWorkingSlice(root, "solarSystem"),
       ).nebulaLocations || {};
       const location = Array.isArray(locations)
         ? locations.find((entry) => entry.id === nebulaId)
@@ -1183,7 +1176,7 @@
           const index = actor.hand.findIndex((card) => card.id === drawnCardId);
           if (index >= 0) {
             const removed = cards.discardFromHandAtIndex(actor, index);
-            cards.addToDiscardPile(getWorkingSlice(root, "cardState"), removed.card);
+            cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
           }
         }
         return cardEffectResult(state, root, sessionEffect, {
@@ -1208,7 +1201,7 @@
         const index = actor.hand.findIndex((card) => card.id === drawnCardId);
         if (index >= 0) {
           const removed = cards.discardFromHandAtIndex(actor, index);
-          cards.addToDiscardPile(getWorkingSlice(root, "cardState"), removed.card);
+          cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
         }
       }
       return cardEffectResult(state, root, sessionEffect, {
@@ -1347,7 +1340,7 @@
         .flatMap((color) => cardEffects.NEBULA_IDS_BY_COLOR[color])
         .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(sectorX))
         .reduce((count, nebulaId) => count + (
-          data.listNebulaTokens(getWorkingSlice(root, "nebulaDataState"), nebulaId)
+          data.listNebulaTokens(getWorkingSlice(root, "data"), nebulaId)
             .filter((token) => (
               token.replacedByPlayerId === actor.id
               || token.replacedByPlayerColor === actor.color
@@ -1455,7 +1448,7 @@
         event.skipped = !met;
       } else if (effect.type === cardEffects.EFFECT_TYPES.PROBE_STACK_REWARD) {
         const match = cardEffects.getProbeStackRewardMatch(
-          getWorkingSlice(root, "rocketState").rockets || [],
+          getWorkingSlice(root, "pieces").rockets || [],
           actor,
           options,
         );
@@ -1464,7 +1457,7 @@
         event.skipped = !match.conditionMet;
       } else if (effect.type === cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD) {
         const count = cardEffects.countRocketsForReward(
-          getWorkingSlice(root, "rocketState").rockets || [],
+          getWorkingSlice(root, "pieces").rockets || [],
           actor,
           options,
         );
@@ -1481,7 +1474,7 @@
         event.count = count;
         event.amount = amount;
       } else if (effect.type === cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS) {
-        const bonusState = root.turnState || root.turn || root.match;
+        const bonusState = root.turn || root.turn || root.match;
         const bonusOptions = options.bonus || options;
         if (!Array.isArray(bonusState.cardTurnEventBonuses)) {
           bonusState.cardTurnEventBonuses = [];
@@ -1501,9 +1494,9 @@
           ? Boolean(root.match.cardPlayContext?.lastLanding?.hadAnyMarker)
           : conditionMet(root, actor, options.condition);
         if (met) {
-          const cardState = getWorkingSlice(root, "cardState");
+          const cardsState = getWorkingSlice(root, "cards");
           const cardId = sessionEffect.payload.cardInstanceId;
-          let source = cardState.discardPile || [];
+          let source = cardsState.discardPile || [];
           let index = source.findIndex((card) => card.id === cardId);
           if (index < 0) {
             source = actor.reservedCards || [];
@@ -1517,10 +1510,10 @@
         }
         event.conditionMet = met;
       } else if (effect.type === cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN) {
-        const cardState = getWorkingSlice(root, "cardState");
+        const cardsState = getWorkingSlice(root, "cards");
         const draw = cards.blindDraw(
-          cardState,
-          getWorkingSlice(root, "playerState"),
+          cardsState,
+          getWorkingSlice(root, "players"),
           actor,
           () => nextCommittedRandom(root),
           { createCardInstance: createCommittedCardFactory(root) },
@@ -1596,7 +1589,7 @@
       }
       if (effect.type === cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN) {
         const x = solar.createSolarSnapshot(
-          getWorkingSlice(root, "solarState"),
+          getWorkingSlice(root, "solarSystem"),
         ).planetLocations?.find((planet) => planet.planetId === options.planetId)?.x;
         const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
           .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(x));
@@ -1605,7 +1598,7 @@
       if (effect.type === cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN) {
         const planetId = root.match.cardPlayContext?.lastLanding?.planetId;
         const x = solar.createSolarSnapshot(
-          getWorkingSlice(root, "solarState"),
+          getWorkingSlice(root, "solarSystem"),
         ).planetLocations?.find((planet) => planet.planetId === planetId)?.x;
         const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
           .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(x));
@@ -1663,7 +1656,7 @@
       }
       if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {
         return listCardChoices(
-          getWorkingSlice(root, "cardState").publicCards || [],
+          getWorkingSlice(root, "cards").publicCards || [],
         );
       }
       if ([
@@ -1683,8 +1676,8 @@
         return choices;
       }
       if (effect.type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
-        const cardState = getWorkingSlice(root, "cardState");
-        return listCardChoices(cardState.publicCards || []);
+        const cardsState = getWorkingSlice(root, "cards");
+        return listCardChoices(cardsState.publicCards || []);
       }
       if (effect.type === cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND) {
         return listCardChoices((actor.reservedCards || []).filter((card) => (
@@ -1695,16 +1688,16 @@
       if (effect.type === cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER) {
         const choices = [];
         for (const planetId of Object.keys(
-          getWorkingSlice(root, "planetStatsState").planets || {},
+          getWorkingSlice(root, "planets").planets || {},
         )) {
           for (const kind of ["orbit", "land"]) {
             const markers = kind === "orbit"
               ? planetStats.getPlanetOrbitMarkers(
-                getWorkingSlice(root, "planetStatsState"),
+                getWorkingSlice(root, "planets"),
                 planetId,
               )
               : planetStats.getPlanetLandingMarkers(
-                getWorkingSlice(root, "planetStatsState"),
+                getWorkingSlice(root, "planets"),
                 planetId,
               );
             markers.forEach((marker, index) => {
@@ -1747,7 +1740,7 @@
       if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
         const choices = [];
         const allowed = options.allowedTraceTypes || aliens.TRACE_TYPES;
-        const alienState = getWorkingSlice(root, "alienGameState");
+        const alienState = getWorkingSlice(root, "aliens");
         for (const alienSlotId of aliens.ALIEN_SLOT_IDS || []) {
           const slot = aliens.getAlienSlot(alienState, alienSlotId);
           for (const traceType of allowed) {
@@ -1801,7 +1794,7 @@
       if (effect.type === cardEffects.EFFECT_TYPES.CARD_LAND) {
         return resolvePlanet(state, sessionEffect, choice, workingContext, "land");
       }
-      const cardState = getWorkingSlice(root, "cardState");
+      const cardsState = getWorkingSlice(root, "cards");
       let spawnedEffects = [];
       let irreversible = null;
       const event = { choiceId: legal.target.choiceId };
@@ -1813,12 +1806,12 @@
           const index = actor.hand.findIndex((entry) => entry.id === legal.target.cardInstanceId);
           const removed = cards.discardFromHandAtIndex(actor, index);
           if (!removed.ok) return removed;
-          cards.addToDiscardPile(cardState, removed.card);
+          cards.addToDiscardPile(cardsState, removed.card);
           const gain = cards.getIncomeGainForCard(removed.card);
           if (gain) players.gainIncome(actor, gain, {
             blindDraw: (target) => cards.blindDraw(
-              cardState,
-              getWorkingSlice(root, "playerState"),
+              cardsState,
+              getWorkingSlice(root, "players"),
               target,
               () => nextCommittedRandom(root),
               { createCardInstance: createCommittedCardFactory(root) },
@@ -1847,7 +1840,7 @@
           const index = actor.hand.findIndex((entry) => entry.id === legal.target.cardInstanceId);
           const removed = cards.discardFromHandAtIndex(actor, index);
           if (!removed.ok) return removed;
-          cards.addToDiscardPile(cardState, removed.card);
+          cards.addToDiscardPile(cardsState, removed.card);
           if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_CARD_CORNER_REPEAT) {
             spawnedEffects = spawnCardEffects(
               cornerEffects(removed.card, options.cornerRepeat || 1),
@@ -1866,14 +1859,14 @@
           }
         }
       } else if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {
-        const index = cardState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
-        const card = cardState.publicCards[index];
-        cardState.publicCards[index] = null;
-        cards.addToDiscardPile(cardState, card);
+        const index = cardsState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
+        const card = cardsState.publicCards[index];
+        cardsState.publicCards[index] = null;
+        cards.addToDiscardPile(cardsState, card);
         spawnedEffects = spawnCardEffects(cornerEffects(card), sessionEffect);
         cards.replenishPublicSlot(
-          cardState,
-          getWorkingSlice(root, "playerState"),
+          cardsState,
+          getWorkingSlice(root, "players"),
           index,
           () => nextCommittedRandom(root),
           { createCardInstance: createCommittedCardFactory(root) },
@@ -1898,10 +1891,10 @@
           }
         }
       } else if (effect.type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
-        const index = cardState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
+        const index = cardsState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
         const result = cards.pickFromPublic(
-          cardState,
-          getWorkingSlice(root, "playerState"),
+          cardsState,
+          getWorkingSlice(root, "players"),
           actor,
           index,
           () => nextCommittedRandom(root),
@@ -1918,17 +1911,17 @@
         cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER,
         cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE,
       ].includes(effect.type)) {
-        const state = getWorkingSlice(root, "planetStatsState");
+        const state = getWorkingSlice(root, "planets");
         const planet = state.planets?.[legal.target.planetId];
         const key = legal.target.kind === "orbit" ? "orbitMarkers" : "landingMarkers";
         const markers = planet?.[key] || [];
         const [marker] = markers.splice(legal.target.index, 1);
         if (effect.type === cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE && marker) {
           const location = solar.createSolarSnapshot(
-            getWorkingSlice(root, "solarState"),
+            getWorkingSlice(root, "solarSystem"),
           ).planetLocations?.find((planet) => planet.planetId === legal.target.planetId);
           const launched = rockets.launchRocketAtSector(
-            getWorkingSlice(root, "rocketState"),
+            getWorkingSlice(root, "pieces"),
             location,
             { playerId: actor.id, color: actor.color, root },
           );
@@ -1938,7 +1931,7 @@
         const rocket = listPlayerRockets(root, actor.id)
           .find((entry) => String(entry.id) === String(legal.target.rocketId));
         const content = solar.resolveVisibleContent(
-          getWorkingSlice(root, "solarState"),
+          getWorkingSlice(root, "solarSystem"),
           rocket.sectorX,
           rocket.sectorY,
         )?.content;
@@ -1950,7 +1943,7 @@
           data.gainData(actor, { source: "probe_location_reward", root });
         }
       } else if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
-        const alienState = getWorkingSlice(root, "alienGameState");
+        const alienState = getWorkingSlice(root, "aliens");
         const slot = aliens.getAlienSlot(alienState, legal.target.alienSlotId);
         let placed;
         if (!slot?.traces?.[legal.target.traceType]?.firstPlaced) {

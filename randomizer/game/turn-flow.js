@@ -51,96 +51,91 @@
     return [...playerIds.slice(startIndex), ...playerIds.slice(0, startIndex)];
   }
 
-  function getActiveOrderedPlayerIds(turnState) {
-    const active = new Set(turnState?.activePlayerIds || []);
-    return (turnState?.turnOrderPlayerIds || []).filter((playerId) => active.has(playerId));
+  function getActiveOrderedPlayerIds(turnSlice) {
+    const active = new Set(turnSlice?.activePlayerIds || []);
+    return (turnSlice?.turnOrderPlayerIds || []).filter((playerId) => active.has(playerId));
   }
 
-  function getRoundOrderPlayerIds(turnState) {
-    const active = getActiveOrderedPlayerIds(turnState);
-    const start = active.includes(turnState?.startPlayerId) ? turnState.startPlayerId : active[0];
+  function getRoundOrderPlayerIds(turnSlice) {
+    const active = getActiveOrderedPlayerIds(turnSlice);
+    const start = active.includes(turnSlice?.startPlayerId) ? turnSlice.startPlayerId : active[0];
     return rotatePlayerIds(active, start);
   }
 
-  function isPlayerPassed(turnState, playerId) {
-    return (turnState?.passedPlayerIds || []).includes(playerId);
+  function isPlayerPassed(turnSlice, playerId) {
+    return (turnSlice?.passedPlayerIds || []).includes(playerId);
   }
 
-  function hasPlayerCompletedTurn(turnState, playerId) {
-    return (turnState?.completedTurnPlayerIds || []).includes(playerId);
+  function hasPlayerCompletedTurn(turnSlice, playerId) {
+    return (turnSlice?.completedTurnPlayerIds || []).includes(playerId);
   }
 
-  function haveAllActivePlayersPassed(turnState) {
-    return (turnState?.activePlayerIds || []).length > 0
-      && turnState.activePlayerIds.every((playerId) => isPlayerPassed(turnState, playerId));
+  function haveAllActivePlayersPassed(turnSlice) {
+    return (turnSlice?.activePlayerIds || []).length > 0
+      && turnSlice.activePlayerIds.every((playerId) => isPlayerPassed(turnSlice, playerId));
   }
 
-  function beginNextRound(workingRoot) {
-    const { playerState, turnState } = workingRoot;
-    turnState.roundNumber += 1;
-    turnState.turnNumber = 1;
-    turnState.actionCycleNumber = 1;
-    turnState.passedPlayerIds = [];
-    turnState.completedTurnPlayerIds = [];
-    turnState.cardTurnEventBonuses = [];
-    turnState.visitedPlanetsByPlayerId = {};
-    const active = getActiveOrderedPlayerIds(turnState);
+  function beginNextRound(state) {
+    const turn = state.turn;
+    turn.roundNumber += 1;
+    turn.turnNumber = 1;
+    turn.actionCycleNumber = 1;
+    turn.passedPlayerIds = [];
+    turn.completedTurnPlayerIds = [];
+    turn.cardTurnEventBonuses = [];
+    turn.visitedPlanetsByPlayerId = {};
+    const active = getActiveOrderedPlayerIds(turn);
     if (active.length) {
-      const current = active.includes(turnState.startPlayerId) ? active.indexOf(turnState.startPlayerId) : 0;
-      turnState.startPlayerId = active[(current + 1) % active.length];
+      const current = active.includes(turn.startPlayerId) ? active.indexOf(turn.startPlayerId) : 0;
+      turn.startPlayerId = active[(current + 1) % active.length];
     }
-    playerState.currentPlayerId = turnState.startPlayerId
-      || turnState.activePlayerIds?.[0]
-      || playerState.currentPlayerId;
-    return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: playerState.currentPlayerId };
+    turn.currentPlayerId = turn.startPlayerId
+      || turn.activePlayerIds?.[0]
+      || turn.currentPlayerId;
+    return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: turn.currentPlayerId };
   }
 
-  function rotateSolarSystem(workingRoot, count = 1, actorId = null) {
-    if (!workingRoot?.solarState || !workingRoot?.rocketState) {
+  function rotateSolarSystem(state, count = 1, actorId = null) {
+    if (!state?.solarSystem || !state?.pieces) {
       throw new TypeError("solar rotation requires committed solar/rocket state");
     }
-    const before = structuredClone(workingRoot.solarState.rotation);
-    workingRoot.solarState.rotation = solar.applySolarOrbitRotation(
-      workingRoot.solarState.rotation,
+    const before = structuredClone(state.solarSystem.rotation);
+    state.solarSystem.rotation = solar.applySolarOrbitRotation(
+      state.solarSystem.rotation,
       count,
     );
-    workingRoot.solarState.wheelSteps = solar.rotationToWheelSteps(workingRoot.solarState.rotation);
-    const playerState = actorId && actorId !== workingRoot.playerState?.currentPlayerId
-      ? { ...workingRoot.playerState, currentPlayerId: actorId }
-      : workingRoot.playerState;
     const context = {
-      workingRoot,
-      playerState,
-      rocketState: workingRoot.rocketState,
-      planetStatsState: workingRoot.planetStatsState,
-      alienGameState: workingRoot.alienGameState,
-      nebulaDataState: workingRoot.nebulaDataState,
-      cardState: workingRoot.cardState,
-      solarState: workingRoot.solarState,
-      turnState: workingRoot.turnState,
-      techGameState: workingRoot.techGameState,
-      getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
+      state,
+      players: state.players,
+      pieces: state.pieces,
+      planets: state.planets,
+      aliens: state.aliens,
+      data: state.data,
+      cards: state.cards,
+      solarSystem: state.solarSystem,
+      turn: { ...state.turn, currentPlayerId: actorId || state.turn.currentPlayerId },
+      tech: state.tech,
+      getPlanetLocations: () => solar.createSolarSnapshot(state.solarSystem).planetLocations,
     };
     const settled = rocketAbility.settleRocketsAfterSolarRotation(
       context,
       before,
-      workingRoot.solarState.rotation,
+      state.solarSystem.rotation,
     );
     return settled.ok
       ? {
         ...settled,
         before,
-        after: structuredClone(workingRoot.solarState.rotation),
+        after: structuredClone(state.solarSystem.rotation),
       }
       : settled;
   }
 
-  function advanceTurnAfterPlayerAction(workingRoot, playerId, options = {}) {
-    if (!workingRoot?.turnState || !workingRoot?.playerState) {
+  function advanceTurnAfterPlayerAction(state, playerId, options = {}) {
+    if (!state?.turn || !state?.players) {
       throw new TypeError("turn flow requires committed turn/player state");
     }
-    const turn = workingRoot.turnState;
-    const playerState = workingRoot.playerState;
+    const turn = state.turn;
     const finalRoundNumber = Number(options.finalRoundNumber) || DEFAULT_FINAL_ROUND;
     const passed = (id) => isPlayerPassed(turn, id);
     const completed = (id) => hasPlayerCompletedTurn(turn, id);
@@ -148,7 +143,7 @@
     const activeCount = Math.max(1, turn.activePlayerIds?.length || turn.activePlayerCount || 1);
     const displayedTurn = Math.floor((Math.max(1, Number(turn.turnNumber) || 1) - 1) / activeCount) + 1;
     const cycle = Math.max(1, Number(turn.actionCycleNumber) || 1);
-    if (!playerId) return { roundAdvanced: false, turnAdvanced: false, nextPlayerId: playerState.currentPlayerId };
+    if (!playerId) return { roundAdvanced: false, turnAdvanced: false, nextPlayerId: turn.currentPlayerId };
 
     if (options.passed && !passed(playerId)) turn.passedPlayerIds.push(playerId);
     turn.cardTurnEventBonuses = (turn.cardTurnEventBonuses || []).filter((bonus) => bonus.playerId !== playerId);
@@ -173,11 +168,11 @@
         roundAdvanced: false,
         turnAdvanced: false,
         gameEnded: true,
-        nextPlayerId: playerState.currentPlayerId,
+        nextPlayerId: turn.currentPlayerId,
         ...completedCycle,
       };
     }
-    if (haveAllActivePlayersPassed(turn)) return { ...beginNextRound(workingRoot), ...completedCycle };
+    if (haveAllActivePlayersPassed(turn)) return { ...beginNextRound(state), ...completedCycle };
 
     const order = roundOrder();
     const startIndex = order.includes(playerId) ? order.indexOf(playerId) : -1;
@@ -190,7 +185,7 @@
       }
     }
     if (nextPlayerId) {
-      playerState.currentPlayerId = nextPlayerId;
+      turn.currentPlayerId = nextPlayerId;
       turn.turnNumber += 1;
       return { roundAdvanced: false, turnAdvanced: true, nextPlayerId };
     }
@@ -198,11 +193,11 @@
     turn.turnNumber += 1;
     turn.completedTurnPlayerIds = [];
     turn.actionCycleNumber = cycle + 1;
-    playerState.currentPlayerId = order.find((id) => !passed(id)) || playerState.currentPlayerId;
+    turn.currentPlayerId = order.find((id) => !passed(id)) || turn.currentPlayerId;
     return {
       roundAdvanced: false,
       turnAdvanced: true,
-      nextPlayerId: playerState.currentPlayerId,
+      nextPlayerId: turn.currentPlayerId,
       ...completedCycle,
     };
   }

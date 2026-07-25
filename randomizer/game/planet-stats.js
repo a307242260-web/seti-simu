@@ -31,8 +31,6 @@
 
   function createEmptyPlanetRecord() {
     return {
-      orbits: 0,
-      landings: 0,
       orbitMarkers: [],
       landingMarkers: [],
       satelliteLandings: [],
@@ -79,41 +77,23 @@
       || ownerKeys.has(marker?.playerColor);
   }
 
-  function markerMatchesSequence(marker, ref = {}) {
-    if (ref.sequence == null) return true;
-    return Number(marker?.sequence) === Number(ref.sequence);
-  }
-
   function getPlanetMarkerDisplayLimit(planetId, kind) {
     return Math.max(0, planetReferenceLayout.getPlanetSlotCount(planetId, kind));
   }
 
-  function applyReferenceOffset(marker, options = {}) {
-    const offset = Number(options.referenceOffsetTokenWidths);
-    if (Number.isFinite(offset) && offset !== 0) {
-      marker.referenceOffsetTokenWidths = offset;
-    } else {
-      delete marker.referenceOffsetTokenWidths;
-    }
-    return marker;
-  }
-
-  function updateMarkerDisplayState(marker, displayLimit) {
-    if (marker.forceDisplaySlot && Number.isFinite(Number(marker.displaySlot))) {
-      marker.displayed = true;
-      marker.displaySlot = Number(marker.displaySlot);
-      return marker;
-    }
-    marker.displayed = marker.sequence <= displayLimit;
-    marker.displaySlot = marker.displayed ? marker.sequence : null;
-    return marker;
-  }
-
-  function reindexMarkerSequences(markers, displayLimit = Infinity) {
-    markers.forEach((marker, index) => {
-      marker.sequence = index + 1;
-      updateMarkerDisplayState(marker, displayLimit);
-    });
+  function projectMarker(marker, sequence, displayLimit) {
+    const rewardSlot = Number(marker?.rewardSlot);
+    const displaySlot = Number.isSafeInteger(rewardSlot) && rewardSlot > 0
+      ? rewardSlot
+      : sequence <= displayLimit
+        ? sequence
+        : null;
+    return {
+      ...marker,
+      sequence,
+      displayed: displaySlot != null,
+      displaySlot,
+    };
   }
 
   function canAddOrbitMarker(state, planetId) {
@@ -135,14 +115,20 @@
 
     const record = getPlanetRecord(state, planetId);
     const normalizedPlayer = normalizePlayer(player);
-    record.orbits += 1;
-    const marker = updateMarkerDisplayState({
-      sequence: record.orbits,
+    const marker = {
       playerId: normalizedPlayer.id,
       color: normalizedPlayer.color,
-    }, getPlanetMarkerDisplayLimit(planetId, "orbit"));
+    };
     record.orbitMarkers.push(marker);
-    return { ok: true, marker, message: null };
+    return {
+      ok: true,
+      marker: projectMarker(
+        marker,
+        record.orbitMarkers.length,
+        getPlanetMarkerDisplayLimit(planetId, "orbit"),
+      ),
+      message: null,
+    };
   }
 
   function addPlanetLandingMarker(state, planetId, player, options = {}) {
@@ -152,72 +138,75 @@
 
     const record = getPlanetRecord(state, planetId);
     const normalizedPlayer = normalizePlayer(player);
-    record.landings += 1;
-    const marker = updateMarkerDisplayState(applyReferenceOffset({
-      sequence: record.landings,
+    const marker = {
       playerId: normalizedPlayer.id,
       color: normalizedPlayer.color,
-      forceDisplaySlot: Boolean(options.forceDisplaySlot),
-      displaySlot: options.displaySlot != null ? Number(options.displaySlot) : undefined,
-    }, options), getPlanetMarkerDisplayLimit(planetId, "land"));
+      ...(Number.isSafeInteger(Number(options.rewardSlot)) && Number(options.rewardSlot) > 0
+        ? { rewardSlot: Number(options.rewardSlot) }
+        : {}),
+    };
     record.landingMarkers.push(marker);
-    return { ok: true, marker, message: null };
+    const projected = projectMarker(
+      marker,
+      record.landingMarkers.length,
+      getPlanetMarkerDisplayLimit(planetId, "land"),
+    );
+    const referenceOffset = Number(options.referenceOffsetTokenWidths);
+    if (Number.isFinite(referenceOffset) && referenceOffset !== 0) {
+      projected.referenceOffsetTokenWidths = referenceOffset;
+    }
+    return { ok: true, marker: projected, message: null };
   }
 
   function removePlanetOrbitMarker(state, planetId, markerRef = {}) {
     const record = getPlanetRecord(state, planetId);
     if (!record) return { ok: false, marker: null, message: "星球不存在" };
-    const markerIndex = record.orbitMarkers.findIndex((marker) => (
-      markerMatchesSequence(marker, markerRef) && markerMatchesOwner(marker, markerRef)
+    const markerIndex = record.orbitMarkers.findIndex((marker, index) => (
+      (markerRef.sequence == null || index + 1 === Number(markerRef.sequence))
+      && markerMatchesOwner(marker, markerRef)
     ));
     if (markerIndex < 0) return { ok: false, marker: null, message: "没有可移除的环绕标记" };
     const [marker] = record.orbitMarkers.splice(markerIndex, 1);
-    reindexMarkerSequences(record.orbitMarkers, getPlanetMarkerDisplayLimit(planetId, "orbit"));
-    record.orbits = record.orbitMarkers.length;
-    return { ok: true, marker, message: "已移除环绕标记" };
+    return { ok: true, marker: projectMarker(marker, markerIndex + 1, Infinity), message: "已移除环绕标记" };
   }
 
   function removePlanetLandingMarker(state, planetId, markerRef = {}) {
     const record = getPlanetRecord(state, planetId);
     if (!record) return { ok: false, marker: null, message: "星球不存在" };
-    const markerIndex = record.landingMarkers.findIndex((marker) => (
-      markerMatchesSequence(marker, markerRef) && markerMatchesOwner(marker, markerRef)
+    const markerIndex = record.landingMarkers.findIndex((marker, index) => (
+      (markerRef.sequence == null || index + 1 === Number(markerRef.sequence))
+      && markerMatchesOwner(marker, markerRef)
     ));
     if (markerIndex < 0) return { ok: false, marker: null, message: "没有可移除的登陆标记" };
     const [marker] = record.landingMarkers.splice(markerIndex, 1);
-    reindexMarkerSequences(record.landingMarkers, getPlanetMarkerDisplayLimit(planetId, "land"));
-    record.landings = record.landingMarkers.length;
-    return { ok: true, marker, message: "已移除登陆标记" };
-  }
-
-  function incrementPlanetOrbits(state, planetId) {
-    const record = getPlanetRecord(state, planetId);
-    if (!record) return false;
-    record.orbits += 1;
-    return true;
-  }
-
-  function incrementPlanetLandings(state, planetId) {
-    const record = getPlanetRecord(state, planetId);
-    if (!record) return false;
-    record.landings += 1;
-    return true;
+    return { ok: true, marker: projectMarker(marker, markerIndex + 1, Infinity), message: "已移除登陆标记" };
   }
 
   function getPlanetOrbitCount(state, planetId) {
-    return getPlanetRecord(state, planetId)?.orbits || 0;
+    return getPlanetRecord(state, planetId)?.orbitMarkers?.length || 0;
   }
 
   function getPlanetLandingCount(state, planetId) {
-    return getPlanetRecord(state, planetId)?.landings || 0;
+    return getPlanetRecord(state, planetId)?.landingMarkers?.length || 0;
   }
 
   function getPlanetOrbitMarkers(state, planetId) {
-    return [...(getPlanetRecord(state, planetId)?.orbitMarkers || [])];
+    return (getPlanetRecord(state, planetId)?.orbitMarkers || []).map((marker, index) => (
+      projectMarker(marker, index + 1, getPlanetMarkerDisplayLimit(planetId, "orbit"))
+    ));
   }
 
   function getPlanetLandingMarkers(state, planetId) {
-    return [...(getPlanetRecord(state, planetId)?.landingMarkers || [])];
+    const rewardSlotCounts = {};
+    return (getPlanetRecord(state, planetId)?.landingMarkers || []).map((marker, index) => {
+      const projected = projectMarker(marker, index + 1, getPlanetMarkerDisplayLimit(planetId, "land"));
+      if (marker.rewardSlot != null) {
+        const collisionIndex = rewardSlotCounts[marker.rewardSlot] || 0;
+        rewardSlotCounts[marker.rewardSlot] = collisionIndex + 1;
+        if (collisionIndex > 0) projected.referenceOffsetTokenWidths = collisionIndex * 0.5;
+      }
+      return projected;
+    });
   }
 
   function isSatelliteLanded(state, planetId, satelliteId) {
@@ -246,14 +235,18 @@
     const satellite = planetReferenceLayout.getSatellitePlacement(planetId, satelliteId);
     const record = getPlanetRecord(state, planetId);
     const normalizedPlayer = normalizePlayer(player);
-    const marker = applyReferenceOffset({
+    const marker = {
       satelliteId,
-      satelliteName: satellite.satelliteName,
       playerId: normalizedPlayer.id,
       color: normalizedPlayer.color,
-    }, options);
+    };
     record.satelliteLandings.push(marker);
-    return { ok: true, marker, message: null };
+    const projected = { ...marker, satelliteName: satellite.satelliteName };
+    const referenceOffset = Number(options.referenceOffsetTokenWidths);
+    if (Number.isFinite(referenceOffset) && referenceOffset !== 0) {
+      projected.referenceOffsetTokenWidths = referenceOffset;
+    }
+    return { ok: true, marker: projected, message: null };
   }
 
   function removeSatelliteLandingMarker(state, planetId, satelliteId, markerRef = {}) {
@@ -278,7 +271,7 @@
       const name = planet?.name || planetId;
       const satelliteCount = record.satelliteLandings.length;
       const satelliteText = satelliteCount ? ` 卫星登陆=${satelliteCount}` : "";
-      return `${name} 环绕=${record.orbits} 登陆=${record.landings}${satelliteText}`;
+      return `${name} 环绕=${record.orbitMarkers.length} 登陆=${record.landingMarkers.length}${satelliteText}`;
     });
   }
 
@@ -292,8 +285,6 @@
     addPlanetLandingMarker,
     removePlanetOrbitMarker,
     removePlanetLandingMarker,
-    incrementPlanetOrbits,
-    incrementPlanetLandings,
     getPlanetOrbitCount,
     getPlanetLandingCount,
     getPlanetOrbitMarkers,

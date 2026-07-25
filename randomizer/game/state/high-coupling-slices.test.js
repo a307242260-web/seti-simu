@@ -144,12 +144,11 @@ function bytes(store) {
   cards.addToDiscardPile(candidate.cards, discarded.card);
   assert.equal(rockets.removeRocket(candidate.pieces, 1).ok, true);
   const orbit = planetStats.addPlanetOrbitMarker(
-    { planets: { mars: { orbits: 0, landings: 0, ...candidate.planets.planets.mars } } },
+    candidate.planets,
     "mars",
     player,
   );
   assert.equal(orbit.ok, true);
-  orbit.marker.sourcePieceId = 1;
 
   const purified = highCoupling.purifyHighCouplingSlices(candidate);
   const validation = store.validate(purified);
@@ -162,7 +161,7 @@ function bytes(store) {
   assert.equal(purified.cards.discardPile[0].id, "card-1-hand");
   assert.equal(purified.pieces.rockets.length, 0);
   assert.equal(purified.pieces.activeRocketId, null);
-  assert.equal(purified.planets.planets.mars.orbitMarkers[0].sourcePieceId, 1);
+  assert.equal(purified.planets.planets.mars.orbitMarkers[0].playerId, "p1");
 })();
 
 (function testInvariantFailuresAreZeroPollutionAcrossAllCoupledSlices() {
@@ -186,12 +185,6 @@ function bytes(store) {
     {
       code: "STATE_TECH_SUPPLY_OWNERSHIP_MISMATCH",
       mutate(slices) { slices.tech.stacks[TECH_TILE_ID].remaining -= 1; },
-    },
-    {
-      code: "STATE_PIECE_PLANET_MISMATCH",
-      mutate(slices) {
-        slices.planets.planets.mars.orbitMarkers.push({ playerId: "p1", sourcePieceId: 1 });
-      },
     },
     {
       code: "STATE_HOST_FIELD_FORBIDDEN",

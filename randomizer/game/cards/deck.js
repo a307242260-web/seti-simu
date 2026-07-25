@@ -194,7 +194,11 @@
 
   function createCommittedCardInstance(root, entry, sequence) {
     const nextSequence = stateSequences.take(root, "card");
-    return createCardInstance(entry, `${nextSequence}-${sequence ?? 0}`);
+    const { cardName: _cardName, src: _src, ...instance } = createCardInstance(
+      entry,
+      `${nextSequence}-${sequence ?? 0}`,
+    );
+    return instance;
   }
 
   function resolveCreateCardInstance(options = {}) {
@@ -312,11 +316,11 @@
     };
   }
 
-  function collectPlayerCardIds(playerState) {
+  function collectPlayerCardIds(playersState) {
     const ids = new Set();
-    if (!playerState || !Array.isArray(playerState.players)) return ids;
+    if (!playersState || !Array.isArray(playersState.players)) return ids;
 
-    for (const player of playerState.players) {
+    for (const player of playersState.players) {
       for (const cardList of [player.hand, player.reservedCards]) {
         if (!Array.isArray(cardList)) continue;
         for (const card of cardList) {
@@ -332,9 +336,9 @@
     return ids;
   }
 
-  function collectPassReserveCardIds(cardState) {
+  function collectPassReserveCardIds(cardsState) {
     const ids = new Set();
-    const piles = cardState?.passReservePiles;
+    const piles = cardsState?.passReservePiles;
     if (!piles || typeof piles !== "object") return ids;
 
     for (const pile of Object.values(piles)) {
@@ -348,27 +352,27 @@
     return ids;
   }
 
-  function collectLiveCardIds(cardState, playerState) {
-    const ids = collectPlayerCardIds(playerState);
+  function collectLiveCardIds(cardsState, playersState) {
+    const ids = collectPlayerCardIds(playersState);
 
-    if (cardState?.publicCards) {
-      for (const card of cardState.publicCards) {
+    if (cardsState?.publicCards) {
+      for (const card of cardsState.publicCards) {
         const cardId = getCardId(card);
         if (cardId) ids.add(cardId);
       }
     }
 
-    for (const cardId of collectPassReserveCardIds(cardState)) {
+    for (const cardId of collectPassReserveCardIds(cardsState)) {
       ids.add(cardId);
     }
 
     return ids;
   }
 
-  function collectDiscardCardIds(cardState) {
+  function collectDiscardCardIds(cardsState) {
     const ids = new Set();
-    if (Array.isArray(cardState?.discardPile)) {
-      for (const card of cardState.discardPile) {
+    if (Array.isArray(cardsState?.discardPile)) {
+      for (const card of cardsState.discardPile) {
         const cardId = getCardId(card);
         if (cardId) ids.add(cardId);
       }
@@ -376,28 +380,28 @@
     return ids;
   }
 
-  function collectClaimedCardIds(cardState, playerState) {
-    const ids = collectLiveCardIds(cardState, playerState);
-    for (const cardId of collectDiscardCardIds(cardState)) {
+  function collectClaimedCardIds(cardsState, playersState) {
+    const ids = collectLiveCardIds(cardsState, playersState);
+    for (const cardId of collectDiscardCardIds(cardsState)) {
       ids.add(cardId);
     }
     return ids;
   }
 
-  function ensureDrawPileCardIds(cardState) {
-    if (!Array.isArray(cardState.drawPileCardIds)) cardState.drawPileCardIds = [];
-    return cardState.drawPileCardIds;
+  function ensureDrawPileCardIds(cardsState) {
+    if (!Array.isArray(cardsState.drawPileCardIds)) cardsState.drawPileCardIds = [];
+    return cardsState.drawPileCardIds;
   }
 
-  function getDrawPileCardIds(cardState) {
-    return Array.isArray(cardState?.drawPileCardIds)
-      ? cardState.drawPileCardIds.slice()
+  function getDrawPileCardIds(cardsState) {
+    return Array.isArray(cardsState?.drawPileCardIds)
+      ? cardsState.drawPileCardIds.slice()
       : [];
   }
 
-  function sanitizeDrawPileCardIds(cardState, playerState) {
-    const drawPile = ensureDrawPileCardIds(cardState);
-    const live = collectLiveCardIds(cardState, playerState);
+  function sanitizeDrawPileCardIds(cardsState, playersState) {
+    const drawPile = ensureDrawPileCardIds(cardsState);
+    const live = collectLiveCardIds(cardsState, playersState);
     const seen = new Set();
     const sanitized = [];
 
@@ -409,39 +413,39 @@
     }
 
     if (sanitized.length !== drawPile.length || sanitized.some((cardId, index) => cardId !== drawPile[index])) {
-      cardState.drawPileCardIds = sanitized;
+      cardsState.drawPileCardIds = sanitized;
     }
-    return cardState.drawPileCardIds;
+    return cardsState.drawPileCardIds;
   }
 
-  function removeCardIdFromDrawPile(cardState, cardId) {
-    if (!cardId || !Array.isArray(cardState?.drawPileCardIds)) return;
-    cardState.drawPileCardIds = cardState.drawPileCardIds.filter((item) => item !== cardId);
+  function removeCardIdFromDrawPile(cardsState, cardId) {
+    if (!cardId || !Array.isArray(cardsState?.drawPileCardIds)) return;
+    cardsState.drawPileCardIds = cardsState.drawPileCardIds.filter((item) => item !== cardId);
   }
 
-  function getActiveDrawPool(cardState, playerState) {
-    const drawPile = sanitizeDrawPileCardIds(cardState, playerState);
+  function getActiveDrawPool(cardsState, playersState) {
+    const drawPile = sanitizeDrawPileCardIds(cardsState, playersState);
     return drawPile
       .map((cardId) => getCatalogEntryByCardId(cardId))
       .filter(Boolean);
   }
 
-  function getFreshAvailablePool(cardState, playerState) {
-    const unavailable = collectClaimedCardIds(cardState, playerState);
-    for (const cardId of getDrawPileCardIds(cardState)) {
+  function getFreshAvailablePool(cardsState, playersState) {
+    const unavailable = collectClaimedCardIds(cardsState, playersState);
+    for (const cardId of getDrawPileCardIds(cardsState)) {
       unavailable.add(cardId);
     }
     return CARD_CATALOG.filter((entry) => !unavailable.has(entry.card_id));
   }
 
-  function getDiscardRecycleCardIds(cardState, playerState) {
-    const live = collectLiveCardIds(cardState, playerState);
-    const activeDrawPile = new Set(getDrawPileCardIds(cardState));
+  function getDiscardRecycleCardIds(cardsState, playersState) {
+    const live = collectLiveCardIds(cardsState, playersState);
+    const activeDrawPile = new Set(getDrawPileCardIds(cardsState));
     const seen = new Set();
     const cardIds = [];
 
-    if (!Array.isArray(cardState?.discardPile)) return cardIds;
-    for (const card of cardState.discardPile) {
+    if (!Array.isArray(cardsState?.discardPile)) return cardIds;
+    for (const card of cardsState.discardPile) {
       const cardId = getCardId(card);
       if (!cardId || seen.has(cardId) || live.has(cardId) || activeDrawPile.has(cardId)) continue;
       if (!getCatalogEntryByCardId(cardId)) continue;
@@ -451,20 +455,20 @@
     return cardIds;
   }
 
-  function getDiscardRecyclePool(cardState, playerState) {
-    return getDiscardRecycleCardIds(cardState, playerState)
+  function getDiscardRecyclePool(cardsState, playersState) {
+    return getDiscardRecycleCardIds(cardsState, playersState)
       .map((cardId) => getCatalogEntryByCardId(cardId))
       .filter(Boolean);
   }
 
-  function getAvailablePool(cardState, playerState) {
-    const activeDrawPool = getActiveDrawPool(cardState, playerState);
+  function getAvailablePool(cardsState, playersState) {
+    const activeDrawPool = getActiveDrawPool(cardsState, playersState);
     if (activeDrawPool.length) return activeDrawPool;
 
-    const freshPool = getFreshAvailablePool(cardState, playerState);
+    const freshPool = getFreshAvailablePool(cardsState, playersState);
     if (freshPool.length) return freshPool;
 
-    return getDiscardRecyclePool(cardState, playerState);
+    return getDiscardRecyclePool(cardsState, playersState);
   }
 
   function pickRandomEntry(pool, random = Math.random) {
@@ -472,8 +476,8 @@
     return pool[Math.floor(random() * pool.length)];
   }
 
-  function takeRandomEntryFromDrawPile(cardState, playerState, random = Math.random) {
-    const drawPile = sanitizeDrawPileCardIds(cardState, playerState);
+  function takeRandomEntryFromDrawPile(cardsState, playersState, random = Math.random) {
+    const drawPile = sanitizeDrawPileCardIds(cardsState, playersState);
     if (!drawPile.length) return null;
 
     const index = Math.floor(random() * drawPile.length);
@@ -481,27 +485,27 @@
     return getCatalogEntryByCardId(cardId);
   }
 
-  function recycleDiscardPileIntoDrawPile(cardState, playerState) {
-    const cardIds = getDiscardRecycleCardIds(cardState, playerState);
+  function recycleDiscardPileIntoDrawPile(cardsState, playersState) {
+    const cardIds = getDiscardRecycleCardIds(cardsState, playersState);
     if (!cardIds.length) return false;
 
     const recycled = new Set(cardIds);
-    cardState.discardPile = (cardState.discardPile || [])
+    cardsState.discardPile = (cardsState.discardPile || [])
       .filter((card) => !recycled.has(getCardId(card)));
-    cardState.drawPileCardIds = cardIds;
+    cardsState.drawPileCardIds = cardIds;
     return true;
   }
 
-  function takeRandomEntryForDraw(cardState, playerState, random = Math.random) {
-    const activeEntry = takeRandomEntryFromDrawPile(cardState, playerState, random);
+  function takeRandomEntryForDraw(cardsState, playersState, random = Math.random) {
+    const activeEntry = takeRandomEntryFromDrawPile(cardsState, playersState, random);
     if (activeEntry) return { entry: activeEntry, reshuffled: false };
 
-    const freshPool = getFreshAvailablePool(cardState, playerState);
+    const freshPool = getFreshAvailablePool(cardsState, playersState);
     const freshEntry = pickRandomEntry(freshPool, random);
     if (freshEntry) return { entry: freshEntry, reshuffled: false };
 
-    if (!recycleDiscardPileIntoDrawPile(cardState, playerState)) return null;
-    const recycledEntry = takeRandomEntryFromDrawPile(cardState, playerState, random);
+    if (!recycleDiscardPileIntoDrawPile(cardsState, playersState)) return null;
+    const recycledEntry = takeRandomEntryFromDrawPile(cardsState, playersState, random);
     return recycledEntry ? { entry: recycledEntry, reshuffled: true } : null;
   }
 
@@ -520,28 +524,28 @@
       .sort((a, b) => a - b);
   }
 
-  function ensurePassReservePiles(cardState) {
-    if (!cardState.passReservePiles || typeof cardState.passReservePiles !== "object") {
-      cardState.passReservePiles = {};
+  function ensurePassReservePiles(cardsState) {
+    if (!cardsState.passReservePiles || typeof cardsState.passReservePiles !== "object") {
+      cardsState.passReservePiles = {};
     }
-    return cardState.passReservePiles;
+    return cardsState.passReservePiles;
   }
 
-  function preparePassReservePiles(cardState, playerState, options = {}) {
+  function preparePassReservePiles(cardsState, playersState, options = {}) {
     const rounds = normalizePassReserveRounds(options.rounds);
     const activePlayerCount = Math.max(1, Math.round(Number(options.activePlayerCount) || 1));
     const cardsPerPile = activePlayerCount + 1;
     const random = options.random || Math.random;
     const createInstance = resolveCreateCardInstance(options);
 
-    cardState.passReservePiles = {};
-    const piles = ensurePassReservePiles(cardState);
+    cardsState.passReservePiles = {};
+    const piles = ensurePassReservePiles(cardsState);
 
     for (const roundNumber of rounds) {
       const pile = [];
       piles[String(roundNumber)] = pile;
       for (let index = 0; index < cardsPerPile; index += 1) {
-        const result = takeRandomEntryForDraw(cardState, playerState, random);
+        const result = takeRandomEntryForDraw(cardsState, playersState, random);
         if (!result?.entry) break;
         pile.push(createInstance(result.entry, `pass-${roundNumber}-${index + 1}`));
       }
@@ -555,19 +559,19 @@
     };
   }
 
-  function getPassReservePile(cardState, roundNumber) {
+  function getPassReservePile(cardsState, roundNumber) {
     const round = Math.round(Number(roundNumber));
     if (!Number.isInteger(round) || round <= 0) return [];
-    const pile = cardState?.passReservePiles?.[String(round)];
+    const pile = cardsState?.passReservePiles?.[String(round)];
     return Array.isArray(pile) ? pile : [];
   }
 
-  function pickPassReserveCard(cardState, player, roundNumber, cardId) {
+  function pickPassReserveCard(cardsState, player, roundNumber, cardId) {
     if (!player) {
       return { ok: false, message: "没有当前玩家", card: null };
     }
 
-    const pile = getPassReservePile(cardState, roundNumber);
+    const pile = getPassReservePile(cardsState, roundNumber);
     if (!pile.length) {
       return { ok: false, message: "本轮没有可选 PASS 预留牌", card: null };
     }
@@ -588,15 +592,15 @@
     };
   }
 
-  function discardUnusedPassReserveCards(cardState, roundNumber) {
-    const pile = getPassReservePile(cardState, roundNumber);
+  function discardUnusedPassReserveCards(cardsState, roundNumber) {
+    const pile = getPassReservePile(cardsState, roundNumber);
     if (!pile.length) {
       return { ok: true, cards: [], message: "本轮没有剩余 PASS 预留牌" };
     }
 
     const discarded = pile.splice(0);
     for (const card of discarded) {
-      addToDiscardPile(cardState, card);
+      addToDiscardPile(cardsState, card);
     }
     return {
       ok: true,
@@ -605,12 +609,12 @@
     };
   }
 
-  function blindDraw(cardState, playerState, player, random = Math.random, options = {}) {
+  function blindDraw(cardsState, playersState, player, random = Math.random, options = {}) {
     if (!player) {
       return { ok: false, message: "没有当前玩家", card: null };
     }
 
-    const result = takeRandomEntryForDraw(cardState, playerState, random);
+    const result = takeRandomEntryForDraw(cardsState, playersState, random);
     if (!result?.entry) {
       return { ok: false, message: "牌库已无可用卡牌", card: null };
     }
@@ -621,14 +625,14 @@
     return { ok: true, message: null, card, reshuffled: Boolean(result.reshuffled) };
   }
 
-  function replenishPublicSlot(cardState, playerState, slotIndex, random = Math.random, options = {}) {
-    const result = takeRandomEntryForDraw(cardState, playerState, random);
+  function replenishPublicSlot(cardsState, playersState, slotIndex, random = Math.random, options = {}) {
+    const result = takeRandomEntryForDraw(cardsState, playersState, random);
     const createInstance = resolveCreateCardInstance(options);
-    cardState.publicCards[slotIndex] = result?.entry ? createInstance(result.entry) : null;
-    return cardState.publicCards[slotIndex];
+    cardsState.publicCards[slotIndex] = result?.entry ? createInstance(result.entry) : null;
+    return cardsState.publicCards[slotIndex];
   }
 
-  function pickFromPublic(cardState, playerState, player, slotIndex, random = Math.random, options = {}) {
+  function pickFromPublic(cardsState, playersState, player, slotIndex, random = Math.random, options = {}) {
     if (!player) {
       return { ok: false, message: "没有当前玩家", card: null };
     }
@@ -638,26 +642,26 @@
       return { ok: false, message: "无效的公共牌位置", card: null };
     }
 
-    const card = cardState.publicCards[index];
+    const card = cardsState.publicCards[index];
     if (!card) {
       return { ok: false, message: "该公共牌位没有卡牌", card: null };
     }
 
     addCardToHand(player, card);
-    const replenished = replenishPublicSlot(cardState, playerState, index, random, options);
+    const replenished = replenishPublicSlot(cardsState, playersState, index, random, options);
 
     return {
       ok: true,
       message: null,
       card,
       replenished,
-      publicCards: cardState.publicCards.slice(),
+      publicCards: cardsState.publicCards.slice(),
     };
   }
 
-  function countPublicCards(cardState) {
-    if (!Array.isArray(cardState?.publicCards)) return 0;
-    return cardState.publicCards.filter(Boolean).length;
+  function countPublicCards(cardsState) {
+    if (!Array.isArray(cardsState?.publicCards)) return 0;
+    return cardsState.publicCards.filter(Boolean).length;
   }
 
   function normalizeSkipSlotIndexes(options = {}) {
@@ -666,27 +670,27 @@
       .filter((slotIndex) => Number.isInteger(slotIndex)));
   }
 
-  function fillPublicCards(cardState, playerState, random = Math.random, options = {}) {
+  function fillPublicCards(cardsState, playersState, random = Math.random, options = {}) {
     const skipSlotIndexes = normalizeSkipSlotIndexes(options);
     for (let index = 0; index < PUBLIC_CARD_COUNT; index += 1) {
       if (skipSlotIndexes.has(index)) continue;
-      if (!cardState.publicCards[index]) {
-        replenishPublicSlot(cardState, playerState, index, random, options);
+      if (!cardsState.publicCards[index]) {
+        replenishPublicSlot(cardsState, playersState, index, random, options);
       }
     }
-    return cardState.publicCards.slice();
+    return cardsState.publicCards.slice();
   }
 
-  function ensurePublicCardsFilled(cardState, playerState, random = Math.random, options = {}) {
-    return fillPublicCards(cardState, playerState, random, options);
+  function ensurePublicCardsFilled(cardsState, playersState, random = Math.random, options = {}) {
+    return fillPublicCards(cardsState, playersState, random, options);
   }
 
-  function drawCardsToHand(cardState, playerState, player, count, random = Math.random, options = {}) {
+  function drawCardsToHand(cardsState, playersState, player, count, random = Math.random, options = {}) {
     const drawn = [];
     const target = Math.max(0, Math.round(count));
 
     for (let index = 0; index < target; index += 1) {
-      const result = blindDraw(cardState, playerState, player, random, options);
+      const result = blindDraw(cardsState, playersState, player, random, options);
       if (!result.ok) {
         return {
           ok: drawn.length > 0,
@@ -724,64 +728,64 @@
     return { ok: true, message: null, card: discarded };
   }
 
-  function addToDiscardPile(cardState, card) {
+  function addToDiscardPile(cardsState, card) {
     if (!card) return;
-    if (!Array.isArray(cardState.discardPile)) cardState.discardPile = [];
-    removeCardIdFromDrawPile(cardState, getCardId(card));
-    cardState.discardPile.push(card);
+    if (!Array.isArray(cardsState.discardPile)) cardsState.discardPile = [];
+    removeCardIdFromDrawPile(cardsState, getCardId(card));
+    cardsState.discardPile.push(card);
   }
 
-  function setSelectionActive(cardState, active) {
-    cardState.ui.selectionActive = Boolean(active);
-    return cardState.ui.selectionActive;
+  function setSelectionActive(cardsState, active) {
+    cardsState.ui.selectionActive = Boolean(active);
+    return cardsState.ui.selectionActive;
   }
 
-  function isSelectionActive(cardState) {
-    return Boolean(cardState?.ui?.selectionActive);
+  function isSelectionActive(cardsState) {
+    return Boolean(cardsState?.ui?.selectionActive);
   }
 
-  function setDiscardSelectionActive(cardState, active, remaining = 0) {
-    cardState.ui.discardSelectionActive = Boolean(active);
-    cardState.ui.discardRemaining = active
+  function setDiscardSelectionActive(cardsState, active, remaining = 0) {
+    cardsState.ui.discardSelectionActive = Boolean(active);
+    cardsState.ui.discardRemaining = active
       ? Math.max(0, Math.round(remaining))
       : 0;
-    return cardState.ui.discardSelectionActive;
+    return cardsState.ui.discardSelectionActive;
   }
 
-  function isDiscardSelectionActive(cardState) {
-    return Boolean(cardState?.ui?.discardSelectionActive);
+  function isDiscardSelectionActive(cardsState) {
+    return Boolean(cardsState?.ui?.discardSelectionActive);
   }
 
-  function setPlayCardSelectionActive(cardState, active) {
-    cardState.ui.playCardSelectionActive = Boolean(active);
-    return cardState.ui.playCardSelectionActive;
+  function setPlayCardSelectionActive(cardsState, active) {
+    cardsState.ui.playCardSelectionActive = Boolean(active);
+    return cardsState.ui.playCardSelectionActive;
   }
 
-  function isPlayCardSelectionActive(cardState) {
-    return Boolean(cardState?.ui?.playCardSelectionActive);
+  function isPlayCardSelectionActive(cardsState) {
+    return Boolean(cardsState?.ui?.playCardSelectionActive);
   }
 
-  function getDiscardRemaining(cardState) {
-    return Math.max(0, Math.round(cardState?.ui?.discardRemaining || 0));
+  function getDiscardRemaining(cardsState) {
+    return Math.max(0, Math.round(cardsState?.ui?.discardRemaining || 0));
   }
 
-  function decrementDiscardRemaining(cardState) {
-    cardState.ui.discardRemaining = Math.max(0, getDiscardRemaining(cardState) - 1);
-    return cardState.ui.discardRemaining;
+  function decrementDiscardRemaining(cardsState) {
+    cardsState.ui.discardRemaining = Math.max(0, getDiscardRemaining(cardsState) - 1);
+    return cardsState.ui.discardRemaining;
   }
 
-  function initializeDeck(cardState, playerState, options = {}) {
+  function initializeDeck(cardsState, playersState, options = {}) {
     const random = options.random || Math.random;
     const handCount = Math.max(0, Math.round(options.handCount ?? 0));
     const player = options.player;
 
     if (player && handCount > 0) {
-      drawCardsToHand(cardState, playerState, player, handCount, random, options);
+      drawCardsToHand(cardsState, playersState, player, handCount, random, options);
     }
 
-    ensurePublicCardsFilled(cardState, playerState, random, options);
+    ensurePublicCardsFilled(cardsState, playersState, random, options);
 
-    return cardState;
+    return cardsState;
   }
 
   function getCatalogSize() {

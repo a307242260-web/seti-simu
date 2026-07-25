@@ -42,7 +42,7 @@ assert.deepEqual(
 );
 for (const forbidden of [
   "stateSourcePort", "productionActionRegistry", "productionActionOwners",
-  "productionActionExecutorOwners", "executor", "provider", "workingRoot",
+  "productionActionExecutorOwners", "executor", "provider", "canonicalState",
 ]) {
   assert.equal(Object.hasOwn(composition, forbidden), false, `Browser facade 不得暴露 ${forbidden}`);
 }

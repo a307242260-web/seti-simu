@@ -16,7 +16,7 @@ assert.deepEqual(result.domainIds, [
 
 for (const source of [
   "const RuleBridge = { dispatch() {} };",
-  "projection.playerState.players[0].credits = 10;",
+  "projection.players.players[0].credits = 10;",
   "function createLaunchExecutor() {}",
   "if (reason === 'unsupported') return { ok: true };",
 ]) {

@@ -13,7 +13,7 @@ assert.throws(
   (error) => error.code === "PLAYER_TECH_LEGACY_FIELD_FORBIDDEN" && error.path === "$.techState.blueBoardSlot",
 );
 
-const playerState = players.createPlayerState({
+const playersState = players.createPlayerState({
   currentPlayer: {
     color: "white",
     resources: {
@@ -27,7 +27,7 @@ const playerState = players.createPlayerState({
   },
 });
 
-const currentPlayer = players.getCurrentPlayer(playerState);
+const currentPlayer = players.getCurrentPlayer(playersState);
 assert.equal(currentPlayer.id, "player-white");
 assert.equal(currentPlayer.color, "white");
 assert.equal(currentPlayer.colorLabel, "白色");

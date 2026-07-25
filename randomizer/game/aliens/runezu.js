@@ -682,8 +682,8 @@
     return slot;
   }
 
-  function listAvailableFirstTakeTechTileIds(techBoardState) {
-    const stacks = techBoardState?.stacks || {};
+  function listAvailableFirstTakeTechTileIds(techState) {
+    const stacks = techState?.stacks || {};
     const result = [];
     for (const tileId of TECH_SOURCE_IDS) {
       const stack = stacks[tileId];
@@ -705,7 +705,7 @@
     }
     const techIds = Array.isArray(options.techTileIds)
       ? options.techTileIds
-      : listAvailableFirstTakeTechTileIds(options.techBoardState);
+      : listAvailableFirstTakeTechTileIds(options.tech);
     for (const tileId of techIds) {
       if (TECH_SOURCE_IDS.includes(tileId)) assignSourceSymbol(runezuState, "tech", tileId, random);
     }
