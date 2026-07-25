@@ -77,49 +77,8 @@
         </div>
       </section>
 
-      <section class="table-panel alien-panel" aria-label="外星人 1" data-alien-slot="1">
-        <div class="alien-jiuzhe-thresholds" data-alien-slot="1" hidden></div>
-        <div class="alien-banrenma-scoremarks" data-alien-slot="1" hidden></div>
-        <div class="alien-stack">
-          <div class="alien-face-wrap">
-            <img class="alien-back" src="../assets/aliens/back.png" alt="外星人 1 牌背" width="777" height="1415" decoding="async">
-            <div class="alien-jiuzhe-trace-layer" data-alien-slot="1" aria-hidden="true"></div>
-          </div>
-          <div class="alien-state-wrap">
-            <img class="alien-state" src="../assets/aliens/state1.png" alt="外星人 1 状态" width="443" height="208" decoding="async">
-            <div class="alien-trace-layer" data-alien-slot="1" aria-hidden="true"></div>
-          </div>
-          <div class="alien-yichangdian-card-area" data-alien-slot="1" hidden></div>
-          <div class="alien-fangzhou-card-area" data-alien-slot="1" hidden></div>
-          <div class="alien-banrenma-card-area" data-alien-slot="1" hidden></div>
-          <div class="alien-chong-card-area" data-alien-slot="1" hidden></div>
-          <div class="alien-amiba-card-area" data-alien-slot="1" hidden></div>
-          <div class="alien-aomomo-card-area" data-alien-slot="1" hidden></div>
-          <div class="alien-runezu-card-area" data-alien-slot="1" hidden></div>
-        </div>
-      </section>
-
-      <section class="table-panel alien-panel" aria-label="外星人 2" data-alien-slot="2">
-        <div class="alien-jiuzhe-thresholds" data-alien-slot="2" hidden></div>
-        <div class="alien-banrenma-scoremarks" data-alien-slot="2" hidden></div>
-        <div class="alien-stack">
-          <div class="alien-face-wrap">
-            <img class="alien-back" src="../assets/aliens/back.png" alt="外星人 2 牌背" width="777" height="1415" decoding="async">
-            <div class="alien-jiuzhe-trace-layer" data-alien-slot="2" aria-hidden="true"></div>
-          </div>
-          <div class="alien-state-wrap">
-            <img class="alien-state" src="../assets/aliens/state2.png" alt="外星人 2 状态" width="443" height="208" decoding="async">
-            <div class="alien-trace-layer" data-alien-slot="2" aria-hidden="true"></div>
-          </div>
-          <div class="alien-yichangdian-card-area" data-alien-slot="2" hidden></div>
-          <div class="alien-fangzhou-card-area" data-alien-slot="2" hidden></div>
-          <div class="alien-banrenma-card-area" data-alien-slot="2" hidden></div>
-          <div class="alien-chong-card-area" data-alien-slot="2" hidden></div>
-          <div class="alien-amiba-card-area" data-alien-slot="2" hidden></div>
-          <div class="alien-aomomo-card-area" data-alien-slot="2" hidden></div>
-          <div class="alien-runezu-card-area" data-alien-slot="2" hidden></div>
-        </div>
-      </section>
+      <section class="table-panel alien-panel" aria-label="外星人 1" data-alien-slot-root="1"></section>
+      <section class="table-panel alien-panel" aria-label="外星人 2" data-alien-slot-root="2"></section>
     </aside>
 
     <main class="board-column">
@@ -492,7 +451,7 @@
   <script src="./game/ai/heuristic-policy.js?v=heuristic-policy-v2"></script>
   <script src="./game/ai/index.js?v=ai-race-model-1"></script>
   <script src="./app/browser-host/projection-adapter.js?v=browser-host-v1"></script>
-  <script src="./app/browser-host/view-state-store.js?v=browser-host-v1"></script>
+  <script src="./app/browser-host/view-state-store.js?v=browser-view-state-v2"></script>
   <script src="./app/browser-host/input-adapter.js?v=browser-host-v1"></script>
   <script src="./app/browser-host/policy-input-adapter.js?v=browser-machine-player-v1"></script>
   <script src="./app/browser-host/action-bar.js?v=browser-host-action-bar-v1"></script>

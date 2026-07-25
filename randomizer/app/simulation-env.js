@@ -244,7 +244,6 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       (playersState.players || []).find((player) => player.id === perspectivePlayerId) || null,
     ),
     decision,
-    actionHistorySummary: { count: (state.match?.actionLog || []).length },
     probeRouteRequirements: clone(state.probeRouteRequirements || null),
     terminal: Boolean(turn.gameEnded),
   };

@@ -7,7 +7,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "seti-browser-host-v1";
+  const SCHEMA_VERSION = "seti-browser-view-state-v2";
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -22,16 +22,8 @@
   function createInitialState() {
     return {
       schemaVersion: SCHEMA_VERSION,
-      status: { note: "" },
-      overlay: { activeId: null, minimizedIds: [] },
-      hover: { entityRef: null, anchorRef: null },
       focus: { entityRef: null, controlId: null },
-      tabs: { report: null, playerPanel: null, alienPanel: null },
-      scroll: {},
-      layout: { viewport: null, panelSizes: {}, collapsedRegions: [] },
       draft: { intentKind: null, selectedChoiceIds: [], text: "" },
-      animation: { acknowledgedEventIds: [] },
-      debug: { panelOpen: false, playerMenuOpen: false, sectorCalibration: false },
       projection: { projectionId: null, decisionId: null, decisionVersion: null },
     };
   }
@@ -45,7 +37,7 @@
     if (expected.length !== actual.length || expected.some((key, index) => key !== actual[index])) {
       return deepFreeze({ ok: false, code: "VIEW_STATE_ROOT_FIELDS_INVALID" });
     }
-    const required = ["status", "overlay", "hover", "focus", "tabs", "scroll", "layout", "draft", "animation", "debug", "projection"];
+    const required = ["focus", "draft", "projection"];
     if (required.some((key) => snapshot[key] == null || typeof snapshot[key] !== "object" || Array.isArray(snapshot[key]))) {
       return deepFreeze({ ok: false, code: "VIEW_STATE_SNAPSHOT_INVALID" });
     }
@@ -74,51 +66,11 @@
       const type = intent?.type;
       const next = clone(state);
       switch (type) {
-        case "status.set":
-          next.status.note = String(intent.note ?? "");
-          break;
-        case "status.clear":
-          next.status.note = "";
-          break;
-        case "overlay.set":
-          next.overlay.activeId = intent.activeId == null ? null : String(intent.activeId);
-          break;
-        case "overlay.minimize": {
-          const id = String(intent.overlayId);
-          next.overlay.minimizedIds = uniqueStrings([...next.overlay.minimizedIds, id]);
-          if (next.overlay.activeId === id) next.overlay.activeId = null;
-          break;
-        }
-        case "hover.set":
-          next.hover = { entityRef: clone(intent.entityRef || null), anchorRef: clone(intent.anchorRef || null) };
-          break;
-        case "hover.clear":
-          next.hover = { entityRef: null, anchorRef: null };
-          break;
         case "focus.set":
           next.focus = { entityRef: clone(intent.entityRef || null), controlId: intent.controlId || null };
           break;
         case "focus.clear":
           next.focus = { entityRef: null, controlId: null };
-          break;
-        case "tabs.set":
-          if (!["report", "playerPanel", "alienPanel"].includes(intent.tabGroup)) {
-            return deepFreeze({ ok: false, code: "VIEW_STATE_TAB_GROUP_UNKNOWN" });
-          }
-          next.tabs[intent.tabGroup] = intent.value == null ? null : String(intent.value);
-          break;
-        case "scroll.set":
-          if (!intent.regionId || !Number.isFinite(intent.offset)) {
-            return deepFreeze({ ok: false, code: "VIEW_STATE_SCROLL_INVALID" });
-          }
-          next.scroll[String(intent.regionId)] = intent.offset;
-          break;
-        case "layout.set":
-          next.layout = {
-            viewport: clone(intent.viewport ?? next.layout.viewport),
-            panelSizes: clone(intent.panelSizes ?? next.layout.panelSizes),
-            collapsedRegions: uniqueStrings(intent.collapsedRegions ?? next.layout.collapsedRegions),
-          };
           break;
         case "draft.set":
           next.draft.intentKind = intent.intentKind == null ? null : String(intent.intentKind);
@@ -134,22 +86,6 @@
         }
         case "draft.clear":
           next.draft = { intentKind: null, selectedChoiceIds: [], text: "" };
-          break;
-        case "animation.acknowledge":
-          next.animation.acknowledgedEventIds = uniqueStrings([
-            ...next.animation.acknowledgedEventIds,
-            ...(intent.eventIds || []),
-          ]);
-          break;
-        case "debug.panel":
-          next.debug.panelOpen = Boolean(intent.open);
-          if (!next.debug.panelOpen) next.debug.playerMenuOpen = false;
-          break;
-        case "debug.playerMenu":
-          next.debug.playerMenuOpen = Boolean(intent.open) && next.debug.panelOpen;
-          break;
-        case "debug.sectorCalibration":
-          next.debug.sectorCalibration = Boolean(intent.active);
           break;
         case "reset":
           state = createInitialState();

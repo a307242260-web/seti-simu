@@ -35,7 +35,7 @@
   ]);
   const RENDER_KEYS = Object.freeze([
     "boardChrome", "tokenPresentation", "playerPanels", "turnPresentation", "cardPanels",
-    "dataPresentation", "markerPresentation", "techTilePresentation",
+    "dataPresentation", "markerPresentation", "alienPresentation", "techTilePresentation",
     "finalScorePresentation", "readoutLines",
   ]);
   const BOARD_CHROME_KEYS = Object.freeze([
@@ -52,6 +52,7 @@
   const MARKER_PRESENTATION_KEYS = Object.freeze([
     "anomalies", "planetFossils", "runezuSymbols",
   ]);
+  const ALIEN_PRESENTATION_KEYS = Object.freeze(["slots"]);
   const TECH_TILE_PRESENTATION_KEYS = Object.freeze(["supplyTiles", "playerTiles"]);
   const FINAL_SCORE_PRESENTATION_KEYS = Object.freeze(["breakdownsByPlayerId"]);
 
@@ -233,6 +234,7 @@
         planetFossils: [],
         runezuSymbols: [],
       },
+      alienPresentation: { slots: [] },
       techTilePresentation: { supplyTiles: [], playerTiles: [] },
       finalScorePresentation: { breakdownsByPlayerId: {} },
       readoutLines: [],
@@ -293,6 +295,11 @@
       render.markerPresentation,
       MARKER_PRESENTATION_KEYS,
       "BrowserReadModel.render.markerPresentation",
+    );
+    assertExactKeys(
+      render.alienPresentation,
+      ALIEN_PRESENTATION_KEYS,
+      "BrowserReadModel.render.alienPresentation",
     );
     assertExactKeys(
       render.techTilePresentation,

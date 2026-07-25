@@ -32,6 +32,8 @@
     ["solar", "SetiSolarSystem"],
     ["planetReferenceLayout", "SetiPlanetReferenceLayout"],
     ["planetStats", "SetiPlanetStats"],
+    ["alienPlacement", "SetiAlienPlacement"],
+    ["data", "SetiData"],
     ["aliens", "SetiAliens"],
     ["tech", "SetiTech"],
   ]);

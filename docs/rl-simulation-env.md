@@ -63,7 +63,6 @@ Observation schema 为 `seti-rl-observation-v1`：
   publicState,
   selfState,
   decision,
-  actionHistorySummary,
   probeRouteRequirements,
   terminal,
 }
@@ -74,7 +73,6 @@ Observation schema 为 `seti-rl-observation-v1`：
 - `selfState` 才包含该 viewer 的手牌、保留牌、公司私有状态、外星人牌和任务状态。
 - 对手手牌、牌库顺序、未来 RNG、未揭示外星人、executor、callback、recovery snapshot、
   Policy/heuristic score 和 Browser ViewState 不得进入 observation。
-- `actionHistorySummary` 是公开行动日志的计数摘要，不是旧事务 history owner。
 
 ## State、Checkpoint 与 Replay
 

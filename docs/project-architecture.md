@@ -46,7 +46,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 ## 状态与恢复
 
-规则事实只有两种合法形态：StateStore 的 committed snapshot，以及基于其 `baseVersion` 创建的单个 Effect Session working copy。Browser ViewState、行动日志、observation、replay 和训练 checkpoint 都是宿主或派生产物，不得反向覆盖规则事实。
+规则事实只有两种合法形态：StateStore 的 committed snapshot，以及基于其 `baseVersion` 创建的单个 Effect Session working copy。Browser ViewState、observation、session journal、replay 和训练 checkpoint 都是宿主或派生产物，不得反向覆盖规则事实。
 
 浏览器恢复包与 simulation checkpoint 只接受当前 schema。旧版本、缺版本、未知 root、未知 Action/Decision/Effect family、stale decision 和非法 Policy 输出均在调用提交/恢复端口前 fail-closed，不迁移、不猜测、不取首项。
 

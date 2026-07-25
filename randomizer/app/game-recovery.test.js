@@ -27,13 +27,17 @@ const checkpoint = recovery.createBrowserCheckpointAdapter({
   now: () => new Date("2026-07-25T00:00:00.000Z"),
 });
 
-view.dispatch({ type: "overlay.set", activeId: "report" });
+view.dispatch({
+  type: "focus.set",
+  entityRef: { kind: "tech-tile", id: "blue-1" },
+  controlId: null,
+});
 const captured = checkpoint.capture();
 assert.equal(captured.ok, true);
 assert.equal(captured.envelope.schemaVersion, recovery.BROWSER_CHECKPOINT_SCHEMA_VERSION);
 assert.equal(captured.envelope.savedAt, "2026-07-25T00:00:00.000Z");
 assert.equal(captured.envelope.rules.envelope.committedState, "round-4");
-assert.equal(captured.envelope.view.state.overlay.activeId, "report");
+assert.equal(captured.envelope.view.state.focus.entityRef.id, "blue-1");
 
 ruleEnvelope = { schemaVersion: RULE_SCHEMA, committedState: "round-1", session: null };
 view.clear();
@@ -42,7 +46,7 @@ assert.equal(restored.ok, true);
 assert.equal(restored.stateVersion, 11);
 assert.equal(restored.viewRestored, true);
 assert.equal(ruleEnvelope.committedState, "round-4");
-assert.equal(view.getSnapshot().overlay.activeId, "report");
+assert.equal(view.getSnapshot().focus.entityRef.id, "blue-1");
 
 for (const invalid of [
   null,

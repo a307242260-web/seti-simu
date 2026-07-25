@@ -62,11 +62,16 @@ function createFixture() {
   techTile.dataset.techId = "blue1";
   const techBonus = createElement("img");
   techBonus.dataset.techBonusFor = "blue1";
+  const techOverlay = createElement("img");
+  techOverlay.dataset.techOverlayFor = "blue1";
   const finalTile = createElement("img");
   finalTile.dataset.finalId = "a";
+  const alienSlot = createElement("section");
+  alienSlot.dataset.alienSlotRoot = "1";
   const els = {
     roundStatusRound: createElement("span"),
     roundStatusTurn: createElement("span"),
+    roundStatusToken: createElement("img"),
     playerStats: createElement("div"),
     opponentStatGrid: createElement("div"),
     publicCardRow: createElement("div"),
@@ -84,8 +89,10 @@ function createFixture() {
     finalScoreTiles: [finalTile],
     techTiles: [techTile],
     techBonuses: [techBonus],
+    techOverlays: [techOverlay],
     playerBoardTechLayer: createElement("div"),
     playerBoardDataLayer: createElement("div"),
+    alienSlots: [alienSlot],
   };
   return { document, els };
 }
@@ -133,6 +140,11 @@ function createProjection() {
   assert.equal(fixture.els.roundStatusRound.textContent, "第 2 轮");
   assert.equal(fixture.els.publicCardRow.children[0].children[0].dataset.cardId, "public-1");
   assert.equal(fixture.els.techTiles[0].hidden, true);
+  assert.equal(
+    fixture.els.finalScoreTileWraps[0]
+      .querySelector(".final-score-token-layer").children[0].style.values["--final-token-x"],
+    "18.5%",
+  );
 })();
 
 (function testDefaultProjectionSupportsCommittedArraySlicesWithoutLeaks() {
@@ -235,6 +247,7 @@ function createProjection() {
   const renderer = rendererApi.createResidentRenderer(fixture);
   const projection = {
     schemaVersion: rendererApi.SCHEMA_VERSION,
+    match: {},
     resident: {
       browserReadModel: {
         render: {
@@ -269,6 +282,7 @@ function createProjection() {
               tileId: "blue1",
               remaining: 3,
               bonusImageSrc: "bonus.webp",
+              firstTakeAvailable: false,
             }],
             playerTiles: [{
               tileId: "blue2",
@@ -296,6 +310,7 @@ function createProjection() {
   assert.equal(fixture.els.techTiles[0].hidden, false);
   assert.equal(fixture.els.techTiles[0].dataset.remaining, "3");
   assert.equal(fixture.els.techBonuses[0].src, "bonus.webp");
+  assert.equal(fixture.els.techOverlays[0].hidden, true);
   assert.equal(fixture.els.playerBoardTechLayer.children[0].dataset.techId, "blue2");
   assert.equal(fixture.els.playerBoardTechLayer.children[0].style.values["--x"], "49%");
   assert.equal(fixture.els.playerBoardDataLayer.children[0].dataset.tokenId, "data-1");
@@ -307,12 +322,32 @@ function createProjection() {
   const renderer = rendererApi.createResidentRenderer(fixture);
   const projection = {
     schemaVersion: rendererApi.SCHEMA_VERSION,
+    match: {},
     resident: {
       browserReadModel: {
         render: {
           boardChrome: {
             wheelTransforms: [{ wheelId: 1, degrees: -45 }],
             sectors: [{ slotId: 1, sectorId: 3 }],
+            rotateTokenSlot: { id: "bottom-left", percentX: 34.15, percentY: 71.18 },
+          },
+          dataPresentation: {
+            sectorTokensBySectorId: {
+              3: {
+                tokens: [{
+                  id: "nebula-1",
+                  nebulaId: "sector-3-a",
+                  imageSrc: "data.png",
+                  layout: { percentX: 47, percentY: 58 },
+                }],
+                wins: [{
+                  id: "win-1",
+                  imageSrc: "blue-token.png",
+                  layout: { percentX: 72, percentY: 35, scalePercent: 8 },
+                }],
+              },
+            },
+            aomomoTokens: [],
           },
           tokenPresentation: {
             tokens: [{
@@ -340,11 +375,56 @@ function createProjection() {
     },
   };
   renderer.renderSolarSystem({ projection, viewState: {} });
+  renderer.renderRoundStatus({ projection, viewState: {} });
   assert.equal(fixture.els.wheels[1].style.values.transform, "rotate(-45deg)");
   assert.equal(fixture.els.sectorWraps[1].children[0].className, "sector sector-3");
+  assert.equal(
+    fixture.els.sectorWraps[1].children[0].children[0].children[0].dataset.tokenId,
+    "nebula-1",
+  );
+  assert.equal(fixture.els.sectorWraps[1].children[0].children[1].dataset.winId, "win-1");
   assert.equal(fixture.els.tokenLayer.children[0].style.values.left, "42%");
   assert.equal(fixture.els.planetsTokenLayer.children[0].dataset.pieceId, "planet:venus:orbit:1");
   assert.match(fixture.els.planetsTokenLayer.children[0].className, /is-reference-orbit/);
+  assert.equal(fixture.els.roundStatusToken.dataset.slotId, "bottom-left");
+})();
+
+(function testAlienPanelsAreRebuiltFromRenderProjection() {
+  const fixture = createFixture();
+  const renderer = rendererApi.createResidentRenderer(fixture);
+  const projection = {
+    schemaVersion: rendererApi.SCHEMA_VERSION,
+    resident: {
+      browserReadModel: {
+        render: {
+          alienPresentation: {
+            slots: [{
+              slotId: 1,
+              revealed: true,
+              alienId: "九折",
+              label: "九折",
+              faceImageSrc: "face.png",
+              stateImageSrc: "state.png",
+              traces: [{
+                id: "trace-1",
+                traceType: "yellow",
+                color: "blue",
+                imageSrc: "token.png",
+                surface: "face",
+                layout: { percentX: 50, percentY: 40, scalePercent: 62 },
+              }],
+            }],
+          },
+        },
+      },
+    },
+  };
+  renderer.renderAliens({ projection, viewState: {} });
+  const root = fixture.els.alienSlots[0];
+  assert.equal(root.dataset.alienId, "九折");
+  assert.equal(root.children[1].children[0].src, "face.png");
+  assert.equal(root.children[1].children[1].style.values.left, "50%");
+  assert.equal(root.children[2].children[0].src, "state.png");
 })();
 
 console.log("resident-renderer tests passed");

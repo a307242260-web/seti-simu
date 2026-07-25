@@ -27,6 +27,8 @@
     solar,
     planetReferenceLayout,
     planetStats,
+    alienPlacement,
+    data,
     aliens,
     tech,
   } = dependencies;
@@ -162,6 +164,343 @@
       }
       return result;
     }
+    const speciesPresentation = {
+      九折: {
+        api: aliens.jiuzhe,
+        layout: alienPlacement.getJiuzheTraceMarkerLayout,
+      },
+      异常点: {
+        api: aliens.yichangdian,
+        layout: alienPlacement.getYichangdianTraceMarkerLayout,
+      },
+      方舟: {
+        api: aliens.fangzhou,
+        layout: alienPlacement.getFangzhouTraceMarkerLayout,
+      },
+      半人马: {
+        api: aliens.banrenma,
+        layout: alienPlacement.getBanrenmaTraceMarkerLayout,
+      },
+      虫: {
+        api: aliens.chong,
+        layout: alienPlacement.getChongTraceMarkerLayout,
+      },
+      阿米巴: {
+        api: aliens.amiba,
+        layout: alienPlacement.getAmibaTraceMarkerLayout,
+      },
+      奥陌陌: {
+        api: aliens.aomomo,
+        layout: alienPlacement.getAomomoTraceMarkerLayout,
+      },
+      符文族: {
+        api: aliens.runezu,
+        layout: alienPlacement.getRunezuTraceMarkerLayout,
+      },
+    };
+    const displayedCardIndexField = {
+      异常点: "displayedCardIndex",
+      方舟: "displayedCard1Index",
+      半人马: "displayedCardIndex",
+      虫: "displayedCardIndex",
+      阿米巴: "displayedCardIndex",
+      奥陌陌: "displayedCardIndex",
+      符文族: "displayedCardIndex",
+    };
+    function traceImageSrc(color) {
+      return markerAssets.orbit[color] || "../assets/tokens/normal_token.png";
+    }
+    function presentGenericTraces(slotId, slot) {
+      const traces = [];
+      for (const traceType of aliens.TRACE_TYPES) {
+        const traceSlot = slot?.traces?.[traceType];
+        const firstLayout = aliens.getAlienTraceMarkerLayout(slotId, traceType);
+        if (traceSlot?.firstPlaced && firstLayout) {
+          traces.push({
+            id: `alien:${slotId}:${traceType}:first`,
+            traceType,
+            color: traceSlot.ownerPlayerColor,
+            imageSrc: traceImageSrc(traceSlot.ownerPlayerColor),
+            layout: structuredClone(firstLayout),
+            surface: "state",
+          });
+        }
+        const extraLayout = aliens.getAlienExtraTraceMarkerLayout(slotId, traceType);
+        for (let index = 0; index < Number(traceSlot?.extraCount || 0); index += 1) {
+          const color = aliens.getExtraTraceOwnerColor(traceSlot, index);
+          traces.push({
+            id: `alien:${slotId}:${traceType}:extra:${index + 1}`,
+            traceType,
+            color,
+            imageSrc: traceImageSrc(color),
+            layout: {
+              ...structuredClone(extraLayout),
+              percentX: Number(extraLayout?.percentX) + (index % 3 - 1) * 13,
+              percentY: Number(extraLayout?.percentY) + (Math.floor(index / 3) - 1) * 13,
+            },
+            surface: "state",
+          });
+        }
+      }
+      return traces;
+    }
+    function presentSpeciesTraces(slotId, alienId) {
+      const species = speciesPresentation[alienId];
+      const grid = species?.api?.getTraceGrid?.(state.aliens, slotId);
+      if (!grid) return [];
+      const traces = [];
+      for (const traceType of aliens.TRACE_TYPES) {
+        for (const [position, value] of Object.entries(grid[traceType] || {})) {
+          const entries = Array.isArray(value) ? value : value ? [value] : [];
+          entries.forEach((entry, stackIndex) => {
+            const layout = species.layout?.(slotId, traceType, Number(position));
+            if (!layout) return;
+            const color = entry?.playerColor || entry?.ownerPlayerColor || entry?.color || null;
+            traces.push({
+              id: entry?.id || `alien:${slotId}:${alienId}:${traceType}:${position}:${stackIndex}`,
+              traceType,
+              color,
+              imageSrc: traceImageSrc(color),
+              layout: {
+                ...structuredClone(layout),
+                percentY: Number(layout.percentY) - stackIndex * 5,
+              },
+              surface: "face",
+            });
+          });
+        }
+      }
+      return traces;
+    }
+    function presentAlienSlots() {
+      return aliens.ALIEN_SLOT_IDS.map((slotId) => {
+        const slot = aliens.getAlienSlot(state.aliens, slotId);
+        const alienId = slot?.revealed ? slot.alienId : null;
+        const species = speciesPresentation[alienId];
+        const stateKey = {
+          九折: "jiuzhe",
+          异常点: "yichangdian",
+          方舟: "fangzhou",
+          半人马: "banrenma",
+          虫: "chong",
+          阿米巴: "amiba",
+          奥陌陌: "aomomo",
+          符文族: "runezu",
+        }[alienId];
+        const resolvedSpeciesState = state.aliens?.[stateKey] || null;
+        const displayedCardIndex = resolvedSpeciesState?.[displayedCardIndexField[alienId]];
+        const statusLines = [];
+        if (alienId === "九折") {
+          if (resolvedSpeciesState?.freeScoreThreshold != null) {
+            statusLines.push(`免费阈值 ${resolvedSpeciesState.freeScoreThreshold}`);
+          }
+          if (resolvedSpeciesState?.paidScoreThreshold != null) {
+            statusLines.push(`付费阈值 ${resolvedSpeciesState.paidScoreThreshold}`);
+          }
+        }
+        if (alienId === "半人马") {
+          const marks = Object.values(resolvedSpeciesState?.scoreMarksByPlayerId || {})
+            .flat()
+            .filter((mark) => !mark.resolved);
+          if (marks.length) statusLines.push(`待结算分数标记 ${marks.length}`);
+        }
+        return {
+          slotId,
+          revealed: Boolean(slot?.revealed),
+          alienId,
+          label: alienId ? aliens.getAlienLabel(alienId) : `外星人 ${slotId}`,
+          faceImageSrc: alienId ? aliens.getAlienFaceSrc(alienId) : aliens.ALIEN_BACK_SRC,
+          stateImageSrc: `../assets/aliens/state${slotId}.png`,
+          displayedCardImageSrc: displayedCardIndex == null
+            ? null
+            : alienId === "方舟"
+              ? species?.api?.getCard1Src?.(displayedCardIndex)
+              : species?.api?.getCardSrc?.(displayedCardIndex),
+          statusLines,
+          traces: [
+            ...presentGenericTraces(slotId, slot),
+            ...presentSpeciesTraces(slotId, alienId),
+            ...(alienId === "符文族"
+              ? [
+                ...aliens.runezu.listPanelSymbols(state.aliens).flatMap((symbol) => {
+                  const layout = alienPlacement.getRunezuPanelSymbolMarkerLayout(
+                    slotId,
+                    symbol.slotId,
+                  );
+                  return layout ? [{
+                    id: `runezu:panel:${symbol.slotId}`,
+                    traceType: "symbol",
+                    color: null,
+                    imageSrc: aliens.runezu.getSymbolSrc(symbol.symbolId),
+                    layout: structuredClone(layout),
+                    surface: "face",
+                  }] : [];
+                }),
+                ...aliens.runezu.listFaceSymbolSlots(state.aliens).flatMap((symbol) => {
+                  const layout = alienPlacement.getRunezuFaceSymbolSlotMarkerLayout(
+                    slotId,
+                    symbol.position,
+                  );
+                  return layout ? [{
+                    id: `runezu:face:${symbol.position}`,
+                    traceType: "symbol",
+                    color: null,
+                    imageSrc: aliens.runezu.getSymbolSrc(symbol.symbolId),
+                    layout: structuredClone(layout),
+                    surface: "face",
+                  }] : [];
+                }),
+              ]
+              : []),
+          ],
+        };
+      });
+    }
+    function polarMarkerPoint(location, radialFraction, angularFraction) {
+      if (!location) return null;
+      const boundary = solar.getSectorCoordinateBoundary(location.x, location.y);
+      const polar = boundary?.polarBoundary;
+      if (!polar) return boundary?.boardCenter || null;
+      return solar.polarToGlobalPoint(
+        polar.innerRadius + (polar.outerRadius - polar.innerRadius) * radialFraction,
+        polar.startAngleDegrees
+          + (polar.endAngleDegrees - polar.startAngleDegrees) * angularFraction,
+      );
+    }
+    function presentAlienBoardMarkers() {
+      const planetLocations = input.boardCoordinate?.planetLocations || [];
+      const anomalies = (state.aliens?.yichangdian?.anomalies || []).flatMap((anomaly) => {
+        const point = aliens.getYichangdianAnomalyMarkerBoardPoint(solar, anomaly);
+        return point ? [{
+          id: `anomaly:${anomaly.markerId}:${anomaly.sectorX}`,
+          imageSrc: anomaly.src || aliens.yichangdian.getAnomalyMarkerSrc(anomaly.markerId),
+          percentX: (point.x / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+          percentY: (point.y / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+        }] : [];
+      });
+      const planetFossils = ["jupiter", "saturn"].flatMap((planetId) => {
+        const fossils = aliens.chong.getAvailablePlanetFossils(state.aliens, planetId);
+        const point = fossils.length
+          ? polarMarkerPoint(
+            planetLocations.find((planet) => planet.planetId === planetId),
+            0.78,
+            0.72,
+          )
+          : null;
+        return point ? [{
+          id: `chong-fossils:${planetId}`,
+          planetId,
+          count: fossils.length,
+          imageSrc: aliens.CHONG_FOSSIL_BACK_SRC,
+          percentX: (point.x / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+          percentY: (point.y / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+        }] : [];
+      });
+      const runezuSymbols = aliens.runezu.listSourceSymbols(state.aliens).flatMap((symbol) => {
+        if (symbol.claimedByPlayerId || symbol.claimedByPlayerColor) return [];
+        if (symbol.sourceType === "tech") {
+          return [{
+            id: `runezu:${symbol.sourceType}:${symbol.sourceId}`,
+            target: "tech",
+            sourceId: symbol.sourceId,
+            imageSrc: aliens.runezu.getSymbolSrc(symbol.symbolId),
+          }];
+        }
+        let point = null;
+        if (symbol.sourceType === "planet") {
+          point = polarMarkerPoint(
+            planetLocations.find((planet) => planet.planetId === symbol.sourceId),
+            0.72,
+            0.72,
+          );
+        } else if (symbol.sourceType === "sector") {
+          for (let x = 0; x < 8 && !point; x += 1) {
+            const nebula = solar.getNebulaAtCoordinate(
+              x,
+              5,
+              state.solarSystem?.sectorBySlot,
+            );
+            if (nebula?.id !== symbol.sourceId) continue;
+            point = polarMarkerPoint({ x, y: 5 }, 0.38, 0.72);
+          }
+        }
+        return point ? [{
+          id: `runezu:${symbol.sourceType}:${symbol.sourceId}`,
+          target: "solar-board",
+          sourceId: symbol.sourceId,
+          imageSrc: aliens.runezu.getSymbolSrc(symbol.symbolId),
+          percentX: (point.x / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+          percentY: (point.y / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+        }] : [];
+      });
+      return { anomalies, planetFossils, runezuSymbols };
+    }
+    function presentSectorData() {
+      return Object.fromEntries([1, 2, 3, 4].map((sectorId) => {
+        const tokens = [];
+        const wins = [];
+        for (const nebulaId of data.listNebulaIdsForSector(sectorId)) {
+          for (const token of data.listNebulaTokens(state.data, nebulaId)) {
+            const layout = data.getNebulaDataSlotLayout(nebulaId, token.slotIndex);
+            if (!layout) continue;
+            tokens.push({
+              id: token.id,
+              nebulaId,
+              slotIndex: token.slotIndex,
+              imageSrc: token.replacedByPlayerColor
+                ? traceImageSrc(token.replacedByPlayerColor)
+                : data.DATA_TOKEN_SRC,
+              panelRegion: structuredClone(data.getNebulaPanelRegion(nebulaId)),
+              layout: structuredClone(layout),
+            });
+          }
+          for (const record of data.listSectorWinRecords(state.data, nebulaId)) {
+            const layout = data.getSectorWinMarkerLayout(
+              nebulaId,
+              record.slotKind,
+              record.markerIndex,
+            );
+            if (!layout) continue;
+            wins.push({
+              id: `sector-win:${nebulaId}:${record.settlementNumber}`,
+              nebulaId,
+              playerColor: record.playerColor,
+              imageSrc: traceImageSrc(record.playerColor),
+              layout: structuredClone(layout),
+            });
+          }
+        }
+        return [String(sectorId), { tokens, wins }];
+      }));
+    }
+    function presentAomomoData() {
+      if (!state.solarSystem?.aomomoActive) return [];
+      const location = input.boardCoordinate?.planetLocations?.find(
+        (planet) => planet.planetId === "aomomo",
+      );
+      if (!location) return [];
+      const boundary = solar.getSectorCoordinateBoundary(location.x, 3);
+      if (!boundary) return [];
+      return data.listNebulaTokens(state.data, data.AOMOMO_NEBULA_ID).flatMap((token) => {
+        const slot = data.getNebulaDataSlotLayout(data.AOMOMO_NEBULA_ID, token.slotIndex);
+        if (!slot) return [];
+        const radialSpan = boundary.polarBoundary.outerRadius - boundary.polarBoundary.innerRadius;
+        const angleSpan = boundary.polarBoundary.endAngleDegrees - boundary.polarBoundary.startAngleDegrees;
+        const radius = boundary.polarBoundary.innerRadius + radialSpan * Number(slot.radialFraction);
+        const angle = boundary.polarBoundary.startAngleDegrees
+          + angleSpan * Number(slot.angularFraction);
+        const point = solar.polarToGlobalPoint(radius, angle);
+        return [{
+          id: token.id,
+          nebulaId: data.AOMOMO_NEBULA_ID,
+          imageSrc: token.replacedByPlayerColor
+            ? traceImageSrc(token.replacedByPlayerColor)
+            : data.DATA_TOKEN_SRC,
+          percentX: (point.x / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+          percentY: (point.y / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
+        }];
+      });
+    }
     function presentCard(card, fallbackLabel) {
       const entry = cards.getCatalogEntryForCard(card);
       return {
@@ -186,6 +525,12 @@
       additionalPublicScan: "额外公共扫描",
       aomomoFossils: "奥陌陌化石",
     };
+    const rotateStateSlots = [
+      { id: "top-left", percentX: 34.81, percentY: 27.3 },
+      { id: "bottom-left", percentX: 34.15, percentY: 71.18 },
+      { id: "right-middle", percentX: 76.68, percentY: 49.96 },
+    ];
+    const rotationCount = Number(state.solarSystem?.rotation?.rotationCount) || 0;
     return {
       boardChrome: {
         wheelTransforms: [1, 2, 3, 4].map((wheelId) => ({
@@ -195,8 +540,13 @@
         sectors: Object.entries(state.solarSystem?.sectorBySlot || {}).map(
           ([slotId, sectorId]) => ({ slotId: Number(slotId), sectorId: Number(sectorId) }),
         ),
-        aomomoWheelImageSrc: null,
-        rotateTokenSlot: Number(state.solarSystem?.rotation?.rotationCount) || 0,
+        aomomoWheelImageSrc: state.solarSystem?.aomomoActive
+          ? aliens.AOMOMO_WHEEL3_AMM_SRC
+          : null,
+        rotateTokenSlot: structuredClone(
+          rotateStateSlots[((rotationCount % rotateStateSlots.length) + rotateStateSlots.length)
+            % rotateStateSlots.length],
+        ),
       },
       tokenPresentation: {
         activeRocketId: input.boardCoordinate?.activeRocketId || null,
@@ -256,10 +606,11 @@
           })),
         ],
         blueDropZones: [],
-        sectorTokensBySectorId: {},
-        aomomoTokens: [],
+        sectorTokensBySectorId: presentSectorData(),
+        aomomoTokens: presentAomomoData(),
       },
-      markerPresentation: { anomalies: [], planetFossils: [], runezuSymbols: [] },
+      markerPresentation: presentAlienBoardMarkers(),
+      alienPresentation: { slots: presentAlienSlots() },
       techTilePresentation: {
         supplyTiles: Object.values(state.tech?.stacks || {}).map((stack) => ({
           tileId: stack.tileId,

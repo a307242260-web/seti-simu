@@ -22,7 +22,7 @@ assert.equal(randomState.algorithm, "seti-simulation-mulberry32-v1");
 assert.equal(Number.isSafeInteger(randomState.state), true);
 assert.equal(Object.hasOwn(checkpoint, "runtimeState"), false, "RNG 必须由 committed meta 唯一持有");
 assert.deepEqual(Object.keys(committedState.meta.sequences).sort(), [
-  "actionLog", "card", "dataToken", "finalMark",
+  "card", "dataToken", "finalMark",
   "nebulaReplacement", "nebulaToken", "rocket",
 ]);
 source.dispose();

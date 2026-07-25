@@ -68,12 +68,12 @@ DOM handler 只解析稳定 identity、指针/键盘信息与当前 projection�
 
 ## ViewState
 
-ViewState 只包含可丢弃的宿主信息，例如 status note、overlay、focus、打开面板、纯视觉 debug
-校准、hover、tab、滚动和未提交草稿。清空 ViewState、重建 DOM 或 renderer 抛错都不得改变
+ViewState 只包含当前 Decision UI 实际消费的 focus、未提交 choice 草稿和 projection identity。
+清空 ViewState、重建 DOM 或 renderer 抛错都不得改变
 committed/session state、legal set、decision owner 或 replay cursor。规则型 debug（收入、分数、
 卡牌、solar、物种揭示、强跳/接管与作弊）没有 Browser service/DOM 入口。
 
-规则相关 identity 不能藏在 ViewState。当前 PASS dismiss 位于正式 `runtime.ui`，扫描展示关联位于 `runtime.browserHost`；二者不承担合法性或流程推进。
+规则相关 identity 不能藏在 ViewState；所有 Action/Decision identity 均来自当前 BrowserProjection，DOM 重建后按同一 projection 恢复。
 
 ## Browser checkpoint 与恢复
 

@@ -57,12 +57,11 @@ StateStore.compareAndCommit
     confirmedCursor,
     entries,
   },
-  summaries: { actionLog },
   host: { viewState },
 }
 ```
 
-权威顺序固定为：committed snapshot；同 baseVersion 的 active session checkpoint；confirmed replay；只读摘要；可丢弃 ViewState。后三级不能覆盖前两级事实。
+权威顺序固定为：committed snapshot；同 baseVersion 的 active session checkpoint；confirmed replay；可丢弃 ViewState。后两级不能覆盖前两级事实。
 
 允许保存的时机：
 

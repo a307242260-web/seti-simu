@@ -202,7 +202,6 @@ function buildInitialState(options = {}, random = Math.random) {
     seed: options.seed ?? "seti-simulation",
     rngState: clone(options.rngState || { algorithm: "seti-simulation-mulberry32-v1", state: 1 }),
     sequences: {
-      actionLog: 1,
       card: 1,
       dataToken: 1,
       finalMark: 1,
@@ -212,7 +211,6 @@ function buildInitialState(options = {}, random = Math.random) {
     },
   });
   state.match.decisionVersion = 0;
-  state.match.actionLog = [];
   if (options.prepareBrowser === true) {
     randomizeBoard(state, random);
     createCardGame(state, random, 4);
@@ -440,7 +438,6 @@ function initializeProductionGame(workingState, options, random) {
 
 function readSequences(workingState) {
   return {
-    actionLog: (workingState.match.actionLog || []).length + 1,
     card: workingState.meta?.sequences?.card ?? 1,
     dataToken: workingState.meta?.sequences?.dataToken ?? 1,
     finalMark: workingState.meta?.sequences?.finalMark ?? 1,

@@ -178,9 +178,12 @@ module.exports = Object.freeze([
           && [...document.querySelectorAll(".tech-bonus:not([hidden])")]
             .every((image) => image.src.includes("/assets/tech_tile/bonus_")),
         scanData: Boolean(document.querySelector("#player-board-data-layer"))
-          && Array.isArray(renderProjection.dataPresentation?.playerTokens),
-        aliens: document.querySelectorAll(".alien-panel[data-alien-slot]").length === 2
-          && Boolean(renderProjection.markerPresentation),
+          && Array.isArray(renderProjection.dataPresentation?.playerTokens)
+          && document.querySelectorAll(".sector .nebula-data-token").length > 0,
+        aliens: document.querySelectorAll("[data-alien-slot-root][data-revealed]").length === 2
+          && document.querySelectorAll("[data-alien-slot-root] .alien-projection-face img").length === 2
+          && Array.isArray(renderProjection.alienPresentation?.slots)
+          && renderProjection.alienPresentation.slots.length === 2,
         scoring: document.querySelectorAll("#final-score-grid .final-score-tile").length === 4
           && Boolean(renderProjection.finalScorePresentation),
       };

@@ -5,17 +5,6 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const PRODUCTION_ROOTS = ["randomizer/app", "randomizer/game", "randomizer/training"];
-const CURRENT_DOCS = [
-  "AGENTS.md",
-  "README.md",
-  "docs/project-architecture.md",
-  "docs/committed-game-state.md",
-  "docs/effect-session-runtime.md",
-  "docs/standard-action-contract.md",
-  "docs/browser-host-ui.md",
-  "docs/rl-simulation-env.md",
-];
-
 const RESIDUALS = Object.freeze({
   legacyWorkingRoot: /\b(?:stateAdapter|projectWorkingState|createWorkingState|restoreWorkingState)\b/g,
   legacyRootSlices: /\b(?:playerState|turnState|solarState|rocketState|planetStatsState|nebulaDataState|cardState|techGameState|alienGameState|finalScoringState)\b/g,
@@ -25,6 +14,10 @@ const RESIDUALS = Object.freeze({
   localIdentityFallbacks: /\b(?:createLocalCardInstance|takeLocalDataTokenSequence|createRecoveredPoolToken|takeFinalMarkSequence)\b/g,
   redundantInitializationCompatibility: /\bdiscarded-rng\b|正式初始化卡牌会重建牌区/g,
   ruleOwnedPresentationState: /\b(?:statusNote|techSelectionActive|pendingTileId|selectedTileId|selectedBlueSlot|selectionActive|discardSelectionActive|playCardSelectionActive)\b/g,
+  orphanActionLogState: /\b(?:actionLog|actionHistorySummary)\b/g,
+  unusedViewStateSurface: /\b(?:panelOpen|playerMenuOpen|sectorCalibration|acknowledgedEventIds|minimizedIds|collapsedRegions)\b/g,
+  alienLocalIdentitySequences: /\bnext(?:Trace|Card|Orbit|Landing)Sequence\b/g,
+  wallClockCanonicalFields: /\b(?:placedAt|createdAt|completedAt|claimedAt|consumedAt|resolvedAt|usedAt|settledAt)\s*:\s*(?:options\.[A-Za-z]+(?:\s*\?\?|\s*\|\|)\s*)?(?:Date\.now\(\)|new Date\(\)\.toISOString\(\))/g,
 });
 
 function walk(relativeRoot) {
@@ -43,7 +36,10 @@ function read(relativePath) {
 function productionFiles() {
   return ["randomizer/app.js", ...PRODUCTION_ROOTS
     .flatMap(walk)
-    .filter((file) => file.endsWith(".js") && !file.endsWith(".test.js"))];
+    .filter((file) => file.endsWith(".js")
+      && !file.endsWith(".test.js")
+      && !file.endsWith(".browser-smoke.js")
+      && !file.includes(`${path.sep}fixtures${path.sep}`))];
 }
 
 function countPattern(files, pattern) {
@@ -81,11 +77,28 @@ function collectDomResiduals(files) {
 
 function collectMissingCurrentDocPaths() {
   const missing = [];
-  for (const file of CURRENT_DOCS.filter((candidate) => fs.existsSync(path.join(ROOT, candidate)))) {
+  const currentDocs = [
+    "AGENTS.md",
+    "README.md",
+    ...walk("docs").filter((file) => (
+      file.endsWith(".md")
+      && !file.startsWith(`docs${path.sep}migrations${path.sep}`)
+      && !file.startsWith(`docs${path.sep}mocha_experience${path.sep}`)
+    )),
+    ...walk("assets").filter((file) => file.endsWith(`${path.sep}implementation.md`)),
+  ];
+  for (const file of [...new Set(currentDocs)]
+    .filter((candidate) => fs.existsSync(path.join(ROOT, candidate)))) {
     const source = read(file);
     for (const match of source.matchAll(/`((?:randomizer|tools|docs|assets)\/[A-Za-z0-9_./?-]+)`/g)) {
       const target = match[1];
-      if (!target.includes("?") && !fs.existsSync(path.join(ROOT, target))) {
+      const lineStart = source.lastIndexOf("\n", match.index) + 1;
+      const lineEnd = source.indexOf("\n", match.index);
+      const line = source.slice(lineStart, lineEnd < 0 ? source.length : lineEnd);
+      const historicalDeletion = /(?:旧|已删除|不再创建|物理删除)/.test(line);
+      if (!historicalDeletion
+        && !target.includes("?")
+        && !fs.existsSync(path.join(ROOT, target))) {
         missing.push({
           file,
           line: source.slice(0, match.index).split("\n").length,
@@ -97,6 +110,33 @@ function collectMissingCurrentDocPaths() {
   return missing;
 }
 
+function collectCssResiduals(files) {
+  const cssFile = "randomizer/style.css";
+  const source = read(cssFile);
+  const consumers = [
+    ...files,
+    "randomizer/index.html",
+  ].filter((file) => file !== cssFile && fs.existsSync(path.join(ROOT, file)))
+    .map(read)
+    .join("\n");
+  const dynamicProjectionClasses = new Set([
+    "is-reference-orbit",
+    "is-reference-land",
+    "is-reference-satellite",
+  ]);
+  const classes = [...new Set([...source.matchAll(/\.([A-Za-z_][\w-]*)/g)]
+    .map((match) => match[1]))];
+  const unreferenced = classes.filter((name) => (
+    !dynamicProjectionClasses.has(name) && !consumers.includes(name)
+  )).sort();
+  return {
+    registered: classes.length,
+    staticallyUnreferenced: unreferenced.length,
+    dynamicProjectionClasses: [...dynamicProjectionClasses],
+    classes: unreferenced,
+  };
+}
+
 const files = productionFiles();
 const report = {
   schemaVersion: "seti-architecture-residual-report-v1",
@@ -105,6 +145,7 @@ const report = {
     Object.entries(RESIDUALS).map(([name, pattern]) => [name, countPattern(files, pattern)]),
   ),
   dom: collectDomResiduals(files),
+  css: collectCssResiduals(files),
   missingCurrentDocPaths: collectMissingCurrentDocPaths(),
 };
 

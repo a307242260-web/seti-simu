@@ -6,9 +6,8 @@
 
 - 专属规则：`randomizer/game/aliens/runezu.js`。
 - 坐标：`randomizer/game/aliens/placement.js` 中的 `RUNEZU_TRACE_MARKER_SLOTS`、`RUNEZU_PANEL_SYMBOL_MARKER_SLOTS`、`RUNEZU_FACE_SYMBOL_SLOT_MARKER_SLOTS`。
-- 渲染：`randomizer/game/aliens/render.js`。
-- UI dialog、奖励、symbol 分支与面板渲染：`randomizer/app/aliens/species-runtime.js`。
-- 调试按钮和跨域牌效装配：`randomizer/app.js`。
+- 投影与渲染：`randomizer/app.js`、`randomizer/app/browser-host/resident-renderer.js`。
+- 奖励、symbol 分支与标准 Decision：`randomizer/game/effects/residual-domain-session.js`。
 - 终局符号计分与符文族终局牌：`randomizer/game/end-game-scoring.js`。
 
 ## 专属状态
@@ -74,10 +73,4 @@
 
 符号本体终局计分由 `scorePlayerSymbols` 计算：未放入黑圈的玩家符号按最大不同集合大小计分，1/2/3/4/5/6/7 种分别为 1/3/5/8/11/15/20 分。
 
-## 调试
-
-调试按钮「符文族调试」会直接把外星人 1 揭示为符文族；同一流程也可通过 `window.SetiRandomizer.revealRunezuForDebug()` 调用，并初始化符号来源、6 个白色圆框 symbol、符文族牌。调试会给当前玩家补齐全部 10 张符文族牌到手牌；玩家仍需手动打出后触发效果或进入保留牌区，已存在的牌不重复发放。该调试入口不会自动放置痕迹 token，也不会显示黑圈占位 symbol。
-
-调试按钮会自动开启「获取外星人标记」模式；在该模式下点击符文族正面痕迹位，会按正式符文族痕迹规则放置当前玩家 token 并结算对应奖励。黑圈仍通过玩家持有 symbol 后点击黑圈位置放置。
-
-调试按钮不保证完整撤销语义；正式玩法路径中的痕迹放置、黑圈放置、来源符号获取、任务进度和符号奖励都通过主行动/快速行动历史记录恢复命令。
+符文族痕迹、黑圈放置、来源符号获取、任务进度和符号奖励均通过标准 Action/Decision 与 Effect Session journal 结算。

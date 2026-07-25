@@ -89,5 +89,50 @@ assert.throws(() => productionKernel.installProductionKernel({
   standardActionDomainOptions: {},
 }), /禁止 Host 注入 Standard Action continuation\/Decision/);
 
+{
+  const paritySeed = "browser-simulation-fixed-parity";
+  const simulationKernel = productionKernel.createSimulationRuleComposition({
+    random: createRandom(11),
+    seed: paritySeed,
+    activePlayerCount: 4,
+  });
+  assert.equal(simulationKernel.newGame({
+    seed: paritySeed,
+    activePlayerCount: 4,
+  }).ok, true);
+  const baseline = simulationKernel.composition.lifecycle.save().envelope;
+  const browserParity = browserRuleComposition.createBrowserRuleComposition({
+    productionKernelApi: productionKernel,
+    random: createRandom(99),
+    counterfactualEnabled: false,
+    browserProjection: {
+      visibilityPolicy: projectionAdapter.defaultVisibilityPolicy,
+      getFinalReadModelOwner: () => ({ project: () => Object.freeze({ players: [], finalBoard: {} }) }),
+      getBrowserReadModelOwner: () => ({
+        project: () => Object.freeze({ schemaVersion: "test-browser-read-model", render: {} }),
+      }),
+      createRenderPresentation: () => ({}),
+    },
+  });
+  assert.equal(browserParity.lifecycle.restore(structuredClone(baseline)).ok, true);
+  const simulationActions = simulationKernel.composition.inputPort.enumerateActions({});
+  const browserActions = browserParity.inputPort.enumerateActions({});
+  assert.deepEqual(browserActions, simulationActions,
+    "Browser/Simulation 从同一 checkpoint 必须枚举完全相同的 Standard Action");
+  const action = simulationActions.find((candidate) => candidate.family === "launch");
+  assert.ok(action, "固定 parity checkpoint 必须存在 launch");
+  assert.equal(simulationKernel.composition.inputPort.submitAction(action).ok, true);
+  assert.equal(browserParity.inputPort.submitAction(
+    browserActions.find((candidate) => candidate.actionId === action.actionId),
+  ).ok, true);
+  assert.deepEqual(
+    browserParity.lifecycle.save().envelope,
+    simulationKernel.composition.lifecycle.save().envelope,
+    "Browser/Simulation 对同一 Action 必须得到同一 committed state、journal 与 checkpoint",
+  );
+  simulationKernel.composition.dispose();
+  browserParity.dispose();
+}
+
 composition.dispose();
 console.log("rule composition tests passed");

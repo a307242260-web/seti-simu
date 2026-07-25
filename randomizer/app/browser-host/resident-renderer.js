@@ -91,6 +91,12 @@
 
     function renderRoundStatus(input) {
       const projection = assertInput(input);
+      const slot = getRenderModel(projection)?.boardChrome?.rotateTokenSlot;
+      if (els.roundStatusToken && slot) {
+        els.roundStatusToken.style.setProperty("--rotate-token-x", `${Number(slot.percentX)}%`);
+        els.roundStatusToken.style.setProperty("--rotate-token-y", `${Number(slot.percentY)}%`);
+        els.roundStatusToken.dataset.slotId = text(slot.id);
+      }
       if (els.roundStatusRound) {
         els.roundStatusRound.textContent = projection.match.terminal
           ? "游戏结束"
@@ -228,6 +234,12 @@
         wheel.dataset.projectionRotation = String(degrees);
         wheel.style.setProperty("transform", `rotate(${degrees}deg)`);
       }
+      if (els.wheels?.[3]) {
+        els.wheels[3].style.setProperty(
+          "background-image",
+          chrome.aomomoWheelImageSrc ? `url("${chrome.aomomoWheelImageSrc}")` : "",
+        );
+      }
       const sectors = new Map((chrome.sectors || []).map(
         (entry) => [String(entry.slotId), entry],
       ));
@@ -238,6 +250,44 @@
         if (sector) {
           sector.className = `sector sector-${entry.sectorId}`;
           sector.dataset.sectorId = text(entry.sectorId);
+          const sectorData = render?.dataPresentation?.sectorTokensBySectorId?.[
+            String(entry.sectorId)
+          ] || {};
+          const nebulaPanels = new Map();
+          for (const tokenEntry of sectorData.tokens || []) {
+            let panel = nebulaPanels.get(tokenEntry.nebulaId);
+            if (!panel) {
+              const region = tokenEntry.panelRegion || {};
+              panel = document.createElement("div");
+              panel.className = "nebula-panel";
+              panel.dataset.nebulaId = text(tokenEntry.nebulaId);
+              panel.style.setProperty("left", `${Number(region.originX) || 0}%`);
+              panel.style.setProperty("width", `${Number(region.widthPercent) || 50}%`);
+              nebulaPanels.set(tokenEntry.nebulaId, panel);
+              sector.append(panel);
+            }
+            const token = document.createElement("img");
+            token.className = "nebula-data-token";
+            token.dataset.tokenId = text(tokenEntry.id);
+            token.src = tokenEntry.imageSrc || "";
+            token.alt = "";
+            token.setAttribute("aria-hidden", "true");
+            token.style.setProperty("left", `${Number(tokenEntry.layout?.percentX)}%`);
+            token.style.setProperty("top", `${Number(tokenEntry.layout?.percentY)}%`);
+            panel.append(token);
+          }
+          for (const winEntry of sectorData.wins || []) {
+            const token = document.createElement("img");
+            token.className = "sector-win-token";
+            token.dataset.winId = text(winEntry.id);
+            token.src = winEntry.imageSrc || "";
+            token.alt = "";
+            token.setAttribute("aria-hidden", "true");
+            token.style.setProperty("left", `${Number(winEntry.layout?.percentX)}%`);
+            token.style.setProperty("top", `${Number(winEntry.layout?.percentY)}%`);
+            token.style.setProperty("--win-scale", `${Number(winEntry.layout?.scalePercent) || 9.4}%`);
+            sector.append(token);
+          }
         }
         wrap.replaceChildren(...(sector ? [sector] : []));
       }
@@ -251,6 +301,8 @@
         token.dataset.playerColor = text(piece.color);
         token.src = piece.imageSrc || "";
         token.alt = piece.label || "公开棋子";
+        if (piece.kind === "chong-fossil") token.classList.add("is-chong-fossil");
+        if (piece.chongDelivered) token.classList.add("is-chong-delivered");
         if (Number.isFinite(Number(piece.percentX))) {
           token.style.setProperty("left", `${Number(piece.percentX)}%`);
         }
@@ -275,6 +327,56 @@
         }
       }
       els.tokenLayer?.replaceChildren(...solarTokens);
+      for (const entry of render?.dataPresentation?.aomomoTokens || []) {
+        const token = document.createElement("img");
+        token.className = "aomomo-data-token";
+        token.dataset.tokenId = text(entry.id);
+        token.src = entry.imageSrc || "";
+        token.alt = "";
+        token.setAttribute("aria-hidden", "true");
+        token.style.setProperty("left", `${Number(entry.percentX)}%`);
+        token.style.setProperty("top", `${Number(entry.percentY)}%`);
+        els.tokenLayer?.append(token);
+      }
+      const markers = render?.markerPresentation || {};
+      for (const entry of markers.anomalies || []) {
+        const marker = document.createElement("img");
+        marker.className = "projection-board-marker projection-anomaly-marker";
+        marker.dataset.markerId = text(entry.id);
+        marker.src = entry.imageSrc || "";
+        marker.alt = "";
+        marker.setAttribute("aria-hidden", "true");
+        marker.style.setProperty("left", `${Number(entry.percentX)}%`);
+        marker.style.setProperty("top", `${Number(entry.percentY)}%`);
+        els.tokenLayer?.append(marker);
+      }
+      for (const entry of markers.planetFossils || []) {
+        const marker = document.createElement("span");
+        marker.className = "projection-board-marker projection-fossil-marker";
+        marker.dataset.markerId = text(entry.id);
+        const image = document.createElement("img");
+        image.src = entry.imageSrc || "";
+        image.alt = "";
+        image.setAttribute("aria-hidden", "true");
+        const count = document.createElement("span");
+        count.textContent = text(entry.count);
+        marker.append(image, count);
+        marker.style.setProperty("left", `${Number(entry.percentX)}%`);
+        marker.style.setProperty("top", `${Number(entry.percentY)}%`);
+        els.tokenLayer?.append(marker);
+      }
+      for (const entry of markers.runezuSymbols || []) {
+        if (entry.target !== "solar-board") continue;
+        const marker = document.createElement("img");
+        marker.className = "projection-board-marker projection-runezu-marker";
+        marker.dataset.markerId = text(entry.id);
+        marker.src = entry.imageSrc || "";
+        marker.alt = "";
+        marker.setAttribute("aria-hidden", "true");
+        marker.style.setProperty("left", `${Number(entry.percentX)}%`);
+        marker.style.setProperty("top", `${Number(entry.percentY)}%`);
+        els.tokenLayer?.append(marker);
+      }
       els.planetsTokenLayer?.replaceChildren(...referenceTokens);
     }
 
@@ -282,6 +384,11 @@
       const projection = assertInput(input);
       const tiles = projection.board?.finalScoring?.tiles || {};
       const variants = projection.resident?.finalScoring?.tileVariants || {};
+      const slotPoints = {
+        1: { x: 18.5, y: 54.4 },
+        2: { x: 40.4, y: 54.4 },
+        3: { x: 66, y: 54.4, stepX: 8.5, stepY: 9.5, columns: 3 },
+      };
       for (const image of els.finalScoreTiles || []) {
         const tileId = image.dataset.finalId;
         const variant = Number(variants[tileId]) || 1;
@@ -297,13 +404,23 @@
         if (!layer) continue;
         layer.replaceChildren(...(tile?.marks || []).map((mark, index) => {
           const token = document.createElement("img");
+          const slotIndex = Number(mark.slotIndex) || 3;
+          const slot = slotPoints[slotIndex] || slotPoints[3];
+          const order = slotIndex === 3 ? Math.max(1, Number(mark.slot3Order) || 1) - 1 : 0;
+          const x = slot.x + (order % (slot.columns || 1)) * (slot.stepX || 0);
+          const y = slot.y + Math.floor(order / (slot.columns || 1)) * (slot.stepY || 0);
           token.className = "final-score-token";
           token.dataset.finalSlot = text(mark.slotIndex);
           token.dataset.playerColor = text(mark.playerColor);
           token.dataset.markId = text(mark.id || `${tileId}:${index}`);
-          token.src = mark.tokenSrc || "../assets/tokens/normal_token.png";
+          token.src = mark.tokenSrc
+            || (mark.playerColor
+              ? `../assets/tokens/normal_token-${mark.playerColor}.png`
+              : "../assets/tokens/normal_token.png");
           token.alt = "";
           token.setAttribute("aria-hidden", "true");
+          token.style.setProperty("--final-token-x", `${x}%`);
+          token.style.setProperty("--final-token-y", `${y}%`);
           return token;
         }));
       }
@@ -333,6 +450,30 @@
         const entry = supply[bonus.dataset.techBonusFor];
         bonus.hidden = !entry?.bonusImageSrc;
         bonus.src = entry?.bonusImageSrc || "";
+      }
+      for (const overlay of els.techOverlays || []) {
+        const entry = supply[overlay.dataset.techOverlayFor];
+        overlay.hidden = !entry?.firstTakeAvailable;
+      }
+      const runezuByTechId = new Map(
+        (getRenderModel(projection)?.markerPresentation?.runezuSymbols || [])
+          .filter((entry) => entry.target === "tech")
+          .map((entry) => [String(entry.sourceId), entry]),
+      );
+      for (const wrap of els.techTileWraps || []) {
+        const entry = runezuByTechId.get(String(wrap.dataset.techWrapFor));
+        const marker = entry ? document.createElement("img") : null;
+        if (marker) {
+          marker.className = "projection-tech-symbol";
+          marker.dataset.markerId = text(entry.id);
+          marker.src = entry.imageSrc || "";
+          marker.alt = "";
+          marker.setAttribute("aria-hidden", "true");
+        }
+        const retained = [...(wrap.children || [])].filter(
+          (child) => !String(child.className).includes("projection-tech-symbol"),
+        );
+        wrap.replaceChildren(...retained, ...(marker ? [marker] : []));
       }
       if (els.playerBoardTechLayer) {
         els.playerBoardTechLayer.replaceChildren(...(presentation.playerTiles || []).map((entry) => {
@@ -375,6 +516,79 @@
       }));
     }
 
+    function createAlienTrace(entry) {
+      const token = document.createElement("img");
+      token.className = "alien-projection-trace";
+      token.dataset.traceId = text(entry.id);
+      token.dataset.traceType = text(entry.traceType);
+      token.dataset.playerColor = text(entry.color);
+      token.src = entry.imageSrc || "";
+      token.alt = "";
+      token.setAttribute("aria-hidden", "true");
+      if (Number.isFinite(Number(entry.layout?.percentX))) {
+        token.style.setProperty("left", `${Number(entry.layout.percentX)}%`);
+      }
+      if (Number.isFinite(Number(entry.layout?.percentY))) {
+        token.style.setProperty("top", `${Number(entry.layout.percentY)}%`);
+      }
+      if (Number.isFinite(Number(entry.layout?.scalePercent))) {
+        token.style.setProperty("--trace-scale", `${Number(entry.layout.scalePercent)}%`);
+      }
+      return token;
+    }
+
+    function renderAliens(input) {
+      const projection = assertInput(input);
+      const slots = getRenderModel(projection)?.alienPresentation?.slots || [];
+      const roots = new Map((els.alienSlots || []).map(
+        (root) => [String(root.dataset.alienSlotRoot), root],
+      ));
+      for (const entry of slots) {
+        const root = roots.get(String(entry.slotId));
+        if (!root) continue;
+        const title = document.createElement("strong");
+        title.className = "alien-projection-title";
+        title.textContent = entry.revealed ? entry.label : `外星人 ${entry.slotId} · 未揭示`;
+        const face = document.createElement("div");
+        face.className = "alien-projection-surface alien-projection-face";
+        const faceImage = document.createElement("img");
+        faceImage.className = "alien-projection-image";
+        faceImage.src = entry.faceImageSrc || "";
+        faceImage.alt = entry.label || `外星人 ${entry.slotId}`;
+        face.append(
+          faceImage,
+          ...(entry.traces || []).filter((trace) => trace.surface === "face").map(createAlienTrace),
+        );
+        const state = document.createElement("div");
+        state.className = "alien-projection-surface alien-projection-state";
+        const stateImage = document.createElement("img");
+        stateImage.className = "alien-projection-image";
+        stateImage.src = entry.stateImageSrc || "";
+        stateImage.alt = `外星人 ${entry.slotId} 痕迹状态`;
+        state.append(
+          stateImage,
+          ...(entry.traces || []).filter((trace) => trace.surface === "state").map(createAlienTrace),
+        );
+        const details = document.createElement("div");
+        details.className = "alien-projection-details";
+        for (const line of entry.statusLines || []) {
+          const textLine = document.createElement("span");
+          textLine.textContent = text(line);
+          details.append(textLine);
+        }
+        if (entry.displayedCardImageSrc) {
+          const card = document.createElement("img");
+          card.className = "alien-projection-card";
+          card.src = entry.displayedCardImageSrc;
+          card.alt = `${entry.label}展示牌`;
+          details.append(card);
+        }
+        root.dataset.revealed = String(Boolean(entry.revealed));
+        root.dataset.alienId = text(entry.alienId);
+        root.replaceChildren(title, face, state, details);
+      }
+    }
+
     function renderAll(input) {
       assertInput(input);
       renderRoundStatus(input);
@@ -383,6 +597,7 @@
       renderFinalScoring(input);
       renderTechSupply(input);
       renderPlayerData(input);
+      renderAliens(input);
       renderPublicCards(input);
       renderPrivateCards(input);
     }
@@ -395,6 +610,7 @@
       renderFinalScoring,
       renderTechSupply,
       renderPlayerData,
+      renderAliens,
       renderPublicCards,
       renderPrivateCards,
     });

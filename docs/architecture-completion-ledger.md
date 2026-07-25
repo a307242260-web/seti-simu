@@ -30,11 +30,11 @@ node tools/report_architecture_residuals.js
 
 | 里程碑 | 审计基线 | 完成证明 | 当前状态 |
 |---|---|---|---|
-| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 已完成：5 个已识别残留族群均为 0；61/61 unit、1/1 full-flow |
+| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 重新打开：旧 root/adapter 已清零，但独立审计发现 7 个外星人物种仍保存 `next*Sequence`，需迁入 canonical `meta.sequences` |
 | M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 已完成：并行决策状态 28→0，规则层展示状态 40→0；61/61 unit、1/1 full-flow、3/3 Chrome |
-| M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 未完成 |
-| M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 进行中：DOM 注册 160→62，静态无消费者注册 131→21；卡牌、资源、科技、数据与太阳系投影已接通 |
-| M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 未完成 |
+| M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 已完成：34 个明确旧 runtime 文件不存在；Host 审计覆盖 22 family、5 个唯一 domain，旧执行设施残留为 0 |
+| M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 已完成：DOM 注册 160→45、静态无消费者 131→0；CSS 152 个 class、静态无消费者 0；真实 Chrome renderer 通过 |
+| M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 进行中：行为门禁已成立；待外星人本地 sequence 与墙钟状态清零后重跑最终全仓审计 |
 
 ## 实施记录
 
@@ -140,6 +140,17 @@ node tools/report_architecture_residuals.js
 - DOM 注册从 63 降到 62，静态无消费者注册从 28 降到 21；八个已识别旧架构残留族群继续保持 0。
 - 本批修改 7 个生产/验证文件及本账本，新增 420 行、删除 96 行；新增代码是投影派生和动态 renderer，不新增规则 owner、兼容 adapter 或 Browser 规则状态。
 - 验证通过：61/61 unit、1/1 full-flow、3/3 真实 Chrome smoke、`node --check`、`git diff --check`。M4 尚余外星人动态展示、终局板块动态状态、无消费者 DOM/CSS 清理与最终视觉证据。
+
+### 2026-07-25：完成 Browser 外延并扩展全仓审计
+
+- 外星人槽位、正面/state、痕迹、物种卡牌、异常点、虫族化石、符文族 symbol、奥陌陌轮盘/数据，以及扇区数据与赢家标记全部由 `BrowserReadModel.render` DTO 派生；renderer 只创建展示 DOM。
+- 终局板块按 canonical variant 切换图片，并按 projection 的真实槽位、玩家颜色与 token 坐标渲染；科技首拿覆盖层、玩家科技/数据、四层轮盘、扇区、火箭和星球标记均不再读取传统 root。
+- 物理删除八物种静态面板、旧拖拽/移动高亮、旧星云数据/赢家 layer、旧 marker、旧玩家统计、旧 Decision root selector 和无消费者 responsive CSS。DOM 注册从上一批 62 降至 45，静态无消费者从 21 降至 0；CSS 当前登记 152 个 class，除 3 个 renderer 动态 `is-reference-*` class 外均有静态消费者，残留为 0。
+- 独立审计额外发现并删除空的 `match.actionLog`、`meta.sequences.actionLog`、Simulation `actionHistorySummary`，以及 ViewState 中从未被 UI 消费的 status/overlay/hover/tabs/scroll/layout/animation/debug 通用表面。新增两类残留门禁后均为 0；ViewState v2 只保留 Decision UI 实际消费的 focus、draft 和 projection identity。
+- 当前残留报告的 10 个旧架构族群全部为 0；34 个明确旧 runtime 文件均不存在；45 个 DOM 注册无静态废项；152 个 CSS class 无静态废项；当前资料不存在指向缺失生产路径的有效引用。
+- Browser/Simulation 从同一 lifecycle checkpoint 枚举完全相同的 Standard Action，并对同一 launch 产生逐字节相同的 committed state、journal 与 checkpoint。真实 Chrome 进一步覆盖人类 initial setup/quick/launch/end_turn、机器席位 Machine Player Host 输入、保存恢复和 renderer 异常隔离。
+- Node 验证通过：61/61 unit、1/1 full-flow；Chrome 验证通过：3/3；`node tools/audit_host_architecture.js`、`node tools/report_architecture_residuals.js` 与 `git diff --check` 均通过。
+- 随后把审计口径扩展到全部当前资料与通用 sequence/时间字段，发现七个物种文件仍有 92 处 `nextTrace/Card/Orbit/LandingSequence` 引用，以及规则实体中仍存在墙钟时间 fallback。该发现重新打开 M1/M5；上述“残留为 0”只适用于当时已登记的 10 个族群，不作为最终完成结论。
 
 ## 每轮更新格式
 

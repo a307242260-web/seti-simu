@@ -6,11 +6,10 @@
 
 - 专属模块：`randomizer/game/aliens/aomomo.js`
 - 坐标配置：`randomizer/game/aliens/placement.js`
-- 正面渲染与拖动覆盖：`randomizer/game/aliens/render.js`
+- 正面与状态投影：`randomizer/app.js`、`randomizer/app/browser-host/resident-renderer.js`
 - 奥陌陌星球：`randomizer/solar-system/layout.js`、`randomizer/solar-system/core.js`
-- 奥陌陌星云数据：`randomizer/game/data/nebula-state.js`、`randomizer/game/data/nebula-render.js`
-- 物种奖励、卡牌选择 dialog 与面板渲染：`randomizer/app/aliens/species-runtime.js`
-- 揭示调试和跨域效果队列装配：`randomizer/app.js`
+- 奥陌陌星云数据：`randomizer/game/data/nebula-state.js`
+- 物种奖励与卡牌 Decision：`randomizer/game/effects/residual-domain-session.js`
 
 ## 运行时状态
 
@@ -81,21 +80,9 @@
 - 8：黄色、红色、蓝色扇区各扫描 1 次，并可消耗 1 化石扫描任意扇区 1 次；3 型终局计分为该物种每个外星人痕迹 1 分。
 - 9：执行一次完整扫描行动；本次扫描行动中每个实际扫描到奥陌陌扇区的信号额外得 2 分；2 型任务为占据至少 1 个消耗化石的奥陌陌痕迹，奖励 1 数据。
 
-## 调试与校准
+## 坐标
 
-页面调试按钮“奥陌陌调试”会：
-
-- 直接揭示外星人 1 为奥陌陌并显示正面面板。
-- 替换第 3 轮盘图片，启用奥陌陌星球和 `aomomo` 星云。
-- 在奥陌陌星球弧形空档中的 3 个数据槽放入普通数据 token。
-- 给当前玩家补齐全部 10 张奥陌陌牌到手牌；玩家仍需手动打出后触发效果或进入保留牌区，已存在的牌不重复发放。
-- 自动进入“获取外星人标记”调试模式。
-
-奥陌陌调试不再预放外星人面板上的痕迹、环绕、登陆 token，也不提供面板 token 拖动校准。奥陌陌星球上的数据 token 也不再可拖动。数据槽使用相对第 3 轮盘的 `radialFraction` / `angularFraction` 坐标，普通数据 token 和扫描替换后的玩家 token 都会随着奥陌陌星球旋转移动。
-
-调试日志会输出当前奥陌陌星球数据槽的盘面坐标与相对坐标：
-
-- `[奥陌陌调试坐标] 数据槽... 盘面(...) radial=... angular=...`
+数据槽使用相对第 3 轮盘的 `radialFraction` / `angularFraction` 坐标，普通数据 token 和扫描替换后的玩家 token 都随奥陌陌星球旋转移动。
 
 当前默认校准值：
 
@@ -103,10 +90,8 @@
 - 槽位 2：`radialFraction=0.6177`，`angularFraction=0.3587`
 - 槽位 3：`radialFraction=0.6121`，`angularFraction=0.5162`
 
-通用 `window.SetiRandomizer.getAlienReadout()` 也会输出奥陌陌展示牌、牌堆、环绕/登陆数量、各痕迹槽与 override 坐标。
-
 ## 测试覆盖
 
 - `randomizer/game/aliens/aomomo.test.js`：揭示状态、化石消耗痕迹、环绕/登陆槽容量、牌效果模型。
 - `randomizer/game/data/nebula.test.js`：奥陌陌 3 槽容量、弧形空档盘面坐标随轮盘旋转、1/3 号槽得分。
-- `randomizer/game/abilities/abilities.test.js`：奥陌陌星球环绕和登陆写入外星人面板状态。
+- `randomizer/game/aliens/aomomo.test.js` 同时覆盖奥陌陌星球环绕和登陆写入外星人面板状态。

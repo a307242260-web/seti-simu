@@ -27,7 +27,7 @@ Browser and training hosts own projections, observations and policy/UI state.
 | 切片 | 唯一所有者与事实范围 | 不得进入 |
 |---|---|---|
 | `meta` | schema/state version、game/ruleset id、seed、`rngState`、确定性唯一编号序列 | Policy 状态、wall clock、模块闭包 counter |
-| `match` | 玩家顺序、对局状态、已确认 setup 结果、终局触发事实 | setup 选择过程、终局弹窗 |
+| `match` | 玩家顺序、对局状态、已确认 setup 结果、终局触发事实 | setup 选择过程、终局展示状态 |
 | `turn` | round、turn、action cycle、当前玩家、active/passed/finished、规则访问记录 | automation timer、按钮 enable 状态 |
 | `players` | 资源、收入、分数来源、牌/科技/公司归属、棋子和标记资产 | AI 估值、格式化名称、渲染资产 |
 | `solarSystem` | 轮盘、旋转、扇区槽位和当前几何局面 | 画布坐标缓存、高亮 |
@@ -36,7 +36,7 @@ Browser and training hosts own projections, observations and policy/UI state.
 | `data` | 数据 token、计算机/额外标记、星云与扇区控制、已确认结算 | 渲染统计缓存 |
 | `cards` | 实例牌、牌库顺序、公共牌、手牌归属、弃牌、PASS 预留及永久变化 | 选择/弃牌 UI、`cardTaskState` 查询索引 |
 | `tech` | 科技供应板、槽位、剩余 tile、玩家取得与永久 tile 变化 | `ui`、pending tile、状态文案 |
-| `aliens` | 揭示池、槽位、痕迹归属、额外标记与物种永久事实 | picker、奖励 continuation |
+| `aliens` | 揭示池、槽位、痕迹归属、额外标记与物种永久事实 | Decision 展示草稿 |
 | `finalScoring` | 板块配置、variant、阈值和已确认 marks | `pendingMarks` decision 流程 |
 
 领域切片 v1 先由根 schema 强制为普通对象，再由对应 purifier 与 invariant validator 固化内部字段。根边界、版本和提交语义在 Browser/Simulation 中完全一致。
@@ -50,7 +50,7 @@ Browser and training hosts own projections, observations and policy/UI state.
 | `solarState.rotation/sectorBySlot/aomomoActive` | committed `solarSystem` | 原样保存规则事实 |
 | `solarState.wheelSteps` | derived | 保存时删除，由 `rotation` 重建 |
 | `turnState.*` + `playerState.currentPlayerId` | committed `turn` | 当前玩家只进入 `turn.currentPlayerId`；自动化与 view flag 禁止进入 |
-| 已确认 setup / 终局触发 | committed `match` | setup 选择过程、终局弹窗仍属 session/host |
+| 已确认 setup / 终局触发 | committed `match` | setup 选择过程与终局展示仍属 session/host |
 | `planetStatsState.*Markers` | committed `planets` | 数组顺序是事实顺序；owner 必须指向现有玩家 |
 | `orbits/landings/sequence/displayed/displaySlot/forceDisplaySlot/referenceOffsetTokenWidths` | derived / host-only | 保存时删除，由 marker 数组或 BrowserProjection 重建计数和顺序 |
 | `nebulaDataState.nebulae.*.tokens` | committed `data` | token id、slot、替换 owner 等规则字段保留 |
