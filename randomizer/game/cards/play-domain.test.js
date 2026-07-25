@@ -56,7 +56,7 @@ function createCanonicalState(cardId) {
   };
   const dataState = data.createDefaultNebulaDataState();
   const techGameState = tech.createState(() => 0);
-  for (const stack of Object.values(techGameState.board.stacks)) {
+  for (const stack of Object.values(techGameState.stacks)) {
     stack.bonusQueue[stack.bonusIndex] = "bonus_3f";
     stack.bonusId = "bonus_3f";
   }
@@ -99,7 +99,7 @@ function createCanonicalState(cardId) {
     solarSystem: solar.createBaselineState(),
     data: dataState,
     planets: {},
-    tech: techGameState.board,
+    tech: techGameState,
     aliens: {},
     turn: { currentPlayerId: "p1" },
     match: { decisionVersion: 0 },

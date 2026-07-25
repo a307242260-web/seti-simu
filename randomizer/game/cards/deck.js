@@ -307,12 +307,6 @@
       discardPile: [],
       drawPileCardIds: [],
       passReservePiles: {},
-      ui: {
-        selectionActive: false,
-        discardSelectionActive: false,
-        discardRemaining: 0,
-        playCardSelectionActive: false,
-      },
     };
   }
 
@@ -735,45 +729,6 @@
     cardsState.discardPile.push(card);
   }
 
-  function setSelectionActive(cardsState, active) {
-    cardsState.ui.selectionActive = Boolean(active);
-    return cardsState.ui.selectionActive;
-  }
-
-  function isSelectionActive(cardsState) {
-    return Boolean(cardsState?.ui?.selectionActive);
-  }
-
-  function setDiscardSelectionActive(cardsState, active, remaining = 0) {
-    cardsState.ui.discardSelectionActive = Boolean(active);
-    cardsState.ui.discardRemaining = active
-      ? Math.max(0, Math.round(remaining))
-      : 0;
-    return cardsState.ui.discardSelectionActive;
-  }
-
-  function isDiscardSelectionActive(cardsState) {
-    return Boolean(cardsState?.ui?.discardSelectionActive);
-  }
-
-  function setPlayCardSelectionActive(cardsState, active) {
-    cardsState.ui.playCardSelectionActive = Boolean(active);
-    return cardsState.ui.playCardSelectionActive;
-  }
-
-  function isPlayCardSelectionActive(cardsState) {
-    return Boolean(cardsState?.ui?.playCardSelectionActive);
-  }
-
-  function getDiscardRemaining(cardsState) {
-    return Math.max(0, Math.round(cardsState?.ui?.discardRemaining || 0));
-  }
-
-  function decrementDiscardRemaining(cardsState) {
-    cardsState.ui.discardRemaining = Math.max(0, getDiscardRemaining(cardsState) - 1);
-    return cardsState.ui.discardRemaining;
-  }
-
   function initializeDeck(cardsState, playersState, options = {}) {
     const random = options.random || Math.random;
     const handCount = Math.max(0, Math.round(options.handCount ?? 0));
@@ -848,14 +803,6 @@
     discardFromHand,
     discardFromHandAtIndex,
     addToDiscardPile,
-    setSelectionActive,
-    isSelectionActive,
-    setDiscardSelectionActive,
-    isDiscardSelectionActive,
-    setPlayCardSelectionActive,
-    isPlayCardSelectionActive,
-    getDiscardRemaining,
-    decrementDiscardRemaining,
     initializeDeck,
     getCatalogSize,
     getCardLabel,

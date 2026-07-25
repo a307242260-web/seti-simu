@@ -55,7 +55,7 @@ function createContext(overrides) {
     players: playersState,
     pieces: piecesState,
     planets: planetsState,
-    tech: techGameState.board,
+    tech: techGameState,
     turn: { currentPlayerId: playersState.currentPlayerId },
     getEarthSectorCoordinate() {
       const snapshot = solar.createSolarSnapshot(solarSystemState);

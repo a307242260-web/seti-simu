@@ -435,12 +435,6 @@ assert.equal(cards.getPassReservePile(passReserveState, 1).length, 0);
 assert.equal(passReserveState.discardPile.length, 2);
 assertUniqueCardZoneIds(passReserveState, passReservePlayerState, "PASS pick and leftover discard must preserve card uniqueness");
 
-cards.setDiscardSelectionActive(cardsState, true, 1);
-assert.equal(cards.isDiscardSelectionActive(cardsState), true);
-assert.equal(cards.getDiscardRemaining(cardsState), 1);
-cards.setDiscardSelectionActive(cardsState, false, 0);
-assert.equal(cards.isDiscardSelectionActive(cardsState), false);
-
 const indexedDiscardPlayer = {
   hand: [
     cards.createCardInstance(cards.CARD_CATALOG[0], 0),

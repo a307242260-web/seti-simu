@@ -25,19 +25,19 @@
     "planets.*.marker display fields": "derived/host-only",
     "data.nebulae.*.tokens": "committed",
     "data.nebulae.*.playerTokenCounts/lastReplaced*": "derived:tokens",
-    "data token label/asset/percent/replacedAt": "derived/host-only",
+    "data token presentation fields": "derived/host-only",
     "data.sectorExtraMarks/sectorSettlements": "committed",
     "aliens.revealPoolAlienIds/neutralScoreTraceMarks/aliens": "committed",
     "aliens marker label/asset/display fields": "derived/host-only",
     "finalScoring.thresholds/tiles/tileVariants": "committed",
     "finalScoring.tiles.*.marks rule fields": "committed",
-    "finalScoring mark label/asset/placedAt": "derived/host-only",
+    "finalScoring mark presentation fields": "derived/host-only",
     "finalScoring.pendingMarks": "session-owned:excluded",
   });
   const PRESENTATION_KEYS = new Set([
     "displayed", "displaySlot", "forceDisplaySlot", "referenceOffsetTokenWidths",
     "playerLabel", "replacedByPlayerLabel", "playerTokenSrc", "tokenSrc", "percentX", "percentY",
-    "placedAt", "replacedAt", "statusNote", "ui", "overlay", "renderCache",
+    "placedAt", "replacedAt", "ui", "overlay", "renderCache",
   ]);
 
   function clone(value) {

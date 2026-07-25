@@ -82,7 +82,6 @@ function createState() {
         tokenSrc: "host/rocket.png", label: "R1",
       }],
       playerRocketSequences: { p1: new Set([1]), p2: new Set() },
-      statusNote: "仅供展示",
     },
     planets: {
       planets: {
@@ -93,12 +92,11 @@ function createState() {
     cards: {
       publicCards: [null, null, null], discardPile: [],
       drawPileCardIds: ["b_3.webp"], passReservePiles: {},
-      ui: { selectionActive: true, discardSelectionActive: true, discardRemaining: 1 },
-      selectedCardIds: ["card-1-hand"],
+      ui: { modal: "open" },
     },
     tech: {
-      board,
-      ui: { pendingTileId: TECH_TILE_ID, selectedTileId: TECH_TILE_ID, statusNote: "请选择" },
+      ...board,
+      ui: { modal: "open" },
     },
     aliens: {},
     finalScoring: {},
@@ -117,10 +115,8 @@ function bytes(store) {
   assert.equal(Object.hasOwn(purified.players, "currentPlayerId"), false);
   assert.equal(Object.hasOwn(purified.players.players[0], "colorLabel"), false);
   assert.equal(Object.hasOwn(purified.players.players[0].hand[0], "src"), false);
-  assert.equal(Object.hasOwn(purified.pieces, "statusNote"), false);
   assert.deepEqual(purified.pieces.playerRocketSequences, { p1: [1], p2: [] });
   assert.equal(Object.hasOwn(purified.cards, "ui"), false);
-  assert.equal(Object.hasOwn(purified.cards, "selectedCardIds"), false);
   assert.equal(Object.hasOwn(purified.tech, "ui"), false);
   assert.ok(purified.tech.stacks[TECH_TILE_ID]);
   assert.equal(purified.meta.sequences.rocket, 2);
@@ -188,7 +184,7 @@ function bytes(store) {
     },
     {
       code: "STATE_HOST_FIELD_FORBIDDEN",
-      mutate(slices) { slices.tech.ui = { pendingTileId: TECH_TILE_ID }; },
+      mutate(slices) { slices.tech.ui = { modal: "open" }; },
     },
   ];
   for (const testCase of cases) {

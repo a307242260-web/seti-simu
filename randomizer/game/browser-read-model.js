@@ -12,13 +12,13 @@
     "schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "runtime", "render",
   ]);
   const RUNTIME_KEYS = Object.freeze([
-    "playerTurn", "cardUi", "solarBriefing", "alienBoard",
+    "playerTurn", "solarBriefing", "alienBoard",
   ]);
   const EVENT_KEYS = Object.freeze([
-    "alienRoutesBySlotId", "fangzhouRevealedSlotId", "aomomoRevealedSlotId", "clickableTechTileIds",
+    "alienRoutesBySlotId", "fangzhouRevealedSlotId", "aomomoRevealedSlotId",
   ]);
   const ALIEN_ROUTE_KEYS = Object.freeze(["slotId", "revealed", "alienId", "route"]);
-  const ACTION_INTERACTION_KEYS = Object.freeze(["activeRocketId", "industryBorrowMode"]);
+  const ACTION_INTERACTION_KEYS = Object.freeze(["activeRocketId"]);
   const TURN_FLOW_KEYS = Object.freeze([
     "roundNumber", "turnNumber", "displayedTurnNumber", "actionCycleNumber",
     "currentPlayerId", "turnOrderPlayerIds", "activePlayerIds", "roundOrderPlayerIds",
@@ -143,25 +143,16 @@
     };
   }
 
-  function createEvents(context, state, players, turnFlow) {
+  function createEvents(context, state) {
     const alienState = state?.aliens || {};
     const alienRoutesBySlotId = Object.fromEntries((context.aliens.ALIEN_SLOT_IDS || []).map((slotId) => [
       String(slotId),
       createAlienRoute(context, alienState, slotId),
     ]));
-    const currentPlayer = players.find(
-      (player) => String(player?.id) === String(turnFlow.currentPlayerId),
-    ) || null;
-    const techState = state?.tech || {};
-    const selectionActive = context.tech.isSupplySelectionActive?.(techState.ui || {}) === true;
-    const clickableTechTileIds = selectionActive
-      ? context.tech.listTakeableTiles?.(techState.board || {}, currentPlayer?.techState || {}, {}) || []
-      : [];
     return {
       alienRoutesBySlotId,
       fangzhouRevealedSlotId: alienState.fangzhou?.revealedSlotId ?? null,
       aomomoRevealedSlotId: alienState.aomomo?.revealedSlotId ?? null,
-      clickableTechTileIds: [...new Set(clickableTechTileIds.map(String))],
     };
   }
 
@@ -259,7 +250,6 @@
         players: playersState,
         turn: clone(turnFlow),
       },
-      cardUi: clone(presentationState?.cards?.ui || {}),
       solarBriefing: {
         sectorBySlot: clone(presentationState?.solarSystem?.sectorBySlot || {}),
       },
@@ -372,10 +362,9 @@
       const presentationState = options.presentationState || state;
       const readModel = deepFreeze({
         schemaVersion: SCHEMA_VERSION,
-        events: createEvents(ownerContext, state, players, turnFlow),
+        events: createEvents(ownerContext, state),
         actionInteraction: {
           activeRocketId: boardCoordinate.activeRocketId,
-          industryBorrowMode: Boolean(state?.tech?.ui?.industryBorrowMode),
         },
         turnFlow,
         boardCoordinate,

@@ -31,7 +31,7 @@ node tools/report_architecture_residuals.js
 | 里程碑 | 审计基线 | 完成证明 | 当前状态 |
 |---|---|---|---|
 | M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 已完成：5 个已识别残留族群均为 0；61/61 unit、1/1 full-flow |
-| M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 进行中：并行决策状态已从 28 处清到 0；规则层展示状态候选仍有 40 处 / 5 文件 |
+| M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 已完成：并行决策状态 28→0，规则层展示状态 40→0；61/61 unit、1/1 full-flow、3/3 Chrome |
 | M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 未完成 |
 | M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 未完成 |
 | M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 未完成 |
@@ -110,6 +110,16 @@ node tools/report_architecture_residuals.js
 - 真实 Chrome 首轮发现此前 Node 未覆盖的两个 canonical 切换缺口：终局九折威胁计算把玩家域对象误当数组；Browser 初始选择把卡面 `label/src` 写入 `player.initialSelection`，导致 StateStore 拒绝提交并回滚。现分别改为读取 `players.players`，以及只保存规则身份 `id`。
 - 固定 full-flow 的业务盘面与 19 次输入不变；checkpoint hash 仅因删除 committed `initialSetup` 流程状态、Session journal/Effect payload 变化而更新。
 - 验证通过：61/61 unit、1/1 full-flow、3/3 真实 Chrome smoke、`git diff --check`；opening 队列逐项缩短、下一 Decision identity 更新、stale 提交拒绝、最终 Session 和初始流程状态清空均有行为断言。
+
+### 2026-07-25：删除规则域 card/tech UI 状态
+
+- `ruleOwnedPresentationState` 从 40 处 / 5 个生产文件下降到 0；M2 两个残留族群均已清零。
+- 删除 `cards.ui`、8 个 selection/discard/play-card UI getter/setter、对应导出和只验证旧 UI 状态的测试。
+- 删除 `tech.ui`、作弊模式、选择开关、待放置 tile、蓝槽确认等无生产消费者 API；科技初始化现在直接创建 canonical board，不再创建 `{ board, ui }` 临时包装后由净化器拆包。
+- Browser visibility projection 与 BrowserReadModel 不再复制空 `cards.ui`/`tech.ui`，不再输出永远为空的 clickable tech 和 industry-borrow interaction 字段。
+- high-coupling 净化/校验删除 card/tech 旧字段专名黑名单；通用 host `ui` 边界仍拒绝展示状态进入 committed state，但不再维护已删除结构的字段清单。
+- 本批修改 13 个文件，新增 40 行、删除 193 行，净删除 153 行；没有新增兼容 adapter、fallback 或第二状态 owner。
+- 验证通过：61/61 unit、1/1 full-flow、3/3 真实 Chrome smoke、`git diff --check`；真实页面初始选择、快速行动、主行动、科技展示、projection 隔离和恢复证据保持成立。
 
 ## 每轮更新格式
 

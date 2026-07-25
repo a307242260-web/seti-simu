@@ -67,7 +67,7 @@ function createRoot() {
     cards: { publicCards: [], drawPile: [], discardPile: [] },
     aliens: {},
     finalScoring: finalScoring.createFinalScoringState(),
-    pieces: { rockets: [], statusNote: "" },
+    pieces: { rockets: [] },
     solarSystem: {},
     planets: {},
     data: {

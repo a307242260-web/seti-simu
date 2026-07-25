@@ -34,7 +34,7 @@ function createContext(publicity = 6) {
   });
 
   return {
-    tech: techGameState.board,
+    tech: techGameState,
     players: playersState,
     turn: { currentPlayerId: playersState.currentPlayerId },
     solarSystem: { rotation: { rotationCount: 0 } },
@@ -55,10 +55,10 @@ function createContext(publicity = 6) {
 
 const gameState = tech.createState();
 for (const techType of tech.TECH_TYPES) {
-  assert.equal(tech.getRemainingForType(gameState.board, techType), 16);
+  assert.equal(tech.getRemainingForType(gameState, techType), 16);
   for (const tileId of tech.TILE_IDS_BY_TYPE[techType]) {
-    assert.equal(tech.getRemainingForSlot(gameState.board, tileId), 4);
-    const stack = gameState.board.stacks[tileId];
+    assert.equal(tech.getRemainingForSlot(gameState, tileId), 4);
+    const stack = gameState.stacks[tileId];
     assert.equal(new Set(stack.bonusQueue).size, 4);
     assert.equal(stack.bonusId, stack.bonusQueue[0]);
   }
@@ -132,7 +132,7 @@ const autoPlayerState = players.createPlayerState({
   },
 });
 const autoContext = {
-  tech: autoSlotContext.board,
+  tech: autoSlotContext,
   players: autoPlayerState,
   turn: { currentPlayerId: autoPlayerState.currentPlayerId },
   solarSystem: { rotation: { rotationCount: 0 } },
@@ -176,7 +176,7 @@ assert.equal(
   true,
 );
 
-const depletionBoard = tech.createState().board;
+const depletionBoard = tech.createState();
 const orange1Queue = [...depletionBoard.stacks.orange1.bonusQueue];
 for (let index = 0; index < 4; index += 1) {
   const result = tech.boardState.consumeFromSupplySlot(
@@ -192,7 +192,7 @@ for (let index = 0; index < 4; index += 1) {
 assert.equal(tech.getRemainingForSlot(depletionBoard, "orange1"), 0);
 assert.equal(tech.isSlotAvailable(depletionBoard, "orange2"), true);
 
-const startupBoard = tech.createState().board;
+const startupBoard = tech.createState();
 const startupBonus = startupBoard.stacks.orange1.bonusId;
 const startupTake = tech.boardState.consumeStartupTileWithoutRewards(startupBoard, "orange1");
 assert.equal(startupTake.ok, true);

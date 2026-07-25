@@ -191,9 +191,8 @@
           publicMarket: clone(cards.publicMarket || cards.publicCards || cards.market || []),
           discardPile: clone(cards.discardPile || cards.discard || []),
           drawPileCount: countCollection(cards.drawPileCardIds || cards.drawPile || cards.deck),
-          ui: clone(cards.ui || {}),
         },
-        tech: pick(state?.tech, ["board", "supply", "publicBoards", "tracks", "ui"]),
+        tech: pick(state?.tech, ["supply", "publicBoards", "tracks", "stacks"]),
         aliens: pick(state?.aliens, [
           "revealed", "public", "traces", "boards", "jiuzhe", "yichangdian", "banrenma",
           "fangzhou", "chong", "amiba", "aomomo", "runezu", "revealedSlotIds",

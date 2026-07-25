@@ -51,7 +51,7 @@
       planets: modules.planetStats.createPlanetStatsState(),
       data: modules.data.createDefaultNebulaDataState(),
       cards: modules.cards.createCardState(),
-      tech: techState.board,
+      tech: techState,
       aliens: aliensState,
       finalScoring: modules.finalScoring.createFinalScoringState(options.finalScoreIds || []),
     };

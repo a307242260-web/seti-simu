@@ -35,26 +35,16 @@
     "players.players.*.hand/reservedCards/techState": "committed",
     "players.currentPlayerId/player labels/assets": "turn-owned/host-only:excluded",
     "pieces.rockets/activeRocketId/playerRocketSequences": "committed",
-    "pieces.statusNote/tokenSrc/label": "host-only:excluded",
+    "pieces presentation fields": "host-only:excluded",
     "cards.publicCards/discardPile/drawPileCardIds/passReservePiles": "committed",
-    "cards.ui/selection*": "session-owned:excluded",
     "cardTaskState": "derived:rebuildCardTaskIndex",
-    "tech.board": "committed",
-    "tech.ui/pendingTileId/selected*/allowedTechTypes": "session-owned/host-only:excluded",
-    "match.initialSetup": "committed initial_setup owner state",
+    "tech.stacks": "committed",
+    "match.initialSetup": "Effect Session working state only; removed before commit",
     "meta.sequences.card/dataToken/rocket": "committed deterministic domain id allocation",
   });
   const HOST_KEYS = new Set([
-    "ui", "statusNote", "tokenSrc", "src", "cardName", "colorLabel", "playerLabel",
+    "ui", "tokenSrc", "src", "cardName", "colorLabel", "playerLabel",
     "label", "asset", "renderCache", "overlay", "dragState",
-  ]);
-  const CARD_SELECTION_KEYS = new Set([
-    "selectionActive", "discardSelectionActive", "discardRemaining",
-    "playCardSelectionActive", "selectedCardId", "selectedCardIds",
-  ]);
-  const TECH_SELECTION_KEYS = new Set([
-    "pendingTileId", "selectedTileId", "selectedBlueSlot", "allowedTechTypes",
-    "techSelectionActive", "cheatModeEnabled", "takeTechDebugEnabled", "industryBorrowMode",
   ]);
   const DERIVED_TASK_KEYS = new Set([
     "cardTaskState", "readyType2Tasks", "readyType2ByCardId", "type1ReservedCards",
@@ -143,14 +133,13 @@
 
   function purifyCards(cards) {
     return stripKeys(cards || {}, new Set([
-      ...HOST_KEYS, ...CARD_SELECTION_KEYS, ...DERIVED_TASK_KEYS,
+      ...HOST_KEYS, ...DERIVED_TASK_KEYS,
     ]));
   }
 
   function purifyTech(tech) {
-    const source = isPlainObject(tech?.board) ? tech.board : tech;
-    return stripKeys(source || {}, new Set([
-      ...HOST_KEYS, ...TECH_SELECTION_KEYS, ...DERIVED_TASK_KEYS,
+    return stripKeys(tech || {}, new Set([
+      ...HOST_KEYS, ...DERIVED_TASK_KEYS,
     ]));
   }
 
@@ -396,8 +385,8 @@
     const errors = [];
     scanForbidden(state?.players, "$.players", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
     scanForbidden(state?.pieces, "$.pieces", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
-    scanForbidden(state?.cards, "$.cards", new Set([...HOST_KEYS, ...CARD_SELECTION_KEYS, ...DERIVED_TASK_KEYS]), errors);
-    scanForbidden(state?.tech, "$.tech", new Set([...HOST_KEYS, ...TECH_SELECTION_KEYS, ...DERIVED_TASK_KEYS]), errors);
+    scanForbidden(state?.cards, "$.cards", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
+    scanForbidden(state?.tech, "$.tech", new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]), errors);
     const playerIds = validatePlayers(state, errors);
     validatePieces(state, playerIds, errors);
     validateCards(state, errors);
