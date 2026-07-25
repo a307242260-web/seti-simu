@@ -31,7 +31,7 @@ node tools/report_architecture_residuals.js
 | 里程碑 | 审计基线 | 完成证明 | 当前状态 |
 |---|---|---|---|
 | M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 已完成：5 个已识别残留族群均为 0；61/61 unit、1/1 full-flow |
-| M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 未完成 |
+| M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 进行中：并行决策状态已从 28 处清到 0；规则层展示状态候选仍有 40 处 / 5 文件 |
 | M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 未完成 |
 | M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 未完成 |
 | M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 未完成 |
@@ -98,6 +98,18 @@ node tools/report_architecture_residuals.js
 - 两个依赖旧随机偏移的测试改为行为断言：opening 选择当前真实 canonical 手牌实体；黄色痕迹在同根两个槽位同时证明“首枚 +1 宣传/+1 外星人牌”和“非首枚零奖励”。
 - 本批生产代码净删除 11 行；连同 fixture 和测试共修改 4 个文件，新增 107 行、删除 97 行。
 - 验证通过：61/61 unit、1/1 full-flow；最终 `blocked=false`、Effect Session 清空，19 次输入对应 19 份 journal。
+
+### 2026-07-25：开局与快速交易切换到 Session Decision 队列
+
+- `parallelDecisionState` 从 28 处 / 7 个生产文件下降到 0；全仓生产与测试均不再读写 `pendingDecision` 或 `initialIncomeQueue`。
+- 开局收入的剩余支付项只保存在当前 `standard_action_session_decision` Effect payload；每次提交生成下一项具备新 `decisionId`/`decisionVersion`/owner 的 DecisionEffect，不再写入 `match`。
+- 初始公司/资源牌选择在同一个 opening Session working state 内完成；最后一项收入结算后物理删除 `match.initialSetup` 和 `match.initialSetupConfig`，committed state 不保留 UI 选择或流程进度。
+- 快速交易的弃牌、公共牌选择和盲抽通过 Effect payload 的 `decisionContext` 接力；资源交易、弃牌交易和弃牌后精选卡牌仍共用同一 Production registry/executor。
+- 删除 probe、science、company、card-corner、runezu 等 domain 对 `match.pendingDecision` 的旧阻塞判断；活动 Session 本身是唯一输入互斥边界。
+- Simulation 决策 owner 从当前 Session action descriptor 派生，不再从规则状态读取 pending owner。
+- 真实 Chrome 首轮发现此前 Node 未覆盖的两个 canonical 切换缺口：终局九折威胁计算把玩家域对象误当数组；Browser 初始选择把卡面 `label/src` 写入 `player.initialSelection`，导致 StateStore 拒绝提交并回滚。现分别改为读取 `players.players`，以及只保存规则身份 `id`。
+- 固定 full-flow 的业务盘面与 19 次输入不变；checkpoint hash 仅因删除 committed `initialSetup` 流程状态、Session journal/Effect payload 变化而更新。
+- 验证通过：61/61 unit、1/1 full-flow、3/3 真实 Chrome smoke、`git diff --check`；opening 队列逐项缩短、下一 Decision identity 更新、stale 提交拒绝、最终 Session 和初始流程状态清空均有行为断言。
 
 ## 每轮更新格式
 

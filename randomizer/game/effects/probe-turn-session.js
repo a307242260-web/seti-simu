@@ -108,7 +108,6 @@
   function canStart(root, player) {
     if (!player) return fail("PROBE_TURN_ACTOR_MISSING", "没有当前玩家");
     if (player.mainActionCompleted) return fail("PROBE_TURN_MAIN_ACTION_COMPLETE", "主要行动已经完成");
-    if (root.match?.pendingDecision) return fail("PROBE_TURN_PENDING_DECISION", "请先完成当前选择");
     return { ok: true };
   }
   function sessionRequired() {
@@ -136,7 +135,6 @@
         const root = context.state || context;
         const player = actor(root, context.standardActionAuthority?.actorId);
         if (!player) return fail("PROBE_TURN_ACTOR_MISSING", "没有当前玩家");
-        if (root.match?.pendingDecision) return fail("PROBE_TURN_PENDING_DECISION", "请先完成当前选择");
         const actionCtx = actionContext(root, player.id);
         const directionOrder = new Map(
           (abilities.rocket.MOVE_DIRECTIONS || []).map((direction, index) => [direction.id, index]),

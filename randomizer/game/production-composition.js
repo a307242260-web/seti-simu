@@ -107,9 +107,8 @@
     const FAMILIES = Object.freeze(["choose_card", "choose_payment"]);
 
     function currentPending(context) {
-      const root = context?.state || context;
-      return root?.match?.pendingDecision?.type === "trade"
-        ? root.match.pendingDecision
+      return context?.standardActionDecisionContext?.type === "trade"
+        ? context.standardActionDecisionContext
         : null;
     }
 
@@ -128,7 +127,7 @@
       if (!player || (player.hand || []).length < required) {
         return { ok: false, code: "QUICK_TRADE_DISCARD_UNAVAILABLE", message: "快速交易弃牌不足" };
       }
-      root.match.pendingDecision = {
+      const decisionContext = {
         kind: "discard",
         type: "trade",
         tradeId: input.tradeId,
@@ -136,7 +135,11 @@
         count: required,
         required: true,
       };
-      return { ok: true, message: `请选择 ${required} 张牌作为快速交易费用` };
+      return {
+        ok: true,
+        decisionContext,
+        message: `请选择 ${required} 张牌作为快速交易费用`,
+      };
     }
 
     function openCardSelection(root, input = {}) {
@@ -152,14 +155,14 @@
       if (!hasPublicCard && input.allowBlindDraw === false) {
         return { ok: false, code: "QUICK_TRADE_CARD_UNAVAILABLE", message: "没有可选公共牌" };
       }
-      root.match.pendingDecision = {
+      const decisionContext = {
         kind: "card_selection",
         type: "trade",
         tradeId: input.tradeId,
         playerId: player.id,
         allowBlindDraw: input.allowBlindDraw !== false,
       };
-      return { ok: true, message: "请选择 1 张公共牌或盲抽" };
+      return { ok: true, decisionContext, message: "请选择 1 张公共牌或盲抽" };
     }
 
     function discardChoices(root, pending) {
@@ -249,12 +252,16 @@
         if (!discarded?.ok) return discarded;
         cards.addToDiscardPile(root.cards, discarded.card);
       }
-      delete root.match.pendingDecision;
+      let openedDecisionContext = null;
       const result = quickTrades.finalizeTradeAfterDiscard(
         pending.tradeId,
         {
           ...context,
-          beginCardSelection: (input) => openCardSelection(root, input),
+          beginCardSelection(input) {
+            const opened = openCardSelection(root, input);
+            if (opened?.ok) openedDecisionContext = opened.decisionContext;
+            return opened;
+          },
         },
         player,
       );
@@ -262,6 +269,7 @@
       return {
         ...result,
         progressed: true,
+        nextDecisionContext: clone(openedDecisionContext),
         events: [{
           type: "quick_trade_payment",
           tradeId: pending.tradeId,
@@ -303,7 +311,6 @@
           factoryOptions,
         );
       if (!picked?.ok) return picked;
-      delete root.match.pendingDecision;
       return {
         ok: true,
         progressed: true,
@@ -399,19 +406,100 @@
     );
     const findSourceChoice = (context, family, action) => enumerateSourceChoices(context, family)
       .find(({ candidate }) => sameDescriptor(candidate, action)) || null;
+
+    function createDecisionActionContext(actionContext, decisionContext) {
+      const root = actionContext?.state || actionContext;
+      const actorId = decisionContext?.kind === "initial_income"
+        ? decisionContext.queue?.[0]?.playerId || null
+        : decisionContext?.playerId || null;
+      if (!root || !actorId) return null;
+      return {
+        ...(actionContext?.state ? actionContext : {
+          state: root,
+          players: root.players,
+          cards: root.cards,
+          turn: root.turn,
+          match: root.match,
+        }),
+        standardActionAuthority: {
+          actorId,
+          stateVersion: actionContext?.stateVersion ?? root.meta?.stateVersion ?? 0,
+          decisionVersion: root.match?.decisionVersion ?? actionContext?.decisionVersion ?? 0,
+        },
+        standardActionDecisionContext: clone(decisionContext),
+      };
+    }
+
+    function createSessionDecisionEffect(actionContext, decisionContext) {
+      const decisionActionContext = createDecisionActionContext(actionContext, decisionContext);
+      if (!decisionActionContext) return null;
+      const family = decisionContext.kind === "card_selection" ? "choose_card" : "choose_payment";
+      const choices = ownedRegistry.enumerate(decisionActionContext, { family });
+      if (!choices.length) return null;
+      return {
+        type: standardActionSession.DECISION_EFFECT_TYPE,
+        kind: "decision",
+        ownerId: decisionActionContext.standardActionAuthority.actorId,
+        decisionKind: family,
+        payload: {
+          choices: clone(choices),
+          decisionContext: clone(decisionContext),
+        },
+      };
+    }
+
+    function incomeDecisionContext(entries) {
+      const queue = (entries || []).flatMap((entry) => (
+        Array.from(
+          { length: Math.max(0, Math.round(Number(entry?.count) || 0)) },
+          () => ({ playerId: entry.playerId, label: entry.label }),
+        )
+      ));
+      return queue.length ? { kind: "initial_income", queue } : null;
+    }
+
+    function attachNextDecision(actionContext, result) {
+      if (!result?.ok) return result;
+      const nextDecisionContext = result.nextDecisionContext
+        || (Array.isArray(result.remainingDecisionQueue)
+          ? (result.remainingDecisionQueue.length
+            ? { kind: "initial_income", queue: result.remainingDecisionQueue }
+            : null)
+          : incomeDecisionContext(result.settlement?.pendingIncomeIncreases));
+      const {
+        nextDecisionContext: _nextDecisionContext,
+        remainingDecisionQueue: _remainingDecisionQueue,
+        ...cleanResult
+      } = result;
+      const decisionEffect = createSessionDecisionEffect(actionContext, nextDecisionContext);
+      if (nextDecisionContext && !decisionEffect) {
+        return {
+          ok: false,
+          code: "PRODUCTION_SESSION_DECISION_EMPTY",
+          message: "规则要求继续选择，但当前 Session Decision 没有合法项",
+        };
+      }
+      return decisionEffect ? { ...cleanResult, decisionEffect } : cleanResult;
+    }
+
     function executeQuickTrade(actionContext, action) {
       const root = actionContext?.state || actionContext;
       const beforeDecisionVersion = Number(
         root?.match?.decisionVersion ?? actionContext?.decisionVersion,
       ) || 0;
+      let openedDecisionContext = null;
       const result = quickTrades.executeTrade(action.target?.tradeId, {
         ...actionContext,
-        beginDiscardSelection: (count, input) => (
-          quickTradeDecisionSource.openDiscard(root, count, input)
-        ),
-        beginCardSelection: (input) => (
-          quickTradeDecisionSource.openCardSelection(root, input)
-        ),
+        beginDiscardSelection(count, input) {
+          const opened = quickTradeDecisionSource.openDiscard(root, count, input);
+          if (opened?.ok) openedDecisionContext = opened.decisionContext;
+          return opened;
+        },
+        beginCardSelection(input) {
+          const opened = quickTradeDecisionSource.openCardSelection(root, input);
+          if (opened?.ok) openedDecisionContext = opened.decisionContext;
+          return opened;
+        },
       });
       if (!result?.ok) return result;
       if (root?.match && (Number(root.match.decisionVersion) || 0) === beforeDecisionVersion) {
@@ -423,13 +511,14 @@
         playerId: action.actorId || actionContext?.turn?.currentPlayerId || null,
         executorId: QUICK_TRADE_EXECUTOR_ID,
       };
-      return {
+      return attachNextDecision(actionContext, {
         ...result,
+        nextDecisionContext: openedDecisionContext,
         progressed: true,
         executorId: QUICK_TRADE_EXECUTOR_ID,
         events: [event],
         journalHistory: [event],
-      };
+      });
     }
     const quickTradeProvider = standardAction.createQuickTradeProvider({
       quickTrades,
@@ -603,6 +692,22 @@
             choices: setupChoices,
           };
         }
+        const incomeQueue = initialSetup.createIncomeDecisionQueue(context?.state || context);
+        const incomeContext = incomeQueue.length
+          ? { kind: "initial_income", queue: incomeQueue }
+          : null;
+        const incomeEffect = createSessionDecisionEffect(context, incomeContext);
+        if (incomeEffect) {
+          return {
+            ok: true,
+            boundary: "conditional_choice",
+            decisionType: "conditional_choice",
+            ownerId: incomeEffect.ownerId,
+            family: incomeEffect.decisionKind,
+            choices: incomeEffect.payload.choices,
+            decisionContext: incomeEffect.payload.decisionContext,
+          };
+        }
         const root = context?.state || context;
         return {
           ok: true,
@@ -621,8 +726,12 @@
       },
       resolveDecision(context, choice, decisionContext) {
         const descriptor = choice;
+        const sessionDecisionContext = decisionContext?.decisionContext || decisionContext;
+        const decisionActionContext = sessionDecisionContext?.kind
+          ? createDecisionActionContext(context, sessionDecisionContext)
+          : context;
         const setupCandidates = INITIAL_SETUP_FAMILIES.includes(descriptor?.family)
-          ? actionRegistry.enumerate(context, { family: descriptor.family })
+          ? actionRegistry.enumerate(decisionActionContext, { family: descriptor.family })
           : [];
         const setupCandidate = setupCandidates.length
           ? setupCandidates
@@ -631,7 +740,12 @@
               && JSON.stringify(candidate.payload || {}) === JSON.stringify(descriptor.payload || {})
             ))
           : null;
-        if (setupCandidate) return actionRegistry.execute(context, setupCandidate);
+        if (setupCandidate) {
+          return attachNextDecision(
+            decisionActionContext,
+            actionRegistry.execute(decisionActionContext, setupCandidate),
+          );
+        }
         if (INITIAL_SETUP_FAMILIES.includes(descriptor?.family)) {
           return {
             ok: false,

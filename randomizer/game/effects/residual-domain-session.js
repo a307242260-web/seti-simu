@@ -138,7 +138,6 @@
 
   function canStartCompany(root, player) {
     if (!player) return fail("COMPANY_OWNER_MISSING", "没有当前玩家");
-    if (root.match?.pendingDecision) return fail("COMPANY_PENDING_DECISION", "请先完成当前选择");
     if ((root.turn?.passedPlayerIds || []).includes(player.id) || player.passCompletionPending) {
       return fail("COMPANY_AFTER_PASS", "PASS 后不能执行公司行动");
     }
@@ -186,8 +185,7 @@
           || context.turn?.currentPlayerId
           || root.turn?.currentPlayerId;
         const player = actor(root, ownerId);
-        if (!player || root.match?.pendingDecision
-          || (root.turn?.passedPlayerIds || []).includes(ownerId)) {
+        if (!player || (root.turn?.passedPlayerIds || []).includes(ownerId)) {
           return fail("CARD_CORNER_BLOCKED", "当前不能执行弃牌角标");
         }
         const multiplier = industry.shouldDoubleDiscardCornerRewards?.(player) ? 2 : 1;
@@ -231,8 +229,7 @@
           || context.turn?.currentPlayerId
           || root.turn?.currentPlayerId;
         const player = actor(root, ownerId);
-        if (!player || root.match?.pendingDecision
-          || (root.turn?.passedPlayerIds || []).includes(ownerId)) {
+        if (!player || (root.turn?.passedPlayerIds || []).includes(ownerId)) {
           return fail("RUNEZU_FACE_BLOCKED", "当前不能放置符文族面部符号");
         }
         const choices = (aliens.ALIEN_SLOT_IDS || []).flatMap((slotId) => (

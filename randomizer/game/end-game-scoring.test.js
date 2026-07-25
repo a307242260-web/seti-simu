@@ -310,7 +310,7 @@ jiuzhe.addThreat(jiuzheState, threatPlayerA, 4);
 jiuzhe.addThreat(jiuzheState, threatPlayerB, 4);
 const jiuzheFinal = endGameScoring.computePlayerFinalScore({
   currentPlayer: threatPlayerA,
-  players: [threatPlayerA, threatPlayerB],
+  players: { players: [threatPlayerA, threatPlayerB] },
   finalScoring: finalScoring.createFinalScoringState(),
   data: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
   aliens: jiuzheState,

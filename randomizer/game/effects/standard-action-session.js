@@ -84,6 +84,9 @@
                 decisionKind: boundary.family || choices[0]?.family || "conditional_choice",
                 payload: {
                   choices: clone(choices),
+                  ...(boundary.decisionContext
+                    ? { decisionContext: clone(boundary.decisionContext) }
+                    : {}),
                   ...(boundary.cardSelection ? { cardSelection: clone(boundary.cardSelection) } : {}),
                 },
               },

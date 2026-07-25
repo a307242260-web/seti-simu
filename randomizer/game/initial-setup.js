@@ -244,33 +244,7 @@
         });
       },
     }, { playerIds: activePlayerIds(rootState) });
-    if (!result?.ok) return result;
-    rootState.match.initialIncomeQueue = (result.pendingIncomeIncreases || []).flatMap((entry) => (
-      Array.from({ length: entry.count }, () => ({ playerId: entry.playerId, label: entry.label }))
-    ));
-    installNextIncomeDecision(rootState);
     return result;
-  }
-
-  function installNextIncomeDecision(rootState) {
-    const next = rootState.match.initialIncomeQueue?.[0] || null;
-    const player = rootState.players.players.find((candidate) => candidate.id === next?.playerId);
-    if (!next || !player) {
-      delete rootState.match.pendingDecision;
-      delete rootState.match.initialIncomeQueue;
-      rootState.turn.currentPlayerId = rootState.turn.startPlayerId
-        || rootState.turn.currentPlayerId;
-      return false;
-    }
-    rootState.turn.currentPlayerId = player.id;
-    rootState.match.pendingDecision = {
-      kind: "discard",
-      type: "initial_income",
-      playerId: player.id,
-      count: 1,
-      required: true,
-    };
-    return true;
   }
 
   function confirm(rootState, actionContext) {
@@ -293,8 +267,8 @@
     offer.confirmed = true;
     setup.confirmedPlayerIds.push(player.id);
     player.initialSelection = {
-      industry: clone(selectedIndustry),
-      removedInitialCards: clone(selectedInitialCards),
+      industry: { id: selectedIndustry.id },
+      removedInitialCards: selectedInitialCards.map((card) => ({ id: card.id })),
     };
     player.aiDifficulty = rootState.match?.initialSetupConfig?.aiDifficulty || player.aiDifficulty;
     initializeIndustryState(player);
@@ -316,6 +290,12 @@
       || rootState.turn.currentPlayerId;
     const settlement = resolveSelections(rootState, actionContext);
     if (!settlement?.ok) return settlement;
+    if (!(settlement.pendingIncomeIncreases || []).some(
+      (entry) => (Number(entry?.count) || 0) > 0,
+    )) {
+      delete rootState.match.initialSetup;
+      delete rootState.match.initialSetupConfig;
+    }
     return {
       ok: true,
       progressed: true,
@@ -330,6 +310,11 @@
   function selectionChoices(rootState) {
     const setup = setupState(rootState);
     if (!setup) {
+      const needsSetup = activePlayerIds(rootState).some((playerId) => {
+        const player = rootState.players.players.find((candidate) => candidate.id === playerId);
+        return !player?.initialSelection;
+      });
+      if (!needsSetup) return [];
       return [{
         target: { kind: "start_initial_setup" },
         payload: {},
@@ -391,9 +376,11 @@
     };
   }
 
-  function paymentChoices(rootState) {
-    const pending = rootState.match?.pendingDecision;
-    if (pending?.type !== "initial_income" || pending.kind !== "discard") return [];
+  function paymentChoices(rootState, decisionContext) {
+    const pending = decisionContext?.kind === "initial_income"
+      ? decisionContext.queue?.[0] || null
+      : null;
+    if (!pending) return [];
     const player = rootState.players.players.find((candidate) => candidate.id === pending.playerId);
     return (player?.hand || []).map((card, handIndex) => ({
       target: {
@@ -407,8 +394,25 @@
     }));
   }
 
+  function createIncomeDecisionQueue(rootState) {
+    const setup = setupState(rootState);
+    if (setup?.phase !== "complete") return [];
+    return activePlayerIds(rootState).flatMap((playerId) => {
+      const player = rootState.players.players.find((candidate) => candidate.id === playerId);
+      const effect = initialCards.getIndustryEffect(player?.initialSelection?.industry);
+      const required = Math.max(0, Math.round(Number(effect?.incomeIncreaseCount) || 0));
+      return Array.from(
+        { length: required },
+        () => ({ playerId, label: effect?.label || "公司牌" }),
+      );
+    });
+  }
+
   function executePayment(rootState, actionContext, action) {
-    const pending = rootState.match?.pendingDecision;
+    const decisionContext = actionContext?.standardActionDecisionContext;
+    const pending = decisionContext?.kind === "initial_income"
+      ? decisionContext.queue?.[0] || null
+      : null;
     const player = rootState.players.players.find((candidate) => candidate.id === pending?.playerId);
     const handIndex = action.target?.handIndexes?.[0];
     if (!player || !Number.isInteger(handIndex)
@@ -444,12 +448,15 @@
         ),
       });
     }
-    rootState.match.initialIncomeQueue.shift();
-    delete rootState.match.pendingDecision;
-    installNextIncomeDecision(rootState);
+    const remainingDecisionQueue = clone(decisionContext.queue.slice(1));
+    if (!remainingDecisionQueue.length) {
+      delete rootState.match.initialSetup;
+      delete rootState.match.initialSetupConfig;
+    }
     return {
       ok: true,
       progressed: true,
+      remainingDecisionQueue,
       events: [{ type: "initial_income_resolved", playerId: player.id }],
     };
   }
@@ -463,7 +470,7 @@
         return request.family === "choose_card"
           ? selectionChoices(rootState)
           : request.family === "choose_payment"
-            ? paymentChoices(rootState)
+            ? paymentChoices(rootState, actionContext?.standardActionDecisionContext)
             : [];
       },
       validate(actionContext, action) {
@@ -513,6 +520,7 @@
     OWNER_ID,
     FAMILIES,
     createSource,
+    createIncomeDecisionQueue,
     createViewerPresentation,
     canConfirm,
     cardFromOffer,

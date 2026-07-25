@@ -32,7 +32,6 @@ function createSaturnLandingCheckpoint(environment) {
     root.turn.roundNumber = 1;
     root.turn.turnNumber = 4;
     root.turn.passedPlayerIds = [];
-    delete root.match.pendingDecision;
     const player = root.players.players.find((candidate) => candidate.id === green.id);
     Object.assign(player.resources, {
       credits: 20,

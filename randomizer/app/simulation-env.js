@@ -178,15 +178,15 @@ function buildDecisionFromState(state, legalActions) {
   if (turn.gameEnded) return null;
   const actorPlayerId = legalActions[0]?.actorPlayerId || turn.currentPlayerId || null;
   if (!actorPlayerId) return null;
-  const pending = state.match?.pendingDecision?.kind === "discard"
-    ? state.match.pendingDecision : null;
+  const decisionType = legalActions[0]?.decisionType || "turn_action";
+  const effectOwnerPlayerId = decisionType === "turn_action" ? null : actorPlayerId;
   return {
     actorPlayerId,
-    pendingOwnerPlayerId: pending?.playerId || null,
-    effectOwnerPlayerId: null,
+    pendingOwnerPlayerId: effectOwnerPlayerId,
+    effectOwnerPlayerId,
     currentPlayerId: turn.currentPlayerId,
-    source: pending ? "pending_owner" : "current_player",
-    decisionType: legalActions[0]?.decisionType || "turn_action",
+    source: effectOwnerPlayerId ? "effect_owner" : "current_player",
+    decisionType,
     choiceCount: legalActions.length,
   };
 }

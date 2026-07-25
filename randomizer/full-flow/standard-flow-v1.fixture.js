@@ -141,5 +141,5 @@ module.exports = Object.freeze({
     authority: [7, "seti-simulation-mulberry32-v1", 1448445793],
     session: [null, "player-white", null, "turn_action", 11, 19, 19],
   },
-  finalCheckpointHash: "f361a3e707ef10c7d7d7c7b407f469e9b8eefdfc4fcdcf0025f8467bac37e98c",
+  finalCheckpointHash: "fd7811ec8d4a8d6743b82f75d63cfb3e6adb10eb5e83b39cd9dd3ede68a22355",
 });

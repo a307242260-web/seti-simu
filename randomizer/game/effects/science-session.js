@@ -238,7 +238,6 @@
   function canStartMain(root, actor) {
     if (!actor) return fail("SCIENCE_ACTOR_MISSING", "没有当前玩家");
     if (actor.mainActionCompleted) return fail("SCIENCE_MAIN_ACTION_COMPLETE", "主要行动已经完成");
-    if (root?.match?.pendingDecision) return fail("SCIENCE_PENDING_DECISION", "请先完成当前选择");
     return { ok: true };
   }
 

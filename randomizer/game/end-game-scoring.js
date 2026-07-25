@@ -828,7 +828,9 @@
   function shouldApplyJiuzheThreatPenalty(player, context = {}) {
     const jiuzheModule = getJiuzheModule();
     if (!jiuzheModule || !context.aliens) return false;
-    const allPlayers = context.players || context.players?.players || [player];
+    const allPlayers = Array.isArray(context.players)
+      ? context.players
+      : context.players?.players || [player];
     return jiuzheModule.shouldApplyThreatPenalty(context.aliens, player, allPlayers);
   }
 

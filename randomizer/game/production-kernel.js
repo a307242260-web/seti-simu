@@ -435,7 +435,6 @@ function initializeProductionGame(workingState, options, random) {
   createCardGame(workingState, random, 4);
   chooseInitialSelections(workingState, options, random);
   workingState.match.decisionVersion = 1;
-  installOpeningDiscard(workingState);
   workingState.meta.sequences = readSequences(workingState);
 }
 
@@ -712,26 +711,6 @@ function createCardGame(workingState, random, handCount = 5) {
   });
 }
 
-function installOpeningDiscard(workingState) {
-  const next = workingState.match.initialIncomeQueue?.[0] || null;
-  const player = workingState.players.players.find((candidate) => candidate.id === next?.playerId) || null;
-  if (!next || !player) {
-    delete workingState.match.pendingDecision;
-    delete workingState.match.initialIncomeQueue;
-    workingState.turn.currentPlayerId = workingState.turn.startPlayerId;
-    return false;
-  }
-  workingState.turn.currentPlayerId = player.id;
-  workingState.match.pendingDecision = {
-    kind: "discard",
-    type: "initial_income",
-    playerId: player.id,
-    count: 1,
-    required: true,
-  };
-  return true;
-}
-
 function createHostCompositionFacade(composition) {
   return Object.freeze({
     SAVE_SCHEMA_VERSION: composition.SAVE_SCHEMA_VERSION,
@@ -921,11 +900,13 @@ function createProductionHostComposition(options = {}) {
     ruleCompositionApi: { createRuleComposition },
     getAuthority(state) {
       const root = state.state || state;
-      const pending = root.match.pendingDecision;
+      const explicit = state.standardActionAuthority || null;
       return {
-        actorId: pending?.playerId || root.turn.currentPlayerId || null,
-        stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
-        decisionVersion: root.match.decisionVersion || 0,
+        actorId: explicit?.actorId || root.turn.currentPlayerId || null,
+        stateVersion: explicit?.stateVersion
+          ?? composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion
+          ?? 0,
+        decisionVersion: explicit?.decisionVersion ?? root.match.decisionVersion ?? 0,
       };
     },
     projectionAdapter: hostProjectionAdapter,

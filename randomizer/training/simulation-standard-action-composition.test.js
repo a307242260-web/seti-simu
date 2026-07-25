@@ -35,6 +35,15 @@ function finishOpening(kernel) {
     assert.equal(submitted.ok, true, `opening Decision ${step} 必须可提交`);
   }
   assert.equal(kernel.composition.inspect().phase, "idle");
+  const settled = kernel.composition.projection({
+    viewerId: "simulation:test",
+    role: "simulation",
+    playerId: null,
+  }).state;
+  assert.equal(settled.match.initialSetup, undefined,
+    "opening Session 完成后不得保留初始选择流程状态");
+  assert.equal(settled.match.initialSetupConfig, undefined,
+    "opening Session 完成后不得保留初始选择配置");
 }
 
 let scenarioCardSequence = 0;
@@ -49,8 +58,6 @@ function createCard(cardInput) {
 function restoreScenario(kernel, mutate) {
   const saved = kernel.composition.lifecycle.save().envelope;
   const state = JSON.parse(saved.committedState);
-  delete state.match.pendingDecision;
-  delete state.match.initialIncomeQueue;
   mutate(state, state.players.players.find((player) => player.id === state.turn.currentPlayerId));
   const restored = kernel.composition.lifecycle.restore({
     ...saved,
@@ -236,7 +243,7 @@ const openingAction = inspection.session.decision.choices.find(
   (choice) => choice.family === "choose_payment",
 );
 assert.ok(openingAction, "生产 opening 状态必须产生真实 choose_payment Standard Action");
-const before = kernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state;
+const beforeDecisionQueueLength = inspection.session.currentEffect.payload.decisionContext.queue.length;
 const submitted = kernel.composition.inputPort.submitDecision({
   decisionId: inspection.session.decision.decisionId,
   decisionVersion: inspection.session.decision.decisionVersion,
@@ -244,8 +251,17 @@ const submitted = kernel.composition.inputPort.submitDecision({
   choice: openingAction,
 });
 assert.equal(submitted.ok, true, "生产 composition 必须正式执行已注册 Standard Action");
-const after = kernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state;
-assert.notDeepEqual(after.match.initialIncomeQueue, before.match.initialIncomeQueue);
+assert.equal(
+  kernel.composition.inspect().session.currentEffect.payload.decisionContext.queue.length,
+  beforeDecisionQueueLength - 1,
+  "opening 收入剩余队列只能在下一项 Session DecisionEffect 中缩短",
+);
+assert.equal(kernel.composition.inspect().phase, "awaiting_input");
+assert.notEqual(
+  kernel.composition.inspect().session.decision.decisionId,
+  inspection.session.decision.decisionId,
+  "下一项 opening 收入必须成为新的 Session DecisionEffect",
+);
 
 const stale = kernel.composition.inputPort.submitDecision({
   decisionId: inspection.session.decision.decisionId,
