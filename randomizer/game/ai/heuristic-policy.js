@@ -22,9 +22,14 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v5";
+  const POLICY_VERSION = "seti-heuristic-policy-v6";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
+  const FALLBACK_FAMILIES = Object.freeze(new Set([
+    ...standardAction.CONDITIONAL_FAMILIES,
+    "end_turn",
+    "pass",
+  ]));
 
   class HeuristicPolicyError extends Error {
     constructor(code, message, details = {}) {
@@ -69,21 +74,27 @@
     if (start) return start;
     const confirm = actions.find((action) => action.target?.kind === "confirm_initial_setup");
     if (confirm) return confirm;
+    const hasEvaluatedSelection = (context.actionOutcomes || []).some((outcome) => (
+      outcome?.status === "settled" && (outcome.leaves?.length || 0) > 0
+    ));
+    if (hasEvaluatedSelection) return null;
     const setup = context.observation?.publicState?.resident?.initialSetup;
     const offer = setup?.offer;
-    if (setup?.active && offer && !offer.selectedIndustryId) {
-      return actions.find((action) => (
-        action.target?.kind === "select_initial_card"
-        && action.target?.selectionKind === "industry"
-      )) || null;
+    const industry = actions.find((action) => (
+      action.target?.kind === "select_initial_card"
+      && action.target?.selectionKind === "industry"
+    ));
+    if ((setup?.active && offer && !offer.selectedIndustryId) || (!offer && industry)) {
+      return industry || null;
     }
     const selectedInitialIds = new Set(offer?.selectedInitialIds || []);
-    if (setup?.active && offer && selectedInitialIds.size < 2) {
-      return actions.find((action) => (
-        action.target?.kind === "select_initial_card"
-        && action.target?.selectionKind === "initial"
-        && !selectedInitialIds.has(action.target?.cardId)
-      )) || null;
+    const initial = actions.find((action) => (
+      action.target?.kind === "select_initial_card"
+      && action.target?.selectionKind === "initial"
+      && !selectedInitialIds.has(action.target?.cardId)
+    ));
+    if ((setup?.active && offer && selectedInitialIds.size < 2) || (!offer && initial)) {
+      return initial || null;
     }
     if (actions.length > 0 && actions.every((action) => (
       action.family === "choose_payment"
@@ -139,7 +150,9 @@
       .map((outcome) => outcome.actionId));
     const phasePriority = { conditional: 0, main: 1, quick: 2 };
     return (context.legalActions || [])
-      .filter((action) => settledIds.has(action.actionId))
+      .filter((action) => (
+        settledIds.has(action.actionId) && FALLBACK_FAMILIES.has(action.family)
+      ))
       .sort((left, right) => (
         (phasePriority[left.phase] ?? 3) - (phasePriority[right.phase] ?? 3)
         || String(left.actionId).localeCompare(String(right.actionId))

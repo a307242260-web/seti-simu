@@ -83,7 +83,7 @@
     assert((await driver.runOnce()).ok, "AI Standard Decision 提交失败");
     assert(JSON.stringify(trace) === JSON.stringify([
       "action:launch:chrome-ai", "effect:launch",
-      "decision:choose_reward:chrome-ai:credit", "reward:credit",
+      "decision:choose_reward:chrome-ai:score", "reward:score",
     ]), `AI 固定 Action/Decision trace 不一致: ${JSON.stringify(trace)}`);
     assert(status.textContent === "AI 已完成行动", "AI 展示未跟随共享 session 结果");
     assert(Object.values(forbiddenCalls).every((count) => count === 0), "AI 访问了 renderer/picker resolver");

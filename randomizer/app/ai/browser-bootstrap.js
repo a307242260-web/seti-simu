@@ -140,8 +140,8 @@
                 : ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
                   viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
                   confidence: "low",
-                  maxDepth: 2,
-                  maxLeaves: 4,
+                  maxDepth: 8,
+                  maxLeaves: 8,
                 }),
               {
                 seatId,

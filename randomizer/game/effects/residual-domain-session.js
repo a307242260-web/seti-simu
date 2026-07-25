@@ -1264,6 +1264,7 @@
       };
     }
     if (payload.domain === "income" && effectType === "planet_reward_income") {
+      if (!(owner.hand || []).length) return { ok: true };
       return {
         ok: true,
         spawnedEffects: [{

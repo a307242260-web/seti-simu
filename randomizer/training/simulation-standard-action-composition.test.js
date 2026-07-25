@@ -357,6 +357,27 @@ for (const family of ["scan", "place_data"]) {
 }
 
 {
+  const routeKernel = createSimulationRuleComposition({
+    ...config,
+    seed: "probe-all-directions",
+    random: createSeededRandom("probe-all-directions"),
+  });
+  assert.equal(routeKernel.newGame({ ...config, seed: "probe-all-directions" }).ok, true);
+  finishOpening(routeKernel);
+  const projected = routeKernel.composition.projection({
+    viewerId: "simulation:probe-routes",
+    role: "simulation",
+    playerId: null,
+  }).state;
+  const directions = new Set((projected.probeRouteRequirements?.candidates || [])
+    .flatMap((candidate) => candidate.path || [])
+    .map((step) => step.directionId));
+  assert.ok(directions.size >= 2,
+    "探测器目标必须从正式四方向移动图搜索，不能按玩家颜色固定单一路径");
+  routeKernel.composition.dispose();
+}
+
+{
   const analyzeKernel = createSimulationRuleComposition({
     ...config,
     seed: "seti-159-analyze",

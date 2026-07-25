@@ -152,7 +152,42 @@ assert.equal(
   "initial_setup Policy 选择必须只由 viewer-safe observation 决定，不得依赖宿主闭包进度",
 );
 
-const settledFallbackAction = action("launch:fallback", "launch");
+const evaluatedSetupActions = [
+  setupAction("setup:industry-low", {
+    kind: "select_initial_card",
+    selectionKind: "industry",
+    cardId: "industry:low",
+  }),
+  setupAction("setup:industry-high", {
+    kind: "select_initial_card",
+    selectionKind: "industry",
+    cardId: "industry:high",
+  }),
+];
+const evaluatedSetupContext = policyPort.createDecisionContext({
+  ...setupContext,
+  requestId: "heuristic-policy-evaluated-setup",
+  legalActions: evaluatedSetupActions,
+  actionOutcomes: evaluatedSetupActions.map((candidate, index) => ({
+    schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+    actionId: candidate.actionId,
+    status: "settled",
+    confidence: "high",
+    rootObservation: observation(0, 0),
+    leaves: [{
+      leafId: `setup-leaf:${candidate.actionId}`,
+      actionChain: [candidate.actionId],
+      observation: observation(index === 0 ? 2 : 5, 0),
+    }],
+  })),
+});
+assert.equal(
+  setupPolicy.decide(evaluatedSetupContext).actionId,
+  "setup:industry-high",
+  "公司与初始牌选择必须使用正式结算叶的同一 Q 口径",
+);
+
+const settledFallbackAction = action("pass:fallback", "pass");
 const settledFallbackObservation = observation(0, 0);
 const settledFallbackContext = policyPort.createDecisionContext({
   requestId: "heuristic-policy-settled-fallback",
@@ -180,8 +215,8 @@ const settledFallbackDecision = setupPolicy.decide(settledFallbackContext);
 assert.equal(settledFallbackDecision.actionId, settledFallbackAction.actionId);
 assert.equal(
   settledFallbackDecision.diagnostics.reasonCode,
-  "heuristic:settled-fallback:launch",
-  "估值无可选路线时只能降级到已有 settled 标准执行结果",
+  "heuristic:pass",
+  "估值无可选路线时必须直接选择合法 PASS，不得乱选其他已结算行动",
 );
 
 const inventoryObservation = outcomeModel.createDecisionObservation({
@@ -213,7 +248,8 @@ const inventoryObservation = outcomeModel.createDecisionObservation({
   },
 }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
 const inventoryValue = expectedScoreEvaluator.evaluateState(inventoryObservation, "p1");
-assert.equal(inventoryValue.total, 0, "信用、能源、宣传和卡牌只作为路线事实，不得形成统一库存 V");
+assert.equal(inventoryValue.total, 0,
+  "静态库存不是额外得分；资源等价只用于标准行动前后的实际增减和剩余路线价值");
 assert.deepEqual(inventoryValue.resourceFacts, {
   credits: 1,
   energy: 2,

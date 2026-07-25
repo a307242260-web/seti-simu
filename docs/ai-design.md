@@ -34,15 +34,15 @@ Rule Composition
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、资源事实和固定大小的
   探测器目标摘要。
 - `game/ai/expected-score-evaluator.js`：只从真实标准叶识别正分环绕/登陆终点、路线实耗、
-  缺口和唯一下一步；库存、宣传、卡牌不折算统一 V/Q。
+  缺口和唯一下一步，并计算当前探测器策略的版本化 V/Q。
 - `game/ai/heuristic-evaluator.js`：优先选择 `settled + selectable` 的目标步骤；失败或 unresolved
   候选不可进入排序。同一目标分才按实耗与稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
   Standard Action registry、Effect Session、Decision 与 commit 语义。
 - Simulation setup 选择也进入隔离规则 fork：提交标准 setup Decision、执行正式初始结算，再以同一
   `DecisionObservation -> OutcomeProjection -> target/gap/next-step` 口径选择。每个 setup
-  反事实叶从同一正式随机状态结算，并按正分探测器目标可达性、`targetBenefit`、信用/能源/移动
-  缺口依次排序；库存不计价，语义相同才保留原始发牌顺序。旧
+  反事实叶从同一正式随机状态结算，并按正分探测器目标的净等价价值、实际分和信用/能源
+  缺口依次排序；语义相同才保留原始发牌顺序。旧
   `selection-evaluator.js` 及其开局静态分值已删除。
 - setup 不消费对局 RNG 之外的未来随机数；probe-goal Policy 改变初始选择语义时，唯一 full-flow
   必须提升 schema/policy provenance，并通过公共 setup Decision 验证真实选择、结算和恢复结果，
@@ -88,18 +88,35 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 
-本阶段不使用统一行动价值、库存 V/Q 或 θ 排序。探测器候选路线由 counterfactual port
-在同一个复用 fork 中继续提交生产
-`launch/move/choose_payment/orbit|land/Decision`；移动到行星的宣传来自 production
-`moveProbe` 到达事件，终点收益、成本、科技减免和奖励全部来自完整标准 leaf。只有已解析且
-终点已兑现分为正的路线可选，最高目标分路线的当前 `nextAction` 获得推荐；没有路线长度、
-完成概率、tempo、发射/移动奖励或 PASS 惩罚。多探测器候选按 next action 独立归因，不共享
-终点或沿途收益。一次决策只读取一次根状态目标需求；隔离分支的续跑必须逐步匹配该
-`targetId` 的路径与终点槽位，其他行星或其他槽位的得分叶不能冒充当前目标完成。
+探测器初版使用以下单步重规划公式，不在每次决策中展开整条路线：
 
-信用、能源和移动只用于报告该标准路线的实耗、余步和可执行缺口；宣传与卡牌不直接计分。
-当标准叶真实取得橙色科技，且当前存在因资源耗尽未完成的探测器路线时，该科技行动可作为
-补缺步骤；它自身的分数不参与探测器目标排序。其他扫描、数据、科技和库存路径本阶段不估值。
+```text
+A(s) = 已兑现分
+     + 5 × 信用 + 5 × 能源
+     + 2.5 × 宣传 + 2.5 × 普通牌 + 10/3 × 外星人牌
+
+Vprobe(s) = max路线 {
+  终点直接奖励等价分 + 沿途实际宣传等价分
+  - 路线剩余信用/能源成本等价分
+}
+
+Q(s, a) = A(s') - A(s) + Vprobe(s')
+```
+
+`s'` 必须来自同根 fork 对该候选执行真实 Standard Action/Decision 后的盘面，不允许策略手工模拟
+资源或奖励。路线目标来自当前正式太阳系拓扑，覆盖四个移动方向、环绕和登陆；科技减免直接反映
+在 `s'` 的剩余成本中。主行动次数、路径步数和 tempo 不扣分。完成终点后不再叠加该目标的未来
+价值；PASS/结束回合固定为控制动作，不继承未完成路线价值。
+
+数据库存权重固定为 0；只有数据链真实解锁蓝色痕迹并已经增加的分数，才通过 `A(s)` 的
+“已兑现分”进入 Q。沿途到达行星的宣传、终点直接资源/普通牌、当前仍可取得的首枚黄色痕迹
+奖励按上述等价关系进入路线预计价值；扫描、收入和未实际兑现的未来数据收益不估值。
+
+Policy 只展开发射、移动、环绕、登陆、能填补当前钱/电缺口的快速交易、与探测器/钱电/橙色科技
+直接相关的打牌和研究橙色科技。打牌或科技只有在真实标准叶降低路线成本、填补缺口或启用新的
+正分路线时才可选；其他扫描、产业、放数据等合法行动仍保留在输入中，但标为本策略范围外。
+每次只提交 Q 最高的当前动作，然后从新盘面重新规划。多探测器候选按各自的
+`targetId + rocketId + path` 独立匹配，其他行星或其他槽位的得分叶不能冒充当前目标完成。
 若目标估值暂时没有可选路线，Policy 只能从已有 `settled` 标准执行结果中确定性降级；
 `failed/unresolved/stale` 结果仍不可选。该降级只保证机器席位经统一基础架构继续推进，
 不把资源库存或猜测收益伪装成 Q。完成主要行动后规则要求的 PASS/结束回合不继承探测器目标收益。

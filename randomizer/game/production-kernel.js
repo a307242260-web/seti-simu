@@ -271,6 +271,46 @@ function rewardScore(effects) {
   ), 0);
 }
 
+const PROBE_VALUE_POINTS = Object.freeze({
+  credits: 5,
+  energy: 5,
+  publicity: 2.5,
+  ordinaryCard: 2.5,
+  alienCard: 10 / 3,
+});
+
+function availableFirstYellowTraces(workingState) {
+  return Object.values(workingState.aliens?.aliens || {}).filter((slot) => (
+    !slot?.revealed && !slot?.traces?.yellow?.firstPlaced
+  )).length;
+}
+
+function rewardEquivalentValue(effects, workingState) {
+  let remainingFirstYellow = availableFirstYellowTraces(workingState);
+  return (effects || []).reduce((total, effect) => {
+    const gain = effect?.options?.gain || {};
+    let value = Number(gain.score || 0)
+      + Number(gain.credits || 0) * PROBE_VALUE_POINTS.credits
+      + Number(gain.energy || 0) * PROBE_VALUE_POINTS.energy
+      + Number(gain.publicity || 0) * PROBE_VALUE_POINTS.publicity;
+    if (effect?.type === planetRewards.EFFECT_TYPES.DRAW_CARDS) {
+      value += Number(effect.options?.count || 0) * PROBE_VALUE_POINTS.ordinaryCard;
+    } else if (effect?.type === planetRewards.EFFECT_TYPES.PICK_CARD) {
+      value += Number(effect.options?.count || 1) * PROBE_VALUE_POINTS.ordinaryCard;
+    } else if (effect?.type === planetRewards.EFFECT_TYPES.AOMOMO_CARD) {
+      value += Number(effect.options?.count || 1) * PROBE_VALUE_POINTS.alienCard;
+    } else if (
+      effect?.type === planetRewards.EFFECT_TYPES.ALIEN_TRACE
+      && effect.options?.traceType === "yellow"
+      && remainingFirstYellow > 0
+    ) {
+      remainingFirstYellow -= 1;
+      value += PROBE_VALUE_POINTS.publicity + PROBE_VALUE_POINTS.alienCard;
+    }
+    return total + value;
+  }, 0);
+}
+
 function routeRequirementKey(sourceId, choice) {
   return [
     sourceId,
@@ -279,12 +319,6 @@ function routeRequirementKey(sourceId, choice) {
     choice.target?.type || "planet",
     choice.target?.satelliteId || "",
   ].join(":");
-}
-
-function productionProbeDirections(player, coordinate) {
-  const preferredDirectionId = player?.color === "blue" ? "out" : "ccw";
-  if (preferredDirectionId === "out" && Number(coordinate?.y || 0) >= 3) return [];
-  return rocketAbility.MOVE_DIRECTIONS.filter((direction) => direction.id === preferredDirectionId);
 }
 
 function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
@@ -381,6 +415,10 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             credits: Number(launchCost.credits || 0) + Number(endpointCost.credits || 0),
             energy: route.movePoints + Number(endpointCost.energy || 0),
           };
+          const publicityValue = route.publicityStops * PROBE_VALUE_POINTS.publicity;
+          const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
+          const resourceCostValue = totalCost.credits * PROBE_VALUE_POINTS.credits
+            + totalCost.energy * PROBE_VALUE_POINTS.energy;
           const firstMove = route.path[0] || null;
           const targetId = [
             choice.actionType,
@@ -399,6 +437,9 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             endpointTarget: clone(choice.target || { type: "planet" }),
             targetBenefit: {
               score: scoreGain,
+              grossEquivalentValue,
+              resourceCostValue,
+              netEquivalentValue: grossEquivalentValue - resourceCostValue,
               rewardSummary: choice.rewardSummary,
               source: `planetRewards.${choice.actionType}:${choice.planetId}`,
             },
@@ -432,7 +473,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
           });
         }
       }
-      for (const direction of productionProbeDirections(player, route.coordinate)) {
+      for (const direction of rocketAbility.MOVE_DIRECTIONS) {
         const move = rockets.canMoveFromCoordinate(
           workingState.pieces,
           route.coordinate,
@@ -470,11 +511,12 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     }
   }
   const ranked = candidates.sort((left, right) => (
-    right.targetBenefit.score - left.targetBenefit.score
+    right.targetBenefit.netEquivalentValue - left.targetBenefit.netEquivalentValue
+    || right.targetBenefit.score - left.targetBenefit.score
     || left.required.credits + left.required.energy - right.required.credits - right.required.energy
     || left.required.movementSteps - right.required.movementSteps
     || String(left.requirementId).localeCompare(String(right.requirementId))
-  )).slice(0, 12);
+  )).slice(0, 8);
   return {
     schemaVersion: "seti-probe-route-requirements-v1",
     playerId: player.id,

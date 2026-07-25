@@ -148,6 +148,25 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(root.players.players[0].resources.credits, 6);
 })();
 
+(function proofPlanetIncomeWithoutHandSettlesAsNoop() {
+  const root = createRoot();
+  const owner = createHarness(residual, "createResidualDomain");
+  const settled = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
+    type: residual.HANDOFF_TYPE,
+    kind: "effect",
+    ownerId: "p1",
+    payload: {
+      schemaVersion: residual.HANDOFF_SCHEMA,
+      domain: "income",
+      effectType: "planet_reward_income",
+      data: {},
+    },
+  });
+  assert.equal(settled.ok, true);
+  assert.deepEqual(settled.spawnedEffects || [], [],
+    "无手牌时的星球收入奖励必须直接结算，不能留下零选项 Decision");
+})();
+
 (function proofConsumesRealRoundTransitionAndGameEndSequence() {
   for (const [roundNumber, expected] of [
     [3, ["card_trigger:round_transition", "company:round_start"]],

@@ -131,6 +131,7 @@ function createHeuristicPolicyAdapter(options = {}) {
       seatId: first.actorId,
       stateVersion: first.stateVersion,
       decisionVersion: first.decisionVersion,
+      authorityKey: `${first.phase}:${first.family}`,
       observation,
       legalActions: descriptors,
       actionOutcomes,

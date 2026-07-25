@@ -6,10 +6,10 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "probe-seat";
 
-function observation(resources, summary = null, rockets = [], probeRouteRequirements = null) {
+function observation(resources, summary = null, rockets = [], probeRouteRequirements = null, player = {}) {
   return outcomeModel.createDecisionObservation({
     publicState: {
-      players: [{ id: seatId, resources }],
+      players: [{ id: seatId, resources, ...player }],
       board: { rockets },
     },
     selfState: { id: seatId, hand: [] },
@@ -20,6 +20,15 @@ function observation(resources, summary = null, rockets = [], probeRouteRequirem
 function action(actionId, family, rocketId = 1) {
   return { actionId, family, target: { rocketId } };
 }
+
+const noData = evaluator.evaluateState(observation({
+  score: 7, credits: 1, energy: 1, publicity: 0, availableData: 0,
+}), seatId);
+const storedData = evaluator.evaluateState(observation({
+  score: 7, credits: 1, energy: 1, publicity: 0, availableData: 9,
+}), seatId);
+assert.equal(storedData.total, noData.total,
+  "数据库存本身不得估值；只有实际进入 score 的蓝色痕迹奖励可计分");
 
 function evaluationFor(candidateAction, summary, finalResources = {}) {
   const root = observation({
@@ -209,7 +218,108 @@ assert.equal(noEndpoint.score, null, "没有正收益终点的循环不得形成
   }, candidate);
   assert.equal(result.reasonCodes.includes("probe-goal-completed-standard-leaf"), false,
     "其他 targetId 的得分叶不得冒充当前探测器目标完成");
-  assert.equal(result.score, 0, "其他终点的实际得分不得进入当前目标分");
+  assert.equal(result.score, null, "其他终点的实际得分不得进入当前目标分");
+}
+
+{
+  const highGoal = {
+    targetId: "land:high:planet:",
+    targetBenefit: { score: 12 },
+    required: { credits: 0, energy: 3, movementSteps: 2 },
+    gap: { credits: 0, energy: 2, movementSteps: 2 },
+    nextStep: { family: "move", rocketId: 1, deltaX: 1, deltaY: 0 },
+  };
+  const matchingGoal = {
+    targetId: "orbit:matching:planet:",
+    targetBenefit: { score: 9 },
+    required: { credits: 0, energy: 2, movementSteps: 1 },
+    gap: { credits: 0, energy: 1, movementSteps: 1 },
+    nextStep: { family: "move", rocketId: 1, deltaX: 0, deltaY: 1 },
+  };
+  const root = observation(
+    { score: 0, credits: 4, energy: 1 },
+    null,
+    [{ id: 1, playerId: seatId, surface: "solar-board", sectorX: 0, sectorY: 0 }],
+    { playerId: seatId, candidates: [highGoal, matchingGoal] },
+  );
+  const leaf = observation(
+    { score: 0, credits: 4, energy: 0 },
+    null,
+    [{ id: 1, playerId: seatId, surface: "solar-board", sectorX: 0, sectorY: 1 }],
+    {
+      playerId: seatId,
+      candidates: [{
+        ...matchingGoal,
+        required: { credits: 0, energy: 1, movementSteps: 0 },
+        gap: { credits: 0, energy: 0, movementSteps: 0 },
+      }],
+    },
+  );
+  const candidate = {
+    ...action("move:matching", "move"),
+    target: { rocketId: 1, deltaX: 0, deltaY: 1 },
+  };
+  const result = evaluator.evaluateAction({
+    seatId,
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: candidate.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: root,
+      leaves: [{ leafId: "matching-goal", actionChain: [candidate.actionId], observation: leaf }],
+    }],
+  }, candidate);
+  assert.equal(result.probeGoalRequirement.targetId, matchingGoal.targetId,
+    "行动必须匹配自己的最佳真实目标，不能永远追排序第一的路线");
+  assert.equal(result.score, 4,
+    "Q 必须扣除真实标准叶消耗的 1 能量，再加执行后盘面的 9 分路线价值");
+}
+
+{
+  const goal = {
+    targetId: "land:orange:planet:",
+    targetBenefit: { score: 10 },
+    required: { credits: 0, energy: 3, movementSteps: 0 },
+    gap: { credits: 0, energy: 1, movementSteps: 0 },
+    nextStep: { family: "land", rocketId: 1 },
+  };
+  const root = observation(
+    { score: 0, credits: 4, energy: 2 },
+    null,
+    [],
+    { playerId: seatId, candidates: [goal] },
+  );
+  const leaf = observation(
+    { score: 0, credits: 4, energy: 2 },
+    null,
+    [],
+    {
+      playerId: seatId,
+      candidates: [{
+        ...goal,
+        required: { credits: 0, energy: 2, movementSteps: 0 },
+        gap: { credits: 0, energy: 0, movementSteps: 0 },
+      }],
+    },
+    { techState: { ownedTiles: { orange3: true } } },
+  );
+  const candidate = action("research:orange", "research_tech");
+  const result = evaluator.evaluateAction({
+    seatId,
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: candidate.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: root,
+      leaves: [{ leafId: "orange-tech", actionChain: [candidate.actionId], observation: leaf }],
+    }],
+  }, candidate);
+  assert.equal(result.selectable, true);
+  assert.equal(result.orangeTechGain, 1);
+  assert.deepEqual(result.reasonCodes, ["probe-goal-gap-reduced-by-orange-tech"],
+    "橙色科技只有实际降低探测器路线缺口时才获得路线 Q");
 }
 
 console.log("probe route evaluator tests passed");
