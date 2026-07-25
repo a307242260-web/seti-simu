@@ -6,6 +6,36 @@ require("./index");
 
 const data = require("./index");
 
+const root = {
+  meta: {
+    sequences: {
+      nebulaReplacement: 1,
+      nebulaToken: 1,
+    },
+  },
+};
+function withRoot(options = {}) {
+  return { ...options, root };
+}
+function fillNebulaData(state, nebulaId, options = {}) {
+  return data.fillNebulaData(state, nebulaId, withRoot(options));
+}
+function fillAllNebulaData(state, options = {}) {
+  return data.fillAllNebulaData(state, withRoot(options));
+}
+function replaceNextNebulaDataToken(state, nebulaId, player, options = {}) {
+  return data.replaceNextNebulaDataToken(state, nebulaId, player, withRoot(options));
+}
+function addSectorExtraMark(state, sectorId, player, options = {}) {
+  return data.addSectorExtraMark(state, sectorId, player, withRoot(options));
+}
+function settleSector(state, sectorId, options = {}) {
+  return data.settleSector(state, sectorId, withRoot(options));
+}
+function settleCompletedSectors(state, options = {}) {
+  return data.settleCompletedSectors(state, withRoot(options));
+}
+
 assert.equal(data.getNebulaCapacity("sector-2-a"), 6);
 assert.equal(data.getNebulaCapacity("sector-3-b"), 6);
 assert.equal(data.getNebulaCapacity("sector-1-a"), 5);
@@ -116,19 +146,19 @@ assert.equal(aomomoArcSlot3.angularFraction, 0.5162);
 
 const nebulaDataState = data.createDefaultNebulaDataState();
 
-const siriusFill = data.fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
+const siriusFill = fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
 assert.equal(siriusFill.ok, true);
 assert.equal(siriusFill.added.length, 6);
 assert.equal(data.listNebulaTokens(nebulaDataState, "sector-2-a").length, 6);
 
-const siriusOverflow = data.fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
+const siriusOverflow = fillNebulaData(nebulaDataState, "sector-2-a", { source: "debug" });
 assert.equal(siriusOverflow.ok, false);
 
-const vegaFill = data.fillNebulaData(nebulaDataState, "sector-1-b", { source: "debug" });
+const vegaFill = fillNebulaData(nebulaDataState, "sector-1-b", { source: "debug" });
 assert.equal(vegaFill.ok, true);
 assert.equal(vegaFill.added.length, 4);
 
-const allFill = data.fillAllNebulaData(nebulaDataState, { source: "debug" });
+const allFill = fillAllNebulaData(nebulaDataState, { source: "debug" });
 assert.equal(allFill.ok, true);
 assert.equal(
   data.listAllNebulaTokens(nebulaDataState).length,
@@ -148,14 +178,14 @@ for (const nebulaId of data.NEBULA_IDS) {
 }
 
 const scanState = data.createDefaultNebulaDataState();
-data.fillNebulaData(scanState, "sector-1-a", { source: "debug" });
+fillNebulaData(scanState, "sector-1-a", { source: "debug" });
 const scanPlayer = {
   id: "player-blue",
   color: "blue",
   colorLabel: "蓝色",
   resources: { availableData: 0, score: 0 },
 };
-const firstReplace = data.replaceNextNebulaDataToken(scanState, "sector-1-a", scanPlayer, {
+const firstReplace = replaceNextNebulaDataToken(scanState, "sector-1-a", scanPlayer, {
   playerTokenSrc: "../assets/tokens/normal_token-blue.png",
 });
 assert.equal(firstReplace.ok, true);
@@ -170,24 +200,24 @@ assert.equal(data.getNebulaSecondSlotScoreReward(2), data.NEBULA_SECOND_SLOT_SCO
 assert.equal(data.NEBULA_SECOND_SLOT_SCORE, 2);
 
 const aomomoScanState = data.createDefaultNebulaDataState();
-data.fillNebulaData(aomomoScanState, "aomomo", { source: "debug" });
+fillNebulaData(aomomoScanState, "aomomo", { source: "debug" });
 const aomomoPlayer = {
   id: "player-white",
   color: "white",
   colorLabel: "白色",
   resources: { availableData: 0, score: 0 },
 };
-const aomomoFirst = data.replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
+const aomomoFirst = replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
 assert.equal(aomomoFirst.ok, true);
 assert.equal(aomomoFirst.slotIndex, 1);
 assert.equal(aomomoFirst.scoreAwarded, 1);
 assert.equal(aomomoPlayer.resources.score, 1);
 assert.equal(aomomoFirst.token.replacedByPlayerColor, "white");
-const aomomoSecond = data.replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
+const aomomoSecond = replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
 assert.equal(aomomoSecond.slotIndex, 2);
 assert.equal(aomomoSecond.scoreAwarded, 0);
 assert.equal(aomomoPlayer.resources.score, 1);
-const aomomoThird = data.replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
+const aomomoThird = replaceNextNebulaDataToken(aomomoScanState, "aomomo", aomomoPlayer);
 assert.equal(aomomoThird.slotIndex, 3);
 assert.equal(aomomoThird.scoreAwarded, 2);
 assert.equal(aomomoPlayer.resources.score, 3);
@@ -205,12 +235,12 @@ const aomomoSettlementWhite = {
   colorLabel: "白色",
   resources: { score: 0 },
 };
-data.fillNebulaData(aomomoSettlementState, "aomomo", { source: "test" });
-data.replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementWhite, { replacementOrder: 1 });
-data.replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementWhite, { replacementOrder: 2 });
-data.replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementBlue, { replacementOrder: 3 });
+fillNebulaData(aomomoSettlementState, "aomomo", { source: "test" });
+replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementWhite, { replacementOrder: 1 });
+replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementWhite, { replacementOrder: 2 });
+replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementBlue, { replacementOrder: 3 });
 assert.equal(data.isSectorReadyToSettle(aomomoSettlementState, "aomomo"), true);
-const aomomoSettleResult = data.settleSector(aomomoSettlementState, "aomomo");
+const aomomoSettleResult = settleSector(aomomoSettlementState, "aomomo");
 assert.equal(aomomoSettleResult.ok, true);
 assert.equal(aomomoSettleResult.winner, null);
 assert.equal(aomomoSettleResult.second, null);
@@ -224,7 +254,7 @@ assert.equal(
   false,
 );
 
-const secondReplace = data.replaceNextNebulaDataToken(scanState, "sector-1-a", scanPlayer, {
+const secondReplace = replaceNextNebulaDataToken(scanState, "sector-1-a", scanPlayer, {
   playerTokenSrc: "../assets/tokens/normal_token-blue.png",
 });
 assert.equal(secondReplace.ok, true);
@@ -242,7 +272,7 @@ const settlementPlayers = [
   { id: "player-green", color: "green", colorLabel: "绿色" },
   { id: "player-white", color: "white", colorLabel: "白色" },
 ];
-data.fillNebulaData(settlementState, "sector-1-a", { source: "test" });
+fillNebulaData(settlementState, "sector-1-a", { source: "test" });
 assert.equal(data.isSectorReadyToSettle(settlementState, "sector-1-a"), false);
 
 [
@@ -252,7 +282,7 @@ assert.equal(data.isSectorReadyToSettle(settlementState, "sector-1-a"), false);
   settlementPlayers[2],
   settlementPlayers[1],
 ].forEach((player, index) => {
-  data.replaceNextNebulaDataToken(settlementState, "sector-1-a", player, {
+  replaceNextNebulaDataToken(settlementState, "sector-1-a", player, {
     replacementOrder: index + 1,
   });
 });
@@ -263,7 +293,7 @@ assert.equal(ranking[0].playerColor, "white");
 assert.equal(ranking[1].playerColor, "blue");
 assert.equal(ranking[2].playerColor, "green");
 
-const settleResult = data.settleSector(settlementState, "sector-1-a", {
+const settleResult = settleSector(settlementState, "sector-1-a", {
   players: settlementPlayers,
   getPlayerTokenSrc: (player) => `token-${player.color}.png`,
 });
@@ -292,12 +322,12 @@ assert.equal(retained.playerTokenSrc, "token-blue.png");
   settlementPlayers[1],
   settlementPlayers[1],
 ].forEach((player, index) => {
-  data.replaceNextNebulaDataToken(settlementState, "sector-1-a", player, {
+  replaceNextNebulaDataToken(settlementState, "sector-1-a", player, {
     replacementOrder: 10 + index,
   });
 });
 assert.equal(data.isSectorReadyToSettle(settlementState, "sector-1-a"), true);
-const secondSettleResult = data.settleSector(settlementState, "sector-1-a", {
+const secondSettleResult = settleSector(settlementState, "sector-1-a", {
   players: settlementPlayers,
   getPlayerTokenSrc: (player) => `token-${player.color}.png`,
 });
@@ -309,7 +339,7 @@ assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[1].
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].winners[1].playerTokenSrc, "token-green.png");
 
 const stripOnlyState = data.createDefaultNebulaDataState();
-data.fillNebulaData(stripOnlyState, "sector-2-a", { source: "test" });
+fillNebulaData(stripOnlyState, "sector-2-a", { source: "test" });
 [
   settlementPlayers[0],
   settlementPlayers[0],
@@ -318,11 +348,11 @@ data.fillNebulaData(stripOnlyState, "sector-2-a", { source: "test" });
   settlementPlayers[1],
   settlementPlayers[2],
 ].forEach((player, index) => {
-  data.replaceNextNebulaDataToken(stripOnlyState, "sector-2-a", player, {
+  replaceNextNebulaDataToken(stripOnlyState, "sector-2-a", player, {
     replacementOrder: index + 1,
   });
 });
-const stripOnlySettle = data.settleSector(stripOnlyState, "sector-2-a", {
+const stripOnlySettle = settleSector(stripOnlyState, "sector-2-a", {
   players: settlementPlayers,
   getPlayerTokenSrc: (player) => `token-${player.color}.png`,
 });
@@ -332,9 +362,9 @@ assert.equal(stripOnlyState.sectorSettlements.sectors["sector-2-a"].winners[0].s
 assert.equal(stripOnlyState.sectorSettlements.sectors["sector-2-a"].winners[0].markerIndex, 1);
 
 const barnardCompletedState = data.createDefaultNebulaDataState();
-data.fillNebulaData(barnardCompletedState, "sector-2-b", { source: "test" });
+fillNebulaData(barnardCompletedState, "sector-2-b", { source: "test" });
 settlementPlayers.forEach((player, index) => {
-  data.replaceNextNebulaDataToken(barnardCompletedState, "sector-2-b", player, {
+  replaceNextNebulaDataToken(barnardCompletedState, "sector-2-b", player, {
     replacementOrder: index + 1,
   });
 });
@@ -342,12 +372,12 @@ settlementPlayers.forEach((player, index) => {
   settlementPlayers[0],
   settlementPlayers[2],
 ].forEach((player, index) => {
-  data.replaceNextNebulaDataToken(barnardCompletedState, "sector-2-b", player, {
+  replaceNextNebulaDataToken(barnardCompletedState, "sector-2-b", player, {
     replacementOrder: 10 + index,
   });
 });
 assert.equal(data.isSectorReadyToSettle(barnardCompletedState, "sector-2-b"), true);
-const barnardSweep = data.settleCompletedSectors(barnardCompletedState, {
+const barnardSweep = settleCompletedSectors(barnardCompletedState, {
   players: settlementPlayers,
   getPlayerTokenSrc: (player) => `token-${player.color}.png`,
 });
@@ -361,7 +391,7 @@ data.clearNebulaData(settlementState);
 assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"], undefined);
 
 const extraMarkState = data.createDefaultNebulaDataState();
-data.fillNebulaData(extraMarkState, "sector-1-a", { source: "test" });
+fillNebulaData(extraMarkState, "sector-1-a", { source: "test" });
 [
   settlementPlayers[0],
   settlementPlayers[0],
@@ -369,13 +399,13 @@ data.fillNebulaData(extraMarkState, "sector-1-a", { source: "test" });
   settlementPlayers[1],
   settlementPlayers[1],
 ].forEach((player, index) => {
-  data.replaceNextNebulaDataToken(extraMarkState, "sector-1-a", player, {
+  replaceNextNebulaDataToken(extraMarkState, "sector-1-a", player, {
     replacementOrder: index + 1,
   });
 });
 assert.equal(data.isSectorReadyToSettle(extraMarkState, "sector-1-a"), true);
 assert.equal(data.getSectorRanking(extraMarkState, "sector-1-a")[0].playerColor, "green");
-const extraMark = data.addSectorExtraMark(extraMarkState, "sector-1-a", settlementPlayers[0], {
+const extraMark = addSectorExtraMark(extraMarkState, "sector-1-a", settlementPlayers[0], {
   replacementOrder: 6,
 });
 assert.equal(extraMark.ok, true);
@@ -385,7 +415,7 @@ const extraRanking = data.getSectorRanking(extraMarkState, "sector-1-a");
 assert.equal(extraRanking[0].playerColor, "blue");
 assert.equal(extraRanking[0].count, 3);
 assert.equal(extraRanking[1].count, 3);
-const extraSettleResult = data.settleSector(extraMarkState, "sector-1-a");
+const extraSettleResult = settleSector(extraMarkState, "sector-1-a");
 assert.equal(extraSettleResult.ok, true);
 assert.equal(extraSettleResult.winner.playerColor, "blue");
 assert.equal(extraSettleResult.second.playerColor, "green");
@@ -399,9 +429,9 @@ for (const [sectorId, winner] of [
   ["sector-1-b", currentOrderPlayer],
   ["aomomo", otherOrderPlayer],
 ]) {
-  data.fillNebulaData(settlementOrderState, sectorId, { source: "test" });
+  fillNebulaData(settlementOrderState, sectorId, { source: "test" });
   while (data.getNextReplaceableNebulaToken(settlementOrderState, sectorId)) {
-    data.replaceNextNebulaDataToken(settlementOrderState, sectorId, winner);
+    replaceNextNebulaDataToken(settlementOrderState, sectorId, winner);
   }
 }
 assert.deepEqual(

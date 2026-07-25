@@ -61,6 +61,21 @@ function restoreScenario(kernel, mutate) {
   return state;
 }
 
+function removeCardDefinitions(state, cardIds) {
+  const removed = new Set(cardIds);
+  for (const player of state.players.players) {
+    player.hand = player.hand.filter((card) => !removed.has(card.cardId));
+    player.reservedCards = player.reservedCards.filter((card) => !removed.has(card.cardId));
+    player.resources.handSize = player.hand.length;
+  }
+  state.cards.publicCards = state.cards.publicCards.filter((card) => !removed.has(card.cardId));
+  state.cards.discardPile = state.cards.discardPile.filter((card) => !removed.has(card.cardId));
+  state.cards.drawPileCardIds = state.cards.drawPileCardIds.filter((cardId) => !removed.has(cardId));
+  for (const [round, pile] of Object.entries(state.cards.passReservePiles || {})) {
+    state.cards.passReservePiles[round] = pile.filter((card) => !removed.has(card.cardId));
+  }
+}
+
 function identityView(actions) {
   return actions.map((action) => ({
     family: action.family,
@@ -409,7 +424,8 @@ for (const family of ["scan", "place_data"]) {
   assert.equal(cardKernel.newGame(cardConfig).ok, true);
   finishOpening(cardKernel);
   const directCard = createCard("dlc_10");
-  const directScenario = restoreScenario(cardKernel, (_state, player) => {
+  const directScenario = restoreScenario(cardKernel, (state, player) => {
+    removeCardDefinitions(state, [directCard.cardId]);
     player.resources.credits = 20;
     player.resources.publicity = 0;
     player.hand = [directCard];
@@ -436,7 +452,8 @@ for (const family of ["scan", "place_data"]) {
 
   const decisionCard = createCard("dlc_2");
   const cornerCard = createCard("b_3");
-  const decisionScenario = restoreScenario(cardKernel, (_state, player) => {
+  const decisionScenario = restoreScenario(cardKernel, (state, player) => {
+    removeCardDefinitions(state, [decisionCard.cardId, cornerCard.cardId]);
     player.resources.credits = 20;
     player.hand = [decisionCard, cornerCard];
     player.reservedCards = [];
@@ -496,10 +513,12 @@ for (const family of ["scan", "place_data"]) {
   finishOpening(researchKernel);
   restoreScenario(researchKernel, (_state, player) => {
     player.resources.publicity = 20;
+    player.techState = { ownedTiles: {}, disabledTiles: {}, blueBoardSlots: {} };
     player.mainActionCompleted = false;
   });
-  const action = researchKernel.composition.inputPort
-    .enumerateActions({ family: "research_tech" })[0];
+  const researchActions = researchKernel.composition.inputPort
+    .enumerateActions({ family: "research_tech" });
+  const action = researchActions[0];
   assert.ok(action, "富宣传代表状态必须枚举 research_tech");
   const result = submitActionToCompletion(researchKernel.composition, action);
   assert.equal(result.ok, true, "生产 Standard Action 回归必须实际执行 research_tech");

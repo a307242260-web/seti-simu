@@ -40,14 +40,6 @@
     return { poolTokens: [], placedTokens: [], discardedCount: 0 };
   }
 
-  function takeLocalDataTokenSequence(dataState) {
-    return [...(dataState?.poolTokens || []), ...(dataState?.placedTokens || [])]
-      .reduce((maximum, token) => {
-        const match = /^data-token-(?:recovered-)?(\d+)$/.exec(String(token?.id || ""));
-        return match ? Math.max(maximum, Number(match[1])) : maximum;
-      }, 0) + 1;
-  }
-
   function getPlacementKind(token) {
     return token?.placementKind === PLACEMENT_KIND_BLUE_BONUS
       ? PLACEMENT_KIND_BLUE_BONUS
@@ -106,53 +98,11 @@
     };
   }
 
-  function getExpectedPoolTokenCount(player) {
-    return Math.max(
-      0,
-      Math.min(
-        players.RESOURCE_LIMITS.availableData,
-        Math.round(Number(player?.resources?.availableData) || 0),
-      ),
-    );
-  }
-
-  function findNextOpenPoolSlotIndexInState(dataState) {
-    const occupied = new Set((dataState.poolTokens || []).map((token) => Number(token.slotIndex)));
-    for (const slotIndex of placement.DATA_POOL_SLOT_IDS) {
-      if (!occupied.has(slotIndex)) return slotIndex;
-    }
-    return null;
-  }
-
-  function createRecoveredPoolToken(dataState, slotIndex) {
-    const sequence = takeLocalDataTokenSequence(dataState);
-    return normalizePoolToken({
-      id: `data-token-recovered-${sequence}`,
-      index: getNextDataIndex(dataState),
-      slotIndex,
-    }, dataState.poolTokens.length);
-  }
-
-  function backfillPoolTokensFromResource(player, dataState) {
-    const targetCount = getExpectedPoolTokenCount(player);
-    while (dataState.poolTokens.length < targetCount) {
-      const slotIndex = findNextOpenPoolSlotIndexInState(dataState);
-      if (!slotIndex) return;
-      dataState.poolTokens.push(createRecoveredPoolToken(dataState, slotIndex));
-    }
-  }
-
   function ensurePlayerDataState(player) {
-    let shouldBackfillFromResource = false;
     if (!player.dataState) {
       player.dataState = createDefaultDataState();
-      shouldBackfillFromResource = true;
     } else if (!Array.isArray(player.dataState.poolTokens) || !Array.isArray(player.dataState.placedTokens)) {
       player.dataState = normalizeDataState(player.dataState);
-      shouldBackfillFromResource = true;
-    }
-    if (shouldBackfillFromResource) {
-      backfillPoolTokensFromResource(player, player.dataState);
     }
     return player.dataState;
   }
@@ -331,9 +281,7 @@
       return { ok: false, message: "数据池没有可用槽位" };
     }
 
-    const committedSequence = options.root
-      ? stateSequences.take(options.root, "dataToken")
-      : takeLocalDataTokenSequence(dataState);
+    const committedSequence = stateSequences.take(options.root, "dataToken");
     const token = {
       id: `data-token-${committedSequence}`,
       index: getNextDataIndex(dataState),

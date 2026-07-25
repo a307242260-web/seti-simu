@@ -9,6 +9,11 @@ const chong = require("./aliens/chong");
 const aomomo = require("./aliens/aomomo");
 const runezu = require("./aliens/runezu");
 
+const root = { meta: { sequences: { finalMark: 1 } } };
+function markTile(state, tileId, targetPlayer, options = {}) {
+  return finalScoring.markTile(state, tileId, targetPlayer, { ...options, root });
+}
+
 function player(overrides = {}) {
   return {
     id: "player-white",
@@ -28,7 +33,7 @@ finalScoring.setTileVariants(state, { a: 1, b: 2, c: 1, d: 2 });
 const white = player();
 white.resources.score = 25;
 finalScoring.syncPendingMarks(state, [white]);
-const markResult = finalScoring.markTile(state, "a", white, { tokenSrc: "white.png" });
+const markResult = markTile(state, "a", white, { tokenSrc: "white.png" });
 assert.equal(markResult.ok, true);
 assert.equal(markResult.mark.slotIndex, 1);
 
@@ -93,7 +98,7 @@ assert.equal(
 const incomeIncreaseState = finalScoring.createFinalScoringState(["a"]);
 finalScoring.setTileVariants(incomeIncreaseState, { a: 1 });
 finalScoring.syncPendingMarks(incomeIncreaseState, [incomeIncreasePlayer]);
-finalScoring.markTile(incomeIncreaseState, "a", incomeIncreasePlayer, { tokenSrc: "white.png" });
+markTile(incomeIncreaseState, "a", incomeIncreasePlayer, { tokenSrc: "white.png" });
 const incomeIncreaseTile = endGameScoring.computePlayerTileScore(incomeIncreaseState, incomeIncreasePlayer, {
   ...baseIncomeContext,
   finalScoringState: incomeIncreaseState,
@@ -104,7 +109,7 @@ assert.equal(incomeIncreaseTile.score, 10, "a1 slot 1 should score income increa
 
 white.resources.score = 50;
 finalScoring.syncPendingMarks(state, [white]);
-finalScoring.markTile(state, "b", white, { tokenSrc: "white.png" });
+markTile(state, "b", white, { tokenSrc: "white.png" });
 const bTile = endGameScoring.computePlayerTileScore(state, white, tileContext).tiles
   .find((entry) => entry.tileId === "b");
 assert.equal(bTile.formulaId, "b2");
@@ -204,9 +209,9 @@ const slotThreePlayer = player({
 const slotOnePlayer = player({ id: "player-blue", color: "blue", resources: { score: 25 } });
 const slotTwoPlayer = player({ id: "player-green", color: "green", resources: { score: 25 } });
 finalScoring.syncPendingMarks(slotThreeState, [slotOnePlayer, slotTwoPlayer, slotThreePlayer]);
-finalScoring.markTile(slotThreeState, "c", slotOnePlayer, { tokenSrc: "blue.png" });
-finalScoring.markTile(slotThreeState, "c", slotTwoPlayer, { tokenSrc: "green.png" });
-finalScoring.markTile(slotThreeState, "c", slotThreePlayer, { tokenSrc: "brown.png" });
+markTile(slotThreeState, "c", slotOnePlayer, { tokenSrc: "blue.png" });
+markTile(slotThreeState, "c", slotTwoPlayer, { tokenSrc: "green.png" });
+markTile(slotThreeState, "c", slotThreePlayer, { tokenSrc: "brown.png" });
 const thirdTile = endGameScoring.computePlayerTileScore(slotThreeState, slotThreePlayer, {
   ...tileContext,
   currentPlayer: slotThreePlayer,
@@ -442,7 +447,7 @@ assert.equal(
 const banrenmaB1State = finalScoring.createFinalScoringState(["b"]);
 finalScoring.setTileVariants(banrenmaB1State, { b: 1 });
 finalScoring.syncPendingMarks(banrenmaB1State, [banrenmaTracePlayer]);
-finalScoring.markTile(banrenmaB1State, "b", banrenmaTracePlayer, { tokenSrc: "white.png" });
+markTile(banrenmaB1State, "b", banrenmaTracePlayer, { tokenSrc: "white.png" });
 const banrenmaB1Tile = endGameScoring.computePlayerTileScore(banrenmaB1State, banrenmaTracePlayer, {
   ...tileContext,
   finalScoringState: banrenmaB1State,

@@ -2,6 +2,10 @@ const assert = require("node:assert/strict");
 require("../card-catalog");
 const cards = require("./deck");
 
+function createRoot() {
+  return { meta: { sequences: { card: 1 } } };
+}
+
 function collectCardZoneIds(cardState, playerState) {
   const ids = [];
   for (const card of cardState.publicCards || []) {
@@ -37,6 +41,7 @@ function assertUniqueCardZoneIds(cardState, playerState, label) {
 }
 
 const cardState = cards.createCardState();
+const root = createRoot();
 const player = {
   id: "player-white",
   hand: [],
@@ -52,6 +57,7 @@ cards.initializeDeck(cardState, playerState, {
   player,
   handCount: 5,
   random: () => 0,
+  root,
 });
 
 assert.equal(cardState.publicCards.filter(Boolean).length, cards.PUBLIC_CARD_COUNT);
@@ -78,8 +84,16 @@ const openingHandPlayerState = {
   players: openingHandPlayers,
   currentPlayerId: openingHandPlayers[0].id,
 };
+const openingHandRoot = createRoot();
 for (const openingPlayer of openingHandPlayers) {
-  const result = cards.drawCardsToHand(openingHandState, openingHandPlayerState, openingPlayer, 4, () => 0.999999);
+  const result = cards.drawCardsToHand(
+    openingHandState,
+    openingHandPlayerState,
+    openingPlayer,
+    4,
+    () => 0.999999,
+    { root: openingHandRoot },
+  );
   assert.equal(result.ok, true);
   assert.equal(openingPlayer.hand.length, 4);
   assert.equal(openingPlayer.resources.handSize, 4);
@@ -254,12 +268,12 @@ assert.equal(claimedWithReserved.size, claimed.size + 1);
 assert.equal(claimedWithReserved.has(cards.CARD_CATALOG[8].card_id), true);
 player.reservedCards = [];
 
-const blindResult = cards.blindDraw(cardState, playerState, player, () => 0);
+const blindResult = cards.blindDraw(cardState, playerState, player, () => 0, { root });
 assert.equal(blindResult.ok, true);
 assert.equal(player.hand.length, 6);
 
 const publicCard = cardState.publicCards[0];
-const pickResult = cards.pickFromPublic(cardState, playerState, player, 0, () => 0);
+const pickResult = cards.pickFromPublic(cardState, playerState, player, 0, () => 0, { root });
 assert.equal(pickResult.ok, true);
 assert.equal(pickResult.card.cardId, publicCard.cardId);
 assert.equal(player.hand.length, 7);
@@ -286,6 +300,7 @@ function createDrawCycleScenario(discardCount, freshCount) {
     .slice(0, discardCount)
     .map((entry, index) => cards.createCardInstance(entry, `discard-${index}`));
   return {
+    root: createRoot(),
     state,
     drawPlayer,
     playerState: { players: [drawPlayer, blocker], currentPlayerId: drawPlayer.id },
@@ -300,13 +315,17 @@ function createDrawCycleScenario(discardCount, freshCount) {
     cards.getAvailablePool(cycle.state, cycle.playerState).map((entry) => entry.card_id),
     [cycle.freshEntries[0].card_id],
   );
-  const freshDraw = cards.blindDraw(cycle.state, cycle.playerState, cycle.drawPlayer, () => 0);
+  const freshDraw = cards.blindDraw(
+    cycle.state, cycle.playerState, cycle.drawPlayer, () => 0, { root: cycle.root },
+  );
   assert.equal(freshDraw.ok, true);
   assert.equal(freshDraw.card.cardId, cycle.freshEntries[0].card_id);
   assert.equal(cycle.state.discardPile.length, 1);
   assert.equal(cycle.state.discardPile[0].cardId, cycle.discardEntries[0].card_id);
 
-  const recycledDraw = cards.blindDraw(cycle.state, cycle.playerState, cycle.drawPlayer, () => 0);
+  const recycledDraw = cards.blindDraw(
+    cycle.state, cycle.playerState, cycle.drawPlayer, () => 0, { root: cycle.root },
+  );
   assert.equal(recycledDraw.ok, true);
   assert.equal(recycledDraw.reshuffled, true);
   assert.equal(recycledDraw.card.cardId, cycle.discardEntries[0].card_id);
@@ -316,7 +335,9 @@ function createDrawCycleScenario(discardCount, freshCount) {
 
 {
   const cycle = createDrawCycleScenario(2, 0);
-  const firstRecycled = cards.blindDraw(cycle.state, cycle.playerState, cycle.drawPlayer, () => 0);
+  const firstRecycled = cards.blindDraw(
+    cycle.state, cycle.playerState, cycle.drawPlayer, () => 0, { root: cycle.root },
+  );
   assert.equal(firstRecycled.ok, true);
   assert.equal(firstRecycled.reshuffled, true);
   assert.equal(firstRecycled.card.cardId, cycle.discardEntries[0].card_id);
@@ -333,12 +354,16 @@ function createDrawCycleScenario(discardCount, freshCount) {
     [cycle.discardEntries[1].card_id],
   );
 
-  const secondRecycled = cards.blindDraw(cycle.state, cycle.playerState, cycle.drawPlayer, () => 0);
+  const secondRecycled = cards.blindDraw(
+    cycle.state, cycle.playerState, cycle.drawPlayer, () => 0, { root: cycle.root },
+  );
   assert.equal(secondRecycled.ok, true);
   assert.equal(secondRecycled.card.cardId, cycle.discardEntries[1].card_id);
   assert.deepEqual(cycle.state.discardPile.map((card) => card.cardId), [cycle.discardEntries[0].card_id]);
 
-  const thirdRecycled = cards.blindDraw(cycle.state, cycle.playerState, cycle.drawPlayer, () => 0);
+  const thirdRecycled = cards.blindDraw(
+    cycle.state, cycle.playerState, cycle.drawPlayer, () => 0, { root: cycle.root },
+  );
   assert.equal(thirdRecycled.ok, true);
   assert.equal(thirdRecycled.reshuffled, true);
   assert.equal(thirdRecycled.card.cardId, cycle.discardEntries[0].card_id);
@@ -347,7 +372,9 @@ function createDrawCycleScenario(discardCount, freshCount) {
 
 {
   const cycle = createDrawCycleScenario(1, 0);
-  const replenished = cards.replenishPublicSlot(cycle.state, cycle.playerState, 1, () => 0);
+  const replenished = cards.replenishPublicSlot(
+    cycle.state, cycle.playerState, 1, () => 0, { root: cycle.root },
+  );
   assert.ok(replenished);
   assert.equal(replenished.cardId, cycle.discardEntries[0].card_id);
   assert.equal(cycle.state.publicCards[1].cardId, cycle.discardEntries[0].card_id);
@@ -357,8 +384,12 @@ function createDrawCycleScenario(discardCount, freshCount) {
 const delayedFillState = cards.createCardState();
 const delayedFillPlayer = { id: "player-blue", hand: [], resources: { handSize: 0 } };
 const delayedFillPlayerState = { players: [delayedFillPlayer], currentPlayerId: delayedFillPlayer.id };
+const delayedFillRoot = createRoot();
 delayedFillState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
-cards.ensurePublicCardsFilled(delayedFillState, delayedFillPlayerState, () => 0, { skipSlotIndexes: [1] });
+cards.ensurePublicCardsFilled(delayedFillState, delayedFillPlayerState, () => 0, {
+  root: delayedFillRoot,
+  skipSlotIndexes: [1],
+});
 assert.ok(delayedFillState.publicCards[0]);
 assert.equal(delayedFillState.publicCards[1], null);
 assert.ok(delayedFillState.publicCards[2]);
@@ -367,11 +398,15 @@ assert.equal(cards.countPublicCards(delayedFillState), cards.PUBLIC_CARD_COUNT -
 const passReserveState = cards.createCardState();
 const passReservePlayer = { id: "player-pass", hand: [], reservedCards: [], resources: { handSize: 0 } };
 const passReservePlayerState = { players: [passReservePlayer], currentPlayerId: passReservePlayer.id };
-cards.ensurePublicCardsFilled(passReserveState, passReservePlayerState, () => 0);
+const passReserveRoot = createRoot();
+cards.ensurePublicCardsFilled(passReserveState, passReservePlayerState, () => 0, {
+  root: passReserveRoot,
+});
 const passReserveResult = cards.preparePassReservePiles(passReserveState, passReservePlayerState, {
   activePlayerCount: 2,
   rounds: [1, 2, 3],
   random: () => 0,
+  root: passReserveRoot,
 });
 assert.equal(passReserveResult.cardsPerPile, 3);
 assert.deepEqual(Object.keys(passReserveState.passReservePiles).sort(), ["1", "2", "3"]);

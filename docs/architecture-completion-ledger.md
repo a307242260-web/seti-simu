@@ -65,6 +65,16 @@ node tools/report_architecture_residuals.js
 - 完整 checkpoint 结构差异仅为删除无消费者的 `meta.sequences.handCard`，最终权威盘面逐字段无变化；固定 checkpoint hash 已据此更新。
 - Node 回归通过：61/61 unit、1/1 full-flow；真实 Chrome smoke 3/3 通过。
 
+### 2026-07-25：删除无 canonical root 的本地编号 fallback
+
+- 卡牌 deck 不再扫描现有容器自行生成 `card-local-*`；所有规则卡牌必须取得 canonical root 或由调用方提供绑定该 root 的 factory。
+- 修复 `initializeDeck()` 未向起手牌和公共牌创建继续传递 canonical factory 的生产缺口。
+- 数据 token 不再从局部 token 数组推导下一编号，也不再根据 `resources.availableData` 静默合成 `data-token-recovered-*`。
+- 星云 token、星云替换顺序和终局标记不再从局部领域状态推导编号；缺少 canonical root 时直接失败。
+- `localIdentityFallbacks` 从 12 处 / 3 个生产文件下降到 0；此外删除了此前未被该模式捕获的 1 个星云通用 fallback。
+- 新审计发现正式发牌前仍会创建并立即丢弃一批 PASS 牌来维持历史 RNG 轨迹，已单列为 `redundantInitializationCompatibility`，因此 M1 仍未完成。
+- Node 回归通过：61/61 unit、1/1 full-flow；真实 Chrome smoke 3/3 通过。
+
 ## 每轮更新格式
 
 每轮实现后必须记录：

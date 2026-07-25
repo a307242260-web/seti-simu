@@ -270,12 +270,15 @@ function randomizeBoard(workingState, random) {
   workingState.turnState.activePlayerIds = order.slice(0, workingState.turnState.activePlayerCount);
   workingState.turnState.startPlayerId = workingState.turnState.activePlayerIds[0] || null;
   workingState.playerState.currentPlayerId = workingState.turnState.startPlayerId;
-  // 生产 TurnFlow 在确认轮序时会先准备一次 PASS 牌堆；随后正式初始化卡牌会重建牌区，
-  // 但这一步仍属于显式 RNG 协议，必须保留以维持 Browser/Simulation 同种子同轨。
+  // 当前固定 seed 契约仍包含正式发牌前的 PASS 牌堆随机抽样；实体随后由 createCardGame 重建。
   cards.preparePassReservePiles(workingState.cardState, workingState.playerState, {
     rounds: [1, 2, 3],
     activePlayerCount: workingState.turnState.activePlayerCount,
     random,
+    createCardInstance: (entry, sequence) => cards.createCardInstance(
+      entry,
+      `discarded-rng-${sequence}`,
+    ),
   });
 
   workingState.solarState.wheelSteps = workingState.solarState.wheelSteps || [0, 0, 0, 0, 0];

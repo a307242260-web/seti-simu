@@ -14,7 +14,7 @@ function createState() {
     rulesetVersion: "prototype-2026-07",
     seed: 83,
     rngState: { owner: "test", state: 83 },
-    sequences: { rocket: 2 },
+    sequences: { finalMark: 2, rocket: 2 },
     match: { status: "playing", playerOrder: ["p1", "p2"] },
     turn: {
       roundNumber: 2,
@@ -217,7 +217,12 @@ function createStore(initialState = createState()) {
     "a",
     { id: "p1", color: "blue", colorLabel: "蓝色" },
     1,
-    { threshold: 25, tokenSrc: "host-token.png", placedAt: "2026-07-19T00:00:00.000Z" },
+    {
+      threshold: 25,
+      tokenSrc: "host-token.png",
+      placedAt: "2026-07-19T00:00:00.000Z",
+      root: working,
+    },
   ).ok, true);
   const candidate = lowCoupling.purifyLowCouplingSlices(working);
   const validation = store.validate(candidate);

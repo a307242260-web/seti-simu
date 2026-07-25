@@ -338,7 +338,13 @@
       blindDraw: (targetPlayer) => (
         typeof context?.blindDrawCard === "function"
           ? context.blindDrawCard(targetPlayer)
-          : cards.blindDraw(context.cardState, context.playerState, targetPlayer)
+          : cards.blindDraw(
+            context.cardState,
+            context.playerState,
+            targetPlayer,
+            Math.random,
+            { root: context?.workingRoot },
+          )
       ),
       gainData: (targetPlayer) => data.gainData(targetPlayer, {
         source: "initial_card",
@@ -377,7 +383,13 @@
     for (let index = 0; index < target; index += 1) {
       const result = typeof context?.blindDrawCard === "function"
         ? context.blindDrawCard(player)
-        : cards.blindDraw(context.cardState, context.playerState, player);
+        : cards.blindDraw(
+          context.cardState,
+          context.playerState,
+          player,
+          Math.random,
+          { root: context?.workingRoot },
+        );
       pushResult(results, {
         ...result,
         type: "blindDraw",

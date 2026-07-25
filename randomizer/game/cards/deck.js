@@ -197,24 +197,12 @@
     return createCardInstance(entry, `${nextSequence}-${sequence ?? 0}`);
   }
 
-  function createLocalCardInstance(cardState, playerState, entry, sequence = 0) {
-    const instanceIds = [];
-    for (const player of playerState?.players || []) {
-      for (const list of [player.hand, player.reservedCards]) {
-        for (const card of list || []) instanceIds.push(card?.id);
-      }
-      instanceIds.push(player?.industryFutureSpan?.card?.id);
+  function resolveCreateCardInstance(options = {}) {
+    if (typeof options.createCardInstance === "function") return options.createCardInstance;
+    if (options.root) {
+      return (entry, sequence) => createCommittedCardInstance(options.root, entry, sequence);
     }
-    for (const card of cardState?.publicCards || []) instanceIds.push(card?.id);
-    for (const card of cardState?.discardPile || []) instanceIds.push(card?.id);
-    for (const pile of Object.values(cardState?.passReservePiles || {})) {
-      for (const card of pile || []) instanceIds.push(card?.id);
-    }
-    const next = instanceIds.reduce((maximum, id) => {
-      const match = /^card-local-(\d+)-/.exec(String(id || ""));
-      return match ? Math.max(maximum, Number(match[1])) : maximum;
-    }, 0) + 1;
-    return createCardInstance(entry, `local-${next}-${sequence}`);
+    throw new TypeError("创建规则卡牌实体需要 canonical root");
   }
 
   function getCatalogEntryForCard(card) {
@@ -544,8 +532,7 @@
     const activePlayerCount = Math.max(1, Math.round(Number(options.activePlayerCount) || 1));
     const cardsPerPile = activePlayerCount + 1;
     const random = options.random || Math.random;
-    const createInstance = options.createCardInstance
-      || ((entry, sequence) => createLocalCardInstance(cardState, playerState, entry, sequence));
+    const createInstance = resolveCreateCardInstance(options);
 
     cardState.passReservePiles = {};
     const piles = ensurePassReservePiles(cardState);
@@ -628,8 +615,7 @@
       return { ok: false, message: "牌库已无可用卡牌", card: null };
     }
 
-    const createInstance = options.createCardInstance
-      || ((entry, sequence) => createLocalCardInstance(cardState, playerState, entry, sequence));
+    const createInstance = resolveCreateCardInstance(options);
     const card = createInstance(result.entry);
     addCardToHand(player, card);
     return { ok: true, message: null, card, reshuffled: Boolean(result.reshuffled) };
@@ -637,8 +623,7 @@
 
   function replenishPublicSlot(cardState, playerState, slotIndex, random = Math.random, options = {}) {
     const result = takeRandomEntryForDraw(cardState, playerState, random);
-    const createInstance = options.createCardInstance
-      || ((entry, sequence) => createLocalCardInstance(cardState, playerState, entry, sequence));
+    const createInstance = resolveCreateCardInstance(options);
     cardState.publicCards[slotIndex] = result?.entry ? createInstance(result.entry) : null;
     return cardState.publicCards[slotIndex];
   }
@@ -791,10 +776,10 @@
     const player = options.player;
 
     if (player && handCount > 0) {
-      drawCardsToHand(cardState, playerState, player, handCount, random);
+      drawCardsToHand(cardState, playerState, player, handCount, random, options);
     }
 
-    ensurePublicCardsFilled(cardState, playerState, random);
+    ensurePublicCardsFilled(cardState, playerState, random, options);
 
     return cardState;
   }

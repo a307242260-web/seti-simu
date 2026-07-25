@@ -23,6 +23,7 @@ const RESIDUALS = Object.freeze({
   legacyExecutionFacilities: /\b(?:SetiActionHistory|SetiHistoryCommands|SetiAbilityChain|createActionHistory|historyStep|actionEffectFlow)\b/g,
   moduleLocalIdentityOwners: /\b(?:cardInstanceSequence|handCardSequence|dataTokenSequence|nebulaTokenSequence|nebulaReplacementSequence|getNextCardInstanceSequence|restoreNextCardInstanceSequence|getNextHandCardSequence|restoreNextHandCardSequence|getNextFinalMarkSequence|restoreNextFinalMarkSequence|getNextDataTokenSequence|restoreNextDataTokenSequence|getDeterministicSequences|restoreDeterministicSequences|nextRocketId)\b/g,
   localIdentityFallbacks: /\b(?:createLocalCardInstance|takeLocalDataTokenSequence|createRecoveredPoolToken|takeFinalMarkSequence)\b/g,
+  redundantInitializationCompatibility: /\bdiscarded-rng\b|正式初始化卡牌会重建牌区/g,
   ruleOwnedPresentationState: /\b(?:statusNote|techSelectionActive|pendingTileId|selectedTileId|selectedBlueSlot|selectionActive|discardSelectionActive|playCardSelectionActive)\b/g,
 });
 

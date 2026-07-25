@@ -11,6 +11,11 @@ const data = require("./index");
 const players = require("../players");
 const playerTech = require("../tech/player-tech");
 
+const root = { meta: { sequences: { dataToken: 1 } } };
+function gainCanonicalData(player, options = {}) {
+  return data.gainData(player, { ...options, root });
+}
+
 const playerState = players.createPlayerState({
   currentPlayer: {
     color: "white",
@@ -20,7 +25,7 @@ const playerState = players.createPlayerState({
 
 const player = players.getCurrentPlayer(playerState);
 
-const first = data.gainData(player, { source: "debug" });
+const first = gainCanonicalData(player, { source: "debug" });
 assert.equal(first.ok, true);
 assert.equal(first.token.index, 1);
 assert.equal(first.token.slotIndex, 1);
@@ -33,7 +38,7 @@ assert.equal(first.layout.percentX, layout.percentX);
 assert.equal(first.layout.percentY, layout.percentY);
 
 for (let index = 2; index <= players.RESOURCE_LIMITS.availableData; index += 1) {
-  const result = data.gainData(player, { source: "debug" });
+  const result = gainCanonicalData(player, { source: "debug" });
   assert.equal(result.ok, true);
   assert.equal(result.token.index, index);
 }
@@ -41,7 +46,7 @@ for (let index = 2; index <= players.RESOURCE_LIMITS.availableData; index += 1) 
 assert.equal(player.resources.availableData, players.RESOURCE_LIMITS.availableData);
 assert.equal(data.listPoolTokens(player).length, players.RESOURCE_LIMITS.availableData);
 
-const overflow = data.gainData(player, { source: "debug" });
+const overflow = gainCanonicalData(player, { source: "debug" });
 assert.equal(overflow.ok, false);
 assert.equal(overflow.discarded, true);
 assert.equal(player.dataState.discardedCount, 1);
@@ -109,10 +114,10 @@ const blueSlotOneState = players.createPlayerState({
 const blueSlotOnePlayer = players.getCurrentPlayer(blueSlotOneState);
 blueSlotOnePlayer.techState = playerTech.createPlayerTechState();
 playerTech.recordPlayerTake(blueSlotOnePlayer.techState, "blue1", 1);
-data.gainData(blueSlotOnePlayer);
+gainCanonicalData(blueSlotOnePlayer);
 data.placeDataToComputer(blueSlotOnePlayer);
 assert.equal(data.hasBlueBonusPlaceOptions(blueSlotOnePlayer), true);
-data.gainData(blueSlotOnePlayer);
+gainCanonicalData(blueSlotOnePlayer);
 const blueSlotOnePlace = data.placeDataToComputer(blueSlotOnePlayer, {
   target: data.PLACEMENT_KIND_BLUE_BONUS,
   blueSlot: 1,
@@ -131,7 +136,7 @@ bluePlayer.id = "player-white-blue-test";
 bluePlayer.techState = playerTech.createPlayerTechState();
 
 for (let index = 0; index < 4; index += 1) {
-  assert.equal(data.gainData(bluePlayer).ok, true);
+  assert.equal(gainCanonicalData(bluePlayer).ok, true);
 }
 assert.equal(data.hasBlueBonusPlaceOptions(bluePlayer), false);
 
@@ -166,17 +171,17 @@ const dataBeforeTechPlayer = players.getCurrentPlayer(players.createPlayerState(
   currentPlayer: { color: "white", resources: { availableData: 0, energy: 10 } },
 }));
 dataBeforeTechPlayer.techState = playerTech.createPlayerTechState();
-data.gainData(dataBeforeTechPlayer);
+gainCanonicalData(dataBeforeTechPlayer);
 data.placeDataToComputer(dataBeforeTechPlayer);
-data.gainData(dataBeforeTechPlayer);
+gainCanonicalData(dataBeforeTechPlayer);
 data.placeDataToComputer(dataBeforeTechPlayer);
-data.gainData(dataBeforeTechPlayer);
+gainCanonicalData(dataBeforeTechPlayer);
 const earlyData = data.placeDataToComputer(dataBeforeTechPlayer);
 assert.equal(earlyData.placementSlot, 3);
 assert.equal(earlyData.slotBonuses.some((bonus) => bonus.type === "score"), false);
 playerTech.recordPlayerTake(dataBeforeTechPlayer.techState, "blue1", 2);
 assert.equal(data.hasBlueBonusPlaceOptions(dataBeforeTechPlayer), true);
-data.gainData(dataBeforeTechPlayer);
+gainCanonicalData(dataBeforeTechPlayer);
 const belowTech = data.placeDataToComputer(dataBeforeTechPlayer, {
   target: data.PLACEMENT_KIND_BLUE_BONUS,
   blueSlot: 2,
@@ -186,7 +191,7 @@ assert.deepEqual(belowTech.slotBonus, { type: "credits", credits: 1 });
 
 function fillComputerThrough(player, placementSlot) {
   while (data.listComputerPlacedTokens(player).length < placementSlot) {
-    data.gainData(player);
+    gainCanonicalData(player);
     const result = data.placeDataToComputer(player);
     assert.equal(result.placementSlot, data.listComputerPlacedTokens(player).length);
   }
@@ -204,7 +209,7 @@ for (const [tileId, boardSlot, expectedBonus] of [
   rewardPlayer.techState = playerTech.createPlayerTechState();
   playerTech.recordPlayerTake(rewardPlayer.techState, tileId, boardSlot);
   fillComputerThrough(rewardPlayer, data.getRequiredComputerSlotForBlueBonus(boardSlot));
-  data.gainData(rewardPlayer);
+  gainCanonicalData(rewardPlayer);
   const rewardPlace = data.placeDataToComputer(rewardPlayer, {
     target: data.PLACEMENT_KIND_BLUE_BONUS,
     blueSlot: boardSlot,
@@ -214,9 +219,9 @@ for (const [tileId, boardSlot, expectedBonus] of [
 }
 
 playerTech.recordPlayerTake(bluePlayer.techState, "blue2", 3);
-data.gainData(bluePlayer);
+gainCanonicalData(bluePlayer);
 data.placeDataToComputer(bluePlayer);
-data.gainData(bluePlayer);
+gainCanonicalData(bluePlayer);
 data.placeDataToComputer(bluePlayer);
 assert.equal(data.hasBlueBonusPlaceOptions(bluePlayer), true);
 
@@ -227,7 +232,7 @@ const blueChoiceSlots = multiChoices
 assert.ok(blueChoiceSlots.includes(3));
 
 for (let slot = 4; slot <= 6; slot += 1) {
-  data.gainData(bluePlayer);
+  gainCanonicalData(bluePlayer);
   data.placeDataToComputer(bluePlayer);
 }
 assert.equal(data.canAnalyzeData(bluePlayer).ok, true);

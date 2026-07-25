@@ -17,14 +17,6 @@
 
   const FINAL_SCORE_THRESHOLDS = Object.freeze([25, 50, 70]);
   const DEFAULT_TILE_IDS = Object.freeze(["a", "b", "c", "d"]);
-  function takeFinalMarkSequence(state, options) {
-    if (options?.root) return stateSequences.take(options.root, "finalMark");
-    return Object.values(state?.tiles || {}).flatMap((tile) => tile?.marks || [])
-      .reduce((maximum, mark) => {
-        const match = /^final-mark-(\d+)$/.exec(String(mark?.id || ""));
-        return match ? Math.max(maximum, Number(match[1])) : maximum;
-      }, 0) + 1;
-  }
 
   function normalizeTileId(tileId) {
     return String(tileId || "").trim().toLowerCase();
@@ -246,7 +238,7 @@
       ? tile.marks.filter((mark) => Number(mark.slotIndex) === 3).length + 1
       : null;
 
-    const markSequence = takeFinalMarkSequence(state, options);
+    const markSequence = stateSequences.take(options.root, "finalMark");
     const mark = {
       id: `final-mark-${markSequence}`,
       tileId: normalizedTileId,
@@ -289,7 +281,7 @@
       ? tile.marks.filter((mark) => Number(mark.slotIndex) === 3).length + 1
       : null;
 
-    const markSequence = takeFinalMarkSequence(state, options);
+    const markSequence = stateSequences.take(options.root, "finalMark");
     const mark = {
       id: `final-mark-${markSequence}`,
       tileId: normalizedTileId,

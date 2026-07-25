@@ -20,22 +20,7 @@
   "use strict";
 
   function takeSequence(state, options, key) {
-    if (options?.root) return stateSequences.take(options.root, key);
-    if (key === "nebulaToken") {
-      return Object.values(state?.nebulae || {}).flatMap((bucket) => bucket?.tokens || [])
-        .reduce((maximum, token) => {
-          const match = /^nebula-data-(\d+)$/.exec(String(token?.id || ""));
-          return match ? Math.max(maximum, Number(match[1])) : maximum;
-        }, 0) + 1;
-    }
-    const replacements = [
-      ...Object.values(state?.nebulae || {}).flatMap((bucket) => bucket?.tokens || []),
-      ...Object.values(state?.sectorExtraMarks || {}).flatMap((marks) => marks || []),
-    ];
-    return replacements.reduce(
-      (maximum, item) => Math.max(maximum, Number(item?.replacementOrder) || 0),
-      0,
-    ) + 1;
+    return stateSequences.take(options?.root, key);
   }
   const AOMOMO_NEBULA_ID = "aomomo";
   const NEBULA_SECOND_SLOT_INDEX = 2;
@@ -612,6 +597,7 @@
     const fillResults = [];
     const fillResult = fillNebulaData(state, nebulaId, {
       source: options.source || "sectorSettlement",
+      root: options.root,
     });
     if (fillResult.ok) fillResults.push(fillResult);
     return fillResults;
