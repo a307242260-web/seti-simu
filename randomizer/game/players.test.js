@@ -16,6 +16,11 @@ assert.throws(
 const playersState = players.createPlayerState({
   currentPlayer: {
     color: "white",
+    hand: Array.from({ length: 5 }, (_, index) => ({
+      id: `initial-card-${index + 1}`,
+      cardId: `b_${index + 1}.webp`,
+      faceUp: true,
+    })),
     resources: {
       credits: 3,
       energy: 2,
@@ -30,14 +35,14 @@ const playersState = players.createPlayerState({
 const currentPlayer = players.getCurrentPlayer(playersState);
 assert.equal(currentPlayer.id, "player-white");
 assert.equal(currentPlayer.color, "white");
-assert.equal(currentPlayer.colorLabel, "白色");
+assert.equal(currentPlayer.name, "白色玩家");
 assert.equal(currentPlayer.resources.credits, 3);
 assert.equal(currentPlayer.resources.energy, 2);
 assert.equal(currentPlayer.resources.publicity, players.RESOURCE_LIMITS.publicity);
 assert.equal(currentPlayer.resources.availableData, players.RESOURCE_LIMITS.availableData);
 assert.equal(currentPlayer.resources.handSize, 5);
 assert.equal(currentPlayer.hand.length, 5);
-assert.equal(currentPlayer.hand[0].src, players.CARD_BACK_SRC);
+assert.equal(currentPlayer.hand[0].cardId, "b_1.webp");
 assert.deepEqual(currentPlayer.reservedCards, []);
 assert.equal(currentPlayer.resources.score, 12);
 assert.deepEqual(currentPlayer.income, players.DEFAULT_INCOME);
@@ -66,10 +71,8 @@ const multiPlayerState = players.createPlayerState({
   currentPlayerColor: "green",
 });
 assert.equal(multiPlayerState.players.length, 4);
-assert.equal(multiPlayerState.currentPlayerId, "player-green");
-assert.equal(players.getCurrentPlayer(multiPlayerState).color, "green");
-multiPlayerState.currentPlayerId = "player-blue";
-assert.equal(players.getCurrentPlayer(multiPlayerState).color, "blue");
+assert.equal(players.getCurrentPlayer(multiPlayerState, "player-green").color, "green");
+assert.equal(players.getCurrentPlayer(multiPlayerState, "player-blue").color, "blue");
 
 const spender = players.createPlayer({ resources: { credits: 5, energy: 4 } });
 assert.equal(players.canAfford(spender, { credits: 2, energy: 1 }), true);
@@ -110,8 +113,13 @@ assert.equal(receiver.resources.energy, 102);
 assert.equal(receiver.resources.publicity, players.RESOURCE_LIMITS.publicity);
 assert.equal(receiver.resources.availableData, players.RESOURCE_LIMITS.availableData);
 
-const handPlayer = players.createPlayer({ resources: { handSize: 0 } });
-players.gainResources(handPlayer, { handSize: 2 });
+const handPlayer = players.createPlayer({
+  hand: [{ id: "hand-1", cardId: "b_1.webp" }, { id: "hand-2", cardId: "b_2.webp" }],
+});
+assert.throws(
+  () => players.gainResources(handPlayer, { handSize: 2 }),
+  /Card Domain/,
+);
 assert.equal(handPlayer.resources.handSize, 2);
 assert.equal(handPlayer.hand.length, 2);
 const handSpend = players.spendResources(handPlayer, { handSize: 1 });
@@ -119,7 +127,21 @@ assert.equal(handSpend.ok, true);
 assert.equal(handPlayer.resources.handSize, 1);
 assert.equal(handPlayer.hand.length, 1);
 
-players.gainIncome(handPlayer, { credits: 1, energy: 2, handSize: 3, publicity: 4, availableData: 5 });
+let incomeDrawSequence = 0;
+players.gainIncome(
+  handPlayer,
+  { credits: 1, energy: 2, handSize: 3, publicity: 4, availableData: 5 },
+  {
+    blindDraw(targetPlayer) {
+      incomeDrawSequence += 1;
+      targetPlayer.hand.push({
+        id: `income-card-${incomeDrawSequence}`,
+        cardId: `b_${incomeDrawSequence + 10}.webp`,
+      });
+      targetPlayer.resources.handSize = targetPlayer.hand.length;
+    },
+  },
+);
 assert.deepEqual(handPlayer.income, {
   credits: 1,
   energy: 2,
@@ -141,8 +163,7 @@ players.gainIncome(callbackIncomePlayer, { handSize: 1 }, {
     immediateBlindDraws += 1;
     targetPlayer.hand.push({
       id: `income-draw-${immediateBlindDraws}`,
-      src: players.CARD_BACK_SRC,
-      faceUp: false,
+      cardId: `b_${immediateBlindDraws}.webp`,
     });
     targetPlayer.resources.handSize = targetPlayer.hand.length;
   },

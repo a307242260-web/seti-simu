@@ -10,6 +10,9 @@ const amiba = require("./amiba");
 const aomomo = require("./aomomo");
 const runezu = require("./runezu");
 
+let alienSequence = 1;
+const takeSequence = () => alienSequence++;
+
 function createPlayers() {
   return [
     { id: "p-red", color: "red", colorLabel: "红色", hand: [], resources: { handSize: 0, score: 0 } },
@@ -32,7 +35,16 @@ function createReadyAlienState(alienId) {
 function initializeAlienModule(alienState, module, players) {
   const triggerPlayer = players[0];
   if (module === yichangdian) return module.initializeYichangdianReveal(alienState, 1, triggerPlayer, 4, () => 0);
-  if (module === banrenma) return module.initializeBanrenmaReveal(alienState, 1, triggerPlayer, players, () => 0);
+  if (module === banrenma) {
+    return module.initializeBanrenmaReveal(
+      alienState,
+      1,
+      triggerPlayer,
+      players,
+      () => 0,
+      { takeSequence },
+    );
+  }
   if (module === chong) return module.initializeChongReveal(alienState, 1, triggerPlayer, () => 0);
   if (module === amiba) return module.initializeAmibaReveal(alienState, 1, triggerPlayer, () => 0);
   if (module === aomomo) return module.initializeAomomoReveal(alienState, 1, triggerPlayer, () => 0);
@@ -51,7 +63,7 @@ for (const module of [yichangdian, banrenma, chong, amiba, aomomo, runezu]) {
     1,
     players,
     module,
-    { label: module.ALIEN_ID, random: () => 0 },
+    { label: module.ALIEN_ID, random: () => 0, takeSequence },
   );
 
   assert.equal(grantResult.ok, true, `${module.ALIEN_ID} reveal grants should succeed`);

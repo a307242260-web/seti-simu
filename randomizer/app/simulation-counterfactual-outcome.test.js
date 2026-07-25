@@ -7,11 +7,34 @@ const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const solar = require("../solar-system/core");
 
 function drainOpeningDecisions(environment) {
+  const selectionProgress = new Map();
   let guard = 0;
   while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
-    assert.equal(environment.step(environment.legalActions()[0]).ok, true);
+    const actions = environment.legalActions();
+    const actorId = actions[0].actorPlayerId;
+    const progress = selectionProgress.get(actorId) || { industry: false, initialIds: new Set() };
+    let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
+      || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+    if (!action && !progress.industry) {
+      action = actions.find((candidate) => (
+        candidate.target?.kind === "select_initial_card"
+        && candidate.target?.selectionKind === "industry"
+      ));
+      if (action) progress.industry = true;
+    }
+    if (!action && progress.initialIds.size < 2) {
+      action = actions.find((candidate) => (
+        candidate.target?.kind === "select_initial_card"
+        && candidate.target?.selectionKind === "initial"
+        && !progress.initialIds.has(candidate.target.cardId)
+      ));
+      if (action) progress.initialIds.add(action.target.cardId);
+    }
+    action = action || actions[0];
+    selectionProgress.set(actorId, progress);
+    assert.equal(environment.step(action).ok, true);
     guard += 1;
-    assert.ok(guard < 20, "opening Decision 不得无限循环");
+    assert.ok(guard < 50, "opening Decision 必须经标准初始选择与收入链有限结束");
   }
 }
 
@@ -27,7 +50,6 @@ function createSaturnLandingCheckpoint(environment) {
     .planetLocations.find((planet) => planet.planetId === "saturn");
   assert.ok(green && saturn);
   for (const root of roots) {
-    root.players.currentPlayerId = green.id;
     root.turn.currentPlayerId = green.id;
     root.turn.roundNumber = 1;
     root.turn.turnNumber = 4;
@@ -42,15 +64,27 @@ function createSaturnLandingCheckpoint(environment) {
     player.dataState = { poolTokens: [], placedTokens: [], discardedCount: 0 };
     player.mainActionCompleted = false;
     player.passCompletionPending = false;
-    Object.assign(root.pieces.rockets[0], {
+    root.pieces.rockets = [{
+      id: 1,
       playerId: player.id,
       color: player.color,
+      playerSequence: 1,
       surface: "solar-board",
       sectorX: saturn.x,
       sectorY: saturn.y,
-      referencePlacement: null,
+      slotIndex: null,
       angleDegrees: null,
       radius: null,
+    }];
+    root.pieces.activeRocketId = 1;
+    root.pieces.playerRocketSequences = { [player.id]: [1] };
+    root.meta.sequences.rocket = Math.max(2, Number(root.meta.sequences.rocket) || 1);
+    Object.assign(root.aliens.aliens[1].traces.yellow, {
+      firstPlaced: true,
+      ownerPlayerId: root.players.players.find((candidate) => candidate.color === "blue")?.id || null,
+      ownerPlayerColor: "blue",
+      extraCount: 0,
+      extraMarkers: [],
     });
   }
   checkpoint.coreState.committedState = JSON.stringify(roots[0]);

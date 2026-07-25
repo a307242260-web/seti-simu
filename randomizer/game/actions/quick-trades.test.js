@@ -5,14 +5,18 @@ require("../players");
 require("./quick-trades");
 
 const players = require("../players");
+const cards = require("../cards/deck");
 const quickTrades = require("./quick-trades");
 
 function createContext(overrides = {}) {
+  const hand = cards.CARD_CATALOG.slice(0, 4)
+    .map((entry, index) => cards.createCardInstance(entry, `fixture-${index + 1}`));
   const context = {
     players: players.createPlayerState({
       currentPlayer: {
         color: "white",
-        resources: { credits: 10, energy: 1, publicity: 3, handSize: 4 },
+        hand,
+        resources: { credits: 10, energy: 1, publicity: 3, handSize: hand.length },
       },
     }),
     selectionRequests: [],

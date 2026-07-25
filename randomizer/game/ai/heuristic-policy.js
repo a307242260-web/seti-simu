@@ -65,6 +65,8 @@
 
   function selectInitialSetupAction(context) {
     const actions = context.legalActions || [];
+    const start = actions.find((action) => action.target?.kind === "start_initial_setup");
+    if (start) return start;
     const confirm = actions.find((action) => action.target?.kind === "confirm_initial_setup");
     if (confirm) return confirm;
     const setup = context.observation?.publicState?.resident?.initialSetup;

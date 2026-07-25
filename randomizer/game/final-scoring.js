@@ -48,7 +48,6 @@
     const state = {
       thresholds: [...FINAL_SCORE_THRESHOLDS],
       tiles: {},
-      pendingMarks: [],
       tileVariants: createDefaultTileVariants(tileIds),
     };
     ensureFinalScoringState(state, tileIds);
@@ -57,7 +56,6 @@
 
   function ensureFinalScoringState(state, tileIds = DEFAULT_TILE_IDS) {
     if (!state.tiles || typeof state.tiles !== "object") state.tiles = {};
-    if (!Array.isArray(state.pendingMarks)) state.pendingMarks = [];
     if (!Array.isArray(state.thresholds)) state.thresholds = [...FINAL_SCORE_THRESHOLDS];
     if (!state.tileVariants || typeof state.tileVariants !== "object") {
       state.tileVariants = createDefaultTileVariants(tileIds);
@@ -134,63 +132,34 @@
     ));
   }
 
-  function hasPendingThreshold(state, playerId, threshold) {
-    return (state.pendingMarks || []).some((pending) => (
-      pending.playerId === playerId && Number(pending.threshold) === Number(threshold)
-    ));
-  }
-
-  function cleanupPendingMarks(state, playerList = []) {
-    const playersById = new Map(playerList.map((player) => [getPlayerId(player), player]));
-    state.pendingMarks = (state.pendingMarks || []).filter((pending) => {
-      const player = playersById.get(pending.playerId);
-      if (!player) return false;
-      if (getPlayerScore(player) < Number(pending.threshold)) return false;
-      return !hasPlayerClaimedThreshold(state, pending.playerId, pending.threshold);
-    });
-  }
-
-  function syncPendingMarks(state, playerList = []) {
+  function listPendingMarks(state, playerList = []) {
     ensureFinalScoringState(state);
-    cleanupPendingMarks(state, playerList);
-
-    const added = [];
+    const pendingMarks = [];
     for (const player of playerList) {
       const playerId = getPlayerId(player);
       if (!playerId) continue;
       for (const threshold of getReachedThresholds(getPlayerScore(player), state.thresholds)) {
         if (hasPlayerClaimedThreshold(state, playerId, threshold)) continue;
-        if (hasPendingThreshold(state, playerId, threshold)) continue;
-
-        const pending = {
+        pendingMarks.push({
           id: `final-pending-${playerId}-${threshold}`,
           playerId,
           playerColor: player.color || null,
-          playerLabel: player.colorLabel || player.name || playerId,
           threshold,
-        };
-        state.pendingMarks.push(pending);
-        added.push(pending);
+        });
       }
     }
-
-    state.pendingMarks.sort((a, b) => (
+    return pendingMarks.sort((a, b) => (
       Number(a.threshold) - Number(b.threshold)
         || String(a.playerId).localeCompare(String(b.playerId))
     ));
-
-    return { ok: true, added, pendingMarks: [...state.pendingMarks] };
   }
 
-  function getPendingMarksForPlayer(state, playerId) {
-    ensureFinalScoringState(state);
-    return (state.pendingMarks || [])
-      .filter((pending) => pending.playerId === playerId)
-      .sort((a, b) => Number(a.threshold) - Number(b.threshold));
+  function getPendingMarksForPlayer(state, player) {
+    return listPendingMarks(state, [player]);
   }
 
-  function getNextPendingMarkForPlayer(state, playerId) {
-    return getPendingMarksForPlayer(state, playerId)[0] || null;
+  function getNextPendingMarkForPlayer(state, player) {
+    return getPendingMarksForPlayer(state, player)[0] || null;
   }
 
   function hasPlayerMarkedTile(state, tileId, playerId) {
@@ -214,7 +183,7 @@
 
     if (!tile) return { ok: false, message: "未找到终局计分板块" };
     if (!playerId) return { ok: false, message: "未找到玩家" };
-    if (!getNextPendingMarkForPlayer(state, playerId)) {
+    if (!getNextPendingMarkForPlayer(state, player)) {
       return { ok: false, message: "该玩家没有待标记的终局计分门槛" };
     }
     if (hasPlayerMarkedTile(state, normalizedTileId, playerId)) {
@@ -231,7 +200,7 @@
     const check = canMarkTile(state, normalizedTileId, player);
     if (!check.ok) return check;
 
-    const pending = getNextPendingMarkForPlayer(state, getPlayerId(player));
+    const pending = getNextPendingMarkForPlayer(state, player);
     const tile = state.tiles[normalizedTileId];
     const slotIndex = check.slotIndex;
     const slot3Order = slotIndex === 3
@@ -244,22 +213,17 @@
       tileId: normalizedTileId,
       playerId: getPlayerId(player),
       playerColor: player.color || null,
-      playerLabel: player.colorLabel || player.name || getPlayerId(player),
-      tokenSrc: options.tokenSrc || options.playerTokenSrc || null,
       threshold: pending.threshold,
       slotIndex,
       slot3Order,
-      placedAt: options.placedAt || new Date().toISOString(),
     };
 
     tile.marks.push(mark);
-    state.pendingMarks = state.pendingMarks.filter((item) => item.id !== pending.id);
-
     return {
       ok: true,
       mark,
       tile,
-      message: `${mark.playerLabel}玩家以 ${pending.threshold} 分门槛标记终局板块 ${normalizedTileId.toUpperCase()} 的第 ${slotIndex} 位`,
+      message: `${player.name || getPlayerId(player)}以 ${pending.threshold} 分门槛标记终局板块 ${normalizedTileId.toUpperCase()} 的第 ${slotIndex} 位`,
     };
   }
 
@@ -287,12 +251,9 @@
       tileId: normalizedTileId,
       playerId,
       playerColor: player.color || null,
-      playerLabel: player.colorLabel || player.name || playerId,
-      tokenSrc: options.tokenSrc || options.playerTokenSrc || null,
       threshold: Number(options.threshold) || 0,
       slotIndex: slot,
       slot3Order,
-      placedAt: options.placedAt || new Date().toISOString(),
       source: options.source || "direct",
     };
 
@@ -301,7 +262,7 @@
       ok: true,
       mark,
       tile,
-      message: `${mark.playerLabel}玩家在终局板块 ${normalizedTileId.toUpperCase()} 第 ${slot} 位放置标记`,
+      message: `${player.name || playerId}在终局板块 ${normalizedTileId.toUpperCase()} 第 ${slot} 位放置标记`,
     };
   }
 
@@ -311,7 +272,7 @@
     createFinalScoringState,
     ensureFinalScoringState,
     getReachedThresholds,
-    syncPendingMarks,
+    listPendingMarks,
     getPendingMarksForPlayer,
     getNextPendingMarkForPlayer,
     hasPlayerMarkedTile,

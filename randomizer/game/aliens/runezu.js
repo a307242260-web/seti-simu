@@ -352,26 +352,6 @@
     }
   }
 
-  function cloneTask(task) {
-    if (!task) return null;
-    return structuredClone(task);
-  }
-
-  function tasksEqual(left, right) {
-    return JSON.stringify(left || null) === JSON.stringify(right || null);
-  }
-
-  function ensureCardTask(card) {
-    if (!card || typeof card !== "object") return getCardTask(card);
-    const definitionTask = getCardDefinition(card)?.task;
-    if (!definitionTask) return null;
-    const canonicalTask = cloneTask(definitionTask);
-    if (!tasksEqual(card.runezuTask, canonicalTask)) {
-      card.runezuTask = canonicalTask;
-    }
-    return card.runezuTask;
-  }
-
   function cloneReward(reward) {
     if (!reward) return null;
     return {
@@ -455,14 +435,12 @@
       revealedByPlayerId: null,
       revealedByPlayerColor: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       availableSymbols: [],
       sourceSymbolSlots: {},
       panelSymbolSlots: {},
       faceSymbolSlots: {},
       displayedCardIndex: null,
       cardDeck: CARD_DEFINITIONS.map((card) => card.index),
-      nextCardSequence: 1,
       revealInitialized: false,
     };
   }
@@ -473,13 +451,11 @@
     }
     const runezu = alienState.runezu;
     if (!runezu.traceSlotsByAlienSlotId) runezu.traceSlotsByAlienSlotId = {};
-    if (!Number.isFinite(Number(runezu.nextTraceSequence))) runezu.nextTraceSequence = 1;
     if (!Array.isArray(runezu.availableSymbols)) runezu.availableSymbols = [];
     if (!runezu.sourceSymbolSlots) runezu.sourceSymbolSlots = {};
     if (!runezu.panelSymbolSlots) runezu.panelSymbolSlots = {};
     if (!runezu.faceSymbolSlots) runezu.faceSymbolSlots = {};
     if (!Array.isArray(runezu.cardDeck)) runezu.cardDeck = CARD_DEFINITIONS.map((card) => card.index);
-    if (!Number.isFinite(Number(runezu.nextCardSequence))) runezu.nextCardSequence = 1;
     if (typeof runezu.revealInitialized !== "boolean") runezu.revealInitialized = false;
     return runezu;
   }
@@ -516,7 +492,7 @@
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -563,8 +539,8 @@
     return { ok: true, position: normalizedPosition };
   }
 
-  function canPlaceRunezuTrace(alienState, alienSlotId, traceType, position, _player, options = {}) {
-    if (!isRunezuRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+  function canPlaceRunezuTrace(alienState, alienSlotId, traceType, position) {
+    if (!isRunezuRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "符文族尚未揭示，不能放置符文族痕迹" };
     }
     const validation = validateTraceTarget(traceType, position);
@@ -578,18 +554,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const runezu = ensureRunezuState(alienState);
-    const sequence = options.sequence || runezu.nextTraceSequence;
-    runezu.nextTraceSequence = Math.max(runezu.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("符文族痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
-      playerColor: player?.color || player?.playerColor || null,
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
+      playerId: player?.id || null,
+      playerColor: player?.color || null,
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -607,11 +582,9 @@
 
     const normalizedPosition = placementCheck.position;
     const grid = ensureTraceGrid(alienState, alienSlotId);
-    const reward = options.debugOnly ? null : getTraceReward(alienState, traceType, normalizedPosition);
+    const reward = getTraceReward(alienState, traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
     if (normalizedPosition === 1) {
@@ -676,7 +649,6 @@
       symbolId,
       claimedByPlayerId: null,
       claimedByPlayerColor: null,
-      claimedAt: null,
     };
     runezuState.sourceSymbolSlots[key] = slot;
     return slot;
@@ -791,8 +763,7 @@
     }
     gainPlayerSymbol(player, slot.symbolId);
     slot.claimedByPlayerId = player?.id || null;
-    slot.claimedByPlayerColor = player?.color || player?.playerColor || null;
-    slot.claimedAt = options.claimedAt ?? Date.now();
+    slot.claimedByPlayerColor = player?.color || null;
     return {
       ok: true,
       sourceType,
@@ -895,8 +866,7 @@
       position: check.position,
       symbolId,
       playerId: player?.id || null,
-      playerColor: player?.color || player?.playerColor || null,
-      placedAt: Date.now(),
+      playerColor: player?.color || null,
     };
     return {
       ok: true,
@@ -923,7 +893,15 @@
     return `${CARD_BASE_PATH}/${Math.round(Number(index))}.webp`;
   }
 
-  function createAlienCard(index, sequence = 0) {
+  function definitionName(card) {
+    return getCardDefinition(card)?.cardName || card?.cardId || "未知卡牌";
+  }
+
+  function createAlienCard(index, sequence) {
+    sequence = Number(sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("符文族卡牌需要 canonical alienEntity sequence");
+    }
     const definition = CARD_BY_INDEX[Math.round(Number(index))];
     if (!definition) return null;
     return {
@@ -931,8 +909,6 @@
       cardId: definition.cardId,
       alienCardId: definition.index,
       set: "alien:符文族",
-      cardName: definition.cardName,
-      src: getCardSrc(definition.index),
       faceUp: true,
       price: definition.price,
       cardTypeCode: definition.cardTypeCode,
@@ -940,8 +916,6 @@
       scanActionCode: definition.scanActionCode,
       incomeCode: definition.incomeCode,
       runezuCard: true,
-      runezuTask: cloneTask(definition.task),
-      runezuFinalRule: definition.finalRule ? { ...definition.finalRule } : null,
     };
   }
 
@@ -953,125 +927,31 @@
     return index;
   }
 
-  function takeDisplayedCard(alienState, random = Math.random) {
+  function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const runezu = ensureRunezuState(alienState);
     if (runezu.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    const card = createAlienCard(runezu.displayedCardIndex, runezu.nextCardSequence);
-    runezu.nextCardSequence += 1;
+    const card = createAlienCard(runezu.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `获得符文族牌：${card.cardName}` : "没有可获得的符文族牌" };
+    return { ok: Boolean(card), card, message: card ? `获得符文族牌：${definitionName(card)}` : "没有可获得的符文族牌" };
   }
 
-  function blindDrawCard(alienState, random = Math.random) {
+  function blindDrawCard(alienState, random = Math.random, options = {}) {
     const runezu = ensureRunezuState(alienState);
     if (!runezu.cardDeck.length) runezu.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     const pickIndex = Math.floor(random() * runezu.cardDeck.length);
     const [index] = runezu.cardDeck.splice(pickIndex, 1);
-    const card = createAlienCard(index, runezu.nextCardSequence);
-    runezu.nextCardSequence += 1;
+    const card = createAlienCard(index, options.sequence);
     if (runezu.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `盲抽符文族牌：${card.cardName}` : "没有可盲抽的符文族牌" };
-  }
-
-  function getCardTask(cardOrIndex) {
-    return cloneTask(getCardDefinition(cardOrIndex)?.task);
+    return { ok: Boolean(card), card, message: card ? `盲抽符文族牌：${definitionName(card)}` : "没有可盲抽的符文族牌" };
   }
 
   function getFinalCardRule(cardOrIndex) {
-    const rule = getCardDefinition(cardOrIndex)?.finalRule || cardOrIndex?.runezuFinalRule;
+    const rule = getCardDefinition(cardOrIndex)?.finalRule;
     return rule ? { ...rule } : null;
   }
 
   function isRunezuCard(card) {
     return Boolean(card?.runezuCard || card?.set === "alien:符文族" || String(card?.cardId || "").startsWith("runezu_"));
-  }
-
-  function getTaskProgress(card) {
-    if (!card) return [];
-    if (!Array.isArray(card.runezuTaskProgress)) card.runezuTaskProgress = [];
-    return card.runezuTaskProgress;
-  }
-
-  function getTaskProgressIndexes(card) {
-    if (!card || typeof card !== "object") return [];
-    const task = ensureCardTask(card);
-    if (!task || task.kind === "three-trace-colors") return [];
-    const stepCount = Array.isArray(task.steps) ? task.steps.length : 0;
-    return getTaskProgress(card)
-      .map((_, index) => index + 1)
-      .filter((index) => index <= stepCount);
-  }
-
-  function isTaskUnfinished(card) {
-    const task = ensureCardTask(card);
-    return Boolean(task && !card?.runezuTaskCompleted);
-  }
-
-  function eventMatchesTaskStep(event, step) {
-    if (!event || !step) return false;
-    if (step.event === "orbitOrLand") return event.type === "orbit" || event.type === "land" || event.type === "orbitOrLand";
-    if (step.event === "researchTech") return event.type === "researchTech" && (!step.techType || event.techType === step.techType);
-    if (step.event === "scan") return event.type === "scanAction";
-    return event.type === step.event;
-  }
-
-  function consumeTaskEvents(card, events = []) {
-    if (!card || typeof card !== "object") return null;
-    const task = ensureCardTask(card);
-    if (!task || card.runezuTaskCompleted) return null;
-    const progress = getTaskProgress(card);
-    if (task.kind === "three-trace-colors") return null;
-    if (!Array.isArray(task.steps) || progress.length >= task.steps.length) return null;
-
-    const rewards = [];
-    for (const event of events || []) {
-      const step = task.steps[progress.length];
-      if (!eventMatchesTaskStep(event, step)) continue;
-      progress.push({
-        event: event.type,
-        symbolId: step.symbolId,
-        consumedAt: Date.now(),
-      });
-      rewards.push(step.symbolId);
-      if (progress.length >= task.steps.length) break;
-    }
-    if (!rewards.length) return null;
-    if (progress.length >= task.steps.length) card.runezuTaskCompleted = true;
-    return {
-      ok: true,
-      card,
-      task,
-      symbolIds: rewards,
-      completed: Boolean(card.runezuTaskCompleted),
-      effects: rewards.map((symbolId, index) => symbolRewardEffect(
-        `${card.id || card.cardId || "runezu-task"}-${progress.length}-${index}`,
-        symbolId,
-        `符文族任务：${formatSymbolLabel(symbolId)}奖励`,
-      )),
-    };
-  }
-
-  function getReadyThreeTraceTask(card, alienState, player) {
-    const task = ensureCardTask(card);
-    if (!task || task.kind !== "three-trace-colors" || card?.runezuTaskCompleted) return null;
-    if (!playerHasAllTraceColors(alienState, player)) return null;
-    const effects = (task.rewards || []).map((symbolId, index) => symbolRewardEffect(
-      `${card.id || card.cardId || "runezu-three"}-${index}`,
-      symbolId,
-      `符文族任务：${formatSymbolLabel(symbolId)}奖励`,
-    ));
-    return {
-      runezuTask: true,
-      card,
-      task,
-      effects,
-    };
-  }
-
-  function completeRunezuTask(card) {
-    if (!card) return false;
-    card.runezuTaskCompleted = true;
-    return true;
   }
 
   function scorePlayerSymbols(player) {
@@ -1098,14 +978,6 @@
     return SYMBOL_IDS.filter((symbolId) => (counts[symbolId] || 0) > 0).length;
   }
 
-  function getPlayerSymbolSummary(player) {
-    const counts = getPlayerSymbolCounts(player);
-    return SYMBOL_IDS
-      .filter((symbolId) => counts[symbolId] > 0)
-      .map((symbolId) => `${formatSymbolLabel(symbolId)}x${counts[symbolId]}`)
-      .join(" / ");
-  }
-
   return Object.freeze({
     ALIEN_ID,
     CARD_BACK_SRC,
@@ -1125,7 +997,6 @@
     getPlayerSymbolCounts,
     gainPlayerSymbol,
     spendPlayerSymbol,
-    getPlayerSymbolSummary,
     isRunezuAlienSlot,
     isRunezuRevealedSlot,
     ensureTraceGrid,
@@ -1161,16 +1032,9 @@
     drawDisplayedCardIndex,
     takeDisplayedCard,
     blindDrawCard,
-    getCardTask,
-    ensureCardTask,
     getFinalCardRule,
     isRunezuCard,
     buildImmediateEffects,
-    getTaskProgressIndexes,
-    isTaskUnfinished,
-    consumeTaskEvents,
-    getReadyThreeTraceTask,
-    completeRunezuTask,
     scorePlayerSymbols,
     getMaxSameSymbolCount,
     getMaxSetSize,

@@ -127,14 +127,10 @@
       revealedByPlayerId: null,
       revealedByPlayerColor: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       displayedCardIndex: null,
       cardDeck: CARD_DEFINITIONS.map((card) => card.index),
-      nextCardSequence: 1,
       orbitMarkers: [],
       landingMarkers: [],
-      nextOrbitSequence: 1,
-      nextLandingSequence: 1,
       revealInitialized: false,
     };
   }
@@ -148,10 +144,6 @@
     if (!Array.isArray(aomomo.cardDeck)) aomomo.cardDeck = CARD_DEFINITIONS.map((card) => card.index);
     if (!Array.isArray(aomomo.orbitMarkers)) aomomo.orbitMarkers = [];
     if (!Array.isArray(aomomo.landingMarkers)) aomomo.landingMarkers = [];
-    if (!Number.isFinite(Number(aomomo.nextTraceSequence))) aomomo.nextTraceSequence = 1;
-    if (!Number.isFinite(Number(aomomo.nextCardSequence))) aomomo.nextCardSequence = 1;
-    if (!Number.isFinite(Number(aomomo.nextOrbitSequence))) aomomo.nextOrbitSequence = 1;
-    if (!Number.isFinite(Number(aomomo.nextLandingSequence))) aomomo.nextLandingSequence = 1;
     if (typeof aomomo.revealInitialized !== "boolean") aomomo.revealInitialized = false;
     return aomomo;
   }
@@ -170,15 +162,15 @@
   }
 
   function getPlayerKey(player) {
-    return player?.id || player?.playerId || player?.color || player?.playerColor || null;
+    return player?.id || player?.color || null;
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -218,18 +210,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    const sequence = options.sequence || aomomo.nextTraceSequence;
-    aomomo.nextTraceSequence = Math.max(aomomo.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("奥陌陌痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -246,8 +237,8 @@
     return cloneReward(TRACE_REWARDS[traceType]?.[position]);
   }
 
-  function canPlaceAomomoTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
-    if (!isAomomoRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+  function canPlaceAomomoTrace(alienState, alienSlotId, traceType, position, player) {
+    if (!isAomomoRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "奥陌陌尚未揭示，不能放置奥陌陌痕迹" };
     }
     const validation = validateTraceTarget(traceType, position);
@@ -261,7 +252,7 @@
       };
     }
     const reward = getTraceReward(traceType, normalizedPosition);
-    if (!options.debugOnly && reward?.payFossils && getFossils(player) < reward.payFossils) {
+    if (reward?.payFossils && getFossils(player) < reward.payFossils) {
       return {
         ok: false,
         message: `化石不足：需要 ${reward.payFossils} 化石`,
@@ -271,7 +262,7 @@
   }
 
   function placeAomomoTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
-    if (!isAomomoRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+    if (!isAomomoRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "奥陌陌尚未揭示，不能放置奥陌陌痕迹" };
     }
 
@@ -287,11 +278,9 @@
       };
     }
 
-    const reward = options.debugOnly ? null : getTraceReward(traceType, normalizedPosition);
+    const reward = getTraceReward(traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
 
@@ -380,18 +369,16 @@
 
   function createPanelMarker(alienState, player, kind, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    const sequenceKey = kind === "orbit" ? "nextOrbitSequence" : "nextLandingSequence";
-    const sequence = options.sequence || aomomo[sequenceKey];
-    aomomo[sequenceKey] = Math.max(aomomo[sequenceKey], sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError(`奥陌陌${kind}标记需要 canonical alienEntity sequence`);
+    }
     return {
       id: options.id || `aomomo-${kind}-${sequence}`,
       kind,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -401,7 +388,7 @@
 
   function addOrbitMarker(alienState, player, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    if (!canAddOrbitMarker(alienState) && !options.debugOnly) {
+    if (!canAddOrbitMarker(alienState)) {
       return { ok: false, message: "奥陌陌环绕槽已满" };
     }
     const marker = createPanelMarker(alienState, player, "orbit", options);
@@ -415,7 +402,7 @@
 
   function addLandingMarker(alienState, player, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    if (!canAddLandingMarker(alienState) && !options.debugOnly) {
+    if (!canAddLandingMarker(alienState)) {
       return { ok: false, message: "奥陌陌登陆槽已满" };
     }
     const marker = createPanelMarker(alienState, player, "landing", options);
@@ -470,7 +457,15 @@
     return null;
   }
 
-  function createAlienCard(index, sequence = 0) {
+  function definitionName(card) {
+    return getCardDefinition(card)?.cardName || card?.cardId || "未知卡牌";
+  }
+
+  function createAlienCard(index, sequence) {
+    sequence = Number(sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("奥陌陌卡牌需要 canonical alienEntity sequence");
+    }
     const definition = CARD_BY_INDEX[Math.round(Number(index))];
     if (!definition) return null;
     return {
@@ -478,8 +473,6 @@
       cardId: definition.cardId,
       alienCardId: definition.index,
       set: "alien:奥陌陌",
-      cardName: definition.cardName,
-      src: getCardSrc(definition.index),
       faceUp: true,
       price: definition.price,
       cardTypeCode: definition.cardTypeCode,
@@ -498,24 +491,22 @@
     return index;
   }
 
-  function takeDisplayedCard(alienState, random = Math.random) {
+  function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const aomomo = ensureAomomoState(alienState);
     if (aomomo.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    const card = createAlienCard(aomomo.displayedCardIndex, aomomo.nextCardSequence);
-    aomomo.nextCardSequence += 1;
+    const card = createAlienCard(aomomo.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `获得奥陌陌牌：${card.cardName}` : "没有可获得的奥陌陌牌" };
+    return { ok: Boolean(card), card, message: card ? `获得奥陌陌牌：${definitionName(card)}` : "没有可获得的奥陌陌牌" };
   }
 
-  function blindDrawCard(alienState, random = Math.random) {
+  function blindDrawCard(alienState, random = Math.random, options = {}) {
     const aomomo = ensureAomomoState(alienState);
     if (!aomomo.cardDeck.length) aomomo.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     const pickIndex = Math.floor(random() * aomomo.cardDeck.length);
     const [index] = aomomo.cardDeck.splice(pickIndex, 1);
-    const card = createAlienCard(index, aomomo.nextCardSequence);
-    aomomo.nextCardSequence += 1;
+    const card = createAlienCard(index, options.sequence);
     if (aomomo.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `盲抽奥陌陌牌：${card.cardName}` : "没有可盲抽的奥陌陌牌" };
+    return { ok: Boolean(card), card, message: card ? `盲抽奥陌陌牌：${definitionName(card)}` : "没有可盲抽的奥陌陌牌" };
   }
 
   function initializeAomomoReveal(alienState, alienSlotId, triggerPlayer, random = Math.random) {

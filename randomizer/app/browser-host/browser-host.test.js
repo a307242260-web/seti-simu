@@ -42,8 +42,13 @@ const projection = projectionApi.createBrowserProjectionAdapter({
 });
 
 assert.equal(Object.isFrozen(projection), true);
-assert.equal(projection.players.p1.hand[0].id, "own");
-assert.equal(Object.hasOwn(projection.players.p2, "hand"), false);
+assert.equal(projection.resident.players.players[0].hand[0].id, "own");
+assert.equal(Object.hasOwn(projection.resident.players.players[1], "hand"), false);
+assert.equal(Object.hasOwn(projection, "players"), false);
+assert.equal(Object.hasOwn(projection, "board"), false);
+assert.equal(Object.hasOwn(projection, "cards"), false);
+assert.equal(Object.hasOwn(projection, "tech"), false);
+assert.equal(Object.hasOwn(projection, "aliens"), false);
 assert.equal(JSON.stringify(projection).includes("secret"), false);
 assert.throws(() => { projection.match.round = 99; }, TypeError);
 

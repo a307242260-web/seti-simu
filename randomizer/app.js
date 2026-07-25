@@ -55,7 +55,7 @@
     const state = input.state || {};
     const players = input.players || [];
     const viewerId = input.viewer?.playerId || null;
-    const publicCards = state.cards?.publicCards || state.cards?.publicMarket || [];
+    const publicCards = state.cards?.publicCards || [];
     const own = players.find((player) => String(player?.id) === String(viewerId)) || null;
     const finalPlayers = input.finalReadModel?.players || [];
     const playerColors = {
@@ -91,26 +91,22 @@
       },
     };
     function presentBoardToken(token) {
-      const reference = token.surface === "planets-reference" ? token.planetsReference : null;
-      const boardPoint = !reference
-        && Number.isFinite(Number(token.radius))
+      const boardPoint = Number.isFinite(Number(token.radius))
         && Number.isFinite(Number(token.angleDegrees))
         ? solar.polarToGlobalPoint(Number(token.radius), Number(token.angleDegrees))
         : null;
       return {
         ...structuredClone(token),
-        target: reference ? "planets-reference" : "solar-board",
-        percentX: reference
-          ? Number(reference.percentX)
-          : boardPoint
-            ? (Number(boardPoint.x) / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100
-            : null,
-        percentY: reference
-          ? Number(reference.percentY)
-          : boardPoint
-            ? (Number(boardPoint.y) / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100
-            : null,
-        imageSrc: token.tokenSrc || rocketAssets[token.color] || "../assets/tokens/rocket.png",
+        target: "solar-board",
+        percentX: boardPoint
+          ? (Number(boardPoint.x) / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100
+          : null,
+        percentY: boardPoint
+          ? (Number(boardPoint.y) / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100
+          : null,
+        imageSrc: token.kind === "chong-fossil" && token.fossilId
+          ? aliens.chong.getFossilSrc(token.fossilId)
+          : rocketAssets[token.color] || "../assets/tokens/rocket.png",
       };
     }
     function presentPlanetMarkers() {
@@ -373,7 +369,7 @@
         const point = aliens.getYichangdianAnomalyMarkerBoardPoint(solar, anomaly);
         return point ? [{
           id: `anomaly:${anomaly.markerId}:${anomaly.sectorX}`,
-          imageSrc: anomaly.src || aliens.yichangdian.getAnomalyMarkerSrc(anomaly.markerId),
+          imageSrc: aliens.yichangdian.getAnomalyMarkerSrc(anomaly.markerId),
           percentX: (point.x / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
           percentY: (point.y / solar.GLOBAL_COORDINATE_SYSTEM.size) * 100,
         }] : [];
@@ -503,10 +499,35 @@
     }
     function presentCard(card, fallbackLabel) {
       const entry = cards.getCatalogEntryForCard(card);
+      const alienModuleBySet = {
+        "alien:异常点": aliens.yichangdian,
+        "alien:半人马": aliens.banrenma,
+        "alien:虫": aliens.chong,
+        "alien:阿米巴": aliens.amiba,
+        "alien:奥陌陌": aliens.aomomo,
+        "alien:符文族": aliens.runezu,
+      };
+      const alienModule = alienModuleBySet[card?.set] || null;
+      const alienDefinition = alienModule?.getCardDefinition
+        ? alienModule.getCardDefinition(card)
+        : alienModule?.CARD_BY_ID?.[card?.cardId] || null;
+      const fangzhouDefinition = card?.fangzhouCard2
+        ? aliens.fangzhou.createCard2Definition(
+          card.fangzhouTraceType || card.traceType,
+          card.variant,
+        )
+        : null;
       return {
         id: card?.id || card?.cardId || fallbackLabel,
-        imageSrc: card?.src || (entry ? cards.getCardSrc(entry) : ""),
-        label: card?.cardName || entry?.card_name || card?.cardId || fallbackLabel,
+        imageSrc: fangzhouDefinition?.src
+          || (alienDefinition && alienModule?.getCardSrc
+            ? alienModule.getCardSrc(alienDefinition.index)
+            : entry ? cards.getCardSrc(entry) : ""),
+        label: fangzhouDefinition?.cardName
+          || alienDefinition?.cardName
+          || entry?.card_name
+          || card?.cardId
+          || fallbackLabel,
       };
     }
     const resourceIcons = {
@@ -561,7 +582,7 @@
         interfacePlayerId: viewerId,
         players: players.map((player) => ({
           ...structuredClone(player),
-          displayName: player.colorLabel || player.name || player.id,
+          displayName: player.name || player.id,
           uiColor: player.uiColor || playerColors[player.color] || "",
           score: Number(player.resources?.score || player.score || 0),
           resourceStats: Object.keys(resourceLabels).map((key) => ({
@@ -630,12 +651,13 @@
         }),
       },
       finalScorePresentation: {
+        tiles: structuredClone(state.finalScoring?.tiles || {}),
+        tileVariants: structuredClone(state.finalScoring?.tileVariants || {}),
         breakdownsByPlayerId: Object.fromEntries(finalPlayers.map((player) => [
           String(player.id),
           structuredClone(player.breakdown || {}),
         ])),
       },
-      readoutLines: [],
     };
   }
 

@@ -49,13 +49,10 @@
   function normalizePoolToken(token, index) {
     const source = token || {};
     const slotIndex = Number(source.slotIndex);
-    const layout = placement.getDataPoolSlotLayout(slotIndex);
     return {
       id: source.id || `data-token-${index + 1}`,
       index: Number.isInteger(source.index) ? source.index : index + 1,
       slotIndex,
-      percentX: layout?.percentX ?? null,
-      percentY: layout?.percentY ?? null,
     };
   }
 
@@ -65,26 +62,20 @@
 
     if (placementKind === PLACEMENT_KIND_BLUE_BONUS) {
       const blueSlot = Number(source.blueSlot);
-      const layout = placement.getBlueBonusDataSlotLayout(blueSlot);
       return {
         id: source.id || `data-placed-blue-${index + 1}`,
         index: Number.isInteger(source.index) ? source.index : index + 1,
         placementKind,
         blueSlot,
-        percentX: layout?.percentX ?? null,
-        percentY: layout?.percentY ?? null,
       };
     }
 
     const placementSlot = Number(source.placementSlot);
-    const layout = placement.getComputerDataSlotLayout(placementSlot);
     return {
       id: source.id || `data-placed-${index + 1}`,
       index: Number.isInteger(source.index) ? source.index : index + 1,
       placementKind: PLACEMENT_KIND_COMPUTER,
       placementSlot,
-      percentX: layout?.percentX ?? null,
-      percentY: layout?.percentY ?? null,
     };
   }
 
@@ -276,8 +267,7 @@
     }
 
     const slotIndex = findNextOpenPoolSlotIndex(player);
-    const layout = placement.getDataPoolSlotLayout(slotIndex);
-    if (!slotIndex || !layout) {
+    if (!slotIndex) {
       return { ok: false, message: "数据池没有可用槽位" };
     }
 
@@ -286,20 +276,16 @@
       id: `data-token-${committedSequence}`,
       index: getNextDataIndex(dataState),
       slotIndex,
-      percentX: layout.percentX,
-      percentY: layout.percentY,
     };
 
     dataState.poolTokens.push(token);
     syncAvailableDataCount(player);
 
-    const sourceLabel = options.source === "debug" ? "调试" : "获取";
     return {
       ok: true,
       token,
       slotIndex,
-      layout,
-      message: `${sourceLabel}数据 +1，序号 ${token.index} @数据池槽位${slotIndex} (${layout.percentX}%,${layout.percentY}%)`,
+      message: `获取数据 +1，序号 ${token.index} @数据池槽位${slotIndex}`,
     };
   }
 
@@ -353,7 +339,6 @@
 
     for (const blueSlot of listEligibleBlueBonusSlots(player)) {
       const requiredComputerSlot = placement.getRequiredComputerSlotForBlueBonus(blueSlot);
-      const layout = placement.getBlueBonusDataSlotLayout(blueSlot);
       const tileId = getBlueTechTileInBoardSlot(player, blueSlot);
       choices.push({
         target: PLACEMENT_KIND_BLUE_BONUS,
@@ -364,7 +349,6 @@
         description:
           `放入蓝色科技 ${blueSlot} 下方（第一排第 ${requiredComputerSlot} 位下方）`
           + describeBlueBonusPlacementReward(player, blueSlot),
-        layout,
       });
     }
 
@@ -473,8 +457,7 @@
 
     if (target === PLACEMENT_KIND_BLUE_BONUS) {
       const blueSlot = check.blueSlot;
-      const layout = placement.getBlueBonusDataSlotLayout(blueSlot);
-      if (!blueSlot || !layout) {
+      if (!blueSlot) {
         restorePoolToken();
         return { ok: false, message: "蓝色科技附加放置位不可用" };
       }
@@ -502,17 +485,15 @@
         blueTileId,
         slotBonus,
         slotBonuses,
-        layout,
         message:
           `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
-          + ` → ${blueTileId || `位置${blueSlot}蓝色科技`} 下方 (${layout.percentX}%,${layout.percentY}%)`
+          + ` → ${blueTileId || `位置${blueSlot}蓝色科技`} 下方`
           + describePlacementBonuses(slotBonuses),
       };
     }
 
     const placementSlot = check.placementSlot ?? findNextComputerPlacementSlot(player);
-    const layout = placement.getComputerDataSlotLayout(placementSlot);
-    if (!placementSlot || !layout) {
+    if (!placementSlot) {
       restorePoolToken();
       return { ok: false, message: "计算机第一排没有可用放置位" };
     }
@@ -531,7 +512,7 @@
     const slotBonus = slotBonuses[0] ?? null;
     const message =
       `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
-      + ` → 第一排放置位${placementSlot} (${layout.percentX}%,${layout.percentY}%)`
+      + ` → 第一排放置位${placementSlot}`
       + describePlacementBonuses(slotBonuses);
 
     return {
@@ -542,7 +523,6 @@
       placementSlot,
       slotBonus,
       slotBonuses,
-      layout,
       message,
     };
   }

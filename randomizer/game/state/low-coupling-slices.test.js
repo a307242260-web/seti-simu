@@ -14,7 +14,10 @@ function createState() {
     rulesetVersion: "prototype-2026-07",
     seed: 83,
     rngState: { owner: "test", state: 83 },
-    sequences: { finalMark: 2, rocket: 2 },
+    sequences: {
+      alienEntity: 1, card: 1, dataToken: 1, finalMark: 2,
+      nebulaReplacement: 1, nebulaToken: 2, rocket: 2,
+    },
     match: { status: "playing", playerOrder: ["p1", "p2"] },
     turn: {
       roundNumber: 2,
@@ -35,22 +38,19 @@ function createState() {
       ],
     },
     solarSystem: {
-      wheelSteps: [0, 1, 2, 3, 0],
       rotation: { wheel1Steps: 1, wheel2Steps: 2, wheel3Steps: 3, wheel4Steps: 0, rotationCount: 1 },
       sectorBySlot: { 1: 2, 2: 1, 3: 4, 4: 3 },
       aomomoActive: false,
     },
     pieces: {
-      activeRocketId: "rocket-1",
-      rockets: [{ id: "rocket-1", playerId: "p1", surface: "solar" }],
+      activeRocketId: 1,
+      rockets: [{ id: 1, playerId: "p1", surface: "solar" }],
       playerRocketSequences: { p1: [1] },
     },
     planets: {
       planets: {
         mars: {
-          orbits: 1,
-          landings: 0,
-          orbitMarkers: [{ sequence: 1, displayed: true, displaySlot: 1, playerId: "p1", color: "blue" }],
+          orbitMarkers: [{ playerId: "p1", color: "blue" }],
           landingMarkers: [],
           satelliteLandings: [],
         },
@@ -60,12 +60,8 @@ function createState() {
       nebulae: {
         n1: {
           tokens: [{
-            id: "data-1", slotIndex: 1, playerId: "p1", playerColor: "blue",
-            playerLabel: "蓝色", playerTokenSrc: "token.png", percentX: 10, percentY: 20,
+            id: "nebula-data-1", slotIndex: 1, playerId: "p1", playerColor: "blue",
           }],
-          playerTokenCounts: { blue: 1 },
-          lastReplacedPlayerId: "p1",
-          lastReplacedPlayerColor: "blue",
         },
       },
       sectorExtraMarks: {},
@@ -80,7 +76,7 @@ function createState() {
         1: {
           revealed: false,
           traces: {
-            yellow: { firstPlaced: true, ownerPlayerColor: "blue", extraCount: 1, extraMarkers: [{ ownerPlayerColor: "blue", playerLabel: "蓝色" }] },
+            yellow: { firstPlaced: true, ownerPlayerColor: "blue", extraCount: 1, extraMarkers: [{ ownerPlayerColor: "blue" }] },
           },
         },
       },
@@ -91,14 +87,12 @@ function createState() {
         a: {
           id: "a",
           marks: [{
-            id: "mark-1", tileId: "a", playerId: "p1", playerColor: "blue",
-            playerLabel: "蓝色", tokenSrc: "token.png", threshold: 25, slotIndex: 1, slot3Order: null,
-            placedAt: "2026-07-19T00:00:00.000Z",
+            id: "final-mark-1", tileId: "a", playerId: "p1", playerColor: "blue",
+            threshold: 25, slotIndex: 1, slot3Order: null,
           }],
         },
       },
       tileVariants: { a: 1 },
-      pendingMarks: [{ id: "pending-p2-25", playerId: "p2", threshold: 25 }],
     },
   });
 }
@@ -110,7 +104,7 @@ function bytes(store) {
 }
 
 function createStore(initialState = createState()) {
-  return stateStore.createStateStore(lowCoupling.purifyLowCouplingSlices(initialState), {
+  return stateStore.createStateStore(initialState, {
     invariantValidators: [lowCoupling.validateLowCouplingInvariants],
   });
 }
@@ -124,20 +118,29 @@ function createStore(initialState = createState()) {
   }
 })();
 
-(function testPurificationMovesSessionDerivedAndHostFieldsOutOfAuthority() {
-  const purified = lowCoupling.purifyLowCouplingSlices(createState());
-  assert.equal(Object.hasOwn(purified.solarSystem, "wheelSteps"), false);
-  assert.equal(Object.hasOwn(purified.planets.planets.mars, "orbits"), false);
-  assert.equal(Object.hasOwn(purified.planets.planets.mars.orbitMarkers[0], "sequence"), false);
-  assert.equal(Object.hasOwn(purified.planets.planets.mars.orbitMarkers[0], "displayed"), false);
-  assert.equal(Object.hasOwn(purified.data.nebulae.n1, "playerTokenCounts"), false);
-  assert.equal(Object.hasOwn(purified.data.nebulae.n1.tokens[0], "playerTokenSrc"), false);
-  assert.equal(Object.hasOwn(purified.aliens.aliens[1].traces.yellow.extraMarkers[0], "playerLabel"), false);
-  assert.equal(Object.hasOwn(purified.finalScoring, "pendingMarks"), false);
-  assert.deepEqual(purified.finalScoring.tiles.a.marks[0], {
-    id: "mark-1", tileId: "a", playerId: "p1", playerColor: "blue",
-    threshold: 25, slotIndex: 1, slot3Order: null,
-  });
+(function testCanonicalStateRequiresNoSanitizingAdapter() {
+  const canonical = createState();
+  const store = createStore(canonical);
+  assert.deepEqual(store.getSnapshot(), canonical);
+  const invalidFields = [
+    ["solarSystem", "wheelSteps"],
+    ["planets", "orbits"],
+    ["planets", "sequence"],
+    ["data", "playerTokenCounts"],
+    ["aliens", "playerLabel"],
+    ["aliens", "debugOnly"],
+    ["finalScoring", "pendingMarks"],
+  ];
+  for (const [name, field] of invalidFields) {
+    const candidate = structuredClone(canonical);
+    if (name === "solarSystem") candidate.solarSystem[field] = [];
+    if (name === "planets" && field === "orbits") candidate.planets.planets.mars[field] = 1;
+    if (name === "planets" && field === "sequence") candidate.planets.planets.mars.orbitMarkers[0][field] = 1;
+    if (name === "data") candidate.data.nebulae.n1[field] = {};
+    if (name === "aliens") candidate.aliens.aliens[1].traces.yellow.extraMarkers[0][field] = "蓝色";
+    if (name === "finalScoring") candidate.finalScoring[field] = [];
+    assert.equal(store.validate(candidate).ok, false, `${name}.${field}`);
+  }
 })();
 
 (function testAllInvariantFailuresRejectCandidateAndLeaveCommittedBytesUnchanged() {
@@ -156,13 +159,13 @@ function createStore(initialState = createState()) {
     },
     {
       code: "STATE_DATA_SLOT_DUPLICATE",
-      mutate(slices) { slices.data.nebulae.n1.tokens.push({ id: "data-2", slotIndex: 1 }); },
+      mutate(slices) { slices.data.nebulae.n1.tokens.push({ id: "nebula-data-2", slotIndex: 1 }); },
     },
     {
       code: "STATE_FINAL_SLOT_OCCUPIED",
       mutate(slices) {
         slices.finalScoring.tiles.a.marks.push({
-          id: "mark-2", playerId: "p2", playerColor: "green", slotIndex: 1,
+          id: "final-mark-2", playerId: "p2", playerColor: "green", slotIndex: 1,
         });
       },
     },
@@ -224,7 +227,7 @@ function createStore(initialState = createState()) {
       root: working,
     },
   ).ok, true);
-  const candidate = lowCoupling.purifyLowCouplingSlices(working);
+  const candidate = working;
   const validation = store.validate(candidate);
   assert.equal(validation.ok, true, JSON.stringify(validation));
   assert.ok(wheelIds.length > 0);
@@ -233,8 +236,6 @@ function createStore(initialState = createState()) {
   assert.equal(candidate.planets.planets.mars.orbitMarkers.length, 1);
   assert.equal(candidate.aliens.aliens[1].revealed, true);
   assert.equal(candidate.finalScoring.tiles.a.marks.length, 1);
-  assert.equal(Object.hasOwn(candidate.finalScoring.tiles.a.marks[0], "tokenSrc"), false);
-  assert.equal(Object.hasOwn(candidate.finalScoring.tiles.a.marks[0], "placedAt"), false);
 
   const serialized = store.serialize(candidate);
   const recovered = store.deserialize(serialized.serialized);

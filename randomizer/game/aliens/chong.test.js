@@ -4,6 +4,9 @@
 const assert = require("node:assert/strict");
 const chong = require("./chong");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 function createState() {
   return {
     aliens: {
@@ -37,22 +40,13 @@ assert.equal(chong.getRemainingPlanetFossilCount(state, "jupiter"), 3);
 assert.equal(chong.getRemainingPlanetFossilCount(state, "saturn"), 3);
 
 assert.equal(chong.canPlaceChongTrace(state, 2, "blue", 1, white).ok, false);
-assert.equal(chong.canPlaceChongTrace(state, 2, "blue", 1, white, { debugOnly: true }).ok, false);
 assert.equal(chong.canPlaceChongTrace(state, 2, "blue", 7, white).ok, true);
 
-const placedPink = chong.placeChongTrace(state, 2, "pink", 3, white);
+const placedPink = chong.placeChongTrace(state, 2, "pink", 3, white, nextAlienIdentity());
 assert.equal(placedPink.ok, true);
 assert.equal(placedPink.reward.gain.score, 3);
 assert.equal(placedPink.reward.pickAlienCard, true);
 assert.equal(chong.countTraceMarkers(state, white, "pink"), 1);
-
-const debugState = createState();
-chong.initializeChongReveal(debugState, 2, white, () => 0);
-const seeded = chong.seedDebugTraceGrid(debugState, 2, white);
-assert.equal(seeded.length, 11);
-assert.equal(chong.countTraceMarkers(debugState, white, null), 11);
-assert.equal(Object.keys(debugState.chong.panelFossilSlots).length, 1);
-assert.equal(debugState.chong.unlockedBluePositions.includes(1), false);
 
 const stateTraceTaskState = createState();
 stateTraceTaskState.aliens[2].traces.blue = { firstPlaced: true, ownerPlayerColor: "white", extraCount: 1 };

@@ -6,16 +6,18 @@
   let shared = root.SetiActionShared;
   let aomomo = root.SetiAlienAomomo;
   let planetRewards = root.SetiPlanetRewards;
+  let stateSequences = root.SetiStateSequences;
 
-  if ((!players || !planetStats || !shared || !aomomo || !planetRewards) && typeof require === "function") {
+  if ((!players || !planetStats || !shared || !aomomo || !planetRewards || !stateSequences) && typeof require === "function") {
     players = players || require("../players");
     planetStats = planetStats || require("../planet-stats");
     shared = shared || require("../actions/shared");
     aomomo = aomomo || require("../aliens/aomomo");
     planetRewards = planetRewards || require("../actions/planet-rewards");
+    stateSequences = stateSequences || require("../state/sequences");
   }
 
-  const api = factory(players, planetStats, shared, aomomo, planetRewards);
+  const api = factory(players, planetStats, shared, aomomo, planetRewards, stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -28,6 +30,7 @@
   shared,
   aomomo,
   planetRewards,
+  stateSequences,
 ) {
   "use strict";
 
@@ -457,7 +460,9 @@
     }
 
     const markerResult = isAomomoPlanet
-      ? aomomoApi.addOrbitMarker(context.aliens, currentPlayer)
+      ? aomomoApi.addOrbitMarker(context.aliens, currentPlayer, {
+        sequence: stateSequences.take(context.state, "alienEntity"),
+      })
       : planetStats.addPlanetOrbitMarker(
         context.planets,
         placement.planet.planetId,
@@ -593,7 +598,9 @@
       satelliteId = target.satelliteId;
       targetLabel = markerResult.marker?.satelliteName || target.satelliteId;
     } else if (isAomomoPlanet) {
-      markerResult = aomomoApi.addLandingMarker(context.aliens, currentPlayer);
+      markerResult = aomomoApi.addLandingMarker(context.aliens, currentPlayer, {
+        sequence: stateSequences.take(context.state, "alienEntity"),
+      });
       markerKind = "aomomo-land";
       markerSequence = markerResult.marker?.sequence || null;
       rewardMarkerSequence = getLandRewardMarkerSequence(target, markerSequence, options);

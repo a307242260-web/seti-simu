@@ -14,6 +14,7 @@
   let industryPassives = root.SetiIndustryPassives;
   let industryState = root.SetiIndustryState;
   let helios = root.SetiIndustryHeliosPassive;
+  let stateSequences = root.SetiStateSequences;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     scanEffects = scanEffects || require("../actions/scan-effects");
@@ -28,6 +29,7 @@
     industryPassives = industryPassives || require("../industry/passives");
     industryState = industryState || require("../industry/state");
     helios = helios || require("../industry/helios-passive");
+    stateSequences = stateSequences || require("../state/sequences");
   }
 
   const api = factory(
@@ -44,6 +46,7 @@
     industryPassives,
     industryState,
     helios,
+    stateSequences,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiScienceSession = api;
@@ -61,6 +64,7 @@
   industryPassives,
   industryState,
   helios,
+  stateSequences,
 ) {
   "use strict";
 
@@ -403,7 +407,7 @@
       getWorkingSlice(root, "aliens"),
       result.tileId,
       actor,
-      { claimedAt: `state:${root.meta?.stateVersion ?? 0}:tech:${result.tileId}` },
+      {},
     );
     if (runezuClaim?.ok) {
       events.push({
@@ -540,7 +544,7 @@
       legal.target.traceType,
       legal.target.position,
       actor,
-      {},
+      { sequence: stateSequences.take(root, "alienEntity") },
     ) || fail("SCIENCE_TRACE_OWNER_MISSING", "外星人痕迹 owner 缺失");
   }
 
@@ -1029,7 +1033,7 @@
             getWorkingSlice(root, "aliens"),
             settlement.sectorId,
             winner,
-            { claimedAt: `state:${root.meta?.stateVersion ?? 0}:sector:${settlement.sectorId}` },
+            {},
           )
           : null;
         if (runezuClaim?.ok) {

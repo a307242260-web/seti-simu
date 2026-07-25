@@ -124,35 +124,6 @@
     };
   }
 
-  function restoreAlienLabPanelForTrace(player, traceType) {
-    const panelId = ALIEN_LAB_TRACE_TO_PANEL[traceType];
-    const panels = ensureAlienLabPanels(player);
-    if (!panels || !panelId) {
-      return { ok: false, player, changed: false, message: "该痕迹不对应异星实验室板块" };
-    }
-    if (panels[panelId] === true) {
-      return { ok: true, player, changed: false, panelId, message: "异星实验室板块已为正面" };
-    }
-    panels[panelId] = true;
-    return {
-      ok: true,
-      player,
-      changed: true,
-      panelId,
-      message: `异星实验室${ALIEN_LAB_PANEL_LABELS[panelId]}板块已恢复正面`,
-    };
-  }
-
-  function createAlienLabPanelSnapshot(player) {
-    return cloneIndustryValue(ensureAlienLabPanels(player));
-  }
-
-  function restoreAlienLabPanelSnapshot(player, snapshot) {
-    if (!player) return player;
-    player.industryAlienLabPanels = cloneIndustryValue(snapshot || createAlienLabPanels());
-    return player;
-  }
-
   function ensureFutureSpanState(player) {
     if (!player) return null;
     if (!player.industryFutureSpan || typeof player.industryFutureSpan !== "object") {
@@ -181,16 +152,6 @@
       player,
       message: "已初始化未来跨度专属标记",
     };
-  }
-
-  function createFutureSpanSnapshot(player) {
-    return cloneIndustryValue(ensureFutureSpanState(player));
-  }
-
-  function restoreFutureSpanSnapshot(player, snapshot) {
-    if (!player) return player;
-    player.industryFutureSpan = cloneIndustryValue(snapshot || createFutureSpanState());
-    return player;
   }
 
   function hasFutureSpanCard(player) {
@@ -446,19 +407,6 @@
     (players || []).forEach(resetRoundIndustryRuntimeState);
   }
 
-  function createIndustryMarkUndoCommand(player, previousRoundMark, previousTurnMark = 0, label) {
-    const snapshot = Number.isInteger(previousRoundMark) ? previousRoundMark : 0;
-    const turnSnapshot = Number.isInteger(previousTurnMark) ? previousTurnMark : 0;
-    return {
-      label: label || "撤销公司 1x 行动标记",
-      undo() {
-        if (!player) return;
-        player.industryRoundMarkRound = snapshot;
-        player.industryRoundMarkTurn = turnSnapshot;
-      },
-    };
-  }
-
   return Object.freeze({
     ALIEN_LAB_PANEL_IDS,
     ALIEN_LAB_TRACE_TO_PANEL,
@@ -477,7 +425,6 @@
     resetAllRoundIndustryRuntimeState,
     clearTuringBorrowedTech,
     clearSentinelPlayCornerState,
-    createIndustryMarkUndoCommand,
     initializeStrategyPassiveMarkers,
     canPlaceStrategyPassiveSlot,
     placeStrategyPassiveSlot,
@@ -486,13 +433,8 @@
     initializeAlienLabPanels,
     isAlienLabPanelFaceUp,
     consumeAlienLabPanel,
-    restoreAlienLabPanelForTrace,
-    createAlienLabPanelSnapshot,
-    restoreAlienLabPanelSnapshot,
     ensureFutureSpanState,
     initializeFutureSpanState,
-    createFutureSpanSnapshot,
-    restoreFutureSpanSnapshot,
     hasFutureSpanCard,
     getFutureSpanCard,
     getFutureSpanTargetScore,

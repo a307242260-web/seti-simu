@@ -5,22 +5,30 @@
   let planetStats = root.SetiPlanetStats;
   let shared = root.SetiActionShared;
   let aomomo = root.SetiAlienAomomo;
+  let stateSequences = root.SetiStateSequences;
 
-  if ((!players || !planetStats || !shared || !aomomo) && typeof require === "function") {
+  if ((!players || !planetStats || !shared || !aomomo || !stateSequences) && typeof require === "function") {
     players = players || require("../players");
     planetStats = planetStats || require("../planet-stats");
     shared = shared || require("./shared");
     aomomo = aomomo || require("../aliens/aomomo");
+    stateSequences = stateSequences || require("../state/sequences");
   }
 
-  const api = factory(players, planetStats, shared, aomomo);
+  const api = factory(players, planetStats, shared, aomomo, stateSequences);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiActionOrbit = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (players, planetStats, shared, aomomo) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  players,
+  planetStats,
+  shared,
+  aomomo,
+  stateSequences,
+) {
   "use strict";
 
   const ACTION_ID = "orbit";
@@ -155,7 +163,9 @@
       return { ok: false, actionId: ACTION_ID, message };
     }
     const markerResult = isAomomoPlanet
-      ? aomomoApi.addOrbitMarker(context.aliens, currentPlayer)
+      ? aomomoApi.addOrbitMarker(context.aliens, currentPlayer, {
+        sequence: stateSequences.take(context, "alienEntity"),
+      })
       : planetStats.addPlanetOrbitMarker(
         context.planets,
         placement.planet.planetId,

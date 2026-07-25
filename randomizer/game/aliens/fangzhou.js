@@ -178,7 +178,6 @@
       revealedByPlayerId: null,
       revealedByPlayerColor: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       playerCard2ById: {},
       unlockCountByPlayerId: {},
       card1Deck: CARD1_DEFINITIONS.map((card) => card.index),
@@ -186,7 +185,6 @@
       card1RevealedSinceShuffle: 0,
       displayedCard1Index: null,
       revealInitialized: false,
-      pendingRevealBasicRewards: [],
     };
   }
 
@@ -201,8 +199,6 @@
     if (!Array.isArray(fangzhou.card1Deck)) fangzhou.card1Deck = CARD1_DEFINITIONS.map((card) => card.index);
     if (!Array.isArray(fangzhou.card1Revealed)) fangzhou.card1Revealed = [];
     if (!Number.isFinite(Number(fangzhou.card1RevealedSinceShuffle))) fangzhou.card1RevealedSinceShuffle = 0;
-    if (!Number.isFinite(Number(fangzhou.nextTraceSequence))) fangzhou.nextTraceSequence = 1;
-    if (!Array.isArray(fangzhou.pendingRevealBasicRewards)) fangzhou.pendingRevealBasicRewards = [];
     if (typeof fangzhou.revealInitialized !== "boolean") fangzhou.revealInitialized = false;
     return fangzhou;
   }
@@ -221,15 +217,15 @@
   }
 
   function getPlayerKey(player) {
-    return player?.id || player?.playerId || player?.color || player?.playerColor || null;
+    return player?.id || player?.color || null;
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -302,18 +298,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const fangzhou = ensureFangzhouState(alienState);
-    const sequence = options.sequence || fangzhou.nextTraceSequence;
-    fangzhou.nextTraceSequence = Math.max(fangzhou.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("方舟痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -334,33 +329,19 @@
   }
 
   function placeFangzhouTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
-    if (!isFangzhouRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+    if (!isFangzhouRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "方舟尚未揭示，不能放置方舟痕迹" };
     }
 
-    if (!options.debugOnly) {
-      const placementCheck = canPlaceFangzhouTrace(alienState, alienSlotId, traceType, position, player);
-      if (!placementCheck.ok) return placementCheck;
-    } else {
-      const validation = validateTraceTarget(traceType, position);
-      if (!validation.ok) return validation;
-      const grid = ensureTraceGrid(alienState, alienSlotId);
-      if (grid[traceType][validation.position]) {
-        return {
-          ok: false,
-          message: `${placement.getTraceTypeLabel(traceType)} ${validation.position} 号位已经有痕迹`,
-        };
-      }
-    }
+    const placementCheck = canPlaceFangzhouTrace(alienState, alienSlotId, traceType, position, player);
+    if (!placementCheck.ok) return placementCheck;
 
     const validation = validateTraceTarget(traceType, position);
     const normalizedPosition = validation.position;
     const grid = ensureTraceGrid(alienState, alienSlotId);
-    const reward = options.debugOnly ? null : getTraceReward(traceType, normalizedPosition);
+    const reward = getTraceReward(traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
 
@@ -501,8 +482,14 @@
     const key = getPlayerKey(player);
     const entry = alienState?.fangzhou?.playerCard2ById?.[key]?.cards?.[traceType];
     if (!entry?.variant || !entry.unlocked) return null;
+    const {
+      src: _src,
+      label: _label,
+      cardName: _cardName,
+      ...definition
+    } = createCard2Definition(traceType, entry.variant);
     return {
-      ...createCard2Definition(traceType, entry.variant),
+      ...definition,
       id: `fangzhou-card2-${key}-${traceType}-${entry.variant}`,
       faceUp: true,
       fangzhouCard2: true,
@@ -584,35 +571,6 @@
     };
   }
 
-  function countFirstTracesForPlayerOnSlot(alienState, alienSlotId, player) {
-    const slot = alienState?.aliens?.[alienSlotId];
-    if (!slot?.traces) return 0;
-    const playerKeys = getPlayerKeys(player);
-    let count = 0;
-    for (const traceType of TRACE_TYPES) {
-      const trace = slot.traces[traceType];
-      if (trace?.firstPlaced && markerBelongsToPlayer({ playerColor: trace.ownerPlayerColor }, playerKeys)) {
-        count += 1;
-      }
-    }
-    return count;
-  }
-
-  function buildRevealBasicRewardQueue(alienState, alienSlotId, players) {
-    const queue = [];
-    for (const player of players || []) {
-      const count = countFirstTracesForPlayerOnSlot(alienState, alienSlotId, player);
-      for (let index = 0; index < count; index += 1) {
-        queue.push({
-          playerId: getPlayerKey(player),
-          playerColor: getPlayerColor(player),
-          reason: "reveal_first_trace",
-        });
-      }
-    }
-    return queue;
-  }
-
   function initializeFangzhouReveal(alienState, alienSlotId, triggerPlayer, players, random = Math.random) {
     const fangzhou = ensureFangzhouState(alienState);
 
@@ -639,37 +597,10 @@
       dealPlayerCard2(alienState, player, random);
     }
 
-    fangzhou.pendingRevealBasicRewards = buildRevealBasicRewardQueue(alienState, alienSlotId, players);
-
     return {
       ok: true,
-      pendingBasicRewardCount: fangzhou.pendingRevealBasicRewards.length,
-      message: `方舟已揭示：已发解锁牌，待结算基础奖励 ${fangzhou.pendingRevealBasicRewards.length} 次`,
+      message: "方舟已揭示：已发放解锁牌",
     };
-  }
-
-  function takeNextRevealBasicReward(alienState) {
-    const fangzhou = ensureFangzhouState(alienState);
-    const next = fangzhou.pendingRevealBasicRewards.shift();
-    if (!next) return { ok: false, message: "没有待结算的揭示基础奖励" };
-    return { ok: true, entry: next };
-  }
-
-  function seedDebugTraceGrid(alienState, alienSlotId, player) {
-    ensureFangzhouState(alienState);
-    delete alienState.fangzhou.traceSlotsByAlienSlotId[String(alienSlotId)];
-    ensureTraceGrid(alienState, alienSlotId);
-    const placed = [];
-    for (const traceType of TRACE_TYPES) {
-      for (const position of TRACE_POSITIONS) {
-        const result = placeFangzhouTrace(alienState, alienSlotId, traceType, position, player, {
-          debugOnly: true,
-          placedAt: 0,
-        });
-        if (result.ok) placed.push(result.entry);
-      }
-    }
-    return placed;
   }
 
   function formatTraceLabel(traceType, position) {
@@ -725,10 +656,7 @@
     getCard1Src,
     flipCard1Reward,
     reshuffleCard1DeckIfNeeded,
-    buildRevealBasicRewardQueue,
     initializeFangzhouReveal,
-    takeNextRevealBasicReward,
-    seedDebugTraceGrid,
     markerBelongsToPlayer,
     getPlayerKeys,
     getPlayerKey,

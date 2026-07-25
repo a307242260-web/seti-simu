@@ -26,12 +26,47 @@ const config = {
   activePlayerCount: 4,
   aiDifficulty: "weak_start",
 };
+
+function completeInitialCardSelections(composition) {
+  const progressByPlayer = new Map();
+  for (let guard = 0; guard < 20; guard += 1) {
+    const inspection = composition.inspect();
+    const choices = inspection.session?.decision?.choices || [];
+    if (choices.some((choice) => choice.family === "choose_payment")) return;
+    const actorId = inspection.session?.decision?.ownerId;
+    const progress = progressByPlayer.get(actorId) || { industry: false, initialIds: new Set() };
+    let choice = choices.find((candidate) => candidate.target?.kind === "start_initial_setup")
+      || choices.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+    if (!choice && !progress.industry) {
+      choice = choices.find((candidate) => candidate.target?.selectionKind === "industry");
+      if (choice) progress.industry = true;
+    }
+    if (!choice && progress.initialIds.size < 2) {
+      choice = choices.find((candidate) => (
+        candidate.target?.selectionKind === "initial"
+        && !progress.initialIds.has(candidate.target.cardId)
+      ));
+      if (choice) progress.initialIds.add(choice.target.cardId);
+    }
+    assert.ok(choice, "初始选择必须提供下一条标准 action");
+    progressByPlayer.set(actorId, progress);
+    assert.equal(composition.inputPort.submitDecision({
+      decisionId: inspection.session.decision.decisionId,
+      decisionVersion: inspection.session.decision.decisionVersion,
+      ownerId: inspection.session.decision.ownerId,
+      choice,
+    }).ok, true);
+  }
+  assert.fail("初始选择必须有限进入收入弃牌 Decision");
+}
+
 const kernel = createSimulationRuleComposition({
   ...config,
   random: createSeededRandom(config.seed),
 });
 assert.equal(kernel.newGame(config).ok, true);
 assert.equal(kernel.composition.inputPort.beginDrain().ok, true);
+completeInitialCardSelections(kernel.composition);
 
 const openingPlayerId = "player-white";
 const before = kernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state;

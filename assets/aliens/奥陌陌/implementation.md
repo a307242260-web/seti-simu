@@ -17,7 +17,7 @@
 
 - `revealedSlotId` / `revealedByPlayerId` / `revealedByPlayerColor`：揭示槽位与揭示玩家。
 - `traceSlotsByAlienSlotId`：正面三色痕迹格。粉、黄、蓝各有 1-5 号位；1 号位为数组，可无限向上堆叠，其它位置单占用。
-- `cardDeck` / `displayedCardIndex` / `nextCardSequence`：奥陌陌外星牌牌堆、展示牌和生成序号。
+- `cardDeck` / `displayedCardIndex`：奥陌陌外星牌牌堆和展示牌；卡牌实例序号统一由 canonical `meta.sequences.alienEntity` 分配。
 - `orbitMarkers`：外星人面板上的 1 个环绕槽。
 - `landingMarkers`：外星人面板上的 3 个登陆槽。
 

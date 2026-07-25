@@ -314,20 +314,18 @@
     }
 
     const label = nebulaPlacement.getNebulaLabel(nebulaId);
-    const sourceLabel = options.source === "debug"
-      ? "调试填充"
-      : options.source === "setup"
+    const sourceLabel = options.source === "setup"
         ? "设置填充"
         : "填充";
-    const coordLines = added.map(({ token, layout }) =>
-      `序号${token.index} 槽位${token.slotIndex} (${layout.percentX}%,${layout.percentY}%)`,
+    const slotLines = added.map(({ token }) =>
+      `序号${token.index} 槽位${token.slotIndex}`,
     );
 
     return {
       ok: true,
       nebulaId,
       added,
-      message: `${sourceLabel} ${label} +${added.length}：${coordLines.join("；")}`,
+      message: `${sourceLabel} ${label} +${added.length}：${slotLines.join("；")}`,
     };
   }
 
@@ -553,9 +551,7 @@
   function orderSectorIdsByPlayerWinPriority(state, sectorIds, player) {
     const playerKeys = new Set([
       player?.id,
-      player?.playerId,
       player?.color,
-      player?.playerColor,
     ].filter(Boolean).map(String));
     return (sectorIds || [])
       .map((sectorId, index) => {
@@ -600,10 +596,7 @@
       const sectorRecord = ensureSectorSettlementRecord(state, normalizedSectorId);
       sectorRecord.settlementCount += 1;
       const settlementNumber = sectorRecord.settlementCount;
-      const fillResults = resetSectorNebulaData(state, normalizedSectorId, null, {
-        ...options,
-        settledAt: options.settledAt || new Date().toISOString(),
-      });
+      const fillResults = resetSectorNebulaData(state, normalizedSectorId, null, options);
 
       return {
         ok: true,
@@ -638,10 +631,7 @@
       settlementNumber,
     });
 
-    const fillResults = resetSectorNebulaData(state, normalizedSectorId, second, {
-      ...options,
-      settledAt: options.settledAt || new Date().toISOString(),
-    });
+    const fillResults = resetSectorNebulaData(state, normalizedSectorId, second, options);
 
     return {
       ok: true,

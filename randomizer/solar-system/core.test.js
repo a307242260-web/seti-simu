@@ -27,28 +27,11 @@ assert.deepEqual(baseRow(4, 2), ["空白", "彗星", "小行星", "空白", "彗
 assert.deepEqual(baseRow(4, 3), ["空白", "小行星", "彗星", "小行星", "小行星", "空白", "空白", "小行星"]);
 assert.deepEqual(baseRow(4, 4), ["天王星", "空白", "空白", "海王星", "空白", "彗星", "空白", "彗星"]);
 
-assert.equal(snapshot.statistics.planetCount, 8);
-assert.equal(snapshot.statistics.nebulaCount, 8);
-assert.equal(snapshot.coordinateSystem.xAxes[0].description, "中线上方偏右的第一块扇形");
-assert.deepEqual(
-  snapshot.nebulaRelations.map((relation) => relation.clockwiseOffset),
-  [1, 1, 1, 1],
-);
-assert.deepEqual(
-  snapshot.nebulaRelations.map((relation) => relation.displayText),
-  [
-    "[天狼星A 巴纳德]-[7,0]",
-    "[南河三 织女一]-[5,6]",
-    "[室女座61 绘架座β]-[1,2]",
-    "[开普勒22 比邻星]-[3,4]",
-  ],
-);
-assert.deepEqual(snapshot.statistics.visibleMeaningfulContentCounts, {
-  星球: 8,
-  小行星: 5,
-  彗星: 4,
-  星云: 8,
-});
+assert.deepEqual(Object.keys(snapshot).sort(), [
+  "nebulaLocations", "planetLocations", "visibleContents",
+]);
+assert.equal(snapshot.planetLocations.length, 8);
+assert.equal(snapshot.nebulaLocations.length, 8);
 
 assert.equal(solar.GLOBAL_COORDINATE_SYSTEM.size, 1000);
 assert.deepEqual(solar.solarGridToGlobalPoint(0, 0), { x: 500, y: 500 });
@@ -209,7 +192,6 @@ assert.deepEqual([uranus.x, uranus.y], [0, 4]);
 const rotated = solar.createSolarSnapshot({
   ...baseline,
   rotation,
-  wheelSteps: solar.rotationToWheelSteps(rotation),
 });
 const rotatedMercury = rotated.planetLocations.find((planet) => planet.planetId === "mercury");
 assert.deepEqual([rotatedMercury.x, rotatedMercury.y], [6, 1]);

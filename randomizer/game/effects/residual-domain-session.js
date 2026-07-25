@@ -24,6 +24,7 @@
   let amiba = root.SetiAlienAmiba;
   let aomomo = root.SetiAlienAomomo;
   let runezu = root.SetiAlienRunezu;
+  let stateSequences = root.SetiStateSequences;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     science = science || require("./science-session");
@@ -49,19 +50,21 @@
     amiba = amiba || require("../aliens/amiba");
     aomomo = aomomo || require("../aliens/aomomo");
     runezu = runezu || require("../aliens/runezu");
+    stateSequences = stateSequences || require("../state/sequences");
   }
   const api = factory(
     standardAction, science, players, cards, data, industry, industryAbilities,
     gameAbilities, strategy, tech, aliens, finalScoring, endGameScoring,
     cardEffects, cardTaskState, cardPlayDomain,
     { jiuzhe, yichangdian, banrenma, fangzhou, chong, amiba, aomomo, runezu },
+    stateSequences,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiResidualDomainSession = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction, science, players, cards, data, industry, industryAbilities,
   gameAbilities, strategy, tech, aliens, finalScoring, endGameScoring,
-  cardEffects, cardTaskState, cardPlayDomain, speciesModules,
+  cardEffects, cardTaskState, cardPlayDomain, speciesModules, stateSequences,
 ) {
   "use strict";
 
@@ -549,7 +552,14 @@
     const args = {
       jiuzhe: [root.aliens, slotId, owner, allPlayers, random],
       yichangdian: [root.aliens, slotId, owner, root.solarSystem?.earthSectorX || 1, random],
-      banrenma: [root.aliens, slotId, owner, allPlayers, random],
+      banrenma: [
+        root.aliens,
+        slotId,
+        owner,
+        allPlayers,
+        random,
+        { takeSequence: () => stateSequences.take(root, "alienEntity") },
+      ],
       fangzhou: [root.aliens, slotId, owner, allPlayers, random],
       chong: [root.aliens, slotId, owner, random],
       amiba: [root.aliens, slotId, owner, random],
@@ -568,7 +578,11 @@
         slotId,
         allPlayers,
         module,
-        { random, label: module.ALIEN_ID },
+        {
+          random,
+          label: module.ALIEN_ID,
+          takeSequence: () => stateSequences.take(root, "alienEntity"),
+        },
       )
       : { ok: true, totalDrawn: 0, irreversible: null };
     if (!grants.ok) return grants;
@@ -705,15 +719,6 @@
           ruleId: task?.id || task?.kind || "amiba_theory",
           effects: clone(reward.effects || []),
           label: task?.label || cards.getCardLabel(card),
-        });
-      } else if (runezu.isRunezuCard(card)) {
-        const ready = runezu.getReadyThreeTraceTask(card, root.aliens, player);
-        if (ready) tasks.push({
-          kind: "runezu_task",
-          cardInstanceId: card.id,
-          ruleId: ready.task?.id || ready.task?.kind || "runezu_three_trace",
-          effects: clone(ready.effects || []),
-          label: ready.task?.label || cards.getCardLabel(card),
         });
       }
     }
@@ -1080,26 +1085,6 @@
           event: clone(match.event || null),
         }, "accept_optional_effect"));
       }
-      for (const card of [...(owner.reservedCards || [])]) {
-        if (!runezu.isRunezuCard(card)) continue;
-        const progress = runezu.consumeTaskEvents(card, events);
-        if (!progress?.ok) continue;
-        const applied = applyFormalCardEffects(
-          root,
-          owner,
-          progress.effects || [],
-          "taskCardScore",
-        );
-        if (applied.ok) spawnedEffects.push(...applied.spawnedEffects);
-        if (progress.completed) {
-          const index = owner.reservedCards.findIndex((entry) => entry.id === card.id);
-          if (index >= 0) {
-            owner.reservedCards.splice(index, 1);
-            cards.addToDiscardPile(root.cards, card);
-            owner.completedTaskCount = (Number(owner.completedTaskCount) || 0) + 1;
-          }
-        }
-      }
       for (const bonus of root.turn.cardTurnEventBonuses || []) {
         if ((bonus.ownerId || bonus.playerId) !== owner.id) continue;
         for (const event of events) {
@@ -1183,8 +1168,6 @@
     } else if (settlement.kind === "amiba_task") {
       card.amibaTaskCompleted = true;
       consumed = true;
-    } else if (settlement.kind === "runezu_task") {
-      consumed = runezu.completeRunezuTask(card);
     }
     if (!consumed) return fail("CARD_RULE_ALREADY_CONSUMED", "卡牌规则已经结算");
     if (settlement.kind !== "trigger" || cardEffects.areAllTriggersConsumed(card)) {
@@ -1229,7 +1212,7 @@
 
   function listPendingFinalOwners(root) {
     return (root.players.players || []).filter((player) => (
-      finalScoring.getPendingMarksForPlayer(root.finalScoring, player.id).length
+      finalScoring.getPendingMarksForPlayer(root.finalScoring, player).length
     ));
   }
 
@@ -1351,14 +1334,13 @@
         payload.data.traceType,
         Number(payload.data.position),
         owner,
-        payload.data.options || {},
+        {
+          ...(payload.data.options || {}),
+          sequence: stateSequences.take(root, "alienEntity"),
+        },
       );
     }
-    if (payload.domain === "final_scoring" && effectType === "sync_marks") {
-      return finalScoring.syncPendingMarks(root.finalScoring, root.players.players);
-    }
     if (payload.domain === "final_scoring" && effectType === "game_end") {
-      finalScoring.syncPendingMarks(root.finalScoring, root.players.players);
       if (!listPendingFinalOwners(root).length) settleFinalScores(root);
       return { ok: true };
     }
@@ -1497,8 +1479,16 @@
           return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
         }
         const gained = legal.target.source === "display"
-          ? aomomo.takeDisplayedCard(root.aliens, () => nextRandom(root))
-          : aomomo.blindDrawCard(root.aliens, () => nextRandom(root));
+          ? aomomo.takeDisplayedCard(
+            root.aliens,
+            () => nextRandom(root),
+            { sequence: stateSequences.take(root, "alienEntity") },
+          )
+          : aomomo.blindDrawCard(
+            root.aliens,
+            () => nextRandom(root),
+            { sequence: stateSequences.take(root, "alienEntity") },
+          );
         if (!gained.ok || !gained.card) return gained;
         player.hand.push(gained.card);
         player.resources.handSize = player.hand.length;
@@ -1533,12 +1523,12 @@
         if (!legal || !player) return fail("FINAL_MARK_STALE", "终局标记 Decision 已失效");
         const marked = finalScoring.markTile(
           root.finalScoring, legal.target.tileId, player,
-          { placedAt: root.meta?.logicalTime || null, root },
+          { root },
         );
         if (!marked.ok) return marked;
         if (!listPendingFinalOwners(root).length) settleFinalScores(root);
         const hasMoreForOwner = finalScoring
-          .getPendingMarksForPlayer(root.finalScoring, player.id).length > 0;
+          .getPendingMarksForPlayer(root.finalScoring, player).length > 0;
         return result(state, root, "final_mark", {
           spawnedEffects: hasMoreForOwner
             ? [decision(EFFECT_TYPES.FINAL_MARK, player.id, {})]

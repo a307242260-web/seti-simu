@@ -3,9 +3,16 @@
 默认 Node 回归长期只执行两类测试：
 
 - `unit`：一个明确规则、纯函数、领域对象或窄接口的可观察行为。测试必须可隔离、确定性执行；历史 bug 必须通过业务输入输出复现。
-- `fullFlow`：仓库唯一的版本化完整流程。固定初态、公共输入脚本和最终权威盘面位于 `randomizer/full-flow/standard-flow-v1.fixture.js`，执行入口为 `randomizer/full-flow/standard-flow.test.js`。
+- `fullFlow`：仓库唯一的版本化完整流程。它通过公共 Standard Action / Decision 输入完成开局、
+  发射、移动、支付和 checkpoint 恢复，并核对恢复前后的 observation、合法行动与 committed
+  state。配置和 provenance 位于 `randomizer/full-flow/standard-flow-v1.fixture.js`，执行入口为
+  `randomizer/full-flow/standard-flow.test.js`。
 
 不得新增读取生产源码后匹配字符串、函数名、行数或装配顺序的测试，也不得用“模块能加载”“导出存在”、迁移阶段编号或旧文件已删除代替业务契约。新增测试必须先登记到 `tools/node-test-inventory.js`；未登记、重复登记、登记文件不存在、条目字段不完整或 full-flow 数量不是一个时，runner 会直接失败。仓库不保留 inventory 之外的 `.test.js`。
+
+测试失败时先判断其义务是否仍属于当前公共契约。只服务于已删除 API、旧状态形状、旧文件布局、
+历史随机轨迹或 checkpoint 字节哈希的测试应删除或改写为当前行为测试；不得为使它通过而恢复兼容
+代码。测试数量和全绿本身都不是架构完成证据。
 
 测试类型与 owner 是两个正交维度。每个 inventory 条目必须逐文件显式登记 `file`、`owner`、`obligation`、`counterexample`；owner 取决于实际验收的公共契约，不由文件路径或正则推导。正式基础设施使用 `architecture/*`，游戏规则使用 `rules/*`，策略实现使用 `policy/*`。
 

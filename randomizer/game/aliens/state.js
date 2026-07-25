@@ -77,8 +77,8 @@
   function firstTraceBelongsToPlayer(traceSlot, player) {
     if (!traceSlot?.firstPlaced || !player) return false;
     if (traceSlot.neutral) return false;
-    const playerIds = new Set([player.id, player.playerId].filter(Boolean).map(String));
-    const playerColors = new Set([player.color, player.playerColor].filter(Boolean).map(String));
+    const playerIds = new Set([player.id].filter(Boolean).map(String));
+    const playerColors = new Set([player.color].filter(Boolean).map(String));
     return (
       [traceSlot.ownerPlayerId, traceSlot.playerId].filter(Boolean).some((value) => playerIds.has(String(value)))
       || [traceSlot.ownerPlayerColor, traceSlot.playerColor].filter(Boolean).some((value) => playerColors.has(String(value)))
@@ -120,8 +120,8 @@
   function countFirstTracesByPlayerOnSlot(alienState, alienSlotId, players = []) {
     return (players || []).map((player) => ({
       player,
-      playerId: player?.id || player?.playerId || null,
-      playerColor: player?.color || player?.playerColor || null,
+      playerId: player?.id || null,
+      playerColor: player?.color || null,
       count: countFirstTracesForPlayerOnSlot(alienState, alienSlotId, player),
     })).filter((entry) => entry.count > 0);
   }
@@ -148,8 +148,8 @@
   function markerBelongsToPlayer(marker, player) {
     if (!marker || !player) return false;
     if (marker.neutral) return false;
-    const playerIds = new Set([player.id, player.playerId].filter(Boolean).map(String));
-    const playerColors = new Set([player.color, player.playerColor].filter(Boolean).map(String));
+    const playerIds = new Set([player.id].filter(Boolean).map(String));
+    const playerColors = new Set([player.color].filter(Boolean).map(String));
     return (
       [marker.ownerPlayerId, marker.playerId].filter(Boolean).some((value) => playerIds.has(String(value)))
       || [marker.ownerPlayerColor, marker.playerColor, marker.color].filter(Boolean).some((value) => playerColors.has(String(value)))
@@ -302,9 +302,8 @@
       alienSlotId: target.alienSlotId,
       traceType: target.traceType,
       neutralPlayerColor,
-      triggerPlayerId: triggerPlayer?.id || triggerPlayer?.playerId || null,
-      triggerPlayerColor: triggerPlayer?.color || triggerPlayer?.playerColor || null,
-      createdAt: options.createdAt || Date.now(),
+      triggerPlayerId: triggerPlayer?.id || null,
+      triggerPlayerColor: triggerPlayer?.color || null,
     };
     ensureNeutralScoreTraceMarks(alienState)[String(normalizedThreshold)] = mark;
 
@@ -347,24 +346,6 @@
     };
   }
 
-  function formatAlienSlotLine(alienSlotId, alienSlot) {
-    if (!alienSlot) return `${placement.getAlienSlotLabel(alienSlotId)} 无状态`;
-
-    const status = alienSlot.revealed
-      ? `已揭示${alienSlot.alienId ? ` ${alienSlot.alienId}` : ""}`
-      : `未揭示 首标记 ${countPlacedFirstTraces(alienSlot)}/3`;
-
-    const traceParts = placement.TRACE_TYPES.map((traceType) => {
-      const traceSlot = alienSlot.traces[traceType];
-      if (!traceSlot.firstPlaced) return `${traceType}=无`;
-      const owner = traceSlot.ownerPlayerColor || "?";
-      const extra = traceSlot.extraCount > 0 ? `+${traceSlot.extraCount}` : "";
-      return `${traceType}=${owner}${extra}`;
-    });
-
-    return `[${placement.getAlienSlotLabel(alienSlotId)}] ${status} ${traceParts.join(" ")}`;
-  }
-
   return Object.freeze({
     NEUTRAL_SCORE_TRACE_THRESHOLDS,
     NEUTRAL_SCORE_TRACE_ORDER,
@@ -387,6 +368,5 @@
     placeFirstTrace,
     addExtraTrace,
     revealAlien,
-    formatAlienSlotLine,
   });
 });

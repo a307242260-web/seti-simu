@@ -78,24 +78,17 @@
   }
 
   function createSelectionCard(kind, value) {
-    if (kind === "industry") {
-      return {
-        id: `industry:${value}`,
-        kind,
-        label: stripExtension(value),
-        src: `../assets/industry/${value}`,
-        width: 1382,
-        height: 1054,
-      };
-    }
     return {
-      id: `initial:${value}`,
+      id: `${kind}:${value}`,
       kind,
-      label: `初始牌 ${value}`,
-      src: `../assets/initial_card/split/${value}.png`,
-      width: 744,
-      height: 1039,
+      value,
     };
+  }
+
+  function selectionLabel(card) {
+    return card?.kind === "industry"
+      ? stripExtension(card.value)
+      : `初始牌 ${card?.value}`;
   }
 
   function activePlayerIds(rootState) {
@@ -125,14 +118,6 @@
     return (options || []).find((card) => card.id === cardId) || null;
   }
 
-  function selectedIndustryFiles(rootState) {
-    const requested = new Set(
-      (rootState.match?.initialSetupConfig?.industryLabels || []).map(String),
-    );
-    const selected = INDUSTRY_CARD_FILES.filter((fileName) => requested.has(stripExtension(fileName)));
-    return selected.length >= 2 ? selected : [...INDUSTRY_CARD_FILES];
-  }
-
   function start(rootState, suppliedRandom = null) {
     if (setupState(rootState)?.phase === "selecting") {
       return { ok: false, code: "INITIAL_SETUP_ALREADY_ACTIVE", message: "初始选择已经开始" };
@@ -141,7 +126,7 @@
     const random = typeof suppliedRandom === "function"
       ? suppliedRandom
       : createRandom(`${rootState.meta?.seed || "browser-host"}:initial-setup`);
-    const industryPool = selectedIndustryFiles(rootState);
+    const industryPool = [...INDUSTRY_CARD_FILES];
     const industryDeck = industryPool.length >= playerIds.length * 2
       ? shuffle(industryPool, random).slice(0, playerIds.length * 2)
       : null;
@@ -270,7 +255,6 @@
       industry: { id: selectedIndustry.id },
       removedInitialCards: selectedInitialCards.map((card) => ({ id: card.id })),
     };
-    player.aiDifficulty = rootState.match?.initialSetupConfig?.aiDifficulty || player.aiDifficulty;
     initializeIndustryState(player);
     const nextPlayerId = setup.playerIds.find(
       (playerId) => !setup.confirmedPlayerIds.includes(playerId),
@@ -294,7 +278,6 @@
       (entry) => (Number(entry?.count) || 0) > 0,
     )) {
       delete rootState.match.initialSetup;
-      delete rootState.match.initialSetupConfig;
     }
     return {
       ok: true,
@@ -327,7 +310,7 @@
     const industryChoices = offer.industryOptions.map((card) => ({
       target: { kind: "select_initial_card", selectionKind: "industry", cardId: card.id },
       payload: {},
-      summary: `选择公司：${card.label}`,
+      summary: `选择公司：${selectionLabel(card)}`,
     }));
     const initialChoices = offer.initialOptions.flatMap((card) => {
       const selected = offer.selectedInitialIds.includes(card.id);
@@ -335,7 +318,7 @@
       return [{
         target: { kind: "select_initial_card", selectionKind: "initial", cardId: card.id },
         payload: {},
-        summary: `${selected ? "取消" : "选择"}：${card.label}`,
+        summary: `${selected ? "取消" : "选择"}：${selectionLabel(card)}`,
       }];
     });
     return [
@@ -451,7 +434,6 @@
     const remainingDecisionQueue = clone(decisionContext.queue.slice(1));
     if (!remainingDecisionQueue.length) {
       delete rootState.match.initialSetup;
-      delete rootState.match.initialSetupConfig;
     }
     return {
       ok: true,
@@ -500,28 +482,11 @@
     });
   }
 
-  function createViewerPresentation(rootState, viewer) {
-    const setup = rootState?.match?.initialSetup || null;
-    if (!setup) return { active: false, interactive: false, currentPlayerId: null, offer: null };
-    const currentPlayerId = setup.currentPlayerId == null ? null : String(setup.currentPlayerId);
-    const viewerPlayerId = viewer?.playerId == null ? null : String(viewer.playerId);
-    return {
-      active: setup.phase === "selecting",
-      interactive: setup.phase === "selecting" && currentPlayerId === viewerPlayerId,
-      currentPlayerId,
-      offer: setup.phase === "selecting" && currentPlayerId === viewerPlayerId
-        ? clone(setup.offersByPlayerId?.[currentPlayerId] || null)
-        : null,
-      confirmedPlayerIds: clone(setup.confirmedPlayerIds || []),
-    };
-  }
-
   return Object.freeze({
     OWNER_ID,
     FAMILIES,
     createSource,
     createIncomeDecisionQueue,
-    createViewerPresentation,
     canConfirm,
     cardFromOffer,
   });

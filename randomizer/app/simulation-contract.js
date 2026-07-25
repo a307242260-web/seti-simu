@@ -197,7 +197,6 @@ function sanitizeFinalScoringState(state) {
   return compactObject({
     tiles: clone(state.tiles || state.boards || []),
     marks: clone(state.marks || state.playerMarks || {}),
-    pendingMarks: clone(state.pendingMarks || []),
   });
 }
 

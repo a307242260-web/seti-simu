@@ -72,12 +72,6 @@
   // 放置优先顺序：中心 -> 四角 -> 四边。
   const LAUNCH_SLOT_PRIORITY = Object.freeze([4, 0, 2, 6, 8, 1, 3, 5, 7]);
 
-  const COUNTED_CONTENT_KINDS = new Set([
-    layout.CONTENT_KIND.PLANET,
-    layout.CONTENT_KIND.ASTEROID,
-    layout.CONTENT_KIND.COMET,
-    layout.CONTENT_KIND.NEBULA,
-  ]);
   const PASS_THROUGH_KINDS = new Set([
     layout.CONTENT_KIND.HOLE,
     layout.CONTENT_KIND.OUTSIDE_WHEEL,
@@ -98,10 +92,6 @@
     while (angle < -90) angle += 360;
     while (angle >= 270) angle -= 360;
     return roundGlobalCoordinate(angle);
-  }
-
-  function deepClone(value) {
-    return JSON.parse(JSON.stringify(value));
   }
 
   function buildWheelCellIndexes(wheels) {
@@ -163,14 +153,8 @@
   function normalizeSolarInput(input) {
     const source = input || {};
     return {
-      rotation: normalizeRotationState(
-        source.rotation
-        || source.solarRotationInitial
-        || source.wheelSteps
-        || source,
-        source.rotationCount,
-      ),
-      sectorBySlot: normalizeSectorBySlot(source.sectorBySlot || source.sectorAssignment),
+      rotation: normalizeRotationState(source.rotation, source.rotation?.rotationCount),
+      sectorBySlot: normalizeSectorBySlot(source.sectorBySlot),
       aomomoActive: Boolean(source.aomomoActive),
     };
   }
@@ -575,35 +559,6 @@
     return getNebulaLocations(sectorBySlot).find((nebula) => nebula.x === mod8(displayX)) || null;
   }
 
-  function collectNebulaRelations(sectorBySlotInput) {
-    const sectorBySlot = normalizeSectorBySlot(sectorBySlotInput);
-    return [1, 2, 3, 4].map((slot) => {
-      const sectorId = sectorBySlot[slot];
-      const sector = layout.SECTORS[sectorId];
-      const slotDefinition = layout.SLOT_DEFINITIONS[slot];
-      const pair = getNebulaLocations(sectorBySlot)
-        .filter((nebula) => nebula.slot === slot)
-        .sort((a, b) => a.localIndex - b.localIndex);
-      const nebulaLabels = pair.map((nebula) => nebula.label);
-      const xCoordinates = pair.map((nebula) => nebula.x);
-
-      return {
-        slot,
-        slotLabel: slotDefinition?.label || `槽${slot}`,
-        slotSide: slotDefinition?.side || null,
-        sectorId,
-        sectorAsset: sector?.asset || null,
-        nebulaIds: pair.map((nebula) => nebula.id),
-        nebulaLabels,
-        xCoordinates,
-        coordinates: pair.map((nebula) => [nebula.x, nebula.y]),
-        clockwiseOffset: pair.length === 2 ? mod8(pair[1].x - pair[0].x) : null,
-        displayText: `[${nebulaLabels.join(" ")}]-[${xCoordinates.join(",")}]`,
-        relation: "same-sector-fixed-pair",
-      };
-    });
-  }
-
   function resolveVisibleContent(displayX, y, input) {
     const solar = normalizeSolarInput(input);
 
@@ -660,48 +615,6 @@
     };
   }
 
-  function collectStaticWheelCoordinateContents() {
-    const result = {};
-
-    for (const wheelId of WHEEL_IDS) {
-      result[wheelId] = [];
-      for (const y of BOARD_RING_IDS) {
-        for (let x = 0; x < 8; x += 1) {
-          result[wheelId].push({
-            wheelId,
-            x,
-            y,
-            cell: getBaseWheelCell(wheelId, x, y),
-          });
-        }
-      }
-    }
-
-    return result;
-  }
-
-  function collectWheelCoordinateContents(input) {
-    const solar = normalizeSolarInput(input);
-    const result = {};
-
-    for (const wheelId of WHEEL_IDS) {
-      result[wheelId] = [];
-      for (const y of BOARD_RING_IDS) {
-        for (let displayX = 0; displayX < 8; displayX += 1) {
-          result[wheelId].push(getWheelCellAtDisplayCoordinate(
-            wheelId,
-            displayX,
-            y,
-            solar.rotation,
-            solar,
-          ));
-        }
-      }
-    }
-
-    return result;
-  }
-
   function collectVisibleCoordinateContents(input) {
     const result = [resolveVisibleContent(0, 0, input)];
 
@@ -740,132 +653,6 @@
     return planets.sort((a, b) => a.y - b.y || a.x - b.x || a.planetId.localeCompare(b.planetId));
   }
 
-  function countContentKinds(entries) {
-    return entries.reduce((counts, entry) => {
-      const content = entry.content || entry.cell || {};
-      counts[content.kind || layout.CONTENT_KIND.UNKNOWN] = (
-        counts[content.kind || layout.CONTENT_KIND.UNKNOWN] || 0
-      ) + 1;
-      return counts;
-    }, {});
-  }
-
-  function getContentKindLabel(kind) {
-    return layout.CONTENT_KIND_LABELS[kind] || layout.CONTENT_KIND_LABELS[layout.CONTENT_KIND.UNKNOWN];
-  }
-
-  function countVisibleMeaningfulContentKinds(entries) {
-    return entries.reduce((counts, entry) => {
-      const content = entry.content || entry.cell || {};
-      const kind = content.kind || layout.CONTENT_KIND.UNKNOWN;
-      if (!COUNTED_CONTENT_KINDS.has(kind)) return counts;
-
-      const label = getContentKindLabel(kind);
-      counts[label] = (counts[label] || 0) + 1;
-      return counts;
-    }, {});
-  }
-
-  function countWheelContents(wheelContents) {
-    return Object.fromEntries(
-      Object.entries(wheelContents).map(([wheelId, entries]) => [
-        wheelId,
-        countContentKinds(entries.map((entry) => ({ cell: entry.cell }))),
-      ]),
-    );
-  }
-
-  function summarizeCell(cell) {
-    return {
-      kind: cell.kind,
-      kindLabel: getContentKindLabel(cell.kind),
-      label: cell.label || getContentKindLabel(cell.kind),
-      planetId: cell.planetId,
-      tags: cell.tags ? [...cell.tags] : [],
-      passThrough: isPassThroughCell(cell),
-      inferred: Boolean(cell.inferred),
-    };
-  }
-
-  function collectWheelCoordinateReport(input) {
-    const solar = normalizeSolarInput(input);
-
-    return Object.fromEntries(WHEEL_IDS.map((wheelId) => [
-      wheelId,
-      {
-        wheelId,
-        step: getWheelStep(solar.rotation, wheelId),
-        normalizedStep: getNormalizedWheelStep(solar.rotation, wheelId),
-        rows: BOARD_RING_IDS.map((y) => ({
-          y,
-          cells: Array.from({ length: 8 }, (_, displayX) => {
-            const wheelCell = getWheelCellAtDisplayCoordinate(
-              wheelId,
-              displayX,
-              y,
-              solar.rotation,
-              solar,
-            );
-            return {
-              x: displayX,
-              y,
-              baseX: wheelCell.baseX,
-              ...summarizeCell(wheelCell.cell),
-            };
-          }),
-        })),
-      },
-    ]));
-  }
-
-  function collectVisibleCoordinateReport(input) {
-    return collectVisibleCoordinateContents(input).map((entry) => ({
-      x: entry.x,
-      y: entry.y,
-      source: entry.source,
-      wheelId: entry.wheelId,
-      baseX: entry.baseX,
-      ...summarizeCell(entry.content),
-      trace: entry.trace.map((item) => ({
-        wheelId: item.wheelId,
-        displayX: item.displayX,
-        baseX: item.baseX,
-        kind: item.cell.kind,
-        kindLabel: getContentKindLabel(item.cell.kind),
-        label: item.cell.label || getContentKindLabel(item.cell.kind),
-        passThrough: isPassThroughCell(item.cell),
-      })),
-    }));
-  }
-
-  function collectVisibleCoordinateGroups(input) {
-    const groups = {
-      planets: [],
-      asteroids: [],
-      comets: [],
-    };
-
-    for (const cell of collectVisibleCoordinateReport(input)) {
-      const coordinate = {
-        x: cell.x,
-        y: cell.y,
-        label: cell.label,
-        kind: cell.kind,
-        kindLabel: cell.kindLabel,
-      };
-
-      if (cell.kind === layout.CONTENT_KIND.PLANET) {
-        groups.planets.push(coordinate);
-      } else if (cell.kind === layout.CONTENT_KIND.ASTEROID) {
-        groups.asteroids.push(coordinate);
-      } else if (cell.kind === layout.CONTENT_KIND.COMET) {
-        groups.comets.push(coordinate);
-      }
-    }
-
-    return groups;
-  }
-
   function getNextOrbitWheelIds(rotationCount) {
     const stage = ((Number(rotationCount) % 3) + 3) % 3;
     if (stage === 0) return [1];
@@ -894,7 +681,6 @@
 
   function createBaselineState() {
     return {
-      wheelSteps: [0, 0, 0, 0, 0],
       rotation: normalizeRotationState([0, 0, 0, 0, 0], 0),
       sectorBySlot: normalizeSectorBySlot(layout.BASE_SECTOR_BY_SLOT),
       aomomoActive: false,
@@ -903,73 +689,10 @@
 
   function createSolarSnapshot(input) {
     const solar = normalizeSolarInput(input || createBaselineState());
-    const staticWheelContents = collectStaticWheelCoordinateContents();
-    const currentWheelContents = collectWheelCoordinateContents(solar);
-    const visibleContents = collectVisibleCoordinateContents(solar);
-    const planetLocations = collectPlanetLocations(solar);
-    const nebulaLocations = getNebulaLocations(solar.sectorBySlot);
-
     return {
-      coordinateSystem: {
-        xAxes: deepClone(layout.X_AXES),
-        rings: deepClone(layout.RINGS),
-        slots: deepClone(layout.SLOT_DEFINITIONS),
-        global: deepClone(GLOBAL_COORDINATE_SYSTEM),
-        cellBoundaries: collectSolarCellBoundaries(),
-        sectorCoordinateBoundaries: collectSectorCoordinateBoundaries(),
-      },
-      rotation: {
-        ...solar.rotation,
-        normalized: {
-          wheel1Steps: mod8(solar.rotation.wheel1Steps),
-          wheel2Steps: mod8(solar.rotation.wheel2Steps),
-          wheel3Steps: mod8(solar.rotation.wheel3Steps),
-          wheel4Steps: mod8(solar.rotation.wheel4Steps),
-        },
-      },
-      sectorBySlot: solar.sectorBySlot,
-      aomomoActive: solar.aomomoActive,
-      sectorAssignment: toSectorAssignment(solar.sectorBySlot),
-      staticWheelContents,
-      currentWheelContents,
-      wheelCoordinateReport: collectWheelCoordinateReport(solar),
-      visibleContents,
-      visibleCoordinateReport: collectVisibleCoordinateReport(solar),
-      visibleCoordinateGroups: collectVisibleCoordinateGroups(solar),
-      planetLocations,
-      nebulaLocations,
-      nebulaRelations: collectNebulaRelations(solar.sectorBySlot),
-      statistics: {
-        staticWheelContentCounts: countWheelContents(staticWheelContents),
-        currentWheelContentCounts: countWheelContents(currentWheelContents),
-        visibleContentCounts: countContentKinds(visibleContents),
-        visibleMeaningfulContentCounts: countVisibleMeaningfulContentKinds(visibleContents),
-        planetCount: planetLocations.length,
-        nebulaCount: nebulaLocations.length,
-      },
-    };
-  }
-
-  function createSetupState(input) {
-    const solar = normalizeSolarInput(input || createBaselineState());
-    const snapshot = createSolarSnapshot(solar);
-
-    return {
-      solarRotationInitial: {
-        wheel1Steps: mod8(solar.rotation.wheel1Steps),
-        wheel2Steps: mod8(solar.rotation.wheel2Steps),
-        wheel3Steps: mod8(solar.rotation.wheel3Steps),
-        wheel4Steps: mod8(solar.rotation.wheel4Steps),
-        rotationCount: solar.rotation.rotationCount,
-      },
-      sectorAssignment: snapshot.sectorAssignment,
-      solarStatistics: {
-        planetLocations: snapshot.planetLocations,
-        nebulaLocations: snapshot.nebulaLocations,
-        nebulaRelations: snapshot.nebulaRelations,
-        visibleContentCounts: snapshot.statistics.visibleMeaningfulContentCounts,
-        visibleCoordinateGroups: snapshot.visibleCoordinateGroups,
-      },
+      visibleContents: collectVisibleCoordinateContents(solar),
+      planetLocations: collectPlanetLocations(solar),
+      nebulaLocations: getNebulaLocations(solar.sectorBySlot),
     };
   }
 
@@ -1009,24 +732,13 @@
     getBaseWheelCell,
     getWheelCellAtDisplayCoordinate,
     resolveVisibleContent,
-    collectStaticWheelCoordinateContents,
-    collectWheelCoordinateContents,
     collectVisibleCoordinateContents,
-    collectWheelCoordinateReport,
-    collectVisibleCoordinateReport,
-    collectVisibleCoordinateGroups,
     collectPlanetLocations,
     getNebulaLocations,
     getNebulaAtCoordinate,
-    collectNebulaRelations,
-    countContentKinds,
-    getContentKindLabel,
-    countVisibleMeaningfulContentKinds,
-    countWheelContents,
     getNextOrbitWheelIds,
     applySolarOrbitRotation,
     createBaselineState,
     createSolarSnapshot,
-    createSetupState,
   });
 });

@@ -50,13 +50,13 @@ function createContext(overrides) {
   const planetsState = planetStats.createPlanetStatsState();
 
   const base = {
-    meta: { sequences: { rocket: 1 } },
+    meta: { sequences: { alienEntity: 1, rocket: 1 } },
     solarSystem: solarSystemState,
     players: playersState,
     pieces: piecesState,
     planets: planetsState,
     tech: techGameState,
-    turn: { currentPlayerId: playersState.currentPlayerId },
+    turn: { currentPlayerId: playersState.players[0].id },
     getEarthSectorCoordinate() {
       const snapshot = solar.createSolarSnapshot(solarSystemState);
       const earth = snapshot.planetLocations.find((planet) => planet.planetId === "earth");
@@ -142,18 +142,6 @@ const noRocketContext = createContext();
 const blockedOrbit = actions.execute("orbit", noRocketContext);
 assert.equal(blockedOrbit.ok, false);
 assert.match(blockedOrbit.message, /当前火箭/);
-
-const referenceContext = createContext();
-actions.execute("launch", referenceContext);
-rockets.placeRocketAtPlanetsReferencePoint(referenceContext.pieces, 1, {
-  x: 836,
-  y: 470.5,
-  width: 1672,
-  height: 941,
-});
-const referenceOrbit = actions.execute("orbit", referenceContext);
-assert.equal(referenceOrbit.ok, false);
-assert.match(referenceOrbit.message, /行星格/);
 
 const marsContext = createContext();
 launchToPlanet(marsContext, "mars");

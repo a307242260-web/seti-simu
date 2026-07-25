@@ -28,7 +28,7 @@ function projection(choices, overrides = {}) {
 (function testProjectionKeepsResearchTileIdentityAndPresentation() {
   const state = {
     meta: { stateVersion: 9 },
-    match: {}, turn: {}, players: { p1: { id: "p1" } }, cards: {}, tech: {}, aliens: {},
+    match: {}, turn: {}, players: { players: [{ id: "p1", color: "white" }] }, cards: {}, tech: {}, aliens: {},
   };
   const decision = {
     decisionId: "research:1",

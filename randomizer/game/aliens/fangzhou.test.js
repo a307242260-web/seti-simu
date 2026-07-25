@@ -6,6 +6,9 @@ const placement = require("./placement");
 const alienState = require("./state");
 const fangzhou = require("./fangzhou");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 function createDebugState() {
   return {
     aliens: {
@@ -64,15 +67,6 @@ for (const [traceType, variants] of Object.entries(card2CornerExpectations)) {
   }
 }
 
-const debugState = createDebugState();
-debugState.fangzhou.revealedSlotId = 2;
-debugState.fangzhou.revealInitialized = true;
-const seeded = fangzhou.seedDebugTraceGrid(debugState, 2, white);
-assert.equal(seeded.length, 12);
-const grid = fangzhou.getTraceGrid(debugState, 2);
-assert.equal(grid.pink[1].playerColor, "white");
-assert.equal(grid.pink[2].playerColor, "white");
-
 const lockedState = createDebugState();
 lockedState.fangzhou.revealedSlotId = 2;
 lockedState.fangzhou.revealInitialized = true;
@@ -113,8 +107,8 @@ assert.equal(fangzhou.countTraceMarkers(unlockTraceState, white, 2), 2);
 const singleState = createDebugState();
 singleState.fangzhou.revealedSlotId = 2;
 singleState.fangzhou.revealInitialized = true;
-fangzhou.placeFangzhouTrace(singleState, 2, "pink", 1, white);
-const duplicate = fangzhou.placeFangzhouTrace(singleState, 2, "pink", 1, white);
+fangzhou.placeFangzhouTrace(singleState, 2, "pink", 1, white, nextAlienIdentity());
+const duplicate = fangzhou.placeFangzhouTrace(singleState, 2, "pink", 1, white, nextAlienIdentity());
 assert.equal(duplicate.ok, false);
 assert.equal(fangzhou.getTraceGrid(singleState, 2).pink[1].playerColor, "white");
 
@@ -134,7 +128,6 @@ const initState = {
 };
 const init = fangzhou.initializeFangzhouReveal(initState, 2, white, [white], () => 0);
 assert.equal(init.ok, true);
-assert.equal(initState.fangzhou.pendingRevealBasicRewards.length, 3);
 assert.equal(initState.fangzhou.playerCard2ById.white.cards.pink.variant, 1);
 
 const flipWrapper = { fangzhou: fangzhou.createFangzhouState() };

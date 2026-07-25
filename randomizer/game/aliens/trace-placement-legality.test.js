@@ -4,6 +4,9 @@ const assert = require("node:assert/strict");
 const aliens = require("./index");
 const state = require("./state");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 const player = {
   id: "player-white",
   color: "white",
@@ -41,7 +44,12 @@ for (const species of [
 }
 
 const fullJiuzheState = createRevealedState(aliens.jiuzhe);
-aliens.jiuzhe.seedDebugTraceGrid(fullJiuzheState, 1, player);
+for (const position of aliens.jiuzhe.TRACE_POSITIONS) {
+  assert.equal(
+    aliens.jiuzhe.placeJiuzheTrace(fullJiuzheState, 1, "pink", position, player, nextAlienIdentity()).ok,
+    true,
+  );
+}
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullJiuzheState, 1, "pink", player),
   false,
@@ -49,7 +57,14 @@ assert.equal(
 );
 
 const fullYichangdianState = createRevealedState(aliens.yichangdian);
-aliens.yichangdian.seedDebugTraceGrid(fullYichangdianState, 1, player);
+for (const position of aliens.yichangdian.TRACE_POSITIONS) {
+  assert.equal(
+    aliens.yichangdian.placeYichangdianTrace(
+      fullYichangdianState, 1, "pink", position, player, nextAlienIdentity(),
+    ).ok,
+    true,
+  );
+}
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullYichangdianState, 1, "pink", player),
   true,
@@ -57,7 +72,15 @@ assert.equal(
 );
 
 const fullFangzhouState = createRevealedState(aliens.fangzhou);
-aliens.fangzhou.seedDebugTraceGrid(fullFangzhouState, 1, player);
+aliens.fangzhou.ensureFangzhouState(fullFangzhouState).unlockCountByPlayerId[player.id] = 3;
+for (const position of aliens.fangzhou.TRACE_POSITIONS) {
+  assert.equal(
+    aliens.fangzhou.placeFangzhouTrace(
+      fullFangzhouState, 1, "pink", position, player, nextAlienIdentity(),
+    ).ok,
+    true,
+  );
+}
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullFangzhouState, 1, "pink", player),
   false,
@@ -65,7 +88,20 @@ assert.equal(
 );
 
 const fullBanrenmaState = createRevealedState(aliens.banrenma);
-aliens.banrenma.seedDebugTraceGrid(fullBanrenmaState, 1, player);
+for (const position of aliens.banrenma.TRACE_POSITIONS.filter((value) => value !== 1)) {
+  const identity = nextAlienIdentity();
+  assert.equal(
+    aliens.banrenma.placeBanrenmaTrace(
+      fullBanrenmaState,
+      1,
+      "pink",
+      position,
+      player,
+      { ...identity, availableDataCount: 3 },
+    ).ok,
+    true,
+  );
+}
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullBanrenmaState, 1, "pink", player, {
     availableDataCount: 0,
@@ -82,7 +118,12 @@ assert.equal(
 );
 
 const fullChongState = createRevealedState(aliens.chong);
-aliens.chong.seedDebugTraceGrid(fullChongState, 1, player);
+for (const position of aliens.chong.getPositionsForTraceType("pink")) {
+  assert.equal(
+    aliens.chong.placeChongTrace(fullChongState, 1, "pink", position, player, nextAlienIdentity()).ok,
+    true,
+  );
+}
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullChongState, 1, "pink", player),
   false,
@@ -90,7 +131,12 @@ assert.equal(
 );
 
 const fullAmibaState = createRevealedState(aliens.amiba);
-aliens.amiba.seedDebugTraceGrid(fullAmibaState, 1, player);
+for (const position of aliens.amiba.TRACE_POSITIONS) {
+  assert.equal(
+    aliens.amiba.placeAmibaTrace(fullAmibaState, 1, "pink", position, player, nextAlienIdentity()).ok,
+    true,
+  );
+}
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullAmibaState, 1, "pink", player),
   false,
@@ -99,7 +145,7 @@ assert.equal(
 
 const fullAomomoState = createRevealedState(aliens.aomomo);
 for (const position of aliens.aomomo.TRACE_POSITIONS) {
-  aliens.aomomo.placeAomomoTrace(fullAomomoState, 1, "pink", position, player, { debugOnly: true });
+  aliens.aomomo.placeAomomoTrace(fullAomomoState, 1, "pink", position, player, nextAlienIdentity());
 }
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullAomomoState, 1, "pink", player),
@@ -116,7 +162,7 @@ player.resources.aomomoFossils = 0;
 
 const fullRunezuState = createRevealedState(aliens.runezu);
 for (const position of aliens.runezu.TRACE_POSITIONS) {
-  aliens.runezu.placeRunezuTrace(fullRunezuState, 1, "pink", position, player, { debugOnly: true });
+  aliens.runezu.placeRunezuTrace(fullRunezuState, 1, "pink", position, player, nextAlienIdentity());
 }
 assert.equal(
   aliens.canPlaceAnyRevealedAlienTrace(fullRunezuState, 1, "pink", player),

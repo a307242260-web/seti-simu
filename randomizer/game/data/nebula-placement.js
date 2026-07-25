@@ -426,21 +426,6 @@
     return layout;
   }
 
-  function listSectorWinDebugSlots(nebulaId) {
-    const config = getSectorWinMarkerConfig(nebulaId);
-    if (!config) return [];
-    if (config.firstKind === "circle") {
-      return [
-        { slotKind: "circle", markerIndex: 1, label: "首次圆形区域" },
-        { slotKind: "bar", markerIndex: 1, label: "后续条形区域" },
-      ];
-    }
-    return [
-      { slotKind: "bar", markerIndex: 1, label: "条形区域 1" },
-      { slotKind: "bar", markerIndex: 2, label: "条形区域 2" },
-    ];
-  }
-
   function listNebulaIdsForSector(sectorId) {
     return NEBULA_IDS_BY_SECTOR[Number(sectorId)] || [];
   }
@@ -466,7 +451,6 @@
     getNebulaDataSlotLayout,
     getSectorWinMarkerConfig,
     getSectorWinMarkerLayout,
-    listSectorWinDebugSlots,
     listNebulaIdsForSector,
   });
 });

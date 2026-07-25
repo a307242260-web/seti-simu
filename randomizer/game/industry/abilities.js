@@ -27,8 +27,8 @@
 
   function isAlienCard(card) {
     const cardId = String(card?.cardId || card?.id || "");
-    const src = String(card?.src || "");
-    return cardId.includes("alien") || src.includes("/aliens/");
+    return String(card?.set || "").startsWith("alien:")
+      || /^(?:yichangdian|banrenma|chong|amiba|aomomo|runezu|fangzhou)_/.test(cardId);
   }
 
   function getCornerReward(cards, card) {
@@ -324,8 +324,14 @@
           if (result.card) drawnCards.push(result.card);
         }
       } else {
-        players.gainResources(player, { handSize: handCount });
-        drawnCards.push(...(player.hand || []).slice(-handCount));
+        return {
+          ok: false,
+          code: "INDUSTRY_INCOME_CARD_DOMAIN_REQUIRED",
+          message: "任务中继站盲抽收入需要 Card Domain",
+          gain,
+          dataResults,
+          drawnCards,
+        };
       }
     }
     const labels = {
@@ -534,10 +540,8 @@
     if (!card) return null;
     return Object.fromEntries(Object.entries({
       id: card.id,
-      src: card.src,
-      cardName: card.cardName,
-      label: card.label,
       cardId: card.cardId,
+      set: card.set,
       discardActionCode: card.discardActionCode,
       incomeActionCode: card.incomeActionCode,
     }).filter(([, value]) => value !== undefined));
@@ -559,7 +563,7 @@
     if (!reward) return null;
     const cardLabel = cards.getCardLabel(playedCard);
     return {
-      id: `industry-sentinel-corner-${playedCard.id || playedCard.src}`,
+      id: `industry-sentinel-corner-${playedCard.id}`,
       type: "industry_sentinel_corner",
       label: `哨兵探测网络：${cardLabel} 弃牌角标`,
       icon: getCornerRewardIcon(reward),

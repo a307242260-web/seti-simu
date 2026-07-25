@@ -51,6 +51,12 @@ function snapshot(element) {
   };
 }
 
+function deepFreeze(value) {
+  if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+  Object.values(value).forEach(deepFreeze);
+  return Object.freeze(value);
+}
+
 function createFixture() {
   const document = { createElement };
   const finalWrap = createElement("button");
@@ -112,8 +118,62 @@ function createProjection() {
     tech: { board: { stacks: { blue1: { available: false } } } },
   });
   const store = stateApi.createStateStore(state);
-  return coreProjectionApi.createBrowserProjectionAdapter({ stateStore: store })
+  const projection = coreProjectionApi.createBrowserProjectionAdapter({ stateStore: store })
     .projectCommitted({ viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" } });
+  const renderProjection = structuredClone(projection);
+  renderProjection.resident.browserReadModel = {
+    render: {
+      boardChrome: {
+        wheelTransforms: [],
+        sectors: [],
+        aomomoWheelImageSrc: null,
+        rotateTokenSlot: { id: "top-left", percentX: 34.81, percentY: 27.3 },
+      },
+      tokenPresentation: { activeRocketId: null, draggingRocketId: null, tokens: [] },
+      playerPanels: {
+        currentPlayerId: "p2",
+        interfacePlayerId: "p1",
+        players: [
+          { id: "p1", displayName: "一号", score: 12, resourceStats: [] },
+          { id: "p2", displayName: "二号", score: 9, resourceStats: [] },
+        ],
+      },
+      turnPresentation: {
+        roundNumber: 2,
+        displayedTurnNumber: 3,
+        currentPlayerId: "p2",
+        terminal: false,
+      },
+      cardPanels: {
+        publicCards: [{ id: "public-1", imageSrc: "public.webp", label: "公开牌" }],
+        handCards: [],
+        publicControls: {},
+        handPanel: { count: 0, empty: true },
+        initialSelection: {},
+        reservedCards: { items: [] },
+      },
+      dataPresentation: {
+        playerTokens: [],
+        blueDropZones: [],
+        sectorTokensBySectorId: {},
+        aomomoTokens: [],
+      },
+      markerPresentation: { anomalies: [], planetFossils: [], runezuSymbols: [] },
+      alienPresentation: { slots: [] },
+      techTilePresentation: {
+        supplyTiles: [{ tileId: "blue1", remaining: 0 }],
+        playerTiles: [],
+      },
+      finalScorePresentation: {
+        tiles: {
+          a: { marks: [{ id: "m1", slotIndex: 1, playerColor: "white" }] },
+        },
+        tileVariants: { a: 1 },
+        breakdownsByPlayerId: {},
+      },
+    },
+  };
+  return deepFreeze(renderProjection);
 }
 
 (function testResidentProjectionAndRendererRebuildAreIsolated() {
@@ -150,20 +210,23 @@ function createProjection() {
 (function testDefaultProjectionSupportsCommittedArraySlicesWithoutLeaks() {
   const state = stateApi.createCommittedGameState({
     gameId: "seti-74", rulesetVersion: "test", seed: 74, rngState: { canary: "RNG_CANARY" }, sequences: {},
-    turn: { round: 2, turn: 4, currentPlayerId: "p1" },
+    turn: { roundNumber: 2, turnNumber: 4, currentPlayerId: "p1" },
     players: { players: [
       { id: "p1", resources: { credits: 5, handSize: 1 }, hand: [{ id: "own" }], reservedCards: [] },
       { id: "p2", resources: { credits: 3, handSize: 1 }, hand: [{ id: "OPPONENT_CANARY" }], reservedCards: [] },
     ] },
     cards: { publicCards: [{ id: "public" }], drawPileCardIds: ["DECK_CANARY"] },
-    pieces: { rockets: [{ id: "r1", playerId: "p1" }] }, tech: { board: { stacks: {} } },
+    pieces: { rockets: [{ id: "r1", playerId: "p1" }] }, tech: { stacks: {} },
   });
   const projection = coreProjectionApi.createBrowserProjectionAdapter({
     stateStore: stateApi.createStateStore(state),
   }).projectCommitted({ viewer: { viewerId: "v1", playerId: "p1", role: "player" } });
-  assert.deepEqual(projection.cards.market, [{ id: "public" }]);
-  assert.equal(projection.board.pieces.public[0].id, "r1");
-  assert.equal(projection.cards.opponentCounts.p2.hand, 1);
+  assert.deepEqual(projection.resident.cards.publicCards, [{ id: "public" }]);
+  assert.equal(projection.resident.pieces.rockets[0].id, "r1");
+  assert.equal(projection.resident.players.players[1].handCount, 1);
+  assert.equal(Object.hasOwn(projection, "board"), false);
+  assert.equal(Object.hasOwn(projection, "players"), false);
+  assert.equal(Object.hasOwn(projection, "cards"), false);
   const serialized = JSON.stringify(projection);
   assert.equal(serialized.includes("OPPONENT_CANARY"), false);
   assert.equal(serialized.includes("DECK_CANARY"), false);
@@ -369,6 +432,12 @@ function createProjection() {
               percentY: 22,
               imageSrc: "token.webp",
             }],
+          },
+          turnPresentation: {
+            roundNumber: 1,
+            displayedTurnNumber: 1,
+            currentPlayerId: "p1",
+            terminal: false,
           },
         },
       },

@@ -4,6 +4,9 @@ const assert = require("node:assert/strict");
 const yichangdian = require("./yichangdian");
 const state = require("./state");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 const alienState = state.createDefaultAlienState();
 alienState.aliens[2].assignedAlienId = yichangdian.ALIEN_ID;
 alienState.aliens[2].alienId = yichangdian.ALIEN_ID;
@@ -33,7 +36,7 @@ assert.deepEqual(
   ],
 );
 assert.deepEqual(
-  revealResult.anomalies.map((anomaly) => anomaly.src),
+  revealResult.anomalies.map((anomaly) => yichangdian.getAnomalyMarkerSrc(anomaly.markerId)),
   [
     "../assets/aliens/异常点/a_1.png",
     "../assets/aliens/异常点/b_1.png",
@@ -58,10 +61,10 @@ assert.equal(
   "next anomaly reward should match the resolved anomaly marker",
 );
 
-let result = yichangdian.placeYichangdianTrace(alienState, 2, "pink", 1, white);
+let result = yichangdian.placeYichangdianTrace(alienState, 2, "pink", 1, white, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(result.reward.gain.score, 2);
-result = yichangdian.placeYichangdianTrace(alienState, 2, "pink", 1, blue);
+result = yichangdian.placeYichangdianTrace(alienState, 2, "pink", 1, blue, nextAlienIdentity());
 assert.equal(result.ok, true, "position 1 can stack");
 assert.equal(
   yichangdian.getTopTraceEntry(alienState, 2, "pink").playerColor,
@@ -69,12 +72,12 @@ assert.equal(
   "later position 1 marker should be higher",
 );
 
-result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 4, white);
+result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 4, white, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(result.reward.pickAlienCard, true);
-result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 4, blue);
+result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 4, blue, nextAlienIdentity());
 assert.equal(result.ok, false, "positions 2-5 cannot be occupied twice");
-result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 5, blue);
+result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 5, blue, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(
   yichangdian.getTopTraceEntry(alienState, 2, "yellow").playerColor,
@@ -91,14 +94,6 @@ const anomalyReward = yichangdian.getAnomalyReward("b_2");
 assert.equal(anomalyReward.traceType, "yellow");
 assert.equal(anomalyReward.pickCard, true);
 
-const debugState = state.createDefaultAlienState();
-debugState.aliens[1].assignedAlienId = yichangdian.ALIEN_ID;
-debugState.aliens[1].alienId = yichangdian.ALIEN_ID;
-debugState.aliens[1].revealed = true;
-yichangdian.seedDebugTraceGrid(debugState, 1, white);
-assert.equal(yichangdian.listTraceEntries(debugState, 1).length, 15, "debug grid should place 3x5 tokens");
-assert.equal(yichangdian.getTraceGrid(debugState, 1).pink[1].length, 1, "debug only places one position-1 token");
-
 const stateTraceTaskState = state.createDefaultAlienState();
 state.placeFirstTrace(stateTraceTaskState, 1, "pink", "white");
 state.placeFirstTrace(stateTraceTaskState, 1, "yellow", "white");
@@ -111,12 +106,15 @@ yichangdian.initializeYichangdianReveal(stateTraceTaskState, 1, white, 4, () => 
 assert.equal(yichangdian.playerHasAllTraceTypes(stateTraceTaskState, white), true);
 assert.equal(yichangdian.countTraceMarkersByType(stateTraceTaskState, white, "yellow"), 2);
 
-const displayed = yichangdian.takeDisplayedCard(alienState, () => 0);
+const displayed = yichangdian.takeDisplayedCard(alienState, () => 0, nextAlienIdentity());
 assert.equal(displayed.ok, true);
 assert.equal(displayed.card.set, "alien:异常点");
 assert.equal(displayed.card.yichangdianCard, true);
-assert.match(displayed.card.src, /assets\/aliens\/异常点\/cards\/\d\.webp/);
-const blind = yichangdian.blindDrawCard(alienState, () => 0);
+assert.match(
+  yichangdian.getCardSrc(displayed.card.alienCardId),
+  /assets\/aliens\/异常点\/cards\/\d\.webp/,
+);
+const blind = yichangdian.blindDrawCard(alienState, () => 0, nextAlienIdentity());
 assert.equal(blind.ok, true);
 assert.equal(blind.card.cardId.startsWith("yichangdian_"), true);
 

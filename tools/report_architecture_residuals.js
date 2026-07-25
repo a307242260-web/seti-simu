@@ -19,6 +19,55 @@ const RESIDUALS = Object.freeze({
   alienLocalIdentitySequences: /\bnext(?:Trace|Card|Orbit|Landing)Sequence\b/g,
   wallClockCanonicalFields: /\b(?:placedAt|createdAt|completedAt|claimedAt|consumedAt|resolvedAt|usedAt|settledAt)\s*:\s*(?:options\.[A-Za-z]+(?:\s*\?\?|\s*\|\|)\s*)?(?:Date\.now\(\)|new Date\(\)\.toISOString\(\))/g,
 });
+const FROZEN_MATRIX_STATIC = Object.freeze({
+  F1: Object.freeze({
+    debugBypass: { pattern: /\b(?:options\.)?debugOnly\s*(?::|=)/g },
+    setupConfigInRules: { roots: ["randomizer/game"], pattern: /\binitialSetupConfig\b/g },
+    policyConfigInRules: { roots: ["randomizer/game"], pattern: /\baiDifficulty\b/g },
+    duplicatePlanetPieces: {
+      roots: ["randomizer/game"],
+      pattern: /\b(?:planetsReference|referencePlacement|syncPlanetRockets)\b/g,
+    },
+    dataTokenPresentationState: {
+      files: ["randomizer/game/data/state.js", "randomizer/game/data/nebula-state.js"],
+      pattern: /\b(?:percentX|percentY)\b/g,
+    },
+  }),
+  F2: Object.freeze({
+    rulePlayerAliases: {
+      roots: ["randomizer/game"],
+      pattern: /\bplayer\.(?:playerId|playerColor)\b/g,
+    },
+    mapShapedPlayerFallback: {
+      roots: ["randomizer/game"],
+      pattern: /state\?*\.players\?*\.players\s*\?\?\s*state\?*\.players/g,
+    },
+    transientCurrentPlayerOwner: {
+      roots: ["randomizer/game"],
+      pattern: /\bplayersState\?*\.currentPlayerId\b/g,
+    },
+  }),
+  F3: Object.freeze({
+    moduleLocalIdentityOwners: RESIDUALS.moduleLocalIdentityOwners,
+    localIdentityFallbacks: RESIDUALS.localIdentityFallbacks,
+    alienLocalIdentitySequences: RESIDUALS.alienLocalIdentitySequences,
+  }),
+  F4: Object.freeze({
+    obsoleteApis: {
+      pattern: /\b(?:restoreAlienLabPanelForTrace|createAlienLabPanelSnapshot|restoreAlienLabPanelSnapshot|createFutureSpanSnapshot|restoreFutureSpanSnapshot|createIndustryMarkUndoCommand|removeOrbitMarker|removeLandingMarker|removeSatelliteLanding|formatPlanetStatsLines|formatAlienSlotLine|formatScoreMark|getPlayerSymbolSummary|getCatalogEntryByInput|listSectorWinDebugSlots|seedDebugTraceGrid|seedDebugSymbols|migrateFirstTracesToJiuzhe)\b/g,
+    },
+    obsoleteSolarReadout: {
+      roots: ["randomizer/solar-system"],
+      pattern: /\b(?:createSetupState|formatSolarSnapshot|collectNebulaRelations|collectStaticWheelCoordinateContents|collectWheelCoordinateContents|countContentKinds|getContentKindLabel|countVisibleMeaningfulContentKinds|countWheelContents|summarizeCell|collectWheelCoordinateReport|collectVisibleCoordinateReport|collectVisibleCoordinateGroups)\b/g,
+    },
+  }),
+  F5: Object.freeze({
+    obsoleteSolarReadout: {
+      roots: ["randomizer/solar-system"],
+      pattern: /\b(?:createSetupState|formatSolarSnapshot|collectNebulaRelations|collectStaticWheelCoordinateContents|collectWheelCoordinateContents|countContentKinds|getContentKindLabel|countVisibleMeaningfulContentKinds|countWheelContents|summarizeCell|collectWheelCoordinateReport|collectVisibleCoordinateReport|collectVisibleCoordinateGroups)\b/g,
+    },
+  }),
+});
 
 function walk(relativeRoot) {
   const absoluteRoot = path.join(ROOT, relativeRoot);
@@ -40,6 +89,27 @@ function productionFiles() {
       && !file.endsWith(".test.js")
       && !file.endsWith(".browser-smoke.js")
       && !file.includes(`${path.sep}fixtures${path.sep}`))];
+}
+
+function filesForCheck(check, allFiles) {
+  if (check.files) return check.files;
+  if (!check.roots) return allFiles;
+  return allFiles.filter((file) => check.roots.some((root) => (
+    file === root || file.startsWith(`${root}${path.sep}`)
+  )));
+}
+
+function collectFrozenMatrixStatic(allFiles) {
+  return Object.fromEntries(Object.entries(FROZEN_MATRIX_STATIC).map(([id, checks]) => {
+    const results = Object.fromEntries(Object.entries(checks).map(([name, rawCheck]) => {
+      const check = rawCheck instanceof RegExp ? { pattern: rawCheck } : rawCheck;
+      return [name, countPattern(filesForCheck(check, allFiles), check.pattern)];
+    }));
+    return [id, {
+      occurrences: Object.values(results).reduce((sum, item) => sum + item.occurrences, 0),
+      checks: results,
+    }];
+  }));
 }
 
 function countPattern(files, pattern) {
@@ -144,6 +214,7 @@ const report = {
   residuals: Object.fromEntries(
     Object.entries(RESIDUALS).map(([name, pattern]) => [name, countPattern(files, pattern)]),
   ),
+  frozenMatrixStatic: collectFrozenMatrixStatic(files),
   dom: collectDomResiduals(files),
   css: collectCssResiduals(files),
   missingCurrentDocPaths: collectMissingCurrentDocPaths(),

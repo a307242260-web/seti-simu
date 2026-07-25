@@ -42,7 +42,6 @@
       finalScoreTileWraps: documentRef.querySelectorAll(".final-score-tile-wrap"),
       finalScoreTiles: documentRef.querySelectorAll(".final-score-tile"),
       tokenLayer: documentRef.getElementById("token-layer"),
-      planetsReference: documentRef.getElementById("planets-reference"),
       planetsTokenLayer: documentRef.getElementById("planets-token-layer"),
       wheels: {
         1: documentRef.getElementById("wheel-1"),

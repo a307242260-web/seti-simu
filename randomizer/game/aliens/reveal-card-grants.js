@@ -36,11 +36,11 @@
     return player?.colorLabel || player?.name || player?.color || player?.id || "未知玩家";
   }
 
-  function drawAlienCard(alienState, alienModule, random) {
+  function drawAlienCard(alienState, alienModule, random, sequence) {
     if (!alienModule?.blindDrawCard) {
       return { ok: false, message: "该外星人没有可发放的牌堆" };
     }
-    return alienModule.blindDrawCard(alienState, random);
+    return alienModule.blindDrawCard(alienState, random, { sequence });
   }
 
   function formatGrantMessage(label, grants) {
@@ -68,6 +68,9 @@
     let totalExpected = 0;
     let totalDrawn = 0;
     const random = options.random || Math.random;
+    if (typeof options.takeSequence !== "function") {
+      throw new TypeError("外星人揭示发牌需要 canonical sequence allocator");
+    }
     const entries = state.countFirstTracesByPlayerOnSlot(alienState, alienSlotId, players || []);
 
     for (const entry of entries) {
@@ -83,7 +86,12 @@
       totalExpected += entry.count;
 
       for (let index = 0; index < entry.count; index += 1) {
-        const drawResult = drawAlienCard(alienState, alienModule, random);
+        const drawResult = drawAlienCard(
+          alienState,
+          alienModule,
+          random,
+          options.takeSequence(),
+        );
         if (drawResult.ok && drawResult.card && addCardToHand(entry.player, drawResult.card)) {
           grant.drawn += 1;
           grant.cards.push(drawResult.card);

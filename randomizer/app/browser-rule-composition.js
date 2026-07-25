@@ -50,14 +50,13 @@
         confirmedPlayerIds: [],
       });
       const presentationPlayers = clone(
-        visibleResident.players?.players || Object.values(visible.players || {}),
+        visibleResident.players?.players || [],
       );
       const presentationState = {
         match: clone(visible.match || {}),
         turn: clone(visibleResident.turn || {}),
         players: {
           currentPlayerId: visibleResident.players?.currentPlayerId
-            ?? visible.match?.currentPlayerId
             ?? null,
           players: presentationPlayers,
         },

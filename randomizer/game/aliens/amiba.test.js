@@ -3,6 +3,9 @@ const assert = require("node:assert/strict");
 globalThis.SetiAlienPlacement = require("./placement");
 const amiba = require("./amiba");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 function createState() {
   return {
     aliens: {
@@ -20,25 +23,21 @@ function createState() {
 const white = { id: "player-white", color: "white", colorLabel: "白色" };
 const state = createState();
 amiba.initializeAmibaReveal(state, 1, white, () => 0);
-amiba.seedDebugSymbols(state);
 
-assert.equal(state.amiba.symbolSlots.orange_1, "symbol_1");
-assert.equal(state.amiba.symbolSlots.orange_2, "symbol_2");
-assert.equal(state.amiba.symbolSlots.blue_3, "symbol_3");
-assert.equal(state.amiba.symbolSlots.red_1, "symbol_4");
-assert.equal(state.amiba.symbolSlots.red_2, "symbol_5");
+assert.equal(Object.keys(state.amiba.symbolSlots).length, 5);
+assert.deepEqual(new Set(Object.values(state.amiba.symbolSlots)), new Set(amiba.SYMBOL_IDS));
 assert.equal(amiba.formatSymbolSlotLabel("blue_3"), "蓝3");
 
 const orangeReward = amiba.resolveRegionReward(state, "orange");
 assert.equal(orangeReward.results.length, 2);
-assert.equal(state.amiba.symbolSlots.orange_2, "symbol_1");
-assert.equal(state.amiba.symbolSlots.blue_1, "symbol_2");
+assert.equal(Object.hasOwn(state.amiba.symbolSlots, "orange_1"), false);
+assert.equal(Object.hasOwn(state.amiba.symbolSlots, "blue_1"), true);
 
 const traceState = createState();
 amiba.initializeAmibaReveal(traceState, 1, white, () => 0);
-const placedPink = amiba.placeAmibaTrace(traceState, 1, "pink", 1, white);
-const placedYellow = amiba.placeAmibaTrace(traceState, 1, "yellow", 1, white);
-const placedBlue = amiba.placeAmibaTrace(traceState, 1, "blue", 1, white);
+const placedPink = amiba.placeAmibaTrace(traceState, 1, "pink", 1, white, nextAlienIdentity());
+const placedYellow = amiba.placeAmibaTrace(traceState, 1, "yellow", 1, white, nextAlienIdentity());
+const placedBlue = amiba.placeAmibaTrace(traceState, 1, "blue", 1, white, nextAlienIdentity());
 assert.equal(placedPink.reward.region, "red");
 assert.equal(placedYellow.reward.region, "orange");
 assert.equal(placedBlue.reward.region, "blue");
@@ -50,12 +49,6 @@ const removed = amiba.removePlayerTrace(traceState, 1, "pink", 1, white);
 assert.equal(removed.ok, true);
 assert.equal(removed.reward.region, "red");
 assert.equal(amiba.countTraceMarkers(traceState, white, "pink"), 0);
-
-const debugState = createState();
-amiba.initializeAmibaReveal(debugState, 1, white, () => 0);
-const debugPlaced = amiba.seedDebugTraceGrid(debugState, 1, white);
-assert.equal(debugPlaced.length, 12);
-assert.equal(amiba.getTheoryTaskReward(debugState).emptyCount, 0);
 
 const stateTraceTheoryState = createState();
 stateTraceTheoryState.aliens[1].traces = {

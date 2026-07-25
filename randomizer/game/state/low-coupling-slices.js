@@ -17,7 +17,7 @@
   ]);
   const FIELD_OWNERSHIP = Object.freeze({
     "solarSystem.rotation/sectorBySlot/aomomoActive": "committed",
-    "solarSystem.wheelSteps": "derived:rotation",
+    "solarSystem.rotation": "committed; wheelSteps is not accepted",
     "match.*": "committed after setup confirmation; setup UI/session excluded",
     "turn.*": "committed; automation/view flags excluded",
     "planets.*.orbitMarkers/landingMarkers/satelliteLandings": "committed",
@@ -32,17 +32,12 @@
     "finalScoring.thresholds/tiles/tileVariants": "committed",
     "finalScoring.tiles.*.marks rule fields": "committed",
     "finalScoring mark presentation fields": "derived/host-only",
-    "finalScoring.pendingMarks": "session-owned:excluded",
   });
   const PRESENTATION_KEYS = new Set([
     "displayed", "displaySlot", "forceDisplaySlot", "referenceOffsetTokenWidths",
     "playerLabel", "replacedByPlayerLabel", "playerTokenSrc", "tokenSrc", "percentX", "percentY",
-    "placedAt", "replacedAt", "ui", "overlay", "renderCache",
+    "placedAt", "replacedAt", "ui", "overlay", "renderCache", "pendingMarks", "debugOnly",
   ]);
-
-  function clone(value) {
-    return structuredClone(value);
-  }
 
   function isPlainObject(value) {
     if (value == null || typeof value !== "object") return false;
@@ -50,72 +45,12 @@
     return prototype === Object.prototype || prototype === null;
   }
 
-  function stripPresentationFields(value) {
-    if (Array.isArray(value)) return value.map(stripPresentationFields);
-    if (!isPlainObject(value)) return value;
-    return Object.fromEntries(Object.entries(value)
-      .filter(([key]) => !PRESENTATION_KEYS.has(key))
-      .map(([key, item]) => [key, stripPresentationFields(item)]));
-  }
-
-  function purifyPlanetState(planets) {
-    const result = stripPresentationFields(planets || {});
-    for (const record of Object.values(result.planets || {})) {
-      if (!isPlainObject(record)) continue;
-      delete record.orbits;
-      delete record.landings;
-      for (const key of ["orbitMarkers", "landingMarkers"]) {
-        if (!Array.isArray(record[key])) continue;
-        record[key] = record[key].map((marker) => {
-          const normalized = stripPresentationFields(marker);
-          delete normalized.sequence;
-          return normalized;
-        });
-      }
-      if (Array.isArray(record.satelliteLandings)) {
-        record.satelliteLandings = record.satelliteLandings.map(stripPresentationFields);
-      }
-    }
-    return result;
-  }
-
-  function purifyDataState(data) {
-    const result = stripPresentationFields(data || {});
-    for (const bucket of Object.values(result.nebulae || {})) {
-      if (!isPlainObject(bucket)) continue;
-      delete bucket.playerTokenCounts;
-      delete bucket.lastReplacedPlayerId;
-      delete bucket.lastReplacedPlayerColor;
-      delete bucket.lastReplacedPlayerLabel;
-    }
-    return result;
-  }
-
-  function purifyLowCouplingSlices(candidate) {
-    const result = clone(candidate);
-    result.solarSystem = stripPresentationFields(result.solarSystem || {});
-    delete result.solarSystem.wheelSteps;
-    result.match = stripPresentationFields(result.match || {});
-    result.turn = stripPresentationFields(result.turn || {});
-    result.planets = purifyPlanetState(result.planets);
-    result.data = purifyDataState(result.data);
-    result.aliens = stripPresentationFields(result.aliens || {});
-    result.finalScoring = stripPresentationFields(result.finalScoring || {});
-    delete result.finalScoring.pendingMarks;
-    return result;
-  }
-
   function error(path, code, message) {
     return { path, code, message };
   }
 
   function getPlayers(state) {
-    const source = state?.players?.players;
-    if (Array.isArray(source)) return source;
-    if (!isPlainObject(state?.players)) return [];
-    return Object.entries(state.players).map(([key, player]) => (
-      isPlainObject(player) ? { id: player.id || key, ...player } : { id: key }
-    ));
+    return Array.isArray(state?.players?.players) ? state.players.players : [];
   }
 
   function validateUniqueReferences(values, validIds, path, errors, options = {}) {
@@ -143,6 +78,63 @@
     }
   }
 
+  function validateNextSequence(state, key, maximum, code, message, errors) {
+    if (maximum < 1) return;
+    const nextSequence = Number(state?.meta?.sequences?.[key]);
+    if (!Number.isSafeInteger(nextSequence) || nextSequence <= maximum) {
+      errors.push(error(`$.meta.sequences.${key}`, code, message));
+    }
+  }
+
+  function inferSequence(value, pattern) {
+    const match = String(value ?? "").match(pattern);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function validateAlienEntitySequences(state, errors) {
+    const sequences = new Map();
+    let maximum = 0;
+
+    function record(sequence, path) {
+      if (!Number.isSafeInteger(sequence) || sequence < 1) {
+        errors.push(error(path, "STATE_ALIEN_ENTITY_SEQUENCE_INVALID", "外星人规则实体必须携带正整数 canonical sequence"));
+        return;
+      }
+      if (sequences.has(sequence)) {
+        errors.push(error(path, "STATE_ALIEN_ENTITY_SEQUENCE_DUPLICATE", `alienEntity sequence ${sequence} 已用于 ${sequences.get(sequence)}`));
+        return;
+      }
+      sequences.set(sequence, path);
+      maximum = Math.max(maximum, sequence);
+    }
+
+    function visit(value, path) {
+      if (!value || typeof value !== "object") return;
+      if (!Array.isArray(value) && value.traceType != null && value.position != null) {
+        record(Number(value.sequence), `${path}.sequence`);
+      } else if (!Array.isArray(value) && value.id != null) {
+        const id = String(value.id);
+        const sequence = inferSequence(id, /^alien-[^-]+-\d+-(\d+)$/)
+          || inferSequence(id, /^aomomo-(?:orbit|landing)-(\d+)$/)
+          || inferSequence(id, /^banrenma-mark-(\d+)$/);
+        if (sequence) record(sequence, `${path}.id`);
+      }
+      for (const [key, child] of Object.entries(value)) {
+        visit(child, `${path}.${key}`);
+      }
+    }
+
+    visit(state, "$");
+    validateNextSequence(
+      state,
+      "alienEntity",
+      maximum,
+      "STATE_ALIEN_ENTITY_SEQUENCE_INVALID",
+      "alienEntity sequence 必须覆盖全部 committed 外星人规则实体",
+      errors,
+    );
+  }
+
   function validateForbiddenFields(state, errors) {
     const stack = LOW_COUPLING_SLICES.map((slice) => ({ value: state[slice], path: `$.${slice}` }));
     while (stack.length) {
@@ -150,8 +142,7 @@
       if (!value || typeof value !== "object") continue;
       for (const [key, child] of Object.entries(value)) {
         const childPath = `${path}.${key}`;
-        if (PRESENTATION_KEYS.has(key) || (path === "$.solarSystem" && key === "wheelSteps")
-          || (path === "$.finalScoring" && key === "pendingMarks")) {
+        if (PRESENTATION_KEYS.has(key) || (path === "$.solarSystem" && key === "wheelSteps")) {
           errors.push(error(childPath, "STATE_HOST_FIELD_FORBIDDEN", `${childPath} 不属于 committed state`));
         } else {
           stack.push({ value: child, path: childPath });
@@ -230,7 +221,7 @@
           errors.push(error(`$.pieces.rockets[${index}].id`, "STATE_PIECE_ID_INVALID", "棋子 id 必须存在且唯一"));
         } else rocketIds.add(String(rocket.id));
         validateOwner(rocket, playerIds, playerColors, `$.pieces.rockets[${index}]`, errors);
-        const planetId = rocket?.planetId || rocket?.planetsReference?.planetId;
+        const planetId = rocket?.planetId;
         if (planetId != null && planetIds.size && !planetIds.has(String(planetId))) {
           errors.push(error(`$.pieces.rockets[${index}]`, "STATE_PLANET_REFERENCE_INVALID", `棋子引用了不存在的星球 ${planetId}`));
         }
@@ -241,12 +232,24 @@
     }
 
     const tokenIds = new Set();
+    let maximumNebulaTokenSequence = 0;
+    let maximumNebulaReplacementSequence = 0;
     for (const [nebulaId, bucket] of Object.entries(state?.data?.nebulae || {})) {
       const slots = new Set();
       (bucket?.tokens || []).forEach((token, index) => {
-        if (!token?.id || tokenIds.has(String(token.id))) {
+        const tokenSequence = inferSequence(token?.id, /^nebula-data-(\d+)$/);
+        if (!tokenSequence || tokenIds.has(String(token?.id))) {
           errors.push(error(`$.data.nebulae.${nebulaId}.tokens[${index}].id`, "STATE_DATA_TOKEN_ID_INVALID", "数据 token id 必须存在且唯一"));
         } else tokenIds.add(String(token.id));
+        maximumNebulaTokenSequence = Math.max(maximumNebulaTokenSequence, tokenSequence);
+        if (token?.replacementOrder != null) {
+          const replacementSequence = Number(token.replacementOrder);
+          if (!Number.isSafeInteger(replacementSequence) || replacementSequence < 1) {
+            errors.push(error(`$.data.nebulae.${nebulaId}.tokens[${index}].replacementOrder`, "STATE_NEBULA_REPLACEMENT_SEQUENCE_INVALID", "replacementOrder 必须是正整数 sequence"));
+          } else {
+            maximumNebulaReplacementSequence = Math.max(maximumNebulaReplacementSequence, replacementSequence);
+          }
+        }
         if (token?.slotIndex != null) {
           if (slots.has(Number(token.slotIndex))) errors.push(error(`$.data.nebulae.${nebulaId}.tokens[${index}].slotIndex`, "STATE_DATA_SLOT_DUPLICATE", "同一星云槽位只能放一个数据 token"));
           slots.add(Number(token.slotIndex));
@@ -254,6 +257,22 @@
         validateOwner(token, playerIds, playerColors, `$.data.nebulae.${nebulaId}.tokens[${index}]`, errors);
       });
     }
+    validateNextSequence(
+      state,
+      "nebulaToken",
+      maximumNebulaTokenSequence,
+      "STATE_NEBULA_TOKEN_SEQUENCE_INVALID",
+      "nebulaToken sequence 必须覆盖全部 committed 星云数据实体",
+      errors,
+    );
+    validateNextSequence(
+      state,
+      "nebulaReplacement",
+      maximumNebulaReplacementSequence,
+      "STATE_NEBULA_REPLACEMENT_SEQUENCE_INVALID",
+      "nebulaReplacement sequence 必须覆盖全部 committed 替换次序",
+      errors,
+    );
 
     for (const [slotId, slot] of Object.entries(state?.aliens?.aliens || {})) {
       for (const [traceType, trace] of Object.entries(slot?.traces || {})) {
@@ -269,11 +288,14 @@
 
     const markIds = new Set();
     const playerTileClaims = new Set();
+    let maximumFinalMarkSequence = 0;
     for (const [tileId, tile] of Object.entries(state?.finalScoring?.tiles || {})) {
       const reservedSlots = new Set();
       (tile?.marks || []).forEach((mark, index) => {
-        if (!mark?.id || markIds.has(String(mark.id))) errors.push(error(`$.finalScoring.tiles.${tileId}.marks[${index}].id`, "STATE_FINAL_MARK_ID_INVALID", "终局 mark id 必须存在且唯一"));
+        const markSequence = inferSequence(mark?.id, /^final-mark-(\d+)$/);
+        if (!markSequence || markIds.has(String(mark?.id))) errors.push(error(`$.finalScoring.tiles.${tileId}.marks[${index}].id`, "STATE_FINAL_MARK_ID_INVALID", "终局 mark id 必须符合 final-mark-N 且全局唯一"));
         else markIds.add(String(mark.id));
+        maximumFinalMarkSequence = Math.max(maximumFinalMarkSequence, markSequence);
         validateOwner(mark, playerIds, playerColors, `$.finalScoring.tiles.${tileId}.marks[${index}]`, errors);
         const claim = `${tileId}:${mark?.playerId}`;
         if (mark?.playerId && playerTileClaims.has(claim)) errors.push(error(`$.finalScoring.tiles.${tileId}.marks[${index}]`, "STATE_FINAL_MARK_DUPLICATE_PLAYER", "同一玩家不能重复标记同一终局板块"));
@@ -283,6 +305,15 @@
         if (slotIndex === 1 || slotIndex === 2) reservedSlots.add(slotIndex);
       });
     }
+    validateNextSequence(
+      state,
+      "finalMark",
+      maximumFinalMarkSequence,
+      "STATE_FINAL_MARK_SEQUENCE_INVALID",
+      "finalMark sequence 必须覆盖全部 committed 终局标记",
+      errors,
+    );
+    validateAlienEntitySequences(state, errors);
     return errors.length ? { ok: false, errors } : { ok: true };
   }
 
@@ -290,7 +321,6 @@
     LOW_COUPLING_SLICES,
     FIELD_OWNERSHIP,
     PRESENTATION_KEYS,
-    purifyLowCouplingSlices,
     validateLowCouplingInvariants,
   });
 });

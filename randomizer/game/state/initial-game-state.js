@@ -14,10 +14,10 @@
   function createInitialState(modules, options = {}) {
     const playersState = modules.players.createPlayerState({
       players: modules.players.PLAYER_COLOR_IDS.map((color) => ({ color })),
-      currentPlayerColor: options.defaultInitialPlayerColor,
     });
-    const currentPlayerId = playersState.currentPlayerId;
-    delete playersState.currentPlayerId;
+    const currentPlayerId = playersState.players.find(
+      (player) => player.color === options.defaultInitialPlayerColor,
+    )?.id || playersState.players[0]?.id || null;
     const aliensState = modules.aliens.createDefaultAlienState();
     const randomizedAliens = modules.aliens.randomizeAlienAssignments(aliensState, {
       alienPoolIds: options.alienPoolIds,

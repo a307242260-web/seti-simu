@@ -216,12 +216,10 @@
       revealedByPlayerId: null,
       revealedByPlayerColor: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       symbolSlots: {},
       symbolsById: {},
       displayedCardIndex: null,
       cardDeck: CARD_DEFINITIONS.map((card) => card.index),
-      nextCardSequence: 1,
       revealInitialized: false,
     };
   }
@@ -232,11 +230,9 @@
     }
     const amiba = alienState.amiba;
     if (!amiba.traceSlotsByAlienSlotId) amiba.traceSlotsByAlienSlotId = {};
-    if (!Number.isFinite(Number(amiba.nextTraceSequence))) amiba.nextTraceSequence = 1;
     if (!amiba.symbolSlots) amiba.symbolSlots = {};
     if (!amiba.symbolsById) amiba.symbolsById = {};
     if (!Array.isArray(amiba.cardDeck)) amiba.cardDeck = CARD_DEFINITIONS.map((card) => card.index);
-    if (!Number.isFinite(Number(amiba.nextCardSequence))) amiba.nextCardSequence = 1;
     if (typeof amiba.revealInitialized !== "boolean") amiba.revealInitialized = false;
     return amiba;
   }
@@ -255,11 +251,11 @@
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -297,8 +293,8 @@
     return { ok: true, position: normalizedPosition };
   }
 
-  function canPlaceAmibaTrace(alienState, alienSlotId, traceType, position, _player, options = {}) {
-    if (!isAmibaRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+  function canPlaceAmibaTrace(alienState, alienSlotId, traceType, position) {
+    if (!isAmibaRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "阿米巴尚未揭示，不能放置阿米巴痕迹" };
     }
     const validation = validateTraceTarget(traceType, position);
@@ -312,18 +308,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const amiba = ensureAmibaState(alienState);
-    const sequence = options.sequence || amiba.nextTraceSequence;
-    amiba.nextTraceSequence = Math.max(amiba.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("阿米巴痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -353,11 +348,9 @@
 
     const normalizedPosition = placementCheck.position;
     const grid = ensureTraceGrid(alienState, alienSlotId);
-    const reward = options.debugOnly ? null : getTraceReward(alienState, traceType, normalizedPosition);
+    const reward = getTraceReward(alienState, traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
     grid[traceType][normalizedPosition] = entry;
@@ -472,35 +465,6 @@
     };
   }
 
-  function seedDebugSymbols(alienState) {
-    const amiba = ensureAmibaState(alienState);
-    amiba.symbolSlots = {};
-    amiba.symbolsById = {};
-    INITIAL_SYMBOL_SLOTS.forEach((slotId, index) => {
-      const symbolId = SYMBOL_IDS[index];
-      amiba.symbolSlots[slotId] = symbolId;
-      amiba.symbolsById[symbolId] = { symbolId, slotId, sequence: index + 1, debugOnly: true };
-    });
-    return Object.values(amiba.symbolsById);
-  }
-
-  function seedDebugTraceGrid(alienState, alienSlotId, player) {
-    ensureAmibaState(alienState);
-    delete alienState.amiba.traceSlotsByAlienSlotId[String(alienSlotId)];
-    ensureTraceGrid(alienState, alienSlotId);
-    const placed = [];
-    for (const traceType of TRACE_TYPES) {
-      for (const position of TRACE_POSITIONS) {
-        const result = placeAmibaTrace(alienState, alienSlotId, traceType, position, player, {
-          debugOnly: true,
-          placedAt: 0,
-        });
-        if (result.ok) placed.push(result.entry);
-      }
-    }
-    return placed;
-  }
-
   function getCardDefinition(cardOrIndex) {
     if (cardOrIndex == null) return null;
     if (typeof cardOrIndex === "number") return CARD_BY_INDEX[Math.round(cardOrIndex)] || null;
@@ -521,7 +485,15 @@
     return `${SYMBOL_BASE_PATH}/${String(symbolId).replace("_", "-")}.png`;
   }
 
-  function createAlienCard(index, sequence = 0) {
+  function definitionName(card) {
+    return getCardDefinition(card)?.cardName || card?.cardId || "未知卡牌";
+  }
+
+  function createAlienCard(index, sequence) {
+    sequence = Number(sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("阿米巴卡牌需要 canonical alienEntity sequence");
+    }
     const definition = CARD_BY_INDEX[Math.round(Number(index))];
     if (!definition) return null;
     return {
@@ -529,8 +501,6 @@
       cardId: definition.cardId,
       alienCardId: definition.index,
       set: "alien:阿米巴",
-      cardName: definition.cardName,
-      src: getCardSrc(definition.index),
       faceUp: true,
       price: definition.price,
       cardTypeCode: definition.cardTypeCode,
@@ -550,24 +520,22 @@
     return index;
   }
 
-  function takeDisplayedCard(alienState, random = Math.random) {
+  function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const amiba = ensureAmibaState(alienState);
     if (amiba.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    const card = createAlienCard(amiba.displayedCardIndex, amiba.nextCardSequence);
-    amiba.nextCardSequence += 1;
+    const card = createAlienCard(amiba.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `获得阿米巴牌：${card.cardName}` : "没有可获得的阿米巴牌" };
+    return { ok: Boolean(card), card, message: card ? `获得阿米巴牌：${definitionName(card)}` : "没有可获得的阿米巴牌" };
   }
 
-  function blindDrawCard(alienState, random = Math.random) {
+  function blindDrawCard(alienState, random = Math.random, options = {}) {
     const amiba = ensureAmibaState(alienState);
     if (!amiba.cardDeck.length) amiba.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     const pickIndex = Math.floor(random() * amiba.cardDeck.length);
     const [index] = amiba.cardDeck.splice(pickIndex, 1);
-    const card = createAlienCard(index, amiba.nextCardSequence);
-    amiba.nextCardSequence += 1;
+    const card = createAlienCard(index, options.sequence);
     if (amiba.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `盲抽阿米巴牌：${card.cardName}` : "没有可盲抽的阿米巴牌" };
+    return { ok: Boolean(card), card, message: card ? `盲抽阿米巴牌：${definitionName(card)}` : "没有可盲抽的阿米巴牌" };
   }
 
   function getSymbolEntry(alienState, slotId) {
@@ -779,8 +747,6 @@
     removePlayerTrace,
     listPlayerTraceOptions,
     initializeAmibaReveal,
-    seedDebugSymbols,
-    seedDebugTraceGrid,
     getCardSrc,
     getSymbolSrc,
     createAlienCard,

@@ -44,40 +44,18 @@
   });
   const HOST_KEYS = new Set([
     "ui", "tokenSrc", "src", "cardName", "colorLabel", "playerLabel",
-    "label", "asset", "renderCache", "overlay", "dragState",
+    "label", "asset", "renderCache", "overlay", "dragState", "currentPlayerId",
+    "debugOnly",
   ]);
   const DERIVED_TASK_KEYS = new Set([
     "cardTaskState", "readyType2Tasks", "readyType2ByCardId", "type1ReservedCards",
     "type2ReservedTasks",
   ]);
 
-  function clone(value) {
-    return structuredClone(value);
-  }
-
   function isPlainObject(value) {
     if (value == null || typeof value !== "object") return false;
     const prototype = Object.getPrototypeOf(value);
     return prototype === Object.prototype || prototype === null;
-  }
-
-  function stripKeys(value, forbidden) {
-    if (Array.isArray(value)) return value.map((item) => stripKeys(item, forbidden));
-    if (!isPlainObject(value)) return value;
-    return Object.fromEntries(Object.entries(value)
-      .filter(([key]) => !forbidden.has(key))
-      .map(([key, item]) => [key, stripKeys(item, forbidden)]));
-  }
-
-  function normalizeSequenceList(value, path) {
-    const source = value instanceof Set ? [...value] : value;
-    if (!Array.isArray(source)) throw new TypeError(`${path} 必须是 Set 或数组`);
-    return [...new Set(source.map(Number))].sort((left, right) => left - right);
-  }
-
-  function inferSequence(value, prefix) {
-    const match = String(value ?? "").match(new RegExp(`^(?:${prefix}[-:]?)?(\\d+)`));
-    return match ? Number(match[1]) : 0;
   }
 
   function visitCardInstances(state, visitor) {
@@ -115,68 +93,17 @@
     return match ? Number(match[1]) : 0;
   }
 
-  function purifyPlayers(players) {
-    const result = stripKeys(players || {}, new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]));
-    delete result.currentPlayerId;
-    return result;
+  function inferCardSequence(value) {
+    const match = String(value ?? "").match(/^card-(\d+)(?:-|$)/);
+    return match ? Number(match[1]) : 0;
   }
 
-  function purifyPieces(pieces) {
-    const result = stripKeys(pieces || {}, new Set([...HOST_KEYS, ...DERIVED_TASK_KEYS]));
-    const normalized = {};
-    for (const [playerId, sequences] of Object.entries(result.playerRocketSequences || {})) {
-      normalized[playerId] = normalizeSequenceList(sequences, `pieces.playerRocketSequences.${playerId}`);
+  function validateNextSequence(state, key, maximum, path, code, message, errors) {
+    if (maximum < 1) return;
+    const nextSequence = Number(state?.meta?.sequences?.[key]);
+    if (!Number.isSafeInteger(nextSequence) || nextSequence <= maximum) {
+      errors.push(error(path, code, message));
     }
-    result.playerRocketSequences = normalized;
-    return result;
-  }
-
-  function purifyCards(cards) {
-    return stripKeys(cards || {}, new Set([
-      ...HOST_KEYS, ...DERIVED_TASK_KEYS,
-    ]));
-  }
-
-  function purifyTech(tech) {
-    return stripKeys(tech || {}, new Set([
-      ...HOST_KEYS, ...DERIVED_TASK_KEYS,
-    ]));
-  }
-
-  function purifyHighCouplingSlices(candidate) {
-    const result = lowCouplingState.purifyLowCouplingSlices(candidate);
-    result.players = purifyPlayers(result.players);
-    result.pieces = purifyPieces(result.pieces);
-    result.cards = purifyCards(result.cards);
-    result.tech = purifyTech(result.tech);
-    if (!isPlainObject(result.meta.sequences)) result.meta.sequences = {};
-    let maxCardSequence = 0;
-    let hasCardInstance = false;
-    visitCardInstances(result, (card) => {
-      hasCardInstance = true;
-      maxCardSequence = Math.max(maxCardSequence, inferSequence(card?.id, "card"));
-    });
-    const maxRocketSequence = (result.pieces.rockets || []).reduce(
-      (maximum, piece) => Math.max(maximum, inferSequence(piece?.id, "rocket")),
-      0,
-    );
-    if (hasCardInstance || Object.hasOwn(result.meta.sequences, "card")) {
-      result.meta.sequences.card = Math.max(Number(result.meta.sequences.card) || 0, maxCardSequence + 1);
-    }
-    let maxDataTokenSequence = 0;
-    let hasDataToken = false;
-    visitDataTokens(result, (token) => {
-      hasDataToken = true;
-      maxDataTokenSequence = Math.max(maxDataTokenSequence, inferDataTokenSequence(token?.id));
-    });
-    if (hasDataToken || Object.hasOwn(result.meta.sequences, "dataToken")) {
-      result.meta.sequences.dataToken = Math.max(
-        Number(result.meta.sequences.dataToken) || 0,
-        maxDataTokenSequence + 1,
-      );
-    }
-    result.meta.sequences.rocket = Math.max(Number(result.meta.sequences.rocket) || 0, maxRocketSequence + 1);
-    return result;
   }
 
   function error(path, code, message) {
@@ -225,11 +152,18 @@
 
   function validatePieces(state, playerIds, errors) {
     const pieceIds = new Set();
+    let maximumRocketSequence = 0;
     for (const [index, piece] of (state?.pieces?.rockets || []).entries()) {
       const path = `$.pieces.rockets[${index}]`;
       const id = String(piece?.id ?? "");
-      if (!id || pieceIds.has(id)) errors.push(error(`${path}.id`, "STATE_PIECE_ID_INVALID", "棋子 id 必须存在且唯一"));
+      const rocketSequence = Number(piece?.id);
+      if (!Number.isSafeInteger(rocketSequence) || rocketSequence < 1 || pieceIds.has(id)) {
+        errors.push(error(`${path}.id`, "STATE_PIECE_ID_INVALID", "棋子 id 必须是全局唯一的正整数 sequence"));
+      }
       pieceIds.add(id);
+      if (Number.isSafeInteger(rocketSequence)) {
+        maximumRocketSequence = Math.max(maximumRocketSequence, rocketSequence);
+      }
       if (piece?.playerId != null && !playerIds.has(String(piece.playerId))) {
         errors.push(error(`${path}.playerId`, "STATE_PLAYER_REFERENCE_INVALID", "棋子 owner 必须存在"));
       }
@@ -266,14 +200,25 @@
         });
       }
     }
+    validateNextSequence(
+      state,
+      "rocket",
+      maximumRocketSequence,
+      "$.meta.sequences.rocket",
+      "STATE_ROCKET_SEQUENCE_INVALID",
+      "rocket sequence 必须覆盖全部 committed 棋子",
+      errors,
+    );
   }
 
   function validateCards(state, errors) {
     const instanceLocations = new Map();
     const cardLocations = new Map();
+    let maximumCardSequence = 0;
     visitCardInstances(state, (card, path) => {
       const instanceId = String(card?.id || "");
       const cardId = String(card?.cardId || "");
+      const cardSequence = inferCardSequence(instanceId);
       const sharedDefinitionAllowed = Boolean(
         card?.fangzhouCard2 || card?.set === "alien:方舟:card2",
       );
@@ -288,6 +233,7 @@
         ));
       }
       if (instanceId && !instanceLocations.has(instanceId)) instanceLocations.set(instanceId, path);
+      maximumCardSequence = Math.max(maximumCardSequence, cardSequence);
       if (cardId && !sharedDefinitionAllowed && cardLocations.has(cardId)) {
         errors.push(error(
           `${path}.cardId`,
@@ -312,6 +258,15 @@
       }
       drawIds.add(cardId);
     });
+    validateNextSequence(
+      state,
+      "card",
+      maximumCardSequence,
+      "$.meta.sequences.card",
+      "STATE_CARD_SEQUENCE_INVALID",
+      "card sequence 必须覆盖全部 committed 标准卡实例",
+      errors,
+    );
   }
 
   function validateDataTokens(state, errors) {
@@ -326,10 +281,15 @@
       ids.add(id);
       maximum = Math.max(maximum, sequence);
     });
-    const nextSequence = Number(state?.meta?.sequences?.dataToken);
-    if (ids.size && (!Number.isSafeInteger(nextSequence) || nextSequence <= maximum)) {
-      errors.push(error("$.meta.sequences.dataToken", "STATE_DATA_TOKEN_SEQUENCE_INVALID", "dataToken sequence 必须覆盖全部 committed 数据实体"));
-    }
+    validateNextSequence(
+      state,
+      "dataToken",
+      maximum,
+      "$.meta.sequences.dataToken",
+      "STATE_DATA_TOKEN_SEQUENCE_INVALID",
+      "dataToken sequence 必须覆盖全部 committed 数据实体",
+      errors,
+    );
   }
 
   function validateTech(state, playerIds, errors) {
@@ -396,7 +356,7 @@
   }
 
   function createHighCouplingStateStore(initialState, options = {}) {
-    return stateStore.createStateStore(purifyHighCouplingSlices(initialState), {
+    return stateStore.createStateStore(initialState, {
       ...options,
       invariantValidators: [
         lowCouplingState.validateLowCouplingInvariants,
@@ -416,7 +376,6 @@
     HIGH_COUPLING_SLICES,
     COORDINATED_SLICES,
     FIELD_OWNERSHIP,
-    purifyHighCouplingSlices,
     validateHighCouplingInvariants,
     createHighCouplingStateStore,
     rebuildCardTaskIndex,

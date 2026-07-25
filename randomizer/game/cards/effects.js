@@ -1065,6 +1065,17 @@
         { id: "runezu6-launch-s7", event: Object.freeze({ type: "launch" }), effect: runezuSymbolRewardEffect("runezu6-s7", "符文族6：发射，符文7奖励", "symbol_7") },
       ]),
     }),
+    "runezu_9.webp": withSource("runezu_9.webp", {
+      cardType: 2,
+      tasks: Object.freeze([{
+        id: "runezu9-three-traces-task",
+        condition: Object.freeze({ type: "runezuAllTraceTypes" }),
+        rewards: Object.freeze([
+          runezuSymbolRewardEffect("runezu9-s6", "符文族9：三色痕迹，符文6奖励", "symbol_6"),
+          runezuSymbolRewardEffect("runezu9-s3", "符文族9：三色痕迹，符文3奖励", "symbol_3"),
+        ]),
+      }]),
+    }),
     "b_1.webp": withSource("b_1.webp", {
       cardType: 2,
       playEffects: Object.freeze([
@@ -2620,15 +2631,6 @@
     return model.tasks.some((task) => !completed.has(task.id));
   }
 
-  function getCardMigrationStatus(cardOrId) {
-    const cardId = typeof cardOrId === "string" ? cardOrId : getCardId(cardOrId);
-    const model = getCardModel(cardId);
-    if (model) {
-      return model.deferredParts?.length ? "partial" : "implemented";
-    }
-    return getDeferredCardModel(cardId) ? "deferred" : "unmapped";
-  }
-
   function buildPlayEffects(card) {
     return expandEffects(getCardModel(card)?.playEffects || []);
   }
@@ -2644,32 +2646,13 @@
     if (!card.cardEffectState || card.cardEffectState.modelCardId !== getCardId(card)) {
       card.cardEffectState = {
         modelCardId: getCardId(card),
-        consumedTriggerIds: getLegacyConsumedTriggerIds(card, model),
+        consumedTriggerIds: [],
         completedTaskIds: [],
       };
     }
     if (!Array.isArray(card.cardEffectState.consumedTriggerIds)) card.cardEffectState.consumedTriggerIds = [];
     if (!Array.isArray(card.cardEffectState.completedTaskIds)) card.cardEffectState.completedTaskIds = [];
-    for (const triggerId of getLegacyConsumedTriggerIds(card, model)) {
-      if (!card.cardEffectState.consumedTriggerIds.includes(triggerId)) {
-        card.cardEffectState.consumedTriggerIds.push(triggerId);
-      }
-    }
     return card.cardEffectState;
-  }
-
-  function getLegacyConsumedTriggerIds(card, model) {
-    if (!card || !model?.triggers?.length) return [];
-    const cardId = getCardId(card) || "";
-    if (!String(cardId).startsWith("runezu_")) return [];
-    const progressCount = card.runezuTaskCompleted
-      ? model.triggers.length
-      : Array.isArray(card.runezuTaskProgress)
-        ? card.runezuTaskProgress.length
-        : 0;
-    return model.triggers
-      .slice(0, Math.max(0, Math.min(model.triggers.length, progressCount)))
-      .map((trigger) => trigger.id);
   }
 
   function isTriggerConsumed(card, triggerId) {
@@ -2811,7 +2794,6 @@
     if (!rocket) return false;
     if ((options.location || "solar") === "solar") {
       if ((rocket.surface || ROCKET_REWARD_SOLAR_SURFACE) !== ROCKET_REWARD_SOLAR_SURFACE) return false;
-      if (rocket.referencePlacement?.isPlanetMarker) return false;
     }
     const kind = rocket.kind || ROCKET_REWARD_STANDARD_KIND;
     const isTransportedChongFossil = options.includeTransportedChongFossils === true
@@ -3263,6 +3245,12 @@
     return aomomo.playerHasAllTraceTypes(aliensState, player);
   }
 
+  function playerHasRunezuAllTraceTypes(player, aliensState) {
+    const runezu = getAlienTraceModuleByAlienId("符文族");
+    if (!runezu?.playerHasAllTraceColors) return false;
+    return runezu.playerHasAllTraceColors(aliensState, player);
+  }
+
   function playerHasAomomoFossilSpendingTrace(player, aliensState) {
     const aomomo = getAomomo();
     if (!aomomo?.playerHasFossilSpendingTrace) return false;
@@ -3389,6 +3377,9 @@
     if (condition.type === "aomomoAllTraceTypes") {
       return playerHasAomomoAllTraceTypes(player, context.aliens);
     }
+    if (condition.type === "runezuAllTraceTypes") {
+      return playerHasRunezuAllTraceTypes(player, context.aliens);
+    }
     if (condition.type === "aomomoFossilSpendingTrace") {
       return playerHasAomomoFossilSpendingTrace(player, context.aliens);
     }
@@ -3457,7 +3448,6 @@
     getDeferredCardModel,
     getRuntimeCardTypeCode,
     isReturnUnfinishedTaskTarget,
-    getCardMigrationStatus,
     getCardPrice,
     getCardPlayCost,
     buildPlayEffects,

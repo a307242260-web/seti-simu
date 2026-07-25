@@ -45,8 +45,8 @@ Rule Composition
   缺口依次排序；库存不计价，语义相同才保留原始发牌顺序。旧
   `selection-evaluator.js` 及其开局静态分值已删除。
 - setup 不消费对局 RNG 之外的未来随机数；probe-goal Policy 改变初始选择语义时，唯一 full-flow
-  必须提升 schema/policy provenance，并用 `openingSemanticChoices` 固化开局弃牌实体，完整重放
-  后同时核对最终权威盘面与 checkpoint bytes，不能只刷新初始快照或 hash。
+  必须提升 schema/policy provenance，并通过公共 setup Decision 验证真实选择、结算和恢复结果，
+  不能用历史发牌实体或 checkpoint hash 固化旧随机轨迹。
 - `app/ai/browser-bootstrap.js`：Browser Machine Player Host、席位判断、Rule Composition boundary 与 PolicyInputAdapter 的窄装配 owner。
 - `app/browser-host/policy-input-adapter.js`：把已验证 PolicyDecision 映射回玩家共用的 Standard Action/Decision input port。
 

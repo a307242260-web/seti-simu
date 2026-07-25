@@ -35,8 +35,7 @@
   }
 
   function listPlayers(state) {
-    const source = state?.players?.players ?? state?.players ?? [];
-    return Array.isArray(source) ? source : Object.values(source);
+    return Array.isArray(state?.players?.players) ? state.players.players : [];
   }
 
   function createRuleContext(state, context) {
@@ -142,7 +141,7 @@
           ...ruleContext,
           currentPlayer: player,
         });
-        const pending = finalScoring.getPendingMarksForPlayer(finalState, playerId).map((entry) => ({
+        const pending = finalScoring.getPendingMarksForPlayer(finalState, player).map((entry) => ({
           id: entry.id || null,
           playerId,
           threshold: number(entry.threshold),
@@ -187,7 +186,7 @@
         playerViews.push({
           id: playerId,
           color: player?.color || null,
-          colorLabel: player?.colorLabel || null,
+          colorLabel: player?.name || player?.id || null,
           name: player?.name || null,
           score: number(player?.resources?.score),
           publicity: number(player?.resources?.publicity),

@@ -9,7 +9,8 @@ const chong = require("./aliens/chong");
 const aomomo = require("./aliens/aomomo");
 const runezu = require("./aliens/runezu");
 
-const root = { meta: { sequences: { finalMark: 1 } } };
+const root = { meta: { sequences: { alienEntity: 1, finalMark: 1 } } };
+const nextAlienIdentity = () => ({ sequence: root.meta.sequences.alienEntity++ });
 function markTile(state, tileId, targetPlayer, options = {}) {
   return finalScoring.markTile(state, tileId, targetPlayer, { ...options, root });
 }
@@ -32,7 +33,6 @@ finalScoring.setTileVariants(state, { a: 1, b: 2, c: 1, d: 2 });
 
 const white = player();
 white.resources.score = 25;
-finalScoring.syncPendingMarks(state, [white]);
 const markResult = markTile(state, "a", white, { tokenSrc: "white.png" });
 assert.equal(markResult.ok, true);
 assert.equal(markResult.mark.slotIndex, 1);
@@ -97,7 +97,6 @@ assert.equal(
 );
 const incomeIncreaseState = finalScoring.createFinalScoringState(["a"]);
 finalScoring.setTileVariants(incomeIncreaseState, { a: 1 });
-finalScoring.syncPendingMarks(incomeIncreaseState, [incomeIncreasePlayer]);
 markTile(incomeIncreaseState, "a", incomeIncreasePlayer, { tokenSrc: "white.png" });
 const incomeIncreaseTile = endGameScoring.computePlayerTileScore(incomeIncreaseState, incomeIncreasePlayer, {
   ...baseIncomeContext,
@@ -108,7 +107,6 @@ assert.equal(incomeIncreaseTile.baseValue, 2);
 assert.equal(incomeIncreaseTile.score, 10, "a1 slot 1 should score income increase 2 * 5");
 
 white.resources.score = 50;
-finalScoring.syncPendingMarks(state, [white]);
 markTile(state, "b", white, { tokenSrc: "white.png" });
 const bTile = endGameScoring.computePlayerTileScore(state, white, tileContext).tiles
   .find((entry) => entry.tileId === "b");
@@ -173,9 +171,9 @@ const aomomoMarkerState = {
   aomomo: aomomo.createAomomoState(),
 };
 aomomo.initializeAomomoReveal(aomomoMarkerState, 1, white, () => 0);
-aomomo.addOrbitMarker(aomomoMarkerState, white);
-aomomo.addLandingMarker(aomomoMarkerState, white);
-aomomo.addLandingMarker(aomomoMarkerState, white);
+aomomo.addOrbitMarker(aomomoMarkerState, white, nextAlienIdentity());
+aomomo.addLandingMarker(aomomoMarkerState, white, nextAlienIdentity());
+aomomo.addLandingMarker(aomomoMarkerState, white, nextAlienIdentity());
 assert.equal(
   endGameScoring.countPlanetOrbitOrLand(white, { planets: {} }, aomomo.PLANET_ID, {
     aliens: aomomoMarkerState,
@@ -208,7 +206,6 @@ const slotThreePlayer = player({
 });
 const slotOnePlayer = player({ id: "player-blue", color: "blue", resources: { score: 25 } });
 const slotTwoPlayer = player({ id: "player-green", color: "green", resources: { score: 25 } });
-finalScoring.syncPendingMarks(slotThreeState, [slotOnePlayer, slotTwoPlayer, slotThreePlayer]);
 markTile(slotThreeState, "c", slotOnePlayer, { tokenSrc: "blue.png" });
 markTile(slotThreeState, "c", slotTwoPlayer, { tokenSrc: "green.png" });
 markTile(slotThreeState, "c", slotThreePlayer, { tokenSrc: "brown.png" });
@@ -377,7 +374,7 @@ const revealedStateTraceState = {
   fangzhou: fangzhou.createFangzhouState(),
 };
 revealedStateTraceState.fangzhou.revealedSlotId = 1;
-fangzhou.placeFangzhouTrace(revealedStateTraceState, 1, "yellow", 1, revealedStateTracePlayer);
+fangzhou.placeFangzhouTrace(revealedStateTraceState, 1, "yellow", 1, revealedStateTracePlayer, nextAlienIdentity());
 assert.equal(
   endGameScoring.countTraceMarkers(revealedStateTracePlayer, revealedStateTraceState, "yellow"),
   3,
@@ -425,12 +422,19 @@ const banrenmaTraceState = {
   },
   banrenma: banrenma.createBanrenmaState(),
 };
-banrenma.initializeBanrenmaReveal(banrenmaTraceState, 1, banrenmaTracePlayer, [banrenmaTracePlayer], () => 0);
-banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "yellow", 1, banrenmaTracePlayer);
-banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "yellow", 1, banrenmaTracePlayer);
-banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "yellow", 4, banrenmaTracePlayer);
-banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "pink", 1, banrenmaTracePlayer);
-banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "blue", 2, banrenmaTracePlayer);
+banrenma.initializeBanrenmaReveal(
+  banrenmaTraceState,
+  1,
+  banrenmaTracePlayer,
+  [banrenmaTracePlayer],
+  () => 0,
+  { takeSequence: () => nextAlienIdentity().sequence },
+);
+banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "yellow", 1, banrenmaTracePlayer, nextAlienIdentity());
+banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "yellow", 1, banrenmaTracePlayer, nextAlienIdentity());
+banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "yellow", 4, banrenmaTracePlayer, nextAlienIdentity());
+banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "pink", 1, banrenmaTracePlayer, nextAlienIdentity());
+banrenma.placeBanrenmaTrace(banrenmaTraceState, 1, "blue", 2, banrenmaTracePlayer, nextAlienIdentity());
 assert.equal(
   endGameScoring.countTraceMarkers(banrenmaTracePlayer, banrenmaTraceState, "yellow"),
   5,
@@ -446,7 +450,6 @@ assert.equal(
 );
 const banrenmaB1State = finalScoring.createFinalScoringState(["b"]);
 finalScoring.setTileVariants(banrenmaB1State, { b: 1 });
-finalScoring.syncPendingMarks(banrenmaB1State, [banrenmaTracePlayer]);
 markTile(banrenmaB1State, "b", banrenmaTracePlayer, { tokenSrc: "white.png" });
 const banrenmaB1Tile = endGameScoring.computePlayerTileScore(banrenmaB1State, banrenmaTracePlayer, {
   ...tileContext,
@@ -471,9 +474,9 @@ const aomomoSharedTraceState = {
   aomomo: aomomo.createAomomoState(),
 };
 aomomo.initializeAomomoReveal(aomomoSharedTraceState, 1, white, () => 0);
-aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 1, white);
-aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 1, white);
-aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 4, white);
+aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
+aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
+aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 4, white, nextAlienIdentity());
 assert.equal(
   endGameScoring.countTraceMarkers(white, aomomoSharedTraceState, "yellow"),
   5,
@@ -494,9 +497,9 @@ const runezuSharedTraceState = {
   runezu: runezu.createRunezuState(),
 };
 runezu.initializeRunezuReveal(runezuSharedTraceState, 1, white, { random: () => 0, techTileIds: [] });
-runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 1, white);
-runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 1, white);
-runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 4, white);
+runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
+runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
+runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 4, white, nextAlienIdentity());
 assert.equal(
   endGameScoring.countTraceMarkers(white, runezuSharedTraceState, "yellow"),
   5,
@@ -509,9 +512,9 @@ const randomized = finalScoring.randomizeTileVariants(finalScoring.createFinalSc
 assert.equal(randomized.a, 2);
 assert.equal(randomized.b, 2);
 
-assert.equal(cardEffects.getCardMigrationStatus("b_14.webp"), "implemented");
+assert.ok(cardEffects.getCardModel("b_14.webp"));
 assert.equal(cardEffects.getCardModel("b_14.webp").endGameScoring.scorePer, 3);
-assert.equal(cardEffects.getCardMigrationStatus("b_34.webp"), "implemented");
+assert.ok(cardEffects.getCardModel("b_34.webp"));
 assert.equal(cardEffects.getCardModel("b_34.webp").endGameScoring.planetId, "jupiter");
 
 const chongState = {
@@ -525,9 +528,9 @@ const chongState = {
   chong: chong.createChongState(),
 };
 chong.initializeChongReveal(chongState, 2, white, () => 0);
-chong.placeChongTrace(chongState, 2, "pink", 1, white);
-chong.placeChongTrace(chongState, 2, "yellow", 1, white);
-chong.placeChongTrace(chongState, 2, "blue", 7, white);
+chong.placeChongTrace(chongState, 2, "pink", 1, white, nextAlienIdentity());
+chong.placeChongTrace(chongState, 2, "yellow", 1, white, nextAlienIdentity());
+chong.placeChongTrace(chongState, 2, "blue", 7, white, nextAlienIdentity());
 const chongPlayer = player({
   reservedCards: [chong.createAlienCard(2, 1)],
 });
@@ -555,7 +558,7 @@ const aomomoState = {
   aomomo: aomomo.createAomomoState(),
 };
 aomomo.initializeAomomoReveal(aomomoState, 1, white, () => 0);
-aomomo.placeAomomoTrace(aomomoState, 1, "blue", 2, white);
+aomomo.placeAomomoTrace(aomomoState, 1, "blue", 2, white, nextAlienIdentity());
 const aomomoPlayer = player({
   reservedCards: [aomomo.createAlienCard(8, 1)],
 });

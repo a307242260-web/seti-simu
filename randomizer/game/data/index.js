@@ -84,7 +84,6 @@
     getNebulaDataSlotLayout: nebulaPlacement.getNebulaDataSlotLayout,
     getSectorWinMarkerConfig: nebulaPlacement.getSectorWinMarkerConfig,
     getSectorWinMarkerLayout: nebulaPlacement.getSectorWinMarkerLayout,
-    listSectorWinDebugSlots: nebulaPlacement.listSectorWinDebugSlots,
     listNebulaIdsForSector: nebulaPlacement.listNebulaIdsForSector,
     createDefaultNebulaDataState: nebulaState.createDefaultNebulaDataState,
     createDefaultSectorSettlementState: nebulaState.createDefaultSectorSettlementState,

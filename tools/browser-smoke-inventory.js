@@ -142,7 +142,8 @@ module.exports = Object.freeze([
         controls: window.SetiRandomizer.inspect().projection.controls,
         viewer: window.SetiRandomizer.inspect().projection.viewer,
         match: window.SetiRandomizer.inspect().projection.match,
-        players: window.SetiRandomizer.inspect().projection.players,
+        players: window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render
+          ?.playerPanels,
       }), 20000);
       const launchButton = document.querySelector("#action-launch-button");
       if (!launchButton || launchButton.disabled) throw new Error("人类 launch 主行动不可提交");
@@ -155,7 +156,7 @@ module.exports = Object.freeze([
       const projection = window.SetiRandomizer.inspect().projection;
       const renderProjection = projection.resident?.browserReadModel?.render || {};
       const serialized = JSON.stringify(projection);
-      const opponents = Object.values(projection.players || {}).filter(
+      const opponents = (renderProjection.playerPanels?.players || []).filter(
         (entry) => String(entry?.id) !== String(projection.viewer?.playerId),
       );
       if (serialized.includes('"drawPile"') || serialized.includes('"deck"')

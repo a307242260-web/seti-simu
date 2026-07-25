@@ -145,15 +145,15 @@
   }
 
   function getPlayerKey(player) {
-    return player?.id || player?.playerId || player?.color || player?.playerColor || null;
+    return player?.id || player?.color || null;
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function getPlayerJiuzheState(alienState, player, create = true) {
@@ -230,20 +230,22 @@
   }
 
   function createTraceEntry(player, traceType, position, options = {}) {
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("九折痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
-      playerId: player?.id || player?.playerId || null,
+      sequence,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
   function placeJiuzheTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
-    if (!isJiuzheRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+    if (!isJiuzheRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "九折尚未揭示，不能放置九折痕迹" };
     }
 
@@ -261,13 +263,12 @@
 
     const reward = cloneReward(getTraceReward(traceType, validation.position));
     const entry = createTraceEntry(player, traceType, validation.position, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
+      sequence: options.sequence,
     });
     grid[traceType][validation.position] = entry;
 
-    if (!options.debugOnly && reward?.threat) {
+    if (reward?.threat) {
       addThreat(alienState, player, reward.threat);
     }
 
@@ -277,34 +278,6 @@
       reward,
       message: `九折：放置${placement.getTraceTypeLabel(traceType)} ${validation.position} 号位`,
     };
-  }
-
-  function migrateFirstTracesToJiuzhe(alienState, alienSlotId, options = {}) {
-    const slot = alienState?.aliens?.[alienSlotId];
-    const migrated = [];
-    if (!slot?.traces) return migrated;
-    const grid = ensureTraceGrid(alienState, alienSlotId);
-
-    for (const traceType of TRACE_TYPES) {
-      const traceSlot = slot.traces[traceType];
-      if (!traceSlot?.firstPlaced || grid[traceType][1]) continue;
-      const player = {
-        id: traceSlot.ownerPlayerId || null,
-        color: traceSlot.ownerPlayerColor || null,
-        colorLabel: traceSlot.ownerPlayerLabel || null,
-      };
-      const reward = cloneReward(getTraceReward(traceType, 1));
-      const entry = createTraceEntry(player, traceType, 1, {
-        debugOnly: false,
-        rewardApplied: Boolean(options.applyRewards && reward),
-      });
-      grid[traceType][1] = entry;
-      if (options.applyRewards && reward?.threat) {
-        addThreat(alienState, player, reward.threat);
-      }
-      migrated.push({ traceType, position: 1, entry, reward: options.applyRewards ? reward : null });
-    }
-    return migrated;
   }
 
   function countRevealOpportunitiesByPlayer(alienState, alienSlotId, activePlayers = []) {
@@ -349,11 +322,9 @@
     return {
       index,
       id: `jiuzhe-card-${index}`,
-      src: getCardSrc(index),
       threat: definition?.threat || 0,
       score: definition?.score || 0,
       condition: definition?.condition || null,
-      label: definition?.label || `九折牌 ${index}`,
       played: false,
     };
   }
@@ -547,22 +518,6 @@
     return null;
   }
 
-  function seedDebugTraceGrid(alienState, alienSlotId, player) {
-    ensureJiuzheState(alienState);
-    ensureTraceGrid(alienState, alienSlotId);
-    const placed = [];
-    for (const traceType of TRACE_TYPES) {
-      for (const position of TRACE_POSITIONS) {
-        const result = placeJiuzheTrace(alienState, alienSlotId, traceType, position, player, {
-          debugOnly: true,
-          placedAt: 0,
-        });
-        if (result.ok) placed.push(result.entry);
-      }
-    }
-    return placed;
-  }
-
   function markerBelongsToPlayer(marker, playerKeys) {
     return playerKeys.has(marker?.playerId)
       || playerKeys.has(marker?.ownerPlayerId)
@@ -725,7 +680,7 @@
     for (const traceType of TRACE_TYPES) {
       for (const position of TRACE_POSITIONS) {
         const entry = grid[traceType][position];
-        if (!entry || entry.debugOnly || !markerBelongsToPlayer(entry, playerKeys)) continue;
+        if (!entry || !markerBelongsToPlayer(entry, playerKeys)) continue;
         total += getTraceReward(traceType, position)?.threat || 0;
       }
     }
@@ -896,7 +851,6 @@
     getThreat,
     getPanelThreat,
     placeJiuzheTrace,
-    migrateFirstTracesToJiuzhe,
     countRevealOpportunitiesByPlayer,
     initializeJiuzheReveal,
     dealJiuzheCards,
@@ -909,7 +863,6 @@
     playJiuzheCard,
     declineOpportunity,
     getPendingOpportunity,
-    seedDebugTraceGrid,
     countSectorWinsByColor,
     countOwnedTech,
     countOrbitMarkers,

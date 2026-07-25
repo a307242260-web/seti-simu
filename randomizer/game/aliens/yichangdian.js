@@ -107,12 +107,10 @@
       revealedByPlayerColor: null,
       revealEarthX: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       anomalies: [],
       nextAnomalySectorX: null,
       displayedCardIndex: null,
       cardDeck: CARD_DEFINITIONS.map((card) => card.index),
-      nextCardSequence: 1,
       revealInitialized: false,
     };
   }
@@ -125,8 +123,6 @@
     if (!yichangdian.traceSlotsByAlienSlotId) yichangdian.traceSlotsByAlienSlotId = {};
     if (!Array.isArray(yichangdian.anomalies)) yichangdian.anomalies = [];
     if (!Array.isArray(yichangdian.cardDeck)) yichangdian.cardDeck = CARD_DEFINITIONS.map((card) => card.index);
-    if (!Number.isFinite(Number(yichangdian.nextTraceSequence))) yichangdian.nextTraceSequence = 1;
-    if (!Number.isFinite(Number(yichangdian.nextCardSequence))) yichangdian.nextCardSequence = 1;
     if (typeof yichangdian.revealInitialized !== "boolean") yichangdian.revealInitialized = false;
     return yichangdian;
   }
@@ -145,15 +141,15 @@
   }
 
   function getPlayerKey(player) {
-    return player?.id || player?.playerId || player?.color || player?.playerColor || null;
+    return player?.id || player?.color || null;
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -193,18 +189,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const yichangdian = ensureYichangdianState(alienState);
-    const sequence = options.sequence || yichangdian.nextTraceSequence;
-    yichangdian.nextTraceSequence = Math.max(yichangdian.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("异常点痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -223,8 +218,8 @@
     return cloneReward(TRACE_REWARDS[traceType]?.[position]);
   }
 
-  function canPlaceYichangdianTrace(alienState, alienSlotId, traceType, position, _player, options = {}) {
-    if (!isYichangdianRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+  function canPlaceYichangdianTrace(alienState, alienSlotId, traceType, position) {
+    if (!isYichangdianRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "异常点尚未揭示，不能放置异常点痕迹" };
     }
 
@@ -258,9 +253,7 @@
 
     const reward = getTraceReward(traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
 
@@ -361,7 +354,6 @@
       traceType: group.traceType,
       sectorX: mod8(sectorX),
       y: 4,
-      src: getAnomalyMarkerSrc(markerId),
       triggeredCount: 0,
     };
   }
@@ -447,7 +439,17 @@
     return `${CARD_BASE_PATH}/${index}.webp`;
   }
 
-  function createAlienCard(index, sequence = 0) {
+  function definitionName(card) {
+    return (CARD_BY_ID[card?.cardId] || CARD_BY_INDEX[card?.alienCardId])?.cardName
+      || card?.cardId
+      || "未知卡牌";
+  }
+
+  function createAlienCard(index, sequence) {
+    sequence = Number(sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("异常点卡牌需要 canonical alienEntity sequence");
+    }
     const definition = CARD_BY_INDEX[Math.round(Number(index))];
     if (!definition) return null;
     return {
@@ -455,8 +457,6 @@
       cardId: definition.cardId,
       alienCardId: definition.index,
       set: "alien:异常点",
-      cardName: definition.cardName,
-      src: getCardSrc(definition.index),
       faceUp: true,
       price: definition.price,
       cardTypeCode: definition.cardTypeCode,
@@ -467,41 +467,22 @@
     };
   }
 
-  function takeDisplayedCard(alienState, random = Math.random) {
+  function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const yichangdian = ensureYichangdianState(alienState);
     if (yichangdian.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    const card = createAlienCard(yichangdian.displayedCardIndex, yichangdian.nextCardSequence);
-    yichangdian.nextCardSequence += 1;
+    const card = createAlienCard(yichangdian.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `获得异常点牌：${card.cardName}` : "没有可获得的异常点牌" };
+    return { ok: Boolean(card), card, message: card ? `获得异常点牌：${definitionName(card)}` : "没有可获得的异常点牌" };
   }
 
-  function blindDrawCard(alienState, random = Math.random) {
+  function blindDrawCard(alienState, random = Math.random, options = {}) {
     const yichangdian = ensureYichangdianState(alienState);
     if (!yichangdian.cardDeck.length) yichangdian.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     const pickIndex = Math.floor(random() * yichangdian.cardDeck.length);
     const [index] = yichangdian.cardDeck.splice(pickIndex, 1);
-    const card = createAlienCard(index, yichangdian.nextCardSequence);
-    yichangdian.nextCardSequence += 1;
+    const card = createAlienCard(index, options.sequence);
     if (yichangdian.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `盲抽异常点牌：${card.cardName}` : "没有可盲抽的异常点牌" };
-  }
-
-  function seedDebugTraceGrid(alienState, alienSlotId, player) {
-    ensureYichangdianState(alienState);
-    delete alienState.yichangdian.traceSlotsByAlienSlotId[String(alienSlotId)];
-    ensureTraceGrid(alienState, alienSlotId);
-    const placed = [];
-    for (const traceType of TRACE_TYPES) {
-      for (const position of TRACE_POSITIONS) {
-        const result = placeYichangdianTrace(alienState, alienSlotId, traceType, position, player, {
-          debugOnly: true,
-          placedAt: 0,
-        });
-        if (result.ok) placed.push(result.entry);
-      }
-    }
-    return placed;
+    return { ok: Boolean(card), card, message: card ? `盲抽异常点牌：${definitionName(card)}` : "没有可盲抽的异常点牌" };
   }
 
   function formatTraceLabel(traceType, position, stackIndex = null) {
@@ -553,7 +534,6 @@
     createAlienCard,
     takeDisplayedCard,
     blindDrawCard,
-    seedDebugTraceGrid,
     markerBelongsToPlayer,
     getPlayerKeys,
     formatTraceLabel,

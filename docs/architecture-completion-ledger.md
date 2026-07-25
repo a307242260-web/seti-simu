@@ -26,15 +26,62 @@ node tools/report_architecture_residuals.js
 - Node 当前 61/61 unit、1/1 full-flow 通过；Chrome smoke 最近一次为 3/3，但 smoke 中部分展示检查只验证静态容器或空 DTO 存在，M4/M5 仍需重做动态证据。
 - `randomizer/app/dom.js` 的 160 个顶层 DOM key 中，有 131 个在生产 JavaScript 中没有静态消费者。
 
+## 2026-07-26 最终整改冻结矩阵
+
+此前残留报告以历史关键词为主，出现过“报告归零，但新一轮审计又发现未登记语义残留”的假完成。
+本轮已经从入口、模块可达性、状态 owner、committed schema、执行旁路、Browser 投影/UI、生产导出、
+测试和当前文档八个视角完成一次只读盘点。以下矩阵是最终整改的封闭输入；实现阶段不得再按文件大小或
+临时搜索结果扩大类别。若最终验证发现矩阵之外的新架构类别，必须把本轮盘点直接判为失败并说明原因，
+不能把新项包装成正常增量进展。
+
+| 编号 | 冻结基线 | 必须删除或改正 | 完成证据 |
+|---|---|---|---|
+| F1 committed schema 污染与重复事实 | 实际 committed snapshot 仍包含 `match.initialSetup` / `initialSetupConfig`、玩家 `aiDifficulty`、数据 token 的 `percentX/percentY`；`syncPlanetRockets()` 还把 planet marker 复制成带贴图坐标的 rocket；生产代码有 72 处 `debugOnly` | setup 过程只进 Session，Policy 配置只归 Host，布局只由投影派生；删除 planet-marker rocket 副本、坐标状态、debug bypass 与 debug-only canonical 字段 | Browser/Simulation 新局与完整局 serialized state 均不含上述字段；直接注入 fail-closed；planet marker 与 pieces 不再双写 |
+| F2 非规范输入兼容 | 规则玩家对象仍有 59 处 `player.playerId/playerColor` 兼容读取；low-coupling validator 接受 map-shaped players；`createPlayerState/getCurrentPlayer` 仍通过 `players.currentPlayerId` 临时或 fallback 传递 turn owner | 规则域只接受玩家 `{id,color}` 与 canonical `players.players`；当前玩家只从 `turn.currentPlayerId` 显式传入 | 静态计数归零；旧 map/alias 输入负例被拒绝；正式完整流程不依赖兼容入口 |
+| F3 canonical sequence 覆盖 | `meta.sequences` 已是唯一分配 owner，但 validator 只证明 `dataToken` 覆盖现有实体 | 对 card、rocket、alienEntity、finalMark、nebulaToken、nebulaReplacement 建立与真实 id/sequence 形状一致的覆盖校验 | 任一 sequence 落后于 committed 实体均零提交；恢复、fork 与正常完整局通过 |
+| F4 旧回滚、readout 与测试旁路 API | 已确认 23 个无生产消费者的旧 API 定义，包括 industry snapshot/undo、planet remove/format、alien format、`seedDebug*`、卡牌 debug 输入与扇区 debug slot；另有 solar setup/format/report 旧 readout | 物理删除实现、导出、专属测试调用和文档接线；测试改用正式规则入口或显式 fixture | 指定 API 定义/导出/调用归零；生产模块不再为测试暴露规则绕过入口 |
+| F5 过宽 Solar readout | `createSolarSnapshot()` 返回 15 个顶层域；正式规则/Browser 只消费 `planetLocations`、`visibleContents`、`nebulaLocations`，其余由无消费者的 setup/format readout 维持 | snapshot 缩成三个真实消费者字段；删除 `createSetupState/formatSolarSnapshot` 及仅服务旧报告的计算接线 | 三字段精确 schema；全部正式消费者与 Browser 动态渲染通过 |
+| F6 Browser Projection 重复根 | 冻结前已在本批删除顶层 `board/players/cards/tech/aliens` 五个重复 DTO，只保留 `resident`、match、controls、decision、feedback | 不恢复重复 projection root；所有 renderer/输入只消费当前 BrowserProjection schema | schema 精确键测试、projection 隔离与真实 Chrome renderer 通过 |
+| F7 行为回归基线 | 当前 61 个 unit 中 2 个因仍使用旧 map-shaped players / fake handSize fixture 失败；full-flow 业务结果通过但 checkpoint hash 待最终 schema 稳定后复核 | fixture 改用真实 canonical 玩家与卡实例；只在逐字段业务差异确认后更新 checkpoint | 61/61 unit、1/1 full-flow；不得通过恢复兼容代码让旧 fixture 继续通过 |
+| F8 当前资料漂移 | `committed-game-state.md` 仍描述已删除 purifier；本账本 M1/M5 状态仍停留在上一轮 sequence/wall-clock 结论 | 当前文档只描述最终代码和可执行门禁；历史记录保留日期语境但不得冒充现状 | 当前资料路径、schema、owner、验证命令与 pushed HEAD 一致 |
+
+### 当前验收状态
+
+| 项目 | 当前结果 |
+|---|---|
+| F1–F6 | 代码与静态审计已完成；登记残留均为 0。 |
+| F7 | 62/62 Node 测试通过；唯一 full-flow 已改为公共开局、行动、支付与恢复行为，不再以历史 checkpoint hash 作为验收。 |
+| F8 | 当前契约文档已按最终代码更新；真实 Chrome 动态验证 3/3 通过。 |
+| 矩阵外新类别 | 本轮实现与复核未发现 F1–F8 之外的新架构残留类别。 |
+
+冻结时模块盘点结果：116 个生产 JavaScript、102 个 UMD 模块均有 Browser script 或 Node 生产入口，
+不存在未消费模块 global；这只证明模块可达，不替代 F4 的导出级消费者审计。现有 12 个历史残留族群、
+45 个 DOM 注册和 152 个 CSS class 报告均为 0，但只有在 F1–F8 同时归零并完成行为验证后才允许作为
+最终完成证据。
+
 ## 里程碑账本
 
 | 里程碑 | 审计基线 | 完成证明 | 当前状态 |
 |---|---|---|---|
-| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 重新打开：旧 root/adapter 已清零，但独立审计发现 7 个外星人物种仍保存 `next*Sequence`，需迁入 canonical `meta.sequences` |
+| M1 canonical state | 长期旧 `workingState`、`stateAdapter/projectWorkingState`、旧 root slice 名和模块级序列仍在生产路径 | 规则 domain 直接消费 Session canonical state；上述设施物理删除；恢复、反事实与提交只操作同一 schema | 已完成：旧 root/adapter、本地 sequence 和 fallback 均清零；card、rocket、data、alien、final、nebula 序列由 `meta.sequences` 唯一持有并校验覆盖实体 |
 | M2 Session / ViewState | `pendingDecision`、`initialIncomeQueue`、card/tech UI selection、规则层 `statusNote` 仍存在 | 所有流程状态归 Effect Session Decision/queue；展示状态只归 Browser ViewState/Projection | 已完成：并行决策状态 28→0，规则层展示状态 40→0；61/61 unit、1/1 full-flow、3/3 Chrome |
 | M3 旧执行设施 | Action History、History Commands、Ability Chain、无消费者 readout、`actionEffectFlow` 仍被加载或导出 | 文件、script、import/export、调用、专属测试和文档接线全部删除 | 已完成：34 个明确旧 runtime 文件不存在；Host 审计覆盖 22 family、5 个唯一 domain，旧执行设施残留为 0 |
 | M4 Browser 外延 | 多组 projection DTO 为空；大量旧 DOM/HTML/CSS 无生产消费者 | 真实盘面、数据、科技、外星人、卡牌、计分均由新 projection 动态呈现和输入；旧 UI 物理删除 | 已完成：DOM 注册 160→45、静态无消费者 131→0；CSS 152 个 class、静态无消费者 0；真实 Chrome renderer 通过 |
-| M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 进行中：行为门禁已成立；待外星人本地 sequence 与墙钟状态清零后重跑最终全仓审计 |
+| M5 验收与资料 | 当前 Chrome smoke 存在静态容器假阳性；当前文档仍描述已删除或尚未成立的边界 | 动态行为、恢复、parity 和负向 owner 证据成立；当前文档与代码一致；最终全仓审计通过 | 已完成：61/61 unit、1/1 full-flow、3/3 真实 Chrome 动态 smoke、当前资料与残留审计均通过 |
+
+### 2026-07-26：冻结矩阵完成验证
+
+- F1–F6 的生产残留、重复 owner、兼容入口、过宽 readout 与重复 Projection root 均已物理清理；
+  `node tools/report_architecture_residuals.js` 中 F1–F5 和 12 个历史残留族群均为 0。
+- 测试先按当前公共行为契约审查：删除只维护旧 debug、rollback、readout 和旧状态形状的断言；
+  保留原子提交、合法行动、Effect Session、恢复、Projection 隔离和规则行为测试。
+- 唯一 full-flow 改为通过公共 Standard Action / Decision 完成真实开局、发射、移动、支付和
+  checkpoint 恢复，不再把历史随机轨迹或 checkpoint hash 当作业务正确性。
+- Node 验证通过：61/61 unit、1/1 full-flow。真实 Chrome 动态验证通过：3/3，覆盖生产开始入口、
+  人类开局/快速行动/主行动、机器席位 Machine Player Host、动态 renderer、保存恢复、
+  renderer 异常隔离和 Browser/Simulation parity。
+- 当前契约文档已删除旧 purifier、兼容状态和固定历史 fixture 口径。实现与验证阶段没有发现
+  F1–F8 之外的新架构残留类别。
 
 ## 实施记录
 

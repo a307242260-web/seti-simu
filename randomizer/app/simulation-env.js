@@ -622,7 +622,7 @@ function createSimulationEnv() {
       const policyObservation = standardObservation(beforeObservation, beforeActions[0].actorPlayerId, beforeActions);
       const initialSetupBoundary = beforeActions.every((action) => (
         ["choose_card", "choose_payment"].includes(action.family)
-        && ["select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
+        && ["start_initial_setup", "select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
           .includes(action.target?.kind)
       ));
       const actionOutcomes = initialSetupBoundary

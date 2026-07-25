@@ -4,6 +4,9 @@ globalThis.SetiAlienPlacement = require("./placement");
 globalThis.SetiAlienState = require("./state");
 const aomomo = require("./aomomo");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 function createTraceSlot(ownerPlayerColor = null, extraCount = 0) {
   return {
     firstPlaced: Boolean(ownerPlayerColor),
@@ -49,19 +52,19 @@ assert.equal(state.aomomo.revealedSlotId, 1);
 assert.equal(aomomo.CARD_DEFINITIONS.some((card) => card.index === state.aomomo.displayedCardIndex), true);
 assert.equal(state.aomomo.cardDeck.includes(state.aomomo.displayedCardIndex), false);
 
-const paidTrace = aomomo.placeAomomoTrace(state, 1, "pink", 1, white);
+const paidTrace = aomomo.placeAomomoTrace(state, 1, "pink", 1, white, nextAlienIdentity());
 assert.equal(paidTrace.ok, true);
 assert.equal(paidTrace.reward.payFossils, 1);
 assert.equal(aomomo.getTraceEntries(aomomo.getTraceGrid(state, 1), "pink", 1).length, 1);
 
 const panelState = createState();
 aomomo.initializeAomomoReveal(panelState, 1, white, () => 0);
-const orbit = aomomo.addOrbitMarker(panelState, white);
+const orbit = aomomo.addOrbitMarker(panelState, white, nextAlienIdentity());
 assert.equal(orbit.ok, true);
 assert.equal(aomomo.countOrbitMarkers(panelState), 1);
 assert.equal(aomomo.canAddOrbitMarker(panelState), false);
 for (let index = 0; index < 3; index += 1) {
-  const landing = aomomo.addLandingMarker(panelState, white);
+  const landing = aomomo.addLandingMarker(panelState, white, nextAlienIdentity());
   assert.equal(landing.ok, true);
 }
 assert.equal(aomomo.countLandingMarkers(panelState), 3);
@@ -102,7 +105,7 @@ const mixedTraceState = createState(createTraceSlots({
   yellow: createTraceSlot("white"),
 }));
 aomomo.initializeAomomoReveal(mixedTraceState, 1, white, () => 0);
-assert.equal(aomomo.placeAomomoTrace(mixedTraceState, 1, "blue", 2, white).ok, true);
+assert.equal(aomomo.placeAomomoTrace(mixedTraceState, 1, "blue", 2, white, nextAlienIdentity()).ok, true);
 assert.equal(aomomo.playerHasAllTraceTypes(mixedTraceState, white), true);
 assert.equal(aomomo.countTraceMarkers(mixedTraceState, white, null), 3);
 

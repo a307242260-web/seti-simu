@@ -17,8 +17,6 @@ function card(instance, cardId) {
     id: instance,
     cardId,
     set: "basic",
-    src: `host/${cardId}`,
-    cardName: `展示 ${cardId}`,
     faceUp: true,
     price: 1,
     cardTypeCode: 2,
@@ -52,10 +50,9 @@ function createState() {
       currentPlayerId: "p1",
     },
     players: {
-      currentPlayerId: "p1",
       players: [
         {
-          id: "p1", color: "blue", colorLabel: "蓝色", name: "展示名称",
+          id: "p1", color: "blue", name: "蓝色玩家",
           resources: { credits: 10, energy: 10, handSize: 1, score: 0 },
           income: {}, scoreSources: {},
           hand: [card("card-1-hand", "b_1.webp")],
@@ -79,9 +76,8 @@ function createState() {
       rockets: [{
         id: 1, playerId: "p1", color: "blue", playerSequence: 1,
         surface: "solar-board", sectorX: 0, sectorY: 1, slotIndex: 1,
-        tokenSrc: "host/rocket.png", label: "R1",
       }],
-      playerRocketSequences: { p1: new Set([1]), p2: new Set() },
+      playerRocketSequences: { p1: [1], p2: [] },
     },
     planets: {
       planets: {
@@ -92,12 +88,8 @@ function createState() {
     cards: {
       publicCards: [null, null, null], discardPile: [],
       drawPileCardIds: ["b_3.webp"], passReservePiles: {},
-      ui: { modal: "open" },
     },
-    tech: {
-      ...board,
-      ui: { modal: "open" },
-    },
+    tech: board,
     aliens: {},
     finalScoring: {},
   });
@@ -109,29 +101,30 @@ function bytes(store) {
   return serialized.serialized;
 }
 
-(function testOwnershipAndPurificationExcludeUiSessionsAndNormalizeIds() {
-  const purified = highCoupling.purifyHighCouplingSlices(createState());
+(function testCanonicalStateRequiresNoSanitizingAdapter() {
+  const canonical = createState();
+  const store = highCoupling.createHighCouplingStateStore(canonical);
   assert.deepEqual(highCoupling.HIGH_COUPLING_SLICES, ["players", "pieces", "cards", "tech"]);
-  assert.equal(Object.hasOwn(purified.players, "currentPlayerId"), false);
-  assert.equal(Object.hasOwn(purified.players.players[0], "colorLabel"), false);
-  assert.equal(Object.hasOwn(purified.players.players[0].hand[0], "src"), false);
-  assert.deepEqual(purified.pieces.playerRocketSequences, { p1: [1], p2: [] });
-  assert.equal(Object.hasOwn(purified.cards, "ui"), false);
-  assert.equal(Object.hasOwn(purified.tech, "ui"), false);
-  assert.ok(purified.tech.stacks[TECH_TILE_ID]);
-  assert.equal(purified.meta.sequences.rocket, 2);
-  assert.equal(purified.meta.sequences.card, 3);
-  assert.equal(purified.meta.sequences.dataToken, 8);
-  assert.equal(JSON.stringify(purified).includes("cardTaskState"), false);
-  assert.equal(JSON.stringify(purified).includes("setupSelectionState"), false);
+  assert.deepEqual(store.getSnapshot(), canonical);
+  assert.ok(canonical.tech.stacks[TECH_TILE_ID]);
+  assert.equal(canonical.meta.sequences.rocket, 2);
+  assert.equal(canonical.meta.sequences.card, 3);
+  assert.equal(canonical.meta.sequences.dataToken, 8);
+  for (const mutate of [
+    (state) => { state.players.currentPlayerId = "p1"; },
+    (state) => { state.players.players[0].colorLabel = "蓝色"; },
+    (state) => { state.players.players[0].hand[0].src = "host/card.png"; },
+    (state) => { state.cards.ui = {}; },
+  ]) {
+    const candidate = structuredClone(canonical);
+    mutate(candidate);
+    assert.equal(store.validate(candidate).ok, false);
+  }
 })();
 
 (function testResearchCardMovementAndPiecePlanetConversionProduceValidCandidate() {
   const store = highCoupling.createHighCouplingStateStore(createState());
   const candidate = structuredClone(store.getSnapshot());
-  candidate.pieces.playerRocketSequences = Object.fromEntries(Object.entries(
-    candidate.pieces.playerRocketSequences,
-  ).map(([playerId, sequences]) => [playerId, new Set(sequences)]));
   const player = candidate.players.players[0];
   assert.equal(techBoard.consumeFromSupplySlot(candidate.tech, TECH_TILE_ID, player.id).ok, true);
   assert.equal(playerTech.recordPlayerTake(player.techState, TECH_TILE_ID).ok, true);
@@ -146,18 +139,17 @@ function bytes(store) {
   );
   assert.equal(orbit.ok, true);
 
-  const purified = highCoupling.purifyHighCouplingSlices(candidate);
-  const validation = store.validate(purified);
+  const validation = store.validate(candidate);
   assert.equal(validation.ok, true, JSON.stringify(validation));
   assert.equal(store.getSnapshot().tech.stacks[TECH_TILE_ID].remaining, 4);
-  assert.equal(purified.tech.stacks[TECH_TILE_ID].remaining, 3);
-  assert.equal(purified.players.players[0].techState.ownedTiles[TECH_TILE_ID], true);
-  assert.equal(purified.players.players[0].hand.length, 0);
-  assert.equal(purified.players.players[0].resources.handSize, 0);
-  assert.equal(purified.cards.discardPile[0].id, "card-1-hand");
-  assert.equal(purified.pieces.rockets.length, 0);
-  assert.equal(purified.pieces.activeRocketId, null);
-  assert.equal(purified.planets.planets.mars.orbitMarkers[0].playerId, "p1");
+  assert.equal(candidate.tech.stacks[TECH_TILE_ID].remaining, 3);
+  assert.equal(candidate.players.players[0].techState.ownedTiles[TECH_TILE_ID], true);
+  assert.equal(candidate.players.players[0].hand.length, 0);
+  assert.equal(candidate.players.players[0].resources.handSize, 0);
+  assert.equal(candidate.cards.discardPile[0].id, "card-1-hand");
+  assert.equal(candidate.pieces.rockets.length, 0);
+  assert.equal(candidate.pieces.activeRocketId, null);
+  assert.equal(candidate.planets.planets.mars.orbitMarkers[0].playerId, "p1");
 })();
 
 (function testInvariantFailuresAreZeroPollutionAcrossAllCoupledSlices() {
@@ -251,7 +243,7 @@ function bytes(store) {
     id: "different-instance-same-basic-card",
   });
   const result = highCoupling.createHighCouplingStateStore(createState()).validate(
-    highCoupling.purifyHighCouplingSlices(invalid),
+    invalid,
   );
   assert.equal(result.ok, false);
   assert.equal(result.code, "STATE_CARD_LOCATION_CONFLICT");

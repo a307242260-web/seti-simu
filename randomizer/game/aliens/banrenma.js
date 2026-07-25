@@ -195,13 +195,10 @@
       revealedByPlayerId: null,
       revealedByPlayerColor: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       scoreMarksByPlayerId: {},
       bonusSlots: {},
       displayedCardIndex: null,
       cardDeck: CARD_DEFINITIONS.map((card) => card.index),
-      nextCardSequence: 1,
-      nextScoreMarkId: 1,
       revealInitialized: false,
     };
   }
@@ -215,9 +212,6 @@
     if (!banrenma.scoreMarksByPlayerId) banrenma.scoreMarksByPlayerId = {};
     if (!banrenma.bonusSlots) banrenma.bonusSlots = {};
     if (!Array.isArray(banrenma.cardDeck)) banrenma.cardDeck = CARD_DEFINITIONS.map((card) => card.index);
-    if (!Number.isFinite(Number(banrenma.nextTraceSequence))) banrenma.nextTraceSequence = 1;
-    if (!Number.isFinite(Number(banrenma.nextCardSequence))) banrenma.nextCardSequence = 1;
-    if (!Number.isFinite(Number(banrenma.nextScoreMarkId))) banrenma.nextScoreMarkId = 1;
     if (typeof banrenma.revealInitialized !== "boolean") banrenma.revealInitialized = false;
     return banrenma;
   }
@@ -236,15 +230,15 @@
   }
 
   function getPlayerKey(player) {
-    return player?.id || player?.playerId || player?.color || player?.playerColor || null;
+    return player?.id || player?.color || null;
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -279,18 +273,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const banrenma = ensureBanrenmaState(alienState);
-    const sequence = options.sequence || banrenma.nextTraceSequence;
-    banrenma.nextTraceSequence = Math.max(banrenma.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("半人马痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -320,7 +313,7 @@
   }
 
   function canPlaceBanrenmaTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
-    if (!isBanrenmaRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+    if (!isBanrenmaRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "半人马尚未揭示，不能放置半人马痕迹" };
     }
 
@@ -336,7 +329,7 @@
       };
     }
 
-    const reward = options.debugOnly ? null : getTraceReward(traceType, normalizedPosition);
+    const reward = getTraceReward(traceType, normalizedPosition);
     if (reward?.payData && getAvailableDataCount(player, options) < reward.payData) {
       return {
         ok: false,
@@ -371,9 +364,7 @@
     const normalizedPosition = placementCheck.position;
     const reward = placementCheck.reward;
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
 
@@ -440,7 +431,15 @@
     return `${MARK_BASE_PATH}/mark_${playerColor || "white"}.png`;
   }
 
-  function createAlienCard(index, sequence = 0) {
+  function definitionName(card) {
+    return getCardDefinition(card)?.cardName || card?.cardId || "未知卡牌";
+  }
+
+  function createAlienCard(index, sequence) {
+    sequence = Number(sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("半人马卡牌需要 canonical alienEntity sequence");
+    }
     const definition = CARD_BY_INDEX[Math.round(Number(index))];
     if (!definition) return null;
     return {
@@ -448,8 +447,6 @@
       cardId: definition.cardId,
       alienCardId: definition.index,
       set: "alien:半人马",
-      cardName: definition.cardName,
-      src: getCardSrc(definition.index),
       faceUp: true,
       price: definition.price,
       cardTypeCode: definition.cardTypeCode,
@@ -468,24 +465,22 @@
     return index;
   }
 
-  function takeDisplayedCard(alienState, random = Math.random) {
+  function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const banrenma = ensureBanrenmaState(alienState);
     if (banrenma.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    const card = createAlienCard(banrenma.displayedCardIndex, banrenma.nextCardSequence);
-    banrenma.nextCardSequence += 1;
+    const card = createAlienCard(banrenma.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `获得半人马牌：${card.cardName}` : "没有可获得的半人马牌" };
+    return { ok: Boolean(card), card, message: card ? `获得半人马牌：${definitionName(card)}` : "没有可获得的半人马牌" };
   }
 
-  function blindDrawCard(alienState, random = Math.random) {
+  function blindDrawCard(alienState, random = Math.random, options = {}) {
     const banrenma = ensureBanrenmaState(alienState);
     if (!banrenma.cardDeck.length) banrenma.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     const pickIndex = Math.floor(random() * banrenma.cardDeck.length);
     const [index] = banrenma.cardDeck.splice(pickIndex, 1);
-    const card = createAlienCard(index, banrenma.nextCardSequence);
-    banrenma.nextCardSequence += 1;
+    const card = createAlienCard(index, options.sequence);
     if (banrenma.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `盲抽半人马牌：${card.cardName}` : "没有可盲抽的半人马牌" };
+    return { ok: Boolean(card), card, message: card ? `盲抽半人马牌：${definitionName(card)}` : "没有可盲抽的半人马牌" };
   }
 
   function getPlayerScoreMarks(alienState, player) {
@@ -519,18 +514,20 @@
     const key = getPlayerKey(player);
     if (!key) return null;
     if (!Array.isArray(banrenma.scoreMarksByPlayerId[key])) banrenma.scoreMarksByPlayerId[key] = [];
-    const id = options.id || `banrenma-mark-${banrenma.nextScoreMarkId++}`;
+    const sequence = Number(options.sequence);
+    if (!options.id && (!Number.isSafeInteger(sequence) || sequence < 1)) {
+      throw new TypeError("半人马分数标记需要 canonical alienEntity sequence");
+    }
+    const id = options.id || `banrenma-mark-${sequence}`;
     const entry = {
       id,
       source,
       threshold: Math.max(0, Math.round(Number(threshold) || 0)),
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
       cardInstanceId: options.cardInstanceId || null,
       cardIndex: options.cardIndex ?? null,
       resolved: false,
-      createdAt: options.createdAt || Date.now(),
     };
     banrenma.scoreMarksByPlayerId[key].push(entry);
     return entry;
@@ -540,7 +537,6 @@
     const mark = getPlayerScoreMarks(alienState, player).find((item) => item.id === markId);
     if (!mark) return { ok: false, message: "找不到半人马分数标记" };
     mark.resolved = true;
-    mark.resolvedAt = Date.now();
     return { ok: true, mark, message: `清除半人马分数标记 ${mark.threshold}` };
   }
 
@@ -570,10 +566,8 @@
     const entry = {
       position: normalizedPosition,
       markId: markId || null,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      usedAt: Date.now(),
     };
     banrenma.bonusSlots[normalizedPosition] = entry;
     return { ok: true, entry, reward: getBonusReward(normalizedPosition), message: `半人马：选择 ${normalizedPosition} 号奖励位` };
@@ -584,7 +578,14 @@
     return BONUS_POSITIONS.filter((position) => !slots[position]);
   }
 
-  function initializeBanrenmaReveal(alienState, alienSlotId, triggerPlayer, players, random = Math.random) {
+  function initializeBanrenmaReveal(
+    alienState,
+    alienSlotId,
+    triggerPlayer,
+    players,
+    random = Math.random,
+    options = {},
+  ) {
     const banrenma = ensureBanrenmaState(alienState);
 
     if (banrenma.revealInitialized) {
@@ -607,7 +608,16 @@
     banrenma.bonusSlots = {};
 
     for (const player of players || []) {
-      addScoreMark(alienState, player, (Number(player?.resources?.score) || 0) + SCORE_MARK_DELTA, "panel");
+      if (typeof options.takeSequence !== "function") {
+        throw new TypeError("半人马揭示需要 canonical sequence allocator");
+      }
+      addScoreMark(
+        alienState,
+        player,
+        (Number(player?.resources?.score) || 0) + SCORE_MARK_DELTA,
+        "panel",
+        { sequence: options.takeSequence() },
+      );
     }
 
     return {
@@ -617,23 +627,6 @@
     };
   }
 
-  function seedDebugTraceGrid(alienState, alienSlotId, player) {
-    ensureBanrenmaState(alienState);
-    delete alienState.banrenma.traceSlotsByAlienSlotId[String(alienSlotId)];
-    ensureTraceGrid(alienState, alienSlotId);
-    const placed = [];
-    for (const traceType of TRACE_TYPES) {
-      for (const position of TRACE_POSITIONS) {
-        const result = placeBanrenmaTrace(alienState, alienSlotId, traceType, position, player, {
-          debugOnly: true,
-          placedAt: 0,
-        });
-        if (result.ok) placed.push(result.entry);
-      }
-    }
-    return placed;
-  }
-
   function isBanrenmaCard(card) {
     return Boolean(card?.banrenmaCard || card?.set === "alien:半人马" || String(card?.cardId || "").startsWith("banrenma_"));
   }
@@ -641,11 +634,6 @@
   function formatTraceLabel(traceType, position, stackIndex = null) {
     const suffix = Number(position) === 1 && stackIndex != null ? `#${stackIndex + 1}` : "";
     return `${placement.getTraceTypeLabel(traceType)} ${position}号位${suffix}`;
-  }
-
-  function formatScoreMark(mark) {
-    if (!mark) return "无";
-    return `${mark.playerColor || mark.playerId || "?"}:${mark.threshold}`;
   }
 
   return Object.freeze({
@@ -679,7 +667,6 @@
     listTraceEntries,
     getTraceEntries,
     initializeBanrenmaReveal,
-    seedDebugTraceGrid,
     getCardSrc,
     getPlayerMarkSrc,
     createAlienCard,
@@ -703,6 +690,5 @@
     getPlayerKeys,
     getPlayerKey,
     formatTraceLabel,
-    formatScoreMark,
   });
 });

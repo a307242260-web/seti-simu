@@ -4,6 +4,9 @@ const assert = require("node:assert/strict");
 const banrenma = require("./banrenma");
 const state = require("./state");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 const alienState = state.createDefaultAlienState();
 alienState.aliens[2].assignedAlienId = banrenma.ALIEN_ID;
 alienState.aliens[2].alienId = banrenma.ALIEN_ID;
@@ -21,7 +24,14 @@ const blue = {
   colorLabel: "蓝色",
   resources: { score: 5, credits: 0, energy: 0, publicity: 0, availableData: 1 },
 };
-const revealResult = banrenma.initializeBanrenmaReveal(alienState, 2, white, [white, blue], () => 0);
+const revealResult = banrenma.initializeBanrenmaReveal(
+  alienState,
+  2,
+  white,
+  [white, blue],
+  () => 0,
+  { takeSequence: () => nextAlienIdentity().sequence },
+);
 assert.equal(revealResult.ok, true);
 assert.equal(alienState.banrenma.revealedSlotId, 2);
 assert.equal(banrenma.getPlayerScoreMarks(alienState, white)[0].threshold, 25);
@@ -35,55 +45,29 @@ assert.equal(banrenma.resolveScoreMark(alienState, white, pendingPanelMark.id).o
 assert.equal(banrenma.getPendingPanelMark(alienState, white), null, "resolved panel marks should not queue again");
 white.resources.score = 10;
 
-let result = banrenma.placeBanrenmaTrace(alienState, 2, "pink", 1, white);
+let result = banrenma.placeBanrenmaTrace(alienState, 2, "pink", 1, white, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(result.reward.payData, 1);
 assert.equal(result.reward.gain.score, 6);
-result = banrenma.placeBanrenmaTrace(alienState, 2, "pink", 1, blue);
+result = banrenma.placeBanrenmaTrace(alienState, 2, "pink", 1, blue, nextAlienIdentity());
 assert.equal(result.ok, true, "position 1 can stack");
 assert.equal(banrenma.getTraceGrid(alienState, 2).pink[1].length, 2);
 
-result = banrenma.placeBanrenmaTrace(alienState, 2, "yellow", 4, white);
+result = banrenma.placeBanrenmaTrace(alienState, 2, "yellow", 4, white, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(result.reward.pickAlienCard, true);
-result = banrenma.placeBanrenmaTrace(alienState, 2, "yellow", 4, blue);
+result = banrenma.placeBanrenmaTrace(alienState, 2, "yellow", 4, blue, nextAlienIdentity());
 assert.equal(result.ok, false, "positions 2-5 cannot be occupied twice");
 
-const debugState = state.createDefaultAlienState();
-debugState.aliens[1].assignedAlienId = banrenma.ALIEN_ID;
-debugState.aliens[1].alienId = banrenma.ALIEN_ID;
-debugState.aliens[1].revealed = true;
-banrenma.seedDebugTraceGrid(debugState, 1, white);
-assert.equal(banrenma.listTraceEntries(debugState, 1).length, 15, "debug grid should place 3x5 tokens");
-assert.equal(banrenma.getTraceGrid(debugState, 1).pink[1].length, 1, "debug only places one position-1 token");
-
-const zeroDataPlayer = {
-  id: "player-zero-data",
-  color: "green",
-  resources: { availableData: 0 },
-};
-assert.equal(
-  banrenma.canPlaceAnyBanrenmaTrace(debugState, 1, "pink", zeroDataPlayer),
-  false,
-  "a full Banrenma row should not treat the stackable data-cost slot as legal without data",
-);
-assert.match(
-  banrenma.canPlaceBanrenmaTrace(debugState, 1, "pink", 1, zeroDataPlayer).message,
-  /数据不足/,
-);
-zeroDataPlayer.resources.availableData = 1;
-assert.equal(
-  banrenma.canPlaceAnyBanrenmaTrace(debugState, 1, "pink", zeroDataPlayer),
-  true,
-  "one data should make the stackable position 1 legal again",
-);
-
-const displayed = banrenma.takeDisplayedCard(alienState, () => 0);
+const displayed = banrenma.takeDisplayedCard(alienState, () => 0, nextAlienIdentity());
 assert.equal(displayed.ok, true);
 assert.equal(displayed.card.set, "alien:半人马");
 assert.equal(displayed.card.banrenmaCard, true);
-assert.match(displayed.card.src, /assets\/aliens\/半人马\/cards\/\d\.webp/);
-const blind = banrenma.blindDrawCard(alienState, () => 0);
+assert.match(
+  banrenma.getCardSrc(displayed.card.alienCardId),
+  /assets\/aliens\/半人马\/cards\/\d\.webp/,
+);
+const blind = banrenma.blindDrawCard(alienState, () => 0, nextAlienIdentity());
 assert.equal(blind.ok, true);
 assert.equal(blind.card.cardId.startsWith("banrenma_"), true);
 
@@ -111,6 +95,7 @@ const dataIncomeMark = banrenma.addScoreMark(
   40,
   "card",
   {
+    sequence: nextAlienIdentity().sequence,
     cardInstanceId: multiReadyPlayer.reservedCards[0].id,
     cardIndex: 2,
   },
@@ -121,6 +106,7 @@ const publicityIncomeMark = banrenma.addScoreMark(
   40,
   "card",
   {
+    sequence: nextAlienIdentity().sequence,
     cardInstanceId: multiReadyPlayer.reservedCards[1].id,
     cardIndex: 4,
   },

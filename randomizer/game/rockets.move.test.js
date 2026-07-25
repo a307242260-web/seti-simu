@@ -31,23 +31,6 @@ assert.equal(manualBoard.ok, true);
 assert.equal(manualBoard.rocket.surface, rockets.ROCKET_SURFACE.SOLAR);
 assert.equal(manualBoard.rocket.slotIndex, null);
 
-const manualReference = rockets.placeRocketAtPlanetsReferencePoint(piecesState, 2, {
-  x: 836,
-  y: 470.5,
-  width: 1672,
-  height: 941,
-});
-assert.equal(manualReference.ok, true);
-assert.equal(manualReference.rocket.surface, rockets.ROCKET_SURFACE.PLANETS_REFERENCE);
-assert.deepEqual(manualReference.rocket.planetsReference, {
-  x: 836,
-  y: 470.5,
-  percentX: 50,
-  percentY: 50,
-  width: 1672,
-  height: 941,
-});
-assert.equal(rockets.getRocketSectorCoordinate(manualReference.rocket), null);
 assert.deepEqual(rockets.serializeSectorOccupancy(piecesState), { "5,1": [4] });
 
 console.log("rocket move tests passed");

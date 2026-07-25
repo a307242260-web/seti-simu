@@ -32,11 +32,6 @@ assert.equal(first.token.slotIndex, 1);
 assert.equal(player.resources.availableData, 1);
 assert.equal(data.listPoolTokens(player).length, 1);
 
-const layout = data.getDataPoolSlotLayout(1);
-assert.ok(layout);
-assert.equal(first.layout.percentX, layout.percentX);
-assert.equal(first.layout.percentY, layout.percentY);
-
 for (let index = 2; index <= players.RESOURCE_LIMITS.availableData; index += 1) {
   const result = gainCanonicalData(player, { source: "debug" });
   assert.equal(result.ok, true);
@@ -59,9 +54,6 @@ assert.equal(place1.slotBonus, null);
 assert.equal(place1.poolToken.slotIndex, 1);
 assert.equal(player.resources.availableData, 5);
 assert.equal(data.listComputerPlacedTokens(player).length, 1);
-
-const computerLayout = data.getComputerDataSlotLayout(1);
-assert.equal(place1.layout.percentX, computerLayout.percentX);
 
 for (let index = 2; index <= 5; index += 1) {
   const result = data.placeDataToComputer(player);

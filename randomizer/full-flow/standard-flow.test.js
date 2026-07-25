@@ -1,127 +1,120 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const crypto = require("node:crypto");
 const { createSimulationEnv } = require("../app/simulation-env");
 const heuristicPolicy = require("../game/ai/heuristic-policy");
 const fixture = require("./standard-flow-v1.fixture");
 
-function initialSnapshot(env) {
-  const state = env.observe().publicState;
-  return {
-    turn: [state.roundNumber, state.turnNumber, state.actionCycleNumber, state.currentPlayerId],
-    players: state.players.map((player) => [
-      player.playerId, player.score, player.credits, player.energy, player.publicity,
-      player.availableData, player.handCount, player.reservedCount,
-    ]),
-    publicCards: state.board.publicCards.map((card) => card.cardId),
-    rockets: state.board.rockets.map((rocket) => [rocket.id, rocket.playerId, rocket.surface]),
-    pending: [state.pending.actorPlayerId, state.pending.pendingOwnerPlayerId, state.pending.decisionType, state.pending.choiceCount],
-  };
+function committedState(environment) {
+  const serialized = environment.createCheckpoint().coreState.committedState;
+  return typeof serialized === "string" ? JSON.parse(serialized) : structuredClone(serialized);
 }
 
-function finalSnapshot(env) {
-  const observation = env.observe();
-  const checkpoint = env.createCheckpoint();
-  const state = typeof checkpoint.coreState.committedState === "string"
-    ? JSON.parse(checkpoint.coreState.committedState)
-    : checkpoint.coreState.committedState;
-  const markerOwners = (markers) => (markers || []).map((marker) => marker.playerId);
-  const alienKeys = ["amiba", "aomomo", "banrenma", "chong", "fangzhou", "jiuzhe", "runezu", "yichangdian"];
-  return {
-    turn: [
-      state.turn.roundNumber, state.turn.turnNumber, state.turn.actionCycleNumber,
-      state.turn.currentPlayerId, state.turn.passedPlayerIds,
-      state.turn.completedTurnPlayerIds, state.turn.gameEnded,
-    ],
-    players: state.players.players.map((player) => [
-      player.id, player.resources.score, player.resources.credits, player.resources.energy,
-      player.resources.publicity, player.resources.availableData,
-      player.hand.map((card) => card.cardId), player.reservedCards.map((card) => card.cardId),
-      player.techState.ownedTiles, player.dataState.poolTokens.length,
-      player.dataState.placedTokens.map((token) => [token.id, token.placementSlot]),
-    ]),
-    cards: {
-      public: state.cards.publicCards.map((card) => card.cardId),
-      discard: state.cards.discardPile.map((card) => card.cardId),
-    },
-    rockets: state.pieces.rockets.map((rocket) => [
-      rocket.id, rocket.playerId, rocket.surface,
-      rocket.surface === "solar-board" ? [rocket.sectorX, rocket.sectorY] : null,
-      rocket.referencePlacement?.planetId || null, rocket.referencePlacement?.kind || null,
-    ]),
-    planets: Object.fromEntries(Object.entries(state.planets.planets).map(([planetId, planet]) => [planetId, [
-      markerOwners(planet.orbitMarkers), markerOwners(planet.landingMarkers), markerOwners(planet.satelliteLandings),
-    ]])),
-    data: Object.entries(state.data.nebulae).flatMap(([nebulaId, nebula]) => nebula.tokens
-      .filter((token) => token.replacedByPlayerId)
-      .map((token) => [nebulaId, token.slotIndex, token.replacedByPlayerId])),
-    aliens: {
-      slots: Object.entries(state.aliens.aliens).map(([slotId, slot]) => [
-        slotId, slot.alienId, slot.revealed,
-        [slot.traces.blue.firstPlaced, slot.traces.pink.firstPlaced, slot.traces.yellow.firstPlaced],
-      ]),
-      revealed: alienKeys.map((key) => state.aliens[key].revealInitialized),
-    },
-    authority: [state.meta.stateVersion, state.meta.rngState.algorithm, state.meta.rngState.state],
-    session: [
-      checkpoint.effectSessionCheckpoint ?? null,
-      observation.publicState.pending.actorPlayerId,
-      observation.publicState.pending.pendingOwnerPlayerId,
-      observation.publicState.pending.decisionType,
-      observation.publicState.pending.choiceCount,
-      checkpoint.replayCursor.stepIndex,
-      checkpoint.effectSessionJournals.length,
-    ],
-  };
+function chooseOpeningAction(actions, progressByPlayer) {
+  const actorId = actions[0]?.actorPlayerId;
+  const progress = progressByPlayer.get(actorId) || { industry: false, initialIds: new Set() };
+  let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
+    || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+  if (!action && !progress.industry) {
+    action = actions.find((candidate) => (
+      candidate.target?.kind === "select_initial_card"
+      && candidate.target?.selectionKind === "industry"
+    ));
+    if (action) progress.industry = true;
+  }
+  if (!action && progress.initialIds.size < fixture.expected.initialCardCount) {
+    action = actions.find((candidate) => (
+      candidate.target?.kind === "select_initial_card"
+      && candidate.target?.selectionKind === "initial"
+      && !progress.initialIds.has(candidate.target.cardId)
+    ));
+    if (action) progress.initialIds.add(action.target.cardId);
+  }
+  progressByPlayer.set(actorId, progress);
+  return action || actions[0] || null;
+}
+
+function submit(environment, action, operations) {
+  assert.ok(action, "完整流程必须存在下一条标准 action");
+  const result = environment.step(action);
+  assert.equal(result.ok, true, result.error || result.message || action.actionId);
+  assert.notEqual(result.blocked, true, `完整流程不得 blocked：${action.actionId}`);
+  operations.push({
+    family: action.family,
+    actorPlayerId: action.actorPlayerId,
+    targetKind: action.target?.kind || null,
+  });
 }
 
 const env = createSimulationEnv();
-const actualPolicyProvenance = heuristicPolicy.createHeuristicPolicy({
-  difficulty: fixture.config.aiDifficulty,
-}).getProvenance();
-assert.deepEqual(fixture.policyProvenance, actualPolicyProvenance,
-  "full-flow fixture 必须记录代码当前实际 Policy provenance");
-assert.equal(fixture.config.policyVersion, actualPolicyProvenance.version,
-  "full-flow config 不得声明不存在的 Policy 版本");
-env.reset(fixture.config);
-assert.deepEqual(initialSnapshot(env), fixture.initialSnapshot, "版本化初始状态发生漂移");
+const restored = createSimulationEnv();
+const operations = [];
+try {
+  const actualPolicyProvenance = heuristicPolicy.createHeuristicPolicy({
+    difficulty: fixture.config.aiDifficulty,
+  }).getProvenance();
+  assert.deepEqual(fixture.policyProvenance, actualPolicyProvenance,
+    "full-flow fixture 必须记录代码当前实际 Policy provenance");
 
-for (const [stepIndex, [actionId, maskIndex]] of fixture.operations.entries()) {
-  const legalActions = env.legalActions();
-  const semanticChoice = fixture.openingSemanticChoices?.[stepIndex] || null;
-  const semanticMatches = semanticChoice ? legalActions.filter((candidate) => (
-    candidate.family === semanticChoice.family
-    && candidate.actorPlayerId === semanticChoice.actorPlayerId
-    && candidate.target?.cardId === semanticChoice.cardId
-  )) : [];
-  if (semanticChoice) {
-    assert.equal(semanticMatches.length, 1,
-      `opening 语义选择必须唯一：${semanticChoice.actorPlayerId}/${semanticChoice.cardId}`);
-    assert.equal(semanticMatches[0].actionId, actionId, "opening 语义选择解析出的 actionId 漂移");
-    assert.equal(semanticMatches[0].maskIndex, maskIndex, "opening 语义选择解析出的 maskIndex 漂移");
+  env.reset(fixture.config);
+  const openingProgress = new Map();
+  for (let guard = 0; env.legalActions()[0]?.family?.startsWith("choose_"); guard += 1) {
+    assert.ok(guard < fixture.expected.maximumOpeningInputs,
+      "初始选择与收入链必须通过有限标准输入结束");
+    const actions = env.legalActions();
+    submit(env, chooseOpeningAction(actions, openingProgress), operations);
   }
-  const action = semanticChoice
-    ? semanticMatches[0]
-    : legalActions.find((candidate) => candidate.actionId === actionId && candidate.maskIndex === maskIndex);
-  assert.ok(action, `固定脚本动作不可用：${actionId}#${maskIndex}`);
-  const result = env.step(action);
-  assert.equal(result.ok, true, result.error || `固定脚本动作失败：${actionId}`);
-  assert.notEqual(result.blocked, true, `流程不得 blocked：${actionId}`);
+
+  const opened = committedState(env);
+  assert.equal(opened.match.initialSetup, undefined);
+  assert.equal(opened.match.initialSetupConfig, undefined);
+  assert.equal(opened.players.players.length, fixture.expected.playerCount);
+  for (const player of opened.players.players) {
+    assert.ok(player.initialSelection?.industry?.id, `${player.id} 必须完成公司选择`);
+    assert.equal(
+      player.initialSelection.removedInitialCards.length,
+      fixture.expected.initialCardCount,
+      `${player.id} 必须完成初始牌选择`,
+    );
+  }
+  const committedBytes = JSON.stringify(opened);
+  for (const forbidden of fixture.expected.forbiddenCommittedFields) {
+    assert.equal(committedBytes.includes(`"${forbidden}"`), false,
+      `committed state 不得包含 ${forbidden}`);
+  }
+
+  const launch = env.legalActions().find((action) => action.family === "launch");
+  const rocketCountBeforeLaunch = opened.pieces.rockets.length;
+  submit(env, launch, operations);
+  const launched = committedState(env);
+  assert.equal(launched.pieces.rockets.length, rocketCountBeforeLaunch + 1,
+    "标准发射必须创建唯一 canonical rocket");
+  assert.equal(launched.pieces.rockets.every((rocket) => rocket.surface === "solar-board"), true);
+
+  const move = env.legalActions().find((action) => action.family === "move");
+  submit(env, move, operations);
+  for (let guard = 0; env.legalActions()[0]?.family?.startsWith("choose_"); guard += 1) {
+    assert.ok(guard < 6, "移动支付 Decision 必须有限收敛");
+    submit(env, env.legalActions()[0], operations);
+  }
+
+  const checkpoint = env.createCheckpoint();
+  assert.equal(checkpoint.effectSessionCheckpoint ?? null, null,
+    "稳定边界不得遗留 Effect Session checkpoint");
+  assert.equal(checkpoint.effectSessionJournals.length, operations.length,
+    "每次标准输入必须留下一个 Effect Session journal");
+
+  restored.reset({ ...fixture.config, seed: `${fixture.config.seed}:restore-target` });
+  restored.loadCheckpoint(structuredClone(checkpoint));
+  assert.deepEqual(restored.observe(), env.observe(),
+    "checkpoint 恢复必须得到相同 viewer-safe observation");
+  assert.deepEqual(restored.legalActions(), env.legalActions(),
+    "checkpoint 恢复必须枚举相同标准 action");
+  assert.deepEqual(restored.createCheckpoint(), checkpoint,
+    "checkpoint 恢复不得改写 committed state、Session journal 或 replay");
+} finally {
+  env.dispose();
+  restored.dispose();
 }
 
-if (fixture.finalSnapshot) {
-  assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
-}
-if (fixture.finalCheckpointHash) {
-  const checkpointHash = crypto.createHash("sha256")
-    .update(JSON.stringify(env.createCheckpoint()))
-    .digest("hex");
-  assert.equal(checkpointHash, fixture.finalCheckpointHash, "最终 checkpoint bytes 发生漂移");
-}
-assert.equal(env.createCheckpoint().effectSessionJournals.length, fixture.operations.length,
-  "每次 composition 输入都必须留下对应 Effect Session journal");
-assert.equal(env.createCheckpoint().effectSessionCheckpoint ?? null, null, "最终 Effect Session 必须清空");
-env.dispose();
-
-console.log("standard full-flow v1 passed");
+console.log("standard full-flow v2 passed");

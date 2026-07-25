@@ -5,7 +5,6 @@ const loadProductionDependency = (path, globalName) => (
   typeof require === "function" ? require(path) : productionRoot[globalName]
 );
 const stateStoreApi = loadProductionDependency("./state/state-store", "SetiStateStore");
-const stateSequences = loadProductionDependency("./state/sequences", "SetiStateSequences");
 const highCouplingStateApi = loadProductionDependency("./state/high-coupling-slices", "SetiHighCouplingState");
 const effectRuntimeApi = loadProductionDependency("./effects/session-runtime", "SetiEffectSession");
 const standardActionApi = loadProductionDependency("./actions/standard-action", "SetiStandardAction");
@@ -19,13 +18,8 @@ const data = loadProductionDependency("./data", "SetiData");
 const cards = loadProductionDependency("./cards/deck", "SetiCards");
 const cardEffects = loadProductionDependency("./cards/effects", "SetiCardEffects");
 const tech = loadProductionDependency("./tech", "SetiTech");
-const industry = loadProductionDependency("./industry", "SetiIndustry");
 const aliens = loadProductionDependency("./aliens", "SetiAliens");
 const finalScoring = loadProductionDependency("./final-scoring", "SetiFinalScoring");
-const initialCards = loadProductionDependency("./initial-cards", "SetiInitialCards");
-const initialSetup = loadProductionDependency("./initial-setup", "SetiInitialSetup");
-const ai = loadProductionDependency("./ai", "SetiAI");
-const planetReferenceLayout = loadProductionDependency("./planet-reference-layout", "SetiPlanetReferenceLayout");
 const rocketAbility = loadProductionDependency("./abilities/rocket", "SetiAbilityRocket");
 const planetAbility = loadProductionDependency("./abilities/planet", "SetiAbilityPlanet");
 const { createRuleComposition } = loadProductionDependency("./rule-composition", "SetiRuleComposition");
@@ -35,11 +29,6 @@ const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
 const RULESET_VERSION = "seti-runtime-v1";
 const INTERNAL_RULE_SCOPE = Symbol("seti-production-kernel-rule-scope");
 const DEFAULT_FINAL_SCORE_IDS = Object.freeze(["a", "b", "c", "d"]);
-const INDUSTRY_CARD_FILES = Object.freeze([
-  "层云核心.png", "芬威克研究中心.png", "赫利昂联合体.png", "寰宇动力.png",
-  "任务中继站.png", "哨兵探测网络.png", "深空探测.png", "图灵系统.png",
-  "未来跨度研究所.png", "异星实验室.png", "宇宙战略集团.png",
-]);
 
 function hashCounterfactualSeed(seed) {
   const text = String(seed ?? "seti-counterfactual");
@@ -202,6 +191,7 @@ function buildInitialState(options = {}, random = Math.random) {
     seed: options.seed ?? "seti-simulation",
     rngState: clone(options.rngState || { algorithm: "seti-simulation-mulberry32-v1", state: 1 }),
     sequences: {
+      alienEntity: 1,
       card: 1,
       dataToken: 1,
       finalMark: 1,
@@ -211,18 +201,12 @@ function buildInitialState(options = {}, random = Math.random) {
     },
   });
   state.match.decisionVersion = 0;
-  if (options.prepareBrowser === true) {
+  if (options.prepareBrowser === true || options.initialize === true) {
     randomizeBoard(state, random);
     createCardGame(state, random, 4);
-    state.match.initialSetupConfig = {
-      aiDifficulty: options.aiDifficulty || "laughable",
-      industryLabels: clone(options.industryLabels || []),
-    };
-  } else if (options.initialize === true) {
-    initializeProductionGame(state, options, random);
   }
   state.meta.sequences = readSequences(state);
-  return highCouplingStateApi.purifyHighCouplingSlices(state);
+  return state;
 }
 
 function shuffle(items, random) {
@@ -232,13 +216,6 @@ function shuffle(items, random) {
     [result[index], result[pick]] = [result[pick], result[index]];
   }
   return result;
-}
-
-function createSelectionCard(kind, value) {
-  if (kind === "industry") {
-    return { id: `industry:${value}`, kind, label: value.replace(/\.[^.]+$/, ""), width: 1382, height: 1054 };
-  }
-  return { id: `initial:${value}`, kind, label: `初始牌 ${value}`, width: 744, height: 1039 };
 }
 
 function randomizeBoard(workingState, random) {
@@ -276,168 +253,9 @@ function getEarthCoordinate(workingState) {
   return earth ? { x: earth.x, y: earth.y } : { x: 1, y: 1 };
 }
 
-function syncPlanetRockets(workingState) {
-  workingState.pieces.rockets = workingState.pieces.rockets
-    .filter((rocket) => rocket.surface !== "planets-reference");
-  for (const planetId of planetReferenceLayout.PLANET_ORDER) {
-    for (const marker of planetStats.getPlanetOrbitMarkers(workingState.planets, planetId)) {
-      const slot = planetReferenceLayout.getPlanetSlot(planetId, "orbit", marker.sequence);
-      if (!slot) continue;
-      const rocket = {
-        id: stateSequences.take(workingState, "rocket"), playerId: marker.playerId, color: marker.color,
-        referencePlacement: { ...slot, isPlanetMarker: true, playerId: marker.playerId, color: marker.color,
-          referenceOffsetTokenWidths: 0, planetId, kind: "orbit", sequence: marker.sequence },
-      };
-      workingState.pieces.rockets.push(rocket);
-      rockets.placeRocketAtPlanetsReferencePoint(workingState.pieces, rocket.id, {
-        x: slot.x, y: slot.y, width: 1672, height: 941,
-      });
-    }
-  }
-}
-
-function getInitialPairs(cardsToChoose = [], count = 2) {
-  if (count <= 0) return [[]];
-  if (count === 1) return cardsToChoose.map((card) => [card]);
-  const pairs = [];
-  for (let left = 0; left < cardsToChoose.length; left += 1) {
-    for (let right = left + 1; right < cardsToChoose.length; right += 1) {
-      pairs.push([cardsToChoose[left], cardsToChoose[right]]);
-    }
-  }
-  return pairs;
-}
-
-function submitOpeningPlans(workingState, selectedPlans, aiDifficulty, random) {
-  const source = initialSetup.createSource();
-  const setupContext = { state: workingState, random };
-  workingState.match.initialSetupConfig = { aiDifficulty };
-  if (!workingState.match.initialSetup) {
-    const started = source.execute(setupContext, {
-      family: "choose_card",
-      target: { kind: "start_initial_setup" },
-      payload: {},
-    });
-    if (!started?.ok) throw new Error(started?.message || "初始选择启动失败");
-  }
-  for (const selected of selectedPlans) {
-    const selections = [
-      { selectionKind: "industry", cardId: selected.industry.id },
-      ...selected.initialCards.map((card) => ({ selectionKind: "initial", cardId: card.id })),
-    ];
-    for (const selection of selections) {
-      const submitted = source.execute(setupContext, {
-        family: "choose_card",
-        target: { kind: "select_initial_card", ...selection },
-        payload: {},
-      });
-      if (!submitted?.ok) throw new Error(submitted?.message || "初始选择提交失败");
-    }
-    const confirmed = source.execute(setupContext, {
-      family: "choose_card",
-      target: { kind: "confirm_initial_setup" },
-      payload: {},
-    });
-    if (!confirmed?.ok) throw new Error(confirmed?.message || "初始选择确认失败");
-  }
-  syncPlanetRockets(workingState);
-}
-
-function createOpeningObservation(workingState, playerId) {
-  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
-  const publicPlayers = workingState.players.players.map((candidate) => ({
-    id: candidate.id,
-    playerId: candidate.id,
-    resources: clone(candidate.resources || {}),
-    handCount: (candidate.hand || []).length,
-    techState: clone(candidate.techState || {}),
-  }));
-  return ai.outcomeModel.createDecisionObservation({
-    publicState: {
-      match: { terminal: false },
-      players: publicPlayers,
-      board: {
-        rockets: clone(workingState.pieces.rockets || []),
-        aliens: clone(workingState.aliens || {}),
-      },
-    },
-    selfState: {
-      playerId,
-      player: { id: playerId, resources: clone(player?.resources || {}) },
-      hand: clone(player?.hand || []),
-      reservedCards: clone(player?.reservedCards || []),
-    },
-    probeRouteRequirements: buildProbeRouteRequirements(workingState, playerId),
-    terminal: false,
-  }, { seatId: playerId, stateVersion: 0, decisionVersion: 0 });
-}
-
-function chooseInitialSelections(workingState, options, random) {
-  const source = initialSetup.createSource();
-  workingState.match.initialSetupConfig = { aiDifficulty: options.aiDifficulty || "laughable" };
-  const started = source.execute({ state: workingState, random }, {
-    family: "choose_card",
-    target: { kind: "start_initial_setup" },
-    payload: {},
-  });
-  if (!started?.ok) throw new Error(started?.message || "初始选择启动失败");
-  const setupOffers = workingState.match.initialSetup.offersByPlayerId;
-  const playerIds = workingState.match.initialSetup.playerIds;
-  const aiDifficulty = options.aiDifficulty || "laughable";
-  const offers = playerIds.map((playerId) => {
-    const offer = setupOffers[playerId];
-    const industryOptions = offer.industryOptions;
-    const initialOptions = offer.initialOptions;
-    const plans = industryOptions.flatMap((industryCard) => (
-      getInitialPairs(initialOptions, 2).map((initialSelection) => ({
-        industry: industryCard,
-        initialCards: initialSelection,
-      }))
-    ));
-    return { playerId, plans };
-  });
-  const selectedPlans = offers.map((offer) => offer.plans[0]);
-  const rootSequences = readSequences(workingState);
-  const rootRandomState = random.getState?.() ?? null;
-  for (const [playerIndex, offer] of offers.entries()) {
-    const evaluated = offer.plans.map((candidate, planIndex) => {
-      const fork = clone(workingState);
-      const forkPlans = selectedPlans.map((selected, index) => (
-        index === playerIndex ? candidate : selected
-      ));
-      submitOpeningPlans(
-        fork,
-        forkPlans,
-        aiDifficulty,
-        rootRandomState == null
-          ? createCounterfactualRandom(`${options.seed}:setup:${offer.playerId}`)
-          : createCounterfactualRandomFromState(rootRandomState),
-      );
-      const observation = createOpeningObservation(fork, offer.playerId);
-      const evaluation = ai.expectedScoreEvaluator.evaluateSetupProbeGoals(
-        observation,
-        offer.playerId,
-      );
-      return { candidate, evaluation, planIndex };
-    }).sort((left, right) => (
-      ai.expectedScoreEvaluator.compareSetupProbeGoals(left.evaluation, right.evaluation)
-      || left.planIndex - right.planIndex
-    ));
-    selectedPlans[playerIndex] = evaluated[0].candidate;
-  }
-  submitOpeningPlans(workingState, selectedPlans, aiDifficulty, random);
-}
-
-function initializeProductionGame(workingState, options, random) {
-  randomizeBoard(workingState, random);
-  createCardGame(workingState, random, 4);
-  chooseInitialSelections(workingState, options, random);
-  workingState.match.decisionVersion = 1;
-  workingState.meta.sequences = readSequences(workingState);
-}
-
 function readSequences(workingState) {
   return {
+    alienEntity: workingState.meta?.sequences?.alienEntity ?? 1,
     card: workingState.meta?.sequences?.card ?? 1,
     dataToken: workingState.meta?.sequences?.dataToken ?? 1,
     finalMark: workingState.meta?.sequences?.finalMark ?? 1,
@@ -929,10 +747,8 @@ function createProductionHostComposition(options = {}) {
       activePlayerCount: config.activePlayerCount || 4,
       seed: config.seed,
       rngState,
-      aiDifficulty: config.aiDifficulty,
       initialize: hostKind === "simulation" || config.initialize === true,
       prepareBrowser: hostKind === "browser",
-      industryLabels: config.industryLabels || [],
     });
   }
 

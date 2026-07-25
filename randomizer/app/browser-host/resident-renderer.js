@@ -91,21 +91,24 @@
 
     function renderRoundStatus(input) {
       const projection = assertInput(input);
-      const slot = getRenderModel(projection)?.boardChrome?.rotateTokenSlot;
+      const render = getRenderModel(projection);
+      const slot = render?.boardChrome?.rotateTokenSlot;
+      const turn = render?.turnPresentation;
+      if (!turn) throw new TypeError("Resident renderer 缺少 BrowserReadModel turnPresentation");
       if (els.roundStatusToken && slot) {
         els.roundStatusToken.style.setProperty("--rotate-token-x", `${Number(slot.percentX)}%`);
         els.roundStatusToken.style.setProperty("--rotate-token-y", `${Number(slot.percentY)}%`);
         els.roundStatusToken.dataset.slotId = text(slot.id);
       }
       if (els.roundStatusRound) {
-        els.roundStatusRound.textContent = projection.match.terminal
+        els.roundStatusRound.textContent = turn.terminal
           ? "游戏结束"
-          : `第 ${Number(projection.match.round) || 1} 轮`;
+          : `第 ${Number(turn.roundNumber) || 1} 轮`;
       }
       if (els.roundStatusTurn) {
-        els.roundStatusTurn.textContent = projection.match.terminal
+        els.roundStatusTurn.textContent = turn.terminal
           ? "终局计分"
-          : `第 ${Number(projection.match.turn) || 1} 回合`;
+          : `第 ${Number(turn.displayedTurnNumber) || 1} 回合`;
       }
     }
 
@@ -145,8 +148,11 @@
         }
       }
       if (els.opponentStatGrid) {
-        els.opponentStatGrid.replaceChildren(...Object.values(projection.players || {})
-          .map((player) => createPlayerCard(player, player.id === projection.match.currentPlayerId)));
+        els.opponentStatGrid.replaceChildren(...(playerPanels?.players || [])
+          .map((player) => createPlayerCard(
+            player,
+            String(player.id) === String(playerPanels.currentPlayerId),
+          )));
       }
     }
 
@@ -154,13 +160,10 @@
       const projection = assertInput(input);
       if (!els.publicCardRow) return;
       const projectedCards = getRenderModel(projection)?.cardPanels?.publicCards;
-      const fallbackCards = projection.cards?.market || [];
-      const cards = projectedCards || fallbackCards.map((card) => ({
-          id: card?.id || card?.cardId,
-          imageSrc: card?.src || "",
-          label: card?.cardName || card?.id || card?.cardId || "公共牌",
-          empty: !card,
-      }));
+      if (!Array.isArray(projectedCards)) {
+        throw new TypeError("Resident renderer 缺少 BrowserReadModel publicCards");
+      }
+      const cards = projectedCards;
       els.publicCardRow.replaceChildren(...cards.map((card, index) => {
         const slot = document.createElement("div");
         slot.className = "public-card-slot";
@@ -382,8 +385,12 @@
 
     function renderFinalScoring(input) {
       const projection = assertInput(input);
-      const tiles = projection.board?.finalScoring?.tiles || {};
-      const variants = projection.resident?.finalScoring?.tileVariants || {};
+      const presentation = getRenderModel(projection)?.finalScorePresentation;
+      if (!presentation) {
+        throw new TypeError("Resident renderer 缺少 BrowserReadModel finalScorePresentation");
+      }
+      const tiles = presentation.tiles;
+      const variants = presentation.tileVariants;
       const slotPoints = {
         1: { x: 18.5, y: 54.4 },
         2: { x: 40.4, y: 54.4 },

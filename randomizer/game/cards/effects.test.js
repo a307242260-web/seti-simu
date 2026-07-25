@@ -3,6 +3,9 @@ const cardEffects = require("./effects");
 const aomomo = require("../aliens/aomomo");
 const yichangdian = require("../aliens/yichangdian");
 
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
+
 const b1 = { id: "card-b1", cardId: "b_1.webp" };
 assert.equal(cardEffects.getCardModel(b1).cardType, 2);
 assert.equal(cardEffects.buildPlayEffects(b1).length, 2);
@@ -203,7 +206,7 @@ for (let index = 1; index <= 140; index += 1) {
   const deferred = cardEffects.getDeferredCardModel(cardId);
   assert.ok(reference, `${cardId} should have an ender_seti reference mapping`);
   assert.notEqual(Boolean(model), Boolean(deferred), `${cardId} should be implemented/partial or deferred`);
-  assert.equal(cardEffects.getCardMigrationStatus(cardId), "implemented", `${cardId} should be implemented`);
+  assert.ok(cardEffects.getCardModel(cardId), `${cardId} should be implemented`);
   if (model) {
     assert.equal(model.source.referenceId, reference.referenceId);
   } else {
@@ -213,12 +216,12 @@ for (let index = 1; index <= 140; index += 1) {
   }
 }
 
-assert.equal(cardEffects.getCardMigrationStatus("b_11.webp"), "implemented");
-assert.equal(cardEffects.getCardMigrationStatus("b_30.webp"), "implemented");
+assert.ok(cardEffects.getCardModel("b_11.webp"));
+assert.ok(cardEffects.getCardModel("b_30.webp"));
 assert.equal(cardEffects.getCardModel("b_30.webp").endGameScoring.kind, "traceCount");
-assert.equal(cardEffects.getCardMigrationStatus("b_31.webp"), "implemented");
+assert.ok(cardEffects.getCardModel("b_31.webp"));
 assert.equal(cardEffects.getRuntimeCardTypeCode({ cardId: "b_31.webp", cardTypeCode: 2 }, 2), 0);
-assert.equal(cardEffects.getCardMigrationStatus("b_140.webp"), "implemented");
+assert.ok(cardEffects.getCardModel("b_140.webp"));
 assert.equal(cardEffects.getCardReference("b_71.webp").sourceKind, "cards_71");
 assert.equal(cardEffects.getCardModel("b_139.webp").displayRow, "bottom");
 assert.equal(cardEffects.getCardModel("b_139.webp").countsAsType3, false);
@@ -229,7 +232,7 @@ for (let index = 1; index <= 42; index += 1) {
   const model = cardEffects.getCardModel(cardId);
   assert.ok(reference, `${cardId} should have a DLC reference mapping`);
   assert.equal(reference.sourceKind, "dlc_cards", `${cardId} should use DLC source`);
-  assert.equal(cardEffects.getCardMigrationStatus(cardId), "implemented", `${cardId} should be implemented`);
+  assert.ok(cardEffects.getCardModel(cardId), `${cardId} should be implemented`);
   assert.equal(cardEffects.getDeferredCardModel(cardId), null, `${cardId} should not be deferred`);
   assert.ok(model, `${cardId} should have a model`);
   assert.equal(model.source.referenceId, reference.referenceId);
@@ -285,8 +288,6 @@ const dlc27RocketRewardState = [
   { id: 1, playerId: "p1", sectorX: 2, sectorY: 3 },
   { id: 2, color: "red", surface: "solar-board", sectorX: 3, sectorY: 3 },
   { id: 3, playerId: "p2", surface: "solar-board", sectorX: 4, sectorY: 3 },
-  { id: 4, playerId: "p1", surface: "planets-reference", sectorX: 5, sectorY: 3 },
-  { id: 5, playerId: "p1", referencePlacement: { isPlanetMarker: true }, sectorX: 6, sectorY: 3 },
   { id: 6, playerId: "p1", kind: "chong-fossil", surface: "solar-board", sectorX: 7, sectorY: 3 },
   { id: 7, playerId: "p1", kind: "chong-fossil", surface: "solar-board", movementLocked: true, sectorX: 0, sectorY: 3 },
 ];
@@ -526,7 +527,7 @@ assert.equal(cardEffects.collectReadyTasks(saturnPlayer, {
 const b22 = { id: "card-b22", cardId: "b_22.webp" };
 const signalPlayer = { id: "p1", color: "red", reservedCards: [b22] };
 cardEffects.ensureCardEffectState(b22);
-assert.equal(cardEffects.getCardMigrationStatus("b_22.webp"), "implemented");
+assert.ok(cardEffects.getCardModel("b_22.webp"));
 assert.equal(cardEffects.getDeferredCardModel("b_22.webp"), null);
 const b22Effects = cardEffects.buildPlayEffects(b22);
 assert.equal(b22Effects.length, 2);
@@ -793,7 +794,7 @@ assert.equal(cardEffects.collectMatchingTriggers(signalTriggerPlayer, {
 
 for (let index = 26; index <= 70; index += 1) {
   const cardId = `b_${index}.webp`;
-  assert.equal(cardEffects.getCardMigrationStatus(cardId), "implemented", `${cardId} should be implemented`);
+  assert.ok(cardEffects.getCardModel(cardId), `${cardId} should be implemented`);
   assert.equal(cardEffects.getDeferredCardModel(cardId), null, `${cardId} should not be deferred`);
   assert.ok(cardEffects.getCardModel(cardId), `${cardId} should have a model`);
 }
@@ -1019,30 +1020,32 @@ for (const [techType, symbolId] of [
 }
 assert.equal(cardEffects.areAllTriggersConsumed(runezuTechCard), true);
 
-const legacyRunezuTechCard = {
-  id: "legacy-runezu-tech-card",
-  cardId: "runezu_3.webp",
-  runezuTaskProgress: [{ event: "researchTech", symbolId: "symbol_4" }],
+const runezuTaskCard = { id: "runezu-task-card", cardId: "runezu_9.webp" };
+const runezuTaskPlayer = { id: "p1", color: "red", reservedCards: [runezuTaskCard] };
+const runezuTaskState = {
+  runezu: { revealedSlotId: 1 },
+  aliens: {
+    1: {
+      revealed: true,
+      alienId: "符文族",
+      assignedAlienId: "符文族",
+      traces: {
+        pink: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red", extraCount: 0 },
+        yellow: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red", extraCount: 0 },
+        blue: { firstPlaced: true, ownerPlayerId: "p1", ownerPlayerColor: "red", extraCount: 0 },
+      },
+    },
+  },
 };
-cardEffects.ensureCardEffectState(legacyRunezuTechCard);
+const runezuReadyTasks = cardEffects.collectReadyTasks(runezuTaskPlayer, {
+  data: {},
+  planets: {},
+  aliens: runezuTaskState,
+});
+assert.deepEqual(runezuReadyTasks.map((entry) => entry.task.id), ["runezu9-three-traces-task"]);
 assert.deepEqual(
-  cardEffects.getConsumedTriggerIndexes(legacyRunezuTechCard),
-  [1],
-  "legacy Runezu task progress should migrate to generic consumed trigger state",
-);
-assert.equal(
-  cardEffects.collectMatchingTriggers(
-    { id: "p1", color: "red", reservedCards: [legacyRunezuTechCard] },
-    { type: "researchTech", techType: "orange" },
-  ).length,
-  0,
-);
-assert.equal(
-  cardEffects.collectMatchingTriggers(
-    { id: "p1", color: "red", reservedCards: [legacyRunezuTechCard] },
-    { type: "researchTech", techType: "purple" },
-  ).length,
-  1,
+  runezuReadyTasks[0].effects.map((effect) => effect.options.symbolId),
+  ["symbol_6", "symbol_3"],
 );
 
 const batchConsumedTriggers = Object.entries(cardEffects.MODELS).flatMap(([cardId, model]) => (
@@ -1148,7 +1151,7 @@ mixedAllPinkState.aliens[2] = {
     pink: { firstPlaced: true, ownerPlayerColor: "red" },
   },
 };
-assert.equal(aomomo.placeAomomoTrace(mixedAllPinkState, 1, "pink", 2, mixedAllPinkPlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(mixedAllPinkState, 1, "pink", 2, mixedAllPinkPlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectReadyTaskIds(
   mixedAllPinkPlayer,
   { aliens: mixedAllPinkState },
@@ -1221,7 +1224,7 @@ mixedSingleAlienTraceState.aliens[1].traces = {
   yellow: { firstPlaced: true, ownerPlayerColor: "red" },
   pink: { firstPlaced: true, ownerPlayerColor: "red" },
 };
-assert.equal(aomomo.placeAomomoTrace(mixedSingleAlienTraceState, 1, "blue", 2, mixedSingleAlienTracePlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(mixedSingleAlienTraceState, 1, "blue", 2, mixedSingleAlienTracePlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectReadyTaskIds(
   mixedSingleAlienTracePlayer,
   { aliens: mixedSingleAlienTraceState },
@@ -1257,7 +1260,6 @@ assert.deepEqual(collectReadyTaskIds(
 ), ["b68-publicity-task"]);
 
 for (const cardId of ["b_30.webp", "b_31.webp", "b_33.webp", "b_38.webp", "b_43.webp", "b_45.webp", "b_56.webp", "b_63.webp", "b_65.webp", "b_69.webp", "b_70.webp"]) {
-  assert.equal(cardEffects.getCardMigrationStatus(cardId), "implemented");
   assert.ok(cardEffects.getCardModel(cardId), `${cardId} should stay modeled`);
 }
 
@@ -1342,7 +1344,7 @@ const aomomoLandingPlayer = {
 };
 const aomomoLandingState = createAomomoAlienState(aomomoLandingPlayer);
 assert.equal(collectAomomoReadyTaskIds(aomomoLandingPlayer, aomomoLandingState).length, 0);
-assert.equal(aomomo.addLandingMarker(aomomoLandingState, aomomoLandingPlayer).ok, true);
+assert.equal(aomomo.addLandingMarker(aomomoLandingState, aomomoLandingPlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectAomomoReadyTaskIds(aomomoLandingPlayer, aomomoLandingState), ["aomomo0-land"]);
 
 const aomomoSamePlanetCard = { id: "card-b95-aomomo", cardId: "b_95.webp" };
@@ -1353,8 +1355,8 @@ const aomomoSamePlanetPlayer = {
   reservedCards: [aomomoSamePlanetCard],
 };
 const aomomoSamePlanetState = createAomomoAlienState(aomomoSamePlanetPlayer);
-assert.equal(aomomo.addOrbitMarker(aomomoSamePlanetState, aomomoSamePlanetPlayer).ok, true);
-assert.equal(aomomo.addLandingMarker(aomomoSamePlanetState, aomomoSamePlanetPlayer).ok, true);
+assert.equal(aomomo.addOrbitMarker(aomomoSamePlanetState, aomomoSamePlanetPlayer, nextAlienIdentity()).ok, true);
+assert.equal(aomomo.addLandingMarker(aomomoSamePlanetState, aomomoSamePlanetPlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectAomomoReadyTaskIds(aomomoSamePlanetPlayer, aomomoSamePlanetState), ["b95-same-planet-orbit-land-task"]);
 
 const aomomoOrbitCountCard = { id: "card-b104-aomomo", cardId: "b_104.webp" };
@@ -1365,7 +1367,7 @@ const aomomoOrbitCountPlayer = {
   reservedCards: [aomomoOrbitCountCard],
 };
 const aomomoOrbitCountState = createAomomoAlienState(aomomoOrbitCountPlayer);
-assert.equal(aomomo.addOrbitMarker(aomomoOrbitCountState, aomomoOrbitCountPlayer).ok, true);
+assert.equal(aomomo.addOrbitMarker(aomomoOrbitCountState, aomomoOrbitCountPlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(cardEffects.collectReadyTasks(aomomoOrbitCountPlayer, {
   data: {},
   aliens: aomomoOrbitCountState,
@@ -1385,7 +1387,7 @@ const aomomoLandingCountPlayer = {
 };
 const aomomoLandingCountState = createAomomoAlienState(aomomoLandingCountPlayer);
 for (let index = 0; index < 3; index += 1) {
-  assert.equal(aomomo.addLandingMarker(aomomoLandingCountState, aomomoLandingCountPlayer).ok, true);
+  assert.equal(aomomo.addLandingMarker(aomomoLandingCountState, aomomoLandingCountPlayer, nextAlienIdentity()).ok, true);
 }
 assert.deepEqual(collectAomomoReadyTaskIds(aomomoLandingCountPlayer, aomomoLandingCountState), ["b116-landing-count-task"]);
 
@@ -1408,9 +1410,9 @@ const aomomoTraceSetPlayer = {
   reservedCards: [aomomo3],
 };
 const aomomoTraceSetState = createAomomoAlienState(aomomoTraceSetPlayer);
-assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "pink", 2, aomomoTraceSetPlayer).ok, true);
-assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "yellow", 3, aomomoTraceSetPlayer).ok, true);
-assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "blue", 4, aomomoTraceSetPlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "pink", 2, aomomoTraceSetPlayer, nextAlienIdentity()).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "yellow", 3, aomomoTraceSetPlayer, nextAlienIdentity()).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "blue", 4, aomomoTraceSetPlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectAomomoReadyTaskIds(aomomoTraceSetPlayer, aomomoTraceSetState), ["aomomo3-all-trace-types"]);
 
 const aomomo5 = { id: "card-aomomo-5", cardId: "aomomo_5.webp", aomomoCard: true };
@@ -1458,7 +1460,7 @@ aomomoMixedTraceState.aliens[1].traces = {
   pink: { firstPlaced: true, ownerPlayerColor: "white", extraCount: 0 },
   yellow: { firstPlaced: true, ownerPlayerColor: "white", extraCount: 0 },
 };
-assert.equal(aomomo.placeAomomoTrace(aomomoMixedTraceState, 1, "blue", 2, aomomoMixedTracePlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoMixedTraceState, 1, "blue", 2, aomomoMixedTracePlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectAomomoReadyTaskIds(aomomoMixedTracePlayer, aomomoMixedTraceState), ["aomomo3-all-trace-types"]);
 
 const yichangdian1 = { id: "card-yichangdian-1", cardId: "yichangdian_1.webp", yichangdianCard: true };
@@ -1495,7 +1497,7 @@ const aomomoFossilTracePlayer = {
 };
 const aomomoFossilTraceState = createAomomoAlienState(aomomoFossilTracePlayer);
 assert.equal(collectAomomoReadyTaskIds(aomomoFossilTracePlayer, aomomoFossilTraceState).length, 0);
-assert.equal(aomomo.placeAomomoTrace(aomomoFossilTraceState, 1, "pink", 1, aomomoFossilTracePlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoFossilTraceState, 1, "pink", 1, aomomoFossilTracePlayer, nextAlienIdentity()).ok, true);
 assert.deepEqual(collectAomomoReadyTaskIds(aomomoFossilTracePlayer, aomomoFossilTraceState), ["aomomo9-fossil-spending-trace"]);
 
 const b31Effects = cardEffects.buildPlayEffects({ cardId: "b_31.webp" });

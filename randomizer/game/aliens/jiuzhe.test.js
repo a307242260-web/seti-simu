@@ -19,16 +19,18 @@ const white = {
   techState: { ownedTiles: { purple1: true, purple2: true, purple3: true }, blueBoardSlots: {} },
   completedTaskCount: 5,
 };
+let alienSequence = 1;
+const nextAlienIdentity = () => ({ sequence: alienSequence++ });
 
-let result = jiuzhe.placeJiuzheTrace(alienState, 1, "pink", 1, white);
+let result = jiuzhe.placeJiuzheTrace(alienState, 1, "pink", 1, white, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(result.reward.gain.score, 3);
 assert.equal(jiuzhe.getThreat(alienState, white), 1);
 
-result = jiuzhe.placeJiuzheTrace(alienState, 1, "pink", 1, white);
+result = jiuzhe.placeJiuzheTrace(alienState, 1, "pink", 1, white, nextAlienIdentity());
 assert.equal(result.ok, false, "same Jiuzhe trace slot cannot be occupied twice");
 
-result = jiuzhe.placeJiuzheTrace(alienState, 1, "yellow", 2, white);
+result = jiuzhe.placeJiuzheTrace(alienState, 1, "yellow", 2, white, nextAlienIdentity());
 assert.equal(result.ok, true);
 assert.equal(result.reward.pickCard, true);
 assert.equal(jiuzhe.getThreat(alienState, white), 3);
@@ -177,11 +179,11 @@ assert.equal(
   jiuzhe.ensureJiuzheState(progressAlienState).revealedSlotId = 1;
   for (const position of [1, 2, 3, 4, 5]) {
     assert.equal(
-      jiuzhe.placeJiuzheTrace(progressAlienState, 1, "pink", position, progressPlayer).ok,
+      jiuzhe.placeJiuzheTrace(progressAlienState, 1, "pink", position, progressPlayer, nextAlienIdentity()).ok,
       true,
     );
   }
-  assert.equal(jiuzhe.placeJiuzheTrace(progressAlienState, 1, "yellow", 1, progressPlayer).ok, true);
+  assert.equal(jiuzhe.placeJiuzheTrace(progressAlienState, 1, "yellow", 1, progressPlayer, nextAlienIdentity()).ok, true);
 
   progressAlienState.aliens[2].traces.pink = {
     firstPlaced: true,

@@ -207,7 +207,7 @@
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function getPlayerId(player) {
@@ -417,18 +417,10 @@
     return count;
   }
 
-  function countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context = {}, kind = "all") {
-    const panelCount = countAomomoMarkers(player, context, kind);
-    if (panelCount > 0) return panelCount;
-    const aomomoModule = getAomomoModule();
-    const planetId = aomomoModule?.PLANET_ID || "aomomo";
-    return countPlanetRecordMarkers(player, planetsState?.planets?.[planetId], kind);
-  }
-
   function countPlanetOrbitOrLand(player, planetsState, planetId, context = {}) {
     if (planetId === "pluto") return countPlutoMarkers(player, context, "all");
     if (isAomomoPlanetId(planetId)) {
-      return countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context, "all");
+      return countAomomoMarkers(player, context, "all");
     }
     const record = planetsState?.planets?.[planetId];
     return countPlanetRecordMarkers(player, record, "all");
@@ -440,7 +432,7 @@
       if (isAomomoPlanetId(planetId)) return total;
       return total + countPlanetOrbitOrLand(player, planetsState, planetId, context);
     }, countPlutoMarkers(player, context, "all")
-      + countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context, "all"));
+      + countAomomoMarkers(player, context, "all"));
   }
 
   function countPlanetLandingPairs(player, planetsState, minCount = 2, context = {}) {
@@ -448,7 +440,7 @@
     const playerKeys = getPlayerKeys(player);
     const required = Math.max(1, Math.round(Number(minCount) || 2));
     let count = countPlutoMarkers(player, context, "land") >= required ? 1 : 0;
-    if (countAomomoOrLegacyPlanetRecordMarkers(player, planetsState, context, "land") >= required) count += 1;
+    if (countAomomoMarkers(player, context, "land") >= required) count += 1;
     for (const [planetId, record] of Object.entries(planets)) {
       if (isAomomoPlanetId(planetId)) continue;
       const landingCount = (record?.landingMarkers || []).filter((marker) => (

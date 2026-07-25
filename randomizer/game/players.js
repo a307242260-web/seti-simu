@@ -77,7 +77,6 @@
     availableData: 0,
     additionalPublicScan: 0,
   });
-  const CARD_BACK_SRC = "../assets/cards/card_back.png";
   let scoreGainListener = null;
 
   function clamp(value, min, max) {
@@ -94,42 +93,15 @@
     return PLAYER_COLORS[key] ? key : DEFAULT_PLAYER_COLOR;
   }
 
-  function createHandCard(playerId, index) {
-    return {
-      id: `hand-card-${playerId}-${index + 1}`,
-      src: CARD_BACK_SRC,
-      faceUp: false,
-    };
-  }
-
   function normalizeHandCard(card, index) {
-    const source = card || {};
-    const normalized = {
-      id: source.id || `hand-card-${index}`,
-      src: source.src || CARD_BACK_SRC,
-      faceUp: Boolean(source.faceUp),
-    };
-    if (source.cardId) normalized.cardId = source.cardId;
-    if (source.set) normalized.set = source.set;
-    if (source.cardName) normalized.cardName = source.cardName;
-    if (Number.isInteger(source.price)) normalized.price = source.price;
-    if (Number.isInteger(source.cardTypeCode)) normalized.cardTypeCode = source.cardTypeCode;
-    if (Number.isInteger(source.discardActionCode)) normalized.discardActionCode = source.discardActionCode;
-    if (Number.isInteger(source.scanActionCode)) normalized.scanActionCode = source.scanActionCode;
-    if (Number.isInteger(source.incomeCode)) normalized.incomeCode = source.incomeCode;
-    if (Number.isInteger(source.cardIndex)) {
-      normalized.cardIndex = source.cardIndex;
+    if (!card || typeof card !== "object" || Array.isArray(card) || !card.id) {
+      throw new TypeError(`手牌 ${index} 必须是带全局唯一 id 的 canonical card instance`);
     }
-    return normalized;
+    return structuredClone(card);
   }
 
-  function normalizeHand(sourceHand, handSize, playerId) {
-    if (Array.isArray(sourceHand) && sourceHand.length > 0) {
-      return sourceHand.map(normalizeHandCard);
-    }
-
-    const count = Math.max(0, Math.round(normalizeNumber(handSize, 0)));
-    return Array.from({ length: count }, (_, index) => createHandCard(playerId, index));
+  function normalizeHand(sourceHand) {
+    return Array.isArray(sourceHand) ? sourceHand.map(normalizeHandCard) : [];
   }
 
   function syncHandSize(player) {
@@ -226,7 +198,7 @@
     const orbitCount = normalizeNumber(source.orbitCount, 0);
     const resources = normalizeResources(source.resources);
     const income = normalizeIncome(source.income);
-    const hand = normalizeHand(source.hand, resources.handSize, playerId);
+    const hand = normalizeHand(source.hand);
     const reservedCards = Array.isArray(source.reservedCards)
       ? source.reservedCards.map(normalizeHandCard)
       : [];
@@ -236,7 +208,6 @@
     return {
       id: playerId,
       color,
-      colorLabel: definition.label,
       name: source.name || `${definition.label}玩家`,
       resources,
       income,
@@ -348,12 +319,7 @@
       );
     }
     if (reward.handSize != null) {
-      const addCount = Math.max(0, Math.round(reward.handSize));
-      const firstIndex = player.hand.length;
-      for (let index = 0; index < addCount; index += 1) {
-        player.hand.push(createHandCard(player.id, firstIndex + index));
-      }
-      syncHandSize(player);
+      throw new TypeError("手牌不能作为普通资源增加；必须由 Card Domain 创建 canonical card instance");
     }
     if (typeof scoreGainListener === "function" && reward.score != null) {
       const afterScore = Number(player?.resources?.score) || 0;
@@ -419,7 +385,7 @@
           options.blindDraw(player);
         }
       } else {
-        gainResources(player, { handSize: handCount });
+        throw new TypeError("盲抽收入需要 Card Domain blindDraw");
       }
     }
   }
@@ -490,21 +456,14 @@
       ? source.players
       : [source.currentPlayer || source.player || { color: DEFAULT_PLAYER_COLOR }];
     const normalizedPlayers = sourcePlayers.map(createPlayer);
-    const requestedCurrentPlayerId = source.currentPlayerId
-      || normalizedPlayers.find((player) => player.color === normalizePlayerColor(source.currentPlayerColor))?.id
-      || normalizedPlayers[0].id;
-    const currentPlayer = normalizedPlayers.find((player) => player.id === requestedCurrentPlayerId)
-      || normalizedPlayers[0];
-
     return {
       players: normalizedPlayers,
-      currentPlayerId: currentPlayer.id,
     };
   }
 
   function getCurrentPlayer(playersState, currentPlayerId = null) {
     if (!playersState || !Array.isArray(playersState.players)) return null;
-    const resolvedPlayerId = currentPlayerId ?? playersState.currentPlayerId ?? null;
+    const resolvedPlayerId = currentPlayerId ?? null;
     return playersState.players.find((player) => player.id === resolvedPlayerId)
       || playersState.players[0]
       || null;
@@ -521,7 +480,6 @@
     RESOURCE_LIMITS,
     DEFAULT_RESOURCES,
     DEFAULT_INCOME,
-    CARD_BACK_SRC,
     normalizePlayerColor,
     normalizeResources,
     normalizeIncome,

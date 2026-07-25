@@ -206,10 +206,8 @@
       revealedByPlayerId: null,
       revealedByPlayerColor: null,
       traceSlotsByAlienSlotId: {},
-      nextTraceSequence: 1,
       displayedCardIndex: null,
       cardDeck: CARD_DEFINITIONS.map((card) => card.index),
-      nextCardSequence: 1,
       revealInitialized: false,
       fossilsById: {},
       planetFossilIds: {
@@ -230,8 +228,6 @@
     const chong = alienState.chong;
     if (!chong.traceSlotsByAlienSlotId) chong.traceSlotsByAlienSlotId = {};
     if (!Array.isArray(chong.cardDeck)) chong.cardDeck = CARD_DEFINITIONS.map((card) => card.index);
-    if (!Number.isFinite(Number(chong.nextTraceSequence))) chong.nextTraceSequence = 1;
-    if (!Number.isFinite(Number(chong.nextCardSequence))) chong.nextCardSequence = 1;
     if (typeof chong.revealInitialized !== "boolean") chong.revealInitialized = false;
     if (!chong.fossilsById) chong.fossilsById = {};
     if (!chong.planetFossilIds) chong.planetFossilIds = { jupiter: [], saturn: [] };
@@ -258,15 +254,15 @@
   }
 
   function getPlayerKey(player) {
-    return player?.id || player?.playerId || player?.color || player?.playerColor || null;
+    return player?.id || player?.color || null;
   }
 
   function getPlayerColor(player) {
-    return player?.color || player?.playerColor || null;
+    return player?.color || null;
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
+    return new Set([player?.id, player?.color].filter(Boolean));
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
@@ -325,7 +321,7 @@
     if (traceType === "blue" && LOCKED_BLUE_POSITIONS.includes(normalizedPosition) && !hasPanelFossilAtPosition(alienState, normalizedPosition)) {
       return { ok: false, message: `虫族蓝色 ${normalizedPosition} 号位没有化石` };
     }
-    if (traceType === "blue" && !options.debugOnly && !isBluePositionUnlocked(alienState, normalizedPosition)) {
+    if (traceType === "blue" && !isBluePositionUnlocked(alienState, normalizedPosition)) {
       return { ok: false, message: `虫族蓝色 ${normalizedPosition} 号位尚未解锁` };
     }
     const grid = getTraceGrid(alienState, alienSlotId) || ensureTraceGrid(alienState, alienSlotId);
@@ -337,18 +333,17 @@
 
   function createTraceEntry(alienState, player, traceType, position, options = {}) {
     const chong = ensureChongState(alienState);
-    const sequence = options.sequence || chong.nextTraceSequence;
-    chong.nextTraceSequence = Math.max(chong.nextTraceSequence, sequence + 1);
+    const sequence = Number(options.sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("虫族痕迹需要 canonical alienEntity sequence");
+    }
     return {
       traceType,
       position,
       sequence,
-      playerId: player?.id || player?.playerId || null,
+      playerId: player?.id || null,
       playerColor: getPlayerColor(player),
-      playerLabel: player?.colorLabel || player?.name || player?.playerLabel || null,
-      debugOnly: Boolean(options.debugOnly),
       rewardApplied: Boolean(options.rewardApplied),
-      placedAt: options.placedAt || Date.now(),
     };
   }
 
@@ -384,7 +379,7 @@
   }
 
   function placeChongTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
-    if (!isChongRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
+    if (!isChongRevealedSlot(alienState, alienSlotId)) {
       return { ok: false, message: "虫族尚未揭示，不能放置虫族痕迹" };
     }
 
@@ -393,11 +388,9 @@
 
     const normalizedPosition = placementCheck.position;
     const grid = ensureTraceGrid(alienState, alienSlotId);
-    const reward = options.debugOnly ? null : getTraceReward(alienState, traceType, normalizedPosition);
+    const reward = getTraceReward(alienState, traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
-      debugOnly: options.debugOnly,
-      rewardApplied: Boolean(!options.debugOnly && reward),
-      placedAt: options.placedAt,
+      rewardApplied: Boolean(reward),
       sequence: options.sequence,
     });
     grid[traceType][normalizedPosition] = entry;
@@ -457,7 +450,15 @@
     return `${FOSSIL_BASE_PATH}/${fossilId}.png`;
   }
 
-  function createAlienCard(index, sequence = 0) {
+  function definitionName(card) {
+    return getCardDefinition(card)?.cardName || card?.cardId || "未知卡牌";
+  }
+
+  function createAlienCard(index, sequence) {
+    sequence = Number(sequence);
+    if (!Number.isSafeInteger(sequence) || sequence < 1) {
+      throw new TypeError("虫族卡牌需要 canonical alienEntity sequence");
+    }
     const definition = CARD_BY_INDEX[Math.round(Number(index))];
     if (!definition) return null;
     return {
@@ -465,8 +466,6 @@
       cardId: definition.cardId,
       alienCardId: definition.index,
       set: "alien:虫",
-      cardName: definition.cardName,
-      src: getCardSrc(definition.index),
       faceUp: true,
       price: definition.price,
       cardTypeCode: definition.cardTypeCode,
@@ -486,24 +485,22 @@
     return index;
   }
 
-  function takeDisplayedCard(alienState, random = Math.random) {
+  function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const chong = ensureChongState(alienState);
     if (chong.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    const card = createAlienCard(chong.displayedCardIndex, chong.nextCardSequence);
-    chong.nextCardSequence += 1;
+    const card = createAlienCard(chong.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `获得虫族牌：${card.cardName}` : "没有可获得的虫族牌" };
+    return { ok: Boolean(card), card, message: card ? `获得虫族牌：${definitionName(card)}` : "没有可获得的虫族牌" };
   }
 
-  function blindDrawCard(alienState, random = Math.random) {
+  function blindDrawCard(alienState, random = Math.random, options = {}) {
     const chong = ensureChongState(alienState);
     if (!chong.cardDeck.length) chong.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     const pickIndex = Math.floor(random() * chong.cardDeck.length);
     const [index] = chong.cardDeck.splice(pickIndex, 1);
-    const card = createAlienCard(index, chong.nextCardSequence);
-    chong.nextCardSequence += 1;
+    const card = createAlienCard(index, options.sequence);
     if (chong.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
-    return { ok: Boolean(card), card, message: card ? `盲抽虫族牌：${card.cardName}` : "没有可盲抽的虫族牌" };
+    return { ok: Boolean(card), card, message: card ? `盲抽虫族牌：${definitionName(card)}` : "没有可盲抽的虫族牌" };
   }
 
   function createFossil(fossilId, location, planetId = null) {
@@ -570,23 +567,6 @@
       fossils,
       message: `虫族已揭示：木星/土星各放置 3 枚化石，面板展示 ${fossils.panel}`,
     };
-  }
-
-  function seedDebugTraceGrid(alienState, alienSlotId, player) {
-    ensureChongState(alienState);
-    delete alienState.chong.traceSlotsByAlienSlotId[String(alienSlotId)];
-    ensureTraceGrid(alienState, alienSlotId);
-    const placed = [];
-    for (const traceType of TRACE_TYPES) {
-      for (const position of getPositionsForTraceType(traceType)) {
-        const result = placeChongTrace(alienState, alienSlotId, traceType, position, player, {
-          debugOnly: true,
-          placedAt: 0,
-        });
-        if (result.ok) placed.push(result.entry);
-      }
-    }
-    return placed;
   }
 
   function isChongCard(card) {
@@ -764,7 +744,6 @@
       destinationPlanetId: fossil.completedDestinationPlanetId,
       cardId: fossil.completedByCardId,
       bluePosition: unlock.position || null,
-      completedAt: Date.now(),
     });
     return {
       ok: true,
@@ -952,7 +931,6 @@
     getTraceEntries,
     getPositionsForTraceType,
     initializeChongReveal,
-    seedDebugTraceGrid,
     getCardSrc,
     getFossilSrc,
     createAlienCard,

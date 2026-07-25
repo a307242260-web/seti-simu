@@ -24,13 +24,31 @@ function createSeededRandom(seed) {
 
 function finishOpening(kernel) {
   assert.equal(kernel.composition.inputPort.beginDrain().ok, true);
-  for (let step = 0; step < 30 && kernel.composition.inspect().phase === "awaiting_input"; step += 1) {
+  const progressByPlayer = new Map();
+  for (let step = 0; step < 50 && kernel.composition.inspect().phase === "awaiting_input"; step += 1) {
     const decision = kernel.composition.inspect().session.decision;
+    const progress = progressByPlayer.get(decision.ownerId)
+      || { industry: false, initialIds: new Set() };
+    let choice = decision.choices.find((candidate) => candidate.target?.kind === "start_initial_setup")
+      || decision.choices.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+    if (!choice && !progress.industry) {
+      choice = decision.choices.find((candidate) => candidate.target?.selectionKind === "industry");
+      if (choice) progress.industry = true;
+    }
+    if (!choice && progress.initialIds.size < 2) {
+      choice = decision.choices.find((candidate) => (
+        candidate.target?.selectionKind === "initial"
+        && !progress.initialIds.has(candidate.target.cardId)
+      ));
+      if (choice) progress.initialIds.add(choice.target.cardId);
+    }
+    choice = choice || decision.choices[0];
+    progressByPlayer.set(decision.ownerId, progress);
     const submitted = kernel.composition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       ownerId: decision.ownerId,
-      choice: decision.choices[0],
+      choice,
     });
     assert.equal(submitted.ok, true, `opening Decision ${step} 必须可提交`);
   }
@@ -49,7 +67,10 @@ function finishOpening(kernel) {
 let scenarioCardSequence = 0;
 function createCard(cardInput) {
   scenarioCardSequence += 1;
-  const card = cards.createCardInstance(cards.getCatalogEntryByInput(cardInput), `scenario-${scenarioCardSequence}`);
+  const card = cards.createCardInstance(
+    cards.CARD_CATALOG.find((entry) => entry.card_id === cardInput),
+    `scenario-${scenarioCardSequence}`,
+  );
   delete card.cardName;
   delete card.src;
   return card;
@@ -238,6 +259,37 @@ for (const entry of kernel.actionContract.coverage()) {
 assert.equal(kernel.newGame(config).ok, true);
 const openingDrain = kernel.composition.inputPort.beginDrain();
 assert.equal(openingDrain.ok, true, JSON.stringify(openingDrain));
+{
+  const progressByPlayer = new Map();
+  for (let guard = 0; guard < 20; guard += 1) {
+    const current = kernel.composition.inspect();
+    const choices = current.session?.decision?.choices || [];
+    if (choices.some((choice) => choice.family === "choose_payment")) break;
+    const actorId = current.session?.decision?.ownerId;
+    const progress = progressByPlayer.get(actorId) || { industry: false, initialIds: new Set() };
+    let choice = choices.find((candidate) => candidate.target?.kind === "start_initial_setup")
+      || choices.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+    if (!choice && !progress.industry) {
+      choice = choices.find((candidate) => candidate.target?.selectionKind === "industry");
+      if (choice) progress.industry = true;
+    }
+    if (!choice && progress.initialIds.size < 2) {
+      choice = choices.find((candidate) => (
+        candidate.target?.selectionKind === "initial"
+        && !progress.initialIds.has(candidate.target.cardId)
+      ));
+      if (choice) progress.initialIds.add(choice.target.cardId);
+    }
+    assert.ok(choice, "初始选择必须提供下一条标准 action");
+    progressByPlayer.set(actorId, progress);
+    assert.equal(kernel.composition.inputPort.submitDecision({
+      decisionId: current.session.decision.decisionId,
+      decisionVersion: current.session.decision.decisionVersion,
+      ownerId: current.session.decision.ownerId,
+      choice,
+    }).ok, true);
+  }
+}
 const inspection = kernel.composition.inspect();
 const openingAction = inspection.session.decision.choices.find(
   (choice) => choice.family === "choose_payment",
@@ -436,7 +488,7 @@ for (const family of ["scan", "place_data"]) {
   });
   assert.equal(cardKernel.newGame(cardConfig).ok, true);
   finishOpening(cardKernel);
-  const directCard = createCard("dlc_10");
+  const directCard = createCard("dlc_10.png");
   const directScenario = restoreScenario(cardKernel, (state, player) => {
     removeCardDefinitions(state, [directCard.cardId]);
     player.resources.credits = 20;
@@ -463,8 +515,8 @@ for (const family of ["scan", "place_data"]) {
   assert.equal(directPlayer.reservedCards.some((card) => card.id === directCard.id), true,
     "3 型牌实体必须进入保留区");
 
-  const decisionCard = createCard("dlc_2");
-  const cornerCard = createCard("b_3");
+  const decisionCard = createCard("dlc_2.png");
+  const cornerCard = createCard("b_3.webp");
   const decisionScenario = restoreScenario(cardKernel, (state, player) => {
     removeCardDefinitions(state, [decisionCard.cardId, cornerCard.cardId]);
     player.resources.credits = 20;

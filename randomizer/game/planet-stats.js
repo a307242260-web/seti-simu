@@ -58,25 +58,6 @@
     };
   }
 
-  function getOwnerKeys(ref = {}) {
-    const player = ref.player ? normalizePlayer(ref.player) : null;
-    return new Set([
-      ref.playerId,
-      ref.color,
-      ref.playerColor,
-      player?.id,
-      player?.color,
-    ].filter(Boolean));
-  }
-
-  function markerMatchesOwner(marker, ref = {}) {
-    const ownerKeys = getOwnerKeys(ref);
-    if (!ownerKeys.size) return true;
-    return ownerKeys.has(marker?.playerId)
-      || ownerKeys.has(marker?.color)
-      || ownerKeys.has(marker?.playerColor);
-  }
-
   function getPlanetMarkerDisplayLimit(planetId, kind) {
     return Math.max(0, planetReferenceLayout.getPlanetSlotCount(planetId, kind));
   }
@@ -158,30 +139,6 @@
     return { ok: true, marker: projected, message: null };
   }
 
-  function removePlanetOrbitMarker(state, planetId, markerRef = {}) {
-    const record = getPlanetRecord(state, planetId);
-    if (!record) return { ok: false, marker: null, message: "星球不存在" };
-    const markerIndex = record.orbitMarkers.findIndex((marker, index) => (
-      (markerRef.sequence == null || index + 1 === Number(markerRef.sequence))
-      && markerMatchesOwner(marker, markerRef)
-    ));
-    if (markerIndex < 0) return { ok: false, marker: null, message: "没有可移除的环绕标记" };
-    const [marker] = record.orbitMarkers.splice(markerIndex, 1);
-    return { ok: true, marker: projectMarker(marker, markerIndex + 1, Infinity), message: "已移除环绕标记" };
-  }
-
-  function removePlanetLandingMarker(state, planetId, markerRef = {}) {
-    const record = getPlanetRecord(state, planetId);
-    if (!record) return { ok: false, marker: null, message: "星球不存在" };
-    const markerIndex = record.landingMarkers.findIndex((marker, index) => (
-      (markerRef.sequence == null || index + 1 === Number(markerRef.sequence))
-      && markerMatchesOwner(marker, markerRef)
-    ));
-    if (markerIndex < 0) return { ok: false, marker: null, message: "没有可移除的登陆标记" };
-    const [marker] = record.landingMarkers.splice(markerIndex, 1);
-    return { ok: true, marker: projectMarker(marker, markerIndex + 1, Infinity), message: "已移除登陆标记" };
-  }
-
   function getPlanetOrbitCount(state, planetId) {
     return getPlanetRecord(state, planetId)?.orbitMarkers?.length || 0;
   }
@@ -249,30 +206,8 @@
     return { ok: true, marker: projected, message: null };
   }
 
-  function removeSatelliteLandingMarker(state, planetId, satelliteId, markerRef = {}) {
-    const record = getPlanetRecord(state, planetId);
-    if (!record) return { ok: false, marker: null, message: "星球不存在" };
-    const markerIndex = record.satelliteLandings.findIndex((marker) => (
-      marker.satelliteId === satelliteId && markerMatchesOwner(marker, markerRef)
-    ));
-    if (markerIndex < 0) return { ok: false, marker: null, message: "没有可移除的卫星登陆标记" };
-    const [marker] = record.satelliteLandings.splice(markerIndex, 1);
-    return { ok: true, marker, message: "已移除卫星登陆标记" };
-  }
-
   function getSatelliteLandingMarkers(state, planetId) {
     return [...(getPlanetRecord(state, planetId)?.satelliteLandings || [])];
-  }
-
-  function formatPlanetStatsLines(state) {
-    return PLANET_IDS.map((planetId) => {
-      const planet = layout.PLANETS[planetId];
-      const record = getPlanetRecord(state, planetId) || createEmptyPlanetRecord();
-      const name = planet?.name || planetId;
-      const satelliteCount = record.satelliteLandings.length;
-      const satelliteText = satelliteCount ? ` 卫星登陆=${satelliteCount}` : "";
-      return `${name} 环绕=${record.orbitMarkers.length} 登陆=${record.landingMarkers.length}${satelliteText}`;
-    });
   }
 
   return Object.freeze({
@@ -283,8 +218,6 @@
     canAddLandingMarker,
     addPlanetOrbitMarker,
     addPlanetLandingMarker,
-    removePlanetOrbitMarker,
-    removePlanetLandingMarker,
     getPlanetOrbitCount,
     getPlanetLandingCount,
     getPlanetOrbitMarkers,
@@ -293,8 +226,6 @@
     getAvailableSatellitesForLanding,
     canLandOnSatellite,
     addSatelliteLandingMarker,
-    removeSatelliteLandingMarker,
     getSatelliteLandingMarkers,
-    formatPlanetStatsLines,
   });
 });
