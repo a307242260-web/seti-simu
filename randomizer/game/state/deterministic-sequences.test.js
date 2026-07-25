@@ -6,14 +6,12 @@ const players = require("../players");
 const finalScoring = require("../final-scoring");
 const dataState = require("../data/state");
 const nebulaState = require("../data/nebula-state");
-const history = require("../history/action-history");
 
 const scalarProviders = [
   [cards.getNextCardInstanceSequence, cards.restoreNextCardInstanceSequence],
   [players.getNextHandCardSequence, players.restoreNextHandCardSequence],
   [finalScoring.getNextFinalMarkSequence, finalScoring.restoreNextFinalMarkSequence],
   [dataState.getNextDataTokenSequence, dataState.restoreNextDataTokenSequence],
-  [history.getNextHistoryStepSequence, history.restoreNextHistoryStepSequence],
 ];
 
 for (const [read, restore] of scalarProviders) {

@@ -21,7 +21,6 @@ const tech = loadProductionDependency("./tech", "SetiTech");
 const industry = loadProductionDependency("./industry", "SetiIndustry");
 const aliens = loadProductionDependency("./aliens", "SetiAliens");
 const finalScoring = loadProductionDependency("./final-scoring", "SetiFinalScoring");
-const actionHistory = loadProductionDependency("./history/action-history", "SetiActionHistory");
 const initialCards = loadProductionDependency("./initial-cards", "SetiInitialCards");
 const initialSetup = loadProductionDependency("./initial-setup", "SetiInitialSetup");
 const ai = loadProductionDependency("./ai", "SetiAI");
@@ -211,7 +210,7 @@ function createModules() {
 function createWorkingState(options = {}, random = Math.random) {
   restoreSequences({
     actionLog: 1, finalMark: 1, handCard: 1,
-    historyStep: 1, nebulaReplacement: 1, nebulaToken: 1, rocket: 1,
+    nebulaReplacement: 1, nebulaToken: 1, rocket: 1,
   });
   const state = initialGameStateApi.createSessionState(createModules(), {
     defaultInitialPlayerColor: players.DEFAULT_PLAYER_COLOR,
@@ -470,7 +469,6 @@ function readSequences(workingState) {
     dataToken: workingState.meta?.sequences?.dataToken ?? data.getNextDataTokenSequence(),
     finalMark: finalScoring.getNextFinalMarkSequence(),
     handCard: players.getNextHandCardSequence(),
-    historyStep: actionHistory.getNextHistoryStepSequence(),
     nebulaReplacement: nebulaSequences.nebulaReplacement || 1,
     nebulaToken: nebulaSequences.nebulaToken || 1,
     rocket: workingState.rocketState.nextRocketId || 1,
@@ -486,7 +484,6 @@ function restoreSequences(sequences = {}) {
     nebulaReplacement: sequences.nebulaReplacement || 1,
     nebulaToken: sequences.nebulaToken || 1,
   });
-  actionHistory.restoreNextHistoryStepSequence(sequences.historyStep || 1);
 }
 
 function sequenceSnapshot(workingState) {

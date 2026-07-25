@@ -139,15 +139,6 @@
           actionId: ACTION_ID,
           abilityId: "researchTechSelect",
           undoable: true,
-          commands: [{
-            label: "选择科技片",
-            describe: "恢复选择科技片前状态",
-            undo() {
-              restoreObject(playerResult.currentPlayer, snapshots.player);
-              restoreObject(context.techBoardState, snapshots.board);
-              restoreObject(context.techUiState, snapshots.ui);
-            },
-          }],
           cost: options.skipCost ? {} : { publicity: researchCost },
           payload: {
             tileId: result.tileId,

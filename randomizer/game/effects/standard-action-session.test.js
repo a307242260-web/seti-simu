@@ -47,8 +47,7 @@ const composition = createRuleComposition({
         return {
           ok: true,
           message: "发射完成",
-          commands: [{ undo() { throw new Error("宿主 undo closure 不得进入 committed root"); } }],
-          history: [{ undo() { throw new Error("legacy history closure 不得进入 Session result"); } }],
+          history: [{ type: "launch", source: "standard_action" }],
           events: [{ type: "launch" }],
         };
       },
@@ -68,6 +67,7 @@ assert.equal(result.phase, "completed");
 assert.deepEqual(composition.projection().state.actions, ["launch"]);
 assert.equal(composition.projection().stateVersion, 1);
 assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("undo"), false);
+assert.deepEqual(result.journal.history, [{ type: "launch", source: "standard_action" }]);
 
 {
   let sessionOwnedResolveCalls = 0;

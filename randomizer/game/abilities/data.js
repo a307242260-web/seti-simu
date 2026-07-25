@@ -3,17 +3,15 @@
 
   let players = root.SetiPlayers;
   let data = root.SetiData;
-  let historyCommands = root.SetiHistoryCommands;
   let industryPassives = root.SetiIndustryPassives;
 
-  if ((!players || !data || !historyCommands || !industryPassives) && typeof require === "function") {
+  if ((!players || !data || !industryPassives) && typeof require === "function") {
     players = players || require("../players");
     data = data || require("../data");
-    historyCommands = historyCommands || require("../history/commands");
     industryPassives = industryPassives || require("../industry/passives");
   }
 
-  const api = factory(players, data, historyCommands, industryPassives);
+  const api = factory(players, data, industryPassives);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -23,7 +21,6 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   data,
-  historyCommands,
   industryPassives,
 ) {
   "use strict";
@@ -92,7 +89,6 @@
         abilityId: "placeData",
         message: "请选择数据放置位置",
         undoable: true,
-        commands: [],
         cost: {},
         payload: { choices },
         events: [],
@@ -115,9 +111,6 @@
       abilityId: "placeData",
       message,
       undoable: true,
-      commands: [
-        historyCommands.createPlaceDataCommand(player, result),
-      ],
       cost: {},
       payload: {
         placementKind: result.placementKind,
@@ -141,7 +134,6 @@
     const check = data.canAnalyzeData(player, { skipEnergyCost: freeEnergy });
     if (!check.ok) return { ok: false, abilityId: "analyzeData", message: check.message };
 
-    const snapshot = structuredClone(player);
     const result = freeEnergy
       ? data.analyzeDataWithoutEnergy?.(player) || data.analyzeData(player)
       : data.analyzeData(player);
@@ -153,9 +145,6 @@
       abilityId: "analyzeData",
       message,
       undoable: true,
-      commands: [
-        historyCommands.createRestorePlayerCommand(player, snapshot, "恢复分析前玩家状态"),
-      ],
       cost: freeEnergy ? {} : { energy: data.ANALYZE_ENERGY_COST },
       payload: {
         clearedCount: result.clearedCount,

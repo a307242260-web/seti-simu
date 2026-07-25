@@ -148,13 +148,8 @@
         if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "state_invalid" });
         return deepFreeze(clone(validation));
       }
-      const {
-        commands: _undoCommands,
-        history: _legacyUndoHistory,
-        ...serializableResult
-      } = result;
-      lastActionResult = clone(serializableResult);
-      return { ...clone(serializableResult), nextState: committedState };
+      lastActionResult = clone(result);
+      return { ...clone(result), nextState: committedState };
     }
 
     function publish(event) {

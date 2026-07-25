@@ -63,7 +63,7 @@ function finalSnapshot(env) {
       ]),
       revealed: alienKeys.map((key) => state.aliens[key].revealInitialized),
     },
-    authority: [state.meta.stateVersion, state.meta.rngState.algorithm, state.meta.rngState.state, state.meta.sequences.historyStep],
+    authority: [state.meta.stateVersion, state.meta.rngState.algorithm, state.meta.rngState.state],
     session: [
       checkpoint.effectSessionCheckpoint ?? null,
       observation.publicState.pending.actorPlayerId,

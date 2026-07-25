@@ -80,8 +80,6 @@ module.exports = Object.freeze({
 
     entry("randomizer/game/final-scoring.test.js", "rules/scoring", "终局计分板选择、占位与分数", "非法 tile、重复标记或错 owner 得分"),
     entry("randomizer/game/end-game-scoring.test.js", "rules/scoring", "终局总分只汇总正式分源", "重复分源、遗漏 owner 或结束前结算"),
-    entry("randomizer/game/history/action-history.test.js", "rules/scoring", "规则行动 history 的 commit/undo 边界", "barrier 后撤销或失败行动入历史"),
-    entry("randomizer/game/history/commands.test.js", "rules/scoring", "history command 正反向应用保持不变量", "undo/redo 非互逆或作用于错误实体"),
   ]),
   fullFlow: Object.freeze([
     entry("randomizer/full-flow/standard-flow.test.js", "full-flow/standard-flow-v1", "唯一固定流程经生产 composition 公共 Action/Decision 到版本化权威盘面", "直接 helper、第二条完整流程入口、未清 session 或 replay 不一致"),

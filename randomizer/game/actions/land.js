@@ -314,18 +314,6 @@
       cost: { energy: energyCost },
       rewardMarkerSequence: markerSequence,
       undoable: true,
-      commands: [{
-        label: "登陆",
-        describe: "恢复登陆前状态",
-        undo() {
-          Object.assign(currentPlayer, structuredClone(snapshots.player));
-          Object.assign(context.rocketState, structuredClone(snapshots.rocketState));
-          Object.assign(context.planetStatsState, structuredClone(snapshots.planetStatsState));
-          if (context.alienGameState && snapshots.alienGameState) {
-            Object.assign(context.alienGameState, structuredClone(snapshots.alienGameState));
-          }
-        },
-      }],
       events: [{
         type: "land",
         planetId,

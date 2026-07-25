@@ -3,19 +3,17 @@
 
   let players = root.SetiPlayers;
   let rockets = root.SetiRocketActions;
-  let historyCommands = root.SetiHistoryCommands;
   let solar = root.SetiSolarSystem;
   let industryPassives = root.SetiIndustryPassives;
 
-  if ((!players || !rockets || !historyCommands || !solar) && typeof require === "function") {
+  if ((!players || !rockets || !solar) && typeof require === "function") {
     players = players || require("../players");
     rockets = rockets || require("../rockets");
-    historyCommands = historyCommands || require("../history/commands");
     solar = solar || require("../../solar-system/core");
     industryPassives = industryPassives || require("../industry/passives");
   }
 
-  const api = factory(players, rockets, historyCommands, solar, industryPassives);
+  const api = factory(players, rockets, solar, industryPassives);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -25,7 +23,6 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   rockets,
-  historyCommands,
   solar,
   industryPassives,
 ) {
@@ -65,15 +62,6 @@
   function spendCost(player, cost) {
     if (!hasCost(cost)) return { ok: true, message: null };
     return players.spendResources(player, cost);
-  }
-
-  function buildSpendCommand(player, cost, label) {
-    if (!hasCost(cost)) return null;
-    return historyCommands.createResourceSpendCommand(
-      player,
-      cost,
-      label || `消耗 ${players.formatResourceCost(cost)}`,
-    );
   }
 
   function getRocketLimitForPlayer(player, options = {}) {
@@ -426,22 +414,6 @@
       };
     }
 
-    const commands = [];
-    const spendCommand = buildSpendCommand(
-      currentPlayer,
-      cost,
-      options.historyLabel || `发射消耗 ${players.formatResourceCost(cost)}`,
-    );
-    if (spendCommand) commands.push(spendCommand);
-    commands.push(historyCommands.createRemoveRocketCommand(
-      rockets,
-      context.rocketState,
-      launchResult.rocket.id,
-      currentPlayer,
-      null,
-      undoState,
-    ));
-
     const costText = hasCost(cost) ? `，消耗 ${players.formatResourceCost(cost)}` : "";
     const message = `${launchResult.message}${costText}`;
     context.rocketState.statusNote = message;
@@ -451,7 +423,6 @@
       abilityId: "launchProbe",
       message,
       undoable: true,
-      commands,
       cost,
       payload: {
         rocket: launchResult.rocket,
@@ -503,10 +474,6 @@
     }
 
     const geometry = resolveMoveGeometry(context, rocketId, deltaX, deltaY);
-    const beforeRocket = structuredClone(
-      context.rocketState.rockets.find((rocket) => rocket.id === rocketId),
-    );
-    const beforePlayer = structuredClone(currentPlayer);
     const spendResult = spendCost(currentPlayer, cost);
     if (!spendResult.ok) {
       return {
@@ -526,14 +493,6 @@
       };
     }
 
-    const commands = [];
-    if (beforeRocket) {
-      commands.push(historyCommands.createMoveRocketCommand(
-        context.rocketState,
-        rocketId,
-        beforeRocket,
-      ));
-    }
     const { rewardNotes, events } = options.suppressArrivalRewards
       ? { rewardNotes: [], events: [] }
       : applyArrivalRewards(
@@ -543,12 +502,6 @@
         geometry.toContent,
         { prefix: "移动到", source: options.source || "move" },
       );
-    commands.push(historyCommands.createRestorePlayerCommand(
-      currentPlayer,
-      beforePlayer,
-      "恢复移动前玩家状态",
-    ));
-
     const costText = hasCost(cost) ? `，消耗 ${players.formatResourceCost(cost)}` : "";
     const movePointText = requiredMovePoints > 1 ? `，需要 ${requiredMovePoints} 点移动力` : "";
     const rewardText = rewardNotes.length ? `，${rewardNotes.join("，")}` : "";
@@ -560,7 +513,6 @@
       abilityId: "moveProbe",
       message,
       undoable: true,
-      commands,
       cost,
       payload: {
         rocket: moveResult.rocket,

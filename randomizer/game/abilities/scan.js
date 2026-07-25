@@ -4,18 +4,16 @@
   let solar = root.SetiSolarSystem;
   let players = root.SetiPlayers;
   let data = root.SetiData;
-  let historyCommands = root.SetiHistoryCommands;
   let rocketAbility = root.SetiAbilityRocket;
 
-  if ((!solar || !players || !data || !historyCommands || !rocketAbility) && typeof require === "function") {
+  if ((!solar || !players || !data || !rocketAbility) && typeof require === "function") {
     solar = solar || require("../../solar-system/core");
     players = players || require("../players");
     data = data || require("../data");
-    historyCommands = historyCommands || require("../history/commands");
     rocketAbility = rocketAbility || require("./rocket");
   }
 
-  const api = factory(solar, players, data, historyCommands, rocketAbility);
+  const api = factory(solar, players, data, rocketAbility);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -26,7 +24,6 @@
   solar,
   players,
   data,
-  historyCommands,
   rocketAbility,
 ) {
   "use strict";
@@ -113,13 +110,6 @@
         abilityId: "scanNebula",
         message: `${prefix}：${label} 已无未替换数据，追加${playerLabel}扫描计数；不获得数据`,
         undoable: true,
-        commands: [
-          historyCommands.createSectorExtraMarkCommand(
-            context.nebulaDataState,
-            nebulaId,
-            extraResult.mark.id,
-          ),
-        ],
         cost: {},
         payload: {
           nebulaId,
@@ -143,7 +133,6 @@
       };
     }
 
-    const tokenBefore = historyCommands.snapshotNebulaToken(nextToken);
     const replaceResult = data.replaceNextNebulaDataToken(
       context.nebulaDataState,
       nebulaId,
@@ -166,25 +155,6 @@
         ...(context.workingRoot ? { root: context.workingRoot } : {}),
       })
       : { ok: true, skipped: true, message: "未获得数据" };
-    const commands = [
-      historyCommands.createNebulaReplaceCommand(
-        context.nebulaDataState,
-        nebulaId,
-        replaceResult.token.id,
-        tokenBefore,
-      ),
-    ];
-    if (replaceResult.scoreAwarded) {
-      commands.push(historyCommands.createResourceGainCommand(
-        currentPlayer,
-        { score: replaceResult.scoreAwarded },
-        `扫描第二格 +${replaceResult.scoreAwarded}分`,
-      ));
-    }
-    if (shouldGainData) {
-      commands.push(historyCommands.createGainDataCommand(currentPlayer, gainResult));
-    }
-
     const label = data.getNebulaLabel(nebulaId);
     const color = players.getPlayerColorDefinition(currentPlayer.color);
     const playerLabel = color?.label || currentPlayer.colorLabel || "当前玩家";
@@ -203,7 +173,6 @@
       abilityId: "scanNebula",
       message,
       undoable: true,
-      commands,
       cost: {},
       payload: {
         nebulaId,
@@ -245,9 +214,6 @@
     const cardState = context.cardState;
     const card = options.card || cardState?.publicCards?.[slotIndex] || null;
     if (cardState && card && Number.isInteger(slotIndex)) {
-      const publicCardsSnapshot = cardState.publicCards.slice();
-      const discardPileSnapshot = (cardState.discardPile || []).slice();
-
       if (!Array.isArray(cardState.discardPile)) cardState.discardPile = [];
       cardState.discardPile.push(card);
       let replenished = null;
@@ -258,11 +224,6 @@
         }
       }
 
-      result.commands.push(historyCommands.createRestorePublicCardsCommand(
-        cardState,
-        publicCardsSnapshot,
-        discardPileSnapshot,
-      ));
       result.payload.card = card;
       result.payload.replenished = replenished;
       result.message += replenished
@@ -298,19 +259,11 @@
     if (context.cardState && player && card && Number.isInteger(handIndex)) {
       const discardIndex = player.hand?.findIndex((item) => item.id === card.id);
       const resolvedIndex = discardIndex >= 0 ? discardIndex : handIndex;
-      const handSnapshot = player.hand.slice();
-      const discardPileSnapshot = (context.cardState.discardPile || []).slice();
       const discarded = player.hand.splice(resolvedIndex, 1)[0];
       player.resources.handSize = player.hand.length;
       if (!Array.isArray(context.cardState.discardPile)) context.cardState.discardPile = [];
       context.cardState.discardPile.push(discarded);
 
-      result.commands.push(historyCommands.createDiscardHandCardCommand(
-        context.cardState,
-        player,
-        handSnapshot,
-        discardPileSnapshot,
-      ));
       result.payload.card = discarded;
       result.message += `；弃除手牌 ${discarded.cardName || discarded.cardId || discarded.id}`;
     }
@@ -371,9 +324,6 @@
       abilityId: "payScanCost",
       message,
       undoable: true,
-      commands: Object.keys(cost).length
-        ? [historyCommands.createResourceSpendCommand(currentPlayer, cost, message)]
-        : [],
       cost,
       payload: {},
       events: [],

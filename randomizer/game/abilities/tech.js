@@ -105,7 +105,6 @@
       abilityId: "researchTechPrepare",
       message: "请选择要研究的科技板块",
       undoable: true,
-      commands: [],
       cost: skipCost ? {} : { publicity: researchCost },
       payload: { takeable, allowedTechTypes: techTypeOptions.techTypes || null },
       events: [],
@@ -142,7 +141,6 @@
           abilityId: "researchTechSelect",
           message: `请选择 ${tileId} 的蓝色放置位置`,
           undoable: true,
-          commands: [],
           cost: {},
           payload: { tileId, availableSlots },
           events: [],
@@ -212,17 +210,6 @@
       abilityId: "researchTechSelect",
       message: result.message,
       undoable: true,
-      commands: [
-        {
-          label: "选择科技片",
-          describe: "恢复选择科技片前状态",
-          undo() {
-            restoreObject(playerResult.currentPlayer, snapshots.player);
-            restoreObject(context.techBoardState, snapshots.board);
-            restoreObject(context.techUiState, snapshots.ui);
-          },
-        },
-      ],
       cost: skipCost ? {} : { publicity: researchCost },
       payload: {
         tileId: result.tileId,
@@ -283,7 +270,6 @@
         code: "tech_bonus_reveal",
         reason: "拿取科技后露出下一张 bonus",
       },
-      commands: [],
       cost: {},
       payload: {
         tileId: result.tileId,
@@ -322,7 +308,6 @@
       abilityId: "researchTechRotate",
       message: rotationSettlement?.message || result.message,
       undoable: false,
-      commands: [],
       cost: {},
       payload: {
         ...(result.payload || {}),
@@ -342,7 +327,6 @@
       ...result,
       abilityId: "researchTechBonus",
       undoable: false,
-      commands: [],
       cost: {},
       payload: {
         bonusId: options.bonusId,

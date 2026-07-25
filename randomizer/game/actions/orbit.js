@@ -186,18 +186,6 @@
       markerSequence: markerResult.marker.sequence,
       cost: { credits: CREDIT_COST, energy: ENERGY_COST },
       undoable: true,
-      commands: [{
-        label: "环绕",
-        describe: "恢复环绕前状态",
-        undo() {
-          Object.assign(currentPlayer, structuredClone(snapshots.player));
-          Object.assign(context.rocketState, structuredClone(snapshots.rocketState));
-          Object.assign(context.planetStatsState, structuredClone(snapshots.planetStatsState));
-          if (context.alienGameState && snapshots.alienGameState) {
-            Object.assign(context.alienGameState, structuredClone(snapshots.alienGameState));
-          }
-        },
-      }],
       events: [{
         type: "orbit",
         planetId: placement.planet.planetId,

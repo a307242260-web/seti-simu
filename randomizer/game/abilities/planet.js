@@ -4,20 +4,18 @@
   let players = root.SetiPlayers;
   let planetStats = root.SetiPlanetStats;
   let shared = root.SetiActionShared;
-  let historyCommands = root.SetiHistoryCommands;
   let aomomo = root.SetiAlienAomomo;
   let planetRewards = root.SetiPlanetRewards;
 
-  if ((!players || !planetStats || !shared || !historyCommands || !aomomo || !planetRewards) && typeof require === "function") {
+  if ((!players || !planetStats || !shared || !aomomo || !planetRewards) && typeof require === "function") {
     players = players || require("../players");
     planetStats = planetStats || require("../planet-stats");
     shared = shared || require("../actions/shared");
-    historyCommands = historyCommands || require("../history/commands");
     aomomo = aomomo || require("../aliens/aomomo");
     planetRewards = planetRewards || require("../actions/planet-rewards");
   }
 
-  const api = factory(players, planetStats, shared, historyCommands, aomomo, planetRewards);
+  const api = factory(players, planetStats, shared, aomomo, planetRewards);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -28,7 +26,6 @@
   players,
   planetStats,
   shared,
-  historyCommands,
   aomomo,
   planetRewards,
 ) {
@@ -61,33 +58,6 @@
 
   function hasCost(cost) {
     return Object.keys(cost || {}).length > 0;
-  }
-
-  function buildCommands(context, player, snapshots) {
-    const commands = [];
-    commands.push(historyCommands.createRestoreRocketStateCommand(
-      context.rocketState,
-      snapshots.rocketState,
-      "恢复火箭状态",
-    ));
-    commands.push(historyCommands.createRestorePlanetStatsCommand(
-      context.planetStatsState,
-      snapshots.planetStatsState,
-      "恢复星球标记",
-    ));
-    commands.push(historyCommands.createRestorePlayerCommand(
-      player,
-      snapshots.player,
-      "恢复玩家状态",
-    ));
-    if (context.alienGameState && snapshots.alienGameState) {
-      commands.push(historyCommands.createRestoreObjectCommand(
-        context.alienGameState,
-        snapshots.alienGameState,
-        "恢复外星人面板标记",
-      ));
-    }
-    return commands;
   }
 
   function getLandEnergyCost(context, planetId) {
@@ -510,7 +480,6 @@
       abilityId: "orbitProbe",
       message,
       undoable: true,
-      commands: buildCommands(context, currentPlayer, snapshots),
       cost,
       payload: {
         removedRocketId: placement.rocket.id,
@@ -673,7 +642,6 @@
       abilityId: "landProbe",
       message,
       undoable: true,
-      commands: buildCommands(context, currentPlayer, snapshots),
       cost,
       payload: {
         removedRocketId: placement.rocket.id,

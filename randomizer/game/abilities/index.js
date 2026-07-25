@@ -6,18 +6,16 @@
   let planetAbility = root.SetiAbilityPlanet;
   let dataAbility = root.SetiAbilityData;
   let techAbility = root.SetiAbilityTech;
-  let chain = root.SetiAbilityChain;
 
-  if ((!rocketAbility || !scanAbility || !planetAbility || !dataAbility || !techAbility || !chain) && typeof require === "function") {
+  if ((!rocketAbility || !scanAbility || !planetAbility || !dataAbility || !techAbility) && typeof require === "function") {
     rocketAbility = rocketAbility || require("./rocket");
     scanAbility = scanAbility || require("./scan");
     planetAbility = planetAbility || require("./planet");
     dataAbility = dataAbility || require("./data");
     techAbility = techAbility || require("./tech");
-    chain = chain || require("./chain");
   }
 
-  const api = factory(rocketAbility, scanAbility, planetAbility, dataAbility, techAbility, chain);
+  const api = factory(rocketAbility, scanAbility, planetAbility, dataAbility, techAbility);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -30,7 +28,6 @@
   planetAbility,
   dataAbility,
   techAbility,
-  chain,
 ) {
   "use strict";
 
@@ -80,6 +77,5 @@
     planet: planetAbility,
     data: dataAbility,
     tech: techAbility,
-    chain,
   });
 });

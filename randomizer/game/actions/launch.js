@@ -111,14 +111,6 @@
       rocket: launchResult.rocket,
       cost,
       undoable: true,
-      commands: [{
-        label: "发射",
-        describe: "恢复发射前状态",
-        undo() {
-          Object.assign(currentPlayer, structuredClone(snapshots.player));
-          Object.assign(context.rocketState, structuredClone(snapshots.rocketState));
-        },
-      }],
       events: [{
         type: "launch",
         rocketId: launchResult.rocket.id,
