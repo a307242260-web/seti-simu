@@ -37,13 +37,6 @@
 ) {
   "use strict";
 
-  function getReadoutLines(player, roundNumber) {
-    return [
-      ...strategyPassive.getReadoutLines(player, roundNumber),
-      ...heliosPassive.getReadoutLines(player),
-    ];
-  }
-
   return Object.freeze({
     ...placement,
     ...state,
@@ -52,6 +45,5 @@
     ...abilities,
     ...strategyPassive,
     ...heliosPassive,
-    getReadoutLines,
   });
 });

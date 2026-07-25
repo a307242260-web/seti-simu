@@ -314,29 +314,6 @@
     };
   }
 
-  function getReadoutLines(state) {
-    ensureFinalScoringState(state);
-    const lines = ["终局计分"];
-
-    for (const tile of Object.values(state.tiles)) {
-      const variant = getTileVariant(state, tile.id);
-      const markText = (tile.marks || []).length
-        ? tile.marks
-          .map((mark) => `${mark.playerLabel || mark.playerColor || mark.playerId}@${mark.slotIndex}(${mark.threshold})`)
-          .join("、")
-        : "无";
-      lines.push(`${tile.id.toUpperCase()}${variant}：${markText}`);
-    }
-
-    const pending = (state.pendingMarks || []).length
-      ? state.pendingMarks
-        .map((mark) => `${mark.playerLabel || mark.playerColor || mark.playerId}(${mark.threshold})`)
-        .join("、")
-      : "无";
-    lines.push(`待标记：${pending}`);
-    return lines;
-  }
-
   return Object.freeze({
     FINAL_SCORE_THRESHOLDS,
     DEFAULT_TILE_IDS,
@@ -353,7 +330,6 @@
     markTile,
     placeDirectMarkAtSlot,
     listMarks,
-    getReadoutLines,
     normalizeTileVariant,
     createDefaultTileVariants,
     setTileVariants,

@@ -25,33 +25,6 @@
       throw new Error("createBrowserRuleComposition requires explicit Browser projection owners");
     }
 
-    function createEffectPresentation(flow) {
-      if (!flow || typeof flow !== "object") return null;
-      const safeOptionKeys = [
-        "cost", "playerId", "playerColor", "targetPlayerId", "targetPlayerColor", "skippable",
-      ];
-      return {
-        actionType: flow.actionType || null,
-        label: flow.label || null,
-        historySource: flow.historySource || null,
-        currentIndex: Number.isInteger(flow.currentIndex) ? flow.currentIndex : 0,
-        completed: Boolean(flow.completed),
-        effects: (flow.effects || []).map((effect) => ({
-          id: effect?.id || null,
-          type: effect?.type || null,
-          label: effect?.label || null,
-          status: effect?.status || null,
-          icon: effect?.icon || null,
-          badge: effect?.badge ?? null,
-          required: Boolean(effect?.required),
-          undoable: effect?.undoable !== false,
-          options: Object.fromEntries(safeOptionKeys
-            .filter((key) => Object.hasOwn(effect?.options || {}, key))
-            .map((key) => [key, clone(effect.options[key])])),
-        })),
-      };
-    }
-
     function projectBrowserState(canonicalState, viewer, inspection) {
       const finalReadModelOwner = browserProjection.getFinalReadModelOwner();
       const browserReadModelOwner = browserProjection.getBrowserReadModelOwner();
@@ -63,18 +36,11 @@
         playerId: null,
         role: "spectator",
       };
-      const visibilityCandidate = clone(canonicalState);
-      visibilityCandidate.match.actionEffectPresentation = createEffectPresentation(
-        canonicalState.match?.actionEffectFlow,
-      );
       const visible = browserProjection.visibilityPolicy(
-        visibilityCandidate,
+        canonicalState,
         resolvedViewer,
         inspection,
       );
-      if (visible.match && Object.hasOwn(visible.match, "actionEffectPresentation")) {
-        delete visible.match.actionEffectPresentation;
-      }
       const visibleResident = visible.resident || {};
       const initialSetup = clone(visibleResident.initialSetup || {
         active: false,
@@ -103,7 +69,6 @@
         tech: clone(visibleResident.tech || {}),
         aliens: clone(visibleResident.aliens || {}),
         finalScoring: clone(visibleResident.finalScoring || {}),
-        effectPresentation: clone(visibleResident.effectPresentation || null),
       };
       const finalReadModel = finalReadModelOwner.project(canonicalState);
       visible.resident = {

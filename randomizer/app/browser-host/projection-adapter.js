@@ -199,7 +199,6 @@
           "fangzhou", "chong", "amiba", "aomomo", "runezu", "revealedSlotIds",
         ]),
         finalScoring: clone(state?.finalScoring || {}),
-        effectPresentation: clone(state?.match?.actionEffectPresentation || null),
         initialSetup: setupPresentation,
       },
       feedback: { events: [], logs: [], progress: null, notices: [] },

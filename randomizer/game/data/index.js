@@ -113,7 +113,6 @@
     SECTOR_WIN_REWARDS: nebulaState.SECTOR_WIN_REWARDS,
     getSectorWinnerRewardKey: nebulaState.getSectorWinnerRewardKey,
     buildSectorRewardDescriptors: nebulaState.buildSectorRewardDescriptors,
-    getSectorSettlementReadoutLines: nebulaState.getSectorSettlementReadoutLines,
     NEBULA_SECOND_SLOT_INDEX: nebulaState.NEBULA_SECOND_SLOT_INDEX,
     NEBULA_SECOND_SLOT_SCORE: nebulaState.NEBULA_SECOND_SLOT_SCORE,
     getNebulaSecondSlotScoreReward: nebulaState.getNebulaSecondSlotScoreReward,

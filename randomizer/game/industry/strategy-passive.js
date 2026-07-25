@@ -220,32 +220,6 @@
     return "";
   }
 
-  function getReadoutLines(player, roundNumber) {
-    if (!playerHasStrategyPassive(player) || !player?.initialSelection?.industry) return [];
-
-    const lines = ["[宇宙战略集团被动标记]"];
-    for (const slotId of placement.STRATEGY_PASSIVE_SLOT_IDS) {
-      const layout = placement.getStrategyPassiveMarkerLayout(slotId);
-      const marked = Boolean(player?.industryStrategyPassiveSlots?.[slotId]);
-      lines.push(
-        `  ${placement.getStrategyPassiveSlotLabel(slotId)}`
-        + `${layout ? ` ${layout.percentX}%,${layout.percentY}%` : ""}`
-        + ` ${marked ? "已放置" : "空"}`,
-      );
-    }
-
-    if (isStrategyPlayInteractionActive(player, roundNumber)) {
-      const scanCode = getStrategyPlayScanCode(player);
-      const eligible = getStrategyPlayEligibleSlotIds(player, roundNumber);
-      lines.push(
-        `  打牌交互 轮=${roundNumber} 扫描角标=${scanCode}`
-        + ` 可选=${eligible.map((id) => placement.getStrategyPassiveSlotLabel(id)).join("/") || "无"}`,
-      );
-    }
-
-    return lines;
-  }
-
   return Object.freeze({
     SCAN_CODE_TO_SLOT,
     SLOT_REWARDS,
@@ -263,6 +237,5 @@
     expireStrategyPlayInteractionOnTurnEnd,
     getStrategySlotReward,
     getStrategySlotRewardLabel,
-    getReadoutLines,
   });
 });

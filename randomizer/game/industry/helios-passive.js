@@ -161,22 +161,6 @@
     return "";
   }
 
-  function getReadoutLines(player) {
-    if (!playerHasHeliosPassive(player) || !player?.initialSelection?.industry) return [];
-
-    const lines = ["[赫利昂联合体被动标记]"];
-    for (const slotId of placement.HELIOS_PASSIVE_SLOT_IDS) {
-      const layout = placement.getHeliosPassiveMarkerLayout(slotId);
-      const marked = Boolean(player?.industryHeliosPassiveSlots?.[slotId]);
-      lines.push(
-        `  ${placement.getHeliosPassiveSlotLabel(slotId)}`
-        + `${layout ? ` ${layout.percentX}%,${layout.percentY}%` : ""}`
-        + ` ${marked ? "已放置" : "空"}`,
-      );
-    }
-    return lines;
-  }
-
   return Object.freeze({
     TECH_TYPE_TO_SLOT,
     SLOT_REWARDS,
@@ -192,6 +176,5 @@
     buildHeliosPassiveRewardEffect,
     getHeliosSlotReward,
     getHeliosSlotRewardLabel,
-    getReadoutLines,
   });
 });

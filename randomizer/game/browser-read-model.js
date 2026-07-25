@@ -12,7 +12,7 @@
     "schemaVersion", "events", "actionInteraction", "turnFlow", "boardCoordinate", "runtime", "render",
   ]);
   const RUNTIME_KEYS = Object.freeze([
-    "playerTurn", "effectPresentation", "cardUi", "solarBriefing", "alienBoard",
+    "playerTurn", "cardUi", "solarBriefing", "alienBoard",
   ]);
   const EVENT_KEYS = Object.freeze([
     "alienRoutesBySlotId", "fangzhouRevealedSlotId", "aomomoRevealedSlotId", "clickableTechTileIds",
@@ -259,7 +259,6 @@
         players: playerState,
         turn: clone(turnFlow),
       },
-      effectPresentation: clone(presentationState?.effectPresentation || null),
       cardUi: clone(presentationState?.cards?.ui || {}),
       solarBriefing: {
         sectorBySlot: clone(presentationState?.solarSystem?.sectorBySlot || {}),

@@ -285,7 +285,6 @@ const retained = data.listNebulaTokens(settlementState, "sector-1-a")
   .find((token) => token.slotIndex === 1);
 assert.equal(retained.replacedByPlayerColor, "blue");
 assert.equal(retained.playerTokenSrc, "token-blue.png");
-assert.ok(data.getSectorSettlementReadoutLines(settlementState).some((line) => line.includes("南河三 结算1次")));
 
 [
   settlementPlayers[1],

@@ -773,32 +773,6 @@
     };
   }
 
-  function getSectorSettlementReadoutLines(state) {
-    const settlements = ensureSectorSettlementState(state || createDefaultNebulaDataState());
-    const lines = ["扇区结算"];
-    for (const sectorId of nebulaPlacement.NEBULA_IDS) {
-      const record = settlements.sectors[sectorId];
-      const count = record?.settlementCount || 0;
-      const winners = (record?.winners || [])
-        .map((winner) => `#${winner.settlementNumber}:${winner.playerLabel || winner.playerColor}`)
-        .join(" ");
-      const marks = getSectorRanking(state, sectorId)
-        .map((item) => `${item.playerLabel || item.playerColor}:${item.count}`)
-        .join(" ");
-      const extraCount = listSectorExtraMarks(state, sectorId).length;
-      lines.push(
-        `${nebulaPlacement.getNebulaLabel(sectorId)} 结算${count}次${winners ? ` ${winners}` : ""}`
-        + ` 标记=${marks || "无"}${extraCount ? ` 额外=${extraCount}` : ""}`,
-      );
-    }
-    const playerLines = Object.entries(settlements.winsByPlayerId || {})
-      .map(([playerKey, wins]) => `${playerKey}:${
-        (wins || []).map((win) => `${nebulaPlacement.getNebulaLabel(win.sectorId)}#${win.settlementNumber}`).join(",")
-      }`);
-    lines.push(`玩家胜利 ${playerLines.length ? playerLines.join("  ") : "无"}`);
-    return lines;
-  }
-
   function listSectorWinRecords(state, sectorId) {
     const key = normalizeSettlementSectorId(sectorId);
     const winners = state?.sectorSettlements?.sectors?.[key]?.winners;
@@ -913,7 +887,6 @@
     listSectorWinRecords,
     settleSector,
     settleCompletedSectors,
-    getSectorSettlementReadoutLines,
     getNebulaReplacementStats,
     getNextReplaceableNebulaToken,
     revertNebulaTokenReplacement,

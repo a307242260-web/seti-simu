@@ -49,6 +49,12 @@ node tools/report_architecture_residuals.js
 - 生产 JavaScript 从 118 个下降到 115 个；`legacyRootSlices` 从 1476 处 / 36 文件下降到 1399 处 / 35 文件，其中本轮下降来自旧 commands 实现删除，不代表 M1 已迁移。
 - 完整回归通过：62/62 unit、1/1 full-flow、3/3 真实 Chrome smoke。
 
+### 2026-07-25：删除剩余已知旧展示桥与 readout API
+
+- 删除 `actionEffectFlow -> actionEffectPresentation -> effectPresentation` Browser 兼容投影链；Effect/Decision 展示只允许来自当前 Session inspection。
+- 删除终局计分、宇宙战略集团、赫利昂和扇区结算中无生产消费者的文本 readout API，以及对应导出和结构型测试断言。
+- `legacyExecutionFacilities` 从 1 处 / 1 文件下降到 0；这只证明已识别的旧执行设施族清零，M3 仍需完成全生产导出消费者审计后才能关单。
+
 ## 每轮更新格式
 
 每轮实现后必须记录：
