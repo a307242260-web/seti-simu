@@ -640,17 +640,10 @@
         },
       },
       dataPresentation: {
-        playerTokens: [
-          ...(own?.dataState?.poolTokens || []).map((token) => ({
-            ...structuredClone(token),
-            placementKind: "pool",
-            imageSrc: "../assets/tokens/data.png",
-          })),
-          ...(own?.dataState?.placedTokens || []).map((token) => ({
+        playerTokens: (own?.dataState?.placedTokens || []).map((token) => ({
             ...structuredClone(token),
             imageSrc: "../assets/tokens/data.png",
           })),
-        ],
         blueDropZones: [],
         sectorTokensBySectorId: presentSectorData(),
         aomomoTokens: presentAomomoData(),
@@ -811,6 +804,10 @@
     },
     hostPort: {
       els,
+      getSelectedHandCardId() {
+        const entity = residentViewState.getSnapshot().focus.entityRef;
+        return entity?.kind === "hand-card" ? String(entity.id) : null;
+      },
       syncFinalResultButton() {},
     },
   });
@@ -919,6 +916,7 @@
   function bindActionButton(button) {
     button?.addEventListener("click", () => {
       if (!button.dataset.actionId) return;
+      residentInput.dispatchIntent({ kind: "view", type: "focus.clear" });
       const result = desktopActionBar.activateAction(button.dataset.actionId);
       if (result?.ok === false) throw new Error(result.message || result.code);
       scheduleRefreshAndAutomation();
@@ -931,6 +929,22 @@
     els.actionAnalyzeButton, els.actionPlayCardButton, els.actionResearchTechButton,
     els.actionPassButton, els.actionConfirmButton,
   ].forEach(bindActionButton);
+  els.playerHandFan?.addEventListener("click", (event) => {
+    const card = event.target.closest?.("[data-hand-card-id]");
+    if (!card) return;
+    const cardId = String(card.dataset.handCardId);
+    const selected = residentViewState.getSnapshot().focus.entityRef;
+    residentInput.dispatchIntent({
+      kind: "view",
+      type: selected?.kind === "hand-card" && String(selected.id) === cardId
+        ? "focus.clear"
+        : "focus.set",
+      ...(selected?.kind === "hand-card" && String(selected.id) === cardId
+        ? {}
+        : { entityRef: { kind: "hand-card", id: cardId }, controlId: "player-hand" }),
+    });
+    scheduleRefresh();
+  });
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
   els.quickActionsTrades?.addEventListener("click", (event) => {
     const button = event.target.closest?.("[data-quick-trade][data-action-id]");

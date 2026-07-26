@@ -189,9 +189,15 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
 
 function actionText(action) {
   const rawSummary = String(action?.summary || action?.family || "未知行动");
-  const moveMatch = rawSummary.match(/^移动火箭\s+(\d+)\s+(ccw|cw)$/i);
+  const moveMatch = rawSummary.match(/^移动火箭\s+(\S+)\s+(ccw|cw|out|in)$/i);
+  const moveDirection = {
+    ccw: "逆时针",
+    cw: "顺时针",
+    out: "向外环",
+    in: "向内环",
+  };
   const summary = moveMatch
-    ? `${moveMatch[2].toLowerCase() === "ccw" ? "逆时针" : "顺时针"}移动探测器 ${moveMatch[1]} 步`
+    ? `探测器 #${moveMatch[1]} ${moveDirection[moveMatch[2].toLowerCase()]}移动 1 步`
     : rawSummary;
   if (action?.decisionType === "conditional_choice") return `↳ 选择：${summary}`;
   if (action?.family === "end_turn") return "结束回合";

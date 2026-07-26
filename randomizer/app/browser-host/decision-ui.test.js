@@ -214,7 +214,7 @@ function projection(choices, overrides = {}) {
           initialSelection: {
             offer: {
               selectedIndustryId: "industry:图灵系统.png",
-              selectedInitialIds: ["initial:7"],
+              selectedInitialIds: ["initial:7", "initial:8"],
               industryOptions: [
                 { id: "industry:图灵系统.png", label: "图灵系统" },
                 { id: "industry:太阳动力.png", label: "太阳动力" },
@@ -222,6 +222,7 @@ function projection(choices, overrides = {}) {
               initialOptions: [
                 { id: "initial:7", label: "资源牌 7" },
                 { id: "initial:8", label: "资源牌 8" },
+                { id: "initial:9", label: "资源牌 9" },
               ],
             },
           },
@@ -233,10 +234,14 @@ function projection(choices, overrides = {}) {
   const model = controller.render({ projection: current, viewState: {} });
   assert.equal(model.content.layout, "initial-setup");
   assert.deepEqual(model.content.groups.map((group) => group.kind), ["industry", "initial"]);
-  assert.deepEqual(model.content.groups.map((group) => group.choices.length), [2, 2]);
+  assert.deepEqual(model.content.groups.map((group) => group.choices.length), [2, 3]);
   assert.equal(model.content.groups[0].choices[0].card.selected, true);
   assert.equal(model.content.groups[0].choices[1].card.selected, false);
   assert.equal(model.content.groups[1].choices[0].card.selected, true);
+  assert.equal(model.content.groups[1].choices[1].card.selected, true);
+  assert.equal(model.content.groups[1].choices[2].choiceId, null);
+  assert.equal(model.content.groups[1].choices[2].disabledReason, "已选满 2 张；先取消一张再选择");
+  assert.equal(model.content.groups[1].choices[2].card.imageSrc, "../assets/initial_card/split/9.png");
   assert.equal(model.content.setupConfirmChoiceId, "setup-confirm");
   assert.equal(model.content.choices.some((choice) => choice.choiceId === "setup-confirm"), false);
 })();

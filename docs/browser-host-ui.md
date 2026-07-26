@@ -34,6 +34,7 @@ PolicyDecision ─> PolicyInputAdapter ─> 同一 Action / Decision port
 初始选择与初始收入也遵守同一边界：公司/资源牌 choice 只携带卡牌 identity、名称和图片展示字段；插收入期间 `resident.initialIncome` 只投影当前 owner、公司名称和剩余次数，资源、收入与手牌卡面复用 `browserReadModel.render.playerPanels/cardPanels`。页面不得为了恢复卡面或收入提示回读玩家规则状态。
 
 初始公司/资源牌的卡面点击会直接提交当前标准 Decision choice，Session 随即产生下一版 Decision，界面连续刷新；UI 不累计另一份规则选择。所有 Decision 都可通过 `ViewState.presentation.decisionCollapsed` 临时收起查看盘面，收起和展开不提交、不取消也不 resolve Effect Session，且仅在同一 Decision identity 下保留。
+资源牌选满 2 张后，完整 offer 中未选的第 3 张仍以禁用卡面保留；它不伪装成合法 Decision choice，取消一张已选牌后才随下一版投影恢复为可提交 choice。
 
 终局 UI、机器玩家与恢复只消费字段白名单 projection。规则层
 `game/final-read-model.js` 在 composition 投影边界内从显式 working root 派生终局分解、合法标记、公式 base/multiplier
@@ -67,6 +68,8 @@ selector 拒绝可变 BrowserProjection、缺失 identity、额外顶层字段�
 | `view` | ViewState store | 只改 panel/hover/tab/scroll/draft，不触碰规则 |
 
 DOM handler 只解析稳定 identity、指针/键盘信息与当前 projection。不得直接写玩家、卡牌、科技、棋子、history、queue 或 session；不得在确认后从 UI 层续跑规则。
+
+手牌点击只把 `hand-card` instance identity 写入 ViewState focus 并显示高亮；顶部“打牌”按钮以该 identity 从当前 `play_card` legal set 选择唯一 Standard Action。未选牌、所选牌不可支付或 identity 已失效时按钮禁用，UI 不自行构造打牌行动。个人板数据图层只渲染带完整 `percentX/percentY` 的已放置 token，可用数据池仅由资源统计展示。
 
 `policy-input-adapter.js` 为机器席位读取同一 boundary、observation 和完整 descriptor，经 Machine Player Host 验证后提交同一 Action/Decision port。它不读 DOM、overlay、renderer、picker 或领域 continuation。Policy 失败只产生结构化暂停；确定性 Effect、唯一选择、触发顺序、commit、event/log/replay 仍由 Effect Session 独占。
 

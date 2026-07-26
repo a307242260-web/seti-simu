@@ -107,6 +107,17 @@
     return Object.freeze({ setProjection, createModel: () => createActionBarModel(projection), activate });
   }
 
+  function selectMainAction(actions, family, selectedHandCardId = null) {
+    const legal = (actions || []).filter((action) => (
+      action.family === family && !action.disabledReason
+    ));
+    if (family !== "play_card") return legal.length === 1 ? legal[0] : null;
+    if (selectedHandCardId == null) return null;
+    return legal.find((action) => (
+      String(action.target?.cardInstanceId) === String(selectedHandCardId)
+    )) || null;
+  }
+
   function createDesktopActionBarController(context = {}) {
     const { els } = context;
     if (typeof context.getProjection !== "function" || typeof context.dispatchIntent !== "function") {
@@ -172,10 +183,20 @@
       context.syncFinalResultButton?.();
       read();
       for (const [button, family] of mainFamilies) {
-        const legal = projection.controls.actions.filter((action) => (
-          action.family === family && !action.disabledReason
-        ));
-        setButton(button, legal.length === 1 ? legal[0] : null, "当前无法执行此行动");
+        const selectedHandCardId = family === "play_card"
+          ? context.getSelectedHandCardId?.() || null
+          : null;
+        const action = selectMainAction(
+          projection.controls.actions,
+          family,
+          selectedHandCardId,
+        );
+        const reason = family === "play_card" && selectedHandCardId == null
+          ? "请先在手牌区选择一张牌"
+          : family === "play_card"
+            ? "所选手牌当前无法打出"
+            : "当前无法执行此行动";
+        setButton(button, action, reason);
       }
       setButton(
         els.actionPassButton,
@@ -221,6 +242,7 @@
     selectActionBarProjection,
     createActionBarModel,
     createActionBarController,
+    selectMainAction,
     createDesktopActionBarController,
     createBrowserDesktopActionBarController,
   });

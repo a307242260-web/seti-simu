@@ -324,8 +324,14 @@ function createProjection() {
       },
     },
   };
-  renderer.renderPrivateCards({ projection, viewState: {} });
-  assert.equal(fixture.els.playerHandFan.children[0].dataset.cardId, "hand-1");
+  renderer.renderPrivateCards({
+    projection,
+    viewState: { focus: { entityRef: { kind: "hand-card", id: "hand-1" } } },
+  });
+  assert.equal(fixture.els.playerHandFan.children[0].dataset.handCardId, "hand-1");
+  assert.equal(fixture.els.playerHandFan.children[0].className.includes("is-selected"), true);
+  assert.equal(fixture.els.playerHandFan.children[0].attributes["aria-pressed"], "true");
+  assert.equal(fixture.els.playerHandFan.children[0].children[0].dataset.cardId, "hand-1");
   assert.equal(fixture.els.reservedCardFan.children[0].dataset.cardId, "reserved-1");
   assert.equal(fixture.els.playerHandPanelHandCount.textContent, "(1)");
   assert.equal(fixture.els.playerHandPanel.className.includes("is-empty"), false);
@@ -356,6 +362,10 @@ function createProjection() {
           },
           dataPresentation: {
             playerTokens: [{
+              id: "pool-data-without-position",
+              imageSrc: "data.webp",
+              placementKind: "pool",
+            }, {
               id: "data-1",
               imageSrc: "data.webp",
               placementKind: "computer",
@@ -377,6 +387,7 @@ function createProjection() {
   assert.equal(fixture.els.playerBoardTechLayer.children[0].dataset.techId, "blue2");
   assert.equal(fixture.els.playerBoardTechLayer.children[0].style.values["--x"], "49%");
   assert.equal(fixture.els.playerBoardDataLayer.children[0].dataset.tokenId, "data-1");
+  assert.equal(fixture.els.playerBoardDataLayer.children.length, 1);
   assert.equal(fixture.els.playerBoardDataLayer.children[0].style.values["--y"], "68%");
 })();
 

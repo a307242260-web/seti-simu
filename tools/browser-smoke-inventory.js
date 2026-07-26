@@ -131,10 +131,16 @@ module.exports = Object.freeze([
         document.querySelectorAll(
           "#compositionDecisionRoot .decision-ui-choice-group-initial .is-rule-selected",
         ).length === 2
+        && document.querySelectorAll(
+          "#compositionDecisionRoot .decision-ui-card-image-initial",
+        ).length === 3
+        && document.querySelectorAll(
+          "#compositionDecisionRoot .decision-ui-choice-group-initial .decision-ui-card-choice:disabled",
+        ).length === 1
         && Boolean(document.querySelector(
           '#compositionDecisionRoot .decision-ui-controls [data-decision-ui-intent="submit-choice"]',
         ))
-      ), "两张资源牌选中态与最终确认");
+      ), "两张资源牌选中态、第三张保留与最终确认");
       await submitVisibleDecision("初始选择确认 DOM Decision", (button) => button.textContent === "确认初始选择");
       await waitFor(() => {
         const input = window.SetiRandomizer.inspect().input;
@@ -239,6 +245,32 @@ module.exports = Object.freeze([
           statusNote: document.querySelector("#status-note")?.textContent,
         }));
       }
+      const playableCard = window.SetiRandomizer.inspect().projection.controls.actions.find(
+        (action) => action.family === "play_card" && !action.disabledReason,
+      );
+      if (playableCard) {
+        const findPlayableHandButton = () => (
+          [...document.querySelectorAll("#player-hand-fan [data-hand-card-id]")]
+            .find((button) => (
+            String(button.dataset.handCardId) === String(playableCard.target?.cardInstanceId)
+            ))
+        );
+        const handButton = findPlayableHandButton();
+        if (!handButton) throw new Error("可打出的 Standard Action 没有对应手牌 DOM identity");
+        handButton.click();
+        await waitFor(() => (
+          findPlayableHandButton()?.classList.contains("is-selected")
+          && findPlayableHandButton()?.getAttribute("aria-pressed") === "true"
+          && document.querySelector("#action-play-card-button")?.dataset.actionId
+            === playableCard.actionId
+          && !document.querySelector("#action-play-card-button")?.disabled
+        ), "先选手牌后顶部打牌按钮绑定唯一 Standard Action");
+        findPlayableHandButton()?.click();
+        await waitFor(() => (
+          document.querySelector("#action-play-card-button")?.disabled
+          && !document.querySelector("#action-play-card-button")?.dataset.actionId
+        ), "取消手牌选择后禁用顶部打牌按钮");
+      }
       const beforeInspect = window.SetiRandomizer.inspect();
       const inputSequence = beforeInspect.input.submissionSequence;
       await waitFor(() => {
@@ -289,6 +321,14 @@ module.exports = Object.freeze([
             .every((image) => image.src.includes("/assets/tech_tile/bonus_")),
         scanData: Boolean(document.querySelector("#player-board-data-layer"))
           && Array.isArray(renderProjection.dataPresentation?.playerTokens)
+          && renderProjection.dataPresentation.playerTokens.every((token) => (
+            Number.isFinite(Number(token.percentX)) && Number.isFinite(Number(token.percentY))
+          ))
+          && [...document.querySelectorAll("#player-board-data-layer .player-data-token")]
+            .every((token) => (
+              Boolean(token.style.getPropertyValue("--x"))
+              && Boolean(token.style.getPropertyValue("--y"))
+            ))
           && document.querySelectorAll(".sector .nebula-data-token").length > 0
           && [...document.querySelectorAll(".sector .nebula-data-token")].every((token) => {
             const scale = Number(token.style.getPropertyValue("--data-scale"));

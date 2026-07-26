@@ -879,6 +879,36 @@ body {
   filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.38));
 }
 
+.player-hand-card-button {
+  display: block;
+  flex: 0 1 var(--card-width);
+  width: var(--card-width);
+  max-width: var(--card-width);
+  padding: 5px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.player-hand-card-button .player-hand-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+.player-hand-card-button:hover {
+  border-color: rgba(139, 203, 255, 0.7);
+  transform: translateY(-4px);
+}
+
+.player-hand-card-button.is-selected {
+  border-color: #ffd166;
+  background: rgba(111, 82, 26, 0.36);
+  box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.72), 0 10px 24px rgba(0, 0, 0, 0.38);
+  transform: translateY(-8px);
+}
+
 .player-hand-panel.is-empty .player-hand-fan::after,
 .reserved-card-panel.is-empty .reserved-card-fan::after {
   display: grid;

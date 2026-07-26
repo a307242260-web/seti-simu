@@ -52,6 +52,24 @@ controller.setProjection(selected);
 assert.equal(controller.activate({ type: "action", actionId: action.actionId }).ok, true);
 assert.equal(submitted.action.actionId, action.actionId);
 assert.equal(controller.activate({ type: "action", actionId: "stale" }).code, "ACTION_BAR_ACTION_STALE");
+const firstCard = {
+  ...action,
+  actionId: "play:first",
+  family: "play_card",
+  target: { cardInstanceId: "card-1" },
+};
+const secondCard = {
+  ...action,
+  actionId: "play:second",
+  family: "play_card",
+  target: { cardInstanceId: "card-2" },
+};
+assert.equal(actionBar.selectMainAction([firstCard, secondCard], "play_card", null), null);
+assert.equal(
+  actionBar.selectMainAction([firstCard, secondCard], "play_card", "card-2").actionId,
+  "play:second",
+);
+assert.equal(actionBar.selectMainAction([firstCard, secondCard], "play_card", "missing"), null);
 assert.equal(Object.hasOwn(actionBar, "createActionSessionRuntime"), false);
 assert.equal(Object.hasOwn(actionBar, "createActionGuardRuntime"), false);
 console.log("action bar tests passed");

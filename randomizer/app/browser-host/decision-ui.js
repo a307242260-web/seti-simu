@@ -203,6 +203,32 @@
     const hasInitialCards = choices.some((choice) => (
       choice.card?.cardKind === "industry" || choice.card?.cardKind === "initial"
     ));
+    if (hasInitialCards) {
+      const offer = projection?.resident?.browserReadModel?.render
+        ?.cardPanels?.initialSelection?.offer;
+      const visibleInitialIds = new Set(choices
+        .filter((choice) => choice.card?.cardKind === "initial")
+        .map((choice) => String(choice.card.cardId)));
+      for (const card of offer?.initialOptions || []) {
+        if (visibleInitialIds.has(String(card.id))) continue;
+        const value = String(card.id).replace(/^initial:/, "");
+        choices.push({
+          choiceId: null,
+          label: card.label,
+          presentation: {},
+          card: {
+            cardId: card.id,
+            cardKind: "initial",
+            imageSrc: `../assets/initial_card/split/${value}.png`,
+            imageAlt: card.label,
+            selected: false,
+            detail: "",
+            displayLabel: card.label,
+          },
+          disabledReason: "已选满 2 张；先取消一张再选择",
+        });
+      }
+    }
     const incomeActive = Boolean(initialIncome.active)
       && choices.some((choice) => choice.card?.cardKind === "hand");
     const setupConfirmChoice = hasInitialCards
@@ -560,12 +586,15 @@
       const selectedChoiceIds = new Set(model.controls.selectedChoiceIds.map(String));
       const appendChoice = (parent, choice) => {
         const choiceId = choice.directChoiceId || choice.choiceId;
-        appendChoiceButton(documentRef, parent, choice, choiceId
+        const dataset = choiceId
           ? {
             decisionUiIntent: model.content.directSubmit ? "submit-choice" : "focus-choice",
             choiceId,
           }
-          : { decisionUiIntent: "focus-tech", tileId: choice.tileId }, {
+          : choice.tileId
+            ? { decisionUiIntent: "focus-tech", tileId: choice.tileId }
+            : {};
+        appendChoiceButton(documentRef, parent, choice, dataset, {
           className: model.content.type === "tech"
             ? "decision-ui-choice decision-ui-tech-tile"
             : "decision-ui-choice",

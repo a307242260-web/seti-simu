@@ -202,10 +202,23 @@
       const cards = getRenderModel(projection)?.cardPanels || {};
       const handCards = cards.handCards || [];
       const reservedCards = cards.reservedCards?.items || [];
+      const focusedEntity = input.viewState?.focus?.entityRef;
+      const selectedHandCardId = focusedEntity?.kind === "hand-card"
+        ? String(focusedEntity.id)
+        : null;
       if (els.playerHandFan) {
-        els.playerHandFan.replaceChildren(...handCards.map((card) => (
-          createCardImage(card, "player-hand-card")
-        )));
+        els.playerHandFan.replaceChildren(...handCards.map((card) => {
+          const button = document.createElement("button");
+          const selected = selectedHandCardId === String(card.id);
+          button.type = "button";
+          button.className = "player-hand-card-button";
+          button.dataset.handCardId = text(card.id);
+          button.classList.toggle("is-selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+          button.setAttribute("aria-label", `选择手牌：${card.label || card.id}`);
+          button.append(createCardImage(card, "player-hand-card"));
+          return button;
+        }));
       }
       if (els.reservedCardFan) {
         els.reservedCardFan.replaceChildren(...reservedCards.map((card) => (
@@ -511,7 +524,10 @@
       const projection = assertInput(input);
       const presentation = getRenderModel(projection)?.dataPresentation || {};
       if (!els.playerBoardDataLayer) return;
-      els.playerBoardDataLayer.replaceChildren(...(presentation.playerTokens || []).map((entry) => {
+      const positionedTokens = (presentation.playerTokens || []).filter((entry) => (
+        Number.isFinite(Number(entry.percentX)) && Number.isFinite(Number(entry.percentY))
+      ));
+      els.playerBoardDataLayer.replaceChildren(...positionedTokens.map((entry) => {
         const token = document.createElement("img");
         token.className = "player-data-token";
         token.dataset.tokenId = text(entry.id);
