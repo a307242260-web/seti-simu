@@ -145,7 +145,10 @@ function projection(choices, overrides = {}) {
     },
   };
   const controller = decisionUiApi.createDecisionUiController({ dispatchIntent() {} });
-  const model = controller.render({ projection: current, viewState: {} });
+  const model = controller.render({
+    projection: current,
+    viewState: { draft: { selectedChoiceIds: ["income-card"] } },
+  });
   assert.equal(model.shell.title, "插入收入牌");
   assert.match(model.shell.prompt, /图灵系统/);
   assert.equal(model.content.status.remainingCount, 2);
@@ -157,6 +160,85 @@ function projection(choices, overrides = {}) {
   );
   assert.equal(model.content.choices[0].label, "轨道计划");
   assert.equal(model.content.choices[0].card.detail, "+1 能量收入");
+  assert.deepEqual(model.controls.selectedChoiceIds, ["income-card"]);
+})();
+
+(function testInitialSetupUsesProjectedSelectionsAndTwoColumnGroups() {
+  const current = projection([
+    {
+      choiceId: "industry-a",
+      label: "图灵系统",
+      presentation: {
+        cardId: "industry:图灵系统.png",
+        cardKind: "industry",
+        imageSrc: "../assets/industry/图灵系统.png",
+      },
+    },
+    {
+      choiceId: "industry-b",
+      label: "太阳动力",
+      presentation: {
+        cardId: "industry:太阳动力.png",
+        cardKind: "industry",
+        imageSrc: "../assets/industry/太阳动力.png",
+      },
+    },
+    {
+      choiceId: "initial-7",
+      label: "资源牌 7",
+      presentation: {
+        cardId: "initial:7",
+        cardKind: "initial",
+        imageSrc: "../assets/initial_card/split/7.png",
+      },
+    },
+    {
+      choiceId: "initial-8",
+      label: "资源牌 8",
+      presentation: {
+        cardId: "initial:8",
+        cardKind: "initial",
+        imageSrc: "../assets/initial_card/split/8.png",
+      },
+    },
+    {
+      choiceId: "setup-confirm",
+      label: "确认初始选择",
+      presentation: { role: "setup-confirm" },
+    },
+  ], { decision: { kind: "choose_card" } });
+  current.resident = {
+    browserReadModel: {
+      render: {
+        cardPanels: {
+          initialSelection: {
+            offer: {
+              selectedIndustryId: "industry:图灵系统.png",
+              selectedInitialIds: ["initial:7"],
+              industryOptions: [
+                { id: "industry:图灵系统.png", label: "图灵系统" },
+                { id: "industry:太阳动力.png", label: "太阳动力" },
+              ],
+              initialOptions: [
+                { id: "initial:7", label: "资源牌 7" },
+                { id: "initial:8", label: "资源牌 8" },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  const controller = decisionUiApi.createDecisionUiController({ dispatchIntent() {} });
+  const model = controller.render({ projection: current, viewState: {} });
+  assert.equal(model.content.layout, "initial-setup");
+  assert.deepEqual(model.content.groups.map((group) => group.kind), ["industry", "initial"]);
+  assert.deepEqual(model.content.groups.map((group) => group.choices.length), [2, 2]);
+  assert.equal(model.content.groups[0].choices[0].card.selected, true);
+  assert.equal(model.content.groups[0].choices[1].card.selected, false);
+  assert.equal(model.content.groups[1].choices[0].card.selected, true);
+  assert.equal(model.content.setupConfirmChoiceId, "setup-confirm");
+  assert.equal(model.content.choices.some((choice) => choice.choiceId === "setup-confirm"), false);
 })();
 
 (function testInitialSetupDirectSubmitUsesCurrentDecisionIdentity() {

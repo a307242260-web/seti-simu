@@ -169,12 +169,19 @@
           (card) => String(card?.id) === String(presentation.cardId),
         )
         : null;
+    const setupSelected = presentation.cardKind === "industry"
+      ? String(initialSelection?.selectedIndustryId || "") === String(presentation.cardId)
+      : presentation.cardKind === "initial"
+        ? (initialSelection?.selectedInitialIds || []).some(
+          (cardId) => String(cardId) === String(presentation.cardId),
+        )
+        : false;
     return {
       cardId: presentation.cardId,
       cardKind: presentation.cardKind,
       imageSrc: presentation.imageSrc || handCard?.imageSrc || "",
       imageAlt: presentation.imageAlt || handCard?.label || choice.label,
-      selected: Boolean(presentation.selected),
+      selected: Boolean(presentation.selected || setupSelected),
       detail: incomeGainLabel(handCard?.incomeGain),
       displayLabel: setupCard?.label || handCard?.label || choice.label,
     };
@@ -198,6 +205,12 @@
     ));
     const incomeActive = Boolean(initialIncome.active)
       && choices.some((choice) => choice.card?.cardKind === "hand");
+    const setupConfirmChoice = hasInitialCards
+      ? choices.find((choice) => choice.presentation?.role === "setup-confirm") || null
+      : null;
+    const visibleChoices = hasInitialCards
+      ? choices.filter((choice) => choice !== setupConfirmChoice)
+      : choices;
     return {
       ok: true,
       type: hasInitialCards || incomeActive ? "card-choices" : "choices",
@@ -211,7 +224,21 @@
         : hasInitialCards
           ? "选择 1 张公司牌和 2 张资源牌，卡面会显示所选内容"
           : null,
-      choices,
+      choices: visibleChoices,
+      groups: hasInitialCards ? [
+        {
+          kind: "industry",
+          title: "公司牌 · 2 选 1",
+          choices: visibleChoices.filter((choice) => choice.card?.cardKind === "industry"),
+        },
+        {
+          kind: "initial",
+          title: "资源牌 · 3 选 2",
+          choices: visibleChoices.filter((choice) => choice.card?.cardKind === "initial"),
+        },
+      ] : null,
+      layout: hasInitialCards ? "initial-setup" : null,
+      setupConfirmChoiceId: setupConfirmChoice?.choiceId || null,
       status: incomeActive ? {
         playerLabel: owner?.displayName || owner?.colorLabel || owner?.name || decision.ownerId,
         remainingCount: Number(initialIncome.currentPlayerRemainingCount) || 0,
@@ -446,8 +473,9 @@
     button.type = "button";
     button.className = `${options.className || "decision-ui-choice"} decision-ui-card-choice`;
     button.disabled = Boolean(options.disabled);
-    button.classList.toggle("is-rule-selected", Boolean(choice.card.selected));
-    button.setAttribute("aria-pressed", String(Boolean(choice.card.selected)));
+    const selected = Boolean(choice.card.selected || options.selected);
+    button.classList.toggle("is-rule-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
     button.setAttribute("aria-label", choice.card.imageAlt || choice.label);
     for (const [key, value] of Object.entries(dataset)) button.dataset[key] = String(value);
     const image = documentRef.createElement("img");
@@ -499,7 +527,9 @@
         return model;
       }
       const dialog = documentRef.createElement("section");
-      dialog.className = "decision-ui-shell";
+      dialog.className = `decision-ui-shell${model.content.layout
+        ? ` decision-ui-shell-${model.content.layout}`
+        : ""}`;
       dialog.setAttribute("role", "dialog");
       dialog.setAttribute("aria-modal", "true");
       dialog.dataset.decisionId = model.identity.decisionId;
@@ -526,11 +556,11 @@
         dialog.appendChild(status);
       }
       const content = documentRef.createElement("div");
-      content.className = `decision-ui-content decision-ui-content-${model.content.type}`;
-      const choices = model.content.type === "tech" ? model.content.tiles : model.content.choices;
-      for (const choice of choices) {
+      content.className = `decision-ui-content decision-ui-content-${model.content.layout || model.content.type}`;
+      const selectedChoiceIds = new Set(model.controls.selectedChoiceIds.map(String));
+      const appendChoice = (parent, choice) => {
         const choiceId = choice.directChoiceId || choice.choiceId;
-        appendChoiceButton(documentRef, content, choice, choiceId
+        appendChoiceButton(documentRef, parent, choice, choiceId
           ? {
             decisionUiIntent: model.content.directSubmit ? "submit-choice" : "focus-choice",
             choiceId,
@@ -540,7 +570,25 @@
             ? "decision-ui-choice decision-ui-tech-tile"
             : "decision-ui-choice",
           disabled: choice.disabledReason,
+          selected: choiceId != null && selectedChoiceIds.has(String(choiceId)),
         });
+      };
+      if (model.content.groups) {
+        for (const choiceGroup of model.content.groups) {
+          const group = documentRef.createElement("section");
+          group.className = `decision-ui-choice-group decision-ui-choice-group-${choiceGroup.kind}`;
+          const groupTitle = documentRef.createElement("h3");
+          groupTitle.className = "decision-ui-choice-group-title";
+          groupTitle.textContent = choiceGroup.title;
+          const groupChoices = documentRef.createElement("div");
+          groupChoices.className = "decision-ui-choice-group-list";
+          for (const choice of choiceGroup.choices) appendChoice(groupChoices, choice);
+          group.append(groupTitle, groupChoices);
+          content.appendChild(group);
+        }
+      } else {
+        const choices = model.content.type === "tech" ? model.content.tiles : model.content.choices;
+        for (const choice of choices) appendChoice(content, choice);
       }
       for (const slot of model.content.slots || []) {
         appendButton(documentRef, content, slot.label, { decisionUiIntent: "focus-choice", choiceId: slot.choiceId }, {
@@ -552,6 +600,15 @@
       const controls = documentRef.createElement("footer");
       controls.className = "decision-ui-controls";
       appendButton(documentRef, controls, "查看盘面", { decisionUiIntent: "collapse" });
+      if (model.content.setupConfirmChoiceId) {
+        appendButton(
+          documentRef,
+          controls,
+          "确认初始选择",
+          { decisionUiIntent: "submit-choice", choiceId: model.content.setupConfirmChoiceId },
+          { className: "decision-ui-choice decision-ui-setup-confirm" },
+        );
+      }
       if (!model.content.directSubmit) {
         appendButton(documentRef, controls, "确认", { decisionUiIntent: "confirm" }, { disabled: model.controls.confirmDisabled });
       }

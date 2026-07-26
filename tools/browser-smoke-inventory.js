@@ -51,6 +51,21 @@ module.exports = Object.freeze([
       await waitFor(() => (
         document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-industry").length === 2
       ), "初始公司真实卡面");
+      const setupShell = document.querySelector("#compositionDecisionRoot .decision-ui-shell-initial-setup");
+      const setupGroups = document.querySelectorAll("#compositionDecisionRoot .decision-ui-choice-group");
+      if (!setupShell || setupGroups.length !== 2) {
+        throw new Error("初始选择未使用公司/资源双栏大弹窗");
+      }
+      const setupRect = setupShell.getBoundingClientRect();
+      if (setupRect.right > window.innerWidth + 1
+        || setupRect.bottom > window.innerHeight + 1
+        || setupRect.width < Math.min(700, window.innerWidth * 0.88)) {
+        throw new Error("初始选择弹窗尺寸或视口适配错误: " + JSON.stringify({
+          width: setupRect.width,
+          height: setupRect.height,
+          viewport: [window.innerWidth, window.innerHeight],
+        }));
+      }
       const companyFaces = [...document.querySelectorAll(
         "#compositionDecisionRoot .decision-ui-card-image-industry",
       )];
@@ -85,6 +100,11 @@ module.exports = Object.freeze([
         (button) => Boolean(button.querySelector(".decision-ui-card-image-industry")),
       );
       await waitFor(() => (
+        document.querySelectorAll(
+          "#compositionDecisionRoot .decision-ui-choice-group-industry .is-rule-selected",
+        ).length === 1
+      ), "公司 Session 投影选中态");
+      await waitFor(() => (
         document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-initial").length >= 3
       ), "初始资源牌真实卡面");
       if (![...document.querySelectorAll(
@@ -97,11 +117,24 @@ module.exports = Object.freeze([
         (button) => Boolean(button.querySelector(".decision-ui-card-image-initial"))
           && button.getAttribute("aria-pressed") !== "true",
       );
+      await waitFor(() => (
+        document.querySelectorAll(
+          "#compositionDecisionRoot .decision-ui-choice-group-initial .is-rule-selected",
+        ).length === 1
+      ), "第一张资源牌 Session 投影选中态");
       await submitVisibleDecision(
         "第二张初始牌 DOM Decision",
         (button) => Boolean(button.querySelector(".decision-ui-card-image-initial"))
           && button.getAttribute("aria-pressed") !== "true",
       );
+      await waitFor(() => (
+        document.querySelectorAll(
+          "#compositionDecisionRoot .decision-ui-choice-group-initial .is-rule-selected",
+        ).length === 2
+        && Boolean(document.querySelector(
+          '#compositionDecisionRoot .decision-ui-controls [data-decision-ui-intent="submit-choice"]',
+        ))
+      ), "两张资源牌选中态与最终确认");
       await submitVisibleDecision("初始选择确认 DOM Decision", (button) => button.textContent === "确认初始选择");
       await waitFor(() => {
         const input = window.SetiRandomizer.inspect().input;
@@ -145,6 +178,11 @@ module.exports = Object.freeze([
         const choice = document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]');
         if (!choice) throw new Error("初始收入 Decision 缺少 DOM choice");
         choice.click();
+        await waitFor(() => Boolean(document.querySelector(
+          '#compositionDecisionRoot .decision-ui-card-image-hand'
+            + ' ~ .decision-ui-card-label',
+        )?.closest(".decision-ui-card-choice.is-rule-selected[aria-pressed='true']")),
+        "收入牌 Decision 选中态");
         await waitFor(() => Boolean(
           document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)'),
         ), "初始收入 Decision 确认按钮");

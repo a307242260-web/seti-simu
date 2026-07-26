@@ -1653,6 +1653,12 @@ body {
   color: #eef7ff;
 }
 
+.decision-ui-shell-initial-setup {
+  width: min(1180px, 96vw);
+  max-height: 94vh;
+  padding: clamp(18px, 2vw, 28px);
+}
+
 .decision-ui-content,
 .decision-ui-controls {
   display: flex;
@@ -1681,7 +1687,36 @@ body {
   align-items: end;
 }
 
+.decision-ui-content-initial-setup {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.85fr) minmax(420px, 1.4fr);
+  align-items: start;
+  gap: clamp(18px, 2vw, 30px);
+}
+
+.decision-ui-choice-group {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.decision-ui-choice-group-title {
+  margin: 0;
+  color: #ffd166;
+  font-size: 15px;
+}
+
+.decision-ui-choice-group-list {
+  display: grid;
+  gap: 12px;
+}
+
+.decision-ui-choice-group-initial .decision-ui-choice-group-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .decision-ui-card-choice {
+  position: relative;
   display: grid;
   justify-items: center;
   gap: 7px;
@@ -1692,7 +1727,21 @@ body {
 .decision-ui-card-choice.is-rule-selected {
   border-color: #ffd166;
   background: rgba(111, 82, 26, 0.78);
-  box-shadow: 0 0 0 2px rgba(255, 209, 102, 0.26);
+  box-shadow: 0 0 0 3px #ffd166, 0 10px 24px rgba(0, 0, 0, 0.36);
+}
+
+.decision-ui-card-choice.is-rule-selected::after {
+  content: "✓ 已选";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #ffd166;
+  color: #172231;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .decision-ui-card-image {
@@ -1710,6 +1759,21 @@ body {
   height: auto;
   max-height: 210px;
   aspect-ratio: 1382 / 1054;
+}
+
+.decision-ui-content-initial-setup .decision-ui-card-image-industry {
+  max-height: min(220px, 27vh);
+}
+
+.decision-ui-content-initial-setup .decision-ui-card-image-initial {
+  height: min(390px, 48vh);
+}
+
+.decision-ui-setup-confirm {
+  border-color: #ffd166;
+  background: #b77718;
+  color: #fff9e8;
+  font-weight: 900;
 }
 
 .decision-ui-card-label {
@@ -1776,6 +1840,16 @@ body {
 .decision-ui-choice:focus-visible {
   outline: 3px solid #ffd166;
   outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .decision-ui-content-initial-setup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .decision-ui-choice-group-industry .decision-ui-choice-group-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .decision-ui-choice:disabled {
