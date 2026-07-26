@@ -449,6 +449,7 @@
                 : data.DATA_TOKEN_SRC,
               panelRegion: structuredClone(data.getNebulaPanelRegion(nebulaId)),
               layout: structuredClone(layout),
+              displayScale: Number(data.DATA_TOKEN_DISPLAY_SCALE) || 3.5,
             });
           }
           for (const record of data.listSectorWinRecords(state.data, nebulaId)) {

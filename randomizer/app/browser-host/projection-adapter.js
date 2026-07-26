@@ -240,6 +240,8 @@
         imageAlt: choice?.summary || choice?.label || "手牌",
         selected: false,
       };
+    } else if (choice?.target?.kind === "confirm_initial_setup") {
+      inferredPresentation = { role: "setup-confirm" };
     }
     if (!inferredPresentation && choice?.tileId != null) {
       inferredPresentation = {

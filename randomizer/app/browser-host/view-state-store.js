@@ -7,7 +7,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "seti-browser-view-state-v2";
+  const SCHEMA_VERSION = "seti-browser-view-state-v3";
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -24,6 +24,7 @@
       schemaVersion: SCHEMA_VERSION,
       focus: { entityRef: null, controlId: null },
       draft: { intentKind: null, selectedChoiceIds: [], text: "" },
+      presentation: { decisionCollapsed: false },
       projection: { projectionId: null, decisionId: null, decisionVersion: null },
     };
   }
@@ -37,7 +38,7 @@
     if (expected.length !== actual.length || expected.some((key, index) => key !== actual[index])) {
       return deepFreeze({ ok: false, code: "VIEW_STATE_ROOT_FIELDS_INVALID" });
     }
-    const required = ["focus", "draft", "projection"];
+    const required = ["focus", "draft", "presentation", "projection"];
     if (required.some((key) => snapshot[key] == null || typeof snapshot[key] !== "object" || Array.isArray(snapshot[key]))) {
       return deepFreeze({ ok: false, code: "VIEW_STATE_SNAPSHOT_INVALID" });
     }
@@ -87,6 +88,12 @@
         case "draft.clear":
           next.draft = { intentKind: null, selectedChoiceIds: [], text: "" };
           break;
+        case "decision.collapse":
+          next.presentation.decisionCollapsed = true;
+          break;
+        case "decision.expand":
+          next.presentation.decisionCollapsed = false;
+          break;
         case "reset":
           state = createInitialState();
           return publish(intent);
@@ -106,6 +113,7 @@
         || previous.projectionId !== (projection?.projectionId || null);
       if (decisionChanged) {
         next.draft = { intentKind: null, selectedChoiceIds: [], text: "" };
+        next.presentation.decisionCollapsed = false;
       } else if (versionChanged) {
         const legalIds = new Set((decision?.choices || []).map((choice) => String(choice.choiceId)));
         next.draft.selectedChoiceIds = next.draft.selectedChoiceIds.filter((id) => legalIds.has(id));
@@ -115,6 +123,7 @@
         decisionId: decision?.decisionId || null,
         decisionVersion: decision?.decisionVersion ?? null,
       };
+      if (!decision) next.presentation.decisionCollapsed = false;
       state = next;
       return publish({ type: "projection.reconcile" });
     }

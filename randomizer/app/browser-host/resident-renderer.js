@@ -23,13 +23,6 @@
     return value == null ? "" : String(value);
   }
 
-  function resourceSummary(player) {
-    return Object.entries(player?.resources || {})
-      .filter(([, value]) => Number.isFinite(Number(value)))
-      .map(([key, value]) => `${key}:${value}`)
-      .join(" · ");
-  }
-
   function getRenderModel(projection) {
     return projection.resident?.browserReadModel?.render || null;
   }
@@ -118,13 +111,18 @@
       card.dataset.playerId = text(player.id);
       card.classList.toggle("is-current", current);
       if (player.color) card.style.setProperty("--player-color", text(player.color));
-      const title = document.createElement("strong");
-      title.className = "opponent-stat-player";
-      title.textContent = player.colorLabel || player.name || player.id;
-      const stats = document.createElement("span");
-      stats.className = "opponent-stat-summary";
-      stats.textContent = `${resourceSummary(player)} · hand:${Number(player.handCount) || 0} · reserved:${Number(player.reservedCount) || 0}`;
-      card.append(title, stats);
+      const row = document.createElement("div");
+      row.className = "player-stats-row opponent-stat-row";
+      row.append(
+        createCurrentPlayerHeader(player),
+        ...visibleCurrentResourceStats(player).map(createPlayerStatIcon),
+        createPlayerStatIcon({
+          label: "手牌",
+          value: Number(player.handCount) || 0,
+          iconSrc: "../assets/symbol/effect/card.webp",
+        }),
+      );
+      card.append(row);
       return card;
     }
 
@@ -149,6 +147,7 @@
       }
       if (els.opponentStatGrid) {
         els.opponentStatGrid.replaceChildren(...(playerPanels?.players || [])
+          .filter((player) => String(player.id) !== String(playerPanels.interfacePlayerId))
           .map((player) => createPlayerCard(
             player,
             String(player.id) === String(playerPanels.currentPlayerId),
@@ -277,6 +276,13 @@
             token.setAttribute("aria-hidden", "true");
             token.style.setProperty("left", `${Number(tokenEntry.layout?.percentX)}%`);
             token.style.setProperty("top", `${Number(tokenEntry.layout?.percentY)}%`);
+            token.style.setProperty(
+              "--data-scale",
+              String(
+                ((Number(tokenEntry.layout?.scalePercent) || 11.8) / 100)
+                * (Number(tokenEntry.displayScale) || 3.5),
+              ),
+            );
             panel.append(token);
           }
           for (const winEntry of sectorData.wins || []) {

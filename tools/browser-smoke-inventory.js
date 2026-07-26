@@ -27,19 +27,23 @@ module.exports = Object.freeze([
       const inputBefore = window.SetiRandomizer.inspect().input.submissionSequence;
       const submitVisibleDecision = async (label, predicate) => {
         await waitFor(() => [...document.querySelectorAll(
-          '#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]:not(:disabled)',
+          '#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]:not(:disabled),'
+            + '#compositionDecisionRoot [data-decision-ui-intent="submit-choice"]:not(:disabled)',
         )].some(predicate), label + " choice");
         const choice = [...document.querySelectorAll(
-          '#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]:not(:disabled)',
+          '#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]:not(:disabled),'
+            + '#compositionDecisionRoot [data-decision-ui-intent="submit-choice"]:not(:disabled)',
         )].find(predicate);
         const beforeId = window.SetiRandomizer.inspect().projection.decision?.decisionId;
         choice.click();
-        await waitFor(() => Boolean(
-          document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)'),
-        ), label + " confirm");
-        document.querySelector(
-          '#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)',
-        ).click();
+        if (choice.dataset.decisionUiIntent !== "submit-choice") {
+          await waitFor(() => Boolean(
+            document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)'),
+          ), label + " confirm");
+          document.querySelector(
+            '#compositionDecisionRoot [data-decision-ui-intent="confirm"]:not(:disabled)',
+          ).click();
+        }
         await waitFor(() => (
           window.SetiRandomizer.inspect().projection.decision?.decisionId !== beforeId
         ), label + " advance");
@@ -53,6 +57,29 @@ module.exports = Object.freeze([
       if (!companyFaces.every((image) => image.src.includes("/assets/industry/"))) {
         throw new Error("初始公司未展示真实公司图片");
       }
+      if (document.querySelector(
+        '#compositionDecisionRoot [data-decision-ui-intent="confirm"]',
+      )) {
+        throw new Error("初始选择仍要求每张卡先选中再确认");
+      }
+      const visibleDecisionId = window.SetiRandomizer.inspect().projection.decision.decisionId;
+      document.querySelector(
+        '#compositionDecisionRoot [data-decision-ui-intent="collapse"]',
+      )?.click();
+      await waitFor(() => Boolean(
+        document.querySelector(
+          '#compositionDecisionRoot.is-collapsed [data-decision-ui-intent="expand"]',
+        ),
+      ), "Decision 收起查看盘面");
+      if (window.SetiRandomizer.inspect().projection.decision?.decisionId !== visibleDecisionId) {
+        throw new Error("收起 Decision 错误地 resolve/cancel 了 Effect Session");
+      }
+      document.querySelector(
+        '#compositionDecisionRoot [data-decision-ui-intent="expand"]',
+      )?.click();
+      await waitFor(() => (
+        document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-industry").length === 2
+      ), "Decision 恢复同一选择");
       await submitVisibleDecision(
         "公司 DOM Decision",
         (button) => Boolean(button.querySelector(".decision-ui-card-image-industry")),
@@ -224,7 +251,17 @@ module.exports = Object.freeze([
             .every((image) => image.src.includes("/assets/tech_tile/bonus_")),
         scanData: Boolean(document.querySelector("#player-board-data-layer"))
           && Array.isArray(renderProjection.dataPresentation?.playerTokens)
-          && document.querySelectorAll(".sector .nebula-data-token").length > 0,
+          && document.querySelectorAll(".sector .nebula-data-token").length > 0
+          && [...document.querySelectorAll(".sector .nebula-data-token")].every((token) => {
+            const scale = Number(token.style.getPropertyValue("--data-scale"));
+            return scale > 0.3 && scale < 0.5;
+          }),
+        opponentStats: document.querySelectorAll("#opponent-stat-grid .opponent-stat-card").length === 3
+          && [...document.querySelectorAll("#opponent-stat-grid .opponent-stat-card")]
+            .every((card) => (
+              card.querySelectorAll(".player-stat-with-icon").length >= 6
+              && Boolean(card.querySelector('[aria-label^="手牌 "]'))
+            )),
         aliens: document.querySelectorAll("[data-alien-slot-root][data-revealed]").length === 2
           && document.querySelectorAll("[data-alien-slot-root] .alien-projection-face img").length === 2
           && Array.isArray(renderProjection.alienPresentation?.slots)

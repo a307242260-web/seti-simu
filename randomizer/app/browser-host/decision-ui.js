@@ -111,6 +111,7 @@
           title: content.title || decision.titleKey || "请选择",
           prompt: content.prompt || decision.promptKey || "",
           stale,
+          collapsed: Boolean(input.viewState?.presentation?.decisionCollapsed),
         },
         content: clone(content),
         controls: {
@@ -217,6 +218,7 @@
         resources: presentStats(owner?.resources, RESOURCE_PRESENTATION),
         income: presentStats(owner?.income, INCOME_PRESENTATION),
       } : null,
+      directSubmit: hasInitialCards,
     };
   }
 
@@ -345,6 +347,30 @@
         }
         return fail("DECISION_UI_FOCUS_INVALID", "focus intent 缺少标准 choice/entity identity");
       }
+      if (intent?.type === "submit-choice") {
+        const choiceId = intent.choiceId == null ? null : String(intent.choiceId);
+        const choice = input.projection.decision.choices.find(
+          (entry) => String(entry.choiceId) === choiceId,
+        );
+        if (!choice || choice.disabledReason || model.shell.stale) {
+          return fail("DECISION_UI_CHOICE_NOT_SUBMITTABLE", "choice 不可直接提交", { choiceId });
+        }
+        return dispatchIntent({
+          kind: "decision",
+          submission: {
+            decisionId: model.identity.decisionId,
+            decisionVersion: model.identity.decisionVersion,
+            ownerId: model.identity.ownerId,
+            choice: { choiceId },
+          },
+        });
+      }
+      if (intent?.type === "collapse") {
+        return dispatchIntent({ kind: "view", type: "decision.collapse" });
+      }
+      if (intent?.type === "expand") {
+        return dispatchIntent({ kind: "view", type: "decision.expand" });
+      }
       if (intent?.type === "confirm") {
         if (model.controls.confirmDisabled) return fail("DECISION_UI_CONFIRM_DISABLED", "当前 Decision 草稿不能确认");
         const choiceId = model.controls.selectedChoiceIds[0];
@@ -460,7 +486,18 @@
       const model = controller.render(currentInput);
       rootNode.replaceChildren();
       rootNode.hidden = Boolean(model.hidden || model.ok === false);
+      rootNode.classList.toggle("is-collapsed", Boolean(model.shell?.collapsed));
       if (rootNode.hidden) return model;
+      if (model.shell.collapsed) {
+        appendButton(
+          documentRef,
+          rootNode,
+          "继续选择",
+          { decisionUiIntent: "expand" },
+          { className: "decision-ui-reopen" },
+        );
+        return model;
+      }
       const dialog = documentRef.createElement("section");
       dialog.className = "decision-ui-shell";
       dialog.setAttribute("role", "dialog");
@@ -494,7 +531,10 @@
       for (const choice of choices) {
         const choiceId = choice.directChoiceId || choice.choiceId;
         appendChoiceButton(documentRef, content, choice, choiceId
-          ? { decisionUiIntent: "focus-choice", choiceId }
+          ? {
+            decisionUiIntent: model.content.directSubmit ? "submit-choice" : "focus-choice",
+            choiceId,
+          }
           : { decisionUiIntent: "focus-tech", tileId: choice.tileId }, {
           className: model.content.type === "tech"
             ? "decision-ui-choice decision-ui-tech-tile"
@@ -511,7 +551,10 @@
       dialog.appendChild(content);
       const controls = documentRef.createElement("footer");
       controls.className = "decision-ui-controls";
-      appendButton(documentRef, controls, "确认", { decisionUiIntent: "confirm" }, { disabled: model.controls.confirmDisabled });
+      appendButton(documentRef, controls, "查看盘面", { decisionUiIntent: "collapse" });
+      if (!model.content.directSubmit) {
+        appendButton(documentRef, controls, "确认", { decisionUiIntent: "confirm" }, { disabled: model.controls.confirmDisabled });
+      }
       if (model.controls.cancelChoiceId) appendButton(documentRef, controls, "取消", { decisionUiIntent: "cancel" });
       dialog.appendChild(controls);
       rootNode.appendChild(dialog);
@@ -522,6 +565,12 @@
       const target = event?.target?.closest?.("[data-decision-ui-intent]");
       if (!target || !currentInput) return { ok: true, ignored: true };
       const kind = target.dataset.decisionUiIntent;
+      if (kind === "submit-choice") {
+        return controller.dispatchUiIntent(
+          { type: "submit-choice", choiceId: target.dataset.choiceId },
+          currentInput,
+        );
+      }
       if (kind === "focus-choice") return controller.dispatchUiIntent({ type: "focus", choiceId: target.dataset.choiceId }, currentInput);
       if (kind === "focus-tech") return controller.dispatchUiIntent({ type: "focus", entityRef: { kind: "tech-tile", id: target.dataset.tileId } }, currentInput);
       return controller.dispatchUiIntent({ type: kind }, currentInput);

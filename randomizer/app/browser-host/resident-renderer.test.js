@@ -401,7 +401,8 @@ function createProjection() {
                   id: "nebula-1",
                   nebulaId: "sector-3-a",
                   imageSrc: "data.png",
-                  layout: { percentX: 47, percentY: 58 },
+                  layout: { percentX: 47, percentY: 58, scalePercent: 11.8 },
+                  displayScale: 3.5,
                 }],
                 wins: [{
                   id: "win-1",
@@ -451,11 +452,60 @@ function createProjection() {
     fixture.els.sectorWraps[1].children[0].children[0].children[0].dataset.tokenId,
     "nebula-1",
   );
+  assert.equal(
+    fixture.els.sectorWraps[1].children[0].children[0].children[0]
+      .style.values["--data-scale"],
+    String((11.8 / 100) * 3.5),
+  );
   assert.equal(fixture.els.sectorWraps[1].children[0].children[1].dataset.winId, "win-1");
   assert.equal(fixture.els.tokenLayer.children[0].style.values.left, "42%");
   assert.equal(fixture.els.planetsTokenLayer.children[0].dataset.pieceId, "planet:venus:orbit:1");
   assert.match(fixture.els.planetsTokenLayer.children[0].className, /is-reference-orbit/);
   assert.equal(fixture.els.roundStatusToken.dataset.slotId, "bottom-left");
+})();
+
+(function testOpponentStatsReuseCurrentPlayerIconsAndAddHandCount() {
+  const fixture = createFixture();
+  const renderer = rendererApi.createResidentRenderer(fixture);
+  const projection = {
+    schemaVersion: rendererApi.SCHEMA_VERSION,
+    resident: {
+      browserReadModel: {
+        render: {
+          playerPanels: {
+            interfacePlayerId: "p1",
+            currentPlayerId: "p2",
+            players: [{
+              id: "p1",
+              displayName: "白色玩家",
+              score: 8,
+              resourceStats: [],
+            }, {
+              id: "p2",
+              displayName: "棕色玩家",
+              score: 12,
+              uiColor: "#b2845a",
+              handCount: 4,
+              resourceStats: [
+                { label: "信用点", value: 5, iconSrc: "credits.webp" },
+                { label: "能量", value: 2, iconSrc: "energy.webp" },
+                { label: "宣传", value: "6/10", iconSrc: "publicity.webp" },
+                { label: "可用数据", value: 1, iconSrc: "data.webp" },
+              ],
+            }],
+          },
+        },
+      },
+    },
+  };
+  renderer.renderPlayers({ projection, viewState: {} });
+  const opponent = fixture.els.opponentStatGrid.children[0];
+  assert.equal(fixture.els.opponentStatGrid.children.length, 1);
+  assert.equal(opponent.className.includes("is-current"), true);
+  const row = opponent.children[0];
+  assert.equal(row.className.includes("player-stats-row"), true);
+  assert.equal(row.children.length, 6, "玩家标题/分数、四项资源、手牌数量");
+  assert.equal(row.children[5].attributes["aria-label"], "手牌 4");
 })();
 
 (function testAlienPanelsAreRebuiltFromRenderProjection() {

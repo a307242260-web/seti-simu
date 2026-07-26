@@ -159,6 +159,68 @@ function projection(choices, overrides = {}) {
   assert.equal(model.content.choices[0].card.detail, "+1 能量收入");
 })();
 
+(function testInitialSetupDirectSubmitUsesCurrentDecisionIdentity() {
+  const submitted = [];
+  const current = projection([{
+    choiceId: "company-choice",
+    label: "图灵系统",
+    presentation: {
+      cardId: "industry:图灵系统.png",
+      cardKind: "industry",
+      imageSrc: "../assets/industry/图灵系统.png",
+    },
+  }], { decision: { kind: "choose_card" } });
+  const controller = decisionUiApi.createDecisionUiController({
+    dispatchIntent(intent) {
+      submitted.push(intent);
+      return { ok: true };
+    },
+  });
+  const inputState = { projection: current, viewState: {} };
+  assert.equal(controller.render(inputState).content.directSubmit, true);
+  controller.dispatchUiIntent(
+    { type: "submit-choice", choiceId: "company-choice" },
+    inputState,
+  );
+  assert.deepEqual(submitted, [{
+    kind: "decision",
+    submission: {
+      decisionId: "research:effect:2",
+      decisionVersion: 3,
+      ownerId: "p1",
+      choice: { choiceId: "company-choice" },
+    },
+  }]);
+})();
+
+(function testDecisionCollapseOnlyChangesViewStateAndPreservesDecision() {
+  const current = projection([
+    { choiceId: "purple1", label: "紫色科技", presentation: { tileId: "purple1" } },
+  ]);
+  const store = viewStateApi.createViewStateStore();
+  store.reconcileProjection(current);
+  const controller = decisionUiApi.createDecisionUiController({
+    dispatchIntent(intent) {
+      if (intent.kind === "view") return store.dispatch(intent);
+      throw new Error("收起 Decision 不得提交规则输入");
+    },
+  });
+  controller.dispatchUiIntent(
+    { type: "collapse" },
+    { projection: current, viewState: store.getSnapshot() },
+  );
+  store.reconcileProjection(current);
+  let model = controller.render({ projection: current, viewState: store.getSnapshot() });
+  assert.equal(model.shell.collapsed, true);
+  assert.equal(store.getSnapshot().projection.decisionId, current.decision.decisionId);
+  controller.dispatchUiIntent(
+    { type: "expand" },
+    { projection: current, viewState: store.getSnapshot() },
+  );
+  model = controller.render({ projection: current, viewState: store.getSnapshot() });
+  assert.equal(model.shell.collapsed, false);
+})();
+
 (function testTechRendererUsesOnlyProjectedChoicesAndRoutesFocusConfirmCancel() {
   const submitted = [];
   const viewStore = viewStateApi.createViewStateStore();
