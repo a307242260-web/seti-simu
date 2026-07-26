@@ -4,6 +4,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const {
+  formatTurnReportHtml,
   formatTurnReportMarkdown,
   runFixedBoardTurnReport,
 } = require("../randomizer/training/heuristic-policy-turn-report");
@@ -15,12 +16,15 @@ function readOutputPath(argv) {
   return path.resolve(argv[index + 1]);
 }
 
-const markdown = formatTurnReportMarkdown(runFixedBoardTurnReport());
 const outputPath = readOutputPath(process.argv.slice(2));
+const report = runFixedBoardTurnReport();
+const output = outputPath && path.extname(outputPath).toLowerCase() === ".html"
+  ? formatTurnReportHtml(report)
+  : formatTurnReportMarkdown(report);
 if (outputPath) {
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, markdown, "utf8");
+  fs.writeFileSync(outputPath, output, "utf8");
   process.stdout.write(`${outputPath}\n`);
 } else {
-  process.stdout.write(markdown);
+  process.stdout.write(output);
 }

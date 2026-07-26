@@ -352,6 +352,417 @@ function markdownCell(value) {
   return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatGoalName(evaluation) {
+  const goal = evaluation?.probeGoalRequirement;
+  const route = evaluation?.probeRouteSummary;
+  if (goal) return `${goal.planetId}/${goal.endpointFamily}`;
+  if (route) return `${route.endpointPlanetId || "未知行星"}/${route.endpointKind || "未知终点"}`;
+  if (evaluation?.orangeTechDelta > 0) return `橙色科技 +${evaluation.orangeTechDelta}`;
+  return "无探测器目标";
+}
+
+function formatGap(gap) {
+  if (!gap) return "—";
+  return `钱 ${gap.credits || 0} · 电 ${gap.energy || 0} · 移动 ${gap.movementSteps || 0}`;
+}
+
+function renderResourceStrip(before, after) {
+  return RESOURCE_FIELDS.map(([key, label]) => {
+    const delta = after[key] - before[key];
+    const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
+    return `<span class="resource-chip">
+      <span class="resource-label">${escapeHtml(label)}</span>
+      <strong>${escapeHtml(before[key])}→${escapeHtml(after[key])}</strong>
+      <span class="delta ${deltaClass}">${escapeHtml(signed(delta))}</span>
+    </span>`;
+  }).join("");
+}
+
+function renderAlternatives(alternatives) {
+  if (!alternatives.length) return '<span class="muted">没有其他候选</span>';
+  return alternatives.map((candidate, index) => {
+    const selectable = candidate.evaluation.selectable;
+    const detail = selectable
+      ? `V ${formatNumber(candidate.score)}`
+      : `不可选 · ${(candidate.evaluation.reasonCodes || []).join(", ")}`;
+    return `<li>
+      <span class="alternative-rank">${index + 1}</span>
+      <span>${escapeHtml(candidate.summary)}</span>
+      <strong class="${selectable ? "" : "muted"}">${escapeHtml(detail)}</strong>
+    </li>`;
+  }).join("");
+}
+
+function renderActionCard(action) {
+  const evaluation = action.value?.evaluation || null;
+  const goal = evaluation?.probeGoalRequirement || null;
+  const route = evaluation?.probeRouteSummary || null;
+  const gap = goal?.gap || route?.resourceGap || null;
+  const required = goal?.required || route?.routeCost || null;
+  const nextStep = goal?.nextStep?.family
+    || route?.nextActionSummary
+    || route?.nextActionId
+    || action.summary
+    || "—";
+  const chain = evaluation?.actionChain || [];
+  const scoreDeltaClass = action.scoreDelta > 0 ? "positive" : action.scoreDelta < 0 ? "negative" : "neutral";
+  const timing = action.timing || {};
+  const candidateCount = Math.max(1, Number(timing.candidateCount) || 1);
+  const perCandidate = (Number(timing.totalMilliseconds) || 0) / candidateCount;
+  return `<article class="action-card" data-player="${escapeHtml(action.actorPlayerId)}" data-family="${escapeHtml(action.family)}">
+    <div class="action-heading">
+      <span class="decision-number">#${action.decisionNumber}</span>
+      <div class="action-title">
+        <h4>${escapeHtml(action.text)}</h4>
+        <span>${escapeHtml(action.decisionType)} · ${escapeHtml(action.family)}</span>
+      </div>
+      <div class="score-change ${scoreDeltaClass}">
+        <small>实际得分</small>
+        <strong>${escapeHtml(signed(action.scoreDelta))}</strong>
+      </div>
+      <div class="value-pill">
+        <small>选择价值 V</small>
+        <strong>${evaluation?.score == null ? "—" : escapeHtml(formatNumber(evaluation.value ?? evaluation.score))}</strong>
+      </div>
+    </div>
+    <div class="resource-strip" aria-label="行动前后资源">${renderResourceStrip(action.resourcesBefore, action.resourcesAfter)}</div>
+    <div class="decision-grid">
+      <div class="decision-cell emphasized">
+        <span>当前目标</span>
+        <strong>${escapeHtml(formatGoalName(evaluation))}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>下一步</span>
+        <strong>${escapeHtml(nextStep)}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>当前缺口</span>
+        <strong>${escapeHtml(formatGap(gap))}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>完整路线需求</span>
+        <strong>${escapeHtml(formatGap(required))}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>路线终点实际分</span>
+        <strong>${escapeHtml(formatNumber(evaluation?.goalScoreGain))}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>沿途宣传</span>
+        <strong>${escapeHtml(formatNumber(route?.publicityAlongRoute))}</strong>
+      </div>
+    </div>
+    <div class="actual-outcome">
+      <span>本步实际收益</span>
+      <strong>${escapeHtml(formatActualDelta(action, action.scoreDelta))}</strong>
+      <span class="score-transition">分数 ${escapeHtml(action.scoreBefore)}→${escapeHtml(action.scoreAfter)}</span>
+    </div>
+    <details class="action-details">
+      <summary>路线依据、标准执行链与备选</summary>
+      <div class="detail-columns">
+        <div>
+          <h5>标准执行链</h5>
+          <div class="chain">${chain.length
+            ? chain.map((step) => `<span>${escapeHtml(step)}</span>`).join('<b aria-hidden="true">→</b>')
+            : '<span class="muted">—</span>'}</div>
+          <h5>结果来源</h5>
+          <p>${escapeHtml((evaluation?.reasonCodes || []).join(", ") || "未生成 outcome")}</p>
+          <p class="muted">终点标准叶：${escapeHtml(route?.endpointActionId || "无")} · ${escapeHtml(JSON.stringify(route?.endpointDelta || {}))}</p>
+        </div>
+        <div>
+          <h5>未提交的前三个备选</h5>
+          <ol class="alternatives">${renderAlternatives(action.alternatives)}</ol>
+          <p class="timing">候选 ${candidateCount} 个 · 总计 ${escapeHtml(formatNumber(timing.totalMilliseconds))}ms · 每候选 ${escapeHtml(formatNumber(perCandidate))}ms</p>
+        </div>
+      </div>
+    </details>
+  </article>`;
+}
+
+function renderTurnSection(turn) {
+  return `<section class="turn-section" data-player="${escapeHtml(turn.actorPlayerId)}">
+    <div class="turn-heading">
+      <div>
+        <span class="eyebrow">第 ${turn.roundNumber} 轮 · T${String(turn.turnNumber).padStart(2, "0")}</span>
+        <h3>${escapeHtml(turn.playerLabel)}</h3>
+      </div>
+      <div class="turn-score">
+        <span>回合分数</span>
+        <strong>${escapeHtml(turn.scoreBefore)} → ${escapeHtml(turn.scoreAfter)}</strong>
+        <b class="${turn.scoreAfter > turn.scoreBefore ? "positive" : "neutral"}">${escapeHtml(signed(turn.scoreAfter - turn.scoreBefore))}</b>
+      </div>
+    </div>
+    <div class="turn-resource-summary">${renderResourceStrip(turn.resourcesBefore, turn.resourcesAfter)}</div>
+    <div class="action-list">${turn.actions.map(renderActionCard).join("")}</div>
+  </section>`;
+}
+
+function formatTurnReportHtml(report) {
+  const familyCounts = report.diagnostics.actionFamilyCounts;
+  const players = report.finalScores.map((player) => ({
+    id: player.playerId,
+    label: player.playerLabel,
+  }));
+  const families = Object.keys(familyCounts).sort();
+  const actionCount = report.setupChoices.length
+    + report.turns.reduce((total, turn) => total + turn.actions.length, 0);
+  const probeEndpoints = report.turns.flatMap((turn) => turn.actions)
+    .filter((action) => ["orbit", "land"].includes(action.family)).length;
+  const generatedAt = new Date().toLocaleString("zh-CN", { hour12: false });
+  const setupSection = report.setupChoices.length
+    ? `<section class="turn-section setup-section" data-player="setup">
+      <div class="turn-heading">
+        <div><span class="eyebrow">开局阶段</span><h3>公司与资源牌选择</h3></div>
+        <div class="turn-score"><span>决策数</span><strong>${report.setupChoices.length}</strong></div>
+      </div>
+      <div class="action-list">${report.setupChoices.map(renderActionCard).join("")}</div>
+    </section>`
+    : "";
+  return `<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(report.boardId)} 机器人逐决策报告</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090d18;
+      --panel: #11182a;
+      --panel-2: #172137;
+      --line: #263451;
+      --text: #eef3ff;
+      --muted: #94a3be;
+      --cyan: #56d8ff;
+      --violet: #9f8cff;
+      --green: #70e1a1;
+      --red: #ff8d92;
+      --amber: #ffc96b;
+      --shadow: 0 18px 48px rgba(0, 0, 0, .26);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% -10%, rgba(63, 105, 255, .22), transparent 30rem),
+        radial-gradient(circle at 90% 5%, rgba(62, 211, 222, .12), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button, select, input { font: inherit; }
+    .page { width: min(1480px, calc(100% - 40px)); margin: 0 auto; padding: 44px 0 80px; }
+    .hero { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; margin-bottom: 24px; }
+    .eyebrow { color: var(--cyan); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 7px 0 10px; font-size: clamp(28px, 4vw, 48px); line-height: 1.12; letter-spacing: -.035em; }
+    .hero p { margin: 0; color: var(--muted); max-width: 880px; }
+    .hero-meta { text-align: right; color: var(--muted); font-size: 12px; }
+    .hero-meta code { display: block; color: var(--text); margin-top: 4px; max-width: 340px; overflow-wrap: anywhere; }
+    .summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+    .summary-card { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(17, 24, 42, .86); box-shadow: var(--shadow); }
+    .summary-card span { display: block; color: var(--muted); font-size: 12px; }
+    .summary-card strong { display: block; margin-top: 4px; font-size: 25px; letter-spacing: -.025em; }
+    .standings { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; background: rgba(17, 24, 42, .9); box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 13px 16px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+    th { color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .rank { color: var(--amber); font-weight: 800; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+      margin: 28px 0 18px; padding: 13px;
+      border: 1px solid var(--line); border-radius: 16px;
+      background: rgba(9, 13, 24, .92); backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+    .toolbar label { display: flex; gap: 8px; align-items: center; color: var(--muted); }
+    select, input {
+      min-width: 150px; padding: 8px 10px; color: var(--text);
+      border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2);
+    }
+    .visible-count { margin-left: auto; color: var(--cyan); font-weight: 700; }
+    .turn-section { margin: 18px 0; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: rgba(17, 24, 42, .78); box-shadow: var(--shadow); }
+    .turn-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 14px; }
+    .turn-heading h3 { margin: 3px 0 0; font-size: 23px; }
+    .turn-score { display: grid; grid-template-columns: auto auto auto; gap: 10px; align-items: baseline; }
+    .turn-score span { color: var(--muted); font-size: 12px; }
+    .turn-score strong { font-size: 18px; }
+    .resource-strip, .turn-resource-summary { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+    .turn-resource-summary { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .resource-chip { display: grid; grid-template-columns: 1fr auto; gap: 1px 8px; padding: 8px 10px; border: 1px solid rgba(57, 73, 110, .75); border-radius: 10px; background: rgba(9, 13, 24, .45); }
+    .resource-label { color: var(--muted); font-size: 11px; }
+    .resource-chip strong { font-size: 13px; }
+    .resource-chip .delta { grid-column: 2; font-size: 11px; }
+    .action-list { display: grid; gap: 12px; }
+    .action-card { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--panel); }
+    .action-heading { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 14px; }
+    .decision-number { color: var(--cyan); font: 750 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .action-title h4 { margin: 0; font-size: 15px; }
+    .action-title span { color: var(--muted); font-size: 11px; }
+    .score-change, .value-pill { min-width: 86px; padding: 6px 10px; text-align: right; border-left: 1px solid var(--line); }
+    .score-change small, .value-pill small { display: block; color: var(--muted); font-size: 10px; }
+    .score-change strong, .value-pill strong { font-size: 18px; }
+    .value-pill strong { color: var(--violet); }
+    .action-card > .resource-strip { padding: 0 14px 14px; }
+    .decision-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr .8fr .8fr; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .decision-cell { min-width: 0; padding: 10px 12px; border-right: 1px solid var(--line); }
+    .decision-cell:last-child { border-right: 0; }
+    .decision-cell span { display: block; color: var(--muted); font-size: 10px; }
+    .decision-cell strong { display: block; margin-top: 2px; font-size: 12px; overflow-wrap: anywhere; }
+    .decision-cell.emphasized strong { color: var(--cyan); }
+    .actual-outcome { display: flex; gap: 10px; align-items: center; padding: 10px 14px; background: rgba(86, 216, 255, .045); }
+    .actual-outcome span { color: var(--muted); font-size: 11px; }
+    .actual-outcome strong { color: var(--green); }
+    .actual-outcome .score-transition { margin-left: auto; }
+    .action-details { border-top: 1px solid var(--line); }
+    .action-details summary { padding: 10px 14px; cursor: pointer; color: var(--muted); font-size: 12px; }
+    .detail-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 2px 14px 16px; }
+    .detail-columns h5 { margin: 10px 0 5px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+    .detail-columns p { margin: 4px 0; font-size: 12px; overflow-wrap: anywhere; }
+    .chain { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .chain span { padding: 4px 7px; border-radius: 6px; background: var(--panel-2); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .chain b { color: var(--muted); }
+    .alternatives { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .alternatives li { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; font-size: 12px; }
+    .alternative-rank { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; color: var(--muted); background: var(--panel-2); }
+    .timing { color: var(--muted); }
+    .positive { color: var(--green) !important; }
+    .negative { color: var(--red) !important; }
+    .neutral, .muted { color: var(--muted) !important; }
+    .hidden { display: none !important; }
+    .empty-state { display: none; padding: 50px; text-align: center; color: var(--muted); }
+    footer { margin-top: 30px; color: var(--muted); font-size: 12px; text-align: center; }
+    @media (max-width: 980px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .resource-strip, .turn-resource-summary { grid-template-columns: repeat(3, 1fr); }
+      .decision-grid { grid-template-columns: repeat(3, 1fr); }
+      .decision-cell:nth-child(3) { border-right: 0; }
+      .detail-columns { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page { width: min(100% - 20px, 1480px); padding-top: 24px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-meta { text-align: left; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .action-heading { grid-template-columns: auto 1fr; }
+      .score-change, .value-pill { border-left: 0; border-top: 1px solid var(--line); text-align: left; }
+      .resource-strip, .turn-resource-summary, .decision-grid { grid-template-columns: repeat(2, 1fr); }
+      .decision-cell:nth-child(3) { border-right: 1px solid var(--line); }
+      .decision-cell:nth-child(even) { border-right: 0; }
+      .turn-heading { align-items: flex-start; }
+      .turn-score { grid-template-columns: 1fr; text-align: right; }
+      .visible-count { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <span class="eyebrow">SETI · Heuristic Policy Trace</span>
+        <h1>机器人逐决策行动报告</h1>
+        <p>每一步均取自实际标准行动执行：先展示行动时持有资源，再展示机器人选择、路线价值 V、实际资源与分数收益，并保留未提交的候选供诊断。</p>
+      </div>
+      <div class="hero-meta">seed <code>${escapeHtml(report.seed)}</code>生成于 ${escapeHtml(generatedAt)}</div>
+    </header>
+
+    <section class="summary-grid" aria-label="整局摘要">
+      <div class="summary-card"><span>Policy 决策</span><strong>${report.decisionCount}</strong></div>
+      <div class="summary-card"><span>玩家回合</span><strong>${report.turns.length}</strong></div>
+      <div class="summary-card"><span>环绕 / 登陆</span><strong>${probeEndpoints}</strong></div>
+      <div class="summary-card"><span>每候选平均</span><strong>${escapeHtml(formatNumber(report.diagnostics.performance.averagePerCandidateMilliseconds))}<small> ms</small></strong></div>
+      <div class="summary-card"><span>最高终局分</span><strong>${report.finalScores[0]?.finalScore || 0}</strong></div>
+    </section>
+
+    <section class="standings" aria-label="终局排名">
+      <table>
+        <thead><tr><th>名次</th><th>机器人</th><th>总分</th><th>实局增长</th><th>探测器得分</th><th>钱</th><th>电</th><th>宣传</th><th>数据</th><th>手牌</th></tr></thead>
+        <tbody>${report.finalScores.map((player, index) => `<tr>
+          <td class="rank">#${index + 1}</td><td>${escapeHtml(player.playerLabel)}</td>
+          <td><strong>${player.finalScore}</strong></td><td>${escapeHtml(signed(player.finalScore - player.initialScore))}</td>
+          <td>${player.actualProbeScore}</td><td>${player.resources.credits}</td><td>${player.resources.energy}</td>
+          <td>${player.resources.publicity}</td><td>${player.resources.availableData}</td><td>${player.resources.handCount}</td>
+        </tr>`).join("")}</tbody>
+      </table>
+    </section>
+
+    <nav class="toolbar" aria-label="报告筛选">
+      <label>机器人
+        <select id="playerFilter">
+          <option value="all">全部机器人</option>
+          <option value="setup">仅开局选择</option>
+          ${players.map((player) => `<option value="${escapeHtml(player.id)}">${escapeHtml(player.label)}</option>`).join("")}
+        </select>
+      </label>
+      <label>行动类型
+        <select id="familyFilter">
+          <option value="all">全部行动</option>
+          ${families.map((family) => `<option value="${escapeHtml(family)}">${escapeHtml(family)} (${familyCounts[family]})</option>`).join("")}
+        </select>
+      </label>
+      <label>搜索
+        <input id="textFilter" type="search" placeholder="行星、行动、目标…">
+      </label>
+      <span class="visible-count" id="visibleCount">显示 ${actionCount} / ${actionCount} 个决策</span>
+    </nav>
+
+    <div id="reportBody">
+      ${setupSection}
+      ${report.turns.map(renderTurnSection).join("")}
+    </div>
+    <div class="empty-state" id="emptyState">没有符合当前筛选条件的决策。</div>
+    <footer>${escapeHtml(report.schemaVersion)} · ${escapeHtml(report.boardId)} · fingerprint ${escapeHtml(report.boardFingerprint)}</footer>
+  </main>
+  <script>
+    (() => {
+      const cards = [...document.querySelectorAll(".action-card")];
+      const sections = [...document.querySelectorAll(".turn-section")];
+      const playerFilter = document.querySelector("#playerFilter");
+      const familyFilter = document.querySelector("#familyFilter");
+      const textFilter = document.querySelector("#textFilter");
+      const visibleCount = document.querySelector("#visibleCount");
+      const emptyState = document.querySelector("#emptyState");
+      const update = () => {
+        const player = playerFilter.value;
+        const family = familyFilter.value;
+        const query = textFilter.value.trim().toLowerCase();
+        let visible = 0;
+        cards.forEach((card) => {
+          const playerMatches = player === "all"
+            || card.dataset.player === player
+            || (player === "setup" && card.closest(".setup-section"));
+          const familyMatches = family === "all" || card.dataset.family === family;
+          const textMatches = !query || card.textContent.toLowerCase().includes(query);
+          card.classList.toggle("hidden", !(playerMatches && familyMatches && textMatches));
+          if (playerMatches && familyMatches && textMatches) visible += 1;
+        });
+        sections.forEach((section) => {
+          section.classList.toggle("hidden", !section.querySelector(".action-card:not(.hidden)"));
+        });
+        visibleCount.textContent = "显示 " + visible + " / ${actionCount} 个决策";
+        emptyState.style.display = visible ? "none" : "block";
+      };
+      playerFilter.addEventListener("change", update);
+      familyFilter.addEventListener("change", update);
+      textFilter.addEventListener("input", update);
+    })();
+  </script>
+</body>
+</html>`;
+}
+
 function formatTurnReportMarkdown(report) {
   const lines = [
     `# ${report.boardId} 机器人逐回合行动报告`,
@@ -438,6 +849,7 @@ module.exports = {
   actionText,
   formatEvaluation,
   formatResourceTransition,
+  formatTurnReportHtml,
   formatTurnReportMarkdown,
   runFixedBoardTurnReport,
 };
