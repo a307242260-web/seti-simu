@@ -85,6 +85,14 @@
           }),
         }),
         initialSetup,
+        initialIncome: clone(visibleResident.initialIncome || {
+          active: false,
+          interactive: false,
+          currentPlayerId: null,
+          companyLabel: null,
+          remainingCount: 0,
+          currentPlayerRemainingCount: 0,
+        }),
       };
       return visible;
     }

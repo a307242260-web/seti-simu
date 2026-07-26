@@ -29,6 +29,7 @@
     ["endGameScoring", "SetiEndGameScoring"],
     ["cardEffects", "SetiCardEffects"],
     ["cards", "SetiCards"],
+    ["initialCards", "SetiInitialCards"],
     ["solar", "SetiSolarSystem"],
     ["planetReferenceLayout", "SetiPlanetReferenceLayout"],
     ["planetStats", "SetiPlanetStats"],

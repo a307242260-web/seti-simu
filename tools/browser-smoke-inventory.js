@@ -44,9 +44,37 @@ module.exports = Object.freeze([
           window.SetiRandomizer.inspect().projection.decision?.decisionId !== beforeId
         ), label + " advance");
       };
-      await submitVisibleDecision("公司 DOM Decision", (button) => button.textContent.startsWith("选择公司"));
-      await submitVisibleDecision("第一张初始牌 DOM Decision", (button) => button.textContent.startsWith("选择："));
-      await submitVisibleDecision("第二张初始牌 DOM Decision", (button) => button.textContent.startsWith("选择："));
+      await waitFor(() => (
+        document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-industry").length === 2
+      ), "初始公司真实卡面");
+      const companyFaces = [...document.querySelectorAll(
+        "#compositionDecisionRoot .decision-ui-card-image-industry",
+      )];
+      if (!companyFaces.every((image) => image.src.includes("/assets/industry/"))) {
+        throw new Error("初始公司未展示真实公司图片");
+      }
+      await submitVisibleDecision(
+        "公司 DOM Decision",
+        (button) => Boolean(button.querySelector(".decision-ui-card-image-industry")),
+      );
+      await waitFor(() => (
+        document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-initial").length >= 3
+      ), "初始资源牌真实卡面");
+      if (![...document.querySelectorAll(
+        "#compositionDecisionRoot .decision-ui-card-image-initial",
+      )].every((image) => image.src.includes("/assets/initial_card/split/"))) {
+        throw new Error("初始资源牌未展示真实卡面");
+      }
+      await submitVisibleDecision(
+        "第一张初始牌 DOM Decision",
+        (button) => Boolean(button.querySelector(".decision-ui-card-image-initial"))
+          && button.getAttribute("aria-pressed") !== "true",
+      );
+      await submitVisibleDecision(
+        "第二张初始牌 DOM Decision",
+        (button) => Boolean(button.querySelector(".decision-ui-card-image-initial"))
+          && button.getAttribute("aria-pressed") !== "true",
+      );
       await submitVisibleDecision("初始选择确认 DOM Decision", (button) => button.textContent === "确认初始选择");
       await waitFor(() => {
         const input = window.SetiRandomizer.inspect().input;
@@ -72,6 +100,21 @@ module.exports = Object.freeze([
         await waitFor(() => Boolean(
           document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]'),
         ), "初始收入 Decision DOM choice");
+        if (document.querySelector("#compositionDecisionRoot .decision-ui-title")?.textContent !== "插入收入牌"
+          || document.querySelectorAll("#compositionDecisionRoot .decision-ui-status-group").length !== 2
+          || ![...document.querySelectorAll(
+            "#compositionDecisionRoot .decision-ui-card-image-hand",
+          )].every((image) => image.src.includes("/assets/cards/"))) {
+          throw new Error("初始收入缺少阶段提示、资源/收入状态或真实手牌卡面 " + JSON.stringify({
+            title: document.querySelector("#compositionDecisionRoot .decision-ui-title")?.textContent,
+            statusGroups: document.querySelectorAll("#compositionDecisionRoot .decision-ui-status-group").length,
+            cardFaces: [...document.querySelectorAll(
+              "#compositionDecisionRoot .decision-ui-card-image-hand",
+            )].map((image) => image.getAttribute("src")),
+            initialIncome: window.SetiRandomizer.inspect().projection.resident?.initialIncome,
+            decision: window.SetiRandomizer.inspect().projection.decision,
+          }));
+        }
         const choice = document.querySelector('#compositionDecisionRoot [data-decision-ui-intent="focus-choice"]');
         if (!choice) throw new Error("初始收入 Decision 缺少 DOM choice");
         choice.click();
@@ -165,7 +208,8 @@ module.exports = Object.freeze([
       }
       const required = {
         solar: document.querySelector("#wheel-1")?.style.transform.startsWith("rotate(")
-          && document.querySelectorAll(".sector-wrap > .sector[data-sector-id]").length === 4,
+          && document.querySelectorAll(".sector-wrap > .sector[data-sector-id]").length === 4
+          && document.querySelector("#wheel-wrap")?.getBoundingClientRect().height > 400,
         rockets: Array.isArray(renderProjection.tokenPresentation?.tokens),
         players: document.querySelector("#player-stats")?.children.length > 0,
         hand: document.querySelectorAll("#player-hand-fan .player-hand-card").length > 0

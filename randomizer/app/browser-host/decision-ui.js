@@ -11,6 +11,21 @@
   const BOARD_KINDS = new Set(["choose_target", "scan_target", "scan_sector", "data_placement", "land_target"]);
   const PAYMENT_KINDS = new Set(["choose_payment", "land_payment", "card_payment"]);
   const CANCEL_ROLES = new Set(["cancel", "skip"]);
+  const RESOURCE_PRESENTATION = Object.freeze([
+    Object.freeze({ key: "credits", label: "信用点", iconSrc: "../assets/symbol/effect/credits.webp" }),
+    Object.freeze({ key: "energy", label: "能量", iconSrc: "../assets/symbol/effect/energy.webp" }),
+    Object.freeze({ key: "publicity", label: "宣传", iconSrc: "../assets/symbol/effect/publicity.webp" }),
+    Object.freeze({ key: "availableData", label: "数据", iconSrc: "../assets/symbol/effect/data.webp" }),
+  ]);
+  const INCOME_PRESENTATION = Object.freeze([
+    ...RESOURCE_PRESENTATION,
+    Object.freeze({ key: "handSize", label: "手牌", iconSrc: "../assets/symbol/effect/card.webp" }),
+    Object.freeze({
+      key: "additionalPublicScan",
+      label: "公共扫描",
+      iconSrc: "../assets/symbol/effect/scan_action.webp",
+    }),
+  ]);
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -93,8 +108,8 @@
         },
         shell: {
           ownerId: decision.ownerId,
-          title: decision.titleKey || "请选择",
-          prompt: decision.promptKey || "",
+          title: content.title || decision.titleKey || "请选择",
+          prompt: content.prompt || decision.promptKey || "",
           stale,
         },
         content: clone(content),
@@ -110,16 +125,98 @@
     return api;
   }
 
-  function renderGeneric({ decision }) {
+  function projectedPlayer(projection, playerId) {
+    return projection?.resident?.browserReadModel?.render?.playerPanels?.players?.find(
+      (player) => String(player?.id) === String(playerId),
+    ) || null;
+  }
+
+  function presentStats(source, definitions) {
+    return definitions.map((definition) => ({
+      ...definition,
+      value: Number(source?.[definition.key]) || 0,
+    }));
+  }
+
+  function incomeGainLabel(gain) {
+    if (!gain) return "";
+    return RESOURCE_PRESENTATION
+      .filter((entry) => Number(gain[entry.key]))
+      .map((entry) => `+${Number(gain[entry.key])} ${entry.label}收入`)
+      .join("、");
+  }
+
+  function presentCardChoice(choice, projection) {
+    const presentation = clone(choice.presentation || {});
+    if (!presentation.cardKind) return null;
+    const handCards = projection?.resident?.browserReadModel?.render?.cardPanels?.handCards || [];
+    const handCard = presentation.cardKind === "hand"
+      ? handCards.find((card) => (
+        String(card?.definitionId) === String(presentation.cardId)
+        || String(card?.id) === String(presentation.cardId)
+        || String(card?.label) === String(choice.label)
+      ))
+      : null;
+    const initialSelection = projection?.resident?.browserReadModel?.render
+      ?.cardPanels?.initialSelection?.offer;
+    const setupCard = presentation.cardKind === "industry"
+      ? initialSelection?.industryOptions?.find(
+        (card) => String(card?.id) === String(presentation.cardId),
+      )
+      : presentation.cardKind === "initial"
+        ? initialSelection?.initialOptions?.find(
+          (card) => String(card?.id) === String(presentation.cardId),
+        )
+        : null;
+    return {
+      cardId: presentation.cardId,
+      cardKind: presentation.cardKind,
+      imageSrc: presentation.imageSrc || handCard?.imageSrc || "",
+      imageAlt: presentation.imageAlt || handCard?.label || choice.label,
+      selected: Boolean(presentation.selected),
+      detail: incomeGainLabel(handCard?.incomeGain),
+      displayLabel: setupCard?.label || handCard?.label || choice.label,
+    };
+  }
+
+  function renderGeneric({ decision, projection }) {
+    const choices = decision.choices.filter((choice) => !isCancelChoice(choice)).map((choice) => {
+      const card = presentCardChoice(choice, projection);
+      return {
+        choiceId: choice.choiceId,
+        label: card?.displayLabel || choice.label,
+        presentation: clone(choice.presentation),
+        card,
+        disabledReason: choice.disabledReason,
+      };
+    });
+    const initialIncome = projection?.resident?.initialIncome || {};
+    const owner = projectedPlayer(projection, decision.ownerId);
+    const hasInitialCards = choices.some((choice) => (
+      choice.card?.cardKind === "industry" || choice.card?.cardKind === "initial"
+    ));
+    const incomeActive = Boolean(initialIncome.active)
+      && choices.some((choice) => choice.card?.cardKind === "hand");
     return {
       ok: true,
-      type: "choices",
-      choices: decision.choices.filter((choice) => !isCancelChoice(choice)).map((choice) => ({
-        choiceId: choice.choiceId,
-        label: choice.label,
-        presentation: clone(choice.presentation),
-        disabledReason: choice.disabledReason,
-      })),
+      type: hasInitialCards || incomeActive ? "card-choices" : "choices",
+      title: incomeActive
+        ? "插入收入牌"
+        : hasInitialCards
+          ? "选择初始公司与资源牌"
+          : null,
+      prompt: incomeActive
+        ? `${initialIncome.companyLabel || "公司"}：选择一张手牌插入收入区`
+        : hasInitialCards
+          ? "选择 1 张公司牌和 2 张资源牌，卡面会显示所选内容"
+          : null,
+      choices,
+      status: incomeActive ? {
+        playerLabel: owner?.displayName || owner?.colorLabel || owner?.name || decision.ownerId,
+        remainingCount: Number(initialIncome.currentPlayerRemainingCount) || 0,
+        resources: presentStats(owner?.resources, RESOURCE_PRESENTATION),
+        income: presentStats(owner?.income, INCOME_PRESENTATION),
+      } : null,
     };
   }
 
@@ -183,7 +280,11 @@
     };
   }
 
-  function renderPayment({ decision }) {
+  function renderPayment({ decision, projection }) {
+    if (projection?.resident?.initialIncome?.active
+      && decision.choices.some((choice) => choice.presentation?.cardKind === "hand")) {
+      return renderGeneric({ decision, projection });
+    }
     return {
       ok: true,
       type: "payment",
@@ -288,6 +389,60 @@
     return button;
   }
 
+  function appendStatusGroup(documentRef, parent, titleText, entries) {
+    const group = documentRef.createElement("section");
+    group.className = "decision-ui-status-group";
+    const title = documentRef.createElement("strong");
+    title.className = "decision-ui-status-title";
+    title.textContent = titleText;
+    const list = documentRef.createElement("div");
+    list.className = "decision-ui-status-list";
+    for (const entry of entries || []) {
+      const item = documentRef.createElement("span");
+      item.className = "decision-ui-status-item";
+      const icon = documentRef.createElement("img");
+      icon.className = "decision-ui-status-icon";
+      icon.src = entry.iconSrc || "";
+      icon.alt = "";
+      icon.setAttribute("aria-hidden", "true");
+      const value = documentRef.createElement("span");
+      value.textContent = `${entry.label} ${entry.value}`;
+      item.append(icon, value);
+      list.appendChild(item);
+    }
+    group.append(title, list);
+    parent.appendChild(group);
+  }
+
+  function appendChoiceButton(documentRef, parent, choice, dataset, options = {}) {
+    if (!choice.card) return appendButton(documentRef, parent, choice.label, dataset, options);
+    const button = documentRef.createElement("button");
+    button.type = "button";
+    button.className = `${options.className || "decision-ui-choice"} decision-ui-card-choice`;
+    button.disabled = Boolean(options.disabled);
+    button.classList.toggle("is-rule-selected", Boolean(choice.card.selected));
+    button.setAttribute("aria-pressed", String(Boolean(choice.card.selected)));
+    button.setAttribute("aria-label", choice.card.imageAlt || choice.label);
+    for (const [key, value] of Object.entries(dataset)) button.dataset[key] = String(value);
+    const image = documentRef.createElement("img");
+    image.className = `decision-ui-card-image decision-ui-card-image-${choice.card.cardKind}`;
+    image.src = choice.card.imageSrc || "";
+    image.alt = choice.card.imageAlt || choice.label;
+    image.decoding = "async";
+    const label = documentRef.createElement("strong");
+    label.className = "decision-ui-card-label";
+    label.textContent = choice.label;
+    button.append(image, label);
+    if (choice.card.detail) {
+      const detail = documentRef.createElement("span");
+      detail.className = "decision-ui-card-detail";
+      detail.textContent = choice.card.detail;
+      button.appendChild(detail);
+    }
+    parent.appendChild(button);
+    return button;
+  }
+
   function createDecisionDomRenderer(options = {}) {
     const rootNode = options.root;
     const controller = options.controller;
@@ -322,12 +477,23 @@
         prompt.textContent = model.shell.prompt;
         dialog.appendChild(prompt);
       }
+      if (model.content.status) {
+        const status = documentRef.createElement("aside");
+        status.className = "decision-ui-status";
+        const heading = documentRef.createElement("div");
+        heading.className = "decision-ui-status-heading";
+        heading.textContent = `${model.content.status.playerLabel} · 还需插入 ${model.content.status.remainingCount} 张`;
+        status.appendChild(heading);
+        appendStatusGroup(documentRef, status, "当前资源", model.content.status.resources);
+        appendStatusGroup(documentRef, status, "当前收入", model.content.status.income);
+        dialog.appendChild(status);
+      }
       const content = documentRef.createElement("div");
       content.className = `decision-ui-content decision-ui-content-${model.content.type}`;
       const choices = model.content.type === "tech" ? model.content.tiles : model.content.choices;
       for (const choice of choices) {
         const choiceId = choice.directChoiceId || choice.choiceId;
-        appendButton(documentRef, content, choice.label, choiceId
+        appendChoiceButton(documentRef, content, choice, choiceId
           ? { decisionUiIntent: "focus-choice", choiceId }
           : { decisionUiIntent: "focus-tech", tileId: choice.tileId }, {
           className: model.content.type === "tech"

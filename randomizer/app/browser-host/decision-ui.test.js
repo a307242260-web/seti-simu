@@ -59,6 +59,106 @@ function projection(choices, overrides = {}) {
   });
 })();
 
+(function testInitialSetupChoicesProjectRealCardFaces() {
+  const company = projectionApi.defaultDecisionPresenter(
+    { ownerId: "p1", decisionKind: "choose_card" },
+    {
+      schemaVersion: "seti-standard-action-v1",
+      actionId: "company",
+      family: "choose_card",
+      actorId: "p1",
+      target: {
+        kind: "select_initial_card",
+        selectionKind: "industry",
+        cardId: "industry:图灵系统.png",
+      },
+      summary: "选择公司：图灵系统",
+    },
+    0,
+  );
+  const initial = projectionApi.defaultDecisionPresenter(
+    { ownerId: "p1", decisionKind: "choose_card" },
+    {
+      schemaVersion: "seti-standard-action-v1",
+      actionId: "initial",
+      family: "choose_card",
+      actorId: "p1",
+      target: {
+        kind: "select_initial_card",
+        selectionKind: "initial",
+        cardId: "initial:7",
+      },
+      summary: "取消：初始牌 7",
+    },
+    1,
+  );
+  assert.equal(company.presentation.imageSrc, "../assets/industry/图灵系统.png");
+  assert.equal(company.presentation.cardKind, "industry");
+  assert.equal(initial.presentation.imageSrc, "../assets/initial_card/split/7.png");
+  assert.equal(initial.presentation.selected, true);
+})();
+
+(function testInitialIncomeDecisionShowsCardFacesResourcesAndIncome() {
+  const current = projection([{
+    choiceId: "income-card",
+    label: "轨道计划",
+    presentation: {
+      cardId: "b_7.webp",
+      cardKind: "hand",
+      imageSrc: null,
+      imageAlt: "轨道计划",
+      selected: false,
+    },
+  }], {
+    decision: {
+      kind: "choose_payment",
+      titleKey: null,
+      promptKey: null,
+    },
+  });
+  current.resident = {
+    initialIncome: {
+      active: true,
+      currentPlayerRemainingCount: 2,
+      companyLabel: "图灵系统",
+    },
+    browserReadModel: {
+      render: {
+        playerPanels: {
+          players: [{
+            id: "p1",
+            displayName: "白色玩家",
+            resources: { credits: 4, energy: 2, publicity: 3, availableData: 1 },
+            income: { credits: 2, energy: 1, handSize: 1 },
+          }],
+        },
+        cardPanels: {
+          handCards: [{
+            id: "card-7",
+            definitionId: "b_7.webp",
+            imageSrc: "../assets/cards/basic/split/b_7.webp",
+            label: "轨道计划",
+            incomeGain: { energy: 1 },
+          }],
+        },
+      },
+    },
+  };
+  const controller = decisionUiApi.createDecisionUiController({ dispatchIntent() {} });
+  const model = controller.render({ projection: current, viewState: {} });
+  assert.equal(model.shell.title, "插入收入牌");
+  assert.match(model.shell.prompt, /图灵系统/);
+  assert.equal(model.content.status.remainingCount, 2);
+  assert.equal(model.content.status.resources.find((entry) => entry.key === "credits").value, 4);
+  assert.equal(model.content.status.income.find((entry) => entry.key === "handSize").value, 1);
+  assert.equal(
+    model.content.choices[0].card.imageSrc,
+    "../assets/cards/basic/split/b_7.webp",
+  );
+  assert.equal(model.content.choices[0].label, "轨道计划");
+  assert.equal(model.content.choices[0].card.detail, "+1 能量收入");
+})();
+
 (function testTechRendererUsesOnlyProjectedChoicesAndRoutesFocusConfirmCancel() {
   const submitted = [];
   const viewStore = viewStateApi.createViewStateStore();

@@ -31,6 +31,8 @@ PolicyDecision ─> PolicyInputAdapter ─> 同一 Action / Decision port
 
 `projection-adapter.js` 校验、复制并冻结规范 BrowserProjection，传统 `playerState/turnState/cardState/...` root 会结构化拒绝。Browser composition 不暴露 canonical `stateSourcePort` 或 working root。`resident-renderer.js` 负责 round/turn、玩家公开统计、太阳系棋子、终局板、科技供应与公共牌。Decision renderer registry 负责 action bar、研究科技、扫描/数据/登陆、卡牌、公司和八种外星人 choice presentation。renderer 只接受 `{ projection, viewState }`。
 
+初始选择与初始收入也遵守同一边界：公司/资源牌 choice 只携带卡牌 identity、名称和图片展示字段；插收入期间 `resident.initialIncome` 只投影当前 owner、公司名称和剩余次数，资源、收入与手牌卡面复用 `browserReadModel.render.playerPanels/cardPanels`。页面不得为了恢复卡面或收入提示回读玩家规则状态。
+
 终局 UI、机器玩家与恢复只消费字段白名单 projection。规则层
 `game/final-read-model.js` 在 composition 投影边界内从显式 working root 派生终局分解、合法标记、公式 base/multiplier
 和 AI 所需指标，再作为深冻结 `finalReadModel` 进入 BrowserProjection；这些 runtime selector

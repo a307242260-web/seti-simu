@@ -61,7 +61,25 @@
     return 0;
   }
 
-  function defaultVisibilityPolicy(state, viewer) {
+  function createInitialIncomePresentation(inspection, viewerPlayerId) {
+    const decisionContext = inspection?.currentEffect?.payload?.decisionContext;
+    const queue = decisionContext?.kind === "initial_income"
+      ? decisionContext.queue || []
+      : [];
+    const current = queue[0] || null;
+    return {
+      active: Boolean(current),
+      interactive: Boolean(current) && String(current.playerId) === String(viewerPlayerId),
+      currentPlayerId: current?.playerId == null ? null : String(current.playerId),
+      companyLabel: current?.label || null,
+      remainingCount: queue.length,
+      currentPlayerRemainingCount: current
+        ? queue.filter((entry) => String(entry?.playerId) === String(current.playerId)).length
+        : 0,
+    };
+  }
+
+  function defaultVisibilityPolicy(state, viewer, context = {}) {
     const playerId = viewer.role === "player" ? viewer.playerId : null;
     if (!Array.isArray(state?.players?.players)) {
       throw new TypeError("BrowserProjection 需要 canonical players.players");
@@ -92,6 +110,8 @@
     const setupCurrentPlayerId = setup?.currentPlayerId == null
       ? null
       : String(setup.currentPlayerId);
+    const projectionInspection = context?.inspection
+      || (context?.currentEffect ? context : null);
     const setupPresentation = {
       active: setup?.phase === "selecting",
       interactive: setup?.phase === "selecting" && setupCurrentPlayerId === playerId,
@@ -138,6 +158,7 @@
         aliens: clone(state?.aliens || {}),
         finalScoring: clone(state?.finalScoring || {}),
         initialSetup: setupPresentation,
+        initialIncome: createInitialIncomePresentation(projectionInspection, playerId),
       },
       feedback: { events: [], logs: [], progress: null, notices: [] },
     };
@@ -195,7 +216,32 @@
     }
     const choiceId = choiceIdentity(choice, index);
     let inferredPresentation = null;
-    if (choice?.tileId != null) {
+    if (choice?.target?.kind === "select_initial_card") {
+      const selectionKind = choice.target.selectionKind;
+      const cardId = String(choice.target.cardId || "");
+      const value = cardId.replace(/^[^:]+:/, "");
+      const isIndustry = selectionKind === "industry";
+      inferredPresentation = {
+        cardId,
+        cardKind: isIndustry ? "industry" : "initial",
+        imageSrc: isIndustry
+          ? `../assets/industry/${value}`
+          : `../assets/initial_card/split/${value}.png`,
+        imageAlt: choice?.summary || choice?.label || cardId,
+        selected: /^(?:取消|已选)/.test(choice?.summary || ""),
+      };
+    } else if (choice?.target?.kind === "discard-hand-cards"
+      && Array.isArray(choice.target.cardIds)
+      && choice.target.cardIds.length === 1) {
+      inferredPresentation = {
+        cardId: String(choice.target.cardIds[0]),
+        cardKind: "hand",
+        imageSrc: null,
+        imageAlt: choice?.summary || choice?.label || "手牌",
+        selected: false,
+      };
+    }
+    if (!inferredPresentation && choice?.tileId != null) {
       inferredPresentation = {
         tileId: choice.tileId,
         slotId: choice.slotId ?? null,
@@ -205,14 +251,16 @@
         image: choice.image ?? null,
         role: choice.role ?? null,
       };
-    } else if (rawDecision?.decisionKind === "choose_target" && choice?.target) {
+    } else if (!inferredPresentation
+      && rawDecision?.decisionKind === "choose_target"
+      && choice?.target) {
       inferredPresentation = { targetRef: clone(choice.target) };
-    } else if (rawDecision?.decisionKind === "choose_payment") {
+    } else if (!inferredPresentation && rawDecision?.decisionKind === "choose_payment") {
       inferredPresentation = {
         cost: clone(choice?.payload?.cost || choice?.target?.cost || choice?.target || null),
         remaining: clone(choice?.payload?.remaining || null),
       };
-    } else if (choice?.role != null) {
+    } else if (!inferredPresentation && choice?.role != null) {
       inferredPresentation = { role: choice.role };
     }
     return {

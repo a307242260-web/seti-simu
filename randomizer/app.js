@@ -24,6 +24,7 @@
     endGameScoring,
     cardEffects,
     cards,
+    initialCards,
     solar,
     planetReferenceLayout,
     planetStats,
@@ -519,6 +520,7 @@
         : null;
       return {
         id: card?.id || card?.cardId || fallbackLabel,
+        definitionId: card?.cardId || entry?.card_id || null,
         imageSrc: fangzhouDefinition?.src
           || (alienDefinition && alienModule?.getCardSrc
             ? alienModule.getCardSrc(alienDefinition.index)
@@ -528,7 +530,29 @@
           || entry?.card_name
           || card?.cardId
           || fallbackLabel,
+        incomeGain: structuredClone(cards.getIncomeGainForCard?.(card) || null),
       };
+    }
+    function presentInitialSelection(setup) {
+      const source = structuredClone(setup || {});
+      if (!source.offer) return source;
+      const presentOption = (card) => {
+        const value = card?.value;
+        const industry = card?.kind === "industry";
+        const label = industry
+          ? String(value || "").replace(/\.[^./\\]+$/, "")
+          : initialCards.getInitialCardEffect(Number(value))?.label || `资源牌 ${value}`;
+        return {
+          ...structuredClone(card),
+          label,
+          imageSrc: industry
+            ? `../assets/industry/${value}`
+            : `../assets/initial_card/split/${value}.png`,
+        };
+      };
+      source.offer.industryOptions = (source.offer.industryOptions || []).map(presentOption);
+      source.offer.initialOptions = (source.offer.initialOptions || []).map(presentOption);
+      return source;
     }
     const resourceIcons = {
       credits: "../assets/symbol/effect/credits.webp",
@@ -607,7 +631,7 @@
         )),
         publicControls: {},
         handPanel: { count: own?.hand?.length || 0, empty: !own?.hand?.length },
-        initialSelection: structuredClone(input.initialSetup || {}),
+        initialSelection: presentInitialSelection(input.initialSetup),
         reservedCards: {
           items: (own?.reservedCards || []).map((card, index) => (
             presentCard(card, `保留牌 ${index + 1}`)

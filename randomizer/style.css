@@ -1116,6 +1116,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
+  aspect-ratio: 1;
 }
 
 .wheel-wrap {
@@ -1649,6 +1650,104 @@ body {
   background: rgba(26, 69, 105, 0.74);
   color: inherit;
   cursor: pointer;
+}
+
+.decision-ui-content-card-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: end;
+}
+
+.decision-ui-card-choice {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-height: 0;
+  padding: 10px;
+}
+
+.decision-ui-card-choice.is-rule-selected {
+  border-color: #ffd166;
+  background: rgba(111, 82, 26, 0.78);
+  box-shadow: 0 0 0 2px rgba(255, 209, 102, 0.26);
+}
+
+.decision-ui-card-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: min(280px, 42vh);
+  object-fit: contain;
+  border-radius: 7px;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.42));
+}
+
+.decision-ui-card-image-industry {
+  width: 100%;
+  height: auto;
+  max-height: 210px;
+  aspect-ratio: 1382 / 1054;
+}
+
+.decision-ui-card-label {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.decision-ui-card-detail {
+  color: #9ee8b8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.decision-ui-status {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 16px;
+  padding: 12px;
+  border: 1px solid rgba(139, 203, 255, 0.28);
+  border-radius: 12px;
+  background: rgba(4, 15, 27, 0.7);
+}
+
+.decision-ui-status-heading {
+  color: #ffd166;
+  font-weight: 800;
+}
+
+.decision-ui-status-group {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.decision-ui-status-title {
+  color: rgba(238, 247, 255, 0.68);
+  font-size: 12px;
+}
+
+.decision-ui-status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.decision-ui-status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(38, 78, 108, 0.58);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.decision-ui-status-icon {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
 }
 
 .decision-ui-choice:focus-visible {
