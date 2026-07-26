@@ -243,7 +243,7 @@ function runFixedBoardTurnReport(options = {}) {
 
     const diagnostics = buildDiagnostics(turns);
     return {
-      schemaVersion: "seti-heuristic-turn-report-v4",
+      schemaVersion: "seti-heuristic-turn-report-v5",
       boardId: FIXED_BOARD_ID,
       seed: FIXED_BOARD_CONFIG.seed,
       boardFingerprint: fingerprintFixedBoard(projectFixedBoard(initialObservation)),
@@ -360,8 +360,9 @@ function formatTurnReportMarkdown(report) {
     `- board fingerprint：\`${report.boardFingerprint}\``,
     `- Policy 决策数：${report.decisionCount}`,
     `- 游戏回合数：${report.turns.length}`,
-    "- 决策口径：对每个合法候选执行真实 Standard Action/Decision，以行动后已兑现分加当前最佳探测器路线价值形成唯一 V，选择 V 最大者",
-    "- 资源口径：钱、电、宣传、卡牌库存本身不直接计入 V；钱电只通过实际盘面改变路线缺口，数据只在真实解锁蓝色痕迹并计分后进入已兑现分",
+    "- 决策口径：枚举每枚探测器到所有可用行星的最短路线，同移动消耗优先沿途宣传最高者；V 是该路线沿途宣传与环绕/登陆实际收益的等价分",
+    "- 执行口径：优先执行 V 最高且资源可支付路线的下一步；没有可支付路线时，快速交易、相关打牌或橙色科技只能用于降低该路线真实缺口；每步后从新盘面重算",
+    "- 资源口径：钱电只判断完整路线能否支付，不按主行动次数或路径长度扣分；数据仅在真实解锁蓝色痕迹并计分后进入收益",
     "- 诊断目标：初次接触玩家约 100 分；最终表同时列出各机器人的目标差距",
     "- 固定反例：R1 T04 绿色登陆土星按 `land -> choose_target(yellow trace)` 标准链展开；成本、地点奖励、首黄宣传及 alienCard 均取实际 root/leaf 字段，不复制规则常数",
     "- 字段边界：projection 只保留固定上限的探测器目标需求摘要；拓扑、成本、减免与奖励引用均由生产规则 owner 生成，完整 checkpoint 不进入 Policy DTO",

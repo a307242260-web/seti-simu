@@ -6,6 +6,7 @@ const quickTrades = require("../game/actions/quick-trades");
 const cards = require("../game/cards/deck");
 const cardEffects = require("../game/cards/effects");
 const players = require("../game/players");
+const solar = require("../solar-system/core");
 const { createSimulationEnv } = require("../app/simulation-env");
 const { createSimulationRuleComposition } = require("./simulation-rule-composition");
 const productionComposition = require("../game/production-composition");
@@ -374,6 +375,44 @@ for (const family of ["scan", "place_data"]) {
     .map((step) => step.directionId));
   assert.ok(directions.size >= 2,
     "探测器目标必须从正式四方向移动图搜索，不能按玩家颜色固定单一路径");
+  const visiblePlanetIds = new Set([
+    "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune",
+  ]);
+  const routedPlanetIds = new Set((projected.probeRouteRequirements?.candidates || [])
+    .map((candidate) => candidate.planetId));
+  assert.deepEqual([...routedPlanetIds].sort(), [...visiblePlanetIds].sort(),
+    "顺序贪心必须枚举当前版面所有非地球行星，不能只保留前几个目标");
+  assert.equal(
+    new Set(projected.probeRouteRequirements.candidates.map((candidate) => candidate.requirementId)).size,
+    projected.probeRouteRequirements.candidates.length,
+    "同一探测器与落点只能保留移动消耗最少、沿途宣传最高的一条路线",
+  );
+  restoreScenario(routeKernel, (state, player) => {
+    const earth = solar.createSolarSnapshot(state.solarSystem).planetLocations
+      .find((planet) => planet.planetId === "earth");
+    state.pieces.rockets.push({
+      id: 9001,
+      playerId: player.id,
+      color: player.color,
+      playerSequence: 1,
+      surface: "solar-board",
+      sectorX: earth.x,
+      sectorY: earth.y,
+      slotIndex: 0,
+    });
+    state.pieces.playerRocketSequences[player.id] = [1];
+    state.meta.sequences.rocket = 9002;
+  });
+  const activeProbeProjection = routeKernel.composition.projection({
+    viewerId: "simulation:active-probe-routes",
+    role: "simulation",
+    playerId: null,
+  }).state;
+  assert.equal(
+    activeProbeProjection.probeRouteRequirements.candidates.some((candidate) => candidate.sourceId === "launch"),
+    false,
+    "仍有在途探测器时必须先规划其环绕/登陆，不能同时启动新发射路线",
+  );
   routeKernel.composition.dispose();
 }
 

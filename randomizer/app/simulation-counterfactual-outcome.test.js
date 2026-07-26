@@ -3,7 +3,6 @@
 const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("./simulation-env");
 const outcomeModel = require("../game/ai/outcome-model");
-const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const solar = require("../solar-system/core");
 
 function drainOpeningDecisions(environment) {
@@ -200,18 +199,6 @@ try {
       && leaf.observation.outcomeProjection.progress.probeRoute.candidate?.nextActionId === landing.actionId
       && !Object.hasOwn(leaf, "routeCheckpoints")
     )), true, "探测器 projection 只保留固定摘要和标准 outcome 引用，不携带完整路线 checkpoint");
-    const landingEvaluation = expectedScoreEvaluator.evaluateAction({
-      seatId: playerId,
-      actionOutcomes: [projectedLanding],
-    }, landing);
-    assert.equal(
-      landingEvaluation.goalScoreGain,
-      landingEvaluation.leafValue.realizedScore - landingEvaluation.rootValue.realizedScore,
-      "探测器目标收益必须完全等于实际 root/leaf 已兑现分字段差",
-    );
-    assert.equal(landingEvaluation.actualScoreDelta, landingEvaluation.goalScoreGain);
-    assert.equal(landingEvaluation.selectable, true);
-    assert.match(landingEvaluation.probeRouteSummary.endpointActionId, /^land:/);
     const rootAssets = projectedLanding.rootObservation.outcomeProjection.assets;
     const yellowTraceAssetDeltas = projectedLanding.leaves.map((leaf) => {
       const assets = leaf.observation.outcomeProjection.assets;

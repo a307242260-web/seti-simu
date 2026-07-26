@@ -352,7 +352,11 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     earth.x,
     earth.y,
   ) !== null;
-  if (activeCount < rocketAbility.getRocketLimitForPlayer(player, context) && launchSlotAvailable) {
+  if (
+    activeRockets.length === 0
+    && activeCount < rocketAbility.getRocketLimitForPlayer(player, context)
+    && launchSlotAvailable
+  ) {
     sources.push({
       sourceId: "launch",
       rocketId: null,
@@ -364,15 +368,20 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
   const candidates = [];
   for (const source of sources) {
     if (!source.coordinate) continue;
-    const queue = [{
+    const initialRoute = {
       coordinate: source.coordinate,
       path: [],
       movePoints: 0,
       publicityStops: 0,
-    }];
-    const visited = new Set([`${source.coordinate.x},${source.coordinate.y}`]);
+    };
+    const queue = [initialRoute];
+    const bestRouteByCoordinate = new Map([
+      [`${source.coordinate.x},${source.coordinate.y}`, initialRoute],
+    ]);
     while (queue.length) {
       const route = queue.shift();
+      const routeKey = `${route.coordinate.x},${route.coordinate.y}`;
+      if (bestRouteByCoordinate.get(routeKey) !== route) continue;
       const visible = solar.resolveVisibleContent(
         route.coordinate.x,
         route.coordinate.y,
@@ -455,7 +464,12 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
               ? { family: "launch" }
               : firstMove
                 ? { family: "move", rocketId: source.rocketId, ...firstMove }
-                : { family: choice.actionType, rocketId: source.rocketId, target: clone(choice.target || {}) },
+                : {
+                  family: choice.actionType,
+                  rocketId: source.rocketId,
+                  planetId: choice.planetId,
+                  target: clone(choice.target || {}),
+                },
             path: route.path.map((step) => ({ ...step })),
             publicityStops: route.publicityStops,
             fieldSources: {
@@ -480,14 +494,12 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
         );
         if (!move.ok) continue;
         const key = `${move.to.x},${move.to.y}`;
-        if (visited.has(key)) continue;
-        visited.add(key);
         const destination = solar.resolveVisibleContent(
           move.to.x,
           move.to.y,
           workingState.solarSystem,
         )?.content;
-        queue.push({
+        const candidateRoute = {
           coordinate: move.to,
           path: [...route.path, {
             directionId: direction.id,
@@ -503,23 +515,52 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             destination?.kind === solar.layout.CONTENT_KIND.PLANET
             && destination.planetId !== "earth" ? 1 : 0
           ),
-        });
+        };
+        const existing = bestRouteByCoordinate.get(key);
+        const better = !existing
+          || candidateRoute.movePoints < existing.movePoints
+          || (
+            candidateRoute.movePoints === existing.movePoints
+            && candidateRoute.path.length < existing.path.length
+          )
+          || (
+            candidateRoute.movePoints === existing.movePoints
+            && candidateRoute.path.length === existing.path.length
+            && candidateRoute.publicityStops > existing.publicityStops
+          );
+        if (!better) continue;
+        bestRouteByCoordinate.set(key, candidateRoute);
+        queue.push(candidateRoute);
       }
     }
   }
-  const ranked = candidates.sort((left, right) => (
-    (
-      right.targetBenefit.grossEquivalentValue
-      / (1 + right.gap.credits + right.gap.energy)
-    ) - (
-      left.targetBenefit.grossEquivalentValue
-      / (1 + left.gap.credits + left.gap.energy)
-    )
+  const shortestByRequirement = new Map();
+  for (const candidate of candidates) {
+    const current = shortestByRequirement.get(candidate.requirementId);
+    if (
+      !current
+      || candidate.required.movementPoints < current.required.movementPoints
+      || (
+        candidate.required.movementPoints === current.required.movementPoints
+        && candidate.required.movementSteps < current.required.movementSteps
+      )
+      || (
+        candidate.required.movementPoints === current.required.movementPoints
+        && candidate.required.movementSteps === current.required.movementSteps
+        && candidate.publicityStops > current.publicityStops
+      )
+    ) shortestByRequirement.set(candidate.requirementId, candidate);
+  }
+  const ranked = [...shortestByRequirement.values()].sort((left, right) => (
+    Number(right.gap.credits === 0 && right.gap.energy === 0)
+      - Number(left.gap.credits === 0 && left.gap.energy === 0)
+    || right.targetBenefit.grossEquivalentValue - left.targetBenefit.grossEquivalentValue
+    || right.publicityStops - left.publicityStops
     || right.targetBenefit.score - left.targetBenefit.score
     || left.required.credits + left.required.energy - right.required.credits - right.required.energy
     || left.required.movementSteps - right.required.movementSteps
     || String(left.requirementId).localeCompare(String(right.requirementId))
-  )).slice(0, 8);
+  ));
   return {
     schemaVersion: "seti-probe-route-requirements-v1",
     playerId: player.id,

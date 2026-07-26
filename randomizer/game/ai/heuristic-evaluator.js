@@ -41,8 +41,8 @@
     ));
     if (!pool.length) return null;
     return pool.sort((left, right) => (
-      right.priorityClass - left.priorityClass
-      || (right.score ?? 0) - (left.score ?? 0)
+      (right.score ?? 0) - (left.score ?? 0)
+      || right.priorityClass - left.priorityClass
       || String(left.action.actionId).localeCompare(String(right.action.actionId))
     ))[0]?.action || null;
   }

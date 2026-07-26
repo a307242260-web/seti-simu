@@ -231,7 +231,7 @@ assert.equal(noEndpoint.score, null, "没有正收益终点的循环不得形成
   };
   const matchingGoal = {
     targetId: "orbit:matching:planet:",
-    targetBenefit: { score: 9 },
+    targetBenefit: { score: 13 },
     required: { credits: 0, energy: 2, movementSteps: 1 },
     gap: { credits: 0, energy: 1, movementSteps: 1 },
     nextStep: { family: "move", rocketId: 1, deltaX: 0, deltaY: 1 },
@@ -272,8 +272,8 @@ assert.equal(noEndpoint.score, null, "没有正收益终点的循环不得形成
   }, candidate);
   assert.equal(result.probeGoalRequirement.targetId, matchingGoal.targetId,
     "行动必须匹配自己的最佳真实目标，不能永远追排序第一的路线");
-  assert.equal(result.score, 9,
-    "V 必须直接读取真实标准叶执行后的盘面价值，不能另加行动差分项");
+  assert.equal(result.score, 13,
+    "V 必须等于当前最佳完整路线的收益，不能借用其他路线或另加行动差分项");
 }
 
 {
@@ -319,7 +319,25 @@ assert.equal(noEndpoint.score, null, "没有正收益终点的循环不得形成
   assert.equal(result.selectable, true);
   assert.equal(result.orangeTechGain, 1);
   assert.deepEqual(result.reasonCodes, ["probe-goal-gap-reduced-by-orange-tech"],
-    "橙色科技只有实际降低探测器路线缺口时才获得路线 Q");
+    "橙色科技只有实际降低探测器路线缺口时才继承完整路线 V");
+  const purpleChoice = {
+    ...action("choose-tech:purple1", "choose_target"),
+    phase: "conditional",
+    target: { tileId: "purple1" },
+  };
+  const purpleResult = evaluator.evaluateAction({
+    seatId,
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: purpleChoice.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: root,
+      leaves: [{ leafId: "purple-tech", actionChain: [purpleChoice.actionId], observation: leaf }],
+    }],
+  }, purpleChoice);
+  assert.equal(purpleResult.score, null, "探测器策略必须排除蓝色和紫色科技选择");
+  assert.deepEqual(purpleResult.reasonCodes, ["probe-policy-orange-tech-only"]);
 }
 
 console.log("probe route evaluator tests passed");
