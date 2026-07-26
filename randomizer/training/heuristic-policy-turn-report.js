@@ -159,7 +159,7 @@ function isObservationFeasible(observation, actorPlayerId, action) {
   return rockets.some((rocket) => rocket?.playerId === actorPlayerId && rocket?.surface === "solar-board");
 }
 
-function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPlayerId, provenance) {
+function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPlayerId, options = {}) {
   return legalActions.map((action) => ({ action }))
     .filter(({ action }) => isObservationFeasible(observation, actorPlayerId, action))
     .map(({ action }) => {
@@ -172,10 +172,10 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
       { observation, actionOutcomes, seatId: actorPlayerId },
       evaluableAction,
     );
-    const visual = selectionVisual(action);
+    const visual = selectionVisual(action, options);
     return Object.freeze({
       actionId: action.actionId,
-      summary: visual ? `选择：${visual.name}` : (actionText(action) || "结束回合"),
+      summary: visual?.text || (actionText(action) || "结束回合"),
       score: evaluation.score,
       evaluation,
     });
@@ -188,7 +188,11 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
 }
 
 function actionText(action) {
-  const summary = String(action?.summary || action?.family || "未知行动");
+  const rawSummary = String(action?.summary || action?.family || "未知行动");
+  const moveMatch = rawSummary.match(/^移动火箭\s+(\d+)\s+(ccw|cw)$/i);
+  const summary = moveMatch
+    ? `${moveMatch[2].toLowerCase() === "ccw" ? "逆时针" : "顺时针"}移动探测器 ${moveMatch[1]} 步`
+    : rawSummary;
   if (action?.decisionType === "conditional_choice") return `↳ 选择：${summary}`;
   if (action?.family === "end_turn") return "结束回合";
   const verb = FAMILY_VERBS[action?.family];
@@ -196,22 +200,63 @@ function actionText(action) {
   return `${verb}：${summary}`;
 }
 
-function selectionVisual(action) {
-  if (action?.target?.kind !== "select_initial_card") return null;
-  const cardId = String(action.target.cardId || "");
-  if (action.target.selectionKind === "industry") {
-    const fileName = cardId.replace(/^industry:/, "");
-    const name = fileName.replace(/\.[^.]+$/, "");
+function selectionVisual(action, options = {}) {
+  if (options.initialIncome && action?.target?.kind === "discard-hand-cards") {
+    const cardId = String(action.target.cardIds?.[0] || "");
+    const name = CARD_NAMES_BY_ID.get(cardId) || cards.getCardLabel({ cardId });
     return Object.freeze({
+      label: "插收入",
       name,
-      imageSrc: `../assets/industry/${encodeURIComponent(fileName)}`,
+      text: `插收入：${name}`,
+      items: Object.freeze([{ name, imageSrc: cardImageSrc(cardId) }]),
     });
   }
-  const number = Number(cardId.replace(/^initial:/, ""));
-  const effect = initialCards.getInitialCardEffect(number);
+  if (action?.target?.kind === "select_initial_card") {
+    const cardId = String(action.target.cardId || "");
+    if (action.target.selectionKind === "industry") {
+      const fileName = cardId.replace(/^industry:/, "");
+      const name = fileName.replace(/\.[^.]+$/, "");
+      return Object.freeze({
+        label: "选择公司",
+        name,
+        text: `选择公司：${name}`,
+        items: Object.freeze([{
+          name,
+          imageSrc: `../assets/industry/${encodeURIComponent(fileName)}`,
+        }]),
+      });
+    }
+    const number = Number(cardId.replace(/^initial:/, ""));
+    const effect = initialCards.getInitialCardEffect(number);
+    const name = effect?.label || `初始牌 ${number}`;
+    return Object.freeze({
+      label: "选择初始资源牌",
+      name,
+      text: `选择初始资源牌：${name}`,
+      items: Object.freeze([{
+        name,
+        imageSrc: `../assets/initial_card/split/${number}.png`,
+      }]),
+    });
+  }
+  const cardIds = [
+    ...(action?.target?.cardIds || []),
+    ...(String(action?.summary || "").match(/(?:b_\d+\.webp|dlc_\d+\.png)/gi) || []),
+  ].filter((cardId, index, values) => values.indexOf(cardId) === index);
+  if (!cardIds.length) return null;
+  const items = cardIds.map((cardId) => ({
+    name: CARD_NAMES_BY_ID.get(cardId) || cards.getCardLabel({ cardId }),
+    imageSrc: cardImageSrc(cardId),
+  }));
+  const label = action?.target?.kind === "discard-hand-cards"
+    ? "弃牌支付"
+    : "选择卡牌";
+  const name = items.map((item) => item.name).join("、");
   return Object.freeze({
-    name: effect?.label || `初始牌 ${number}`,
-    imageSrc: `../assets/initial_card/split/${number}.png`,
+    label,
+    name,
+    text: `${label}：${name}`,
+    items: Object.freeze(items.map(Object.freeze)),
   });
 }
 
@@ -253,7 +298,7 @@ function runFixedBoardTurnReport(options = {}) {
       const incomeEvents = (result.replayEvent?.effectSessionJournal?.events || [])
         .filter((event) => event.type === "round_start_income");
       const actorIncome = incomeEvents.find((event) => event.playerId === actorPlayerId) || null;
-      const visual = selectionVisual(chosen);
+      const visual = selectionVisual(chosen, { initialIncome: !reachedTurnActions });
       const resourcesAfter = actorIncome
         ? Object.freeze({
           ...resourcesFromIncomeEvent(actorIncome, "before"),
@@ -266,7 +311,7 @@ function runFixedBoardTurnReport(options = {}) {
         legalActions,
         result.actionOutcomes,
         actorPlayerId,
-        result.policyProvenance,
+        { initialIncome: !reachedTurnActions },
       );
       const valuationMilliseconds = performance.now() - valuationStartedAt;
       const counterfactualTiming = env.getCounterfactualDiagnostics() || {};
@@ -284,7 +329,7 @@ function runFixedBoardTurnReport(options = {}) {
         decisionType: chosen.decisionType,
         family: chosen.family,
         summary: chosen.summary,
-        text: visual ? `选择：${visual.name}` : actionText(chosen),
+        text: visual?.text || actionText(chosen),
         visual,
         value: chosenEvaluation,
         alternatives: rankedEvaluations.filter((candidate) => candidate.actionId !== chosen.actionId).slice(0, 3),
@@ -588,10 +633,10 @@ function renderActionCard(action) {
         <strong>${evaluation?.score == null ? "—" : escapeHtml(formatNumber(evaluation.value ?? evaluation.score))}</strong>
       </div>
     </div>${action.visual ? `<div class="selected-card-preview">
-      <button class="card-image-button" type="button" data-image-src="${escapeHtml(action.visual.imageSrc)}" aria-label="放大查看 ${escapeHtml(action.visual.name)}">
-        <img src="${escapeHtml(action.visual.imageSrc)}" alt="${escapeHtml(action.visual.name)}">
-      </button>
-      <div><span>本次选择</span><strong>${escapeHtml(action.visual.name)}</strong></div>
+      <div class="selected-card-images">${(action.visual.items || []).filter((item) => item.imageSrc).map((item) => `<button class="card-image-button" type="button" data-image-src="${escapeHtml(item.imageSrc)}" aria-label="放大查看 ${escapeHtml(item.name)}">
+        <img src="${escapeHtml(item.imageSrc)}" alt="${escapeHtml(item.name)}">
+      </button>`).join("")}</div>
+      <div><span>${escapeHtml(action.visual.label || "本次选择")}</span><strong>${escapeHtml(action.visual.name)}</strong></div>
     </div>` : ""}
     <div class="strip-caption">本决策前 → 执行后</div>
     <div class="resource-strip" aria-label="本决策前后资源">${renderResourceStrip(action.resourcesBefore, action.resourcesAfter)}</div>
@@ -670,12 +715,59 @@ function renderHand(hand) {
   }).join("");
 }
 
-function traceSummary(traces) {
-  return ["pink", "yellow", "blue"].map((traceType) => {
-    const trace = traces?.[traceType] || {};
-    const count = Number(Boolean(trace.firstPlaced)) + Number(trace.extraCount || 0);
-    return `${traceType} ${count}`;
-  }).join(" · ");
+const PLANET_LABELS = Object.freeze({
+  earth: "地球",
+  mercury: "水星",
+  venus: "金星",
+  mars: "火星",
+  jupiter: "木星",
+  saturn: "土星",
+  uranus: "天王星",
+  neptune: "海王星",
+  aomomo: "奥陌陌",
+});
+
+function boardCoordinateStyle(x, y) {
+  const angle = ((Number(x) || 0) - 1.5) * (Math.PI / 4);
+  const radius = 10 + (Math.max(1, Number(y) || 1) * 7.1);
+  return `left:${(50 + (Math.cos(angle) * radius)).toFixed(2)}%;top:${(50 + (Math.sin(angle) * radius)).toFixed(2)}%`;
+}
+
+function renderSolarSystem(board) {
+  const rotation = board?.rotation || {};
+  const wheelSteps = [1, 2, 3, 4].map((wheel) => Number(rotation[`wheel${wheel}Steps`]) || 0);
+  const planets = board?.planets || [];
+  const rockets = board?.rockets || [];
+  const planetMarkers = planets.map((planet) => `<span class="planet-marker" style="${boardCoordinateStyle(planet.x, planet.y)}" title="${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}">${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}</span>`).join("");
+  const rocketMarkers = rockets.filter((rocket) => Number.isFinite(rocket.x) && Number.isFinite(rocket.y)).map((rocket, index) => `<span class="rocket-marker player-color-${escapeHtml(rocket.playerId)}" style="${boardCoordinateStyle(rocket.x, rocket.y)};--rocket-offset:${((index % 3) - 1) * 10}px" title="${escapeHtml(rocket.playerId)} · ${escapeHtml(rocket.planetId || `${rocket.x},${rocket.y}`)}">▲</span>`).join("");
+  return `<div class="solar-visual" aria-label="本轮开始时的太阳系盘面">
+    ${[4, 3, 2, 1].map((wheel) => `<img class="solar-wheel wheel-${wheel}" src="../assets/core/wheels/wheel${wheel}.png" alt="" style="transform:translate(-50%,-50%) rotate(${wheelSteps[wheel - 1] * 45}deg)">`).join("")}
+    <img class="solar-sun" src="../assets/core/sun.png" alt="太阳">
+${planetMarkers}
+${rocketMarkers}
+  </div>`;
+}
+
+function alienFaceSrc(slot) {
+  return slot?.revealed && slot.alienId
+    ? `../assets/aliens/${encodeURIComponent(slot.alienId)}/face.png`
+    : "../assets/aliens/back.png";
+}
+
+function renderAlienBoard(aliens) {
+  if (!aliens.length) return '<p class="muted">无外星人状态</p>';
+  return `<div class="alien-board">${aliens.map((slot) => `<div class="alien-slot">
+    <button class="alien-face-button" type="button" data-image-src="${escapeHtml(alienFaceSrc(slot))}" aria-label="放大查看${escapeHtml(slot.revealed ? slot.alienId || "外星人" : "未揭示外星人")}">
+      <img src="${escapeHtml(alienFaceSrc(slot))}" alt="${escapeHtml(slot.revealed ? slot.alienId || "已揭示外星人" : "未揭示外星人")}">
+    </button>
+    <div><strong>槽位 ${slot.slotId} · ${escapeHtml(slot.revealed ? slot.alienId || "已揭示" : "未揭示")}</strong>
+      <div class="trace-row">${["pink", "yellow", "blue"].map((traceType) => {
+        const trace = slot.traces?.[traceType] || {};
+        const count = Number(Boolean(trace.firstPlaced)) + Number(trace.extraCount || 0);
+        return `<span class="trace-chip ${traceType}"><i></i>${escapeHtml(count)}</span>`;
+      }).join("")}</div>
+    </div>
+  </div>`).join("")}</div>`;
 }
 
 function renderBoardSnapshot(board) {
@@ -696,15 +788,15 @@ function renderBoardSnapshot(board) {
   const aliens = board?.aliens || [];
   const techSupply = board?.techSupply || [];
   return `<div class="board-preview">
-    <div class="board-card">
+    <div class="board-card solar-board-card">
       <span class="eyebrow">太阳系</span>
-      <strong>旋转 ${escapeHtml(typeof rotation === "object" ? JSON.stringify(rotation) : rotation)}</strong>
+      ${renderSolarSystem(board)}
+      <strong>已旋转 ${escapeHtml(typeof rotation === "object" ? rotation.rotationCount ?? 0 : rotation)} 次</strong>
       <p>${escapeHtml(rocketText)}</p>
-      <small>可见行星：${escapeHtml((board?.planets || []).map((planet) => planet.planetId).join("、") || "—")}</small>
     </div>
     <div class="board-card">
       <span class="eyebrow">外星人</span>
-      ${aliens.map((slot) => `<p><strong>槽位 ${slot.slotId} · ${escapeHtml(slot.revealed ? slot.alienId || "已揭示" : "未揭示")}</strong><br><small>${escapeHtml(traceSummary(slot.traces))}</small></p>`).join("") || '<p class="muted">无外星人状态</p>'}
+      ${renderAlienBoard(aliens)}
     </div>
     <div class="board-card">
       <span class="eyebrow">科技供应</span>
@@ -747,7 +839,7 @@ function renderRoundStart(roundStart) {
       <div><span class="eyebrow">轮初状态</span><h3>${initial ? "正式初始资源" : "收入阶段"}</h3></div>
       <p>${initial ? "第 1 轮不获得轮初收入；以下是公司牌与两张资源牌结算后的正式状态。" : "收入归入本轮开始，不计入上一轮最后一个 end_turn。"}</p>
     </div>
-    <div class="income-grid">${(roundStart?.players || []).map((player) => `<div class="income-player">
+    <div class="income-grid">${(roundStart?.players || []).map((player) => `<div class="income-player" data-player="${escapeHtml(player.playerId)}">
       <div><strong>${escapeHtml(player.playerLabel)}</strong><small>${initial ? "正式开局" : `收入：${escapeHtml(formatIncome(player.income))}`}</small></div>
       <div class="resource-strip">${renderResourceStrip(player.resourcesBefore, player.resourcesAfter)}</div>
     </div>`).join("")}</div>
@@ -773,7 +865,7 @@ function renderRoundSummary(turns) {
   }
   return `<section class="round-summary">
     <div class="round-subheading"><div><span class="eyebrow">本轮梗概</span><h3>资源与得分变化</h3></div></div>
-    <div class="round-summary-grid">${[...byPlayer.values()].map((summary) => `<div class="round-player-summary">
+    <div class="round-summary-grid">${[...byPlayer.entries()].map(([playerId, summary]) => `<div class="round-player-summary" data-player="${escapeHtml(playerId)}">
       <div class="summary-line"><strong>${escapeHtml(summary.playerLabel)}</strong><span>${summary.decisionCount} 次决策 · 得分 ${escapeHtml(summary.scoreBefore)}→${escapeHtml(summary.scoreAfter)}（${escapeHtml(signed(summary.scoreAfter - summary.scoreBefore))}）</span></div>
       <div class="resource-strip">${renderResourceStrip(summary.resourcesBefore, summary.resourcesAfter)}</div>
     </div>`).join("")}</div>
@@ -829,7 +921,7 @@ function formatTurnReportHtml(report) {
   const roundSections = roundNumbers.map((roundNumber) => {
     const turns = report.turns.filter((turn) => turn.roundNumber === roundNumber);
     const roundStart = report.roundStarts?.find((entry) => entry.roundNumber === roundNumber) || null;
-    return `<section class="round-block" data-round="${roundNumber}">
+    return `<section class="round-block" id="round-${roundNumber}" data-round="${roundNumber}">
       <div class="round-title"><span>ROUND</span><strong>${roundNumber}</strong></div>
       ${renderRoundStart(roundStart)}
       ${renderRoundSummary(turns)}
@@ -919,11 +1011,36 @@ function formatTurnReportHtml(report) {
     .income-player small { color: var(--muted); }
     .summary-line { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
     .summary-line span { color: var(--muted); font-size: 12px; }
-    .board-preview { display: grid; grid-template-columns: 1.25fr .85fr 1.25fr 1fr; gap: 10px; margin: 14px 0; }
+    .board-preview { display: grid; grid-template-columns: 1.6fr 1.1fr 1fr 1fr; gap: 10px; margin: 14px 0; }
     .board-card { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(17, 24, 42, .78); box-shadow: var(--shadow); }
     .board-card > strong { display: block; margin: 4px 0; }
     .board-card p { margin: 6px 0; font-size: 12px; overflow-wrap: anywhere; }
     .board-card small { color: var(--muted); }
+    .solar-visual { position: relative; width: min(100%, 340px); aspect-ratio: 1; margin: 10px auto 8px; overflow: hidden; border-radius: 50%; background: #050912; box-shadow: inset 0 0 30px rgba(86, 216, 255, .12), 0 10px 28px rgba(0, 0, 0, .32); }
+    .solar-wheel { position: absolute; left: 50%; top: 50%; height: auto; transform-origin: center; }
+    .solar-wheel.wheel-4 { width: 100%; }
+    .solar-wheel.wheel-3 { width: 62.4%; }
+    .solar-wheel.wheel-2 { width: 48.7%; }
+    .solar-wheel.wheel-1 { width: 35.3%; }
+    .solar-sun { position: absolute; left: 50%; top: 50%; width: 8.5%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 10px rgba(255, 196, 64, .8)); }
+    .planet-marker, .rocket-marker { position: absolute; z-index: 4; transform: translate(-50%, -50%); }
+    .planet-marker { padding: 1px 4px; border: 1px solid rgba(255, 255, 255, .42); border-radius: 8px; color: #fff; background: rgba(4, 8, 18, .78); font-size: 8px; font-weight: 750; line-height: 1.25; white-space: nowrap; box-shadow: 0 2px 5px rgba(0, 0, 0, .55); }
+    .rocket-marker { margin: var(--rocket-offset) 0 0 var(--rocket-offset); color: #fff; font-size: 15px; line-height: 1; text-shadow: 0 1px 4px #000, 0 0 5px currentColor; }
+    .player-color-player-red { color: #ff6576; }
+    .player-color-player-blue { color: #55a7ff; }
+    .player-color-player-green { color: #61d98a; }
+    .player-color-player-brown { color: #d4a171; }
+    .alien-board { display: grid; gap: 9px; margin-top: 10px; }
+    .alien-slot { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 9px; align-items: center; padding: 7px; border-radius: 10px; background: rgba(9, 13, 24, .5); }
+    .alien-face-button { width: 52px; height: 76px; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: transparent; cursor: zoom-in; }
+    .alien-face-button img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .alien-slot strong { font-size: 11px; }
+    .trace-row { display: flex; gap: 5px; margin-top: 7px; }
+    .trace-chip { display: inline-flex; gap: 4px; align-items: center; padding: 2px 5px; border-radius: 8px; background: var(--panel-2); font-size: 10px; }
+    .trace-chip i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .trace-chip.pink { color: #ff7db6; }
+    .trace-chip.yellow { color: #ffd15c; }
+    .trace-chip.blue { color: #62b5ff; }
     .tech-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
     .tech-list span { padding: 5px 7px; border-radius: 7px; background: var(--panel-2); font-size: 11px; }
     .tech-list small { display: block; font-size: 9px; overflow-wrap: anywhere; }
@@ -943,6 +1060,7 @@ function formatTurnReportHtml(report) {
     .selected-card-preview { display: flex; gap: 12px; align-items: center; margin: 0 14px 14px; padding: 10px; border: 1px solid var(--line); border-radius: 11px; background: rgba(86, 216, 255, .045); }
     .selected-card-preview span { display: block; color: var(--muted); font-size: 10px; }
     .selected-card-preview strong { display: block; margin-top: 2px; }
+    .selected-card-images { display: flex; gap: 6px; flex: 0 0 auto; }
     .card-image-button { display: inline-grid; place-items: center; flex: 0 0 auto; margin: 0; padding: 0; border: 0; border-radius: 7px; background: transparent; cursor: zoom-in; }
     .card-image-button img { display: block; width: 44px; height: 62px; object-fit: cover; border-radius: 6px; box-shadow: 0 5px 14px rgba(0, 0, 0, .35); }
     .selected-card-preview .card-image-button img { width: 58px; height: 82px; }
@@ -1088,6 +1206,7 @@ function formatTurnReportHtml(report) {
     (() => {
       const cards = [...document.querySelectorAll(".action-card")];
       const sections = [...document.querySelectorAll(".turn-section")];
+      const playerSummaries = [...document.querySelectorAll(".round-player-summary, .income-player")];
       const playerFilter = document.querySelector("#playerFilter");
       const familyFilter = document.querySelector("#familyFilter");
       const textFilter = document.querySelector("#textFilter");
@@ -1111,6 +1230,9 @@ function formatTurnReportHtml(report) {
         });
         sections.forEach((section) => {
           section.classList.toggle("hidden", !section.querySelector(".action-card:not(.hidden)"));
+        });
+        playerSummaries.forEach((summary) => {
+          summary.classList.toggle("hidden", player !== "all" && summary.dataset.player !== player);
         });
         visibleCount.textContent = "显示 " + visible + " / ${actionCount} 个决策";
         emptyState.style.display = visible ? "none" : "block";
