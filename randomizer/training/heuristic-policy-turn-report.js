@@ -71,7 +71,7 @@ function buildDiagnostics(turns) {
           total + ((Number(action.timing.totalMilliseconds) || 0) / Number(action.timing.candidateCount))
         ), 0) / timed.length
         : 0,
-      routeCheckpointLimit: 6,
+      routeCheckpointLimit: 10,
     }),
   });
 }
@@ -243,7 +243,7 @@ function runFixedBoardTurnReport(options = {}) {
 
     const diagnostics = buildDiagnostics(turns);
     return {
-      schemaVersion: "seti-heuristic-turn-report-v3",
+      schemaVersion: "seti-heuristic-turn-report-v4",
       boardId: FIXED_BOARD_ID,
       seed: FIXED_BOARD_CONFIG.seed,
       boardFingerprint: fingerprintFixedBoard(projectFixedBoard(initialObservation)),
@@ -293,6 +293,7 @@ function formatEvaluation(candidate, timing = null) {
   const gap = goal?.gap || route?.resourceGap || null;
   const required = goal?.required || route?.routeCost || null;
   const parts = [
+    `V=${formatNumber(evaluation.value ?? evaluation.score)}`,
     goal
       ? `目标=${goal.planetId}/${goal.endpointFamily}`
       : route
@@ -300,8 +301,8 @@ function formatEvaluation(candidate, timing = null) {
       : evaluation.orangeTechDelta > 0
         ? `目标=补探测器橙色科技缺口(+${evaluation.orangeTechDelta})`
         : "目标=无",
-    `目标已兑现分=${formatNumber(evaluation.goalScoreGain)}`,
-    `候选标准链叶累计分差=${formatNumber(evaluation.actualScoreDelta)}`,
+    `路线终点实际分=${formatNumber(evaluation.goalScoreGain)}`,
+    `行动后已兑现分变化=${formatNumber(evaluation.actualScoreDelta)}`,
     gap
       ? `缺口=钱${gap.credits || 0}/电${gap.energy || 0}/移动${gap.movementSteps || 0}`
       : "缺口=—",
@@ -319,7 +320,7 @@ function formatEvaluation(candidate, timing = null) {
         ? `钱${evaluation.leafProbeGoalRequirement.gap?.credits || 0}/电${evaluation.leafProbeGoalRequirement.gap?.energy || 0}/移动${evaluation.leafProbeGoalRequirement.gap?.movementSteps || 0}`
         : "目标已完成或不再可用"}`
       : route
-      ? `叶后资源=钱${route.remainingResources?.credits || 0}/电${route.remainingResources?.energy || 0}（仅供后续路线补缺，不折算 V/Q）`
+      ? `叶后资源=钱${route.remainingResources?.credits || 0}/电${route.remainingResources?.energy || 0}（库存本身不计 V，只改变路线缺口）`
       : "叶后资源=无探测器用途",
     `链=${(evaluation.actionChain || []).join("→") || "—"}`,
     "字段=outcomeProjection.scoring.realizedScore/progress.probeGoalRequirements/progress.probeRoute.candidate",
@@ -342,7 +343,7 @@ function formatAlternatives(alternatives) {
   if (!alternatives.length) return "—";
   return alternatives.map((candidate) => (
     candidate.evaluation.selectable
-      ? `${candidate.summary}（目标分 ${formatNumber(candidate.score)}）`
+      ? `${candidate.summary}（V ${formatNumber(candidate.score)}）`
       : `${candidate.summary}（不可选：${candidate.evaluation.reasonCodes.join(",")}）`
   )).join("；");
 }
@@ -359,7 +360,8 @@ function formatTurnReportMarkdown(report) {
     `- board fingerprint：\`${report.boardFingerprint}\``,
     `- Policy 决策数：${report.decisionCount}`,
     `- 游戏回合数：${report.turns.length}`,
-    "- 决策口径：本阶段只实现探测器目标；只选择有正分标准终点叶的发射/移动/环绕/登陆下一步，资源仅用于展示路线实耗和缺口，不折算统一 V/Q",
+    "- 决策口径：对每个合法候选执行真实 Standard Action/Decision，以行动后已兑现分加当前最佳探测器路线价值形成唯一 V，选择 V 最大者",
+    "- 资源口径：钱、电、宣传、卡牌库存本身不直接计入 V；钱电只通过实际盘面改变路线缺口，数据只在真实解锁蓝色痕迹并计分后进入已兑现分",
     "- 诊断目标：初次接触玩家约 100 分；最终表同时列出各机器人的目标差距",
     "- 固定反例：R1 T04 绿色登陆土星按 `land -> choose_target(yellow trace)` 标准链展开；成本、地点奖励、首黄宣传及 alienCard 均取实际 root/leaf 字段，不复制规则常数",
     "- 字段边界：projection 只保留固定上限的探测器目标需求摘要；拓扑、成本、减免与奖励引用均由生产规则 owner 生成，完整 checkpoint 不进入 Policy DTO",
@@ -418,7 +420,7 @@ function formatTurnReportMarkdown(report) {
     const nextStep = lastGoal?.nextStep?.family || lastGoal?.nextActionSummary || lastGoal?.nextActionId || "无";
     const purpose = lastGoal
       ? `钱${player.resources.credits}/电${player.resources.energy}：仅供后续可解析探测器路线补缺`
-      : `钱${player.resources.credits}/电${player.resources.energy}：当前无正分探测器终点，不折算价值`;
+      : `钱${player.resources.credits}/电${player.resources.energy}：当前无正分探测器终点，库存本身不计 V`;
     lines.push(`| ${player.playerLabel} | ${goalNames} | ${gap} | ${markdownCell(nextStep)} | ${player.actualProbeScore} | ${purpose} |`);
   });
 

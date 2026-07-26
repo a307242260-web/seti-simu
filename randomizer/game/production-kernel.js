@@ -417,8 +417,11 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
           };
           const publicityValue = route.publicityStops * PROBE_VALUE_POINTS.publicity;
           const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
-          const resourceCostValue = totalCost.credits * PROBE_VALUE_POINTS.credits
-            + totalCost.energy * PROBE_VALUE_POINTS.energy;
+          const resourceGap = {
+            credits: Math.max(0, totalCost.credits - Number(player.resources?.credits || 0)),
+            energy: Math.max(0, totalCost.energy - Number(player.resources?.energy || 0)),
+            movementSteps: route.path.length,
+          };
           const firstMove = route.path[0] || null;
           const targetId = [
             choice.actionType,
@@ -438,8 +441,6 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             targetBenefit: {
               score: scoreGain,
               grossEquivalentValue,
-              resourceCostValue,
-              netEquivalentValue: grossEquivalentValue - resourceCostValue,
               rewardSummary: choice.rewardSummary,
               source: `planetRewards.${choice.actionType}:${choice.planetId}`,
             },
@@ -449,11 +450,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
               movementSteps: route.path.length,
               movementPoints: route.movePoints,
             },
-            gap: {
-              credits: Math.max(0, totalCost.credits - Number(player.resources?.credits || 0)),
-              energy: Math.max(0, totalCost.energy - Number(player.resources?.energy || 0)),
-              movementSteps: route.path.length,
-            },
+            gap: resourceGap,
             nextStep: source.launchRequired
               ? { family: "launch" }
               : firstMove
@@ -511,7 +508,13 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     }
   }
   const ranked = candidates.sort((left, right) => (
-    right.targetBenefit.netEquivalentValue - left.targetBenefit.netEquivalentValue
+    (
+      right.targetBenefit.grossEquivalentValue
+      / (1 + right.gap.credits + right.gap.energy)
+    ) - (
+      left.targetBenefit.grossEquivalentValue
+      / (1 + left.gap.credits + left.gap.energy)
+    )
     || right.targetBenefit.score - left.targetBenefit.score
     || left.required.credits + left.required.energy - right.required.credits - right.required.energy
     || left.required.movementSteps - right.required.movementSteps
@@ -685,7 +688,7 @@ function createProductionHostComposition(options = {}) {
     projectState(state, viewer, _session, projectionContext = {}) {
       const projectedState = {
         ...clone(state),
-        probeRouteRequirements: buildProbeRouteRequirements(state),
+        probeRouteRequirements: buildProbeRouteRequirements(state, viewer?.playerId),
       };
       if (hostKind === "browser") {
         if (typeof options.projectBrowserState !== "function") {

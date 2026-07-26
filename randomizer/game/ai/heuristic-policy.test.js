@@ -184,7 +184,7 @@ const evaluatedSetupContext = policyPort.createDecisionContext({
 assert.equal(
   setupPolicy.decide(evaluatedSetupContext).actionId,
   "setup:industry-high",
-  "公司与初始牌选择必须使用正式结算叶的同一 Q 口径",
+  "公司与初始牌选择必须使用正式结算叶的同一 V 口径",
 );
 
 const settledFallbackAction = action("pass:fallback", "pass");
@@ -217,6 +217,29 @@ assert.equal(
   settledFallbackDecision.diagnostics.reasonCode,
   "heuristic:pass",
   "估值无可选路线时必须直接选择合法 PASS，不得乱选其他已结算行动",
+);
+
+const unresolvedPassContext = policyPort.createDecisionContext({
+  requestId: "heuristic-policy-unresolved-pass",
+  seatId: "p1",
+  stateVersion: 7,
+  decisionVersion: 3,
+  observation: settledFallbackObservation,
+  legalActions: [settledFallbackAction],
+  actionOutcomes: [{
+    schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+    actionId: settledFallbackAction.actionId,
+    status: "unresolved",
+    confidence: "none",
+    code: "COUNTERFACTUAL_BRANCH_LIMIT",
+    rootObservation: settledFallbackObservation,
+    leaves: [],
+  }],
+});
+assert.equal(
+  setupPolicy.decide(unresolvedPassContext).actionId,
+  settledFallbackAction.actionId,
+  "探测器策略没有可估值行动时，合法 PASS 即使跨轮反事实分支超限也必须推进真实标准流程",
 );
 
 const inventoryObservation = outcomeModel.createDecisionObservation({
@@ -285,14 +308,14 @@ const lowerBenefit = expectedScoreEvaluator.evaluateSetupProbeGoals(
   setupObservation(8, { credits: 0, energy: 0, movementSteps: 0 }),
   "p1",
 );
-assert.ok(expectedScoreEvaluator.compareSetupProbeGoals(higherBenefit, lowerBenefit) < 0,
-  "setup 必须先按真实叶的正分探测器目标收益排序");
+assert.ok(expectedScoreEvaluator.compareSetupProbeGoals(lowerBenefit, higherBenefit) < 0,
+  "setup 必须按真实叶执行后的路线价值排序，资源缺口会降低目标的当前可达价值");
 const lowerGap = expectedScoreEvaluator.evaluateSetupProbeGoals(
   setupObservation(12, { credits: 0, energy: 1, movementSteps: 1 }),
   "p1",
 );
 assert.ok(expectedScoreEvaluator.compareSetupProbeGoals(lowerGap, higherBenefit) < 0,
-  "同目标收益的 setup 叶必须按 credits/energy/movement 缺口排序");
+  "同目标收益的 setup 叶必须优先选择信用和能源缺口更小的路线");
 
 assert.throws(
   () => policy.decide({ schemaVersion: policyPort.CONTEXT_SCHEMA_VERSION, legalActions: [] }),

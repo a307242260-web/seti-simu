@@ -22,7 +22,7 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v6";
+  const POLICY_VERSION = "seti-heuristic-policy-v7";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
   const FALLBACK_FAMILIES = Object.freeze(new Set([
@@ -144,14 +144,18 @@
     }
   }
 
-  function selectSettledFallbackAction(context) {
+  function selectControlFallbackAction(context) {
     const settledIds = new Set((context.actionOutcomes || [])
       .filter((outcome) => outcome?.status === "settled" && (outcome.leaves?.length || 0) > 0)
       .map((outcome) => outcome.actionId));
     const phasePriority = { conditional: 0, main: 1, quick: 2 };
     return (context.legalActions || [])
       .filter((action) => (
-        settledIds.has(action.actionId) && FALLBACK_FAMILIES.has(action.family)
+        FALLBACK_FAMILIES.has(action.family)
+        && (
+          settledIds.has(action.actionId)
+          || ["pass", "end_turn"].includes(action.family)
+        )
       ))
       .sort((left, right) => (
         (phasePriority[left.phase] ?? 3) - (phasePriority[right.phase] ?? 3)
@@ -179,7 +183,7 @@
         evaluateAction,
         isFeasible: isObservationFeasible,
       });
-      const selected = evaluatedSelection || selectSettledFallbackAction(context);
+      const selected = evaluatedSelection || selectControlFallbackAction(context);
       if (!selected) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_SELECTION", "Heuristic Policy 未能选择 legal descriptor");
       }

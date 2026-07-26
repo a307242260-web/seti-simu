@@ -29,7 +29,7 @@ const tied = evaluator.selectLegalAction({
 }, {
   evaluateAction: () => ({ score: 5, status: "settled", selectable: true }),
 });
-assert.equal(tied.actionId, "a-action", "同 Q 必须使用稳定 actionId tie-break，不依赖枚举顺序");
+assert.equal(tied.actionId, "a-action", "同 V 必须使用稳定 actionId tie-break，不依赖枚举顺序");
 
 const unresolved = evaluator.selectLegalAction({
   ...context,

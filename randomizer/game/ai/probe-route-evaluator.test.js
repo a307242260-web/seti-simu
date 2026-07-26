@@ -272,8 +272,8 @@ assert.equal(noEndpoint.score, null, "没有正收益终点的循环不得形成
   }, candidate);
   assert.equal(result.probeGoalRequirement.targetId, matchingGoal.targetId,
     "行动必须匹配自己的最佳真实目标，不能永远追排序第一的路线");
-  assert.equal(result.score, 4,
-    "Q 必须扣除真实标准叶消耗的 1 能量，再加执行后盘面的 9 分路线价值");
+  assert.equal(result.score, 9,
+    "V 必须直接读取真实标准叶执行后的盘面价值，不能另加行动差分项");
 }
 
 {

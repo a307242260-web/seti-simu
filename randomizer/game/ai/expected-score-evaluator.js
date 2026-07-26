@@ -9,21 +9,14 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
-  const EVALUATION_MODEL = "counterfactual-probe-goal-v2";
-  const PARAMETER_VERSION = "seti-probe-goal-v2";
+  const EVALUATION_MODEL = "counterfactual-probe-state-value-v3";
+  const PARAMETER_VERSION = "seti-probe-state-value-v3";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
   const PROBE_FAMILIES = Object.freeze(new Set(["launch", "move", "orbit", "land"]));
   const PROBE_ENABLER_FAMILIES = Object.freeze(new Set([
     "quick_trade", "play_card", "research_tech",
   ]));
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
-  const ASSET_VALUES = Object.freeze({
-    credits: 5,
-    energy: 5,
-    publicity: 2.5,
-    ordinaryCards: 2.5,
-    alienCards: 10 / 3,
-  });
   const DEFAULT_PARAMETERS = Object.freeze({ parameterVersion: PARAMETER_VERSION });
 
   function deepFreeze(value) {
@@ -98,20 +91,16 @@
   }
 
   function goalValue(requirement) {
-    return finite(
-      requirement?.targetBenefit?.netEquivalentValue
+    const grossValue = finite(
+      requirement?.targetBenefit?.grossEquivalentValue
       ?? requirement?.targetBenefit?.score,
     );
+    return grossValue / (1 + gapSize(requirement));
   }
 
-  function actualValueDelta(rootValue, leafValue) {
-    return leafValue.realizedScore - rootValue.realizedScore
-      + Object.entries(ASSET_VALUES).reduce((total, [asset, points]) => (
-        total + (
-          finite(leafValue.resourceFacts?.[asset])
-          - finite(rootValue.resourceFacts?.[asset])
-        ) * points
-      ), 0);
+  function futureProbeValue(requirements, seatId) {
+    if (requirements?.playerId !== seatId) return 0;
+    return Math.max(0, ...(requirements.candidates || []).map(goalValue));
   }
 
   function sameTarget(requirements, goal) {
@@ -200,8 +189,9 @@
       return deepFreeze({
         evaluationModel: EVALUATION_MODEL,
         score: legacyBest.goalScoreGain,
+        value: legacyBest.goalScoreGain,
         selectable: true,
-        priorityClass: 4,
+        priorityClass: 0,
         goalScoreGain: legacyBest.goalScoreGain,
         status: outcome.status,
         confidence: outcome.confidence || "high",
@@ -221,7 +211,7 @@
         const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
         const leafRequirements = leaf.observation.outcomeProjection.progress?.probeGoalRequirements;
         const actualScoreDelta = leafValue.realizedScore - rootValue.realizedScore;
-        const realizedValueDelta = actualValueDelta(rootValue, leafValue);
+        const value = leafValue.realizedScore + futureProbeValue(leafRequirements, context.seatId);
         const orangeTechGain = Math.max(0,
           finite(leaf.observation.outcomeProjection.progress?.orangeTechCount)
           - finite(outcome.rootObservation.outcomeProjection.progress?.orangeTechCount));
@@ -256,10 +246,7 @@
             orangeTechGain,
             completed,
             enabledGoalScore: 0,
-            realizedValueDelta,
-            qValue: CONTROL_FAMILIES.has(action?.family)
-              ? 0
-              : realizedValueDelta + (completed ? 0 : goalValue(leafGoal || rootGoal)),
+            value,
           };
         });
         const rootTargetIds = new Set(rootGoals.map((goal) => goal?.targetId));
@@ -280,14 +267,13 @@
             orangeTechGain,
             completed: false,
             enabledGoalScore: finite(leafGoal.targetBenefit.score),
-            realizedValueDelta,
-            qValue: realizedValueDelta + goalValue(leafGoal),
+            value,
           }));
         return [...compared, ...newlyEnabled];
       })
       .sort((left, right) => (
-        Number(right.completed) - Number(left.completed)
-        || right.qValue - left.qValue
+        right.value - left.value
+        || Number(right.completed) - Number(left.completed)
         || goalValue(right.rootGoal) - goalValue(left.rootGoal)
         || finite(right.rootGoal?.targetBenefit?.score) - finite(left.rootGoal?.targetBenefit?.score)
         || right.gapReduction - left.gapReduction
@@ -339,31 +325,18 @@
     );
     const selectable = best.completed || routeAdvanced || directGapFill || controlFlow || controlAction;
     if (!selectable) return unavailable(outcome, "not-current-probe-goal-step");
-    const priorityClass = best.completed
-      ? 5
-      : routeAdvanced
-        ? 4
-        : directGapFill
-          ? 3
-          : controlFlow
-            ? 2
-            : action?.family === "end_turn"
-              ? 1
-              : 0;
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score: best.completed
-        ? best.realizedValueDelta
-        : best.qValue,
+      score: best.value,
+      value: best.value,
       selectable: true,
-      priorityClass,
+      priorityClass: 0,
       goalScoreGain: finite(best.rootGoal?.targetBenefit?.score),
       status: outcome.status,
       confidence: outcome.confidence || "high",
       rootValue,
       leafValue: best.leafValue,
       actualScoreDelta: best.actualScoreDelta,
-      actualValueDelta: best.realizedValueDelta,
       probeGoalRequirement: best.rootGoal,
       leafProbeGoalRequirement: best.leafGoal,
       gapReduction: best.gapReduction,
