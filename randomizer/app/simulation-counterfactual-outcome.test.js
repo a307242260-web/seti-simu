@@ -210,12 +210,12 @@ try {
       };
     });
     assert.equal(yellowTraceAssetDeltas.every(({ alienCards, publicity }) => (
-      (alienCards === 0 || alienCards === 1) && alienCards === publicity
-    )), true, "只有首枚黄色痕迹同时获得 1 宣传和 1 外星人牌");
+      alienCards === 0 && (publicity === 0 || publicity === 1)
+    )), true, "未揭示外星人的黄色痕迹不得获得物种外星人牌，首痕迹额外获得 1 宣传");
     assert.deepEqual(
-      [...new Set(yellowTraceAssetDeltas.map(({ alienCards }) => alienCards))].sort(),
+      [...new Set(yellowTraceAssetDeltas.map(({ publicity }) => publicity))].sort(),
       [0, 1],
-      "同根两个槽位必须分别证明首枚奖励与非首枚零奖励",
+      "同根两个槽位必须分别证明首痕迹宣传奖励与追加痕迹无宣传",
     );
     assert.deepEqual(sandbox.createCheckpoint(), before, "土星候选评估不得污染 canonical root");
 
@@ -228,7 +228,20 @@ try {
       && choice.target?.kind === "planet-reward-alien-trace"
       && choice.target?.traceType === "yellow"
     )), true);
-    const selectedTrace = traceChoices[0];
+    const beforeTraceCommitted = JSON.parse(actual.createCheckpoint().coreState.committedState);
+    const selectedTrace = traceChoices.find((choice) => (
+      !beforeTraceCommitted.aliens.aliens[choice.target.alienSlotId]
+        .traces.yellow.firstPlaced
+    ));
+    assert.ok(selectedTrace, "土星黄色痕迹必须存在尚未放置首标的标准目标");
+    const beforeTrace = outcomeModel.createDecisionObservation(
+      actual.observe(playerId),
+      {
+        seatId: playerId,
+        stateVersion: selectedTrace.stateVersion,
+        decisionVersion: selectedTrace.decisionVersion,
+      },
+    );
     assert.equal(actual.step(selectedTrace).ok, true);
     const matchingLeaf = projectedLanding.leaves.find((leaf) => (
       leaf.actionChain.at(-1) === selectedTrace.actionId
@@ -251,6 +264,25 @@ try {
       directObservation.outcomeProjection.assets,
       matchingLeaf.observation.outcomeProjection.assets,
       "直接标准执行与反事实叶的资源/牌型字段必须一致",
+    );
+    const expectedTraceScore = Number(selectedTrace.target.alienSlotId) === 1 ? 5 : 3;
+    assert.equal(
+      directObservation.outcomeProjection.scoring.realizedScore
+        - beforeTrace.outcomeProjection.scoring.realizedScore,
+      expectedTraceScore,
+      "未揭示外星人的首痕迹必须结算槽位基础分",
+    );
+    assert.equal(
+      directObservation.outcomeProjection.assets.publicity
+        - beforeTrace.outcomeProjection.assets.publicity,
+      1,
+      "首痕迹必须结算 1 宣传",
+    );
+    assert.equal(
+      directObservation.outcomeProjection.assets.alienCards
+        - beforeTrace.outcomeProjection.assets.alienCards,
+      0,
+      "未揭示外星人的黄色首痕迹不得提前获得物种外星人牌",
     );
     const committed = JSON.parse(actual.createCheckpoint().coreState.committedState);
     assert.equal(committed.aliens.aliens[selectedTrace.target.alienSlotId].traces.yellow.firstPlaced, true);

@@ -443,9 +443,6 @@
         };
         return result(state, root, action.family, {
           spawnedEffects: [
-            ...(didPass && Number(turn.roundNumber) < turnFlow.DEFAULT_FINAL_ROUND
-              ? [domainHandoff("income", "pass_income", player.id, boundary)]
-              : []),
             domainHandoff("alien", "turn_end_reveal", player.id, boundary),
             domainHandoff("company", "turn_end", player.id, boundary),
             domainHandoff("card_trigger", "turn_end", player.id, boundary),
@@ -502,6 +499,9 @@
       return result(state, root, EFFECT_TYPES.TURN_ADVANCE, {
         spawnedEffects: [
           ...(transition.roundAdvanced ? [
+            ...(slice(root, "turn", "turn").activePlayerIds || []).map((playerId) => (
+              domainHandoff("income", "round_start_income", playerId, transitionPayload)
+            )),
             domainHandoff("card_trigger", "round_transition", transition.nextPlayerId, transitionPayload),
             domainHandoff("company", "round_start", transition.nextPlayerId, transitionPayload),
           ] : []),

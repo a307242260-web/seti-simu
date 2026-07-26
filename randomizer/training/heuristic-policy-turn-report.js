@@ -8,6 +8,9 @@ const {
 } = require("./heuristic-policy.fixed-board");
 const { createSimulationEnv } = require("../app/simulation-env");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
+const initialCards = require("../game/initial-cards");
+const cards = require("../game/cards/deck");
+const CARD_NAMES_BY_ID = new Map(cards.CARD_CATALOG.map((card) => [card.card_id, card.card_name]));
 
 const FAMILY_VERBS = Object.freeze({
   industry: "执行科技",
@@ -26,16 +29,87 @@ const RESOURCE_FIELDS = Object.freeze([
   ["publicity", "宣传"],
   ["availableData", "数据"],
   ["handCount", "手牌"],
+  ["alienCardCount", "外星牌"],
   ["reservedCount", "预留牌"],
 ]);
 
 function resourcesOf(observation, playerId) {
   const player = observation?.publicState?.players?.find((candidate) => candidate.playerId === playerId) || {};
-  return Object.freeze(Object.fromEntries(RESOURCE_FIELDS.map(([key]) => [key, Number(player[key] || 0)])));
+  const selfState = observation?.selfState?.playerId === playerId
+    ? observation.selfState
+    : null;
+  return Object.freeze({
+    ...Object.fromEntries(RESOURCE_FIELDS.map(([key]) => [key, Number(player[key] || 0)])),
+    alienCardCount: Array.isArray(selfState?.privateAlienCards)
+      ? selfState.privateAlienCards.length
+      : 0,
+  });
 }
 
 function resourceDelta(before, after) {
   return Object.freeze(Object.fromEntries(RESOURCE_FIELDS.map(([key]) => [key, after[key] - before[key]])));
+}
+
+function handOf(observation, playerId) {
+  if (observation?.selfState?.playerId !== playerId) return Object.freeze([]);
+  return Object.freeze((observation.selfState.hand || []).map((card) => Object.freeze({
+    id: card.id,
+    cardId: card.cardId,
+    cardName: card.cardName || CARD_NAMES_BY_ID.get(card.cardId) || cards.getCardLabel(card),
+    price: card.price,
+    cardTypeCode: card.cardTypeCode,
+    discardActionCode: card.discardActionCode,
+    scanActionCode: card.scanActionCode,
+    incomeCode: card.incomeCode,
+  })));
+}
+
+function boardSnapshot(observation) {
+  const board = observation?.publicState?.board || {};
+  const solar = board.solarSystem || {};
+  return Object.freeze({
+    rotation: structuredClone(solar.rotation || null),
+    sectorBySlot: structuredClone(solar.sectorBySlot || null),
+    planets: Object.freeze((solar.planetLocations || []).map((planet) => Object.freeze({
+      planetId: planet.planetId,
+      x: planet.x,
+      y: planet.y,
+    }))),
+    rockets: Object.freeze((board.rockets || []).map((rocket) => Object.freeze({
+      id: rocket.id,
+      playerId: rocket.playerId,
+      surface: rocket.surface,
+      x: rocket.x,
+      y: rocket.y,
+      planetId: rocket.planetId || null,
+    }))),
+    aliens: Object.freeze((board.aliens?.slots || []).map((slot, index) => Object.freeze({
+      slotId: index + 1,
+      revealed: Boolean(slot.revealed),
+      alienId: slot.alienId || null,
+      traces: structuredClone(slot.traces || {}),
+    }))),
+    techSupply: Object.freeze(Object.values(board.techSupply?.stacks || {}).map((stack) => Object.freeze({
+      tileId: stack.tileId,
+      techType: stack.techType,
+      bonusId: stack.bonusId || null,
+      remaining: stack.remaining,
+    }))),
+    playerTech: Object.freeze((observation?.publicState?.players || []).map((player) => Object.freeze({
+      playerId: player.playerId,
+      playerLabel: player.playerLabel,
+      techState: structuredClone(player.techState || {}),
+    }))),
+  });
+}
+
+function resourcesFromIncomeEvent(event, side) {
+  const source = event?.[side === "before" ? "resourcesBefore" : "resourcesAfter"] || {};
+  return Object.freeze({
+    ...Object.fromEntries(RESOURCE_FIELDS.map(([key]) => [key, Number(source[key] || 0)])),
+    handCount: Number(event?.[side === "before" ? "handCountBefore" : "handCountAfter"]) || 0,
+    alienCardCount: 0,
+  });
 }
 
 function buildDiagnostics(turns) {
@@ -98,9 +172,10 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
       { observation, actionOutcomes, seatId: actorPlayerId },
       evaluableAction,
     );
+    const visual = selectionVisual(action);
     return Object.freeze({
       actionId: action.actionId,
-      summary: actionText(action) || "结束回合",
+      summary: visual ? `选择：${visual.name}` : (actionText(action) || "结束回合"),
       score: evaluation.score,
       evaluation,
     });
@@ -121,6 +196,25 @@ function actionText(action) {
   return `${verb}：${summary}`;
 }
 
+function selectionVisual(action) {
+  if (action?.target?.kind !== "select_initial_card") return null;
+  const cardId = String(action.target.cardId || "");
+  if (action.target.selectionKind === "industry") {
+    const fileName = cardId.replace(/^industry:/, "");
+    const name = fileName.replace(/\.[^.]+$/, "");
+    return Object.freeze({
+      name,
+      imageSrc: `../assets/industry/${encodeURIComponent(fileName)}`,
+    });
+  }
+  const number = Number(cardId.replace(/^initial:/, ""));
+  const effect = initialCards.getInitialCardEffect(number);
+  return Object.freeze({
+    name: effect?.label || `初始牌 ${number}`,
+    imageSrc: `../assets/initial_card/split/${number}.png`,
+  });
+}
+
 function runFixedBoardTurnReport(options = {}) {
   const env = createSimulationEnv();
   const maxDecisions = options.maxDecisions || 2000;
@@ -132,8 +226,10 @@ function runFixedBoardTurnReport(options = {}) {
     const initialScores = Object.fromEntries(
       initialObservation.publicState.players.map((player) => [player.playerId, Number(player.score) || 0]),
     );
+    const playerIds = initialObservation.publicState.players.map((player) => player.playerId);
     const setupChoices = [];
     const turns = [];
+    const roundStarts = [];
     let activeTurn = null;
     let reachedTurnActions = false;
     let decisionCount = 0;
@@ -141,6 +237,10 @@ function runFixedBoardTurnReport(options = {}) {
     while (!env.isTerminal() && decisionCount < maxDecisions) {
       const before = env.observe();
       const legalActions = env.legalActions();
+      const formalStartObservations = !reachedTurnActions
+        && before.decision?.decisionType !== "conditional_choice"
+        ? Object.fromEntries(playerIds.map((playerId) => [playerId, env.observe(playerId)]))
+        : null;
       const result = env.runHeuristicPolicyDecision();
       const chosen = legalActions.find((action) => action.actionId === result.policyDecision.actionId);
       if (!chosen) throw new Error(`无法还原第 ${decisionCount + 1} 个 PolicyDecision`);
@@ -148,7 +248,18 @@ function runFixedBoardTurnReport(options = {}) {
 
       const actorPlayerId = chosen.actorPlayerId || before.decision?.actorPlayerId;
       const resourcesBefore = resourcesOf(before, actorPlayerId);
-      const resourcesAfter = resourcesOf(result.observation, actorPlayerId);
+      const afterForActor = env.observe(actorPlayerId);
+      const rawResourcesAfter = resourcesOf(afterForActor, actorPlayerId);
+      const incomeEvents = (result.replayEvent?.effectSessionJournal?.events || [])
+        .filter((event) => event.type === "round_start_income");
+      const actorIncome = incomeEvents.find((event) => event.playerId === actorPlayerId) || null;
+      const visual = selectionVisual(chosen);
+      const resourcesAfter = actorIncome
+        ? Object.freeze({
+          ...resourcesFromIncomeEvent(actorIncome, "before"),
+          alienCardCount: rawResourcesAfter.alienCardCount,
+        })
+        : rawResourcesAfter;
       const valuationStartedAt = performance.now();
       const rankedEvaluations = evaluateLegalActions(
         before,
@@ -173,15 +284,20 @@ function runFixedBoardTurnReport(options = {}) {
         decisionType: chosen.decisionType,
         family: chosen.family,
         summary: chosen.summary,
-        text: actionText(chosen),
+        text: visual ? `选择：${visual.name}` : actionText(chosen),
+        visual,
         value: chosenEvaluation,
         alternatives: rankedEvaluations.filter((candidate) => candidate.actionId !== chosen.actionId).slice(0, 3),
         resourcesBefore,
         resourcesAfter,
         resourceDelta: resourceDelta(resourcesBefore, resourcesAfter),
         scoreBefore: scoreOf(before, actorPlayerId),
-        scoreAfter: scoreOf(result.observation, actorPlayerId),
-        scoreDelta: scoreOf(result.observation, actorPlayerId) - scoreOf(before, actorPlayerId),
+        scoreAfter: actorIncome
+          ? Number(actorIncome.resourcesBefore?.score || 0)
+          : scoreOf(afterForActor, actorPlayerId),
+        scoreDelta: (actorIncome
+          ? Number(actorIncome.resourcesBefore?.score || 0)
+          : scoreOf(afterForActor, actorPlayerId)) - scoreOf(before, actorPlayerId),
         timing: {
           ...counterfactualTiming,
           valuationMilliseconds,
@@ -191,6 +307,24 @@ function runFixedBoardTurnReport(options = {}) {
       if (!reachedTurnActions && chosen.decisionType === "conditional_choice") {
         setupChoices.push(record);
         continue;
+      }
+      if (!reachedTurnActions) {
+        const formalPlayers = playerIds.map((playerId) => {
+          const observation = formalStartObservations?.[playerId] || before;
+          return Object.freeze({
+            playerId,
+            playerLabel: playerLabels[playerId] || playerId,
+            resourcesBefore: resourcesOf(observation, playerId),
+            resourcesAfter: resourcesOf(observation, playerId),
+            income: Object.freeze({}),
+          });
+        });
+        roundStarts.push(Object.freeze({
+          roundNumber: Number(before.publicState.roundNumber) || 1,
+          kind: "initial",
+          players: Object.freeze(formalPlayers),
+          board: boardSnapshot(before),
+        }));
       }
       reachedTurnActions = true;
 
@@ -208,6 +342,8 @@ function runFixedBoardTurnReport(options = {}) {
           scoreAfter: scoreOf(before, actorPlayerId),
           resourcesBefore,
           resourcesAfter,
+          handBefore: handOf(before, actorPlayerId),
+          handAfter: handOf(afterForActor, actorPlayerId),
           actions: [],
         };
         turns.push(activeTurn);
@@ -215,6 +351,23 @@ function runFixedBoardTurnReport(options = {}) {
       activeTurn.actions.push(record);
       activeTurn.scoreAfter = scoreOf(result.observation, actorPlayerId);
       activeTurn.resourcesAfter = resourcesAfter;
+      activeTurn.handAfter = handOf(afterForActor, actorPlayerId);
+      if (incomeEvents.length) {
+        const roundNumber = Number(incomeEvents[0].roundNumber)
+          || Number(result.observation.publicState.roundNumber);
+        roundStarts.push(Object.freeze({
+          roundNumber,
+          kind: "income",
+          players: Object.freeze(incomeEvents.map((event) => Object.freeze({
+            playerId: event.playerId,
+            playerLabel: playerLabels[event.playerId] || event.playerId,
+            resourcesBefore: resourcesFromIncomeEvent(event, "before"),
+            resourcesAfter: resourcesFromIncomeEvent(event, "after"),
+            income: Object.freeze({ ...(event.income || {}) }),
+          }))),
+          board: boardSnapshot(result.observation),
+        }));
+      }
     }
 
     if (!env.isTerminal()) throw new Error(`固定版面在 ${maxDecisions} 次决策内未结束`);
@@ -226,7 +379,7 @@ function runFixedBoardTurnReport(options = {}) {
         initialScore: initialScores[player.playerId] || 0,
         finalScore: Number(player.finalScore ?? player.score ?? 0),
         scoreSources: { ...(player.scoreSources || {}) },
-        resources: resourcesOf(terminal, player.playerId),
+        resources: resourcesOf(env.observe(player.playerId), player.playerId),
         probeGoals: turns
           .filter((turn) => turn.actorPlayerId === player.playerId)
           .flatMap((turn) => turn.actions)
@@ -243,12 +396,13 @@ function runFixedBoardTurnReport(options = {}) {
 
     const diagnostics = buildDiagnostics(turns);
     return {
-      schemaVersion: "seti-heuristic-turn-report-v5",
-      boardId: FIXED_BOARD_ID,
-      seed: FIXED_BOARD_CONFIG.seed,
+      schemaVersion: "seti-heuristic-turn-report-v6",
+      boardId: options.boardId || FIXED_BOARD_ID,
+      seed: initialObservation.seed,
       boardFingerprint: fingerprintFixedBoard(projectFixedBoard(initialObservation)),
       decisionCount,
       setupChoices,
+      roundStarts,
       turns,
       finalScores,
       diagnostics,
@@ -433,8 +587,14 @@ function renderActionCard(action) {
         <small>选择价值 V</small>
         <strong>${evaluation?.score == null ? "—" : escapeHtml(formatNumber(evaluation.value ?? evaluation.score))}</strong>
       </div>
-    </div>
-    <div class="resource-strip" aria-label="行动前后资源">${renderResourceStrip(action.resourcesBefore, action.resourcesAfter)}</div>
+    </div>${action.visual ? `<div class="selected-card-preview">
+      <button class="card-image-button" type="button" data-image-src="${escapeHtml(action.visual.imageSrc)}" aria-label="放大查看 ${escapeHtml(action.visual.name)}">
+        <img src="${escapeHtml(action.visual.imageSrc)}" alt="${escapeHtml(action.visual.name)}">
+      </button>
+      <div><span>本次选择</span><strong>${escapeHtml(action.visual.name)}</strong></div>
+    </div>` : ""}
+    <div class="strip-caption">本决策前 → 执行后</div>
+    <div class="resource-strip" aria-label="本决策前后资源">${renderResourceStrip(action.resourcesBefore, action.resourcesAfter)}</div>
     <div class="decision-grid">
       <div class="decision-cell emphasized">
         <span>当前目标</span>
@@ -488,6 +648,138 @@ function renderActionCard(action) {
   </article>`;
 }
 
+function cardImageSrc(cardId) {
+  const normalized = String(cardId || "");
+  if (/^b_\d+\.webp$/i.test(normalized)) {
+    return `../assets/cards/basic/split/${normalized}`;
+  }
+  if (/^dlc_\d+\.(png|webp)$/i.test(normalized)) {
+    return `../assets/cards/space-agency/split/${normalized.replace(/\.webp$/i, ".png")}`;
+  }
+  return null;
+}
+
+function renderHand(hand) {
+  if (!hand?.length) return '<span class="muted">无手牌</span>';
+  return hand.map((card) => {
+    const imageSrc = cardImageSrc(card.cardId);
+    return `<span class="hand-card" title="费用 ${escapeHtml(card.price ?? "—")} · 打出类型 ${escapeHtml(card.cardTypeCode ?? "—")} · 弃牌角 ${escapeHtml(card.discardActionCode ?? "—")} · 收入角 ${escapeHtml(card.incomeCode ?? "—")}">
+      ${imageSrc ? `<button class="card-image-button" type="button" data-image-src="${escapeHtml(imageSrc)}" aria-label="放大查看 ${escapeHtml(card.cardName)}"><img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(card.cardName)}"></button>` : ""}
+      <span><strong>${escapeHtml(card.cardName)}</strong></span>
+    </span>`;
+  }).join("");
+}
+
+function traceSummary(traces) {
+  return ["pink", "yellow", "blue"].map((traceType) => {
+    const trace = traces?.[traceType] || {};
+    const count = Number(Boolean(trace.firstPlaced)) + Number(trace.extraCount || 0);
+    return `${traceType} ${count}`;
+  }).join(" · ");
+}
+
+function renderBoardSnapshot(board) {
+  const rotation = board?.rotation?.normalized
+    ?? board?.rotation?.steps
+    ?? board?.rotation
+    ?? "—";
+  const rockets = board?.rockets || [];
+  const rocketText = rockets.length
+    ? rockets.map((rocket) => (
+      `${rocket.playerId.replace(/^player-/, "")}#${rocket.id}：${rocket.planetId || (
+        Number.isFinite(rocket.x) && Number.isFinite(rocket.y)
+          ? `${rocket.x},${rocket.y}`
+          : rocket.surface
+      )}`
+    )).join("；")
+    : "盘面暂无探测器";
+  const aliens = board?.aliens || [];
+  const techSupply = board?.techSupply || [];
+  return `<div class="board-preview">
+    <div class="board-card">
+      <span class="eyebrow">太阳系</span>
+      <strong>旋转 ${escapeHtml(typeof rotation === "object" ? JSON.stringify(rotation) : rotation)}</strong>
+      <p>${escapeHtml(rocketText)}</p>
+      <small>可见行星：${escapeHtml((board?.planets || []).map((planet) => planet.planetId).join("、") || "—")}</small>
+    </div>
+    <div class="board-card">
+      <span class="eyebrow">外星人</span>
+      ${aliens.map((slot) => `<p><strong>槽位 ${slot.slotId} · ${escapeHtml(slot.revealed ? slot.alienId || "已揭示" : "未揭示")}</strong><br><small>${escapeHtml(traceSummary(slot.traces))}</small></p>`).join("") || '<p class="muted">无外星人状态</p>'}
+    </div>
+    <div class="board-card">
+      <span class="eyebrow">科技供应</span>
+      <div class="tech-list">${techSupply.map((stack) => `<span><strong>${escapeHtml(stack.tileId)}</strong> ×${escapeHtml(stack.remaining ?? "—")}<small>${escapeHtml(stack.bonusId || "无首拿奖励")}</small></span>`).join("")}</div>
+    </div>
+    <div class="board-card">
+      <span class="eyebrow">玩家科技</span>
+      ${(board?.playerTech || []).map((player) => {
+        const owned = Object.keys(player.techState?.ownedTiles || {})
+          .filter((tileId) => player.techState.ownedTiles[tileId]);
+        const disabled = new Set(Object.keys(player.techState?.disabledTiles || {})
+          .filter((tileId) => player.techState.disabledTiles[tileId]));
+        return `<p><strong>${escapeHtml(player.playerLabel)}</strong>：${owned.length
+          ? owned.map((tileId) => `${escapeHtml(tileId)}${disabled.has(tileId) ? "（失效）" : ""}`).join("、")
+          : '<span class="muted">无科技</span>'}</p>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+
+function formatIncome(income) {
+  const labels = {
+    credits: "钱",
+    energy: "电",
+    publicity: "宣传",
+    availableData: "数据",
+    additionalPublicScan: "额外公共扫描",
+    handSize: "盲抽",
+  };
+  return Object.entries(income || {})
+    .filter(([, value]) => Number(value))
+    .map(([key, value]) => `${labels[key] || key} +${value}`)
+    .join(" · ") || "无";
+}
+
+function renderRoundStart(roundStart) {
+  const initial = roundStart?.kind === "initial";
+  return `<section class="round-start-card">
+    <div class="round-subheading">
+      <div><span class="eyebrow">轮初状态</span><h3>${initial ? "正式初始资源" : "收入阶段"}</h3></div>
+      <p>${initial ? "第 1 轮不获得轮初收入；以下是公司牌与两张资源牌结算后的正式状态。" : "收入归入本轮开始，不计入上一轮最后一个 end_turn。"}</p>
+    </div>
+    <div class="income-grid">${(roundStart?.players || []).map((player) => `<div class="income-player">
+      <div><strong>${escapeHtml(player.playerLabel)}</strong><small>${initial ? "正式开局" : `收入：${escapeHtml(formatIncome(player.income))}`}</small></div>
+      <div class="resource-strip">${renderResourceStrip(player.resourcesBefore, player.resourcesAfter)}</div>
+    </div>`).join("")}</div>
+  </section>
+  ${renderBoardSnapshot(roundStart?.board)}`;
+}
+
+function renderRoundSummary(turns) {
+  const byPlayer = new Map();
+  for (const turn of turns) {
+    const summary = byPlayer.get(turn.actorPlayerId) || {
+      playerLabel: turn.playerLabel,
+      scoreBefore: turn.scoreBefore,
+      scoreAfter: turn.scoreAfter,
+      resourcesBefore: turn.resourcesBefore,
+      resourcesAfter: turn.resourcesAfter,
+      decisionCount: 0,
+    };
+    summary.scoreAfter = turn.scoreAfter;
+    summary.resourcesAfter = turn.resourcesAfter;
+    summary.decisionCount += turn.actions.length;
+    byPlayer.set(turn.actorPlayerId, summary);
+  }
+  return `<section class="round-summary">
+    <div class="round-subheading"><div><span class="eyebrow">本轮梗概</span><h3>资源与得分变化</h3></div></div>
+    <div class="round-summary-grid">${[...byPlayer.values()].map((summary) => `<div class="round-player-summary">
+      <div class="summary-line"><strong>${escapeHtml(summary.playerLabel)}</strong><span>${summary.decisionCount} 次决策 · 得分 ${escapeHtml(summary.scoreBefore)}→${escapeHtml(summary.scoreAfter)}（${escapeHtml(signed(summary.scoreAfter - summary.scoreBefore))}）</span></div>
+      <div class="resource-strip">${renderResourceStrip(summary.resourcesBefore, summary.resourcesAfter)}</div>
+    </div>`).join("")}</div>
+  </section>`;
+}
+
 function renderTurnSection(turn) {
   return `<section class="turn-section" data-player="${escapeHtml(turn.actorPlayerId)}">
     <div class="turn-heading">
@@ -501,6 +793,11 @@ function renderTurnSection(turn) {
         <b class="${turn.scoreAfter > turn.scoreBefore ? "positive" : "neutral"}">${escapeHtml(signed(turn.scoreAfter - turn.scoreBefore))}</b>
       </div>
     </div>
+    <div class="hand-panel">
+      <span>本回合行动前手牌（${turn.handBefore?.length || 0}）</span>
+      <div class="hand-list">${renderHand(turn.handBefore)}</div>
+    </div>
+    <div class="strip-caption turn-caption">本回合累计变化（下方每张卡是单步变化）</div>
     <div class="turn-resource-summary">${renderResourceStrip(turn.resourcesBefore, turn.resourcesAfter)}</div>
     <div class="action-list">${turn.actions.map(renderActionCard).join("")}</div>
   </section>`;
@@ -524,9 +821,24 @@ function formatTurnReportHtml(report) {
         <div><span class="eyebrow">开局阶段</span><h3>公司与资源牌选择</h3></div>
         <div class="turn-score"><span>决策数</span><strong>${report.setupChoices.length}</strong></div>
       </div>
+      <p class="setup-note">开局选择完成后才会清空玩家模型占位资源，并结算公司牌和两张资源牌；因此本区不展示结算前的 10 钱 / 10 电。第 1 轮第一张行动卡显示正式初始资源。</p>
       <div class="action-list">${report.setupChoices.map(renderActionCard).join("")}</div>
     </section>`
     : "";
+  const roundNumbers = [...new Set(report.turns.map((turn) => turn.roundNumber))].sort((left, right) => left - right);
+  const roundSections = roundNumbers.map((roundNumber) => {
+    const turns = report.turns.filter((turn) => turn.roundNumber === roundNumber);
+    const roundStart = report.roundStarts?.find((entry) => entry.roundNumber === roundNumber) || null;
+    return `<section class="round-block" data-round="${roundNumber}">
+      <div class="round-title"><span>ROUND</span><strong>${roundNumber}</strong></div>
+      ${renderRoundStart(roundStart)}
+      ${renderRoundSummary(turns)}
+      <section class="round-details">
+        <div class="round-subheading"><div><span class="eyebrow">本轮细节</span><h3>逐回合与逐决策日志</h3></div></div>
+        ${turns.map(renderTurnSection).join("")}
+      </section>
+    </section>`;
+  }).join("");
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -593,14 +905,56 @@ function formatTurnReportHtml(report) {
       border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2);
     }
     .visible-count { margin-left: auto; color: var(--cyan); font-weight: 700; }
-    .turn-section { margin: 18px 0; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: rgba(17, 24, 42, .78); box-shadow: var(--shadow); }
+    .round-block { position: relative; margin: 32px 0 50px; padding-top: 10px; }
+    .round-title { display: flex; gap: 10px; align-items: baseline; margin-bottom: 12px; }
+    .round-title span { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .15em; }
+    .round-title strong { color: var(--cyan); font-size: 36px; line-height: 1; }
+    .round-start-card, .round-summary, .round-details { margin: 14px 0; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: rgba(17, 24, 42, .78); box-shadow: var(--shadow); }
+    .round-subheading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
+    .round-subheading h3 { margin: 3px 0 0; font-size: 21px; }
+    .round-subheading p { margin: 0; color: var(--muted); font-size: 12px; }
+    .income-grid, .round-summary-grid { display: grid; gap: 10px; }
+    .income-player, .round-player-summary { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(9, 13, 24, .42); }
+    .income-player > div:first-child { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .income-player small { color: var(--muted); }
+    .summary-line { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+    .summary-line span { color: var(--muted); font-size: 12px; }
+    .board-preview { display: grid; grid-template-columns: 1.25fr .85fr 1.25fr 1fr; gap: 10px; margin: 14px 0; }
+    .board-card { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(17, 24, 42, .78); box-shadow: var(--shadow); }
+    .board-card > strong { display: block; margin: 4px 0; }
+    .board-card p { margin: 6px 0; font-size: 12px; overflow-wrap: anywhere; }
+    .board-card small { color: var(--muted); }
+    .tech-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+    .tech-list span { padding: 5px 7px; border-radius: 7px; background: var(--panel-2); font-size: 11px; }
+    .tech-list small { display: block; font-size: 9px; overflow-wrap: anywhere; }
+    .turn-section { margin: 12px 0; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(9, 13, 24, .38); }
     .turn-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 14px; }
     .turn-heading h3 { margin: 3px 0 0; font-size: 23px; }
     .turn-score { display: grid; grid-template-columns: auto auto auto; gap: 10px; align-items: baseline; }
     .turn-score span { color: var(--muted); font-size: 12px; }
     .turn-score strong { font-size: 18px; }
-    .resource-strip, .turn-resource-summary { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+    .resource-strip, .turn-resource-summary { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
     .turn-resource-summary { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .strip-caption { padding: 0 14px 6px; color: var(--muted); font-size: 10px; letter-spacing: .04em; }
+    .turn-caption { padding: 0 0 6px; color: var(--cyan); }
+    .setup-note { margin: 0 0 14px; padding: 10px 12px; border: 1px solid rgba(255, 201, 107, .3); border-radius: 10px; color: var(--amber); background: rgba(255, 201, 107, .06); }
+    .setup-section .action-card > .strip-caption,
+    .setup-section .action-card > .resource-strip { display: none; }
+    .selected-card-preview { display: flex; gap: 12px; align-items: center; margin: 0 14px 14px; padding: 10px; border: 1px solid var(--line); border-radius: 11px; background: rgba(86, 216, 255, .045); }
+    .selected-card-preview span { display: block; color: var(--muted); font-size: 10px; }
+    .selected-card-preview strong { display: block; margin-top: 2px; }
+    .card-image-button { display: inline-grid; place-items: center; flex: 0 0 auto; margin: 0; padding: 0; border: 0; border-radius: 7px; background: transparent; cursor: zoom-in; }
+    .card-image-button img { display: block; width: 44px; height: 62px; object-fit: cover; border-radius: 6px; box-shadow: 0 5px 14px rgba(0, 0, 0, .35); }
+    .selected-card-preview .card-image-button img { width: 58px; height: 82px; }
+    .hand-panel { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 11px; background: rgba(159, 140, 255, .055); }
+    .hand-panel > span { color: var(--violet); font-size: 11px; white-space: nowrap; }
+    .hand-list { display: flex; gap: 6px; flex-wrap: wrap; }
+    .hand-card { display: inline-flex; gap: 7px; align-items: center; padding: 5px 7px 5px 5px; border-radius: 8px; background: var(--panel-2); font-size: 11px; }
+    .hand-card > span { display: grid; }
+    .hand-card small { color: var(--muted); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .image-lightbox { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; padding: 30px; border: 0; background: rgba(3, 6, 14, .9); cursor: zoom-out; }
+    .image-lightbox.open { display: grid; }
+    .image-lightbox img { max-width: min(92vw, 780px); max-height: 90vh; border-radius: 14px; box-shadow: 0 30px 90px rgba(0, 0, 0, .7); }
     .resource-chip { display: grid; grid-template-columns: 1fr auto; gap: 1px 8px; padding: 8px 10px; border: 1px solid rgba(57, 73, 110, .75); border-radius: 10px; background: rgba(9, 13, 24, .45); }
     .resource-label { color: var(--muted); font-size: 11px; }
     .resource-chip strong { font-size: 13px; }
@@ -650,6 +1004,7 @@ function formatTurnReportHtml(report) {
       .decision-grid { grid-template-columns: repeat(3, 1fr); }
       .decision-cell:nth-child(3) { border-right: 0; }
       .detail-columns { grid-template-columns: 1fr; }
+      .board-preview { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 640px) {
       .page { width: min(100% - 20px, 1480px); padding-top: 24px; }
@@ -664,6 +1019,9 @@ function formatTurnReportHtml(report) {
       .turn-heading { align-items: flex-start; }
       .turn-score { grid-template-columns: 1fr; text-align: right; }
       .visible-count { width: 100%; margin-left: 0; }
+      .board-preview { grid-template-columns: 1fr; }
+      .round-subheading, .summary-line { align-items: flex-start; flex-direction: column; }
+      .hand-panel { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -720,11 +1078,12 @@ function formatTurnReportHtml(report) {
 
     <div id="reportBody">
       ${setupSection}
-      ${report.turns.map(renderTurnSection).join("")}
+      ${roundSections}
     </div>
     <div class="empty-state" id="emptyState">没有符合当前筛选条件的决策。</div>
     <footer>${escapeHtml(report.schemaVersion)} · ${escapeHtml(report.boardId)} · fingerprint ${escapeHtml(report.boardFingerprint)}</footer>
   </main>
+  <button class="image-lightbox" id="imageLightbox" type="button" aria-label="关闭卡牌大图"><img alt="卡牌大图"></button>
   <script>
     (() => {
       const cards = [...document.querySelectorAll(".action-card")];
@@ -734,6 +1093,8 @@ function formatTurnReportHtml(report) {
       const textFilter = document.querySelector("#textFilter");
       const visibleCount = document.querySelector("#visibleCount");
       const emptyState = document.querySelector("#emptyState");
+      const lightbox = document.querySelector("#imageLightbox");
+      const lightboxImage = lightbox.querySelector("img");
       const update = () => {
         const player = playerFilter.value;
         const family = familyFilter.value;
@@ -757,6 +1118,17 @@ function formatTurnReportHtml(report) {
       playerFilter.addEventListener("change", update);
       familyFilter.addEventListener("change", update);
       textFilter.addEventListener("input", update);
+      document.addEventListener("click", (event) => {
+        const trigger = event.target.closest("[data-image-src]");
+        if (!trigger) return;
+        lightboxImage.src = trigger.dataset.imageSrc;
+        lightboxImage.alt = trigger.getAttribute("aria-label") || "卡牌大图";
+        lightbox.classList.add("open");
+      });
+      lightbox.addEventListener("click", () => lightbox.classList.remove("open"));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") lightbox.classList.remove("open");
+      });
     })();
   </script>
 </body>

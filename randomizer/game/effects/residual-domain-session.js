@@ -1239,7 +1239,9 @@
     const effectType = payload.effectType;
     const owner = actor(root, effect.ownerId);
     if (effect.ownerId && !owner) return fail("DOMAIN_HANDOFF_OWNER_STALE", "领域 handoff owner 已失效");
-    if (payload.domain === "income" && effectType === "pass_income") {
+    if (payload.domain === "income" && effectType === "round_start_income") {
+      const resourcesBefore = clone(owner?.resources || {});
+      const handCountBefore = (owner?.hand || []).length;
       const income = owner?.income || owner?.resources?.income || {};
       players.gainResources(owner, {
         credits: Number(income.credits) || 0,
@@ -1261,6 +1263,16 @@
         irreversible: drawnCards.length
           ? { code: "hidden_card_draw", reason: "收入盲抽翻开隐藏牌" }
           : null,
+        events: [{
+          type: "round_start_income",
+          playerId: owner.id,
+          roundNumber: Number(payload.data?.roundNumber) || roundOf(root),
+          income: clone(income),
+          resourcesBefore,
+          resourcesAfter: clone(owner.resources || {}),
+          handCountBefore,
+          handCountAfter: (owner.hand || []).length,
+        }],
       };
     }
     if (payload.domain === "income" && effectType === "planet_reward_income") {
@@ -1557,6 +1569,7 @@
           ...(applied.spawnedEffects || []),
         ],
         irreversible: applied.irreversible || null,
+        events: applied.events || [],
       });
     });
     return Object.freeze({

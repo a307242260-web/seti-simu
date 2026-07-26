@@ -517,25 +517,24 @@
         legal.target.traceType,
         actor.color,
       );
-      if (placed?.ok && !placed.extraOnly && legal.target.traceType === "yellow") {
-        players.gainResources(actor, { publicity: 1 });
-        if (!Array.isArray(actor.alienCards)) actor.alienCards = [];
-        actor.alienCards.push({
-          id: `alien-trace-reward:${legal.target.alienSlotId}:${actor.id}`,
-          kind: "alien",
-          source: "first-yellow-trace",
-          alienSlotId: legal.target.alienSlotId,
-        });
+      if (placed?.ok && !placed.extraOnly) {
+        const reward = aliens.getFirstTraceRewardForSlot?.(legal.target.alienSlotId);
+        players.gainResources(actor, reward?.gain || {});
       }
       return placed;
     }
     if (!slot.revealed) {
-      return aliens.addExtraTrace(
+      const placed = aliens.addExtraTrace(
         alienState,
         legal.target.alienSlotId,
         legal.target.traceType,
         actor.color,
       );
+      if (placed?.ok) {
+        const reward = aliens.getExtraTraceReward?.();
+        players.gainResources(actor, reward?.gain || {});
+      }
+      return placed;
     }
     const species = getSpeciesTraceApi(slot);
     return species?.api?.[species.placeMethod]?.(

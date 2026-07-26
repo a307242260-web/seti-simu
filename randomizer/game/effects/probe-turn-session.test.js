@@ -128,7 +128,6 @@ function handoffSummary(entry) {
       `${entry.effect.payload.domain}:${entry.effect.payload.effectType}`
     )),
     [
-      "income:pass_income",
       "alien:turn_end_reveal",
       "company:turn_end",
       "card_trigger:turn_end",
@@ -172,7 +171,12 @@ function handoffSummary(entry) {
     result.spawnedEffects.map((entry) => (
       `${entry.effect.payload.domain}:${entry.effect.payload.effectType}`
     )),
-    ["card_trigger:round_transition", "company:round_start"],
+    [
+      "income:round_start_income",
+      "income:round_start_income",
+      "card_trigger:round_transition",
+      "company:round_start",
+    ],
   );
 })();
 

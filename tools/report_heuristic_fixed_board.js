@@ -9,15 +9,22 @@ const {
   runFixedBoardTurnReport,
 } = require("../randomizer/training/heuristic-policy-turn-report");
 
-function readOutputPath(argv) {
-  const index = argv.indexOf("--output");
+function readOption(argv, name) {
+  const index = argv.indexOf(name);
   if (index < 0) return null;
-  if (!argv[index + 1]) throw new Error("--output 需要文件路径");
-  return path.resolve(argv[index + 1]);
+  if (!argv[index + 1]) throw new Error(`${name} 需要参数值`);
+  return argv[index + 1];
 }
 
-const outputPath = readOutputPath(process.argv.slice(2));
-const report = runFixedBoardTurnReport();
+const argv = process.argv.slice(2);
+const outputValue = readOption(argv, "--output");
+const outputPath = outputValue ? path.resolve(outputValue) : null;
+const seed = readOption(argv, "--seed");
+const boardId = readOption(argv, "--board-id");
+const report = runFixedBoardTurnReport({
+  ...(seed ? { config: { seed } } : {}),
+  ...(boardId ? { boardId } : {}),
+});
 const output = outputPath && path.extname(outputPath).toLowerCase() === ".html"
   ? formatTurnReportHtml(report)
   : formatTurnReportMarkdown(report);

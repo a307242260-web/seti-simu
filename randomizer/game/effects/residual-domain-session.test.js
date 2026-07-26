@@ -139,13 +139,13 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.deepEqual(handoffs.map((effect) => (
     `${effect.payload.domain}:${effect.payload.effectType}`
   )), [
-    "income:pass_income", "alien:turn_end_reveal",
-    "company:turn_end", "card_trigger:turn_end",
+    "alien:turn_end_reveal", "company:turn_end", "card_trigger:turn_end",
   ]);
   for (const handoff of handoffs) {
     assert.equal(execute(owner.executors.get(residual.HANDOFF_TYPE), root, handoff).ok, true);
   }
-  assert.equal(root.players.players[0].resources.credits, 6);
+  assert.equal(root.players.players[0].resources.credits, 5,
+    "上一轮 end_turn 不得提前结算下一轮收入");
 })();
 
 (function proofPlanetIncomeWithoutHandSettlesAsNoop() {
@@ -169,7 +169,10 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
 
 (function proofConsumesRealRoundTransitionAndGameEndSequence() {
   for (const [roundNumber, expected] of [
-    [3, ["card_trigger:round_transition", "company:round_start"]],
+    [3, [
+      "income:round_start_income", "income:round_start_income",
+      "card_trigger:round_transition", "company:round_start",
+    ]],
     [4, ["final_scoring:game_end"]],
   ]) {
     const root = createRoot();
@@ -191,6 +194,13 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
       const settled = execute(owner.executors.get(residual.HANDOFF_TYPE), root, handoff);
       assert.equal(settled.ok, true);
       settleFinalMarkEffects(owner, root, settled.spawnedEffects);
+    }
+    if (roundNumber === 3) {
+      assert.deepEqual(
+        root.players.players.map((player) => player.resources.credits),
+        [6, 5],
+        "跨入新一轮时必须为所有启用玩家统一结算轮初收入",
+      );
     }
     if (roundNumber === 4) {
       assert.equal(root.players.players.every((player) => Number.isFinite(player.finalScore)), true);
