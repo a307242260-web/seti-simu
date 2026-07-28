@@ -142,6 +142,10 @@ identity 决胜。被 beam 移除的 origin 标为 pruned/low-confidence。每�
 预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
 饱和 root 继续执行。beam 和叶上限都是显式近似，均不得描述成完整期望分布。
 
+当前 v12 的无一级增量 successor tie-break 中，`play_card` 为 420；这是固定盘面五轮对照中
+唯一使四席均分严格上升的第二批候选。该常量不改变一级叶价值，且固定盘面实际提交打牌仍为 0，
+因此只视为低置信 frontier 排序改进，不得外推为打牌策略已经完成。
+
 路线搜索中的 `quick_trade` 是正式次级代理，必须执行真实 outcome；它只通过后续真实叶能否
 转化为一级目标体现价值，当前库存本身仍不计分。`pass/end_turn` 也必须执行
 真实后继。focal PASS 叶停在 PASS 必做链之后，不观察新轮；实际对局若最后一个 PASS 后提交

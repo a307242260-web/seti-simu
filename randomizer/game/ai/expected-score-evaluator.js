@@ -399,7 +399,7 @@
       land: 350,
       research_tech: 250,
       scan: 220,
-      play_card: 200,
+      play_card: 420,
       place_data: 180,
       analyze: 180,
       launch: 160,

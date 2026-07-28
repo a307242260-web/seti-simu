@@ -2,9 +2,9 @@
 
 ## 当前结论
 
-新架构迁移与旧代码清理的主阶段已经完成，当前工作重心已转为启发式机器人。v11 完成了 5 轮
-固定盘面候选实验，只采用“全局 beam 2→4”：四席均分从 29.50 升到 33.25，最高分从 47 升到
-53，但仍远低于新手约 100 分的验收基准，不能描述成高分或策略合格。
+新架构迁移与旧代码清理的主阶段已经完成，当前工作重心已转为启发式机器人。v11 第一批五轮
+只采用“全局 beam 2→4”，v12 第二批五轮只采用 `play_card` successor rank `200→420`。
+固定盘面均分从 29.50 经 33.25 升到 33.75，但仍远低于新手约 100 分的验收基准。
 
 ## 代码基线
 
@@ -91,8 +91,11 @@
 - `node tools/benchmark_probe_policy.js`：12 次固定首 Decision，中位数约 `1063ms`、
   P90 约 `1102ms`、最大约 `1137ms`；实际评估 18 个 legal root。
 - 五轮实验记录：`checkpoint/seti-heuristic-auto-optimization-20260728.md`。
+- 第二批五轮实验记录：`checkpoint/seti-heuristic-auto-optimization-rounds-6-10-20260728.md`。
 - v11 固定盘面完整局报告：
   `checkpoint/seti-heuristic-auto-optimization-v11-20260728-action-log.html`。
+- v12 固定盘面完整局报告：
+  `checkpoint/seti-heuristic-auto-optimization-v12-20260728-action-log.html`。
 - Browser runtime 当前没有可用浏览器实例，真实 Chrome smoke 未执行；这项不能用 Node
   回归替代。
 
@@ -110,6 +113,12 @@
   `2059.87ms`，18 个 legal root。
 - 候选实验中的定向交易只解决单个策略边界内的排列，没有保证跨边界剩余缺口单调下降，因此
   快速转换反而回升并导致均分下降，已物理撤销。
+- v12 候选局为 43、37、35、20，均分 33.75；相对 v11 均分只提高 0.50，最低席恢复到 20，
+  但最高席从 53 降到 43。实际提交打牌仍为 0，采用结论属于低置信固定盘面结果。
+- v12 正式复现与候选局的四席分数和行动族完全一致；每候选平均 `275.00ms`、最慢单候选
+  `1559.15ms`、候选集整步最大 `2466.11ms`。
+- v12 固定首决策 12 次 benchmark：中位 `1860.99ms`、P90 `1869.69ms`、最大
+  `1899.52ms`，本次样本全部回到 2 秒观察线内。
 - transposition 和状态恢复的分项收益仍需重新 profile；不能从首 Decision benchmark 推断
   后续单候选决策的瓶颈。
 
