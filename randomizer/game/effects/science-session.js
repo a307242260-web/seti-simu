@@ -1126,7 +1126,7 @@
         const discarded = cards.discardFromHandAtIndex(actor, handIndex);
         if (!discarded.ok) return discarded;
         cards.addToDiscardPile(getWorkingSlice(root, "cards"), discarded.card);
-        const result = players.gainIncome(actor, gain, {
+        players.gainIncome(actor, gain, {
           blindDraw: (target) => cards.blindDraw(
             getWorkingSlice(root, "cards"),
             getWorkingSlice(root, "players"),
@@ -1136,7 +1136,6 @@
           ),
           gainData: (target) => data.gainData(target, { source: "place_data_income", root }),
         });
-        if (!result?.ok) return result;
         return scienceResult(state, root, EFFECT_TYPES.INCOME, {
           events: [{ type: "place_data_income", playerId: actor.id, cardInstanceId: card.id }],
         });

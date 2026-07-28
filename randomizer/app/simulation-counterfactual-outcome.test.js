@@ -111,6 +111,30 @@ function createSaturnApproachCheckpoint(environment) {
   return { checkpoint, playerId: result.playerId };
 }
 
+function createMarsOrbitCheckpoint(environment) {
+  const result = createSaturnLandingCheckpoint(environment);
+  const checkpoint = structuredClone(result.checkpoint);
+  const roots = [
+    JSON.parse(checkpoint.coreState.committedState),
+    JSON.parse(checkpoint.coreState.compositionEnvelope.committedState),
+  ];
+  for (const root of roots) {
+    const mars = solar.createSolarSnapshot(root.solarSystem)
+      .planetLocations.find((planet) => planet.planetId === "mars");
+    const player = root.players.players.find((candidate) => candidate.id === result.playerId);
+    const rocket = root.pieces.rockets.find((candidate) => candidate.playerId === result.playerId);
+    assert.ok(mars && player && rocket);
+    rocket.sectorX = mars.x;
+    rocket.sectorY = mars.y;
+    player.orbitCount = 0;
+    player.mainActionCompleted = false;
+    player.passCompletionPending = false;
+  }
+  checkpoint.coreState.committedState = JSON.stringify(roots[0]);
+  checkpoint.coreState.compositionEnvelope.committedState = JSON.stringify(roots[1]);
+  return { checkpoint, playerId: result.playerId };
+}
+
 const env = createSimulationEnv();
 const direct = createSimulationEnv();
 try {
@@ -315,6 +339,29 @@ try {
       "沿途经过非地球行星的宣传必须来自 production moveProbe 到达奖励");
   } finally {
     environment.dispose();
+  }
+}
+
+{
+  const sandbox = createSimulationEnv();
+  try {
+    sandbox.reset({ seed: "seti-mars-orbit-counterfactual", activePlayerCount: 4 });
+    const { checkpoint } = createMarsOrbitCheckpoint(sandbox);
+    sandbox.loadCheckpoint(checkpoint);
+    const orbit = sandbox.legalActions().find((action) => (
+      action.family === "orbit" && action.target?.planetId === "mars"
+    ));
+    assert.ok(orbit, "火星环绕必须存在合法标准行动");
+    const outcome = sandbox.evaluateActionOutcomes([orbit], {
+      maxDepth: 15,
+      maxLeaves: 64,
+      continueProbeRoute: false,
+    })[0];
+    assert.equal(outcome.status, "settled",
+      "火星环绕的选牌、扫描与插收入 DecisionEffect 全链必须能在反事实分支正常结算");
+    assert.equal(outcome.leaves.length > 0, true);
+  } finally {
+    sandbox.dispose();
   }
 }
 
