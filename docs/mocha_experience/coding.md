@@ -14,6 +14,22 @@
 
 ## Entries
 
+- date: 2026-07-28
+- source_issue: SETI 启发式搜索 DFS 原型、owner 对“不要重复搜索、需要剪枝、资源不足形成自然上限”的纠偏
+- observation: 状态搜索不能只提高 depth 并用逐根 `maxLeaves` 截断。若没有共享搜索树、等价状态指纹、transposition cache、目标可达性/资源下界剪枝和全局 node/time budget，每个根候选会重复展开同一子树；leaf cap 既不是 beam，也不能控制根候选相乘后的总工作量。搜索实现前必须先给出分支因子、状态等价、剪枝和预算设计，并用单次 Decision benchmark 验证后才允许跑完整局。
+- evidence: 当前固定盘面在第 28 个 `play_card` 决策处，朴素深度 15 DFS 的一次诊断约 179 秒并触发单步超过 1 秒的门禁，完整局摘要和 HTML 报告未能完成；代码审计确认搜索按根候选重复展开，`maxLeaves` 为逐根限制，无 transposition cache，剪枝晚于大量 conditional 分支。owner 明确要求禁止重复搜索、增加剪枝，并指出真实资源不足会形成自然深度上界。
+- promote_to: global_agents
+- promotion_status: promote
+- decision: 在全局 AGENTS 的目标驱动/性能规则中增加搜索算法前置约束：实现前明确状态等价与去重、可达性/资源剪枝、全局 node/time/beam budget 和单步性能门槛；深度或叶子上限不得被当作剪枝或 beam。完整局、批跑和报告只在单次 Decision benchmark 达标后运行。
+
+- date: 2026-07-28
+- source_issue: SETI-104、SETI-140 及后续架构清理和启发式开发中的旧测试纠偏
+- observation: “看测试文件”不能被解释为测试天然代表当前需求。架构迁移中，旧结构测试、迁移期 characterization 和绕开真实产品行为的伪 smoke 可能继续通过或失败；修复失败测试前必须先确认它证明的行为仍属于当前契约，否则 agent 会为了旧测试重新引入兼容层或偏离新架构。
+- evidence: SETI-104 的 PASS-first 测试能稳定终局，却完全不证明机器人行为；删除后真实 Policy 才暴露无限 industry 空转。后续测试重构又多次出现旧 headless/continuation/旧状态变量测试驱动实现的风险，owner 明确要求“确认测试是否必要以及正确性，别被应该删除的测试误导”。
+- promote_to: global_agents
+- promotion_status: promote
+- decision: 修订全局 AGENTS 验证规则：迁移/重构中先按当前产品和架构契约分类失败测试；必要业务行为继续作为门禁，迁移期 characterization 在 parity 后删除或改写，旧结构实现细节与伪产品 smoke 不得驱动生产兼容实现。
+
 - date: 2026-07-24
 - source_issue: SETI-158（续 SETI-124/135/136）
 - observation: 对已有完整旧实现、有限效果目录和明确目标架构的跨模块迁移，领航仍会把 implementation 退化为 exploratory debugging：每迁少量类型就运行测试，用下一次失败发现下一段设计，再提交 checkpoint。该循环能持续产出代码，却把测试当成需求发现器，导致根契约（确定性实体序列、真实 Decision owner）尚未闭合时横向扩大覆盖，形成高吞吐、低收敛和大量碎提交。此类任务必须在首个生产 patch 前冻结完整迁移矩阵；测试只验证设计，不负责逐步发现设计。

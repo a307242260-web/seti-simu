@@ -28,6 +28,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 
 ## Entries
 
+- date: 2026-07-28
+- source: SETI 架构迁移复盘、SETI-104/140 测试纠偏、启发式 DFS 固定盘面约 179 秒失败及 owner 的直接设计反馈
+- promoted_to: global_agents
+- promotion_decision: promote
+- target_agent: 本机所有 Codex / Claude / 多 agent coding agent
+- target_component: 迁移完成判据、测试契约审查、搜索算法复杂度设计
+- target_file: `/Users/bilibili/.agent-rules/AGENTS.md` source-of-truth 及其同步目标；`docs/mocha_experience/coding.md`
+- remote_skill_id: none
+- change: 补充三条现有全局规则未覆盖的边界：架构迁移必须同时证明新路径成立与旧入口全仓归零；迁移中先判断失败测试是否仍代表当前必要行为；状态搜索实现前必须完成去重、剪枝、全局预算和单步 benchmark 设计。
+- applied_change: 全局 AGENTS 的复杂实现、验证和目标驱动章节增加对应规则；运行全局规则同步脚本后同步 Codex/Claude。项目内新增本轮复盘与启发式交接文档，并在 coding experience 记录搜索/测试两项通用证据。
+- expected_effect: agent 不再用局部竖切片、入口行数或测试全绿外推架构完成；不再为过期测试恢复兼容路径；不再通过盲目提高 DFS 深度和逐根叶子上限制造秒级或分钟级决策。
+- evaluation_window: 后续 2 个架构迁移/清理任务、3 个旧测试失败处理、2 个状态搜索或规划任务
+- success_signal: 架构完成结论包含固定提交的新路径义务与旧路径 inventory；每个迁移失败测试有保留/改写/删除判断；搜索任务在完整批跑前给出状态指纹、剪枝、全局预算及单步节点/耗时结果。
+- rollback_condition: 若新增规则对普通 bugfix 或无分支算法造成明显流程负担，则收窄到“架构迁移/重构”和“状态空间搜索”；不撤销当前契约真实性、全仓删除证明和搜索复杂度前置原则。
+- risk: agent 可能把任何小循环都误判为状态搜索，或把合法 characterization 过早删除；规则明确只针对迁移/重构与多分支状态搜索，测试删除前仍需确认其业务行为是否被其他当前契约覆盖。
+- evidence_before: SETI-123～164 多次出现局部里程碑完成后全仓审计才发现成片来源入口；SETI-104 的 PASS-first smoke 不能证明机器人行为，真实 Policy 测试才暴露空转；当前启发式 DFS 在固定盘面单次决策约 179 秒，存在重复子树、无 transposition、剪枝晚和逐根 `maxLeaves`。
+- owner_or_agent_decision: owner 要求将经验和项目进度记录到本地，并再次总结哪些应修改 AGENTS 以避免复发；其中复杂设计冻结和双轴拆分已有长期规则，本次只晋升仍缺失的完成口径、测试契约与搜索复杂度约束。
+- applied_at: 2026-07-28
+- verification: 检查 source-of-truth 与同步目标包含三条新增规则；检查本地复盘、项目交接、coding experience 和本 promotion decision 可互相追溯；不运行产品测试，因为本次不修改生产代码。
+- observed_outcome: 待评估窗口填写。
+- keep_or_revise: 先保留；若后续仍以旧测试或局部统计驱动实现，优先增加结构化开工/验收模板，不继续堆叠同义 prompt。
+
 - date: 2026-07-21
 - source: SETI-124 已升级 agent prompt 后的 runs `627968ce-3dbf-4f24-ab3b-2f6724adf9df`、`f0b69138-48a4-48bd-b5f0-c3db2eb87dde`，以及 owner 对持续人工催跑成本的反馈
 - promoted_to: issue_workflow
