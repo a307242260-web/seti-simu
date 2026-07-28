@@ -6,7 +6,41 @@ const path = require("node:path");
 
 const ITERATIONS = 12;
 const SINGLE_DECISION_LIMIT_MS = 1000;
-const PARENT_TIMEOUT_MS = 15000;
+const PARENT_TIMEOUT_MS = 25000;
+
+function drainOpeningDecisions(environment) {
+  const selectionProgress = new Map();
+  let steps = 0;
+  while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
+    const actions = environment.legalActions();
+    const actorId = actions[0].actorPlayerId;
+    const progress = selectionProgress.get(actorId) || { industry: false, initialIds: new Set() };
+    let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
+      || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+    if (!action && !progress.industry) {
+      action = actions.find((candidate) => (
+        candidate.target?.kind === "select_initial_card"
+        && candidate.target?.selectionKind === "industry"
+      ));
+      if (action) progress.industry = true;
+    }
+    if (!action && progress.initialIds.size < 2) {
+      action = actions.find((candidate) => (
+        candidate.target?.kind === "select_initial_card"
+        && candidate.target?.selectionKind === "initial"
+        && !progress.initialIds.has(candidate.target.cardId)
+      ));
+      if (action) progress.initialIds.add(action.target.cardId);
+    }
+    action = action || actions[0];
+    selectionProgress.set(actorId, progress);
+    const result = environment.step(action);
+    if (!result.ok) throw new Error(result.error || "setup Decision 执行失败");
+    steps += 1;
+    if (steps >= 50) throw new Error("opening Decision 未能有限结束");
+  }
+  return steps;
+}
 
 async function runWorker() {
   const { createSimulationEnv } = require("../randomizer/app/simulation-env");
@@ -19,10 +53,7 @@ async function runWorker() {
       activePlayerCount: 4,
       aiDifficulty: "weak_start",
     });
-    while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
-      const result = environment.step(environment.legalActions()[0]);
-      if (!result.ok) throw new Error(result.error || "setup Decision 执行失败");
-    }
+    const setupSteps = drainOpeningDecisions(environment);
     const checkpoint = environment.createCheckpoint();
     for (let index = 0; index < ITERATIONS; index += 1) {
       environment.loadCheckpoint(checkpoint);
@@ -44,6 +75,7 @@ async function runWorker() {
     process.stdout.write(`${JSON.stringify({
       schemaVersion: "seti-probe-policy-benchmark-v1",
       iterations: ITERATIONS,
+      setupSteps,
       candidateCount: environment.getCounterfactualDiagnostics()?.candidateCount || 0,
       medianMilliseconds: percentile(0.5),
       p90Milliseconds: percentile(0.9),

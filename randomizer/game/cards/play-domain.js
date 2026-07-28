@@ -2025,15 +2025,6 @@
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },
     });
 
-    const SCIENCE_CARD_DECISION_TYPES = new Set([
-      cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN,
-      cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN,
-      cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN,
-      cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN,
-      cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN,
-      cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN,
-    ]);
-
     for (const [effectType, descriptor] of Object.entries(GENERIC_EFFECT_DESCRIPTORS)) {
       const runtimeType = genericEffectRuntimeType(effectType);
       runtime.registerExecutor(runtimeType, genericExecute);
@@ -2042,9 +2033,11 @@
           getLegalChoices(state, sessionEffect, workingContext) {
             const root = getWorkingRoot(state, workingContext);
             const choices = listGenericChoices(root, sessionEffect);
-            return SCIENCE_CARD_DECISION_TYPES.has(effectType)
-              ? getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, choices)
-              : choices;
+            return getScienceDomain().formalizeChoices(
+              root,
+              sessionEffect.ownerId,
+              choices,
+            );
           },
           resolveDecision: genericResolve,
         });

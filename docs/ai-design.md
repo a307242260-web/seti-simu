@@ -18,9 +18,10 @@ Rule Composition
 
 - Browser 由 `app/ai/browser-bootstrap.js` 读取 Rule Composition boundary，构造当前机器席位的只读 observation 与 legal descriptors。
 - Simulation 使用同一 Policy Port、Machine Player Host 语义与 Standard Action/Decision identity。
-- Host 在 Policy 请求前通过 Rule Composition 的 `counterfactualPort` 为每个 legal action
-  建立隔离 fork；Policy 只收到裁剪后的 root/leaf observation、标准行动链、合法后继和
-  structured unresolved 状态，仍只返回一个 legal `actionId`。
+- Host 在 Policy 请求前通过 Rule Composition 的 `counterfactualPort` 为可能直接命中当前
+  估值目标的 legal action 建立隔离 fork；明确不可能命中目标的 action 仍保留在完整 legal set
+  中，并以 structured unresolved outcome 对齐。Policy 只收到裁剪后的 root/leaf observation、
+  标准行动链、合法后继和 unresolved 状态，仍只返回一个 legal `actionId`。
 - Policy 不执行规则、不点击 DOM、不读取 canonical root，也不持有 StateStore、Effect Session、
   registry 或 executor。
 - Host 在提交前复核 seat、stateVersion、decisionVersion、deadline、generation 与 legal identity；未知、过期、重复或非法响应一律 fail-closed。
@@ -95,6 +96,11 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 - 获取科技；
 - 增加收入。
 
+因此当前根候选不会为 `quick_trade` 建立反事实分支：快速交易只改变即时资源或手牌，
+无法在同一个快速交易 Session 内直接兑现分数、科技或收入。它仍属于完整 legal set，
+对应 outcome 固定为 `STRATEGIC_GOAL_NOT_EVALUATED`，所以不会被误选；若未来价值模型开始
+估值当前库存或恢复跨稳定 Action 规划，必须同步撤销这项目标可达性剪枝。
+
 扫描、赢得扇区、发射、移动、环绕、登陆、放置/分析数据、打牌、放置外星人痕迹、研究科技
 和插收入都必须先作为当前 legal Action 出现。快速转换、支付与必要 DecisionEffect 只在该
 Action 已打开的 Effect Session 内继续，不单独加分。稳定策略边界后的下一 Action 由下一次
@@ -123,6 +129,9 @@ V(leaf)
 反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
 StateStore、working state、Effect Session 与独立分支 RNG，再调用生产 registry/executor。
 禁止逐候选或逐 Decision 创建 `SimulationEnv`、加载 replay，或调用领域 helper 手工结算。
+节点等价键为 `composition envelope + actionId + remainingDepth`，全局节点上限为 128，
+每个 root 最多保留 8 个叶。某个 root 达到叶上限后，frontier 会先移除该 saturated origin；
+共享节点仍为其他未饱和 root 继续执行。叶上限是显式截断，不得描述成 beam 或完整期望分布。
 运行报告记录候选数及 fork/执行/投影/估值分项耗时；耗时是诊断数据，不属于 outcome 语义，
 不得影响候选等价性或排序。
 

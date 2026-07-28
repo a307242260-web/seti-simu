@@ -97,7 +97,7 @@ function getTurnState(state) {
 }
 
 function policyOutcomeActions(actions, observation) {
-  return actions || [];
+  return (actions || []).filter((action) => action.family !== "quick_trade");
 }
 
 function initialSetupOutcomeActions(actions, observation) {

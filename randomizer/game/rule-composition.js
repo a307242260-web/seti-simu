@@ -804,6 +804,13 @@
         const selected = sorted;
         const nextFrontierByKey = new Map();
         for (const node of selected) {
+          const saturatedOrigins = node.origins.filter((origin) => {
+            const state = outcomeStateByActionId.get(origin.rootAction.actionId);
+            return state && state.leaves.length >= maxLeaves;
+          });
+          if (saturatedOrigins.length) markPruned(saturatedOrigins);
+          node.origins = node.origins.filter((origin) => !saturatedOrigins.includes(origin));
+          if (!node.origins.length) continue;
           if (executedNodeCount >= maxNodes) {
             markPruned(node.origins);
             continue;

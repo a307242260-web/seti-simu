@@ -195,6 +195,60 @@ try {
 }
 
 {
+  const environment = createSimulationEnv();
+  try {
+    environment.reset({ seed: "seti-104-official-v1", activePlayerCount: 4 });
+    drainOpeningDecisions(environment);
+    const actions = environment.legalActions();
+    const b11 = actions.find((action) => (
+      action.family === "play_card" && action.summary === "b_11.webp"
+    ));
+    assert.ok(b11, "固定盘面必须持有飞掠小行星");
+    const before = environment.createCheckpoint();
+    const b11Outcome = environment.evaluateActionOutcomes([b11], {
+      maxDepth: 15,
+      maxLeaves: 8,
+      maxNodes: 128,
+    })[0];
+    assert.equal(b11Outcome.status, "settled",
+      "卡牌移动 Decision 必须以 conditional descriptor 在同一 Session 内完成");
+    assert.equal(b11Outcome.code, null);
+    assert.equal(b11Outcome.leaves.length > 0, true);
+    assert.deepEqual(environment.createCheckpoint(), before,
+      "卡牌移动反事实不得污染 canonical root");
+
+    const scan = actions.find((action) => action.family === "scan");
+    assert.ok(scan, "固定盘面必须存在扫描行动");
+    const scanOutcome = environment.evaluateActionOutcomes([scan], {
+      maxDepth: 15,
+      maxLeaves: 1,
+      maxNodes: 128,
+    })[0];
+    const scanDiagnostics = environment.getCounterfactualDiagnostics();
+    assert.equal(scanOutcome.leaves.length, 1);
+    assert.equal(scanOutcome.code, "COUNTERFACTUAL_SEARCH_PRUNED");
+    assert.equal(scanDiagnostics.executedNodeCount < 50, true,
+      "root 达到叶上限后不得继续执行剩余兄弟节点");
+    assert.equal(scanDiagnostics.prunedNodeCount > 0, true);
+    assert.deepEqual(environment.createCheckpoint(), before,
+      "叶饱和剪枝不得污染 canonical root");
+
+    const policyResult = environment.runHeuristicPolicyDecision();
+    const quickTradeOutcomes = policyResult.actionOutcomes.filter((outcome) => (
+      actions.find((action) => action.actionId === outcome.actionId)?.family === "quick_trade"
+    ));
+    assert.equal(quickTradeOutcomes.length > 0, true,
+      "固定盘面必须覆盖可执行快速交易");
+    assert.equal(quickTradeOutcomes.every((outcome) => (
+      outcome.status === "unresolved"
+      && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
+    )), true, "不可能直接命中 v9 目标的快速交易必须显式跳过反事实执行");
+  } finally {
+    environment.dispose();
+  }
+}
+
+{
   const sandbox = createSimulationEnv();
   const actual = createSimulationEnv();
   try {

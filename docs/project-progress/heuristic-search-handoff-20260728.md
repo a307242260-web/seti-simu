@@ -2,19 +2,16 @@
 
 ## 当前结论
 
-新架构迁移与旧代码清理的主阶段已经完成，当前工作重心已转为启发式机器人和浏览器体验修复。机器人具备通过新架构读取盘面、枚举标准行动、在反事实沙箱中执行候选并读取实际结果的基础能力，但当前通用 DFS 方案性能不合格，不能作为可交付实现提交。
+新架构迁移与旧代码清理的主阶段已经完成，当前工作重心已转为启发式机器人和浏览器体验修复。机器人已通过新架构读取盘面、枚举标准行动、在反事实沙箱中执行候选并读取实际结果。第一阶段单步性能已经收敛到 1 秒门禁以内，但距离 100ms 理想目标和完整局策略质量验收仍有明显差距。
 
 ## 代码基线
 
 - 分支：`dev`
-- 编写本记录时的产品代码基线 / `origin/dev`：`be5c453`（修正初始选择与手牌打牌交互）；本记录提交位于其后，不代表产品代码又发生变化。
-- 最近 UI/报告提交：
-  - `022bbeb`：完善机器人报告卡牌与盘面展示
-  - `bdbd4d5`：放大并重排初始选择弹窗
-  - `5d2e54e`：改进初始选择与浏览器盘面交互
-  - `80e0716`：修正轮初收入并生成正常对局报告
-
-共享工作树目前高度混合：`git status --short` 有 126 项，staged 与 unstaged 均包含架构、UI、规则、测试、报告和启发式实验改动。不要 reset、checkout 或把全部改动一次性提交；后续应先按归属梳理，再用隔离 index 提交明确文件。
+- 2026-07-28 本轮开始时工作树与 index 均干净。
+- 反事实搜索继续使用 Production Rule Composition 的单一 fork、标准 Action/Decision 和
+  canonical checkpoint，不恢复旧 AI 规划与自动推进设施。
+- 本轮完整设计与验收边界见
+  `checkpoint/seti-heuristic-policy-performance-matrix-20260728.md`。
 
 ## 已确定的策略模型
 
@@ -66,47 +63,49 @@
 - 已定位收入 resolver 的返回值契约误判：`players.gainIncome()` 返回收入表，不是 `{ok: true}`；当前工作树已有对应修正。
 - 已加强嵌套反事实失败传播，避免把真正的执行失败错误归类为 branch limit。
 - 已增加火星环绕后选择公共牌、扫描、收入的行为覆盖。
-- 定向测试最近通过：
+- 卡牌域通用 Decision choice 已统一规范化为 conditional Standard Action；`b_11.webp`
+  的移动 Decision 不再误走主 Action 提交并触发 `RULE_COMPOSITION_SESSION_ACTIVE`。
+- 达到 `maxLeaves` 的 root 会立即停止执行剩余兄弟节点；固定 scan 从 50 个执行节点降到
+  16 个（`maxLeaves=8`）。
+- 当前 v9 明确跳过无法直接命中分数/科技/收入目标的 `quick_trade` 根，仍以
+  `STRATEGIC_GOAL_NOT_EVALUATED` 保留完整 legal/outcome 对齐。
+- benchmark 初始选择已改为每位玩家显式完成 1 公司、2 初始牌与确认，不再重复点击首个公司。
+- 验证结果：
   - `randomizer/game/ai/strategic-goal-evaluator.test.js`
   - `randomizer/game/ai/heuristic-policy.test.js`
   - `randomizer/app/simulation-counterfactual-outcome.test.js`
+- `node tools/run_node_tests.js`：61 unit + 1 full-flow 全部通过。
+- `node tools/benchmark_probe_policy.js`：12 次固定 Decision，中位数约 `923ms`、
+  P90 约 `956ms`、最大约 `965ms`；18 个 legal action 中实际评估 10 个根。
+- Browser runtime 当前没有可用浏览器实例，真实 Chrome smoke 未执行；这项不能用 Node
+  回归替代。
 
-这些结果属于当前混合工作树证据，尚不能等同于一个干净、可提交的启发式版本。
+## 当前性能边界
 
-## 当前失败方案
-
-当前原型把通用 DFS 深度扩到 15，但：
-
-- 每个根候选重复展开相同子树；
-- 没有稳定状态指纹和 transposition cache；
-- 剪枝发生得太晚；
-- `maxLeaves` 是逐根截断，不是全局 beam；
-- conditional/打牌会迅速放大分支；
-- 没有充分利用资源不足带来的自然深度上界。
-
-固定盘面在第 28 个 `play_card` 决策处，一次诊断约耗时 179 秒并触发单步超过 1 秒的门禁；完整局摘要和 HTML 报告因此中止。这个实现不能提交，也不能通过继续增大上限修复。
+- 单步已从历史约 179 秒和本轮修复前约 2.3 秒降到 1 秒以内，满足第一阶段硬门禁。
+- 当前 923ms 中位数仍接近门槛，不能宣称达到毫秒级理想性能。
+- transposition hit 在固定首回合仍为 0，说明当前收益主要来自目标可达性剪枝、复用 fork
+  和叶饱和提前停止，不代表共享搜索已经充分消除重复状态。
+- `maxLeaves=8/root` 仍是截断，不是 beam；被截断的 outcome 保持 low confidence。
 
 ## 下一步实施方案
 
-1. 每个 Decision 只构建一次共享的、目标约束搜索树。
-2. 将具体目标实例化，例如某颗行星登陆、某项科技、某张收入牌，而不是无目标地展开全部合法行动。
-3. 使用全局 beam width 3～5、node cap 100～200、depth cap 15；资源或动作耗尽、目标达成时立即终止。
-4. transposition key 至少包含规则状态指纹、目标和剩余深度。
-5. 对可交换的快速行动使用 canonical 顺序，避免同一资源转换的排列爆炸。
-6. 用资源下界和目标可达性剪枝：剩余资源不可能支付路线时直接淘汰。
-7. conditional choice 只保留与当前目标相关的选项。
-8. 先用固定盘面测单次 Decision 的节点数、cache 命中和耗时，再跑完整局并生成 HTML 行动日志。
+1. 将具体目标实例化，例如某颗行星登陆、某项科技、某张收入牌，而不是只按根 action 无目标展开。
+2. 在不改变 Production Decision 完备集的前提下，用目标相关性与资源下界给 frontier 排序/剪枝。
+3. 为高分支卡牌与扫描建立可证伪的 beam 设计；必须保留全局 node/time budget，不能把逐根 leaf cap 改名为 beam。
+4. 找出固定盘面 transposition hit 为 0 的原因，确认状态指纹是否过细，或该盘面本身没有可交换路径。
+5. 将中位数继续压到 100ms 量级后，再运行完整局、生成 HTML 行动日志并审计最终资源转化。
 
 性能目标：平均单次决策保持毫秒级，优先控制在 100ms 内；任何常规决策不得进入秒级。
 
 ## 尚未交付
 
-- 新的共享 beam/transposition 搜索器；
+- 目标实例化后的共享 beam/transposition 搜索器；
 - 完整局可接受时延的模拟结果；
 - 基于新搜索器生成的最终 HTML 行动日志；
 - 对最终资源是否充分转化为分数、科技和收入的策略评估；
-- 混合工作树的归属梳理与启发式相关独立提交。
+- 当前环境下的真实 Chrome smoke。
 
 ## 启动下一会话时的首要动作
 
-先不要继续运行完整局。读取本文件和 `docs/ai-design.md`，从当前工作树提取 resolver/行为测试等有效修正；删除或重写朴素 DFS 原型，然后按“单次 Decision benchmark → 固定盘面 → 完整局报告”的顺序推进。
+先不要继续运行完整局。读取本文件、`docs/ai-design.md` 和性能矩阵，从目标实例化与资源下界设计开始；每次生产改动仍按“单次 Decision benchmark → 固定盘面 → 完整局报告”的顺序推进。
