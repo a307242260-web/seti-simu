@@ -61,7 +61,7 @@
 
 ## 已修正或已验证
 
-- 火星环绕链属于正式 DecisionEffect，不是旧 continuation。
+- 火星环绕链属于正式 DecisionEffect，不是旧 旧路径。
 - 反事实执行会通过标准 action/decision port 执行，不应另写一套规则。
 - 已定位收入 resolver 的返回值契约误判：`players.gainIncome()` 返回收入表，不是 `{ok: true}`；当前工作树已有对应修正。
 - 已加强嵌套反事实失败传播，避免把真正的执行失败错误归类为 branch limit。

@@ -21,7 +21,7 @@
 - `syncFinalScorePendingMarks` 仍只存在于显式规则/Decision 推进入口，`renderPlayerStats` 不再创建 pending 或写 `rocketState.statusNote`。
 - Node：`node --check randomizer/app.js && node tools/run_node_tests.js`，95 unit + 1 full-flow PASS。
 - Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`。
-- Chrome Decision UI smoke：`data-result=passed`，一次原子提交，trace=`rotate/place/reward`，UI 规则 continuation 调用计数均为 0。
+- Chrome Decision UI smoke：`data-result=passed`，一次原子提交，trace=`rotate/place/reward`，UI 规则 旧路径 调用计数均为 0。
 - Chrome 完整局：1 席 90 分、4 席 56/26（最高/最低），两局均 `blockedGames=0`、`bugCounts={}`。
 
 ## 第二轮返工验收（reserved / initial-selection 旁路）
@@ -30,7 +30,7 @@
 - `resident.initialSelection` 包含当前 viewer 可见的 offer 克隆与已选公司摘要；生产 render context 已删除 `getInitialSelectionOffer` 及其他 setup 对象 getter。
 - 删除 `card-trigger-runtime` 的 DOM renderer 与 render-time `refreshTaskState`；task refresh 仅保留在规则事件/行动结算和显式 task 查询路径。所有原 `renderReservedCardsFromTaskState` caller 已统一改接 projection renderer。
 - Node：`node --check randomizer/app.js && node tools/run_node_tests.js`，95 unit + 1 full-flow PASS。
-- Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`；Decision UI smoke：`data-result=passed`，一次原子提交且 forbidden continuation 调用为 0。
+- Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`；Decision UI smoke：`data-result=passed`，一次原子提交且 forbidden 旧路径 调用为 0。
 - Chrome 完整局：1 席 76 分、4 席最高 90 / 最低 37；两局 `blockedGames=0`，运行结果 `ok=true`。
 
 ## 第三轮返工验收（production capability inventory）
@@ -39,5 +39,5 @@
 - `renderPublicCards` 直接消费冻结 projection 中的 `cards.publicControls`，`renderPlayerStats` 直接消费 `handPanel`；生产 context 删除 `updatePublicCardControls/updatePlayerHandPanelTitle/canBlindDraw/isCardSelectionActive/isPublicCardMultiSelectActive/isAiAutoBattlePlayer/selectDefaultRocketForCurrentPlayer`，并清除另外 9 项未使用能力。
 - 对象型窄 selector 在 composition 边界经 `cloneSelectorResult` 返回新 identity；unit 覆盖 nested identity 隔离。所有 forbidden inventory 项均以继承 poison getter 注入，实际调用 public/player/hand/opponent/reserved/initial/token renderer 时调用数为 0。
 - Node：`node --check randomizer/app.js && node tools/run_node_tests.js`，95 unit + 1 full-flow PASS。
-- Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`；Decision UI smoke：`data-result=passed`，一次原子提交且 forbidden continuation 调用为 0。
+- Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`；Decision UI smoke：`data-result=passed`，一次原子提交且 forbidden 旧路径 调用为 0。
 - Chrome 完整局：1 席 63 分、4 席最高 99 / 最低 41；两局 `blockedGames=0`，运行结果 `ok=true`。

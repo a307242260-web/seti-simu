@@ -84,7 +84,7 @@ Decision 提交，不拥有规则分支。每次 action/choice 由公共 registr
 | 28 | 完成 | `game/turn-flow.advanceTurnAfterPlayerAction` 唯一修改 completed/passed/active/start/current/round/turn/gameEnded |
 
 静态删除审计：`SetiPrimaryBoardActionExecutor` 文件、依赖和调用已删除；Simulation
-move/pass/end_turn provider、move/pass continuation 分支、`applyPlanetRewardEffects` 与
+move/pass/end_turn provider、move/pass 旧路径 分支、`applyPlanetRewardEffects` 与
 `SIMULATION_PLANET_REWARD_UNSUPPORTED` 已删除；Browser 顶层移动箭头直接提交 production
 descriptor，Quick/Turn executor 不再声明 pass/end_turn。
 

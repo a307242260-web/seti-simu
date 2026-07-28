@@ -9,15 +9,23 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
-  const EVALUATION_MODEL = "greedy-probe-route-value-v4";
-  const PARAMETER_VERSION = "seti-probe-route-value-v4";
+  const EVALUATION_MODEL = "strategic-goal-search-v1";
+  const PARAMETER_VERSION = "seti-strategic-goal-search-v1";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const PROBE_FAMILIES = Object.freeze(new Set(["launch", "move", "orbit", "land"]));
-  const PROBE_ENABLER_FAMILIES = Object.freeze(new Set([
-    "quick_trade", "play_card", "research_tech",
-  ]));
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
-  const DEFAULT_PARAMETERS = Object.freeze({ parameterVersion: PARAMETER_VERSION });
+  const DEFAULT_PARAMETERS = Object.freeze({
+    parameterVersion: PARAMETER_VERSION,
+    searchDepth: 15,
+    techValuePerRemainingRound: 5,
+  });
+  const INCOME_UNIT_VALUES = Object.freeze({
+    credits: 5,
+    energy: 5,
+    publicity: 2.5,
+    availableData: 2.5,
+    handSize: 2.5,
+    additionalPublicScan: 2.5,
+  });
 
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
@@ -31,7 +39,24 @@
   }
 
   function mergeParameters(input = {}) {
-    return deepFreeze({ parameterVersion: String(input.parameterVersion || PARAMETER_VERSION) });
+    return deepFreeze({
+      parameterVersion: String(input.parameterVersion || PARAMETER_VERSION),
+      searchDepth: Math.max(1, Math.round(finite(input.searchDepth) || DEFAULT_PARAMETERS.searchDepth)),
+      techValuePerRemainingRound: Math.max(
+        0,
+        finite(input.techValuePerRemainingRound)
+          || DEFAULT_PARAMETERS.techValuePerRemainingRound,
+      ),
+    });
+  }
+
+  function infrastructureOf(projection) {
+    return {
+      ownedTechIds: [...(projection.progress?.ownedTechIds || [])].sort(),
+      income: { ...(projection.progress?.income || {}) },
+      roundNumber: Math.max(1, finite(projection.progress?.roundNumber) || 1),
+      finalRoundNumber: Math.max(1, finite(projection.progress?.finalRoundNumber) || 4),
+    };
   }
 
   function evaluateState(observation, seatId) {
@@ -52,10 +77,12 @@
       terminal,
       realizedScore,
       total: realizedScore,
+      infrastructure: infrastructureOf(projection),
       resourceFacts: {
         credits: finite(projection.assets.credits),
         energy: finite(projection.assets.energy),
         publicity: finite(projection.assets.publicity),
+        availableData: finite(projection.assets.availableData),
         ordinaryCards: finite(projection.assets.ordinaryCards),
         alienCards: finite(projection.assets.alienCards),
       },
@@ -63,6 +90,7 @@
         realizedScore: terminal
           ? "outcomeProjection.scoring.officialTerminalScore"
           : "outcomeProjection.scoring.realizedScore",
+        infrastructure: "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
         resources: outcomeModel.ASSET_PATHS,
       },
     });
@@ -80,14 +108,53 @@
     });
   }
 
+  function positiveDelta(after, before) {
+    return Math.max(0, finite(after) - finite(before));
+  }
+
+  function infrastructureDeltaValue(rootValue, leafValue, parameters) {
+    const rootInfrastructure = rootValue.infrastructure;
+    const leafInfrastructure = leafValue.infrastructure;
+    const remainingRounds = Math.max(
+      0,
+      leafInfrastructure.finalRoundNumber - leafInfrastructure.roundNumber,
+    );
+    const rootTech = new Set(rootInfrastructure.ownedTechIds);
+    const gainedTechIds = leafInfrastructure.ownedTechIds
+      .filter((tileId) => !rootTech.has(tileId));
+    const techValue = gainedTechIds.length
+      * (remainingRounds + 1)
+      * parameters.techValuePerRemainingRound;
+    const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
+      key,
+      positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
+    ]));
+    const incomePerWindowValue = Object.entries(INCOME_UNIT_VALUES)
+      .reduce((total, [key, unitValue]) => total + incomeDelta[key] * unitValue, 0);
+    const incomeValue = incomePerWindowValue * (remainingRounds + 1);
+    return {
+      total: techValue + incomeValue,
+      remainingRounds,
+      gainedTechIds,
+      techValue,
+      incomeDelta,
+      incomeValue,
+    };
+  }
+
+  function leafValue(rootValue, leafValueState, parameters) {
+    const actualScoreDelta = leafValueState.realizedScore - rootValue.realizedScore;
+    const infrastructure = infrastructureDeltaValue(rootValue, leafValueState, parameters);
+    return {
+      total: actualScoreDelta + infrastructure.total,
+      actualScoreDelta,
+      infrastructure,
+    };
+  }
+
   function gapSize(requirement) {
     const gap = requirement?.gap || {};
     return finite(gap.credits) + finite(gap.energy);
-  }
-
-  function requirementSize(requirement) {
-    const required = requirement?.required || {};
-    return finite(required.credits) + finite(required.energy);
   }
 
   function goalValue(requirement) {
@@ -102,19 +169,9 @@
       && finite(requirement?.gap?.energy) === 0;
   }
 
-  function outcomeDeltaValue(rootValue, leafValue) {
-    return leafValue.realizedScore - rootValue.realizedScore
-      + (finite(leafValue.resourceFacts?.credits) - finite(rootValue.resourceFacts?.credits)) * 5
-      + (finite(leafValue.resourceFacts?.energy) - finite(rootValue.resourceFacts?.energy)) * 5
-      + (finite(leafValue.resourceFacts?.publicity) - finite(rootValue.resourceFacts?.publicity)) * 2.5
-      + (finite(leafValue.resourceFacts?.ordinaryCards) - finite(rootValue.resourceFacts?.ordinaryCards)) * 2.5
-      + (finite(leafValue.resourceFacts?.alienCards) - finite(rootValue.resourceFacts?.alienCards)) * (10 / 3);
-  }
-
   function compareGoals(left, right) {
     return Number(isAffordable(right)) - Number(isAffordable(left))
       || goalValue(right) - goalValue(left)
-      || finite(right?.publicityStops) - finite(left?.publicityStops)
       || finite(right?.targetBenefit?.score) - finite(left?.targetBenefit?.score)
       || gapSize(left) - gapSize(right)
       || String(left?.requirementId || "").localeCompare(String(right?.requirementId || ""));
@@ -123,21 +180,6 @@
   function bestGoal(requirements) {
     return [...(requirements?.candidates || [])]
       .filter((candidate) => finite(candidate?.targetBenefit?.score) > 0)
-      .sort(compareGoals)[0] || null;
-  }
-
-  function sameRoute(requirements, goal) {
-    const candidates = requirements?.candidates || [];
-    return candidates.find((candidate) => (
-      candidate?.requirementId && candidate.requirementId === goal?.requirementId
-    )) || candidates
-      .filter((candidate) => (
-        candidate?.targetId === goal?.targetId
-        && (
-          candidate?.sourceId === goal?.sourceId
-          || goal?.sourceId === "launch"
-        )
-      ))
       .sort(compareGoals)[0] || null;
   }
 
@@ -179,23 +221,8 @@
       || finite(leftGap.movementSteps) - finite(rightGap.movementSteps);
   }
 
-  function matchesNextStep(action, step) {
-    if (!action || !step || action.family !== step.family) return false;
-    if (step.family === "move") {
-      return String(action.target?.rocketId) === String(step.rocketId)
-        && finite(action.target?.deltaX) === finite(step.deltaX)
-        && finite(action.target?.deltaY) === finite(step.deltaY);
-    }
-    if (["orbit", "land"].includes(step.family)) {
-      return String(action.target?.rocketId) === String(step.rocketId)
-        && String(action.target?.planetId) === String(step.planetId)
-        && String(action.target?.type || "planet") === String(step.target?.type || "planet")
-        && String(action.target?.satelliteId || "") === String(step.target?.satelliteId || "");
-    }
-    return true;
-  }
-
-  function evaluateOutcome(context, action) {
+  function evaluateOutcome(context, action, parametersInput = {}) {
+    const parameters = mergeParameters(parametersInput);
     const outcome = (context?.actionOutcomes || []).find((candidate) => (
       candidate?.actionId === action?.actionId
     ));
@@ -207,209 +234,54 @@
       ? evaluateState(outcome.rootObservation, context.seatId)
       : null;
     if (!rootValue) return unavailable(outcome, "outcome-root-missing");
-
-    const isProbeAction = PROBE_FAMILIES.has(action?.family);
-    const rootRequirements = outcome.rootObservation.outcomeProjection.progress?.probeGoalRequirements;
-    const rootGoals = rootRequirements?.candidates || [];
-    if (!rootGoals.length && isProbeAction) {
-      const legacyBest = (outcome.leaves || [])
-        .filter((leaf) => leaf?.status !== "failed" && leaf?.observation)
-        .map((leaf) => {
-          const leafValue = evaluateState(leaf.observation, context.seatId);
-          const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
-          return { leaf, leafValue, summary, goalScoreGain: finite(summary?.goalScoreGain) };
-        })
-        .filter((candidate) => candidate.summary?.endpointActionId && candidate.goalScoreGain > 0)
-        .sort((left, right) => right.goalScoreGain - left.goalScoreGain)[0];
-      if (!legacyBest) return unavailable(outcome, "probe-goal-no-positive-endpoint");
-      return deepFreeze({
-        evaluationModel: EVALUATION_MODEL,
-        score: legacyBest.goalScoreGain,
-        value: legacyBest.goalScoreGain,
-        selectable: true,
-        priorityClass: 0,
-        goalScoreGain: legacyBest.goalScoreGain,
-        status: outcome.status,
-        confidence: outcome.confidence || "high",
-        rootValue,
-        leafValue: legacyBest.leafValue,
-        actualScoreDelta: legacyBest.leafValue.realizedScore - rootValue.realizedScore,
-        probeRouteSummary: legacyBest.summary,
-        selectedLeafId: legacyBest.leaf.leafId || null,
-        actionChain: legacyBest.leaf.actionChain || [],
-        reasonCodes: ["probe-goal-standard-route"],
-      });
-    }
-    const techTileId = String(action?.target?.tileId || "");
-    if (/^(blue|purple)\d+$/.test(techTileId)) {
-      return unavailable(outcome, "probe-policy-orange-tech-only");
-    }
-    const rootGoal = bestGoal(rootRequirements);
     const evaluatedLeaves = (outcome.leaves || [])
       .filter((leaf) => leaf?.status !== "failed" && leaf?.observation)
       .map((leaf) => {
-        const leafValue = evaluateState(leaf.observation, context.seatId);
-        const summary = leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null;
-        const leafRequirements = leaf.observation.outcomeProjection.progress?.probeGoalRequirements;
-        const actualScoreDelta = leafValue.realizedScore - rootValue.realizedScore;
-        const directOutcomeValue = outcomeDeltaValue(rootValue, leafValue);
-        const orangeTechGain = Math.max(0,
-          finite(leaf.observation.outcomeProjection.progress?.orangeTechCount)
-          - finite(outcome.rootObservation.outcomeProjection.progress?.orangeTechCount));
-        const rootProbeCount = rootValue
-          ? outcome.rootObservation.outcomeProjection.progress?.probeRoute?.deployedProbes?.length || 0
-          : 0;
-        const leafProbeCount = leaf.observation.outcomeProjection.progress?.probeRoute?.deployedProbes?.length || 0;
-        const orangeTechLaunchedProbe = leafProbeCount > rootProbeCount;
-        const leafGoal = rootGoal ? sameRoute(leafRequirements, rootGoal) : null;
-        const leafBestGoal = bestGoal(leafRequirements);
-        const divertedEndpoint = Boolean(
-          rootGoal
-          && summary?.endpointTargetId
-          && summary.endpointTargetId !== rootGoal.targetId
-        );
-        const gapReduction = rootGoal && leafGoal && !divertedEndpoint
-          ? Math.max(0, gapSize(rootGoal) - gapSize(leafGoal))
-          : 0;
-        const requirementReduction = rootGoal && leafGoal && !divertedEndpoint
-          ? Math.max(0, requirementSize(rootGoal) - requirementSize(leafGoal))
-          : 0;
-        const completed = Boolean(
-          rootGoal
-          && actualScoreDelta > 0
-          && summary?.endpointTargetId === rootGoal.targetId
-        );
-        const orangeRouteImproved = orangeTechGain > 0
-          && (!orangeTechLaunchedProbe || rootProbeCount === 0)
-          && Boolean(
-          gapReduction > 0
-          || requirementReduction > 0
-          || (
-            leafBestGoal
-            && (
-              !rootGoal
-              || goalValue(leafBestGoal) > goalValue(rootGoal)
-              || !rootGoals.some((candidate) => candidate.targetId === leafBestGoal.targetId)
-            )
-          )
-        );
-        const evaluatedGoal = orangeRouteImproved && leafBestGoal
-          ? leafBestGoal
-          : rootGoal;
+        const leafStateValue = evaluateState(leaf.observation, context.seatId);
         return {
           leaf,
-          leafValue,
-          rootGoal,
-          leafGoal,
-          leafBestGoal,
-          evaluatedGoal,
-          summary,
-          divertedEndpoint,
-          actualScoreDelta,
-          directOutcomeValue,
-          gapReduction,
-          requirementReduction,
-          orangeTechGain,
-          orangeTechLaunchedProbe,
-          orangeRouteImproved,
-          completed,
-          value: evaluatedGoal ? goalValue(evaluatedGoal) : directOutcomeValue,
+          leafStateValue,
+          strategicValue: leafValue(rootValue, leafStateValue, parameters),
         };
       })
       .sort((left, right) => (
-        right.value - left.value
-        || Number(right.completed) - Number(left.completed)
-        || right.gapReduction - left.gapReduction
-        || right.requirementReduction - left.requirementReduction
-        || right.orangeTechGain - left.orangeTechGain
-        || right.actualScoreDelta - left.actualScoreDelta
+        right.strategicValue.total - left.strategicValue.total
+        || right.strategicValue.actualScoreDelta - left.strategicValue.actualScoreDelta
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
-    const controlFlow = action?.phase === "conditional";
-    const controlAction = CONTROL_FAMILIES.has(action?.family);
-    const allowedEnabler = PROBE_ENABLER_FAMILIES.has(action?.family);
-    const routeAffordable = isAffordable(rootGoal);
-    const eligibleLeaves = evaluatedLeaves.filter((candidate) => {
-      const nextProbeStep = matchesNextStep(action, rootGoal?.nextStep);
-      if (isProbeAction) {
-        return candidate.completed || (nextProbeStep && !candidate.divertedEndpoint);
-      }
-      if (action?.family === "research_tech") {
-        return candidate.orangeRouteImproved;
-      }
-      if (allowedEnabler) {
-        return candidate.gapReduction > 0
-          || candidate.requirementReduction > 0
-          || candidate.orangeRouteImproved;
-      }
-      return controlFlow || controlAction;
-    });
-    const best = eligibleLeaves[0] || null;
-    if (!best) {
-      return unavailable(
-        outcome,
-        PROBE_FAMILIES.has(action?.family) || PROBE_ENABLER_FAMILIES.has(action?.family)
-          ? "not-current-probe-goal-step"
-          : "outside-probe-policy-scope",
-      );
-    }
-    const nextProbeStep = matchesNextStep(action, rootGoal?.nextStep);
-    const routeAdvanced = isProbeAction && nextProbeStep && !best.completed;
-    const directGapFill = allowedEnabler && (
-      best.gapReduction > 0
-      || best.requirementReduction > 0
-      || best.orangeRouteImproved
-    );
-    const selectable = best.completed || routeAdvanced || directGapFill || controlFlow || controlAction;
-    if (!selectable) return unavailable(outcome, "not-current-probe-goal-step");
-    const priorityClass = best.completed
-      ? 4
-      : routeAdvanced
-        ? routeAffordable ? 3 : 1
-        : directGapFill
-          ? 2 + Math.min(0.9, (best.gapReduction + best.requirementReduction) / 10)
-          : controlFlow
-            ? 3 + Math.min(0.9, (
-              best.gapReduction
-              + best.requirementReduction
-              + Math.max(0, best.directOutcomeValue) / 100
-              + Math.max(0, best.actualScoreDelta) / 100
-            ) / 10)
-            : 0;
+    const best = evaluatedLeaves[0] || null;
+    if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
+    const control = CONTROL_FAMILIES.has(action?.family);
+    const conditional = action?.phase === "conditional";
+    const selectable = best.strategicValue.total > 0 || control || conditional;
+    if (!selectable) return unavailable(outcome, "no-score-tech-or-income-gain");
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score: best.value,
-      value: best.value,
+      score: best.strategicValue.total,
+      value: best.strategicValue.total,
       selectable: true,
-      priorityClass,
-      goalScoreGain: finite(best.evaluatedGoal?.targetBenefit?.score),
+      priorityClass: conditional ? 3 : control ? 0 : 2,
       status: outcome.status,
       confidence: outcome.confidence || "high",
       rootValue,
-      leafValue: best.leafValue,
-      actualScoreDelta: best.actualScoreDelta,
-      probeGoalRequirement: best.evaluatedGoal,
-      leafProbeGoalRequirement: best.leafGoal,
-      gapReduction: best.gapReduction,
-      requirementReduction: best.requirementReduction,
-      orangeTechGain: best.orangeTechGain,
-      orangeRouteImproved: best.orangeRouteImproved,
-      probeRouteSummary: isProbeAction ? best.summary : null,
+      leafValue: best.leafStateValue,
+      actualScoreDelta: best.strategicValue.actualScoreDelta,
+      infrastructureValue: best.strategicValue.infrastructure.total,
+      techValue: best.strategicValue.infrastructure.techValue,
+      gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
+      incomeValue: best.strategicValue.infrastructure.incomeValue,
+      incomeDelta: best.strategicValue.infrastructure.incomeDelta,
+      remainingRounds: best.strategicValue.infrastructure.remainingRounds,
+      probeRouteSummary: best.leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null,
       selectedLeafId: best.leaf.leafId || null,
       actionChain: best.leaf.actionChain || [],
-      reasonCodes: [best.completed
-        ? "probe-goal-completed-standard-leaf"
-        : routeAdvanced
-          ? "probe-goal-route-advanced"
-          : directGapFill
-            ? action.family === "research_tech"
-              ? "probe-goal-gap-reduced-by-orange-tech"
-              : "probe-goal-gap-reduced-by-standard-leaf"
-        : controlFlow
-          ? "required-standard-decision"
-          : action?.family === "end_turn"
-            ? "end-turn-no-probe-step"
-            : "pass-last-resort"],
+      reasonCodes: [
+        best.strategicValue.actualScoreDelta > 0 ? "strategic-goal-score" : null,
+        best.strategicValue.infrastructure.techValue > 0 ? "strategic-goal-tech" : null,
+        best.strategicValue.infrastructure.incomeValue > 0 ? "strategic-goal-income" : null,
+        conditional ? "required-standard-decision" : null,
+        control ? "turn-control" : null,
+      ].filter(Boolean),
     });
   }
 
@@ -418,6 +290,7 @@
     PARAMETER_VERSION,
     OUTCOME_SCHEMA_VERSION,
     DEFAULT_PARAMETERS,
+    INCOME_UNIT_VALUES,
     mergeParameters,
     evaluateState,
     evaluateSetupProbeGoals,

@@ -71,8 +71,8 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   },
   { family: "research_tech", obligation: "生产科技规则枚举科技板目标并提交研究" },
   { family: "play_card", obligation: "打牌使用生产手牌、费用、卡牌实体与 Effect journal" },
-  { family: "pass", obligation: "生产回合规则提交 PASS 并建立预留牌 continuation" },
-  { family: "move", obligation: "生产火箭规则枚举移动并建立支付 continuation" },
+  { family: "pass", obligation: "生产回合规则提交 PASS 并建立预留牌 DecisionEffect" },
+  { family: "move", obligation: "生产火箭规则枚举移动并建立支付 DecisionEffect" },
   { family: "quick_trade", obligation: "快速交易复用生产资源交易规则并提交真实资源变更" },
   { family: "industry", obligation: "生产公司能力规则枚举并提交公司行动" },
   { family: "card_corner", obligation: "生产卡角规则枚举手牌并提交弃牌收益" },
@@ -85,13 +85,13 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
     obligation: "符号面行动必须由生产外星种族规则提供合法描述符",
   },
   { family: "end_turn", obligation: "生产回合规则结束当前行动，并在跨轮时统一结算下一轮收入" },
-  { family: "choose_card", obligation: "生产 continuation 枚举并提交预留牌选择" },
-  { family: "choose_target", obligation: "生产 continuation 枚举并提交移动或科技目标" },
-  { family: "choose_payment", obligation: "生产 continuation 枚举并提交弃牌或移动支付" },
-  { family: "choose_reward", obligation: "生产效果 continuation 枚举并提交奖励选择" },
+  { family: "choose_card", obligation: "生产 DecisionEffect 枚举并提交预留牌选择" },
+  { family: "choose_target", obligation: "生产 DecisionEffect 枚举并提交移动或科技目标" },
+  { family: "choose_payment", obligation: "生产 DecisionEffect 枚举并提交弃牌或移动支付" },
+  { family: "choose_reward", obligation: "生产效果 DecisionEffect 枚举并提交奖励选择" },
   {
     family: "choose_branch",
-    obligation: "分支选择必须由生产效果 continuation 提供合法描述符",
+    obligation: "分支选择必须由生产 DecisionEffect 提供合法描述符",
   },
   {
     family: "choose_final_scoring",
@@ -99,7 +99,7 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   },
   {
     family: "accept_optional_effect",
-    obligation: "可选效果必须由生产效果 continuation 提供合法描述符",
+    obligation: "可选效果必须由生产 DecisionEffect 提供合法描述符",
   },
 ]);
 
@@ -118,7 +118,7 @@ function installProductionKernel(options = {}) {
     throw new TypeError(`Production Kernel ${hostKind} 缺少专属 host services`);
   }
   if (options.standardActionDomainOptions != null) {
-    throw new TypeError("Production Kernel 禁止 Host 注入 Standard Action continuation/Decision");
+    throw new TypeError("Production Kernel 禁止 Host 注入 Standard Action Decision/事务规则");
   }
   if (options.productionRules != null) {
     throw new TypeError(

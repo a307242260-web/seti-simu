@@ -16,7 +16,7 @@ Production company catalog 只包含 11 个正式标签：
 
 公司行动由 `randomizer/game/effects/residual-domain-session.js` 独占执行。
 Browser 与 Simulation 只能提交 Standard Action 或 Effect Session Decision，不能直接调用
-`randomizer/app` 中的 picker、callback 或 continuation。
+`randomizer/app` 中的 picker、callback 或流程控制。
 
 ## 主动能力
 

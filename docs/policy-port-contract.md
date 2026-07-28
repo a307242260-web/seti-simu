@@ -53,7 +53,7 @@ schema 为 `seti-policy-context-v1`：
 - `legalActions` 沿用 `seti-standard-action-v1`，actor/state/decision version 必须与 context 完全一致，`actionId` 不得重复。
 - `deterministicContext` 只放 seed、episode/request ordinal、已公开 RNG cursor 等复现上下文；不得放未来 RNG 或牌库顺序。
 - 创建过程只接受 plain object/array/JSON primitive，拒绝函数、symbol、accessor、循环引用和非有限数值；结果为递归只读副本，不保留宿主 mutable reference。
-- 默认拒绝对手手牌、对手保留牌、牌库顺序、未来抽牌/RNG、未公开牌、recovery snapshot、heuristic score、policy score、actionGraph、planner shadow、battle analytics、DOM、resolver、executor、continuation 和 callback 字段。
+- 默认拒绝对手手牌、对手保留牌、牌库顺序、未来抽牌/RNG、未公开牌、recovery snapshot、heuristic score、policy score、actionGraph、planner shadow、battle analytics、DOM、resolver、executor、旧路径 和 callback 字段。
 
 ## `PolicyDecision`
 
@@ -72,7 +72,7 @@ schema 为 `seti-policy-decision-v1`：
 }
 ```
 
-`actionId` 只能引用当前 `legalActions` 成员。Learned Policy 必须提供模型 checksum；Heuristic 可用 `null`。诊断字段为有限白名单，不能夹带 effect、状态补丁、continuation、回调、评分图或隐藏 observation。
+`actionId` 只能引用当前 `legalActions` 成员。Learned Policy 必须提供模型 checksum；Heuristic 可用 `null`。诊断字段为有限白名单，不能夹带 effect、状态补丁、旧路径、回调、评分图或隐藏 observation。
 
 ## 同步、异步与请求失效
 

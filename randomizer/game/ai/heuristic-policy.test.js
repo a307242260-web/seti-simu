@@ -277,6 +277,7 @@ assert.deepEqual(inventoryValue.resourceFacts, {
   credits: 1,
   energy: 2,
   publicity: 4,
+  availableData: 3,
   ordinaryCards: 2,
   alienCards: 2,
 });

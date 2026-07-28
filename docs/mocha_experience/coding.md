@@ -25,7 +25,7 @@
 - date: 2026-07-28
 - source_issue: SETI-104、SETI-140 及后续架构清理和启发式开发中的旧测试纠偏
 - observation: “看测试文件”不能被解释为测试天然代表当前需求。架构迁移中，旧结构测试、迁移期 characterization 和绕开真实产品行为的伪 smoke 可能继续通过或失败；修复失败测试前必须先确认它证明的行为仍属于当前契约，否则 agent 会为了旧测试重新引入兼容层或偏离新架构。
-- evidence: SETI-104 的 PASS-first 测试能稳定终局，却完全不证明机器人行为；删除后真实 Policy 才暴露无限 industry 空转。后续测试重构又多次出现旧 headless/continuation/旧状态变量测试驱动实现的风险，owner 明确要求“确认测试是否必要以及正确性，别被应该删除的测试误导”。
+- evidence: SETI-104 的 PASS-first 测试能稳定终局，却完全不证明机器人行为；删除后真实 Policy 才暴露无限 industry 空转。后续测试重构又多次出现旧 headless/旧路径/旧状态变量测试驱动实现的风险，owner 明确要求“确认测试是否必要以及正确性，别被应该删除的测试误导”。
 - promote_to: global_agents
 - promotion_status: promote
 - decision: 修订全局 AGENTS 验证规则：迁移/重构中先按当前产品和架构契约分类失败测试；必要业务行为继续作为门禁，迁移期 characterization 在 parity 后删除或改写，旧结构实现细节与伪产品 smoke 不得驱动生产兼容实现。

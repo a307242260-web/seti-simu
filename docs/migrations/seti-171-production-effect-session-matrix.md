@@ -1,21 +1,20 @@
-# SETI-171 Production Continuation 硬切迁移矩阵
+# SETI-171 Production Effect Session 硬切迁移矩阵
 
 ## 冻结范围与根契约
 
 本矩阵冻结于首个生产代码 patch 之前。有限集合机械来源如下：
 
 - Standard Action：`randomizer/game/actions/standard-action.js::ALL_FAMILIES`，共 22 项。
-- Production Effect domain：`randomizer/game/production-composition.js::effectDomains`，共 5 项。
+- Production Effect domain：`randomizer/game/production-composition.js::effectDomains`，共 6 项。
 - Browser 旧 pending：`randomizer/game/effects/browser-pending-decision.js::SUPPORTED_KINDS`，
   共 21 项。
-- Browser 旧 continuation：`app.js::standardActionContinuation`、
+- Browser 旧规则推进路径：`app.js` 中已删除的 Standard Action 流程对象、
   `app/conditional-decision-domain.js` 与 `app/conditional-action-executor.js`。
-- Simulation 旧 continuation：`production-kernel.js::registry` 与
-  `simulationContinuation`。
+- Simulation 旧规则推进路径：`production-kernel.js` 中已删除的私有 registry 与流程对象。
 
 根契约：Production Composition 是 deterministic drain、跨域 Effect、Decision
 owner/version、journal/replay/commit 的唯一 owner。Host 只提供 state/projection adapter、
-显式随机源和无规则语义的 service；Host 不能注入 continuation、conditional registry、
+显式随机源和无规则语义的 service；Host 不能注入规则推进器、conditional registry、
 Decision effect、quick-trade history 或 working-root rule transaction。
 
 ## 22 family 目标轴
@@ -48,11 +47,12 @@ Decision effect、quick-trade history 或 working-root rule transaction。
 不存在 Host-owned family。未知 family、当前 active Effect 不接受的 conditional family、
 错误 actor/stateVersion/decisionVersion/choice identity 均零副作用 fail-closed。
 
-## 5 Effect domain 与跨域 handoff
+## 6 Effect domain 与跨域 handoff
 
 | domain | families | deterministic drain / Decision owner | journal / commit / replay |
 |---|---|---|---|
-| `standard_action` | quick_trade + 7 conditional families | Composition 内建 continuation；只枚举 game source，不调用 Host | Session journal；完整链完成后一次 CAS |
+| `opening_session` | 无玩家 family | 显式 opening Effect 启动 initial setup / income DecisionEffect | opening 与收入链共用 Session journal；完整链一次 CAS |
+| `standard_action` | quick_trade + 7 conditional families | executor 直接返回 `decisionEffect`；只枚举 game source，不调用 Host | Session journal；完整链完成后一次 CAS |
 | `card_play` | play_card | card domain 自有 payment/trigger/followup | card entity、费用、RNG 与 replay 都在 Session |
 | `science` | scan/place_data/analyze/research_tech | science 自有全部 Decision 与 deterministic effects | science journal + root RNG cursor |
 | `probe_turn` | launch/move/orbit/land/pass/end_turn | probe/turn 自有 payment、target、reserve、reveal | probe-turn journal + turn commit |
@@ -62,7 +62,7 @@ Decision effect、quick-trade history 或 working-root rule transaction。
 使用普通 Effect envelope：`type=game_domain_handoff`、`kind=effect`（或省略后由 runtime
 规范化为 `effect`）；`handoff` 只是 payload/domain provenance，绝不是第三种 Session
 Effect kind。Composition 不得调用 Browser effect dispatcher、Simulation private executor
-或 callback continuation。
+或旧规则推进器。
 
 ## 21 Browser 旧 pending 的目标归属
 
@@ -98,15 +98,15 @@ Composition 上送 DecisionEffect；正式 source/domain 直接构造 choices。
 | 旧来源 | 当前语义 | 本项目标 | 删除证据 |
 |---|---|---|---|
 | `production-composition.js::productionRules.conditionalActions` | Host conditional registry | 由 game source/domain 枚举 | 构造参数出现即 fail-fast；生产读取为零 |
-| `production-composition.js::standardActionDomainOptions.continuation` | Host continuation | Composition 内建 continuation | Host 参数出现即 fail-fast；生产读取为零 |
+| `production-composition.js::standardActionDomainOptions` | Host 规则推进选项 | 参数整体删除 | Host 参数出现即 fail-fast；生产读取为零 |
 | `production-composition.js::hostServices.quickTradeHistory` | Browser history callback | Session journal/原子 working root | 字段出现即 fail-fast；调用为零 |
 | `standard-action-session.js::takeOpenedDecisionEffect/takeDeferredDecisionEffects` | Browser side-channel Decision | domain/source 直接 spawn | 参数和调用为零 |
-| `app.js::standardActionContinuation` | Browser continuation | 删除 Production 接线 | 符号与 `standardActionDomainOptions` 接线为零 |
+| `app.js` 的旧 Standard Action 流程对象 | Browser 规则推进路径 | 删除 Production 接线 | 旧符号与 `standardActionDomainOptions` 接线为零 |
 | `app.js::runWithWorkingState` 的 Browser Decision owner 嵌套 | Browser rule transaction | 普通 Composition working-state scope | `runRuleTransaction` 不进入 Production 装配 |
 | `app.js::hostServices.quickTradeHistory` | Browser quick-trade undo callback | Session journal | Production 装配字段为零 |
 | `production-kernel.js::registry` | Simulation conditional executor | game sources/domain | private register/enumerate/execute 为零 |
-| `production-kernel.js::simulationContinuation` | Simulation continuation | Composition 内建 continuation | 符号与注入为零 |
-| `browser-rule-composition.js` continuation/service pass-through | Browser rule port | 只传 adapter/random/纯 service | continuation/规则 service 参数为零 |
+| `production-kernel.js` 的旧 Simulation 流程对象 | Simulation 规则推进路径 | 显式 Effect / Decision owner | 旧符号与注入为零 |
+| `browser-rule-composition.js` 规则 service pass-through | Browser rule port | 只传 adapter/random/纯 service | 规则推进与规则 service 参数为零 |
 
 保留的 Browser presentation helper 不能成为 Production source；若仍有旧 UI 调用
 `open/defer`，它只能位于未接 Production Composition 的不可达兼容路径，后续来源删除项可物理
@@ -114,7 +114,7 @@ Composition 上送 DecisionEffect；正式 source/domain 直接构造 choices。
 
 ## Proof obligations 与集中验证
 
-1. **根契约反例**：分别注入 continuation、conditionalActions、quickTradeHistory、
+1. **根契约反例**：分别注入规则推进器、conditionalActions、quickTradeHistory、
    take/deferred Decision callback、重复 family/domain；构造期必须失败且不创建 StateStore。
 2. **22-family 完备性**：同 canonical checkpoint 对每个 family 枚举实体/方向/目标/费用完整
    descriptor；逐 action fork 比较 result、Effect journal、下一 Decision 与 committed state。

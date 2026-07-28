@@ -210,10 +210,10 @@
         <tr><td><code>randomizer/game/effects/session-journal.test.js</code></td><td>architecture/effect-session</td><td>session journal 可重放且 barrier/undo 语义稳定</td></tr>
         <tr><td><code>randomizer/game/effects/state-store-session.test.js</code></td><td>architecture/effect-session</td><td>Session 只经 StateStore CAS 原子提交</td></tr>
         <tr><td><code>randomizer/game/effects/standard-action-session.test.js</code></td><td>architecture/effect-session</td><td>Standard Action 领域只经统一 Session/Decision 入口</td></tr>
-        <tr><td><code>randomizer/game/effects/quick-action-session.test.js</code></td><td>architecture/effect-session</td><td>快速行动 continuation 由 Session 串行推进</td></tr>
+        <tr><td><code>randomizer/game/effects/quick-action-session.test.js</code></td><td>architecture/effect-session</td><td>快速行动 旧路径 由 Session 串行推进</td></tr>
         <tr><td><code>randomizer/game/effects/research-tech-session.test.js</code></td><td>architecture/effect-session</td><td>科技选择与蓝槽选择共享一个 Decision owner</td></tr>
         <tr><td><code>randomizer/game/effects/scan-card-session.test.js</code></td><td>architecture/effect-session</td><td>扫描卡牌链通过 Effect Session 有序提交</td></tr>
-        <tr><td><code>randomizer/game/effects/industry-alien-session.test.js</code></td><td>architecture/effect-session</td><td>公司与外星人 continuation 共用 session journal</td></tr>
+        <tr><td><code>randomizer/game/effects/industry-alien-session.test.js</code></td><td>architecture/effect-session</td><td>公司与外星人 旧路径 共用 session journal</td></tr>
         <tr><td><code>randomizer/game/state/state-store.test.js</code></td><td>architecture/state-store</td><td>StateStore 快照隔离、版本单调与 CAS</td></tr>
         <tr><td><code>randomizer/game/state/host-source.test.js</code></td><td>architecture/state-store</td><td>Host 只读取冻结的权威投影</td></tr>
         <tr><td><code>randomizer/game/state/deterministic-sequences.test.js</code></td><td>architecture/state-store</td><td>序列号随 checkpoint 确定性恢复</td></tr>

@@ -22,7 +22,7 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v8";
+  const POLICY_VERSION = "seti-heuristic-policy-v9";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
   const FALLBACK_FAMILIES = Object.freeze(new Set([
@@ -166,7 +166,13 @@
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const evaluationParameters = expectedScoreEvaluator.mergeParameters(options.evaluationParameters);
-    const evaluateAction = options.evaluateAction || expectedScoreEvaluator.evaluateAction;
+    const evaluateAction = options.evaluateAction || (
+      (context, action) => expectedScoreEvaluator.evaluateAction(
+        context,
+        action,
+        evaluationParameters,
+      )
+    );
     if (typeof evaluateAction !== "function" || typeof heuristicEvaluator?.selectLegalAction !== "function") {
       throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "Heuristic Policy 缺少纯 action evaluator");
     }

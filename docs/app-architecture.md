@@ -107,7 +107,7 @@ Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 旧 `card-runtime.js`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、
 `alien-ui.js`、Host effect/conditional/turn runtime 已物理删除。领域展示统一消费
 viewer-safe projection，交互统一提交 Standard Action/Decision；不得重建兼容 alias、
-continuation、history mutation、executor 或 working-root 参数。
+旧路径、history mutation、executor 或 working-root 参数。
 
 ## 4. 禁止恢复的模式
 

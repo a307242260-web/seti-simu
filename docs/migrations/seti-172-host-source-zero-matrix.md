@@ -36,7 +36,7 @@ lifecycle envelope。未知 family/effect/Decision、无合法项与错误 owner
 ```bash
 rg -n '<script src=' randomizer/index.html
 rg --files randomizer/app randomizer/training | sort
-rg -n 'workingRoot|stateSourcePort|create[A-Za-z]*(Executor|Provider)|execute[A-Za-z]*Effect|openPendingDecision|readPendingDecision|quickActionHistory|historyCommands|continuation|fallback|unsupported|unavailable|no_legal_choice|registry|alias' \
+rg -n 'workingRoot|stateSourcePort|create[A-Za-z]*(Executor|Provider)|execute[A-Za-z]*Effect|openPendingDecision|readPendingDecision|quickActionHistory|historyCommands|旧路径|fallback|unsupported|unavailable|no_legal_choice|registry|alias' \
   randomizer/index.html randomizer/app.js randomizer/app randomizer/training
 ```
 
@@ -55,7 +55,7 @@ rg -n 'workingRoot|stateSourcePort|create[A-Za-z]*(Executor|Provider)|execute[A-
 | science | `scan`、`analyze`、`research_tech` | data/card/tech/solar slices；card/data/tech id 与 RNG cursor；target/payment/slot Decision |
 | card-play | `play_card` | card/player/match slices；card instance/抽牌 sequence；支付、trigger、task、barrier |
 | residual-domains | `industry`、`card_corner`、`place_data`、`runezu_face_symbol` | industry/card/data/alien/player slices；实体 id；公司/物种/奖励 Decision |
-| Production continuation | `quick_trade`、全部 7 conditional family | 同一 active Session；decisionId/version/owner/choice；stale/late/wrong-owner 零副作用 |
+| Production 旧路径 | `quick_trade`、全部 7 conditional family | 同一 active Session；decisionId/version/owner/choice；stale/late/wrong-owner 零副作用 |
 
 五个 domain 均由 `createProductionDomainPack()` 构造期 claim family；重复 owner、缺失 family
 或 Host 自定义 `productionRules` / `standardActionDomainOptions` / `effectDomains` /
@@ -70,7 +70,7 @@ rg -n 'workingRoot|stateSourcePort|create[A-Za-z]*(Executor|Provider)|execute[A-
 |---|---|---|---|
 | `app/effects/{bootstrap,dispatcher,movement-scan,rewards,aliens}.js` | Effect executor suite、规则 dispatch、奖励/扫描/物种 mutation | 五个 Production domain executor | 从 `app.js`、`dependencies.js`、`index.html` 删除；文件物理删除 |
 | `app/effect-flow.js`、`app/effect-choice-flow.js` | actionEffectFlow、insert/drain/skip、choice/history | Effect Session queue/Decision/journal | 同上，文件物理删除 |
-| `app/conditional-decision-domain.js`、`app/conditional-action-executor.js` | conditional builder/provider/executor、deterministic boundary | Production continuation + 7 conditional family | 同上，测试迁至 architecture audit/Production 行为证据 |
+| `app/conditional-decision-domain.js`、`app/conditional-action-executor.js` | conditional builder/provider/executor、deterministic boundary | Production 旧路径 + 7 conditional family | 同上，测试迁至 architecture audit/Production 行为证据 |
 | `app/quick-turn-action-executor.js` | Host quick/turn executor | probe-turn + residual + quick-trade source | 同上，文件物理删除 |
 | `app/action-runtime.js` | Host action provider/context/dispatch runtime | Production action registry/input port | 同上，文件物理删除 |
 | `app/action-interaction-runtime.js` | launch/orbit/land/move/analyze/data/Pluto mutation 与 picker 混合体 | Production descriptors；Browser 仅 action/Decision presentation | 删除规则 runtime；UI 只从 projection/descriptor 提交 |
@@ -80,9 +80,9 @@ rg -n 'workingRoot|stateSourcePort|create[A-Za-z]*(Executor|Provider)|execute[A-
 | `app/industry-runtime.js` | 公司能力、rollback、pending | residual domain | 删除规则 owner；公司 Decision 用通用 Decision UI |
 | `app/alien-runtime.js`、`app/alien-trace-reward-flow.js` | 揭示、痕迹、奖励、机会队列 | residual domain | 删除规则 owner |
 | `app/alien-ui.js`、`app/aliens/species-runtime.js` 中规则端口 | 物种 picker + mutation/session/history | residual domain | 删除规则部分；正式 projection/Decision UI 保留可视化 |
-| `app/income-runtime.js` | income effect/pending continuation | probe-turn/residual domain | 删除规则 owner |
+| `app/income-runtime.js` | income effect/pending 旧路径 | probe-turn/residual domain | 删除规则 owner |
 | `app/score-source-runtime.js` | Host score ledger 与撤销 command | game player/final scoring/journal | 文件物理删除 |
-| `app/turn-flow.js` Host runtime、`app/turn-end-flow.js` | new-game randomization、PASS/end-turn/reveal/income continuation | Production Kernel lifecycle + probe-turn | 删除 Host runtime；只保留 projection 格式化时也不得读 working root |
+| `app/turn-flow.js` Host runtime、`app/turn-end-flow.js` | new-game randomization、PASS/end-turn/reveal/income 旧路径 | Production Kernel lifecycle + probe-turn | 删除 Host runtime；只保留 projection 格式化时也不得读 working root |
 | `app/final-ui-runtime.js` 规则方法 | final pending mark、markTile、history | final-scoring + conditional family | 删除规则 owner；最终展示只读 final read model |
 | `app/browser-host/action-bar.js` 的 ActionSession/guard/history runtime | pending/session/history/working-root guard | Composition inspection + Action descriptors | 仅保留 selector/model/controller/DOM presentation |
 | `app/browser-host/card-decision-ui.js` 的 working-root/pending helper | 私有 card pending viewer | 通用 viewer-safe Decision projection | 删除 helper；renderer registry 仅匹配 presentation |
@@ -106,7 +106,7 @@ services、control runtime 与 storage/download facade 均未进入最终生产�
 |---|---|---|---|
 | 22 family / 5 domain 唯一 owner | Production pack coverage 恰为全集且 owner 不重复 | fixture 注入第二 `launch` owner | architecture audit + Production coverage |
 | Host facade allowlist | app/training production 文件只命中允许模块与端口 | 改名 `RuleBridge` 转发 root | import/global/script graph audit |
-| Host 自定义 owner 构造失败 | 任意 Host registry/executor/continuation/working transaction option 都抛错 | `effectDomains: []` 或自定义 provider | negative fixture |
+| Host 自定义 owner 构造失败 | 任意 Host registry/executor/旧路径/working transaction option 都抛错 | `effectDomains: []` 或自定义 provider | negative fixture |
 | canonical root 不出 game | Browser/Simulation 无 `stateSourcePort`、working/committed root 读取或直接 slice 写 | `projection.state.players[0]...=` 或 `stateSourcePort.read()` | source audit + frozen projection behavior |
 | fallback 归零 | unknown/unsupported/unavailable/generic pending/no legal choice 不继续推进 | 注入未知 pending 后返回成功 | negative fixture + fail-closed behavior |
 | Browser 功能不空壳 | 真实页面有人类主/快/回合动作、多步 Decision、完整 renderer、保存恢复 | 静态 DOM 或只跑 API 不渲染 | `production-browser-full-parity` Chrome smoke |

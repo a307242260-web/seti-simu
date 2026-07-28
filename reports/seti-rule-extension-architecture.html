@@ -175,7 +175,7 @@
         <h3>禁止的新旁路</h3>
         <ul>
           <li>直接读取或修改 DOM、overlay、按钮、localStorage、AI controller。</li>
-          <li>自己维护 pending / continuation，或回调 app runtime 继续流程。</li>
+          <li>自己维护 pending / 旧路径，或回调 app runtime 继续流程。</li>
           <li>绕过 Effect Session 直接写 committed state、换玩家或提交 history。</li>
           <li>为了新内容复制一套 Browser executor、Headless resolver 或 Policy 合法性。</li>
         </ul>

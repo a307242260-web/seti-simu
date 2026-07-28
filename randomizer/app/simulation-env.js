@@ -15,7 +15,6 @@ const {
   sanitizeFinalScoringState,
 } = require("./simulation-contract");
 const outcomeModel = require("../game/ai/outcome-model");
-const cardEffects = require("../game/cards/effects");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
 const REPLAY_SCHEMA_VERSION = "seti-rl-replay-v1";
@@ -97,178 +96,8 @@ function getTurnState(state) {
   return clone(state.turn || {});
 }
 
-const PROBE_ROUTE_FAMILIES = new Set(["launch", "move", "orbit", "land"]);
-const PROBE_POLICY_ENABLER_FAMILIES = new Set(["quick_trade", "play_card", "research_tech"]);
-const PROBE_POLICY_CONTROL_FAMILIES = new Set(["end_turn", "pass"]);
-const PROBE_CARD_EFFECT_TYPES = new Set([
-  cardEffects.REWARD_TYPES.LAUNCH,
-  cardEffects.EFFECT_TYPES.CARD_MOVE,
-  cardEffects.EFFECT_TYPES.FREE_MOVE,
-  cardEffects.EFFECT_TYPES.CARD_ORBIT,
-  cardEffects.EFFECT_TYPES.CARD_LAND,
-  cardEffects.EFFECT_TYPES.RESEARCH_TECH,
-  cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE,
-  cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE,
-]);
-
-function publicRocketList(observation) {
-  return observation?.publicState?.board?.rockets || [];
-}
-
-function rocketPosition(observation, rocketId) {
-  const rocket = publicRocketList(observation)
-    .find((candidate) => String(candidate?.id) === String(rocketId));
-  return rocket?.surface === "solar-board"
-    ? `${Number(rocket.sectorX)},${Number(rocket.sectorY)}`
-    : null;
-}
-
-function sameProbeMove(action, step, rocketId) {
-  return action?.family === "move"
-    && String(action.target?.rocketId) === String(rocketId)
-    && Number(action.target?.deltaX) === Number(step?.deltaX)
-    && Number(action.target?.deltaY) === Number(step?.deltaY);
-}
-
-function sameProbeEndpoint(action, goal, rocketId) {
-  if (action?.family !== goal?.endpointFamily) return false;
-  if (String(action.target?.rocketId) !== String(rocketId)) return false;
-  if (String(action.target?.planetId || "") !== String(goal.planetId || "")) return false;
-  const expectedTarget = goal.endpointTarget || {};
-  return String(action.target?.type || "planet") === String(expectedTarget.type || "planet")
-    && String(action.target?.satelliteId || "") === String(expectedTarget.satelliteId || "");
-}
-
-function selectProbeRouteContinuations(context) {
-  const initial = context.initialAction;
-  if (!PROBE_ROUTE_FAMILIES.has(initial?.family)) return [];
-  if ((context.actionChain || []).some((actionId) => (
-    String(actionId).startsWith("orbit:") || String(actionId).startsWith("land:")
-  ))) return [];
-  if ((context.checkpoints || []).length >= 10) return [];
-
-  const goals = (context.rootObservation?.probeRouteRequirements?.candidates || []).slice(0, 4);
-  if (!goals.length) return [];
-  let rocketId = initial.target?.rocketId ?? null;
-  if (initial.family === "launch") {
-    const rootIds = new Set(publicRocketList(context.rootObservation).map((rocket) => String(rocket.id)));
-    const launched = publicRocketList(context.checkpoints?.[0]?.observation)
-      .find((rocket) => rocket?.surface === "solar-board" && !rootIds.has(String(rocket.id)));
-    rocketId = launched?.id ?? null;
-  }
-  if (rocketId == null) return [];
-
-  const visited = new Set([
-    rocketPosition(context.rootObservation, rocketId),
-    ...(context.checkpoints || []).map((checkpoint) => rocketPosition(checkpoint.observation, rocketId)),
-  ].filter(Boolean));
-  const currentPosition = rocketPosition(
-    context.checkpoints?.[context.checkpoints.length - 1]?.observation,
-    rocketId,
-  );
-  const completedMoveCheckpoints = (context.checkpoints || [])
-    .filter((checkpoint) => checkpoint.family === "move");
-  const completedMoves = completedMoveCheckpoints.length;
-  const compatibleGoals = goals.filter((goal) => {
-    const initialMatches = initial.family === "launch"
-      ? goal.nextStep?.family === "launch"
-      : initial.family === "move"
-        ? sameProbeMove(initial, goal.nextStep, rocketId)
-        : sameProbeEndpoint(initial, goal, rocketId);
-    return initialMatches && completedMoveCheckpoints.every((checkpoint, index) => (
-      sameProbeMove({ family: "move", target: checkpoint.target }, goal.path?.[index], rocketId)
-    ));
-  });
-  const selected = new Map();
-  for (const goal of compatibleGoals) {
-    const nextMove = goal.path?.[completedMoves] || null;
-    for (const successor of context.legalSuccessors || []) {
-      if (nextMove) {
-        if (!sameProbeMove(successor, nextMove, rocketId) || !currentPosition) continue;
-        const [x, y] = currentPosition.split(",").map(Number);
-        const nextPosition = `${x + Number(successor.target?.deltaX || 0)},${y + Number(successor.target?.deltaY || 0)}`;
-        if (visited.has(nextPosition)) continue;
-      } else if (!sameProbeEndpoint(successor, goal, rocketId)) {
-        continue;
-      }
-      selected.set(successor.actionId, successor);
-    }
-  }
-  return [...selected.values()];
-}
-
-function selectInitialSetupContinuation(context) {
-  if ((context.checkpoints || []).length >= 5) return [];
-  const actorId = context.initialAction?.actorId
-    || context.initialAction?.actorPlayerId
-    || null;
-  const latest = context.checkpoints?.[context.checkpoints.length - 1]?.observation
-    || context.rootObservation;
-  const setup = latest?.publicState?.resident?.initialSetup;
-  if (!setup?.active || setup.currentPlayerId !== actorId || !setup.offer) return [];
-  const successors = context.legalSuccessors || [];
-  const start = successors.find((action) => action.target?.kind === "start_initial_setup");
-  if (start) return [start];
-  if (!setup.offer.selectedIndustryId) {
-    const industry = successors.find((action) => (
-      action.target?.kind === "select_initial_card"
-      && action.target?.selectionKind === "industry"
-    ));
-    if (industry) return [industry];
-  }
-  const selectedInitialIds = new Set(setup.offer.selectedInitialIds || []);
-  if (selectedInitialIds.size < 2) {
-    const initial = successors.find((action) => (
-      action.target?.kind === "select_initial_card"
-      && action.target?.selectionKind === "initial"
-      && !selectedInitialIds.has(action.target?.cardId)
-    ));
-    if (initial) return [initial];
-  }
-  const confirm = successors.find((action) => action.target?.kind === "confirm_initial_setup");
-  return confirm ? [confirm] : [];
-}
-
 function policyOutcomeActions(actions, observation) {
-  const goals = observation?.probeRouteRequirements?.candidates || [];
-  const needs = {
-    credits: goals.some((goal) => Number(goal?.gap?.credits || 0) > 0),
-    energy: goals.some((goal) => Number(goal?.gap?.energy || 0) > 0),
-  };
-  const handById = new Map((observation?.selfState?.hand || [])
-    .map((card) => [String(card?.id), card]));
-  function cardSupportsProbe(action) {
-    const card = handById.get(String(action.target?.cardInstanceId));
-    const effects = cardEffects.buildPlayEffects(card || action.summary);
-    function relevant(value) {
-      if (!value || typeof value !== "object") return false;
-      if (Array.isArray(value)) return value.some(relevant);
-      if (PROBE_CARD_EFFECT_TYPES.has(value.type)) return true;
-      if (value.type === cardEffects.REWARD_TYPES.GAIN_RESOURCES) {
-        const gain = value.options?.gain || {};
-        if (Number(gain.credits || 0) > 0 || Number(gain.energy || 0) > 0) return true;
-      }
-      return Object.entries(value).some(([key, child]) => (
-        !["condition", "event"].includes(key) && relevant(child)
-      ));
-    }
-    return relevant(effects);
-  }
-  return (actions || []).filter((action) => {
-    if (
-      action.decisionType === "conditional_choice"
-      || action.phase === "conditional"
-      || PROBE_ROUTE_FAMILIES.has(action.family)
-      || PROBE_POLICY_CONTROL_FAMILIES.has(action.family)
-    ) return true;
-    if (action.family === "quick_trade") {
-      const gain = action.payload?.gain || {};
-      return (needs.credits && Number(gain.credits || 0) > 0)
-        || (needs.energy && Number(gain.energy || 0) > 0);
-    }
-    if (action.family === "play_card") return cardSupportsProbe(action);
-    return PROBE_POLICY_ENABLER_FAMILIES.has(action.family);
-  });
+  return actions || [];
 }
 
 function initialSetupOutcomeActions(actions, observation) {
@@ -301,7 +130,7 @@ function completePolicyOutcomeSet(actions, evaluated, rootObservation) {
       actionId: action.actionId,
       status: "unresolved",
       confidence: "none",
-      code: "PROBE_POLICY_SCOPE_EXCLUDED",
+      code: "STRATEGIC_GOAL_NOT_EVALUATED",
       rootObservation,
       leaves: [],
     };
@@ -427,11 +256,10 @@ function createSimulationEnv() {
     ));
     return composition.counterfactualPort.evaluate(descriptors, {
       viewer: { playerId: legal[0]?.actorPlayerId || null, role: "player" },
-      maxDepth: options.maxDepth || 10,
+      maxDepth: options.maxDepth || 15,
       maxLeaves: options.maxLeaves || 8,
+      maxNodes: options.maxNodes || 128,
       confidence: "low",
-      continueAfterSettled: options.continueAfterSettled
-        || (options.continueProbeRoute === false ? undefined : selectProbeRouteContinuations),
     });
   }
 
@@ -785,12 +613,9 @@ function createSimulationEnv() {
         : policyOutcomeActions(beforeActions, beforeObservation);
       const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
         evaluateActionOutcomes.call(this, evaluatedActions, {
-          continueProbeRoute: false,
-          continueAfterSettled: initialSetupBoundary
-            ? selectInitialSetupContinuation
-            : undefined,
-          maxDepth: initialSetupBoundary ? 6 : 8,
-          maxLeaves: initialSetupBoundary ? 1 : 4,
+          maxDepth: initialSetupBoundary ? 6 : 15,
+          maxLeaves: initialSetupBoundary ? 1 : 8,
+          maxNodes: initialSetupBoundary ? 12 : 128,
         }),
         outcomeOptions,
       );

@@ -11,12 +11,16 @@ module.exports = Object.freeze({
   }),
   policyProvenance: Object.freeze({
     type: "heuristic",
-    version: "seti-heuristic-policy-v8",
+    version: "seti-heuristic-policy-v9",
     config: Object.freeze({
       difficulty: "weak_start",
-      evaluationParameters: Object.freeze({ parameterVersion: "seti-probe-route-value-v4" }),
+      evaluationParameters: Object.freeze({
+        parameterVersion: "seti-strategic-goal-search-v1",
+        searchDepth: 15,
+        techValuePerRemainingRound: 5,
+      }),
     }),
-    configChecksum: "793c7fc5",
+    configChecksum: "bb727cfd",
   }),
   expected: Object.freeze({
     playerCount: 4,

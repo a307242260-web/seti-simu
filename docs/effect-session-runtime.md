@@ -7,9 +7,9 @@ Effect Session 是 Standard Action 与浏览器/训练宿主之间唯一共享�
 Effect Session reference core 位于 `randomizer/game/effects/session-runtime.js`。生产规则恰由五个 domain 组成：`standard-action-session.js`、`cards/play-domain.js`、`science-session.js`、`probe-turn-session.js` 与 `residual-domain-session.js`。main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier 统一由 session runtime 与 journal 管理。Browser 与 Simulation 都由各自的 Rule Composition 直接持有 StateStore、Effect runtime 与唯一 active Session；宿主只提交 Standard Action/Decision 并读取只读 projection/source port。
 
 核心的禁止依赖：DOM、overlay/button、localStorage、render callback、AI
-valuation/planner、具体 Policy、领域 continuation。Production executor/domain 只能由
+valuation/planner、具体 Policy、领域 旧路径。Production executor/domain 只能由
 game Domain Pack 安装；宿主只提交 Action/Decision、读取可见投影和持久化稳定结果，不能
-注册规则 executor、注入 continuation/conditional registry 或在 runtime 外推进规则。
+注册规则 executor、注入 旧路径/conditional registry 或在 runtime 外推进规则。
 
 ## 数据契约
 
@@ -51,8 +51,8 @@ Effect 与 DecisionEffect 都是纯数据，不携带闭包、DOM、Policy 或�
 卡牌移动、弃牌角标免费移动、卡牌触发免费移动、卡牌触发选择、任务完成、图灵科技借用、
 公司免费移动、策略奖励槽、外星人痕迹、登陆目标、数据放置、海盗掠夺与回合末揭示也遵循
 同一协议：对应 game Effect domain 直接返回 DecisionEffect 与正式 choice；Browser 和
-Simulation 都不 open/take/defer DecisionEffect，也不提供私有 continuation。确认、取消和
-Policy 输入都提交 active Decision，旧 match continuation、恢复字段和 AI 直调 resolver 均
+Simulation 都不 open/take/defer DecisionEffect，也不提供私有 旧路径。确认、取消和
+Policy 输入都提交 active Decision，旧 match 旧路径、恢复字段和 AI 直调 resolver 均
 不参与生产路径。回合末揭示的排序由正式 domain spawned-effects 队列声明，不额外寄存
 Host 等待协议。
 
@@ -180,7 +180,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 - `abilities.chain` 不再作为第二套队列/插入状态机。
 - `actionHistory` / `quickActionHistory` 不再各自决定事务边界，改为消费 session journal。
-- `renderAll`、overlay callback 和 DOM click 不再调用领域 continuation 推进规则。
+- `renderAll`、overlay callback 和 DOM click 不再调用领域 旧路径 推进规则。
 - AI automation 不再按 pending priority 选择或自动 resolve 多选项。
 - simulation 未识别 pending 不再 recover/skip；显式返回 unsupported 并停止。
 

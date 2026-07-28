@@ -8,6 +8,7 @@ const productionComposition = require("../randomizer/game/production-composition
 const ROOT = path.resolve(__dirname, "..");
 const HOST_ROOTS = ["randomizer/app", "randomizer/training"];
 const EXPECTED_DOMAINS = Object.freeze([
+  "opening_session",
   "standard_action",
   "card_play",
   "science",
@@ -148,9 +149,9 @@ function assertProductionPack() {
   }
   const domains = pack.effectDomains.map((domain) => domain.id);
   if (JSON.stringify(domains) !== JSON.stringify(EXPECTED_DOMAINS)) {
-    throw new Error(`Production domain 必须恰为五个: ${JSON.stringify(domains)}`);
+    throw new Error(`Production domain 必须恰为六个: ${JSON.stringify(domains)}`);
   }
-  if (new Set(Object.values(pack.familyOwners)).size !== EXPECTED_DOMAINS.length) {
+  if (new Set(Object.values(pack.familyOwners)).size !== EXPECTED_DOMAINS.length - 1) {
     throw new Error("Production family owner 数量不是五个");
   }
   return pack;

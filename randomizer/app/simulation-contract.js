@@ -148,6 +148,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
       : Math.max(0, Math.round(Number(player?.reservedCount) || 0)),
     completedTaskCount: Object.values(player?.taskState || {}).filter(Boolean).length,
     techState: clone(player?.techState || {}),
+    income: clone(player?.income || {}),
     passed: Boolean(player?.passed),
   };
 }

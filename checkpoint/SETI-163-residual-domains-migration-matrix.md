@@ -7,7 +7,7 @@
 - 入口只接受 `seti-game-domain-handoff-v1`，domain 为 `company | alien | income | card_trigger | final_scoring`；Production Composition 安装唯一 residual domain，Browser 只投递 Standard Action/Decision，Simulation 使用同一 pack。
 - committed root 的唯一字段为 `playerState/cardState/alienGameState/finalScoringState/turnState/rocketState/solarState/planetStatsState/nebulaDataState/techGameState/match`。不得读取 DOM、Browser draft、模块闭包 session 或 app runtime callback。
 - 所有实体 id、RNG draw、effect sequence、Decision revision 写入 Effect Session journal；隐藏牌/外星人揭示后设置 irreversible barrier。Decision 对 owner、stateVersion、decisionVersion、choiceId 全部重验；stale/late/wrong-owner 无副作用拒绝。
-- 机会、followup、触发和跨域 handoff 共用 Composition Effect Session 的 direct/trigger/deferred 三优先级队列；不得再建 species opportunity queue、generic pending 或 host continuation。
+- 机会、followup、触发和跨域 handoff 共用 Composition Effect Session 的 direct/trigger/deferred 三优先级队列；不得再建 species opportunity queue、generic pending 或 host 旧路径。
 - 有限集合机械来源：
   - 公司以开始页和 `app/constants.js::INDUSTRY_CARD_FILES` 的交集为准，恰为 11 个正式标签：层云核心、芬威克研究中心、赫利昂联合体、寰宇动力、任务中继站、哨兵探测网络、深空探测、图灵系统、未来跨度研究所、异星实验室、宇宙战略集团。重写后的 `industry/catalog.js` 必须与该集合严格相等，机械导出 10 个非空 `activeAbilityId` 和 11 个 `passiveId`，不接受额外 label。
   - `aliens/catalog.js` 的 8 个物种；`income-runtime.js` 的 7 种收入 actionType 归并为 4 个事务族；`card-trigger-runtime.js` 的事件/任务/奖励/followup 归并为 4 个 owner 族；`final_detail.md` 的 a/b/c/d 八变体与 `end-game-scoring.js` 的正式公式归并为 4 个终局族。
@@ -44,7 +44,7 @@
 | 23 | PASS 收入 | income / player income ledger | P,C,N,T,Q；多次 draw journal | D0；资源+N张牌原子，任一 draw 失败 fail-closed | turn-end `applyPassTurnEndIncome` 删除 | 0/N handSize、最终轮不生成 |
 | 24 | type1 事件触发 | card_trigger / card task-state+effects | P,C,A,R,S,N,Q | D* 多 match 选 reward；event key 去重 | app trigger picker/matcher 删除 | 每 event type、0/1/N match |
 | 25 | 任务结算（普通/虫/阿米巴/符文） | card_trigger / task-state+species primitives | P,C,A,Q | D* confirm/skip/reward；consume+discard+count 同 CAS | app task completion picker 删除 | 四任务族、blocked/busy、重复 confirm |
-| 26 | card event bonus/followup | card_trigger / formal card effect nodes | P,C,A,R,S,N,Q | D* move/trace/reward；direct>trigger>deferred | app bonus/continuation callback 删除 | publicity move、alien trace、transport |
+| 26 | card event bonus/followup | card_trigger / formal card effect nodes | P,C,A,R,S,N,Q | D* move/trace/reward；direct>trigger>deferred | app bonus/旧路径 callback 删除 | publicity move、alien trace、transport |
 | 27 | turn_end/round_transition cleanup | card_trigger+company | P,C,T,Q | D0；owner 切换前 cleanup，跨轮后 reset | app turn-end cleanup branches 删除；所有旧标签 round-start 分支零引用 | 普通换人/跨轮/最终轮顺序；正式公司不产生额外兼容事件 |
 | 28 | 门槛标记 `choose_final_scoring` | final_scoring / `finalScoring.syncPendingMarks/markTile` | P,F,Q；mark id 由 committed sequence | D* a/b/c/d；threshold/slot/owner stale 重验 | final UI mark mutation/Simulation provider 删除 | 25/50/70、多 pending、slot1/2/3 |
 | 29 | 正式终局 a/b/c/d 八变体 | final_scoring / `endGameScoring.computePlayerTileScore` | P,C,A,F,R,S,N,Tech,Q | D0；只读最终 committed snapshot | Browser fallback breakdown 删除 | 每变体边界值与多人排名 |

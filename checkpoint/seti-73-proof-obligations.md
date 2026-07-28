@@ -11,4 +11,4 @@
 | ViewState revision reconcile | projection 或 decision version 变化时草稿与最新 choiceIds 求交；decision identity 变化则清空 | 旧科技 choice 在新 decision 自动提交 | `ViewStateStore.reconcileProjection` | same-decision/new-version intersection + new-decision clear | 缺 projection/decision 时清空 decision draft |
 | 浏览器装配 | 传统 script 顺序产生完整 `SetiBrowserHost` facade，且不读取 DOM/localStorage | Node 合约全绿但页面缺 global/加载顺序错 | `index.html` + `app/dependencies.js` | dependency test + 真实 Chrome smoke | 缺任一 reference module 时 dependencies fail-fast |
 
-本阶段不接管生产 renderer，不修改旧 `pendingState`、DOM handler、AI resolver、localStorage 或 app continuation；Chrome smoke 只证明 reference core 的传统脚本装配与公开 facade。
+本阶段不接管生产 renderer，不修改旧 `pendingState`、DOM handler、AI resolver、localStorage 或 app 旧路径；Chrome smoke 只证明 reference core 的传统脚本装配与公开 facade。

@@ -56,9 +56,9 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - promotion_decision: candidate
 - target_agent: 领航（`13e5c469-264f-4a3c-837d-2cbc26bbba19`）及 SETI coding issue 执行编排
 - target_component: 未完成 coding run 的事件驱动续跑与中间 checkpoint 轻量化
-- target_file: 待定；候选为 issue-workflow continuation contract 与 Mocha task-completed hook，经验记录位于 `docs/mocha_experience/coding.md`
+- target_file: 待定；候选为 issue-workflow 旧路径 contract 与 Mocha task-completed hook，经验记录位于 `docs/mocha_experience/coding.md`
 - remote_skill_id: 待定
-- change: 当 run 正常结束但 issue 仍为 `in_progress`、`next_action` 非空且不存在 blocker、review、owner 决策或权限等待时，将其识别为 continuation，而不是合法停工；由任务完成事件触发下一 run，并禁止中间 continuation 重复执行 harness closeout、长评论和全历史读取。
+- change: 当 run 正常结束但 issue 仍为 `in_progress`、`next_action` 非空且不存在 blocker、review、owner 决策或权限等待时，将其识别为 旧路径，而不是合法停工；由任务完成事件触发下一 run，并禁止中间 旧路径 重复执行 harness closeout、长评论和全历史读取。
 - applied_change: 仅记录 coding experience 和本候选决策契约；当前未修改 issue-workflow、watcher、agent prompt 或 Mocha 服务。SETI-124 的本次人工续跑仅用于继续交付，不算候选机制已落地。
 - expected_effect: 大型 coding issue 可以跨有限 run 连续完成，阶段 checkpoint 仍可保护代码，但不再需要 owner 或人工 watcher发现空闲后逐次催跑；同时减少每轮重复加载上下文造成的 token 消耗。
 - evaluation_window: SETI-124 剩余全部 runs；完成后再观察 2 个预计超过单次 run 的 coding issue。
@@ -1163,7 +1163,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - success_signal: 每次阶段汇报同时包含新主链义务、旧路径残留计数和提交基线；下一组 issue 直接对应非零 residual，完成后相关计数归零。
 - rollback_condition: 不回滚双账原则；若现有文本式计数受改名影响，则升级为 AST/dataflow/capability inventory，但不得退回只看文件行数或已知字符串。
 - risk: 机械计数可能把合法同名业务字段计入旧路径；必须用 caller、owner 和数据流复核语义，不能为追求数字删除真实规则。
-- evidence_before: `f7b4c01` 冷快照仍有 22 类 continuation、约 173 处直接引用，五组 readout-root 兼容调用分别为 30/81/8/2/36，并存在中央 Host Command、Simulation Policy 旁路和旧 AI pending runtime；这些残留未被 SETI-137～139 的局部验收覆盖。
+- evidence_before: `f7b4c01` 冷快照仍有 22 类 旧路径、约 173 处直接引用，五组 readout-root 兼容调用分别为 30/81/8/2/36，并存在中央 Host Command、Simulation Policy 旁路和旧 AI pending runtime；这些残留未被 SETI-137～139 的局部验收覆盖。
 - owner_or_agent_decision: owner 明确要求记录当前判断及其与下发 SETI-139 系列时产生变化的原因，用于改善协作并提升 agent 判断能力；本次据此直接 promote 到项目长期记忆。
 - applied_at: 2026-07-23
 - verification: `rg` 复核新增长期规则、经验条目和 promotion decision 均包含提交基线、双账门禁、残留计数及三问校准法；未修改生产代码或测试。

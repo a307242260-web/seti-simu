@@ -138,6 +138,25 @@
     )).length;
   }
 
+  function ownedTechIds(publicPlayer) {
+    return Object.entries(publicPlayer?.techState?.ownedTiles || {})
+      .filter(([, owned]) => Boolean(owned))
+      .map(([tileId]) => tileId)
+      .sort();
+  }
+
+  function incomeFacts(publicPlayer) {
+    const income = publicPlayer?.income || {};
+    return {
+      credits: finiteOrNull(income.credits) ?? 0,
+      energy: finiteOrNull(income.energy) ?? 0,
+      publicity: finiteOrNull(income.publicity) ?? 0,
+      availableData: finiteOrNull(income.availableData) ?? 0,
+      handSize: finiteOrNull(income.handSize) ?? 0,
+      additionalPublicScan: finiteOrNull(income.additionalPublicScan) ?? 0,
+    };
+  }
+
   function boardOf(source) {
     return source?.publicState?.board || source?.board || {};
   }
@@ -254,6 +273,14 @@
       progress: {
         techCount: countTech(publicPlayer),
         orangeTechCount: countOrangeTech(publicPlayer),
+        ownedTechIds: ownedTechIds(publicPlayer),
+        income: incomeFacts(publicPlayer),
+        roundNumber: finiteOrNull(
+          source?.publicState?.roundNumber
+          ?? source?.turn?.roundNumber
+          ?? source?.publicState?.turn?.roundNumber,
+        ) ?? 1,
+        finalRoundNumber: 4,
         traceCount: traces.traceCount,
         alienContacts: traces.alienContacts,
         probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),

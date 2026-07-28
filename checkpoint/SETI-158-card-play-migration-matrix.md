@@ -99,7 +99,7 @@
   input intent adapter，不得保留 rule mutation。
 - `O-SIM`：`training/simulation-rule-composition.js::applySimulationCardEffect`、
   `play_card_effect` pending、`listHandCornerRewardChoices` 与
-  `simulationContinuation.resolveDecision` 卡牌分支。
+  `simulation旧路径.resolveDecision` 卡牌分支。
 - `O-PUBLIC`：`app/public-api.js::playHandCard` 及直接 `handleHandCardPlay` facade。
 
 删除证据是上述符号/分支零引用、Production Domain Pack `familyOwners.play_card=card_play`、
@@ -113,7 +113,7 @@ Browser/Policy/Simulation 三宿主只持有同一 composition input port；不�
 
 | # | effect type（可达数；代表牌） | 语义来源 / 唯一 production owner / 正式 primitive | committed state / RNG-id-sequence | Decision owner 与拒绝 | 事务 / 不可逆 / CAS | 旧入口 / 删除证据 | 正式 composition 行为证据 |
 |---:|---|---|---|---|---|---|---|
-| 1 | `alien_trace` (5; b27) | DSL `alien_trace`; 旧 `openAlienTraceRewardEffect`; `CardEffect.AlienTrace` → `aliens.placeFirstTrace` + species trace reward Effect | `S-A,S-P`; `Q0`，现有 trace/panel slot 使用 committed 结构键，不分配模块级实体序列 | `D-ALIEN`; slot/颜色重枚举，统一 stale/late/wrong-owner | `TX,IR0`; placement+species followup 同 CAS | `O-DISP` alien trace case/UI continuation，`O-SIM` | `E-DEC,E-ALL`：未揭示/已揭示、有/无合法 slot |
+| 1 | `alien_trace` (5; b27) | DSL `alien_trace`; 旧 `openAlienTraceRewardEffect`; `CardEffect.AlienTrace` → `aliens.placeFirstTrace` + species trace reward Effect | `S-A,S-P`; `Q0`，现有 trace/panel slot 使用 committed 结构键，不分配模块级实体序列 | `D-ALIEN`; slot/颜色重枚举，统一 stale/late/wrong-owner | `TX,IR0`; placement+species followup 同 CAS | `O-DISP` alien trace case/UI 旧路径，`O-SIM` | `E-DEC,E-ALL`：未揭示/已揭示、有/无合法 slot |
 | 2 | `card_any_sector_scan` (2; b9) | DSL `any_sector_scan`; 旧 `openCardAnySectorScanEffect`; `CardEffect.AnySectorScan` → scan target enumeration + `abilities.scanNebula` | `S-N,S-D,S-P`; `Q-N,Q-D` | `D-SCAN`; 0..7 sector/nebula 完整重枚举 | `TX,IR0`；信号事件先记，扇区结算只在整组尾部 | `O-DISP` ANY_SECTOR_SCAN + rewards picker，`O-SIM` | `E-DEC,E-RNG,E-ALL` |
 | 3 | `card_choose_hand_corner_reward` (1; dlc2) | DSL hand corner; 旧 `executeChooseHandCornerRewardEffect`; `CardEffect.HandCornerReward` → deck corner parser + reward/move child Effect | `S-C,S-P,S-R`; `Q0/Q-R` | `D-CARD`，若角标为移动再 `D-MOVE` | `TX,IR0`; 不弃所选牌，只重复角标语义 | `O-DISP` CHOOSE_HAND... + Simulation 特制 pending/resolver | `E-DEC,E-ALL`，资源/数据/移动非等价角标 |
 | 4 | `card_conditional_reward` (3; b52) | DSL controlled condition; 旧 `executeConditionalRewardEffect`; `CardEffect.ConditionalReward` → `cardEffects.taskConditionMet/runtime condition` + child Effects | condition 涉及 `S-P,S-C,S-N,S-R,S-L,S-A`; child 决定 Q | `D0`，child 自己声明 Decision | `TX,IR0`; 条件 false 是显式 skipped event，不静默丢 effect | `O-DISP` CONDITIONAL_REWARD + rewards executor | `E-AUTO,E-ALL` 覆盖 true/false 与每种 condition |

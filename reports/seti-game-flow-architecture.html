@@ -266,11 +266,11 @@
     <section id="overview">
       <div class="section-head">
         <div class="section-index">01</div>
-        <div><h2>一句话现状</h2><p>SETI 已经有完整的「建局 → 行动 → 条件选择 → 回合收尾 → 跨轮 → 终局」主链，风险不在缺少步骤，而在同一条链上同时存在 effect queue、52 项 pending/runtime 字段、continuation 回调和手工刷新四套衔接语言。</p></div>
+        <div><h2>一句话现状</h2><p>SETI 已经有完整的「建局 → 行动 → 条件选择 → 回合收尾 → 跨轮 → 终局」主链，风险不在缺少步骤，而在同一条链上同时存在 effect queue、52 项 pending/runtime 字段、旧路径 回调和手工刷新四套衔接语言。</p></div>
       </div>
       <div class="summary-grid">
         <div class="summary-item"><b>9</b><span>可辨认的一级流程阶段</span><strong>从页面启动到终局结算</strong></div>
-        <div class="summary-item"><b>52</b><span><code>createPendingState()</code> 字段</span><strong>选择、队列、锁与 continuation 混在同一容器</strong></div>
+        <div class="summary-item"><b>52</b><span><code>createPendingState()</code> 字段</span><strong>选择、队列、锁与 旧路径 混在同一容器</strong></div>
         <div class="summary-item"><b>10,984</b><span><code>randomizer/app.js</code> 当前行数</span><strong>composition root 仍承担大量跨流程接线</strong></div>
         <div class="summary-item"><b>1</b><span>共享权威游戏状态主干</span><strong>浏览器、AI 与 headless 没有各自复制一套规则状态</strong></div>
       </div>
@@ -331,9 +331,9 @@
           <tr data-level="strong"><td>轮次与玩家推进</td><td><code>turn-flow.js</code></td><td>当前玩家、PASS 集合、行动周期、跨轮和最终轮判定集中管理。</td><td>新轮业务奖励仍由 app/turn-end 侧显式追加，controller 只负责骨架。</td><td><span class="badge strong">较成熟</span></td></tr>
           <tr data-level="medium"><td>行动入口</td><td><code>action-runtime.js</code><br>各 domain runtime</td><td>统一 action port 已开始落地；UI、AI 和 headless 都能执行顶层行动。</td><td>仍存在按钮直接调用领域函数、旧入口与标准 Action 并存的过渡态。</td><td><span class="badge medium">可用但耦合</span></td></tr>
           <tr data-level="medium"><td>效果链</td><td><code>effect-flow.js</code><br><code>app.js</code></td><td>顺序执行、owner、历史来源、自动奖励、延迟扇区结算已有共同载体。</td><td><code>finishActionEffectFlow()</code> 仍承载大量领域收尾分支，是主要汇流点。</td><td><span class="badge medium">可用但耦合</span></td></tr>
-          <tr data-level="weak"><td>条件选择 / pending</td><td><code>runtime.js</code><br>多个 flow/runtime</td><td>覆盖卡牌、移动、扫描、痕迹、科技、外星人与公司等复杂选择。</td><td>52 个字段同时表达队列、锁、owner、选择与 continuation；完成协议依领域而异。</td><td><span class="badge weak">明显分散</span></td></tr>
+          <tr data-level="weak"><td>条件选择 / pending</td><td><code>runtime.js</code><br>多个 flow/runtime</td><td>覆盖卡牌、移动、扫描、痕迹、科技、外星人与公司等复杂选择。</td><td>52 个字段同时表达队列、锁、owner、选择与 旧路径；完成协议依领域而异。</td><td><span class="badge weak">明显分散</span></td></tr>
           <tr data-level="medium"><td>提交、撤销与日志</td><td><code>game/history/**</code><br>action log</td><td>主行动/快速行动分 session，支持事务撤销、不可撤销 barrier 与恢复快照。</td><td>history、effect、pending、日志草稿四者的稳定边界依靠编排约定维持。</td><td><span class="badge medium">可用但耦合</span></td></tr>
-          <tr data-level="medium"><td>PASS 与回合结束</td><td><code>turn-end-flow.js</code></td><td>PASS 必做效果、手牌上限、旋转、收入、外星人揭示和下一玩家已集中。</td><td>外星揭示会打开多种子流程，需专门 <code>turnEndAfterRevealContinuation</code> 恢复收尾。</td><td><span class="badge medium">可用但耦合</span></td></tr>
+          <tr data-level="medium"><td>PASS 与回合结束</td><td><code>turn-end-flow.js</code></td><td>PASS 必做效果、手牌上限、旋转、收入、外星人揭示和下一玩家已集中。</td><td>外星揭示会打开多种子流程，需专门 <code>turnEndAfterReveal旧路径</code> 恢复收尾。</td><td><span class="badge medium">可用但耦合</span></td></tr>
           <tr data-level="strong"><td>终局与统计</td><td><code>final-scoring.js</code><br><code>end-game-scoring.js</code></td><td>最终轮结束判定、终局板块、卡牌与外星人计分均有稳定入口和统计 UI。</td><td>主要风险不是流程缺失，而是得分来源持续扩展时需保持口径同步。</td><td><span class="badge strong">较成熟</span></td></tr>
         </tbody>
       </table>
@@ -357,8 +357,8 @@
         <div><h2>当前最影响演进的四个问题</h2><p>按对整体流程衔接的影响排序；不是本轮直接重构清单。</p></div>
       </div>
       <div class="risk-stack">
-        <div class="risk-row"><div class="risk-rank">01</div><div class="risk-title">pending 不是单一状态机</div><div class="risk-body">52 个字段中混有互斥选择、并行队列、状态锁、序号和 continuation。调用方通过「哪些字段非空」推断当前流程位置。</div><div class="risk-impact"><b>影响：</b>新增规则容易漏 UI、AI、headless 或恢复清理。</div></div>
-        <div class="risk-row"><div class="risk-rank">02</div><div class="risk-title">完成协议不统一</div><div class="risk-body">有的子流程调用 <code>completeCurrentActionEffect</code>，有的调用领域 continuation，有的清字段后再显式刷新/调度。</div><div class="risk-impact"><b>影响：</b>「选完但没继续」「继续两次」是典型跨模块风险。</div></div>
+        <div class="risk-row"><div class="risk-rank">01</div><div class="risk-title">pending 不是单一状态机</div><div class="risk-body">52 个字段中混有互斥选择、并行队列、状态锁、序号和 旧路径。调用方通过「哪些字段非空」推断当前流程位置。</div><div class="risk-impact"><b>影响：</b>新增规则容易漏 UI、AI、headless 或恢复清理。</div></div>
+        <div class="risk-row"><div class="risk-rank">02</div><div class="risk-title">完成协议不统一</div><div class="risk-body">有的子流程调用 <code>completeCurrentActionEffect</code>，有的调用领域 旧路径，有的清字段后再显式刷新/调度。</div><div class="risk-impact"><b>影响：</b>「选完但没继续」「继续两次」是典型跨模块风险。</div></div>
         <div class="risk-row"><div class="risk-rank">03</div><div class="risk-title">app.js 仍是总接线板</div><div class="risk-body">模块已大量拆出，但 composition root 仍持有权威状态、owner 解析、效果完成、恢复、刷新和公共 API 装配。</div><div class="risk-impact"><b>影响：</b>局部模块边界清晰，跨流程边界仍难单独测试。</div></div>
         <div class="risk-row"><div class="risk-rank">04</div><div class="risk-title">渲染是命令式副作用</div><div class="risk-body">刷新 helpers 减少了重复，但流程完成后仍需记住要刷新哪些面板、按钮、overlay 和 AI step。</div><div class="risk-impact"><b>影响：</b>规则正确时仍可能出现界面或自动化停滞。</div></div>
       </div>
@@ -398,7 +398,7 @@
       <div class="evidence">
         <a href="../randomizer/app.js"><b>randomizer/app.js</b><span>composition root、effect 完成、恢复、公共 API 与跨流程编排</span></a>
         <a href="../randomizer/app/turn-flow.js"><b>randomizer/app/turn-flow.js</b><span>轮次、当前玩家、PASS 集合与跨轮推进</span></a>
-        <a href="../randomizer/app/turn-end-flow.js"><b>randomizer/app/turn-end-flow.js</b><span>PASS、外星揭示、回合结束与 continuation</span></a>
+        <a href="../randomizer/app/turn-end-flow.js"><b>randomizer/app/turn-end-flow.js</b><span>PASS、外星揭示、回合结束与 旧路径</span></a>
         <a href="../randomizer/app/runtime.js"><b>randomizer/app/runtime.js</b><span>52 项 pending/runtime 字段的定义</span></a>
         <a href="../randomizer/app/effect-flow.js"><b>randomizer/app/effect-flow.js</b><span>效果链、history step、owner 与自动推进</span></a>
         <a href="../randomizer/app/refresh.js"><b>randomizer/app/refresh.js</b><span>板面、玩家面板与行动状态聚合刷新</span></a>

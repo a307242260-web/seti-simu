@@ -27,7 +27,7 @@
     "opponenthand", "opponenthands", "opponentreservedcards", "deckorder", "drawpile",
     "futuredraws", "futurerng", "rngstate", "unrevealedcards", "recoverysnapshot",
     "heuristicscore", "policyscore", "candidatescore", "actiongraph", "plannershadow",
-    "battleanalytics", "dom", "document", "window", "resolver", "executor", "continuation",
+    "battleanalytics", "dom", "document", "window", "resolver", "executor",
     "callback", "pendingmutablereference",
   ]));
 

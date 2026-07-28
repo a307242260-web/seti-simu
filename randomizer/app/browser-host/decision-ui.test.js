@@ -345,8 +345,8 @@ function projection(choices, overrides = {}) {
   ]);
 })();
 
-(function testRequiredDecisionCannotInventCancelAndLegacyContinuationsStayUnreachable() {
-  const calls = { takeTech: 0, reward: 0, continuation: 0 };
+(function testRequiredDecisionCannotInventCancelAndLegacyRuleCallsStayUnreachable() {
+  const calls = { takeTech: 0, reward: 0, legacyRule: 0 };
   let authorityVersion = 5;
   const viewStore = viewStateApi.createViewStateStore();
   const controller = decisionUiApi.createDecisionUiController({
@@ -370,7 +370,7 @@ function projection(choices, overrides = {}) {
   inputState = { projection: current, viewState: viewStore.getSnapshot() };
   authorityVersion = 7;
   assert.equal(controller.dispatchUiIntent({ type: "confirm" }, inputState).code, "EFFECT_DECISION_STALE");
-  assert.deepEqual(calls, { takeTech: 0, reward: 0, continuation: 0 });
+  assert.deepEqual(calls, { takeTech: 0, reward: 0, legacyRule: 0 });
 
 })();
 

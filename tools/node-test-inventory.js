@@ -32,7 +32,7 @@ module.exports = Object.freeze({
 
     entry("randomizer/app/simulation-host-contract.test.js", "architecture/simulation-host", "Simulation reset/observe/legalActions/step/reward/terminal/dispose 公共契约", "schema、stale、越权、篡改、terminal/dispose 后调用产生提交"),
     entry("randomizer/app/simulation-decision-owner.test.js", "architecture/simulation-host", "Simulation Decision owner 与合法集一致", "非 owner 观察或提交隐藏 choice"),
-    entry("randomizer/app/simulation-effect-session-worker-recovery.test.js", "architecture/simulation-host", "worker 恢复 active Session 与 journal", "恢复只还原 committed state 而丢失 continuation"),
+    entry("randomizer/app/simulation-effect-session-worker-recovery.test.js", "architecture/simulation-host", "worker 恢复 active Session 与 journal", "恢复只还原 committed state 而丢失 active Decision 链"),
     entry("randomizer/app/simulation-no-browser-globals.test.js", "architecture/simulation-host", "rules-only Simulation 不依赖 DOM/Window", "训练入口加载浏览器全局或 app composition"),
     entry("randomizer/app/simulation-state-checkpoint.test.js", "architecture/simulation-host", "checkpoint 当前 schema round-trip 保持 action identity", "未知 schema 或非零版本恢复后 legal set 漂移"),
     entry("randomizer/app/simulation-counterfactual-outcome.test.js", "architecture/policy-host", "每个 legal action 从同根隔离 fork 经标准链生成 outcome", "枚举顺序、失败 fork 或 RNG 消耗污染 canonical root"),
@@ -43,7 +43,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/machine-player-host.test.js", "architecture/policy-host", "Machine Player Host 独占代次、取消和合法性门禁", "旧 generation 响应推进当前回合"),
     entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位通过 PolicyInputAdapter 装配", "浏览器 AI 绕过公共 input port 直接执行规则"),
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
-    entry("randomizer/game/ai/probe-route-evaluator.test.js", "policy/heuristic-policy", "探测器路线只把标准叶真实净收益归给合法下一步", "PASS、无关动作、多探测器或重复终点继承路线价值"),
+    entry("randomizer/game/ai/strategic-goal-evaluator.test.js", "policy/heuristic-policy", "战略目标只读取标准叶已兑现的分数、科技和收入变化", "资源库存或未兑现的未来路线冒充目标收益"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
 
     entry("randomizer/game/actions/standard-action.test.js", "rules/actions", "Standard Action registry 的 identity、phase、validate/execute 协议", "未知、stale、越权 descriptor 到达 handler"),

@@ -8,7 +8,6 @@
   "use strict";
 
   const EFFECT_TYPE = "standard_action_session_execute";
-  const CONTINUE_EFFECT_TYPE = "standard_action_session_continue";
   const DECISION_EFFECT_TYPE = "standard_action_session_decision";
 
   function clone(value) {
@@ -19,8 +18,6 @@
     const runtime = options.runtime;
     const executeRegisteredAction = options.executeRegisteredAction;
     const actionFamilies = Object.freeze([...(options.actionFamilies || [])]);
-    const continuation = options.continuation || null;
-    const commitWorkingState = options.commitWorkingState;
     if (typeof runtime?.registerExecutor !== "function") {
       throw new TypeError("standard action domain 缺少 composition Effect runtime");
     }
@@ -35,16 +32,12 @@
       const result = executeRegisteredAction(canonicalState, effect.payload.action);
       if (!result?.ok) return result;
       const openedDecisionEffect = result.decisionEffect || null;
-      const spawnedEffects = [
-        ...(openedDecisionEffect ? [{ priority: "direct", effect: openedDecisionEffect }] : []),
-        ...(!openedDecisionEffect && continuation
-          ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
-          : []),
-      ];
       return {
         ok: true,
         nextState: result.nextState,
-        spawnedEffects,
+        spawnedEffects: openedDecisionEffect
+          ? [{ priority: "direct", effect: openedDecisionEffect }]
+          : [],
         events: clone(result.events || []),
         history: clone(result.journalHistory || result.history || []),
         log: clone(result.log ?? (result.message ? { type: "standardAction", message: result.message } : null)),
@@ -52,126 +45,37 @@
       };
     });
 
-    if (continuation) {
-      if (typeof continuation.inspect !== "function"
-        || typeof continuation.executeDeterministic !== "function"
-        || typeof commitWorkingState !== "function") {
-        throw new TypeError("standard action continuation 缺少 inspect/executeDeterministic/commitWorkingState");
-      }
-
-      runtime.registerExecutor(CONTINUE_EFFECT_TYPE, (canonicalState, _effect, compositionWorkingRoot) => {
-        if (!compositionWorkingRoot) {
-          return {
-            ok: false,
-            code: "STANDARD_ACTION_WORKING_ROOT_MISSING",
-            message: "Standard Action continuation 缺少 Composition working root",
-          };
-        }
-        const boundary = continuation.inspect(compositionWorkingRoot);
-        if (boundary?.ok === false) return boundary.error || boundary;
-        const choices = (boundary?.choices || boundary?.candidates || [])
-          .filter((choice) => choice?.available !== false);
-        if (boundary?.decisionType === "conditional_choice" && choices.length) {
-          return {
-            ok: true,
-            nextState: structuredClone(canonicalState),
-            spawnedEffects: [{
-              priority: "direct",
-              effect: {
-                type: DECISION_EFFECT_TYPE,
-                kind: "decision",
-                ownerId: boundary.ownerId || boundary.actorPlayer?.id || null,
-                decisionKind: boundary.family || choices[0]?.family || "conditional_choice",
-                payload: {
-                  choices: clone(choices),
-                  ...(boundary.decisionContext
-                    ? { decisionContext: clone(boundary.decisionContext) }
-                    : {}),
-                  ...(boundary.cardSelection ? { cardSelection: clone(boundary.cardSelection) } : {}),
-                },
-              },
-            }],
-          };
-        }
-        if (boundary?.boundary === "turn_action" || boundary?.boundary === "terminal") {
-          return { ok: true, nextState: structuredClone(canonicalState) };
-        }
-        const result = continuation.executeDeterministic(compositionWorkingRoot, boundary);
-        if (!result || result.ok === false) return result || {
-          ok: false,
-          code: "STANDARD_ACTION_CONTINUATION_STALLED",
-          message: "Standard Action continuation 未返回推进结果",
-        };
+    runtime.registerExecutor(DECISION_EFFECT_TYPE, {
+      getLegalChoices(_workingRoot, effect) {
+        return clone(effect.payload?.choices || []);
+      },
+      resolveDecision(canonicalState, effect, choice, compositionWorkingContext) {
+        const result = executeRegisteredAction(canonicalState, choice, {
+          standardActionAuthority: {
+            actorId: effect.ownerId,
+            stateVersion: choice.stateVersion,
+            decisionVersion: choice.decisionVersion,
+          },
+          standardActionDecisionContext: clone(effect.payload?.decisionContext || null),
+        }, compositionWorkingContext);
+        if (!result?.ok) return result;
         return {
           ok: true,
-          nextState: commitWorkingState(canonicalState, result),
-          spawnedEffects: [
-            ...(result.decisionEffect
-              ? [{ priority: "direct", effect: clone(result.decisionEffect) }]
-              : []),
-            ...(!result.decisionEffect && result.progressed !== false
-              ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
-              : []),
-          ],
-          events: clone(result.events || []),
+          nextState: result.nextState,
+          spawnedEffects: result.decisionEffect
+            ? [{ priority: "direct", effect: clone(result.decisionEffect) }]
+            : [],
+          events: clone(result.events || [{
+            type: "standard_action_decision_executed",
+            family: choice?.family || null,
+            actionId: choice?.actionId || null,
+          }]),
+          history: clone(result.journalHistory || result.history || []),
+          log: clone(result.log || null),
+          irreversible: clone(result.irreversible || null),
         };
-      });
-
-      runtime.registerExecutor(DECISION_EFFECT_TYPE, {
-        getLegalChoices(_workingRoot, effect) {
-          return clone(effect.payload?.choices || []);
-        },
-        resolveDecision(canonicalState, _effect, choice, compositionWorkingRoot) {
-          if (typeof continuation.resolveDecision === "function") {
-            if (!compositionWorkingRoot) {
-              return {
-                ok: false,
-                code: "STANDARD_ACTION_WORKING_ROOT_MISSING",
-                message: "Standard Action Decision resolve 缺少 Composition working root",
-              };
-            }
-            const resolved = continuation.resolveDecision(compositionWorkingRoot, clone(choice), {
-              effect: clone(_effect),
-              decisionContext: clone(_effect.payload?.decisionContext || null),
-            });
-            if (!resolved?.ok) return resolved || {
-              ok: false,
-              code: "STANDARD_ACTION_DECISION_RESOLVE_FAILED",
-              message: "Standard Action Decision resolve 未返回成功结果",
-            };
-            return {
-              ok: true,
-              nextState: commitWorkingState(canonicalState, resolved),
-              spawnedEffects: [
-                ...(resolved.decisionEffect
-                  ? [{ priority: "direct", effect: clone(resolved.decisionEffect) }]
-                  : []),
-                ...(!resolved.decisionEffect
-                  ? [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }]
-                  : []),
-              ],
-              events: clone(resolved.events || [{
-                type: "standard_action_decision_executed",
-                family: choice?.family || null,
-                actionId: choice?.actionId || null,
-              }]),
-            };
-          }
-          const result = executeRegisteredAction(canonicalState, choice);
-          if (!result?.ok) return result;
-          return {
-            ok: true,
-            nextState: result.nextState,
-            spawnedEffects: [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
-            events: [{
-              type: "standard_action_decision_executed",
-              family: choice?.family || null,
-              actionId: choice?.actionId || null,
-            }],
-          };
-        },
-      });
-    }
+      },
+    });
 
     function createEffectGroup(_workingRoot, action) {
       if (!actionFamilies.includes(action?.family)) {
@@ -192,26 +96,11 @@
       };
     }
 
-    function createDrainEffectGroup() {
-      if (!continuation) {
-        return {
-          ok: false,
-          code: "STANDARD_ACTION_CONTINUATION_UNAVAILABLE",
-          message: "Standard Action domain 未配置 deterministic continuation",
-        };
-      }
-      return {
-        kind: "internal",
-        effects: [{ type: CONTINUE_EFFECT_TYPE }],
-      };
-    }
-
-    return Object.freeze({ actionFamilies, createEffectGroup, createDrainEffectGroup });
+    return Object.freeze({ actionFamilies, createEffectGroup });
   }
 
   return Object.freeze({
     EFFECT_TYPE,
-    CONTINUE_EFFECT_TYPE,
     DECISION_EFFECT_TYPE,
     createStandardActionDomain,
   });

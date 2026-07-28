@@ -71,7 +71,7 @@ DOM handler 只解析稳定 identity、指针/键盘信息与当前 projection�
 
 手牌点击只把 `hand-card` instance identity 写入 ViewState focus 并显示高亮；顶部“打牌”按钮以该 identity 从当前 `play_card` legal set 选择唯一 Standard Action。未选牌、所选牌不可支付或 identity 已失效时按钮禁用，UI 不自行构造打牌行动。个人板数据图层只渲染带完整 `percentX/percentY` 的已放置 token，可用数据池仅由资源统计展示。
 
-`policy-input-adapter.js` 为机器席位读取同一 boundary、observation 和完整 descriptor，经 Machine Player Host 验证后提交同一 Action/Decision port。它不读 DOM、overlay、renderer、picker 或领域 continuation。Policy 失败只产生结构化暂停；确定性 Effect、唯一选择、触发顺序、commit、event/log/replay 仍由 Effect Session 独占。
+`policy-input-adapter.js` 为机器席位读取同一 boundary、observation 和完整 descriptor，经 Machine Player Host 验证后提交同一 Action/Decision port。它不读 DOM、overlay、renderer、picker 或领域 旧路径。Policy 失败只产生结构化暂停；确定性 Effect、唯一选择、触发顺序、commit、event/log/replay 仍由 Effect Session 独占。
 
 ## ViewState
 

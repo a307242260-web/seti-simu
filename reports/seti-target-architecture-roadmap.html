@@ -172,9 +172,9 @@
     <table>
       <thead><tr><th>优先级</th><th>先解决什么</th><th>为什么</th><th>明确不做什么</th></tr></thead>
       <tbody>
-        <tr><td class="priority">P0</td><td>完成 Effect Session 与 StateStore 的在途迁移。</td><td>它们是 Browser、Headless、AI 和恢复共同依赖的主干；不先收口，其他层仍会各自维护 pending、continuation 和状态副本。</td><td>不新建另一套流程引擎或状态容器。</td></tr>
+        <tr><td class="priority">P0</td><td>完成 Effect Session 与 StateStore 的在途迁移。</td><td>它们是 Browser、Headless、AI 和恢复共同依赖的主干；不先收口，其他层仍会各自维护 pending、旧路径 和状态副本。</td><td>不新建另一套流程引擎或状态容器。</td></tr>
         <tr><td class="priority">P1</td><td>让 Browser Host 和两类机器玩家只通过标准端口输入输出。</td><td>当前最大风险是 UI、AI resolver 与共享规则同时拥有合法项和流程推进权。</td><td>不让 AI 点击 DOM，不让 UI 直接结算规则。</td></tr>
-        <tr><td class="priority">P2</td><td>删除旧 pending、continuation、旁路 executor 和双写 adapter。</td><td>新接口“能用”不等于迁移完成；旧路径继续存在会让后续改动再次分叉。</td><td>不无限保留兼容层，不以改名代替删除。</td></tr>
+        <tr><td class="priority">P2</td><td>删除旧 pending、旧路径、旁路 executor 和双写 adapter。</td><td>新接口“能用”不等于迁移完成；旧路径继续存在会让后续改动再次分叉。</td><td>不无限保留兼容层，不以改名代替删除。</td></tr>
         <tr><td class="later">P3</td><td>在所有权稳定后再拆超大文件、整理脚本加载和局部模块。</td><td><code>app.js</code> 与外星人 runtime 仍大，但文件大小不是当前最危险的问题。</td><td>不为降行数平移巨石，不以更换前端框架作为前提。</td></tr>
       </tbody>
     </table>
@@ -194,7 +194,7 @@
     <h2>保留与停止</h2>
     <div class="split">
       <article class="panel keep"><h3>继续保留</h3><ul><li>传统脚本加载和现有页面外观，可渐进迁移。</li><li><code>randomizer/game/**</code> 的领域模块与已有 Effects。</li><li>启发式机器玩家作为浏览器对手、teacher 和固定评测基线。</li><li>以单元测试为主；改到浏览器或训练链路时只补最小专项检查。</li></ul></article>
-      <article class="panel stop"><h3>停止继续扩张</h3><ul><li>在 <code>app.js</code> 或领域 runtime 中新增专用 pending / continuation。</li><li>Browser、Headless、AI 各维护一套动作合法性或执行流程。</li><li>为了理想分层再造新框架、extension registry 或第二套 runtime。</li><li>把训练器、worker、优化器带进浏览器玩家端。</li></ul></article>
+      <article class="panel stop"><h3>停止继续扩张</h3><ul><li>在 <code>app.js</code> 或领域 runtime 中新增专用 pending / 旧路径。</li><li>Browser、Headless、AI 各维护一套动作合法性或执行流程。</li><li>为了理想分层再造新框架、extension registry 或第二套 runtime。</li><li>把训练器、worker、优化器带进浏览器玩家端。</li></ul></article>
     </div>
   </section>
 

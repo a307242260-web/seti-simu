@@ -70,7 +70,7 @@
 | `Q0` | 无 RNG/新实体；所有 choices 按正式稳定 id/slot 顺序。 |
 | `Q-C/D/N/R` | 分别表示 card/data/nebula/rocket committed RNG 或 sequence，serialize/restore/replay 后逐字节一致。 |
 
-所有行的 mutation 先发生在同一 working root；无 Decision 的完整组或每次 Decision continuation
+所有行的 mutation 先发生在同一 working root；无 Decision 的完整组或每次 Decision 旧路径
 结束后由 Effect Session 的 `commitWorkingState` 做唯一 StateStore CAS。不得让 Browser global
 与 committed root 双写。
 
@@ -127,7 +127,7 @@
 | 9 | public card scan target | Science.PublicScan → common nebula primitive；card scanActionCode 映射 | `S-C,S-N,S-D;Q-D,Q-N` | `D-SCAN` | 目标确认后才迁牌 | Browser public queue/picker | 每个 code 的 targets |
 | 10 | public discard + delayed refill | Science.PublicScan followup；card entity migration + committed draw | `S-C;Q-C` | `D0` | `IR-C`；完整 scan chain 尾部统一 refill，slot 顺序稳定 | `registerDelayedPublicRefill/replenishDelayedPublicRefillSlots` | 多 slot、牌库耗尽、恢复 |
 | 11 | purple4 launch branch | Science.ScanPurple4；`abilities.scanAction4 -> rocket.launchProbe` | `S-R,S-P;Q-R` | `D-MOVE` launch/move | launch cost 1 energy，实体先记 sequence | Browser `scanAction4Overlay/launchRocketForScanAction4` | limit/cost/launch |
-| 12 | purple4 move branch | Science.ScanPurple4；正式 rocket move/payment | `S-R,S-P,S-C;Q-R` | `D-MOVE` rocket+direction+terrain payment | discard/payment+move 同 continuation | `scan_free_move` pending / supplemental payment | normal/asteroid/card/energy |
+| 12 | purple4 move branch | Science.ScanPurple4；正式 rocket move/payment | `S-R,S-P,S-C;Q-R` | `D-MOVE` rocket+direction+terrain payment | discard/payment+move 同 旧路径 | `scan_free_move` pending / supplemental payment | normal/asteroid/card/energy |
 | 13 | purple4 launch 的 Sentinel Earth scan | Science.ScanPurple4 child；industry `shouldScanEarthOnLaunch` + common scan | `S-R,S-N,S-D;Q-R,Q-D,Q-N` | `D-SCAN` | launch 与 scan child 同 Session | `maybeApplyIndustryLaunchScan` Browser mutation | passive on/off + settlement |
 | 14 | purple2 Mercury sector scan | Science.SectorScan；Mercury coordinate + common scan | `S-N,S-D,S-P;Q-D,Q-N` | `D-SCAN` | 独立 cost=1 publicity；不足显式 skipped/failed 按旧契约 | Browser `MERCURY_SECTOR_SCAN` | rotation/cost |
 | 15 | purple3 hand scan 选牌 | Science.HandScan；hand entities + scan code parser | `S-C;Q0` | `D-CARD` | 选择前不弃牌 | `beginHandScan/hand_scan` pending | 空手/多牌/stale |
@@ -181,7 +181,7 @@
 | 50 | blue2 bottom +1 energy | Science.DataBonus | 同 #49 | `D0` | 同 frame | 同上 | exact result |
 | 51 | blue3 bottom pick card | Science.DataBonus → Card Pick domain | `S-C,S-D;Q-C` | `D-CARD` | refill/blind 时 `IR-C` | `place_data_choose_card` pending | public/blind/stale |
 | 52 | blue4 bottom +2 publicity | Science.DataBonus | `S-P,S-D;Q0` | `D0` | 同 frame | Browser bonus switch | exact result |
-| 53 | auto-place-before-gain-data | 数据获得 source owner → Science.PlaceData optional continuation | `S-D,S-P;Q-D` | `D-DATA` + skip | 满池时先放或显式弃本次 gain；两步同 parent Session | `auto_data_place_before_gain` pending | place/skip/stale |
+| 53 | auto-place-before-gain-data | 数据获得 source owner → Science.PlaceData optional 旧路径 | `S-D,S-P;Q-D` | `D-DATA` + skip | 满池时先放或显式弃本次 gain；两步同 parent Session | `auto_data_place_before_gain` pending | place/skip/stale |
 | 54 | place_data event/history/undo | Science.PlaceData journal | `S-M,S-D` | child 决定 | bonus 完结才完成 quick action；屏障前可撤 | Browser quickActionHistory | replay parity |
 | 55 | analyze legality：computer slot6 | Science.Analyze；`data.canAnalyzeData` | `S-D,S-P;Q0` | `D0` | main-action lock | Browser provider、Simulation unavailable | ready/not ready |
 | 56 | analyze cost：1 energy / Deep Space free | Science.Analyze；`abilities.analyzeData` + industry passive | `S-P,S-D;Q0` | `D0` | 扣费并清空全部 placed tokens 同 frame | Browser options wrapper | normal/free/insufficient |

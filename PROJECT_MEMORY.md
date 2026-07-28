@@ -18,4 +18,4 @@
 - “测试全绿”“入口文件变小”“新模块已经存在”都不是旧架构清理完成的证据。若旧实现仍承载必要行为，应先迁移行为，随后删除旧字段、getter、handler、恢复路径、脚本入口、alias 和测试依赖；不存在“旧代码可保留”分类。
 - 对 owner 汇报整体完成度时，必须给出可复核的残留计数、作用域和提交基线。没有全仓计数时，只能汇报局部里程碑，不能给出整体百分比或“接近完成”的判断。
 
-证据：2026-07-23，SETI-137、138 分别完成 Browser Machine Player Host 和单一 Card Selection DecisionEffect，SETI-139 开始 Action Bar DTO 竖切片；随后从提交 `f7b4c01` 冷快照复审仍发现 22 类 continuation、约 173 处直接引用，以及 `createReadoutRoot=30`、`getRuleReadout=81`、`createReadoutActionContext=8`、`createResidentReadoutRoot=2`、`createStateSourceReadoutRoot=36`，另有中央 Host Command、Simulation Policy 旁路和旧 AI pending runtime。此前把三条竖切片的成功外推为整体迁移接近完成，属于证据层级错误。
+证据：2026-07-23，SETI-137、138 分别完成 Browser Machine Player Host 和单一 Card Selection DecisionEffect，SETI-139 开始 Action Bar DTO 竖切片；随后从提交 `f7b4c01` 冷快照复审仍发现 22 类 旧路径、约 173 处直接引用，以及 `createReadoutRoot=30`、`getRuleReadout=81`、`createReadoutActionContext=8`、`createResidentReadoutRoot=2`、`createStateSourceReadoutRoot=36`，另有中央 Host Command、Simulation Policy 旁路和旧 AI pending runtime。此前把三条竖切片的成功外推为整体迁移接近完成，属于证据层级错误。

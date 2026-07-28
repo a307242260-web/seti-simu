@@ -5,6 +5,7 @@ const standardAction = require("../game/actions/standard-action");
 const quickTrades = require("../game/actions/quick-trades");
 const cards = require("../game/cards/deck");
 const cardEffects = require("../game/cards/effects");
+const initialCards = require("../game/initial-cards");
 const players = require("../game/players");
 const solar = require("../solar-system/core");
 const { createSimulationEnv } = require("../app/simulation-env");
@@ -27,7 +28,8 @@ function finishOpening(kernel) {
   assert.equal(kernel.composition.inputPort.beginDrain().ok, true);
   const progressByPlayer = new Map();
   for (let step = 0; step < 50 && kernel.composition.inspect().phase === "awaiting_input"; step += 1) {
-    const decision = kernel.composition.inspect().session.decision;
+    const inspected = kernel.composition.inspect();
+    const decision = inspected.session.decision;
     const progress = progressByPlayer.get(decision.ownerId)
       || { industry: false, initialIds: new Set() };
     let choice = decision.choices.find((candidate) => candidate.target?.kind === "start_initial_setup")
@@ -51,7 +53,16 @@ function finishOpening(kernel) {
       ownerId: decision.ownerId,
       choice,
     });
-    assert.equal(submitted.ok, true, `opening Decision ${step} 必须可提交`);
+    assert.equal(
+      submitted.ok,
+      true,
+      `opening Decision ${step} 必须可提交: ${JSON.stringify({
+        code: submitted.code,
+        message: submitted.message,
+        failure: submitted.failure || submitted.session?.failure,
+        effectPayload: inspected.session.currentEffect.payload,
+      })}`,
+    );
   }
   assert.equal(kernel.composition.inspect().phase, "idle");
   const settled = kernel.composition.projection({
@@ -228,16 +239,13 @@ for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
   "host quick-trade history 规则 callback 必须在构造期 fail-fast");
   assert.throws(() => productionComposition.createProductionDomainPack({
     standardActionDomainOptions: {
-      continuation: {
-        inspect() {},
-        executeDeterministic() {},
-      },
+      injectedRule() {},
     },
-  }), /standardActionDomainOptions\.continuation/,
-  "host Standard Action continuation 必须在构造期 fail-fast");
+  }), /standardActionDomainOptions/,
+  "host Standard Action 规则选项必须在构造期 fail-fast");
   assert.throws(() => productionComposition.createProductionDomainPack({
     standardActionDomainOptions: { takeOpenedDecisionEffect() {} },
-  }), /standardActionDomainOptions\.takeOpenedDecisionEffect/,
+  }), /standardActionDomainOptions/,
   "host Decision side-channel 必须在构造期 fail-fast");
 }
 
@@ -271,8 +279,13 @@ assert.equal(openingDrain.ok, true, JSON.stringify(openingDrain));
     let choice = choices.find((candidate) => candidate.target?.kind === "start_initial_setup")
       || choices.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
     if (!choice && !progress.industry) {
-      choice = choices.find((candidate) => candidate.target?.selectionKind === "industry");
-      if (choice) progress.industry = true;
+      choice = choices.find((candidate) => (
+        candidate.target?.selectionKind === "industry"
+        && Number(initialCards.getIndustryEffect(candidate.target.cardId)?.incomeIncreaseCount) > 0
+      )) || choices.find((candidate) => candidate.target?.selectionKind === "industry");
+      if (choice) {
+        progress.industry = true;
+      }
     }
     if (!choice && progress.initialIds.size < 2) {
       choice = choices.find((candidate) => (
@@ -281,7 +294,10 @@ assert.equal(openingDrain.ok, true, JSON.stringify(openingDrain));
       ));
       if (choice) progress.initialIds.add(choice.target.cardId);
     }
-    assert.ok(choice, "初始选择必须提供下一条标准 action");
+    assert.ok(
+      choice,
+      `初始选择必须提供下一条标准 action: ${JSON.stringify(current)}`,
+    );
     progressByPlayer.set(actorId, progress);
     assert.equal(kernel.composition.inputPort.submitDecision({
       decisionId: current.session.decision.decisionId,
@@ -303,7 +319,15 @@ const submitted = kernel.composition.inputPort.submitDecision({
   ownerId: inspection.session.decision.ownerId,
   choice: openingAction,
 });
-assert.equal(submitted.ok, true, "生产 composition 必须正式执行已注册 Standard Action");
+assert.equal(
+  submitted.ok,
+  true,
+  `生产 composition 必须正式执行已注册 Standard Action: ${JSON.stringify({
+    code: submitted.code,
+    message: submitted.message,
+    failure: submitted.failure || submitted.session?.failure,
+  })}`,
+);
 assert.equal(
   kernel.composition.inspect().session.currentEffect.payload.decisionContext.queue.length,
   beforeDecisionQueueLength - 1,

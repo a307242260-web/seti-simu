@@ -87,7 +87,7 @@ assert.throws(() => productionKernel.installProductionKernel({
   projectionAdapter: { projectState() {} },
   hostServices: {},
   standardActionDomainOptions: {},
-}), /禁止 Host 注入 Standard Action continuation\/Decision/);
+}), /禁止 Host 注入 Standard Action Decision\/事务规则/);
 
 {
   const paritySeed = "browser-simulation-fixed-parity";

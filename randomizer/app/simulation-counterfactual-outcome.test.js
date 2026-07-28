@@ -355,7 +355,6 @@ try {
     const outcome = sandbox.evaluateActionOutcomes([orbit], {
       maxDepth: 15,
       maxLeaves: 64,
-      continueProbeRoute: false,
     })[0];
     assert.equal(outcome.status, "settled",
       "火星环绕的选牌、扫描与插收入 DecisionEffect 全链必须能在反事实分支正常结算");

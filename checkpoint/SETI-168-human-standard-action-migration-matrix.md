@@ -54,9 +54,9 @@ Standard Action 的 committed state、费用、RNG、实体 id、sequence、Deci
 | `analyze` | `#action-analyze-button` → `activateFamily` / `analyzeDataForCurrentPlayer` | Action Bar projection 当前完整 `analyze` descriptor | science domain；数据轨/费用/奖励 Effect 原子提交 | 删除 `{kind:"computer"}` selector facade | 成功与 removed descriptor |
 | `research_tech` | `#action-research-tech-button`、`.tech-tile`、蓝槽确认 → `researchTechForCurrentPlayer` / `selectResearchTechTileForCurrentFlow` | Action Bar / tech presentation 保存当前完整 descriptor；identity 由 actionId，不由 tile label | science domain；费用、tile 实体、blue slot Decision、Effect journal | 删除 `dispatchStandardIntent("research_tech", selector)`；DOM 不直调 executor | 主按钮、tile/blue-slot 代表路径；stale tile |
 | `play_card` | `#action-play-card-button`、手牌按钮、`#play-card-action-button` → hand-flow confirm | 手牌 presentation 保存当前 `play_card` descriptor；确认提交完整 descriptor（含 cardInstanceId/cost/handIndex） | card play domain；费用、卡牌实体迁移、sequence、Effect Session、不可逆边界 | 删除 cardId selector resolve 和 Browser 预放牌/预扣资源 | 两张同 label 不串牌；费用漂移 stale 零提交 |
-| `pass` | `#action-pass-button` → `activateFamily("pass")` / `turn-end-flow::passForCurrentPlayer` | Action Bar projection 当前唯一完整 `pass` descriptor | probe-turn domain；PASS、reserve continuation、journal | 删除 family dispatch 与 turn-end StandardIntent facade | DOM click + stale/wrong actor |
-| `move` | `[data-move-x/y]` → `moveRocket` | 移动箭头 presentation 保存当前完整 `move` descriptor；方向/rocket 只用于渲染 | probe-turn domain；移动、支付 continuation、费用、火箭坐标、journal | 删除按 delta/rocket `.find` 后直接 `submitQuickAction` | 同火箭四方向、切火箭 stale |
-| `quick_trade` | `[data-quick-trade]` → `activateFamily(...tradeId)` / `createQuickTradeFlow` | quick panel render 绑定当前完整 descriptor/actionId | quick-trade Production provider；资源、弃牌/抽牌 continuation、history | 删除 trade selector与 `createQuickTradeFlow` family executor | 每 trade descriptor；资源变化后旧按钮零提交 |
+| `pass` | `#action-pass-button` → `activateFamily("pass")` / `turn-end-flow::passForCurrentPlayer` | Action Bar projection 当前唯一完整 `pass` descriptor | probe-turn domain；PASS、reserve 旧路径、journal | 删除 family dispatch 与 turn-end StandardIntent facade | DOM click + stale/wrong actor |
+| `move` | `[data-move-x/y]` → `moveRocket` | 移动箭头 presentation 保存当前完整 `move` descriptor；方向/rocket 只用于渲染 | probe-turn domain；移动、支付 旧路径、费用、火箭坐标、journal | 删除按 delta/rocket `.find` 后直接 `submitQuickAction` | 同火箭四方向、切火箭 stale |
+| `quick_trade` | `[data-quick-trade]` → `activateFamily(...tradeId)` / `createQuickTradeFlow` | quick panel render 绑定当前完整 descriptor/actionId | quick-trade Production provider；资源、弃牌/抽牌 旧路径、history | 删除 trade selector与 `createQuickTradeFlow` family executor | 每 trade descriptor；资源变化后旧按钮零提交 |
 | `industry` | company action marker → `handleCompanyActionMarkerClick` / `startIndustryAbilityFlow` | 公司 presentation 保存当前完整 `industry` descriptor（companyId+abilityId） | residual company domain；mark、Effect queue、journal/CAS | 删除 `dispatchIndustry(selector)` 和 companyId 模糊 resolver | 多公司/失效 mark/wrong actor |
 | `card_corner` | 手牌角标按钮、确认按钮 → `handleHandCardCornerQuickAction` / `confirmCardCornerQuickAction` | hand presentation / pending UI 保存当前完整 descriptor（cardInstanceId+corner） | residual card-corner domain；弃牌、收益、Effect、不可逆边界 | 删除 Browser `executeStandardCardCornerAction` executor与 card selector | 同 label 不串实体；stale hand |
 | `place_data` | `.data-token-pool` → `runPlaceDataToComputer` | player-board presentation 绑定当前完整 `place_data` descriptor | residual data domain；数据 token、computer slot/Decision、journal | 删除 `{kind:"place-data"}` StandardIntent facade与 Browser open-as-execute | DOM click descriptor + 满槽失效 |
@@ -83,7 +83,7 @@ Standard Action 的 committed state、费用、RNG、实体 id、sequence、Deci
 - stale、wrong actor、removed action、descriptor 任意字段篡改均在 Browser boundary 拒绝，底层
   dispatch 次数为 0。
 - Browser 生产代码中用于这 15 family 的 family/label/partial-target resolver、字符串 target
-  registry、helper executor、预扣资源或 continuation effect 为 0。
+  registry、helper executor、预扣资源或 旧路径 effect 为 0。
 - `window.SetiRandomizer.input.dispatchAction` 复用唯一 Human adapter，不提供 family/selector API。
 - 不修改 `randomizer/game/**` provider/executor；Production Composition 的 committed state、
   Effect journal、Decision 与恢复行为保持既有契约。

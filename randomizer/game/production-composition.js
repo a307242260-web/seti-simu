@@ -78,18 +78,11 @@
       ...(options.productionRules?.conditionalActions ? ["productionRules.conditionalActions"] : []),
       ...(options.productionRules && !options.productionRules.conditionalActions ? ["productionRules"] : []),
       ...(options.hostServices?.quickTradeHistory ? ["hostServices.quickTradeHistory"] : []),
-      ...(["continuation", "takeOpenedDecisionEffect", "takeDeferredDecisionEffects"]
-        .filter((key) => options.standardActionDomainOptions?.[key] != null)
-        .map((key) => `standardActionDomainOptions.${key}`)),
-      ...(options.standardActionDomainOptions
-        && !["continuation", "takeOpenedDecisionEffect", "takeDeferredDecisionEffects"]
-          .some((key) => options.standardActionDomainOptions[key] != null)
-        ? ["standardActionDomainOptions"]
-        : []),
+      ...(options.standardActionDomainOptions ? ["standardActionDomainOptions"] : []),
     ];
     if (nestedRuleOverrides.length) {
       throw new TypeError(
-        `Production Composition 禁止 host 注入 continuation/Decision/事务规则: ${nestedRuleOverrides.join(", ")}`,
+        `Production Composition 禁止 host 注入 Decision/事务规则: ${nestedRuleOverrides.join(", ")}`,
       );
     }
   }
@@ -482,6 +475,77 @@
       return decisionEffect ? { ...cleanResult, decisionEffect } : cleanResult;
     }
 
+    function attachOpeningDecision(actionContext, result) {
+      const attached = attachNextDecision(actionContext, result);
+      if (!attached?.ok || attached.decisionEffect) return attached;
+      const decisionEffect = createOpeningDecisionEffect(actionContext);
+      return decisionEffect ? { ...attached, decisionEffect } : attached;
+    }
+
+    const OPENING_EFFECT_TYPE = "production_opening_session";
+
+    function createOpeningDecisionEffect(actionContext) {
+      const root = actionContext?.state || actionContext;
+      const setupPlayerId = root?.match?.initialSetup?.currentPlayerId || null;
+      const openingActorId = setupPlayerId || root?.turn?.currentPlayerId || null;
+      const setupActionContext = openingActorId
+        ? createDecisionActionContext(actionContext, {
+          kind: "initial_setup",
+          playerId: openingActorId,
+        })
+        : null;
+      const setupChoices = setupActionContext
+        ? INITIAL_SETUP_FAMILIES.flatMap(
+          (family) => actionRegistry.enumerate(setupActionContext, { family }),
+        )
+        : [];
+      if (setupChoices.length) {
+        return {
+          type: standardActionSession.DECISION_EFFECT_TYPE,
+          kind: "decision",
+          ownerId: setupChoices[0].actorId,
+          decisionKind: setupChoices[0].family,
+          payload: { choices: clone(setupChoices) },
+        };
+      }
+      const incomeQueue = initialSetup.createIncomeDecisionQueue(
+        root,
+      );
+      return createSessionDecisionEffect(
+        actionContext,
+        incomeQueue.length ? { kind: "initial_income", queue: incomeQueue } : null,
+      );
+    }
+
+    function createOpeningEffectDomain({ runtime }) {
+      runtime.registerExecutor(OPENING_EFFECT_TYPE, (canonicalState) => {
+        const decisionEffect = createOpeningDecisionEffect(canonicalState);
+        return {
+          ok: true,
+          nextState: clone(canonicalState),
+          spawnedEffects: decisionEffect
+            ? [{ priority: "direct", effect: decisionEffect }]
+            : [],
+        };
+      });
+      return Object.freeze({
+        actionFamilies: [],
+        createEffectGroup() {
+          return {
+            ok: false,
+            code: "OPENING_EFFECT_ACTION_UNSUPPORTED",
+            message: "Opening Effect domain 不接受玩家 Action",
+          };
+        },
+        createDrainEffectGroup() {
+          return {
+            kind: "internal",
+            effects: [{ type: OPENING_EFFECT_TYPE }],
+          };
+        },
+      });
+    }
+
     function executeQuickTrade(actionContext, action) {
       const root = actionContext?.state || actionContext;
       const beforeDecisionVersion = Number(
@@ -589,7 +653,15 @@
           if (initialSetupSource.families.includes(family)) {
             const resolved = findSourceChoice(context, family, action);
             return resolved
-              ? resolved.source.execute(context, { ...action, family })
+              ? (resolved.source === initialSetupSource
+                ? attachOpeningDecision(
+                  context,
+                  resolved.source.execute(context, { ...action, family }),
+                )
+                : attachNextDecision(
+                  context,
+                  resolved.source.execute(context, { ...action, family }),
+                ))
               : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
           }
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 执行` };
@@ -677,101 +749,18 @@
         ));
       },
     });
-    const productionContinuation = Object.freeze({
-      inspect(context) {
-        const setupChoices = INITIAL_SETUP_FAMILIES.flatMap(
-          (family) => actionRegistry.enumerate(context, { family }),
-        );
-        if (setupChoices.length) {
-          return {
-            ok: true,
-            boundary: "conditional_choice",
-            decisionType: "conditional_choice",
-            ownerId: setupChoices[0].actorId,
-            family: setupChoices[0].family,
-            choices: setupChoices,
-          };
-        }
-        const incomeQueue = initialSetup.createIncomeDecisionQueue(context?.state || context);
-        const incomeContext = incomeQueue.length
-          ? { kind: "initial_income", queue: incomeQueue }
-          : null;
-        const incomeEffect = createSessionDecisionEffect(context, incomeContext);
-        if (incomeEffect) {
-          return {
-            ok: true,
-            boundary: "conditional_choice",
-            decisionType: "conditional_choice",
-            ownerId: incomeEffect.ownerId,
-            family: incomeEffect.decisionKind,
-            choices: incomeEffect.payload.choices,
-            decisionContext: incomeEffect.payload.decisionContext,
-          };
-        }
-        const root = context?.state || context;
-        return {
-          ok: true,
-          boundary: root?.turn?.gameEnded ? "terminal" : "turn_action",
-          decisionType: "turn_action",
-          ownerId: root?.turn?.currentPlayerId || null,
-          choices: [],
-        };
-      },
-      executeDeterministic(_context, boundary) {
-        return {
-          ok: false,
-          code: "PRODUCTION_CONTINUATION_BOUNDARY_UNKNOWN",
-          message: `Production continuation 不支持 boundary: ${boundary?.boundary || "<missing>"}`,
-        };
-      },
-      resolveDecision(context, choice, decisionContext) {
-        const descriptor = choice;
-        const sessionDecisionContext = decisionContext?.decisionContext || decisionContext;
-        const decisionActionContext = sessionDecisionContext?.kind
-          ? createDecisionActionContext(context, sessionDecisionContext)
-          : context;
-        const setupCandidates = INITIAL_SETUP_FAMILIES.includes(descriptor?.family)
-          ? actionRegistry.enumerate(decisionActionContext, { family: descriptor.family })
-          : [];
-        const setupCandidate = setupCandidates.length
-          ? setupCandidates
-            .find((candidate) => (
-              JSON.stringify(candidate.target) === JSON.stringify(descriptor.target)
-              && JSON.stringify(candidate.payload || {}) === JSON.stringify(descriptor.payload || {})
-            ))
-          : null;
-        if (setupCandidate) {
-          return attachNextDecision(
-            decisionActionContext,
-            actionRegistry.execute(decisionActionContext, setupCandidate),
-          );
-        }
-        if (INITIAL_SETUP_FAMILIES.includes(descriptor?.family)) {
-          return {
-            ok: false,
-            code: "INITIAL_SETUP_DECISION_STALE",
-            message: "initial_setup Decision 已不在 Production Kernel legal set",
-            descriptor,
-            candidates: setupCandidates,
-          };
-        }
-        return {
-          ok: false,
-          code: "PRODUCTION_DECISION_SOURCE_UNKNOWN",
-          message: "Decision 不属于任何 Production source",
-          decisionContext,
-        };
-      },
-    });
-
     const standardDomain = Object.freeze({
       id: "standard_action",
       families: standardFamilies,
       create: standardActionSession.createStandardActionDomain,
       options: Object.freeze({
         actionFamilies: standardFamilies,
-        continuation: productionContinuation,
       }),
+    });
+    const openingDomain = Object.freeze({
+      id: "opening_session",
+      families: Object.freeze([]),
+      create: createOpeningEffectDomain,
     });
     const cardDomain = Object.freeze({
       id: cardPlayDomain.DOMAIN_ID,
@@ -794,6 +783,7 @@
       create: residualDomainSession.createResidualDomain,
     });
     const effectDomains = Object.freeze([
+      openingDomain,
       standardDomain,
       cardDomain,
       scienceDomain,

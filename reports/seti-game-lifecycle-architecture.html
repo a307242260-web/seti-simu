@@ -173,7 +173,7 @@
         <tr><td>2. Setup 完成条件</td><td><code>setupSelectionState</code> 独立存在；何时从初始选择进入首个正常 actor 没有进入 SETI-62 标准阶段。</td><td>新增 setup session / transition proof case，仍复用 DecisionEffect。</td></tr>
         <tr><td>3. 宏观 phase</td><td>turn state 有 round / actor / passed / gameEnded，但没有统一 setup / playing / finishing / ended phase；调用方仍通过多个字段组合推断。</td><td>SETI-71 的 turn/match schema 与 invariant。</td></tr>
         <tr><td>4. 下一 actor / 跨轮 / 终局纯规则</td><td><code>advanceTurnAfterPlayerAction()</code>、<code>beginNextRound()</code>、<code>finishGameAfterFinalPass()</code> 仍在 app/turn-flow；SETI-70 说迁 PASS/回合末，但没冻结谁是这些规则的唯一 owner。</td><td>作为 SETI-62/70 的 lifecycle transition executor；纯函数落 game core。</td></tr>
-        <tr><td>5. 跨阶段 hook 顺序</td><td>PASS 收入、外星揭示、round-start 公司收益、原教旨收入目前手工串接；只有 continuation，没有统一 hook 顺序契约。</td><td>SETI-62 Effect Queue / hook registry；Lifecycle Rules 只返回要进入哪条边界。</td></tr>
+        <tr><td>5. 跨阶段 hook 顺序</td><td>PASS 收入、外星揭示、round-start 公司收益、原教旨收入目前手工串接；只有 旧路径，没有统一 hook 顺序契约。</td><td>SETI-62 Effect Queue / hook registry；Lifecycle Rules 只返回要进入哪条边界。</td></tr>
         <tr><td>6. 原子换人</td><td>当前先提交 history、清 pending，再调用 turn advance，随后执行 round-start hook 和刷新；不能证明所有步骤与 actor 切换属于同一次 StateStore commit。</td><td>SETI-62 + SETI-71 的 end_turn 原子 proof obligation。</td></tr>
         <tr><td>7. 恢复与 terminal 闭合</td><td>恢复多在稳定边界；终局还要等终局标记、奖励、弃牌和 replay flush。何时 legalActions 必须为空没有统一 core 判定。</td><td>SETI-62 session inspect + SETI-71 committed phase + RL/browser parity。</td></tr>
         <tr><td>8. Host 启动去浏览器化</td><td>headless reset 仍加载 browser bundle 并调用 <code>startNewGame()</code>；Browser / Training 尚未共享独立 runtime 创建入口。</td><td>SETI-72 / training host 接入；消费同一 GameFactory 与 session runtime。</td></tr>

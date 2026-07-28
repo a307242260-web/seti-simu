@@ -16,7 +16,7 @@ Decision choice 提交回同一 adapter。规则推进、唯一项 drain、effec
 | P-02 | 无 DOM/renderer/picker resolver | Policy module import、boundary 枚举、一次 action 与一次 decision 在 poison `document/window/overlay/renderer/picker/resolver` 下调用数为 0 | 为取得 choice，driver 查询 overlay 按钮或调用旧 resolver | Policy adapter + Effect Session host | poison getter/runtime spy；触发即抛错 |
 | P-03 | 未知 Decision fail-closed | boundary kind、decision identity、schema/family/owner/version 或 legal set 不受支持时不提交、不 drain、不改变状态 | 未知 kind 被当顶层 action 或默认选第一项 | `normalizeBoundary` / fresh-boundary validation | 逐项未知/篡改注入；返回 `POLICY_INPUT_*` 结构化错误 |
 | P-04 | stale/越权无副作用 | Policy 响应后若当前 boundary identity/version/owner/legal set 已变化，提交次数为 0 | 旧异步结果提交到下一位玩家或下一 Decision | submission 前 fresh boundary revalidation | stale/owner/action membership 负向测试 |
-| P-05 | drain 单一所有者 | driver 每次只产生一个外部 Action/Decision submission；确定性 effect 与唯一选择只由 session host drain | driver 循环调用 continuation/skip/recover | driver API 与 session journal | submission spy=1；environment events 不伪装为 Policy replay |
+| P-05 | drain 单一所有者 | driver 每次只产生一个外部 Action/Decision submission；确定性 effect 与唯一选择只由 session host drain | driver 循环调用 旧路径/skip/recover | driver API 与 session journal | submission spy=1；environment events 不伪装为 Policy replay |
 | P-06 | headless 不造伪 DOM | headless 完整局继续只使用 Standard Action/Decision host；Policy adapter 在 Node 中不创建浏览器 global | import 时写 `globalThis.document={}` | 静态依赖 + 完整局现有门禁 | no-browser-global poison、完整局/固定 seed 回归 |
 | P-07 | 浏览器展示不改规则 | Chrome smoke 中 Policy 驱动 action→decision 后，renderer 只消费 projection；AI 展示不参与选择与执行 | renderer label 决定 choiceId | Browser Host smoke | 真 Chrome 固定 trace；渲染/overlay/picker spy=0 |
 

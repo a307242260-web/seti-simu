@@ -7,6 +7,7 @@ const result = runAudit();
 assert.equal(result.ok, true);
 assert.equal(result.familyCount, 22);
 assert.deepEqual(result.domainIds, [
+  "opening_session",
   "standard_action",
   "card_play",
   "science",

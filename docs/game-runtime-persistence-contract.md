@@ -32,7 +32,7 @@ StateStore.compareAndCommit
 
 1. Action registry 可读隔离 snapshot、构建 Effect Group，不直接替换 committed root。
 2. Effect Session 只能从 StateStore `beginWorkingCopy()` 建立 working state；queue 清空、无等待输入且 invariant 通过时只提交一次。
-3. Browser renderer、DOM handler、simulation adapter 与 Policy 不调用领域 continuation，不持有 pending 真相。
+3. Browser renderer、DOM handler、simulation adapter 与 Policy 不调用领域 旧路径，不持有 pending 真相。
 4. 失败、stale、越权、timeout、未知 family 或未通过 validator 的输入不修改 state、journal 或 confirmed replay cursor。
 5. 同一 committed/session 来源投影 BrowserProjection 与 observation；宿主不得各自维护规则切片。
 

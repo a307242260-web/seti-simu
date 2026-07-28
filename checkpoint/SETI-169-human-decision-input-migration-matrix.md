@@ -44,7 +44,7 @@ choice；该对齐不按 label/target/predicate 解析，也不生成新 choice�
 
 | family | 正式 owner / committed state | Decision / transaction | Browser 展示与提交 | 删除义务 | 行为证据 |
 |---|---|---|---|---|---|
-| `choose_card` | opening、card、science、probe-turn、residual；player/card/match，card/RNG sequence | 牌实体 identity；抽取/迁牌/followup 同 session | 卡牌 renderer 只显示当前 owner 的 actionId | card selection builder、hand/public index matcher、blind/confirm continuation | opening、手牌、公共牌；双同名牌不串项 |
+| `choose_card` | opening、card、science、probe-turn、residual；player/card/match，card/RNG sequence | 牌实体 identity；抽取/迁牌/followup 同 session | 卡牌 renderer 只显示当前 owner 的 actionId | card selection builder、hand/public index matcher、blind/confirm 旧路径 | opening、手牌、公共牌；双同名牌不串项 |
 | `choose_target` | card/science/probe-turn/residual/company-alien；rocket/solar/data/tech/alien | target entity 与费用留在正式 choice；独立 replay step | board/tech renderer 提交 actionId | target string/predicate dispatcher、land/scan/move picker resolver | 至少两个目标；stale/wrong-owner |
 | `choose_payment` | opening/card/probe-turn；player/card/match | 精确 cost/弃牌组合；费用与后续 effect 单 CAS | payment renderer 只呈现正式 cost DTO，提交 actionId | Browser 子集 builder、能量/手牌自动补齐、移动支付 resolver | 多支付项不取首项；资源漂移 removed |
 | `choose_reward` | card/science/residual/company-alien | 奖励 exact choice；mutation/followup 归 session | generic/card renderer 提交 actionId | reward label/choiceId resolver | 同 label 奖励、skip/accept |
@@ -72,7 +72,7 @@ choice；该对齐不按 label/target/predicate 解析，也不生成新 choice�
 这些来源不得继续为人类 DOM 枚举 choices 或执行 followup。SETI-170 尚未删除的 OwnerInput 根
 兼容层不属于本单，但其中不得再承载 Decision builder/resolver。
 
-### B. Browser resolver / continuation
+### B. Browser resolver / 旧路径
 
 - `app.js::createActiveDecisionPort/submitActiveCardDecision/submitChoiceById`；
 - `app.js` generic controller 中从 `ruleComposition.inspect().session.decision.choices` 二次
@@ -100,7 +100,7 @@ choice；该对齐不按 label/target/predicate 解析，也不生成新 choice�
    generic controller/public facade 复用它，删除 `app.js` 二次 full-choice resolver。
 2. Presentation 批次：七 family 都只从 projection 获得 actionId；focus/confirm/cancel 仅操作
    ViewState 和 identity；删除首项/label/target/index resolver 与 abort mutation。
-3. 来源删除批次：移除 Browser choice builder/handler/continuation 接线；保留 SETI-170 才删除的
+3. 来源删除批次：移除 Browser choice builder/handler/旧路径 接线；保留 SETI-170 才删除的
    OwnerInput/recovery 根壳，但 Decision authority 必须为零。
 4. 集中验证：Decision adapter/UI unit → `node --check randomizer/app.js` →
    `node tools/run_node_tests.js` → 真实 Chrome 多步 Decision smoke。
@@ -111,7 +111,7 @@ choice；该对齐不按 label/target/predicate 解析，也不生成新 choice�
 - stale、wrong-owner、removed-choice、篡改 identity 的 Composition submit 次数均为 0。
 - 两个以上非等价 choices 时，render/focus 不提交，显式 confirm 才恰好提交一次。
 - Browser 生产调用图中 choice builder、首项/label/target predicate resolver、
-  confirm/cancel mutation、字符串 target dispatch、旧 continuation callback 和 public API
+  confirm/cancel mutation、字符串 target dispatch、旧 旧路径 callback 和 public API
   Decision 旁路归零。
 - Production game domain、committed state、RNG/id/sequence、Decision owner、journal/replay 与
   CAS 语义不变。
@@ -124,7 +124,7 @@ journal/replay 与 CAS 均仍归 Production Domain Pack；本批次不改这些�
 
 | # | 旧入口 | 旧匹配/提交语义 | 唯一正式 owner | 本批删除 | 保留的正式实现 / 证据 |
 |---|---|---|---|---|---|
-| 1 | `turn-end-flow.js::submitDecision` | `residual-domain` + JSON includes | residual Effect Session | 删除 inspect/matcher/submit continuation | pass/end-turn Standard Action；回合末 session executor |
+| 1 | `turn-end-flow.js::submitDecision` | `residual-domain` + JSON includes | residual Effect Session | 删除 inspect/matcher/submit 旧路径 | pass/end-turn Standard Action；回合末 session executor |
 | 2 | `industry-runtime.js::submitDecision` | `residual-domain` + JSON includes | industry-alien Effect Session | 删除 matcher、cancel 首项解析和 submit wrapper | `dispatchIndustry` Standard Action；公司 session |
 | 3 | `action-interaction-runtime.js::skipPendingDataPlacement` Browser port | predicate 恒真 | residual Effect Session | 删除 Browser 直提分支 | `skipPendingDataPlacement(workingRoot, ...)` |
 | 4 | `action-interaction-runtime.js::confirmDataPlacement` Browser port | target/payload predicate | residual Effect Session | 删除 Browser 直提分支 | `confirmDataPlacement(workingRoot, ...)` |

@@ -37,20 +37,20 @@ assert.deepEqual(JSON.parse(restored.coreState.committedState).meta.rngState, ra
 const forkNextAction = fork.legalActions()[0];
 const forkNextResult = fork.step(forkNextAction);
 assert.equal(forkNextResult.ok, true, forkNextResult.error);
-const forkContinuationCheckpoint = fork.createCheckpoint();
+const forkNextCheckpoint = fork.createCheckpoint();
 fork.dispose();
 
-const sourceContinuation = createSimulationEnv();
-sourceContinuation.loadCheckpoint(structuredClone(checkpoint));
-const sourceNextAction = sourceContinuation.legalActions()[0];
+const sourceNext = createSimulationEnv();
+sourceNext.loadCheckpoint(structuredClone(checkpoint));
+const sourceNextAction = sourceNext.legalActions()[0];
 assert.deepEqual(sourceNextAction, forkNextAction);
-const sourceNextResult = sourceContinuation.step(sourceNextAction);
+const sourceNextResult = sourceNext.step(sourceNextAction);
 assert.equal(sourceNextResult.ok, true, sourceNextResult.error);
 assert.deepEqual(sourceNextResult.observation, forkNextResult.observation);
 assert.deepEqual(sourceNextResult.legalActions, forkNextResult.legalActions);
 assert.deepEqual(sourceNextResult.reward, forkNextResult.reward);
-assert.deepEqual(sourceContinuation.createCheckpoint(), forkContinuationCheckpoint);
-sourceContinuation.dispose();
+assert.deepEqual(sourceNext.createCheckpoint(), forkNextCheckpoint);
+sourceNext.dispose();
 
 const unknownSequenceCheckpoint = structuredClone(checkpoint);
 const unknownCommittedState = JSON.parse(unknownSequenceCheckpoint.coreState.committedState);

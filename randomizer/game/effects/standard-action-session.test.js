@@ -70,7 +70,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
 assert.deepEqual(result.journal.history, [{ type: "launch", source: "standard_action" }]);
 
 {
-  let sessionOwnedResolveCalls = 0;
+  let registeredChoiceCalls = 0;
   const decisionComposition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
@@ -86,47 +86,38 @@ assert.deepEqual(result.journal.history, [{ type: "launch", source: "standard_ac
         validate: () => ({ ok: true }),
         execute(root, action) {
           root.match.actions.push(action.actionId);
-          root.match.phase = action.family === "launch" ? "decision" : "turn";
-          return { ok: true };
+          if (action.family !== "launch") {
+            registeredChoiceCalls += 1;
+            root.match.phase = "turn";
+            return { ok: true };
+          }
+          root.match.phase = "decision";
+          const choice = (id) => ({
+            schemaVersion: "seti-standard-action-v1",
+            actionId: `choose_target:${id}`,
+            family: "choose_target",
+            phase: "conditional",
+            actorId: "p1",
+            target: { choiceId: id },
+            payload: {},
+          });
+          return {
+            ok: true,
+            decisionEffect: {
+              type: standardActionDomain.DECISION_EFFECT_TYPE,
+              kind: "decision",
+              ownerId: "p1",
+              decisionKind: "choose_target",
+              payload: { choices: [choice("left"), choice("right")] },
+            },
+          };
         },
       };
     },
     effectDomains: [{
       create: standardActionDomain.createStandardActionDomain,
       families: ["launch", "choose_target"],
-      options: {
-        actionFamilies: ["launch", "choose_target"],
-        continuation: {
-          inspect(root) {
-            if (root.match.phase !== "decision") {
-              return { ok: true, boundary: "turn_action", decisionType: "turn_action", candidates: [] };
-            }
-            const choice = (id) => ({
-                schemaVersion: "seti-standard-action-v1",
-                actionId: `choose_target:${id}`,
-                family: "choose_target",
-                phase: "conditional",
-                actorId: "p1",
-                target: { choiceId: id },
-                payload: {},
-            });
-            return {
-              ok: true,
-              boundary: "conditional_choice",
-              decisionType: "conditional_choice",
-              ownerId: "p1",
-              candidates: [choice("left"), choice("right")],
-            };
-          },
-          executeDeterministic: () => ({ ok: false, code: "UNEXPECTED_DETERMINISTIC_STEP" }),
-          resolveDecision(root, choice) {
-            sessionOwnedResolveCalls += 1;
-            root.match.actions.push(choice.actionId);
-            root.match.phase = "turn";
-            return { ok: true };
-          },
-        },
-      },
+      options: { actionFamilies: ["launch", "choose_target"] },
     }],
   });
   const opened = decisionComposition.inputPort.submitAction({
@@ -153,7 +144,7 @@ assert.deepEqual(result.journal.history, [{ type: "launch", source: "standard_ac
   });
   assert.equal(resolved.ok, true);
   assert.equal(resolved.phase, "completed");
-  assert.equal(sessionOwnedResolveCalls, 1);
+  assert.equal(registeredChoiceCalls, 1);
   assert.deepEqual(decisionComposition.projection().state.actions, ["launch:decision", "choose_target:right"]);
 }
 
@@ -172,28 +163,22 @@ assert.deepEqual(result.journal.history, [{ type: "launch", source: "standard_ac
       return {
         enumerate: () => [],
         validate: () => ({ ok: true }),
-        execute(root) {
+        execute(root, action) {
+          if (action.family === "choose_target") {
+            resolveCalls += 1;
+            root.match.phase = "turn";
+            return { ok: true };
+          }
           root.match.phase = "decision";
-          return { ok: true };
-        },
-      };
-    },
-    effectDomains: [{
-      create: standardActionDomain.createStandardActionDomain,
-      families: ["launch", "choose_target"],
-      options: {
-        actionFamilies: ["launch", "choose_target"],
-        continuation: {
-          inspect(root) {
-            if (root.match.phase !== "decision") {
-              return { ok: true, boundary: "turn_action", decisionType: "turn_action", candidates: [] };
-            }
-            return {
-              ok: true,
-              boundary: "conditional_choice",
-              decisionType: "conditional_choice",
+          return {
+            ok: true,
+            decisionEffect: {
+              type: standardActionDomain.DECISION_EFFECT_TYPE,
+              kind: "decision",
               ownerId: "p1",
-              candidates: [{
+              decisionKind: "choose_target",
+              payload: {
+                choices: [{
                   schemaVersion: "seti-standard-action-v1",
                   actionId: "choose_target:only",
                   family: "choose_target",
@@ -201,17 +186,17 @@ assert.deepEqual(result.journal.history, [{ type: "launch", source: "standard_ac
                   actorId: "p1",
                   target: { choiceId: "only" },
                   payload: {},
-              }],
-            };
-          },
-          executeDeterministic: () => ({ ok: false, code: "UNEXPECTED_DETERMINISTIC_STEP" }),
-          resolveDecision(root) {
-            resolveCalls += 1;
-            root.match.phase = "turn";
-            return { ok: true };
-          },
+                }],
+              },
+            },
+          };
         },
-      },
+      };
+    },
+    effectDomains: [{
+      create: standardActionDomain.createStandardActionDomain,
+      families: ["launch", "choose_target"],
+      options: { actionFamilies: ["launch", "choose_target"] },
     }],
   });
   const opened = singleChoiceComposition.inputPort.submitAction({

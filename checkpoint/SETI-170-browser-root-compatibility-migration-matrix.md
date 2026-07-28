@@ -41,7 +41,7 @@ SETI-168/169 的正式输入替代，纯展示由 SETI-166 的 BrowserProjection
 
 | owner | 方法数 | 语义分组 | 唯一目标 owner | 删除证据 |
 |---|---:|---|---|---|
-| `turn_end` | 7 | PASS/回合推进、揭示 continuation | `pass/end_turn` Action + residual Session | target/factory/app caller 为零 |
+| `turn_end` | 7 | PASS/回合推进、揭示 旧路径 | `pass/end_turn` Action + residual Session | target/factory/app caller 为零 |
 | `hand_flow` | 25 | 手牌/弃牌/支付/卡角 picker 与 mutation | `play_card/card_corner` Action + Decision renderer/ViewState | 同上 |
 | `industry_runtime` | 36 | 公司能力、机会、奖励、历史 | residual domain Session | 同上 |
 | `alien_runtime` | 21 | 揭示、痕迹、回合末结算 | residual domain Session | 同上 |
@@ -49,7 +49,7 @@ SETI-168/169 的正式输入替代，纯展示由 SETI-166 的 BrowserProjection
 | `action_interaction` | 11 | Pluto、移动、数据 picker/mutation | probe/science Action + Decision/ViewState | 同上 |
 | `scan_flow` | 23 | 扫描、补牌、扇区结算、picker | science domain Session | 同上 |
 | `effect_choice` | 7 | 旧条件选择 resolver | active Standard Decision | 同上 |
-| `card_trigger` | 19 | 任务/奖励/触发 continuation | card/residual Session | 同上 |
+| `card_trigger` | 19 | 任务/奖励/触发 旧路径 | card/residual Session | 同上 |
 | `card_runtime` | 24 | 抽牌、选牌、PASS reserve、card move | card/probe Session + renderer/ViewState | 同上 |
 | `alien_ui` | 19 | 痕迹/方舟 picker 与提交 | alien Decision renderer/ViewState | 同上 |
 | `alien_species` | 37 | 八物种 dialog/choice/mutation | industry-alien Session + renderer | 同上 |
@@ -95,7 +95,7 @@ SETI-168/169 的正式输入替代，纯展示由 SETI-166 的 BrowserProjection
 | `landTargetInputPort.open/cancel` | `createLandTargetPicker.request/cancel`、旧 action/effect context | active Standard Decision renderer + ViewState | 删除 Browser request/cancel rule port 与旧 overlay input；内部 domain 仅保留显式 working-root primitive |
 | `quickActionCompatibilityPort.checkPending` | `createActionGuardRuntime.blockIncompatiblePendingQuickAction` | Standard Action validate/submit | 删除 Browser preflight 与旧 quick pending cancel；按钮只提交投影中的完整 descriptor |
 | `openComputerPicker/rotate/placeDataToBlueSlot` 固定失败 | render/effect legacy callback | `place_data/analyze` Action/Decision；Session deterministic effect | 删除无 working-root Browser callback；内部正式 domain primitive仍要求显式 working root |
-| `beginCardMoveEffect/releaseFutureSpanAfterPlayWithHistory` 固定失败 | hand/card legacy UI continuation | card/probe Effect Session | 删除 Browser callback；production session 内部显式 working-root primitive不经 facade |
+| `beginCardMoveEffect/releaseFutureSpanAfterPlayWithHistory` 固定失败 | hand/card legacy UI 旧路径 | card/probe Effect Session | 删除 Browser callback；production session 内部显式 working-root primitive不经 facade |
 | `cancelActivePendingSubFlows/cancelActiveEffectSubFlows/skipCurrentActionEffect/finishActionEffectFlow/handleActionEffectButtonClick` 固定失败 |旧 effect bar、events 与历史 runtime | active Decision / Effect Session `advance/abort/undo` | 删除旧 DOM listeners、无 root wrapper 与 Browser effect-flow facade；不得以手工按钮解除 |
 | `recoverPendingActionFromOpenHistoryForAi` 固定失败 |旧 AI/action recovery context | lifecycle restore 当前 schema | 删除 caller 与函数；AI 只观察 Composition projection，不恢复旧 pending |
 

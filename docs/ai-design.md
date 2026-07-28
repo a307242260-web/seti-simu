@@ -31,12 +31,12 @@ Rule Composition
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
 - `game/ai/machine-player-host.js`：固定席位、deadline/取消、generation、去重与 fail-closed 提交协调。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
-- `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、资源事实和固定大小的
-  探测器目标摘要。
-- `game/ai/expected-score-evaluator.js`：只从真实标准叶识别正分环绕/登陆终点、路线实耗、
-  缺口和唯一下一步，并计算当前探测器策略的版本化 V。
-- `game/ai/heuristic-evaluator.js`：优先选择 `settled + selectable` 的目标步骤；失败或 unresolved
-  候选不可进入排序。同一目标分才按实耗与稳定 actionId 决胜。
+- `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
+  固定大小的探测器目标摘要。
+- `game/ai/expected-score-evaluator.js`：只从真实标准叶读取已兑现分数、科技和收入变化，
+  按剩余轮次计算版本化战略价值。
+- `game/ai/heuristic-evaluator.js`：优先选择 `settled + selectable` 的战略目标路径；失败或
+  unresolved 候选不可进入排序，同值时只按稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
   Standard Action registry、Effect Session、Decision 与 commit 语义。
 - Simulation setup 选择也进入隔离规则 fork：提交标准 setup Decision、执行正式初始结算，再以同一
@@ -88,48 +88,37 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 
-探测器策略只使用完整路线价值，不设置额外行动分或 Q：
+当前启发式只估值当前合法 Action 及其必选 Decision 闭包，不设置跨稳定边界的单行动 Q。
+可进入排序的已兑现目标只有：
+
+- 获得实际分数；
+- 获取科技；
+- 增加收入。
+
+扫描、赢得扇区、发射、移动、环绕、登陆、放置/分析数据、打牌、放置外星人痕迹、研究科技
+和插收入都必须先作为当前 legal Action 出现。快速转换、支付与必要 DecisionEffect 只在该
+Action 已打开的 Effect Session 内继续，不单独加分。稳定策略边界后的下一 Action 由下一次
+Policy 请求决定，规则层和反事实 evaluator 都不得替 Policy 自动选择。
+
+每个候选只提交一个当前合法 Action，并最多推进 15 个由它直接产生的真实标准 Decision。
+Effect Session 的选牌、选目标和支付均计入深度；evaluator 不替代 Production
+registry/executor，也不手工结算规则。叶价值为：
 
 ```text
-V(探测器, 行星, 环绕/登陆)
-  = 最短路线沿途实际宣传等价分
-  + 终点即时分与资源/卡牌/痕迹奖励等价分
+V(leaf)
+  = 实际分数变化
+  + 新科技数 ×（剩余轮数 + 当前轮）× 每轮科技价值
+  + 新增收入的每轮资源价值 ×（剩余收入次数 + 插入当次）
 ```
 
-每次决策从当前正式太阳系拓扑枚举本席每枚在途探测器到所有非地球行星的环绕和登陆路线。
-只要仍有在途探测器，就不加入新发射路线；全部探测器完成环绕/登陆后，才把“发射后新探测器”
-作为路线来源。每个“来源探测器—终点”只保留实际移动力需求最少的路径；移动力相同
-时优先步数更少，再优先沿途实际宣传更多。卫星只有拥有橙色 4 时才由生产登陆规则加入终点。
-资源成本只判断完整路线当前是否可支付，不从收益中扣分，也不按主行动次数、路径长度或 tempo
-折价：先从可支付路线中选择 `V` 最大者；没有可支付路线时，才为最高 `V` 路线补实际钱电缺口。
+收入换算使用 `1 信用 = 1 能源 = 2 数据 = 2 宣传 = 2 普通牌 = 5 分`。这是长期收入能力的
+估值，不是给当前库存加分。钱、电、宣传、数据、普通牌和外星人牌库存均不直接进入叶价值；
+只有它们在同一真实探索链中已经转化为分数、科技或收入时才体现。痕迹同样不使用固定价值：
+未揭示外星人时只能获得的实际分数、首标宣传、揭示后的物种奖励和后续状态，都由同一标准
+执行链后的盘面决定。
 
-钱、电、宣传、普通牌和外星人牌库存本身不直接加入 `V`。钱电只通过降低正式路线的资源缺口
-影响可达价值；沿途到达行星的宣传、终点直接资源/普通牌、当前仍可取得的首枚黄色痕迹奖励，
-按 `1 信用 = 1 能源 = 2 宣传 = 2 普通牌 = 1.5 外星人牌 = 5 分` 换算路线即时收益。
-数据暂不按库存换算；只有数据链真实解锁蓝色痕迹并已经增加的分数，才通过“已兑现实际分”
-进入 `V`。扫描、收入和未实际兑现的未来数据收益不估值。
-
-Policy 只展开发射、移动、环绕、登陆、能填补当前钱/电缺口的快速交易、与探测器/钱电/橙色科技
-直接相关的打牌和研究橙色科技。打牌或科技只有在真实标准叶降低路线成本、填补缺口或启用新的
-正分路线时才可选；其他扫描、产业、放数据等合法行动仍保留在输入中，但标为本策略范围外。
-行动评估只继承它实际推进的那条完整路线的 `V`，不能借用行动后全盘另一条路线的最大值。
-Policy 每次只提交获胜路线的当前第一步，然后从新盘面重新枚举。多探测器候选按各自的
-`requirementId = sourceId + targetId` 独立匹配，其他探测器、行星或槽位不能冒充目标完成。
-
-科技只考虑橙色：
-
-- 橙色 1 的正式科技效果会免费发射；只有当前没有在途探测器时，才把这次发射视为路线改善；
-- 橙色 2 通过生产移动规则降低移出小行星的移动力，并在进入小行星时结算宣传；
-- 橙色 3 通过生产登陆规则降低实际登陆能量；
-- 橙色 4 通过生产登陆规则加入尚可用的卫星终点。
-
-蓝色、紫色科技选择直接排除。橙色科技也没有固定分值；只有它的真实标准叶降低当前路线缺口、
-降低完整路线需求或启用收益更高的新路线时，研究科技才可选。
-若目标估值暂时没有可选路线，Policy 只能从已有 `settled` 标准执行结果中确定性降级；
-`failed/unresolved/stale` 结果仍不可选。唯一例外是合法 PASS/结束回合：它跨轮触发的正式
-Decision 链可能超过反事实分支上限；当不存在可估值的探测器行动时，Policy 可以提交该控制行动，
-仍由生产 Standard Action 执行。该降级只保证机器席位经统一基础架构继续推进，不把资源库存或
-猜测收益伪装成价值。
+若目标估值暂时没有正价值路线，Policy 只能从合法 PASS/结束回合中确定性降级；
+`failed/unresolved/stale` 候选不可选，也不能把部分结算状态伪装成叶。
 
 反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
 StateStore、working state、Effect Session 与独立分支 RNG，再调用生产 registry/executor。
