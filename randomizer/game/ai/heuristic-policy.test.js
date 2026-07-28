@@ -90,6 +90,61 @@ assert.equal(first.actionId, "launch:p1:7", "Heuristic Policy 必须真实按标
 assert.deepEqual(current, before, "策略不得修改 observation、outcome 或 legal descriptor");
 assert.equal(policy.getProvenance().version, heuristicPolicy.POLICY_VERSION);
 
+{
+  const noProbeObservation = outcomeModel.createDecisionObservation({
+    publicState: {
+      players: [{ id: "p1", resources: { score: 0, credits: 0 } }],
+      board: { rockets: [] },
+    },
+    selfState: { id: "p1", resources: { score: 0, credits: 0 }, hand: [] },
+  }, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
+  const moveCard = {
+    ...action("card-corner:move-without-probe", "card_corner"),
+    phase: "quick",
+    payload: { kind: "move" },
+  };
+  const pass = action("pass:no-probe", "pass");
+  const noProbeContext = policyPort.createDecisionContext({
+    requestId: "heuristic-no-probe-move-card",
+    seatId: "p1",
+    stateVersion: 7,
+    decisionVersion: 3,
+    observation: noProbeObservation,
+    legalActions: [moveCard, pass],
+    actionOutcomes: [
+      {
+        schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+        actionId: moveCard.actionId,
+        status: "settled",
+        confidence: "high",
+        rootObservation: noProbeObservation,
+        leaves: [{
+          leafId: "move-card-fake-value",
+          actionChain: [moveCard.actionId],
+          observation: observation(20, 0),
+        }],
+      },
+      {
+        schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+        actionId: pass.actionId,
+        status: "settled",
+        confidence: "high",
+        rootObservation: noProbeObservation,
+        leaves: [{
+          leafId: "pass-no-probe",
+          actionChain: [pass.actionId],
+          observation: noProbeObservation,
+        }],
+      },
+    ],
+  });
+  assert.equal(
+    policy.decide(noProbeContext).actionId,
+    pass.actionId,
+    "没有太阳系探测器时不得弃牌换移动，即使该错误分支携带后续累计价值",
+  );
+}
+
 const validation = policyPort.validatePolicyDecision(current, first, {
   registry: { validate: (_runtime, selected) => ({ ok: selected.actionId === first.actionId }) },
   runtimeContext: {},

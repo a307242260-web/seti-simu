@@ -725,7 +725,17 @@
           const keyForOrigin = originKey(origin);
           const current = origins.get(keyForOrigin);
           if (!current
-            || stableSerialize(origin.chain) < stableSerialize(current.chain)) {
+            || Number(origin.quickTradeCount || 0) < Number(current.quickTradeCount || 0)
+            || (
+              Number(origin.quickTradeCount || 0) === Number(current.quickTradeCount || 0)
+              && (
+                Number(origin.proxyDepth || 0) < Number(current.proxyDepth || 0)
+                || (
+                  Number(origin.proxyDepth || 0) === Number(current.proxyDepth || 0)
+                  && stableSerialize(origin.chain) < stableSerialize(current.chain)
+                )
+              )
+            )) {
             origins.set(keyForOrigin, origin);
           }
         }
@@ -817,6 +827,8 @@
           routeCheckpoints: secondaryAgentSearch ? [] : clone(nextCheckpoints),
           ...(secondaryAgentSearch ? {
             secondaryAgentDepth: origin.proxyDepth || 0,
+            quickTradeCount: origin.quickTradeCount || 0,
+            secondaryAgentTrace: clone(origin.routeActions || []),
             terminalReason: origin.terminalReason || null,
           } : {}),
         });
@@ -833,6 +845,8 @@
           legalSuccessors: successors,
           routeCheckpoints: [],
           secondaryAgentDepth: origin.proxyDepth || 0,
+          quickTradeCount: origin.quickTradeCount || 0,
+          secondaryAgentTrace: clone(origin.routeActions || []),
           terminalReason: "search-frontier",
         };
         const byId = new Map(state.frontierLeaves.map((candidate) => [
@@ -967,9 +981,11 @@
         origins: [{
           rootAction: action,
           chain: [],
+          routeActions: [],
           checkpoints: [],
           lastProbeAction: null,
           proxyDepth: 0,
+          quickTradeCount: 0,
           opponentProxyDepth: 0,
           focalPassStarted: false,
           terminalReason: null,
@@ -1036,6 +1052,18 @@
             const nextProxyDepth = origin.proxyDepth + (
               currentIsFocal && currentIsProxy ? 1 : 0
             );
+            const nextQuickTradeCount = Number(origin.quickTradeCount || 0) + (
+              currentIsFocal && current.family === "quick_trade" ? 1 : 0
+            );
+            const nextRouteActions = [
+              ...(origin.routeActions || []),
+              ...(currentIsFocal && currentIsProxy ? [{
+                actionId: current.actionId,
+                family: current.family,
+                target: clone(current.target || {}),
+                payload: clone(current.payload || {}),
+              }] : []),
+            ];
             const focalPassStarted = origin.focalPassStarted
               || (currentIsFocal && current.family === "pass");
             if (
@@ -1049,6 +1077,8 @@
                   ...origin,
                   chain: nextChain,
                   proxyDepth: nextProxyDepth,
+                  quickTradeCount: nextQuickTradeCount,
+                  routeActions: nextRouteActions,
                   focalPassStarted,
                   routeTargetId,
                 },
@@ -1114,6 +1144,8 @@
                     chain: nextChain,
                     lastProbeAction: originNextProbeAction,
                     proxyDepth: nextProxyDepth,
+                    quickTradeCount: nextQuickTradeCount,
+                    routeActions: nextRouteActions,
                     focalPassStarted,
                     routeTargetId,
                   }],
@@ -1136,6 +1168,8 @@
                     ...origin,
                     chain: nextChain,
                     proxyDepth: nextProxyDepth,
+                    quickTradeCount: nextQuickTradeCount,
+                    routeActions: nextRouteActions,
                     focalPassStarted,
                     terminalReason: "focal-pass",
                   },
@@ -1152,6 +1186,8 @@
                     ...origin,
                     chain: nextChain,
                     proxyDepth: nextProxyDepth,
+                    quickTradeCount: nextQuickTradeCount,
+                    routeActions: nextRouteActions,
                     terminalReason: "secondary-agent-depth",
                   },
                   execution.leafObservation,
@@ -1206,6 +1242,8 @@
                       ...origin,
                       chain: nextChain,
                       proxyDepth: nextProxyDepth,
+                      quickTradeCount: nextQuickTradeCount,
+                      routeActions: nextRouteActions,
                       routeTargetId,
                     },
                     execution.leafObservation,
@@ -1247,6 +1285,8 @@
                       checkpoints: nextCheckpoints,
                       lastProbeAction: originNextProbeAction,
                       proxyDepth: nextProxyDepth,
+                      quickTradeCount: nextQuickTradeCount,
+                      routeActions: nextRouteActions,
                       opponentProxyDepth: nextActorIsFocal
                         ? 0
                         : (
@@ -1263,7 +1303,14 @@
               }
             }
             addLeaf(
-              { ...origin, chain: nextChain, proxyDepth: nextProxyDepth, focalPassStarted },
+              {
+                ...origin,
+                chain: nextChain,
+                proxyDepth: nextProxyDepth,
+                quickTradeCount: nextQuickTradeCount,
+                routeActions: nextRouteActions,
+                focalPassStarted,
+              },
               execution.leafObservation,
               execution.successors,
               execution.nextInspection,

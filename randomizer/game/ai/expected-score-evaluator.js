@@ -9,10 +9,10 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
-  const EVALUATION_MODEL = "strategic-goal-search-v1";
-  const PARAMETER_VERSION = "seti-strategic-goal-search-v1";
+  const EVALUATION_MODEL = "strategic-goal-search-v2";
+  const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v1";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v2";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["quick_trade"]));
   const DEFAULT_PARAMETERS = Object.freeze({
@@ -27,6 +27,14 @@
     availableData: 2.5,
     handSize: 2.5,
     additionalPublicScan: 2.5,
+  });
+  const ASSET_OPPORTUNITY_VALUES = Object.freeze({
+    credits: 1,
+    energy: 1,
+    publicity: 1,
+    availableData: 1,
+    ordinaryCards: 1,
+    alienCards: 1,
   });
   const ROLLOUT_FAMILY_PRIORITY = Object.freeze([
     "orbit", "land", "research_tech", "scan", "play_card", "place_data",
@@ -119,6 +127,43 @@
     return Math.max(0, finite(after) - finite(before));
   }
 
+  function stableSerialize(value) {
+    if (value == null || typeof value !== "object") return JSON.stringify(value);
+    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+    return `{${Object.keys(value).sort().map(
+      (key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`,
+    ).join(",")}}`;
+  }
+
+  function actionSemanticKey(action) {
+    return stableSerialize({
+      family: action?.family || null,
+      target: action?.target || {},
+      payload: action?.payload || {},
+    });
+  }
+
+  function quickTradePurpose(context, action, leaf) {
+    if (action?.family !== "quick_trade") return { required: false, supported: true };
+    const nextAgent = (leaf?.secondaryAgentTrace || [])
+      .find((candidate) => candidate?.family !== "quick_trade");
+    if (!nextAgent) {
+      return { required: true, supported: false, reason: "quick-trade-no-followup-agent" };
+    }
+    const nextKey = actionSemanticKey(nextAgent);
+    const alreadyLegal = (context?.legalActions || [])
+      .filter((candidate) => !["quick_trade", "pass", "end_turn"].includes(candidate?.family))
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    return {
+      required: true,
+      supported: !alreadyLegal,
+      reason: alreadyLegal
+        ? "quick-trade-did-not-unlock-next-agent"
+        : "quick-trade-unlocked-next-agent",
+      nextAgent,
+    };
+  }
+
   function infrastructureDeltaValue(rootValue, leafValue, parameters) {
     const rootInfrastructure = rootValue.infrastructure;
     const leafInfrastructure = leafValue.infrastructure;
@@ -138,7 +183,7 @@
     ]));
     const incomePerWindowValue = Object.entries(INCOME_UNIT_VALUES)
       .reduce((total, [key, unitValue]) => total + incomeDelta[key] * unitValue, 0);
-    const incomeValue = incomePerWindowValue * (remainingRounds + 1);
+    const incomeValue = incomePerWindowValue * remainingRounds;
     return {
       total: techValue + incomeValue,
       remainingRounds,
@@ -152,10 +197,18 @@
   function leafValue(rootValue, leafValueState, parameters) {
     const actualScoreDelta = leafValueState.realizedScore - rootValue.realizedScore;
     const infrastructure = infrastructureDeltaValue(rootValue, leafValueState, parameters);
+    const netAssetSpend = Object.entries(ASSET_OPPORTUNITY_VALUES)
+      .reduce((total, [key, unitValue]) => (
+        total + (finite(rootValue.resourceFacts?.[key]) - finite(leafValueState.resourceFacts?.[key]))
+          * unitValue
+      ), 0);
+    const opportunityCost = Math.max(0, netAssetSpend);
     return {
-      total: actualScoreDelta + infrastructure.total,
+      total: actualScoreDelta + infrastructure.total - opportunityCost,
+      primaryValue: actualScoreDelta + infrastructure.total,
       actualScoreDelta,
       infrastructure,
+      opportunityCost,
     };
   }
 
@@ -166,22 +219,38 @@
     return leafValue(rootValue, branchValue, parameters).total;
   }
 
-  function evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput = {}) {
-    if (!rootFacts || !branchFacts
-      || rootFacts.viewerSeatId !== branchFacts.viewerSeatId) {
-      throw new TypeError("Search priority 需要同 viewer 的战略事实");
-    }
-    const parameters = mergeParameters(parametersInput);
-    const toValue = (facts) => ({
+  function valueFromStrategicFacts(facts) {
+    return {
       realizedScore: finite(facts.realizedScore),
+      resourceFacts: { ...(facts.resourceFacts || {}) },
       infrastructure: {
         ownedTechIds: [...(facts.ownedTechIds || [])].sort(),
         income: { ...(facts.income || {}) },
         roundNumber: Math.max(1, finite(facts.roundNumber) || 1),
         finalRoundNumber: Math.max(1, finite(facts.finalRoundNumber) || 4),
       },
-    });
-    return leafValue(toValue(rootFacts), toValue(branchFacts), parameters).total;
+    };
+  }
+
+  function evaluateStrategicFactsBreakdown(rootFacts, branchFacts, parametersInput = {}) {
+    if (!rootFacts || !branchFacts
+      || rootFacts.viewerSeatId !== branchFacts.viewerSeatId) {
+      throw new TypeError("Search priority 需要同 viewer 的战略事实");
+    }
+    const parameters = mergeParameters(parametersInput);
+    return leafValue(
+      valueFromStrategicFacts(rootFacts),
+      valueFromStrategicFacts(branchFacts),
+      parameters,
+    );
+  }
+
+  function evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput = {}) {
+    return evaluateStrategicFactsBreakdown(
+      rootFacts,
+      branchFacts,
+      parametersInput,
+    ).total;
   }
 
   function gapSize(requirement) {
@@ -279,10 +348,14 @@
       .sort((left, right) => (
         right.strategicValue.total - left.strategicValue.total
         || right.strategicValue.actualScoreDelta - left.strategicValue.actualScoreDelta
+        || Number(left.leaf.quickTradeCount || 0) - Number(right.leaf.quickTradeCount || 0)
+        || Number(left.leaf.secondaryAgentDepth || 0) - Number(right.leaf.secondaryAgentDepth || 0)
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
     const best = evaluatedLeaves[0] || null;
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
+    const tradePurpose = quickTradePurpose(context, action, best.leaf);
+    if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
     const control = CONTROL_FAMILIES.has(action?.family);
     const conditional = action?.phase === "conditional";
     const selectable = best.strategicValue.total > 0 || control || conditional;
@@ -298,6 +371,11 @@
       rootValue,
       leafValue: best.leafStateValue,
       actualScoreDelta: best.strategicValue.actualScoreDelta,
+      primaryValue: best.strategicValue.primaryValue,
+      opportunityCost: best.strategicValue.opportunityCost,
+      quickTradeCount: Number(best.leaf.quickTradeCount || 0),
+      secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
+      quickTradePurpose: tradePurpose.required ? tradePurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
       techValue: best.strategicValue.infrastructure.techValue,
       gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
@@ -311,6 +389,7 @@
         best.strategicValue.actualScoreDelta > 0 ? "strategic-goal-score" : null,
         best.strategicValue.infrastructure.techValue > 0 ? "strategic-goal-tech" : null,
         best.strategicValue.infrastructure.incomeValue > 0 ? "strategic-goal-income" : null,
+        tradePurpose.required ? tradePurpose.reason : null,
         conditional ? "required-standard-decision" : null,
         control ? "turn-control" : null,
       ].filter(Boolean),
@@ -357,7 +436,11 @@
   function evaluateSecondaryAgentSearchPriority(input = {}, parametersInput = {}) {
     const rootFacts = outcomeModel.createStrategicFacts(input.rootObservation, input.focalSeatId);
     const branchFacts = outcomeModel.createStrategicFacts(input.branchObservation, input.focalSeatId);
-    const primaryValue = evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput);
+    const strategicValue = evaluateStrategicFactsBreakdown(
+      rootFacts,
+      branchFacts,
+      parametersInput,
+    );
     const rootGoals = rawProbeRequirements(input.rootObservation)?.candidates || [];
     const branchGoal = bestProbePotential(rawProbeRequirements(input.branchObservation));
     const matchedRoot = rootGoals
@@ -372,7 +455,8 @@
     const gapReduction = matchedRoot && branchSameRoute
       ? Math.max(0, gapSize(matchedRoot) - gapSize(branchSameRoute))
       : 0;
-    return primaryValue * 1000
+    return strategicValue.primaryValue * 1000
+      - strategicValue.opportunityCost * 10
       + finite(matchedRoot?.targetBenefit?.score) * 100
       + gapReduction * 10
       + finite(branchGoal?.targetBenefit?.score)
@@ -385,8 +469,12 @@
     if (String(successor?.actorId || "") !== String(input.focalSeatId || "")) return 0;
     const rootFacts = outcomeModel.createStrategicFacts(input.rootObservation, input.focalSeatId);
     const branchFacts = outcomeModel.createStrategicFacts(input.branchObservation, input.focalSeatId);
-    const primaryValue = evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput);
-    if (successor.family === "pass") return primaryValue > 0 ? 900 : -900;
+    const strategicValue = evaluateStrategicFactsBreakdown(
+      rootFacts,
+      branchFacts,
+      parametersInput,
+    );
+    if (successor.family === "pass") return strategicValue.total > 0 ? 900 : -900;
     if (successor.family === "end_turn") return 100;
     const requirements = (rawProbeRequirements(input.branchObservation)?.candidates || [])
       .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId);
@@ -407,7 +495,7 @@
       industry: 120,
       runezu_face_symbol: 100,
       card_corner: 80,
-      quick_trade: 60,
+      quick_trade: 0,
     };
     return familyPriority[successor.family] || 0;
   }
@@ -478,6 +566,7 @@
     OUTCOME_SCHEMA_VERSION,
     DEFAULT_PARAMETERS,
     INCOME_UNIT_VALUES,
+    ASSET_OPPORTUNITY_VALUES,
     SECONDARY_AGENT_ROLLOUT_VERSION,
     mergeParameters,
     requiresCounterfactualOutcome,
@@ -486,6 +575,7 @@
     compareSetupProbeGoals,
     evaluateSearchPriority,
     evaluateStrategicFactsPriority,
+    evaluateStrategicFactsBreakdown,
     evaluateSecondaryAgentSearchPriority,
     rankSecondaryAgentSuccessor,
     selectSecondaryAgentRouteTarget,

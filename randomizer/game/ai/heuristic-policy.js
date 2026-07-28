@@ -22,7 +22,7 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v12";
+  const POLICY_VERSION = "seti-heuristic-policy-v13";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
   const FALLBACK_FAMILIES = Object.freeze(new Set([
@@ -58,7 +58,7 @@
 
   function isObservationFeasible(context, action) {
     const isMoveLike = action.family === "move"
-      || (action.family === "card_corner" && action.payload?.actionKind === "move");
+      || (action.family === "card_corner" && action.payload?.kind === "move");
     if (!isMoveLike) return true;
     const rockets = context.observation?.publicState?.board?.rockets;
     if (!Array.isArray(rockets)) return true;

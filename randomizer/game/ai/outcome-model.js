@@ -160,6 +160,7 @@
   function createStrategicFacts(source, seatId) {
     const publicPlayer = findPlayer(source, seatId);
     const resources = publicPlayer?.resources || publicPlayer || {};
+    const selfState = selfStateOf(source, seatId, publicPlayer);
     const terminal = Boolean(
       source?.terminal
       ?? source?.publicState?.terminal
@@ -175,6 +176,14 @@
         : realizedScore,
       ownedTechIds: ownedTechIds(publicPlayer),
       income: incomeFacts(publicPlayer),
+      resourceFacts: {
+        credits: finiteOrNull(resources.credits) ?? 0,
+        energy: finiteOrNull(resources.energy) ?? 0,
+        publicity: finiteOrNull(resources.publicity) ?? 0,
+        availableData: finiteOrNull(resources.availableData) ?? 0,
+        ordinaryCards: countOrdinaryCards(selfState, publicPlayer),
+        alienCards: countAlienCards(selfState),
+      },
       roundNumber: finiteOrNull(
         source?.publicState?.roundNumber
         ?? source?.turn?.roundNumber

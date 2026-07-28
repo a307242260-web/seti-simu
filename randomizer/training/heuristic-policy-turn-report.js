@@ -135,6 +135,7 @@ function buildDiagnostics(turns) {
     tiedTopChoiceCount: tiedTopChoices.length,
     nonPositiveChoiceCount: nonPositiveChoices.length,
     zeroScoreTurnCount: turns.filter((turn) => turn.scoreAfter === turn.scoreBefore).length,
+    quickTradeCount: evaluated.filter(({ action }) => action.family === "quick_trade").length,
     actionFamilyCounts: Object.freeze(Object.fromEntries(
       [...evaluated, ...allActions
         .filter((action) => action.family === "end_turn")
@@ -161,7 +162,7 @@ function buildDiagnostics(turns) {
 
 function isObservationFeasible(observation, actorPlayerId, action) {
   const isMoveLike = action.family === "move"
-    || (action.family === "card_corner" && action.payload?.actionKind === "move");
+    || (action.family === "card_corner" && action.payload?.kind === "move");
   if (!isMoveLike) return true;
   const rockets = observation?.publicState?.board?.rockets;
   if (!Array.isArray(rockets)) return true;
@@ -178,7 +179,7 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
         || (action.decisionType === "conditional_choice" ? "conditional" : "main"),
     };
     const evaluation = expectedScoreEvaluator.evaluateAction(
-      { observation, actionOutcomes, seatId: actorPlayerId },
+      { observation, legalActions, actionOutcomes, seatId: actorPlayerId },
       evaluableAction,
     );
     const visual = selectionVisual(action, options);
@@ -606,7 +607,13 @@ function formatEvaluation(candidate, timing = null) {
   const gap = goal?.gap || route?.resourceGap || null;
   const required = goal?.required || route?.routeCost || null;
   const parts = [
-    `V=${formatNumber(evaluation.value ?? evaluation.score)}`,
+    `路线净值=${formatNumber(evaluation.value ?? evaluation.score)}`,
+    `一级收益=${formatNumber(evaluation.primaryValue)}`,
+    `其中实际分=${formatNumber(evaluation.actualScoreDelta)}`,
+    `科技=${formatNumber(evaluation.techValue)}`,
+    `未来收入=${formatNumber(evaluation.incomeValue)}`,
+    `资源机会成本=${evaluation.opportunityCost ? `-${formatNumber(evaluation.opportunityCost)}` : "0"}`,
+    `快速转换=${formatNumber(evaluation.quickTradeCount)}次`,
     goal
       ? `目标=${goal.planetId}/${goal.endpointFamily}`
       : route
@@ -795,7 +802,7 @@ function renderActionCard(action) {
         <strong>${escapeHtml(signed(action.scoreDelta))}</strong>
       </div>
       <div class="value-pill">
-        <small>选择价值 V</small>
+        <small>整条路线净值</small>
         <strong>${evaluation?.score == null ? "—" : escapeHtml(formatNumber(evaluation.value ?? evaluation.score))}</strong>
       </div>
     </div>${action.visual ? `<div class="selected-card-preview">
@@ -826,12 +833,30 @@ function renderActionCard(action) {
         <strong>${escapeHtml(formatGap(required))}</strong>
       </div>
       <div class="decision-cell">
-        <span>路线终点实际分</span>
-        <strong>${escapeHtml(formatNumber(evaluation?.goalScoreGain))}</strong>
+        <span>路线累计实际分</span>
+        <strong>${escapeHtml(formatNumber(evaluation?.actualScoreDelta))}</strong>
       </div>
       <div class="decision-cell">
-        <span>沿途宣传</span>
-        <strong>${escapeHtml(formatNumber(route?.publicityAlongRoute))}</strong>
+        <span>路线科技价值</span>
+        <strong>${escapeHtml(formatNumber(evaluation?.techValue))}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>路线未来收入</span>
+        <strong>${escapeHtml(formatNumber(evaluation?.incomeValue))}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>资源机会成本</span>
+        <strong>${evaluation?.opportunityCost
+          ? `-${escapeHtml(formatNumber(evaluation.opportunityCost))}`
+          : "0"}</strong>
+      </div>
+      <div class="decision-cell">
+        <span>快速转换</span>
+        <strong>${escapeHtml(formatNumber(evaluation?.quickTradeCount))} 次</strong>
+      </div>
+      <div class="decision-cell">
+        <span>路线净值</span>
+        <strong>${escapeHtml(formatNumber(evaluation?.value ?? evaluation?.score))}</strong>
       </div>
     </div>
     <div class="actual-outcome">

@@ -46,6 +46,7 @@ function action(actionId, family = "scan") {
 function evaluate(candidateAction, before, after, status = "settled") {
   return evaluator.evaluateAction({
     seatId,
+    legalActions: [candidateAction],
     actionOutcomes: [{
       schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
       actionId: candidateAction.actionId,
@@ -53,7 +54,17 @@ function evaluate(candidateAction, before, after, status = "settled") {
       confidence: status === "settled" ? "high" : "none",
       rootObservation: before,
       leaves: status === "settled"
-        ? [{ leafId: `${candidateAction.actionId}:leaf`, actionChain: [candidateAction.actionId], observation: after }]
+        ? [{
+          leafId: `${candidateAction.actionId}:leaf`,
+          actionChain: [candidateAction.actionId],
+          secondaryAgentTrace: candidateAction.family === "quick_trade"
+            ? [
+              { family: "quick_trade", target: candidateAction.target, payload: {} },
+              { family: "orbit", target: { planetId: "mars" }, payload: {} },
+            ]
+            : [],
+          observation: after,
+        }]
         : [],
     }],
   }, candidateAction);
@@ -92,6 +103,94 @@ function evaluate(candidateAction, before, after, status = "settled") {
 
 {
   const result = evaluate(
+    action("trade-then-orbit", "quick_trade"),
+    observation({ score: 4, resources: { credits: 2, energy: 0 } }),
+    observation({ score: 13, resources: { credits: 0, energy: 1 } }),
+  );
+  assert.equal(result.primaryValue, 9, "快速转换后的目标分仍按实际一级收益计算");
+  assert.equal(result.opportunityCost, 1, "2份资源换1份资源必须体现1份净机会成本");
+  assert.equal(result.score, 8, "必要转换可以完成目标，但路线价值必须扣除真实净损耗");
+}
+
+{
+  const candidateAction = action("trade-route-dominance", "quick_trade");
+  const before = observation({ score: 4 });
+  const after = observation({ score: 13 });
+  const result = evaluator.evaluateAction({
+    seatId,
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: candidateAction.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: before,
+      leaves: [
+        {
+          leafId: "wasteful",
+          actionChain: ["quick_trade:a", "quick_trade:b", "orbit:c"],
+          quickTradeCount: 2,
+          secondaryAgentDepth: 3,
+          secondaryAgentTrace: [
+            { family: "quick_trade", target: { tradeId: "credits-for-energy" }, payload: {} },
+            { family: "orbit", target: { planetId: "mars" }, payload: {} },
+          ],
+          observation: after,
+        },
+        {
+          leafId: "direct",
+          actionChain: ["quick_trade:a", "orbit:c"],
+          quickTradeCount: 1,
+          secondaryAgentDepth: 2,
+          secondaryAgentTrace: [
+            { family: "quick_trade", target: { tradeId: "credits-for-energy" }, payload: {} },
+            { family: "orbit", target: { planetId: "mars" }, payload: {} },
+          ],
+          observation: after,
+        },
+      ],
+    }],
+  }, candidateAction);
+  assert.equal(result.selectedLeafId, "direct",
+    "同一一级结果必须保留转换更少、代理更短的达成路线");
+  assert.equal(result.quickTradeCount, 1);
+}
+
+{
+  const trade = action("trade-without-purpose", "quick_trade");
+  const placeData = {
+    ...action("place-data-already-legal", "place_data"),
+    target: { slotId: "slot-1" },
+  };
+  const before = observation({ income: { credits: 0 } });
+  const after = observation({ income: { credits: 1 } });
+  const result = evaluator.evaluateAction({
+    seatId,
+    legalActions: [trade, placeData],
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: trade.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: before,
+      leaves: [{
+        leafId: "trade-before-already-legal-placement",
+        actionChain: [trade.actionId, placeData.actionId],
+        quickTradeCount: 1,
+        secondaryAgentTrace: [
+          { family: "quick_trade", target: { tradeId: "credits-for-energy" }, payload: {} },
+          { family: placeData.family, target: placeData.target, payload: placeData.payload },
+        ],
+        observation: after,
+      }],
+    }],
+  }, trade);
+  assert.equal(result.score, null,
+    "转换后的下一代理在转换前已经合法时，不能把遥远路线收益反复归因给当前转换");
+  assert.deepEqual(result.reasonCodes, ["quick-trade-did-not-unlock-next-agent"]);
+}
+
+{
+  const result = evaluate(
     action("research:tech", "research_tech"),
     observation({ roundNumber: 2 }),
     observation({ roundNumber: 2, ownedTechIds: ["orange2"] }),
@@ -117,9 +216,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 2 }),
     observation({ roundNumber: 2, income: { credits: 1 } }),
   );
-  assert.equal(result.incomeValue, 15,
-    "第2轮增加1信用收入应计效果即时结算及第3、4轮轮初收入，共15分长期价值");
-  assert.equal(result.score, 15);
+  assert.equal(result.incomeValue, 10,
+    "第2轮增加1信用收入只计第3、4轮两次尚未发生的轮初收入，共10分长期价值");
+  assert.equal(result.score, 10);
   assert.deepEqual(result.incomeDelta, {
     credits: 1,
     energy: 0,
@@ -136,7 +235,7 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 4 }),
     observation({ roundNumber: 4, income: { credits: 1 } }),
   );
-  assert.equal(result.incomeValue, 5, "第4轮新增信用收入只计效果自身的当前轮窗口");
+  assert.equal(result.score, null, "第4轮行动阶段之后已经没有轮初收入窗口，纯收入轨路线不可选");
 }
 
 {
@@ -152,8 +251,8 @@ function evaluate(candidateAction, before, after, status = "settled") {
   );
   assert.equal(result.actualScoreDelta, 5);
   assert.equal(result.techValue, 10);
-  assert.equal(result.incomeValue, 10);
-  assert.equal(result.score, 25,
+  assert.equal(result.incomeValue, 5);
+  assert.equal(result.score, 20,
     "同一真实叶的分数、科技和收入可以合并，但中间资源不得重复计分");
 }
 
