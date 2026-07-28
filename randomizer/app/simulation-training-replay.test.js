@@ -15,7 +15,7 @@ try {
   });
   const result = env.runOfflineTeacherDecision();
   assert.equal(result.done, false);
-  assert.equal(result.teacherAdapter, "seti-heuristic-policy-v9");
+  assert.equal(result.teacherAdapter, "seti-heuristic-policy-v10");
   assert.equal(result.chosenAction.actionId, result.beforeActions.find(
     (candidate) => candidate.actionId === result.chosenAction.actionId,
   ).actionId);

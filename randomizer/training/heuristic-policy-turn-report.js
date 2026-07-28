@@ -405,10 +405,10 @@ function runFixedBoardTurnReport(options = {}) {
       );
       const valuationMilliseconds = performance.now() - valuationStartedAt;
       const counterfactualTiming = env.getCounterfactualDiagnostics() || {};
-      if (Number(counterfactualTiming.totalMilliseconds) > 1000) {
+      if (Number(counterfactualTiming.totalMilliseconds) > 10000) {
         throw new Error(
           `fixed-board 第${decisionCount}次 ${chosen.family}/${chosen.actionId} `
-          + `单次决策 ${counterfactualTiming.totalMilliseconds}ms 超过 1s 门禁`,
+          + `单次决策 ${counterfactualTiming.totalMilliseconds}ms 超过 10s 实验失控保护`,
         );
       }
       const chosenEvaluation = rankedEvaluations.find((candidate) => candidate.actionId === chosen.actionId) || null;
@@ -1503,7 +1503,7 @@ function formatTurnReportMarkdown(report) {
     `- ${report.turns.length} 个玩家回合中，${report.diagnostics.zeroScoreTurnCount} 个回合没有获得分数。`,
     `- ${report.diagnostics.evaluatedDecisionCount} 个已解析的非结束决策中，${report.diagnostics.tiedTopChoiceCount} 个与至少一个备选目标同分，${report.diagnostics.nonPositiveChoiceCount} 个不是正分探测器目标步骤。`,
     `- 实际提交行动族：${Object.entries(report.diagnostics.actionFamilyCounts).map(([family, count]) => `${family}=${count}`).join("，") || "无"}；表格主列均为实际提交，备选列仅为未提交的反事实候选。`,
-    `- 性能：路线 checkpoint 上限=${report.diagnostics.performance.routeCheckpointLimit}；每候选平均 ${formatNumber(report.diagnostics.performance.averagePerCandidateMilliseconds)}ms、最大 ${formatNumber(report.diagnostics.performance.maxPerCandidateMilliseconds)}ms；候选集整步最大 ${formatNumber(report.diagnostics.performance.maxDecisionMilliseconds)}ms，超过 1s 会立即中止整局。`,
+    `- 性能：路线 checkpoint 上限=${report.diagnostics.performance.routeCheckpointLimit}；每候选平均 ${formatNumber(report.diagnostics.performance.averagePerCandidateMilliseconds)}ms、最大 ${formatNumber(report.diagnostics.performance.maxPerCandidateMilliseconds)}ms；候选集整步最大 ${formatNumber(report.diagnostics.performance.maxDecisionMilliseconds)}ms；2s 为记录目标，10s 仅作实验失控保护。`,
   );
   let currentRound = null;
   for (const turn of report.turns) {

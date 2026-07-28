@@ -603,6 +603,22 @@
         1,
         Number(evaluateOptions.maxFrontierPerRoot) || 8,
       );
+      const secondaryAgentSearch = evaluateOptions.secondaryAgentSearch || null;
+      const focalSeatId = secondaryAgentSearch?.focalSeatId == null
+        ? null
+        : String(secondaryAgentSearch.focalSeatId);
+      const maxProxyDepth = Math.max(
+        1,
+        Number(secondaryAgentSearch?.maxProxyDepth) || 15,
+      );
+      if (secondaryAgentSearch && (
+        !focalSeatId
+        || typeof secondaryAgentSearch.selectSuccessors !== "function"
+      )) {
+        throw new TypeError(
+          "secondaryAgentSearch 需要 focalSeatId 和版本化 selectSuccessors",
+        );
+      }
       const timing = {
         forkMilliseconds: 0,
         executionMilliseconds: 0,
@@ -665,6 +681,7 @@
       const outcomeStateByActionId = new Map(legalActions.map((action) => [action.actionId, {
         action,
         leaves: [],
+        frontierLeaves: [],
         failures: [],
         pruned: false,
       }]));
@@ -680,16 +697,22 @@
         return origin.rootAction.actionId;
       }
 
-      function nodeKey(envelope, action, depth) {
+      function nodeKey(envelope, action, depth, origins = []) {
+        const routeOrigin = origins[0] || {};
         return [
           envelopeHash(envelope),
           action.actionId,
           Math.max(0, maxDepth - depth),
+          secondaryAgentSearch ? focalSeatId : "",
+          secondaryAgentSearch ? routeOrigin.proxyDepth || 0 : "",
+          secondaryAgentSearch ? routeOrigin.opponentProxyDepth || 0 : "",
+          secondaryAgentSearch ? Number(Boolean(routeOrigin.focalPassStarted)) : "",
+          secondaryAgentSearch ? routeOrigin.routeTargetId || "" : "",
         ].join(":");
       }
 
       function mergeNode(frontierByKey, node) {
-        const key = nodeKey(node.envelope, node.action, node.depth);
+        const key = nodeKey(node.envelope, node.action, node.depth, node.origins);
         const existing = frontierByKey.get(key);
         if (!existing) {
           frontierByKey.set(key, { ...node, key });
@@ -732,6 +755,25 @@
 
       function retainRootFairBeam(nodes) {
         const ordered = [...nodes].sort(compareNodes);
+        if (secondaryAgentSearch) {
+          const bestByRoot = new Map();
+          for (const node of ordered) {
+            for (const origin of node.origins) {
+              const rootId = origin.rootAction.actionId;
+              if (!bestByRoot.has(rootId)) bestByRoot.set(rootId, node);
+            }
+          }
+          const retained = [...new Set(bestByRoot.values())]
+            .sort(compareNodes)
+            .slice(0, 2);
+          const retainedKeys = new Set(retained.map((node) => node.key));
+          for (const node of ordered) {
+            if (retainedKeys.has(node.key)) continue;
+            beamPrunedOriginCount += node.origins.length;
+            markPruned(node.origins);
+          }
+          return retained;
+        }
         const retainedKeysByRoot = new Map();
         for (const action of legalActions) {
           const rootActionId = action.actionId;
@@ -769,11 +811,38 @@
           status: ["completed", "idle"].includes(nextInspection.phase)
             ? "settled"
             : nextInspection.phase,
-          actionChain: clone(origin.chain),
-          observation: clone(leafObservation),
-          legalSuccessors: clone(successors),
-          routeCheckpoints: clone(nextCheckpoints),
+          actionChain: secondaryAgentSearch ? origin.chain : clone(origin.chain),
+          observation: secondaryAgentSearch ? leafObservation : clone(leafObservation),
+          legalSuccessors: secondaryAgentSearch ? successors : clone(successors),
+          routeCheckpoints: secondaryAgentSearch ? [] : clone(nextCheckpoints),
+          ...(secondaryAgentSearch ? {
+            secondaryAgentDepth: origin.proxyDepth || 0,
+            terminalReason: origin.terminalReason || null,
+          } : {}),
         });
+      }
+
+      function addFrontierLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
+        const state = outcomeStateByActionId.get(origin.rootAction.actionId);
+        if (!state) return;
+        const leaf = {
+          leafId: `frontier:${stableHash(origin.chain)}`,
+          status: "search_frontier",
+          actionChain: origin.chain,
+          observation: leafObservation,
+          legalSuccessors: successors,
+          routeCheckpoints: [],
+          secondaryAgentDepth: origin.proxyDepth || 0,
+          terminalReason: "search-frontier",
+        };
+        const byId = new Map(state.frontierLeaves.map((candidate) => [
+          candidate.leafId,
+          candidate,
+        ]));
+        byId.set(leaf.leafId, leaf);
+        state.frontierLeaves = [...byId.values()]
+          .sort((left, right) => String(left.leafId).localeCompare(String(right.leafId)))
+          .slice(-maxLeaves);
       }
 
       function executeNode(node) {
@@ -847,6 +916,7 @@
                 rootObservation,
                 branchObservation: leafObservation,
                 viewer,
+                currentAction: clone(current),
               }));
               branchPriority = Number.isFinite(measured) ? measured : 0;
             } catch (_error) {
@@ -899,6 +969,11 @@
           chain: [],
           checkpoints: [],
           lastProbeAction: null,
+          proxyDepth: 0,
+          opponentProxyDepth: 0,
+          focalPassStarted: false,
+          terminalReason: null,
+          routeTargetId: null,
         }],
       }));
       while (frontier.length && executedNodeCount < maxNodes) {
@@ -917,7 +992,7 @@
             markPruned(node.origins);
             continue;
           }
-          const key = node.key || nodeKey(node.envelope, node.action, node.depth);
+          const key = node.key || nodeKey(node.envelope, node.action, node.depth, node.origins);
           if (processedNodeKeys.has(key)) {
             transpositionHitCount += 1;
             continue;
@@ -930,15 +1005,53 @@
             continue;
           }
           const current = execution.current;
+          const currentIsFocal = secondaryAgentSearch
+            && String(current.actorId) === focalSeatId;
+          const currentIsProxy = secondaryAgentSearch
+            && current.phase !== "conditional"
+            && !["end_turn", "pass"].includes(current.family);
           const nextProbeAction = ["launch", "move", "orbit", "land"].includes(current.family)
             ? clone(current)
             : null;
           for (const origin of node.origins) {
             const nextChain = [...origin.chain, current.actionId];
             const originNextProbeAction = nextProbeAction || origin.lastProbeAction;
-            if (execution.awaitingDecision && current.phase === "conditional" && origin.chain.length === 0) {
+            let routeTargetId = origin.routeTargetId || null;
+            if (
+              secondaryAgentSearch
+              && typeof secondaryAgentSearch.selectRouteTarget === "function"
+            ) {
+              try {
+                routeTargetId = secondaryAgentSearch.selectRouteTarget({
+                  focalSeatId,
+                  currentAction: current,
+                  rootObservation,
+                  branchObservation: execution.leafObservation,
+                  routeTargetId,
+                }) || null;
+              } catch (_error) {
+                routeTargetId = origin.routeTargetId || null;
+              }
+            }
+            const nextProxyDepth = origin.proxyDepth + (
+              currentIsFocal && currentIsProxy ? 1 : 0
+            );
+            const focalPassStarted = origin.focalPassStarted
+              || (currentIsFocal && current.family === "pass");
+            if (
+              !secondaryAgentSearch
+              && execution.awaitingDecision
+              && current.phase === "conditional"
+              && origin.chain.length === 0
+            ) {
               addLeaf(
-                { ...origin, chain: nextChain },
+                {
+                  ...origin,
+                  chain: nextChain,
+                  proxyDepth: nextProxyDepth,
+                  focalPassStarted,
+                  routeTargetId,
+                },
                 execution.leafObservation,
                 execution.successors,
                 execution.nextInspection,
@@ -951,7 +1064,46 @@
                 markPruned([origin]);
                 continue;
               }
-              for (const successor of execution.successors) {
+              let conditionalSuccessors = execution.successors;
+              if (
+                secondaryAgentSearch
+                && String(conditionalSuccessors[0]?.actorId || "") !== focalSeatId
+              ) {
+                try {
+                  conditionalSuccessors = secondaryAgentSearch.selectSuccessors({
+                    focalSeatId,
+                    currentAction: current,
+                    branchObservation: execution.leafObservation,
+                    legalSuccessors: execution.successors,
+                    focalProxyDepth: nextProxyDepth,
+                    opponentProxyDepth: origin.opponentProxyDepth,
+                    actionChain: nextChain,
+                    rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
+                    routeTargetId,
+                  }) || [];
+                } catch (error) {
+                  markFailure([origin], {
+                    code: error?.code || "COUNTERFACTUAL_ROUTE_SELECTOR_FAILED",
+                    message: error?.message || String(error),
+                  });
+                  continue;
+                }
+                const legalById = new Map(execution.successors.map((successor) => [
+                  successor.actionId,
+                  successor,
+                ]));
+                conditionalSuccessors = conditionalSuccessors
+                  .map((successor) => legalById.get(successor?.actionId))
+                  .filter(Boolean);
+                if (!conditionalSuccessors.length) {
+                  markFailure([origin], {
+                    code: "COUNTERFACTUAL_ROUTE_SELECTOR_EMPTY",
+                    message: "secondaryAgentSearch 未选择合法 conditional 后继",
+                  });
+                  continue;
+                }
+              }
+              for (const successor of conditionalSuccessors) {
                 mergeNode(nextFrontierByKey, {
                   envelope: execution.childEnvelope,
                   action: successor,
@@ -961,12 +1113,15 @@
                     ...origin,
                     chain: nextChain,
                     lastProbeAction: originNextProbeAction,
+                    proxyDepth: nextProxyDepth,
+                    focalPassStarted,
+                    routeTargetId,
                   }],
                 });
               }
               continue;
             }
-            const nextCheckpoints = [...origin.checkpoints, {
+            const nextCheckpoints = secondaryAgentSearch ? [] : [...origin.checkpoints, {
               actionId: originNextProbeAction?.actionId || current.actionId,
               family: originNextProbeAction?.family || current.family,
               target: clone(originNextProbeAction?.target || current.target || {}),
@@ -974,8 +1129,141 @@
               actionChain: nextChain,
               observation: execution.leafObservation,
             }];
+            if (secondaryAgentSearch) {
+              if (focalPassStarted) {
+                addLeaf(
+                  {
+                    ...origin,
+                    chain: nextChain,
+                    proxyDepth: nextProxyDepth,
+                    focalPassStarted,
+                    terminalReason: "focal-pass",
+                  },
+                  execution.leafObservation,
+                  execution.successors,
+                  execution.nextInspection,
+                  nextCheckpoints,
+                );
+                continue;
+              }
+              if (nextProxyDepth >= maxProxyDepth) {
+                addLeaf(
+                  {
+                    ...origin,
+                    chain: nextChain,
+                    proxyDepth: nextProxyDepth,
+                    terminalReason: "secondary-agent-depth",
+                  },
+                  execution.leafObservation,
+                  execution.successors,
+                  execution.nextInspection,
+                  nextCheckpoints,
+                );
+                continue;
+              }
+              if (execution.successors.length && execution.childEnvelope) {
+                let selectedSuccessors = [];
+                try {
+                  selectedSuccessors = secondaryAgentSearch.selectSuccessors({
+                    focalSeatId,
+                    currentAction: current,
+                    branchObservation: execution.leafObservation,
+                    legalSuccessors: execution.successors,
+                    focalProxyDepth: nextProxyDepth,
+                    opponentProxyDepth: currentIsFocal || current.family === "end_turn"
+                      ? 0
+                      : origin.opponentProxyDepth + (currentIsProxy ? 1 : 0),
+                    actionChain: nextChain,
+                    rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
+                    routeTargetId,
+                  }) || [];
+                } catch (error) {
+                  markFailure([origin], {
+                    code: error?.code || "COUNTERFACTUAL_ROUTE_SELECTOR_FAILED",
+                    message: error?.message || String(error),
+                  });
+                  continue;
+                }
+                const legalById = new Map(execution.successors.map((successor) => [
+                  successor.actionId,
+                  successor,
+                ]));
+                selectedSuccessors = selectedSuccessors
+                  .map((successor) => legalById.get(successor?.actionId))
+                  .filter(Boolean);
+                if (!selectedSuccessors.length) {
+                  markFailure([origin], {
+                    code: "COUNTERFACTUAL_ROUTE_SELECTOR_EMPTY",
+                    message: "secondaryAgentSearch 未选择合法后继",
+                  });
+                  continue;
+                }
+                if (selectedSuccessors.some((successor) => (
+                  String(successor.actorId) === focalSeatId
+                ))) {
+                  addFrontierLeaf(
+                    {
+                      ...origin,
+                      chain: nextChain,
+                      proxyDepth: nextProxyDepth,
+                      routeTargetId,
+                    },
+                    execution.leafObservation,
+                    execution.successors,
+                    execution.nextInspection,
+                    nextCheckpoints,
+                  );
+                }
+                const nextActorIsFocal = selectedSuccessors.some((successor) => (
+                  String(successor.actorId) === focalSeatId
+                ));
+                for (const successor of selectedSuccessors) {
+                  let successorPriority = execution.branchPriority;
+                  if (typeof secondaryAgentSearch.rankSuccessor === "function") {
+                    try {
+                      const ranked = Number(secondaryAgentSearch.rankSuccessor({
+                        focalSeatId,
+                        currentAction: current,
+                        successor,
+                        rootObservation,
+                        branchObservation: execution.leafObservation,
+                        focalProxyDepth: nextProxyDepth,
+                        routeTargetId,
+                        actionChain: nextChain,
+                      }));
+                      if (Number.isFinite(ranked)) successorPriority += ranked;
+                    } catch (_error) {
+                      // Successor ranking is an approximation; execution validity remains authoritative.
+                    }
+                  }
+                  mergeNode(nextFrontierByKey, {
+                    envelope: execution.childEnvelope,
+                    action: successor,
+                    depth: 0,
+                    priority: successorPriority,
+                    origins: [{
+                      ...origin,
+                      chain: nextChain,
+                      checkpoints: nextCheckpoints,
+                      lastProbeAction: originNextProbeAction,
+                      proxyDepth: nextProxyDepth,
+                      opponentProxyDepth: nextActorIsFocal
+                        ? 0
+                        : (
+                          currentIsFocal || current.family === "end_turn"
+                            ? 0
+                            : origin.opponentProxyDepth + (currentIsProxy ? 1 : 0)
+                        ),
+                      focalPassStarted,
+                      routeTargetId,
+                    }],
+                  });
+                }
+                continue;
+              }
+            }
             addLeaf(
-              { ...origin, chain: nextChain },
+              { ...origin, chain: nextChain, proxyDepth: nextProxyDepth, focalPassStarted },
               execution.leafObservation,
               execution.successors,
               execution.nextInspection,
@@ -994,7 +1282,8 @@
 
       const outcomes = [...outcomeStateByActionId.values()].map((state) => {
         const failure = state.failures[0] || null;
-        const hasLeaves = state.leaves.length > 0;
+        const allLeaves = [...state.leaves, ...state.frontierLeaves];
+        const hasLeaves = allLeaves.length > 0;
         const status = hasLeaves
           ? "settled"
           : failure && !state.pruned
@@ -1018,7 +1307,7 @@
             state.failures.length ? "counterfactual-branch-failed" : null,
           ].filter(Boolean),
           rootObservation,
-          leaves: state.leaves.sort((left, right) => (
+          leaves: allLeaves.sort((left, right) => (
             String(left.leafId).localeCompare(String(right.leafId))
           )),
         };
@@ -1044,6 +1333,9 @@
         executedNodeCount,
         maxNodes,
         maxDepth,
+        maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
+        secondaryAgentSearch: Boolean(secondaryAgentSearch),
+        rolloutVersion: secondaryAgentSearch?.rolloutVersion || null,
         maxFrontierPerRoot,
         maxFrontierSize,
         maxRetainedFrontierSize,

@@ -12,6 +12,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v1";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v1";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v1";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["quick_trade"]));
   const DEFAULT_PARAMETERS = Object.freeze({
@@ -27,6 +28,11 @@
     handSize: 2.5,
     additionalPublicScan: 2.5,
   });
+  const ROLLOUT_FAMILY_PRIORITY = Object.freeze([
+    "orbit", "land", "research_tech", "scan", "play_card", "place_data",
+    "analyze", "launch", "industry", "runezu_face_symbol", "card_corner",
+    "quick_trade", "pass", "move",
+  ]);
 
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
@@ -315,12 +321,164 @@
     return !UNEVALUATED_ROOT_FAMILIES.has(action?.family);
   }
 
+  function rawProbeRequirements(observation) {
+    return observation?.probeRouteRequirements
+      || observation?.outcomeProjection?.progress?.probeGoalRequirements
+      || null;
+  }
+
+  function actionMatchesProbeStep(action, step) {
+    if (!action || !step || action.family !== step.family) return false;
+    if (step.family === "move") {
+      return String(action.target?.rocketId) === String(step.rocketId)
+        && finite(action.target?.deltaX) === finite(step.deltaX)
+        && finite(action.target?.deltaY) === finite(step.deltaY);
+    }
+    if (["orbit", "land"].includes(step.family)) {
+      return String(action.target?.rocketId) === String(step.rocketId)
+        && String(action.target?.planetId) === String(step.planetId)
+        && String(action.target?.type || "planet") === String(step.target?.type || "planet")
+        && String(action.target?.satelliteId || "") === String(step.target?.satelliteId || "");
+    }
+    return true;
+  }
+
+  function bestProbePotential(requirements) {
+    return [...(requirements?.candidates || [])]
+      .filter((goal) => finite(goal?.targetBenefit?.score) > 0)
+      .sort((left, right) => (
+        finite(right.targetBenefit.score) - finite(left.targetBenefit.score)
+        || gapSize(left) - gapSize(right)
+        || finite(left?.required?.movementSteps) - finite(right?.required?.movementSteps)
+        || String(left.requirementId).localeCompare(String(right.requirementId))
+      ))[0] || null;
+  }
+
+  function evaluateSecondaryAgentSearchPriority(input = {}, parametersInput = {}) {
+    const rootFacts = outcomeModel.createStrategicFacts(input.rootObservation, input.focalSeatId);
+    const branchFacts = outcomeModel.createStrategicFacts(input.branchObservation, input.focalSeatId);
+    const primaryValue = evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput);
+    const rootGoals = rawProbeRequirements(input.rootObservation)?.candidates || [];
+    const branchGoal = bestProbePotential(rawProbeRequirements(input.branchObservation));
+    const matchedRoot = rootGoals
+      .filter((goal) => actionMatchesProbeStep(input.currentAction, goal.nextStep))
+      .sort(compareGoals)[0] || null;
+    const branchSameRoute = matchedRoot
+      ? (rawProbeRequirements(input.branchObservation)?.candidates || []).find((goal) => (
+        goal.requirementId === matchedRoot.requirementId
+        || (matchedRoot.sourceId === "launch" && goal.targetId === matchedRoot.targetId)
+      ))
+      : null;
+    const gapReduction = matchedRoot && branchSameRoute
+      ? Math.max(0, gapSize(matchedRoot) - gapSize(branchSameRoute))
+      : 0;
+    return primaryValue * 1000
+      + finite(matchedRoot?.targetBenefit?.score) * 100
+      + gapReduction * 10
+      + finite(branchGoal?.targetBenefit?.score)
+      + Number(Boolean(branchGoal) && isAffordable(branchGoal)) * 2
+      - finite(branchGoal?.required?.movementSteps) / 100;
+  }
+
+  function rankSecondaryAgentSuccessor(input = {}, parametersInput = {}) {
+    const successor = input.successor;
+    if (String(successor?.actorId || "") !== String(input.focalSeatId || "")) return 0;
+    const rootFacts = outcomeModel.createStrategicFacts(input.rootObservation, input.focalSeatId);
+    const branchFacts = outcomeModel.createStrategicFacts(input.branchObservation, input.focalSeatId);
+    const primaryValue = evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput);
+    if (successor.family === "pass") return primaryValue > 0 ? 900 : -900;
+    if (successor.family === "end_turn") return 100;
+    const requirements = (rawProbeRequirements(input.branchObservation)?.candidates || [])
+      .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId);
+    const matched = requirements
+      .filter((goal) => actionMatchesProbeStep(successor, goal.nextStep))
+      .sort(compareGoals)[0] || null;
+    if (matched) return 500 + finite(matched.targetBenefit?.score) * 10;
+    const familyPriority = {
+      orbit: 350,
+      land: 350,
+      research_tech: 250,
+      scan: 220,
+      play_card: 200,
+      place_data: 180,
+      analyze: 180,
+      launch: 160,
+      move: 140,
+      industry: 120,
+      runezu_face_symbol: 100,
+      card_corner: 80,
+      quick_trade: 60,
+    };
+    return familyPriority[successor.family] || 0;
+  }
+
+  function selectSecondaryAgentRouteTarget(input = {}) {
+    const branchGoals = rawProbeRequirements(input.branchObservation)?.candidates || [];
+    if (
+      input.routeTargetId
+      && branchGoals.some((goal) => goal.targetId === input.routeTargetId)
+    ) {
+      return input.routeTargetId;
+    }
+    if (
+      String(input.currentAction?.actorId || "") !== String(input.focalSeatId || "")
+      || !["launch", "move", "orbit", "land"].includes(input.currentAction?.family)
+    ) {
+      return null;
+    }
+    const matched = (rawProbeRequirements(input.rootObservation)?.candidates || [])
+      .filter((goal) => actionMatchesProbeStep(input.currentAction, goal.nextStep))
+      .sort(compareGoals)[0] || null;
+    return matched?.targetId || null;
+  }
+
+  function selectSecondaryAgentSuccessors(input = {}) {
+    const successors = [...(input.legalSuccessors || [])]
+      .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
+    if (!successors.length) return [];
+    const focalSeatId = String(input.focalSeatId || "");
+    const actorId = String(successors[0]?.actorId || "");
+    if (actorId === focalSeatId) {
+      const goals = (rawProbeRequirements(input.branchObservation)?.candidates || [])
+        .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId);
+      if (input.routeTargetId && goals.length) {
+        const exact = successors.filter((action) => (
+          goals.some((goal) => actionMatchesProbeStep(action, goal.nextStep))
+        ));
+        if (exact.length) return exact;
+        const controls = successors.filter((action) => (
+          ["end_turn", "pass"].includes(action.family)
+        ));
+        if (controls.length) return controls;
+      }
+      return successors.filter((action) => (
+        !["launch", "move", "orbit", "land"].includes(action.family)
+        || goals.some((goal) => actionMatchesProbeStep(action, goal.nextStep))
+      ));
+    }
+    if (successors[0]?.phase === "conditional") return successors.slice(0, 1);
+    const endTurn = successors.find((action) => action.family === "end_turn");
+    if (endTurn) return [endTurn];
+    if (Number(input.opponentProxyDepth || 0) >= 8) {
+      const pass = successors.find((action) => action.family === "pass");
+      if (pass) return [pass];
+    }
+    for (const family of ROLLOUT_FAMILY_PRIORITY) {
+      const selected = successors.find((action) => action.family === family);
+      if (selected) return [selected];
+    }
+    const error = new Error(`冻结 rollout 无法选择 opponent action: ${actorId || "<missing>"}`);
+    error.code = "SECONDARY_AGENT_ROLLOUT_NO_ACTION";
+    throw error;
+  }
+
   return Object.freeze({
     EVALUATION_MODEL,
     PARAMETER_VERSION,
     OUTCOME_SCHEMA_VERSION,
     DEFAULT_PARAMETERS,
     INCOME_UNIT_VALUES,
+    SECONDARY_AGENT_ROLLOUT_VERSION,
     mergeParameters,
     requiresCounterfactualOutcome,
     evaluateState,
@@ -328,7 +486,11 @@
     compareSetupProbeGoals,
     evaluateSearchPriority,
     evaluateStrategicFactsPriority,
+    evaluateSecondaryAgentSearchPriority,
+    rankSecondaryAgentSuccessor,
+    selectSecondaryAgentRouteTarget,
     evaluateAction: evaluateOutcome,
     evaluateOutcome,
+    selectSecondaryAgentSuccessors,
   });
 });

@@ -83,6 +83,15 @@ function evaluate(candidateAction, before, after, status = "settled") {
 
 {
   const result = evaluate(
+    action("orbit:round-four-score", "orbit"),
+    observation({ score: 4, roundNumber: 4 }),
+    observation({ score: 13, roundNumber: 4 }),
+  );
+  assert.equal(result.score, 9, "分数价值不得随轮次下降");
+}
+
+{
+  const result = evaluate(
     action("research:tech", "research_tech"),
     observation({ roundNumber: 2 }),
     observation({ roundNumber: 2, ownedTechIds: ["orange2"] }),
@@ -91,6 +100,15 @@ function evaluate(candidateAction, before, after, status = "settled") {
     "第2轮获得科技可覆盖当前轮及剩余两轮，初版每轮价值5分");
   assert.equal(result.score, 15);
   assert.deepEqual(result.gainedTechIds, ["orange2"]);
+}
+
+{
+  const result = evaluate(
+    action("research:round-four-tech", "research_tech"),
+    observation({ roundNumber: 4 }),
+    observation({ roundNumber: 4, ownedTechIds: ["orange2"] }),
+  );
+  assert.equal(result.techValue, 5, "第4轮科技只剩当前轮价值，必须低于第2轮");
 }
 
 {
@@ -110,6 +128,15 @@ function evaluate(candidateAction, before, after, status = "settled") {
     handSize: 0,
     additionalPublicScan: 0,
   });
+}
+
+{
+  const result = evaluate(
+    action("place-data:round-four-income", "place_data"),
+    observation({ roundNumber: 4 }),
+    observation({ roundNumber: 4, income: { credits: 1 } }),
+  );
+  assert.equal(result.incomeValue, 5, "第4轮新增信用收入只计效果自身的当前轮窗口");
 }
 
 {

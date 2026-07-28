@@ -89,32 +89,31 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 
-当前启发式只估值当前合法 Action 及其必选 Decision 闭包，不设置跨稳定边界的单行动 Q。
-可进入排序的已兑现目标只有：
+当前启发式把以下三项作为搜索叶的累计评估轴：
 
 - 获得实际分数；
 - 获取科技；
 - 增加收入。
 
-因此当前根候选不会为 `quick_trade` 建立反事实分支：快速交易只改变即时资源或手牌，
-无法在同一个快速交易 Session 内直接兑现分数、科技或收入。它仍属于完整 legal set，
-对应 outcome 固定为 `STRATEGIC_GOAL_NOT_EVALUATED`，所以不会被误选；若未来价值模型开始
-估值当前库存或恢复跨稳定 Action 规划，必须同步撤销这项目标可达性剪枝。
+一级目标不是路线终点。搜索在中途取得分数、科技或收入后仍继续累计后续收益，直到本席本轮
+实际 PASS，或执行满 15 个本席次级代理。次级代理来自正式顶层 family：扫描、发射、移动、
+环绕、登陆、放置/分析数据、打牌、弃牌角标、研究科技、快速转换、公司与物种能力；赢得扇区、
+痕迹和收入是这些代理的真实规则结果。支付、选目标、选牌等 conditional Decision 属于当前
+代理的规则闭包，不计入 15 个代理深度；`end_turn` 只推进真实回合 owner，也不计深度。
 
-扫描、赢得扇区、发射、移动、环绕、登陆、放置/分析数据、打牌、放置外星人痕迹、研究科技
-和插收入都必须先作为当前 legal Action 出现。快速转换、支付与必要 DecisionEffect 只在该
-Action 已打开的 Effect Session 内继续，不单独加分。稳定策略边界后的下一 Action 由下一次
-Policy 请求决定，规则层和反事实 evaluator 都不得替 Policy 自动选择。
+搜索跨本席的多个真实行动机会。中间对手由版本化冻结 rollout 通过 Standard Action 和正式
+Decision 推进，不能直接篡改 turn owner；本席 PASS 的必做链结算后立即形成叶，不执行其后的
+`end_turn`，因此不会把下一轮轮初收入记到 PASS 身上。每次 Policy 仍只提交获胜路线的第一个
+当前 legal descriptor，真实提交后从新 committed state 重新搜索。
 
-每个候选只提交一个当前合法 Action，并最多推进 15 个由它直接产生的真实标准 Decision。
-Effect Session 的选牌、选目标和支付均计入深度；evaluator 不替代 Production
-registry/executor，也不手工结算规则。叶价值为：
+单个代理内部最多推进 15 个真实标准 Decision，这是独立的 Effect Session 安全上限，不是路线
+深度。evaluator 不替代 Production registry/executor，也不手工结算规则。叶价值为：
 
 ```text
 V(leaf)
   = 实际分数变化
-  + 新科技数 ×（剩余轮数 + 当前轮）× 每轮科技价值
-  + 新增收入的每轮资源价值 ×（后续轮初收入次数 + 增加收入效果的即时结算）
+  + 新科技数 × 取得时所在轮的剩余轮次价值
+  + 新增收入的每轮资源价值 × 取得时所在轮的剩余收入窗口
 ```
 
 收入换算使用 `1 信用 = 1 能源 = 2 数据 = 2 宣传 = 2 普通牌 = 5 分`。这是长期收入能力的
@@ -125,7 +124,7 @@ V(leaf)
 未揭示外星人时只能获得的实际分数、首标宣传、揭示后的物种奖励和后续状态，都由同一标准
 执行链后的盘面决定。
 
-若目标估值暂时没有正价值路线，Policy 只能从合法 PASS/结束回合中确定性降级；
+若 15 个代理预算内没有正价值路线，Policy 只能从合法 PASS/结束回合中确定性降级；
 `failed/unresolved/stale` 候选不可选，也不能把部分结算状态伪装成叶。
 
 反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
@@ -136,14 +135,17 @@ Session checkpoint 只恢复一次，普通存档恢复仍执行完整校验。�
 
 节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的稳定
 hash 组成，反事实 RNG 使用相同紧凑 envelope identity 的 v2 seed；canonical RNG 不变。
-全局节点上限为 128。所有 root action 都进入首层；后续每个 root、每个 breadth 层最多保留
-8 个 frontier 节点，按同一 evaluator 的已兑现分数、科技和收入价值排序，再用稳定 identity
-决胜。被 beam 移除的 origin 标为 pruned/low-confidence。每个 root 另有最多 8 个叶的独立
+常规机器决策的全局节点上限为 128。所有 root action 都进入首层；后续先按 root 合并同源
+conditional 分支，再保留 2 个全局路线节点，按累计一级目标价值与只用于 beam 的次级路线潜力
+排序，再用稳定
+identity 决胜。被 beam 移除的 origin 标为 pruned/low-confidence。每个 root 另有最多 8 个叶的独立
 预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
 饱和 root 继续执行。beam 和叶上限都是显式近似，均不得描述成完整期望分布。
 
-`quick_trade` 不单独建立战略 outcome；`pass/end_turn` 必须执行真实后继。若最后一个 PASS
-使回合推进到新一轮，搜索观察的是随后发生的轮初收入，而不是所谓“轮末收入”。运行报告记录
+路线搜索中的 `quick_trade` 是正式次级代理，必须执行真实 outcome；它只通过后续真实叶能否
+转化为一级目标体现价值，当前库存本身仍不计分。`pass/end_turn` 也必须执行
+真实后继。focal PASS 叶停在 PASS 必做链之后，不观察新轮；实际对局若最后一个 PASS 后提交
+`end_turn`，收入仍只在随后新轮开始时发生。运行报告记录
 候选数、原始/保留 frontier、beam 剪枝数及 fork/执行/投影/checkpoint/编排总耗时；耗时是
 诊断数据，不属于 outcome 语义，不得影响候选等价性或排序。
 

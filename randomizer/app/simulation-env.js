@@ -262,8 +262,25 @@ function createSimulationEnv() {
       maxDepth: options.maxDepth || 15,
       maxLeaves: options.maxLeaves || 8,
       maxNodes: options.maxNodes || 128,
-      maxFrontierPerRoot: options.maxFrontierPerRoot || 8,
-      getBranchPriority({ rootObservation, branchObservation }) {
+      maxFrontierPerRoot: options.maxFrontierPerRoot
+        || (options.secondaryAgentSearch ? 1 : 8),
+      secondaryAgentSearch: options.secondaryAgentSearch ? {
+        focalSeatId: seatId,
+        maxProxyDepth: options.maxProxyDepth || 15,
+        rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
+        selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
+        rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
+        selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
+      } : null,
+      getBranchPriority({ rootObservation, branchObservation, currentAction }) {
+        if (options.secondaryAgentSearch) {
+          return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
+            rootObservation,
+            branchObservation,
+            focalSeatId: seatId,
+            currentAction,
+          });
+        }
         rootStrategicFacts = rootStrategicFacts
           || outcomeModel.createStrategicFacts(rootObservation, seatId);
         return expectedScoreEvaluator.evaluateStrategicFactsPriority(
@@ -622,12 +639,14 @@ function createSimulationEnv() {
       };
       const evaluatedActions = initialSetupBoundary
         ? initialSetupOutcomeActions(beforeActions, beforeObservation)
-        : policyOutcomeActions(beforeActions, beforeObservation);
+        : beforeActions;
       const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
         evaluateActionOutcomes.call(this, evaluatedActions, {
           maxDepth: initialSetupBoundary ? 6 : 15,
           maxLeaves: initialSetupBoundary ? 1 : 8,
           maxNodes: initialSetupBoundary ? 12 : 128,
+          secondaryAgentSearch: !initialSetupBoundary,
+          maxProxyDepth: 15,
         }),
         outcomeOptions,
       );

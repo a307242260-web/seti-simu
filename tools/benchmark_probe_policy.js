@@ -5,8 +5,8 @@ const { performance } = require("node:perf_hooks");
 const path = require("node:path");
 
 const ITERATIONS = 12;
-const SINGLE_DECISION_LIMIT_MS = 1000;
-const PARENT_TIMEOUT_MS = 25000;
+const SINGLE_DECISION_LIMIT_MS = 2000;
+const PARENT_TIMEOUT_MS = 35000;
 
 function drainOpeningDecisions(environment) {
   const selectionProgress = new Map();

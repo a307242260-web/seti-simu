@@ -140,7 +140,15 @@
             ));
             if (setupBoundary) return [];
             let rootStrategicFacts = null;
-            const getBranchPriority = ({ rootObservation, branchObservation }) => {
+            const getBranchPriority = ({ rootObservation, branchObservation, currentAction }) => {
+              if (currentAction) {
+                return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
+                  rootObservation,
+                  branchObservation,
+                  focalSeatId: seatId,
+                  currentAction,
+                });
+              }
               rootStrategicFacts = rootStrategicFacts
                 || outcomeModel.createStrategicFacts(rootObservation, seatId);
               return expectedScoreEvaluator.evaluateStrategicFactsPriority(
@@ -148,15 +156,23 @@
                 outcomeModel.createStrategicFacts(branchObservation, seatId),
               );
             };
-            const evaluatedActions = boundary.legalActions
-              .filter(expectedScoreEvaluator.requiresCounterfactualOutcome);
+            const evaluatedActions = boundary.legalActions;
             const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
               ruleComposition.counterfactualPort.evaluate(evaluatedActions, {
                 viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
                 confidence: "low",
                 maxDepth: 8,
                 maxLeaves: 8,
-                maxFrontierPerRoot: 8,
+                maxNodes: 128,
+                maxFrontierPerRoot: 1,
+                secondaryAgentSearch: {
+                  focalSeatId: seatId,
+                  maxProxyDepth: 15,
+                  rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
+                  selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
+                  rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
+                  selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
+                },
                 getBranchPriority,
               }),
               {

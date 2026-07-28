@@ -246,9 +246,8 @@ try {
     assert.equal(quickTradeOutcomes.length > 0, true,
       "固定盘面必须覆盖可执行快速交易");
     assert.equal(quickTradeOutcomes.every((outcome) => (
-      outcome.status === "unresolved"
-      && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
-    )), true, "不可能直接命中 v9 目标的快速交易必须显式跳过反事实执行");
+      outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
+    )), true, "快速交易必须作为次级代理进入跨行动搜索，不能沿用 v9 单 Action 剪枝");
     const controlOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       ["pass", "end_turn"].includes(
         actions.find((action) => action.actionId === outcome.actionId)?.family,
@@ -428,6 +427,18 @@ try {
     assert.equal(outcome.status, "settled",
       "火星环绕的选牌、扫描与插收入 DecisionEffect 全链必须能在反事实分支正常结算");
     assert.equal(outcome.leaves.length > 0, true);
+    const routeOutcome = sandbox.evaluateActionOutcomes([orbit], {
+      maxDepth: 15,
+      maxLeaves: 8,
+      maxNodes: 56,
+      secondaryAgentSearch: true,
+      maxProxyDepth: 15,
+    })[0];
+    assert.equal(routeOutcome.status, "settled");
+    assert.equal(routeOutcome.leaves.some((leaf) => (
+      Number(leaf.secondaryAgentDepth || 0) > 1
+      || leaf.actionChain.some((actionId) => String(actionId).startsWith("end_turn:"))
+    )), true, "取得环绕收益后必须继续搜索后续次级代理，不能把一级目标当作路线终点");
   } finally {
     sandbox.dispose();
   }
