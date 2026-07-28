@@ -11,6 +11,7 @@
     policyInputAdapter,
     browserAiBootstrap,
     outcomeModel,
+    expectedScoreEvaluator,
     heuristicPolicy,
     actionBar,
     decisionUi,
@@ -754,6 +755,7 @@
   const browserAi = browserAiBootstrap.createBrowserAiBootstrap({
     ruleComposition,
     outcomeModel,
+    expectedScoreEvaluator,
     policyInputAdapterModule: policyInputAdapter,
     projectionAdapter: canonicalProjection,
     inputAdapter: residentInput,

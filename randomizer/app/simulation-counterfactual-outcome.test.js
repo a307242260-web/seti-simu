@@ -227,6 +227,12 @@ try {
     const scanDiagnostics = environment.getCounterfactualDiagnostics();
     assert.equal(scanOutcome.leaves.length, 1);
     assert.equal(scanOutcome.code, "COUNTERFACTUAL_SEARCH_PRUNED");
+    assert.equal(scanDiagnostics.maxFrontierPerRoot, 8);
+    assert.equal(
+      scanDiagnostics.maxRetainedFrontierSize <= scanDiagnostics.maxFrontierSize,
+      true,
+      "诊断必须同时保留原始 frontier 压力和实际 beam 保留宽度",
+    );
     assert.equal(scanDiagnostics.executedNodeCount < 50, true,
       "root 达到叶上限后不得继续执行剩余兄弟节点");
     assert.equal(scanDiagnostics.prunedNodeCount > 0, true);
@@ -243,6 +249,15 @@ try {
       outcome.status === "unresolved"
       && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
     )), true, "不可能直接命中 v9 目标的快速交易必须显式跳过反事实执行");
+    const controlOutcomes = policyResult.actionOutcomes.filter((outcome) => (
+      ["pass", "end_turn"].includes(
+        actions.find((action) => action.actionId === outcome.actionId)?.family,
+      )
+    ));
+    assert.equal(controlOutcomes.length > 0, true, "固定盘面必须覆盖回合控制行动");
+    assert.equal(controlOutcomes.every((outcome) => (
+      outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
+    )), true, "PASS/end_turn 必须执行真实后继，轮初收入语义不能成为跳过理由");
   } finally {
     environment.dispose();
   }

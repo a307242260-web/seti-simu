@@ -760,11 +760,12 @@ function createProductionHostComposition(options = {}) {
           hostKind,
           random: branchRandom,
           rngState: {
-            algorithm: "seti-counterfactual-mulberry32-v1",
+            algorithm: "seti-counterfactual-mulberry32-v2",
             state: hashCounterfactualSeed(branchKey),
             branch: true,
           },
           counterfactualEnabled: false,
+          trustedForkLifecycle: true,
         });
         const restored = forkKernel.composition.lifecycle.restore(envelope, { silent: true });
         if (!restored?.ok) {
@@ -783,6 +784,7 @@ function createProductionHostComposition(options = {}) {
         };
       },
     reuseCounterfactualFork: true,
+    allowTrustedForkLifecycle: options.trustedForkLifecycle === true,
     initialOptions: {
       activePlayerCount: options.activePlayerCount || 4,
       seed: options.seed,

@@ -95,6 +95,21 @@ const validation = policyPort.validatePolicyDecision(current, first, {
   runtimeContext: {},
 });
 assert.equal(validation.ok, true);
+assert.equal(
+  expectedScoreEvaluator.requiresCounterfactualOutcome(action("trade:p1:7", "quick_trade")),
+  false,
+  "快速交易只作为同一策略边界内的辅助输入，不应单独建立战略 outcome",
+);
+assert.equal(
+  expectedScoreEvaluator.requiresCounterfactualOutcome(action("pass:p1:7", "pass")),
+  true,
+  "PASS 必须保留真实反事实后继；最后一个 PASS 可能进入新一轮并在轮初结算收入",
+);
+assert.equal(
+  expectedScoreEvaluator.requiresCounterfactualOutcome(action("end:p1:7", "end_turn")),
+  true,
+  "结束行动必须保留真实反事实后继，不能把轮初收入语义当成跳过控制行动的理由",
+);
 
 function setupAction(actionId, target) {
   return {
@@ -282,6 +297,41 @@ assert.deepEqual(inventoryValue.resourceFacts, {
   alienCards: 2,
 });
 assert.equal(inventoryValue.schemaVersion, outcomeModel.VALUE_SCHEMA_VERSION);
+
+const priorityRoot = outcomeModel.createDecisionObservation({
+  publicState: {
+    roundNumber: 2,
+    players: [{
+      id: "p1",
+      resources: { score: 3 },
+      income: { credits: 1, energy: 1 },
+      techState: { ownedTiles: { "orange-1": true } },
+    }],
+    board: {},
+  },
+  selfState: { id: "p1", hand: [] },
+}, { seatId: "p1", stateVersion: 7, decisionVersion: 3 });
+const priorityBranch = outcomeModel.createDecisionObservation({
+  publicState: {
+    roundNumber: 2,
+    players: [{
+      id: "p1",
+      resources: { score: 5 },
+      income: { credits: 2, energy: 1 },
+      techState: { ownedTiles: { "orange-1": true, "blue-1": true } },
+    }],
+    board: {},
+  },
+  selfState: { id: "p1", hand: [] },
+}, { seatId: "p1", stateVersion: 8, decisionVersion: 4 });
+assert.equal(
+  expectedScoreEvaluator.evaluateStrategicFactsPriority(
+    outcomeModel.createStrategicFacts(priorityRoot, "p1"),
+    outcomeModel.createStrategicFacts(priorityBranch, "p1"),
+  ),
+  expectedScoreEvaluator.evaluateSearchPriority(priorityRoot, priorityBranch, "p1"),
+  "beam 的紧凑战略事实必须与正式 observation 估值保持同一分数、科技和收入口径",
+);
 
 function setupObservation(targetBenefitScore, gap) {
   return outcomeModel.createDecisionObservation({

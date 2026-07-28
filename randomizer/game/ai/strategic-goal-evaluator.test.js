@@ -100,7 +100,7 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 2, income: { credits: 1 } }),
   );
   assert.equal(result.incomeValue, 15,
-    "第2轮增加1信用收入应计插入当次及后续两次收入，共15分长期价值");
+    "第2轮增加1信用收入应计效果即时结算及第3、4轮轮初收入，共15分长期价值");
   assert.equal(result.score, 15);
   assert.deepEqual(result.incomeDelta, {
     credits: 1,

@@ -19,6 +19,7 @@
     ["policyInputAdapter", "SetiBrowserPolicyInputAdapter"],
     ["browserAiBootstrap", "SetiAppAiBrowserBootstrap"],
     ["outcomeModel", "SetiOutcomeModel"],
+    ["expectedScoreEvaluator", "SetiExpectedScoreEvaluator"],
     ["heuristicPolicy", "SetiHeuristicPolicy"],
     ["gameRecovery", "SetiAppGameRecovery"],
     ["publicApi", "SetiAppPublicApi"],

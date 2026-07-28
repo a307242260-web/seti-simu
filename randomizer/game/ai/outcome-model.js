@@ -157,6 +157,33 @@
     };
   }
 
+  function createStrategicFacts(source, seatId) {
+    const publicPlayer = findPlayer(source, seatId);
+    const resources = publicPlayer?.resources || publicPlayer || {};
+    const terminal = Boolean(
+      source?.terminal
+      ?? source?.publicState?.terminal
+      ?? source?.publicState?.match?.terminal
+      ?? source?.match?.terminal,
+    );
+    const realizedScore = finiteOrNull(resources.score ?? publicPlayer?.score) ?? 0;
+    return {
+      viewerSeatId: String(seatId),
+      terminal,
+      realizedScore: terminal
+        ? (finiteOrNull(publicPlayer?.finalScore) ?? realizedScore)
+        : realizedScore,
+      ownedTechIds: ownedTechIds(publicPlayer),
+      income: incomeFacts(publicPlayer),
+      roundNumber: finiteOrNull(
+        source?.publicState?.roundNumber
+        ?? source?.turn?.roundNumber
+        ?? source?.publicState?.turn?.roundNumber,
+      ) ?? 1,
+      finalRoundNumber: 4,
+    };
+  }
+
   function boardOf(source) {
     return source?.publicState?.board || source?.board || {};
   }
@@ -534,6 +561,7 @@
     REWARD_SCHEMA_VERSION,
     VALUE_SCHEMA_VERSION,
     ASSET_PATHS,
+    createStrategicFacts,
     createOutcomeProjection,
     createDecisionObservation,
     projectOutcomeObservations,

@@ -114,11 +114,13 @@ registry/executor，也不手工结算规则。叶价值为：
 V(leaf)
   = 实际分数变化
   + 新科技数 ×（剩余轮数 + 当前轮）× 每轮科技价值
-  + 新增收入的每轮资源价值 ×（剩余收入次数 + 插入当次）
+  + 新增收入的每轮资源价值 ×（后续轮初收入次数 + 增加收入效果的即时结算）
 ```
 
 收入换算使用 `1 信用 = 1 能源 = 2 数据 = 2 宣传 = 2 普通牌 = 5 分`。这是长期收入能力的
-估值，不是给当前库存加分。钱、电、宣传、数据、普通牌和外星人牌库存均不直接进入叶价值；
+估值，不是给当前库存加分，也不是把轮初收入错误称为轮末结算。正常收入阶段只在新一轮开始
+时发生；`gainIncome` 提高收入轨时对新增部分的即时奖励属于该效果自身。钱、电、宣传、数据、
+普通牌和外星人牌库存均不直接进入叶价值；
 只有它们在同一真实探索链中已经转化为分数、科技或收入时才体现。痕迹同样不使用固定价值：
 未揭示外星人时只能获得的实际分数、首标宣传、揭示后的物种奖励和后续状态，都由同一标准
 执行链后的盘面决定。
@@ -128,12 +130,22 @@ V(leaf)
 
 反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
 StateStore、working state、Effect Session 与独立分支 RNG，再调用生产 registry/executor。
-禁止逐候选或逐 Decision 创建 `SimulationEnv`、加载 replay，或调用领域 helper 手工结算。
-节点等价键为 `composition envelope + actionId + remainingDepth`，全局节点上限为 128，
-每个 root 最多保留 8 个叶。某个 root 达到叶上限后，frontier 会先移除该 saturated origin；
-共享节点仍为其他未饱和 root 继续执行。叶上限是显式截断，不得描述成 beam 或完整期望分布。
-运行报告记录候选数及 fork/执行/投影/估值分项耗时；耗时是诊断数据，不属于 outcome 语义，
-不得影响候选等价性或排序。
+可信且已冻结的内存 fork 可复用只读 committed snapshot，但 Action working copy 仍独立克隆；
+Session checkpoint 只恢复一次，普通存档恢复仍执行完整校验。禁止逐候选或逐 Decision 创建
+`SimulationEnv`、加载 replay，或调用领域 helper 手工结算。
+
+节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的稳定
+hash 组成，反事实 RNG 使用相同紧凑 envelope identity 的 v2 seed；canonical RNG 不变。
+全局节点上限为 128。所有 root action 都进入首层；后续每个 root、每个 breadth 层最多保留
+8 个 frontier 节点，按同一 evaluator 的已兑现分数、科技和收入价值排序，再用稳定 identity
+决胜。被 beam 移除的 origin 标为 pruned/low-confidence。每个 root 另有最多 8 个叶的独立
+预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
+饱和 root 继续执行。beam 和叶上限都是显式近似，均不得描述成完整期望分布。
+
+`quick_trade` 不单独建立战略 outcome；`pass/end_turn` 必须执行真实后继。若最后一个 PASS
+使回合推进到新一轮，搜索观察的是随后发生的轮初收入，而不是所谓“轮末收入”。运行报告记录
+候选数、原始/保留 frontier、beam 剪枝数及 fork/执行/投影/checkpoint/编排总耗时；耗时是
+诊断数据，不属于 outcome 语义，不得影响候选等价性或排序。
 
 ## 4. Browser 调度与规则边界
 

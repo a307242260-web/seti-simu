@@ -15,6 +15,7 @@ const {
   sanitizeFinalScoringState,
 } = require("./simulation-contract");
 const outcomeModel = require("../game/ai/outcome-model");
+const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
 const REPLAY_SCHEMA_VERSION = "seti-rl-replay-v1";
@@ -97,7 +98,7 @@ function getTurnState(state) {
 }
 
 function policyOutcomeActions(actions, observation) {
-  return (actions || []).filter((action) => action.family !== "quick_trade");
+  return (actions || []).filter(expectedScoreEvaluator.requiresCounterfactualOutcome);
 }
 
 function initialSetupOutcomeActions(actions, observation) {
@@ -254,11 +255,22 @@ function createSimulationEnv() {
     const descriptors = legal.map((action) => (
       selectors.get(action.actionId) || action
     ));
+    const seatId = legal[0]?.actorPlayerId || null;
+    let rootStrategicFacts = null;
     return composition.counterfactualPort.evaluate(descriptors, {
-      viewer: { playerId: legal[0]?.actorPlayerId || null, role: "player" },
+      viewer: { playerId: seatId, role: "player" },
       maxDepth: options.maxDepth || 15,
       maxLeaves: options.maxLeaves || 8,
       maxNodes: options.maxNodes || 128,
+      maxFrontierPerRoot: options.maxFrontierPerRoot || 8,
+      getBranchPriority({ rootObservation, branchObservation }) {
+        rootStrategicFacts = rootStrategicFacts
+          || outcomeModel.createStrategicFacts(rootObservation, seatId);
+        return expectedScoreEvaluator.evaluateStrategicFactsPriority(
+          rootStrategicFacts,
+          outcomeModel.createStrategicFacts(branchObservation, seatId),
+        );
+      },
       confidence: "low",
     });
   }

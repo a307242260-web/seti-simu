@@ -395,12 +395,13 @@
       };
     }
 
-    function restoreForkSnapshot(candidate) {
-      committedState = deepFreeze(clone(candidate));
+    function restoreForkSnapshot(candidate, restoreOptions = {}) {
+      committedState = restoreOptions.trustedFrozen === true && Object.isFrozen(candidate)
+        ? candidate
+        : deepFreeze(clone(candidate));
       return {
         ok: true,
         stateVersion: committedState.meta.stateVersion,
-        snapshot: getSnapshot(),
       };
     }
 
@@ -408,6 +409,10 @@
       const validation = validate(candidate);
       if (!validation.ok) return validation;
       return { ok: true, serialized: stableSerialize(candidate) };
+    }
+
+    function serializeForkSnapshot() {
+      return { ok: true, serialized: stableSerialize(committedState) };
     }
 
     function subscribe(listener) {
@@ -426,6 +431,7 @@
       restore,
       restoreForkSnapshot,
       serialize,
+      serializeForkSnapshot,
       deserialize,
       subscribe,
     });

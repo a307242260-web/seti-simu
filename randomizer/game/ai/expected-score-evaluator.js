@@ -13,6 +13,7 @@
   const PARAMETER_VERSION = "seti-strategic-goal-search-v1";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
+  const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["quick_trade"]));
   const DEFAULT_PARAMETERS = Object.freeze({
     parameterVersion: PARAMETER_VERSION,
     searchDepth: 15,
@@ -152,6 +153,31 @@
     };
   }
 
+  function evaluateSearchPriority(rootObservation, branchObservation, seatId, parametersInput = {}) {
+    const parameters = mergeParameters(parametersInput);
+    const rootValue = evaluateState(rootObservation, seatId);
+    const branchValue = evaluateState(branchObservation, seatId);
+    return leafValue(rootValue, branchValue, parameters).total;
+  }
+
+  function evaluateStrategicFactsPriority(rootFacts, branchFacts, parametersInput = {}) {
+    if (!rootFacts || !branchFacts
+      || rootFacts.viewerSeatId !== branchFacts.viewerSeatId) {
+      throw new TypeError("Search priority 需要同 viewer 的战略事实");
+    }
+    const parameters = mergeParameters(parametersInput);
+    const toValue = (facts) => ({
+      realizedScore: finite(facts.realizedScore),
+      infrastructure: {
+        ownedTechIds: [...(facts.ownedTechIds || [])].sort(),
+        income: { ...(facts.income || {}) },
+        roundNumber: Math.max(1, finite(facts.roundNumber) || 1),
+        finalRoundNumber: Math.max(1, finite(facts.finalRoundNumber) || 4),
+      },
+    });
+    return leafValue(toValue(rootFacts), toValue(branchFacts), parameters).total;
+  }
+
   function gapSize(requirement) {
     const gap = requirement?.gap || {};
     return finite(gap.credits) + finite(gap.energy);
@@ -285,6 +311,10 @@
     });
   }
 
+  function requiresCounterfactualOutcome(action) {
+    return !UNEVALUATED_ROOT_FAMILIES.has(action?.family);
+  }
+
   return Object.freeze({
     EVALUATION_MODEL,
     PARAMETER_VERSION,
@@ -292,9 +322,12 @@
     DEFAULT_PARAMETERS,
     INCOME_UNIT_VALUES,
     mergeParameters,
+    requiresCounterfactualOutcome,
     evaluateState,
     evaluateSetupProbeGoals,
     compareSetupProbeGoals,
+    evaluateSearchPriority,
+    evaluateStrategicFactsPriority,
     evaluateAction: evaluateOutcome,
     evaluateOutcome,
   });

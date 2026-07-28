@@ -223,4 +223,33 @@ function committedBytes(store) {
   assert.equal(events.length, 1);
 })();
 
+(function testTrustedForkRestoreKeepsFrozenAuthorityIsolated() {
+  const freeze = (value) => {
+    if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+    for (const child of Object.values(value)) freeze(child);
+    return Object.freeze(value);
+  };
+  const store = createStateStore(createState());
+  const trusted = createState();
+  trusted.turn.turn = 4;
+  freeze(trusted);
+  assert.equal(store.restoreForkSnapshot(trusted, { trustedFrozen: true }).ok, true);
+  const working = store.beginWorkingCopy().state;
+  working.turn.turn = 9;
+  assert.equal(store.getSnapshot().turn.turn, 4,
+    "trusted frozen fork 可复用只读 committed root，但 working copy 仍必须隔离");
+  assert.equal(
+    store.serializeForkSnapshot().serialized,
+    store.serialize(store.getSnapshot()).serialized,
+    "trusted fork 序列化不能改变 canonical bytes",
+  );
+
+  const mutable = createState();
+  mutable.turn.turn = 6;
+  assert.equal(store.restoreForkSnapshot(mutable).ok, true);
+  mutable.turn.turn = 10;
+  assert.equal(store.getSnapshot().turn.turn, 6,
+    "普通 fork restore 仍必须克隆外部可写 candidate");
+})();
+
 console.log("state-store tests passed");

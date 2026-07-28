@@ -114,6 +114,11 @@ assert.throws(() => productionKernel.installProductionKernel({
       createRenderPresentation: () => ({}),
     },
   });
+  assert.equal(
+    browserParity.lifecycle.restore(structuredClone(baseline), { trustedFork: true }).code,
+    "RULE_COMPOSITION_TRUSTED_FORK_FORBIDDEN",
+    "Browser/canonical composition 不得调用只属于隔离反事实 fork 的恢复快路径",
+  );
   assert.equal(browserParity.lifecycle.restore(structuredClone(baseline)).ok, true);
   const simulationActions = simulationKernel.composition.inputPort.enumerateActions({});
   const browserActions = browserParity.inputPort.enumerateActions({});

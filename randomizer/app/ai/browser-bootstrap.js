@@ -14,6 +14,7 @@
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "ruleComposition",
     "outcomeModel",
+    "expectedScoreEvaluator",
     "policyInputAdapterModule",
     "projectionAdapter",
     "inputAdapter",
@@ -81,6 +82,7 @@
     const {
       ruleComposition,
       outcomeModel,
+      expectedScoreEvaluator,
       projectionSource,
       policyInputAdapterModule,
       projectionAdapter,
@@ -91,6 +93,7 @@
     if (!policyInputAdapterModule?.createPolicyInputAdapter
       || !projectionAdapter?.projectSource
       || !outcomeModel?.createDecisionObservation
+      || typeof expectedScoreEvaluator?.evaluateStrategicFactsPriority !== "function"
       || !inputAdapter?.dispatchAction
       || !inputAdapter?.submitDecision
       || typeof createPolicy !== "function"
@@ -130,25 +133,65 @@
             });
           },
           readActionOutcomes: (boundary) => {
-            const outcomes = outcomeModel.projectOutcomeObservations(
-              boundary.legalActions.every((action) => (
+            const setupBoundary = boundary.legalActions.every((action) => (
               ["choose_card", "choose_payment"].includes(action.family)
               && ["select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
                 .includes(action.target?.kind)
-              ))
-                ? []
-                : ruleComposition.counterfactualPort.evaluate(boundary.legalActions, {
-                  viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-                  confidence: "low",
-                  maxDepth: 8,
-                  maxLeaves: 8,
-                }),
+            ));
+            if (setupBoundary) return [];
+            let rootStrategicFacts = null;
+            const getBranchPriority = ({ rootObservation, branchObservation }) => {
+              rootStrategicFacts = rootStrategicFacts
+                || outcomeModel.createStrategicFacts(rootObservation, seatId);
+              return expectedScoreEvaluator.evaluateStrategicFactsPriority(
+                rootStrategicFacts,
+                outcomeModel.createStrategicFacts(branchObservation, seatId),
+              );
+            };
+            const evaluatedActions = boundary.legalActions
+              .filter(expectedScoreEvaluator.requiresCounterfactualOutcome);
+            const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
+              ruleComposition.counterfactualPort.evaluate(evaluatedActions, {
+                viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+                confidence: "low",
+                maxDepth: 8,
+                maxLeaves: 8,
+                maxFrontierPerRoot: 8,
+                getBranchPriority,
+              }),
               {
                 seatId,
                 stateVersion: boundary.stateVersion,
                 decisionVersion: boundary.decisionVersion,
               },
             );
+            const byActionId = new Map(evaluatedOutcomes.map((outcome) => [
+              outcome.actionId,
+              outcome,
+            ]));
+            const rootObservation = evaluatedOutcomes[0]?.rootObservation
+              || outcomeModel.createDecisionObservation(
+                projectionAdapter.projectSource({
+                  viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+                }),
+                {
+                  seatId,
+                  stateVersion: boundary.stateVersion,
+                  decisionVersion: boundary.decisionVersion,
+                },
+              );
+            const outcomes = boundary.legalActions.map((action) => (
+              byActionId.get(action.actionId) || {
+                schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+                actionId: action.actionId,
+                status: "unresolved",
+                confidence: "none",
+                code: "STRATEGIC_GOAL_NOT_EVALUATED",
+                reasonCodes: ["strategic-goal-not-evaluated"],
+                rootObservation,
+                leaves: [],
+              }
+            ));
             lastOutcomeSummary = Object.freeze({
               seatId,
               actions: Object.freeze(boundary.legalActions.map((action) => ({
@@ -229,6 +272,7 @@
     const {
       ruleComposition,
       outcomeModel,
+      expectedScoreEvaluator,
       policyInputAdapterModule,
       projectionAdapter,
       inputAdapter,
@@ -239,6 +283,7 @@
     const machinePlayerPort = createBrowserMachinePlayerPort({
       ruleComposition,
       outcomeModel,
+      expectedScoreEvaluator,
       projectionSource,
       policyInputAdapterModule,
       projectionAdapter,

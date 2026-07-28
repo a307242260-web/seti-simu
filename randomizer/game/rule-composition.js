@@ -26,14 +26,17 @@
     return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`).join(",")}}`;
   }
 
-  function stableHash(value) {
-    const input = stableSerialize(value);
+  function stableHashSerialized(input) {
     let hash = 0x811c9dc5;
     for (let index = 0; index < input.length; index += 1) {
       hash ^= input.charCodeAt(index);
       hash = Math.imul(hash, 0x01000193);
     }
     return (hash >>> 0).toString(16).padStart(8, "0");
+  }
+
+  function stableHash(value) {
+    return stableHashSerialized(stableSerialize(value));
   }
 
   function fail(code, message, details = {}) {
@@ -457,10 +460,15 @@
     }
 
     function save(saveOptions = {}) {
-      const saveState = store.getSnapshot();
-      const validation = store.validate(saveState);
-      if (!validation.ok) return deepFreeze(clone(validation));
-      const serialized = store.serialize(saveState);
+      let serialized;
+      if (saveOptions.trustedFork === true && options.allowTrustedForkLifecycle === true) {
+        serialized = store.serializeForkSnapshot();
+      } else {
+        const saveState = store.getSnapshot();
+        const validation = store.validate(saveState);
+        if (!validation.ok) return deepFreeze(clone(validation));
+        serialized = store.serialize(saveState);
+      }
       if (!serialized.ok) return deepFreeze(clone(serialized));
       const session = activeSession ? runtime.createCheckpoint(activeSession) : null;
       if (session?.ok === false) return deepFreeze(clone(session));
@@ -487,7 +495,7 @@
       if (!loaded?.ok) return deepFreeze(clone(loaded));
       let restoredSession = null;
       if (envelope.session != null) {
-        restoredSession = runtime.restoreCheckpoint(clone(envelope.session));
+        restoredSession = runtime.restoreCheckpoint(envelope.session);
         if (!restoredSession?.ok) return deepFreeze(clone(restoredSession));
         if (restoredSession.session.baseVersion !== loaded.state.meta.stateVersion) {
           return fail("RULE_COMPOSITION_SESSION_STALE", "Effect Session checkpoint 与 committed state 版本不一致", {
@@ -502,11 +510,17 @@
     function restore(envelope, restoreOptions = {}) {
       let validated;
       if (restoreOptions.trustedFork === true) {
+        if (options.allowTrustedForkLifecycle !== true) {
+          return fail(
+            "RULE_COMPOSITION_TRUSTED_FORK_FORBIDDEN",
+            "trusted fork restore 只允许隔离的 counterfactual composition",
+          );
+        }
         try {
           const state = restoreOptions.trustedState || JSON.parse(envelope.committedState);
           const restoredSession = envelope.session == null
             ? null
-            : runtime.restoreCheckpoint(clone(envelope.session));
+            : runtime.restoreCheckpoint(envelope.session);
           if (restoredSession?.ok === false) return deepFreeze(clone(restoredSession));
           validated = { ok: true, state, session: restoredSession?.session || null };
         } catch (error) {
@@ -518,7 +532,7 @@
       if (!validated.ok) return validated;
       if (restoreOptions.inPlace === true) {
         const restoredStore = restoreOptions.trustedFork === true
-          ? store.restoreForkSnapshot(validated.state)
+          ? store.restoreForkSnapshot(validated.state, { trustedFrozen: true })
           : store.restore(validated.state, { source: "composition-in-memory-fork" });
         if (!restoredStore?.ok) return deepFreeze(clone(restoredStore));
         activeSession = null;
@@ -528,15 +542,15 @@
         installStore(validated.state);
       }
       if (validated.session) {
-        const restored = runtime.restoreCheckpoint(clone(envelope.session));
-        if (!restored?.ok) throw new Error("已预验证的 Effect Session 恢复失败");
-        activeSession = restored.session;
+        activeSession = validated.session;
         activeFamily = activeSession.journal?.actions?.[0]?.action?.family || null;
       }
       if (restoreOptions.silent !== true) {
         publish({ source: "lifecycle", event: { type: "restored" } });
       }
-      return deepFreeze({ ok: true, projection: projection() });
+      return restoreOptions.skipProjection === true
+        ? deepFreeze({ ok: true })
+        : deepFreeze({ ok: true, projection: projection() });
     }
 
     function newGame(initialOptions = {}) {
@@ -581,30 +595,69 @@
         })));
       }
       const canonicalBefore = stableSerialize(saved.envelope);
+      const canonicalEnvelopeHash = stableHashSerialized(canonicalBefore);
       const maxDepth = Math.max(1, Number(evaluateOptions.maxDepth) || 4);
       const maxLeaves = Math.max(1, Number(evaluateOptions.maxLeaves) || 12);
       const maxNodes = Math.max(legalActions.length, Number(evaluateOptions.maxNodes) || 128);
+      const maxFrontierPerRoot = Math.max(
+        1,
+        Number(evaluateOptions.maxFrontierPerRoot) || 8,
+      );
       const timing = {
         forkMilliseconds: 0,
         executionMilliseconds: 0,
         projectionMilliseconds: 0,
+        identityMilliseconds: 0,
+        checkpointMilliseconds: 0,
+        frontierMilliseconds: 0,
       };
       const now = () => (
         typeof performance !== "undefined" && typeof performance.now === "function"
           ? performance.now()
           : Date.now()
       );
+      const evaluationStartedAt = now();
       let reusableFork = null;
       const parsedStateByBytes = new Map();
+      const stateHashByBytes = new Map();
+      const envelopeHashByObject = new WeakMap();
       function getTrustedState(envelope) {
         const bytes = envelope.committedState;
-        if (!parsedStateByBytes.has(bytes)) parsedStateByBytes.set(bytes, JSON.parse(bytes));
+        if (!parsedStateByBytes.has(bytes)) {
+          parsedStateByBytes.set(bytes, deepFreeze(JSON.parse(bytes)));
+        }
         return parsedStateByBytes.get(bytes);
+      }
+      function envelopeHash(envelope) {
+        if (!envelopeHashByObject.has(envelope)) {
+          const bytes = envelope.committedState;
+          if (!stateHashByBytes.has(bytes)) {
+            stateHashByBytes.set(bytes, stableHashSerialized(bytes));
+          }
+          envelopeHashByObject.set(envelope, stableHash({
+            schemaVersion: "seti-counterfactual-envelope-key-v2",
+            committedStateHash: stateHashByBytes.get(bytes),
+            sessionHash: stableHash(envelope.session),
+          }));
+        }
+        return envelopeHashByObject.get(envelope);
+      }
+      function branchKey(envelope, actionId) {
+        return stableHash({
+          schemaVersion: "seti-counterfactual-branch-key-v2",
+          canonicalEnvelopeHash,
+          envelopeHash: envelopeHash(envelope),
+          actionId,
+        });
       }
       if (options.reuseCounterfactualFork === true) {
         const forkStartedAt = now();
         reusableFork = options.createCounterfactualFork(saved.envelope, {
-          branchKey: stableHash({ canonicalBefore, pool: true }),
+          branchKey: stableHash({
+            schemaVersion: "seti-counterfactual-branch-key-v2",
+            canonicalEnvelopeHash,
+            pool: true,
+          }),
         });
         timing.forkMilliseconds += now() - forkStartedAt;
       }
@@ -619,7 +672,9 @@
       let executedNodeCount = 0;
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
+      let beamPrunedOriginCount = 0;
       let maxFrontierSize = legalActions.length;
+      let maxRetainedFrontierSize = legalActions.length;
 
       function originKey(origin) {
         return origin.rootAction.actionId;
@@ -627,7 +682,7 @@
 
       function nodeKey(envelope, action, depth) {
         return [
-          stableHash(envelope),
+          envelopeHash(envelope),
           action.actionId,
           Math.max(0, maxDepth - depth),
         ].join(":");
@@ -669,6 +724,40 @@
         }
       }
 
+      function compareNodes(left, right) {
+        return Number(right.priority || 0) - Number(left.priority || 0)
+          || String(left.action.actionId).localeCompare(String(right.action.actionId))
+          || String(left.key || "").localeCompare(String(right.key || ""));
+      }
+
+      function retainRootFairBeam(nodes) {
+        const ordered = [...nodes].sort(compareNodes);
+        const retainedKeysByRoot = new Map();
+        for (const action of legalActions) {
+          const rootActionId = action.actionId;
+          const retainedKeys = ordered
+            .filter((node) => node.origins.some((origin) => (
+              origin.rootAction.actionId === rootActionId
+            )))
+            .slice(0, maxFrontierPerRoot)
+            .map((node) => node.key);
+          retainedKeysByRoot.set(rootActionId, new Set(retainedKeys));
+        }
+        return ordered.flatMap((node) => {
+          const retainedOrigins = [];
+          const prunedOrigins = [];
+          for (const origin of node.origins) {
+            const retainedKeys = retainedKeysByRoot.get(origin.rootAction.actionId);
+            (retainedKeys?.has(node.key) ? retainedOrigins : prunedOrigins).push(origin);
+          }
+          if (prunedOrigins.length) {
+            beamPrunedOriginCount += prunedOrigins.length;
+            markPruned(prunedOrigins);
+          }
+          return retainedOrigins.length ? [{ ...node, origins: retainedOrigins }] : [];
+        });
+      }
+
       function addLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
         const state = outcomeStateByActionId.get(origin.rootAction.actionId);
         if (!state || state.leaves.length >= maxLeaves) {
@@ -690,21 +779,22 @@
       function executeNode(node) {
         let fork;
         try {
-          const branchKey = stableHash({
-            canonicalBefore,
-            envelope: node.envelope,
-            actionId: node.action.actionId,
-          });
+          const identityStartedAt = now();
+          const branchIdentity = branchKey(node.envelope, node.action.actionId);
+          timing.identityMilliseconds += now() - identityStartedAt;
           const forkStartedAt = now();
-          fork = reusableFork || options.createCounterfactualFork(node.envelope, { branchKey });
+          fork = reusableFork || options.createCounterfactualFork(node.envelope, {
+            branchKey: branchIdentity,
+          });
           const composition = fork?.composition || fork;
           if (reusableFork) {
-            reusableFork.resetBranch?.(branchKey);
+            reusableFork.resetBranch?.(branchIdentity);
             const restored = composition.lifecycle.restore(node.envelope, {
               silent: true,
               inPlace: true,
               trustedFork: true,
               trustedState: getTrustedState(node.envelope),
+              skipProjection: true,
             });
             if (!restored?.ok) {
               return {
@@ -750,9 +840,24 @@
           const projectionStartedAt = now();
           const leafObservation = composition.projection(viewer).state;
           timing.projectionMilliseconds += now() - projectionStartedAt;
-          const childSaved = successors.length || node.origins.length
-            ? composition.lifecycle.save()
+          let branchPriority = 0;
+          if (typeof evaluateOptions.getBranchPriority === "function") {
+            try {
+              const measured = Number(evaluateOptions.getBranchPriority({
+                rootObservation,
+                branchObservation: leafObservation,
+                viewer,
+              }));
+              branchPriority = Number.isFinite(measured) ? measured : 0;
+            } catch (_error) {
+              branchPriority = 0;
+            }
+          }
+          const checkpointStartedAt = now();
+          const childSaved = successors.length
+            ? composition.lifecycle.save({ trustedFork: true })
             : null;
+          timing.checkpointMilliseconds += now() - checkpointStartedAt;
           if (childSaved && !childSaved.ok) {
             return { failed: true, code: childSaved.code || "COUNTERFACTUAL_BRANCH_SAVE_FAILED" };
           }
@@ -763,6 +868,7 @@
             awaitingDecision,
             successors,
             leafObservation,
+            branchPriority,
             childEnvelope: childSaved?.envelope || null,
           };
         } catch (error) {
@@ -796,11 +902,7 @@
         }],
       }));
       while (frontier.length && executedNodeCount < maxNodes) {
-        maxFrontierSize = Math.max(maxFrontierSize, frontier.length);
-        const sorted = [...frontier].sort((left, right) => (
-          String(left.action.actionId).localeCompare(String(right.action.actionId))
-          || String(left.key || "").localeCompare(String(right.key || ""))
-        ));
+        const sorted = [...frontier].sort(compareNodes);
         const selected = sorted;
         const nextFrontierByKey = new Map();
         for (const node of selected) {
@@ -854,7 +956,7 @@
                   envelope: execution.childEnvelope,
                   action: successor,
                   depth: node.depth + 1,
-                  priority: 0,
+                  priority: execution.branchPriority,
                   origins: [{
                     ...origin,
                     chain: nextChain,
@@ -881,7 +983,12 @@
             );
           }
         }
-        frontier = [...nextFrontierByKey.values()];
+        const frontierStartedAt = now();
+        const nextFrontier = [...nextFrontierByKey.values()];
+        maxFrontierSize = Math.max(maxFrontierSize, nextFrontier.length);
+        frontier = retainRootFairBeam(nextFrontier);
+        maxRetainedFrontierSize = Math.max(maxRetainedFrontierSize, frontier.length);
+        timing.frontierMilliseconds += now() - frontierStartedAt;
       }
       for (const node of frontier) markPruned(node.origins);
 
@@ -921,28 +1028,36 @@
       } finally {
         reusableFork = null;
       }
-      const canonicalRestored = restore(saved.envelope, { silent: true });
-      if (!canonicalRestored?.ok) {
-        throw new Error(canonicalRestored?.message || "COUNTERFACTUAL_ROOT_RESTORE_FAILED");
-      }
       const after = save();
       if (!after?.ok || stableSerialize(after.envelope) !== canonicalBefore) {
         throw new Error("COUNTERFACTUAL_ROOT_POLLUTED: canonical state/RNG/session/journal/history/replay 发生变化");
       }
+      const measuredMilliseconds = now() - evaluationStartedAt;
+      const accountedMilliseconds = timing.forkMilliseconds
+        + timing.executionMilliseconds
+        + timing.projectionMilliseconds
+        + timing.identityMilliseconds
+        + timing.checkpointMilliseconds
+        + timing.frontierMilliseconds;
       lastCounterfactualDiagnostics = deepFreeze({
         candidateCount: legalActions.length,
         executedNodeCount,
         maxNodes,
         maxDepth,
+        maxFrontierPerRoot,
         maxFrontierSize,
+        maxRetainedFrontierSize,
         transpositionHitCount,
         prunedNodeCount,
+        beamPrunedOriginCount,
         forkMilliseconds: timing.forkMilliseconds,
         executionMilliseconds: timing.executionMilliseconds,
         projectionMilliseconds: timing.projectionMilliseconds,
-        totalMilliseconds: timing.forkMilliseconds
-          + timing.executionMilliseconds
-          + timing.projectionMilliseconds,
+        identityMilliseconds: timing.identityMilliseconds,
+        checkpointMilliseconds: timing.checkpointMilliseconds,
+        frontierMilliseconds: timing.frontierMilliseconds,
+        orchestrationMilliseconds: Math.max(0, measuredMilliseconds - accountedMilliseconds),
+        totalMilliseconds: measuredMilliseconds,
       });
       return deepFreeze(outcomes);
     }
