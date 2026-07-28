@@ -765,7 +765,7 @@
           }
           const retained = [...new Set(bestByRoot.values())]
             .sort(compareNodes)
-            .slice(0, 2);
+            .slice(0, 4);
           const retainedKeys = new Set(retained.map((node) => node.key));
           for (const node of ordered) {
             if (retainedKeys.has(node.key)) continue;

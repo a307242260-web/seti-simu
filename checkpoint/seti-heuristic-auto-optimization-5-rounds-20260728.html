@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 启发式机器人五轮自迭代报告</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f0e8;
+      --paper: #fffdf8;
+      --ink: #25241f;
+      --muted: #706d63;
+      --line: #d9d3c5;
+      --accent: #315f78;
+      --good: #2f7656;
+      --bad: #a2483d;
+      --warn: #a66b1f;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.65 system-ui, sans-serif; }
+    main { width: min(1120px, calc(100% - 32px)); margin: 32px auto 72px; }
+    header, section { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; }
+    header { padding: 30px 34px; border-top: 6px solid var(--accent); }
+    h1, h2 { margin: 0; }
+    h1 { font-size: clamp(26px, 4vw, 42px); line-height: 1.15; }
+    h2 { margin-bottom: 16px; font-size: 21px; }
+    p { margin: 10px 0 0; }
+    code { padding: 2px 5px; border-radius: 5px; background: #ece8df; }
+    .muted { color: var(--muted); }
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 22px; }
+    .metric { padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: #faf7f0; }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; margin-top: 3px; font-size: 24px; }
+    section { margin-top: 18px; padding: 24px 28px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 11px 9px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; letter-spacing: .04em; }
+    .good { color: var(--good); font-weight: 700; }
+    .bad { color: var(--bad); font-weight: 700; }
+    .warn { color: var(--warn); font-weight: 700; }
+    .score-row { display: grid; grid-template-columns: 110px 1fr 70px; gap: 12px; align-items: center; margin: 12px 0; }
+    .track { height: 14px; overflow: hidden; border-radius: 999px; background: #e8e3d9; }
+    .bar { height: 100%; border-radius: inherit; background: var(--accent); }
+    .bar.target { background: var(--warn); opacity: .65; }
+    ol, ul { margin: 8px 0 0; padding-left: 22px; }
+    li + li { margin-top: 7px; }
+    .callout { border-left: 5px solid var(--bad); background: #fff4f0; }
+    a { color: var(--accent); font-weight: 700; }
+    footer { margin-top: 18px; color: var(--muted); text-align: center; font-size: 12px; }
+    @media (max-width: 760px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>启发式机器人五轮自迭代</h1>
+    <p class="muted">固定 seed <code>seti-104-official-v1</code> · 固定 node cap 128 · 只在四席均分严格上升时采用候选</p>
+    <div class="summary">
+      <div class="metric"><span>基线均分</span><strong>29.50</strong></div>
+      <div class="metric"><span>最终均分</span><strong>33.25</strong></div>
+      <div class="metric"><span>相对提升</span><strong class="good">+3.75</strong></div>
+      <div class="metric"><span>采用候选</span><strong>1 / 5</strong></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>结论</h2>
+    <p>五轮中只保留“全局 beam 从 2 扩到 4”。最终分数为 <strong>53 / 37 / 34 / 9</strong>，
+      可稳定复现，但仍远低于新手约 100 分的水平。最低席从 20 降到 9，策略改善并不均衡。</p>
+    <div class="score-row"><span>基线均分</span><div class="track"><div class="bar" style="width:29.5%"></div></div><strong>29.50</strong></div>
+    <div class="score-row"><span>v11 均分</span><div class="track"><div class="bar" style="width:33.25%"></div></div><strong>33.25</strong></div>
+    <div class="score-row"><span>新手参考线</span><div class="track"><div class="bar target" style="width:100%"></div></div><strong>100</strong></div>
+  </section>
+
+  <section>
+    <h2>五轮候选结果</h2>
+    <table>
+      <thead><tr><th>轮次</th><th>单一候选修改</th><th>四席分数</th><th>均分</th><th>决定</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>取消正收益后的 PASS beam 奖励</td><td>27 / 20 / 12 / 9</td><td>17.00</td><td class="bad">撤销</td></tr>
+        <tr><td>2</td><td>路线缺资源时开放全部补资源行动</td><td>未完成</td><td>—</td><td class="bad">35.61s 超时，撤销</td></tr>
+        <tr><td>3</td><td>降低探测器 next-step 固定加成</td><td>34 / 27 / 14 / 13</td><td>22.00</td><td class="bad">撤销</td></tr>
+        <tr><td>4</td><td>全局 beam 2 → 4，node cap 不变</td><td>53 / 37 / 34 / 9</td><td>33.25</td><td class="good">采用</td></tr>
+        <tr><td>5</td><td>定向 quick_trade 与 place_data bridge</td><td>34 / 32 / 22 / 14</td><td>25.50</td><td class="bad">撤销</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>错误分析</h2>
+    <ol>
+      <li><strong>PASS 奖励不能孤立删除：</strong>它当前承担保留“已兑现且可结束”路线的功能；删除后，长但低兑现路线挤出有限 beam。</li>
+      <li><strong>补资源不能开放整套 legal set：</strong>多种交易、弃牌与再次枚举形成排列组合，第 51 次决策达到 35.61 秒。</li>
+      <li><strong>降低探测器引导会流向交易链：</strong>快速转换从 45 次增到 79 次，新增多样性没有兑现成分数。</li>
+      <li><strong>单步定向兑换仍不够：</strong>它减少同一边界的排列，却不能保证跨边界剩余缺口持续下降，快速转换仍回升到 39 次。</li>
+      <li><strong>当前缺少完成度证明：</strong>交易和放置数据只有在“下一步立即合法”或“剩余缺口严格缩小”时才应进入目标路线。</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>最终行动结构与性能</h2>
+    <ul>
+      <li>发射 9、移动 33、环绕 8、登陆 2、科技 4、打牌 1、分析 1、快速转换 24。</li>
+      <li>完整局每候选平均 283.98ms，候选集整步最大 2434.93ms。</li>
+      <li>固定首决策 12 次：中位 1992.94ms、P90 2008.76ms、最大 2059.87ms。</li>
+      <li>2 秒目标未稳定满足；10 秒仅作为实验失控保护。</li>
+    </ul>
+    <p><a href="seti-heuristic-auto-optimization-v11-20260728-action-log.html">打开 v11 完整逐行动报告</a></p>
+  </section>
+
+  <section class="callout">
+    <h2>下一轮建议</h2>
+    <p>不要继续盲调 family 固定权重。先为交易和数据放置建立可证伪 bridge：
+      必须证明动作执行后目标下一步立即可达，或资源/分析门槛缺口严格下降；否则不进入路线搜索。
+      同时需要单独处理 9 分席位，避免只提高均分而扩大席位差异。</p>
+  </section>
+
+  <footer>seti-heuristic-auto-optimization-v11 · 2026-07-28</footer>
+</main>
+</body>
+</html>

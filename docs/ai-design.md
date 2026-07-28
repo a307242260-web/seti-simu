@@ -136,7 +136,7 @@ Session checkpoint 只恢复一次，普通存档恢复仍执行完整校验。�
 节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的稳定
 hash 组成，反事实 RNG 使用相同紧凑 envelope identity 的 v2 seed；canonical RNG 不变。
 常规机器决策的全局节点上限为 128。所有 root action 都进入首层；后续先按 root 合并同源
-conditional 分支，再保留 2 个全局路线节点，按累计一级目标价值与只用于 beam 的次级路线潜力
+conditional 分支，再保留 4 个全局路线节点，按累计一级目标价值与只用于 beam 的次级路线潜力
 排序，再用稳定
 identity 决胜。被 beam 移除的 origin 标为 pruned/low-confidence。每个 root 另有最多 8 个叶的独立
 预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
