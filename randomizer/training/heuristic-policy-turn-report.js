@@ -10,6 +10,7 @@ const { createSimulationEnv } = require("../app/simulation-env");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const initialCards = require("../game/initial-cards");
 const cards = require("../game/cards/deck");
+const solarSystem = require("../solar-system/core");
 const CARD_NAMES_BY_ID = new Map(cards.CARD_CATALOG.map((card) => [card.card_id, card.card_name]));
 
 const FAMILY_VERBS = Object.freeze({
@@ -67,10 +68,12 @@ function handOf(observation, playerId) {
 function boardSnapshot(observation) {
   const board = observation?.publicState?.board || {};
   const solar = board.solarSystem || {};
+  const solarSnapshot = solarSystem.createSolarSnapshot(solar);
+  const planets = solarSnapshot.planetLocations || [];
   return Object.freeze({
     rotation: structuredClone(solar.rotation || null),
     sectorBySlot: structuredClone(solar.sectorBySlot || null),
-    planets: Object.freeze((solar.planetLocations || []).map((planet) => Object.freeze({
+    planets: Object.freeze(planets.map((planet) => Object.freeze({
       planetId: planet.planetId,
       x: planet.x,
       y: planet.y,
@@ -78,10 +81,14 @@ function boardSnapshot(observation) {
     rockets: Object.freeze((board.rockets || []).map((rocket) => Object.freeze({
       id: rocket.id,
       playerId: rocket.playerId,
+      color: rocket.color || String(rocket.playerId || "").replace(/^player-/, ""),
       surface: rocket.surface,
-      x: rocket.x,
-      y: rocket.y,
-      planetId: rocket.planetId || null,
+      x: rocket.x ?? rocket.sectorX,
+      y: rocket.y ?? rocket.sectorY,
+      planetId: rocket.planetId || planets.find((planet) => (
+        Number(planet.x) === Number(rocket.x ?? rocket.sectorX)
+        && Number(planet.y) === Number(rocket.y ?? rocket.sectorY)
+      ))?.planetId || null,
     }))),
     aliens: Object.freeze((board.aliens?.slots || []).map((slot, index) => Object.freeze({
       slotId: index + 1,
@@ -113,10 +120,12 @@ function resourcesFromIncomeEvent(event, side) {
 }
 
 function buildDiagnostics(turns) {
-  const evaluated = turns.flatMap((turn) => turn.actions.map((action) => ({ turn, action })))
+  const allActions = turns.flatMap((turn) => turn.actions.flatMap((action) => (
+    [action, ...(action.followups || [])]
+  )));
+  const evaluated = allActions.map((action) => ({ action }))
     .filter(({ action }) => action.value && action.family !== "end_turn");
-  const timed = turns.flatMap((turn) => turn.actions)
-    .filter((action) => Number(action.timing?.candidateCount) > 0);
+  const timed = allActions.filter((action) => Number(action.timing?.candidateCount) > 0);
   const tiedTopChoices = evaluated.filter(({ action }) => (
     action.alternatives.some((alternative) => Math.abs(alternative.score - action.value.score) < 1e-9)
   ));
@@ -127,9 +136,9 @@ function buildDiagnostics(turns) {
     nonPositiveChoiceCount: nonPositiveChoices.length,
     zeroScoreTurnCount: turns.filter((turn) => turn.scoreAfter === turn.scoreBefore).length,
     actionFamilyCounts: Object.freeze(Object.fromEntries(
-      [...evaluated, ...turns.flatMap((turn) => turn.actions
+      [...evaluated, ...allActions
         .filter((action) => action.family === "end_turn")
-        .map((action) => ({ action })))]
+        .map((action) => ({ action }))]
         .reduce((counts, { action }) => {
           counts.set(action.family, (counts.get(action.family) || 0) + 1);
           return counts;
@@ -207,14 +216,24 @@ function actionText(action) {
 }
 
 function selectionVisual(action, options = {}) {
+  const presentCard = (rawCardId) => {
+    const handCard = (options.hand || []).find((card) => (
+      String(card.id) === String(rawCardId) || String(card.cardId) === String(rawCardId)
+    ));
+    const cardId = handCard?.cardId || String(rawCardId || "");
+    return {
+      name: handCard?.cardName || CARD_NAMES_BY_ID.get(cardId) || cards.getCardLabel({ cardId }),
+      imageSrc: cardImageSrc(cardId),
+    };
+  };
   if (options.initialIncome && action?.target?.kind === "discard-hand-cards") {
     const cardId = String(action.target.cardIds?.[0] || "");
-    const name = CARD_NAMES_BY_ID.get(cardId) || cards.getCardLabel({ cardId });
+    const item = presentCard(cardId);
     return Object.freeze({
       label: "插收入",
-      name,
-      text: `插收入：${name}`,
-      items: Object.freeze([{ name, imageSrc: cardImageSrc(cardId) }]),
+      name: item.name,
+      text: `插收入：${item.name}`,
+      items: Object.freeze([item]),
     });
   }
   if (action?.target?.kind === "select_initial_card") {
@@ -250,13 +269,12 @@ function selectionVisual(action, options = {}) {
     ...(String(action?.summary || "").match(/(?:b_\d+\.webp|dlc_\d+\.png)/gi) || []),
   ].filter((cardId, index, values) => values.indexOf(cardId) === index);
   if (!cardIds.length) return null;
-  const items = cardIds.map((cardId) => ({
-    name: CARD_NAMES_BY_ID.get(cardId) || cards.getCardLabel({ cardId }),
-    imageSrc: cardImageSrc(cardId),
-  }));
-  const label = action?.target?.kind === "discard-hand-cards"
-    ? "弃牌支付"
-    : "选择卡牌";
+  const items = cardIds.map(presentCard);
+  const label = action?.target?.kind === "move-payment"
+    ? "移动支付（弃牌获得 1 移动力）"
+    : action?.target?.kind === "discard-hand-cards"
+      ? "弃牌支付"
+      : "选择卡牌";
   const name = items.map((item) => item.name).join("、");
   return Object.freeze({
     label,
@@ -264,6 +282,68 @@ function selectionVisual(action, options = {}) {
     text: `${label}：${name}`,
     items: Object.freeze(items.map(Object.freeze)),
   });
+}
+
+function rocketCoordinate(observation, rocketId) {
+  const rocket = observation?.publicState?.board?.rockets?.find(
+    (candidate) => String(candidate.id) === String(rocketId),
+  );
+  const x = rocket?.x ?? rocket?.sectorX;
+  const y = rocket?.y ?? rocket?.sectorY;
+  if (!rocket || !Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) {
+    return null;
+  }
+  const planets = solarSystem.createSolarSnapshot(
+    observation?.publicState?.board?.solarSystem || {},
+  ).planetLocations || [];
+  const planetId = rocket.planetId || planets.find((planet) => (
+    Number(planet.x) === Number(x) && Number(planet.y) === Number(y)
+  ))?.planetId || null;
+  return { x: Number(x), y: Number(y), planetId };
+}
+
+function coordinateLabel(observation, coordinate) {
+  if (!coordinate) return "未知位置";
+  const planet = solarSystem.createSolarSnapshot(
+    observation?.publicState?.board?.solarSystem || {},
+  ).planetLocations?.find(
+    (candidate) => Number(candidate.x) === coordinate.x && Number(candidate.y) === coordinate.y,
+  );
+  const grid = `${coordinate.y} 环 · 扇区 ${coordinate.x}`;
+  return planet
+    ? `${PLANET_LABELS[planet.planetId] || planet.planetId}（${grid}）`
+    : grid;
+}
+
+function movementRecord(before, after, action) {
+  if (action?.family !== "move" || action.target?.rocketId == null) return null;
+  const from = rocketCoordinate(before, action.target.rocketId);
+  const to = rocketCoordinate(after, action.target.rocketId);
+  return {
+    rocketId: String(action.target.rocketId),
+    from: coordinateLabel(before, from),
+    to: coordinateLabel(after, to),
+  };
+}
+
+function actionBoardRecord(before, after, action) {
+  if (!["move", "orbit", "land"].includes(action?.family)) return null;
+  const rocketId = action.target?.rocketId == null ? null : String(action.target.rocketId);
+  const targetPlanetId = action.target?.planetId
+    || rocketCoordinate(before, rocketId)?.planetId
+    || null;
+  return {
+    family: action.family,
+    rocketId,
+    targetPlanetId,
+    before: boardSnapshot(before),
+    after: boardSnapshot(after),
+  };
+}
+
+function isFoldableCardDecision(record) {
+  return record?.decisionType === "conditional_choice"
+    && ["choose_payment", "choose_card"].includes(record.family);
 }
 
 function runFixedBoardTurnReport(options = {}) {
@@ -299,12 +379,16 @@ function runFixedBoardTurnReport(options = {}) {
 
       const actorPlayerId = chosen.actorPlayerId || before.decision?.actorPlayerId;
       const resourcesBefore = resourcesOf(before, actorPlayerId);
+      const handBeforeDecision = handOf(before, actorPlayerId);
       const afterForActor = env.observe(actorPlayerId);
       const rawResourcesAfter = resourcesOf(afterForActor, actorPlayerId);
       const incomeEvents = (result.replayEvent?.effectSessionJournal?.events || [])
         .filter((event) => event.type === "round_start_income");
       const actorIncome = incomeEvents.find((event) => event.playerId === actorPlayerId) || null;
-      const visual = selectionVisual(chosen, { initialIncome: !reachedTurnActions });
+      const visual = selectionVisual(chosen, {
+        initialIncome: !reachedTurnActions,
+        hand: handBeforeDecision,
+      });
       const resourcesAfter = actorIncome
         ? Object.freeze({
           ...resourcesFromIncomeEvent(actorIncome, "before"),
@@ -317,7 +401,7 @@ function runFixedBoardTurnReport(options = {}) {
         legalActions,
         result.actionOutcomes,
         actorPlayerId,
-        { initialIncome: !reachedTurnActions },
+        { initialIncome: !reachedTurnActions, hand: handBeforeDecision },
       );
       const valuationMilliseconds = performance.now() - valuationStartedAt;
       const counterfactualTiming = env.getCounterfactualDiagnostics() || {};
@@ -353,6 +437,9 @@ function runFixedBoardTurnReport(options = {}) {
           ...counterfactualTiming,
           valuationMilliseconds,
         },
+        movement: movementRecord(before, afterForActor, chosen),
+        actionBoard: actionBoardRecord(before, afterForActor, chosen),
+        followups: [],
       };
 
       if (!reachedTurnActions && chosen.decisionType === "conditional_choice") {
@@ -399,7 +486,28 @@ function runFixedBoardTurnReport(options = {}) {
         };
         turns.push(activeTurn);
       }
-      activeTurn.actions.push(record);
+      const previousAction = activeTurn.actions.at(-1) || null;
+      if (previousAction && isFoldableCardDecision(record)) {
+        previousAction.followups.push(record);
+        previousAction.resourcesAfter = record.resourcesAfter;
+        previousAction.resourceDelta = resourceDelta(
+          previousAction.resourcesBefore,
+          record.resourcesAfter,
+        );
+        previousAction.scoreAfter = record.scoreAfter;
+        previousAction.scoreDelta = record.scoreAfter - previousAction.scoreBefore;
+        if (previousAction.movement) {
+          previousAction.movement.to = coordinateLabel(
+            afterForActor,
+            rocketCoordinate(afterForActor, previousAction.movement.rocketId),
+          );
+        }
+        if (previousAction.actionBoard) {
+          previousAction.actionBoard.after = boardSnapshot(afterForActor);
+        }
+      } else {
+        activeTurn.actions.push(record);
+      }
       activeTurn.scoreAfter = scoreOf(result.observation, actorPlayerId);
       activeTurn.resourcesAfter = resourcesAfter;
       activeTurn.handAfter = handOf(afterForActor, actorPlayerId);
@@ -607,6 +715,58 @@ function renderAlternatives(alternatives) {
   }).join("");
 }
 
+function renderActionFollowups(action) {
+  if (!action.followups?.length) return "";
+  return `<div class="action-followups">${action.followups.map((followup) => {
+    const label = followup.visual?.label
+      || (followup.family === "choose_payment" ? "支付方式" : "卡牌选择");
+    const name = followup.visual?.name
+      || String(followup.text || followup.summary || "已完成").replace(/^↳\s*选择：/, "");
+    const images = (followup.visual?.items || [])
+      .filter((item) => item.imageSrc)
+      .map((item) => `<button class="card-image-button" type="button" data-image-src="${escapeHtml(item.imageSrc)}" aria-label="放大查看 ${escapeHtml(item.name)}">
+        <img src="${escapeHtml(item.imageSrc)}" alt="${escapeHtml(item.name)}">
+      </button>`)
+      .join("");
+    return `<div class="action-followup">
+      ${images ? `<div class="selected-card-images">${images}</div>` : ""}
+      <div><span>${escapeHtml(label)}</span><strong>${escapeHtml(name)}</strong></div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function renderActionBoard(action) {
+  const board = action.actionBoard;
+  if (!board) return "";
+  const endpoint = board.targetPlanetId
+    ? PLANET_LABELS[board.targetPlanetId] || board.targetPlanetId
+    : action.movement?.to || "太阳系";
+  const outcome = board.family === "land"
+    ? `登陆 ${endpoint}`
+    : board.family === "orbit"
+      ? `环绕 ${endpoint}`
+      : `${action.movement?.from || "未知位置"} → ${action.movement?.to || "未知位置"}`;
+  return `<div class="action-board-panel">
+    <div class="action-board-heading">
+      <span>${board.family === "move" ? "实际移动路径" : "太阳系落点变化"}</span>
+      <strong>${escapeHtml(outcome)}</strong>
+    </div>
+    <div class="action-board-pair">
+      <figure><figcaption>行动前</figcaption>${renderSolarSystem(board.before, {
+        compact: true,
+        highlightRocketId: board.rocketId,
+      })}</figure>
+      <span class="board-change-arrow" aria-hidden="true">→</span>
+      <figure><figcaption>${board.family === "move" ? "移动后" : "结算后"}</figcaption>${renderSolarSystem(board.after, {
+        compact: true,
+        highlightRocketId: board.rocketId,
+        highlightPlanetId: board.family === "move" ? null : board.targetPlanetId,
+        endpointFamily: board.family,
+      })}</figure>
+    </div>
+  </div>`;
+}
+
 function renderActionCard(action) {
   const evaluation = action.value?.evaluation || null;
   const goal = evaluation?.probeGoalRequirement || null;
@@ -644,6 +804,8 @@ function renderActionCard(action) {
       </button>`).join("")}</div>
       <div><span>${escapeHtml(action.visual.label || "本次选择")}</span><strong>${escapeHtml(action.visual.name)}</strong></div>
     </div>` : ""}
+    ${renderActionFollowups(action)}
+    ${renderActionBoard(action)}
     <div class="strip-caption">本决策前 → 执行后</div>
     <div class="resource-strip" aria-label="本决策前后资源">${renderResourceStrip(action.resourcesBefore, action.resourcesAfter)}</div>
     <div class="decision-grid">
@@ -734,19 +896,47 @@ const PLANET_LABELS = Object.freeze({
 });
 
 function boardCoordinateStyle(x, y) {
-  const angle = ((Number(x) || 0) - 1.5) * (Math.PI / 4);
-  const radius = 10 + (Math.max(1, Number(y) || 1) * 7.1);
-  return `left:${(50 + (Math.cos(angle) * radius)).toFixed(2)}%;top:${(50 + (Math.sin(angle) * radius)).toFixed(2)}%`;
+  const point = boardCoordinatePoint(x, y);
+  return `left:${point.left.toFixed(2)}%;top:${point.top.toFixed(2)}%`;
 }
 
-function renderSolarSystem(board) {
+function boardCoordinatePoint(x, y) {
+  const angle = ((Number(x) || 0) - 1.5) * (Math.PI / 4);
+  const radius = 10 + (Math.max(1, Number(y) || 1) * 7.1);
+  return {
+    left: 50 + (Math.cos(angle) * radius),
+    top: 50 + (Math.sin(angle) * radius),
+  };
+}
+
+function renderSolarSystem(board, options = {}) {
   const rotation = board?.rotation || {};
   const wheelSteps = [1, 2, 3, 4].map((wheel) => Number(rotation[`wheel${wheel}Steps`]) || 0);
   const planets = board?.planets || [];
   const rockets = board?.rockets || [];
-  const planetMarkers = planets.map((planet) => `<span class="planet-marker" style="${boardCoordinateStyle(planet.x, planet.y)}" title="${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}">${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}</span>`).join("");
-  const rocketMarkers = rockets.filter((rocket) => Number.isFinite(rocket.x) && Number.isFinite(rocket.y)).map((rocket, index) => `<span class="rocket-marker player-color-${escapeHtml(rocket.playerId)}" style="${boardCoordinateStyle(rocket.x, rocket.y)};--rocket-offset:${((index % 3) - 1) * 10}px" title="${escapeHtml(rocket.playerId)} · ${escapeHtml(rocket.planetId || `${rocket.x},${rocket.y}`)}">▲</span>`).join("");
-  return `<div class="solar-visual" aria-label="本轮开始时的太阳系盘面">
+  const planetMarkers = planets.map((planet) => {
+    const highlighted = String(planet.planetId) === String(options.highlightPlanetId || "");
+    const endpointLabel = highlighted && options.endpointFamily === "land"
+      ? "登陆"
+      : highlighted && options.endpointFamily === "orbit"
+        ? "环绕"
+        : "";
+    return `<span class="planet-marker${highlighted ? " highlighted" : ""}" style="${boardCoordinateStyle(planet.x, planet.y)}" title="${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}">${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}${endpointLabel ? `<b>${endpointLabel}</b>` : ""}</span>`;
+  }).join("");
+  const visibleRockets = rockets.filter((rocket) => (
+    Number.isFinite(rocket.x) && Number.isFinite(rocket.y)
+  ));
+  const rocketMarkers = visibleRockets.map((rocket) => {
+    const highlighted = String(rocket.id) === String(options.highlightRocketId || "");
+    const colocated = visibleRockets.filter((candidate) => (
+      Number(candidate.x) === Number(rocket.x) && Number(candidate.y) === Number(rocket.y)
+    ));
+    const localIndex = colocated.indexOf(rocket);
+    const localOffset = (localIndex - ((colocated.length - 1) / 2)) * 7;
+    const color = rocket.color || String(rocket.playerId || "").replace(/^player-/, "") || "white";
+    return `<img class="rocket-marker${highlighted ? " highlighted" : ""}" src="../assets/tokens/rocket-${escapeHtml(color)}.png" alt="${escapeHtml(color)} 探测器" style="${boardCoordinateStyle(rocket.x, rocket.y)};--rocket-offset:${localOffset}px" title="${escapeHtml(rocket.playerId)} · ${escapeHtml(rocket.planetId || `${rocket.x},${rocket.y}`)}">`;
+  }).join("");
+  return `<div class="solar-visual${options.compact ? " compact" : ""}" aria-label="${options.compact ? "行动太阳系盘面" : "本轮开始时的太阳系盘面"}">
     ${[4, 3, 2, 1].map((wheel) => `<img class="solar-wheel wheel-${wheel}" src="../assets/core/wheels/wheel${wheel}.png" alt="" style="transform:translate(-50%,-50%) rotate(${wheelSteps[wheel - 1] * 45}deg)">`).join("")}
     <img class="solar-sun" src="../assets/core/sun.png" alt="太阳">
 ${planetMarkers}
@@ -866,7 +1056,10 @@ function renderRoundSummary(turns) {
     };
     summary.scoreAfter = turn.scoreAfter;
     summary.resourcesAfter = turn.resourcesAfter;
-    summary.decisionCount += turn.actions.length;
+    summary.decisionCount += turn.actions.reduce(
+      (count, action) => count + 1 + (action.followups?.length || 0),
+      0,
+    );
     byPlayer.set(turn.actorPlayerId, summary);
   }
   return `<section class="round-summary">
@@ -1023,6 +1216,7 @@ function formatTurnReportHtml(report) {
     .board-card p { margin: 6px 0; font-size: 12px; overflow-wrap: anywhere; }
     .board-card small { color: var(--muted); }
     .solar-visual { position: relative; width: min(100%, 340px); aspect-ratio: 1; margin: 10px auto 8px; overflow: hidden; border-radius: 50%; background: #050912; box-shadow: inset 0 0 30px rgba(86, 216, 255, .12), 0 10px 28px rgba(0, 0, 0, .32); }
+    .solar-visual.compact { width: min(100%, 250px); margin: 0 auto; }
     .solar-wheel { position: absolute; left: 50%; top: 50%; height: auto; transform-origin: center; }
     .solar-wheel.wheel-4 { width: 100%; }
     .solar-wheel.wheel-3 { width: 62.4%; }
@@ -1031,7 +1225,10 @@ function formatTurnReportHtml(report) {
     .solar-sun { position: absolute; left: 50%; top: 50%; width: 8.5%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 10px rgba(255, 196, 64, .8)); }
     .planet-marker, .rocket-marker { position: absolute; z-index: 4; transform: translate(-50%, -50%); }
     .planet-marker { padding: 1px 4px; border: 1px solid rgba(255, 255, 255, .42); border-radius: 8px; color: #fff; background: rgba(4, 8, 18, .78); font-size: 8px; font-weight: 750; line-height: 1.25; white-space: nowrap; box-shadow: 0 2px 5px rgba(0, 0, 0, .55); }
-    .rocket-marker { margin: var(--rocket-offset) 0 0 var(--rocket-offset); color: #fff; font-size: 15px; line-height: 1; text-shadow: 0 1px 4px #000, 0 0 5px currentColor; }
+    .planet-marker.highlighted { z-index: 7; color: #07111f; border-color: #fff; background: var(--amber); box-shadow: 0 0 0 4px rgba(255, 201, 107, .28), 0 0 18px rgba(255, 201, 107, .9); }
+    .planet-marker b { display: block; font-size: 7px; }
+    .rocket-marker { width: 17px; height: 20px; margin-left: var(--rocket-offset); object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .9)); }
+    .rocket-marker.highlighted { z-index: 8; width: 22px; height: 25px; filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px rgba(86, 216, 255, .85)); }
     .player-color-player-red { color: #ff6576; }
     .player-color-player-blue { color: #55a7ff; }
     .player-color-player-green { color: #61d98a; }
@@ -1070,6 +1267,18 @@ function formatTurnReportHtml(report) {
     .card-image-button { display: inline-grid; place-items: center; flex: 0 0 auto; margin: 0; padding: 0; border: 0; border-radius: 7px; background: transparent; cursor: zoom-in; }
     .card-image-button img { display: block; width: 44px; height: 62px; object-fit: cover; border-radius: 6px; box-shadow: 0 5px 14px rgba(0, 0, 0, .35); }
     .selected-card-preview .card-image-button img { width: 58px; height: 82px; }
+    .action-followups { display: grid; gap: 7px; margin: 0 14px 14px; }
+    .action-followup { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-left: 3px solid var(--amber); border-radius: 7px; background: rgba(255, 201, 107, .07); }
+    .action-followup span { display: block; color: var(--muted); font-size: 10px; }
+    .action-followup strong { display: block; margin-top: 2px; font-size: 12px; }
+    .action-board-panel { margin: 0 14px 14px; padding: 12px; border: 1px solid rgba(86, 216, 255, .28); border-radius: 13px; background: rgba(86, 216, 255, .045); }
+    .action-board-heading { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+    .action-board-heading span { color: var(--muted); font-size: 10px; }
+    .action-board-heading strong { color: var(--cyan); font-size: 12px; text-align: right; }
+    .action-board-pair { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .action-board-pair figure { min-width: 0; margin: 0; }
+    .action-board-pair figcaption { margin-bottom: 5px; color: var(--muted); font-size: 10px; text-align: center; }
+    .board-change-arrow { color: var(--cyan); font-size: 24px; }
     .hand-panel { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 11px; background: rgba(159, 140, 255, .055); }
     .hand-panel > span { color: var(--violet); font-size: 11px; white-space: nowrap; }
     .hand-list { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -1146,6 +1355,8 @@ function formatTurnReportHtml(report) {
       .board-preview { grid-template-columns: 1fr; }
       .round-subheading, .summary-line { align-items: flex-start; flex-direction: column; }
       .hand-panel { grid-template-columns: 1fr; }
+      .action-board-pair { grid-template-columns: 1fr; }
+      .board-change-arrow { transform: rotate(90deg); text-align: center; }
     }
   </style>
 </head>
@@ -1197,7 +1408,7 @@ function formatTurnReportHtml(report) {
       <label>搜索
         <input id="textFilter" type="search" placeholder="行星、行动、目标…">
       </label>
-      <span class="visible-count" id="visibleCount">显示 ${actionCount} / ${actionCount} 个决策</span>
+      <span class="visible-count" id="visibleCount">显示 ${actionCount} / ${actionCount} 个行动记录（原始 Policy 决策 ${report.decisionCount}）</span>
     </nav>
 
     <div id="reportBody">
@@ -1240,7 +1451,7 @@ function formatTurnReportHtml(report) {
         playerSummaries.forEach((summary) => {
           summary.classList.toggle("hidden", player !== "all" && summary.dataset.player !== player);
         });
-        visibleCount.textContent = "显示 " + visible + " / ${actionCount} 个决策";
+        visibleCount.textContent = "显示 " + visible + " / ${actionCount} 个行动记录（原始 Policy 决策 ${report.decisionCount}）";
         emptyState.style.display = visible ? "none" : "block";
       };
       playerFilter.addEventListener("change", update);
@@ -1310,7 +1521,15 @@ function formatTurnReportMarkdown(report) {
       "| ---: | --- | --- | --- | --- |",
     );
     turn.actions.forEach((action) => {
-      lines.push(`| ${action.decisionNumber} | ${markdownCell(action.text)} | ${markdownCell(formatEvaluation(action.value, action.timing))} | ${markdownCell(formatActualDelta(action, action.scoreDelta))} | ${markdownCell(formatAlternatives(action.alternatives))} |`);
+      const followups = (action.followups || []).map((followup) => (
+        followup.visual?.text
+        || String(followup.text || followup.summary || "").replace(/^↳\s*选择：/, "支付/选择：")
+      ));
+      const movement = action.movement
+        ? `实际移动：${action.movement.from} → ${action.movement.to}`
+        : "";
+      const submitted = [action.text, movement, ...followups].filter(Boolean).join("；");
+      lines.push(`| ${action.decisionNumber} | ${markdownCell(submitted)} | ${markdownCell(formatEvaluation(action.value, action.timing))} | ${markdownCell(formatActualDelta(action, action.scoreDelta))} | ${markdownCell(formatAlternatives(action.alternatives))} |`);
     });
   }
 
