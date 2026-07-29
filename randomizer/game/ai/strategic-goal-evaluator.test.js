@@ -654,9 +654,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 2 }),
     observation({ roundNumber: 2, ownedTechIds: ["orange2"] }),
   );
-  assert.equal(result.techValue, 15,
-    "第2轮获得科技可覆盖当前轮及剩余两轮，初版每轮价值5分");
-  assert.equal(result.score, 15);
+  assert.equal(result.techValue, 10,
+    "第2轮科技通用资产只计第3、4轮两个未来窗口，本轮价值必须由真实后续行动兑现");
+  assert.equal(result.score, 10);
   assert.deepEqual(result.gainedTechIds, ["orange2"]);
 }
 
@@ -666,7 +666,21 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 4 }),
     observation({ roundNumber: 4, ownedTechIds: ["orange2"] }),
   );
-  assert.equal(result.techValue, 5, "第4轮科技只剩当前轮价值，必须低于第2轮");
+  assert.equal(result.score, null,
+    "第4轮未使用科技不能凭取得动作获得固定分，本轮能力必须在真实后续行动中兑现");
+  assert.deepEqual(result.reasonCodes, ["no-score-tech-or-income-gain"]);
+}
+
+{
+  const result = evaluate(
+    action("research:round-four-realized", "research_tech"),
+    observation({ roundNumber: 4, score: 10 }),
+    observation({ roundNumber: 4, score: 14, ownedTechIds: ["blue1"] }),
+  );
+  assert.equal(result.techValue, 0);
+  assert.equal(result.actualScoreDelta, 4);
+  assert.equal(result.score, 4,
+    "第4轮科技带来的首次科技分和数据列分仍按官方实际分累计，不与通用科技价值重复");
 }
 
 {
@@ -737,9 +751,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     }),
   );
   assert.equal(result.actualScoreDelta, 5);
-  assert.equal(result.techValue, 10);
+  assert.equal(result.techValue, 5);
   assert.equal(result.incomeValue, 5);
-  assert.equal(result.score, 20,
+  assert.equal(result.score, 15,
     "同一真实叶的分数、科技和收入可以合并，但中间资源不得重复计分");
 }
 

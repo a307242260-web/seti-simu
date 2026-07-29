@@ -267,7 +267,7 @@
     const gainedTechIds = leafInfrastructure.ownedTechIds
       .filter((tileId) => !rootTech.has(tileId));
     const techValue = gainedTechIds.length
-      * (remainingRounds + 1)
+      * remainingRounds
       * parameters.techValuePerRemainingRound;
     const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
       key,
