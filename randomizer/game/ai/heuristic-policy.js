@@ -22,7 +22,7 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v15";
+  const POLICY_VERSION = "seti-heuristic-policy-v16";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
   const FALLBACK_FAMILIES = Object.freeze(new Set([

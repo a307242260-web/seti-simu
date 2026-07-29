@@ -12,7 +12,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v5";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v6";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CARD_PLAY_ROUTE_TARGET = "card:play";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -217,6 +217,13 @@
       > finite(rootValue.resourceFacts?.availableData)
     ) {
       return { required: true, supported: true, reason: "card-corner-data-progress" };
+    }
+    if (selectReducedProbeGoal(
+      context?.observation,
+      immediateObservation,
+      context?.seatId,
+    )) {
+      return { required: true, supported: true, reason: "card-corner-reduced-probe-goal-gap" };
     }
     const nextAgent = (leaf?.secondaryAgentTrace || []).find((candidate) => (
       !["card_corner", "end_turn", "pass"].includes(candidate?.family)
@@ -665,6 +672,24 @@
       || compareGoals(left, right);
   }
 
+  function selectReducedProbeGoal(rootObservation, branchObservation, seatId) {
+    const branchGoals = rawProbeRequirements(branchObservation)?.candidates || [];
+    return (rawProbeRequirements(rootObservation)?.candidates || [])
+      .map((rootGoal) => ({
+        rootGoal,
+        branchGoal: branchGoals.find((candidate) => candidate.targetId === rootGoal.targetId),
+      }))
+      .filter(({ rootGoal, branchGoal }) => (
+        branchGoal && gapSize(branchGoal) < gapSize(rootGoal)
+      ))
+      .sort((left, right) => compareProbeRouteGoals(
+        branchObservation,
+        left.branchGoal,
+        right.branchGoal,
+        seatId,
+      ))[0]?.branchGoal || null;
+  }
+
   function bestProbePotential(requirements) {
     return [...(requirements?.candidates || [])]
       .filter((goal) => finite(goal?.targetBenefit?.score) > 0)
@@ -802,6 +827,13 @@
           );
         });
       if (matchedTradeGoals.length) return matchedTradeGoals[0].targetId;
+    }
+    if (input.currentAction?.family === "card_corner") {
+      return selectReducedProbeGoal(
+        input.rootObservation,
+        input.branchObservation,
+        input.focalSeatId,
+      )?.targetId || null;
     }
     if (!["launch", "move", "orbit", "land"].includes(input.currentAction?.family)) return null;
     const matched = (rawProbeRequirements(input.rootObservation)?.candidates || [])

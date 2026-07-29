@@ -226,6 +226,32 @@ function observation({
     [creditsForEnergy.actionId],
     "锁定探测器目标后，下一步缺电应只选择能严格缩小正式资源缺口的转换",
   );
+  const corner = {
+    ...action("corner:energy", "card_corner"),
+    actorId: seatId,
+    payload: { kind: "resource" },
+  };
+  const cornerRoot = {
+    ...observation({ resources: { credits: 5, energy: 2 } }),
+    probeRouteRequirements: probeRequirements,
+  };
+  const cornerBranch = {
+    ...observation({ resources: { credits: 5, energy: 3 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        ...probeRequirements.candidates[0],
+        gap: { credits: 0, energy: 0 },
+      }],
+    },
+  };
+  assert.equal(evaluator.selectSecondaryAgentRouteTarget({
+    focalSeatId: seatId,
+    currentAction: corner,
+    rootObservation: cornerRoot,
+    branchObservation: cornerBranch,
+    routeTargetId: null,
+  }), probeTargetId,
+  "卡角资源只有严格缩小正式目标缺口时才可锁定该目标，不能作为随机资源根");
   const rawBranchObservation = {
     publicState: {
       players: [{
