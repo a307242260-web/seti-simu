@@ -2,17 +2,21 @@
   "use strict";
 
   let outcomeModel = root.SetiOutcomeModel;
-  if (!outcomeModel && typeof require === "function") outcomeModel = require("./outcome-model");
-  const api = factory(outcomeModel);
+  let quickTrades = root.SetiQuickTrades;
+  if (typeof require === "function") {
+    outcomeModel = outcomeModel || require("./outcome-model");
+    quickTrades = quickTrades || require("../actions/quick-trades");
+  }
+  const api = factory(outcomeModel, quickTrades);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiExpectedScoreEvaluator = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel, quickTrades) {
   "use strict";
 
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v7";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v8";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CARD_PLAY_ROUTE_TARGET = "card:play";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -619,31 +623,159 @@
     };
   }
 
-  function selectProbeResourcePreparation(observation, goals, successors, seatId) {
-    return successors
+  const PLANNED_RESOURCE_KEYS = Object.freeze([
+    "credits",
+    "energy",
+    "publicity",
+    "handSize",
+  ]);
+  const resourceDistanceCache = new Map();
+  const resourcePreparationCache = new Map();
+
+  function selectMinimumCostResourcePreparation(
+    observation,
+    required,
+    successors,
+    seatId,
+  ) {
+    const legalByTradeId = new Map(successors
       .filter((action) => action.family === "quick_trade")
-      .map((action) => {
-        const reductions = goals.map((goal) => {
-          const projected = probeResourceGapAfterTrade(observation, goal, action, seatId);
-          return projected ? projected.before - projected.after : 0;
-        });
-        return {
+      .map((action) => [action.target?.tradeId, action]));
+    if (!legalByTradeId.size || !Array.isArray(quickTrades?.TRADE_ACTIONS)) return [];
+    const assets = resourceFactsOf(observation, seatId);
+    const initial = {
+      credits: Math.max(0, Math.floor(finite(assets.credits))),
+      energy: Math.max(0, Math.floor(finite(assets.energy))),
+      publicity: Math.max(0, Math.floor(finite(assets.publicity))),
+      handSize: Math.max(0, Math.floor(finite(assets.ordinaryCards))),
+    };
+    const target = {
+      credits: Math.max(0, Math.ceil(finite(required?.credits))),
+      energy: Math.max(0, Math.ceil(finite(required?.energy))),
+    };
+    const satisfied = (state) => (
+      state.credits >= target.credits
+      && state.energy >= target.energy
+    );
+    if (satisfied(initial)) return [];
+    const preparationKey = [
+      target.credits,
+      target.energy,
+      ...PLANNED_RESOURCE_KEYS.map((key) => initial[key]),
+      ...[...legalByTradeId.keys()].sort(),
+    ].join(":");
+    if (resourcePreparationCache.has(preparationKey)) {
+      return resourcePreparationCache.get(preparationKey)
+        .map((tradeId) => legalByTradeId.get(tradeId))
+        .filter(Boolean);
+    }
+    const stateKey = (state) => [
+      target.credits,
+      target.energy,
+      ...PLANNED_RESOURCE_KEYS.map((key) => state[key]),
+    ].join(":");
+    const available = (state, trade) => PLANNED_RESOURCE_KEYS.every((key) => (
+      state[key] >= Math.max(0, finite(trade.cost?.[key]))
+    ));
+    const applyTrade = (state, trade) => Object.fromEntries(
+      PLANNED_RESOURCE_KEYS.map((key) => [
+        key,
+        state[key]
+          - Math.max(0, finite(trade.cost?.[key]))
+          + Math.max(0, finite(trade.gain?.[key])),
+      ]),
+    );
+    const edgeLoss = (trade) => PLANNED_RESOURCE_KEYS.reduce((total, key) => (
+      total
+      + Math.max(0, finite(trade.cost?.[key]))
+      - Math.max(0, finite(trade.gain?.[key]))
+    ), 0);
+    function minimumPlans(state) {
+      if (satisfied(state)) {
+        return [{
+          loss: 0,
+          steps: 0,
+          terminalKey: PLANNED_RESOURCE_KEYS.map((key) => state[key]).join(":"),
+        }];
+      }
+      const key = stateKey(state);
+      if (resourceDistanceCache.has(key)) return resourceDistanceCache.get(key);
+      const candidates = [];
+      for (const trade of quickTrades.TRADE_ACTIONS) {
+        const loss = edgeLoss(trade);
+        if (loss <= 0 || !available(state, trade)) continue;
+        for (const remaining of minimumPlans(applyTrade(state, trade))) {
+          candidates.push({
+            loss: loss + remaining.loss,
+            steps: 1 + remaining.steps,
+            terminalKey: remaining.terminalKey,
+          });
+        }
+      }
+      candidates.sort((left, right) => (
+        left.loss - right.loss
+        || left.steps - right.steps
+        || left.terminalKey.localeCompare(right.terminalKey)
+      ));
+      const best = candidates[0] || null;
+      const plans = best
+        ? [...new Map(candidates
+          .filter((candidate) => (
+            candidate.loss === best.loss
+            && candidate.steps === best.steps
+          ))
+          .map((candidate) => [candidate.terminalKey, candidate])).values()]
+        : [];
+      if (resourceDistanceCache.size >= 100000) resourceDistanceCache.clear();
+      resourceDistanceCache.set(key, plans);
+      return plans;
+    }
+    const candidates = [];
+    for (const [tradeId, action] of legalByTradeId) {
+      const trade = quickTrades.TRADE_ACTIONS.find((candidate) => candidate.id === tradeId);
+      if (!trade || !available(initial, trade)) continue;
+      for (const remaining of minimumPlans(applyTrade(initial, trade))) {
+        candidates.push({
           action,
-          reduction: Math.max(0, ...reductions),
-          opportunityLoss: Object.values(action.payload?.cost || {})
-            .reduce((total, value) => total + finite(value), 0)
-            - Object.values(action.payload?.gain || {})
-              .reduce((total, value) => total + finite(value), 0),
-        };
-      })
-      .filter((candidate) => candidate.reduction > 0)
-      .sort((left, right) => (
-        right.reduction - left.reduction
-        || left.opportunityLoss - right.opportunityLoss
-        || String(left.action.actionId).localeCompare(String(right.action.actionId))
-      ))
-      .slice(0, 1)
-      .map((candidate) => candidate.action);
+          loss: edgeLoss(trade) + remaining.loss,
+          steps: 1 + remaining.steps,
+          terminalKey: remaining.terminalKey,
+        });
+      }
+    }
+    candidates.sort((left, right) => (
+      left.loss - right.loss
+      || left.steps - right.steps
+      || left.terminalKey.localeCompare(right.terminalKey)
+      || String(left.action.actionId).localeCompare(String(right.action.actionId))
+    ));
+    const best = candidates[0] || null;
+    const plannedTradeIds = (best
+      ? [...new Map(candidates
+        .filter((candidate) => (
+          candidate.loss === best.loss
+          && candidate.steps === best.steps
+        ))
+        .map((candidate) => [candidate.terminalKey, candidate])).values()]
+      : [])
+      .map((candidate) => candidate.action.target?.tradeId)
+      .filter(Boolean);
+    if (resourcePreparationCache.size >= 10000) resourcePreparationCache.clear();
+    resourcePreparationCache.set(preparationKey, plannedTradeIds);
+    return plannedTradeIds
+      .map((tradeId) => legalByTradeId.get(tradeId))
+      .filter(Boolean);
+  }
+
+  function selectProbeResourcePreparation(observation, goals, successors, seatId) {
+    return goals.flatMap((goal) => selectMinimumCostResourcePreparation(
+      observation,
+      goal.required || {},
+      successors,
+      seatId,
+    )).filter((action, index, actions) => (
+      actions.findIndex((candidate) => candidate.actionId === action.actionId) === index
+    ));
   }
 
   function dataPaymentGapAfterTrade(observation, action, seatId) {
@@ -669,24 +801,15 @@
   }
 
   function selectDataResourcePreparation(observation, successors, seatId) {
-    return successors
-      .filter((action) => action.family === "quick_trade")
-      .map((action) => ({
-        action,
-        projected: dataPaymentGapAfterTrade(observation, action, seatId),
-        opportunityLoss: Object.values(action.payload?.cost || {})
-          .reduce((total, value) => total + finite(value), 0)
-          - Object.values(action.payload?.gain || {})
-            .reduce((total, value) => total + finite(value), 0),
-      }))
-      .filter((candidate) => candidate.projected?.reduction > 0)
-      .sort((left, right) => (
-        right.projected.reduction - left.projected.reduction
-        || left.opportunityLoss - right.opportunityLoss
-        || String(left.action.actionId).localeCompare(String(right.action.actionId))
-      ))
-      .slice(0, 1)
-      .map((candidate) => candidate.action);
+    const requirements = rawDataAnalyzeRequirements(observation);
+    return requirements
+      ? selectMinimumCostResourcePreparation(
+        observation,
+        requirements.nextCost || {},
+        successors,
+        seatId,
+      )
+      : [];
   }
 
   function enumerateSecondaryAgentRootTargets(input = {}) {
@@ -704,7 +827,12 @@
       targets.set(targetId, [...new Set([...existing, ...compatibleActionIds])].sort());
     }
 
-    const probeGoals = rawProbeRequirements(input.rootObservation)?.candidates || [];
+    const probeGoals = (rawProbeRequirements(input.rootObservation)?.candidates || [])
+      .filter((goal) => probeGoalResourceReachable(
+        input.rootObservation,
+        goal,
+        input.focalSeatId,
+      ));
     for (const action of legalActions) {
       const matchedGoals = probeGoals
         .filter((goal) => {
@@ -781,10 +909,30 @@
     const assets = resourceFactsOf(observation, seatId);
     const requiredCredits = Math.max(0, finite(goal?.required?.credits));
     const requiredEnergy = Math.max(0, finite(goal?.required?.energy));
-    const credits = Math.max(0, finite(assets.credits));
-    const energy = Math.max(0, finite(assets.energy));
+    const optimisticFlexibleResources = Math.max(
+      0,
+      finite(assets.ordinaryCards) + finite(assets.availableData),
+    );
+    const credits = Math.max(
+      0,
+      finite(assets.credits) + optimisticFlexibleResources,
+    );
+    const energy = Math.max(
+      0,
+      finite(assets.energy) + optimisticFlexibleResources,
+    );
+    const optimisticCardsFromPublicity = Math.floor(
+      (
+        finite(assets.publicity)
+        + Math.max(0, finite(goal?.publicityStops))
+      ) / 3,
+    );
     const cardPairs = Math.floor(
-      (finite(assets.ordinaryCards) + finite(assets.alienCards)) / 2,
+      (
+        finite(assets.ordinaryCards)
+        + finite(assets.alienCards)
+        + optimisticCardsFromPublicity
+      ) / 2,
     );
     for (let cardsForCredits = 0; cardsForCredits <= cardPairs; cardsForCredits += 1) {
       for (
@@ -1016,35 +1164,56 @@
     const successors = [...(input.legalSuccessors || [])]
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     if (!successors.length) return [];
+    const bindRoute = (actions, routeTargetId) => actions.map((action) => ({
+      ...action,
+      routeTargetId: routeTargetId || null,
+    }));
     const focalSeatId = String(input.focalSeatId || "");
     const actorId = String(successors[0]?.actorId || "");
     if (actorId === focalSeatId) {
+      if (!input.routeTargetId) {
+        const targetCatalog = enumerateSecondaryAgentRootTargets({
+          focalSeatId,
+          rootObservation: input.branchObservation,
+          legalActions: successors,
+          maxProxyDepth: input.maxProxyDepth,
+        });
+        const legalById = new Map(successors.map((action) => [action.actionId, action]));
+        const targeted = targetCatalog.flatMap((target) => (
+          target.compatibleActionIds.map((actionId) => ({
+            ...legalById.get(actionId),
+            routeTargetId: target.targetId,
+          }))
+        ));
+        const controls = successors
+          .filter((action) => CONTROL_FAMILIES.has(action.family))
+          .map((action) => ({ ...action, routeTargetId: null }));
+        return [...targeted, ...controls];
+      }
+      if (successors[0]?.phase === "conditional") {
+        if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
+          const dataPlacementChoices = successors.filter((action) => (
+            String(action.target?.choiceId || "").startsWith("data:")
+          ));
+          if (dataPlacementChoices.length) {
+            return bindRoute(dataPlacementChoices.filter((action) => (
+              action.target?.target === "computer"
+            )), input.routeTargetId);
+          }
+        }
+        return bindRoute(successors, input.routeTargetId);
+      }
       if (input.routeTargetId === CARD_PLAY_ROUTE_TARGET) {
         const playCards = successors.filter((action) => action.family === "play_card");
-        if (playCards.length) return playCards;
-        const endTurn = successors.find((action) => action.family === "end_turn");
-        if (endTurn) return [endTurn];
-        const pass = successors.find((action) => action.family === "pass");
-        if (pass) return [pass];
-        return successors.filter((action) => !["quick_trade", "card_corner"].includes(action.family));
+        if (playCards.length) return bindRoute(playCards, input.routeTargetId);
+        return [];
       }
       if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
-        if (successors[0]?.phase === "conditional") {
-          const nonSkip = successors.filter((action) => (
-            !String(action.target?.choiceId || "").startsWith("skip:")
-          ));
-          const compatible = nonSkip.length ? nonSkip : successors;
-          return [...compatible].sort((left, right) => (
-            Number(right.target?.target === "computer")
-              - Number(left.target?.target === "computer")
-            || String(left.actionId).localeCompare(String(right.actionId))
-          )).slice(0, 1);
-        }
         const requirements = rawDataAnalyzeRequirements(input.branchObservation);
         const requiredAction = requirements
           ? successors.find((action) => action.family === requirements.nextStep)
           : null;
-        if (requiredAction) return [requiredAction];
+        if (requiredAction) return bindRoute([requiredAction], input.routeTargetId);
         const preparation = requirements
           ? selectDataResourcePreparation(
             input.branchObservation,
@@ -1052,12 +1221,12 @@
             input.focalSeatId,
           )
           : [];
-        if (preparation.length) return preparation;
+        if (preparation.length) return bindRoute(preparation, input.routeTargetId);
         if (!requirements) {
           const analyze = successors.find((action) => action.family === "analyze");
-          if (analyze) return [analyze];
+          if (analyze) return bindRoute([analyze], input.routeTargetId);
           const placeData = successors.find((action) => action.family === "place_data");
-          if (placeData) return [placeData];
+          if (placeData) return bindRoute([placeData], input.routeTargetId);
           const energyTrade = successors.find((action) => (
             action.family === "quick_trade"
             && action.target?.tradeId === "credits-for-energy"
@@ -1070,37 +1239,32 @@
             energyTrade
             && branchFacts.dataProgress?.analyzeReady
             && finite(branchFacts.resourceFacts?.energy) === 0
-          ) return [energyTrade];
+          ) return bindRoute([energyTrade], input.routeTargetId);
         }
-        const endTurn = successors.find((action) => action.family === "end_turn");
-        if (endTurn) return [endTurn];
-        const pass = successors.find((action) => action.family === "pass");
-        if (pass) return [pass];
-        return successors.filter((action) => !["quick_trade", "pass"].includes(action.family));
+        return [];
       }
       const goals = (rawProbeRequirements(input.branchObservation)?.candidates || [])
-        .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId);
+        .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId)
+        .filter((goal) => probeGoalResourceReachable(
+          input.branchObservation,
+          goal,
+          input.focalSeatId,
+        ));
       if (input.routeTargetId && goals.length) {
         const exact = successors.filter((action) => (
           goals.some((goal) => actionMatchesProbeStep(action, goal.nextStep))
         ));
-        if (exact.length) return exact;
+        if (exact.length) return bindRoute(exact, input.routeTargetId);
         const preparation = selectProbeResourcePreparation(
           input.branchObservation,
           goals,
           successors,
           input.focalSeatId,
         );
-        if (preparation.length) return preparation;
-        const controls = successors.filter((action) => (
-          ["end_turn", "pass"].includes(action.family)
-        ));
-        if (controls.length) return controls;
+        if (preparation.length) return bindRoute(preparation, input.routeTargetId);
+        return [];
       }
-      return successors.filter((action) => (
-        !["launch", "move", "orbit", "land"].includes(action.family)
-        || goals.some((goal) => actionMatchesProbeStep(action, goal.nextStep))
-      ));
+      return [];
     }
     if (successors[0]?.phase === "conditional") return successors.slice(0, 1);
     const pass = successors.find((action) => action.family === "pass");

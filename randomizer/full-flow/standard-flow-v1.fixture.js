@@ -11,7 +11,7 @@ module.exports = Object.freeze({
   }),
   policyProvenance: Object.freeze({
     type: "heuristic",
-    version: "seti-heuristic-policy-v18",
+    version: "seti-heuristic-policy-v19",
     config: Object.freeze({
       difficulty: "weak_start",
       evaluationParameters: Object.freeze({

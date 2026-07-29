@@ -109,12 +109,14 @@ Decision 同样属于当前目标的规则闭包；`end_turn` 只推进真实回
 RNG 或 Decision，也不计入 15 个次级代理目标。发射、移动、快速转换、放置数据和弃牌角标若
 不能严格缩小已选目标的正式资源或移动缺口，不进入该目标的 frontier；快速转换本身没有固定
 收益。数据路线只按 `dataAnalyzeRequirements.nextStep` 选择 scan/place_data/analyze，资源
-不足时才选择严格缩小下一支付缺口的一次转换。已锁定数据目标的放置 Decision 优先计算机位，
+不足时用正式快速转换表计算最低总损耗、最少步数的完整资源路线，再只执行该路线的当前第一步；
+不会随机枚举钱、电、牌之间的转换排列。已锁定数据目标的放置 Decision 只保留计算机位，
 避免把获得蓝科奖励置于完成分析之前。
 
 根 conditional choice 仍逐项提交原 actionId，但其规则闭包只执行到 Effect Session idle 或
 下一个外部 Policy Decision；不会替下一 Decision 自动选第一项，也不会把每个 choice 再展开成
-15 个后续代理。虚拟目标不占 `maxNodes=128`，真实反事实执行仍受 512 次执行保护。
+15 个后续代理。虚拟目标不占 `maxNodes=128`，真实反事实执行受
+`maxExecutionNodes=16×maxNodes` 失控保护；触顶必须报告 incomplete，不能把保护当剪枝。
 
 搜索跨本席的多个真实行动机会。当前资源闭环阶段不预测对手策略：中间对手通过 Standard
 Action 提交正式 PASS，并完成其必做 Decision，只用于合法推进 turn owner 与生命周期；该近似
@@ -155,18 +157,29 @@ StateStore、working state、Effect Session 与独立分支 RNG，再调用生�
 Session checkpoint 只恢复一次，普通存档恢复仍执行完整校验。禁止逐候选或逐 Decision 创建
 `SimulationEnv`、加载 replay，或调用领域 helper 手工结算。
 
-节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的稳定
-hash 组成，反事实 RNG 使用相同紧凑 envelope identity 的 v2 seed；canonical RNG 不变。
+普通节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的
+稳定 hash 组成。conditional 已完整提交且没有 active Session 后，若两个 committed state
+只差 `meta.stateVersion` / `match.decisionVersion`，并且 RNG、sequence、手牌、牌堆、盘面与
+下一 action 的 actor/family/phase/target/payload 全部相同，可共享后续一次物理执行。
+不同 conditional choice 仍逐项由正式 Effect Session 执行；不同手牌或奖励不得合并。
+反事实 RNG 从 committed `meta.rngState` 恢复，canonical RNG 不变。
 常规机器决策的全局节点上限为 128，只统计本席完成的次级代理目标；目标内部的发射、移动、
-快速转换、放置数据、卡角、唯一 conditional、`end_turn/PASS` 和对手的正式 PASS 推进不消耗
-这 128 个搜索节点，但所有执行仍受 `maxExecutionNodes=4×maxNodes` 物理保护。只有能绑定正式
-探测器、分析或打牌目标的快速转换才进入 root；后续按 root
-各保留一条字典序最优路线，不再用全局 beam 4 让不同目标互相挤掉。排序证据依次来自已经兑现的
+快速转换、放置数据、卡角、conditional、`end_turn/PASS` 和对手的正式 PASS 推进不消耗
+这 128 个搜索节点。只有能绑定正式探测器、分析或打牌目标的快速转换才进入 root。
+secondary search 使用 best-first 调度并保留全部 frontier，不再使用 per-root 或全局 beam。
+排序证据依次来自已经兑现的
 一级收益、正式探测器目标收益/缺口、数据分析缺口和实际机会成本；完全相同才用稳定 identity
-决胜，不给 action family 固定分。被移除的 origin 标为 pruned/low-confidence。每个 root
-另有最多 8 个叶的独立
+决胜，不给 action family 固定分。
+
+搜索有三类可证明剪枝：正式探测器目标在把途中宣传、手牌和数据奖励全部按乐观上界计入后仍
+无法满足总信用/能量需求时判不可达；已提交 conditional 的结算态按上述完整未来状态等价共享；
+同 virtual root、同目标、同盘面/手牌/RNG/Decision 边界下，信用、能量、宣传逐项不少且快速
+转换次数不多的路线支配贫资源路线。不同首行动、不同目标或非逐项偏序不得互剪。
+
+每个 root 另有最多 8 个叶的独立
 预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
-饱和 root 继续执行。beam 和叶上限都是显式近似，均不得描述成完整期望分布。
+饱和 root 继续执行。当前 `maxLeaves=8` 是仍保留的显式近似；beam 剪枝数必须为 0，不得把
+当前搜索描述成无限叶完备分布。
 
 当前 v16 使用未扣成本的一级收益和正式缺口证据保留“先付资源、后完成目标”的路线；资源成本
 只用于同一级收益路线的效率比较。不得为 `play_card/analyze/scan` 等 family 设置固定

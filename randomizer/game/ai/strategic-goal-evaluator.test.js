@@ -15,6 +15,7 @@ function observation({
   dataProgress = null,
   alienSlots = [],
   securedEndGameBonus = 0,
+  handCount = 0,
 } = {}) {
   return outcomeModel.createDecisionObservation({
     publicState: {
@@ -40,7 +41,13 @@ function observation({
       }],
       board: { aliens: { slots: alienSlots } },
     },
-    selfState: { id: seatId, hand: [] },
+    selfState: {
+      id: seatId,
+      hand: Array.from({ length: handCount }, (_, index) => ({
+        id: `test-card-${index + 1}`,
+        cardId: `test-card-${index + 1}.webp`,
+      })),
+    },
   }, { seatId, stateVersion: 1, decisionVersion: 1 });
 }
 
@@ -422,7 +429,7 @@ function observation({
   );
 
   const noCreditSlackObservation = {
-    ...observation({ resources: { credits: 1, energy: 2 } }),
+    ...observation({ resources: { credits: 1, energy: 2 }, handCount: 2 }),
     probeRouteRequirements: probeRequirements,
   };
   const cardsForEnergy = {
@@ -449,8 +456,8 @@ function observation({
       legalSuccessors: [endTurn, creditsForCard],
       routeTargetId: probeTargetId,
     }).map((candidate) => candidate.actionId),
-    [endTurn.actionId],
-    "没有转换能缩小既定目标缺口时应结束路线，不能随机消耗资源",
+    [creditsForCard.actionId],
+    "单步不直接补能量但属于最低损耗完整转换路线时，必须允许继续达成既定目标",
   );
 }
 
@@ -505,13 +512,10 @@ function observation({
       legalActions: [launch],
     }),
     [{
-      targetId: unreachableTarget,
-      compatibleActionIds: [launch.actionId],
-    }, {
       targetId: reachableTarget,
       compatibleActionIds: [launch.actionId],
     }],
-    "同一物理发射兼容的所有正式目标都必须进入目录，不能为了性能只保留排序第一项",
+    "乐观转换上界仍不足的正式目标必须在执行发射前删除，但可达目标不得受影响",
   );
   assert.equal(evaluator.selectSecondaryAgentRouteTarget({
     focalSeatId: seatId,
@@ -542,8 +546,8 @@ function observation({
       candidates: [{
         requirementId: "probe-1:land:neptune",
         targetId: "land:neptune:planet:",
-        required: { credits: 0, energy: 9, movementSteps: 8 },
-        gap: { credits: 0, energy: 8 },
+        required: { credits: 0, energy: 7, movementSteps: 6 },
+        gap: { credits: 0, energy: 6 },
         targetBenefit: { score: 12 },
         nextStep: { family: "move", rocketId: "probe-1", deltaX: 1, deltaY: 0 },
       }, {

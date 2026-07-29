@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const evaluator = require("./heuristic-evaluator");
+const expectedScore = require("./expected-score-evaluator");
 
 function descriptor(actionId) {
   return { actionId, family: "pass", phase: "main", actorId: "p1" };
@@ -64,5 +65,111 @@ const primaryBeforeCost = evaluator.selectLegalAction({
 });
 assert.equal(primaryBeforeCost.actionId, "score-with-cost",
   "正一级收益必须胜过0分PASS，资源成本只在同一级收益路线间比较");
+
+const targetObservation = {
+  probeRouteRequirements: {
+    candidates: [{
+      targetId: "orbit:mars:planet:",
+      nextStep: { family: "launch" },
+      required: { credits: 2, energy: 3 },
+      gap: { credits: 0, energy: 0 },
+      targetBenefit: { score: 3 },
+    }],
+  },
+  dataAnalyzeRequirements: null,
+  publicState: {
+    players: [{
+      id: "p1",
+      resources: {
+        credits: 4,
+        energy: 4,
+        publicity: 0,
+        availableData: 0,
+      },
+      handCount: 0,
+    }],
+  },
+};
+const targetSuccessors = [
+  { actionId: "launch", family: "launch", phase: "main", actorId: "p1" },
+  { actionId: "scan", family: "scan", phase: "main", actorId: "p1" },
+  { actionId: "research", family: "research_tech", phase: "main", actorId: "p1" },
+];
+const boundProbe = expectedScore.selectSecondaryAgentSuccessors({
+  focalSeatId: "p1",
+  branchObservation: targetObservation,
+  legalSuccessors: targetSuccessors,
+  routeTargetId: "orbit:mars:planet:",
+});
+assert.deepEqual(
+  boundProbe.map((action) => [action.actionId, action.routeTargetId]),
+  [["launch", "orbit:mars:planet:"]],
+  "目标未完成时只能生成直接推进该正式目标的 action",
+);
+assert.deepEqual(expectedScore.selectSecondaryAgentSuccessors({
+  focalSeatId: "p1",
+  branchObservation: targetObservation,
+  legalSuccessors: targetSuccessors.slice(1),
+  routeTargetId: "orbit:mars:planet:",
+}), [], "目标不可达时必须结束路线，不得退回无关 legal actions");
+
+const rebound = expectedScore.selectSecondaryAgentSuccessors({
+  focalSeatId: "p1",
+  branchObservation: targetObservation,
+  legalSuccessors: targetSuccessors,
+  routeTargetId: null,
+});
+assert.equal(rebound.every((action) => action.routeTargetId), true,
+  "上一个目标结算后，每个后继 action 必须先绑定新的正式目标");
+
+const conversionObservation = {
+  ...targetObservation,
+  outcomeProjection: {
+    assets: {
+      credits: 0,
+      energy: 0,
+      publicity: 0,
+      ordinaryCards: 4,
+      alienCards: 0,
+    },
+  },
+  probeRouteRequirements: {
+    candidates: [{
+      targetId: "orbit:mars:planet:",
+      nextStep: { family: "launch" },
+      required: { credits: 1, energy: 1 },
+      gap: { credits: 1, energy: 1 },
+      targetBenefit: { score: 3 },
+    }],
+  },
+};
+const conversionRoutes = expectedScore.selectSecondaryAgentSuccessors({
+  focalSeatId: "p1",
+  branchObservation: conversionObservation,
+  legalSuccessors: [
+    {
+      actionId: "cards-credit",
+      family: "quick_trade",
+      phase: "quick",
+      actorId: "p1",
+      target: { tradeId: "cards-for-credit" },
+      payload: { cost: { handSize: 2 }, gain: { credits: 1 } },
+    },
+    {
+      actionId: "cards-energy",
+      family: "quick_trade",
+      phase: "quick",
+      actorId: "p1",
+      target: { tradeId: "cards-for-energy" },
+      payload: { cost: { handSize: 2 }, gain: { energy: 1 } },
+    },
+  ],
+  routeTargetId: "orbit:mars:planet:",
+});
+assert.deepEqual(
+  conversionRoutes.map((action) => action.actionId),
+  ["cards-energy"],
+  "资源规划必须按最终资源向量归并等成本排列，并用稳定首步表示同一方案",
+);
 
 console.log("heuristic evaluator outcome behavior tests passed");

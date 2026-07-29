@@ -166,7 +166,7 @@
         phase: "session_open",
         baseVersion: meta.baseVersion ?? getStateVersion(committedState),
         baseState,
-        workingState: cloneState(baseState),
+        workingState: trustedIsolatedOwnership ? baseState : cloneState(baseState),
         committedState: null,
         queue: [],
         journal: {
@@ -208,7 +208,9 @@
       }
       return {
         effectId: effect.effectId,
-        stateBefore: cloneState(session.workingState),
+        stateBefore: trustedIsolatedOwnership
+          ? session.workingState
+          : cloneState(session.workingState),
         queueBefore: clone(session.queue),
         revisionBefore: session.revision,
         phaseBefore: session.phase,
@@ -221,7 +223,9 @@
     }
 
     function restoreUndoFrame(session, frame) {
-      session.workingState = cloneState(frame.stateBefore);
+      session.workingState = trustedIsolatedOwnership
+        ? frame.stateBefore
+        : cloneState(frame.stateBefore);
       session.queue = clone(frame.queueBefore);
       session.revision = frame.revisionBefore;
       session.phase = frame.phaseBefore;
@@ -253,7 +257,10 @@
       }
       let choices;
       try {
-        choices = executor.getLegalChoices(cloneState(session.workingState), effect) || [];
+        choices = executor.getLegalChoices(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          effect,
+        ) || [];
       } catch (error) {
         return fail("EFFECT_DECISION_ENUMERATION_FAILED", error?.message || `${effect.type} 合法项枚举失败`, {
           effectId: effect.effectId,
@@ -330,7 +337,11 @@
         sessionId: session.sessionId,
         phase: session.phase,
         revision: session.revision,
-        state: projectState(cloneState(state), viewer, inspect(session)),
+        state: projectState(
+          trustedIsolatedOwnership ? state : cloneState(state),
+          viewer,
+          inspect(session),
+        ),
         decision: session.phase === "awaiting_input" ? getDecisionSnapshot(session) : null,
       };
     }
@@ -345,7 +356,9 @@
           session,
         });
       }
-      session.workingState = cloneState(session.baseState);
+      session.workingState = trustedIsolatedOwnership
+        ? session.baseState
+        : cloneState(session.baseState);
       session.queue = [];
       session.phase = "aborted";
       return fail(failure.code || "EFFECT_SESSION_ABORTED", failure.message || "Effect Session 已回滚", {
@@ -517,7 +530,10 @@
       const session = createSession(committedState, meta);
       let rawGroup;
       try {
-        rawGroup = createEffectGroup(cloneState(session.workingState), clone(action));
+        rawGroup = createEffectGroup(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          clone(action),
+        );
       } catch (error) {
         return abort(session, {
           code: "EFFECT_ACTION_REJECTED",
@@ -762,7 +778,10 @@
       assertFunction(createEffectGroup, "createEffectGroup");
       let rawGroup;
       try {
-        rawGroup = createEffectGroup(cloneState(session.workingState), clone(action));
+        rawGroup = createEffectGroup(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          clone(action),
+        );
       } catch (error) {
         return fail("EFFECT_QUICK_ACTION_REJECTED", error?.message || "Quick Action 未能生成 Effect Group");
       }

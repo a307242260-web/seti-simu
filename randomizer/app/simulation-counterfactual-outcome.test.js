@@ -240,6 +240,15 @@ try {
       "叶饱和剪枝不得污染 canonical root");
 
     const policyResult = environment.runHeuristicPolicyDecision();
+    const policyDiagnostics = environment.getCounterfactualDiagnostics();
+    assert.equal(policyDiagnostics.beamPrunedOriginCount, 0,
+      "次级目标搜索不得恢复 beam");
+    assert.equal(policyDiagnostics.executionLimitReached, false,
+      "固定盘面必须自然耗尽 frontier，不能把执行上限当剪枝");
+    assert.equal(Number.isSafeInteger(policyDiagnostics.conditionalEquivalentMergeCount), true);
+    assert.equal(Number.isSafeInteger(policyDiagnostics.resourceDominatedOriginCount), true);
+    assert.equal(policyDiagnostics.executedNodeCountByFamily.choose_payment > 1, true,
+      "非等价支付 Decision 必须继续逐项执行，不能固定选择一个 conditional");
     const quickTradeOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       actions.find((action) => action.actionId === outcome.actionId)?.family === "quick_trade"
     ));

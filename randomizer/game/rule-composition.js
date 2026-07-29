@@ -96,6 +96,12 @@
     let drainEffectGroupFactory = null;
     let lastCounterfactualDiagnostics = null;
 
+    function readStoreSnapshot() {
+      return options.allowTrustedForkLifecycle === true
+        ? store.getForkSnapshot()
+        : store.getSnapshot();
+    }
+
     function actionContext(state) {
       return typeof options.createActionContext === "function"
         ? options.createActionContext(state)
@@ -168,10 +174,10 @@
         validateState: (state) => store.validate(state),
         projectState: (state, viewer, inspection) => (
           options.projectState(
-            clone(state),
+            options.allowTrustedForkLifecycle === true ? state : clone(state),
             clone(viewer),
             clone(inspection),
-            { stateVersion: state?.meta?.stateVersion ?? store.getSnapshot().meta.stateVersion },
+            { stateVersion: state?.meta?.stateVersion ?? readStoreSnapshot().meta.stateVersion },
           )
         ),
       });
@@ -266,7 +272,7 @@
     bindStoreEvents();
 
     function committedProjection(viewer = null) {
-      const state = store.getSnapshot();
+      const state = readStoreSnapshot();
       const projected = options.projectState(
         clone(state),
         clone(viewer),
@@ -280,7 +286,7 @@
       if (!activeSession) return committedProjection(viewer);
       return deepFreeze({
         ...runtime.observe(activeSession, clone(viewer)),
-        stateVersion: store.getSnapshot().meta.stateVersion,
+        stateVersion: readStoreSnapshot().meta.stateVersion,
       });
     }
 
@@ -293,7 +299,7 @@
     }
 
     function readStateSource(viewer = null) {
-      const committed = store.getSnapshot();
+      const committed = readStoreSnapshot();
       const projectedState = activeSession
         ? runtime.observe(activeSession, clone(viewer))?.state
         : committed;
@@ -319,7 +325,7 @@
         ok: activeSession.phase === "completed",
         phase: activeSession.phase,
         family: activeFamily,
-        stateVersion: store.getSnapshot().meta.stateVersion,
+        stateVersion: readStoreSnapshot().meta.stateVersion,
         failure: clone(activeSession.failure),
         journal: clone(activeSession.journal),
       });
@@ -387,7 +393,7 @@
       lastActionResult = null;
       const internalAction = { family: "environment_drain", phase: "internal", actorId: null };
       const dispatched = runtime.dispatchAction(
-        store.getSnapshot(),
+        readStoreSnapshot(),
         internalAction,
         drainEffectGroupFactory,
         { source: "composition-drain", ...clone(submitOptions.metadata || {}) },
@@ -403,7 +409,7 @@
 
     function submitActionById(actionId, submitOptions = {}) {
       if (activeSession) return fail("RULE_COMPOSITION_SESSION_ACTIVE", "已有规则 Session 正在执行");
-      const committed = store.getSnapshot();
+      const committed = readStoreSnapshot();
       const workingContext = actionContext(clone(committed));
       const action = (runWithWorkingStateContext(
         workingContext,
@@ -443,7 +449,7 @@
     }
 
     function enumerateActions(request = {}) {
-      const state = activeSession ? activeSession.workingState : store.getSnapshot();
+      const state = activeSession ? activeSession.workingState : readStoreSnapshot();
       const workingContext = actionContext(clone(state));
       return deepFreeze(clone(runWithWorkingStateContext(
         workingContext,
@@ -478,7 +484,7 @@
       if (saveOptions.trustedFork === true && options.allowTrustedForkLifecycle === true) {
         serialized = store.serializeForkSnapshot();
       } else {
-        const saveState = store.getSnapshot();
+        const saveState = readStoreSnapshot();
         const validation = store.validate(saveState);
         if (!validation.ok) return deepFreeze(clone(validation));
         serialized = store.serialize(saveState);
@@ -573,7 +579,7 @@
         initialState = createInitialState(clone(initialOptions));
       }
       catch (error) { return fail("RULE_COMPOSITION_NEW_GAME_FAILED", error?.message || "新局状态创建失败"); }
-      const previousVersion = store.getSnapshot().meta.stateVersion;
+      const previousVersion = readStoreSnapshot().meta.stateVersion;
       if (initialState?.meta) initialState.meta.stateVersion = previousVersion + 1;
       try { installStore(initialState); }
       catch (error) { return fail("RULE_COMPOSITION_NEW_GAME_INVALID", error?.message || "新局状态无效"); }
@@ -619,7 +625,7 @@
       );
       const secondaryAgentSearch = evaluateOptions.secondaryAgentSearch || null;
       const maxExecutionNodes = secondaryAgentSearch
-        ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 4)
+        ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 16)
         : maxNodes;
       const focalSeatId = secondaryAgentSearch?.focalSeatId == null
         ? null
@@ -654,6 +660,9 @@
       const parsedStateByBytes = new Map();
       const stateHashByBytes = new Map();
       const envelopeHashByObject = new WeakMap();
+      const settledSemanticStateHashByBytes = new Map();
+      const dominanceStateByBytes = new Map();
+      const semanticActionHashByObject = new WeakMap();
       function getTrustedState(envelope) {
         const bytes = envelope.committedState;
         if (!parsedStateByBytes.has(bytes)) {
@@ -674,6 +683,120 @@
           }));
         }
         return envelopeHashByObject.get(envelope);
+      }
+      function semanticActionHash(action) {
+        if (!semanticActionHashByObject.has(action)) {
+          semanticActionHashByObject.set(action, stableHash({
+            actorId: action?.actorId || null,
+            family: action?.family || null,
+            phase: action?.phase || null,
+            target: action?.target || null,
+            payload: action?.payload || null,
+          }));
+        }
+        return semanticActionHashByObject.get(action);
+      }
+      function normalizedStateForSearch(state, maskFocalResources = false) {
+        const players = state.players?.players || [];
+        return {
+          ...state,
+          meta: {
+            ...state.meta,
+            stateVersion: 0,
+          },
+          match: {
+            ...state.match,
+            decisionVersion: 0,
+          },
+          ...(maskFocalResources ? {
+            players: {
+              ...state.players,
+              players: players.map((player) => (
+                String(player?.id || "") === focalSeatId
+                  ? {
+                    ...player,
+                    resources: {
+                      ...player.resources,
+                      credits: 0,
+                      energy: 0,
+                      publicity: 0,
+                    },
+                  }
+                  : player
+              )),
+            },
+          } : {}),
+        };
+      }
+      function replaceSerializedValue(bytes, currentValue, nextValue) {
+        const current = stableSerialize(currentValue);
+        const index = bytes.indexOf(current);
+        if (index < 0) return null;
+        return `${bytes.slice(0, index)}${stableSerialize(nextValue)}${
+          bytes.slice(index + current.length)
+        }`;
+      }
+      function normalizedStateBytesForSearch(envelope, maskFocalResources = false) {
+        const bytes = envelope.committedState;
+        const state = getTrustedState(envelope);
+        const normalizedMeta = { ...state.meta, stateVersion: 0 };
+        const normalizedMatch = { ...state.match, decisionVersion: 0 };
+        let normalized = replaceSerializedValue(bytes, state.meta, normalizedMeta);
+        normalized = normalized == null
+          ? null
+          : replaceSerializedValue(normalized, state.match, normalizedMatch);
+        if (normalized != null && maskFocalResources) {
+          const player = (state.players?.players || []).find((candidate) => (
+            String(candidate?.id || "") === focalSeatId
+          ));
+          if (!player) return null;
+          normalized = replaceSerializedValue(normalized, player, {
+            ...player,
+            resources: {
+              ...player.resources,
+              credits: 0,
+              energy: 0,
+              publicity: 0,
+            },
+          });
+        }
+        return normalized;
+      }
+      function settledSemanticStateHash(envelope) {
+        if (envelope?.session != null) return null;
+        const bytes = envelope.committedState;
+        if (!settledSemanticStateHashByBytes.has(bytes)) {
+          const normalizedBytes = normalizedStateBytesForSearch(envelope);
+          settledSemanticStateHashByBytes.set(
+            bytes,
+            normalizedBytes == null
+              ? stableHash(normalizedStateForSearch(getTrustedState(envelope)))
+              : stableHashSerialized(normalizedBytes),
+          );
+        }
+        return settledSemanticStateHashByBytes.get(bytes);
+      }
+      function dominanceState(envelope) {
+        if (envelope?.session != null) return null;
+        const bytes = envelope.committedState;
+        if (!dominanceStateByBytes.has(bytes)) {
+          const state = getTrustedState(envelope);
+          const player = (state.players?.players || []).find((candidate) => (
+            String(candidate?.id || "") === focalSeatId
+          ));
+          const normalizedBytes = normalizedStateBytesForSearch(envelope, true);
+          dominanceStateByBytes.set(bytes, player ? {
+            contextHash: normalizedBytes == null
+              ? stableHash(normalizedStateForSearch(state, true))
+              : stableHashSerialized(normalizedBytes),
+            resources: {
+              credits: Number(player.resources?.credits) || 0,
+              energy: Number(player.resources?.energy) || 0,
+              publicity: Number(player.resources?.publicity) || 0,
+            },
+          } : null);
+        }
+        return dominanceStateByBytes.get(bytes);
       }
       function branchKey(envelope, actionId) {
         return stableHash({
@@ -739,10 +862,25 @@
       let prunedNodeCount = 0;
       let beamPrunedOriginCount = 0;
       let sharedPhysicalExecutionOriginCount = 0;
+      let conditionalEquivalentMergeCount = 0;
+      let resourceDominatedOriginCount = 0;
       let maxFrontierSize = legalActions.length;
       let maxRetainedFrontierSize = legalActions.length;
       let maxFrontierOriginCount = legalActions.length;
+      const executedNodeCountByFamily = new Map();
+      const executedOriginCountByTarget = new Map();
       const leafCountByVirtualRoot = new Map();
+      const chainKeyByOrigin = new WeakMap();
+      const dominanceCheckedOrigins = new WeakSet();
+      const resourceDominatedOrigins = new WeakSet();
+      const retainedDominanceEntriesByGroup = new Map();
+
+      function chainKey(origin) {
+        if (!chainKeyByOrigin.has(origin)) {
+          chainKeyByOrigin.set(origin, stableSerialize(origin.chain || []));
+        }
+        return chainKeyByOrigin.get(origin);
+      }
 
       function originKey(origin) {
         return [
@@ -752,6 +890,7 @@
           origin.proxyDepth || 0,
           origin.opponentProxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
+          Number(Boolean(origin.goalCompletionPending)),
         ].join(":");
       }
 
@@ -762,7 +901,7 @@
         ].join(":");
       }
 
-      function nodeKey(envelope, action, depth) {
+      function exactNodeKey(envelope, action, depth) {
         return [
           envelopeHash(envelope),
           action.actionId,
@@ -771,14 +910,37 @@
         ].join(":");
       }
 
+      function nodeKey(node) {
+        const semanticStateHash = node.semanticMergeEligible
+          ? settledSemanticStateHash(node.envelope)
+          : null;
+        if (!semanticStateHash) {
+          return exactNodeKey(node.envelope, node.action, node.depth);
+        }
+        return [
+          "conditional-equivalent",
+          semanticStateHash,
+          semanticActionHash(node.action),
+          Math.max(0, maxDepth - node.depth),
+          focalSeatId,
+        ].join(":");
+      }
+
       function mergeNode(frontierByKey, node) {
-        const key = nodeKey(node.envelope, node.action, node.depth, node.origins);
+        const key = nodeKey(node);
         const existing = frontierByKey.get(key);
         if (!existing) {
           frontierByKey.set(key, { ...node, key });
           return;
         }
         transpositionHitCount += 1;
+        if (
+          node.semanticMergeEligible
+          && exactNodeKey(node.envelope, node.action, node.depth)
+            !== exactNodeKey(existing.envelope, existing.action, existing.depth)
+        ) {
+          conditionalEquivalentMergeCount += 1;
+        }
         if (compareSearchPriorities(node.priority, existing.priority) < 0) {
           existing.priority = node.priority;
         }
@@ -794,7 +956,7 @@
                 Number(origin.proxyDepth || 0) < Number(current.proxyDepth || 0)
                 || (
                   Number(origin.proxyDepth || 0) === Number(current.proxyDepth || 0)
-                  && stableSerialize(origin.chain) < stableSerialize(current.chain)
+                  && chainKey(origin) < chainKey(current)
                 )
               )
             )) {
@@ -802,6 +964,73 @@
           }
         }
         existing.origins = [...origins.values()];
+      }
+
+      function dominatesResources(left, right) {
+        const leftResources = left.state.resources;
+        const rightResources = right.state.resources;
+        const noLess = ["credits", "energy", "publicity"].every((key) => (
+          leftResources[key] >= rightResources[key]
+        ));
+        const noMoreTrades = Number(left.origin.quickTradeCount || 0)
+          <= Number(right.origin.quickTradeCount || 0);
+        const strictlyBetter = ["credits", "energy", "publicity"].some((key) => (
+          leftResources[key] > rightResources[key]
+        )) || Number(left.origin.quickTradeCount || 0)
+          < Number(right.origin.quickTradeCount || 0);
+        return noLess && noMoreTrades && strictlyBetter;
+      }
+
+      function dominanceGroupKey(node, origin) {
+        return [
+          virtualRootKey(origin),
+          origin.routeTargetId || "",
+          origin.proxyDepth || 0,
+          origin.opponentProxyDepth || 0,
+          Number(Boolean(origin.focalPassStarted)),
+          Number(Boolean(origin.goalCompletionPending)),
+          Number(Boolean(origin.rootWasConditional)),
+          semanticActionHash(node.action),
+          Math.max(0, maxDepth - node.depth),
+        ].join(":");
+      }
+
+      function pruneResourceDominatedOrigins(nodes) {
+        if (!secondaryAgentSearch) return nodes;
+        for (const node of nodes) {
+          if (node.envelope?.session != null) continue;
+          for (const origin of node.origins) {
+            if (dominanceCheckedOrigins.has(origin)) continue;
+            dominanceCheckedOrigins.add(origin);
+            const state = dominanceState(node.envelope);
+            if (!state) continue;
+            const key = `${dominanceGroupKey(node, origin)}:${state.contextHash}`;
+            const retained = retainedDominanceEntriesByGroup.get(key) || [];
+            const candidate = { node, origin, state };
+            if (retained.some((entry) => dominatesResources(entry, candidate))) {
+              resourceDominatedOrigins.add(origin);
+              resourceDominatedOriginCount += 1;
+              continue;
+            }
+            const survivors = [];
+            for (const entry of retained) {
+              if (dominatesResources(candidate, entry)) {
+                resourceDominatedOrigins.add(entry.origin);
+                resourceDominatedOriginCount += 1;
+              } else {
+                survivors.push(entry);
+              }
+            }
+            survivors.push(candidate);
+            retainedDominanceEntriesByGroup.set(key, survivors);
+          }
+        }
+        return nodes.flatMap((node) => {
+          const origins = node.origins.filter((origin) => (
+            !resourceDominatedOrigins.has(origin)
+          ));
+          return origins.length ? [{ ...node, origins }] : [];
+        });
       }
 
       function markPruned(origins) {
@@ -846,31 +1075,7 @@
       function retainRootFairBeam(nodes) {
         const ordered = [...nodes].sort(compareNodes);
         if (secondaryAgentSearch) {
-          const bestKeyByVirtualRoot = new Map();
-          for (const node of ordered) {
-            for (const origin of node.origins) {
-              const rootId = virtualRootKey(origin);
-              if (!bestKeyByVirtualRoot.has(rootId)) {
-                bestKeyByVirtualRoot.set(rootId, node.key);
-              }
-            }
-          }
-          return ordered.flatMap((node) => {
-            const retainedOrigins = [];
-            const prunedOrigins = [];
-            for (const origin of node.origins) {
-              (
-                bestKeyByVirtualRoot.get(virtualRootKey(origin)) === node.key
-                  ? retainedOrigins
-                  : prunedOrigins
-              ).push(origin);
-            }
-            if (prunedOrigins.length) {
-              beamPrunedOriginCount += prunedOrigins.length;
-              markPruned(prunedOrigins);
-            }
-            return retainedOrigins.length ? [{ ...node, origins: retainedOrigins }] : [];
-          });
+          return ordered;
         }
         const retainedKeysByRoot = new Map();
         for (const action of legalActions) {
@@ -1108,6 +1313,7 @@
               quickTradeCount: 0,
               opponentProxyDepth: 0,
               focalPassStarted: false,
+              goalCompletionPending: false,
               terminalReason: null,
               routeTargetId,
               rootRouteTargetId: routeTargetId,
@@ -1138,8 +1344,13 @@
 
       while (frontier.length && executedNodeCount < maxExecutionNodes) {
         const sorted = [...frontier].sort(compareNodes);
-        const selected = sorted;
         const nextFrontierByKey = new Map();
+        const selected = secondaryAgentSearch ? sorted.slice(0, 1) : sorted;
+        if (secondaryAgentSearch) {
+          for (const pending of sorted.slice(1)) {
+            mergeNode(nextFrontierByKey, pending);
+          }
+        }
         for (const node of selected) {
           const saturatedOrigins = node.origins.filter((origin) => {
             return (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
@@ -1156,7 +1367,7 @@
             markPruned(node.origins);
             continue;
           }
-          const key = node.key || nodeKey(node.envelope, node.action, node.depth, node.origins);
+          const key = node.key || nodeKey(node);
           if (processedNodeKeys.has(key)) {
             transpositionHitCount += 1;
             continue;
@@ -1171,6 +1382,17 @@
             continue;
           }
           const current = execution.current;
+          executedNodeCountByFamily.set(
+            current.family,
+            (executedNodeCountByFamily.get(current.family) || 0) + 1,
+          );
+          for (const origin of node.origins) {
+            const targetId = origin.routeTargetId || "<unbound>";
+            executedOriginCountByTarget.set(
+              targetId,
+              (executedOriginCountByTarget.get(targetId) || 0) + 1,
+            );
+          }
           const currentIsFocal = secondaryAgentSearch
             && String(current.actorId) === focalSeatId;
           const currentIsRouteAction = secondaryAgentSearch
@@ -1208,6 +1430,8 @@
             let routeTargetId = origin.routeTargetId || null;
             if (
               secondaryAgentSearch
+              && !routeTargetId
+              && !origin.goalCompletionPending
               && typeof secondaryAgentSearch.selectRouteTarget === "function"
             ) {
               try {
@@ -1243,6 +1467,10 @@
             ];
             const focalPassStarted = origin.focalPassStarted
               || (currentIsFocal && current.family === "pass");
+            const goalCompletionPending = Boolean(
+              origin.goalCompletionPending
+              || (currentIsFocal && currentCompletesSecondaryGoal),
+            );
             if (
               secondaryAgentSearch
               && origin.rootWasConditional
@@ -1293,6 +1521,7 @@
                 continue;
               }
               let conditionalSuccessors = execution.successors;
+              let routeTargetByActionId = new Map();
               if (
                 secondaryAgentSearch
               ) {
@@ -1320,6 +1549,12 @@
                   successor.actionId,
                   successor,
                 ]));
+                routeTargetByActionId = new Map(conditionalSuccessors.map((successor) => [
+                  successor?.actionId,
+                  Object.hasOwn(successor || {}, "routeTargetId")
+                    ? successor.routeTargetId
+                    : routeTargetId,
+                ]));
                 conditionalSuccessors = conditionalSuccessors
                   .map((successor) => legalById.get(successor?.actionId))
                   .filter(Boolean);
@@ -1337,6 +1572,7 @@
                   action: successor,
                   depth: node.depth + 1,
                   priority: execution.branchPriority,
+                  semanticMergeEligible: true,
                   origins: [{
                     ...origin,
                     chain: nextChain,
@@ -1345,7 +1581,10 @@
                     quickTradeCount: nextQuickTradeCount,
                     routeActions: nextRouteActions,
                     focalPassStarted,
-                    routeTargetId,
+                    goalCompletionPending,
+                    routeTargetId: secondaryAgentSearch
+                      ? routeTargetByActionId.get(successor.actionId)
+                      : routeTargetId,
                   }],
                 });
               }
@@ -1430,7 +1669,7 @@
                       : origin.opponentProxyDepth + (currentCompletesSecondaryGoal ? 1 : 0),
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
-                    routeTargetId,
+                    routeTargetId: goalCompletionPending ? null : routeTargetId,
                     maxProxyDepth,
                   }) || [];
                 } catch (error) {
@@ -1444,18 +1683,28 @@
                   successor.actionId,
                   successor,
                 ]));
-                selectedSuccessors = selectedSuccessors
-                  .map((successor) => legalById.get(successor?.actionId))
-                  .filter(Boolean);
-                if (!selectedSuccessors.length) {
+                const selectedRoutes = selectedSuccessors
+                  .map((selected) => ({
+                    action: legalById.get(selected?.actionId),
+                    routeTargetId: Object.hasOwn(selected || {}, "routeTargetId")
+                      ? selected.routeTargetId
+                      : routeTargetId,
+                  }))
+                  .filter((route) => Boolean(route.action));
+                if (!selectedRoutes.length) {
                   markFailure([origin], {
                     code: "COUNTERFACTUAL_ROUTE_SELECTOR_EMPTY",
-                    message: "secondaryAgentSearch 未选择合法后继",
+                    message: [
+                      "secondaryAgentSearch 未选择合法后继",
+                      `target=${goalCompletionPending ? "<completed>" : routeTargetId || "<none>"}`,
+                      `current=${current.family || "<unknown>"}`,
+                      `successors=${execution.successors.map((successor) => successor.family).join(",")}`,
+                    ].join(" "),
                   });
                   continue;
                 }
-                if (selectedSuccessors.some((successor) => (
-                  String(successor.actorId) === focalSeatId
+                if (selectedRoutes.some((route) => (
+                  String(route.action.actorId) === focalSeatId
                 ))) {
                   addFrontierLeaf(
                     {
@@ -1472,15 +1721,17 @@
                     nextCheckpoints,
                   );
                 }
-                const nextActorIsFocal = selectedSuccessors.some((successor) => (
-                  String(successor.actorId) === focalSeatId
+                const nextActorIsFocal = selectedRoutes.some((route) => (
+                  String(route.action.actorId) === focalSeatId
                 ));
-                for (const successor of selectedSuccessors) {
+                for (const selectedRoute of selectedRoutes) {
+                  const successor = selectedRoute.action;
                   mergeNode(nextFrontierByKey, {
                     envelope: execution.childEnvelope,
                     action: successor,
                     depth: 0,
                     priority: execution.branchPriority,
+                    semanticMergeEligible: current.phase === "conditional",
                     origins: [{
                       ...origin,
                       chain: nextChain,
@@ -1495,9 +1746,14 @@
                           currentIsFocal || current.family === "end_turn"
                             ? 0
                             : origin.opponentProxyDepth + (currentCompletesSecondaryGoal ? 1 : 0)
-                        ),
+                      ),
                       focalPassStarted,
-                      routeTargetId,
+                      goalCompletionPending: nextActorIsFocal
+                        ? false
+                        : goalCompletionPending,
+                      routeTargetId: nextActorIsFocal
+                        ? selectedRoute.routeTargetId
+                        : routeTargetId,
                     }],
                   });
                 }
@@ -1521,7 +1777,9 @@
           }
         }
         const frontierStartedAt = now();
-        const nextFrontier = [...nextFrontierByKey.values()];
+        const nextFrontier = pruneResourceDominatedOrigins(
+          [...nextFrontierByKey.values()],
+        );
         maxFrontierSize = Math.max(maxFrontierSize, nextFrontier.length);
         maxFrontierOriginCount = Math.max(
           maxFrontierOriginCount,
@@ -1606,6 +1864,18 @@
         maxFrontierOriginCount,
         transpositionHitCount,
         sharedPhysicalExecutionOriginCount,
+        conditionalEquivalentMergeCount,
+        resourceDominatedOriginCount,
+        executedNodeCountByFamily: Object.fromEntries(
+          [...executedNodeCountByFamily.entries()].sort(([left], [right]) => (
+            String(left).localeCompare(String(right))
+          )),
+        ),
+        executedOriginCountByTarget: Object.fromEntries(
+          [...executedOriginCountByTarget.entries()].sort((left, right) => (
+            right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
+          )),
+        ),
         prunedNodeCount,
         beamPrunedOriginCount,
         forkMilliseconds: timing.forkMilliseconds,
@@ -1638,7 +1908,7 @@
     });
 
     const stateSourcePort = Object.freeze({
-        getSnapshot: () => store.getSnapshot(),
+        getSnapshot: () => clone(readStoreSnapshot()),
         read: readStateSource,
         project(projector, viewer = null) {
           if (typeof projector !== "function") throw new TypeError("Rule Composition state source projector 必须是函数");
@@ -1659,10 +1929,10 @@
         read(name) {
           const reader = options.readModels?.[name];
           if (typeof reader !== "function") throw new TypeError(`Rule Composition 未注册 read model: ${name}`);
-          const state = activeSession ? activeSession.workingState : store.getSnapshot();
+          const state = activeSession ? activeSession.workingState : readStoreSnapshot();
           return deepFreeze(clone(reader(state, {
             phase: activeSession?.phase || "idle",
-            stateVersion: store.getSnapshot().meta.stateVersion,
+            stateVersion: readStoreSnapshot().meta.stateVersion,
           })));
         },
       })

@@ -292,6 +292,13 @@
       return deepFreeze(clone(committedState));
     }
 
+    function getForkSnapshot() {
+      if (!trustedIsolatedOwnership) {
+        throw new Error("fork snapshot 只允许 trusted isolated StateStore");
+      }
+      return committedState;
+    }
+
     function beginWorkingCopy(baseVersion = committedState.meta.stateVersion) {
       const currentVersion = committedState.meta.stateVersion;
       if (baseVersion !== currentVersion) {
@@ -432,6 +439,7 @@
 
     return Object.freeze({
       getSnapshot,
+      getForkSnapshot,
       beginWorkingCopy,
       validate,
       compareAndCommit,
