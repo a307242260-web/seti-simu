@@ -236,6 +236,10 @@ try {
     assert.equal(scanDiagnostics.executedNodeCount < 50, true,
       "root 达到叶上限后不得继续执行剩余兄弟节点");
     assert.equal(scanDiagnostics.prunedNodeCount > 0, true);
+    assert.equal(scanDiagnostics.saturatedVirtualRoots.length, 1);
+    assert.equal(scanDiagnostics.saturatedVirtualRoots[0].retainedLeafCount, 1);
+    assert.equal(scanDiagnostics.saturatedVirtualRoots[0].saturatedOriginCount > 0, true);
+    assert.equal(scanDiagnostics.saturatedVirtualRoots[0].rootActionFamily, "scan");
     assert.deepEqual(environment.createCheckpoint(), before,
       "叶饱和剪枝不得污染 canonical root");
 

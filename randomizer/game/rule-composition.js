@@ -870,6 +870,8 @@
       const executedNodeCountByFamily = new Map();
       const executedOriginCountByTarget = new Map();
       const leafCountByVirtualRoot = new Map();
+      const saturatedOriginCountByVirtualRoot = new Map();
+      const virtualRootDescriptionByKey = new Map();
       const chainKeyByOrigin = new WeakMap();
       const dominanceCheckedOrigins = new WeakSet();
       const resourceDominatedOrigins = new WeakSet();
@@ -899,6 +901,19 @@
           origin.rootAction.actionId,
           origin.rootRouteTargetId || "",
         ].join(":");
+      }
+
+      function rememberVirtualRoot(origin) {
+        const key = virtualRootKey(origin);
+        if (!virtualRootDescriptionByKey.has(key)) {
+          virtualRootDescriptionByKey.set(key, {
+            rootActionId: origin.rootAction.actionId,
+            rootActionFamily: origin.rootAction.family,
+            rootActionSummary: origin.rootAction.summary || null,
+            rootRouteTargetId: origin.rootRouteTargetId || null,
+          });
+        }
+        return key;
       }
 
       function exactNodeKey(envelope, action, depth) {
@@ -1355,7 +1370,16 @@
           const saturatedOrigins = node.origins.filter((origin) => {
             return (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
           });
-          if (saturatedOrigins.length) markPruned(saturatedOrigins);
+          if (saturatedOrigins.length) {
+            for (const origin of saturatedOrigins) {
+              const rootKey = rememberVirtualRoot(origin);
+              saturatedOriginCountByVirtualRoot.set(
+                rootKey,
+                (saturatedOriginCountByVirtualRoot.get(rootKey) || 0) + 1,
+              );
+            }
+            markPruned(saturatedOrigins);
+          }
           node.origins = node.origins.filter((origin) => !saturatedOrigins.includes(origin));
           if (!node.origins.length) continue;
           if (executedNodeCount >= maxExecutionNodes) {
@@ -1876,6 +1900,19 @@
             right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
           )),
         ),
+        saturatedVirtualRoots: [...saturatedOriginCountByVirtualRoot.entries()]
+          .map(([key, saturatedOriginCount]) => ({
+            ...virtualRootDescriptionByKey.get(key),
+            retainedLeafCount: leafCountByVirtualRoot.get(key) || 0,
+            saturatedOriginCount,
+          }))
+          .sort((left, right) => (
+            right.saturatedOriginCount - left.saturatedOriginCount
+            || String(left.rootActionId).localeCompare(String(right.rootActionId))
+            || String(left.rootRouteTargetId || "").localeCompare(
+              String(right.rootRouteTargetId || ""),
+            )
+          )),
         prunedNodeCount,
         beamPrunedOriginCount,
         forkMilliseconds: timing.forkMilliseconds,
