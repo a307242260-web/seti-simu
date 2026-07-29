@@ -188,6 +188,153 @@ function observation({
 }
 
 {
+  const dataRequirements = {
+    schemaVersion: "seti-data-analyze-requirements-v1",
+    playerId: seatId,
+    targetId: "data:analyze",
+    computerPlacedCount: 2,
+    remainingPlacements: 4,
+    availableData: 0,
+    dataNeeded: 4,
+    nextStep: "scan",
+    nextCost: { credits: 1, energy: 2 },
+    nextGap: { credits: 0, energy: 2 },
+  };
+  const rootObservation = {
+    ...observation({ resources: { credits: 5, energy: 0, availableData: 0 } }),
+    dataAnalyzeRequirements: dataRequirements,
+  };
+  const creditsForEnergy = {
+    ...action("trade:data-energy", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-energy" },
+    payload: { cost: { credits: 2 }, gain: { energy: 1 } },
+  };
+  const creditsForCard = {
+    ...action("trade:data-card", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-card" },
+    payload: { cost: { credits: 2 }, gain: { handSize: 1 } },
+  };
+  const research = { ...action("research:direct-target", "research_tech"), actorId: seatId };
+  const rootTargets = evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation,
+    legalActions: [creditsForCard, research, creditsForEnergy],
+  });
+  assert.deepEqual(rootTargets, [{
+    targetId: "action:research:direct-target",
+    compatibleActionIds: [research.actionId],
+  }, {
+    targetId: "card:play",
+    compatibleActionIds: [creditsForCard.actionId],
+  }, {
+    targetId: "data:analyze",
+    compatibleActionIds: [creditsForEnergy.actionId],
+  }], "执行任何动作前应先建立正式目标目录，每个快速转换只能属于其明确缩小缺口的目标");
+  assert.equal(
+    evaluator.requiresRootCounterfactual(creditsForEnergy, rootObservation),
+    true,
+    "即使扫描暂时不合法，目标 requirement 也必须让必要的第一笔转换进入 root",
+  );
+  assert.equal(
+    rootTargets.find((target) => target.targetId === "card:play")
+      .compatibleActionIds.includes(creditsForCard.actionId),
+    true,
+    "不能缩小数据缺口的换牌只能归属 card:play，不得混入 data:analyze",
+  );
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: rootObservation,
+      legalSuccessors: [creditsForCard, creditsForEnergy],
+      routeTargetId: "data:analyze",
+    }).map((candidate) => candidate.actionId),
+    [creditsForEnergy.actionId],
+    "已选数据目标后应继续同一目标的确定性资源准备",
+  );
+
+  const scan = { ...action("scan:data-target", "scan"), actorId: seatId };
+  const scanReady = {
+    ...observation({ resources: { credits: 1, energy: 2, availableData: 0 } }),
+    dataAnalyzeRequirements: {
+      ...dataRequirements,
+      nextGap: { credits: 0, energy: 0 },
+    },
+  };
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation: scanReady,
+      legalActions: [scan, creditsForCard],
+    }),
+    [{
+      targetId: "card:play",
+      compatibleActionIds: [creditsForCard.actionId],
+    }, {
+      targetId: "data:analyze",
+      compatibleActionIds: [scan.actionId],
+    }],
+    "支付满足后的扫描属于分析目标时不得再复制一个相同动作的直接目标",
+  );
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: scanReady,
+      legalSuccessors: [creditsForCard, scan],
+      routeTargetId: "data:analyze",
+    }).map((candidate) => candidate.actionId),
+    [scan.actionId],
+    "数据目标支付满足后必须执行扫描，不能继续随机换牌",
+  );
+  const dataChoices = [{
+    ...action("choose:data-blue", "choose_target"),
+    phase: "conditional",
+    actorId: seatId,
+    target: { choiceId: "data:blueBonus:1", target: "blueBonus" },
+  }, {
+    ...action("choose:data-computer", "choose_target"),
+    phase: "conditional",
+    actorId: seatId,
+    target: { choiceId: "data:computer", target: "computer" },
+  }, {
+    ...action("choose:data-skip", "accept_optional_effect"),
+    phase: "conditional",
+    actorId: seatId,
+    target: { choiceId: "skip:data" },
+  }];
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: scanReady,
+      legalSuccessors: dataChoices,
+      routeTargetId: "data:analyze",
+    }).map((candidate) => candidate.actionId),
+    ["choose:data-computer"],
+    "分析目标的正式放置 Decision 应在建搜索节点前选择计算机位，并排除 skip/蓝附加槽",
+  );
+
+  const techChoices = ["orange1", "orange2"].map((tileId) => ({
+    ...action(`choose:${tileId}`, "choose_target"),
+    phase: "conditional",
+    actorId: seatId,
+    target: { tileId },
+  }));
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation,
+      legalActions: techChoices,
+    }),
+    techChoices.map((choice) => ({
+      targetId: `decision:${choice.actionId}`,
+      compatibleActionIds: [choice.actionId],
+    })),
+    "根 conditional 的每个非等价 choice 必须在执行前获得独立目标，且不能被目标目录丢弃",
+  );
+}
+
+{
   const probeTargetId = "orbit:mars:planet:";
   const probeRequirements = {
     candidates: [{
@@ -593,6 +740,7 @@ function evaluate(candidateAction, before, after, status = "settled") {
         },
         {
           leafId: "direct",
+          rootRouteTargetId: "data:analyze",
           actionChain: ["quick_trade:a", "orbit:c"],
           quickTradeCount: 1,
           secondaryAgentDepth: 2,
@@ -611,6 +759,8 @@ function evaluate(candidateAction, before, after, status = "settled") {
   assert.equal(result.selectedLeafId, "direct",
     "同一一级结果必须保留转换更少、代理更短的达成路线");
   assert.equal(result.quickTradeCount, 1);
+  assert.equal(result.routeTargetId, "data:analyze",
+    "估值结果必须保留搜索开始前选中的次级代理目标，供报告与行为审计");
 }
 
 {

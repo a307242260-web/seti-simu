@@ -181,6 +181,7 @@
                   focalSeatId: seatId,
                   maxProxyDepth: 15,
                   rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
+                  selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
                   selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
                   rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
                   selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,

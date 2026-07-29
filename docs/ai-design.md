@@ -33,7 +33,8 @@ Rule Composition
 - `game/ai/machine-player-host.js`：固定席位、deadline/取消、generation、去重与 fail-closed 提交协调。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
-  固定大小的探测器目标摘要。
+  固定大小的探测器目标摘要，以及本席数据轨到下一次正式扫描、放置或分析所需的
+  viewer-safe `dataAnalyzeRequirements`。
 - `game/ai/expected-score-evaluator.js`：只从真实标准叶读取已兑现分数、科技和收入变化，
   按剩余轮次计算版本化战略价值。
 - `game/ai/heuristic-evaluator.js`：优先选择 `settled + selectable` 的战略目标路径；失败或
@@ -85,7 +86,8 @@ low confidence，不读取本局未来 RNG。
 viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute` 最多列两枚本席在途
 探测器的标识/坐标；候选 leaf 只额外携带 `nextActionId/family/summary`、目标行星与
 `orbit/land` outcome 引用、已兑现目标分、沿途宣传 delta、终点即时 delta、标准路线实耗、
-移动余步和叶后钱/电。
+移动余步和叶后钱/电。`dataAnalyzeRequirements` 只投影计算机已放置数、可用数据数、下一正式
+步骤及其信用/能源缺口；扫描费用和分析减免分别来自正式 scan effect 与公司被动。
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 
@@ -100,6 +102,19 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 公司与物种能力等“完成一个意图”的节点各计一个目标；发射、多次移动、快速转换、放置数据和
 弃牌角标属于目标内部达成路线，不增加这 15 个目标深度。支付、选目标、选牌等 conditional
 Decision 同样属于当前目标的规则闭包；`end_turn` 只推进真实回合 owner，也不计深度。
+
+每次反事实搜索在执行首个 Standard Action 前，先从正式 observation 与 legal descriptors
+建立有限次级代理目标目录：探测器终点、`data:analyze`、`card:play`、当前合法的独立单步代理
+及根 Decision choice。目录只产生 `targetId + compatibleActionIds` 元数据，不写状态、不消费
+RNG 或 Decision，也不计入 15 个次级代理目标。发射、移动、快速转换、放置数据和弃牌角标若
+不能严格缩小已选目标的正式资源或移动缺口，不进入该目标的 frontier；快速转换本身没有固定
+收益。数据路线只按 `dataAnalyzeRequirements.nextStep` 选择 scan/place_data/analyze，资源
+不足时才选择严格缩小下一支付缺口的一次转换。已锁定数据目标的放置 Decision 优先计算机位，
+避免把获得蓝科奖励置于完成分析之前。
+
+根 conditional choice 仍逐项提交原 actionId，但其规则闭包只执行到 Effect Session idle 或
+下一个外部 Policy Decision；不会替下一 Decision 自动选第一项，也不会把每个 choice 再展开成
+15 个后续代理。虚拟目标不占 `maxNodes=128`，真实反事实执行仍受 512 次执行保护。
 
 搜索跨本席的多个真实行动机会。当前资源闭环阶段不预测对手策略：中间对手通过 Standard
 Action 提交正式 PASS，并完成其必做 Decision，只用于合法推进 turn owner 与生命周期；该近似

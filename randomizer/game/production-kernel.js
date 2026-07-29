@@ -14,6 +14,7 @@ const solar = loadProductionDependency("../solar-system/core", "SetiSolarSystem"
 const rockets = loadProductionDependency("./rockets", "SetiRocketActions");
 const planetStats = loadProductionDependency("./planet-stats", "SetiPlanetStats");
 const planetRewards = loadProductionDependency("./actions/planet-rewards", "SetiPlanetRewards");
+const scanEffects = loadProductionDependency("./actions/scan-effects", "SetiScanEffects");
 const data = loadProductionDependency("./data", "SetiData");
 const cards = loadProductionDependency("./cards/deck", "SetiCards");
 const cardEffects = loadProductionDependency("./cards/effects", "SetiCardEffects");
@@ -22,6 +23,7 @@ const aliens = loadProductionDependency("./aliens", "SetiAliens");
 const finalScoring = loadProductionDependency("./final-scoring", "SetiFinalScoring");
 const rocketAbility = loadProductionDependency("./abilities/rocket", "SetiAbilityRocket");
 const planetAbility = loadProductionDependency("./abilities/planet", "SetiAbilityPlanet");
+const industryPassives = loadProductionDependency("./industry/passives", "SetiIndustryPassives");
 const { createRuleComposition } = loadProductionDependency("./rule-composition", "SetiRuleComposition");
 const productionCompositionApi = loadProductionDependency("./production-composition", "SetiProductionComposition");
 const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
@@ -568,6 +570,61 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
   };
 }
 
+function buildDataAnalyzeRequirements(workingState, requestedPlayerId = null) {
+  const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
+  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
+  if (!player || workingState.turn.gameEnded) return null;
+  const computerSlots = data.listComputerPlacedTokens(player)
+    .map((token) => Number(token.placementSlot))
+    .filter(Number.isFinite);
+  const computerPlacedCount = computerSlots.length;
+  const analyzeReady = computerSlots.includes(data.ANALYZE_REQUIRED_COMPUTER_SLOT);
+  const availableData = Number(player.resources?.availableData || 0);
+  const remainingPlacements = Math.max(
+    0,
+    data.ANALYZE_REQUIRED_COMPUTER_SLOT - computerPlacedCount,
+  );
+  const dataNeeded = Math.max(0, remainingPlacements - availableData);
+  const scanCost = scanEffects.getStandardScanCost(player);
+  const analyzeCost = industryPassives.canAnalyzeWithoutEnergy(player)
+    ? {}
+    : { energy: data.ANALYZE_ENERGY_COST };
+  const nextStep = analyzeReady
+    ? "analyze"
+    : availableData > 0
+      ? "place_data"
+      : "scan";
+  const nextCost = nextStep === "analyze"
+    ? analyzeCost
+    : nextStep === "scan"
+      ? scanCost
+      : {};
+  return {
+    schemaVersion: "seti-data-analyze-requirements-v1",
+    playerId: player.id,
+    targetId: "data:analyze",
+    computerPlacedCount,
+    remainingPlacements,
+    availableData,
+    dataNeeded,
+    nextStep,
+    nextCost: {
+      credits: Number(nextCost.credits || 0),
+      energy: Number(nextCost.energy || 0),
+    },
+    nextGap: {
+      credits: Math.max(0, Number(nextCost.credits || 0) - Number(player.resources?.credits || 0)),
+      energy: Math.max(0, Number(nextCost.energy || 0) - Number(player.resources?.energy || 0)),
+    },
+    fieldSources: {
+      dataProgress: "players[].dataProgress.computerSlots",
+      availableData: "players[].resources.availableData",
+      scanCost: "SetiScanEffects.getStandardScanCost",
+      analyzeCost: "SetiIndustryPassives.canAnalyzeWithoutEnergy",
+    },
+  };
+}
+
 function activePlayers(workingState) {
   const active = new Set(workingState.turn.activePlayerIds || []);
   return (workingState.players.players || []).filter((player) => active.has(player.id));
@@ -730,6 +787,7 @@ function createProductionHostComposition(options = {}) {
       const projectedState = {
         ...clone(state),
         probeRouteRequirements: buildProbeRouteRequirements(state, viewer?.playerId),
+        dataAnalyzeRequirements: buildDataAnalyzeRequirements(state, viewer?.playerId),
       };
       if (hostKind === "browser") {
         if (typeof options.projectBrowserState !== "function") {

@@ -344,6 +344,9 @@
         probeGoalRequirements: String(source?.probeRouteRequirements?.playerId) === String(seatId)
           ? clone(source.probeRouteRequirements)
           : null,
+        dataAnalyzeRequirements: String(source?.dataAnalyzeRequirements?.playerId) === String(seatId)
+          ? clone(source.dataAnalyzeRequirements)
+          : null,
       },
     });
   }

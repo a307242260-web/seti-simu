@@ -447,6 +447,14 @@ try {
       maxProxyDepth: 15,
     })[0];
     assert.equal(routeOutcome.status, "settled");
+    assert.equal(
+      routeOutcome.rootObservation.dataAnalyzeRequirements?.schemaVersion,
+      "seti-data-analyze-requirements-v1",
+      "Production observation 必须投影本席正式数据分析 requirement",
+    );
+    assert.equal(routeOutcome.leaves.some((leaf) => (
+      leaf.rootRouteTargetId === "orbit:mars:planet:"
+    )), true, "首个真实动作执行前必须已经选择火星环绕目标");
     assert.equal(routeOutcome.leaves.some((leaf) => (
       Number(leaf.secondaryAgentDepth || 0) > 1
       || leaf.actionChain.some((actionId) => String(actionId).startsWith("end_turn:"))

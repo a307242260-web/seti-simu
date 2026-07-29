@@ -12,7 +12,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v6";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v7";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CARD_PLAY_ROUTE_TARGET = "card:play";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -178,16 +178,28 @@
         );
         return projected && projected.after < projected.before;
       });
+    const preparesDataGoal = nextAgent?.family === rawDataAnalyzeRequirements(
+      context?.observation,
+    )?.nextStep && dataPaymentGapAfterTrade(
+      context?.observation,
+      action,
+      context.seatId,
+    )?.reduction > 0;
     return {
       required: true,
-      supported: preparesReadyAnalyze || preparesProbeGoal || (directlyLegal && !alreadyLegal),
+      supported: preparesReadyAnalyze
+        || preparesProbeGoal
+        || preparesDataGoal
+        || (directlyLegal && !alreadyLegal),
       reason: preparesReadyAnalyze
         ? "quick-trade-prepared-ready-analyze"
         : preparesProbeGoal
           ? "quick-trade-reduced-probe-goal-gap"
-          : directlyLegal && !alreadyLegal
-            ? "quick-trade-directly-unlocked-agent"
-            : "quick-trade-did-not-directly-unlock-agent",
+          : preparesDataGoal
+            ? "quick-trade-reduced-data-goal-gap"
+            : directlyLegal && !alreadyLegal
+              ? "quick-trade-directly-unlocked-agent"
+              : "quick-trade-did-not-directly-unlock-agent",
       nextAgent,
     };
   }
@@ -497,6 +509,7 @@
       incomeDelta: best.strategicValue.infrastructure.incomeDelta,
       remainingRounds: best.strategicValue.infrastructure.remainingRounds,
       probeRouteSummary: best.leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null,
+      routeTargetId: best.leaf.rootRouteTargetId || null,
       selectedLeafId: best.leaf.leafId || null,
       actionChain: best.leaf.actionChain || [],
       reasonCodes: [
@@ -532,7 +545,12 @@
         const projected = probeResourceGapAfterTrade(observation, goal, action, seatId);
         return projected && projected.after < projected.before;
       });
-    return preparesAnalyze || preparesCardGoal || preparesProbeGoal;
+    const preparesDataGoal = dataPaymentGapAfterTrade(
+      observation,
+      action,
+      seatId,
+    )?.reduction > 0;
+    return preparesAnalyze || preparesCardGoal || preparesProbeGoal || preparesDataGoal;
   }
 
   function countsSecondaryAgentGoal(action) {
@@ -547,6 +565,12 @@
   function rawProbeRequirements(observation) {
     return observation?.probeRouteRequirements
       || observation?.outcomeProjection?.progress?.probeGoalRequirements
+      || null;
+  }
+
+  function rawDataAnalyzeRequirements(observation) {
+    return observation?.dataAnalyzeRequirements
+      || observation?.outcomeProjection?.progress?.dataAnalyzeRequirements
       || null;
   }
 
@@ -620,6 +644,137 @@
       ))
       .slice(0, 1)
       .map((candidate) => candidate.action);
+  }
+
+  function dataPaymentGapAfterTrade(observation, action, seatId) {
+    if (action?.family !== "quick_trade") return null;
+    const requirements = rawDataAnalyzeRequirements(observation);
+    const cost = action.payload?.cost;
+    const gain = action.payload?.gain;
+    if (!requirements || !cost || !gain) return null;
+    const assets = resourceFactsOf(observation, seatId);
+    const beforeGap = requirements.nextGap || {};
+    let after = 0;
+    for (const resource of ["credits", "energy"]) {
+      const availableAfterTrade = finite(assets[resource])
+        - finite(cost[resource])
+        + finite(gain[resource]);
+      after += Math.max(
+        0,
+        finite(requirements.nextCost?.[resource]) - availableAfterTrade,
+      );
+    }
+    const before = finite(beforeGap.credits) + finite(beforeGap.energy);
+    return { before, after, reduction: before - after };
+  }
+
+  function selectDataResourcePreparation(observation, successors, seatId) {
+    return successors
+      .filter((action) => action.family === "quick_trade")
+      .map((action) => ({
+        action,
+        projected: dataPaymentGapAfterTrade(observation, action, seatId),
+        opportunityLoss: Object.values(action.payload?.cost || {})
+          .reduce((total, value) => total + finite(value), 0)
+          - Object.values(action.payload?.gain || {})
+            .reduce((total, value) => total + finite(value), 0),
+      }))
+      .filter((candidate) => candidate.projected?.reduction > 0)
+      .sort((left, right) => (
+        right.projected.reduction - left.projected.reduction
+        || left.opportunityLoss - right.opportunityLoss
+        || String(left.action.actionId).localeCompare(String(right.action.actionId))
+      ))
+      .slice(0, 1)
+      .map((candidate) => candidate.action);
+  }
+
+  function enumerateSecondaryAgentRootTargets(input = {}) {
+    const legalActions = [...(input.legalActions || [])]
+      .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
+    const legalIds = new Set(legalActions.map((action) => action.actionId));
+    const targets = new Map();
+    function add(targetId, actions) {
+      const compatibleActionIds = [...new Set(actions
+        .map((action) => action?.actionId)
+        .filter((actionId) => legalIds.has(actionId)))]
+        .sort();
+      if (!compatibleActionIds.length) return;
+      const existing = targets.get(targetId) || [];
+      targets.set(targetId, [...new Set([...existing, ...compatibleActionIds])].sort());
+    }
+
+    const probeGoals = rawProbeRequirements(input.rootObservation)?.candidates || [];
+    for (const action of legalActions) {
+      const matchedGoals = probeGoals
+        .filter((goal) => {
+          if (actionMatchesProbeStep(action, goal.nextStep)) return true;
+          const projected = probeResourceGapAfterTrade(
+            input.rootObservation,
+            goal,
+            action,
+            input.focalSeatId,
+          );
+          return projected && projected.after < projected.before;
+        })
+        .sort((left, right) => compareProbeRouteGoals(
+          input.rootObservation,
+          left,
+          right,
+          input.focalSeatId,
+        ));
+      if (matchedGoals.length) add(matchedGoals[0].targetId, [action]);
+    }
+
+    const dataRequirements = rawDataAnalyzeRequirements(input.rootObservation);
+    if (dataRequirements) {
+      add(DATA_ANALYZE_ROUTE_TARGET, legalActions.filter((action) => (
+        action.family === dataRequirements.nextStep
+        || dataPaymentGapAfterTrade(
+          input.rootObservation,
+          action,
+          input.focalSeatId,
+        )?.reduction > 0
+      )));
+    }
+
+    add(CARD_PLAY_ROUTE_TARGET, legalActions.filter((action) => (
+      action.family === "play_card"
+      || (
+        action.family === "quick_trade"
+        && finite(action.payload?.gain?.handSize) > 0
+        && finite(action.payload?.cost?.handSize) === 0
+      )
+    )));
+
+    const formalRouteFamilies = new Set([
+      ...SECONDARY_GOAL_ROUTE_FAMILIES,
+      "orbit",
+      "land",
+      "analyze",
+      "play_card",
+      "pass",
+      "end_turn",
+    ]);
+    for (const action of legalActions) {
+      if (action.phase === "conditional") {
+        add(`decision:${action.actionId}`, [action]);
+        continue;
+      }
+      if (
+        !formalRouteFamilies.has(action.family)
+        && !(
+          action.family === "scan"
+          && targets.get(DATA_ANALYZE_ROUTE_TARGET)?.includes(action.actionId)
+        )
+      ) add(`action:${action.actionId}`, [action]);
+    }
+    return [...targets.entries()]
+      .map(([targetId, compatibleActionIds]) => ({
+        targetId,
+        compatibleActionIds,
+      }))
+      .sort((left, right) => left.targetId.localeCompare(right.targetId));
   }
 
   function probeGoalResourceReachable(observation, goal, seatId) {
@@ -874,23 +1029,49 @@
         return successors.filter((action) => !["quick_trade", "card_corner"].includes(action.family));
       }
       if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
-        const analyze = successors.find((action) => action.family === "analyze");
-        if (analyze) return [analyze];
-        const placeData = successors.find((action) => action.family === "place_data");
-        if (placeData) return [placeData];
-        const energyTrade = successors.find((action) => (
-          action.family === "quick_trade"
-          && action.target?.tradeId === "credits-for-energy"
-        ));
-        const branchFacts = outcomeModel.createStrategicFacts(
-          input.branchObservation,
-          input.focalSeatId,
-        );
-        if (
-          energyTrade
-          && branchFacts.dataProgress?.analyzeReady
-          && finite(branchFacts.resourceFacts?.energy) === 0
-        ) return [energyTrade];
+        if (successors[0]?.phase === "conditional") {
+          const nonSkip = successors.filter((action) => (
+            !String(action.target?.choiceId || "").startsWith("skip:")
+          ));
+          const compatible = nonSkip.length ? nonSkip : successors;
+          return [...compatible].sort((left, right) => (
+            Number(right.target?.target === "computer")
+              - Number(left.target?.target === "computer")
+            || String(left.actionId).localeCompare(String(right.actionId))
+          )).slice(0, 1);
+        }
+        const requirements = rawDataAnalyzeRequirements(input.branchObservation);
+        const requiredAction = requirements
+          ? successors.find((action) => action.family === requirements.nextStep)
+          : null;
+        if (requiredAction) return [requiredAction];
+        const preparation = requirements
+          ? selectDataResourcePreparation(
+            input.branchObservation,
+            successors,
+            input.focalSeatId,
+          )
+          : [];
+        if (preparation.length) return preparation;
+        if (!requirements) {
+          const analyze = successors.find((action) => action.family === "analyze");
+          if (analyze) return [analyze];
+          const placeData = successors.find((action) => action.family === "place_data");
+          if (placeData) return [placeData];
+          const energyTrade = successors.find((action) => (
+            action.family === "quick_trade"
+            && action.target?.tradeId === "credits-for-energy"
+          ));
+          const branchFacts = outcomeModel.createStrategicFacts(
+            input.branchObservation,
+            input.focalSeatId,
+          );
+          if (
+            energyTrade
+            && branchFacts.dataProgress?.analyzeReady
+            && finite(branchFacts.resourceFacts?.energy) === 0
+          ) return [energyTrade];
+        }
         const endTurn = successors.find((action) => action.family === "end_turn");
         if (endTurn) return [endTurn];
         const pass = successors.find((action) => action.family === "pass");
@@ -950,6 +1131,7 @@
     evaluateStrategicFactsPriority,
     evaluateStrategicFactsBreakdown,
     evaluateSecondaryAgentSearchPriority,
+    enumerateSecondaryAgentRootTargets,
     selectSecondaryAgentRouteTarget,
     evaluateAction: evaluateOutcome,
     evaluateOutcome,

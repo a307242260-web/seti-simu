@@ -245,6 +245,7 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
     ),
     decision,
     probeRouteRequirements: clone(state.probeRouteRequirements || null),
+    dataAnalyzeRequirements: clone(state.dataAnalyzeRequirements || null),
     terminal: Boolean(turn.gameEnded),
   };
 }
@@ -289,6 +290,7 @@ function createSimulationEnv() {
         focalSeatId: seatId,
         maxProxyDepth: options.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
+        selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
         countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
@@ -366,6 +368,7 @@ function createSimulationEnv() {
     const state = {
       ...getWorkingProjection(composition),
       probeRouteRequirements: clone(projected?.probeRouteRequirements || null),
+      dataAnalyzeRequirements: clone(projected?.dataAnalyzeRequirements || null),
     };
     const result = buildObservation(state, seed, viewerPlayerId, actions);
     recordDuration("observationMilliseconds", startedAt);

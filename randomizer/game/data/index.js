@@ -48,6 +48,7 @@
     hasBlueBonusPlaceOptions: state.hasBlueBonusPlaceOptions,
     gainData: state.gainData,
     ANALYZE_ENERGY_COST: state.ANALYZE_ENERGY_COST,
+    ANALYZE_REQUIRED_COMPUTER_SLOT: state.ANALYZE_REQUIRED_COMPUTER_SLOT,
     isAnalyzeReady: state.isAnalyzeReady,
     canPlaceAnyData: state.canPlaceAnyData,
     listPlaceDataChoices: state.listPlaceDataChoices,

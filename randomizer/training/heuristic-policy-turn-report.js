@@ -618,6 +618,8 @@ function formatEvaluation(candidate, timing = null) {
       ? `目标=${goal.planetId}/${goal.endpointFamily}`
       : route
       ? `目标=${route.endpointPlanetId || "未知行星"}/${route.endpointKind || "未知终点"}`
+      : evaluation.routeTargetId
+        ? `目标=${formatGoalName(evaluation)}`
       : evaluation.orangeTechDelta > 0
         ? `目标=补探测器橙色科技缺口(+${evaluation.orangeTechDelta})`
         : "目标=无",
@@ -682,12 +684,19 @@ function escapeHtml(value) {
 }
 
 function formatGoalName(evaluation) {
+  const routeTargetId = evaluation?.routeTargetId;
+  if (routeTargetId === "data:analyze") return "数据：推进至分析";
+  if (routeTargetId === "card:play") return "卡牌：取得并打出";
+  if (String(routeTargetId || "").startsWith("decision:")) return "完成当前规则选择";
+  if (String(routeTargetId || "").startsWith("action:")) {
+    return `直接行动：${routeTargetId.slice("action:".length)}`;
+  }
   const goal = evaluation?.probeGoalRequirement;
   const route = evaluation?.probeRouteSummary;
   if (goal) return `${goal.planetId}/${goal.endpointFamily}`;
   if (route) return `${route.endpointPlanetId || "未知行星"}/${route.endpointKind || "未知终点"}`;
   if (evaluation?.orangeTechDelta > 0) return `橙色科技 +${evaluation.orangeTechDelta}`;
-  return "无探测器目标";
+  return routeTargetId || "未标注次级代理目标";
 }
 
 function formatGap(gap) {

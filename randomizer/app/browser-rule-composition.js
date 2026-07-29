@@ -94,6 +94,8 @@
           currentPlayerRemainingCount: 0,
         }),
       };
+      visible.probeRouteRequirements = clone(canonicalState.probeRouteRequirements || null);
+      visible.dataAnalyzeRequirements = clone(canonicalState.dataAnalyzeRequirements || null);
       return visible;
     }
 

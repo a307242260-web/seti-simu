@@ -688,6 +688,36 @@
         failures: [],
         pruned: false,
       }]));
+      const rootTargetsByActionId = new Map();
+      if (
+        secondaryAgentSearch
+        && typeof secondaryAgentSearch.selectRootTargets === "function"
+      ) {
+        const legalById = new Map(legalActions.map((action) => [action.actionId, action]));
+        const catalog = secondaryAgentSearch.selectRootTargets({
+          focalSeatId,
+          rootObservation,
+          legalActions: clone(legalActions),
+          maxProxyDepth,
+        });
+        if (!Array.isArray(catalog)) {
+          throw new TypeError("secondaryAgentSearch 根目标目录必须是数组");
+        }
+        for (const target of catalog) {
+          const targetId = String(target?.targetId || "");
+          if (!targetId || !Array.isArray(target?.compatibleActionIds)) {
+            throw new TypeError("secondaryAgentSearch 根目标缺少 targetId/compatibleActionIds");
+          }
+          for (const actionId of target.compatibleActionIds) {
+            if (!legalById.has(actionId)) {
+              throw new TypeError(`secondaryAgentSearch 根目标引用非法 actionId: ${actionId}`);
+            }
+            const current = rootTargetsByActionId.get(actionId) || [];
+            if (!current.includes(targetId)) current.push(targetId);
+            rootTargetsByActionId.set(actionId, current.sort());
+          }
+        }
+      }
       const processedNodeKeys = new Set();
       let executedNodeCount = 0;
       let expandedSearchNodeCount = 0;
@@ -857,6 +887,7 @@
             rootActionSettledObservation: origin.rootActionSettledObservation || null,
             rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
             terminalReason: origin.terminalReason || null,
+            rootRouteTargetId: origin.rootRouteTargetId || null,
           } : {}),
         });
       }
@@ -879,6 +910,7 @@
           rootActionSettledObservation: origin.rootActionSettledObservation || null,
           rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
           terminalReason: "search-frontier",
+          rootRouteTargetId: origin.rootRouteTargetId || null,
         };
         const byId = new Map(state.frontierLeaves.map((candidate) => [
           candidate.leafId,
@@ -1006,28 +1038,43 @@
         }
       }
 
-      let frontier = legalActions.map((action) => ({
-        envelope: saved.envelope,
-        action,
-        depth: 0,
-        priority: 0,
-        origins: [{
-          rootAction: action,
-          chain: [],
-          routeActions: [],
-          checkpoints: [],
-          lastProbeAction: null,
-          proxyDepth: 0,
-          quickTradeCount: 0,
-          opponentProxyDepth: 0,
-          focalPassStarted: false,
-          terminalReason: null,
-          routeTargetId: null,
-        }],
-      }));
+      const usesRootTargetCatalog = secondaryAgentSearch
+        && typeof secondaryAgentSearch.selectRootTargets === "function";
+      let frontier = legalActions.flatMap((action) => {
+        const routeTargetIds = rootTargetsByActionId.get(action.actionId) || [];
+        const selectedTargetIds = routeTargetIds.length
+          ? routeTargetIds
+          : !usesRootTargetCatalog || ["pass", "end_turn"].includes(action.family)
+            ? [null]
+            : [];
+        return selectedTargetIds.map((routeTargetId) => ({
+          envelope: saved.envelope,
+          action,
+          depth: 0,
+          priority: 0,
+          origins: [{
+            rootAction: action,
+            chain: [],
+            routeActions: [],
+            checkpoints: [],
+            lastProbeAction: null,
+            proxyDepth: 0,
+            quickTradeCount: 0,
+            opponentProxyDepth: 0,
+            focalPassStarted: false,
+            terminalReason: null,
+            routeTargetId,
+            rootRouteTargetId: routeTargetId,
+            rootWasConditional: action.phase === "conditional",
+          }],
+        }));
+      });
+      maxFrontierSize = Math.max(maxFrontierSize, frontier.length);
+      maxRetainedFrontierSize = Math.max(maxRetainedFrontierSize, frontier.length);
       function consumesSearchBudget(node) {
         const action = node?.action;
         if (!secondaryAgentSearch) return true;
+        if (node?.origins?.some((origin) => origin.rootWasConditional)) return false;
         if (typeof secondaryAgentSearch.countsGoal === "function") {
           return String(action?.actorId || "") === focalSeatId
             && secondaryAgentSearch.countsGoal(action);
@@ -1125,9 +1172,11 @@
                 routeTargetId = origin.routeTargetId || null;
               }
             }
-            const nextProxyDepth = origin.proxyDepth + (
-              currentIsFocal && currentCompletesSecondaryGoal ? 1 : 0
-            );
+            const nextProxyDepth = origin.rootWasConditional
+              ? 0
+              : origin.proxyDepth + (
+                currentIsFocal && currentCompletesSecondaryGoal ? 1 : 0
+              );
             const nextQuickTradeCount = Number(origin.quickTradeCount || 0) + (
               currentIsFocal && current.family === "quick_trade" ? 1 : 0
             );
@@ -1142,6 +1191,27 @@
             ];
             const focalPassStarted = origin.focalPassStarted
               || (currentIsFocal && current.family === "pass");
+            if (
+              secondaryAgentSearch
+              && origin.rootWasConditional
+              && execution.awaitingDecision
+            ) {
+              addLeaf(
+                {
+                  ...origin,
+                  chain: nextChain,
+                  proxyDepth: 0,
+                  quickTradeCount: nextQuickTradeCount,
+                  routeActions: nextRouteActions,
+                  terminalReason: "root-decision-next-boundary",
+                },
+                execution.leafObservation,
+                execution.successors,
+                execution.nextInspection,
+                origin.checkpoints,
+              );
+              continue;
+            }
             if (
               !secondaryAgentSearch
               && execution.awaitingDecision
@@ -1173,7 +1243,6 @@
               let conditionalSuccessors = execution.successors;
               if (
                 secondaryAgentSearch
-                && String(conditionalSuccessors[0]?.actorId || "") !== focalSeatId
               ) {
                 try {
                   conditionalSuccessors = secondaryAgentSearch.selectSuccessors({
@@ -1239,6 +1308,27 @@
               observation: execution.leafObservation,
             }];
             if (secondaryAgentSearch) {
+              if (
+                origin.rootWasConditional
+                && !execution.awaitingDecision
+                && ["completed", "idle"].includes(execution.nextInspection.phase)
+              ) {
+                addLeaf(
+                  {
+                    ...origin,
+                    chain: nextChain,
+                    proxyDepth: 0,
+                    quickTradeCount: nextQuickTradeCount,
+                    routeActions: nextRouteActions,
+                    terminalReason: "root-decision-settled",
+                  },
+                  execution.leafObservation,
+                  execution.successors,
+                  execution.nextInspection,
+                  nextCheckpoints,
+                );
+                continue;
+              }
               if (focalPassStarted) {
                 addLeaf(
                   {
@@ -1444,6 +1534,8 @@
         maxDepth,
         maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
         secondaryAgentSearch: Boolean(secondaryAgentSearch),
+        rootTargetCount: [...rootTargetsByActionId.values()]
+          .reduce((total, targetIds) => total + targetIds.length, 0),
         rolloutVersion: secondaryAgentSearch?.rolloutVersion || null,
         maxFrontierPerRoot,
         maxFrontierSize,
