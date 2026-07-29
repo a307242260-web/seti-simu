@@ -77,7 +77,10 @@
     if (!actionRegistry?.enumerate || !actionRegistry?.validate) {
       throw new TypeError("createActionRegistry() 未返回 Standard Action registry");
     }
-    const storeOptions = Object.freeze({ invariantValidators: [...(options.invariantValidators || [])] });
+    const storeOptions = Object.freeze({
+      invariantValidators: [...(options.invariantValidators || [])],
+      trustedIsolatedOwnership: options.allowTrustedForkLifecycle === true,
+    });
     let store = stateStoreApi.createStateStore(
       clone(createInitialState(clone(options.initialOptions || {}))),
       storeOptions,
@@ -149,6 +152,10 @@
 
     function bindStoreEvents() {
       unsubscribeStore?.();
+      if (options.allowTrustedForkLifecycle === true) {
+        unsubscribeStore = null;
+        return;
+      }
       unsubscribeStore = store.subscribe((event) => {
         publish({ source: "committed", event });
       });
@@ -157,6 +164,7 @@
     function createRuntime() {
       const next = effectRuntimeApi.createRuntime({
         stateStore: store,
+        trustedIsolatedOwnership: options.allowTrustedForkLifecycle === true,
         validateState: (state) => store.validate(state),
         projectState: (state, viewer, inspection) => (
           options.projectState(

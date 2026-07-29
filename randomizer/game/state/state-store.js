@@ -226,6 +226,7 @@
     const invariantValidators = Array.isArray(options.invariantValidators)
       ? [...options.invariantValidators]
       : [];
+    const trustedIsolatedOwnership = options.trustedIsolatedOwnership === true;
     const listeners = new Set();
     let committedState;
 
@@ -317,8 +318,10 @@
       let isolatedCandidate;
       let isolatedMetadata;
       try {
-        isolatedCandidate = clone(candidate);
-        isolatedMetadata = clone(metadata);
+        isolatedCandidate = trustedIsolatedOwnership ? candidate : clone(candidate);
+        isolatedMetadata = trustedIsolatedOwnership && listeners.size === 0
+          ? null
+          : clone(metadata);
       } catch (error) {
         return { ok: false, code: "STATE_NOT_SERIALIZABLE", message: error?.message || "候选状态不可克隆" };
       }
@@ -338,27 +341,31 @@
       if (!nextValidation.ok) return nextValidation;
 
       const previousState = committedState;
-      const nextState = deepFreeze(clone(isolatedCandidate));
+      const nextState = trustedIsolatedOwnership
+        ? deepFreeze(isolatedCandidate)
+        : deepFreeze(clone(isolatedCandidate));
       committedState = nextState;
-      const event = deepFreeze({
-        type: "committed",
-        previousVersion: currentVersion,
-        stateVersion: nextState.meta.stateVersion,
-        snapshot: clone(nextState),
-        metadata: isolatedMetadata,
-      });
-      for (const listener of [...listeners]) {
-        try {
-          listener(event);
-        } catch (error) {
-          // 订阅者属于宿主边界；提交已经成立，宿主异常不得制造半提交。
+      if (listeners.size) {
+        const event = deepFreeze({
+          type: "committed",
+          previousVersion: currentVersion,
+          stateVersion: nextState.meta.stateVersion,
+          snapshot: clone(nextState),
+          metadata: isolatedMetadata,
+        });
+        for (const listener of [...listeners]) {
+          try {
+            listener(event);
+          } catch (error) {
+            // 订阅者属于宿主边界；提交已经成立，宿主异常不得制造半提交。
+          }
         }
       }
       return {
         ok: true,
         previousVersion: previousState.meta.stateVersion,
         stateVersion: nextState.meta.stateVersion,
-        snapshot: getSnapshot(),
+        snapshot: trustedIsolatedOwnership ? nextState : getSnapshot(),
       };
     }
 

@@ -284,6 +284,7 @@ function createSimulationEnv() {
       maxDepth: options.maxDepth || 15,
       maxLeaves: options.maxLeaves || 8,
       maxNodes: options.maxNodes || 128,
+      ...(options.maxExecutionNodes ? { maxExecutionNodes: options.maxExecutionNodes } : {}),
       maxFrontierPerRoot: options.maxFrontierPerRoot
         || (options.secondaryAgentSearch ? 1 : 8),
       secondaryAgentSearch: options.secondaryAgentSearch ? {

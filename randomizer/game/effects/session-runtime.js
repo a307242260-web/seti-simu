@@ -127,6 +127,7 @@
     const readCommittedState = options.readCommittedState
       || stateStore?.getSnapshot?.bind(stateStore)
       || null;
+    const trustedIsolatedOwnership = options.trustedIsolatedOwnership === true;
     const maxDrainSteps = Math.max(1, Number(options.maxDrainSteps) || 1000);
     const executors = new Map();
     let nextSessionSequence = 0;
@@ -158,7 +159,7 @@
     function createSession(committedState, meta = {}) {
       nextSessionSequence += 1;
       const sessionId = meta.sessionId || `effect-session-${nextSessionSequence}`;
-      const baseState = cloneState(committedState);
+      const baseState = trustedIsolatedOwnership ? committedState : cloneState(committedState);
       return {
         schemaVersion: SCHEMA_VERSION,
         sessionId,
@@ -370,7 +371,10 @@
           });
         }
       }
-      const validation = validateState(cloneState(session.workingState), session);
+      const validation = validateState(
+        trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+        session,
+      );
       if (validation?.ok === false) {
         return abort(session, {
           code: validation.code || "EFFECT_SESSION_INVARIANT_FAILED",
@@ -381,10 +385,14 @@
       if (compareAndCommit) {
         let committed;
         try {
-          committed = compareAndCommit(session.baseVersion, cloneState(session.workingState), {
+          committed = compareAndCommit(
+            session.baseVersion,
+            trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+            {
             sessionId: session.sessionId,
             journal: clone(session.journal),
-          });
+            },
+          );
         } catch (error) {
           return abort(session, {
             code: "EFFECT_SESSION_COMMIT_THROWN",
@@ -404,13 +412,21 @@
             message: "StateStore 提交成功但未返回 committed snapshot",
           });
         }
-        session.committedState = cloneState(committed.snapshot);
-        session.commitResult = clone(committed);
+        session.committedState = trustedIsolatedOwnership
+          ? committed.snapshot
+          : cloneState(committed.snapshot);
+        session.commitResult = trustedIsolatedOwnership ? committed : clone(committed);
       } else {
         session.committedState = cloneState(session.workingState);
       }
       session.phase = "completed";
-      return { ok: true, session, committedState: cloneState(session.committedState) };
+      return {
+        ok: true,
+        session,
+        committedState: trustedIsolatedOwnership
+          ? session.committedState
+          : cloneState(session.committedState),
+      };
     }
 
     function dispatchStoredAction(action, createEffectGroup, meta = {}) {
@@ -561,7 +577,9 @@
           effectId: effect.effectId,
         });
       }
-      session.workingState = cloneState(result.nextState);
+      session.workingState = trustedIsolatedOwnership
+        ? result.nextState
+        : cloneState(result.nextState);
       session.revision += 1;
       session.queue.shift();
       if (spawnedEffects.length) session.queue.unshift(...spawnedEffects);

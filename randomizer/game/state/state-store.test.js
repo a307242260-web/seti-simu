@@ -252,4 +252,32 @@ function committedBytes(store) {
     "普通 fork restore 仍必须克隆外部可写 candidate");
 })();
 
+(function testTrustedIsolatedCommitTransfersAndFreezesCandidateOwnership() {
+  const invariant = (state) => state.turn.turn >= 0
+    ? { ok: true }
+    : { ok: false, code: "NEGATIVE_TURN", path: "$.turn.turn" };
+  const store = createStateStore(createState(), {
+    invariantValidators: [invariant],
+    trustedIsolatedOwnership: true,
+  });
+  const working = store.beginWorkingCopy(0).state;
+  working.turn.turn = 11;
+  const committed = store.compareAndCommit(0, working, { source: "trusted-fork" });
+  assert.equal(committed.ok, true);
+  assert.equal(committed.snapshot, working,
+    "trusted isolated commit 应转移独占 candidate，而不是再次复制整局");
+  assert.equal(Object.isFrozen(working), true);
+  assert.equal(Object.isFrozen(working.turn), true);
+  assert.throws(() => { working.turn.turn = 12; }, TypeError);
+  assert.equal(store.getSnapshot().turn.turn, 11);
+
+  const invalid = store.beginWorkingCopy(1).state;
+  invalid.turn.turn = -1;
+  const before = committedBytes(store);
+  const rejected = store.compareAndCommit(1, invalid);
+  assert.equal(rejected.code, "NEGATIVE_TURN");
+  assert.equal(committedBytes(store), before,
+    "trusted ownership 路径仍必须 fail-closed，不得提交无效 candidate");
+})();
+
 console.log("state-store tests passed");
