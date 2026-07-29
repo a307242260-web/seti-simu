@@ -240,6 +240,19 @@ try {
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].retainedLeafCount, 1);
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].saturatedOriginCount > 0, true);
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].rootActionFamily, "scan");
+    assert.equal(scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups.length > 0, true);
+    assert.equal(
+      scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups
+        .reduce((total, group) => total + group.originCount, 0),
+      scanDiagnostics.saturatedVirtualRoots[0].saturatedOriginCount,
+      "截断明细必须按行动类型链完整覆盖全部 origin",
+    );
+    assert.equal(
+      scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups
+        .every((group) => group.pendingActionFamily),
+      true,
+      "截断明细必须保留下一项待执行行动类型",
+    );
     assert.deepEqual(environment.createCheckpoint(), before,
       "叶饱和剪枝不得污染 canonical root");
 

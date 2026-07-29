@@ -871,6 +871,7 @@
       const executedOriginCountByTarget = new Map();
       const leafCountByVirtualRoot = new Map();
       const saturatedOriginCountByVirtualRoot = new Map();
+      const saturatedRouteGroupsByVirtualRoot = new Map();
       const virtualRootDescriptionByKey = new Map();
       const chainKeyByOrigin = new WeakMap();
       const dominanceCheckedOrigins = new WeakSet();
@@ -1377,6 +1378,25 @@
                 rootKey,
                 (saturatedOriginCountByVirtualRoot.get(rootKey) || 0) + 1,
               );
+              const groups = saturatedRouteGroupsByVirtualRoot.get(rootKey) || new Map();
+              const routeFamilies = (origin.routeActions || []).map((action) => action.family);
+              const groupKey = stableSerialize({
+                routeFamilies,
+                pendingActionFamily: node.action.family,
+                proxyDepth: origin.proxyDepth || 0,
+              });
+              const existing = groups.get(groupKey);
+              if (existing) {
+                existing.originCount += 1;
+              } else {
+                groups.set(groupKey, {
+                  routeFamilies,
+                  pendingActionFamily: node.action.family,
+                  proxyDepth: origin.proxyDepth || 0,
+                  originCount: 1,
+                });
+              }
+              saturatedRouteGroupsByVirtualRoot.set(rootKey, groups);
             }
             markPruned(saturatedOrigins);
           }
@@ -1905,6 +1925,17 @@
             ...virtualRootDescriptionByKey.get(key),
             retainedLeafCount: leafCountByVirtualRoot.get(key) || 0,
             saturatedOriginCount,
+            saturatedRouteGroups: [
+              ...(saturatedRouteGroupsByVirtualRoot.get(key)?.values() || []),
+            ]
+              .sort((left, right) => (
+                right.originCount - left.originCount
+                || left.proxyDepth - right.proxyDepth
+                || String(left.routeFamilies.join(":")).localeCompare(
+                  String(right.routeFamilies.join(":")),
+                )
+                || String(left.pendingActionFamily).localeCompare(right.pendingActionFamily)
+              )),
           }))
           .sort((left, right) => (
             right.saturatedOriginCount - left.saturatedOriginCount
