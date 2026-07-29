@@ -152,8 +152,8 @@ const validation = policyPort.validatePolicyDecision(current, first, {
 assert.equal(validation.ok, true);
 assert.equal(
   expectedScoreEvaluator.requiresCounterfactualOutcome(action("trade:p1:7", "quick_trade")),
-  false,
-  "快速交易只作为同一策略边界内的辅助输入，不应单独建立战略 outcome",
+  true,
+  "快速交易必须搜索到后续正式代理，才能证明资源损耗服务于明确目标",
 );
 assert.equal(
   expectedScoreEvaluator.requiresCounterfactualOutcome(action("pass:p1:7", "pass")),
@@ -162,8 +162,8 @@ assert.equal(
 );
 assert.equal(
   expectedScoreEvaluator.requiresCounterfactualOutcome(action("end:p1:7", "end_turn")),
-  true,
-  "结束行动必须保留真实反事实后继，不能把轮初收入语义当成跳过控制行动的理由",
+  false,
+  "结束行动只需单层提交真实状态转换，不应继续搜索后续席位",
 );
 
 function setupAction(actionId, target) {

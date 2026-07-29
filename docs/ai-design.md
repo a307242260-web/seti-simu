@@ -101,8 +101,9 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 痕迹和收入是这些代理的真实规则结果。支付、选目标、选牌等 conditional Decision 属于当前
 代理的规则闭包，不计入 15 个代理深度；`end_turn` 只推进真实回合 owner，也不计深度。
 
-搜索跨本席的多个真实行动机会。中间对手由版本化冻结 rollout 通过 Standard Action 和正式
-Decision 推进，不能直接篡改 turn owner；本席 PASS 的必做链结算后立即形成叶，不执行其后的
+搜索跨本席的多个真实行动机会。当前资源闭环阶段不预测对手策略：中间对手通过 Standard
+Action 提交正式 PASS，并完成其必做 Decision，只用于合法推进 turn owner 与生命周期；该近似
+不预测抢位或公共供应变化，路线价值会偏乐观。本席 PASS 的必做链结算后立即形成叶，不执行其后的
 `end_turn`，因此不会把下一轮轮初收入记到 PASS 身上。每次 Policy 仍只提交获胜路线的第一个
 当前 legal descriptor，真实提交后从新 committed state 重新搜索。
 
@@ -137,23 +138,26 @@ Session checkpoint 只恢复一次，普通存档恢复仍执行完整校验。�
 
 节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的稳定
 hash 组成，反事实 RNG 使用相同紧凑 envelope identity 的 v2 seed；canonical RNG 不变。
-常规机器决策的全局节点上限为 128。所有 root action 都进入首层；后续先按 root 合并同源
-conditional 分支，再保留 4 个全局路线节点，按累计一级目标价值与只用于 beam 的次级路线潜力
-排序，再用稳定
-identity 决胜。被 beam 移除的 origin 标为 pruned/low-confidence。每个 root 另有最多 8 个叶的独立
+常规机器决策的全局节点上限为 128，只统计本席真正可选择的非 conditional 次级代理；
+唯一 conditional、`end_turn/PASS` 和对手的正式 PASS 推进不消耗这 128 个搜索节点，但所有
+执行仍受 `maxExecutionNodes=4×maxNodes` 物理保护。所有 root action 都进入首层；后续按 root
+各保留一条字典序最优路线，不再用全局 beam 4 让不同目标互相挤掉。排序证据依次来自已经兑现的
+一级收益、正式探测器目标收益/缺口、数据分析缺口和实际机会成本；完全相同才用稳定 identity
+决胜，不给 action family 固定分。被移除的 origin 标为 pruned/low-confidence。每个 root
+另有最多 8 个叶的独立
 预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
 饱和 root 继续执行。beam 和叶上限都是显式近似，均不得描述成完整期望分布。
 
-当前 v13 在 beam 中使用未扣成本的一级收益保留“先亏资源转换、后完成目标”的路线，同时仅以
-较小量级扣除已发生的资源机会成本；成本不得像一级收益一样乘以 1000，否则必要快速转换会在
-到达目标前被提前剪枝。无一级增量 successor tie-break 中，`play_card` 仍保留 v12 的 420
-低置信排序。
+当前 v14 使用未扣成本的一级收益和正式缺口证据保留“先付资源、后完成目标”的路线，最终叶
+仍扣真实资源机会成本。不得为 `play_card/analyze/scan` 等 family 设置固定 successor 分数。
 
-路线搜索中的 `quick_trade` 是正式次级代理，必须执行真实 outcome；纯交换始终亏模，但它可
-作为补足目标资源缺口的第一步或中间步骤。策略比较转换后完成的一级目标价值与路线净资源成本；
-同一 committed state / 一级结果只保留转换次数更少、代理深度更短的来源。当前库存本身仍不是
-一级目标。`pass/end_turn` 也必须执行
-真实后继。focal PASS 叶停在 PASS 必做链之后，不观察新轮；实际对局若最后一个 PASS 后提交
+路线搜索中的 `quick_trade` 是正式次级代理，必须执行真实 outcome；纯交换始终亏模。v14
+只在第一次转换完成全部 mandatory Decision 后直接解锁下一代理，或数据第 6 格已就绪且只缺
+分析能量时，才允许把后续一级收益归因给该转换。卡角同样必须即时产生一级收益、推进真实
+探测器/数据进度，或直接解锁下一代理；不得借用数回合后的无关收益。策略比较转换后完成的一级
+目标价值与路线净资源成本；同一 committed state / 一级结果只保留转换次数更少、代理深度更短
+的来源。当前库存本身仍不是一级目标。`end_turn` 使用一层正式控制反事实；PASS 执行完整必做链。
+focal PASS 叶停在 PASS 必做链之后，不观察新轮；实际对局若最后一个 PASS 后提交
 `end_turn`，收入仍只在随后新轮开始时发生。运行报告记录
 候选数、原始/保留 frontier、beam 剪枝数及 fork/执行/投影/checkpoint/编排总耗时；耗时是
 诊断数据，不属于 outcome 语义，不得影响候选等价性或排序。

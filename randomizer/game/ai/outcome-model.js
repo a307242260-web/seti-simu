@@ -157,6 +157,17 @@
     };
   }
 
+  function dataProgressFacts(publicPlayer) {
+    const progress = publicPlayer?.dataProgress || {};
+    const computerSlots = Array.isArray(progress.computerSlots)
+      ? progress.computerSlots.map(Number).filter(Number.isFinite)
+      : [];
+    return {
+      computerPlacedCount: computerSlots.length,
+      analyzeReady: Boolean(progress.analyzeReady || computerSlots.includes(6)),
+    };
+  }
+
   function createStrategicFacts(source, seatId) {
     const publicPlayer = findPlayer(source, seatId);
     const resources = publicPlayer?.resources || publicPlayer || {};
@@ -168,14 +179,20 @@
       ?? source?.match?.terminal,
     );
     const realizedScore = finiteOrNull(resources.score ?? publicPlayer?.score) ?? 0;
+    const securedEndGameBonus = terminal
+      ? 0
+      : (finiteOrNull(publicPlayer?.securedEndGameBonus) ?? 0);
     return {
       viewerSeatId: String(seatId),
       terminal,
       realizedScore: terminal
         ? (finiteOrNull(publicPlayer?.finalScore) ?? realizedScore)
         : realizedScore,
+      securedEndGameBonus,
       ownedTechIds: ownedTechIds(publicPlayer),
       income: incomeFacts(publicPlayer),
+      dataProgress: dataProgressFacts(publicPlayer),
+      traceCount: countPlayerTraces(source, seatId, publicPlayer).traceCount,
       resourceFacts: {
         credits: finiteOrNull(resources.credits) ?? 0,
         energy: finiteOrNull(resources.energy) ?? 0,
@@ -290,6 +307,9 @@
       terminal,
       scoring: {
         realizedScore,
+        securedEndGameBonus: terminal
+          ? 0
+          : (finiteOrNull(publicPlayer?.securedEndGameBonus) ?? 0),
         officialTerminalScore,
         sourcePath: officialTerminalScore == null
           ? "publicState.players[viewer].score"
@@ -318,6 +338,7 @@
         ) ?? 1,
         finalRoundNumber: 4,
         traceCount: traces.traceCount,
+        dataProgress: dataProgressFacts(publicPlayer),
         alienContacts: traces.alienContacts,
         probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),
         probeGoalRequirements: String(source?.probeRouteRequirements?.playerId) === String(seatId)
@@ -346,6 +367,8 @@
   function deltaProjection(before, after) {
     return {
       realizedScore: after.scoring.realizedScore - before.scoring.realizedScore,
+      securedEndGameBonus:
+        (after.scoring.securedEndGameBonus || 0) - (before.scoring.securedEndGameBonus || 0),
       credits: after.assets.credits - before.assets.credits,
       energy: after.assets.energy - before.assets.energy,
       publicity: after.assets.publicity - before.assets.publicity,

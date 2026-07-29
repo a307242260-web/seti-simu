@@ -604,6 +604,9 @@
         Number(evaluateOptions.maxFrontierPerRoot) || 8,
       );
       const secondaryAgentSearch = evaluateOptions.secondaryAgentSearch || null;
+      const maxExecutionNodes = secondaryAgentSearch
+        ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 4)
+        : maxNodes;
       const focalSeatId = secondaryAgentSearch?.focalSeatId == null
         ? null
         : String(secondaryAgentSearch.focalSeatId);
@@ -687,6 +690,7 @@
       }]));
       const processedNodeKeys = new Set();
       let executedNodeCount = 0;
+      let expandedSearchNodeCount = 0;
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
       let beamPrunedOriginCount = 0;
@@ -719,7 +723,9 @@
           return;
         }
         transpositionHitCount += 1;
-        existing.priority = Math.max(existing.priority, node.priority);
+        if (compareSearchPriorities(node.priority, existing.priority) < 0) {
+          existing.priority = node.priority;
+        }
         const origins = new Map(existing.origins.map((origin) => [originKey(origin), origin]));
         for (const origin of node.origins) {
           const keyForOrigin = originKey(origin);
@@ -757,8 +763,26 @@
         }
       }
 
+      function prioritySortKey(priority) {
+        if (Array.isArray(priority?.sortKey)) return priority.sortKey.map(Number);
+        const numeric = Number(priority);
+        return [Number.isFinite(numeric) ? numeric : 0];
+      }
+
+      function compareSearchPriorities(left, right) {
+        const leftKey = prioritySortKey(left);
+        const rightKey = prioritySortKey(right);
+        const length = Math.max(leftKey.length, rightKey.length);
+        for (let index = 0; index < length; index += 1) {
+          const leftValue = Number.isFinite(leftKey[index]) ? leftKey[index] : 0;
+          const rightValue = Number.isFinite(rightKey[index]) ? rightKey[index] : 0;
+          if (leftValue !== rightValue) return rightValue - leftValue;
+        }
+        return 0;
+      }
+
       function compareNodes(left, right) {
-        return Number(right.priority || 0) - Number(left.priority || 0)
+        return compareSearchPriorities(left.priority, right.priority)
           || String(left.action.actionId).localeCompare(String(right.action.actionId))
           || String(left.key || "").localeCompare(String(right.key || ""));
       }
@@ -774,8 +798,7 @@
             }
           }
           const retained = [...new Set(bestByRoot.values())]
-            .sort(compareNodes)
-            .slice(0, 4);
+            .sort(compareNodes);
           const retainedKeys = new Set(retained.map((node) => node.key));
           for (const node of ordered) {
             if (retainedKeys.has(node.key)) continue;
@@ -829,6 +852,10 @@
             secondaryAgentDepth: origin.proxyDepth || 0,
             quickTradeCount: origin.quickTradeCount || 0,
             secondaryAgentTrace: clone(origin.routeActions || []),
+            rootActionObservation: origin.rootActionObservation || null,
+            rootActionLegalSuccessors: clone(origin.rootActionLegalSuccessors || []),
+            rootActionSettledObservation: origin.rootActionSettledObservation || null,
+            rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
             terminalReason: origin.terminalReason || null,
           } : {}),
         });
@@ -847,6 +874,10 @@
           secondaryAgentDepth: origin.proxyDepth || 0,
           quickTradeCount: origin.quickTradeCount || 0,
           secondaryAgentTrace: clone(origin.routeActions || []),
+          rootActionObservation: origin.rootActionObservation || null,
+          rootActionLegalSuccessors: clone(origin.rootActionLegalSuccessors || []),
+          rootActionSettledObservation: origin.rootActionSettledObservation || null,
+          rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
           terminalReason: "search-frontier",
         };
         const byId = new Map(state.frontierLeaves.map((candidate) => [
@@ -926,13 +957,15 @@
           let branchPriority = 0;
           if (typeof evaluateOptions.getBranchPriority === "function") {
             try {
-              const measured = Number(evaluateOptions.getBranchPriority({
+              const measured = evaluateOptions.getBranchPriority({
                 rootObservation,
                 branchObservation: leafObservation,
                 viewer,
                 currentAction: clone(current),
-              }));
-              branchPriority = Number.isFinite(measured) ? measured : 0;
+              });
+              branchPriority = Array.isArray(measured?.sortKey)
+                ? clone(measured)
+                : (Number.isFinite(Number(measured)) ? Number(measured) : 0);
             } catch (_error) {
               branchPriority = 0;
             }
@@ -992,7 +1025,14 @@
           routeTargetId: null,
         }],
       }));
-      while (frontier.length && executedNodeCount < maxNodes) {
+      function consumesSearchBudget(action) {
+        if (!secondaryAgentSearch) return true;
+        return String(action?.actorId || "") === focalSeatId
+          && action?.phase !== "conditional"
+          && !["end_turn", "pass"].includes(action?.family);
+      }
+
+      while (frontier.length && executedNodeCount < maxExecutionNodes) {
         const sorted = [...frontier].sort(compareNodes);
         const selected = sorted;
         const nextFrontierByKey = new Map();
@@ -1004,7 +1044,12 @@
           if (saturatedOrigins.length) markPruned(saturatedOrigins);
           node.origins = node.origins.filter((origin) => !saturatedOrigins.includes(origin));
           if (!node.origins.length) continue;
-          if (executedNodeCount >= maxNodes) {
+          if (executedNodeCount >= maxExecutionNodes) {
+            markPruned(node.origins);
+            continue;
+          }
+          const budgetedNode = consumesSearchBudget(node.action);
+          if (budgetedNode && expandedSearchNodeCount >= maxNodes) {
             markPruned(node.origins);
             continue;
           }
@@ -1015,6 +1060,7 @@
           }
           processedNodeKeys.add(key);
           executedNodeCount += 1;
+          if (budgetedNode) expandedSearchNodeCount += 1;
           const execution = executeNode(node);
           if (execution.failed) {
             markFailure(node.origins, execution);
@@ -1030,6 +1076,24 @@
             ? clone(current)
             : null;
           for (const origin of node.origins) {
+            if (!origin.rootActionObservation && origin.chain.length === 0) {
+              origin.rootActionObservation = execution.leafObservation;
+              origin.rootActionLegalSuccessors = execution.successors;
+            }
+            if (
+              !origin.rootActionSettledObservation
+              && !execution.awaitingDecision
+              && (
+                origin.chain.length === 0
+                || (
+                  origin.chain.length > 0
+                  && current.phase === "conditional"
+                )
+              )
+            ) {
+              origin.rootActionSettledObservation = execution.leafObservation;
+              origin.rootActionSettledLegalSuccessors = execution.successors;
+            }
             const nextChain = [...origin.chain, current.actionId];
             const originNextProbeAction = nextProbeAction || origin.lastProbeAction;
             let routeTargetId = origin.routeTargetId || null;
@@ -1256,29 +1320,11 @@
                   String(successor.actorId) === focalSeatId
                 ));
                 for (const successor of selectedSuccessors) {
-                  let successorPriority = execution.branchPriority;
-                  if (typeof secondaryAgentSearch.rankSuccessor === "function") {
-                    try {
-                      const ranked = Number(secondaryAgentSearch.rankSuccessor({
-                        focalSeatId,
-                        currentAction: current,
-                        successor,
-                        rootObservation,
-                        branchObservation: execution.leafObservation,
-                        focalProxyDepth: nextProxyDepth,
-                        routeTargetId,
-                        actionChain: nextChain,
-                      }));
-                      if (Number.isFinite(ranked)) successorPriority += ranked;
-                    } catch (_error) {
-                      // Successor ranking is an approximation; execution validity remains authoritative.
-                    }
-                  }
                   mergeNode(nextFrontierByKey, {
                     envelope: execution.childEnvelope,
                     action: successor,
                     depth: 0,
-                    priority: successorPriority,
+                    priority: execution.branchPriority,
                     origins: [{
                       ...origin,
                       chain: nextChain,
@@ -1378,7 +1424,9 @@
       lastCounterfactualDiagnostics = deepFreeze({
         candidateCount: legalActions.length,
         executedNodeCount,
+        expandedSearchNodeCount,
         maxNodes,
+        maxExecutionNodes,
         maxDepth,
         maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
         secondaryAgentSearch: Boolean(secondaryAgentSearch),

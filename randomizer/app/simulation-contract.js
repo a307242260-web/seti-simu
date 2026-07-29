@@ -124,6 +124,14 @@ function sanitizeCard(card) {
 
 function sanitizePublicPlayer(player, finalScoreSummary) {
   const resources = player?.resources || {};
+  const placedData = Array.isArray(player?.dataState?.placedTokens)
+    ? player.dataState.placedTokens
+    : [];
+  const computerDataSlots = placedData
+    .filter((token) => token?.placementKind !== "blueBonus")
+    .map((token) => Number(token?.placementSlot))
+    .filter(Number.isFinite)
+    .sort((left, right) => left - right);
   const summary = finalScoreSummary && typeof finalScoreSummary === "object"
     ? finalScoreSummary
     : { totalScore: finalScoreSummary };
@@ -147,6 +155,11 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
       ? player.reservedCards.length
       : Math.max(0, Math.round(Number(player?.reservedCount) || 0)),
     completedTaskCount: Object.values(player?.taskState || {}).filter(Boolean).length,
+    dataProgress: {
+      computerSlots: computerDataSlots,
+      blueBonusCount: placedData.length - computerDataSlots.length,
+      analyzeReady: computerDataSlots.includes(6),
+    },
     techState: clone(player?.techState || {}),
     income: clone(player?.income || {}),
     passed: Boolean(player?.passed),

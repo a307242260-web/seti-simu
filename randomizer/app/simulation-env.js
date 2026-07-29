@@ -16,6 +16,8 @@ const {
 } = require("./simulation-contract");
 const outcomeModel = require("../game/ai/outcome-model");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
+const endGameScoring = require("../game/end-game-scoring");
+const cardEffects = require("../game/cards/effects");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
 const REPLAY_SCHEMA_VERSION = "seti-rl-replay-v1";
@@ -194,7 +196,24 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       passedPlayerIds: [...(turn.passedPlayerIds || [])],
       completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
       activePlayerIds: [...(turn.activePlayerIds || [])],
-      players: (playersState.players || []).map((player) => sanitizePublicPlayer(player, null)),
+      players: (playersState.players || []).map((player) => {
+        const publicPlayer = sanitizePublicPlayer(player, null);
+        const breakdown = endGameScoring.computePlayerFinalScore({
+          ...state,
+          finalScoring: clone(state.finalScoring),
+          players: playersState.players || [],
+          currentPlayer: player,
+          cardEffects,
+          getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(
+            card,
+            cardEffects.getCardModel(card)?.cardType,
+          ),
+        }, player);
+        return {
+          ...publicPlayer,
+          securedEndGameBonus: breakdown.totalScore - breakdown.baseScore,
+        };
+      }),
       board: {
         rockets: clone(state.pieces?.rockets || []),
         planets: clone(state.planets || {}),
@@ -269,7 +288,6 @@ function createSimulationEnv() {
         maxProxyDepth: options.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
-        rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
       } : null,
       getBranchPriority({ rootObservation, branchObservation, currentAction }) {
@@ -639,15 +657,29 @@ function createSimulationEnv() {
       };
       const evaluatedActions = initialSetupBoundary
         ? initialSetupOutcomeActions(beforeActions, beforeObservation)
-        : beforeActions;
-      const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
-        evaluateActionOutcomes.call(this, evaluatedActions, {
+        : policyOutcomeActions(beforeActions, beforeObservation);
+      const controlActions = initialSetupBoundary
+        ? []
+        : beforeActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));
+      const strategicOutcomes = evaluatedActions.length
+        ? evaluateActionOutcomes.call(this, evaluatedActions, {
           maxDepth: initialSetupBoundary ? 6 : 15,
           maxLeaves: initialSetupBoundary ? 1 : 8,
           maxNodes: initialSetupBoundary ? 12 : 128,
           secondaryAgentSearch: !initialSetupBoundary,
           maxProxyDepth: 15,
-        }),
+        })
+        : [];
+      const controlOutcomes = controlActions.length
+        ? evaluateActionOutcomes.call(this, controlActions, {
+          maxDepth: 1,
+          maxLeaves: 1,
+          maxNodes: controlActions.length,
+          secondaryAgentSearch: false,
+        })
+        : [];
+      const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
+        [...strategicOutcomes, ...controlOutcomes],
         outcomeOptions,
       );
       const actionOutcomes = completePolicyOutcomeSet(

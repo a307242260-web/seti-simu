@@ -12,9 +12,10 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v2";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v3";
+  const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
-  const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["quick_trade"]));
+  const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn"]));
   const DEFAULT_PARAMETERS = Object.freeze({
     parameterVersion: PARAMETER_VERSION,
     searchDepth: 15,
@@ -36,11 +37,6 @@
     ordinaryCards: 1,
     alienCards: 1,
   });
-  const ROLLOUT_FAMILY_PRIORITY = Object.freeze([
-    "orbit", "land", "research_tech", "scan", "play_card", "place_data",
-    "analyze", "launch", "industry", "runezu_face_symbol", "card_corner",
-    "quick_trade", "pass", "move",
-  ]);
 
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
@@ -91,6 +87,7 @@
       parameterVersion: PARAMETER_VERSION,
       terminal,
       realizedScore,
+      securedEndGameBonus: terminal ? 0 : finite(projection.scoring.securedEndGameBonus),
       total: realizedScore,
       infrastructure: infrastructureOf(projection),
       resourceFacts: {
@@ -106,6 +103,7 @@
           ? "outcomeProjection.scoring.officialTerminalScore"
           : "outcomeProjection.scoring.realizedScore",
         infrastructure: "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+        securedEndGameBonus: "outcomeProjection.scoring.securedEndGameBonus",
         resources: outcomeModel.ASSET_PATHS,
       },
     });
@@ -154,12 +152,69 @@
     const alreadyLegal = (context?.legalActions || [])
       .filter((candidate) => !["quick_trade", "pass", "end_turn"].includes(candidate?.family))
       .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    const directlyLegal = (leaf?.rootActionSettledLegalSuccessors || [])
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    const projection = context?.observation?.outcomeProjection;
+    const preparesReadyAnalyze = Boolean(
+      projection?.progress?.dataProgress?.analyzeReady
+      && finite(projection?.assets?.energy) === 0
+      && ["credits-for-energy", "cards-for-energy"].includes(action.target?.tradeId),
+    );
     return {
       required: true,
-      supported: !alreadyLegal,
-      reason: alreadyLegal
-        ? "quick-trade-did-not-unlock-next-agent"
-        : "quick-trade-unlocked-next-agent",
+      supported: preparesReadyAnalyze || (directlyLegal && !alreadyLegal),
+      reason: preparesReadyAnalyze
+        ? "quick-trade-prepared-ready-analyze"
+        : directlyLegal && !alreadyLegal
+          ? "quick-trade-directly-unlocked-agent"
+          : "quick-trade-did-not-directly-unlock-agent",
+      nextAgent,
+    };
+  }
+
+  function cardCornerPurpose(context, action, leaf, rootValue, parameters) {
+    if (action?.family !== "card_corner") return { required: false, supported: true };
+    const immediateObservation = leaf?.rootActionObservation;
+    if (!immediateObservation) {
+      return { required: true, supported: false, reason: "card-corner-immediate-outcome-missing" };
+    }
+    const immediateStateValue = valueFromStrategicFacts(
+      outcomeModel.createStrategicFacts(immediateObservation, context.seatId),
+    );
+    const immediateValue = leafValue(
+      rootValue,
+      immediateStateValue,
+      parameters,
+    );
+    if (immediateValue.primaryValue > 0) {
+      return { required: true, supported: true, reason: "card-corner-immediate-primary" };
+    }
+    if (action.payload?.kind === "move") {
+      return { required: true, supported: true, reason: "card-corner-probe-progress" };
+    }
+    if (
+      finite(immediateStateValue.resourceFacts?.availableData)
+      > finite(rootValue.resourceFacts?.availableData)
+    ) {
+      return { required: true, supported: true, reason: "card-corner-data-progress" };
+    }
+    const nextAgent = (leaf?.secondaryAgentTrace || []).find((candidate) => (
+      !["card_corner", "end_turn", "pass"].includes(candidate?.family)
+    ));
+    if (!nextAgent) {
+      return { required: true, supported: false, reason: "card-corner-no-followup-agent" };
+    }
+    const nextKey = actionSemanticKey(nextAgent);
+    const rootLegal = (context?.legalActions || [])
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    const immediatelyLegal = (leaf?.rootActionLegalSuccessors || [])
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    return {
+      required: true,
+      supported: immediatelyLegal && !rootLegal,
+      reason: immediatelyLegal && !rootLegal
+        ? "card-corner-directly-unlocked-agent"
+        : "card-corner-did-not-directly-unlock-agent",
       nextAgent,
     };
   }
@@ -195,7 +250,11 @@
   }
 
   function leafValue(rootValue, leafValueState, parameters) {
-    const actualScoreDelta = leafValueState.realizedScore - rootValue.realizedScore;
+    const actualScoreDelta = (
+      leafValueState.realizedScore + finite(leafValueState.securedEndGameBonus)
+    ) - (
+      rootValue.realizedScore + finite(rootValue.securedEndGameBonus)
+    );
     const infrastructure = infrastructureDeltaValue(rootValue, leafValueState, parameters);
     const netAssetSpend = Object.entries(ASSET_OPPORTUNITY_VALUES)
       .reduce((total, [key, unitValue]) => (
@@ -222,6 +281,7 @@
   function valueFromStrategicFacts(facts) {
     return {
       realizedScore: finite(facts.realizedScore),
+      securedEndGameBonus: finite(facts.securedEndGameBonus),
       resourceFacts: { ...(facts.resourceFacts || {}) },
       infrastructure: {
         ownedTechIds: [...(facts.ownedTechIds || [])].sort(),
@@ -356,6 +416,14 @@
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
     if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
+    const cornerPurpose = cardCornerPurpose(
+      context,
+      action,
+      best.leaf,
+      rootValue,
+      parameters,
+    );
+    if (!cornerPurpose.supported) return unavailable(outcome, cornerPurpose.reason);
     const control = CONTROL_FAMILIES.has(action?.family);
     const conditional = action?.phase === "conditional";
     const selectable = best.strategicValue.total > 0 || control || conditional;
@@ -376,6 +444,7 @@
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
       quickTradePurpose: tradePurpose.required ? tradePurpose : null,
+      cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
       techValue: best.strategicValue.infrastructure.techValue,
       gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
@@ -390,6 +459,7 @@
         best.strategicValue.infrastructure.techValue > 0 ? "strategic-goal-tech" : null,
         best.strategicValue.infrastructure.incomeValue > 0 ? "strategic-goal-income" : null,
         tradePurpose.required ? tradePurpose.reason : null,
+        cornerPurpose.required ? cornerPurpose.reason : null,
         conditional ? "required-standard-decision" : null,
         control ? "turn-control" : null,
       ].filter(Boolean),
@@ -455,52 +525,63 @@
     const gapReduction = matchedRoot && branchSameRoute
       ? Math.max(0, gapSize(matchedRoot) - gapSize(branchSameRoute))
       : 0;
-    return strategicValue.primaryValue * 1000
-      - strategicValue.opportunityCost * 10
-      + finite(matchedRoot?.targetBenefit?.score) * 100
-      + gapReduction * 10
-      + finite(branchGoal?.targetBenefit?.score)
-      + Number(Boolean(branchGoal) && isAffordable(branchGoal)) * 2
-      - finite(branchGoal?.required?.movementSteps) / 100;
-  }
-
-  function rankSecondaryAgentSuccessor(input = {}, parametersInput = {}) {
-    const successor = input.successor;
-    if (String(successor?.actorId || "") !== String(input.focalSeatId || "")) return 0;
-    const rootFacts = outcomeModel.createStrategicFacts(input.rootObservation, input.focalSeatId);
-    const branchFacts = outcomeModel.createStrategicFacts(input.branchObservation, input.focalSeatId);
-    const strategicValue = evaluateStrategicFactsBreakdown(
-      rootFacts,
-      branchFacts,
-      parametersInput,
+    const rootPlaced = finite(rootFacts.dataProgress?.computerPlacedCount);
+    const branchPlaced = finite(branchFacts.dataProgress?.computerPlacedCount);
+    const rootDataGap = Math.max(
+      0,
+      6 - rootPlaced - finite(rootFacts.resourceFacts?.availableData),
     );
-    if (successor.family === "pass") return strategicValue.total > 0 ? 900 : -900;
-    if (successor.family === "end_turn") return 100;
-    const requirements = (rawProbeRequirements(input.branchObservation)?.candidates || [])
-      .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId);
-    const matched = requirements
-      .filter((goal) => actionMatchesProbeStep(successor, goal.nextStep))
-      .sort(compareGoals)[0] || null;
-    if (matched) return 500 + finite(matched.targetBenefit?.score) * 10;
-    const familyPriority = {
-      orbit: 350,
-      land: 350,
-      research_tech: 250,
-      scan: 220,
-      play_card: 420,
-      place_data: 180,
-      analyze: 180,
-      launch: 160,
-      move: 140,
-      industry: 120,
-      runezu_face_symbol: 100,
-      card_corner: 80,
-      quick_trade: 0,
+    const branchDataGap = Math.max(
+      0,
+      6 - branchPlaced - finite(branchFacts.resourceFacts?.availableData),
+    );
+    return {
+      schemaVersion: "seti-secondary-search-priority-v1",
+      sortKey: [
+        strategicValue.primaryValue,
+        finite(matchedRoot?.targetBenefit?.score),
+        gapReduction,
+        Math.max(0, finite(branchFacts.traceCount) - finite(rootFacts.traceCount)),
+        Math.max(0, rootDataGap - branchDataGap),
+        Math.max(0, branchPlaced - rootPlaced),
+        Number(Boolean(branchFacts.dataProgress?.analyzeReady)
+          && finite(branchFacts.resourceFacts?.energy) > 0),
+        -strategicValue.opportunityCost,
+        finite(branchGoal?.targetBenefit?.score),
+        -finite(branchGoal?.required?.movementSteps),
+      ],
     };
-    return familyPriority[successor.family] || 0;
   }
 
   function selectSecondaryAgentRouteTarget(input = {}) {
+    if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
+      return input.currentAction?.family === "analyze"
+        ? null
+        : DATA_ANALYZE_ROUTE_TARGET;
+    }
+    const branchFacts = outcomeModel.createStrategicFacts(
+      input.branchObservation,
+      input.focalSeatId,
+    );
+    const rootFacts = outcomeModel.createStrategicFacts(
+      input.rootObservation,
+      input.focalSeatId,
+    );
+    if (
+      String(input.currentAction?.actorId || "") === String(input.focalSeatId || "")
+      && (
+        input.currentAction?.family === "place_data"
+        || branchFacts.dataProgress?.analyzeReady
+        || finite(branchFacts.resourceFacts?.availableData)
+          > finite(rootFacts.resourceFacts?.availableData)
+      )
+      && (
+        finite(branchFacts.resourceFacts?.availableData) > 0
+        || finite(branchFacts.dataProgress?.computerPlacedCount) > 0
+      )
+    ) {
+      return DATA_ANALYZE_ROUTE_TARGET;
+    }
     const branchGoals = rawProbeRequirements(input.branchObservation)?.candidates || [];
     if (
       input.routeTargetId
@@ -527,6 +608,30 @@
     const focalSeatId = String(input.focalSeatId || "");
     const actorId = String(successors[0]?.actorId || "");
     if (actorId === focalSeatId) {
+      if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
+        const analyze = successors.find((action) => action.family === "analyze");
+        if (analyze) return [analyze];
+        const placeData = successors.find((action) => action.family === "place_data");
+        if (placeData) return [placeData];
+        const energyTrade = successors.find((action) => (
+          action.family === "quick_trade"
+          && action.target?.tradeId === "credits-for-energy"
+        ));
+        const branchFacts = outcomeModel.createStrategicFacts(
+          input.branchObservation,
+          input.focalSeatId,
+        );
+        if (
+          energyTrade
+          && branchFacts.dataProgress?.analyzeReady
+          && finite(branchFacts.resourceFacts?.energy) === 0
+        ) return [energyTrade];
+        const endTurn = successors.find((action) => action.family === "end_turn");
+        if (endTurn) return [endTurn];
+        const pass = successors.find((action) => action.family === "pass");
+        if (pass) return [pass];
+        return successors.filter((action) => !["quick_trade", "pass"].includes(action.family));
+      }
       const goals = (rawProbeRequirements(input.branchObservation)?.candidates || [])
         .filter((goal) => !input.routeTargetId || goal.targetId === input.routeTargetId);
       if (input.routeTargetId && goals.length) {
@@ -545,17 +650,11 @@
       ));
     }
     if (successors[0]?.phase === "conditional") return successors.slice(0, 1);
+    const pass = successors.find((action) => action.family === "pass");
+    if (pass) return [pass];
     const endTurn = successors.find((action) => action.family === "end_turn");
     if (endTurn) return [endTurn];
-    if (Number(input.opponentProxyDepth || 0) >= 8) {
-      const pass = successors.find((action) => action.family === "pass");
-      if (pass) return [pass];
-    }
-    for (const family of ROLLOUT_FAMILY_PRIORITY) {
-      const selected = successors.find((action) => action.family === family);
-      if (selected) return [selected];
-    }
-    const error = new Error(`冻结 rollout 无法选择 opponent action: ${actorId || "<missing>"}`);
+    const error = new Error(`零规划 rollout 无法推进 opponent: ${actorId || "<missing>"}`);
     error.code = "SECONDARY_AGENT_ROLLOUT_NO_ACTION";
     throw error;
   }
@@ -577,7 +676,6 @@
     evaluateStrategicFactsPriority,
     evaluateStrategicFactsBreakdown,
     evaluateSecondaryAgentSearchPriority,
-    rankSecondaryAgentSuccessor,
     selectSecondaryAgentRouteTarget,
     evaluateAction: evaluateOutcome,
     evaluateOutcome,

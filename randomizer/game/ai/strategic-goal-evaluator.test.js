@@ -12,6 +12,9 @@ function observation({
   income = {},
   ownedTechIds = [],
   roundNumber = 1,
+  dataProgress = null,
+  alienSlots = [],
+  securedEndGameBonus = 0,
 } = {}) {
   return outcomeModel.createDecisionObservation({
     publicState: {
@@ -32,11 +35,156 @@ function observation({
           disabledTiles: {},
           blueBoardSlots: {},
         },
+        ...(dataProgress ? { dataProgress } : {}),
+        securedEndGameBonus,
       }],
-      board: {},
+      board: { aliens: { slots: alienSlots } },
     },
     selfState: { id: seatId, hand: [] },
   }, { seatId, stateVersion: 1, decisionVersion: 1 });
+}
+
+{
+  const result = evaluate(
+    action("play-card:secured-final-score", "play_card"),
+    observation({ score: 10, securedEndGameBonus: 0 }),
+    observation({ score: 10, securedEndGameBonus: 8 }),
+  );
+  assert.equal(result.actualScoreDelta, 8,
+    "正式终局计分器已经锁定的卡牌分必须作为一级分数，不等待整局 terminal");
+  assert.equal(result.score, 8);
+}
+
+{
+  const root = observation({
+    dataProgress: { computerSlots: [1, 2, 3, 4], analyzeReady: false },
+  });
+  const closer = observation({
+    dataProgress: { computerSlots: [1, 2, 3, 4, 5], analyzeReady: false },
+  });
+  const unrelated = observation({
+    resources: { credits: 1 },
+    dataProgress: { computerSlots: [1, 2, 3, 4], analyzeReady: false },
+  });
+  const place = action("place-data:slot-5", "place_data");
+  const closerPriority = evaluator.evaluateSecondaryAgentSearchPriority({
+      rootObservation: root,
+      branchObservation: closer,
+      focalSeatId: seatId,
+      currentAction: place,
+    });
+  const unrelatedPriority = evaluator.evaluateSecondaryAgentSearchPriority({
+      rootObservation: root,
+      branchObservation: unrelated,
+      focalSeatId: seatId,
+      currentAction: action("industry:credit", "industry"),
+    });
+  const firstDifferentIndex = closerPriority.sortKey.findIndex(
+    (value, index) => value !== unrelatedPriority.sortKey[index],
+  );
+  assert.ok(
+    firstDifferentIndex >= 0
+      && closerPriority.sortKey[firstDifferentIndex] > unrelatedPriority.sortKey[firstDifferentIndex],
+    "填入下一计算机槽必须作为 beam 路线进度，但不能进入一级叶值",
+  );
+  assert.equal(
+    evaluator.evaluateStrategicFactsPriority(
+      outcomeModel.createStrategicFacts(root, seatId),
+      outcomeModel.createStrategicFacts(closer, seatId),
+    ),
+    0,
+    "数据槽进度不得直接折算为分数、科技或收入",
+  );
+}
+
+{
+  const corner = {
+    ...action("corner:publicity", "card_corner"),
+    payload: { kind: "resource" },
+  };
+  const before = observation({ resources: { publicity: 0 } });
+  const immediate = observation({ resources: { publicity: 1 } });
+  const distant = observation({
+    resources: { publicity: 1 },
+    score: 6,
+  });
+  const result = evaluator.evaluateAction({
+    seatId,
+    legalActions: [corner],
+    actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+      actionId: corner.actionId,
+      status: "settled",
+      confidence: "high",
+      rootObservation: before,
+      leaves: [{
+        leafId: "unrelated-publicity-corner",
+        actionChain: [corner.actionId, "land:distant"],
+        secondaryAgentTrace: [
+          { family: "card_corner", target: corner.target, payload: corner.payload },
+          { family: "land", target: { planetId: "mars" }, payload: {} },
+        ],
+        rootActionObservation: immediate,
+        rootActionLegalSuccessors: [{ family: "end_turn", target: {}, payload: {} }],
+        observation: distant,
+      }],
+    }],
+  }, corner);
+  assert.equal(result.score, null,
+    "只获得宣传的卡角不得把跨回合后的无关登陆收益归因给自己");
+  assert.deepEqual(result.reasonCodes, ["card-corner-did-not-directly-unlock-agent"]);
+}
+
+{
+  const ready = observation({
+    resources: { credits: 4, energy: 0 },
+    dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
+  });
+  const locked = evaluator.selectSecondaryAgentRouteTarget({
+    focalSeatId: seatId,
+    currentAction: { ...action("place-data:slot-6", "place_data"), actorId: seatId },
+    rootObservation: observation(),
+    branchObservation: ready,
+    routeTargetId: null,
+  });
+  assert.equal(locked, "data:analyze", "第6格完成后必须锁定正式分析路线");
+  const energyTrade = {
+    ...action("trade:energy", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-energy" },
+  };
+  const endTurn = { ...action("end-turn", "end_turn"), actorId: seatId };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: ready,
+      legalSuccessors: [endTurn, energyTrade],
+      routeTargetId: locked,
+    }).map((candidate) => candidate.actionId),
+    [energyTrade.actionId],
+    "分析 ready 但缺电时应把换电当作目标手段，而不是提前结束路线",
+  );
+  const analyze = { ...action("analyze:data", "analyze"), actorId: seatId };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: observation({
+        resources: { credits: 2, energy: 1 },
+        dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
+      }),
+      legalSuccessors: [endTurn, analyze],
+      routeTargetId: locked,
+    }).map((candidate) => candidate.actionId),
+    [analyze.actionId],
+    "跨回合返回本席后必须继续正式分析",
+  );
+  assert.equal(evaluator.selectSecondaryAgentRouteTarget({
+    focalSeatId: seatId,
+    currentAction: analyze,
+    rootObservation: ready,
+    branchObservation: observation(),
+    routeTargetId: locked,
+  }), null, "分析提交后数据目标应释放，继续搜索后续真实一级收益");
 }
 
 function action(actionId, family = "scan") {
@@ -62,6 +210,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
               { family: "quick_trade", target: candidateAction.target, payload: {} },
               { family: "orbit", target: { planetId: "mars" }, payload: {} },
             ]
+            : [],
+          rootActionSettledLegalSuccessors: candidateAction.family === "quick_trade"
+            ? [{ family: "orbit", target: { planetId: "mars" }, payload: {} }]
             : [],
           observation: after,
         }]
@@ -134,6 +285,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
             { family: "quick_trade", target: { tradeId: "credits-for-energy" }, payload: {} },
             { family: "orbit", target: { planetId: "mars" }, payload: {} },
           ],
+          rootActionSettledLegalSuccessors: [
+            { family: "orbit", target: { planetId: "mars" }, payload: {} },
+          ],
           observation: after,
         },
         {
@@ -143,6 +297,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
           secondaryAgentDepth: 2,
           secondaryAgentTrace: [
             { family: "quick_trade", target: { tradeId: "credits-for-energy" }, payload: {} },
+            { family: "orbit", target: { planetId: "mars" }, payload: {} },
+          ],
+          rootActionSettledLegalSuccessors: [
             { family: "orbit", target: { planetId: "mars" }, payload: {} },
           ],
           observation: after,
@@ -180,13 +337,14 @@ function evaluate(candidateAction, before, after, status = "settled") {
           { family: "quick_trade", target: { tradeId: "credits-for-energy" }, payload: {} },
           { family: placeData.family, target: placeData.target, payload: placeData.payload },
         ],
+        rootActionSettledLegalSuccessors: [placeData],
         observation: after,
       }],
     }],
   }, trade);
   assert.equal(result.score, null,
     "转换后的下一代理在转换前已经合法时，不能把遥远路线收益反复归因给当前转换");
-  assert.deepEqual(result.reasonCodes, ["quick-trade-did-not-unlock-next-agent"]);
+  assert.deepEqual(result.reasonCodes, ["quick-trade-did-not-directly-unlock-agent"]);
 }
 
 {
