@@ -322,7 +322,7 @@
       return terminal;
     }
 
-    function advanceSession(result, autoDrain = true) {
+    function advanceSession(result, autoDrain = true, responseOptions = {}) {
       if (!result?.ok) return finishIfTerminal() || deepFreeze(clone(result));
       if (activeSession && autoDrain && !TERMINAL_PHASES.has(activeSession.phase)) {
         const drained = runtime.drain(activeSession);
@@ -330,7 +330,7 @@
       }
       return finishIfTerminal() || deepFreeze({
         ok: true,
-        projection: projection(),
+        ...(responseOptions.skipProjection === true ? {} : { projection: projection() }),
         journal: clone(activeSession?.journal || null),
       });
     }
@@ -365,7 +365,9 @@
       activeSession = dispatched.session;
       activeFamily = action.family;
       publish({ source: "session", event: { type: "opened", family: activeFamily } });
-      const result = advanceSession(dispatched, submitOptions.autoDrain !== false);
+      const result = advanceSession(dispatched, submitOptions.autoDrain !== false, {
+        skipProjection: submitOptions.skipProjection === true,
+      });
       return result;
     }
 
@@ -419,13 +421,17 @@
         createProductionEffectGroup,
         { source: "browser-quick-input", ...clone(submitOptions.metadata || {}) },
       );
-      return advanceSession(result, submitOptions.autoDrain !== false);
+      return advanceSession(result, submitOptions.autoDrain !== false, {
+        skipProjection: submitOptions.skipProjection === true,
+      });
     }
 
     function submitDecision(submission, submitOptions = {}) {
       if (!activeSession) return fail("RULE_COMPOSITION_SESSION_REQUIRED", "当前没有等待输入的规则 Session");
       const resolved = runtime.resolveDecision(activeSession, clone(submission));
-      return advanceSession(resolved, submitOptions.autoDrain !== false);
+      return advanceSession(resolved, submitOptions.autoDrain !== false, {
+        skipProjection: submitOptions.skipProjection === true,
+      });
     }
 
     function enumerateActions(request = {}) {
@@ -967,8 +973,8 @@
               decisionVersion: inspection.session.decision.decisionVersion,
               ownerId: inspection.session.decision.ownerId,
               choice: current,
-            })
-            : composition.inputPort.submitAction(current);
+            }, { skipProjection: true })
+            : composition.inputPort.submitAction(current, { skipProjection: true });
           timing.executionMilliseconds += now() - executionStartedAt;
           if (!result?.ok) {
             const failure = result?.failure || result?.session?.failure || null;

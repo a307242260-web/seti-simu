@@ -707,7 +707,9 @@ function createProductionHostComposition(options = {}) {
       finalScoring: state.finalScoring,
       turn: state.turn,
       match: state.match,
-      stateVersion: composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion || 0,
+      stateVersion: state.meta?.stateVersion
+        ?? composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion
+        ?? 0,
       decisionVersion: state.match.decisionVersion || 0,
       random: options.random,
       blindDrawCard(player) {
@@ -865,6 +867,7 @@ function createProductionHostComposition(options = {}) {
       return {
         actorId: explicit?.actorId || root.turn.currentPlayerId || null,
         stateVersion: explicit?.stateVersion
+          ?? root.meta?.stateVersion
           ?? composition?.stateSourcePort?.getSnapshot()?.meta?.stateVersion
           ?? 0,
         decisionVersion: explicit?.decisionVersion ?? root.match.decisionVersion ?? 0,

@@ -57,7 +57,10 @@ assert.equal(families.has("choose_card"), true);
 const start = composition.inputPort.enumerateActions({})
   .find((action) => action.target?.kind === "start_initial_setup");
 assert.ok(start);
-assert.equal(composition.inputPort.submitAction(start).ok, true);
+const startResult = composition.inputPort.submitAction(start);
+assert.equal(startResult.ok, true);
+assert.ok(startResult.projection,
+  "正常 Browser/Simulation 提交仍必须返回 projection；省略只允许反事实内部调用");
 
 const viewer = {
   viewerId: `viewer:${start.actorId}`,

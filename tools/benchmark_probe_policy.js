@@ -7,6 +7,27 @@ const path = require("node:path");
 const ITERATIONS = 12;
 const SINGLE_DECISION_LIMIT_MS = 10000;
 const PARENT_TIMEOUT_MS = 150000;
+const COVERAGE_FIELDS = Object.freeze([
+  "candidateCount",
+  "executedNodeCount",
+  "expandedSearchNodeCount",
+  "rootTargetCount",
+  "maxFrontierSize",
+  "maxRetainedFrontierSize",
+  "transpositionHitCount",
+  "prunedNodeCount",
+  "beamPrunedOriginCount",
+]);
+const TIMING_FIELDS = Object.freeze([
+  "totalMilliseconds",
+  "forkMilliseconds",
+  "executionMilliseconds",
+  "projectionMilliseconds",
+  "checkpointMilliseconds",
+  "identityMilliseconds",
+  "frontierMilliseconds",
+  "orchestrationMilliseconds",
+]);
 
 function drainOpeningDecisions(environment) {
   const selectionProgress = new Map();
@@ -47,6 +68,7 @@ async function runWorker() {
   const environment = createSimulationEnv();
   const samples = [];
   const memoryDeltas = [];
+  const counterfactualSamples = [];
   try {
     environment.reset({
       seed: "seti-104-official-v1",
@@ -62,9 +84,11 @@ async function runWorker() {
       const startedAt = performance.now();
       environment.runHeuristicPolicyDecision();
       const elapsed = performance.now() - startedAt;
+      const counterfactual = environment.getCounterfactualDiagnostics();
       global.gc?.();
       samples.push(elapsed);
       memoryDeltas.push(process.memoryUsage().heapUsed - heapBefore);
+      counterfactualSamples.push(counterfactual);
       if (elapsed > SINGLE_DECISION_LIMIT_MS) {
         throw new Error(`单次 Policy ${elapsed.toFixed(2)}ms 超过 ${SINGLE_DECISION_LIMIT_MS}ms 门禁`);
       }
@@ -72,11 +96,31 @@ async function runWorker() {
     const sorted = [...samples].sort((left, right) => left - right);
     const sortedMemory = [...memoryDeltas].sort((left, right) => left - right);
     const percentile = (ratio) => sorted[Math.ceil(sorted.length * ratio) - 1];
+    const coverage = Object.fromEntries(COVERAGE_FIELDS.map((field) => [
+      field,
+      counterfactualSamples[0]?.[field] ?? null,
+    ]));
+    for (const sample of counterfactualSamples.slice(1)) {
+      const current = Object.fromEntries(COVERAGE_FIELDS.map((field) => [
+        field,
+        sample?.[field] ?? null,
+      ]));
+      if (JSON.stringify(current) !== JSON.stringify(coverage)) {
+        throw new Error(`重复 checkpoint 的搜索覆盖发生漂移: ${JSON.stringify({ coverage, current })}`);
+      }
+    }
+    const medianCounterfactualTiming = Object.fromEntries(TIMING_FIELDS.map((field) => {
+      const values = counterfactualSamples
+        .map((sample) => Number(sample?.[field]) || 0)
+        .sort((left, right) => left - right);
+      return [field, values[Math.floor(values.length / 2)]];
+    }));
     process.stdout.write(`${JSON.stringify({
       schemaVersion: "seti-probe-policy-benchmark-v1",
       iterations: ITERATIONS,
       setupSteps,
-      candidateCount: environment.getCounterfactualDiagnostics()?.candidateCount || 0,
+      coverage,
+      medianCounterfactualTiming,
       medianMilliseconds: percentile(0.5),
       p90Milliseconds: percentile(0.9),
       maxMilliseconds: Math.max(...samples),
