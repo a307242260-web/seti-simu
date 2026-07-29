@@ -156,7 +156,19 @@
                 outcomeModel.createStrategicFacts(branchObservation, seatId),
               );
             };
-            const evaluatedActions = boundary.legalActions;
+            const rootObservation = outcomeModel.createDecisionObservation(
+              projectionAdapter.projectSource({
+                viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
+              }),
+              {
+                seatId,
+                stateVersion: boundary.stateVersion,
+                decisionVersion: boundary.decisionVersion,
+              },
+            );
+            const evaluatedActions = boundary.legalActions.filter((action) => (
+              expectedScoreEvaluator.requiresRootCounterfactual(action, rootObservation)
+            ));
             const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
               ruleComposition.counterfactualPort.evaluate(evaluatedActions, {
                 viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
@@ -172,6 +184,7 @@
                   selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
                   rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
                   selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
+                  countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
                 },
                 getBranchPriority,
               }),
@@ -185,17 +198,8 @@
               outcome.actionId,
               outcome,
             ]));
-            const rootObservation = evaluatedOutcomes[0]?.rootObservation
-              || outcomeModel.createDecisionObservation(
-                projectionAdapter.projectSource({
-                  viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-                }),
-                {
-                  seatId,
-                  stateVersion: boundary.stateVersion,
-                  decisionVersion: boundary.decisionVersion,
-                },
-              );
+            const evaluatedRootObservation = evaluatedOutcomes[0]?.rootObservation
+              || rootObservation;
             const outcomes = boundary.legalActions.map((action) => (
               byActionId.get(action.actionId) || {
                 schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
@@ -204,7 +208,7 @@
                 confidence: "none",
                 code: "STRATEGIC_GOAL_NOT_EVALUATED",
                 reasonCodes: ["strategic-goal-not-evaluated"],
-                rootObservation,
+                rootObservation: evaluatedRootObservation,
                 leaves: [],
               }
             ));

@@ -30,6 +30,9 @@
         return {
           action,
           score: finiteScore(evaluation.score),
+          sortKey: Array.isArray(evaluation.sortKey)
+            ? evaluation.sortKey.map((value) => finiteScore(value) ?? 0)
+            : [finiteScore(evaluation.score) ?? 0],
           status: evaluation.status || null,
           selectable: evaluation.selectable === true,
           priorityClass: Number(evaluation.priorityClass) || 0,
@@ -40,8 +43,16 @@
       entry.selectable && entry.status === "settled" && entry.score != null
     ));
     if (!pool.length) return null;
+    const compareSortKey = (left, right) => {
+      const length = Math.max(left.length, right.length);
+      for (let index = 0; index < length; index += 1) {
+        const delta = (right[index] ?? 0) - (left[index] ?? 0);
+        if (delta) return delta;
+      }
+      return 0;
+    };
     return pool.sort((left, right) => (
-      (right.score ?? 0) - (left.score ?? 0)
+      compareSortKey(left.sortKey, right.sortKey)
       || right.priorityClass - left.priorityClass
       || String(left.action.actionId).localeCompare(String(right.action.actionId))
     ))[0]?.action || null;

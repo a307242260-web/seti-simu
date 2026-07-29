@@ -1025,8 +1025,13 @@
           routeTargetId: null,
         }],
       }));
-      function consumesSearchBudget(action) {
+      function consumesSearchBudget(node) {
+        const action = node?.action;
         if (!secondaryAgentSearch) return true;
+        if (typeof secondaryAgentSearch.countsGoal === "function") {
+          return String(action?.actorId || "") === focalSeatId
+            && secondaryAgentSearch.countsGoal(action);
+        }
         return String(action?.actorId || "") === focalSeatId
           && action?.phase !== "conditional"
           && !["end_turn", "pass"].includes(action?.family);
@@ -1048,7 +1053,7 @@
             markPruned(node.origins);
             continue;
           }
-          const budgetedNode = consumesSearchBudget(node.action);
+          const budgetedNode = consumesSearchBudget(node);
           if (budgetedNode && expandedSearchNodeCount >= maxNodes) {
             markPruned(node.origins);
             continue;
@@ -1069,9 +1074,14 @@
           const current = execution.current;
           const currentIsFocal = secondaryAgentSearch
             && String(current.actorId) === focalSeatId;
-          const currentIsProxy = secondaryAgentSearch
+          const currentIsRouteAction = secondaryAgentSearch
             && current.phase !== "conditional"
             && !["end_turn", "pass"].includes(current.family);
+          const currentCompletesSecondaryGoal = currentIsRouteAction
+            && (
+              typeof secondaryAgentSearch.countsGoal !== "function"
+              || secondaryAgentSearch.countsGoal(current)
+            );
           const nextProbeAction = ["launch", "move", "orbit", "land"].includes(current.family)
             ? clone(current)
             : null;
@@ -1108,20 +1118,22 @@
                   rootObservation,
                   branchObservation: execution.leafObservation,
                   routeTargetId,
+                  focalProxyDepth: origin.proxyDepth,
+                  maxProxyDepth,
                 }) || null;
               } catch (_error) {
                 routeTargetId = origin.routeTargetId || null;
               }
             }
             const nextProxyDepth = origin.proxyDepth + (
-              currentIsFocal && currentIsProxy ? 1 : 0
+              currentIsFocal && currentCompletesSecondaryGoal ? 1 : 0
             );
             const nextQuickTradeCount = Number(origin.quickTradeCount || 0) + (
               currentIsFocal && current.family === "quick_trade" ? 1 : 0
             );
             const nextRouteActions = [
               ...(origin.routeActions || []),
-              ...(currentIsFocal && currentIsProxy ? [{
+              ...(currentIsFocal && currentIsRouteAction ? [{
                 actionId: current.actionId,
                 family: current.family,
                 target: clone(current.target || {}),
@@ -1174,6 +1186,7 @@
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
                     routeTargetId,
+                    maxProxyDepth,
                   }) || [];
                 } catch (error) {
                   markFailure([origin], {
@@ -1272,10 +1285,11 @@
                     focalProxyDepth: nextProxyDepth,
                     opponentProxyDepth: currentIsFocal || current.family === "end_turn"
                       ? 0
-                      : origin.opponentProxyDepth + (currentIsProxy ? 1 : 0),
+                      : origin.opponentProxyDepth + (currentCompletesSecondaryGoal ? 1 : 0),
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
                     routeTargetId,
+                    maxProxyDepth,
                   }) || [];
                 } catch (error) {
                   markFailure([origin], {
@@ -1338,7 +1352,7 @@
                         : (
                           currentIsFocal || current.family === "end_turn"
                             ? 0
-                            : origin.opponentProxyDepth + (currentIsProxy ? 1 : 0)
+                            : origin.opponentProxyDepth + (currentCompletesSecondaryGoal ? 1 : 0)
                         ),
                       focalPassStarted,
                       routeTargetId,

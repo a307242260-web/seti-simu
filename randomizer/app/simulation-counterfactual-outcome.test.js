@@ -245,9 +245,21 @@ try {
     ));
     assert.equal(quickTradeOutcomes.length > 0, true,
       "固定盘面必须覆盖可执行快速交易");
-    assert.equal(quickTradeOutcomes.every((outcome) => (
+    const cardGoalOutcomes = quickTradeOutcomes.filter((outcome) => {
+      const trade = actions.find((action) => action.actionId === outcome.actionId);
+      return Number(trade?.payload?.gain?.handSize || 0) > 0
+        && Number(trade?.payload?.cost?.handSize || 0) === 0;
+    });
+    assert.equal(cardGoalOutcomes.length > 0, true, "固定盘面必须覆盖换牌后正式打牌目标");
+    assert.equal(cardGoalOutcomes.every((outcome) => (
       outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
-    )), true, "快速交易必须作为次级代理进入跨行动搜索，不能沿用 v9 单 Action 剪枝");
+    )), true, "钱/电/宣传换牌必须绑定 card:play 目标进入搜索");
+    assert.equal(quickTradeOutcomes.every((outcome) => {
+      if (outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED") return true;
+      const trade = actions.find((action) => action.actionId === outcome.actionId);
+      return Number(trade?.payload?.gain?.handSize || 0) > 0
+        || Number(trade?.payload?.gain?.energy || 0) > 0;
+    }), true, "被评估的快速转换必须由打牌或 ready 分析目标证明用途");
     const controlOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       ["pass", "end_turn"].includes(
         actions.find((action) => action.actionId === outcome.actionId)?.family,

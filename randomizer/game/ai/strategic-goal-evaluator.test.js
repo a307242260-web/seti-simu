@@ -187,6 +187,217 @@ function observation({
   }), null, "分析提交后数据目标应释放，继续搜索后续真实一级收益");
 }
 
+{
+  const probeTargetId = "orbit:mars:planet:";
+  const probeRequirements = {
+    candidates: [{
+      requirementId: "probe-1:orbit:mars",
+      targetId: probeTargetId,
+      required: { credits: 1, energy: 3 },
+      gap: { credits: 0, energy: 1 },
+      targetBenefit: { score: 6 },
+      nextStep: { family: "move", rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+    }],
+  };
+  const branchObservation = {
+    ...observation({ resources: { credits: 5, energy: 2 } }),
+    probeRouteRequirements: probeRequirements,
+  };
+  const creditsForEnergy = {
+    ...action("trade:credits-for-energy", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-energy" },
+    payload: { cost: { credits: 2 }, gain: { energy: 1 } },
+  };
+  const creditsForCard = {
+    ...action("trade:credits-for-card", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-card" },
+    payload: { cost: { credits: 2 }, gain: { handSize: 1 } },
+  };
+  const endTurn = { ...action("end-turn:probe-gap", "end_turn"), actorId: seatId };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation,
+      legalSuccessors: [endTurn, creditsForCard, creditsForEnergy],
+      routeTargetId: probeTargetId,
+    }).map((candidate) => candidate.actionId),
+    [creditsForEnergy.actionId],
+    "锁定探测器目标后，下一步缺电应只选择能严格缩小正式资源缺口的转换",
+  );
+  const rawBranchObservation = {
+    publicState: {
+      players: [{
+        id: seatId,
+        playerId: seatId,
+        resources: { credits: 5, energy: 2 },
+      }],
+    },
+    selfState: { id: seatId, hand: [] },
+    probeRouteRequirements: probeRequirements,
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: rawBranchObservation,
+      legalSuccessors: [endTurn, creditsForCard, creditsForEnergy],
+      routeTargetId: probeTargetId,
+    }).map((candidate) => candidate.actionId),
+    [creditsForEnergy.actionId],
+    "Rule Composition 原始分支投影也必须读取真实资源，不能把5信用误判成0",
+  );
+
+  const noCreditSlackObservation = {
+    ...observation({ resources: { credits: 1, energy: 2 } }),
+    probeRouteRequirements: probeRequirements,
+  };
+  const cardsForEnergy = {
+    ...action("trade:cards-for-energy", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "cards-for-energy" },
+    payload: { cost: { handSize: 2 }, gain: { energy: 1 } },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: noCreditSlackObservation,
+      legalSuccessors: [endTurn, creditsForEnergy, cardsForEnergy],
+      routeTargetId: probeTargetId,
+    }).map((candidate) => candidate.actionId),
+    [cardsForEnergy.actionId],
+    "转换不能为了补能量而制造同一探测器目标的信用缺口",
+  );
+
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation,
+      legalSuccessors: [endTurn, creditsForCard],
+      routeTargetId: probeTargetId,
+    }).map((candidate) => candidate.actionId),
+    [endTurn.actionId],
+    "没有转换能缩小既定目标缺口时应结束路线，不能随机消耗资源",
+  );
+}
+
+{
+  const launch = { ...action("launch:route-budget", "launch"), actorId: seatId };
+  const unreachableTarget = "land:neptune:planet:";
+  const reachableTarget = "orbit:mars:planet:";
+  const rootObservation = {
+    ...observation({ resources: { credits: 12, energy: 0 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "launch:land:neptune",
+        targetId: unreachableTarget,
+        required: { credits: 2, energy: 10, movementSteps: 8 },
+        gap: { credits: 0, energy: 10 },
+        targetBenefit: { score: 12, grossEquivalentValue: 12 },
+        nextStep: { family: "launch" },
+      }, {
+        requirementId: "launch:orbit:mars",
+        targetId: reachableTarget,
+        required: { credits: 2, energy: 4, movementSteps: 2 },
+        gap: { credits: 0, energy: 4 },
+        targetBenefit: { score: 8, grossEquivalentValue: 8 },
+        nextStep: { family: "launch" },
+      }],
+    },
+  };
+  const branchObservation = {
+    ...observation({ resources: { credits: 10, energy: 0 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "probe-1:land:neptune",
+        targetId: unreachableTarget,
+        required: { credits: 0, energy: 10, movementSteps: 8 },
+        gap: { credits: 0, energy: 10 },
+        targetBenefit: { score: 12, grossEquivalentValue: 12 },
+        nextStep: { family: "move" },
+      }, {
+        requirementId: "probe-1:orbit:mars",
+        targetId: reachableTarget,
+        required: { credits: 0, energy: 4, movementSteps: 2 },
+        gap: { credits: 0, energy: 4 },
+        targetBenefit: { score: 8, grossEquivalentValue: 8 },
+        nextStep: { family: "move" },
+      }],
+    },
+  };
+  assert.equal(evaluator.selectSecondaryAgentRouteTarget({
+    focalSeatId: seatId,
+    currentAction: launch,
+    rootObservation,
+    branchObservation,
+    routeTargetId: null,
+    focalProxyDepth: 0,
+    maxProxyDepth: 15,
+  }), reachableTarget,
+  "目标选择必须验证正式转换后的资源可达性，不能让资源不足的高分目标挤掉可达目标");
+}
+
+{
+  const unreachableMove = {
+    ...action("move:unreachable", "move"),
+    actorId: seatId,
+    target: { rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+  };
+  const reachableMove = {
+    ...action("move:reachable", "move"),
+    actorId: seatId,
+    target: { rocketId: "probe-1", deltaX: 0, deltaY: 1 },
+  };
+  const branchObservation = {
+    ...observation({ resources: { credits: 12, energy: 1 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "probe-1:land:neptune",
+        targetId: "land:neptune:planet:",
+        required: { credits: 0, energy: 9, movementSteps: 8 },
+        gap: { credits: 0, energy: 8 },
+        targetBenefit: { score: 12 },
+        nextStep: { family: "move", rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+      }, {
+        requirementId: "probe-1:orbit:mars",
+        targetId: "orbit:mars:planet:",
+        required: { credits: 0, energy: 3, movementSteps: 2 },
+        gap: { credits: 0, energy: 2 },
+        targetBenefit: { score: 8 },
+        nextStep: { family: "move", rocketId: "probe-1", deltaX: 0, deltaY: 1 },
+      }],
+    },
+  };
+  assert.deepEqual(new Set(evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation,
+    legalSuccessors: [unreachableMove, reachableMove],
+    routeTargetId: null,
+    focalProxyDepth: 1,
+    maxProxyDepth: 15,
+  }).map((candidate) => candidate.actionId)), new Set([
+    unreachableMove.actionId,
+    reachableMove.actionId,
+  ]), "当前库存不足不等于跨代理路线不可达，未锁定时不得物理删除正式目标");
+}
+
+{
+  for (const family of ["launch", "move", "quick_trade", "place_data", "card_corner"]) {
+    assert.equal(
+      evaluator.countsSecondaryAgentGoal(action(`route:${family}`, family)),
+      false,
+      `${family} 是次级代理目标的内部达成路线，不得消耗15个目标深度`,
+    );
+  }
+  for (const family of ["scan", "orbit", "land", "analyze", "play_card", "research_tech"]) {
+    assert.equal(
+      evaluator.countsSecondaryAgentGoal(action(`goal:${family}`, family)),
+      true,
+      `${family} 完成一个次级代理目标，应当且只应当增加一次目标深度`,
+    );
+  }
+}
+
 function action(actionId, family = "scan") {
   return { actionId, family, phase: "main", target: {} };
 }
@@ -260,7 +471,71 @@ function evaluate(candidateAction, before, after, status = "settled") {
   );
   assert.equal(result.primaryValue, 9, "快速转换后的目标分仍按实际一级收益计算");
   assert.equal(result.opportunityCost, 1, "2份资源换1份资源必须体现1份净机会成本");
-  assert.equal(result.score, 8, "必要转换可以完成目标，但路线价值必须扣除真实净损耗");
+  assert.equal(result.score, 9, "一级目标收益先于资源效率比较，必要转换不能把正收益路线否决");
+  assert.deepEqual(result.sortKey.slice(0, 2), [9, -1]);
+}
+
+{
+  const ordinaryTrade = {
+    ...action("trade:root-random", "quick_trade"),
+    payload: { cost: { credits: 2 }, gain: { energy: 1 } },
+  };
+  assert.equal(
+    evaluator.requiresRootCounterfactual(
+      ordinaryTrade,
+      observation({ resources: { credits: 14, energy: 0 } }),
+    ),
+    false,
+    "未选定代理目标时快速转换不是搜索根，不能随机瓜分全局节点预算",
+  );
+  assert.equal(
+    evaluator.requiresRootCounterfactual(
+      ordinaryTrade,
+      observation({
+        resources: { credits: 14, energy: 0 },
+        dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
+      }),
+    ),
+    true,
+    "分析已经 ready 且缺电时，正式状态本身足以证明换电根的用途",
+  );
+  const creditsForCard = {
+    ...action("trade:card-goal", "quick_trade"),
+    payload: { cost: { credits: 2 }, gain: { handSize: 1 } },
+  };
+  assert.equal(
+    evaluator.requiresRootCounterfactual(creditsForCard, observation()),
+    true,
+    "换牌根必须先绑定打牌代理目标，而不是作为无目的库存转换",
+  );
+  const cardTarget = evaluator.selectSecondaryAgentRouteTarget({
+    focalSeatId: seatId,
+    currentAction: { ...creditsForCard, actorId: seatId },
+    rootObservation: observation(),
+    branchObservation: observation(),
+    routeTargetId: null,
+  });
+  const playCard = { ...action("play:new-card", "play_card"), actorId: seatId };
+  const anotherTrade = {
+    ...action("trade:again", "quick_trade"),
+    actorId: seatId,
+    payload: { cost: { energy: 2 }, gain: { handSize: 1 } },
+  };
+  assert.equal(cardTarget, "card:play");
+  assert.deepEqual(evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: observation(),
+    legalSuccessors: [anotherTrade, playCard],
+    routeTargetId: cardTarget,
+  }).map((candidate) => candidate.actionId), [playCard.actionId],
+  "换牌后只能继续正式打牌目标，不能再次随机转换");
+  assert.equal(evaluator.selectSecondaryAgentRouteTarget({
+    focalSeatId: seatId,
+    currentAction: playCard,
+    rootObservation: observation(),
+    branchObservation: observation(),
+    routeTargetId: cardTarget,
+  }), null, "正式打牌完成后应释放 card:play 目标");
 }
 
 {
@@ -394,6 +669,34 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 4, income: { credits: 1 } }),
   );
   assert.equal(result.score, null, "第4轮行动阶段之后已经没有轮初收入窗口，纯收入轨路线不可选");
+}
+
+{
+  const breakdown = evaluator.evaluateStrategicFactsBreakdown({
+    viewerSeatId: seatId,
+    terminal: false,
+    realizedScore: 10,
+    securedEndGameBonus: 0,
+    resourceFacts: { credits: 8 },
+    ownedTechIds: [],
+    income: {},
+    roundNumber: 4,
+    finalRoundNumber: 4,
+  }, {
+    viewerSeatId: seatId,
+    terminal: true,
+    realizedScore: 15,
+    securedEndGameBonus: 0,
+    resourceFacts: { credits: 0 },
+    ownedTechIds: ["blue1"],
+    income: { credits: 2 },
+    roundNumber: 4,
+    finalRoundNumber: 4,
+  });
+  assert.equal(breakdown.actualScoreDelta, 5);
+  assert.equal(breakdown.infrastructure.total, 0);
+  assert.equal(breakdown.opportunityCost, 0);
+  assert.equal(breakdown.total, 5, "terminal 叶只能比较官方终局分，科技收入和剩余资源均归零");
 }
 
 {

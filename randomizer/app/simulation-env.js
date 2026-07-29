@@ -99,8 +99,10 @@ function getTurnState(state) {
   return clone(state.turn || {});
 }
 
-function policyOutcomeActions(actions, observation) {
-  return (actions || []).filter(expectedScoreEvaluator.requiresCounterfactualOutcome);
+function policyOutcomeActions(actions, policyObservation) {
+  return (actions || []).filter((action) => (
+    expectedScoreEvaluator.requiresRootCounterfactual(action, policyObservation)
+  ));
 }
 
 function initialSetupOutcomeActions(actions, observation) {
@@ -289,6 +291,7 @@ function createSimulationEnv() {
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
+        countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
       } : null,
       getBranchPriority({ rootObservation, branchObservation, currentAction }) {
         if (options.secondaryAgentSearch) {
@@ -657,7 +660,7 @@ function createSimulationEnv() {
       };
       const evaluatedActions = initialSetupBoundary
         ? initialSetupOutcomeActions(beforeActions, beforeObservation)
-        : policyOutcomeActions(beforeActions, beforeObservation);
+        : policyOutcomeActions(beforeActions, policyObservation);
       const controlActions = initialSetupBoundary
         ? []
         : beforeActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));

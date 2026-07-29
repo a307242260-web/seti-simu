@@ -52,4 +52,17 @@ const goalBeforePass = evaluator.selectLegalAction({
 });
 assert.equal(goalBeforePass.actionId, "move", "已解析正分路线的下一步必须优先于 PASS");
 
+const primaryBeforeCost = evaluator.selectLegalAction({
+  ...context,
+  legalActions: [descriptor("pass"), descriptor("score-with-cost")],
+}, {
+  evaluateAction: (_current, action) => (
+    action.actionId === "pass"
+      ? { score: 0, sortKey: [0, 0], status: "settled", selectable: true }
+      : { score: 5, sortKey: [5, -14], status: "settled", selectable: true }
+  ),
+});
+assert.equal(primaryBeforeCost.actionId, "score-with-cost",
+  "正一级收益必须胜过0分PASS，资源成本只在同一级收益路线间比较");
+
 console.log("heuristic evaluator outcome behavior tests passed");
