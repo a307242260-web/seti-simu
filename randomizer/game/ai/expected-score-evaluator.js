@@ -723,7 +723,7 @@
           right,
           input.focalSeatId,
         ));
-      if (matchedGoals.length) add(matchedGoals[0].targetId, [action]);
+      for (const goal of matchedGoals) add(goal.targetId, [action]);
     }
 
     const dataRequirements = rawDataAnalyzeRequirements(input.rootObservation);

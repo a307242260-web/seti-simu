@@ -498,6 +498,21 @@ function observation({
       }],
     },
   };
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation,
+      legalActions: [launch],
+    }),
+    [{
+      targetId: unreachableTarget,
+      compatibleActionIds: [launch.actionId],
+    }, {
+      targetId: reachableTarget,
+      compatibleActionIds: [launch.actionId],
+    }],
+    "同一物理发射兼容的所有正式目标都必须进入目录，不能为了性能只保留排序第一项",
+  );
   assert.equal(evaluator.selectSecondaryAgentRouteTarget({
     focalSeatId: seatId,
     currentAction: launch,

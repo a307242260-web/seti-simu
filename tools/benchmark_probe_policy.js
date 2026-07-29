@@ -14,7 +14,11 @@ const COVERAGE_FIELDS = Object.freeze([
   "rootTargetCount",
   "maxFrontierSize",
   "maxRetainedFrontierSize",
+  "maxFrontierOriginCount",
   "transpositionHitCount",
+  "sharedPhysicalExecutionOriginCount",
+  "executionLimitReached",
+  "remainingFrontierNodeCount",
   "prunedNodeCount",
   "beamPrunedOriginCount",
 ]);

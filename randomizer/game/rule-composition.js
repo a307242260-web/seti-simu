@@ -730,24 +730,36 @@
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
       let beamPrunedOriginCount = 0;
+      let sharedPhysicalExecutionOriginCount = 0;
       let maxFrontierSize = legalActions.length;
       let maxRetainedFrontierSize = legalActions.length;
+      let maxFrontierOriginCount = legalActions.length;
+      const leafCountByVirtualRoot = new Map();
 
       function originKey(origin) {
-        return origin.rootAction.actionId;
+        return [
+          origin.rootAction.actionId,
+          origin.rootRouteTargetId || "",
+          origin.routeTargetId || "",
+          origin.proxyDepth || 0,
+          origin.opponentProxyDepth || 0,
+          Number(Boolean(origin.focalPassStarted)),
+        ].join(":");
       }
 
-      function nodeKey(envelope, action, depth, origins = []) {
-        const routeOrigin = origins[0] || {};
+      function virtualRootKey(origin) {
+        return [
+          origin.rootAction.actionId,
+          origin.rootRouteTargetId || "",
+        ].join(":");
+      }
+
+      function nodeKey(envelope, action, depth) {
         return [
           envelopeHash(envelope),
           action.actionId,
           Math.max(0, maxDepth - depth),
           secondaryAgentSearch ? focalSeatId : "",
-          secondaryAgentSearch ? routeOrigin.proxyDepth || 0 : "",
-          secondaryAgentSearch ? routeOrigin.opponentProxyDepth || 0 : "",
-          secondaryAgentSearch ? Number(Boolean(routeOrigin.focalPassStarted)) : "",
-          secondaryAgentSearch ? routeOrigin.routeTargetId || "" : "",
         ].join(":");
       }
 
@@ -826,22 +838,31 @@
       function retainRootFairBeam(nodes) {
         const ordered = [...nodes].sort(compareNodes);
         if (secondaryAgentSearch) {
-          const bestByRoot = new Map();
+          const bestKeyByVirtualRoot = new Map();
           for (const node of ordered) {
             for (const origin of node.origins) {
-              const rootId = origin.rootAction.actionId;
-              if (!bestByRoot.has(rootId)) bestByRoot.set(rootId, node);
+              const rootId = virtualRootKey(origin);
+              if (!bestKeyByVirtualRoot.has(rootId)) {
+                bestKeyByVirtualRoot.set(rootId, node.key);
+              }
             }
           }
-          const retained = [...new Set(bestByRoot.values())]
-            .sort(compareNodes);
-          const retainedKeys = new Set(retained.map((node) => node.key));
-          for (const node of ordered) {
-            if (retainedKeys.has(node.key)) continue;
-            beamPrunedOriginCount += node.origins.length;
-            markPruned(node.origins);
-          }
-          return retained;
+          return ordered.flatMap((node) => {
+            const retainedOrigins = [];
+            const prunedOrigins = [];
+            for (const origin of node.origins) {
+              (
+                bestKeyByVirtualRoot.get(virtualRootKey(origin)) === node.key
+                  ? retainedOrigins
+                  : prunedOrigins
+              ).push(origin);
+            }
+            if (prunedOrigins.length) {
+              beamPrunedOriginCount += prunedOrigins.length;
+              markPruned(prunedOrigins);
+            }
+            return retainedOrigins.length ? [{ ...node, origins: retainedOrigins }] : [];
+          });
         }
         const retainedKeysByRoot = new Map();
         for (const action of legalActions) {
@@ -871,12 +892,15 @@
 
       function addLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
         const state = outcomeStateByActionId.get(origin.rootAction.actionId);
-        if (!state || state.leaves.length >= maxLeaves) {
+        const rootKey = virtualRootKey(origin);
+        const leafCount = leafCountByVirtualRoot.get(rootKey) || 0;
+        if (!state || leafCount >= maxLeaves) {
           if (state) state.pruned = true;
           return;
         }
+        leafCountByVirtualRoot.set(rootKey, leafCount + 1);
         state.leaves.push({
-          leafId: `leaf:${stableHash(origin.chain)}`,
+          leafId: `leaf:${stableHash([origin.rootRouteTargetId || null, origin.chain])}`,
           status: ["completed", "idle"].includes(nextInspection.phase)
             ? "settled"
             : nextInspection.phase,
@@ -918,14 +942,20 @@
           terminalReason: "search-frontier",
           rootRouteTargetId: origin.rootRouteTargetId || null,
         };
-        const byId = new Map(state.frontierLeaves.map((candidate) => [
+        const rootTargetId = origin.rootRouteTargetId || null;
+        const otherTargets = state.frontierLeaves.filter((candidate) => (
+          candidate.rootRouteTargetId !== rootTargetId
+        ));
+        const byId = new Map(state.frontierLeaves
+          .filter((candidate) => candidate.rootRouteTargetId === rootTargetId)
+          .map((candidate) => [
           candidate.leafId,
           candidate,
-        ]));
+          ]));
         byId.set(leaf.leafId, leaf);
-        state.frontierLeaves = [...byId.values()]
+        state.frontierLeaves = [...otherTargets, ...[...byId.values()]
           .sort((left, right) => String(left.leafId).localeCompare(String(right.leafId)))
-          .slice(-maxLeaves);
+          .slice(-maxLeaves)];
       }
 
       function executeNode(node) {
@@ -1046,37 +1076,45 @@
 
       const usesRootTargetCatalog = secondaryAgentSearch
         && typeof secondaryAgentSearch.selectRootTargets === "function";
-      let frontier = legalActions.flatMap((action) => {
+      const initialFrontierByKey = new Map();
+      for (const action of legalActions) {
         const routeTargetIds = rootTargetsByActionId.get(action.actionId) || [];
         const selectedTargetIds = routeTargetIds.length
           ? routeTargetIds
           : !usesRootTargetCatalog || ["pass", "end_turn"].includes(action.family)
             ? [null]
             : [];
-        return selectedTargetIds.map((routeTargetId) => ({
-          envelope: saved.envelope,
-          action,
-          depth: 0,
-          priority: 0,
-          origins: [{
-            rootAction: action,
-            chain: [],
-            routeActions: [],
-            checkpoints: [],
-            lastProbeAction: null,
-            proxyDepth: 0,
-            quickTradeCount: 0,
-            opponentProxyDepth: 0,
-            focalPassStarted: false,
-            terminalReason: null,
-            routeTargetId,
-            rootRouteTargetId: routeTargetId,
-            rootWasConditional: action.phase === "conditional",
-          }],
-        }));
-      });
+        for (const routeTargetId of selectedTargetIds) {
+          mergeNode(initialFrontierByKey, {
+            envelope: saved.envelope,
+            action,
+            depth: 0,
+            priority: 0,
+            origins: [{
+              rootAction: action,
+              chain: [],
+              routeActions: [],
+              checkpoints: [],
+              lastProbeAction: null,
+              proxyDepth: 0,
+              quickTradeCount: 0,
+              opponentProxyDepth: 0,
+              focalPassStarted: false,
+              terminalReason: null,
+              routeTargetId,
+              rootRouteTargetId: routeTargetId,
+              rootWasConditional: action.phase === "conditional",
+            }],
+          });
+        }
+      }
+      let frontier = [...initialFrontierByKey.values()];
       maxFrontierSize = Math.max(maxFrontierSize, frontier.length);
       maxRetainedFrontierSize = Math.max(maxRetainedFrontierSize, frontier.length);
+      maxFrontierOriginCount = Math.max(
+        maxFrontierOriginCount,
+        frontier.reduce((total, node) => total + node.origins.length, 0),
+      );
       function consumesSearchBudget(node) {
         const action = node?.action;
         if (!secondaryAgentSearch) return true;
@@ -1096,8 +1134,7 @@
         const nextFrontierByKey = new Map();
         for (const node of selected) {
           const saturatedOrigins = node.origins.filter((origin) => {
-            const state = outcomeStateByActionId.get(origin.rootAction.actionId);
-            return state && state.leaves.length >= maxLeaves;
+            return (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
           });
           if (saturatedOrigins.length) markPruned(saturatedOrigins);
           node.origins = node.origins.filter((origin) => !saturatedOrigins.includes(origin));
@@ -1118,6 +1155,7 @@
           }
           processedNodeKeys.add(key);
           executedNodeCount += 1;
+          sharedPhysicalExecutionOriginCount += Math.max(0, node.origins.length - 1);
           if (budgetedNode) expandedSearchNodeCount += 1;
           const execution = executeNode(node);
           if (execution.failed) {
@@ -1477,10 +1515,19 @@
         const frontierStartedAt = now();
         const nextFrontier = [...nextFrontierByKey.values()];
         maxFrontierSize = Math.max(maxFrontierSize, nextFrontier.length);
+        maxFrontierOriginCount = Math.max(
+          maxFrontierOriginCount,
+          nextFrontier.reduce((total, node) => total + node.origins.length, 0),
+        );
         frontier = retainRootFairBeam(nextFrontier);
         maxRetainedFrontierSize = Math.max(maxRetainedFrontierSize, frontier.length);
         timing.frontierMilliseconds += now() - frontierStartedAt;
       }
+      const remainingFrontierNodeCount = frontier.length;
+      const executionLimitReached = (
+        executedNodeCount >= maxExecutionNodes
+        && remainingFrontierNodeCount > 0
+      );
       for (const node of frontier) markPruned(node.origins);
 
       const outcomes = [...outcomeStateByActionId.values()].map((state) => {
@@ -1537,6 +1584,8 @@
         expandedSearchNodeCount,
         maxNodes,
         maxExecutionNodes,
+        executionLimitReached,
+        remainingFrontierNodeCount,
         maxDepth,
         maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
         secondaryAgentSearch: Boolean(secondaryAgentSearch),
@@ -1546,7 +1595,9 @@
         maxFrontierPerRoot,
         maxFrontierSize,
         maxRetainedFrontierSize,
+        maxFrontierOriginCount,
         transpositionHitCount,
+        sharedPhysicalExecutionOriginCount,
         prunedNodeCount,
         beamPrunedOriginCount,
         forkMilliseconds: timing.forkMilliseconds,
