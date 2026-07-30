@@ -16,6 +16,8 @@ function observation({
   alienSlots = [],
   securedEndGameBonus = 0,
   handCount = 0,
+  hand = null,
+  blueBoardSlots = {},
 } = {}) {
   return outcomeModel.createDecisionObservation({
     publicState: {
@@ -34,7 +36,7 @@ function observation({
         techState: {
           ownedTiles: Object.fromEntries(ownedTechIds.map((tileId) => [tileId, true])),
           disabledTiles: {},
-          blueBoardSlots: {},
+          blueBoardSlots,
         },
         ...(dataProgress ? { dataProgress } : {}),
         securedEndGameBonus,
@@ -43,10 +45,10 @@ function observation({
     },
     selfState: {
       id: seatId,
-      hand: Array.from({ length: handCount }, (_, index) => ({
-        id: `test-card-${index + 1}`,
-        cardId: `test-card-${index + 1}.webp`,
-      })),
+      hand: hand || Array.from({ length: handCount }, (_, index) => ({
+          id: `test-card-${index + 1}`,
+          cardId: `test-card-${index + 1}.webp`,
+        })),
     },
   }, { seatId, stateVersion: 1, decisionVersion: 1 });
 }
@@ -230,25 +232,15 @@ function observation({
     legalActions: [creditsForCard, research, creditsForEnergy],
   });
   assert.deepEqual(rootTargets, [{
-    targetId: "action:research:direct-target",
-    compatibleActionIds: [research.actionId],
-  }, {
-    targetId: "card:play",
-    compatibleActionIds: [creditsForCard.actionId],
-  }, {
     targetId: "data:analyze",
+    planId: "data:analyze",
+    resultTargetIds: ["data:analyze"],
     compatibleActionIds: [creditsForEnergy.actionId],
-  }], "执行任何动作前应先建立正式目标目录，每个快速转换只能属于其明确缩小缺口的目标");
+  }], "根目录只允许结果目标；未绑定具体结果的研究和换牌不能自动包装成目标");
   assert.equal(
     evaluator.requiresRootCounterfactual(creditsForEnergy, rootObservation),
     true,
     "即使扫描暂时不合法，目标 requirement 也必须让必要的第一笔转换进入 root",
-  );
-  assert.equal(
-    rootTargets.find((target) => target.targetId === "card:play")
-      .compatibleActionIds.includes(creditsForCard.actionId),
-    true,
-    "不能缩小数据缺口的换牌只能归属 card:play，不得混入 data:analyze",
   );
   assert.deepEqual(
     evaluator.selectSecondaryAgentSuccessors({
@@ -276,10 +268,9 @@ function observation({
       legalActions: [scan, creditsForCard],
     }),
     [{
-      targetId: "card:play",
-      compatibleActionIds: [creditsForCard.actionId],
-    }, {
       targetId: "data:analyze",
+      planId: "data:analyze",
+      resultTargetIds: ["data:analyze"],
       compatibleActionIds: [scan.actionId],
     }],
     "支付满足后的扫描属于分析目标时不得再复制一个相同动作的直接目标",
@@ -321,6 +312,61 @@ function observation({
     "分析目标的正式放置 Decision 应在建搜索节点前选择计算机位，并排除 skip/蓝附加槽",
   );
 
+  const discardChoices = ["a+b", "a+c", "b+c"].map((choiceId) => ({
+    ...action(`choose-payment:${choiceId}`, "choose_payment"),
+    phase: "conditional",
+    actorId: seatId,
+    target: {
+      kind: "discard-hand-cards",
+      choiceId,
+      cardIds: choiceId.split("+"),
+      handIndexes: [0, 1],
+    },
+  }));
+  const resourcePayment = evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: scanReady,
+    legalSuccessors: discardChoices,
+    routeTargetId: "data:analyze",
+    routePlanId: "data:analyze",
+  });
+  assert.deepEqual(
+    resourcePayment.map((candidate) => candidate.actionId),
+    [discardChoices[0].actionId],
+    "资源目标中的等量弃牌支付按终点资源事实等价，只提交一个稳定正式 choice",
+  );
+  assert.equal(resourcePayment[0].targetEquivalentChoiceCount, 2);
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: scanReady,
+      legalSuccessors: discardChoices,
+      routeTargetId: "card:resolve:card-a",
+      routePlanId: "card:card-a",
+    }).map((candidate) => candidate.actionId),
+    discardChoices.map((candidate) => candidate.actionId),
+    "具体卡牌结果中的非资源支付仍保留全部正式 choice",
+  );
+  const passReserveChoices = ["reserve-a", "reserve-b"].map((cardId) => ({
+    ...action(`choose-pass:${cardId}`, "choose_card"),
+    phase: "conditional",
+    actorId: seatId,
+    target: { kind: "pass-reserve-card", choiceId: cardId, cardId },
+  }));
+  const terminalChoice = evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: scanReady,
+    legalSuccessors: passReserveChoices,
+    routeTargetId: null,
+    routePlanId: null,
+  });
+  assert.deepEqual(
+    terminalChoice.map((candidate) => candidate.actionId),
+    [passReserveChoices[0].actionId],
+    "PASS 闭包只按终点资源数量比较，预留牌身份使用显式目标等价代表",
+  );
+  assert.equal(terminalChoice[0].targetEquivalentChoiceCount, 1);
+
   const techChoices = ["orange1", "orange2"].map((tileId) => ({
     ...action(`choose:${tileId}`, "choose_target"),
     phase: "conditional",
@@ -335,6 +381,8 @@ function observation({
     }),
     techChoices.map((choice) => ({
       targetId: `decision:${choice.actionId}`,
+      planId: `decision:${choice.actionId}`,
+      resultTargetIds: [`decision:${choice.actionId}`],
       compatibleActionIds: [choice.actionId],
     })),
     "根 conditional 的每个非等价 choice 必须在执行前获得独立目标，且不能被目标目录丢弃",
@@ -513,6 +561,8 @@ function observation({
     }),
     [{
       targetId: reachableTarget,
+      planId: "probe:launch:orbit:mars",
+      resultTargetIds: [reachableTarget],
       compatibleActionIds: [launch.actionId],
     }],
     "乐观转换上界仍不足的正式目标必须在执行发射前删除，但可达目标不得受影响",
@@ -560,34 +610,357 @@ function observation({
       }],
     },
   };
-  assert.deepEqual(new Set(evaluator.selectSecondaryAgentSuccessors({
+  const scheduled = evaluator.selectSecondaryAgentSuccessors({
     focalSeatId: seatId,
     branchObservation,
     legalSuccessors: [unreachableMove, reachableMove],
     routeTargetId: null,
     focalProxyDepth: 1,
     maxProxyDepth: 15,
-  }).map((candidate) => candidate.actionId)), new Set([
-    unreachableMove.actionId,
-    reachableMove.actionId,
-  ]), "当前库存不足不等于跨代理路线不可达，未锁定时不得物理删除正式目标");
+  });
+  assert.deepEqual(
+    scheduled.map((candidate) => candidate.actionId),
+    [reachableMove.actionId],
+    "首个目标完成后应按正式资源缺口选择成本最低的下一个结果目标",
+  );
+  assert.equal(
+    scheduled[0].targetSchedulerPrunedCount,
+    1,
+    "资源下界目标调度的性能折损必须显式计数",
+  );
 }
 
 {
-  for (const family of ["launch", "move", "quick_trade", "place_data", "card_corner"]) {
+  for (const family of [
+    "launch",
+    "move",
+    "quick_trade",
+    "place_data",
+    "card_corner",
+    "scan",
+    "orbit",
+    "land",
+    "analyze",
+    "play_card",
+    "research_tech",
+  ]) {
     assert.equal(
       evaluator.countsSecondaryAgentGoal(action(`route:${family}`, family)),
       false,
-      `${family} 是次级代理目标的内部达成路线，不得消耗15个目标深度`,
+      `${family} 仅凭 action family 不能证明结果目标完成，不得消耗15个目标深度`,
     );
   }
-  for (const family of ["scan", "orbit", "land", "analyze", "play_card", "research_tech"]) {
-    assert.equal(
-      evaluator.countsSecondaryAgentGoal(action(`goal:${family}`, family)),
-      true,
-      `${family} 完成一个次级代理目标，应当且只应当增加一次目标深度`,
-    );
-  }
+}
+
+{
+  assert.equal(
+    evaluator.completesSecondaryAgentRouteTarget(
+      {
+        action: action("scan:data-progress", "scan"),
+        targetId: "data:analyze",
+      },
+    ),
+    false,
+    "分析路线中的扫描只增加代理深度，不能错误释放分析目标",
+  );
+  assert.equal(
+    evaluator.completesSecondaryAgentRouteTarget(
+      {
+        action: action("analyze:data-complete", "analyze"),
+        targetId: "data:analyze",
+      },
+    ),
+    true,
+  );
+  assert.equal(
+    evaluator.completesSecondaryAgentRouteTarget(
+      {
+        action: {
+          ...action("move:mars-progress", "move"),
+          target: { rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+        },
+        targetId: "land:mars:planet:",
+      },
+    ),
+    false,
+    "登陆路线中的移动只推进既定目标，不能提前枚举下一目标",
+  );
+  assert.equal(
+    evaluator.completesSecondaryAgentRouteTarget(
+      {
+        action: {
+          ...action("land:mars-complete", "land"),
+          target: { rocketId: "probe-1", planetId: "mars", type: "planet" },
+        },
+        targetId: "land:mars:planet:",
+      },
+    ),
+    true,
+  );
+}
+
+{
+  const base = observation({
+    resources: { credits: 2, energy: 2 },
+    hand: [{ id: "proxima-card", cardId: "b_102.webp" }],
+  });
+  const rootObservation = {
+    ...base,
+    sectorWinRequirements: {
+      schemaVersion: "seti-sector-win-requirements-v1",
+      playerId: seatId,
+      standardScanCost: { credits: 1, energy: 2 },
+      wins: [],
+      candidates: [{
+        targetId: "sector:win:sector-1-a:1",
+        sectorId: "sector-1-a",
+        minimumOwnMarks: 2,
+        openSlotCount: 2,
+      }, {
+        targetId: "sector:win:sector-3-a:1",
+        sectorId: "sector-3-a",
+        minimumOwnMarks: 1,
+        openSlotCount: 1,
+      }, {
+        targetId: "sector:win:sector-3-b:1",
+        sectorId: "sector-3-b",
+        minimumOwnMarks: 4,
+        openSlotCount: 4,
+      }],
+      accessSources: [{
+        sourceId: "standard-scan",
+        family: "scan",
+        sectorIds: ["sector-1-a", "sector-3-a"],
+      }, {
+        sourceId: "card:proxima-card",
+        family: "play_card",
+        cardInstanceId: "proxima-card",
+        sectorIds: ["sector-3-b"],
+      }],
+    },
+  };
+  const scan = { ...action("scan:easiest-sector", "scan"), actorId: seatId };
+  const play = {
+    ...action("play:proxima-observation", "play_card"),
+    actorId: seatId,
+    target: { cardInstanceId: "proxima-card" },
+  };
+  const sectorTargets = evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation,
+    legalActions: [scan, play],
+  }).filter((target) => target.targetId.startsWith("sector:win:"));
+  assert.deepEqual(sectorTargets, [{
+    targetId: "sector:win:sector-3-a:1",
+    planId: "sector:standard-scan:sector-3-a",
+    resultTargetIds: ["sector:win:sector-3-a:1"],
+    compatibleActionIds: [scan.actionId],
+  }, {
+    targetId: "sector:win:sector-3-b:1",
+    planId: "sector:card:proxima-card:sector-3-b",
+    resultTargetIds: ["sector:win:sector-3-b:1"],
+    compatibleActionIds: [play.actionId],
+  }], "普通扫描只选择最好赢的可达扇区，同时保留观测比邻星这类专属触达计划");
+  const unrelatedTrade = {
+    ...action("trade:unrelated-sector", "quick_trade"),
+    actorId: seatId,
+    payload: { cost: { publicity: 3 }, gain: { handSize: 1 } },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentRootActions({
+      focalSeatId: seatId,
+      rootObservation,
+      legalActions: [unrelatedTrade, scan, play],
+    }).map((candidate) => candidate.actionId),
+    [scan.actionId, play.actionId],
+    "根搜索只执行绑定真实结果目标的 action，不横向试跑无关快速转换",
+  );
+
+  assert.equal(evaluator.completesSecondaryAgentRouteTarget({
+    action: scan,
+    targetId: "sector:win:sector-3-a:1",
+    branchObservation: rootObservation,
+  }), false, "扫描动作本身不能完成赢得扇区目标");
+  assert.equal(evaluator.completesSecondaryAgentRouteTarget({
+    action: action("settle:sector-3-a", "choose_reward"),
+    targetId: "sector:win:sector-3-a:1",
+    branchObservation: {
+      ...rootObservation,
+      sectorWinRequirements: {
+        ...rootObservation.sectorWinRequirements,
+        wins: [{ sectorId: "sector-3-a", settlementNumber: 1 }],
+      },
+    },
+  }), true, "只有正式胜场记录新增后才完成扇区目标");
+}
+
+{
+  const before = {
+    ...observation({ income: { credits: 1 } }),
+    incomeGainRequirements: {
+      schemaVersion: "seti-income-gain-requirements-v1",
+      playerId: seatId,
+      targetId: "income:gain:1,0,0,0,0,0",
+      baseline: {
+        credits: 1,
+        energy: 0,
+        publicity: 0,
+        availableData: 0,
+        handSize: 0,
+        additionalPublicScan: 0,
+      },
+      plans: [],
+    },
+  };
+  assert.equal(evaluator.completesSecondaryAgentRouteTarget({
+    action: action("place-data:income", "place_data"),
+    targetId: "income:gain:1,0,0,0,0,0",
+    branchObservation: before,
+  }), false);
+  assert.equal(evaluator.completesSecondaryAgentRouteTarget({
+    action: action("place-data:income", "place_data"),
+    targetId: "income:gain:1,0,0,0,0,0",
+    branchObservation: observation({ income: { credits: 1, energy: 1 } }),
+  }), true, "获得收入按正式 income 差量完成，不依赖打牌、放数据或环绕 family");
+}
+
+{
+  const probeTargetId = "orbit:mars:planet:";
+  const incomeTargetId = "income:gain:1,0,0,0,0,0";
+  const orbit = {
+    ...action("orbit:mars-with-income", "orbit"),
+    actorId: seatId,
+    target: { planetId: "mars", type: "planet" },
+  };
+  const rootObservation = {
+    ...observation({ income: { credits: 1 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        targetId: probeTargetId,
+        requirementId: "orbit:mars:probe-1",
+        required: {},
+        gap: {},
+        nextStep: { family: "orbit", planetId: "mars", targetType: "planet" },
+        targetBenefit: { incomeCount: 1 },
+      }],
+    },
+    incomeGainRequirements: {
+      targetId: incomeTargetId,
+      plans: [{
+        planId: "probe:orbit:mars:probe-1",
+        kind: "probe",
+        probeRequirementId: "orbit:mars:probe-1",
+        nextStep: { family: "orbit", planetId: "mars", targetType: "planet" },
+      }],
+    },
+  };
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation,
+      legalActions: [orbit],
+    }),
+    [{
+      targetId: probeTargetId,
+      planId: "probe:orbit:mars:probe-1",
+      resultTargetIds: [incomeTargetId, probeTargetId].sort(),
+      compatibleActionIds: [orbit.actionId],
+    }],
+    "同一次环绕同时产生收入时只建立一条物理计划，并声明两个真实结果",
+  );
+}
+
+{
+  const targetId = "land:mars:planet:";
+  const branchObservation = {
+    ...observation({
+      resources: { credits: 4, energy: 2 },
+      hand: [{ id: "move-card", cardId: "b_24.webp" }],
+    }),
+    probeRouteRequirements: {
+      candidates: [{
+        targetId,
+        required: { credits: 0, energy: 2, movementSteps: 2 },
+        gap: { credits: 0, energy: 0, movementSteps: 2 },
+        nextStep: {
+          family: "move",
+          rocketId: "probe-1",
+          deltaX: 1,
+          deltaY: 0,
+        },
+      }],
+    },
+  };
+  const directMove = {
+    ...action("move:direct-to-mars", "move"),
+    actorId: seatId,
+    target: { rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+  };
+  const movementCard = {
+    ...action("play:b24-to-mars", "play_card"),
+    actorId: seatId,
+    target: { cardInstanceId: "move-card" },
+    payload: { cost: { credits: 1 } },
+  };
+  const wastefulTrade = {
+    ...action("trade:credits-for-energy-before-move", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-energy" },
+    payload: { cost: { credits: 2 }, gain: { energy: 1 } },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation,
+      legalSuccessors: [wastefulTrade, movementCard, directMove],
+      routeTargetId: targetId,
+    }).map((candidate) => candidate.actionId),
+    [directMove.actionId, movementCard.actionId],
+    "同一火星登陆目标应保留直接移动和移动牌两种非支配路线，并删除多余换电",
+  );
+}
+
+{
+  const branchObservation = {
+    ...observation({
+      resources: { credits: 2, energy: 0 },
+      ownedTechIds: ["blue1", "blue2"],
+      blueBoardSlots: { blue1: 2, blue2: 3 },
+    }),
+    dataAnalyzeRequirements: {
+      targetId: "data:analyze",
+      nextGap: { credits: 0, energy: 1 },
+      nextCost: { credits: 1, energy: 2 },
+    },
+  };
+  const computer = {
+    ...action("choice:data:computer", "choose_target"),
+    actorId: seatId,
+    phase: "conditional",
+    target: { choiceId: "data:computer", target: "computer" },
+  };
+  const blueCredit = {
+    ...action("choice:data:blue1", "choose_target"),
+    actorId: seatId,
+    phase: "conditional",
+    target: { choiceId: "data:blueBonus:2", target: "blueBonus", blueSlot: 2 },
+  };
+  const blueEnergy = {
+    ...action("choice:data:blue2", "choose_target"),
+    actorId: seatId,
+    phase: "conditional",
+    target: { choiceId: "data:blueBonus:3", target: "blueBonus", blueSlot: 3 },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation,
+      legalSuccessors: [computer, blueCredit, blueEnergy],
+      routeTargetId: "data:analyze",
+    }).map((candidate) => candidate.actionId),
+    [blueEnergy.actionId],
+    "分析路线缺能源时应确定性放到 blue2 奖励位，而不是盲目推进计算机或遍历所有蓝位",
+  );
 }
 
 function action(actionId, family = "scan") {
@@ -697,37 +1070,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
   };
   assert.equal(
     evaluator.requiresRootCounterfactual(creditsForCard, observation()),
-    true,
-    "换牌根必须先绑定打牌代理目标，而不是作为无目的库存转换",
+    false,
+    "不知道会抽到哪张牌时，换牌不能被包装成固定打牌目标",
   );
-  const cardTarget = evaluator.selectSecondaryAgentRouteTarget({
-    focalSeatId: seatId,
-    currentAction: { ...creditsForCard, actorId: seatId },
-    rootObservation: observation(),
-    branchObservation: observation(),
-    routeTargetId: null,
-  });
-  const playCard = { ...action("play:new-card", "play_card"), actorId: seatId };
-  const anotherTrade = {
-    ...action("trade:again", "quick_trade"),
-    actorId: seatId,
-    payload: { cost: { energy: 2 }, gain: { handSize: 1 } },
-  };
-  assert.equal(cardTarget, "card:play");
-  assert.deepEqual(evaluator.selectSecondaryAgentSuccessors({
-    focalSeatId: seatId,
-    branchObservation: observation(),
-    legalSuccessors: [anotherTrade, playCard],
-    routeTargetId: cardTarget,
-  }).map((candidate) => candidate.actionId), [playCard.actionId],
-  "换牌后只能继续正式打牌目标，不能再次随机转换");
-  assert.equal(evaluator.selectSecondaryAgentRouteTarget({
-    focalSeatId: seatId,
-    currentAction: playCard,
-    rootObservation: observation(),
-    branchObservation: observation(),
-    routeTargetId: cardTarget,
-  }), null, "正式打牌完成后应释放 card:play 目标");
 }
 
 {

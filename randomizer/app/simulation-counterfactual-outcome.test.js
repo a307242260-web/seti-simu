@@ -264,6 +264,18 @@ try {
       "固定盘面必须自然耗尽 frontier，不能把执行上限当剪枝");
     assert.equal(Number.isSafeInteger(policyDiagnostics.conditionalEquivalentMergeCount), true);
     assert.equal(Number.isSafeInteger(policyDiagnostics.resourceDominatedOriginCount), true);
+    assert.equal(policyDiagnostics.maxExecutionNodes, 4096);
+    assert.equal(policyDiagnostics.executedNodeCount < policyDiagnostics.maxExecutionNodes, true,
+      "固定盘面必须在物理失控保护前自然耗尽");
+    assert.equal(policyDiagnostics.completedGoalTransitionCount > 0, true,
+      "次级深度只能由真实结果目标完成推进");
+    assert.equal(policyDiagnostics.maxCompletedGoalDepth > 0, true,
+      "诊断必须报告实际完成的最大结果目标深度");
+    assert.equal(policyDiagnostics.maxCompletedGoalDepth <= 15, true,
+      "15 步只限制已完成的结果目标数");
+    assert.equal(policyDiagnostics.targetSchedulerPrunedCount > 0, true,
+      "后续目标必须由资源下界调度，而不是重新展开全部目标排列");
+    assert.equal(Number.isSafeInteger(policyDiagnostics.unreachableRouteOriginCount), true);
     assert.equal(policyDiagnostics.executedNodeCountByFamily.choose_payment > 1, true,
       "非等价支付 Decision 必须继续逐项执行，不能固定选择一个 conditional");
     const quickTradeOutcomes = policyResult.actionOutcomes.filter((outcome) => (
@@ -271,21 +283,19 @@ try {
     ));
     assert.equal(quickTradeOutcomes.length > 0, true,
       "固定盘面必须覆盖可执行快速交易");
-    const cardGoalOutcomes = quickTradeOutcomes.filter((outcome) => {
-      const trade = actions.find((action) => action.actionId === outcome.actionId);
-      return Number(trade?.payload?.gain?.handSize || 0) > 0
-        && Number(trade?.payload?.cost?.handSize || 0) === 0;
-    });
-    assert.equal(cardGoalOutcomes.length > 0, true, "固定盘面必须覆盖换牌后正式打牌目标");
-    assert.equal(cardGoalOutcomes.every((outcome) => (
-      outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
-    )), true, "钱/电/宣传换牌必须绑定 card:play 目标进入搜索");
-    assert.equal(quickTradeOutcomes.every((outcome) => {
-      if (outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED") return true;
-      const trade = actions.find((action) => action.actionId === outcome.actionId);
-      return Number(trade?.payload?.gain?.handSize || 0) > 0
-        || Number(trade?.payload?.gain?.energy || 0) > 0;
-    }), true, "被评估的快速转换必须由打牌或 ready 分析目标证明用途");
+    assert.equal(quickTradeOutcomes.every((outcome) => (
+      outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
+    )), true, "快速转换只能在已选结果目标内部执行，不能成为独立搜索根");
+    const strategicFamilies = new Set(["launch", "place_data", "play_card", "scan"]);
+    const strategicOutcomes = policyResult.actionOutcomes.filter((outcome) => (
+      strategicFamilies.has(actions.find((action) => action.actionId === outcome.actionId)?.family)
+    ));
+    assert.equal(strategicOutcomes.length > 0, true);
+    assert.equal(strategicOutcomes.every((outcome) => (
+      outcome.status === "settled"
+      && outcome.code == null
+      && outcome.leaves.length > 0
+    )), true, "正式结果目标根必须全部产生完整叶，不能依赖失败或 frontier 估值");
     const controlOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       ["pass", "end_turn"].includes(
         actions.find((action) => action.actionId === outcome.actionId)?.family,

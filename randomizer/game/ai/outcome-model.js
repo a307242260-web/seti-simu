@@ -198,6 +198,7 @@
         energy: finiteOrNull(resources.energy) ?? 0,
         publicity: finiteOrNull(resources.publicity) ?? 0,
         availableData: finiteOrNull(resources.availableData) ?? 0,
+        additionalPublicScan: finiteOrNull(resources.additionalPublicScan) ?? 0,
         ordinaryCards: countOrdinaryCards(selfState, publicPlayer),
         alienCards: countAlienCards(selfState),
       },
@@ -346,6 +347,15 @@
           : null,
         dataAnalyzeRequirements: String(source?.dataAnalyzeRequirements?.playerId) === String(seatId)
           ? clone(source.dataAnalyzeRequirements)
+          : null,
+        sectorWinRequirements: String(source?.sectorWinRequirements?.playerId) === String(seatId)
+          ? clone(source.sectorWinRequirements)
+          : null,
+        incomeGainRequirements: String(source?.incomeGainRequirements?.playerId) === String(seatId)
+          ? clone(source.incomeGainRequirements)
+          : null,
+        techGainRequirements: String(source?.techGainRequirements?.playerId) === String(seatId)
+          ? clone(source.techGainRequirements)
           : null,
       },
     });

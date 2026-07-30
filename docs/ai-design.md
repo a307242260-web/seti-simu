@@ -91,41 +91,43 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 
-当前启发式把以下三项作为搜索叶的累计评估轴：
+启发式搜索的一级评估轴是当前正式分数、收入和科技；剩余资源用于比较这些收益相同或接近的
+完整终点。一级目标不是路线终点。搜索在中途取得一级收益后继续，直到本席真实 PASS，或正式
+完成 15 个结果目标。
 
-- 获得实际分数；
-- 获取科技；
-- 增加收入。
+次级目标只描述结算结果：
 
-一级目标不是路线终点。搜索在中途取得分数、科技或收入后仍继续累计后续收益，直到本席本轮
-实际 PASS，或完成满 15 个本席次级代理目标。扫描、环绕、登陆、分析数据、打牌、研究科技、
-公司与物种能力等“完成一个意图”的节点各计一个目标；发射、多次移动、快速转换、放置数据和
-弃牌角标属于目标内部达成路线，不增加这 15 个目标深度。支付、选目标、选牌等 conditional
-Decision 同样属于当前目标的规则闭包；`end_turn` 只推进真实回合 owner，也不计深度。
+- 指定探测器在指定星球或卫星完成环绕/登陆；
+- 赢得启发式选出的普通具名扇区；定向额外触达的卡牌或能力可保留额外扇区计划；
+- 完成正式数据分析；
+- 任一收入轨相对选择目标时的基线上升；
+- 获得具体科技；
+- 兑现具体卡牌、公司或物种能力结果；
+- 根 conditional 的具名 Decision 结果。
 
-每次反事实搜索在执行首个 Standard Action 前，先从正式 observation 与 legal descriptors
-建立有限次级代理目标目录：探测器终点、`data:analyze`、`card:play`、当前合法的独立单步代理
-及根 Decision choice。目录只产生 `targetId + compatibleActionIds` 元数据，不写状态、不消费
-RNG 或 Decision，也不计入 15 个次级代理目标。发射、移动、快速转换、放置数据和弃牌角标若
-不能严格缩小已选目标的正式资源或移动缺口，不进入该目标的 frontier；快速转换本身没有固定
-收益。数据路线只按 `dataAnalyzeRequirements.nextStep` 选择 scan/place_data/analyze，资源
-不足时用正式快速转换表计算最低总损耗、最少步数的完整资源路线，再只执行该路线的当前第一步；
-不会随机枚举钱、电、牌之间的转换排列。已锁定数据目标的放置 Decision 只保留计算机位，
-避免把获得蓝科奖励置于完成分析之前。
+单次扫描、发射、移动、快速转换、放置数据、卡角、支付和其他 conditional 都只是既定目标的
+达成步骤。任何 action family 单独都不能证明目标完成。`goalId` 保存结果，`planId` 保存达成
+路线，`resultGoalIds` 记录同一物理路线可同时兑现的结果；只有 Effect Session 完整结算后的
+正式 observation 证明目标结果出现，目标深度才增加一次。
 
-根 conditional choice 仍逐项提交原 actionId，但其规则闭包只执行到 Effect Session idle 或
-下一个外部 Policy Decision；不会替下一 Decision 自动选第一项，也不会把每个 choice 再展开成
-15 个后续代理。虚拟目标不占 `maxNodes=128`，真实反事实执行受
-`maxExecutionNodes=16×maxNodes` 失控保护；触顶必须报告 incomplete，不能把保护当剪枝。
+根搜索只执行能绑定上述结果目录的 action。普通扫描先按正式扇区胜利要求选择最好赢的扇区，
+不会遍历八个扇区；具有定向额外触达能力的来源单独保留。选定目标后，只执行其正式下一步或
+严格补足当前资源缺口的最小损耗转换。直接移动与移动牌等资源结构不同的非支配路线可以同时
+保留；纯亏损且不提供额外结果的转换不会作为独立探索方向。数据放置优先选择能直接补当前缺口
+的蓝科技位，否则放入计算机推进分析。
 
-搜索跨本席的多个真实行动机会。当前资源闭环阶段不预测对手策略：中间对手通过 Standard
-Action 提交正式 PASS，并完成其必做 Decision，只用于合法推进 turn owner 与生命周期；该近似
-不预测抢位或公共供应变化，路线价值会偏乐观。本席 PASS 的必做链结算后立即形成叶，不执行其后的
-`end_turn`，因此不会把下一轮轮初收入记到 PASS 身上。每次 Policy 仍只提交获胜路线的第一个
-当前 legal descriptor，真实提交后从新 committed state 重新搜索。
+搜索跨本席的多个真实行动机会，但当前阶段不预测对手策略；中间对手不进入目标搜索，只按规则
+推进回合边界。该近似不预测抢位和公共供应变化，结果会偏乐观。本席 PASS 的必做链结算后立即
+形成叶，不观察新轮，因此不会把轮初收入误算成 PASS 的价值。
 
-单个代理内部最多推进 15 个真实标准 Decision，这是独立的 Effect Session 安全上限，不是路线
-深度。evaluator 不替代 Production registry/executor，也不手工结算规则。非终局叶先比较：
+完整终点先保存以下正式事实并做 Pareto 收敛：
+
+- 当前正式分数与已锁定终局分；
+- 信用、能源、宣传、可用数据、额外公共扫描、普通牌和外星牌数量；
+- 六条收入轨；
+- 已拥有科技集合。
+
+最终排序使用：
 
 ```text
 Primary(leaf)
@@ -134,69 +136,38 @@ Primary(leaf)
   + 新增收入的每轮资源价值 × 取得后尚未发生的轮初收入次数
 ```
 
-`Primary` 不扣资源成本；任意正一级收益路线都胜过 0 分 PASS。只有 `Primary` 完全相同时，
-才依次比较路线净资源机会成本、快速转换次数和代理目标数。真实 terminal 叶只比较官方终局
-分差。科技的通用资产价值只计算取得后尚未开始的未来轮次；取得当轮若能帮助第 4 轮后续行动，
-必须由同一真实路线中实际兑现的分数、科技或收入体现，游戏已经结束后不再独立估值。
+`Primary` 不扣资源成本；随后比较剩余资源机会成本、快速转换次数和已完成目标数。收入换算使用
+`1 信用 = 1 能源 = 2 数据 = 2 宣传 = 2 普通牌 = 5 分`，只估算尚未发生的轮初收入：
+第 1/2/3/4 轮行动阶段新增收入分别计算 3/2/1/0 次。终局叶的收入与资源机会价值归零，只保留
+正式终局分；科技若能在当轮继续帮助行动，必须由后续真实路线兑现价值，不能另加固定分。
+任何中间 action、goal 或 family 都没有固定奖励。
 
-收入换算使用 `1 信用 = 1 能源 = 2 数据 = 2 宣传 = 2 普通牌 = 5 分`。这是长期收入能力的
-估值，不是给当前库存加分，也不是把轮初收入错误称为轮末结算。正常收入阶段只在新一轮开始
-时发生，因此第 1/2/3/4 轮行动阶段取得的收入轨只分别计算 3/2/1/0 次后续轮初收入。
-`gainIncome` 提高收入轨时对新增部分的即时奖励属于该效果自身。钱、电、宣传、数据、普通牌和
-外星人牌库存均不是一级目标；但 root 到 leaf 的净库存下降会作为同一级收益路线的机会成本，
-避免在收益相同时选择浪费资源的一条。痕迹同样不使用固定价值：
-未揭示外星人时只能获得的实际分数、首标宣传、揭示后的物种奖励和后续状态，都由同一标准
-执行链后的盘面决定。
+次级搜索使用精确最小堆维护 frontier，不使用 beam、`maxLeaves` 或普通 `maxNodes=128`。
+`maxProxyDepth=15` 只限制已经正式完成的结果目标数。物理执行另有
+`maxExecutionNodes=4096` 失控保护；触顶必须返回 incomplete，不能把剩余 frontier 包装成
+完整叶。当前固定盘面在该保护前自然耗尽。
 
-若 15 个代理预算内没有正价值路线，Policy 只能从合法 PASS/结束回合中确定性降级；
-`failed/unresolved/stale` 候选不可选，也不能把部分结算状态伪装成叶。
+为了把单次决策控制在 10 秒内，当前保留一项明确的策略近似：首个结果目标及其非支配路线全部
+探索；完成首个目标后，下一目标只选择正式资源下界最小者，目标内部仍保留非支配路线。这不是
+beam、节点 cap 或固定选项分，但会漏掉“先完成较贵目标，反而改善后续组合”的目标顺序。诊断
+以 `targetSchedulerPrunedCount` 单独报告被省略的目标绑定；优化权重前必须保持这项近似和搜索
+空间不变，不能把调权重与改路线覆盖混为一次实验。
 
-反事实执行复用一个 Composition 级内存 fork 容器：每个候选从同一可信 checkpoint 恢复
-StateStore、working state、Effect Session 与独立分支 RNG，再调用生产 registry/executor。
-可信且已冻结的内存 fork 可复用只读 committed snapshot，但 Action working copy 仍独立克隆；
-Session checkpoint 只恢复一次，普通存档恢复仍执行完整校验。禁止逐候选或逐 Decision 创建
-`SimulationEnv`、加载 replay，或调用领域 helper 手工结算。
+反事实执行复用一个 Composition 级可信隔离 fork。每个候选从同一 checkpoint 恢复
+StateStore、Effect Session 和分支 RNG，再调用生产 registry/executor；Simulation 的可信
+projection reader 可读取该隔离 state，Browser 与普通公共路径仍保留复制。可信 fork 省略重复
+undo frame、重复输入克隆和中间 validation，但最终 candidate 仍执行完整 schema/invariant
+验证，异常分支由下一次 restore 整体恢复。canonical root、正式 RNG、journal 和其他 frontier
+不共享可变引用。
 
-普通节点等价键由 committed state bytes、Session checkpoint、actionId 与 remainingDepth 的
-稳定 hash 组成。conditional 已完整提交且没有 active Session 后，若两个 committed state
-只差 `meta.stateVersion` / `match.decisionVersion`，并且 RNG、sequence、手牌、牌堆、盘面与
-下一 action 的 actor/family/phase/target/payload 全部相同，可共享后续一次物理执行。
-不同 conditional choice 仍逐项由正式 Effect Session 执行；不同手牌或奖励不得合并。
-反事实 RNG 从 committed `meta.rngState` 恢复，canonical RNG 不变。
-常规机器决策的全局节点上限为 128，只统计本席完成的次级代理目标；目标内部的发射、移动、
-快速转换、放置数据、卡角、conditional、`end_turn/PASS` 和对手的正式 PASS 推进不消耗
-这 128 个搜索节点。只有能绑定正式探测器、分析或打牌目标的快速转换才进入 root。
-secondary search 使用 best-first 调度并保留全部 frontier，不再使用 per-root 或全局 beam。
-排序证据依次来自已经兑现的
-一级收益、正式探测器目标收益/缺口、数据分析缺口和实际机会成本；完全相同才用稳定 identity
-决胜，不给 action family 固定分。
+完整 future state、Session、RNG、Decision owner 和下一 action 相同的分支可以共享一次物理
+执行；不同奖励、手牌身份、科技、收入或盘面不能作为规则等价合并。仅在资源目标内部，等量弃牌
+支付和终局 PASS 后只影响未纳入终点评估的普通牌身份 choice 会稳定保留一个代表，并通过
+`targetEquivalentChoicePrunedCount` 显式报告。这是终点事实抽象，不得描述为规则无损。
 
-搜索有三类可证明剪枝：正式探测器目标在把途中宣传、手牌和数据奖励全部按乐观上界计入后仍
-无法满足总信用/能量需求时判不可达；已提交 conditional 的结算态按上述完整未来状态等价共享；
-同 virtual root、同目标、同盘面/手牌/RNG/Decision 边界下，信用、能量、宣传逐项不少且快速
-转换次数不多的路线支配贫资源路线。不同首行动、不同目标或非逐项偏序不得互剪。
-
-每个 root 另有最多 8 个叶的独立
-预算；某个 root 达到叶上限后，frontier 会先移除该 saturated origin，共享节点仍为其他未
-饱和 root 继续执行。当前 `maxLeaves=8` 是仍保留的显式近似；beam 剪枝数必须为 0，不得把
-当前搜索描述成无限叶完备分布。
-
-当前 v16 使用未扣成本的一级收益和正式缺口证据保留“先付资源、后完成目标”的路线；资源成本
-只用于同一级收益路线的效率比较。不得为 `play_card/analyze/scan` 等 family 设置固定
-successor 分数。
-
-路线搜索中的 `quick_trade` 是正式目标内部动作，必须执行真实 outcome；纯交换始终亏模。v16
-先从正式 `probeGoalRequirements`、ready 分析或 `card:play` 中选定目标，再允许能严格缩小该
-目标资源缺口的转换；转换后只能继续同一目标的发射/移动/终点、分析或打牌，不能形成钱电牌
-循环。卡角同样必须即时产生一级收益、推进真实
-探测器/数据进度、严格缩小某个正式探测器目标的资源缺口，或直接解锁下一代理；缩小缺口时绑定
-该 targetId 并只继续同一条正式路线，不得借用数回合后的无关收益。策略比较转换后完成的一级
-目标价值与路线净资源成本；同一 committed state / 一级结果只保留转换次数更少、代理深度更短
-的来源。当前库存本身仍不是一级目标。`end_turn` 使用一层正式控制反事实；PASS 执行完整必做链。
-focal PASS 叶停在 PASS 必做链之后，不观察新轮；实际对局若最后一个 PASS 后提交
-`end_turn`，收入仍只在随后新轮开始时发生。运行报告记录
-候选数、原始/保留 frontier、beam 剪枝数及 fork/执行/投影/checkpoint/编排总耗时；耗时是
-诊断数据，不属于 outcome 语义，不得影响候选等价性或排序。
+运行诊断至少记录候选与根目标数、物理执行节点、最大 frontier、状态共享、完成态支配、
+完成目标次数/最大深度、目标调度省略数、不可达路线数、beam/执行保护状态，以及
+fork/执行/投影/checkpoint/frontier/编排耗时。耗时仅用于性能验证，不参与候选排序。
 
 ## 4. Browser 调度与规则边界
 

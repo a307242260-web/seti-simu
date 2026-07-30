@@ -15,6 +15,7 @@ const rockets = loadProductionDependency("./rockets", "SetiRocketActions");
 const planetStats = loadProductionDependency("./planet-stats", "SetiPlanetStats");
 const planetRewards = loadProductionDependency("./actions/planet-rewards", "SetiPlanetRewards");
 const scanEffects = loadProductionDependency("./actions/scan-effects", "SetiScanEffects");
+const researchTechAction = loadProductionDependency("./actions/research-tech", "SetiActionResearchTech");
 const data = loadProductionDependency("./data", "SetiData");
 const cards = loadProductionDependency("./cards/deck", "SetiCards");
 const cardEffects = loadProductionDependency("./cards/effects", "SetiCardEffects");
@@ -24,6 +25,7 @@ const finalScoring = loadProductionDependency("./final-scoring", "SetiFinalScori
 const rocketAbility = loadProductionDependency("./abilities/rocket", "SetiAbilityRocket");
 const planetAbility = loadProductionDependency("./abilities/planet", "SetiAbilityPlanet");
 const industryPassives = loadProductionDependency("./industry/passives", "SetiIndustryPassives");
+const industryCatalog = loadProductionDependency("./industry/catalog", "SetiIndustryCatalog");
 const { createRuleComposition } = loadProductionDependency("./rule-composition", "SetiRuleComposition");
 const productionCompositionApi = loadProductionDependency("./production-composition", "SetiProductionComposition");
 const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
@@ -31,6 +33,12 @@ const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
 const RULESET_VERSION = "seti-runtime-v1";
 const INTERNAL_RULE_SCOPE = Symbol("seti-production-kernel-rule-scope");
 const DEFAULT_FINAL_SCORE_IDS = Object.freeze(["a", "b", "c", "d"]);
+const NEBULA_IDS_BY_SCAN_CODE = Object.freeze([
+  Object.freeze(["sector-4-a", "sector-3-a"]),
+  Object.freeze(["sector-2-b", "sector-3-b"]),
+  Object.freeze(["sector-2-a", "sector-1-a"]),
+  Object.freeze(["sector-1-b", "sector-4-b"]),
+]);
 
 function hashCounterfactualSeed(seed) {
   const text = String(seed ?? "seti-counterfactual");
@@ -418,6 +426,9 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
               );
           const scoreGain = rewardScore(effects);
           if (scoreGain <= 0) continue;
+          const incomeCount = effects.filter((effect) => (
+            effect?.type === planetRewards.EFFECT_TYPES.INCOME
+          )).length;
           const launchCost = source.launchRequired
             ? rocketAbility.getLaunchCost(context, player)
             : {};
@@ -451,6 +462,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             endpointTarget: clone(choice.target || { type: "planet" }),
             targetBenefit: {
               score: scoreGain,
+              incomeCount,
               grossEquivalentValue,
               rewardSummary: choice.rewardSummary,
               source: `planetRewards.${choice.actionType}:${choice.planetId}`,
@@ -625,6 +637,290 @@ function buildDataAnalyzeRequirements(workingState, requestedPlayerId = null) {
   };
 }
 
+function nebulaAtSectorX(workingState, sectorX) {
+  return solar.getNebulaAtCoordinate(
+    solar.mod8(sectorX),
+    5,
+    workingState.solarSystem.sectorBySlot,
+  )?.id || null;
+}
+
+function cardScanCode(card) {
+  const catalog = cards.getCatalogEntryForCard(card);
+  const code = Number(card?.scanActionCode ?? catalog?.scan_action_code);
+  return Number.isInteger(code) ? code : null;
+}
+
+function standardScanSectorIds(workingState, player) {
+  const sectorIds = new Set();
+  const earth = getEarthCoordinate(workingState);
+  const earthOffsets = scanEffects.playerOwnsPurpleTech(player, 1, {
+    roundNumber: workingState.turn.roundNumber,
+    turnNumber: workingState.turn.turnNumber,
+  }) ? [-1, 0, 1] : [0];
+  for (const offset of earthOffsets) {
+    const sectorId = nebulaAtSectorX(workingState, earth.x + offset);
+    if (sectorId) sectorIds.add(sectorId);
+  }
+  for (const card of workingState.cards?.publicCards || []) {
+    for (const sectorId of NEBULA_IDS_BY_SCAN_CODE[cardScanCode(card)] || []) {
+      sectorIds.add(sectorId);
+    }
+  }
+  if (scanEffects.playerOwnsPurpleTech(player, 2, {
+    roundNumber: workingState.turn.roundNumber,
+    turnNumber: workingState.turn.turnNumber,
+  })) {
+    const mercury = solar.createSolarSnapshot(workingState.solarSystem)
+      .planetLocations?.mercury;
+    const sectorId = mercury ? nebulaAtSectorX(workingState, mercury.x) : null;
+    if (sectorId) sectorIds.add(sectorId);
+  }
+  if (scanEffects.playerOwnsPurpleTech(player, 3, {
+    roundNumber: workingState.turn.roundNumber,
+    turnNumber: workingState.turn.turnNumber,
+  })) {
+    for (const card of player.hand || []) {
+      for (const sectorId of NEBULA_IDS_BY_SCAN_CODE[cardScanCode(card)] || []) {
+        sectorIds.add(sectorId);
+      }
+    }
+  }
+  return [...sectorIds].sort();
+}
+
+function cardDirectScanSectorIds(card) {
+  const sectorIds = new Set();
+  for (const effect of cardEffects.buildPlayEffects(card)) {
+    if (effect?.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA && effect.options?.nebulaId) {
+      sectorIds.add(effect.options.nebulaId);
+    } else if (effect?.type === cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE) {
+      for (const sectorId of cardEffects.NEBULA_IDS_BY_COLOR?.[effect.options?.color] || []) {
+        sectorIds.add(sectorId);
+      }
+    } else if (effect?.type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN) {
+      for (const sectorId of data.NEBULA_IDS) {
+        if (sectorId !== data.AOMOMO_NEBULA_ID) sectorIds.add(sectorId);
+      }
+    }
+  }
+  return [...sectorIds].sort();
+}
+
+function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
+  const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
+  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
+  if (!player || workingState.turn.gameEnded) return null;
+  const playerKeys = new Set([player.id, player.color].filter(Boolean).map(String));
+  const standardSectorIds = standardScanSectorIds(workingState, player);
+  const specialAccess = (player.hand || [])
+    .map((card) => ({
+      sourceId: `card:${card.id}`,
+      family: "play_card",
+      cardInstanceId: card.id,
+      sectorIds: cardDirectScanSectorIds(card),
+    }))
+    .filter((source) => source.sectorIds.length > 0);
+  const candidates = data.NEBULA_IDS
+    .filter((sectorId) => sectorId !== data.AOMOMO_NEBULA_ID)
+    .map((sectorId) => {
+      const tokens = data.listNebulaTokens(workingState.data, sectorId);
+      const openSlotCount = tokens.filter((token) => (
+        !token.replacedByPlayerId && !token.replacedByPlayerColor
+      )).length;
+      const ranking = data.getSectorRanking(workingState.data, sectorId);
+      const own = ranking.find((entry) => (
+        [entry.playerId, entry.playerKey, entry.playerColor]
+          .filter(Boolean)
+          .some((key) => playerKeys.has(String(key)))
+      )) || null;
+      const maxOpponentCount = ranking
+        .filter((entry) => entry !== own)
+        .reduce((maximum, entry) => Math.max(maximum, Number(entry.count) || 0), 0);
+      const ownCount = Number(own?.count) || 0;
+      const minimumOwnMarks = Math.max(
+        openSlotCount,
+        Math.max(0, maxOpponentCount - ownCount),
+      );
+      const settlementCount = Number(
+        workingState.data?.sectorSettlements?.sectors?.[sectorId]?.settlementCount,
+      ) || 0;
+      return {
+        targetId: `sector:win:${sectorId}:${settlementCount + 1}`,
+        sectorId,
+        nextSettlementNumber: settlementCount + 1,
+        openSlotCount,
+        ownCount,
+        maxOpponentCount,
+        minimumOwnMarks,
+        ranking: ranking.map((entry) => ({
+          playerId: entry.playerId || null,
+          playerColor: entry.playerColor || null,
+          count: Number(entry.count) || 0,
+          latestReplacementOrder: Number(entry.latestReplacementOrder) || 0,
+        })),
+      };
+    })
+    .filter((candidate) => candidate.openSlotCount > 0)
+    .sort((left, right) => (
+      left.minimumOwnMarks - right.minimumOwnMarks
+      || left.openSlotCount - right.openSlotCount
+      || left.sectorId.localeCompare(right.sectorId)
+    ));
+  return {
+    schemaVersion: "seti-sector-win-requirements-v1",
+    playerId: player.id,
+    candidates,
+    standardScanCost: scanEffects.getStandardScanCost(player),
+    accessSources: [
+      {
+        sourceId: "standard-scan",
+        family: "scan",
+        sectorIds: standardSectorIds,
+      },
+      ...specialAccess,
+    ],
+    wins: clone(
+      workingState.data?.sectorSettlements?.winsByPlayerId?.[player.id]
+      || workingState.data?.sectorSettlements?.winsByPlayerId?.[player.color]
+      || [],
+    ),
+    fieldSources: {
+      competition: "data.{nebulae,sectorExtraMarks}",
+      tieBreak: "data.*.replacementOrder",
+      completion: "data.sectorSettlements.winsByPlayerId",
+    },
+  };
+}
+
+function incomeBaseline(player) {
+  return Object.fromEntries([
+    "credits",
+    "energy",
+    "publicity",
+    "availableData",
+    "handSize",
+    "additionalPublicScan",
+  ].map((key) => [key, Number(player?.income?.[key]) || 0]));
+}
+
+function cardCanIncreaseIncome(card) {
+  const incomeEffectTypes = new Set([
+    cardEffects.EFFECT_TYPES.INCOME,
+    cardEffects.EFFECT_TYPES.TUCK_PLAYED_CARD_TO_INCOME,
+    cardEffects.EFFECT_TYPES.DISCARD_ANY_FOR_INCOME,
+  ]);
+  return cardEffects.buildPlayEffects(card).some((effect) => (
+    incomeEffectTypes.has(effect?.type)
+  ));
+}
+
+function buildIncomeGainRequirements(
+  workingState,
+  requestedPlayerId = null,
+  probeRequirements = null,
+) {
+  const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
+  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
+  if (!player || workingState.turn.gameEnded) return null;
+  const baseline = incomeBaseline(player);
+  const baselineKey = Object.values(baseline).join(",");
+  const targetId = `income:gain:${baselineKey}`;
+  const plans = [];
+  for (const candidate of probeRequirements?.candidates || []) {
+    if (Number(candidate.targetBenefit?.incomeCount) <= 0) continue;
+    plans.push({
+      planId: `probe:${candidate.requirementId}`,
+      kind: "probe",
+      probeRequirementId: candidate.requirementId,
+      nextStep: clone(candidate.nextStep),
+    });
+  }
+  const computerSlots = data.listComputerPlacedTokens(player)
+    .map((token) => Number(token.placementSlot))
+    .filter(Number.isFinite);
+  if (!computerSlots.includes(4) && computerSlots.length < 4) {
+    const remainingPlacements = 4 - computerSlots.length;
+    const availableData = Number(player.resources?.availableData) || 0;
+    const nextStepFamily = availableData > 0 ? "place_data" : "scan";
+    const scanCost = scanEffects.getStandardScanCost(player);
+    const nextCost = nextStepFamily === "scan" ? scanCost : {};
+    plans.push({
+      planId: "income:data:computer-slot-4",
+      kind: "data",
+      targetComputerSlot: 4,
+      remainingPlacements,
+      nextStep: { family: nextStepFamily },
+      nextCost: {
+        credits: Number(nextCost.credits) || 0,
+        energy: Number(nextCost.energy) || 0,
+      },
+    });
+  }
+  for (const card of player.hand || []) {
+    if (!cardCanIncreaseIncome(card)) continue;
+    plans.push({
+      planId: `card:${card.id}`,
+      kind: "card",
+      cardInstanceId: card.id,
+      nextStep: { family: "play_card", cardInstanceId: card.id },
+    });
+  }
+  const industryAbilityId = industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId
+    || null;
+  if (["helios_remove_tech_income", "mission_publicity_pick_income"].includes(industryAbilityId)) {
+    plans.push({
+      planId: `income:industry:${industryAbilityId}`,
+      kind: "industry",
+      abilityId: industryAbilityId,
+      nextStep: { family: "industry", abilityId: industryAbilityId },
+    });
+  }
+  return {
+    schemaVersion: "seti-income-gain-requirements-v1",
+    playerId: player.id,
+    targetId,
+    baseline,
+    plans,
+    fieldSources: {
+      baseline: "players[].income",
+      probe: "SetiPlanetRewards",
+      data: "players[].dataProgress.computerSlots",
+      cards: "SetiCardEffects.buildPlayEffects",
+      industry: "SetiIndustryAbilities",
+    },
+  };
+}
+
+function buildTechGainRequirements(workingState, requestedPlayerId = null) {
+  const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
+  const player = workingState.players.players.find((candidate) => candidate.id === playerId);
+  if (!player || workingState.turn.gameEnded) return null;
+  const context = {
+    state: workingState,
+    players: workingState.players,
+    tech: workingState.tech,
+    turn: { ...workingState.turn, currentPlayerId: player.id },
+  };
+  const options = researchTechAction.getResearchOptions(context);
+  const plans = options.ok ? (options.choices || []).map((choice) => ({
+    targetId: `tech:gain:${choice.tileId}`,
+    planId: `tech:${choice.tileId}:${choice.blueSlot ?? ""}`,
+    tileId: choice.tileId,
+    blueSlot: choice.blueSlot ?? null,
+    nextStep: { family: "research_tech" },
+  })) : [];
+  return {
+    schemaVersion: "seti-tech-gain-requirements-v1",
+    playerId: player.id,
+    plans,
+    fieldSources: {
+      choices: "SetiActionResearchTech.getResearchOptions",
+      completion: "players[].techState.ownedTiles",
+    },
+  };
+}
+
 function activePlayers(workingState) {
   const active = new Set(workingState.turn.activePlayerIds || []);
   return (workingState.players.players || []).filter((player) => active.has(player.id));
@@ -692,6 +988,20 @@ function createProductionHostComposition(options = {}) {
     throw new TypeError(`${hostKind} Production Composition 缺少显式 random`);
   }
   let composition;
+  function projectedRequirements(state, viewer, session) {
+    const probeRouteRequirements = buildProbeRouteRequirements(state, viewer?.playerId);
+    return {
+      probeRouteRequirements,
+      dataAnalyzeRequirements: buildDataAnalyzeRequirements(state, viewer?.playerId),
+      sectorWinRequirements: buildSectorWinRequirements(state, viewer?.playerId),
+      incomeGainRequirements: buildIncomeGainRequirements(
+        state,
+        viewer?.playerId,
+        probeRouteRequirements,
+      ),
+      techGainRequirements: buildTechGainRequirements(state, viewer?.playerId),
+    };
+  }
 
   function createActionContext(state) {
     return {
@@ -786,10 +1096,11 @@ function createProductionHostComposition(options = {}) {
       }
     },
     projectState(state, viewer, _session, projectionContext = {}) {
+      const requirements = projectedRequirements(state, viewer, _session);
+      const projectionState = options.trustedProjectionReader === true ? state : clone(state);
       const projectedState = {
-        ...clone(state),
-        probeRouteRequirements: buildProbeRouteRequirements(state, viewer?.playerId),
-        dataAnalyzeRequirements: buildDataAnalyzeRequirements(state, viewer?.playerId),
+        ...projectionState,
+        ...(options.trustedProjectionReader === true ? requirements : clone(requirements)),
       };
       if (hostKind === "browser") {
         if (typeof options.projectBrowserState !== "function") {

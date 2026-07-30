@@ -157,8 +157,8 @@ assert.equal(
 );
 assert.equal(
   expectedScoreEvaluator.requiresCounterfactualOutcome(action("pass:p1:7", "pass")),
-  true,
-  "PASS 必须保留真实反事实后继；最后一个 PASS 可能进入新一轮并在轮初结算收入",
+  false,
+  "PASS 只提交本轮控制闭包；新轮轮初收入不得记作当前 PASS 的价值",
 );
 assert.equal(
   expectedScoreEvaluator.requiresCounterfactualOutcome(action("end:p1:7", "end_turn")),

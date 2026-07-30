@@ -140,13 +140,21 @@
             ));
             if (setupBoundary) return [];
             let rootStrategicFacts = null;
-            const getBranchPriority = ({ rootObservation, branchObservation, currentAction }) => {
+            const getBranchPriority = ({
+              rootObservation,
+              branchObservation,
+              currentAction,
+              routeTargetIds,
+              routePlanIds,
+            }) => {
               if (currentAction) {
                 return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
                   rootObservation,
                   branchObservation,
                   focalSeatId: seatId,
                   currentAction,
+                  routeTargetIds,
+                  routePlanIds,
                 });
               }
               rootStrategicFacts = rootStrategicFacts
@@ -166,9 +174,15 @@
                 decisionVersion: boundary.decisionVersion,
               },
             );
-            const evaluatedActions = boundary.legalActions.filter((action) => (
+            const counterfactualCandidates = boundary.legalActions.filter((action) => (
               expectedScoreEvaluator.requiresRootCounterfactual(action, rootObservation)
             ));
+            const evaluatedActions = expectedScoreEvaluator.selectSecondaryAgentRootActions({
+              focalSeatId: seatId,
+              rootObservation,
+              legalActions: counterfactualCandidates,
+              maxProxyDepth: 15,
+            });
             const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
               ruleComposition.counterfactualPort.evaluate(evaluatedActions, {
                 viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
@@ -186,6 +200,8 @@
                   rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
                   selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
                   countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
+                  completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
+                  getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
                 },
                 getBranchPriority,
               }),

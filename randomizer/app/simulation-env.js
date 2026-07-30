@@ -100,9 +100,15 @@ function getTurnState(state) {
 }
 
 function policyOutcomeActions(actions, policyObservation) {
-  return (actions || []).filter((action) => (
+  const candidates = (actions || []).filter((action) => (
     expectedScoreEvaluator.requiresRootCounterfactual(action, policyObservation)
   ));
+  return expectedScoreEvaluator.selectSecondaryAgentRootActions({
+    focalSeatId: candidates[0]?.actorPlayerId || null,
+    rootObservation: policyObservation,
+    legalActions: candidates,
+    maxProxyDepth: 15,
+  });
 }
 
 function initialSetupOutcomeActions(actions, observation) {
@@ -219,6 +225,7 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       board: {
         rockets: clone(state.pieces?.rockets || []),
         planets: clone(state.planets || {}),
+        data: clone(state.data || {}),
         solarSystem: clone(state.solarSystem || {}),
         publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
         discardCount: (state.cards?.discardPile || []).length,
@@ -246,6 +253,9 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
     decision,
     probeRouteRequirements: clone(state.probeRouteRequirements || null),
     dataAnalyzeRequirements: clone(state.dataAnalyzeRequirements || null),
+    sectorWinRequirements: clone(state.sectorWinRequirements || null),
+    incomeGainRequirements: clone(state.incomeGainRequirements || null),
+    techGainRequirements: clone(state.techGainRequirements || null),
     terminal: Boolean(turn.gameEnded),
   };
 }
@@ -295,14 +305,24 @@ function createSimulationEnv() {
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
         countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
+        completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
+        getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
       } : null,
-      getBranchPriority({ rootObservation, branchObservation, currentAction }) {
+      getBranchPriority({
+        rootObservation,
+        branchObservation,
+        currentAction,
+        routeTargetIds,
+        routePlanIds,
+      }) {
         if (options.secondaryAgentSearch) {
           return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
             rootObservation,
             branchObservation,
             focalSeatId: seatId,
             currentAction,
+            routeTargetIds,
+            routePlanIds,
           });
         }
         rootStrategicFacts = rootStrategicFacts
@@ -370,6 +390,9 @@ function createSimulationEnv() {
       ...getWorkingProjection(composition),
       probeRouteRequirements: clone(projected?.probeRouteRequirements || null),
       dataAnalyzeRequirements: clone(projected?.dataAnalyzeRequirements || null),
+      sectorWinRequirements: clone(projected?.sectorWinRequirements || null),
+      incomeGainRequirements: clone(projected?.incomeGainRequirements || null),
+      techGainRequirements: clone(projected?.techGainRequirements || null),
     };
     const result = buildObservation(state, seed, viewerPlayerId, actions);
     recordDuration("observationMilliseconds", startedAt);
@@ -446,6 +469,7 @@ function createSimulationEnv() {
         activePlayerCount: config.activePlayerCount,
         random: seededRandom,
         rngState: { algorithm: "seti-simulation-mulberry32-v1", state: seededRandom.getState() },
+        trustedProjectionReader: true,
         projectCounterfactualState: (state, viewer) => buildObservation(
           state,
           seed,
@@ -668,6 +692,14 @@ function createSimulationEnv() {
       const controlActions = initialSetupBoundary
         ? []
         : beforeActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));
+      const controlOutcomes = controlActions.length
+        ? evaluateActionOutcomes.call(this, controlActions, {
+          maxDepth: 1,
+          maxLeaves: 1,
+          maxNodes: controlActions.length,
+          secondaryAgentSearch: false,
+        })
+        : [];
       const strategicOutcomes = evaluatedActions.length
         ? evaluateActionOutcomes.call(this, evaluatedActions, {
           maxDepth: initialSetupBoundary ? 6 : 15,
@@ -675,14 +707,6 @@ function createSimulationEnv() {
           maxNodes: initialSetupBoundary ? 12 : 128,
           secondaryAgentSearch: !initialSetupBoundary,
           maxProxyDepth: 15,
-        })
-        : [];
-      const controlOutcomes = controlActions.length
-        ? evaluateActionOutcomes.call(this, controlActions, {
-          maxDepth: 1,
-          maxLeaves: 1,
-          maxNodes: controlActions.length,
-          secondaryAgentSearch: false,
         })
         : [];
       const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(

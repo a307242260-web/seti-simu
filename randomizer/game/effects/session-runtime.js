@@ -202,6 +202,7 @@
     }
 
     function captureUndoFrame(session, effect) {
+      if (trustedIsolatedOwnership) return null;
       const journalLengths = {};
       for (const [key, entries] of Object.entries(session.journal)) {
         if (Array.isArray(entries)) journalLengths[key] = entries.length;
@@ -504,7 +505,10 @@
 
       let validation;
       try {
-        validation = registry.validate(cloneState(working.state), clone(action));
+        validation = registry.validate(
+          trustedIsolatedOwnership ? working.state : cloneState(working.state),
+          clone(action),
+        );
       } catch (error) {
         return fail(
           "EFFECT_STANDARD_ACTION_VALIDATION_FAILED",
@@ -670,7 +674,10 @@
       session.phase = session.interruptContext ? "interrupting" : "effect_running";
       let result;
       try {
-        result = executor.execute(cloneState(session.workingState), effect);
+        result = executor.execute(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          effect,
+        );
       } catch (error) {
         return abort(session, {
           code: "EFFECT_EXECUTOR_THROWN",
@@ -736,7 +743,11 @@
       const undoFrame = captureUndoFrame(session, effect);
       let result;
       try {
-        result = executor.resolveDecision(cloneState(session.workingState), effect, clone(legalChoice));
+        result = executor.resolveDecision(
+          trustedIsolatedOwnership ? session.workingState : cloneState(session.workingState),
+          effect,
+          clone(legalChoice),
+        );
       } catch (error) {
         return abort(session, {
           code: "EFFECT_DECISION_RESOLVER_THROWN",
@@ -851,7 +862,7 @@
       return { ok: true, session, effectId: frame.effectId };
     }
 
-    function createCheckpoint(session) {
+    function createCheckpoint(session, options = {}) {
       if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
       if (["effect_running", "committing"].includes(session.phase)) {
         return fail("EFFECT_CHECKPOINT_UNSAFE_PHASE", "同步 Effect 或提交期间不能建立 checkpoint");
@@ -865,7 +876,9 @@
         checkpoint: {
           schemaVersion: CHECKPOINT_SCHEMA_VERSION,
           replayCursor,
-          session: clone(session),
+          session: options.trustedReference === true && trustedIsolatedOwnership
+            ? session
+            : clone(session),
         },
       };
     }

@@ -276,6 +276,8 @@ function committedBytes(store) {
   const before = committedBytes(store);
   const rejected = store.compareAndCommit(1, invalid);
   assert.equal(rejected.code, "NEGATIVE_TURN");
+  assert.equal(invalid.meta.stateVersion, 1,
+    "可信 candidate 校验失败后必须恢复输入版本，不能泄漏半提交状态");
   assert.equal(committedBytes(store), before,
     "trusted ownership 路径仍必须 fail-closed，不得提交无效 candidate");
 })();

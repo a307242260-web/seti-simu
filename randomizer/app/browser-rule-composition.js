@@ -96,6 +96,9 @@
       };
       visible.probeRouteRequirements = clone(canonicalState.probeRouteRequirements || null);
       visible.dataAnalyzeRequirements = clone(canonicalState.dataAnalyzeRequirements || null);
+      visible.sectorWinRequirements = clone(canonicalState.sectorWinRequirements || null);
+      visible.incomeGainRequirements = clone(canonicalState.incomeGainRequirements || null);
+      visible.techGainRequirements = clone(canonicalState.techGainRequirements || null);
       return visible;
     }
 

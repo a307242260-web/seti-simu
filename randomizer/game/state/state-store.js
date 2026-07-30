@@ -239,7 +239,9 @@
       if (!errors.length) {
         for (let index = 0; index < invariantValidators.length; index += 1) {
           try {
-            errors.push(...normalizeInvariantErrors(invariantValidators[index](clone(candidate)), index));
+            errors.push(...normalizeInvariantErrors(invariantValidators[index](
+              trustedIsolatedOwnership ? candidate : clone(candidate),
+            ), index));
           } catch (error) {
             errors.push(validationError(
               "$",
@@ -340,12 +342,20 @@
           candidateVersion: isolatedCandidate?.meta?.stateVersion ?? null,
         };
       }
-      const validation = validate(isolatedCandidate);
-      if (!validation.ok) return validation;
-
-      isolatedCandidate.meta.stateVersion = currentVersion + 1;
-      const nextValidation = validate(isolatedCandidate);
-      if (!nextValidation.ok) return nextValidation;
+      if (trustedIsolatedOwnership) {
+        isolatedCandidate.meta.stateVersion = currentVersion + 1;
+        const nextValidation = validate(isolatedCandidate);
+        if (!nextValidation.ok) {
+          isolatedCandidate.meta.stateVersion = currentVersion;
+          return nextValidation;
+        }
+      } else {
+        const validation = validate(isolatedCandidate);
+        if (!validation.ok) return validation;
+        isolatedCandidate.meta.stateVersion = currentVersion + 1;
+        const nextValidation = validate(isolatedCandidate);
+        if (!nextValidation.ok) return nextValidation;
+      }
 
       const previousState = committedState;
       const nextState = trustedIsolatedOwnership

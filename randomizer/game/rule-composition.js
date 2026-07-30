@@ -171,7 +171,9 @@
       const next = effectRuntimeApi.createRuntime({
         stateStore: store,
         trustedIsolatedOwnership: options.allowTrustedForkLifecycle === true,
-        validateState: (state) => store.validate(state),
+        validateState: options.allowTrustedForkLifecycle === true
+          ? () => ({ ok: true })
+          : (state) => store.validate(state),
         projectState: (state, viewer, inspection) => (
           options.projectState(
             options.allowTrustedForkLifecycle === true ? state : clone(state),
@@ -188,7 +190,15 @@
             workingContext,
             () => operation(state, ...args, workingContext),
           );
-          if (result?.ok === true && result.nextState?.meta && state?.meta) {
+          if (
+            result?.ok === true
+            && result.nextState?.meta
+            && state?.meta
+            && !(
+              options.allowTrustedForkLifecycle === true
+              && result.nextState === state
+            )
+          ) {
             result.nextState.meta = clone(state.meta);
           }
           if (typeof options.transformEffectResult !== "function"
@@ -198,9 +208,10 @@
           const transformed = runWithWorkingStateContext(
             transformedContext,
             () => options.transformEffectResult(
-              transformedContext,
+              result.nextState,
               result,
               args[0] || null,
+              transformedContext,
             ),
           );
           if (transformed !== result && transformed?.ok === true) {
@@ -232,7 +243,7 @@
           runtime: Object.freeze({ ...next, registerExecutor: registerContextualExecutor }),
           executeRegisteredAction,
           commitWorkingState(state, _context = {}) {
-            return clone(state);
+            return options.allowTrustedForkLifecycle === true ? state : clone(state);
           },
         });
         if (typeof domain?.createEffectGroup !== "function") {
@@ -255,7 +266,10 @@
 
     function createProductionEffectGroup(workingState, action) {
       const domain = effectDomainByFamily.get(action?.family);
-      if (domain) return domain.createEffectGroup(clone(workingState), clone(action));
+      if (domain) return domain.createEffectGroup(
+        options.allowTrustedForkLifecycle === true ? workingState : clone(workingState),
+        clone(action),
+      );
       return fail("RULE_COMPOSITION_EFFECT_DOMAIN_MISSING", `没有 production Effect domain: ${action?.family || "<missing>"}`);
     }
 
@@ -356,14 +370,18 @@
         clone(action),
         {
           enumerate: (state, request) => {
-            const workingContext = actionContext(clone(state));
+            const workingContext = actionContext(
+              options.allowTrustedForkLifecycle === true ? state : clone(state),
+            );
             return runWithWorkingStateContext(
               workingContext,
               () => actionRegistry.enumerate(workingContext, request),
             );
           },
           validate: (state, candidate) => {
-            const workingContext = actionContext(clone(state));
+            const workingContext = actionContext(
+              options.allowTrustedForkLifecycle === true ? state : clone(state),
+            );
             return runWithWorkingStateContext(
               workingContext,
               () => actionRegistry.validate(workingContext, candidate),
@@ -450,11 +468,18 @@
 
     function enumerateActions(request = {}) {
       const state = activeSession ? activeSession.workingState : readStoreSnapshot();
-      const workingContext = actionContext(clone(state));
-      return deepFreeze(clone(runWithWorkingStateContext(
+      const workingContext = actionContext(
+        options.allowTrustedForkLifecycle === true && activeSession
+          ? state
+          : clone(state),
+      );
+      const actions = runWithWorkingStateContext(
         workingContext,
         () => actionRegistry.enumerate(workingContext, clone(request)),
-      ) || []));
+      ) || [];
+      return options.allowTrustedForkLifecycle === true
+        ? deepFreeze(actions)
+        : deepFreeze(clone(actions));
     }
 
     function advance() {
@@ -490,14 +515,20 @@
         serialized = store.serialize(saveState);
       }
       if (!serialized.ok) return deepFreeze(clone(serialized));
-      const session = activeSession ? runtime.createCheckpoint(activeSession) : null;
+      const trustedCheckpoint = saveOptions.trustedFork === true
+        && options.allowTrustedForkLifecycle === true;
+      const session = activeSession
+        ? runtime.createCheckpoint(activeSession, { trustedReference: trustedCheckpoint })
+        : null;
       if (session?.ok === false) return deepFreeze(clone(session));
       return deepFreeze({
         ok: true,
         envelope: {
           schemaVersion: SAVE_SCHEMA_VERSION,
           committedState: serialized.serialized,
-          session: clone(session?.checkpoint || null),
+          session: trustedCheckpoint
+            ? (session?.checkpoint || null)
+            : clone(session?.checkpoint || null),
         },
       });
     }
@@ -625,7 +656,7 @@
       );
       const secondaryAgentSearch = evaluateOptions.secondaryAgentSearch || null;
       const maxExecutionNodes = secondaryAgentSearch
-        ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 16)
+        ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 32)
         : maxNodes;
       const focalSeatId = secondaryAgentSearch?.focalSeatId == null
         ? null
@@ -842,16 +873,28 @@
         }
         for (const target of catalog) {
           const targetId = String(target?.targetId || "");
+          const planId = String(target?.planId || targetId);
+          const resultTargetIds = [...new Set(
+            (target?.resultTargetIds || [targetId]).map(String).filter(Boolean),
+          )].sort();
           if (!targetId || !Array.isArray(target?.compatibleActionIds)) {
             throw new TypeError("secondaryAgentSearch 根目标缺少 targetId/compatibleActionIds");
+          }
+          if (!resultTargetIds.includes(targetId)) {
+            throw new TypeError("secondaryAgentSearch 根目标未包含在 resultTargetIds");
           }
           for (const actionId of target.compatibleActionIds) {
             if (!legalById.has(actionId)) {
               throw new TypeError(`secondaryAgentSearch 根目标引用非法 actionId: ${actionId}`);
             }
             const current = rootTargetsByActionId.get(actionId) || [];
-            if (!current.includes(targetId)) current.push(targetId);
-            rootTargetsByActionId.set(actionId, current.sort());
+            if (!current.some((entry) => (
+              entry.targetId === targetId && entry.planId === planId
+            ))) current.push({ targetId, planId, resultTargetIds });
+            rootTargetsByActionId.set(actionId, current.sort((left, right) => (
+              left.targetId.localeCompare(right.targetId)
+              || left.planId.localeCompare(right.planId)
+            )));
           }
         }
       }
@@ -864,11 +907,19 @@
       let sharedPhysicalExecutionOriginCount = 0;
       let conditionalEquivalentMergeCount = 0;
       let resourceDominatedOriginCount = 0;
+      let completionDominatedOriginCount = 0;
+      let targetEquivalentChoicePrunedCount = 0;
+      let targetSchedulerPrunedCount = 0;
+      let unreachableRouteOriginCount = 0;
+      let completedGoalTransitionCount = 0;
+      let maxCompletedGoalDepth = 0;
       let maxFrontierSize = legalActions.length;
       let maxRetainedFrontierSize = legalActions.length;
       let maxFrontierOriginCount = legalActions.length;
       const executedNodeCountByFamily = new Map();
+      const executedNodeCountByDecisionKind = new Map();
       const executedOriginCountByTarget = new Map();
+      const executedOriginCountByTargetAndDecisionKind = new Map();
       const leafCountByVirtualRoot = new Map();
       const saturatedOriginCountByVirtualRoot = new Map();
       const saturatedRouteGroupsByVirtualRoot = new Map();
@@ -877,6 +928,8 @@
       const dominanceCheckedOrigins = new WeakSet();
       const resourceDominatedOrigins = new WeakSet();
       const retainedDominanceEntriesByGroup = new Map();
+      const retainedCompletionEntriesByGroup = new Map();
+      const dominatedCompletionKeys = new Set();
 
       function chainKey(origin) {
         if (!chainKeyByOrigin.has(origin)) {
@@ -889,7 +942,9 @@
         return [
           origin.rootAction.actionId,
           origin.rootRouteTargetId || "",
+          origin.rootRoutePlanId || "",
           origin.routeTargetId || "",
+          origin.routePlanId || "",
           origin.proxyDepth || 0,
           origin.opponentProxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
@@ -901,6 +956,7 @@
         return [
           origin.rootAction.actionId,
           origin.rootRouteTargetId || "",
+          origin.rootRoutePlanId || "",
         ].join(":");
       }
 
@@ -912,6 +968,7 @@
             rootActionFamily: origin.rootAction.family,
             rootActionSummary: origin.rootAction.summary || null,
             rootRouteTargetId: origin.rootRouteTargetId || null,
+            rootRoutePlanId: origin.rootRoutePlanId || null,
           });
         }
         return key;
@@ -985,12 +1042,13 @@
       function dominatesResources(left, right) {
         const leftResources = left.state.resources;
         const rightResources = right.state.resources;
-        const noLess = ["credits", "energy", "publicity"].every((key) => (
+        const resourceKeys = ["credits", "energy", "publicity"];
+        const noLess = resourceKeys.every((key) => (
           leftResources[key] >= rightResources[key]
         ));
         const noMoreTrades = Number(left.origin.quickTradeCount || 0)
           <= Number(right.origin.quickTradeCount || 0);
-        const strictlyBetter = ["credits", "energy", "publicity"].some((key) => (
+        const strictlyBetter = resourceKeys.some((key) => (
           leftResources[key] > rightResources[key]
         )) || Number(left.origin.quickTradeCount || 0)
           < Number(right.origin.quickTradeCount || 0);
@@ -1001,6 +1059,7 @@
         return [
           virtualRootKey(origin),
           origin.routeTargetId || "",
+          origin.routePlanId || "",
           origin.proxyDepth || 0,
           origin.opponentProxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
@@ -1083,9 +1142,104 @@
       }
 
       function compareNodes(left, right) {
-        return compareSearchPriorities(left.priority, right.priority)
+        return (
+          secondaryAgentSearch
+            ? Math.min(...left.origins.map((origin) => origin.proxyDepth || 0))
+              - Math.min(...right.origins.map((origin) => origin.proxyDepth || 0))
+            : 0
+        )
+          || compareSearchPriorities(left.priority, right.priority)
+          || (
+            secondaryAgentSearch
+              ? Math.max(...right.origins.map((origin) => origin.chain?.length || 0))
+                - Math.max(...left.origins.map((origin) => origin.chain?.length || 0))
+              : 0
+          )
           || String(left.action.actionId).localeCompare(String(right.action.actionId))
           || String(left.key || "").localeCompare(String(right.key || ""));
+      }
+
+      function completionFactsDominate(left, right) {
+        const scalarPaths = [
+          ["score"],
+          ...[
+            "credits",
+            "energy",
+            "publicity",
+            "availableData",
+            "additionalPublicScan",
+            "ordinaryCards",
+            "alienCards",
+          ]
+            .map((key) => ["resources", key]),
+          ...[
+            "credits",
+            "energy",
+            "publicity",
+            "availableData",
+            "handSize",
+            "additionalPublicScan",
+          ].map((key) => ["income", key]),
+        ];
+        const valueAt = (source, path) => (
+          path.reduce((value, key) => value?.[key], source)
+        );
+        const noLess = scalarPaths.every((path) => (
+          Number(valueAt(left.facts, path) || 0) >= Number(valueAt(right.facts, path) || 0)
+        ));
+        const leftTech = new Set(left.facts.ownedTechIds || []);
+        const rightTech = new Set(right.facts.ownedTechIds || []);
+        const techSuperset = [...rightTech].every((techId) => leftTech.has(techId));
+        if (!noLess || !techSuperset) return false;
+        const strictlyBetter = scalarPaths.some((path) => (
+          Number(valueAt(left.facts, path) || 0) > Number(valueAt(right.facts, path) || 0)
+        )) || leftTech.size > rightTech.size;
+        if (strictlyBetter) return true;
+        const leftTrades = Number(left.quickTradeCount || 0);
+        const rightTrades = Number(right.quickTradeCount || 0);
+        if (leftTrades !== rightTrades) return leftTrades < rightTrades;
+        if (left.chainLength !== right.chainLength) return left.chainLength < right.chainLength;
+        return left.key < right.key;
+      }
+
+      function retainCompletedEndpoint(origin, observation, nextProxyDepth, nextChain, quickTrades) {
+        if (typeof secondaryAgentSearch?.getCompletionFacts !== "function") {
+          return { retained: true, key: null };
+        }
+        const facts = secondaryAgentSearch.getCompletionFacts(observation, focalSeatId);
+        if (!facts || typeof facts !== "object") {
+          throw new TypeError("secondaryAgentSearch 完成态缺少正式终点评估事实");
+        }
+        const key = stableHash([
+          origin.rootAction.actionId,
+          nextProxyDepth,
+          nextChain,
+        ]);
+        const groupKey = `${origin.rootAction.actionId}:${nextProxyDepth}`;
+        const candidate = {
+          key,
+          facts,
+          quickTradeCount: quickTrades,
+          chainLength: nextChain.length,
+        };
+        const retained = retainedCompletionEntriesByGroup.get(groupKey) || [];
+        if (retained.some((entry) => completionFactsDominate(entry, candidate))) {
+          dominatedCompletionKeys.add(key);
+          completionDominatedOriginCount += 1;
+          return { retained: false, key };
+        }
+        const survivors = [];
+        for (const entry of retained) {
+          if (completionFactsDominate(candidate, entry)) {
+            dominatedCompletionKeys.add(entry.key);
+            completionDominatedOriginCount += 1;
+          } else {
+            survivors.push(entry);
+          }
+        }
+        survivors.push(candidate);
+        retainedCompletionEntriesByGroup.set(groupKey, survivors);
+        return { retained: true, key };
       }
 
       function retainRootFairBeam(nodes) {
@@ -1123,13 +1277,17 @@
         const state = outcomeStateByActionId.get(origin.rootAction.actionId);
         const rootKey = virtualRootKey(origin);
         const leafCount = leafCountByVirtualRoot.get(rootKey) || 0;
-        if (!state || leafCount >= maxLeaves) {
+        if (!state || (!secondaryAgentSearch && leafCount >= maxLeaves)) {
           if (state) state.pruned = true;
           return;
         }
         leafCountByVirtualRoot.set(rootKey, leafCount + 1);
         state.leaves.push({
-          leafId: `leaf:${stableHash([origin.rootRouteTargetId || null, origin.chain])}`,
+          leafId: `leaf:${stableHash([
+            origin.rootRouteTargetId || null,
+            origin.rootRoutePlanId || null,
+            origin.chain,
+          ])}`,
           status: ["completed", "idle"].includes(nextInspection.phase)
             ? "settled"
             : nextInspection.phase,
@@ -1147,6 +1305,7 @@
             rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
             terminalReason: origin.terminalReason || null,
             rootRouteTargetId: origin.rootRouteTargetId || null,
+            rootRoutePlanId: origin.rootRoutePlanId || null,
           } : {}),
         });
       }
@@ -1170,21 +1329,30 @@
           rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
           terminalReason: "search-frontier",
           rootRouteTargetId: origin.rootRouteTargetId || null,
+          rootRoutePlanId: origin.rootRoutePlanId || null,
         };
         const rootTargetId = origin.rootRouteTargetId || null;
+        const rootPlanId = origin.rootRoutePlanId || null;
         const otherTargets = state.frontierLeaves.filter((candidate) => (
           candidate.rootRouteTargetId !== rootTargetId
+          || candidate.rootRoutePlanId !== rootPlanId
         ));
         const byId = new Map(state.frontierLeaves
-          .filter((candidate) => candidate.rootRouteTargetId === rootTargetId)
+          .filter((candidate) => (
+            candidate.rootRouteTargetId === rootTargetId
+            && candidate.rootRoutePlanId === rootPlanId
+          ))
           .map((candidate) => [
           candidate.leafId,
           candidate,
           ]));
         byId.set(leaf.leafId, leaf);
-        state.frontierLeaves = [...otherTargets, ...[...byId.values()]
-          .sort((left, right) => String(left.leafId).localeCompare(String(right.leafId)))
-          .slice(-maxLeaves)];
+        const sameTargetLeaves = [...byId.values()]
+          .sort((left, right) => String(left.leafId).localeCompare(String(right.leafId)));
+        state.frontierLeaves = [
+          ...otherTargets,
+          ...(secondaryAgentSearch ? sameTargetLeaves : sameTargetLeaves.slice(-maxLeaves)),
+        ];
       }
 
       function executeNode(node) {
@@ -1259,6 +1427,12 @@
                 branchObservation: leafObservation,
                 viewer,
                 currentAction: clone(current),
+                routeTargetIds: [...new Set(node.origins.map((origin) => (
+                  origin.routeTargetId || null
+                )))],
+                routePlanIds: [...new Set(node.origins.map((origin) => (
+                  origin.routePlanId || null
+                )))],
               });
               branchPriority = Array.isArray(measured?.sortKey)
                 ? clone(measured)
@@ -1307,13 +1481,18 @@
         && typeof secondaryAgentSearch.selectRootTargets === "function";
       const initialFrontierByKey = new Map();
       for (const action of legalActions) {
-        const routeTargetIds = rootTargetsByActionId.get(action.actionId) || [];
-        const selectedTargetIds = routeTargetIds.length
-          ? routeTargetIds
+        const routeTargets = rootTargetsByActionId.get(action.actionId) || [];
+        const selectedTargets = routeTargets.length
+          ? routeTargets
           : !usesRootTargetCatalog || ["pass", "end_turn"].includes(action.family)
-            ? [null]
+            ? [{ targetId: null, planId: null }]
             : [];
-        for (const routeTargetId of selectedTargetIds) {
+        for (const routeTarget of selectedTargets) {
+          const routeTargetId = routeTarget?.targetId || null;
+          const routePlanId = routeTarget?.planId || null;
+          const routeResultTargetIds = clone(routeTarget?.resultTargetIds || (
+            routeTargetId ? [routeTargetId] : []
+          ));
           mergeNode(initialFrontierByKey, {
             envelope: saved.envelope,
             action,
@@ -1332,13 +1511,90 @@
               goalCompletionPending: false,
               terminalReason: null,
               routeTargetId,
+              routePlanId,
+              routeResultTargetIds,
               rootRouteTargetId: routeTargetId,
+              rootRoutePlanId: routePlanId,
+              rootRouteResultTargetIds: routeResultTargetIds,
               rootWasConditional: action.phase === "conditional",
             }],
           });
         }
       }
       let frontier = [...initialFrontierByKey.values()];
+      const secondaryFrontierByKey = new Map();
+      const secondaryFrontierIndexByKey = new Map();
+      function swapSecondaryFrontier(leftIndex, rightIndex) {
+        const left = frontier[leftIndex];
+        frontier[leftIndex] = frontier[rightIndex];
+        frontier[rightIndex] = left;
+        secondaryFrontierIndexByKey.set(frontier[leftIndex].key, leftIndex);
+        secondaryFrontierIndexByKey.set(frontier[rightIndex].key, rightIndex);
+      }
+      function bubbleSecondaryFrontierUp(startIndex) {
+        let index = startIndex;
+        while (index > 0) {
+          const parent = Math.floor((index - 1) / 2);
+          if (compareNodes(frontier[parent], frontier[index]) <= 0) break;
+          swapSecondaryFrontier(parent, index);
+          index = parent;
+        }
+        return index;
+      }
+      function bubbleSecondaryFrontierDown(startIndex) {
+        let index = startIndex;
+        while (true) {
+          const left = index * 2 + 1;
+          const right = left + 1;
+          let best = index;
+          if (left < frontier.length && compareNodes(frontier[left], frontier[best]) < 0) {
+            best = left;
+          }
+          if (right < frontier.length && compareNodes(frontier[right], frontier[best]) < 0) {
+            best = right;
+          }
+          if (best === index) break;
+          swapSecondaryFrontier(index, best);
+          index = best;
+        }
+        return index;
+      }
+      function repairSecondaryFrontier(index) {
+        bubbleSecondaryFrontierDown(bubbleSecondaryFrontierUp(index));
+      }
+      function pushSecondaryFrontier(node) {
+        const key = node.key || nodeKey(node);
+        const existing = secondaryFrontierByKey.get(key);
+        if (existing) {
+          mergeNode(secondaryFrontierByKey, node);
+          repairSecondaryFrontier(secondaryFrontierIndexByKey.get(key));
+          return;
+        }
+        const retained = { ...node, key };
+        secondaryFrontierByKey.set(key, retained);
+        frontier.push(retained);
+        const index = frontier.length - 1;
+        secondaryFrontierIndexByKey.set(key, index);
+        bubbleSecondaryFrontierUp(index);
+      }
+      function popSecondaryFrontier() {
+        if (!frontier.length) return null;
+        const first = frontier[0];
+        const last = frontier.pop();
+        secondaryFrontierByKey.delete(first.key);
+        secondaryFrontierIndexByKey.delete(first.key);
+        if (frontier.length) {
+          frontier[0] = last;
+          secondaryFrontierIndexByKey.set(last.key, 0);
+          bubbleSecondaryFrontierDown(0);
+        }
+        return first;
+      }
+      if (secondaryAgentSearch) {
+        const initialNodes = frontier;
+        frontier = [];
+        for (const node of initialNodes) pushSecondaryFrontier(node);
+      }
       maxFrontierSize = Math.max(maxFrontierSize, frontier.length);
       maxRetainedFrontierSize = Math.max(maxRetainedFrontierSize, frontier.length);
       maxFrontierOriginCount = Math.max(
@@ -1346,30 +1602,22 @@
         frontier.reduce((total, node) => total + node.origins.length, 0),
       );
       function consumesSearchBudget(node) {
-        const action = node?.action;
-        if (!secondaryAgentSearch) return true;
-        if (node?.origins?.some((origin) => origin.rootWasConditional)) return false;
-        if (typeof secondaryAgentSearch.countsGoal === "function") {
-          return String(action?.actorId || "") === focalSeatId
-            && secondaryAgentSearch.countsGoal(action);
-        }
-        return String(action?.actorId || "") === focalSeatId
-          && action?.phase !== "conditional"
-          && !["end_turn", "pass"].includes(action?.family);
+        return !secondaryAgentSearch && Boolean(node?.action);
       }
 
       while (frontier.length && executedNodeCount < maxExecutionNodes) {
-        const sorted = [...frontier].sort(compareNodes);
+        const sorted = secondaryAgentSearch ? null : [...frontier].sort(compareNodes);
         const nextFrontierByKey = new Map();
-        const selected = secondaryAgentSearch ? sorted.slice(0, 1) : sorted;
-        if (secondaryAgentSearch) {
-          for (const pending of sorted.slice(1)) {
-            mergeNode(nextFrontierByKey, pending);
-          }
-        }
+        const selected = secondaryAgentSearch ? [popSecondaryFrontier()] : sorted;
         for (const node of selected) {
+          node.origins = node.origins.filter((origin) => (
+            !origin.completionFrontierKey
+            || !dominatedCompletionKeys.has(origin.completionFrontierKey)
+          ));
+          if (!node.origins.length) continue;
           const saturatedOrigins = node.origins.filter((origin) => {
-            return (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
+            return !secondaryAgentSearch
+              && (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
           });
           if (saturatedOrigins.length) {
             for (const origin of saturatedOrigins) {
@@ -1430,11 +1678,21 @@
             current.family,
             (executedNodeCountByFamily.get(current.family) || 0) + 1,
           );
+          const decisionKind = `${current.family}:${current.target?.kind || "<none>"}`;
+          executedNodeCountByDecisionKind.set(
+            decisionKind,
+            (executedNodeCountByDecisionKind.get(decisionKind) || 0) + 1,
+          );
           for (const origin of node.origins) {
             const targetId = origin.routeTargetId || "<unbound>";
             executedOriginCountByTarget.set(
               targetId,
               (executedOriginCountByTarget.get(targetId) || 0) + 1,
+            );
+            const targetDecisionKind = `${targetId} -> ${decisionKind}`;
+            executedOriginCountByTargetAndDecisionKind.set(
+              targetDecisionKind,
+              (executedOriginCountByTargetAndDecisionKind.get(targetDecisionKind) || 0) + 1,
             );
           }
           const currentIsFocal = secondaryAgentSearch
@@ -1442,7 +1700,7 @@
           const currentIsRouteAction = secondaryAgentSearch
             && current.phase !== "conditional"
             && !["end_turn", "pass"].includes(current.family);
-          const currentCompletesSecondaryGoal = currentIsRouteAction
+          const currentCountsSecondaryGoal = currentIsRouteAction
             && (
               typeof secondaryAgentSearch.countsGoal !== "function"
               || secondaryAgentSearch.countsGoal(current)
@@ -1472,31 +1730,36 @@
             const nextChain = [...origin.chain, current.actionId];
             const originNextProbeAction = nextProbeAction || origin.lastProbeAction;
             let routeTargetId = origin.routeTargetId || null;
+            let routePlanId = origin.routePlanId || null;
             if (
               secondaryAgentSearch
               && !routeTargetId
+              && !usesRootTargetCatalog
               && !origin.goalCompletionPending
               && typeof secondaryAgentSearch.selectRouteTarget === "function"
             ) {
               try {
-                routeTargetId = secondaryAgentSearch.selectRouteTarget({
+                const selectedRoute = secondaryAgentSearch.selectRouteTarget({
                   focalSeatId,
                   currentAction: current,
                   rootObservation,
                   branchObservation: execution.leafObservation,
                   routeTargetId,
+                  routePlanId,
                   focalProxyDepth: origin.proxyDepth,
                   maxProxyDepth,
                 }) || null;
+                routeTargetId = typeof selectedRoute === "string"
+                  ? selectedRoute
+                  : selectedRoute?.targetId || null;
+                routePlanId = typeof selectedRoute === "string"
+                  ? selectedRoute
+                  : selectedRoute?.planId || routeTargetId;
               } catch (_error) {
                 routeTargetId = origin.routeTargetId || null;
+                routePlanId = origin.routePlanId || null;
               }
             }
-            const nextProxyDepth = origin.rootWasConditional
-              ? 0
-              : origin.proxyDepth + (
-                currentIsFocal && currentCompletesSecondaryGoal ? 1 : 0
-              );
             const nextQuickTradeCount = Number(origin.quickTradeCount || 0) + (
               currentIsFocal && current.family === "quick_trade" ? 1 : 0
             );
@@ -1511,10 +1774,48 @@
             ];
             const focalPassStarted = origin.focalPassStarted
               || (currentIsFocal && current.family === "pass");
+            const currentCompletesRouteTarget = currentIsFocal
+              && (
+                typeof secondaryAgentSearch.completesRouteTarget === "function"
+                  ? secondaryAgentSearch.completesRouteTarget(
+                    {
+                      action: current,
+                      targetId: routeTargetId,
+                      planId: routePlanId,
+                      focalSeatId,
+                      rootObservation,
+                      branchObservation: execution.leafObservation,
+                    },
+                  )
+                  : currentCountsSecondaryGoal
+              );
             const goalCompletionPending = Boolean(
               origin.goalCompletionPending
-              || (currentIsFocal && currentCompletesSecondaryGoal),
+              || currentCompletesRouteTarget,
             );
+            const completedGoal = Boolean(
+              goalCompletionPending
+              && !execution.awaitingDecision
+            );
+            const nextProxyDepth = origin.rootWasConditional
+              ? 0
+              : origin.proxyDepth + Number(completedGoal);
+            let completionFrontierKey = origin.completionFrontierKey || null;
+            if (completedGoal) {
+              completedGoalTransitionCount += 1;
+              maxCompletedGoalDepth = Math.max(maxCompletedGoalDepth, nextProxyDepth);
+              const retained = retainCompletedEndpoint(
+                origin,
+                execution.leafObservation,
+                nextProxyDepth,
+                nextChain,
+                nextQuickTradeCount,
+              );
+              completionFrontierKey = retained.key;
+              if (!retained.retained) {
+                continue;
+              }
+            }
             if (
               secondaryAgentSearch
               && origin.rootWasConditional
@@ -1551,6 +1852,7 @@
                   routeActions: nextRouteActions,
                   focalPassStarted,
                   routeTargetId,
+                  routePlanId,
                 },
                 execution.leafObservation,
                 execution.successors,
@@ -1566,6 +1868,8 @@
               }
               let conditionalSuccessors = execution.successors;
               let routeTargetByActionId = new Map();
+              let routePlanByActionId = new Map();
+              let routeResultsByActionId = new Map();
               if (
                 secondaryAgentSearch
               ) {
@@ -1580,6 +1884,8 @@
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
                     routeTargetId,
+                    routePlanId,
+                    routeResultTargetIds: origin.routeResultTargetIds || [],
                     maxProxyDepth,
                   }) || [];
                 } catch (error) {
@@ -1589,6 +1895,18 @@
                   });
                   continue;
                 }
+                targetEquivalentChoicePrunedCount += Math.max(
+                  0,
+                  ...conditionalSuccessors.map((successor) => (
+                    Number(successor?.targetEquivalentChoiceCount) || 0
+                  )),
+                );
+                targetSchedulerPrunedCount += Math.max(
+                  0,
+                  ...conditionalSuccessors.map((successor) => (
+                    Number(successor?.targetSchedulerPrunedCount) || 0
+                  )),
+                );
                 const legalById = new Map(execution.successors.map((successor) => [
                   successor.actionId,
                   successor,
@@ -1599,14 +1917,23 @@
                     ? successor.routeTargetId
                     : routeTargetId,
                 ]));
+                routePlanByActionId = new Map(conditionalSuccessors.map((successor) => [
+                  successor?.actionId,
+                  Object.hasOwn(successor || {}, "routePlanId")
+                    ? successor.routePlanId
+                    : routePlanId,
+                ]));
+                routeResultsByActionId = new Map(conditionalSuccessors.map((successor) => [
+                  successor?.actionId,
+                  Object.hasOwn(successor || {}, "routeResultTargetIds")
+                    ? clone(successor.routeResultTargetIds)
+                    : clone(origin.routeResultTargetIds || []),
+                ]));
                 conditionalSuccessors = conditionalSuccessors
                   .map((successor) => legalById.get(successor?.actionId))
                   .filter(Boolean);
                 if (!conditionalSuccessors.length) {
-                  markFailure([origin], {
-                    code: "COUNTERFACTUAL_ROUTE_SELECTOR_EMPTY",
-                    message: "secondaryAgentSearch 未选择合法 conditional 后继",
-                  });
+                  unreachableRouteOriginCount += 1;
                   continue;
                 }
               }
@@ -1629,6 +1956,12 @@
                     routeTargetId: secondaryAgentSearch
                       ? routeTargetByActionId.get(successor.actionId)
                       : routeTargetId,
+                    routePlanId: secondaryAgentSearch
+                      ? routePlanByActionId.get(successor.actionId)
+                      : routePlanId,
+                    routeResultTargetIds: secondaryAgentSearch
+                      ? routeResultsByActionId.get(successor.actionId)
+                      : clone(origin.routeResultTargetIds || []),
                   }],
                 });
               }
@@ -1710,10 +2043,14 @@
                     focalProxyDepth: nextProxyDepth,
                     opponentProxyDepth: currentIsFocal || current.family === "end_turn"
                       ? 0
-                      : origin.opponentProxyDepth + (currentCompletesSecondaryGoal ? 1 : 0),
+                      : origin.opponentProxyDepth + (currentCountsSecondaryGoal ? 1 : 0),
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
-                    routeTargetId: goalCompletionPending ? null : routeTargetId,
+                    routeTargetId: completedGoal ? null : routeTargetId,
+                    routePlanId: completedGoal ? null : routePlanId,
+                    routeResultTargetIds: completedGoal
+                      ? []
+                      : clone(origin.routeResultTargetIds || []),
                     maxProxyDepth,
                   }) || [];
                 } catch (error) {
@@ -1723,6 +2060,12 @@
                   });
                   continue;
                 }
+                targetSchedulerPrunedCount += Math.max(
+                  0,
+                  ...selectedSuccessors.map((successor) => (
+                    Number(successor?.targetSchedulerPrunedCount) || 0
+                  )),
+                );
                 const legalById = new Map(execution.successors.map((successor) => [
                   successor.actionId,
                   successor,
@@ -1732,19 +2075,21 @@
                     action: legalById.get(selected?.actionId),
                     routeTargetId: Object.hasOwn(selected || {}, "routeTargetId")
                       ? selected.routeTargetId
-                      : routeTargetId,
+                      : (completedGoal ? null : routeTargetId),
+                    routePlanId: Object.hasOwn(selected || {}, "routePlanId")
+                      ? selected.routePlanId
+                      : (completedGoal ? null : routePlanId),
+                    routeResultTargetIds: Object.hasOwn(selected || {}, "routeResultTargetIds")
+                      ? clone(selected.routeResultTargetIds)
+                      : (
+                        completedGoal
+                          ? []
+                          : clone(origin.routeResultTargetIds || [])
+                      ),
                   }))
                   .filter((route) => Boolean(route.action));
                 if (!selectedRoutes.length) {
-                  markFailure([origin], {
-                    code: "COUNTERFACTUAL_ROUTE_SELECTOR_EMPTY",
-                    message: [
-                      "secondaryAgentSearch 未选择合法后继",
-                      `target=${goalCompletionPending ? "<completed>" : routeTargetId || "<none>"}`,
-                      `current=${current.family || "<unknown>"}`,
-                      `successors=${execution.successors.map((successor) => successor.family).join(",")}`,
-                    ].join(" "),
-                  });
+                  unreachableRouteOriginCount += 1;
                   continue;
                 }
                 if (selectedRoutes.some((route) => (
@@ -1757,7 +2102,11 @@
                       proxyDepth: nextProxyDepth,
                       quickTradeCount: nextQuickTradeCount,
                       routeActions: nextRouteActions,
-                      routeTargetId,
+                      routeTargetId: completedGoal ? null : routeTargetId,
+                      routePlanId: completedGoal ? null : routePlanId,
+                      routeResultTargetIds: completedGoal
+                        ? []
+                        : clone(origin.routeResultTargetIds || []),
                     },
                     execution.leafObservation,
                     execution.successors,
@@ -1789,15 +2138,22 @@
                         : (
                           currentIsFocal || current.family === "end_turn"
                             ? 0
-                            : origin.opponentProxyDepth + (currentCompletesSecondaryGoal ? 1 : 0)
+                            : origin.opponentProxyDepth + (currentCountsSecondaryGoal ? 1 : 0)
                       ),
                       focalPassStarted,
                       goalCompletionPending: nextActorIsFocal
                         ? false
-                        : goalCompletionPending,
+                        : (completedGoal ? false : goalCompletionPending),
                       routeTargetId: nextActorIsFocal
                         ? selectedRoute.routeTargetId
                         : routeTargetId,
+                      routePlanId: nextActorIsFocal
+                        ? selectedRoute.routePlanId
+                        : routePlanId,
+                      routeResultTargetIds: nextActorIsFocal
+                        ? selectedRoute.routeResultTargetIds
+                        : clone(origin.routeResultTargetIds || []),
+                      completionFrontierKey,
                     }],
                   });
                 }
@@ -1824,16 +2180,29 @@
         const nextFrontier = pruneResourceDominatedOrigins(
           [...nextFrontierByKey.values()],
         );
-        maxFrontierSize = Math.max(maxFrontierSize, nextFrontier.length);
+        if (secondaryAgentSearch) {
+          for (const nextNode of nextFrontier) pushSecondaryFrontier(nextNode);
+        } else {
+          frontier = retainRootFairBeam(nextFrontier);
+        }
+        maxFrontierSize = Math.max(maxFrontierSize, frontier.length);
         maxFrontierOriginCount = Math.max(
           maxFrontierOriginCount,
-          nextFrontier.reduce((total, node) => total + node.origins.length, 0),
+          frontier.reduce((total, node) => total + node.origins.length, 0),
         );
-        frontier = retainRootFairBeam(nextFrontier);
         maxRetainedFrontierSize = Math.max(maxRetainedFrontierSize, frontier.length);
         timing.frontierMilliseconds += now() - frontierStartedAt;
       }
       const remainingFrontierNodeCount = frontier.length;
+      const remainingFrontierOriginCountByGoalDepth = {};
+      for (const node of frontier) {
+        for (const origin of node.origins) {
+          const depth = String(Number(origin.proxyDepth) || 0);
+          remainingFrontierOriginCountByGoalDepth[depth] = (
+            remainingFrontierOriginCountByGoalDepth[depth] || 0
+          ) + 1;
+        }
+      }
       const executionLimitReached = (
         executedNodeCount >= maxExecutionNodes
         && remainingFrontierNodeCount > 0
@@ -1842,7 +2211,9 @@
 
       const outcomes = [...outcomeStateByActionId.values()].map((state) => {
         const failure = state.failures[0] || null;
-        const allLeaves = [...state.leaves, ...state.frontierLeaves];
+        const allLeaves = secondaryAgentSearch
+          ? [...state.leaves]
+          : [...state.leaves, ...state.frontierLeaves];
         const hasLeaves = allLeaves.length > 0;
         const status = hasLeaves
           ? "settled"
@@ -1896,6 +2267,7 @@
         maxExecutionNodes,
         executionLimitReached,
         remainingFrontierNodeCount,
+        remainingFrontierOriginCountByGoalDepth,
         maxDepth,
         maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
         secondaryAgentSearch: Boolean(secondaryAgentSearch),
@@ -1910,13 +2282,29 @@
         sharedPhysicalExecutionOriginCount,
         conditionalEquivalentMergeCount,
         resourceDominatedOriginCount,
+        completionDominatedOriginCount,
+        targetEquivalentChoicePrunedCount,
+        targetSchedulerPrunedCount,
+        unreachableRouteOriginCount,
+        completedGoalTransitionCount,
+        maxCompletedGoalDepth,
         executedNodeCountByFamily: Object.fromEntries(
           [...executedNodeCountByFamily.entries()].sort(([left], [right]) => (
             String(left).localeCompare(String(right))
           )),
         ),
+        executedNodeCountByDecisionKind: Object.fromEntries(
+          [...executedNodeCountByDecisionKind.entries()].sort(([left], [right]) => (
+            String(left).localeCompare(String(right))
+          )),
+        ),
         executedOriginCountByTarget: Object.fromEntries(
           [...executedOriginCountByTarget.entries()].sort((left, right) => (
+            right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
+          )),
+        ),
+        executedOriginCountByTargetAndDecisionKind: Object.fromEntries(
+          [...executedOriginCountByTargetAndDecisionKind.entries()].sort((left, right) => (
             right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
           )),
         ),
@@ -1942,6 +2330,9 @@
             || String(left.rootActionId).localeCompare(String(right.rootActionId))
             || String(left.rootRouteTargetId || "").localeCompare(
               String(right.rootRouteTargetId || ""),
+            )
+            || String(left.rootRoutePlanId || "").localeCompare(
+              String(right.rootRoutePlanId || ""),
             )
           )),
         prunedNodeCount,
