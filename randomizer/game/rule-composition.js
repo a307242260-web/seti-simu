@@ -618,6 +618,69 @@
       return deepFreeze({ ok: true, projection: committedProjection() });
     }
 
+    function advanceFocalPlanningTurn(focalSeatId) {
+      if (options.allowTrustedForkLifecycle !== true) {
+        return fail(
+          "COUNTERFACTUAL_FOCAL_TURN_FORBIDDEN",
+          "单席位规划推进只允许隔离的 counterfactual fork",
+        );
+      }
+      if (!focalSeatId) {
+        return fail("COUNTERFACTUAL_FOCAL_TURN_OWNER_MISSING", "单席位规划缺少 focalSeatId");
+      }
+      if (activeSession && !TERMINAL_PHASES.has(activeSession.phase)) {
+        return fail(
+          "COUNTERFACTUAL_FOCAL_TURN_SESSION_PENDING",
+          "Effect Session 未结束时不得跳过其他席位",
+        );
+      }
+      const snapshot = readStoreSnapshot();
+      const turn = snapshot.turn || {};
+      if (!(turn.activePlayerIds || []).includes(focalSeatId)) {
+        return fail(
+          "COUNTERFACTUAL_FOCAL_TURN_OWNER_INACTIVE",
+          "单席位规划 focal 不在 active seats",
+        );
+      }
+      if ((turn.passedPlayerIds || []).includes(focalSeatId)) {
+        return deepFreeze({ ok: true, advanced: false, reason: "focal-passed" });
+      }
+      if (String(turn.currentPlayerId || "") === String(focalSeatId)) {
+        return deepFreeze({ ok: true, advanced: false, reason: "already-focal" });
+      }
+      const working = store.beginWorkingCopy(snapshot.meta.stateVersion);
+      if (!working.ok) return deepFreeze(clone(working));
+      const activePlayerCount = Math.max(
+        1,
+        Number(working.state.turn.activePlayerCount)
+          || working.state.turn.activePlayerIds?.length
+          || 1,
+      );
+      working.state.turn.currentPlayerId = focalSeatId;
+      working.state.turn.completedTurnPlayerIds = [];
+      working.state.turn.actionCycleNumber = Math.max(
+        1,
+        Number(working.state.turn.actionCycleNumber) || 1,
+      ) + 1;
+      working.state.turn.turnNumber = Math.max(
+        1,
+        Number(working.state.turn.turnNumber) || 1,
+      ) + Math.max(0, activePlayerCount - 1);
+      const committed = store.compareAndCommit(
+        working.baseVersion,
+        working.state,
+        { source: "counterfactual-focal-planning-turn" },
+      );
+      return committed.ok
+        ? deepFreeze({
+          ok: true,
+          advanced: true,
+          stateVersion: committed.stateVersion,
+          currentPlayerId: focalSeatId,
+        })
+        : deepFreeze(clone(committed));
+    }
+
     function evaluateCounterfactualOutcomes(actions = [], evaluateOptions = {}) {
       const legalActions = clone(actions);
       const viewer = clone(evaluateOptions.viewer || null);
@@ -654,6 +717,7 @@
         1,
         Number(evaluateOptions.maxFrontierPerRoot) || 8,
       );
+      const stopAtPassDecisionBoundary = evaluateOptions.stopAtPassDecisionBoundary === true;
       const secondaryAgentSearch = evaluateOptions.secondaryAgentSearch || null;
       const maxExecutionNodes = secondaryAgentSearch
         ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 32)
@@ -913,11 +977,15 @@
       let unreachableRouteOriginCount = 0;
       let completedGoalTransitionCount = 0;
       let maxCompletedGoalDepth = 0;
+      let opponentExecutedNodeCount = 0;
+      let focalPlanningTurnAdvanceCount = 0;
+      let focalPassBoundaryLeafCount = 0;
       let maxFrontierSize = legalActions.length;
       let maxRetainedFrontierSize = legalActions.length;
       let maxFrontierOriginCount = legalActions.length;
       const executedNodeCountByFamily = new Map();
       const executedNodeCountByDecisionKind = new Map();
+      const executedNodeCountByActor = new Map();
       const executedOriginCountByTarget = new Map();
       const executedOriginCountByTargetAndDecisionKind = new Map();
       const leafCountByVirtualRoot = new Map();
@@ -1358,6 +1426,16 @@
       function executeNode(node) {
         let fork;
         try {
+          if (
+            secondaryAgentSearch
+            && String(node.action?.actorId || "") !== focalSeatId
+          ) {
+            return {
+              failed: true,
+              code: "COUNTERFACTUAL_OPPONENT_ACTION_FORBIDDEN",
+              message: "单席位规划不得执行其他席位行动",
+            };
+          }
           const identityStartedAt = now();
           const branchIdentity = branchKey(node.envelope, node.action.actionId);
           timing.identityMilliseconds += now() - identityStartedAt;
@@ -1410,6 +1488,22 @@
               code: result?.code || failure?.code || "COUNTERFACTUAL_EXECUTION_FAILED",
               message: result?.message || failure?.message || null,
             };
+          }
+          if (
+            secondaryAgentSearch
+            && current.family === "end_turn"
+            && String(current.actorId || "") === focalSeatId
+          ) {
+            const advanced = composition.counterfactualPort
+              ?.advanceFocalPlanningTurn?.(focalSeatId);
+            if (!advanced?.ok) {
+              return {
+                failed: true,
+                code: advanced?.code || "COUNTERFACTUAL_FOCAL_TURN_ADVANCE_FAILED",
+                message: advanced?.message || "单席位规划无法进入下一行动",
+              };
+            }
+            if (advanced.advanced) focalPlanningTurnAdvanceCount += 1;
           }
           const nextInspection = composition.inspect();
           const awaitingDecision = nextInspection.phase === "awaiting_input";
@@ -1674,6 +1768,14 @@
             continue;
           }
           const current = execution.current;
+          const currentActorId = String(current.actorId || "");
+          executedNodeCountByActor.set(
+            currentActorId,
+            (executedNodeCountByActor.get(currentActorId) || 0) + 1,
+          );
+          if (secondaryAgentSearch && currentActorId !== focalSeatId) {
+            opponentExecutedNodeCount += 1;
+          }
           executedNodeCountByFamily.set(
             current.family,
             (executedNodeCountByFamily.get(current.family) || 0) + 1,
@@ -1832,6 +1934,31 @@
                 },
                 execution.leafObservation,
                 execution.successors,
+                execution.nextInspection,
+                origin.checkpoints,
+              );
+              continue;
+            }
+            if (
+              (
+                (secondaryAgentSearch && focalPassStarted)
+                || (stopAtPassDecisionBoundary && current.family === "pass")
+              )
+              && execution.awaitingDecision
+            ) {
+              if (secondaryAgentSearch) focalPassBoundaryLeafCount += 1;
+              addLeaf(
+                {
+                  ...origin,
+                  chain: nextChain,
+                  proxyDepth: nextProxyDepth,
+                  quickTradeCount: nextQuickTradeCount,
+                  routeActions: nextRouteActions,
+                  focalPassStarted,
+                  terminalReason: "focal-pass-decision-boundary",
+                },
+                execution.leafObservation,
+                [],
                 execution.nextInspection,
                 origin.checkpoints,
               );
@@ -2288,6 +2415,9 @@
         unreachableRouteOriginCount,
         completedGoalTransitionCount,
         maxCompletedGoalDepth,
+        opponentExecutedNodeCount,
+        focalPlanningTurnAdvanceCount,
+        focalPassBoundaryLeafCount,
         executedNodeCountByFamily: Object.fromEntries(
           [...executedNodeCountByFamily.entries()].sort(([left], [right]) => (
             String(left).localeCompare(String(right))
@@ -2295,6 +2425,11 @@
         ),
         executedNodeCountByDecisionKind: Object.fromEntries(
           [...executedNodeCountByDecisionKind.entries()].sort(([left], [right]) => (
+            String(left).localeCompare(String(right))
+          )),
+        ),
+        executedNodeCountByActor: Object.fromEntries(
+          [...executedNodeCountByActor.entries()].sort(([left], [right]) => (
             String(left).localeCompare(String(right))
           )),
         ),
@@ -2364,6 +2499,9 @@
     const counterfactualPort = Object.freeze({
       evaluate: evaluateCounterfactualOutcomes,
       getDiagnostics: () => clone(lastCounterfactualDiagnostics),
+      ...(options.allowTrustedForkLifecycle === true
+        ? { advanceFocalPlanningTurn }
+        : {}),
     });
 
     const stateSourcePort = Object.freeze({

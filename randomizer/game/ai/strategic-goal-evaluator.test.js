@@ -56,6 +56,22 @@ function observation({
 }
 
 {
+  assert.throws(
+    () => evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: observation(),
+      legalSuccessors: [{
+        ...action("opponent:pass", "pass"),
+        actorId: "opponent-seat",
+      }],
+      routeTargetId: "data:analyze",
+    }),
+    (error) => error?.code === "SECONDARY_AGENT_OPPONENT_ACTION_FORBIDDEN",
+    "单席位规划 selector 不得再以 opponent PASS/end_turn 推进回合",
+  );
+}
+
+{
   const emptyTraceSlot = () => ({
     revealed: false,
     traces: {

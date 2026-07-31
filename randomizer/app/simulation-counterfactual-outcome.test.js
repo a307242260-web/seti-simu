@@ -273,6 +273,20 @@ try {
       "诊断必须报告实际完成的最大结果目标深度");
     assert.equal(policyDiagnostics.maxCompletedGoalDepth <= 15, true,
       "15 步只限制已完成的结果目标数");
+    assert.equal(policyDiagnostics.opponentExecutedNodeCount, 0,
+      "单席位规划不得执行、PASS 或解析任何对手行动");
+    assert.equal(policyDiagnostics.focalPlanningTurnAdvanceCount > 0, true,
+      "白色 end_turn 后必须由 planner-only 时钟直接进入白色下一行动");
+    assert.deepEqual(
+      Object.keys(policyDiagnostics.executedNodeCountByActor || {}),
+      [actions[0].actorPlayerId],
+      "固定盘面全部物理执行节点必须只属于当前白色席位",
+    );
+    assert.equal(
+      policyDiagnostics.executedNodeCountByDecisionKind?.["choose_card:pass-reserve-card"] || 0,
+      0,
+      "PASS 前规划不得选择或读取尚未向白色公开的 PASS 预留牌",
+    );
     assert.equal(policyDiagnostics.targetSchedulerPrunedCount > 0, true,
       "后续目标必须由资源下界调度，而不是重新展开全部目标排列");
     assert.equal(Number.isSafeInteger(policyDiagnostics.unreachableRouteOriginCount), true);
@@ -305,6 +319,21 @@ try {
     assert.equal(controlOutcomes.every((outcome) => (
       outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
     )), true, "PASS/end_turn 必须执行真实后继，轮初收入语义不能成为跳过理由");
+    const passOutcome = policyResult.actionOutcomes.find((outcome) => (
+      actions.find((action) => action.actionId === outcome.actionId)?.family === "pass"
+    ));
+    assert.equal(passOutcome?.status, "settled",
+      "根 PASS 必须在首个正式 Decision 边界形成完整叶");
+    assert.equal(
+      (passOutcome?.leaves || []).every((leaf) => (
+        !(leaf.actionChain || []).some((actionId) => (
+          String(actionId).startsWith("choose_card:")
+        ))
+        && (leaf.legalSuccessors || []).length === 0
+      )),
+      true,
+      "根 PASS 估值不得暴露或提前提交随后才可见的预留牌选择",
+    );
   } finally {
     environment.dispose();
   }

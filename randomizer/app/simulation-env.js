@@ -295,6 +295,7 @@ function createSimulationEnv() {
       maxLeaves: options.maxLeaves || 8,
       maxNodes: options.maxNodes || 128,
       ...(options.maxExecutionNodes ? { maxExecutionNodes: options.maxExecutionNodes } : {}),
+      stopAtPassDecisionBoundary: options.stopAtPassDecisionBoundary === true,
       maxFrontierPerRoot: options.maxFrontierPerRoot
         || (options.secondaryAgentSearch ? 1 : 8),
       secondaryAgentSearch: options.secondaryAgentSearch ? {
@@ -698,6 +699,7 @@ function createSimulationEnv() {
           maxLeaves: 1,
           maxNodes: controlActions.length,
           secondaryAgentSearch: false,
+          stopAtPassDecisionBoundary: true,
         })
         : [];
       const strategicOutcomes = evaluatedActions.length

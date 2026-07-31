@@ -25,7 +25,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v9";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v10";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -2143,13 +2143,8 @@
       }
       return [];
     }
-    if (successors[0]?.phase === "conditional") return successors.slice(0, 1);
-    const pass = successors.find((action) => action.family === "pass");
-    if (pass) return [pass];
-    const endTurn = successors.find((action) => action.family === "end_turn");
-    if (endTurn) return [endTurn];
-    const error = new Error(`零规划 rollout 无法推进 opponent: ${actorId || "<missing>"}`);
-    error.code = "SECONDARY_AGENT_ROLLOUT_NO_ACTION";
+    const error = new Error(`单席位规划收到 opponent action: ${actorId || "<missing>"}`);
+    error.code = "SECONDARY_AGENT_OPPONENT_ACTION_FORBIDDEN";
     throw error;
   }
 
