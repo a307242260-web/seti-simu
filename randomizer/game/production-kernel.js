@@ -281,6 +281,16 @@ function rewardScore(effects) {
   ), 0);
 }
 
+function rewardDataCount(effects) {
+  return (effects || []).reduce((total, effect) => (
+    total + (
+      effect?.type === planetRewards.EFFECT_TYPES.GAIN_DATA
+        ? Math.max(0, Number(effect?.options?.count) || 0)
+        : 0
+    )
+  ), 0);
+}
+
 const PROBE_VALUE_POINTS = Object.freeze({
   credits: 5,
   energy: 5,
@@ -426,6 +436,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
               );
           const scoreGain = rewardScore(effects);
           if (scoreGain <= 0) continue;
+          const dataCount = rewardDataCount(effects);
           const incomeCount = effects.filter((effect) => (
             effect?.type === planetRewards.EFFECT_TYPES.INCOME
           )).length;
@@ -463,6 +474,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             targetBenefit: {
               score: scoreGain,
               incomeCount,
+              dataCount,
               grossEquivalentValue,
               rewardSummary: choice.rewardSummary,
               source: `planetRewards.${choice.actionType}:${choice.planetId}`,
@@ -582,7 +594,11 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
   };
 }
 
-function buildDataAnalyzeRequirements(workingState, requestedPlayerId = null) {
+function buildDataAnalyzeRequirements(
+  workingState,
+  requestedPlayerId = null,
+  probeRequirements = null,
+) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
@@ -597,28 +613,100 @@ function buildDataAnalyzeRequirements(workingState, requestedPlayerId = null) {
     data.ANALYZE_REQUIRED_COMPUTER_SLOT - computerPlacedCount,
   );
   const dataNeeded = Math.max(0, remainingPlacements - availableData);
+  const firstRowComplete = computerPlacedCount >= 4;
+  const firstRowRemainingPlacements = Math.max(0, 4 - computerPlacedCount);
+  const heldDataCanFillFirstRow = availableData >= firstRowRemainingPlacements;
+  const eligible = firstRowComplete || heldDataCanFillFirstRow;
   const scanCost = scanEffects.getStandardScanCost(player);
   const analyzeCost = industryPassives.canAnalyzeWithoutEnergy(player)
     ? {}
     : { energy: data.ANALYZE_ENERGY_COST };
-  const nextStep = analyzeReady
+  const nextStep = !eligible
+    ? null
+    : analyzeReady
     ? "analyze"
     : availableData > 0
       ? "place_data"
-      : "scan";
+      : "acquire_data";
   const nextCost = nextStep === "analyze"
     ? analyzeCost
-    : nextStep === "scan"
-      ? scanCost
-      : {};
+    : {};
+  const acquisitionPlans = [];
+  if (eligible && nextStep === "acquire_data") {
+    acquisitionPlans.push({
+      planId: "data:scan",
+      kind: "scan",
+      dataCount: 1,
+      nextStep: { family: "scan" },
+      nextCost: {
+        credits: Number(scanCost.credits || 0),
+        energy: Number(scanCost.energy || 0),
+      },
+      resultTargetIds: ["data:analyze"],
+    });
+    for (const candidate of probeRequirements?.candidates || []) {
+      const dataCount = Math.max(0, Number(candidate.targetBenefit?.dataCount) || 0);
+      if (dataCount <= 0) continue;
+      acquisitionPlans.push({
+        planId: `data:probe:${candidate.requirementId}`,
+        kind: "probe",
+        dataCount,
+        probeRequirementId: candidate.requirementId,
+        probeTargetId: candidate.targetId,
+        nextStep: clone(candidate.nextStep),
+        resultTargetIds: ["data:analyze", candidate.targetId],
+      });
+    }
+    for (const card of player.hand || []) {
+      const dataCount = (cardEffects.buildPlayEffects(card) || []).reduce((total, effect) => (
+        total + (
+          effect?.type === cardEffects.REWARD_TYPES.GAIN_DATA
+            ? Math.max(0, Number(effect?.options?.count) || 0)
+            : 0
+        )
+      ), 0);
+      if (dataCount > 0) {
+        acquisitionPlans.push({
+          planId: `data:card:${card.id}`,
+          kind: "card",
+          dataCount,
+          cardInstanceId: card.id,
+          nextStep: { family: "play_card", cardInstanceId: card.id },
+          nextCost: clone(cardEffects.getCardPlayCost(card) || {}),
+          resultTargetIds: ["data:analyze", `card:resolve:${card.id}`],
+        });
+      }
+      const corner = cards.getDiscardActionRewardForCard(card);
+      const cornerDataCount = Math.max(0, Number(corner?.dataCount) || 0);
+      if (cornerDataCount > 0) {
+        acquisitionPlans.push({
+          planId: `data:corner:${card.id}`,
+          kind: "card_corner",
+          dataCount: cornerDataCount,
+          cardInstanceId: card.id,
+          nextStep: { family: "card_corner", cardInstanceId: card.id },
+          resultTargetIds: ["data:analyze"],
+        });
+      }
+    }
+  }
   return {
-    schemaVersion: "seti-data-analyze-requirements-v1",
+    schemaVersion: "seti-data-analyze-requirements-v2",
     playerId: player.id,
     targetId: "data:analyze",
     computerPlacedCount,
     remainingPlacements,
     availableData,
     dataNeeded,
+    firstRowComplete,
+    firstRowRemainingPlacements,
+    heldDataCanFillFirstRow,
+    eligible,
+    eligibilityReason: heldDataCanFillFirstRow
+      ? "held-data-can-fill-first-row"
+      : firstRowComplete
+        ? "first-row-complete"
+        : null,
     nextStep,
     nextCost: {
       credits: Number(nextCost.credits || 0),
@@ -628,6 +716,7 @@ function buildDataAnalyzeRequirements(workingState, requestedPlayerId = null) {
       credits: Math.max(0, Number(nextCost.credits || 0) - Number(player.resources?.credits || 0)),
       energy: Math.max(0, Number(nextCost.energy || 0) - Number(player.resources?.energy || 0)),
     },
+    acquisitionPlans,
     fieldSources: {
       dataProgress: "players[].dataProgress.computerSlots",
       availableData: "players[].resources.availableData",
@@ -992,7 +1081,11 @@ function createProductionHostComposition(options = {}) {
     const probeRouteRequirements = buildProbeRouteRequirements(state, viewer?.playerId);
     return {
       probeRouteRequirements,
-      dataAnalyzeRequirements: buildDataAnalyzeRequirements(state, viewer?.playerId),
+      dataAnalyzeRequirements: buildDataAnalyzeRequirements(
+        state,
+        viewer?.playerId,
+        probeRouteRequirements,
+      ),
       sectorWinRequirements: buildSectorWinRequirements(state, viewer?.playerId),
       incomeGainRequirements: buildIncomeGainRequirements(
         state,

@@ -25,10 +25,19 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v10";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v11";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
+  const CONDITIONAL_FAMILIES = Object.freeze(new Set([
+    "choose_card",
+    "choose_target",
+    "choose_payment",
+    "choose_reward",
+    "choose_branch",
+    "choose_final_scoring",
+    "accept_optional_effect",
+  ]));
   const DEFAULT_PARAMETERS = Object.freeze({
     parameterVersion: PARAMETER_VERSION,
     searchDepth: 15,
@@ -183,13 +192,19 @@
         );
         return projected && projected.after < projected.before;
       });
-    const preparesDataGoal = nextAgent?.family === rawDataAnalyzeRequirements(
-      context?.observation,
-    )?.nextStep && dataPaymentGapAfterTrade(
-      context?.observation,
-      action,
-      context.seatId,
-    )?.reduction > 0;
+    const dataRequirements = rawDataAnalyzeRequirements(context?.observation);
+    const dataNextFamilies = new Set([
+      dataRequirements?.nextStep,
+      ...(dataRequirements?.acquisitionPlans || [])
+        .map((plan) => plan.nextStep?.family),
+    ].filter(Boolean));
+    const preparesDataGoal = dataAnalyzeEligible(dataRequirements)
+      && dataNextFamilies.has(nextAgent?.family)
+      && dataPaymentGapAfterTrade(
+        context?.observation,
+        action,
+        context.seatId,
+      )?.reduction > 0;
     return {
       required: true,
       supported: preparesReadyAnalyze
@@ -670,6 +685,17 @@
       || null;
   }
 
+  function dataAnalyzeEligible(requirements) {
+    if (!requirements) return false;
+    if (typeof requirements.eligible === "boolean") return requirements.eligible;
+    const firstRowRemaining = Math.max(
+      0,
+      4 - finite(requirements.computerPlacedCount),
+    );
+    return finite(requirements.computerPlacedCount) >= 4
+      || finite(requirements.availableData) >= firstRowRemaining;
+  }
+
   function rawSectorWinRequirements(observation) {
     return observation?.sectorWinRequirements
       || observation?.outcomeProjection?.progress?.sectorWinRequirements
@@ -991,26 +1017,36 @@
     const requirements = rawDataAnalyzeRequirements(observation);
     const cost = action.payload?.cost;
     const gain = action.payload?.gain;
-    if (!requirements || !cost || !gain) return null;
+    if (!dataAnalyzeEligible(requirements) || !cost || !gain) return null;
     const assets = resourceFactsOf(observation, seatId);
-    const beforeGap = requirements.nextGap || {};
-    let after = 0;
-    for (const resource of ["credits", "energy"]) {
-      const availableAfterTrade = finite(assets[resource])
-        - finite(cost[resource])
-        + finite(gain[resource]);
-      after += Math.max(
-        0,
-        finite(requirements.nextCost?.[resource]) - availableAfterTrade,
-      );
-    }
-    const before = finite(beforeGap.credits) + finite(beforeGap.energy);
-    return { before, after, reduction: before - after };
+    const costs = [
+      requirements.nextCost || {},
+      ...(requirements.acquisitionPlans || []).map((plan) => plan.nextCost || {}),
+    ].filter((candidate) => (
+      finite(candidate.credits) > 0 || finite(candidate.energy) > 0
+    ));
+    const gaps = costs.map((required) => {
+      let before = 0;
+      let after = 0;
+      for (const resource of ["credits", "energy"]) {
+        before += Math.max(0, finite(required[resource]) - finite(assets[resource]));
+        const availableAfterTrade = finite(assets[resource])
+          - finite(cost[resource])
+          + finite(gain[resource]);
+        after += Math.max(0, finite(required[resource]) - availableAfterTrade);
+      }
+      return { before, after, reduction: before - after };
+    }).filter((gap) => gap.reduction > 0);
+    return gaps.sort((left, right) => (
+      right.reduction - left.reduction
+      || left.after - right.after
+      || left.before - right.before
+    ))[0] || null;
   }
 
   function selectDataResourcePreparation(observation, successors, seatId) {
     const requirements = rawDataAnalyzeRequirements(observation);
-    return requirements
+    return dataAnalyzeEligible(requirements)
       ? selectMinimumCostResourcePreparation(
         observation,
         requirements.nextCost || {},
@@ -1080,29 +1116,67 @@
       return [...exact.slice(0, 1), ...movementCards, ...resourcePreparation];
     }
     for (const goal of probeGoals) {
+      const contributesToAnalyze = dataAnalyzeEligible(
+        rawDataAnalyzeRequirements(input.rootObservation),
+      ) && (rawDataAnalyzeRequirements(input.rootObservation)?.acquisitionPlans || [])
+        .some((plan) => (
+          plan.kind === "probe"
+          && plan.probeRequirementId === goal.requirementId
+        ));
       add(
         goal.targetId,
         `probe:${goal.requirementId || goal.targetId}`,
         probePlanActions(goal),
+        contributesToAnalyze
+          ? [goal.targetId, DATA_ANALYZE_ROUTE_TARGET]
+          : [goal.targetId],
       );
     }
 
     const dataRequirements = rawDataAnalyzeRequirements(input.rootObservation);
-    if (dataRequirements) {
-      const requiredAction = legalActions.find((action) => (
-        action.family === dataRequirements.nextStep
-      ));
-      add(
-        DATA_ANALYZE_ROUTE_TARGET,
-        DATA_ANALYZE_ROUTE_TARGET,
-        requiredAction
-          ? [requiredAction]
-          : selectDataResourcePreparation(
-            input.rootObservation,
-            legalActions,
-            input.focalSeatId,
-          ),
-      );
+    if (dataAnalyzeEligible(dataRequirements)) {
+      if (["place_data", "analyze"].includes(dataRequirements.nextStep)) {
+        const requiredAction = legalActions.find((action) => (
+          action.family === dataRequirements.nextStep
+        ));
+        add(
+          DATA_ANALYZE_ROUTE_TARGET,
+          `data:${dataRequirements.nextStep}`,
+          requiredAction
+            ? [requiredAction]
+            : selectDataResourcePreparation(
+              input.rootObservation,
+              legalActions,
+              input.focalSeatId,
+            ),
+        );
+      }
+      for (const plan of dataRequirements.acquisitionPlans || []) {
+        if (!["scan", "card_corner"].includes(plan.kind)) continue;
+        let actions = [];
+        if (plan.kind === "scan") {
+          const scan = legalActions.find((action) => action.family === "scan");
+          actions = scan
+            ? [scan]
+            : selectMinimumCostResourcePreparation(
+              input.rootObservation,
+              plan.nextCost || {},
+              legalActions,
+              input.focalSeatId,
+            );
+        } else if (plan.kind === "card_corner") {
+          actions = legalActions.filter((action) => (
+            action.family === "card_corner"
+            && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
+          ));
+        }
+        add(
+          DATA_ANALYZE_ROUTE_TARGET,
+          plan.planId,
+          actions,
+          plan.resultTargetIds || [DATA_ANALYZE_ROUTE_TARGET],
+        );
+      }
     }
 
     const sectorRequirements = rawSectorWinRequirements(input.rootObservation);
@@ -1212,16 +1286,24 @@
     }
 
     for (const action of legalActions) {
-      if (action.phase === "conditional") {
+      if (action.phase === "conditional" || CONDITIONAL_FAMILIES.has(action.family)) {
         add(`decision:${action.actionId}`, `decision:${action.actionId}`, [action]);
         continue;
       }
       if (action.family === "play_card") {
         const instanceId = String(action.target?.cardInstanceId || "");
+        const contributesToAnalyze = dataAnalyzeEligible(dataRequirements)
+          && (dataRequirements.acquisitionPlans || []).some((plan) => (
+            plan.kind === "card"
+            && String(plan.cardInstanceId) === instanceId
+          ));
         if (instanceId) add(
           `card:resolve:${instanceId}`,
           `card:${instanceId}`,
           [action],
+          contributesToAnalyze
+            ? [`card:resolve:${instanceId}`, DATA_ANALYZE_ROUTE_TARGET]
+            : [`card:resolve:${instanceId}`],
         );
       }
     }
@@ -1431,7 +1513,8 @@
 
   function selectSecondaryAgentRouteTarget(input = {}) {
     if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
-      return input.currentAction?.family === "analyze"
+      if (input.currentAction?.family === "analyze") return null;
+      return rawDataAnalyzeRequirements(input.branchObservation)?.nextStep === "acquire_data"
         ? null
         : DATA_ANALYZE_ROUTE_TARGET;
     }
@@ -1455,6 +1538,7 @@
         finite(branchFacts.resourceFacts?.availableData) > 0
         || finite(branchFacts.dataProgress?.computerPlacedCount) > 0
       )
+      && dataAnalyzeEligible(rawDataAnalyzeRequirements(input.branchObservation))
     ) {
       return DATA_ANALYZE_ROUTE_TARGET;
     }
@@ -1784,7 +1868,29 @@
           }));
         return [...targeted, ...controls];
       }
-      if (successors[0]?.phase === "conditional") {
+      if (
+        successors[0]?.phase === "conditional"
+        || CONDITIONAL_FAMILIES.has(successors[0]?.family)
+      ) {
+        const immediateCardSettlement = successors.every((action) => (
+          action.family === "accept_optional_effect"
+          && action.target?.kind === "residual-domain"
+        ));
+        if (immediateCardSettlement) {
+          const confirm = successors.find((action) => (
+            String(action.target?.choiceId || "").startsWith("confirm:")
+          ));
+          if (confirm) {
+            return bindRoute(
+              [confirm],
+              input.routeTargetId,
+              input.routePlanId,
+            ).map((action) => ({
+              ...action,
+              targetEquivalentChoiceCount: successors.length - 1,
+            }));
+          }
+        }
         const alienTraceChoices = selectUnrevealedAlienTraceChoices(
           input.branchObservation,
           successors,
@@ -2041,26 +2147,22 @@
       }
       if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
         const requirements = rawDataAnalyzeRequirements(input.branchObservation);
-        const requiredAction = requirements
-          ? successors.find((action) => action.family === requirements.nextStep)
-          : null;
-        if (requiredAction) {
-          return bindRoute([requiredAction], input.routeTargetId, input.routePlanId);
-        }
-        const preparation = requirements
-          ? selectDataResourcePreparation(
+        if (!dataAnalyzeEligible(requirements)) return [];
+        if (["analyze", "place_data"].includes(requirements.nextStep)) {
+          const requiredAction = successors.find((action) => (
+            action.family === requirements.nextStep
+          ));
+          if (requiredAction) {
+            return bindRoute([requiredAction], input.routeTargetId, input.routePlanId);
+          }
+          const preparation = selectDataResourcePreparation(
             input.branchObservation,
             successors,
             input.focalSeatId,
-          )
-          : [];
-        if (preparation.length) {
-          return bindRoute(preparation, input.routeTargetId, input.routePlanId);
-        }
-        if (
-          requirements
-          && ["analyze", "place_data", "scan"].includes(requirements.nextStep)
-        ) {
+          );
+          if (preparation.length) {
+            return bindRoute(preparation, input.routeTargetId, input.routePlanId);
+          }
           const assets = resourceFactsOf(input.branchObservation, input.focalSeatId);
           const cost = requirements.nextCost || {};
           if (
@@ -2068,26 +2170,48 @@
             && finite(assets.energy) >= finite(cost.energy)
           ) return continueBoundTargetNextTurn();
         }
-        if (!requirements) {
-          const analyze = successors.find((action) => action.family === "analyze");
-          if (analyze) return bindRoute([analyze], input.routeTargetId, input.routePlanId);
-          const placeData = successors.find((action) => action.family === "place_data");
-          if (placeData) {
-            return bindRoute([placeData], input.routeTargetId, input.routePlanId);
-          }
-          const energyTrade = successors.find((action) => (
-            action.family === "quick_trade"
-            && action.target?.tradeId === "credits-for-energy"
+        if (requirements.nextStep === "acquire_data") {
+          const availablePlans = (requirements.acquisitionPlans || [])
+            .filter((plan) => ["scan", "card_corner"].includes(plan.kind));
+          const exactPlan = availablePlans.find((plan) => (
+            plan.planId === input.routePlanId
           ));
-          const branchFacts = outcomeModel.createStrategicFacts(
-            input.branchObservation,
-            input.focalSeatId,
-          );
-          if (
-            energyTrade
-            && branchFacts.dataProgress?.analyzeReady
-            && finite(branchFacts.resourceFacts?.energy) === 0
-          ) return bindRoute([energyTrade], input.routeTargetId, input.routePlanId);
+          const plans = exactPlan
+            ? [exactPlan]
+            : availablePlans;
+          const selected = [];
+          for (const plan of plans) {
+            let actions = [];
+            if (plan.kind === "scan") {
+              const scan = successors.find((action) => action.family === "scan");
+              actions = scan
+                ? [scan]
+                : selectMinimumCostResourcePreparation(
+                  input.branchObservation,
+                  plan.nextCost || {},
+                  successors,
+                  input.focalSeatId,
+                );
+            } else if (plan.kind === "card_corner") {
+              actions = successors.filter((action) => (
+                action.family === "card_corner"
+                && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
+              ));
+            }
+            selected.push(...bindRoute(
+              actions,
+              input.routeTargetId,
+              plan.planId,
+              plan.resultTargetIds,
+            ));
+          }
+          if (selected.length) return selected.filter((action, index, actions) => (
+            actions.findIndex((candidate) => (
+              candidate.actionId === action.actionId
+              && candidate.routePlanId === action.routePlanId
+            )) === index
+          ));
+          return continueBoundTargetNextTurn(input.routePlanId);
         }
         return [];
       }

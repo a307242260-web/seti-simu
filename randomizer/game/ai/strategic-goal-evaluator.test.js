@@ -56,6 +56,48 @@ function observation({
 }
 
 {
+  const cardSettlement = ["confirm", "skip"].map((choice) => ({
+    ...action(`${choice}:card-trigger`, "accept_optional_effect"),
+    phase: "conditional",
+    actorId: seatId,
+    target: {
+      kind: "residual-domain",
+      choiceId: `${choice}:trigger:card-a:rule-a`,
+    },
+  }));
+  const selected = evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: observation(),
+    legalSuccessors: cardSettlement,
+    routeTargetId: "card:resolve:card-a",
+  });
+  assert.deepEqual(
+    selected.map((candidate) => candidate.actionId),
+    [cardSettlement[0].actionId],
+    "已正式触发的纯奖励卡牌 settlement 应立即结算，不重复搜索可再次触发的 skip",
+  );
+  assert.equal(selected[0].targetEquivalentChoiceCount, 1);
+}
+
+{
+  const phaseLessTechChoices = ["orange1", "orange2"].map((tileId) => ({
+    ...action(`choose-tech:${tileId}`, "choose_target"),
+    phase: null,
+    actorId: seatId,
+    target: { choiceId: `tech:${tileId}`, tileId },
+  }));
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentRootActions({
+      focalSeatId: seatId,
+      rootObservation: observation(),
+      legalActions: phaseLessTechChoices,
+    }).map((candidate) => candidate.actionId),
+    phaseLessTechChoices.map((candidate) => candidate.actionId),
+    "Simulation phase=null 的正式 conditional family 仍必须全部进入根 Decision 评估",
+  );
+}
+
+{
   assert.throws(
     () => evaluator.selectSecondaryAgentSuccessors({
       focalSeatId: seatId,
@@ -237,10 +279,27 @@ function observation({
 }
 
 {
-  const ready = observation({
-    resources: { credits: 4, energy: 0 },
-    dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
-  });
+  const ready = {
+    ...observation({
+      resources: { credits: 4, energy: 0 },
+      dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
+    }),
+    dataAnalyzeRequirements: {
+      schemaVersion: "seti-data-analyze-requirements-v2",
+      targetId: "data:analyze",
+      computerPlacedCount: 6,
+      remainingPlacements: 0,
+      availableData: 0,
+      firstRowComplete: true,
+      firstRowRemainingPlacements: 0,
+      heldDataCanFillFirstRow: true,
+      eligible: true,
+      nextStep: "analyze",
+      nextCost: { credits: 0, energy: 1 },
+      nextGap: { credits: 0, energy: 1 },
+      acquisitionPlans: [],
+    },
+  };
   const locked = evaluator.selectSecondaryAgentRouteTarget({
     focalSeatId: seatId,
     currentAction: { ...action("place-data:slot-6", "place_data"), actorId: seatId },
@@ -253,6 +312,7 @@ function observation({
     ...action("trade:energy", "quick_trade"),
     actorId: seatId,
     target: { tradeId: "credits-for-energy" },
+    payload: { cost: { credits: 2 }, gain: { energy: 1 } },
   };
   const endTurn = { ...action("end-turn", "end_turn"), actorId: seatId };
   assert.deepEqual(
@@ -269,10 +329,16 @@ function observation({
   assert.deepEqual(
     evaluator.selectSecondaryAgentSuccessors({
       focalSeatId: seatId,
-      branchObservation: observation({
-        resources: { credits: 2, energy: 1 },
-        dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
-      }),
+      branchObservation: {
+        ...observation({
+          resources: { credits: 2, energy: 1 },
+          dataProgress: { computerSlots: [1, 2, 3, 4, 5, 6], analyzeReady: true },
+        }),
+        dataAnalyzeRequirements: {
+          ...ready.dataAnalyzeRequirements,
+          nextGap: { credits: 0, energy: 0 },
+        },
+      },
       legalSuccessors: [endTurn, analyze],
       routeTargetId: locked,
     }).map((candidate) => candidate.actionId),
@@ -289,17 +355,106 @@ function observation({
 }
 
 {
+  const placeData = { ...action("place-data:first-row", "place_data"), actorId: seatId };
+  const trade = {
+    ...action("trade:first-row", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "credits-for-energy" },
+    payload: { cost: { credits: 2 }, gain: { energy: 1 } },
+  };
+  const belowThreshold = {
+    ...observation({ resources: { credits: 4, availableData: 2 } }),
+    dataAnalyzeRequirements: {
+      schemaVersion: "seti-data-analyze-requirements-v2",
+      targetId: "data:analyze",
+      computerPlacedCount: 1,
+      remainingPlacements: 5,
+      availableData: 2,
+      firstRowRemainingPlacements: 3,
+      eligible: false,
+      nextStep: null,
+      nextCost: {},
+      nextGap: {},
+      acquisitionPlans: [],
+    },
+  };
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation: belowThreshold,
+      legalActions: [placeData, trade],
+    }).filter((target) => target.targetId === "data:analyze"),
+    [],
+    "已放1格且手头2数据不足以填满第一行时，不得建立分析目标",
+  );
+  assert.equal(
+    evaluator.requiresRootCounterfactual(trade, belowThreshold),
+    false,
+    "第一行不可达时，快速转换不得借分析目标进入 root",
+  );
+  assert.equal(
+    evaluator.selectSecondaryAgentRouteTarget({
+      focalSeatId: seatId,
+      currentAction: placeData,
+      rootObservation: belowThreshold,
+      branchObservation: belowThreshold,
+      routeTargetId: null,
+    }),
+    null,
+    "第一行不可达时，放置数据不得自动锁定分析路线",
+  );
+
+  const canFillFirstRow = {
+    ...belowThreshold,
+    dataAnalyzeRequirements: {
+      ...belowThreshold.dataAnalyzeRequirements,
+      availableData: 3,
+      heldDataCanFillFirstRow: true,
+      eligible: true,
+      eligibilityReason: "held-data-can-fill-first-row",
+      nextStep: "place_data",
+    },
+  };
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation: canFillFirstRow,
+      legalActions: [placeData, trade],
+    }).filter((target) => target.targetId === "data:analyze"),
+    [{
+      targetId: "data:analyze",
+      planId: "data:place_data",
+      resultTargetIds: ["data:analyze"],
+      compatibleActionIds: [placeData.actionId],
+    }],
+    "手头数据足以填满第一行时，应从正式放置数据开始分析路线",
+  );
+}
+
+{
   const dataRequirements = {
-    schemaVersion: "seti-data-analyze-requirements-v1",
+    schemaVersion: "seti-data-analyze-requirements-v2",
     playerId: seatId,
     targetId: "data:analyze",
-    computerPlacedCount: 2,
-    remainingPlacements: 4,
+    computerPlacedCount: 4,
+    remainingPlacements: 2,
     availableData: 0,
-    dataNeeded: 4,
-    nextStep: "scan",
-    nextCost: { credits: 1, energy: 2 },
+    dataNeeded: 2,
+    firstRowComplete: true,
+    firstRowRemainingPlacements: 0,
+    heldDataCanFillFirstRow: true,
+    eligible: true,
+    nextStep: "acquire_data",
+    nextCost: {},
     nextGap: { credits: 0, energy: 2 },
+    acquisitionPlans: [{
+      planId: "data:scan",
+      kind: "scan",
+      dataCount: 1,
+      nextStep: { family: "scan" },
+      nextCost: { credits: 1, energy: 2 },
+      resultTargetIds: ["data:analyze"],
+    }],
   };
   const rootObservation = {
     ...observation({ resources: { credits: 5, energy: 0, availableData: 0 } }),
@@ -325,7 +480,7 @@ function observation({
   });
   assert.deepEqual(rootTargets, [{
     targetId: "data:analyze",
-    planId: "data:analyze",
+    planId: "data:scan",
     resultTargetIds: ["data:analyze"],
     compatibleActionIds: [creditsForEnergy.actionId],
   }], "根目录只允许结果目标；未绑定具体结果的研究和换牌不能自动包装成目标");
@@ -340,6 +495,7 @@ function observation({
       branchObservation: rootObservation,
       legalSuccessors: [creditsForCard, creditsForEnergy],
       routeTargetId: "data:analyze",
+      routePlanId: "data:scan",
     }).map((candidate) => candidate.actionId),
     [creditsForEnergy.actionId],
     "已选数据目标后应继续同一目标的确定性资源准备",
@@ -361,7 +517,7 @@ function observation({
     }),
     [{
       targetId: "data:analyze",
-      planId: "data:analyze",
+      planId: "data:scan",
       resultTargetIds: ["data:analyze"],
       compatibleActionIds: [scan.actionId],
     }],
@@ -373,9 +529,111 @@ function observation({
       branchObservation: scanReady,
       legalSuccessors: [creditsForCard, scan],
       routeTargetId: "data:analyze",
+      routePlanId: "data:scan",
     }).map((candidate) => candidate.actionId),
     [scan.actionId],
     "数据目标支付满足后必须执行扫描，不能继续随机换牌",
+  );
+  const probeMove = {
+    ...action("move:data-probe", "move"),
+    actorId: seatId,
+    target: { rocketId: "rocket-data", deltaX: 1, deltaY: 0 },
+  };
+  const dataCard = {
+    ...action("play:data-card", "play_card"),
+    actorId: seatId,
+    target: { cardInstanceId: "card-data" },
+  };
+  const dataCorner = {
+    ...action("corner:data-card", "card_corner"),
+    actorId: seatId,
+    target: { cardInstanceId: "corner-data" },
+  };
+  const multiSourceObservation = {
+    ...scanReady,
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "rocket-data:land:mars",
+        targetId: "land:mars:planet:",
+        sourceId: "rocket:rocket-data",
+        required: { credits: 0, energy: 1, movementSteps: 1 },
+        gap: { credits: 0, energy: 0, movementSteps: 1 },
+        nextStep: {
+          family: "move",
+          rocketId: "rocket-data",
+          deltaX: 1,
+          deltaY: 0,
+        },
+        targetBenefit: { score: 6, dataCount: 2 },
+      }],
+    },
+    dataAnalyzeRequirements: {
+      ...dataRequirements,
+      acquisitionPlans: [
+        ...dataRequirements.acquisitionPlans,
+        {
+          planId: "data:probe:rocket-data:land:mars",
+          kind: "probe",
+          dataCount: 2,
+          probeRequirementId: "rocket-data:land:mars",
+          probeTargetId: "land:mars:planet:",
+          nextStep: { family: "move" },
+          resultTargetIds: ["data:analyze", "land:mars:planet:"],
+        },
+        {
+          planId: "data:card:card-data",
+          kind: "card",
+          dataCount: 2,
+          cardInstanceId: "card-data",
+          nextStep: { family: "play_card", cardInstanceId: "card-data" },
+          nextCost: {},
+          resultTargetIds: ["data:analyze", "card:resolve:card-data"],
+        },
+        {
+          planId: "data:corner:corner-data",
+          kind: "card_corner",
+          dataCount: 1,
+          cardInstanceId: "corner-data",
+          nextStep: { family: "card_corner", cardInstanceId: "corner-data" },
+          resultTargetIds: ["data:analyze"],
+        },
+      ],
+    },
+  };
+  const sourceTargets = evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation: multiSourceObservation,
+    legalActions: [scan, probeMove, dataCard, dataCorner],
+  }).filter((target) => target.targetId === "data:analyze");
+  assert.deepEqual(
+    Object.fromEntries(sourceTargets.map((target) => [
+      target.planId,
+      target.compatibleActionIds,
+    ])),
+    {
+      "data:corner:corner-data": [dataCorner.actionId],
+      "data:scan": [scan.actionId],
+    },
+    "分析目标自身只直接拥有没有其他结果目标承载的扫描和数据角标来源",
+  );
+  const allSourceTargets = evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation: multiSourceObservation,
+    legalActions: [scan, probeMove, dataCard, dataCorner],
+  });
+  assert.equal(
+    allSourceTargets.find((target) => (
+      target.planId === "probe:rocket-data:land:mars"
+    ))?.resultTargetIds.includes("data:analyze"),
+    true,
+    "数据登陆路线必须复用原具名登陆目标并标注可继续分析，不能复制第二套路线",
+  );
+  assert.equal(
+    allSourceTargets.find((target) => (
+      target.planId === "card:card-data"
+    ))?.resultTargetIds.includes("data:analyze"),
+    true,
+    "数据卡牌必须复用原具名卡牌目标并标注可继续分析，不能复制第二套路线",
   );
   const dataChoices = [{
     ...action("choose:data-blue", "choose_target"),

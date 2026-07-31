@@ -21,9 +21,20 @@ const outputValue = readOption(argv, "--output");
 const outputPath = outputValue ? path.resolve(outputValue) : null;
 const seed = readOption(argv, "--seed");
 const boardId = readOption(argv, "--board-id");
+const maxDecisionValue = readOption(argv, "--max-decision-ms");
+const maxDecisionMilliseconds = maxDecisionValue == null ? null : Number(maxDecisionValue);
+if (
+  maxDecisionMilliseconds != null
+  && (!Number.isFinite(maxDecisionMilliseconds) || maxDecisionMilliseconds <= 0)
+) {
+  throw new TypeError("--max-decision-ms 必须是正数");
+}
 const report = runFixedBoardTurnReport({
   ...(seed ? { config: { seed } } : {}),
   ...(boardId ? { boardId } : {}),
+  ...(maxDecisionMilliseconds ? {
+    maxDecisionMilliseconds: Number(maxDecisionMilliseconds),
+  } : {}),
 });
 const output = outputPath && path.extname(outputPath).toLowerCase() === ".html"
   ? formatTurnReportHtml(report)

@@ -514,7 +514,7 @@ try {
     assert.equal(routeOutcome.status, "settled");
     assert.equal(
       routeOutcome.rootObservation.dataAnalyzeRequirements?.schemaVersion,
-      "seti-data-analyze-requirements-v1",
+      "seti-data-analyze-requirements-v2",
       "Production observation 必须投影本席正式数据分析 requirement",
     );
     assert.equal(routeOutcome.leaves.some((leaf) => (
