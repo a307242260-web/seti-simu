@@ -17,6 +17,7 @@ function observation({
   securedEndGameBonus = 0,
   handCount = 0,
   hand = null,
+  reservedCards = [],
   blueBoardSlots = {},
 } = {}) {
   return outcomeModel.createDecisionObservation({
@@ -49,8 +50,83 @@ function observation({
           id: `test-card-${index + 1}`,
           cardId: `test-card-${index + 1}.webp`,
         })),
+      reservedCards,
     },
   }, { seatId, stateVersion: 1, decisionVersion: 1 });
+}
+
+{
+  const emptyTraceSlot = () => ({
+    revealed: false,
+    traces: {
+      pink: { firstPlaced: false, extraCount: 0 },
+      yellow: { firstPlaced: false, extraCount: 0 },
+      blue: { firstPlaced: false, extraCount: 0 },
+    },
+  });
+  const traceChoice = (alienSlotId, traceType = "blue") => ({
+    ...action(`choice:trace:${alienSlotId}:${traceType}`, "choose_target"),
+    actorId: seatId,
+    phase: "conditional",
+    target: {
+      choiceId: `trace:${alienSlotId}:${traceType}`,
+      kind: "planet-reward-alien-trace",
+      alienSlotId,
+      traceType,
+    },
+  });
+  const choices = [traceChoice(1), traceChoice(2)];
+
+  const firstTrace = evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: observation({ alienSlots: [emptyTraceSlot(), emptyTraceSlot()] }),
+    legalSuccessors: choices,
+    routeTargetId: "data:analyze",
+  });
+  assert.deepEqual(
+    firstTrace.map((candidate) => candidate.target.alienSlotId),
+    [1],
+    "未揭示槽的首个痕迹应在执行规则前先剪掉即时奖励被支配的槽位",
+  );
+
+  const equalSlot1 = emptyTraceSlot();
+  const equalSlot2 = emptyTraceSlot();
+  equalSlot1.traces.blue.firstPlaced = true;
+  equalSlot2.traces.blue.firstPlaced = true;
+  const equalTrace = evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: observation({ alienSlots: [equalSlot1, equalSlot2] }),
+    legalSuccessors: choices,
+    routeTargetId: "data:analyze",
+  });
+  assert.deepEqual(
+    equalTrace.map((candidate) => candidate.target.alienSlotId),
+    [1],
+    "两个未揭示槽都只给相同的追加痕迹奖励时应保留一个稳定代表",
+  );
+
+  const taskSensitive = evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: observation({
+      alienSlots: [emptyTraceSlot(), emptyTraceSlot()],
+      reservedCards: [{
+        id: "task-b67",
+        cardId: "b_67.webp",
+        cardEffectState: {
+          modelCardId: "b_67.webp",
+          completedTaskIds: [],
+          consumedTriggerIds: [],
+        },
+      }],
+    }),
+    legalSuccessors: choices,
+    routeTargetId: "data:analyze",
+  });
+  assert.deepEqual(
+    taskSensitive.map((candidate) => candidate.target.alienSlotId),
+    [1, 2],
+    "尚未完成的同一外星人痕迹任务会区分槽位，必须保留两个选择",
+  );
 }
 
 {

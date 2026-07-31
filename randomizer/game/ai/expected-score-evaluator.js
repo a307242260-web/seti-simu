@@ -4,25 +4,28 @@
   let outcomeModel = root.SetiOutcomeModel;
   let quickTrades = root.SetiQuickTrades;
   let cardEffects = root.SetiCardEffects;
+  let alienState = root.SetiAlienState;
   if (typeof require === "function") {
     outcomeModel = outcomeModel || require("./outcome-model");
     quickTrades = quickTrades || require("../actions/quick-trades");
     cardEffects = cardEffects || require("../cards/effects");
+    alienState = alienState || require("../aliens/state");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiExpectedScoreEvaluator = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
   quickTrades,
   cardEffects,
+  alienState,
 ) {
   "use strict";
 
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v8";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v9";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -1520,6 +1523,103 @@
     return matched?.targetId || null;
   }
 
+  function unfinishedTaskDistinguishesAlienSlot(observation, traceType) {
+    const distributionConditionTypes = new Set([
+      "allAliensHaveTrace",
+      "allAliensHavePlayerTrace",
+      "singleAlienTraceSet",
+      "singleAlienTraceCount",
+    ]);
+    for (const card of observation?.selfState?.reservedCards || []) {
+      const model = cardEffects.getCardModel(card);
+      if (!model?.tasks?.length) continue;
+      const completedTaskIds = new Set(card?.cardEffectState?.completedTaskIds || []);
+      for (const task of model.tasks) {
+        if (completedTaskIds.has(task.id)) continue;
+        const condition = task?.condition || {};
+        if (!distributionConditionTypes.has(condition.type)) continue;
+        if (
+          condition.traceType != null
+          && String(condition.traceType) !== String(traceType)
+        ) {
+          continue;
+        }
+        if (
+          Array.isArray(condition.traceTypes)
+          && condition.traceTypes.length
+          && !condition.traceTypes.includes(traceType)
+        ) {
+          continue;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function gainDominates(left, right) {
+    const keys = new Set([...Object.keys(left || {}), ...Object.keys(right || {})]);
+    let strictlyBetter = false;
+    for (const key of keys) {
+      const leftValue = finite(left?.[key]);
+      const rightValue = finite(right?.[key]);
+      if (leftValue < rightValue) return false;
+      if (leftValue > rightValue) strictlyBetter = true;
+    }
+    return strictlyBetter;
+  }
+
+  function sameGain(left, right) {
+    const keys = new Set([...Object.keys(left || {}), ...Object.keys(right || {})]);
+    return [...keys].every((key) => finite(left?.[key]) === finite(right?.[key]));
+  }
+
+  function selectUnrevealedAlienTraceChoices(observation, successors) {
+    if (!successors.length || !successors.every((action) => (
+      action.family === "choose_target"
+      && action.target?.kind === "planet-reward-alien-trace"
+      && action.target?.speciesId == null
+      && action.target?.position == null
+    ))) {
+      return [];
+    }
+    const traceTypes = new Set(successors.map((action) => String(action.target?.traceType || "")));
+    if (traceTypes.size !== 1) return [];
+    const slots = observation?.publicState?.board?.aliens?.slots
+      || observation?.publicState?.aliens?.slots;
+    if (!Array.isArray(slots)) return [];
+    const choices = successors.map((action) => {
+      const alienSlotId = Math.round(finite(action.target?.alienSlotId));
+      const slot = slots[alienSlotId - 1];
+      const trace = slot?.traces?.[action.target?.traceType];
+      if (!slot || slot.revealed || !trace) return null;
+      const reward = trace.firstPlaced
+        ? alienState.getExtraTraceReward()
+        : alienState.getFirstTraceRewardForSlot(alienSlotId);
+      if (!reward?.gain) return null;
+      return { action, gain: reward.gain };
+    });
+    if (choices.some((choice) => choice == null)) return [];
+    const traceType = successors[0].target.traceType;
+    if (unfinishedTaskDistinguishesAlienSlot(observation, traceType)) return successors;
+
+    const nonDominated = choices.filter((choice, index) => !choices.some((
+      other,
+      otherIndex,
+    ) => otherIndex !== index && gainDominates(other.gain, choice.gain)));
+    const selected = [];
+    for (const choice of nonDominated) {
+      if (selected.some((existing) => sameGain(existing.gain, choice.gain))) continue;
+      selected.push(choice);
+    }
+    return selected.map((choice, index) => ({
+      ...choice.action,
+      ...(index === 0 && selected.length < nonDominated.length
+        ? { targetEquivalentChoiceCount: nonDominated.length - selected.length }
+        : {}),
+    }));
+  }
+
   function selectSecondaryAgentSuccessors(input = {}) {
     const successors = [...(input.legalSuccessors || [])]
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
@@ -1685,6 +1785,17 @@
         return [...targeted, ...controls];
       }
       if (successors[0]?.phase === "conditional") {
+        const alienTraceChoices = selectUnrevealedAlienTraceChoices(
+          input.branchObservation,
+          successors,
+        );
+        if (alienTraceChoices.length) {
+          return bindRoute(
+            alienTraceChoices,
+            input.routeTargetId,
+            input.routePlanId,
+          );
+        }
         const fungiblePaymentChoices = targetUsesFungibleResources
           && successors.every((action) => (
             action.family === "choose_payment"
