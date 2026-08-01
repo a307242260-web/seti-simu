@@ -37,6 +37,13 @@ function drainOpeningDecisions(environment) {
   }
 }
 
+function collectValuesByKey(value, key, result = []) {
+  if (!value || typeof value !== "object") return result;
+  if (Object.hasOwn(value, key) && value[key] != null) result.push(value[key]);
+  for (const child of Object.values(value)) collectValuesByKey(child, key, result);
+  return result;
+}
+
 function createSaturnLandingCheckpoint(environment) {
   drainOpeningDecisions(environment);
   const checkpoint = structuredClone(environment.createCheckpoint());
@@ -240,6 +247,39 @@ try {
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].retainedLeafCount, 1);
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].saturatedOriginCount > 0, true);
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].rootActionFamily, "scan");
+    assert.equal(
+      Number(scanDiagnostics.hiddenInformationBarrierCountByCode?.hidden_card_reveal) > 0,
+      true,
+      "公共牌补牌必须在反事实搜索中建立隐藏信息 mask",
+    );
+    const knownCardIds = new Set([
+      ...(scanOutcome.rootObservation.publicState?.board?.publicCards || []),
+      ...(scanOutcome.rootObservation.selfState?.hand || []),
+      ...(scanOutcome.rootObservation.selfState?.reservedCards || []),
+      ...(scanOutcome.rootObservation.selfState?.privateAlienCards || []),
+    ].map((card) => card?.id).filter(Boolean));
+    const maskedLeaves = scanOutcome.leaves.filter((leaf) => (
+      leaf.observation?.informationBoundary?.code === "hidden_card_reveal"
+    ));
+    assert.equal(maskedLeaves.length > 0, true,
+      "公共牌翻出后必须继续产生可评估的遮蔽叶，而不是停止搜索");
+    assert.equal(maskedLeaves.some((leaf) => leaf.actionChain.length >= 4), true,
+      "隐藏信息边界后仍必须继续执行不依赖新牌身份的后续行动");
+    for (const leaf of maskedLeaves) {
+      const exposedCardIds = [
+        ...collectValuesByKey(leaf, "cardInstanceId"),
+        ...(leaf.observation.publicState?.board?.publicCards || [])
+          .map((card) => card?.id).filter(Boolean),
+        ...(leaf.observation.selfState?.hand || [])
+          .map((card) => card?.id).filter(Boolean),
+        ...(leaf.observation.selfState?.reservedCards || [])
+          .map((card) => card?.id).filter(Boolean),
+        ...(leaf.observation.selfState?.privateAlienCards || [])
+          .map((card) => card?.id).filter(Boolean),
+      ];
+      assert.equal(exposedCardIds.every((id) => knownCardIds.has(String(id))), true,
+        "叶 observation 与目标 requirement 不得暴露本次搜索中新翻出的牌身份");
+    }
     assert.equal(scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups.length > 0, true);
     assert.equal(
       scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups

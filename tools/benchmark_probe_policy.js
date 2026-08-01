@@ -31,6 +31,8 @@ const COVERAGE_FIELDS = Object.freeze([
   "opponentExecutedNodeCount",
   "focalPlanningTurnAdvanceCount",
   "focalPassBoundaryLeafCount",
+  "hiddenInformationFilteredActionCount",
+  "hiddenInformationBarrierCountByCode",
   "executionLimitReached",
   "remainingFrontierNodeCount",
   "prunedNodeCount",

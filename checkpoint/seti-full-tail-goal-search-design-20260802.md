@@ -126,4 +126,43 @@ frontier 只保留 18 次。因而下一性能候选不能删目标，也不应�
 旁路扫描。它不删任何次级目标，也不改变目标终点评价；风险由定向测试固定为“目标可触达时必须
 选目标，否则选最容易赢的额外扇区”，后续固定盘面评分仍需单独验证。
 
+## 隐藏信息边界修正（2026-08-02）
+
+公共牌补牌、盲抽、外星揭示和科技 bonus 翻开在当前决策时均未知。固定 RNG 只保证正式执行可
+复现，不授权反事实 Policy 提前读取结果。搜索不得因 reveal 停止，而应在后续节点持续使用当前
+决策的信息集：新身份保持 opaque，已发生的资源、分数和数量变化仍可继续参与规划。
+
+| 语义 | 唯一 owner / 正式来源 | 反事实处理 | 禁止行为 |
+|---|---|---|---|
+| reveal 发生 | Effect executor 返回 `irreversible`，Session runtime 写 `irreversibleBarrier` | 已选择动作与 reveal 前后无需输入的确定性 effect 正常结算 | 用 seed 预测牌面后继续选目标或 action |
+| reveal 后新 Decision | Session 的正式 `awaiting_input` | 过滤依赖新身份的 choice；身份无关的结束、支付等 choice 可继续 | 读取新 Decision choice 身份并替玩家选择 |
+| reveal 后直接完成 | Session commit 的 terminal result 保留 barrier | 后续 observation 持续遮蔽新身份，但继续枚举已知信息可证明的行动 | 用新公共牌、手牌、外星人或 bonus 建立后续目标 |
+| RNG / journal | Session、domain RNG cursor 与 journal | 保留正式 outcome 和 checkpoint 证据；canonical root 仍零污染 | 重抽、替换假牌或把未知结果当期望值 |
+| Browser / Simulation 正式执行 | Production Composition | 不改变；玩家和机器席位在 reveal 后收到新的真实 Decision/Action 请求 | 把 counterfactual 截止误用于真实规则提交 |
+
+执行闭包：
+
+1. executor 仍负责抽取/补充并标记 barrier；不修改牌堆规则。
+2. Rule Composition terminal result 必须保留 barrier，避免 Session commit 时丢失证据。
+3. counterfactual 单节点执行完成后从 active inspection 或 terminal result 读取 barrier。
+4. 一旦识别隐藏信息 code，为该 origin 持久标记 information mask；后续 projection、branch
+   priority、successor selector 与目标目录只消费遮蔽后的 observation。
+5. 新公共牌、新手牌与新外星身份不得生成具体 play/card-corner/public-scan/物种路线；已知卡牌
+   目录与正式标量状态继续搜索。未知牌若只作为身份无关的通用支付资源，可以按数量使用。
+6. 诊断按 barrier code 计数，并报告因未知身份过滤的 action 数。
+
+验收义务：固定开局扫描选择一张当前可见公共牌后，搜索必须继续，但任何后续 action、目标
+requirement、叶 observation 和 trace 都不得包含补出牌的实例或牌面；新牌数量可作为普通资源计数。
+canonical checkpoint 与 RNG 不得被污染。非 reveal 路线、正式实际执行和全量 Node 回归保持原行为。
+
 不得把本次失败解释为估值权重问题，也不得通过提高 `maxNodes` 宣称搜索优化完成。
+
+实现验证：固定扫描反事实在 `hidden_card_reveal` 后仍形成至少 4 项 action chain；所有遮蔽叶、目标
+requirement、trace 与 successor 中出现的 `cardInstanceId` 均属于根观察已知集合。未知牌仍按 opaque
+牌张保留，可进入通用支付，但不能形成具名卡牌路线。61 个 unit 与唯一 full-flow 全部通过。
+
+12 次固定开局 Policy 基准均自然耗尽：每次 1966 个物理节点、191 次目标完成、最大目标深度 5，
+共识别 23 次公共补牌和 12 次科技 bonus 隐藏边界，过滤 537 个依赖未知身份的 successor；
+`executionLimitReached=false`、`remainingFrontierNodeCount=0`、`beamPrunedOriginCount=0`。中位 Policy
+耗时 6151ms，P90 6207ms，最大 6288ms，低于 10 秒门禁。该结果证明继续搜索没有依赖提高 node cap，
+但隐藏身份过滤本身是保守信息集约束，不代表全目标尾部搜索已经取代现有最低成本回退调度。

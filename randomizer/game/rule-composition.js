@@ -9,6 +9,14 @@
 
   const SAVE_SCHEMA_VERSION = "seti-rule-composition-save-v1";
   const TERMINAL_PHASES = new Set(["completed", "aborted", "irreversible_locked"]);
+  const HIDDEN_INFORMATION_BARRIER_CODES = new Set([
+    "alien_revealed",
+    "hidden_alien_card",
+    "hidden_alien_card_reveal",
+    "hidden_card_draw",
+    "hidden_card_reveal",
+    "tech_bonus_reveal",
+  ]);
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -37,6 +45,174 @@
 
   function stableHash(value) {
     return stableHashSerialized(stableSerialize(value));
+  }
+
+  function isHiddenInformationBarrier(barrier) {
+    const code = String(barrier?.code || "");
+    return HIDDEN_INFORMATION_BARRIER_CODES.has(code)
+      || code.startsWith("hidden_");
+  }
+
+  function maskUnknownCards(cards, knownIds) {
+    return (cards || []).map((card) => {
+      if (!card) return card;
+      return card.id != null && knownIds.has(String(card.id))
+        ? clone(card)
+        : { hidden: true, faceUp: false };
+    });
+  }
+
+  function collectKnownCardIds(observation) {
+    const ids = new Set();
+    const lists = [
+      observation?.publicState?.board?.publicCards,
+      observation?.selfState?.hand,
+      observation?.selfState?.reservedCards,
+      observation?.selfState?.privateAlienCards,
+    ];
+    for (const cards of lists) {
+      for (const card of cards || []) {
+        if (card?.id != null) ids.add(String(card.id));
+      }
+    }
+    return ids;
+  }
+
+  function containsUnknownCardReference(value, knownCardIds) {
+    if (!value || typeof value !== "object") return false;
+    if (
+      value.cardInstanceId != null
+      && !knownCardIds.has(String(value.cardInstanceId))
+    ) return true;
+    if (
+      Array.isArray(value.cardInstanceIds)
+      && value.cardInstanceIds.some((id) => !knownCardIds.has(String(id)))
+    ) return true;
+    if (
+      Array.isArray(value.cardIds)
+      && value.cardIds.some((id) => id != null && !knownCardIds.has(String(id)))
+    ) return true;
+    return Object.values(value).some((child) => (
+      child && typeof child === "object"
+      && containsUnknownCardReference(child, knownCardIds)
+    ));
+  }
+
+  function sanitizeRequirementPlans(requirements, knownCardIds, listKey) {
+    const sanitized = clone(requirements);
+    if (!sanitized || !Array.isArray(sanitized[listKey])) return sanitized;
+    sanitized[listKey] = sanitized[listKey].filter((entry) => (
+      !containsUnknownCardReference(entry, knownCardIds)
+    ));
+    return sanitized;
+  }
+
+  function sanitizeHiddenInformationObservation(rootObservation, leafObservation, barrier) {
+    const sanitized = clone(leafObservation);
+    if (!sanitized || typeof sanitized !== "object") return sanitized;
+    const rootBoard = rootObservation?.publicState?.board || {};
+    const knownCardIds = collectKnownCardIds(rootObservation);
+    const board = sanitized.publicState?.board || null;
+    if (board) {
+      board.publicCards = maskUnknownCards(board.publicCards, knownCardIds);
+      const rootTechStacks = rootBoard.techSupply?.stacks || {};
+      for (const [tileId, stack] of Object.entries(board.techSupply?.stacks || {})) {
+        if (stack?.bonusId === rootTechStacks[tileId]?.bonusId) continue;
+        stack.bonusId = null;
+        stack.bonusHidden = true;
+      }
+      const rootAlienSlots = rootBoard.aliens?.slots || [];
+      for (const [index, slot] of (board.aliens?.slots || []).entries()) {
+        if (rootAlienSlots[index]?.revealed || !slot?.revealed) continue;
+        slot.revealed = false;
+        slot.alienId = null;
+      }
+    }
+    const self = sanitized.selfState || null;
+    if (self) {
+      for (const key of ["hand", "reservedCards", "privateAlienCards"]) {
+        self[key] = maskUnknownCards(self[key], knownCardIds);
+      }
+    }
+    if (sanitized.publicState) sanitized.publicState.pending = null;
+    sanitized.decision = null;
+    sanitized.probeRouteRequirements = sanitizeRequirementPlans(
+      sanitized.probeRouteRequirements,
+      knownCardIds,
+      "candidates",
+    );
+    sanitized.dataAnalyzeRequirements = sanitizeRequirementPlans(
+      sanitized.dataAnalyzeRequirements,
+      knownCardIds,
+      "acquisitionPlans",
+    );
+    sanitized.incomeGainRequirements = sanitizeRequirementPlans(
+      sanitized.incomeGainRequirements,
+      knownCardIds,
+      "plans",
+    );
+    sanitized.techGainRequirements = sanitizeRequirementPlans(
+      sanitized.techGainRequirements,
+      knownCardIds,
+      "plans",
+    );
+    sanitized.sectorWinRequirements = sanitizeRequirementPlans(
+      sanitized.sectorWinRequirements,
+      knownCardIds,
+      "accessSources",
+    );
+    const rootStandardScan = (rootObservation?.sectorWinRequirements?.accessSources || [])
+      .find((source) => source?.sourceId === "standard-scan");
+    const leafStandardScan = (sanitized.sectorWinRequirements?.accessSources || [])
+      .find((source) => source?.sourceId === "standard-scan");
+    if (rootStandardScan && leafStandardScan) {
+      leafStandardScan.sectorIds = clone(rootStandardScan.sectorIds || []);
+    }
+    sanitized.informationBoundary = { code: barrier?.code || "hidden_information" };
+    return sanitized;
+  }
+
+  function sanitizeHiddenInformationActions(rootObservation, actions) {
+    const knownCardIds = collectKnownCardIds(rootObservation);
+    const knownAlienIds = new Set((rootObservation?.publicState?.board?.aliens?.slots || [])
+      .filter((slot) => slot?.revealed && slot?.alienId)
+      .map((slot) => String(slot.alienId)));
+    let filteredCount = 0;
+    const sanitized = [];
+    for (const action of actions || []) {
+      const target = action?.target || {};
+      const unknownCard = containsUnknownCardReference(target, knownCardIds);
+      const unknownAlien = target.alienId != null
+        && !knownAlienIds.has(String(target.alienId));
+      const identityIndependentCardUse = action?.family === "choose_payment"
+        || target.kind === "trade-card-selection"
+        || target.kind === "discard-hand-cards";
+      if (
+        (unknownCard && !identityIndependentCardUse)
+        || unknownAlien
+      ) {
+        filteredCount += 1;
+        continue;
+      }
+      const descriptor = clone(action);
+      if (unknownCard && identityIndependentCardUse) {
+        if (descriptor.target) {
+          if (descriptor.target.cardInstanceId != null) {
+            descriptor.target.cardInstanceId = null;
+          }
+          if (Array.isArray(descriptor.target.cardInstanceIds)) {
+            descriptor.target.cardInstanceIds = descriptor.target.cardInstanceIds
+              .map(() => null);
+          }
+          if (Array.isArray(descriptor.target.cardIds)) {
+            descriptor.target.cardIds = descriptor.target.cardIds.map(() => null);
+          }
+        }
+        descriptor.summary = "未知牌（仅按数量使用）";
+      }
+      sanitized.push(descriptor);
+    }
+    return { actions: sanitized, filteredCount };
   }
 
   function fail(code, message, details = {}) {
@@ -342,6 +518,7 @@
         stateVersion: readStoreSnapshot().meta.stateVersion,
         failure: clone(activeSession.failure),
         journal: clone(activeSession.journal),
+        irreversibleBarrier: clone(activeSession.irreversibleBarrier),
       });
       activeSession = null;
       activeFamily = null;
@@ -980,6 +1157,8 @@
       let opponentExecutedNodeCount = 0;
       let focalPlanningTurnAdvanceCount = 0;
       let focalPassBoundaryLeafCount = 0;
+      let hiddenInformationFilteredActionCount = 0;
+      const hiddenInformationBarrierCountByCode = new Map();
       let maxFrontierSize = legalActions.length;
       let maxRetainedFrontierSize = legalActions.length;
       let maxFrontierOriginCount = legalActions.length;
@@ -1052,6 +1231,7 @@
           origin.opponentProxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
           Number(Boolean(origin.goalCompletionPending)),
+          Number(Boolean(origin.informationMasked)),
         ].join(":");
       }
 
@@ -1168,6 +1348,7 @@
           Number(Boolean(origin.focalPassStarted)),
           Number(Boolean(origin.goalCompletionPending)),
           Number(Boolean(origin.rootWasConditional)),
+          Number(Boolean(origin.informationMasked)),
           semanticActionHash(node.action),
           Math.max(0, maxDepth - node.depth),
         ].join(":");
@@ -1555,8 +1736,36 @@
           let successors = awaitingDecision
             ? clone(nextInspection.session?.decision?.choices || [])
             : clone(composition.inputPort.enumerateActions({}));
+          const hiddenBarrier = isHiddenInformationBarrier(result.irreversibleBarrier)
+            ? result.irreversibleBarrier
+            : isHiddenInformationBarrier(nextInspection.session?.irreversibleBarrier)
+              ? nextInspection.session.irreversibleBarrier
+              : null;
+          const wasInformationMasked = node.origins.some((origin) => (
+            origin.informationMasked
+          ));
+          const informationMasked = wasInformationMasked || Boolean(hiddenBarrier);
+          if (!wasInformationMasked && hiddenBarrier) {
+            const code = String(hiddenBarrier.code || "hidden_information");
+            hiddenInformationBarrierCountByCode.set(
+              code,
+              (hiddenInformationBarrierCountByCode.get(code) || 0) + 1,
+            );
+          }
+          if (informationMasked) {
+            const filtered = sanitizeHiddenInformationActions(rootObservation, successors);
+            successors = filtered.actions;
+            hiddenInformationFilteredActionCount += filtered.filteredCount;
+          }
           const projectionStartedAt = now();
-          const leafObservation = composition.projection(viewer).state;
+          const projectedObservation = composition.projection(viewer).state;
+          const leafObservation = informationMasked
+            ? sanitizeHiddenInformationObservation(
+              rootObservation,
+              projectedObservation,
+              hiddenBarrier,
+            )
+            : projectedObservation;
           timing.projectionMilliseconds += now() - projectionStartedAt;
           let branchPriority = 0;
           if (typeof evaluateOptions.getBranchPriority === "function") {
@@ -1597,6 +1806,7 @@
             leafObservation,
             branchPriority,
             childEnvelope: childSaved?.envelope || null,
+            informationMasked,
           };
         } catch (error) {
           return {
@@ -1651,6 +1861,7 @@
               opponentProxyDepth: 0,
               focalPassStarted: false,
               goalCompletionPending: false,
+              informationMasked: false,
               terminalReason: null,
               routeTargetId,
               routePlanId,
@@ -1859,6 +2070,9 @@
             ? clone(current)
             : null;
           for (const origin of node.origins) {
+            origin.informationMasked = Boolean(
+              origin.informationMasked || execution.informationMasked,
+            );
             if (!origin.rootActionObservation && origin.chain.length === 0) {
               origin.rootActionObservation = execution.leafObservation;
               origin.rootActionLegalSuccessors = execution.successors;
@@ -2522,6 +2736,12 @@
         opponentExecutedNodeCount,
         focalPlanningTurnAdvanceCount,
         focalPassBoundaryLeafCount,
+        hiddenInformationFilteredActionCount,
+        hiddenInformationBarrierCountByCode: Object.fromEntries(
+          [...hiddenInformationBarrierCountByCode.entries()].sort(([left], [right]) => (
+            String(left).localeCompare(String(right))
+          )),
+        ),
         executedNodeCountByFamily: Object.fromEntries(
           [...executedNodeCountByFamily.entries()].sort(([left], [right]) => (
             String(left).localeCompare(String(right))

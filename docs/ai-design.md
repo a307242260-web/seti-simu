@@ -79,7 +79,10 @@ Decision 链只通过 active Effect Session 暴露的标准 choice 继续。主 
 分支数/深度超过安全上限时返回 `unresolved`，不把已结算一半的状态伪装为 leaf。Simulation 随机
 分支从 root identity 与 actionId 派生独立 RNG；一旦消费随机数，outcome 标为
 `low-confidence/COUNTERFACTUAL_RANDOM_SAMPLE`。Browser 无法安全聚合随机期望时同样返回
-low confidence，不读取本局未来 RNG。
+low confidence。固定 RNG 只用于让规则结果可复现，不授权 Policy 读取本局未来信息：公共牌补牌、
+盲抽、外星揭示等隐藏信息出现后，反事实仍继续搜索，但新身份在后续 observation、目标 requirement
+和 legal successor 中保持 opaque。搜索可以继续使用已兑现的分数、资源与牌张数量，也可以把未知牌
+用于身份无关的通用支付；不得用其牌面建立打牌、卡角、定向扫描或物种能力路线。
 
 每个 root/leaf observation 使用 `seti-decision-observation-v2`，其中
 `outcomeProjection` 为 `seti-outcome-projection-v2`。projection 只增加以下
