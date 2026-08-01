@@ -127,7 +127,10 @@ function buildDiagnostics(turns) {
     .filter(({ action }) => action.value && action.family !== "end_turn");
   const timed = allActions.filter((action) => Number(action.timing?.candidateCount) > 0);
   const tiedTopChoices = evaluated.filter(({ action }) => (
-    action.alternatives.some((alternative) => Math.abs(alternative.score - action.value.score) < 1e-9)
+    action.alternatives.some((alternative) => Math.abs(
+      Number(alternative.evaluation?.value ?? alternative.score)
+        - Number(action.value.value ?? action.value.score),
+    ) < 1e-9)
   ));
   const nonPositiveChoices = evaluated.filter(({ action }) => action.value.score <= 0);
   return Object.freeze({
@@ -189,12 +192,20 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
       score: evaluation.score,
       evaluation,
     });
-  }).sort((left, right) => (
-    Number(right.evaluation.selectable) - Number(left.evaluation.selectable)
-    || Number(right.evaluation.priorityClass || -1) - Number(left.evaluation.priorityClass || -1)
-    || Number(right.score ?? -Infinity) - Number(left.score ?? -Infinity)
-    || left.actionId.localeCompare(right.actionId)
-  ));
+  }).sort((left, right) => {
+    const selectableDelta = Number(right.evaluation.selectable)
+      - Number(left.evaluation.selectable);
+    if (selectableDelta) return selectableDelta;
+    const leftKey = left.evaluation.sortKey || [];
+    const rightKey = right.evaluation.sortKey || [];
+    const keyLength = Math.max(leftKey.length, rightKey.length);
+    for (let index = 0; index < keyLength; index += 1) {
+      const delta = Number(rightKey[index] || 0) - Number(leftKey[index] || 0);
+      if (delta) return delta;
+    }
+    return Number(right.evaluation.priorityClass || -1) - Number(left.evaluation.priorityClass || -1)
+      || left.actionId.localeCompare(right.actionId);
+  });
 }
 
 function actionText(action) {
@@ -724,7 +735,7 @@ function renderAlternatives(alternatives) {
   return alternatives.map((candidate, index) => {
     const selectable = candidate.evaluation.selectable;
     const detail = selectable
-      ? `V ${formatNumber(candidate.score)}`
+      ? `V ${formatNumber(candidate.evaluation.value ?? candidate.score)}`
       : `不可选 · ${(candidate.evaluation.reasonCodes || []).join(", ")}`;
     return `<li>
       <span class="alternative-rank">${index + 1}</span>
