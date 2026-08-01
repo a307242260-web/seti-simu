@@ -264,6 +264,27 @@ try {
       "固定盘面必须自然耗尽 frontier，不能把执行上限当剪枝");
     assert.equal(Number.isSafeInteger(policyDiagnostics.conditionalEquivalentMergeCount), true);
     assert.equal(Number.isSafeInteger(policyDiagnostics.resourceDominatedOriginCount), true);
+    assert.equal(
+      Object.values(policyDiagnostics.completionDominatedOriginCountByTarget || {})
+        .reduce((total, count) => total + count, 0),
+      policyDiagnostics.completionDominatedOriginCount,
+      "完成态支配诊断必须逐次级目标完整归因，不能跨目标合并",
+    );
+    const routeEntryStats = Object.values(policyDiagnostics.routeEntryStatsByTarget || {});
+    assert.equal(routeEntryStats.length > 0, true,
+      "次级目标搜索必须报告按目标拆分的入口状态统计");
+    assert.equal(routeEntryStats.every((stats) => (
+      stats.bindingOriginCount >= stats.distinctEntryStateCount
+      && stats.maxBindingsPerEntryState <= stats.bindingOriginCount
+      && stats.completedTransitionCount >= stats.retainedCompletedTransitionCount
+    )), true, "目标入口、完成与保留路线计数必须保持包含关系");
+    assert.equal(
+      Object.values(policyDiagnostics.completedRouteGroupsByTarget || {})
+        .flat()
+        .reduce((total, group) => total + group.completedTransitionCount, 0),
+      policyDiagnostics.completedGoalTransitionCount,
+      "完成路线族必须按目标与行动序列完整覆盖全部完成尝试",
+    );
     assert.equal(policyDiagnostics.maxExecutionNodes, 4096);
     assert.equal(policyDiagnostics.executedNodeCount < policyDiagnostics.maxExecutionNodes, true,
       "固定盘面必须在物理失控保护前自然耗尽");

@@ -988,6 +988,10 @@
       const executedNodeCountByActor = new Map();
       const executedOriginCountByTarget = new Map();
       const executedOriginCountByTargetAndDecisionKind = new Map();
+      const routeEntryStatsByTarget = new Map();
+      const completedTransitionCountByTarget = new Map();
+      const retainedCompletedTransitionCountByTarget = new Map();
+      const completedRouteGroupsByTarget = new Map();
       const leafCountByVirtualRoot = new Map();
       const saturatedOriginCountByVirtualRoot = new Map();
       const saturatedRouteGroupsByVirtualRoot = new Map();
@@ -998,6 +1002,37 @@
       const retainedDominanceEntriesByGroup = new Map();
       const retainedCompletionEntriesByGroup = new Map();
       const dominatedCompletionKeys = new Set();
+      const completionDominatedOriginCountByTarget = new Map();
+
+      function recordRouteEntry(targetId, planId, envelope) {
+        if (!targetId || !envelope) return;
+        const stats = routeEntryStatsByTarget.get(targetId) || {
+          bindingOriginCount: 0,
+          entries: new Map(),
+        };
+        const entryKey = `${planId || ""}:${envelopeHash(envelope)}`;
+        const bindingCount = (stats.entries.get(entryKey) || 0) + 1;
+        stats.bindingOriginCount += 1;
+        stats.entries.set(entryKey, bindingCount);
+        routeEntryStatsByTarget.set(targetId, stats);
+      }
+
+      function recordCompletedRoute(targetId, routeActions, quickTradeCount, retained) {
+        if (!targetId) return;
+        const groups = completedRouteGroupsByTarget.get(targetId) || new Map();
+        const routeFamilies = (routeActions || []).map((action) => action.family);
+        const key = stableSerialize({ routeFamilies, quickTradeCount });
+        const group = groups.get(key) || {
+          routeFamilies,
+          quickTradeCount,
+          completedTransitionCount: 0,
+          retainedCompletedTransitionCount: 0,
+        };
+        if (retained == null) group.completedTransitionCount += 1;
+        else if (retained) group.retainedCompletedTransitionCount += 1;
+        groups.set(key, group);
+        completedRouteGroupsByTarget.set(targetId, groups);
+      }
 
       function chainKey(origin) {
         if (!chainKeyByOrigin.has(origin)) {
@@ -1280,10 +1315,12 @@
         }
         const key = stableHash([
           origin.rootAction.actionId,
+          origin.routeTargetId || "",
           nextProxyDepth,
           nextChain,
         ]);
-        const groupKey = `${origin.rootAction.actionId}:${nextProxyDepth}`;
+        const targetId = origin.routeTargetId || "<unbound>";
+        const groupKey = `${origin.rootAction.actionId}:${nextProxyDepth}:${targetId}`;
         const candidate = {
           key,
           facts,
@@ -1294,6 +1331,10 @@
         if (retained.some((entry) => completionFactsDominate(entry, candidate))) {
           dominatedCompletionKeys.add(key);
           completionDominatedOriginCount += 1;
+          completionDominatedOriginCountByTarget.set(
+            targetId,
+            (completionDominatedOriginCountByTarget.get(targetId) || 0) + 1,
+          );
           return { retained: false, key };
         }
         const survivors = [];
@@ -1301,6 +1342,10 @@
           if (completionFactsDominate(candidate, entry)) {
             dominatedCompletionKeys.add(entry.key);
             completionDominatedOriginCount += 1;
+            completionDominatedOriginCountByTarget.set(
+              targetId,
+              (completionDominatedOriginCountByTarget.get(targetId) || 0) + 1,
+            );
           } else {
             survivors.push(entry);
           }
@@ -1587,6 +1632,7 @@
           const routeResultTargetIds = clone(routeTarget?.resultTargetIds || (
             routeTargetId ? [routeTargetId] : []
           ));
+          recordRouteEntry(routeTargetId, routePlanId, saved.envelope);
           mergeNode(initialFrontierByKey, {
             envelope: saved.envelope,
             action,
@@ -1905,6 +1951,16 @@
             let completionFrontierKey = origin.completionFrontierKey || null;
             if (completedGoal) {
               completedGoalTransitionCount += 1;
+              recordCompletedRoute(
+                routeTargetId,
+                nextRouteActions,
+                nextQuickTradeCount,
+                null,
+              );
+              completedTransitionCountByTarget.set(
+                routeTargetId,
+                (completedTransitionCountByTarget.get(routeTargetId) || 0) + 1,
+              );
               maxCompletedGoalDepth = Math.max(maxCompletedGoalDepth, nextProxyDepth);
               const retained = retainCompletedEndpoint(
                 origin,
@@ -1917,6 +1973,16 @@
               if (!retained.retained) {
                 continue;
               }
+              recordCompletedRoute(
+                routeTargetId,
+                nextRouteActions,
+                nextQuickTradeCount,
+                true,
+              );
+              retainedCompletedTransitionCountByTarget.set(
+                routeTargetId,
+                (retainedCompletedTransitionCountByTarget.get(routeTargetId) || 0) + 1,
+              );
             }
             if (
               secondaryAgentSearch
@@ -2246,6 +2312,13 @@
                 ));
                 for (const selectedRoute of selectedRoutes) {
                   const successor = selectedRoute.action;
+                  if (completedGoal && nextActorIsFocal) {
+                    recordRouteEntry(
+                      selectedRoute.routeTargetId,
+                      selectedRoute.routePlanId,
+                      execution.childEnvelope,
+                    );
+                  }
                   mergeNode(nextFrontierByKey, {
                     envelope: execution.childEnvelope,
                     action: successor,
@@ -2410,6 +2483,11 @@
         conditionalEquivalentMergeCount,
         resourceDominatedOriginCount,
         completionDominatedOriginCount,
+        completionDominatedOriginCountByTarget: Object.fromEntries(
+          [...completionDominatedOriginCountByTarget.entries()].sort((left, right) => (
+            right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
+          )),
+        ),
         targetEquivalentChoicePrunedCount,
         targetSchedulerPrunedCount,
         unreachableRouteOriginCount,
@@ -2442,6 +2520,40 @@
           [...executedOriginCountByTargetAndDecisionKind.entries()].sort((left, right) => (
             right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
           )),
+        ),
+        routeEntryStatsByTarget: Object.fromEntries(
+          [...routeEntryStatsByTarget.entries()]
+            .map(([targetId, stats]) => [targetId, {
+              bindingOriginCount: stats.bindingOriginCount,
+              distinctEntryStateCount: stats.entries.size,
+              maxBindingsPerEntryState: Math.max(0, ...stats.entries.values()),
+              completedTransitionCount: completedTransitionCountByTarget.get(targetId) || 0,
+              retainedCompletedTransitionCount:
+                retainedCompletedTransitionCountByTarget.get(targetId) || 0,
+            }])
+            .sort((left, right) => (
+              right[1].bindingOriginCount - left[1].bindingOriginCount
+              || String(left[0]).localeCompare(String(right[0]))
+            )),
+        ),
+        completedRouteGroupsByTarget: Object.fromEntries(
+          [...completedRouteGroupsByTarget.entries()]
+            .map(([targetId, groups]) => [targetId, [...groups.values()]
+              .sort((left, right) => (
+                right.completedTransitionCount - left.completedTransitionCount
+                || left.quickTradeCount - right.quickTradeCount
+                || String(left.routeFamilies.join(":"))
+                  .localeCompare(String(right.routeFamilies.join(":")))
+              ))])
+            .sort((left, right) => (
+              right[1].reduce((total, group) => (
+                total + group.completedTransitionCount
+              ), 0)
+              - left[1].reduce((total, group) => (
+                total + group.completedTransitionCount
+              ), 0)
+              || String(left[0]).localeCompare(String(right[0]))
+            )),
         ),
         saturatedVirtualRoots: [...saturatedOriginCountByVirtualRoot.entries()]
           .map(([key, saturatedOriginCount]) => ({
