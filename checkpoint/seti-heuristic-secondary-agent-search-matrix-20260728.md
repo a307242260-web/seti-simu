@@ -116,7 +116,7 @@ Machine Player Host 的 seat/policy identity。首版 `secondary-agent-rollout-v
 - 删除“15 个真实 Decision”的产品口径。
 - 删除“一级目标是路线终点/取得即停止”的设计。
 - 删除“当前只搜索一个 Action + 必选 Decision 闭包”的产品口径。
-- 不恢复任何带 `continuation` 命名的 callback、旧 candidate/selector/pending automation 或
+- 不恢复任何旧式回调命名、旧 candidate/selector/pending automation 或
   Browser 旁路。
 
 ## 可证伪行为义务
