@@ -813,7 +813,7 @@ function renderActionCard(action) {
   const timing = action.timing || {};
   const candidateCount = Math.max(1, Number(timing.candidateCount) || 1);
   const perCandidate = (Number(timing.totalMilliseconds) || 0) / candidateCount;
-  return `<article class="action-card" data-player="${escapeHtml(action.actorPlayerId)}" data-family="${escapeHtml(action.family)}">
+  return `<article class="action-card" id="decision-${action.decisionNumber}" data-player="${escapeHtml(action.actorPlayerId)}" data-family="${escapeHtml(action.family)}">
     <div class="action-heading">
       <span class="decision-number">#${action.decisionNumber}</span>
       <div class="action-title">
@@ -1479,15 +1479,23 @@ function formatTurnReportHtml(report) {
       const emptyState = document.querySelector("#emptyState");
       const lightbox = document.querySelector("#imageLightbox");
       const lightboxImage = lightbox.querySelector("img");
+      const queryParams = new URLSearchParams(location.search);
+      const requestedPlayer = queryParams.get("player");
+      const formalOnly = queryParams.get("stage") === "formal";
+      const openDetails = queryParams.get("details") === "open";
+      if ([...playerFilter.options].some((option) => option.value === requestedPlayer)) {
+        playerFilter.value = requestedPlayer;
+      }
       const update = () => {
         const player = playerFilter.value;
         const family = familyFilter.value;
         const query = textFilter.value.trim().toLowerCase();
         let visible = 0;
         cards.forEach((card) => {
-          const playerMatches = player === "all"
+          const stageMatches = !formalOnly || !card.closest(".setup-section");
+          const playerMatches = stageMatches && (player === "all"
             || card.dataset.player === player
-            || (player === "setup" && card.closest(".setup-section"));
+            || (player === "setup" && card.closest(".setup-section")));
           const familyMatches = family === "all" || card.dataset.family === family;
           const textMatches = !query || card.textContent.toLowerCase().includes(query);
           card.classList.toggle("hidden", !(playerMatches && familyMatches && textMatches));
@@ -1516,6 +1524,10 @@ function formatTurnReportHtml(report) {
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") lightbox.classList.remove("open");
       });
+      if (openDetails) {
+        document.querySelectorAll(".action-details").forEach((details) => { details.open = true; });
+      }
+      update();
     })();
   </script>
 </body>
