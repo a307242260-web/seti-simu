@@ -1126,6 +1126,41 @@ function observation({
     "根搜索只执行绑定真实结果目标的 action，不横向试跑无关快速转换",
   );
 
+  const publicSector1 = {
+    ...action("public:sector-1-a", "choose_card"),
+    actorId: seatId,
+    phase: "conditional",
+    target: { cardInstanceId: "public-1", nebulaId: "sector-1-a" },
+  };
+  const publicSector3 = {
+    ...action("public:sector-3-a", "choose_card"),
+    actorId: seatId,
+    phase: "conditional",
+    target: { cardInstanceId: "public-3", nebulaId: "sector-3-a" },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: rootObservation,
+      legalSuccessors: [publicSector1, publicSector3],
+      routeTargetId: "sector:win:sector-3-b:1",
+      routePlanId: "sector:standard-scan:sector-3-b",
+    }).map((candidate) => candidate.actionId),
+    [publicSector3.actionId],
+    "公共牌不能触达当前扇区目标时，只取最好赢的额外扇区，不遍历全部无关扫描",
+  );
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: rootObservation,
+      legalSuccessors: [publicSector1, publicSector3],
+      routeTargetId: "sector:win:sector-1-a:1",
+      routePlanId: "sector:standard-scan:sector-1-a",
+    }).map((candidate) => candidate.actionId),
+    [publicSector1.actionId],
+    "公共牌能直接推进当前扇区目标时，必须优先目标扇区而不是更便宜的旁路",
+  );
+
   assert.equal(evaluator.completesSecondaryAgentRouteTarget({
     action: scan,
     targetId: "sector:win:sector-3-a:1",

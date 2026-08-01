@@ -1642,10 +1642,12 @@
               rootAction: action,
               chain: [],
               routeActions: [],
+              targetRouteActions: [],
               checkpoints: [],
               lastProbeAction: null,
               proxyDepth: 0,
               quickTradeCount: 0,
+              targetQuickTradeCount: 0,
               opponentProxyDepth: 0,
               focalPassStarted: false,
               goalCompletionPending: false,
@@ -1911,6 +1913,9 @@
             const nextQuickTradeCount = Number(origin.quickTradeCount || 0) + (
               currentIsFocal && current.family === "quick_trade" ? 1 : 0
             );
+            const nextTargetQuickTradeCount = Number(origin.targetQuickTradeCount || 0) + (
+              currentIsFocal && current.family === "quick_trade" ? 1 : 0
+            );
             const nextRouteActions = [
               ...(origin.routeActions || []),
               ...(currentIsFocal && currentIsRouteAction ? [{
@@ -1918,6 +1923,13 @@
                 family: current.family,
                 target: clone(current.target || {}),
                 payload: clone(current.payload || {}),
+              }] : []),
+            ];
+            const nextTargetRouteActions = [
+              ...(origin.targetRouteActions || []),
+              ...(currentIsFocal && currentIsRouteAction ? [{
+                actionId: current.actionId,
+                family: current.family,
               }] : []),
             ];
             const focalPassStarted = origin.focalPassStarted
@@ -1953,8 +1965,8 @@
               completedGoalTransitionCount += 1;
               recordCompletedRoute(
                 routeTargetId,
-                nextRouteActions,
-                nextQuickTradeCount,
+                nextTargetRouteActions,
+                nextTargetQuickTradeCount,
                 null,
               );
               completedTransitionCountByTarget.set(
@@ -1975,8 +1987,8 @@
               }
               recordCompletedRoute(
                 routeTargetId,
-                nextRouteActions,
-                nextQuickTradeCount,
+                nextTargetRouteActions,
+                nextTargetQuickTradeCount,
                 true,
               );
               retainedCompletedTransitionCountByTarget.set(
@@ -2143,7 +2155,9 @@
                     lastProbeAction: originNextProbeAction,
                     proxyDepth: nextProxyDepth,
                     quickTradeCount: nextQuickTradeCount,
+                    targetQuickTradeCount: nextTargetQuickTradeCount,
                     routeActions: nextRouteActions,
+                    targetRouteActions: nextTargetRouteActions,
                     focalPassStarted,
                     goalCompletionPending,
                     routeTargetId: secondaryAgentSearch
@@ -2294,7 +2308,13 @@
                       chain: nextChain,
                       proxyDepth: nextProxyDepth,
                       quickTradeCount: nextQuickTradeCount,
+                      targetQuickTradeCount: completedGoal
+                        ? 0
+                        : nextTargetQuickTradeCount,
                       routeActions: nextRouteActions,
+                      targetRouteActions: completedGoal
+                        ? []
+                        : nextTargetRouteActions,
                       routeTargetId: completedGoal ? null : routeTargetId,
                       routePlanId: completedGoal ? null : routePlanId,
                       routeResultTargetIds: completedGoal
@@ -2332,7 +2352,13 @@
                       lastProbeAction: originNextProbeAction,
                       proxyDepth: nextProxyDepth,
                       quickTradeCount: nextQuickTradeCount,
+                      targetQuickTradeCount: completedGoal && nextActorIsFocal
+                        ? 0
+                        : nextTargetQuickTradeCount,
                       routeActions: nextRouteActions,
+                      targetRouteActions: completedGoal && nextActorIsFocal
+                        ? []
+                        : nextTargetRouteActions,
                       opponentProxyDepth: nextActorIsFocal
                         ? 0
                         : (

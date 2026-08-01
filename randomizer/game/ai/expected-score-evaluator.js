@@ -1980,18 +1980,21 @@
             (rawSectorWinRequirements(input.branchObservation)?.candidates || [])
               .map((candidate) => [candidate.sectorId, candidate]),
           );
-          const selectedSectorId = boundSectorId || [...new Set(
+          const availableSectorIds = [...new Set(
             nebulaChoices.map((action) => String(action.target.nebulaId)),
-          )].sort((left, right) => {
-            const leftCandidate = candidateBySector.get(left);
-            const rightCandidate = candidateBySector.get(right);
-            if (!leftCandidate && !rightCandidate) return left.localeCompare(right);
-            if (!leftCandidate) return 1;
-            if (!rightCandidate) return -1;
-            return finite(leftCandidate.minimumOwnMarks) - finite(rightCandidate.minimumOwnMarks)
-              || finite(leftCandidate.openSlotCount) - finite(rightCandidate.openSlotCount)
-              || left.localeCompare(right);
-          })[0];
+          )];
+          const selectedSectorId = boundSectorId && availableSectorIds.includes(boundSectorId)
+            ? boundSectorId
+            : availableSectorIds.sort((left, right) => {
+              const leftCandidate = candidateBySector.get(left);
+              const rightCandidate = candidateBySector.get(right);
+              if (!leftCandidate && !rightCandidate) return left.localeCompare(right);
+              if (!leftCandidate) return 1;
+              if (!rightCandidate) return -1;
+              return finite(leftCandidate.minimumOwnMarks) - finite(rightCandidate.minimumOwnMarks)
+                || finite(leftCandidate.openSlotCount) - finite(rightCandidate.openSlotCount)
+                || left.localeCompare(right);
+            })[0];
           const selected = nebulaChoices.filter((action) => (
             String(action.target.nebulaId) === selectedSectorId
           ));
