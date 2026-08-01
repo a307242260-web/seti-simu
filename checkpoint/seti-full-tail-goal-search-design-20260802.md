@@ -166,3 +166,15 @@ requirement、trace 与 successor 中出现的 `cardInstanceId` 均属于根观�
 `executionLimitReached=false`、`remainingFrontierNodeCount=0`、`beamPrunedOriginCount=0`。中位 Policy
 耗时 6151ms，P90 6207ms，最大 6288ms，低于 10 秒门禁。该结果证明继续搜索没有依赖提高 node cap，
 但隐藏身份过滤本身是保守信息集约束，不代表全目标尾部搜索已经取代现有最低成本回退调度。
+
+### Quick Trade 补牌执行闭包（2026-08-02）
+
+固定局第 51 次决策复现出遗漏的隐藏信息入口：`3宣传 → 精选1张牌` 取走当前公开牌后，Production
+Quick Trade Decision 使用正式牌堆补牌，但没有把 `hidden_card_reveal` 传回 Effect Session。
+反事实因此连续利用补出的 b49 等未知牌，`orbit:mars` 路线触发 1321 次相同快速转换和 2652 次
+卡牌移动选择，在 4096 节点触顶，耗时 16.52 秒。
+
+唯一修复位于 Quick Trade card selection executor：公开牌补牌返回 `hidden_card_reveal`，盲抽返回
+`hidden_card_draw`。搜索继续执行，已知被选公开牌仍可使用；补出的新牌只保留数量，不能按身份
+建立打牌或卡角路线。相同 checkpoint 修复后自然耗尽于 1828 节点，单次 6.59 秒，选择从错误的
+截断 PASS 恢复为正式移动；对手执行仍为 0。没有改变 node cap、beam、15 目标深度或估值权重。

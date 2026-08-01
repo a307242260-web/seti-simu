@@ -1164,6 +1164,7 @@
       let maxFrontierOriginCount = legalActions.length;
       const executedNodeCountByFamily = new Map();
       const executedNodeCountByDecisionKind = new Map();
+      const executedNodeCountByActionSummary = new Map();
       const executedNodeCountByActor = new Map();
       const executedOriginCountByTarget = new Map();
       const executedOriginCountByTargetAndDecisionKind = new Map();
@@ -2044,6 +2045,11 @@
             decisionKind,
             (executedNodeCountByDecisionKind.get(decisionKind) || 0) + 1,
           );
+          const actionSummary = `${current.family}:${current.summary || current.actionId}`;
+          executedNodeCountByActionSummary.set(
+            actionSummary,
+            (executedNodeCountByActionSummary.get(actionSummary) || 0) + 1,
+          );
           for (const origin of node.origins) {
             const targetId = origin.routeTargetId || "<unbound>";
             executedOriginCountByTarget.set(
@@ -2750,6 +2756,11 @@
         executedNodeCountByDecisionKind: Object.fromEntries(
           [...executedNodeCountByDecisionKind.entries()].sort(([left], [right]) => (
             String(left).localeCompare(String(right))
+          )),
+        ),
+        executedNodeCountByActionSummary: Object.fromEntries(
+          [...executedNodeCountByActionSummary.entries()].sort((left, right) => (
+            right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
           )),
         ),
         executedNodeCountByActor: Object.fromEntries(

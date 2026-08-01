@@ -308,6 +308,9 @@
         ok: true,
         progressed: true,
         message: "快速交易选牌完成",
+        irreversible: action.target?.source === "blind"
+          ? { code: "hidden_card_draw", reason: "快速交易盲抽翻出隐藏牌" }
+          : { code: "hidden_card_reveal", reason: "快速交易取牌后公共牌补牌" },
         events: [{
           type: "quick_trade_card_selected",
           tradeId: pending.tradeId,

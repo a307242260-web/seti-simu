@@ -507,6 +507,13 @@ for (const family of ["scan", "place_data"]) {
     const completed = submitActionToCompletion(parityKernel.composition, action, true);
     assert.equal(completed.phase, "completed", `${trade.id} 必须经 Effect Session 提交`);
     assert.equal(completed.journal.actions[0].action.actionId, action.actionId);
+    if (Number(trade.gain?.handSize) > 0) {
+      assert.equal(
+        completed.irreversibleBarrier?.code,
+        "hidden_card_reveal",
+        `${trade.id} 取走公开牌并补牌后必须保留隐藏信息边界`,
+      );
+    }
   }
   assert.equal(parityKernel.composition.lifecycle.restore(richEnvelope).ok, true);
   const routeBefore = parityKernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state

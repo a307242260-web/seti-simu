@@ -83,6 +83,8 @@ low confidence。固定 RNG 只用于让规则结果可复现，不授权 Policy
 盲抽、外星揭示等隐藏信息出现后，反事实仍继续搜索，但新身份在后续 observation、目标 requirement
 和 legal successor 中保持 opaque。搜索可以继续使用已兑现的分数、资源与牌张数量，也可以把未知牌
 用于身份无关的通用支付；不得用其牌面建立打牌、卡角、定向扫描或物种能力路线。
+公共扫描与 Quick Trade 精选牌都必须在正式 executor 补牌时上报同一隐藏信息 barrier；盲抽上报
+`hidden_card_draw`。不得因入口属于通用 Standard Action Decision 而绕过信息边界。
 
 每个 root/leaf observation 使用 `seti-decision-observation-v2`，其中
 `outcomeProjection` 为 `seti-outcome-projection-v2`。projection 只增加以下

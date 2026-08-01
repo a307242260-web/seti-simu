@@ -12,6 +12,7 @@ const COVERAGE_FIELDS = Object.freeze([
   "executedNodeCount",
   "expandedSearchNodeCount",
   "rootTargetCount",
+  "executedNodeCountByActionSummary",
   "maxFrontierSize",
   "maxRetainedFrontierSize",
   "maxFrontierOriginCount",
