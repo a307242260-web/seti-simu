@@ -160,6 +160,7 @@ const html = formatDecisionSearchTraceHtml({
   turns: [{
     actions: [{
       decisionNumber: 28,
+      playerLabel: "白色玩家",
       text: "发射",
       scoreBefore: 7,
       resourcesBefore: { credits: 4, energy: 4, publicity: 4, availableData: 2 },
@@ -238,7 +239,7 @@ assert.match(html, /太阳系盘面/);
 assert.match(html, /白色玩家手牌/);
 assert.match(html, /公共牌/);
 assert.match(html, /深空观测/);
-assert.match(html, /科技供应与白色科技/);
+assert.match(html, /科技供应与白色玩家科技/);
 assert.match(html, /blue1/);
 assert.match(html, /太阳系盘面与外围 8 个扇区/);
 assert.match(html, /数据计算机/);
@@ -255,6 +256,33 @@ assert.match(html, /4\/6/);
 assert.match(html, /id="imageLightbox"/);
 assert.match(html, /closest\("\[data-image-src\]"\)/);
 assert.doesNotMatch(html, /launch:a|move:b|orbit:c/);
+
+const greenHtml = formatDecisionSearchTraceHtml({
+  setupChoices: [],
+  turns: [{
+    actions: [{
+      decisionNumber: 320,
+      playerLabel: "绿色玩家",
+      text: "放置数据",
+      scoreBefore: 26,
+      resourcesBefore: { credits: 7, energy: 3, publicity: 1, availableData: 3 },
+      decisionContext: {
+        roundNumber: 4,
+        turnNumber: 1,
+        score: 26,
+        resources: { credits: 7, energy: 3, publicity: 1, availableData: 3 },
+        hand: [],
+      },
+      timing: { totalMilliseconds: 11930 },
+      searchTrace: traceWithWinner,
+      followups: [],
+    }],
+  }],
+}, 320);
+assert.match(greenHtml, /绿色玩家 #320/);
+assert.match(greenHtml, /绿色玩家行动前/);
+assert.match(greenHtml, /绿色玩家手牌/);
+assert.doesNotMatch(greenHtml, /白色玩家行动前/);
 
 const incomeHtml = formatDecisionSearchTraceHtml({
   setupChoices: [],
