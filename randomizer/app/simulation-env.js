@@ -298,6 +298,7 @@ function createSimulationEnv() {
       stopAtPassDecisionBoundary: options.stopAtPassDecisionBoundary === true,
       maxFrontierPerRoot: options.maxFrontierPerRoot
         || (options.secondaryAgentSearch ? 1 : 8),
+      traceGoalClusters: options.traceGoalClusters === true,
       secondaryAgentSearch: options.secondaryAgentSearch ? {
         focalSeatId: seatId,
         maxProxyDepth: options.maxProxyDepth || 15,
@@ -443,6 +444,8 @@ function createSimulationEnv() {
         seat: resetConfig.seat ?? null,
         offlineTeacher: resetConfig.offlineTeacher === true,
         compactReplay: resetConfig.compactReplay === true,
+        traceCounterfactualGoalClusters:
+          resetConfig.traceCounterfactualGoalClusters === true,
       };
       replaySteps = [];
       environmentEvents = [];
@@ -708,6 +711,8 @@ function createSimulationEnv() {
           maxLeaves: initialSetupBoundary ? 1 : 8,
           maxNodes: initialSetupBoundary ? 12 : 128,
           secondaryAgentSearch: !initialSetupBoundary,
+          traceGoalClusters: !initialSetupBoundary
+            && config.traceCounterfactualGoalClusters,
           maxProxyDepth: 15,
         })
         : [];

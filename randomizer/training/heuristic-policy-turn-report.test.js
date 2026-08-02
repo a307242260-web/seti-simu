@@ -1,7 +1,10 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { buildSearchTrace } = require("./heuristic-policy-turn-report");
+const {
+  buildSearchTrace,
+  formatDecisionSearchTraceHtml,
+} = require("./heuristic-policy-turn-report");
 
 const actionOutcomes = [
   {
@@ -33,6 +36,15 @@ const rankedEvaluations = [
       quickTradeCount: 0,
       routeTargetId: "orbit:mars:planet:",
       actionChain: ["launch:a", "move:b", "orbit:c"],
+      goalPaths: [["orbit:mars:planet:"]],
+      goalSelections: [{
+        targetId: "orbit:mars:planet:",
+        actions: [
+          { family: "play_card", summary: "b_56.webp", target: {} },
+          { family: "orbit", summary: "环绕火星", target: { planetId: "mars" } },
+        ],
+        quickTradeCount: 0,
+      }],
       reasonCodes: ["strategic-goal-score"],
     },
   },
@@ -79,6 +91,27 @@ const diagnostics = {
       retainedCompletedTransitionCount: 1,
     }],
   },
+  goalClusters: [{
+    depth: 1,
+    path: ["orbit:mars:planet:"],
+    parentPath: [],
+    targetId: "orbit:mars:planet:",
+    entryCount: 1,
+    firstExecutionOrder: 1,
+    executedOriginCount: 7,
+    completedTransitionCount: 2,
+    survivingCompletionCount: 1,
+    routeVariants: [{
+      actions: [
+        { family: "play_card", summary: "b_56.webp", target: {} },
+        { family: "orbit", summary: "环绕火星", target: { planetId: "mars" } },
+      ],
+      quickTradeCount: 0,
+      completedTransitionCount: 2,
+      survivingCompletionCount: 1,
+    }],
+    childTargets: [],
+  }],
 };
 
 const trace = buildSearchTrace(
@@ -101,5 +134,26 @@ assert.deepEqual(trace.targetRows[0].routeGroups[0].routeFamilies, ["launch", "m
 assert.deepEqual(trace.nodeFamilies.map(({ family }) => family), ["move", "launch", "orbit"]);
 assert.equal(Object.isFrozen(trace), true);
 assert.equal(Object.isFrozen(trace.targetRows[0].routeGroups[0]), true);
+assert.equal(trace.goalClusters[0].selectedPath, true);
+assert.equal(trace.goalClusters[0].routeVariants[0].selectedRoute, true);
+
+const html = formatDecisionSearchTraceHtml({
+  setupChoices: [],
+  turns: [{
+    actions: [{
+      decisionNumber: 28,
+      text: "发射",
+      scoreBefore: 7,
+      resourcesBefore: { credits: 4, energy: 4, publicity: 4, availableData: 2 },
+      timing: { totalMilliseconds: 123 },
+      searchTrace: trace,
+      followups: [],
+    }],
+  }],
+}, 28);
+assert.match(html, /第 1 层 · 本层第 1 个目标/);
+assert.match(html, /最终采用路线的次级目标顺序/);
+assert.match(html, /打出卡牌：离子推迸系统/);
+assert.doesNotMatch(html, /launch:a|move:b|orbit:c/);
 
 console.log("heuristic turn report search trace tests passed");

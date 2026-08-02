@@ -896,6 +896,9 @@
       );
       const stopAtPassDecisionBoundary = evaluateOptions.stopAtPassDecisionBoundary === true;
       const secondaryAgentSearch = evaluateOptions.secondaryAgentSearch || null;
+      const traceGoalClusters = Boolean(
+        secondaryAgentSearch && evaluateOptions.traceGoalClusters === true,
+      );
       const maxExecutionNodes = secondaryAgentSearch
         ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 32)
         : maxNodes;
@@ -1183,6 +1186,149 @@
       const retainedCompletionEntriesByGroup = new Map();
       const dominatedCompletionKeys = new Set();
       const completionDominatedOriginCountByTarget = new Map();
+      const goalClusterTraceByPath = new Map();
+      const goalCompletionTraceRefsByKey = new Map();
+      let goalClusterTraceExecutionOrdinal = 0;
+
+      function traceAction(action) {
+        return {
+          family: action?.family || null,
+          summary: action?.summary || action?.family || null,
+          target: clone(action?.target || {}),
+        };
+      }
+
+      function tracePathKey(path) {
+        return stableSerialize(path || []);
+      }
+
+      function ensureGoalCluster(parentPath, targetId) {
+        if (!traceGoalClusters || !targetId) return null;
+        const path = [...(parentPath || []), targetId];
+        const key = tracePathKey(path);
+        if (!goalClusterTraceByPath.has(key)) {
+          goalClusterTraceByPath.set(key, {
+            key,
+            depth: path.length,
+            path,
+            parentPath: [...(parentPath || [])],
+            targetId,
+            entryCount: 0,
+            firstExecutionOrder: null,
+            executedOriginCount: 0,
+            completedTransitionCount: 0,
+            survivingCompletionCount: 0,
+            routeVariants: new Map(),
+            childTargets: new Map(),
+          });
+        }
+        return goalClusterTraceByPath.get(key);
+      }
+
+      function mergeGoalTracePaths(left, right) {
+        if (!traceGoalClusters) return left || right || [];
+        const paths = new Map();
+        for (const path of [...(left || []), ...(right || [])]) {
+          paths.set(tracePathKey(path), [...path]);
+        }
+        return [...paths.values()];
+      }
+
+      function recordGoalClusterEntry(parentPaths, targetId) {
+        if (!traceGoalClusters || !targetId) return;
+        for (const parentPath of parentPaths || []) {
+          const cluster = ensureGoalCluster(parentPath, targetId);
+          cluster.entryCount += 1;
+        }
+      }
+
+      function recordGoalClusterExecution(parentPaths, targetId) {
+        if (!traceGoalClusters || !targetId) return;
+        for (const parentPath of parentPaths || []) {
+          const cluster = ensureGoalCluster(parentPath, targetId);
+          goalClusterTraceExecutionOrdinal += 1;
+          if (cluster.firstExecutionOrder == null) {
+            cluster.firstExecutionOrder = goalClusterTraceExecutionOrdinal;
+          }
+          cluster.executedOriginCount += 1;
+        }
+      }
+
+      function goalRouteVariantKey(actions, quickTradeCount) {
+        return stableSerialize({
+          actions: (actions || []).map((action) => ({
+            family: action.family,
+            summary: action.summary,
+            target: action.target,
+          })),
+          quickTradeCount,
+        });
+      }
+
+      function recordGoalClusterCompletion(
+        parentPaths,
+        targetId,
+        actions,
+        quickTradeCount,
+        completion,
+      ) {
+        if (!traceGoalClusters || !targetId) return;
+        const refs = [];
+        for (const parentPath of parentPaths || []) {
+          const cluster = ensureGoalCluster(parentPath, targetId);
+          const variantKey = goalRouteVariantKey(actions, quickTradeCount);
+          const variant = cluster.routeVariants.get(variantKey) || {
+            key: variantKey,
+            actions: (actions || []).map(traceAction),
+            quickTradeCount,
+            completedTransitionCount: 0,
+            survivingCompletionCount: 0,
+          };
+          cluster.completedTransitionCount += 1;
+          variant.completedTransitionCount += 1;
+          if (completion.retained) {
+            cluster.survivingCompletionCount += 1;
+            variant.survivingCompletionCount += 1;
+          }
+          cluster.routeVariants.set(variantKey, variant);
+          refs.push({ clusterKey: cluster.key, variantKey });
+        }
+        if (completion.key) goalCompletionTraceRefsByKey.set(completion.key, refs);
+      }
+
+      function markGoalCompletionDominated(completionKey) {
+        if (!traceGoalClusters || !completionKey) return;
+        for (const ref of goalCompletionTraceRefsByKey.get(completionKey) || []) {
+          const cluster = goalClusterTraceByPath.get(ref.clusterKey);
+          const variant = cluster?.routeVariants.get(ref.variantKey);
+          if (!cluster || !variant) continue;
+          cluster.survivingCompletionCount = Math.max(
+            0,
+            cluster.survivingCompletionCount - 1,
+          );
+          variant.survivingCompletionCount = Math.max(
+            0,
+            variant.survivingCompletionCount - 1,
+          );
+        }
+      }
+
+      function recordGoalClusterChildren(completedPaths, selectedRoutes) {
+        if (!traceGoalClusters) return;
+        for (const completedPath of completedPaths || []) {
+          const parentCluster = goalClusterTraceByPath.get(tracePathKey(completedPath));
+          for (const route of selectedRoutes || []) {
+            if (!route.routeTargetId) continue;
+            if (parentCluster) {
+              parentCluster.childTargets.set(
+                route.routeTargetId,
+                (parentCluster.childTargets.get(route.routeTargetId) || 0) + 1,
+              );
+            }
+            recordGoalClusterEntry([completedPath], route.routeTargetId);
+          }
+        }
+      }
 
       function recordRouteEntry(targetId, planId, envelope) {
         if (!targetId || !envelope) return;
@@ -1305,6 +1451,10 @@
         for (const origin of node.origins) {
           const keyForOrigin = originKey(origin);
           const current = origins.get(keyForOrigin);
+          const mergedTracePaths = mergeGoalTracePaths(
+            current?.goalTracePaths,
+            origin.goalTracePaths,
+          );
           if (!current
             || Number(origin.quickTradeCount || 0) < Number(current.quickTradeCount || 0)
             || (
@@ -1317,7 +1467,10 @@
                 )
               )
             )) {
+            if (traceGoalClusters) origin.goalTracePaths = mergedTracePaths;
             origins.set(keyForOrigin, origin);
+          } else if (traceGoalClusters) {
+            current.goalTracePaths = mergedTracePaths;
           }
         }
         existing.origins = [...origins.values()];
@@ -1523,6 +1676,7 @@
         for (const entry of retained) {
           if (completionFactsDominate(candidate, entry)) {
             dominatedCompletionKeys.add(entry.key);
+            markGoalCompletionDominated(entry.key);
             completionDominatedOriginCount += 1;
             completionDominatedOriginCountByTarget.set(
               targetId,
@@ -1594,6 +1748,8 @@
             secondaryAgentDepth: origin.proxyDepth || 0,
             quickTradeCount: origin.quickTradeCount || 0,
             secondaryAgentTrace: clone(origin.routeActions || []),
+            secondaryAgentGoalPaths: clone(origin.goalTracePaths || []),
+            secondaryAgentGoalSelections: clone(origin.goalTraceSelections || []),
             rootActionObservation: origin.rootActionObservation || null,
             rootActionLegalSuccessors: clone(origin.rootActionLegalSuccessors || []),
             rootActionSettledObservation: origin.rootActionSettledObservation || null,
@@ -1844,6 +2000,7 @@
             routeTargetId ? [routeTargetId] : []
           ));
           recordRouteEntry(routeTargetId, routePlanId, saved.envelope);
+          recordGoalClusterEntry([[]], routeTargetId);
           mergeNode(initialFrontierByKey, {
             envelope: saved.envelope,
             action,
@@ -1867,6 +2024,9 @@
               routeTargetId,
               routePlanId,
               routeResultTargetIds,
+              goalTracePaths: traceGoalClusters ? [[]] : null,
+              goalTraceActions: [],
+              goalTraceSelections: [],
               rootRouteTargetId: routeTargetId,
               rootRoutePlanId: routePlanId,
               rootRouteResultTargetIds: routeResultTargetIds,
@@ -2052,6 +2212,7 @@
           );
           for (const origin of node.origins) {
             const targetId = origin.routeTargetId || "<unbound>";
+            recordGoalClusterExecution(origin.goalTracePaths || [], origin.routeTargetId);
             executedOriginCountByTarget.set(
               targetId,
               (executedOriginCountByTarget.get(targetId) || 0) + 1,
@@ -2066,6 +2227,9 @@
             && String(current.actorId) === focalSeatId;
           const currentIsRouteAction = secondaryAgentSearch
             && current.phase !== "conditional"
+            && !["end_turn", "pass"].includes(current.family);
+          const currentIsGoalTraceAction = traceGoalClusters
+            && currentIsFocal
             && !["end_turn", "pass"].includes(current.family);
           const currentCountsSecondaryGoal = currentIsRouteAction
             && (
@@ -2152,6 +2316,10 @@
                 family: current.family,
               }] : []),
             ];
+            const nextGoalTraceActions = [
+              ...(origin.goalTraceActions || []),
+              ...(currentIsGoalTraceAction ? [traceAction(current)] : []),
+            ];
             const focalPassStarted = origin.focalPassStarted
               || (currentIsFocal && current.family === "pass");
             const currentCompletesRouteTarget = currentIsFocal
@@ -2181,6 +2349,7 @@
               ? 0
               : origin.proxyDepth + Number(completedGoal);
             let completionFrontierKey = origin.completionFrontierKey || null;
+            let nextGoalTraceSelections = origin.goalTraceSelections || [];
             if (completedGoal) {
               completedGoalTransitionCount += 1;
               recordCompletedRoute(
@@ -2201,9 +2370,26 @@
                 nextChain,
                 nextQuickTradeCount,
               );
+              recordGoalClusterCompletion(
+                origin.goalTracePaths || [],
+                routeTargetId,
+                nextGoalTraceActions,
+                nextTargetQuickTradeCount,
+                retained,
+              );
               completionFrontierKey = retained.key;
               if (!retained.retained) {
                 continue;
+              }
+              if (traceGoalClusters) {
+                nextGoalTraceSelections = [
+                  ...nextGoalTraceSelections,
+                  {
+                    targetId: routeTargetId,
+                    actions: nextGoalTraceActions.map(traceAction),
+                    quickTradeCount: nextTargetQuickTradeCount,
+                  },
+                ];
               }
               recordCompletedRoute(
                 routeTargetId,
@@ -2216,6 +2402,9 @@
                 (retainedCompletedTransitionCountByTarget.get(routeTargetId) || 0) + 1,
               );
             }
+            const nextGoalTracePaths = completedGoal && routeTargetId
+              ? (origin.goalTracePaths || []).map((path) => [...path, routeTargetId])
+              : (origin.goalTracePaths || []);
             if (
               secondaryAgentSearch
               && origin.rootWasConditional
@@ -2378,6 +2567,9 @@
                     targetQuickTradeCount: nextTargetQuickTradeCount,
                     routeActions: nextRouteActions,
                     targetRouteActions: nextTargetRouteActions,
+                    goalTracePaths: nextGoalTracePaths,
+                    goalTraceActions: nextGoalTraceActions,
+                    goalTraceSelections: nextGoalTraceSelections,
                     focalPassStarted,
                     goalCompletionPending,
                     routeTargetId: secondaryAgentSearch
@@ -2550,6 +2742,9 @@
                 const nextActorIsFocal = selectedRoutes.some((route) => (
                   String(route.action.actorId) === focalSeatId
                 ));
+                if (completedGoal && nextActorIsFocal) {
+                  recordGoalClusterChildren(nextGoalTracePaths, selectedRoutes);
+                }
                 for (const selectedRoute of selectedRoutes) {
                   const successor = selectedRoute.action;
                   if (completedGoal && nextActorIsFocal) {
@@ -2579,6 +2774,11 @@
                       targetRouteActions: completedGoal && nextActorIsFocal
                         ? []
                         : nextTargetRouteActions,
+                      goalTracePaths: nextGoalTracePaths,
+                      goalTraceActions: completedGoal && nextActorIsFocal
+                        ? []
+                        : nextGoalTraceActions,
+                      goalTraceSelections: nextGoalTraceSelections,
                       opponentProxyDepth: nextActorIsFocal
                         ? 0
                         : (
@@ -2812,6 +3012,45 @@
               || String(left[0]).localeCompare(String(right[0]))
             )),
         ),
+        goalClusters: traceGoalClusters
+          ? [...goalClusterTraceByPath.values()]
+            .map((cluster) => ({
+              depth: cluster.depth,
+              path: clone(cluster.path),
+              parentPath: clone(cluster.parentPath),
+              targetId: cluster.targetId,
+              entryCount: cluster.entryCount,
+              firstExecutionOrder: cluster.firstExecutionOrder,
+              executedOriginCount: cluster.executedOriginCount,
+              completedTransitionCount: cluster.completedTransitionCount,
+              survivingCompletionCount: cluster.survivingCompletionCount,
+              routeVariants: [...cluster.routeVariants.values()]
+                .map((variant) => ({
+                  actions: clone(variant.actions),
+                  quickTradeCount: variant.quickTradeCount,
+                  completedTransitionCount: variant.completedTransitionCount,
+                  survivingCompletionCount: variant.survivingCompletionCount,
+                }))
+                .sort((left, right) => (
+                  right.survivingCompletionCount - left.survivingCompletionCount
+                  || right.completedTransitionCount - left.completedTransitionCount
+                  || left.quickTradeCount - right.quickTradeCount
+                  || stableSerialize(left.actions).localeCompare(stableSerialize(right.actions))
+                )),
+              childTargets: [...cluster.childTargets.entries()]
+                .map(([targetId, entryCount]) => ({ targetId, entryCount }))
+                .sort((left, right) => (
+                  right.entryCount - left.entryCount
+                  || left.targetId.localeCompare(right.targetId)
+                )),
+            }))
+            .sort((left, right) => (
+              (left.firstExecutionOrder ?? Number.MAX_SAFE_INTEGER)
+                - (right.firstExecutionOrder ?? Number.MAX_SAFE_INTEGER)
+              || left.depth - right.depth
+              || stableSerialize(left.path).localeCompare(stableSerialize(right.path))
+            ))
+          : [],
         saturatedVirtualRoots: [...saturatedOriginCountByVirtualRoot.entries()]
           .map(([key, saturatedOriginCount]) => ({
             ...virtualRootDescriptionByKey.get(key),

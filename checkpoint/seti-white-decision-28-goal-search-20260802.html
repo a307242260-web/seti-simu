@@ -1,0 +1,2547 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>白色玩家 #28 次级目标搜索树</title><style>
+:root{color-scheme:dark;--bg:#090d18;--panel:#11182a;--panel2:#172137;--line:#2a3958;--text:#eef3ff;--muted:#94a3be;--cyan:#56d8ff;--green:#70e1a1;--amber:#ffc96b;--red:#ff8d92;--violet:#9f8cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% -8%,rgba(63,105,255,.22),transparent 30rem),var(--bg);color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.page{width:min(1320px,calc(100% - 36px));margin:auto;padding:38px 0 70px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.1em}h1{margin:6px 0 8px;font-size:36px}.intro{color:var(--muted);max-width:900px}.decision-card{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:22px 0}.decision-card span,.selected-goal-chain,.goal-cluster{border:1px solid var(--line);background:rgba(17,24,42,.88);border-radius:14px}.decision-card span{padding:12px}.decision-card small{display:block;color:var(--muted)}.decision-card strong{display:block;margin-top:3px;font-size:16px}.selected-goal-chain{padding:15px;margin-bottom:22px}.selected-goal-chain h2{margin:0 0 9px;font-size:15px;color:var(--green)}.human-route{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.human-route span{padding:5px 8px;border-radius:7px;background:var(--panel2)}.human-route b{color:var(--muted)}.goal-level{display:grid;gap:11px}.goal-cluster{overflow:hidden}.goal-cluster.selected-goal{border-color:rgba(112,225,161,.7);box-shadow:0 0 0 2px rgba(112,225,161,.08)}.goal-cluster>summary{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(260px,1.5fr) minmax(240px,1fr);gap:14px;align-items:center;padding:14px 16px;cursor:pointer}.goal-cluster>summary:hover{background:rgba(86,216,255,.04)}.goal-order{color:var(--cyan);font-size:11px}.goal-counts{color:var(--muted);font-size:11px;text-align:right}.goal-cluster-body{padding:0 16px 16px;border-top:1px solid var(--line)}.goal-cluster-body h3{margin:14px 0 8px;color:var(--muted);font-size:11px}.goal-routes{display:grid;gap:8px;margin:0;padding:0;list-style:none}.goal-route{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(9,13,24,.48)}.goal-route.chosen-route{border-color:var(--green)}.goal-route.discarded-route{opacity:.68}.goal-route-heading{display:flex;gap:8px;align-items:center;margin-bottom:7px}.goal-route-heading span{margin-left:auto;color:var(--muted);font-size:10px}.chosen-badge,.retained-badge,.discarded-badge{padding:2px 6px;border-radius:6px;font-size:10px}.chosen-badge{color:#07130c;background:var(--green)}.retained-badge{color:var(--green);background:rgba(112,225,161,.12)}.discarded-badge{color:var(--red);background:rgba(255,141,146,.1)}.next-goals{margin:15px 0 0 18px;padding-left:14px;border-left:2px solid rgba(86,216,255,.28)}.no-route{margin:8px 0;color:var(--muted);font-size:12px}@media(max-width:760px){.decision-card{grid-template-columns:1fr 1fr}.goal-cluster>summary{grid-template-columns:1fr}.goal-counts{text-align:left}.next-goals{margin-left:4px}.page{width:min(100% - 20px,1320px)}}
+</style></head><body><main class="page"><span class="eyebrow">SETI · 单节点次级目标搜索</span><h1>白色玩家 #28</h1>
+<p class="intro">只呈现公司、起始卡和收入选择完成后的这一次决策。一级列表按目标簇实际首次展开顺序排列；展开任一目标，可以看到目标内部完成路线、最终保留路线，以及完成后进入的下一层目标。内部 actionId 与哈希均已隐藏。</p>
+<section class="decision-card"><span><small>当前选择</small><strong>选择卡牌：离子推迸系统</strong></span><span><small>当前分数</small><strong>7</strong></span><span><small>当前资源</small><strong>钱 4 · 电 4 · 宣传 4 · 数据 2</strong></span><span><small>完成目标深度</small><strong>5 / 15</strong></span><span><small>搜索耗时</small><strong>5758.57 ms</strong></span></section>
+<section class="selected-goal-chain"><h2>最终采用路线的次级目标顺序</h2><div class="human-route"><span>兑现卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>兑现卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>提升收入轨（钱 3、电 2、手牌 1）</span><b aria-hidden="true">→</b><span>登陆金星</span><b aria-hidden="true">→</b><span>获得科技：blue1</span></div></section>
+<div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 1 个目标 · 搜索序号 1</span>
+          <strong>登陆木星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 9 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 2 个目标 · 搜索序号 2</span>
+          <strong>登陆火星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 19 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 4 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2信用点 → 1能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、新任务</span><b aria-hidden="true">→</b><span>登陆：登陆火星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 557</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 16 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 3 个目标 · 搜索序号 3</span>
+          <strong>登陆水星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 19 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 4 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2信用点 → 1能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、新任务</span><b aria-hidden="true">→</b><span>登陆：登陆水星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 413</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 16 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 4 个目标 · 搜索序号 4</span>
+          <strong>登陆海王星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 19 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 4 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>快速转换：2信用点 → 1能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、新任务</span><b aria-hidden="true">→</b><span>登陆：登陆海王星（主星，R3，2能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 512</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 16 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 5 个目标 · 搜索序号 5</span>
+          <strong>登陆土星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 17 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 4 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 cw</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>快速转换：2信用点 → 1能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、新任务</span><b aria-hidden="true">→</b><span>登陆：登陆土星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 530</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 16 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 6 个目标 · 搜索序号 6</span>
+          <strong>登陆天王星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 9 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 7 个目标 · 搜索序号 7</span>
+          <strong>登陆金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 14 · 完成 2 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2信用点 → 1能量</span><b aria-hidden="true">→</b><span>登陆：登陆金星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>登陆：登陆金星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 614</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 29 · 完成 5 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 3 次 · 最终保留 2 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 746</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 32 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 969</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 6 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 2 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 2 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 2 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1495</span>
+          <strong>兑现卡牌：潘多拉卫星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 4 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 2 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：潘多拉卫星</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 3 个目标 · 搜索序号 974</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1596</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 5 · 完成 3 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1779</span>
+          <strong>兑现卡牌：新任务</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 1 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：新任务</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 2 个目标 · 未实际展开</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 0 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 632</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 759</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 20 · 完成 4 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1601</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 10 · 完成 6 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 2 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 2 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1784</span>
+          <strong>兑现卡牌：潘多拉卫星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：潘多拉卫星</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 8 个目标 · 搜索序号 8</span>
+          <strong>环绕木星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 20 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 3 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、新任务</span><b aria-hidden="true">→</b><span>环绕：环绕木星（R3）</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 673</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 16 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 9 个目标 · 搜索序号 9</span>
+          <strong>环绕火星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 25 · 完成 6 · 最终路线 3</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕火星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕火星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span><b aria-hidden="true">→</b><span>选择卡牌：收入 穿越小行星带</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕火星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span><b aria-hidden="true">→</b><span>选择卡牌：收入 新任务</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕火星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 5</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕火星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 6</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕火星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span><b aria-hidden="true">→</b><span>选择卡牌：收入 潘多拉卫星</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 331</span>
+          <strong>提升收入轨（钱 4、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 12 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 337</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 33 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 3 个目标 · 搜索序号 573</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 41 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 10 个目标 · 搜索序号 10</span>
+          <strong>环绕水星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 17 · 完成 2 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕水星（R3）</span><b aria-hidden="true">→</b><span>选择目标：扫描 南河三</span><b aria-hidden="true">→</b><span>选择目标：扫描 南河三</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕水星（R3）</span><b aria-hidden="true">→</b><span>选择目标：扫描 南河三</span><b aria-hidden="true">→</b><span>选择目标：扫描 南河三</span><b aria-hidden="true">→</b><span>选择卡牌：收入 阿番西博天文台</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 297</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 18 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 阿番西博天文台</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 745</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 13 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 963</span>
+          <strong>兑现卡牌：小行星研究</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 1 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：小行星研究</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1279</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1591</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 5 · 完成 3 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 546</span>
+          <strong>兑现卡牌：小行星研究</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 1 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：小行星研究</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 758</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 18 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1280</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1586</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 5 · 完成 3 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1761</span>
+          <strong>兑现卡牌：潘多拉卫星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：潘多拉卫星</span><b aria-hidden="true">→</b><span>选择目标：扫描 南河三</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 3 个目标 · 搜索序号 547</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 小行星研究</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 744</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 13 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 964</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 5 · 完成 3 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1265</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 11 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1485</span>
+          <strong>兑现卡牌：潘多拉卫星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：潘多拉卫星</span><b aria-hidden="true">→</b><span>选择目标：扫描 南河三</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 11 个目标 · 搜索序号 11</span>
+          <strong>环绕海王星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 18 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 3 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、新任务</span><b aria-hidden="true">→</b><span>环绕：环绕海王星（R3）</span><b aria-hidden="true">→</b><span>选择目标：扫描 织女一</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 657</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 16 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 12 个目标 · 搜索序号 12</span>
+          <strong>环绕土星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 13 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 out</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 cw</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、飞掠小行星</span><b aria-hidden="true">→</b><span>环绕：环绕土星（R3）</span><b aria-hidden="true">→</b><span>选择目标：扫描 绘架座β</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 376</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 37 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 13 个目标 · 搜索序号 13</span>
+          <strong>环绕天王星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 9 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 14 个目标 · 搜索序号 14</span>
+          <strong>环绕金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 3 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 280</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 751</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 27 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1278</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1567</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1676</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 282</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 741</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 939</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1262</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 19 · 完成 2 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 2 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>使用卡角：穿越小行星带：弃牌角标</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、超环面仪器</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 3 个目标 · 搜索序号 481</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 31 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、阿番西博天文台</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 742</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 942</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1263</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>使用卡角：穿越小行星带：弃牌角标</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 15 个目标 · 搜索序号 29</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 3 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 266</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 11 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 1021</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1282</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 4 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 1023</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 13 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 267</span>
+          <strong>环绕金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 11 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：飞掠小行星、超环面仪器</span><b aria-hidden="true">→</b><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 945</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1264</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>使用卡角：穿越小行星带：弃牌角标</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 948</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 3 个目标 · 搜索序号 528</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 4 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 2 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 756</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 11 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1616</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 4 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 760</span>
+          <strong>环绕金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 27 · 完成 3 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、超环面仪器</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、超环面仪器</span><b aria-hidden="true">→</b><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1573</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1675</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1579</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 16 个目标 · 搜索序号 44</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 268</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 29 · 完成 4 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 757</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 11 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1618</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 4 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 761</span>
+          <strong>环绕金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 27 · 完成 3 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、超环面仪器</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、超环面仪器</span><b aria-hidden="true">→</b><span>发射</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1570</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1674</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1576</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster selected-goal" open>
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 17 个目标 · 搜索序号 46</span>
+          <strong>兑现卡牌：离子推迸系统</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 8 · 完成 6 · 最终路线 4</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route chosen-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="chosen-badge">最终采用</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>选择目标：研究 orange1</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>选择目标：研究 orange2</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>选择目标：研究 orange3</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>选择目标：研究 orange4</span><b aria-hidden="true">→</b><span>选择卡牌：新任务</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 5</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>选择目标：研究 orange4</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 6</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：离子推迸系统</span><b aria-hidden="true">→</b><span>选择目标：研究 orange4</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 262</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 5 · 逻辑展开 61 · 完成 9 · 最终路线 5</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 3 次 · 最终保留 3 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 3 次 · 最终保留 3 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 5</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 736</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 7 · 逻辑展开 93 · 完成 5 · 最终路线 3</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 3 次 · 最终保留 2 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1信用点</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、超环面仪器</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 3 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>快速转换：2能量 → 1信用点</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：飞掠小行星、专项研究</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 3 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>快速转换：2能量 → 1信用点</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：飞掠小行星、朱诺号探测器</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1508</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 8 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1537</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 8 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 739</span>
+          <strong>登陆金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 11 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 2 次</span>
+        </div>
+        <div class="human-route"><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：飞掠小行星、专项研究</span><b aria-hidden="true">→</b><span>登陆：登陆金星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1487</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 8 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 3 个目标 · 搜索序号 749</span>
+          <strong>环绕金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1信用点</span><b aria-hidden="true">→</b><span>选择支付：罗盎塔号探测器、超环面仪器</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1269</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1534</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1672</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 4 个目标 · 搜索序号 916</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 13 · 完成 8 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 5 次 · 最终保留 4 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 -1,0</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 0,1</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 1,0</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1268</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 4 · 逻辑展开 50 · 完成 1 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条 · 快速转换 4 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>快速转换：2能量 → 1信用点</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：引力弹弓、废弃任务</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1270</span>
+          <strong>登陆金星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 9 · 完成 2 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 2 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>登陆：登陆金星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 未实际展开</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 0 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 3 个目标 · 搜索序号 1559</span>
+          <strong>兑现卡牌：新任务</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：新任务</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1678</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 13 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 4 个目标 · 搜索序号 1561</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1673</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 22 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>使用卡角：穿越小行星带：弃牌角标</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 5 个目标 · 未实际展开</span>
+          <strong>登陆水星</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 0 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 5 个目标 · 搜索序号 976</span>
+          <strong>兑现卡牌：新任务</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：新任务</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1281</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 6 个目标 · 搜索序号 981</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1266</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 24 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>使用卡角：穿越小行星带：弃牌角标</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1752</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 9 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster selected-goal" open>
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 329</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 11 · 完成 7 · 最终路线 2</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 4 次 · 最终保留 3 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li><li class="goal-route chosen-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="chosen-badge">最终采用</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 -1,0</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 0,1</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 1,0</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster selected-goal" open>
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 752</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 5 · 逻辑展开 96 · 完成 8 · 最终路线 4</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 4 次 · 最终保留 2 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route chosen-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="chosen-badge">最终采用</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1267</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 6 · 逻辑展开 50 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 4 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>快速转换：2能量 → 1信用点</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：迭代工程、朱诺号探测器</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1780</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 4 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster selected-goal" open>
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1271</span>
+          <strong>登陆金星</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 9 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route chosen-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="chosen-badge">最终采用</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 2 能量</span><b aria-hidden="true">→</b><span>登陆：登陆金星（主星，R3，3能量）</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 黄色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster selected-goal" open>
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1763</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route chosen-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="chosen-badge">最终采用</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 6 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 6 层 · 本层第 1 个目标 · 搜索序号 1806</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 8 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 2 个目标 · 搜索序号 1766</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 13 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条 · 快速转换 3 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：盲抽 1 张牌</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：观测南河、聚娈反应堆</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 6 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 6 层 · 本层第 1 个目标 · 搜索序号 1814</span>
+          <strong>提升收入轨（钱 3、电 3、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 8 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 3 个目标 · 搜索序号 1557</span>
+          <strong>兑现卡牌：新任务</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 2 · 完成 1 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：新任务</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 未实际展开</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 0 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 4 个目标 · 搜索序号 1564</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 2 个目标 · 搜索序号 1107</span>
+          <strong>兑现卡牌：新任务</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 1 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：新任务</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1283</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 27 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 巴纳德</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1679</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 11 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 18 个目标 · 搜索序号 54</span>
+          <strong>兑现卡牌：罗盎塔号探测器</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 1 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：罗盎塔号探测器</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 2 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 1 个目标 · 搜索序号 269</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 15 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 飞掠小行星</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 762</span>
+          <strong>环绕金星</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 15 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条 · 快速转换 1 次</span>
+        </div>
+        <div class="human-route"><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>移动：移动火箭 3 ccw</span><b aria-hidden="true">→</b><span>选择支付：消耗 1 能量</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：离子推迸系统、超环面仪器</span><b aria-hidden="true">→</b><span>环绕：环绕金星（R3）</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1284</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 3 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 2 个目标 · 搜索序号 1655</span>
+          <strong>获得科技：blue1</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 3 · 完成 1 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>研究科技</span><b aria-hidden="true">→</b><span>选择目标：研究 blue1（蓝槽 1）</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1677</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 10 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 2 层 · 本层第 2 个目标 · 搜索序号 731</span>
+          <strong>兑现卡牌：飞掠小行星</strong>
+          <span class="goal-counts">入口 0 · 逻辑展开 5 · 完成 4 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 1 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 0,1</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 2</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 -1,0</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 3</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：R3 1,0</span></div>
+      </li><li class="goal-route discarded-route">
+        <div class="goal-route-heading">
+          <strong>路线 4</strong>
+          <b class="discarded-badge">被淘汰</b>
+          <span>完成 1 次 · 最终保留 0 条</span>
+        </div>
+        <div class="human-route"><span>打出卡牌：飞掠小行星</span><b aria-hidden="true">→</b><span>选择目标：结束移动</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 3 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 3 层 · 本层第 1 个目标 · 搜索序号 763</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 1）</strong>
+          <span class="goal-counts">入口 3 · 逻辑展开 27 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 1</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 2</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：新任务 → 开普勒22</span><b aria-hidden="true">→</b><span>选择卡牌：潘多拉卫星 → 开普勒22</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 3</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 4</span><b aria-hidden="true">→</b><span>选择卡牌：收入 离子推迸系统</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 4 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 4 层 · 本层第 1 个目标 · 搜索序号 1285</span>
+          <strong>完成数据分析</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 29 · 完成 2 · 最终路线 1</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <ol class="goal-routes"><li class="goal-route retained-route">
+        <div class="goal-route-heading">
+          <strong>路线 1</strong>
+          <b class="retained-badge">Pareto 保留</b>
+          <span>完成 2 次 · 最终保留 1 条 · 快速转换 2 次</span>
+        </div>
+        <div class="human-route"><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 5</span><b aria-hidden="true">→</b><span>扫描</span><b aria-hidden="true">→</b><span>选择目标：扫描 室女座61</span><b aria-hidden="true">→</b><span>选择卡牌：穿越小行星带 → 天狼星A</span><b aria-hidden="true">→</b><span>放置数据</span><b aria-hidden="true">→</b><span>选择目标：第一排放置位 6</span><b aria-hidden="true">→</b><span>快速转换：3宣传 → 精选1张牌</span><b aria-hidden="true">→</b><span>选择卡牌：观测巴纳德星</span><b aria-hidden="true">→</b><span>快速转换：2张牌 → 1能量</span><b aria-hidden="true">→</b><span>选择支付：超环面仪器、观测巴纳德星</span><b aria-hidden="true">→</b><span>分析数据：分析</span><b aria-hidden="true">→</b><span>选择目标：外星人 1 蓝色痕迹</span></div>
+      </li></ol>
+          <div class="next-goals"><h3>完成后展开的第 5 层目标</h3><div class="goal-level"><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 5 层 · 本层第 1 个目标 · 搜索序号 1802</span>
+          <strong>提升收入轨（钱 3、电 2、手牌 2）</strong>
+          <span class="goal-counts">入口 2 · 逻辑展开 4 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details></div></div>
+        </div>
+      </details><details class="goal-cluster" >
+        <summary>
+          <span class="goal-order">第 1 层 · 本层第 19 个目标 · 搜索序号 55</span>
+          <strong>赢得扇区：sector-3-a</strong>
+          <span class="goal-counts">入口 1 · 逻辑展开 17 · 完成 0 · 最终路线 0</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          <p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>
+          <p class="no-route">该目标完成后没有继续形成下一层目标。</p>
+        </div>
+      </details></div>
+</main></body></html>

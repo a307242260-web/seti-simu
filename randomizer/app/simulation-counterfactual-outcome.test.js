@@ -204,7 +204,11 @@ try {
 {
   const environment = createSimulationEnv();
   try {
-    environment.reset({ seed: "seti-104-official-v1", activePlayerCount: 4 });
+    environment.reset({
+      seed: "seti-104-official-v1",
+      activePlayerCount: 4,
+      traceCounterfactualGoalClusters: true,
+    });
     drainOpeningDecisions(environment);
     const actions = environment.legalActions();
     const b11 = actions.find((action) => (
@@ -334,6 +338,17 @@ try {
       "诊断必须报告实际完成的最大结果目标深度");
     assert.equal(policyDiagnostics.maxCompletedGoalDepth <= 15, true,
       "15 步只限制已完成的结果目标数");
+    assert.equal(policyDiagnostics.goalClusters.length > 0, true,
+      "报告 trace 必须按父子路径保留真实次级目标簇");
+    assert.equal(policyDiagnostics.goalClusters.every((cluster) => (
+      cluster.depth === cluster.path.length
+      && cluster.parentPath.length + 1 === cluster.path.length
+      && cluster.completedTransitionCount >= cluster.survivingCompletionCount
+      && cluster.routeVariants.every((route) => (
+        route.completedTransitionCount >= route.survivingCompletionCount
+        && route.actions.every((action) => !Object.hasOwn(action, "actionId"))
+      ))
+    )), true, "目标簇必须保留层级、最终路线与无 identity 的人类摘要");
     assert.equal(policyDiagnostics.opponentExecutedNodeCount, 0,
       "单席位规划不得执行、PASS 或解析任何对手行动");
     assert.equal(policyDiagnostics.focalPlanningTurnAdvanceCount > 0, true,

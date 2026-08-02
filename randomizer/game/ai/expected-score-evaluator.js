@@ -530,6 +530,16 @@
       remainingRounds: best.strategicValue.infrastructure.remainingRounds,
       probeRouteSummary: best.leaf.observation.outcomeProjection.progress?.probeRoute?.candidate || null,
       routeTargetId: best.leaf.rootRouteTargetId || null,
+      goalPaths: (best.leaf.secondaryAgentGoalPaths || []).map((path) => [...path]),
+      goalSelections: (best.leaf.secondaryAgentGoalSelections || []).map((selection) => ({
+        targetId: selection.targetId || null,
+        actions: (selection.actions || []).map((step) => ({
+          family: step.family || null,
+          summary: step.summary || null,
+          target: { ...(step.target || {}) },
+        })),
+        quickTradeCount: Number(selection.quickTradeCount) || 0,
+      })),
       selectedLeafId: best.leaf.leafId || null,
       actionChain: best.leaf.actionChain || [],
       reasonCodes: [

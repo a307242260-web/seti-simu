@@ -4,6 +4,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const {
+  formatDecisionSearchTraceHtml,
   formatTurnReportHtml,
   formatTurnReportMarkdown,
   runFixedBoardTurnReport,
@@ -23,6 +24,7 @@ const seed = readOption(argv, "--seed");
 const boardId = readOption(argv, "--board-id");
 const maxDecisionValue = readOption(argv, "--max-decision-ms");
 const traceDecisionValue = readOption(argv, "--trace-decision");
+const focusDecisionValue = readOption(argv, "--focus-decision");
 const maxDecisionMilliseconds = maxDecisionValue == null ? null : Number(maxDecisionValue);
 if (
   maxDecisionMilliseconds != null
@@ -30,9 +32,16 @@ if (
 ) {
   throw new TypeError("--max-decision-ms 必须是正数");
 }
+const focusDecision = focusDecisionValue == null ? null : Number(focusDecisionValue);
+if (focusDecision != null && (!Number.isSafeInteger(focusDecision) || focusDecision <= 0)) {
+  throw new TypeError("--focus-decision 必须是正整数");
+}
 const traceDecisionNumbers = traceDecisionValue == null
   ? []
   : traceDecisionValue.split(",").map((value) => Number(value.trim()));
+if (focusDecision != null && !traceDecisionNumbers.includes(focusDecision)) {
+  traceDecisionNumbers.push(focusDecision);
+}
 if (traceDecisionNumbers.some((value) => !Number.isSafeInteger(value) || value <= 0)) {
   throw new TypeError("--trace-decision 必须是逗号分隔的正整数");
 }
@@ -43,9 +52,12 @@ const report = runFixedBoardTurnReport({
     maxDecisionMilliseconds: Number(maxDecisionMilliseconds),
   } : {}),
   ...(traceDecisionNumbers.length ? { traceDecisionNumbers } : {}),
+  ...(focusDecision != null ? { stopAfterDecision: focusDecision } : {}),
 });
 const output = outputPath && path.extname(outputPath).toLowerCase() === ".html"
-  ? formatTurnReportHtml(report)
+  ? focusDecision == null
+    ? formatTurnReportHtml(report)
+    : formatDecisionSearchTraceHtml(report, focusDecision)
   : formatTurnReportMarkdown(report);
 if (outputPath) {
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });

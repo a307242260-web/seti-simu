@@ -234,6 +234,16 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
       quickTradeCount: evaluation?.quickTradeCount ?? null,
       routeTargetId: evaluation?.routeTargetId || null,
       actionChain: Object.freeze([...(evaluation?.actionChain || [])]),
+      goalPaths: Object.freeze((evaluation?.goalPaths || []).map((path) => Object.freeze([...path]))),
+      goalSelections: Object.freeze((evaluation?.goalSelections || []).map((selection) => Object.freeze({
+        targetId: selection.targetId,
+        actions: Object.freeze((selection.actions || []).map((action) => Object.freeze({
+          family: action.family,
+          summary: action.summary,
+          target: Object.freeze({ ...(action.target || {}) }),
+        }))),
+        quickTradeCount: Number(selection.quickTradeCount) || 0,
+      }))),
       reasonCodes: Object.freeze([...(evaluation?.reasonCodes || outcome.reasonCodes || [])]),
     });
   }).sort((left, right) => (
@@ -268,6 +278,54 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
   const nodeFamilies = Object.entries(diagnostics?.executedNodeCountByFamily || {})
     .map(([family, count]) => Object.freeze({ family, count: Number(count) || 0 }))
     .sort((left, right) => right.count - left.count || left.family.localeCompare(right.family));
+  const selectedGoalPathKeys = new Set(rootCandidates
+    .filter((candidate) => candidate.selected)
+    .flatMap((candidate) => candidate.goalPaths)
+    .flatMap((path) => path.map((_, index) => JSON.stringify(path.slice(0, index + 1)))));
+  const selectedRouteByGoalPath = new Map();
+  for (const candidate of rootCandidates.filter((entry) => entry.selected)) {
+    const path = [];
+    for (const selection of candidate.goalSelections) {
+      path.push(selection.targetId);
+      selectedRouteByGoalPath.set(JSON.stringify(path), JSON.stringify({
+        actions: selection.actions,
+        quickTradeCount: selection.quickTradeCount,
+      }));
+    }
+  }
+  const goalClusters = (diagnostics?.goalClusters || []).map((cluster) => Object.freeze({
+    depth: Number(cluster.depth) || 0,
+    path: Object.freeze([...(cluster.path || [])]),
+    parentPath: Object.freeze([...(cluster.parentPath || [])]),
+    targetId: cluster.targetId,
+    entryCount: Number(cluster.entryCount) || 0,
+    firstExecutionOrder: cluster.firstExecutionOrder == null
+      ? null
+      : Number(cluster.firstExecutionOrder),
+    executedOriginCount: Number(cluster.executedOriginCount) || 0,
+    completedTransitionCount: Number(cluster.completedTransitionCount) || 0,
+    survivingCompletionCount: Number(cluster.survivingCompletionCount) || 0,
+    selectedPath: selectedGoalPathKeys.has(JSON.stringify(cluster.path || [])),
+    routeVariants: Object.freeze((cluster.routeVariants || []).map((variant) => Object.freeze({
+      actions: Object.freeze((variant.actions || []).map((action) => Object.freeze({
+        family: action.family,
+        summary: action.summary,
+        target: Object.freeze({ ...(action.target || {}) }),
+      }))),
+      quickTradeCount: Number(variant.quickTradeCount) || 0,
+      selectedRoute: selectedRouteByGoalPath.get(JSON.stringify(cluster.path || []))
+        === JSON.stringify({
+          actions: variant.actions || [],
+          quickTradeCount: Number(variant.quickTradeCount) || 0,
+        }),
+      completedTransitionCount: Number(variant.completedTransitionCount) || 0,
+      survivingCompletionCount: Number(variant.survivingCompletionCount) || 0,
+    }))),
+    childTargets: Object.freeze((cluster.childTargets || []).map((child) => Object.freeze({
+      targetId: child.targetId,
+      entryCount: Number(child.entryCount) || 0,
+    }))),
+  }));
   return Object.freeze({
     selectedActionId,
     legalActionCount: rootCandidates.length,
@@ -291,6 +349,7 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
     rootCandidates: Object.freeze(rootCandidates),
     targetRows: Object.freeze(targetRows),
     nodeFamilies: Object.freeze(nodeFamilies),
+    goalClusters: Object.freeze(goalClusters),
   });
 }
 
@@ -451,8 +510,13 @@ function runFixedBoardTurnReport(options = {}) {
   const traceDecisionNumbers = new Set(
     (options.traceDecisionNumbers || []).map(Number).filter(Number.isSafeInteger),
   );
+  const stopAfterDecision = Number(options.stopAfterDecision) || null;
   try {
-    const initialObservation = env.reset({ ...FIXED_BOARD_CONFIG, ...(options.config || {}) });
+    const initialObservation = env.reset({
+      ...FIXED_BOARD_CONFIG,
+      ...(options.config || {}),
+      traceCounterfactualGoalClusters: traceDecisionNumbers.size > 0,
+    });
     const playerLabels = Object.fromEntries(
       initialObservation.publicState.players.map((player) => [player.playerId, player.playerLabel]),
     );
@@ -555,6 +619,7 @@ function runFixedBoardTurnReport(options = {}) {
 
       if (!reachedTurnActions && chosen.decisionType === "conditional_choice") {
         setupChoices.push(record);
+        if (stopAfterDecision && decisionCount >= stopAfterDecision) break;
         continue;
       }
       if (!reachedTurnActions) {
@@ -638,9 +703,13 @@ function runFixedBoardTurnReport(options = {}) {
           board: boardSnapshot(result.observation),
         }));
       }
+      if (stopAfterDecision && decisionCount >= stopAfterDecision) break;
     }
 
-    if (!env.isTerminal()) throw new Error(`固定版面在 ${maxDecisions} 次决策内未结束`);
+    const partial = !env.isTerminal();
+    if (partial && (!stopAfterDecision || decisionCount < stopAfterDecision)) {
+      throw new Error(`固定版面在 ${maxDecisions} 次决策内未结束`);
+    }
     const terminal = env.observe();
     const finalScores = terminal.publicState.players
       .map((player) => ({
@@ -666,12 +735,13 @@ function runFixedBoardTurnReport(options = {}) {
 
     const diagnostics = buildDiagnostics(turns);
     return {
-      schemaVersion: "seti-heuristic-turn-report-v7",
+      schemaVersion: "seti-heuristic-turn-report-v8",
       boardId: options.boardId || FIXED_BOARD_ID,
       seed: initialObservation.seed,
       boardFingerprint: fingerprintFixedBoard(projectFixedBoard(initialObservation)),
       decisionCount,
       maxDecisionMilliseconds,
+      partial,
       setupChoices,
       roundStarts,
       turns,
@@ -1311,6 +1381,157 @@ function renderTurnSection(turn) {
   </section>`;
 }
 
+function traceCardLabel(cardId) {
+  return CARD_NAMES_BY_ID.get(cardId) || cards.getCardLabel({ cardId }) || cardId;
+}
+
+function humanizeTraceText(value) {
+  return String(value || "")
+    .replace(/(?:b_\d+\.webp|dlc_\d+\.(?:png|webp))/gi, (cardId) => traceCardLabel(cardId));
+}
+
+function humanizeGoalAction(action) {
+  const summary = humanizeTraceText(action?.summary || action?.family || "未知行动");
+  const labels = {
+    play_card: "打出卡牌",
+    choose_card: "选择卡牌",
+    choose_payment: "选择支付",
+    choose_target: "选择目标",
+    quick_trade: "快速转换",
+    card_corner: "使用卡角",
+    place_data: "放置数据",
+    scan: "扫描",
+    analyze: "分析数据",
+    research_tech: "研究科技",
+    launch: "发射",
+    move: "移动",
+    orbit: "环绕",
+    land: "登陆",
+  };
+  const label = labels[action?.family] || action?.family || "行动";
+  if (summary === label || summary === action?.family) return label;
+  return `${label}：${summary}`;
+}
+
+function formatIncomeGoal(targetId) {
+  const values = String(targetId).slice("income:gain:".length).split(",").map(Number);
+  const labels = ["钱", "电", "宣传", "数据", "手牌", "额外扫描"];
+  const tracks = values.map((value, index) => value ? `${labels[index]} ${value}` : null).filter(Boolean);
+  return `提升收入轨（${tracks.join("、") || "未知轨道"}）`;
+}
+
+function formatGoalClusterName(cluster) {
+  const targetId = String(cluster?.targetId || "");
+  if (targetId.startsWith("card:resolve:")) {
+    const play = cluster.routeVariants
+      .flatMap((route) => route.actions)
+      .find((action) => action.family === "play_card");
+    const card = play ? humanizeTraceText(play.summary) : "指定卡牌";
+    return `兑现卡牌：${card}`;
+  }
+  if (targetId.startsWith("income:gain:")) return formatIncomeGoal(targetId);
+  if (targetId === "data:analyze") return "完成数据分析";
+  if (targetId.startsWith("tech:gain:")) {
+    const techId = targetId.slice("tech:gain:".length);
+    return `获得科技：${techId}`;
+  }
+  if (targetId.startsWith("sector:win:")) {
+    return `赢得扇区：${targetId.slice("sector:win:".length).replace(/:\d+$/, "")}`;
+  }
+  const endpoint = targetId.match(/^(orbit|land):([^:]+):/);
+  if (endpoint) {
+    return `${endpoint[1] === "orbit" ? "环绕" : "登陆"}${PLANET_LABELS[endpoint[2]] || endpoint[2]}`;
+  }
+  return formatTraceTargetId(targetId);
+}
+
+function renderGoalClusterTree(trace) {
+  const clusters = trace.goalClusters || [];
+  const byParent = new Map();
+  for (const cluster of clusters) {
+    const key = JSON.stringify(cluster.parentPath || []);
+    const children = byParent.get(key) || [];
+    children.push(cluster);
+    byParent.set(key, children);
+  }
+  const compare = (left, right) => (
+    (left.firstExecutionOrder ?? Number.MAX_SAFE_INTEGER)
+      - (right.firstExecutionOrder ?? Number.MAX_SAFE_INTEGER)
+    || left.targetId.localeCompare(right.targetId)
+  );
+  const renderChildren = (parentPath) => {
+    const children = [...(byParent.get(JSON.stringify(parentPath)) || [])].sort(compare);
+    if (!children.length) return "";
+    return `<div class="goal-level">${children.map((cluster, index) => {
+      const retainedRoutes = cluster.routeVariants.filter((route) => (
+        route.survivingCompletionCount > 0
+      ));
+      const routeRows = cluster.routeVariants.map((route, routeIndex) => `<li class="goal-route ${route.selectedRoute ? "chosen-route" : route.survivingCompletionCount ? "retained-route" : "discarded-route"}">
+        <div class="goal-route-heading">
+          <strong>路线 ${routeIndex + 1}</strong>
+          ${route.selectedRoute ? '<b class="chosen-badge">最终采用</b>' : route.survivingCompletionCount ? '<b class="retained-badge">Pareto 保留</b>' : '<b class="discarded-badge">被淘汰</b>'}
+          <span>完成 ${route.completedTransitionCount} 次 · 最终保留 ${route.survivingCompletionCount} 条${route.quickTradeCount ? ` · 快速转换 ${route.quickTradeCount} 次` : ""}</span>
+        </div>
+        <div class="human-route">${route.actions.length
+          ? route.actions.map((action) => `<span>${escapeHtml(humanizeGoalAction(action))}</span>`).join('<b aria-hidden="true">→</b>')
+          : '<span class="muted">没有形成完整路线</span>'}</div>
+      </li>`).join("");
+      const childTree = renderChildren(cluster.path);
+      return `<details class="goal-cluster${cluster.selectedPath ? " selected-goal" : ""}" ${cluster.selectedPath ? "open" : ""}>
+        <summary>
+          <span class="goal-order">第 ${cluster.depth} 层 · 本层第 ${index + 1} 个目标${cluster.firstExecutionOrder == null ? " · 未实际展开" : ` · 搜索序号 ${cluster.firstExecutionOrder}`}</span>
+          <strong>${escapeHtml(formatGoalClusterName(cluster))}</strong>
+          <span class="goal-counts">入口 ${cluster.entryCount} · 逻辑展开 ${cluster.executedOriginCount} · 完成 ${cluster.completedTransitionCount} · 最终路线 ${retainedRoutes.length}</span>
+        </summary>
+        <div class="goal-cluster-body">
+          <h3>该目标内搜索过的完成路线</h3>
+          ${routeRows ? `<ol class="goal-routes">${routeRows}</ol>` : '<p class="no-route">没有找到可以完成该目标的路线，因此这一枝在本层收敛。</p>'}
+          ${childTree ? `<div class="next-goals"><h3>完成后展开的第 ${cluster.depth + 1} 层目标</h3>${childTree}</div>` : '<p class="no-route">该目标完成后没有继续形成下一层目标。</p>'}
+        </div>
+      </details>`;
+    }).join("")}</div>`;
+  };
+  return renderChildren([]);
+}
+
+function findReportAction(report, decisionNumber) {
+  return [
+    ...(report.setupChoices || []),
+    ...(report.turns || []).flatMap((turn) => turn.actions.flatMap((action) => (
+      [action, ...(action.followups || [])]
+    ))),
+  ].find((action) => Number(action.decisionNumber) === Number(decisionNumber)) || null;
+}
+
+function formatDecisionSearchTraceHtml(report, decisionNumber) {
+  const action = findReportAction(report, decisionNumber);
+  if (!action?.searchTrace) {
+    throw new Error(`报告中没有第 ${decisionNumber} 次决策的搜索 trace`);
+  }
+  const trace = action.searchTrace;
+  const selected = trace.rootCandidates.find((candidate) => candidate.selected) || null;
+  const selectedPath = selected?.goalSelections || [];
+  const selectedGoalNames = [];
+  const path = [];
+  for (const selection of selectedPath) {
+    path.push(selection.targetId);
+    const cluster = trace.goalClusters.find((candidate) => (
+      JSON.stringify(candidate.path) === JSON.stringify(path)
+    ));
+    selectedGoalNames.push(cluster ? formatGoalClusterName(cluster) : formatTraceTargetId(selection.targetId));
+  }
+  return `<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>白色玩家 #${decisionNumber} 次级目标搜索树</title><style>
+:root{color-scheme:dark;--bg:#090d18;--panel:#11182a;--panel2:#172137;--line:#2a3958;--text:#eef3ff;--muted:#94a3be;--cyan:#56d8ff;--green:#70e1a1;--amber:#ffc96b;--red:#ff8d92;--violet:#9f8cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% -8%,rgba(63,105,255,.22),transparent 30rem),var(--bg);color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.page{width:min(1320px,calc(100% - 36px));margin:auto;padding:38px 0 70px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.1em}h1{margin:6px 0 8px;font-size:36px}.intro{color:var(--muted);max-width:900px}.decision-card{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:22px 0}.decision-card span,.selected-goal-chain,.goal-cluster{border:1px solid var(--line);background:rgba(17,24,42,.88);border-radius:14px}.decision-card span{padding:12px}.decision-card small{display:block;color:var(--muted)}.decision-card strong{display:block;margin-top:3px;font-size:16px}.selected-goal-chain{padding:15px;margin-bottom:22px}.selected-goal-chain h2{margin:0 0 9px;font-size:15px;color:var(--green)}.human-route{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.human-route span{padding:5px 8px;border-radius:7px;background:var(--panel2)}.human-route b{color:var(--muted)}.goal-level{display:grid;gap:11px}.goal-cluster{overflow:hidden}.goal-cluster.selected-goal{border-color:rgba(112,225,161,.7);box-shadow:0 0 0 2px rgba(112,225,161,.08)}.goal-cluster>summary{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(260px,1.5fr) minmax(240px,1fr);gap:14px;align-items:center;padding:14px 16px;cursor:pointer}.goal-cluster>summary:hover{background:rgba(86,216,255,.04)}.goal-order{color:var(--cyan);font-size:11px}.goal-counts{color:var(--muted);font-size:11px;text-align:right}.goal-cluster-body{padding:0 16px 16px;border-top:1px solid var(--line)}.goal-cluster-body h3{margin:14px 0 8px;color:var(--muted);font-size:11px}.goal-routes{display:grid;gap:8px;margin:0;padding:0;list-style:none}.goal-route{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(9,13,24,.48)}.goal-route.chosen-route{border-color:var(--green)}.goal-route.discarded-route{opacity:.68}.goal-route-heading{display:flex;gap:8px;align-items:center;margin-bottom:7px}.goal-route-heading span{margin-left:auto;color:var(--muted);font-size:10px}.chosen-badge,.retained-badge,.discarded-badge{padding:2px 6px;border-radius:6px;font-size:10px}.chosen-badge{color:#07130c;background:var(--green)}.retained-badge{color:var(--green);background:rgba(112,225,161,.12)}.discarded-badge{color:var(--red);background:rgba(255,141,146,.1)}.next-goals{margin:15px 0 0 18px;padding-left:14px;border-left:2px solid rgba(86,216,255,.28)}.no-route{margin:8px 0;color:var(--muted);font-size:12px}@media(max-width:760px){.decision-card{grid-template-columns:1fr 1fr}.goal-cluster>summary{grid-template-columns:1fr}.goal-counts{text-align:left}.next-goals{margin-left:4px}.page{width:min(100% - 20px,1320px)}}
+</style></head><body><main class="page"><span class="eyebrow">SETI · 单节点次级目标搜索</span><h1>白色玩家 #${decisionNumber}</h1>
+<p class="intro">只呈现公司、起始卡和收入选择完成后的这一次决策。一级列表按目标簇实际首次展开顺序排列；展开任一目标，可以看到目标内部完成路线、最终保留路线，以及完成后进入的下一层目标。内部 actionId 与哈希均已隐藏。</p>
+<section class="decision-card"><span><small>当前选择</small><strong>${escapeHtml(action.text)}</strong></span><span><small>当前分数</small><strong>${action.scoreBefore}</strong></span><span><small>当前资源</small><strong>钱 ${action.resourcesBefore.credits} · 电 ${action.resourcesBefore.energy} · 宣传 ${action.resourcesBefore.publicity} · 数据 ${action.resourcesBefore.availableData}</strong></span><span><small>完成目标深度</small><strong>${trace.maxCompletedGoalDepth} / 15</strong></span><span><small>搜索耗时</small><strong>${escapeHtml(formatNumber(action.timing.totalMilliseconds))} ms</strong></span></section>
+<section class="selected-goal-chain"><h2>最终采用路线的次级目标顺序</h2><div class="human-route">${selectedGoalNames.map((name) => `<span>${escapeHtml(name)}</span>`).join('<b aria-hidden="true">→</b>')}</div></section>
+${renderGoalClusterTree(trace)}
+</main></body></html>`;
+}
+
 function formatTurnReportHtml(report) {
   const familyCounts = report.diagnostics.actionFamilyCounts;
   const players = report.finalScores.map((player) => ({
@@ -1825,6 +2046,7 @@ function formatTurnReportMarkdown(report) {
 module.exports = {
   actionText,
   buildSearchTrace,
+  formatDecisionSearchTraceHtml,
   formatEvaluation,
   formatResourceTransition,
   formatTurnReportHtml,
