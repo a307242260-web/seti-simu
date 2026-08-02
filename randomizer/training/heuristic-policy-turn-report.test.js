@@ -137,6 +137,24 @@ assert.equal(Object.isFrozen(trace.targetRows[0].routeGroups[0]), true);
 assert.equal(trace.goalClusters[0].selectedPath, true);
 assert.equal(trace.goalClusters[0].routeVariants[0].selectedRoute, true);
 
+const traceWithWinner = {
+  ...trace,
+  rootCandidates: trace.rootCandidates.map((candidate) => candidate.selected ? {
+    ...candidate,
+    winningState: {
+      roundNumber: 1,
+      turnNumber: 6,
+      score: 18,
+      securedEndGameBonus: 2,
+      resources: { credits: 1, energy: 1, publicity: 0, availableData: 0, handCount: 2 },
+      income: { credits: 4, energy: 3, handSize: 1 },
+      hand: [{ id: "remaining-card", cardName: "剩余牌" }],
+      dataProgress: { computerSlots: [1, 2, 3, 4], analyzeReady: false },
+      ownedTechIds: ["blue1"],
+    },
+  } : candidate),
+};
+
 const html = formatDecisionSearchTraceHtml({
   setupChoices: [],
   turns: [{
@@ -207,7 +225,7 @@ const html = formatDecisionSearchTraceHtml({
         },
       },
       timing: { totalMilliseconds: 123 },
-      searchTrace: trace,
+      searchTrace: traceWithWinner,
       followups: [],
     }],
   }],
@@ -222,15 +240,18 @@ assert.match(html, /公共牌/);
 assert.match(html, /深空观测/);
 assert.match(html, /科技供应与白色科技/);
 assert.match(html, /blue1/);
-assert.match(html, /数据计算机与外围 8 个扇区/);
-assert.match(html, /开普勒22/);
-assert.match(html, /填满并获胜至少还需白色 4 枚/);
+assert.match(html, /太阳系盘面与外围 8 个扇区/);
+assert.match(html, /数据计算机/);
+assert.match(html, /solar-sector-2/);
 assert.match(html, /行星环绕与登陆版图/);
 assert.match(html, /assets\/core\/background\/planets\.png/);
 assert.match(html, /assets\/tokens\/normal_token-white\.png/);
 assert.match(html, /assets\/core\/sectors\/sector-3\.png/);
-assert.match(html, /火卫一\/火卫二/);
-assert.match(html, /下一次：首次登陆：额外获得 2 个数据；获得 6 分/);
+assert.doesNotMatch(html, /下一次：首次登陆/);
+assert.match(html, /最终优胜状态/);
+assert.match(html, /正式分数/);
+assert.match(html, /新增 blue1/);
+assert.match(html, /4\/6/);
 assert.match(html, /id="imageLightbox"/);
 assert.match(html, /closest\("\[data-image-src\]"\)/);
 assert.doesNotMatch(html, /launch:a|move:b|orbit:c/);
