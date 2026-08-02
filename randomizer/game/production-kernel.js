@@ -991,20 +991,60 @@ function buildTechGainRequirements(workingState, requestedPlayerId = null) {
     tech: workingState.tech,
     turn: { ...workingState.turn, currentPlayerId: player.id },
   };
-  const options = researchTechAction.getResearchOptions(context);
+  const researchCost = tech.resolver.getResearchPublicityCost(player);
+  const options = researchTechAction.getResearchOptions(context, { skipCost: true });
+  const computerSlots = data.listComputerPlacedTokens(player)
+    .map((token) => Number(token.placementSlot))
+    .filter(Number.isFinite);
+  const computerPlacedCount = computerSlots.length;
+  const publicityPreparationPlans = [];
+  if (
+    !computerSlots.includes(2)
+    && computerPlacedCount < 2
+    && Number(player.resources?.availableData) >= 2 - computerPlacedCount
+  ) {
+    publicityPreparationPlans.push({
+      planId: "tech:publicity:data-slot-2",
+      kind: "place_data",
+      targetComputerSlot: 2,
+      remainingPlacements: 2 - computerPlacedCount,
+      publicityGain: 1,
+      nextStep: { family: "place_data" },
+    });
+  }
+  for (const card of player.hand || []) {
+    const corner = cards.getDiscardActionRewardForCard(card);
+    const publicityGain = Math.max(0, Number(corner?.gain?.publicity) || 0);
+    if (!publicityGain) continue;
+    publicityPreparationPlans.push({
+      planId: `tech:publicity:corner:${card.id}`,
+      kind: "card_corner",
+      cardInstanceId: card.id,
+      publicityGain,
+      nextStep: { family: "card_corner", cardInstanceId: card.id },
+    });
+  }
   const plans = options.ok ? (options.choices || []).map((choice) => ({
     targetId: `tech:gain:${choice.tileId}`,
     planId: `tech:${choice.tileId}:${choice.blueSlot ?? ""}`,
     tileId: choice.tileId,
     blueSlot: choice.blueSlot ?? null,
+    required: { publicity: researchCost },
+    gap: {
+      publicity: Math.max(0, researchCost - Number(player.resources?.publicity || 0)),
+    },
     nextStep: { family: "research_tech" },
   })) : [];
   return {
-    schemaVersion: "seti-tech-gain-requirements-v1",
+    schemaVersion: "seti-tech-gain-requirements-v2",
     playerId: player.id,
+    researchCost,
+    publicityPreparationPlans,
     plans,
     fieldSources: {
-      choices: "SetiActionResearchTech.getResearchOptions",
+      choices: "SetiActionResearchTech.getResearchOptions(skipCost)",
+      researchCost: "SetiTech.resolver.getResearchPublicityCost",
+      publicityPreparation: "SetiData.COMPUTER_SLOT_BONUSES + SetiCards.getDiscardActionRewardForCard",
       completion: "players[].techState.ownedTiles",
     },
   };

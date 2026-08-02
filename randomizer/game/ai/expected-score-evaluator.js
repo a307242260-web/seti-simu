@@ -25,7 +25,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v12";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v13";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -660,7 +660,7 @@
   function secondaryAgentCompletionFacts(observation, seatId) {
     const facts = outcomeModel.createStrategicFacts(observation, seatId);
     return {
-      schemaVersion: "seti-secondary-agent-completion-facts-v1",
+      schemaVersion: "seti-secondary-agent-completion-facts-v2",
       score: finite(facts.realizedScore) + finite(facts.securedEndGameBonus),
       resources: {
         credits: finite(facts.resourceFacts?.credits),
@@ -678,6 +678,10 @@
         availableData: finite(facts.income?.availableData),
         handSize: finite(facts.income?.handSize),
         additionalPublicScan: finite(facts.income?.additionalPublicScan),
+      },
+      dataProgress: {
+        computerPlacedCount: finite(facts.dataProgress?.computerPlacedCount),
+        analyzeReady: Boolean(facts.dataProgress?.analyzeReady),
       },
       ownedTechIds: [...new Set(facts.ownedTechIds || [])].map(String).sort(),
     };
@@ -1106,6 +1110,131 @@
       : [];
   }
 
+  function selectTechPublicityPreparation(observation, successors, seatId) {
+    const requirements = rawTechGainRequirements(observation);
+    if (!requirements) return [];
+    const assets = resourceFactsOf(observation, seatId);
+    if (finite(assets.publicity) >= finite(requirements.researchCost)) return [];
+    const plans = requirements.publicityPreparationPlans || [];
+    if (plans.some((plan) => plan.kind === "place_data")) {
+      const placeData = successors.find((action) => action.family === "place_data");
+      if (placeData) return [placeData];
+    }
+    const cardById = new Map((observation?.selfState?.hand || []).map((card) => [
+      String(card.id),
+      card,
+    ]));
+    const preservationRank = (card) => {
+      const effects = cardEffects?.buildPlayEffects?.(card) || [];
+      if (effects.some((effect) => effect?.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH)) return 4;
+      if (effects.some((effect) => [
+        cardEffects.REWARD_TYPES.LAUNCH,
+        cardEffects.EFFECT_TYPES.INCOME,
+        cardEffects.EFFECT_TYPES.TUCK_PLAYED_CARD_TO_INCOME,
+      ].includes(effect?.type))) return 3;
+      if (effects.some((effect) => String(effect?.type || "").includes("scan"))) return 2;
+      if (movementPointsFromCard(card) > 0) return 1;
+      return 0;
+    };
+    const corners = successors.filter((action) => (
+      action.family === "card_corner"
+      && plans.some((plan) => (
+        plan.kind === "card_corner"
+        && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
+      ))
+    )).sort((left, right) => (
+      preservationRank(cardById.get(String(left.target?.cardInstanceId)))
+      - preservationRank(cardById.get(String(right.target?.cardInstanceId)))
+      || String(left.actionId).localeCompare(String(right.actionId))
+    ));
+    return corners.slice(0, 1);
+  }
+
+  function selectBlueTechPlan(plans, computerPlacedCount) {
+    const requiredComputerSlotByBlueSlot = { 1: 1, 2: 3, 3: 5, 4: 6 };
+    return [...plans].sort((left, right) => {
+      const leftRequired = requiredComputerSlotByBlueSlot[finite(left.blueSlot)] || 99;
+      const rightRequired = requiredComputerSlotByBlueSlot[finite(right.blueSlot)] || 99;
+      return Math.max(0, leftRequired - computerPlacedCount)
+        - Math.max(0, rightRequired - computerPlacedCount)
+        || leftRequired - rightRequired
+        || String(left.planId).localeCompare(String(right.planId));
+    })[0] || null;
+  }
+
+  function selectHeuristicTechPlans(observation) {
+    const requirements = rawTechGainRequirements(observation);
+    const allPlans = requirements?.plans || [];
+    if (!allPlans.length) return [];
+    const dataRequirements = rawDataAnalyzeRequirements(observation);
+    const computerPlacedCount = finite(dataRequirements?.computerPlacedCount);
+    const plansByTile = new Map();
+    for (const plan of allPlans) {
+      const tilePlans = plansByTile.get(plan.tileId) || [];
+      tilePlans.push(plan);
+      plansByTile.set(plan.tileId, tilePlans);
+    }
+    const planByTile = new Map();
+    for (const [tileId, plans] of plansByTile) {
+      const selected = String(tileId).startsWith("blue")
+        ? selectBlueTechPlan(plans, computerPlacedCount)
+        : [...plans].sort((left, right) => (
+          String(left.planId).localeCompare(String(right.planId))
+        ))[0];
+      if (selected) planByTile.set(tileId, selected);
+    }
+
+    const assets = resourceFactsOf(observation, requirements.playerId);
+    const probeCandidates = rawProbeRequirements(observation)?.candidates || [];
+    const sectorRequirements = rawSectorWinRequirements(observation);
+    const scanRelevant = Boolean(
+      (dataRequirements?.acquisitionPlans || []).some((plan) => plan.kind === "scan")
+      || (sectorRequirements?.accessSources || []).some((source) => source.family === "scan")
+    );
+    const probeRelevant = probeCandidates.some((candidate) => (
+      ["launch", "move"].includes(candidate.nextStep?.family)
+    ));
+    const landRelevant = probeCandidates.some((candidate) => candidate.targetId?.startsWith("land:"));
+    const satelliteRelevant = probeCandidates.some((candidate) => (
+      candidate.endpointTarget?.type === "satellite"
+      || candidate.targetId?.includes(":satellite:")
+    ));
+    const needsTwoData = Boolean(
+      dataAnalyzeEligible(dataRequirements)
+      && finite(assets.availableData) < 2
+      && (dataRequirements?.acquisitionPlans || []).length
+    );
+    const sectorWinRelevant = Boolean((sectorRequirements?.candidates || []).length);
+
+    const preferredIds = [
+      ...(finite(assets.availableData) > 0 ? ["blue1", "blue2"] : []),
+      ...(scanRelevant ? ["purple2", "purple4"] : []),
+      ...(probeRelevant ? ["orange2"] : []),
+      ...(needsTwoData ? ["purple1"] : []),
+      ...(sectorWinRelevant ? ["purple3"] : []),
+    ];
+    const preferred = [...new Set(preferredIds)]
+      .map((tileId) => planByTile.get(tileId))
+      .filter(Boolean);
+    if (preferred.length) return preferred;
+
+    const fallbackIds = [
+      ...(probeRelevant ? ["orange1"] : []),
+      ...(landRelevant ? ["orange3"] : []),
+      ...(satelliteRelevant ? ["orange4"] : []),
+      ...(finite(assets.availableData) > 0 ? ["blue3", "blue4"] : []),
+      "orange1",
+      "orange3",
+      "orange4",
+      "blue3",
+      "blue4",
+    ];
+    return [...new Set(fallbackIds)]
+      .map((tileId) => planByTile.get(tileId))
+      .filter(Boolean)
+      .slice(0, 2);
+  }
+
   function enumerateSecondaryAgentRootTargets(input = {}) {
     const legalActions = [...(input.legalActions || [])]
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
@@ -1333,11 +1462,17 @@
       }
     }
 
+    const techRequirements = rawTechGainRequirements(input.rootObservation);
     const researchAction = legalActions.find((action) => action.family === "research_tech");
-    if (researchAction) {
-      for (const plan of rawTechGainRequirements(input.rootObservation)?.plans || []) {
-        add(plan.targetId, plan.planId, [researchAction]);
-      }
+    const techPreparation = researchAction
+      ? [researchAction]
+      : selectTechPublicityPreparation(
+        input.rootObservation,
+        legalActions,
+        input.focalSeatId,
+      );
+    for (const plan of selectHeuristicTechPlans(input.rootObservation)) {
+      add(plan.targetId, plan.planId, techPreparation);
     }
 
     for (const action of legalActions) {
@@ -2064,6 +2199,12 @@
               return bindRoute(techChoices, input.routeTargetId, input.routePlanId);
             }
           }
+          if (input.currentAction?.family === "place_data") {
+            const computer = successors.filter((action) => action.target?.target === "computer");
+            if (computer.length) {
+              return bindRoute(computer, input.routeTargetId, input.routePlanId);
+            }
+          }
         }
         const nebulaChoices = successors.filter((action) => action.target?.nebulaId);
         if (nebulaChoices.length) {
@@ -2154,6 +2295,29 @@
           }
         }
         return bindRoute(successors, input.routeTargetId, input.routePlanId);
+      }
+      if (String(input.routeTargetId || "").startsWith("tech:gain:")) {
+        const requirements = rawTechGainRequirements(input.branchObservation);
+        const plan = (requirements?.plans || []).find((candidate) => (
+          candidate.planId === input.routePlanId
+        ));
+        if (!plan) return [];
+        const research = successors.find((action) => action.family === "research_tech");
+        if (research) {
+          return bindRoute([research], input.routeTargetId, input.routePlanId);
+        }
+        const preparation = selectTechPublicityPreparation(
+          input.branchObservation,
+          successors,
+          input.focalSeatId,
+        );
+        if (preparation.length) {
+          return bindRoute(preparation, input.routeTargetId, input.routePlanId);
+        }
+        const assets = resourceFactsOf(input.branchObservation, input.focalSeatId);
+        return finite(assets.publicity) >= finite(requirements.researchCost)
+          ? continueBoundTargetNextTurn(input.routePlanId)
+          : [];
       }
       if (String(input.routeTargetId || "").startsWith("sector:win:")) {
         if (!String(input.routePlanId || "").startsWith("sector:standard-scan:")) return [];

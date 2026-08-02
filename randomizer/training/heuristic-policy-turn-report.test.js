@@ -157,6 +157,7 @@ const html = formatDecisionSearchTraceHtml({
         techState: { ownedTiles: {}, disabledTiles: {}, blueBoardSlots: {} },
         board: {
           rotation: {},
+          sectorBySlot: { 1: 3, 2: 4, 3: 1, 4: 2 },
           planets: [{ planetId: "mars", x: 1, y: 2 }],
           rockets: [],
           aliens: [],
@@ -177,6 +178,16 @@ const html = formatDecisionSearchTraceHtml({
               reward: "获得 8 分；获得收入 1/2；获得收入 2/2",
             }],
           }],
+          planetBoardTokens: [{
+            id: "planet:mars:orbit:1",
+            kind: "orbit",
+            color: "white",
+            playerId: "player-white",
+            percentX: 25,
+            percentY: 50,
+            referenceOffsetTokenWidths: 0,
+            imageSrc: "../assets/tokens/normal_token-white.png",
+          }],
           sectorData: [{
             sectorId: "sector-3-a",
             label: "开普勒22",
@@ -184,6 +195,7 @@ const html = formatDecisionSearchTraceHtml({
             boardSlot: 2,
             side: "left",
             capacity: 5,
+            tokens: [{ id: "data-1", slotIndex: 1, playerId: "player-white", playerColor: "white" }],
             signals: [{ playerId: "player-white", playerColor: "white", slotIndex: 1 }],
             leaderPlayerId: "player-white",
             ownCount: 1,
@@ -214,6 +226,9 @@ assert.match(html, /数据计算机与外围 8 个扇区/);
 assert.match(html, /开普勒22/);
 assert.match(html, /填满并获胜至少还需白色 4 枚/);
 assert.match(html, /行星环绕与登陆版图/);
+assert.match(html, /assets\/core\/background\/planets\.png/);
+assert.match(html, /assets\/tokens\/normal_token-white\.png/);
+assert.match(html, /assets\/core\/sectors\/sector-3\.png/);
 assert.match(html, /火卫一\/火卫二/);
 assert.match(html, /下一次：首次登陆：额外获得 2 个数据；获得 6 分/);
 assert.match(html, /id="imageLightbox"/);

@@ -1306,6 +1306,176 @@ function observation({
 }
 
 {
+  const techPlans = [
+    ...["blue1", "blue2", "blue3", "blue4"].flatMap((tileId) => (
+      [1, 2, 3, 4].map((blueSlot) => ({
+        targetId: `tech:gain:${tileId}`,
+        planId: `tech:${tileId}:${blueSlot}`,
+        tileId,
+        blueSlot,
+      }))
+    )),
+    ...["orange1", "orange2", "orange3", "orange4", "purple1", "purple2", "purple3", "purple4"]
+      .map((tileId) => ({
+        targetId: `tech:gain:${tileId}`,
+        planId: `tech:${tileId}:`,
+        tileId,
+        blueSlot: null,
+      })),
+  ];
+  const branchObservation = {
+    ...observation({
+      resources: { credits: 4, energy: 4, publicity: 6, availableData: 2 },
+    }),
+    techGainRequirements: {
+      schemaVersion: "seti-tech-gain-requirements-v2",
+      playerId: seatId,
+      researchCost: 6,
+      plans: techPlans,
+      publicityPreparationPlans: [],
+    },
+    dataAnalyzeRequirements: {
+      eligible: true,
+      computerPlacedCount: 0,
+      acquisitionPlans: [{ kind: "scan" }],
+    },
+  };
+  const research = { ...action("research:heuristic-tech", "research_tech"), actorId: seatId };
+  const targets = evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation: branchObservation,
+    legalActions: [research],
+  });
+  assert.deepEqual(
+    targets.map((target) => [target.targetId, target.planId]),
+    [
+      ["tech:gain:blue1", "tech:blue1:1"],
+      ["tech:gain:blue2", "tech:blue2:1"],
+      ["tech:gain:purple2", "tech:purple2:"],
+      ["tech:gain:purple4", "tech:purple4:"],
+    ],
+    "有数据且准备扫描时只展开蓝1/蓝2/紫2/紫4，并为蓝科选择最快可启用的单一槽位",
+  );
+}
+
+{
+  const techPlan = {
+    targetId: "tech:gain:blue1",
+    planId: "tech:blue1:1",
+    tileId: "blue1",
+    blueSlot: 1,
+    required: { publicity: 6 },
+    gap: { publicity: 2 },
+    nextStep: { family: "research_tech" },
+  };
+  const techRequirements = {
+    schemaVersion: "seti-tech-gain-requirements-v2",
+    playerId: seatId,
+    researchCost: 6,
+    plans: [techPlan],
+    publicityPreparationPlans: [{
+      planId: "tech:publicity:data-slot-2",
+      kind: "place_data",
+      targetComputerSlot: 2,
+      remainingPlacements: 2,
+      publicityGain: 1,
+      nextStep: { family: "place_data" },
+    }, {
+      planId: "tech:publicity:corner:asteroid-flyby",
+      kind: "card_corner",
+      cardInstanceId: "asteroid-flyby",
+      publicityGain: 1,
+      nextStep: { family: "card_corner", cardInstanceId: "asteroid-flyby" },
+    }],
+  };
+  const branchObservation = {
+    ...observation({
+      resources: { credits: 4, energy: 4, publicity: 4, availableData: 2 },
+      hand: [{ id: "asteroid-flyby", cardId: "b_11.webp", discardActionCode: 0 }],
+    }),
+    techGainRequirements: techRequirements,
+  };
+  const placeData = { ...action("place-data:tech-publicity", "place_data"), actorId: seatId };
+  const publicityCorner = {
+    ...action("corner:asteroid-publicity", "card_corner"),
+    actorId: seatId,
+    target: { cardInstanceId: "asteroid-flyby" },
+  };
+  assert.deepEqual(
+    evaluator.enumerateSecondaryAgentRootTargets({
+      focalSeatId: seatId,
+      rootObservation: branchObservation,
+      legalActions: [placeData, publicityCorner],
+    }),
+    [{
+      targetId: techPlan.targetId,
+      planId: techPlan.planId,
+      resultTargetIds: [techPlan.targetId],
+      compatibleActionIds: [placeData.actionId],
+    }],
+    "宣传不足且数据可推进宣传位时，应先确定性放数据而不并行遍历弃牌顺序",
+  );
+  const chooseComputer = {
+    ...action("choose:computer-for-tech", "choose_target"),
+    actorId: seatId,
+    target: { target: "computer" },
+  };
+  const chooseNebula = {
+    ...action("choose:nebula-for-tech", "choose_target"),
+    actorId: seatId,
+    target: { target: "nebula", nebulaId: "sector-2-b" },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation,
+      legalSuccessors: [chooseNebula, chooseComputer],
+      currentAction: placeData,
+      routeTargetId: techPlan.targetId,
+      routePlanId: techPlan.planId,
+    }).map((candidate) => candidate.actionId),
+    [chooseComputer.actionId],
+    "为科技补宣传的放数据必须确定性进入计算机，而不是遍历星云",
+  );
+
+  const discardObservation = {
+    ...observation({
+      resources: { credits: 4, energy: 4, publicity: 5, availableData: 0 },
+      hand: [
+        { id: "asteroid-flyby", cardId: "b_11.webp" },
+        { id: "ion-propulsion", cardId: "b_56.webp" },
+        { id: "rosetta", cardId: "b_105.webp" },
+      ],
+    }),
+    techGainRequirements: {
+      ...techRequirements,
+      publicityPreparationPlans: [
+        { kind: "card_corner", cardInstanceId: "asteroid-flyby" },
+        { kind: "card_corner", cardInstanceId: "ion-propulsion" },
+        { kind: "card_corner", cardInstanceId: "rosetta" },
+      ],
+    },
+  };
+  const cardCorners = ["asteroid-flyby", "ion-propulsion", "rosetta"].map((cardInstanceId) => ({
+    ...action(`corner:${cardInstanceId}`, "card_corner"),
+    actorId: seatId,
+    target: { cardInstanceId },
+  }));
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: discardObservation,
+      legalSuccessors: cardCorners,
+      currentAction: action("end-turn:before-tech-corner", "end_turn"),
+      routeTargetId: techPlan.targetId,
+      routePlanId: techPlan.planId,
+    }).map((candidate) => candidate.actionId),
+    ["corner:asteroid-flyby"],
+    "放数据取得宣传后只弃置下游目标能力最低的飞掠小行星，不遍历科技牌和发射牌",
+  );
+}
+
+{
   const targetId = "land:venus:planet:";
   const branchObservation = {
     ...observation({

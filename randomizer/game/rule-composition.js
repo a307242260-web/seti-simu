@@ -1618,6 +1618,8 @@
             "handSize",
             "additionalPublicScan",
           ].map((key) => ["income", key]),
+          ["dataProgress", "computerPlacedCount"],
+          ["dataProgress", "analyzeReady"],
         ];
         const valueAt = (source, path) => (
           path.reduce((value, key) => value?.[key], source)
