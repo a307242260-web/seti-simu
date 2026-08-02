@@ -1050,7 +1050,7 @@ function formatEvaluation(candidate, timing = null) {
     `其中实际分=${formatNumber(evaluation.actualScoreDelta)}`,
     `科技=${formatNumber(evaluation.techValue)}`,
     `未来收入=${formatNumber(evaluation.incomeValue)}`,
-    `资源机会成本=${evaluation.opportunityCost ? `-${formatNumber(evaluation.opportunityCost)}` : "0"}`,
+    "剩余资源估值=0（按当前策略不计分）",
     `快速转换=${formatNumber(evaluation.quickTradeCount)}次`,
     goal
       ? `目标=${goal.planetId}/${goal.endpointFamily}`
@@ -1363,10 +1363,8 @@ function renderActionCard(action) {
         <strong>${escapeHtml(formatNumber(evaluation?.incomeValue))}</strong>
       </div>
       <div class="decision-cell">
-        <span>资源机会成本</span>
-        <strong>${evaluation?.opportunityCost
-          ? `-${escapeHtml(formatNumber(evaluation.opportunityCost))}`
-          : "0"}</strong>
+        <span>剩余资源估值</span>
+        <strong>0（不计分）</strong>
       </div>
       <div class="decision-cell">
         <span>快速转换</span>
@@ -1897,7 +1895,7 @@ function renderWinningState(start, winner, selectedGoalNames, selected) {
     .filter((tileId) => start.techState.ownedTiles[tileId]));
   const gainedTech = (winner.ownedTechIds || []).filter((tileId) => !startTech.has(tileId));
   const computerCount = (winner.dataProgress?.computerSlots || []).length;
-  return `<section class="winning-state"><h2>最终优胜状态</h2><p>搜索最终选择的完整叶，不是当前第一步执行后的临时状态。路线净值 ${escapeHtml(formatNumber(selected?.value))}；一级收益由实际分 ${escapeHtml(formatNumber(selected?.actualScoreDelta))}、科技价值 ${escapeHtml(formatNumber(selected?.techValue))}、未来收入 ${escapeHtml(formatNumber(selected?.incomeValue))} 构成，剩余资源机会成本 ${escapeHtml(formatNumber(selected?.opportunityCost))}。</p>
+  return `<section class="winning-state"><h2>最终优胜状态</h2><p>搜索最终选择的完整叶，不是当前第一步执行后的临时状态。路线净值 ${escapeHtml(formatNumber(selected?.value))}；一级收益由实际分 ${escapeHtml(formatNumber(selected?.actualScoreDelta))}、科技价值 ${escapeHtml(formatNumber(selected?.techValue))}、未来收入 ${escapeHtml(formatNumber(selected?.incomeValue))} 构成；叶节点剩余资源不计分。</p>
     <div class="winning-state-grid">${resourceCells.map(([label, value, delta]) => `<span><small>${escapeHtml(label)}</small><strong>${escapeHtml(value)}</strong><small>较起点 ${escapeHtml(delta)}</small></span>`).join("")}</div>
     <div class="winning-state-details">
       <span><small>收入轨</small><strong>${escapeHtml(formatIncome(winner.income))}</strong><small>${escapeHtml(incomeDelta.join(" · ") || "较起点无变化")}</small></span>
@@ -2261,7 +2259,7 @@ function formatTurnReportHtml(report) {
       <div>
         <span class="eyebrow">SETI · Heuristic Policy Trace</span>
         <h1>机器人逐决策行动报告</h1>
-        <p>每一步均取自实际标准行动执行：分别展示本步变化、整条路线的分数/科技/未来收入、资源机会成本与净值，并保留未提交的候选供诊断。</p>
+        <p>每一步均取自实际标准行动执行：分别展示本步变化、整条路线的分数/科技/未来收入与净值；叶节点剩余资源不计分，并保留未提交的候选供诊断。</p>
       </div>
       <div class="hero-meta">seed <code>${escapeHtml(report.seed)}</code>生成于 ${escapeHtml(generatedAt)}</div>
     </header>

@@ -1970,9 +1970,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ score: 13, resources: { credits: 0, energy: 1 } }),
   );
   assert.equal(result.primaryValue, 9, "快速转换后的目标分仍按实际一级收益计算");
-  assert.equal(result.opportunityCost, 1, "2份资源换1份资源必须体现1份净机会成本");
+  assert.equal(result.opportunityCost, 0, "叶节点当轮剩余资源不参与最终估值");
   assert.equal(result.score, 9, "一级目标收益先于资源效率比较，必要转换不能把正收益路线否决");
-  assert.deepEqual(result.sortKey.slice(0, 2), [9, -1]);
+  assert.deepEqual(result.sortKey.slice(0, 2), [9, 0]);
 }
 
 {
@@ -2103,10 +2103,50 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 2 }),
     observation({ roundNumber: 2, ownedTechIds: ["orange2"] }),
   );
-  assert.equal(result.techValue, 10,
-    "第2轮科技通用资产只计第3、4轮两个未来窗口，本轮价值必须由真实后续行动兑现");
-  assert.equal(result.score, 10);
+  assert.equal(result.techValue, 14,
+    "橙2每个剩余轮次计7分，第2轮取得只计第3、4轮共14分");
+  assert.equal(result.score, 14);
   assert.deepEqual(result.gainedTechIds, ["orange2"]);
+}
+
+{
+  const techRates = {
+    orange1: 0,
+    orange2: 7,
+    orange3: 5,
+    orange4: 0,
+    purple1: 0,
+    purple2: 10,
+    purple3: 0,
+    purple4: 10,
+    blue1: 10,
+    blue2: 10,
+    blue3: 5,
+    blue4: 5,
+  };
+  for (const [tileId, perRound] of Object.entries(techRates)) {
+    const breakdown = evaluator.evaluateStrategicFactsBreakdown({
+      viewerSeatId: seatId,
+      terminal: false,
+      realizedScore: 0,
+      resourceFacts: {},
+      ownedTechIds: [],
+      income: {},
+      roundNumber: 1,
+      finalRoundNumber: 4,
+    }, {
+      viewerSeatId: seatId,
+      terminal: false,
+      realizedScore: 0,
+      resourceFacts: {},
+      ownedTechIds: [tileId],
+      income: {},
+      roundNumber: 1,
+      finalRoundNumber: 4,
+    });
+    assert.equal(breakdown.infrastructure.techValue, perRound * 3,
+      `${tileId} 必须按独立科技轮次价值计算`);
+  }
 }
 
 {
@@ -2130,6 +2170,26 @@ function evaluate(candidateAction, before, after, status = "settled") {
   assert.equal(result.actualScoreDelta, 4);
   assert.equal(result.score, 4,
     "第4轮科技带来的首次科技分和数据列分仍按官方实际分累计，不与通用科技价值重复");
+}
+
+{
+  const result = evaluate(
+    action("place-data:round-one-credit-energy-income", "place_data"),
+    observation({ roundNumber: 1 }),
+    observation({ roundNumber: 1, income: { credits: 1, energy: 1 } }),
+  );
+  assert.equal(result.incomeValue, 30,
+    "第1轮各增加1信用与1能源收入，三个未来轮初窗口共计30分");
+  assert.equal(result.score, 30);
+}
+
+{
+  const result = evaluate(
+    action("place-data:non-credit-energy-income", "place_data"),
+    observation({ roundNumber: 1 }),
+    observation({ roundNumber: 1, income: { publicity: 1, handSize: 1 } }),
+  );
+  assert.equal(result.score, null, "宣传、数据、手牌和公共扫描收入暂不进入终点评价");
 }
 
 {
@@ -2200,9 +2260,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     }),
   );
   assert.equal(result.actualScoreDelta, 5);
-  assert.equal(result.techValue, 5);
+  assert.equal(result.techValue, 10);
   assert.equal(result.incomeValue, 5);
-  assert.equal(result.score, 15,
+  assert.equal(result.score, 20,
     "同一真实叶的分数、科技和收入可以合并，但中间资源不得重复计分");
 }
 

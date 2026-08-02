@@ -22,10 +22,10 @@
 ) {
   "use strict";
 
-  const EVALUATION_MODEL = "strategic-goal-search-v2";
-  const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
+  const EVALUATION_MODEL = "strategic-goal-search-v3";
+  const PARAMETER_VERSION = "seti-strategic-goal-search-v3";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v16";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v17";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -41,25 +41,29 @@
   const DEFAULT_PARAMETERS = Object.freeze({
     parameterVersion: PARAMETER_VERSION,
     searchDepth: 15,
-    techValuePerRemainingRound: 5,
   });
   const INCOME_UNIT_VALUES = Object.freeze({
     credits: 5,
     energy: 5,
-    publicity: 2.5,
-    availableData: 2.5,
-    handSize: 2.5,
-    additionalPublicScan: 2.5,
+    publicity: 0,
+    availableData: 0,
+    handSize: 0,
+    additionalPublicScan: 0,
   });
-  const ASSET_OPPORTUNITY_VALUES = Object.freeze({
-    credits: 1,
-    energy: 1,
-    publicity: 1,
-    availableData: 1,
-    ordinaryCards: 1,
-    alienCards: 1,
+  const TECH_UNIT_VALUES = Object.freeze({
+    orange1: 0,
+    orange2: 7,
+    orange3: 5,
+    orange4: 0,
+    purple1: 0,
+    purple2: 10,
+    purple3: 0,
+    purple4: 10,
+    blue1: 10,
+    blue2: 10,
+    blue3: 5,
+    blue4: 5,
   });
-
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
     for (const child of Object.values(value)) deepFreeze(child);
@@ -75,11 +79,6 @@
     return deepFreeze({
       parameterVersion: String(input.parameterVersion || PARAMETER_VERSION),
       searchDepth: Math.max(1, Math.round(finite(input.searchDepth) || DEFAULT_PARAMETERS.searchDepth)),
-      techValuePerRemainingRound: Math.max(
-        0,
-        finite(input.techValuePerRemainingRound)
-          || DEFAULT_PARAMETERS.techValuePerRemainingRound,
-      ),
     });
   }
 
@@ -278,7 +277,7 @@
     };
   }
 
-  function infrastructureDeltaValue(rootValue, leafValue, parameters) {
+  function infrastructureDeltaValue(rootValue, leafValue) {
     const rootInfrastructure = rootValue.infrastructure;
     const leafInfrastructure = leafValue.infrastructure;
     if (leafValue.terminal) {
@@ -298,9 +297,9 @@
     const rootTech = new Set(rootInfrastructure.ownedTechIds);
     const gainedTechIds = leafInfrastructure.ownedTechIds
       .filter((tileId) => !rootTech.has(tileId));
-    const techValue = gainedTechIds.length
-      * remainingRounds
-      * parameters.techValuePerRemainingRound;
+    const techValue = gainedTechIds.reduce((total, tileId) => (
+      total + finite(TECH_UNIT_VALUES[tileId]) * remainingRounds
+    ), 0);
     const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
       key,
       positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
@@ -324,13 +323,8 @@
     ) - (
       rootValue.realizedScore + finite(rootValue.securedEndGameBonus)
     );
-    const infrastructure = infrastructureDeltaValue(rootValue, leafValueState, parameters);
-    const netAssetSpend = Object.entries(ASSET_OPPORTUNITY_VALUES)
-      .reduce((total, [key, unitValue]) => (
-        total + (finite(rootValue.resourceFacts?.[key]) - finite(leafValueState.resourceFacts?.[key]))
-          * unitValue
-      ), 0);
-    const opportunityCost = leafValueState.terminal ? 0 : Math.max(0, netAssetSpend);
+    const infrastructure = infrastructureDeltaValue(rootValue, leafValueState);
+    const opportunityCost = 0;
     return {
       total: actualScoreDelta + infrastructure.total - opportunityCost,
       primaryValue: actualScoreDelta + infrastructure.total,
@@ -505,7 +499,7 @@
       value: best.strategicValue.total,
       sortKey: [
         best.strategicValue.primaryValue,
-        -best.strategicValue.opportunityCost,
+        0,
         -Number(best.leaf.quickTradeCount || 0),
         -Number(best.leaf.secondaryAgentDepth || 0),
       ],
@@ -2726,7 +2720,7 @@
     OUTCOME_SCHEMA_VERSION,
     DEFAULT_PARAMETERS,
     INCOME_UNIT_VALUES,
-    ASSET_OPPORTUNITY_VALUES,
+    TECH_UNIT_VALUES,
     SECONDARY_AGENT_ROLLOUT_VERSION,
     mergeParameters,
     requiresCounterfactualOutcome,
