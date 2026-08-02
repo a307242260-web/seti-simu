@@ -192,7 +192,7 @@ function sanitizeAlienPublicState(state) {
 }
 
 function sanitizeTechSupply(state) {
-  const stacks = state?.board?.stacks || {};
+  const stacks = state?.board?.stacks || state?.stacks || {};
   return {
     stacks: Object.fromEntries(Object.entries(stacks).map(([tileId, stack]) => [tileId, compactObject({
       tileId: stack?.tileId || tileId,

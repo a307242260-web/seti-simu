@@ -11,6 +11,7 @@ const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const initialCards = require("../game/initial-cards");
 const cards = require("../game/cards/deck");
 const solarSystem = require("../solar-system/core");
+const techCatalog = require("../game/tech/catalog");
 const CARD_NAMES_BY_ID = new Map(cards.CARD_CATALOG.map((card) => [card.card_id, card.card_name]));
 
 const FAMILY_VERBS = Object.freeze({
@@ -65,6 +66,35 @@ function handOf(observation, playerId) {
   })));
 }
 
+function publicCardsOf(observation) {
+  return Object.freeze((observation?.publicState?.board?.publicCards || []).map((card) => Object.freeze({
+    cardId: card.cardId,
+    cardName: card.cardName || CARD_NAMES_BY_ID.get(card.cardId) || cards.getCardLabel(card),
+    price: card.price,
+    cardTypeCode: card.cardTypeCode,
+    discardActionCode: card.discardActionCode,
+    scanActionCode: card.scanActionCode,
+    incomeCode: card.incomeCode,
+  })));
+}
+
+function sectorDataSnapshot(data) {
+  return Object.freeze(Object.entries(data?.nebulae || {}).map(([sectorId, nebula]) => {
+    const tokens = nebula?.tokens || [];
+    const occupiedByPlayer = {};
+    for (const token of tokens) {
+      if (!token.replacedByPlayerId) continue;
+      occupiedByPlayer[token.replacedByPlayerId] = (occupiedByPlayer[token.replacedByPlayerId] || 0) + 1;
+    }
+    return Object.freeze({
+      sectorId,
+      capacity: tokens.length,
+      emptyCount: tokens.filter((token) => !token.replacedByPlayerId).length,
+      occupiedByPlayer: Object.freeze(occupiedByPlayer),
+    });
+  }));
+}
+
 function boardSnapshot(observation) {
   const board = observation?.publicState?.board || {};
   const solar = board.solarSystem || {};
@@ -90,6 +120,14 @@ function boardSnapshot(observation) {
         && Number(planet.y) === Number(rocket.y ?? rocket.sectorY)
       ))?.planetId || null,
     }))),
+    planetMarkers: Object.freeze(Object.entries(board.planets?.planets || {}).map(([planetId, state]) => Object.freeze({
+      planetId,
+      orbitOwners: Object.freeze((state.orbitMarkers || []).map((marker) => marker.playerId)),
+      landingOwners: Object.freeze((state.landingMarkers || []).map((marker) => marker.playerId)),
+    }))),
+    sectorData: sectorDataSnapshot(board.data),
+    sectorWins: Object.freeze(Object.entries(board.data?.sectorSettlements?.winsByPlayerId || {})
+      .map(([playerId, wins]) => Object.freeze({ playerId, wins: Number(wins) || 0 }))),
     aliens: Object.freeze((board.aliens?.slots || []).map((slot, index) => Object.freeze({
       slotId: index + 1,
       revealed: Boolean(slot.revealed),
@@ -107,6 +145,22 @@ function boardSnapshot(observation) {
       playerLabel: player.playerLabel,
       techState: structuredClone(player.techState || {}),
     }))),
+  });
+}
+
+function decisionContextSnapshot(observation, playerId) {
+  const player = observation?.publicState?.players?.find((candidate) => candidate.playerId === playerId) || {};
+  return Object.freeze({
+    roundNumber: Number(observation?.publicState?.roundNumber) || 0,
+    turnNumber: Number(observation?.publicState?.turnNumber) || 0,
+    score: scoreOf(observation, playerId),
+    resources: resourcesOf(observation, playerId),
+    income: Object.freeze({ ...(player.income || {}) }),
+    hand: handOf(observation, playerId),
+    publicCards: publicCardsOf(observation),
+    dataProgress: structuredClone(player.dataProgress || {}),
+    techState: structuredClone(player.techState || {}),
+    board: boardSnapshot(observation),
   });
 }
 
@@ -591,6 +645,9 @@ function runFixedBoardTurnReport(options = {}) {
         value: chosenEvaluation,
         alternatives: rankedEvaluations.filter((candidate) => candidate.actionId !== chosen.actionId).slice(0, 3),
         resourcesBefore,
+        decisionContext: traceDecisionNumbers.has(decisionCount)
+          ? decisionContextSnapshot(before, actorPlayerId)
+          : null,
         resourcesAfter,
         resourceDelta: resourceDelta(resourcesBefore, resourcesAfter),
         scoreBefore: scoreOf(before, actorPlayerId),
@@ -1503,6 +1560,54 @@ function findReportAction(report, decisionNumber) {
   ].find((action) => Number(action.decisionNumber) === Number(decisionNumber)) || null;
 }
 
+function shortPlayerLabel(playerId) {
+  const color = String(playerId || "").replace(/^player-/, "");
+  return ({ white: "白", brown: "棕", blue: "蓝", green: "绿" })[color] || color || "未知";
+}
+
+function renderDecisionContext(context) {
+  if (!context) return '<section class="decision-context"><h2>决策现场</h2><p class="muted">本报告没有记录该节点的 observation。</p></section>';
+  const resources = context.resources || {};
+  const income = formatIncome(context.income);
+  const techState = context.techState || {};
+  const ownedTech = Object.keys(techState.ownedTiles || {}).filter((tileId) => techState.ownedTiles[tileId]);
+  const disabledTech = new Set(Object.keys(techState.disabledTiles || {}).filter((tileId) => techState.disabledTiles[tileId]));
+  const computerSlots = context.dataProgress?.computerSlots || [];
+  const sectorRows = (context.board?.sectorData || []).map((sector) => {
+    const occupied = Object.entries(sector.occupiedByPlayer || {})
+      .map(([playerId, count]) => `${shortPlayerLabel(playerId)} ${count}`)
+      .join(" · ") || "无人";
+    return `<span><strong>${escapeHtml(sector.sectorId)}</strong><small>${escapeHtml(occupied)} · 空 ${escapeHtml(sector.emptyCount)}/${escapeHtml(sector.capacity)}</small></span>`;
+  }).join("");
+  const planetMarkers = (context.board?.planetMarkers || [])
+    .filter((planet) => planet.orbitOwners?.length || planet.landingOwners?.length)
+    .map((planet) => `${PLANET_LABELS[planet.planetId] || planet.planetId}：环绕 ${planet.orbitOwners.map(shortPlayerLabel).join("、") || "无"}；登陆 ${planet.landingOwners.map(shortPlayerLabel).join("、") || "无"}`)
+    .join("；") || "尚无环绕或登陆标记";
+  const techSupply = context.board?.techSupply || [];
+  return `<section class="decision-context">
+    <div class="context-heading"><div><span class="eyebrow">仅使用本节点可见 observation</span><h2>决策现场</h2></div><p>第 ${escapeHtml(context.roundNumber)} 轮 · 第 ${escapeHtml(context.turnNumber)} 回合 · 白色玩家行动前</p></div>
+    <div class="context-resource-grid">
+      <span><small>分数</small><strong>${escapeHtml(context.score)}</strong></span>
+      <span><small>钱</small><strong>${escapeHtml(resources.credits)}</strong></span>
+      <span><small>电</small><strong>${escapeHtml(resources.energy)}</strong></span>
+      <span><small>宣传</small><strong>${escapeHtml(resources.publicity)}</strong></span>
+      <span><small>可用数据</small><strong>${escapeHtml(resources.availableData)}</strong></span>
+      <span><small>额外公共扫描</small><strong>${escapeHtml(resources.additionalPublicScan || 0)}</strong></span>
+    </div>
+    <p class="income-line"><strong>当前收入轨：</strong>${escapeHtml(income)}</p>
+    <div class="context-card-row">
+      <div class="context-panel"><h3>白色玩家手牌（${context.hand?.length || 0}）</h3><div class="card-list">${renderHand(context.hand)}</div></div>
+      <div class="context-panel"><h3>公共牌（${context.publicCards?.length || 0}）</h3><div class="card-list">${renderHand(context.publicCards)}</div><p class="panel-note">只展示此刻已翻开的公共牌，不展示牌堆下一张。</p></div>
+    </div>
+    <div class="context-board-grid">
+      <div class="context-panel solar-context"><h3>太阳系盘面</h3>${renderSolarSystem(context.board, { compact: true })}<p>${escapeHtml(planetMarkers)}</p></div>
+      <div class="context-panel"><h3>科技供应与白色科技</h3><div class="tech-context-list">${techSupply.length ? techSupply.map((stack) => `<span><strong>${escapeHtml(stack.tileId)}</strong><small>${escapeHtml(techCatalog.TECH_TYPE_LABELS[stack.techType] || stack.techType || "—")} · 剩余 ${escapeHtml(stack.remaining ?? "—")} · 奖励 ${escapeHtml(techCatalog.BONUS_LABELS[stack.bonusId] || stack.bonusId || "无")}</small></span>`).join("") : '<span class="muted">无可用科技供应</span>'}</div><p><strong>白色已拥有：</strong>${ownedTech.length ? ownedTech.map((tileId) => `${escapeHtml(tileId)}${disabledTech.has(tileId) ? "（失效）" : ""}`).join("、") : '<span class="muted">无</span>'}</p><p><strong>蓝科数据槽：</strong>${Object.keys(techState.blueBoardSlots || {}).length ? Object.entries(techState.blueBoardSlots).map(([tileId, slot]) => `${escapeHtml(tileId)}→槽 ${escapeHtml(slot)}`).join("、") : '<span class="muted">无</span>'}</p></div>
+      <div class="context-panel data-context"><h3>数据计算机与扇区</h3><p><strong>计算机：</strong>${computerSlots.length}/6 格 · 第一行 ${Math.min(4, computerSlots.length)}/4 · ${context.dataProgress?.analyzeReady ? "可分析" : "尚不可分析"}</p><div class="sector-list">${sectorRows || '<span class="muted">无扇区数据</span>'}</div></div>
+      <div class="context-panel"><h3>公开外星人状态</h3>${renderAlienBoard(context.board?.aliens || [])}</div>
+    </div>
+  </section>`;
+}
+
 function formatDecisionSearchTraceHtml(report, decisionNumber) {
   const action = findReportAction(report, decisionNumber);
   if (!action?.searchTrace) {
@@ -1523,10 +1628,11 @@ function formatDecisionSearchTraceHtml(report, decisionNumber) {
   return `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>白色玩家 #${decisionNumber} 次级目标搜索树</title><style>
-:root{color-scheme:dark;--bg:#090d18;--panel:#11182a;--panel2:#172137;--line:#2a3958;--text:#eef3ff;--muted:#94a3be;--cyan:#56d8ff;--green:#70e1a1;--amber:#ffc96b;--red:#ff8d92;--violet:#9f8cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% -8%,rgba(63,105,255,.22),transparent 30rem),var(--bg);color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.page{width:min(1320px,calc(100% - 36px));margin:auto;padding:38px 0 70px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.1em}h1{margin:6px 0 8px;font-size:36px}.intro{color:var(--muted);max-width:900px}.decision-card{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:22px 0}.decision-card span,.selected-goal-chain,.goal-cluster{border:1px solid var(--line);background:rgba(17,24,42,.88);border-radius:14px}.decision-card span{padding:12px}.decision-card small{display:block;color:var(--muted)}.decision-card strong{display:block;margin-top:3px;font-size:16px}.selected-goal-chain{padding:15px;margin-bottom:22px}.selected-goal-chain h2{margin:0 0 9px;font-size:15px;color:var(--green)}.human-route{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.human-route span{padding:5px 8px;border-radius:7px;background:var(--panel2)}.human-route b{color:var(--muted)}.goal-level{display:grid;gap:11px}.goal-cluster{overflow:hidden}.goal-cluster.selected-goal{border-color:rgba(112,225,161,.7);box-shadow:0 0 0 2px rgba(112,225,161,.08)}.goal-cluster>summary{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(260px,1.5fr) minmax(240px,1fr);gap:14px;align-items:center;padding:14px 16px;cursor:pointer}.goal-cluster>summary:hover{background:rgba(86,216,255,.04)}.goal-order{color:var(--cyan);font-size:11px}.goal-counts{color:var(--muted);font-size:11px;text-align:right}.goal-cluster-body{padding:0 16px 16px;border-top:1px solid var(--line)}.goal-cluster-body h3{margin:14px 0 8px;color:var(--muted);font-size:11px}.goal-routes{display:grid;gap:8px;margin:0;padding:0;list-style:none}.goal-route{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(9,13,24,.48)}.goal-route.chosen-route{border-color:var(--green)}.goal-route.discarded-route{opacity:.68}.goal-route-heading{display:flex;gap:8px;align-items:center;margin-bottom:7px}.goal-route-heading span{margin-left:auto;color:var(--muted);font-size:10px}.chosen-badge,.retained-badge,.discarded-badge{padding:2px 6px;border-radius:6px;font-size:10px}.chosen-badge{color:#07130c;background:var(--green)}.retained-badge{color:var(--green);background:rgba(112,225,161,.12)}.discarded-badge{color:var(--red);background:rgba(255,141,146,.1)}.next-goals{margin:15px 0 0 18px;padding-left:14px;border-left:2px solid rgba(86,216,255,.28)}.no-route{margin:8px 0;color:var(--muted);font-size:12px}@media(max-width:760px){.decision-card{grid-template-columns:1fr 1fr}.goal-cluster>summary{grid-template-columns:1fr}.goal-counts{text-align:left}.next-goals{margin-left:4px}.page{width:min(100% - 20px,1320px)}}
+:root{color-scheme:dark;--bg:#090d18;--panel:#11182a;--panel2:#172137;--line:#2a3958;--text:#eef3ff;--muted:#94a3be;--cyan:#56d8ff;--green:#70e1a1;--amber:#ffc96b;--red:#ff8d92;--violet:#9f8cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% -8%,rgba(63,105,255,.22),transparent 30rem),var(--bg);color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.page{width:min(1320px,calc(100% - 36px));margin:auto;padding:38px 0 70px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.1em}h1{margin:6px 0 8px;font-size:36px}.intro{color:var(--muted);max-width:900px}.muted,.panel-note{color:var(--muted)}.decision-card{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:22px 0}.decision-card span,.selected-goal-chain,.goal-cluster,.decision-context{border:1px solid var(--line);background:rgba(17,24,42,.88);border-radius:14px}.decision-card span{padding:12px}.decision-card small{display:block;color:var(--muted)}.decision-card strong{display:block;margin-top:3px;font-size:16px}.decision-context{padding:18px;margin:0 0 20px}.context-heading{display:flex;justify-content:space-between;gap:20px;align-items:end}.context-heading h2{margin:3px 0 0}.context-heading p{margin:0;color:var(--muted)}.context-resource-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:15px 0 8px}.context-resource-grid span,.context-panel{border:1px solid var(--line);background:rgba(9,13,24,.5);border-radius:11px}.context-resource-grid span{padding:9px 11px}.context-resource-grid small{display:block;color:var(--muted)}.context-resource-grid strong{font-size:18px}.income-line{margin:8px 0 14px}.context-card-row,.context-board-grid{display:grid;gap:10px}.context-card-row{grid-template-columns:1fr 1fr}.context-board-grid{grid-template-columns:1.1fr 1fr;margin-top:10px}.context-panel{padding:12px;min-width:0}.context-panel h3{margin:0 0 9px;color:var(--cyan);font-size:12px}.context-panel p{margin:8px 0 0}.panel-note{font-size:10px}.card-list{display:flex;gap:7px;flex-wrap:wrap}.hand-card{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:8px;background:var(--panel2);font-size:11px}.card-image-button,.alien-face-button{padding:0;border:0;background:none;cursor:zoom-in}.card-image-button img{display:block;width:44px;height:62px;object-fit:cover;border-radius:5px}.tech-context-list,.sector-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tech-context-list span,.sector-list span{display:block;padding:6px 7px;border-radius:7px;background:var(--panel2)}.tech-context-list small,.sector-list small{display:block;color:var(--muted);font-size:9px;overflow-wrap:anywhere}.solar-visual{position:relative;width:min(100%,290px);aspect-ratio:1;margin:5px auto;overflow:hidden;border-radius:50%;background:#050912;box-shadow:inset 0 0 30px rgba(86,216,255,.12)}.solar-wheel{position:absolute;left:50%;top:50%;height:auto;transform-origin:center}.solar-wheel.wheel-4{width:100%}.solar-wheel.wheel-3{width:62.4%}.solar-wheel.wheel-2{width:48.7%}.solar-wheel.wheel-1{width:35.3%}.solar-sun{position:absolute;left:50%;top:50%;width:8.5%;transform:translate(-50%,-50%)}.planet-marker{position:absolute;transform:translate(-50%,-50%);z-index:3;padding:1px 3px;border-radius:4px;background:rgba(5,9,18,.82);font-size:8px}.planet-marker b{display:block;color:var(--green)}.rocket-marker{position:absolute;z-index:5;width:20px;transform:translate(calc(-50% + var(--rocket-offset)),calc(-50% - 9px));filter:drop-shadow(0 0 4px #fff)}.alien-board{display:grid;gap:6px}.alien-slot{display:flex;gap:8px;align-items:center;padding:6px;border-radius:8px;background:var(--panel2)}.alien-slot img{display:block;width:35px;height:35px;object-fit:cover;border-radius:50%}.trace-row{display:flex;gap:4px}.trace-chip{font-size:9px}.trace-chip i{display:inline-block;width:6px;height:6px;margin-right:2px;border-radius:50%;background:currentColor}.trace-chip.pink{color:#ff84c5}.trace-chip.yellow{color:#ffd66e}.trace-chip.blue{color:#72c8ff}.selected-goal-chain{padding:15px;margin-bottom:22px}.selected-goal-chain h2{margin:0 0 9px;font-size:15px;color:var(--green)}.human-route{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.human-route span{padding:5px 8px;border-radius:7px;background:var(--panel2)}.human-route b{color:var(--muted)}.goal-level{display:grid;gap:11px}.goal-cluster{overflow:hidden}.goal-cluster.selected-goal{border-color:rgba(112,225,161,.7);box-shadow:0 0 0 2px rgba(112,225,161,.08)}.goal-cluster>summary{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(260px,1.5fr) minmax(240px,1fr);gap:14px;align-items:center;padding:14px 16px;cursor:pointer}.goal-cluster>summary:hover{background:rgba(86,216,255,.04)}.goal-order{color:var(--cyan);font-size:11px}.goal-counts{color:var(--muted);font-size:11px;text-align:right}.goal-cluster-body{padding:0 16px 16px;border-top:1px solid var(--line)}.goal-cluster-body h3{margin:14px 0 8px;color:var(--muted);font-size:11px}.goal-routes{display:grid;gap:8px;margin:0;padding:0;list-style:none}.goal-route{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(9,13,24,.48)}.goal-route.chosen-route{border-color:var(--green)}.goal-route.discarded-route{opacity:.68}.goal-route-heading{display:flex;gap:8px;align-items:center;margin-bottom:7px}.goal-route-heading span{margin-left:auto;color:var(--muted);font-size:10px}.chosen-badge,.retained-badge,.discarded-badge{padding:2px 6px;border-radius:6px;font-size:10px}.chosen-badge{color:#07130c;background:var(--green)}.retained-badge{color:var(--green);background:rgba(112,225,161,.12)}.discarded-badge{color:var(--red);background:rgba(255,141,146,.1)}.next-goals{margin:15px 0 0 18px;padding-left:14px;border-left:2px solid rgba(86,216,255,.28)}.no-route{margin:8px 0;color:var(--muted);font-size:12px}@media(max-width:760px){.decision-card,.context-resource-grid{grid-template-columns:1fr 1fr}.context-card-row,.context-board-grid{grid-template-columns:1fr}.context-heading{display:block}.goal-cluster>summary{grid-template-columns:1fr}.goal-counts{text-align:left}.next-goals{margin-left:4px}.page{width:min(100% - 20px,1320px)}}
 </style></head><body><main class="page"><span class="eyebrow">SETI · 单节点次级目标搜索</span><h1>白色玩家 #${decisionNumber}</h1>
 <p class="intro">只呈现公司、起始卡和收入选择完成后的这一次决策。一级列表按目标簇实际首次展开顺序排列；展开任一目标，可以看到目标内部完成路线、最终保留路线，以及完成后进入的下一层目标。内部 actionId 与哈希均已隐藏。</p>
 <section class="decision-card"><span><small>当前选择</small><strong>${escapeHtml(action.text)}</strong></span><span><small>当前分数</small><strong>${action.scoreBefore}</strong></span><span><small>当前资源</small><strong>钱 ${action.resourcesBefore.credits} · 电 ${action.resourcesBefore.energy} · 宣传 ${action.resourcesBefore.publicity} · 数据 ${action.resourcesBefore.availableData}</strong></span><span><small>完成目标深度</small><strong>${trace.maxCompletedGoalDepth} / 15</strong></span><span><small>搜索耗时</small><strong>${escapeHtml(formatNumber(action.timing.totalMilliseconds))} ms</strong></span></section>
+${renderDecisionContext(action.decisionContext)}
 <section class="selected-goal-chain"><h2>最终采用路线的次级目标顺序</h2><div class="human-route">${selectedGoalNames.map((name) => `<span>${escapeHtml(name)}</span>`).join('<b aria-hidden="true">→</b>')}</div></section>
 ${renderGoalClusterTree(trace)}
 </main></body></html>`;

@@ -30,6 +30,10 @@ assert.equal(initial.schemaVersion, OBSERVATION_SCHEMA_VERSION);
 assert.equal(initial.terminal, false);
 assert.ok(initial.decision?.actorPlayerId);
 assert.equal(initial.publicState.currentPlayerId, initial.decision.currentPlayerId);
+assert.ok(
+  Object.keys(initial.publicState.board.techSupply?.stacks || {}).length > 0,
+  "公开 observation 必须包含科技供应堆",
+);
 
 const legal = env.legalActions();
 assert.ok(legal.length > 0, "reset 后必须暴露当前策略边界的 legal set");

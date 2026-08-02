@@ -145,6 +145,28 @@ const html = formatDecisionSearchTraceHtml({
       text: "发射",
       scoreBefore: 7,
       resourcesBefore: { credits: 4, energy: 4, publicity: 4, availableData: 2 },
+      decisionContext: {
+        roundNumber: 1,
+        turnNumber: 1,
+        score: 7,
+        resources: { credits: 4, energy: 4, publicity: 4, availableData: 2 },
+        income: { credits: 3, energy: 2, handSize: 1 },
+        hand: [{ cardId: "b_56.webp", cardName: "离子推迸系统", price: 3 }],
+        publicCards: [{ cardId: "b_124.webp", cardName: "深空观测", price: 1 }],
+        dataProgress: { computerSlots: [], analyzeReady: false },
+        techState: { ownedTiles: {}, disabledTiles: {}, blueBoardSlots: {} },
+        board: {
+          rotation: {},
+          planets: [{ planetId: "mars", x: 1, y: 2 }],
+          rockets: [],
+          aliens: [],
+          techSupply: [{ tileId: "blue1", techType: "blue", bonusId: "gain-card", remaining: 4 }],
+          playerTech: [],
+          planetMarkers: [],
+          sectorData: [],
+          sectorWins: [],
+        },
+      },
       timing: { totalMilliseconds: 123 },
       searchTrace: trace,
       followups: [],
@@ -154,6 +176,14 @@ const html = formatDecisionSearchTraceHtml({
 assert.match(html, /第 1 层 · 本层第 1 个目标/);
 assert.match(html, /最终采用路线的次级目标顺序/);
 assert.match(html, /打出卡牌：离子推迸系统/);
+assert.match(html, /决策现场/);
+assert.match(html, /太阳系盘面/);
+assert.match(html, /白色玩家手牌/);
+assert.match(html, /公共牌/);
+assert.match(html, /深空观测/);
+assert.match(html, /科技供应与白色科技/);
+assert.match(html, /blue1/);
+assert.match(html, /数据计算机与扇区/);
 assert.doesNotMatch(html, /launch:a|move:b|orbit:c/);
 
 console.log("heuristic turn report search trace tests passed");
