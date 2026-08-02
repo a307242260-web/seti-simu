@@ -208,6 +208,92 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
   });
 }
 
+function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, selectedActionId) {
+  const rankedByActionId = new Map(rankedEvaluations.map((candidate, index) => [
+    candidate.actionId,
+    { candidate, rank: index + 1 },
+  ]));
+  const rootCandidates = (actionOutcomes || []).map((outcome) => {
+    const ranked = rankedByActionId.get(outcome.actionId) || null;
+    const evaluation = ranked?.candidate?.evaluation || null;
+    return Object.freeze({
+      actionId: outcome.actionId,
+      summary: ranked?.candidate?.summary || outcome.actionId,
+      rank: ranked?.rank || null,
+      selected: outcome.actionId === selectedActionId,
+      status: outcome.status,
+      confidence: outcome.confidence,
+      leafCount: outcome.leaves?.length || 0,
+      selectable: Boolean(evaluation?.selectable),
+      value: evaluation?.value ?? evaluation?.score ?? null,
+      primaryValue: evaluation?.primaryValue ?? null,
+      actualScoreDelta: evaluation?.actualScoreDelta ?? null,
+      techValue: evaluation?.techValue ?? null,
+      incomeValue: evaluation?.incomeValue ?? null,
+      opportunityCost: evaluation?.opportunityCost ?? null,
+      quickTradeCount: evaluation?.quickTradeCount ?? null,
+      routeTargetId: evaluation?.routeTargetId || null,
+      actionChain: Object.freeze([...(evaluation?.actionChain || [])]),
+      reasonCodes: Object.freeze([...(evaluation?.reasonCodes || outcome.reasonCodes || [])]),
+    });
+  }).sort((left, right) => (
+    Number(right.selected) - Number(left.selected)
+    || (left.rank ?? Number.MAX_SAFE_INTEGER) - (right.rank ?? Number.MAX_SAFE_INTEGER)
+    || left.actionId.localeCompare(right.actionId)
+  ));
+  const routeGroupsByTarget = diagnostics?.completedRouteGroupsByTarget || {};
+  const executedByTarget = diagnostics?.executedOriginCountByTarget || {};
+  const dominatedByTarget = diagnostics?.completionDominatedOriginCountByTarget || {};
+  const targetRows = Object.entries(diagnostics?.routeEntryStatsByTarget || {})
+    .map(([targetId, stats]) => Object.freeze({
+      targetId,
+      bindingOriginCount: Number(stats.bindingOriginCount) || 0,
+      distinctEntryStateCount: Number(stats.distinctEntryStateCount) || 0,
+      executedOriginCount: Number(executedByTarget[targetId]) || 0,
+      completedTransitionCount: Number(stats.completedTransitionCount) || 0,
+      retainedCompletedTransitionCount: Number(stats.retainedCompletedTransitionCount) || 0,
+      completionDominatedCount: Number(dominatedByTarget[targetId]) || 0,
+      routeGroups: Object.freeze((routeGroupsByTarget[targetId] || []).map((group) => Object.freeze({
+        routeFamilies: Object.freeze([...(group.routeFamilies || [])]),
+        quickTradeCount: Number(group.quickTradeCount) || 0,
+        completedTransitionCount: Number(group.completedTransitionCount) || 0,
+        retainedCompletedTransitionCount: Number(group.retainedCompletedTransitionCount) || 0,
+      }))),
+    }))
+    .sort((left, right) => (
+      right.executedOriginCount - left.executedOriginCount
+      || right.completedTransitionCount - left.completedTransitionCount
+      || left.targetId.localeCompare(right.targetId)
+    ));
+  const nodeFamilies = Object.entries(diagnostics?.executedNodeCountByFamily || {})
+    .map(([family, count]) => Object.freeze({ family, count: Number(count) || 0 }))
+    .sort((left, right) => right.count - left.count || left.family.localeCompare(right.family));
+  return Object.freeze({
+    selectedActionId,
+    legalActionCount: rootCandidates.length,
+    strategicCandidateCount: Number(diagnostics?.candidateCount) || 0,
+    rootTargetCount: Number(diagnostics?.rootTargetCount) || 0,
+    executedNodeCount: Number(diagnostics?.executedNodeCount) || 0,
+    sharedPhysicalExecutionOriginCount:
+      Number(diagnostics?.sharedPhysicalExecutionOriginCount) || 0,
+    transpositionHitCount: Number(diagnostics?.transpositionHitCount) || 0,
+    maxFrontierOriginCount: Number(diagnostics?.maxFrontierOriginCount) || 0,
+    completedGoalTransitionCount: Number(diagnostics?.completedGoalTransitionCount) || 0,
+    maxCompletedGoalDepth: Number(diagnostics?.maxCompletedGoalDepth) || 0,
+    completionDominatedOriginCount:
+      Number(diagnostics?.completionDominatedOriginCount) || 0,
+    targetEquivalentChoicePrunedCount:
+      Number(diagnostics?.targetEquivalentChoicePrunedCount) || 0,
+    targetSchedulerPrunedCount: Number(diagnostics?.targetSchedulerPrunedCount) || 0,
+    unreachableRouteOriginCount: Number(diagnostics?.unreachableRouteOriginCount) || 0,
+    focalPassBoundaryLeafCount: Number(diagnostics?.focalPassBoundaryLeafCount) || 0,
+    executionLimitReached: Boolean(diagnostics?.executionLimitReached),
+    rootCandidates: Object.freeze(rootCandidates),
+    targetRows: Object.freeze(targetRows),
+    nodeFamilies: Object.freeze(nodeFamilies),
+  });
+}
+
 function actionText(action) {
   const rawSummary = String(action?.summary || action?.family || "未知行动");
   const moveMatch = rawSummary.match(/^移动火箭\s+(\S+)\s+(ccw|cw|out|in)$/i);
@@ -362,6 +448,9 @@ function runFixedBoardTurnReport(options = {}) {
   const env = createSimulationEnv();
   const maxDecisions = options.maxDecisions || 2000;
   const maxDecisionMilliseconds = Number(options.maxDecisionMilliseconds) || 10000;
+  const traceDecisionNumbers = new Set(
+    (options.traceDecisionNumbers || []).map(Number).filter(Number.isSafeInteger),
+  );
   try {
     const initialObservation = env.reset({ ...FIXED_BOARD_CONFIG, ...(options.config || {}) });
     const playerLabels = Object.fromEntries(
@@ -451,6 +540,14 @@ function runFixedBoardTurnReport(options = {}) {
           ...counterfactualTiming,
           valuationMilliseconds,
         },
+        searchTrace: traceDecisionNumbers.has(decisionCount)
+          ? buildSearchTrace(
+            result.actionOutcomes,
+            rankedEvaluations,
+            counterfactualTiming,
+            chosen.actionId,
+          )
+          : null,
         movement: movementRecord(before, afterForActor, chosen),
         actionBoard: actionBoardRecord(before, afterForActor, chosen),
         followups: [],
@@ -569,7 +666,7 @@ function runFixedBoardTurnReport(options = {}) {
 
     const diagnostics = buildDiagnostics(turns);
     return {
-      schemaVersion: "seti-heuristic-turn-report-v6",
+      schemaVersion: "seti-heuristic-turn-report-v7",
       boardId: options.boardId || FIXED_BOARD_ID,
       seed: initialObservation.seed,
       boardFingerprint: fingerprintFixedBoard(projectFixedBoard(initialObservation)),
@@ -745,6 +842,77 @@ function renderAlternatives(alternatives) {
   }).join("");
 }
 
+function formatTraceTargetId(targetId) {
+  const value = String(targetId || "");
+  if (value === "data:analyze") return "分析数据";
+  if (value.startsWith("income:gain:")) return `获得收入 · ${value.slice("income:gain:".length)}`;
+  if (value.startsWith("tech:gain:")) return `获得科技 · ${value.slice("tech:gain:".length)}`;
+  if (value.startsWith("card:resolve:")) return `兑现卡牌 · ${value.slice("card:resolve:".length)}`;
+  if (value.startsWith("sector:win:")) return `赢得扇区 · ${value.slice("sector:win:".length)}`;
+  const endpoint = value.match(/^(orbit|land):([^:]+):/);
+  if (endpoint) return `${endpoint[1] === "orbit" ? "环绕" : "登陆"} · ${PLANET_LABELS[endpoint[2]] || endpoint[2]}`;
+  return value || "未绑定控制行动";
+}
+
+function renderSearchTrace(trace) {
+  if (!trace) return "";
+  const rootRows = trace.rootCandidates.map((root) => `<tr class="${root.selected ? "selected-search-row" : ""}">
+    <td>${root.rank == null ? "—" : `#${root.rank}`}</td>
+    <td><strong>${escapeHtml(root.summary)}</strong><small>${escapeHtml(root.actionId)}</small></td>
+    <td>${escapeHtml(root.status)}${root.selectable ? " · 可比较" : " · 未进入终点比较"}</td>
+    <td>${root.leafCount}</td>
+    <td>${escapeHtml(formatTraceTargetId(root.routeTargetId))}</td>
+    <td>${root.primaryValue == null ? "—" : escapeHtml(formatNumber(root.primaryValue))}</td>
+    <td>${root.value == null ? "—" : escapeHtml(formatNumber(root.value))}</td>
+    <td><div class="trace-chain">${root.actionChain.length
+      ? root.actionChain.map((step) => `<span>${escapeHtml(step)}</span>`).join("<b>→</b>")
+      : `<span class="muted">${escapeHtml(root.reasonCodes.join(", ") || "没有完整叶")}</span>`}</div></td>
+  </tr>`).join("");
+  const targetRows = trace.targetRows.map((target) => `<tr>
+    <td><strong>${escapeHtml(formatTraceTargetId(target.targetId))}</strong><small>${escapeHtml(target.targetId)}</small></td>
+    <td>${target.bindingOriginCount}</td>
+    <td>${target.distinctEntryStateCount}</td>
+    <td>${target.executedOriginCount}</td>
+    <td>${target.completedTransitionCount}</td>
+    <td>${target.retainedCompletedTransitionCount}</td>
+    <td>${target.completionDominatedCount}</td>
+    <td>${target.routeGroups.length ? `<details><summary>${target.routeGroups.length} 种完成路线</summary><ul class="route-group-list">${target.routeGroups.map((group) => `<li>
+      <code>${escapeHtml(group.routeFamilies.join(" → ") || "直接完成")}</code>
+      <span>转换 ${group.quickTradeCount} · 完成 ${group.completedTransitionCount} · 保留 ${group.retainedCompletedTransitionCount}</span>
+    </li>`).join("")}</ul></details>` : '<span class="muted">未完成</span>'}</td>
+  </tr>`).join("");
+  return `<details class="search-trace-panel" open>
+    <summary>本节点真实搜索过程</summary>
+    <div class="search-trace-body">
+      <p class="search-trace-note">读取搜索器现有诊断，不重新搜索：先把合法行动绑定到结果目标，再在目标内执行必要行动；完成目标后继续调度下一目标，直到 PASS 或 15 个完成目标。下表中的“节点”是生产规则物理执行，不是 15 个目标深度。</p>
+      <div class="search-funnel">
+        <span><small>根合法行动</small><strong>${trace.legalActionCount}</strong></span><b>→</b>
+        <span><small>战略搜索根</small><strong>${trace.strategicCandidateCount}</strong></span><b>→</b>
+        <span><small>根目标绑定</small><strong>${trace.rootTargetCount}</strong></span><b>→</b>
+        <span><small>物理执行节点</small><strong>${trace.executedNodeCount}</strong></span><b>→</b>
+        <span><small>完成目标转换</small><strong>${trace.completedGoalTransitionCount}</strong></span><b>→</b>
+        <span><small>PASS 终点叶</small><strong>${trace.focalPassBoundaryLeafCount}</strong></span>
+      </div>
+      <div class="search-metric-grid">
+        <span><small>最大已完成目标深度</small><strong>${trace.maxCompletedGoalDepth} / 15</strong></span>
+        <span><small>最大 frontier origin</small><strong>${trace.maxFrontierOriginCount}</strong></span>
+        <span><small>状态共享命中</small><strong>${trace.transpositionHitCount}</strong></span>
+        <span><small>完成态 Pareto 删除</small><strong>${trace.completionDominatedOriginCount}</strong></span>
+        <span><small>等价 choice 省略</small><strong>${trace.targetEquivalentChoicePrunedCount}</strong></span>
+        <span><small>后续目标调度省略</small><strong>${trace.targetSchedulerPrunedCount}</strong></span>
+        <span><small>不可达路线 origin</small><strong>${trace.unreachableRouteOriginCount}</strong></span>
+        <span><small>执行保护</small><strong class="${trace.executionLimitReached ? "negative" : "positive"}">${trace.executionLimitReached ? "触发" : "未触发"}</strong></span>
+      </div>
+      <h5>第一层：根行动及其最终叶</h5>
+      <div class="trace-table-wrap"><table class="trace-table"><thead><tr><th>排名</th><th>根行动</th><th>结果</th><th>完整叶</th><th>胜出叶目标</th><th>一级收益</th><th>净值</th><th>胜出叶行动链</th></tr></thead><tbody>${rootRows}</tbody></table></div>
+      <h5>第二层：目标内路线展开与 Pareto 收敛</h5>
+      <div class="trace-table-wrap"><table class="trace-table"><thead><tr><th>结果目标</th><th>绑定入口</th><th>不同入口状态</th><th>执行 origin</th><th>完成</th><th>保留</th><th>被支配</th><th>完成路线族</th></tr></thead><tbody>${targetRows}</tbody></table></div>
+      <h5>物理节点花在哪里</h5>
+      <div class="node-family-list">${trace.nodeFamilies.map((entry) => `<span><small>${escapeHtml(entry.family)}</small><strong>${entry.count}</strong></span>`).join("")}</div>
+    </div>
+  </details>`;
+}
+
 function renderActionFollowups(action) {
   if (!action.followups?.length) return "";
   return `<div class="action-followups">${action.followups.map((followup) => {
@@ -887,6 +1055,7 @@ function renderActionCard(action) {
       <strong>${escapeHtml(formatActualDelta(action, action.scoreDelta))}</strong>
       <span class="score-transition">分数 ${escapeHtml(action.scoreBefore)}→${escapeHtml(action.scoreAfter)}</span>
     </div>
+    ${renderSearchTrace(action.searchTrace)}
     <details class="action-details">
       <summary>路线依据、标准执行链与备选</summary>
       <div class="detail-columns">
@@ -1361,6 +1530,31 @@ function formatTurnReportHtml(report) {
     .actual-outcome span { color: var(--muted); font-size: 11px; }
     .actual-outcome strong { color: var(--green); }
     .actual-outcome .score-transition { margin-left: auto; }
+    .search-trace-panel { border-top: 1px solid rgba(86, 216, 255, .34); background: rgba(86, 216, 255, .025); }
+    .search-trace-panel > summary { padding: 13px 14px; color: var(--cyan); cursor: pointer; font-weight: 750; }
+    .search-trace-body { padding: 0 14px 18px; }
+    .search-trace-note { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+    .search-funnel { display: flex; gap: 8px; align-items: center; overflow-x: auto; padding: 10px 0 14px; }
+    .search-funnel > span, .search-metric-grid > span, .node-family-list > span { min-width: 120px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: rgba(9, 13, 24, .55); }
+    .search-funnel small, .search-metric-grid small, .node-family-list small { display: block; color: var(--muted); font-size: 10px; }
+    .search-funnel strong, .search-metric-grid strong, .node-family-list strong { display: block; margin-top: 2px; font-size: 16px; }
+    .search-funnel > b { color: var(--cyan); }
+    .search-metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+    .search-trace-body > h5 { margin: 17px 0 7px; color: var(--cyan); font-size: 12px; }
+    .trace-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 11px; }
+    .trace-table { min-width: 1080px; font-size: 11px; }
+    .trace-table th, .trace-table td { padding: 8px 10px; text-align: left; vertical-align: top; white-space: normal; }
+    .trace-table td > small { display: block; margin-top: 2px; color: var(--muted); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .trace-table .selected-search-row { background: rgba(112, 225, 161, .08); }
+    .trace-chain { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; min-width: 280px; }
+    .trace-chain span { padding: 2px 5px; border-radius: 5px; background: var(--panel-2); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .trace-chain b { color: var(--muted); }
+    .route-group-list { display: grid; gap: 5px; min-width: 330px; margin: 7px 0 0; padding: 0; list-style: none; }
+    .route-group-list li { display: grid; gap: 2px; padding: 6px 7px; border-radius: 7px; background: rgba(9, 13, 24, .48); }
+    .route-group-list code { white-space: normal; overflow-wrap: anywhere; }
+    .route-group-list span { color: var(--muted); font-size: 10px; }
+    .node-family-list { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 7px; }
+    .node-family-list > span { min-width: 0; }
     .action-details { border-top: 1px solid var(--line); }
     .action-details summary { padding: 10px 14px; cursor: pointer; color: var(--muted); font-size: 12px; }
     .detail-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 2px 14px 16px; }
@@ -1386,6 +1580,8 @@ function formatTurnReportHtml(report) {
       .decision-cell:nth-child(3) { border-right: 0; }
       .detail-columns { grid-template-columns: 1fr; }
       .board-preview { grid-template-columns: 1fr 1fr; }
+      .search-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .node-family-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
     @media (max-width: 640px) {
       .page { width: min(100% - 20px, 1480px); padding-top: 24px; }
@@ -1404,6 +1600,7 @@ function formatTurnReportHtml(report) {
       .round-subheading, .summary-line { align-items: flex-start; flex-direction: column; }
       .hand-panel { grid-template-columns: 1fr; }
       .action-board-pair { grid-template-columns: 1fr; }
+      .search-metric-grid, .node-family-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .board-change-arrow { transform: rotate(90deg); text-align: center; }
     }
   </style>
@@ -1627,6 +1824,7 @@ function formatTurnReportMarkdown(report) {
 
 module.exports = {
   actionText,
+  buildSearchTrace,
   formatEvaluation,
   formatResourceTransition,
   formatTurnReportHtml,

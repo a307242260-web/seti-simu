@@ -204,6 +204,9 @@ undo frame、重复输入克隆和中间 validation，但最终 candidate 仍执
 PASS Decision 边界叶、最大 frontier、状态共享、完成态支配、
 完成目标次数/最大深度、目标调度省略数、不可达路线数、beam/执行保护状态，以及
 fork/执行/投影/checkpoint/frontier/编排耗时。耗时仅用于性能验证，不参与候选排序。
+固定盘面报告可通过 `--trace-decision N` 把指定决策的既有诊断呈现为“根行动 → 结果目标 →
+完成路线族 → Pareto/调度剪枝 → 最终叶比较”漏斗；该视图不重新执行或逐节点记录搜索，避免
+报告开关改变搜索空间和决策耗时。
 
 ## 4. Browser 调度与规则边界
 

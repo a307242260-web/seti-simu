@@ -22,6 +22,7 @@ const outputPath = outputValue ? path.resolve(outputValue) : null;
 const seed = readOption(argv, "--seed");
 const boardId = readOption(argv, "--board-id");
 const maxDecisionValue = readOption(argv, "--max-decision-ms");
+const traceDecisionValue = readOption(argv, "--trace-decision");
 const maxDecisionMilliseconds = maxDecisionValue == null ? null : Number(maxDecisionValue);
 if (
   maxDecisionMilliseconds != null
@@ -29,12 +30,19 @@ if (
 ) {
   throw new TypeError("--max-decision-ms 必须是正数");
 }
+const traceDecisionNumbers = traceDecisionValue == null
+  ? []
+  : traceDecisionValue.split(",").map((value) => Number(value.trim()));
+if (traceDecisionNumbers.some((value) => !Number.isSafeInteger(value) || value <= 0)) {
+  throw new TypeError("--trace-decision 必须是逗号分隔的正整数");
+}
 const report = runFixedBoardTurnReport({
   ...(seed ? { config: { seed } } : {}),
   ...(boardId ? { boardId } : {}),
   ...(maxDecisionMilliseconds ? {
     maxDecisionMilliseconds: Number(maxDecisionMilliseconds),
   } : {}),
+  ...(traceDecisionNumbers.length ? { traceDecisionNumbers } : {}),
 });
 const output = outputPath && path.extname(outputPath).toLowerCase() === ".html"
   ? formatTurnReportHtml(report)
