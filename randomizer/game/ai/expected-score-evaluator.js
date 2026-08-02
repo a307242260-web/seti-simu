@@ -25,7 +25,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v15";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v16";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -1220,6 +1220,18 @@
       candidate.endpointTarget?.type === "satellite"
       || candidate.targetId?.includes(":satellite:")
     ));
+    const finalRound = finite(observation?.outcomeProjection?.progress?.roundNumber)
+      >= finite(observation?.outcomeProjection?.progress?.finalRoundNumber || 4);
+    const satellitePlanetIds = new Set([
+      "jupiter",
+      "saturn",
+      ...(finalRound ? ["uranus", "neptune"] : []),
+    ]);
+    const satelliteTechReachable = planByTile.has("orange4")
+      && probeCandidates.some((candidate) => (
+        satellitePlanetIds.has(String(candidate.planetId || ""))
+        && probeGoalResourceReachable(observation, candidate, requirements.playerId)
+      ));
     const needsTwoData = Boolean(
       dataAnalyzeEligible(dataRequirements)
       && finite(assets.availableData) < 2
@@ -1231,6 +1243,7 @@
       ...(finite(assets.availableData) > 0 ? ["blue1", "blue2"] : []),
       ...(scanRelevant ? ["purple2", "purple4"] : []),
       ...(probeRelevant ? ["orange2"] : []),
+      ...(satelliteTechReachable ? ["orange4"] : []),
       ...(needsTwoData ? ["purple1"] : []),
       ...(sectorWinRelevant ? ["purple3"] : []),
     ];
@@ -1296,11 +1309,12 @@
         goal,
         input.focalSeatId,
       ));
-    const probeGoals = reachableProbeGoals.filter((goal, index, goals) => (
+    const paretoProbeGoals = reachableProbeGoals.filter((goal, index, goals) => (
       !goals.some((other, otherIndex) => (
         otherIndex !== index && probeRouteDistanceDominates(other, goal)
       ))
     ));
+    const probeGoals = selectHeuristicProbeGoals(input.rootObservation, paretoProbeGoals);
     function probePlanActions(goal) {
       const exact = legalActions.filter((action) => (
         actionMatchesProbeStep(action, goal.nextStep)
@@ -1645,6 +1659,43 @@
     const strictlyBetter = leftCost.some((value, index) => value < rightCost[index])
       || leftBenefit.some((value, index) => value > rightBenefit[index]);
     return noWorse && strictlyBetter;
+  }
+
+  function compareProbeDistance(left, right) {
+    return finite(left.required?.movementPoints) - finite(right.required?.movementPoints)
+      || finite(left.required?.movementSteps) - finite(right.required?.movementSteps)
+      || finite(left.required?.credits) + finite(left.required?.energy)
+        - finite(right.required?.credits) - finite(right.required?.energy)
+      || goalValue(right) - goalValue(left)
+      || String(left.targetId).localeCompare(String(right.targetId))
+      || String(left.requirementId).localeCompare(String(right.requirementId));
+  }
+
+  function selectHeuristicProbeGoals(observation, goals) {
+    const roundNumber = finite(observation?.outcomeProjection?.progress?.roundNumber) || 1;
+    const finalRoundNumber = finite(
+      observation?.outcomeProjection?.progress?.finalRoundNumber,
+    ) || 4;
+    const satellitePlanetIds = new Set([
+      "jupiter",
+      "saturn",
+      ...(roundNumber >= finalRoundNumber ? ["uranus", "neptune"] : []),
+    ]);
+    const mainPlanetGoals = goals.filter((goal) => (
+      String(goal.endpointTarget?.type || "planet") !== "satellite"
+      && goal.firstRewardSlotOpen !== false
+    ));
+    const nearestOrbit = mainPlanetGoals
+      .filter((goal) => probeEndpointFamily(goal) === "orbit")
+      .sort(compareProbeDistance)[0] || null;
+    const nearestLand = mainPlanetGoals
+      .filter((goal) => probeEndpointFamily(goal) === "land")
+      .sort(compareProbeDistance)[0] || null;
+    const satelliteGoals = goals.filter((goal) => (
+      String(goal.endpointTarget?.type || "planet") === "satellite"
+      && satellitePlanetIds.has(String(goal.planetId || ""))
+    )).sort(compareProbeDistance);
+    return [nearestOrbit, nearestLand, ...satelliteGoals].filter(Boolean);
   }
 
   function compareProbeRouteGoals(observation, left, right, seatId) {

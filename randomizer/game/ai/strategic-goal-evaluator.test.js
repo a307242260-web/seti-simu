@@ -1665,6 +1665,7 @@ function observation({
         requirementId: "launch:land:venus",
         targetId: "land:venus:planet:",
         endpointFamily: "land",
+        firstRewardSlotOpen: true,
         required: { credits: 2, energy: 4, movementSteps: 2, movementPoints: 2 },
         gap: { credits: 0, energy: 0, movementSteps: 2 },
         targetBenefit: { score: 5, grossEquivalentValue: 5 },
@@ -1673,6 +1674,7 @@ function observation({
         requirementId: "launch:land:saturn",
         targetId: "land:saturn:planet:",
         endpointFamily: "land",
+        firstRewardSlotOpen: true,
         required: { credits: 2, energy: 6, movementSteps: 4, movementPoints: 4 },
         gap: { credits: 0, energy: 0, movementSteps: 4 },
         targetBenefit: { score: 4, grossEquivalentValue: 4 },
@@ -1681,6 +1683,7 @@ function observation({
         requirementId: "launch:land:mercury",
         targetId: "land:mercury:planet:",
         endpointFamily: "land",
+        firstRewardSlotOpen: true,
         required: { credits: 2, energy: 6, movementSteps: 4, movementPoints: 4 },
         gap: { credits: 0, energy: 0, movementSteps: 4 },
         targetBenefit: { score: 10, grossEquivalentValue: 10 },
@@ -1689,6 +1692,7 @@ function observation({
         requirementId: "launch:orbit:mars",
         targetId: "orbit:mars:planet:",
         endpointFamily: "orbit",
+        firstRewardSlotOpen: true,
         required: { credits: 3, energy: 5, movementSteps: 3, movementPoints: 3 },
         gap: { credits: 0, energy: 0, movementSteps: 3 },
         targetBenefit: { score: 3, grossEquivalentValue: 3 },
@@ -1703,10 +1707,136 @@ function observation({
   }).map((target) => target.targetId);
   assert.deepEqual(targetIds, [
     "land:venus:planet:",
-    "land:mercury:planet:",
-    "land:saturn:planet:",
     "orbit:mars:planet:",
-  ], "不同星球必须保留为不同目标，同类目标按当前真实距离和资源下界排序");
+  ], "主星登陆和环绕分别只保留第一奖励格为空的最近目标");
+}
+
+{
+  const launch = { ...action("launch:occupied-first-slot", "launch"), actorId: seatId };
+  const makeMainLand = (planetId, movementPoints, firstRewardSlotOpen) => ({
+    requirementId: `launch:land:${planetId}`,
+    targetId: `land:${planetId}:planet:`,
+    planetId,
+    endpointFamily: "land",
+    endpointTarget: { type: "planet" },
+    firstRewardSlotOpen,
+    required: {
+      credits: 2,
+      energy: movementPoints + 2,
+      movementSteps: movementPoints,
+      movementPoints,
+    },
+    gap: { credits: 0, energy: 0, movementSteps: movementPoints },
+    targetBenefit: { score: 5, grossEquivalentValue: 5 },
+    nextStep: { family: "launch" },
+  });
+  const rootObservation = {
+    ...observation({ resources: { credits: 20, energy: 20 } }),
+    probeRouteRequirements: {
+      candidates: [
+        makeMainLand("venus", 1, false),
+        makeMainLand("mars", 2, true),
+        makeMainLand("saturn", 3, true),
+      ],
+    },
+  };
+  assert.deepEqual(evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation,
+    legalActions: [launch],
+  }).map((target) => target.targetId), [
+    "land:mars:planet:",
+  ], "最近主星第一奖励格已被占领时，应跳到下一颗第一格为空的主星");
+}
+
+{
+  const launch = { ...action("launch:satellite-round-gate", "launch"), actorId: seatId };
+  const makeSatellite = (planetId, satelliteId, movementPoints) => ({
+    requirementId: `launch:land:${planetId}:${satelliteId}`,
+    targetId: `land:${planetId}:satellite:${satelliteId}`,
+    planetId,
+    endpointFamily: "land",
+    endpointTarget: { type: "satellite", satelliteId },
+    firstRewardSlotOpen: false,
+    required: {
+      credits: 2,
+      energy: movementPoints + 2,
+      movementSteps: movementPoints,
+      movementPoints,
+    },
+    gap: { credits: 0, energy: 0, movementSteps: movementPoints },
+    targetBenefit: { score: 5, grossEquivalentValue: 5 },
+    nextStep: { family: "launch" },
+  });
+  const candidates = [
+    makeSatellite("jupiter", "io", 2),
+    makeSatellite("saturn", "titan", 3),
+    makeSatellite("uranus", "titania", 2),
+    makeSatellite("neptune", "triton", 4),
+  ];
+  const targetsForRound = (roundNumber) => evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation: {
+      ...observation({
+        roundNumber,
+        ownedTechIds: ["orange4"],
+        resources: { credits: 20, energy: 20 },
+      }),
+      probeRouteRequirements: { candidates },
+    },
+    legalActions: [launch],
+  }).map((target) => target.targetId);
+  assert.deepEqual(targetsForRound(3), [
+    "land:jupiter:satellite:io",
+    "land:saturn:satellite:titan",
+  ], "前三轮卫星登陆只搜索木星和土星");
+  assert.deepEqual(targetsForRound(4), [
+    "land:jupiter:satellite:io",
+    "land:uranus:satellite:titania",
+    "land:saturn:satellite:titan",
+    "land:neptune:satellite:triton",
+  ], "最后一轮才把天王星和海王星卫星加入搜索");
+}
+
+{
+  const launch = { ...action("launch:orange4-precondition", "launch"), actorId: seatId };
+  const research = { ...action("research:orange4-precondition", "research_tech"), actorId: seatId };
+  const rootObservation = {
+    ...observation({ resources: { credits: 20, energy: 20, publicity: 6 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "launch:land:jupiter",
+        targetId: "land:jupiter:planet:",
+        planetId: "jupiter",
+        endpointFamily: "land",
+        endpointTarget: { type: "planet" },
+        firstRewardSlotOpen: true,
+        required: { credits: 2, energy: 4, movementSteps: 2, movementPoints: 2 },
+        gap: { credits: 0, energy: 0, movementSteps: 2 },
+        targetBenefit: { score: 5, grossEquivalentValue: 5 },
+        nextStep: { family: "launch" },
+      }],
+    },
+    techGainRequirements: {
+      playerId: seatId,
+      researchCost: 6,
+      publicityPreparationPlans: [],
+      plans: [{
+        targetId: "tech:gain:orange4",
+        planId: "tech:orange4:",
+        tileId: "orange4",
+        required: { publicity: 6 },
+        gap: { publicity: 0 },
+        nextStep: { family: "research_tech" },
+      }],
+    },
+  };
+  assert.equal(evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation,
+    legalActions: [launch, research],
+  }).some((target) => target.targetId === "tech:gain:orange4"), true,
+  "尚无橙4但当前可研究时，应先保留橙4作为木土卫星路线的前置目标");
 }
 
 {

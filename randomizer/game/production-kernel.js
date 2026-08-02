@@ -471,6 +471,8 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             planetId: choice.planetId,
             endpointFamily: choice.actionType,
             endpointTarget: clone(choice.target || { type: "planet" }),
+            firstRewardSlotOpen: choice.target?.type !== "satellite"
+              && Number(choice.markerSequence) === 1,
             targetBenefit: {
               score: scoreGain,
               incomeCount,
@@ -588,7 +590,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     || String(left.requirementId).localeCompare(String(right.requirementId))
   ));
   return {
-    schemaVersion: "seti-probe-route-requirements-v1",
+    schemaVersion: "seti-probe-route-requirements-v2",
     playerId: player.id,
     candidates: ranked,
   };
