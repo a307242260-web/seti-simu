@@ -25,7 +25,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v14";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v15";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -2217,6 +2217,62 @@
                 ? { targetEquivalentChoiceCount: successors.length - selected.length }
                 : {}),
             }));
+        }
+        const publicScanDone = successors.find((action) => (
+          action.family === "choose_card"
+          && (
+            action.target?.done === true
+            || action.target?.choiceId === "public:done"
+          )
+        ));
+        if (publicScanDone) {
+          const assets = resourceFactsOf(input.branchObservation, input.focalSeatId);
+          let remainingDataPlacements = null;
+          if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
+            remainingDataPlacements = finite(
+              rawDataAnalyzeRequirements(input.branchObservation)?.remainingPlacements,
+            );
+          } else if (input.routePlanId === "income:data:computer-slot-4") {
+            const incomePlan = (rawIncomeGainRequirements(input.branchObservation)?.plans || [])
+              .find((plan) => plan.planId === input.routePlanId);
+            remainingDataPlacements = incomePlan
+              ? finite(incomePlan.remainingPlacements)
+              : null;
+          }
+          if (
+            remainingDataPlacements != null
+            && finite(assets.availableData) >= remainingDataPlacements
+          ) {
+            const sectorCandidates = new Map(
+              (rawSectorWinRequirements(input.branchObservation)?.candidates || [])
+                .map((candidate) => [String(candidate.sectorId), candidate]),
+            );
+            const scoringOrCompleting = successors.filter((action) => {
+              const candidate = sectorCandidates.get(String(action.target?.nebulaId || ""));
+              return candidate && (
+                finite(candidate.nextSlotScore) > 0
+                || finite(candidate.openSlotCount) <= 1
+              );
+            }).sort((left, right) => {
+              const leftCandidate = sectorCandidates.get(String(left.target?.nebulaId || ""));
+              const rightCandidate = sectorCandidates.get(String(right.target?.nebulaId || ""));
+              return finite(rightCandidate?.nextSlotScore) - finite(leftCandidate?.nextSlotScore)
+                || finite(leftCandidate?.openSlotCount) - finite(rightCandidate?.openSlotCount)
+                || String(left.actionId).localeCompare(String(right.actionId));
+            });
+            if (scoringOrCompleting.length) {
+              return bindRoute(
+                [scoringOrCompleting[0]],
+                input.routeTargetId,
+                input.routePlanId,
+              );
+            }
+            return bindRoute(
+              [publicScanDone],
+              input.routeTargetId,
+              input.routePlanId,
+            );
+          }
         }
         if (String(input.routeTargetId || "").startsWith("tech:gain:")) {
           const plan = (rawTechGainRequirements(input.branchObservation)?.plans || [])

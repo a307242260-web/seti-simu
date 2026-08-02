@@ -817,6 +817,10 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
       const openSlotCount = tokens.filter((token) => (
         !token.replacedByPlayerId && !token.replacedByPlayerColor
       )).length;
+      const nextToken = data.getNextReplaceableNebulaToken(workingState.data, sectorId);
+      const nextSlotScore = nextToken
+        ? Number(data.getNebulaSlotScoreReward(sectorId, nextToken.slotIndex)) || 0
+        : 0;
       const ranking = data.getSectorRanking(workingState.data, sectorId);
       const own = ranking.find((entry) => (
         [entry.playerId, entry.playerKey, entry.playerColor]
@@ -839,6 +843,7 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
         sectorId,
         nextSettlementNumber: settlementCount + 1,
         openSlotCount,
+        nextSlotScore,
         ownCount,
         maxOpponentCount,
         minimumOwnMarks,

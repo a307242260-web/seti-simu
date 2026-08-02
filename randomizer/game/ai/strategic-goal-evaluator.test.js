@@ -1198,6 +1198,100 @@ function observation({
     "公共牌能直接推进当前扇区目标时，必须优先目标扇区而不是更便宜的旁路",
   );
 
+  const endPublicScan = {
+    ...action("public:done", "choose_card"),
+    actorId: seatId,
+    phase: "conditional",
+    target: { choiceId: "public:done", done: true },
+  };
+  const incomeDataReady = {
+    ...observation({ resources: { availableData: 2 } }),
+    incomeGainRequirements: {
+      targetId: "income:gain:3,2,0,0,1,0",
+      plans: [{
+        planId: "income:data:computer-slot-4",
+        kind: "data",
+        remainingPlacements: 2,
+        nextStep: { family: "place_data" },
+      }],
+    },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: incomeDataReady,
+      legalSuccessors: [publicSector1, publicSector3, endPublicScan],
+      routeTargetId: "income:gain:3,2,0,0,1,0",
+      routePlanId: "income:data:computer-slot-4",
+    }).map((candidate) => candidate.actionId),
+    [endPublicScan.actionId],
+    "已有两数据可填完第3、4格时必须结束公共牌扫描，不能消耗额外标记再扫一张",
+  );
+  const incomeDataWithScoringScan = {
+    ...incomeDataReady,
+    sectorWinRequirements: {
+      candidates: [{
+        sectorId: "sector-1-a",
+        openSlotCount: 3,
+        minimumOwnMarks: 3,
+        nextSlotScore: 2,
+      }, {
+        sectorId: "sector-3-a",
+        openSlotCount: 2,
+        minimumOwnMarks: 2,
+        nextSlotScore: 0,
+      }],
+    },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: incomeDataWithScoringScan,
+      legalSuccessors: [publicSector1, publicSector3, endPublicScan],
+      routeTargetId: "income:gain:3,2,0,0,1,0",
+      routePlanId: "income:data:computer-slot-4",
+    }).map((candidate) => candidate.actionId),
+    [publicSector1.actionId],
+    "数据已经足够时，下一落点立即得分仍可消耗额外公共扫描",
+  );
+  const incomeDataWithCompletingScan = {
+    ...incomeDataReady,
+    sectorWinRequirements: {
+      candidates: [{
+        sectorId: "sector-3-a",
+        openSlotCount: 1,
+        minimumOwnMarks: 1,
+        nextSlotScore: 0,
+      }],
+    },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: incomeDataWithCompletingScan,
+      legalSuccessors: [publicSector1, publicSector3, endPublicScan],
+      routeTargetId: "income:gain:3,2,0,0,1,0",
+      routePlanId: "income:data:computer-slot-4",
+    }).map((candidate) => candidate.actionId),
+    [publicSector3.actionId],
+    "数据已经足够时，能填满并结算扇区仍可消耗额外公共扫描",
+  );
+  const incomeDataMissing = {
+    ...observation({ resources: { availableData: 1 } }),
+    incomeGainRequirements: incomeDataReady.incomeGainRequirements,
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation: incomeDataMissing,
+      legalSuccessors: [publicSector1, publicSector3, endPublicScan],
+      routeTargetId: "income:gain:3,2,0,0,1,0",
+      routePlanId: "income:data:computer-slot-4",
+    }).map((candidate) => candidate.actionId),
+    [publicSector1.actionId],
+    "数据仍不足时才继续一次启发式公共牌扫描",
+  );
+
   assert.equal(evaluator.completesSecondaryAgentRouteTarget({
     action: scan,
     targetId: "sector:win:sector-3-a:1",
