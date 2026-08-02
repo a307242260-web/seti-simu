@@ -611,10 +611,11 @@ function observation({
       target.compatibleActionIds,
     ])),
     {
+      "data:card:card-data": [dataCard.actionId],
       "data:corner:corner-data": [dataCorner.actionId],
       "data:scan": [scan.actionId],
     },
-    "分析目标自身只直接拥有没有其他结果目标承载的扫描和数据角标来源",
+    "数据卡、扫描和数据角标都只能作为完成分析的来源，不能自己成为目标",
   );
   const allSourceTargets = evaluator.enumerateSecondaryAgentRootTargets({
     focalSeatId: seatId,
@@ -628,13 +629,9 @@ function observation({
     true,
     "数据登陆路线必须复用原具名登陆目标并标注可继续分析，不能复制第二套路线",
   );
-  assert.equal(
-    allSourceTargets.find((target) => (
-      target.planId === "card:card-data"
-    ))?.resultTargetIds.includes("data:analyze"),
-    true,
-    "数据卡牌必须复用原具名卡牌目标并标注可继续分析，不能复制第二套路线",
-  );
+  assert.equal(allSourceTargets.some((target) => (
+    target.targetId === "card:resolve:card-data"
+  )), false, "获得数据的打牌只能绑定分析结果，不能建立兑现卡牌目标");
   const dataChoices = [{
     ...action("choose:data-blue", "choose_target"),
     phase: "conditional",
@@ -978,6 +975,46 @@ function observation({
     1,
     "资源下界目标调度的性能折损必须显式计数",
   );
+}
+
+{
+  const rotatedNearMove = {
+    ...action("move:after-tech-rotation-near", "move"),
+    actorId: seatId,
+    target: { rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+  };
+  const staleFarMove = {
+    ...action("move:before-tech-rotation-far", "move"),
+    actorId: seatId,
+    target: { rocketId: "probe-1", deltaX: 0, deltaY: 1 },
+  };
+  const rotatedObservation = {
+    ...observation({ resources: { credits: 3, energy: 3 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "probe-1:land:mars:rotated",
+        targetId: "land:mars:planet:",
+        required: { credits: 0, energy: 4, movementSteps: 1, movementPoints: 1 },
+        gap: { credits: 0, energy: 1 },
+        nextStep: { family: "move", rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+      }, {
+        requirementId: "probe-1:land:jupiter:stale",
+        targetId: "land:jupiter:planet:",
+        required: { credits: 0, energy: 3, movementSteps: 2, movementPoints: 2 },
+        gap: { credits: 0, energy: 0 },
+        nextStep: { family: "move", rocketId: "probe-1", deltaX: 0, deltaY: 1 },
+      }],
+    },
+  };
+  assert.deepEqual(evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId,
+    branchObservation: rotatedObservation,
+    legalSuccessors: [staleFarMove, rotatedNearMove],
+    routeTargetId: null,
+    focalProxyDepth: 1,
+    maxProxyDepth: 15,
+  }).map((candidate) => candidate.actionId), [rotatedNearMove.actionId],
+  "科技旋转后的下一目标必须按子状态新距离调度，即使近目标还需一次资源准备");
 }
 
 {
@@ -1570,11 +1607,28 @@ function observation({
     rootObservation,
     legalActions: [launch],
   }).map((target) => target.targetId);
-  assert.deepEqual(
-    targetIds,
-    ["land:mercury:planet:", "land:venus:planet:", "orbit:mars:planet:"],
-    "登陆与环绕应先按正式最短距离/成本做 Pareto，删除更远且收益更差的行星路线",
-  );
+  assert.deepEqual(targetIds, [
+    "land:venus:planet:",
+    "land:mercury:planet:",
+    "land:saturn:planet:",
+    "orbit:mars:planet:",
+  ], "不同星球必须保留为不同目标，同类目标按当前真实距离和资源下界排序");
+}
+
+{
+  const play = {
+    ...action("play:movement-without-purpose", "play_card"),
+    actorId: seatId,
+    target: { cardInstanceId: "movement-card" },
+  };
+  const rootObservation = observation({
+    hand: [{ id: "movement-card", cardId: "b_11.webp", price: 0 }],
+  });
+  assert.deepEqual(evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation,
+    legalActions: [play],
+  }), [], "没有登陆、环绕、数据、收入或科技目的时，打出移动牌不能成为独立次级目标");
 }
 
 {

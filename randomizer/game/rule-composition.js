@@ -1135,10 +1135,7 @@
             if (!current.some((entry) => (
               entry.targetId === targetId && entry.planId === planId
             ))) current.push({ targetId, planId, resultTargetIds });
-            rootTargetsByActionId.set(actionId, current.sort((left, right) => (
-              left.targetId.localeCompare(right.targetId)
-              || left.planId.localeCompare(right.planId)
-            )));
+            rootTargetsByActionId.set(actionId, current);
           }
         }
       }

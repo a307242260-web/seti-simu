@@ -376,9 +376,19 @@ try {
     assert.equal(quickTradeOutcomes.every((outcome) => (
       outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
     )), true, "快速转换只能在已选结果目标内部执行，不能成为独立搜索根");
-    const strategicFamilies = new Set(["launch", "place_data", "play_card", "scan"]);
+    const unboundPlayCardOutcomes = policyResult.actionOutcomes.filter((outcome) => (
+      actions.find((action) => action.actionId === outcome.actionId)?.family === "play_card"
+      && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
+    ));
+    assert.equal(unboundPlayCardOutcomes.length > 0, true,
+      "没有登陆、环绕、数据、收入或科技目的的打牌必须留在目标目录之外");
+    const strategicFamilies = new Set(["launch", "place_data", "scan"]);
     const strategicOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       strategicFamilies.has(actions.find((action) => action.actionId === outcome.actionId)?.family)
+      || (
+        actions.find((action) => action.actionId === outcome.actionId)?.family === "play_card"
+        && outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
+      )
     ));
     assert.equal(strategicOutcomes.length > 0, true);
     assert.equal(strategicOutcomes.every((outcome) => (

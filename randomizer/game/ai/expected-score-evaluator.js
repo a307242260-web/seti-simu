@@ -25,7 +25,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v13";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v14";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -824,6 +824,27 @@
       ));
   }
 
+  function cardResearchTechTypes(observation, action) {
+    if (action?.family !== "play_card") return null;
+    const instanceId = String(action.target?.cardInstanceId || "");
+    const card = (observation?.selfState?.hand || []).find((candidate) => (
+      String(candidate?.id) === instanceId
+    ));
+    const effects = cardEffects?.buildPlayEffects?.(card) || [];
+    const research = effects.find((effect) => (
+      effect?.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
+    ));
+    return research ? [...(research.options?.techTypes || [])] : null;
+  }
+
+  function cardCanResearchTechPlan(observation, action, plan) {
+    const techTypes = cardResearchTechTypes(observation, action);
+    if (techTypes == null) return false;
+    if (!techTypes.length) return true;
+    const tileType = String(plan?.tileId || "").replace(/[0-9]+$/, "");
+    return techTypes.includes(tileType);
+  }
+
   function deferredProbeMovementCardCosts(observation, goal, seatId) {
     if (goal?.nextStep?.family !== "move") return [];
     const assets = resourceFactsOf(observation, seatId);
@@ -1336,7 +1357,7 @@
         );
       }
       for (const plan of dataRequirements.acquisitionPlans || []) {
-        if (!["scan", "card_corner"].includes(plan.kind)) continue;
+        if (!["scan", "card", "card_corner"].includes(plan.kind)) continue;
         let actions = [];
         if (plan.kind === "scan") {
           const scan = legalActions.find((action) => action.family === "scan");
@@ -1348,6 +1369,11 @@
               legalActions,
               input.focalSeatId,
             );
+        } else if (plan.kind === "card") {
+          actions = legalActions.filter((action) => (
+            action.family === "play_card"
+            && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
+          ));
         } else if (plan.kind === "card_corner") {
           actions = legalActions.filter((action) => (
             action.family === "card_corner"
@@ -1358,7 +1384,9 @@
           DATA_ANALYZE_ROUTE_TARGET,
           plan.planId,
           actions,
-          plan.resultTargetIds || [DATA_ANALYZE_ROUTE_TARGET],
+          plan.kind === "card"
+            ? [DATA_ANALYZE_ROUTE_TARGET]
+            : (plan.resultTargetIds || [DATA_ANALYZE_ROUTE_TARGET]),
         );
       }
     }
@@ -1426,15 +1454,14 @@
           continue;
         }
         if (plan.kind === "card") {
-          const targetId = `card:resolve:${plan.cardInstanceId}`;
           add(
-            targetId,
+            incomeRequirements.targetId,
             plan.planId,
             legalActions.filter((action) => (
               action.family === "play_card"
               && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
             )),
-            [targetId, incomeRequirements.targetId],
+            [incomeRequirements.targetId],
           );
           continue;
         }
@@ -1472,7 +1499,10 @@
         input.focalSeatId,
       );
     for (const plan of selectHeuristicTechPlans(input.rootObservation)) {
-      add(plan.targetId, plan.planId, techPreparation);
+      const researchCards = legalActions.filter((action) => (
+        cardCanResearchTechPlan(input.rootObservation, action, plan)
+      ));
+      add(plan.targetId, plan.planId, [...techPreparation, ...researchCards]);
     }
 
     for (const action of legalActions) {
@@ -1480,28 +1510,31 @@
         add(`decision:${action.actionId}`, `decision:${action.actionId}`, [action]);
         continue;
       }
-      if (action.family === "play_card") {
-        const instanceId = String(action.target?.cardInstanceId || "");
-        const contributesToAnalyze = dataAnalyzeEligible(dataRequirements)
-          && (dataRequirements.acquisitionPlans || []).some((plan) => (
-            plan.kind === "card"
-            && String(plan.cardInstanceId) === instanceId
-          ));
-        if (instanceId) add(
-          `card:resolve:${instanceId}`,
-          `card:${instanceId}`,
-          [action],
-          contributesToAnalyze
-            ? [`card:resolve:${instanceId}`, DATA_ANALYZE_ROUTE_TARGET]
-            : [`card:resolve:${instanceId}`],
-        );
-      }
     }
-    return [...targets.values()]
-      .sort((left, right) => (
-        left.targetId.localeCompare(right.targetId)
-        || left.planId.localeCompare(right.planId)
-      ));
+    const probeByPlanId = new Map(probeGoals.map((goal) => [
+      `probe:${goal.requirementId || goal.targetId}`,
+      goal,
+    ]));
+    return [...targets.values()].sort((left, right) => {
+      const leftProbe = probeByPlanId.get(left.planId);
+      const rightProbe = probeByPlanId.get(right.planId);
+      if (leftProbe && rightProbe) {
+        return String(probeEndpointFamily(leftProbe)).localeCompare(
+          String(probeEndpointFamily(rightProbe)),
+        )
+          || finite(leftProbe.required?.movementPoints)
+            - finite(rightProbe.required?.movementPoints)
+          || finite(leftProbe.required?.movementSteps)
+            - finite(rightProbe.required?.movementSteps)
+          || finite(leftProbe.required?.credits) + finite(leftProbe.required?.energy)
+            - finite(rightProbe.required?.credits) - finite(rightProbe.required?.energy)
+          || left.targetId.localeCompare(right.targetId)
+          || left.planId.localeCompare(right.planId);
+      }
+      if (leftProbe || rightProbe) return leftProbe ? -1 : 1;
+      return left.targetId.localeCompare(right.targetId)
+        || left.planId.localeCompare(right.planId);
+    });
   }
 
   function selectSecondaryAgentRootActions(input = {}) {
@@ -1580,7 +1613,7 @@
   }
 
   function probeRouteDistanceDominates(left, right) {
-    if (!left || !right || probeEndpointFamily(left) !== probeEndpointFamily(right)) return false;
+    if (!left || !right || String(left.targetId) !== String(right.targetId)) return false;
     const leftCost = [
       finite(left.required?.movementPoints),
       finite(left.required?.movementSteps),
@@ -1997,10 +2030,11 @@
             ));
           if (probe) {
             return [
+              finite(probe.required?.movementPoints),
+              finite(probe.required?.movementSteps),
               finite(probe.gap?.credits) + finite(probe.gap?.energy),
               finite(probe.gap?.credits),
               finite(probe.gap?.energy),
-              finite(probe.gap?.movementSteps),
               target.planId,
             ];
           }
@@ -2452,7 +2486,7 @@
         }
         if (requirements.nextStep === "acquire_data") {
           const availablePlans = (requirements.acquisitionPlans || [])
-            .filter((plan) => ["scan", "card_corner"].includes(plan.kind));
+            .filter((plan) => ["scan", "card", "card_corner"].includes(plan.kind));
           const exactPlan = availablePlans.find((plan) => (
             plan.planId === input.routePlanId
           ));
@@ -2472,6 +2506,11 @@
                   successors,
                   input.focalSeatId,
                 );
+            } else if (plan.kind === "card") {
+              actions = successors.filter((action) => (
+                action.family === "play_card"
+                && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
+              ));
             } else if (plan.kind === "card_corner") {
               actions = successors.filter((action) => (
                 action.family === "card_corner"
