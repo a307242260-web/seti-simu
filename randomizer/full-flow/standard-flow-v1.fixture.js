@@ -1,9 +1,9 @@
 "use strict";
 
 module.exports = Object.freeze({
-  schemaVersion: "seti-standard-full-flow-v11",
+  schemaVersion: "seti-standard-full-flow-v12",
   config: Object.freeze({
-    seed: "seti-standard-full-flow-v11",
+    seed: "seti-standard-full-flow-v12",
     activePlayerCount: 4,
     aiDifficulty: "weak_start",
     offlineTeacher: true,
@@ -11,7 +11,7 @@ module.exports = Object.freeze({
   }),
   policyProvenance: Object.freeze({
     type: "heuristic",
-    version: "seti-heuristic-policy-v20",
+    version: "seti-heuristic-policy-v21",
     config: Object.freeze({
       difficulty: "weak_start",
       evaluationParameters: Object.freeze({

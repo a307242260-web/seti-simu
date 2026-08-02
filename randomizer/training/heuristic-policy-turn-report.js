@@ -11,6 +11,9 @@ const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const initialCards = require("../game/initial-cards");
 const cards = require("../game/cards/deck");
 const solarSystem = require("../solar-system/core");
+const nebulaPlacement = require("../game/data/nebula-placement");
+const planetRewards = require("../game/actions/planet-rewards");
+const planetReferenceLayout = require("../game/planet-reference-layout");
 const techCatalog = require("../game/tech/catalog");
 const CARD_NAMES_BY_ID = new Map(cards.CARD_CATALOG.map((card) => [card.card_id, card.card_name]));
 
@@ -78,24 +81,87 @@ function publicCardsOf(observation) {
   })));
 }
 
-function sectorDataSnapshot(data) {
-  return Object.freeze(Object.entries(data?.nebulae || {}).map(([sectorId, nebula]) => {
+function sectorDataSnapshot(data, sectorBySlot, focalPlayerId) {
+  const focalPlayerKeys = new Set([
+    focalPlayerId,
+    String(focalPlayerId || "").replace(/^player-/, ""),
+  ].filter(Boolean).map(String));
+  const locationBySectorId = new Map(solarSystem.getNebulaLocations(sectorBySlot)
+    .map((location) => [location.id, location]));
+  return Object.freeze(Object.entries(data?.nebulae || {})
+    .filter(([sectorId]) => sectorId !== "aomomo")
+    .map(([sectorId, nebula]) => {
     const tokens = nebula?.tokens || [];
+    const extraMarks = data?.sectorExtraMarks?.[sectorId] || [];
+    const signals = [...tokens, ...extraMarks]
+      .filter((token) => token.replacedByPlayerId || token.replacedByPlayerColor)
+      .map((token) => ({
+        playerId: token.replacedByPlayerId || null,
+        playerColor: token.replacedByPlayerColor || null,
+        slotIndex: token.slotIndex || null,
+        extra: extraMarks.includes(token),
+        replacementOrder: Number(token.replacementOrder) || 0,
+      }));
     const occupiedByPlayer = {};
-    for (const token of tokens) {
-      if (!token.replacedByPlayerId) continue;
-      occupiedByPlayer[token.replacedByPlayerId] = (occupiedByPlayer[token.replacedByPlayerId] || 0) + 1;
+    for (const signal of signals) {
+      const key = signal.playerId || signal.playerColor;
+      if (!key) continue;
+      occupiedByPlayer[key] = (occupiedByPlayer[key] || 0) + 1;
     }
+    const ranking = Object.entries(occupiedByPlayer)
+      .map(([playerId, count]) => ({
+        playerId,
+        count,
+        latestReplacementOrder: signals
+          .filter((signal) => signal.playerId === playerId || signal.playerColor === playerId)
+          .reduce((latest, signal) => Math.max(latest, signal.replacementOrder), 0),
+      }))
+      .sort((left, right) => (
+        right.count - left.count
+        || right.latestReplacementOrder - left.latestReplacementOrder
+        || left.playerId.localeCompare(right.playerId)
+      ));
+    const ownCount = signals.filter((signal) => (
+      [signal.playerId, signal.playerColor].filter(Boolean)
+        .some((key) => focalPlayerKeys.has(String(key)))
+    )).length;
+    const maxOpponentCount = ranking
+      .filter((entry) => !focalPlayerKeys.has(String(entry.playerId)))
+      .reduce((maximum, entry) => Math.max(maximum, entry.count), 0);
+    const emptyCount = tokens.filter((token) => (
+      !token.replacedByPlayerId && !token.replacedByPlayerColor
+    )).length;
+    const settlement = data?.sectorSettlements?.sectors?.[sectorId] || {};
+    const location = locationBySectorId.get(sectorId) || {};
     return Object.freeze({
       sectorId,
+      label: nebulaPlacement.getNebulaLabel(sectorId),
+      color: nebulaPlacement.getNebulaColor(sectorId),
+      boardSlot: location.slot || null,
+      side: location.side || null,
       capacity: tokens.length,
-      emptyCount: tokens.filter((token) => !token.replacedByPlayerId).length,
+      emptyCount,
       occupiedByPlayer: Object.freeze(occupiedByPlayer),
+      signals: Object.freeze(signals.map((signal) => Object.freeze(signal))),
+      leaderPlayerId: ranking[0]?.playerId || null,
+      ownCount,
+      maxOpponentCount,
+      minimumOwnMarks: Math.max(emptyCount, Math.max(0, maxOpponentCount - ownCount)),
+      settlementCount: Number(settlement.settlementCount) || 0,
+      winners: Object.freeze((settlement.winners || []).map((winner) => Object.freeze({
+        playerId: winner.playerId || null,
+        playerColor: winner.playerColor || null,
+        settlementNumber: Number(winner.settlementNumber) || 0,
+      }))),
     });
-  }));
+  }).sort((left, right) => (
+    Number(left.boardSlot || 99) - Number(right.boardSlot || 99)
+    || String(left.side).localeCompare(String(right.side))
+    || left.sectorId.localeCompare(right.sectorId)
+  )));
 }
 
-function boardSnapshot(observation) {
+function boardSnapshot(observation, focalPlayerId = null) {
   const board = observation?.publicState?.board || {};
   const solar = board.solarSystem || {};
   const solarSnapshot = solarSystem.createSolarSnapshot(solar);
@@ -120,12 +186,37 @@ function boardSnapshot(observation) {
         && Number(planet.y) === Number(rocket.y ?? rocket.sectorY)
       ))?.planetId || null,
     }))),
-    planetMarkers: Object.freeze(Object.entries(board.planets?.planets || {}).map(([planetId, state]) => Object.freeze({
-      planetId,
-      orbitOwners: Object.freeze((state.orbitMarkers || []).map((marker) => marker.playerId)),
-      landingOwners: Object.freeze((state.landingMarkers || []).map((marker) => marker.playerId)),
-    }))),
-    sectorData: sectorDataSnapshot(board.data),
+    planetMarkers: Object.freeze(Object.entries(board.planets?.planets || {}).map(([planetId, state]) => {
+      const orbitMarkers = state.orbitMarkers || [];
+      const landingMarkers = state.landingMarkers || [];
+      const satelliteLandings = state.satelliteLandings || [];
+      return Object.freeze({
+        planetId,
+        orbitSlotCount: planetReferenceLayout.getPlanetSlotCount(planetId, "orbit"),
+        landSlotCount: planetReferenceLayout.getPlanetSlotCount(planetId, "land"),
+        orbitOwners: Object.freeze(orbitMarkers.map((marker) => marker.playerId || marker.color)),
+        landingOwners: Object.freeze(landingMarkers.map((marker) => marker.playerId || marker.color)),
+        nextOrbitReward: planetRewards.formatRewardEffectsSummary(
+          planetRewards.buildOrbitRewardEffects(planetId, orbitMarkers.length + 1),
+        ),
+        nextLandReward: planetRewards.formatRewardEffectsSummary(
+          planetRewards.buildPlanetLandRewardEffects(planetId, landingMarkers.length + 1),
+        ),
+        satellites: Object.freeze(planetReferenceLayout.getSatellitesForPlanet(planetId)
+          .map((satellite) => {
+            const marker = satelliteLandings.find((entry) => entry.satelliteId === satellite.satelliteId);
+            return Object.freeze({
+              satelliteId: satellite.satelliteId,
+              satelliteName: satellite.satelliteName,
+              owner: marker?.playerId || marker?.color || null,
+              reward: planetRewards.formatRewardEffectsSummary(
+                planetRewards.buildSatelliteLandRewardEffects(satellite.satelliteId),
+              ),
+            });
+          })),
+      });
+    })),
+    sectorData: sectorDataSnapshot(board.data, solar.sectorBySlot, focalPlayerId),
     sectorWins: Object.freeze(Object.entries(board.data?.sectorSettlements?.winsByPlayerId || {})
       .map(([playerId, wins]) => Object.freeze({ playerId, wins: Number(wins) || 0 }))),
     aliens: Object.freeze((board.aliens?.slots || []).map((slot, index) => Object.freeze({
@@ -160,7 +251,7 @@ function decisionContextSnapshot(observation, playerId) {
     publicCards: publicCardsOf(observation),
     dataProgress: structuredClone(player.dataProgress || {}),
     techState: structuredClone(player.techState || {}),
-    board: boardSnapshot(observation),
+    board: boardSnapshot(observation, playerId),
   });
 }
 
@@ -1474,7 +1565,7 @@ function formatIncomeGoal(targetId) {
   const values = String(targetId).slice("income:gain:".length).split(",").map(Number);
   const labels = ["钱", "电", "宣传", "数据", "手牌", "额外扫描"];
   const tracks = values.map((value, index) => value ? `${labels[index]} ${value}` : null).filter(Boolean);
-  return `提升收入轨（${tracks.join("、") || "未知轨道"}）`;
+  return `继续提升收入（当前基线：${tracks.join("、") || "未知轨道"}）`;
 }
 
 function formatGoalClusterName(cluster) {
@@ -1565,6 +1656,51 @@ function shortPlayerLabel(playerId) {
   return ({ white: "白", brown: "棕", blue: "蓝", green: "绿" })[color] || color || "未知";
 }
 
+function renderOuterSectorState(sector) {
+  const colorLabel = ({ yellow: "黄", red: "红", blue: "蓝", black: "黑" })[sector.color]
+    || sector.color
+    || "未知";
+  const signalsBySlot = new Map((sector.signals || [])
+    .filter((signal) => !signal.extra && signal.slotIndex)
+    .map((signal) => [Number(signal.slotIndex), signal]));
+  const signalSlots = Array.from({ length: Number(sector.capacity) || 0 }, (_, index) => {
+    const signal = signalsBySlot.get(index + 1);
+    const color = signal?.playerColor || String(signal?.playerId || "").replace(/^player-/, "") || "empty";
+    return `<i class="sector-signal ${escapeHtml(color)}" title="${signal ? `${escapeHtml(shortPlayerLabel(signal.playerId || signal.playerColor))}色信号` : "空位"}"></i>`;
+  }).join("");
+  const extraSignals = (sector.signals || []).filter((signal) => signal.extra)
+    .map((signal) => `<i class="sector-signal extra ${escapeHtml(signal.playerColor || "unknown")}" title="${escapeHtml(shortPlayerLabel(signal.playerId || signal.playerColor))}色额外信号">+</i>`)
+    .join("");
+  const leader = sector.leaderPlayerId ? shortPlayerLabel(sector.leaderPlayerId) : "无人";
+  const status = Number(sector.settlementCount)
+    ? `已结算 ${sector.settlementCount} 次`
+    : "尚未结算";
+  return `<article class="sector-state ${escapeHtml(sector.color || "unknown")}">
+    <div><strong>${escapeHtml(sector.label || sector.sectorId)}</strong><small>盘位 ${escapeHtml(sector.boardSlot ?? "—")} · ${escapeHtml(sector.side || "—")} · ${escapeHtml(colorLabel)}色</small></div>
+    <div class="sector-signals" aria-label="${escapeHtml(sector.label || sector.sectorId)}信号格">${signalSlots}${extraSignals}</div>
+    <small>白 ${escapeHtml(sector.ownCount)} · 对手最高 ${escapeHtml(sector.maxOpponentCount)} · 当前领先 ${escapeHtml(leader)} · 填满并获胜至少还需白色 ${escapeHtml(sector.minimumOwnMarks)} 枚 · ${escapeHtml(status)}</small>
+  </article>`;
+}
+
+function renderPlanetOrbitLandState(planet) {
+  const markerRow = (owners, slotCount) => Array.from(
+    { length: Math.max(Number(slotCount) || 0, owners?.length || 0) },
+    (_, index) => {
+      const owner = owners?.[index] || null;
+      const color = String(owner || "").replace(/^player-/, "") || "empty";
+      return `<i class="planet-slot ${escapeHtml(color)}" title="${owner ? `${escapeHtml(shortPlayerLabel(owner))}色标记` : "空位"}"></i>`;
+    },
+  ).join("");
+  const satellites = (planet.satellites || []).map((satellite) => (
+    `<small><strong>${escapeHtml(satellite.satelliteName)}</strong>：${satellite.owner ? `${escapeHtml(shortPlayerLabel(satellite.owner))}已登陆` : "未登陆"} · ${escapeHtml(satellite.reward || "无即时奖励")}</small>`
+  )).join("");
+  return `<article class="planet-state">
+    <h4>${escapeHtml(PLANET_LABELS[planet.planetId] || planet.planetId)}</h4>
+    <div class="planet-state-line"><b>环绕</b><span>${markerRow(planet.orbitOwners, planet.orbitSlotCount)}</span><small>下一次：${escapeHtml(planet.nextOrbitReward || "无即时奖励")}</small></div>
+    <div class="planet-state-line"><b>登陆</b><span>${markerRow(planet.landingOwners, planet.landSlotCount)}</span><small>下一次：${escapeHtml(planet.nextLandReward || "无即时奖励")}</small></div>${satellites ? `<div class="satellite-state">${satellites}</div>` : ""}
+  </article>`;
+}
+
 function renderDecisionContext(context) {
   if (!context) return '<section class="decision-context"><h2>决策现场</h2><p class="muted">本报告没有记录该节点的 observation。</p></section>';
   const resources = context.resources || {};
@@ -1573,17 +1709,16 @@ function renderDecisionContext(context) {
   const ownedTech = Object.keys(techState.ownedTiles || {}).filter((tileId) => techState.ownedTiles[tileId]);
   const disabledTech = new Set(Object.keys(techState.disabledTiles || {}).filter((tileId) => techState.disabledTiles[tileId]));
   const computerSlots = context.dataProgress?.computerSlots || [];
-  const sectorRows = (context.board?.sectorData || []).map((sector) => {
-    const occupied = Object.entries(sector.occupiedByPlayer || {})
-      .map(([playerId, count]) => `${shortPlayerLabel(playerId)} ${count}`)
-      .join(" · ") || "无人";
-    return `<span><strong>${escapeHtml(sector.sectorId)}</strong><small>${escapeHtml(occupied)} · 空 ${escapeHtml(sector.emptyCount)}/${escapeHtml(sector.capacity)}</small></span>`;
-  }).join("");
+  const sectorRows = (context.board?.sectorData || []).map(renderOuterSectorState).join("");
   const planetMarkers = (context.board?.planetMarkers || [])
     .filter((planet) => planet.orbitOwners?.length || planet.landingOwners?.length)
     .map((planet) => `${PLANET_LABELS[planet.planetId] || planet.planetId}：环绕 ${planet.orbitOwners.map(shortPlayerLabel).join("、") || "无"}；登陆 ${planet.landingOwners.map(shortPlayerLabel).join("、") || "无"}`)
     .join("；") || "尚无环绕或登陆标记";
   const techSupply = context.board?.techSupply || [];
+  const planetStateRows = (context.board?.planetMarkers || [])
+    .filter((planet) => planet.planetId !== "earth" && planet.planetId !== "aomomo")
+    .map(renderPlanetOrbitLandState)
+    .join("");
   return `<section class="decision-context">
     <div class="context-heading"><div><span class="eyebrow">仅使用本节点可见 observation</span><h2>决策现场</h2></div><p>第 ${escapeHtml(context.roundNumber)} 轮 · 第 ${escapeHtml(context.turnNumber)} 回合 · 白色玩家行动前</p></div>
     <div class="context-resource-grid">
@@ -1602,7 +1737,8 @@ function renderDecisionContext(context) {
     <div class="context-board-grid">
       <div class="context-panel solar-context"><h3>太阳系盘面</h3>${renderSolarSystem(context.board, { compact: true })}<p>${escapeHtml(planetMarkers)}</p></div>
       <div class="context-panel"><h3>科技供应与白色科技</h3><div class="tech-context-list">${techSupply.length ? techSupply.map((stack) => `<span><strong>${escapeHtml(stack.tileId)}</strong><small>${escapeHtml(techCatalog.TECH_TYPE_LABELS[stack.techType] || stack.techType || "—")} · 剩余 ${escapeHtml(stack.remaining ?? "—")} · 奖励 ${escapeHtml(techCatalog.BONUS_LABELS[stack.bonusId] || stack.bonusId || "无")}</small></span>`).join("") : '<span class="muted">无可用科技供应</span>'}</div><p><strong>白色已拥有：</strong>${ownedTech.length ? ownedTech.map((tileId) => `${escapeHtml(tileId)}${disabledTech.has(tileId) ? "（失效）" : ""}`).join("、") : '<span class="muted">无</span>'}</p><p><strong>蓝科数据槽：</strong>${Object.keys(techState.blueBoardSlots || {}).length ? Object.entries(techState.blueBoardSlots).map(([tileId, slot]) => `${escapeHtml(tileId)}→槽 ${escapeHtml(slot)}`).join("、") : '<span class="muted">无</span>'}</p></div>
-      <div class="context-panel data-context"><h3>数据计算机与扇区</h3><p><strong>计算机：</strong>${computerSlots.length}/6 格 · 第一行 ${Math.min(4, computerSlots.length)}/4 · ${context.dataProgress?.analyzeReady ? "可分析" : "尚不可分析"}</p><div class="sector-list">${sectorRows || '<span class="muted">无扇区数据</span>'}</div></div>
+      <div class="context-panel planet-context"><h3>行星环绕与登陆版图</h3><div class="planet-state-list">${planetStateRows || '<span class="muted">无行星状态</span>'}</div></div>
+      <div class="context-panel data-context"><h3>数据计算机与外围 8 个扇区</h3><p><strong>计算机：</strong>${computerSlots.length}/6 格 · 第一行 ${Math.min(4, computerSlots.length)}/4 · ${context.dataProgress?.analyzeReady ? "可分析" : "尚不可分析"}</p><div class="sector-list">${sectorRows || '<span class="muted">无扇区数据</span>'}</div></div>
       <div class="context-panel"><h3>公开外星人状态</h3>${renderAlienBoard(context.board?.aliens || [])}</div>
     </div>
   </section>`;
@@ -1629,6 +1765,7 @@ function formatDecisionSearchTraceHtml(report, decisionNumber) {
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>白色玩家 #${decisionNumber} 次级目标搜索树</title><style>
 :root{color-scheme:dark;--bg:#090d18;--panel:#11182a;--panel2:#172137;--line:#2a3958;--text:#eef3ff;--muted:#94a3be;--cyan:#56d8ff;--green:#70e1a1;--amber:#ffc96b;--red:#ff8d92;--violet:#9f8cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% -8%,rgba(63,105,255,.22),transparent 30rem),var(--bg);color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.page{width:min(1320px,calc(100% - 36px));margin:auto;padding:38px 0 70px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.1em}h1{margin:6px 0 8px;font-size:36px}.intro{color:var(--muted);max-width:900px}.muted,.panel-note{color:var(--muted)}.decision-card{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:22px 0}.decision-card span,.selected-goal-chain,.goal-cluster,.decision-context{border:1px solid var(--line);background:rgba(17,24,42,.88);border-radius:14px}.decision-card span{padding:12px}.decision-card small{display:block;color:var(--muted)}.decision-card strong{display:block;margin-top:3px;font-size:16px}.decision-context{padding:18px;margin:0 0 20px}.context-heading{display:flex;justify-content:space-between;gap:20px;align-items:end}.context-heading h2{margin:3px 0 0}.context-heading p{margin:0;color:var(--muted)}.context-resource-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:15px 0 8px}.context-resource-grid span,.context-panel{border:1px solid var(--line);background:rgba(9,13,24,.5);border-radius:11px}.context-resource-grid span{padding:9px 11px}.context-resource-grid small{display:block;color:var(--muted)}.context-resource-grid strong{font-size:18px}.income-line{margin:8px 0 14px}.context-card-row,.context-board-grid{display:grid;gap:10px}.context-card-row{grid-template-columns:1fr 1fr}.context-board-grid{grid-template-columns:1.1fr 1fr;margin-top:10px}.context-panel{padding:12px;min-width:0}.context-panel h3{margin:0 0 9px;color:var(--cyan);font-size:12px}.context-panel p{margin:8px 0 0}.panel-note{font-size:10px}.card-list{display:flex;gap:7px;flex-wrap:wrap}.hand-card{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:8px;background:var(--panel2);font-size:11px}.card-image-button,.alien-face-button{padding:0;border:0;background:none;cursor:zoom-in}.card-image-button img{display:block;width:44px;height:62px;object-fit:cover;border-radius:5px}.tech-context-list,.sector-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tech-context-list span,.sector-list span{display:block;padding:6px 7px;border-radius:7px;background:var(--panel2)}.tech-context-list small,.sector-list small{display:block;color:var(--muted);font-size:9px;overflow-wrap:anywhere}.solar-visual{position:relative;width:min(100%,290px);aspect-ratio:1;margin:5px auto;overflow:hidden;border-radius:50%;background:#050912;box-shadow:inset 0 0 30px rgba(86,216,255,.12)}.solar-wheel{position:absolute;left:50%;top:50%;height:auto;transform-origin:center}.solar-wheel.wheel-4{width:100%}.solar-wheel.wheel-3{width:62.4%}.solar-wheel.wheel-2{width:48.7%}.solar-wheel.wheel-1{width:35.3%}.solar-sun{position:absolute;left:50%;top:50%;width:8.5%;transform:translate(-50%,-50%)}.planet-marker{position:absolute;transform:translate(-50%,-50%);z-index:3;padding:1px 3px;border-radius:4px;background:rgba(5,9,18,.82);font-size:8px}.planet-marker b{display:block;color:var(--green)}.rocket-marker{position:absolute;z-index:5;width:20px;transform:translate(calc(-50% + var(--rocket-offset)),calc(-50% - 9px));filter:drop-shadow(0 0 4px #fff)}.alien-board{display:grid;gap:6px}.alien-slot{display:flex;gap:8px;align-items:center;padding:6px;border-radius:8px;background:var(--panel2)}.alien-slot img{display:block;width:35px;height:35px;object-fit:cover;border-radius:50%}.trace-row{display:flex;gap:4px}.trace-chip{font-size:9px}.trace-chip i{display:inline-block;width:6px;height:6px;margin-right:2px;border-radius:50%;background:currentColor}.trace-chip.pink{color:#ff84c5}.trace-chip.yellow{color:#ffd66e}.trace-chip.blue{color:#72c8ff}.selected-goal-chain{padding:15px;margin-bottom:22px}.selected-goal-chain h2{margin:0 0 9px;font-size:15px;color:var(--green)}.human-route{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.human-route span{padding:5px 8px;border-radius:7px;background:var(--panel2)}.human-route b{color:var(--muted)}.goal-level{display:grid;gap:11px}.goal-cluster{overflow:hidden}.goal-cluster.selected-goal{border-color:rgba(112,225,161,.7);box-shadow:0 0 0 2px rgba(112,225,161,.08)}.goal-cluster>summary{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(260px,1.5fr) minmax(240px,1fr);gap:14px;align-items:center;padding:14px 16px;cursor:pointer}.goal-cluster>summary:hover{background:rgba(86,216,255,.04)}.goal-order{color:var(--cyan);font-size:11px}.goal-counts{color:var(--muted);font-size:11px;text-align:right}.goal-cluster-body{padding:0 16px 16px;border-top:1px solid var(--line)}.goal-cluster-body h3{margin:14px 0 8px;color:var(--muted);font-size:11px}.goal-routes{display:grid;gap:8px;margin:0;padding:0;list-style:none}.goal-route{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(9,13,24,.48)}.goal-route.chosen-route{border-color:var(--green)}.goal-route.discarded-route{opacity:.68}.goal-route-heading{display:flex;gap:8px;align-items:center;margin-bottom:7px}.goal-route-heading span{margin-left:auto;color:var(--muted);font-size:10px}.chosen-badge,.retained-badge,.discarded-badge{padding:2px 6px;border-radius:6px;font-size:10px}.chosen-badge{color:#07130c;background:var(--green)}.retained-badge{color:var(--green);background:rgba(112,225,161,.12)}.discarded-badge{color:var(--red);background:rgba(255,141,146,.1)}.next-goals{margin:15px 0 0 18px;padding-left:14px;border-left:2px solid rgba(86,216,255,.28)}.no-route{margin:8px 0;color:var(--muted);font-size:12px}@media(max-width:760px){.decision-card,.context-resource-grid{grid-template-columns:1fr 1fr}.context-card-row,.context-board-grid{grid-template-columns:1fr}.context-heading{display:block}.goal-cluster>summary{grid-template-columns:1fr}.goal-counts{text-align:left}.next-goals{margin-left:4px}.page{width:min(100% - 20px,1320px)}}
+.sector-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.sector-state{display:grid;gap:5px;padding:8px;border-left:3px solid var(--line);border-radius:7px;background:var(--panel2)}.sector-state.yellow{border-left-color:#e6c85b}.sector-state.red{border-left-color:#e67070}.sector-state.blue{border-left-color:#65aef0}.sector-state.black{border-left-color:#697386}.sector-state>div:first-child{display:flex;justify-content:space-between;gap:8px}.sector-state small{display:block;color:var(--muted);font-size:9px}.sector-signals{display:flex;gap:4px;align-items:center}.sector-signal,.planet-slot{display:inline-grid;place-items:center;width:11px;height:11px;border:1px solid rgba(255,255,255,.26);border-radius:50%;background:transparent;font-size:8px;font-style:normal}.sector-signal.white,.planet-slot.white{background:#f4f4ee}.sector-signal.brown,.planet-slot.brown{background:#9a623f}.sector-signal.blue,.planet-slot.blue{background:#3d83d7}.sector-signal.green,.planet-slot.green{background:#54a96b}.sector-signal.extra{width:13px;height:13px;border-style:dashed}.planet-context{grid-column:1/-1}.planet-state-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.planet-state{padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}.planet-state h4{margin:0 0 6px;color:var(--text)}.planet-state-line{display:grid;grid-template-columns:34px 70px 1fr;gap:6px;align-items:start;margin:4px 0}.planet-state-line>span{display:flex;gap:3px;padding-top:4px}.planet-state-line small,.satellite-state small{color:var(--muted);font-size:9px}.satellite-state{display:grid;gap:2px;margin-top:6px;padding-top:5px;border-top:1px solid var(--line)}@media(max-width:760px){.sector-list,.planet-state-list{grid-template-columns:1fr}.planet-state-line{grid-template-columns:34px 62px 1fr}}
 .image-lightbox{position:fixed;inset:0;z-index:1000;display:none;place-items:center;width:100%;height:100%;padding:28px;border:0;background:rgba(2,5,12,.88);cursor:zoom-out}.image-lightbox.open{display:grid}.image-lightbox img{display:block;max-width:min(92vw,720px);max-height:92vh;object-fit:contain;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.65)}
 </style></head><body><main class="page"><span class="eyebrow">SETI · 单节点次级目标搜索</span><h1>白色玩家 #${decisionNumber}</h1>
 <p class="intro">只呈现公司、起始卡和收入选择完成后的这一次决策。一级列表按目标簇实际首次展开顺序排列；展开任一目标，可以看到目标内部完成路线、最终保留路线，以及完成后进入的下一层目标。内部 actionId 与哈希均已隐藏。</p>

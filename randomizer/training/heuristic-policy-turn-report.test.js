@@ -162,8 +162,35 @@ const html = formatDecisionSearchTraceHtml({
           aliens: [],
           techSupply: [{ tileId: "blue1", techType: "blue", bonusId: "gain-card", remaining: 4 }],
           playerTech: [],
-          planetMarkers: [],
-          sectorData: [],
+          planetMarkers: [{
+            planetId: "mars",
+            orbitSlotCount: 5,
+            landSlotCount: 5,
+            orbitOwners: ["player-white"],
+            landingOwners: [],
+            nextOrbitReward: "精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+            nextLandReward: "首次登陆：额外获得 2 个数据；获得 6 分",
+            satellites: [{
+              satelliteId: "phobos-deimos",
+              satelliteName: "火卫一/火卫二",
+              owner: null,
+              reward: "获得 8 分；获得收入 1/2；获得收入 2/2",
+            }],
+          }],
+          sectorData: [{
+            sectorId: "sector-3-a",
+            label: "开普勒22",
+            color: "yellow",
+            boardSlot: 2,
+            side: "left",
+            capacity: 5,
+            signals: [{ playerId: "player-white", playerColor: "white", slotIndex: 1 }],
+            leaderPlayerId: "player-white",
+            ownCount: 1,
+            maxOpponentCount: 0,
+            minimumOwnMarks: 4,
+            settlementCount: 0,
+          }],
           sectorWins: [],
         },
       },
@@ -183,9 +210,39 @@ assert.match(html, /公共牌/);
 assert.match(html, /深空观测/);
 assert.match(html, /科技供应与白色科技/);
 assert.match(html, /blue1/);
-assert.match(html, /数据计算机与扇区/);
+assert.match(html, /数据计算机与外围 8 个扇区/);
+assert.match(html, /开普勒22/);
+assert.match(html, /填满并获胜至少还需白色 4 枚/);
+assert.match(html, /行星环绕与登陆版图/);
+assert.match(html, /火卫一\/火卫二/);
+assert.match(html, /下一次：首次登陆：额外获得 2 个数据；获得 6 分/);
 assert.match(html, /id="imageLightbox"/);
 assert.match(html, /closest\("\[data-image-src\]"\)/);
 assert.doesNotMatch(html, /launch:a|move:b|orbit:c/);
+
+const incomeHtml = formatDecisionSearchTraceHtml({
+  setupChoices: [],
+  turns: [{
+    actions: [{
+      decisionNumber: 29,
+      text: "放置数据",
+      scoreBefore: 7,
+      resourcesBefore: { credits: 4, energy: 4, publicity: 4, availableData: 2 },
+      timing: { totalMilliseconds: 10 },
+      searchTrace: {
+        ...trace,
+        rootCandidates: [{ ...trace.rootCandidates[0], goalSelections: [] }],
+        goalClusters: [{
+          ...trace.goalClusters[0],
+          targetId: "income:gain:3,3,0,0,1,0",
+          path: ["income:gain:3,3,0,0,1,0"],
+          routeVariants: [],
+        }],
+      },
+      followups: [],
+    }],
+  }],
+}, 29);
+assert.match(incomeHtml, /继续提升收入（当前基线：钱 3、电 3、手牌 1）/);
 
 console.log("heuristic turn report search trace tests passed");

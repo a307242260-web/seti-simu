@@ -1306,6 +1306,108 @@ function observation({
 }
 
 {
+  const targetId = "land:venus:planet:";
+  const branchObservation = {
+    ...observation({
+      resources: { credits: 4, energy: 0 },
+      hand: [
+        { id: "asteroid-flyby", cardId: "b_11.webp", price: 0 },
+        { id: "other-card", cardId: "b_56.webp", price: 3 },
+      ],
+    }),
+    probeRouteRequirements: {
+      candidates: [{
+        targetId,
+        requirementId: "probe-1:land:venus",
+        required: { credits: 0, energy: 1, movementSteps: 1, movementPoints: 1 },
+        gap: { credits: 0, energy: 1, movementSteps: 1 },
+        nextStep: {
+          family: "move",
+          rocketId: "probe-1",
+          deltaX: 1,
+          deltaY: 0,
+        },
+      }],
+    },
+  };
+  const endTurn = { ...action("end-turn:play-move-card-next", "end_turn"), actorId: seatId };
+  const directMove = {
+    ...action("move:spend-energy-now", "move"),
+    actorId: seatId,
+    target: { rocketId: "probe-1", deltaX: 1, deltaY: 0 },
+  };
+  const cardsForEnergy = {
+    ...action("trade:two-cards-for-move-energy", "quick_trade"),
+    actorId: seatId,
+    target: { tradeId: "cards-for-energy" },
+    payload: { cost: { handSize: 2 }, gain: { energy: 1 } },
+  };
+  assert.deepEqual(
+    evaluator.selectSecondaryAgentSuccessors({
+      focalSeatId: seatId,
+      branchObservation,
+      legalSuccessors: [cardsForEnergy, directMove, endTurn],
+      routeTargetId: targetId,
+      routePlanId: "probe:probe-1:land:venus",
+    }).map((candidate) => candidate.actionId),
+    [directMove.actionId, endTurn.actionId],
+    "主行动已用完时，应同时保留直接花电与下圈0钱移动牌，并删除弃2牌换1电",
+  );
+}
+
+{
+  const launch = { ...action("launch:distance-pareto", "launch"), actorId: seatId };
+  const rootObservation = {
+    ...observation({ resources: { credits: 20, energy: 20 } }),
+    probeRouteRequirements: {
+      candidates: [{
+        requirementId: "launch:land:venus",
+        targetId: "land:venus:planet:",
+        endpointFamily: "land",
+        required: { credits: 2, energy: 4, movementSteps: 2, movementPoints: 2 },
+        gap: { credits: 0, energy: 0, movementSteps: 2 },
+        targetBenefit: { score: 5, grossEquivalentValue: 5 },
+        nextStep: { family: "launch" },
+      }, {
+        requirementId: "launch:land:saturn",
+        targetId: "land:saturn:planet:",
+        endpointFamily: "land",
+        required: { credits: 2, energy: 6, movementSteps: 4, movementPoints: 4 },
+        gap: { credits: 0, energy: 0, movementSteps: 4 },
+        targetBenefit: { score: 4, grossEquivalentValue: 4 },
+        nextStep: { family: "launch" },
+      }, {
+        requirementId: "launch:land:mercury",
+        targetId: "land:mercury:planet:",
+        endpointFamily: "land",
+        required: { credits: 2, energy: 6, movementSteps: 4, movementPoints: 4 },
+        gap: { credits: 0, energy: 0, movementSteps: 4 },
+        targetBenefit: { score: 10, grossEquivalentValue: 10 },
+        nextStep: { family: "launch" },
+      }, {
+        requirementId: "launch:orbit:mars",
+        targetId: "orbit:mars:planet:",
+        endpointFamily: "orbit",
+        required: { credits: 3, energy: 5, movementSteps: 3, movementPoints: 3 },
+        gap: { credits: 0, energy: 0, movementSteps: 3 },
+        targetBenefit: { score: 3, grossEquivalentValue: 3 },
+        nextStep: { family: "launch" },
+      }],
+    },
+  };
+  const targetIds = evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId,
+    rootObservation,
+    legalActions: [launch],
+  }).map((target) => target.targetId);
+  assert.deepEqual(
+    targetIds,
+    ["land:mercury:planet:", "land:venus:planet:", "orbit:mars:planet:"],
+    "登陆与环绕应先按正式最短距离/成本做 Pareto，删除更远且收益更差的行星路线",
+  );
+}
+
+{
   const branchObservation = {
     ...observation({
       resources: { credits: 2, energy: 0 },

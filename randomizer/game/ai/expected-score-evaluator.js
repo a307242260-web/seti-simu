@@ -25,7 +25,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v2";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v2";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v11";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v12";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
@@ -791,12 +791,7 @@
     return true;
   }
 
-  function movementPointsFromCardAction(observation, action) {
-    if (action?.family !== "play_card") return 0;
-    const instanceId = action.target?.cardInstanceId;
-    const card = (observation?.selfState?.hand || []).find((candidate) => (
-      String(candidate?.id) === String(instanceId)
-    ));
+  function movementPointsFromCard(card) {
     if (!card || typeof cardEffects?.buildPlayEffects !== "function") return 0;
     return cardEffects.buildPlayEffects(card).reduce((total, effect) => (
       [cardEffects.EFFECT_TYPES.CARD_MOVE, cardEffects.EFFECT_TYPES.FREE_MOVE]
@@ -804,6 +799,15 @@
         ? total + Math.max(1, finite(effect?.options?.movementPoints) || 1)
         : total
     ), 0);
+  }
+
+  function movementPointsFromCardAction(observation, action) {
+    if (action?.family !== "play_card") return 0;
+    const instanceId = action.target?.cardInstanceId;
+    const card = (observation?.selfState?.hand || []).find((candidate) => (
+      String(candidate?.id) === String(instanceId)
+    ));
+    return movementPointsFromCard(card);
   }
 
   function selectProbeMovementCards(observation, goal, actions) {
@@ -814,6 +818,42 @@
         finite(left.payload?.cost?.credits) - finite(right.payload?.cost?.credits)
         || String(left.actionId).localeCompare(String(right.actionId))
       ));
+  }
+
+  function deferredProbeMovementCardCosts(observation, goal, seatId) {
+    if (goal?.nextStep?.family !== "move") return [];
+    const assets = resourceFactsOf(observation, seatId);
+    return (observation?.selfState?.hand || [])
+      .filter((card) => movementPointsFromCard(card) > 0)
+      .map((card) => ({
+        credits: Math.max(0, finite(card.price)),
+        energy: 0,
+        publicity: 0,
+        handSize: 1,
+      }))
+      .filter((cost) => cost.credits <= finite(assets.credits));
+  }
+
+  function resourceCostDominates(left, right) {
+    const keys = ["credits", "energy", "publicity", "handSize"];
+    return keys.every((key) => finite(left?.[key]) <= finite(right?.[key]))
+      && keys.some((key) => finite(left?.[key]) < finite(right?.[key]));
+  }
+
+  function preferDeferredProbeMovementCard(
+    observation,
+    goal,
+    preparation,
+    successors,
+    seatId,
+  ) {
+    const cardCosts = deferredProbeMovementCardCosts(observation, goal, seatId);
+    const endTurn = successors.find((action) => action.family === "end_turn");
+    if (!cardCosts.length || !endTurn) return preparation;
+    const nonDominatedPreparation = preparation.filter((action) => (
+      !cardCosts.some((cost) => resourceCostDominates(cost, action.payload?.cost || {}))
+    ));
+    return [...nonDominatedPreparation, endTurn];
   }
 
   function resourceFactsOf(observation, seatId) {
@@ -1100,12 +1140,17 @@
       });
     }
 
-    const probeGoals = (rawProbeRequirements(input.rootObservation)?.candidates || [])
+    const reachableProbeGoals = (rawProbeRequirements(input.rootObservation)?.candidates || [])
       .filter((goal) => probeGoalResourceReachable(
         input.rootObservation,
         goal,
         input.focalSeatId,
       ));
+    const probeGoals = reachableProbeGoals.filter((goal, index, goals) => (
+      !goals.some((other, otherIndex) => (
+        otherIndex !== index && probeRouteDistanceDominates(other, goal)
+      ))
+    ));
     function probePlanActions(goal) {
       const exact = legalActions.filter((action) => (
         actionMatchesProbeStep(action, goal.nextStep)
@@ -1393,6 +1438,45 @@
       }
     }
     return false;
+  }
+
+  function probeEndpointFamily(goal) {
+    return goal?.endpointFamily || String(goal?.targetId || "").split(":")[0];
+  }
+
+  function probeRouteDistanceDominates(left, right) {
+    if (!left || !right || probeEndpointFamily(left) !== probeEndpointFamily(right)) return false;
+    const leftCost = [
+      finite(left.required?.movementPoints),
+      finite(left.required?.movementSteps),
+      finite(left.required?.credits),
+      finite(left.required?.energy),
+    ];
+    const rightCost = [
+      finite(right.required?.movementPoints),
+      finite(right.required?.movementSteps),
+      finite(right.required?.credits),
+      finite(right.required?.energy),
+    ];
+    const leftBenefit = [
+      finite(left.targetBenefit?.grossEquivalentValue),
+      finite(left.targetBenefit?.score),
+      finite(left.targetBenefit?.incomeCount),
+      finite(left.targetBenefit?.dataCount),
+      finite(left.publicityStops),
+    ];
+    const rightBenefit = [
+      finite(right.targetBenefit?.grossEquivalentValue),
+      finite(right.targetBenefit?.score),
+      finite(right.targetBenefit?.incomeCount),
+      finite(right.targetBenefit?.dataCount),
+      finite(right.publicityStops),
+    ];
+    const noWorse = leftCost.every((value, index) => value <= rightCost[index])
+      && leftBenefit.every((value, index) => value >= rightBenefit[index]);
+    const strictlyBetter = leftCost.some((value, index) => value < rightCost[index])
+      || leftBenefit.some((value, index) => value > rightBenefit[index]);
+    return noWorse && strictlyBetter;
   }
 
   function compareProbeRouteGoals(observation, left, right, seatId) {
@@ -2141,9 +2225,18 @@
             goal,
             successors,
           );
+          const deferredMovement = movementCards.length
+            ? []
+            : preferDeferredProbeMovementCard(
+              input.branchObservation,
+              goal,
+              [],
+              successors,
+              input.focalSeatId,
+            );
           if (exact.length || movementCards.length) {
             return bindRoute(
-              [...exact, ...movementCards],
+              [...exact, ...movementCards, ...deferredMovement],
               input.routeTargetId,
               input.routePlanId,
             );
@@ -2154,7 +2247,17 @@
             successors,
             input.focalSeatId,
           );
-          return bindRoute(preparation, input.routeTargetId, input.routePlanId);
+          return bindRoute(
+            preferDeferredProbeMovementCard(
+              input.branchObservation,
+              goal,
+              preparation,
+              successors,
+              input.focalSeatId,
+            ),
+            input.routeTargetId,
+            input.routePlanId,
+          );
         }
         return [];
       }
@@ -2243,10 +2346,21 @@
         )).filter((action, index, actions) => (
           actions.findIndex((candidate) => candidate.actionId === action.actionId) === index
         ));
+        const deferredDirectMovement = movementCards.length
+          ? []
+          : goals.flatMap((goal) => preferDeferredProbeMovementCard(
+            input.branchObservation,
+            goal,
+            [],
+            successors,
+            input.focalSeatId,
+          )).filter((action, index, actions) => (
+            actions.findIndex((candidate) => candidate.actionId === action.actionId) === index
+          ));
         if (exact.length || movementCards.length) {
           const nextPlanId = `probe:${goals[0].requirementId || goals[0].targetId}`;
           return bindRoute(
-            [...exact, ...movementCards],
+            [...exact, ...movementCards, ...deferredDirectMovement],
             input.routeTargetId,
             nextPlanId,
           );
@@ -2257,9 +2371,20 @@
           successors,
           input.focalSeatId,
         );
-        if (preparation.length) {
-          return bindRoute(
+        const deferredMovement = goals.flatMap((goal) => (
+          preferDeferredProbeMovementCard(
+            input.branchObservation,
+            goal,
             preparation,
+            successors,
+            input.focalSeatId,
+          )
+        )).filter((action, index, actions) => (
+          actions.findIndex((candidate) => candidate.actionId === action.actionId) === index
+        ));
+        if (deferredMovement.length) {
+          return bindRoute(
+            deferredMovement,
             input.routeTargetId,
             `probe:${goals[0].requirementId || goals[0].targetId}`,
           );
