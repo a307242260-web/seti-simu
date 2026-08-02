@@ -184,6 +184,8 @@ assert.match(html, /深空观测/);
 assert.match(html, /科技供应与白色科技/);
 assert.match(html, /blue1/);
 assert.match(html, /数据计算机与扇区/);
+assert.match(html, /id="imageLightbox"/);
+assert.match(html, /closest\("\[data-image-src\]"\)/);
 assert.doesNotMatch(html, /launch:a|move:b|orbit:c/);
 
 console.log("heuristic turn report search trace tests passed");
