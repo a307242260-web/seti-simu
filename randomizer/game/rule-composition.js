@@ -99,69 +99,102 @@
   }
 
   function sanitizeRequirementPlans(requirements, knownCardIds, listKey) {
-    // 调用方 sanitizeHiddenInformationObservation 已 clone 整棵 observation，
-    // 此处直接原地过滤，不再二次克隆。
+    // 输入可能来自 deepFrozen 观测（sanitize 浅重建路径共享），不可原地修改：
+    // 只在真正过滤掉条目时浅重建对象。
     if (!requirements || !Array.isArray(requirements[listKey])) return requirements;
     const filtered = requirements[listKey].filter((entry) => (
       !containsUnknownCardReference(entry, knownCardIds)
     ));
-    if (filtered.length !== requirements[listKey].length) {
-      requirements[listKey] = filtered;
+    if (filtered.length === requirements[listKey].length) return requirements;
+    return { ...requirements, [listKey]: filtered };
+  }
+
+  function maskTechSupplyStacks(techSupply, rootStacks) {
+    if (!techSupply || typeof techSupply !== "object") return techSupply;
+    const stacks = techSupply.stacks || {};
+    let changed = false;
+    const masked = {};
+    for (const [tileId, stack] of Object.entries(stacks)) {
+      if (stack?.bonusId === rootStacks[tileId]?.bonusId) {
+        masked[tileId] = stack;
+        continue;
+      }
+      masked[tileId] = { ...stack, bonusId: null, bonusHidden: true };
+      changed = true;
     }
-    return requirements;
+    return changed ? { ...techSupply, stacks: masked } : techSupply;
+  }
+
+  function maskAlienSlots(aliens, rootSlots) {
+    if (!aliens || typeof aliens !== "object") return aliens;
+    const slots = aliens.slots || [];
+    let changed = false;
+    const masked = slots.map((slot, index) => {
+      if (rootSlots[index]?.revealed || !slot?.revealed) return slot;
+      changed = true;
+      return { ...slot, revealed: false, alienId: null };
+    });
+    return changed ? { ...aliens, slots: masked } : aliens;
   }
 
   function sanitizeHiddenInformationObservation(rootObservation, leafObservation, barrier) {
-    const sanitized = clone(leafObservation);
-    if (!sanitized || typeof sanitized !== "object") return sanitized;
+    // 只浅重建被遮蔽的部分（publicCards/techSupply/aliens/selfState 手牌/requirements），
+    // 其余字段与 deepFrozen 的 leafObservation 共享（只读安全），不再整棵深克隆。
+    if (!leafObservation || typeof leafObservation !== "object") return leafObservation;
     const rootBoard = rootObservation?.publicState?.board || {};
     const knownCardIds = collectKnownCardIds(rootObservation);
-    const board = sanitized.publicState?.board || null;
-    if (board) {
-      board.publicCards = maskUnknownCards(board.publicCards, knownCardIds);
-      const rootTechStacks = rootBoard.techSupply?.stacks || {};
-      for (const [tileId, stack] of Object.entries(board.techSupply?.stacks || {})) {
-        if (stack?.bonusId === rootTechStacks[tileId]?.bonusId) continue;
-        stack.bonusId = null;
-        stack.bonusHidden = true;
-      }
-      const rootAlienSlots = rootBoard.aliens?.slots || [];
-      for (const [index, slot] of (board.aliens?.slots || []).entries()) {
-        if (rootAlienSlots[index]?.revealed || !slot?.revealed) continue;
-        slot.revealed = false;
-        slot.alienId = null;
-      }
-    }
-    const self = sanitized.selfState || null;
+    const board = leafObservation.publicState?.board || null;
+    const sanitized = {
+      ...leafObservation,
+      publicState: leafObservation.publicState ? {
+        ...leafObservation.publicState,
+        pending: null,
+        ...(board ? {
+          board: {
+            ...board,
+            publicCards: maskUnknownCards(board.publicCards, knownCardIds),
+            techSupply: maskTechSupplyStacks(
+              board.techSupply,
+              rootBoard.techSupply?.stacks || {},
+            ),
+            aliens: maskAlienSlots(board.aliens, rootBoard.aliens?.slots || []),
+          },
+        } : {}),
+      } : null,
+      decision: null,
+      informationBoundary: { code: barrier?.code || "hidden_information" },
+    };
+    const self = leafObservation.selfState || null;
     if (self) {
-      for (const key of ["hand", "reservedCards", "privateAlienCards"]) {
-        self[key] = maskUnknownCards(self[key], knownCardIds);
-      }
+      sanitized.selfState = {
+        ...self,
+        hand: maskUnknownCards(self.hand, knownCardIds),
+        reservedCards: maskUnknownCards(self.reservedCards, knownCardIds),
+        privateAlienCards: maskUnknownCards(self.privateAlienCards, knownCardIds),
+      };
     }
-    if (sanitized.publicState) sanitized.publicState.pending = null;
-    sanitized.decision = null;
     sanitized.probeRouteRequirements = sanitizeRequirementPlans(
-      sanitized.probeRouteRequirements,
+      leafObservation.probeRouteRequirements,
       knownCardIds,
       "candidates",
     );
     sanitized.dataAnalyzeRequirements = sanitizeRequirementPlans(
-      sanitized.dataAnalyzeRequirements,
+      leafObservation.dataAnalyzeRequirements,
       knownCardIds,
       "acquisitionPlans",
     );
     sanitized.incomeGainRequirements = sanitizeRequirementPlans(
-      sanitized.incomeGainRequirements,
+      leafObservation.incomeGainRequirements,
       knownCardIds,
       "plans",
     );
     sanitized.techGainRequirements = sanitizeRequirementPlans(
-      sanitized.techGainRequirements,
+      leafObservation.techGainRequirements,
       knownCardIds,
       "plans",
     );
     sanitized.sectorWinRequirements = sanitizeRequirementPlans(
-      sanitized.sectorWinRequirements,
+      leafObservation.sectorWinRequirements,
       knownCardIds,
       "accessSources",
     );
@@ -170,9 +203,16 @@
     const leafStandardScan = (sanitized.sectorWinRequirements?.accessSources || [])
       .find((source) => source?.sourceId === "standard-scan");
     if (rootStandardScan && leafStandardScan) {
-      leafStandardScan.sectorIds = clone(rootStandardScan.sectorIds || []);
+      // 共享冻结观测时 entry 不可原地改 sectorIds，浅重建该 entry
+      const sectorIds = clone(rootStandardScan.sectorIds || []);
+      sanitized.sectorWinRequirements = {
+        ...(sanitized.sectorWinRequirements || {}),
+        accessSources: (sanitized.sectorWinRequirements?.accessSources || [])
+          .map((source) => (source === leafStandardScan
+            ? { ...source, sectorIds }
+            : source)),
+      };
     }
-    sanitized.informationBoundary = { code: barrier?.code || "hidden_information" };
     return sanitized;
   }
 
