@@ -102,6 +102,10 @@ fork 4%。方向：
   - per-submit 全量校验（fail-closed 契约，文档明确保留）——保留；
   - enumerateActions deepFreeze（安全网）——保留；
   - routeActions 构建时 target/payload 克隆——已移除（描述符已冻结，叶时整体克隆）。
+- **最终验证（2026-08-14 晚）**：整局（截断模式）422 决策、四席 30/49/57/47，与
+  规则修复后基线完全一致——全部优化行为中立性成立；整局墙钟 276s（干净机器，无病态决策，
+  此前"13-14s 慢决策"为机器负载假象）；probe median 2128ms；complete 模式仍有 4 个
+  4096 触顶决策（~11s，节点墙待宏步/DP 缓存）。
 - **拓扑缓存漂移修复（commit d367c45/a2568a5）**：整局轨迹对比发现缓存键漏依赖——
   rotation 是对象（`{wheel1Steps..}`）被 `Number()` 成 NaN 导致不同旋转碰撞同键、
   漏 player.id（同盘面不同玩家 sources 不同）、漏火箭上限（orange1+行业被动）。
