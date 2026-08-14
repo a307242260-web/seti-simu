@@ -510,7 +510,9 @@
     function committedProjection(viewer = null) {
       const state = readStoreSnapshot();
       const projected = options.projectState(
-        clone(state),
+        // trusted fork 的 readStoreSnapshot 已返回冻结 committed state，直接引用即可
+        // （projectState 的 spread 新建对象，嵌套引用为冻结只读）；非 trusted 保留克隆隔离。
+        options.allowTrustedForkLifecycle === true ? state : clone(state),
         clone(viewer),
         null,
         { stateVersion: state.meta.stateVersion },
