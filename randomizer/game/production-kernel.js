@@ -346,6 +346,19 @@ function routeRequirementKey(sourceId, choice) {
 // 见 checkpoint/seti-clone-audit-and-remaining-optimizations-20260814.md 方向 B。
 const PROBE_ROUTE_TOPOLOGY_CACHE = new Map();
 const PROBE_ROUTE_TOPOLOGY_CACHE_MAX = 2048;
+// 探测候选结构与扇区胜利需求的结构缓存：两者都只依赖"变化稀少"的公开切片
+// （火箭/旋转/行星标记/科技/alien 痕迹/数据 token/手牌），玩家资源只影响 probe 的
+// resourceGap（每节点便宜地重算）。结构命中时跳过 listOrbitRequirementsAt/
+// buildRewardEffects/getSectorRanking 等昂贵重算。
+const PROBE_STRUCTURE_CACHE = new Map();
+const SECTOR_REQUIREMENTS_CACHE = new Map();
+const REQUIREMENTS_CACHE_MAX = 4096;
+
+function cachePut(cache, key, value) {
+  if (cache.size >= REQUIREMENTS_CACHE_MAX) cache.clear();
+  cache.set(key, value);
+  return value;
+}
 
 function probeRouteTopologyKey(workingState, player, sources, context) {
   const pieces = workingState.pieces || {};
@@ -524,7 +537,28 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     });
   }
 
-  const topology = probeRouteTopology(workingState, player, context, sources);
+  const structureKey = probeStructureKey(workingState, player, context, sources);
+  let structure = PROBE_STRUCTURE_CACHE.get(structureKey);
+  if (!structure) {
+    const topology = probeRouteTopology(workingState, player, context, sources);
+    structure = cachePut(
+      PROBE_STRUCTURE_CACHE,
+      structureKey,
+      Object.freeze(buildProbeCandidateStructures(workingState, player, context, topology, sources)),
+    );
+  }
+  return finalizeProbeRequirements(player, structure);
+}
+
+// 探测候选结构缓存键：拓扑键（火箭/旋转/orange2/火箭上限）+ 行星标记 + 玩家科技 +
+// alien 痕迹（rewardEquivalentValue 的黄色痕迹来源）。玩家资源不入键——只影响
+// resourceGap，由 finalizeProbeRequirements 每节点便宜地重算。
+function probeStructureKey(workingState, player, context, sources) {
+  const topologyKey = probeRouteTopologyKey(workingState, player, sources, context);
+  return `${topologyKey}|P${stableSerialize(workingState.planets)}|T${stableSerialize(player.techState)}|A${stableSerialize(workingState.aliens)}`;
+}
+
+function buildProbeCandidateStructures(workingState, player, context, topology, sources) {
   const candidates = [];
   for (const source of topology.sources) {
     if (!source.coordinate) continue;
@@ -565,11 +599,6 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
         };
         const publicityValue = reach.publicityStops * PROBE_VALUE_POINTS.publicity;
         const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
-        const resourceGap = {
-          credits: Math.max(0, totalCost.credits - Number(player.resources?.credits || 0)),
-          energy: Math.max(0, totalCost.energy - Number(player.resources?.energy || 0)),
-          movementSteps: reach.path.length,
-        };
         const firstMove = reach.path[0] || null;
         const targetId = [
           choice.actionType,
@@ -602,7 +631,6 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             movementSteps: reach.path.length,
             movementPoints: reach.movePoints,
           },
-          gap: resourceGap,
           nextStep: source.launchRequired
             ? { family: "launch" }
             : firstMove
@@ -628,6 +656,26 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
       }
     }
   }
+  return candidates;
+}
+
+function finalizeProbeRequirements(player, structureCandidates) {
+  // 每节点便宜部分：从缓存结构补 resourceGap（资源差）+ 最短路径去重 + 排序。
+  // 与未缓存路径的候选字段/排序完全一致（gap 由 required 与当前资源重算）。
+  const candidates = structureCandidates.map((candidate) => ({
+    ...candidate,
+    gap: {
+      credits: Math.max(
+        0,
+        Number(candidate.required?.credits || 0) - Number(player.resources?.credits || 0),
+      ),
+      energy: Math.max(
+        0,
+        Number(candidate.required?.energy || 0) - Number(player.resources?.energy || 0),
+      ),
+      movementSteps: candidate.required?.movementSteps ?? 0,
+    },
+  }));
   const shortestByRequirement = new Map();
   for (const candidate of candidates) {
     const current = shortestByRequirement.get(candidate.requirementId);
@@ -868,6 +916,16 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
+  // 扇区胜利需求完全无资源依赖（只读 data token/排名/玩家科技/手牌/标准扫描成本）：
+  // 结构键命中时直接共享缓存结果，跳过 listNebulaTokens/getSectorRanking 等每节点重算。
+  const key = `${workingState.meta?.gameId || "?"}:${player.id}:D${stableSerialize(workingState.data)}:T${stableSerialize(player.techState)}:H${stableSerialize(player.hand || [])}`;
+  const cached = SECTOR_REQUIREMENTS_CACHE.get(key);
+  if (cached) return cached;
+  const result = buildSectorWinRequirementsBody(workingState, player);
+  return cachePut(SECTOR_REQUIREMENTS_CACHE, key, result);
+}
+
+function buildSectorWinRequirementsBody(workingState, player) {
   const playerKeys = new Set([player.id, player.color].filter(Boolean).map(String));
   const standardSectorIds = standardScanSectorIds(workingState, player);
   const specialAccess = (player.hand || [])
