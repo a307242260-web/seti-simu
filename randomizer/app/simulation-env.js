@@ -96,7 +96,8 @@ function getWorkingProjection(composition) {
 }
 
 function getTurnState(state) {
-  return clone(state.turn || {});
+  // 调用方只瞬时读取原始字段并复制进新对象，不持有引用，无需克隆
+  return state.turn || {};
 }
 
 function policyOutcomeActions(actions, policyObservation) {

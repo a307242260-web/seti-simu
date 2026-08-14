@@ -86,7 +86,8 @@
       ?? source?.selfState?.id
       ?? source?.perspectivePlayerId;
     if (source?.selfState && String(sourceSelfId) === String(seatId)) {
-      return clone(source.selfState);
+      // source.selfState 由观测构建时 fresh 生成并 deepFreeze，直接复用不再克隆
+      return source.selfState;
     }
     const cards = source?.cards || {};
     return {

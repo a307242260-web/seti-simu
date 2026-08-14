@@ -65,8 +65,10 @@
   }
 
   function normalizeDescriptor(definition, descriptor, authority) {
-    const target = clone(descriptor?.target || null);
-    const payload = clone(descriptor?.payload || {});
+    // family enumerate 每次构建 fresh target/payload（原始字段），enumerateActions
+    // 会 deepFreeze 结果；此处不再防御性克隆，仅保留 decision 克隆（可能为活引用）。
+    const target = descriptor?.target || null;
+    const payload = descriptor?.payload || {};
     const identity = {
       family: definition.family,
       actorId: authority.actorId,

@@ -221,8 +221,10 @@
 
   function formalizeChoices(root, actorId, choices) {
     return (choices || []).map((choice) => {
-      const target = clone(choice.target || null);
-      const payload = clone(choice.payload || {});
+      // choices 由 makeChoice 等每次新建 fresh 对象；session runtime
+      // getDecisionSnapshot 存储时会再 clone，此处不再防御性克隆。
+      const target = choice.target || null;
+      const payload = choice.payload || {};
       const identity = { family: choice.family, actorId, target, payload };
       return {
         schemaVersion: standardAction.SCHEMA_VERSION,

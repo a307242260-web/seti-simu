@@ -470,7 +470,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
             rocketId: source.rocketId,
             planetId: choice.planetId,
             endpointFamily: choice.actionType,
-            endpointTarget: clone(choice.target || { type: "planet" }),
+            endpointTarget: choice.target || { type: "planet" },
             firstRewardSlotOpen: choice.target?.type !== "satellite"
               && Number(choice.markerSequence) === 1,
             targetBenefit: {
@@ -496,7 +496,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
                   family: choice.actionType,
                   rocketId: source.rocketId,
                   planetId: choice.planetId,
-                  target: clone(choice.target || {}),
+                  target: choice.target || {},
                 },
             path: route.path.map((step) => ({ ...step })),
             publicityStops: route.publicityStops,
@@ -929,7 +929,7 @@ function buildIncomeGainRequirements(
       planId: `probe:${candidate.requirementId}`,
       kind: "probe",
       probeRequirementId: candidate.requirementId,
-      nextStep: clone(candidate.nextStep),
+      nextStep: candidate.nextStep,
     });
   }
   const computerSlots = data.listComputerPlacedTokens(player)

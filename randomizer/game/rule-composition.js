@@ -99,12 +99,16 @@
   }
 
   function sanitizeRequirementPlans(requirements, knownCardIds, listKey) {
-    const sanitized = clone(requirements);
-    if (!sanitized || !Array.isArray(sanitized[listKey])) return sanitized;
-    sanitized[listKey] = sanitized[listKey].filter((entry) => (
+    // 调用方 sanitizeHiddenInformationObservation 已 clone 整棵 observation，
+    // 此处直接原地过滤，不再二次克隆。
+    if (!requirements || !Array.isArray(requirements[listKey])) return requirements;
+    const filtered = requirements[listKey].filter((entry) => (
       !containsUnknownCardReference(entry, knownCardIds)
     ));
-    return sanitized;
+    if (filtered.length !== requirements[listKey].length) {
+      requirements[listKey] = filtered;
+    }
+    return requirements;
   }
 
   function sanitizeHiddenInformationObservation(rootObservation, leafObservation, barrier) {
@@ -194,7 +198,9 @@
         filteredCount += 1;
         continue;
       }
-      const descriptor = clone(action);
+      const descriptor = unknownCard && identityIndependentCardUse
+        ? clone(action)
+        : action;
       if (unknownCard && identityIndependentCardUse) {
         if (descriptor.target) {
           if (descriptor.target.cardInstanceId != null) {
