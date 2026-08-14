@@ -50,9 +50,15 @@
       `totalTargetSchedulerPrunedCount`），10 次触 4096 上限、**13 次超 10s**（最大 23.8s）、
       剩余 frontier 合计 7780；四席 57/49/49/41（均 49），median 133ms / p90 975ms。
       即当前“高效”截断模式本身已违反 10s 门禁。
-- [ ] B3a-only 全量测量（后台运行中）。
-- [ ] B3a+B1（`--complete`）全量测量：预期目标目录全开后的真实膨胀（08-02 实验为
-      4096 触顶 / 884 剩余 frontier / 10.5s）。
+- [x] B1 完整目标目录（`--complete`，45 决策采样）：**`targetSchedulerPrunedCount=0`
+      （完备性达成）**，但 4/17 搜索决策触 4096 上限（剩余 frontier 734-818）、4 个超 10s
+      （16.2-17.0s）；单决策 median 99ms / p90 4241ms；completedGoalTransitions 2741。
+      与 08-02 完整尾部实验（4096 触顶 / 884 剩余）一致。
+- [x] 修复：`completeTargetCatalog` 原本只传到第一处 `selectSuccessors` 调用点，第二处
+      （深度推进路径）未传导致开关失效（`c1a9e2e`）。
+- [ ] B3a-only 全量测量：B3a+规则修复后晚盘病态慢（全量 >70min 未完成），早中期 120 决策
+      40s 正常；晚盘慢是已知“必须高效化”的独立证据。
+- [ ] 完整局 `--complete` 测量（预计 40-60 min，待高效化后更有意义）。
 
 ### Phase 2 结构候选 A：确定性资源缺口宏步
 
