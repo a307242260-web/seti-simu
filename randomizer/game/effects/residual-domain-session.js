@@ -1517,20 +1517,21 @@
         });
       },
     });
+    const finalMarkChoices = (state, effect, context) => {
+      const root = getRoot(state, context);
+      const player = actor(root, effect.ownerId);
+      if (!player) return [];
+      return formalize(root, player.id, finalScoring.DEFAULT_TILE_IDS.flatMap((tileId) => (
+        finalScoring.canMarkTile(root.finalScoring, tileId, player).ok
+          ? [choice("choose_target", `final:${tileId}`, { tileId }, {}, `标记 ${tileId.toUpperCase()}`)]
+          : []
+      )));
+    };
     runtime.registerExecutor(EFFECT_TYPES.FINAL_MARK, {
-      getLegalChoices(state, effect, context) {
-        const root = getRoot(state, context);
-        const player = actor(root, effect.ownerId);
-        if (!player) return [];
-        return formalize(root, player.id, finalScoring.DEFAULT_TILE_IDS.flatMap((tileId) => (
-          finalScoring.canMarkTile(root.finalScoring, tileId, player).ok
-            ? [choice("choose_target", `final:${tileId}`, { tileId }, {}, `标记 ${tileId.toUpperCase()}`)]
-            : []
-        )));
-      },
+      getLegalChoices: finalMarkChoices,
       resolveDecision(state, effect, selected, context) {
         const root = getRoot(state, context);
-        const legal = this.getLegalChoices(state, effect, context)
+        const legal = finalMarkChoices(state, effect, context)
           .find((candidate) => candidate.actionId === selected?.actionId);
         const player = actor(root, effect.ownerId);
         if (!legal || !player) return fail("FINAL_MARK_STALE", "终局标记 Decision 已失效");

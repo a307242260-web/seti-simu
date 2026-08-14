@@ -6,19 +6,21 @@
   let heuristicEvaluator = root.SetiHeuristicEvaluator;
   let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
   let outcomeModel = root.SetiOutcomeModel;
+  let endGameScoring = root.SetiEndGameScoring;
 
-  if ((!policyPort || !standardAction || !heuristicEvaluator || !expectedScoreEvaluator || !outcomeModel) && typeof require === "function") {
+  if ((!policyPort || !standardAction || !heuristicEvaluator || !expectedScoreEvaluator || !outcomeModel || !endGameScoring) && typeof require === "function") {
     policyPort = policyPort || require("./policy-port");
     standardAction = standardAction || require("../actions/standard-action");
     heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
     expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
     outcomeModel = outcomeModel || require("./outcome-model");
+    endGameScoring = endGameScoring || require("../end-game-scoring");
   }
 
-  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel);
+  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiHeuristicPolicy = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";
@@ -163,6 +165,64 @@
       ))[0] || null;
   }
 
+  // 终局计分标记决策（FINAL_MARK）：legal actions 全为 choose_target + tileId(a/b/c/d) 时，
+  // 按各板块公式 baseValue × 下一槽位倍率直接打分选最优瓦片。板块变体/标记/玩家公开
+  // 数据均可从观测读取，不依赖反事实搜索。
+  function selectFinalMarkAction(context) {
+    const legalActions = context.legalActions || [];
+    if (!legalActions.length) return null;
+    const isFinalMarkDecision = legalActions.every((action) => (
+      action.family === "choose_target"
+      && /^[a-d]$/.test(String(action.target?.tileId || ""))
+    ));
+    if (!isFinalMarkDecision) return null;
+    const observation = context.observation;
+    const seatId = String(context.seatId || "");
+    const players = observation?.publicState?.players || [];
+    const player = players.find((candidate) => (
+      String(candidate.playerId || candidate.color || "") === seatId
+    ));
+    if (!player) return legalActions[0];
+    const board = observation?.publicState?.board || {};
+    const finalScoring = board.finalScoring || {};
+    const tiles = finalScoring.tiles || {};
+    const variants = finalScoring.tileVariants || {};
+    const playerForFormula = {
+      ...player,
+      // 公式 c2 需要 type3 卡（保留区），从 selfState 补
+      reservedCards: observation?.selfState?.reservedCards || [],
+    };
+    const formulaContext = {
+      aliens: board.aliens || {},
+      planets: board.planets || {},
+      data: board.data || {},
+    };
+    const getCardTypeCode = (card) => Number(card?.cardTypeCode);
+    let best = null;
+    for (const action of legalActions) {
+      const tileId = String(action.target?.tileId || "");
+      const tile = tiles[tileId] || {};
+      const marks = Array.isArray(tile?.marks) ? tile.marks : [];
+      const nextSlot = !marks.some((mark) => Number(mark?.slotIndex) === 1) ? 1
+        : !marks.some((mark) => Number(mark?.slotIndex) === 2) ? 2 : 3;
+      const formulaId = endGameScoring.getFormulaId(tileId, variants[tileId]);
+      const baseValue = Number(endGameScoring.getFormulaBaseValue(
+        formulaId,
+        playerForFormula,
+        formulaContext,
+        { getCardTypeCode },
+      ) || 0);
+      const multiplier = Number(endGameScoring.getSlotMultiplier(formulaId, nextSlot) || 0);
+      const score = baseValue * multiplier;
+      if (!best || score > best.score || (
+        score === best.score && action.actionId < best.action.actionId
+      )) {
+        best = { action, score };
+      }
+    }
+    return best?.action || legalActions[0];
+  }
+
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const evaluationParameters = expectedScoreEvaluator.mergeParameters(options.evaluationParameters);
@@ -184,11 +244,13 @@
     });
     function decide(context) {
       const setupSelection = selectInitialSetupAction(context);
-      assertContext(context, { skipOutcomeValidation: Boolean(setupSelection) });
-      const evaluatedSelection = setupSelection || heuristicEvaluator.selectLegalAction(context, {
-        evaluateAction,
-        isFeasible: isObservationFeasible,
-      });
+      const finalMarkSelection = selectFinalMarkAction(context);
+      assertContext(context, { skipOutcomeValidation: Boolean(setupSelection || finalMarkSelection) });
+      const evaluatedSelection = setupSelection || finalMarkSelection
+        || heuristicEvaluator.selectLegalAction(context, {
+          evaluateAction,
+          isFeasible: isObservationFeasible,
+        });
       const selected = evaluatedSelection || selectControlFallbackAction(context);
       if (!selected) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_SELECTION", "Heuristic Policy 未能选择 legal descriptor");

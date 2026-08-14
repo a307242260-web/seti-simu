@@ -17,6 +17,7 @@ const {
 const outcomeModel = require("../game/ai/outcome-model");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const endGameScoring = require("../game/end-game-scoring");
+const finalScoring = require("../game/final-scoring");
 const cardEffects = require("../game/cards/effects");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
@@ -618,7 +619,11 @@ function createSimulationEnv() {
       const postActions = this.legalActions();
       const observation = observeWithActions(undefined, postActions);
       lastObservation = observation;
-      const reward = rewardBetween(beforeObservation, observation, actorPlayerId, actions, postActions);
+      // reward 的 viewer 必须用提交动作 owner 的席位：终局标记序列中
+      // beforeObservation.decision.actorPlayerId 可能为 undefined（标记决策的 decision
+      // 描述来自 session），且 next decision 属于其他玩家，直接用 action 的 owner。
+      const rewardSeatId = action.actorPlayerId || actorPlayerId;
+      const reward = rewardBetween(beforeObservation, observation, rewardSeatId, actions, postActions);
       const journal = result.journal || composition.inspect().session?.journal || null;
       const replayEvent = {
         stepIndex: replaySteps.length,
@@ -648,7 +653,36 @@ function createSimulationEnv() {
 
     isTerminal() {
       assertUsable();
-      return Boolean(getTurnState(getWorkingProjection(composition)).gameEnded);
+      const state = getWorkingProjection(composition);
+      const turn = getTurnState(state);
+      if (!turn.gameEnded) return false;
+      // 游戏结束后仍要继续处理终局计分标记（FINAL_MARK 决策）：终局板块是重要分源，
+      // 必须等 finalScoringSettled（或没有待标记玩家）才算真正终局，否则标记永远不
+      // 被放置、板块计分恒为 0。
+      if (state.match?.finalScoringSettled === true) return true;
+      const finalScoringSlice = state.finalScoring;
+      if (!(finalScoringSlice && typeof finalScoringSlice === "object"
+        && finalScoringSlice.tiles && Array.isArray(finalScoringSlice.thresholds))) {
+        return true;
+      }
+      // 只读待标记判定（getPendingMarksForPlayer 内部 ensure 会写冻结 committed 状态）：
+      // 分数达到 [25,50,70] 阈值且未在任意板块认领过该阈值的玩家视为有待标记。
+      const thresholds = finalScoringSlice.thresholds;
+      const marks = Object.values(finalScoringSlice.tiles || {})
+        .flatMap((tile) => (Array.isArray(tile?.marks) ? tile.marks : []));
+      const players = state.players?.players || [];
+      const hasPendingFinalMarks = players.some((player) => {
+        const playerId = player?.id || player?.color || null;
+        if (!playerId) return false;
+        const score = Number(player?.resources?.score) || 0;
+        const claimed = new Set(marks
+          .filter((mark) => mark?.playerId === playerId || mark?.playerColor === playerId)
+          .map((mark) => Number(mark?.threshold)));
+        return thresholds.some((threshold) => (
+          score >= Number(threshold) && !claimed.has(Number(threshold))
+        ));
+      });
+      return !hasPendingFinalMarks;
     },
 
     getDiagnostics() {

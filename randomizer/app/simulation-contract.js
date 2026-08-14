@@ -211,6 +211,8 @@ function sanitizeFinalScoringState(state) {
   return compactObject({
     tiles: clone(state.tiles || state.boards || []),
     marks: clone(state.marks || state.playerMarks || {}),
+    // 板块变体（1/2）决定公式（a1 vs a2），是公开盘面信息，策略选择终局标记时需要。
+    tileVariants: clone(state.tileVariants || {}),
   });
 }
 
