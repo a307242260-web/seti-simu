@@ -1889,9 +1889,12 @@
           }
           const nextInspection = composition.inspect();
           const awaitingDecision = nextInspection.phase === "awaiting_input";
+          // 信任 enumerateActions 已返回 fresh deepFreeze 结果，不再二次 clone
+          // （trusted fork 路径 enumerateActions 内部不做 state clone，返回即冻结；
+          //   sanitizeHiddenInformationActions 需要变更时会自行 clone）。
           let successors = awaitingDecision
             ? clone(nextInspection.session?.decision?.choices || [])
-            : clone(composition.inputPort.enumerateActions({}));
+            : composition.inputPort.enumerateActions({});
           const hiddenBarrier = isHiddenInformationBarrier(result.irreversibleBarrier)
             ? result.irreversibleBarrier
             : isHiddenInformationBarrier(nextInspection.session?.irreversibleBarrier)
