@@ -367,8 +367,9 @@
           ? result
           : fail("RULE_COMPOSITION_ACTION_EXECUTION_FAILED", "Standard Action execute() 未返回成功结果");
       }
-      lastActionResult = clone(result);
-      return { ...clone(result), nextState };
+      const clonedResult = clone(result);
+      lastActionResult = clonedResult;
+      return { ...clonedResult, nextState };
     }
 
     function publish(event) {
