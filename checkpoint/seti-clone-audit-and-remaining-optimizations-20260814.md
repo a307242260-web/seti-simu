@@ -32,6 +32,15 @@
 | normalizeResultArray/normalizeEffect（~22k） | effect 队列稳定性 |
 | sectorWinRequirements wins（~4.3k） | 脱离活状态（移除外层克隆后内层必需） |
 
+## 已完成的优化（2026-08-14 晚）
+
+- 克隆：67 万 → 31.5 万次/决策（-53%），全部行为逐项不变；
+- 稳定基准（benchmark_probe_policy 12 次）：**3625ms → 2387ms（-34%）**；
+- complete 决策 #28：wall 13.7s → 12.1s；projection 分项 5150 → 3221ms（-37%）；
+- **拓扑 requirement 缓存**（方向 B，已实现）：BFS 可达性按
+  （gameId + 太阳系旋转 + 全火箭占位 + 玩家 orange2）缓存，quick_trade/place_data 链上
+  火箭未移动时只重算资源缺口；projection 分项 -35%（commit 后投影 865→575ms）。
+
 ## 剩余两个大头（设计级改动，均无损）
 
 ### A. 观测生命周期重构（目标：消除 ~100k 观测克隆 + 每节点每玩家终局计分）
@@ -47,17 +56,13 @@ selectSuccessors/branch priority 瞬时读取，不跨节点持有。
 风险：冻结语义变化（观测可被变更/陈旧）；叶存储点（addLeaf/addFrontierLeaf/origin
 rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 
-### B. 拓扑 requirement 缓存（目标：消除 solar-core ~15% 路径搜索）
+### C. 编排开销（新发现：complete 决策 orchestration 3314ms，反超 projection 成最大分项）
 
-现状：`buildProbeRouteRequirements` 每节点对每个火箭做太阳系网格 BFS 路径搜索；
-quick_trade/place_data 链上火箭未移动时路线完全相同，只资源缺口变化。
+现状：搜索循环每节点重建 origin 的 chain/routeActions/goalTrace 数组并深拷贝；
+`routeResultTargetIds` 等数组逐 origin 克隆（6.4k 次/决策）。
 
-方案：按（火箭坐标 + 太阳系旋转 + 玩家 + 游戏身份）缓存"无缺口候选拓扑"
-（planetId、path、movePoints、totalCost、rewards），每节点只重算 resourceGap
-并 spread 新候选（共享嵌套字段，已冻结只读）。
-
-风险：缓存键正确性（火箭移动/旋转/游戏身份都入键）；跨决策缓存需含游戏身份防污染；
-每节点 spread 候选的开销 vs 路径搜索的收益需实测。
+方案：origin 记账改共享不可变结构（chain 用持久化链表或共享前缀）；只在变更时新建
+小数组；`routeResultTargetIds` 用冻结共享数组（从不修改时）。
 
 ## 决策点
 
