@@ -1767,6 +1767,23 @@
         });
       }
 
+      function fullLeafObservation(origin, fallback) {
+        // 叶观测必须完整（评估器读 aliens/rockets、报告 winning state 读完整 board）；
+        // 中间观测是 cheap，这里从 fork 当前状态重建完整观测并按需遮蔽。
+        try {
+          const fullProjection = composition.projection(viewer).state;
+          return origin.informationMasked
+            ? sanitizeHiddenInformationObservation(
+              rootObservation,
+              fullProjection,
+              origin.informationBarrier || null,
+            )
+            : fullProjection;
+        } catch (_error) {
+          return fallback;
+        }
+      }
+
       function addLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
         const state = outcomeStateByActionId.get(origin.rootAction.actionId);
         const rootKey = virtualRootKey(origin);
@@ -1776,6 +1793,7 @@
           return;
         }
         leafCountByVirtualRoot.set(rootKey, leafCount + 1);
+        const fullObservation = fullLeafObservation(origin, leafObservation);
         state.leaves.push({
           leafId: `leaf:${stableHash([
             origin.rootRouteTargetId || null,
@@ -1786,7 +1804,9 @@
             ? "settled"
             : nextInspection.phase,
           actionChain: secondaryAgentSearch ? origin.chain : clone(origin.chain),
-          observation: secondaryAgentSearch ? leafObservation : clone(leafObservation),
+          observation: secondaryAgentSearch
+            ? fullObservation
+            : clone(fullObservation),
           legalSuccessors: secondaryAgentSearch ? successors : clone(successors),
           routeCheckpoints: secondaryAgentSearch ? [] : clone(nextCheckpoints),
           ...(secondaryAgentSearch ? {
@@ -1809,11 +1829,12 @@
       function addFrontierLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
         const state = outcomeStateByActionId.get(origin.rootAction.actionId);
         if (!state) return;
+        const fullObservation = fullLeafObservation(origin, leafObservation);
         const leaf = {
           leafId: `frontier:${stableHash(origin.chain)}`,
           status: "search_frontier",
           actionChain: origin.chain,
-          observation: leafObservation,
+          observation: fullObservation,
           legalSuccessors: successors,
           routeCheckpoints: [],
           secondaryAgentDepth: origin.proxyDepth || 0,
@@ -1963,7 +1984,11 @@
             hiddenInformationFilteredActionCount += filtered.filteredCount;
           }
           const projectionStartedAt = now();
-          const projectedObservation = composition.projection(viewer).state;
+          // 中间节点观测用 cheap 模式（跳过 planets/data/solarSystem/finalScoring 克隆，
+          // 只含 requirements/资源/rockets/aliens/公共牌/科技）；完整观测在叶形成时重建。
+          const projectedObservation = composition.projection(
+            viewer ? { ...viewer, cheap: true } : null,
+          ).state;
           const leafObservation = informationMasked
             ? sanitizeHiddenInformationObservation(
               rootObservation,
@@ -2012,6 +2037,7 @@
             branchPriority,
             childEnvelope: childSaved?.envelope || null,
             informationMasked,
+            hiddenBarrier,
           };
         } catch (error) {
           return {
@@ -2291,6 +2317,9 @@
             origin.informationMasked = Boolean(
               origin.informationMasked || execution.informationMasked,
             );
+            if (execution.informationMasked && !origin.informationBarrier) {
+              origin.informationBarrier = execution.hiddenBarrier || null;
+            }
             if (!origin.rootActionObservation && origin.chain.length === 0) {
               origin.rootActionObservation = execution.leafObservation;
               origin.rootActionLegalSuccessors = execution.successors;
@@ -2353,8 +2382,10 @@
               ...(currentIsFocal && currentIsRouteAction ? [{
                 actionId: current.actionId,
                 family: current.family,
-                target: clone(current.target || {}),
-                payload: clone(current.payload || {}),
+                // 描述符 target/payload 已冻结或本节点私有，叶物化（secondaryAgentTrace
+                // clone）时才会复制，这里不再重复克隆。
+                target: current.target || {},
+                payload: current.payload || {},
               }] : []),
             ];
             const nextTargetRouteActions = [

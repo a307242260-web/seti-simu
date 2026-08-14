@@ -186,13 +186,16 @@ function buildDecision(api, legalActions) {
   };
 }
 
-function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
+function buildObservation(state, seed, viewerPlayerId, legalActions = [], options = {}) {
   const turn = getTurnState(state);
   const playersState = state.players || { players: [] };
   const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorPlayerId || turn.currentPlayerId || null;
   const decision = buildDecisionFromState(state, legalActions);
   const setup = state.match?.initialSetup || null;
   const setupCurrentPlayerId = setup?.currentPlayerId || null;
+  // cheap：搜索中间节点只需 requirements/资源/rockets/aliens/公共牌/科技（遮蔽所需），
+  // 跳过 planets/data/solarSystem/finalScoring 克隆；完整观测只在叶/根/宿主构建。
+  const cheap = options.cheap === true;
   return {
     schemaVersion: OBSERVATION_SCHEMA_VERSION,
     seed: seed ?? null,
@@ -225,14 +228,16 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       }),
       board: {
         rockets: clone(state.pieces?.rockets || []),
-        planets: clone(state.planets || {}),
-        data: clone(state.data || {}),
-        solarSystem: clone(state.solarSystem || {}),
+        ...(cheap ? {} : {
+          planets: clone(state.planets || {}),
+          data: clone(state.data || {}),
+          solarSystem: clone(state.solarSystem || {}),
+          finalScoring: sanitizeFinalScoringState(state.finalScoring),
+        }),
         publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
         discardCount: (state.cards?.discardPile || []).length,
         techSupply: sanitizeTechSupply(state.tech),
         aliens: sanitizeAlienPublicState(state.aliens),
-        finalScoring: sanitizeFinalScoringState(state.finalScoring),
       },
       resident: {
         initialSetup: {
@@ -482,6 +487,7 @@ function createSimulationEnv() {
           seed,
           viewer?.playerId || null,
           [],
+          { cheap: viewer?.cheap === true },
         ),
       });
       composition = kernel.composition;
