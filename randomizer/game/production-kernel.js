@@ -347,7 +347,7 @@ function routeRequirementKey(sourceId, choice) {
 const PROBE_ROUTE_TOPOLOGY_CACHE = new Map();
 const PROBE_ROUTE_TOPOLOGY_CACHE_MAX = 2048;
 
-function probeRouteTopologyKey(workingState, player, sources) {
+function probeRouteTopologyKey(workingState, player, sources, context) {
   const pieces = workingState.pieces || {};
   const rocketSignatures = (pieces.rockets || []).map((rocket) => {
     const coordinate = rockets.getRocketSectorCoordinate(rocket);
@@ -355,11 +355,14 @@ function probeRouteTopologyKey(workingState, player, sources) {
   }).sort().join("|");
   const rotation = Number(workingState.solarSystem?.rotation ?? 0);
   const orange2 = players.playerOwnsTech(player, "orange2") ? 1 : 0;
-  return `${workingState.meta?.gameId || "?"}:${rotation}:${rocketSignatures}:${orange2}`;
+  // sources 依赖火箭上限（orange1 + 行业被动）与活跃火箭数，必须入键，否则科技变化后
+  // 缓存的发射源过期（行为漂移）。
+  const rocketLimit = rocketAbility.getRocketLimitForPlayer(player, context);
+  return `${workingState.meta?.gameId || "?"}:${rotation}:${rocketSignatures}:${orange2}:${rocketLimit}`;
 }
 
 function probeRouteTopology(workingState, player, context, sources) {
-  const key = probeRouteTopologyKey(workingState, player, sources);
+  const key = probeRouteTopologyKey(workingState, player, sources, context);
   const cached = PROBE_ROUTE_TOPOLOGY_CACHE.get(key);
   if (cached) return cached;
   const reachableBySource = new Map();
