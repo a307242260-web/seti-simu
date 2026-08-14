@@ -87,6 +87,7 @@ function buildOptions() {
     boardId,
     outputPath,
     detail: argv.includes("--detail"),
+    complete: argv.includes("--complete"),
   };
 }
 
@@ -213,6 +214,7 @@ function runFullGame(options) {
     const initialObservation = env.reset({
       ...FIXED_BOARD_CONFIG,
       ...(options.seed ? { seed: options.seed } : {}),
+      ...(options.complete ? { completeTargetCatalog: true } : {}),
     });
     const playerLabels = Object.fromEntries(
       (initialObservation.publicState?.players || []).map((player) => [
@@ -305,6 +307,7 @@ function runReplay(options) {
     const initialObservation = env.reset({
       ...FIXED_BOARD_CONFIG,
       ...(options.seed ? { seed: options.seed } : {}),
+      ...(options.complete ? { completeTargetCatalog: true } : {}),
     });
     let decisionCount = 0;
     for (const step of recorded) {

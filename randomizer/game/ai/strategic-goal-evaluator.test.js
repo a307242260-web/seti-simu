@@ -1224,8 +1224,8 @@ function observation({
       routeTargetId: "income:gain:3,2,0,0,1,0",
       routePlanId: "income:data:computer-slot-4",
     }).map((candidate) => candidate.actionId),
-    [endPublicScan.actionId],
-    "已有两数据可填完第3、4格时必须结束公共牌扫描，不能消耗额外标记再扫一张",
+    [publicSector1.actionId],
+    "已有两数据可填完第3、4格时不再强制结束公共牌扫描（B3a），落入通用扇区收敛只保留代表放置",
   );
   const incomeDataWithScoringScan = {
     ...incomeDataReady,

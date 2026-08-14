@@ -2316,11 +2316,9 @@
                 input.routePlanId,
               );
             }
-            return bindRoute(
-              [publicScanDone],
-              input.routeTargetId,
-              input.routePlanId,
-            );
+            // B3a（2026-08-14 用户裁决）：数据已足够且没有立即得分/结算放置时，
+            // 不再强制"结束公共牌扫描"，落入下方通用扇区逻辑继续放置
+            // （仍遵守扇区代表收敛，不展开全部 牌×扇区 组合）。
           }
         }
         if (String(input.routeTargetId || "").startsWith("tech:gain:")) {
