@@ -2500,6 +2500,8 @@
                     routePlanId,
                     routeResultTargetIds: origin.routeResultTargetIds || [],
                     maxProxyDepth,
+                    completeTargetCatalog:
+                      secondaryAgentSearch.completeTargetCatalog === true,
                   }) || [];
                 } catch (error) {
                   markFailure([origin], {

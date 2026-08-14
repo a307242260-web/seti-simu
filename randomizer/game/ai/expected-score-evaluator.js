@@ -2137,7 +2137,11 @@
             target.planId,
           ];
         }
-        const scheduledCatalog = input.focalProxyDepth > 0 && targetCatalog.length
+        const scheduledCatalog = (
+          input.focalProxyDepth > 0
+          && targetCatalog.length
+          && input.completeTargetCatalog !== true
+        )
           ? [[...targetCatalog].sort((left, right) => {
             const leftKey = targetResourceLowerBound(left);
             const rightKey = targetResourceLowerBound(right);

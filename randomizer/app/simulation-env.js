@@ -303,6 +303,7 @@ function createSimulationEnv() {
         focalSeatId: seatId,
         maxProxyDepth: options.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
+        completeTargetCatalog: options.completeTargetCatalog === true,
         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
@@ -446,6 +447,7 @@ function createSimulationEnv() {
         compactReplay: resetConfig.compactReplay === true,
         traceCounterfactualGoalClusters:
           resetConfig.traceCounterfactualGoalClusters === true,
+        completeTargetCatalog: resetConfig.completeTargetCatalog === true,
       };
       replaySteps = [];
       environmentEvents = [];
@@ -711,6 +713,8 @@ function createSimulationEnv() {
           maxLeaves: initialSetupBoundary ? 1 : 8,
           maxNodes: initialSetupBoundary ? 12 : 128,
           secondaryAgentSearch: !initialSetupBoundary,
+          completeTargetCatalog: !initialSetupBoundary
+            && config.completeTargetCatalog === true,
           traceGoalClusters: !initialSetupBoundary
             && config.traceCounterfactualGoalClusters,
           maxProxyDepth: 15,
