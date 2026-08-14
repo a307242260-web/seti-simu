@@ -1894,20 +1894,30 @@
           });
           const composition = fork?.composition || fork;
           if (reusableFork) {
+            // 分支 RNG 必须始终重置到本 (envelope,action) 的种子（链上的精选/补牌消耗随机）。
             reusableFork.resetBranch?.(branchIdentity);
-            const restored = composition.lifecycle.restore(node.envelope, {
-              silent: true,
-              inPlace: true,
-              trustedFork: true,
-              trustedState: getTrustedState(node.envelope),
-              skipProjection: true,
-            });
-            if (!restored?.ok) {
-              return {
-                failed: true,
-                code: restored?.code || "COUNTERFACTUAL_FORK_RESTORE_FAILED",
-                message: restored?.message || null,
-              };
+            // 宏步优化：若 fork 已精确处于 node.envelope 对应的状态（同引用，来自上一步
+            // childEnvelope）且上一步未等待输入（确定性链继续），跳过 restore/deserialize；
+            // 状态与 session 完全一致时恢复是无操作，省去每步全量反序列化。
+            const forkAlreadyAtState = (
+              node.envelope === lastForkEnvelope
+              && lastExecutionAwaitingDecision === false
+            );
+            if (!forkAlreadyAtState) {
+              const restored = composition.lifecycle.restore(node.envelope, {
+                silent: true,
+                inPlace: true,
+                trustedFork: true,
+                trustedState: getTrustedState(node.envelope),
+                skipProjection: true,
+              });
+              if (!restored?.ok) {
+                return {
+                  failed: true,
+                  code: restored?.code || "COUNTERFACTUAL_FORK_RESTORE_FAILED",
+                  message: restored?.message || null,
+                };
+              }
             }
           }
           timing.forkMilliseconds += now() - forkStartedAt;
@@ -2027,6 +2037,9 @@
           if (childSaved && !childSaved.ok) {
             return { failed: true, code: childSaved.code || "COUNTERFACTUAL_BRANCH_SAVE_FAILED" };
           }
+          // 宏步：记录 fork 现处 envelope 与是否等待输入，供下个节点跳过冗余 restore。
+          lastForkEnvelope = childSaved?.envelope || null;
+          lastExecutionAwaitingDecision = awaitingDecision;
           return {
             ok: true,
             current,
@@ -2192,6 +2205,10 @@
       function consumesSearchBudget(node) {
         return !secondaryAgentSearch && Boolean(node?.action);
       }
+
+      // 宏步：跟踪最后一次执行后 fork 所处 envelope 与是否等待输入，用于跳过冗余 restore。
+      let lastForkEnvelope = null;
+      let lastExecutionAwaitingDecision = null;
 
       while (frontier.length && executedNodeCount < maxExecutionNodes) {
         const sorted = secondaryAgentSearch ? null : [...frontier].sort(compareNodes);
