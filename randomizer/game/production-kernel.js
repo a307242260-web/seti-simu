@@ -353,18 +353,25 @@ function probeRouteTopologyKey(workingState, player, sources, context) {
     const coordinate = rockets.getRocketSectorCoordinate(rocket);
     return `${rocket.id}:${coordinate?.x ?? "?"},${coordinate?.y ?? "?"}:${rocket.surface || ""}`;
   }).sort().join("|");
-  const rotation = Number(workingState.solarSystem?.rotation ?? 0);
+  // rotation 是 {wheel1Steps..wheel4Steps,rotationCount} 对象，Number() 会得 NaN 导致
+  // 不同旋转碰撞同一缓存键；必须把各轮步数序列化入键。
+  const rotation = workingState.solarSystem?.rotation || {};
+  const rotationKey = [
+    rotation.wheel1Steps ?? "",
+    rotation.wheel2Steps ?? "",
+    rotation.wheel3Steps ?? "",
+    rotation.wheel4Steps ?? "",
+    rotation.rotationCount ?? "",
+  ].join(",");
   const orange2 = players.playerOwnsTech(player, "orange2") ? 1 : 0;
   // sources 依赖火箭上限（orange1 + 行业被动）与活跃火箭数，必须入键，否则科技变化后
   // 缓存的发射源过期（行为漂移）。
   const rocketLimit = rocketAbility.getRocketLimitForPlayer(player, context);
-  return `${workingState.meta?.gameId || "?"}:${rotation}:${rocketSignatures}:${orange2}:${rocketLimit}`;
+  // player.id 必须入键：同盘面下不同玩家的 sources（谁的火箭/是否可发射）不同
+  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${rocketLimit}`;
 }
 
-function probeRouteTopology(workingState, player, context, sources) {
-  const key = probeRouteTopologyKey(workingState, player, sources, context);
-  const cached = PROBE_ROUTE_TOPOLOGY_CACHE.get(key);
-  if (cached) return cached;
+function buildTopologyBody(workingState, player, context, sources) {
   const reachableBySource = new Map();
   for (const source of sources) {
     if (!source.coordinate) continue;
@@ -456,7 +463,16 @@ function probeRouteTopology(workingState, player, context, sources) {
     }
     reachableBySource.set(source.sourceId, reachable);
   }
-  const topology = Object.freeze({ sources, reachableBySource });
+  return { sources, reachableBySource };
+}
+
+function probeRouteTopology(workingState, player, context, sources) {
+  const key = probeRouteTopologyKey(workingState, player, sources, context);
+  const cached = PROBE_ROUTE_TOPOLOGY_CACHE.get(key);
+  if (cached) {
+    return cached;
+  }
+  const topology = Object.freeze(buildTopologyBody(workingState, player, context, sources));
   if (PROBE_ROUTE_TOPOLOGY_CACHE.size >= PROBE_ROUTE_TOPOLOGY_CACHE_MAX) {
     PROBE_ROUTE_TOPOLOGY_CACHE.clear();
   }
