@@ -303,10 +303,8 @@
   }
 
   function isIndustryActionMarkedThisRound(player, roundNumber, turnNumber = 1) {
-    const state = ensurePlayerIndustryState(player);
-    if (!state) return false;
     const round = normalizeRoundNumber(roundNumber);
-    return state.industryRoundMarkRound === round
+    return Number(player?.industryRoundMarkRound) === round
       && round > 0;
   }
 

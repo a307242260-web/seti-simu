@@ -695,9 +695,7 @@
     function enumerateActions(request = {}) {
       const state = activeSession ? activeSession.workingState : readStoreSnapshot();
       const workingContext = actionContext(
-        options.allowTrustedForkLifecycle === true && activeSession
-          ? state
-          : clone(state),
+        options.allowTrustedForkLifecycle === true ? state : clone(state),
       );
       const actions = runWithWorkingStateContext(
         workingContext,

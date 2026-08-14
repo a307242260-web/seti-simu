@@ -1292,8 +1292,12 @@ function createProductionHostComposition(options = {}) {
       try {
         return operation();
       } finally {
-        workingState.meta.sequences = readSequences(workingState);
-        if (typeof options.random.getState === "function") {
+        // 冻结的 meta（只读枚举/投影场景）跳过同步：只读操作不分配实体、不消耗随机，
+        // 写入相同值反而在冻结状态上抛错；可变 working state 保持同步。
+        if (!Object.isFrozen(workingState.meta)) {
+          workingState.meta.sequences = readSequences(workingState);
+        }
+        if (typeof options.random.getState === "function" && !Object.isFrozen(workingState.meta)) {
           workingState.meta.rngState = {
             algorithm: options.rngAlgorithm || rngState?.algorithm || "seti-production-rng-v1",
             state: options.random.getState(),
