@@ -1970,11 +1970,14 @@
           }
           const nextInspection = composition.inspect();
           const awaitingDecision = nextInspection.phase === "awaiting_input";
-          // 信任 enumerateActions 已返回 fresh deepFreeze 结果，不再二次 clone
-          // （trusted fork 路径 enumerateActions 内部不做 state clone，返回即冻结；
-          //   sanitizeHiddenInformationActions 需要变更时会自行 clone）。
+          // 信任 enumerateActions / getDecisionSnapshot 已返回 fresh 结果，不再二次 clone：
+          // - 非 awaiting 路径 enumerateActions 每次新建描述符（trusted 不做 state clone）；
+          // - awaiting 路径 session.decision.choices 由 getDecisionSnapshot 每次枚举并克隆
+          //   （session-runtime getDecisionSnapshot 内部 choices: clone(...)），本层 inspect
+          //   的 deepFreeze 后直接共享该私有数组即可；
+          // - sanitizeHiddenInformationActions 需要变更时会自行 clone，其余消费方只读或 spread。
           let successors = awaitingDecision
-            ? clone(nextInspection.session?.decision?.choices || [])
+            ? (nextInspection.session?.decision?.choices || [])
             : composition.inputPort.enumerateActions({});
           const hiddenBarrier = isHiddenInformationBarrier(result.irreversibleBarrier)
             ? result.irreversibleBarrier
@@ -2642,8 +2645,8 @@
                 routeResultsByActionId = new Map(conditionalSuccessors.map((successor) => [
                   successor?.actionId,
                   Object.hasOwn(successor || {}, "routeResultTargetIds")
-                    ? clone(successor.routeResultTargetIds)
-                    : clone(origin.routeResultTargetIds || []),
+                    ? successor.routeResultTargetIds
+                    : (origin.routeResultTargetIds || []),
                 ]));
                 conditionalSuccessors = conditionalSuccessors
                   .map((successor) => legalById.get(successor?.actionId))
@@ -2771,7 +2774,7 @@
                     routePlanId: completedGoal ? null : routePlanId,
                     routeResultTargetIds: completedGoal
                       ? []
-                      : clone(origin.routeResultTargetIds || []),
+                      : (origin.routeResultTargetIds || []),
                     maxProxyDepth,
                     completeTargetCatalog:
                       secondaryAgentSearch.completeTargetCatalog === true,
@@ -2803,11 +2806,11 @@
                       ? selected.routePlanId
                       : (completedGoal ? null : routePlanId),
                     routeResultTargetIds: Object.hasOwn(selected || {}, "routeResultTargetIds")
-                      ? clone(selected.routeResultTargetIds)
+                      ? selected.routeResultTargetIds
                       : (
                         completedGoal
                           ? []
-                          : clone(origin.routeResultTargetIds || [])
+                          : (origin.routeResultTargetIds || [])
                       ),
                   }))
                   .filter((route) => Boolean(route.action));
@@ -2835,7 +2838,7 @@
                       routePlanId: completedGoal ? null : routePlanId,
                       routeResultTargetIds: completedGoal
                         ? []
-                        : clone(origin.routeResultTargetIds || []),
+                        : (origin.routeResultTargetIds || []),
                     },
                     execution.leafObservation,
                     execution.successors,
@@ -2902,7 +2905,7 @@
                         : routePlanId,
                       routeResultTargetIds: nextActorIsFocal
                         ? selectedRoute.routeResultTargetIds
-                        : clone(origin.routeResultTargetIds || []),
+                        : (origin.routeResultTargetIds || []),
                       completionFrontierKey,
                     }],
                   });
