@@ -90,6 +90,7 @@
     RESEARCH: "science_domain_research",
     ALIEN_TRACE: "science_domain_alien_trace",
     SETTLE: "science_domain_settle",
+    PUBLIC_REFILL: "science_domain_public_refill",
   });
 
   function clone(value) {
@@ -878,6 +879,10 @@
         const root = getWorkingRoot(state, workingContext);
         if (choice?.target?.done) {
           return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
+            spawnedEffects: [{
+              priority: "direct",
+              effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
+            }],
             events: [{ type: "publicScanCompleted", selected: effect.payload?.selected || 0 }],
           });
         }
@@ -894,15 +899,10 @@
           { gainData: true },
         ), { nebulaIds: [legal.target.nebulaId], gainData: true, source: "public_scan" });
         if (!result.ok) return result;
+        // 公共牌扫描放置后空位保持空置，不立即补牌；待本次扫描流程结束时统一补牌
+        // （对应规则：公共区留空待扫描结束补牌）。
         cardsState.publicCards[legal.target.publicSlotIndex] = null;
         cards.addToDiscardPile(cardsState, card);
-        const replenished = cards.replenishPublicSlot(
-          cardsState,
-          getWorkingSlice(root, "players"),
-          legal.target.publicSlotIndex,
-          () => nextCommittedRandom(root),
-          { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
-        );
         const selected = (Number(effect.payload?.selected) || 0) + 1;
         if (selected > 1 && effect.payload?.consumeMarkers) {
           actor.resources.additionalPublicScan = Math.max(
@@ -914,20 +914,54 @@
           priority: "direct",
           effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id },
         }];
-        if (selected < (Number(effect.payload?.max) || 1) && publicScanChoices(root).length) {
+        const scanFlowEnded = selected >= (Number(effect.payload?.max) || 1)
+          || !publicScanChoices(root).length;
+        if (!scanFlowEnded) {
           spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PUBLIC_SCAN, actor.id, {
             selected,
             max: effect.payload.max,
             consumeMarkers: Boolean(effect.payload?.consumeMarkers),
           }, "choose_card"));
+        } else {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: actor.id },
+          });
         }
         return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
           spawnedEffects,
-          irreversible: replenished ? { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" } : null,
-          rng: replenished ? [{ owner: DOMAIN_ID, cursor: root.meta?.rngState?.science?.cursor || 0 }] : [],
           events: clone(result.events || []),
         });
       },
+    });
+
+    runtime.registerExecutor(EFFECT_TYPES.PUBLIC_REFILL, (state, effect, workingContext) => {
+      const root = getWorkingRoot(state, workingContext);
+      const cardsState = getWorkingSlice(root, "cards");
+      const playersState = getWorkingSlice(root, "players");
+      let filled = 0;
+      for (let index = 0; index < (cardsState.publicCards || []).length; index += 1) {
+        if (cardsState.publicCards[index]) continue;
+        const replenished = cards.replenishPublicSlot(
+          cardsState,
+          playersState,
+          index,
+          () => nextCommittedRandom(root),
+          { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
+        );
+        if (replenished) filled += 1;
+      }
+      return scienceResult(state, root, EFFECT_TYPES.PUBLIC_REFILL, {
+        ...(filled
+          ? {
+            irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
+            rng: [{ owner: DOMAIN_ID, cursor: root.meta?.rngState?.science?.cursor || 0 }],
+          }
+          : {}),
+        events: filled
+          ? [{ type: "publicRefill", count: filled }]
+          : [{ type: "publicRefillSkipped" }],
+      });
     });
 
     function handScanChoices(root, actorId) {
