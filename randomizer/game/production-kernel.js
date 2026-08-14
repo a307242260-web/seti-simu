@@ -341,6 +341,126 @@ function routeRequirementKey(sourceId, choice) {
   ].join(":");
 }
 
+// 探测路线拓扑缓存：BFS 可达性只依赖（gameId + 太阳系旋转 + 全火箭占位 + 玩家 orange2），
+// quick_trade/place_data 等链上火箭未移动时路线完全相同，只重算资源缺口与候选收益。
+// 见 checkpoint/seti-clone-audit-and-remaining-optimizations-20260814.md 方向 B。
+const PROBE_ROUTE_TOPOLOGY_CACHE = new Map();
+const PROBE_ROUTE_TOPOLOGY_CACHE_MAX = 2048;
+
+function probeRouteTopologyKey(workingState, player, sources) {
+  const pieces = workingState.pieces || {};
+  const rocketSignatures = (pieces.rockets || []).map((rocket) => {
+    const coordinate = rockets.getRocketSectorCoordinate(rocket);
+    return `${rocket.id}:${coordinate?.x ?? "?"},${coordinate?.y ?? "?"}:${rocket.surface || ""}`;
+  }).sort().join("|");
+  const rotation = Number(workingState.solarSystem?.rotation ?? 0);
+  const orange2 = players.playerOwnsTech(player, "orange2") ? 1 : 0;
+  return `${workingState.meta?.gameId || "?"}:${rotation}:${rocketSignatures}:${orange2}`;
+}
+
+function probeRouteTopology(workingState, player, context, sources) {
+  const key = probeRouteTopologyKey(workingState, player, sources);
+  const cached = PROBE_ROUTE_TOPOLOGY_CACHE.get(key);
+  if (cached) return cached;
+  const reachableBySource = new Map();
+  for (const source of sources) {
+    if (!source.coordinate) continue;
+    const initialRoute = {
+      coordinate: source.coordinate,
+      path: [],
+      movePoints: 0,
+      publicityStops: 0,
+    };
+    const queue = [initialRoute];
+    const bestRouteByCoordinate = new Map([
+      [`${source.coordinate.x},${source.coordinate.y}`, initialRoute],
+    ]);
+    const reachable = [];
+    while (queue.length) {
+      const route = queue.shift();
+      const routeKey = `${route.coordinate.x},${route.coordinate.y}`;
+      if (bestRouteByCoordinate.get(routeKey) !== route) continue;
+      const visible = solar.resolveVisibleContent(
+        route.coordinate.x,
+        route.coordinate.y,
+        workingState.solarSystem,
+      )?.content;
+      if (visible?.kind === solar.layout.CONTENT_KIND.PLANET && visible.planetId !== "earth") {
+        const planet = solar.layout.PLANETS[visible.planetId] || {};
+        reachable.push({
+          planetId: visible.planetId,
+          planet: {
+            planetId: visible.planetId,
+            name: planet.name || visible.label,
+            label: visible.label,
+            x: route.coordinate.x,
+            y: route.coordinate.y,
+          },
+          coordinate: { ...route.coordinate },
+          path: route.path,
+          movePoints: route.movePoints,
+          publicityStops: route.publicityStops,
+        });
+      }
+      for (const direction of rocketAbility.MOVE_DIRECTIONS) {
+        const move = rockets.canMoveFromCoordinate(
+          workingState.pieces,
+          route.coordinate,
+          direction.deltaX,
+          direction.deltaY,
+          source.rocketId,
+        );
+        if (!move.ok) continue;
+        const key2 = `${move.to.x},${move.to.y}`;
+        const destination = solar.resolveVisibleContent(
+          move.to.x,
+          move.to.y,
+          workingState.solarSystem,
+        )?.content;
+        const candidateRoute = {
+          coordinate: move.to,
+          path: [...route.path, {
+            directionId: direction.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          }],
+          movePoints: route.movePoints + rocketAbility.getRequiredMovePointsFromCoordinate(
+            context,
+            player,
+            route.coordinate,
+          ),
+          publicityStops: route.publicityStops + (
+            destination?.kind === solar.layout.CONTENT_KIND.PLANET
+            && destination.planetId !== "earth" ? 1 : 0
+          ),
+        };
+        const existing = bestRouteByCoordinate.get(key2);
+        const better = !existing
+          || candidateRoute.movePoints < existing.movePoints
+          || (
+            candidateRoute.movePoints === existing.movePoints
+            && candidateRoute.path.length < existing.path.length
+          )
+          || (
+            candidateRoute.movePoints === existing.movePoints
+            && candidateRoute.path.length === existing.path.length
+            && candidateRoute.publicityStops > existing.publicityStops
+          );
+        if (!better) continue;
+        bestRouteByCoordinate.set(key2, candidateRoute);
+        queue.push(candidateRoute);
+      }
+    }
+    reachableBySource.set(source.sourceId, reachable);
+  }
+  const topology = Object.freeze({ sources, reachableBySource });
+  if (PROBE_ROUTE_TOPOLOGY_CACHE.size >= PROBE_ROUTE_TOPOLOGY_CACHE_MAX) {
+    PROBE_ROUTE_TOPOLOGY_CACHE.clear();
+  }
+  PROBE_ROUTE_TOPOLOGY_CACHE.set(key, topology);
+  return topology;
+}
+
 function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
@@ -385,180 +505,107 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     });
   }
 
+  const topology = probeRouteTopology(workingState, player, context, sources);
   const candidates = [];
-  for (const source of sources) {
+  for (const source of topology.sources) {
     if (!source.coordinate) continue;
-    const initialRoute = {
-      coordinate: source.coordinate,
-      path: [],
-      movePoints: 0,
-      publicityStops: 0,
-    };
-    const queue = [initialRoute];
-    const bestRouteByCoordinate = new Map([
-      [`${source.coordinate.x},${source.coordinate.y}`, initialRoute],
-    ]);
-    while (queue.length) {
-      const route = queue.shift();
-      const routeKey = `${route.coordinate.x},${route.coordinate.y}`;
-      if (bestRouteByCoordinate.get(routeKey) !== route) continue;
-      const visible = solar.resolveVisibleContent(
-        route.coordinate.x,
-        route.coordinate.y,
-        workingState.solarSystem,
-      )?.content;
-      if (visible?.kind === solar.layout.CONTENT_KIND.PLANET && visible.planetId !== "earth") {
-        const planet = solar.layout.PLANETS[visible.planetId] || {};
-        const placement = {
-          rocket: { id: source.rocketId, playerId: player.id, surface: "solar-board" },
-          currentPlayer: player,
-          planet: {
-            planetId: visible.planetId,
-            name: planet.name || visible.label,
-            label: visible.label,
-            x: route.coordinate.x,
-            y: route.coordinate.y,
+    const reachablePlanets = topology.reachableBySource.get(source.sourceId) || [];
+    for (const reach of reachablePlanets) {
+      const placement = {
+        rocket: { id: source.rocketId, playerId: player.id, surface: "solar-board" },
+        currentPlayer: player,
+        planet: reach.planet,
+        sectorCoordinate: reach.coordinate,
+      };
+      const endpointChoices = [
+        ...planetAbility.listOrbitRequirementsAt(context, placement),
+        ...planetAbility.listLandRequirementsAt(context, placement),
+      ];
+      for (const choice of endpointChoices) {
+        const effects = choice.actionType === "orbit"
+          ? planetRewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
+          : choice.target?.type === "satellite"
+            ? planetRewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
+            : planetRewards.buildPlanetLandRewardEffects(
+              choice.planetId,
+              choice.rewardMarkerSequence ?? choice.markerSequence,
+            );
+        const scoreGain = rewardScore(effects);
+        if (scoreGain <= 0) continue;
+        const dataCount = rewardDataCount(effects);
+        const incomeCount = effects.filter((effect) => (
+          effect?.type === planetRewards.EFFECT_TYPES.INCOME
+        )).length;
+        const launchCost = source.launchRequired
+          ? rocketAbility.getLaunchCost(context, player)
+          : {};
+        const endpointCost = choice.cost || {};
+        const totalCost = {
+          credits: Number(launchCost.credits || 0) + Number(endpointCost.credits || 0),
+          energy: reach.movePoints + Number(endpointCost.energy || 0),
+        };
+        const publicityValue = reach.publicityStops * PROBE_VALUE_POINTS.publicity;
+        const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
+        const resourceGap = {
+          credits: Math.max(0, totalCost.credits - Number(player.resources?.credits || 0)),
+          energy: Math.max(0, totalCost.energy - Number(player.resources?.energy || 0)),
+          movementSteps: reach.path.length,
+        };
+        const firstMove = reach.path[0] || null;
+        const targetId = [
+          choice.actionType,
+          choice.planetId,
+          choice.target?.type || "planet",
+          choice.target?.satelliteId || "",
+        ].join(":");
+        candidates.push({
+          requirementId: routeRequirementKey(source.sourceId, choice),
+          targetId,
+          playerId: player.id,
+          sourceId: source.sourceId,
+          rocketId: source.rocketId,
+          planetId: choice.planetId,
+          endpointFamily: choice.actionType,
+          endpointTarget: choice.target || { type: "planet" },
+          firstRewardSlotOpen: choice.target?.type !== "satellite"
+            && Number(choice.markerSequence) === 1,
+          targetBenefit: {
+            score: scoreGain,
+            incomeCount,
+            dataCount,
+            grossEquivalentValue,
+            rewardSummary: choice.rewardSummary,
+            source: `planetRewards.${choice.actionType}:${choice.planetId}`,
           },
-          sectorCoordinate: route.coordinate,
-        };
-        const endpointChoices = [
-          ...planetAbility.listOrbitRequirementsAt(context, placement),
-          ...planetAbility.listLandRequirementsAt(context, placement),
-        ];
-        for (const choice of endpointChoices) {
-          const effects = choice.actionType === "orbit"
-            ? planetRewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
-            : choice.target?.type === "satellite"
-              ? planetRewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
-              : planetRewards.buildPlanetLandRewardEffects(
-                choice.planetId,
-                choice.rewardMarkerSequence ?? choice.markerSequence,
-              );
-          const scoreGain = rewardScore(effects);
-          if (scoreGain <= 0) continue;
-          const dataCount = rewardDataCount(effects);
-          const incomeCount = effects.filter((effect) => (
-            effect?.type === planetRewards.EFFECT_TYPES.INCOME
-          )).length;
-          const launchCost = source.launchRequired
-            ? rocketAbility.getLaunchCost(context, player)
-            : {};
-          const endpointCost = choice.cost || {};
-          const totalCost = {
-            credits: Number(launchCost.credits || 0) + Number(endpointCost.credits || 0),
-            energy: route.movePoints + Number(endpointCost.energy || 0),
-          };
-          const publicityValue = route.publicityStops * PROBE_VALUE_POINTS.publicity;
-          const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
-          const resourceGap = {
-            credits: Math.max(0, totalCost.credits - Number(player.resources?.credits || 0)),
-            energy: Math.max(0, totalCost.energy - Number(player.resources?.energy || 0)),
-            movementSteps: route.path.length,
-          };
-          const firstMove = route.path[0] || null;
-          const targetId = [
-            choice.actionType,
-            choice.planetId,
-            choice.target?.type || "planet",
-            choice.target?.satelliteId || "",
-          ].join(":");
-          candidates.push({
-            requirementId: routeRequirementKey(source.sourceId, choice),
-            targetId,
-            playerId: player.id,
-            sourceId: source.sourceId,
-            rocketId: source.rocketId,
-            planetId: choice.planetId,
-            endpointFamily: choice.actionType,
-            endpointTarget: choice.target || { type: "planet" },
-            firstRewardSlotOpen: choice.target?.type !== "satellite"
-              && Number(choice.markerSequence) === 1,
-            targetBenefit: {
-              score: scoreGain,
-              incomeCount,
-              dataCount,
-              grossEquivalentValue,
-              rewardSummary: choice.rewardSummary,
-              source: `planetRewards.${choice.actionType}:${choice.planetId}`,
-            },
-            required: {
-              credits: totalCost.credits,
-              energy: totalCost.energy,
-              movementSteps: route.path.length,
-              movementPoints: route.movePoints,
-            },
-            gap: resourceGap,
-            nextStep: source.launchRequired
-              ? { family: "launch" }
-              : firstMove
-                ? { family: "move", rocketId: source.rocketId, ...firstMove }
-                : {
-                  family: choice.actionType,
-                  rocketId: source.rocketId,
-                  planetId: choice.planetId,
-                  target: choice.target || {},
-                },
-            path: route.path.map((step) => ({ ...step })),
-            publicityStops: route.publicityStops,
-            fieldSources: {
-              topology: "SetiRocketActions.canMoveFromCoordinate",
-              movementCost: "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
-              launchCost: "SetiAbilityRocket.getLaunchCost",
-              endpointCost: choice.actionType === "land"
-                ? "SetiAbilityPlanet.getLandEnergyCost"
-                : "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
-              rewards: "SetiPlanetRewards",
-            },
-          });
-        }
-      }
-      for (const direction of rocketAbility.MOVE_DIRECTIONS) {
-        const move = rockets.canMoveFromCoordinate(
-          workingState.pieces,
-          route.coordinate,
-          direction.deltaX,
-          direction.deltaY,
-          source.rocketId,
-        );
-        if (!move.ok) continue;
-        const key = `${move.to.x},${move.to.y}`;
-        const destination = solar.resolveVisibleContent(
-          move.to.x,
-          move.to.y,
-          workingState.solarSystem,
-        )?.content;
-        const candidateRoute = {
-          coordinate: move.to,
-          path: [...route.path, {
-            directionId: direction.id,
-            deltaX: direction.deltaX,
-            deltaY: direction.deltaY,
-          }],
-          movePoints: route.movePoints + rocketAbility.getRequiredMovePointsFromCoordinate(
-            context,
-            player,
-            route.coordinate,
-          ),
-          publicityStops: route.publicityStops + (
-            destination?.kind === solar.layout.CONTENT_KIND.PLANET
-            && destination.planetId !== "earth" ? 1 : 0
-          ),
-        };
-        const existing = bestRouteByCoordinate.get(key);
-        const better = !existing
-          || candidateRoute.movePoints < existing.movePoints
-          || (
-            candidateRoute.movePoints === existing.movePoints
-            && candidateRoute.path.length < existing.path.length
-          )
-          || (
-            candidateRoute.movePoints === existing.movePoints
-            && candidateRoute.path.length === existing.path.length
-            && candidateRoute.publicityStops > existing.publicityStops
-          );
-        if (!better) continue;
-        bestRouteByCoordinate.set(key, candidateRoute);
-        queue.push(candidateRoute);
+          required: {
+            credits: totalCost.credits,
+            energy: totalCost.energy,
+            movementSteps: reach.path.length,
+            movementPoints: reach.movePoints,
+          },
+          gap: resourceGap,
+          nextStep: source.launchRequired
+            ? { family: "launch" }
+            : firstMove
+              ? { family: "move", rocketId: source.rocketId, ...firstMove }
+              : {
+                family: choice.actionType,
+                rocketId: source.rocketId,
+                planetId: choice.planetId,
+                target: choice.target || {},
+              },
+          path: reach.path.map((step) => ({ ...step })),
+          publicityStops: reach.publicityStops,
+          fieldSources: {
+            topology: "SetiRocketActions.canMoveFromCoordinate",
+            movementCost: "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+            launchCost: "SetiAbilityRocket.getLaunchCost",
+            endpointCost: choice.actionType === "land"
+              ? "SetiAbilityPlanet.getLandEnergyCost"
+              : "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+            rewards: "SetiPlanetRewards",
+          },
+        });
       }
     }
   }
