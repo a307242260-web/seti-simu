@@ -188,6 +188,9 @@ function summarizeDecisions(decisions, detail) {
             completedGoalTransitionCount: record.diagnostics.completedGoalTransitionCount,
             transpositionHitCount: record.diagnostics.transpositionHitCount,
             sharedPhysicalExecutionOriginCount: record.diagnostics.sharedPhysicalExecutionOriginCount,
+            macroStepExecutedCount: record.diagnostics.macroStepExecutedCount,
+            macroStepChainCount: record.diagnostics.macroStepChainCount,
+            macroStepMaxChainDepth: record.diagnostics.macroStepMaxChainDepth,
           } : {}),
         })),
       }
