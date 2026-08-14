@@ -1001,7 +1001,6 @@
       const parsedStateByBytes = new Map();
       const stateHashByBytes = new Map();
       const envelopeHashByObject = new WeakMap();
-      const settledSemanticStateHashByBytes = new Map();
       const dominanceStateByBytes = new Map();
       const semanticActionHashByObject = new WeakMap();
       function getTrustedState(envelope) {
@@ -1020,10 +1019,29 @@
           envelopeHashByObject.set(envelope, stableHash({
             schemaVersion: "seti-counterfactual-envelope-key-v2",
             committedStateHash: stateHashByBytes.get(bytes),
-            sessionHash: stableHash(envelope.session),
+            sessionHash: sessionKeyHash(envelope.session),
           }));
         }
         return envelopeHashByObject.get(envelope);
+      }
+      // session 键哈希：排除 baseState/committedState/commitResult（trusted fork 下与
+      // envelope 的 committedState 同一对象，其哈希已由 committedStateHash 覆盖；
+      // awaiting session 的 committedState/commitResult 恒为 null）。排除后哈希保持
+      // 注入性：同 committedStateHash 且同剩余 session 内容 ⇔ 同完整 session，转置合并
+      // 关系不变，只是省去每节点对全量状态的二次序列化（决策 232 实测 ~1400ms → ~700ms）。
+      function sessionKeyHash(checkpoint) {
+        if (checkpoint == null) return stableHash(null);
+        const session = checkpoint.session || null;
+        return stableHash({
+          schemaVersion: checkpoint.schemaVersion,
+          replayCursor: checkpoint.replayCursor,
+          session: session == null ? null : {
+            ...session,
+            baseState: null,
+            committedState: null,
+            commitResult: null,
+          },
+        });
       }
       function semanticActionHash(action) {
         if (!semanticActionHashByObject.has(action)) {
@@ -1102,20 +1120,6 @@
           });
         }
         return normalized;
-      }
-      function settledSemanticStateHash(envelope) {
-        if (envelope?.session != null) return null;
-        const bytes = envelope.committedState;
-        if (!settledSemanticStateHashByBytes.has(bytes)) {
-          const normalizedBytes = normalizedStateBytesForSearch(envelope);
-          settledSemanticStateHashByBytes.set(
-            bytes,
-            normalizedBytes == null
-              ? stableHash(normalizedStateForSearch(getTrustedState(envelope)))
-              : stableHashSerialized(normalizedBytes),
-          );
-        }
-        return settledSemanticStateHashByBytes.get(bytes);
       }
       function dominanceState(envelope) {
         if (envelope?.session != null) return null;
@@ -1477,19 +1481,11 @@
       }
 
       function nodeKey(node) {
-        const semanticStateHash = node.semanticMergeEligible
-          ? settledSemanticStateHash(node.envelope)
-          : null;
-        if (!semanticStateHash) {
-          return exactNodeKey(node.envelope, node.action, node.depth);
-        }
-        return [
-          "conditional-equivalent",
-          semanticStateHash,
-          semanticActionHash(node.action),
-          Math.max(0, maxDepth - node.depth),
-          focalSeatId,
-        ].join(":");
+        // 统一使用精确 envelope 哈希键：语义合并（版本计数器归零后的状态等价）在固定盘面
+        // 全程 conditionalEquivalentMergeCount=0，从未实际命中（确定性搜索中同一逻辑状态
+        // 的版本计数器总是精确一致）；移除语义哈希省去每唯一 envelope 的全量规范化序列化
+        // （决策 232 实测 ~1670ms）。转置改为只合并字节相同状态=严格超集，无搜索空间损失。
+        return exactNodeKey(node.envelope, node.action, node.depth);
       }
 
       function mergeNode(frontierByKey, node) {
