@@ -518,22 +518,38 @@
         null,
         { stateVersion: state.meta.stateVersion },
       );
+      // 搜索中间观测（cheap）只读且不跨节点持有：跳过 deepFreeze 整树遍历，
+      // 完整冻结观测只在叶/根/宿主路径构建。
+      if (viewer?.cheap === true) {
+        return { phase: "idle", stateVersion: state.meta.stateVersion, state: projected };
+      }
       return deepFreeze({ phase: "idle", stateVersion: state.meta.stateVersion, state: projected });
     }
 
     function projection(viewer = null) {
-      if (!activeSession) return committedProjection(viewer);
-      return deepFreeze({
-        ...runtime.observe(activeSession, clone(viewer)),
-        stateVersion: readStoreSnapshot().meta.stateVersion,
-      });
+      return projectionInner(viewer);
     }
 
-    function inspect() {
+    function projectionInner(viewer = null) {
+      if (!activeSession) return committedProjection(viewer);
+      const observed = {
+        ...runtime.observe(activeSession, clone(viewer), {
+          // 搜索中间观测不消费 decision 字段（选择枚举见后提交 inspect），跳过重复枚举。
+          skipDecisionChoices: viewer?.cheap === true,
+        }),
+        stateVersion: readStoreSnapshot().meta.stateVersion,
+      };
+      // 同上：cheap 中间观测跳过 deepFreeze，叶/根/宿主仍走冻结完整观测。
+      return viewer?.cheap === true ? observed : deepFreeze(observed);
+    }
+
+    function inspect(skipChoices = false) {
       return deepFreeze({
         phase: activeSession?.phase || "idle",
         family: activeFamily,
-        session: activeSession ? runtime.inspect(activeSession) : null,
+        session: activeSession
+          ? runtime.inspect(activeSession, { skipChoices: skipChoices === true })
+          : null,
       });
     }
 
@@ -1928,6 +1944,10 @@
           if (!composition?.inputPort || !composition?.inspect || !composition?.lifecycle) {
             return { failed: true, code: "COUNTERFACTUAL_FORK_INVALID" };
           }
+          // 前提交枚举不可跳过：submitDecision 用 stableSerialize(choice) 全等比对
+          // session 的 raw choice，而 node.action 是 normalizeDescriptor 标准描述符
+          // （含 schemaVersion/stateVersion 等额外字段），必须从当前 session 的
+          // decision.choices 里取回 raw choice 才能提交（root conditional 尤其如此）。
           const inspection = composition.inspect();
           const candidates = inspection.phase === "awaiting_input" && inspection.session?.decision
             ? inspection.session.decision.choices
@@ -2004,7 +2024,7 @@
           // 中间节点观测用 cheap 模式（跳过 planets/data/solarSystem/finalScoring 克隆，
           // 只含 requirements/资源/rockets/aliens/公共牌/科技）；完整观测在叶形成时重建。
           const projectedObservation = composition.projection(
-            viewer ? { ...viewer, cheap: true } : null,
+            { ...(viewer || {}), cheap: true },
           ).state;
           const leafObservation = informationMasked
             ? sanitizeHiddenInformationObservation(

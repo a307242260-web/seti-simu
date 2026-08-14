@@ -247,7 +247,7 @@
       return session?.queue?.[0] || null;
     }
 
-    function getDecisionSnapshot(session, effect = currentEffect(session)) {
+    function getDecisionSnapshot(session, effect = currentEffect(session), options = {}) {
       if (!effect || effect.kind !== "decision") return null;
       const executor = executors.get(effect.type);
       if (!executor || typeof executor.getLegalChoices !== "function") {
@@ -256,6 +256,18 @@
           type: effect.type,
         });
       }
+      const snapshot = {
+        ok: true,
+        decisionId: effect.effectId,
+        decisionVersion: session.revision,
+        ownerId: effect.ownerId,
+        decisionKind: effect.decisionKind || effect.type,
+        allowQuickActions: effect.allowQuickActions,
+        choices: null,
+      };
+      // 搜索中间节点只需要 decision 元数据（decisionId/version/ownerId）与后续 choices；
+      // 前提交 inspect 与 cheap 投影跳过完整枚举，避免每节点 2-3 次 getLegalChoices。
+      if (options.skipChoices === true) return snapshot;
       let choices;
       try {
         choices = executor.getLegalChoices(
@@ -273,21 +285,16 @@
           effectId: effect.effectId,
         });
       }
-      return {
-        ok: true,
-        decisionId: effect.effectId,
-        decisionVersion: session.revision,
-        ownerId: effect.ownerId,
-        decisionKind: effect.decisionKind || effect.type,
-        allowQuickActions: effect.allowQuickActions,
-        choices: clone(choices),
-      };
+      snapshot.choices = clone(choices);
+      return snapshot;
     }
 
-    function inspect(session) {
+    function inspect(session, options = {}) {
       if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
       const effect = currentEffect(session);
-      const decision = session.phase === "awaiting_input" ? getDecisionSnapshot(session, effect) : null;
+      const decision = session.phase === "awaiting_input"
+        ? getDecisionSnapshot(session, effect, options)
+        : null;
       const undoFrame = session.undoFrames[session.undoFrames.length - 1] || null;
       const undoCrossesBarrier = Boolean(
         undoFrame
@@ -330,9 +337,10 @@
       };
     }
 
-    function observe(session, viewer = null) {
+    function observe(session, viewer = null, options = {}) {
       if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
       const state = session.phase === "completed" ? session.committedState : session.workingState;
+      const skipDecisionChoices = options.skipDecisionChoices === true;
       return {
         schemaVersion: SCHEMA_VERSION,
         sessionId: session.sessionId,
@@ -341,9 +349,11 @@
         state: projectState(
           trustedIsolatedOwnership ? state : cloneState(state),
           viewer,
-          inspect(session),
+          inspect(session, { skipChoices: skipDecisionChoices }),
         ),
-        decision: session.phase === "awaiting_input" ? getDecisionSnapshot(session) : null,
+        decision: session.phase === "awaiting_input" && !skipDecisionChoices
+          ? getDecisionSnapshot(session)
+          : null,
       };
     }
 
