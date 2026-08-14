@@ -1001,6 +1001,7 @@
       const parsedStateByBytes = new Map();
       const stateHashByBytes = new Map();
       const envelopeHashByObject = new WeakMap();
+      const settledSemanticStateHashByBytes = new Map();
       const dominanceStateByBytes = new Map();
       const semanticActionHashByObject = new WeakMap();
       function getTrustedState(envelope) {
@@ -1061,6 +1062,8 @@
           ...state,
           meta: {
             ...state.meta,
+            rngState: null,
+            sequences: null,
             stateVersion: 0,
           },
           match: {
@@ -1098,7 +1101,12 @@
       function normalizedStateBytesForSearch(envelope, maskFocalResources = false) {
         const bytes = envelope.committedState;
         const state = getTrustedState(envelope);
-        const normalizedMeta = { ...state.meta, stateVersion: 0 };
+        const normalizedMeta = {
+          ...state.meta,
+          rngState: null,
+          sequences: null,
+          stateVersion: 0,
+        };
         const normalizedMatch = { ...state.match, decisionVersion: 0 };
         let normalized = replaceSerializedValue(bytes, state.meta, normalizedMeta);
         normalized = normalized == null
@@ -1120,6 +1128,20 @@
           });
         }
         return normalized;
+      }
+      function settledSemanticStateHash(envelope) {
+        if (envelope?.session != null) return null;
+        const bytes = envelope.committedState;
+        if (!settledSemanticStateHashByBytes.has(bytes)) {
+          const normalizedBytes = normalizedStateBytesForSearch(envelope);
+          settledSemanticStateHashByBytes.set(
+            bytes,
+            normalizedBytes == null
+              ? stableHash(normalizedStateForSearch(getTrustedState(envelope)))
+              : stableHashSerialized(normalizedBytes),
+          );
+        }
+        return settledSemanticStateHashByBytes.get(bytes);
       }
       function dominanceState(envelope) {
         if (envelope?.session != null) return null;
@@ -1481,10 +1503,22 @@
       }
 
       function nodeKey(node) {
-        // 统一使用精确 envelope 哈希键：语义合并（版本计数器归零后的状态等价）在固定盘面
-        // 全程 conditionalEquivalentMergeCount=0，从未实际命中（确定性搜索中同一逻辑状态
-        // 的版本计数器总是精确一致）；移除语义哈希省去每唯一 envelope 的全量规范化序列化
-        // （决策 232 实测 ~1670ms）。转置改为只合并字节相同状态=严格超集，无搜索空间损失。
+        // settled（无 session）节点用语义键：mask meta 的 rngState/sequences/stateVersion
+        // 与 match.decisionVersion 后，合并"先发射再扫描 vs 先扫描再发射"这类置换等价
+        // 状态（cap frontier 36% 是 meta-only 雷同）。session 节点（awaiting）保持精确键
+        // （pending 决策不同不可合并）。
+        if (secondaryAgentSearch && node.envelope?.session == null) {
+          const semanticStateHash = settledSemanticStateHash(node.envelope);
+          if (semanticStateHash) {
+            return [
+              "semantic",
+              semanticStateHash,
+              semanticActionHash(node.action),
+              Math.max(0, maxDepth - node.depth),
+              focalSeatId,
+            ].join(":");
+          }
+        }
         return exactNodeKey(node.envelope, node.action, node.depth);
       }
 
