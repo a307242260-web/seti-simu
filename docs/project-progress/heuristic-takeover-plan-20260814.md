@@ -81,7 +81,7 @@
 验收：单次决策压回 2 秒记录目标内；固定盘面分数不降；`targetSchedulerPrunedCount`
 与 `executionLimitReached` 保持诚实公开。
 
-### Phase 4 性能分项优化
+### Phase 4 性能分项优化（原子操作，进行中）
 
 当前瓶颈画像：projection 42% > orchestration 25% > execution 20% > checkpoint 7% >
 fork 4%。方向：
@@ -89,6 +89,24 @@ fork 4%。方向：
 1. projection 物化裁剪：profile 每个投影字段是否被 Policy 实际消费，去掉未消费物化；
 2. orchestration 与 frontier 管理开销分项；
 3. 规则执行热路径（在覆盖不变门禁下）。
+
+**2026-08-14 原子操作优化成果（commit 702b0d3，行为逐项不变）**：
+- CPU profile + structuredClone 打点：单 complete 决策（4096 节点）曾 **67 万次克隆**
+  （占决策时间 37.5% + GC 6.9%）。
+- 已消除的冗余克隆（-50%，670k → 336k）：probe/income requirement 的 nextStep/
+  endpointTarget、formalizeChoices、normalizeDescriptor target/payload、sanitizer
+  二次克隆（sanitizeRequirementPlans 改原地过滤、sanitizeHiddenInformationActions
+  改条件克隆）、selfStateOf、getTurnState。
+- 保留的必要克隆（防 deepFreeze 冻结活状态 / 防 fork 状态陈旧）：sanitizePublicPlayer
+  （techState/income）、sanitizeAlienPublicState（traces）、maskUnknownCards、
+  getDecisionSnapshot（session choices）、normalizeResultArray（effect 队列）。
+- 稳定基准（benchmark_probe_policy 12 次）：**3625ms → 2910ms（-20%）**，
+  projection 分项 1391 → 1068ms。
+- 重新 profile：structuredClone 仍 34.6%（现在是必要克隆，克隆大对象）；
+  solar core ~15%（规则计算）；稳定哈希 ~9%；deepFreeze ~3.5%。
+- 剩余大头候选：观测生命周期重构（中间节点观测不冻结、叶存储时才克隆，需设计评审，
+  涉及冻结语义与陈旧性保证）；拓扑相关 requirement 缓存（rocket 未移动时复用路线，
+  只重算资源缺口）。
 
 验收：每次改动 benchmark 覆盖指标逐项一致（Phase 口径）；median 目标 2 秒内，理想
 100ms；任何常规决策不得进入秒级。禁止通过缩 node cap / beam / leaf cap 伪造通过。
