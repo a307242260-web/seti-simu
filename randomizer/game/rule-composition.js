@@ -700,8 +700,11 @@
         workingContext,
         () => actionRegistry.enumerate(workingContext, clone(request)),
       ) || [];
+      // trusted fork 搜索路径：描述符由 enumerate 每次新建、搜索只读（spread/过滤均新建，
+      // sanitize 需要变更时自行克隆），跳过 deepFreeze 省每节点整组冻结开销；
+      // 非 trusted（Browser/宿主）路径保持 deepFreeze(clone(...)) 的安全隔离。
       return options.allowTrustedForkLifecycle === true
-        ? deepFreeze(actions)
+        ? actions
         : deepFreeze(clone(actions));
     }
 
