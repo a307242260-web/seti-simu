@@ -109,9 +109,14 @@
     ancestors.delete(value);
   }
 
-  function validateRootSchema(candidate) {
+  function validateRootSchema(candidate, options = {}) {
     const errors = [];
-    validateSerializableGraph(candidate, errors);
+    // trusted fork 提交跳过全图可序列化遍历（accessor/隐藏字段/数组空洞/环检测）：
+    // fork 状态由 structuredClone + 与规范游戏相同的 effect 代码构建，结构损坏会同时
+    // 在规范路径暴露；保留 root/meta/domain 结构检查与 invariant 语义校验。
+    if (options.skipSerializableGraph !== true) {
+      validateSerializableGraph(candidate, errors);
+    }
     if (!isPlainObject(candidate)) {
       errors.push(validationError("$", "STATE_ROOT_INVALID", "CommittedGameState 必须是普通对象"));
       return errors;
@@ -234,9 +239,14 @@
       if (typeof validator !== "function") throw new TypeError("invariantValidators 必须只包含函数");
     }
 
-    function validate(candidate) {
-      const errors = validateRootSchema(candidate);
+    function validate(candidate, options = {}) {
+      const __v = globalThis.__VALPROF__;
+      const __t = __v ? performance.now() : 0;
+      const errors = validateRootSchema(candidate, options);
+      if (__v) __v.graphMs += performance.now() - __t;
       if (!errors.length) {
+        const __vi = globalThis.__VALPROF__;
+        const __ti = __vi ? performance.now() : 0;
         for (let index = 0; index < invariantValidators.length; index += 1) {
           try {
             errors.push(...normalizeInvariantErrors(invariantValidators[index](
@@ -250,6 +260,7 @@
             ));
           }
         }
+        if (__vi) __vi.invariantsMs += performance.now() - __ti;
       }
       return errors.length
         ? { ok: false, code: errors[0].code, errors: Object.freeze(errors) }
@@ -344,7 +355,9 @@
       }
       if (trustedIsolatedOwnership) {
         isolatedCandidate.meta.stateVersion = currentVersion + 1;
-        const nextValidation = validate(isolatedCandidate);
+        // trusted fork 提交跳过全图可序列化遍历（结构防御性检查），保留 invariants；
+        // 非 trusted 提交保持完整双次校验。
+        const nextValidation = validate(isolatedCandidate, { skipSerializableGraph: true });
         if (!nextValidation.ok) {
           isolatedCandidate.meta.stateVersion = currentVersion;
           return nextValidation;
