@@ -252,11 +252,11 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = []) {
       (playersState.players || []).find((player) => player.id === perspectivePlayerId) || null,
     ),
     decision,
-    probeRouteRequirements: clone(state.probeRouteRequirements || null),
-    dataAnalyzeRequirements: clone(state.dataAnalyzeRequirements || null),
-    sectorWinRequirements: clone(state.sectorWinRequirements || null),
-    incomeGainRequirements: clone(state.incomeGainRequirements || null),
-    techGainRequirements: clone(state.techGainRequirements || null),
+    probeRouteRequirements: state.probeRouteRequirements || null,
+    dataAnalyzeRequirements: state.dataAnalyzeRequirements || null,
+    sectorWinRequirements: state.sectorWinRequirements || null,
+    incomeGainRequirements: state.incomeGainRequirements || null,
+    techGainRequirements: state.techGainRequirements || null,
     terminal: Boolean(turn.gameEnded),
   };
 }
@@ -392,11 +392,11 @@ function createSimulationEnv() {
     }).state;
     const state = {
       ...getWorkingProjection(composition),
-      probeRouteRequirements: clone(projected?.probeRouteRequirements || null),
-      dataAnalyzeRequirements: clone(projected?.dataAnalyzeRequirements || null),
-      sectorWinRequirements: clone(projected?.sectorWinRequirements || null),
-      incomeGainRequirements: clone(projected?.incomeGainRequirements || null),
-      techGainRequirements: clone(projected?.techGainRequirements || null),
+      probeRouteRequirements: projected?.probeRouteRequirements || null,
+      dataAnalyzeRequirements: projected?.dataAnalyzeRequirements || null,
+      sectorWinRequirements: projected?.sectorWinRequirements || null,
+      incomeGainRequirements: projected?.incomeGainRequirements || null,
+      techGainRequirements: projected?.techGainRequirements || null,
     };
     const result = buildObservation(state, seed, viewerPlayerId, actions);
     recordDuration("observationMilliseconds", startedAt);
