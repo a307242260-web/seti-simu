@@ -199,11 +199,12 @@
           family,
           selectedHandCardId,
         );
-        const reason = family === "play_card" && selectedHandCardId == null
-          ? "请先在手牌区选择一张牌"
-          : family === "play_card"
-            ? "所选手牌当前无法打出"
-            : "当前无法执行此行动";
+        const reason = action?.disabledReason
+          || (family === "play_card" && selectedHandCardId == null
+            ? "请先在手牌区选择一张牌"
+            : family === "play_card"
+              ? "所选手牌当前无法打出"
+              : "当前无法执行此行动");
         setButton(button, action, reason);
       }
       setButton(
