@@ -755,6 +755,8 @@
             gainData: true,
             cost: entry.options?.cost || null,
             label: entry.label,
+            // 紫2（水星扫描）按规则书「可以」可选执行：提供跳过。
+            skippable: entry.type === scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN,
           });
         }
         if (entry.type === scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN) {
@@ -772,11 +774,17 @@
         }
         if (entry.type === scanEffects.EFFECT_TYPES.HAND_SCAN) {
           if (!handScanChoices(root, actor.id).length) return null;
-          return scanDecisionEffect(EFFECT_TYPES.HAND_SCAN, actor.id, {}, "choose_card");
+          return scanDecisionEffect(EFFECT_TYPES.HAND_SCAN, actor.id, {
+            // 紫3（手牌扫描）按规则书「可以」可选执行：提供跳过。
+            skippable: true,
+          }, "choose_card");
         }
         if (entry.type === scanEffects.EFFECT_TYPES.SCAN_ACTION_4) {
           if (!listScanAction4Choices(root, actor.id).length) return null;
-          return scanDecisionEffect(EFFECT_TYPES.SCAN_ACTION_4, actor.id, {}, "choose_target");
+          return scanDecisionEffect(EFFECT_TYPES.SCAN_ACTION_4, actor.id, {
+            // 紫4（发射/移动）按规则书「可以」可选执行：提供跳过。
+            skippable: true,
+          }, "choose_target");
         }
         return null;
       }).filter(Boolean);
@@ -934,14 +942,31 @@
     runtime.registerExecutor(EFFECT_TYPES.SCAN_TARGET, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        return formalizeChoices(root, effect.ownerId, listNebulaChoices(root, {
+        const choices = listNebulaChoices(root, {
           sectorX: effect.payload?.sectorX,
           nebulaIds: effect.payload?.nebulaIds,
           gainData: effect.payload?.gainData,
-        }));
+        });
+        if (effect.payload?.skippable) {
+          choices.push(makeChoice("choose_target", "skip", { skip: true }, {}, "跳过"));
+        }
+        return formalizeChoices(root, effect.ownerId, choices);
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
+        if (choice?.target?.skip) {
+          const spawnedEffects = [];
+          if (effect.payload?.finalize) {
+            spawnedEffects.push({
+              priority: "direct",
+              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
+            });
+          }
+          return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
+            spawnedEffects,
+            events: [{ type: "scanTargetSkipped", playerId: effect.ownerId }],
+          });
+        }
         if (effect.payload?.cost) {
           const actor = getActor(root, effect.ownerId);
           const spent = players.spendResources(actor, effect.payload.cost);
@@ -1126,10 +1151,27 @@
     runtime.registerExecutor(EFFECT_TYPES.HAND_SCAN, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        return formalizeChoices(root, effect.ownerId, handScanChoices(root, effect.ownerId));
+        const choices = handScanChoices(root, effect.ownerId);
+        if (effect.payload?.skippable) {
+          choices.push(makeChoice("choose_card", "skip", { skip: true }, {}, "跳过"));
+        }
+        return formalizeChoices(root, effect.ownerId, choices);
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
+        if (choice?.target?.skip) {
+          const spawnedEffects = [];
+          if (effect.payload?.finalize) {
+            spawnedEffects.push({
+              priority: "direct",
+              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
+            });
+          }
+          return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
+            spawnedEffects,
+            events: [{ type: "handScanSkipped", playerId: effect.ownerId }],
+          });
+        }
         const legal = handScanChoices(root, effect.ownerId)
           .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
         const actor = getActor(root, effect.ownerId);
@@ -1162,10 +1204,27 @@
     runtime.registerExecutor(EFFECT_TYPES.SCAN_ACTION_4, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        return formalizeChoices(root, effect.ownerId, listScanAction4Choices(root, effect.ownerId));
+        const choices = listScanAction4Choices(root, effect.ownerId);
+        if (effect.payload?.skippable) {
+          choices.push(makeChoice("choose_target", "scan4:skip", { mode: "skip" }, {}, "跳过"));
+        }
+        return formalizeChoices(root, effect.ownerId, choices);
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
+        if (choice?.target?.mode === "skip") {
+          const spawnedEffects = [];
+          if (effect.payload?.finalize) {
+            spawnedEffects.push({
+              priority: "direct",
+              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
+            });
+          }
+          return scienceResult(state, root, EFFECT_TYPES.SCAN_ACTION_4, {
+            spawnedEffects,
+            events: [{ type: "scanAction4Skipped", playerId: effect.ownerId }],
+          });
+        }
         const legal = listScanAction4Choices(root, effect.ownerId)
           .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
         if (!legal) return fail("SCIENCE_SCAN4_STALE", "发射/移动选择已失效");
