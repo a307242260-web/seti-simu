@@ -79,6 +79,7 @@
 - `docs/card-modeling-dsl-spec.md`：卡牌描述转换为可执行 DSL 的规范。
 - `docs/alien-design.md`：外星人通用设计总结与新增外星人检查清单。
 - `docs/ai-design.md`：电脑玩家 AI 的当前唯一设计文档（控制器接口、价值模型、目标系统、回合规划、自博弈验证），后续开发以此为准。
+- `docs/fixed-boards.md`：固定盘面 seed ↔ 盘面 ↔ 初始公司关联清单（浏览器下拉与训练侧默认盘面的对号入座）。
 - `docs/rl-simulation-env.md`：RL Simulation env 契约、observation/action/replay schema 与当前浏览器实现映射。
 - `docs/implementation-proof-obligations.md`：跨模块状态机/迁移任务的验收条款正向推导、proof obligation、检查问题与分层证据模板。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。
