@@ -932,13 +932,15 @@
             {},
             `结算 ${settlement.label}`,
           ),
-          // 任务触发选择直接展示任务卡图，不显示编号
+          // 任务触发选择直接展示任务卡图 + 任务内容/奖励说明
           ...(cardImageSrc ? {
             presentation: {
               cardKind: "pick",
               cardId: String(settlement.cardInstanceId),
               imageSrc: cardImageSrc,
               imageAlt: settlement.label,
+              detail: (settlement.effects || [])
+                .map((entry) => entry.label).filter(Boolean).join("；") || null,
             },
           } : {}),
         });
@@ -954,13 +956,15 @@
     return formalize(root, effect.ownerId, [
       {
         ...choice("accept_optional_effect", `confirm:${id}`, {}, {}, `结算 ${settlement.label}`),
-        // 任务触发选择直接展示任务卡图，不显示编号
+        // 任务触发选择直接展示任务卡图 + 任务内容/奖励说明
         ...(cardImageSrc ? {
           presentation: {
             cardKind: "pick",
             cardId: String(settlement.cardInstanceId),
             imageSrc: cardImageSrc,
             imageAlt: settlement.label,
+            detail: (settlement.effects || [])
+              .map((entry) => entry.label).filter(Boolean).join("；") || null,
           },
         } : {}),
       },

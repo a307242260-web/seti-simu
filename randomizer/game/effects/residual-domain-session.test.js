@@ -264,6 +264,16 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const choices = taskExecutor.getLegalChoices(root, taskEffect, { state: root });
   const confirm = choices.find((choice) => choice.target.choiceId.startsWith("confirm:"));
   assert.ok(confirm);
+  assert.equal(confirm.presentation?.cardKind, "pick", "任务结算选择必须携带卡面");
+  assert.match(
+    String(confirm.presentation?.imageSrc || ""),
+    /b_1\.webp/,
+    "任务结算选择必须显示任务卡图",
+  );
+  assert.ok(
+    String(confirm.presentation?.detail || "").length > 0,
+    "任务结算选择必须展示任务奖励说明",
+  );
   const completed = taskExecutor.resolveDecision(
     root, taskEffect, confirm, { state: root },
   );

@@ -157,7 +157,7 @@
         imageSrc: presentation.imageSrc || "",
         imageAlt: presentation.imageAlt || choice.label,
         selected: Boolean(presentation.selected),
-        detail: null,
+        detail: presentation.detail || null,
         displayLabel: choice.label,
       };
     }
