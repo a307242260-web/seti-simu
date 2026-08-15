@@ -875,7 +875,14 @@
 
   // 存盘：把完整 committed state 写入 localStorage 并下载 JSON，方便开发者读取排查
   function saveGameStateToLocal() {
-    const snapshot = ruleComposition.stateSourcePort.getSnapshot();
+    let snapshot = null;
+    try {
+      snapshot = ruleComposition.stateSourcePort.getSnapshot();
+    } catch (error) {
+      console.error("读取游戏状态失败", error);
+      window.alert(`读取游戏状态失败：${error?.message || error}`);
+      return;
+    }
     if (!snapshot || !snapshot.meta) {
       window.alert("当前没有可保存的游戏状态");
       return;
@@ -890,21 +897,32 @@
       state: snapshot,
     };
     const json = JSON.stringify(payload, null, 2);
+    let storedLocally = false;
     try {
       localStorage.setItem("seti-browser-save", json);
-      console.info("游戏状态已存入 localStorage(seti-browser-save)，并已下载 JSON");
+      storedLocally = true;
     } catch (error) {
       console.warn("localStorage 存档失败", error);
     }
+    // 文件名中的 seed 可能含路径/空格等非法字符，统一安全化避免下载被浏览器拦截
+    const safeSeed = String(snapshot.meta?.seed ?? "game")
+      .replace(/[^a-zA-Z0-9_-]/g, "-")
+      .replace(/-+/g, "-")
+      .slice(0, 60) || "game";
+    const fileName = `seti-save-${safeSeed}-v${snapshot.meta?.stateVersion ?? 0}.json`;
     const blob = new Blob([json], { type: "application/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `seti-save-${String(snapshot.meta?.seed ?? "game")}-v${snapshot.meta?.stateVersion ?? 0}.json`;
+    anchor.download = fileName;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
     URL.revokeObjectURL(url);
+    window.alert(
+      `状态已保存（${storedLocally ? "localStorage + " : ""}开始下载 ${fileName}）\n`
+      + "请在浏览器下载栏找到该文件，放到仓库目录或告诉我路径，便于排查。",
+    );
   }
 
   ruleComposition.subscribe((event) => {
