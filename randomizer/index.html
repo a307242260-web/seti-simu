@@ -129,7 +129,15 @@
             <button class="action-button action-button-text" type="button" id="action-pass-button" disabled aria-label="本回合 PASS">PASS</button>
             <button class="action-button action-button-text" type="button" id="action-confirm-button" disabled aria-label="回合结束">回合结束</button>
             <button class="action-button action-button-text" type="button" id="action-undo-button" disabled aria-label="撤销行动">撤销</button>
+            <button class="action-button action-button-text" type="button" id="solar-preview-button" aria-label="太阳系转动预览">预览转动</button>
           </div>
+        </div>
+        <div class="solar-preview-panel" id="solar-preview-panel" hidden aria-label="太阳系转动预览">
+          <div class="solar-preview-head">
+            <span>接下来几次太阳系转动</span>
+            <button class="solar-preview-close" type="button" id="solar-preview-close" aria-label="关闭预览">×</button>
+          </div>
+          <div class="solar-preview-body" id="solar-preview-body"></div>
         </div>
         <div class="quick-actions-panel" id="quick-actions-panel" hidden aria-label="快速行动">
           <div class="quick-actions-row">
