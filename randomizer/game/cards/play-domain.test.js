@@ -11,6 +11,7 @@ const { createRuleComposition } = require("../rule-composition");
 const data = require("../data");
 const players = require("../players");
 const tech = require("../tech");
+const aliens = require("../aliens");
 const solar = require("../../solar-system/core");
 const rockets = require("../rockets");
 
@@ -662,6 +663,63 @@ function runCardLandGrantsStandardPlanetRewards() {
     slot1?.traces?.yellow?.firstPlaced,
     true,
     "打牌登陆木星后槽位1黄色痕迹必须已放置",
+  );
+  composition.dispose();
+}
+
+function runAmibaCardTriggersRegionReward() {
+  // amiba_0（3 数据 + 蓝色区域 symbol 奖励）：打出阿米巴牌必须触发蓝色区域结算
+  const root = createCanonicalState("amiba_0.webp");
+  const amibaCard = aliens.amiba.createAlienCard(0, 1);
+  root.players.players[0].hand = [amibaCard];
+  root.players.players[0].resources.handSize = 1;
+  // 揭示阿米巴（槽位1）：初始 symbol 槽含 blue_3
+  const initialized = aliens.amiba.initializeAmibaReveal(
+    root.aliens,
+    1,
+    root.players.players[0],
+    () => 0.5,
+  );
+  assert.equal(initialized.ok, true);
+  assert.ok(
+    aliens.amiba.getSymbolEntry(root.aliens, "blue_3")?.symbolId,
+    "阿米巴揭示后 blue_3 槽位必须有 symbol",
+  );
+  const { composition } = createIntegratedComposition("amiba_0.webp", { state: root });
+  let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  let guard = 0;
+  let blueRewardSeen = false;
+  while (result.ok && composition.inspect().phase === "awaiting_input") {
+    const decision = composition.inspect().session.decision;
+    const choices = decision.choices;
+    if (choices.some((candidate) => /蓝色|blue|symbol/i.test(String(candidate.summary || "")))) {
+      blueRewardSeen = true;
+    }
+    result = composition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
+      choice: choices[0],
+    });
+    guard += 1;
+    assert.ok(guard < 30, `amiba_0 Decision 链异常: ${JSON.stringify(
+      choices.map((candidate) => JSON.stringify(candidate.target)),
+    )}`);
+  }
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.ok(
+    Number(player.resources.availableData) + Number(player.resources.placedData || 0) >= 3,
+    "amiba_0 必须给 3 个数据",
+  );
+  // 蓝色区域结算后 blue_3 的 symbol 应被消费/移动
+  const blueSlotEntry = aliens.amiba.getSymbolEntry(committed.aliens, "blue_3");
+  assert.ok(
+    !blueSlotEntry || blueSlotEntry.symbolId == null || blueRewardSeen,
+    "amiba_0 蓝色区域 symbol 奖励必须被触发",
   );
   composition.dispose();
 }

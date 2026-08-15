@@ -468,6 +468,11 @@
         return fail("PLAY_CARD_COST_STALE", "卡牌费用已失效");
       }
       const playEffects = cardEffects.buildPlayEffects(card);
+      // 阿米巴牌不在标准卡表（set: alien:阿米巴），打出效果由物种模块构建：
+      // 例如 amiba_0/7 蓝色区域 symbol 奖励、amiba_3 移除痕迹结算区域等。
+      if (aliens?.amiba?.isAmibaCard?.(card)) {
+        playEffects.push(...(aliens.amiba.buildImmediateEffects(card) || []));
+      }
       const unsupported = findUnownedEffect(playEffects);
       if (unsupported) {
         return fail("CARD_PLAY_EFFECT_UNOWNED", `Card Play domain 未拥有 ${unsupported.type}`, {
