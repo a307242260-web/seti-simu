@@ -188,6 +188,122 @@
     }
   }
 
+  // 统一虫族牌效果入口：打出虫族牌后的即时效果在此解析。
+  // 四种效果：
+  //  - CHONG_LAND_FOR_PICKUP / CHONG_ORBIT_OR_LAND_FOR_PICKUP：先登陆（或环绕）再拾取化石，
+  //    由 play-domain 复用 CARD_LAND/CARD_ORBIT 执行器，结算后自动进入拾取节点；
+  //  - CHONG_PICKUP_FOSSIL：上一步登陆/环绕落点位于木星/土星时，拾取该星球 1 枚化石；
+  //  - CHONG_PROBE_PLANET_FOSSIL_REWARD（生态系统研究，3 型牌）：查看探测器所在星球化石并结算 1 枚奖励。
+  function resolvePlayEffect(kind, root, effect, player, options = {}) {
+    const alienState = root?.aliens || options.aliens;
+    if (!alienState || !player) return { ok: false, message: "虫族效果缺少上下文" };
+    const effectOptions = effect?.options || options.effectOptions || {};
+    if (kind === EFFECT_TYPES.CHONG_PICKUP_FOSSIL) {
+      // 上一步登陆/环绕落点决定可拾取化石来源（木星/土星）。
+      const lastPlanetId = root?.match?.cardPlayContext?.lastLanding?.planetId
+        ?? options.planetId
+        ?? null;
+      if (!lastPlanetId || !["jupiter", "saturn"].includes(lastPlanetId)) {
+        return { ok: true, skipped: true, message: "上一步落点不在木星/土星，无法拾取化石" };
+      }
+      const fossils = getAvailablePlanetFossils(alienState, lastPlanetId);
+      if (!fossils.length) {
+        return { ok: true, skipped: true, message: `${lastPlanetId} 没有可拾取的化石` };
+      }
+      // 生成可拾取化石选项（交由 play-domain 弹选择）。
+      return {
+        ok: true,
+        awaitingFossilPick: true,
+        planetId: lastPlanetId,
+        fossils: fossils.map((fossil) => ({
+          fossilId: fossil.fossilId,
+          label: `${fossil.fossilId}：${formatFossilRewardLabel(fossil.fossilId)}`,
+        })),
+        message: `${lastPlanetId} 有 ${fossils.length} 枚化石可拾取`,
+      };
+    }
+    if (kind === EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD) {
+      // 生态系统研究：查看探测器所在星球化石，选 1 枚结算奖励（不移除化石）。
+      const probes = options.listPlayerRockets?.() || [];
+      const planetFossils = ["jupiter", "saturn"].flatMap((planetId) => (
+        getAvailablePlanetFossils(alienState, planetId).map((fossil) => ({
+          ...fossil,
+          sourcePlanetId: planetId,
+        }))
+      ));
+      if (!planetFossils.length) {
+        return { ok: true, skipped: true, message: "木星/土星没有可查看的化石" };
+      }
+      return {
+        ok: true,
+        awaitingFossilReward: true,
+        fossils: planetFossils.map((fossil) => ({
+          fossilId: fossil.fossilId,
+          planetId: fossil.sourcePlanetId,
+          label: `${fossil.sourcePlanetId} ${fossil.fossilId}：${formatFossilRewardLabel(fossil.fossilId)}`,
+        })),
+        message: "选择 1 枚化石结算奖励（不移除化石）",
+      };
+    }
+    return { ok: true };
+  }
+
+  function formatFossilRewardLabel(fossilId) {
+    const reward = getFossilReward(fossilId) || {};
+    const parts = [];
+    const gain = reward.gain || {};
+    if (gain.publicity) parts.push(`${gain.publicity}宣传`);
+    if (gain.score) parts.push(`${gain.score}分`);
+    if (gain.credits) parts.push(`${gain.credits}信用点`);
+    if (gain.energy) parts.push(`${gain.energy}能量`);
+    if (reward.dataCount) parts.push(`${reward.dataCount}数据`);
+    if (reward.drawCards) parts.push(`盲抽${reward.drawCards}`);
+    if (reward.pickCard) parts.push("精选");
+    return parts.length ? parts.join("+") : fossilId;
+  }
+
+  // 结算 1 枚化石奖励（生态系统研究：查看后结算，不移除化石）。
+  function applyFossilRewardOnly(alienState, player, fossilId, options = {}) {
+    const reward = getFossilReward(fossilId);
+    if (!reward) return { ok: false, message: `未知化石奖励 ${fossilId}` };
+    const gain = { ...(reward.gain || {}) };
+    if (options.gainResources) options.gainResources(gain);
+    const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+    for (let index = 0; index < dataCount; index += 1) {
+      if (options.gainData) options.gainData();
+    }
+    const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+    for (let index = 0; index < drawCount; index += 1) {
+      if (options.blindDraw) options.blindDraw();
+    }
+    if (reward.pickCard && options.pickCard) options.pickCard();
+    return {
+      ok: true,
+      reward,
+      gain,
+      message: `结算 ${fossilId} 奖励：${formatFossilRewardLabel(fossilId)}`,
+    };
+  }
+
+  // 拾取 1 枚化石（登陆/环绕后：生成化石搬运棋子，绑定到当前探测器）。
+  function pickupPlanetFossil(alienState, player, fossilId, options = {}) {
+    const task = buildTransportTaskFromFossil(alienState);
+    const picked = pickUpFossil(alienState, fossilId, player, task || {}, {
+      cardId: options.cardId || null,
+      cardLabel: options.cardLabel || null,
+      destinationPlanetId: options.destinationPlanetId || "earth",
+    });
+    if (!picked.ok) return picked;
+    if (options.rocketId != null) {
+      attachTransportRocket(alienState, fossilId, options.rocketId);
+    }
+    return {
+      ok: true,
+      fossil: picked.fossil,
+      message: picked.message,
+    };
+  }
+
   function createTraceGrid() {
     const grid = {};
     for (const traceType of TRACE_TYPES) {
@@ -938,6 +1054,9 @@
     drawDisplayedCardIndex,
     getCardDefinition,
     buildImmediateEffects,
+    resolvePlayEffect,
+    applyFossilRewardOnly,
+    pickupPlanetFossil,
     isChongCard,
     getCardTask,
     isTraceTaskReady,

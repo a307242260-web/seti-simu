@@ -467,10 +467,23 @@
         return fail("PLAY_CARD_COST_STALE", "卡牌费用已失效");
       }
       const playEffects = cardEffects.buildPlayEffects(card);
-      // 阿米巴牌不在标准卡表（set: alien:阿米巴），打出效果由物种模块构建：
-      // 例如 amiba_0/7 蓝色区域 symbol 奖励、amiba_3 移除痕迹结算区域等。
-      if (aliens?.amiba?.isAmibaCard?.(card)) {
-        playEffects.push(...(aliens.amiba.buildImmediateEffects(card) || []));
+      // 外星人牌不在标准卡表（set: alien:*），打出效果由对应物种模块构建：
+      // 阿米巴/虫/奥陌陌/半人马/符文族等所有有 buildImmediateEffects 的物种统一追加，
+      // 不再逐物种特判（虫族牌此前漏接导致打出无效）。
+      const alienModules = [
+        aliens?.amiba,
+        aliens?.chong,
+        aliens?.aomomo,
+        aliens?.banrenma,
+        aliens?.runezu,
+      ].filter(Boolean);
+      for (const module of alienModules) {
+        const isCardMethod = Object.keys(module || {}).find((key) => (
+          key.startsWith("is") && key.endsWith("Card") && typeof module[key] === "function"
+        ));
+        if (isCardMethod && module[isCardMethod](card) && typeof module.buildImmediateEffects === "function") {
+          playEffects.push(...(module.buildImmediateEffects(card) || []));
+        }
       }
       const unsupported = findUnownedEffect(playEffects);
       if (unsupported) {
@@ -1384,6 +1397,21 @@
           };
         }
       }
+      if (actionType === "land") {
+        // 记录登陆落点（虫族拾取化石等后续效果读取）
+        root.match.cardPlayContext = {
+          ...(root.match.cardPlayContext || {}),
+          lastLanding: {
+            planetId: result.planetId,
+            rocketId: legal.target.rocketId,
+            hadAnyMarker: Boolean(
+              effect.options.rememberPreLandingMarker
+                ? result.hadAnyMarker
+                : null,
+            ),
+          },
+        };
+      }
       return cardEffectResult(state, root, sessionEffect, {
         spawnedEffects,
         events: result.events || [],
@@ -1653,6 +1681,38 @@
             cursor: root.meta.rngState.cardPlay?.cursor || 0,
           }],
         });
+      } else if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP
+        || effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
+        // 虫族登陆/环绕牌：先执行登陆（或环绕/登陆），结算后由 CHONG_PICKUP_FOSSIL 拾取化石。
+        // 复用 CARD_LAND/CARD_ORBIT 执行器；可选环绕的牌先弹环绕/登陆二选一。
+        const orbitOrLand = effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP;
+        const actionType = orbitOrLand ? "orbit" : "land";
+        const landed = {
+          priority: "direct",
+          effect: {
+            type: cardEffects.EFFECT_TYPES.CARD_LAND,
+            kind: "decision",
+            decisionKind: "choose_target",
+            ownerId: actor.id,
+            payload: clone(sessionEffect.payload),
+          },
+        };
+        if (!orbitOrLand) {
+          spawnedEffects = [landed];
+        } else {
+          // 环绕或登陆：先弹选择，再走对应执行器。
+          spawnedEffects = [{
+            priority: "direct",
+            effect: {
+              type: genericEffectRuntimeType(effect.type, true),
+              kind: "decision",
+              decisionKind: "choose_target",
+              ownerId: actor.id,
+              payload: clone(sessionEffect.payload),
+            },
+          }];
+        }
+        event.pendingChongPlanetAction = actionType;
       } else {
         return fail("CARD_EFFECT_EXECUTOR_INCOMPLETE", `未实现卡牌效果 ${effect.type}`);
       }
@@ -1668,6 +1728,52 @@
       const actor = getActor(root, sessionEffect.ownerId);
       const options = effect?.options || {};
       if (!actor) return [];
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL) {
+        // 虫族拾取化石：列出上一步登陆/环绕落点（木星/土星）的可拾取化石
+        const resolved = aliens.chong.resolvePlayEffect(
+          aliens.chong.EFFECT_TYPES.CHONG_PICKUP_FOSSIL,
+          root,
+          effect,
+          actor,
+          { aliens: getWorkingSlice(root, "aliens") },
+        );
+        if (!resolved.ok || resolved.skipped || !resolved.awaitingFossilPick) return [];
+        return resolved.fossils.map((fossil) => makeChoice(
+          "choose_target",
+          `chong-fossil:${fossil.fossilId}`,
+          { fossilId: fossil.fossilId, planetId: resolved.planetId },
+          {},
+          fossil.label,
+        ));
+      }
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD) {
+        // 生态系统研究：列出木星/土星全部可查看化石
+        const resolved = aliens.chong.resolvePlayEffect(
+          aliens.chong.EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD,
+          root,
+          effect,
+          actor,
+          {
+            aliens: getWorkingSlice(root, "aliens"),
+            listPlayerRockets: () => listPlayerRockets(root, actor.id),
+          },
+        );
+        if (!resolved.ok || resolved.skipped || !resolved.awaitingFossilReward) return [];
+        return resolved.fossils.map((fossil) => makeChoice(
+          "choose_target",
+          `chong-reward:${fossil.fossilId}`,
+          { fossilId: fossil.fossilId, planetId: fossil.planetId },
+          {},
+          fossil.label,
+        ));
+      }
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
+        // 环绕或登陆二选一
+        return [
+          makeChoice("choose_target", "chong-action:orbit", { chongAction: "orbit" }, {}, "环绕"),
+          makeChoice("choose_target", "chong-action:land", { chongAction: "land" }, {}, "登陆"),
+        ];
+      }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
         // 阿米巴牌区域 symbol 奖励：让玩家选择结算区域内哪个细胞器（symbol）
         const region = options.region;
@@ -1925,6 +2031,106 @@
         cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN,
         cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN,
       ].includes(effect.type)) return resolveNebulaScan(state, sessionEffect, choice, workingContext);
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL) {
+        // 虫族：拾取选中的化石（生成化石搬运棋子绑定当前探测器）
+        const alienState = getWorkingSlice(root, "aliens");
+        const cardInstanceId = sessionEffect.payload?.cardInstanceId;
+        const picked = aliens.chong.pickupPlanetFossil(
+          alienState,
+          actor,
+          legal.target.fossilId,
+          {
+            rocketId: root.match?.cardPlayContext?.lastLanding?.rocketId ?? null,
+            cardId: cardInstanceId,
+          },
+        );
+        if (!picked.ok) return picked;
+        return cardEffectResult(state, root, sessionEffect, {
+          events: [{
+            type: "chong_fossil_picked",
+            playerId: actor.id,
+            fossilId: legal.target.fossilId,
+            rocketId: root.match?.cardPlayContext?.lastLanding?.rocketId ?? null,
+          }],
+          historyType: "card_effect_decision",
+          history: { choiceId: legal.target.choiceId, fossilId: legal.target.fossilId },
+        });
+      }
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD) {
+        // 生态系统研究：结算选中的 1 枚化石奖励（不移除化石）
+        const alienState = getWorkingSlice(root, "aliens");
+        const spawnedEffects = [];
+        let irreversible = null;
+        const applied = aliens.chong.applyFossilRewardOnly(
+          alienState,
+          actor,
+          legal.target.fossilId,
+          {
+            gainResources(gain) { players.gainResources(actor, gain); },
+            gainData() {
+              const result = data.gainData(actor, { source: "chong_fossil_reward", root });
+              if (!result.ok) return result;
+              return result;
+            },
+            blindDraw() {
+              const drawCtx = cards.createCardDrawContext(
+                getWorkingSlice(root, "cards"),
+                getWorkingSlice(root, "players"),
+                () => nextCommittedRandom(root),
+                { root },
+              );
+              const drawn = drawCtx.blindDraw(actor);
+              if (!drawn.ok) return drawn;
+              irreversible = { code: "hidden_card_draw", reason: "虫族化石奖励盲抽翻开隐藏牌" };
+              return drawn;
+            },
+            pickCard() {
+              spawnedEffects.push({
+                priority: "direct",
+                effect: {
+                  type: cardEffects.REWARD_TYPES.PICK_CARD,
+                  kind: "decision",
+                  decisionKind: "choose_card",
+                  ownerId: actor.id,
+                  payload: {},
+                },
+              });
+            },
+          },
+        );
+        if (!applied.ok) return applied;
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects,
+          irreversible,
+          events: [{
+            type: "chong_fossil_reward_settled",
+            playerId: actor.id,
+            fossilId: legal.target.fossilId,
+            reward: applied.reward,
+          }],
+          historyType: "card_effect_decision",
+          history: { choiceId: legal.target.choiceId, fossilId: legal.target.fossilId },
+        });
+      }
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
+        // 环绕或登陆二选一：按选择 spawn 对应执行器
+        const actionType = legal.target.chongAction === "orbit" ? "orbit" : "land";
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects: [{
+            priority: "direct",
+            effect: {
+              type: actionType === "orbit"
+                ? cardEffects.EFFECT_TYPES.CARD_ORBIT
+                : cardEffects.EFFECT_TYPES.CARD_LAND,
+              kind: "decision",
+              decisionKind: "choose_target",
+              ownerId: actor.id,
+              payload: clone(sessionEffect.payload),
+            },
+          }],
+          event: { chongAction: actionType },
+        });
+      }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
         // 结算玩家选中的阿米巴细胞器（symbol）：移动 + 发放奖励
         const alienState = getWorkingSlice(root, "aliens");
@@ -2272,6 +2478,10 @@
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },
       [aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD]: { decisionKind: "choose_target" },
       [aliens.amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD]: { decisionKind: "choose_target" },
+      [aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP]: {},
+      [aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP]: { decisionKind: "choose_target" },
+      [aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL]: { decisionKind: "choose_target" },
+      [aliens.chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD]: { decisionKind: "choose_target" },
     });
 
     for (const [effectType, descriptor] of Object.entries(GENERIC_EFFECT_DESCRIPTORS)) {
