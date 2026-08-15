@@ -128,6 +128,7 @@ function handoffSummary(entry) {
       `${entry.effect.payload.domain}:${entry.effect.payload.effectType}`
     )),
     [
+      "final_scoring:milestone",
       "alien:turn_end_neutral_milestone",
       "alien:turn_end_reveal",
       "company:turn_end",

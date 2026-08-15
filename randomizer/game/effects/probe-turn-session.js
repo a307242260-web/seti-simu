@@ -458,8 +458,9 @@
         };
         return result(state, root, action.family, {
           spawnedEffects: [
-            // 规则书 P18/P20：回合结束时先结算所有里程碑（含中立里程碑 20/30 放中立
-            // 首痕迹），再结算发现外星人。
+            // 规则书 P18/P20：回合结束时先结算所有里程碑（金色 → 中立），
+            // 再结算发现外星人。金里程碑在回合末统一生成 FINAL_MARK。
+            domainHandoff("final_scoring", "milestone", player.id, boundary),
             domainHandoff("alien", "turn_end_neutral_milestone", player.id, boundary),
             domainHandoff("alien", "turn_end_reveal", player.id, boundary),
             domainHandoff("company", "turn_end", player.id, boundary),

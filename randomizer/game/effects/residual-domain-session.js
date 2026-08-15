@@ -1185,28 +1185,15 @@
       return executorResult;
     }
     const spawnedEffects = [...(executorResult.spawnedEffects || [])];
-    // 终局标记立即摆放：任意 effect 结算后，若玩家分数跨过 [25,50,70] 阈值且未认领，
-    // 立即生成 FINAL_MARK Decision。FINAL_MARK 自身的 resolve 结果由 hasMoreForOwner 链
-    // 继续，final_scoring game_end handoff 由 HANDOFF executor 兜底，两者都跳过避免重复。
+    // 金里程碑不再「跨过阈值立即摆放」：规则书 P18 要求玩家完成所有主行动与
+    // 免费行动、结束回合之后再结算里程碑。回合末由 probe-turn 的
+    // final_scoring:milestone handoff 统一生成 FINAL_MARK（先金里程碑、
+    // 再中立里程碑、最后外星人揭示）。这里仅过滤本 effect 自身产生的
+    // FINAL_MARK，避免回合末 handoff 与即时生成重复。
     const sourceType = sourceEffect?.type;
-    const isFinalMarkSource = sourceType === EFFECT_TYPES.FINAL_MARK;
-    const isFinalScoringHandoff = sourceType === HANDOFF_TYPE
-      && sourceEffect?.payload?.domain === "final_scoring";
-    const thresholdFloor = (root.finalScoring?.thresholds || [])[0] ?? 25;
-    const anyPlayerReachedThreshold = (root.players?.players || []).some((player) => (
-      Number(player?.resources?.score) >= Number(thresholdFloor)
-    ));
-    if (!isFinalMarkSource && !isFinalScoringHandoff
-      && root.finalScoring && typeof root.finalScoring === "object"
-      && anyPlayerReachedThreshold) {
-      // 立即摆放终局标记：FINAL_MARK 决策必须 unshift 到队列最前，先于本 effect
-      // 结果里其余 spawnedEffects 认领阈值，否则同一 pending 阈值会被后续 effect
-      // 结果重复生成 FINAL_MARK，第二个决策 choices 为空造成死锁。
-      const finalMarkDecisions = [];
-      for (const player of listPendingFinalOwners(root)) {
-        finalMarkDecisions.push(decision(EFFECT_TYPES.FINAL_MARK, player.id, {}));
-      }
-      spawnedEffects.unshift(...finalMarkDecisions);
+    if (sourceType === EFFECT_TYPES.FINAL_MARK
+      || (sourceType === HANDOFF_TYPE && sourceEffect?.payload?.domain === "final_scoring")) {
+      return { ...executorResult, spawnedEffects };
     }
     if (!Array.isArray(executorResult.events) || !executorResult.events.length) {
       return { ...executorResult, spawnedEffects };
@@ -1393,6 +1380,19 @@
     return scores;
   }
 
+  function orderFinalOwnersFromOwner(root, ownerId) {
+    const order = root.turn?.turnOrderPlayerIds || [];
+    const startIndex = ownerId ? order.indexOf(ownerId) : -1;
+    const rotated = startIndex >= 0
+      ? [...order.slice(startIndex), ...order.slice(0, startIndex)]
+      : order;
+    const pendingIds = new Set(listPendingFinalOwners(root).map((player) => player.id));
+    return rotated
+      .filter((playerId) => pendingIds.has(playerId))
+      .map((playerId) => actor(root, playerId))
+      .filter(Boolean);
+  }
+
   function listPendingFinalOwners(root) {
     return (root.players.players || []).filter((player) => (
       finalScoring.getPendingMarksForPlayer(root.finalScoring, player).length
@@ -1499,6 +1499,21 @@
     }
     if (payload.domain === "alien" && effectType === "turn_end_reveal") {
       return revealReadyAliens(root, owner);
+    }
+    if (payload.domain === "final_scoring" && effectType === "milestone") {
+      // 规则书 P18：里程碑在玩家回合结束（完成所有主行动与免费行动）后结算；
+      // 多个玩家需要结算时，从刚结束回合的玩家开始按顺时针顺序依次结算。
+      const pendingOwners = orderFinalOwnersFromOwner(root, owner?.id || null);
+      return {
+        ok: true,
+        spawnedEffects: pendingOwners.map((player) => (
+          decision(EFFECT_TYPES.FINAL_MARK, player.id, {})
+        )),
+        events: pendingOwners.map((player) => ({
+          type: "final_milestone_pending",
+          playerId: player.id,
+        })),
+      };
     }
     if (payload.domain === "alien" && effectType === "turn_end_neutral_milestone") {
       // 规则书 P18/P5：3 人局在 20/30 分设置中立里程碑（每位置 1 个中立标记）；
@@ -1785,6 +1800,7 @@
       const applied = applyHandoff(root, effect);
       if (!applied.ok) return applied;
       const pendingOwners = effect.payload?.domain === "final_scoring"
+        && effect.payload?.effectType !== "milestone"
         ? listPendingFinalOwners(root)
         : [];
       const cardEffectsToSpawn = (applied.cardSettlements || []).map((settlement) => decision(
