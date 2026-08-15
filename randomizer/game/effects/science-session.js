@@ -671,12 +671,29 @@
         if ([scanEffects.EFFECT_TYPES.EARTH_SECTOR_SCAN,
           scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN,
           scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN].includes(entry.type)) {
+          const isImproved = entry.type === scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN;
           const planetId = entry.type === scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN
             ? "mercury"
             : "earth";
           const planet = solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem"))
             .planetLocations.find((candidate) => candidate.planetId === planetId);
           if (entry.options?.cost && !players.canAfford(actor, entry.options.cost)) return null;
+          if (isImproved) {
+            // 紫1：可不在地球扇区标记信号，而改在相邻扇区标记（规则书：地球及相邻扇区三选一）。
+            if (planet?.x == null) return null;
+            const sectorBySlot = getWorkingSlice(root, "solarSystem").sectorBySlot;
+            const nebulaIds = [solar.mod8(planet.x - 1), solar.mod8(planet.x), solar.mod8(planet.x + 1)]
+              .map((sectorX) => solar.getNebulaAtCoordinate(sectorX, 5, sectorBySlot)?.id)
+              .filter(Boolean);
+            if (!listNebulaChoices(root, { nebulaIds, gainData: true }).length) return null;
+            return scanDecisionEffect(EFFECT_TYPES.SCAN_TARGET, actor.id, {
+              sectorX: null,
+              nebulaIds,
+              gainData: true,
+              cost: entry.options?.cost || null,
+              label: entry.label,
+            });
+          }
           if (!listNebulaChoices(root, { sectorX: planet?.x, gainData: true }).length) return null;
           return scanDecisionEffect(EFFECT_TYPES.SCAN_TARGET, actor.id, {
             sectorX: planet?.x ?? null,
@@ -689,7 +706,12 @@
           if (!publicScanChoices(root).length) return null;
           return scanDecisionEffect(EFFECT_TYPES.PUBLIC_SCAN, actor.id, {
             selected: 0,
-            max: 1 + Math.max(0, Number(actor.resources?.additionalPublicScan) || 0),
+            // 信号标记（额外公共牌区扫描）：每次扫描行动最多通过弃置信号标记
+            // 额外标记 2 个信号（规则书 FAQ：供应区只在行动完成后补满，因此封顶 2）。
+            max: Math.min(
+              1 + 2,
+              1 + Math.max(0, Number(actor.resources?.additionalPublicScan) || 0),
+            ),
             consumeMarkers: true,
           }, "choose_card");
         }
@@ -709,7 +731,19 @@
       const actor = getActor(root, actorId);
       if (!actor) return [];
       const choices = [];
-      if (players.canAfford(actor, { energy: 1 })) {
+      // 紫4 发射选项需校验探测器上限：已达上限时不提供发射，只能移动/跳过
+      // （规则书：支付 1 能量发射一个探测器；发射行动本身受太空探测器上限约束）。
+      const piecesState = getWorkingSlice(root, "pieces");
+      const activeRocketCount = (piecesState?.rockets || []).filter((rocket) => (
+        rocket?.playerId === actor.id
+        && rocket?.surface === "solar-board"
+        && (rocket.kind || "standard") === "standard"
+      )).length;
+      const context = createActionContext(root, actor.id);
+      const rocketLimit = typeof abilities.rocket.getRocketLimitForPlayer === "function"
+        ? abilities.rocket.getRocketLimitForPlayer(actor, context)
+        : 1;
+      if (activeRocketCount < rocketLimit && players.canAfford(actor, { energy: 1 })) {
         choices.push(makeChoice(
           "choose_target",
           "scan4:launch",
@@ -718,7 +752,6 @@
           "发射探测器",
         ));
       }
-      const context = createActionContext(root, actor.id);
       for (const rocket of getWorkingSlice(root, "pieces").rockets || []) {
         if (rocket.playerId !== actor.id) continue;
         for (const move of abilities.rocket.listMoveRequirements(context, actor, rocket.id)) {
