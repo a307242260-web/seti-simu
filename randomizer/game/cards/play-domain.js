@@ -1747,7 +1747,7 @@
         ));
       }
       if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD) {
-        // 生态系统研究：列出木星/土星全部可查看化石
+        // 生态系统研究：列出当前探测器所在星球（木星/土星）的可查看化石
         const resolved = aliens.chong.resolvePlayEffect(
           aliens.chong.EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD,
           root,
@@ -1755,7 +1755,13 @@
           actor,
           {
             aliens: getWorkingSlice(root, "aliens"),
-            listPlayerRockets: () => listPlayerRockets(root, actor.id),
+            listRocketPlanetIds: () => {
+              const context = createActionContext(root, actor.id);
+              return (listPlayerRockets(root, actor.id) || []).map((rocket) => {
+                const placed = actionShared.getRocketPlanet(context, { rocketId: rocket.id });
+                return placed?.ok ? placed.planet?.planetId : null;
+              }).filter(Boolean);
+            },
           },
         );
         if (!resolved.ok || resolved.skipped || !resolved.awaitingFossilReward) return [];

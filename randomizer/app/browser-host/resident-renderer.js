@@ -591,6 +591,14 @@
       token.dataset.traceId = text(entry.id);
       token.dataset.traceType = text(entry.traceType);
       token.dataset.playerColor = text(entry.color);
+      // 虫族面板化石：携带化石信息供点击查看奖励
+      if (entry.traceType === "panel-fossil" && entry.fossil) {
+        token.dataset.fossilId = text(entry.fossil.fossilId);
+        token.dataset.fossilLabel = text(entry.fossil.label);
+        token.classList.add("is-panel-fossil");
+        token.style.pointerEvents = "auto";
+        token.style.cursor = "pointer";
+      }
       if (entry.empty) {
         // 空槽位：不加载图片，由 CSS 显示轮廓占位，便于看清位置布局
         token.classList.add("is-empty-slot");

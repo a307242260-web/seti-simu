@@ -424,6 +424,31 @@
                   }];
                 })
               : []),
+            ...(alienId === "虫"
+              ? aliens.chong.listPanelFossils(state.aliens).flatMap((entry) => {
+                const layout = alienPlacement.getChongTraceMarkerLayout(
+                  slotId,
+                  "blue",
+                  entry.position,
+                );
+                if (!layout) return [];
+                return [{
+                  id: `chong:panel-fossil:${entry.position}`,
+                  traceType: "panel-fossil",
+                  color: null,
+                  imageSrc: aliens.chong.getFossilSrc(entry.fossilId),
+                  layout: structuredClone(layout),
+                  surface: "face",
+                  // 面板化石奖励信息（供点击查看）
+                  fossil: {
+                    fossilId: entry.fossilId,
+                    position: entry.position,
+                    label: entry.label,
+                    reward: entry.reward,
+                  },
+                }];
+              })
+              : []),
           ],
         };
       });
@@ -1467,6 +1492,16 @@
     const image = event.target.closest(".public-card");
     if (!image?.src) return;
     openCardViewer(image.src, image.alt);
+  });
+  // 虫族面板化石奖励标记：点击查看化石奖励
+  document.querySelectorAll("[data-alien-slot-root]").forEach((panel) => {
+    panel.addEventListener("click", (event) => {
+      const token = event.target.closest('[data-trace-type="panel-fossil"]');
+      if (!token) return;
+      const fossilId = token.dataset.fossilId;
+      const label = token.dataset.fossilLabel;
+      window.alert(`虫族化石 ${fossilId}：${label}`);
+    });
   });
   els.reservedCardFan?.addEventListener("click", (event) => {
     const image = event.target.closest(".reserved-card");

@@ -223,26 +223,27 @@
       };
     }
     if (kind === EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD) {
-      // 生态系统研究：查看探测器所在星球化石，选 1 枚结算奖励（不移除化石）。
-      const probes = options.listPlayerRockets?.() || [];
-      const planetFossils = ["jupiter", "saturn"].flatMap((planetId) => (
-        getAvailablePlanetFossils(alienState, planetId).map((fossil) => ({
-          ...fossil,
-          sourcePlanetId: planetId,
-        }))
-      ));
-      if (!planetFossils.length) {
-        return { ok: true, skipped: true, message: "木星/土星没有可查看的化石" };
+      // 生态系统研究：查看当前探测器所在星球（木星/土星）的化石，选 1 枚结算奖励（不移除化石）。
+      // 规则书：只查看探测器所在行星的化石，不列出全部行星；正在搬运的化石棋子也视为探测器。
+      const planetIds = options.listRocketPlanetIds?.() || [];
+      const probePlanetId = planetIds.find((planetId) => ["jupiter", "saturn"].includes(planetId)) || null;
+      if (!probePlanetId) {
+        return { ok: true, skipped: true, message: "探测器不在木星/土星，没有可查看的化石" };
+      }
+      const fossils = getAvailablePlanetFossils(alienState, probePlanetId);
+      if (!fossils.length) {
+        return { ok: true, skipped: true, message: `${probePlanetId} 没有可查看的化石` };
       }
       return {
         ok: true,
         awaitingFossilReward: true,
-        fossils: planetFossils.map((fossil) => ({
+        planetId: probePlanetId,
+        fossils: fossils.map((fossil) => ({
           fossilId: fossil.fossilId,
-          planetId: fossil.sourcePlanetId,
-          label: `${fossil.sourcePlanetId} ${fossil.fossilId}：${formatFossilRewardLabel(fossil.fossilId)}`,
+          planetId: probePlanetId,
+          label: `${fossil.fossilId}：${formatFossilRewardLabel(fossil.fossilId)}`,
         })),
-        message: "选择 1 枚化石结算奖励（不移除化石）",
+        message: `${probePlanetId} 有 ${fossils.length} 枚化石可查看`,
       };
     }
     return { ok: true };
@@ -835,6 +836,19 @@
     return { ok: true, position };
   }
 
+  // 列出虫族面板上的化石奖励标记（蓝色 1-6 号位已放入的化石），供面板渲染。
+  function listPanelFossils(alienState) {
+    const chong = ensureChongState(alienState);
+    return Object.entries(chong.panelFossilSlots || {})
+      .map(([position, fossilId]) => ({
+        position: Number(position),
+        fossilId,
+        reward: getFossilReward(fossilId),
+        label: formatFossilRewardLabel(fossilId),
+      }))
+      .filter((entry) => Boolean(entry.fossilId));
+  }
+
   function completeTransportedFossil(alienState, rocketId, options = {}) {
     const chong = ensureChongState(alienState);
     const task = chong.transportTasksByRocketId?.[String(rocketId)];
@@ -1075,6 +1089,7 @@
     listTransportArrivalEvents,
     listActiveTransports,
     unlockBluePositionWithFossil,
+    listPanelFossils,
     markerBelongsToPlayer,
     getPlayerKeys,
     getPlayerKey,
