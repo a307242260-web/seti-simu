@@ -1172,7 +1172,9 @@
   });
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
   els.quickActionsTrades?.addEventListener("click", (event) => {
-    const button = event.target.closest?.("[data-quick-trade][data-action-id]");
+    const button = event.target.closest?.(
+      "[data-quick-trade][data-action-id], [data-quick-action][data-action-id]",
+    );
     if (!button || button.disabled || !button.dataset.actionId) return;
     const result = desktopActionBar.activateAction(button.dataset.actionId);
     if (result?.ok === false) throw new Error(result.message || result.code);
