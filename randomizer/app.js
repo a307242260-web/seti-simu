@@ -166,7 +166,10 @@
               percentX: (placement.x / planetReferenceLayout.PLANETS_REFERENCE_SIZE.width) * 100,
               percentY: (placement.y / planetReferenceLayout.PLANETS_REFERENCE_SIZE.height) * 100,
               referenceOffsetTokenWidths: Number(marker.referenceOffsetTokenWidths) || 0,
-              imageSrc: markerAssets[kind][marker.color] || markerAssets[kind].white,
+              // 登陆标记显示探测器图标（贴合玩家预期：探测器停在该行星），环绕仍为普通标记
+              imageSrc: kind === "land"
+                ? rocketAssets[marker.color] || rocketAssets.white
+                : markerAssets[kind][marker.color] || markerAssets[kind].white,
             });
           }
         }
