@@ -487,6 +487,28 @@
         continue;
       }
       const species = getSpeciesTraceApi(slot);
+      // 已揭示槽位仍可把痕迹追加到 state 额外痕迹位（3 分/枚），规则书 P20 冗余位。
+      if (slot.traces?.[traceType]?.firstPlaced) {
+        choices.push(makeChoice(
+          "choose_target",
+          `trace:${alienSlotId}:${traceType}:state-extra`,
+          { kind: "planet-reward-alien-trace", alienSlotId, traceType, stateExtra: true },
+          {},
+          `${aliens.getAlienSlotLabel(alienSlotId)} 额外痕迹位（3分）`,
+        ));
+      }
+      // 方舟：痕迹可用来解锁对应颜色的 card2 解锁牌（文档 assets/aliens/方舟/implementation.md）。
+      if (species?.speciesId === "fangzhou"
+        && typeof aliens.fangzhou?.canUnlockCard2ForTrace === "function"
+        && aliens.fangzhou.canUnlockCard2ForTrace(alienState, actor, traceType)) {
+        choices.push(makeChoice(
+          "choose_target",
+          `trace:${alienSlotId}:${traceType}:fangzhou-unlock`,
+          { kind: "planet-reward-alien-trace", alienSlotId, traceType, fangzhouUnlock: true },
+          {},
+          `${aliens.getAlienSlotLabel(alienSlotId)} 解锁方舟牌`,
+        ));
+      }
       const positions = species?.api?.TRACE_POSITIONS
         || species?.api?.getPositionsForTraceType?.(traceType)
         || [];
@@ -543,6 +565,36 @@
         players.gainResources(actor, reward?.gain || {});
       }
       return placed;
+    }
+    // 已揭示槽位：state 额外痕迹位（3 分/枚，规则书 P20 冗余位）。
+    if (legal.target.stateExtra) {
+      const placed = aliens.addExtraTrace(
+        alienState,
+        legal.target.alienSlotId,
+        legal.target.traceType,
+        actor.color,
+      );
+      if (placed?.ok) {
+        const reward = aliens.getExtraTraceReward?.();
+        players.gainResources(actor, reward?.gain || {});
+      }
+      return placed;
+    }
+    // 方舟：解锁对应颜色 card2 解锁牌，进手牌。
+    if (legal.target.fangzhouUnlock) {
+      const unlocked = aliens.fangzhou?.unlockCard2?.(
+        alienState,
+        actor,
+        legal.target.traceType,
+      );
+      if (!unlocked?.ok) return unlocked || fail("SCIENCE_FANGZHOU_UNLOCK_FAILED", "方舟解锁失败");
+      if (unlocked.handCard) {
+        const added = cards.addCardToHand(actor, unlocked.handCard);
+        if (added && getWorkingSlice(root, "players")) {
+          actor.resources.handSize = actor.hand.length;
+        }
+      }
+      return { ok: true, ...unlocked };
     }
     const species = getSpeciesTraceApi(slot);
     return species?.api?.[species.placeMethod]?.(

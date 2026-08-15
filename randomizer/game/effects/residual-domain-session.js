@@ -611,11 +611,47 @@
       )
       : { ok: true, totalDrawn: 0, irreversible: null };
     if (!grants.ok) return grants;
+    // 方舟专属：揭示时，state 面板拥有首痕迹的玩家按首痕迹数量各获得 1 次基础奖励
+    // （翻 card1 基础奖励牌，结算 gain/数据/盲抽/额外公共扫描）。
+    let revealRewardEffects = [];
+    let revealIrreversible = grants.irreversible || null;
+    if (speciesId === "fangzhou" && typeof module.flipCard1Reward === "function") {
+      for (const player of allPlayers) {
+        const firstTraceCount = aliens.countFirstTracesForPlayerOnSlot
+          ? aliens.countFirstTracesForPlayerOnSlot(root.aliens, slotId, player)
+          : 0;
+        for (let rewardIndex = 0; rewardIndex < firstTraceCount; rewardIndex += 1) {
+          const flip = module.flipCard1Reward(root.aliens, "basic", random);
+          if (!flip.ok) return flip;
+          const reward = flip.effect || {};
+          const translated = [];
+          if (reward.gain && Object.keys(reward.gain).length) {
+            translated.push({ type: "gain_resources", options: { gain: clone(reward.gain) } });
+          }
+          if (reward.dataCount) translated.push({ type: "gain_data", options: { count: reward.dataCount } });
+          if (reward.blindDraw) translated.push({ type: "draw_cards", options: { count: reward.blindDraw } });
+          if (reward.additionalPublicScan) {
+            translated.push({
+              type: "gain_resources",
+              options: { gain: { additionalPublicScan: reward.additionalPublicScan } },
+            });
+          }
+          const applied = applyFormalCardEffects(root, player, translated, "alienRevealScore");
+          if (!applied.ok) return applied;
+          revealRewardEffects.push(...applied.spawnedEffects);
+          if (applied.irreversible) revealIrreversible = applied.irreversible;
+        }
+      }
+      if (!revealIrreversible) {
+        revealIrreversible = { code: "fangzhou_reward_reveal", reason: "方舟奖励牌已翻开" };
+      }
+    }
     return {
       ok: true,
       initialized,
       grants,
-      irreversible: grants.irreversible || {
+      spawnedEffects: revealRewardEffects,
+      irreversible: revealIrreversible || {
         code: "alien_reveal",
         reason: "外星人物种已揭示",
       },
@@ -633,6 +669,7 @@
 
   function revealReadyAliens(root, owner) {
     const revealed = [];
+    const spawnedEffects = [];
     for (const slotId of [1, 2]) {
       const slot = aliens.getAlienSlot(root.aliens, slotId);
       if (!slot || slot.revealed || !aliens.isAlienReadyToReveal(slot)) continue;
@@ -648,10 +685,12 @@
       );
       if (!initialized.ok) return initialized;
       revealed.push({ slotId, speciesId, alienId: picked.alienId, initialized });
+      spawnedEffects.push(...(initialized.spawnedEffects || []));
     }
     return {
       ok: true,
       revealed,
+      spawnedEffects,
       irreversible: revealed.length
         ? { code: "alien_reveal_turn_end", reason: "回合结束揭示外星人" }
         : null,
