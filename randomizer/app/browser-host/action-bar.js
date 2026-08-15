@@ -131,7 +131,6 @@
       [els.actionAnalyzeButton, "analyze"],
       [els.actionPlayCardButton, "play_card"],
       [els.actionResearchTechButton, "research_tech"],
-      [els.actionPlaceDataButton, "place_data"],
     ]);
     let projection = null;
     const read = () => {
@@ -171,6 +170,14 @@
           && String(candidate.target?.tradeId) === String(button.dataset.quickTrade)
         ));
         setButton(button, action, "当前无法兑换");
+      });
+      // 其他快速行动（放置数据等）：按 family 匹配
+      els.quickActionsTrades.querySelectorAll("[data-quick-action]").forEach((button) => {
+        const action = projection.controls.quickActions.find((candidate) => (
+          candidate.family === String(button.dataset.quickAction)
+          && !candidate.disabledReason
+        ));
+        setButton(button, action, "当前无法执行此快速行动");
       });
     }
     function setQuickPanelOpen(open) {

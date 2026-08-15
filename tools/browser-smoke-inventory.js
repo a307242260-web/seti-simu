@@ -650,14 +650,19 @@ module.exports = Object.freeze([
       if (btn.getAttribute("aria-label") !== "1能量移动1步") {
         throw new Error("能量移动按钮文案错误: " + btn.getAttribute("aria-label"));
       }
-      window.__setiQuickMoveSmoke = { ok: true, hasButton: true };
+      const placeBtn = document.querySelector('[data-quick-action="place_data"]');
+      if (!placeBtn) throw new Error("快速面板缺少放置数据按钮");
+      if (document.querySelector('#action-place-data-button')) {
+        throw new Error("放置数据不应占用主行动栏");
+      }
+      window.__setiQuickMoveSmoke = { ok: true, hasButton: true, hasPlaceData: true };
     })()`,
     successExpression: "window.__setiQuickMoveSmoke?.ok === true",
     obligation: "快速面板渲染 1 能量移动 1 步（energy-for-move）按钮",
     counterexample: "能量移动按钮缺失或文案错误",
   }),
   Object.freeze({
-    id: "policy-input",id: "policy-input",
+    id: "policy-input",id: "policy-input",id: "policy-input",
     file: "randomizer/app/browser-host/policy-input-adapter.browser-smoke.html",
     resultSelector: "body",
     resultAttribute: "data-result",
