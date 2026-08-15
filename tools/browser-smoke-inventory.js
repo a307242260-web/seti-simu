@@ -714,4 +714,47 @@ module.exports = Object.freeze([
     obligation: "Policy 在 Chrome 中只经与人类共用的 Action/Decision input port",
     counterexample: "Policy 访问 renderer/picker 或绕过正式提交端口",
   }),
+  Object.freeze({
+    id: "production-replay-steps-recorded",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",
+    actionExpression: `(async () => {
+      const waitFor = async (predicate, label, timeout = 15000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      document.querySelector("#start-screen-start-button").click();
+      await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
+      // 通过 capture() 拿 committedState，验证浏览器内核能提供 players/turn 摘要数据
+      const cap = window.SetiRandomizer.capture();
+      if (!cap || cap.ok !== true || !cap.envelope || !cap.envelope.rules) {
+        throw new Error("capture 失败: " + JSON.stringify(cap).slice(0, 200));
+      }
+      const rulesEnv = cap.envelope.rules.envelope;
+      if (!rulesEnv || !rulesEnv.committedState) {
+        throw new Error("capture 缺少 rules.envelope.committedState");
+      }
+      const st = JSON.parse(rulesEnv.committedState);
+      const players = st && st.players && st.players.players;
+      if (!players || !Array.isArray(players) || players.length < 4) {
+        throw new Error("committedState 缺少 players.players: " + JSON.stringify(st && Object.keys(st)));
+      }
+      const turn = st && st.turn;
+      if (!turn || turn.roundNumber == null) {
+        throw new Error("committedState 缺少 turn.roundNumber");
+      }
+      const white = players.find((p) => p.id === "player-white" || p.playerId === "player-white");
+      if (!white || !white.resources) {
+        throw new Error("committedState 缺少 white.resources");
+      }
+      return true;
+    })`,
+    successExpression: "Boolean(window.SetiRandomizer)",
+    obligation: "浏览器内核 lifecycle.save 的 committedState 必须能提供 players/turn/resources（replaySteps after 摘要的状态源）",
+    counterexample: "committedState 结构变化导致 after 摘要无法生成",
+  }),
 ]);

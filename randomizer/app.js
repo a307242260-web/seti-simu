@@ -859,37 +859,38 @@
 
   // 每步后的紧凑状态摘要（供学习工具看"决策时的状态 + 选择"）：
   // { r: round, t: turn, c: currentPlayerId, p: { [playerId]: [score, credits, energy, publicity, hand, reserved] } }
+  // 状态来源：lifecycle.save() 的 committedState（投影在提交后时序下可能取不到，
+  // 存档的 committedState 已证明结构可靠；每步一次序列化 ~1-3ms，可接受）。
   function browserStateSummary() {
-    let st = null;
     try {
-      const read = ruleComposition.projectionSource.read({
-        viewerId: "browser:replay-summary",
-        playerId: null,
-        role: "spectator",
-      });
-      st = read?.state || null;
+      const saved = ruleComposition.lifecycle.save();
+      if (!saved?.ok || !saved.envelope?.committedState) {
+        return { p: {}, r: null, t: null, c: null };
+      }
+      const st = typeof saved.envelope.committedState === "string"
+        ? JSON.parse(saved.envelope.committedState)
+        : saved.envelope.committedState;
+      const players = st?.players?.players || [];
+      const turn = st?.turn || {};
+      const summary = { p: {} };
+      summary.r = turn.roundNumber ?? null;
+      summary.t = turn.turnNumber ?? null;
+      summary.c = turn.currentPlayerId ?? null;
+      for (const p of players) {
+        const r = p.resources || p;
+        summary.p[p.id || p.playerId || p.color] = [
+          r.score ?? p.score ?? 0,
+          r.credits ?? p.credits ?? 0,
+          r.energy ?? p.energy ?? 0,
+          r.publicity ?? p.publicity ?? 0,
+          (p.hand || []).length,
+          (p.reservedCards || []).length,
+        ];
+      }
+      return summary;
     } catch (_error) {
-      st = null;
+      return { p: {}, r: null, t: null, c: null };
     }
-    if (!st) return { p: {}, r: null, t: null, c: null };
-    const players = st.players?.players || [];
-    const summary = { p: {} };
-    const turn = st.turn || {};
-    summary.r = turn.roundNumber ?? null;
-    summary.t = turn.turnNumber ?? null;
-    summary.c = turn.currentPlayerId ?? null;
-    for (const p of players) {
-      const r = p.resources || p;
-      summary.p[p.id || p.playerId || p.color] = [
-        r.score ?? p.score ?? 0,
-        r.credits ?? p.credits ?? 0,
-        r.energy ?? p.energy ?? 0,
-        r.publicity ?? p.publicity ?? 0,
-        (p.hand || []).length,
-        (p.reservedCards || []).length,
-      ];
-    }
-    return summary;
   }
 
   function recordBrowserReplayStep(action, extra = {}) {
