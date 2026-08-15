@@ -1231,6 +1231,7 @@
         }
       }
       const processedNodeKeys = new Set();
+      const processedOriginKeys = new Set();
       let executedNodeCount = 0;
       let expandedSearchNodeCount = 0;
       let transpositionHitCount = 0;
@@ -2322,10 +2323,23 @@
           }
           const key = node.key || nodeKey(node);
           if (processedNodeKeys.has(key)) {
+            // 换位去重不是无损的：同一状态可能被多个「不同路由目标」的 origin 到达，
+            // 而搜索从该状态的继续展开是跟着目标的（selectSuccessors 用 routeTargetId）。
+            // 只按 (state, action, depth) 判重会静默丢弃后到 origin 的目标路径。这里
+            // 按 (key, routeTarget, routePlan) 判重，仅丢弃目标已处理过的 origin。
+            const originKey = (o) => `${key}|${o.routeTargetId || ""}|${o.routePlanId || ""}`;
+            const freshOrigins = node.origins.filter((o) => !processedOriginKeys.has(originKey(o)));
+            if (!freshOrigins.length) {
+              transpositionHitCount += 1;
+              continue;
+            }
+            node.origins = freshOrigins;
+            for (const o of freshOrigins) processedOriginKeys.add(originKey(o));
             transpositionHitCount += 1;
-            continue;
+          } else {
+            processedNodeKeys.add(key);
+            for (const o of node.origins) processedOriginKeys.add(`${key}|${o.routeTargetId || ""}|${o.routePlanId || ""}`);
           }
-          processedNodeKeys.add(key);
           executedNodeCount += 1;
           sharedPhysicalExecutionOriginCount += Math.max(0, node.origins.length - 1);
           if (budgetedNode) expandedSearchNodeCount += 1;
