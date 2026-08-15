@@ -61,6 +61,17 @@
     return 0;
   }
 
+  // 公司 label：initialSelection.industry 可能是 { id: "industry:图灵系统.png" }，
+  // 统一规范化为无前缀无扩展名的公司名，用于拼卡图路径。
+  function normalizeCompanyLabel(value) {
+    if (!value) return null;
+    const label = typeof value === "string" ? value : (value?.id || value?.label || "");
+    return String(label)
+      .replace(/^industry:/, "")
+      .replace(/^.*[/\\]/, "")
+      .replace(/\.[^.]+$/, "") || null;
+  }
+
   function createInitialIncomePresentation(inspection, viewerPlayerId) {
     const decisionContext = inspection?.currentEffect?.payload?.decisionContext;
     const queue = decisionContext?.kind === "initial_income"
@@ -101,7 +112,7 @@
         handCount: countCollection(player?.hand),
         reservedCount: countCollection(player?.reservedCards),
         tech: clone(player?.techState?.ownedTiles || {}),
-        companyLabel: player?.initialSelection?.industry || null,
+        companyLabel: normalizeCompanyLabel(player?.initialSelection?.industry),
       };
     }
 
