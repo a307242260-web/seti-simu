@@ -2010,16 +2010,25 @@
             const advanced = composition.counterfactualPort
               ?.advanceFocalPlanningTurn?.(focalSeatId);
             if (!advanced?.ok) {
-              return {
-                failed: true,
-                code: advanced?.code || "COUNTERFACTUAL_FOCAL_TURN_ADVANCE_FAILED",
-                message: advanced?.message || "单席位规划无法进入下一行动",
-              };
+              // 回合末结算链（final_scoring:milestone → FINAL_MARK 等）尚未排空时
+              // 立即推进必然失败。这不是分支失败：真实游戏会先解析完终局标记等
+              // 决策再进入下一回合。这里标记延迟推进，待会话排空后再推进（见下方
+              // pendingFocalAdvance 处理），避免「刚跨过里程碑的回合」被误杀。
+              if (advanced?.code === "COUNTERFACTUAL_FOCAL_TURN_SESSION_PENDING") {
+                for (const origin of node.origins) origin.pendingFocalAdvance = true;
+              } else {
+                return {
+                  failed: true,
+                  code: advanced?.code || "COUNTERFACTUAL_FOCAL_TURN_ADVANCE_FAILED",
+                  message: advanced?.message || "单席位规划无法进入下一行动",
+                };
+              }
+            } else if (advanced.advanced) {
+              focalPlanningTurnAdvanceCount += 1;
             }
-            if (advanced.advanced) focalPlanningTurnAdvanceCount += 1;
           }
-          const nextInspection = composition.inspect();
-          const awaitingDecision = nextInspection.phase === "awaiting_input";
+          let nextInspection = composition.inspect();
+          let awaitingDecision = nextInspection.phase === "awaiting_input";
           // 信任 enumerateActions / getDecisionSnapshot 已返回 fresh 结果，不再二次 clone：
           // - 非 awaiting 路径 enumerateActions 每次新建描述符（trusted 不做 state clone）；
           // - awaiting 路径 session.decision.choices 由 getDecisionSnapshot 每次枚举并克隆
@@ -2049,6 +2058,32 @@
             const filtered = sanitizeHiddenInformationActions(rootObservation, successors);
             successors = filtered.actions;
             hiddenInformationFilteredActionCount += filtered.filteredCount;
+          }
+          // 延迟推进：end_turn 立即推进因回合末会话未排空（如 FINAL_MARK 决策待解析）
+          // 而标记 pendingFocalAdvance 时，在会话排空（无活动 session）后把 focal 拉回
+          // 当前行动位，并重新 inspect/枚举后继——否则后继会落在「下一位玩家」的
+          // 行动上，单席位规划无法执行而被误杀。
+          if (
+            secondaryAgentSearch
+            && node.origins.some((origin) => origin.pendingFocalAdvance === true)
+            && !nextInspection.session
+          ) {
+            const advanced = composition.counterfactualPort
+              ?.advanceFocalPlanningTurn?.(focalSeatId);
+            if (advanced?.ok) {
+              for (const origin of node.origins) origin.pendingFocalAdvance = false;
+              if (advanced.advanced) focalPlanningTurnAdvanceCount += 1;
+              nextInspection = composition.inspect();
+              awaitingDecision = nextInspection.phase === "awaiting_input";
+              successors = awaitingDecision
+                ? (nextInspection.session?.decision?.choices || [])
+                : composition.inputPort.enumerateActions({});
+              if (informationMasked) {
+                const filtered = sanitizeHiddenInformationActions(rootObservation, successors);
+                successors = filtered.actions;
+                hiddenInformationFilteredActionCount += filtered.filteredCount;
+              }
+            }
           }
           const projectionStartedAt = now();
           // 中间节点观测用 cheap 模式（跳过 planets/data/solarSystem/finalScoring 克隆，
