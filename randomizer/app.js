@@ -860,9 +860,19 @@
   // 每步后的紧凑状态摘要（供学习工具看"决策时的状态 + 选择"）：
   // { r: round, t: turn, c: currentPlayerId, p: { [playerId]: [score, credits, energy, publicity, hand, reserved] } }
   function browserStateSummary() {
-    const projection = readProjection();
-    const st = projection?.state || projection || {};
-    const players = st.players?.players || st.players || [];
+    let st = null;
+    try {
+      const read = ruleComposition.projectionSource.read({
+        viewerId: "browser:replay-summary",
+        playerId: null,
+        role: "spectator",
+      });
+      st = read?.state || null;
+    } catch (_error) {
+      st = null;
+    }
+    if (!st) return { p: {}, r: null, t: null, c: null };
+    const players = st.players?.players || [];
     const summary = { p: {} };
     const turn = st.turn || {};
     summary.r = turn.roundNumber ?? null;
