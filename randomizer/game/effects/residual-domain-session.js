@@ -1572,11 +1572,20 @@
       const root = getRoot(state, context);
       const player = actor(root, effect.ownerId);
       if (!player) return [];
-      return formalize(root, player.id, finalScoring.DEFAULT_TILE_IDS.flatMap((tileId) => (
-        finalScoring.canMarkTile(root.finalScoring, tileId, player).ok
-          ? [choice("choose_target", `final:${tileId}`, { tileId }, {}, `标记 ${tileId.toUpperCase()}`)]
-          : []
-      )));
+      return formalize(root, player.id, finalScoring.DEFAULT_TILE_IDS.flatMap((tileId) => {
+        if (!finalScoring.canMarkTile(root.finalScoring, tileId, player).ok) return [];
+        const variant = root.finalScoring?.tileVariants?.[tileId] ?? 1;
+        return [{
+          ...choice("choose_target", `final:${tileId}`, { tileId }, {}, `标记 ${tileId.toUpperCase()}`),
+          // 终局标记选择直接展示终局计分板块图片，玩家对照板块放标记
+          presentation: {
+            cardKind: "pick",
+            cardId: String(tileId),
+            imageSrc: `../assets/final/final_${tileId}${variant}.png`,
+            imageAlt: `终局计分板块 ${tileId.toUpperCase()}`,
+          },
+        }];
+      }));
     };
     runtime.registerExecutor(EFFECT_TYPES.FINAL_MARK, {
       getLegalChoices: finalMarkChoices,

@@ -106,8 +106,15 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
     const effect = queue.shift().effect;
     if (effect.type !== residual.EFFECT_TYPES.FINAL_MARK) continue;
     const executor = owner.executors.get(residual.EFFECT_TYPES.FINAL_MARK);
-    const selected = executor.getLegalChoices(root, effect, { state: root })[0];
-    assert.ok(selected, "终局标记必须有正式合法选择");
+    const choices = executor.getLegalChoices(root, effect, { state: root });
+    assert.ok(choices.length > 0, "终局标记必须有正式合法选择");
+    assert.equal(choices[0].presentation?.cardKind, "pick", "终局标记选择必须携带板块图片");
+    assert.match(
+      String(choices[0].presentation?.imageSrc || ""),
+      /^\.\.\/assets\/final\/final_[a-d][12]\.png$/,
+      "终局标记选择必须指向终局板块图片",
+    );
+    const selected = choices[0];
     const settled = executor.resolveDecision(root, effect, selected, { state: root });
     assert.equal(settled.ok, true);
     queue.push(...(settled.spawnedEffects || []));
