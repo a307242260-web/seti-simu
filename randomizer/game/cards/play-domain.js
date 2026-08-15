@@ -1631,6 +1631,7 @@
       }
       if ([
         cardEffects.EFFECT_TYPES.CARD_MOVE,
+        cardEffects.EFFECT_TYPES.FREE_MOVE,
         cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE,
         cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE,
       ].includes(effect.type)) return listMoveChoices(root, sessionEffect);
@@ -1785,6 +1786,7 @@
       ].includes(effect.type)) return resolveNebulaScan(state, sessionEffect, choice, workingContext);
       if ([
         cardEffects.EFFECT_TYPES.CARD_MOVE,
+        cardEffects.EFFECT_TYPES.FREE_MOVE,
         cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE,
         cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE,
       ].includes(effect.type)) return resolveMove(state, sessionEffect, choice, workingContext);
@@ -2009,6 +2011,7 @@
       [cardEffects.EFFECT_TYPES.CARD_LAND]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.CARD_MOVE]: { decisionKind: "choose_target" },
+      [cardEffects.EFFECT_TYPES.FREE_MOVE]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.OPTIONAL_DISCARD_SCAN]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.CARD_ORBIT]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD]: { decisionKind: "choose_reward" },

@@ -2042,7 +2042,7 @@
     "b_103.webp": withSource("b_103.webp", {
       cardType: 2,
       playEffects: Object.freeze([researchTechEffect("b103-blue-tech", "科技（只能选择蓝色）", ["blue"])]),
-      tasks: Object.freeze([{ id: "b103-score-task", condition: Object.freeze({ type: "resourceThreshold", resource: "score", count: 50 }), rewards: Object.freeze([effect("b103-income", "income", "至少50分：收入", "income")]) }]),
+      tasks: Object.freeze([{ id: "b103-score-task", condition: Object.freeze({ type: "resourceThreshold", resource: "score", count: 50 }), rewards: Object.freeze([incomeEffect("b103-income", "至少50分：收入")]) }]),
     }),
     "b_104.webp": withSource("b_104.webp", {
       cardType: 2,
