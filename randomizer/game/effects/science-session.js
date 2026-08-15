@@ -521,16 +521,46 @@
           actor,
           {},
         );
-        if (check?.ok) choices.push(makeChoice(
-          "choose_target",
-          `trace:${alienSlotId}:${traceType}:${species.speciesId}:${position}`,
-          { kind: "planet-reward-alien-trace", alienSlotId, traceType, speciesId: species.speciesId, position },
-          {},
-          `${aliens.getAlienSlotLabel(alienSlotId)} ${position}`,
-        ));
+        if (check?.ok) {
+          // 选项带奖励描述（如「虫族 黄3号：3分+虫族牌」），让玩家看清每个位置得到什么
+          const reward = typeof species.api.getTraceReward === "function"
+            ? species.api.getTraceReward(alienState, traceType, position)
+            : null;
+          const rewardText = formatTraceRewardLabel(reward);
+          choices.push(makeChoice(
+            "choose_target",
+            `trace:${alienSlotId}:${traceType}:${species.speciesId}:${position}`,
+            { kind: "planet-reward-alien-trace", alienSlotId, traceType, speciesId: species.speciesId, position },
+            {},
+            `${aliens.getAlienSlotLabel(alienSlotId)} ${traceTypeLabel(traceType)}${position}号位${rewardText ? `（${rewardText}）` : ""}`,
+          ));
+        }
       }
     }
     return choices;
+  }
+
+  function traceTypeLabel(traceType) {
+    const labels = { pink: "粉", yellow: "黄", blue: "蓝" };
+    return labels[traceType] || traceType;
+  }
+
+  // 统一痕迹位置奖励描述：gain（宣传/分/信用点/能量/数据）+ 盲抽/精选/外星人牌/化石面板。
+  function formatTraceRewardLabel(reward) {
+    if (!reward) return "";
+    const parts = [];
+    const gain = reward.gain || {};
+    if (gain.score) parts.push(`${gain.score}分`);
+    if (gain.publicity) parts.push(`${gain.publicity}宣传`);
+    if (gain.credits) parts.push(`${gain.credits}信用点`);
+    if (gain.energy) parts.push(`${gain.energy}能量`);
+    if (gain.additionalPublicScan) parts.push(`${gain.additionalPublicScan}额外扫描`);
+    if (reward.dataCount) parts.push(`${reward.dataCount}数据`);
+    if (reward.drawCards) parts.push(`盲抽${reward.drawCards}`);
+    if (reward.pickCard) parts.push("精选牌");
+    if (reward.pickAlienCard) parts.push("外星人牌");
+    if (reward.fossilPanel) parts.push("化石奖励");
+    return parts.join("+");
   }
 
   function placeAlienTrace(root, actorId, choice) {
@@ -1435,9 +1465,17 @@
         const traceTypes = effect.payload?.traceType
           ? [effect.payload.traceType]
           : (aliens.TRACE_TYPES || ["pink", "yellow", "blue"]);
-        return formalizeChoices(root, effect.ownerId, traceTypes.flatMap((traceType) => (
+        const choices = traceTypes.flatMap((traceType) => (
           listAlienTraceChoices(root, effect.ownerId, traceType)
-        )));
+        ));
+        // 来源标签（如「任意外星人标记 1/2」）拼到每个选项前，玩家能看清这是第几次放置
+        const sourceLabel = effect.payload?.label;
+        if (sourceLabel && choices.length) {
+          for (const choice of choices) {
+            choice.summary = `${sourceLabel} → ${choice.summary || choice.family}`;
+          }
+        }
+        return formalizeChoices(root, effect.ownerId, choices);
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);

@@ -624,7 +624,11 @@
         delegated = {
           type: science.EFFECT_TYPES.ALIEN_TRACE, kind: "decision",
           decisionKind: "choose_target", ownerId: effect.ownerId,
-          payload: { traceType: rewardOptions.traceType },
+          payload: {
+            traceType: rewardOptions.traceType,
+            // 带奖励来源标签（如「任意外星人标记 1/2」），弹窗标题可显示第几次
+            label: reward.label || null,
+          },
         };
       } else if (reward.type === planetRewards.EFFECT_TYPES.AOMOMO_CARD) {
         delegated = domainHandoff("alien", "planet_reward_aomomo_card", effect.ownerId, {
