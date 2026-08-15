@@ -2284,3 +2284,15 @@ body {
   border-radius: 5px;
   flex: 0 0 auto;
 }
+
+/* 快速行动按钮文字标签 */
+.quick-trade-action-button {
+  flex-direction: column;
+  gap: 3px;
+}
+
+.quick-trade-label {
+  font: 700 10px/1.1 "Microsoft YaHei", "PingFang SC", sans-serif;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
