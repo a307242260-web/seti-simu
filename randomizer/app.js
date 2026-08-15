@@ -1009,9 +1009,13 @@
       window.alert(`读档失败：${result?.message || result?.code || "内核恢复失败"}`);
       return;
     }
-    scheduleRefresh();
+    // 读档后从恢复点重新开始录制轨迹：恢复前的已录步骤不再延续（避免版本分叉），
+    // 恢复点之后的操作照常记录，同样可用于机器人训练（ingest 只消费 step 动作价值）。
+    if (trajectoryRecording) trajectoryRecording.reset();
+    scheduleRefreshAndAutomation();
     window.alert(
-      `已从 ${sourceName} 恢复游戏（stateVersion ${payload.stateVersion ?? "?"}）`,
+      `已从 ${sourceName} 恢复游戏（stateVersion ${payload.stateVersion ?? "?"}）`
+      + (trajectoryRecording ? "；轨迹已从恢复点重新录制" : ""),
     );
   }
 
