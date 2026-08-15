@@ -1451,12 +1451,33 @@
         const root = getWorkingRoot(state, workingContext);
         const result = placeAlienTrace(root, effect.ownerId, choice);
         if (!result?.ok) return result;
+        const spawnedEffects = [];
+        // 阿米巴痕迹位置的区域奖励：放完痕迹后让玩家选择结算该区域哪个细胞器（symbol）
+        if (result.reward?.region && aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: `card_play_domain_effect:decision:${aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD}`,
+              kind: "decision",
+              decisionKind: "choose_target",
+              ownerId: effect.ownerId,
+              payload: {
+                cardEffect: {
+                  type: aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD,
+                  options: { region: result.reward.region },
+                },
+              },
+            },
+          });
+        }
         return scienceResult(state, root, EFFECT_TYPES.ALIEN_TRACE, {
+          spawnedEffects,
           events: [{
             type: "alienTrace",
             playerId: effect.ownerId,
             traceType: choice.target.traceType,
             alienSlotId: choice.target.alienSlotId,
+            region: result.reward?.region || null,
           }],
         });
       },
