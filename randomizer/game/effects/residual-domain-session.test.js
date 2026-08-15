@@ -146,7 +146,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.deepEqual(handoffs.map((effect) => (
     `${effect.payload.domain}:${effect.payload.effectType}`
   )), [
-    "alien:turn_end_reveal", "company:turn_end", "card_trigger:turn_end",
+    "alien:turn_end_neutral_milestone", "alien:turn_end_reveal", "company:turn_end", "card_trigger:turn_end",
   ]);
   for (const handoff of handoffs) {
     assert.equal(execute(owner.executors.get(residual.HANDOFF_TYPE), root, handoff).ok, true);

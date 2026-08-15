@@ -622,6 +622,15 @@
     };
   }
 
+  function findNeutralPlayerColor(root) {
+    // 3 人局：4 色中未参与游戏的玩家颜色作为中立标记来源。
+    const activeColors = new Set((root.players?.players || [])
+      .filter((player) => (root.turn?.activePlayerIds || []).includes(player.id))
+      .map((player) => player.color));
+    return (players.PLAYER_COLOR_IDS || [])
+      .find((color) => !activeColors.has(color)) || null;
+  }
+
   function revealReadyAliens(root, owner) {
     const revealed = [];
     for (const slotId of [1, 2]) {
@@ -1490,6 +1499,40 @@
     }
     if (payload.domain === "alien" && effectType === "turn_end_reveal") {
       return revealReadyAliens(root, owner);
+    }
+    if (payload.domain === "alien" && effectType === "turn_end_neutral_milestone") {
+      // 规则书 P18/P5：3 人局在 20/30 分设置中立里程碑（每位置 1 个中立标记）；
+      // 玩家分数到达/超过阈值的回合结束后，把该阈值的中立标记放到外星人
+      // 「最左侧未占用」发现位置（可能使外星人待揭示，随后由 turn_end_reveal 结算）。
+      // 4 人局不放置中立标记；2 人局仓库暂不支持。
+      const activeCount = Number(root.turn?.activePlayerCount) || 0;
+      if (activeCount !== 3) return { ok: true };
+      const alienState = root.aliens;
+      const events = [];
+      const neutralThresholds = aliens?.NEUTRAL_SCORE_TRACE_THRESHOLDS || [20, 30];
+      for (const threshold of neutralThresholds) {
+        if (aliens.getNeutralScoreTraceMark?.(alienState, threshold)) continue;
+        const triggerPlayer = (root.players?.players || []).find((player) => (
+          Number(player?.resources?.score) >= threshold
+        ));
+        if (!triggerPlayer) continue;
+        const neutralColor = findNeutralPlayerColor(root);
+        const placed = aliens.placeNeutralScoreTraceForThreshold?.(
+          alienState,
+          threshold,
+          triggerPlayer,
+          neutralColor,
+        );
+        if (!placed?.ok) continue;
+        events.push({
+          type: "neutral_score_trace_placed",
+          playerId: owner?.id || null,
+          threshold,
+          alienSlotId: placed.alienSlotId,
+          traceType: placed.traceType,
+        });
+      }
+      return { ok: true, events };
     }
     if (payload.domain === "alien" && effectType === "planet_reward_aomomo_card") {
       return {
