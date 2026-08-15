@@ -885,7 +885,9 @@
             summary: "盲抽 1 张牌",
           });
         }
-        return choices;
+        // 与其它决策一致：formalize 补全 Standard Action identity（读档恢复后
+        // 投影校验要求 schemaVersion/actionId/actorId，缺则整个投影抛错）。
+        return getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, choices);
       },
       resolveDecision(state, sessionEffect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
