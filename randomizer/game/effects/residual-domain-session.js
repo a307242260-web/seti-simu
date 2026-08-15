@@ -753,7 +753,7 @@
   }
 
   function rewardEffects(reward, prefix = "residual-reward") {
-    // 统一奖励转换：与 play-domain 角标、applyAlienReward 共用 cards.buildRewardEffects
+    // 统一奖励转换：与 play-domain 角标、applyReward 共用 cards.buildRewardEffects
     return cards.buildRewardEffects(reward, prefix);
   }
 
@@ -1098,8 +1098,9 @@
     return { ok: true, spawnedEffects, irreversible };
   }
 
-  function applyAlienReward(root, player, reward, sourceKey) {
-    // 通用资源/数据/抽卡/精选统一走共享转换；符文族专属 symbolId/panelSymbol 在此追加
+  // 统一奖励应用：reward 对象（资源/数据/抽卡/精选/移动/符文符号）转效果并结算。
+  // 弃牌角标、卡牌效果、外星人与符文族奖励都走这一条路径（buildRewardEffects 为纯转换，这里是应用端）。
+  function applyReward(root, player, reward, sourceKey) {
     const effects = cards.buildRewardEffects(reward, sourceKey || "alien-reward");
     if (reward?.symbolId) runezu.gainPlayerSymbol(player, reward.symbolId);
     if (reward?.panelSymbol && reward?.panelSymbolSlotId) {
@@ -1133,7 +1134,7 @@
         )),
         dataCount: (Number(base.dataCount) || 0) * multiplier,
       };
-      const applied = applyAlienReward(root, player, reward, "cardQuickScore");
+      const applied = applyReward(root, player, reward, "cardQuickScore");
       if (!applied.ok) return applied;
       spawnedEffects.push(...applied.spawnedEffects);
       irreversible = applied.irreversible;
@@ -1149,7 +1150,7 @@
       };
       // 统一奖励转换：gain 与 movementPoints 一起经 buildRewardEffects
       // 生成 gain_resources + card_move 效果（card_move 由 applyFormalCardEffects 转决策节点）
-      const applied = applyAlienReward(root, player, reward, "cardQuickScore");
+      const applied = applyReward(root, player, reward, "cardQuickScore");
       if (!applied.ok) return applied;
       spawnedEffects.push(...applied.spawnedEffects);
       irreversible = applied.irreversible;
@@ -1160,7 +1161,7 @@
       );
       reward = resolved.ok ? resolved.reward : null;
       if (reward) {
-        const applied = applyAlienReward(root, player, reward, "alienCardQuickScore");
+        const applied = applyReward(root, player, reward, "alienCardQuickScore");
         if (!applied.ok) return applied;
         spawnedEffects.push(...applied.spawnedEffects);
         irreversible = applied.irreversible;
@@ -1213,7 +1214,7 @@
       action.target?.symbolId,
     );
     if (!placed.ok) return placed;
-    const applied = applyAlienReward(
+    const applied = applyReward(
       root,
       player,
       placed.reward,
