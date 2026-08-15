@@ -916,9 +916,18 @@
     } catch (error) {
       console.warn("localStorage 存档失败", error);
     }
-    // 文件名中的 seed 可能含路径/空格等非法字符，统一安全化避免下载被浏览器拦截
-    const safeSeed = String(meta?.seed ?? "game")
-      .replace(/[^a-zA-Z0-9_-]/g, "-")
+    // 让用户输入存档名（可留空用默认：seed+版本）
+    const userSaveName = window.prompt(
+      "存档名称（可留空使用默认 seed+版本号）：",
+      String(meta?.seed ?? "game"),
+    );
+    if (userSaveName === null) return; // 用户取消存盘
+    payload.name = userSaveName.trim() || String(meta?.seed ?? "game");
+    const jsonWithName = JSON.stringify({ ...payload, name: payload.name }, null, 2);
+
+    // 文件名中的名字/seed 可能含路径/空格等非法字符，统一安全化避免下载被浏览器拦截
+    const safeSeed = payload.name
+      .replace(/[^\w\u4e00-\u9fa5-]/g, "-")
       .replace(/-+/g, "-")
       .slice(0, 60) || "game";
     const fileName = `seti-save-${safeSeed}-v${meta?.stateVersion ?? 0}.json`;
@@ -930,7 +939,7 @@
         const response = await fetch("http://127.0.0.1:8301/api/save", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: json,
+          body: jsonWithName,
         });
         if (!response.ok) return null;
         const result = await response.json();
@@ -948,7 +957,7 @@
       return;
     }
 
-    const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+    const blob = new Blob([jsonWithName], { type: "application/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -964,30 +973,71 @@
     );
   }
 
-  // 读档：优先从本地接收服务读取 seti-saves/ 最新存档恢复游戏，失败回退 localStorage
+  // 读档：弹出存档列表（来自 seti-saves/），选择后恢复；服务不可用时回退 localStorage
   async function loadGameStateFromLocal() {
-    let raw = null;
-    let sourceName = null;
+    let saves = [];
     try {
-      const response = await fetch("http://127.0.0.1:8301/api/latest");
+      const response = await fetch("http://127.0.0.1:8301/api/saves");
       if (response.ok) {
         const result = await response.json();
-        if (result?.ok && result.content) {
-          raw = result.content;
-          sourceName = `seti-saves/${result.fileName}`;
-        }
+        saves = result?.saves || [];
       }
     } catch (error) {
       console.warn("本地存盘服务不可用，尝试 localStorage", error);
     }
-    if (!raw) {
-      raw = localStorage.getItem("seti-browser-save");
-      sourceName = "localStorage";
+    if (saves.length) {
+      renderSavePicker(saves);
+      return;
     }
+    const raw = localStorage.getItem("seti-browser-save");
     if (!raw) {
       window.alert("没有找到存档（seti-saves/ 目录为空且 localStorage 无存档）");
       return;
     }
+    restoreFromPayload(raw, "localStorage");
+  }
+
+  function renderSavePicker(saves) {
+    if (!els.savePickerOverlay || !els.savePickerList) return;
+    els.savePickerList.replaceChildren();
+    for (const entry of saves) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "save-picker-item";
+      const name = String(entry.fileName || "");
+      const time = new Date(Number(entry.mtimeMs) || 0).toLocaleString();
+      const sizeKb = Math.max(1, Math.round(Number(entry.size || 0) / 1024));
+      const title = document.createElement("strong");
+      title.textContent = name;
+      const detail = document.createElement("span");
+      detail.textContent = `${time} · ${sizeKb} KB`;
+      button.append(title, detail);
+      button.addEventListener("click", async () => {
+        els.savePickerOverlay.hidden = true;
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8301/api/save?file=${encodeURIComponent(name)}`,
+          );
+          if (!response.ok) {
+            window.alert(`读取存档失败：${name}`);
+            return;
+          }
+          const result = await response.json();
+          if (!result?.ok || !result.content) {
+            window.alert(`读取存档失败：${result?.message || name}`);
+            return;
+          }
+          restoreFromPayload(result.content, `seti-saves/${name}`);
+        } catch (error) {
+          window.alert(`读取存档失败：${error?.message || error}`);
+        }
+      });
+      els.savePickerList.appendChild(button);
+    }
+    els.savePickerOverlay.hidden = false;
+  }
+
+  function restoreFromPayload(raw, sourceName) {
     let payload = null;
     try {
       payload = JSON.parse(raw);
@@ -1325,6 +1375,12 @@
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
   els.actionSaveStateButton?.addEventListener("click", saveGameStateToLocal);
   els.actionLoadStateButton?.addEventListener("click", loadGameStateFromLocal);
+  els.savePickerClose?.addEventListener("click", () => {
+    if (els.savePickerOverlay) els.savePickerOverlay.hidden = true;
+  });
+  els.savePickerOverlay?.addEventListener("click", (event) => {
+    if (event.target === els.savePickerOverlay) els.savePickerOverlay.hidden = true;
+  });
   els.quickActionsTrades?.addEventListener("click", (event) => {
     const button = event.target.closest?.(
       "[data-quick-trade][data-action-id], [data-quick-action][data-action-id]",

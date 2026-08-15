@@ -46,11 +46,14 @@ function readBody(request) {
 }
 
 function safeFileName(payload) {
-  const seed = String(payload?.seed ?? "game")
-    .replace(/[^a-zA-Z0-9_-]/g, "-")
+  const base = payload?.name
+    ? String(payload.name)
+    : String(payload?.seed ?? "game");
+  const safe = base
+    .replace(/[^\w\u4e00-\u9fa5-]/g, "-")
     .replace(/-+/g, "-")
     .slice(0, 60) || "game";
-  return `seti-save-${seed}-v${payload?.stateVersion ?? 0}.json`;
+  return `seti-save-${safe}-v${payload?.stateVersion ?? 0}.json`;
 }
 
 const server = http.createServer(async (request, response) => {
@@ -61,6 +64,42 @@ const server = http.createServer(async (request, response) => {
     return;
   }
   const url = new URL(request.url, `http://127.0.0.1:${port}`);
+  if (request.method === "GET" && url.pathname === "/api/saves") {
+    // 列出 seti-saves/ 所有存档（读档选择用）
+    try {
+      const saves = fs.readdirSync(saveDir)
+        .filter((name) => name.endsWith(".json"))
+        .map((name) => {
+          const stat = fs.statSync(path.join(saveDir, name));
+          return { fileName: name, mtimeMs: stat.mtimeMs, size: stat.size };
+        })
+        .sort((a, b) => b.mtimeMs - a.mtimeMs);
+      respond(response, 200, { ok: true, saves });
+    } catch (error) {
+      respond(response, 500, { ok: false, code: "LIST_FAILED", message: error.message });
+    }
+    return;
+  }
+  if (request.method === "GET" && url.pathname === "/api/save") {
+    // 读取指定存档文件内容（读档用）
+    try {
+      const fileName = path.basename(String(url.searchParams.get("file") || ""));
+      if (!fileName) {
+        respond(response, 400, { ok: false, code: "MISSING_FILE", message: "缺少 file 参数" });
+        return;
+      }
+      const filePath = path.join(saveDir, fileName);
+      if (!fs.existsSync(filePath)) {
+        respond(response, 404, { ok: false, code: "SAVE_NOT_FOUND", message: `存档不存在: ${fileName}` });
+        return;
+      }
+      const content = fs.readFileSync(filePath, "utf8");
+      respond(response, 200, { ok: true, fileName, content });
+    } catch (error) {
+      respond(response, 500, { ok: false, code: "READ_FAILED", message: error.message });
+    }
+    return;
+  }
   if (request.method === "GET" && url.pathname === "/api/latest") {
     // 返回 seti-saves/ 中最新一份存档的内容（供浏览器读档）
     try {

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=quick-tooltip-v1">
+  <link rel="stylesheet" href="./style.css?v=save-picker-v1">
 </head>
 <body>
   <div class="start-screen" id="start-screen" aria-label="开始界面">
@@ -506,7 +506,7 @@
   <script src="./training/trajectory-recorder.js?v=trajectory-recorder-1"></script>
   <script src="./app/browser-host/trajectory-recording.js?v=trajectory-recording-1"></script>
   <script src="./app/dependencies.js?v=trajectory-recording-1"></script>
-  <script src="./app/dom.js?v=ui-fixes-v3"></script>
+  <script src="./app/dom.js?v=ui-fixes-v4"></script>
   <script src="./game/state/state-store.js?v=state-store-v1"></script>
   <script src="./game/state/low-coupling-slices.js?v=low-coupling-state-v1"></script>
   <script src="./game/state/high-coupling-slices.js?v=high-coupling-state-v1"></script>
@@ -520,7 +520,16 @@
     <img id="cardViewerImage" class="card-viewer-image" alt="" decoding="async">
   </div>
   <div id="compositionDecisionRoot" class="composition-decision-root" hidden></div>
+  <div id="save-picker-overlay" class="save-picker-overlay" hidden aria-label="选择存档">
+    <div class="save-picker-panel">
+      <div class="save-picker-head">
+        <span>选择存档恢复</span>
+        <button class="save-picker-close" type="button" id="save-picker-close" aria-label="关闭">×</button>
+      </div>
+      <div class="save-picker-list" id="save-picker-list"></div>
+    </div>
+  </div>
   <script src="./app/public-api.js?v=trajectory-recording-1"></script>
-  <script src="./app.js?v=ui-fixes-v9"></script>
+  <script src="./app.js?v=ui-fixes-v10"></script>
 </body>
 </html>
