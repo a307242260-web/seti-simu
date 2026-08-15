@@ -521,6 +521,50 @@ function runScanCompletesSectorSettlement() {
   composition.dispose();
 }
 
+function runReturnPlayedCardToHandWhenProbeAdjacentEarth() {
+  // dlc_5（维护任务）：1 数据 + 1 移动 + 若自己有探测器在地球相邻位置则本卡回手
+  const root = createCanonicalState("dlc_5.png");
+  const earthX = solar.createSolarSnapshot(root.solarSystem).planetLocations
+    .find((planet) => planet.planetId === "earth").x;
+  root.pieces.rockets.push({
+    id: "rocket-1",
+    playerId: "p1",
+    color: "brown",
+    sectorX: solar.mod8(earthX + 2),
+    sectorY: 0,
+  });
+  const { composition } = createIntegratedComposition("dlc_5.png", { state: root });
+  let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  let guard = 0;
+  while (result.ok && composition.inspect().phase === "awaiting_input") {
+    const decision = composition.inspect().session.decision;
+    const choice = decision.choices.find((candidate) => (
+      candidate.target.choiceId === "rocket-1:-1:0"
+    )) || decision.choices[0];
+    result = composition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
+      choice,
+    });
+    guard += 1;
+    assert.ok(guard < 20, `dlc_5 Decision 链异常: ${JSON.stringify(
+      decision.choices.map((candidate) => candidate.target.choiceId),
+    )}`);
+  }
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(committed.pieces.rockets[0].sectorX, solar.mod8(earthX + 1), "火箭应移动到地球相邻扇区");
+  assert.ok(
+    player.hand.some((card) => String(card.cardId) === "dlc_5.png"),
+    "探测器移动到地球相邻位置后 dlc_5 必须回到手牌",
+  );
+  composition.dispose();
+}
+
 runFixedScan();
 runColorDecisions();
 runDirectRewards();

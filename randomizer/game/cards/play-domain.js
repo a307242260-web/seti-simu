@@ -177,6 +177,41 @@
     throw new TypeError("Card Play 缺少 Science production domain");
   }
 
+  // 构建探测器位置索引（供卡牌条件/任务判定）：
+  // details 每项带 playerId/color、sectorX/Y、adjacentToEarth（与地球扇区相邻）；
+  // index 按玩家 id/color 汇总 locationType。
+  function buildProbeLocationData(root) {
+    const solarSystemState = getWorkingSlice(root, "solarSystem");
+    const earth = solar.createSolarSnapshot(solarSystemState)
+      .planetLocations.find((planet) => planet.planetId === "earth");
+    const earthX = earth?.x;
+    const details = [];
+    const index = {};
+    for (const rocket of (root?.pieces?.rockets || [])) {
+      if (!rocket.playerId) continue;
+      const onBoard = Number.isInteger(rocket.sectorX) && Number.isInteger(rocket.sectorY);
+      const adjacentToEarth = onBoard && earthX != null
+        && (solar.mod8(rocket.sectorX - earthX) === 1
+          || solar.mod8(earthX - rocket.sectorX) === 1);
+      const locationType = "solar";
+      const detail = {
+        playerId: rocket.playerId,
+        color: rocket.color || null,
+        sectorX: onBoard ? rocket.sectorX : null,
+        sectorY: onBoard ? rocket.sectorY : null,
+        locationType,
+        adjacentToEarth: Boolean(adjacentToEarth),
+        planetId: null,
+      };
+      details.push(detail);
+      for (const key of [rocket.playerId, rocket.color].filter(Boolean).map(String)) {
+        if (!index[key]) index[key] = [];
+        if (!index[key].includes(locationType)) index[key].push(locationType);
+      }
+    }
+    return { details, index };
+  }
+
   function getWorkingSlice(root, key) {
     return root?.[key] || {};
   }
@@ -1364,6 +1399,7 @@
     }
 
     function conditionMet(root, actor, condition) {
+      const probeData = buildProbeLocationData(root);
       return cardEffects.taskConditionMet(
         { condition },
         actor,
@@ -1373,6 +1409,8 @@
             [actor.id]: Number(actor.resources?.availableData) || 0,
             [actor.color]: Number(actor.resources?.availableData) || 0,
           },
+          probeLocations: probeData.index,
+          probeLocationDetails: probeData.details,
         },
       );
     }
@@ -2106,5 +2144,6 @@
     OWNED_PLAY_EFFECT_TYPES,
     createPlayCardProvider,
     createExperimentalCardPlayDomain,
+    buildProbeLocationData,
   });
 });

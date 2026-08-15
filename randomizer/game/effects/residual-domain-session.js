@@ -648,12 +648,15 @@
   }
 
   function buildCardTaskContext(root) {
+    const probeData = cardPlayDomain.buildProbeLocationData
+      ? cardPlayDomain.buildProbeLocationData(root)
+      : { details: [], index: {} };
     return {
       data: root.data,
       aliens: root.aliens,
       planets: root.planets,
-      probeLocations: root.match?.probeLocations || {},
-      probeLocationDetails: root.match?.probeLocationDetails || [],
+      probeLocations: probeData.index,
+      probeLocationDetails: probeData.details,
       dataTotals: Object.fromEntries((root.players.players || []).flatMap((player) => {
         const available = Number(player.resources?.availableData) || 0;
         const placed = Number(player.resources?.placedData) || 0;
