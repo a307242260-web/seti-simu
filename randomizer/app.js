@@ -57,6 +57,12 @@
     return random;
   }
 
+  // 固定盘面（seti-104-board-v1，seed seti-104-official-v1）：训练侧 Simulation
+  // 的 kernel 初始化会把 RNG 从 seed hash 推进到 FIXED_BOARD_RNG_STATE，再以该状态
+  // 生成盘面；浏览器开局必须用同一个起点才能复现训练盘面（直接 setState(seed hash)
+  // 会生成不同盘面）。
+  const FIXED_BOARD_RNG_STATE = 485487026;
+
   function createRenderPresentation(input = {}) {
     const state = input.state || {};
     const players = input.players || [];
@@ -971,13 +977,18 @@
   }
 
   function startNewGame() {
-    const activePlayerCount = Math.max(2, Math.min(4, Number(els.startPlayerCount?.value) || 4));
-    aiDifficulty = els.startAiDifficulty?.value || "laughable";
+    const fixedBoard = els.startFixedBoard?.checked === true;
+    const activePlayerCount = fixedBoard
+      ? 4
+      : Math.max(2, Math.min(4, Number(els.startPlayerCount?.value) || 4));
+    aiDifficulty = fixedBoard
+      ? "weak_start"
+      : (els.startAiDifficulty?.value || "laughable");
     trajectoryRecording = els.startRecordTrajectory?.checked === true
       ? createTrajectoryRecording()
       : null;
     if (trajectoryRecording) trajectoryRecording.reset();
-    browserRandom.setState(1);
+    browserRandom.setState(fixedBoard ? FIXED_BOARD_RNG_STATE : 1);
     const result = ruleComposition.newGame({
       activePlayerCount,
       aiDifficulty,

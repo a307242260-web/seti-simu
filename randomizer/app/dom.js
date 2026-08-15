@@ -19,6 +19,7 @@
       startAiDifficulty: documentRef.getElementById("start-ai-difficulty"),
       startPlayerCount: documentRef.getElementById("start-player-count"),
       startRecordTrajectory: documentRef.getElementById("start-record-trajectory"),
+      startFixedBoard: documentRef.getElementById("start-fixed-board"),
       playerStats: documentRef.getElementById("player-stats"),
       opponentStatGrid: documentRef.getElementById("opponent-stat-grid"),
       playerHandPanel: documentRef.getElementById("player-hand-panel"),

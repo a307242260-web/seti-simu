@@ -66,6 +66,43 @@ module.exports = Object.freeze([
     counterexample: "开关默认态错误、轨迹 schema 不符、缺 action/legalMask/actorKind 或取消勾选后仍录制",
   }),
   Object.freeze({
+    id: "production-fixed-board",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button') && document.querySelector('#start-fixed-board'))",
+    actionExpression: `(async () => {
+      const fixed = document.querySelector("#start-fixed-board");
+      if (!fixed) throw new Error("缺少固定盘面开关");
+      fixed.checked = true;
+      document.querySelector("#start-screen-start-button").click();
+      const waitFor = async (predicate, label, timeout = 12000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
+      const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
+      const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
+      const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
+      const expectedSectors = [[1, 3], [2, 4], [3, 1], [4, 2]];
+      const expectedFaces = ["dlc_22.png", "dlc_37.png", "b_124.webp"];
+      if (JSON.stringify(sectors) !== JSON.stringify(expectedSectors)) {
+        throw new Error("固定盘面扇区布局与训练盘面不一致: " + JSON.stringify(sectors));
+      }
+      for (const face of expectedFaces) {
+        if (!publicFaces.some((src) => src.endsWith(face))) {
+          throw new Error("固定盘面公共牌与训练盘面不一致: " + JSON.stringify(publicFaces));
+        }
+      }
+      window.__setiFixedBoardSmoke = { ok: true, sectors, publicFaces };
+    })()`,
+    successExpression: "window.__setiFixedBoardSmoke?.ok === true",
+    obligation: "勾选固定盘面后浏览器开局复现训练固定盘面（seti-104-board-v1 的扇区布局与公共牌）",
+    counterexample: "固定盘面 seed 未接入随机源，或浏览器盘面与 Simulation 固定盘面不一致",
+  }),
+  Object.freeze({
     id: "production-browser-full-parity",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",
