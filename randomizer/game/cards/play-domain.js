@@ -1352,6 +1352,12 @@
         .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
       if (!legal) return fail("CARD_PLANET_CHOICE_STALE", "卡牌行星选择已失效");
       const actor = getActor(root, sessionEffect.ownerId);
+      // 记录火箭落点坐标（供虫族拾取化石创建搬运棋子；登陆后火箭会被移除，必须提前记录）
+      const landingRocket = (getWorkingSlice(root, "pieces")?.rockets || [])
+        .find((entry) => entry.id === Number(legal.target.rocketId)) || null;
+      const landingCoordinate = landingRocket
+        ? rockets.getRocketSectorCoordinate(landingRocket)
+        : null;
       const result = abilities.executeAbility(
         actionType === "orbit" ? "orbitProbe" : "landProbe",
         createActionContext(root, actor.id),
@@ -1404,6 +1410,9 @@
           lastLanding: {
             planetId: result.planetId,
             rocketId: legal.target.rocketId,
+            // 落点坐标：登陆后火箭会被移除，拾取化石需用此坐标创建搬运棋子
+            sectorX: landingCoordinate?.x ?? null,
+            sectorY: landingCoordinate?.y ?? null,
             hadAnyMarker: Boolean(
               effect.options.rememberPreLandingMarker
                 ? result.hadAnyMarker
@@ -2019,22 +2028,46 @@
         // 虫族：拾取选中的化石（生成化石搬运棋子绑定当前探测器）
         const alienState = getWorkingSlice(root, "aliens");
         const cardInstanceId = sessionEffect.payload?.cardInstanceId;
+        const rocketId = root.match?.cardPlayContext?.lastLanding?.rocketId ?? null;
         const picked = aliens.chong.pickupPlanetFossil(
           alienState,
           actor,
           legal.target.fossilId,
           {
-            rocketId: root.match?.cardPlayContext?.lastLanding?.rocketId ?? null,
+            rocketId,
             cardId: cardInstanceId,
           },
         );
         if (!picked.ok) return picked;
+        // 生成化石搬运棋子（CHONG_FOSSIL）到探测器落点坐标：可移动、可随盘旋转，
+        // 到达目的地主星后触发虫族任务完成。坐标在登陆时已记录（lastLanding.sectorX/Y），
+        // 因为登陆后探测器已从盘面移除，不能再从 pieces.rockets 取坐标。
+        const lastLanding = root.match?.cardPlayContext?.lastLanding || {};
+        const sectorCoordinate = (Number.isInteger(Number(lastLanding.sectorX))
+          && Number.isInteger(Number(lastLanding.sectorY)))
+          ? { x: Number(lastLanding.sectorX), y: Number(lastLanding.sectorY) }
+          : null;
+        if (sectorCoordinate) {
+          const piecesState = getWorkingSlice(root, "pieces");
+          const created = rockets.createMovableTokenAtSector(
+            piecesState,
+            sectorCoordinate,
+            {
+              root,
+              kind: rockets.ROCKET_KIND.CHONG_FOSSIL,
+              playerId: actor.id,
+              color: actor.color || null,
+              fossilId: legal.target.fossilId,
+            },
+          );
+          if (!created.ok) return created;
+        }
         return cardEffectResult(state, root, sessionEffect, {
           events: [{
             type: "chong_fossil_picked",
             playerId: actor.id,
             fossilId: legal.target.fossilId,
-            rocketId: root.match?.cardPlayContext?.lastLanding?.rocketId ?? null,
+            rocketId,
           }],
           historyType: "card_effect_decision",
           history: { choiceId: legal.target.choiceId, fossilId: legal.target.fossilId },
