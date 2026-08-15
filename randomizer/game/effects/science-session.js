@@ -1452,26 +1452,52 @@
         const result = placeAlienTrace(root, effect.ownerId, choice);
         if (!result?.ok) return result;
         const spawnedEffects = [];
-        // 阿米巴痕迹位置的区域奖励：放完痕迹后让玩家选择结算该区域哪个细胞器（symbol）
-        if (result.reward?.region && aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
+        let irreversible = null;
+        // 阿米巴痕迹位置奖励：选一张阿米巴牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）
+        if (result.reward?.pickAlienCard) {
           spawnedEffects.push({
             priority: "direct",
             effect: {
-              type: `card_play_domain_effect:decision:${aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD}`,
+              type: "residual_alien_card_decision",
               kind: "decision",
-              decisionKind: "choose_target",
+              decisionKind: "choose_card",
               ownerId: effect.ownerId,
-              payload: {
-                cardEffect: {
-                  type: aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD,
-                  options: { region: result.reward.region },
-                },
-              },
+              payload: { speciesId: "amiba", source: "trace_reward" },
             },
           });
         }
+        // 阿米巴痕迹区域奖励：自动结算该区域全部细胞器（蓝色痕迹 → 蓝色区域全部 symbol，
+        // 与外星人面板规则一致，不弹选择）。
+        if (result.reward?.region) {
+          const alienState = getWorkingSlice(root, "aliens");
+          const resolved = aliens.amiba.resolveRegionReward(alienState, result.reward.region);
+          for (const entry of resolved.results || []) {
+            const reward = entry.reward || {};
+            if (reward.gain) players.gainResources(actor, reward.gain);
+            const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+            for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
+              const gained = data.gainData(actor, { source: "amiba_region_reward", root });
+              if (!gained.ok) return gained;
+            }
+            const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+            for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+              const drawn = cards.blindDraw(
+                getWorkingSlice(root, "cards"),
+                getWorkingSlice(root, "players"),
+                actor,
+                () => nextCommittedRandom(root),
+                { createCardInstance: createCommittedCardFactory(root) },
+              );
+              if (!drawn.ok) return drawn;
+            }
+            if (drawCount > 0) {
+              irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
+            }
+          }
+        }
         return scienceResult(state, root, EFFECT_TYPES.ALIEN_TRACE, {
           spawnedEffects,
+          irreversible,
           events: [{
             type: "alienTrace",
             playerId: effect.ownerId,
