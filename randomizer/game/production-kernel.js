@@ -1330,6 +1330,14 @@ function createProductionHostComposition(options = {}) {
     effectRuntimeApi,
     createActionContext,
     createInitialState(initialOptions) {
+      // RNG 起点契约：newGame 显式从 rngState.state 开始，不再隐式依赖 kernel
+      // 构造（初始 store）消费后的 random 状态；同一 seed 在 Browser/Simulation
+      // 必须得到同一盘面。rngState 缺失时保持 options.random 当前状态。
+      if (typeof options.random.setState === "function"
+        && initialOptions?.rngState?.state != null
+        && Number.isSafeInteger(initialOptions.rngState.state)) {
+        options.random.setState(initialOptions.rngState.state);
+      }
       const state = buildInitialState(initialOptions, options.random);
       if (typeof options.random.getState === "function") {
         state.meta.rngState = {

@@ -20,6 +20,7 @@
       startPlayerCount: documentRef.getElementById("start-player-count"),
       startRecordTrajectory: documentRef.getElementById("start-record-trajectory"),
       startFixedBoard: documentRef.getElementById("start-fixed-board"),
+      startSeedInput: documentRef.getElementById("start-seed-input"),
       playerStats: documentRef.getElementById("player-stats"),
       opponentStatGrid: documentRef.getElementById("opponent-stat-grid"),
       playerHandPanel: documentRef.getElementById("player-hand-panel"),

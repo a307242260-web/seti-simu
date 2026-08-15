@@ -153,6 +153,28 @@ body {
   cursor: pointer;
 }
 
+.start-screen-seed-option {
+  grid-template-columns: minmax(92px, auto) minmax(0, 1fr);
+}
+
+.start-screen-seed-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  border: 1px solid rgba(154, 218, 255, 0.32);
+  border-radius: 6px;
+  background: rgba(8, 22, 34, 0.9);
+  color: rgba(240, 248, 255, 0.94);
+  font: 700 13px/1.2 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.start-screen-seed-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 @media (max-width: 560px) {
   .start-screen-option-row {
     grid-template-columns: 1fr;

@@ -3,7 +3,8 @@
 const crypto = require("node:crypto");
 const heuristicPolicy = require("../game/ai/heuristic-policy");
 
-const FIXED_BOARD_ID = "seti-104-board-v1";
+// RNG 起点契约（createInitialState 显式从 seed hash 开始）生效后盘面内容变化，boardId 升 v2
+const FIXED_BOARD_ID = "seti-104-board-v2";
 const FIXED_BOARD_CONFIG = Object.freeze({
   seed: "seti-104-official-v1",
   activePlayerCount: 4,

@@ -57,11 +57,19 @@
     return random;
   }
 
-  // 固定盘面（seti-104-board-v1，seed seti-104-official-v1）：训练侧 Simulation
-  // 的 kernel 初始化会把 RNG 从 seed hash 推进到 FIXED_BOARD_RNG_STATE，再以该状态
-  // 生成盘面；浏览器开局必须用同一个起点才能复现训练盘面（直接 setState(seed hash)
-  // 会生成不同盘面）。
-  const FIXED_BOARD_RNG_STATE = 485487026;
+  // 固定盘面（seti-104-board-v1，seed seti-104-official-v1）：RNG 起点契约 =
+  // hashSeed(seed)，Production Composition 的 createInitialState 显式从该状态开始，
+  // Browser 与 Simulation 用同一 seed 得到同一盘面。
+  const FIXED_BOARD_SEED = "seti-104-official-v1";
+  function hashSeed(seed) {
+    const text = String(seed);
+    let hash = 2166136261;
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
 
   function createRenderPresentation(input = {}) {
     const state = input.state || {};
@@ -976,19 +984,37 @@
     return actions.length === 1 ? actions[0] : null;
   }
 
+  // 固定盘面勾选 = 预填固定 seed 并锁定；取消后清空，回到普通局。
+  function syncFixedBoardSeedInput() {
+    if (!els.startSeedInput) return;
+    const fixed = els.startFixedBoard?.checked === true;
+    if (fixed) {
+      els.startSeedInput.value = FIXED_BOARD_SEED;
+      els.startSeedInput.disabled = true;
+    } else {
+      els.startSeedInput.value = "";
+      els.startSeedInput.disabled = false;
+    }
+  }
+
   function startNewGame() {
     const fixedBoard = els.startFixedBoard?.checked === true;
-    const activePlayerCount = fixedBoard
+    const seedText = (els.startSeedInput?.value || "").trim();
+    const seeded = Boolean(seedText || fixedBoard);
+    const seed = seedText || (fixedBoard ? FIXED_BOARD_SEED : null);
+    // 有种子（固定盘面或自定义）时与训练侧 Simulation 对齐：4 人局、weak_start、
+    // RNG 起点 = hashSeed(seed)。
+    const activePlayerCount = seeded
       ? 4
       : Math.max(2, Math.min(4, Number(els.startPlayerCount?.value) || 4));
-    aiDifficulty = fixedBoard
+    aiDifficulty = seeded
       ? "weak_start"
       : (els.startAiDifficulty?.value || "laughable");
     trajectoryRecording = els.startRecordTrajectory?.checked === true
       ? createTrajectoryRecording()
       : null;
     if (trajectoryRecording) trajectoryRecording.reset();
-    browserRandom.setState(fixedBoard ? FIXED_BOARD_RNG_STATE : 1);
+    browserRandom.setState(seed ? hashSeed(seed) : 1);
     const result = ruleComposition.newGame({
       activePlayerCount,
       aiDifficulty,
@@ -1029,6 +1055,8 @@
   }
 
   els.startScreenStartButton?.addEventListener("click", startNewGame);
+  els.startFixedBoard?.addEventListener("change", syncFixedBoardSeedInput);
+  syncFixedBoardSeedInput();
   [
     els.actionLaunchButton, els.actionOrbitButton, els.actionLandButton, els.actionScanButton,
     els.actionAnalyzeButton, els.actionPlayCardButton, els.actionResearchTechButton,

@@ -73,6 +73,48 @@ module.exports = Object.freeze([
       const fixed = document.querySelector("#start-fixed-board");
       if (!fixed) throw new Error("缺少固定盘面开关");
       fixed.checked = true;
+      fixed.dispatchEvent(new Event("change", { bubbles: true }));
+      const seedInput = document.querySelector("#start-seed-input");
+      if (!seedInput) throw new Error("缺少种子输入框");
+      if (seedInput.disabled !== true || seedInput.value !== "seti-104-official-v1") {
+        throw new Error("勾选固定盘面后种子输入框必须锁定为固定 seed: " + JSON.stringify({ disabled: seedInput.disabled, value: seedInput.value }));
+      }
+      document.querySelector("#start-screen-start-button").click();
+      const waitFor = async (predicate, label, timeout = 12000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
+      const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
+      const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
+      const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
+      const expectedSectors = [[1, 2], [2, 4], [3, 1], [4, 3]];
+      const expectedFaces = ["b_68.webp", "b_111.webp", "b_44.webp"];
+      if (JSON.stringify(sectors) !== JSON.stringify(expectedSectors)) {
+        throw new Error("固定盘面扇区布局与训练盘面不一致: " + JSON.stringify(sectors));
+      }
+      for (const face of expectedFaces) {
+        if (!publicFaces.some((src) => src.endsWith(face))) {
+          throw new Error("固定盘面公共牌与训练盘面不一致: " + JSON.stringify(publicFaces));
+        }
+      }
+      window.__setiFixedBoardSmoke = { ok: true, sectors, publicFaces };
+    })()`,
+    successExpression: "window.__setiFixedBoardSmoke?.ok === true",
+    obligation: "勾选固定盘面后浏览器开局复现训练固定盘面（seti-104-board-v1 的扇区布局与公共牌）",
+    counterexample: "固定盘面 seed 未接入随机源，或浏览器盘面与 Simulation 固定盘面不一致",
+  }),
+  Object.freeze({
+    id: "production-custom-seed",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-seed-input'))",
+    actionExpression: `(async () => {
+      const seedInput = document.querySelector("#start-seed-input");
+      seedInput.value = "hello-seti-2026";
       document.querySelector("#start-screen-start-button").click();
       const waitFor = async (predicate, label, timeout = 12000) => {
         const deadline = Date.now() + timeout;
@@ -87,20 +129,20 @@ module.exports = Object.freeze([
       const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
       const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
       const expectedSectors = [[1, 3], [2, 4], [3, 1], [4, 2]];
-      const expectedFaces = ["dlc_22.png", "dlc_37.png", "b_124.webp"];
+      const expectedFaces = ["dlc_4.png", "b_5.webp", "b_10.webp"];
       if (JSON.stringify(sectors) !== JSON.stringify(expectedSectors)) {
-        throw new Error("固定盘面扇区布局与训练盘面不一致: " + JSON.stringify(sectors));
+        throw new Error("自定义种子盘面与 Simulation 不一致: " + JSON.stringify(sectors));
       }
       for (const face of expectedFaces) {
         if (!publicFaces.some((src) => src.endsWith(face))) {
-          throw new Error("固定盘面公共牌与训练盘面不一致: " + JSON.stringify(publicFaces));
+          throw new Error("自定义种子公共牌与 Simulation 不一致: " + JSON.stringify(publicFaces));
         }
       }
-      window.__setiFixedBoardSmoke = { ok: true, sectors, publicFaces };
+      window.__setiCustomSeedSmoke = { ok: true, sectors, publicFaces };
     })()`,
-    successExpression: "window.__setiFixedBoardSmoke?.ok === true",
-    obligation: "勾选固定盘面后浏览器开局复现训练固定盘面（seti-104-board-v1 的扇区布局与公共牌）",
-    counterexample: "固定盘面 seed 未接入随机源，或浏览器盘面与 Simulation 固定盘面不一致",
+    successExpression: "window.__setiCustomSeedSmoke?.ok === true",
+    obligation: "开始界面输入自定义随机种子后，浏览器开局复现 Simulation 同 seed 盘面（RNG 起点契约）",
+    counterexample: "种子未接入 RNG 起点或自定义种子盘面与 Simulation 不一致",
   }),
   Object.freeze({
     id: "production-browser-full-parity",
