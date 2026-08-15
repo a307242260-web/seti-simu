@@ -1683,36 +1683,11 @@
         });
       } else if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP
         || effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
-        // 虫族登陆/环绕牌：先执行登陆（或环绕/登陆），结算后由 CHONG_PICKUP_FOSSIL 拾取化石。
-        // 复用 CARD_LAND/CARD_ORBIT 执行器；可选环绕的牌先弹环绕/登陆二选一。
-        const orbitOrLand = effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP;
-        const actionType = orbitOrLand ? "orbit" : "land";
-        const landed = {
-          priority: "direct",
-          effect: {
-            type: cardEffects.EFFECT_TYPES.CARD_LAND,
-            kind: "decision",
-            decisionKind: "choose_target",
-            ownerId: actor.id,
-            payload: clone(sessionEffect.payload),
-          },
-        };
-        if (!orbitOrLand) {
-          spawnedEffects = [landed];
-        } else {
-          // 环绕或登陆：先弹选择，再走对应执行器。
-          spawnedEffects = [{
-            priority: "direct",
-            effect: {
-              type: genericEffectRuntimeType(effect.type, true),
-              kind: "decision",
-              decisionKind: "choose_target",
-              ownerId: actor.id,
-              payload: clone(sessionEffect.payload),
-            },
-          }];
-        }
-        event.pendingChongPlanetAction = actionType;
+        // 虫族登陆/环绕牌：由标准 generic 决策流程处理（descriptor 有 decisionKind），
+        // listGenericChoices 枚举登陆目标 / 环绕登陆二选一，resolve 结算后进入拾取节点。
+        event.pendingChongPlanetAction = effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP
+          ? "orbit"
+          : "land";
       } else {
         return fail("CARD_EFFECT_EXECUTOR_INCOMPLETE", `未实现卡牌效果 ${effect.type}`);
       }
@@ -1773,12 +1748,15 @@
           fossil.label,
         ));
       }
-      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
-        // 环绕或登陆二选一
-        return [
-          makeChoice("choose_target", "chong-action:orbit", { chongAction: "orbit" }, {}, "环绕"),
-          makeChoice("choose_target", "chong-action:land", { chongAction: "land" }, {}, "登陆"),
-        ];
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP
+        || effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
+        // 虫族登陆/环绕牌：直接枚举合法登陆（或环绕）目标，复用标准行星执行器。
+        // 可选环绕的牌同时提供环绕与登陆两类目标。
+        const orbitOrLand = effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP;
+        const landChoices = listPlanetChoices(root, sessionEffect, "land");
+        if (!orbitOrLand) return landChoices;
+        const orbitChoices = listPlanetChoices(root, sessionEffect, "orbit");
+        return [...orbitChoices, ...landChoices];
       }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
         // 阿米巴牌区域 symbol 奖励：让玩家选择结算区域内哪个细胞器（symbol）
@@ -2118,24 +2096,11 @@
           history: { choiceId: legal.target.choiceId, fossilId: legal.target.fossilId },
         });
       }
-      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
-        // 环绕或登陆二选一：按选择 spawn 对应执行器
-        const actionType = legal.target.chongAction === "orbit" ? "orbit" : "land";
-        return cardEffectResult(state, root, sessionEffect, {
-          spawnedEffects: [{
-            priority: "direct",
-            effect: {
-              type: actionType === "orbit"
-                ? cardEffects.EFFECT_TYPES.CARD_ORBIT
-                : cardEffects.EFFECT_TYPES.CARD_LAND,
-              kind: "decision",
-              decisionKind: "choose_target",
-              ownerId: actor.id,
-              payload: clone(sessionEffect.payload),
-            },
-          }],
-          event: { chongAction: actionType },
-        });
+      if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP
+        || effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
+        // 虫族登陆/环绕牌：结算选中的登陆/环绕目标，之后由 CHONG_PICKUP_FOSSIL 拾取化石。
+        const actionType = legal.target.actionType || "land";
+        return resolvePlanet(state, sessionEffect, choice, workingContext, actionType);
       }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
         // 结算玩家选中的阿米巴细胞器（symbol）：移动 + 发放奖励
@@ -2484,7 +2449,7 @@
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },
       [aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD]: { decisionKind: "choose_target" },
       [aliens.amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD]: { decisionKind: "choose_target" },
-      [aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP]: {},
+      [aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP]: { decisionKind: "choose_target" },
       [aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP]: { decisionKind: "choose_target" },
       [aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL]: { decisionKind: "choose_target" },
       [aliens.chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD]: { decisionKind: "choose_target" },
