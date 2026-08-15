@@ -34,10 +34,10 @@
   const ORANGE1_ROCKET_LIMIT = 2;
   const ASTEROID_EXIT_MOVE_POINTS = 2;
   const MOVE_DIRECTIONS = Object.freeze([
-    Object.freeze({ id: "out", deltaX: 0, deltaY: 1 }),
-    Object.freeze({ id: "cw", deltaX: 1, deltaY: 0 }),
-    Object.freeze({ id: "ccw", deltaX: -1, deltaY: 0 }),
-    Object.freeze({ id: "in", deltaX: 0, deltaY: -1 }),
+    Object.freeze({ id: "out", label: "向外", deltaX: 0, deltaY: 1 }),
+    Object.freeze({ id: "cw", label: "顺时针", deltaX: 1, deltaY: 0 }),
+    Object.freeze({ id: "ccw", label: "逆时针", deltaX: -1, deltaY: 0 }),
+    Object.freeze({ id: "in", label: "向内", deltaX: 0, deltaY: -1 }),
   ]);
 
   function cloneCost(cost) {

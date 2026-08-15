@@ -186,7 +186,7 @@
               direction: move.id,
             },
             payload: { direction: move.id },
-            summary: `移动探测器 ${rocket.id} ${move.id}`,
+            summary: `移动探测器 ${rocket.id} ${move.label || move.id}`,
           });
         }
       }

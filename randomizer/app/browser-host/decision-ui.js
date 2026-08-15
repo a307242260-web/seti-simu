@@ -474,6 +474,9 @@
     button.textContent = label;
     button.className = options.className || "decision-ui-choice";
     button.disabled = Boolean(options.disabled);
+    const selected = Boolean(options.selected);
+    button.classList.toggle("is-rule-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
     for (const [key, value] of Object.entries(dataset)) button.dataset[key] = String(value);
     parent.appendChild(button);
     return button;

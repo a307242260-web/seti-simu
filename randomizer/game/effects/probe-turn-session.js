@@ -156,7 +156,7 @@
             .map((move) => ({
               target: { rocketId: rocket.id, deltaX: move.deltaX, deltaY: move.deltaY },
               payload: { direction: move.id, requiredMovePoints: move.requiredMovePoints },
-              label: `移动火箭 ${rocket.id} ${move.id}`,
+              label: `移动探测器 ${rocket.id} ${move.label || move.id}`,
             }))
           ));
         return choices.length ? { ok: true, choices } : fail("PROBE_MOVE_UNAVAILABLE", "没有合法移动目标");
@@ -338,30 +338,26 @@
       turnNumber: turn.turnNumber,
     }));
     const isFinalRound = Number(turn.roundNumber) >= turnFlow.DEFAULT_FINAL_ROUND;
-    // 手牌上限弃牌：所有轮次都执行（规则书 PASS 步骤 1，最后一轮同样适用）。
-    const discardCount = Math.max(0, (player.hand || []).length - 4);
-    if (discardCount) {
-      effects.push({
-        priority: "direct",
-        effect: {
-          type: EFFECT_TYPES.PASS_DISCARD,
-          kind: "decision",
-          decisionKind: "choose_card",
-          ownerId: player.id,
-          payload: { discardCount },
-        },
-      });
-    }
-    // 本轮第一个 PASS 的玩家执行太阳系公转：所有轮次（规则书 PASS 步骤 2，
-    // 最后一轮仍要公转，只是无需拿取公转标记；实现不建模标记 token）。
-    if (!(turn.passedPlayerIds || []).length) {
-      effects.push({
-        priority: "direct",
-        effect: { type: EFFECT_TYPES.PASS, ownerId: player.id, payload: { kind: "first-rotation" } },
-      });
-    }
-    // 一轮结束牌：仅第 1/2/3 轮有预留叠（扩展模式仅第 2/3/4 轮准备，末轮无叠）。
     if (!isFinalRound) {
+      const discardCount = Math.max(0, (player.hand || []).length - 4);
+      if (discardCount) {
+        effects.push({
+          priority: "direct",
+          effect: {
+            type: EFFECT_TYPES.PASS_DISCARD,
+            kind: "decision",
+            decisionKind: "choose_card",
+            ownerId: player.id,
+            payload: { discardCount },
+          },
+        });
+      }
+      if (!(turn.passedPlayerIds || []).length) {
+        effects.push({
+          priority: "direct",
+          effect: { type: EFFECT_TYPES.PASS, ownerId: player.id, payload: { kind: "first-rotation" } },
+        });
+      }
       const reserve = cards.getPassReservePile(slice(root, "cards", "cards"), turn.roundNumber);
       if (reserve.length) {
         effects.push({
