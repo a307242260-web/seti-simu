@@ -16,9 +16,10 @@
   const PIECES_PER_TYPE = PIECES_PER_SLOT;
 
   const TECH_TYPE_LABELS = Object.freeze({
-    blue: "探测器科技",
-    orange: "望远镜科技",
-    purple: "计算机科技",
+    // 官方对应（规则书 P17）：橙=探测器科技、紫=望远镜科技、蓝=计算机科技。
+    blue: "计算机科技",
+    orange: "探测器科技",
+    purple: "望远镜科技",
   });
 
   const STACK_INDEX_BY_TILE = Object.freeze(
