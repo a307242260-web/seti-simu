@@ -407,8 +407,20 @@
       }
     }
 
+    // 规则书：研究科技时「首先需要执行一次太阳系公转，然后选择科技」。
+    // 公转先于选择/拿取执行；select/take 失败时随快照一并回滚。
+    if (!options.skipRotation) {
+      const rotateResult = rotateForResearch(context, 1);
+      if (!rotateResult.ok) {
+        return rotateResult;
+      }
+    }
+
     const selectResult = selectTechTile(context, options);
-    if (!selectResult.ok || selectResult.needsBlueSlotChoice) return selectResult;
+    if (!selectResult.ok || selectResult.needsBlueSlotChoice) {
+      restoreSnapshots();
+      return selectResult;
+    }
 
     if (!options.skipCost) {
       const researchCost = getResearchPublicityCost(players.getCurrentPlayer(context.players, context.turn?.currentPlayerId));
@@ -429,14 +441,6 @@
     if (!takeResult.ok || takeResult.needsBlueSlotChoice) {
       restoreSnapshots();
       return takeResult;
-    }
-
-    if (!options.skipRotation) {
-      const rotateResult = rotateForResearch(context, 1);
-      if (!rotateResult.ok) {
-        restoreSnapshots();
-        return rotateResult;
-      }
     }
 
     const bonusResult = applyTechBonus(context, {

@@ -383,6 +383,11 @@
     };
     let result;
     if (options.skipBonus) {
+      // 规则书：研究科技先公转、后选择。
+      if (!options.skipRotate) {
+        const rotated = tech.resolver.rotateForResearch(context, 1);
+        if (!rotated.ok) return rotated;
+      }
       const selected = tech.resolver.selectTechTile(context, takeOptions);
       if (!selected.ok || selected.needsBlueSlotChoice) return selected;
       if (!takeOptions.skipCost) {
@@ -395,10 +400,6 @@
         expectedBonusId: selected.bonusId,
         expectedFirstTake: selected.firstTake,
       });
-      if (result.ok && !options.skipRotate) {
-        const rotated = tech.resolver.rotateForResearch(context, 1);
-        if (!rotated.ok) return rotated;
-      }
     } else {
       result = tech.resolver.executeTakeTech(context, takeOptions);
     }
@@ -1319,14 +1320,28 @@
     runtime.registerExecutor(EFFECT_TYPES.RESEARCH, {
       execute(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const choices = listResearchChoices(root, effect.ownerId, effect.payload?.options || {});
+        const options = effect.payload?.options || {};
+        const choices = listResearchChoices(root, effect.ownerId, options);
+        // 规则书：卡牌效果研究科技时，即使已获得该种类所有科技（无合法目标），
+        // 也「依然执行公转」。因此无合法目标时先公转再跳过。
+        if (!choices.length) {
+          const context = createActionContext(root, effect.ownerId);
+          if (typeof context.rotateSolarOrbit === "function" && !options.skipRotate) {
+            const rotated = context.rotateSolarOrbit(1);
+            if (rotated && rotated.ok === false) return rotated;
+          }
+          return scienceResult(state, root, `${EFFECT_TYPES.RESEARCH}:prepare`, {
+            spawnedEffects: [],
+            events: [{ type: "researchTechSkipped", reason: "no_legal_target", rotated: true }],
+          });
+        }
         return scienceResult(state, root, `${EFFECT_TYPES.RESEARCH}:prepare`, {
-          spawnedEffects: choices.length ? [scanDecisionEffect(
+          spawnedEffects: [scanDecisionEffect(
             EFFECT_TYPES.RESEARCH,
             effect.ownerId,
             clone(effect.payload || {}),
-          )] : [],
-          events: choices.length ? [] : [{ type: "researchTechSkipped", reason: "no_legal_target" }],
+          )],
+          events: [],
         });
       },
       getLegalChoices(state, effect, workingContext) {
