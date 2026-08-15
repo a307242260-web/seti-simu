@@ -19,6 +19,8 @@ function printHelp() {
   --log PATH                逐步 JSONL 日志
   --report-dir PATH         每局 HTML 总结目录（默认与日志或 checkpoint 相邻的 reports）
   --evaluate                只评测，不更新 agent
+  --demo-log PATH[,PATH]    人类示范 JSONL（seti-self-play-log-v1 格式），默认只取人类席位步骤
+  --demo-all-seats          示范导入时同时包含机器席位步骤
   --max-steps N             单局最大决策步数（默认 100）
   --epsilon NUMBER          训练探索率（默认 0.1）
   --learning-rate NUMBER    action-kind Monte Carlo 学习率（默认 0.15）
@@ -38,6 +40,7 @@ function parseArgs(argv) {
     ["--resume", "resumeFrom"],
     ["--log", "logPath"],
     ["--report-dir", "reportDirectory"],
+    ["--demo-log", "demoLogs"],
     ["--max-steps", "maxSteps"],
     ["--epsilon", "epsilon"],
     ["--learning-rate", "learningRate"],
@@ -52,6 +55,10 @@ function parseArgs(argv) {
     }
     if (argument === "--evaluate") {
       options.evaluate = true;
+      continue;
+    }
+    if (argument === "--demo-all-seats") {
+      options.demoAllSeats = true;
       continue;
     }
     const key = valueOptions.get(argument);
@@ -75,6 +82,12 @@ function main() {
   if (options.resumeFrom && !options.checkpointPath && !options.evaluate) {
     options.checkpointPath = options.resumeFrom;
   }
+  if (options.demoLogs) {
+    options.demoLogs = String(options.demoLogs).split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+  if (options.demoAllSeats === true) options.demoHumanOnly = false;
   if (options.checkpointPath) options.checkpointPath = path.resolve(options.checkpointPath);
   if (options.resumeFrom) options.resumeFrom = path.resolve(options.resumeFrom);
   if (options.logPath) options.logPath = path.resolve(options.logPath);

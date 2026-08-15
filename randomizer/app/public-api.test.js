@@ -16,7 +16,15 @@ const api = publicApi.createPublicApi({
 
 assert.deepEqual(
   Object.keys(api),
-  ["schemaVersion", "inspect", "capture", "restore", "input"],
+  [
+    "schemaVersion",
+    "inspect",
+    "capture",
+    "restore",
+    "input",
+    "getRecordedTrajectory",
+    "isTrajectoryRecordingEnabled",
+  ],
   "Browser public facade 顶层不得恢复规则 executor 或分散 inspect",
 );
 assert.deepEqual(
@@ -26,6 +34,8 @@ assert.deepEqual(
 );
 assert.equal(Object.isFrozen(api), true);
 assert.equal(Object.isFrozen(api.input), true);
+assert.equal(api.getRecordedTrajectory(), null, "未装配录制器时返回 null");
+assert.equal(api.isTrajectoryRecordingEnabled(), false, "未装配录制器时返回 false");
 
 const inspected = api.inspect();
 assert.notEqual(inspected.projection, projection);
@@ -54,5 +64,22 @@ assert.throws(
   /viewer-safe inspect/,
   "缺失窄端口必须在装配期失败",
 );
+
+const apiRecorded = publicApi.createPublicApi({
+  inspectProjection: () => projection,
+  inspectInput: () => ({ submissionSequence: 2 }),
+  capture: () => ({ ok: true }),
+  restore: () => ({ ok: true }),
+  dispatchAction: (action) => ({ ok: true, action }),
+  submitDecision: (submission) => ({ ok: true, submission }),
+  getRecordedTrajectory: () => '{"schemaVersion":"seti-self-play-log-v1"}\n',
+  isTrajectoryRecordingEnabled: () => true,
+});
+assert.equal(
+  apiRecorded.getRecordedTrajectory(),
+  '{"schemaVersion":"seti-self-play-log-v1"}\n',
+  "装配录制器后返回 self-play JSONL",
+);
+assert.equal(apiRecorded.isTrajectoryRecordingEnabled(), true, "录制开关状态可查");
 
 console.log("public-api tests passed");

@@ -11,6 +11,61 @@ module.exports = Object.freeze([
     counterexample: "app.js 初始化异常导致公开 API 或事件未装配，或点击后启动页/初始选择状态错误",
   }),
   Object.freeze({
+    id: "production-trajectory-recording",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button') && document.querySelector('#start-record-trajectory'))",
+    actionExpression: `(async () => {
+      const checkbox = document.querySelector("#start-record-trajectory");
+      if (!checkbox || checkbox.checked !== true) {
+        throw new Error("录制开关必须默认勾选: " + (checkbox && checkbox.checked));
+      }
+      const waitFor = async (predicate, label, timeout = 12000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      document.querySelector("#start-screen-start-button").click();
+      await waitFor(() => (
+        window.SetiRandomizer.isTrajectoryRecordingEnabled() === true
+      ), "默认勾选后录制器装配");
+      await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
+      const jsonl = window.SetiRandomizer.getRecordedTrajectory();
+      if (!jsonl) throw new Error("录制开启后轨迹为空");
+      const lines = jsonl.split("\\n").filter(Boolean);
+      if (!lines.length) throw new Error("轨迹 JSONL 无内容");
+      let stepCount = 0;
+      for (const line of lines) {
+        const record = JSON.parse(line);
+        if (record.schemaVersion !== "seti-self-play-log-v1") {
+          throw new Error("轨迹必须使用 self-play log schema: " + record.schemaVersion);
+        }
+        if (record.type === "step") {
+          stepCount += 1;
+          if (!["human", "machine"].includes(record.actorKind)) {
+            throw new Error("step 必须标记 human/machine actorKind: " + record.actorKind);
+          }
+          if (!record.action || !Array.isArray(record.legalMask)) {
+            throw new Error("step 必须携带 action 与 legalMask");
+          }
+        }
+      }
+      if (stepCount === 0) throw new Error("轨迹没有任何已确认 step");
+      checkbox.checked = false;
+      document.querySelector("#start-screen-start-button").click();
+      if (window.SetiRandomizer.isTrajectoryRecordingEnabled() !== false
+        || window.SetiRandomizer.getRecordedTrajectory() !== null) {
+        throw new Error("取消勾选后录制必须关闭");
+      }
+      window.__setiTrajectorySmoke = { ok: true, lines: lines.length, steps: stepCount };
+    })()`,
+    successExpression: "window.__setiTrajectorySmoke?.ok === true",
+    obligation: "开局前录制开关默认勾选，勾选后每个已确认输入按 self-play JSONL 落轨迹且可关闭",
+    counterexample: "开关默认态错误、轨迹 schema 不符、缺 action/legalMask/actorKind 或取消勾选后仍录制",
+  }),
+  Object.freeze({
     id: "production-browser-full-parity",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",

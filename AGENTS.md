@@ -32,6 +32,8 @@
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
 - `randomizer/game/ai/heuristic-evaluator.js`、`expected-score-evaluator.js`：只消费公共 observation、legal descriptors 与标准反事实 outcome，负责纯估值和稳定排序；不得恢复 legacy candidate 或 selector adapter。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
+- `randomizer/training/trajectory-recorder.js`：`seti-self-play-log-v1` 轨迹录制器（Browser/Node 共用，人类示范与 self-play 同一格式）。
+- `randomizer/app/browser-host/trajectory-recording.js`：Browser 输入链录制适配器（只读 projection、按确认 replay 对齐、终局导出 JSONL）。
 - `randomizer/training/worker-protocol.js`、`simulation-worker.js`、`worker-pool.js`：Python/PyTorch 常驻采样协议、隔离 worker、超时/背压/崩溃恢复与批量请求。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。
 - `tools/run_rl_worker_server.js`、`tools/rl_worker_client.py`：Node JSONL worker 服务与 Python 标准库客户端；`tools/benchmark_rl_workers.js` 为分项吞吐闸门。

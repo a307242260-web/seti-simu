@@ -41,6 +41,12 @@
     const inspectMachinePlayer = typeof context.inspectMachinePlayer === "function"
       ? context.inspectMachinePlayer
       : () => null;
+    const getRecordedTrajectory = typeof context.getRecordedTrajectory === "function"
+      ? context.getRecordedTrajectory
+      : () => null;
+    const isTrajectoryRecordingEnabled = typeof context.isTrajectoryRecordingEnabled === "function"
+      ? context.isTrajectoryRecordingEnabled
+      : () => false;
 
     const input = Object.freeze({
       dispatchAction(action) {
@@ -67,6 +73,12 @@
         return deepFreeze(clone(restore(clone(envelope, structuredClone)), structuredClone));
       },
       input,
+      getRecordedTrajectory() {
+        return clone(getRecordedTrajectory(), structuredClone);
+      },
+      isTrajectoryRecordingEnabled() {
+        return isTrajectoryRecordingEnabled();
+      },
     });
   }
 

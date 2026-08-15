@@ -10,6 +10,8 @@
     inputAdapter,
     policyInputAdapter,
     browserAiBootstrap,
+    trajectoryRecorder,
+    trajectoryRecording: trajectoryRecordingModule,
     outcomeModel,
     expectedScoreEvaluator,
     heuristicPolicy,
@@ -40,6 +42,8 @@
   let automationScheduled = false;
   let refreshScheduled = false;
   let aiDifficulty = "laughable";
+  let trajectoryRecording = null;
+  let trajectoryGameSequence = 0;
 
   function createBrowserRandom(initialState = 1) {
     let state = Number(initialState) >>> 0 || 1;
@@ -731,13 +735,27 @@
     return canonicalProjection.projectSource({ viewer: getViewer() });
   }
 
+  function rawDispatchAction(action) {
+    return action?.phase === "quick"
+      ? ruleComposition.inputPort.submitQuickAction(action)
+      : ruleComposition.inputPort.submitAction(action);
+  }
+
+  function rawSubmitDecision(submission) {
+    return ruleComposition.inputPort.submitDecision(submission);
+  }
+
   const residentInput = inputAdapter.createBrowserInputAdapter({
     dispatchAction(action) {
-      return action?.phase === "quick"
-        ? ruleComposition.inputPort.submitQuickAction(action)
-        : ruleComposition.inputPort.submitAction(action);
+      return trajectoryRecording
+        ? trajectoryRecording.dispatchAction(action, rawDispatchAction)
+        : rawDispatchAction(action);
     },
-    submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
+    submitDecision(submission) {
+      return trajectoryRecording
+        ? trajectoryRecording.submitDecision(submission, rawSubmitDecision)
+        : rawSubmitDecision(submission);
+    },
     viewStateStore: residentViewState,
     refreshProjection: readProjection,
   });
@@ -764,6 +782,76 @@
     isMachineSeat: (seatId) => (
       humanSeat.playerId != null && String(seatId) !== String(humanSeat.playerId)
     ),
+  });
+
+  function createTrajectoryRecording() {
+    trajectoryGameSequence += 1;
+    return trajectoryRecordingModule.createTrajectoryRecordingAdapter({
+      createRecorder: () => trajectoryRecorder.createTrajectoryRecorder({
+        seed: `browser-human-${Date.now()}-${trajectoryGameSequence}`,
+        mode: "human-demo",
+        episodeIndex: 0,
+      }),
+      enumerateActions: () => ruleComposition.inputPort.enumerateActions({}),
+      inspectDecision: () => ruleComposition.inspect().session?.decision || null,
+      projectObservation: (seatId) => (
+        outcomeModel.createDecisionObservation(
+          canonicalProjection.projectSource({
+            viewer: {
+              viewerId: `browser:record:${seatId}`,
+              playerId: seatId,
+              role: "player",
+            },
+          }),
+          { seatId },
+        )
+      ),
+      createReward: (before, after) => outcomeModel.createReward(before, after),
+      isMachineSeat: (seatId) => (
+        humanSeat.playerId != null && String(seatId) !== String(humanSeat.playerId)
+      ),
+      isTerminal: () => {
+        const state = ruleComposition.projectionSource.read({
+          viewerId: "browser:recorder",
+          playerId: null,
+          role: "spectator",
+        }).state;
+        return Boolean(state?.turn?.gameEnded && state?.match?.finalScoringSettled === true);
+      },
+      readFinalPlayers: () => {
+        const projection = readProjection();
+        return (projection.resident?.players?.players || []).map((player) => ({
+          playerId: player.id ?? player.playerId ?? null,
+          score: Number(player.resources?.score ?? player.score ?? 0),
+          finalScore: Number(player.finalScore ?? player.resources?.score ?? player.score ?? 0),
+        }));
+      },
+      onFinalized: (recorder) => {
+        const stepCount = recorder.getStepCount();
+        console.info(`本局轨迹已录制完成：${stepCount} 个已确认输入（self-play 格式）`);
+        downloadTrajectory(recorder);
+      },
+    });
+  }
+
+  function downloadTrajectory(recorder) {
+    const jsonl = recorder.getJsonl();
+    if (!jsonl) return;
+    const blob = new Blob([jsonl], { type: "application/x-ndjson;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `seti-demo-${new Date().toISOString().replace(/[:.]/g, "-")}.jsonl`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  ruleComposition.subscribe((event) => {
+    if (trajectoryRecording && event?.source === "session" && event?.event?.type === "opened") {
+      trajectoryRecording.onSessionOpened();
+    }
   });
 
   const decisionController = decisionUi.createDecisionUiController({
@@ -885,6 +973,10 @@
   function startNewGame() {
     const activePlayerCount = Math.max(2, Math.min(4, Number(els.startPlayerCount?.value) || 4));
     aiDifficulty = els.startAiDifficulty?.value || "laughable";
+    trajectoryRecording = els.startRecordTrajectory?.checked === true
+      ? createTrajectoryRecording()
+      : null;
+    if (trajectoryRecording) trajectoryRecording.reset();
     browserRandom.setState(1);
     const result = ruleComposition.newGame({
       activePlayerCount,
@@ -962,6 +1054,9 @@
       revision: inspection.session?.revision ?? null,
     });
     if (result?.ok === false) throw new Error(result.message || result.code);
+    if (trajectoryRecording && result?.journal) {
+      trajectoryRecording.reconcile(result.journal.replay?.length);
+    }
     scheduleRefreshAndAutomation();
   });
 
@@ -973,11 +1068,16 @@
     capture: () => browserCheckpoint.capture(),
     restore(envelope) {
       const result = browserCheckpoint.restore(envelope);
-      if (result?.ok) scheduleRefreshAndAutomation();
+      if (result?.ok) {
+        if (trajectoryRecording) trajectoryRecording.reset();
+        scheduleRefreshAndAutomation();
+      }
       return result;
     },
     dispatchAction: (action) => humanActionInput.submit(action),
     submitDecision: (submission) => humanDecisionInput.submit(submission),
+    getRecordedTrajectory: () => (trajectoryRecording ? trajectoryRecording.getJsonl() : null),
+    isTrajectoryRecordingEnabled: () => trajectoryRecording != null,
   });
 
   if (els.appWrap) els.appWrap.hidden = false;

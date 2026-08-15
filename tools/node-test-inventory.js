@@ -38,6 +38,9 @@ module.exports = Object.freeze({
     entry("randomizer/app/simulation-counterfactual-outcome.test.js", "architecture/policy-host", "每个 legal action 从同根隔离 fork 经标准链生成 outcome", "枚举顺序、失败 fork 或 RNG 消耗污染 canonical root"),
     entry("randomizer/app/simulation-training-replay.test.js", "architecture/simulation-host", "训练 replay 逐步复现 observation/action/reward", "stale 或篡改 replay 被静默接受"),
     entry("randomizer/training/simulation-rule-composition.test.js", "architecture/simulation-host", "生产 rules-only composition 经正式 Decision 提交", "直接 helper 调用绕过 composition working root"),
+    entry("randomizer/training/trajectory-recorder.test.js", "training/trajectory", "录制器按 seti-self-play-log-v1 产出逐步记录与 episode 汇总且可截断对齐", "步骤缺 actor/action/reward/legalMask、汇总缺 players 或汇总后仍被改写仍被接受"),
+    entry("randomizer/training/self-play-demo.test.js", "training/trajectory", "人类示范日志按 self-play 更新口径灌入 action-kind agent 并去重", "机器席位混入默认示范、错误终局分 target 或同一 demo 重复灌入"),
+    entry("randomizer/app/browser-host/trajectory-recording.test.js", "architecture/browser-host", "Browser 轨迹录制只读 projection 与标准输入链，撤销后与确认 replay 对齐", "录制改写规则状态、失败提交入轨迹或 undo 后轨迹与已确认输入不一致"),
 
     entry("randomizer/game/ai/policy-port.test.js", "architecture/policy-host", "Policy Port schema、取消、超时与迟到响应零副作用", "重复、迟到或未知 actionId 被宿主提交"),
     entry("randomizer/game/ai/machine-player-host.test.js", "architecture/policy-host", "Machine Player Host 独占代次、取消和合法性门禁", "旧 generation 响应推进当前回合"),

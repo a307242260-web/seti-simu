@@ -140,6 +140,19 @@ body {
   font: 700 13px/1.2 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
 }
 
+.start-screen-record-option {
+  grid-template-columns: auto minmax(0, 1fr);
+  cursor: pointer;
+}
+
+.start-screen-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #4da3ff;
+  cursor: pointer;
+}
+
 @media (max-width: 560px) {
   .start-screen-option-row {
     grid-template-columns: 1fr;

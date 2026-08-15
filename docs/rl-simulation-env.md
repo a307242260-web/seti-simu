@@ -134,6 +134,42 @@ node tools/run_rl_evaluation.js \
 不低于 180、P50 不低于 200、非法动作率和阻塞率均为 0。修改 seed、样本数、分位数、
 步数上限或门槛必须发布新协议 id。
 
+## 人类示范录制与导入
+
+前台开局前有"录制本局轨迹（self-play 格式）"开关，默认勾选。开启后浏览器不依赖
+任何 UI 事件埋点，直接在引擎输入链（Browser 与 Simulation 共用的
+submitAction/submitDecision 语义）为**每个已确认输入**记录一条
+`seti-self-play-log-v1` step，并在终局追加 episode_summary：
+
+- step：`actorPlayerId`、`action`、`reward`、`legalMask`、`terminal`、`ok`，
+  外加 `actorKind`（`human`/`machine`，区分人类席位与机器席位，不改变 log 结构）；
+- episode_summary：`players` 携带各席位终局分，供训练按
+  `reward + 终局分` 口径回填 target；
+- 撤销（undo）只影响当前 Effect Session，录制器按 session journal 的确认
+  replay 截断对齐，被撤销的输入不进入轨迹；恢复（restore）后从恢复点重新开始
+  记录，不把恢复前的旧轨迹与新状态混在一起。
+
+终局后浏览器自动下载 `seti-demo-<时间戳>.jsonl`，同时
+`SetiRandomizer.getRecordedTrajectory()` 返回同一 JSONL、
+`isTrajectoryRecordingEnabled()` 返回开关状态。录制是纯只读旁路：观测、reward
+或枚举异常一律吞掉，绝不改变对局结果。
+
+人类示范灌入训练：
+
+```bash
+node tools/run_self_play_training.js \
+  --episodes 10 \
+  --demo-log checkpoint/demo/human-2026-01-01.jsonl \
+  --demo-all-seats \
+  --checkpoint checkpoint/self-play/demo-augmented.json
+```
+
+`--demo-log` 接受逗号分隔的多个人类示范 JSONL；默认只导入 `actorKind === "human"`
+的步骤，`--demo-all-seats` 才包含机器席位步骤。导入与 self-play 的
+`updateAgent` 同一更新口径（`flattenReward(reward) + 该席位终局分` 作为 target，
+按 family 更新 action-kind Monte Carlo 值）。已应用的示范以文件内容指纹写入
+checkpoint `config.demoLogs`，resume 时按指纹去重，不会重复灌入同一文件。
+
 ## 性能门禁
 
 ```bash

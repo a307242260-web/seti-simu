@@ -18,6 +18,8 @@
     ["residentRenderer", "SetiBrowserResidentRenderer"],
     ["policyInputAdapter", "SetiBrowserPolicyInputAdapter"],
     ["browserAiBootstrap", "SetiAppAiBrowserBootstrap"],
+    ["trajectoryRecorder", "SetiTrajectoryRecorder"],
+    ["trajectoryRecording", "SetiBrowserTrajectoryRecording"],
     ["outcomeModel", "SetiOutcomeModel"],
     ["expectedScoreEvaluator", "SetiExpectedScoreEvaluator"],
     ["heuristicPolicy", "SetiHeuristicPolicy"],

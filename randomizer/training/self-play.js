@@ -4,9 +4,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { createSimulationEnv } = require("../app/simulation-env");
 const { buildEpisodeReport, writeEpisodeReport } = require("./episode-report");
+const { LOG_SCHEMA } = require("./trajectory-recorder");
 
 const CHECKPOINT_SCHEMA = "seti-self-play-checkpoint-v1";
-const LOG_SCHEMA = "seti-self-play-log-v1";
 
 function hashSeed(seed) {
   const text = String(seed ?? "seti-self-play");
@@ -139,6 +139,64 @@ function createSummary(stats) {
   };
 }
 
+function readJsonlRecords(logPath) {
+  const lines = fs.readFileSync(logPath, "utf8").split("\n").filter(Boolean);
+  return lines.map((line) => JSON.parse(line));
+}
+
+function demoFileFingerprint(logPath) {
+  const text = fs.readFileSync(logPath, "utf8");
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `fnv1a:${(hash >>> 0).toString(16)}:${text.length}`;
+}
+
+function normalizeDemoLogs(demoLogs) {
+  const paths = Array.isArray(demoLogs) ? demoLogs : [demoLogs];
+  return (paths || []).filter(Boolean).map((demoPath) => {
+    const resolved = path.resolve(String(demoPath));
+    return { path: resolved, fingerprint: demoFileFingerprint(resolved) };
+  });
+}
+
+// 把 seti-self-play-log-v1 的人类示范日志灌进 action-kind agent：
+// 与 updateAgent 同一更新口径（reward + 终局分作为 target），默认只取人类席位步骤
+// （浏览器录制会标记 actorKind），需要机器步骤时显式 humanOnly: false。
+function ingestDemoLog(agent, logPath, options = {}) {
+  const humanOnly = options.humanOnly !== false;
+  const records = readJsonlRecords(logPath);
+  const episodes = new Map();
+  for (const record of records) {
+    if (record?.schemaVersion !== LOG_SCHEMA) continue;
+    const key = String(record.episodeIndex ?? 0);
+    if (!episodes.has(key)) episodes.set(key, []);
+    episodes.get(key).push(record);
+  }
+  let ingestedSteps = 0;
+  for (const episodeRecords of episodes.values()) {
+    const summary = episodeRecords.find((record) => record.type === "episode_summary");
+    const finalScores = new Map((summary?.players || []).map((player) => [
+      String(player?.playerId ?? player?.id ?? ""),
+      Number(player?.finalScore ?? player?.score ?? 0),
+    ]));
+    for (const record of episodeRecords) {
+      if (record.type !== "step" || record.ok !== true) continue;
+      if (humanOnly && record.actorKind === "machine") continue;
+      const family = record.action?.family || record.action?.kind || "unknown";
+      const terminalScore = finalScores.get(String(record.actorPlayerId)) || 0;
+      const target = flattenReward(record.reward) + terminalScore;
+      const current = Number(agent.actionValues[family] || 0);
+      agent.actionValues[family] = current + agent.learningRate * (target - current);
+      agent.actionVisits[family] = Number(agent.actionVisits[family] || 0) + 1;
+      ingestedSteps += 1;
+    }
+  }
+  return ingestedSteps;
+}
+
 function createCheckpoint(config, agent, stats, nextEpisodeIndex, random) {
   return {
     schemaVersion: CHECKPOINT_SCHEMA,
@@ -148,6 +206,9 @@ function createCheckpoint(config, agent, stats, nextEpisodeIndex, random) {
       activePlayerCount: config.activePlayerCount,
       aiDifficulty: config.aiDifficulty,
       maxSteps: config.maxSteps,
+      ...(config.demoLogs && config.demoLogs.length
+        ? { demoLogs: cloneAgent(config.demoLogs) }
+        : {}),
     },
     nextEpisodeIndex,
     randomState: random.getState(),
@@ -295,6 +356,27 @@ function runSelfPlay(options = {}) {
   const envFactory = options.envFactory || createSimulationEnv;
   let nextEpisodeIndex = startEpisodeIndex;
   const reportPaths = [];
+  const demoLogs = normalizeDemoLogs(options.demoLogs);
+  const appliedDemoFingerprints = new Set(
+    (checkpoint?.config?.demoLogs || []).map((entry) => entry?.fingerprint).filter(Boolean),
+  );
+  let demoStepsIngested = 0;
+  const newlyAppliedDemos = [];
+  for (const demo of demoLogs) {
+    if (appliedDemoFingerprints.has(demo.fingerprint)) continue;
+    demoStepsIngested += ingestDemoLog(agent, demo.path, {
+      humanOnly: options.demoHumanOnly !== false,
+    });
+    appliedDemoFingerprints.add(demo.fingerprint);
+    newlyAppliedDemos.push(demo);
+  }
+  const configWithDemos = {
+    ...config,
+    demoLogs: [
+      ...(checkpoint?.config?.demoLogs || []),
+      ...newlyAppliedDemos,
+    ],
+  };
 
   for (let offset = 0; offset < config.episodes; offset += 1) {
     const episodeIndex = startEpisodeIndex + offset;
@@ -322,7 +404,7 @@ function runSelfPlay(options = {}) {
     )) {
       writeCheckpoint(
         options.checkpointPath,
-        createCheckpoint(config, agent, stats, nextEpisodeIndex, random),
+        createCheckpoint(configWithDemos, agent, stats, nextEpisodeIndex, random),
       );
     }
   }
@@ -332,6 +414,7 @@ function runSelfPlay(options = {}) {
     nextEpisodeIndex,
     stats: createSummary(stats),
     reportPaths,
+    demoStepsIngested,
   };
 }
 
@@ -342,6 +425,8 @@ module.exports = {
   chooseAction,
   createBaselineAgent,
   createRandomState,
+  ingestDemoLog,
+  normalizeDemoLogs,
   readCheckpoint,
   runEpisode,
   runSelfPlay,
