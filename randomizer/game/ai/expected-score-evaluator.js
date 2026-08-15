@@ -43,8 +43,8 @@
     searchDepth: 15,
   });
   const INCOME_UNIT_VALUES = Object.freeze({
-    credits: 5,
-    energy: 5,
+    credits: 8,
+    energy: 10,
     publicity: 0,
     availableData: 0,
     handSize: 0,

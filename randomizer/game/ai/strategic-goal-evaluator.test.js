@@ -2178,9 +2178,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 1 }),
     observation({ roundNumber: 1, income: { credits: 1, energy: 1 } }),
   );
-  assert.equal(result.incomeValue, 30,
-    "第1轮各增加1信用与1能源收入，三个未来轮初窗口共计30分");
-  assert.equal(result.score, 30);
+  assert.equal(result.incomeValue, 54,
+    "第1轮各增加1信用与1能源收入，三个未来轮初窗口共计54分（信用8/能量10每窗口）");
+  assert.equal(result.score, 54);
 }
 
 {
@@ -2198,9 +2198,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ roundNumber: 2 }),
     observation({ roundNumber: 2, income: { credits: 1 } }),
   );
-  assert.equal(result.incomeValue, 10,
-    "第2轮增加1信用收入只计第3、4轮两次尚未发生的轮初收入，共10分长期价值");
-  assert.equal(result.score, 10);
+  assert.equal(result.incomeValue, 16,
+    "第2轮增加1信用收入只计第3、4轮两次尚未发生的轮初收入，共16分长期价值（信用8每窗口）");
+  assert.equal(result.score, 16);
   assert.deepEqual(result.incomeDelta, {
     credits: 1,
     energy: 0,
@@ -2261,8 +2261,8 @@ function evaluate(candidateAction, before, after, status = "settled") {
   );
   assert.equal(result.actualScoreDelta, 5);
   assert.equal(result.techValue, 10);
-  assert.equal(result.incomeValue, 5);
-  assert.equal(result.score, 20,
+  assert.equal(result.incomeValue, 10);
+  assert.equal(result.score, 25,
     "同一真实叶的分数、科技和收入可以合并，但中间资源不得重复计分");
 }
 

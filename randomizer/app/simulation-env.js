@@ -150,6 +150,61 @@ function completePolicyOutcomeSet(actions, evaluated, rootObservation) {
   });
 }
 
+// 待放置终局标记的潜在价值：玩家 base 分已跨过 [25,50,70] 阈值但尚未认领的标记，
+// 每个标记会放在该玩家可标记的最优板块（公式 baseValue × 下一槽位倍率）。
+function pendingFinalMarkValue(state, player) {
+  const fs = state.finalScoring;
+  if (!fs || !fs.tiles || !Array.isArray(fs.thresholds)) return 0;
+  const playerId = player?.id || player?.color || null;
+  if (!playerId) return 0;
+  const score = Number(player?.resources?.score) || 0;
+  const minThreshold = Math.min(...fs.thresholds.map((t) => Number(t) || 0));
+  if (score < minThreshold) return 0;
+  const marks = Object.values(fs.tiles || {})
+    .flatMap((tile) => (Array.isArray(tile?.marks) ? tile.marks : []));
+  const claimed = new Set(marks
+    .filter((mark) => mark?.playerId === playerId || mark?.playerColor === playerId)
+    .map((mark) => Number(mark?.threshold)));
+  const pendingThresholds = fs.thresholds.filter((threshold) => (
+    score >= Number(threshold) && !claimed.has(Number(threshold))
+  ));
+  if (!pendingThresholds.length) return 0;
+  const formulaContext = {
+    aliens: state.aliens,
+    planets: state.planets,
+    data: state.data,
+  };
+  const getCardTypeCode = (card) => cardEffects.getRuntimeCardTypeCode(
+    card,
+    cardEffects.getCardModel(card)?.cardType,
+  );
+  let total = 0;
+  for (const threshold of pendingThresholds) {
+    let best = 0;
+    for (const [tileId, tile] of Object.entries(fs.tiles || {})) {
+      const tileMarks = Array.isArray(tile?.marks) ? tile.marks : [];
+      if (tileMarks.some((mark) => (
+        mark?.playerId === playerId || mark?.playerColor === playerId
+      ))) {
+        continue;
+      }
+      const nextSlot = !tileMarks.some((mark) => Number(mark?.slotIndex) === 1) ? 1
+        : !tileMarks.some((mark) => Number(mark?.slotIndex) === 2) ? 2 : 3;
+      const formulaId = endGameScoring.getFormulaId(tileId, fs.tileVariants?.[tileId]);
+      const baseValue = Number(endGameScoring.getFormulaBaseValue(
+        formulaId,
+        player,
+        formulaContext,
+        { getCardTypeCode },
+      ) || 0);
+      const multiplier = Number(endGameScoring.getSlotMultiplier(formulaId, nextSlot) || 0);
+      best = Math.max(best, baseValue * multiplier);
+    }
+    total += best;
+  }
+  return total;
+}
+
 function buildDecisionFromState(state, legalActions) {
   const turn = getTurnState(state);
   if (turn.gameEnded) return null;
@@ -224,7 +279,8 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = [], option
         }, player);
         return {
           ...publicPlayer,
-          securedEndGameBonus: breakdown.totalScore - breakdown.baseScore,
+          securedEndGameBonus: breakdown.totalScore - breakdown.baseScore
+            + pendingFinalMarkValue(state, player),
         };
       }),
       board: {

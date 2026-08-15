@@ -1049,14 +1049,39 @@
   }
 
   function augmentEffectResult(root, executorResult, sourceEffect) {
-    if (!executorResult || executorResult.ok !== true || !Array.isArray(executorResult.events)
-      || !executorResult.events.length || !root?.players) {
+    if (!executorResult || executorResult.ok !== true || !root?.players) {
       return executorResult;
+    }
+    const spawnedEffects = [...(executorResult.spawnedEffects || [])];
+    // 终局标记立即摆放：任意 effect 结算后，若玩家分数跨过 [25,50,70] 阈值且未认领，
+    // 立即生成 FINAL_MARK Decision。FINAL_MARK 自身的 resolve 结果由 hasMoreForOwner 链
+    // 继续，final_scoring game_end handoff 由 HANDOFF executor 兜底，两者都跳过避免重复。
+    const sourceType = sourceEffect?.type;
+    const isFinalMarkSource = sourceType === EFFECT_TYPES.FINAL_MARK;
+    const isFinalScoringHandoff = sourceType === HANDOFF_TYPE
+      && sourceEffect?.payload?.domain === "final_scoring";
+    const thresholdFloor = (root.finalScoring?.thresholds || [])[0] ?? 25;
+    const anyPlayerReachedThreshold = (root.players?.players || []).some((player) => (
+      Number(player?.resources?.score) >= Number(thresholdFloor)
+    ));
+    if (!isFinalMarkSource && !isFinalScoringHandoff
+      && root.finalScoring && typeof root.finalScoring === "object"
+      && anyPlayerReachedThreshold) {
+      // 立即摆放终局标记：FINAL_MARK 决策必须 unshift 到队列最前，先于本 effect
+      // 结果里其余 spawnedEffects 认领阈值，否则同一 pending 阈值会被后续 effect
+      // 结果重复生成 FINAL_MARK，第二个决策 choices 为空造成死锁。
+      const finalMarkDecisions = [];
+      for (const player of listPendingFinalOwners(root)) {
+        finalMarkDecisions.push(decision(EFFECT_TYPES.FINAL_MARK, player.id, {}));
+      }
+      spawnedEffects.unshift(...finalMarkDecisions);
+    }
+    if (!Array.isArray(executorResult.events) || !executorResult.events.length) {
+      return { ...executorResult, spawnedEffects };
     }
     const events = executorResult.events.filter((event) => event?.type);
     const ownerId = sourceEffect?.ownerId || events.find((event) => event.playerId)?.playerId;
     const owner = actor(root, ownerId);
-    const spawnedEffects = [...(executorResult.spawnedEffects || [])];
     if (owner) {
       for (const event of events) {
         if (event.type === "visitPlanet" && event.rocketId != null) {
@@ -1540,7 +1565,11 @@
           { root },
         );
         if (!marked.ok) return marked;
-        if (!listPendingFinalOwners(root).length) settleFinalScores(root);
+        // 立即摆放后，settle 只在真正游戏结束时触发（turn.gameEnded），
+        // 否则中局摆放完最后一个标记会提前结算终局分数。
+        if (root.turn?.gameEnded === true && !listPendingFinalOwners(root).length) {
+          settleFinalScores(root);
+        }
         const hasMoreForOwner = finalScoring
           .getPendingMarksForPlayer(root.finalScoring, player).length > 0;
         return result(state, root, "final_mark", {

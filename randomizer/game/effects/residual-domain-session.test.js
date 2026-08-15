@@ -270,6 +270,7 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
 
 (function proofGameEndWritesEveryPlayerFinalContract() {
   const root = createRoot();
+  root.turn.gameEnded = true;
   const owner = createHarness(residual, "createResidualDomain");
   const result = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
     type: residual.HANDOFF_TYPE,
