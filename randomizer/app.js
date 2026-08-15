@@ -373,6 +373,22 @@
                 }),
               ]
               : []),
+            ...(alienId === "阿米巴"
+              ? aliens.amiba.listSymbols(state.aliens).flatMap((symbol) => {
+                const layout = alienPlacement.getAmibaSymbolMarkerLayout(
+                  slotId,
+                  symbol.slotId,
+                );
+                return layout ? [{
+                  id: `amiba:symbol:${symbol.slotId}`,
+                  traceType: "symbol",
+                  color: null,
+                  imageSrc: aliens.amiba.getSymbolSrc(symbol.symbolId),
+                  layout: structuredClone(layout),
+                  surface: "face",
+                }] : [];
+              })
+              : []),
           ],
         };
       });
