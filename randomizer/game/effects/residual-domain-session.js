@@ -950,6 +950,37 @@
             players.gainResources(player, { score: scoreGain });
             addScoreSource(player, sourceKey, scoreGain);
           }
+        } else if (effect.type === "runezu_symbol_reward") {
+          // 符文族牌奖励：玩家获得指定符文 symbol（进入持有集合，可放 face 或参与终局计分）。
+          const symbolId = effect.options?.symbolId;
+          if (symbolId && typeof runezu?.gainPlayerSymbol === "function") {
+            runezu.gainPlayerSymbol(player, symbolId);
+          }
+        } else if (effect.type === "amiba_choose_symbol_reward") {
+          // 阿米巴区域 symbol 奖励：结算对应区域全部 symbol（移动 + 应用奖励）。
+          const region = effect.options?.region;
+          if (region && typeof amiba?.resolveRegionReward === "function") {
+            const resolved = amiba.resolveRegionReward(root.aliens, region);
+            for (const result of resolved.results || []) {
+              const reward = result.reward || {};
+              if (reward.gain) players.gainResources(player, reward.gain);
+              const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+              for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
+                const gained = data.gainData(player, { source: "amiba_region_reward", root });
+                if (!gained.ok) return gained;
+              }
+              const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+              for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+                const drawn = cards.blindDraw(
+                  root.cards, root.players, player, () => nextRandom(root), drawOptions(root),
+                );
+                if (!drawn.ok) return drawn;
+              }
+              if (drawCount > 0) {
+                irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
+              }
+            }
+          }
         } else if (effect.type === "draw_cards") {
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let drawIndex = 0; drawIndex < count; drawIndex += 1) {
