@@ -84,13 +84,31 @@
 
   // 统一卡面展示：任意要选牌的卡（手牌/公共牌/保留牌/弃牌角标等）都用它，
   // 避免各选牌场景重复配置卡面。
+  // 外星人牌（set: alien:*）不在标准卡表，按 alienCardId 生成 `../assets/aliens/<物种>/cards/<index>.webp`。
+  function getAlienCardImageSrc(card) {
+    if (!card) return null;
+    const set = String(card.set || "");
+    if (!set.startsWith("alien:")) return null;
+    const speciesName = set.slice("alien:".length);
+    if (!speciesName || !["阿米巴", "虫", "奥陌陌", "半人马", "符文族", "异常点", "方舟", "九折"].includes(speciesName)) {
+      return card.src || null;
+    }
+    const index = Number.isInteger(Number(card.alienCardId))
+      ? Number(card.alienCardId)
+      : /_(\d+)\.webp$/.exec(String(card.cardId || ""))?.[1];
+    if (index == null) return card.src || null;
+    return `../assets/aliens/${speciesName}/cards/${index}.webp`;
+  }
+
   function getCardPickPresentation(card) {
     if (!card) return null;
     const entry = getCatalogEntryForCard(card);
     return {
       cardKind: "pick",
       cardId: String(card.id),
-      imageSrc: entry ? getCardSrc(entry) : (card.src || null),
+      imageSrc: entry
+        ? getCardSrc(entry)
+        : (getAlienCardImageSrc(card) || card.src || null),
       imageAlt: getCardLabel(card),
     };
   }
