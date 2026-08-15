@@ -44,6 +44,9 @@
   let aiDifficulty = "laughable";
   let trajectoryRecording = null;
   let trajectoryGameSequence = 0;
+  // 逐行动重放历史：记录所有玩家（人类+AI）每次成功提交的行动，随存档保存。
+  // 学习工具可用 seed 重置 + 重放此序列，完整重建每步状态（含前三轮的过程）。
+  let browserReplaySteps = [];
   const actionLog = [];
   const PLAYER_LOG_COLORS = { blue: "#4da3ff", green: "#56d37a", brown: "#b2845a", white: "#f3f5ef" };
 
@@ -855,13 +858,33 @@
   }
 
   function rawDispatchAction(action) {
-    return action?.phase === "quick"
+    const result = action?.phase === "quick"
       ? ruleComposition.inputPort.submitQuickAction(action)
       : ruleComposition.inputPort.submitAction(action);
+    if (result?.ok && typeof structuredClone === "function") {
+      browserReplaySteps.push({
+        stepIndex: browserReplaySteps.length,
+        actorPlayerId: action.actorId || action.actorPlayerId || null,
+        action: structuredClone(action),
+        phase: action.phase || null,
+      });
+    }
+    return result;
   }
 
   function rawSubmitDecision(submission) {
-    return ruleComposition.inputPort.submitDecision(submission);
+    const result = ruleComposition.inputPort.submitDecision(submission);
+    if (result?.ok && typeof structuredClone === "function" && submission?.choice) {
+      browserReplaySteps.push({
+        stepIndex: browserReplaySteps.length,
+        actorPlayerId: submission.ownerId || submission.choice?.actorId || null,
+        action: structuredClone(submission.choice),
+        phase: "conditional",
+        decisionId: submission.decisionId || null,
+        decisionVersion: submission.decisionVersion ?? null,
+      });
+    }
+    return result;
   }
 
   const residentInput = inputAdapter.createBrowserInputAdapter({
@@ -1007,6 +1030,7 @@
       committedState: envelope.committedState || null,
       session: envelope.session || null,
       readableState,
+      replaySteps: structuredClone(browserReplaySteps),
     };
     const json = JSON.stringify(payload, null, 2);
     let storedLocally = false;
@@ -1218,6 +1242,8 @@
     // 读档后从恢复点重新开始录制轨迹：恢复前的已录步骤不再延续（避免版本分叉），
     // 恢复点之后的操作照常记录，同样可用于机器人训练（ingest 只消费 step 动作价值）。
     if (trajectoryRecording) trajectoryRecording.reset();
+    // 重放历史同样从恢复点重新开始；读档前的历史保留在存档的 replaySteps 字段里。
+    browserReplaySteps = [];
     scheduleRefreshAndAutomation();
     window.alert(
       `已从 ${sourceName} 恢复游戏（stateVersion ${payload.stateVersion ?? "?"}）`
@@ -1439,6 +1465,7 @@
       ? createTrajectoryRecording()
       : null;
     if (trajectoryRecording) trajectoryRecording.reset();
+    browserReplaySteps = [];
     actionLog.length = 0;
     browserRandom.setState(seed ? hashSeed(seed) : 1);
     const result = ruleComposition.newGame({
@@ -1592,6 +1619,9 @@
     if (trajectoryRecording && result?.journal) {
       trajectoryRecording.reconcile(result.journal.replay?.length);
     }
+    if (result?.journal?.replay) {
+      browserReplaySteps.length = result.journal.replay.length || 0;
+    }
     scheduleRefreshAndAutomation();
   });
 
@@ -1657,6 +1687,7 @@
       const result = browserCheckpoint.restore(envelope);
       if (result?.ok) {
         if (trajectoryRecording) trajectoryRecording.reset();
+        browserReplaySteps = [];
         scheduleRefreshAndAutomation();
       }
       return result;

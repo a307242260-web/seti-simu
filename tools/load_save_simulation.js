@@ -4,6 +4,7 @@
 //   node tools/load_save_simulation.js <save-file>            # 加载并打印状态
 //   node tools/load_save_simulation.js <save-file> --run-ai   # 加载并让 AI 打完整局
 //   node tools/load_save_simulation.js <save-file> --decide <N>  # 加载并让 AI 决策 N 步
+//   node tools/load_save_simulation.js <save-file> --history <round>  # 打印指定轮(默认1-3)的逐行动历史
 const fs = require("node:fs");
 const path = require("node:path");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
@@ -43,6 +44,34 @@ function loadSave(env, savePath) {
   return { save, state, obs };
 }
 
+function printReplayHistory(save, roundFilter) {
+  const steps = save.replaySteps || [];
+  if (!steps.length) {
+    console.log("存档无 replaySteps（旧格式，无逐行动历史）");
+    return;
+  }
+  console.log(`replaySteps: ${steps.length} 步`);
+  const famCount = {};
+  for (const s of steps) {
+    const fam = s.action?.family || s.action?.choiceId || "?";
+    famCount[fam] = (famCount[fam] || 0) + 1;
+  }
+  console.log(`按 family 统计: ${JSON.stringify(famCount)}`);
+  // 按 round 分组：需要每步的 round——重放才能拿到，这里用 step 顺序打印
+  const start = Number(roundFilter) || 0;
+  const filter = roundFilter
+    ? (s, i) => { const perRound = Math.ceil(steps.length / 3); return Math.floor(i / perRound) + 1 === Number(roundFilter); }
+    : () => true;
+  let shown = 0;
+  for (let i = 0; i < steps.length && shown < 60; i++) {
+    const s = steps[i];
+    if (!filter(s, i)) continue;
+    const a = s.action || {};
+    shown += 1;
+    console.log(`  #${i} [${s.actorPlayerId || "?"}] ${a.family || "?"} ${a.target ? JSON.stringify(a.target).slice(0, 80) : ""}`);
+  }
+}
+
 function printState(obs) {
   const st = obs.publicState;
   console.log(`round=${st.roundNumber} turn=${st.turnNumber} current=${st.currentPlayerId} ended=${Boolean(st.terminal)}`);
@@ -70,9 +99,14 @@ function main() {
     process.exit(1);
   }
   const env = createSimulationEnv();
-  const { obs } = loadSave(env, saveFile);
+  const { obs, save } = loadSave(env, saveFile);
   printState(obs);
 
+  if (mode === "--history") {
+    printReplayHistory(save, args[2]);
+    env.dispose();
+    return;
+  }
   if (mode === "--run-ai") {
     let count = 0;
     while (!env.isTerminal() && count < 400) {
