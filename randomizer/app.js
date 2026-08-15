@@ -1505,6 +1505,11 @@
       "[data-quick-trade][data-action-id], [data-quick-action][data-action-id]",
     );
     if (!button || button.disabled || !button.dataset.actionId) return;
+    // 弃牌角标：需先选手牌，不能直接提交单个 action
+    if (String(button.dataset.quickAction) === "card_corner") {
+      pickCardCornerAction();
+      return;
+    }
     const result = desktopActionBar.activateAction(button.dataset.actionId);
     if (result?.ok === false) throw new Error(result.message || result.code);
     scheduleRefreshAndAutomation();
