@@ -1449,8 +1449,9 @@
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
+        const actor = getActor(root, effect.ownerId);
         const result = placeAlienTrace(root, effect.ownerId, choice);
-        if (!result?.ok) return result;
+        if (!actor || !result?.ok) return result || fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
         const spawnedEffects = [];
         let irreversible = null;
         // 阿米巴痕迹位置奖励：选一张阿米巴牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）
@@ -1486,7 +1487,7 @@
                 getWorkingSlice(root, "players"),
                 actor,
                 () => nextCommittedRandom(root),
-                { createCardInstance: createCommittedCardFactory(root) },
+                { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
               );
               if (!drawn.ok) return drawn;
             }
