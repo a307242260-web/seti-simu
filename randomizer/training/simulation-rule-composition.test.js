@@ -109,7 +109,12 @@ assert.equal(
   originalEntityIds.size - 1,
   "明确弃牌后原始手牌实体集合必须真实减少 1",
 );
-assert.equal(after.cards.discardPile.length, discardCount + 1, "明确弃牌后 discard 必须增加 1");
+assert.equal(after.cards.discardPile.length, discardCount, "初始收入牌移出游戏，不进入弃牌堆");
+assert.equal(
+  (after.cards.removedFromGameCardIds || []).length,
+  (before.cards.removedFromGameCardIds || []).length + 1,
+  "初始收入牌必须移出游戏（removedFromGameCardIds +1）",
+);
 assert.equal(
   kernel.composition.inspect().session.decision.choices.some((choice) => (
     choice.target?.cardIds?.includes(selectedCardId)

@@ -404,7 +404,8 @@
     }
     const discarded = cards.discardFromHandAtIndex(player, handIndex);
     if (!discarded?.ok) return discarded;
-    cards.addToDiscardPile(rootState.cards, discarded.card);
+    // 初始收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
+    cards.addRemovedFromGame(rootState.cards, discarded.card);
     const gain = cards.getIncomeGainForCard(discarded.card);
     if (gain) {
       players.gainIncome(player, gain, {

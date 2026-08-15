@@ -269,7 +269,11 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(completed.ok, true);
   assert.deepEqual(
     root.cards.discardPile.map((card) => card.id),
-    ["task-b1"],
+    [],
+  );
+  assert.ok(
+    (root.cards.removedFromGameCardIds || []).includes("b_1.webp"),
+    "完成任务牌必须移出游戏（removedFromGameCardIds 记录 cardId，不进弃牌堆）",
   );
   assert.equal(root.players.players[0].resources.score, 34);
   assert.equal(root.players.players[0].scoreSources.taskCardScore, 4);

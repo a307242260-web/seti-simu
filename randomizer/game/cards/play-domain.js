@@ -726,7 +726,8 @@
         if (!removed.ok) return removed;
         const gain = cards.getIncomeGainForCard(removed.card);
         if (!gain) return fail("CARD_INCOME_UNKNOWN", "所选卡牌没有可识别收入");
-        cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
+        // 收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
+        cards.addRemovedFromGame(getWorkingSlice(root, "cards"), removed.card);
         const drawnCards = [];
         const dataResults = [];
         players.gainIncome(actor, gain, {

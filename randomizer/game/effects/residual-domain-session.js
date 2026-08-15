@@ -455,7 +455,8 @@
       const index = player.hand.findIndex((card) => card.id === target.cardInstanceId);
       if (index < 0) return fail("COMPANY_INCOME_CARD_STALE", "收入牌已失效");
       const [card] = player.hand.splice(index, 1);
-      cards.addToDiscardPile(root.cards, card);
+      // 收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
+      cards.addRemovedFromGame(root.cards, card);
       const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, card, {
         root,
         blindDraw: () => cards.blindDraw(
@@ -500,7 +501,8 @@
       if (payload.abilityId === "mission_publicity_pick_income") {
         const index = player.hand.findIndex((card) => card.id === picked.card.id);
         player.hand.splice(index, 1);
-        cards.addToDiscardPile(root.cards, picked.card);
+        // 收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
+        cards.addRemovedFromGame(root.cards, picked.card);
         const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, picked.card, {
           root,
           blindDraw: () => cards.blindDraw(
@@ -1267,7 +1269,8 @@
     if (!consumed) return fail("CARD_RULE_ALREADY_CONSUMED", "卡牌规则已经结算");
     if (settlement.kind !== "trigger" || cardEffects.areAllTriggersConsumed(card)) {
       player.reservedCards.splice(cardIndex, 1);
-      cards.addToDiscardPile(root.cards, card);
+      // 完成任务牌翻面保留在玩家面前，移出游戏（不进弃牌堆、不会被洗回主牌库）。
+      cards.addRemovedFromGame(root.cards, card);
       player.completedTaskCount = (Number(player.completedTaskCount) || 0) + 1;
     }
     const applied = applyFormalCardEffects(

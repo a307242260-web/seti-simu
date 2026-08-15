@@ -298,12 +298,38 @@
     return ids;
   }
 
+  function collectRemovedFromGameCardIds(cardsState) {
+    const ids = new Set();
+    for (const cardId of cardsState?.removedFromGameCardIds || []) {
+      if (cardId) ids.add(String(cardId));
+    }
+    return ids;
+  }
+
   function collectClaimedCardIds(cardsState, playersState) {
     const ids = collectLiveCardIds(cardsState, playersState);
     for (const cardId of collectDiscardCardIds(cardsState)) {
       ids.add(cardId);
     }
+    for (const cardId of collectRemovedFromGameCardIds(cardsState)) {
+      ids.add(cardId);
+    }
     return ids;
+  }
+
+  /**
+   * 将卡牌移出游戏：收入牌「插入起始收入牌下方」、完成任务牌「翻面保留在玩家面前」
+   * 均不再参与牌库循环（不进弃牌堆、不会被洗回主牌库、同名牌不再可被抽到）。
+   */
+  function addRemovedFromGame(cardsState, card) {
+    if (!card) return;
+    if (!Array.isArray(cardsState.removedFromGameCardIds)) cardsState.removedFromGameCardIds = [];
+    const cardId = getCardId(card);
+    if (!cardId) return;
+    if (!cardsState.removedFromGameCardIds.includes(cardId)) {
+      cardsState.removedFromGameCardIds.push(cardId);
+    }
+    removeCardIdFromDrawPile(cardsState, cardId);
   }
 
   function ensureDrawPileCardIds(cardsState) {
@@ -320,12 +346,13 @@
   function sanitizeDrawPileCardIds(cardsState, playersState) {
     const drawPile = ensureDrawPileCardIds(cardsState);
     const live = collectLiveCardIds(cardsState, playersState);
+    const removed = collectRemovedFromGameCardIds(cardsState);
     const seen = new Set();
     const sanitized = [];
 
     for (const rawCardId of drawPile) {
       const cardId = String(rawCardId || "");
-      if (!cardId || seen.has(cardId) || live.has(cardId) || !getCatalogEntryByCardId(cardId)) continue;
+      if (!cardId || seen.has(cardId) || live.has(cardId) || removed.has(cardId) || !getCatalogEntryByCardId(cardId)) continue;
       seen.add(cardId);
       sanitized.push(cardId);
     }
@@ -720,6 +747,8 @@
     discardFromHand,
     discardFromHandAtIndex,
     addToDiscardPile,
+    addRemovedFromGame,
+    collectRemovedFromGameCardIds,
     initializeDeck,
     getCatalogSize,
     getCardLabel,

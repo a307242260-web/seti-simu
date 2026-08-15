@@ -36,7 +36,7 @@
     "players.currentPlayerId/player labels/assets": "turn-owned/host-only:excluded",
     "pieces.rockets/activeRocketId/playerRocketSequences": "committed",
     "pieces presentation fields": "host-only:excluded",
-    "cards.publicCards/discardPile/drawPileCardIds/passReservePiles": "committed",
+    "cards.publicCards/discardPile/drawPileCardIds/passReservePiles/removedFromGameCardIds": "committed",
     "cardTaskState": "derived:rebuildCardTaskIndex",
     "tech.stacks": "committed",
     "match.initialSetup": "Effect Session working state only; removed before commit",
