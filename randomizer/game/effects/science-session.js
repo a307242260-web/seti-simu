@@ -238,6 +238,8 @@
         payload,
         decision: null,
         summary: choice.summary || choice.family,
+        // 保留选择卡面等展示信息（精选牌等），不能在此丢弃
+        ...(choice.presentation ? { presentation: clone(choice.presentation) } : {}),
       };
     });
   }

@@ -246,8 +246,10 @@
     }
 
     function cardChoices(root, pending) {
-      const publicChoices = (root.cards?.publicCards || []).flatMap((card, slotIndex) => (
-        card ? [{
+      const publicChoices = (root.cards?.publicCards || []).flatMap((card, slotIndex) => {
+        if (!card) return [];
+        const entry = cards.getCatalogEntryForCard(card);
+        return [{
           target: {
             kind: "trade-card-selection",
             choiceId: `public:${slotIndex}`,
@@ -257,8 +259,15 @@
           },
           payload: { slotIndex },
           summary: cards.getCardLabel(card),
-        }] : []
-      ));
+          // 精选牌选择直接携带公共牌卡面，决策弹窗显示牌面而非编号
+          presentation: {
+            cardKind: "pick",
+            cardId: String(card.id),
+            imageSrc: entry ? cards.getCardSrc(entry) : null,
+            imageAlt: cards.getCardLabel(card),
+          },
+        }];
+      });
       return pending.allowBlindDraw
         ? [...publicChoices, {
           target: {
