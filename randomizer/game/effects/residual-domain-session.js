@@ -1306,7 +1306,7 @@
     return true;
   }
 
-  function augmentEffectResult(root, executorResult, sourceEffect) {
+  function augmentEffectResult(root, executorResult, sourceEffect, context) {
     if (!executorResult || executorResult.ok !== true || !root?.players) {
       return executorResult;
     }
@@ -1320,6 +1320,27 @@
     if (sourceType === EFFECT_TYPES.FINAL_MARK
       || (sourceType === HANDOFF_TYPE && sourceEffect?.payload?.domain === "final_scoring")) {
       return { ...executorResult, spawnedEffects };
+    }
+    // 反事实投影内（counterfactual fork，random 带 resetSeed 且无 setState）：
+    // 玩家跨过 [25,50,70] 阈值时立即生成 FINAL_MARK 决策并置前。真实规则在回合末
+    // 统一结算（上面注释），但评估的有限搜索常常在到达 end_turn 前被截断，导致
+    // 里程碑价值在投影里不可见、行动被系统性低估。投影内立即摆放只是把「回合末
+    // 必然发生的结算」提前建模，不改真实规则，保证评估与标记时机无关。
+    const counterfactualRandom = context?.random
+      && typeof context.random.resetSeed === "function"
+      && typeof context.random.setState !== "function";
+    if (counterfactualRandom && root.finalScoring && typeof root.finalScoring === "object") {
+      const thresholdFloor = (root.finalScoring.thresholds || [])[0] ?? 25;
+      const anyPlayerReachedThreshold = (root.players?.players || []).some((player) => (
+        Number(player?.resources?.score) >= Number(thresholdFloor)
+      ));
+      if (anyPlayerReachedThreshold) {
+        const finalMarkDecisions = [];
+        for (const player of listPendingFinalOwners(root)) {
+          finalMarkDecisions.push(decision(EFFECT_TYPES.FINAL_MARK, player.id, {}));
+        }
+        spawnedEffects.unshift(...finalMarkDecisions);
+      }
     }
     if (!Array.isArray(executorResult.events) || !executorResult.events.length) {
       return { ...executorResult, spawnedEffects };
