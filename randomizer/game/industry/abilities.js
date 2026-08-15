@@ -250,42 +250,58 @@
   }
 
   function applyCornerReward(players, data, player, reward, options = {}) {
+    // 统一奖励转换：与正式弃牌角标（executeCardCorner→applyReward）、卡牌角标（cornerEffects）
+    // 共用 cards.buildRewardEffects，不再手写 gain/dataCount/movementPoints 分支。
+    const cards = options.cards;
+    const effects = typeof cards?.buildRewardEffects === "function"
+      ? cards.buildRewardEffects(reward, "industry-corner")
+      : null;
     const results = [];
     if (!reward || !player) {
       return { ok: false, message: "没有可结算的弃牌角标奖励", results };
     }
-    if (reward.kind === "resource") {
-      if (reward.gain && Object.keys(reward.gain).length) {
-        players.gainResources(player, reward.gain);
+    const gain = reward.gain || {};
+    if (effects) {
+      // 走统一转换：gain_resources / gain_data 直接应用，card_move 转 pendingFreeMove
+      for (const effect of effects) {
+        if (effect.type === "gain_resources") {
+          players.gainResources(player, effect.options?.gain || {});
+        } else if (effect.type === "gain_data") {
+          const count = Math.max(1, Number(effect.options?.count) || 1);
+          for (let index = 0; index < count; index += 1) {
+            results.push(data.gainData(player, { source: "industry_corner", root: options.root }));
+          }
+        } else if (effect.type === "card_move") {
+          // 移动由残余域转 free_move 决策，这里只记账不执行
+        }
       }
+    } else {
+      // 无统一转换时退回直接字段结算（兼容旧数据）
+      if (Object.keys(gain).length) players.gainResources(player, gain);
       const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
       for (let index = 0; index < dataCount; index += 1) {
         results.push(data.gainData(player, { source: "industry_corner", root: options.root }));
       }
-      const parts = [];
-      if (reward.gain?.publicity) parts.push(`宣传+${reward.gain.publicity}`);
-      if (reward.gain?.score) parts.push(`分+${reward.gain.score}`);
-      if (dataCount) parts.push(`数据+${results.filter((item) => item.ok).length}`);
+    }
+    const parts = [];
+    if (gain.publicity) parts.push(`宣传+${gain.publicity}`);
+    if (gain.score) parts.push(`分+${gain.score}`);
+    if (reward.kind === "move" || Number(reward.movementPoints) > 0) {
+      const movementPoints = Math.max(1, Math.round(Number(reward.movementPoints) || 1));
       return {
         ok: true,
         message: parts.length ? parts.join("、") : reward.label,
         results,
+        pendingFreeMove: { movementPoints },
       };
     }
-    if (reward.kind === "move") {
-      if (reward.gain && Object.keys(reward.gain).length) {
-        players.gainResources(player, reward.gain);
-      }
-      return {
-        ok: true,
-        message: reward.label,
-        results,
-        pendingFreeMove: {
-          movementPoints: reward.movementPoints || 1,
-        },
-      };
-    }
-    return { ok: false, message: "不支持的弃牌角标奖励", results };
+    const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+    if (dataCount) parts.push(`数据+${results.filter((item) => item.ok).length}`);
+    return {
+      ok: true,
+      message: parts.length ? parts.join("、") : reward.label,
+      results,
+    };
   }
 
   function applyIncomeResourcesFromCard(cards, players, data, player, card, options = {}) {
@@ -594,7 +610,7 @@
     if (!reward) {
       return { ok: false, message: "该牌没有弃牌角标奖励" };
     }
-    const applied = applyCornerReward(players, data, player, reward);
+    const applied = applyCornerReward(players, data, player, reward, { cards });
     return {
       ...applied,
       reward,

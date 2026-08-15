@@ -465,7 +465,7 @@
         data,
         player,
         payload.node?.options?.reward,
-        { root },
+        { root, cards },
       );
       if (!applied.ok) return applied;
       if (applied.pendingFreeMove) {
@@ -549,7 +549,7 @@
           data,
           player,
           industryAbilities.getCornerReward(cards, picked.card),
-          { root },
+          { root, cards },
         );
         if (!applied.ok) return applied;
         if (applied.pendingFreeMove) spawnedEffects.push(decision(
