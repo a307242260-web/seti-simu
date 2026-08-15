@@ -10,6 +10,7 @@
   let solar = root.SetiSolarSystem;
   let science = root.SetiScienceSession;
   let turnFlow = root.SetiTurnFlow;
+  let chong = root.SetiAlienChong;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     actions = actions || require("../actions");
@@ -21,16 +22,17 @@
     solar = solar || require("../../solar-system/core");
     science = science || require("./science-session");
     turnFlow = turnFlow || require("../turn-flow");
+    chong = chong || require("../aliens/chong");
   }
   const api = factory(
     standardAction, actions, abilities, players, planetRewards, data, cards, solar,
-    science, turnFlow,
+    science, turnFlow, chong,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProbeTurnSession = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction, actions, abilities, players, planetRewards, data, cards, solar,
-  science, turnFlow,
+  science, turnFlow, chong,
 ) {
   "use strict";
   const DOMAIN_ID = "probe_turn";
@@ -294,9 +296,14 @@
     return result;
   }
 
+  function isChongHandCard(card) {
+    return typeof chong?.isChongCard === "function" && chong.isChongCard(card);
+  }
+
   function passDiscardChoices(root, ownerId, discardCount) {
     const player = actor(root, ownerId);
-    const cardsInHand = player?.hand || [];
+    const cardsInHand = (player?.hand || [])
+      .filter((card) => !isChongHandCard(card));
     return science.formalizeChoices(
       root,
       ownerId,
@@ -338,26 +345,34 @@
       turnNumber: turn.turnNumber,
     }));
     const isFinalRound = Number(turn.roundNumber) >= turnFlow.DEFAULT_FINAL_ROUND;
+    // 手牌上限弃牌：所有轮次都执行（规则书 PASS 步骤 1，最后一轮同样适用）。
+    // 钻探者（虫）卡牌不计入手牌上限——只数非虫牌。
+    const discardCount = Math.max(
+      0,
+      (player.hand || []).filter((card) => !isChongHandCard(card)).length - 4,
+    );
+    if (discardCount) {
+      effects.push({
+        priority: "direct",
+        effect: {
+          type: EFFECT_TYPES.PASS_DISCARD,
+          kind: "decision",
+          decisionKind: "choose_card",
+          ownerId: player.id,
+          payload: { discardCount },
+        },
+      });
+    }
+    // 本轮第一个 PASS 的玩家执行太阳系公转：所有轮次（规则书 PASS 步骤 2，
+    // 最后一轮仍要公转，只是无需拿取公转标记；实现不建模标记 token）。
+    if (!(turn.passedPlayerIds || []).length) {
+      effects.push({
+        priority: "direct",
+        effect: { type: EFFECT_TYPES.PASS, ownerId: player.id, payload: { kind: "first-rotation" } },
+      });
+    }
+    // 一轮结束牌：仅第 1/2/3 轮有预留叠（扩展模式仅第 2/3/4 轮准备，末轮无叠）。
     if (!isFinalRound) {
-      const discardCount = Math.max(0, (player.hand || []).length - 4);
-      if (discardCount) {
-        effects.push({
-          priority: "direct",
-          effect: {
-            type: EFFECT_TYPES.PASS_DISCARD,
-            kind: "decision",
-            decisionKind: "choose_card",
-            ownerId: player.id,
-            payload: { discardCount },
-          },
-        });
-      }
-      if (!(turn.passedPlayerIds || []).length) {
-        effects.push({
-          priority: "direct",
-          effect: { type: EFFECT_TYPES.PASS, ownerId: player.id, payload: { kind: "first-rotation" } },
-        });
-      }
       const reserve = cards.getPassReservePile(slice(root, "cards", "cards"), turn.roundNumber);
       if (reserve.length) {
         effects.push({

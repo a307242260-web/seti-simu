@@ -11,6 +11,7 @@
   let cards = root.SetiCards;
   let quickTradeRules = root.SetiQuickTrades;
   let rocketAbility = root.SetiAbilityRocket;
+  let chong = root.SetiAlienChong;
   if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession
     || !probeTurnSession || !residualDomainSession || !initialSetup || !cards || !quickTradeRules)
     && typeof require === "function") {
@@ -23,6 +24,7 @@
     initialSetup = initialSetup || require("./initial-setup");
     cards = cards || require("./cards/deck");
     quickTradeRules = quickTradeRules || require("./actions/quick-trades");
+    chong = chong || require("./aliens/chong");
     rocketAbility = rocketAbility || require("./abilities/rocket");
   }
 
@@ -37,6 +39,7 @@
     cards,
     quickTradeRules,
     rocketAbility,
+    chong,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
@@ -51,6 +54,7 @@
   cards,
   quickTradeRules,
   rocketAbility,
+  chong,
 ) {
   "use strict";
 
@@ -218,7 +222,9 @@
 
     function discardChoices(root, pending) {
       const player = resolvePlayer(root, pending);
-      const hand = player?.hand || [];
+      // 钻探者（虫）卡牌不可用于资源转换：候选只从非虫牌中枚举。
+      const hand = (player?.hand || [])
+        .filter((card) => !(typeof chong?.isChongCard === "function" && chong.isChongCard(card)));
       const required = Math.max(1, Math.round(Number(pending?.count) || 1));
       const combinations = [];
       const visit = (start, selected) => {
@@ -233,16 +239,23 @@
         }
       };
       visit(0, []);
-      return combinations.map((handIndexes) => ({
-        target: {
-          kind: "discard-hand-cards",
-          choiceId: handIndexes.join("+"),
-          cardIds: handIndexes.map((index) => hand[index]?.cardId || hand[index]?.id || null),
-          handIndexes,
-        },
-        payload: { handIndexes },
-        summary: handIndexes.map((index) => cards.getCardLabel(hand[index])).join("、"),
-      }));
+      // 映射回原始手牌索引（hand 过滤后索引 ≠ player.hand 索引）。
+      const originalIndexes = (player?.hand || []).map((card, index) => (
+        (typeof chong?.isChongCard === "function" && chong.isChongCard(card)) ? -1 : index
+      )).filter((index) => index >= 0);
+      return combinations.map((handIndexes) => {
+        const original = handIndexes.map((filteredIndex) => originalIndexes[filteredIndex]);
+        return {
+          target: {
+            kind: "discard-hand-cards",
+            choiceId: original.join("+"),
+            cardIds: original.map((index) => player.hand[index]?.cardId || player.hand[index]?.id || null),
+            handIndexes: original,
+          },
+          payload: { handIndexes: original },
+          summary: original.map((index) => cards.getCardLabel(player.hand[index])).join("、"),
+        };
+      });
     }
 
     function cardChoices(root, pending) {
