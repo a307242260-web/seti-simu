@@ -279,13 +279,14 @@
         solarSystemState.rotation,
       );
     };
-    context.drawBasicCardToPlayer = (player) => cards.blindDraw(
+    // 统一抽牌上下文：drawBasicCardToPlayer 等抽牌入口共用 cards.createCardDrawContext
+    const drawContext = cards.createCardDrawContext(
       context.cards,
-      actionPlayerState,
-      player,
+      playersState,
       () => nextCommittedRandom(root),
-      { createCardInstance: createCommittedCardFactory(root) },
+      { root },
     );
+    context.drawBasicCardToPlayer = (player) => drawContext.blindDraw(player);
     return context;
   }
 
@@ -317,9 +318,8 @@
     return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
   }
 
-  function createCommittedCardFactory(root) {
-    return (entry) => cards.createCommittedCardInstance(root, entry);
-  }
+  // 卡牌实例统一由 cards.createCardDrawContext（root 分支）创建，
+  // 此处不再单独维护工厂。
 
   function createPlayCardProvider() {
     return Object.freeze(standardAction.createPlayCardProvider({
@@ -579,15 +579,16 @@
         if (!gain) return fail("CARD_TUCK_INCOME_UNKNOWN", "当前卡牌没有可识别收入");
         const drawnCards = [];
         const dataResults = [];
+        // 统一抽牌上下文：收入盲抽共用 cards.createCardDrawContext
+        const drawContext = cards.createCardDrawContext(
+          cardsState,
+          getWorkingSlice(root, "players"),
+          () => nextCommittedRandom(root),
+          { root },
+        );
         players.gainIncome(actor, gain, {
           blindDraw(targetPlayer) {
-            const draw = cards.blindDraw(
-              cardsState,
-              getWorkingSlice(root, "players"),
-              targetPlayer,
-              () => nextCommittedRandom(root),
-              { createCardInstance: createCommittedCardFactory(root) },
-            );
+            const draw = drawContext.blindDraw(targetPlayer);
             if (draw.ok) drawnCards.push(draw.card);
             return draw;
           },
@@ -676,13 +677,20 @@
         const count = Math.max(0, ...counts);
         const drawnCards = [];
         if (options.reward === "draw") {
+          // 统一抽牌上下文：科技数量盲抽共用 cards.createCardDrawContext
+          const drawContext = cards.createCardDrawContext(
+            getWorkingSlice(root, "cards"),
+            getWorkingSlice(root, "players"),
+            () => nextCommittedRandom(root),
+            { root },
+          );
           const drawResult = cards.drawCardsToHand(
             getWorkingSlice(root, "cards"),
             getWorkingSlice(root, "players"),
             actor,
             count,
             () => nextCommittedRandom(root),
-            { createCardInstance: createCommittedCardFactory(root) },
+            { createCardInstance: drawContext.createCardInstance },
           );
           drawnCards.push(...(drawResult.cards || []));
         }
@@ -738,15 +746,16 @@
         cards.addRemovedFromGame(getWorkingSlice(root, "cards"), removed.card);
         const drawnCards = [];
         const dataResults = [];
+        // 统一抽牌上下文：收入盲抽共用 cards.createCardDrawContext
+        const drawContext = cards.createCardDrawContext(
+          getWorkingSlice(root, "cards"),
+          getWorkingSlice(root, "players"),
+          () => nextCommittedRandom(root),
+          { root },
+        );
         players.gainIncome(actor, gain, {
           blindDraw(targetPlayer) {
-            const draw = cards.blindDraw(
-              getWorkingSlice(root, "cards"),
-              getWorkingSlice(root, "players"),
-              targetPlayer,
-              () => nextCommittedRandom(root),
-              { createCardInstance: createCommittedCardFactory(root) },
-            );
+            const draw = drawContext.blindDraw(targetPlayer);
             if (draw.ok) drawnCards.push(draw.card);
             return draw;
           },
@@ -822,13 +831,20 @@
         return fail("CARD_DRAW_CONTEXT_STALE", "卡牌盲抽上下文已失效");
       }
       const count = Math.max(0, Math.round(Number(effect.options?.count) || 0));
+      // 统一抽牌上下文：盲抽共用 cards.createCardDrawContext
+      const drawContext = cards.createCardDrawContext(
+        getWorkingSlice(root, "cards"),
+        getWorkingSlice(root, "players"),
+        () => nextCommittedRandom(root),
+        { root },
+      );
       const result = cards.drawCardsToHand(
         getWorkingSlice(root, "cards"),
         getWorkingSlice(root, "players"),
         actor,
         count,
         () => nextCommittedRandom(root),
-        { createCardInstance: createCommittedCardFactory(root) },
+        { createCardInstance: drawContext.createCardInstance },
       );
       if (!result.ok && !(result.cards || []).length) return result;
       return {
@@ -901,18 +917,16 @@
         }
         const cardsState = getWorkingSlice(root, "cards");
         const playersState = getWorkingSlice(root, "players");
-        const random = () => nextCommittedRandom(root);
-        const factoryOptions = { createCardInstance: createCommittedCardFactory(root) };
+        // 统一抽牌上下文：精选/盲抽共用 cards.createCardDrawContext
+        const drawContext = cards.createCardDrawContext(
+          cardsState,
+          playersState,
+          () => nextCommittedRandom(root),
+          { root },
+        );
         const result = legal.target.source === "public"
-          ? cards.pickFromPublic(
-            cardsState,
-            playersState,
-            actor,
-            legal.target.slotIndex,
-            random,
-            factoryOptions,
-          )
-          : cards.blindDraw(cardsState, playersState, actor, random, factoryOptions);
+          ? drawContext.pickFromPublic(actor, legal.target.slotIndex)
+          : drawContext.blindDraw(actor);
         if (!result.ok) return result;
         return {
           ok: true,
@@ -1593,13 +1607,13 @@
         event.conditionMet = met;
       } else if (effect.type === cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN) {
         const cardsState = getWorkingSlice(root, "cards");
-        const draw = cards.blindDraw(
+        const drawCtx = cards.createCardDrawContext(
           cardsState,
           getWorkingSlice(root, "players"),
-          actor,
           () => nextCommittedRandom(root),
-          { createCardInstance: createCommittedCardFactory(root) },
+          { root },
         );
+        const draw = drawCtx.blindDraw(actor);
         if (!draw.ok) return draw;
         const scanCode = Number(
           draw.card.scanActionCode
@@ -1925,15 +1939,17 @@
           if (!gained.ok) return gained;
         }
         const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-        for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-          const drawn = cards.blindDraw(
+        if (drawCount > 0) {
+          const drawCtx = cards.createCardDrawContext(
             getWorkingSlice(root, "cards"),
             getWorkingSlice(root, "players"),
-            actor,
             () => nextCommittedRandom(root),
-            { createCardInstance: createCommittedCardFactory(root) },
+            { root },
           );
-          if (!drawn.ok) return drawn;
+          for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+            const drawn = drawCtx.blindDraw(actor);
+            if (!drawn.ok) return drawn;
+          }
         }
         if (drawCount > 0) {
           irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
@@ -1977,15 +1993,17 @@
               if (!gained.ok) return gained;
             }
             const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-            for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-              const drawn = cards.blindDraw(
+            if (drawCount > 0) {
+              const drawCtx = cards.createCardDrawContext(
                 getWorkingSlice(root, "cards"),
                 getWorkingSlice(root, "players"),
-                actor,
                 () => nextCommittedRandom(root),
-                { createCardInstance: createCommittedCardFactory(root) },
+                { root },
               );
-              if (!drawn.ok) return drawn;
+              for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+                const drawn = drawCtx.blindDraw(actor);
+                if (!drawn.ok) return drawn;
+              }
             }
             if (drawCount > 0) {
               irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
@@ -2026,16 +2044,19 @@
           if (!removed.ok) return removed;
           cards.addToDiscardPile(cardsState, removed.card);
           const gain = cards.getIncomeGainForCard(removed.card);
-          if (gain) players.gainIncome(actor, gain, {
-            blindDraw: (target) => cards.blindDraw(
+          if (gain) {
+            // 统一抽牌上下文：收入盲抽共用 cards.createCardDrawContext
+            const drawCtx = cards.createCardDrawContext(
               cardsState,
               getWorkingSlice(root, "players"),
-              target,
               () => nextCommittedRandom(root),
-              { createCardInstance: createCommittedCardFactory(root) },
-            ),
-            gainData: (target) => data.gainData(target, { source: "card_income", root }),
-          });
+              { root },
+            );
+            players.gainIncome(actor, gain, {
+              blindDraw: (target) => drawCtx.blindDraw(target),
+              gainData: (target) => data.gainData(target, { source: "card_income", root }),
+            });
+          }
           if (actor.hand.length) {
             spawnedEffects.push({
               priority: "direct",
@@ -2082,12 +2103,19 @@
         cardsState.publicCards[index] = null;
         cards.addToDiscardPile(cardsState, card);
         spawnedEffects = spawnCardEffects(cornerEffects(card), sessionEffect);
+        // 统一抽牌上下文：公共牌补牌共用 cards.createCardDrawContext
+        const drawCtx = cards.createCardDrawContext(
+          cardsState,
+          getWorkingSlice(root, "players"),
+          () => nextCommittedRandom(root),
+          { root },
+        );
         cards.replenishPublicSlot(
           cardsState,
           getWorkingSlice(root, "players"),
           index,
           () => nextCommittedRandom(root),
-          { createCardInstance: createCommittedCardFactory(root) },
+          { createCardInstance: drawCtx.createCardInstance },
         );
         irreversible = { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" };
       } else if (effect.type === cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD) {
@@ -2110,14 +2138,14 @@
         }
       } else if (effect.type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
         const index = cardsState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
-        const result = cards.pickFromPublic(
+        // 统一抽牌上下文：精选公共牌共用 cards.createCardDrawContext
+        const drawCtx = cards.createCardDrawContext(
           cardsState,
           getWorkingSlice(root, "players"),
-          actor,
-          index,
           () => nextCommittedRandom(root),
-          { createCardInstance: createCommittedCardFactory(root) },
+          { root },
         );
+        const result = drawCtx.pickFromPublic(actor, index);
         if (!result.ok) return result;
         spawnedEffects = spawnCardEffects(cornerEffects(result.card), sessionEffect);
       } else if (effect.type === cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND) {
@@ -2377,16 +2405,16 @@
       if (!slots.length) {
         return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_public_cards" } });
       }
+      // 统一抽牌上下文：异常点拿全部公共牌共用 cards.createCardDrawContext
+      const drawCtx = cards.createCardDrawContext(
+        cardsState,
+        getWorkingSlice(root, "players"),
+        () => nextCommittedRandom(root),
+        { root },
+      );
       const taken = [];
       for (const entry of slots) {
-        const picked = cards.pickFromPublic(
-          cardsState,
-          getWorkingSlice(root, "players"),
-          actor,
-          entry.index,
-          nextCommittedRandom,
-          { createCardInstance: createCommittedCardFactory(root) },
-        );
+        const picked = drawCtx.pickFromPublic(actor, entry.index);
         if (!picked.ok) return picked;
         taken.push(picked.card);
       }
@@ -2465,15 +2493,16 @@
       const root = getWorkingRoot(state, workingContext);
       const actor = getActor(root, sessionEffect.ownerId);
       if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      // 统一抽牌上下文：异常点盲抽共用 cards.createCardDrawContext
+      const drawCtx = cards.createCardDrawContext(
+        getWorkingSlice(root, "cards"),
+        getWorkingSlice(root, "players"),
+        () => nextCommittedRandom(root),
+        { root },
+      );
       const drawn = [];
       for (let index = 0; index < 3; index += 1) {
-        const result = cards.blindDraw(
-          getWorkingSlice(root, "cards"),
-          getWorkingSlice(root, "players"),
-          actor,
-          nextCommittedRandom,
-          { createCardInstance: createCommittedCardFactory(root) },
-        );
+        const result = drawCtx.blindDraw(actor);
         if (!result.ok) return result;
         drawn.push(result.card);
       }

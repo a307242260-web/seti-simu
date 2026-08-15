@@ -152,13 +152,14 @@
         solarSystemState.rotation,
       );
     };
-    context.drawBasicCardToPlayer = (player) => cards.blindDraw(
+    // 统一抽牌上下文：drawBasicCardToPlayer 共用 cards.createCardDrawContext
+    const drawContext = cards.createCardDrawContext(
       context.cards,
-      actionPlayerState,
-      player,
+      playersState,
       () => nextCommittedRandom(root),
-      { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
+      { root },
     );
+    context.drawBasicCardToPlayer = (player) => drawContext.blindDraw(player);
     return context;
   }
 
@@ -1091,6 +1092,13 @@
       const cardsState = getWorkingSlice(root, "cards");
       const playersState = getWorkingSlice(root, "players");
       let filled = 0;
+      // 统一抽牌上下文：公共牌补牌共用 cards.createCardDrawContext
+      const drawContext = cards.createCardDrawContext(
+        cardsState,
+        playersState,
+        () => nextCommittedRandom(root),
+        { root },
+      );
       for (let index = 0; index < (cardsState.publicCards || []).length; index += 1) {
         if (cardsState.publicCards[index]) continue;
         const replenished = cards.replenishPublicSlot(
@@ -1098,7 +1106,7 @@
           playersState,
           index,
           () => nextCommittedRandom(root),
-          { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
+          { createCardInstance: drawContext.createCardInstance },
         );
         if (replenished) filled += 1;
       }
@@ -1359,14 +1367,15 @@
         const discarded = cards.discardFromHandAtIndex(actor, handIndex);
         if (!discarded.ok) return discarded;
         cards.addToDiscardPile(getWorkingSlice(root, "cards"), discarded.card);
+        // 统一抽牌上下文：收入盲抽共用 cards.createCardDrawContext
+        const drawContext = cards.createCardDrawContext(
+          getWorkingSlice(root, "cards"),
+          getWorkingSlice(root, "players"),
+          () => nextCommittedRandom(root),
+          { root },
+        );
         players.gainIncome(actor, gain, {
-          blindDraw: (target) => cards.blindDraw(
-            getWorkingSlice(root, "cards"),
-            getWorkingSlice(root, "players"),
-            target,
-            () => nextCommittedRandom(root),
-            { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
-          ),
+          blindDraw: (target) => drawContext.blindDraw(target),
           gainData: (target) => data.gainData(target, { source: "place_data_income", root }),
         });
         return scienceResult(state, root, EFFECT_TYPES.INCOME, {
@@ -1386,14 +1395,14 @@
           .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
         const actor = getActor(root, effect.ownerId);
         if (!actor || !legal) return fail("SCIENCE_PICK_CARD_STALE", "精选牌选择已失效");
-        const result = cards.pickFromPublic(
+        // 统一抽牌上下文：精选公共牌共用 cards.createCardDrawContext
+        const drawContext = cards.createCardDrawContext(
           getWorkingSlice(root, "cards"),
           getWorkingSlice(root, "players"),
-          actor,
-          legal.target.publicSlotIndex,
           () => nextCommittedRandom(root),
-          { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
+          { root },
         );
+        const result = drawContext.pickFromPublic(actor, legal.target.publicSlotIndex);
         if (!result.ok) return result;
         return scienceResult(state, root, EFFECT_TYPES.PICK_CARD, {
           irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
@@ -1441,8 +1450,13 @@
         if (result.reward?.gain && Object.keys(result.reward.gain).some((key) => Number(result.reward.gain[key]) !== 0)) {
           players.gainResources(actor, result.reward.gain);
         }
-        // 阿米巴痕迹位置奖励：选一张阿米巴牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）
+        // 痕迹位置奖励：选一张当前外星人的牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）。
+        // 从放置的槽位推断物种，不能写死阿米巴（虫族等同样有 pickAlienCard 奖励）。
         if (result.reward?.pickAlienCard) {
+          const alienSlotId = choice?.target?.alienSlotId;
+          const slot = aliens.getAlienSlot(getWorkingSlice(root, "aliens"), alienSlotId);
+          const species = slot ? getSpeciesTraceApi(slot) : null;
+          const speciesId = species?.speciesId || "amiba";
           spawnedEffects.push({
             priority: "direct",
             effect: {
@@ -1450,7 +1464,7 @@
               kind: "decision",
               decisionKind: "choose_card",
               ownerId: effect.ownerId,
-              payload: { speciesId: "amiba", source: "trace_reward" },
+              payload: { speciesId, source: "trace_reward" },
             },
           });
         }
@@ -1468,15 +1482,18 @@
               if (!gained.ok) return gained;
             }
             const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-            for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-              const drawn = cards.blindDraw(
+            if (drawCount > 0) {
+              // 统一抽牌上下文：阿米巴区域奖励盲抽共用 cards.createCardDrawContext
+              const drawContext = cards.createCardDrawContext(
                 getWorkingSlice(root, "cards"),
                 getWorkingSlice(root, "players"),
-                actor,
                 () => nextCommittedRandom(root),
-                { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
+                { root },
               );
-              if (!drawn.ok) return drawn;
+              for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+                const drawn = drawContext.blindDraw(actor);
+                if (!drawn.ok) return drawn;
+              }
             }
             if (drawCount > 0) {
               irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };

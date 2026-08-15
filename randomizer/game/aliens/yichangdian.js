@@ -438,6 +438,10 @@
     return `${CARD_BASE_PATH}/${index}.webp`;
   }
 
+  function getCardDefinition(cardOrIndex) {
+    return CARD_BY_INDEX[Math.round(Number(cardOrIndex))] || null;
+  }
+
   function definitionName(card) {
     return (CARD_BY_ID[card?.cardId] || CARD_BY_INDEX[card?.alienCardId])?.cardName
       || card?.cardId
@@ -530,6 +534,7 @@
     updateNextAnomaly,
     drawDisplayedCardIndex,
     getCardSrc,
+    getCardDefinition,
     createAlienCard,
     takeDisplayedCard,
     blindDrawCard,

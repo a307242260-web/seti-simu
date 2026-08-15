@@ -715,6 +715,25 @@
     return { ok: true, message: null, cards: drawn };
   }
 
+  // 统一抽牌/精选上下文：封装 cardsState/playersState/random/root，
+  // 各处（卡牌效果、公司能力、精选、盲抽）不再手动拼 blindDraw/pickFromPublic 参数。
+  function createCardDrawContext(cardsState, playersState, random, options = {}) {
+    const root = options.root || null;
+    const randomFn = typeof random === "function" ? random : Math.random;
+    const drawOptions = root
+      ? { root }
+      : (options.createCardInstance ? { createCardInstance: options.createCardInstance } : {});
+    return {
+      createCardInstance: resolveCreateCardInstance({ root, ...(options.createCardInstance ? { createCardInstance: options.createCardInstance } : {}) }),
+      blindDraw(player, extra = {}) {
+        return blindDraw(cardsState, playersState, player, randomFn, { ...drawOptions, ...extra });
+      },
+      pickFromPublic(player, slotIndex, extra = {}) {
+        return pickFromPublic(cardsState, playersState, player, slotIndex, randomFn, { ...drawOptions, ...extra });
+      },
+    };
+  }
+
   function discardFromHand(player, cardIndexFromEnd = 0) {
     if (!player || !Array.isArray(player.hand) || !player.hand.length) {
       return { ok: false, message: "手牌为空，无法弃牌", card: null };
@@ -807,6 +826,7 @@
     pickPassReserveCard,
     discardUnusedPassReserveCards,
     blindDraw,
+    createCardDrawContext,
     pickFromPublic,
     replenishPublicSlot,
     countPublicCards,

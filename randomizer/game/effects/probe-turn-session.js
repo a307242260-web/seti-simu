@@ -265,14 +265,15 @@
     }
     if (effect.type === planetRewards.EFFECT_TYPES.DRAW_CARDS) {
       const events = [];
+      // 统一抽牌上下文：行星奖励盲抽共用 cards.createCardDrawContext
+      const drawContext = cards.createCardDrawContext(
+        slice(root, "cards", "cards"),
+        slice(root, "players", "players"),
+        () => nextRandom(root),
+        { root },
+      );
       for (let index = 0; index < Math.max(0, Number(options.count) || 0); index += 1) {
-        const result = cards.blindDraw(
-          slice(root, "cards", "cards"),
-          slice(root, "players", "players"),
-          player,
-          () => nextRandom(root),
-          { createCardInstance: (entry) => cards.createCommittedCardInstance(root, entry) },
-        );
+        const result = drawContext.blindDraw(player);
         if (!result.ok) return result;
         events.push({ type: "planet_reward_card", playerId: player.id, cardInstanceId: result.card?.id });
       }
