@@ -641,7 +641,23 @@ module.exports = Object.freeze([
     counterexample: "日志面板为空或公共牌点击无放大/放大后无法关闭",
   }),
   Object.freeze({
-    id: "policy-input",
+    id: "production-quick-move-button",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#action-quick-button'))",
+    actionExpression: `(() => {
+      const btn = document.querySelector('[data-quick-trade="energy-for-move"]');
+      if (!btn) throw new Error("缺少能量移动按钮");
+      if (btn.getAttribute("aria-label") !== "1能量移动1步") {
+        throw new Error("能量移动按钮文案错误: " + btn.getAttribute("aria-label"));
+      }
+      window.__setiQuickMoveSmoke = { ok: true, hasButton: true };
+    })()`,
+    successExpression: "window.__setiQuickMoveSmoke?.ok === true",
+    obligation: "快速面板渲染 1 能量移动 1 步（energy-for-move）按钮",
+    counterexample: "能量移动按钮缺失或文案错误",
+  }),
+  Object.freeze({
+    id: "policy-input",id: "policy-input",
     file: "randomizer/app/browser-host/policy-input-adapter.browser-smoke.html",
     resultSelector: "body",
     resultAttribute: "data-result",

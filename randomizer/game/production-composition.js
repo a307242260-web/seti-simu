@@ -10,6 +10,7 @@
   let initialSetup = root.SetiInitialSetup;
   let cards = root.SetiCards;
   let quickTradeRules = root.SetiQuickTrades;
+  let rocketAbility = root.SetiAbilityRocket;
   if ((!standardAction || !standardActionSession || !cardPlayDomain || !scienceSession
     || !probeTurnSession || !residualDomainSession || !initialSetup || !cards || !quickTradeRules)
     && typeof require === "function") {
@@ -22,6 +23,7 @@
     initialSetup = initialSetup || require("./initial-setup");
     cards = cards || require("./cards/deck");
     quickTradeRules = quickTradeRules || require("./actions/quick-trades");
+    rocketAbility = rocketAbility || require("./abilities/rocket");
   }
 
   const api = factory(
@@ -34,6 +36,7 @@
     initialSetup,
     cards,
     quickTradeRules,
+    rocketAbility,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiProductionComposition = api;
@@ -47,6 +50,7 @@
   initialSetup,
   cards,
   quickTradeRules,
+  rocketAbility,
 ) {
   "use strict";
 
@@ -97,7 +101,7 @@
   }
 
   function createQuickTradeDecisionSource(quickTrades) {
-    const FAMILIES = Object.freeze(["choose_card", "choose_payment"]);
+    const FAMILIES = Object.freeze(["choose_card", "choose_payment", "choose_target"]);
 
     function currentPending(context) {
       return context?.standardActionDecisionContext?.type === "trade"
@@ -133,6 +137,60 @@
         decisionContext,
         message: `请选择 ${required} 张牌作为快速交易费用`,
       };
+    }
+
+    function openMoveSelection(root, input = {}) {
+      const player = input.player
+        || root.players?.players?.find((entry) => entry.id === input.playerId)
+        || root.players?.players?.find(
+          (entry) => entry.id === root.turn?.currentPlayerId,
+        );
+      if (!player) {
+        return { ok: false, code: "QUICK_TRADE_MOVE_OWNER_MISSING", message: "快速移动 owner 不存在" };
+      }
+      const hasMove = (root.pieces?.rockets || []).some((rocket) => (
+        rocket.playerId === player.id && rocket.surface === "solar-board"
+      ));
+      if (!hasMove) {
+        return { ok: false, code: "QUICK_TRADE_MOVE_UNAVAILABLE", message: "没有可移动的探测器" };
+      }
+      return {
+        ok: true,
+        decisionContext: {
+          kind: "move",
+          type: "trade",
+          tradeId: input.tradeId,
+          playerId: player.id,
+        },
+        message: "请选择要移动的探测器与方向（1 步）",
+      };
+    }
+
+    function moveChoices(root, pending) {
+      const player = resolvePlayer(root, pending);
+      if (!player) return [];
+      const choices = [];
+      for (const rocket of root.pieces?.rockets || []) {
+        if (rocket.playerId !== player.id || rocket.surface !== "solar-board") continue;
+        const moves = typeof rocketAbility?.listMoveRequirements === "function"
+          ? rocketAbility.listMoveRequirements(root, player, rocket.id)
+          : [];
+        for (const move of moves) {
+          choices.push({
+            target: {
+              kind: "quick-move",
+              choiceId: `move:${rocket.id}:${move.id}`,
+              rocketId: rocket.id,
+              deltaX: move.deltaX,
+              deltaY: move.deltaY,
+              direction: move.id,
+            },
+            payload: { direction: move.id },
+            summary: `移动探测器 ${rocket.id} ${move.id}`,
+          });
+        }
+      }
+      return choices;
     }
 
     function openCardSelection(root, input = {}) {
@@ -223,6 +281,9 @@
       }
       if (request.family === "choose_card" && pending.kind === "card_selection") {
         return cardChoices(root, pending);
+      }
+      if (request.family === "choose_target" && pending.kind === "move") {
+        return moveChoices(root, pending);
       }
       return [];
     }
@@ -320,13 +381,45 @@
       };
     }
 
+    function executeMove(context, action, pending) {
+      const root = context?.state || context;
+      const player = resolvePlayer(root, pending);
+      if (!player) {
+        return { ok: false, code: "QUICK_TRADE_MOVE_OWNER_MISSING", message: "快速移动 owner 不存在" };
+      }
+      if (typeof rocketAbility?.moveProbe !== "function") {
+        return { ok: false, code: "QUICK_TRADE_MOVE_UNAVAILABLE", message: "移动能力不可用" };
+      }
+      const result = rocketAbility.moveProbe(root, {
+        rocketId: Number(action.target?.rocketId),
+        deltaX: Number(action.target?.deltaX),
+        deltaY: Number(action.target?.deltaY),
+        movementPoints: 1,
+        cost: {},
+        source: "quick_move",
+      });
+      if (!result?.ok) return result;
+      return {
+        ok: true,
+        progressed: true,
+        message: "快速移动完成",
+        events: [{
+          type: "quick_move",
+          tradeId: pending.tradeId,
+          playerId: player.id,
+          rocketId: Number(action.target?.rocketId),
+          direction: action.target?.direction || null,
+        }],
+      };
+    }
+
     function execute(context, action) {
       const pending = currentPending(context);
       const validation = validate(context, action);
       if (!validation.ok) return validation;
-      return pending.kind === "discard"
-        ? executeDiscard(context, action, pending)
-        : executeCardSelection(context, action, pending);
+      if (pending.kind === "discard") return executeDiscard(context, action, pending);
+      if (pending.kind === "card_selection") return executeCardSelection(context, action, pending);
+      return executeMove(context, action, pending);
     }
 
     return Object.freeze({
@@ -336,6 +429,7 @@
       execute,
       openDiscard,
       openCardSelection,
+      openMoveSelection,
     });
   }
 
@@ -429,7 +523,11 @@
     function createSessionDecisionEffect(actionContext, decisionContext) {
       const decisionActionContext = createDecisionActionContext(actionContext, decisionContext);
       if (!decisionActionContext) return null;
-      const family = decisionContext.kind === "card_selection" ? "choose_card" : "choose_payment";
+      const family = decisionContext.kind === "card_selection"
+        ? "choose_card"
+        : decisionContext.kind === "move"
+          ? "choose_target"
+          : "choose_payment";
       const choices = ownedRegistry.enumerate(decisionActionContext, { family });
       if (!choices.length) return null;
       return {
@@ -567,6 +665,11 @@
           if (opened?.ok) openedDecisionContext = opened.decisionContext;
           return opened;
         },
+        beginMoveSelection(input) {
+          const opened = quickTradeDecisionSource.openMoveSelection(root, input);
+          if (opened?.ok) openedDecisionContext = opened.decisionContext;
+          return opened;
+        },
       });
       if (!result?.ok) return result;
       if (root?.match && (Number(root.match.decisionVersion) || 0) === beforeDecisionVersion) {
@@ -630,7 +733,7 @@
       ownedRegistry.register(standardAction.createOptionDefinition(family, {
         label: family,
         getOptions(context) {
-          if (initialSetupSource.families.includes(family)) {
+          if (conditionalSources.some((source) => source.families.includes(family))) {
             const choices = enumerateSourceChoices(context, family);
             return choices.length
               ? { ok: true, choices: choices.map(({ candidate }) => ({
@@ -644,30 +747,25 @@
           return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
         },
         canExecute(context, option) {
-          if (initialSetupSource.families.includes(family)) {
-            const resolved = findSourceChoice(context, family, option);
-            return resolved
-              ? resolved.source.validate(context, { ...option, family })
-              : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
-          }
-          return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 产生` };
+          const resolved = findSourceChoice(context, family, option);
+          return resolved
+            ? resolved.source.validate(context, { ...option, family })
+            : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
         },
         execute(context, action) {
-          if (initialSetupSource.families.includes(family)) {
-            const resolved = findSourceChoice(context, family, action);
-            return resolved
-              ? (resolved.source === initialSetupSource
-                ? attachOpeningDecision(
-                  context,
-                  resolved.source.execute(context, { ...action, family }),
-                )
-                : attachNextDecision(
-                  context,
-                  resolved.source.execute(context, { ...action, family }),
-                ))
-              : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
+          const resolved = findSourceChoice(context, family, action);
+          if (!resolved) {
+            return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} source 已失效` };
           }
-          return { ok: false, code: "SESSION_DECISION_ONLY", message: `${family} 只由 Effect Session Decision 执行` };
+          return resolved.source === initialSetupSource
+            ? attachOpeningDecision(
+              context,
+              resolved.source.execute(context, { ...action, family }),
+            )
+            : attachNextDecision(
+              context,
+              resolved.source.execute(context, { ...action, family }),
+            );
         },
       }));
     }

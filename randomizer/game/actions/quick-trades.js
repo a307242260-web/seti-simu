@@ -68,6 +68,13 @@
       gain: Object.freeze({ handSize: 1 }),
       allowBlindDraw: true,
     }),
+    Object.freeze({
+      id: "energy-for-move",
+      label: "1能量 → 移动1步",
+      cost: Object.freeze({ energy: 1 }),
+      gain: Object.freeze({}),
+      moveStep: true,
+    }),
   ]);
 
   function getTradeAction(tradeId) {
@@ -102,7 +109,6 @@
         message: `资源不足，需要 ${players.formatResourceCost(trade.cost)}`,
       };
     }
-
     return { ok: true, message: null, trade, currentPlayer };
   }
 
@@ -206,6 +212,29 @@
     const spendResult = players.spendResources(check.currentPlayer, check.trade.cost);
     if (!spendResult.ok) {
       return { ok: false, tradeId, message: spendResult.message };
+    }
+
+    if (check.trade.moveStep) {
+      if (typeof context.beginMoveSelection !== "function") {
+        return { ok: false, tradeId, message: "当前无法快速移动" };
+      }
+      const moveResult = context.beginMoveSelection({
+        type: "trade",
+        tradeId,
+        player: check.currentPlayer,
+      });
+      if (!moveResult?.ok) {
+        // 无探测器等失败场景退还已扣能量，快速移动必须零副作用失败
+        players.gainResources(check.currentPlayer, check.trade.cost);
+        return { ok: false, tradeId, message: moveResult.message };
+      }
+      return {
+        ok: true,
+        tradeId,
+        awaitingMoveSelection: true,
+        message: moveResult.message,
+        trade: check.trade,
+      };
     }
 
     const gainResult = applyTradeGains(check.trade, context, check.currentPlayer);

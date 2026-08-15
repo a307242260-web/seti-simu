@@ -88,6 +88,39 @@ function createCard(cardInput) {
   return card;
 }
 
+function drainOpeningDecisions(environment) {
+  const selectionProgress = new Map();
+  let guard = 0;
+  while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
+    const actions = environment.legalActions();
+    const actorId = actions[0].actorPlayerId;
+    const progress = selectionProgress.get(actorId) || { industry: false, initialIds: new Set() };
+    let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
+      || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
+    if (!action && !progress.industry) {
+      action = actions.find((candidate) => (
+        candidate.target?.kind === "select_initial_card"
+        && candidate.target?.selectionKind === "industry"
+      ));
+      if (action) progress.industry = true;
+    }
+    if (!action && progress.initialIds.size < 2) {
+      action = actions.find((candidate) => (
+        candidate.target?.kind === "select_initial_card"
+        && candidate.target?.selectionKind === "initial"
+        && !progress.initialIds.has(candidate.target.cardId)
+      ));
+      if (action) progress.initialIds.add(action.target.cardId);
+    }
+    action = action || actions.find((candidate) => candidate.family !== "choose_payment") || actions[0];
+    selectionProgress.set(actorId, progress);
+    const result = environment.step(action);
+    if (!result.ok) throw new Error("初始选择推进失败: " + result.error);
+    guard += 1;
+    if (guard > 300) throw new Error("初始选择推进超出上限");
+  }
+}
+
 function restoreScenario(kernel, mutate) {
   const saved = kernel.composition.lifecycle.save().envelope;
   const state = JSON.parse(saved.committedState);
@@ -504,6 +537,21 @@ for (const family of ["scan", "place_data"]) {
     const action = parityKernel.composition.inputPort.enumerateActions({ family: "quick_trade" })
       .find((candidate) => candidate.target.tradeId === trade.id);
     assert.ok(action, `${trade.id} 必须保持生产可枚举`);
+    if (trade.moveStep) {
+      // 无探测器代表状态：能量移动必须 fail-closed 返回明确错误且退还能量，不进 Session
+      const beforeEnergy = JSON.parse(parityKernel.composition.lifecycle.save().envelope.committedState)
+        .players.players.find((player) => player.id === scenario.turn.currentPlayerId).resources.energy;
+      const rejected = parityKernel.composition.inputPort.submitQuickAction(action);
+      assert.equal(rejected.ok, false, `${trade.id} 无探测器必须拒绝`);
+      assert.ok(
+        /探测器/.test(`${rejected.failure?.message || ""}${rejected.failure?.code || ""}`),
+        `${trade.id} 必须给出明确错误`,
+      );
+      const afterEnergy = JSON.parse(parityKernel.composition.lifecycle.save().envelope.committedState)
+        .players.players.find((player) => player.id === scenario.turn.currentPlayerId).resources.energy;
+      assert.equal(afterEnergy, beforeEnergy, `${trade.id} 失败必须退还能量`);
+      continue;
+    }
     const completed = submitActionToCompletion(parityKernel.composition, action, true);
     assert.equal(completed.phase, "completed", `${trade.id} 必须经 Effect Session 提交`);
     assert.equal(completed.journal.actions[0].action.actionId, action.actionId);
@@ -539,6 +587,38 @@ for (const family of ["scan", "place_data"]) {
     "Browser/Simulation quick_trade 必须写入同一 journal events");
   assert.deepEqual(tradeResult.journal.history, browserTradeResult.journalHistory,
     "Browser/Simulation quick_trade 必须写入同一 journal history");
+
+{
+  // 有探测器场景：1 能量快速移动 1 步完整流程（发射 → energy-for-move → 选方向 → 完成）
+  const quickMoveEnv = createSimulationEnv();
+  try {
+    quickMoveEnv.reset({ seed: "seti-107", activePlayerCount: 4 });
+    drainOpeningDecisions(quickMoveEnv);
+    const launch = quickMoveEnv.legalActions().find((action) => action.family === "launch");
+    assert.ok(launch, "代表状态必须可发射探测器");
+    assert.equal(quickMoveEnv.step(launch).ok, true, "发射探测器失败");
+    const trade = quickMoveEnv.legalActions().find((action) => (
+      action.family === "quick_trade" && action.target?.tradeId === "energy-for-move"
+    ));
+    assert.ok(trade, "发射后必须可枚举 energy-for-move");
+    const energyBefore = JSON.parse(quickMoveEnv.createCheckpoint().coreState.committedState)
+      .players.players.find((player) => player.id === trade.actorPlayerId).resources.energy;
+    assert.equal(quickMoveEnv.step(trade).ok, true, "energy-for-move 提交失败");
+    const moveChoice = quickMoveEnv.legalActions().find((action) => (
+      action.family === "choose_target" && action.target?.kind === "quick-move"
+    ));
+    assert.ok(moveChoice, "快速移动必须产生方向选择 Decision");
+    const moved = quickMoveEnv.step(moveChoice);
+    assert.equal(moved.ok, true, "快速移动方向提交失败: " + (moved.error || ""));
+    const root = JSON.parse(quickMoveEnv.createCheckpoint().coreState.committedState);
+    const player = root.players.players.find((entry) => entry.id === trade.actorPlayerId);
+    assert.equal(player.resources.energy, energyBefore - 1, "快速移动必须消耗 1 能量");
+    const rocket = root.pieces.rockets.find((entry) => entry.playerId === trade.actorPlayerId);
+    assert.ok(rocket, "快速移动后探测器必须存在");
+  } finally {
+    quickMoveEnv.dispose();
+  }
+}
   const tradePlayer = parityKernel.composition.projection({ viewerId: "simulation:test", role: "simulation", playerId: null }).state.players.players
     .find((player) => player.id === scenario.turn.currentPlayerId);
   const browserTradePlayer = players.getCurrentPlayer(
