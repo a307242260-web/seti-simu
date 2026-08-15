@@ -356,7 +356,25 @@
               String(Number(piece.referenceOffsetTokenWidths)),
             );
           }
-          referenceTokens.push(token);
+          if (piece.referenceKind === "land" && piece.planetLabel) {
+            // 登陆标记旁常显一行文字（如“已登陆·木星”），方便核对标记位置
+            const wrap = document.createElement("span");
+            wrap.className = "reference-land-marker";
+            if (Number.isFinite(Number(piece.percentX))) {
+              wrap.style.setProperty("left", `${Number(piece.percentX)}%`);
+            }
+            if (Number.isFinite(Number(piece.percentY))) {
+              wrap.style.setProperty("top", `${Number(piece.percentY)}%`);
+            }
+            token.removeAttribute("style");
+            const label = document.createElement("span");
+            label.className = "reference-land-label";
+            label.textContent = `已登陆·${text(piece.planetLabel)}`;
+            wrap.append(token, label);
+            referenceTokens.push(wrap);
+          } else {
+            referenceTokens.push(token);
+          }
         } else {
           solarTokens.push(token);
         }

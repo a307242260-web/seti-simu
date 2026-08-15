@@ -136,6 +136,12 @@
     }
     function presentPlanetMarkers() {
       const result = [];
+      const planetLabels = new Map(
+        (input.boardCoordinate?.planetLocations || []).map((entry) => [
+          entry.planetId,
+          entry.label || entry.name || entry.planetId,
+        ]),
+      );
       for (const planetId of planetStats.PLANET_IDS) {
         for (const kind of ["orbit", "land"]) {
           const markers = kind === "orbit"
@@ -155,6 +161,7 @@
               color: marker.color,
               kind: "planet-marker",
               referenceKind: kind,
+              planetLabel: planetLabels.get(planetId) || planetId,
               target: "planets-reference",
               percentX: (placement.x / planetReferenceLayout.PLANETS_REFERENCE_SIZE.width) * 100,
               percentY: (placement.y / planetReferenceLayout.PLANETS_REFERENCE_SIZE.height) * 100,
