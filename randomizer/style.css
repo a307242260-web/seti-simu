@@ -1094,6 +1094,71 @@ body {
   display: none;
 }
 
+.solar-preview-panel {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 1px solid rgba(160, 210, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(8, 18, 30, 0.88);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.solar-preview-panel[hidden] {
+  display: none;
+}
+
+.solar-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  font: 700 13px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.solar-preview-close {
+  border: 1px solid rgba(160, 210, 255, 0.35);
+  border-radius: 6px;
+  background: rgba(160, 210, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  font: 700 14px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+  cursor: pointer;
+  padding: 2px 8px;
+}
+
+.solar-preview-close:hover {
+  background: rgba(160, 210, 255, 0.22);
+}
+
+.solar-preview-body {
+  display: grid;
+  gap: 4px;
+}
+
+.solar-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 0;
+}
+
+.solar-preview-step {
+  flex: 0 0 44px;
+  color: rgba(255, 255, 255, 0.6);
+  font: 600 12px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+.solar-preview-wheel {
+  flex: 1 1 0;
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font: 600 12px/1.4 "Microsoft YaHei", "PingFang SC", sans-serif;
+  white-space: nowrap;
+}
+
 .quick-actions-row {
   display: flex;
   align-items: center;

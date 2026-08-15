@@ -1193,6 +1193,58 @@
     scheduleRefreshAndAutomation();
   });
 
+  // 太阳系转动预览：纯前端计算未来几次转动的轮盘位置，不修改任何游戏状态。
+  const SOLAR_PREVIEW_STEPS = 3;
+  function renderSolarPreview() {
+    if (!els.solarPreviewBody) return;
+    const projection = readProjection();
+    const rotation = structuredClone(
+      projection.resident?.solar?.rotation
+      ?? projection.solarSystem?.rotation
+      ?? null,
+    );
+    if (!rotation || typeof rotation !== "object") {
+      els.solarPreviewBody.replaceChildren();
+      return;
+    }
+    const rows = [];
+    const rotations = [rotation];
+    for (let step = 1; step <= SOLAR_PREVIEW_STEPS; step += 1) {
+      rotations.push(solar.applySolarOrbitRotation(
+        structuredClone(rotations[rotations.length - 1]),
+        1,
+      ));
+    }
+    const visibleWheelIds = solar.VISIBLE_WHEEL_IDS || [1, 2, 3, 4];
+    for (let step = 0; step < rotations.length; step += 1) {
+      const wheelDegrees = visibleWheelIds.map((wheelId) => (
+        solar.getWheelStep(rotations[step], wheelId) * 45
+      ));
+      const row = document.createElement("div");
+      row.className = "solar-preview-row";
+      const label = document.createElement("span");
+      label.className = "solar-preview-step";
+      label.textContent = step === 0 ? "当前" : `+${step} 次`;
+      row.appendChild(label);
+      visibleWheelIds.forEach((wheelId, index) => {
+        const cell = document.createElement("span");
+        cell.className = "solar-preview-wheel";
+        cell.textContent = `轮${index + 1} ${wheelDegrees[index]}°`;
+        row.appendChild(cell);
+      });
+      rows.push(row);
+    }
+    els.solarPreviewBody.replaceChildren(...rows);
+  }
+  els.solarPreviewButton?.addEventListener("click", () => {
+    if (!els.solarPreviewPanel) return;
+    renderSolarPreview();
+    els.solarPreviewPanel.hidden = !els.solarPreviewPanel.hidden;
+  });
+  els.solarPreviewClose?.addEventListener("click", () => {
+    if (els.solarPreviewPanel) els.solarPreviewPanel.hidden = true;
+  });
+
   window.SetiRandomizer = publicApi.createPublicApi({
     structuredClone,
     inspectProjection: readProjection,
