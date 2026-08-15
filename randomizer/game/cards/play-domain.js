@@ -10,7 +10,7 @@
   let initialCards = root.SetiInitialCards;
   let tech = root.SetiTech;
   let solar = root.SetiSolarSystem;
-  let rockets = root.SetiRockets;
+  let rockets = root.SetiRocketActions;
   let planetStats = root.SetiPlanetStats;
   let planetRewards = root.SetiPlanetRewards;
   let aliens = root.SetiAliens;
