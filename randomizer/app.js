@@ -1280,8 +1280,11 @@
     // 读档后从恢复点重新开始录制轨迹：恢复前的已录步骤不再延续（避免版本分叉），
     // 恢复点之后的操作照常记录，同样可用于机器人训练（ingest 只消费 step 动作价值）。
     if (trajectoryRecording) trajectoryRecording.reset();
-    // 重放历史同样从恢复点重新开始；读档前的历史保留在存档的 replaySteps 字段里。
-    browserReplaySteps = [];
+    // 重放历史**保留**读档前的（来自存档 replaySteps 字段），之后新行动继续追加——
+    // 这样读档后再存，历史不会丢（曾误清空导致 replaySteps 变 0）。
+    browserReplaySteps = Array.isArray(payload.replaySteps)
+      ? structuredClone(payload.replaySteps)
+      : [];
     scheduleRefreshAndAutomation();
     window.alert(
       `已从 ${sourceName} 恢复游戏（stateVersion ${payload.stateVersion ?? "?"}）`
