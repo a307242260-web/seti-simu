@@ -72,4 +72,65 @@ assert.equal(
 assert.equal(actionBar.selectMainAction([firstCard, secondCard], "play_card", "missing"), null);
 assert.equal(Object.hasOwn(actionBar, "createActionSessionRuntime"), false);
 assert.equal(Object.hasOwn(actionBar, "createActionGuardRuntime"), false);
+
+// 公司 1x 行动按钮：updateQuickPanel 必须写入当前公司主动能力 tooltip
+function fakeButton() {
+  return {
+    disabled: false,
+    dataset: {},
+    title: "",
+    ariaLabel: "",
+    setAttribute(name, value) {
+      if (name === "aria-label") this.ariaLabel = value;
+      else this.dataset[name] = value;
+    },
+    removeAttribute(name) {
+      if (name === "title") this.title = "";
+      else delete this.dataset[name];
+    },
+  };
+}
+const placeDataButton = fakeButton();
+const industryButton = fakeButton();
+const quickActionsTrades = {
+  querySelectorAll(selector) {
+    if (selector === "[data-quick-trade]") return [];
+    if (selector === '[data-quick-action="industry"]') return [industryButton];
+    if (selector === "[data-quick-action]") return [placeDataButton, industryButton];
+    return [];
+  },
+};
+const quickActionsPanel = { hidden: false };
+const actionQuickButton = { disabled: false, title: "", setAttribute() {} };
+const els = { quickActionsTrades, quickActionsPanel, actionQuickButton };
+const desktop = actionBar.createDesktopActionBarController({
+  els,
+  getProjection() {
+    return actionBar.selectActionBarProjection(browserProjection);
+  },
+  dispatchIntent: () => ({ ok: true }),
+  getViewerCompany() {
+    return "寰宇动力";
+  },
+});
+desktop.updateQuickPanel();
+assert.equal(
+  industryButton.dataset.tooltip,
+  "寰宇动力：两次各 1 移动力，必须选择不同火箭",
+);
+assert.equal(industryButton.title, "");
+assert.match(industryButton.ariaLabel, /寰宇动力/);
+// 无公司信息时不写 tooltip
+const noCompany = actionBar.createDesktopActionBarController({
+  els,
+  getProjection() {
+    return actionBar.selectActionBarProjection(browserProjection);
+  },
+  dispatchIntent: () => ({ ok: true }),
+  getViewerCompany() {
+    return null;
+  },
+});
+noCompany.updateQuickPanel();
+assert.equal(Object.hasOwn(industryButton.dataset, "tooltip"), false);
 console.log("action bar tests passed");
