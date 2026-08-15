@@ -403,4 +403,43 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.match(String(publicChoices[0].presentation?.imageSrc || ""), /b_83/);
 })();
 
+(function proofAmiba1ResearchTechTaskSpawnsSymbolChoice() {
+  // amiba_1 牌：研究橙色科技 → 橙色区域 symbol 奖励必须弹细胞器选择决策（不自动结算）
+  const root = createRoot();
+  const amiba1 = aliens.amiba.createAlienCard(1, 5);
+  root.players.players[0].reservedCards = [amiba1];
+  root.turn.type1TriggerEvents = [{ type: "researchTech", techType: "orange" }];
+  const owner = createHarness(residual, "createResidualDomain");
+  const handoff = {
+    type: residual.HANDOFF_TYPE,
+    kind: "effect",
+    ownerId: "p1",
+    payload: {
+      schemaVersion: residual.HANDOFF_SCHEMA,
+      domain: "card_trigger",
+      effectType: "turn_end",
+      data: { roundNumber: 3, turnNumber: 2 },
+    },
+  };
+  const started = execute(owner.executors.get(residual.HANDOFF_TYPE), root, handoff);
+  assert.equal(started.ok, true, JSON.stringify(started));
+  const taskEffect = started.spawnedEffects.find((entry) => (
+    entry.effect.type === residual.EFFECT_TYPES.CARD_DECISION
+  ))?.effect;
+  assert.ok(taskEffect, "研究橙色科技必须触发 amiba_1 任务 Decision");
+  const executor = owner.executors.get(residual.EFFECT_TYPES.CARD_DECISION);
+  const choices = executor.getLegalChoices(root, taskEffect, { state: root });
+  const confirm = choices.find((choice) => choice.target.choiceId.startsWith("confirm:"));
+  assert.ok(confirm, "amiba_1 任务必须有确认选项");
+  const completed = executor.resolveDecision(root, taskEffect, confirm, { state: root });
+  assert.equal(completed.ok, true, JSON.stringify(completed));
+  const symbolDecision = (completed.spawnedEffects || []).find((entry) => (
+    String(entry.effect?.type || "").includes("amiba_choose_symbol_reward")
+  ));
+  assert.ok(
+    symbolDecision,
+    "amiba_1 任务结算必须生成细胞器选择决策，而不是自动结算",
+  );
+})();
+
 console.log("residual-domain-session production proofs passed");

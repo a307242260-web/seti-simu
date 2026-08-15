@@ -1104,30 +1104,18 @@
             runezu.gainPlayerSymbol(player, symbolId);
           }
         } else if (effect.type === "amiba_choose_symbol_reward") {
-          // 阿米巴区域 symbol 奖励：结算对应区域全部 symbol（移动 + 应用奖励）。
-          const region = effect.options?.region;
-          if (region && typeof amiba?.resolveRegionReward === "function") {
-            const resolved = amiba.resolveRegionReward(root.aliens, region);
-            for (const result of resolved.results || []) {
-              const reward = result.reward || {};
-              if (reward.gain) players.gainResources(player, reward.gain);
-              const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
-              for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
-                const gained = data.gainData(player, { source: "amiba_region_reward", root });
-                if (!gained.ok) return gained;
-              }
-              const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-              for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-                const drawn = cards.blindDraw(
-                  root.cards, root.players, player, () => nextRandom(root), drawOptions(root),
-                );
-                if (!drawn.ok) return drawn;
-              }
-              if (drawCount > 0) {
-                irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
-              }
-            }
-          }
+          // 阿米巴区域 symbol 奖励：转成玩家选择决策（选该区域哪个细胞器结算），
+          // 与打牌路径一致，不再自动结算全部。
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: `${cardPlayDomain.EFFECT_TYPES.EFFECT}:decision:${effect.type}`,
+              kind: "decision",
+              decisionKind: "choose_target",
+              ownerId: player.id,
+              payload: { cardEffect: clone(effect) },
+            },
+          });
         } else if (effect.type === "draw_cards") {
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let drawIndex = 0; drawIndex < count; drawIndex += 1) {
@@ -1571,6 +1559,22 @@
     ));
   }
 
+  function amibaCardChoices(root, ownerId) {
+    const amibaState = amiba.ensureAmibaState(root.aliens);
+    const displayed = amibaState.displayedCardIndex == null
+      ? []
+      : [choice(
+        "choose_card", `amiba:display:${amibaState.displayedCardIndex}`,
+        { source: "display", cardIndex: amibaState.displayedCardIndex }, {},
+        `获得展示的${amiba.getCardDefinition(amibaState.displayedCardIndex)?.cardName || "阿米巴牌"}`,
+      )];
+    const blind = (amibaState.cardDeck || []).length
+      ? [choice("choose_card", "amiba:blind", { source: "blind" }, {}, "盲抽阿米巴牌")]
+      : [];
+    const cancel = [choice("choose_card", "amiba:cancel", { source: "cancel" }, {}, "取消")];
+    return formalize(root, ownerId, [...displayed, ...blind, ...cancel]);
+  }
+
   function aomomoCardChoices(root, ownerId) {
     const state = aomomo.ensureAomomoState(root.aliens);
     const displayed = state.displayedCardIndex == null
@@ -1883,13 +1887,47 @@
     runtime.registerExecutor(EFFECT_TYPES.ALIEN_CARD_DECISION, {
       getLegalChoices(state, effect, context) {
         const root = getRoot(state, context);
-        return effect.payload?.speciesId === "aomomo"
-          ? aomomoCardChoices(root, effect.ownerId)
-          : [];
+        if (effect.payload?.speciesId === "aomomo") return aomomoCardChoices(root, effect.ownerId);
+        if (effect.payload?.speciesId === "amiba") return amibaCardChoices(root, effect.ownerId);
+        return [];
       },
       resolveDecision(state, effect, selected, context) {
         const root = getRoot(state, context);
         const player = actor(root, effect.ownerId);
+        if (effect.payload?.speciesId === "amiba") {
+          const legal = amibaCardChoices(root, effect.ownerId)
+            .find((candidate) => candidate.actionId === selected?.actionId);
+          if (!player || !legal) {
+            return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
+          }
+          if (legal.target.source === "cancel") {
+            return { ok: true, spawnedEffects: [], irreversible: null };
+          }
+          const gained = legal.target.source === "display"
+            ? amiba.takeDisplayedCard(
+              root.aliens,
+              () => nextRandom(root),
+              { sequence: stateSequences.take(root, "alienEntity") },
+            )
+            : amiba.blindDrawCard(
+              root.aliens,
+              () => nextRandom(root),
+              { sequence: stateSequences.take(root, "alienEntity") },
+            );
+          if (!gained.ok || !gained.card) return gained;
+          player.hand.push(gained.card);
+          player.resources.handSize = player.hand.length;
+          return result(state, root, "alien:amiba_card", {
+            irreversible: { code: "hidden_alien_card", reason: "阿米巴牌堆已翻开" },
+            events: [{
+              type: "alien_card_gain",
+              playerId: player.id,
+              alienId: amiba.ALIEN_ID,
+              cardInstanceId: gained.card.id,
+              source: legal.target.source,
+            }],
+          });
+        }
         const legal = aomomoCardChoices(root, effect.ownerId)
           .find((candidate) => candidate.actionId === selected?.actionId);
         if (!player || !legal || effect.payload?.speciesId !== "aomomo") {
