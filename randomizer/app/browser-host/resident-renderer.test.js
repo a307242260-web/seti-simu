@@ -197,7 +197,7 @@ function createProjection() {
   renderer.renderAll({ projection, viewState });
   const second = snapshot({ tagName: "ROOT", className: "", dataset: {}, attributes: {}, textContent: "", hidden: false, src: "", alt: "", style: { values: {} }, children: Object.values(fixture.els).flat().filter((entry) => entry?.tagName) });
   assert.deepEqual(second, first, "同 projection + ViewState 必须可重建等价 DOM");
-  assert.equal(fixture.els.roundStatusRound.textContent, "第 2 轮");
+  assert.equal(fixture.els.roundStatusRound.textContent, "第 3 轮", "内部第 2 轮展示为规则书第 3 轮");
   assert.equal(fixture.els.publicCardRow.children[0].children[0].dataset.cardId, "public-1");
   assert.equal(fixture.els.techTiles[0].hidden, true);
   assert.equal(

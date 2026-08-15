@@ -51,7 +51,7 @@
 | # | 问题 | 代码位置 | 备注 |
 |---|---|---|---|
 | L1 | 主牌库抽牌池 182 张 vs 官方 138+42=180（b_139 冥王星自定义保留牌、b_140 促销牌「Gateway to Mars」混入） | `card-catalog.js`；`cards/deck.js:351-357` | 🔍 促销牌有意混入属 house rule，需确认 |
-| L2 | 轮次显示「第 1~4 轮」vs 规则书「第 2~5 轮」 | `resident-renderer.js:99`、`browser-read-model.js:86` | 功能等价，仅展示标签差 1 |
+| L2 | 轮次显示「第 1~4 轮」vs 规则书「第 2~5 轮」 | `resident-renderer.js:99` | ✅ **已修复**：展示 +1（内部第 1~4 轮 = 扩展第 2~5 轮），测试同步更新 |
 | L3 | 火星首登陆「任选两个数据位之一」简化为固定 2/1 数据 | `actions/planet-rewards.js:267-271` | 功能等价（2>1，无理性玩家会先选 1 数据位） |
 | L4 | 冗余（额外）痕迹无限堆叠 vs 规则书「固定冗余位置」设计 | `aliens/state.js:203-207` | 规则书未明示上限，观察项 |
 | L5 | 基础 5 轮模式未实现（实现 = 扩展 4 轮模式，与扩展规则书一致） | `turn-flow.js:17` `DEFAULT_FINAL_ROUND=4` | 若产品声明支持基础模式则为范围缺陷 |
@@ -71,5 +71,5 @@
 
 ## 六、其他
 
-- `randomizer/app/simulation-counterfactual-outcome.test.js` 在基线即失败（「正式结果目标根必须全部产生完整叶」断言，`node tools/run_node_tests.js` 中 64/65），与本次审计改动无关，另行排查。
+- `randomizer/app/simulation-counterfactual-outcome.test.js` 在基线即失败（「正式结果目标根必须全部产生完整叶」断言，`node tools/run_node_tests.js` 中 64/65）。**已排查根因**：AI 规划器 counterfactual 展开中，`scan` 行动的结果为 `unresolved`（leaves/frontierLeaves 均为空，无 failure、未 pruned，见 `rule-composition.js:3025` 状态判定）——扫描行动的多步决策在规划器执行预算内未产生完整叶。与规则实现无关（基线失败点 L394 始终不变），属 AI 规划器展开边界问题，建议规划器专项调优（maxDepth/叶收集对多步行动的适配）。
 - 审计期间并行工作区有他人改动（如 `tools/browser-smoke-inventory.js` 存在重复 id 的未提交修改），不在本清单范围。

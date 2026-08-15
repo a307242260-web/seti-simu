@@ -94,9 +94,10 @@
         els.roundStatusToken.dataset.slotId = text(slot.id);
       }
       if (els.roundStatusRound) {
+        // 实现内部第 1~4 轮 = 规则书（公司扩展）第 2~5 轮，展示 +1。
         els.roundStatusRound.textContent = turn.terminal
           ? "游戏结束"
-          : `第 ${Number(turn.roundNumber) || 1} 轮`;
+          : `第 ${(Number(turn.roundNumber) || 1) + 1} 轮`;
       }
       if (els.roundStatusTurn) {
         els.roundStatusTurn.textContent = turn.terminal
