@@ -780,6 +780,14 @@
         }
         return null;
       }).filter(Boolean);
+      // 扇区结算时机（规则书 P13）：完成扇区不逐节点立即结算，等本次扫描 flow
+      // 结束后统一结算。给队列最后一个节点打 finalize 标记，由其结算后的
+      // spawnedEffects 触发一次 SETTLE（公共牌扫描由 done 分支负责）。
+      if (queue.length) {
+        const last = queue[queue.length - 1];
+        if (last?.effect?.payload) last.effect.payload.finalize = true;
+      }
+      return queue;
     }
 
     function listScanAction4Choices(root, actorId) {
@@ -941,11 +949,16 @@
         }
         const result = executeNebulaScan(root, effect.ownerId, choice, effect.payload || {});
         if (!result.ok) return result;
-        return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
-          spawnedEffects: [{
+        const spawnedEffects = [];
+        // 扇区结算只由扫描 flow 最后一个节点触发（finalize），避免同行动内提前重置。
+        if (effect.payload?.finalize) {
+          spawnedEffects.push({
             priority: "direct",
             effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
-          }],
+          });
+        }
+        return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
+          spawnedEffects,
           events: clone(result.events || []),
           history: [{ type: "science_scan", nebulaId: choice.target.nebulaId }],
         });
@@ -1001,11 +1014,20 @@
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         if (choice?.target?.done) {
-          return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
-            spawnedEffects: [{
+          const spawnedEffects = [];
+          // 公共牌扫描是扫描 flow 最后一个节点（finalize）时，统一结算扇区后再补牌。
+          if (effect.payload?.finalize) {
+            spawnedEffects.push({
               priority: "direct",
-              effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
-            }],
+              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
+            });
+          }
+          spawnedEffects.push({
+            priority: "direct",
+            effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
+          });
+          return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
+            spawnedEffects,
             events: [{ type: "publicScanCompleted", selected: effect.payload?.selected || 0 }],
           });
         }
@@ -1033,10 +1055,7 @@
             (Number(actor.resources.additionalPublicScan) || 0) - 1,
           );
         }
-        const spawnedEffects = [{
-          priority: "direct",
-          effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id },
-        }];
+        const spawnedEffects = [];
         const scanFlowEnded = selected >= (Number(effect.payload?.max) || 1)
           || !publicScanChoices(root).length;
         if (!scanFlowEnded) {
@@ -1044,6 +1063,7 @@
             selected,
             max: effect.payload.max,
             consumeMarkers: Boolean(effect.payload?.consumeMarkers),
+            ...(effect.payload?.finalize ? { finalize: true } : {}),
           }, "choose_card"));
         } else {
           spawnedEffects.push({
@@ -1125,8 +1145,15 @@
         const removed = cards.discardFromHandAtIndex(actor, index);
         if (!removed.ok) return removed;
         cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
+        const spawnedEffects = [];
+        if (effect.payload?.finalize) {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id },
+          });
+        }
         return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
-          spawnedEffects: [{ priority: "direct", effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id } }],
+          spawnedEffects,
           events: clone(result.events || []),
         });
       },
@@ -1163,7 +1190,14 @@
           }
         }
         return scienceResult(state, root, EFFECT_TYPES.SCAN_ACTION_4, {
-          spawnedEffects,
+          spawnedEffects: [
+            ...spawnedEffects,
+            // 紫4 是扫描 flow 最后一个节点时，统一结算扇区。
+            ...(effect.payload?.finalize ? [{
+              priority: "direct",
+              effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id },
+            }] : []),
+          ],
           events: clone(result.events || []),
         });
       },
