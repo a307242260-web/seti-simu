@@ -662,6 +662,51 @@ module.exports = Object.freeze([
     counterexample: "能量移动按钮缺失或文案错误",
   }),
   Object.freeze({
+    id: "production-solar-preview",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#action-quick-button'))",
+    actionExpression: `(async () => {
+      const waitFor = async (predicate, label, timeout = 12000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      document.querySelector("#start-screen-start-button").click();
+      await waitFor(() => document.querySelector("#start-screen")?.hidden === true, "开始游戏");
+      const button = document.querySelector('#solar-preview-button');
+      if (!button) throw new Error("缺少太阳系预览按钮");
+      const panel = document.querySelector('#solar-preview-panel');
+      if (!panel) throw new Error("缺少太阳系预览面板");
+      if (panel.hidden !== true) throw new Error("预览面板初始应隐藏");
+      button.click();
+      if (panel.hidden !== false) throw new Error("点击后预览面板应显示");
+      const rows = document.querySelectorAll('#solar-preview-body .solar-preview-row');
+      const inspected = window.SetiRandomizer?.inspect?.()?.projection || null;
+      const rotation = inspected?.resident?.solar?.rotation
+        ?? inspected?.solarSystem?.rotation
+        ?? null;
+      const residentKeys = inspected?.resident ? Object.keys(inspected.resident) : [];
+      if (rows.length < 2) {
+        throw new Error("预览应显示当前+未来至少 2 行轮盘，实际 rows=" + rows.length
+          + " rotation=" + JSON.stringify(rotation || null)
+          + " residentKeys=" + JSON.stringify(residentKeys));
+      }
+      const firstRow = rows[0].textContent;
+      if (!firstRow.includes("当前") || !firstRow.includes("轮1")) {
+        throw new Error("预览首行应标记当前并含轮盘: " + firstRow);
+      }
+      document.querySelector('#solar-preview-close').click();
+      if (panel.hidden !== true) throw new Error("关闭按钮应隐藏预览面板");
+      window.__setiSolarPreviewSmoke = { ok: true, rows: rows.length, firstRow };
+    })()`,
+    successExpression: "window.__setiSolarPreviewSmoke?.ok === true",
+    obligation: "太阳系转动预览按钮可展开/收起面板并显示当前与未来轮盘角度",
+    counterexample: "预览按钮/面板缺失，或点击后未显示轮盘数据、关闭无效",
+  }),
+  Object.freeze({
     id: "policy-input",id: "policy-input",id: "policy-input",
     file: "randomizer/app/browser-host/policy-input-adapter.browser-smoke.html",
     resultSelector: "body",
