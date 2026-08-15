@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiBrowserReadModel = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiBrowserReadModel = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-read-model-v1";

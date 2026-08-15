@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiTechPlacement = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
+  if (typeof module === "undefined") root.SetiTechPlacement = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
   "use strict";
 
   const PLAYER_BOARD_LAYOUT = Object.freeze({

@@ -19,8 +19,7 @@
     module.exports = api;
   }
 
-  root.SetiData = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiData = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   placement,
   state,
   nebulaPlacement,

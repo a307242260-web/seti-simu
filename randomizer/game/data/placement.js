@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiDataPlacement = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiDataPlacement = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const DATA_TOKEN_DISPLAY_SCALE = 3.5;

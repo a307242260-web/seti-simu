@@ -19,8 +19,7 @@
     module.exports = api;
   }
 
-  root.SetiAbilityTech = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiAbilityTech = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   tech,
   rocketAbility,

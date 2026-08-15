@@ -42,8 +42,7 @@
     chong,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiProductionComposition = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiProductionComposition = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction,
   standardActionSession,
   cardPlayDomain,

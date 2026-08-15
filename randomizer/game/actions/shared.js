@@ -17,8 +17,7 @@
     module.exports = api;
   }
 
-  root.SetiActionShared = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (solar, players, rockets) {
+  if (typeof module === "undefined") root.SetiActionShared = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (solar, players, rockets) {
   "use strict";
 
   if (!solar || !players || !rockets) {

@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiFangzhouCard1Queue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
+  if (typeof module === "undefined") root.SetiFangzhouCard1Queue = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
   "use strict";
 
   const PLANET_REWARD_TYPES = Object.freeze({

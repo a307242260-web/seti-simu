@@ -6,8 +6,7 @@
 
   const api = factory(stateStore);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiLowCouplingState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (stateStore) {
+  if (typeof module === "undefined") root.SetiLowCouplingState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (stateStore) {
   "use strict";
 
   if (!stateStore) throw new Error("SetiStateStore is required before SetiLowCouplingState");

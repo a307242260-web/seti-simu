@@ -17,8 +17,7 @@
     module.exports = api;
   }
 
-  root.SetiActionResearchTech = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (players, catalog, resolver) {
+  if (typeof module === "undefined") root.SetiActionResearchTech = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (players, catalog, resolver) {
   "use strict";
 
   const ACTION_ID = "researchTech";

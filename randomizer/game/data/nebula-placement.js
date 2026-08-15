@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiNebulaDataPlacement = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiNebulaDataPlacement = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   /** 各星云可放置的数据数量 */

@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiAppPublicApi = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
+  if (typeof module === "undefined") root.SetiAppPublicApi = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-public-facade-v1";

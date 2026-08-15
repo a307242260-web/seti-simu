@@ -19,8 +19,7 @@
     module.exports = api;
   }
 
-  root.SetiAbilityRocket = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiAbilityRocket = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   rockets,
   solar,

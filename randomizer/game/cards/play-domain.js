@@ -52,8 +52,7 @@
     yichangdian,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiCardPlayDomain = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiCardPlayDomain = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction,
   cards,
   cardEffects,

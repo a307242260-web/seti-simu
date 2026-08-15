@@ -13,8 +13,7 @@
   }
   const api = factory(outcomeModel, quickTrades, cardEffects, alienState);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiExpectedScoreEvaluator = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
   quickTrades,
   cardEffects,

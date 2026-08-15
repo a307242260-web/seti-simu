@@ -29,8 +29,7 @@
     science, turnFlow, chong,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiProbeTurnSession = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiProbeTurnSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction, actions, abilities, players, planetRewards, data, cards, solar,
   science, turnFlow, chong,
 ) {

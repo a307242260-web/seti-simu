@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiTechBonuses = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, players) {
+  if (typeof module === "undefined") root.SetiTechBonuses = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, players) {
   "use strict";
 
   function drawBonusCard(player, helpers) {

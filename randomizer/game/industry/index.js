@@ -25,8 +25,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustry = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiIndustry = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   placement,
   state,
   catalog,

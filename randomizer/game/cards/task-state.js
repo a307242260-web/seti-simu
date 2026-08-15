@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiCardTaskState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiCardTaskState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   function createTaskState() {

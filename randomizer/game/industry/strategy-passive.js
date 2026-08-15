@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryStrategyPassive = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement) {
+  if (typeof module === "undefined") root.SetiIndustryStrategyPassive = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement) {
   "use strict";
 
   const SCAN_CODE_TO_SLOT = Object.freeze({

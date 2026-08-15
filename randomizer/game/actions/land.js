@@ -21,8 +21,7 @@
     module.exports = api;
   }
 
-  root.SetiActionLand = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiActionLand = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   planetStats,
   shared,

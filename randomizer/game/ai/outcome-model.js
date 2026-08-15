@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiOutcomeModel = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiOutcomeModel = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const OBSERVATION_SCHEMA_VERSION = "seti-decision-observation-v2";

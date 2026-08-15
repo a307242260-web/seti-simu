@@ -17,8 +17,7 @@
     module.exports = api;
   }
 
-  root.SetiActionLaunch = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (players, rockets, industryPassives) {
+  if (typeof module === "undefined") root.SetiActionLaunch = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (players, rockets, industryPassives) {
   "use strict";
 
   const ACTION_ID = "launch";

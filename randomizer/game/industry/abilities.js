@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryAbilities = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, passives) {
+  if (typeof module === "undefined") root.SetiIndustryAbilities = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, passives) {
   "use strict";
 
   const PUBLICITY_PICK_COST = 2;

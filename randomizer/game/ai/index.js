@@ -23,8 +23,7 @@
     module.exports = api;
   }
 
-  root.SetiAI = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost) {
+  if (typeof module === "undefined") root.SetiAI = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost) {
   "use strict";
 
   return Object.freeze({

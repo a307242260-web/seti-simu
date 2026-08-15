@@ -7,8 +7,7 @@
   }
 
   if (root) {
-    root.SetiAppAiBrowserBootstrap = api;
-  }
+    if (typeof module === "undefined") root.SetiAppAiBrowserBootstrap = api;  }
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
   const REQUIRED_CONTEXT_KEYS = Object.freeze([

@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiStateSequences = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiStateSequences = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   function getSequenceMap(root) {

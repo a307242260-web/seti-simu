@@ -2,8 +2,7 @@
   "use strict";
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiBrowserActionBar = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiBrowserActionBar = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const ACTION_BAR_PROJECTION_SCHEMA = "seti-action-bar-projection-v1";

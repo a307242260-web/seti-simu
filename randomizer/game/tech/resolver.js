@@ -25,8 +25,7 @@
     module.exports = api;
   }
 
-  root.SetiTechResolver = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiTechResolver = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   catalog,
   boardState,
   playerTech,

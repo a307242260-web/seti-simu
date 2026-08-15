@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiNebulaDataState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (nebulaPlacement, stateSequences) {
+  if (typeof module === "undefined") root.SetiNebulaDataState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (nebulaPlacement, stateSequences) {
   "use strict";
 
   function takeSequence(state, options, key) {

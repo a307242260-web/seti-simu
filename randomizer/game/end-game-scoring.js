@@ -28,8 +28,7 @@
     module.exports = api;
   }
 
-  root.SetiEndGameScoring = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (finalScoring, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu) {
+  if (typeof module === "undefined") root.SetiEndGameScoring = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (finalScoring, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu) {
   "use strict";
 
   const NEBULA_IDS_BY_COLOR = Object.freeze({

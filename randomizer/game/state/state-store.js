@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiStateStore = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiStateStore = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SCHEMA_VERSION = "seti-committed-game-state-v1";

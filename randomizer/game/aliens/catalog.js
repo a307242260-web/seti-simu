@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienCatalog = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiAlienCatalog = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const ALIEN_BASE_PATH = "../assets/aliens";

@@ -14,8 +14,7 @@
 
   const api = factory(stateStore, lowCouplingState, cardTaskState, techCatalog);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiHighCouplingState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiHighCouplingState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   stateStore,
   lowCouplingState,
   cardTaskState,

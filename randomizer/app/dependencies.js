@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiAppDependencies = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiAppDependencies = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const REQUIRED_GLOBALS = Object.freeze([

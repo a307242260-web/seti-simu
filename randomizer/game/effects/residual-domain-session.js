@@ -60,8 +60,7 @@
     stateSequences,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiResidualDomainSession = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiResidualDomainSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction, science, players, cards, data, industry, industryAbilities,
   gameAbilities, strategy, tech, aliens, finalScoring, endGameScoring,
   cardEffects, cardTaskState, cardPlayDomain, speciesModules, stateSequences,

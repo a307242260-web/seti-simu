@@ -11,8 +11,7 @@
   }
   const api = factory(policyPort, standardAction, machinePlayerHost);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiBrowserPolicyInputAdapter = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, machinePlayerHost) {
+  if (typeof module === "undefined") root.SetiBrowserPolicyInputAdapter = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, machinePlayerHost) {
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-policy-input-v1";

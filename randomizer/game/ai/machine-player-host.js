@@ -7,8 +7,7 @@
   }
   const api = factory(policyPort);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiMachinePlayerHost = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort) {
+  if (typeof module === "undefined") root.SetiMachinePlayerHost = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort) {
   "use strict";
 
   const SCHEMA_VERSION = "seti-machine-player-host-v1";

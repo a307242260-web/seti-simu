@@ -19,8 +19,7 @@
 
   const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiHeuristicPolicy = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring) {
+  if (typeof module === "undefined") root.SetiHeuristicPolicy = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";

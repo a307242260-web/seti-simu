@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryHeliosPassive = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement) {
+  if (typeof module === "undefined") root.SetiIndustryHeliosPassive = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement) {
   "use strict";
 
   const TECH_TYPE_TO_SLOT = Object.freeze({

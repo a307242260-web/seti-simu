@@ -9,8 +9,7 @@
     module.exports = api;
   }
 
-  root.SetiPolicyPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
+  if (typeof module === "undefined") root.SetiPolicyPort = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (outcomeModel) {
   "use strict";
 
   const CONTEXT_SCHEMA_VERSION = "seti-policy-context-v1";

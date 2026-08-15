@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
+  if (typeof module === "undefined") root.SetiAlienState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
   "use strict";
 
   const FIRST_TRACE_REWARDS_BY_ALIEN_SLOT_ID = Object.freeze({

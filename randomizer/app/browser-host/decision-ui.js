@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiBrowserDecisionUi = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiBrowserDecisionUi = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const TECH_KINDS = new Set(["research_tech_choice", "choose_tech", "choose_tech_slot"]);

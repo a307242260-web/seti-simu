@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiPlanetStats = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (layout, planetReferenceLayout) {
+  if (typeof module === "undefined") root.SetiPlanetStats = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (layout, planetReferenceLayout) {
   "use strict";
 
   if (!layout) {

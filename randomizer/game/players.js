@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiPlayers = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiPlayers = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const PLAYER_COLORS = Object.freeze({

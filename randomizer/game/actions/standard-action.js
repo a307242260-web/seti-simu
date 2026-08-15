@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiStandardAction = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiStandardAction = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SCHEMA_VERSION = "seti-standard-action-v1";

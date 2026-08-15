@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiPlanetReferenceLayout = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiPlanetReferenceLayout = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const PLANETS_REFERENCE_SIZE = Object.freeze({ width: 1672, height: 941 });

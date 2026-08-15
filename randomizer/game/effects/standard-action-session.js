@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiStandardActionSession = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiStandardActionSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const EFFECT_TYPE = "standard_action_session_execute";

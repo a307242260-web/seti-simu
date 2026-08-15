@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiTechCatalog = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiTechCatalog = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const TECH_TYPES = Object.freeze(["blue", "orange", "purple"]);

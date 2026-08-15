@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiAppDom = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiAppDom = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   function collectElements(documentRef) {

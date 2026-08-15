@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiPlayerTech = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
+  if (typeof module === "undefined") root.SetiPlayerTech = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
   "use strict";
 
   const BLUE_BOARD_SLOTS = [1, 2, 3, 4];

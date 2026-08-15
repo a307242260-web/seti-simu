@@ -8,8 +8,7 @@
   }
   const api = factory(solar, rocketAbility);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiTurnFlow = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiTurnFlow = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   solar, rocketAbility,
 ) {
   "use strict";

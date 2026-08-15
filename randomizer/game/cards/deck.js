@@ -19,8 +19,7 @@
     module.exports = api;
   }
 
-  root.SetiCards = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (CARD_CATALOG, stateSequences) {
+  if (typeof module === "undefined") root.SetiCards = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (CARD_CATALOG, stateSequences) {
   "use strict";
 
   const PUBLIC_CARD_COUNT = 3;

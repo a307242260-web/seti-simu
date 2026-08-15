@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienAmiba = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state) {
+  if (typeof module === "undefined") root.SetiAlienAmiba = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state) {
   "use strict";
 
   const ALIEN_ID = "阿米巴";

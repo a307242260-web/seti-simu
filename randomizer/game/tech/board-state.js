@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiTechBoardState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
+  if (typeof module === "undefined") root.SetiTechBoardState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
   "use strict";
 
   function getCurrentBonusId(stack) {

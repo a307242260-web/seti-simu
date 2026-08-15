@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiEffectSession = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiEffectSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SCHEMA_VERSION = "seti-effect-session-v1";

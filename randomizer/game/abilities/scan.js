@@ -19,8 +19,7 @@
     module.exports = api;
   }
 
-  root.SetiAbilityScan = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiAbilityScan = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   solar,
   players,
   data,

@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiTrajectoryRecorder = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiTrajectoryRecorder = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   // 与 randomizer/training/self-play.js 完全一致的日志 schema：人类示范轨迹按

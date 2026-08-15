@@ -33,8 +33,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienRandomizer = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu) {
+  if (typeof module === "undefined") root.SetiAlienRandomizer = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu) {
   "use strict";
 
   const MIN_ALIEN_REVEAL_POOL_SIZE = Math.max(2, placement.ALIEN_SLOT_IDS.length);

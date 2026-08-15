@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiBrowserViewStateStore = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiBrowserViewStateStore = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-view-state-v3";

@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryCatalog = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiIndustryCatalog = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SKIPPED_ACTIVE_LABELS = Object.freeze(["异星实验室"]);

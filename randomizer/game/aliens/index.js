@@ -39,8 +39,7 @@
     module.exports = api;
   }
 
-  root.SetiAliens = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu, fangzhouCard1Queue, revealCardGrants) {
+  if (typeof module === "undefined") root.SetiAliens = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu, fangzhouCard1Queue, revealCardGrants) {
   "use strict";
 
   function getTracePositionsForSpecies(species, traceType) {

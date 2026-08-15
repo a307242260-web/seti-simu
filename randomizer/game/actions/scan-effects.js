@@ -17,8 +17,7 @@
     module.exports = api;
   }
 
-  root.SetiScanEffects = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (players, playerTech, industryPassives) {
+  if (typeof module === "undefined") root.SetiScanEffects = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (players, playerTech, industryPassives) {
   "use strict";
 
   const SCAN_COST = Object.freeze({ credits: 1, energy: 2 });

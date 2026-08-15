@@ -21,8 +21,7 @@
 
   const api = factory(initialCards, cards, players, rockets, solar, data, industry);
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiInitialSetup = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiInitialSetup = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   initialCards,
   cards,
   players,

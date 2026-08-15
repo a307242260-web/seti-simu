@@ -23,8 +23,7 @@
     module.exports = api;
   }
 
-  root.SetiTech = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiTech = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   catalog,
   boardState,
   playerTech,

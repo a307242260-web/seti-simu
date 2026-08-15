@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienRevealCardGrants = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (state, cards) {
+  if (typeof module === "undefined") root.SetiAlienRevealCardGrants = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (state, cards) {
   "use strict";
 
   function addCardToHand(player, card) {

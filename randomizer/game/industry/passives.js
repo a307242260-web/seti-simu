@@ -12,8 +12,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryPassives = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
+  if (typeof module === "undefined") root.SetiIndustryPassives = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
   "use strict";
 
   const FENWICK_RESEARCH_COST = 5;

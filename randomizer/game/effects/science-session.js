@@ -49,8 +49,7 @@
     stateSequences,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiScienceSession = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiScienceSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction,
   scanEffects,
   researchTechAction,

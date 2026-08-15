@@ -23,8 +23,7 @@
     module.exports = api;
   }
 
-  root.SetiAbilityPlanet = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiAbilityPlanet = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   planetStats,
   shared,

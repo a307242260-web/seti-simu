@@ -21,8 +21,7 @@
     module.exports = api;
   }
 
-  root.SetiDataState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiDataState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   placement,
   players,
   playerTech,

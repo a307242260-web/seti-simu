@@ -21,8 +21,7 @@
     module.exports = api;
   }
 
-  root.SetiActions = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (launch, orbit, land, researchTech, standardAction) {
+  if (typeof module === "undefined") root.SetiActions = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (launch, orbit, land, researchTech, standardAction) {
   "use strict";
 
   const ACTIONS = Object.freeze({

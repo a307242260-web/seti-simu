@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienPlacement = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiAlienPlacement = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const TRACE_TYPES = Object.freeze(["yellow", "pink", "blue"]);

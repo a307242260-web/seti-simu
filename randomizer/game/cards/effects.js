@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiCardEffects = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiCardEffects = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const EFFECT_TYPES = Object.freeze({

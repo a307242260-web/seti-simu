@@ -14,8 +14,7 @@
     module.exports = api;
   }
 
-  root.SetiRocketActions = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (solar, stateSequences) {
+  if (typeof module === "undefined") root.SetiRocketActions = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (solar, stateSequences) {
   "use strict";
 
   if (!solar) {

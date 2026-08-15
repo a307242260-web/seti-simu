@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryPlacement = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiIndustryPlacement = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const INDUSTRY_REFERENCE_SIZE = Object.freeze({ width: 2372, height: 1792 });

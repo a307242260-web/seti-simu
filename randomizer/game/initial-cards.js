@@ -27,8 +27,7 @@
     module.exports = api;
   }
 
-  root.SetiInitialCards = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiInitialCards = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   cards,
   data,

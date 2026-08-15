@@ -17,8 +17,7 @@
     module.exports = api;
   }
 
-  root.SetiAbilityData = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  if (typeof module === "undefined") root.SetiAbilityData = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   data,
   industryPassives,

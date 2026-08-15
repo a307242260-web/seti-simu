@@ -15,8 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienChong = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state) {
+  if (typeof module === "undefined") root.SetiAlienChong = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state) {
   "use strict";
 
   const ALIEN_ID = "虫";

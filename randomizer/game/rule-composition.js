@@ -3,8 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiRuleComposition = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiRuleComposition = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const SAVE_SCHEMA_VERSION = "seti-rule-composition-save-v1";

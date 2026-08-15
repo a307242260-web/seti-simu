@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiAlienBanrenma = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
+  if (typeof module === "undefined") root.SetiAlienBanrenma = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
   "use strict";
 
   const ALIEN_ID = "半人马";

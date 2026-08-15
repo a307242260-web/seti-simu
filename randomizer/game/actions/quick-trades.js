@@ -13,8 +13,7 @@
     module.exports = api;
   }
 
-  root.SetiQuickTrades = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (players) {
+  if (typeof module === "undefined") root.SetiQuickTrades = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (players) {
   "use strict";
 
   const TRADE_ACTIONS = Object.freeze([

@@ -7,8 +7,7 @@
     module.exports = api;
   }
 
-  root.SetiIndustryState = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  if (typeof module === "undefined") root.SetiIndustryState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
   const ALIEN_LAB_PANEL_IDS = Object.freeze(["blue", "yellow", "pink"]);

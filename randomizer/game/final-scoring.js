@@ -11,8 +11,7 @@
     module.exports = api;
   }
 
-  root.SetiFinalScoring = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (stateSequences) {
+  if (typeof module === "undefined") root.SetiFinalScoring = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (stateSequences) {
   "use strict";
 
   const FINAL_SCORE_THRESHOLDS = Object.freeze([25, 50, 70]);
