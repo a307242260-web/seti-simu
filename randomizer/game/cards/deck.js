@@ -82,16 +82,22 @@
     return `${CARD_BASE_PATH}/${entry.set}/split/${entry.card_id}`;
   }
 
-  // 精选公共牌的统一卡面展示（交易精选与卡牌效果精选共用，避免两处重复配置）
-  function getPublicCardPickPresentation(card) {
+  // 统一卡面展示：任意要选牌的卡（手牌/公共牌/保留牌/弃牌角标等）都用它，
+  // 避免各选牌场景重复配置卡面。
+  function getCardPickPresentation(card) {
     if (!card) return null;
     const entry = getCatalogEntryForCard(card);
     return {
       cardKind: "pick",
       cardId: String(card.id),
-      imageSrc: entry ? getCardSrc(entry) : null,
+      imageSrc: entry ? getCardSrc(entry) : (card.src || null),
       imageAlt: getCardLabel(card),
     };
+  }
+
+  // 精选公共牌的统一卡面展示（交易精选与卡牌效果精选共用，避免两处重复配置）
+  function getPublicCardPickPresentation(card) {
+    return getCardPickPresentation(card);
   }
 
   function getCardId(value) {
@@ -723,6 +729,7 @@
     DISCARD_ACTION_MOVE_REWARDS,
     DISCARD_ACTION_TRIGGER_CODE_EQUIVALENTS,
     getCardSrc,
+    getCardPickPresentation,
     getPublicCardPickPresentation,
     createCardInstance,
     createCommittedCardInstance,

@@ -392,12 +392,7 @@
             cards.getCardLabel(card),
           ),
           // 手牌选择携带卡面，决策弹窗显示牌面而非编号
-          presentation: {
-            cardKind: "pick",
-            cardId: String(card.id),
-            imageSrc: entry ? cards.getCardSrc(entry) : null,
-            imageAlt: cards.getCardLabel(card),
-          },
+          presentation: cards.getCardPickPresentation(card),
         };
       }));
     }
@@ -416,12 +411,7 @@
             cards.getCardLabel(card),
           ),
           // 公共牌选择携带卡面，决策弹窗显示牌面而非编号
-          presentation: {
-            cardKind: "pick",
-            cardId: String(card.id),
-            imageSrc: entry ? cards.getCardSrc(entry) : null,
-            imageAlt: cards.getCardLabel(card),
-          },
+          presentation: cards.getCardPickPresentation(card),
         }];
       }));
     }

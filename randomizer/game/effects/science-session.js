@@ -856,12 +856,7 @@
             `收入 ${cards.getCardLabel(card)}`,
           ),
           // 收入选择携带手牌卡面，决策弹窗显示牌面而非编号
-          presentation: {
-            cardKind: "pick",
-            cardId: String(card.id),
-            imageSrc: entry ? cards.getCardSrc(entry) : null,
-            imageAlt: cards.getCardLabel(card),
-          },
+          presentation: cards.getCardPickPresentation(card),
         };
       });
     }
@@ -879,12 +874,7 @@
             cards.getCardLabel(card),
           ),
           // 科技精选牌直接携带公共牌卡面，decision-ui 显示牌面而非编号
-          presentation: {
-            cardKind: "pick",
-            cardId: String(card.id),
-            imageSrc: entry ? cards.getCardSrc(entry) : null,
-            imageAlt: cards.getCardLabel(card),
-          },
+          presentation: cards.getCardPickPresentation(card),
         }];
       });
     }
@@ -1002,13 +992,8 @@
             { cardInstanceId: card.id, publicSlotIndex, nebulaId: choice.target.nebulaId },
             { gainData: true },
             `${cards.getCardLabel(card)} → ${data.getNebulaLabel(choice.target.nebulaId)}`,
-            // 公共牌扫描选择携带卡面，决策弹窗显示牌面而非编号
-            {
-              cardKind: "pick",
-              cardId: String(card.id),
-              imageSrc: entry ? cards.getCardSrc(entry) : null,
-              imageAlt: cards.getCardLabel(card),
-            },
+            // 卡面统一由 cards.getCardPickPresentation 提供
+            cards.getCardPickPresentation(card),
           ));
       });
     }

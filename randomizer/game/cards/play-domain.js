@@ -1394,13 +1394,19 @@
     }
 
     function listCardChoices(cardsToList, family = "choose_card", extra = {}) {
-      return (cardsToList || []).map((card, index) => makeChoice(
-        family,
-        card.id,
-        { cardInstanceId: card.id, index, ...extra },
-        {},
-        cards.getCardLabel(card),
-      ));
+      return (cardsToList || []).map((card, index) => ({
+        ...makeChoice(
+          family,
+          card.id,
+          { cardInstanceId: card.id, index, ...extra },
+          {},
+          cards.getCardLabel(card),
+        ),
+        // 所有选手牌的决策统一显示卡面（弃牌角标、弃牌换奖励等）
+        ...(cards.getCardPickPresentation(card) ? {
+          presentation: cards.getCardPickPresentation(card),
+        } : {}),
+      }));
     }
 
     function cornerEffects(card, repeat = 1) {
