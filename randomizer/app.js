@@ -1425,7 +1425,11 @@
       if (!button.dataset.actionId) return;
       residentInput.dispatchIntent({ kind: "view", type: "focus.clear" });
       const result = desktopActionBar.activateAction(button.dataset.actionId);
-      if (result?.ok === false) throw new Error(result.message || result.code);
+      if (result?.ok === false) {
+        console.error("行动提交失败", result);
+        window.alert(`行动提交失败：${result.message || result.code}`);
+        return;
+      }
       scheduleRefreshAndAutomation();
     });
   }
@@ -1511,7 +1515,11 @@
       return;
     }
     const result = desktopActionBar.activateAction(button.dataset.actionId);
-    if (result?.ok === false) throw new Error(result.message || result.code);
+    if (result?.ok === false) {
+      console.error("快速行动提交失败", result);
+      window.alert(`快速行动提交失败：${result.message || result.code}`);
+      return;
+    }
     scheduleRefreshAndAutomation();
   });
   els.actionUndoButton?.addEventListener("click", () => {
