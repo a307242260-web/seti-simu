@@ -369,6 +369,37 @@
     return value ? [value] : [];
   }
 
+  // 兼容迁移：旧存档中阿米巴揭示后首痕迹仍留在通用槽位（traces），
+  // 但 amiba_3 等机制从痕迹格读取；由拥有 root 的调用方（play-domain/residual）
+  // 显式调用，并传入 takeSequence 生成全局唯一的 alienEntity sequence。
+  function migrateLegacyTraces(alienState, alienSlotId, options = {}) {
+    const amiba = ensureAmibaState(alienState);
+    const key = String(alienSlotId);
+    if (amiba.migratedTracesSlots?.[key]) return 0;
+    if (typeof options.takeSequence !== "function") return 0;
+    const grid = ensureTraceGrid(alienState, alienSlotId);
+    const slotTraces = alienState.aliens?.[key]?.traces || {};
+    let migratedCount = 0;
+    for (const traceType of Object.keys(slotTraces)) {
+      const trace = slotTraces[traceType];
+      if (!trace?.firstPlaced) continue;
+      if (!grid[traceType] || grid[traceType][1]) continue;
+      grid[traceType][1] = createTraceEntry(
+        alienState,
+        { id: trace.ownerPlayerId || null, color: trace.ownerPlayerColor || null },
+        traceType,
+        1,
+        { sequence: options.takeSequence() },
+      );
+      migratedCount += 1;
+    }
+    if (migratedCount > 0) {
+      if (!amiba.migratedTracesSlots) amiba.migratedTracesSlots = {};
+      amiba.migratedTracesSlots[key] = true;
+    }
+    return migratedCount;
+  }
+
   function listTraceEntries(alienState, alienSlotId, traceType = null) {
     const grid = getTraceGrid(alienState, alienSlotId);
     const entries = [];
@@ -744,6 +775,7 @@
     getSymbolReward,
     listTraceEntries,
     getTraceEntries,
+    migrateLegacyTraces,
     removePlayerTrace,
     listPlayerTraceOptions,
     initializeAmibaReveal,

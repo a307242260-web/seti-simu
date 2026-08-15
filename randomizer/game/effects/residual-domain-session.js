@@ -641,6 +641,12 @@
     }
     const initialized = initializer(...args[speciesId]);
     if (!initialized.ok) return initialized;
+    if (speciesId === "阿米巴" && typeof amiba?.migrateLegacyTraces === "function") {
+      // 揭示前玩家已在通用槽位放置的首痕迹迁入阿米巴痕迹格（amiba_3 等机制读取）
+      amiba.migrateLegacyTraces(root.aliens, slotId, {
+        takeSequence: () => stateSequences.take(root, "alienEntity"),
+      });
+    }
     const grants = !["jiuzhe", "fangzhou"].includes(speciesId)
       ? aliens.grantAlienCardsForFirstTraces(
         root.aliens,

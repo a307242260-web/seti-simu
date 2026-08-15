@@ -1647,10 +1647,45 @@
             cursor: root.meta.rngState.cardPlay?.cursor || 0,
           }],
         });
+      } else if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
+        // 阿米巴区域 symbol 奖励：结算对应区域全部 symbol（移动 + 应用奖励）
+        const region = options.region;
+        if (region && typeof aliens.amiba.resolveRegionReward === "function") {
+          const resolved = aliens.amiba.resolveRegionReward(getWorkingSlice(root, "aliens"), region);
+          for (const result of resolved.results || []) {
+            const reward = result.reward || {};
+            if (reward.gain) players.gainResources(actor, reward.gain);
+            const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+            for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
+              const gained = data.gainData(actor, { source: "amiba_region_reward", root });
+              if (!gained.ok) return gained;
+            }
+            const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+            for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+              const drawn = cards.blindDraw(
+                getWorkingSlice(root, "cards"),
+                getWorkingSlice(root, "players"),
+                actor,
+                () => nextCommittedRandom(root),
+                { createCardInstance: createCommittedCardFactory(root) },
+              );
+              if (!drawn.ok) return drawn;
+            }
+            if (drawCount > 0) {
+              event.irreversibleDraw = true;
+            }
+          }
+          event.amibaRegion = region;
+          event.resolvedCount = (resolved.results || []).length;
+        }
       } else {
         return fail("CARD_EFFECT_EXECUTOR_INCOMPLETE", `未实现卡牌效果 ${effect.type}`);
       }
-      return cardEffectResult(state, root, sessionEffect, { spawnedEffects, event });
+      return cardEffectResult(state, root, sessionEffect, {
+        spawnedEffects,
+        event,
+        ...(event.irreversibleDraw ? { irreversible: { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" } } : {}),
+      });
     }
 
     function listGenericChoices(root, sessionEffect) {
@@ -1658,6 +1693,32 @@
       const actor = getActor(root, sessionEffect.ownerId);
       const options = effect?.options || {};
       if (!actor) return [];
+      if (effect.type === aliens.amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD) {
+        // 阿米巴3：移除自己的 1 个阿米巴痕迹并结算该痕迹所在区域
+        const alienState = getWorkingSlice(root, "aliens");
+        const revealedSlotId = alienState?.amiba?.revealedSlotId || null;
+        if (!revealedSlotId) return [];
+        if (typeof aliens.amiba.migrateLegacyTraces === "function") {
+          aliens.amiba.migrateLegacyTraces(alienState, revealedSlotId, {
+            takeSequence: () => {
+              // play-domain 无 stateSequences：返回当前 alienEntity sequence 并递增
+              const meta = root.meta || {};
+              const current = Number(meta.sequences?.alienEntity) || 0;
+              if (meta.sequences) meta.sequences.alienEntity = current + 1;
+              return current;
+            },
+          });
+        }
+        return aliens.amiba.listPlayerTraceOptions(alienState, revealedSlotId, actor).map((entry) => (
+          makeChoice(
+            "choose_target",
+            `trace:${entry.traceType}:${entry.position}`,
+            { traceType: entry.traceType, position: entry.position, region: entry.region },
+            {},
+            entry.label || `${entry.traceType} ${entry.position}`,
+          )
+        ));
+      }
       if (effect.type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN) {
         return listScannableNebulaChoices(
           root,
@@ -1874,6 +1935,56 @@
         cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN,
         cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN,
       ].includes(effect.type)) return resolveNebulaScan(state, sessionEffect, choice, workingContext);
+      if (effect.type === aliens.amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD) {
+        // 移除自己的痕迹并结算该痕迹所在区域的 symbol 奖励
+        const alienState = getWorkingSlice(root, "aliens");
+        const revealedSlotId = alienState?.amiba?.revealedSlotId || null;
+        if (!revealedSlotId) return fail("AMIBA_SLOT_NOT_REVEALED", "阿米巴尚未揭示");
+        const removed = aliens.amiba.removePlayerTrace(
+          alienState,
+          revealedSlotId,
+          legal.target.traceType,
+          legal.target.position,
+          actor,
+        );
+        if (!removed.ok) return removed;
+        const region = legal.target.region || removed.reward?.region || null;
+        const spawnedEffects = [];
+        let irreversible = null;
+        if (region && typeof aliens.amiba.resolveRegionReward === "function") {
+          const resolved = aliens.amiba.resolveRegionReward(alienState, region);
+          for (const result of resolved.results || []) {
+            const reward = result.reward || {};
+            if (reward.gain) players.gainResources(actor, reward.gain);
+            const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+            for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
+              const gained = data.gainData(actor, { source: "amiba_region_reward", root });
+              if (!gained.ok) return gained;
+            }
+            const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+            for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
+              const drawn = cards.blindDraw(
+                getWorkingSlice(root, "cards"),
+                getWorkingSlice(root, "players"),
+                actor,
+                () => nextCommittedRandom(root),
+                { createCardInstance: createCommittedCardFactory(root) },
+              );
+              if (!drawn.ok) return drawn;
+            }
+            if (drawCount > 0) {
+              irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
+            }
+          }
+        }
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects,
+          events: removed.ok ? [{ type: "amiba_trace_removed", traceType: legal.target.traceType, position: legal.target.position, region }] : [],
+          irreversible,
+          historyType: "card_effect_decision",
+          history: { choiceId: legal.target.choiceId, region },
+        });
+      }
       if ([
         cardEffects.EFFECT_TYPES.CARD_MOVE,
         cardEffects.EFFECT_TYPES.FREE_MOVE,
@@ -2116,6 +2227,8 @@
       [cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF]: {},
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },
+      [aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD]: {},
+      [aliens.amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD]: { decisionKind: "choose_target" },
     });
 
     for (const [effectType, descriptor] of Object.entries(GENERIC_EFFECT_DESCRIPTORS)) {
