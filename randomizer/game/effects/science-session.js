@@ -721,7 +721,7 @@
         includeFinalize: true,
         turn: getWorkingSlice(root, "turn"),
       });
-      return queue.map((entry) => {
+      const mappedQueue = queue.map((entry) => {
         if ([scanEffects.EFFECT_TYPES.EARTH_SECTOR_SCAN,
           scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN,
           scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN].includes(entry.type)) {
@@ -790,11 +790,11 @@
       // 扇区结算时机（规则书 P13）：完成扇区不逐节点立即结算，等本次扫描 flow
       // 结束后统一结算。给队列最后一个节点打 finalize 标记，由其结算后的
       // spawnedEffects 触发一次 SETTLE（公共牌扫描由 done 分支负责）。
-      if (queue.length) {
-        const last = queue[queue.length - 1];
+      if (mappedQueue.length) {
+        const last = mappedQueue[mappedQueue.length - 1];
         if (last?.effect?.payload) last.effect.payload.finalize = true;
       }
-      return queue;
+      return mappedQueue;
     }
 
     function listScanAction4Choices(root, actorId) {
@@ -822,23 +822,22 @@
           "发射探测器",
         ));
       }
-      for (const rocket of getWorkingSlice(root, "pieces").rockets || []) {
-        if (rocket.playerId !== actor.id) continue;
-        for (const move of abilities.rocket.listMoveRequirements(context, actor, rocket.id)) {
-          if (move.requiredMovePoints > 1) continue;
-          choices.push(makeChoice(
-            "choose_target",
-            `scan4:move:${rocket.id}:${move.id}`,
-            {
-              mode: "move",
-              rocketId: rocket.id,
-              deltaX: move.deltaX,
-              deltaY: move.deltaY,
-            },
-            { requiredMovePoints: move.requiredMovePoints },
-            `移动 ${rocket.id} ${move.id}`,
-          ));
-        }
+      for (const move of abilities.rocket.listPlayerMoveChoices(context, actor, {
+        maxPoints: 1,
+        ignoreAsteroidRestriction: false,
+      })) {
+        choices.push(makeChoice(
+          "choose_target",
+          `scan4:move:${move.rocketId}:${move.directionId}`,
+          {
+            mode: "move",
+            rocketId: move.rocketId,
+            deltaX: move.deltaX,
+            deltaY: move.deltaY,
+          },
+          { requiredMovePoints: move.requiredMovePoints },
+          `移动 ${move.rocketId} ${move.label}`,
+        ));
       }
       return choices;
     }

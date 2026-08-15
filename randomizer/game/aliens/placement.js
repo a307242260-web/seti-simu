@@ -846,6 +846,13 @@
     return (layout.scalePercent / 100) * displayScale;
   }
 
+  // 统一痕迹显示宽度：14% 基础宽度 × 视觉缩放（scalePercent/100 × displayScale）。
+  // 渲染端必须用换算后的 widthPercent，不能把 scalePercent 直接当 CSS 宽度。
+  function getTraceDisplayWidthPercent(layout, displayScale) {
+    if (!layout || !Number.isFinite(Number(layout.scalePercent))) return null;
+    return roundPercent(ALIEN_TRACE_TOKEN_BASE_WIDTH_PERCENT * getTraceTokenVisualScale(layout, displayScale));
+  }
+
   function getExtraTraceCellSize(layout) {
     const visualScale = getTraceTokenVisualScale(layout, ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE);
     const widthPercent = ALIEN_TRACE_TOKEN_BASE_WIDTH_PERCENT * visualScale;
@@ -993,6 +1000,7 @@
     getAomomoStackTraceMarkerLayout,
     getAomomoBaseFromStackTraceMarkerLayout,
     getYichangdianAnomalyMarkerBoardPoint,
+    getTraceDisplayWidthPercent,
     getExtraTraceCellSize,
     getExtraTraceGridOriginCenter,
     getExtraTraceGridCenter,

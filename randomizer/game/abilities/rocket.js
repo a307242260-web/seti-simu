@@ -358,6 +358,30 @@
     return 1;
   }
 
+  // 统一移动入口：枚举玩家所有探测器的合法移动选项（含中文方向 label）。
+  // 卡牌移动、紫4 扫描移动、快速交易移动、probe turn、残余域移动全部走这里，
+  // 避免各入口重复枚举、文案不一致（MOVE_DIRECTIONS.label 是唯一中文来源）。
+  function listPlayerMoveChoices(context, player, options = {}) {
+    if (!context || !player) return [];
+    const maxPoints = Math.max(1, Math.round(Number(options.maxPoints) || 1));
+    const choices = [];
+    for (const rocket of (context.pieces?.rockets || [])) {
+      if (rocket.playerId !== player.id || rocket.surface !== "solar-board") continue;
+      for (const move of listMoveRequirements(context, player, rocket.id, options)) {
+        if (move.requiredMovePoints > maxPoints) continue;
+        choices.push({
+          rocketId: rocket.id,
+          deltaX: move.deltaX,
+          deltaY: move.deltaY,
+          directionId: move.id,
+          label: `${move.label || move.id}`,
+          requiredMovePoints: move.requiredMovePoints,
+        });
+      }
+    }
+    return choices;
+  }
+
   function launchProbe(context, options = {}) {
     const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) {
@@ -629,6 +653,7 @@
     getRequiredMovePoints,
     getRequiredMovePointsFromCoordinate,
     listMoveRequirements,
+    listPlayerMoveChoices,
     launchProbe,
     moveProbe,
     settleRocketsAfterSolarRotation,

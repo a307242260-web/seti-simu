@@ -1132,28 +1132,17 @@
           ?? 1
         ) || 1),
       );
-      const choices = [];
-      for (const rocket of listPlayerRockets(root, actor.id)) {
-        for (const direction of abilities.rocket.listMoveRequirements(
-          context,
-          actor,
-          rocket.id,
-          { ignoreAsteroidRestriction: false },
-        )) {
-          if (direction.requiredMovePoints > remaining) continue;
-          choices.push(makeChoice(
-            "choose_target",
-            `${rocket.id}:${direction.deltaX}:${direction.deltaY}`,
-            {
-              rocketId: rocket.id,
-              deltaX: direction.deltaX,
-              deltaY: direction.deltaY,
-            },
-            { requiredMovePoints: direction.requiredMovePoints, remaining },
-            `R${rocket.id} ${direction.label || `${direction.deltaX},${direction.deltaY}`}`,
-          ));
-        }
-      }
+      // 统一移动入口：所有移动来源（卡牌/紫4/快速交易/probe turn/残余域）共用
+      const choices = abilities.rocket.listPlayerMoveChoices(context, actor, {
+        maxPoints: remaining,
+        ignoreAsteroidRestriction: false,
+      }).map((move) => makeChoice(
+        "choose_target",
+        `${move.rocketId}:${move.deltaX}:${move.deltaY}`,
+        { rocketId: move.rocketId, deltaX: move.deltaX, deltaY: move.deltaY },
+        { requiredMovePoints: move.requiredMovePoints, remaining },
+        `R${move.rocketId} ${move.label}`,
+      ));
       choices.push(makeChoice("choose_target", "skip", { skip: true }, { remaining }, "结束移动"));
       return choices;
     }

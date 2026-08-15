@@ -172,28 +172,22 @@
     function moveChoices(root, pending) {
       const player = resolvePlayer(root, pending);
       if (!player) return [];
-      const choices = [];
-      for (const rocket of root.pieces?.rockets || []) {
-        if (rocket.playerId !== player.id || rocket.surface !== "solar-board") continue;
-        const moves = typeof rocketAbility?.listMoveRequirements === "function"
-          ? rocketAbility.listMoveRequirements(root, player, rocket.id)
-          : [];
-        for (const move of moves) {
-          choices.push({
-            target: {
-              kind: "quick-move",
-              choiceId: `move:${rocket.id}:${move.id}`,
-              rocketId: rocket.id,
-              deltaX: move.deltaX,
-              deltaY: move.deltaY,
-              direction: move.id,
-            },
-            payload: { direction: move.id },
-            summary: `移动探测器 ${rocket.id} ${move.label || move.id}`,
-          });
-        }
-      }
-      return choices;
+      // 统一移动入口：与卡牌/紫4/probe turn/残余域共用 listPlayerMoveChoices
+      const moves = typeof rocketAbility?.listPlayerMoveChoices === "function"
+        ? rocketAbility.listPlayerMoveChoices(root, player, { maxPoints: 1 })
+        : [];
+      return moves.map((move) => ({
+        target: {
+          kind: "quick-move",
+          choiceId: `move:${move.rocketId}:${move.directionId}`,
+          rocketId: move.rocketId,
+          deltaX: move.deltaX,
+          deltaY: move.deltaY,
+          direction: move.directionId,
+        },
+        payload: { direction: move.directionId },
+        summary: `移动探测器 ${move.rocketId} ${move.label}`,
+      }));
     }
 
     function openCardSelection(root, input = {}) {

@@ -199,34 +199,42 @@
       九折: {
         api: aliens.jiuzhe,
         layout: alienPlacement.getJiuzheTraceMarkerLayout,
+        displayScale: alienPlacement.JIUZHE_TRACE_TOKEN_DISPLAY_SCALE,
       },
       异常点: {
         api: aliens.yichangdian,
         layout: alienPlacement.getYichangdianTraceMarkerLayout,
+        displayScale: alienPlacement.YICHANGDIAN_TRACE_TOKEN_DISPLAY_SCALE,
       },
       方舟: {
         api: aliens.fangzhou,
         layout: alienPlacement.getFangzhouTraceMarkerLayout,
+        displayScale: alienPlacement.FANGZHOU_TRACE_TOKEN_DISPLAY_SCALE,
       },
       半人马: {
         api: aliens.banrenma,
         layout: alienPlacement.getBanrenmaTraceMarkerLayout,
+        displayScale: alienPlacement.BANRENMA_TRACE_TOKEN_DISPLAY_SCALE,
       },
       虫: {
         api: aliens.chong,
         layout: alienPlacement.getChongTraceMarkerLayout,
+        displayScale: alienPlacement.CHONG_TRACE_TOKEN_DISPLAY_SCALE,
       },
       阿米巴: {
         api: aliens.amiba,
         layout: alienPlacement.getAmibaTraceMarkerLayout,
+        displayScale: alienPlacement.AMIBA_TRACE_TOKEN_DISPLAY_SCALE,
       },
       奥陌陌: {
         api: aliens.aomomo,
         layout: alienPlacement.getAomomoTraceMarkerLayout,
+        displayScale: alienPlacement.AOMOMO_TRACE_TOKEN_DISPLAY_SCALE,
       },
       符文族: {
         api: aliens.runezu,
         layout: alienPlacement.getRunezuTraceMarkerLayout,
+        displayScale: alienPlacement.RUNEZU_TRACE_TOKEN_DISPLAY_SCALE,
       },
     };
     const displayedCardIndexField = {
@@ -295,6 +303,14 @@
               layout: {
                 ...structuredClone(layout),
                 percentY: Number(layout.percentY) - stackIndex * 5,
+                // 统一换算：species 痕迹按 14% 基础宽度 × (scalePercent/100) × displayScale，
+                // 不能把 scalePercent（62）直接当 CSS 宽度（会大 5 倍、盖过标记格）。
+                ...(layout?.scalePercent != null && species?.displayScale ? {
+                  widthPercent: alienPlacement.getTraceDisplayWidthPercent(
+                    layout,
+                    species.displayScale,
+                  ),
+                } : {}),
               },
               surface: "face",
             });

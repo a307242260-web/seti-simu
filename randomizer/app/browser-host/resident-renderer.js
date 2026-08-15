@@ -606,7 +606,11 @@
       if (Number.isFinite(Number(entry.layout?.percentY))) {
         token.style.setProperty("top", `${Number(entry.layout.percentY)}%`);
       }
-      if (Number.isFinite(Number(entry.layout?.scalePercent))) {
+      // 统一换算后的显示宽度优先；无换算值时退回 layout.scalePercent（state 面通用痕迹）
+      const displayWidth = Number(entry.layout?.widthPercent);
+      if (Number.isFinite(displayWidth) && displayWidth > 0) {
+        token.style.setProperty("--trace-scale", `${displayWidth}%`);
+      } else if (Number.isFinite(Number(entry.layout?.scalePercent))) {
         token.style.setProperty("--trace-scale", `${Number(entry.layout.scalePercent)}%`);
       }
       return token;

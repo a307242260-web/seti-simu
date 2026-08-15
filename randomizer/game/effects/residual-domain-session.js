@@ -417,28 +417,28 @@
     }
     if (payload.step === "free_move") {
       const used = new Set(payload.usedRocketIds || []);
-      const choices = (root.pieces?.rockets || []).flatMap((rocket) => {
-        if (rocket.playerId !== player.id || rocket.surface !== "solar-board" || used.has(rocket.id)) return [];
-        const context = {
-          state: root,
-          players: root.players,
-          pieces: root.pieces,
-          planets: root.planets,
-          aliens: root.aliens,
-          data: root.data,
-          cards: root.cards,
-          solarSystem: root.solarSystem,
-          turn: { ...root.turn, currentPlayerId: player.id },
-          tech: root.tech,
-        };
-        return gameAbilities.rocket.listMoveRequirements(context, player, rocket.id)
-          ?.filter((move) => Number(move.requiredMovePoints) <= 1)
-          .map((move) => choice(
-            "choose_target", `move:${rocket.id}:${move.id}`,
-            { rocketId: rocket.id, deltaX: move.deltaX, deltaY: move.deltaY },
-            { direction: move.id }, `移动 ${rocket.id} ${move.id}`,
-          )) || [];
-      });
+      const context = {
+        state: root,
+        players: root.players,
+        pieces: root.pieces,
+        planets: root.planets,
+        aliens: root.aliens,
+        data: root.data,
+        cards: root.cards,
+        solarSystem: root.solarSystem,
+        turn: { ...root.turn, currentPlayerId: player.id },
+        tech: root.tech,
+      };
+      // 统一移动入口：与卡牌/紫4/快速交易/probe turn 共用 listPlayerMoveChoices
+      const choices = gameAbilities.rocket.listPlayerMoveChoices(context, player, {
+        maxPoints: 1,
+      })
+        .filter((move) => !used.has(move.rocketId))
+        .map((move) => choice(
+          "choose_target", `move:${move.rocketId}:${move.directionId}`,
+          { rocketId: move.rocketId, deltaX: move.deltaX, deltaY: move.deltaY },
+          { direction: move.directionId }, `移动 ${move.rocketId} ${move.label}`,
+        ));
       return formalize(root, player.id, choices);
     }
     return [];
