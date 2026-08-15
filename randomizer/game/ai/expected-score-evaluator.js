@@ -88,6 +88,11 @@
       income: { ...(projection.progress?.income || {}) },
       roundNumber: Math.max(1, finite(projection.progress?.roundNumber) || 1),
       finalRoundNumber: Math.max(1, finite(projection.progress?.finalRoundNumber) || 4),
+      traceCount: Math.max(0, finite(projection.progress?.traceCount) || 0),
+      sectorWinRequirements: projection.progress?.sectorWinRequirements
+        ? structuredClone(projection.progress.sectorWinRequirements)
+        : null,
+      dataProgress: { ...(projection.progress?.dataProgress || {}) },
     };
   }
 
@@ -277,6 +282,10 @@
     };
   }
 
+  // 外星人 trace 价值：每个 trace 标记（第一放置 3-5 分即时 + 终局 trace 卡 2分/个
+  // + 外星人牌），保守估每个新增 trace ~3 分。外星人收益显著，倾向应高。
+  const TRACE_UNIT_VALUE = 3;
+
   function infrastructureDeltaValue(rootValue, leafValue) {
     const rootInfrastructure = rootValue.infrastructure;
     const leafInfrastructure = leafValue.infrastructure;
@@ -288,6 +297,8 @@
         techValue: 0,
         incomeDelta: Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [key, 0])),
         incomeValue: 0,
+        traceDelta: 0,
+        traceValue: 0,
       };
     }
     const remainingRounds = Math.max(
@@ -307,13 +318,21 @@
     const incomePerWindowValue = Object.entries(INCOME_UNIT_VALUES)
       .reduce((total, [key, unitValue]) => total + incomeDelta[key] * unitValue, 0);
     const incomeValue = incomePerWindowValue * remainingRounds;
+    // 外星人标记价值：新增 trace 标记 → 即时分 + 终局 trace 分 + 外星人牌
+    const traceDelta = Math.max(
+      0,
+      finite(leafInfrastructure.traceCount) - finite(rootInfrastructure.traceCount),
+    );
+    const traceValue = traceDelta * TRACE_UNIT_VALUE;
     return {
-      total: techValue + incomeValue,
+      total: techValue + incomeValue + traceValue,
       remainingRounds,
       gainedTechIds,
       techValue,
       incomeDelta,
       incomeValue,
+      traceDelta,
+      traceValue,
     };
   }
 
@@ -352,6 +371,11 @@
         income: { ...(facts.income || {}) },
         roundNumber: Math.max(1, finite(facts.roundNumber) || 1),
         finalRoundNumber: Math.max(1, finite(facts.finalRoundNumber) || 4),
+        traceCount: Math.max(0, finite(facts.traceCount) || 0),
+        sectorWinRequirements: facts.sectorWinRequirements
+          ? structuredClone(facts.sectorWinRequirements)
+          : null,
+        dataProgress: { ...(facts.dataProgress || {}) },
       },
     };
   }
