@@ -2271,3 +2271,16 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   white-space: nowrap;
 }
+
+/* 弃牌角标选卡弹窗 */
+.corner-picker-item {
+  align-items: center;
+}
+
+.corner-picker-card {
+  width: 42px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 5px;
+  flex: 0 0 auto;
+}

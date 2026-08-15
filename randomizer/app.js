@@ -1023,6 +1023,45 @@
     );
   }
 
+  // 弃牌角标：收集手牌中可结算角标的卡，弹选择后提交对应 card_corner 行动
+  function pickCardCornerAction() {
+    const projection = readProjection();
+    const actions = (projection?.controls?.quickActions || [])
+      .filter((candidate) => candidate.family === "card_corner" && !candidate.disabledReason);
+    if (!actions.length) {
+      window.alert("当前没有可结算的弃牌角标（需要手牌中有带角标的牌）");
+      return;
+    }
+    if (actions.length === 1) {
+      desktopActionBar.activateAction(actions[0].actionId);
+      return;
+    }
+    if (!els.cornerPickerOverlay || !els.cornerPickerList) return;
+    const handCards = projection?.resident?.browserReadModel?.render
+      ?.cardPanels?.handCards || [];
+    els.cornerPickerList.replaceChildren();
+    for (const action of actions) {
+      const cardId = String(action.target?.cardInstanceId || "");
+      const card = handCards.find((entry) => String(entry.id) === cardId);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "save-picker-item corner-picker-item";
+      const label = document.createElement("span");
+      label.textContent = card?.label || `手牌角标 ${cardId}`;
+      const icon = document.createElement("img");
+      icon.className = "corner-picker-card";
+      icon.src = card?.imageSrc || "";
+      icon.alt = "";
+      button.append(icon, label);
+      button.addEventListener("click", () => {
+        els.cornerPickerOverlay.hidden = true;
+        desktopActionBar.activateAction(action.actionId);
+      });
+      els.cornerPickerList.appendChild(button);
+    }
+    els.cornerPickerOverlay.hidden = false;
+  }
+
   // 读档：弹出存档列表（来自 seti-saves/），选择后恢复；服务不可用时回退 localStorage
   async function loadGameStateFromLocal() {
     let saves = [];
@@ -1441,6 +1480,10 @@
     scheduleRefresh();
   });
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
+  els.quickCardCornerButton?.addEventListener("click", pickCardCornerAction);
+  els.cornerPickerClose?.addEventListener("click", () => {
+    if (els.cornerPickerOverlay) els.cornerPickerOverlay.hidden = true;
+  });
   els.actionSaveStateButton?.addEventListener("click", saveGameStateToLocal);
   els.actionLoadStateButton?.addEventListener("click", loadGameStateFromLocal);
   els.startScreenLoadButton?.addEventListener("click", () => {
