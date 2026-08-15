@@ -12,6 +12,7 @@
   let solar = root.SetiSolarSystem;
   let rockets = root.SetiRockets;
   let planetStats = root.SetiPlanetStats;
+  let planetRewards = root.SetiPlanetRewards;
   let aliens = root.SetiAliens;
   let actionShared = root.SetiActionShared;
   if (typeof require === "function") {
@@ -26,6 +27,7 @@
     solar = solar || require("../../solar-system/core");
     rockets = rockets || require("../rockets");
     planetStats = planetStats || require("../planet-stats");
+    planetRewards = planetRewards || require("../actions/planet-rewards");
     aliens = aliens || require("../aliens");
     actionShared = actionShared || require("../actions/shared");
   }
@@ -42,6 +44,7 @@
     solar,
     rockets,
     planetStats,
+    planetRewards,
     aliens,
     actionShared,
   );
@@ -59,6 +62,7 @@
   solar,
   rockets,
   planetStats,
+  planetRewards,
   aliens,
   actionShared,
 ) {
@@ -175,6 +179,13 @@
     if (api) return api;
     if (typeof require === "function") return require("../effects/science-session");
     throw new TypeError("Card Play 缺少 Science production domain");
+  }
+
+  function getProbeTurnDomain() {
+    const api = typeof globalThis !== "undefined" ? globalThis.SetiProbeTurnSession : null;
+    if (api) return api;
+    if (typeof require === "function") return require("../effects/probe-turn-session");
+    throw new TypeError("Card Play 缺少 Probe Turn production domain");
   }
 
   // 构建探测器位置索引（供卡牌条件/任务判定）：
@@ -1327,6 +1338,19 @@
       const effect = sessionEffect.payload.cardEffect;
       const spawnedEffects = [];
       if (actionType === "land") {
+        // 标准行星登陆奖励（分数/数据/黄色痕迹等）与主行动登陆一致：
+        // 打牌触发登陆同样必须结算，否则会漏掉黄色外星人痕迹等行星奖励。
+        const standardRewards = planetRewards.buildRewardEffectsForAction("land", result);
+        for (const reward of standardRewards) {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: getProbeTurnDomain().EFFECT_TYPES.REWARD,
+              ownerId: actor.id,
+              payload: { reward },
+            },
+          });
+        }
         const reward = (effect.options?.afterLandRewards || []).find((entry) => (
           (entry.planetIds || []).includes(result.planetId)
           && (entry.includeSatellites || result.markerKind !== "satellite")

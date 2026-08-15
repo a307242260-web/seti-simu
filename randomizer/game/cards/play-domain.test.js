@@ -610,6 +610,62 @@ function runReturnPlayedCardToHandWhenProbeRadiallyAdjacent() {
   composition.dispose();
 }
 
+function runCardLandGrantsStandardPlanetRewards() {
+  // dlc_6（现场着陆直播）：打牌登陆木星必须结算标准行星奖励（7分 + 1黄色外星人痕迹）
+  const root = createCanonicalState("dlc_6.png");
+  const jupiter = solar.createSolarSnapshot(root.solarSystem).planetLocations
+    .find((planet) => planet.planetId === "jupiter");
+  assert.ok(jupiter, "测试状态必须存在木星");
+  root.pieces.rockets.push({
+    id: "rocket-1",
+    playerId: "p1",
+    color: "brown",
+    sectorX: jupiter.x,
+    sectorY: jupiter.y,
+    slotIndex: 1,
+    launchGrid: { x: jupiter.x, y: jupiter.y },
+  });
+  const { composition } = createIntegratedComposition("dlc_6.png", { state: root });
+  let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  let guard = 0;
+  let alienTraceSeen = false;
+  while (result.ok && composition.inspect().phase === "awaiting_input") {
+    const decision = composition.inspect().session.decision;
+    const choices = decision.choices;
+    if (choices.some((candidate) => candidate.target?.traceType === "yellow")) {
+      alienTraceSeen = true;
+    }
+    const choice = choices.find((candidate) => candidate.target?.skip === true)
+      || choices.find((candidate) => String(candidate.target?.planetId) === "jupiter")
+      || choices.find((candidate) => candidate.target?.traceType === "yellow")
+      || choices[0];
+    result = composition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
+      choice,
+    });
+    guard += 1;
+    assert.ok(guard < 40, `dlc_6 Decision 链异常: ${JSON.stringify(
+      choices.map((candidate) => JSON.stringify(candidate.target)),
+    )}`);
+  }
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.equal(alienTraceSeen, true, "打牌登陆木星必须出现黄色外星人痕迹决策（标准行星奖励）");
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.ok(Number(player.resources.score) >= 7, `打牌登陆木星必须给 7 分，实际 ${player.resources.score}`);
+  const slot1 = committed.aliens.aliens["1"];
+  assert.equal(
+    slot1?.traces?.yellow?.firstPlaced,
+    true,
+    "打牌登陆木星后槽位1黄色痕迹必须已放置",
+  );
+  composition.dispose();
+}
+
 runFixedScan();
 runColorDecisions();
 runDirectRewards();
