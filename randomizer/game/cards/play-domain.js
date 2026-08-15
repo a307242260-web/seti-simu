@@ -15,6 +15,7 @@
   let planetRewards = root.SetiPlanetRewards;
   let aliens = root.SetiAliens;
   let actionShared = root.SetiActionShared;
+  let yichangdian = root.SetiAlienYichangdian;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     cards = cards || require("./deck");
@@ -30,6 +31,7 @@
     planetRewards = planetRewards || require("../actions/planet-rewards");
     aliens = aliens || require("../aliens");
     actionShared = actionShared || require("../actions/shared");
+    yichangdian = yichangdian || require("../aliens/yichangdian");
   }
 
   const api = factory(
@@ -47,6 +49,7 @@
     planetRewards,
     aliens,
     actionShared,
+    yichangdian,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiCardPlayDomain = api;
@@ -65,6 +68,7 @@
   planetRewards,
   aliens,
   actionShared,
+  yichangdian,
 ) {
   "use strict";
 
@@ -2140,6 +2144,121 @@
         });
       }
     }
+
+    // 异常点专属 playEffects 执行器：y1 下一异常奖励 / y4 拿公共牌全部 / y9 发射后异常移动。
+    function executeYichangdianNextAnomalyReward(state, sessionEffect, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      const alienState = getWorkingSlice(root, "aliens");
+      const earth = solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem"))
+        .planetLocations?.find((planet) => planet.planetId === "earth");
+      const hasModule = typeof yichangdian?.getNextAnomalySectorX === "function"
+        && typeof yichangdian.getAnomalyBySectorX === "function"
+        && typeof yichangdian.getAnomalyReward === "function";
+      if (!earth || !hasModule) {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_anomaly_target" } });
+      }
+      const nextX = yichangdian.getNextAnomalySectorX(alienState, earth.x);
+      const anomaly = nextX == null ? null : yichangdian.getAnomalyBySectorX(alienState, nextX);
+      if (!anomaly) {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_anomaly" } });
+      }
+      const reward = yichangdian.getAnomalyReward(anomaly.markerId) || {};
+      const events = [];
+      const spawnedEffects = [];
+      if (reward.gain && Object.keys(reward.gain).some((key) => Number(reward.gain[key]) !== 0)) {
+        players.gainResources(actor, reward.gain);
+        events.push({ type: "yichangdian_anomaly_reward", markerId: anomaly.markerId, gain: clone(reward.gain) });
+      }
+      const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+      for (let index = 0; index < dataCount; index += 1) {
+        const gained = data.gainData(actor, { source: "yichangdian_anomaly", root });
+        if (!gained.ok) return gained;
+      }
+      if (reward.pickCard) {
+        spawnedEffects.push(createSpawnedCardEffect({
+          id: `y1-pick-${anomaly.markerId}`,
+          type: cardEffects.REWARD_TYPES.PICK_CARD,
+          label: "异常奖励：精选 1 张牌",
+          options: {},
+        }, actor.id, sessionEffect.payload?.cardInstanceId || null));
+      }
+      if (reward.traceType) {
+        spawnedEffects.push(createSpawnedCardEffect({
+          id: `y1-trace-${anomaly.markerId}`,
+          type: cardEffects.REWARD_TYPES.ALIEN_TRACE,
+          label: "异常奖励：外星人痕迹",
+          options: { allowedTraceTypes: [reward.traceType] },
+        }, actor.id, sessionEffect.payload?.cardInstanceId || null));
+      }
+      return cardEffectResult(state, root, sessionEffect, { events, spawnedEffects });
+    }
+
+    function executeYichangdianPublicAll(state, sessionEffect, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      const cardsState = getWorkingSlice(root, "cards");
+      const slots = (cardsState.publicCards || []).map((card, index) => ({ card, index }))
+        .filter((entry) => Boolean(entry.card));
+      if (!slots.length) {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_public_cards" } });
+      }
+      const taken = [];
+      for (const entry of slots) {
+        const picked = cards.pickFromPublic(
+          cardsState,
+          getWorkingSlice(root, "players"),
+          actor,
+          entry.index,
+          nextCommittedRandom,
+          { createCardInstance: createCommittedCardFactory(root) },
+        );
+        if (!picked.ok) return picked;
+        taken.push(picked.card);
+      }
+      return cardEffectResult(state, root, sessionEffect, {
+        events: [{ type: "yichangdian_public_all", count: taken.length, cardIds: taken.map((card) => card.id) }],
+        irreversible: { code: "hidden_card_reveal", reason: "拿公共牌后补牌翻出隐藏牌" },
+      });
+    }
+
+    function executeYichangdianLaunchAnomalyMove(state, sessionEffect, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      const alienState = getWorkingSlice(root, "aliens");
+      const earth = solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem"))
+        .planetLocations?.find((planet) => planet.planetId === "earth");
+      const inAnomaly = Boolean(earth) && typeof yichangdian?.getAnomalyBySectorX === "function"
+        && Boolean(yichangdian.getAnomalyBySectorX(alienState, earth.x));
+      if (!inAnomaly) {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "earth_not_in_anomaly" } });
+      }
+      return cardEffectResult(state, root, sessionEffect, {
+        spawnedEffects: [createSpawnedCardEffect({
+          id: "y9-anomaly-move",
+          type: cardEffects.EFFECT_TYPES.CARD_MOVE,
+          label: "异常扇区：1 移动",
+          options: { movementPoints: 1 },
+        }, actor.id, sessionEffect.payload?.cardInstanceId || null)],
+        events: [{ type: "yichangdian_launch_anomaly_move", playerId: actor.id }],
+      });
+    }
+
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_NEXT_ANOMALY_REWARD),
+      (state, sessionEffect, workingContext) => executeYichangdianNextAnomalyReward(state, sessionEffect, workingContext),
+    );
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_PUBLIC_ALL),
+      (state, sessionEffect, workingContext) => executeYichangdianPublicAll(state, sessionEffect, workingContext),
+    );
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_LAUNCH_ANOMALY_MOVE),
+      (state, sessionEffect, workingContext) => executeYichangdianLaunchAnomalyMove(state, sessionEffect, workingContext),
+    );
 
     function createEffectGroup(_state, action) {
       if (action?.family !== "play_card") {

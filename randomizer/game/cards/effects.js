@@ -946,7 +946,7 @@
     "yichangdian_7.webp": withSource("yichangdian_7.webp", {
       cardType: 0,
       playEffects: Object.freeze([
-        effect("y7-alien-trace", EFFECT_TYPES.YICHANGDIAN_ALIEN_TRACE, "获得任意外星人痕迹", "alien_trace"),
+        alienTraceEffect("y7-alien-trace", "获得任意外星人痕迹"),
       ]),
     }),
     "yichangdian_8.webp": withSource("yichangdian_8.webp", {
