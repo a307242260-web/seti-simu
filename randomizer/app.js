@@ -581,6 +581,12 @@
       return {
         id: card?.id || card?.cardId || fallbackLabel,
         definitionId: card?.cardId || entry?.card_id || null,
+        // 任务奖励已获取标记：完成过效果任务或阿米巴/虫任务
+        taskCompleted: Boolean(
+          (card?.cardEffectState?.completedTaskIds || []).length > 0
+          || card?.amibaTaskCompleted
+          || card?.chongTaskCompleted
+        ),
         imageSrc: fangzhouDefinition?.src
           || (alienDefinition && alienModule?.getCardSrc
             ? alienModule.getCardSrc(alienDefinition.index)

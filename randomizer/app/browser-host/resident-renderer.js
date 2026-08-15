@@ -207,6 +207,16 @@
       image.width = 747;
       image.height = 1040;
       image.decoding = "async";
+      if (card?.taskCompleted) {
+        image.classList.add("is-task-completed");
+        const wrap = document.createElement("span");
+        wrap.className = "reserved-card-tile";
+        const badge = document.createElement("span");
+        badge.className = "task-completed-badge";
+        badge.textContent = "已完成";
+        wrap.append(image, badge);
+        return wrap;
+      }
       return image;
     }
 
