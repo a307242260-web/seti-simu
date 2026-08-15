@@ -2208,3 +2208,14 @@ body {
   border: 1px dashed rgba(255, 255, 255, 0.45);
   box-shadow: none;
 }
+
+/* 开始页读档按钮（次级样式） */
+.start-screen-load-button {
+  background: rgba(160, 210, 255, 0.12);
+  border-color: rgba(160, 210, 255, 0.4);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.start-screen-load-button:hover {
+  background: rgba(160, 210, 255, 0.22);
+}

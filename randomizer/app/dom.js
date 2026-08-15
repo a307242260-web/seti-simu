@@ -44,6 +44,7 @@
       actionUndoButton: documentRef.getElementById("action-undo-button"),
       actionSaveStateButton: documentRef.getElementById("action-save-state-button"),
       actionLoadStateButton: documentRef.getElementById("action-load-state-button"),
+      startScreenLoadButton: documentRef.getElementById("start-screen-load-button"),
       savePickerOverlay: documentRef.getElementById("save-picker-overlay"),
       savePickerList: documentRef.getElementById("save-picker-list"),
       savePickerClose: documentRef.getElementById("save-picker-close"),

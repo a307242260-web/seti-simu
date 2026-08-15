@@ -375,16 +375,16 @@
               : []),
             ...(alienId === "阿米巴"
               ? [...aliens.amiba.OUTER_SYMBOL_SLOTS, ...aliens.amiba.INNER_SYMBOL_SLOTS]
-                .flatMap((slotId) => {
+                .flatMap((symbolSlotId) => {
                   const layout = alienPlacement.getAmibaSymbolMarkerLayout(
                     slotId,
-                    slotId,
+                    symbolSlotId,
                   );
                   if (!layout) return [];
-                  const symbolId = aliens.amiba.getSymbolEntry(state.aliens, slotId)
+                  const symbolId = aliens.amiba.getSymbolEntry(state.aliens, symbolSlotId)
                     ?.symbolId || null;
                   return [{
-                    id: `amiba:symbol:${slotId}`,
+                    id: `amiba:symbol:${symbolSlotId}`,
                     traceType: "symbol",
                     color: null,
                     imageSrc: symbolId ? aliens.amiba.getSymbolSrc(symbolId) : "",
@@ -1011,19 +1011,25 @@
       console.warn("本地存盘服务不可用，尝试 localStorage", error);
     }
     if (saves.length) {
-      renderSavePicker(saves);
-      return;
+      renderSavePicker(saves, { fromStartScreen: true });
+      return false;
     }
     const raw = localStorage.getItem("seti-browser-save");
     if (!raw) {
       window.alert("没有找到存档（seti-saves/ 目录为空且 localStorage 无存档）");
-      return;
+      return false;
     }
-    restoreFromPayload(raw, "localStorage");
+    return restoreFromPayload(raw, "localStorage") === true;
   }
 
-  function renderSavePicker(saves) {
+  function renderSavePicker(saves, options = {}) {
     if (!els.savePickerOverlay || !els.savePickerList) return;
+    const finishRestore = () => {
+      if (options.fromStartScreen) {
+        els.startScreen.hidden = true;
+        if (els.appWrap) els.appWrap.hidden = false;
+      }
+    };
     els.savePickerList.replaceChildren();
     for (const entry of saves) {
       const button = document.createElement("button");
@@ -1052,7 +1058,8 @@
             window.alert(`读取存档失败：${result?.message || name}`);
             return;
           }
-          restoreFromPayload(result.content, `seti-saves/${name}`);
+          const restored = restoreFromPayload(result.content, `seti-saves/${name}`);
+          if (restored) finishRestore();
         } catch (error) {
           window.alert(`读取存档失败：${error?.message || error}`);
         }
@@ -1092,6 +1099,7 @@
       `已从 ${sourceName} 恢复游戏（stateVersion ${payload.stateVersion ?? "?"}）`
       + (trajectoryRecording ? "；轨迹已从恢复点重新录制" : ""),
     );
+    return true;
   }
 
   ruleComposition.subscribe((event) => {
@@ -1400,6 +1408,14 @@
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
   els.actionSaveStateButton?.addEventListener("click", saveGameStateToLocal);
   els.actionLoadStateButton?.addEventListener("click", loadGameStateFromLocal);
+  els.startScreenLoadButton?.addEventListener("click", () => {
+    loadGameStateFromLocal().then((restored) => {
+      if (restored) {
+        els.startScreen.hidden = true;
+        if (els.appWrap) els.appWrap.hidden = false;
+      }
+    });
+  });
   els.savePickerClose?.addEventListener("click", () => {
     if (els.savePickerOverlay) els.savePickerOverlay.hidden = true;
   });
