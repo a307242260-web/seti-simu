@@ -63,12 +63,17 @@ function printReplayHistory(save, roundFilter) {
     ? (s, i) => { const perRound = Math.ceil(steps.length / 3); return Math.floor(i / perRound) + 1 === Number(roundFilter); }
     : () => true;
   let shown = 0;
-  for (let i = 0; i < steps.length && shown < 60; i++) {
+  for (let i = 0; i < steps.length && shown < 80; i++) {
     const s = steps[i];
     if (!filter(s, i)) continue;
     const a = s.action || {};
     shown += 1;
-    console.log(`  #${i} [${s.actorPlayerId || "?"}] ${a.family || "?"} ${a.target ? JSON.stringify(a.target).slice(0, 80) : ""}`);
+    const aft = s.after || {};
+    const white = aft.p && aft.p["player-white"];
+    const stateStr = white
+      ? ` 白色[分${white[0]} 钱${white[1]} 能${white[2]} 宣${white[3]} 手${white[4]} 留${white[5]}]`
+      : "";
+    console.log(`  #${i} R${aft.r ?? "?"}T${aft.t ?? "?"} [${s.actorPlayerId || "?"}] ${a.family || "?"} ${stateStr} ${a.target ? JSON.stringify(a.target).slice(0, 60) : ""}`);
   }
 }
 

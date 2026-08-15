@@ -857,28 +857,56 @@
     return canonicalProjection.projectSource({ viewer: getViewer() });
   }
 
+  // 每步后的紧凑状态摘要（供学习工具看"决策时的状态 + 选择"）：
+  // { r: round, t: turn, c: currentPlayerId, p: { [playerId]: [score, credits, energy, publicity, hand, reserved] } }
+  function browserStateSummary() {
+    const projection = readProjection();
+    const st = projection?.state || projection || {};
+    const players = st.players?.players || st.players || [];
+    const summary = { p: {} };
+    const turn = st.turn || {};
+    summary.r = turn.roundNumber ?? null;
+    summary.t = turn.turnNumber ?? null;
+    summary.c = turn.currentPlayerId ?? null;
+    for (const p of players) {
+      const r = p.resources || p;
+      summary.p[p.id || p.playerId || p.color] = [
+        r.score ?? p.score ?? 0,
+        r.credits ?? p.credits ?? 0,
+        r.energy ?? p.energy ?? 0,
+        r.publicity ?? p.publicity ?? 0,
+        (p.hand || []).length,
+        (p.reservedCards || []).length,
+      ];
+    }
+    return summary;
+  }
+
+  function recordBrowserReplayStep(action, extra = {}) {
+    if (typeof structuredClone !== "function") return;
+    browserReplaySteps.push({
+      stepIndex: browserReplaySteps.length,
+      actorPlayerId: action.actorId || action.actorPlayerId || null,
+      action: structuredClone(action),
+      phase: extra.phase || null,
+      decisionId: extra.decisionId ?? null,
+      decisionVersion: extra.decisionVersion ?? null,
+      after: browserStateSummary(),
+    });
+  }
+
   function rawDispatchAction(action) {
     const result = action?.phase === "quick"
       ? ruleComposition.inputPort.submitQuickAction(action)
       : ruleComposition.inputPort.submitAction(action);
-    if (result?.ok && typeof structuredClone === "function") {
-      browserReplaySteps.push({
-        stepIndex: browserReplaySteps.length,
-        actorPlayerId: action.actorId || action.actorPlayerId || null,
-        action: structuredClone(action),
-        phase: action.phase || null,
-      });
-    }
+    if (result?.ok) recordBrowserReplayStep(action, { phase: action.phase || null });
     return result;
   }
 
   function rawSubmitDecision(submission) {
     const result = ruleComposition.inputPort.submitDecision(submission);
-    if (result?.ok && typeof structuredClone === "function" && submission?.choice) {
-      browserReplaySteps.push({
-        stepIndex: browserReplaySteps.length,
-        actorPlayerId: submission.ownerId || submission.choice?.actorId || null,
-        action: structuredClone(submission.choice),
+    if (result?.ok && submission?.choice) {
+      recordBrowserReplayStep(submission.choice, {
         phase: "conditional",
         decisionId: submission.decisionId || null,
         decisionVersion: submission.decisionVersion ?? null,
