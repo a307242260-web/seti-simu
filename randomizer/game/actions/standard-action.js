@@ -21,9 +21,14 @@
     "choose_final_scoring", "accept_optional_effect",
   ]);
   const ALL_FAMILIES = Object.freeze([...TOP_LEVEL_FAMILIES, ...CONDITIONAL_FAMILIES]);
-  const PHASE_BY_FAMILY = Object.freeze(Object.fromEntries(ALL_FAMILIES.map((family, index) => [
+  // 相位用显式 family 映射，不依赖 ALL_FAMILIES 索引（插入新 family 会移位索引，
+  // 曾导致 end_turn 从 turn_control 错标为 conditional）。
+  const PHASE_BY_FAMILY = Object.freeze(Object.fromEntries(ALL_FAMILIES.map((family) => [
     family,
-    index < 8 ? "main" : index < 14 ? "quick" : index === 14 ? "turn_control" : "conditional",
+    CONDITIONAL_FAMILIES.includes(family) ? "conditional"
+      : family === "end_turn" ? "turn_control"
+        : TOP_LEVEL_FAMILIES.slice(0, 8).includes(family) ? "main"
+          : "quick",
   ])));
 
   function clone(value) {
