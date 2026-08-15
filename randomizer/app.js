@@ -57,10 +57,13 @@
     return random;
   }
 
-  // 固定盘面（seti-104-board-v1，seed seti-104-official-v1）：RNG 起点契约 =
-  // hashSeed(seed)，Production Composition 的 createInitialState 显式从该状态开始，
-  // Browser 与 Simulation 用同一 seed 得到同一盘面。
-  const FIXED_BOARD_SEED = "seti-104-official-v1";
+  // 固定盘面（开始界面下拉选择）：RNG 起点契约 = hashSeed(seed)，Production
+  // Composition 的 createInitialState 显式从该状态开始，Browser 与 Simulation
+  // 用同一 seed 得到同一盘面。
+  const FIXED_BOARDS = Object.freeze({
+    "seti-107-move": "双发盘面（寰宇动力 / 异星实验室）",
+    "free-analyze-board": "免电分析盘面（深空探测 / 寰宇动力）",
+  });
   function hashSeed(seed) {
     const text = String(seed);
     let hash = 2166136261;
@@ -984,12 +987,12 @@
     return actions.length === 1 ? actions[0] : null;
   }
 
-  // 固定盘面勾选 = 预填固定 seed 并锁定；取消后清空，回到普通局。
+  // 选择固定盘面 = 预填对应 seed 并锁定；选"无"后清空，回到普通局。
   function syncFixedBoardSeedInput() {
     if (!els.startSeedInput) return;
-    const fixed = els.startFixedBoard?.checked === true;
-    if (fixed) {
-      els.startSeedInput.value = FIXED_BOARD_SEED;
+    const fixedSeed = els.startFixedBoard?.value || "";
+    if (fixedSeed) {
+      els.startSeedInput.value = fixedSeed;
       els.startSeedInput.disabled = true;
     } else {
       els.startSeedInput.value = "";
@@ -998,10 +1001,10 @@
   }
 
   function startNewGame() {
-    const fixedBoard = els.startFixedBoard?.checked === true;
+    const fixedSeed = els.startFixedBoard?.value || "";
     const seedText = (els.startSeedInput?.value || "").trim();
-    const seeded = Boolean(seedText || fixedBoard);
-    const seed = seedText || (fixedBoard ? FIXED_BOARD_SEED : null);
+    const seeded = Boolean(seedText || fixedSeed);
+    const seed = seedText || fixedSeed || null;
     // 有种子（固定盘面或自定义）时与训练侧 Simulation 对齐：4 人局、weak_start、
     // RNG 起点 = hashSeed(seed)。
     const activePlayerCount = seeded

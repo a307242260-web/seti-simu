@@ -34,8 +34,12 @@
           <span class="start-screen-option-label">录制本局轨迹（self-play 格式）</span>
         </label>
         <label class="start-screen-option start-screen-record-option" for="start-fixed-board">
-          <input class="start-screen-checkbox" type="checkbox" id="start-fixed-board">
-          <span class="start-screen-option-label">固定盘面（AI 训练盘面 seti-104-board-v1）</span>
+          <span class="start-screen-option-label">固定盘面</span>
+          <select class="start-screen-select" id="start-fixed-board">
+            <option value="">无</option>
+            <option value="seti-107-move">双发盘面（寰宇动力）</option>
+            <option value="free-analyze-board">免电分析盘面（深空探测）</option>
+          </select>
         </label>
         <label class="start-screen-option start-screen-seed-option" for="start-seed-input">
           <span class="start-screen-option-label">随机种子</span>
