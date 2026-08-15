@@ -491,7 +491,12 @@
     if (!cornerPurpose.supported) return unavailable(outcome, cornerPurpose.reason);
     const control = CONTROL_FAMILIES.has(action?.family);
     const conditional = action?.phase === "conditional";
-    const selectable = best.strategicValue.primaryValue > 0 || control || conditional;
+    // 移动不是主行动：quick 相位的 move 是随时可用的免费快速行动（用电/移动牌/牌
+    // corner/打牌效果/紫4扫描/公司能力），不应因"没有即时分/tech/income 增量"被过滤。
+    // 它作为探测路线的达成步骤获得路线价值，无绑定路线时保持可选项但排末尾。
+    const moveIsQuickAction = action?.family === "move";
+    const selectable = best.strategicValue.primaryValue > 0 || control || conditional
+      || moveIsQuickAction;
     if (!selectable) return unavailable(outcome, "no-score-tech-or-income-gain");
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
