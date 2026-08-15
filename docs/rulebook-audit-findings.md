@@ -44,13 +44,13 @@
 | M4 | 钻探者（虫）卡牌「不计入手牌上限」与「不可用于资源转换」未实现 | 基础 P20「除钻探者卡牌以外，此类卡牌不被计入手牌上限」；P28 FAQ「钻探者卡牌不被视为手牌，不可被用于资源转换」 | `effects/probe-turn-session.js`（PASS 弃牌计数与候选）、`production-composition.js`（资源转换弃牌候选） | ✅ **已修复**：PASS 手牌上限只数非虫牌、弃牌候选排除虫牌；快速交易「2 张牌换资源」候选只从非虫牌枚举（索引映射回原始手牌） |
 | M5 | 方舟揭示「按首痕迹数量各获得 1 次基础奖励」未实现 | `assets/aliens/方舟/implementation.md:18` | 原 `effects/residual-domain-session.js` 对 fangzhou 跳过发牌；`fangzhou.js` 只发 card2 | ✅ **已修复**：方舟揭示时按玩家在该槽位首痕迹数量逐次翻 card1 基础奖励牌（gain/数据/盲抽/额外公共扫描），奖励随揭示 spawnedEffects 结算（`revealReadyAliens` 汇总传播） |
 | M6 | 方舟解锁 card2 分支与「揭示后 state 额外痕迹位仍可用」不可达 | `assets/aliens/方舟/implementation.md:24-26`；`docs/alien-design.md:52`；`docs/mechanics-reference.md:156` | 原 `fangzhou.js` `unlockCard2` 仅测试调用；`science-session.js` 对已揭示槽位只生成正面格位 | ✅ **已修复**：已揭示槽位的痕迹决策新增「state 额外痕迹位（3 分/枚）」选项（规则书 P20 冗余位）；方舟槽位额外提供「解锁方舟牌」选项（`unlockCard2` → 解锁牌进手牌） |
-| M7 | 快速起始牌 10/11（外星人痕迹）放置时授予首痕迹奖励 | 扩展 P5「上半部分效果会让玩家放置一个人造卫星，生命迹象，或是信号。如此做时，玩家不会获得任何效果奖励或资源」 | `initial-cards.js:531-548` `applyAlienStateTraceReward`（与卫星放置 `noReward: true` 不一致） | 🔍 若实体卡下半部分恰为同值奖励则总账正确但归属错误；需对照实体快速起始牌确认 |
+| M7 | 快速起始牌 10/11（外星人痕迹）放置时授予首痕迹奖励 | 扩展 P5「上半部分效果会让玩家放置一个人造卫星，生命迹象，或是信号。如此做时，玩家不会获得任何效果奖励或资源」 | 原 `initial-cards.js` `applyAlienStateTraceReward` | ✅ **已修复（经用户确认）**：快速起始牌（初始牌）上半部分放置不给任何奖励——初始牌 10/11 放置痕迹不再授予首痕迹奖励（删除 `applyAlienStateTraceReward`），只执行放置/可能揭示；初始牌上的（下半部分）奖励照常结算 |
 
 ## 四、轻微 / 展示 / 待核对 ⬜
 
 | # | 问题 | 代码位置 | 备注 |
 |---|---|---|---|
-| L1 | 主牌库抽牌池 182 张 vs 官方 138+42=180（b_139 冥王星自定义保留牌、b_140 促销牌「Gateway to Mars」混入） | `card-catalog.js`；`cards/deck.js:351-357` | 🔍 促销牌有意混入属 house rule，需确认 |
+| L1 | 主牌库抽牌池 182 张 vs 官方 138+42=180（b_139 冥王星自定义保留牌、b_140 促销牌「Gateway to Mars」混入） | `card-catalog.js`；`cards/deck.js` | ⚪ **用户确认保持现状**（促销牌混入属 house rule，接受） |
 | L2 | 轮次显示「第 1~4 轮」vs 规则书「第 2~5 轮」 | `resident-renderer.js:99` | ✅ **已修复**：展示 +1（内部第 1~4 轮 = 扩展第 2~5 轮），测试同步更新 |
 | L3 | 火星首登陆「任选两个数据位之一」简化为固定 2/1 数据 | `actions/planet-rewards.js:267-271` | 功能等价（2>1，无理性玩家会先选 1 数据位） |
 | L4 | 冗余（额外）痕迹无限堆叠 vs 规则书「固定冗余位置」设计 | `aliens/state.js:203-207` | 规则书未明示上限，观察项 |
@@ -61,7 +61,7 @@
 | L9 | `TECH_TYPE_LABELS` 三色标签错位（蓝=探测器/橙=望远镜/紫=计算机，与官方及自身行为相反） | `tech/catalog.js:19-22` | ✅ **已修复**：改为官方对应（橙=探测器、紫=望远镜、蓝=计算机），仅影响训练报告展示 |
 | L10 | 快速起始牌不能作为收入牌插入 | `initial-setup.js`（收入插入仅列手牌） | 🔍 **待实体核对**：仅画有收入角标的快速起始牌可插入收入；仓库初始牌模型无 incomeCode 概念，需确认哪些初始牌有收入角标后扩展模型 |
 | L11 | 收入「每个图标单独结算」（新卡可立即用于下一图标）未建模，聚合一次性结算 | `initial-setup.js`（初始收入按 `incomeIncreaseCount` 生成逐图标队列，`paymentChoices` 实时读手牌） | ⚪ **已满足**：初始收入按图标逐个结算，新获得的卡牌（盲抽/奖励）可立即用于下一图标；轮初收入（`round_start_income`）聚合发放符合规则书 P19（起始收入牌+全部插入卡牌的收入资源一起给） |
-| L12 | 金色板块仅 3 个档位（1/2/3），实体疑为 4 槽 4 值 | `final-scoring.js:171-176`、`end-game-scoring.js:524-529` | 🔍 4 人局第 3/4 位玩家同取第 3 档；规则书 P18「各自价值不同的分数」、槽位数值为图片无法从 PDF 核对 |
+| L12 | 金色板块仅 3 个档位（1/2/3），实体疑为 4 槽 4 值 | `final-scoring.js:171-176`、`end-game-scoring.js:524-529` | ⚪ **用户确认实现正确**：3 槽位（1/2/3），3 号位可无限放多个标记 |
 | L13 | 文档「3 人局」vs 规则书「2-3 人局」中立里程碑 | `docs/mechanics-reference.md:149` | 与 S1 同源；仓库只支持 3/4 人局 |
 
 ## 五、已确认非问题 ⚪

@@ -528,25 +528,6 @@
     });
   }
 
-  function applyAlienStateTraceReward(player, trace, placementResult, results) {
-    if (!placementResult?.ok) return null;
-    const reward = placementResult.extraOnly
-      ? aliens.getExtraTraceReward?.(trace.alienSlotId, trace.traceType)
-      : aliens.getFirstTraceRewardForSlot?.(trace.alienSlotId);
-    const gain = reward?.gain || null;
-    if (!hasNonZeroGain(gain)) return null;
-
-    players.gainResources(player, gain);
-    return pushResult(results, {
-      ok: true,
-      type: "alienTraceReward",
-      rewardKind: placementResult.extraOnly ? "stateExtraTrace" : "firstTrace",
-      trace: { ...trace },
-      gain: { ...gain },
-      message: `state${placementResult.extraOnly ? "额外" : "首"}痕迹奖励：${formatResourceGain(gain)}`,
-    });
-  }
-
   function applyAlienTrace(context, player, trace, results, events) {
     if (!trace || !context.aliens) return;
     const result = aliens.placeFirstTrace(
@@ -564,16 +545,16 @@
       type: "alienTrace",
       trace,
       revealed: revealResult || null,
+      // 扩展规则书 P5：快速起始牌（初始牌）上半部分放置生命迹象不给任何奖励。
       message: revealResult?.ok ? `${result.message}；${revealResult.message}` : result.message,
     });
-    const stateReward = applyAlienStateTraceReward(player, trace, result, results);
     if (result.ok) {
       events.push({
         type: "alienTracePlaced",
         alienSlotId: trace.alienSlotId,
         traceType: trace.traceType,
         playerId: player.id,
-        reward: stateReward?.gain || null,
+        reward: null,
       });
     }
   }
