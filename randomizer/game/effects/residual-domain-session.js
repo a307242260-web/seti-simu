@@ -907,7 +907,15 @@
     const card = allCards.find((candidate) => String(candidate?.id) === String(cardInstanceId));
     if (!card) return null;
     const entry = cards.getCatalogEntryForCard(card);
-    return (entry ? cards.getCardSrc(entry) : null) || card.src || null;
+    if (entry) return cards.getCardSrc(entry);
+    // 外星人牌（阿米巴/奥陌陌/虫等）不在标准卡表，用物种模块的卡图
+    for (const module of Object.values(SPECIES_MODULES || {})) {
+      if (typeof module?.getCardDefinition !== "function" || typeof module?.getCardSrc !== "function") continue;
+      if (card.set && !String(card.set).startsWith("alien:")) continue;
+      const definition = module.getCardDefinition(card);
+      if (definition) return module.getCardSrc(definition.index);
+    }
+    return card.src || null;
   }
 
   function cardDecisionChoices(root, effect) {
