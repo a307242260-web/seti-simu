@@ -437,7 +437,16 @@
                   traceType: "panel-fossil",
                   color: null,
                   imageSrc: aliens.chong.getFossilSrc(entry.fossilId),
-                  layout: structuredClone(layout),
+                  // 与 species 痕迹同一换算：不能把 scalePercent（62）直接当 CSS 宽度
+                  layout: {
+                    ...structuredClone(layout),
+                    ...(layout?.scalePercent != null ? {
+                      widthPercent: alienPlacement.getTraceDisplayWidthPercent(
+                        layout,
+                        alienPlacement.CHONG_TRACE_TOKEN_DISPLAY_SCALE,
+                      ),
+                    } : {}),
+                  },
                   surface: "face",
                   // 面板化石奖励信息（供点击查看）
                   fossil: {
