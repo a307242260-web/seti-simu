@@ -1414,11 +1414,18 @@
       const moveReward = cards.getDiscardActionMoveRewardForCard(card);
       const effects = [];
       for (let index = 0; index < Math.max(1, repeat); index += 1) {
-        if (reward?.gain) effects.push({
+        if (reward?.gain && Object.keys(reward.gain).some((key) => Number(reward.gain[key]) !== 0)) effects.push({
           id: `corner:${card.id}:${index}:reward`,
           type: cardEffects.REWARD_TYPES.GAIN_RESOURCES,
           label: "卡牌角标奖励",
           options: { gain: clone(reward.gain) },
+        });
+        // 数据角标（discard code 1 = 1 数据）也必须随 repeat 重复结算
+        if (Number(reward?.dataCount) > 0) effects.push({
+          id: `corner:${card.id}:${index}:data`,
+          type: cardEffects.REWARD_TYPES.GAIN_DATA,
+          label: "卡牌角标数据",
+          options: { count: Number(reward.dataCount) },
         });
         if (moveReward?.movementPoints) effects.push({
           id: `corner:${card.id}:${index}:move`,
