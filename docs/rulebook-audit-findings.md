@@ -73,3 +73,44 @@
 
 - `randomizer/app/simulation-counterfactual-outcome.test.js` 在基线即失败（「正式结果目标根必须全部产生完整叶」断言，`node tools/run_node_tests.js` 中 64/65）。**已排查根因**：AI 规划器 counterfactual 展开中，`scan` 行动的结果为 `unresolved`（leaves/frontierLeaves 均为空，无 failure、未 pruned，见 `rule-composition.js:3025` 状态判定）——扫描行动的多步决策在规划器执行预算内未产生完整叶。与规则实现无关（基线失败点 L394 始终不变），属 AI 规划器展开边界问题，建议规划器专项调优（maxDepth/叶收集对多步行动的适配）。
 - 审计期间并行工作区有他人改动（如 `tools/browser-smoke-inventory.js` 存在重复 id 的未提交修改），不在本清单范围。
+
+## 七、修复记录（按提交顺序，本次审计会话）
+
+### 规则书下载与审计基线
+- `cb41510` 文档：官方规则书 PDF 下载地址（`docs/card-data-sources.md`；PDF 存 `rules/`）
+- `6e891e1` 新增本审计发现清单
+
+### A 组（规则核心冲突）
+- `1da9d40` F1 末轮 PASS 公转+弃牌至 4；F2 信号标记每次扫描封顶 2 个额外；F3 紫4 发射校验探测器上限；F4 紫1 地球及相邻扇区三选一；F5 `card_free_move` 补执行器；F6 b_103 任务奖励类型修正
+- `da25783` S3 同事件多匹配合并为多选一（每行动/效果只触发一个任务）
+- `5892909` S4 任务/收入牌移出游戏（`removedFromGameCardIds`，不再进弃牌堆/洗回）
+- `b185403`/`484f903`/`c74b66a`/`0bb8c32`/`bfc90a5` S5 缺失执行器全部补齐（b_26/b_46、runezu/amiba/aomomo、异常点 y0/y1/y4/y5/y7/y8/y9；y0 依赖 `scanNebula` 记录 `lastScanNebulaId`）
+- `c1be70e` M4 钻探者（虫）牌不计手牌上限、不可资源转换；**恢复 F1**（并行会话曾回退）
+- `4d6a3d9` M7 快速起始牌上半部分放置不再授予首痕迹奖励（扩展 P5，经用户确认）
+
+### B 组（时机/顺序）
+- `8b3df76` M1 研究科技先公转后选科技；卡牌研究无合法目标时仍公转
+- `e258dee` M2 扇区改为扫描 flow 末统一结算（`finalize` 标记，同行动不再提前重置）
+- `b52fcfb` M3 新增 `complete_task` 免费行动（条件任务任意时点完成 + 浏览器按钮）
+- `d6fd957`/`17ee8c2` M3/L11 状态文档
+
+### C 组（里程碑/外星人）
+- `a582b65` S1 中立里程碑接线（回合末 `turn_end_neutral_milestone`，先里程碑后揭示）
+- `5033810` S2 金里程碑回合末结算（`final_scoring:milestone`，多玩家顺时针）
+- `441617c` M5/M6 方舟揭示基础奖励 + 解锁 card2 + 已揭示额外痕迹位
+
+### D 组轻微项
+- `d542926` L9 科技三色标签对齐官方
+- `34deb05` L2 轮次显示对齐规则书（第 1~4 轮 → 第 2~5 轮）；记录 T1 根因
+- `7441fa5` L8 紫2/紫3/紫4 追加节点可跳过
+- `17ee8c2` L11 确认已满足（初始收入逐图标结算）；L10 待核对
+- `f341f8c` L13 中立里程碑文档对齐实现
+- `e762e4b` L10 机制澄清已覆盖（快速起始牌无收入角标，特定牌卡面直接说明；带 `income` 效果的初始牌已在初始结算生效）
+
+### 文档同步
+- `868d5ef` `docs/mechanics-reference.md` 同步（里程碑回合末顺序、扇区 flow 末结算、紫2/3/4 可跳过、complete_task）
+
+### 用户确认项（⚪）
+- 外星人槽位 2 首痕迹 3 分（与实体一致）
+- L1 促销牌混入主牌库（保持现状）；L6 紫4 移动免费（保持）；L12 金色板块 3 槽+3 号位无限（实现正确）；L10 机制已覆盖
+- T1 AI 规划器测试（`simulation-counterfactual-outcome.test.js`）——已排查根因为规划器展开边界问题，非规则 bug，**用户确认不再处理**
