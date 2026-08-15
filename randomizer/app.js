@@ -873,6 +873,40 @@
     URL.revokeObjectURL(url);
   }
 
+  // 存盘：把完整 committed state 写入 localStorage 并下载 JSON，方便开发者读取排查
+  function saveGameStateToLocal() {
+    const snapshot = ruleComposition.stateSourcePort.getSnapshot();
+    if (!snapshot || !snapshot.meta) {
+      window.alert("当前没有可保存的游戏状态");
+      return;
+    }
+    const payload = {
+      schema: "seti-browser-save-v1",
+      savedAt: new Date().toISOString(),
+      seed: snapshot.meta?.seed ?? null,
+      gameId: snapshot.meta?.gameId ?? null,
+      rulesetVersion: snapshot.meta?.rulesetVersion ?? null,
+      stateVersion: snapshot.meta?.stateVersion ?? null,
+      state: snapshot,
+    };
+    const json = JSON.stringify(payload, null, 2);
+    try {
+      localStorage.setItem("seti-browser-save", json);
+      console.info("游戏状态已存入 localStorage(seti-browser-save)，并已下载 JSON");
+    } catch (error) {
+      console.warn("localStorage 存档失败", error);
+    }
+    const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `seti-save-${String(snapshot.meta?.seed ?? "game")}-v${snapshot.meta?.stateVersion ?? 0}.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }
+
   ruleComposition.subscribe((event) => {
     if (trajectoryRecording && event?.source === "session" && event?.event?.type === "opened") {
       trajectoryRecording.onSessionOpened();
@@ -1177,6 +1211,7 @@
     scheduleRefresh();
   });
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
+  els.actionSaveStateButton?.addEventListener("click", saveGameStateToLocal);
   els.quickActionsTrades?.addEventListener("click", (event) => {
     const button = event.target.closest?.(
       "[data-quick-trade][data-action-id], [data-quick-action][data-action-id]",
