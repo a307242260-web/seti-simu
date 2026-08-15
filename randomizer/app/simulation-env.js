@@ -1,6 +1,7 @@
 "use strict";
 
 const { performance } = require("node:perf_hooks");
+const { createSeededRandom, hashSeed, RNG_ALGORITHM } = require("../game/random");
 const { createSimulationRuleComposition } = require("../training/simulation-rule-composition");
 const {
   ACTION_SCHEMA_VERSION,
@@ -50,28 +51,6 @@ function environmentError(code, message) {
   const error = new Error(message);
   error.code = code;
   return error;
-}
-
-function hashSeed(seed) {
-  const text = String(seed ?? "seti-simulation");
-  let hash = 2166136261;
-  for (let index = 0; index < text.length; index += 1) {
-    hash ^= text.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
-}
-
-function createSeededRandom(seed) {
-  let state = hashSeed(seed) || 1;
-  const random = () => {
-    state = Math.imul(state ^ (state >>> 15), 1 | state);
-    state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
-    return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
-  };
-  random.getState = () => state >>> 0;
-  random.setState = (next) => { state = Number(next) >>> 0; };
-  return random;
 }
 
 function compactEffectSessionJournal(journal) {
@@ -484,7 +463,7 @@ function createSimulationEnv() {
   function saveEnvelope() {
     const beforeVersion = getWorkingProjection(composition).meta.stateVersion;
     const result = composition.lifecycle.save({
-      rngState: { algorithm: "seti-simulation-mulberry32-v1", state: seededRandom.getState() },
+      rngState: { algorithm: RNG_ALGORITHM, state: seededRandom.getState() },
     });
     if (!result.ok) throw new Error(result.message || result.code || "composition save 失败");
     if (getWorkingProjection(composition).meta.stateVersion !== beforeVersion) {
@@ -537,7 +516,7 @@ function createSimulationEnv() {
         seed,
         activePlayerCount: config.activePlayerCount,
         random: seededRandom,
-        rngState: { algorithm: "seti-simulation-mulberry32-v1", state: seededRandom.getState() },
+        rngState: { algorithm: RNG_ALGORITHM, state: seededRandom.getState() },
         trustedProjectionReader: true,
         projectCounterfactualState: (state, viewer) => buildObservation(
           state,
@@ -930,7 +909,7 @@ function createSimulationEnv() {
           throw new Error("checkpoint replay 后唯一序列与 committed meta 不一致");
         }
         const rngState = committed.meta?.rngState;
-        if (rngState?.algorithm !== "seti-simulation-mulberry32-v1" || !Number.isSafeInteger(rngState.state)) {
+        if (rngState?.algorithm !== RNG_ALGORITHM || !Number.isSafeInteger(rngState.state)) {
           throw new Error("checkpoint coreState 缺少可恢复的 simulation RNG 状态");
         }
         seededRandom.setState(rngState.state);
@@ -950,7 +929,7 @@ function createSimulationEnv() {
       const restore = composition.lifecycle.restore(envelope);
       if (!restore.ok) throw new Error(`checkpoint coreState 反序列化失败：${restore.code || restore.message}`);
       const rngState = committed.meta?.rngState;
-      if (rngState?.algorithm !== "seti-simulation-mulberry32-v1" || !Number.isSafeInteger(rngState.state)) {
+      if (rngState?.algorithm !== RNG_ALGORITHM || !Number.isSafeInteger(rngState.state)) {
         throw new Error("checkpoint coreState 缺少可恢复的 simulation RNG 状态");
       }
       seededRandom.setState(rngState.state);

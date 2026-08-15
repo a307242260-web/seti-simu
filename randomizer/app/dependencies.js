@@ -8,6 +8,7 @@
 
   const REQUIRED_GLOBALS = Object.freeze([
     ["productionKernel", "SetiProductionKernel"],
+    ["random", "SetiRandom"],
     ["browserRuleComposition", "SetiAppBrowserRuleComposition"],
     ["projectionAdapter", "SetiBrowserProjectionAdapter"],
     ["viewStateStore", "SetiBrowserViewStateStore"],

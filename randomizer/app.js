@@ -23,6 +23,7 @@
     dom,
     finalReadModel,
     browserReadModel,
+    random: randomModule,
     finalScoring,
     endGameScoring,
     cardEffects,
@@ -50,17 +51,21 @@
   const actionLog = [];
   const PLAYER_LOG_COLORS = { blue: "#4da3ff", green: "#56d37a", brown: "#b2845a", white: "#f3f5ef" };
 
-  function createBrowserRandom(initialState = 1) {
-    let state = Number(initialState) >>> 0 || 1;
-    const random = () => {
-      state = Math.imul(state ^ (state >>> 15), 1 | state);
-      state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
-      return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
+  // 唯一 RNG：与 Simulation 共用同一 mulberry32 工厂（SetiRandom），
+  // 保证同 seed 下浏览器与 Simulation 得到完全相同的盘面/洗牌序列。
+  const createBrowserRandom = typeof randomModule?.createSeededRandom === "function"
+    ? randomModule.createSeededRandom
+    : (initialState = 1) => {
+      let state = Number(initialState) >>> 0 || 1;
+      const random = () => {
+        state = Math.imul(state ^ (state >>> 15), 1 | state);
+        state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
+        return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
+      };
+      random.getState = () => state >>> 0;
+      random.setState = (nextState) => { state = Number(nextState) >>> 0 || 1; };
+      return random;
     };
-    random.getState = () => state >>> 0;
-    random.setState = (nextState) => { state = Number(nextState) >>> 0 || 1; };
-    return random;
-  }
 
   // 固定盘面（开始界面下拉选择）：RNG 起点契约 = hashSeed(seed)，Production
   // Composition 的 createInitialState 显式从该状态开始，Browser 与 Simulation
@@ -817,6 +822,8 @@
     tech,
   });
   const browserRandom = createBrowserRandom();
+  // 与旧 createBrowserRandom() 初始 state=1 语义保持一致；newGame 前会 setState(hashSeed(seed)) 重置。
+  browserRandom.setState(1);
   const ruleComposition = browserRuleComposition.createBrowserRuleComposition({
     productionKernelApi: productionKernel,
     random: browserRandom,
@@ -1514,7 +1521,7 @@
       activePlayerCount,
       aiDifficulty,
       rngState: {
-        algorithm: "seti-browser-mulberry32-v1",
+        algorithm: randomModule?.RNG_ALGORITHM || "seti-simulation-mulberry32-v1",
         state: browserRandom.getState(),
       },
     });
