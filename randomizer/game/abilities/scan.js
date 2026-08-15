@@ -74,6 +74,13 @@
       return { ok: false, abilityId: "scanNebula", message: "没有可扫描星云" };
     }
 
+    // 记录本次扫描目标星云，供异常点 y0「异常扇区信号得分」等卡牌效果读取
+    // （随 undo frame 一并恢复）。
+    if (context.state?.match) {
+      context.state.match.cardPlayContext = context.state.match.cardPlayContext || {};
+      context.state.match.cardPlayContext.lastScanNebulaId = nebulaId;
+    }
+
     const nextToken = data.getNextReplaceableNebulaToken(context.data, nebulaId);
     const scanOptions = {
       playerColor: options.playerColor || currentPlayer.color,

@@ -2145,7 +2145,66 @@
       }
     }
 
-    // 异常点专属 playEffects 执行器：y1 下一异常奖励 / y4 拿公共牌全部 / y9 发射后异常移动。
+    // 异常点专属 playEffects 执行器：y0 异常扇区信号得分 / y1 下一异常奖励 /
+    // y4 拿公共牌全部 / y9 发射后异常移动。
+    function applyYichangdianAnomalyReward(root, actor, anomaly, cardInstanceId, reward) {
+      const events = [];
+      const spawnedEffects = [];
+      if (reward.gain && Object.keys(reward.gain).some((key) => Number(reward.gain[key]) !== 0)) {
+        players.gainResources(actor, reward.gain);
+        events.push({ type: "yichangdian_anomaly_reward", markerId: anomaly.markerId, gain: clone(reward.gain) });
+      }
+      const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+      for (let index = 0; index < dataCount; index += 1) {
+        const gained = data.gainData(actor, { source: "yichangdian_anomaly", root });
+        if (!gained.ok) return gained;
+      }
+      if (reward.pickCard) {
+        spawnedEffects.push(createSpawnedCardEffect({
+          id: `y1-pick-${anomaly.markerId}`,
+          type: cardEffects.REWARD_TYPES.PICK_CARD,
+          label: "异常奖励：精选 1 张牌",
+          options: {},
+        }, actor.id, cardInstanceId));
+      }
+      if (reward.traceType) {
+        spawnedEffects.push(createSpawnedCardEffect({
+          id: `y1-trace-${anomaly.markerId}`,
+          type: cardEffects.REWARD_TYPES.ALIEN_TRACE,
+          label: "异常奖励：外星人痕迹",
+          options: { allowedTraceTypes: [reward.traceType] },
+        }, actor.id, cardInstanceId));
+      }
+      return { events, spawnedEffects };
+    }
+
+    function executeYichangdianAnomalySignalScore(state, sessionEffect, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      const alienState = getWorkingSlice(root, "aliens");
+      const lastScanNebulaId = root.match?.cardPlayContext?.lastScanNebulaId;
+      if (!lastScanNebulaId || typeof yichangdian?.getAnomalyBySectorX !== "function") {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_last_scan" } });
+      }
+      const sectorX = getNebulaSectorX(root, lastScanNebulaId);
+      const anomaly = sectorX == null ? null : yichangdian.getAnomalyBySectorX(alienState, sectorX);
+      if (!anomaly) {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "scan_sector_not_anomaly" } });
+      }
+      const reward = typeof yichangdian.getAnomalyReward === "function"
+        ? (yichangdian.getAnomalyReward(anomaly.markerId) || {})
+        : {};
+      const applied = applyYichangdianAnomalyReward(
+        root, actor, anomaly, sessionEffect.payload?.cardInstanceId || null, reward,
+      );
+      if (!applied.ok) return applied;
+      return cardEffectResult(state, root, sessionEffect, {
+        events: [{ type: "yichangdian_anomaly_signal_score", nebulaId: lastScanNebulaId, markerId: anomaly.markerId }, ...applied.events],
+        spawnedEffects: applied.spawnedEffects,
+      });
+    }
+
     function executeYichangdianNextAnomalyReward(state, sessionEffect, workingContext) {
       const root = getWorkingRoot(state, workingContext);
       const actor = getActor(root, sessionEffect.ownerId);
@@ -2165,34 +2224,14 @@
         return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_anomaly" } });
       }
       const reward = yichangdian.getAnomalyReward(anomaly.markerId) || {};
-      const events = [];
-      const spawnedEffects = [];
-      if (reward.gain && Object.keys(reward.gain).some((key) => Number(reward.gain[key]) !== 0)) {
-        players.gainResources(actor, reward.gain);
-        events.push({ type: "yichangdian_anomaly_reward", markerId: anomaly.markerId, gain: clone(reward.gain) });
-      }
-      const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
-      for (let index = 0; index < dataCount; index += 1) {
-        const gained = data.gainData(actor, { source: "yichangdian_anomaly", root });
-        if (!gained.ok) return gained;
-      }
-      if (reward.pickCard) {
-        spawnedEffects.push(createSpawnedCardEffect({
-          id: `y1-pick-${anomaly.markerId}`,
-          type: cardEffects.REWARD_TYPES.PICK_CARD,
-          label: "异常奖励：精选 1 张牌",
-          options: {},
-        }, actor.id, sessionEffect.payload?.cardInstanceId || null));
-      }
-      if (reward.traceType) {
-        spawnedEffects.push(createSpawnedCardEffect({
-          id: `y1-trace-${anomaly.markerId}`,
-          type: cardEffects.REWARD_TYPES.ALIEN_TRACE,
-          label: "异常奖励：外星人痕迹",
-          options: { allowedTraceTypes: [reward.traceType] },
-        }, actor.id, sessionEffect.payload?.cardInstanceId || null));
-      }
-      return cardEffectResult(state, root, sessionEffect, { events, spawnedEffects });
+      const applied = applyYichangdianAnomalyReward(
+        root, actor, anomaly, sessionEffect.payload?.cardInstanceId || null, reward,
+      );
+      if (!applied.ok) return applied;
+      return cardEffectResult(state, root, sessionEffect, {
+        events: applied.events,
+        spawnedEffects: applied.spawnedEffects,
+      });
     }
 
     function executeYichangdianPublicAll(state, sessionEffect, workingContext) {
@@ -2247,6 +2286,94 @@
       });
     }
 
+    function executeYichangdianNextAnomalyScan(state, sessionEffect, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      const alienState = getWorkingSlice(root, "aliens");
+      const solarSystem = getWorkingSlice(root, "solarSystem");
+      const earth = solar.createSolarSnapshot(solarSystem)
+        .planetLocations?.find((planet) => planet.planetId === "earth");
+      if (!earth || typeof yichangdian?.getNextAnomalySectorX !== "function") {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_anomaly_target" } });
+      }
+      const nextX = yichangdian.getNextAnomalySectorX(alienState, earth.x);
+      const nebulaId = nextX == null
+        ? null
+        : (solar.getNebulaAtCoordinate(nextX, 5, solarSystem.sectorBySlot)?.id || null);
+      if (!nebulaId) {
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_anomaly_nebula" } });
+      }
+      const result = getScienceDomain().executeNebulaScan(root, actor.id, {
+        family: "choose_target",
+        target: { choiceId: `nebula:${nebulaId}`, nebulaId },
+        payload: { gainData: true },
+      }, {
+        nebulaIds: [nebulaId],
+        gainData: true,
+        source: "yichangdian_anomaly_scan",
+        label: "异常扇区扫描",
+      });
+      if (!result.ok) return result;
+      return {
+        ok: true,
+        nextState: commitWorkingState(state, { source: sessionEffect.payload?.cardEffect?.type || EFFECT_TYPES.EFFECT }),
+        // 卡牌异常扇区扫描同样可能扫满扇区，必须触发扇区结算。
+        spawnedEffects: [{
+          priority: "direct",
+          effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
+        }],
+        events: clone(result.events || []),
+        history: [{ type: "card_effect", effectId: sessionEffect.payload?.cardEffect?.id || null, executorId: EXECUTOR_ID }],
+      };
+    }
+
+    function executeYichangdianDrawThenTwoCorners(state, sessionEffect, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, sessionEffect.ownerId);
+      if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
+      const drawn = [];
+      for (let index = 0; index < 3; index += 1) {
+        const result = cards.blindDraw(
+          getWorkingSlice(root, "cards"),
+          getWorkingSlice(root, "players"),
+          actor,
+          nextCommittedRandom,
+          { createCardInstance: createCommittedCardFactory(root) },
+        );
+        if (!result.ok) return result;
+        drawn.push(result.card);
+      }
+      const spawnedEffects = [];
+      for (let index = 0; index < 2; index += 1) {
+        spawnedEffects.push(createSpawnedCardEffect({
+          id: `y8-corner-${index + 1}`,
+          type: cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD,
+          label: `结算角标 ${index + 1}/2`,
+          options: {},
+        }, actor.id, sessionEffect.payload?.cardInstanceId || null));
+      }
+      return {
+        ok: true,
+        nextState: commitWorkingState(state, { source: sessionEffect.payload?.cardEffect?.type || EFFECT_TYPES.EFFECT }),
+        spawnedEffects,
+        events: [{ type: "yichangdian_draw_then_two_corners", drawn: drawn.map((card) => card.id) }],
+        irreversible: { code: "hidden_card_draw", reason: "盲抽 3 张翻开隐藏牌" },
+      };
+    }
+
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_ANOMALY_SIGNAL_SCORE),
+      (state, sessionEffect, workingContext) => executeYichangdianAnomalySignalScore(state, sessionEffect, workingContext),
+    );
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS),
+      (state, sessionEffect, workingContext) => executeYichangdianDrawThenTwoCorners(state, sessionEffect, workingContext),
+    );
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_NEXT_ANOMALY_SCAN),
+      (state, sessionEffect, workingContext) => executeYichangdianNextAnomalyScan(state, sessionEffect, workingContext),
+    );
     runtime.registerExecutor(
       genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_NEXT_ANOMALY_REWARD),
       (state, sessionEffect, workingContext) => executeYichangdianNextAnomalyReward(state, sessionEffect, workingContext),
