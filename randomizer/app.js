@@ -689,10 +689,18 @@
         },
       },
       dataPresentation: {
-        playerTokens: (own?.dataState?.placedTokens || []).map((token) => ({
+        playerTokens: (own?.dataState?.placedTokens || []).map((token) => {
+          const layout = token.placementKind === "blueBonus"
+            ? null
+            : data.getComputerDataSlotLayout(token.placementSlot);
+          return {
             ...structuredClone(token),
             imageSrc: "../assets/tokens/data.png",
-          })),
+            percentX: layout?.percentX ?? null,
+            percentY: layout?.percentY ?? null,
+            scalePercent: layout?.scalePercent ?? null,
+          };
+        }),
         blueDropZones: [],
         sectorTokensBySectorId: presentSectorData(),
         aomomoTokens: presentAomomoData(),
@@ -1091,6 +1099,16 @@
       window.alert(`读档失败：${result?.message || result?.code || "内核恢复失败"}`);
       return;
     }
+    // 读档后把人类座位绑定到恢复状态的当前玩家（否则保持 spectator，看不到自己的科技/数据/手牌）
+    const restoredProjection = ruleComposition.projectionSource.read({
+      viewerId: "browser:seat-resync",
+      playerId: null,
+      role: "spectator",
+    });
+    humanSeat.playerId = restoredProjection?.state?.match?.currentPlayerId
+      || restoredProjection?.state?.turn?.currentPlayerId
+      || Object.keys(restoredProjection?.state?.players || {})[0]
+      || null;
     // 读档后从恢复点重新开始录制轨迹：恢复前的已录步骤不再延续（避免版本分叉），
     // 恢复点之后的操作照常记录，同样可用于机器人训练（ingest 只消费 step 动作价值）。
     if (trajectoryRecording) trajectoryRecording.reset();
