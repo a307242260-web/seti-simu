@@ -72,11 +72,11 @@ module.exports = Object.freeze([
     actionExpression: `(async () => {
       const fixed = document.querySelector("#start-fixed-board");
       if (!fixed) throw new Error("缺少固定盘面下拉");
-      fixed.value = "seti-107-move";
+      fixed.value = "seti-107";
       fixed.dispatchEvent(new Event("change", { bubbles: true }));
       const seedInput = document.querySelector("#start-seed-input");
       if (!seedInput) throw new Error("缺少种子输入框");
-      if (seedInput.disabled !== true || seedInput.value !== "seti-107-move") {
+      if (seedInput.disabled !== true || seedInput.value !== "seti-107") {
         throw new Error("选择固定盘面后种子输入框必须锁定为对应 seed: " + JSON.stringify({ disabled: seedInput.disabled, value: seedInput.value }));
       }
       document.querySelector("#start-screen-start-button").click();
@@ -92,8 +92,8 @@ module.exports = Object.freeze([
       const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
       const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
       const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
-      const expectedSectors = [[1, 1], [2, 3], [3, 4], [4, 2]];
-      const expectedFaces = ["b_52.webp", "dlc_40.png", "b_107.webp"];
+      const expectedSectors = [[1, 3], [2, 2], [3, 4], [4, 1]];
+      const expectedFaces = ["dlc_20.png", "b_137.webp", "b_83.webp"];
       if (JSON.stringify(sectors) !== JSON.stringify(expectedSectors)) {
         throw new Error("固定盘面扇区布局与训练盘面不一致: " + JSON.stringify(sectors));
       }
@@ -102,7 +102,13 @@ module.exports = Object.freeze([
           throw new Error("固定盘面公共牌与训练盘面不一致: " + JSON.stringify(publicFaces));
         }
       }
-      window.__setiFixedBoardSmoke = { ok: true, sectors, publicFaces };
+      const companyAlts = [...document.querySelectorAll(
+        "#compositionDecisionRoot .decision-ui-card-image-industry",
+      )].map((img) => img.getAttribute("alt") || "");
+      if (!companyAlts.some((alt) => alt.includes("寰宇动力"))) {
+        throw new Error("双发盘面初始公司必须含寰宇动力: " + JSON.stringify(companyAlts));
+      }
+      window.__setiFixedBoardSmoke = { ok: true, sectors, publicFaces, companyAlts };
     })()`,
     successExpression: "window.__setiFixedBoardSmoke?.ok === true",
     obligation: "勾选固定盘面后浏览器开局复现训练固定盘面（seti-104-board-v1 的扇区布局与公共牌）",
@@ -150,10 +156,10 @@ module.exports = Object.freeze([
     readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-fixed-board'))",
     actionExpression: `(async () => {
       const fixed = document.querySelector("#start-fixed-board");
-      fixed.value = "free-analyze-board";
+      fixed.value = "seti-free-analyze-v1";
       fixed.dispatchEvent(new Event("change", { bubbles: true }));
       const seedInput = document.querySelector("#start-seed-input");
-      if (seedInput.disabled !== true || seedInput.value !== "free-analyze-board") {
+      if (seedInput.disabled !== true || seedInput.value !== "seti-free-analyze-v1") {
         throw new Error("免电盘面种子锁定失败: " + JSON.stringify({ disabled: seedInput.disabled, value: seedInput.value }));
       }
       document.querySelector("#start-screen-start-button").click();
@@ -169,8 +175,8 @@ module.exports = Object.freeze([
       const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
       const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
       const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
-      const expectedSectors = [[1, 3], [2, 1], [3, 4], [4, 2]];
-      const expectedFaces = ["b_63.webp", "b_81.webp", "b_80.webp"];
+      const expectedSectors = [[1, 3], [2, 1], [3, 2], [4, 4]];
+      const expectedFaces = ["b_2.webp", "b_48.webp", "dlc_21.png"];
       if (JSON.stringify(sectors) !== JSON.stringify(expectedSectors)) {
         throw new Error("免电分析盘面扇区与 Simulation 不一致: " + JSON.stringify(sectors));
       }
@@ -179,7 +185,13 @@ module.exports = Object.freeze([
           throw new Error("免电分析盘面公共牌与 Simulation 不一致: " + JSON.stringify(publicFaces));
         }
       }
-      window.__setiFreeAnalyzeSmoke = { ok: true, sectors, publicFaces };
+      const companyAlts = [...document.querySelectorAll(
+        "#compositionDecisionRoot .decision-ui-card-image-industry",
+      )].map((img) => img.getAttribute("alt") || "");
+      if (!companyAlts.some((alt) => alt.includes("深空探测"))) {
+        throw new Error("免电盘面初始公司必须含深空探测: " + JSON.stringify(companyAlts));
+      }
+      window.__setiFreeAnalyzeSmoke = { ok: true, sectors, publicFaces, companyAlts };
     })()`,
     successExpression: "window.__setiFreeAnalyzeSmoke?.ok === true",
     obligation: "免电分析固定盘面（free-analyze-board，白色可选深空探测）在浏览器复现 Simulation 盘面",

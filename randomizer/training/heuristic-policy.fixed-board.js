@@ -4,10 +4,10 @@ const crypto = require("node:crypto");
 const heuristicPolicy = require("../game/ai/heuristic-policy");
 
 // 固定盘面 = 双发盘面（白色 2 选 1：寰宇动力 / 异星实验室），与浏览器"固定盘面"下拉
-// 的 seti-107-move 同 seed；RNG 起点契约 = hashSeed(seed)。
-const FIXED_BOARD_ID = "seti-107-move-board-v1";
+// 的 seti-107 同 seed；RNG 起点契约 = hashSeed(seed)。
+const FIXED_BOARD_ID = "seti-107-board-v1";
 const FIXED_BOARD_CONFIG = Object.freeze({
-  seed: "seti-107-move",
+  seed: "seti-107",
   activePlayerCount: 4,
   aiDifficulty: "weak_start",
   offlineTeacher: true,

@@ -61,8 +61,8 @@
   // Composition 的 createInitialState 显式从该状态开始，Browser 与 Simulation
   // 用同一 seed 得到同一盘面。
   const FIXED_BOARDS = Object.freeze({
-    "seti-107-move": "双发盘面（寰宇动力 / 异星实验室）",
-    "free-analyze-board": "免电分析盘面（深空探测 / 寰宇动力）",
+    "seti-107": "双发盘面（寰宇动力 / 异星实验室）",
+    "seti-free-analyze-v1": "免电分析盘面（异星实验室 / 深空探测）",
   });
   function hashSeed(seed) {
     const text = String(seed);
