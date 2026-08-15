@@ -1561,13 +1561,28 @@
 
   function amibaCardChoices(root, ownerId) {
     const amibaState = amiba.ensureAmibaState(root.aliens);
-    const displayed = amibaState.displayedCardIndex == null
+    const displayedIndex = amibaState.displayedCardIndex;
+    const displayedDefinition = displayedIndex == null
+      ? null
+      : amiba.getCardDefinition(displayedIndex);
+    const displayed = displayedIndex == null
       ? []
-      : [choice(
-        "choose_card", `amiba:display:${amibaState.displayedCardIndex}`,
-        { source: "display", cardIndex: amibaState.displayedCardIndex }, {},
-        `获得展示的${amiba.getCardDefinition(amibaState.displayedCardIndex)?.cardName || "阿米巴牌"}`,
-      )];
+      : [{
+        ...choice(
+          "choose_card", `amiba:display:${displayedIndex}`,
+          { source: "display", cardIndex: displayedIndex }, {},
+          `获得展示的${displayedDefinition?.cardName || "阿米巴牌"}`,
+        ),
+        // 展示阿米巴牌卡面
+        ...(displayedDefinition ? {
+          presentation: {
+            cardKind: "pick",
+            cardId: String(displayedIndex),
+            imageSrc: amiba.getCardSrc(displayedDefinition.index),
+            imageAlt: displayedDefinition.cardName || "阿米巴牌",
+          },
+        } : {}),
+      }];
     const blind = (amibaState.cardDeck || []).length
       ? [choice("choose_card", "amiba:blind", { source: "blind" }, {}, "盲抽阿米巴牌")]
       : [];
