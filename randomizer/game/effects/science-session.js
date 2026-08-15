@@ -1453,6 +1453,10 @@
         if (!actor || !result?.ok) return result || fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
         const spawnedEffects = [];
         let irreversible = null;
+        // 阿米巴痕迹位置分值奖励（2/4 号位 +1 分等）
+        if (result.reward?.gain && Object.keys(result.reward.gain).some((key) => Number(result.reward.gain[key]) !== 0)) {
+          players.gainResources(actor, result.reward.gain);
+        }
         // 阿米巴痕迹位置奖励：选一张阿米巴牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）
         if (result.reward?.pickAlienCard) {
           spawnedEffects.push({
