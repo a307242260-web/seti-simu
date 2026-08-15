@@ -563,7 +563,13 @@
       token.dataset.traceId = text(entry.id);
       token.dataset.traceType = text(entry.traceType);
       token.dataset.playerColor = text(entry.color);
-      token.src = entry.imageSrc || "";
+      if (entry.empty) {
+        // 空槽位：不加载图片，由 CSS 显示轮廓占位，便于看清位置布局
+        token.classList.add("is-empty-slot");
+        token.removeAttribute("src");
+      } else {
+        token.src = entry.imageSrc || "";
+      }
       token.alt = "";
       token.setAttribute("aria-hidden", "true");
       if (Number.isFinite(Number(entry.layout?.percentX))) {

@@ -2201,3 +2201,10 @@ body {
   font-size: 11px;
   white-space: nowrap;
 }
+
+/* 阿米巴空 symbol 槽位轮廓 */
+.alien-projection-trace.is-empty-slot {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px dashed rgba(255, 255, 255, 0.45);
+  box-shadow: none;
+}

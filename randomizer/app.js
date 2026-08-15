@@ -374,20 +374,29 @@
               ]
               : []),
             ...(alienId === "阿米巴"
-              ? aliens.amiba.listSymbols(state.aliens).flatMap((symbol) => {
-                const layout = alienPlacement.getAmibaSymbolMarkerLayout(
-                  slotId,
-                  symbol.slotId,
-                );
-                return layout ? [{
-                  id: `amiba:symbol:${symbol.slotId}`,
-                  traceType: "symbol",
-                  color: null,
-                  imageSrc: aliens.amiba.getSymbolSrc(symbol.symbolId),
-                  layout: structuredClone(layout),
-                  surface: "face",
-                }] : [];
-              })
+              ? [...aliens.amiba.OUTER_SYMBOL_SLOTS, ...aliens.amiba.INNER_SYMBOL_SLOTS]
+                .flatMap((slotId) => {
+                  const layout = alienPlacement.getAmibaSymbolMarkerLayout(
+                    slotId,
+                    slotId,
+                  );
+                  if (!layout) return [];
+                  const symbolId = aliens.amiba.getSymbolEntry(state.aliens, slotId)
+                    ?.symbolId || null;
+                  return [{
+                    id: `amiba:symbol:${slotId}`,
+                    traceType: "symbol",
+                    color: null,
+                    imageSrc: symbolId ? aliens.amiba.getSymbolSrc(symbolId) : "",
+                    empty: !symbolId,
+                    // 布局默认 scalePercent 50% 过大，会遮住槽位；统一缩小到痕迹尺寸
+                    layout: {
+                      ...structuredClone(layout),
+                      scalePercent: 14,
+                    },
+                    surface: "face",
+                  }];
+                })
               : []),
           ],
         };
