@@ -17,3 +17,4 @@ checkpoint/**/*.jsonl.*
 checkpoint/**/*.pt
 checkpoint/**/eval-*/
 checkpoint/**/smoke-*/
+seti-saves/

@@ -874,8 +874,8 @@
   }
 
   // 存盘：用规则内核正规存档 API（lifecycle.save）导出完整 committed state，
-  // 写入 localStorage 并下载 JSON，方便开发者读取排查
-  function saveGameStateToLocal() {
+  // 优先写入仓库 seti-saves/（本地接收服务），失败回退 localStorage + 浏览器下载
+  async function saveGameStateToLocal() {
     let saved = null;
     try {
       saved = ruleComposition.lifecycle.save();
@@ -922,6 +922,32 @@
       .replace(/-+/g, "-")
       .slice(0, 60) || "game";
     const fileName = `seti-save-${safeSeed}-v${meta?.stateVersion ?? 0}.json`;
+
+    // 优先发送到本地存盘接收服务（tools/save_receiver.js），直接写入仓库 seti-saves/ 目录；
+    // 服务未启动时回退浏览器下载。
+    const savedViaReceiver = await (async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8301/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: json,
+        });
+        if (!response.ok) return null;
+        const result = await response.json();
+        return result?.ok ? result : null;
+      } catch (error) {
+        console.warn("本地存盘服务不可用，回退浏览器下载", error);
+        return null;
+      }
+    })();
+    if (savedViaReceiver) {
+      window.alert(
+        `状态已保存到仓库：\n${savedViaReceiver.path}\n`
+        + `${storedLocally ? "（同时写入 localStorage）" : ""}`,
+      );
+      return;
+    }
+
     const blob = new Blob([json], { type: "application/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
@@ -933,7 +959,8 @@
     URL.revokeObjectURL(url);
     window.alert(
       `状态已保存（${storedLocally ? "localStorage + " : ""}开始下载 ${fileName}）\n`
-      + "请在浏览器下载栏找到该文件，放到仓库目录或告诉我路径，便于排查。",
+      + "请在浏览器下载栏找到该文件，放到仓库目录或告诉我路径，便于排查。\n"
+      + "提示：仓库目录下运行 node tools/save_receiver.js 可让存盘直接写入 seti-saves/。",
     );
   }
 
