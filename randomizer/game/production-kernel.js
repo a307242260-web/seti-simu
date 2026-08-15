@@ -94,6 +94,10 @@ const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
     family: "runezu_face_symbol",
     obligation: "符号面行动必须由生产外星种族规则提供合法描述符",
   },
+  {
+    family: "complete_task",
+    obligation: "生产条件任务规则枚举可完成任务并提交结算",
+  },
   { family: "end_turn", obligation: "生产回合规则结束当前行动，并在跨轮时统一结算下一轮收入" },
   { family: "choose_card", obligation: "生产 DecisionEffect 枚举并提交预留牌选择" },
   { family: "choose_target", obligation: "生产 DecisionEffect 枚举并提交移动或科技目标" },

@@ -14,7 +14,7 @@
   const SCHEMA_VERSION = "seti-standard-action-v1";
   const TOP_LEVEL_FAMILIES = Object.freeze([
     "launch", "orbit", "land", "scan", "analyze", "research_tech", "play_card", "pass",
-    "move", "quick_trade", "industry", "card_corner", "place_data", "runezu_face_symbol", "end_turn",
+    "move", "quick_trade", "industry", "card_corner", "place_data", "runezu_face_symbol", "complete_task", "end_turn",
   ]);
   const CONDITIONAL_FAMILIES = Object.freeze([
     "choose_card", "choose_target", "choose_payment", "choose_reward", "choose_branch",

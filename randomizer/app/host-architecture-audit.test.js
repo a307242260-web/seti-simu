@@ -5,7 +5,7 @@ const { auditSourceText, runAudit } = require("../../tools/audit_host_architectu
 
 const result = runAudit();
 assert.equal(result.ok, true);
-assert.equal(result.familyCount, 22);
+assert.equal(result.familyCount, 23);
 assert.deepEqual(result.domainIds, [
   "opening_session",
   "standard_action",

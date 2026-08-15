@@ -143,7 +143,7 @@ function assertProductionPack() {
   const pack = productionComposition.createProductionDomainPack();
   const families = [...standardAction.ALL_FAMILIES].sort();
   const owned = Object.keys(pack.familyOwners).sort();
-  if (families.length !== 22) throw new Error(`Standard Action family 数量不是 22: ${families.length}`);
+  if (families.length !== 23) throw new Error(`Standard Action family 数量不是 23: ${families.length}`);
   if (JSON.stringify(owned) !== JSON.stringify(families)) {
     throw new Error(`Production family coverage 不完整: ${JSON.stringify(owned)}`);
   }

@@ -76,8 +76,8 @@ assert.equal(JSON.stringify(projected.state).includes("drawPileCardIds"), false)
 
 assert.equal(
   new Set(standardAction.ALL_FAMILIES).size,
-  22,
-  "Standard Action 完备集固定为 22 family",
+  23,
+  "Standard Action 完备集固定为 23 family",
 );
 
 assert.throws(() => productionKernel.installProductionKernel({

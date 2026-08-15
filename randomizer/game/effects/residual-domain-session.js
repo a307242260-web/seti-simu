@@ -70,7 +70,7 @@
 
   const DOMAIN_ID = "residual_domains";
   const EXECUTOR_ID = `${DOMAIN_ID}:executor:v1`;
-  const ACTION_FAMILIES = Object.freeze(["industry", "card_corner", "runezu_face_symbol"]);
+  const ACTION_FAMILIES = Object.freeze(["industry", "card_corner", "runezu_face_symbol", "complete_task"]);
   const HANDOFF_TYPE = "game_domain_handoff";
   const HANDOFF_SCHEMA = "seti-game-domain-handoff-v1";
   const EFFECT_TYPES = Object.freeze({
@@ -258,6 +258,50 @@
       },
       execute() {
         return fail("RUNEZU_FACE_SESSION_REQUIRED", "符文族面部符号必须由 Effect Session 执行");
+      },
+    }), standardAction.createOptionDefinition("complete_task", {
+      label: "完成任务",
+      getOptions(context) {
+        const root = context.state || context;
+        const ownerId = context.standardActionAuthority?.actorId
+          || context.turn?.currentPlayerId
+          || root.turn?.currentPlayerId;
+        const player = actor(root, ownerId);
+        if (!player || (root.turn?.passedPlayerIds || []).includes(ownerId) || player.passCompletionPending) {
+          return fail("COMPLETE_TASK_BLOCKED", "当前不能执行完成任务");
+        }
+        const choices = listCardSettlements(root, ownerId)
+          .filter((settlement) => settlement.kind === "task")
+          .map((settlement) => ({
+            target: {
+              cardInstanceId: settlement.cardInstanceId,
+              ruleId: settlement.ruleId,
+            },
+            label: `完成 ${settlement.label}`,
+          }));
+        return choices.length
+          ? { ok: true, choices }
+          : fail("COMPLETE_TASK_EMPTY", "没有可完成的条件任务");
+      },
+      canExecute(context, option) {
+        const listed = this.getOptions(context);
+        return listed.ok && listed.choices.some((entry) => (
+          entry.target.cardInstanceId === option.target?.cardInstanceId
+          && entry.target.ruleId === option.target?.ruleId
+        )) ? { ok: true } : fail("COMPLETE_TASK_STALE", "条件任务选择已失效");
+      },
+      execute(context, action) {
+        const root = context.state || context;
+        const ownerId = action.actorId
+          || context.standardActionAuthority?.actorId
+          || context.turn?.currentPlayerId
+          || root.turn?.currentPlayerId;
+        return settleReadyTaskDirect(
+          root,
+          ownerId,
+          action.target?.cardInstanceId,
+          action.target?.ruleId,
+        );
       },
     })];
   }
@@ -1319,6 +1363,40 @@
       }
     }
     return { ...executorResult, spawnedEffects };
+  }
+
+  function settleReadyTaskDirect(root, ownerId, cardInstanceId, ruleId) {
+    // 规则书 P15：条件任务在达成条件后可用免费行动完成。此函数由 complete_task
+    // 免费行动直接结算一个已满足条件的类型 2 任务（无需玩家再次确认）。
+    const settlement = findCardSettlement(root, ownerId, {
+      kind: "task",
+      cardInstanceId,
+      ruleId,
+    });
+    const player = actor(root, ownerId);
+    if (!settlement || !player) {
+      return fail("CARD_TASK_STALE", "条件任务已失效");
+    }
+    const cardIndex = (player.reservedCards || [])
+      .findIndex((card) => card.id === settlement.cardInstanceId);
+    const card = player.reservedCards?.[cardIndex];
+    if (!card) return fail("CARD_INSTANCE_STALE", "任务牌实例已失效");
+    const consumed = cardEffects.completeTask(card, settlement.ruleId);
+    if (!consumed) return fail("CARD_RULE_ALREADY_CONSUMED", "任务规则已经结算");
+    if (settlement.kind !== "trigger" || cardEffects.areAllTriggersConsumed(card)) {
+      player.reservedCards.splice(cardIndex, 1);
+      cards.addRemovedFromGame(root.cards, card);
+      player.completedTaskCount = (Number(player.completedTaskCount) || 0) + 1;
+    }
+    const applied = applyFormalCardEffects(root, player, settlement.effects, "taskCardScore");
+    if (!applied.ok) return applied;
+    return {
+      ok: true,
+      cardInstanceId,
+      ruleId,
+      spawnedEffects: applied.spawnedEffects || [],
+      irreversible: applied.irreversible || null,
+    };
   }
 
   function settleCardDecision(root, effect, selected) {

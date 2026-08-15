@@ -285,7 +285,7 @@ for (const family of ["scan", "place_data", "analyze", "research_tech"]) {
 assert.deepEqual(
   kernel.actionContract.coverage().map(({ family, registered }) => ({ family, registered })),
   standardAction.ALL_FAMILIES.map((family) => ({ family, registered: true })),
-  "生产 Simulation composition 必须唯一注册全部 22 个 Standard Action family",
+  "生产 Simulation composition 必须唯一注册全部 23 个 Standard Action family",
 );
 for (const entry of kernel.actionContract.coverage()) {
   assert.equal(entry.phase, standardAction.PHASE_BY_FAMILY[entry.family]);
