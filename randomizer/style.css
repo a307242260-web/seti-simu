@@ -840,8 +840,14 @@ body {
 }
 
 .player-tech-tile {
-  width: 13%;
+  /* 科技 tile 按玩家板预设槽高度适配：蓝槽高约 24%、橙/紫槽高约 5.6% */
+  width: auto;
+  height: 20%;
   z-index: 3;
+}
+
+.player-tech-tile:not([data-tech-id^="blue"]) {
+  height: 5.5%;
 }
 
 .player-tech-tile.is-disabled {
