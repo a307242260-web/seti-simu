@@ -348,14 +348,17 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   const decisions = augmented.spawnedEffects.filter((entry) => (
     entry.effect.type === residual.EFFECT_TYPES.CARD_DECISION
   ));
-  assert.equal(decisions.length, 2, "真实 orbit event 必须产生 b140 的两个 type1 Decision");
+  // 规则：一个行动/效果只能触发并覆盖一个任务——同一 orbit 事件的所有匹配
+  // 合并为一个多选一 Decision（b140 的两个触发槽只能选择其一结算）。
+  assert.equal(decisions.length, 1, "真实 orbit event 只能产生一个 type1 Decision（多选一）");
   const owner = createHarness(residual, "createResidualDomain");
   const executor = owner.executors.get(residual.EFFECT_TYPES.CARD_DECISION);
   const first = decisions[0].effect;
-  const confirm = executor.getLegalChoices(root, first, { state: root })
-    .find((entry) => entry.target.choiceId.startsWith("confirm:"));
-  assert.ok(confirm);
-  const settled = executor.resolveDecision(root, first, confirm, { state: root });
+  const choices = executor.getLegalChoices(root, first, { state: root });
+  const confirms = choices.filter((entry) => entry.target.choiceId.startsWith("confirm:"));
+  assert.equal(confirms.length, 2, "b140 的两个触发槽必须都作为候选列出，由玩家选一");
+  assert.equal(choices.some((entry) => entry.target.choiceId.startsWith("skip:")), true);
+  const settled = executor.resolveDecision(root, first, confirms[0], { state: root });
   assert.equal(settled.ok, true);
 })();
 

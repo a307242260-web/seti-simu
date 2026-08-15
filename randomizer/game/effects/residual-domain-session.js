@@ -798,7 +798,31 @@
   }
 
   function cardDecisionChoices(root, effect) {
-    const settlement = findCardSettlement(root, effect.ownerId, effect.payload || {});
+    const payload = effect.payload || {};
+    if (payload.kind === "trigger" && Array.isArray(payload.matches) && payload.matches.length) {
+      // 触发任务多选一：列出该事件全部仍可触发的候选槽位，玩家只能选择其一。
+      const choices = [];
+      for (const match of payload.matches) {
+        const settlement = findCardSettlement(root, effect.ownerId, {
+          kind: "trigger",
+          cardInstanceId: match.cardInstanceId,
+          ruleId: match.ruleId,
+          event: payload.event,
+        });
+        if (!settlement) continue; // 槽位已被消费或卡牌已离开保留区，不再可触发
+        choices.push(choice(
+          "accept_optional_effect",
+          `confirm:trigger:${settlement.cardInstanceId}:${settlement.ruleId}`,
+          { cardInstanceId: settlement.cardInstanceId, ruleId: settlement.ruleId },
+          {},
+          `结算 ${settlement.label}`,
+        ));
+      }
+      if (!choices.length) return [];
+      choices.push(choice("accept_optional_effect", `skip:${payload.event?.type || "trigger"}`, {}, {}, "跳过"));
+      return formalize(root, effect.ownerId, choices);
+    }
+    const settlement = findCardSettlement(root, effect.ownerId, payload);
     if (!settlement) return [];
     const id = `${settlement.kind}:${settlement.cardInstanceId}:${settlement.ruleId}`;
     return formalize(root, effect.ownerId, [
@@ -1118,22 +1142,29 @@
           );
         }
       }
-      const matches = events.flatMap((event) => (
-        cardTaskState.collectType1TriggerMatches(owner, [event], cardEffects)
-      ));
-      const seen = new Set();
-      for (const match of matches) {
-        const key = `${match.card.id}:${match.trigger.id}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
+      // 触发任务：每个事件最多生成一个触发 Decision，其候选为该事件全部匹配
+      // （不同卡牌或同一张牌的多个触发槽）。规则书：若一个行动/效果可触发多个
+      // 任务，玩家自行选择触发其中哪一个——每个行动/效果只能触发并覆盖一个任务，
+      // 其余必须再次达成条件才能触发。因此同事件的多匹配合并为单选，不再逐个生成。
+      const seenTriggerKeys = new Set();
+      for (const event of events) {
+        const eventMatches = cardTaskState.collectType1TriggerMatches(owner, [event], cardEffects);
+        const uniqueMatches = [];
+        for (const match of eventMatches) {
+          const key = `${match.card.id}:${match.trigger.id}`;
+          if (seenTriggerKeys.has(key)) continue;
+          seenTriggerKeys.add(key);
+          uniqueMatches.push(match);
+        }
+        if (!uniqueMatches.length) continue;
         spawnedEffects.push(decision(EFFECT_TYPES.CARD_DECISION, owner.id, {
           kind: "trigger",
-          cardInstanceId: match.card.id,
-          ruleId: match.trigger.id,
-          effects: clone(match.effects || match.trigger.rewards
-            || (match.effect ? [match.effect] : match.trigger.effect ? [match.trigger.effect] : [])),
-          label: match.trigger.label || cards.getCardLabel(match.card),
-          event: clone(match.event || null),
+          matches: uniqueMatches.map((match) => ({
+            cardInstanceId: match.card.id,
+            ruleId: match.trigger.id,
+            label: match.trigger.label || cards.getCardLabel(match.card),
+          })),
+          event: clone(event),
         }, "accept_optional_effect"));
       }
       for (const bonus of root.turn.cardTurnEventBonuses || []) {
@@ -1185,7 +1216,20 @@
   function settleCardDecision(root, effect, selected) {
     const legal = cardDecisionChoices(root, effect)
       .find((candidate) => candidate.actionId === selected?.actionId);
-    const settlement = findCardSettlement(root, effect.ownerId, effect.payload || {});
+    const payload = effect.payload || {};
+    let settlement;
+    if (payload.kind === "trigger" && Array.isArray(payload.matches)) {
+      // 触发任务多选一：以玩家所选候选的 cardInstanceId/ruleId 重新解析 settlement。
+      const target = legal?.target || {};
+      settlement = findCardSettlement(root, effect.ownerId, {
+        kind: "trigger",
+        cardInstanceId: target.cardInstanceId,
+        ruleId: target.ruleId,
+        event: payload.event,
+      });
+    } else {
+      settlement = findCardSettlement(root, effect.ownerId, payload);
+    }
     const player = actor(root, effect.ownerId);
     if (!legal || !settlement || !player) {
       return fail("CARD_DECISION_STALE", "卡牌触发 Decision 已失效");
@@ -1232,7 +1276,12 @@
       settlement.effects,
       settlement.kind === "trigger" ? "cardEffectScore" : "taskCardScore",
     );
-    return applied.ok ? applied : applied;
+    if (!applied.ok) return applied;
+    return {
+      ...applied,
+      cardInstanceId: settlement.cardInstanceId,
+      ruleId: settlement.ruleId,
+    };
   }
 
   function settleFinalScores(root) {
@@ -1520,8 +1569,8 @@
           events: [{
             type: "card_rule_settled",
             playerId: effect.ownerId,
-            cardInstanceId: effect.payload.cardInstanceId,
-            ruleId: effect.payload.ruleId,
+            cardInstanceId: settled.cardInstanceId ?? effect.payload.cardInstanceId ?? null,
+            ruleId: settled.ruleId ?? effect.payload.ruleId ?? null,
             ruleKind: effect.payload.kind,
           }],
         });
