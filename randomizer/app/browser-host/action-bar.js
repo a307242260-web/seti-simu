@@ -199,7 +199,12 @@
           family,
           selectedHandCardId,
         );
+        // 取该 family 任一候选（含 disabled）以展示具体禁用原因
+        const disabledCandidate = projection.controls.actions.find((candidate) => (
+          candidate.family === family
+        )) || null;
         const reason = action?.disabledReason
+          || disabledCandidate?.disabledReason
           || (family === "play_card" && selectedHandCardId == null
             ? "请先在手牌区选择一张牌"
             : family === "play_card"
