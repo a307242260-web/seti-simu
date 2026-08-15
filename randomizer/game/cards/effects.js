@@ -1400,17 +1400,17 @@
         {
           id: "b26-publicity-corner",
           event: Object.freeze({ type: "cardCorner", cornerKind: "publicity" }),
-          effect: effect("b26-publicity-corner-repeat", EFFECT_TYPES.CARD_CORNER_EVENT_REWARD, "康奈尔大学：再获得一次宣传角标奖励", "publicity"),
+          effect: gainResourcesEffect("b26-publicity-corner-repeat", "康奈尔大学：再获得一次宣传角标奖励", { publicity: 1 }),
         },
         {
           id: "b26-data-corner",
           event: Object.freeze({ type: "cardCorner", cornerKind: "data" }),
-          effect: effect("b26-data-corner-repeat", EFFECT_TYPES.CARD_CORNER_EVENT_REWARD, "康奈尔大学：再获得一次数据角标奖励", "data"),
+          effect: gainDataEffect("b26-data-corner-repeat", "康奈尔大学：再获得一次数据角标奖励", 1),
         },
         {
           id: "b26-move-corner",
           event: Object.freeze({ type: "cardCorner", cornerKind: "move" }),
-          effect: effect("b26-move-corner-repeat", EFFECT_TYPES.CARD_CORNER_EVENT_REWARD, "康奈尔大学：再获得一次移动角标奖励", "movement"),
+          effect: cardMoveEffect("b26-move-corner-repeat", "康奈尔大学：再获得一次移动角标奖励", { movementPoints: 1 }),
         },
       ]),
     }),

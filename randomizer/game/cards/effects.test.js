@@ -810,7 +810,10 @@ const b26CornerMatches = cardEffects.collectMatchingTriggers(cornerPlayer, {
 });
 assert.equal(b26CornerMatches.length, 1);
 assert.equal(b26CornerMatches[0].event.cornerKind, "publicity");
-assert.equal(b26CornerMatches[0].effect.type, cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD);
+// b_26「再获得一次宣传角标奖励」改用现成直接效果类型（固定 1 宣传），
+// 不再依赖无执行器的 card_corner_event_reward。
+assert.equal(b26CornerMatches[0].effect.type, "gain_resources");
+assert.deepEqual(b26CornerMatches[0].effect.options.gain, { publicity: 1 });
 const b26AlienCornerEvents = [
   {
     type: "cardCorner",

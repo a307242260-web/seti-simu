@@ -910,6 +910,34 @@
             const gained = data.gainData(player, { source: "card_trigger", root });
             if (!gained.ok) return gained;
           }
+        } else if (effect.type === "card_count_aliens_resource") {
+          // 每个外星人：玩家有痕迹的外星人槽位数量 × 单个奖励（如 b_46）。
+          const gainPerAlien = effect.options?.gainPerAlien || {};
+          const alienState = root.aliens;
+          const traceTypes = aliens?.TRACE_TYPES || ["yellow", "pink", "blue"];
+          let alienCount = 0;
+          for (const [slotId, slot] of Object.entries(alienState?.aliens || {})) {
+            if (!slot || slot.revealed === undefined) continue;
+            let hasTrace = false;
+            for (const traceType of traceTypes) {
+              const count = typeof aliens.countTraceMarkersForPlayerOnSlot === "function"
+                ? aliens.countTraceMarkersForPlayerOnSlot(alienState, Number(slotId), player, traceType)
+                : 0;
+              if (count > 0) {
+                hasTrace = true;
+                break;
+              }
+            }
+            if (hasTrace) alienCount += 1;
+          }
+          if (alienCount > 0) {
+            const gain = {};
+            for (const [key, perAlien] of Object.entries(gainPerAlien)) {
+              gain[key] = Number(perAlien || 0) * alienCount;
+            }
+            players.gainResources(player, gain);
+            if (gain.score) addScoreSource(player, sourceKey, gain.score);
+          }
         } else if (effect.type === "draw_cards") {
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let drawIndex = 0; drawIndex < count; drawIndex += 1) {

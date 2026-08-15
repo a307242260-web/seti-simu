@@ -211,6 +211,7 @@
     getAlienSlot: state.getAlienSlot,
     countPlacedFirstTraces: state.countPlacedFirstTraces,
     countFirstTracesForPlayerOnSlot: state.countFirstTracesForPlayerOnSlot,
+    countTraceMarkersForPlayerOnSlot: state.countTraceMarkersForPlayerOnSlot,
     countFirstTracesByPlayerOnSlot: state.countFirstTracesByPlayerOnSlot,
     getFirstTraceRewardForSlot: state.getFirstTraceRewardForSlot,
     getExtraTraceReward: state.getExtraTraceReward,
