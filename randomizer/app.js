@@ -873,28 +873,40 @@
     URL.revokeObjectURL(url);
   }
 
-  // 存盘：把完整 committed state 写入 localStorage 并下载 JSON，方便开发者读取排查
+  // 存盘：用规则内核正规存档 API（lifecycle.save）导出完整 committed state，
+  // 写入 localStorage 并下载 JSON，方便开发者读取排查
   function saveGameStateToLocal() {
-    let snapshot = null;
+    let saved = null;
     try {
-      snapshot = ruleComposition.stateSourcePort.getSnapshot();
+      saved = ruleComposition.lifecycle.save();
     } catch (error) {
       console.error("读取游戏状态失败", error);
       window.alert(`读取游戏状态失败：${error?.message || error}`);
       return;
     }
-    if (!snapshot || !snapshot.meta) {
-      window.alert("当前没有可保存的游戏状态");
+    if (!saved?.ok) {
+      console.error("读取游戏状态失败", saved);
+      window.alert(`读取游戏状态失败：${saved?.message || saved?.code || "内核 save 失败"}`);
       return;
     }
+    const envelope = saved.envelope || {};
+    let readableState = null;
+    try {
+      readableState = envelope.committedState ? JSON.parse(envelope.committedState) : null;
+    } catch (error) {
+      console.warn("committedState 解析失败，仅保留序列化原文", error);
+    }
+    const meta = readableState?.meta || {};
     const payload = {
-      schema: "seti-browser-save-v1",
+      schema: "seti-browser-save-v2",
       savedAt: new Date().toISOString(),
-      seed: snapshot.meta?.seed ?? null,
-      gameId: snapshot.meta?.gameId ?? null,
-      rulesetVersion: snapshot.meta?.rulesetVersion ?? null,
-      stateVersion: snapshot.meta?.stateVersion ?? null,
-      state: snapshot,
+      seed: meta?.seed ?? null,
+      gameId: meta?.gameId ?? null,
+      rulesetVersion: meta?.rulesetVersion ?? null,
+      stateVersion: meta?.stateVersion ?? null,
+      committedState: envelope.committedState || null,
+      session: envelope.session || null,
+      readableState,
     };
     const json = JSON.stringify(payload, null, 2);
     let storedLocally = false;
@@ -905,11 +917,11 @@
       console.warn("localStorage 存档失败", error);
     }
     // 文件名中的 seed 可能含路径/空格等非法字符，统一安全化避免下载被浏览器拦截
-    const safeSeed = String(snapshot.meta?.seed ?? "game")
+    const safeSeed = String(meta?.seed ?? "game")
       .replace(/[^a-zA-Z0-9_-]/g, "-")
       .replace(/-+/g, "-")
       .slice(0, 60) || "game";
-    const fileName = `seti-save-${safeSeed}-v${snapshot.meta?.stateVersion ?? 0}.json`;
+    const fileName = `seti-save-${safeSeed}-v${meta?.stateVersion ?? 0}.json`;
     const blob = new Blob([json], { type: "application/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
