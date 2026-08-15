@@ -341,23 +341,46 @@
       )));
     }
     if (payload.step === "income_card" || payload.step === "swap_hand") {
-      return formalize(root, player.id, (player.hand || []).map((card) => choice(
-        "choose_card", `hand:${card.id}`, { cardInstanceId: card.id }, {},
-        cards.getCardLabel(card),
-      )));
+      return formalize(root, player.id, (player.hand || []).map((card) => {
+        const entry = cards.getCatalogEntryForCard(card);
+        return {
+          ...choice(
+            "choose_card", `hand:${card.id}`, { cardInstanceId: card.id }, {},
+            cards.getCardLabel(card),
+          ),
+          // 手牌选择携带卡面，决策弹窗显示牌面而非编号
+          presentation: {
+            cardKind: "pick",
+            cardId: String(card.id),
+            imageSrc: entry ? cards.getCardSrc(entry) : null,
+            imageAlt: cards.getCardLabel(card),
+          },
+        };
+      }));
     }
     if (payload.step === "public_card" || payload.step === "swap_public") {
       const publicityCost = payload.abilityId === "mission_publicity_pick_income"
         ? 2
         : payload.abilityId === "fenwick_publicity_pick_corner" ? 1 : 0;
       if (publicityCost && !players.canAfford(player, { publicity: publicityCost })) return [];
-      return formalize(root, player.id, (root.cards.publicCards || []).flatMap((card, slotIndex) => (
-        card ? [choice(
-          "choose_card", `public:${slotIndex}:${card.id}`, { slotIndex, cardInstanceId: card.id },
-          payload.step === "swap_public" ? { handCardInstanceId: payload.handCardInstanceId } : {},
-          cards.getCardLabel(card),
-        )] : []
-      )));
+      return formalize(root, player.id, (root.cards.publicCards || []).flatMap((card, slotIndex) => {
+        if (!card) return [];
+        const entry = cards.getCatalogEntryForCard(card);
+        return [{
+          ...choice(
+            "choose_card", `public:${slotIndex}:${card.id}`, { slotIndex, cardInstanceId: card.id },
+            payload.step === "swap_public" ? { handCardInstanceId: payload.handCardInstanceId } : {},
+            cards.getCardLabel(card),
+          ),
+          // 公共牌选择携带卡面，决策弹窗显示牌面而非编号
+          presentation: {
+            cardKind: "pick",
+            cardId: String(card.id),
+            imageSrc: entry ? cards.getCardSrc(entry) : null,
+            imageAlt: cards.getCardLabel(card),
+          },
+        }];
+      }));
     }
     if (payload.step === "free_move") {
       const used = new Set(payload.usedRocketIds || []);

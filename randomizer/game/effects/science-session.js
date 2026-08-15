@@ -191,13 +191,15 @@
     return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
   }
 
-  function makeChoice(family, choiceId, target = {}, payload = {}, summary = choiceId) {
+  function makeChoice(family, choiceId, target = {}, payload = {}, summary = choiceId, presentation = null) {
     return {
       family,
       phase: "conditional",
       target: { choiceId, ...target },
       payload,
       summary,
+      // 选择卡面等展示信息（精选牌、扫描选牌等），formalizeChoices 会原样保留
+      ...(presentation ? { presentation } : {}),
     };
   }
 
@@ -901,6 +903,7 @@
       const cardsState = getWorkingSlice(root, "cards");
       return (cardsState.publicCards || []).flatMap((card, publicSlotIndex) => {
         if (!card) return [];
+        const entry = cards.getCatalogEntryForCard(card);
         const code = Number(card.scanActionCode ?? cards.getCatalogEntryForCard(card)?.scan_action_code);
         return listNebulaChoices(root, { nebulaIds: NEBULA_IDS_BY_SCAN_CODE[code] || [], gainData: true })
           .map((choice) => makeChoice(
@@ -909,6 +912,13 @@
             { cardInstanceId: card.id, publicSlotIndex, nebulaId: choice.target.nebulaId },
             { gainData: true },
             `${cards.getCardLabel(card)} → ${data.getNebulaLabel(choice.target.nebulaId)}`,
+            // 公共牌扫描选择携带卡面，决策弹窗显示牌面而非编号
+            {
+              cardKind: "pick",
+              cardId: String(card.id),
+              imageSrc: entry ? cards.getCardSrc(entry) : null,
+              imageAlt: cards.getCardLabel(card),
+            },
           ));
       });
     }

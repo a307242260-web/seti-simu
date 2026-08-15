@@ -713,16 +713,26 @@
         cards.getPassReservePile(
           slice(root, "cards", "cards"),
           effect.payload?.roundNumber,
-        ).map((card) => ({
-          family: "choose_card",
-          target: {
-            kind: "pass-reserve-card",
-            choiceId: card.id,
-            cardId: card.cardId || card.id || null,
-          },
-          payload: { cardInstanceId: card.id },
-          summary: cards.getCardLabel(card),
-        })),
+        ).map((card) => {
+          const entry = cards.getCatalogEntryForCard(card);
+          return {
+            family: "choose_card",
+            target: {
+              kind: "pass-reserve-card",
+              choiceId: card.id,
+              cardId: card.cardId || card.id || null,
+            },
+            payload: { cardInstanceId: card.id },
+            summary: cards.getCardLabel(card),
+            // PASS 预留牌选择携带卡面，决策弹窗显示牌面而非编号
+            presentation: {
+              cardKind: "pick",
+              cardId: String(card.id),
+              imageSrc: entry ? cards.getCardSrc(entry) : null,
+              imageAlt: cards.getCardLabel(card),
+            },
+          };
+        }),
       );
     }
     runtime.registerExecutor(EFFECT_TYPES.PASS_RESERVE, {

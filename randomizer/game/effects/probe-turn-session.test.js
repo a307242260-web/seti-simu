@@ -180,4 +180,22 @@ function handoffSummary(entry) {
   );
 })();
 
+(function testPassReserveChoicesCarryCardFace() {
+  const root = createRoot({ roundNumber: 4 });
+  root.cards = {
+    passReservePiles: {
+      "4": [{ id: "pr-1", cardId: "b_137.webp", cardName: "测试预留牌", faceUp: true }],
+    },
+  };
+  const { executors } = createHarness();
+  const getLegalChoices = executors.get(probeTurn.EFFECT_TYPES.PASS_RESERVE).getLegalChoices;
+  const choices = getLegalChoices(root, {
+    ownerId: "p1",
+    payload: { roundNumber: 4 },
+  }, { state: root });
+  assert.equal(choices.length, 1, "PASS 预留牌必须有 1 个选择");
+  assert.equal(choices[0].presentation?.cardKind, "pick", "PASS 预留牌选择必须携带卡面 cardKind");
+  assert.match(String(choices[0].presentation?.imageSrc || ""), /b_137/);
+})();
+
 console.log("probe-turn-session tests passed");

@@ -352,4 +352,30 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(settled.ok, true);
 })();
 
+(function testHandAndPublicCardPickChoicesCarryCardFace() {
+  const root = createRoot();
+  root.players.players[0].hand = [
+    { id: "h-1", cardId: "b_137.webp", cardName: "测试手牌", faceUp: true },
+  ];
+  root.cards.publicCards = [
+    { id: "pub-1", cardId: "b_83.webp", cardName: "测试公共牌", faceUp: true },
+  ];
+  const owner = createHarness(residual, "createResidualDomain");
+  const getLegalChoices = owner.executors.get(residual.EFFECT_TYPES.COMPANY_DECISION).getLegalChoices;
+  const handChoices = getLegalChoices(root, {
+    ownerId: "p1",
+    payload: { companyId: "哨兵探测网络", step: "income_card" },
+  }, { state: root });
+  assert.equal(handChoices.length, 1, "手牌选牌必须有 1 个选择");
+  assert.equal(handChoices[0].presentation?.cardKind, "pick", "手牌选牌必须携带卡面 cardKind");
+  assert.match(String(handChoices[0].presentation?.imageSrc || ""), /b_137/);
+  const publicChoices = getLegalChoices(root, {
+    ownerId: "p1",
+    payload: { companyId: "哨兵探测网络", step: "public_card" },
+  }, { state: root });
+  assert.equal(publicChoices.length, 1, "公共牌选牌必须有 1 个选择");
+  assert.equal(publicChoices[0].presentation?.cardKind, "pick", "公共牌选牌必须携带卡面 cardKind");
+  assert.match(String(publicChoices[0].presentation?.imageSrc || ""), /b_83/);
+})();
+
 console.log("residual-domain-session production proofs passed");
