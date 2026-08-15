@@ -189,8 +189,8 @@ function semanticState(state) {
   };
 }
 
-function createIntegratedComposition(cardId) {
-  const initialState = toCommitted(createCanonicalState(cardId));
+function createIntegratedComposition(cardId, extra = {}) {
+  const initialState = toCommitted(extra.state || createCanonicalState(cardId));
   const counters = { compareAndCommit: 0 };
   const instrumentedStateStoreApi = {
     createStateStore(initialState, options) {
@@ -265,7 +265,12 @@ function runFixedScan() {
   assert.equal(result.stateVersion, 1);
   assert.equal(counters.compareAndCommit, 1, "费用、迁牌与两个扫描 Effect 只能整体 CAS 一次");
   assert.equal(result.journal.actions.length, 1);
-  assert.equal(result.journal.effects.length, 3);
+  assert.equal(result.journal.effects.length, 5);
+  assert.equal(
+    result.journal.effects.filter((entry) => entry.type === scienceSession.EFFECT_TYPES.SETTLE).length,
+    2,
+    "固定星云卡牌扫描每次都必须触发扇区结算效果",
+  );
   assert.equal(result.journal.events.filter((event) => event.type === "signalMarked").length, 2);
   const committed = composition.stateSourcePort.getSnapshot();
   assert.equal(committed.players.players[0].resources.credits, 8);
@@ -487,6 +492,33 @@ function runLaunchAndPick() {
   assert.equal(committed.players.players[0].hand.length, 1);
   assert.ok(result.journal.events.some((event) => event.type === "launch"));
   return semanticState(committed);
+}
+
+function runScanCompletesSectorSettlement() {
+  // 室女座61（sector-4-a，容量 6）预填 5 个已替换 token，打 b_1（repeat 2 固定扫描该扇区）
+  // 第 1 次扫描即补满最后一个槽 → 必须触发扇区结算
+  const root = createCanonicalState("b_1.webp");
+  const tokens = root.data.nebulae["sector-4-a"].tokens;
+  assert.equal(tokens.length, 6, "室女座61 容量必须为 6");
+  for (const token of tokens.slice(0, tokens.length - 1)) {
+    token.replacedByPlayerId = "p1";
+    token.replacedByPlayerColor = "brown";
+    token.replacementOrder = 1;
+  }
+  const { composition } = createIntegratedComposition("b_1.webp", { state: root });
+  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.ok(
+    result.journal.events.some((event) => event.type === "sectorCompleted"),
+    "卡牌扫描补满扇区后必须产生扇区结算事件",
+  );
+  const committed = composition.stateSourcePort.getSnapshot();
+  assert.equal(
+    committed.data.sectorSettlements?.sectors?.["sector-4-a"]?.settlementCount,
+    1,
+    "扇区结算后 settlementCount 必须为 1",
+  );
+  composition.dispose();
 }
 
 runFixedScan();

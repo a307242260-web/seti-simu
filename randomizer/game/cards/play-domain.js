@@ -940,6 +940,11 @@
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: effect.type }),
+        // 卡牌固定星云扫描同样可能扫满扇区，必须触发扇区结算
+        spawnedEffects: [{
+          priority: "direct",
+          effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
+        }],
         events: clone(result.events || []),
         history: [{
           type: "card_effect",
@@ -987,6 +992,11 @@
         return {
           ok: true,
           nextState: commitWorkingState(state, { source: effect.type }),
+          // 卡牌颜色选择扫描同样可能扫满扇区，必须触发扇区结算
+          spawnedEffects: [{
+            priority: "direct",
+            effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
+          }],
           events: clone(result.events || []),
           history: [{
             type: "card_effect_decision",
@@ -1205,6 +1215,11 @@
         }
       }
       return cardEffectResult(state, root, sessionEffect, {
+        // 任意扇区/条件/行星/着陆/探测器等卡牌扫描同样可能扫满扇区，必须触发扇区结算
+        spawnedEffects: [{
+          priority: "direct",
+          effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
+        }],
         events: result.events || [],
         historyType: "card_effect_decision",
         history: { choiceId: legal.target.choiceId, abilityId: result.abilityId },
