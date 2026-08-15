@@ -43,6 +43,7 @@
       actionConfirmButton: documentRef.getElementById("action-confirm-button"),
       actionUndoButton: documentRef.getElementById("action-undo-button"),
       actionSaveStateButton: documentRef.getElementById("action-save-state-button"),
+      actionLoadStateButton: documentRef.getElementById("action-load-state-button"),
       solarPreviewButton: documentRef.getElementById("solar-preview-button"),
       solarPreviewPanel: documentRef.getElementById("solar-preview-panel"),
       solarPreviewClose: documentRef.getElementById("solar-preview-close"),

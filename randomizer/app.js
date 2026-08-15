@@ -964,6 +964,57 @@
     );
   }
 
+  // 读档：优先从本地接收服务读取 seti-saves/ 最新存档恢复游戏，失败回退 localStorage
+  async function loadGameStateFromLocal() {
+    let raw = null;
+    let sourceName = null;
+    try {
+      const response = await fetch("http://127.0.0.1:8301/api/latest");
+      if (response.ok) {
+        const result = await response.json();
+        if (result?.ok && result.content) {
+          raw = result.content;
+          sourceName = `seti-saves/${result.fileName}`;
+        }
+      }
+    } catch (error) {
+      console.warn("本地存盘服务不可用，尝试 localStorage", error);
+    }
+    if (!raw) {
+      raw = localStorage.getItem("seti-browser-save");
+      sourceName = "localStorage";
+    }
+    if (!raw) {
+      window.alert("没有找到存档（seti-saves/ 目录为空且 localStorage 无存档）");
+      return;
+    }
+    let payload = null;
+    try {
+      payload = JSON.parse(raw);
+    } catch (error) {
+      window.alert("存档内容损坏，无法解析");
+      return;
+    }
+    const envelope = {
+      schemaVersion: ruleComposition.SAVE_SCHEMA_VERSION,
+      committedState: payload.committedState || payload.envelope?.committedState || null,
+      session: payload.session ?? payload.envelope?.session ?? null,
+    };
+    if (!envelope.committedState) {
+      window.alert("存档缺少 committedState，无法恢复");
+      return;
+    }
+    const result = ruleComposition.lifecycle.restore(envelope);
+    if (!result?.ok) {
+      window.alert(`读档失败：${result?.message || result?.code || "内核恢复失败"}`);
+      return;
+    }
+    scheduleRefresh();
+    window.alert(
+      `已从 ${sourceName} 恢复游戏（stateVersion ${payload.stateVersion ?? "?"}）`,
+    );
+  }
+
   ruleComposition.subscribe((event) => {
     if (trajectoryRecording && event?.source === "session" && event?.event?.type === "opened") {
       trajectoryRecording.onSessionOpened();
@@ -1269,6 +1320,7 @@
   });
   els.actionQuickButton?.addEventListener("click", () => desktopActionBar.toggleQuickPanel());
   els.actionSaveStateButton?.addEventListener("click", saveGameStateToLocal);
+  els.actionLoadStateButton?.addEventListener("click", loadGameStateFromLocal);
   els.quickActionsTrades?.addEventListener("click", (event) => {
     const button = event.target.closest?.(
       "[data-quick-trade][data-action-id], [data-quick-action][data-action-id]",

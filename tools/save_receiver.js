@@ -61,6 +61,28 @@ const server = http.createServer(async (request, response) => {
     return;
   }
   const url = new URL(request.url, `http://127.0.0.1:${port}`);
+  if (request.method === "GET" && url.pathname === "/api/latest") {
+    // 返回 seti-saves/ 中最新一份存档的内容（供浏览器读档）
+    try {
+      const entries = fs.readdirSync(saveDir)
+        .filter((name) => name.endsWith(".json"))
+        .map((name) => {
+          const stat = fs.statSync(path.join(saveDir, name));
+          return { name, mtimeMs: stat.mtimeMs };
+        })
+        .sort((a, b) => b.mtimeMs - a.mtimeMs);
+      if (!entries.length) {
+        respond(response, 404, { ok: false, code: "NO_SAVES", message: "seti-saves/ 目录还没有存档" });
+        return;
+      }
+      const fileName = entries[0].name;
+      const content = fs.readFileSync(path.join(saveDir, fileName), "utf8");
+      respond(response, 200, { ok: true, fileName, content });
+    } catch (error) {
+      respond(response, 500, { ok: false, code: "READ_FAILED", message: error.message });
+    }
+    return;
+  }
   if (request.method === "POST" && url.pathname === "/api/save") {
     try {
       const raw = await readBody(request);
