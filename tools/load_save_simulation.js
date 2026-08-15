@@ -1,0 +1,97 @@
+"use strict";
+// 读取浏览器存档（seti-saves/*.json, seti-browser-save-v2）并加载进 Simulation env。
+// 用法:
+//   node tools/load_save_simulation.js <save-file>            # 加载并打印状态
+//   node tools/load_save_simulation.js <save-file> --run-ai   # 加载并让 AI 打完整局
+//   node tools/load_save_simulation.js <save-file> --decide <N>  # 加载并让 AI 决策 N 步
+const fs = require("node:fs");
+const path = require("node:path");
+const { createSimulationEnv } = require("../randomizer/app/simulation-env");
+
+function loadSave(env, savePath) {
+  const raw = fs.readFileSync(savePath, "utf8");
+  const save = JSON.parse(raw);
+  if (save.schema !== "seti-browser-save-v2") {
+    throw new Error(`不支持的存档 schema: ${save.schema}`);
+  }
+  const state = JSON.parse(save.committedState);
+  // 浏览器与 simulation 的 mulberry32 同源，仅算法标签不同；统一标签以便恢复 RNG。
+  if (state?.meta?.rngState) {
+    state.meta.rngState.algorithm = "seti-simulation-mulberry32-v1";
+  }
+  const committed = JSON.stringify(state);
+  const checkpoint = {
+    schemaVersion: "seti-rl-checkpoint-v1",
+    coreState: {
+      version: 2,
+      committedState: committed,
+      compositionEnvelope: {
+        schemaVersion: "seti-rule-composition-save-v1",
+        committedState: committed,
+        session: save.session ?? null,
+      },
+    },
+    config: {
+      seed: save.seed || state?.meta?.seed || "seti-simulation",
+      activePlayerCount: Number(state?.turn?.activePlayerCount) || 4,
+      episodeId: `save:${path.basename(savePath, ".json")}`,
+    },
+    replayCursor: { seed: save.seed || "seti-simulation", stepIndex: 0 },
+    replaySteps: null,
+  };
+  const obs = env.loadCheckpoint(checkpoint);
+  return { save, state, obs };
+}
+
+function printState(obs) {
+  const st = obs.publicState;
+  console.log(`round=${st.roundNumber} turn=${st.turnNumber} current=${st.currentPlayerId} ended=${Boolean(st.terminal)}`);
+  for (const p of st.players) {
+    console.log(
+      `  ${p.playerId}: score=${p.score} secured=${p.securedEndGameBonus}`
+      + ` credits=${p.credits} energy=${p.energy} publicity=${p.publicity}`
+      + ` data=${p.availableData} hand=${p.handCount} reserved=${p.reservedCount}`,
+    );
+  }
+  const legal = (() => { try { return env.legalActions(); } catch { return []; } })();
+  if (legal.length) {
+    const byFamily = {};
+    for (const a of legal) byFamily[a.family] = (byFamily[a.family] || 0) + 1;
+    console.log(`legal: ${legal.length} | ${JSON.stringify(byFamily)}`);
+  }
+}
+
+function main() {
+  const args = process.argv.slice(2);
+  const saveFile = args[0];
+  const mode = args[1] || "";
+  if (!saveFile) {
+    console.log("用法: node tools/load_save_simulation.js <save-file> [--run-ai|--decide N]");
+    process.exit(1);
+  }
+  const env = createSimulationEnv();
+  const { obs } = loadSave(env, saveFile);
+  printState(obs);
+
+  if (mode === "--run-ai") {
+    let count = 0;
+    while (!env.isTerminal() && count < 400) {
+      env.runHeuristicPolicyDecision();
+      count += 1;
+    }
+    const terminal = env.observe();
+    console.log(`\nAI 终局 (decisions=${count}):`);
+    for (const p of terminal.publicState.players) {
+      console.log(`  ${p.playerId}: score=${p.score} secured=${p.securedEndGameBonus} total=${(p.score || 0) + (p.securedEndGameBonus || 0)}`);
+    }
+  } else if (mode === "--decide") {
+    const n = Number(args[2] || 1);
+    for (let i = 0; i < n && !env.isTerminal(); i++) {
+      const res = env.runHeuristicPolicyDecision();
+      console.log(`d${i} [${res.policyDecision.seatId}] ${res.policyDecision.actionId}`);
+    }
+  }
+  env.dispose();
+}
+
+main();
