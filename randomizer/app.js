@@ -701,7 +701,7 @@
       dataPresentation: {
         playerTokens: (own?.dataState?.placedTokens || []).map((token) => {
           const layout = token.placementKind === "blueBonus"
-            ? null
+            ? data.getBlueBonusDataSlotLayout(token.blueSlot)
             : data.getComputerDataSlotLayout(token.placementSlot);
           return {
             ...structuredClone(token),
