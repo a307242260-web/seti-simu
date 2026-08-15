@@ -919,6 +919,12 @@
     },
     hostPort: {
       els,
+      getViewerCompany() {
+        const projection = readProjection();
+        const viewerId = projection?.viewer?.playerId;
+        if (viewerId == null) return null;
+        return projection?.players?.[String(viewerId)]?.companyLabel || null;
+      },
       getSelectedHandCardId() {
         const entity = residentViewState.getSnapshot().focus.entityRef;
         return entity?.kind === "hand-card" ? String(entity.id) : null;

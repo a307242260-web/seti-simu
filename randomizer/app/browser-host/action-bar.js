@@ -8,6 +8,21 @@
 
   const ACTION_BAR_PROJECTION_SCHEMA = "seti-action-bar-projection-v1";
 
+  // 公司 1x 主动能力说明（与 assets/industry/industry-abilities.md 正式能力表一致）
+  const COMPANY_ACTIVE_ABILITY_TEXT = Object.freeze({
+    "层云核心": "依公共牌区三张牌的弃牌角标生成效果节点；同类角标合并",
+    "图灵系统": "当前回合借用一项橙色或紫色供应科技",
+    "哨兵探测网络": "武装当前回合，打出非外星牌后结算该牌弃牌角标",
+    "寰宇动力": "两次各 1 移动力，必须选择不同火箭",
+    "赫利昂联合体": "使一项非蓝科技失效，再选择一张手牌增加收入",
+    "任务中继站": "支付 2 宣传精选公共牌并获得收入角标",
+    "芬威克研究中心": "支付 1 宣传精选公共牌并获得弃牌角标",
+    "深空探测": "精确选择一张手牌与一张公共牌并交换",
+    "宇宙战略集团": "精选公共牌并清空三色奖励槽",
+    "未来跨度研究所": "精选公共牌并提高已扣牌的目标分",
+    "异星实验室": "无 1x 主动能力；被动：三色板块分别复用发射、扫描、科技行动",
+  });
+
   function clone(value) {
     return value == null ? value : structuredClone(value);
   }
@@ -178,6 +193,18 @@
           && !candidate.disabledReason
         ));
         setButton(button, action, "当前无法执行此快速行动");
+      });
+      // 公司 1x 行动：hover 展示当前公司主动能力说明（data-tooltip 由 CSS 呈现）
+      els.quickActionsTrades.querySelectorAll('[data-quick-action="industry"]').forEach((button) => {
+        const company = context.getViewerCompany?.() || null;
+        const abilityText = company ? COMPANY_ACTIVE_ABILITY_TEXT[company] : null;
+        if (abilityText) {
+          button.dataset.tooltip = `${company}：${abilityText}`;
+          button.removeAttribute("title");
+          button.setAttribute("aria-label", `公司 1x 行动（${company}）：${abilityText}`);
+        } else {
+          delete button.dataset.tooltip;
+        }
       });
     }
     function setQuickPanelOpen(open) {
