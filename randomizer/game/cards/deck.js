@@ -82,6 +82,18 @@
     return `${CARD_BASE_PATH}/${entry.set}/split/${entry.card_id}`;
   }
 
+  // 精选公共牌的统一卡面展示（交易精选与卡牌效果精选共用，避免两处重复配置）
+  function getPublicCardPickPresentation(card) {
+    if (!card) return null;
+    const entry = getCatalogEntryForCard(card);
+    return {
+      cardKind: "pick",
+      cardId: String(card.id),
+      imageSrc: entry ? getCardSrc(entry) : null,
+      imageAlt: getCardLabel(card),
+    };
+  }
+
   function getCardId(value) {
     if (!value) return null;
     if (typeof value === "string") return value;
@@ -711,6 +723,7 @@
     DISCARD_ACTION_MOVE_REWARDS,
     DISCARD_ACTION_TRIGGER_CODE_EQUIVALENTS,
     getCardSrc,
+    getPublicCardPickPresentation,
     createCardInstance,
     createCommittedCardInstance,
     getCatalogEntryForCard,

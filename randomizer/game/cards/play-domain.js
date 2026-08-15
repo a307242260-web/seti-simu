@@ -866,19 +866,13 @@
         const cardsState = getWorkingSlice(root, "cards");
         const choices = (cardsState.publicCards || []).flatMap((card, slotIndex) => {
           if (!card) return [];
-          const entry = cards.getCatalogEntryForCard(card);
           return [{
             family: "choose_card",
             target: { choiceId: `public:${slotIndex}`, source: "public", slotIndex },
             payload: { cardInstanceId: card.id },
             summary: cards.getCardLabel(card),
-            // 精选公共牌直接携带卡面，决策弹窗显示牌面而非编号
-            presentation: {
-              cardKind: "pick",
-              cardId: String(card.id),
-              imageSrc: entry ? cards.getCardSrc(entry) : null,
-              imageAlt: cards.getCardLabel(card),
-            },
+            // 精选牌卡面统一由 cards.getPublicCardPickPresentation 提供
+            presentation: cards.getPublicCardPickPresentation(card),
           }];
         });
         if (cards.getAvailablePool(
