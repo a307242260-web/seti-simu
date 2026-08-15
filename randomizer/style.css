@@ -571,7 +571,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(72px * 246 / 175 + 34px);
+  min-height: calc(58px * 246 / 175 + 30px);
 }
 
 .tech-slot-stack {
@@ -587,7 +587,7 @@ body {
 .tech-tile-wrap {
   position: relative;
   width: 100%;
-  max-width: 72px;
+  max-width: 58px;
   margin: 0 auto;
 }
 
@@ -617,7 +617,7 @@ body {
 
 .tech-bonus {
   width: 100%;
-  max-width: 44px;
+  max-width: 36px;
   height: auto;
   margin: 0 auto;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.34));
@@ -636,7 +636,7 @@ body {
 .tech-tile {
   display: block;
   width: 100%;
-  max-width: 72px;
+  max-width: 58px;
   height: auto;
   margin: 0 auto;
   filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
@@ -1920,4 +1920,83 @@ body {
 .decision-ui-choice:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+
+/* 行动日志面板 */
+.action-log-panel {
+  padding-bottom: 12px;
+}
+
+.action-log-panel > .panel-title {
+  padding-inline: var(--right-panel-row-padding-x, 6px) 12px;
+}
+
+.action-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px var(--right-panel-row-padding-x, 6px) 12px;
+  max-height: min(40vh, 360px);
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.action-log-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12px;
+  line-height: 1.35;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(5, 13, 24, 0.55);
+  border: 1px solid rgba(154, 218, 255, 0.14);
+}
+
+.action-log-player {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.action-log-summary {
+  color: rgba(240, 248, 255, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-log-meta {
+  color: rgba(240, 248, 255, 0.45);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+
+/* 卡牌放大查看 overlay */
+.card-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.76);
+  cursor: zoom-out;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.card-viewer[hidden] {
+  display: none;
+}
+
+.card-viewer-image {
+  max-width: min(80vw, 470px);
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
 }

@@ -131,6 +131,7 @@
       [els.actionAnalyzeButton, "analyze"],
       [els.actionPlayCardButton, "play_card"],
       [els.actionResearchTechButton, "research_tech"],
+      [els.actionPlaceDataButton, "place_data"],
     ]);
     let projection = null;
     const read = () => {

@@ -44,6 +44,8 @@
   let aiDifficulty = "laughable";
   let trajectoryRecording = null;
   let trajectoryGameSequence = 0;
+  const actionLog = [];
+  const PLAYER_LOG_COLORS = { blue: "#4da3ff", green: "#56d37a", brown: "#b2845a", white: "#f3f5ef" };
 
   function createBrowserRandom(initialState = 1) {
     let state = Number(initialState) >>> 0 || 1;
@@ -764,14 +766,20 @@
 
   const residentInput = inputAdapter.createBrowserInputAdapter({
     dispatchAction(action) {
-      return trajectoryRecording
+      const result = trajectoryRecording
         ? trajectoryRecording.dispatchAction(action, rawDispatchAction)
         : rawDispatchAction(action);
+      if (result?.ok) {
+        recordActionLog("action", action.actorId, action.family, action.summary || action.family);
+      }
+      return result;
     },
     submitDecision(submission) {
-      return trajectoryRecording
+      const result = trajectoryRecording
         ? trajectoryRecording.submitDecision(submission, rawSubmitDecision)
         : rawSubmitDecision(submission);
+      if (result?.ok) recordDecisionLog(submission);
+      return result;
     },
     viewStateStore: residentViewState,
     refreshProjection: readProjection,
@@ -945,6 +953,7 @@
     renderDesktop();
     renderInitialSelection(projection);
     desktopActionBar.updateActionButtons();
+    renderActionLog();
     return projection;
   }
 
@@ -979,6 +988,60 @@
   function scheduleRefreshAndAutomation() {
     scheduleRefresh();
     scheduleAutomation();
+  }
+
+  function recordActionLog(kind, playerId, family, summary) {
+    const projection = readProjection();
+    const match = projection.match || {};
+    const players = projection.playerPanels?.players || [];
+    const player = players.find((entry) => String(entry?.id) === String(playerId));
+    actionLog.push({
+      seq: actionLog.length + 1,
+      playerId: String(playerId),
+      playerName: player?.displayName || player?.name || String(playerId),
+      color: player?.color || "",
+      kind,
+      family,
+      summary: String(summary || family || kind),
+      round: Number(match.roundNumber) || 1,
+      turn: Number(match.turnNumber) || 1,
+    });
+  }
+
+  function recordDecisionLog(submission) {
+    const decision = ruleComposition.inspect().session?.decision || null;
+    const choice = (decision?.choices || []).find((candidate) => (
+      String(candidate?.choiceId) === String(submission?.choice?.choiceId)
+    ));
+    recordActionLog(
+      "decision",
+      submission?.ownerId,
+      choice?.family || "decision",
+      choice?.summary || choice?.label || submission?.choice?.choiceId,
+    );
+  }
+
+  function renderActionLog() {
+    if (!els.actionLogList) return;
+    els.actionLogList.replaceChildren(...actionLog.map((entry) => {
+      const row = document.createElement("div");
+      row.className = "action-log-row";
+      const player = document.createElement("span");
+      player.className = "action-log-player";
+      player.textContent = entry.playerName;
+      if (PLAYER_LOG_COLORS[entry.color]) player.style.color = PLAYER_LOG_COLORS[entry.color];
+      const summary = document.createElement("span");
+      summary.className = "action-log-summary";
+      summary.textContent = entry.summary;
+      const meta = document.createElement("span");
+      meta.className = "action-log-meta";
+      meta.textContent = `R${entry.round} T${entry.turn}`;
+      row.append(player, summary, meta);
+      return row;
+    }));
+    if (els.actionLogList.scrollTop != null) {
+      els.actionLogList.scrollTop = els.actionLogList.scrollHeight;
+    }
   }
 
   function findSingleAction(family, predicate = () => true) {
@@ -1017,6 +1080,7 @@
       ? createTrajectoryRecording()
       : null;
     if (trajectoryRecording) trajectoryRecording.reset();
+    actionLog.length = 0;
     browserRandom.setState(seed ? hashSeed(seed) : 1);
     const result = ruleComposition.newGame({
       activePlayerCount,
@@ -1060,9 +1124,34 @@
   els.startScreenStartButton?.addEventListener("click", startNewGame);
   els.startFixedBoard?.addEventListener("change", syncFixedBoardSeedInput);
   syncFixedBoardSeedInput();
+
+  function openCardViewer(src, alt) {
+    if (!els.cardViewer || !els.cardViewerImage) return;
+    els.cardViewerImage.src = src || "";
+    els.cardViewerImage.alt = alt || "卡牌";
+    els.cardViewer.hidden = false;
+  }
+  function closeCardViewer() {
+    if (els.cardViewer) els.cardViewer.hidden = true;
+  }
+  els.publicCardRow?.addEventListener("click", (event) => {
+    const image = event.target.closest(".public-card");
+    if (!image?.src) return;
+    openCardViewer(image.src, image.alt);
+  });
+  els.reservedCardFan?.addEventListener("click", (event) => {
+    const image = event.target.closest(".reserved-card");
+    if (!image?.src) return;
+    openCardViewer(image.src, image.alt);
+  });
+  els.cardViewer?.addEventListener("click", closeCardViewer);
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeCardViewer();
+  });
   [
     els.actionLaunchButton, els.actionOrbitButton, els.actionLandButton, els.actionScanButton,
     els.actionAnalyzeButton, els.actionPlayCardButton, els.actionResearchTechButton,
+    els.actionPlaceDataButton,
     els.actionPassButton, els.actionConfirmButton,
   ].forEach(bindActionButton);
   els.playerHandFan?.addEventListener("click", (event) => {

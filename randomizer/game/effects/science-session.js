@@ -750,15 +750,26 @@
     }
 
     function listPickCardChoices(root) {
-      return (getWorkingSlice(root, "cards").publicCards || []).flatMap((card, index) => (
-        card ? [makeChoice(
-          "choose_card",
-          `pick:${card.id}`,
-          { cardInstanceId: card.id, publicSlotIndex: index },
-          {},
-          cards.getCardLabel(card),
-        )] : []
-      ));
+      return (getWorkingSlice(root, "cards").publicCards || []).flatMap((card, index) => {
+        if (!card) return [];
+        const entry = cards.getCatalogEntryForCard(card);
+        return [{
+          ...makeChoice(
+            "choose_card",
+            `pick:${card.id}`,
+            { cardInstanceId: card.id, publicSlotIndex: index },
+            {},
+            cards.getCardLabel(card),
+          ),
+          // 科技精选牌直接携带公共牌卡面，decision-ui 显示牌面而非编号
+          presentation: {
+            cardKind: "pick",
+            cardId: String(card.id),
+            imageSrc: entry ? cards.getCardSrc(entry) : null,
+            imageAlt: cards.getCardLabel(card),
+          },
+        }];
+      });
     }
 
     runtime.registerExecutor(EFFECT_TYPES.EXECUTE, (state, effect, workingContext) => {

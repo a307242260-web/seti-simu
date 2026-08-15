@@ -150,6 +150,17 @@
   function presentCardChoice(choice, projection) {
     const presentation = clone(choice.presentation || {});
     if (!presentation.cardKind) return null;
+    if (presentation.cardKind === "pick") {
+      return {
+        cardId: presentation.cardId,
+        cardKind: "pick",
+        imageSrc: presentation.imageSrc || "",
+        imageAlt: presentation.imageAlt || choice.label,
+        selected: Boolean(presentation.selected),
+        detail: null,
+        displayLabel: choice.label,
+      };
+    }
     const handCards = projection?.resident?.browserReadModel?.render?.cardPanels?.handCards || [];
     const handCard = presentation.cardKind === "hand"
       ? handCards.find((card) => (

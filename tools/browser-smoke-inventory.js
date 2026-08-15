@@ -609,6 +609,38 @@ module.exports = Object.freeze([
     counterexample: "极简壳、空 renderer、Browser 机器席位未接 Machine Player Host、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
   }),
   Object.freeze({
+    id: "production-action-log-and-card-viewer",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",
+    actionExpression: `(async () => {
+      document.querySelector("#start-screen-start-button").click();
+      const waitFor = async (predicate, label, timeout = 12000) => {
+        const deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+          if (predicate()) return;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        throw new Error("等待超时: " + label);
+      };
+      await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
+      const logRows = document.querySelectorAll("#action-log-list .action-log-row").length;
+      if (logRows < 1) throw new Error("行动日志为空");
+      const publicCard = document.querySelector("#public-card-row .public-card");
+      if (!publicCard) throw new Error("无公共牌");
+      publicCard.click();
+      await waitFor(() => (
+        document.querySelector("#cardViewer")?.hidden === false
+        && (document.querySelector("#cardViewerImage")?.src || "").includes("/assets/cards/")
+      ), "卡牌查看器放大");
+      document.querySelector("#cardViewer").click();
+      await waitFor(() => document.querySelector("#cardViewer")?.hidden === true, "卡牌查看器关闭");
+      window.__setiLogViewerSmoke = { ok: true, logRows };
+    })()`,
+    successExpression: "window.__setiLogViewerSmoke?.ok === true",
+    obligation: "行动日志记录每个已确认输入且公共牌可点击放大查看",
+    counterexample: "日志面板为空或公共牌点击无放大/放大后无法关闭",
+  }),
+  Object.freeze({
     id: "policy-input",
     file: "randomizer/app/browser-host/policy-input-adapter.browser-smoke.html",
     resultSelector: "body",
