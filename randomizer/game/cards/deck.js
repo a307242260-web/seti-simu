@@ -213,6 +213,55 @@
     return getDiscardActionMoveRewardForCode(getDiscardActionCodeForCard(card));
   }
 
+  // 统一奖励转换：reward 对象（gain / dataCount / drawCards / blindDraw / pickCard / movementPoints）→ 效果数组。
+  // 弃牌角标（资源/数据/移动）、外星人奖励、任务奖励等所有奖励共用这一条路径，
+  // 新增奖励类型只改这一处，不再逐调用点手写分支。
+  function buildRewardEffects(reward, prefix = "reward") {
+    const effects = [];
+    if (Object.keys(reward?.gain || {}).length) {
+      effects.push({
+        id: `${prefix}:gain`,
+        type: "gain_resources",
+        label: reward.label || undefined,
+        options: { gain: { ...(reward.gain || {}) } },
+      });
+    }
+    if (Number(reward?.dataCount) > 0) {
+      effects.push({
+        id: `${prefix}:data`,
+        type: "gain_data",
+        label: reward.label || undefined,
+        options: { count: Number(reward.dataCount) },
+      });
+    }
+    const drawCount = Number(reward?.drawCards || reward?.blindDraw);
+    if (drawCount > 0) {
+      effects.push({
+        id: `${prefix}:draw`,
+        type: "draw_cards",
+        label: reward.label || undefined,
+        options: { count: drawCount },
+      });
+    }
+    if (reward?.pickCard) {
+      effects.push({
+        id: `${prefix}:pick`,
+        type: "pick_card",
+        label: reward.label || undefined,
+        options: { count: 1 },
+      });
+    }
+    if (Number(reward?.movementPoints) > 0) {
+      effects.push({
+        id: `${prefix}:move`,
+        type: "card_move",
+        label: reward.label || undefined,
+        options: { movementPoints: Number(reward.movementPoints) },
+      });
+    }
+    return effects;
+  }
+
   function normalizeDiscardActionTriggerCode(actionCode) {
     if (actionCode == null || actionCode === "") return null;
     const numericCode = Number(actionCode);
@@ -741,6 +790,7 @@
     getDiscardActionMoveRewardForCode,
     getDiscardActionRewardForCard,
     getDiscardActionMoveRewardForCard,
+    buildRewardEffects,
     normalizeDiscardActionTriggerCode,
     getDiscardActionTriggerCodeForCard,
     getDiscardActionTriggerRewardForCode,

@@ -663,12 +663,10 @@
           const flip = module.flipCard1Reward(root.aliens, "basic", random);
           if (!flip.ok) return flip;
           const reward = flip.effect || {};
-          const translated = [];
-          if (reward.gain && Object.keys(reward.gain).length) {
-            translated.push({ type: "gain_resources", options: { gain: clone(reward.gain) } });
-          }
-          if (reward.dataCount) translated.push({ type: "gain_data", options: { count: reward.dataCount } });
-          if (reward.blindDraw) translated.push({ type: "draw_cards", options: { count: reward.blindDraw } });
+          // 通用 gain/data/blindDraw 走共享转换；additionalPublicScan 为方舟专属追加
+          const translated = [
+            ...cards.buildRewardEffects(reward, "alienReveal"),
+          ];
           if (reward.additionalPublicScan) {
             translated.push({
               type: "gain_resources",
@@ -755,36 +753,8 @@
   }
 
   function rewardEffects(reward, prefix = "residual-reward") {
-    const effects = [];
-    if (Object.keys(reward?.gain || {}).length) {
-      effects.push({
-        id: `${prefix}:gain`,
-        type: "gain_resources",
-        options: { gain: clone(reward.gain) },
-      });
-    }
-    if (Number(reward?.dataCount) > 0) {
-      effects.push({
-        id: `${prefix}:data`,
-        type: "gain_data",
-        options: { count: Number(reward.dataCount) },
-      });
-    }
-    if (Number(reward?.drawCards) > 0) {
-      effects.push({
-        id: `${prefix}:draw`,
-        type: "draw_cards",
-        options: { count: Number(reward.drawCards) },
-      });
-    }
-    if (reward?.pickCard) {
-      effects.push({
-        id: `${prefix}:pick`,
-        type: "pick_card",
-        options: { count: 1 },
-      });
-    }
-    return effects;
+    // 统一奖励转换：与 play-domain 角标、applyAlienReward 共用 cards.buildRewardEffects
+    return cards.buildRewardEffects(reward, prefix);
   }
 
   function listCardSettlements(root, ownerId) {
@@ -1129,19 +1099,8 @@
   }
 
   function applyAlienReward(root, player, reward, sourceKey) {
-    const effects = [];
-    if (Object.keys(reward?.gain || {}).length) {
-      effects.push({ type: "gain_resources", options: { gain: clone(reward.gain) } });
-    }
-    if (Number(reward?.dataCount) > 0) {
-      effects.push({ type: "gain_data", options: { count: Number(reward.dataCount) } });
-    }
-    if (Number(reward?.drawCards || reward?.blindDraw) > 0) {
-      effects.push({
-        type: "draw_cards",
-        options: { count: Number(reward.drawCards || reward.blindDraw) },
-      });
-    }
+    // 通用资源/数据/抽卡/精选统一走共享转换；符文族专属 symbolId/panelSymbol 在此追加
+    const effects = cards.buildRewardEffects(reward, sourceKey || "alien-reward");
     if (reward?.symbolId) runezu.gainPlayerSymbol(player, reward.symbolId);
     if (reward?.panelSymbol && reward?.panelSymbolSlotId) {
       const taken = runezu.takePanelSymbol(
@@ -1182,20 +1141,17 @@
       const base = cards.getDiscardActionMoveRewardForCard(card);
       if (!base) return fail("CARD_CORNER_STALE", "卡牌移动角标已失效");
       reward = {
+        ...clone(base),
         gain: Object.fromEntries(Object.entries(base.gain || {}).map(
           ([key, value]) => [key, Number(value) * multiplier],
         )),
         movementPoints: Math.max(1, Number(base.movementPoints) || 1) * multiplier,
       };
+      // 统一奖励转换：gain 与 movementPoints 一起经 buildRewardEffects
+      // 生成 gain_resources + card_move 效果（card_move 由 applyFormalCardEffects 转决策节点）
       const applied = applyAlienReward(root, player, reward, "cardQuickScore");
       if (!applied.ok) return applied;
       spawnedEffects.push(...applied.spawnedEffects);
-      spawnedEffects.push(createFormalCardEffectNode({
-        id: `card-corner:${card.id}`,
-        type: cardEffects.EFFECT_TYPES.CARD_MOVE,
-        label: `${cards.getCardLabel(card)}：移动`,
-        options: { movementPoints: reward.movementPoints, source: "card_corner" },
-      }, player.id, card.id));
       irreversible = applied.irreversible;
     } else if (action.payload?.kind === "runezu_symbol") {
       const resolved = runezu.getTraceFaceRewardForSymbol(
@@ -1217,14 +1173,9 @@
       );
       if (!flip.ok) return flip;
       reward = flip.effect;
+      // 通用 gain/data/blindDraw 走共享转换，随 multiplier 重复
       const repeatedEffects = Array.from({ length: multiplier }, () => reward)
-        .flatMap((entry) => {
-          const translated = [];
-          if (entry?.gain) translated.push({ type: "gain_resources", options: { gain: entry.gain } });
-          if (entry?.dataCount) translated.push({ type: "gain_data", options: { count: entry.dataCount } });
-          if (entry?.blindDraw) translated.push({ type: "draw_cards", options: { count: entry.blindDraw } });
-          return translated;
-        });
+        .flatMap((entry) => cards.buildRewardEffects(entry, "alienCardQuickScore"));
       const applied = applyFormalCardEffects(root, player, repeatedEffects, "alienCardQuickScore");
       if (!applied.ok) return applied;
       spawnedEffects.push(...applied.spawnedEffects);
