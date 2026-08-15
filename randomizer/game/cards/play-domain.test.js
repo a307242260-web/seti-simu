@@ -565,6 +565,51 @@ function runReturnPlayedCardToHandWhenProbeAdjacentEarth() {
   composition.dispose();
 }
 
+function runReturnPlayedCardToHandWhenProbeRadiallyAdjacent() {
+  // 用户存档场景：地球 (x=1,y=1)，探测器移动到 (x=1,y=2)（径向相邻，y 差 1）
+  const root = createCanonicalState("dlc_5.png");
+  const earth = solar.createSolarSnapshot(root.solarSystem).planetLocations
+    .find((planet) => planet.planetId === "earth");
+  root.pieces.rockets.push({
+    id: "rocket-1",
+    playerId: "p1",
+    color: "brown",
+    sectorX: earth.x,
+    sectorY: earth.y + 2,
+  });
+  const { composition } = createIntegratedComposition("dlc_5.png", { state: root });
+  let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  let guard = 0;
+  while (result.ok && composition.inspect().phase === "awaiting_input") {
+    const decision = composition.inspect().session.decision;
+    // 向内移动（deltaY:-1）→ (x, y+1)，与地球径向相邻
+    const choice = decision.choices.find((candidate) => (
+      candidate.target.choiceId === "rocket-1:0:-1"
+    )) || decision.choices[0];
+    result = composition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId,
+      choice,
+    });
+    guard += 1;
+    assert.ok(guard < 20, `dlc_5 径向 Decision 链异常: ${JSON.stringify(
+      decision.choices.map((candidate) => candidate.target.choiceId),
+    )}`);
+  }
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(committed.pieces.rockets[0].sectorY, earth.y + 1, "火箭应移动到地球径向相邻扇区");
+  assert.ok(
+    player.hand.some((card) => String(card.cardId) === "dlc_5.png"),
+    "探测器径向相邻地球后 dlc_5 必须回到手牌",
+  );
+  composition.dispose();
+}
+
 runFixedScan();
 runColorDecisions();
 runDirectRewards();

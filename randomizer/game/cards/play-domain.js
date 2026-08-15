@@ -178,21 +178,24 @@
   }
 
   // 构建探测器位置索引（供卡牌条件/任务判定）：
-  // details 每项带 playerId/color、sectorX/Y、adjacentToEarth（与地球扇区相邻）；
-  // index 按玩家 id/color 汇总 locationType。
+  // details 每项带 playerId/color、sectorX/Y、adjacentToEarth（与地球扇区正交相邻，
+  // 含环向 x 与径向 y，曼哈顿距离为 1）；index 按玩家 id/color 汇总 locationType。
   function buildProbeLocationData(root) {
     const solarSystemState = getWorkingSlice(root, "solarSystem");
     const earth = solar.createSolarSnapshot(solarSystemState)
       .planetLocations.find((planet) => planet.planetId === "earth");
     const earthX = earth?.x;
+    const earthY = earth?.y;
     const details = [];
     const index = {};
     for (const rocket of (root?.pieces?.rockets || [])) {
       if (!rocket.playerId) continue;
       const onBoard = Number.isInteger(rocket.sectorX) && Number.isInteger(rocket.sectorY);
-      const adjacentToEarth = onBoard && earthX != null
-        && (solar.mod8(rocket.sectorX - earthX) === 1
-          || solar.mod8(earthX - rocket.sectorX) === 1);
+      const adjacentToEarth = onBoard && earthX != null && earthY != null
+        && (Math.min(
+          solar.mod8(rocket.sectorX - earthX),
+          solar.mod8(earthX - rocket.sectorX),
+        ) + Math.abs(rocket.sectorY - earthY)) === 1;
       const locationType = "solar";
       const detail = {
         playerId: rocket.playerId,
