@@ -864,16 +864,23 @@
       getLegalChoices(state, sessionEffect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         const cardsState = getWorkingSlice(root, "cards");
-        const choices = (cardsState.publicCards || []).flatMap((card, slotIndex) => (
-          card
-            ? [{
-              family: "choose_card",
-              target: { choiceId: `public:${slotIndex}`, source: "public", slotIndex },
-              payload: { cardInstanceId: card.id },
-              summary: cards.getCardLabel(card),
-            }]
-            : []
-        ));
+        const choices = (cardsState.publicCards || []).flatMap((card, slotIndex) => {
+          if (!card) return [];
+          const entry = cards.getCatalogEntryForCard(card);
+          return [{
+            family: "choose_card",
+            target: { choiceId: `public:${slotIndex}`, source: "public", slotIndex },
+            payload: { cardInstanceId: card.id },
+            summary: cards.getCardLabel(card),
+            // 精选公共牌直接携带卡面，决策弹窗显示牌面而非编号
+            presentation: {
+              cardKind: "pick",
+              cardId: String(card.id),
+              imageSrc: entry ? cards.getCardSrc(entry) : null,
+              imageAlt: cards.getCardLabel(card),
+            },
+          }];
+        });
         if (cards.getAvailablePool(
           cardsState,
           getWorkingSlice(root, "players"),
