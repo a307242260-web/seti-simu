@@ -1293,7 +1293,11 @@ assert.equal(cardEffects.getRuntimeCardTypeCode({ cardId: "aomomo_5.webp", cardT
 assert.equal(aomomo5Effects.length, 2);
 assert.equal(aomomo5Effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
 assert.equal(aomomo5Effects[0].options.movementPoints, 4);
-assert.equal(aomomo5Effects[1].type, aomomo.EFFECT_VISIT_AOMOMO_THIS_TURN_FOSSIL);
+// aomomo_5「本回合访问奥陌陌得1化石」改用 REGISTER_EVENT_BONUS 复用现有机制。
+assert.equal(aomomo5Effects[1].type, cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS);
+assert.equal(aomomo5Effects[1].options.bonus.eventType, "visitPlanet");
+assert.deepEqual(aomomo5Effects[1].options.bonus.includePlanetIds, ["aomomo"]);
+assert.equal(aomomo5Effects[1].options.bonus.duration, "turn");
 
 const aomomo6Exchange = aomomo.buildImmediateEffects(6)[0];
 assert.equal(aomomo6Exchange.type, aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND);

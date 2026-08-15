@@ -827,7 +827,15 @@
       cardType: 2,
       playEffects: Object.freeze([
         cardMoveEffect("aomomo5-move", "奥陌陌5：4移动", { movementPoints: 4 }),
-        effect("aomomo5-visit-fossil", "aomomo_visit_turn_fossil", "奥陌陌5：本回合访问奥陌陌得1化石", "aomomoFossil", { count: 1 }),
+        registerEventBonusEffect("aomomo5-visit-fossil", "奥陌陌5：本回合访问奥陌陌得1化石", {
+          duration: "turn",
+          eventType: "visitPlanet",
+          includePlanetIds: Object.freeze(["aomomo"]),
+          icon: "aomomoFossil",
+          rewards: Object.freeze([
+            gainResourcesEffect("aomomo5-visit-fossil-gain", "访问奥陌陌：1化石", { aomomoFossils: 1 }),
+          ]),
+        }),
       ]),
       tasks: Object.freeze([{
         id: "aomomo5-signal-fossil",

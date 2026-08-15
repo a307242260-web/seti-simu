@@ -938,6 +938,18 @@
             players.gainResources(player, gain);
             if (gain.score) addScoreSource(player, sourceKey, gain.score);
           }
+        } else if (effect.type === "aomomo_spend_fossils_gain_score") {
+          // 奥陌陌任务奖励：支付化石换分数（如 aomomo_2 花 2 化石得 11 分）。
+          const cost = Math.max(0, Math.round(Number(effect.options?.cost) || 0));
+          const scoreGain = Math.max(0, Math.round(Number(effect.options?.score) || 0));
+          if (cost > 0 && typeof aomomo?.spendFossils === "function") {
+            const spent = aomomo.spendFossils(player, cost);
+            if (!spent.ok) return spent;
+          }
+          if (scoreGain > 0) {
+            players.gainResources(player, { score: scoreGain });
+            addScoreSource(player, sourceKey, scoreGain);
+          }
         } else if (effect.type === "draw_cards") {
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let drawIndex = 0; drawIndex < count; drawIndex += 1) {
