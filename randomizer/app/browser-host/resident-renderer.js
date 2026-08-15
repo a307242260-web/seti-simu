@@ -105,6 +105,16 @@
       }
     }
 
+    function createCompanyImage(player) {
+      if (!player?.companyLabel) return null;
+      const image = document.createElement("img");
+      image.className = "player-company-token";
+      image.src = `../assets/industry/${player.companyLabel}.png`;
+      image.alt = `公司：${player.companyLabel}`;
+      image.title = `公司：${player.companyLabel}（1x 主动能力，在快速面板执行）`;
+      return image;
+    }
+
     function createPlayerCard(player, current) {
       const card = document.createElement("article");
       card.className = "opponent-stat-card";
@@ -116,6 +126,7 @@
       row.append(
         createCurrentPlayerHeader(player),
         ...visibleCurrentResourceStats(player).map(createPlayerStatIcon),
+        ...(createCompanyImage(player) ? [createCompanyImage(player)] : []),
         createPlayerStatIcon({
           label: "手牌",
           value: Number(player.handCount) || 0,
@@ -141,6 +152,7 @@
           row.append(
             createCurrentPlayerHeader(own),
             ...visibleCurrentResourceStats(own).map(createPlayerStatIcon),
+            ...(createCompanyImage(own) ? [createCompanyImage(own)] : []),
           );
           els.playerStats.replaceChildren(row);
         }

@@ -101,6 +101,7 @@
         handCount: countCollection(player?.hand),
         reservedCount: countCollection(player?.reservedCards),
         tech: clone(player?.techState?.ownedTiles || {}),
+        companyLabel: player?.initialSelection?.industry || null,
       };
     }
 
