@@ -897,6 +897,19 @@
     )) || null;
   }
 
+  function findTaskCardImageSrc(root, cardInstanceId) {
+    if (!cardInstanceId) return null;
+    const allCards = [];
+    for (const player of (root.players?.players || [])) {
+      allCards.push(...(player.reservedCards || []), ...(player.hand || []));
+    }
+    allCards.push(...(root.cards?.discardPile || []));
+    const card = allCards.find((candidate) => String(candidate?.id) === String(cardInstanceId));
+    if (!card) return null;
+    const entry = cards.getCatalogEntryForCard(card);
+    return (entry ? cards.getCardSrc(entry) : null) || card.src || null;
+  }
+
   function cardDecisionChoices(root, effect) {
     const payload = effect.payload || {};
     if (payload.kind === "trigger" && Array.isArray(payload.matches) && payload.matches.length) {
@@ -910,13 +923,25 @@
           event: payload.event,
         });
         if (!settlement) continue; // 槽位已被消费或卡牌已离开保留区，不再可触发
-        choices.push(choice(
-          "accept_optional_effect",
-          `confirm:trigger:${settlement.cardInstanceId}:${settlement.ruleId}`,
-          { cardInstanceId: settlement.cardInstanceId, ruleId: settlement.ruleId },
-          {},
-          `结算 ${settlement.label}`,
-        ));
+        const cardImageSrc = findTaskCardImageSrc(root, settlement.cardInstanceId);
+        choices.push({
+          ...choice(
+            "accept_optional_effect",
+            `confirm:trigger:${settlement.cardInstanceId}:${settlement.ruleId}`,
+            { cardInstanceId: settlement.cardInstanceId, ruleId: settlement.ruleId },
+            {},
+            `结算 ${settlement.label}`,
+          ),
+          // 任务触发选择直接展示任务卡图，不显示编号
+          ...(cardImageSrc ? {
+            presentation: {
+              cardKind: "pick",
+              cardId: String(settlement.cardInstanceId),
+              imageSrc: cardImageSrc,
+              imageAlt: settlement.label,
+            },
+          } : {}),
+        });
       }
       if (!choices.length) return [];
       choices.push(choice("accept_optional_effect", `skip:${payload.event?.type || "trigger"}`, {}, {}, "跳过"));
@@ -925,8 +950,20 @@
     const settlement = findCardSettlement(root, effect.ownerId, payload);
     if (!settlement) return [];
     const id = `${settlement.kind}:${settlement.cardInstanceId}:${settlement.ruleId}`;
+    const cardImageSrc = findTaskCardImageSrc(root, settlement.cardInstanceId);
     return formalize(root, effect.ownerId, [
-      choice("accept_optional_effect", `confirm:${id}`, {}, {}, `结算 ${settlement.label}`),
+      {
+        ...choice("accept_optional_effect", `confirm:${id}`, {}, {}, `结算 ${settlement.label}`),
+        // 任务触发选择直接展示任务卡图，不显示编号
+        ...(cardImageSrc ? {
+          presentation: {
+            cardKind: "pick",
+            cardId: String(settlement.cardInstanceId),
+            imageSrc: cardImageSrc,
+            imageAlt: settlement.label,
+          },
+        } : {}),
+      },
       choice("accept_optional_effect", `skip:${id}`, {}, {}, `跳过 ${settlement.label}`),
     ]);
   }
