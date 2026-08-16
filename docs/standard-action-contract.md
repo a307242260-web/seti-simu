@@ -47,9 +47,9 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 | family | phase | 当前 owner / 入口 | 状态 | 验收重点 |
 |---|---|---|---|---|
-| `launch` | main | `game/actions/launch` | reference | 参考合约已证明 enumerate/validate/execute 共用 `canExecute/execute` |
-| `orbit` | main | Production probe-turn domain | reference | rocket/planet target 由 registry 枚举；唯一规则执行器为 `game/actions/orbit` |
-| `land` | main | Production probe-turn domain | reference | rocket/planet/satellite target 由 registry 枚举；唯一规则执行器为 `game/actions/land` |
+| `launch` | main | Production probe-turn domain | reference | 唯一规则执行器为 `game/abilities/rocket.launchProbe`；与行星奖励/卡牌来源同一引擎 |
+| `orbit` | main | Production probe-turn domain | reference | rocket/planet target 由 registry 枚举；唯一规则执行器为 `game/abilities/planet.orbitProbe`，与卡牌来源同一引擎 |
+| `land` | main | Production probe-turn domain | reference | rocket/planet/satellite target 由 registry 枚举；唯一规则执行器为 `game/abilities/planet.landProbe`，与打牌登陆同一引擎 |
 | `scan` | main | Production science domain | reference | registry 统一入口与支付合法性；sector/card 多选继续外显 Decision |
 | `analyze` | main | Standard Action registry；ability/effect adapter | reference | 数据来源固定为 computer/requiredSlot，费用写入 payload |
 | `research_tech` | main | Production science domain | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |

@@ -279,8 +279,8 @@ UI 布局：
 - `buildOrbitRewardEffects(planetId, markerSequence)`：环绕奖励。普通星球若 `markerSequence === 1`，先插入“首次环绕 +3 分”，再按星球固定奖励顺序生成效果节点。奥陌陌使用专属环绕奖励：首次环绕额外获得 1 张奥陌陌牌，每次环绕获得 10 分、1 化石和只扫描 `aomomo` 本体的奥陌陌扇区扫描。
 - `buildPlanetLandRewardEffects(planetId, markerSequence)`：主星登陆奖励。除火星外，普通星球只有首次登陆额外获得数据；火星第 1 次额外 2 数据，第 2 次额外 1 数据。奥陌陌登陆固定获得 9 分和 2 化石，第 1/2/3 次登陆分别额外获得 3/2/1 个数据。
 - `buildSatelliteLandRewardEffects(satelliteId)`：卫星登陆奖励。
-- `buildRewardEffectsForAction(actionId, result)`：Production domain 在 `orbitProbe` /
-  `landProbe` 成功后生成奖励 Effect。
+- `buildRewardEffectsForAction(actionId, result)`：Production domain 在唯一的
+  `orbitProbe` / `landProbe` 能力执行成功后生成奖励 Effect（主行动与卡牌来源共用同一引擎）。
 - 多个环绕/登陆目标需要选择时，下拉选项会在位置名后显示按当前下一枚标记序号计算的地点奖励摘要；卡牌来源追加的登陆后奖励也会并入对应位置摘要。
 - 奥陌陌环绕/登陆的标记存于外星人面板，但能力结果仍发出 `planetId: "aomomo"` 的 `orbit` / `land` 事件，并计入通用星球环绕/登陆任务与终局统计。
 

@@ -1,7 +1,6 @@
 (function (root, factory) {
   "use strict";
   let standardAction = root.SetiStandardAction;
-  let actions = root.SetiActions;
   let abilities = root.SetiAbilities;
   let players = root.SetiPlayers;
   let planetRewards = root.SetiPlanetRewards;
@@ -14,7 +13,6 @@
   let chong = root.SetiAlienChong;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
-    actions = actions || require("../actions");
     abilities = abilities || require("../abilities");
     players = players || require("../players");
     planetRewards = planetRewards || require("../actions/planet-rewards");
@@ -27,12 +25,12 @@
     chong = chong || require("../aliens/chong");
   }
   const api = factory(
-    standardAction, actions, abilities, players, planetRewards, planetStats, data, cards, solar,
+    standardAction, abilities, players, planetRewards, planetStats, data, cards, solar,
     science, turnFlow, chong,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiProbeTurnSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
-  standardAction, actions, abilities, players, planetRewards, planetStats, data, cards, solar,
+  standardAction, abilities, players, planetRewards, planetStats, data, cards, solar,
   science, turnFlow, chong,
 ) {
   "use strict";
@@ -119,7 +117,6 @@
   }
   function createActionDefinitions() {
     const definitions = [];
-    const launchAction = actions.getAction("launch");
     definitions.push(standardAction.createOptionDefinition("launch", {
       label: "发射",
       getOptions(context) {
@@ -127,8 +124,19 @@
         const player = actor(root, context.standardActionAuthority?.actorId);
         const start = canStart(root, player);
         if (!start.ok) return start;
-        const check = launchAction.canExecute(actionContext(root, player.id));
-        return check.ok ? { ok: true, choices: [{ label: "发射" }] } : check;
+        // 统一发射入口：与行星奖励/卡牌共用 abilities.rocket.launchProbe 的规则原语，
+        // 这里只做零副作用的合法性枚举（费用、火箭上限），不执行。
+        const actionCtx = actionContext(root, player.id);
+        const cost = abilities.rocket.getLaunchCost(actionCtx, player);
+        const rocketLimit = abilities.rocket.getRocketLimitForPlayer(player, actionCtx);
+        const activeCount = abilities.rocket.getActiveRocketCountForPlayer(actionCtx.pieces, player.id);
+        if (activeCount >= rocketLimit) {
+          return fail("PROBE_LAUNCH_UNAVAILABLE", `火箭数量已达上限（${activeCount}/${rocketLimit}）`);
+        }
+        if (!players.canAfford(player, cost)) {
+          return fail("PROBE_LAUNCH_UNAFFORDABLE", `资源不足，需要 ${players.formatResourceCost(cost)}`);
+        }
+        return { ok: true, choices: [{ label: "发射" }] };
       },
       canExecute(context) { return this.getOptions(context); },
       execute: sessionRequired,
@@ -177,7 +185,6 @@
       execute: sessionRequired,
     }));
     for (const family of ["orbit", "land"]) {
-      const reference = actions.getAction(family);
       definitions.push(standardAction.createOptionDefinition(family, {
         label: family === "orbit" ? "环绕" : "登陆",
         getOptions(context) {
@@ -185,9 +192,11 @@
           const player = actor(root, context.standardActionAuthority?.actorId);
           const start = canStart(root, player);
           if (!start.ok) return start;
+          // 统一环绕/登陆入口：与卡牌来源共用 abilities.planet 的枚举/执行引擎
+          // （orbitProbe/landProbe 是唯一规则实现，参考行动副本已删除）。
           const result = family === "orbit"
-            ? reference.getOrbitOptions(actionContext(root, player.id))
-            : reference.getLandOptions(actionContext(root, player.id));
+            ? abilities.planet.getOrbitOptions(actionContext(root, player.id))
+            : abilities.planet.getLandOptions(actionContext(root, player.id));
           if (!result.ok) return result;
           const choices = result.choices.map((choice) => ({
             target: {
@@ -421,7 +430,10 @@
       }
       let executed;
       if (action.family === "launch") {
-        executed = actions.getAction("launch").execute(actionContext(root, player.id));
+        // 统一发射引擎：abilities.rocket.launchProbe 与行星奖励/卡牌来源同一实现
+        executed = abilities.executeAbility("launchProbe", actionContext(root, player.id), {
+          source: "launch",
+        });
       } else if (action.family === "move") {
         return result(state, root, action.family, {
           spawnedEffects: [{
@@ -438,8 +450,9 @@
           history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
         });
       } else if (action.family === "orbit") {
-        executed = actions.getAction("orbit").execute(actionContext(root, player.id), {
+        executed = abilities.executeAbility("orbitProbe", actionContext(root, player.id), {
           rocketId: action.target.rocketId,
+          source: "orbit",
         });
       } else if (action.family === "land") {
         if (action.target?.select) {
@@ -460,12 +473,14 @@
             history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
           });
         }
-        executed = actions.getAction("land").execute(actionContext(root, player.id), {
+        // 统一登陆引擎：abilities.planet.landProbe 与打牌登陆同一实现
+        executed = abilities.executeAbility("landProbe", actionContext(root, player.id), {
           rocketId: action.target.rocketId,
           target: {
             type: action.target.type,
             ...(action.target.satelliteId ? { satelliteId: action.target.satelliteId } : {}),
           },
+          source: "land",
         });
       } else if (action.family === "pass") {
         return result(state, root, action.family, {
@@ -553,7 +568,8 @@
       const player = actor(root, effect.ownerId);
       // payload 不带 rocketId 时列出所有火箭的全部可登目标（统一选择框）。
       const rocketId = effect.payload?.rocketId == null ? null : Number(effect.payload?.rocketId);
-      const result = actions.getAction("land").getLandOptions(actionContext(root, player.id));
+      // 与打牌登陆同一枚举引擎：abilities.planet.getLandOptions
+      const result = abilities.planet.getLandOptions(actionContext(root, player.id));
       return (result.choices || [])
         .filter((choice) => rocketId == null || Number(choice.rocketId) === rocketId)
         .map((choice) => ({
@@ -580,9 +596,11 @@
         const legal = listLandChoiceTargets(root, effect)
           .find((candidate) => String(candidate.target?.choiceId) === String(choice?.target?.choiceId));
         if (!legal) return fail("PROBE_LAND_CHOICE_STALE", "登陆目标选择已失效");
-        const executed = actions.getAction("land").execute(actionContext(root, player.id), {
+        // 与打牌登陆同一执行引擎：abilities.planet.landProbe
+        const executed = abilities.executeAbility("landProbe", actionContext(root, player.id), {
           rocketId: legal.target.rocketId,
           target: legal.target.landTarget,
+          source: "land",
         });
         if (!executed?.ok) return executed;
         player.mainActionCompleted = true;

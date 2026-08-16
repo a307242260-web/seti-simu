@@ -193,95 +193,6 @@
     return Object.freeze({ register, enumerate, validate, execute, coverage });
   }
 
-  function createLaunchDefinition(launchAction) {
-    if (!launchAction?.canExecute || !launchAction?.execute) {
-      throw new TypeError("launch reference action 需要 canExecute/execute");
-    }
-    return {
-      family: "launch",
-      label: launchAction.label || "发射",
-      enumerate(context) {
-        const check = launchAction.canExecute(context);
-        return check.ok ? [{ summary: launchAction.label || "发射" }] : [];
-      },
-      validate(context) {
-        return launchAction.canExecute(context);
-      },
-      execute(context) {
-        return launchAction.execute(context);
-      },
-    };
-  }
-
-  function assertReferenceAction(action, family, optionMethod = null) {
-    if (!action?.canExecute || !action?.execute || (optionMethod && typeof action[optionMethod] !== "function")) {
-      throw new TypeError(`${family} reference action 缺少统一规则接口`);
-    }
-  }
-
-  function createOrbitDefinition(orbitAction) {
-    assertReferenceAction(orbitAction, "orbit", "getOrbitOptions");
-    return {
-      family: "orbit",
-      label: orbitAction.label || "环绕",
-      enumerate(context) {
-        const options = orbitAction.getOrbitOptions(context);
-        if (!options.ok) return [];
-        return options.choices.map((choice) => ({
-          target: { rocketId: choice.rocketId, planetId: choice.planetId },
-          summary: choice.label,
-        }));
-      },
-      validate(context, action) {
-        return orbitAction.getOrbitOptions(context, { rocketId: action.target?.rocketId });
-      },
-      execute(context, action) {
-        return orbitAction.execute(context, { rocketId: action.target.rocketId });
-      },
-    };
-  }
-
-  function createLandDefinition(landAction) {
-    assertReferenceAction(landAction, "land", "getLandOptions");
-    return {
-      family: "land",
-      label: landAction.label || "登陆",
-      enumerate(context) {
-        const options = landAction.getLandOptions(context);
-        if (!options.ok) return [];
-        return options.choices.map((choice) => ({
-          target: {
-            rocketId: choice.rocketId,
-            planetId: choice.planetId,
-            type: choice.target.type,
-            ...(choice.target.satelliteId ? { satelliteId: choice.target.satelliteId } : {}),
-          },
-          summary: choice.label,
-        }));
-      },
-      validate(context, action) {
-        return landAction.getLandOptions(context, { rocketId: action.target?.rocketId });
-      },
-      execute(context, action) {
-        return landAction.execute(context, {
-          rocketId: action.target.rocketId,
-          target: {
-            type: action.target.type,
-            ...(action.target.satelliteId ? { satelliteId: action.target.satelliteId } : {}),
-          },
-        });
-      },
-    };
-  }
-
-  function createReferenceDefinitions(referenceActions = {}) {
-    return Object.freeze([
-      createLaunchDefinition(referenceActions.launch),
-      createOrbitDefinition(referenceActions.orbit),
-      createLandDefinition(referenceActions.land),
-    ]);
-  }
-
   function createOptionDefinition(family, action) {
     if (!action?.getOptions || !action?.canExecute || !action?.execute) {
       throw new TypeError(`${family} Standard Action 缺少 getOptions/canExecute/execute`);
@@ -410,42 +321,6 @@
     });
   }
 
-  function createStage2Definitions(actions = {}) {
-    const entries = [
-      ["play_card", ["playCard", "play_card"]],
-      ["pass", ["pass"]],
-    ];
-    return Object.freeze(entries.flatMap(([family, keys]) => {
-      const configuredKey = keys.find((key) => Object.hasOwn(actions, key));
-      return configuredKey ? [createOptionDefinition(family, actions[configuredKey])] : [];
-    }));
-  }
-
-  function createConditionalDefinition(family, action) {
-    if (!CONDITIONAL_FAMILIES.includes(family)) {
-      throw new TypeError(`未知 conditional Standard Action family: ${family}`);
-    }
-    return createOptionDefinition(family, action);
-  }
-
-  function createStage4Definitions(actions = {}) {
-    return Object.freeze(CONDITIONAL_FAMILIES.map((family) => (
-      createConditionalDefinition(family, actions[family])
-    )));
-  }
-
-  function createReferenceRegistry(referenceActions, options = {}) {
-    const registry = createRegistry(options);
-    for (const definition of createReferenceDefinitions(referenceActions)) registry.register(definition);
-    if (options.stage2Actions) {
-      for (const definition of createStage2Definitions(options.stage2Actions)) registry.register(definition);
-    }
-    if (options.stage4Actions) {
-      for (const definition of createStage4Definitions(options.stage4Actions)) registry.register(definition);
-    }
-    return registry;
-  }
-
   function createRegistryAdapter(registry) {
     if (!registry?.enumerate || !registry?.execute) throw new TypeError("Standard Action adapter 需要 registry");
     function enumerate(context, request = {}) {
@@ -482,17 +357,9 @@
     ALL_FAMILIES,
     PHASE_BY_FAMILY,
     createRegistry,
-    createLaunchDefinition,
-    createOrbitDefinition,
-    createLandDefinition,
-    createReferenceDefinitions,
     createOptionDefinition,
-    createStage2Definitions,
-    createConditionalDefinition,
     createQuickTradeProvider,
     createPlayCardProvider,
-    createStage4Definitions,
-    createReferenceRegistry,
     createRegistryAdapter,
   });
 });

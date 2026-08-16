@@ -51,7 +51,7 @@ module.exports = Object.freeze({
     entry("randomizer/training/heuristic-policy-turn-report.test.js", "policy/heuristic-policy", "固定盘面报告保留根行动、目标路线与剪枝漏斗", "报告只展示赢家和前三备选而无法解释节点内部搜索"),
 
     entry("randomizer/game/actions/standard-action.test.js", "rules/actions", "Standard Action registry 的 identity、phase、validate/execute 协议", "未知、stale、越权 descriptor 到达 handler"),
-    entry("randomizer/game/actions/actions.test.js", "rules/actions", "发射、环绕、登陆、科技生产规则的合法性与提交", "资源不足或非法目标仍修改规则状态"),
+    entry("randomizer/game/actions/actions.test.js", "rules/actions", "发射、环绕、登陆、科技生产规则的合法性与提交（统一能力层引擎 launchProbe/orbitProbe/landProbe）", "资源不足或非法目标仍修改规则状态"),
     entry("randomizer/game/actions/quick-trades.test.js", "rules/actions", "快速交易成本、次数与资源变更", "不足资源、重复交易或未知交易成功"),
     entry("randomizer/game/players.test.js", "rules/actions", "玩家资源/收入/支付不变量", "负资源、越界收入或失败支付部分写入"),
     entry("randomizer/game/rockets.test.js", "rules/actions", "火箭创建、占位与 owner 规则", "未知 owner 或重复占位被接受"),

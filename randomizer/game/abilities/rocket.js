@@ -650,6 +650,7 @@
     MOVE_DIRECTIONS,
     getRocketLimitForPlayer,
     getLaunchCost,
+    getActiveRocketCountForPlayer,
     getRequiredMovePoints,
     getRequiredMovePointsFromCoordinate,
     listMoveRequirements,

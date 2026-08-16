@@ -44,7 +44,7 @@ for (const family of standardAction.ALL_FAMILIES) registry.register(definition(f
 assert.deepEqual(
   registry.coverage().filter((entry) => !entry.registered),
   [],
-  "正式 registry 的 15 个顶层 family 与 7 个 conditional family 必须都有行为 definition",
+  "正式 registry 的 16 个顶层 family 与 7 个 conditional family 必须都有行为 definition",
 );
 const actions = registry.enumerate(state);
 assert.equal(actions.length, standardAction.ALL_FAMILIES.length);
