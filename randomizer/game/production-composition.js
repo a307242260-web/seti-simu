@@ -217,9 +217,9 @@
 
     function discardChoices(root, pending) {
       const player = resolvePlayer(root, pending);
-      // 钻探者（虫）卡牌不可用于资源转换：候选只从非虫牌中枚举。
-      const hand = (player?.hand || [])
-        .filter((card) => !(typeof chong?.isChongCard === "function" && chong.isChongCard(card)));
+      // 外星人牌与普通牌行为一致：全部手牌都可作为弃牌费用（用户规则，
+      // 不区分虫/阿米巴等任何卡牌来源）。
+      const hand = player?.hand || [];
       const required = Math.max(1, Math.round(Number(pending?.count) || 1));
       const selected = [...(pending?.selected || [])].filter((id) => (
         hand.some((card) => String(card.id) === String(id))
