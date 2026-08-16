@@ -71,7 +71,7 @@ console.log(`\n决策: kind=${decision.kind} decisionKind=${decision.decisionKin
 const choices = decision.choices || [];
 console.log(`决策选项数: ${choices.length}`);
 for (const c of choices) {
-  console.log(`- choiceId=${c.choiceId} label=${c.label} rocketId=${c.target?.rocketId} target=${JSON.stringify(c.target?.landTarget || c.target)}`);
+  console.log(`- ${c.summary || c.label} (rocketId=${c.target?.rocketId})`);
 }
 if (choices.length < 2) {
   console.error(`FAIL: 决策应含多个登陆目标，实际 ${choices.length}`);

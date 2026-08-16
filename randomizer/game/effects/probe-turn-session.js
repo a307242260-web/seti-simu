@@ -5,6 +5,7 @@
   let abilities = root.SetiAbilities;
   let players = root.SetiPlayers;
   let planetRewards = root.SetiPlanetRewards;
+  let planetStats = root.SetiPlanetStats;
   let data = root.SetiData;
   let cards = root.SetiCards;
   let solar = root.SetiSolarSystem;
@@ -17,6 +18,7 @@
     abilities = abilities || require("../abilities");
     players = players || require("../players");
     planetRewards = planetRewards || require("../actions/planet-rewards");
+    planetStats = planetStats || require("../planet-stats");
     data = data || require("../data");
     cards = cards || require("../cards/deck");
     solar = solar || require("../../solar-system/core");
@@ -25,12 +27,12 @@
     chong = chong || require("../aliens/chong");
   }
   const api = factory(
-    standardAction, actions, abilities, players, planetRewards, data, cards, solar,
+    standardAction, actions, abilities, players, planetRewards, planetStats, data, cards, solar,
     science, turnFlow, chong,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiProbeTurnSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
-  standardAction, actions, abilities, players, planetRewards, data, cards, solar,
+  standardAction, actions, abilities, players, planetRewards, planetStats, data, cards, solar,
   science, turnFlow, chong,
 ) {
   "use strict";
@@ -522,6 +524,27 @@
         history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
       });
     });
+    function buildLandChoiceSummary(root, choice) {
+      // 选择框选项显示登陆奖励（主星按当前登陆标记序列预测 first/second 奖励，
+      // 卫星为固定奖励），不再显示能量消耗。
+      const planets = slice(root, "planets");
+      const isSatellite = choice.target?.type === "satellite";
+      let targetLabel;
+      let effects;
+      if (isSatellite) {
+        const satellite = (planetStats.getAvailableSatellitesForLanding(planets, choice.planetId) || [])
+          .find((entry) => entry.satelliteId === choice.target.satelliteId);
+        targetLabel = `${satellite?.satelliteName || choice.target.satelliteId}（${choice.planet?.name || choice.planetId}）`;
+        effects = planetRewards.buildSatelliteLandRewardEffects(choice.target.satelliteId);
+      } else {
+        targetLabel = `${choice.planet?.name || choice.planetId}（主星）`;
+        const sequence = Number(planetStats.getPlanetLandingCount(planets, choice.planetId) || 0) + 1;
+        effects = planetRewards.buildPlanetLandRewardEffects(choice.planetId, sequence);
+      }
+      const rewardText = planetRewards.formatRewardEffectsSummary(effects, { separator: "；" });
+      return rewardText ? `登陆${targetLabel}｜奖励：${rewardText}` : `登陆${targetLabel}`;
+    }
+
     function listLandChoiceTargets(root, effect) {
       const player = actor(root, effect.ownerId);
       // payload 不带 rocketId 时列出所有火箭的全部可登目标（统一选择框）。
@@ -538,7 +561,7 @@
             landTarget: choice.target,
           },
           payload: { energyCost: choice.energyCost },
-          summary: choice.label,
+          summary: buildLandChoiceSummary(root, choice),
         }));
     }
 
