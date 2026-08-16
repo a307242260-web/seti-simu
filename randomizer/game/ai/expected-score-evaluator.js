@@ -282,8 +282,9 @@
   }
 
   // 外星人 trace 价值：每个 trace 标记（第一放置 3-5 分即时 + 终局 trace 卡 2分/个
-  // + 外星人牌），保守估每个新增 trace ~3 分。外星人收益显著，倾向应高。
-  const TRACE_UNIT_VALUE = 3;
+  // + 外星人牌：开牌即可继续获得外星人牌/终局计分/机制收益）。用户高分档首回合
+  // 就抢第一放置、全盘 5 痕迹占满（阿米巴3+虫2）——痕迹是稳定大分源，估值提高。
+  const TRACE_UNIT_VALUE = 5;
 
   function infrastructureDeltaValue(rootValue, leafValue) {
     const rootInfrastructure = rootValue.infrastructure;
