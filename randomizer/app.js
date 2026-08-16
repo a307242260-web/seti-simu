@@ -1143,9 +1143,55 @@
     );
   }
 
-  // 弃牌角标：收集手牌中可结算角标的卡，弹选择后提交对应 card_corner 行动
-  function pickCardCornerAction() {
+  // 完成任务：虫族搬运/条件任务/阿米巴理论任务可交时，多个任务弹选择让玩家选任意一个交
+  function pickCompleteTaskAction() {
     const projection = readProjection();
+    const actions = (projection?.controls?.quickActions || [])
+      .filter((candidate) => candidate.family === "complete_task" && !candidate.disabledReason);
+    if (!actions.length) {
+      window.alert("当前没有可完成的任务");
+      return;
+    }
+    if (actions.length === 1) {
+      submitQuickAction(actions[0]);
+      return;
+    }
+    if (!els.cornerPickerOverlay || !els.cornerPickerList) return;
+    if (els.cornerPickerTitle) {
+      els.cornerPickerTitle.textContent = "选择要完成的任务（化石与任务不绑定，可交任意一个）";
+    }
+    els.cornerPickerList.replaceChildren();
+    for (const action of actions) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "save-picker-item corner-picker-item";
+      const label = document.createElement("span");
+      label.textContent = action.summary || "完成任务";
+      button.append(label);
+      button.addEventListener("click", () => {
+        els.cornerPickerOverlay.hidden = true;
+        submitQuickAction(action);
+      });
+      els.cornerPickerList.appendChild(button);
+    }
+    els.cornerPickerOverlay.hidden = false;
+  }
+
+  // 提交快速行动并展示真实失败原因（含 Effect Session failure 内层错误）
+  function submitQuickAction(action) {
+    const result = desktopActionBar.activateAction(action.actionId);
+    if (result?.ok === false) {
+      const reason = result.message || result.code
+        || result.failure?.message || result.failure?.code
+        || JSON.stringify(result.failure || {}).slice(0, 120);
+      window.alert(`快速行动提交失败：${reason}`);
+      return;
+    }
+    scheduleRefreshAndAutomation();
+  }
+
+  // 弃牌角标：收集手牌中可结算角标的卡，弹选择后提交对应 card_corner 行动
+  function pickCardCornerAction() {    const projection = readProjection();
     const actions = (projection?.controls?.quickActions || [])
       .filter((candidate) => candidate.family === "card_corner" && !candidate.disabledReason);
     if (!actions.length) {
@@ -1648,6 +1694,11 @@
     // 弃牌角标：需先选手牌，不能直接提交单个 action
     if (String(button.dataset.quickAction) === "card_corner") {
       pickCardCornerAction();
+      return;
+    }
+    // 完成任务：多个任务可交时弹选择让玩家选任意一个
+    if (String(button.dataset.quickAction) === "complete_task") {
+      pickCompleteTaskAction();
       return;
     }
     const result = desktopActionBar.activateAction(button.dataset.actionId);

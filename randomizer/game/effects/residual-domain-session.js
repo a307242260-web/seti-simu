@@ -1015,7 +1015,8 @@
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let dataIndex = 0; dataIndex < count; dataIndex += 1) {
             const gained = data.gainData(player, { source: "card_trigger", root });
-            if (!gained.ok) return gained;
+            // 数据池已满时数据被弃置（discarded），属正常结果，不中断结算
+            if (!gained.ok && !gained.discarded) return gained;
           }
         } else if (effect.type === "card_count_aliens_resource") {
           // 每个外星人：玩家有痕迹的外星人槽位数量 × 单个奖励（如 b_46）。
