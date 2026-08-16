@@ -237,16 +237,24 @@
               ? "所选手牌当前无法打出"
               : "当前无法执行此行动");
         setButton(button, action, reason);
-        // 多目标主行动（登陆/环绕/发射/扫描等）：有多个合法目标时按钮保持可点，
-        // 点击后弹出目标选择（dataset.multiTarget 交给 app 层处理）。
+        // 多目标主行动（登陆/环绕等）：若有「选择目标」动作（内核生成 choose_target
+        // 决策，与打牌登陆同一选择框）则绑定到按钮；否则保持可点弹列表（兜底）。
         if (family !== "play_card") {
           const allLegal = (projection.controls.actions || []).filter((candidate) => (
             candidate.family === family && !candidate.disabledReason
           ));
-          if (allLegal.length > 1 && button) {
+          const selectAction = allLegal.find((candidate) => candidate.target?.select);
+          if (selectAction && button) {
+            button.disabled = false;
+            button.dataset.actionId = selectAction.actionId;
+            delete button.dataset.multiTarget;
+            button.setAttribute("aria-disabled", "false");
+            button.title = "选择目标";
+          } else if (allLegal.length > 1 && button) {
             button.disabled = false;
             button.dataset.actionId = "";
             button.dataset.multiTarget = family;
+            button.setAttribute("aria-disabled", "false");
             button.title = "选择目标";
           } else if (button) {
             delete button.dataset.multiTarget;

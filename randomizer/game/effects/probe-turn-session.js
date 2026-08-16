@@ -46,6 +46,7 @@
     PASS_RESERVE: "probe_turn_pass_reserve",
     PASS_COMMIT: "probe_turn_pass_commit",
     TURN_ADVANCE: "probe_turn_advance",
+    LAND_CHOICE: "probe_land_choice",
   });
   const DOMAIN_HANDOFF_EFFECT_TYPE = "game_domain_handoff";
   const DOMAIN_HANDOFF_SCHEMA_VERSION = "seti-game-domain-handoff-v1";
@@ -185,21 +186,30 @@
           const result = family === "orbit"
             ? reference.getOrbitOptions(actionContext(root, player.id))
             : reference.getLandOptions(actionContext(root, player.id));
-          return result.ok ? {
-            ok: true,
-            choices: result.choices.map((choice) => ({
-              target: {
-                rocketId: choice.rocketId,
-                planetId: choice.planetId,
-                ...(family === "land" ? {
-                  type: choice.target.type,
-                  ...(choice.target.satelliteId ? { satelliteId: choice.target.satelliteId } : {}),
-                } : {}),
-              },
-              payload: family === "land" ? { energyCost: choice.energyCost } : {},
-              label: choice.label,
-            })),
-          } : result;
+          if (!result.ok) return result;
+          const choices = result.choices.map((choice) => ({
+            target: {
+              rocketId: choice.rocketId,
+              planetId: choice.planetId,
+              ...(family === "land" ? {
+                type: choice.target.type,
+                ...(choice.target.satelliteId ? { satelliteId: choice.target.satelliteId } : {}),
+              } : {}),
+            },
+            payload: family === "land" ? { energyCost: choice.energyCost } : {},
+            label: choice.label,
+          }));
+          // 多目标登陆（木星主星+卫星、多火箭等）：追加「选择登陆目标」动作，
+          // 提交后由内核生成 choose_target 决策（与打牌登陆同一正常选择框），
+          // 决策框列出所有火箭的全部可登目标，由玩家任选其一。
+          if (family === "land" && result.needsChoice) {
+            choices.push({
+              target: { select: true },
+              payload: {},
+              label: "选择登陆目标",
+            });
+          }
+          return { ok: true, choices };
         },
         canExecute(context, option) {
           const listed = this.getOptions(context);
@@ -434,6 +444,24 @@
           rocketId: action.target.rocketId,
         });
       } else if (action.family === "land") {
+        if (action.target?.select) {
+          // 多目标登陆（木星主星+卫星等）：spawn choose_target 决策，
+          // 由 decision-ui 渲染与打牌登陆一致的目标选择框。
+          return result(state, root, action.family, {
+            spawnedEffects: [{
+              priority: "direct",
+              effect: {
+                type: EFFECT_TYPES.LAND_CHOICE,
+                kind: "decision",
+                decisionKind: "choose_target",
+                ownerId: player.id,
+                payload: {},
+              },
+            }],
+            events: [{ type: "land_target_selection_requested", playerId: player.id }],
+            history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
+          });
+        }
         executed = actions.getAction("land").execute(actionContext(root, player.id), {
           rocketId: action.target.rocketId,
           target: {
@@ -493,6 +521,57 @@
         events: clone(executed.events || []),
         history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
       });
+    });
+    function listLandChoiceTargets(root, effect) {
+      const player = actor(root, effect.ownerId);
+      // payload 不带 rocketId 时列出所有火箭的全部可登目标（统一选择框）。
+      const rocketId = effect.payload?.rocketId == null ? null : Number(effect.payload?.rocketId);
+      const result = actions.getAction("land").getLandOptions(actionContext(root, player.id));
+      return (result.choices || [])
+        .filter((choice) => rocketId == null || Number(choice.rocketId) === rocketId)
+        .map((choice) => ({
+          family: "choose_target",
+          target: {
+            choiceId: `land:${choice.rocketId}:${choice.planetId}:${choice.target?.type || "planet"}:${choice.target?.satelliteId || ""}`,
+            rocketId: choice.rocketId,
+            planetId: choice.planetId,
+            landTarget: choice.target,
+          },
+          payload: { energyCost: choice.energyCost },
+          summary: choice.label,
+        }));
+    }
+
+    runtime.registerExecutor(EFFECT_TYPES.LAND_CHOICE, {
+      getLegalChoices(state, effect, workingContext) {
+        const root = getRoot(state, workingContext);
+        return science.formalizeChoices(root, effect.ownerId, listLandChoiceTargets(root, effect));
+      },
+      resolveDecision(state, effect, choice, workingContext) {
+        const root = getRoot(state, workingContext);
+        const player = actor(root, effect.ownerId);
+        const legal = listLandChoiceTargets(root, effect)
+          .find((candidate) => String(candidate.target?.choiceId) === String(choice?.target?.choiceId));
+        if (!legal) return fail("PROBE_LAND_CHOICE_STALE", "登陆目标选择已失效");
+        const executed = actions.getAction("land").execute(actionContext(root, player.id), {
+          rocketId: legal.target.rocketId,
+          target: legal.target.landTarget,
+        });
+        if (!executed?.ok) return executed;
+        player.mainActionCompleted = true;
+        const rewardEffects = planetRewards.buildRewardEffectsForAction("land", executed);
+        return result(state, root, "land", {
+          spawnedEffects: [
+            ...(executed.spawnedEffects || []),
+            ...rewardEffects.map((reward) => ({
+              priority: "direct",
+              effect: { type: EFFECT_TYPES.REWARD, ownerId: player.id, payload: { reward } },
+            })),
+          ],
+          events: clone(executed.events || []),
+          history: [{ type: "probe_turn_action", family: "land", executorId: EXECUTOR_ID }],
+        });
+      },
     });
     runtime.registerExecutor(EFFECT_TYPES.TURN_ADVANCE, (state, effect, workingContext) => {
       const root = getRoot(state, workingContext);
