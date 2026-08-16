@@ -1143,7 +1143,7 @@
     );
   }
 
-  // 完成任务：虫族搬运/条件任务/阿米巴理论任务可交时，多个任务弹选择让玩家选任意一个交
+  // 完成任务：虫族搬运/条件任务/阿米巴理论任务可交时，总是弹选择让玩家确认交哪一个
   function pickCompleteTaskAction() {
     const projection = readProjection();
     const actions = (projection?.controls?.quickActions || [])
@@ -1152,13 +1152,12 @@
       window.alert("当前没有可完成的任务");
       return;
     }
-    if (actions.length === 1) {
+    if (!els.cornerPickerOverlay || !els.cornerPickerList) {
       submitQuickAction(actions[0]);
       return;
     }
-    if (!els.cornerPickerOverlay || !els.cornerPickerList) return;
     if (els.cornerPickerTitle) {
-      els.cornerPickerTitle.textContent = "选择要完成的任务（化石与任务不绑定，可交任意一个）";
+      els.cornerPickerTitle.textContent = "选择要完成的任务（可交任意一个）";
     }
     els.cornerPickerList.replaceChildren();
     for (const action of actions) {
