@@ -1482,6 +1482,8 @@
                     options: { region: result.reward.region },
                   },
                   cardInstanceId: null,
+                  // 放置痕迹触发区域结算：结算区域内全部细胞器（最多 3 个）
+                  maxSettles: 3,
                 },
               },
             });

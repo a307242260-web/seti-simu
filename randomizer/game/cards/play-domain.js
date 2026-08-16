@@ -2159,10 +2159,12 @@
         }
         // 选细胞器的顺序影响最终位置：结算一个后若区域内还有细胞器位，
         // 继续让玩家选择下一个（每结算一个 symbol 就移动一次）。
-        // 同一区域最多结算 3 次（蓝/红/橙各 3 个细胞器位）。
+        // 结算次数上限由来源决定：放置痕迹/移除痕迹触发区域结算 maxSettles=3
+        // （蓝/红/橙各 3 个细胞器位）；卡牌任务奖励（如阿米巴1拿科技）默认 1 个。
         const spawnedEffects = [];
         const settledCount = Math.max(0, Number(sessionEffect.payload?.settledCount) || 0) + 1;
-        if (settledCount < 3 && aliens.amiba.listSymbolsInRegion(alienState, legal.target.region).length) {
+        const maxSettles = Math.max(1, Number(sessionEffect.payload?.maxSettles) || 1);
+        if (settledCount < maxSettles && aliens.amiba.listSymbolsInRegion(alienState, legal.target.region).length) {
           spawnedEffects.push({
             priority: "direct",
             effect: {
@@ -2221,6 +2223,8 @@
                   options: { region },
                 },
                 cardInstanceId: null,
+                // 移除痕迹结算区域：结算区域内全部细胞器（最多 3 个）
+                maxSettles: 3,
               },
             },
           });
