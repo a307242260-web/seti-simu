@@ -141,6 +141,11 @@
         actionCycleNumber: Number(state?.turn?.actionCycleNumber ?? 1),
         currentPlayerId: state?.turn?.currentPlayerId ?? null,
         terminal: Boolean(state?.turn?.gameEnded),
+        // 终局结果展示：游戏结束后各玩家总分与分数构成（无隐藏信息）
+        ...(state?.match?.finalScores ? { finalScores: clone(state.match.finalScores) } : {}),
+        ...(state?.match?.finalScoringSettled != null
+          ? { finalScoringSettled: Boolean(state.match.finalScoringSettled) }
+          : {}),
       },
       resident: {
         turn: pick(state?.turn, [

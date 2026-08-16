@@ -502,7 +502,7 @@
   <script src="./game/ai/expected-score-evaluator.js?v=expected-score-v1"></script>
   <script src="./game/ai/heuristic-policy.js?v=heuristic-policy-v2"></script>
   <script src="./game/ai/index.js?v=ai-race-model-1"></script>
-  <script src="./app/browser-host/projection-adapter.js?v=browser-host-v3"></script>
+  <script src="./app/browser-host/projection-adapter.js?v=browser-host-v4"></script>
   <script src="./app/browser-host/view-state-store.js?v=browser-view-state-v2"></script>
   <script src="./app/browser-host/input-adapter.js?v=browser-host-v1"></script>
   <script src="./app/browser-host/policy-input-adapter.js?v=browser-machine-player-v1"></script>
@@ -513,7 +513,7 @@
   <script src="./training/trajectory-recorder.js?v=trajectory-recorder-1"></script>
   <script src="./app/browser-host/trajectory-recording.js?v=trajectory-recording-1"></script>
   <script src="./app/dependencies.js?v=trajectory-recording-1"></script>
-  <script src="./app/dom.js?v=ui-fixes-v7"></script>
+  <script src="./app/dom.js?v=ui-fixes-v8"></script>
   <script src="./game/state/state-store.js?v=state-store-v1"></script>
   <script src="./game/state/low-coupling-slices.js?v=low-coupling-state-v1"></script>
   <script src="./game/state/high-coupling-slices.js?v=high-coupling-state-v1"></script>
@@ -546,7 +546,16 @@
       <div class="save-picker-list" id="save-picker-list"></div>
     </div>
   </div>
+  <div id="final-result-overlay" class="save-picker-overlay" hidden aria-label="终局结果">
+    <div class="save-picker-panel final-result-panel">
+      <div class="save-picker-head">
+        <span>游戏结束 · 终局结果</span>
+        <button class="save-picker-close" type="button" id="final-result-close" aria-label="关闭">×</button>
+      </div>
+      <div class="final-result-body" id="final-result-body"></div>
+    </div>
+  </div>
   <script src="./app/public-api.js?v=trajectory-recording-1"></script>
-  <script src="./app.js?v=ui-fixes-v31"></script>
+  <script src="./app.js?v=ui-fixes-v32"></script>
 </body>
 </html>

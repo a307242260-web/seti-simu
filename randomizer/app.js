@@ -1441,7 +1441,88 @@
     renderInitialSelection(projection);
     desktopActionBar.updateActionButtons();
     renderActionLog();
+    maybeShowFinalResult(projection);
     return projection;
+  }
+
+  // 终局结果弹窗：游戏结束且终局计分结算完成后，弹出各玩家总分、
+  // 行动次数与分数构成（基础分/卡牌分/板块分/九折牌分/符文分/惩罚）。
+  let finalResultDismissed = false;
+
+  function buildFinalResultRows() {
+    const projection = readProjection();
+    const finalScores = projection.match?.finalScores || [];
+    if (!finalScores.length) return null;
+    const actionCounts = {};
+    for (const step of browserReplaySteps || []) {
+      const playerId = step.actorPlayerId || step.action?.actorId || null;
+      if (playerId) actionCounts[playerId] = (actionCounts[playerId] || 0) + 1;
+    }
+    const panels = projection.resident?.browserReadModel?.render?.playerPanels?.players || [];
+    return finalScores.map((entry) => {
+      const panel = panels.find((player) => String(player?.id) === String(entry.playerId)) || {};
+      return {
+        playerId: entry.playerId,
+        name: panel.displayName || panel.name || String(entry.playerId),
+        color: panel.color || "",
+        totalScore: Number(entry.totalScore) || 0,
+        baseScore: Number(entry.baseScore) || 0,
+        cardScore: Number(entry.cardScore) || 0,
+        tileScore: Number(entry.tileScore) || 0,
+        jiuzheCardScore: Number(entry.jiuzheCardScore) || 0,
+        runezuSymbolScore: Number(entry.runezuSymbolScore) || 0,
+        penalty: Number(entry.jiuzhePenaltyScore) || 0,
+        actionCount: actionCounts[entry.playerId] || 0,
+      };
+    }).sort((left, right) => right.totalScore - left.totalScore);
+  }
+
+  function maybeShowFinalResult(projection) {
+    if (finalResultDismissed || !els.finalResultOverlay) return;
+    const terminal = Boolean(
+      projection?.resident?.browserReadModel?.render?.turnPresentation?.terminal,
+    );
+    const settled = Boolean(projection?.match?.finalScoringSettled);
+    if (!terminal || !settled) return;
+    const rows = buildFinalResultRows();
+    if (!rows) return;
+    els.finalResultBody.replaceChildren();
+    const table = document.createElement("table");
+    table.className = "final-result-table";
+    const head = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    for (const label of ["排名", "玩家", "总分", "行动次数", "基础分", "卡牌分", "板块分", "九折牌分", "符文分", "惩罚"]) {
+      const cell = document.createElement("th");
+      cell.textContent = label;
+      headRow.appendChild(cell);
+    }
+    head.appendChild(headRow);
+    table.appendChild(head);
+    const body = document.createElement("tbody");
+    rows.forEach((row, index) => {
+      const tr = document.createElement("tr");
+      for (const value of [
+        String(index + 1),
+        row.name,
+        String(row.totalScore),
+        String(row.actionCount),
+        String(row.baseScore),
+        String(row.cardScore),
+        String(row.tileScore),
+        String(row.jiuzheCardScore),
+        String(row.runezuSymbolScore),
+        String(row.penalty),
+      ]) {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        tr.appendChild(cell);
+      }
+      if (row.color && PLAYER_LOG_COLORS[row.color]) tr.style.color = PLAYER_LOG_COLORS[row.color];
+      body.appendChild(tr);
+    });
+    table.appendChild(body);
+    els.finalResultBody.appendChild(table);
+    els.finalResultOverlay.hidden = false;
   }
 
   function scheduleRefresh() {
@@ -1735,6 +1816,16 @@
   });
   els.savePickerOverlay?.addEventListener("click", (event) => {
     if (event.target === els.savePickerOverlay) els.savePickerOverlay.hidden = true;
+  });
+  els.finalResultClose?.addEventListener("click", () => {
+    finalResultDismissed = true;
+    if (els.finalResultOverlay) els.finalResultOverlay.hidden = true;
+  });
+  els.finalResultOverlay?.addEventListener("click", (event) => {
+    if (event.target === els.finalResultOverlay) {
+      finalResultDismissed = true;
+      els.finalResultOverlay.hidden = true;
+    }
   });
   els.quickActionsTrades?.addEventListener("click", (event) => {
     const button = event.target.closest?.(
