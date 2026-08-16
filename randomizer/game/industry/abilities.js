@@ -265,7 +265,7 @@
       // 走统一转换：gain_resources / gain_data 直接应用，card_move 转 pendingFreeMove
       for (const effect of effects) {
         if (effect.type === "gain_resources") {
-          players.gainResources(player, effect.options?.gain || {});
+          players.gainResources(player, effect.options?.gain || {}, "cardQuickScore");
         } else if (effect.type === "gain_data") {
           const count = Math.max(1, Number(effect.options?.count) || 1);
           for (let index = 0; index < count; index += 1) {
@@ -277,7 +277,7 @@
       }
     } else {
       // 无统一转换时退回直接字段结算（兼容旧数据）
-      if (Object.keys(gain).length) players.gainResources(player, gain);
+      if (Object.keys(gain).length) players.gainResources(player, gain, "cardQuickScore");
       const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
       for (let index = 0; index < dataCount; index += 1) {
         results.push(data.gainData(player, { source: "industry_corner", root: options.root }));

@@ -1446,8 +1446,37 @@
   }
 
   // 终局结果弹窗：游戏结束且终局计分结算完成后，弹出各玩家总分、
-  // 行动次数与分数构成（基础分/卡牌分/板块分/九折牌分/符文分/惩罚）。
+  // 行动次数（按行动类型拆分）与分数构成（四终局板块、基础分来源）。
   let finalResultDismissed = false;
+
+  const FINAL_RESULT_ACTION_LABELS = Object.freeze([
+    Object.freeze({ key: "place_data", label: "插数据" }),
+    Object.freeze({ key: "play_card", label: "打牌" }),
+    Object.freeze({ key: "research_tech", label: "拿科技" }),
+    Object.freeze({ key: "scan", label: "扫描" }),
+    Object.freeze({ key: "analyze", label: "分析" }),
+    Object.freeze({ key: "orbit", label: "环绕" }),
+    Object.freeze({ key: "land", label: "登陆" }),
+    Object.freeze({ key: "launch", label: "发射" }),
+    Object.freeze({ key: "move", label: "移动" }),
+    Object.freeze({ key: "quick_trade", label: "快速交易" }),
+    Object.freeze({ key: "complete_task", label: "交任务" }),
+    Object.freeze({ key: "card_corner", label: "弃牌角标" }),
+    Object.freeze({ key: "pass", label: "PASS" }),
+    Object.freeze({ key: "end_turn", label: "结束回合" }),
+  ]);
+
+  const FINAL_RESULT_SOURCE_LABELS = Object.freeze([
+    Object.freeze({ key: "card", label: "卡牌", keys: ["cardQuickScore", "cardEffectScore", "alienCardQuickScore", "alienEffectScore"] }),
+    Object.freeze({ key: "trace", label: "踪迹", keys: ["alienTracePinkScore", "alienTraceYellowScore", "alienTraceBlueScore"] }),
+    Object.freeze({ key: "land", label: "登陆", keys: ["landScore"] }),
+    Object.freeze({ key: "orbit", label: "环绕", keys: ["orbitScore"] }),
+    Object.freeze({ key: "scan", label: "扫描", keys: ["scanScore"] }),
+    Object.freeze({ key: "tech", label: "科技", keys: ["techBonusScore", "blueTechScore"] }),
+    Object.freeze({ key: "task", label: "任务", keys: ["taskCardScore"] }),
+    Object.freeze({ key: "industry", label: "公司", keys: ["industryEffectScore"] }),
+    Object.freeze({ key: "initial", label: "初始", keys: ["initialScore"] }),
+  ]);
 
   function buildFinalResultRows() {
     const projection = readProjection();
@@ -1456,11 +1485,30 @@
     const actionCounts = {};
     for (const step of browserReplaySteps || []) {
       const playerId = step.actorPlayerId || step.action?.actorId || null;
-      if (playerId) actionCounts[playerId] = (actionCounts[playerId] || 0) + 1;
+      if (!playerId) continue;
+      const family = String(step.action?.family || "");
+      // 决策（choose_*）不计入行动次数；按 family 拆分统计
+      if (family.startsWith("choose_")) continue;
+      const bucket = actionCounts[playerId] || { total: 0, byFamily: {} };
+      bucket.total += 1;
+      bucket.byFamily[family] = (bucket.byFamily[family] || 0) + 1;
+      actionCounts[playerId] = bucket;
     }
     const panels = projection.resident?.browserReadModel?.render?.playerPanels?.players || [];
+    const finalPlayers = projection.resident?.finalReadModel?.players || [];
     return finalScores.map((entry) => {
       const panel = panels.find((player) => String(player?.id) === String(entry.playerId)) || {};
+      const sourceRecord = finalPlayers.find((player) => (
+        String(player?.id) === String(entry.playerId)
+      ))?.scoreSources || {};
+      const counts = actionCounts[entry.playerId] || { total: 0, byFamily: {} };
+      const tileScores = entry.tileScoresById || {};
+      const sources = {};
+      for (const source of FINAL_RESULT_SOURCE_LABELS) {
+        sources[source.key] = source.keys.reduce((sum, key) => (
+          sum + (Number(sourceRecord[key]) || 0)
+        ), 0);
+      }
       return {
         playerId: entry.playerId,
         name: panel.displayName || panel.name || String(entry.playerId),
@@ -1469,10 +1517,16 @@
         baseScore: Number(entry.baseScore) || 0,
         cardScore: Number(entry.cardScore) || 0,
         tileScore: Number(entry.tileScore) || 0,
-        jiuzheCardScore: Number(entry.jiuzheCardScore) || 0,
-        runezuSymbolScore: Number(entry.runezuSymbolScore) || 0,
         penalty: Number(entry.jiuzhePenaltyScore) || 0,
-        actionCount: actionCounts[entry.playerId] || 0,
+        tiles: {
+          a: Number(tileScores.a) || 0,
+          b: Number(tileScores.b) || 0,
+          c: Number(tileScores.c) || 0,
+          d: Number(tileScores.d) || 0,
+        },
+        sources,
+        actionTotal: counts.total,
+        actions: counts.byFamily,
       };
     }).sort((left, right) => right.totalScore - left.totalScore);
   }
@@ -1487,11 +1541,12 @@
     const rows = buildFinalResultRows();
     if (!rows) return;
     els.finalResultBody.replaceChildren();
+    // 主表：排名 / 玩家 / 总分 / 行动次数 / 四终局板块 / 惩罚
     const table = document.createElement("table");
     table.className = "final-result-table";
     const head = document.createElement("thead");
     const headRow = document.createElement("tr");
-    for (const label of ["排名", "玩家", "总分", "行动次数", "基础分", "卡牌分", "板块分", "九折牌分", "符文分", "惩罚"]) {
+    for (const label of ["排名", "玩家", "总分", "行动次数", "终局A", "终局B", "终局C", "终局D", "惩罚"]) {
       const cell = document.createElement("th");
       cell.textContent = label;
       headRow.appendChild(cell);
@@ -1505,12 +1560,11 @@
         String(index + 1),
         row.name,
         String(row.totalScore),
-        String(row.actionCount),
-        String(row.baseScore),
-        String(row.cardScore),
-        String(row.tileScore),
-        String(row.jiuzheCardScore),
-        String(row.runezuSymbolScore),
+        String(row.actionTotal),
+        String(row.tiles.a),
+        String(row.tiles.b),
+        String(row.tiles.c),
+        String(row.tiles.d),
         String(row.penalty),
       ]) {
         const cell = document.createElement("td");
@@ -1522,6 +1576,33 @@
     });
     table.appendChild(body);
     els.finalResultBody.appendChild(table);
+    // 明细：每个玩家一行得分来源、一行行动拆分
+    const detail = document.createElement("div");
+    detail.className = "final-result-detail";
+    for (const row of rows) {
+      const block = document.createElement("div");
+      block.className = "final-result-player-detail";
+      if (row.color && PLAYER_LOG_COLORS[row.color]) block.style.borderColor = PLAYER_LOG_COLORS[row.color];
+      const title = document.createElement("strong");
+      title.textContent = row.name;
+      block.appendChild(title);
+      const sourcesText = FINAL_RESULT_SOURCE_LABELS
+        .filter((source) => Number(row.sources[source.key]) > 0)
+        .map((source) => `${source.label} ${row.sources[source.key]}`)
+        .join(" · ");
+      const sourcesLine = document.createElement("div");
+      sourcesLine.textContent = sourcesText ? `得分来源：${sourcesText}` : "得分来源：—";
+      block.appendChild(sourcesLine);
+      const actionsText = FINAL_RESULT_ACTION_LABELS
+        .filter((action) => Number(row.actions[action.key]) > 0)
+        .map((action) => `${action.label} ${row.actions[action.key]}`)
+        .join(" · ");
+      const actionsLine = document.createElement("div");
+      actionsLine.textContent = actionsText ? `行动拆分：${actionsText}` : "行动拆分：—";
+      block.appendChild(actionsLine);
+      detail.appendChild(block);
+    }
+    els.finalResultBody.appendChild(detail);
     els.finalResultOverlay.hidden = false;
   }
 

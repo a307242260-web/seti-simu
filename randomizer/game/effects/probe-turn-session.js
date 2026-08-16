@@ -251,12 +251,12 @@
     }));
     return Object.freeze(definitions);
   }
-  function applyDirectReward(root, ownerId, effect) {
+  function applyDirectReward(root, ownerId, effect, sourceKey = null) {
     const player = actor(root, ownerId);
     const options = effect.options || {};
     if (!player) return fail("PROBE_REWARD_OWNER_STALE", "行星奖励 owner 已失效");
     if (effect.type === planetRewards.EFFECT_TYPES.GAIN_RESOURCES) {
-      players.gainResources(player, options.gain || {});
+      players.gainResources(player, options.gain || {}, sourceKey);
       return { ok: true, events: [{ type: "planet_reward_resources", playerId: player.id, gain: clone(options.gain || {}) }] };
     }
     if (effect.type === planetRewards.EFFECT_TYPES.GAIN_DATA) {
@@ -513,7 +513,15 @@
           ...(executed.spawnedEffects || []),
           ...rewardEffects.map((reward) => ({
             priority: "direct",
-            effect: { type: EFFECT_TYPES.REWARD, ownerId: player.id, payload: { reward } },
+            effect: {
+              type: EFFECT_TYPES.REWARD,
+              ownerId: player.id,
+              payload: {
+                reward,
+                // 终局计分来源拆分：登陆奖励计 landScore，环绕奖励计 orbitScore
+                sourceKey: action.family === "land" ? "landScore" : "orbitScore",
+              },
+            },
           })),
         ],
         events: clone(executed.events || []),
@@ -584,7 +592,11 @@
             ...(executed.spawnedEffects || []),
             ...rewardEffects.map((reward) => ({
               priority: "direct",
-              effect: { type: EFFECT_TYPES.REWARD, ownerId: player.id, payload: { reward } },
+              effect: {
+                type: EFFECT_TYPES.REWARD,
+                ownerId: player.id,
+                payload: { reward, sourceKey: "landScore" },
+              },
             })),
           ],
           events: clone(executed.events || []),
@@ -757,7 +769,7 @@
           spawnedEffects: [{ priority: "direct", effect: delegated }],
         });
       }
-      const settled = applyDirectReward(root, effect.ownerId, reward);
+      const settled = applyDirectReward(root, effect.ownerId, reward, effect.payload?.sourceKey || null);
       if (!settled.ok) return settled;
       return result(state, root, EFFECT_TYPES.REWARD, { events: clone(settled.events || []) });
     });

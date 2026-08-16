@@ -285,12 +285,21 @@
     return { ok: true, message: null };
   }
 
-  function gainResources(player, gain) {
+  function gainResources(player, gain, scoreSourceKey = null) {
     const reward = gain || {};
     const beforeScore = Number(player?.resources?.score) || 0;
     if (reward.credits != null) player.resources.credits += reward.credits;
     if (reward.energy != null) player.resources.energy += reward.energy;
-    if (reward.score != null) player.resources.score += reward.score;
+    if (reward.score != null) {
+      player.resources.score += reward.score;
+      // 终局计分的得分来源拆分（卡牌/踪迹/登陆/环绕/扫描/科技/任务等）
+      if (scoreSourceKey) {
+        player.scoreSources = player.scoreSources || {};
+        player.scoreSources[scoreSourceKey] = (
+          Number(player.scoreSources[scoreSourceKey]) || 0
+        ) + reward.score;
+      }
+    }
     if (reward.aomomoFossils != null) {
       player.resources.aomomoFossils = Math.max(
         0,

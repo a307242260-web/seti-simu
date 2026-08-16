@@ -111,6 +111,8 @@ async function main() {
     const dump = await evalJs(cdp, `(() => {
       const proj = window.SetiRandomizer.inspect().projection;
       const panels = proj?.resident?.browserReadModel?.render?.playerPanels?.players || [];
+      const finalModel = proj?.resident?.finalReadModel || null;
+      const finalSample = finalModel?.players?.[0] || null;
       const overlay = document.querySelector('#final-result-overlay');
       const table = document.querySelector('.final-result-table');
       const round = document.querySelector('#round-status-round');
@@ -122,6 +124,8 @@ async function main() {
         finalScoresCount: proj?.match?.finalScores?.length ?? null,
         panelSample: panels[0] ? Object.fromEntries(Object.entries(panels[0]).filter(([k]) => ["id", "name", "displayName", "color", "uiColor"].includes(k))) : null,
         panelCount: panels.length,
+        finalModelKeys: finalModel ? Object.keys(finalModel) : null,
+        finalPlayerSample: finalSample ? { id: finalSample.id, scoreSources: finalSample.scoreSources, metrics: finalSample.metrics ? Object.keys(finalSample.metrics) : null } : null,
         overlayHidden: overlay?.hidden,
         overlayText: overlay ? (overlay.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 500) : null,
         tableRows: table ? [...table.querySelectorAll('tbody tr')].map((tr) => [...tr.children].map((td) => td.textContent).join(' | ')) : null,

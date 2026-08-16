@@ -447,11 +447,11 @@
       const count = Object.keys(actor.techState?.ownedTiles || {}).filter((tileId) => (
         actor.techState.ownedTiles[tileId] && tech.getTechType(tileId) === result.techType
       )).length;
-      players.gainResources(actor, { score: count * Math.max(0, Number(after.scorePer) || 0) });
+      players.gainResources(actor, { score: count * Math.max(0, Number(after.scorePer) || 0) }, "techBonusScore");
     } else if (after?.kind === "resourceValueScore") {
       players.gainResources(actor, {
         score: Math.max(0, Number(actor.resources?.[after.resource]) || 0),
-      });
+      }, "techBonusScore");
     } else if (after?.kind === "publicityIfNotFirstTake" && !result.firstTake) {
       players.gainResources(actor, { publicity: Math.max(0, Number(after.publicity) || 0) });
     }
@@ -586,7 +586,11 @@
       );
       if (placed?.ok && !placed.extraOnly) {
         const reward = aliens.getFirstTraceRewardForSlot?.(legal.target.alienSlotId);
-        players.gainResources(actor, reward?.gain || {});
+        players.gainResources(
+          actor,
+          reward?.gain || {},
+          `alienTrace${legal.target.traceType[0].toUpperCase()}${legal.target.traceType.slice(1)}Score`,
+        );
       }
       return placed;
     }
@@ -599,7 +603,11 @@
       );
       if (placed?.ok) {
         const reward = aliens.getExtraTraceReward?.();
-        players.gainResources(actor, reward?.gain || {});
+        players.gainResources(
+          actor,
+          reward?.gain || {},
+          `alienTrace${legal.target.traceType[0].toUpperCase()}${legal.target.traceType.slice(1)}Score`,
+        );
       }
       return placed;
     }
@@ -613,7 +621,11 @@
       );
       if (placed?.ok) {
         const reward = aliens.getExtraTraceReward?.();
-        players.gainResources(actor, reward?.gain || {});
+        players.gainResources(
+          actor,
+          reward?.gain || {},
+          `alienTrace${legal.target.traceType[0].toUpperCase()}${legal.target.traceType.slice(1)}Score`,
+        );
       }
       return placed;
     }
@@ -1441,9 +1453,14 @@
         if (!actor || !result?.ok) return result || fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
         const spawnedEffects = [];
         let irreversible = null;
-        // 阿米巴痕迹位置分值奖励（2/4 号位 +1 分等）
+        // 阿米巴痕迹位置分值奖励（2/4 号位 +1 分等）→ 计入对应颜色踪迹得分来源
         if (result.reward?.gain && Object.keys(result.reward.gain).some((key) => Number(result.reward.gain[key]) !== 0)) {
-          players.gainResources(actor, result.reward.gain);
+          const traceType = String(choice?.target?.traceType || "yellow");
+          players.gainResources(
+            actor,
+            result.reward.gain,
+            `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`,
+          );
         }
         // 痕迹位置奖励：选一张当前外星人的牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）。
         // 从放置的槽位推断物种，不能写死阿米巴（虫族等同样有 pickAlienCard 奖励）。

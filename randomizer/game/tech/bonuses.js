@@ -82,7 +82,7 @@
   }
 
   function applyFirstTakeTypeReward(player) {
-    players.gainResources(player, { score: catalog.FIRST_TAKE_TYPE_SCORE });
+    players.gainResources(player, { score: catalog.FIRST_TAKE_TYPE_SCORE }, "techBonusScore");
     return {
       ok: true,
       score: catalog.FIRST_TAKE_TYPE_SCORE,

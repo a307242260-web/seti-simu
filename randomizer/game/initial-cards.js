@@ -271,9 +271,9 @@
       .join("、");
   }
 
-  function applyResources(player, gain, results) {
+  function applyResources(player, gain, results, scoreSourceKey = null) {
     if (!gain || !Object.keys(gain).length) return;
-    players.gainResources(player, gain);
+    players.gainResources(player, gain, scoreSourceKey);
     pushResult(results, {
       ok: true,
       type: "resources",
@@ -290,7 +290,7 @@
   function resolveTurnOrderScoreEffect(player, positionIndex) {
     const score = getInitialTurnOrderScore(positionIndex);
     const results = [];
-    applyResources(player, { score }, results);
+    applyResources(player, { score }, results, "initialScore");
     return {
       ok: true,
       type: "turnOrderScore",
