@@ -6,7 +6,7 @@ Browser Host 是浏览器玩家端的正式宿主边界。它只把 StateStore c
 
 - StateStore：唯一 committed 事实。
 - Effect Session：唯一 working state、queue、Decision、journal、undo/barrier 与 commit/abort 生命周期。
-- Standard Action：15 个顶层 family、7 个 conditional family、identity、actor、target/payload、合法性和业务 handler。
+- Standard Action：16 个顶层 family、7 个 conditional family、identity、actor、target/payload、合法性和业务 handler。
 - Machine Player Host / Policy：机器席位只返回当前 legal set 的 `actionId`，提交前由 Host 复核 freshness。
 
 Browser Host 不重定义这些协议，也不保存规则切片。

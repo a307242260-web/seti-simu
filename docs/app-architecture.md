@@ -23,8 +23,9 @@ DOM / Browser ViewState
                      Effect Session -> StateStore commit
 ```
 
-- `randomizer/game/production-composition.js` 与 `production-kernel.js` 安装 22 个 Standard
-  Action family、Effect domain、Decision owner 和唯一提交链。
+- `randomizer/game/production-composition.js` 与 `production-kernel.js` 安装 23 个 Standard
+  Action family（16 顶层 + 7 conditional，含 `complete_task`）、Effect domain、Decision owner
+  和唯一提交链。
 - Browser 与 Simulation 共用 Production rules、Action identity、Decision 和 commit 语义，
   但各自拥有不同的 projection、ViewState、存储与宿主服务。
 - Browser 不得取得 canonical committed root、working root、StateStore CAS、规则 executor

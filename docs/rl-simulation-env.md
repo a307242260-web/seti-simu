@@ -41,7 +41,7 @@ authority version，不重新推导合法性。
 顶层 family：
 
 `launch / orbit / land / scan / analyze / research_tech / play_card / pass / move /
-quick_trade / industry / card_corner / place_data / runezu_face_symbol / end_turn`
+quick_trade / industry / card_corner / place_data / runezu_face_symbol / complete_task / end_turn`
 
 conditional family：
 

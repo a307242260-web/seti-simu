@@ -245,7 +245,7 @@ UI 布局：
 
 ### Effect Session journal
 
-- 主行动、快速行动、回合控制和条件选择统一使用 22 个 Standard Action family。浏览器与训练端对同一合法 descriptor 共享 `actionId`、owner、target/payload 与 registry executor。
+- 主行动、快速行动、回合控制和条件选择统一使用 23 个 Standard Action family。浏览器与训练端对同一合法 descriptor 共享 `actionId`、owner、target/payload 与 registry executor。
 - Effect Session journal 是 action、decision、effect、event、RNG、history、log 与 replay 的唯一事务记录；旧 Browser 行动日志 draft、独立 history owner、恢复快照和日志 UI 已删除。
 - `launch / move / orbit / land / pass / end_turn` 统一由 `game/effects/probe-turn-session.js` 枚举和编排。移动支付、行星奖励、PASS 弃牌/预留精选均是同一 session 内的标准 Decision；Browser 只提交 descriptor/choice，Simulation 不注册私有 provider。
 - 隐藏信息效果写入不可撤销屏障；恢复只使用 Composition lifecycle envelope 和 Effect Session checkpoint，不从展示日志恢复规则状态。

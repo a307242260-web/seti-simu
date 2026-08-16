@@ -35,7 +35,7 @@ Effect Session ───────────► StateStore.compareAndCommit
                  DecisionContext -> PolicyDecision
 ```
 
-- `randomizer/game/actions/standard-action.js` 是 15 个顶层 family 与 7 个 conditional family 的 identity、phase、枚举/校验协议 owner。
+- `randomizer/game/actions/standard-action.js` 是 16 个顶层 family 与 7 个 conditional family 的 identity、phase、枚举/校验协议 owner。
 - `randomizer/game/effects/session-runtime.js` 是 working copy、DecisionEffect、队列、journal、undo/barrier 和提交门禁 owner。
 - `randomizer/game/state/state-store.js` 是 committed schema、版本、RNG/sequence 与 compare-and-commit owner。
 - `randomizer/app/browser-host/**` 只消费 committed/session projection，并把人类或机器输入交回标准端口。

@@ -40,7 +40,7 @@
 - `randomizer/app.js`：Browser Production composition、projection/ViewState、标准输入、服务与渲染的窄装配根。
 - `randomizer/game/effects/residual-domain-session.js`、`randomizer/app/browser-host/decision-ui.js`：公司、卡牌、数据与八种外星人的标准 Decision/Effect owner 和只读 presentation；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
 - `randomizer/app/browser-host/policy-input-adapter.js`：把公共 PolicyDecision 映射回与玩家相同的 Standard Action/Decision 输入端口；提交前重验 boundary，未知/stale fail-closed。
-- `randomizer/game/production-kernel.js`、`randomizer/game/production-composition.js`：Browser/Simulation 共用的唯一 Production factory、22 family registry、五个 domain、Decision 与提交链。
+- `randomizer/game/production-kernel.js`、`randomizer/game/production-composition.js`：Browser/Simulation 共用的唯一 Production factory、23 family registry（16 顶层 + 7 conditional）、五个 domain、Decision 与提交链。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。
 - `randomizer/solar-system/core.js`：太阳系渲染与旋转相关核心逻辑。
@@ -81,6 +81,7 @@
 - `docs/ai-design.md`：电脑玩家 AI 的当前唯一设计文档（控制器接口、价值模型、目标系统、回合规划、自博弈验证），后续开发以此为准。
 - `docs/fixed-boards.md`：固定盘面 seed ↔ 盘面 ↔ 初始公司关联清单（浏览器下拉与训练侧默认盘面的对号入座）。
 - `docs/rl-simulation-env.md`：RL Simulation env 契约、observation/action/replay schema 与当前浏览器实现映射。
+- `docs/browser-simulation-unification.md`：Browser/Simulation 内核共用审计、family 接口唯一性矩阵、打牌登陆与直接登陆双实现差异、代码与文档冲突清单与统一方案。
 - `docs/implementation-proof-obligations.md`：跨模块状态机/迁移任务的验收条款正向推导、proof obligation、检查问题与分层证据模板。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。
 - `assets/industry/industry-abilities.md`：公司牌主动/被动能力设计与建模说明。

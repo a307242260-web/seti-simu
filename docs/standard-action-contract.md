@@ -4,7 +4,7 @@
 
 Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏决策协议。两端只选择语义 action；候选枚举、执行前校验、状态事务、规则结算和下一个决策边界均由无 DOM 的游戏层负责。
 
-当前 15 个顶层 family 与 7 个 conditional family 均由 game Production Domain Pack
+当前 16 个顶层 family 与 7 个 conditional family 均由 game Production Domain Pack
 唯一注册。浏览器 AI 与训练 Policy 选择完整 descriptor，并只通过 Composition input port
 执行；条件动作由 active Effect domain 或 game-owned initial-setup/quick-trade source
 枚举。旧 kind switch、Simulation 私有条件 registry/旧路径、Browser Decision
@@ -17,7 +17,7 @@ side-channel、`payload.legacyAction`、`executeLegacy` 与 runtime bypass 已�
 | 字段 | 语义 |
 |---|---|
 | `schemaVersion` | 固定为 `seti-standard-action-v1`；不兼容变更必须升版 |
-| `family` | 下表冻结的 22 个语义 family 之一 |
+| `family` | 下表冻结的 23 个语义 family 之一 |
 | `phase` | `main`、`quick`、`turn_control` 或 `conditional` |
 | `actionId` | 由 `family + actorId + target + payload` 稳定生成；不含 label、估值或 UI 状态 |
 | `actorId` | 当前真实 decision owner；不是观察者或 automation controller |
@@ -86,7 +86,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 | 验收条款 | 可证伪命题 | 最小反例 | 必需证据 |
 |---|---|---|---|
-| registry 完备 | 22 个 family 均有唯一 definition，且每个 definition 同时实现 enumerate/validate/execute | family 有标签但无 handler，或重复注册 | registry exhaustive test + 每 family 行为 checkpoint |
+| registry 完备 | 23 个 family 均有唯一 definition，且每个 definition 同时实现 enumerate/validate/execute | family 有标签但无 handler，或重复注册 | registry exhaustive test + 每 family 行为 checkpoint |
 | legal 可执行 | 对任意 checkpoint `s` 与 `a ∈ enumerate(s)`，从同一 `s` 执行 `a` 成功或到声明终态 | 候选由 AI builder 生成，规则 executor 拒绝 | 同 checkpoint 逐候选 fork 执行 |
 | stale/越权拒绝 | actor 或任一版本不匹配时状态、RNG、history/replay 均不变化 | 旧按钮 action 在对手回合仍能执行 | 负向合约 + 前后完整 checkpoint parity |
 | 单一规则入口 | 浏览器点击与 Policy 对同一 actionId 调用相同 registry.execute | UI 预扣资源，simulation 走另一 switch | composition 结构检查 + 双入口 parity |
