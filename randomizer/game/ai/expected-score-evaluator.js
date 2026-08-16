@@ -2246,9 +2246,18 @@
         const fungiblePaymentChoices = targetUsesFungibleResources
           && successors.every((action) => (
             action.family === "choose_payment"
-            && action.target?.kind === "discard-hand-cards"
+            && (
+              action.target?.kind === "discard-hand-cards"
+              || action.target?.kind === "discard-hand-card"
+              || action.target?.kind === "confirm"
+            )
           ));
         if (fungiblePaymentChoices) {
+          // 弃牌付费等价折叠：旧 UI 一次提交一组卡（discard-hand-cards），新 UI 逐张
+          // 点选（discard-hand-card + confirm）。对反事实搜索而言"弃哪张卡"不影响
+          // 目标达成（付的是同一种资源），任选一个代表即可，避免组合/逐张全量展开
+          // 导致 choose_payment 节点爆炸（此前 4096 上限内 3530 次 choose_payment，
+          // 主行动全被剪枝）。
           return bindRoute(
             successors.slice(0, 1),
             input.routeTargetId,
