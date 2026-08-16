@@ -364,12 +364,30 @@
       rootValue.realizedScore + finite(rootValue.securedEndGameBonus)
     );
     const infrastructure = infrastructureDeltaValue(rootValue, leafValueState);
+    // 宣传研究货币价值：宣传是研究科技的唯一货币（研究 cost 6 宣传，科技单位价值 10）。
+    // 用户 405 档（终局未结算-v223）实测：打 b_117（免费发射+2 宣传）→ pub 4→6 达
+    // 研究门槛 → 研究 blue2（蓝科技数据位槽 8 次）。此前 AI 评估打牌只算即时分，
+    // 宣传增量=0 → b_117 不可选（no-score-tech-or-income-gain），AI 选 launch 而非打牌。
+    // 宣传价值只在"跨过研究门槛"时兑现（pub 从 <6 到 >=6 的那部分），零星宣传
+    // （远离门槛，如卡角 +1 宣传 pub 0→1）价值为 0——测试契约"只获得宣传的卡角
+    // 不得归因"保持成立。
+    const RESEARCH_PUBLICITY_COST = 6;
+    const TECH_VALUE_PER_RESEARCH = 10;
+    const rootPub = finite(rootValue.resourceFacts?.publicity);
+    const leafPub = finite(leafValueState.resourceFacts?.publicity);
+    const crossesThreshold = rootPub < RESEARCH_PUBLICITY_COST
+      && leafPub >= RESEARCH_PUBLICITY_COST;
+    const publicityResearchValue = crossesThreshold
+      ? (RESEARCH_PUBLICITY_COST - rootPub)
+        * (TECH_VALUE_PER_RESEARCH / RESEARCH_PUBLICITY_COST)
+      : 0;
     const opportunityCost = 0;
     return {
-      total: actualScoreDelta + infrastructure.total - opportunityCost,
-      primaryValue: actualScoreDelta + infrastructure.total,
+      total: actualScoreDelta + infrastructure.total + publicityResearchValue - opportunityCost,
+      primaryValue: actualScoreDelta + infrastructure.total + publicityResearchValue,
       actualScoreDelta,
       infrastructure,
+      publicityResearchValue,
       opportunityCost,
     };
   }
