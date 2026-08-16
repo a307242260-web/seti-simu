@@ -307,14 +307,10 @@
     return result;
   }
 
-  function isChongHandCard(card) {
-    return typeof chong?.isChongCard === "function" && chong.isChongCard(card);
-  }
-
   function passDiscardChoices(root, ownerId, discardCount) {
     const player = actor(root, ownerId);
-    const cardsInHand = (player?.hand || [])
-      .filter((card) => !isChongHandCard(card));
+    // 外星人牌与普通牌行为一致：PASS 弃牌候选包含全部手牌。
+    const cardsInHand = player?.hand || [];
     return science.formalizeChoices(
       root,
       ownerId,
@@ -357,10 +353,10 @@
     }));
     const isFinalRound = Number(turn.roundNumber) >= turnFlow.DEFAULT_FINAL_ROUND;
     // 手牌上限弃牌：所有轮次都执行（规则书 PASS 步骤 1，最后一轮同样适用）。
-    // 钻探者（虫）卡牌不计入手牌上限——只数非虫牌。
+    // 外星人牌与普通牌一致，均计入手牌上限。
     const discardCount = Math.max(
       0,
-      (player.hand || []).filter((card) => !isChongHandCard(card)).length - 4,
+      (player.hand || []).length - 4,
     );
     if (discardCount) {
       effects.push({
