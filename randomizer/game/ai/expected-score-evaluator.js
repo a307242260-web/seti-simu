@@ -842,7 +842,8 @@
   }
 
   function actionMatchesProbeStep(action, step) {
-    if (!action || !step || action.family !== step.family) return false;
+    if (!action || !step) return false;
+    if (action.family !== step.family) return false;
     if (step.family === "move") {
       return String(action.target?.rocketId) === String(step.rocketId)
         && finite(action.target?.deltaX) === finite(step.deltaX)
@@ -865,6 +866,21 @@
         ? total + Math.max(1, finite(effect?.options?.movementPoints) || 1)
         : total
     ), 0);
+  }
+
+  // 打牌 spawn 的免费发射：该 play_card 打出时含 LAUNCH（skipCost）效果，
+  // 可作为探测的免费发射步骤（用户 405 档 b_117 = 免费发射 + 2 宣传）。
+  function cardHasFreeLaunch(observation, action) {
+    if (action?.family !== "play_card") return false;
+    const instanceId = action.target?.cardInstanceId;
+    const card = (observation?.selfState?.hand || []).find((candidate) => (
+      String(candidate?.id) === String(instanceId)
+    ));
+    if (!card || typeof cardEffects?.buildPlayEffects !== "function") return false;
+    return cardEffects.buildPlayEffects(card).some((effect) => (
+      effect?.type === cardEffects.EFFECT_TYPES.LAUNCH
+      && effect?.options?.skipCost !== false
+    ));
   }
 
   function movementPointsFromCardAction(observation, action) {
@@ -1381,6 +1397,17 @@
       const exact = legalActions.filter((action) => (
         actionMatchesProbeStep(action, goal.nextStep)
       ));
+      // 打牌 spawn 的免费发射可作为探测的发射步骤：用户 405 档打 b_117
+      // （LAUNCH skipCost 免费发射 +2 宣传）→ 免费探测 + 攒宣传研究科技。
+      // 此前探测目标只认 launch 行动，打牌发射完全不可见（AI 评估 b_117
+      // 无探测价值，只算宣传 3.33，选 launch 103 而非打牌）。
+      let launchCards = [];
+      if (goal?.nextStep?.family === "launch" && !exact.length) {
+        launchCards = legalActions.filter((action) => (
+          action.family === "play_card"
+          && cardHasFreeLaunch(input.rootObservation, action)
+        ));
+      }
       const movementCards = selectProbeMovementCards(
         input.rootObservation,
         goal,
@@ -1394,7 +1421,7 @@
           legalActions,
           input.focalSeatId,
         );
-      return [...exact.slice(0, 1), ...movementCards, ...resourcePreparation];
+      return [...exact.slice(0, 1), ...launchCards, ...movementCards, ...resourcePreparation];
     }
     for (const goal of probeGoals) {
       const contributesToAnalyze = dataAnalyzeEligible(
