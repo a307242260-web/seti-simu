@@ -96,17 +96,22 @@ player-white: 分249 钱0 能0 手[] ✓   ← 白色完全一致
 player-blue: ... ✗（仅手牌差异，规则演变遗留，不影响白色）
 
 === 白色 scoreSources（完整拆分）===
-键数: 15，各来源合计: 105，白色总分: 249
+键数: 15，各来源合计: 249，白色总分: 249   ← 行动分全部分解，无缺口
+  blueTechScore: 40（旧档记录 0）    ← 数据放置蓝列加分
+  alienEffectScore: 38（旧档记录 0） ← 阿米巴细胞器/痕迹计数/异常点奖励
+  landScore: 41（旧档记录 0）        ← 登陆奖励（含卡牌触发登陆）
+  techBonusScore: 30（旧档记录 0）   ← 12 次研究科技：首次类型 2 分×N + 背面 bonus
   alienTracePinkScore: 22（旧档记录 0）
-  techBonusScore: 24（旧档记录 0）
+  scanScore: 21（旧档记录 0）        ← 扫描替换星云 token 第二槽位 +2 分
   alienTraceBlueScore: 15（旧档记录 0）
   alienTraceYellowScore: 15（旧档记录 0）
   taskCardScore: 15
-  landScore: 7（旧档记录 0）
+  initialScore: 6（旧档记录 0）      ← 顺位 1 + 初始牌 21 的 3 分 + 初始牌 1 天狼星扫描 2 分
   cardQuickScore: 3
   orbitScore: 3（旧档记录 0）
-  initialScore: 1（旧档记录 0）
-  ...（其余为 0）
+  cardEffectScore: 0
+  industryEffectScore: 0
+  alienCardQuickScore: 0
 ```
 
 ## 结果可信度
@@ -114,8 +119,17 @@ player-blue: ... ✗（仅手牌差异，规则演变遗留，不影响白色）
 - 白色玩家从开局（初始选择）到终局逐点对齐存档：分数 0→249、钱/能/手牌、
   公共牌（`b_129/b_130/b_56`）全部一致。
 - 绿色/棕色玩家也完全对齐；仅蓝色玩家手牌因 PASS 上限规则演变有差异。
-- 白色 scoreSources 补全到 15 键（旧档只有 5 个非零键），合计 105 分来源
-  + 终局板块等其余部分 = 249 总分。
+- 白色 scoreSources **15 键合计 249 = 总分 249**（行动分全部分解，无缺口），
+  旧档只有 5 个非零键（cardQuickScore 3 / taskCardScore 15 等）。
+- 逐步骤核验脚本 `tools/step_score_check.js`：每步后校验 score === sources 合计，
+  全程一致。
+
+## techBonusScore 构成（30 分，示例局）
+
+12 次研究科技：10 次 +2、2 次 +5（#99 blue1、#482 orange3）。
+- +2 = 首次获取某类型科技 tile 的统一奖励（`FIRST_TAKE_TYPE_SCORE = 2`，catalog.js）
+- +5 = 首次类型 2 分 + 该 tile 背面 bonus_3f 的 3 分
+- 合计 10×2 + 2×5 = 30 ✓
 
 ## 常用验证（不要漏）
 
@@ -126,6 +140,24 @@ node tools/run_node_tests.js   # 64/65 通过；simulation-counterfactual-outcom
 
 ## 关联提交
 
-- `randomizer/app.js`：startNewGame 显式传 seed（science RNG 对齐，2026-08-16 提交）
+- `433d942`：终局计分来源完整拆分（2026-08-16 提交，含本次全部修复）
+  - `randomizer/app.js`：startNewGame 显式传 seed（science RNG 对齐）
+  - `randomizer/game/effects/science-session.js`：place_data 蓝列分→blueTechScore、
+    扇区结算→scanScore、Helios 被动→industryEffectScore、蓝槽科技 firstTake→techBonusScore
+  - `randomizer/game/cards/play-domain.js`：卡牌 GAIN_RESOURCES→cardEffectScore、
+    阿米巴细胞器→alienEffectScore、卡牌登陆/环绕→landScore/orbitScore、
+    痕迹计数/异常点→alienEffectScore
+  - `randomizer/game/tech/bonuses.js`：科技研究 bonus（bonus_3f 等）→techBonusScore
+  - `randomizer/game/data/nebula-state.js`：扫描替换星云 token +2 分走 gainResources
+    （记 scanScore/initialScore，不再直接改 score）
+  - `randomizer/game/abilities/scan.js`：扫描给分传 scanScore
+  - `randomizer/game/initial-cards.js`：初始牌/公司效果分→initialScore/industryEffectScore
 - 89467ad：虫牌计入 PASS 手牌上限（规则改动，旧档重放分叉点之一）
 - f9c9827：amiba_task 只对带理论任务的牌生成（规则改动，旧档重放分叉点之二）
+
+## 相关工具脚本
+
+- `tools/backfill_full_chain.js`：权威入口（完整重放 + 终局对比 + scoreSources）
+- `tools/step_score_check.js`：逐步校验 score === sources 合计
+- `tools/trace_tech_bonus.js`：追踪 techBonusScore 每次加分构成
+- `tools/replay_joined_chain.js` / `tools/replay_white_strict.js`：调试用
