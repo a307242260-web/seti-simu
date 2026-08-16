@@ -1759,13 +1759,12 @@
         return [...orbitChoices, ...landChoices];
       }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
-        // 阿米巴牌区域 symbol 奖励：让玩家选择结算区域内哪个细胞器（symbol）。
-        // 已结算的 symbol（本区域结算流程内）即使移动到区域内空位也不得重复选择。
+        // 阿米巴区域 symbol 奖励：让玩家选择结算区域内哪个细胞器（symbol）。
+        // 同一区域最多结算 3 次（蓝/红/橙各 3 个细胞器位），到达上限不再提供选择。
         const region = options.region;
         if (!region) return [];
-        const resolvedIds = new Set(sessionEffect.payload?.resolvedSymbolIds || []);
-        const symbols = aliens.amiba.listSymbolsInRegion(getWorkingSlice(root, "aliens"), region)
-          .filter((entry) => !resolvedIds.has(entry.symbolId));
+        if ((Number(sessionEffect.payload?.settledCount) || 0) >= 3) return [];
+        const symbols = aliens.amiba.listSymbolsInRegion(getWorkingSlice(root, "aliens"), region);
         return symbols.map((entry) => (
           makeChoice(
             "choose_target",
@@ -2158,19 +2157,12 @@
         if (drawCount > 0) {
           irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
         }
-        // 选细胞器的顺序影响最终位置：结算一个后若区域内还有未结算的 symbol，
+        // 选细胞器的顺序影响最终位置：结算一个后若区域内还有细胞器位，
         // 继续让玩家选择下一个（每结算一个 symbol 就移动一次）。
-        // 已结算的 symbolId 累积传递，避免移动回区域内空位后被重复结算。
+        // 同一区域最多结算 3 次（蓝/红/橙各 3 个细胞器位）。
         const spawnedEffects = [];
-        const resolvedSymbolIds = [
-          ...(Array.isArray(sessionEffect.payload?.resolvedSymbolIds)
-            ? sessionEffect.payload.resolvedSymbolIds
-            : []),
-          resolved.symbolId,
-        ];
-        const remaining = aliens.amiba.listSymbolsInRegion(alienState, legal.target.region)
-          .filter((entry) => !resolvedSymbolIds.includes(entry.symbolId));
-        if (remaining.length) {
+        const settledCount = Math.max(0, Number(sessionEffect.payload?.settledCount) || 0) + 1;
+        if (settledCount < 3 && aliens.amiba.listSymbolsInRegion(alienState, legal.target.region).length) {
           spawnedEffects.push({
             priority: "direct",
             effect: {
@@ -2180,7 +2172,7 @@
               ownerId: actor.id,
               payload: {
                 ...clone(sessionEffect.payload),
-                resolvedSymbolIds,
+                settledCount,
               },
             },
           });
