@@ -7,6 +7,7 @@
   let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
   let outcomeModel = root.SetiOutcomeModel;
   let endGameScoring = root.SetiEndGameScoring;
+  let initialCards = root.SetiInitialCards;
 
   if ((!policyPort || !standardAction || !heuristicEvaluator || !expectedScoreEvaluator || !outcomeModel || !endGameScoring) && typeof require === "function") {
     policyPort = policyPort || require("./policy-port");
@@ -15,11 +16,12 @@
     expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
     outcomeModel = outcomeModel || require("./outcome-model");
     endGameScoring = endGameScoring || require("../end-game-scoring");
+    initialCards = initialCards || require("../initial-cards");
   }
 
-  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring);
+  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring, initialCards);
   if (typeof module === "object" && module.exports) module.exports = api;
-  if (typeof module === "undefined") root.SetiHeuristicPolicy = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring) {
+  if (typeof module === "undefined") root.SetiHeuristicPolicy = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator, outcomeModel, endGameScoring, initialCards) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";
@@ -89,11 +91,20 @@
       return industry || null;
     }
     const selectedInitialIds = new Set(offer?.selectedInitialIds || []);
-    const initial = actions.find((action) => (
+    // 初始牌倾向数据：数据（dataGain/availableData）是 R1 环绕+填 4 数据轨拿收入的
+    // 起点，也是蓝科技（1 数据换 1 能量）的燃料——用户高分策略首轮即选数据牌。
+    // 数据牌优先，无数据牌时保持原「第一个」行为。
+    const initialOptions = actions.filter((action) => (
       action.target?.kind === "select_initial_card"
       && action.target?.selectionKind === "initial"
       && !selectedInitialIds.has(action.target?.cardId)
     ));
+    const dataCard = initialOptions.find((action) => {
+      const number = Number(String(action.target?.cardId || "").replace("initial:", ""));
+      const effect = initialCards?.INITIAL_CARD_EFFECTS?.[number];
+      return Boolean(effect && (effect.dataGain || effect.income?.availableData));
+    });
+    const initial = dataCard || initialOptions[0] || null;
     if ((setup?.active && offer && selectedInitialIds.size < 2) || (!offer && initial)) {
       return initial || null;
     }
