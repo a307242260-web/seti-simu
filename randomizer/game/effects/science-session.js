@@ -1463,36 +1463,28 @@
             },
           });
         }
-        // 阿米巴痕迹区域奖励：自动结算该区域全部细胞器（蓝色痕迹 → 蓝色区域全部 symbol，
-        // 与外星人面板规则一致，不弹选择）。
+        // 阿米巴痕迹区域奖励：让玩家逐个选择该区域细胞器（symbol），选择顺序
+        // 影响 symbol 移动后的位置。统一走 play-domain 的 CHOOSE_SYMBOL_REWARD
+        // 决策（card_play_domain_effect:decision:...，跨域 spawn，与阿米巴牌效果同一入口）。
         if (result.reward?.region) {
           const alienState = getWorkingSlice(root, "aliens");
-          const resolved = aliens.amiba.resolveRegionReward(alienState, result.reward.region);
-          for (const entry of resolved.results || []) {
-            const reward = entry.reward || {};
-            if (reward.gain) players.gainResources(actor, reward.gain);
-            const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
-            for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
-              const gained = data.gainData(actor, { source: "amiba_region_reward", root });
-              if (!gained.ok) return gained;
-            }
-            const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-            if (drawCount > 0) {
-              // 统一抽牌上下文：阿米巴区域奖励盲抽共用 cards.createCardDrawContext
-              const drawContext = cards.createCardDrawContext(
-                getWorkingSlice(root, "cards"),
-                getWorkingSlice(root, "players"),
-                () => nextCommittedRandom(root),
-                { root },
-              );
-              for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-                const drawn = drawContext.blindDraw(actor);
-                if (!drawn.ok) return drawn;
-              }
-            }
-            if (drawCount > 0) {
-              irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
-            }
+          if (aliens.amiba.listSymbolsInRegion(alienState, result.reward.region).length) {
+            spawnedEffects.push({
+              priority: "direct",
+              effect: {
+                type: "card_play_domain_effect:decision:amiba_choose_symbol_reward",
+                kind: "decision",
+                decisionKind: "choose_target",
+                ownerId: effect.ownerId,
+                payload: {
+                  cardEffect: {
+                    type: aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD,
+                    options: { region: result.reward.region },
+                  },
+                  cardInstanceId: null,
+                },
+              },
+            });
           }
         }
         return scienceResult(state, root, EFFECT_TYPES.ALIEN_TRACE, {

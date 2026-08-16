@@ -2155,7 +2155,24 @@
         if (drawCount > 0) {
           irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
         }
+        // 选细胞器的顺序影响最终位置：结算一个后若区域内还有 symbol，
+        // 继续让玩家选择下一个（每结算一个 symbol 就移动一次）。
+        const spawnedEffects = [];
+        const remaining = aliens.amiba.listSymbolsInRegion(alienState, legal.target.region);
+        if (remaining.length) {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: genericEffectRuntimeType(aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD, true),
+              kind: "decision",
+              decisionKind: "choose_target",
+              ownerId: actor.id,
+              payload: clone(sessionEffect.payload),
+            },
+          });
+        }
         return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects,
           events: [{
             type: "amiba_symbol_resolved",
             symbolId: resolved.symbolId,
@@ -2182,39 +2199,29 @@
         if (!removed.ok) return removed;
         const region = legal.target.region || removed.reward?.region || null;
         const spawnedEffects = [];
-        let irreversible = null;
-        if (region && typeof aliens.amiba.resolveRegionReward === "function") {
-          const resolved = aliens.amiba.resolveRegionReward(alienState, region);
-          for (const result of resolved.results || []) {
-            const reward = result.reward || {};
-            if (reward.gain) players.gainResources(actor, reward.gain);
-            const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
-            for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
-              const gained = data.gainData(actor, { source: "amiba_region_reward", root });
-              if (!gained.ok) return gained;
-            }
-            const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-            if (drawCount > 0) {
-              const drawCtx = cards.createCardDrawContext(
-                getWorkingSlice(root, "cards"),
-                getWorkingSlice(root, "players"),
-                () => nextCommittedRandom(root),
-                { root },
-              );
-              for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-                const drawn = drawCtx.blindDraw(actor);
-                if (!drawn.ok) return drawn;
-              }
-            }
-            if (drawCount > 0) {
-              irreversible = { code: "hidden_card_draw", reason: "阿米巴区域奖励盲抽翻开隐藏牌" };
-            }
-          }
+        // 统一区域结算：移除痕迹后让玩家逐个选择该区域细胞器（symbol），
+        // 选择顺序决定 symbol 移动后的位置。
+        if (region && aliens.amiba.listSymbolsInRegion(alienState, region).length) {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: genericEffectRuntimeType(aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD, true),
+              kind: "decision",
+              decisionKind: "choose_target",
+              ownerId: actor.id,
+              payload: {
+                cardEffect: {
+                  type: aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD,
+                  options: { region },
+                },
+                cardInstanceId: null,
+              },
+            },
+          });
         }
         return cardEffectResult(state, root, sessionEffect, {
           spawnedEffects,
           events: removed.ok ? [{ type: "amiba_trace_removed", traceType: legal.target.traceType, position: legal.target.position, region }] : [],
-          irreversible,
           historyType: "card_effect_decision",
           history: { choiceId: legal.target.choiceId, region },
         });
