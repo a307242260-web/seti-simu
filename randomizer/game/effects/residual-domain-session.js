@@ -802,17 +802,20 @@
             fossilRewardRepeat: Math.max(0, Math.round(Number(task.fossilRewardRepeat) || 1)),
           } : {}),
         });
-      } else if (amiba.isAmibaCard(card) && !card.amibaTaskCompleted
-        && amiba.isTheoryTaskReady(root.aliens, player)) {
+      } else if (amiba.isAmibaCard(card) && !card.amibaTaskCompleted) {
+        // 只有携带理论任务的阿米巴牌（如 amiba_8）参与任务结算；
+        // 3 型终局计分牌（基因组表征等）不得在回合末弹出结算选项。
         const task = card.amibaTask || amiba.getCardTask(card);
-        const reward = amiba.getTheoryTaskReward(root.aliens);
-        tasks.push({
-          kind: "amiba_task",
-          cardInstanceId: card.id,
-          ruleId: task?.id || task?.kind || "amiba_theory",
-          effects: clone(reward.effects || []),
-          label: task?.label || cards.getCardLabel(card),
-        });
+        if (task && amiba.isTheoryTaskReady(root.aliens, player)) {
+          const reward = amiba.getTheoryTaskReward(root.aliens);
+          tasks.push({
+            kind: "amiba_task",
+            cardInstanceId: card.id,
+            ruleId: task?.id || task?.kind || "amiba_theory",
+            effects: clone(reward.effects || []),
+            label: task?.label || cards.getCardLabel(card),
+          });
+        }
       }
     }
     const triggers = (root.turn?.type1TriggerEvents || []).flatMap((event) => (
