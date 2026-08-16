@@ -1034,6 +1034,16 @@
         },
       ]),
     }),
+    "chong_0.webp": withSource("chong_0.webp", { cardType: 2 }),
+    "chong_1.webp": withSource("chong_1.webp", { cardType: 1 }),
+    "chong_2.webp": withSource("chong_2.webp", { cardType: 3 }),
+    "chong_3.webp": withSource("chong_3.webp", { cardType: 2 }),
+    "chong_4.webp": withSource("chong_4.webp", { cardType: 1 }),
+    "chong_5.webp": withSource("chong_5.webp", { cardType: 2 }),
+    "chong_6.webp": withSource("chong_6.webp", { cardType: 2 }),
+    "chong_7.webp": withSource("chong_7.webp", { cardType: 1 }),
+    "chong_8.webp": withSource("chong_8.webp", { cardType: 2 }),
+    "chong_9.webp": withSource("chong_9.webp", { cardType: 2 }),
     "runezu_2.webp": withSource("runezu_2.webp", {
       cardType: 1,
       triggers: Object.freeze([
