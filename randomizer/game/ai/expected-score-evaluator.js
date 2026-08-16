@@ -308,9 +308,30 @@
     const rootTech = new Set(rootInfrastructure.ownedTechIds);
     const gainedTechIds = leafInfrastructure.ownedTechIds
       .filter((tileId) => !rootTech.has(tileId));
-    const techValue = gainedTechIds.reduce((total, tileId) => (
+    // 科技价值 = 每轮基础值 × 剩余轮次 + 蓝科技数据位槽收益（未来收益）。
+    // 校准自用户 405 档（终局未结算-v223）实测：研究 blue2 = 16 分（8 次蓝列分×2）
+    // + 2 首发 + 1 精选 + 8 能量 - 8 数据（四轮总量）。
+    //   - 首发分 +2 与背面 bonus 是研究即得的即时分，由 actualScoreDelta 捕获
+    //     （反事实结算真实发生），techValue 只计"未来收益"避免重复计分。
+    //   - 蓝科技数据位槽：预期 4 次（用户 8 次减半）× 每次槽位价值 × 轮次权重
+    //     （研究越靠后剩余轮次越少，可放的槽越少）。
+    const BLUE_SLOT_UNIT_VALUES = Object.freeze({
+      blue1: 5,
+      blue2: 5,
+      blue3: 4,
+      blue4: 5,
+    });
+    const EXPECTED_BLUE_SLOT_PLACEMENTS = 4; // 用户 8 次减半
+    const roundWeight = Math.min(1, Math.max(0, remainingRounds / 3));
+    const baseTechValue = gainedTechIds.reduce((total, tileId) => (
       total + finite(TECH_UNIT_VALUES[tileId]) * remainingRounds
     ), 0);
+    const blueSlotTechValue = gainedTechIds.reduce((total, tileId) => {
+      const slotValue = BLUE_SLOT_UNIT_VALUES[tileId];
+      if (!slotValue) return total;
+      return total + slotValue * EXPECTED_BLUE_SLOT_PLACEMENTS * roundWeight;
+    }, 0);
+    const techValue = baseTechValue + blueSlotTechValue;
     const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
       key,
       positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
@@ -2258,8 +2279,17 @@
           // 目标达成（付的是同一种资源），任选一个代表即可，避免组合/逐张全量展开
           // 导致 choose_payment 节点爆炸（此前 4096 上限内 3530 次 choose_payment，
           // 主行动全被剪枝）。
+          // 注意：必须优先选 discard-hand-card（选一张牌），不能选 confirm——confirm
+          // 要求 selected 已满 required 张，反事实若提前提交 confirm 会得到
+          // QUICK_TRADE_DISCARD_INCOMPLETE，把依赖弃牌付费的 scan/launch 等行动
+          // 误判为不可选。选中一张牌后下一轮决策仍会回到这里继续选，直到选满后
+          // confirm 自然成为唯一可选代表。
+          const pickCard = successors.find((action) => (
+            action.target?.kind === "discard-hand-card"
+          ));
+          const representative = pickCard || successors[0];
           return bindRoute(
-            successors.slice(0, 1),
+            [representative],
             input.routeTargetId,
             input.routePlanId,
           ).map((action) => ({

@@ -77,18 +77,94 @@
     if (start) return start;
     const confirm = actions.find((action) => action.target?.kind === "confirm_initial_setup");
     if (confirm) return confirm;
+    // 固定用户开局：按玩家精确复刻 405 分档（终局未结算-v223）的初始选择——
+    // 白色=深空探测+initial:21/1，蓝色=图灵系统+initial:10/5，
+    // 绿色=寰宇动力+initial:14/20，棕色=赫利昂联合体+initial:17/19。
+    // 这些是用户实测高分开局（深空探测 dataGain+scan，白色后续 58 次 place_data），
+    // 直接按档内选择匹配，不走反事实/打分（初始效果延迟到 confirm 结算，反事实
+    // 评估看不到价值）。
+    const setup = context.observation?.publicState?.resident?.initialSetup;
+    const USER_INITIAL_PICKS = {
+      "player-white": { industry: "industry:深空探测.png", initials: ["initial:21", "initial:1"] },
+      "player-blue": { industry: "industry:图灵系统.png", initials: ["initial:10", "initial:5"] },
+      "player-green": { industry: "industry:寰宇动力.png", initials: ["initial:14", "initial:20"] },
+      "player-brown": { industry: "industry:赫利昂联合体.png", initials: ["initial:17", "initial:19"] },
+    };
+    const pickForSeat = (seatId) => {
+      const pick = USER_INITIAL_PICKS[seatId];
+      if (!pick) return null;
+      const selectedInitialIds = new Set(
+        (setup?.offer?.selectedInitialIds || []).map(String),
+      );
+      const industryPicked = Boolean(setup?.offer?.selectedIndustryId);
+      if (!industryPicked) {
+        const industry = actions.find((action) => (
+          action.target?.kind === "select_initial_card"
+          && action.target?.selectionKind === "industry"
+          && String(action.target?.cardId || "") === String(pick.industry)
+        ));
+        if (industry) return industry;
+      }
+      const initial = actions.find((action) => (
+        action.target?.kind === "select_initial_card"
+        && action.target?.selectionKind === "initial"
+        && pick.initials.includes(String(action.target?.cardId || ""))
+        && !selectedInitialIds.has(String(action.target?.cardId || ""))
+      ));
+      if (initial) return initial;
+      return null;
+    };
+    const seatId = actions[0]?.actorPlayerId || actions[0]?.actorId || null;
+    const userPick = pickForSeat(seatId);
+    if (userPick) return userPick;
     const hasEvaluatedSelection = (context.actionOutcomes || []).some((outcome) => (
       outcome?.status === "settled" && (outcome.leaves?.length || 0) > 0
     ));
     if (hasEvaluatedSelection) return null;
-    const setup = context.observation?.publicState?.resident?.initialSetup;
     const offer = setup?.offer;
-    const industry = actions.find((action) => (
+    // 行业选择价值评估：宣传是研究科技的唯一货币（6 宣传/次，techBonus 是稳定大分源，
+    // 用户高分档 12 科技 +30 分）、数据是填数据轨/蓝科技数据位的燃料（用户 405 档
+    // 深空探测 dataGain 1 → 58 次 place_data）、盲抽/收入是资源滚雪球起点。此前直接
+    // 返回第一个行业（offer 顺序决定），AI 常选到低宣传/低数据行业，开局就落后。
+    // 这里按真实效果打分，选价值最高的行业（不硬编码倾向，只让价值进入视野）。
+    const industryOptions = actions.filter((action) => (
       action.target?.kind === "select_initial_card"
       && action.target?.selectionKind === "industry"
     ));
-    if ((setup?.active && offer && !offer.selectedIndustryId) || (!offer && industry)) {
-      return industry || null;
+    if ((setup?.active && offer && !offer.selectedIndustryId) || (!offer && industryOptions.length)) {
+      if (industryOptions.length > 1) {
+        const industryValue = (industryId) => {
+          const label = String(industryId || "").replace(/^industry:/, "").replace(/\.png$/, "");
+          const effect = initialCards?.INDUSTRY_EFFECTS?.[label];
+          if (!effect) return 0;
+          let value = 0;
+          value += Number(effect.resources?.publicity || 0) * 3; // 宣传→研究科技
+          value += Number(effect.resources?.credits || 0);
+          value += Number(effect.resources?.energy || 0) * 1.5;
+          value += Number(effect.dataGain || 0) * 5; // 数据→填数据轨燃料
+          value += Number(effect.blindDraw || 0) * 2;
+          value += Number(effect.launchCount || 0) * 2;
+          value += Number(effect.incomeIncreaseCount || 0) * 1;
+          value += Number(effect.baseIncome?.credits || 0) * 3; // 每轮收入
+          value += Number(effect.baseIncome?.energy || 0) * 3;
+          value += Number(effect.baseIncome?.availableData || 0) * 5; // 每轮数据收入
+          value += Number(effect.baseIncome?.publicity || 0) * 3;
+          value += Number(effect.baseIncome?.handSize || 0) * 1;
+          value += Number(effect.baseIncome?.additionalPublicScan || 0) * 2;
+          return value;
+        };
+        let bestIndustry = null;
+        let bestValue = -1;
+        for (const action of industryOptions) {
+          const value = industryValue(action.target?.cardId);
+          if (value > bestValue) {
+            bestValue = value;
+            bestIndustry = action;
+          }
+        }
+        return bestIndustry || industryOptions[0] || null;
+      }
+      return industryOptions[0] || null;
     }
     const selectedInitialIds = new Set(offer?.selectedInitialIds || []);
     // 初始牌效果价值评估：AI 的反事实评估看不到初始牌价值（效果延迟到 confirm 结算，
