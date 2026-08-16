@@ -968,7 +968,19 @@
       if (!rocket || (requiredKind && rocket.kind !== requiredKind)) continue;
       const rocketId = Number(rocket.id);
       if (!Number.isFinite(rocketId)) continue;
-      const task = chong.transportTasksByRocketId?.[String(rocketId)];
+      let task = chong.transportTasksByRocketId?.[String(rocketId)];
+      let taskRocketId = String(rocketId);
+      // 化石搬运棋子（CHONG_FOSSIL）是新生成的实体，任务表 key 仍是拾取时的
+      // 探测器 id：按 fossilId 关联任务，事件 rocketId 用任务 key，后续
+      // markTransportedFossilDelivered / completeTransportedFossil 才能按 key 找到任务。
+      if (!task && rocket.kind === "chong-fossil" && rocket.fossilId) {
+        const entry = Object.entries(chong.transportTasksByRocketId || {})
+          .find(([, candidate]) => candidate.fossilId === rocket.fossilId);
+        if (entry) {
+          task = entry[1];
+          taskRocketId = entry[0];
+        }
+      }
       if (!task || !task.destinationPlanetId || task.delivered) continue;
       const fossil = chong.fossilsById?.[task.fossilId];
       if (!fossil || fossil.status !== "transported" || fossil.taskCompleted) continue;
@@ -983,7 +995,7 @@
       events.push({
         type: "visitPlanet",
         planetId: task.destinationPlanetId,
-        rocketId,
+        rocketId: Number(taskRocketId),
         playerId: rocket.playerId || fossil.carriedByPlayerId || null,
         playerColor: rocket.color || fossil.carriedByPlayerColor || null,
         tokenKind: rocket.kind || requiredKind || null,

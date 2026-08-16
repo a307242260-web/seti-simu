@@ -25,6 +25,7 @@
   let aomomo = root.SetiAlienAomomo;
   let runezu = root.SetiAlienRunezu;
   let stateSequences = root.SetiStateSequences;
+  let solar = root.SetiSolarSystem;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     science = science || require("./science-session");
@@ -51,6 +52,7 @@
     aomomo = aomomo || require("../aliens/aomomo");
     runezu = runezu || require("../aliens/runezu");
     stateSequences = stateSequences || require("../state/sequences");
+    solar = solar || require("../../solar-system/core");
   }
   const api = factory(
     standardAction, science, players, cards, data, industry, industryAbilities,
@@ -58,12 +60,14 @@
     cardEffects, cardTaskState, cardPlayDomain,
     { jiuzhe, yichangdian, banrenma, fangzhou, chong, amiba, aomomo, runezu },
     stateSequences,
+    solar,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiResidualDomainSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   standardAction, science, players, cards, data, industry, industryAbilities,
   gameAbilities, strategy, tech, aliens, finalScoring, endGameScoring,
   cardEffects, cardTaskState, cardPlayDomain, speciesModules, stateSequences,
+  solar,
 ) {
   "use strict";
 
@@ -1243,6 +1247,24 @@
     return true;
   }
 
+  function listFossilArrivalEvents(root) {
+    if (!chong?.listTransportArrivalEvents || !solar) return [];
+    return chong.listTransportArrivalEvents(
+      root.aliens,
+      root.pieces?.rockets || [],
+      (planetId) => {
+        try {
+          const snapshot = solar.createSolarSnapshot(root.solarSystem);
+          const planet = (snapshot.planetLocations || []).find((entry) => entry.planetId === planetId);
+          return planet ? { x: planet.x, y: planet.y } : null;
+        } catch (_error) {
+          return null;
+        }
+      },
+      { source: "rocket-move" },
+    );
+  }
+
   function augmentEffectResult(root, executorResult, sourceEffect) {
     if (!executorResult || executorResult.ok !== true || !root?.players) {
       return executorResult;
@@ -1258,10 +1280,28 @@
       || (sourceType === HANDOFF_TYPE && sourceEffect?.payload?.domain === "final_scoring")) {
       return { ...executorResult, spawnedEffects };
     }
+    // 移动到位也算送达：火箭搬运化石到达目的地星球坐标（不要求环绕/登陆）
+    // 即生成 visitPlanet 事件，标记化石 delivered，之后玩家可通过完成任务交任务。
+    const arrivalEvents = listFossilArrivalEvents(root);
     if (!Array.isArray(executorResult.events) || !executorResult.events.length) {
-      return { ...executorResult, spawnedEffects };
+      if (!arrivalEvents.length) return { ...executorResult, spawnedEffects };
+      const events = arrivalEvents.filter((event) => event?.type);
+      const ownerId = sourceEffect?.ownerId || events.find((event) => event.playerId)?.playerId;
+      const owner = actor(root, ownerId);
+      if (owner) {
+        for (const event of events) {
+          if (event.type === "visitPlanet" && event.rocketId != null) {
+            chong.markTransportedFossilDelivered(
+              root.aliens,
+              event.rocketId,
+              event.planetId || null,
+            );
+          }
+        }
+      }
+      return { ...executorResult, spawnedEffects, events };
     }
-    const events = executorResult.events.filter((event) => event?.type);
+    const events = [...(executorResult.events.filter((event) => event?.type)), ...arrivalEvents];
     const ownerId = sourceEffect?.ownerId || events.find((event) => event.playerId)?.playerId;
     const owner = actor(root, ownerId);
     if (owner) {
