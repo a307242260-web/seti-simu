@@ -49,6 +49,13 @@
     handSize: 0,
     additionalPublicScan: 0,
   });
+  // 宣传研究货币价值（模块级，leafValue 与 evaluateOutcome 共用）：
+  // 宣传是研究科技的唯一货币（研究 cost 6 宣传）。TECH_VALUE_PER_RESEARCH 从 10 提到
+  // 60：研究 blue2 的实际 techValue ≈50（R1 时每轮 10×3 + 蓝槽预期 5×4），10 让打牌
+  // 凑宣传只值 3.33，远低于 launch 的乐观探测链评估（103）→ AI 永远不学用户
+  // "先打牌凑宣传再研究"。
+  const RESEARCH_PUBLICITY_COST = 6;
+  const TECH_VALUE_PER_RESEARCH = 60;
   const TECH_UNIT_VALUES = Object.freeze({
     orange1: 0,
     orange2: 7,
@@ -421,14 +428,8 @@
     // blue2 的实际 techValue ≈50（R1 时每轮 10×3 + 蓝槽预期 5×4），10 让打牌凑宣传
     // 只值 3.33，远低于 launch 的乐观探测链评估（103）→ AI 永远不学用户"先打牌凑
     // 宣传再研究"。提到 60 后 b_117 的 2 宣传 ≈20，与免费发射链叠加可超过 launch。
-    const RESEARCH_PUBLICITY_COST = 6;
-    const TECH_VALUE_PER_RESEARCH = 60;
     const rootPub = finite(rootValue.resourceFacts?.publicity);
     const leafPub = finite(leafValueState.resourceFacts?.publicity);
-    // 跨门槛判断只看 leaf 终点 pub：研究动作本身（research_tech）花宣传，终点 pub
-    // 下降 → 不触发（测试契约：R2 研究 orange2 score=14 不加宣传分）。b_117 打牌凑
-    // 宣传→研究的链，其研究价值已由 techValue（gainedTechIds）兑现，宣传是前置动作，
-    // 不重复计分；b_117 的 2 宣传价值由"打牌后 pub 达到 6"的 leaf 分支体现。
     const crossesThreshold = rootPub < RESEARCH_PUBLICITY_COST
       && leafPub >= RESEARCH_PUBLICITY_COST;
     const publicityResearchValue = crossesThreshold
@@ -563,6 +564,30 @@
       || finite(leftGap.movementSteps) - finite(rightGap.movementSteps);
   }
 
+  // 打牌提供的宣传量：play_card 的卡牌打出效果中 gain_resources publicity 之和。
+  // 用于 evaluateOutcome 判断"该动作的宣传是否跨过研究门槛"（b_117 +2 宣传 → pub
+  // 4→6 → 研究 blue1；leaf 终点 pub 被研究消耗掩盖，leafValue 的 leafPub 判断丢失）。
+  // 卡角/填槽等宣传来源由 leaf 结算后的 leafPub 判断覆盖（原逻辑），无需动作级补偿。
+  function actionPublicityProvidedByCard(context, action) {
+    if (action?.family !== "play_card") return 0;
+    const outcome = (context?.actionOutcomes || []).find((candidate) => (
+      candidate?.actionId === action?.actionId
+    ));
+    const rootObservation = outcome?.rootObservation;
+    if (!rootObservation) return 0;
+    const instanceId = action?.target?.cardInstanceId;
+    const card = (rootObservation.selfState?.hand || []).find((candidate) => (
+      String(candidate?.id) === String(instanceId)
+    ));
+    if (!card || typeof cardEffects?.buildPlayEffects !== "function") return 0;
+    const gainType = cardEffects.REWARD_TYPES?.GAIN_RESOURCES ?? "gain_resources";
+    return cardEffects.buildPlayEffects(card).reduce((total, effect) => (
+      effect?.type === gainType
+        ? total + finite(effect?.options?.gain?.publicity)
+        : total
+    ), 0);
+  }
+
   function evaluateOutcome(context, action, parametersInput = {}) {
     const parameters = mergeParameters(parametersInput);
     const outcome = (context?.actionOutcomes || []).find((candidate) => (
@@ -594,8 +619,31 @@
         || Number(left.leaf.secondaryAgentDepth || 0) - Number(right.leaf.secondaryAgentDepth || 0)
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
-    const best = evaluatedLeaves[0] || null;
+    let best = evaluatedLeaves[0] || null;
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
+    // 打牌提供的宣传若跨过研究门槛（pub 从 <6 到 >=6）应计宣传价值：b_117 打牌
+    // +2 宣传（pub 4→6）→ 研究 blue1，但 leaf 终点 pub 被研究消耗掩盖（leafPub<6），
+    // leafValue 的 leafPub 判断丢失宣传价值 → b_117 只 88 分 < launch 103 → AI 不打
+    // （用户："b_117 的 2 宣传帮我凑 6 宣传拿蓝科"）。按"该动作提供的宣传量"判断
+    // 跨门槛（卡角 pub 0→1 远离门槛仍无价值，测试契约保持）。
+    let bestLeafValue = best.strategicValue;
+    const actionPublicityGain = actionPublicityProvidedByCard(context, action);
+    if (
+      action?.family === "play_card"
+      && actionPublicityGain > 0
+      && rootValue.resourceFacts?.publicity < RESEARCH_PUBLICITY_COST
+      && finite(rootValue.resourceFacts?.publicity) + actionPublicityGain
+        >= RESEARCH_PUBLICITY_COST
+    ) {
+      const publicityValue = (RESEARCH_PUBLICITY_COST - finite(rootValue.resourceFacts?.publicity))
+        * (TECH_VALUE_PER_RESEARCH / RESEARCH_PUBLICITY_COST);
+      bestLeafValue = {
+        ...bestLeafValue,
+        total: bestLeafValue.total + publicityValue,
+        primaryValue: bestLeafValue.primaryValue + publicityValue,
+        publicityResearchValue: publicityValue,
+      };
+    }
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
     if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
     const cornerPurpose = cardCornerPurpose(
@@ -612,15 +660,15 @@
     // corner/打牌效果/紫4扫描/公司能力），不应因"没有即时分/tech/income 增量"被过滤。
     // 它作为探测路线的达成步骤获得路线价值，无绑定路线时保持可选项但排末尾。
     const moveIsQuickAction = action?.family === "move";
-    const selectable = best.strategicValue.primaryValue > 0 || control || conditional
+    const selectable = bestLeafValue.primaryValue > 0 || control || conditional
       || moveIsQuickAction;
     if (!selectable) return unavailable(outcome, "no-score-tech-or-income-gain");
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score: best.strategicValue.primaryValue,
-      value: best.strategicValue.total,
+      score: bestLeafValue.primaryValue,
+      value: bestLeafValue.total,
       sortKey: [
-        best.strategicValue.primaryValue,
+        bestLeafValue.primaryValue,
         0,
         -Number(best.leaf.quickTradeCount || 0),
         -Number(best.leaf.secondaryAgentDepth || 0),
@@ -631,9 +679,9 @@
       confidence: outcome.confidence || "high",
       rootValue,
       leafValue: best.leafStateValue,
-      actualScoreDelta: best.strategicValue.actualScoreDelta,
-      primaryValue: best.strategicValue.primaryValue,
-      opportunityCost: best.strategicValue.opportunityCost,
+      actualScoreDelta: bestLeafValue.actualScoreDelta,
+      primaryValue: bestLeafValue.primaryValue,
+      opportunityCost: bestLeafValue.opportunityCost,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
       quickTradePurpose: tradePurpose.required ? tradePurpose : null,
