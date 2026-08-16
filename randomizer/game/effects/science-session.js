@@ -284,6 +284,13 @@
     });
   }
 
+  // 扫描结算统一出口：任何扫描（扫描主行动、卡牌扫描、行星奖励扫描等）替换数据
+  // token 后都统一追加一次扇区结算检查。SETTLE executor 幂等，只结算已完成的扇区，
+  // 因此每个扫描动作后调用一次是安全且统一的。
+  function settleAfterScan(ownerId) {
+    return { priority: "direct", effect: { type: EFFECT_TYPES.SETTLE, ownerId } };
+  }
+
   function executeNebulaScan(root, actorId, choice, options = {}) {
     const actor = getActor(root, actorId);
     if (!actor) return fail("SCIENCE_SCAN_ACTOR_STALE", "扫描玩家已失效");
@@ -818,13 +825,6 @@
         }
         return null;
       }).filter(Boolean);
-      // 扇区结算时机（规则书 P13）：完成扇区不逐节点立即结算，等本次扫描 flow
-      // 结束后统一结算。给队列最后一个节点打 finalize 标记，由其结算后的
-      // spawnedEffects 触发一次 SETTLE（公共牌扫描由 done 分支负责）。
-      if (mappedQueue.length) {
-        const last = mappedQueue[mappedQueue.length - 1];
-        if (last?.effect?.payload) last.effect.payload.finalize = true;
-      }
       return mappedQueue;
     }
 
@@ -974,15 +974,8 @@
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         if (choice?.target?.skip) {
-          const spawnedEffects = [];
-          if (effect.payload?.finalize) {
-            spawnedEffects.push({
-              priority: "direct",
-              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
-            });
-          }
           return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
-            spawnedEffects,
+            spawnedEffects: [],
             events: [{ type: "scanTargetSkipped", playerId: effect.ownerId }],
           });
         }
@@ -993,16 +986,9 @@
         }
         const result = executeNebulaScan(root, effect.ownerId, choice, effect.payload || {});
         if (!result.ok) return result;
-        const spawnedEffects = [];
-        // 扇区结算只由扫描 flow 最后一个节点触发（finalize），避免同行动内提前重置。
-        if (effect.payload?.finalize) {
-          spawnedEffects.push({
-            priority: "direct",
-            effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
-          });
-        }
+        // 统一扇区结算：任何扫描替换 token 后都检查一次扇区完成（SETTLE 幂等）。
         return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
-          spawnedEffects,
+          spawnedEffects: [settleAfterScan(effect.ownerId)],
           events: clone(result.events || []),
           history: [{ type: "science_scan", nebulaId: choice.target.nebulaId }],
         });
@@ -1053,20 +1039,15 @@
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         if (choice?.target?.done) {
-          const spawnedEffects = [];
-          // 公共牌扫描是扫描 flow 最后一个节点（finalize）时，统一结算扇区后再补牌。
-          if (effect.payload?.finalize) {
-            spawnedEffects.push({
-              priority: "direct",
-              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
-            });
-          }
-          spawnedEffects.push({
-            priority: "direct",
-            effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
-          });
+          // 统一扇区结算：公共牌扫描结束前检查一次扇区完成（SETTLE 幂等）。
           return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
-            spawnedEffects,
+            spawnedEffects: [
+              settleAfterScan(effect.ownerId),
+              {
+                priority: "direct",
+                effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
+              },
+            ],
             events: [{ type: "publicScanCompleted", selected: effect.payload?.selected || 0 }],
           });
         }
@@ -1095,6 +1076,8 @@
           );
         }
         const spawnedEffects = [];
+        // 统一扇区结算：公共牌每次扫描替换 token 后都检查一次扇区完成（SETTLE 幂等）。
+        spawnedEffects.push(settleAfterScan(actor.id));
         const scanFlowEnded = selected >= (Number(effect.payload?.max) || 1)
           || !publicScanChoices(root).length;
         if (!scanFlowEnded) {
@@ -1102,7 +1085,6 @@
             selected,
             max: effect.payload.max,
             consumeMarkers: Boolean(effect.payload?.consumeMarkers),
-            ...(effect.payload?.finalize ? { finalize: true } : {}),
           }, "choose_card"));
         } else {
           spawnedEffects.push({
@@ -1181,15 +1163,8 @@
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         if (choice?.target?.skip) {
-          const spawnedEffects = [];
-          if (effect.payload?.finalize) {
-            spawnedEffects.push({
-              priority: "direct",
-              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
-            });
-          }
           return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
-            spawnedEffects,
+            spawnedEffects: [],
             events: [{ type: "handScanSkipped", playerId: effect.ownerId }],
           });
         }
@@ -1208,15 +1183,9 @@
         const removed = cards.discardFromHandAtIndex(actor, index);
         if (!removed.ok) return removed;
         cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
-        const spawnedEffects = [];
-        if (effect.payload?.finalize) {
-          spawnedEffects.push({
-            priority: "direct",
-            effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id },
-          });
-        }
+        // 统一扇区结算：手牌扫描替换 token 后检查一次扇区完成（SETTLE 幂等）。
         return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
-          spawnedEffects,
+          spawnedEffects: [settleAfterScan(actor.id)],
           events: clone(result.events || []),
         });
       },
@@ -1234,15 +1203,8 @@
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         if (choice?.target?.mode === "skip") {
-          const spawnedEffects = [];
-          if (effect.payload?.finalize) {
-            spawnedEffects.push({
-              priority: "direct",
-              effect: { type: EFFECT_TYPES.SETTLE, ownerId: effect.ownerId },
-            });
-          }
           return scienceResult(state, root, EFFECT_TYPES.SCAN_ACTION_4, {
-            spawnedEffects,
+            spawnedEffects: [],
             events: [{ type: "scanAction4Skipped", playerId: effect.ownerId }],
           });
         }
@@ -1269,15 +1231,10 @@
             }));
           }
         }
+        // 紫4 本身不替换数据 token，不触发扇区结算；若触发哨兵发射扫描，
+        // 该扫描会经由 SCAN_TARGET 统一结算。
         return scienceResult(state, root, EFFECT_TYPES.SCAN_ACTION_4, {
-          spawnedEffects: [
-            ...spawnedEffects,
-            // 紫4 是扫描 flow 最后一个节点时，统一结算扇区。
-            ...(effect.payload?.finalize ? [{
-              priority: "direct",
-              effect: { type: EFFECT_TYPES.SETTLE, ownerId: actor.id },
-            }] : []),
-          ],
+          spawnedEffects,
           events: clone(result.events || []),
         });
       },
@@ -1660,6 +1617,7 @@
     createActionContext,
     listNebulaChoices,
     executeNebulaScan,
+    settleAfterScan,
     listResearchChoices,
     executeResearchChoice,
     formalizeChoices,

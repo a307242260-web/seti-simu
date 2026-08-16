@@ -1028,11 +1028,8 @@
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: effect.type }),
-        // 卡牌固定星云扫描同样可能扫满扇区，必须触发扇区结算
-        spawnedEffects: [{
-          priority: "direct",
-          effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
-        }],
+        // 统一扇区结算：卡牌固定星云扫描替换 token 后检查一次扇区完成。
+        spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
         events: clone(result.events || []),
         history: [{
           type: "card_effect",
@@ -1080,11 +1077,8 @@
         return {
           ok: true,
           nextState: commitWorkingState(state, { source: effect.type }),
-          // 卡牌颜色选择扫描同样可能扫满扇区，必须触发扇区结算
-          spawnedEffects: [{
-            priority: "direct",
-            effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
-          }],
+          // 统一扇区结算：卡牌颜色选择扫描替换 token 后检查一次扇区完成。
+          spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
           events: clone(result.events || []),
           history: [{
             type: "card_effect_decision",
@@ -1292,11 +1286,8 @@
         }
       }
       return cardEffectResult(state, root, sessionEffect, {
-        // 任意扇区/条件/行星/着陆/探测器等卡牌扫描同样可能扫满扇区，必须触发扇区结算
-        spawnedEffects: [{
-          priority: "direct",
-          effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
-        }],
+        // 统一扇区结算：任意扇区/条件/行星/着陆/探测器等卡牌扫描替换 token 后检查一次扇区完成。
+        spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
         events: result.events || [],
         historyType: "card_effect_decision",
         history: { choiceId: legal.target.choiceId, abilityId: result.abilityId },
@@ -2693,11 +2684,8 @@
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: sessionEffect.payload?.cardEffect?.type || EFFECT_TYPES.EFFECT }),
-        // 卡牌异常扇区扫描同样可能扫满扇区，必须触发扇区结算。
-        spawnedEffects: [{
-          priority: "direct",
-          effect: { type: getScienceDomain().EFFECT_TYPES.SETTLE, ownerId: actor.id },
-        }],
+        // 统一扇区结算：卡牌异常扇区扫描替换 token 后检查一次扇区完成。
+        spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
         events: clone(result.events || []),
         history: [{ type: "card_effect", effectId: sessionEffect.payload?.cardEffect?.id || null, executorId: EXECUTOR_ID }],
       };
