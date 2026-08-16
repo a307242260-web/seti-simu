@@ -48,6 +48,7 @@
       cornerPickerOverlay: documentRef.getElementById("corner-picker-overlay"),
       cornerPickerList: documentRef.getElementById("corner-picker-list"),
       cornerPickerClose: documentRef.getElementById("corner-picker-close"),
+      cornerPickerTitle: documentRef.getElementById("corner-picker-title"),
       savePickerOverlay: documentRef.getElementById("save-picker-overlay"),
       savePickerList: documentRef.getElementById("save-picker-list"),
       savePickerClose: documentRef.getElementById("save-picker-close"),
