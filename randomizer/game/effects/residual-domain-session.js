@@ -270,7 +270,9 @@
           return fail("COMPLETE_TASK_BLOCKED", "当前不能执行完成任务");
         }
         const choices = listCardSettlements(root, ownerId)
-          .filter((settlement) => settlement.kind === "task")
+          // 条件任务（task）、虫族搬运任务（chong_task）、阿米巴理论任务（amiba_task）
+          // 都通过「完成任务」免费行动结算。
+          .filter((settlement) => ["task", "chong_task", "amiba_task"].includes(settlement.kind))
           .map((settlement) => ({
             target: {
               cardInstanceId: settlement.cardInstanceId,
@@ -1345,12 +1347,14 @@
 
   function settleReadyTaskDirect(root, ownerId, cardInstanceId, ruleId) {
     // 规则书 P15：条件任务在达成条件后可用免费行动完成。此函数由 complete_task
-    // 免费行动直接结算一个已满足条件的类型 2 任务（无需玩家再次确认）。
-    const settlement = findCardSettlement(root, ownerId, {
-      kind: "task",
-      cardInstanceId,
-      ruleId,
-    });
+    // 免费行动直接结算一个已满足条件的任务（条件任务 / 虫族搬运 / 阿米巴理论），
+    // 无需玩家再次确认。
+    const settlement = listCardSettlements(root, ownerId)
+      .find((entry) => (
+        entry.cardInstanceId === cardInstanceId
+        && entry.ruleId === ruleId
+        && ["task", "chong_task", "amiba_task"].includes(entry.kind)
+      ));
     const player = actor(root, ownerId);
     if (!settlement || !player) {
       return fail("CARD_TASK_STALE", "条件任务已失效");
@@ -1359,7 +1363,27 @@
       .findIndex((card) => card.id === settlement.cardInstanceId);
     const card = player.reservedCards?.[cardIndex];
     if (!card) return fail("CARD_INSTANCE_STALE", "任务牌实例已失效");
-    const consumed = cardEffects.completeTask(card, settlement.ruleId);
+    let consumed = false;
+    if (settlement.kind === "task") {
+      consumed = cardEffects.completeTask(card, settlement.ruleId);
+    } else if (settlement.kind === "chong_task") {
+      if (settlement.rocketId != null) {
+        const transport = chong.completeTransportedFossil(
+          root.aliens,
+          settlement.rocketId,
+          {
+            cardId: card.id,
+            destinationPlanetId: settlement.destinationPlanetId,
+          },
+        );
+        if (!transport.ok) return transport;
+      }
+      card.chongTaskCompleted = true;
+      consumed = true;
+    } else if (settlement.kind === "amiba_task") {
+      card.amibaTaskCompleted = true;
+      consumed = true;
+    }
     if (!consumed) return fail("CARD_RULE_ALREADY_CONSUMED", "任务规则已经结算");
     if (settlement.kind !== "trigger" || cardEffects.areAllTriggersConsumed(card)) {
       player.reservedCards.splice(cardIndex, 1);
