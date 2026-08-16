@@ -1159,14 +1159,22 @@
     if (els.cornerPickerTitle) {
       els.cornerPickerTitle.textContent = "选择要完成的任务（可交任意一个）";
     }
+    const reservedCards = (projection?.resident?.browserReadModel?.render
+      ?.cardPanels?.reservedCards?.items) || [];
     els.cornerPickerList.replaceChildren();
     for (const action of actions) {
+      const cardId = String(action.target?.cardInstanceId || "");
+      const card = reservedCards.find((entry) => String(entry.id) === cardId);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "save-picker-item corner-picker-item";
       const label = document.createElement("span");
       label.textContent = action.summary || "完成任务";
-      button.append(label);
+      const icon = document.createElement("img");
+      icon.className = "corner-picker-card";
+      icon.src = card?.imageSrc || "";
+      icon.alt = "";
+      button.append(icon, label);
       button.addEventListener("click", () => {
         els.cornerPickerOverlay.hidden = true;
         submitQuickAction(action);
