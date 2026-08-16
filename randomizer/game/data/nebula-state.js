@@ -3,19 +3,21 @@
 
   let nebulaPlacement = root.SetiNebulaDataPlacement;
   let stateSequences = root.SetiStateSequences;
+  let players = root.SetiPlayers;
 
   if (typeof require === "function") {
     nebulaPlacement = nebulaPlacement || require("./nebula-placement");
     stateSequences = stateSequences || require("../state/sequences");
+    players = players || require("../players");
   }
 
-  const api = factory(nebulaPlacement, stateSequences);
+  const api = factory(nebulaPlacement, stateSequences, players);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
-  if (typeof module === "undefined") root.SetiNebulaDataState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (nebulaPlacement, stateSequences) {
+  if (typeof module === "undefined") root.SetiNebulaDataState = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (nebulaPlacement, stateSequences, players) {
   "use strict";
 
   function takeSequence(state, options, key) {
@@ -706,7 +708,13 @@
     const scoreReward = getNebulaSlotScoreReward(nebulaId, token.slotIndex);
     if (scoreReward && options.awardSecondSlotScore !== false) {
       if (!player.resources) player.resources = {};
-      player.resources.score = (Number(player.resources.score) || 0) + scoreReward;
+      // 终局计分来源拆分：扫描第二槽位 +2 分（初始牌扫描记 initialScore，普通扫描记 scanScore）
+      const sourceKey = options.scoreSourceKey || null;
+      if (typeof players?.gainResources === "function") {
+        players.gainResources(player, { score: scoreReward }, sourceKey);
+      } else {
+        player.resources.score = (Number(player.resources.score) || 0) + scoreReward;
+      }
     }
     return {
       ok: true,

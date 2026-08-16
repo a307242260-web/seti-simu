@@ -469,6 +469,8 @@
       playerLabel: player.colorLabel,
       playerTokenSrc: getTokenSrc(context, player),
       source: "initial_card",
+      // 终局计分来源拆分：初始牌扫描的 +2 分记 initialScore
+      scoreSourceKey: "initialScore",
     };
     if (nextToken) {
       const replaceResult = data.replaceNextNebulaDataToken(
@@ -571,7 +573,7 @@
       return { ok: false, cardNumber: number, card, results, events, message: `未知初始牌 ${number || ""}` };
     }
 
-    applyResources(player, effect.resources, results);
+    applyResources(player, effect.resources, results, "initialScore");
     applyIncome(context, player, effect.income, results);
     applyDataGain(context, player, effect.dataGain, results);
     applyBlindDraw(context, player, effect.blindDraw, results);
@@ -615,7 +617,7 @@
     resetPlayerStartingResources(player);
     setBaseIncome(player, effect.baseIncome, results);
     applyStartupTech(context, player, effect.startupTechTileId, results);
-    applyResources(player, effect.resources, results);
+    applyResources(player, effect.resources, results, "industryEffectScore");
     applyDataGain(context, player, effect.dataGain, results);
     applyBlindDraw(context, player, effect.blindDraw, results);
     applyLaunches(context, player, effect.launchCount, results);

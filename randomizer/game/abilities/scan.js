@@ -143,7 +143,11 @@
       context.data,
       nebulaId,
       currentPlayer,
-      scanOptions,
+      {
+        ...scanOptions,
+        // 终局计分来源拆分：扫描替换星云 token 的 +2 分记 scanScore
+        scoreSourceKey: "scanScore",
+      },
     );
 
     if (!replaceResult.ok) {

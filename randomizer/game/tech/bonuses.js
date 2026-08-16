@@ -42,7 +42,7 @@
     if (effect.publicity) resourceGain.publicity = effect.publicity;
 
     if (Object.keys(resourceGain).length) {
-      players.gainResources(player, resourceGain);
+      players.gainResources(player, resourceGain, "techBonusScore");
       Object.assign(rewards, resourceGain);
     }
 

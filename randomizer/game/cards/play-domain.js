@@ -549,7 +549,7 @@
       let irreversible = null;
       if (effect.type === cardEffects.REWARD_TYPES.GAIN_RESOURCES) {
         const gain = clone(options.gain || {});
-        players.gainResources(actor, gain);
+        players.gainResources(actor, gain, "cardEffectScore");
         result = { ok: true, gain };
       } else if (effect.type === cardEffects.REWARD_TYPES.GAIN_DATA) {
         const count = Math.max(0, Math.round(Number(options.count) || 0));
@@ -675,7 +675,7 @@
             data.gainData(actor, { source: "owned_tech_reward", root });
           }
         } else if (total > 0) {
-          players.gainResources(actor, { [options.resource || "score"]: total });
+          players.gainResources(actor, { [options.resource || "score"]: total }, "cardEffectScore");
         }
         result = { ok: true, count, total };
       } else if (effect.type === cardEffects.EFFECT_TYPES.COUNT_TECH_TYPES_REWARD) {
@@ -1372,7 +1372,11 @@
             effect: {
               type: getProbeTurnDomain().EFFECT_TYPES.REWARD,
               ownerId: actor.id,
-              payload: { reward },
+              payload: {
+                reward,
+                // 打牌触发登陆同样按来源拆终局分：登陆计 landScore
+                sourceKey: actionType === "land" ? "landScore" : "orbitScore",
+              },
             },
           });
         }
@@ -1592,7 +1596,7 @@
               data.gainData(actor, { source: "count_rockets_reward", root });
             }
           } else {
-            players.gainResources(actor, { [options.resource || "score"]: amount });
+            players.gainResources(actor, { [options.resource || "score"]: amount }, "cardEffectScore");
           }
         }
         event.count = count;
@@ -2076,7 +2080,7 @@
           actor,
           legal.target.fossilId,
           {
-            gainResources(gain) { players.gainResources(actor, gain); },
+            gainResources(gain) { players.gainResources(actor, gain, "cardEffectScore"); },
             gainData() {
               const result = data.gainData(actor, { source: "chong_fossil_reward", root });
               if (!result.ok) return result;
@@ -2135,7 +2139,7 @@
         if (!resolved?.ok) return resolved;
         const reward = resolved.reward || {};
         let irreversible = null;
-        if (reward.gain) players.gainResources(actor, reward.gain);
+        if (reward.gain) players.gainResources(actor, reward.gain, "alienEffectScore");
         const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
         for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
           const gained = data.gainData(actor, { source: "amiba_region_reward", root });
@@ -2443,7 +2447,7 @@
           );
           players.gainResources(actor, {
             score: count * Math.max(0, Number(options.afterTraceReward.scorePer) || 0),
-          });
+          }, "alienEffectScore");
         }
       } else {
         return fail("CARD_EFFECT_DECISION_INCOMPLETE", `未实现卡牌 Decision ${effect.type}`);
@@ -2534,7 +2538,7 @@
       const events = [];
       const spawnedEffects = [];
       if (reward.gain && Object.keys(reward.gain).some((key) => Number(reward.gain[key]) !== 0)) {
-        players.gainResources(actor, reward.gain);
+        players.gainResources(actor, reward.gain, "alienEffectScore");
         events.push({ type: "yichangdian_anomaly_reward", markerId: anomaly.markerId, gain: clone(reward.gain) });
       }
       const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));

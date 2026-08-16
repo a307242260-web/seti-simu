@@ -347,14 +347,14 @@
     ));
   }
 
-  function appendResourceBonus(actor, bonus, events) {
+  function appendResourceBonus(actor, bonus, events, sourceKey = null) {
     const gain = {};
     for (const key of ["credits", "energy", "publicity", "score", "aomomoFossils"]) {
       if (bonus?.[key]) gain[key] = Number(bonus[key]);
     }
     if (Object.keys(gain).length) {
-      players.gainResources(actor, gain);
-      events.push({ type: "science_resource_bonus", playerId: actor.id, gain });
+      players.gainResources(actor, gain, sourceKey);
+      events.push({ type: "science_resource_bonus", playerId: actor.id, gain, sourceKey });
     }
   }
 
@@ -370,7 +370,7 @@
         data.gainData(actor, { source: "industry_helios", root });
       }
     } else {
-      appendResourceBonus(actor, reward, events);
+      appendResourceBonus(actor, reward, events, "industryEffectScore");
     }
     events.push({ type: "industry_helios_passive_reward", playerId: actor.id, slotId });
   }
@@ -407,6 +407,19 @@
         expectedBonusId: selected.bonusId,
         expectedFirstTake: selected.firstTake,
       });
+      // skipBonus 单步取科技路径（蓝槽科技）：takeSelectedTechTile 不执行
+      // firstTake 类型奖励给分（只有 executeTakeTech 的 applyTechBonus 会给），
+      // 这里补上首次拿取同类型科技板块的 +2 分（记 techBonusScore）。
+      if (result?.ok && result.firstTake) {
+        const firstTakeScore = Math.max(0, Math.round(Number(tech?.FIRST_TAKE_TYPE_SCORE) || 0));
+        if (firstTakeScore > 0) {
+          players.gainResources(actor, { score: firstTakeScore }, "techBonusScore");
+          result = { ...result, rewards: {
+            ...(result.rewards || {}),
+            firstTakeScore: (Number(result.rewards?.firstTakeScore) || 0) + firstTakeScore,
+          } };
+        }
+      }
     } else {
       result = tech.resolver.executeTakeTech(context, takeOptions);
     }
@@ -1287,7 +1300,7 @@
           const owner = getActor(root, reward.owner?.playerId)
             || playersState.players.find((player) => player.color === reward.owner?.playerColor);
           if (!owner) continue;
-          if (reward.kind === "resource") appendResourceBonus(owner, reward.gain, events);
+          if (reward.kind === "resource") appendResourceBonus(owner, reward.gain, events, "scanScore");
           if (reward.kind === "alien_trace") spawnedEffects.push(scanDecisionEffect(
             EFFECT_TYPES.ALIEN_TRACE,
             owner.id,
@@ -1342,7 +1355,7 @@
           } else if (bonus.type === "choose_card" && listPickCardChoices(root).length) {
             spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, actor.id, {}, "choose_card"));
           } else {
-            appendResourceBonus(actor, bonus, events);
+            appendResourceBonus(actor, bonus, events, "blueTechScore");
           }
         }
         return scienceResult(state, root, EFFECT_TYPES.PLACE_DATA, { spawnedEffects, events });

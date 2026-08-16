@@ -1735,6 +1735,12 @@
     const result = ruleComposition.newGame({
       activePlayerCount,
       aiDifficulty,
+      // 必须显式传 seed：内核 buildInitialState 用 options.seed ?? "seti-simulation"
+      // 落 meta.seed，而 science 域 RNG（研究科技/补牌/收入盲抽）用
+      // hashSeed(root.meta.seed) 独立初始化——不传会落到默认 "seti-simulation"，
+      // 与 Simulation 侧（传实际固定盘面 seed）的 science RNG 起点不一致，
+      // 导致同 seed 下浏览器与 simulator 补牌/抽牌分叉。
+      seed,
       rngState: {
         algorithm: randomModule?.RNG_ALGORITHM || "seti-simulation-mulberry32-v1",
         state: browserRandom.getState(),
