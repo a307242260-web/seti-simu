@@ -461,9 +461,14 @@
 
   function ensurePlayerRunezuState(player) {
     if (!player) return null;
-    if (!player.runezuSymbols || typeof player.runezuSymbols !== "object") {
-      player.runezuSymbols = {};
+    if (player.runezuSymbols && typeof player.runezuSymbols === "object") {
+      return player.runezuSymbols;
     }
+    // 反事实搜索的 trusted fork 状态被 deepFreeze（rule-composition getTrustedState）：
+    // 符文族 symbol 获取在 fork 里写 player 会抛 "Cannot add property runezuSymbols"。
+    // 冻结 player 用临时对象（评估近似，不污染冻结状态）；真实游戏 player 可变则正常初始化。
+    if (!Object.isExtensible(player)) return player.runezuSymbols || {};
+    player.runezuSymbols = {};
     for (const symbolId of SYMBOL_IDS) {
       player.runezuSymbols[symbolId] = Math.max(0, Math.round(Number(player.runezuSymbols[symbolId]) || 0));
     }
