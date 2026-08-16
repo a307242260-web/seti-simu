@@ -166,14 +166,32 @@ function submitActionToCompletion(composition, action, quick = false) {
     ? composition.inputPort.submitQuickAction(action)
     : composition.inputPort.submitAction(action);
   assert.equal(result.ok, true, `${action.family}/${action.target?.tradeId || action.actionId} 必须可提交`);
-  for (let step = 0; step < 10 && composition.inspect().phase === "awaiting_input"; step += 1) {
+  const discardedSeen = new Set();
+  for (let step = 0; step < 20 && composition.inspect().phase === "awaiting_input"; step += 1) {
     const decision = composition.inspect().session.decision;
     assert.ok(decision.choices.length, `${decision.decisionKind} 必须有合法选择`);
+    let choice = decision.choices[0];
+    // 弃牌换奖励决策（2张牌→信用点/能量/精选等）：先点选未选过的牌，
+    // 选满 required 张后确认结算（交互与人工一致）。
+    if (decision.choices.some((candidate) => candidate.target?.kind === "discard-hand-card")) {
+      const cardChoice = decision.choices.find((candidate) => (
+        candidate.target?.kind === "discard-hand-card"
+        && !candidate.presentation?.selected
+        && !discardedSeen.has(String(candidate.target?.cardInstanceId))
+      ));
+      const confirmChoice = decision.choices.find((candidate) => (
+        candidate.target?.kind === "confirm" && !candidate.disabledReason
+      ));
+      choice = cardChoice || confirmChoice || decision.choices[0];
+      if (choice.target?.kind === "discard-hand-card") {
+        discardedSeen.add(String(choice.target.cardInstanceId));
+      }
+    }
     result = composition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       ownerId: decision.ownerId,
-      choice: decision.choices[0],
+      choice,
     });
     assert.equal(result.ok, true, JSON.stringify(result.failure || result));
   }

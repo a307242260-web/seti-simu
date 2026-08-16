@@ -134,6 +134,8 @@
         playerId: player.id,
         count: required,
         required: true,
+        // 选中待弃的手牌卡 instance id（点选切换，弃满后确认结算）
+        selected: [],
       };
       return {
         ok: true,
@@ -219,36 +221,38 @@
       const hand = (player?.hand || [])
         .filter((card) => !(typeof chong?.isChongCard === "function" && chong.isChongCard(card)));
       const required = Math.max(1, Math.round(Number(pending?.count) || 1));
-      const combinations = [];
-      const visit = (start, selected) => {
-        if (selected.length === required) {
-          combinations.push([...selected]);
-          return;
-        }
-        for (let index = start; index <= hand.length - (required - selected.length); index += 1) {
-          selected.push(index);
-          visit(index + 1, selected);
-          selected.pop();
-        }
-      };
-      visit(0, []);
-      // 映射回原始手牌索引（hand 过滤后索引 ≠ player.hand 索引）。
-      const originalIndexes = (player?.hand || []).map((card, index) => (
-        (typeof chong?.isChongCard === "function" && chong.isChongCard(card)) ? -1 : index
-      )).filter((index) => index >= 0);
-      return combinations.map((handIndexes) => {
-        const original = handIndexes.map((filteredIndex) => originalIndexes[filteredIndex]);
-        return {
-          target: {
-            kind: "discard-hand-cards",
-            choiceId: original.join("+"),
-            cardIds: original.map((index) => player.hand[index]?.cardId || player.hand[index]?.id || null),
-            handIndexes: original,
+      const selected = [...(pending?.selected || [])].filter((id) => (
+        hand.some((card) => String(card.id) === String(id))
+      ));
+      // 每张手牌一个选项（显示卡面，选中状态高亮），与精选/初始资源牌同一 UI 部件。
+      const cardChoices = hand.map((card) => ({
+        target: {
+          kind: "discard-hand-card",
+          cardInstanceId: card.id,
+          select: true,
+        },
+        payload: {},
+        summary: cards.getCardLabel(card),
+        ...(cards.getCardPickPresentation(card) ? {
+          presentation: {
+            ...cards.getCardPickPresentation(card),
+            selected: selected.some((id) => String(id) === String(card.id)),
           },
-          payload: { handIndexes: original },
-          summary: original.map((index) => cards.getCardLabel(player.hand[index])).join("、"),
-        };
+        } : {}),
+      }));
+      const remaining = Math.max(0, required - selected.length);
+      // 确认弃牌：选满 required 张后可用（提交时仍兜底校验）。
+      cardChoices.push({
+        target: { kind: "confirm", confirm: true },
+        payload: {},
+        summary: remaining > 0
+          ? `确认弃牌（${selected.length}/${required}）`
+          : `确认弃牌（${required}/${required}）`,
+        ...(remaining > 0 ? {
+          disabledReason: `还需选择 ${remaining} 张牌`,
+        } : {}),
       });
+      return cardChoices;
     }
 
     function cardChoices(root, pending) {
@@ -308,38 +312,79 @@
     function executeDiscard(context, action, pending) {
       const root = context?.state || context;
       const player = resolvePlayer(root, pending);
-      const handIndexes = [...(action.target?.handIndexes || [])]
-        .sort((left, right) => right - left);
-      for (const handIndex of handIndexes) {
-        const discarded = cards.discardFromHandAtIndex(player, handIndex);
-        if (!discarded?.ok) return discarded;
-        cards.addToDiscardPile(root.cards, discarded.card);
+      const required = Math.max(1, Math.round(Number(pending?.count) || 1));
+      const selected = [...(pending?.selected || [])];
+      if (action.target?.kind === "discard-hand-card") {
+        // 点选/取消一张手牌：切换选中状态后继续同一弃牌决策。
+        const cardInstanceId = action.target.cardInstanceId;
+        const inHand = (player?.hand || []).some((card) => String(card.id) === String(cardInstanceId));
+        if (!inHand) {
+          return { ok: false, code: "QUICK_TRADE_DISCARD_STALE", message: "弃牌目标已失效" };
+        }
+        const index = selected.findIndex((id) => String(id) === String(cardInstanceId));
+        if (index >= 0) selected.splice(index, 1);
+        else if (selected.length < required) selected.push(cardInstanceId);
+        return {
+          ok: true,
+          progressed: true,
+          nextDecisionContext: { ...clone(pending), selected },
+          events: [{
+            type: "quick_trade_discard_selection",
+            tradeId: pending.tradeId,
+            playerId: player.id,
+            cardInstanceId,
+            selected: clone(selected),
+          }],
+        };
       }
-      let openedDecisionContext = null;
-      const result = quickTrades.finalizeTradeAfterDiscard(
-        pending.tradeId,
-        {
-          ...context,
-          beginCardSelection(input) {
-            const opened = openCardSelection(root, input);
-            if (opened?.ok) openedDecisionContext = opened.decisionContext;
-            return opened;
+      if (action.target?.confirm) {
+        if (selected.length !== required) {
+          return {
+            ok: false,
+            code: "QUICK_TRADE_DISCARD_INCOMPLETE",
+            message: `还需选择 ${Math.max(0, required - selected.length)} 张牌`,
+          };
+        }
+        const discardedCardIds = [];
+        for (const cardInstanceId of selected) {
+          const index = (player?.hand || []).findIndex((card) => (
+            String(card.id) === String(cardInstanceId)
+          ));
+          if (index < 0) {
+            return { ok: false, code: "QUICK_TRADE_DISCARD_STALE", message: "弃牌目标已失效" };
+          }
+          const removed = cards.discardFromHandAtIndex(player, index);
+          if (!removed?.ok) return removed;
+          cards.addToDiscardPile(root.cards, removed.card);
+          discardedCardIds.push(removed.card?.id || cardInstanceId);
+        }
+        let openedDecisionContext = null;
+        const result = quickTrades.finalizeTradeAfterDiscard(
+          pending.tradeId,
+          {
+            ...context,
+            beginCardSelection(input) {
+              const opened = openCardSelection(root, input);
+              if (opened?.ok) openedDecisionContext = opened.decisionContext;
+              return opened;
+            },
           },
-        },
-        player,
-      );
-      if (!result?.ok) return result;
-      return {
-        ...result,
-        progressed: true,
-        nextDecisionContext: clone(openedDecisionContext),
-        events: [{
-          type: "quick_trade_payment",
-          tradeId: pending.tradeId,
-          playerId: player.id,
-          cardInstanceIds: action.target.cardIds,
-        }],
-      };
+          player,
+        );
+        if (!result?.ok) return result;
+        return {
+          ...result,
+          progressed: true,
+          nextDecisionContext: clone(openedDecisionContext),
+          events: [{
+            type: "quick_trade_payment",
+            tradeId: pending.tradeId,
+            playerId: player.id,
+            cardInstanceIds: discardedCardIds,
+          }],
+        };
+      }
+      return { ok: false, code: "QUICK_TRADE_DISCARD_STALE", message: "弃牌目标已失效" };
     }
 
     function executeCardSelection(context, action, pending) {
@@ -750,6 +795,9 @@
                 payload: candidate.payload,
                 decision: candidate.decision,
                 label: candidate.summary,
+                // 卡面/禁用原因随决策透传（弃牌换奖励、精选等 UI 依赖）
+                ...(candidate.presentation ? { presentation: candidate.presentation } : {}),
+                ...(candidate.disabledReason ? { disabledReason: candidate.disabledReason } : {}),
               })) }
               : { ok: false, code: "SESSION_DECISION_ONLY", message: `当前没有 ${family} source` };
           }

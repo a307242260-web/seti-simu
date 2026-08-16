@@ -281,7 +281,9 @@
         resources: presentStats(owner?.resources, RESOURCE_PRESENTATION),
         income: presentStats(owner?.income, INCOME_PRESENTATION),
       } : null,
-      directSubmit: hasInitialCards,
+      // 精选/弃牌换奖励类卡面选择：点卡直接提交（内核切换选中状态并重发决策），
+      // 初始资源牌同此交互；无需底部「确认」按钮（完成由「确认弃牌」等 choice 承担）。
+      directSubmit: hasInitialCards || visibleChoices.some((choice) => choice.card?.cardKind === "pick"),
     };
   }
 
@@ -346,6 +348,11 @@
   }
 
   function renderPayment({ decision, projection }) {
+    // 带卡面的弃牌/支付决策（如 2 张牌换 1 信用点）与精选/初始资源牌同 UI 部件：
+    // 列出所有手牌卡面，点选切换，选满后确认结算。
+    if (decision.choices.some((choice) => choice.presentation?.cardKind)) {
+      return renderGeneric({ decision, projection });
+    }
     if (projection?.resident?.initialIncome?.active
       && decision.choices.some((choice) => choice.presentation?.cardKind === "hand")) {
       return renderGeneric({ decision, projection });

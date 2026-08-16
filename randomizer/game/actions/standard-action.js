@@ -91,6 +91,10 @@
       payload,
       decision: clone(descriptor?.decision || null),
       summary: descriptor?.summary || definition.label || definition.family,
+      // 决策展示信息（卡面、禁用原因等）随 descriptor 透传；action 枚举投影
+      // 只挑选已知字段，不受影响；sameAction 不比较这些字段。
+      ...(descriptor?.presentation ? { presentation: clone(descriptor.presentation) } : {}),
+      ...(descriptor?.disabledReason ? { disabledReason: descriptor.disabledReason } : {}),
     });
   }
 
@@ -293,6 +297,9 @@
           payload: choice.payload || {},
           decision: choice.decision || null,
           summary: choice.label || action.label || family,
+          // 卡面/禁用原因随决策透传（弃牌换奖励等 UI 依赖）；action 枚举投影只挑已知字段。
+          ...(choice.presentation ? { presentation: choice.presentation } : {}),
+          ...(choice.disabledReason ? { disabledReason: choice.disabledReason } : {}),
         }));
       },
       validate(context, descriptor) {
