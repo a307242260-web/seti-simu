@@ -1653,7 +1653,11 @@
     const result = desktopActionBar.activateAction(button.dataset.actionId);
     if (result?.ok === false) {
       console.error("快速行动提交失败", result);
-      window.alert(`快速行动提交失败：${result.message || result.code}`);
+      // 内核 Effect Session 失败时错误在 result.failure 内，不能只读顶层 message
+      const reason = result.message || result.code
+        || result.failure?.message || result.failure?.code
+        || JSON.stringify(result.failure || {}).slice(0, 120);
+      window.alert(`快速行动提交失败：${reason}`);
       return;
     }
     scheduleRefreshAndAutomation();
