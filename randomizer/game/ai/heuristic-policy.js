@@ -91,20 +91,47 @@
       return industry || null;
     }
     const selectedInitialIds = new Set(offer?.selectedInitialIds || []);
-    // 初始牌倾向数据：数据（dataGain/availableData）是 R1 环绕+填 4 数据轨拿收入的
-    // 起点，也是蓝科技（1 数据换 1 能量）的燃料——用户高分策略首轮即选数据牌。
-    // 数据牌优先，无数据牌时保持原「第一个」行为。
+    // 初始牌效果价值评估：AI 的反事实评估看不到初始牌价值（效果延迟到 confirm 结算，
+    // 评估选牌步骤时效果未执行 → 全部 0）。这里按真实效果直接打分——分数/资源/
+    // 数据（数据→填 4 数据轨→收入 + 蓝科技 1 数据换 1 能量，用户高分策略的核心燃料）
+    // /环绕器/扫描（给数据 token）/外星人痕迹——选价值最高的牌。
     const initialOptions = actions.filter((action) => (
       action.target?.kind === "select_initial_card"
       && action.target?.selectionKind === "initial"
       && !selectedInitialIds.has(action.target?.cardId)
     ));
-    const dataCard = initialOptions.find((action) => {
+    const effectOf = (action) => {
       const number = Number(String(action.target?.cardId || "").replace("initial:", ""));
-      const effect = initialCards?.INITIAL_CARD_EFFECTS?.[number];
-      return Boolean(effect && (effect.dataGain || effect.income?.availableData));
-    });
-    const initial = dataCard || initialOptions[0] || null;
+      return initialCards?.INITIAL_CARD_EFFECTS?.[number] || null;
+    };
+    const DATA_UNIT_VALUE = 4; // 1 数据 ≈ 填数据轨收入 + 蓝科技转换价值
+    const initialCardValue = (effect) => {
+      if (!effect) return 0;
+      let value = 0;
+      value += Number(effect.resources?.score || 0);
+      value += Number(effect.resources?.credits || 0);
+      value += Number(effect.resources?.energy || 0) * 1.5;
+      value += Number(effect.resources?.publicity || 0) * 0.4;
+      value += Number(effect.resources?.additionalPublicScan || 0) * 3;
+      value += Number(effect.dataGain || 0) * DATA_UNIT_VALUE;
+      value += Number(effect.income?.availableData || 0) * DATA_UNIT_VALUE;
+      value += Number(effect.income?.handSize || 0) * 2;
+      value += Number(effect.blindDraw || 0) * 1.5;
+      if (effect.orbitPlanetId) value += 3;
+      if (effect.scan) value += 3 + (Number(effect.scan.count) || 0) * 1.5;
+      if (effect.alienTrace) value += 5;
+      return value;
+    };
+    let bestInitial = null;
+    let bestValue = -1;
+    for (const action of initialOptions) {
+      const value = initialCardValue(effectOf(action));
+      if (value > bestValue) {
+        bestValue = value;
+        bestInitial = action;
+      }
+    }
+    const initial = bestInitial || initialOptions[0] || null;
     if ((setup?.active && offer && selectedInitialIds.size < 2) || (!offer && initial)) {
       return initial || null;
     }
