@@ -774,6 +774,18 @@ function createSimulationEnv() {
       const controlActions = initialSetupBoundary
         ? []
         : beforeActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));
+      // 有界评估桶：play_card 若未进入路由目标评估（不推进探测/科技/收入/扇区需求），
+      // 此前完全 unresolved——AI 永远看不到打牌的直接价值（分数/资源/抽牌/触发），
+      // 高价值保留牌被系统性忽略（用户高分档：阿米巴牌等稳定分源）。给它们中等深度
+      // 反事实评估，让打牌的直接价值进入策略视野。
+      const evaluatedIds = new Set(evaluatedActions.map((action) => action.actionId));
+      const boundedActions = initialSetupBoundary
+        ? []
+        : beforeActions.filter((action) => (
+          !evaluatedIds.has(action.actionId)
+          && expectedScoreEvaluator.requiresCounterfactualOutcome(action)
+          && action.family === "play_card"
+        ));
       const controlOutcomes = controlActions.length
         ? evaluateActionOutcomes.call(this, controlActions, {
           maxDepth: 1,
@@ -781,6 +793,14 @@ function createSimulationEnv() {
           maxNodes: controlActions.length,
           secondaryAgentSearch: false,
           stopAtPassDecisionBoundary: true,
+        })
+        : [];
+      const boundedOutcomes = boundedActions.length
+        ? evaluateActionOutcomes.call(this, boundedActions, {
+          maxDepth: 6,
+          maxLeaves: 3,
+          maxNodes: Math.max(boundedActions.length, boundedActions.length * 16),
+          secondaryAgentSearch: false,
         })
         : [];
       const strategicOutcomes = evaluatedActions.length
@@ -797,7 +817,7 @@ function createSimulationEnv() {
         })
         : [];
       const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
-        [...strategicOutcomes, ...controlOutcomes],
+        [...strategicOutcomes, ...boundedOutcomes, ...controlOutcomes],
         outcomeOptions,
       );
       const actionOutcomes = completePolicyOutcomeSet(
