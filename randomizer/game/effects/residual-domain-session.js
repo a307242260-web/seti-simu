@@ -794,6 +794,8 @@
           ...(deliveredFossils[0] ? {
             rocketId: deliveredFossils[0].rocketId,
             destinationPlanetId: deliveredFossils[0].task?.destinationPlanetId || task.destinationPlanetId,
+            fossilId: deliveredFossils[0].fossilId,
+            fossilRewardRepeat: Math.max(0, Math.round(Number(task.fossilRewardRepeat) || 1)),
           } : {}),
         });
       } else if (amiba.isAmibaCard(card) && !card.amibaTaskCompleted
@@ -1387,6 +1389,36 @@
     return { ...executorResult, spawnedEffects };
   }
 
+  // 发放 1 枚化石奖励（交虫族搬运任务时，按任务卡 fossilRewardRepeat 重复）。
+  // gain 直接入资源；data 池满弃置不中断；盲抽/精选走统一抽牌上下文。
+  function applyChongFossilReward(root, player, fossilId, repeat = 1) {
+    const spawnedEffects = [];
+    let irreversible = null;
+    for (let index = 0; index < Math.max(1, repeat); index += 1) {
+      const applied = chong.applyFossilRewardOnly(root.aliens, player, fossilId, {
+        gainResources(gain) {
+          players.gainResources(player, gain);
+        },
+        gainData() {
+          const result = data.gainData(player, { source: "chong_fossil_reward", root });
+          if (!result.ok && !result.discarded) return result;
+          return { ok: true };
+        },
+        blindDraw() {
+          const drawn = drawOptions(root).blindDraw(player);
+          if (!drawn.ok) return drawn;
+          irreversible = { code: "hidden_card_draw", reason: "虫族化石奖励盲抽翻开隐藏牌" };
+          return drawn;
+        },
+        pickCard() {
+          spawnedEffects.push(decision(science.EFFECT_TYPES.PICK_CARD, player.id, {}, "choose_card"));
+        },
+      });
+      if (!applied.ok) return applied;
+    }
+    return { ok: true, spawnedEffects, irreversible };
+  }
+
   function settleReadyTaskDirect(root, ownerId, cardInstanceId, ruleId) {
     // 规则书 P15：条件任务在达成条件后可用免费行动完成。此函数由 complete_task
     // 免费行动直接结算一个已满足条件的任务（条件任务 / 虫族搬运 / 阿米巴理论），
@@ -1434,12 +1466,26 @@
     }
     const applied = applyFormalCardEffects(root, player, settlement.effects, "taskCardScore");
     if (!applied.ok) return applied;
+    // 虫族搬运任务：同时发放被运输化石自身的奖励（按任务卡 fossilRewardRepeat 重复）
+    let fossilReward = { ok: true, spawnedEffects: [], irreversible: null };
+    if (settlement.kind === "chong_task" && settlement.fossilId) {
+      fossilReward = applyChongFossilReward(
+        root,
+        player,
+        settlement.fossilId,
+        Math.max(1, Number(settlement.fossilRewardRepeat) || 1),
+      );
+      if (!fossilReward.ok) return fossilReward;
+    }
     return {
       ok: true,
       cardInstanceId,
       ruleId,
-      spawnedEffects: applied.spawnedEffects || [],
-      irreversible: applied.irreversible || null,
+      spawnedEffects: [
+        ...(applied.spawnedEffects || []),
+        ...(fossilReward.spawnedEffects || []),
+      ],
+      irreversible: applied.irreversible || fossilReward.irreversible || null,
     };
   }
 
@@ -1508,8 +1554,24 @@
       settlement.kind === "trigger" ? "cardEffectScore" : "taskCardScore",
     );
     if (!applied.ok) return applied;
+    // 虫族搬运任务：同时发放被运输化石自身的奖励（按任务卡 fossilRewardRepeat 重复）
+    let fossilReward = { ok: true, spawnedEffects: [], irreversible: null };
+    if (settlement.kind === "chong_task" && settlement.fossilId) {
+      fossilReward = applyChongFossilReward(
+        root,
+        player,
+        settlement.fossilId,
+        Math.max(1, Number(settlement.fossilRewardRepeat) || 1),
+      );
+      if (!fossilReward.ok) return fossilReward;
+    }
     return {
       ...applied,
+      spawnedEffects: [
+        ...(applied.spawnedEffects || []),
+        ...(fossilReward.spawnedEffects || []),
+      ],
+      irreversible: applied.irreversible || fossilReward.irreversible || null,
       cardInstanceId: settlement.cardInstanceId,
       ruleId: settlement.ruleId,
     };
