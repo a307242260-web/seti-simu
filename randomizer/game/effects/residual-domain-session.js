@@ -1841,6 +1841,34 @@
           }],
         });
       }
+      if (action?.family === "complete_task") {
+        // 完成任务：条件任务 / 虫族搬运任务 / 阿米巴理论任务。
+        // 之前漏接此分支，complete_task 落到下方公司行动校验报「公司行动已失效」。
+        const applied = settleReadyTaskDirect(
+          root,
+          action.actorId,
+          action.target?.cardInstanceId,
+          action.target?.ruleId,
+        );
+        if (!applied.ok) return applied;
+        return result(state, root, "complete_task", {
+          spawnedEffects: applied.spawnedEffects || [],
+          irreversible: applied.irreversible || null,
+          events: [{
+            type: "complete_task",
+            playerId: player.id,
+            cardInstanceId: action.target?.cardInstanceId,
+            ruleId: action.target?.ruleId,
+          }],
+          history: [{
+            type: "complete_task",
+            playerId: player.id,
+            cardInstanceId: action.target?.cardInstanceId,
+            ruleId: action.target?.ruleId,
+            executorId: EXECUTOR_ID,
+          }],
+        });
+      }
       const start = canStartCompany(root, player);
       if (!start.ok
         || start.label !== action?.target?.companyId
