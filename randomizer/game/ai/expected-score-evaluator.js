@@ -295,6 +295,8 @@
         remainingRounds: 0,
         gainedTechIds: [],
         techValue: 0,
+        blueBonusPlacementValue: 0,
+        dataUtilizationValue: 0,
         incomeDelta: Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [key, 0])),
         incomeValue: 0,
         traceDelta: 0,
@@ -332,6 +334,48 @@
       return total + slotValue * EXPECTED_BLUE_SLOT_PLACEMENTS * roundWeight;
     }, 0);
     const techValue = baseTechValue + blueSlotTechValue;
+    // 蓝科技数据位槽"实际放置"的即时收益：用户 405 档 19 次放槽是"用上"科技的主要形态
+    // （blue2 槽 8 次每次 +1 能量、blue1 槽 8 次 +1 信用、blue4 槽 2 次 +2 宣传、blue3 槽 1 次
+    // 选牌）。此前 leafValue 只计研究时的预期（EXPECTED_BLUE_SLOT_PLACEMENTS=4 减半），
+    // 实际放槽的即时资源收益在评估里 value=0 → AI 研究 blue2 后从不放槽（blueBonus 0）。
+    // 按用户口径"实际产生的收益才是价值、预期次数才折半"：实际放置全额计。
+    // 与 research 的 techValue 不重复：放槽分支 gainedTechIds 为空（科技已在位），
+    // 研究分支 blueBonusCount 未增加；只有多步展开（研究→放槽）才可能同时出现，
+    // 但预期(减半)+实际(全额)符合"预期次数折半、实际不折半"的口径。
+    const rootBlueCount = finite(rootInfrastructure.dataProgress?.blueBonusCount);
+    const leafBlueCount = finite(leafInfrastructure.dataProgress?.blueBonusCount);
+    const blueBonusPlacementDelta = Math.max(0, leafBlueCount - rootBlueCount);
+    // 放槽的即时收益按实际到手的资源货币化：资源（能量/信用）会被 AI 转换为分数
+    // （能量→发射/移动/分析，信用→交易/研究），因此实际到手的资源按 INCOME_UNIT_VALUES
+    // 计价值（blue2 槽 +1 能量→10，blue1 槽 +1 信用→8，blue4 槽 +2 宣传走研究门槛逻辑）。
+    // 只在实际放槽（blueBonusCount 增加）时计入，避免 quick_trade/scan 等纯资源动作被高估。
+    const rootEnergy = finite(rootValue.resourceFacts?.energy);
+    const leafEnergy = finite(leafValue.resourceFacts?.energy);
+    const rootCredits = finite(rootValue.resourceFacts?.credits);
+    const leafCredits = finite(leafValue.resourceFacts?.credits);
+    const blueBonusPlacementValue = blueBonusPlacementDelta > 0
+      ? Math.max(0, leafEnergy - rootEnergy) * INCOME_UNIT_VALUES.energy
+        + Math.max(0, leafCredits - rootCredits) * INCOME_UNIT_VALUES.credits
+      : 0;
+    // 数据预期用途价值：scan/打牌获得的数据是放槽（blueBonus 每次 +5 资源价值）与
+    // analyze 的原料。数据库存本身不算分（测试契约"钱/电/宣传/数据/手牌库存不得
+    // 冒充分数"），但"已有 blue 科技可放槽"时数据的预期转换价值应可见——否则 scan
+    // 拿数据在评估里 value=0（白花 1c+2e），AI 从不扫描（用户 405 档 scan 13 次）。
+    // 用 root（决策时）科技判断：scan 分支里没有研究动作，leaf 恒无 blue——数据能
+    // 否放槽取决于决策时 AI 已拥有的 blue 科技。用户口径："用上了才有价值、预期
+    // 次数折半"：预期利用率 0.5。
+    const rootTechSet = new Set(rootInfrastructure.ownedTechIds);
+    const hasBlueTechForData = [...rootTechSet].some((tileId) => (
+      String(tileId).startsWith("blue")
+    ));
+    const rootDataCount = finite(rootValue.resourceFacts?.availableData);
+    const leafDataCount = finite(leafValue.resourceFacts?.availableData);
+    const dataDelta = Math.max(0, leafDataCount - rootDataCount);
+    const DATA_TO_BLUE_SLOT_VALUE = INCOME_UNIT_VALUES.energy; // 数据→放槽→+1 能量（10）
+    const EXPECTED_DATA_UTILIZATION = 0.5; // 预期折半（数据未必全转化为放槽）
+    const dataUtilizationValue = hasBlueTechForData && dataDelta > 0
+      ? dataDelta * DATA_TO_BLUE_SLOT_VALUE * EXPECTED_DATA_UTILIZATION
+      : 0;
     const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
       key,
       positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
@@ -346,10 +390,12 @@
     );
     const traceValue = traceDelta * TRACE_UNIT_VALUE;
     return {
-      total: techValue + incomeValue + traceValue,
+      total: techValue + blueBonusPlacementValue + dataUtilizationValue + incomeValue + traceValue,
       remainingRounds,
       gainedTechIds,
       techValue,
+      blueBonusPlacementValue,
+      dataUtilizationValue,
       incomeDelta,
       incomeValue,
       traceDelta,
@@ -371,10 +417,18 @@
     // 宣传价值只在"跨过研究门槛"时兑现（pub 从 <6 到 >=6 的那部分），零星宣传
     // （远离门槛，如卡角 +1 宣传 pub 0→1）价值为 0——测试契约"只获得宣传的卡角
     // 不得归因"保持成立。
+    // TECH_VALUE_PER_RESEARCH 从 10 提到 60：10 是"研究一次"的旧固定值，但研究
+    // blue2 的实际 techValue ≈50（R1 时每轮 10×3 + 蓝槽预期 5×4），10 让打牌凑宣传
+    // 只值 3.33，远低于 launch 的乐观探测链评估（103）→ AI 永远不学用户"先打牌凑
+    // 宣传再研究"。提到 60 后 b_117 的 2 宣传 ≈20，与免费发射链叠加可超过 launch。
     const RESEARCH_PUBLICITY_COST = 6;
-    const TECH_VALUE_PER_RESEARCH = 10;
+    const TECH_VALUE_PER_RESEARCH = 60;
     const rootPub = finite(rootValue.resourceFacts?.publicity);
     const leafPub = finite(leafValueState.resourceFacts?.publicity);
+    // 跨门槛判断只看 leaf 终点 pub：研究动作本身（research_tech）花宣传，终点 pub
+    // 下降 → 不触发（测试契约：R2 研究 orange2 score=14 不加宣传分）。b_117 打牌凑
+    // 宣传→研究的链，其研究价值已由 techValue（gainedTechIds）兑现，宣传是前置动作，
+    // 不重复计分；b_117 的 2 宣传价值由"打牌后 pub 达到 6"的 leaf 分支体现。
     const crossesThreshold = rootPub < RESEARCH_PUBLICITY_COST
       && leafPub >= RESEARCH_PUBLICITY_COST;
     const publicityResearchValue = crossesThreshold
@@ -870,6 +924,8 @@
 
   // 打牌 spawn 的免费发射：该 play_card 打出时含 LAUNCH（skipCost）效果，
   // 可作为探测的免费发射步骤（用户 405 档 b_117 = 免费发射 + 2 宣传）。
+  // launchEffect 用 REWARD_TYPES.LAUNCH("launch")，EFFECT_TYPES 无 LAUNCH 键——
+  // 此前用 EFFECT_TYPES.LAUNCH(undefined) 恒 false，b_117 免费发射从未被识别。
   function cardHasFreeLaunch(observation, action) {
     if (action?.family !== "play_card") return false;
     const instanceId = action.target?.cardInstanceId;
@@ -877,8 +933,9 @@
       String(candidate?.id) === String(instanceId)
     ));
     if (!card || typeof cardEffects?.buildPlayEffects !== "function") return false;
+    const launchType = cardEffects.REWARD_TYPES?.LAUNCH ?? "launch";
     return cardEffects.buildPlayEffects(card).some((effect) => (
-      effect?.type === cardEffects.EFFECT_TYPES.LAUNCH
+      effect?.type === launchType
       && effect?.options?.skipCost !== false
     ));
   }
@@ -1318,7 +1375,11 @@
     const sectorWinRelevant = Boolean((sectorRequirements?.candidates || []).length);
 
     const preferredIds = [
-      ...(finite(assets.availableData) > 0 ? ["blue1", "blue2"] : []),
+      // 蓝科技始终优先：研究后开数据位槽（每槽 +1 资源，用户 405 档 blue2 槽 8 次）。
+      // 此前依赖 availableData>0，AI 填轨耗尽数据后 blue 科技不优先 → 研究拖到填满轨
+      // 之后（step 101），无处可放槽（blueBonus 0）。用户先研究 blue2（sv11）再填轨。
+      ...(planByTile.has("blue1") ? ["blue1"] : []),
+      ...(planByTile.has("blue2") ? ["blue2"] : []),
       ...(scanRelevant ? ["purple2", "purple4"] : []),
       ...(probeRelevant ? ["orange2"] : []),
       ...(satelliteTechReachable ? ["orange4"] : []),
@@ -1401,8 +1462,10 @@
       // （LAUNCH skipCost 免费发射 +2 宣传）→ 免费探测 + 攒宣传研究科技。
       // 此前探测目标只认 launch 行动，打牌发射完全不可见（AI 评估 b_117
       // 无探测价值，只算宣传 3.33，选 launch 103 而非打牌）。
+      // 即使 launch 本身可选也把免费发射牌并列：免费发射 = 探测链价值 + 省
+      // 发射费 + 牌面宣传，理应优于付费 launch（用户 R1 打 b_117 而非 launch）。
       let launchCards = [];
-      if (goal?.nextStep?.family === "launch" && !exact.length) {
+      if (goal?.nextStep?.family === "launch") {
         launchCards = legalActions.filter((action) => (
           action.family === "play_card"
           && cardHasFreeLaunch(input.rootObservation, action)

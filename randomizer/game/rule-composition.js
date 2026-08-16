@@ -2313,8 +2313,11 @@
           ));
           if (!node.origins.length) continue;
           const saturatedOrigins = node.origins.filter((origin) => {
-            return !secondaryAgentSearch
-              && (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
+            // 次级代理搜索同样受 maxLeaves 饱和限制：此前 secondary 不饱和 → scan 等
+            // 分支宽的根无限展开直到 maxExecutionNodes 耗尽仍无叶（unresolved）→ AI
+            // 评估 scan 返回 unavailable → 从不扫描（用户 405 档 scan 13 次 vs AI 2 次）。
+            // 让 secondary 也按 maxLeaves 收束出叶（settled），保留预算内剪枝语义。
+            return (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
           });
           if (saturatedOrigins.length) {
             for (const origin of saturatedOrigins) {
@@ -2606,11 +2609,25 @@
             const nextGoalTracePaths = completedGoal && routeTargetId
               ? (origin.goalTracePaths || []).map((path) => [...path, routeTargetId])
               : (origin.goalTracePaths || []);
+            // scan 主行动的叶边界必须跳过其目标选择（choose_target）：scan 效果链是
+            // scan → choose_target（选扇区/星云）→ 扫描结算（数据/痕迹/扇区奖励）。
+            // 若在 scan 后的第一个 awaitingDecision 成叶，叶在选目标前就断了——scan
+            // 白花 1c+2e 无任何收益（评估 0 分 → AI 从不扫描）。只有 scan 的目标选择
+            // 已结算（choose_target 走完、奖励到手、focal 回到主行动选择）才成叶。
+            const scanTargetChoicePending = origin.rootAction?.family === "scan"
+              && execution.successors[0]?.family === "choose_target";
             if (
               secondaryAgentSearch
-              && origin.rootWasConditional
+              && (
+                origin.rootWasConditional
+                || (origin.rootAction?.family === "scan" && !scanTargetChoicePending)
+              )
               && execution.awaitingDecision
             ) {
+              // scan 主行动执行完成（数据/痕迹/扇区奖励已发）后 focal 等待下一主行动
+              // 选择——在此边界形成叶。此前 scan 无叶边界，继续展开 focal 后续（分支
+              // 爆炸）到不了 focal pass → 4096 节点耗尽仍 unresolved → AI 评估 scan
+              // unavailable → 从不扫描（用户 405 档 scan 13 次 vs AI 2 次）。
               addLeaf(
                 {
                   ...origin,

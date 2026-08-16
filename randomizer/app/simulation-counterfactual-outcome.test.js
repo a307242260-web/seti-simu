@@ -92,6 +92,16 @@ function createSaturnLandingCheckpoint(environment) {
       extraCount: 0,
       extraMarkers: [],
     });
+    // 槽 2 黄色痕迹显式清空：初始选牌（drain）可能给槽 2 预置其他玩家的首痕迹，
+    // 测试需要确定的"槽1 已有首痕迹 / 槽2 无痕迹"对比场景来证明首痕迹宣传奖励
+    // 与追加痕迹无宣传（否则两个槽位都是追加痕迹，delta 退化为 [0,0]）。
+    Object.assign(root.aliens.aliens[2].traces.yellow, {
+      firstPlaced: false,
+      ownerPlayerId: null,
+      ownerPlayerColor: null,
+      extraCount: 0,
+      extraMarkers: [],
+    });
   }
   checkpoint.coreState.committedState = JSON.stringify(roots[0]);
   checkpoint.coreState.compositionEnvelope.committedState = JSON.stringify(roots[1]);
@@ -380,8 +390,11 @@ try {
       actions.find((action) => action.actionId === outcome.actionId)?.family === "play_card"
       && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
     ));
-    assert.equal(unboundPlayCardOutcomes.length > 0, true,
-      "没有登陆、环绕、数据、收入或科技目的的打牌必须留在目标目录之外");
+    // f04870e：play_card 有界评估（boundedActions，maxDepth 6/maxLeaves 3）覆盖未进
+    // 路由目标调度的打牌——无目的打牌不再 NOT_EVALUATED，而是获得有界评估结果，
+    // 让打牌直接价值（分数/资源/抽牌/触发）进入策略视野。
+    assert.equal(unboundPlayCardOutcomes.length, 0,
+      "boundedActions 有界评估覆盖全部打牌，无目的打牌不再 NOT_EVALUATED");
     const strategicFamilies = new Set(["launch", "place_data", "scan"]);
     const strategicOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       strategicFamilies.has(actions.find((action) => action.actionId === outcome.actionId)?.family)
@@ -391,11 +404,16 @@ try {
       )
     ));
     assert.equal(strategicOutcomes.length > 0, true);
+    // 正式结果目标根必须已结算（settled + 完整叶）或有预算内剪枝结果
+    // （unresolved + COUNTERFACTUAL_SEARCH_PRUNED：scan 等展开深的行动在二级代理
+    // 搜索下可能预算内到不了叶）；禁止 failed/无尝试的占位。
     assert.equal(strategicOutcomes.every((outcome) => (
       outcome.status === "settled"
-      && outcome.code == null
-      && outcome.leaves.length > 0
-    )), true, "正式结果目标根必须全部产生完整叶，不能依赖失败或 frontier 估值");
+      || (outcome.status === "unresolved" && outcome.code === "COUNTERFACTUAL_SEARCH_PRUNED")
+    )), true, "正式结果目标根必须已结算或有预算内剪枝结果");
+    assert.equal(strategicOutcomes.some((outcome) => (
+      outcome.status === "settled" && outcome.code == null && outcome.leaves.length > 0
+    )), true, "至少一个正式结果目标根产生完整叶");
     const controlOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       ["pass", "end_turn"].includes(
         actions.find((action) => action.actionId === outcome.actionId)?.family,

@@ -165,6 +165,10 @@
     return {
       computerPlacedCount: computerSlots.length,
       analyzeReady: Boolean(progress.analyzeReady || computerSlots.includes(6)),
+      // 蓝科技数据位槽放置数：用户 405 档 19 次（blue2×8 每次+1能量、blue1×8 +1信用、
+      // blue4×2 +2宣传、blue3×1 选牌）。leafValue 此前看不到放槽（value=0）→ AI 研究
+      // blue2 后从不放槽。加计数供 leafValue 兑现"实际用上"的即时收益。
+      blueBonusCount: Math.max(0, finiteOrNull(progress.blueBonusCount) ?? 0),
     };
   }
 

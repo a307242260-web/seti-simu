@@ -527,7 +527,10 @@ function createSimulationEnv() {
         ),
       });
       composition = kernel.composition;
-      const newGameResult = kernel.newGame(config);
+      // meta.seed 固定为用户档的 "seti-simulation"（science 域/外星人 RNG 由 meta.seed
+      // 派生，用户 405 档 = 阿米巴+虫）；盘面 seed 只用于主 RNG（seededRandom），
+      // 不再直接写进 meta.seed，保证外星人序列与用户档同源。
+      const newGameResult = kernel.newGame({ ...config, seed: "seti-simulation" });
       if (newGameResult?.ok === false) {
         throw new Error(newGameResult.message || newGameResult.code || "simulation newGame 失败");
       }
