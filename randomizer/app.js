@@ -1601,6 +1601,11 @@
 
   function bindActionButton(button) {
     button?.addEventListener("click", () => {
+      // 多目标主行动（登陆/环绕/发射等）：弹出目标选择
+      if (button.dataset.multiTarget) {
+        pickMultiTargetAction(button.dataset.multiTarget);
+        return;
+      }
       if (!button.dataset.actionId) return;
       residentInput.dispatchIntent({ kind: "view", type: "focus.clear" });
       const result = desktopActionBar.activateAction(button.dataset.actionId);
@@ -1611,6 +1616,44 @@
       }
       scheduleRefreshAndAutomation();
     });
+  }
+
+  // 多目标主行动选择（登陆木星主星/卫星等）：弹列表让玩家选目标
+  function pickMultiTargetAction(family) {
+    const projection = readProjection();
+    const actions = (projection?.controls?.actions || [])
+      .filter((candidate) => candidate.family === family && !candidate.disabledReason);
+    if (!actions.length) {
+      window.alert(`当前没有可执行的${family}目标`);
+      return;
+    }
+    if (actions.length === 1) {
+      submitQuickAction(actions[0]);
+      return;
+    }
+    if (!els.cornerPickerOverlay || !els.cornerPickerList) {
+      submitQuickAction(actions[0]);
+      return;
+    }
+    if (els.cornerPickerTitle) {
+      const labels = { land: "选择登陆目标", orbit: "选择环绕目标", launch: "选择发射目标", scan: "选择扫描目标", analyze: "选择分析目标", research_tech: "选择科技" };
+      els.cornerPickerTitle.textContent = labels[family] || `选择${family}目标`;
+    }
+    els.cornerPickerList.replaceChildren();
+    for (const action of actions) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "save-picker-item corner-picker-item";
+      const label = document.createElement("span");
+      label.textContent = action.summary || action.family;
+      button.append(label);
+      button.addEventListener("click", () => {
+        els.cornerPickerOverlay.hidden = true;
+        submitQuickAction(action);
+      });
+      els.cornerPickerList.appendChild(button);
+    }
+    els.cornerPickerOverlay.hidden = false;
   }
 
   els.startScreenStartButton?.addEventListener("click", startNewGame);
