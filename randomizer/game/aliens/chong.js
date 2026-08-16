@@ -922,6 +922,29 @@
     return null;
   }
 
+  // 化石与任务不绑定：列出所有已送达目的地的搬运化石（不限由哪张任务卡拾取）。
+  // 任意任务卡只要目的地匹配即可用其中一个化石完成任务。
+  function listDeliveredFossilsForDestination(alienState, destinationPlanetId) {
+    const chong = ensureChongState(alienState);
+    const results = [];
+    for (const [rocketId, task] of Object.entries(chong.transportTasksByRocketId || {})) {
+      if (!task || task.destinationPlanetId !== destinationPlanetId) continue;
+      const fossil = chong.fossilsById?.[task.fossilId];
+      if (!fossil || fossil.status !== "delivered" || !fossil.readyToComplete || fossil.taskCompleted) continue;
+      results.push({
+        fossilId: fossil.fossilId,
+        rocketId: Number(rocketId),
+        fossil,
+        task: buildTransportTaskFromFossil(fossil),
+      });
+    }
+    return results;
+  }
+
+  function hasDeliveredFossilForDestination(alienState, destinationPlanetId) {
+    return listDeliveredFossilsForDestination(alienState, destinationPlanetId).length > 0;
+  }
+
   function getActiveTransportForCard(alienState, cardId) {
     if (!cardId) return null;
     const chong = ensureChongState(alienState);
@@ -1097,6 +1120,8 @@
     getTransportTaskForRocket,
     getTransportedFossilForRocket,
     getDeliveredTransportForCard,
+    listDeliveredFossilsForDestination,
+    hasDeliveredFossilForDestination,
     getActiveTransportForCard,
     listTransportArrivalEvents,
     listActiveTransports,

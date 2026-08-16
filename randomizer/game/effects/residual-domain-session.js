@@ -774,13 +774,14 @@
     for (const card of player.reservedCards || []) {
       if (chong.isChongCard(card) && !card.chongTaskCompleted) {
         const task = card.chongTask || chong.getCardTask(card);
-        const deliveredTransport = task?.kind === "transport"
-          ? chong.getDeliveredTransportForCard(root.aliens, card.id)
-          : null;
+        // 化石与任务不绑定：任意已送达目的地的化石都可完成目的地匹配的任务卡
+        const deliveredFossils = task?.kind === "transport"
+          ? chong.listDeliveredFossilsForDestination(root.aliens, task.destinationPlanetId)
+          : [];
         const ready = task?.kind === "trace"
           ? chong.isTraceTaskReady(root.aliens, player, task)
           : task?.kind === "transport"
-            ? Boolean(deliveredTransport)
+            ? deliveredFossils.length > 0
             : false;
         if (ready) tasks.push({
           kind: "chong_task",
@@ -790,9 +791,9 @@
             ? task.effects
             : rewardEffects(task.rewards || task, `chong:${card.id}`)),
           label: task.label || cards.getCardLabel(card),
-          ...(deliveredTransport ? {
-            rocketId: deliveredTransport.rocketId,
-            destinationPlanetId: deliveredTransport.task?.destinationPlanetId,
+          ...(deliveredFossils[0] ? {
+            rocketId: deliveredFossils[0].rocketId,
+            destinationPlanetId: deliveredFossils[0].task?.destinationPlanetId || task.destinationPlanetId,
           } : {}),
         });
       } else if (amiba.isAmibaCard(card) && !card.amibaTaskCompleted
