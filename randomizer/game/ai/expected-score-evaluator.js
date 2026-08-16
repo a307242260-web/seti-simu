@@ -596,6 +596,7 @@
       ));
     const best = evaluatedLeaves[0] || null;
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
+    let bestLeafValue = best.strategicValue;
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
     if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
     const cornerPurpose = cardCornerPurpose(
@@ -612,15 +613,15 @@
     // corner/打牌效果/紫4扫描/公司能力），不应因"没有即时分/tech/income 增量"被过滤。
     // 它作为探测路线的达成步骤获得路线价值，无绑定路线时保持可选项但排末尾。
     const moveIsQuickAction = action?.family === "move";
-    const selectable = best.strategicValue.primaryValue > 0 || control || conditional
+    const selectable = bestLeafValue.primaryValue > 0 || control || conditional
       || moveIsQuickAction;
     if (!selectable) return unavailable(outcome, "no-score-tech-or-income-gain");
     return deepFreeze({
       evaluationModel: EVALUATION_MODEL,
-      score: best.strategicValue.primaryValue,
-      value: best.strategicValue.total,
+      score: bestLeafValue.primaryValue,
+      value: bestLeafValue.total,
       sortKey: [
-        best.strategicValue.primaryValue,
+        bestLeafValue.primaryValue,
         0,
         -Number(best.leaf.quickTradeCount || 0),
         -Number(best.leaf.secondaryAgentDepth || 0),
@@ -631,9 +632,9 @@
       confidence: outcome.confidence || "high",
       rootValue,
       leafValue: best.leafStateValue,
-      actualScoreDelta: best.strategicValue.actualScoreDelta,
-      primaryValue: best.strategicValue.primaryValue,
-      opportunityCost: best.strategicValue.opportunityCost,
+      actualScoreDelta: bestLeafValue.actualScoreDelta,
+      primaryValue: bestLeafValue.primaryValue,
+      opportunityCost: bestLeafValue.opportunityCost,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
       quickTradePurpose: tradePurpose.required ? tradePurpose : null,
