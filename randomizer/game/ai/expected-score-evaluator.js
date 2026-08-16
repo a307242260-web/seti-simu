@@ -2450,9 +2450,15 @@
             }
           }
           if (input.currentAction?.family === "place_data") {
+            // 填数据轨时 computer 与 blueBonus（蓝科技数据位槽）并列候选：
+            // 用户 405 档"研究蓝科技→填轨→放槽"交替（blue2 槽 8 次，每次 +1 能量），
+            // 此前只返回 computer 导致 AI 研究 blue2 后从不放槽（blueBonus 0），
+            // 蓝科技收益（数据换资源槽）完全没兑现。价值由 leafValue 权衡。
             const computer = successors.filter((action) => action.target?.target === "computer");
-            if (computer.length) {
-              return bindRoute(computer, input.routeTargetId, input.routePlanId);
+            const blueBonus = successors.filter((action) => action.target?.target === "blueBonus");
+            const placementChoices = [...computer, ...blueBonus];
+            if (placementChoices.length) {
+              return bindRoute(placementChoices, input.routeTargetId, input.routePlanId);
             }
           }
         }
@@ -2509,11 +2515,16 @@
           String(input.routeTargetId || "").startsWith("income:gain:")
           && input.routePlanId === "income:data:computer-slot-4"
         ) {
+          // 收入链填轨也允许 blueBonus（用户交替放 computer/blueBonus 槽）。
           const computer = successors.filter((action) => (
             action.target?.target === "computer"
           ));
-          if (computer.length) {
-            return bindRoute(computer, input.routeTargetId, input.routePlanId);
+          const blueBonus = successors.filter((action) => (
+            action.target?.target === "blueBonus"
+          ));
+          const placementChoices = [...computer, ...blueBonus];
+          if (placementChoices.length) {
+            return bindRoute(placementChoices, input.routeTargetId, input.routePlanId);
           }
         }
         if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
