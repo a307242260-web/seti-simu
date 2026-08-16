@@ -26,6 +26,7 @@
   let runezu = root.SetiAlienRunezu;
   let stateSequences = root.SetiStateSequences;
   let solar = root.SetiSolarSystem;
+  let rockets = root.SetiRocketActions;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     science = science || require("./science-session");
@@ -53,6 +54,7 @@
     runezu = runezu || require("../aliens/runezu");
     stateSequences = stateSequences || require("../state/sequences");
     solar = solar || require("../../solar-system/core");
+    rockets = rockets || require("../rockets");
   }
   const api = factory(
     standardAction, science, players, cards, data, industry, industryAbilities,
@@ -61,6 +63,7 @@
     { jiuzhe, yichangdian, banrenma, fangzhou, chong, amiba, aomomo, runezu },
     stateSequences,
     solar,
+    rockets,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiResidualDomainSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -68,6 +71,7 @@
   gameAbilities, strategy, tech, aliens, finalScoring, endGameScoring,
   cardEffects, cardTaskState, cardPlayDomain, speciesModules, stateSequences,
   solar,
+  rockets,
 ) {
   "use strict";
 
@@ -1451,6 +1455,15 @@
           },
         );
         if (!transport.ok) return transport;
+      }
+      // 化石送达后从太阳系盘面移除搬运棋子，不能再移动
+      if (settlement.fossilId && rockets?.removeRocket) {
+        const piecesState = root.pieces;
+        for (const rocket of [...(piecesState?.rockets || [])]) {
+          if (rocket.kind === "chong-fossil" && rocket.fossilId === settlement.fossilId) {
+            rockets.removeRocket(piecesState, rocket.id);
+          }
+        }
       }
       card.chongTaskCompleted = true;
       consumed = true;
