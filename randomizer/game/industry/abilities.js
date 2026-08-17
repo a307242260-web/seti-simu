@@ -548,6 +548,10 @@
 
   function snapshotPlayedCard(card) {
     if (!card) return null;
+    // 外星卡不触发哨兵弃牌角标，也不应进入 industryLastPlayedCardThisRound：
+    // 其 id 会与 reservedCards 中的同一实体重复，触发
+    // STATE_ALIEN_ENTITY_SEQUENCE_DUPLICATE（外星实体 sequence 全局唯一）。
+    if (isAlienCard(card)) return null;
     return Object.fromEntries(Object.entries({
       id: card.id,
       cardId: card.cardId,

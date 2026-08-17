@@ -528,11 +528,18 @@
       actor.mainActionCompleted = true;
       // 哨兵探测网络：记录本次打牌（供「打牌后才武装哨兵」补开弃牌角标），
       // 并在打牌效果链末尾追加武装状态下的哨兵弃牌角标节点（不弃牌）。
+      // 外星卡不触发哨兵角标（industryAbilities.isAlienCard 判定），快照为
+      // null 时不得把 industryPlayedCardThisRound 置 true，否则保留型外星卡
+      // 打出的 id 会同时出现在 reservedCards 与快照里，触发
+      // STATE_ALIEN_ENTITY_SEQUENCE_DUPLICATE。
       const roundNumber = Number(root.turn?.roundNumber) || 1;
       const turnNumber = Number(root.turn?.turnNumber) || 1;
-      if (industryAbilities?.snapshotPlayedCard) {
+      const playedCardSnapshot = industryAbilities?.snapshotPlayedCard
+        ? industryAbilities.snapshotPlayedCard(playedCard)
+        : null;
+      if (playedCardSnapshot) {
         actor.industryPlayedCardThisRound = true;
-        actor.industryLastPlayedCardThisRound = industryAbilities.snapshotPlayedCard(playedCard);
+        actor.industryLastPlayedCardThisRound = playedCardSnapshot;
         actor.industryPlayedCardRound = roundNumber;
         actor.industryPlayedCardTurn = turnNumber;
       }

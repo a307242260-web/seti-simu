@@ -1100,17 +1100,13 @@
             (Number(actor.resources.additionalPublicScan) || 0) - 1,
           );
         }
-        // 公共牌扫描放置后空位保持空置，不立即补牌；流程结束统一补牌。
+        // 公共牌扫描放置后空位保持空置，不立即补牌；补牌统一由扫描流串尾
+        // SCAN_FINALIZE 在 SETTLE（扇区结算痕迹/盲抽奖励）之后触发。
         const scanFlowEnded = selected >= (Number(opts.max) || 1) || !publicScanChoices(root).length;
         if (!scanFlowEnded) {
           spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_STEP, actor.id, {
             options: { ...clone(opts), selected },
           }, "choose_card"));
-        } else {
-          spawnedEffects.push({
-            priority: "direct",
-            effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: actor.id },
-          });
         }
       }
       return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
@@ -1185,12 +1181,11 @@
           });
         }
         if (mode === "public" && choice?.target?.done) {
-          // 公共牌扫描结束：空位统一补牌；扇区结算由扫描流串尾 SCAN_FINALIZE
-          // 统一触发（SETTLE 幂等，公共牌 done 分支不再单独结算）。
+          // 公共牌扫描结束：空位不在此补牌。补牌由扫描流串尾 SCAN_FINALIZE
+          // 在 SETTLE（扇区结算痕迹/盲抽奖励）之后统一触发——保证盲抽 RNG
+          // 消费顺序先痕迹盲抽、后公共牌补牌（老档逐节点结算顺序一致）。
           return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
-            spawnedEffects: [
-              { priority: "direct", effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId } },
-            ],
+            spawnedEffects: [],
             events: [{ type: "publicScanCompleted", selected: opts.selected || 0 }],
           });
         }
@@ -1258,11 +1253,25 @@
 
     // 扫描流串尾统一判定节点：整串 SCAN_STEP 结束后触发一次 SETTLE（幂等，
     // 只结算已完成的扇区）。独立节点保证跳过任意扫描节点后仍触发扇区结算。
+    // 公共牌补牌（PUBLIC_REFILL）在 SETTLE 之后执行：扇区结算的痕迹/盲抽奖励
+    // 先于公共牌补牌（规则书 P13 扇区奖励在补牌前；老档逐节点结算顺序亦然），
+    // 保证盲抽 RNG 消费顺序与规则一致。
     runtime.registerExecutor(EFFECT_TYPES.SCAN_FINALIZE, (state, effect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
-      return scienceResult(state, root, EFFECT_TYPES.SCAN_FINALIZE, {
-        spawnedEffects: [settleAfterScan(effect.ownerId)],
-      });
+      const spawnedEffects = [settleAfterScan(effect.ownerId)];
+      // 公共牌补牌在 SETTLE 之后执行：扇区结算的痕迹/盲抽奖励先于补牌
+      // （规则书 P13；老档逐节点结算顺序亦然），保证盲抽 RNG 消费顺序一致。
+      // 只有本次扫描流产生了空公共牌位才补牌，避免无公共牌扫描的流多出空节点。
+      const cardsState = getWorkingSlice(root, "cards");
+      const hasEmptyPublicSlot = Array.isArray(cardsState.publicCards)
+        && cardsState.publicCards.some((card) => !card);
+      if (hasEmptyPublicSlot) {
+        spawnedEffects.push({
+          priority: "direct",
+          effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
+        });
+      }
+      return scienceResult(state, root, EFFECT_TYPES.SCAN_FINALIZE, { spawnedEffects });
     });
 
     function handScanChoices(root, actorId) {
