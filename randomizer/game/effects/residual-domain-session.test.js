@@ -450,6 +450,31 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.match(String(publicChoices[0].presentation?.imageSrc || ""), /b_83/);
 })();
 
+// 赫利昂 1x「1 次收入」= 插入一张牌到收入列：收入栏提升 + 立即奖励（gainIncome 语义）。
+(function proofHeliosIncomeCardInsertsIntoIncomeColumn() {
+  const root = createRoot();
+  root.turn.passedPlayerIds = [];
+  const player = root.players.players[0];
+  player.hand = [{ id: "h-inc", cardId: "b_2.webp", incomeCode: 0 }]; // 收入 0 = +1 信用点
+  const beforeCredits = player.income.credits;
+  const owner = createHarness(residual, "createResidualDomain");
+  const executor = owner.executors.get(residual.EFFECT_TYPES.COMPANY_DECISION);
+  const effect = {
+    ownerId: "p1",
+    payload: { companyId: "哨兵探测网络", step: "income_card" },
+  };
+  const legal = executor.getLegalChoices(root, effect, { state: root });
+  assert.equal(legal.length, 1, "赫利昂收入牌必须有 1 个手牌选择");
+  const settled = executor.resolveDecision(root, effect, legal[0], { state: root });
+  assert.equal(settled.ok, true);
+  assert.equal(
+    player.income.credits,
+    beforeCredits + 1,
+    "赫利昂收入牌必须插入收入列（收入栏 +1）",
+  );
+  assert.equal(player.hand.length, 0, "收入牌必须移出游戏");
+})();
+
 (function proofAmiba1ResearchTechTaskSpawnsSymbolChoice() {
   // amiba_1 牌：研究橙色科技 → 橙色区域 symbol 奖励必须弹细胞器选择决策（不自动结算）
   const root = createRoot();
