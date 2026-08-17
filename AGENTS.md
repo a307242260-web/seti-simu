@@ -32,7 +32,7 @@
 - `randomizer/game/ai/machine-player-host.js`：Browser 机器席位的异步提交壳（席位身份、Policy 请求生命周期、deadline/取消/去重、fail-closed）；Simulation 已迁移到 `machine-player-coordinator.js`，详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
 - `randomizer/game/ai/heuristic-evaluator.js`、`expected-score-evaluator.js`：只消费公共 observation、legal descriptors 与标准反事实 outcome，负责纯估值和稳定排序；不得恢复 legacy candidate 或 selector adapter。
-- `randomizer/game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用）——席位决策函数注册表、裸调共享 composition 读边界、计划复用（`planReuseCheck`）、调用决策函数、执行；失败直接抛错。详见 `docs/ai-design.md` §1。
+- `randomizer/game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子；失败直接抛错。详见 `docs/ai-design.md` §1。
 - `randomizer/game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——反事实搜索分桶 + 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。
 - `randomizer/game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策函数输出的计划结构（`buildPlanFromSnapshot`/`advancePlan`）、复用判定（`planReuseCheck`）、依赖事实与外星揭示基线；详见 `docs/ai-design.md` §3。装配在 `randomizer/app/simulation-env.js`（`planContinuationFastPath`，默认关），诊断/验证工具 `tools/diagnose_plan_continuation.js`、`tools/verify_plan_continuation_fastpath.js`。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。

@@ -4,14 +4,21 @@
 
 ## 1. 决策流程
 
-机器人每个决策点的生产分两层：**simulation 侧复用优先**，未命中才调用**决策方案**。
+机器人每个决策点的生产由**协调器**（`machine-player-coordinator.js`，Browser/
+Simulation 共用一份实现）编排：**复用优先**，未命中才调用**决策方案**。
 
 ```text
-simulation（决策点，每个机器人座位）
+协调器（决策点，每个机器人座位）
+  -> readBoundary：裸调共享 composition —— enumerateActions 原生合法集 +
+     createDecisionObservation(projection.state)（观察一份实现，零训练包装）
   -> planReuseCheck(上次方案输出的 plan, 当前观测, 合法集)
-  -> 命中：提交 plan.nextActionId（计划前进一步，多步消费）回到 Rule Composition
-  -> 未命中：调用决策方案 -> { actionId, plan? } 回到 simulation
-       -> plan 存回（供下一次复用判断）；actionId 经标准输入提交
+  -> 命中：提交 plan.nextActionId（计划前进一步，多步消费）
+  -> 未命中：调用决策方案 -> { actionId, plan? }
+       -> plan 存回（供下一次复用判断）
+  -> execute：actionId 直接提交共享 inputPort（零转换）
+  -> recordStep(action, result)：协调器内部记账钩子
+       sim 训练：补记 replay/reward（原生 action，不做形状转换）
+       browser：空操作
 ```
 
 - **决策方案**（decision scheme）是一个可插拔接口：输入当前 viewer-safe observation
@@ -39,7 +46,9 @@ simulation（决策点，每个机器人座位）
 ## 2. 当前模块
 
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
-- `game/ai/machine-player-host.js`：固定席位、deadline/取消、generation、去重与 fail-closed 提交协调。
+- `game/ai/machine-player-host.js`：Browser 机器席位的异步提交壳（席位身份、Policy 请求生命周期、deadline/取消/去重、fail-closed）；Simulation 已迁移到协调器，见 docs/machine-player-host.md。
+- `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用）——席位决策函数注册表、读边界、计划复用、调用决策函数、execute 提交、recordStep 记账钩子；失败直接抛错。
+- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——反事实搜索分桶 + 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
   固定大小的探测器目标摘要，以及本席数据轨到下一次正式扫描、放置或分析所需的

@@ -1,10 +1,12 @@
 # Machine Player Host
 
-`randomizer/game/ai/machine-player-host.js` 是浏览器机器席位与 simulation/训练机器席位共用的协调器。
+`randomizer/game/ai/machine-player-host.js` 是 **Browser 机器席位**的异步提交壳。
 它负责固定席位身份、Policy 请求生命周期、反事实 outcome 的消费与对齐（outcome 的
 获取在 boundary/adapter 层，经 Rule Composition counterfactualPort 隔离 fork 执行），
 以及公共 Standard Action/Decision 提交。真实提交仍只有一次；反事实执行委托给 Rule
 Composition 隔离 fork，不把 root、executor、StateStore 或 Effect Session 暴露给 Policy。
+Simulation 机器决策已迁移到 `machine-player-coordinator.js`（同步、复用优先、失败
+直接抛错），不经本 Host。
 
 在 `docs/ai-design.md` §1 的决策流程里，本 Host 是 **Browser 机器席位**的异步提交壳
 （席位身份、请求生命周期、fail-closed 校验）；Simulation 的机器人决策由
