@@ -92,8 +92,14 @@ StateStore.compareAndCommit
 | session `journal.rng/events/decisions` | Effect Session | 当前 working 流程已消费的确定性事实 |
 | undo frame / barrier | Effect Session | session 内撤销与隐藏信息边界 |
 | confirmed replay | runtime/simulation facade | 每个外部 Action/Decision 至多一条 |
+| 读档前的浏览器历史（`browserReplaySteps`） | simulation env 瞬态 | 从浏览器档恢复时原样保留；`saveBrowserSave` 拼接为 `历史 + 新步骤`，保证 replaySteps = 开局→当前完整不丢；reset 清空、不入 checkpoint 之外的持久事实 |
 | action log | formatter/projection | 人类可读摘要，不参与恢复 |
 | ViewState | Browser Host | 可清空重建，不影响合法性和流程 |
+
+> 读档续玩再存盘语义：`loadCheckpoint`（restore 分支）接受 `browserReplaySteps`
+> 字段并保留为浏览器格式历史；之后新增的 env 内部 replay 步骤在 `saveBrowserSave`
+> 时从历史长度续号拼接。因此"从 v47 档读档 → 续玩 → 存新档"的 replaySteps =
+> v1→47 历史 + 新动作，不会只剩读档点之后的部分。
 
 ## 验收
 

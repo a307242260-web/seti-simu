@@ -260,6 +260,9 @@ function createSimulationEnv() {
   let seed = null;
   let config = null;
   let replaySteps = [];
+  // 读档恢复时保留的浏览器格式历史（seti-browser-save-v2 replaySteps 原样），
+  // 续玩后再 saveBrowserSave 时拼接到新步骤之前，保证"开局→当前"完整不丢。
+  let browserReplayHistory = [];
   let environmentEvents = [];
   let selectors = new Map();
   let cachedLegal = null;
@@ -562,6 +565,7 @@ function createSimulationEnv() {
         planContinuationFastPath: resetConfig.planContinuationFastPath === true,
       };
       replaySteps = [];
+      browserReplayHistory = [];
       environmentEvents = [];
       selectors = new Map();
       cachedLegal = null;
@@ -926,7 +930,10 @@ function createSimulationEnv() {
         readableState = null;
       }
       const meta = readableState?.meta || {};
-      const browserReplaySteps = replaySteps.map((step, index) => {
+      // 读档恢复时保留的浏览器格式历史（browserReplayHistory）原样拼接在前，
+      // 续玩产生的新步骤从历史长度续号——保证存档 replaySteps = "开局→当前"完整。
+      const historyBase = browserReplayHistory.length;
+      const newReplaySteps = replaySteps.map((step, index) => {
         const action = step.action || {};
         const ps = step.publicSummary;
         const after = ps
@@ -948,7 +955,7 @@ function createSimulationEnv() {
           }
           : null;
         return {
-          stepIndex: index,
+          stepIndex: historyBase + index,
           actorPlayerId: step.actorPlayerId ?? action.actorId ?? action.actorPlayerId ?? null,
           action: clone(action),
           phase: action.phase ?? null,
@@ -957,6 +964,7 @@ function createSimulationEnv() {
           after,
         };
       });
+      const browserReplaySteps = [...clone(browserReplayHistory), ...newReplaySteps];
       return {
         schema: "seti-browser-save-v2",
         savedAt: new Date().toISOString(),
@@ -999,6 +1007,7 @@ function createSimulationEnv() {
         replayCursor: { seed, stepIndex: replaySteps.length },
         effectSessionJournals: replaySteps.map((step) => step.effectSessionJournal).filter(Boolean),
         replaySteps: clone(replaySteps),
+        browserReplaySteps: clone(browserReplayHistory),
         environmentEvents: clone(environmentEvents),
       };
     },
@@ -1033,6 +1042,7 @@ function createSimulationEnv() {
         }
         seededRandom.setState(rngState.state);
         environmentEvents = clone(checkpoint.environmentEvents || []);
+        browserReplayHistory = clone(checkpoint.browserReplaySteps || []);
 
         cachedLegal = null;
         selectors = new Map();
@@ -1050,6 +1060,7 @@ function createSimulationEnv() {
       }
       seededRandom.setState(rngState.state);
       replaySteps = clone(checkpoint.replaySteps || []);
+      browserReplayHistory = clone(checkpoint.browserReplaySteps || []);
       environmentEvents = clone(checkpoint.environmentEvents || []);
       cachedLegal = null;
       selectors = new Map();

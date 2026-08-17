@@ -39,6 +39,9 @@ function loadSave(env, savePath) {
     },
     replayCursor: { seed: save.seed || "seti-simulation", stepIndex: 0 },
     replaySteps: null,
+    // 浏览器格式历史原样带进恢复后的 env：续玩后再 saveBrowserSave，存档
+    // replaySteps = 历史（开局→读档点）+ 新步骤，完整不丢。
+    browserReplaySteps: Array.isArray(save.replaySteps) ? save.replaySteps : [],
   };
   const obs = env.loadCheckpoint(checkpoint);
   return { save, state, obs };

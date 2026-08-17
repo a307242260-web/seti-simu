@@ -18,3 +18,6 @@ checkpoint/**/*.pt
 checkpoint/**/eval-*/
 checkpoint/**/smoke-*/
 seti-saves/
+
+# Research validation records (per-run artifacts, reviewed via tools/run_research_validation.js --list/--show).
+reports/research/

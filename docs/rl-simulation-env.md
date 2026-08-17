@@ -93,6 +93,14 @@ Replay schema 为 `seti-rl-replay-v1`。每个成功的外部 Action/Decision恰
 step；确定性结算进入对应 Effect Session journal/environment events。失败、超时、取消和迟到
 PolicyDecision 不进入 replay。
 
+浏览器存档（`seti-browser-save-v2`）加载恢复：`loadCheckpoint` 的 restore 分支接受
+`browserReplaySteps` 字段（浏览器格式历史，原样保留为 env 瞬态 `browserReplayHistory`），
+之后续玩产生的内部 replay 步骤在 `saveBrowserSave` 时从历史长度续号拼接。因此
+**读档续玩后再存盘，replaySteps = 历史（开局→读档点）+ 新步骤，完整不丢**——
+"从 v47 档读档 → 续玩 → 存新档"不会只剩读档点之后的部分。`reset()` 清空该瞬态；
+内部 replay（`getReplay`/`loadReplay`）仍只覆盖本 env 生命周期内记录的步骤，不含
+读档前的浏览器历史。
+
 ## Reward 与策略评估
 
 Reward 和价值评估只比较标准执行前后的 viewer-safe observation。反事实叶必须调用与真实
