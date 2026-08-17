@@ -1481,6 +1481,7 @@
           blueSlot: result.blueSlot ?? null,
         }];
         for (const bonus of result.slotBonuses || (result.slotBonus ? [result.slotBonus] : [])) {
+          // 计算机数据位覆盖奖励：4 号位 = 获得 1 次收入行动（插入一张收入牌）。
           if (bonus.type === "income" && listIncomeChoices(root, actor.id).length) {
             spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.INCOME, actor.id, {}, "choose_card"));
           } else if (bonus.type === "choose_card" && listPickCardChoices(root).length) {
@@ -1493,6 +1494,8 @@
       },
     });
 
+    // 放置数据（计算机 4 号位数据覆盖奖励）获得的收入行动：选一张手牌插入
+    // 收入列（收入栏增长 + 立即获得收入效果 + 移出游戏）。
     runtime.registerExecutor(EFFECT_TYPES.INCOME, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
