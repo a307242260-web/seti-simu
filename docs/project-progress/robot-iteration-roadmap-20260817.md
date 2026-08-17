@@ -88,8 +88,12 @@
 - [x] 基础设施：tools/run_simulate_save.js（模拟全盘+同浏览器格式存盘）、
       tools/fast_forward_save.js（存档快进复现，537 步 ~5s，纯内核重放）
 - [x] V 校准数据提取：用户 405 档各回合末状态与收入/科技事件（见下）
+- [x] V(state) 设计文档：docs/project-progress/v-state-design-20260817.md
+- [x] V(state) 初版实现：outcome-model 投影加 alienSlots，expected-score-evaluator 加
+      evaluateStateValue（收入复利/科技效率/外星进度/手牌期望）
+- [x] V 接入评估（默认关）：evaluateOutcome 叶排序加 V 增量，env 开关透传
+- [ ] 对照实验：V 开 vs 关 全盘对比（行为差异验证）
 - [ ] 统一搜索：去掉分桶门控（第 5 节三处改动）
-- [ ] 价值模型：准备类（科技效率红利、收入复利）与榨取类完整覆盖
 - [ ] 外星目标簇：放首痕迹→三色齐→揭示→放位置→拿外星牌作为正式目标
 - [ ] 收入动力：环绕/填数据作为收入引擎进入评估
 
