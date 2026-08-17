@@ -118,6 +118,39 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 fast-path 设计启示：miss 集中在「根行动 → 条件决策」的平局选择，条件决策本身
 便宜；可考虑只对非条件决策 fast-path，或对条件决策携带稳定 tie-break。
 
+## 方向 D 落地：fast-path v1（simulation env，opt-in，2026-08-XX）
+
+实现：
+
+- `plan-continuation.js` 新增 `extractPlanSnapshot`（诊断 record 与 fast-path 共用：
+  从全量搜索结果提取 winning leaf 计划下一步 + 目录指纹 + margin）与
+  `attemptPlanContinuation`（护栏：store 存在 + 下一步仍合法 + 目录指纹未变）。
+- `simulation-env.js` 新增 `planContinuationFastPath` 配置（默认关）：每次决策先
+  attempt，命中则跳过全量反事实搜索、直接提交计划下一步（经 env.step 合法集/
+  authority 重验），未命中才全量搜索并重建 store；计数进 diagnostics。
+- `tools/verify_plan_continuation_fastpath.js`：同 seed 关/开 A/B，对比终局分与
+  计数器。
+
+护栏演进（含被否定的设计）：
+
+- margin 门槛已移除：上一次决策的赢面与「本次继续计划是否安全」无因果关系
+  （实测 margin=null 占 store 尝试 77%，全部误杀；严格更优候选案例由
+  directory-changed 拦截）。原则：盘面（目录）未变 → 照旧执行计划，含 tie-break。
+- 计划假设状态整目录比较已移除（cheap 投影与全量投影结构不同，见上）。
+
+首测 A/B（seti-107，前 120 决策）：
+
+- fast-path 命中 28/92（30.4% 的决策），其中「有延续计划（store 存在）」的决策
+  命中 28/36 = 77.8%——与诊断实际命中 77.1% 一致；其余 56 例 no-plan 是结构上限
+  （约 2/3 决策的 winning leaf 链条不足 2 步，多为 setup/条件决策/控制决策，本身
+  便宜），8 例 directory-changed 被护栏拦截；
+- 终局分差（ON - OFF）四席 +7（蓝 -4、绿 +7、棕 -1、白 +5），mid-game 截断样本，
+  未出现塌方；提交失败 0。
+
+剩余杠杆（未实现）：no-plan 结构上限——多步链消费（winning leaf 只携带
+rootActionLegalSuccessors，第 2 步及以后需 rule-composition 侧扩展）或条件决策
+延续提取。
+
 后续 fast-path 落地的红线（尚未实现，仅诊断）：
 
 - 命中决策提交前必须对 fresh state 重验（validateFresh / policy-input-adapter 边界）；

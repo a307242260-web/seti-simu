@@ -329,6 +329,70 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
 }
 
 // ---------------------------------------------------------------------------
+// attemptPlanContinuation：fast-path 检查（只消费 store + 当前合法集 + 观测）
+// ---------------------------------------------------------------------------
+
+{
+  const nextDescriptor = descriptor("move", { rocketId: "r1", deltaX: 1, deltaY: 0 }, {}, "move:a");
+  const nextKey = planContinuation.actionSemanticKey(nextDescriptor);
+  const observation = makeObservation({ rotation: 1 });
+  const store = {
+    nextStepKey: nextKey,
+    directoryFingerprint: planContinuation.directoryFingerprint(observation),
+    margin: 12,
+  };
+
+  const hit = planContinuation.attemptPlanContinuation(
+    store,
+    makeObservation({ rotation: 1 }),
+    [nextDescriptor],
+  );
+  assert.equal(hit.hit, true, "store 匹配 + 合法 + 目录一致 + margin>0 必须命中");
+  assert.equal(hit.action.actionId, "move:a", "命中必须返回当前合法集内的 descriptor");
+
+  const noStore = planContinuation.attemptPlanContinuation(null, observation, [nextDescriptor]);
+  assert.equal(noStore.hit, false, "无 store 必须 miss");
+  assert.equal(noStore.reason, "no-plan");
+
+  const notLegal = planContinuation.attemptPlanContinuation(
+    store,
+    makeObservation({ rotation: 1 }),
+    [descriptor("move", { rocketId: "r1", deltaX: 2, deltaY: 0 })],
+  );
+  assert.equal(notLegal.hit, false, "下一步不在当前合法集必须 miss");
+  assert.equal(notLegal.reason, "step-not-legal");
+
+  const dirChanged = planContinuation.attemptPlanContinuation(
+    store,
+    makeObservation({ rotation: 2 }),
+    [nextDescriptor],
+  );
+  assert.equal(dirChanged.hit, false, "目录指纹变化必须 miss");
+  assert.equal(dirChanged.reason, "directory-changed");
+
+  const thinMargin = planContinuation.attemptPlanContinuation(
+    { ...store, margin: 0 },
+    makeObservation({ rotation: 1 }),
+    [nextDescriptor],
+  );
+  assert.equal(thinMargin.hit, true, "margin=0 与护栏无关（盘面未变即照旧执行计划）");
+
+  const nullMargin = planContinuation.attemptPlanContinuation(
+    { ...store, margin: null },
+    makeObservation({ rotation: 1 }),
+    [nextDescriptor],
+  );
+  assert.equal(nullMargin.hit, true, "margin=null 与护栏无关（盘面未变即照旧执行计划）");
+
+  const noDirStore = planContinuation.attemptPlanContinuation(
+    { ...store, directoryFingerprint: null },
+    makeObservation({ rotation: 2 }),
+    [nextDescriptor],
+  );
+  assert.equal(noDirStore.hit, true, "store 无目录指纹时跳过目录检查（不误杀）");
+}
+
+// ---------------------------------------------------------------------------
 // aggregateStats：命中率 + 预测器 precision/recall + 原因分布
 // ---------------------------------------------------------------------------
 

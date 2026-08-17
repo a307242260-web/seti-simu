@@ -17,6 +17,7 @@ const {
 } = require("./simulation-contract");
 const outcomeModel = require("../game/ai/outcome-model");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
+const planContinuation = require("../game/ai/plan-continuation");
 const endGameScoring = require("../game/end-game-scoring");
 const finalScoring = require("../game/final-scoring");
 const cardEffects = require("../game/cards/effects");
@@ -317,6 +318,8 @@ function createSimulationEnv() {
   let policyAdapter = null;
   let policySeatsInitialized = false;
   let disposed = false;
+  // 计划延续 fast-path：按席位保存上次全量搜索产出的计划下一步 + 目录指纹 + 赢面。
+  let planContinuationStores = new Map();
 
   function evaluateActionOutcomes(actions = null, options = {}) {
     assertUsable();
@@ -508,12 +511,14 @@ function createSimulationEnv() {
           resetConfig.traceCounterfactualGoalClusters === true,
         completeTargetCatalog: resetConfig.completeTargetCatalog === true,
         vStateValueEnabled: resetConfig.vStateValueEnabled === true,
+        planContinuationFastPath: resetConfig.planContinuationFastPath === true,
       };
       replaySteps = [];
       environmentEvents = [];
       selectors = new Map();
       cachedLegal = null;
       lastObservation = null;
+      planContinuationStores = new Map();
       diagnostics = {
         bootMilliseconds: 0,
         setupSelectionMilliseconds: 0,
@@ -527,6 +532,10 @@ function createSimulationEnv() {
         legalActionsCalls: 0,
         observationCalls: 0,
         actionExecutionCalls: 0,
+        planContinuationHitCount: 0,
+        planContinuationMissCount: 0,
+        planContinuationCommitFailures: 0,
+        planContinuationMissReasons: {},
       };
       const startedAt = performance.now();
       seededRandom = createSeededRandom(seed);
@@ -784,6 +793,46 @@ function createSimulationEnv() {
         && ["start_initial_setup", "select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
           .includes(action.target?.kind)
       ));
+      // 计划延续 fast-path：命中时跳过全量反事实搜索，直接提交上次搜索计划出的
+      // 下一步（含其 tie-break——计划内选择是与重搜等价的合法决策）。仅非 setup、
+      // 非 teacher 模式启用；提交经 env.step 的合法集/authority 重验。
+      if (config.planContinuationFastPath && !asTeacher && !initialSetupBoundary) {
+        const seatId = beforeActions[0].actorPlayerId;
+        const fastPath = planContinuation.attemptPlanContinuation(
+          planContinuationStores.get(seatId) || null,
+          policyObservation,
+          beforeActions,
+        );
+        if (fastPath.hit) {
+          planContinuationStores.delete(seatId);
+          const committed = this.step(fastPath.action);
+          if (!committed?.ok) {
+            diagnostics.planContinuationCommitFailures += 1;
+            // 提交失败（不应发生：action 来自当前 legal set）——回退全量搜索。
+          } else {
+            diagnostics.planContinuationHitCount += 1;
+            const provenance = policyAdapter.getProvenance();
+            return {
+              ...committed,
+              policyDecision: {
+                actionId: fastPath.action.actionId,
+                policyType: provenance.type,
+                policyVersion: provenance.version,
+                planContinuationFastPath: true,
+                diagnostics: { reasonCode: "plan-continuation-fast-path" },
+              },
+              policyProvenance: provenance,
+              actionOutcomes: [],
+              planContinuationFastPath: { hit: true },
+            };
+          }
+        } else {
+          diagnostics.planContinuationMissCount += 1;
+          diagnostics.planContinuationMissReasons[fastPath.reason] = (
+            diagnostics.planContinuationMissReasons[fastPath.reason] || 0
+          ) + 1;
+        }
+      }
       const outcomeOptions = {
         seatId: beforeActions[0].actorPlayerId,
         stateVersion: beforeActions[0].stateVersion,
@@ -852,6 +901,26 @@ function createSimulationEnv() {
       }, (chosenAction) => this.step(chosenAction), actionOutcomes);
       const result = selection.submission?.result;
       if (!result?.ok) throw new Error(result?.error || "Heuristic opponent 执行失败");
+      // 更新计划延续 store：每次全量搜索后用 winning leaf 重建（供下一次同席
+      // 决策 fast-path 复用，含条件决策的 tie-break 选择）。
+      if (config.planContinuationFastPath) {
+        const snapshot = planContinuation.extractPlanSnapshot({
+          seatId: beforeActions[0].actorPlayerId,
+          chosenAction: selection.action,
+          legalActions: beforeActions,
+          actionOutcomes,
+          rootObservation: policyObservation,
+        });
+        if (snapshot.plan?.hasContinuation) {
+          planContinuationStores.set(beforeActions[0].actorPlayerId, {
+            nextStepKey: snapshot.plan.nextStepKey,
+            directoryFingerprint: snapshot.directoryFingerprint,
+            margin: snapshot.margin,
+          });
+        } else {
+          planContinuationStores.delete(beforeActions[0].actorPlayerId);
+        }
+      }
       if (!asTeacher) {
         return {
           ...result,

@@ -38,7 +38,6 @@ const {
   FIXED_BOARD_ID,
   FIXED_BOARD_CONFIG,
 } = require("../randomizer/training/heuristic-policy.fixed-board");
-const expectedScoreEvaluator = require("../randomizer/game/ai/expected-score-evaluator");
 const planContinuation = require("../randomizer/game/ai/plan-continuation");
 
 const RECORD_SCHEMA_VERSION = "seti-plan-continuation-record-v1";
@@ -81,44 +80,6 @@ function buildOptions() {
 // record
 // ---------------------------------------------------------------------------
 
-function rankActions(context, legalActions) {
-  const pool = [];
-  for (const action of legalActions || []) {
-    const outcome = (context.actionOutcomes || []).find((candidate) => (
-      candidate?.actionId === action?.actionId
-    ));
-    if (!outcome || outcome.status !== "settled") continue;
-    try {
-      const evaluation = expectedScoreEvaluator.evaluateOutcome(context, action, {});
-      if (evaluation?.selectable === true
-        && evaluation.status === "settled"
-        && evaluation.score != null) {
-        pool.push({ action, evaluation });
-      }
-    } catch (error) {
-      // 单条 action 估值失败不影响诊断；跳过。
-    }
-  }
-  pool.sort((left, right) => (
-    compareSortKey(left.evaluation.sortKey, right.evaluation.sortKey)
-    || Number(right.evaluation.priorityClass) - Number(left.evaluation.priorityClass)
-    || String(left.action.actionId).localeCompare(String(right.action.actionId))
-  ));
-  return pool;
-}
-
-// 与 heuristic-evaluator.selectLegalAction 相同的降序 sortKey 比较。
-function compareSortKey(left, right) {
-  const a = Array.isArray(left) ? left.map((value) => Number(value) || 0) : [Number(left) || 0];
-  const b = Array.isArray(right) ? right.map((value) => Number(value) || 0) : [Number(right) || 0];
-  const length = Math.max(a.length, b.length);
-  for (let index = 0; index < length; index += 1) {
-    const delta = (b[index] ?? 0) - (a[index] ?? 0);
-    if (delta) return delta;
-  }
-  return 0;
-}
-
 function captureDecision(input) {
   const {
     decisionNumber,
@@ -126,58 +87,18 @@ function captureDecision(input) {
     family,
     chosenAction,
     legalActions,
-    actionOutcomes,
     elapsedMilliseconds,
     diagnostics,
   } = input;
-  const chosenOutcome = (actionOutcomes || []).find((outcome) => (
-    outcome?.actionId === chosenAction?.actionId
-  )) || null;
-  const rootObservation = (actionOutcomes || []).find((outcome) => (
-    outcome?.rootObservation
-  ))?.rootObservation || null;
-  const context = rootObservation ? {
+  const snapshot = planContinuation.extractPlanSnapshot({
     seatId,
-    observation: rootObservation,
-    actionOutcomes: actionOutcomes || [],
-  } : null;
-
-  let evaluation = null;
-  let margin = null;
-  let topScore = null;
-  let secondScore = null;
-  if (context && chosenOutcome) {
-    try {
-      evaluation = expectedScoreEvaluator.evaluateOutcome(context, chosenAction, {});
-      topScore = Number(evaluation?.score) || null;
-    } catch (error) {
-      evaluation = { error: error?.message || String(error) };
-    }
-  }
-  if (context) {
-    const ranked = rankActions(context, legalActions || []);
-    if (ranked.length) {
-      topScore = topScore ?? (Number(ranked[0].evaluation.score) || null);
-      secondScore = ranked.length > 1 ? (Number(ranked[1].evaluation.score) || null) : null;
-      if (Number.isFinite(topScore) && Number.isFinite(secondScore)) {
-        margin = topScore - secondScore;
-      }
-    }
-  }
-
-  let plan = null;
-  if (chosenOutcome && evaluation?.selectedLeafId) {
-    const leaf = (chosenOutcome.leaves || []).find((candidate) => (
-      String(candidate?.leafId) === String(evaluation.selectedLeafId)
-    )) || null;
-    plan = leaf ? planContinuation.planContinuationFromWinningLeaf(leaf) : null;
-  }
-
-  const facts = rootObservation ? planContinuation.directoryFactsSnapshot(rootObservation) : null;
-  const planAssumedFacts = plan?.planAssumedObservation
-    ? planContinuation.directoryFactsSnapshot(plan.planAssumedObservation)
-    : null;
-
+    chosenAction,
+    legalActions,
+    actionOutcomes: input.actionOutcomes || [],
+    rootObservation: (input.actionOutcomes || []).find((outcome) => (
+      outcome?.rootObservation
+    ))?.rootObservation || null,
+  });
   return {
     decisionNumber,
     seatId,
@@ -186,10 +107,10 @@ function captureDecision(input) {
     actionKey: planContinuation.actionSemanticKey(chosenAction),
     legalActionKeys: (legalActions || []).map(planContinuation.actionSemanticKey),
     legalActionIds: (legalActions || []).map((action) => action.actionId),
-    plan,
-    margin,
-    topScore,
-    secondScore,
+    plan: snapshot.plan,
+    margin: snapshot.margin,
+    topScore: snapshot.topScore,
+    secondScore: snapshot.secondScore,
     elapsedMilliseconds,
     searched: diagnostics?.secondaryAgentSearch === true,
     executedNodeCount: Number(diagnostics?.executedNodeCount) || 0,
@@ -202,14 +123,12 @@ function captureDecision(input) {
       orchestration: Number(diagnostics?.orchestrationMilliseconds) || 0,
       total: Number(diagnostics?.totalMilliseconds) || 0,
     },
-    directoryFingerprint: rootObservation
-      ? planContinuation.directoryFingerprint(rootObservation)
+    directoryFingerprint: snapshot.directoryFingerprint,
+    directoryFingerprintWithRockets: snapshot.directoryFingerprintWithRockets,
+    facts: snapshot.facts,
+    planAssumedFacts: snapshot.plan?.planAssumedObservation
+      ? planContinuation.directoryFactsSnapshot(snapshot.plan.planAssumedObservation)
       : null,
-    directoryFingerprintWithRockets: rootObservation
-      ? planContinuation.directoryFingerprint(rootObservation, { includeRockets: true })
-      : null,
-    facts,
-    planAssumedFacts,
   };
 }
 

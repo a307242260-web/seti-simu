@@ -17,11 +17,15 @@
  * 「计划内变化」不改变指纹；目录候选数组按元素 stableHash 排序，投影深度
  * （cheap vs full）导致的枚举顺序差异不产生误报。
  *
- * 本模块全部为纯函数；数据采样由 tools/diagnose_plan_continuation.js 完成。
+ * 本模块全部为纯函数；数据采样由 tools/diagnose_plan_continuation.js 完成，
+ * fast-path 复用处（simulation-env）与工具共用 extractPlanSnapshot /
+ * attemptPlanContinuation。
  * actionSemanticKey 与 expected-score-evaluator 内部同名单函数保持同一语义
  * （family+target+payload 稳定序列化），此处复制以避免在共享工作树中修改
  * 该 policy 模块；行为由单元测试钉住。
  */
+
+const expectedScoreEvaluator = require("./expected-score-evaluator");
 
 // 与 expected-score-evaluator.actionSemanticKey 语义一致：同一逻辑 action
 // （仅 actionId/枚举序号不同）必须产生同一键。
@@ -287,6 +291,144 @@ function aggregateStats(pairs) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// 计划快照提取（诊断 record 与 fast-path 共用）
+// ---------------------------------------------------------------------------
+
+// 与 heuristic-evaluator.selectLegalAction 相同的降序 sortKey 比较。
+function compareSortKey(left, right) {
+  const a = Array.isArray(left) ? left.map((value) => Number(value) || 0) : [Number(left) || 0];
+  const b = Array.isArray(right) ? right.map((value) => Number(value) || 0) : [Number(right) || 0];
+  const length = Math.max(a.length, b.length);
+  for (let index = 0; index < length; index += 1) {
+    const delta = (b[index] ?? 0) - (a[index] ?? 0);
+    if (delta) return delta;
+  }
+  return 0;
+}
+
+// 与 policy 相同的池排序：settled + selectable + score != null，按 sortKey 降序、
+// priorityClass 降序、actionId 升序。返回 [{ action, evaluation }]。
+function rankActions(context, legalActions) {
+  const pool = [];
+  for (const action of legalActions || []) {
+    const outcome = (context.actionOutcomes || []).find((candidate) => (
+      candidate?.actionId === action?.actionId
+    ));
+    if (!outcome || outcome.status !== "settled") continue;
+    try {
+      const evaluation = expectedScoreEvaluator.evaluateOutcome(context, action, {});
+      if (evaluation?.selectable === true
+        && evaluation.status === "settled"
+        && evaluation.score != null) {
+        pool.push({ action, evaluation });
+      }
+    } catch (error) {
+      // 单条 action 估值失败不影响快照；跳过。
+    }
+  }
+  pool.sort((left, right) => (
+    compareSortKey(left.evaluation.sortKey, right.evaluation.sortKey)
+    || Number(right.evaluation.priorityClass) - Number(left.evaluation.priorityClass)
+    || String(left.action.actionId).localeCompare(String(right.action.actionId))
+  ));
+  return pool;
+}
+
+// 从一次全量搜索的决策结果提取计划快照：winning leaf 的计划下一步、赢面 margin、
+// 目录指纹与事实。rootObservation 取搜索同源的 viewer-safe 根观测
+// （policyObservation / outcome.rootObservation）。
+function extractPlanSnapshot(input) {
+  const {
+    seatId,
+    chosenAction,
+    legalActions,
+    actionOutcomes,
+    rootObservation,
+  } = input;
+  const chosenOutcome = (actionOutcomes || []).find((outcome) => (
+    outcome?.actionId === chosenAction?.actionId
+  )) || null;
+  const context = rootObservation ? {
+    seatId,
+    observation: rootObservation,
+    actionOutcomes: actionOutcomes || [],
+  } : null;
+
+  let evaluation = null;
+  let margin = null;
+  let topScore = null;
+  let secondScore = null;
+  if (context && chosenOutcome) {
+    try {
+      evaluation = expectedScoreEvaluator.evaluateOutcome(context, chosenAction, {});
+      topScore = Number(evaluation?.score) || null;
+    } catch (error) {
+      evaluation = { error: error?.message || String(error) };
+    }
+  }
+  if (context) {
+    const ranked = rankActions(context, legalActions || []);
+    if (ranked.length) {
+      topScore = topScore ?? (Number(ranked[0].evaluation.score) || null);
+      secondScore = ranked.length > 1 ? (Number(ranked[1].evaluation.score) || null) : null;
+      if (Number.isFinite(topScore) && Number.isFinite(secondScore)) {
+        margin = topScore - secondScore;
+      }
+    }
+  }
+
+  let plan = null;
+  if (chosenOutcome && evaluation?.selectedLeafId) {
+    const leaf = (chosenOutcome.leaves || []).find((candidate) => (
+      String(candidate?.leafId) === String(evaluation.selectedLeafId)
+    )) || null;
+    plan = leaf ? planContinuationFromWinningLeaf(leaf) : null;
+  }
+
+  return {
+    plan,
+    margin,
+    topScore,
+    secondScore,
+    rootObservation,
+    facts: rootObservation ? directoryFactsSnapshot(rootObservation) : null,
+    directoryFingerprint: rootObservation ? directoryFingerprint(rootObservation) : null,
+    directoryFingerprintWithRockets: rootObservation
+      ? directoryFingerprint(rootObservation, { includeRockets: true })
+      : null,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// fast-path 检查（纯函数）：只消费计划快照 + 当前合法集 + 当前观测
+// ---------------------------------------------------------------------------
+
+// store: { nextStepKey, directoryFingerprint, margin }（由 extractPlanSnapshot
+// 的 plan/margin/directoryFingerprint 字段构造）。
+// 命中时返回 { hit: true, action }（当前合法集内的 descriptor），否则返回
+// { hit: false, reason }。
+// 护栏只有两条：下一步仍合法 + 目录指纹未变（计划假设的外部世界成立）。
+// 不设 margin 门槛：上一次决策的赢面与「本次继续计划是否安全」无因果关系
+// （实测 margin=null 占 store 尝试 77%，全部误杀；严格更优候选案例由
+// directory-changed 拦截）。tie-break 复用即：目录未变时计划内选择与重搜
+// 等价值，直接提交计划的选择。
+function attemptPlanContinuation(store, currentObservation, legalActions) {
+  if (!store) return Object.freeze({ hit: false, reason: "no-plan" });
+  const nextStepKey = store.nextStepKey;
+  if (!nextStepKey) return Object.freeze({ hit: false, reason: "no-next-step" });
+  const current = (legalActions || []).find((action) => (
+    actionSemanticKey(action) === nextStepKey
+  ));
+  if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
+  if (store.directoryFingerprint != null && currentObservation) {
+    if (directoryFingerprint(currentObservation) !== store.directoryFingerprint) {
+      return Object.freeze({ hit: false, reason: "directory-changed" });
+    }
+  }
+  return Object.freeze({ hit: true, action: current });
+}
+
 module.exports = Object.freeze({
   stableSerialize,
   stableHash,
@@ -299,4 +441,7 @@ module.exports = Object.freeze({
   pairContinuation,
   changedFactComponents,
   aggregateStats,
+  extractPlanSnapshot,
+  attemptPlanContinuation,
+  rankActions,
 });
