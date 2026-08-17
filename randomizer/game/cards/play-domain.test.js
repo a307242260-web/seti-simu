@@ -269,8 +269,8 @@ function runFixedScan() {
   assert.equal(result.journal.effects.length, 5);
   assert.equal(
     result.journal.effects.filter((entry) => entry.type === scienceSession.EFFECT_TYPES.SETTLE).length,
-    2,
-    "固定星云卡牌扫描每次都必须触发扇区结算效果",
+    1,
+    "固定星云卡牌扫描两次同属一个卡牌扫描流，串尾 SCAN_FINALIZE 统一触发一次扇区结算",
   );
   assert.equal(result.journal.events.filter((event) => event.type === "signalMarked").length, 2);
   const committed = composition.stateSourcePort.getSnapshot();

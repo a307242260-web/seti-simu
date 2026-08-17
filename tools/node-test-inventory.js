@@ -66,6 +66,7 @@ module.exports = Object.freeze({
 
     entry("randomizer/game/data/data.test.js", "rules/data", "数据获得、放置、分析与容量不变量", "满容量、未知目标或重复放置成功"),
     entry("randomizer/game/data/nebula.test.js", "rules/data", "星云数据槽与奖励结算", "非法槽位或重复奖励被接受"),
+    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描流串尾 SCAN_FINALIZE 统一扇区结算：不逐节点结算、同 flow 完成扇区不提前重置（后续信号只放额外标记）、跳过任意节点仍结算一次", "SETTLE 逐节点触发、额外标记缺失、跳过末节点后不结算或一次行动结算多次"),
 
     entry("randomizer/game/tech/tech.test.js", "rules/tech", "科技供应、取得、蓝槽与 owner 规则", "被占/被封锁科技仍取得"),
     entry("randomizer/game/tech/bonuses.test.js", "rules/tech", "科技奖励按 tile/slot 唯一结算", "重复触发或错误颜色奖励"),

@@ -536,9 +536,12 @@
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: EFFECT_TYPES.PLAY }),
-        spawnedEffects: playEffects.map((effect) => (
-          createSpawnedCardEffect(effect, actor.id, playedCard.id)
-        )),
+        spawnedEffects: chainScanFinalize(
+          playEffects.map((effect) => (
+            createSpawnedCardEffect(effect, actor.id, playedCard.id)
+          )),
+          actor.id,
+        ),
         events: [{
           type: "playCard",
           timing: "after_play_card",
@@ -659,13 +662,16 @@
           cards.addToDiscardPile(cardsState, removed.card);
           discarded.push(removed.card);
         }
-        spawnedEffects = (options.rewards || []).map((reward) => (
-          createSpawnedCardEffect(
-            reward,
-            actor.id,
-            sessionEffect.payload?.cardInstanceId || null,
-          )
-        ));
+        spawnedEffects = chainScanFinalize(
+          (options.rewards || []).map((reward) => (
+            createSpawnedCardEffect(
+              reward,
+              actor.id,
+              sessionEffect.payload?.cardInstanceId || null,
+            )
+          )),
+          actor.id,
+        );
         result = { ok: true, discarded };
       } else if (effect.type === cardEffects.EFFECT_TYPES.INCOME) {
         if ((actor.hand || []).length) {
@@ -1058,12 +1064,27 @@
       };
     }
 
-    function spawnCardEffects(effects, sessionEffect) {
-      return (effects || []).map((effect) => createSpawnedCardEffect(
-        effect,
-        sessionEffect.ownerId,
-        sessionEffect.payload?.cardInstanceId || null,
+    // 卡牌扫描流串尾判定：若整条效果链包含 science SCAN_STEP，在链尾追加一个
+    // SCAN_FINALIZE 节点（整串扫描结束后统一触发一次扇区结算，P13：不逐节点
+    // 结算、同一 flow 内完成扇区不提前重置）。多条扫描（如固定扫描 2 次）同属
+    // 一个卡牌 flow，只追加一个 FINALIZE，串内所有扫描都发生在判定之前。
+    function chainScanFinalize(entries, ownerId) {
+      const science = getScienceDomain();
+      const hasScan = (entries || []).some((entry) => (
+        entry?.effect?.type === science.EFFECT_TYPES.SCAN_STEP
       ));
+      return hasScan ? [...entries, science.scanFinalizeEffect(ownerId)] : entries;
+    }
+
+    function spawnCardEffects(effects, sessionEffect) {
+      return chainScanFinalize(
+        (effects || []).map((effect) => createSpawnedCardEffect(
+          effect,
+          sessionEffect.ownerId,
+          sessionEffect.payload?.cardInstanceId || null,
+        )),
+        sessionEffect.ownerId,
+      );
     }
 
     function listPlayerRockets(root, ownerId, options = {}) {
@@ -1218,8 +1239,9 @@
         }
       }
       return cardEffectResult(state, root, sessionEffect, {
-        // 统一扇区结算：任意扇区/条件/行星/着陆/探测器等卡牌扫描替换 token 后检查一次扇区完成。
-        spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
+        // 统一扇区结算：任意扇区/条件/行星/着陆/探测器等卡牌扫描属于单节点扫描流，
+        // 追加 SCAN_FINALIZE 串尾节点统一触发一次 SETTLE。
+        spawnedEffects: [getScienceDomain().scanFinalizeEffect(actor.id)],
         events: result.events || [],
         historyType: "card_effect_decision",
         history: { choiceId: legal.target.choiceId, abilityId: result.abilityId },
@@ -2564,8 +2586,9 @@
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: sessionEffect.payload?.cardEffect?.type || EFFECT_TYPES.EFFECT }),
-        // 统一扇区结算：卡牌异常扇区扫描替换 token 后检查一次扇区完成。
-        spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
+        // 统一扇区结算：异常扇区扫描是单节点扫描流，追加 SCAN_FINALIZE 串尾节点
+        // 统一触发一次 SETTLE。
+        spawnedEffects: [getScienceDomain().scanFinalizeEffect(actor.id)],
         events: clone(result.events || []),
         history: [{ type: "card_effect", effectId: sessionEffect.payload?.cardEffect?.id || null, executorId: EXECUTOR_ID }],
       };

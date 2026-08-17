@@ -822,9 +822,16 @@
         };
       }
       if (delegated) {
-        return result(state, root, EFFECT_TYPES.REWARD, {
-          spawnedEffects: [{ priority: "direct", effect: delegated }],
-        });
+        // 行星奖励扫描是单节点扫描流：追加 SCAN_FINALIZE 串尾节点统一触发
+        // 一次扇区结算（P13：不逐节点结算）。
+        const spawned = [{
+          priority: "direct",
+          effect: delegated,
+        }];
+        if (delegated.type === science.EFFECT_TYPES.SCAN_STEP) {
+          spawned.push(science.scanFinalizeEffect(effect.ownerId));
+        }
+        return result(state, root, EFFECT_TYPES.REWARD, { spawnedEffects: spawned });
       }
       const settled = applyDirectReward(root, effect.ownerId, reward, effect.payload?.sourceKey || null);
       if (!settled.ok) return settled;

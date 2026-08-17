@@ -83,8 +83,11 @@
   const EFFECT_TYPES = Object.freeze({
     EXECUTE: "science_domain_execute",
     // 统一扫描节点：一次「往扇区放信号」由 SCAN_STEP 完成（按 mode 枚举目标、
-    // 可选跳过、逐次扫描、统一扇区结算；hand/public 模式含弃牌与多步流）。
+    // 可选跳过、逐次扫描；hand/public 模式含弃牌与多步流）。扫描流结束后由
+    // SCAN_FINALIZE 串尾节点统一触发一次扇区结算（规则书 P13：同一 flow 内
+    // 完成扇区不提前重置，后续信号只能放额外标记）。
     SCAN_STEP: "science_domain_scan_step",
+    SCAN_FINALIZE: "science_domain_scan_finalize",
     SCAN_ACTION_4: "science_domain_scan_action_4",
     PLACE_DATA: "science_domain_place_data",
     INCOME: "science_domain_income",
@@ -288,11 +291,18 @@
     });
   }
 
-  // 扫描结算统一出口：任何扫描（扫描主行动、卡牌扫描、行星奖励扫描等）替换数据
-  // token 后都统一追加一次扇区结算检查。SETTLE executor 幂等，只结算已完成的扇区，
-  // 因此每个扫描动作后调用一次是安全且统一的。
+  // 扫描结算统一出口：任何扫描流（扫描主行动、卡牌扫描、行星奖励扫描等）在
+  // 串尾追加一次 SCAN_FINALIZE，由它统一触发一次 SETTLE。SETTLE executor 幂等，
+  // 只结算已完成的扇区，因此每个扫描流后调用一次是安全且统一的。
   function settleAfterScan(ownerId) {
     return { priority: "direct", effect: { type: EFFECT_TYPES.SETTLE, ownerId } };
+  }
+
+  // 扫描流串尾判定节点：非决策，executor 只负责触发一次 SETTLE。独立节点保证
+  // 跳过任意扫描节点后仍会触发扇区结算（跳过时若该节点是扫描 flow 最后节点
+  // 仍触发结算），且撤销最后一次扫描时随尾部节点一起移除/重排。
+  function scanFinalizeEffect(ownerId) {
+    return { priority: "direct", effect: { type: EFFECT_TYPES.SCAN_FINALIZE, ownerId } };
   }
 
   function executeNebulaScan(root, actorId, choice, options = {}) {
@@ -876,6 +886,10 @@
         }
         return null;
       }).filter(Boolean);
+      // 串尾统一判定节点：整串扫描结束后触发一次扇区结算（P13：不逐节点结算、
+      // 同一 flow 内完成扇区不提前重置；跳过任意节点后仍触发）。紫4 哨兵地球
+      // 扫描等流内派生扫描发生在 FINALIZE 之前，同样被本次结算覆盖。
+      mappedQueue.push(scanFinalizeEffect(actor.id));
       return mappedQueue;
     }
 
@@ -1123,7 +1137,9 @@
         label: opts.label,
       });
       if (!result.ok) return result;
-      const spawnedEffects = [settleAfterScan(actor.id)];
+      // 不逐节点结算：扇区结算由扫描流串尾 SCAN_FINALIZE 统一触发（P13），
+      // 同一 flow 内完成扇区不提前重置，后续信号只能放额外标记。
+      const spawnedEffects = [];
       const events = clone(result.events || []);
       if (mode === "hand") {
         const index = actor.hand.findIndex((card) => card.id === legal.target.cardInstanceId);
@@ -1227,10 +1243,10 @@
           });
         }
         if (mode === "public" && choice?.target?.done) {
-          // 统一扇区结算：公共牌扫描结束前检查一次扇区完成（SETTLE 幂等）。
+          // 公共牌扫描结束：空位统一补牌；扇区结算由扫描流串尾 SCAN_FINALIZE
+          // 统一触发（SETTLE 幂等，公共牌 done 分支不再单独结算）。
           return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
             spawnedEffects: [
-              settleAfterScan(effect.ownerId),
               { priority: "direct", effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId } },
             ],
             events: [{ type: "publicScanCompleted", selected: opts.selected || 0 }],
@@ -1295,6 +1311,15 @@
         events: filled
           ? [{ type: "publicRefill", count: filled }]
           : [{ type: "publicRefillSkipped" }],
+      });
+    });
+
+    // 扫描流串尾统一判定节点：整串 SCAN_STEP 结束后触发一次 SETTLE（幂等，
+    // 只结算已完成的扇区）。独立节点保证跳过任意扫描节点后仍触发扇区结算。
+    runtime.registerExecutor(EFFECT_TYPES.SCAN_FINALIZE, (state, effect, workingContext) => {
+      const root = getWorkingRoot(state, workingContext);
+      return scienceResult(state, root, EFFECT_TYPES.SCAN_FINALIZE, {
+        spawnedEffects: [settleAfterScan(effect.ownerId)],
       });
     });
 
@@ -1368,7 +1393,14 @@
       const root = getWorkingRoot(state, workingContext);
       const nebulaState = getWorkingSlice(root, "data");
       const playersState = getWorkingSlice(root, "players");
+      const actor = getActor(root, effect.ownerId);
+      // 同一批多个待结算扇区时，先排当前玩家为赢家的扇区，再排其他玩家获胜
+      // 或无赢家的扇区；同组内维持原具名扇区顺序（规则书 P13）。
+      const sectorIds = typeof data.orderSectorIdsByPlayerWinPriority === "function"
+        ? data.orderSectorIdsByPlayerWinPriority(nebulaState, undefined, actor)
+        : undefined;
       const result = data.settleCompletedSectors(nebulaState, {
+        sectorIds,
         players: playersState.players,
         source: "science",
         root,
@@ -1749,6 +1781,7 @@
     listNebulaChoices,
     executeNebulaScan,
     settleAfterScan,
+    scanFinalizeEffect,
     listResearchChoices,
     executeResearchChoice,
     formalizeChoices,
