@@ -3329,6 +3329,14 @@
     const counterfactualPort = Object.freeze({
       evaluate: evaluateCounterfactualOutcomes,
       getDiagnostics: () => clone(lastCounterfactualDiagnostics),
+      // 暴露 fork 原语（可回退执行）：从任意 envelope 创建独立 composition 分支，
+      // 在分支上执行动作不影响 root——"可回退执行"基础组件，供外部自定义搜索
+      // （如 V 引导浅搜索）复用，不依赖 evaluate 内置的目标/预算体系。
+      createFork: typeof options.createCounterfactualFork === "function"
+        ? (envelope, forkOptions = {}) => (
+          options.createCounterfactualFork(envelope, forkOptions)
+        )
+        : null,
       ...(options.allowTrustedForkLifecycle === true
         ? { advanceFocalPlanningTurn }
         : {}),

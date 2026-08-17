@@ -1037,6 +1037,19 @@ function createSimulationEnv() {
       return clone(lastObservation);
     },
 
+    // 暴露反事实 fork 原语（可回退执行基础组件）：从当前或指定 envelope 创建
+    // 独立 composition 分支，分支上执行动作不影响 root。供自定义搜索策略
+    // （如 V 引导浅搜索）复用，不依赖 counterfactualPort.evaluate 的内置目标体系。
+    createCounterfactualFork(envelope = null, forkOptions = {}) {
+      assertUsable();
+      const forkEnvelope = envelope || saveEnvelope();
+      const createFork = composition?.counterfactualPort?.createFork;
+      if (typeof createFork !== "function") {
+        throw new Error("当前 composition 未启用 counterfactual fork 能力");
+      }
+      return createFork(forkEnvelope, forkOptions);
+    },
+
     dispose() {
       if (disposed) return;
       disposed = true;
