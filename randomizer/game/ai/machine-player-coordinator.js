@@ -8,8 +8,8 @@
  *   ① AI 类型：席位注册表——seatId -> 决策函数（heuristic/learned 实现同一
  *      `(ctx) => ({ actionId, plan? })` 接口，可插拔）；
  *   ② 行动时读公共信息：裸调共享 composition 的 inspect / inputPort.enumerateActions /
- *      projection（唯一一份实现，不包壳），经注入的 createObservation 产出标准
- *      Decision observation；
+ *      projection（唯一一份实现，不包壳），observation 直接
+ *      createDecisionObservation(projection.state)（一份实现，零训练包装）；
  *   ③ 复用判断：planReuseCheck 上次方案输出的 plan，命中直接复用（多步消费）；
  *   ④ 未命中调用决策函数；
  *   ⑤ 输出决策：{ actionId, plan? }，plan 存回供下一次复用判断；
@@ -22,18 +22,29 @@
  */
 
 const planContinuation = require("./plan-continuation");
+const outcomeModel = require("./outcome-model");
 
 function createMachinePlayerCoordinator(options = {}) {
   const composition = options.composition;
-  const createObservation = options.createObservation;
   const execute = options.execute;
   const onDiagnostic = options.onDiagnostic;
   if (!composition?.inspect || !composition?.inputPort?.enumerateActions
     || typeof composition?.projection !== "function") {
     throw new TypeError("Machine Player Coordinator 需要共享 Rule Composition（inspect/inputPort.enumerateActions/projection）");
   }
-  if (typeof createObservation !== "function" || typeof execute !== "function") {
-    throw new TypeError("Machine Player Coordinator 需要 createObservation() 与 execute(action)");
+  if (typeof execute !== "function") {
+    throw new TypeError("Machine Player Coordinator 需要 execute(action)");
+  }
+
+  // 决策观测：一份实现——composition.projection(viewer).state 已是 viewer-safe
+  // 观察（含 publicState/selfState/requirements），直接喂 createDecisionObservation，
+  // 不经过任何训练观察包装（Browser/Simulation 同一份）。
+  function createObservation(projection, seatId, legalActions) {
+    return outcomeModel.createDecisionObservation(projection?.state || projection, {
+      seatId,
+      stateVersion: legalActions[0]?.stateVersion ?? null,
+      decisionVersion: legalActions[0]?.decisionVersion ?? null,
+    });
   }
 
   const decisionFunctions = new Map(); // seatId -> (ctx) => ({ actionId, plan? })  ← ① AI 类型注册表

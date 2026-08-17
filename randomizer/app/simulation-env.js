@@ -375,25 +375,6 @@ function createSimulationEnv() {
     if (!machineCoordinator) {
       machineCoordinator = machinePlayerCoordinatorModule.createMachinePlayerCoordinator({
         composition,
-        createObservation: (projection, seatId, legalActions) => {
-          // composition.projection 返回 { phase, stateVersion, state }，requirements
-          // 在 state 内（与旧 observeWithActions 取 .state 同源）。
-          const projected = projection?.state || projection;
-          const state = {
-            ...getWorkingProjection(composition),
-            probeRouteRequirements: projected?.probeRouteRequirements || null,
-            dataAnalyzeRequirements: projected?.dataAnalyzeRequirements || null,
-            sectorWinRequirements: projected?.sectorWinRequirements || null,
-            incomeGainRequirements: projected?.incomeGainRequirements || null,
-            techGainRequirements: projected?.techGainRequirements || null,
-          };
-          const rawObservation = buildObservation(state, seed, seatId, legalActions);
-          return outcomeModel.createDecisionObservation(rawObservation, {
-            seatId,
-            stateVersion: legalActions[0]?.stateVersion ?? null,
-            decisionVersion: legalActions[0]?.decisionVersion ?? null,
-          });
-        },
         execute: (action) => executeRawAction.call(envApi, action),
         onDiagnostic: (type, details) => {
           if (type === "plan-reuse-hit") {

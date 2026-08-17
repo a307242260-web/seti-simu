@@ -18,7 +18,6 @@ function makeComposition(legalActions) {
 function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   return createMachinePlayerCoordinator({
     composition: makeComposition(legalActions),
-    createObservation: () => ({ schemaVersion: "seti-decision-observation-v2", publicState: { board: {} }, outcomeProjection: { progress: {} } }),
     execute,
     onDiagnostic: () => {},
   });
