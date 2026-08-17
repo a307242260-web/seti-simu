@@ -27,6 +27,31 @@
   const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v17";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
+  // 统一搜索：未绑定分支每层最多展开的未绑定后继数（预算内优先级截断，见
+  // docs/project-progress/unified-search-design-20260817.md §3 项 9）。
+  const MAX_UNIFIED_SUCCESSORS = 4;
+  // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
+  // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终
+  // 叶评分（ai-design.md：任何中间 action/family 没有固定奖励）。
+  const UNTARGETED_FAMILY_BASE = Object.freeze({
+    launch: 8, orbit: 9, land: 9, move: 6, scan: 6, analyze: 6,
+    research_tech: 7, play_card: 5, place_data: 6, industry: 3,
+    quick_trade: 2, card_corner: 1, complete_task: 1,
+  });
+  function compareUntargetedSuccessor(left, right, branchObservation) {
+    const base = (action) => Number(UNTARGETED_FAMILY_BASE[action?.family] || 0);
+    const netResources = (action) => {
+      const cost = action?.payload?.cost || {};
+      const gain = action?.payload?.gain || {};
+      return (
+        (Number(gain.credits) || 0) - (Number(cost.credits) || 0)
+        + (Number(gain.energy) || 0) - (Number(cost.energy) || 0)
+        + (Number(gain.publicity) || 0) - (Number(cost.publicity) || 0)
+      );
+    };
+    return (base(left) - base(right))
+      || (netResources(left) - netResources(right));
+  }
   const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const CONDITIONAL_FAMILIES = Object.freeze(new Set([
     "choose_card",
@@ -179,7 +204,6 @@
     const assets = projection.assets || {};
     const income = projection.progress?.income || {};
 
-    // 榨取类：分数 + 资源流动性
     const scoreValue = finite(realizedScore) + (terminal ? 0 : finite(projection.scoring.securedEndGameBonus));
     const liquidValue = (
       finite(assets.credits) * INCOME_UNIT_VALUES.credits
@@ -791,9 +815,14 @@
     return !UNEVALUATED_ROOT_FAMILIES.has(action?.family);
   }
 
-  function requiresRootCounterfactual(action, observation) {
+  function requiresRootCounterfactual(action, observation, unifiedSearch = false) {
     if (!requiresCounterfactualOutcome(action)) return false;
     if (action?.family !== "quick_trade") return true;
+    // 统一搜索（unifiedSearch）：quick_trade 也进反事实评估——"只为目标补缺口才评估"
+    // 的门控让未命中目标的 quick_trade（含"有资源时乱买卡"）完全不可见，V/叶评估
+    // 无从判断其真实价值；价值交由评估排序（evaluateSecondaryAgentSearchPriority）
+    // 在预算内取舍。默认关保持原门控。
+    if (unifiedSearch === true) return true;
     const projection = observation?.outcomeProjection;
     const preparesAnalyze = Boolean(
       projection?.progress?.dataProgress?.analyzeReady
@@ -1822,6 +1851,10 @@
 
   function selectSecondaryAgentRootActions(input = {}) {
     const legalActions = input.legalActions || [];
+    // 统一搜索（unifiedSearch）：所有非 control 动作（requiresRootCounterfactual
+    // 已滤掉 end_turn/pass）都进反事实评估，不再按"是否命中预设目标清单"过滤根动作；
+    // 低价值分支由分支优先级排序在预算内 pruned。默认关保持目标门控。
+    if (input.unifiedSearch === true) return legalActions;
     const compatibleActionIds = new Set(enumerateSecondaryAgentRootTargets({
       focalSeatId: input.focalSeatId,
       rootObservation: input.rootObservation,
@@ -2308,7 +2341,15 @@
     const targetUsesFungibleResources = input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET
       || String(input.routeTargetId || "").startsWith("sector:win:")
       || String(input.routePlanId || "").startsWith("probe:")
-      || input.routePlanId === "income:data:computer-slot-4";
+      || input.routePlanId === "income:data:computer-slot-4"
+      // 探测行动目标（直接环绕/登陆/移动）：支付是移动/环绕的资源成本（能量/移动牌/
+      // 弃牌），与卡牌身份无关，等价可折叠。此前只认 probe:/data:/sector:/income 前缀，
+      // 直接环绕/登陆目标（routePlanId 形如 orbit:.../land:...）的弃牌折叠不命中，
+      // conditional 分支落到默认"全部返回"→ 弃牌选项指数展开（实测 3043 节点）。
+      // card:/decision: 等卡牌身份目标仍保持全部 choice（弃哪张卡影响结算，不等价）。
+      || String(input.routeTargetId || "").startsWith("orbit:")
+      || String(input.routeTargetId || "").startsWith("land:")
+      || String(input.routeTargetId || "").startsWith("move:");
     const continueBoundTargetNextTurn = (routePlanId = input.routePlanId) => {
       const endTurn = successors.find((action) => action.family === "end_turn");
       return bindRoute(
@@ -2330,6 +2371,30 @@
             ...action,
             targetEquivalentChoiceCount: successors.length - 1,
           }));
+      }
+      // 统一搜索：未绑定分支的 conditional 不展开支付/选牌细节。弃牌付费、移动支付
+      // 与交易选牌是纯结算步骤（付同一种资源 / 选哪张牌对未绑定目标等价），对
+      // "评估根动作价值"无贡献；逐张展开会 toggle 振荡（executeDiscard 语义：
+      // 已选→移除，无状态折叠恒选第一张 → selected 在 A↔∅ 间振荡），实测
+      // choose_payment 单决策 2515→3042 节点吃光 4096 预算。未绑定分支价值由
+      // "根动作 + 前几层 + PASS 叶 + 重新绑定目标"体现（rule-composition 未绑定
+      // 分支浅尝 ≤3 层），支付细节直接 return [] 让 origin 收束（被尝试过）。
+      // 绑定目标分支的弃牌仍走 routeTargetId 分支的折叠（会话少，够用）。
+      if (
+        input.unifiedSearch === true
+        && !input.routeTargetId
+        && successors[0]?.phase === "conditional"
+      ) {
+        const settlementOnly = (
+          successors.every((action) => action.family === "choose_payment")
+          || successors.every((action) => (
+            action.family === "choose_card"
+            && action.target?.kind === "trade-card-selection"
+          ))
+        );
+        if (settlementOnly) {
+          return [];
+        }
       }
       if (!input.routeTargetId) {
         const targetCatalog = enumerateSecondaryAgentRootTargets({
@@ -2453,6 +2518,32 @@
             routePlanId: null,
             routeResultTargetIds: [],
           }));
+        // 统一搜索（unifiedSearch，默认关）：把"只留目标绑定动作"的后继门控改为
+        // "targeted + 未绑定后继（按立即价值截断 top-K）+ controls"合并返回——
+        // 搜索在每个节点都能尝试所有动作，覆盖不再受目标清单限制；但未绑定后继
+        // 必须按立即价值截断，否则每层 17 个后继全展开（分支因子 17，配合未绑定
+        // 浅尝 3 层仍到 17³ 节点）吃光预算。优先级由 getBranchPriority 在展开时
+        // 再排序；此处的 top-K 是"预算内优先级截断"，低价值后继仍会在根/上层
+        // 被尝试（见 §3 设计文档）。
+        if (input.unifiedSearch === true) {
+          const targetedIds = new Set(targeted.map((action) => action.actionId));
+          const untargeted = successors
+            .filter((action) => (
+              !targetedIds.has(action.actionId) && !CONTROL_FAMILIES.has(action.family)
+            ))
+            .map((action) => ({
+              ...action,
+              routeTargetId: null,
+              routePlanId: null,
+              routeResultTargetIds: [],
+            }))
+            .sort((left, right) => (
+              compareUntargetedSuccessor(right, left, input.branchObservation)
+              || String(left.actionId).localeCompare(String(right.actionId))
+            ))
+            .slice(0, MAX_UNIFIED_SUCCESSORS);
+          return [...targeted, ...untargeted, ...controls];
+        }
         return [...targeted, ...controls];
       }
       if (
@@ -2489,6 +2580,8 @@
             input.routePlanId,
           );
         }
+        // 弃牌等价性只对"资源目标"成立（付的是同一种资源，弃哪张卡不影响达成）；
+        // 卡牌身份目标（card:/decision:）的弃牌影响结算，必须保留全部正式 choice。
         const fungiblePaymentChoices = targetUsesFungibleResources
           && successors.every((action) => (
             action.family === "choose_payment"
@@ -2499,16 +2592,19 @@
             )
           ));
         if (fungiblePaymentChoices) {
-          // 弃牌付费等价折叠：旧 UI 一次提交一组卡（discard-hand-cards），新 UI 逐张
-          // 点选（discard-hand-card + confirm）。对反事实搜索而言"弃哪张卡"不影响
-          // 目标达成（付的是同一种资源），任选一个代表即可，避免组合/逐张全量展开
-          // 导致 choose_payment 节点爆炸（此前 4096 上限内 3530 次 choose_payment，
-          // 主行动全被剪枝）。
-          // 注意：必须优先选 discard-hand-card（选一张牌），不能选 confirm——confirm
-          // 要求 selected 已满 required 张，反事实若提前提交 confirm 会得到
-          // QUICK_TRADE_DISCARD_INCOMPLETE，把依赖弃牌付费的 scan/launch 等行动
-          // 误判为不可选。选中一张牌后下一轮决策仍会回到这里继续选，直到选满后
-          // confirm 自然成为唯一可选代表。
+          // 振荡控制：弃牌会话是无状态折叠的陷阱——折叠恒选"第一张卡"，展开后
+          // 规则把该卡加入 selected，下一层仍是同一弃牌决策，折叠又选同一张卡，
+          // 规则语义"已选→移除"（toggle）→ selected 在 A↔∅ 间振荡，永不满
+          // required，confirm 永远无法提交 → 一个弃牌会话无限消耗节点（统一搜索
+          // 实测 3043 个 choose_payment 节点吃光 4096 预算）。同一会话的延续层
+          // （actionChain 末尾已是 choose_payment）直接 return [] 收束：每个弃牌
+          // 会话最多展开 1 层代表（被尝试过），不做完整逐张结算。
+          const lastActionFamily = String(
+            (input.actionChain || []).at(-1) || "",
+          ).split(":")[0];
+          if (lastActionFamily === "choose_payment") {
+            return [];
+          }
           const pickCard = successors.find((action) => (
             action.target?.kind === "discard-hand-card"
           ));
@@ -2537,11 +2633,16 @@
             targetEquivalentChoiceCount: successors.length - 1,
           }));
         }
-        const movePaymentChoices = targetUsesFungibleResources
-          && successors.every((action) => (
-            action.family === "choose_payment"
-            && action.target?.kind === "move-payment"
-          ));
+        // 移动支付等价折叠：按 energyCost + 弃牌数分组取代表（同一 energyCost 的
+        // 支付路线资源等价，选一张代表即可；不同 energyCost 是不同资源结构，全保留
+        // 交给终点评估）。等价性与目标无关（支付多少能量是移动的属性，不是目标
+        // 的属性）——此前限定 targetUsesFungibleResources 导致探测路线（orbit/land
+        // 目标）的移动支付链每层全展开（每个 move-payment 选项一个分支），depth
+        // 5→14 层指数爆炸吃光 4096 预算（unified 实测 choose_payment 3043 节点）。
+        const movePaymentChoices = successors.every((action) => (
+          action.family === "choose_payment"
+          && action.target?.kind === "move-payment"
+        ));
         if (movePaymentChoices) {
           const representatives = new Map();
           for (const action of successors) {

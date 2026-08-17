@@ -2164,6 +2164,17 @@
 
       const usesRootTargetCatalog = secondaryAgentSearch
         && typeof secondaryAgentSearch.selectRootTargets === "function";
+      // 统一搜索（unified search，开关 allowUntargetedRootActions）：未绑定任何目标的
+      // 动作也以 targetId=null 进入初始 frontier，让"预算内全动作尝试"取代"只搜命中
+      // 预设目标的动作"的目标门控；低价值分支由 branchPriority 排序在节点耗尽时
+      // pruned（被尝试过，而非根本不在搜索里）。默认关：保持分桶门控现状。
+      const allowUntargetedRootActions = evaluateOptions.allowUntargetedRootActions === true;
+      // 未绑定分支浅尝深度：未绑定 origin 不完成目标（proxyDepth 恒 0），普通后继
+      // 又无深度检查，若每层都返回全部后继会无限深挖到 maxExecutionNodes 耗尽
+      // （实测 4096 撞顶、单决策 8s）。展开 MAX_UNTARGETED_DEPTH 层即收束为
+      // pruned（被尝试过），深挖预算留给绑定目标分支；有目标机会时 selectRouteTarget
+      // 会把 origin 重新绑定到目标路线（见下），不受此限制。
+      const MAX_UNTARGETED_DEPTH = 3;
       const initialFrontierByKey = new Map();
       for (const action of legalActions) {
         const routeTargets = rootTargetsByActionId.get(action.actionId) || [];
@@ -2171,7 +2182,9 @@
           ? routeTargets
           : !usesRootTargetCatalog || ["pass", "end_turn"].includes(action.family)
             ? [{ targetId: null, planId: null }]
-            : [];
+            : allowUntargetedRootActions
+              ? [{ targetId: null, planId: null }]
+              : [];
         for (const routeTarget of selectedTargets) {
           const routeTargetId = routeTarget?.targetId || null;
           const routePlanId = routeTarget?.planId || null;
@@ -2470,7 +2483,7 @@
             if (
               secondaryAgentSearch
               && !routeTargetId
-              && !usesRootTargetCatalog
+              && (!usesRootTargetCatalog || allowUntargetedRootActions)
               && !origin.goalCompletionPending
               && typeof secondaryAgentSearch.selectRouteTarget === "function"
             ) {
@@ -2719,6 +2732,7 @@
                     routePlanId,
                     routeResultTargetIds: origin.routeResultTargetIds || [],
                     maxProxyDepth,
+                    unifiedSearch: secondaryAgentSearch.unifiedSearch === true,
                     completeTargetCatalog:
                       secondaryAgentSearch.completeTargetCatalog === true,
                   }) || [];
@@ -2871,6 +2885,20 @@
                 );
                 continue;
               }
+              // 未绑定分支浅尝：未绑定 origin（无 routeTargetId）展开到
+              // MAX_UNTARGETED_DEPTH 层即收束为 pruned——未绑定分支 proxyDepth 恒 0、
+              // 普通后继无深度检查，不限制会无限深挖吃光预算；"试过即可"，深挖预算
+              // 留给绑定目标分支。已重新绑定目标（selectRouteTarget 更新了
+              // routeTargetId）或已完成目标挂起的 origin 不受此限制。
+              if (
+                allowUntargetedRootActions
+                && !routeTargetId
+                && !origin.goalCompletionPending
+                && node.depth >= MAX_UNTARGETED_DEPTH
+              ) {
+                markPruned([origin]);
+                continue;
+              }
               if (execution.successors.length && execution.childEnvelope) {
                 let selectedSuccessors = [];
                 try {
@@ -2891,6 +2919,7 @@
                       ? []
                       : (origin.routeResultTargetIds || []),
                     maxProxyDepth,
+                    unifiedSearch: secondaryAgentSearch.unifiedSearch === true,
                     completeTargetCatalog:
                       secondaryAgentSearch.completeTargetCatalog === true,
                   }) || [];

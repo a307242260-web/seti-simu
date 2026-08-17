@@ -132,6 +132,34 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
   或多打一张移动牌）；tier2 的「可能出现更优选择」；多步链的跨路线续用。
 
+### 3.4 统一搜索（unifiedSearch，默认关）
+
+反事实搜索（`heuristic-decision-function.js` 的 strategic 桶）默认走分桶目标门控：
+只有"命中预设目标目录"的根动作进搜索，未绑定动作（多数 quick_trade、card_corner、
+industry、未命中目标的 place_data/play_card）被 L1-L4 层门控滤掉，outcome 为
+`STRATEGIC_GOAL_NOT_EVALUATED`——评估器看不到其价值。
+
+`config.unifiedSearch`（默认关）改为"预算内全动作尝试 + 优先级排序"，涉及：
+
+- `expected-score-evaluator#requiresRootCounterfactual`：加 `unifiedSearch` 参数，
+  开启时 quick_trade 不再要求"为某目标补资源缺口"（L1 放开）；
+- `expected-score-evaluator#selectSecondaryAgentRootActions`：加 `unifiedSearch`，
+  开启时返回全部非 control 动作（L2 目标门控放开）；
+- `rule-composition#evaluate`：加 `allowUntargetedRootActions`，未绑定动作以
+  targetId=null 进初始 frontier（L4a 放开）；未绑定 origin 展开 ≤3 层
+  （`MAX_UNTARGETED_DEPTH`）即收束 pruned（浅尝，防无限深挖）；未绑定分支展开后
+  允许 `selectRouteTarget` 重新绑定目标；
+- `expected-score-evaluator#selectSecondaryAgentSuccessors`：`unifiedSearch` 时
+  `!routeTargetId` 分支返回 targeted + 未绑定后继 top-K（`MAX_UNIFIED_SUCCESSORS`=4，
+  按 family 基础价值 + 净资源收益排序，预算内优先级截断）+ controls；未绑定分支的
+  choose_payment（弃牌/移动支付）与交易选牌视为纯结算直接不展开；绑定分支弃牌折叠
+  的 `targetUsesFungibleResources` 扩展覆盖探测行动目标（orbit:/land:/move: 前缀，
+  弃牌等价），card:/decision: 卡牌身份目标仍保留全部 choice；弃牌会话延续层
+  （actionChain 末尾已是 choose_payment）直接收束（无状态折叠恒选第一张卡会 toggle
+  振荡，永不满 required）。
+
+详细设计与 A/B 实测见 `docs/project-progress/unified-search-design-20260817.md`。
+
 ## 4. Policy 契约
 
 Policy 输入只包含：
