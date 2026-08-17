@@ -78,6 +78,9 @@
     return deepFreeze({
       parameterVersion: String(input.parameterVersion || PARAMETER_VERSION),
       searchDepth: Math.max(1, Math.round(finite(input.searchDepth) || DEFAULT_PARAMETERS.searchDepth)),
+      // V(state) 接入开关（v-state-design-20260817.md）：默认关（当前决策不变），
+      // 打开后 V 增量参与叶排序，让打牌/放痕迹/收入/科技的长期价值可见。
+      vStateValueEnabled: Boolean(input.vStateValueEnabled),
     });
   }
 
@@ -678,18 +681,26 @@
       ? evaluateState(outcome.rootObservation, context.seatId)
       : null;
     if (!rootValue) return unavailable(outcome, "outcome-root-missing");
+    // V(state) 增量：V(leaf) - V(root)，编码长线价值（收入复利/科技效率/外星进度/手牌）
+    const vEnabled = Boolean(parameters.vStateValueEnabled);
+    const rootV = vEnabled ? evaluateStateValue(outcome.rootObservation, context.seatId).total : null;
     const evaluatedLeaves = (outcome.leaves || [])
       .filter((leaf) => leaf?.status !== "failed" && leaf?.observation)
       .map((leaf) => {
         const leafStateValue = evaluateState(leaf.observation, context.seatId);
+        const vDelta = vEnabled
+          ? evaluateStateValue(leaf.observation, context.seatId).total - rootV
+          : 0;
         return {
           leaf,
           leafStateValue,
           strategicValue: leafValue(rootValue, leafStateValue, parameters),
+          vDelta,
         };
       })
       .sort((left, right) => (
         right.strategicValue.primaryValue - left.strategicValue.primaryValue
+        || (vEnabled ? (right.vDelta - left.vDelta) : 0)
         || right.strategicValue.total - left.strategicValue.total
         || right.strategicValue.actualScoreDelta - left.strategicValue.actualScoreDelta
         || Number(left.leaf.quickTradeCount || 0) - Number(right.leaf.quickTradeCount || 0)
@@ -699,6 +710,7 @@
     const best = evaluatedLeaves[0] || null;
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
     let bestLeafValue = best.strategicValue;
+    const bestVD = best.vDelta || 0;
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
     if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
     const cornerPurpose = cardCornerPurpose(
@@ -737,6 +749,8 @@
       actualScoreDelta: bestLeafValue.actualScoreDelta,
       primaryValue: bestLeafValue.primaryValue,
       opportunityCost: bestLeafValue.opportunityCost,
+      vDelta: bestVD,
+      vStateValueEnabled: vEnabled,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
       quickTradePurpose: tradePurpose.required ? tradePurpose : null,

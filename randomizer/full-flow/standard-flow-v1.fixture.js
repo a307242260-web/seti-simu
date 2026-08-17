@@ -17,9 +17,10 @@ module.exports = Object.freeze({
       evaluationParameters: Object.freeze({
         parameterVersion: "seti-strategic-goal-search-v3",
         searchDepth: 15,
+        vStateValueEnabled: false,
       }),
     }),
-    configChecksum: "6716b32a",
+    configChecksum: "53263a1c",
   }),
   expected: Object.freeze({
     playerCount: 4,

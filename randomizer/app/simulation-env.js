@@ -400,6 +400,10 @@ function createSimulationEnv() {
       policyAdapter = createHeuristicPolicyAdapter({
         difficulty: config.aiDifficulty,
         strategyWeights: config.strategyWeights || {},
+        // V(state) 接入开关透传（v-state-design-20260817.md）
+        evaluationParameters: config.vStateValueEnabled
+          ? { vStateValueEnabled: true }
+          : undefined,
         seed,
       });
     }
@@ -490,6 +494,7 @@ function createSimulationEnv() {
         traceCounterfactualGoalClusters:
           resetConfig.traceCounterfactualGoalClusters === true,
         completeTargetCatalog: resetConfig.completeTargetCatalog === true,
+        vStateValueEnabled: resetConfig.vStateValueEnabled === true,
       };
       replaySteps = [];
       environmentEvents = [];
