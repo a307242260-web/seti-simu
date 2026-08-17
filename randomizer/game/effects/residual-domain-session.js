@@ -1416,27 +1416,18 @@
     return { ok: true, spawnedEffects, irreversible };
   }
 
-  function settleReadyTaskDirect(root, ownerId, cardInstanceId, ruleId) {
-    // 规则书 P15：条件任务在达成条件后可用免费行动完成。此函数由 complete_task
-    // 免费行动直接结算一个已满足条件的任务（条件任务 / 虫族搬运 / 阿米巴理论），
-    // 无需玩家再次确认。
-    const settlement = listCardSettlements(root, ownerId)
-      .find((entry) => (
-        entry.cardInstanceId === cardInstanceId
-        && entry.ruleId === ruleId
-        && ["task", "chong_task", "amiba_task"].includes(entry.kind)
-      ));
-    const player = actor(root, ownerId);
-    if (!settlement || !player) {
-      return fail("CARD_TASK_STALE", "条件任务已失效");
-    }
-    const cardIndex = (player.reservedCards || [])
-      .findIndex((card) => card.id === settlement.cardInstanceId);
+  // 统一任务结算内核：complete_task 快速行动（settleReadyTaskDirect）与回合末
+  // CARD_DECISION（settleCardDecision）共用同一实现。处理：按 kind 消费
+  // （task/trigger/chong_task/amiba_task）、虫族搬运棋子移除、保留区移除+移出
+  // 游戏+完成任务数、任务奖励（sourceKey 区分触发/任务计分来源）、化石奖励。
+  function settleTaskCardConsumption(root, player, settlement, cardIndex, sourceKey) {
     const card = player.reservedCards?.[cardIndex];
     if (!card) return fail("CARD_INSTANCE_STALE", "任务牌实例已失效");
     let consumed = false;
     if (settlement.kind === "task") {
       consumed = cardEffects.completeTask(card, settlement.ruleId);
+    } else if (settlement.kind === "trigger") {
+      consumed = cardEffects.consumeTrigger(card, settlement.ruleId);
     } else if (settlement.kind === "chong_task") {
       if (settlement.rocketId != null) {
         const transport = chong.completeTransportedFossil(
@@ -1470,7 +1461,7 @@
       cards.addRemovedFromGame(root.cards, card);
       player.completedTaskCount = (Number(player.completedTaskCount) || 0) + 1;
     }
-    const applied = applyFormalCardEffects(root, player, settlement.effects, "taskCardScore");
+    const applied = applyFormalCardEffects(root, player, settlement.effects, sourceKey);
     if (!applied.ok) return applied;
     // 虫族搬运任务：同时发放被运输化石自身的奖励（按任务卡 fossilRewardRepeat 重复）
     let fossilReward = { ok: true, spawnedEffects: [], irreversible: null };
@@ -1485,14 +1476,34 @@
     }
     return {
       ok: true,
-      cardInstanceId,
-      ruleId,
+      cardInstanceId: settlement.cardInstanceId,
+      ruleId: settlement.ruleId,
       spawnedEffects: [
         ...(applied.spawnedEffects || []),
         ...(fossilReward.spawnedEffects || []),
       ],
       irreversible: applied.irreversible || fossilReward.irreversible || null,
     };
+  }
+
+  function settleReadyTaskDirect(root, ownerId, cardInstanceId, ruleId) {
+    // 规则书 P15：条件任务在达成条件后可用免费行动完成。此函数由 complete_task
+    // 免费行动直接结算一个已满足条件的任务（条件任务 / 虫族搬运 / 阿米巴理论），
+    // 无需玩家再次确认。
+    const settlement = listCardSettlements(root, ownerId)
+      .find((entry) => (
+        entry.cardInstanceId === cardInstanceId
+        && entry.ruleId === ruleId
+        && ["task", "chong_task", "amiba_task"].includes(entry.kind)
+      ));
+    const player = actor(root, ownerId);
+    if (!settlement || !player) {
+      return fail("CARD_TASK_STALE", "条件任务已失效");
+    }
+    const cardIndex = (player.reservedCards || [])
+      .findIndex((card) => card.id === settlement.cardInstanceId);
+    // 统一结算内核：与回合末 CARD_DECISION（settleCardDecision）同一实现
+    return settleTaskCardConsumption(root, player, settlement, cardIndex, "taskCardScore");
   }
 
   function settleCardDecision(root, effect, selected) {
@@ -1521,66 +1532,15 @@
     }
     const cardIndex = (player.reservedCards || [])
       .findIndex((card) => card.id === settlement.cardInstanceId);
-    const card = player.reservedCards?.[cardIndex];
-    if (!card) return fail("CARD_INSTANCE_STALE", "任务牌实例已失效");
-    let consumed = false;
-    if (settlement.kind === "task") {
-      consumed = cardEffects.completeTask(card, settlement.ruleId);
-    } else if (settlement.kind === "trigger") {
-      consumed = cardEffects.consumeTrigger(card, settlement.ruleId);
-    } else if (settlement.kind === "chong_task") {
-      if (settlement.rocketId != null) {
-        const transport = chong.completeTransportedFossil(
-          root.aliens,
-          settlement.rocketId,
-          {
-            cardId: card.id,
-            destinationPlanetId: settlement.destinationPlanetId,
-          },
-        );
-        if (!transport.ok) return transport;
-      }
-      card.chongTaskCompleted = true;
-      consumed = true;
-    } else if (settlement.kind === "amiba_task") {
-      card.amibaTaskCompleted = true;
-      consumed = true;
-    }
-    if (!consumed) return fail("CARD_RULE_ALREADY_CONSUMED", "卡牌规则已经结算");
-    if (settlement.kind !== "trigger" || cardEffects.areAllTriggersConsumed(card)) {
-      player.reservedCards.splice(cardIndex, 1);
-      // 完成任务牌翻面保留在玩家面前，移出游戏（不进弃牌堆、不会被洗回主牌库）。
-      cards.addRemovedFromGame(root.cards, card);
-      player.completedTaskCount = (Number(player.completedTaskCount) || 0) + 1;
-    }
-    const applied = applyFormalCardEffects(
+    // 统一结算内核：与 complete_task 快速行动（settleReadyTaskDirect）同一实现
+    // （触发任务计分来源 cardEffectScore，其余任务 taskCardScore）。
+    return settleTaskCardConsumption(
       root,
       player,
-      settlement.effects,
+      settlement,
+      cardIndex,
       settlement.kind === "trigger" ? "cardEffectScore" : "taskCardScore",
     );
-    if (!applied.ok) return applied;
-    // 虫族搬运任务：同时发放被运输化石自身的奖励（按任务卡 fossilRewardRepeat 重复）
-    let fossilReward = { ok: true, spawnedEffects: [], irreversible: null };
-    if (settlement.kind === "chong_task" && settlement.fossilId) {
-      fossilReward = applyChongFossilReward(
-        root,
-        player,
-        settlement.fossilId,
-        Math.max(1, Number(settlement.fossilRewardRepeat) || 1),
-      );
-      if (!fossilReward.ok) return fossilReward;
-    }
-    return {
-      ...applied,
-      spawnedEffects: [
-        ...(applied.spawnedEffects || []),
-        ...(fossilReward.spawnedEffects || []),
-      ],
-      irreversible: applied.irreversible || fossilReward.irreversible || null,
-      cardInstanceId: settlement.cardInstanceId,
-      ruleId: settlement.ruleId,
-    };
   }
 
   function settleFinalScores(root) {
