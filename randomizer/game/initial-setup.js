@@ -4,28 +4,25 @@
   let initialCards = root.SetiInitialCards;
   let cards = root.SetiCards;
   let players = root.SetiPlayers;
-  let rockets = root.SetiRocketActions;
   let solar = root.SetiSolarSystem;
   let data = root.SetiData;
   let industry = root.SetiIndustry;
-  if ((!initialCards || !cards || !players || !rockets || !solar || !data || !industry)
+  if ((!initialCards || !cards || !players || !solar || !data || !industry)
     && typeof require === "function") {
     initialCards = initialCards || require("./initial-cards");
     cards = cards || require("./cards/deck");
     players = players || require("./players");
-    rockets = rockets || require("./rockets");
     solar = solar || require("../solar-system/core");
     data = data || require("./data");
     industry = industry || require("./industry");
   }
 
-  const api = factory(initialCards, cards, players, rockets, solar, data, industry);
+  const api = factory(initialCards, cards, players, solar, data, industry);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiInitialSetup = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   initialCards,
   cards,
   players,
-  rockets,
   solar,
   data,
   industry,
@@ -217,16 +214,6 @@
         );
       },
       getEarthSectorCoordinate: () => earthCoordinate(rootState),
-      launchRocketAtEarth(player) {
-        if (typeof actionContext?.launchRocketAtEarth === "function") {
-          return actionContext.launchRocketAtEarth(player);
-        }
-        return rockets.launchRocketAtSector(rootState.pieces, earthCoordinate(rootState), {
-          playerId: player.id,
-          color: player.color,
-          root: rootState,
-        });
-      },
     }, { playerIds: activePlayerIds(rootState) });
     return result;
   }

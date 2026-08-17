@@ -9,6 +9,7 @@
   let rockets = root.SetiRocketActions;
   let techBoard = root.SetiTechBoardState;
   let playerTech = root.SetiPlayerTech;
+  let rocketAbility = root.SetiAbilityRocket;
 
   if ((!players || !cards || !data || !planetStats || !aliens || !rockets || !techBoard || !playerTech) && typeof require === "function") {
     players = players || require("./players");
@@ -19,9 +20,10 @@
     rockets = rockets || require("./rockets");
     techBoard = techBoard || require("./tech/board-state");
     playerTech = playerTech || require("./tech/player-tech");
+    rocketAbility = rocketAbility || require("./abilities/rocket");
   }
 
-  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoard, playerTech);
+  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoard, playerTech, rocketAbility);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -36,6 +38,7 @@
   rockets,
   techBoard,
   playerTech,
+  rocketAbility,
 ) {
   "use strict";
 
@@ -402,18 +405,14 @@
   function applyLaunches(context, player, count, results) {
     const target = Math.max(0, Math.round(Number(count) || 0));
     for (let index = 0; index < target; index += 1) {
-      let result;
-      if (typeof context?.launchRocketAtEarth === "function") {
-        result = context.launchRocketAtEarth(player);
-      } else if (context?.pieces && typeof context?.getEarthSectorCoordinate === "function") {
-        result = rockets.launchRocketAtSector(context.pieces, context.getEarthSectorCoordinate(), {
-          playerId: player.id,
-          color: player.color,
-          root: context.state || context,
-        });
-      } else {
-        result = { ok: false, message: "缺少发射上下文" };
-      }
+      // 统一发射内核：寰宇动力开局发射与所有行动性发射共用 launchProbe；
+      // 开局免成本，且按文档豁免普通发射行动的探测器数量上限。
+      const result = rocketAbility.launchProbe(context, {
+        skipCost: true,
+        ignoreRocketLimit: true,
+        playerId: player.id,
+        source: "initial_company",
+      });
       pushResult(results, {
         ...result,
         type: "launch",

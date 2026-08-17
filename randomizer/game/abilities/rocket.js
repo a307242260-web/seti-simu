@@ -383,7 +383,13 @@
   }
 
   function launchProbe(context, options = {}) {
-    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
+    // 统一发射内核：初始结算等非回合场景通过 options.playerId 显式指定发射者
+    // （此时 turn.currentPlayerId 不一定是被结算的玩家），其余场景照常取当前玩家。
+    const currentPlayer = options.playerId != null
+      ? (context.players?.players || []).find(
+        (player) => String(player.id) === String(options.playerId),
+      ) || null
+      : players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     if (!currentPlayer) {
       return { ok: false, abilityId: "launchProbe", message: "没有当前玩家" };
     }

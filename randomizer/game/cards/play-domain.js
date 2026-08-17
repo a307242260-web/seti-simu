@@ -2388,10 +2388,16 @@
           const location = solar.createSolarSnapshot(
             getWorkingSlice(root, "solarSystem"),
           ).planetLocations?.find((planet) => planet.planetId === legal.target.planetId);
-          const launched = rockets.launchRocketAtSector(
-            getWorkingSlice(root, "pieces"),
-            location,
-            { playerId: actor.id, color: actor.color, root },
+          // 统一发射内核：环绕标记转探测器与行动性发射共用 launchProbe，
+          // 免成本、在目标星球扇区放置，并按普通发射规则检查探测器上限。
+          const launched = abilities.executeAbility(
+            "launchProbe",
+            createActionContext(root, actor.id),
+            {
+              skipCost: true,
+              sectorCoordinate: location,
+              source: "card",
+            },
           );
           if (!launched.ok) return launched;
         }

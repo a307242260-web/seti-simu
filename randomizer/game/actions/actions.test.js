@@ -347,4 +347,51 @@ if (researchTake.bonusId === "bonus_1c") {
   assert.equal(researchPlayer.hand.length, 0);
 }
 
+// 统一发射内核：launchProbe 支持 playerId 覆盖（初始结算等非回合场景，
+// turn.currentPlayerId 不一定是被结算的玩家）。
+{
+  const multiPlayerContext = createContext({
+    players: players.createPlayerState({
+      players: [
+        { color: "white", resources: { credits: 10, energy: 10, publicity: 10 } },
+        { color: "brown", resources: { credits: 10, energy: 10, publicity: 10 } },
+      ],
+    }),
+  });
+  const second = multiPlayerContext.players.players[1];
+  const targetedLaunch = abilities.executeAbility("launchProbe", multiPlayerContext, {
+    skipCost: true,
+    playerId: second.id,
+    source: "initial_company",
+  });
+  assert.equal(targetedLaunch.ok, true, targetedLaunch.message);
+  assert.equal(targetedLaunch.rocket.playerId, second.id, "playerId 覆盖必须发射给指定玩家");
+  assert.equal(targetedLaunch.events[0].source, "initial_company");
+  assert.equal(multiPlayerContext.players.players[0].resources.credits, 10, "非目标玩家不得扣费");
+  assert.equal(second.resources.credits, 10, "免费发射不得扣费");
+}
+
+// 寰宇动力开局 2 次初始发射：统一走 launchProbe（免成本、豁免探测器上限）。
+{
+  const initialCards = require("../initial-cards");
+  const huanyuContext = createContext({
+    players: players.createPlayerState({
+      currentPlayer: {
+        color: "white",
+        resources: { credits: 10, energy: 10, publicity: 10 },
+      },
+    }),
+  });
+  const player = huanyuContext.players.players[0];
+  player.initialSelection = { industry: "寰宇动力", removedInitialCards: [] };
+  const settled = initialCards.resolveInitialSelections(huanyuContext, {
+    playerIds: [player.id],
+  });
+  assert.equal(settled.ok, true, settled.message);
+  const huanyuRockets = huanyuContext.pieces.rockets.filter((rocket) => rocket.playerId === player.id);
+  assert.equal(huanyuRockets.length, 2, "寰宇动力开局必须放置 2 枚探测器");
+  assert.equal(player.resources.credits, 2, "开局发射不得扣信用点（免成本）");
+  assert.equal(player.resources.energy, 2, "开局发射不得扣能量（免成本）");
+}
+
 console.log("action ability tests passed");
