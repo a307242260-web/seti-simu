@@ -8,6 +8,15 @@
 //   node tools/fast_forward_save.js <save-file> --aliens      # 只跟踪外星人状态变化
 const fs = require("node:fs");
 const path = require("node:path");
+
+// 稳定序列化 action（排序键）用于重复录制判定
+function stableSerializeAction(value) {
+  if (value == null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableSerializeAction).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => (
+    `${JSON.stringify(key)}:${stableSerializeAction(value[key])}`
+  )).join(",")}}`;
+}
 const { createSeededRandom, hashSeed } = require("../randomizer/game/random");
 const { createSimulationRuleComposition } = require("../randomizer/game/production-kernel");
 
@@ -23,7 +32,9 @@ if (!saveFiles.length) {
   console.log("用法: node tools/fast_forward_save.js <save-file> [更多存档(自动拼接)] [--round N|--step N|--aliens|--white]");
   process.exit(1);
 }
-// 加载并拼接多档（去重：相邻步骤 actionId+choiceId 相同视为重复，如 v54/v223 衔接处）
+// 加载并拼接多档。拼接规则与 tools/backfill_full_chain.js 一致：
+// 后档 step0 若与前档最后一步同 actionId（同一动作被多档重复记录）则去掉后档 step0，
+// 档内保留全部步骤（quick_trade 弃牌等真实重复选择不能去重）。
 let replaySteps = [];
 let seedFromSave = null;
 let metaSeed = null;
@@ -40,14 +51,17 @@ for (const saveFile of saveFiles) {
   if (!metaSeed && st?.meta?.seed) metaSeed = st.meta.seed;
   if (st?.turn?.activePlayerCount) activePlayerCount = Number(st.turn.activePlayerCount);
   targetState = targetState || st;
-  for (const step of (save.replaySteps || [])) {
-    const action = step.action || {};
-    const key = `${action.actionId || ""}|${action.target?.choiceId || ""}|${action.summary || ""}`;
-    const last = replaySteps[replaySteps.length - 1];
-    const lastKey = last
-      ? `${last.action?.actionId || ""}|${last.action?.target?.choiceId || ""}|${last.action?.summary || ""}`
-      : null;
-    if (lastKey === key) continue; // 拼接衔接处重复
+  const steps = save.replaySteps || [];
+  for (let i = 0; i < steps.length; i += 1) {
+    const step = steps[i];
+    // 重复录制判据：完整 action 稳定序列化相等（同一步被录多次）。
+    // 不能用 actionId+stateVersion：toggle 选择（选中/取消）同 actionId 同 stateVersion
+    // 但 presentation.selected 不同，是真实操作，必须保留（v223 #403/#404）。
+    const thisKey = stableSerializeAction(step.action || {});
+    if (replaySteps.length) {
+      const lastKey = stableSerializeAction(replaySteps[replaySteps.length - 1].action || {});
+      if (lastKey === thisKey) continue;
+    }
     replaySteps.push(step);
   }
 }
@@ -60,9 +74,12 @@ const onlyWhite = flagArgs.includes("--white");
 const targetRound = modeRound >= 0 ? Number(flagArgs[modeRound + 1] || 1) : null;
 const targetStep = modeStep >= 0 ? Number(flagArgs[modeStep + 1] || 0) : null;
 
-// seed 双层语义：主 RNG = hashSeed(save.seed)（固定盘面 seed），
-// science 域 RNG = hashSeed(root.meta.seed)（存档 committedState 的 meta.seed）。
-const SEED = seedFromSave || "seti-free-analyze-v1";
+// seed 双层语义：主 RNG = hashSeed(固定盘面 seed)（浏览器 startNewGame 用
+// hashSeed("seti-free-analyze-v1")，模拟 reset 同源），science 域 RNG =
+// hashSeed(root.meta.seed)（存档 committedState 的 meta.seed）。
+// 注意：浏览器档的 seed 字段 = meta.seed（science seed），不是主 RNG seed；
+// 主 RNG seed 固定为盘面 seed（当前唯一盘面 seti-free-analyze-v1）。
+const SEED = "seti-free-analyze-v1";
 const META_SEED = metaSeed || SEED;
 const random = createSeededRandom(SEED);
 random.setState(hashSeed(SEED));
@@ -113,6 +130,18 @@ function matchChoice(d, action) {
     });
     if (byCard) return byCard;
   }
+  // 弃牌角标/手牌上限：cardIds 数组匹配
+  const cardIds = action.target?.cardIds || action.payload?.cardIds || [];
+  if (Array.isArray(cardIds) && cardIds.length) {
+    const sorted = [...cardIds].map(String).sort().join("|");
+    const byCardIds = d.choices.find((c) => {
+      const cIds = c.target?.cardIds || c.cardIds || [];
+      return Array.isArray(cIds)
+        && cIds.length === cardIds.length
+        && [...cIds].map(String).sort().join("|") === sorted;
+    });
+    if (byCardIds) return byCardIds;
+  }
   const bySummary = d.choices.find((c) => String(c.summary || "") === String(action.summary || ""));
   if (bySummary) return bySummary;
   const wt = JSON.stringify(action.target || {});
@@ -148,7 +177,13 @@ for (let index = 0; index < replaySteps.length && !reached; index += 1) {
       : kernel.composition.inputPort.submitAction(fixed);
   } else {
     const d = insp.session.decision;
-    const pick = matchChoice(d, action);
+    const isWhite = action.actorId === "player-white" || action.actorPlayerId === "player-white";
+    const strict = matchChoice(d, action);
+    let pick = strict;
+    // 非白色宽松匹配（与 backfill_full_chain 一致）：PASS/弃牌/选牌取第一个可选项
+    if (!pick && !isWhite) {
+      pick = d.choices.find((c) => !c.disabledReason) || d.choices[0];
+    }
     if (!pick) {
       console.error(`#${index} 决策无匹配: ${action.family} ${JSON.stringify(action.summary)}`);
       kernel.dispose?.();
@@ -159,6 +194,13 @@ for (let index = 0; index < replaySteps.length && !reached; index += 1) {
     });
   }
   if (!r?.ok) {
+    // 已修复的可选效果决策（f9c9827 后不再弹出）：跳过无效果，直接 continue
+    if (action.family === "accept_optional_effect"
+      && String(action.summary || "").startsWith("跳过")
+      && insp.phase !== "awaiting_input") {
+      okCount += 1;
+      continue;
+    }
     console.error(`#${index} 提交失败: ${r.failure?.code || r.code} ${r.failure?.message || r.message} action=${action.family}`);
     kernel.dispose?.();
     process.exit(1);
