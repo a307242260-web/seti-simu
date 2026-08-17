@@ -77,38 +77,51 @@ quick_trade 是唯一有专项门控的 family。它**不被视为有独立价�
 
 ## 3. 统一搜索改动清单（unifiedSearch 开关，默认关）
 
+**方向修正（2026-08-17 用户裁决）**：第一版"预算内全动作尝试"（全放行进搜索树）实测
+**全体玩家变弱**（on 白色 39-43 / 均分 32-37 vs off 86/63.5）——"乱按打字机的猴子写不出
+莎士比亚"：所有动作平铺进搜索树，节点被平均分散，主行动深搜被稀释，任何长链都规划
+不出来。修正为**搜索入口 = 目标引导 + 需求引导**：
+
+- 主行动（launch/place_data/play_card/scan…）围绕目标评估（off 的目标绑定搜索结构保留）；
+- 目的型动作（quick_trade 补缺口 / card_corner 弃牌收益 / industry 公司能力）**凭需求放行**
+  （"需要了再做"），叶价值由 quick 根截断限制为立即效果；
+- 无目标无需求动作保持 off 的不可见（AI 通过目标绑定评估所有值得做的动作）。
+
 已实现：
 
 | # | 位置 | 改动 |
 |---|------|------|
-| 1 | requiresRootCounterfactual | 加 `unifiedSearch` 参数：开启时 quick_trade 全放行（不再要求 prepares*） |
-| 2 | selectSecondaryAgentRootActions | 加 `unifiedSearch`：开启时返回全部 candidates（L2 目标门控放开） |
-| 3 | rule-composition 根门控 | `allowUntargetedRootActions` 时未绑定动作以 targetId=null 进 frontier（L4a 放开） |
+| 1 | requiresRootCounterfactual | quick_trade 保持需求门控（prepares* 补缺口才进，unified 同 off）——"需要了再做" |
+| 2 | selectSecondaryAgentRootActions | `unifiedSearch`：目标绑定动作 + 需求放行的目的型动作（UNIFIED_PURPOSE_FAMILIES =
+      quick_trade/card_corner/industry）进搜索，**不再平铺全部候选**（修正：原"返回全部"实测全体变弱） |
+| 3 | rule-composition 根门控 | `allowUntargetedRootActions` 时需求动作以 targetId=null 进 frontier（L4a 放开） |
 | 4 | selectSecondaryAgentSuccessors !routeTargetId 分支 | `unifiedSearch` 时返回 targeted + 未绑定后继 top-K + controls（L4b 放开 + 预算截断） |
 | 5 | selectSecondaryAgentSuccessors 条件折叠 | 未绑定分支的 choose_payment（弃牌/移动支付）与交易选牌直接 return []（不展开结算细节） |
 | 6 | rule-composition 深度限制 | 未绑定 origin 展开 ≤3 层即收束 pruned（防无限深挖） |
 | 7 | rule-composition selectRouteTarget | 未绑定分支展开后允许重新绑定目标（原来被 usesRootTargetCatalog 跳过） |
-| 8 | simulation-env config | `unifiedSearch` 开关透传 + policyOutcomeActions 传参 |
+| 8 | simulation-env / heuristic-decision-function config | `unifiedSearch` 开关透传 |
 | 9 | selectSecondaryAgentSuccessors 未绑定后继 | top-K 截断：未绑定后继按"立即价值"（family 基础 + 净资源收益）排序取前 4 |
-| 10 | 绑定分支弃牌折叠 | `targetUsesFungibleResources` 扩展覆盖探测行动目标（orbit:/land:/move: 前缀）：
-      直接环绕/登陆目标的弃牌折叠不再落到默认全返回（曾致 3043 choose_payment 节点）；
-      card:/decision: 卡牌身份目标仍保留全部 choice（弃牌不等价） |
-| 11 | 绑定分支弃牌振荡控制 | 弃牌会话延续层（actionChain 末尾已是 choose_payment）直接 return []：
-      无状态折叠恒选第一张卡 → 规则 toggle（已选→移除）→ 永不选满，一个会话无限振荡 |
+| 10 | 绑定分支弃牌折叠 | `targetUsesFungibleResources` 扩展覆盖探测行动目标（orbit:/land:/move: 前缀）；
+       card:/decision: 卡牌身份目标仍保留全部 choice（弃牌不等价） |
+| 11 | 绑定分支弃牌振荡控制 | 弃牌会话延续层（actionChain 末尾已是 choose_payment）直接 return []（toggle 振荡防死） |
+| 12 | quick 根截断（QUICK_ROOT_FAMILIES） | 目的型/铺垫型 quick 根（quick_trade/card_corner/industry/move 等）作为未绑定根时，
+       下一个主行动决策只给 control（end_turn/pass）→ 叶在 quick 完成后立即形成，价值 = 立即效果，
+       不搭后续主行动便车（修正：原"全放行"时 quick_trade 87/card_corner 65 虚高导致乱做） |
+| 13 | 防死锁（residual-domain-session） | 卡牌结算全部失效时给 skip 兜底（空 choices 决策卡死修复，与 unified 无关） |
 
 **A/B 实测（step 23 决策点，unified=on vs off）**：
-- 覆盖：NOT_EVALUATED 12 → **0**（所有 18 个动作都有评估）
-- choose_payment 节点：off 46 / on 158（爆炸修复前 3043）
-- executedNodeCount：off 868 / on 3040（< 4096 上限）
-- 单决策耗时：off ~2s / on ~6.3s（覆盖扩大的成本，< 10s 预算）
+- 评估排序：off 选 play_card 97；on 选 launch 100（play_card 87/place_data 65/card_corner 30）——
+  主行动排序正常，card_corner 等目的型动作价值 = 立即效果（不虚高）
 - 回归：off 模式 66 unit + 1 fullFlow 全过
 
 剩余（后续迭代）：
 
 | # | 位置 | 改动 |
 |---|------|------|
-| 12 | choose_target/choose_card 展开 | 目标选择/选牌决策的等价折叠（on 时 choose_target 889 节点是主要耗时项） |
-| 13 | 全盘行为验证 | on 全盘很慢（每决策 ~6s），需先跑短窗口验证行为方向再决定全盘 |
+| 14 | 外星目的价值 | 首痕迹 = 分 + 外星人牌（ALIEN_CARD_VALUE 5，抢未抢夺的首痕迹）；揭示后位置覆盖 =
+       位置分 + 外星牌期望（ALIEN_POSITION）；on 均分 60.3→68→70 |
+| 15 | 揭示后位置选择引导 | AI 选痕迹位置时优先"有外星人牌/精选牌"的高收益位置（阿米巴 3/4 号位），
+       state-extra（3分）冗余位居后——用户规则"开了外星人优先覆盖下两行高收益位置" |
 
 ## 4. 验证（A/B，同一 seed seti-free-analyze-v1）
 
@@ -120,26 +133,25 @@ quick_trade 是唯一有专项门控的 family。它**不被视为有独立价�
 
 ### 4.1 实测结果
 
-单决策（step 23 决策点，unified=on vs off）：
+单决策（step 23 决策点，unified=on vs off，目的引导版）：
 
 | 指标 | off | on |
 |------|-----|----|
-| NOT_EVALUATED 动作数 | 12 | **0**（全部 18 个动作有评估） |
-| choose_payment 节点 | 46 | 158（修复前 3043） |
-| executedNodeCount | 868 | 3040（< 4096） |
-| 单决策耗时 | ~2s | ~6.3s（覆盖扩大的成本，< 10s 预算） |
+| 评估排序 | play_card 97 最优 | launch 100 最优（play_card 87/place_data 65/card_corner 30） |
+| 目的型动作 | card_corner/industry/quick_trade 不可选 | quick_trade 不可选（需求门控），card_corner 30（立即效果） |
 
-150 步窗口（新架构协调器，全场 unifiedSearch）：
+全盘终局（最新代码 + 目的引导，全场 unifiedSearch）：
 
-| 指标 | off | on |
-|------|-----|----|
-| 耗时 | 63s | 273s（4.3 倍，全盘预计 ~15 分钟） |
-| 白色 150 步末 | 24 分 / R2 / tech1 / qt1 | **30 分 / R3 / tech1 / qt3** |
-| 白色推进 | R2 | R3（更快） |
+| 指标 | off | on（历次修正） |
+|------|-----|----------------|
+| 白色终局 | 86 | 全放行 43 → quick 门控 13 → 截断 39-41 → **目的引导 73** |
+| 均分 | 63.5 | 全放行 39.5 → **目的引导 60.3** |
+| 步数 | 551 | 570（恢复正常节奏） |
+| 白方行动 | place_data 31 / qt 3 / card_corner 6 / industry 0 | place_data 28 / qt 4 / card_corner 7 / industry 2 |
 
-行为方向合理：覆盖打开后白色能评估 quick_trade 等未绑定动作（qt 3 次而非 V 引导的
-29 次疯狂），分数与推进均优于分桶。剩余优化（§3 项 12）：choose_target/choose_card
-展开是 on 的主要耗时项。
+目的引导后 on 接近 off（73 vs 86，均分 60.3 vs 63.5），且目的型动作被"需要时使用"
+（card_corner 7、industry 2——off 时 industry 完全不可见）。剩余差距（§3 项 14）：
+搜索节点分配/评估细节。
 
 ## 5. 性能问题定位（未绑定分支深挖）
 

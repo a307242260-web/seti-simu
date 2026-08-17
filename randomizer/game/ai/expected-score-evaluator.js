@@ -30,6 +30,22 @@
   // 统一搜索：未绑定分支每层最多展开的未绑定后继数（预算内优先级截断，见
   // docs/project-progress/unified-search-design-20260817.md §3 项 9）。
   const MAX_UNIFIED_SUCCESSORS = 4;
+  // 统一搜索的"需求放行"family：目的型动作——本身没有独立价值，价值来自
+  // "满足当前需求"（quick_trade 补资源缺口 / card_corner 弃牌角标收益 /
+  // industry 公司能力）。unified 下这些动作凭需求进搜索（requiresRootCounterfactual
+  // 已按缺口过滤 quick_trade），叶价值由 quick 根截断限制为立即效果；其余未绑定
+  // 动作保持目标绑定评估（不平铺进搜索树）。
+  const UNIFIED_PURPOSE_FAMILIES = Object.freeze(new Set([
+    "quick_trade", "card_corner", "industry",
+  ]));
+  // quick 根截断（unified 未绑定）：这些 family 是 quick 动作，本身没有独立价值，
+  // 价值来自"为后续主行动/目标做准备"（"需要了再做"，用户口径）。作为根展开时
+  // 若继续主行动选择，leafValue（整链价值）会把主行动收益归因到 quick 根上，
+  // 评估虚高 → 乱做。截断到"quick 完成 + end_turn"，价值 = 立即效果。
+  const QUICK_ROOT_FAMILIES = Object.freeze(new Set([
+    "move", "quick_trade", "industry", "card_corner",
+    "runezu_face_symbol", "complete_task",
+  ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
   // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终
   // 叶评分（ai-design.md：任何中间 action/family 没有固定奖励）。
@@ -116,6 +132,13 @@
       roundNumber: Math.max(1, finite(projection.progress?.roundNumber) || 1),
       finalRoundNumber: Math.max(1, finite(projection.progress?.finalRoundNumber) || 4),
       traceCount: Math.max(0, finite(projection.progress?.traceCount) || 0),
+      // 外星槽位级进度（V 同源）：{ slotId, revealed, ownFirstTraces, ownExtraMarks }
+      alienSlots: (projection.progress?.alienSlots || []).map((slot) => ({
+        slotId: slot?.slotId ?? null,
+        revealed: Boolean(slot?.revealed),
+        ownFirstTraces: Math.max(0, finite(slot?.ownFirstTraces)),
+        ownExtraMarks: Math.max(0, finite(slot?.ownExtraMarks)),
+      })),
       sectorWinRequirements: projection.progress?.sectorWinRequirements
         ? structuredClone(projection.progress.sectorWinRequirements)
         : null,
@@ -512,14 +535,24 @@
     const incomePerWindowValue = Object.entries(INCOME_UNIT_VALUES)
       .reduce((total, [key, unitValue]) => total + incomeDelta[key] * unitValue, 0);
     const incomeValue = incomePerWindowValue * remainingRounds;
-    // 外星人标记价值：新增 trace 标记 → 即时分 + 终局 trace 分 + 外星人牌
+    // 外星人标记价值：新增 trace 标记 → 即时分 + 终局 trace 分 + 外星人牌。
+    // traceValue 保持"每痕迹 5 分"（终局 trace 分近似）；另加 alienPurposeValue：
+    // 放首痕迹的"揭示进度"期望（学习用户 405 档：R1-R2 放首痕迹 → R3 三色齐揭示 →
+    // 位置分 + 外星牌链爆发）。首痕迹即时分（slot1 5分+1宣 / slot2 3分+1宣）由
+    // actualScoreDelta 捕获（反事实真实结算），此处只计未来期望避免重复计分。
     const traceDelta = Math.max(
       0,
       finite(leafInfrastructure.traceCount) - finite(rootInfrastructure.traceCount),
     );
     const traceValue = traceDelta * TRACE_UNIT_VALUE;
+    const alienPurposeValue = alienPurposeDelta(
+      rootInfrastructure.alienSlots || [],
+      leafInfrastructure.alienSlots || [],
+      remainingRounds,
+    );
     return {
-      total: techValue + blueBonusPlacementValue + dataUtilizationValue + incomeValue + traceValue,
+      total: techValue + blueBonusPlacementValue + dataUtilizationValue
+        + incomeValue + traceValue + alienPurposeValue,
       remainingRounds,
       gainedTechIds,
       techValue,
@@ -529,7 +562,55 @@
       incomeValue,
       traceDelta,
       traceValue,
+      alienPurposeValue,
     };
+  }
+
+  // 外星目的价值（"放首痕迹→三色齐→揭示→位置分+外星牌"链的期望，delta 版）：
+  // - 新揭示（leaf revealed 而 root 未）：位置分期望（3-5 分/位置 × 剩余轮）+ 外星牌链
+  // - 未揭示但抢到首痕迹（ownFirstTraces 增加）：**首痕迹价值 = 首痕迹分（即时分由
+  //   actualScoreDelta 捕获）+ 一张外星人牌（用户规则：未揭示前只有首痕迹有价值，
+  //   非首痕迹少一张外星人牌且分低）** + 接近三色齐的揭示期望
+  // - 揭示后（两边 revealed）：**优先覆盖高收益位置（用户规则：开了外星人优先覆盖
+  //   下两行高收益、有外星人牌的位置）**——extraMarks 增加 = 放位置标记，每个位置
+  //   ≈ 位置分（3-5/位置 × 剩余轮）+ 外星牌期望
+  const ALIEN_CARD_VALUE = 5;         // 放首痕迹给一张外星人牌（效果链价值；10 实测让分桶 AI 疯狂抢外星忽略其他，off 白色 86→35，取 5 平衡）
+  const ALIEN_REVEAL_EXPECTATION = 15; // 三色齐揭示的期望（位置分 + 外星牌链，对齐 V 权重）
+  const ALIEN_POSITION_UNIT = 3;       // 揭示后每位置每轮期望（3-5 分/位置，对齐 V）
+  const ALIEN_POSITION_CARD_EXPECTATION = 4; // 高收益行给外星人牌的期望（部分位置）
+  function alienPurposeDelta(rootSlots, leafSlots, remainingRounds) {
+    let value = 0;
+    const length = Math.max(rootSlots.length, leafSlots.length);
+    for (let index = 0; index < length; index += 1) {
+      const root = rootSlots[index] || { revealed: false, ownFirstTraces: 0, ownExtraMarks: 0 };
+      const leaf = leafSlots[index] || { revealed: false, ownFirstTraces: 0, ownExtraMarks: 0 };
+      if (leaf.revealed && !root.revealed) {
+        value += ALIEN_REVEAL_EXPECTATION
+          + ALIEN_POSITION_UNIT * Math.max(0, remainingRounds);
+      } else if (leaf.revealed && root.revealed) {
+        // 揭示后位置覆盖（高收益行优先：位置分 + 外星牌期望）
+        const gainedMarks = Math.max(0, finite(leaf.ownExtraMarks))
+          - Math.max(0, finite(root.ownExtraMarks));
+        value += gainedMarks * (
+          ALIEN_POSITION_UNIT * Math.max(1, remainingRounds)
+          + ALIEN_POSITION_CARD_EXPECTATION
+        );
+      } else if (!leaf.revealed) {
+        const rootTraces = Math.max(0, finite(root.ownFirstTraces));
+        const leafTraces = Math.max(0, finite(leaf.ownFirstTraces));
+        if (leafTraces > rootTraces) {
+          const gainedFirstTraces = leafTraces - rootTraces;
+          // 抢到首痕迹：外星人牌价值（每张首痕迹一张牌）+ 揭示进度期望
+          value += ALIEN_CARD_VALUE * gainedFirstTraces;
+          value += leafTraces >= 3
+            ? ALIEN_REVEAL_EXPECTATION
+            : leafTraces >= 2
+              ? ALIEN_REVEAL_EXPECTATION * 0.3
+              : ALIEN_REVEAL_EXPECTATION * 0.1;
+        }
+      }
+    }
+    return value;
   }
 
   function leafValue(rootValue, leafValueState, parameters) {
@@ -818,11 +899,11 @@
   function requiresRootCounterfactual(action, observation, unifiedSearch = false) {
     if (!requiresCounterfactualOutcome(action)) return false;
     if (action?.family !== "quick_trade") return true;
-    // 统一搜索（unifiedSearch）：quick_trade 也进反事实评估——"只为目标补缺口才评估"
-    // 的门控让未命中目标的 quick_trade（含"有资源时乱买卡"）完全不可见，V/叶评估
-    // 无从判断其真实价值；价值交由评估排序（evaluateSecondaryAgentSearchPriority）
-    // 在预算内取舍。默认关保持原门控。
-    if (unifiedSearch === true) return true;
+    // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade 本身没有独立价值，
+    // 价值来自"补当前资源缺口"。unified 也不全放行——无需求时 quick_trade 的叶必然
+    // 搭后续主行动的便车（leafValue 是整链价值，不按动作分摊），评估虚高导致 AI 乱做
+    // （实测 on 全盘白色 86→43，quick_trade/card_corner/industry 被误选）。
+    // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
     const projection = observation?.outcomeProjection;
     const preparesAnalyze = Boolean(
       projection?.progress?.dataProgress?.analyzeReady
@@ -1851,16 +1932,25 @@
 
   function selectSecondaryAgentRootActions(input = {}) {
     const legalActions = input.legalActions || [];
-    // 统一搜索（unifiedSearch）：所有非 control 动作（requiresRootCounterfactual
-    // 已滤掉 end_turn/pass）都进反事实评估，不再按"是否命中预设目标清单"过滤根动作；
-    // 低价值分支由分支优先级排序在预算内 pruned。默认关保持目标门控。
-    if (input.unifiedSearch === true) return legalActions;
+    // 统一搜索（unifiedSearch）：搜索入口 = 目标引导 + 需求引导（用户口径
+    // "需要了再做"，乱按打字机的猴子写不出莎士比亚）——不把全部动作平铺进搜索树
+    // 稀释主行动深搜。未绑定动作只凭"需求"放行：目的型动作（quick_trade 补缺口 /
+    // card_corner 弃牌收益 / industry 公司能力）有需求才评估，其余未绑定动作保持
+    // off 的不可见（AI 通过目标绑定评估所有值得做的动作）。需求动作的叶价值由
+    // quick 根截断限制为立即效果（见 selectSecondaryAgentSuccessors），策略在
+    // "主行动完整链 vs 需求动作立即效果"间取舍。
     const compatibleActionIds = new Set(enumerateSecondaryAgentRootTargets({
       focalSeatId: input.focalSeatId,
       rootObservation: input.rootObservation,
       legalActions,
       maxProxyDepth: input.maxProxyDepth,
     }).flatMap((target) => target.compatibleActionIds));
+    if (input.unifiedSearch === true) {
+      return legalActions.filter((action) => (
+        compatibleActionIds.has(action.actionId)
+        || UNIFIED_PURPOSE_FAMILIES.has(action.family)
+      ));
+    }
     return legalActions.filter((action) => compatibleActionIds.has(action.actionId));
   }
 
@@ -2526,6 +2616,26 @@
         // 再排序；此处的 top-K 是"预算内优先级截断"，低价值后继仍会在根/上层
         // 被尝试（见 §3 设计文档）。
         if (input.unifiedSearch === true) {
+          // quick 根截断（"需要了再做"，用户口径）：根动作是 quick 时，其叶价值
+          // 只算立即效果，不搭后续主行动的便车。leafValue 是整链价值（叶状态−根
+          // 状态，不按动作分摊），quick 根（quick_trade/card_corner/industry/
+          // place_data 等）展开后若继续主行动选择，链里主行动的收益被归因到
+          // quick 根上（实测 on 单决策 quick_trade 87 / card_corner 65 / industry
+          // 55，全盘白色 86→43 乱做）。截断：quick 根的下一个主行动决策只给
+          // control（end_turn/pass）→ 叶在 quick 完成后立即形成，价值 = 立即
+          // 效果；主行动的价值由主行动自己作为根时的完整链评估承担。
+          // 注意：conditional（结算/支付）不算主行动，不截断；绑定目标的（routeTargetId
+          // 非空）不截断（目标路线的链价值归属正确）。
+          const rootActionId = String((input.actionChain || [])[0] || "");
+          const rootFamily = rootActionId.split(":")[0];
+          const rootIsQuick = QUICK_ROOT_FAMILIES.has(rootFamily);
+          const atMainActionDecision = !(
+            successors[0]?.phase === "conditional"
+            || CONDITIONAL_FAMILIES.has(successors[0]?.family)
+          );
+          if (rootIsQuick && atMainActionDecision && !input.routeTargetId) {
+            return controls;
+          }
           const targetedIds = new Set(targeted.map((action) => action.actionId));
           const untargeted = successors
             .filter((action) => (
@@ -2576,6 +2686,33 @@
         if (alienTraceChoices.length) {
           return bindRoute(
             alienTraceChoices,
+            input.routeTargetId,
+            input.routePlanId,
+          );
+        }
+        // 揭示后痕迹位置选择（用户规则：开了外星人优先覆盖"下两行高收益、有外星
+        // 人牌"的位置，如阿米巴 3/4 号位给精选外星牌）：选项 summary 带奖励描述
+        // （"阿米巴 黄3号位（外星人牌）"），按奖励价值排序——外星人牌/精选牌 >
+        // 有分数 > state-extra 冗余位（3 分/枚）> 无奖励。
+        const revealedTracePositions = successors.filter((action) => (
+          action.family === "choose_target"
+          && action.target?.kind === "planet-reward-alien-trace"
+          && action.target?.speciesId != null
+          && action.target?.position != null
+        ));
+        if (revealedTracePositions.length === successors.length) {
+          const tracePositionValue = (action) => {
+            const summary = String(action.summary || "");
+            if (summary.includes("外星人牌") || summary.includes("精选牌")) return 3;
+            if (/[0-9]分/.test(summary)) return 2;
+            if (action.target?.stateExtra) return 1;
+            return 0;
+          };
+          return bindRoute(
+            [...revealedTracePositions].sort((left, right) => (
+              tracePositionValue(right) - tracePositionValue(left)
+              || String(left.actionId).localeCompare(String(right.actionId))
+            )),
             input.routeTargetId,
             input.routePlanId,
           );

@@ -938,12 +938,24 @@
           } : {}),
         });
       }
-      if (!choices.length) return [];
+      if (!choices.length) {
+        // 防死锁兜底：全部候选槽位已失效/被消费时，仍给一个"跳过"选项收束——
+        // 否则决策已创建却无可选项，玩家（含 AI）卡在 awaiting_input 无合法候选
+        // （协调器 MACHINE_PLAYER_BOUNDARY_EMPTY 崩溃，实测统一搜索全盘 step 302）。
+        return formalize(root, effect.ownerId, [
+          choice("accept_optional_effect", `skip:${payload.event?.type || "trigger"}`, {}, {}, "跳过"),
+        ]);
+      }
       choices.push(choice("accept_optional_effect", `skip:${payload.event?.type || "trigger"}`, {}, {}, "跳过"));
       return formalize(root, effect.ownerId, choices);
     }
     const settlement = findCardSettlement(root, effect.ownerId, payload);
-    if (!settlement) return [];
+    if (!settlement) {
+      // 同上：效果已失效（卡牌离开/槽位被消费）时仍给 skip 兜底，防止无选项决策死锁。
+      return formalize(root, effect.ownerId, [
+        choice("accept_optional_effect", `skip:${payload.kind || "settlement"}`, {}, {}, "跳过"),
+      ]);
+    }
     const id = `${settlement.kind}:${settlement.cardInstanceId}:${settlement.ruleId}`;
     const cardImageSrc = findTaskCardImageSrc(root, settlement.cardInstanceId);
     return formalize(root, effect.ownerId, [
@@ -1539,11 +1551,17 @@
       settlement = findCardSettlement(root, effect.ownerId, payload);
     }
     const player = actor(root, effect.ownerId);
-    if (!legal || !settlement || !player) {
+    if (!legal || !player) {
       return fail("CARD_DECISION_STALE", "卡牌触发 Decision 已失效");
     }
+    // skip 不需要 settlement 有效（防死锁兜底：效果已失效/槽位被消费时玩家仍能
+    // 收束本决策；settlement 检查必须放在 skip 之后，否则失效场景 skip 也会被
+    // CARD_DECISION_STALE 拒绝）。
     if (String(legal.target.choiceId).startsWith("skip:")) {
       return { ok: true, spawnedEffects: [], irreversible: null };
+    }
+    if (!settlement) {
+      return fail("CARD_DECISION_STALE", "卡牌触发 Decision 已失效");
     }
     const cardIndex = (player.reservedCards || [])
       .findIndex((card) => card.id === settlement.cardInstanceId);
