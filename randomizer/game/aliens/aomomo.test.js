@@ -59,16 +59,19 @@ assert.equal(aomomo.getTraceEntries(aomomo.getTraceGrid(state, 1), "pink", 1).le
 
 const panelState = createState();
 aomomo.initializeAomomoReveal(panelState, 1, white, () => 0);
-const orbit = aomomo.addOrbitMarker(panelState, white, nextAlienIdentity());
-assert.equal(orbit.ok, true);
-assert.equal(aomomo.countOrbitMarkers(panelState), 1);
-assert.equal(aomomo.canAddOrbitMarker(panelState), false);
+// 奥陌陌环绕/登陆槽位无限：任意次数的环绕/登陆都可以继续放置标记。
 for (let index = 0; index < 3; index += 1) {
-  const landing = aomomo.addLandingMarker(panelState, white, nextAlienIdentity());
-  assert.equal(landing.ok, true);
+  const orbit = aomomo.addOrbitMarker(panelState, white, nextAlienIdentity());
+  assert.equal(orbit.ok, true, orbit.message);
 }
-assert.equal(aomomo.countLandingMarkers(panelState), 3);
-assert.equal(aomomo.canAddLandingMarker(panelState), false);
+assert.equal(aomomo.countOrbitMarkers(panelState), 3);
+assert.equal(aomomo.canAddOrbitMarker(panelState), true, "环绕槽位无限，永不满");
+for (let index = 0; index < 5; index += 1) {
+  const landing = aomomo.addLandingMarker(panelState, white, nextAlienIdentity());
+  assert.equal(landing.ok, true, landing.message);
+}
+assert.equal(aomomo.countLandingMarkers(panelState), 5);
+assert.equal(aomomo.canAddLandingMarker(panelState), true, "登陆槽位无限，永不满");
 
 assert.equal(aomomo.createAlienCard(8, 1).cardTypeCode, 3);
 const aomomo0Effects = aomomo.buildImmediateEffects(0);

@@ -28,8 +28,6 @@
   const TRACE_TYPES = Object.freeze(["pink", "yellow", "blue"]);
   const TRACE_POSITIONS = Object.freeze([1, 2, 3, 4, 5]);
   const TRACE_POSITION_COUNT = 5;
-  const ORBIT_CAPACITY = 1;
-  const LANDING_CAPACITY = 3;
 
   const EFFECT_GAIN_FOSSILS = "aomomo_gain_fossils";
   const EFFECT_SCAN_AOMOMO_X = "aomomo_scan_x";
@@ -381,29 +379,25 @@
     };
   }
 
-  function canAddOrbitMarker(alienState) {
-    return (ensureAomomoState(alienState).orbitMarkers || []).length < ORBIT_CAPACITY;
+  // 奥陌陌环绕/登陆槽位无限：任何次数的环绕/登陆都可以继续放置标记，
+  // 不做容量上限（与普通星球参考图一致，超出固定槽位的标记照常记录）。
+  function canAddOrbitMarker() {
+    return true;
   }
 
   function addOrbitMarker(alienState, player, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    if (!canAddOrbitMarker(alienState)) {
-      return { ok: false, message: "奥陌陌环绕槽已满" };
-    }
     const marker = createPanelMarker(alienState, player, "orbit", options);
     aomomo.orbitMarkers.push(marker);
     return { ok: true, marker, message: "奥陌陌：放置环绕标记" };
   }
 
-  function canAddLandingMarker(alienState) {
-    return (ensureAomomoState(alienState).landingMarkers || []).length < LANDING_CAPACITY;
+  function canAddLandingMarker() {
+    return true;
   }
 
   function addLandingMarker(alienState, player, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    if (!canAddLandingMarker(alienState)) {
-      return { ok: false, message: "奥陌陌登陆槽已满" };
-    }
     const marker = createPanelMarker(alienState, player, "landing", options);
     aomomo.landingMarkers.push(marker);
     return { ok: true, marker, message: "奥陌陌：放置登陆标记" };
@@ -621,8 +615,6 @@
     TRACE_POSITIONS,
     TRACE_POSITION_COUNT,
     TRACE_REWARDS,
-    ORBIT_CAPACITY,
-    LANDING_CAPACITY,
     EFFECT_GAIN_FOSSILS,
     EFFECT_SCAN_AOMOMO_X,
     EFFECT_SCAN_AOMOMO_X_GAIN_FOSSIL,

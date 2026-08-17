@@ -208,9 +208,9 @@
 
   function canAddOrbitForPlacement(context, placement) {
     const planetId = placement.planet.planetId;
-    const aomomoApi = getAomomo();
+    // 奥陌陌环绕槽位无限（与普通星球参考图一致），只要求奥陌陌模块已加载。
     return isAomomoPlanetId(planetId)
-      ? Boolean(aomomoApi?.canAddOrbitMarker?.(context.aliens))
+      ? Boolean(getAomomo())
       : planetStats.canAddOrbitMarker(context.planets, planetId);
   }
 
@@ -287,7 +287,7 @@
     const aomomoApi = getAomomo();
 
     if (isAomomoPlanetId(planetId)) {
-      if (aomomoApi?.canAddLandingMarker?.(context.aliens)) {
+      if (aomomoApi) {
         const target = targetWithRocketId({ type: "planet" }, placement.rocket.id);
         const markerSequence = getNextLandingMarkerSequence(context, planetId);
         const rewardMarkerSequence = getLandRewardMarkerSequence(target, markerSequence, options);
@@ -429,11 +429,9 @@
     const aomomoApi = getAomomo();
     const isAomomoPlanet = isAomomoPlanetId(placement.planet.planetId);
     if (isAomomoPlanet) {
-      if (!aomomoApi?.canAddOrbitMarker) {
+      // 奥陌陌环绕槽位无限：只需奥陌陌模块已加载，无容量上限。
+      if (!aomomoApi) {
         return { ok: false, abilityId: "orbitProbe", message: "奥陌陌模块未加载" };
-      }
-      if (!aomomoApi.canAddOrbitMarker(context.aliens)) {
-        return { ok: false, abilityId: "orbitProbe", message: `${placement.planet.name} 环绕槽位已满` };
       }
     } else if (!planetStats.canAddOrbitMarker(context.planets, placement.planet.planetId)) {
       return { ok: false, abilityId: "orbitProbe", message: `${placement.planet.name} 不支持环绕` };
@@ -528,11 +526,9 @@
     const planetId = placement.planet.planetId;
     const aomomoApi = getAomomo();
     const isAomomoPlanet = isAomomoPlanetId(planetId);
-    if (target.type === "planet" && isAomomoPlanet && !aomomoApi?.canAddLandingMarker) {
+    // 奥陌陌登陆槽位无限：只需奥陌陌模块已加载，无容量上限。
+    if (target.type === "planet" && isAomomoPlanet && !aomomoApi) {
       return { ok: false, abilityId: "landProbe", message: "奥陌陌模块未加载" };
-    }
-    if (target.type === "planet" && isAomomoPlanet && !aomomoApi.canAddLandingMarker(context.aliens)) {
-      return { ok: false, abilityId: "landProbe", message: `${placement.planet.name} 登陆槽位已满` };
     }
     if (target.type === "planet"
       && !isAomomoPlanet
