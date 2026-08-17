@@ -343,7 +343,7 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     movementSteps: 2,
     firstRewardSlotOpen: null,
   };
-  const store = { nextStepKey: nextKey, dependency: routeDependency };
+  const store = { nextStepKey: nextKey, dependency: routeDependency, revealedCount: 0 };
 
   const noStore = planContinuation.attemptPlanContinuation(null, null, [nextDescriptor]);
   assert.equal(noStore.hit, false);
@@ -391,9 +391,38 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   assert.equal(slotMiss.hit, false, "第一奖励格被占必须重新决策");
 
   // tier1/2：generic 依赖（对手火箭移动/打牌等不影响计划执行）→ 直接复用
-  const genericStore = { nextStepKey: nextKey, dependency: { kind: "generic" } };
+  const genericStore = { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: 0 };
   const genericHit = planContinuation.attemptPlanContinuation(genericStore, makeObservation({ rotation: 2 }), [nextDescriptor]);
   assert.equal(genericHit.hit, true, "generic 依赖（未识别为影响计划执行）必须复用");
+
+  // 硬性特例：翻开了外星人 → 无论依赖环节如何都必须重新决策
+  const revealed = makeObservation();
+  revealed.publicState.board.aliens = { slots: [{ revealed: true }] };
+  const revealedMiss = planContinuation.attemptPlanContinuation(
+    { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: 0 },
+    revealed,
+    [nextDescriptor],
+  );
+  assert.equal(revealedMiss.hit, false, "翻开了外星人必须重新决策");
+  assert.equal(revealedMiss.reason, "alien-revealed");
+  assert.equal(revealedMiss.currentRevealedCount, 1, "必须报告实际揭示槽位数");
+
+  // 揭示数未增加（还是 1 个）→ 不触发硬性特例，走正常依赖判定
+  const stillRevealed = planContinuation.attemptPlanContinuation(
+    { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: 1 },
+    revealed,
+    [nextDescriptor],
+  );
+  assert.equal(stillRevealed.hit, true, "揭示数未增加不触发特例");
+
+  // store 无揭示基线 → 无法验证 → 保守重新决策
+  const noBaseline = planContinuation.attemptPlanContinuation(
+    { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: null },
+    makeObservation(),
+    [nextDescriptor],
+  );
+  assert.equal(noBaseline.hit, false, "无揭示基线必须保守重新决策");
+  assert.equal(noBaseline.reason, "no-reveal-count");
 }
 
 // ---------------------------------------------------------------------------

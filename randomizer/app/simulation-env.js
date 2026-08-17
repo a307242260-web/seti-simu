@@ -930,6 +930,7 @@ function createSimulationEnv() {
             planContinuationStores.set(seatId, {
               nextStepKey: snapshot.plan.nextStepKey,
               dependency: snapshot.planDependency,
+              revealedCount: snapshot.planAssumedRevealedCount,
               directoryFingerprint: snapshot.directoryFingerprint,
             });
           } else {

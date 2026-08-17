@@ -463,6 +463,9 @@ function extractPlanSnapshot(input, options = {}) {
     plan,
     planStatus,
     planDependency,
+    planAssumedRevealedCount: plan?.planAssumedObservation
+      ? countRevealedAliens(plan.planAssumedObservation)
+      : null,
     margin,
     marginStatus,
     topScore,
@@ -567,17 +570,31 @@ function findAlienSlot(observation, alienSlotId) {
   )) || null;
 }
 
+// 已揭示外星人槽位数（揭示是单调事件：只增不减）。
+function countRevealedAliens(observation) {
+  const aliens = observation?.publicState?.board?.aliens
+    || observation?.publicState?.aliens
+    || null;
+  const slots = Array.isArray(aliens?.slots)
+    ? aliens.slots
+    : Object.values(aliens?.slots || {});
+  return slots.filter((slot) => slot?.revealed === true).length;
+}
+
 // ---------------------------------------------------------------------------
 // fast-path 检查（纯函数）：只消费计划快照 + 当前合法集 + 当前观测
 // ---------------------------------------------------------------------------
 
-// store: { nextStepKey, dependency, directoryFingerprint }（由 extractPlanSnapshot
-// 的 plan/planDependency/directoryFingerprint 构造）。
+// store: { nextStepKey, dependency, revealedCount, directoryFingerprint }
+// （由 extractPlanSnapshot 的 plan/planDependency/planAssumedRevealedCount/
+// directoryFingerprint 构造）。
 // 判定（用户口径，对照基准 = 上轮本家行动执行完的计划假设状态）：
 //   下一步仍合法 且 计划执行依赖的环节未变（盘面无变化 → tier1；盘面有变化但
 //   不影响计划执行，如对手火箭移动/打牌/资源变化/无关扇区/无探测器移动的旋转
 //   → tier2）→ 直接复用；依赖环节变了（着陆移动变多 / 目标外星人槽被占等 →
 //   tier3）→ 重新决策。
+// 硬性特例：翻开了外星人（揭示槽位数增加）→ 无条件重新决策——揭示可能带来
+// 计划未预见的全新目标/机会，不适用依赖环节近似。
 function attemptPlanContinuation(store, currentObservation, legalActions) {
   if (!store) return Object.freeze({ hit: false, reason: "no-plan" });
   const current = (legalActions || []).find((action) => (
@@ -589,6 +606,19 @@ function attemptPlanContinuation(store, currentObservation, legalActions) {
   }
   if (!currentObservation) {
     return Object.freeze({ hit: false, reason: "no-observation" });
+  }
+  // 硬性特例：翻开了外星人 → 一定重新决策
+  if (store.revealedCount == null) {
+    return Object.freeze({ hit: false, reason: "no-reveal-count" });
+  }
+  const currentRevealed = countRevealedAliens(currentObservation);
+  if (currentRevealed > store.revealedCount) {
+    return Object.freeze({
+      hit: false,
+      reason: "alien-revealed",
+      assumedRevealedCount: store.revealedCount,
+      currentRevealedCount: currentRevealed,
+    });
   }
   const currentDependency = currentDependencyFromStore(store, currentObservation);
   if (stableHash(currentDependency) === stableHash(store.dependency)) {
@@ -613,5 +643,6 @@ module.exports = Object.freeze({
   attemptPlanContinuation,
   planDependencyFromPlan,
   currentDependencyFromStore,
+  countRevealedAliens,
   rankActions,
 });
