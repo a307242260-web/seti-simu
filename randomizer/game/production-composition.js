@@ -394,31 +394,18 @@
       if (!player) {
         return { ok: false, code: "QUICK_TRADE_CARD_OWNER_MISSING", message: "快速交易选牌 owner 不存在" };
       }
-      const factoryOptions = typeof cards.createCommittedCardInstance === "function"
-        ? {
-          createCardInstance: (entry, sequence) => (
-            cards.createCommittedCardInstance(root, entry, sequence)
-          ),
-        }
-        : {};
+      // 统一抽牌上下文：快速交易获得牌（精选/盲抽）共用 cards.createCardDrawContext
+      const drawContext = cards.createCardDrawContext(
+        root.cards,
+        root.players,
+        context.random,
+        { root },
+      );
       const picked = action.target?.source === "blind"
         ? (typeof context.blindDrawCard === "function"
           ? context.blindDrawCard(player)
-          : cards.blindDraw(
-            root.cards,
-            root.players,
-            player,
-            context.random,
-            factoryOptions,
-          ))
-        : cards.pickFromPublic(
-          root.cards,
-          root.players,
-          player,
-          Number(action.target?.slotIndex),
-          context.random,
-          factoryOptions,
-        );
+          : drawContext.blindDraw(player))
+        : drawContext.pickFromPublic(player, Number(action.target?.slotIndex));
       if (!picked?.ok) return picked;
       return {
         ok: true,

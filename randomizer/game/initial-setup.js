@@ -199,19 +199,13 @@
       turn: rootState.turn,
       blindDrawCard(player) {
         if (typeof actionContext?.blindDrawCard === "function") return actionContext.blindDrawCard(player);
-        return cards.blindDraw(
+        // 统一抽牌上下文：初始结算盲抽共用 cards.createCardDrawContext
+        return cards.createCardDrawContext(
           rootState.cards,
           rootState.players,
-          player,
           random,
-          typeof cards.createCommittedCardInstance === "function"
-            ? {
-              createCardInstance: (entry, sequence) => (
-                cards.createCommittedCardInstance(rootState, entry, sequence)
-              ),
-            }
-            : {},
-        );
+          { root: rootState },
+        ).blindDraw(player);
       },
       getEarthSectorCoordinate: () => earthCoordinate(rootState),
     }, { playerIds: activePlayerIds(rootState) });
@@ -398,19 +392,13 @@
         blindDraw: (targetPlayer) => (
           typeof actionContext?.blindDrawCard === "function"
             ? actionContext.blindDrawCard(targetPlayer)
-            : cards.blindDraw(
+            // 统一抽牌上下文：初始收入盲抽共用 cards.createCardDrawContext
+            : cards.createCardDrawContext(
               rootState.cards,
               rootState.players,
-              targetPlayer,
               createRandom(`${rootState.meta?.seed || "browser-host"}:initial-income:${player.id}`),
-              typeof cards.createCommittedCardInstance === "function"
-                ? {
-                  createCardInstance: (entry, sequence) => (
-                    cards.createCommittedCardInstance(rootState, entry, sequence)
-                  ),
-                }
-                : {},
-            )
+              { root: rootState },
+            ).blindDraw(targetPlayer)
         ),
         gainData: (targetPlayer) => data.gainData(
           targetPlayer,

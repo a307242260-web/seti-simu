@@ -1291,17 +1291,13 @@ function createProductionHostComposition(options = {}) {
       decisionVersion: state.match.decisionVersion || 0,
       random: options.random,
       blindDrawCard(player) {
-        return cards.blindDraw(
+        // 统一抽牌上下文：初始结算/要求规划盲抽共用 cards.createCardDrawContext
+        return cards.createCardDrawContext(
           state.cards,
           state.players,
-          player,
           options.random,
-          {
-            createCardInstance: (entry, sequence) => (
-              cards.createCommittedCardInstance(state, entry, sequence)
-            ),
-          },
-        );
+          { root: state },
+        ).blindDraw(player);
       },
       getEarthSectorCoordinate: () => getEarthCoordinate(state),
       getPlanetLocations: () => solar.createSolarSnapshot(state.solarSystem).planetLocations,

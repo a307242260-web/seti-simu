@@ -336,13 +336,13 @@
       blindDraw: (targetPlayer) => (
         typeof context?.blindDrawCard === "function"
           ? context.blindDrawCard(targetPlayer)
-          : cards.blindDraw(
+          // 统一抽牌上下文：初始牌收入盲抽共用 cards.createCardDrawContext
+          : cards.createCardDrawContext(
             context.cards,
             context.players,
-            targetPlayer,
             Math.random,
             { root: context?.state },
-          )
+          ).blindDraw(targetPlayer)
       ),
       gainData: (targetPlayer) => data.gainData(targetPlayer, {
         source: "initial_card",
@@ -381,13 +381,13 @@
     for (let index = 0; index < target; index += 1) {
       const result = typeof context?.blindDrawCard === "function"
         ? context.blindDrawCard(player)
-        : cards.blindDraw(
+        // 统一抽牌上下文：初始牌盲抽共用 cards.createCardDrawContext
+        : cards.createCardDrawContext(
           context.cards,
           context.players,
-          player,
           Math.random,
           { root: context?.state },
-        );
+        ).blindDraw(player);
       pushResult(results, {
         ...result,
         type: "blindDraw",

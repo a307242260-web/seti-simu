@@ -428,6 +428,7 @@ journal 统一处理。
 
 ## 卡牌模型
 
+- **获得牌统一**：盲抽与精选全部收敛到 `cards/deck.js` 唯一内核——盲抽 `cards.blindDraw`（→ `takeRandomEntryForDraw` 洗回+抽牌 → `createCommittedCardInstance` 进手牌）、精选 `cards.pickFromPublic`（公共牌区取牌 + `replenishPublicSlot` 补牌）。效果会话内路径（卡牌效果、研究科技、收入、公司能力、外星人/任务触发、快速交易获得牌、初始结算/初始收入盲抽）全部经统一上下文 `cards.createCardDrawContext`（封装 random 与 createCardInstance 装配）执行；无任何绕过内核的第二套抽牌/选牌实现。外星物种牌堆（阿米巴/虫/… `blindDrawCard`）是物种独立牌堆，不属主牌库盲抽范围。
 - 人工卡牌描述转可执行 DSL 的规范参考：`docs\card-modeling-dsl-spec.md`。后续新增卡牌模型时，先按该文档约束人工描述和 agent 转换，尤其要明确效果节点 `kind`、费用策略、任务类型和队列结束结算时机。
 - 卡牌源数据保持 CSV，方便手工校对和继续补内容。`assets/cards/card_model.csv` 承载资产编号、费用、角标和切图元数据；浏览器加载的 `randomizer/game/card-catalog.js` 和 Node 使用的 `assets/cards/card_model.json` 由 `python tools/build_card_catalog_js.py` 生成，改 CSV 后必须同步生成。
 - `randomizer/game/cards/effects.js` 维护卡牌来源映射与可执行模型；实现状态以该文件和当前测试 inventory 为准，不再引用仓库外资料路径或已删除的中间说明文档。
