@@ -255,6 +255,7 @@ UI 布局：
 - 每个回合只能开始一次主要行动。
 - 主行动执行中、效果队列处理中或主行动已完成但未回合结束时，其他主行动按钮全部禁用。
 - 每个主行动触发的动作和效果全部处理完后，才允许点击“回合结束”。
+- **“消耗主行动”与“执行动作”解耦**：能力内核（`launchProbe`/`orbitProbe`/`landProbe`/`scanNebula`/`analyzeData`/科技 resolver）与 science/probe-turn 效果执行器不自行判断是否消耗主行动。置位只在标准行动入口：probe-turn EXECUTE/LAND_CHOICE（launch/orbit/land）、science `createEffectGroup` 按相位打 `consumeMainAction` 标记后由 EXECUTE/ANALYZE/RESEARCH 按标记置位（scan/analyze/research_tech）、play_card 与 PASS 各自置位；卡牌/初始/奖励来源直接 spawn 效果节点、不带 `consumeMainAction`，不消耗主行动——消耗发生在“打牌/标准行动”那一次。
 - “回合结束”会提交并清空当前主行动与快速行动历史，并按本轮顺位切换到下一名未 PASS 玩家；所有未 PASS 玩家在当前行动圈都行动后，会继续本轮的下一回合；若所有玩家都 PASS，则进入下一轮。第 4 轮所有玩家都 PASS 后，游戏结束并进行终局计分。
 - `PASS` 当前也是主要行动：点击后进入 PASS 必做效果链；PASS 链结算完后**自动结束回合**——在同一 Effect Session 内直接执行与「结束回合」相同的回合末 handoff（金/中立里程碑 → 外星人揭示 → 公司 → 卡牌触发）并推进到下一名玩家，玩家无需再点击“结束回合”，也不再有“待回合结束”状态。该玩家本轮不再获得行动机会。
 - 每轮 PASS 效果链顺序固定（含最后一轮）：若当前玩家手牌数 > 4，先弃至 4 张；若该玩家是本轮第一位 PASS 玩家，执行 1 次太阳系旋转（最后一轮同样旋转，规则书 PASS 步骤 2 注明“第 5 轮仍要公转，只是无需拿取公转标记”；实现不建模标记 token）；然后从本轮 PASS 预留叠中强制精选 1 张牌加入手牌（仅第 1/2/3 轮有预留叠，最后一轮无叠、跳过此步）。链末自动推进回合（`TURN_ADVANCE`，边界标记 `didPass`）。

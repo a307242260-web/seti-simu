@@ -982,7 +982,6 @@
         ...clone(effect.options || {}),
         skipCost: effect.options?.skipCost !== false,
       };
-      payload.mainAction = false;
     } else if (effect.type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN) {
       type = science.EFFECT_TYPES.PUBLIC_SCAN;
       kind = "decision";
@@ -997,7 +996,7 @@
         phase: "main",
         actorId: ownerId,
         target: { kind: "card-scan-action" },
-        payload: { skipCost: true, nestedCardEffect: true },
+        payload: { skipCost: true },
       };
     }
     return {

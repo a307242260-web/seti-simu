@@ -953,7 +953,9 @@
         const paid = abilities.executeAbility("payScanCost", createActionContext(root, actor.id), { cost });
         if (!paid.ok) return paid;
         if (!action.payload?.skipCost) consumeAlienLabPanel(actor, "yellow");
-        if (!action.payload?.nestedCardEffect) actor.mainActionCompleted = true;
+        // 消耗主行动的判定由标准行动入口（createEffectGroup）传入 consumeMainAction；
+        // 卡牌展开的扫描直接 spawn EXECUTE、不带该标记，不消耗主行动。
+        if (effect.payload?.consumeMainAction) actor.mainActionCompleted = true;
         return scienceResult(state, root, action.family, {
           spawnedEffects: scanQueue(root, actor),
           events: [{ type: "scanAction", playerId: actor.id, executorId: EXECUTOR_ID }],
@@ -977,7 +979,10 @@
             effect: {
               type: EFFECT_TYPES.ANALYZE,
               ownerId: actor.id,
-              payload: { action: clone(action) },
+              payload: {
+                action: clone(action),
+                consumeMainAction: Boolean(effect.payload?.consumeMainAction),
+              },
             },
           }],
         });
@@ -985,7 +990,7 @@
       return scienceResult(state, root, action.family, {
         spawnedEffects: [scanDecisionEffect(EFFECT_TYPES.RESEARCH, actor.id, {
           options: clone(action.payload || {}),
-          mainAction: true,
+          consumeMainAction: Boolean(effect.payload?.consumeMainAction),
         })],
       });
     });
@@ -1438,7 +1443,9 @@
         skipCost: Boolean(effect.payload?.action?.payload?.skipCost),
       });
       if (!actor || !result.ok) return result || fail("SCIENCE_ANALYZE_STALE", "分析已失效");
-      actor.mainActionCompleted = true;
+      // 消耗主行动由标准行动入口传入的 consumeMainAction 决定（当前无卡牌触发
+      // analyze，标准 analyze 必然带标记；与 scan/research 保持同一解耦结构）。
+      if (effect.payload?.consumeMainAction) actor.mainActionCompleted = true;
       const choices = listAlienTraceChoices(root, actor.id, "blue");
       return scienceResult(state, root, EFFECT_TYPES.ANALYZE, {
         spawnedEffects: choices.length
@@ -1586,7 +1593,7 @@
         if (!result.ok) return result;
         const actor = getActor(root, effect.ownerId);
         if (!effect.payload?.options?.skipCost) consumeAlienLabPanel(actor, "pink");
-        if (effect.payload?.mainAction && actor) actor.mainActionCompleted = true;
+        if (effect.payload?.consumeMainAction && actor) actor.mainActionCompleted = true;
         const spawnedEffects = [];
         if (result.awaitingCardSelection) {
           spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
@@ -1623,6 +1630,9 @@
       if (!ACTION_FAMILIES.includes(action?.family)) {
         return fail("SCIENCE_FAMILY_INVALID", `Science domain 不接受 ${action?.family || "<missing>"}`);
       }
+      // 消耗主行动的判定只在标准行动入口：主相位 action 由 createEffectGroup
+      // 打上 consumeMainAction 标记，执行器只按标记置位；卡牌展开的 science
+      // 效果直接 spawn EXECUTE/RESEARCH，不带标记，不消耗主行动。
       return {
         kind: action.phase === "quick" ? "quick" : "action",
         ownerId: action.actorId || null,
@@ -1630,7 +1640,10 @@
         effects: [{
           type: EFFECT_TYPES.EXECUTE,
           ownerId: action.actorId || null,
-          payload: { action: clone(action) },
+          payload: {
+            action: clone(action),
+            consumeMainAction: action.phase !== "quick",
+          },
         }],
       };
     }
