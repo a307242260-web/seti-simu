@@ -122,7 +122,7 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 计划；不复用才调用决策方案，方案输出 { actionId（至少下一步）, plan?（完整
 计划，用于复用判断）}。
 
-- 契约：`heuristic-policy-adapter.runDecision` 输出携带 `plan`（winning leaf 的
+- 契约：`heuristic-decision-function` 输出携带 `plan`（winning leaf 的
   chain.slice(1) 完整链 + 依赖 + 揭示基线）；simulation 的 store 存完整计划，
   `planReuseCheck` 命中后 `advancePlan` 前进一步存回（多步逐步消费），链条耗尽
   或判定失败才调用方案。

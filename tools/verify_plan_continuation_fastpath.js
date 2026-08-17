@@ -79,7 +79,6 @@ function runGame(options, planContinuationFastPath) {
       planContinuation: {
         hitCount: Number(diagnostics.planContinuationHitCount) || 0,
         missCount: Number(diagnostics.planContinuationMissCount) || 0,
-        commitFailures: Number(diagnostics.planContinuationCommitFailures) || 0,
         missReasons: diagnostics.planContinuationMissReasons || {},
       },
     };
@@ -106,7 +105,7 @@ function main() {
     if (run.planContinuationFastPath) {
       process.stdout.write(
         `fast-path: 命中 ${run.planContinuation.hitCount} / miss ${run.planContinuation.missCount}`
-        + ` (实际快路决策 ${run.fastPathDecisions}) / 提交失败 ${run.planContinuation.commitFailures}\n`,
+        + ` (实际快路决策 ${run.fastPathDecisions})\n`,
       );
       process.stdout.write(
         `miss 原因: ${Object.entries(run.planContinuation.missReasons).map(([reason, count]) => `${reason}=${count}`).join("  ") || "无"}\n`,

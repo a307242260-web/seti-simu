@@ -17,7 +17,8 @@ const {
 } = require("./simulation-contract");
 const outcomeModel = require("../game/ai/outcome-model");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
-const planContinuation = require("../game/ai/plan-continuation");
+const machinePlayerCoordinatorModule = require("../game/ai/machine-player-coordinator");
+const heuristicDecisionFunctionModule = require("../game/ai/heuristic-decision-function");
 const endGameScoring = require("../game/end-game-scoring");
 const finalScoring = require("../game/final-scoring");
 const cardEffects = require("../game/cards/effects");
@@ -79,60 +80,6 @@ function getWorkingProjection(composition) {
 function getTurnState(state) {
   // 调用方只瞬时读取原始字段并复制进新对象，不持有引用，无需克隆
   return state.turn || {};
-}
-
-function policyOutcomeActions(actions, policyObservation, unifiedSearch = false) {
-  const candidates = (actions || []).filter((action) => (
-    expectedScoreEvaluator.requiresRootCounterfactual(
-      action,
-      policyObservation,
-      unifiedSearch,
-    )
-  ));
-  return expectedScoreEvaluator.selectSecondaryAgentRootActions({
-    focalSeatId: candidates[0]?.actorPlayerId || null,
-    rootObservation: policyObservation,
-    legalActions: candidates,
-    maxProxyDepth: 15,
-    unifiedSearch,
-  });
-}
-
-function initialSetupOutcomeActions(actions, observation) {
-  const setup = observation?.publicState?.resident?.initialSetup;
-  const offer = setup?.offer;
-  if (!setup?.active || !offer) return actions || [];
-  if (!offer.selectedIndustryId) {
-    return (actions || []).filter((action) => (
-      action.target?.kind === "select_initial_card"
-      && action.target?.selectionKind === "industry"
-    ));
-  }
-  const selectedInitialIds = new Set(offer.selectedInitialIds || []);
-  if (selectedInitialIds.size < 2) {
-    return (actions || []).filter((action) => (
-      action.target?.kind === "select_initial_card"
-      && action.target?.selectionKind === "initial"
-      && !selectedInitialIds.has(action.target?.cardId)
-    ));
-  }
-  return (actions || []).filter((action) => action.target?.kind === "confirm_initial_setup");
-}
-
-function completePolicyOutcomeSet(actions, evaluated, rootObservation) {
-  const byId = new Map((evaluated || []).map((outcome) => [outcome.actionId, outcome]));
-  return (actions || []).map((action) => {
-    if (byId.has(action.actionId)) return byId.get(action.actionId);
-    return {
-      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
-      actionId: action.actionId,
-      status: "unresolved",
-      confidence: "none",
-      code: "STRATEGIC_GOAL_NOT_EVALUATED",
-      rootObservation,
-      leaves: [],
-    };
-  });
 }
 
 // 待放置终局标记的潜在价值：玩家 base 分已跨过 [25,50,70] 阈值但尚未认领的标记，
@@ -320,11 +267,9 @@ function createSimulationEnv() {
   let cachedLegal = null;
   let lastObservation = null;
   let diagnostics = null;
-  let policyAdapter = null;
-  let policySeatsInitialized = false;
+  let machineCoordinator = null;
+  let heuristicDecision = null;
   let disposed = false;
-  // 计划延续 fast-path：按席位保存上次全量搜索产出的计划下一步 + 目录指纹 + 赢面。
-  let planContinuationStores = new Map();
 
   function evaluateActionOutcomes(actions = null, options = {}) {
     assertUsable();
@@ -404,10 +349,11 @@ function createSimulationEnv() {
     if (!composition) throw environmentError("SIMULATION_ENV_NOT_READY", "Simulation env 尚未 reset");
   }
 
-  function ensurePolicyAdapter() {
-    if (!policyAdapter) {
-      const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
-      policyAdapter = createHeuristicPolicyAdapter({
+  // Heuristic 决策函数（懒创建）：直调启发式 Policy，无旧 Host/policyAdapter 壳。
+  function ensureHeuristicDecision() {
+    if (!heuristicDecision) {
+      heuristicDecision = heuristicDecisionFunctionModule.createHeuristicDecisionFunction({
+        composition,
         difficulty: config.aiDifficulty,
         strategyWeights: config.strategyWeights || {},
         // V(state) 接入开关透传（v-state-design-20260817.md）
@@ -415,9 +361,116 @@ function createSimulationEnv() {
           ? { vStateValueEnabled: true }
           : undefined,
         seed,
+        config: {
+          completeTargetCatalog: config.completeTargetCatalog === true,
+          traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,
+          unifiedSearch: config.unifiedSearch === true,
+        },
       });
     }
-    return policyAdapter;
+    return heuristicDecision;
+  }
+
+  // 机器人玩家协调器（懒创建）：读盘面（裸调共享 composition）+ 计划复用 +
+  // 决策函数注册表 + 执行编排。失败直接抛错，见 docs/ai-design.md §1。
+  function ensureCoordinator() {
+    if (!machineCoordinator) {
+      machineCoordinator = machinePlayerCoordinatorModule.createMachinePlayerCoordinator({
+        composition,
+        createObservation: (projection, seatId, legalActions) => {
+          // composition.projection 返回 { phase, stateVersion, state }，requirements
+          // 在 state 内（与旧 observeWithActions 取 .state 同源）。
+          const projected = projection?.state || projection;
+          const state = {
+            ...getWorkingProjection(composition),
+            probeRouteRequirements: projected?.probeRouteRequirements || null,
+            dataAnalyzeRequirements: projected?.dataAnalyzeRequirements || null,
+            sectorWinRequirements: projected?.sectorWinRequirements || null,
+            incomeGainRequirements: projected?.incomeGainRequirements || null,
+            techGainRequirements: projected?.techGainRequirements || null,
+          };
+          const rawObservation = buildObservation(state, seed, seatId, legalActions);
+          return outcomeModel.createDecisionObservation(rawObservation, {
+            seatId,
+            stateVersion: legalActions[0]?.stateVersion ?? null,
+            decisionVersion: legalActions[0]?.decisionVersion ?? null,
+          });
+        },
+        execute: (action) => executeRawAction.call(envApi, action),
+        onDiagnostic: (type, details) => {
+          if (type === "plan-reuse-hit") {
+            diagnostics.planContinuationHitCount += 1;
+          } else if (type === "plan-reuse-miss") {
+            diagnostics.planContinuationMissCount += 1;
+            diagnostics.planContinuationMissReasons[details.reason] = (
+              diagnostics.planContinuationMissReasons[details.reason] || 0
+            ) + 1;
+          }
+        },
+      });
+    }
+    return machineCoordinator;
+  }
+
+  // 机器人决策路径的 execute：raw descriptor 直接提交共享 inputPort（零转换），
+  // 提交后补记 replay/reward/observation（训练记账，不做形状转换）。
+  // 失败直接抛错，不回退、不静默。
+  function executeRawAction(rawAction) {
+    assertUsable();
+    const inspection = composition.inspect();
+    if (this.isTerminal()) {
+      throw new Error(`SIMULATION_TERMINAL: terminal 环境不接受新的 policy action ${rawAction?.actionId}`);
+    }
+    const result = inspection.phase === "awaiting_input"
+      ? composition.inputPort.submitDecision({
+        decisionId: inspection.session.decision.decisionId,
+        decisionVersion: inspection.session.decision.decisionVersion,
+        ownerId: inspection.session.decision.ownerId,
+        choice: rawAction,
+      })
+      : composition.inputPort.submitAction(rawAction);
+    if (result?.ok === false) {
+      throw new Error(
+        `MACHINE_PLAYER_EXECUTE_FAILED: 执行 ${rawAction?.actionId} 失败: `
+        + `${result.message || result.code || "规则执行失败"}`,
+      );
+    }
+    cachedLegal = null;
+    selectors = new Map();
+    const beforeObservation = lastObservation || observeWithActions(rawAction?.actorId, null);
+    const actorPlayerId = rawAction?.actorId
+      || beforeObservation.decision?.actorPlayerId
+      || null;
+    const postActions = this.legalActions();
+    const observation = observeWithActions(undefined, postActions);
+    lastObservation = observation;
+    const rewardSeatId = actorPlayerId;
+    const reward = rewardBetween(beforeObservation, observation, rewardSeatId, [], postActions);
+    const journal = result.journal || composition.inspect().session?.journal || null;
+    const replayEvent = {
+      stepIndex: replaySteps.length,
+      actorPlayerId,
+      action: clone(rawAction),
+      reward,
+      preDecision: beforeObservation.decision,
+      postDecision: observation.decision,
+      publicSummary: config.compactReplay ? null : observation.publicState,
+      environmentEvents: [],
+      effectSessionJournal: config.compactReplay ? compactEffectSessionJournal(journal) : clone(journal),
+    };
+    replaySteps.push(replayEvent);
+    return {
+      ok: true,
+      actionId: rawAction.actionId,
+      actorPlayerId,
+      reward,
+      done: this.isTerminal(),
+      terminated: this.isTerminal(),
+      truncated: false,
+      observation,
+      legalActions: clone(postActions),
+      replayEvent,
+    };
   }
 
   // V 引导决策模块懒加载（v-guided-search / outcome-model / evaluator）
@@ -500,7 +553,7 @@ function createSimulationEnv() {
     return result.envelope;
   }
 
-  return {
+  const envApi = {
     reset(resetConfig = {}) {
       if (disposed) throw environmentError("SIMULATION_ENV_DISPOSED", "Simulation env 已 dispose");
       seed = resetConfig.seed ?? "seti-simulation";
@@ -526,7 +579,8 @@ function createSimulationEnv() {
       selectors = new Map();
       cachedLegal = null;
       lastObservation = null;
-      planContinuationStores = new Map();
+      machineCoordinator = null;
+      heuristicDecision = null;
       diagnostics = {
         bootMilliseconds: 0,
         setupSelectionMilliseconds: 0,
@@ -542,9 +596,7 @@ function createSimulationEnv() {
         actionExecutionCalls: 0,
         planContinuationHitCount: 0,
         planContinuationMissCount: 0,
-        planContinuationCommitFailures: 0,
         planContinuationMissReasons: {},
-        planContinuationStoreStatus: {},
       };
       const startedAt = performance.now();
       seededRandom = createSeededRandom(seed);
@@ -574,8 +626,6 @@ function createSimulationEnv() {
       const drain = composition.inputPort.beginDrain({ metadata: { source: "simulation_reset" } });
       recordDuration("resetDrainMilliseconds", drainStartedAt);
       if (drain?.ok === false) throw new Error(drain.message || drain.code || "simulation reset drain 失败");
-      policyAdapter = null;
-      policySeatsInitialized = false;
       recordDuration("bootMilliseconds", startedAt);
       const actions = this.legalActions();
       lastObservation = observeWithActions(undefined, actions);
@@ -782,174 +832,73 @@ function createSimulationEnv() {
 
     runHeuristicPolicyDecision(asTeacher = false) {
       assertUsable();
-      ensurePolicyAdapter();
-      if (!policySeatsInitialized) {
-        policyAdapter.initializeSeats(
-          (getWorkingProjection(composition).players?.players || []).map((player) => player.id),
-          { phase: "new_game" },
-        );
-        policySeatsInitialized = true;
-      }
       this.createCheckpoint();
       cachedLegal = null;
       selectors = new Map();
-      const beforeActions = this.legalActions();
-      const beforeObservation = lastObservation || observeWithActions(undefined, beforeActions);
-      if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
-      const policyObservation = standardObservation(beforeObservation, beforeActions[0].actorPlayerId, beforeActions);
-      const initialSetupBoundary = beforeActions.every((action) => (
-        ["choose_card", "choose_payment"].includes(action.family)
-        && ["start_initial_setup", "select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
-          .includes(action.target?.kind)
-      ));
-      // 计划延续复用（simulation 侧负责复用判断）：先看能否直接复用上次计划；
-      // 不复用才调用决策方案（启发式搜索 + policy），方案输出 { actionId, plan? }。
-      // 仅非 setup、非 teacher 模式启用；复用提交经 env.step 的合法集/authority
-      // 重验；store 存方案输出的完整计划（多步逐步消费）。
-      if (config.planContinuationFastPath && !asTeacher && !initialSetupBoundary) {
-        const seatId = beforeActions[0].actorPlayerId;
-        const reuse = planContinuation.planReuseCheck(
-          planContinuationStores.get(seatId) || null,
-          policyObservation,
-          beforeActions,
-        );
-        if (reuse.hit) {
-          const committed = this.step(reuse.action);
-          if (!committed?.ok) {
-            diagnostics.planContinuationCommitFailures += 1;
-            // 提交失败（不应发生：action 来自当前 legal set）——回退全量搜索。
-          } else {
-            diagnostics.planContinuationHitCount += 1;
-            const provenance = policyAdapter.getProvenance();
-            // 计划前进一步：仍有下一步则存回（多步复用），否则清空
-            if (reuse.nextPlan?.nextActionId) {
-              planContinuationStores.set(seatId, reuse.nextPlan);
-            } else {
-              planContinuationStores.delete(seatId);
-            }
-            return {
-              ...committed,
-              policyDecision: {
-                actionId: reuse.action.actionId,
-                policyType: provenance.type,
-                policyVersion: provenance.version,
-                planContinuationFastPath: true,
-                diagnostics: { reasonCode: "plan-continuation-fast-path" },
-              },
-              policyProvenance: provenance,
-              actionOutcomes: [],
-              plan: reuse.nextPlan,
-              planContinuationFastPath: { hit: true },
-            };
-          }
-        } else {
-          diagnostics.planContinuationMissCount += 1;
-          diagnostics.planContinuationMissReasons[reuse.reason] = (
-            diagnostics.planContinuationMissReasons[reuse.reason] || 0
-          ) + 1;
-        }
+      const decisionFunction = ensureHeuristicDecision();
+      const coordinator = ensureCoordinator();
+      const probeBoundary = coordinator.readBoundary(null);
+      const seatId = probeBoundary.seatId;
+      if (!coordinator.hasSeat(seatId)) {
+        coordinator.registerSeat(seatId, decisionFunction.run);
       }
-      const outcomeOptions = {
-        seatId: beforeActions[0].actorPlayerId,
-        stateVersion: beforeActions[0].stateVersion,
-        decisionVersion: beforeActions[0].decisionVersion,
-      };
-      const evaluatedActions = initialSetupBoundary
-        ? initialSetupOutcomeActions(beforeActions, beforeObservation)
-        : policyOutcomeActions(beforeActions, policyObservation, config.unifiedSearch === true);
-      const controlActions = initialSetupBoundary
-        ? []
-        : beforeActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));
-      // 有界评估桶：play_card 若未进入路由目标评估（不推进探测/科技/收入/扇区需求），
-      // 此前完全 unresolved——AI 永远看不到打牌的直接价值（分数/资源/抽牌/触发），
-      // 高价值保留牌被系统性忽略（用户高分档：阿米巴牌等稳定分源）。给它们中等深度
-      // 反事实评估，让打牌的直接价值进入策略视野。
-      const evaluatedIds = new Set(evaluatedActions.map((action) => action.actionId));
-      const boundedActions = initialSetupBoundary
-        ? []
-        : beforeActions.filter((action) => (
-          !evaluatedIds.has(action.actionId)
-          && expectedScoreEvaluator.requiresCounterfactualOutcome(action)
-          && action.family === "play_card"
-        ));
-      const controlOutcomes = controlActions.length
-        ? evaluateActionOutcomes.call(this, controlActions, {
-          maxDepth: 1,
-          maxLeaves: 1,
-          maxNodes: controlActions.length,
-          secondaryAgentSearch: false,
-          stopAtPassDecisionBoundary: true,
-        })
-        : [];
-      const boundedOutcomes = boundedActions.length
-        ? evaluateActionOutcomes.call(this, boundedActions, {
-          maxDepth: 6,
-          maxLeaves: 3,
-          maxNodes: Math.max(boundedActions.length, boundedActions.length * 16),
-          secondaryAgentSearch: false,
-        })
-        : [];
-      const strategicOutcomes = evaluatedActions.length
-        ? evaluateActionOutcomes.call(this, evaluatedActions, {
-          maxDepth: initialSetupBoundary ? 6 : 15,
-          maxLeaves: initialSetupBoundary ? 1 : 8,
-          maxNodes: initialSetupBoundary ? 12 : 128,
-          secondaryAgentSearch: !initialSetupBoundary,
-          completeTargetCatalog: !initialSetupBoundary
-            && config.completeTargetCatalog === true,
-          unifiedSearch: config.unifiedSearch === true,
-          traceGoalClusters: !initialSetupBoundary
-            && config.traceCounterfactualGoalClusters,
-          maxProxyDepth: 15,
-        })
-        : [];
-      const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
-        [...strategicOutcomes, ...boundedOutcomes, ...controlOutcomes],
-        outcomeOptions,
-      );
-      const actionOutcomes = completePolicyOutcomeSet(
-        beforeActions,
-        evaluatedOutcomes,
-        evaluatedOutcomes[0]?.rootObservation || policyObservation,
-      );
-      const selection = policyAdapter.runDecision(policyObservation, beforeActions, {
-        seed,
-        episodeId: config?.episodeId || null,
-      }, (chosenAction) => this.step(chosenAction), actionOutcomes);
-      const result = selection.submission?.result;
-      if (!result?.ok) throw new Error(result?.error || "Heuristic opponent 执行失败");
-      // 决策方案输出已含 plan（heuristic-policy-adapter.runDecision 从 winning leaf
-      // 构建）：存入 store 供下一次同席决策复用；无计划（链条不足 2 步）则清空。
-      if (config.planContinuationFastPath) {
-        const seatId = beforeActions[0].actorPlayerId;
-        if (selection.plan?.nextActionId) {
-          planContinuationStores.set(seatId, selection.plan);
-        } else {
-          planContinuationStores.delete(seatId);
-          diagnostics.planContinuationStoreStatus["no-plan-output"] = (
-            diagnostics.planContinuationStoreStatus["no-plan-output"] || 0
-          ) + 1;
-        }
-      }
-      if (!asTeacher) {
+      if (asTeacher) {
+        // teacher 路径（self-play 录制需要内部数据）：不经协调器复用，直接
+        // 读边界 + 决策函数 + env.step 提交，返回原 teacher 形状。
+        const beforeActions = this.legalActions();
+        const beforeObservation = lastObservation || observeWithActions(undefined, beforeActions);
+        if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
+        const policyObservation = standardObservation(beforeObservation, beforeActions[0].actorPlayerId, beforeActions);
+        const scheme = decisionFunction.run({
+          seatId,
+          legalActions: probeBoundary.legalActions,
+          observation: policyObservation,
+        });
+        const trainingAction = beforeActions.find((action) => action.actionId === scheme.actionId);
+        if (!trainingAction) throw new Error(`teacher 决策选择非法 actionId ${scheme.actionId}`);
+        const executed = this.step(trainingAction);
+        if (!executed?.ok) throw new Error(executed?.error || "Heuristic opponent 执行失败");
+        const provenance = decisionFunction.getProvenance();
         return {
-          ...result,
-          policyDecision: selection.decision,
-          policyProvenance: policyAdapter.getProvenance(),
-          actionOutcomes: selection.context.actionOutcomes,
-          plan: selection.plan,
+          beforeObservation,
+          beforeActions,
+          teacherResult: { decision: scheme.decision, provenance },
+          teacherLogs: [],
+          teacherAdapter: provenance.version,
+          chosenAction: trainingAction,
+          observation: executed.observation,
+          legalActions: executed.legalActions,
+          done: executed.done,
+        };
+      }
+      // 机器人决策路径：协调器编排（读盘面 + 计划复用 + 决策函数 + 提交），
+      // 失败直接抛错；复用命中经 execute 直接提交共享 inputPort（零转换）。
+      const result = coordinator.runDecision(seatId, {
+        reuseEnabled: config.planContinuationFastPath === true,
+      });
+      const provenance = decisionFunction.getProvenance();
+      if (result.source === "plan-reuse") {
+        return {
+          ...result.executed,
+          policyDecision: {
+            actionId: result.actionId,
+            policyType: provenance.type,
+            policyVersion: provenance.version,
+            planContinuationFastPath: true,
+            diagnostics: { reasonCode: "plan-continuation-fast-path" },
+          },
+          policyProvenance: provenance,
+          actionOutcomes: [],
+          plan: result.plan,
+          planContinuationFastPath: { hit: true },
         };
       }
       return {
-        beforeObservation,
-        beforeActions,
-        teacherResult: { decision: selection.decision, provenance: policyAdapter.getProvenance() },
-        teacherLogs: [],
-        teacherAdapter: policyAdapter.getProvenance().version,
-        chosenAction: selection.action,
-        observation: result.observation,
-        legalActions: result.legalActions,
-        done: result.done,
+        ...result.executed,
+        policyDecision: result.decision.decision,
+        policyProvenance: provenance,
+        actionOutcomes: result.decision.actionOutcomes,
+        plan: result.plan,
       };
     },
 
@@ -963,7 +912,7 @@ function createSimulationEnv() {
           policyVersion: config?.policyVersion || null,
           opponentIdentity: config?.opponentIdentity || null,
           seat: config?.seat ?? null,
-          policyProvenance: policyAdapter?.getProvenance?.() || null,
+          policyProvenance: heuristicDecision?.getProvenance?.() || null,
         },
         config: clone(config || {}),
         effectSessions: replaySteps.map((step) => step.effectSessionJournal).filter(Boolean),
@@ -1062,7 +1011,6 @@ function createSimulationEnv() {
         config: clone(config || {}),
         replayCursor: { seed, stepIndex: replaySteps.length },
         effectSessionJournals: replaySteps.map((step) => step.effectSessionJournal).filter(Boolean),
-        machinePlayerHostSnapshot: policyAdapter?.createHostSnapshot?.() || null,
         replaySteps: clone(replaySteps),
         environmentEvents: clone(environmentEvents),
       };
@@ -1098,10 +1046,7 @@ function createSimulationEnv() {
         }
         seededRandom.setState(rngState.state);
         environmentEvents = clone(checkpoint.environmentEvents || []);
-        if (checkpoint.machinePlayerHostSnapshot) {
-          ensurePolicyAdapter().restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
-          policySeatsInitialized = true;
-        }
+
         cachedLegal = null;
         selectors = new Map();
         return this.observe();
@@ -1121,10 +1066,7 @@ function createSimulationEnv() {
       environmentEvents = clone(checkpoint.environmentEvents || []);
       cachedLegal = null;
       selectors = new Map();
-      if (checkpoint.machinePlayerHostSnapshot) {
-        ensurePolicyAdapter().restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
-        policySeatsInitialized = true;
-      }
+
       const actions = this.legalActions();
       lastObservation = observeWithActions(undefined, actions);
       return clone(lastObservation);
@@ -1229,12 +1171,14 @@ function createSimulationEnv() {
       kernel = null;
       composition = null;
       seededRandom = null;
-      policyAdapter = null;
+      machineCoordinator = null;
+      heuristicDecision = null;
       selectors = new Map();
       cachedLegal = null;
       lastObservation = null;
     },
   };
+  return envApi;
 }
 
 module.exports = { buildDecision, createSimulationEnv };

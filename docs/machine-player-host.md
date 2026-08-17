@@ -6,11 +6,10 @@
 以及公共 Standard Action/Decision 提交。真实提交仍只有一次；反事实执行委托给 Rule
 Composition 隔离 fork，不把 root、executor、StateStore 或 Effect Session 暴露给 Policy。
 
-在 `docs/ai-design.md` §1 的决策流程里，Host 是**决策方案内部链路**的协调器：
-simulation 决策点先做计划延续复用（`planReuseCheck`），未命中才进入本 Host 请求
-Policy。复用命中时不经过本 Host（合法集/authority 重验由 `simulation-env.step()`
-承担），仅 simulation 训练/benchmark 路径启用（`planContinuationFastPath`，默认关），
-Browser 始终经本 Host。
+在 `docs/ai-design.md` §1 的决策流程里，本 Host 是 **Browser 机器席位**的异步提交壳
+（席位身份、请求生命周期、fail-closed 校验）；Simulation 的机器人决策由
+`machine-player-coordinator.js` + `heuristic-decision-function.js` 编排（同步、
+失败直接抛错、复用优先），不经本 Host。
 
 ## 席位与初始化
 
@@ -54,12 +53,11 @@ AbortSignal 或在途 session。`restore()` 先切换 generation，使恢复前�
 `MACHINE_POLICY_REQUEST_INVALIDATED`，再按保存的 identity 解析 Policy；当前模型不可用时，只能在
 load 阶段切换到存档中预声明的整席 fallback。
 
-浏览器 `policy-input-adapter.js` 和训练 `heuristic-policy-adapter.js` 都只是该 Host 的 adapter。
-前者提交 `BrowserInputAdapter`，后者提交 Simulation 的标准 Action/Decision input；对局动作进入
-`simulation-env.step()`，setup 公司牌/初始牌组合经标准 Decision（`choose_card`：
-`select_initial_card` / `confirm_initial_setup`；`choose_payment`：`discard-hand-cards`）
-由方案选择并经 `submitDecision()` 提交。两端不维护独立 Policy 分支
-（simulation 的复用层见本文开头与 `docs/ai-design.md` §1/§3）。
+浏览器 `policy-input-adapter.js` 是本 Host 的 adapter，提交 `BrowserInputAdapter`
+（`dispatchAction` / `submitDecision`）；成功结果只经公共输入端口回到 Rule
+Composition。Simulation 侧不再使用本 Host：机器人决策由 `machine-player-coordinator.js`
+编排，`heuristic-decision-function.js` 直调 Policy，提交直接进共享 `inputPort`
+（见 `docs/ai-design.md` §1）。
 
 ## Browser 接线
 

@@ -38,9 +38,9 @@ Simulation（app/simulation-env.js）
 - 输入端口（`inputPort.enumerateActions / submitAction / submitQuickAction /
   submitDecision / undo`）与 `lifecycle`、`counterfactualPort`、`inspect` 由
   `rule-composition.js` 唯一实现，两个宿主逐字调用同一端口；
-- AI 席位共用 `game/ai/machine-player-host.js`（Browser 经
-  `app/browser-host/policy-input-adapter.js`，Simulation 经
-  `training/heuristic-policy-adapter.js`）。
+- AI 席位决策共用 `game/ai/machine-player-coordinator.js`（Browser 机器席位经
+  `app/browser-host/policy-input-adapter.js` + 旧异步 Host 壳；Simulation 经
+  `heuristic-decision-function.js` 直调 Policy）。
 
 **已测试证明**（`randomizer/app/rule-composition.test.js`、`randomizer/training/
 simulation-standard-action-composition.test.js`）：

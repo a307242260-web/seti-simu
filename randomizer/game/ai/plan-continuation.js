@@ -14,8 +14,8 @@
  * - 诊断：`pairContinuation` / `aggregateStats` 量化「计划下一步 == 新搜索实际
  *   选择」的命中率与预测器质量（工具 tools/diagnose_plan_continuation.js）。
  *
- * 本模块全部为纯函数；simulation-env（planReuseCheck 装配）与
- * heuristic-policy-adapter（方案输出 plan）共用。
+ * 本模块全部为纯函数；machine-player-coordinator（planReuseCheck 装配）与
+ * heuristic-decision-function（方案输出 plan）共用。
  * actionSemanticKey 与 expected-score-evaluator 内部同名单函数保持同一语义
  * （family+target+payload 稳定序列化），此处复制以避免在共享工作树中修改
  * 该 policy 模块；行为由单元测试钉住。

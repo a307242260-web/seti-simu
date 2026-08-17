@@ -18,13 +18,14 @@ simulation（决策点，每个机器人座位）
   与完整 legalActions，输出**至少下一步 `actionId`**；有完整计划时附带
   `plan = { nextActionId, continuation[], dependency, revealedCount }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供 simulation 复用判断。
-  当前实现：`training/heuristic-policy-adapter.js#runDecision`（方案 = 反事实
-  outcome 生成 + Host + 启发式 Policy，见下）；Learned Policy 实现同一输出契约
-  即可参与复用。
-- **方案内部链路**（未命中时才走）：Rule Composition 的 counterfactualPort 生成
-  actionOutcomes -> Machine Player Host -> Policy Port -> Policy -> PolicyDecision
-  -> Standard Action/Decision input adapter -> Rule Composition。复用命中时不经过
-  这条链路，合法集/authority 重验由 `simulation-env.step()` 承担。
+  当前实现：`heuristic-decision-function.js`（反事实搜索 + 直调启发式 Policy，
+  从 winning leaf 构建 plan）；Learned Policy 实现同一输出契约即可参与复用。
+- **方案内部链路**（未命中时才走）：`heuristic-decision-function` 经
+  composition.counterfactualPort 生成 actionOutcomes -> Policy Port -> Policy
+  -> PolicyDecision -> 提交。Simulation 直调 Policy（无旧 Host 壳）；
+  Browser 机器席位仍经旧 Machine Player Host（异步提交壳，见
+  docs/machine-player-host.md）。复用命中时不经这条链路，提交由协调器的 execute
+  直接进共享 inputPort（零转换）。
 - 复用判定与计划结构细节见 §3；Browser 无复用层，机器席位始终走方案内部链路。
 - Host 在 Policy 请求前通过 Rule Composition 的 `counterfactualPort` 为可能直接命中当前
   估值目标的 legal action 建立隔离 fork；明确不可能命中目标的 action 仍保留在完整 legal set
@@ -80,8 +81,9 @@ simulation（决策点，每个机器人座位）
 - 方案输出**至少包含下一步 `actionId`**；若有完整计划（winning leaf 链条 ≥ 2 步），
   附带 `plan = { nextActionId, continuation[], dependency, revealedCount }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供复用判断；
-- 当前方案：`training/heuristic-policy-adapter.js#runDecision` 在启发式搜索 +
-  policy 选完后，从所选 action 的 winning leaf 构建 plan 一并返回；
+- 当前方案：`heuristic-decision-function.js`（反事实搜索分桶 + 直调启发式
+  Policy + 从 winning leaf 构建 plan）；协调器 `machine-player-coordinator.js`
+  编排 readBoundary/复用/调用/提交；
 - 装配：`app/simulation-env.js#runHeuristicPolicyDecision`（复用判断先行，未命中才
   走 outcome 生成 + 方案；`config.planContinuationFastPath` 开关，默认关）。
 

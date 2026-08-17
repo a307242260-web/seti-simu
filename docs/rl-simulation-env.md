@@ -24,7 +24,7 @@ Standard Action、Decision、Effect Session 和 Machine Player Host，不加载 
 - `getReplay()` / `loadReplay()`：读写已确认策略输入与环境事件。
 - `createCheckpoint()` / `loadCheckpoint()`：保存和恢复当前 composition envelope、RNG 与 replay cursor。
 - `evaluateActionOutcomes()`：在同根状态的隔离 fork 中执行标准 Action，用于策略评估。
-- `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经公共 Policy Port 和 Machine Player Host 选择，再调用同一 `step()`。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`（决策方案输出的完整计划，无延续时为 null，见 docs/ai-design.md §3）。`reset({ planContinuationFastPath: true })` 开启计划延续复用（默认关）：每个决策点先 `planReuseCheck` 复用上次方案输出的 plan，未命中才走方案；命中/未命中计数进 `getDiagnostics()`。
+- `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经机器人玩家协调器（`machine-player-coordinator.js`）编排——裸调共享 composition 读边界、计划复用优先、未命中调用 Heuristic 决策函数（`heuristic-decision-function.js`，直调 Policy）、提交共享 `inputPort`（零转换，replay/reward 记账在 env 层补做）。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`。`reset({ planContinuationFastPath: true })` 开启计划复用（默认关）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
 - `dispose()`：释放单局环境。
 

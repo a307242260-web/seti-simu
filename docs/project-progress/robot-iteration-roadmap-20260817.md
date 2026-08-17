@@ -187,6 +187,6 @@ R1 末收入率 c6/e2 构成 = 两次插入收入牌 +2c（初始资源，R1 生
 - `randomizer/game/ai/heuristic-evaluator.js`：`selectLegalAction`（settled+selectable 过滤）
 - `randomizer/game/rule-composition.js`：反事实搜索内核（maxNodes/maxLeaves/maxExecutionNodes、
   `consumesSearchBudget`、叶边界、PRUNED/unresolved）
-- `randomizer/training/heuristic-policy-adapter.js`：Policy 适配（runDecision 装配）
+- `randomizer/game/ai/heuristic-decision-function.js`：Heuristic 决策函数（反事实搜索 + 直调 Policy + plan 构建）
 - 存档工具：`tools/run_simulate_save.js`（模拟全盘+存盘，seti-browser-save-v2 同格式）、
   `tools/fast_forward_save.js`（存档快进复现，纯内核重放 ~6s/537 步）
