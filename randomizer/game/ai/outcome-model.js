@@ -291,6 +291,51 @@
     return { traceCount, alienContacts };
   }
 
+  // 外星槽位级进度事实（V 状态价值用）：每个槽位的揭示状态、我方首痕迹数/额外标记、
+  // 三色齐判定。来源 publicState.board.aliens.slots（sanitize 后形状：{revealed,
+  // alienId, traces:{yellow/pink/blue:{firstPlaced,ownerPlayerColor,extraCount}}}）。
+  function alienSlotFacts(source, seatId, publicPlayer = null) {
+    const aliens = source?.publicState?.board?.aliens
+      ?? source?.publicState?.aliens
+      ?? source?.aliens
+      ?? {};
+    const slots = Array.isArray(aliens?.slots)
+      ? aliens.slots
+      : Object.values(aliens?.slots || aliens?.aliens || {});
+    const color = playerColor(publicPlayer);
+    const owned = (trace) => (
+      trace?.firstPlaced
+      && !trace?.neutral
+      && (
+        String(trace?.playerId ?? trace?.ownerId ?? "") === String(seatId)
+        || (color && (
+          String(trace?.ownerPlayerColor ?? trace?.playerColor ?? "") === String(color)
+        ))
+      )
+    );
+    return slots.map((slot, index) => {
+      const traces = slot?.traces || {};
+      let ownFirstTraces = 0;
+      let ownExtraMarks = 0;
+      for (const traceType of ["yellow", "pink", "blue"]) {
+        const trace = traces[traceType];
+        if (!trace) continue;
+        if (owned(trace)) {
+          ownFirstTraces += 1;
+          ownExtraMarks += Math.max(0, finiteOrNull(trace.extraCount) ?? 0);
+        }
+      }
+      return {
+        slotId: index + 1,
+        revealed: Boolean(slot?.revealed),
+        alienId: slot?.revealed ? (slot?.alienId || slot?.assignedAlienId || null) : null,
+        ownFirstTraces,
+        ownExtraMarks,
+        firstTracesComplete: ownFirstTraces >= 3,
+      };
+    });
+  }
+
   function createOutcomeProjection(source, seatId, options = {}) {
     const publicPlayer = findPlayer(source, seatId);
     const selfState = selfStateOf(source, seatId, publicPlayer);
@@ -345,6 +390,9 @@
         traceCount: traces.traceCount,
         dataProgress: dataProgressFacts(publicPlayer),
         alienContacts: traces.alienContacts,
+        // 外星槽位级进度（V 状态价值：首痕迹归属/揭示/位置进度）
+        // 每个槽位: { slotId, revealed, alienId, ownFirstTraces, ownExtraMarks }
+        alienSlots: alienSlotFacts(source, seatId, publicPlayer),
         probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),
         probeGoalRequirements: String(source?.probeRouteRequirements?.playerId) === String(seatId)
           ? clone(source.probeRouteRequirements)

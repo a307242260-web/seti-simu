@@ -146,6 +146,108 @@
     });
   }
 
+  // =====================================================================
+  // V(state) 状态价值函数（v-state-design-20260817.md）
+  // V(state) = 榨取类（分数 + 资源流动性）+ 准备类（收入复利 + 科技效率 +
+  // 外星进度 + 手牌期望）。编码长线价值，让浅搜索（depth 4-6）就能看到
+  // "打牌→科技/收入/登陆链" 的收益，替代"暴搜 15 步 + 线性外推"。
+  // 权重全部校准自用户 405 档（v-state-design 第 3 节）。
+  // =====================================================================
+  const V_INCOME_MULTIPLIER = 1.4; // 收入复利放大（收入→更多行动→更多分）
+  const V_TECH_EFFICIENCY_UNIT = 4; // 每个已研究科技每轮效率红利（橙/紫降价等）
+  const V_TRACE_FIRST_VALUE = 5; // 首痕迹价值（slot1 5分+1宣、slot2 3分+1宣）
+  const V_ALIEN_REVEAL_BONUS = 15; // 三色齐→揭示的期望（位置分+外星牌链）
+  const V_ALIEN_SLOT_POSITION_VALUE = 3; // 揭示后每个位置期望分（3-5 分/位置）
+  const V_DATA_UNIT_VALUE = 4; // 数据→填槽/分析转化价值
+  const V_CARD_EFFECT_VALUE = 6; // 手牌可打效果期望（科技/收入/移动/登陆链）
+
+  function evaluateStateValue(observation, seatId) {
+    const projection = observation?.outcomeProjection;
+    if (!projection || projection.schemaVersion !== outcomeModel.PROJECTION_SCHEMA_VERSION) {
+      throw new TypeError("V 只接受同 viewer 的标准 outcome projection");
+    }
+    const terminal = Boolean(projection.terminal);
+    const realizedScore = terminal
+      ? finite(projection.scoring.officialTerminalScore)
+      : finite(projection.scoring.realizedScore);
+    const roundNumber = Math.max(1, finite(projection.progress?.roundNumber) || 1);
+    const finalRoundNumber = Math.max(1, finite(projection.progress?.finalRoundNumber) || 4);
+    const remainingPayments = Math.max(0, finalRoundNumber - roundNumber); // 回合开始发放
+    const assets = projection.assets || {};
+    const income = projection.progress?.income || {};
+
+    // 榨取类：分数 + 资源流动性
+    const scoreValue = finite(realizedScore) + (terminal ? 0 : finite(projection.scoring.securedEndGameBonus));
+    const liquidValue = (
+      finite(assets.credits) * INCOME_UNIT_VALUES.credits
+      + finite(assets.energy) * INCOME_UNIT_VALUES.energy
+      + finite(assets.availableData) * V_DATA_UNIT_VALUE
+      + finite(assets.publicity) * 0 // 宣传是研究货币，非直接分
+    );
+
+    // 准备类：收入复利（收入率 × 剩余发放次数 × 单位价值 × 放大系数）
+    const incomeValue = (
+      finite(income.credits) * INCOME_UNIT_VALUES.credits
+      + finite(income.energy) * INCOME_UNIT_VALUES.energy
+      + finite(income.availableData) * V_DATA_UNIT_VALUE
+    ) * remainingPayments * V_INCOME_MULTIPLIER;
+
+    // 准备类：科技效率红利（每个已研究科技 × 剩余轮次 × 单位效率）
+    const ownedTechIds = projection.progress?.ownedTechIds || [];
+    const techEfficiencyValue = ownedTechIds.length
+      * Math.max(0, finalRoundNumber - roundNumber)
+      * V_TECH_EFFICIENCY_UNIT;
+
+    // 准备类：外星进度（首痕迹 + 揭示期望 + 位置期望）
+    const alienSlots = projection.progress?.alienSlots || [];
+    let alienValue = 0;
+    for (const slot of alienSlots) {
+      if (!slot) continue;
+      // 已放置的我方首痕迹：即时分（slot1 5 / slot2 3，近似 5）
+      alienValue += slot.ownFirstTraces * V_TRACE_FIRST_VALUE;
+      if (slot.revealed) {
+        // 已揭示：位置期望（3-5 分/位置 × 剩余轮次）
+        alienValue += V_ALIEN_SLOT_POSITION_VALUE * Math.max(0, finalRoundNumber - roundNumber);
+      } else if (slot.ownFirstTraces >= 2) {
+        // 差 1 个首痕迹齐三色：揭示奖励期望
+        alienValue += V_ALIEN_REVEAL_BONUS;
+      } else if (slot.ownFirstTraces > 0) {
+        alienValue += V_ALIEN_REVEAL_BONUS * 0.3; // 有首痕迹但远未齐：部分期望
+      }
+    }
+
+    // 准备类：手牌/保留牌可打效果期望（打牌价值认知的落点）
+    // 手牌数从 publicState.players 读（sanitize 后有 handCount），保留牌从 selfState
+    const selfState = observation?.selfState || {};
+    const publicPlayers = observation?.publicState?.players || [];
+    const selfPublic = publicPlayers.find((p) => (
+      String(p.playerId || p.color || "") === String(seatId)
+    ));
+    const handCount = finite(selfPublic?.handCount ?? selfState?.handCount);
+    const reservedCount = finite(selfState?.reservedCount);
+    const cardValue = (handCount + reservedCount * 0.5) * V_CARD_EFFECT_VALUE;
+
+    const total = scoreValue + liquidValue + incomeValue + techEfficiencyValue
+      + alienValue + cardValue;
+    return deepFreeze({
+      schemaVersion: "seti-state-value-v1",
+      evaluationModel: EVALUATION_MODEL,
+      terminal,
+      roundNumber,
+      finalRoundNumber,
+      remainingPayments,
+      total,
+      components: {
+        scoreValue,
+        liquidValue,
+        incomeValue,
+        techEfficiencyValue,
+        alienValue,
+        cardValue,
+      },
+    });
+  }
+
   function positiveDelta(after, before) {
     return Math.max(0, finite(after) - finite(before));
   }
@@ -2919,6 +3021,7 @@
     completesSecondaryAgentRouteTarget,
     secondaryAgentCompletionFacts,
     evaluateState,
+    evaluateStateValue,
     evaluateSetupProbeGoals,
     compareSetupProbeGoals,
     evaluateSearchPriority,
