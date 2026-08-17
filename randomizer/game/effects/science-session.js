@@ -485,23 +485,6 @@
     return { ...result, events };
   }
 
-  function getSpeciesTraceApi(slot) {
-    const byId = {
-      "九折": ["jiuzhe", "canPlaceJiuzheTrace", "placeJiuzheTrace"],
-      "异常点": ["yichangdian", "canPlaceYichangdianTrace", "placeYichangdianTrace"],
-      "方舟": ["fangzhou", "canPlaceFangzhouTrace", "placeFangzhouTrace"],
-      "半人马": ["banrenma", "canPlaceBanrenmaTrace", "placeBanrenmaTrace"],
-      "虫": ["chong", "canPlaceChongTrace", "placeChongTrace"],
-      "阿米巴": ["amiba", "canPlaceAmibaTrace", "placeAmibaTrace"],
-      "奥陌陌": ["aomomo", "canPlaceAomomoTrace", "placeAomomoTrace"],
-      "符文族": ["runezu", "canPlaceRunezuTrace", "placeRunezuTrace"],
-    };
-    const descriptor = byId[slot?.alienId || slot?.assignedAlienId];
-    if (!descriptor) return null;
-    const [speciesId, canMethod, placeMethod] = descriptor;
-    return aliens[speciesId] ? { speciesId, api: aliens[speciesId], canMethod, placeMethod } : null;
-  }
-
   function listAlienTraceChoices(root, actorId, traceType) {
     const actor = getActor(root, actorId);
     const alienState = getWorkingSlice(root, "aliens");
@@ -520,7 +503,7 @@
         ));
         continue;
       }
-      const species = getSpeciesTraceApi(slot);
+      const species = aliens.getSpeciesTraceApi(slot);
       // 已揭示槽位仍可把痕迹追加到 state 额外痕迹位（3 分/枚），规则书 P20 冗余位。
       if (slot.traces?.[traceType]?.firstPlaced) {
         choices.push(makeChoice(
@@ -603,60 +586,7 @@
     const legal = listAlienTraceChoices(root, actorId, choice?.target?.traceType)
       .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
     if (!actor || !legal) return fail("SCIENCE_TRACE_CHOICE_STALE", "外星人痕迹选择已失效");
-    const slot = aliens.getAlienSlot(alienState, legal.target.alienSlotId);
-    if (!slot?.traces?.[legal.target.traceType]?.firstPlaced) {
-      const placed = aliens.placeFirstTrace(
-        alienState,
-        legal.target.alienSlotId,
-        legal.target.traceType,
-        actor.color,
-      );
-      if (placed?.ok && !placed.extraOnly) {
-        const reward = aliens.getFirstTraceRewardForSlot?.(legal.target.alienSlotId);
-        players.gainResources(
-          actor,
-          reward?.gain || {},
-          `alienTrace${legal.target.traceType[0].toUpperCase()}${legal.target.traceType.slice(1)}Score`,
-        );
-      }
-      return placed;
-    }
-    if (!slot.revealed) {
-      const placed = aliens.addExtraTrace(
-        alienState,
-        legal.target.alienSlotId,
-        legal.target.traceType,
-        actor.color,
-      );
-      if (placed?.ok) {
-        const reward = aliens.getExtraTraceReward?.();
-        players.gainResources(
-          actor,
-          reward?.gain || {},
-          `alienTrace${legal.target.traceType[0].toUpperCase()}${legal.target.traceType.slice(1)}Score`,
-        );
-      }
-      return placed;
-    }
-    // 已揭示槽位：state 额外痕迹位（3 分/枚，规则书 P20 冗余位）。
-    if (legal.target.stateExtra) {
-      const placed = aliens.addExtraTrace(
-        alienState,
-        legal.target.alienSlotId,
-        legal.target.traceType,
-        actor.color,
-      );
-      if (placed?.ok) {
-        const reward = aliens.getExtraTraceReward?.();
-        players.gainResources(
-          actor,
-          reward?.gain || {},
-          `alienTrace${legal.target.traceType[0].toUpperCase()}${legal.target.traceType.slice(1)}Score`,
-        );
-      }
-      return placed;
-    }
-    // 方舟：解锁对应颜色 card2 解锁牌，进手牌。
+    // 方舟：解锁对应颜色 card2 解锁牌，进手牌（痕迹入口统一选项，先于放置）。
     if (legal.target.fangzhouUnlock) {
       const unlocked = aliens.fangzhou?.unlockCard2?.(
         alienState,
@@ -672,15 +602,27 @@
       }
       return { ok: true, ...unlocked };
     }
-    const species = getSpeciesTraceApi(slot);
-    return species?.api?.[species.placeMethod]?.(
+    // 统一痕迹放置内核：首次/额外（含 state 额外位）/物种正面放置 + 奖励。
+    // 与卡牌效果、初始牌来源共用 aliens.placeTraceForActor。alienEntity 序列
+    // 只在已揭示槽物种正面放置时消耗（旧行为，未揭示首次/额外放置不消耗）。
+    const slot = aliens.getAlienSlot(alienState, legal.target.alienSlotId);
+    const isSpeciesPlacement = Boolean(
+      slot?.revealed && !legal.target.stateExtra && !legal.target.fangzhouUnlock,
+    );
+    return aliens.placeTraceForActor(
+      players,
       alienState,
+      actor,
       legal.target.alienSlotId,
       legal.target.traceType,
       legal.target.position,
-      actor,
-      { sequence: stateSequences.take(root, "alienEntity") },
-    ) || fail("SCIENCE_TRACE_OWNER_MISSING", "外星人痕迹 owner 缺失");
+      {
+        stateExtra: Boolean(legal.target.stateExtra),
+        sequence: isSpeciesPlacement
+          ? stateSequences.take(root, "alienEntity")
+          : undefined,
+      },
+    );
   }
 
   function createActionDefinitions() {
@@ -1617,7 +1559,7 @@
         if (result.reward?.pickAlienCard) {
           const alienSlotId = choice?.target?.alienSlotId;
           const slot = aliens.getAlienSlot(getWorkingSlice(root, "aliens"), alienSlotId);
-          const species = slot ? getSpeciesTraceApi(slot) : null;
+          const species = slot ? aliens.getSpeciesTraceApi(slot) : null;
           const speciesId = species?.speciesId || "amiba";
           spawnedEffects.push({
             priority: "direct",

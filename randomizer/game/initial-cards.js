@@ -500,11 +500,17 @@
 
   function applyAlienTrace(context, player, trace, results, events) {
     if (!trace || !context.aliens) return;
-    const result = aliens.placeFirstTrace(
+    // 统一痕迹放置内核：与 science ALIEN_TRACE 决策、卡牌效果共用
+    // aliens.placeTraceForActor；awardRewards:false 保留初始牌豁免
+    // （扩展规则书 P5：上半部分放置生命迹象不给任何奖励）。
+    const result = aliens.placeTraceForActor(
+      players,
       context.aliens,
+      player,
       trace.alienSlotId,
       trace.traceType,
-      player.color,
+      null,
+      { awardRewards: false },
     );
     let revealResult = null;
     if (result.ok && result.readyToReveal) {
@@ -515,7 +521,6 @@
       type: "alienTrace",
       trace,
       revealed: revealResult || null,
-      // 扩展规则书 P5：快速起始牌（初始牌）上半部分放置生命迹象不给任何奖励。
       message: revealResult?.ok ? `${result.message}；${revealResult.message}` : result.message,
     });
     if (result.ok) {

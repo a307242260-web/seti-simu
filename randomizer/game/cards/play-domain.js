@@ -1468,27 +1468,10 @@
       );
     }
 
-    function getSpeciesTraceApi(slot) {
-      const byId = {
-        "九折": ["jiuzhe", "canPlaceJiuzheTrace", "placeJiuzheTrace"],
-        "异常点": ["yichangdian", "canPlaceYichangdianTrace", "placeYichangdianTrace"],
-        "方舟": ["fangzhou", "canPlaceFangzhouTrace", "placeFangzhouTrace"],
-        "半人马": ["banrenma", "canPlaceBanrenmaTrace", "placeBanrenmaTrace"],
-        "虫": ["chong", "canPlaceChongTrace", "placeChongTrace"],
-        "阿米巴": ["amiba", "canPlaceAmibaTrace", "placeAmibaTrace"],
-        "奥陌陌": ["aomomo", "canPlaceAomomoTrace", "placeAomomoTrace"],
-        "符文族": ["runezu", "canPlaceRunezuTrace", "placeRunezuTrace"],
-      };
-      const descriptor = byId[slot?.alienId || slot?.assignedAlienId];
-      if (!descriptor) return null;
-      const [speciesId, canMethod, placeMethod] = descriptor;
-      const api = aliens[speciesId];
-      return api ? { speciesId, api, canMethod, placeMethod } : null;
-    }
-
     function listSpeciesTraceChoices(alienState, alienSlotId, traceType, actor) {
       const slot = aliens.getAlienSlot(alienState, alienSlotId);
-      const species = getSpeciesTraceApi(slot);
+      // 统一物种痕迹 API：与 science 共用 aliens.getSpeciesTraceApi
+      const species = aliens.getSpeciesTraceApi(slot);
       if (!slot?.revealed || !species) return [];
       const positions = species.api.TRACE_POSITIONS
         || species.api.getPositionsForTraceType?.(traceType)
@@ -2313,33 +2296,17 @@
         }
       } else if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
         const alienState = getWorkingSlice(root, "aliens");
-        const slot = aliens.getAlienSlot(alienState, legal.target.alienSlotId);
-        let placed;
-        if (!slot?.traces?.[legal.target.traceType]?.firstPlaced) {
-          placed = aliens.placeFirstTrace(
-            alienState,
-            legal.target.alienSlotId,
-            legal.target.traceType,
-            actor.color,
-          );
-        } else if (!slot.revealed) {
-          placed = aliens.addExtraTrace(
-            alienState,
-            legal.target.alienSlotId,
-            legal.target.traceType,
-            actor.color,
-          );
-        } else {
-          const species = getSpeciesTraceApi(slot);
-          placed = species?.api?.[species.placeMethod]?.(
-            alienState,
-            legal.target.alienSlotId,
-            legal.target.traceType,
-            legal.target.position,
-            actor,
-            {},
-          );
-        }
+        // 统一痕迹放置内核：首次/额外/物种正面放置 + 首痕迹/额外奖励，与
+        // science ALIEN_TRACE 决策、初始牌来源共用 aliens.placeTraceForActor。
+        const placed = aliens.placeTraceForActor(
+          players,
+          alienState,
+          actor,
+          legal.target.alienSlotId,
+          legal.target.traceType,
+          legal.target.position,
+          {},
+        );
         if (!placed?.ok) return placed;
         if (options.afterTraceReward?.kind === "traceCountScore") {
           const count = cardEffects.countTraceMarkers(

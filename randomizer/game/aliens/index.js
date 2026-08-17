@@ -152,6 +152,69 @@
     return false;
   }
 
+  // 统一物种痕迹 API 解析：science/play-domain 曾各持一份相同映射，收敛到本模块。
+  function getSpeciesTraceApi(slot) {
+    const byId = {
+      "九折": ["jiuzhe", "canPlaceJiuzheTrace", "placeJiuzheTrace"],
+      "异常点": ["yichangdian", "canPlaceYichangdianTrace", "placeYichangdianTrace"],
+      "方舟": ["fangzhou", "canPlaceFangzhouTrace", "placeFangzhouTrace"],
+      "半人马": ["banrenma", "canPlaceBanrenmaTrace", "placeBanrenmaTrace"],
+      "虫": ["chong", "canPlaceChongTrace", "placeChongTrace"],
+      "阿米巴": ["amiba", "canPlaceAmibaTrace", "placeAmibaTrace"],
+      "奥陌陌": ["aomomo", "canPlaceAomomoTrace", "placeAomomoTrace"],
+      "符文族": ["runezu", "canPlaceRunezuTrace", "placeRunezuTrace"],
+    };
+    const descriptor = byId[slot?.alienId || slot?.assignedAlienId];
+    if (!descriptor) return null;
+    const [speciesId, canMethod, placeMethod] = descriptor;
+    const api = {
+      jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu,
+    }[speciesId];
+    return api ? { speciesId, api, canMethod, placeMethod } : null;
+  }
+
+  // 按痕迹颜色统一计分来源：alienTrace<颜色>Score。
+  function gainTraceResources(players, actor, reward, traceType) {
+    players.gainResources(
+      actor,
+      reward?.gain || {},
+      `alienTrace${String(traceType || "")[0]?.toUpperCase() || ""}${String(traceType || "").slice(1)}Score`,
+    );
+  }
+
+  // 统一「放置外星人痕迹」内核：首次痕迹（含首痕迹奖励）/ 额外痕迹（state 额外
+  // 位与未揭示槽，含额外奖励）/ 已揭示槽物种正面放置，全部收敛到一处。
+  // 红黄蓝三种痕迹颜色统一按 traceType 参数化（无按颜色分支）。
+  // awardRewards=false 用于初始牌等豁免来源（不授予首痕迹/额外奖励）。
+  function placeTraceForActor(players, alienState, actor, alienSlotId, traceType, position, options = {}) {
+    const slot = state.getAlienSlot(alienState, alienSlotId);
+    if (!slot?.traces?.[traceType]?.firstPlaced) {
+      const placed = state.placeFirstTrace(alienState, alienSlotId, traceType, actor.color);
+      if (placed?.ok && !placed.extraOnly && options.awardRewards !== false) {
+        const reward = state.getFirstTraceRewardForSlot?.(alienSlotId);
+        gainTraceResources(players, actor, reward, traceType);
+      }
+      return placed;
+    }
+    if (!slot.revealed || options.stateExtra) {
+      const placed = state.addExtraTrace(alienState, alienSlotId, traceType, actor.color);
+      if (placed?.ok && options.awardRewards !== false) {
+        const reward = state.getExtraTraceReward?.();
+        gainTraceResources(players, actor, reward, traceType);
+      }
+      return placed;
+    }
+    const species = getSpeciesTraceApi(slot);
+    return species?.api?.[species.placeMethod]?.(
+      alienState,
+      alienSlotId,
+      traceType,
+      position,
+      actor,
+      { sequence: options.sequence },
+    );
+  }
+
   return Object.freeze({
     ALIEN_TYPES: catalog.ALIEN_TYPES,
     ALIEN_TYPE_IDS: catalog.ALIEN_TYPE_IDS,
@@ -232,5 +295,8 @@
     getExtraTraceGridOriginCenter: placement.getExtraTraceGridOriginCenter,
     getExtraTraceGridCenter: placement.getExtraTraceGridCenter,
     canPlaceAnyRevealedAlienTrace,
+    getSpeciesTraceApi,
+    gainTraceResources,
+    placeTraceForActor,
   });
 });
