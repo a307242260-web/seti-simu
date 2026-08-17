@@ -329,67 +329,108 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
 }
 
 // ---------------------------------------------------------------------------
-// attemptPlanContinuation：fast-path 检查（只消费 store + 当前合法集 + 观测）
+// attemptPlanContinuation：三层判定（依赖环节未变 → 复用；变了 → 重决策）
 // ---------------------------------------------------------------------------
 
 {
   const nextDescriptor = descriptor("move", { rocketId: "r1", deltaX: 1, deltaY: 0 }, {}, "move:a");
   const nextKey = planContinuation.actionSemanticKey(nextDescriptor);
-  const observation = makeObservation({ rotation: 1 });
-  const store = {
-    nextStepKey: nextKey,
-    directoryFingerprint: planContinuation.directoryFingerprint(observation),
-    margin: 12,
+  // 依赖：探测路线计划，终点 land:mars，移动 2 步（fixture 候选无 firstRewardSlotOpen → null）
+  const routeDependency = {
+    kind: "route",
+    endpointTargetId: "land:mars:planet:",
+    present: true,
+    movementSteps: 2,
+    firstRewardSlotOpen: null,
   };
+  const store = { nextStepKey: nextKey, dependency: routeDependency };
 
-  const hit = planContinuation.attemptPlanContinuation(
-    store,
-    makeObservation({ rotation: 1 }),
-    [nextDescriptor],
-  );
-  assert.equal(hit.hit, true, "store 匹配 + 合法 + 目录一致 + margin>0 必须命中");
-  assert.equal(hit.action.actionId, "move:a", "命中必须返回当前合法集内的 descriptor");
-
-  const noStore = planContinuation.attemptPlanContinuation(null, observation, [nextDescriptor]);
-  assert.equal(noStore.hit, false, "无 store 必须 miss");
+  const noStore = planContinuation.attemptPlanContinuation(null, null, [nextDescriptor]);
+  assert.equal(noStore.hit, false);
   assert.equal(noStore.reason, "no-plan");
 
   const notLegal = planContinuation.attemptPlanContinuation(
     store,
-    makeObservation({ rotation: 1 }),
+    makeObservation(),
     [descriptor("move", { rocketId: "r1", deltaX: 2, deltaY: 0 })],
   );
-  assert.equal(notLegal.hit, false, "下一步不在当前合法集必须 miss");
+  assert.equal(notLegal.hit, false, "下一步不在当前合法集必须重决策");
   assert.equal(notLegal.reason, "step-not-legal");
 
-  const dirChanged = planContinuation.attemptPlanContinuation(
-    store,
-    makeObservation({ rotation: 2 }),
+  const noDependency = planContinuation.attemptPlanContinuation(
+    { nextStepKey: nextKey, dependency: null },
+    makeObservation(),
     [nextDescriptor],
   );
-  assert.equal(dirChanged.hit, false, "目录指纹变化必须 miss");
-  assert.equal(dirChanged.reason, "directory-changed");
+  assert.equal(noDependency.hit, false, "无依赖信息（无法验证）必须保守重决策");
+  assert.equal(noDependency.reason, "no-dependency");
 
-  const thinMargin = planContinuation.attemptPlanContinuation(
-    { ...store, margin: 0 },
-    makeObservation({ rotation: 1 }),
-    [nextDescriptor],
-  );
-  assert.equal(thinMargin.hit, true, "margin=0 与护栏无关（盘面未变即照旧执行计划）");
+  // tier1/2：依赖环节未变 → 直接复用（盘面无变化，或变化不影响计划执行）
+  const unchanged = makeObservation();
+  unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  const hit = planContinuation.attemptPlanContinuation(store, unchanged, [nextDescriptor]);
+  assert.equal(hit.hit, true, "路线移动步数与槽位未变必须复用");
+  assert.equal(hit.action.actionId, "move:a");
 
-  const nullMargin = planContinuation.attemptPlanContinuation(
-    { ...store, margin: null },
-    makeObservation({ rotation: 1 }),
-    [nextDescriptor],
-  );
-  assert.equal(nullMargin.hit, true, "margin=null 与护栏无关（盘面未变即照旧执行计划）");
+  // tier3：着陆需要的移动更多了 → 重新决策
+  const moreMoves = makeObservation();
+  moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].gap.movementSteps = 5;
+  const affected = planContinuation.attemptPlanContinuation(store, moreMoves, [nextDescriptor]);
+  assert.equal(affected.hit, false, "目标移动步数增加必须重新决策");
+  assert.equal(affected.reason, "next-step-affected");
 
-  const noDirStore = planContinuation.attemptPlanContinuation(
-    { ...store, directoryFingerprint: null },
-    makeObservation({ rotation: 2 }),
-    [nextDescriptor],
+  // tier3：第一奖励格被占 → 重新决策
+  const slotTaken = makeObservation();
+  slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].firstRewardSlotOpen = false;
+  const slotMiss = planContinuation.attemptPlanContinuation(store, slotTaken, [nextDescriptor]);
+  assert.equal(slotMiss.hit, false, "第一奖励格被占必须重新决策");
+
+  // tier1/2：generic 依赖（对手火箭移动/打牌等不影响计划执行）→ 直接复用
+  const genericStore = { nextStepKey: nextKey, dependency: { kind: "generic" } };
+  const genericHit = planContinuation.attemptPlanContinuation(genericStore, makeObservation({ rotation: 2 }), [nextDescriptor]);
+  assert.equal(genericHit.hit, true, "generic 依赖（未识别为影响计划执行）必须复用");
+}
+
+// ---------------------------------------------------------------------------
+// planDependencyFromPlan / currentDependencyFromStore：形状一致才可比较
+// ---------------------------------------------------------------------------
+
+{
+  const assumedObservation = makeObservation();
+  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  const leaf = {
+    actionChain: ["place_data:x", "land:mars"],
+    rootActionLegalSuccessors: [descriptor("land", { planetId: "mars" }, {}, "land:mars")],
+    rootActionObservation: assumedObservation,
+    observation: {
+      outcomeProjection: {
+        progress: {
+          probeRoute: { candidate: { endpointTargetId: "land:mars:planet:", resourceGap: { movementSteps: 2 } } },
+        },
+      },
+    },
+  };
+  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
+  const assumed = planContinuation.planDependencyFromPlan(plan, leaf);
+  assert.equal(assumed.kind, "route");
+  assert.equal(assumed.movementSteps, 2);
+
+  const store = { dependency: assumed };
+  const current = makeObservation();
+  current.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  current.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  const recomputed = planContinuation.currentDependencyFromStore(store, current);
+  assert.equal(
+    planContinuation.stableHash(recomputed),
+    planContinuation.stableHash(assumed),
+    "同一状态的依赖重算必须与计划假设一致（形状对齐才能比较）",
   );
-  assert.equal(noDirStore.hit, true, "store 无目录指纹时跳过目录检查（不误杀）");
 }
 
 // ---------------------------------------------------------------------------

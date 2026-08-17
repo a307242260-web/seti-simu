@@ -179,6 +179,7 @@ function planContinuationFromWinningLeaf(leaf) {
     nextActionId,
     nextStepFamily: descriptor?.family || String(nextActionId).split(":")[0],
     nextStepKey: descriptor ? actionSemanticKey(descriptor) : `id:${nextActionId}`,
+    nextStepDescriptor: descriptor || null,
     // 计划假设状态：根行动执行后的观测。rootActionSettledObservation 优先
     // （完整稳定边界），缺失时退回 rootActionObservation（根行动刚执行完）。
     planAssumedObservation: leaf?.rootActionSettledObservation
@@ -308,23 +309,42 @@ function compareSortKey(left, right) {
 }
 
 // 与 policy 相同的池排序：settled + selectable + score != null，按 sortKey 降序、
-// priorityClass 降序、actionId 升序。返回 [{ action, evaluation }]。
+// priorityClass 降序、actionId 升序。返回 { pool, failures }——未入池的每个
+// action 都带显式原因，不静默吞错。
 function rankActions(context, legalActions) {
   const pool = [];
+  const failures = [];
   for (const action of legalActions || []) {
     const outcome = (context.actionOutcomes || []).find((candidate) => (
       candidate?.actionId === action?.actionId
     ));
-    if (!outcome || outcome.status !== "settled") continue;
+    if (!outcome) {
+      failures.push({ actionId: action?.actionId, reason: "outcome-missing" });
+      continue;
+    }
+    if (outcome.status !== "settled") {
+      failures.push({ actionId: action?.actionId, reason: `outcome-${outcome.status || "missing"}` });
+      continue;
+    }
     try {
       const evaluation = expectedScoreEvaluator.evaluateOutcome(context, action, {});
       if (evaluation?.selectable === true
         && evaluation.status === "settled"
         && evaluation.score != null) {
         pool.push({ action, evaluation });
+      } else {
+        failures.push({
+          actionId: action?.actionId,
+          reason: `evaluation-${evaluation?.status || "none"}`,
+          score: evaluation?.score == null ? "no-score" : "not-selectable",
+        });
       }
     } catch (error) {
-      // 单条 action 估值失败不影响快照；跳过。
+      failures.push({
+        actionId: action?.actionId,
+        reason: "evaluation-threw",
+        message: error?.message || String(error),
+      });
     }
   }
   pool.sort((left, right) => (
@@ -332,13 +352,20 @@ function rankActions(context, legalActions) {
     || Number(right.evaluation.priorityClass) - Number(left.evaluation.priorityClass)
     || String(left.action.actionId).localeCompare(String(right.action.actionId))
   ));
-  return pool;
+  return { pool, failures };
 }
 
 // 从一次全量搜索的决策结果提取计划快照：winning leaf 的计划下一步、赢面 margin、
 // 目录指纹与事实。rootObservation 取搜索同源的 viewer-safe 根观测
 // （policyObservation / outcome.rootObservation）。
-function extractPlanSnapshot(input) {
+// options.light = true 时跳过 rankActions（margin/pool 不计算）：fast-path 的
+// store 只需要 plan.nextStepKey 与 planDependency，不需要全 action 排序。
+// 每个缺失都带显式 status/reason，不静默吞错：
+//   planStatus: continuation | chain-too-short | no-winning-leaf | leaf-missing |
+//               evaluation-failed | chosen-outcome-missing | no-root-observation
+//   marginStatus: computed | skipped | no-runner-up | empty-pool | no-evaluation |
+//                 evaluation-failed
+function extractPlanSnapshot(input, options = {}) {
   const {
     seatId,
     chosenAction,
@@ -346,9 +373,17 @@ function extractPlanSnapshot(input) {
     actionOutcomes,
     rootObservation,
   } = input;
+  const light = options.light === true;
+  const issues = [];
   const chosenOutcome = (actionOutcomes || []).find((outcome) => (
     outcome?.actionId === chosenAction?.actionId
   )) || null;
+  if (!chosenOutcome) {
+    issues.push({ code: "chosen-outcome-missing", actionId: chosenAction?.actionId || null });
+  }
+  if (!rootObservation) {
+    issues.push({ code: "root-observation-missing", seatId });
+  }
   const context = rootObservation ? {
     seatId,
     observation: rootObservation,
@@ -356,41 +391,84 @@ function extractPlanSnapshot(input) {
   } : null;
 
   let evaluation = null;
-  let margin = null;
+  let evaluationFailure = null;
   let topScore = null;
-  let secondScore = null;
   if (context && chosenOutcome) {
     try {
       evaluation = expectedScoreEvaluator.evaluateOutcome(context, chosenAction, {});
-      topScore = Number(evaluation?.score) || null;
+      if (evaluation?.score != null) topScore = Number(evaluation.score);
     } catch (error) {
-      evaluation = { error: error?.message || String(error) };
+      evaluationFailure = { message: error?.message || String(error) };
+      issues.push({ code: "evaluation-threw", actionId: chosenAction?.actionId, ...evaluationFailure });
     }
   }
-  if (context) {
-    const ranked = rankActions(context, legalActions || []);
-    if (ranked.length) {
-      topScore = topScore ?? (Number(ranked[0].evaluation.score) || null);
-      secondScore = ranked.length > 1 ? (Number(ranked[1].evaluation.score) || null) : null;
+
+  const ranked = light
+    ? { pool: [], failures: [] }
+    : context
+      ? rankActions(context, legalActions || [])
+      : { pool: [], failures: [] };
+  for (const failure of ranked.failures) issues.push({ code: "rank-failure", ...failure });
+
+  let secondScore = null;
+  let margin = null;
+  let marginStatus = light ? "skipped" : "no-evaluation";
+  if (!light && context && chosenOutcome) {
+    if (evaluationFailure) {
+      marginStatus = "evaluation-failed";
+    } else if (ranked.pool.length === 0) {
+      marginStatus = "empty-pool";
+    } else {
+      topScore = topScore ?? (Number(ranked.pool[0].evaluation.score) || null);
+      secondScore = ranked.pool.length > 1
+        ? (Number(ranked.pool[1].evaluation.score) || null)
+        : null;
       if (Number.isFinite(topScore) && Number.isFinite(secondScore)) {
         margin = topScore - secondScore;
+        marginStatus = "computed";
+      } else if (ranked.pool.length < 2) {
+        marginStatus = "no-runner-up";
+      } else {
+        marginStatus = "no-finite-scores";
       }
     }
   }
 
   let plan = null;
+  let planStatus = "no-root-observation";
+  let planDependency = null;
   if (chosenOutcome && evaluation?.selectedLeafId) {
     const leaf = (chosenOutcome.leaves || []).find((candidate) => (
       String(candidate?.leafId) === String(evaluation.selectedLeafId)
     )) || null;
-    plan = leaf ? planContinuationFromWinningLeaf(leaf) : null;
+    if (leaf) {
+      plan = planContinuationFromWinningLeaf(leaf);
+      planStatus = plan.hasContinuation ? "continuation" : "chain-too-short";
+      planDependency = planDependencyFromPlan(plan, leaf);
+    } else {
+      planStatus = "leaf-missing";
+      issues.push({ code: "leaf-missing", selectedLeafId: evaluation.selectedLeafId });
+    }
+  } else if (!chosenOutcome) {
+    planStatus = "chosen-outcome-missing";
+  } else if (evaluationFailure) {
+    planStatus = "evaluation-failed";
+  } else if (evaluation?.score == null) {
+    planStatus = "no-winning-leaf";
+  } else {
+    planStatus = "no-selected-leaf";
   }
 
   return {
     plan,
+    planStatus,
+    planDependency,
     margin,
+    marginStatus,
     topScore,
     secondScore,
+    poolSize: ranked.pool.length,
+    issues,
     rootObservation,
     facts: rootObservation ? directoryFactsSnapshot(rootObservation) : null,
     directoryFingerprint: rootObservation ? directoryFingerprint(rootObservation) : null,
@@ -401,32 +479,122 @@ function extractPlanSnapshot(input) {
 }
 
 // ---------------------------------------------------------------------------
+// 计划依赖事实（三层判定用；对照基准 = 上轮本家行动执行完的计划假设状态）
+// ---------------------------------------------------------------------------
+
+// 计划执行所依赖的盘面事实：
+// - 探测路线计划（winning leaf 带 probeRoute 终点）：终点 { movementSteps,
+//   firstRewardSlotOpen }——「着陆需要的移动更多了 / 第一奖励格被占」即此字段变化；
+// - 下一步是外星痕迹放置（target.alienSlotId）：槽位占用——「想标记的槽被占了」；
+// - 其他：{ kind: "generic" } → 视为不影响计划执行 → 可复用（对手火箭移动、
+//   打牌、资源变化、无关扇区、无探测器移动的旋转均落此分支，先直接复用）。
+function planDependencyFromPlan(plan, leaf) {
+  if (!plan || !leaf) return { kind: "generic" };
+  const candidate = leaf?.observation?.outcomeProjection?.progress?.probeRoute?.candidate;
+  if (candidate?.endpointTargetId) {
+    const assumed = plan.planAssumedObservation;
+    const requirements = assumed?.probeRouteRequirements
+      || assumed?.outcomeProjection?.progress?.probeGoalRequirements;
+    const requirement = (requirements?.candidates || []).find((entry) => (
+      String(entry?.targetId) === String(candidate.endpointTargetId)
+    ));
+    return {
+      kind: "route",
+      endpointTargetId: String(candidate.endpointTargetId),
+      present: Boolean(requirement),
+      movementSteps: Number(
+        requirement?.gap?.movementSteps ?? candidate.resourceGap?.movementSteps ?? 0,
+      ),
+      firstRewardSlotOpen: requirement?.firstRewardSlotOpen ?? null,
+    };
+  }
+  const target = plan.nextStepDescriptor?.target || {};
+  if (target.alienSlotId != null) {
+    const assumed = plan.planAssumedObservation;
+    const slot = findAlienSlot(assumed, target.alienSlotId);
+    return {
+      kind: "alien-slot",
+      alienSlotId: String(target.alienSlotId),
+      present: Boolean(slot),
+      firstPlaced: slot?.firstPlaced ?? null,
+      ownerPlayerColor: slot?.ownerPlayerColor ?? null,
+    };
+  }
+  return { kind: "generic" };
+}
+
+// 从当前观测重算同一依赖（与 planDependencyFromPlan 同构，供 fast-path 比较）。
+function currentDependencyFromStore(store, observation) {
+  const dependency = store?.dependency || null;
+  if (dependency?.kind === "route") {
+    const requirements = observation?.probeRouteRequirements
+      || observation?.outcomeProjection?.progress?.probeGoalRequirements;
+    const requirement = (requirements?.candidates || []).find((entry) => (
+      String(entry?.targetId) === String(dependency.endpointTargetId)
+    ));
+    return {
+      kind: "route",
+      endpointTargetId: dependency.endpointTargetId,
+      present: Boolean(requirement),
+      movementSteps: Number(requirement?.gap?.movementSteps ?? 0),
+      firstRewardSlotOpen: requirement?.firstRewardSlotOpen ?? null,
+    };
+  }
+  if (dependency?.kind === "alien-slot") {
+    const slot = findAlienSlot(observation, dependency.alienSlotId);
+    return {
+      kind: "alien-slot",
+      alienSlotId: dependency.alienSlotId,
+      present: Boolean(slot),
+      firstPlaced: slot?.firstPlaced ?? null,
+      ownerPlayerColor: slot?.ownerPlayerColor ?? null,
+    };
+  }
+  return { kind: "generic" };
+}
+
+function findAlienSlot(observation, alienSlotId) {
+  const aliens = observation?.publicState?.board?.aliens
+    || observation?.publicState?.aliens
+    || null;
+  const slots = Array.isArray(aliens?.slots)
+    ? aliens.slots
+    : Object.values(aliens?.slots || {});
+  return slots.find((entry) => (
+    [entry?.id, entry?.slotId, entry?.alienId].some((value) => (
+      value != null && String(value) === String(alienSlotId)
+    ))
+  )) || null;
+}
+
+// ---------------------------------------------------------------------------
 // fast-path 检查（纯函数）：只消费计划快照 + 当前合法集 + 当前观测
 // ---------------------------------------------------------------------------
 
-// store: { nextStepKey, directoryFingerprint, margin }（由 extractPlanSnapshot
-// 的 plan/margin/directoryFingerprint 字段构造）。
-// 命中时返回 { hit: true, action }（当前合法集内的 descriptor），否则返回
-// { hit: false, reason }。
-// 护栏只有两条：下一步仍合法 + 目录指纹未变（计划假设的外部世界成立）。
-// 不设 margin 门槛：上一次决策的赢面与「本次继续计划是否安全」无因果关系
-// （实测 margin=null 占 store 尝试 77%，全部误杀；严格更优候选案例由
-// directory-changed 拦截）。tie-break 复用即：目录未变时计划内选择与重搜
-// 等价值，直接提交计划的选择。
+// store: { nextStepKey, dependency, directoryFingerprint }（由 extractPlanSnapshot
+// 的 plan/planDependency/directoryFingerprint 构造）。
+// 判定（用户口径，对照基准 = 上轮本家行动执行完的计划假设状态）：
+//   下一步仍合法 且 计划执行依赖的环节未变（盘面无变化 → tier1；盘面有变化但
+//   不影响计划执行，如对手火箭移动/打牌/资源变化/无关扇区/无探测器移动的旋转
+//   → tier2）→ 直接复用；依赖环节变了（着陆移动变多 / 目标外星人槽被占等 →
+//   tier3）→ 重新决策。
 function attemptPlanContinuation(store, currentObservation, legalActions) {
   if (!store) return Object.freeze({ hit: false, reason: "no-plan" });
-  const nextStepKey = store.nextStepKey;
-  if (!nextStepKey) return Object.freeze({ hit: false, reason: "no-next-step" });
   const current = (legalActions || []).find((action) => (
-    actionSemanticKey(action) === nextStepKey
+    actionSemanticKey(action) === store.nextStepKey
   ));
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
-  if (store.directoryFingerprint != null && currentObservation) {
-    if (directoryFingerprint(currentObservation) !== store.directoryFingerprint) {
-      return Object.freeze({ hit: false, reason: "directory-changed" });
-    }
+  if (store.dependency == null) {
+    return Object.freeze({ hit: false, reason: "no-dependency" });
   }
-  return Object.freeze({ hit: true, action: current });
+  if (!currentObservation) {
+    return Object.freeze({ hit: false, reason: "no-observation" });
+  }
+  const currentDependency = currentDependencyFromStore(store, currentObservation);
+  if (stableHash(currentDependency) === stableHash(store.dependency)) {
+    return Object.freeze({ hit: true, action: current });
+  }
+  return Object.freeze({ hit: false, reason: "next-step-affected", affected: currentDependency });
 }
 
 module.exports = Object.freeze({
@@ -443,5 +611,7 @@ module.exports = Object.freeze({
   aggregateStats,
   extractPlanSnapshot,
   attemptPlanContinuation,
+  planDependencyFromPlan,
+  currentDependencyFromStore,
   rankActions,
 });

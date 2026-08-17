@@ -118,7 +118,38 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 fast-path 设计启示：miss 集中在「根行动 → 条件决策」的平局选择，条件决策本身
 便宜；可考虑只对非条件决策 fast-path，或对条件决策携带稳定 tie-break。
 
-## 方向 D 落地：fast-path v1（simulation env，opt-in，2026-08-XX）
+## 方向 D 落地：fast-path v2（三层判定，2026-08-XX）
+
+实现（按用户口径，对照基准 = 上轮本家行动执行完的计划假设状态，而非执行前）：
+
+- `plan-continuation.js`：`planDependencyFromPlan`（从 winning leaf 的 probeRoute
+  终点 / 外星痕迹槽提取计划执行依赖的盘面事实）+ `currentDependencyFromStore`
+  （从当前观测重算同一依赖，形状对齐才可比较）+ `attemptPlanContinuation`
+  （三层判定）。
+- 判定规则：
+  - **复用**：下一步仍合法 且 计划依赖环节未变。覆盖：
+    - tier1 盘面无变化（对照基准 = 上轮本家行动执行完）；
+    - tier2 盘面有变化但不影响计划执行——**当前直接复用**（记录为后续优化点）：
+      - 其他玩家火箭移动 / 打牌 / 资源变化（可能后续影响本家行动，现在不考虑）；
+      - 计划不涉及的扇区变化；太阳系转动但计划无探测器移动（可能出现更优选择，
+        现在不管）。
+  - **重新决策**：依赖环节变了——着陆需要的移动更多了 / 目标外星人槽位被占 /
+    第一奖励格被占 / 目标路线消失等。
+- tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电或多打一张
+  移动牌）**明确延后不实现**。
+- store 重建用 `extractPlanSnapshot(..., { light: true })`：跳过 rankActions
+  （margin 已不参与判定，rankActions 仅剩诊断工具使用）。
+
+首测 A/B（seti-107，前 120 决策）：fast-path 命中 31/92（33.7%），miss 全部为
+no-plan（结构上限，约 2/3 决策的 winning leaf 链条不足 2 步，多为条件/控制等
+便宜决策——用户裁决先不管，属当前启发式在条件决策根边界成叶所致）；所有有
+store 的尝试全部命中（依赖环节在窗口内未变）；终局分差四席合计 +1，提交失败 0。
+
+后续优化点（记录，暂不实现）：tier2 的「可能出现更优选择」；tier3 的部分复用
+（warm start：成本调整后仍沿用路线）；no-plan 结构上限（多步链消费 / 条件决策
+延续提取）。
+
+## 方向 D 落地：fast-path v1（simulation env，opt-in，历史版本）
 
 实现：
 

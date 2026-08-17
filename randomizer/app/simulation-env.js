@@ -536,6 +536,10 @@ function createSimulationEnv() {
         planContinuationMissCount: 0,
         planContinuationCommitFailures: 0,
         planContinuationMissReasons: {},
+        planContinuationStoreStatus: {},
+        planContinuationExtractIssues: {},
+        planContinuationExtractFailures: 0,
+        planContinuationExtractFailureMessage: null,
       };
       const startedAt = performance.now();
       seededRandom = createSeededRandom(seed);
@@ -902,23 +906,42 @@ function createSimulationEnv() {
       const result = selection.submission?.result;
       if (!result?.ok) throw new Error(result?.error || "Heuristic opponent 执行失败");
       // 更新计划延续 store：每次全量搜索后用 winning leaf 重建（供下一次同席
-      // 决策 fast-path 复用，含条件决策的 tie-break 选择）。
+      // 决策 fast-path 复用，含条件决策的 tie-break 选择）。快照提取是诊断侧
+      // 逻辑，失败绝不 crash 游戏：计数 + 记录原因，store 置空（下次全量搜索）。
       if (config.planContinuationFastPath) {
-        const snapshot = planContinuation.extractPlanSnapshot({
-          seatId: beforeActions[0].actorPlayerId,
-          chosenAction: selection.action,
-          legalActions: beforeActions,
-          actionOutcomes,
-          rootObservation: policyObservation,
-        });
-        if (snapshot.plan?.hasContinuation) {
-          planContinuationStores.set(beforeActions[0].actorPlayerId, {
-            nextStepKey: snapshot.plan.nextStepKey,
-            directoryFingerprint: snapshot.directoryFingerprint,
-            margin: snapshot.margin,
-          });
-        } else {
-          planContinuationStores.delete(beforeActions[0].actorPlayerId);
+        const seatId = beforeActions[0].actorPlayerId;
+        try {
+          // light 模式：store 只需要 plan.nextStepKey 与 planDependency，
+          // 跳过全 action 排序（margin 已不参与判定）。
+          const snapshot = planContinuation.extractPlanSnapshot({
+            seatId,
+            chosenAction: selection.action,
+            legalActions: beforeActions,
+            actionOutcomes,
+            rootObservation: policyObservation,
+          }, { light: true });
+          for (const issue of snapshot.issues || []) {
+            const code = issue?.code || "unknown";
+            diagnostics.planContinuationExtractIssues[code] = (
+              diagnostics.planContinuationExtractIssues[code] || 0
+            ) + 1;
+          }
+          if (snapshot.plan?.hasContinuation && snapshot.planDependency != null) {
+            planContinuationStores.set(seatId, {
+              nextStepKey: snapshot.plan.nextStepKey,
+              dependency: snapshot.planDependency,
+              directoryFingerprint: snapshot.directoryFingerprint,
+            });
+          } else {
+            planContinuationStores.delete(seatId);
+            diagnostics.planContinuationStoreStatus[snapshot.planStatus || "unknown"] = (
+              diagnostics.planContinuationStoreStatus[snapshot.planStatus || "unknown"] || 0
+            ) + 1;
+          }
+        } catch (error) {
+          diagnostics.planContinuationExtractFailures += 1;
+          diagnostics.planContinuationExtractFailureMessage = error?.message || String(error);
+          planContinuationStores.delete(seatId);
         }
       }
       if (!asTeacher) {
