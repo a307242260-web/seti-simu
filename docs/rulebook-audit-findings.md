@@ -39,7 +39,7 @@
 | # | 问题 | 规则依据 | 代码位置 | 备注 |
 |---|---|---|---|---|
 | M1 | 研究科技公转顺序：规则要求「先公转、后选科技」，实现为 选择→支付 6 推广→拿取→旋转→bonus | 基础 P16「当玩家研究一个科技时，首先需要执行一次太阳系公转。然后玩家选择一个自己还未拥有的科技」 | `tech/resolver.js` `executeTakeTech`（原 select→spend→take→rotate→bonus）；`effects/science-session.js` RESEARCH/skipBonus 分支 | ✅ **已修复**：rotate 前移到 select 之前（主行动与卡牌效果路径）；卡牌研究无合法目标时仍先公转再跳过（P16「依然执行公转」）；`docs/mechanics-reference.md` 同步 |
-| M2 | 扇区即时结算：每次标记信号后立即 SETTLE 并重置，而非「主要行动结束后按当前玩家决定顺序统一结算」 | 基础 P13「当该玩家的主要行动结束之后，就会以当前玩家决定的顺序依次结算所有本回合中完成的扇区」 | 早期实现：每个扫描节点（SCAN_STEP 收敛前的 SCAN_TARGET/PUBLIC_SCAN/HAND_SCAN）后各 spawn SETTLE 立即结算 | ✅ **已修复（扫描流串尾统一判定）**：移除逐节点 SETTLE，扫描流 spawn 源（scanQueue/卡牌扫描家族/DRAW_THEN_SCAN/行星奖励扫描）统一在串尾追加独立 `SCAN_FINALIZE` 节点（`science_domain_scan_finalize`），由它触发一次 SETTLE——同一扫描 flow 内完成扇区不再提前重置，后续信号只能放额外标记（规则书 P13）；跳过任意扫描节点后串尾仍结算；公共牌扫描 done 分支只负责补牌。SETTLE 内同一批多个待结算扇区按「先当前玩家为赢家」排序。「当前玩家选择结算顺序」未实现（沿用固定顺序） |
+| M2 | 扇区即时结算：每次标记信号后立即 SETTLE 并重置，而非「主要行动结束后按当前玩家决定顺序统一结算」 | 基础 P13「当该玩家的主要行动结束之后，就会以当前玩家决定的顺序依次结算所有本回合中完成的扇区」 | 早期实现：每个扫描节点后各 spawn SETTLE 立即结算 | ✅ **已修复（扫描流串尾统一判定）**：移除逐节点 SETTLE，扫描流 spawn 源（scanQueue/卡牌扫描家族/DRAW_THEN_SCAN/行星奖励扫描）统一在串尾追加独立 `SCAN_FINALIZE` 节点（`science_domain_scan_finalize`），由它触发一次 SETTLE——同一扫描 flow 内完成扇区不再提前重置，后续信号只能放额外标记（规则书 P13）；跳过任意扫描节点后串尾仍结算；公共牌扫描 done 分支只负责补牌。SETTLE 内同一批多个待结算扇区按「先当前玩家为赢家」排序。「当前玩家选择结算顺序」未实现（沿用固定顺序） |
 | M3 | 条件任务只能回合末结算，不能「回合内任意时点用免费行动完成 / 立即完成」 | 基础 P15「在你回合中的任意时间，若你已经达成了任务所需的条件，就可以执行一个免费行动完成此任务」 | 原 `effects/residual-domain-session.js` 类型 2 任务只在 `card_trigger:turn_end` 生成 Decision | ✅ **已修复（任意时点完成）**：新增 `complete_task` 免费行动 family（`standard-action` TOP_LEVEL_FAMILIES 第 15 位、`production-kernel` 义务声明、`index.html` 快速行动按钮）；residual 新增 `settleReadyTaskDirect` 直接结算已满足条件的类型 2 任务（复用任务完成/移出游戏逻辑）。回合末自动弹窗保留。「打出卡牌时立即完成」仍走回合末弹窗（规则允许选择立即或稍后完成，免费行动入口已覆盖稍后场景）。**（后续统一）**：`settleReadyTaskDirect`（快速行动）与 `settleCardDecision`（回合末 CARD_DECISION）的任务结算抽取为共享内核 `settleTaskCardConsumption`（task/trigger/chong_task/amiba_task 消费、保留区移除+移出游戏+计数、任务奖励、化石奖励），并补齐回合末路径缺失的虫族搬运棋子盘面移除 |
 | M4 | ~~钻探者（虫）卡牌「不计入手牌上限」与「不可用于资源转换」未实现~~ → **已澄清（用户核对说明书第 3 页）**：钻探者是独立物种 = 本仓库九折（15 张钻探者卡牌 ↔ 九折 15 张），硫铵虫 = 虫（10 张）；说明书 P20/P28 只豁免钻探者（九折）卡牌 | 基础 P20「除钻探者卡牌以外，此类卡牌不被计入手牌上限」；P28 FAQ「钻探者卡牌不被视为手牌，不可被用于资源转换」 | `effects/probe-turn-session.js`（PASS 弃牌计数与候选）、`production-composition.js`（资源转换弃牌候选） | ✅ **当前实现正确，无需改动**：九折牌不进入手牌（`assets/aliens/九折/implementation.md`），P20/P28 豁免自然成立；虫（硫铵虫）牌正常进手牌、计入手牌上限、可作弃牌/资源转换费用（说明书未豁免硫铵虫），`passDiscardChoices`/`discardChoices` 的「全部手牌可用」与说明书一致 |
 | M5 | 方舟揭示「按首痕迹数量各获得 1 次基础奖励」未实现 | `assets/aliens/方舟/implementation.md:18` | 原 `effects/residual-domain-session.js` 对 fangzhou 跳过发牌；`fangzhou.js` 只发 card2 | ✅ **已修复**：方舟揭示时按玩家在该槽位首痕迹数量逐次翻 card1 基础奖励牌（gain/数据/盲抽/额外公共扫描），奖励随揭示 spawnedEffects 结算（`revealReadyAliens` 汇总传播） |
@@ -92,14 +92,14 @@
 ### D 组（统一内核审计，全行动族 + 非行动跨来源机制）
 本轮行动审计（23 族 + 非行动机制）收敛到的统一内核，详见 `docs/mechanics-reference.md`「统一内核清单」：
 - `b5280f5`/`2fcba91` 扫描流串尾 `SCAN_FINALIZE` 统一扇区结算（P13 不逐节点）；residual 死分支清理
-- `ceda731` 外星牌打出效果全部迁入卡表 `playEffects`（删 `buildImmediateEffects`/`is*Card` 循环，修复 aomomo_0/5/9 双路径重复结算）
+- `ceda731` 外星牌打出效果全部迁入卡表 `playEffects`（删物种效果函数与逐物种追加循环，修复 aomomo_0/5/9 双路径重复结算）
 - `a13732b` 获得牌统一：盲抽/精选全部收拢到 `createCardDrawContext`
 - `dfbed5a`/`ae152b0` M4 物种澄清（钻探者=九折、硫铵虫=虫，说明书第 3 页核对）；弃牌/手牌上限注释同步
 - `c50442f` 哨兵角标恢复接线（见上）
 - `061a159` 任务结算统一内核 `settleTaskCardConsumption`（补回合末虫族搬运棋子移除）
 - `425047e`/`3374719` 插入牌到收入列统一（`gainIncome`：赫利昂、蓝槽/数据位收入、初始收入；收入牌一律移出游戏）
 - `870c9a1`/`aecef4b` 任务中继站改为「获得角标奖励」（一次性、不弃牌，`applyCornerGainReward`）；术语区分「插入收入列」vs「角标效果」
-- `84687b3` 术语修正：放置数据（计算机 4 号位）获得的收入行动，非「蓝槽收入」
+- `84687b3` 术语修正：放置数据（计算机 4 号位数据覆盖）获得的收入行动，与蓝科技槽无关
 - `2480014` 外星人痕迹统一内核 `placeTraceForActor`（首次/额外/物种正面 + 奖励；`getSpeciesTraceApi` 单点）
 
 ### B 组（时机/顺序）
