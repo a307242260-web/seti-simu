@@ -317,6 +317,8 @@ UI 布局：
 
 快速行动可以在主行动之前、主行动完成之后，以及主行动效果队列的不同效果之间使用。快速行动会记录可撤销步骤，但不会消耗本回合的主要行动次数，也不会改变主行动是否已经完成。确认精选拿牌后，该精选动作不可撤销。
 
+PASS 提交后（`passCompletionPending` 置位或已计入 `passedPlayerIds`）回合即结束，不再枚举任何快速行动：快速交易、公司 1x、弃牌角标、符文族面部符号、完成任务、移动与放置数据统一关闭，PASS 后只剩「结束回合」。PASS 效果链（弃牌/公转/预留精选）完成前仍可正常使用快速行动。
+
 ### 扫描效果队列
 
 扫描 effect 由 `randomizer/game/actions/scan-effects.js` 构建，并由 `randomizer/game/effects/science-session.js` 在公共 Effect Session 中编排：

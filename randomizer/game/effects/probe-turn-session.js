@@ -147,6 +147,11 @@
         const root = context.state || context;
         const player = actor(root, context.standardActionAuthority?.actorId);
         if (!player) return fail("PROBE_TURN_ACTOR_MISSING", "没有当前玩家");
+        // PASS 后回合已结束：与 quick_trade/industry/card_corner 等其余快速行动
+        // 一致，移动不再可枚举（规则书：PASS 结束回合，不再执行任何快速行动）。
+        if ((root.turn?.passedPlayerIds || []).includes(player.id) || player.passCompletionPending) {
+          return fail("PROBE_MOVE_AFTER_PASS", "PASS 后不能执行移动");
+        }
         const actionCtx = actionContext(root, player.id);
         const directionOrder = new Map(
           (abilities.rocket.MOVE_DIRECTIONS || []).map((direction, index) => [direction.id, index]),
@@ -671,16 +676,24 @@
             if (selected.length < required) subsets.push([...selected, card]);
           }
         }
+        // 同一弃牌集合的排列（[a,b] 与 [b,a]）去重：choiceId 按排序后的
+        // cardId 生成，避免同一支付方案重复出现在移动支付选择中。
+        const seenPaymentKeys = new Set();
         return science.formalizeChoices(root, effect.ownerId, subsets.flatMap((selected) => {
           const energyCost = Math.max(0, required - selected.length);
           if (!players.canAfford(player, { energy: energyCost })) return [];
-          const cardIds = selected.map((card) => card.id);
+          const cardIds = selected.map((card) => card.id).sort((left, right) => (
+            String(left).localeCompare(String(right))
+          ));
+          const paymentKey = cardIds.join("|");
+          if (seenPaymentKeys.has(paymentKey)) return [];
+          seenPaymentKeys.add(paymentKey);
           return [{
             family: "choose_payment",
             phase: "conditional",
             target: {
               kind: "move-payment",
-              choiceId: cardIds.length ? cardIds.join("|") : "energy",
+              choiceId: cardIds.length ? paymentKey : "energy",
               cardIds,
             },
             payload: { energyCost, requiredMovePoints: required },

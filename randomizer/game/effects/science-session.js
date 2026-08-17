@@ -695,6 +695,13 @@
         getOptions(actionContext) {
           const root = actionContext?.state || actionContext;
           const actor = getActor(root, actionContext?.standardActionAuthority?.actorId);
+          if (!actor) return fail("SCIENCE_ACTOR_MISSING", "没有当前玩家");
+          // PASS 后回合已结束：与 quick_trade/industry/complete_task 等其余快速
+          // 行动一致，放置数据不再可枚举（规则书：PASS 结束回合，不再执行任何
+          // 快速行动）。
+          if ((root.turn?.passedPlayerIds || []).includes(actor.id) || actor.passCompletionPending) {
+            return fail("SCIENCE_PLACE_DATA_AFTER_PASS", "PASS 后不能放置数据");
+          }
           const result = abilities.data.listPlacementChoices(actor);
           return result.ok ? {
             ok: true,

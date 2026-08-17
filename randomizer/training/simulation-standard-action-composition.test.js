@@ -433,6 +433,66 @@ for (const family of ["scan", "place_data"]) {
 }
 
 {
+  // PASS 后所有快速行动必须关闭：move / place_data 曾漏接门槛，与
+  // quick_trade / industry / card_corner / runezu_face_symbol / complete_task
+  // 对齐（规则书：PASS 结束回合，不再执行任何快速行动）。
+  const passKernel = createSimulationRuleComposition({
+    ...config,
+    seed: "seti-pass-quick-gate",
+    random: createSeededRandom("seti-pass-quick-gate"),
+  });
+  assert.equal(passKernel.newGame({ ...config, seed: "seti-pass-quick-gate" }).ok, true);
+  finishOpening(passKernel);
+  // 给当前玩家追加一枚在途火箭（追加 playerSequence，不覆盖已有序列），
+  // 确保 move 在有合法移动目标的前提下验证门槛。
+  const baseState = restoreScenario(passKernel, (state, player) => {
+    const earth = solar.createSolarSnapshot(state.solarSystem).planetLocations
+      .find((planet) => planet.planetId === "earth");
+    const nextSequence = (state.pieces.rockets || [])
+      .filter((rocket) => rocket.playerId === player.id)
+      .reduce((max, rocket) => Math.max(max, Number(rocket.playerSequence) || 0), 0) + 1;
+    state.pieces.rockets.push({
+      id: 9100 + nextSequence,
+      playerId: player.id,
+      color: player.color,
+      playerSequence: nextSequence,
+      surface: "solar-board",
+      sectorX: earth.x,
+      sectorY: earth.y,
+      slotIndex: 5,
+    });
+    state.pieces.playerRocketSequences[player.id] = [
+      ...(state.pieces.playerRocketSequences[player.id] || []),
+      nextSequence,
+    ];
+    state.meta.sequences.rocket = 9200;
+    player.resources.energy = 10;
+  });
+  const playerId = baseState.turn.currentPlayerId;
+  const player = baseState.players.players.find((entry) => entry.id === playerId);
+  assert.ok(
+    enumerateBrowserProductionPort(baseState, "move").actions.length > 0,
+    "PASS 前移动必须可枚举（对照）",
+  );
+  assert.ok(
+    enumerateBrowserProductionPort(baseState, "place_data").actions.length > 0,
+    "PASS 前放置数据必须可枚举（对照）",
+  );
+  // 提交 PASS 后的双标志状态：passedPlayerIds + passCompletionPending。
+  player.mainActionCompleted = true;
+  player.passCompletionPending = true;
+  baseState.turn.passedPlayerIds = [...(baseState.turn.passedPlayerIds || []), playerId];
+  for (const family of [
+    "move", "place_data", "quick_trade", "industry", "card_corner",
+    "runezu_face_symbol", "complete_task",
+  ]) {
+    const quick = enumerateBrowserProductionPort(baseState, family);
+    assert.equal(quick.actions.length, 0, `PASS 后 ${family} 必须不可枚举`);
+  }
+  passKernel.composition.dispose();
+}
+
+{
   const routeKernel = createSimulationRuleComposition({
     ...config,
     seed: "probe-all-directions",
