@@ -20,6 +20,7 @@
 - 代码和资产路径以仓库根目录为基准。
 - 共享 dirty worktree 中若本次修改与他人改动重叠同一文件，提交前除工作树回归外，还必须验证仅含本次 staged 内容的独立快照；不得把他人未提交修复当作本次验收证据。
 - 并行任务可能同时写共享 index 时，提交必须从最新 HEAD 创建私有 `GIT_INDEX_FILE`，只装入本 issue 的明确 blob；初始化与后续每条 index 命令必须在同一 shell segment 显式携带 `GIT_INDEX_FILE=<private-path>`，禁止先裸跑 `git read-tree HEAD`；commit 后立即用 `git show --name-only/--stat` 核对实际文件清单与 issue 范围。
+- 共享 index 中可能残留并行任务早先 `git add` 的**过期 staged 快照**（blob 早于最新 HEAD，文件级工作树却已同步到 HEAD）：此时直接 `git commit` 会把他人已提交的改动整体回退。提交前必须核对 `git diff --cached` 与工作树/HEAD 一致；发现过期 staged 用 `git reset -- <paths>` 清掉（不动工作树、不动提交）。
 
 ## 代码地图
 
