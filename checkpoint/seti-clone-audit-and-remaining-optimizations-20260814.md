@@ -101,15 +101,16 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 - 失效原因按事实分量点名（board.rotation / board.planets / board.aliens /
   board.data / board.publicCards / board.techSupply / directory.*）。
 
-首测（固定盘面 seti-107，前 150 决策，4 席，48 对同席连续决策）：
+首测（固定盘面 seti-107，前 150 决策，4 席，48 对同席连续决策；margin 预测器在
+后续判定演进中已移除，此处不再引用）：
 
 - 实际命中（计划下一步 == 新搜索实际选择）37/48 = **77.1%**；
 - 预测器：stepLegal precision 77.1% / recall 100%；directorySame precision
-  80.6% / recall 78.4%；marginOk precision 80.4% / recall 100%；
-  组合（stepLegal+directory+margin）precision 80.6% / recall 78.4%；
+  80.6% / recall 78.4%；组合（stepLegal+directory）precision 80.6% /
+  recall 78.4%；
 - 未命中 11 例：7 例 plan-degraded-or-alternative-improved（便宜检查全过但搜索
   改选——实证为条件决策平局 tie-break 发散，如 blue1 slot1 vs slot4 同值 52），
-  4 例 directory-changed，2 例 margin-non-positive；
+  4 例 directory-changed；
 - 命中决策可省搜索耗时 6.2s（占配对 cur 搜索总耗时 73.9%）；实测 miss 的条件
   决策本身便宜（40-170ms），贵的根行动搜索命中率高；
 - 搜索耗时构成（28.9s）：execution 31.4%、orchestration 27.4%、projection

@@ -49,6 +49,12 @@ load 阶段切换到存档中预声明的整席 fallback。
 `simulation-env.step()`，setup 公司牌/初始牌组合则由 Standard Action registry 生成
 `choose_branch` descriptor，并经 `submitDecision()` 提交。两端不维护独立 Policy 分支。
 
+例外：Simulation 侧的计划延续复用（`planContinuationFastPath`，默认关）在决策点
+先复用上次方案输出的 plan，命中时直接提交计划下一步，**不经本 Host 的请求/校验链**
+（合法集/authority 重验由 `simulation-env.step()` 承担）；未命中才回到本 Host 请求
+Policy。该路径仅 simulation 训练/benchmark 启用，Browser 始终经本 Host。见
+`docs/ai-design.md` §3。
+
 ## Browser 接线
 
 Browser 调度由 `app/ai/browser-bootstrap.js` 从 Rule Composition 的 inspection、StateSource projection

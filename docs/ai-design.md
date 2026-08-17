@@ -16,6 +16,10 @@ Rule Composition
   -> Rule Composition
 ```
 
+例外：Simulation 侧的计划延续复用（`planContinuationFastPath`，默认关）在决策点
+先复用上次方案输出的 plan，命中时**直接提交计划下一步，不经过上述链路**；仅
+simulation 训练/benchmark 路径启用，Browser 不受影响。见 §3。
+
 - Browser 由 `app/ai/browser-bootstrap.js` 读取 Rule Composition boundary，构造当前机器席位的只读 observation 与 legal descriptors。
 - Simulation 使用同一 Policy Port、Machine Player Host 语义与 Standard Action/Decision identity。
 - Host 在 Policy 请求前通过 Rule Composition 的 `counterfactualPort` 为可能直接命中当前
@@ -112,6 +116,10 @@ simulation（决策点）
   重验，计数进 diagnostics（`planContinuationHitCount` / `MissReasons` /
   `planContinuationStoreStatus`）。属显式近似，与 `targetSchedulerPrunedCount`
   同文化：优化判定空间前保持近似与搜索空间不变。
+- 计划 store 是 per-env 瞬态（`reset`/`loadCheckpoint` 清空，不入 checkpoint）：
+  当前 simulation 每 env 固定单一 policy，store 的身份隐式等于该 policy；若未来
+  支持同席多 policy 切换，store 必须按 policyType/version/modelChecksum/
+  configChecksum 分键（checkpoint 红线）。
 - 仅在 simulation env 启用（默认关）；Browser 路径尚未接入，Browser 机器席位仍
   走 Host -> Policy 完整链。
 - 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
@@ -343,6 +351,7 @@ node randomizer/game/ai/policy-port.test.js
 node randomizer/game/ai/machine-player-host.test.js
 node randomizer/game/ai/heuristic-evaluator.test.js
 node randomizer/game/ai/heuristic-policy.test.js
+node randomizer/game/ai/plan-continuation.test.js
 node randomizer/app/ai/browser-machine-player.test.js
 node tools/run_node_tests.js
 node tools/run_browser_smokes.js
