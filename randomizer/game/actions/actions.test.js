@@ -50,7 +50,7 @@ function createContext(overrides) {
   const planetsState = planetStats.createPlanetStatsState();
 
   const base = {
-    meta: { sequences: { alienEntity: 1, rocket: 1 } },
+    meta: { sequences: { alienEntity: 1, rocket: 1, nebulaToken: 1, nebulaReplacement: 1, dataToken: 1 } },
     solarSystem: solarSystemState,
     players: playersState,
     pieces: piecesState,
@@ -392,6 +392,47 @@ if (researchTake.bonusId === "bonus_1c") {
   assert.equal(huanyuRockets.length, 2, "寰宇动力开局必须放置 2 枚探测器");
   assert.equal(player.resources.credits, 2, "开局发射不得扣信用点（免成本）");
   assert.equal(player.resources.energy, 2, "开局发射不得扣能量（免成本）");
+}
+
+// 初始牌扫描统一走 scanNebula 内核（免扫描费、不展开完整扫描队列），
+// 事件与数据替换与主行动扫描一致。
+{
+  const data = require("../data");
+  const initialCards = require("../initial-cards");
+  const scanContext = createContext({
+    players: players.createPlayerState({
+      currentPlayer: {
+        color: "white",
+        resources: { credits: 10, energy: 10, publicity: 10 },
+      },
+    }),
+  });
+  scanContext.data = data.createDefaultNebulaDataState();
+  data.fillAllNebulaData(scanContext.data, { source: "setup", root: scanContext });
+  const player = scanContext.players.players[0];
+  player.dataState = data.createDefaultDataState();
+  // 初始牌 1：天狼星A扫描两次（id 需为 initial:N 以便识别牌号）
+  const initialCard = cards.createCardInstance(
+    { set: "initial", card_id: "initial:1", card_name: "天狼星A扫描两次" },
+    "initial-test-1",
+  );
+  initialCard.id = "initial:1";
+  player.initialSelection = { industry: "寰宇动力", removedInitialCards: [initialCard] };
+  const settled = initialCards.resolveInitialSelections(scanContext, {
+    playerIds: [player.id],
+  });
+  assert.equal(settled.ok, true, settled.message);
+  const cardResult = settled.results.find((result) => result.cardNumber === 1);
+  assert.ok(cardResult, "初始牌 1 必须产生结算结果");
+  const scanResults = (cardResult?.results || []).filter((result) => result.type === "scan" && result.ok);
+  assert.equal(scanResults.length, 2, "天狼星A初始牌必须完成 2 次扫描");
+  assert.equal(
+    settled.events.filter((event) => event.type === "signalMarked").length,
+    2,
+    "初始牌扫描必须发出 signalMarked 事件（与主行动扫描一致）",
+  );
+  assert.equal(player.resources.credits, 2, "初始牌扫描不得扣扫描费（免成本）");
+  assert.equal(player.resources.energy, 2, "初始牌扫描不得扣能量（免成本）");
 }
 
 // 共享登陆行为纯净：getLandOptions 的选项摘要不得包含卡牌追加的

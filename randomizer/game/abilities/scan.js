@@ -145,8 +145,9 @@
       currentPlayer,
       {
         ...scanOptions,
-        // 终局计分来源拆分：扫描替换星云 token 的 +2 分记 scanScore
-        scoreSourceKey: "scanScore",
+        // 终局计分来源拆分：扫描替换星云 token 的 +2 分默认记 scanScore；
+        // 初始牌扫描等来源可覆盖（如 initialScore）。
+        scoreSourceKey: options.scoreSourceKey || "scanScore",
       },
     );
 

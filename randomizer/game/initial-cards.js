@@ -10,6 +10,7 @@
   let techBoard = root.SetiTechBoardState;
   let playerTech = root.SetiPlayerTech;
   let rocketAbility = root.SetiAbilityRocket;
+  let scanAbility = root.SetiAbilityScan;
 
   if ((!players || !cards || !data || !planetStats || !aliens || !rockets || !techBoard || !playerTech) && typeof require === "function") {
     players = players || require("./players");
@@ -21,9 +22,10 @@
     techBoard = techBoard || require("./tech/board-state");
     playerTech = playerTech || require("./tech/player-tech");
     rocketAbility = rocketAbility || require("./abilities/rocket");
+    scanAbility = scanAbility || require("./abilities/scan");
   }
 
-  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoard, playerTech, rocketAbility);
+  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoard, playerTech, rocketAbility, scanAbility);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -39,6 +41,7 @@
   techBoard,
   playerTech,
   rocketAbility,
+  scanAbility,
 ) {
   "use strict";
 
@@ -252,13 +255,6 @@
     };
   }
 
-  function getTokenSrc(context, player) {
-    if (typeof context?.getPlayerTokenSrc === "function") {
-      return context.getPlayerTokenSrc(player);
-    }
-    return players.getPlayerColorDefinition(player?.color)?.normalTokenAsset || null;
-  }
-
   function pushResult(results, result) {
     if (result) results.push(result);
     return result;
@@ -461,43 +457,17 @@
   }
 
   function replaceNextSectorData(context, player, nebulaId) {
-    const nextToken = data.getNextReplaceableNebulaToken(context.data, nebulaId);
-    const options = {
-      root: context?.state,
-      playerColor: player.color,
-      playerLabel: player.colorLabel,
-      playerTokenSrc: getTokenSrc(context, player),
+    // 统一扫描内核：与主行动/卡牌/奖励扫描共用 abilities.scanNebula（找下一个
+    // 可替换 token → 替换 → 得数据 → 无可替换时追加扫描计数标记）。初始牌扫描
+    // 不付扫描费、不展开完整扫描队列（初始结算豁免），计分来源记 initialScore、
+    // 数据来源记 initial_card。
+    const result = scanAbility.scanNebula(context, {
+      nebulaId,
       source: "initial_card",
-      // 终局计分来源拆分：初始牌扫描的 +2 分记 initialScore
       scoreSourceKey: "initialScore",
-    };
-    if (nextToken) {
-      const replaceResult = data.replaceNextNebulaDataToken(
-        context.data,
-        nebulaId,
-        player,
-        options,
-      );
-      if (!replaceResult.ok) return replaceResult;
-      const gainResult = data.gainData(player, { source: "initial_card", root: context?.state });
-      return {
-        ...replaceResult,
-        ok: true,
-        type: "scan",
-        gainedData: gainResult,
-        events: [{ type: "signalMarked", nebulaId, playerId: player.id }],
-        message: `${replaceResult.message}；${gainResult.ok ? "获得数据" : gainResult.message}`,
-      };
-    }
-    if (typeof data.addSectorExtraMark !== "function") {
-      return { ok: false, type: "scan", message: `${data.getNebulaLabel(nebulaId)}没有可替换的数据` };
-    }
-    const extraResult = data.addSectorExtraMark(context.data, nebulaId, player, options);
-    return {
-      ...extraResult,
-      type: "scan",
-      events: extraResult.ok ? [{ type: "signalMarked", nebulaId, playerId: player.id }] : [],
-    };
+      prefix: "初始扫描",
+    });
+    return { ...result, type: "scan" };
   }
 
   function applySectorScan(context, player, scan, results, events) {
