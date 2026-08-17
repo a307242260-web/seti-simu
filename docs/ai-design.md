@@ -37,6 +37,13 @@ Rule Composition
   viewer-safe `dataAnalyzeRequirements`。
 - `game/ai/expected-score-evaluator.js`：只从真实标准叶读取已兑现分数、科技和收入变化，
   按剩余轮次计算版本化战略价值。
+- `game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策方案输出的计划结构
+  （`buildPlanFromSnapshot`/`advancePlan`）、simulation 侧复用判定
+  （`planReuseCheck`）、计划依赖事实提取（`planDependencyFromPlan`/
+  `currentDependencyFromStore`）、外星揭示基线（`countRevealedAliens`）。诊断工具
+  `tools/diagnose_plan_continuation.js`（record-once/analyze-many）与
+  `tools/verify_plan_continuation_fastpath.js`（同 seed A/B）共用同一套纯函数；
+  单元测试登记 `policy/plan-continuation`。
 - `game/ai/heuristic-evaluator.js`：优先选择 `settled + selectable` 的战略目标路径；失败或
   unresolved 候选不可进入排序，同值时只按稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
@@ -54,7 +61,63 @@ Rule Composition
 
 `game/ai/index.js` 只聚合以上 Policy/Host/evaluator 模块。不得向其中重新加入 legacy valuation、candidate、planner、analytics 或 controller adapter。
 
-## 3. Policy 契约
+## 3. 决策方案输出契约与计划延续复用（simulation 侧）
+
+### 3.1 分层
+
+simulation 侧负责模拟与复用判断；机器人决策通过「决策方案」产出：
+
+```text
+simulation（决策点）
+  -> planReuseCheck(上次计划, 当前观测, 合法集)    # 先看能否直接复用上次计划
+  -> 命中：提交 plan.nextActionId；计划前进一步（多步消费）存回 store
+  -> 未命中：调用决策方案 -> { actionId, plan? }   # 方案输出决策回到 simulation
+       -> store 存 plan（供下一次复用判断）；提交 actionId
+```
+
+- simulation 只依赖方案的输出契约，不关心方案内部（启发式搜索 / learned policy
+  可插拔）；
+- 方案输出**至少包含下一步 `actionId`**；若有完整计划（winning leaf 链条 ≥ 2 步），
+  附带 `plan = { nextActionId, continuation[], dependency, revealedCount }`
+  （`plan-continuation.js#buildPlanFromSnapshot`），供复用判断；
+- 当前方案：`training/heuristic-policy-adapter.js#runDecision` 在启发式搜索 +
+  policy 选完后，从所选 action 的 winning leaf 构建 plan 一并返回；
+- 装配：`app/simulation-env.js#runHeuristicPolicyDecision`（复用判断先行，未命中才
+  走 outcome 生成 + 方案；`config.planContinuationFastPath` 开关，默认关）。
+
+### 3.2 复用判定（plan-continuation.js#planReuseCheck）
+
+对照基准 = **上轮本家行动执行完**的计划假设状态（不是执行前——本家行动造成的
+盘面变化属于计划内，不能当作外部变化）。
+
+- **复用**：下一步仍合法（按 actionId 解析）且计划执行依赖的环节未变：
+  - tier1 盘面无变化；
+  - tier2 盘面有变化但不影响计划执行——当前直接复用（记录为后续优化点）：
+    其他玩家火箭移动 / 打牌 / 资源变化（可能后续影响本家行动，现在不考虑）；
+    计划不涉及的扇区变化；太阳系转动但计划无探测器移动（可能出现更优选择，
+    现在不管）。
+- **重新决策**：依赖环节变了——着陆需要的移动更多了 / 目标外星人槽位被占 /
+  第一奖励格被占 / 目标路线消失 / 计划跨出当前路线终点（`route-target-changed`）。
+- **硬性特例**：翻开了外星人（已揭示槽位数 > 计划假设值）→ 无条件重新决策，
+  不适用依赖环节近似（揭示可能带来计划未预见的全新目标/机会）。
+- 依赖事实：探测路线终点 `{ movementSteps, firstRewardSlotOpen }` 与外星痕迹槽位
+  占用（`planDependencyFromPlan` / `currentDependencyFromStore`，形状对齐才可
+  比较）；其余 family 视为 generic（不影响计划执行）。
+- 多步消费：命中后 `advancePlan` 前进一步，链条耗尽或判定失败才重新调用方案。
+
+### 3.3 近似边界
+
+- 复用决策的来源是**计划缓存**（上一次方案输出的 plan），不经过 policy 的
+  decide 与 Machine Player Host 完整校验链；提交经 `env.step` 的合法集/authority
+  重验，计数进 diagnostics（`planContinuationHitCount` / `MissReasons` /
+  `planContinuationStoreStatus`）。属显式近似，与 `targetSchedulerPrunedCount`
+  同文化：优化判定空间前保持近似与搜索空间不变。
+- 仅在 simulation env 启用（默认关）；Browser 路径尚未接入，Browser 机器席位仍
+  走 Host -> Policy 完整链。
+- 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
+  或多打一张移动牌）；tier2 的「可能出现更优选择」；多步链的跨路线续用。
+
+## 4. Policy 契约
 
 Policy 输入只包含：
 
@@ -250,7 +313,7 @@ fork/执行/投影/checkpoint/frontier/编排耗时。耗时仅用于性能验�
 输出文字版。搜索树之前必须展示最终优胜叶的正式分数、锁定终局分、剩余资源、收入、科技、
 数据计算机进度、完整目标链及相对起点变化，区分“最终搜索结果”和“当前只提交的第一步”。
 
-## 4. Browser 调度与规则边界
+## 5. Browser 调度与规则边界
 
 Browser bootstrap 可以：
 
@@ -271,7 +334,7 @@ Browser bootstrap 不可以：
 
 终局板块、初始选择、弃牌、支付、科技与外星人选择都必须作为标准 Decision 进入同一 Policy 输入链；没有单独的 final-score AI runtime。
 
-## 5. 验证
+## 6. 验证
 
 最低验证：
 
@@ -296,7 +359,7 @@ node tools/run_browser_smokes.js
 - legacy 全局 export、script、resolved module、context binding、fallback、alias 与测试依赖归零；
 - 唯一 full-flow 和真实 Browser smoke 通过。
 
-## 6. 维护原则
+## 7. 维护原则
 
 - 新策略能力优先扩展 viewer-safe observation 或 outcome schema，不把 root/executor 权限扩张给 Policy。
 - 新 conditional family 先进入 Rule Composition Decision，再补 Policy 可观测估值。

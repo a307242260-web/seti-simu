@@ -31,6 +31,7 @@
 - `randomizer/game/ai/machine-player-host.js`：浏览器与 Simulation 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
 - `randomizer/game/ai/heuristic-evaluator.js`、`expected-score-evaluator.js`：只消费公共 observation、legal descriptors 与标准反事实 outcome，负责纯估值和稳定排序；不得恢复 legacy candidate 或 selector adapter。
+- `randomizer/game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策方案输出的计划结构（`buildPlanFromSnapshot`/`advancePlan`）、simulation 侧复用判定（`planReuseCheck`）、依赖事实与外星揭示基线；详见 `docs/ai-design.md` §3。装配在 `randomizer/app/simulation-env.js`（`planContinuationFastPath`，默认关），诊断/验证工具 `tools/diagnose_plan_continuation.js`、`tools/verify_plan_continuation_fastpath.js`。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `randomizer/training/trajectory-recorder.js`：`seti-self-play-log-v1` 轨迹录制器（Browser/Node 共用，人类示范与 self-play 同一格式）。
 - `randomizer/app/browser-host/trajectory-recording.js`：Browser 输入链录制适配器（只读 projection、按确认 replay 对齐、终局导出 JSONL）。
