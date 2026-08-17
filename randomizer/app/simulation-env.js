@@ -875,6 +875,69 @@ function createSimulationEnv() {
       };
     },
 
+    // 与浏览器同格式存盘（seti-browser-save-v2）：复用同一内核 lifecycle.save()
+    // 的 envelope（committedState + session），per-step after 摘要从每步 publicSummary
+    // 构造（同构浏览器 browserStateSummary）。产出可直接被 tools/load_save_simulation.js
+    // 读取继续打，或离线查中间过程。
+    saveBrowserSave(options = {}) {
+      assertUsable();
+      const envelope = saveEnvelope();
+      const committedState = envelope.committedState;
+      let readableState = null;
+      try {
+        readableState = typeof committedState === "string"
+          ? JSON.parse(committedState)
+          : committedState;
+      } catch (_error) {
+        readableState = null;
+      }
+      const meta = readableState?.meta || {};
+      const browserReplaySteps = replaySteps.map((step, index) => {
+        const action = step.action || {};
+        const ps = step.publicSummary;
+        const after = ps
+          ? {
+            r: ps.roundNumber ?? null,
+            t: ps.turnNumber ?? null,
+            c: ps.currentPlayerId ?? null,
+            p: Object.fromEntries((ps.players || []).map((player) => [
+              player.playerId || player.id,
+              [
+                Number(player.score) || 0,
+                Number(player.credits) || 0,
+                Number(player.energy) || 0,
+                Number(player.publicity) || 0,
+                Number(player.handCount) || 0,
+                Number(player.reservedCount) || 0,
+              ],
+            ])),
+          }
+          : null;
+        return {
+          stepIndex: index,
+          actorPlayerId: step.actorPlayerId ?? action.actorId ?? action.actorPlayerId ?? null,
+          action: clone(action),
+          phase: action.phase ?? null,
+          decisionId: null,
+          decisionVersion: null,
+          after,
+        };
+      });
+      return {
+        schema: "seti-browser-save-v2",
+        savedAt: new Date().toISOString(),
+        seed, // 主 RNG seed（与浏览器档 seed=固定盘面 seed 语义一致，供从零重放）
+        gameId: meta.gameId ?? null,
+        rulesetVersion: meta.rulesetVersion ?? null,
+        stateVersion: meta.stateVersion ?? null,
+        committedState,
+        session: envelope.session ?? null,
+        readableState,
+        replaySteps: browserReplaySteps,
+        name: options.name ?? String(meta.seed ?? seed ?? "simulation"),
+      };
+    },
+
     evaluateActionOutcomes,
 
     loadReplay(replay) {
