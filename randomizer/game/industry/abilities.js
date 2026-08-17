@@ -304,6 +304,63 @@
     };
   }
 
+  // 一次性「收入角标」奖励（任务中继站精选牌获得该牌收入角标效果）：
+  // 只发牌面收入效果（资源/数据/盲抽），不插入收入列、不增长收入栏——
+  // 与「插入牌到收入列」（players.gainIncome）是不同的语义。
+  function applyIncomeCornerReward(cards, players, data, player, card, options = {}) {
+    const gain = cards.getIncomeGainForCard(card);
+    if (!gain) {
+      return { ok: false, message: `无法识别卡牌收入：${cards.getCardLabel(card)}` };
+    }
+    const resourceGain = {};
+    const dataResults = [];
+    const drawnCards = [];
+    if (gain.credits) resourceGain.credits = gain.credits;
+    if (gain.energy) resourceGain.energy = gain.energy;
+    if (gain.publicity) resourceGain.publicity = gain.publicity;
+    if (Object.keys(resourceGain).length) {
+      players.gainResources(player, resourceGain);
+    }
+    const dataCount = Math.max(0, Math.round(Number(gain.availableData) || 0));
+    for (let index = 0; index < dataCount; index += 1) {
+      dataResults.push(data.gainData(player, { source: "industry_income", root: options.root }));
+    }
+    const handCount = Math.max(0, Math.round(Number(gain.handSize) || 0));
+    if (handCount > 0) {
+      if (typeof options.blindDraw === "function") {
+        for (let index = 0; index < handCount; index += 1) {
+          const result = options.blindDraw(player);
+          if (!result?.ok) {
+            return {
+              ok: false,
+              message: result?.message || "收入角标盲抽结算失败",
+              gain,
+              dataResults,
+              drawnCards,
+            };
+          }
+          if (result.card) drawnCards.push(result.card);
+        }
+      } else {
+        return {
+          ok: false,
+          code: "INDUSTRY_INCOME_CARD_DOMAIN_REQUIRED",
+          message: "收入角标盲抽需要 Card Domain",
+          gain,
+          dataResults,
+          drawnCards,
+        };
+      }
+    }
+    return {
+      ok: true,
+      message: `获得收入角标奖励：${cards.getCardLabel(card)}`,
+      gain,
+      dataResults,
+      drawnCards,
+    };
+  }
+
   function prepareActiveAbility(player, companyLabel) {
     const definition = catalog.getIndustryDefinition(companyLabel);
     if (!definition?.activeAbilityId) {
@@ -585,6 +642,7 @@
     buildStratusPublicCornerEffectNodes,
     buildHuanyuFreeMoveEffectNodes,
     applyCornerReward,
+    applyIncomeCornerReward,
     prepareActiveAbility,
     canStartActiveAbility,
     armAbilityState,
