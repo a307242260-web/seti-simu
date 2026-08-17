@@ -968,12 +968,6 @@
       type = cardPlayDomain.EFFECT_TYPES.PICK_CARD_START;
     } else if (effect.type === cardEffects.REWARD_TYPES.LAUNCH) {
       type = cardPlayDomain.EFFECT_TYPES.LAUNCH;
-    } else if (effect.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA) {
-      type = cardPlayDomain.EFFECT_TYPES.FIXED_NEBULA_SCAN;
-    } else if (effect.type === cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE) {
-      type = cardPlayDomain.EFFECT_TYPES.COLOR_NEBULA_SCAN;
-      kind = "decision";
-      decisionKind = "choose_target";
     } else if (effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) {
       type = science.EFFECT_TYPES.RESEARCH;
       kind = "decision";
@@ -982,14 +976,11 @@
         ...clone(effect.options || {}),
         skipCost: effect.options?.skipCost !== false,
       };
-    } else if (effect.type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN) {
-      type = science.EFFECT_TYPES.PUBLIC_SCAN;
-      kind = "decision";
-      decisionKind = "choose_card";
-      payload.selected = 0;
-      payload.max = Math.max(1, Number(effect.options?.repeat || effect.options?.count) || 1);
-      payload.consumeMarkers = false;
     } else if (effect.type === cardEffects.EFFECT_TYPES.SCAN_ACTION) {
+      // 扫描行动走 science EXECUTE → scanQueue（串尾自带 SCAN_FINALIZE 统一结算）。
+      // 其余扫描家族（SCAN_NEBULA/ANY_SECTOR_SCAN/SCAN_COLOR_CHOICE/PUBLIC_SCAN 等）
+      // 在卡牌域统一收敛到 science SCAN_STEP（play-domain createSpawnedCardEffect）；
+      // 本域（外星/任务/公司触发）当前没有任何扫描家族效果来源，故不重复映射。
       type = science.EFFECT_TYPES.EXECUTE;
       payload.action = {
         family: "scan",
