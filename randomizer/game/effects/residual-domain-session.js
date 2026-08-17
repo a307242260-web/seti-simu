@@ -554,11 +554,26 @@
         player.hand.splice(index, 1);
         // 收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
         cards.addRemovedFromGame(root.cards, picked.card);
-        const gained = industryAbilities.applyIncomeResourcesFromCard(cards, players, data, player, picked.card, {
-          root,
-          blindDraw: () => drawOptions(root).blindDraw(player),
+        const gain = cards.getIncomeGainForCard(picked.card);
+        if (!gain) return fail("COMPANY_INCOME_CARD_UNKNOWN", "当前卡牌没有可识别收入");
+        // 一次收入行动：与赫利昂/初始收入牌同一语义——插入收入列（收入栏
+        // 提升）+ 立即奖励，统一走 players.gainIncome。
+        const drawnCards = [];
+        players.gainIncome(player, gain, {
+          blindDraw: (targetPlayer) => {
+            const draw = drawOptions(root).blindDraw(targetPlayer);
+            if (draw.ok) drawnCards.push(draw.card);
+            return draw;
+          },
+          gainData: (targetPlayer) => data.gainData(targetPlayer, {
+            source: "industry_income",
+            root,
+          }),
         });
-        if (!gained.ok) return gained;
+        irreversible = drawnCards.length ? {
+          code: "hidden_card_draw",
+          reason: "任务中继站收入盲抽翻开隐藏牌",
+        } : null;
       } else if (payload.abilityId === "fenwick_publicity_pick_corner") {
         const applied = industryAbilities.applyCornerReward(
           players,

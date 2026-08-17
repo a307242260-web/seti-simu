@@ -304,69 +304,6 @@
     };
   }
 
-  function applyIncomeResourcesFromCard(cards, players, data, player, card, options = {}) {
-    const gain = cards.getIncomeGainForCard(card);
-    if (!gain) {
-      return { ok: false, message: `无法识别卡牌收入：${cards.getCardLabel(card)}` };
-    }
-    const resourceGain = {};
-    const dataResults = [];
-    const drawnCards = [];
-    if (gain.credits) resourceGain.credits = gain.credits;
-    if (gain.energy) resourceGain.energy = gain.energy;
-    if (gain.publicity) resourceGain.publicity = gain.publicity;
-    if (Object.keys(resourceGain).length) {
-      players.gainResources(player, resourceGain);
-    }
-    const dataCount = Math.max(0, Math.round(Number(gain.availableData) || 0));
-    for (let index = 0; index < dataCount; index += 1) {
-      dataResults.push(data.gainData(player, { source: "industry_income", root: options.root }));
-    }
-    const handCount = Math.max(0, Math.round(Number(gain.handSize) || 0));
-    if (handCount > 0) {
-      if (typeof options.blindDraw === "function") {
-        for (let index = 0; index < handCount; index += 1) {
-          const result = options.blindDraw(player);
-          if (!result?.ok) {
-            return {
-              ok: false,
-              message: result?.message || "任务中继站盲抽收入结算失败",
-              gain,
-              dataResults,
-              drawnCards,
-            };
-          }
-          if (result.card) drawnCards.push(result.card);
-        }
-      } else {
-        return {
-          ok: false,
-          code: "INDUSTRY_INCOME_CARD_DOMAIN_REQUIRED",
-          message: "任务中继站盲抽收入需要 Card Domain",
-          gain,
-          dataResults,
-          drawnCards,
-        };
-      }
-    }
-    const labels = {
-      credits: "信用点",
-      energy: "能量",
-      publicity: "宣传",
-      availableData: "数据",
-    };
-    const parts = Object.entries(resourceGain).map(([key, value]) => `${value}${labels[key] || key}`);
-    if (dataCount) parts.push(`${dataCount}数据`);
-    if (handCount) parts.push(`盲抽${drawnCards.length || handCount}张`);
-    return {
-      ok: true,
-      message: parts.join("、") || "无收入奖励",
-      gain,
-      dataResults,
-      drawnCards,
-    };
-  }
-
   function prepareActiveAbility(player, companyLabel) {
     const definition = catalog.getIndustryDefinition(companyLabel);
     if (!definition?.activeAbilityId) {
@@ -648,7 +585,6 @@
     buildStratusPublicCornerEffectNodes,
     buildHuanyuFreeMoveEffectNodes,
     applyCornerReward,
-    applyIncomeResourcesFromCard,
     prepareActiveAbility,
     canStartActiveAbility,
     armAbilityState,

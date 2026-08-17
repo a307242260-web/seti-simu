@@ -1509,7 +1509,8 @@
         const gain = cards.getIncomeGainForCard(card);
         const discarded = cards.discardFromHandAtIndex(actor, handIndex);
         if (!discarded.ok) return discarded;
-        cards.addToDiscardPile(getWorkingSlice(root, "cards"), discarded.card);
+        // 收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
+        cards.addRemovedFromGame(getWorkingSlice(root, "cards"), discarded.card);
         // 统一抽牌上下文：收入盲抽共用 cards.createCardDrawContext
         const drawContext = cards.createCardDrawContext(
           getWorkingSlice(root, "cards"),
