@@ -550,16 +550,18 @@
         reason: "精选公共牌后翻开新牌",
       };
       if (payload.abilityId === "mission_publicity_pick_income") {
-        // 收入角标奖励（一次性）：精选牌进手牌并保留，只获得该牌收入角标效果
-        // （资源/数据/盲抽），不插入收入列、不增长收入栏。
-        const gained = industryAbilities.applyIncomeCornerReward(cards, players, data, player, picked.card, {
+        // 获得角标奖励（一次性、不弃牌）：精选牌进手牌并保留，只获得该牌
+        // 收入角标码奖励（资源/数据/盲抽）。与弃牌获得角标奖励（card_corner
+        // 弃牌角标）同一「获得角标奖励」机制，仅不弃牌；不插入收入列、
+        // 不增长收入栏。
+        const gained = industryAbilities.applyCornerGainReward(cards, players, data, player, picked.card, {
           root,
           blindDraw: () => drawOptions(root).blindDraw(player),
         });
         if (!gained.ok) return gained;
         irreversible = gained.drawnCards?.length ? {
           code: "hidden_card_draw",
-          reason: "任务中继站收入角标盲抽翻开隐藏牌",
+          reason: "任务中继站角标盲抽翻开隐藏牌",
         } : null;
       } else if (payload.abilityId === "fenwick_publicity_pick_corner") {
         const applied = industryAbilities.applyCornerReward(

@@ -304,10 +304,11 @@
     };
   }
 
-  // 一次性「收入角标」奖励（任务中继站精选牌获得该牌收入角标效果）：
-  // 只发牌面收入效果（资源/数据/盲抽），不插入收入列、不增长收入栏——
-  // 与「插入牌到收入列」（players.gainIncome）是不同的语义。
-  function applyIncomeCornerReward(cards, players, data, player, card, options = {}) {
+  // 获得角标奖励（一次性，可复用原语）：不弃牌地获得一张卡的角标奖励。
+  // 与「弃牌获得角标奖励」（card_corner 弃牌角标）同一机制，区别只在是否弃牌。
+  // 此处为收入角标码（INCOME_CODE_GAINS：资源/数据/盲抽），只发一次性奖励，
+  // 不插入收入列、不增长收入栏（与「插入牌到收入列」players.gainIncome 不同）。
+  function applyCornerGainReward(cards, players, data, player, card, options = {}) {
     const gain = cards.getIncomeGainForCard(card);
     if (!gain) {
       return { ok: false, message: `无法识别卡牌收入：${cards.getCardLabel(card)}` };
@@ -642,7 +643,7 @@
     buildStratusPublicCornerEffectNodes,
     buildHuanyuFreeMoveEffectNodes,
     applyCornerReward,
-    applyIncomeCornerReward,
+    applyCornerGainReward,
     prepareActiveAbility,
     canStartActiveAbility,
     armAbilityState,
