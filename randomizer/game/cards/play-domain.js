@@ -17,6 +17,7 @@
   let actionShared = root.SetiActionShared;
   let yichangdian = root.SetiAlienYichangdian;
   let industryAbilities = root.SetiIndustryAbilities;
+  let industry = root.SetiIndustry;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     cards = cards || require("./deck");
@@ -34,6 +35,7 @@
     actionShared = actionShared || require("../actions/shared");
     yichangdian = yichangdian || require("../aliens/yichangdian");
     industryAbilities = industryAbilities || require("../industry/abilities");
+    industry = industry || require("../industry");
   }
 
   const api = factory(
@@ -53,6 +55,7 @@
     actionShared,
     yichangdian,
     industryAbilities,
+    industry,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiCardPlayDomain = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -72,6 +75,7 @@
   actionShared,
   yichangdian,
   industryAbilities,
+  industry,
 ) {
   "use strict";
 
@@ -546,11 +550,61 @@
           payload: { node },
         },
       }));
+      // 任务中继站被动：打出 1/2 型任务牌 +1 宣传。
+      if (industry?.shouldGainPublicityOnType12Play?.(actor) && [1, 2].includes(cardType)) {
+        players.gainResources(actor, {
+          publicity: Math.max(0, Number(industry.getMissionPlayPublicityGain?.() || 0)),
+        });
+      }
+      // 宇宙战略集团被动：打牌后按扫描角标开启奖励槽交互，并在打牌效果链
+      // 末尾追加奖励槽节点（点击后放置 token 领奖；可跳过、可撤销）。
+      const strategyNodes = [];
+      if (typeof industry?.activateStrategyPlayInteraction === "function") {
+        const activated = industry.activateStrategyPlayInteraction(actor, playedCard, roundNumber);
+        if (activated?.ok && industry.isStrategyPlayInteractionActive?.(actor, roundNumber)) {
+          const eligibleSlotIds = industry.getStrategyPlayEligibleSlotIds?.(actor, roundNumber) || [];
+          if (eligibleSlotIds.length) {
+            const scanCode = industry.getStrategyPlayScanCode?.(actor);
+            const needsSlotChoice = Number(scanCode) === 3 && eligibleSlotIds.length > 1;
+            const slotId = needsSlotChoice
+              ? null
+              : (industry.getAutomaticStrategyPlaySlotId?.(actor, roundNumber) || eligibleSlotIds[0]);
+            const slotLabel = slotId
+              ? (industry.getStrategySlotRewardLabel?.(slotId) || slotId)
+              : "选择";
+            strategyNodes.push({
+              priority: "direct",
+              effect: {
+                type: "industry_strategy_passive_reward",
+                kind: "decision",
+                decisionKind: "choose_target",
+                ownerId: actor.id,
+                payload: {
+                  node: {
+                    id: `industry-strategy-passive-${playedCard.id}-${slotId || "choice"}`,
+                    type: "industry_strategy_passive_reward",
+                    label: `宇宙战略集团：${slotLabel}奖励槽`,
+                    icon: slotId ? "score" : "black_scan",
+                    status: "pending",
+                    undoable: true,
+                    options: {
+                      slotId,
+                      eligibleSlotIds,
+                      needsSlotChoice,
+                      playedCard: industryAbilities?.snapshotPlayedCard?.(playedCard),
+                    },
+                  },
+                },
+              },
+            });
+          }
+        }
+      }
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: EFFECT_TYPES.PLAY }),
         spawnedEffects: [
-          // 哨兵弃牌角标节点追加在打牌效果链末尾（不弃牌，结算打出牌的角标奖励）
+          // 哨兵弃牌角标与宇宙战略奖励槽节点追加在打牌效果链末尾
           ...chainScanFinalize(
             playEffects.map((effect) => (
               createSpawnedCardEffect(effect, actor.id, playedCard.id)
@@ -558,6 +612,7 @@
             actor.id,
           ),
           ...sentinelNodes,
+          ...strategyNodes,
         ],
         events: [{
           type: "playCard",

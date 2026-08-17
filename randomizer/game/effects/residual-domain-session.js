@@ -2020,6 +2020,76 @@
         }],
       });
     });
+    // 宇宙战略集团被动「打牌后按扫描角标领奖」节点：选择奖励槽（或自动槽）后
+    // 放置 token 领奖；可跳过（不放置 token、不占用槽位、下次打牌仍可触发）。
+    runtime.registerExecutor("industry_strategy_passive_reward", {
+      getLegalChoices(state, effect, context) {
+        const root = getRoot(state, context);
+        const player = actor(root, effect.ownerId);
+        const node = effect.payload?.node || {};
+        if (!player) return [];
+        const nodeOptions = node.options || {};
+        const choices = (nodeOptions.eligibleSlotIds || [])
+          .flatMap((slotId) => {
+            const check = strategy.canInteractStrategyPlaySlot?.(player, slotId, roundOf(root));
+            return check?.ok
+              ? [choice("choose_target", `slot:${slotId}`, { slotId }, {}, (
+                strategy.getStrategySlotRewardLabel?.(slotId) || slotId
+              ))]
+              : [];
+          });
+        choices.push(choice("choose_target", "skip", { skip: true }, {}, "跳过"));
+        return formalize(root, player.id, choices);
+      },
+      resolveDecision(state, effect, selected, context) {
+        const root = getRoot(state, context);
+        const player = actor(root, effect.ownerId);
+        const node = effect.payload?.node || {};
+        if (!player) return fail("STRATEGY_PASSIVE_STALE", "宇宙战略集团奖励槽已失效");
+        if (selected?.target?.skip) {
+          strategy.clearStrategyPlayInteraction?.(player);
+          return result(state, root, "industry_strategy_passive_reward", {
+            spawnedEffects: [],
+            events: [{ type: "industry_strategy_passive_skipped", playerId: player.id }],
+          });
+        }
+        const slotId = selected?.target?.slotId ?? nodeOptions.slotId;
+        if (!slotId) return fail("STRATEGY_PASSIVE_STALE", "宇宙战略集团奖励槽已失效");
+        const check = strategy.canInteractStrategyPlaySlot?.(player, slotId, roundOf(root));
+        if (!check?.ok) {
+          strategy.clearStrategyPlayInteraction?.(player);
+          return fail("STRATEGY_PASSIVE_SLOT_STALE", check?.message || "奖励槽不可用");
+        }
+        const placed = industry.placeStrategyPassiveSlot(player, slotId);
+        if (!placed?.ok) return placed;
+        strategy.completeStrategyPlayInteraction?.(player);
+        const reward = strategy.getStrategySlotReward?.(slotId) || {};
+        if (reward.credits || reward.publicity) {
+          players.gainResources(player, {
+            credits: reward.credits || 0,
+            publicity: reward.publicity || 0,
+          });
+        }
+        if (reward.data) {
+          data.gainData(player, { source: "industry_strategy_passive", root });
+        }
+        return result(state, root, "industry_strategy_passive_reward", {
+          spawnedEffects: [],
+          events: [{
+            type: "industry_strategy_passive_reward",
+            playerId: player.id,
+            slotId,
+            reward: clone(reward || {}),
+          }],
+          history: [{
+            type: "industry_strategy_passive_reward",
+            playerId: player.id,
+            slotId,
+            executorId: EXECUTOR_ID,
+          }],
+        });
+      },
+    });
     runtime.registerExecutor(EFFECT_TYPES.CARD_DECISION, {
       getLegalChoices(state, effect, context) {
         return cardDecisionChoices(getRoot(state, context), effect);

@@ -881,4 +881,119 @@ function runSentinelCornerOnPlay() {
 
 runSentinelCornerOnPlay();
 
+// —— 公司打牌被动（迁移 8963b38 丢失，重建接线）——
+// 任务中继站：打出 1/2 型任务牌 +1 宣传；宇宙战略集团：打牌后按扫描角标
+// 追加奖励槽节点（放置 token 领奖 / 跳过）。
+function createPassiveComposition(companyLabel, cardOverrides = {}) {
+  const root = createCanonicalState("b_1.webp"); // cardType 2（任务牌）
+  const player = root.players.players[0];
+  player.initialSelection = { industry: { label: companyLabel } };
+  root.turn.roundNumber = 1;
+  root.turn.turnNumber = 1;
+  Object.assign(player.hand[0], cardOverrides);
+  const initialState = toCommitted(root);
+  return createRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createInitialState() { return structuredClone(initialState); },
+    createActionContext,
+    createActionRegistry() {
+      const registry = standardAction.createRegistry({
+        getAuthority: (context) => context.standardActionAuthority,
+      });
+      registry.register(standardAction.createOptionDefinition(
+        "play_card",
+        playDomain.createPlayCardProvider(),
+      ));
+      return registry;
+    },
+    effectDomains: [
+      {
+        id: "card_play_test_boundary",
+        families: ["play_card"],
+        create: playDomain.createExperimentalCardPlayDomain,
+      },
+      {
+        id: scienceSession.DOMAIN_ID,
+        families: scienceSession.ACTION_FAMILIES,
+        create: scienceSession.createScienceDomain,
+      },
+      {
+        id: residualDomain.DOMAIN_ID,
+        families: residualDomain.ACTION_FAMILIES,
+        create: residualDomain.createResidualDomain,
+      },
+    ],
+    projectState: (state) => state,
+  });
+}
+
+function runCompanyPassivesOnPlay() {
+  // 任务中继站被动：打出 2 型任务牌 +1 宣传。
+  const missionComp = createPassiveComposition("任务中继站");
+  const missionAction = getOnlyPlayAction(missionComp);
+  const missionResult = missionComp.inputPort.submitAction(missionAction);
+  assert.equal(missionResult.ok, true);
+  assert.equal(missionComp.inspect().phase, "idle");
+  assert.equal(
+    missionComp.stateSourcePort.getSnapshot().players.players[0].resources.publicity,
+    1,
+    "任务中继站被动：打出 1/2 型任务牌 +1 宣传",
+  );
+  missionComp.dispose();
+
+  // 宇宙战略集团被动：打牌后按扫描角标（scanActionCode 1 → 黄槽）追加奖励槽节点。
+  const strategyComp = createPassiveComposition("宇宙战略集团", { scanActionCode: 0 }); // 0 → 黄槽
+  const strategyAction = getOnlyPlayAction(strategyComp);
+  const strategyOpened = strategyComp.inputPort.submitAction(strategyAction);
+  assert.equal(strategyOpened.ok, true);
+  assert.equal(
+    strategyComp.inspect().phase,
+    "awaiting_input",
+    "宇宙战略奖励槽节点必须作为决策弹出",
+  );
+  const decision = strategyComp.inspect().session.decision;
+  const slotChoice = decision.choices.find((entry) => entry.target?.slotId != null);
+  assert.ok(slotChoice, "必须提供奖励槽选择");
+  const submitted = strategyComp.inputPort.submitDecision({
+    decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId,
+    choice: slotChoice,
+  });
+  assert.equal(submitted.ok, true);
+  assert.equal(strategyComp.inspect().phase, "idle");
+  const strategyPlayer = strategyComp.stateSourcePort.getSnapshot().players.players[0];
+  assert.equal(
+    strategyPlayer.industryStrategyPassiveSlots?.yellow,
+    true,
+    "宇宙战略被动：放置 token 到黄奖励槽",
+  );
+  strategyComp.dispose();
+
+  // 跳过路径：不放置 token、不占用槽位。
+  const skipComp = createPassiveComposition("宇宙战略集团", { scanActionCode: 0 });
+  const skipAction = getOnlyPlayAction(skipComp);
+  skipComp.inputPort.submitAction(skipAction);
+  const skipDecision = skipComp.inspect().session.decision;
+  const skipChoice = skipDecision.choices.find((entry) => entry.target?.skip === true);
+  assert.ok(skipChoice, "奖励槽决策必须提供跳过选项");
+  const skipped = skipComp.inputPort.submitDecision({
+    decisionId: skipDecision.decisionId,
+    decisionVersion: skipDecision.decisionVersion,
+    ownerId: skipDecision.ownerId,
+    choice: skipChoice,
+  });
+  assert.equal(skipped.ok, true);
+  const skipPlayer = skipComp.stateSourcePort.getSnapshot().players.players[0];
+  assert.equal(
+    Boolean(skipPlayer.industryStrategyPassiveSlots?.yellow),
+    false,
+    "跳过不放置 token、不占用槽位",
+  );
+  skipComp.dispose();
+}
+
+runCompanyPassivesOnPlay();
+
 console.log("card play domain production composition tests passed");
