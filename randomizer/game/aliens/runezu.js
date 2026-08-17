@@ -279,77 +279,11 @@
     return { id, type, label, icon, options: { ...options }, status: "pending" };
   }
 
-  function gainResourcesEffect(id, label, gain) {
-    return effect(id, "gain_resources", label, gain.score ? "score" : gain.energy ? "energy" : "publicity", { gain });
-  }
 
-  function gainDataEffect(id, label, count) {
-    return effect(id, "gain_data", label, "data", { count });
-  }
 
-  function pickCardEffect(id, label) {
-    return effect(id, "pick_card", label || "精选 1 张卡牌", "pick_card", { count: 1 });
-  }
 
-  function launchEffect(id, label) {
-    return effect(id, "launch", label || "发射", "launch", { skipCost: true, cost: {}, source: "runezu" });
-  }
 
-  function symbolRewardEffect(id, symbolId, label = null) {
-    return effect(id, EFFECT_TYPES.SYMBOL_REWARD, label || `${formatSymbolLabel(symbolId)}奖励`, symbolId, { symbolId });
-  }
 
-  function symbolBranchEffect(id, label, branches) {
-    return effect(id, EFFECT_TYPES.SYMBOL_BRANCH, label, "runezuSymbolBack", {
-      branches: branches.map((branch, index) => ({
-        id: `${id}-branch-${index + 1}`,
-        label: branch.map(formatSymbolLabel).join("+"),
-        symbolIds: [...branch],
-      })),
-    });
-  }
-
-  function buildImmediateEffects(cardOrIndex) {
-    const index = getCardDefinition(cardOrIndex)?.index;
-    switch (index) {
-      case 0:
-        return [symbolBranchEffect("runezu-0-branch", "符文族0：选择一组符文奖励", [
-          ["symbol_4", "symbol_7"],
-          ["symbol_3", "symbol_2"],
-        ])];
-      case 1:
-        return [symbolBranchEffect("runezu-1-branch", "符文族1：选择一组符文奖励", [
-          ["symbol_2", "symbol_2", "symbol_6"],
-          ["symbol_3", "symbol_3", "symbol_7"],
-        ])];
-      case 4:
-        return [gainResourcesEffect("runezu-4-public-scan", "符文族4：1额外公共扫描", { additionalPublicScan: 1 })];
-      case 5:
-        return [pickCardEffect("runezu-5-pick", "符文族5：精选1张牌")];
-      case 6:
-        return [
-          gainResourcesEffect("runezu-6-publicity", "符文族6：1宣传", { publicity: 1 }),
-          gainDataEffect("runezu-6-data", "符文族6：1数据", 1),
-        ];
-      case 7:
-        return [symbolBranchEffect("runezu-7-branch", "符文族7：选择一组符文奖励", [
-          ["symbol_7", "symbol_7", "symbol_6"],
-          ["symbol_5", "symbol_5", "symbol_1"],
-        ])];
-      case 8:
-        return [symbolBranchEffect("runezu-8-branch", "符文族8：选择一组符文奖励", [
-          ["symbol_4", "symbol_2"],
-          ["symbol_3", "symbol_1"],
-        ])];
-      case 9:
-        return [
-          launchEffect("runezu-9-launch", "符文族9：发射"),
-          symbolRewardEffect("runezu-9-s7", "symbol_7", "符文族9：符文7奖励"),
-        ];
-      default:
-        return [];
-    }
-  }
 
   function cloneReward(reward) {
     if (!reward) return null;
@@ -1038,7 +972,6 @@
     blindDrawCard,
     getFinalCardRule,
     isRunezuCard,
-    buildImmediateEffects,
     scorePlayerSymbols,
     getMaxSameSymbolCount,
     getMaxSetSize,

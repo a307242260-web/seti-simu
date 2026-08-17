@@ -490,24 +490,9 @@
         return fail("PLAY_CARD_COST_STALE", "卡牌费用已失效");
       }
       const playEffects = cardEffects.buildPlayEffects(card);
-      // 外星人牌不在标准卡表（set: alien:*），打出效果由对应物种模块构建：
-      // 阿米巴/虫/奥陌陌/半人马/符文族等所有有 buildImmediateEffects 的物种统一追加，
-      // 不再逐物种特判（虫族牌此前漏接导致打出无效）。
-      const alienModules = [
-        aliens?.amiba,
-        aliens?.chong,
-        aliens?.aomomo,
-        aliens?.banrenma,
-        aliens?.runezu,
-      ].filter(Boolean);
-      for (const module of alienModules) {
-        const isCardMethod = Object.keys(module || {}).find((key) => (
-          key.startsWith("is") && key.endsWith("Card") && typeof module[key] === "function"
-        ));
-        if (isCardMethod && module[isCardMethod](card) && typeof module.buildImmediateEffects === "function") {
-          playEffects.push(...(module.buildImmediateEffects(card) || []));
-        }
-      }
+      // 打出效果统一来自卡表模型 playEffects（普通牌 + 外星牌：amiba/chong/
+      // aomomo/banrenma/runezu/异常点等全部收敛到 MODELS，不再逐物种追加
+      // buildImmediateEffects，避免同效果双路径重复结算）。
       const unsupported = findUnownedEffect(playEffects);
       if (unsupported) {
         return fail("CARD_PLAY_EFFECT_UNOWNED", `Card Play domain 未拥有 ${unsupported.type}`, {

@@ -1307,7 +1307,7 @@ assert.equal(aomomo5Effects[1].options.bonus.eventType, "visitPlanet");
 assert.deepEqual(aomomo5Effects[1].options.bonus.includePlanetIds, ["aomomo"]);
 assert.equal(aomomo5Effects[1].options.bonus.duration, "turn");
 
-const aomomo6Exchange = aomomo.buildImmediateEffects(6)[0];
+const aomomo6Exchange = cardEffects.getCardModel("aomomo_6.webp").playEffects[0];
 assert.equal(aomomo6Exchange.type, aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND);
 assert.equal(aomomo6Exchange.options.costPerExchange, 1);
 assert.equal(aomomo6Exchange.options.movementPerExchange, 2);

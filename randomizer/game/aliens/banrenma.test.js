@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const banrenma = require("./banrenma");
 const state = require("./state");
+const cardEffects = require("../cards/effects");
 
 let alienSequence = 1;
 const nextAlienIdentity = () => ({ sequence: alienSequence++ });
@@ -71,8 +72,9 @@ const blind = banrenma.blindDrawCard(alienState, () => 0, nextAlienIdentity());
 assert.equal(blind.ok, true);
 assert.equal(blind.card.cardId.startsWith("banrenma_"), true);
 
-assert.equal(banrenma.buildImmediateEffects(3)[0].type, "card_research_tech");
-const card8Effects = banrenma.buildImmediateEffects(8);
+// 打出效果统一来自卡表模型 playEffects（species buildImmediateEffects 已迁入 MODELS）。
+assert.equal(cardEffects.getCardModel("banrenma_3.webp").playEffects[0].type, "card_research_tech");
+const card8Effects = cardEffects.getCardModel("banrenma_8.webp").playEffects;
 assert.equal(card8Effects.length, 1, "card 8 should choose one sector once");
 assert.equal(card8Effects[0].type, "card_any_sector_scan");
 assert.equal(card8Effects[0].options.repeat, 2, "card 8 should scan the selected sector twice");

@@ -71,24 +71,12 @@
     return { id, type, label, icon, options: { ...options }, status: "pending" };
   }
 
-  function gainFossilEffect(id, label, count = 1) {
-    return effect(id, EFFECT_GAIN_FOSSILS, label, "aomomoFossil", { count });
-  }
 
   function aomomoFossilRewardEffect(id, label, count = 1) {
     return effect(id, "gain_resources", label, "aomomoFossil", { gain: { aomomoFossils: count } });
   }
 
-  function scoreRewardEffect(id, label, score) {
-    return effect(id, "gain_resources", label, "score", { gain: { score } });
-  }
 
-  function flowMarkedAomomoRewardEffect(id, label, rewardEffect) {
-    return effect(id, "card_conditional_reward", label, rewardEffect.icon || "aomomoFossil", {
-      condition: { type: "flowMarkedNebula", nebulaIds: [NEBULA_ID] },
-      rewards: [rewardEffect],
-    });
-  }
 
   function aomomoSignalBonusEffect(id, label, rewardEffect, options = {}) {
     return effect(id, "card_register_event_bonus", label, rewardEffect.icon || "aomomoFossil", {
@@ -103,9 +91,6 @@
     });
   }
 
-  function scanActionEffect(id, label) {
-    return effect(id, "card_scan_action", label, "scan_action", { skipCost: true });
-  }
 
   function createTraceGrid() {
     const grid = {};
@@ -536,68 +521,6 @@
     return Boolean(card?.aomomoCard || card?.set === "alien:奥陌陌" || String(card?.cardId || "").startsWith("aomomo_"));
   }
 
-  function buildImmediateEffects(cardOrIndex) {
-    const index = getCardDefinition(cardOrIndex)?.index;
-    switch (index) {
-      case 0:
-        return [
-          scanActionEffect("aomomo-0-scan-action", "奥陌陌0：扫描行动"),
-          flowMarkedAomomoRewardEffect(
-            "aomomo-0-aomomo-scan-fossil",
-            "奥陌陌0：若本次扫描行动扫到奥陌陌得1化石",
-            aomomoFossilRewardEffect("aomomo-0-fossil", "扫描奥陌陌：1化石", 1),
-          ),
-        ];
-      case 1:
-        return [gainFossilEffect("aomomo-1-fossil", "奥陌陌1：1化石", 1)];
-      case 2:
-        return [effect("aomomo-2-scan", EFFECT_SCAN_AOMOMO_X, "奥陌陌2：扫描奥陌陌所在扇区", "scan", { gainData: true })];
-      case 3:
-        return [effect("aomomo-3-land", EFFECT_LAND_SCORE_IF_AOMOMO, "奥陌陌3：登陆；若登陆奥陌陌得3分", "land", { score: 3 })];
-      case 4:
-        return [
-          effect("aomomo-4-blue-tech", "card_research_tech", "奥陌陌4：蓝色科技", "research_tech", { skipCost: true, techTypes: Object.freeze(["blue"]) }),
-          effect("aomomo-4-fossil-data", EFFECT_FOSSIL_FOR_DATA, "奥陌陌4：可移除1化石得1数据", "aomomoFossil", { cost: 1, dataCount: 1, optional: true }),
-        ];
-      case 5:
-        return [
-          effect("aomomo-5-move", "card_move", "奥陌陌5：4移动", "movement", { movementPoints: 4 }),
-          effect("aomomo-5-visit-fossil", EFFECT_VISIT_AOMOMO_THIS_TURN_FOSSIL, "奥陌陌5：本回合访问奥陌陌得1化石", "aomomoFossil", { count: 1 }),
-        ];
-      case 6:
-        return [effect(
-          "aomomo-6-move-land",
-          EFFECT_FOSSIL_FOR_MOVE_AND_LAND,
-          "奥陌陌6：选择化石兑换量，每个化石换2移动，然后登陆",
-          "movement",
-          { costPerExchange: 1, movementPerExchange: 2 },
-        )];
-      case 7:
-        return [
-          effect("aomomo-7-launch", "launch", "奥陌陌7：发射", "launch", { skipCost: true, cost: {}, source: "aomomo" }),
-          gainFossilEffect("aomomo-7-fossil", "奥陌陌7：1化石", 1),
-        ];
-      case 8:
-        return [
-          effect("aomomo-8-yellow", "card_color_scan", "奥陌陌8：黄色扇区扫描", "yellow_scan", { color: "yellow", gainData: true }),
-          effect("aomomo-8-red", "card_color_scan", "奥陌陌8：红色扇区扫描", "red_scan", { color: "red", gainData: true }),
-          effect("aomomo-8-blue", "card_color_scan", "奥陌陌8：蓝色扇区扫描", "blue_scan", { color: "blue", gainData: true }),
-          effect("aomomo-8-fossil-any-scan", EFFECT_FOSSIL_FOR_ANY_SCAN, "奥陌陌8：可移除1化石扫描任意扇区", "aomomoFossil", { cost: 1, gainData: true, optional: true }),
-        ];
-      case 9:
-        return [
-          aomomoSignalBonusEffect(
-            "aomomo-9-aomomo-signal-score",
-            "奥陌陌9：本次扫描行动奥陌陌信号+2分",
-            scoreRewardEffect("aomomo-9-score", "扫描奥陌陌：2分", 2),
-          ),
-          scanActionEffect("aomomo-9-scan-action", "奥陌陌9：扫描行动"),
-        ];
-      default:
-        return [];
-    }
-  }
-
   function formatTraceLabel(traceType, position, stackIndex = null) {
     const suffix = Number(position) === 1 && stackIndex != null ? `#${stackIndex + 1}` : "";
     return `${placement.getTraceTypeLabel(traceType)} ${position}号位${suffix}`;
@@ -663,7 +586,6 @@
     blindDrawCard,
     drawDisplayedCardIndex,
     isAomomoCard,
-    buildImmediateEffects,
     markerBelongsToPlayer,
     getPlayerKeys,
     getPlayerKey,

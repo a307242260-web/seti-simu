@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 
 globalThis.SetiAlienPlacement = require("./placement");
 const amiba = require("./amiba");
+const cardEffects = require("../cards/effects");
 
 let alienSequence = 1;
 const nextAlienIdentity = () => ({ sequence: alienSequence++ });
@@ -63,7 +64,9 @@ assert.equal(amiba.getTheoryTaskReward(stateTraceTheoryState).emptyCount, 12);
 
 assert.equal(amiba.createAlienCard(5, 1).cardTypeCode, 3);
 assert.equal(amiba.getFinalTraceTypeForCard(amiba.createAlienCard(6, 2)), "yellow");
-assert.equal(amiba.buildImmediateEffects(9)[0].type, "launch");
-assert.equal(amiba.buildImmediateEffects(9)[1].type, amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD);
+// 打出效果统一来自卡表模型 playEffects（species buildImmediateEffects 已迁入 MODELS）。
+const amiba9Play = cardEffects.getCardModel("amiba_9.webp").playEffects;
+assert.equal(amiba9Play[0].type, "launch");
+assert.equal(amiba9Play[1].type, amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD);
 
 console.log("amiba.test.js: all tests passed");

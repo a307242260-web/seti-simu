@@ -83,71 +83,19 @@
     return effect(id, "gain_resources", label, gain.score ? "score" : gain.energy ? "energy" : "publicity", { gain });
   }
 
-  function gainDataEffect(id, label, count) {
-    return effect(id, "gain_data", label, "data", { count });
-  }
 
   function gainIncomeEffect(id, label, gain) {
     return effect(id, EFFECT_GAIN_INCOME, label, "income", { gain });
   }
 
-  function drawCardsEffect(id, label, count) {
-    return effect(id, "draw_cards", label, "blind_card", { count });
-  }
 
-  function pickCardEffect(id, label) {
-    return effect(id, "pick_card", label || "精选1张牌", "pick_card", { count: 1 });
-  }
 
-  function launchEffect(id, label) {
-    return effect(id, "launch", label || "发射", "launch", { skipCost: true, cost: {}, source: "banrenma" });
-  }
 
-  function researchTechEffect(id, label, techTypes) {
-    return effect(id, "card_research_tech", label, "research_tech", {
-      skipCost: true,
-      techTypes: Object.freeze([...techTypes]),
-    });
-  }
 
   function alienTraceEffect(id, label, traceType = null) {
     return effect(id, "alien_trace", label, traceType ? `alien_${traceType}` : "alien_trace", {
       traceType,
     });
-  }
-
-  function buildImmediateEffects(cardOrIndex) {
-    const index = getCardDefinition(cardOrIndex)?.index;
-    switch (index) {
-      case 0:
-        return [drawCardsEffect("banrenma-0-draw", "半人马0：1盲抽", 1)];
-      case 1:
-        return [gainResourcesEffect("banrenma-1-publicity", "半人马1：2宣传", { publicity: 2 })];
-      case 2:
-        return [gainDataEffect("banrenma-2-data", "半人马2：2数据", 2)];
-      case 3:
-        return [researchTechEffect("banrenma-3-blue-tech", "半人马3：蓝色科技", ["blue"])];
-      case 4:
-        return [gainResourcesEffect("banrenma-4-resources", "半人马4：1宣传，1信用点", { publicity: 1, credits: 1 })];
-      case 5:
-        return [pickCardEffect("banrenma-5-pick", "半人马5：精选1张牌")];
-      case 6:
-        return [gainDataEffect("banrenma-6-data", "半人马6：1数据", 1)];
-      case 7:
-        return [researchTechEffect("banrenma-7-purple-tech", "半人马7：粉紫科技", ["purple"])];
-      case 8:
-        return [effect(
-          "banrenma-8-sector-scan",
-          "card_any_sector_scan",
-          "半人马8：选定扇区扫描2次",
-          "scan",
-          { gainData: true, repeat: 2 },
-        )];
-      case 9:
-        return [launchEffect("banrenma-9-launch", "半人马9：发射")];
-      default:
-        return [];
-    }
   }
 
   function buildConditionEffects(cardOrIndex) {
@@ -674,7 +622,6 @@
     drawDisplayedCardIndex,
     getCardDefinition,
     isBanrenmaCard,
-    buildImmediateEffects,
     buildConditionEffects,
     addScoreMark,
     resolveScoreMark,

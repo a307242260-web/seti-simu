@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 globalThis.SetiAlienPlacement = require("./placement");
 globalThis.SetiAlienState = require("./state");
 const aomomo = require("./aomomo");
+const cardEffects = require("../cards/effects");
 
 let alienSequence = 1;
 const nextAlienIdentity = () => ({ sequence: alienSequence++ });
@@ -74,20 +75,23 @@ assert.equal(aomomo.countLandingMarkers(panelState), 5);
 assert.equal(aomomo.canAddLandingMarker(panelState), true, "登陆槽位无限，永不满");
 
 assert.equal(aomomo.createAlienCard(8, 1).cardTypeCode, 3);
-const aomomo0Effects = aomomo.buildImmediateEffects(0);
+// 打出效果统一来自卡表模型 playEffects（species buildImmediateEffects 已迁入 MODELS）。
+const aomomo0Effects = cardEffects.getCardModel("aomomo_0.webp").playEffects;
 assert.equal(aomomo0Effects.length, 2);
 assert.equal(aomomo0Effects[0].type, "card_scan_action");
 assert.equal(aomomo0Effects[1].type, "card_conditional_reward");
 assert.equal(aomomo0Effects[1].options.condition.type, "flowMarkedNebula");
 assert.deepEqual(aomomo0Effects[1].options.condition.nebulaIds, [aomomo.NEBULA_ID]);
-assert.equal(aomomo.buildImmediateEffects(1)[0].type, aomomo.EFFECT_GAIN_FOSSILS);
-const aomomo5Effects = aomomo.buildImmediateEffects(5);
+assert.equal(cardEffects.getCardModel("aomomo_1.webp").playEffects[0].type, aomomo.EFFECT_GAIN_FOSSILS);
+const aomomo5Effects = cardEffects.getCardModel("aomomo_5.webp").playEffects;
 assert.equal(aomomo5Effects.length, 2);
 assert.equal(aomomo5Effects[0].type, "card_move");
 assert.equal(aomomo5Effects[0].options.movementPoints, 4);
-assert.equal(aomomo5Effects[1].type, aomomo.EFFECT_VISIT_AOMOMO_THIS_TURN_FOSSIL);
-assert.equal(aomomo.buildImmediateEffects(8).at(-1).type, aomomo.EFFECT_FOSSIL_FOR_ANY_SCAN);
-const aomomo9Effects = aomomo.buildImmediateEffects(9);
+// aomomo_5「本回合访问奥陌陌得1化石」模型版用 REGISTER_EVENT_BONUS 复用现有机制。
+assert.equal(aomomo5Effects[1].type, cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS);
+assert.equal(aomomo5Effects[1].options.bonus.eventType, "visitPlanet");
+assert.equal(cardEffects.getCardModel("aomomo_8.webp").playEffects.at(-1).type, aomomo.EFFECT_FOSSIL_FOR_ANY_SCAN);
+const aomomo9Effects = cardEffects.getCardModel("aomomo_9.webp").playEffects;
 assert.equal(aomomo9Effects.length, 2);
 assert.equal(aomomo9Effects[0].type, "card_register_event_bonus");
 assert.equal(aomomo9Effects[0].options.bonus.eventType, "signalMarked");

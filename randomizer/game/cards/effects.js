@@ -780,42 +780,165 @@
     "aomomo_1.webp": withSource("aomomo_1.webp", {
       cardType: 1,
       triggers: Object.freeze([
-        {
-          id: "aomomo1-trace-data",
-          event: Object.freeze({ type: "alienTrace" }),
-          effect: gainDataEffect("aomomo1-data", "奥陌陌1：获得外星人痕迹，1数据", 1),
-        },
-        {
-          id: "aomomo1-trace-publicity",
-          event: Object.freeze({ type: "alienTrace" }),
-          effect: gainResourcesEffect("aomomo1-publicity", "奥陌陌1：获得外星人痕迹，1宣传", { publicity: 1 }),
-        },
-        {
-          id: "aomomo1-trace-score",
-          event: Object.freeze({ type: "alienTrace" }),
-          effect: gainResourcesEffect("aomomo1-score", "奥陌陌1：获得外星人痕迹，3分", { score: 3 }),
-        },
-      ]),
+              Object.freeze({
+                "id": "aomomo1-trace-data",
+                "event": Object.freeze({
+                  "type": "alienTrace"
+                }),
+                "effect": Object.freeze({
+                  "id": "aomomo1-data",
+                  "type": "gain_data",
+                  "label": "奥陌陌1：获得外星人痕迹，1数据",
+                  "icon": "data",
+                  "options": Object.freeze({
+                    "count": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo1-trace-publicity",
+                "event": Object.freeze({
+                  "type": "alienTrace"
+                }),
+                "effect": Object.freeze({
+                  "id": "aomomo1-publicity",
+                  "type": "gain_resources",
+                  "label": "奥陌陌1：获得外星人痕迹，1宣传",
+                  "icon": "publicity",
+                  "options": Object.freeze({
+                    "gain": Object.freeze({
+                      "publicity": 1
+                    })
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo1-trace-score",
+                "event": Object.freeze({
+                  "type": "alienTrace"
+                }),
+                "effect": Object.freeze({
+                  "id": "aomomo1-score",
+                  "type": "gain_resources",
+                  "label": "奥陌陌1：获得外星人痕迹，3分",
+                  "icon": "score",
+                  "options": Object.freeze({
+                    "gain": Object.freeze({
+                      "score": 3
+                    })
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-1-fossil",
+                "type": "aomomo_gain_fossils",
+                "label": "奥陌陌1：1化石",
+                "icon": "aomomoFossil",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
     }),
     "aomomo_2.webp": withSource("aomomo_2.webp", {
       cardType: 2,
-      tasks: Object.freeze([{
-        id: "aomomo2-fossils-score",
-        condition: Object.freeze({ type: "aomomoFossils", count: 3 }),
-        rewards: Object.freeze([
-          effect("aomomo2-spend-fossils", "aomomo_spend_fossils_gain_score", "拥有3化石：移除2化石得11分", "aomomoFossil", { cost: 2, score: 11 }),
-        ]),
-      }]),
+      tasks: Object.freeze([
+              Object.freeze({
+                "id": "aomomo2-fossils-score",
+                "condition": Object.freeze({
+                  "type": "aomomoFossils",
+                  "count": 3
+                }),
+                "rewards": Object.freeze([
+                  Object.freeze({
+                    "id": "aomomo2-spend-fossils",
+                    "type": "aomomo_spend_fossils_gain_score",
+                    "label": "拥有3化石：移除2化石得11分",
+                    "icon": "aomomoFossil",
+                    "options": Object.freeze({
+                      "cost": 2,
+                      "score": 11
+                    })
+                  })
+                ])
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-2-scan",
+                "type": "aomomo_scan_x",
+                "label": "奥陌陌2：扫描奥陌陌所在扇区",
+                "icon": "scan",
+                "options": Object.freeze({
+                  "gainData": true
+                })
+              })
+            ]),
     }),
     "aomomo_3.webp": withSource("aomomo_3.webp", {
       cardType: 2,
-      tasks: Object.freeze([{
-        id: "aomomo3-all-trace-types",
-        condition: Object.freeze({ type: "aomomoAllTraceTypes" }),
-        rewards: Object.freeze([
-          gainResourcesEffect("aomomo3-fossil", "奥陌陌三色痕迹：1化石", { aomomoFossils: 1 }),
-        ]),
-      }]),
+      tasks: Object.freeze([
+              Object.freeze({
+                "id": "aomomo3-all-trace-types",
+                "condition": Object.freeze({
+                  "type": "aomomoAllTraceTypes"
+                }),
+                "rewards": Object.freeze([
+                  Object.freeze({
+                    "id": "aomomo3-fossil",
+                    "type": "gain_resources",
+                    "label": "奥陌陌三色痕迹：1化石",
+                    "icon": "publicity",
+                    "options": Object.freeze({
+                      "gain": Object.freeze({
+                        "aomomoFossils": 1
+                      })
+                    })
+                  })
+                ])
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-3-land",
+                "type": "aomomo_land_score",
+                "label": "奥陌陌3：登陆；若登陆奥陌陌得3分",
+                "icon": "land",
+                "options": Object.freeze({
+                  "score": 3
+                })
+              })
+            ]),
+    }),
+    "aomomo_4.webp": withSource("aomomo_4.webp", {
+      cardType: 1,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-4-blue-tech",
+                "type": "card_research_tech",
+                "label": "奥陌陌4：蓝色科技",
+                "icon": "research_tech",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "techTypes": Object.freeze([
+                    "blue"
+                  ])
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo-4-fossil-data",
+                "type": "aomomo_fossil_for_data",
+                "label": "奥陌陌4：可移除1化石得1数据",
+                "icon": "aomomoFossil",
+                "options": Object.freeze({
+                  "cost": 1,
+                  "dataCount": 1,
+                  "optional": true
+                })
+              })
+            ]),
     }),
     "aomomo_5.webp": withSource("aomomo_5.webp", {
       cardType: 2,
@@ -839,9 +962,91 @@
         ]),
       }]),
     }),
+    "aomomo_6.webp": withSource("aomomo_6.webp", {
+      cardType: 0,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-6-move-land",
+                "type": "aomomo_fossil_move_land",
+                "label": "奥陌陌6：选择化石兑换量，每个化石换2移动，然后登陆",
+                "icon": "movement",
+                "options": Object.freeze({
+                  "costPerExchange": 1,
+                  "movementPerExchange": 2
+                })
+              })
+            ]),
+    }),
+    "aomomo_7.webp": withSource("aomomo_7.webp", {
+      cardType: 0,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-7-launch",
+                "type": "launch",
+                "label": "奥陌陌7：发射",
+                "icon": "launch",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "cost": Object.freeze({}),
+                  "source": "aomomo"
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo-7-fossil",
+                "type": "aomomo_gain_fossils",
+                "label": "奥陌陌7：1化石",
+                "icon": "aomomoFossil",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
+    }),
     "aomomo_8.webp": withSource("aomomo_8.webp", {
       cardType: 3,
-      endGameScoring: Object.freeze({ kind: "aomomoTraceCount", scorePer: 1 }),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "aomomo-8-yellow",
+                "type": "card_color_scan",
+                "label": "奥陌陌8：黄色扇区扫描",
+                "icon": "yellow_scan",
+                "options": Object.freeze({
+                  "color": "yellow",
+                  "gainData": true
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo-8-red",
+                "type": "card_color_scan",
+                "label": "奥陌陌8：红色扇区扫描",
+                "icon": "red_scan",
+                "options": Object.freeze({
+                  "color": "red",
+                  "gainData": true
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo-8-blue",
+                "type": "card_color_scan",
+                "label": "奥陌陌8：蓝色扇区扫描",
+                "icon": "blue_scan",
+                "options": Object.freeze({
+                  "color": "blue",
+                  "gainData": true
+                })
+              }),
+              Object.freeze({
+                "id": "aomomo-8-fossil-any-scan",
+                "type": "aomomo_fossil_any_scan",
+                "label": "奥陌陌8：可移除1化石扫描任意扇区",
+                "icon": "aomomoFossil",
+                "options": Object.freeze({
+                  "cost": 1,
+                  "gainData": true,
+                  "optional": true
+                })
+              })
+            ]),
     }),
     "aomomo_9.webp": withSource("aomomo_9.webp", {
       cardType: 2,
@@ -961,84 +1166,960 @@
     "amiba_0.webp": withSource("amiba_0.webp", {
       cardType: 1,
       triggers: Object.freeze([
-        {
-          id: "amiba0-pink-data",
-          event: Object.freeze({ type: "alienTrace", traceType: "pink" }),
-          effect: gainDataEffect("amiba0-pink-data", "自动分析：获得粉色外星人痕迹，1数据", 1),
-        },
-        {
-          id: "amiba0-yellow-data",
-          event: Object.freeze({ type: "alienTrace", traceType: "yellow" }),
-          effect: gainDataEffect("amiba0-yellow-data", "自动分析：获得黄色外星人痕迹，1数据", 1),
-        },
-      ]),
+              Object.freeze({
+                "id": "amiba0-pink-data",
+                "event": Object.freeze({
+                  "type": "alienTrace",
+                  "traceType": "pink"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba0-pink-data",
+                  "type": "gain_data",
+                  "label": "自动分析：获得粉色外星人痕迹，1数据",
+                  "icon": "data",
+                  "options": Object.freeze({
+                    "count": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "amiba0-yellow-data",
+                "event": Object.freeze({
+                  "type": "alienTrace",
+                  "traceType": "yellow"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba0-yellow-data",
+                  "type": "gain_data",
+                  "label": "自动分析：获得黄色外星人痕迹，1数据",
+                  "icon": "data",
+                  "options": Object.freeze({
+                    "count": 1
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-0-data",
+                "type": "gain_data",
+                "label": "阿米巴0：3数据",
+                "icon": "data",
+                "options": Object.freeze({
+                  "count": 3
+                })
+              }),
+              Object.freeze({
+                "id": "amiba-0-blue-symbol",
+                "type": "amiba_choose_symbol_reward",
+                "label": "阿米巴0：蓝色区域 symbol 奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({
+                  "region": "blue"
+                })
+              })
+            ]),
     }),
     "amiba_1.webp": withSource("amiba_1.webp", {
       cardType: 1,
       triggers: Object.freeze([
-        {
-          id: "amiba1-orange-tech",
-          event: Object.freeze({ type: "researchTech", techType: "orange" }),
-          effect: effect("amiba1-orange-symbol", "amiba_choose_symbol_reward", "安全协议：橙色科技，橙色区域 symbol 奖励", "alien_trace", { region: "orange" }),
-        },
-        {
-          id: "amiba1-purple-tech",
-          event: Object.freeze({ type: "researchTech", techType: "purple" }),
-          effect: effect("amiba1-red-symbol", "amiba_choose_symbol_reward", "安全协议：粉紫科技，红色区域 symbol 奖励", "alien_trace", { region: "red" }),
-        },
-        {
-          id: "amiba1-blue-tech",
-          event: Object.freeze({ type: "researchTech", techType: "blue" }),
-          effect: effect("amiba1-blue-symbol", "amiba_choose_symbol_reward", "安全协议：蓝色科技，蓝色区域 symbol 奖励", "alien_trace", { region: "blue" }),
-        },
-      ]),
+              Object.freeze({
+                "id": "amiba1-orange-tech",
+                "event": Object.freeze({
+                  "type": "researchTech",
+                  "techType": "orange"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba1-orange-symbol",
+                  "type": "amiba_choose_symbol_reward",
+                  "label": "安全协议：橙色科技，橙色区域 symbol 奖励",
+                  "icon": "alien_trace",
+                  "options": Object.freeze({
+                    "region": "orange"
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "amiba1-purple-tech",
+                "event": Object.freeze({
+                  "type": "researchTech",
+                  "techType": "purple"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba1-red-symbol",
+                  "type": "amiba_choose_symbol_reward",
+                  "label": "安全协议：粉紫科技，红色区域 symbol 奖励",
+                  "icon": "alien_trace",
+                  "options": Object.freeze({
+                    "region": "red"
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "amiba1-blue-tech",
+                "event": Object.freeze({
+                  "type": "researchTech",
+                  "techType": "blue"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba1-blue-symbol",
+                  "type": "amiba_choose_symbol_reward",
+                  "label": "安全协议：蓝色科技，蓝色区域 symbol 奖励",
+                  "icon": "alien_trace",
+                  "options": Object.freeze({
+                    "region": "blue"
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-1-publicity",
+                "type": "gain_resources",
+                "label": "阿米巴1：1宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 1
+                  })
+                })
+              })
+            ]),
     }),
     "amiba_2.webp": withSource("amiba_2.webp", {
       cardType: 1,
       triggers: Object.freeze([
-        {
-          id: "amiba2-trace-publicity-1",
-          event: Object.freeze({ type: "alienTrace", alienId: "阿米巴" }),
-          effect: gainResourcesEffect("amiba2-publicity-1", "科学论文：本物种痕迹，1宣传", { publicity: 1 }),
-        },
-        {
-          id: "amiba2-trace-publicity-2",
-          event: Object.freeze({ type: "alienTrace", alienId: "阿米巴" }),
-          effect: gainResourcesEffect("amiba2-publicity-2", "科学论文：本物种痕迹，1宣传", { publicity: 1 }),
-        },
-      ]),
+              Object.freeze({
+                "id": "amiba2-trace-publicity-1",
+                "event": Object.freeze({
+                  "type": "alienTrace",
+                  "alienId": "阿米巴"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba2-publicity-1",
+                  "type": "gain_resources",
+                  "label": "科学论文：本物种痕迹，1宣传",
+                  "icon": "publicity",
+                  "options": Object.freeze({
+                    "gain": Object.freeze({
+                      "publicity": 1
+                    })
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "amiba2-trace-publicity-2",
+                "event": Object.freeze({
+                  "type": "alienTrace",
+                  "alienId": "阿米巴"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba2-publicity-2",
+                  "type": "gain_resources",
+                  "label": "科学论文：本物种痕迹，1宣传",
+                  "icon": "publicity",
+                  "options": Object.freeze({
+                    "gain": Object.freeze({
+                      "publicity": 1
+                    })
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-2-draw",
+                "type": "draw_cards",
+                "label": "阿米巴2：2盲抽",
+                "icon": "blind_card",
+                "options": Object.freeze({
+                  "count": 2
+                })
+              })
+            ]),
     }),
-    "amiba_3.webp": withSource("amiba_3.webp", { cardType: 0 }),
-    "amiba_4.webp": withSource("amiba_4.webp", { cardType: 0 }),
-    "amiba_5.webp": withSource("amiba_5.webp", { cardType: 3 }),
-    "amiba_6.webp": withSource("amiba_6.webp", { cardType: 3 }),
-    "amiba_7.webp": withSource("amiba_7.webp", { cardType: 3 }),
-    "amiba_8.webp": withSource("amiba_8.webp", { cardType: 2 }),
+    "amiba_3.webp": withSource("amiba_3.webp", {
+      cardType: 0,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-3-remove-trace",
+                "type": "amiba_remove_trace_for_region_reward",
+                "label": "阿米巴3：移除自己的 1 个阿米巴痕迹并结算区域奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({})
+              })
+            ]),
+    }),
+    "amiba_4.webp": withSource("amiba_4.webp", {
+      cardType: 0,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-4-resources",
+                "type": "gain_resources",
+                "label": "阿米巴4：1额外公共扫描，1宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "additionalPublicScan": 1,
+                    "publicity": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "amiba-4-red-symbol",
+                "type": "amiba_choose_symbol_reward",
+                "label": "阿米巴4：红色区域 symbol 奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({
+                  "region": "red"
+                })
+              })
+            ]),
+    }),
+    "amiba_5.webp": withSource("amiba_5.webp", {
+      cardType: 3,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-5-pick",
+                "type": "pick_card",
+                "label": "阿米巴5：精选1张牌",
+                "icon": "pick_card",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              }),
+              Object.freeze({
+                "id": "amiba-5-red-symbol",
+                "type": "amiba_choose_symbol_reward",
+                "label": "阿米巴5：红色区域 symbol 奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({
+                  "region": "red"
+                })
+              })
+            ]),
+    }),
+    "amiba_6.webp": withSource("amiba_6.webp", {
+      cardType: 3,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-6-pick",
+                "type": "pick_card",
+                "label": "阿米巴6：精选1张牌",
+                "icon": "pick_card",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              }),
+              Object.freeze({
+                "id": "amiba-6-orange-symbol",
+                "type": "amiba_choose_symbol_reward",
+                "label": "阿米巴6：橙色区域 symbol 奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({
+                  "region": "orange"
+                })
+              })
+            ]),
+    }),
+    "amiba_7.webp": withSource("amiba_7.webp", {
+      cardType: 3,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-7-pick",
+                "type": "pick_card",
+                "label": "阿米巴7：精选1张牌",
+                "icon": "pick_card",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              }),
+              Object.freeze({
+                "id": "amiba-7-blue-symbol",
+                "type": "amiba_choose_symbol_reward",
+                "label": "阿米巴7：蓝色区域 symbol 奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({
+                  "region": "blue"
+                })
+              })
+            ]),
+    }),
+    "amiba_8.webp": withSource("amiba_8.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-8-publicity",
+                "type": "gain_resources",
+                "label": "阿米巴8：3宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 3
+                  })
+                })
+              })
+            ]),
+    }),
     "amiba_9.webp": withSource("amiba_9.webp", {
       cardType: 1,
       triggers: Object.freeze([
-        {
-          id: "amiba9-blue-data-1",
-          event: Object.freeze({ type: "alienTrace", traceType: "blue" }),
-          effect: gainDataEffect("amiba9-blue-data-1", "低重力研究：获得蓝色外星人痕迹，1数据", 1),
-        },
-        {
-          id: "amiba9-blue-data-2",
-          event: Object.freeze({ type: "alienTrace", traceType: "blue" }),
-          effect: gainDataEffect("amiba9-blue-data-2", "低重力研究：获得蓝色外星人痕迹，1数据", 1),
-        },
-      ]),
+              Object.freeze({
+                "id": "amiba9-blue-data-1",
+                "event": Object.freeze({
+                  "type": "alienTrace",
+                  "traceType": "blue"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba9-blue-data-1",
+                  "type": "gain_data",
+                  "label": "低重力研究：获得蓝色外星人痕迹，1数据",
+                  "icon": "data",
+                  "options": Object.freeze({
+                    "count": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "amiba9-blue-data-2",
+                "event": Object.freeze({
+                  "type": "alienTrace",
+                  "traceType": "blue"
+                }),
+                "effect": Object.freeze({
+                  "id": "amiba9-blue-data-2",
+                  "type": "gain_data",
+                  "label": "低重力研究：获得蓝色外星人痕迹，1数据",
+                  "icon": "data",
+                  "options": Object.freeze({
+                    "count": 1
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "amiba-9-launch",
+                "type": "launch",
+                "label": "阿米巴9：发射",
+                "icon": "launch",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "cost": Object.freeze({}),
+                  "source": "amiba"
+                })
+              }),
+              Object.freeze({
+                "id": "amiba-9-orange-symbol",
+                "type": "amiba_choose_symbol_reward",
+                "label": "阿米巴9：橙色区域 symbol 奖励",
+                "icon": "alien_trace",
+                "options": Object.freeze({
+                  "region": "orange"
+                })
+              })
+            ]),
     }),
-    "chong_0.webp": withSource("chong_0.webp", { cardType: 2 }),
-    "chong_1.webp": withSource("chong_1.webp", { cardType: 1 }),
-    "chong_2.webp": withSource("chong_2.webp", { cardType: 3 }),
-    "chong_3.webp": withSource("chong_3.webp", { cardType: 2 }),
-    "chong_4.webp": withSource("chong_4.webp", { cardType: 1 }),
-    "chong_5.webp": withSource("chong_5.webp", { cardType: 2 }),
-    "chong_6.webp": withSource("chong_6.webp", { cardType: 2 }),
-    "chong_7.webp": withSource("chong_7.webp", { cardType: 1 }),
-    "chong_8.webp": withSource("chong_8.webp", { cardType: 2 }),
-    "chong_9.webp": withSource("chong_9.webp", { cardType: 2 }),
+
+    "chong_0.webp": withSource("chong_0.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-0-action",
+                "type": "chong_land_for_pickup",
+                "label": "虫族0：登陆",
+                "icon": "land",
+                "options": Object.freeze({
+                  "cardIndex": 0
+                })
+              }),
+              Object.freeze({
+                "id": "chong-0-pickup",
+                "type": "chong_pickup_fossil",
+                "label": "虫族0：拾取木星/土星化石",
+                "icon": "chongFossilBack",
+                "options": Object.freeze({
+                  "cardIndex": 0
+                })
+              })
+            ]),
+    }),
+    "chong_1.webp": withSource("chong_1.webp", {
+      cardType: 1,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-1-publicity",
+                "type": "gain_resources",
+                "label": "虫族1：1宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "chong-1-blue-tech",
+                "type": "card_research_tech",
+                "label": "虫族1：蓝色科技",
+                "icon": "research_tech",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "techTypes": Object.freeze([
+                    "blue"
+                  ])
+                })
+              })
+            ]),
+    }),
+    "chong_2.webp": withSource("chong_2.webp", {
+      cardType: 3,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-2-probe-fossil",
+                "type": "chong_probe_planet_fossil_reward",
+                "label": "虫族2：查看探测器所在星球化石并结算奖励",
+                "icon": "chongFossilOk",
+                "options": Object.freeze({
+                  "cardIndex": 2
+                })
+              })
+            ]),
+    }),
+    "chong_3.webp": withSource("chong_3.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-3-move",
+                "type": "card_move",
+                "label": "虫族3：1移动",
+                "icon": "movement",
+                "options": Object.freeze({
+                  "movementPoints": 1
+                })
+              }),
+              Object.freeze({
+                "id": "chong-3-action",
+                "type": "chong_land_for_pickup",
+                "label": "虫族3：登陆",
+                "icon": "land",
+                "options": Object.freeze({
+                  "cardIndex": 3
+                })
+              }),
+              Object.freeze({
+                "id": "chong-3-pickup",
+                "type": "chong_pickup_fossil",
+                "label": "虫族3：拾取木星/土星化石",
+                "icon": "chongFossilBack",
+                "options": Object.freeze({
+                  "cardIndex": 3
+                })
+              })
+            ]),
+    }),
+    "chong_4.webp": withSource("chong_4.webp", {
+      cardType: 1,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-4-publicity",
+                "type": "gain_resources",
+                "label": "虫族4：1宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "chong-4-orange-tech",
+                "type": "card_research_tech",
+                "label": "虫族4：橙色科技",
+                "icon": "research_tech",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "techTypes": Object.freeze([
+                    "orange"
+                  ])
+                })
+              })
+            ]),
+    }),
+    "chong_5.webp": withSource("chong_5.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-5-action",
+                "type": "chong_land_for_pickup",
+                "label": "虫族5：登陆",
+                "icon": "land",
+                "options": Object.freeze({
+                  "cardIndex": 5
+                })
+              }),
+              Object.freeze({
+                "id": "chong-5-pickup",
+                "type": "chong_pickup_fossil",
+                "label": "虫族5：拾取木星/土星化石",
+                "icon": "chongFossilBack",
+                "options": Object.freeze({
+                  "cardIndex": 5
+                })
+              })
+            ]),
+    }),
+    "chong_6.webp": withSource("chong_6.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-6-action",
+                "type": "chong_orbit_or_land_for_pickup",
+                "label": "虫族6：环绕或登陆",
+                "icon": "orbitOrLand",
+                "options": Object.freeze({
+                  "cardIndex": 6,
+                  "orbitOrLand": true
+                })
+              }),
+              Object.freeze({
+                "id": "chong-6-pickup",
+                "type": "chong_pickup_fossil",
+                "label": "虫族6：拾取木星/土星化石",
+                "icon": "chongFossilBack",
+                "options": Object.freeze({
+                  "cardIndex": 6,
+                  "orbitOrLand": true
+                })
+              })
+            ]),
+    }),
+    "chong_7.webp": withSource("chong_7.webp", {
+      cardType: 1,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-7-publicity",
+                "type": "gain_resources",
+                "label": "虫族7：1宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "chong-7-purple-tech",
+                "type": "card_research_tech",
+                "label": "虫族7：粉紫科技",
+                "icon": "research_tech",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "techTypes": Object.freeze([
+                    "purple"
+                  ])
+                })
+              })
+            ]),
+    }),
+    "chong_8.webp": withSource("chong_8.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-8-action",
+                "type": "chong_land_for_pickup",
+                "label": "虫族8：登陆",
+                "icon": "land",
+                "options": Object.freeze({
+                  "cardIndex": 8,
+                  "allowSatellite": true
+                })
+              }),
+              Object.freeze({
+                "id": "chong-8-pickup",
+                "type": "chong_pickup_fossil",
+                "label": "虫族8：拾取木星/土星化石",
+                "icon": "chongFossilBack",
+                "options": Object.freeze({
+                  "cardIndex": 8,
+                  "allowSatellite": true
+                })
+              })
+            ]),
+    }),
+    "chong_9.webp": withSource("chong_9.webp", {
+      cardType: 2,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "chong-9-action",
+                "type": "chong_land_for_pickup",
+                "label": "虫族9：登陆",
+                "icon": "land",
+                "options": Object.freeze({
+                  "cardIndex": 9,
+                  "allowSatellite": true
+                })
+              }),
+              Object.freeze({
+                "id": "chong-9-pickup",
+                "type": "chong_pickup_fossil",
+                "label": "虫族9：拾取木星/土星化石",
+                "icon": "chongFossilBack",
+                "options": Object.freeze({
+                  "cardIndex": 9,
+                  "allowSatellite": true
+                })
+              })
+            ]),
+    }),
+
+    "runezu_0.webp": withSource("runezu_0.webp", {
+      cardType: 3,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-0-branch",
+                "type": "runezu_symbol_branch",
+                "label": "符文族0：选择一组符文奖励",
+                "icon": "runezuSymbolBack",
+                "options": Object.freeze({
+                  "branches": Object.freeze([
+                    Object.freeze({
+                      "id": "runezu-0-branch-branch-1",
+                      "label": "符文4+符文7",
+                      "symbolIds": Object.freeze([
+                        "symbol_4",
+                        "symbol_7"
+                      ])
+                    }),
+                    Object.freeze({
+                      "id": "runezu-0-branch-branch-2",
+                      "label": "符文3+符文2",
+                      "symbolIds": Object.freeze([
+                        "symbol_3",
+                        "symbol_2"
+                      ])
+                    })
+                  ])
+                })
+              })
+            ]),
+    }),
+    "runezu_1.webp": withSource("runezu_1.webp", {
+      cardType: 0,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-1-branch",
+                "type": "runezu_symbol_branch",
+                "label": "符文族1：选择一组符文奖励",
+                "icon": "runezuSymbolBack",
+                "options": Object.freeze({
+                  "branches": Object.freeze([
+                    Object.freeze({
+                      "id": "runezu-1-branch-branch-1",
+                      "label": "符文2+符文2+符文6",
+                      "symbolIds": Object.freeze([
+                        "symbol_2",
+                        "symbol_2",
+                        "symbol_6"
+                      ])
+                    }),
+                    Object.freeze({
+                      "id": "runezu-1-branch-branch-2",
+                      "label": "符文3+符文3+符文7",
+                      "symbolIds": Object.freeze([
+                        "symbol_3",
+                        "symbol_3",
+                        "symbol_7"
+                      ])
+                    })
+                  ])
+                })
+              })
+            ]),
+    }),
+    "runezu_4.webp": withSource("runezu_4.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+              Object.freeze({
+                "id": "runezu4-scan-s4",
+                "event": Object.freeze({
+                  "type": "scanAction"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu4-s4",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族4：扫描行动，符文4奖励",
+                  "icon": "symbol_4",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_4"
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "runezu4-scan-s2",
+                "event": Object.freeze({
+                  "type": "scanAction"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu4-s2",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族4：扫描行动，符文2奖励",
+                  "icon": "symbol_2",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_2"
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-4-public-scan",
+                "type": "gain_resources",
+                "label": "符文族4：1额外公共扫描",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "additionalPublicScan": 1
+                  })
+                })
+              })
+            ]),
+    }),
+    "runezu_5.webp": withSource("runezu_5.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+              Object.freeze({
+                "id": "runezu5-trace-s6",
+                "event": Object.freeze({
+                  "type": "alienTrace"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu5-s6",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族5：外星人痕迹，符文6奖励",
+                  "icon": "symbol_6",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_6"
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "runezu5-trace-s5",
+                "event": Object.freeze({
+                  "type": "alienTrace"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu5-s5",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族5：外星人痕迹，符文5奖励",
+                  "icon": "symbol_5",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_5"
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "runezu5-trace-s2",
+                "event": Object.freeze({
+                  "type": "alienTrace"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu5-s2",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族5：外星人痕迹，符文2奖励",
+                  "icon": "symbol_2",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_2"
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-5-pick",
+                "type": "pick_card",
+                "label": "符文族5：精选1张牌",
+                "icon": "pick_card",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
+    }),
+    "runezu_6.webp": withSource("runezu_6.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+              Object.freeze({
+                "id": "runezu6-launch-s1",
+                "event": Object.freeze({
+                  "type": "launch"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu6-s1",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族6：发射，符文1奖励",
+                  "icon": "symbol_1",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_1"
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "runezu6-launch-s7",
+                "event": Object.freeze({
+                  "type": "launch"
+                }),
+                "effect": Object.freeze({
+                  "id": "runezu6-s7",
+                  "type": "runezu_symbol_reward",
+                  "label": "符文族6：发射，符文7奖励",
+                  "icon": "symbol_7",
+                  "options": Object.freeze({
+                    "symbolId": "symbol_7"
+                  })
+                })
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-6-publicity",
+                "type": "gain_resources",
+                "label": "符文族6：1宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 1
+                  })
+                })
+              }),
+              Object.freeze({
+                "id": "runezu-6-data",
+                "type": "gain_data",
+                "label": "符文族6：1数据",
+                "icon": "data",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
+    }),
+    "runezu_7.webp": withSource("runezu_7.webp", {
+      cardType: 0,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-7-branch",
+                "type": "runezu_symbol_branch",
+                "label": "符文族7：选择一组符文奖励",
+                "icon": "runezuSymbolBack",
+                "options": Object.freeze({
+                  "branches": Object.freeze([
+                    Object.freeze({
+                      "id": "runezu-7-branch-branch-1",
+                      "label": "符文7+符文7+符文6",
+                      "symbolIds": Object.freeze([
+                        "symbol_7",
+                        "symbol_7",
+                        "symbol_6"
+                      ])
+                    }),
+                    Object.freeze({
+                      "id": "runezu-7-branch-branch-2",
+                      "label": "符文5+符文5+符文1",
+                      "symbolIds": Object.freeze([
+                        "symbol_5",
+                        "symbol_5",
+                        "symbol_1"
+                      ])
+                    })
+                  ])
+                })
+              })
+            ]),
+    }),
+    "runezu_8.webp": withSource("runezu_8.webp", {
+      cardType: 3,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-8-branch",
+                "type": "runezu_symbol_branch",
+                "label": "符文族8：选择一组符文奖励",
+                "icon": "runezuSymbolBack",
+                "options": Object.freeze({
+                  "branches": Object.freeze([
+                    Object.freeze({
+                      "id": "runezu-8-branch-branch-1",
+                      "label": "符文4+符文2",
+                      "symbolIds": Object.freeze([
+                        "symbol_4",
+                        "symbol_2"
+                      ])
+                    }),
+                    Object.freeze({
+                      "id": "runezu-8-branch-branch-2",
+                      "label": "符文3+符文1",
+                      "symbolIds": Object.freeze([
+                        "symbol_3",
+                        "symbol_1"
+                      ])
+                    })
+                  ])
+                })
+              })
+            ]),
+    }),
+    "runezu_9.webp": withSource("runezu_9.webp", {
+      cardType: 2,
+      tasks: Object.freeze([
+              Object.freeze({
+                "id": "runezu9-three-traces-task",
+                "condition": Object.freeze({
+                  "type": "runezuAllTraceTypes"
+                }),
+                "rewards": Object.freeze([
+                  Object.freeze({
+                    "id": "runezu9-s6",
+                    "type": "runezu_symbol_reward",
+                    "label": "符文族9：三色痕迹，符文6奖励",
+                    "icon": "symbol_6",
+                    "options": Object.freeze({
+                      "symbolId": "symbol_6"
+                    })
+                  }),
+                  Object.freeze({
+                    "id": "runezu9-s3",
+                    "type": "runezu_symbol_reward",
+                    "label": "符文族9：三色痕迹，符文3奖励",
+                    "icon": "symbol_3",
+                    "options": Object.freeze({
+                      "symbolId": "symbol_3"
+                    })
+                  })
+                ])
+              })
+            ]),
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "runezu-9-launch",
+                "type": "launch",
+                "label": "符文族9：发射",
+                "icon": "launch",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "cost": Object.freeze({}),
+                  "source": "runezu"
+                })
+              }),
+              Object.freeze({
+                "id": "runezu-9-s7",
+                "type": "runezu_symbol_reward",
+                "label": "符文族9：符文7奖励",
+                "icon": "symbol_7",
+                "options": Object.freeze({
+                  "symbolId": "symbol_7"
+                })
+              })
+            ]),
+    }),
     "runezu_2.webp": withSource("runezu_2.webp", {
       cardType: 1,
       triggers: Object.freeze([
@@ -1055,39 +2136,162 @@
         { id: "runezu3-blue-tech-s6", event: Object.freeze({ type: "researchTech", techType: "blue" }), effect: runezuSymbolRewardEffect("runezu3-s6", "符文族3：蓝色科技，符文6奖励", "symbol_6") },
       ]),
     }),
-    "runezu_4.webp": withSource("runezu_4.webp", {
-      cardType: 1,
-      triggers: Object.freeze([
-        { id: "runezu4-scan-s4", event: Object.freeze({ type: "scanAction" }), effect: runezuSymbolRewardEffect("runezu4-s4", "符文族4：扫描行动，符文4奖励", "symbol_4") },
-        { id: "runezu4-scan-s2", event: Object.freeze({ type: "scanAction" }), effect: runezuSymbolRewardEffect("runezu4-s2", "符文族4：扫描行动，符文2奖励", "symbol_2") },
-      ]),
+
+    "banrenma_0.webp": withSource("banrenma_0.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-0-draw",
+                "type": "draw_cards",
+                "label": "半人马0：1盲抽",
+                "icon": "blind_card",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
     }),
-    "runezu_5.webp": withSource("runezu_5.webp", {
-      cardType: 1,
-      triggers: Object.freeze([
-        { id: "runezu5-trace-s6", event: Object.freeze({ type: "alienTrace" }), effect: runezuSymbolRewardEffect("runezu5-s6", "符文族5：外星人痕迹，符文6奖励", "symbol_6") },
-        { id: "runezu5-trace-s5", event: Object.freeze({ type: "alienTrace" }), effect: runezuSymbolRewardEffect("runezu5-s5", "符文族5：外星人痕迹，符文5奖励", "symbol_5") },
-        { id: "runezu5-trace-s2", event: Object.freeze({ type: "alienTrace" }), effect: runezuSymbolRewardEffect("runezu5-s2", "符文族5：外星人痕迹，符文2奖励", "symbol_2") },
-      ]),
+    "banrenma_1.webp": withSource("banrenma_1.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-1-publicity",
+                "type": "gain_resources",
+                "label": "半人马1：2宣传",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 2
+                  })
+                })
+              })
+            ]),
     }),
-    "runezu_6.webp": withSource("runezu_6.webp", {
-      cardType: 1,
-      triggers: Object.freeze([
-        { id: "runezu6-launch-s1", event: Object.freeze({ type: "launch" }), effect: runezuSymbolRewardEffect("runezu6-s1", "符文族6：发射，符文1奖励", "symbol_1") },
-        { id: "runezu6-launch-s7", event: Object.freeze({ type: "launch" }), effect: runezuSymbolRewardEffect("runezu6-s7", "符文族6：发射，符文7奖励", "symbol_7") },
-      ]),
+    "banrenma_2.webp": withSource("banrenma_2.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-2-data",
+                "type": "gain_data",
+                "label": "半人马2：2数据",
+                "icon": "data",
+                "options": Object.freeze({
+                  "count": 2
+                })
+              })
+            ]),
     }),
-    "runezu_9.webp": withSource("runezu_9.webp", {
-      cardType: 2,
-      tasks: Object.freeze([{
-        id: "runezu9-three-traces-task",
-        condition: Object.freeze({ type: "runezuAllTraceTypes" }),
-        rewards: Object.freeze([
-          runezuSymbolRewardEffect("runezu9-s6", "符文族9：三色痕迹，符文6奖励", "symbol_6"),
-          runezuSymbolRewardEffect("runezu9-s3", "符文族9：三色痕迹，符文3奖励", "symbol_3"),
-        ]),
-      }]),
+    "banrenma_3.webp": withSource("banrenma_3.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-3-blue-tech",
+                "type": "card_research_tech",
+                "label": "半人马3：蓝色科技",
+                "icon": "research_tech",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "techTypes": Object.freeze([
+                    "blue"
+                  ])
+                })
+              })
+            ]),
     }),
+    "banrenma_4.webp": withSource("banrenma_4.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-4-resources",
+                "type": "gain_resources",
+                "label": "半人马4：1宣传，1信用点",
+                "icon": "publicity",
+                "options": Object.freeze({
+                  "gain": Object.freeze({
+                    "publicity": 1,
+                    "credits": 1
+                  })
+                })
+              })
+            ]),
+    }),
+    "banrenma_5.webp": withSource("banrenma_5.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-5-pick",
+                "type": "pick_card",
+                "label": "半人马5：精选1张牌",
+                "icon": "pick_card",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
+    }),
+    "banrenma_6.webp": withSource("banrenma_6.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-6-data",
+                "type": "gain_data",
+                "label": "半人马6：1数据",
+                "icon": "data",
+                "options": Object.freeze({
+                  "count": 1
+                })
+              })
+            ]),
+    }),
+    "banrenma_7.webp": withSource("banrenma_7.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-7-purple-tech",
+                "type": "card_research_tech",
+                "label": "半人马7：粉紫科技",
+                "icon": "research_tech",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "techTypes": Object.freeze([
+                    "purple"
+                  ])
+                })
+              })
+            ]),
+    }),
+    "banrenma_8.webp": withSource("banrenma_8.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-8-sector-scan",
+                "type": "card_any_sector_scan",
+                "label": "半人马8：选定扇区扫描2次",
+                "icon": "scan",
+                "options": Object.freeze({
+                  "gainData": true,
+                  "repeat": 2
+                })
+              })
+            ]),
+    }),
+    "banrenma_9.webp": withSource("banrenma_9.webp", {
+      cardType: 4,
+      playEffects: Object.freeze([
+              Object.freeze({
+                "id": "banrenma-9-launch",
+                "type": "launch",
+                "label": "半人马9：发射",
+                "icon": "launch",
+                "options": Object.freeze({
+                  "skipCost": true,
+                  "cost": Object.freeze({}),
+                  "source": "banrenma"
+                })
+              })
+            ]),
+    }),
+
     "b_1.webp": withSource("b_1.webp", {
       cardType: 2,
       playEffects: Object.freeze([

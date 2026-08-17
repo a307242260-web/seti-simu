@@ -3,6 +3,12 @@
 
 const assert = require("node:assert/strict");
 const chong = require("./chong");
+const cardEffects = require("../cards/effects");
+
+// 打出效果统一来自卡表模型 playEffects（species buildImmediateEffects 已迁入 MODELS）。
+const chongPlayEffects = (cardIndex) => (
+  cardEffects.getCardModel(`chong_${cardIndex}.webp`).playEffects
+);
 
 let alienSequence = 1;
 const nextAlienIdentity = () => ({ sequence: alienSequence++ });
@@ -160,29 +166,29 @@ assert.equal(completedBlueReward.pickCard, Boolean(completedFossilReward.pickCar
 assert.equal(chong.getFossilReward("fossil_01").gain.publicity, 3);
 assert.equal(chong.getFossilReward("fossil_04").drawCards, 2);
 assert.equal(chong.createAlienCard(2, 1).cardTypeCode, 3);
-const chong0Effects = chong.buildImmediateEffects(0);
+const chong0Effects = chongPlayEffects(0);
 assert.equal(chong0Effects.length, 2);
 assert.equal(chong0Effects[0].type, chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP);
 assert.equal(chong0Effects[0].icon, "land");
 assert.equal(chong0Effects[1].type, chong.EFFECT_TYPES.CHONG_PICKUP_FOSSIL);
 assert.equal(chong0Effects[1].icon, "chongFossilBack");
-assert.equal(chong.buildImmediateEffects(2)[0].type, chong.EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD);
-assert.equal(chong.buildImmediateEffects(2)[0].icon, "chongFossilOk");
-assert.equal(chong.buildImmediateEffects(6)[0].type, chong.EFFECT_TYPES.CHONG_ORBIT_OR_LAND_FOR_PICKUP);
-assert.equal(chong.buildImmediateEffects(6)[0].icon, "orbitOrLand");
+assert.equal(chongPlayEffects(2)[0].type, chong.EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD);
+assert.equal(chongPlayEffects(2)[0].icon, "chongFossilOk");
+assert.equal(chongPlayEffects(6)[0].type, chong.EFFECT_TYPES.CHONG_ORBIT_OR_LAND_FOR_PICKUP);
+assert.equal(chongPlayEffects(6)[0].icon, "orbitOrLand");
 for (const cardIndex of [0, 3, 5, 6, 8, 9]) {
   const task = chong.getCardTask(cardIndex);
-  const effects = chong.buildImmediateEffects(cardIndex);
+  const effects = chongPlayEffects(cardIndex);
   assert.equal(task.kind, "transport", `chong ${cardIndex} should be a transport task`);
   assert.equal(effects.some((effect) => effect.type === chong.EFFECT_TYPES.CHONG_PICKUP_FOSSIL), true, `chong ${cardIndex} should pick up a fossil`);
 }
 for (const cardIndex of [8, 9]) {
-  const [travelEffect] = chong.buildImmediateEffects(cardIndex);
+  const [travelEffect] = chongPlayEffects(cardIndex);
   assert.equal(travelEffect.type, chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP);
   assert.equal(travelEffect.options.allowSatellite, true, `chong ${cardIndex} should allow satellite landing`);
 }
 for (const cardIndex of [0, 3, 5]) {
-  const travelEffect = chong.buildImmediateEffects(cardIndex).find((effect) => (
+  const travelEffect = chongPlayEffects(cardIndex).find((effect) => (
     effect.type === chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP
   ));
   assert.ok(travelEffect, `chong ${cardIndex} should land before pickup`);

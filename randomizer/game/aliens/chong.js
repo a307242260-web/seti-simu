@@ -117,83 +117,10 @@
     return { id, type, label, icon, options: { ...options }, status: "pending" };
   }
 
-  function gainResourcesEffect(id, label, gain) {
-    return effect(id, "gain_resources", label, gain.score ? "score" : gain.energy ? "energy" : "publicity", { gain });
-  }
 
-  function researchTechEffect(id, label, techTypes) {
-    return effect(id, "card_research_tech", label, "research_tech", {
-      skipCost: true,
-      techTypes: Object.freeze([...techTypes]),
-    });
-  }
 
-  function cardMoveEffect(id, label, movementPoints = 1) {
-    return effect(id, "card_move", label, "movement", { movementPoints });
-  }
 
-  function pickupEffects(prefix, labelPrefix, options = {}) {
-    const cardIndex = Math.round(Number(options.cardIndex));
-    const effectOptions = { ...options, cardIndex };
-    const actionType = options.orbitOrLand
-      ? EFFECT_TYPES.CHONG_ORBIT_OR_LAND_FOR_PICKUP
-      : EFFECT_TYPES.CHONG_LAND_FOR_PICKUP;
-    const actionIcon = options.orbitOrLand ? "orbitOrLand" : "land";
-    const actionLabel = options.orbitOrLand
-      ? `${labelPrefix}：环绕或登陆`
-      : `${labelPrefix}：登陆`;
-    return [
-      effect(`${prefix}-action`, actionType, actionLabel, actionIcon, effectOptions),
-      effect(`${prefix}-pickup`, EFFECT_TYPES.CHONG_PICKUP_FOSSIL, `${labelPrefix}：拾取木星/土星化石`, "chongFossilBack", effectOptions),
-    ];
-  }
 
-  function buildImmediateEffects(cardOrIndex) {
-    const index = getCardDefinition(cardOrIndex)?.index;
-    switch (index) {
-      case 0:
-        return pickupEffects("chong-0", "虫族0", { cardIndex: 0 });
-      case 1:
-        return [
-          gainResourcesEffect("chong-1-publicity", "虫族1：1宣传", { publicity: 1 }),
-          researchTechEffect("chong-1-blue-tech", "虫族1：蓝色科技", ["blue"]),
-        ];
-      case 2:
-        return [effect("chong-2-probe-fossil", EFFECT_TYPES.CHONG_PROBE_PLANET_FOSSIL_REWARD, "虫族2：查看探测器所在星球化石并结算奖励", "chongFossilOk", { cardIndex: 2 })];
-      case 3:
-        return [
-          cardMoveEffect("chong-3-move", "虫族3：1移动", 1),
-          ...pickupEffects("chong-3", "虫族3", { cardIndex: 3 }),
-        ];
-      case 4:
-        return [
-          gainResourcesEffect("chong-4-publicity", "虫族4：1宣传", { publicity: 1 }),
-          researchTechEffect("chong-4-orange-tech", "虫族4：橙色科技", ["orange"]),
-        ];
-      case 5:
-        return pickupEffects("chong-5", "虫族5", { cardIndex: 5 });
-      case 6:
-        return pickupEffects("chong-6", "虫族6", { cardIndex: 6, orbitOrLand: true });
-      case 7:
-        return [
-          gainResourcesEffect("chong-7-publicity", "虫族7：1宣传", { publicity: 1 }),
-          researchTechEffect("chong-7-purple-tech", "虫族7：粉紫科技", ["purple"]),
-        ];
-      case 8:
-        return pickupEffects("chong-8", "虫族8", { cardIndex: 8, allowSatellite: true });
-      case 9:
-        return pickupEffects("chong-9", "虫族9", { cardIndex: 9, allowSatellite: true });
-      default:
-        return [];
-    }
-  }
-
-  // 统一虫族牌效果入口：打出虫族牌后的即时效果在此解析。
-  // 四种效果：
-  //  - CHONG_LAND_FOR_PICKUP / CHONG_ORBIT_OR_LAND_FOR_PICKUP：先登陆（或环绕）再拾取化石，
-  //    由 play-domain 复用 CARD_LAND/CARD_ORBIT 执行器，结算后自动进入拾取节点；
-  //  - CHONG_PICKUP_FOSSIL：上一步登陆/环绕落点位于木星/土星时，拾取该星球 1 枚化石；
-  //  - CHONG_PROBE_PLANET_FOSSIL_REWARD（生态系统研究，3 型牌）：查看探测器所在星球化石并结算 1 枚奖励。
   function resolvePlayEffect(kind, root, effect, player, options = {}) {
     const alienState = root?.aliens || options.aliens;
     if (!alienState || !player) return { ok: false, message: "虫族效果缺少上下文" };
@@ -1102,7 +1029,6 @@
     blindDrawCard,
     drawDisplayedCardIndex,
     getCardDefinition,
-    buildImmediateEffects,
     resolvePlayEffect,
     applyFossilRewardOnly,
     pickupPlanetFossil,

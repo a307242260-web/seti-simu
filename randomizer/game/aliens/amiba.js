@@ -128,75 +128,11 @@
     return effect(id, "gain_resources", label, gain.score ? "score" : gain.energy ? "energy" : "publicity", { gain });
   }
 
-  function gainDataEffect(id, label, count) {
-    return effect(id, "gain_data", label, "data", { count });
-  }
 
-  function drawCardsEffect(id, label, count) {
-    return effect(id, "draw_cards", label, "blind_card", { count });
-  }
 
-  function pickCardEffect(id, label) {
-    return effect(id, "pick_card", label || "精选 1 张卡牌", "pick_card", { count: 1 });
-  }
 
-  function launchEffect(id, label) {
-    return effect(id, "launch", label || "发射", "launch", { skipCost: true, cost: {}, source: "amiba" });
-  }
 
-  function symbolChoiceEffect(id, label, region) {
-    return effect(id, EFFECT_TYPES.CHOOSE_SYMBOL_REWARD, label, "alien_trace", { region });
-  }
 
-  function removeTraceEffect(id, label) {
-    return effect(id, EFFECT_TYPES.REMOVE_TRACE_FOR_REGION_REWARD, label, "alien_trace", {});
-  }
-
-  function buildImmediateEffects(cardOrIndex) {
-    const index = getCardDefinition(cardOrIndex)?.index;
-    switch (index) {
-      case 0:
-        return [
-          gainDataEffect("amiba-0-data", "阿米巴0：3数据", 3),
-          symbolChoiceEffect("amiba-0-blue-symbol", "阿米巴0：蓝色区域 symbol 奖励", "blue"),
-        ];
-      case 1:
-        return [gainResourcesEffect("amiba-1-publicity", "阿米巴1：1宣传", { publicity: 1 })];
-      case 2:
-        return [drawCardsEffect("amiba-2-draw", "阿米巴2：2盲抽", 2)];
-      case 3:
-        return [removeTraceEffect("amiba-3-remove-trace", "阿米巴3：移除自己的 1 个阿米巴痕迹并结算区域奖励")];
-      case 4:
-        return [
-          gainResourcesEffect("amiba-4-resources", "阿米巴4：1额外公共扫描，1宣传", { additionalPublicScan: 1, publicity: 1 }),
-          symbolChoiceEffect("amiba-4-red-symbol", "阿米巴4：红色区域 symbol 奖励", "red"),
-        ];
-      case 5:
-        return [
-          pickCardEffect("amiba-5-pick", "阿米巴5：精选1张牌"),
-          symbolChoiceEffect("amiba-5-red-symbol", "阿米巴5：红色区域 symbol 奖励", "red"),
-        ];
-      case 6:
-        return [
-          pickCardEffect("amiba-6-pick", "阿米巴6：精选1张牌"),
-          symbolChoiceEffect("amiba-6-orange-symbol", "阿米巴6：橙色区域 symbol 奖励", "orange"),
-        ];
-      case 7:
-        return [
-          pickCardEffect("amiba-7-pick", "阿米巴7：精选1张牌"),
-          symbolChoiceEffect("amiba-7-blue-symbol", "阿米巴7：蓝色区域 symbol 奖励", "blue"),
-        ];
-      case 8:
-        return [gainResourcesEffect("amiba-8-publicity", "阿米巴8：3宣传", { publicity: 3 })];
-      case 9:
-        return [
-          launchEffect("amiba-9-launch", "阿米巴9：发射"),
-          symbolChoiceEffect("amiba-9-orange-symbol", "阿米巴9：橙色区域 symbol 奖励", "orange"),
-        ];
-      default:
-        return [];
-    }
-  }
 
   function createTraceGrid() {
     const grid = {};
@@ -785,7 +721,6 @@
     blindDrawCard,
     drawDisplayedCardIndex,
     getCardDefinition,
-    buildImmediateEffects,
     isAmibaCard,
     getCardTask,
     getFinalTraceTypeForCard,
