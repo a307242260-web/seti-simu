@@ -16,6 +16,7 @@
   let aliens = root.SetiAliens;
   let actionShared = root.SetiActionShared;
   let yichangdian = root.SetiAlienYichangdian;
+  let industryAbilities = root.SetiIndustryAbilities;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     cards = cards || require("./deck");
@@ -32,6 +33,7 @@
     aliens = aliens || require("../aliens");
     actionShared = actionShared || require("../actions/shared");
     yichangdian = yichangdian || require("../aliens/yichangdian");
+    industryAbilities = industryAbilities || require("../industry/abilities");
   }
 
   const api = factory(
@@ -50,6 +52,7 @@
     aliens,
     actionShared,
     yichangdian,
+    industryAbilities,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiCardPlayDomain = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -68,6 +71,7 @@
   aliens,
   actionShared,
   yichangdian,
+  industryAbilities,
 ) {
   "use strict";
 
@@ -518,15 +522,43 @@
         cards.addToDiscardPile(getWorkingSlice(root, "cards"), playedCard);
       }
       actor.mainActionCompleted = true;
+      // 哨兵探测网络：记录本次打牌（供「打牌后才武装哨兵」补开弃牌角标），
+      // 并在打牌效果链末尾追加武装状态下的哨兵弃牌角标节点（不弃牌）。
+      const roundNumber = Number(root.turn?.roundNumber) || 1;
+      const turnNumber = Number(root.turn?.turnNumber) || 1;
+      if (industryAbilities?.snapshotPlayedCard) {
+        actor.industryPlayedCardThisRound = true;
+        actor.industryLastPlayedCardThisRound = industryAbilities.snapshotPlayedCard(playedCard);
+        actor.industryPlayedCardRound = roundNumber;
+        actor.industryPlayedCardTurn = turnNumber;
+      }
+      const sentinelNodes = (industryAbilities?.buildSentinelPlayCornerEffectNodes?.(
+        cards,
+        actor,
+        roundNumber,
+        turnNumber,
+        playedCard,
+      ) || []).map((node) => ({
+        priority: "direct",
+        effect: {
+          type: node.type,
+          ownerId: actor.id,
+          payload: { node },
+        },
+      }));
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: EFFECT_TYPES.PLAY }),
-        spawnedEffects: chainScanFinalize(
-          playEffects.map((effect) => (
-            createSpawnedCardEffect(effect, actor.id, playedCard.id)
-          )),
-          actor.id,
-        ),
+        spawnedEffects: [
+          // 哨兵弃牌角标节点追加在打牌效果链末尾（不弃牌，结算打出牌的角标奖励）
+          ...chainScanFinalize(
+            playEffects.map((effect) => (
+              createSpawnedCardEffect(effect, actor.id, playedCard.id)
+            )),
+            actor.id,
+          ),
+          ...sentinelNodes,
+        ],
         events: [{
           type: "playCard",
           timing: "after_play_card",

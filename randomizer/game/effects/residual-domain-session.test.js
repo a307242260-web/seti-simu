@@ -242,6 +242,53 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(root.players.players[0].industrySentinelArmedRound, 4);
 })();
 
+// 哨兵补开：本轮先打牌、本次 1x 才武装哨兵 → 补开该打出牌的弃牌角标节点。
+(function proofSentinelCornerInjectedAfterArmWithPlayedCard() {
+  const root = createRoot();
+  root.turn.passedPlayerIds = [];
+  const player = root.players.players[0];
+  player.industryPlayedCardThisRound = true;
+  player.industryPlayedCardRound = 4;
+  player.industryPlayedCardTurn = 3;
+  player.industryLastPlayedCardThisRound = {
+    id: "played-b1",
+    cardId: "b_1.webp",
+    set: "",
+    discardActionCode: 0, // 弃牌角标：1 宣传
+  };
+  const owner = createHarness(residual, "createResidualDomain");
+  const result = execute(owner.executors.get(residual.EFFECT_TYPES.EXECUTE), root, {
+    ownerId: "p1",
+    payload: {
+      action: {
+        schemaVersion: "seti-standard-action-v1",
+        actionId: "industry:sentinel",
+        family: "industry",
+        actorId: "p1",
+        target: {
+          companyId: "哨兵探测网络",
+          abilityId: "sentinel_arm_play_corner",
+        },
+        payload: {},
+      },
+    },
+  });
+  assert.equal(result.ok, true);
+  const injected = result.spawnedEffects.filter((entry) => (
+    entry?.effect?.type === "industry_sentinel_corner"
+  ));
+  assert.equal(
+    injected.length,
+    1,
+    "打牌后才武装哨兵必须补开 industry_sentinel_corner 节点",
+  );
+  assert.equal(
+    injected[0].effect.payload?.node?.options?.playedCard?.cardId,
+    "b_1.webp",
+    "补开的哨兵角标节点必须指向本轮打出的牌",
+  );
+})();
+
 (function proofTurnEndCardTaskRunsInProductionOwner() {
   const root = createRoot();
   const owner = createHarness(residual, "createResidualDomain");

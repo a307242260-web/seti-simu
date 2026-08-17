@@ -644,6 +644,7 @@
     FUTURE_SPAN_PICK_ADVANCE_AMOUNT,
     isAlienCard,
     getCornerReward,
+    snapshotPlayedCard,
     buildStratusPublicCornerEffectNodes,
     buildHuanyuFreeMoveEffectNodes,
     applyCornerReward,

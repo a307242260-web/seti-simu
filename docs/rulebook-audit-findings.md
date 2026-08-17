@@ -87,6 +87,7 @@
 - `b185403`/`484f903`/`c74b66a`/`0bb8c32`/`bfc90a5` S5 缺失执行器全部补齐（b_26/b_46、runezu/amiba/aomomo、异常点 y0/y1/y4/y5/y7/y8/y9；y0 依赖 `scanNebula` 记录 `lastScanNebulaId`）
 - `c1be70e` M4（后经用户核对说明书第 3 页澄清：钻探者=九折、非虫；九折牌不进手牌故豁免自然成立，虫牌无豁免按普通手牌处理）；**恢复 F1**（并行会话曾回退）
 - `4d6a3d9` M7 快速起始牌上半部分放置不再授予首痕迹奖励（扩展 P5，经用户确认）
+- `(本次)` 哨兵探测网络「打牌后结算弃牌角标」恢复接线：迁移（[SETI-26] `8963b38`）丢失的 `industry_sentinel_corner` 追加/补开在 play-domain PLAY 与 residual 哨兵 1x 重建（复用统一角标奖励转换 `applyCornerReward`），打牌记录（`industryPlayedCardThisRound` 等）同步恢复写入
 
 ### B 组（时机/顺序）
 - `8b3df76` M1 研究科技先公转后选科技；卡牌研究无合法目标时仍公转

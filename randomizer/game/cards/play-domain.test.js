@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const playDomain = require("./play-domain");
 const scienceSession = require("../effects/science-session");
+const residualDomain = require("../effects/residual-domain-session");
 const cardEffects = require("./effects");
 const standardAction = require("../actions/standard-action");
 const stateStoreApi = require("../state/state-store");
@@ -787,5 +788,97 @@ assert.deepEqual(
   [...playDomain.REACHABLE_PLAY_EFFECT_TYPES].sort(),
   "逐张 composition 证明必须覆盖 46/46 可达 top-level effect type",
 );
+
+// —— 哨兵探测网络「打牌后结算弃牌角标」——
+// 武装状态下打牌：打牌效果链末尾追加 industry_sentinel_corner 节点（不弃牌），
+// 由 residual 执行器经统一角标奖励转换（applyCornerReward）结算。
+function createSentinelComposition() {
+  const root = createCanonicalState("b_1.webp");
+  const player = root.players.players[0];
+  player.hand[0].discardActionCode = 0; // 弃牌角标：1 宣传
+  root.turn.roundNumber = 1;
+  root.turn.turnNumber = 1;
+  player.industrySentinelArmedRound = 1;
+  player.industrySentinelArmedTurn = 1;
+  player.industryRoundMarkRound = 1; // 本轮已标记公司 1x（哨兵武装前置）
+  const initialState = toCommitted(root);
+  return createRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createInitialState() { return structuredClone(initialState); },
+    createActionContext,
+    createActionRegistry() {
+      const registry = standardAction.createRegistry({
+        getAuthority: (context) => context.standardActionAuthority,
+      });
+      registry.register(standardAction.createOptionDefinition(
+        "play_card",
+        playDomain.createPlayCardProvider(),
+      ));
+      return registry;
+    },
+    effectDomains: [
+      {
+        id: "card_play_test_boundary",
+        families: ["play_card"],
+        create: playDomain.createExperimentalCardPlayDomain,
+      },
+      {
+        id: scienceSession.DOMAIN_ID,
+        families: scienceSession.ACTION_FAMILIES,
+        create: scienceSession.createScienceDomain,
+      },
+      {
+        id: residualDomain.DOMAIN_ID,
+        families: residualDomain.ACTION_FAMILIES,
+        create: residualDomain.createResidualDomain,
+      },
+    ],
+    projectState: (state) => state,
+  });
+}
+
+function runSentinelCornerOnPlay() {
+  const composition = createSentinelComposition();
+  const action = getOnlyPlayAction(composition);
+  const result = composition.inputPort.submitAction(action);
+  assert.equal(result.ok, true, "哨兵武装下打牌必须可执行");
+  assert.equal(
+    composition.inspect().phase,
+    "idle",
+    "哨兵角标节点必须在打牌流程内结算完成",
+  );
+
+  // 打牌效果链末尾追加并结算了哨兵角标：获得 1 宣传（不弃牌）。
+  const committed = composition.stateSourcePort.getSnapshot();
+  const player = committed.players.players[0];
+  assert.equal(player.resources.publicity, 1, "哨兵角标必须结算 1 宣传");
+  assert.equal(player.hand.length, 0, "打牌弃掉手牌，哨兵角标不再额外弃牌");
+
+  // 打牌记录写入（供「打牌后才武装哨兵」补开使用）。
+  assert.equal(player.industryPlayedCardThisRound, true, "本轮打牌记录必须写入");
+  assert.equal(player.industryPlayedCardRound, 1);
+  assert.equal(player.industryPlayedCardTurn, 1);
+  assert.equal(
+    player.industryLastPlayedCardThisRound?.cardId,
+    "b_1.webp",
+    "最近打出牌快照必须记录",
+  );
+
+  // journal 必须包含 industry_sentinel_corner 效果。
+  const effectTypes = (result.journal?.effects || []).map((entry) => entry.type);
+  assert.ok(
+    effectTypes.includes("industry_sentinel_corner"),
+    "打牌效果链必须追加 industry_sentinel_corner 节点",
+  );
+  const cornerIndex = effectTypes.indexOf("industry_sentinel_corner");
+  assert.ok(
+    cornerIndex > effectTypes.indexOf(playDomain.EFFECT_TYPES.PLAY),
+    "哨兵角标节点必须在 PLAY 之后结算",
+  );
+  composition.dispose();
+}
+
+runSentinelCornerOnPlay();
 
 console.log("card play domain production composition tests passed");

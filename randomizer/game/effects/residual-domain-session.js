@@ -1951,8 +1951,28 @@
         player, start.label, roundOf(root), turnOf(root),
       );
       if (!flow.ok) return flow;
+      const spawnedEffects = companyQueue(root, player, flow);
+      // 哨兵探测网络：若本轮先打牌、本次 1x 才武装哨兵，补开该打出的牌的
+      // 弃牌角标节点（不弃牌；节点执行走统一 industry_sentinel_corner 执行器）。
+      if (flow.flowType === "sentinel_arm_play_corner") {
+        const sentinelNodes = industryAbilities.buildSentinelPlayCornerEffectNodes?.(
+          cards,
+          player,
+          roundOf(root),
+          turnOf(root),
+          player.industryLastPlayedCardThisRound,
+        ) || [];
+        spawnedEffects.unshift(...sentinelNodes.map((node) => ({
+          priority: "direct",
+          effect: {
+            type: node.type,
+            ownerId: player.id,
+            payload: { node },
+          },
+        })));
+      }
       return result(state, root, "company_action", {
-        spawnedEffects: companyQueue(root, player, flow),
+        spawnedEffects,
         events: [{
           type: "company_action",
           playerId: player.id,
@@ -1985,6 +2005,45 @@
           irreversible: applied.irreversible,
         });
       },
+    });
+    // 哨兵探测网络「打牌后结算弃牌角标」节点：不弃牌，复用统一角标奖励转换
+    // （applyCornerReward → cards.buildRewardEffects；card_move 转 free_move 决策）。
+    runtime.registerExecutor("industry_sentinel_corner", (state, effect, context) => {
+      const root = getRoot(state, context);
+      const player = actor(root, effect.ownerId);
+      const card = effect.payload?.node?.options?.playedCard
+        || effect.payload?.playedCard
+        || null;
+      if (!player || !card) {
+        return fail("INDUSTRY_SENTINEL_CORNER_STALE", "哨兵弃牌角标已失效");
+      }
+      const applied = industryAbilities.resolveSentinelPlayCorner(cards, players, data, player, card);
+      if (!applied?.ok) return applied;
+      const spawnedEffects = [];
+      if (applied.pendingFreeMove) {
+        spawnedEffects.push(decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
+          companyId: industry.getPlayerIndustryLabel(player),
+          abilityId: "sentinel_arm_play_corner",
+          step: "free_move",
+          remaining: 1,
+          usedRocketIds: [],
+        }));
+      }
+      return result(state, root, "industry_sentinel_corner", {
+        spawnedEffects,
+        events: [{
+          type: "industry_sentinel_corner",
+          playerId: player.id,
+          cardId: card.cardId || null,
+          message: applied.message,
+        }],
+        history: [{
+          type: "industry_sentinel_corner",
+          playerId: player.id,
+          cardId: card.cardId || null,
+          executorId: EXECUTOR_ID,
+        }],
+      });
     });
     runtime.registerExecutor(EFFECT_TYPES.CARD_DECISION, {
       getLegalChoices(state, effect, context) {
