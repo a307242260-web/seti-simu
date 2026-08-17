@@ -412,6 +412,25 @@
       priority: "direct",
       effect: { type: EFFECT_TYPES.PASS_COMMIT, ownerId: player.id },
     });
+    // PASS 自动结束回合：PASS 链结算后直接进入与 end_turn 相同的回合末 handoff
+    // （金/中立里程碑 → 外星人揭示 → 公司 → 卡牌触发）并推进回合，玩家无需再点
+    // 「结束回合」（规则书：PASS 后回合立即结束）。边界显式标记 didPass。
+    const boundary = {
+      roundNumber: turn.roundNumber,
+      turnNumber: turn.turnNumber,
+      didPass: true,
+    };
+    effects.push(
+      domainHandoff("final_scoring", "milestone", player.id, boundary),
+      domainHandoff("alien", "turn_end_neutral_milestone", player.id, boundary),
+      domainHandoff("alien", "turn_end_reveal", player.id, boundary),
+      domainHandoff("company", "turn_end", player.id, boundary),
+      domainHandoff("card_trigger", "turn_end", player.id, boundary),
+      {
+        priority: "direct",
+        effect: { type: EFFECT_TYPES.TURN_ADVANCE, ownerId: player.id, payload: boundary },
+      },
+    );
     return effects;
   }
 

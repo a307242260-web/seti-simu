@@ -111,7 +111,35 @@ function handoffSummary(entry) {
     domain: "company",
     effectType: "company_pass",
   });
-  assert.equal(result.spawnedEffects.at(-1).effect.type, probeTurn.EFFECT_TYPES.PASS_COMMIT);
+  // PASS 链必须依次：... → PASS_COMMIT → 回合末 handoff → TURN_ADVANCE，
+  // 玩家无需再点「结束回合」即自动推进回合。
+  const passCommitIndex = result.spawnedEffects.findIndex((entry) => (
+    entry.effect.type === probeTurn.EFFECT_TYPES.PASS_COMMIT
+  ));
+  assert.ok(passCommitIndex >= 0, "PASS 链必须包含 PASS_COMMIT");
+  assert.deepEqual(
+    result.spawnedEffects.slice(passCommitIndex + 1, -1).map((entry) => (
+      `${entry.effect.payload.domain}:${entry.effect.payload.effectType}`
+    )),
+    [
+      "final_scoring:milestone",
+      "alien:turn_end_neutral_milestone",
+      "alien:turn_end_reveal",
+      "company:turn_end",
+      "card_trigger:turn_end",
+    ],
+    "PASS 后必须自动追加与 end_turn 相同的回合末 handoff 序列",
+  );
+  assert.equal(
+    result.spawnedEffects.at(-1).effect.type,
+    probeTurn.EFFECT_TYPES.TURN_ADVANCE,
+    "PASS 链必须以 TURN_ADVANCE 收尾，自动推进回合",
+  );
+  assert.equal(
+    result.spawnedEffects.at(-1).effect.payload.didPass,
+    true,
+    "PASS 自动推进必须显式携带 didPass 边界",
+  );
 })();
 
 (function testEndTurnHandoffsPrecedePureTurnAdvance() {
