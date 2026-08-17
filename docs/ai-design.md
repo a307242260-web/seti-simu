@@ -29,26 +29,30 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   从 winning leaf 构建 plan）；Learned Policy 实现同一输出契约即可参与复用。
 - **方案内部链路**（未命中时才走）：`heuristic-decision-function` 经
   composition.counterfactualPort 生成 actionOutcomes -> Policy Port -> Policy
-  -> PolicyDecision -> 提交。Simulation 直调 Policy（无旧 Host 壳）；
-  Browser 机器席位仍经旧 Machine Player Host（异步提交壳，见
-  docs/machine-player-host.md）。复用命中时不经这条链路，提交由协调器的 execute
+  -> PolicyDecision -> 提交。Browser 与 Simulation 完全同一份实现（同一协调器、
+  同一决策函数）；唯一差异是协调器的 `recordStep` 记账钩子——sim 训练补记
+  replay/reward，browser 为空操作。复用命中时不经这条链路，提交由协调器的 execute
   直接进共享 inputPort（零转换）。
-- 复用判定与计划结构细节见 §3；Browser 无复用层，机器席位始终走方案内部链路。
-- Host 在 Policy 请求前通过 Rule Composition 的 `counterfactualPort` 为可能直接命中当前
-  估值目标的 legal action 建立隔离 fork；明确不可能命中目标的 action 仍保留在完整 legal set
-  中，并以 structured unresolved outcome 对齐。Policy 只收到裁剪后的 root/leaf observation、
-  标准行动链、合法后继和 unresolved 状态，仍只返回一个 legal `actionId`。
-- Policy 不执行规则、不点击 DOM、不读取 canonical root，也不持有 StateStore、Effect Session、
-  registry 或 executor。
-- Host 在提交前复核 seat、stateVersion、decisionVersion、deadline、generation 与 legal identity；未知、过期、重复或非法响应一律 fail-closed。
-- conditional choice 必须由 Rule Composition 暴露为标准 Decision。Host 不允许 resolver、recover/skip 或“取第一项”旁路。
+- 复用判定与计划结构细节见 §3。Browser 机器席位与 Simulation 一样走协调器复用层
+  （`planContinuationReuse`，默认关，URL 参数 `?planReuse=1` 开启）。
+- 反事实搜索在决策函数内经 `counterfactualPort` 隔离 fork：同根状态、同一
+  Standard Action registry / Effect Session / Decision 与 commit 语义；Policy 只收到
+  裁剪后的 root/leaf observation、标准行动链、合法后继和 unresolved 状态，仍只返回
+  一个 legal `actionId`。
+- Policy 不执行规则、不点击 DOM、不读取 canonical root，也不持有 StateStore、Effect
+  Session、registry 或 executor。
+- 提交前复核（seat、stateVersion、decisionVersion、合法集、authority）由协调器
+  execute（Browser 经与人类共用的 Action/Decision input port）承担；未知、过期、
+  重复或非法一律失败直接抛错；Browser 端口把抛错转成显式 fail 结果（非静默）。
+- conditional choice 必须由 Rule Composition 暴露为标准 Decision。协调器
+  readBoundary 在 awaiting_input 时读 `session.decision.choices`；不允许 resolver、
+  recover/skip 或"取第一项"旁路。
 
 ## 2. 当前模块
 
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
-- `game/ai/machine-player-host.js`：Browser 机器席位的异步提交壳（席位身份、Policy 请求生命周期、deadline/取消/去重、fail-closed）；Simulation 已迁移到协调器，见 docs/machine-player-host.md。
-- `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用）——席位决策函数注册表、读边界、计划复用、调用决策函数、execute 提交、recordStep 记账钩子；失败直接抛错。
-- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——反事实搜索分桶 + 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。
+- `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用一份实现）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子（sim 训练补记 replay/reward，browser 空操作）；失败直接抛错。
+- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——反事实搜索分桶 + 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。unifiedSearch 等开关经同一 config 源透传，Browser/Simulation 一份装配。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
   固定大小的探测器目标摘要，以及本席数据轨到下一次正式扫描、放置或分析所需的
@@ -74,10 +78,12 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - setup 不消费对局 RNG 之外的未来随机数；probe-goal Policy 改变初始选择语义时，唯一 full-flow
   必须提升 schema/policy provenance，并通过公共 setup Decision 验证真实选择、结算和恢复结果，
   不能用历史发牌实体或 checkpoint hash 固化旧随机轨迹。
-- `app/ai/browser-bootstrap.js`：Browser Machine Player Host、席位判断、Rule Composition boundary 与 PolicyInputAdapter 的窄装配 owner。
-- `app/browser-host/policy-input-adapter.js`：把已验证 PolicyDecision 映射回玩家共用的 Standard Action/Decision input port。
+- `app/ai/browser-bootstrap.js`：Browser 机器席位端口——与 Simulation 共用同一协调器与
+  Heuristic 决策函数（唯一差异：recordStep 记账钩子，browser 空操作）；只保留席位判定、
+  决策前稳定化、同 decision 去重、lifecycle 失效重建与 fail-closed 结果转写。内联反事实
+  搜索拷贝已删除，开关（unifiedSearch 等）经同一 config 源透传（URL 参数，见 §3.4）。
 
-`game/ai/index.js` 只聚合以上 Policy/Host/evaluator 模块。不得向其中重新加入 legacy valuation、candidate、planner、analytics 或 controller adapter。
+`game/ai/index.js` 只聚合以上 Policy/evaluator 模块。不得向其中重新加入 legacy valuation、candidate、planner、analytics 或 controller adapter。
 
 ## 3. 决策方案输出契约与计划延续复用（simulation 侧）
 
@@ -118,17 +124,17 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 ### 3.3 边界与约束
 
-- 复用层属于 simulation 决策流程（§1）的一部分：命中的决策来自**计划缓存**而非
-  policy 的 decide，不经过 Machine Player Host 的请求/校验链；提交经 `env.step`
-  的合法集/authority 重验，计数进 diagnostics（`planContinuationHitCount` /
-  `MissReasons` / `planContinuationStoreStatus`）。判定空间变更需保持搜索空间与
+- 复用层属于协调器决策流程（§1）的一部分：命中的决策来自**计划缓存**而非
+  policy 的 decide，不经过决策函数/反事实搜索链；提交经协调器 execute
+  （合法集/authority 重验）与 recordStep 记账（sim 补记，计数进 diagnostics：
+  `planContinuationHitCount` / `MissReasons`）。判定空间变更需保持搜索空间与
   近似不变（同 `targetSchedulerPrunedCount` 文化）。
 - 计划 store 是 per-env 瞬态（`reset`/`loadCheckpoint` 清空，不入 checkpoint）：
   当前 simulation 每 env 固定单一 policy，store 的身份隐式等于该 policy；若未来
   支持同席多 policy 切换，store 必须按 policyType/version/modelChecksum/
   configChecksum 分键（checkpoint 红线）。
-- 仅在 simulation env 启用（默认关）；Browser 路径尚未接入，Browser 机器席位仍
-  走方案内部链路（Host -> Policy）。
+- Browser 与 Simulation 同一份装配（同一协调器 + 同一决策函数 config 源）：
+  sim 经 `resetConfig.planContinuationFastPath`，browser 经 URL 参数 `?planReuse=1`。
 - 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
   或多打一张移动牌）；tier2 的「可能出现更优选择」；多步链的跨路线续用。
 
@@ -361,9 +367,9 @@ fork/执行/投影/checkpoint/frontier/编排耗时。耗时仅用于性能验�
 Browser bootstrap 可以：
 
 - 标记哪些 seat 由机器控制；
-- 在 Rule Composition lifecycle 后失效旧 Policy 请求；
-- 调度下一次 Machine Player Host 请求；
-- 在 Policy/Host 失败时暂停。
+- 在 Rule Composition lifecycle 后失效旧决策（重建协调器/决策函数、清计划 store）；
+- 调度下一次机器席位 runOnce（经协调器 readBoundary -> 复用/决策 -> execute）；
+- 在协调器/决策失败时把抛错转成显式 fail 结果并暂停。
 
 Browser bootstrap 不可以：
 
@@ -383,7 +389,7 @@ Browser bootstrap 不可以：
 
 ```sh
 node randomizer/game/ai/policy-port.test.js
-node randomizer/game/ai/machine-player-host.test.js
+node randomizer/game/ai/machine-player-coordinator.test.js
 node randomizer/game/ai/heuristic-evaluator.test.js
 node randomizer/game/ai/heuristic-policy.test.js
 node randomizer/game/ai/plan-continuation.test.js

@@ -31,8 +31,9 @@ Effect Session ───────────► StateStore.compareAndCommit
                     │                                   │
                     └──────────────┬────────────────────┘
                                    ▼
-                      Machine Player Host
-                 DecisionContext -> PolicyDecision
+                  Machine Player Coordinator
+              readBoundary / 复用 / 决策函数 / execute
+                 （Browser/Simulation 共用一份实现）
 ```
 
 - `randomizer/game/actions/standard-action.js` 是 16 个顶层 family 与 7 个 conditional family 的 identity、phase、枚举/校验协议 owner。
@@ -40,7 +41,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 - `randomizer/game/state/state-store.js` 是 committed schema、版本、RNG/sequence 与 compare-and-commit owner。
 - `randomizer/app/browser-host/**` 只消费 committed/session projection，并把人类或机器输入交回标准端口。
 - `randomizer/app/simulation-env.js` 只把相同 descriptor 投影成 RL envelope；不接受旧 candidate 形状，也不生成新的 action identity。
-- `randomizer/game/ai/machine-player-host.js` 拥有请求代次、deadline、取消、输出验证与 stale 去重；`policy-port.js` 定义公共请求/响应，具体 Policy 只选择传入 legal set 中的 `actionId`。
+- `randomizer/game/ai/machine-player-coordinator.js` 编排机器人决策（readBoundary、计划复用、决策函数注册表、execute 提交、recordStep 记账钩子）；`policy-port.js` 定义公共 `DecisionContext -> PolicyDecision` 契约，具体 Policy 只选择传入 legal set 中的 `actionId`。
 
 依赖只能由宿主指向公共协议和规则 owner。StateStore 不依赖 Action、Session、DOM 或 Policy；Policy 不依赖 DOM、resolver、executor、StateStore 或 Effect Session；renderer 不执行规则。
 
@@ -52,7 +53,7 @@ Effect Session ───────────► StateStore.compareAndCommit
 
 ## Composition root
 
-`randomizer/app.js` 是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、规则 runtime 或 simulation 入口。机器席位由 `app/ai/browser-bootstrap.js` 直接装配 Machine Player Host、公共 Policy 与标准输入适配器；旧 controller、resolver、pending automation、report/tuning 和 valuation/candidate 域不属于生产架构。
+`randomizer/app.js` 是 Browser composition root：收集依赖、创建 Rule Composition/Browser Host、连接 projection/inputPort/DOM 并启动页面。它不是第二个 StateStore、Action registry、规则 runtime 或 simulation 入口。机器席位由 `app/ai/browser-bootstrap.js` 装配与 Simulation 同一协调器（`machine-player-coordinator.js`）与 Heuristic 决策函数，唯一差异是 recordStep 记账钩子（browser 空操作）；旧 controller、resolver、pending automation、report/tuning 和 valuation/candidate 域不属于生产架构。
 
 传统 `window.Seti*` 只作为无构建脚本的模块注册方式。是否使用全局命名空间不改变状态 owner，也不能成为跨局可变事实或隐藏 fallback 的理由。
 
@@ -64,6 +65,6 @@ Effect Session ───────────► StateStore.compareAndCommit
 - 固定 seed simulation 完整局、非零 checkpoint/replay fork、Browser/Simulation parity
 - 真实 Chrome 人类输入、机器席位标准提交与 Composition checkpoint recovery smoke
 
-更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-simulation-env.md`。
+更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/policy-port-contract.md` 与 `docs/rl-simulation-env.md`。
 
 StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 由相应行为单元测试与唯一完整流程验证。脚本存在性、装配顺序、旧文件删除和源码禁词不再作为默认 Node 行为回归；浏览器真实装配由固定 Chrome smoke 清单验证。

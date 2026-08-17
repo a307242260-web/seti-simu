@@ -110,13 +110,14 @@ function assertBrowserMachinePlayerWiring() {
   const required = [
     ["Browser bootstrap", app, "createBrowserAiBootstrap"],
     ["Machine Player run", app, "machinePlayerPort.runOnce"],
-    ["Policy input adapter", bootstrap, "createPolicyInputAdapter"],
-    ["Machine Player Host boundary", bootstrap, "createBrowserMachinePlayerPort"],
+    ["机器玩家协调器", bootstrap, "createMachinePlayerCoordinator"],
+    ["Heuristic 决策函数", bootstrap, "createHeuristicDecisionFunction"],
+    ["Browser 机器席位端口", bootstrap, "createBrowserMachinePlayerPort"],
   ];
   for (const [label, source, token] of required) {
     if (!source.includes(token)) throw new Error(`${label} 未接入生产 Browser composition`);
   }
-  for (const token of ["openingAutomation", "aiControlRuntimeModule", "choices[0].standardAction"]) {
+  for (const token of ["openingAutomation", "aiControlRuntimeModule", "choices[0].standardAction", "createPolicyInputAdapter"]) {
     if (app.includes(token) || bootstrap.includes(token)) {
       throw new Error(`Browser Machine Player 恢复旧旁路: ${token}`);
     }

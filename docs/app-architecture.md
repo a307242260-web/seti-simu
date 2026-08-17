@@ -4,7 +4,7 @@
 公共规则、状态、Action、Decision 与 Effect 以 `randomizer/game/**` 为唯一 owner；Browser
 只是宿主，不拥有第二套规则。
 
-全局依赖方向、StateStore 与 Machine Player Host 关系见
+全局依赖方向、StateStore 与 Machine Player Coordinator 关系见
 [`project-architecture.md`](./project-architecture.md)。页面投影和输入细节见
 [`browser-host-ui.md`](./browser-host-ui.md)。
 
@@ -81,7 +81,7 @@ Browser composition root 可以使用 timer、focus、overlay 等纯宿主能力
 service registry，也不能取得规则写端口。当前保存恢复只有一个显式组合点：
 
 - `game-recovery.js` 只组合 Composition lifecycle envelope 与独立 ViewState；
-- Machine Player Host 的席位与调度状态只归 `browser-bootstrap.js`；
+- 机器席位协调器（`machine-player-coordinator.js`）与决策函数的装配状态只归 `browser-bootstrap.js`；
 - timer、focus、overlay 与 status 只影响 ViewState 或调度，不执行规则。
 
 这些 Browser 能力不接收 projection root 或规则 input port，不执行收入、回合、扫描、卡牌、
@@ -98,11 +98,10 @@ Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 | `randomizer/app.js` | composition root 与端口装配 |
 | `randomizer/app/browser-rule-composition.js` | Browser Production factory 的窄 Host facade |
 | `randomizer/app/browser-host/input-adapter.js` | 人类 Standard Action/Decision 输入 |
-| `randomizer/app/browser-host/policy-input-adapter.js` | PolicyDecision 到相同输入端口 |
 | `randomizer/app/browser-host/projection-adapter.js` | viewer visibility policy |
 | `randomizer/app/browser-host/resident-renderer.js` | projection 到 DOM 的渲染隔离 |
 | `randomizer/app/game-recovery.js` | Composition lifecycle + ViewState checkpoint 适配 |
-| `randomizer/app/ai/browser-bootstrap.js` | Machine Player Host 与 Policy input 装配 |
+| `randomizer/app/ai/browser-bootstrap.js` | 机器席位端口：协调器 + Heuristic 决策函数装配 |
 | `randomizer/app/public-api.js` | 冻结的 inspect/capture/restore/input facade |
 
 旧 `card-runtime.js`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、

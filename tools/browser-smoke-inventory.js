@@ -568,9 +568,7 @@ module.exports = Object.freeze([
         return Boolean(button && !button.disabled && button.dataset.actionId);
       }, "人类 end_turn descriptor 就绪");
       const endTurnSequence = window.SetiRandomizer.inspect().input.submissionSequence;
-      const machineSubmissionCount = window.SetiRandomizer.inspect().machinePlayer.drivers
-        .flatMap((driver) => driver.host.diagnostics || [])
-        .filter((event) => event.type === "decision_submitted").length;
+      const machineSubmissionCount = window.SetiRandomizer.inspect().machinePlayer.submittedCount || 0;
       document.querySelector("#action-confirm-button").click();
       await waitFor(() => {
         const next = window.SetiRandomizer.inspect();
@@ -578,10 +576,10 @@ module.exports = Object.freeze([
           && next.input.lastResult?.kind === "action";
       }, "人类 end_turn 进入 Standard Action input port");
       try {
-        await waitFor(() => window.SetiRandomizer.inspect().machinePlayer.drivers
-          .flatMap((driver) => driver.host.diagnostics || [])
-          .filter((event) => event.type === "decision_submitted").length > machineSubmissionCount,
-        "机器席位通过 Machine Player Host 提交标准输入", 20000);
+        await waitFor(() => (
+          (window.SetiRandomizer.inspect().machinePlayer.submittedCount || 0)
+            > machineSubmissionCount
+        ), "机器席位经协调器提交标准输入", 20000);
       } catch (error) {
         throw new Error(error.message + " " + JSON.stringify(
           window.SetiRandomizer.inspect().machinePlayer,
@@ -606,7 +604,7 @@ module.exports = Object.freeze([
     })()`,
     successExpression: "window.__setiFullParitySmoke?.ok === true",
     obligation: "真实 index.html 覆盖 viewer 隐私、完整页面 renderer、人类主/快/回合动作、机器席位标准输入、多步 Decision、保存恢复和 renderer 异常隔离",
-    counterexample: "极简壳、空 renderer、Browser 机器席位未接 Machine Player Host、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
+    counterexample: "极简壳、空 renderer、Browser 机器席位未接协调器、canonical root 泄漏、缺失真实 UI 或 renderer 抛错污染规则状态",
   }),
   Object.freeze({
     id: "production-action-log-and-card-viewer",
@@ -705,14 +703,6 @@ module.exports = Object.freeze([
     successExpression: "window.__setiSolarPreviewSmoke?.ok === true",
     obligation: "太阳系转动预览按钮可展开/收起面板并显示当前与未来轮盘角度",
     counterexample: "预览按钮/面板缺失，或点击后未显示轮盘数据、关闭无效",
-  }),
-  Object.freeze({
-    id: "policy-input",id: "policy-input",id: "policy-input",
-    file: "randomizer/app/browser-host/policy-input-adapter.browser-smoke.html",
-    resultSelector: "body",
-    resultAttribute: "data-result",
-    obligation: "Policy 在 Chrome 中只经与人类共用的 Action/Decision input port",
-    counterexample: "Policy 访问 renderer/picker 或绕过正式提交端口",
   }),
   Object.freeze({
     id: "production-replay-steps-recorded",

@@ -7,7 +7,7 @@ Browser Host 是浏览器玩家端的正式宿主边界。它只把 StateStore c
 - StateStore：唯一 committed 事实。
 - Effect Session：唯一 working state、queue、Decision、journal、undo/barrier 与 commit/abort 生命周期。
 - Standard Action：16 个顶层 family、7 个 conditional family、identity、actor、target/payload、合法性和业务 handler。
-- Machine Player Host / Policy：机器席位只返回当前 legal set 的 `actionId`，提交前由 Host 复核 freshness。
+- Machine Player Coordinator：机器席位决策（readBoundary/复用/决策函数/execute）经 `game/ai/machine-player-coordinator.js` 编排，提交前在 execute 内复核合法集与 authority；失败直接抛错，Browser 端口转成显式 fail 结果。
 
 Browser Host 不重定义这些协议，也不保存规则切片。
 
@@ -16,7 +16,7 @@ StateStore snapshot ───────────────┐
 EffectSession inspect / observe ───┼─> BrowserProjection ─> renderer
                                    │
 DOM input ─> BrowserInputAdapter ──┴─> Action / Decision / View intent
-PolicyDecision ─> PolicyInputAdapter ─> 同一 Action / Decision port
+协调器 execute ─> 同一 Action / Decision port（机器席位与人类共用）
 ```
 
 ## Projection 与可见性
@@ -71,7 +71,7 @@ DOM handler 只解析稳定 identity、指针/键盘信息与当前 projection�
 
 手牌点击只把 `hand-card` instance identity 写入 ViewState focus 并显示高亮；顶部“打牌”按钮以该 identity 从当前 `play_card` legal set 选择唯一 Standard Action。未选牌、所选牌不可支付或 identity 已失效时按钮禁用，UI 不自行构造打牌行动。个人板数据图层只渲染带完整 `percentX/percentY` 的已放置 token，可用数据池仅由资源统计展示。
 
-`policy-input-adapter.js` 为机器席位读取同一 boundary、observation 和完整 descriptor，经 Machine Player Host 验证后提交同一 Action/Decision port。它不读 DOM、overlay、renderer、picker 或领域 旧路径。Policy 失败只产生结构化暂停；确定性 Effect、唯一选择、触发顺序、commit、event/log/replay 仍由 Effect Session 独占。
+机器席位决策经 `app/ai/browser-bootstrap.js` 装配的协调器（`machine-player-coordinator.js` + `heuristic-decision-function.js`，与 Simulation 同一份实现）读取同一 boundary、observation 与完整 descriptor，提交同一 Action/Decision port。它不读 DOM、overlay、renderer、picker 或领域旧路径。失败由协调器抛错、端口转成显式 fail 结果（结构化暂停）；确定性 Effect、唯一选择、触发顺序、commit、event/log/replay 仍由 Effect Session 独占。
 
 ## ViewState
 
@@ -104,7 +104,7 @@ committed/session state、legal set、decision owner 或 replay cursor。规则�
 | 通用 choice、科技、扫描、卡牌 | Effect Session | Decision presentation |
 | 公司与外星人 | `residual-domain-session.js` | Decision presentation registry |
 | 人类席位 | 当前 BrowserInputAdapter | DOM identity -> Action/Decision |
-| 机器席位 | Machine Player Host | PolicyDecision -> 同一 Action/Decision |
+| 机器席位 | Machine Player Coordinator | 协调器 execute -> 同一 Action/Decision |
 | 保存与恢复 | Composition lifecycle + session checkpoint | GameRecovery checkpoint adapter / ViewState |
 
 ## Fail-closed 矩阵

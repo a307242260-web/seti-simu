@@ -264,6 +264,9 @@ function createSimulationEnv() {
   let selectors = new Map();
   let cachedLegal = null;
   let lastObservation = null;
+  // recordStep 记账产出（协调器提交成功后补记的完整 step 形状，供
+  // runHeuristicPolicyDecision 返回；见 recordMachineStep）。
+  let machineStepResult = null;
   let diagnostics = null;
   let machineCoordinator = null;
   let heuristicDecision = null;
@@ -376,6 +379,7 @@ function createSimulationEnv() {
       machineCoordinator = machinePlayerCoordinatorModule.createMachinePlayerCoordinator({
         composition,
         execute: (action) => executeRawAction.call(envApi, action),
+        recordStep: (action, executed) => recordMachineStep.call(envApi, action, executed),
         onDiagnostic: (type, details) => {
           if (type === "plan-reuse-hit") {
             diagnostics.planContinuationHitCount += 1;
@@ -392,15 +396,15 @@ function createSimulationEnv() {
   }
 
   // 机器人决策路径的 execute：raw descriptor 直接提交共享 inputPort（零转换），
-  // 提交后补记 replay/reward/observation（训练记账，不做形状转换）。
-  // 失败直接抛错，不回退、不静默。
+  // 只做提交；replay/reward/observation 记账由协调器 recordStep 钩子补做
+  // （recordMachineStep，训练记账，不做形状转换）。失败直接抛错，不回退、不静默。
   function executeRawAction(rawAction) {
     assertUsable();
     const inspection = composition.inspect();
     if (this.isTerminal()) {
       throw new Error(`SIMULATION_TERMINAL: terminal 环境不接受新的 policy action ${rawAction?.actionId}`);
     }
-    const result = inspection.phase === "awaiting_input"
+    const submitResult = inspection.phase === "awaiting_input"
       ? composition.inputPort.submitDecision({
         decisionId: inspection.session.decision.decisionId,
         decisionVersion: inspection.session.decision.decisionVersion,
@@ -408,14 +412,21 @@ function createSimulationEnv() {
         choice: rawAction,
       })
       : composition.inputPort.submitAction(rawAction);
-    if (result?.ok === false) {
+    if (submitResult?.ok === false) {
       throw new Error(
         `MACHINE_PLAYER_EXECUTE_FAILED: 执行 ${rawAction?.actionId} 失败: `
-        + `${result.message || result.code || "规则执行失败"}`,
+        + `${submitResult.message || submitResult.code || "规则执行失败"}`,
       );
     }
     cachedLegal = null;
     selectors = new Map();
+    return { ok: true, actionId: rawAction.actionId, submitResult };
+  }
+
+  // 协调器 recordStep 记账实现（sim 训练）：提交成功后补记 observation/reward/
+  // replay 事件，产出与旧 executeRawAction 一致的完整 step 形状，存回
+  // machineStepResult 供 runHeuristicPolicyDecision 返回（self-play 依赖）。
+  function recordMachineStep(rawAction, executed) {
     const beforeObservation = lastObservation || observeWithActions(rawAction?.actorId, null);
     const actorPlayerId = rawAction?.actorId
       || beforeObservation.decision?.actorPlayerId
@@ -425,7 +436,9 @@ function createSimulationEnv() {
     lastObservation = observation;
     const rewardSeatId = actorPlayerId;
     const reward = rewardBetween(beforeObservation, observation, rewardSeatId, [], postActions);
-    const journal = result.journal || composition.inspect().session?.journal || null;
+    const journal = executed?.submitResult?.journal
+      || composition.inspect().session?.journal
+      || null;
     const replayEvent = {
       stepIndex: replaySteps.length,
       actorPlayerId,
@@ -438,7 +451,7 @@ function createSimulationEnv() {
       effectSessionJournal: config.compactReplay ? compactEffectSessionJournal(journal) : clone(journal),
     };
     replaySteps.push(replayEvent);
-    return {
+    machineStepResult = {
       ok: true,
       actionId: rawAction.actionId,
       actorPlayerId,
@@ -450,6 +463,7 @@ function createSimulationEnv() {
       legalActions: clone(postActions),
       replayEvent,
     };
+    return machineStepResult;
   }
 
   // V 引导决策模块懒加载（v-guided-search / outcome-model / evaluator）
@@ -552,6 +566,7 @@ function createSimulationEnv() {
       selectors = new Map();
       cachedLegal = null;
       lastObservation = null;
+      machineStepResult = null;
       machineCoordinator = null;
       heuristicDecision = null;
       diagnostics = {
@@ -845,10 +860,13 @@ function createSimulationEnv() {
       const result = coordinator.runDecision(seatId, {
         reuseEnabled: config.planContinuationFastPath === true,
       });
+      if (!machineStepResult) {
+        throw new Error("MACHINE_PLAYER_RECORD_STEP_MISSING: 协调器执行后未产出 step 记账结果");
+      }
       const provenance = decisionFunction.getProvenance();
       if (result.source === "plan-reuse") {
         return {
-          ...result.executed,
+          ...machineStepResult,
           policyDecision: {
             actionId: result.actionId,
             policyType: provenance.type,
@@ -863,7 +881,7 @@ function createSimulationEnv() {
         };
       }
       return {
-        ...result.executed,
+        ...machineStepResult,
         policyDecision: result.decision.decision,
         policyProvenance: provenance,
         actionOutcomes: result.decision.actionOutcomes,

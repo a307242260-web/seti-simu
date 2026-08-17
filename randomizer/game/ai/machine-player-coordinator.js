@@ -1,4 +1,17 @@
-"use strict";
+(function (root, factory) {
+  "use strict";
+
+  let planContinuation = root.SetiPlanContinuation;
+  let outcomeModel = root.SetiOutcomeModel;
+  if ((!planContinuation || !outcomeModel) && typeof require === "function") {
+    planContinuation = planContinuation || require("./plan-continuation");
+    outcomeModel = outcomeModel || require("./outcome-model");
+  }
+  const api = factory(planContinuation, outcomeModel);
+  if (typeof module === "object" && module.exports) module.exports = api;
+  if (typeof module === "undefined") root.SetiMachinePlayerCoordinator = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function (planContinuation, outcomeModel) {
+  "use strict";
 
 /**
  * 机器人玩家协调器（Machine Player Coordinator）。
@@ -13,7 +26,9 @@
  *   ③ 复用判断：planReuseCheck 上次方案输出的 plan，命中直接复用（多步消费）；
  *   ④ 未命中调用决策函数；
  *   ⑤ 输出决策：{ actionId, plan? }，plan 存回供下一次复用判断；
- *   ⑥ 执行：注入的 execute(action) 提交（合法集/authority 重验在 execute 内）。
+ *   ⑥ 执行：注入的 execute(action) 提交（合法集/authority 重验在 execute 内）；
+ *   ⑦ 记账：注入的 recordStep(action, executed, ctx) 钩子——提交成功后调用，
+ *      sim 训练补记 replay/reward（原生 action，不做形状转换），browser 空操作。
  *
  * 错误语义（铁律）：失败就失败，直接抛错，绝不静默降级——决策函数未注册 /
  * 抛错 / 返回无 actionId / actionId 不在合法集 / execute 返回 !ok，一律 throw。
@@ -21,13 +36,12 @@
  * 控制流，落到决策函数重新决策，不算错误。
  */
 
-const planContinuation = require("./plan-continuation");
-const outcomeModel = require("./outcome-model");
 
 function createMachinePlayerCoordinator(options = {}) {
   const composition = options.composition;
   const execute = options.execute;
   const onDiagnostic = options.onDiagnostic;
+  const recordStep = options.recordStep;
   if (!composition?.inspect || !composition?.inputPort?.enumerateActions
     || typeof composition?.projection !== "function") {
     throw new TypeError("Machine Player Coordinator 需要共享 Rule Composition（inspect/inputPort.enumerateActions/projection）");
@@ -150,13 +164,17 @@ function createMachinePlayerCoordinator(options = {}) {
       record("scheme-decision", { seatId, actionId: action.actionId });
     }
 
-    // ⑤ 输出决策（含 plan，供下一次复用判断）；⑥ 执行。
+    // ⑤ 输出决策（含 plan，供下一次复用判断）；⑥ 执行；⑦ recordStep 记账钩子
+    // （提交成功后调用；sim 训练补记 replay/reward，browser 空操作）。
     const executed = execute(action);
     if (!executed || executed.ok !== true) {
       throw new Error(
         `MACHINE_PLAYER_EXECUTE_FAILED: 座位 ${seatId} 执行决策 ${action.actionId} 失败: `
         + `${executed?.error || executed?.message || "unknown"}`,
       );
+    }
+    if (typeof recordStep === "function") {
+      recordStep(action, executed, { seatId, boundary });
     }
     if (plan?.nextActionId) {
       planStores.set(seatId, plan);
@@ -188,6 +206,7 @@ function createMachinePlayerCoordinator(options = {}) {
   });
 }
 
-module.exports = Object.freeze({
-  createMachinePlayerCoordinator,
+  return Object.freeze({
+    createMachinePlayerCoordinator,
+  });
 });

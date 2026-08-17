@@ -1,4 +1,30 @@
-"use strict";
+(function (root, factory) {
+  "use strict";
+
+  let policyPort = root.SetiPolicyPort;
+  let heuristicPolicy = root.SetiHeuristicPolicy;
+  let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
+  let outcomeModel = root.SetiOutcomeModel;
+  let planContinuation = root.SetiPlanContinuation;
+  if ((!policyPort || !heuristicPolicy || !expectedScoreEvaluator || !outcomeModel || !planContinuation)
+    && typeof require === "function") {
+    policyPort = policyPort || require("./policy-port");
+    heuristicPolicy = heuristicPolicy || require("./heuristic-policy");
+    expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
+    outcomeModel = outcomeModel || require("./outcome-model");
+    planContinuation = planContinuation || require("./plan-continuation");
+  }
+  const api = factory(policyPort, heuristicPolicy, expectedScoreEvaluator, outcomeModel, planContinuation);
+  if (typeof module === "object" && module.exports) module.exports = api;
+  if (typeof module === "undefined") root.SetiHeuristicDecisionFunction = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function (
+  policyPort,
+  heuristicPolicy,
+  expectedScoreEvaluator,
+  outcomeModel,
+  planContinuation,
+) {
+  "use strict";
 
 /**
  * Heuristic 决策函数（AI 类型的一种）。
@@ -17,11 +43,6 @@
  * 失败即抛错：policy 选择非法 actionId、搜索失败一律 throw，不静默降级。
  */
 
-const policyPort = require("./policy-port");
-const heuristicPolicy = require("./heuristic-policy");
-const expectedScoreEvaluator = require("./expected-score-evaluator");
-const outcomeModel = require("./outcome-model");
-const planContinuation = require("./plan-continuation");
 
 function policyOutcomeActions(actions, policyObservation, unifiedSearch = false) {
   const candidates = (actions || []).filter((action) => (
@@ -255,7 +276,8 @@ function createHeuristicDecisionFunction(options = {}) {
   });
 }
 
-module.exports = Object.freeze({
-  createHeuristicDecisionFunction,
-  isInitialSetupBoundary,
+  return Object.freeze({
+    createHeuristicDecisionFunction,
+    isInitialSetupBoundary,
+  });
 });

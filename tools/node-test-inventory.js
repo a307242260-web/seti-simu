@@ -25,7 +25,6 @@ module.exports = Object.freeze({
     entry("randomizer/app/browser-host/browser-host.test.js", "architecture/browser-host", "Browser Host 只接收 projection 与正式 input port", "renderer 或 ViewState 改写规则状态"),
     entry("randomizer/app/browser-host/action-bar.test.js", "architecture/browser-host", "Action Bar 只呈现 legal descriptor 并提交 intent", "disabled/未知按钮仍触发规则提交"),
     entry("randomizer/app/browser-host/decision-ui.test.js", "architecture/browser-host", "通用 Decision UI 保留 owner 与 decisionVersion", "过期 DOM choice 被重新解释执行"),
-    entry("randomizer/app/browser-host/policy-input-adapter.test.js", "architecture/browser-host", "人类与 Policy 共用正式 Action/Decision 输入", "非法 Policy actionId 仍调用 submit"),
     entry("randomizer/app/browser-host/resident-renderer.test.js", "architecture/browser-host", "resident renderer 单向消费冻结 selector", "renderer 异常撤销或污染规则提交"),
     entry("randomizer/app/public-api.test.js", "architecture/browser-host", "SetiRandomizer 只暴露 viewer-safe inspect/save/restore 与标准输入", "旧 Browser 规则 executor 或可写 projection 重新进入 public facade"),
     entry("randomizer/app/game-recovery.test.js", "architecture/browser-host", "Browser recovery 包 round-trip 且瞬态 UI 不入权威状态", "损坏 schema 或 UI 临时态覆盖 composition"),
@@ -43,8 +42,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/browser-host/trajectory-recording.test.js", "architecture/browser-host", "Browser 轨迹录制只读 projection 与标准输入链，撤销后与确认 replay 对齐", "录制改写规则状态、失败提交入轨迹或 undo 后轨迹与已确认输入不一致"),
 
     entry("randomizer/game/ai/policy-port.test.js", "architecture/policy-host", "Policy Port schema、取消、超时与迟到响应零副作用", "重复、迟到或未知 actionId 被宿主提交"),
-    entry("randomizer/game/ai/machine-player-host.test.js", "architecture/policy-host", "Machine Player Host 独占代次、取消和合法性门禁", "旧 generation 响应推进当前回合"),
-    entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位通过 PolicyInputAdapter 装配", "浏览器 AI 绕过公共 input port 直接执行规则"),
+    entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位经同一协调器装配（协调器读边界/决策函数注册/execute 提交/失败转 fail 结果）", "浏览器 AI 绕过公共 input port 直接执行规则或残留内联搜索拷贝"),
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
     entry("randomizer/game/ai/strategic-goal-evaluator.test.js", "policy/heuristic-policy", "战略目标只读取标准叶已兑现的分数、科技和收入变化", "资源库存或未兑现的未来路线冒充目标收益"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),

@@ -1,4 +1,15 @@
-"use strict";
+(function (root, factory) {
+  "use strict";
+
+  let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
+  if (!expectedScoreEvaluator && typeof require === "function") {
+    expectedScoreEvaluator = require("./expected-score-evaluator");
+  }
+  const api = factory(expectedScoreEvaluator);
+  if (typeof module === "object" && module.exports) module.exports = api;
+  if (typeof module === "undefined") root.SetiPlanContinuation = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function (expectedScoreEvaluator) {
+  "use strict";
 
 /**
  * 计划延续复用与诊断（plan-continuation）。
@@ -21,7 +32,6 @@
  * 该 policy 模块；行为由单元测试钉住。
  */
 
-const expectedScoreEvaluator = require("./expected-score-evaluator");
 
 // 与 expected-score-evaluator.actionSemanticKey 语义一致：同一逻辑 action
 // （仅 actionId/枚举序号不同）必须产生同一键。
@@ -649,24 +659,25 @@ function planReuseCheck(plan, currentObservation, legalActions) {
   return Object.freeze({ hit: true, action: current, nextPlan: advancePlan(plan) });
 }
 
-module.exports = Object.freeze({
-  stableSerialize,
-  stableHash,
-  actionSemanticKey,
-  stripResourceFields,
-  directoryFactsSnapshot,
-  directoryFingerprint,
-  directoryFingerprintFromFacts,
-  planContinuationFromWinningLeaf,
-  pairContinuation,
-  changedFactComponents,
-  aggregateStats,
-  extractPlanSnapshot,
-  buildPlanFromSnapshot,
-  advancePlan,
-  planReuseCheck,
-  planDependencyFromPlan,
-  currentDependencyFromStore,
-  countRevealedAliens,
-  rankActions,
+  return Object.freeze({
+    stableSerialize,
+    stableHash,
+    actionSemanticKey,
+    stripResourceFields,
+    directoryFactsSnapshot,
+    directoryFingerprint,
+    directoryFingerprintFromFacts,
+    planContinuationFromWinningLeaf,
+    pairContinuation,
+    changedFactComponents,
+    aggregateStats,
+    extractPlanSnapshot,
+    buildPlanFromSnapshot,
+    advancePlan,
+    planReuseCheck,
+    planDependencyFromPlan,
+    currentDependencyFromStore,
+    countRevealedAliens,
+    rankActions,
+  });
 });

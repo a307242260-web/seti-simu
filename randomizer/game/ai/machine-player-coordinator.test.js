@@ -57,6 +57,30 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   assert.equal(calls, 1, "复用命中不得调用决策函数");
 }
 
+// recordStep 记账钩子：execute 成功后调用（方案路径与复用路径都走），
+// 传入 (action, executed, ctx)；未注入时为空操作。
+{
+  const recorded = [];
+  const coordinator = createMachinePlayerCoordinator({
+    composition: makeComposition([makeDescriptor("a"), makeDescriptor("b")]),
+    execute: () => ({ ok: true }),
+    onDiagnostic: () => {},
+    recordStep: (action, executed, ctx) => {
+      recorded.push({ actionId: action.actionId, ok: executed.ok, seatId: ctx.seatId });
+    },
+  });
+  coordinator.registerSeat("p1", () => ({
+    actionId: "a",
+    plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 },
+  }));
+  const first = coordinator.runDecision("p1", { reuseEnabled: true });
+  assert.equal(first.source, "scheme");
+  const second = coordinator.runDecision("p1", { reuseEnabled: true });
+  assert.equal(second.source, "plan-reuse");
+  assert.deepEqual(recorded.map((entry) => entry.actionId), ["a", "b"], "execute 成功后每次决策都补记一步");
+  assert.equal(recorded.every((entry) => entry.ok === true && entry.seatId === "p1"), true);
+}
+
 // 失败即抛错（铁律）：
 {
   // 未注册决策函数

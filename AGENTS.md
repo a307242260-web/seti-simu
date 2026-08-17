@@ -28,10 +28,10 @@
 - `randomizer/app/dependencies.js`：app 层全局模块依赖收集与脚本顺序校验。
 - `randomizer/app/dom.js`：固定 DOM 元素注册表。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
-- `randomizer/app/ai/browser-bootstrap.js`：Browser Machine Player Host、公共 Policy 与标准输入端口的窄装配 owner；创建期校验必需端口。
+- `randomizer/app/ai/browser-bootstrap.js`：Browser 机器席位端口——装配与 Simulation 同一协调器（`machine-player-coordinator.js`）与 Heuristic 决策函数（`heuristic-decision-function.js`），唯一差异是 `recordStep` 记账钩子（browser 空操作）；席位判定、决策前稳定化、同 decision 去重、lifecycle 失效重建、失败转显式 fail 结果。创建期校验必需端口。
+- 旧 `randomizer/game/ai/machine-player-host.js` 与 `randomizer/app/browser-host/policy-input-adapter.js` 异步 Host 壳已删除；Browser 机器席位不得恢复独立于协调器的第二份搜索/提交链。
 - 旧 `randomizer/app/ai-controller.js`、pending/automation/action-executor、report/tuning runtime 与 legacy valuation/candidate 域已物理删除；Browser 机器席位不得恢复 candidate/selector/pending automation 旁路。
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
-- `randomizer/game/ai/machine-player-host.js`：Browser 机器席位的异步提交壳（席位身份、Policy 请求生命周期、deadline/取消/去重、fail-closed）；Simulation 已迁移到 `machine-player-coordinator.js`，详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
 - `randomizer/game/ai/heuristic-evaluator.js`、`expected-score-evaluator.js`：只消费公共 observation、legal descriptors 与标准反事实 outcome，负责纯估值和稳定排序；不得恢复 legacy candidate 或 selector adapter。
 - `randomizer/game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子；失败直接抛错。详见 `docs/ai-design.md` §1。
@@ -45,7 +45,6 @@
 - `tools/run_rl_worker_server.js`、`tools/rl_worker_client.py`：Node JSONL worker 服务与 Python 标准库客户端；`tools/benchmark_rl_workers.js` 为分项吞吐闸门。
 - `randomizer/app.js`：Browser Production composition、projection/ViewState、标准输入、服务与渲染的窄装配根。
 - `randomizer/game/effects/residual-domain-session.js`、`randomizer/app/browser-host/decision-ui.js`：公司、卡牌、数据与八种外星人的标准 Decision/Effect owner 和只读 presentation；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
-- `randomizer/app/browser-host/policy-input-adapter.js`：把公共 PolicyDecision 映射回与玩家相同的 Standard Action/Decision 输入端口；提交前重验 boundary，未知/stale fail-closed。
 - `randomizer/game/production-kernel.js`、`randomizer/game/production-composition.js`：Browser/Simulation 共用的唯一 Production factory、23 family registry（16 顶层 + 7 conditional）、五个 domain、Decision 与提交链。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。

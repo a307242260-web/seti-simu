@@ -1,8 +1,8 @@
 # SETI RL Simulation Env 契约
 
 Simulation 是 Production Composition 的无 DOM 宿主。它与 Browser 共用 StateStore、
-Standard Action、Decision、Effect Session 和 Machine Player Host，不加载 `index.html`、
-`app.js`、Browser projection、overlay、localStorage 或 Browser 恢复适配器。
+Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-player-coordinator.js`），
+不加载 `index.html`、`app.js`、Browser projection、overlay、localStorage 或 Browser 恢复适配器。
 
 ## 正式入口
 

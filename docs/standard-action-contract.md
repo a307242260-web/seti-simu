@@ -80,7 +80,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 当前行为证据以 `tools/node-test-inventory.js` 登记的 Action、Session 与领域行为测试为准：各 family 必须覆盖合法候选执行、stale/越权拒绝、失败零污染和浏览器/Policy 同入口；跨模块组合由唯一 full-flow 验证。本文不维护按迁移批次命名的测试清单。
 
-残余兼容面只有浏览器 DOM 的 `standard_intent`：它把明确 family/selector 解析为唯一 descriptor 后立即进入同一 registry；多目标 fail-closed。Browser Host Policy 经 `browser-host/policy-input-adapter.js` 选择完整 descriptor，并与玩家共用 `BrowserInputAdapter` 的 Action/Decision submission；AI、simulation、Policy、conditional provider 和 public API 均不保留旧执行入口。
+残余兼容面只有浏览器 DOM 的 `standard_intent`：它把明确 family/selector 解析为唯一 descriptor 后立即进入同一 registry；多目标 fail-closed。机器席位决策经协调器（`machine-player-coordinator.js`）选择完整 descriptor，并与玩家共用 `BrowserInputAdapter` 的 Action/Decision submission；AI、simulation、Policy、conditional provider 和 public API 均不保留旧执行入口。
 
 ## Proof obligations
 

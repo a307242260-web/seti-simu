@@ -8,13 +8,12 @@
     projectionAdapter,
     viewStateStore,
     inputAdapter,
-    policyInputAdapter,
+    machinePlayerCoordinator: machinePlayerCoordinatorModule,
+    heuristicDecisionFunction: heuristicDecisionFunctionModule,
     browserAiBootstrap,
     trajectoryRecorder,
     trajectoryRecording: trajectoryRecordingModule,
     outcomeModel,
-    expectedScoreEvaluator,
-    heuristicPolicy,
     actionBar,
     decisionUi,
     residentRenderer,
@@ -964,18 +963,29 @@
     submitDecision: (submission) => residentInput.submitDecision(submission),
     afterSubmit: () => scheduleRefreshAndAutomation(),
   });
+  // 浏览器机器席位的策略开关（与 Simulation resetConfig 同源语义，默认关）：
+  // 通过 URL 查询参数开启，例如 ?unifiedSearch=1&planReuse=1。
+  const browserMachineFlags = (typeof URLSearchParams === "function"
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams(""));
   const browserAi = browserAiBootstrap.createBrowserAiBootstrap({
     ruleComposition,
-    outcomeModel,
-    expectedScoreEvaluator,
-    policyInputAdapterModule: policyInputAdapter,
-    projectionAdapter: canonicalProjection,
+    machinePlayerCoordinatorModule,
+    heuristicDecisionFunctionModule,
     inputAdapter: residentInput,
-    createPolicy: () => heuristicPolicy.createHeuristicPolicy({ difficulty: aiDifficulty }),
-    projectionSource: ruleComposition.projectionSource,
     isMachineSeat: (seatId) => (
       humanSeat.playerId != null && String(seatId) !== String(humanSeat.playerId)
     ),
+    machineConfig: {
+      // 惰性读取：决策函数在首个 runOnce（startNewGame 之后）创建，
+      // 新游戏时 invalidate 丢弃重建，难度切换随之生效。
+      get difficulty() { return aiDifficulty; },
+      unifiedSearch: browserMachineFlags.get("unifiedSearch") === "1",
+      completeTargetCatalog: browserMachineFlags.get("completeTargetCatalog") === "1",
+      traceCounterfactualGoalClusters: browserMachineFlags.get("traceCounterfactualGoalClusters") === "1",
+      vStateValueEnabled: browserMachineFlags.get("vStateValueEnabled") === "1",
+      planContinuationReuse: browserMachineFlags.get("planReuse") === "1",
+    },
   });
 
   function createTrajectoryRecording() {

@@ -7,18 +7,15 @@
   }
 
   if (root) {
-    if (typeof module === "undefined") root.SetiAppAiBrowserBootstrap = api;  }
+    if (typeof module === "undefined") root.SetiAppAiBrowserBootstrap = api;
+  }
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "ruleComposition",
-    "outcomeModel",
-    "expectedScoreEvaluator",
-    "policyInputAdapterModule",
-    "projectionAdapter",
+    "machinePlayerCoordinatorModule",
+    "heuristicDecisionFunctionModule",
     "inputAdapter",
-    "createPolicy",
-    "projectionSource",
     "isMachineSeat",
   ]);
 
@@ -26,233 +23,137 @@
     return Object.freeze({ ok: false, code, message, ...structuredClone(details) });
   }
 
-  function createCompositionPolicyBoundaryReader(options = {}) {
-    const composition = options.ruleComposition;
-    const projectionSource = options.projectionSource;
-    if (!composition?.inspect || !projectionSource?.read
-      || !composition?.inputPort?.enumerateActions) {
-      throw new TypeError("Browser Machine Player boundary reader 需要 Rule Composition inspect/input 与 Browser projection ports");
-    }
-    return function readBoundary(seatId) {
-      const stabilized = composition.lifecycle?.save?.();
-      if (stabilized?.ok === false) {
-        const error = new Error(stabilized.message || "Rule Composition authority 稳定化失败");
-        error.code = stabilized.code || "RULE_COMPOSITION_STABILIZE_FAILED";
-        throw error;
-      }
-      const inspection = composition.inspect();
-      const source = projectionSource.read({
-        viewerId: `machine:${seatId}`,
-        playerId: seatId,
-        role: "player",
-      });
-      const decision = inspection.session?.decision || source.decision || null;
-      if (inspection.phase === "awaiting_input" && decision) {
-        const legalActions = (decision.choices || []).filter(Boolean);
-        return {
-          kind: "decision",
-          actorId: decision.ownerId,
-          stateVersion: legalActions[0]?.stateVersion ?? source.source.stateVersion,
-          decisionVersion: legalActions[0]?.decisionVersion ?? 0,
-          ...(decision.decisionVersion === (legalActions[0]?.decisionVersion ?? 0)
-            ? {}
-            : { submissionDecisionVersion: decision.decisionVersion }),
-          decisionId: decision.decisionId,
-          legalActions,
-        };
-      }
-      const actorId = source.state?.match?.currentPlayerId ?? null;
-      if (source.state?.match?.terminal) {
-        return { kind: "terminal", terminal: { phase: "completed" } };
-      }
-      const legalActions = composition.inputPort.enumerateActions({ actorId });
-      return {
-        kind: "action",
-        actorId,
-        stateVersion: legalActions[0]?.stateVersion ?? source.source.stateVersion,
-        decisionVersion: legalActions[0]?.decisionVersion
-          ?? Math.max(0, Number(source.state?.match?.decisionVersion) || 0),
-        legalActions,
-      };
-    };
-  }
-
+  /**
+   * Browser 机器席位端口：与 Simulation 共用同一协调器
+   * （machine-player-coordinator.js）+ Heuristic 决策函数
+   * （heuristic-decision-function.js），唯一差异是 recordStep 记账钩子——
+   * sim 训练补记 replay/reward，browser 为空操作。
+   *
+   * 端口只保留 Browser 宿主所需的薄壳：
+   * - currentSeatId / isMachineSeat 席位判定与 fail-closed 结果；
+   * - 决策前稳定化（lifecycle.save，与旧 readBoundary 一致）；
+   * - 同 decision version 去重（对应旧 Host submittedDecisions）；
+   * - lifecycle 失效时 resetPlans（清计划 store，决策函数注册表保留）；
+   * - 协调器抛错一律转成显式 fail 结果（非静默，app 会记录）。
+   *
+   * 内联反事实搜索拷贝已删除：读边界、计划复用、决策函数调用、execute 提交
+   * 全部走协调器一份实现（观察 createDecisionObservation(projection.state)，
+   * 与 Simulation 完全同源）。见 docs/ai-design.md §1。
+   */
   function createBrowserMachinePlayerPort(options = {}) {
     const {
       ruleComposition,
-      outcomeModel,
-      expectedScoreEvaluator,
-      projectionSource,
-      policyInputAdapterModule,
-      projectionAdapter,
+      machinePlayerCoordinatorModule,
+      heuristicDecisionFunctionModule,
       inputAdapter,
-      createPolicy,
       isMachineSeat,
+      machineConfig,
     } = options;
-    if (!policyInputAdapterModule?.createPolicyInputAdapter
-      || !projectionAdapter?.projectSource
-      || !outcomeModel?.createDecisionObservation
-      || typeof expectedScoreEvaluator?.evaluateStrategicFactsPriority !== "function"
-      || !inputAdapter?.dispatchAction
-      || !inputAdapter?.submitDecision
-      || typeof createPolicy !== "function"
+    if (!ruleComposition?.inspect || !ruleComposition?.inputPort?.enumerateActions
+      || typeof ruleComposition?.projection !== "function"
+      || !machinePlayerCoordinatorModule?.createMachinePlayerCoordinator
+      || !heuristicDecisionFunctionModule?.createHeuristicDecisionFunction
+      || !inputAdapter?.dispatchAction || !inputAdapter?.submitDecision
       || typeof isMachineSeat !== "function") {
-      throw new TypeError("Browser Machine Player port 缺少 policy/projection/input/seat ports");
+      throw new TypeError("Browser Machine Player port 缺少 composition/coordinator/decision/input/seat ports");
     }
-    const readBoundary = createCompositionPolicyBoundaryReader({ ruleComposition, projectionSource });
-    const drivers = new Map();
+    const config = machineConfig || {};
+
     let generation = 0;
     let lastResult = null;
     let lastOutcomeSummary = null;
+    let lastDiagnostics = null;
+    let coordinator = null;
+    let decisionFunction = null;
+    let submittedCount = 0; // 成功提交计数（含方案/复用路径），供 inspect 与 smoke 断言
+    let lastSubmittedKey = null; // 去重：seatId:stateVersion:decisionVersion:kind:decisionId
 
     function currentSeatId() {
       const inspection = ruleComposition.inspect();
-      const source = projectionSource.read();
+      const source = ruleComposition.projectionSource?.read?.() || null;
       return (inspection.phase === "awaiting_input"
-        ? inspection.session?.decision?.ownerId ?? source.decision?.ownerId
+        ? inspection.session?.decision?.ownerId ?? source?.decision?.ownerId
         : null)
-        ?? source.state?.match?.currentPlayerId
+        ?? source?.state?.match?.currentPlayerId
         ?? null;
     }
 
-    function getDriver(seatId) {
-      if (!drivers.has(seatId)) {
-        drivers.set(seatId, policyInputAdapterModule.createPolicyInputAdapter({
-          policy: createPolicy(seatId),
-          readBoundary: () => readBoundary(seatId),
-          readObservation: () => {
-            const boundary = readBoundary(seatId);
-            const projected = projectionAdapter.projectSource({
-              viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-            });
-            return outcomeModel.createDecisionObservation(projected, {
-              seatId,
-              stateVersion: boundary.stateVersion,
-              decisionVersion: boundary.decisionVersion,
-            });
+    // 一份 Heuristic 决策函数（与 Simulation 同一份实现、同一 config 源）：
+    // unifiedSearch / completeTargetCatalog / traceCounterfactualGoalClusters /
+    // vStateValueEnabled 等开关与 sim 完全一致地透传。
+    function ensureDecisionFunction() {
+      if (!decisionFunction) {
+        decisionFunction = heuristicDecisionFunctionModule.createHeuristicDecisionFunction({
+          composition: ruleComposition,
+          difficulty: config.difficulty,
+          strategyWeights: config.strategyWeights || {},
+          evaluationParameters: config.vStateValueEnabled === true
+            ? { vStateValueEnabled: true }
+            : undefined,
+          config: {
+            completeTargetCatalog: config.completeTargetCatalog === true,
+            traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,
+            unifiedSearch: config.unifiedSearch === true,
           },
-          readActionOutcomes: (boundary) => {
-            const setupBoundary = boundary.legalActions.every((action) => (
-              ["choose_card", "choose_payment"].includes(action.family)
-              && ["select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
-                .includes(action.target?.kind)
-            ));
-            if (setupBoundary) return [];
-            let rootStrategicFacts = null;
-            const getBranchPriority = ({
-              rootObservation,
-              branchObservation,
-              currentAction,
-              routeTargetIds,
-              routePlanIds,
-            }) => {
-              if (currentAction) {
-                return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
-                  rootObservation,
-                  branchObservation,
-                  focalSeatId: seatId,
-                  currentAction,
-                  routeTargetIds,
-                  routePlanIds,
-                });
-              }
-              rootStrategicFacts = rootStrategicFacts
-                || outcomeModel.createStrategicFacts(rootObservation, seatId);
-              return expectedScoreEvaluator.evaluateStrategicFactsPriority(
-                rootStrategicFacts,
-                outcomeModel.createStrategicFacts(branchObservation, seatId),
-              );
-            };
-            const rootObservation = outcomeModel.createDecisionObservation(
-              projectionAdapter.projectSource({
-                viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-              }),
-              {
-                seatId,
-                stateVersion: boundary.stateVersion,
-                decisionVersion: boundary.decisionVersion,
-              },
-            );
-            const counterfactualCandidates = boundary.legalActions.filter((action) => (
-              expectedScoreEvaluator.requiresRootCounterfactual(action, rootObservation)
-            ));
-            const evaluatedActions = expectedScoreEvaluator.selectSecondaryAgentRootActions({
-              focalSeatId: seatId,
-              rootObservation,
-              legalActions: counterfactualCandidates,
-              maxProxyDepth: 15,
-            });
-            const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
-              ruleComposition.counterfactualPort.evaluate(evaluatedActions, {
-                viewer: { viewerId: `machine:${seatId}`, playerId: seatId, role: "player" },
-                confidence: "low",
-                maxDepth: 8,
-                maxLeaves: 8,
-                maxNodes: 128,
-                maxFrontierPerRoot: 1,
-                secondaryAgentSearch: {
-                  focalSeatId: seatId,
-                  maxProxyDepth: 15,
-                  rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
-                  selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
-                  selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
-                  rankSuccessor: expectedScoreEvaluator.rankSecondaryAgentSuccessor,
-                  selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
-                  countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
-                  completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
-                  getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
-                },
-                getBranchPriority,
-              }),
-              {
-                seatId,
-                stateVersion: boundary.stateVersion,
-                decisionVersion: boundary.decisionVersion,
-              },
-            );
-            const byActionId = new Map(evaluatedOutcomes.map((outcome) => [
-              outcome.actionId,
-              outcome,
-            ]));
-            const evaluatedRootObservation = evaluatedOutcomes[0]?.rootObservation
-              || rootObservation;
-            const outcomes = boundary.legalActions.map((action) => (
-              byActionId.get(action.actionId) || {
-                schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
-                actionId: action.actionId,
-                status: "unresolved",
-                confidence: "none",
-                code: "STRATEGIC_GOAL_NOT_EVALUATED",
-                reasonCodes: ["strategic-goal-not-evaluated"],
-                rootObservation: evaluatedRootObservation,
-                leaves: [],
-              }
-            ));
-            lastOutcomeSummary = Object.freeze({
-              seatId,
-              actions: Object.freeze(boundary.legalActions.map((action) => ({
-                actionId: action.actionId,
-                family: action.family,
-                outcome: (() => {
-                  const outcome = outcomes.find((candidate) => candidate.actionId === action.actionId);
-                  return {
-                    status: outcome?.status || "missing",
-                    code: outcome?.code || null,
-                    leaves: outcome?.leaves?.length || 0,
-                  };
-                })(),
-              }))),
-              timing: ruleComposition.counterfactualPort.getDiagnostics?.() || null,
-            });
-            return outcomes;
-          },
-          inputAdapter,
-          onPause: options.onPause,
-          onDiagnostic: options.onDiagnostic,
-          defaultDeadlineMs: options.defaultDeadlineMs,
-        }));
+        });
       }
-      return drivers.get(seatId);
+      return decisionFunction;
+    }
+
+    // 协调器 execute：与玩家共用正式 Action/Decision 输入端口（零转换）；
+    // 失败直接抛错，由 runOnce 转成显式 fail 结果。
+    function submitMachineAction(action) {
+      const inspection = ruleComposition.inspect();
+      const result = inspection.phase === "awaiting_input"
+        ? inputAdapter.submitDecision({
+          decisionId: inspection.session.decision.decisionId,
+          decisionVersion: inspection.session.decision.decisionVersion,
+          ownerId: inspection.session.decision.ownerId,
+          choice: action,
+        })
+        : inputAdapter.dispatchAction(action);
+      if (result?.ok === false) {
+        const error = new Error(result.message || result.code || "规则提交失败");
+        error.code = result.code || "MACHINE_PLAYER_EXECUTE_FAILED";
+        throw error;
+      }
+      return { ok: true, actionId: action.actionId, submitResult: result };
+    }
+
+    function ensureCoordinator() {
+      if (!coordinator) {
+        coordinator = machinePlayerCoordinatorModule.createMachinePlayerCoordinator({
+          composition: ruleComposition,
+          execute: submitMachineAction,
+          // Browser 不训练：recordStep 空操作（sim 训练补记 replay/reward）。
+          recordStep: () => {},
+          onDiagnostic: (type, details) => {
+            if (type === "plan-reuse-hit" || type === "plan-reuse-miss") {
+              lastDiagnostics = lastDiagnostics || { planContinuationHitCount: 0, planContinuationMissCount: 0 };
+              if (type === "plan-reuse-hit") lastDiagnostics.planContinuationHitCount += 1;
+              else lastDiagnostics.planContinuationMissCount += 1;
+            }
+          },
+        });
+      }
+      return coordinator;
+    }
+
+    function buildOutcomeSummary(result) {
+      const actions = result.decision?.actionOutcomes || [];
+      return Object.freeze({
+        seatId: result.seatId,
+        actions: Object.freeze(actions.map((outcome) => ({
+          actionId: outcome.actionId,
+          family: outcome.family || null,
+          outcome: {
+            status: outcome.status || "missing",
+            code: outcome.code || null,
+            leaves: outcome.leaves?.length || 0,
+          },
+        }))),
+        timing: ruleComposition.counterfactualPort?.getDiagnostics?.() || null,
+      });
     }
 
     async function runOnce(runOptions = {}) {
@@ -266,18 +167,79 @@
         return lastResult;
       }
       const ownGeneration = generation;
-      const result = await getDriver(seatId).runOnce(runOptions);
-      lastResult = ownGeneration === generation
-        ? result
-        : fail("MACHINE_POLICY_REQUEST_INVALIDATED", "Browser Machine Player generation 已变化", { seatId });
-      return lastResult;
+      try {
+        // 稳定化：把进行中的 session 工作态提交后再读边界（与旧 readBoundary 一致）。
+        const stabilized = ruleComposition.lifecycle?.save?.();
+        if (stabilized?.ok === false) {
+          const error = new Error(stabilized.message || "Rule Composition authority 稳定化失败");
+          error.code = stabilized.code || "RULE_COMPOSITION_STABILIZE_FAILED";
+          throw error;
+        }
+        const activeCoordinator = ensureCoordinator();
+        const activeDecision = ensureDecisionFunction();
+        const probeBoundary = activeCoordinator.readBoundary(seatId);
+        if (!activeCoordinator.hasSeat(probeBoundary.seatId)) {
+          activeCoordinator.registerSeat(probeBoundary.seatId, activeDecision.run);
+        }
+        // 去重键对齐旧 Host 语义（authorityKey = kind:decisionId）：setup 内
+        // 同一席位连续多个 choice 的 stateVersion/decisionVersion 相同，必须靠
+        // decisionId 区分，否则第二个 choice 会被误判为重复提交。
+        const boundaryKind = probeBoundary.phase === "awaiting_input" ? "decision" : "action";
+        const decisionId = probeBoundary.sessionDecision?.decisionId
+          || probeBoundary.legalActions[0]?.decisionId
+          || "";
+        const dedupeKey = `${probeBoundary.seatId}:`
+          + `${probeBoundary.legalActions[0]?.stateVersion}:`
+          + `${probeBoundary.legalActions[0]?.decisionVersion}:`
+          + `${boundaryKind}:${decisionId}`;
+        if (lastSubmittedKey === dedupeKey) {
+          lastResult = fail("MACHINE_POLICY_DUPLICATE_SUBMISSION", "同一 decision version 已成功提交", { seatId });
+          return lastResult;
+        }
+        const result = activeCoordinator.runDecision(probeBoundary.seatId, {
+          reuseEnabled: config.planContinuationReuse === true,
+        });
+        lastSubmittedKey = dedupeKey;
+        submittedCount += 1;
+        lastOutcomeSummary = buildOutcomeSummary(result);
+        const successResult = Object.freeze({
+          ok: true,
+          seatId: result.seatId,
+          actionId: result.actionId,
+          source: result.source,
+          plan: result.plan || null,
+          ...(result.decision
+            ? {
+              policyDecision: result.decision.decision,
+              actionOutcomes: result.decision.actionOutcomes || [],
+            }
+            : {
+              policyDecision: { actionId: result.actionId, planContinuationFastPath: true },
+              actionOutcomes: [],
+            }),
+        });
+        lastResult = ownGeneration === generation
+          ? successResult
+          : fail("MACHINE_POLICY_REQUEST_INVALIDATED", "Browser Machine Player generation 已变化", { seatId });
+        return lastResult;
+      } catch (error) {
+        // fail-closed：协调器/提交错误显式转成 fail 结果（不静默，app 会记录）。
+        lastResult = ownGeneration === generation
+          ? fail(error?.code || "MACHINE_PLAYER_FAILED", error?.message || String(error), { seatId })
+          : fail("MACHINE_POLICY_REQUEST_INVALIDATED", "Browser Machine Player generation 已变化", { seatId });
+        return lastResult;
+      }
     }
 
     function invalidate(reason = "Browser Rule Composition lifecycle 已变化") {
       generation += 1;
-      for (const driver of drivers.values()) driver.invalidate(reason);
-      drivers.clear();
+      coordinator = null;
+      decisionFunction = null;
       lastResult = null;
+      lastSubmittedKey = null;
+      lastOutcomeSummary = null;
+      lastDiagnostics = null;
+      submittedCount = 0;
       return Object.freeze({ ok: true, generation });
     }
 
@@ -285,10 +247,8 @@
       return Object.freeze({
         generation,
         seatId: currentSeatId(),
-        drivers: Object.freeze([...drivers.entries()].map(([seatId, driver]) => ({
-          seatId,
-          host: driver.inspect(),
-        }))),
+        submittedCount,
+        diagnostics: lastDiagnostics ? structuredClone(lastDiagnostics) : null,
         lastOutcomeSummary: structuredClone(lastOutcomeSummary),
         lastResult: structuredClone(lastResult),
       });
@@ -307,25 +267,19 @@
 
     const {
       ruleComposition,
-      outcomeModel,
-      expectedScoreEvaluator,
-      policyInputAdapterModule,
-      projectionAdapter,
+      machinePlayerCoordinatorModule,
+      heuristicDecisionFunctionModule,
       inputAdapter,
-      createPolicy,
-      projectionSource,
       isMachineSeat,
+      machineConfig,
     } = context;
     const machinePlayerPort = createBrowserMachinePlayerPort({
       ruleComposition,
-      outcomeModel,
-      expectedScoreEvaluator,
-      projectionSource,
-      policyInputAdapterModule,
-      projectionAdapter,
+      machinePlayerCoordinatorModule,
+      heuristicDecisionFunctionModule,
       inputAdapter,
-      createPolicy,
       isMachineSeat,
+      machineConfig,
     });
     ruleComposition.subscribe((event) => {
       if (event?.source === "lifecycle") {
@@ -338,7 +292,6 @@
 
   return {
     REQUIRED_CONTEXT_KEYS,
-    createCompositionPolicyBoundaryReader,
     createBrowserMachinePlayerPort,
     createBrowserAiBootstrap,
   };

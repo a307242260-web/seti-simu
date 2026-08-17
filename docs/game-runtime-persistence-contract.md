@@ -8,7 +8,7 @@ SETI 的规则状态、流程状态和宿主状态已经分属明确 owner：
 - Effect Session：唯一 working copy、queue、Decision、journal、undo/barrier 与 checkpoint。
 - Standard Action：唯一 Action/Decision descriptor、合法性与 family handler 入口。
 - Browser/Simulation Host：只投影状态并提交标准输入。
-- Machine Player Host/Policy：只管理请求与选择 legal `actionId`，不执行规则。
+- Machine Player Coordinator：编排机器席位决策（readBoundary/复用/决策函数/execute），只选择 legal `actionId`，不执行规则。
 
 `app.js` 是 composition root，不是并列状态源。`window.Seti*` 是无构建脚本的模块注册方式，不得保存跨局权威事实。
 
