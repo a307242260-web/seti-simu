@@ -21,3 +21,4 @@
 - **L3 火星首登陆「任选两个数据位之一」简化为固定 2/1 数据**：功能等价（2>1，无理性玩家会先选 1 数据位）。
 - **L13 文档「3 人局」vs 规则书「2-3 人局」中立里程碑**：仓库只支持 3/4 人局。
 - **AI 规划器 counterfactual 展开边界**：`simulation-counterfactual-outcome.test.js` 基线失败（`scan` 行动多步决策在规划器执行预算内未产生完整叶，leaves/frontierLeaves 为空且无 failure）——与规则实现无关，属规划器展开预算/叶收集适配问题，建议规划器专项调优。
+- **公司被动 UI 显示缺口（观察项）**：`industry.shouldShowStrategyPassiveMarkers`、`shouldShowHeliosPassiveMarkers`、`shouldShowAlienLabPanels`、`shouldShowFutureSpanPanel`、`isSentinelCornerArmed` 目前无外部调用，浏览器只渲染公司牌 token 图与 1x 主动能力按钮；异星实验室三色面板、未来跨度标记、宇宙战略+赫利昂奖励槽、哨兵角标武装状态在 web UI 上未呈现——机制层已接线（见 `docs/mechanics-reference.md`），仅 UI 展示缺失，待补。

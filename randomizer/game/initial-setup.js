@@ -7,6 +7,7 @@
   let solar = root.SetiSolarSystem;
   let data = root.SetiData;
   let industry = root.SetiIndustry;
+  let finalScoring = root.SetiFinalScoring;
   if ((!initialCards || !cards || !players || !solar || !data || !industry)
     && typeof require === "function") {
     initialCards = initialCards || require("./initial-cards");
@@ -15,9 +16,10 @@
     solar = solar || require("../solar-system/core");
     data = data || require("./data");
     industry = industry || require("./industry");
+    finalScoring = finalScoring || require("./final-scoring");
   }
 
-  const api = factory(initialCards, cards, players, solar, data, industry);
+  const api = factory(initialCards, cards, players, solar, data, industry, finalScoring);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiInitialSetup = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   initialCards,
@@ -26,6 +28,7 @@
   solar,
   data,
   industry,
+  finalScoring,
 ) {
   "use strict";
 
@@ -162,7 +165,7 @@
     };
   }
 
-  function initializeIndustryState(player) {
+  function initializeIndustryState(rootState, player) {
     if (industry.shouldInitializeStrategyPassiveMarkers?.(player)) {
       industry.initializeStrategyPassiveMarkers(player);
     }
@@ -174,6 +177,17 @@
     }
     if (industry.shouldInitializeFutureSpan?.(player)) {
       industry.initializeFutureSpanState(player);
+    }
+    // 任务中继站：开局在终局 c 板块 3 号位放自己的标记（终局任务板块计分）。
+    if (typeof finalScoring?.placeDirectMarkAtSlot === "function"
+      && industry.shouldPlaceMissionStartupFinalMark?.(player)) {
+      finalScoring.placeDirectMarkAtSlot(
+        rootState.finalScoring,
+        "c",
+        player,
+        3,
+        { root: rootState },
+      );
     }
   }
 
@@ -235,7 +249,7 @@
       industry: { id: selectedIndustry.id },
       removedInitialCards: selectedInitialCards.map((card) => ({ id: card.id })),
     };
-    initializeIndustryState(player);
+    initializeIndustryState(rootState, player);
     const nextPlayerId = setup.playerIds.find(
       (playerId) => !setup.confirmedPlayerIds.includes(playerId),
     );
