@@ -410,6 +410,19 @@ function createSimulationEnv() {
     return policyAdapter;
   }
 
+  // V 引导决策模块懒加载（v-guided-search / outcome-model / evaluator）
+  let vGuidedModules = null;
+  function ensureVGuidedModules() {
+    if (!vGuidedModules) {
+      vGuidedModules = {
+        search: require("../game/ai/v-guided-search"),
+        outcomeModel: require("../game/ai/outcome-model"),
+        evaluator: require("../game/ai/expected-score-evaluator"),
+      };
+    }
+    return vGuidedModules;
+  }
+
   function rawLegalDescriptors() {
     const inspection = composition.inspect();
     if (inspection.phase === "awaiting_input" && inspection.session?.decision) {
@@ -1048,6 +1061,86 @@ function createSimulationEnv() {
         throw new Error("当前 composition 未启用 counterfactual fork 能力");
       }
       return createFork(forkEnvelope, forkOptions);
+    },
+
+    // V 引导决策（v-guided-policy / v-guided-search）：全动作 fork 浅搜索 + V 评估。
+    // 与 runHeuristicPolicyDecision 完全解耦，不复用分桶/目标门控/线性外推。
+    // 返回 { action, seatId, diagnostics, evaluations }。
+    runVGuidedDecision(options = {}) {
+      assertUsable();
+      const modules = ensureVGuidedModules();
+      const ev = modules.evaluator;
+      const outcomeModel = modules.outcomeModel;
+      const vGuidedSearch = modules.search;
+      const legal = this.legalActions();
+      if (!legal.length) throw new Error("V 引导决策没有合法候选");
+      const seatId = legal[0]?.actorPlayerId || null;
+      // 初始选择/条件决策：由调用方委托 runHeuristicPolicyDecision（本方法只管
+      // 主行动选择）。这里返回标记，调用方据此走 policyAdapter 路径。
+      const allConditional = legal.every((a) => (
+        ["choose_card", "choose_payment", "choose_target", "accept_optional_effect"].includes(a.family)
+      ));
+      if (allConditional) {
+        return {
+          action: null,
+          seatId,
+          conditional: true,
+          diagnostics: { reasonCode: "conditional-delegated", evaluated: 0, searchMs: 0 },
+          evaluations: [],
+        };
+      }
+      const params = ev.evaluateStateValue && { vStateValueEnabled: true };
+      const authority = {
+        stateVersion: legal[0]?.stateVersion,
+        decisionVersion: legal[0]?.decisionVersion,
+      };
+      // root 标准 observation（从当前状态构造）
+      const rootObservation = this.observe();
+      const rootStd = outcomeModel.createDecisionObservation(rootObservation, {
+        seatId,
+        stateVersion: authority.stateVersion,
+        decisionVersion: authority.decisionVersion,
+      });
+      const rootV = ev.evaluateStateValue(rootStd, seatId).total;
+      // 主行动集合（排除 control）
+      const mainActions = legal.filter((a) => !["end_turn", "pass"].includes(a.family));
+      const rootEnvelope = saveEnvelope();
+      const maxDepth = Math.max(1, Number(options.maxDepth) || 4);
+      const startedAt = performance.now();
+      const evaluations = [];
+      for (const action of mainActions) {
+        const result = vGuidedSearch.evaluateActionWithFork(
+          this,
+          action,
+          rootEnvelope,
+          seatId,
+          authority,
+          params,
+          { maxDepth, rootObservation },
+        );
+        if (result?.ok) evaluations.push(result);
+      }
+      // 选 total 最高
+      evaluations.sort((a, b) => b.total - a.total || String(a.actionId).localeCompare(String(b.actionId)));
+      const best = evaluations[0] || null;
+      const chosenAction = best
+        ? mainActions.find((a) => a.actionId === best.actionId)
+        : (legal.find((a) => a.family === "end_turn") || legal[0]);
+      const searchMs = performance.now() - startedAt;
+      return {
+        action: chosenAction,
+        seatId,
+        diagnostics: {
+          reasonCode: best ? "v-guided:max-total" : "v-guided:no-eval",
+          evaluated: evaluations.length,
+          searchMs,
+          rootV,
+          top: evaluations.slice(0, 5).map((e) => ({
+            family: e.family, total: e.total, vDelta: e.vDelta, actual: e.actual,
+          })),
+        },
+        evaluations,
+      };
     },
 
     dispose() {
