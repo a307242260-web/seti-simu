@@ -421,8 +421,7 @@ function evaluateLegalActions(observation, legalActions, actionOutcomes, actorPl
     .map(({ action }) => {
     const evaluableAction = {
       ...action,
-      phase: action.actionFeature?.phase
-        || (action.decisionType === "conditional_choice" ? "conditional" : "main"),
+      phase: action.phase || "main",
     };
     const evaluation = expectedScoreEvaluator.evaluateAction(
       { observation, legalActions, actionOutcomes, seatId: actorPlayerId },
@@ -619,7 +618,7 @@ function actionText(action) {
   const summary = moveMatch
     ? `探测器 #${moveMatch[1]} ${moveDirection[moveMatch[2].toLowerCase()]}移动 1 步`
     : rawSummary;
-  if (action?.decisionType === "conditional_choice") return `↳ 选择：${summary}`;
+  if (action?.phase === "conditional") return `↳ 选择：${summary}`;
   if (action?.family === "end_turn") return "结束回合";
   const verb = FAMILY_VERBS[action?.family];
   if (!verb || verb === summary || (verb === "PASS" && summary === "PASS")) return summary;
@@ -753,7 +752,7 @@ function actionBoardRecord(before, after, action) {
 }
 
 function isFoldableCardDecision(record) {
-  return record?.decisionType === "conditional_choice"
+  return record?.phase === "conditional"
     && ["choose_payment", "choose_card"].includes(record.family);
 }
 
@@ -837,7 +836,7 @@ function runFixedBoardTurnReport(options = {}) {
         decisionNumber: decisionCount,
         actorPlayerId,
         playerLabel: playerLabels[actorPlayerId] || actorPlayerId,
-        decisionType: chosen.decisionType,
+        decisionType: chosen.phase === "conditional" ? "conditional_choice" : "turn_action",
         family: chosen.family,
         summary: chosen.summary,
         text: visual?.text || actionText(chosen),
@@ -874,7 +873,7 @@ function runFixedBoardTurnReport(options = {}) {
         followups: [],
       };
 
-      if (!reachedTurnActions && chosen.decisionType === "conditional_choice") {
+      if (!reachedTurnActions && chosen.phase === "conditional") {
         setupChoices.push(record);
         if (stopAfterDecision && decisionCount >= stopAfterDecision) break;
         continue;
@@ -1313,7 +1312,7 @@ function renderActionCard(action) {
       <span class="decision-number">#${action.decisionNumber}</span>
       <div class="action-title">
         <h4>${escapeHtml(action.text)}</h4>
-        <span>${escapeHtml(action.decisionType)} · ${escapeHtml(action.family)}</span>
+        <span>${escapeHtml(action.phase)} · ${escapeHtml(action.family)}</span>
       </div>
       <div class="score-change ${scoreDeltaClass}">
         <small>实际得分</small>

@@ -34,9 +34,9 @@ confirmed replay。
 
 ## Action 与 Decision
 
-Simulation Action schema 为 `seti-rl-action-v2`。候选 identity 来自
-`seti-standard-action-v1`，环境只增加训练所需的 `maskIndex`、`actionFeature` 与当前
-authority version，不重新推导合法性。
+Simulation 决策路径使用共享 `inputPort` 的原生 Action（`seti-standard-action-v1`，
+零转换，Browser/Simulation 同一实现，见 docs/ai-design.md §1）；训练记录在协调器
+`recordStep` 钩子补做，不做形状转换。
 
 顶层 family：
 

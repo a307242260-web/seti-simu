@@ -37,7 +37,7 @@ function forkSubmit(comp, action) {
 // 在 fork 中推进 N 步：执行动作后若进入条件决策，取第一个可选项继续
 // 直到：a) 达到 maxDepth  b) 进入新一轮主行动选择 c) 失败
 // 注意：fork 的动作必须用 fork 自己枚举的（标准 schema），不能用 env 的
-// （seti-rl-action-v2 schema 不匹配 fork 的 inputPort）。
+// （决策路径统一用共享 inputPort 的原生 schema）。
 function forkAdvance(comp, startAction, maxDepth, seatId) {
   const trace = [];
   let action = startAction;

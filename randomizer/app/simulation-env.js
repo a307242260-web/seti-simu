@@ -4,10 +4,7 @@ const { performance } = require("node:perf_hooks");
 const { createSeededRandom, hashSeed, RNG_ALGORITHM } = require("../game/random");
 const { createSimulationRuleComposition } = require("../training/simulation-rule-composition");
 const {
-  ACTION_SCHEMA_VERSION,
   OBSERVATION_SCHEMA_VERSION,
-  normalizeTurnCandidate,
-  normalizeConditionalCandidate,
   sanitizeCard,
   sanitizePublicPlayer,
   sanitizeSelfPlayer,
@@ -38,10 +35,7 @@ function stableSerialize(value) {
 }
 
 function sameSubmittedAction(submitted, current) {
-  return submitted?.schemaVersion === current?.schemaVersion
-    && submitted?.actionId === current?.actionId
-    && submitted?.actorPlayerId === current?.actorPlayerId
-    && submitted?.decisionType === current?.decisionType
+  return submitted?.actionId === current?.actionId
     && submitted?.family === current?.family
     && submitted?.stateVersion === current?.stateVersion
     && submitted?.decisionVersion === current?.decisionVersion
@@ -140,9 +134,11 @@ function pendingFinalMarkValue(state, player) {
 function buildDecisionFromState(state, legalActions) {
   const turn = getTurnState(state);
   if (turn.gameEnded) return null;
-  const actorPlayerId = legalActions[0]?.actorPlayerId || turn.currentPlayerId || null;
+  const actorPlayerId = legalActions[0]?.actorId || turn.currentPlayerId || null;
   if (!actorPlayerId) return null;
-  const decisionType = legalActions[0]?.decisionType || "turn_action";
+  const decisionType = legalActions[0]?.phase === "conditional"
+    ? "conditional_choice"
+    : "turn_action";
   const effectOwnerPlayerId = decisionType === "turn_action" ? null : actorPlayerId;
   return {
     actorPlayerId,
@@ -159,9 +155,9 @@ function buildDecision(api, legalActions) {
   const turnSlice = api.getTurnState();
   if (turnSlice.gameEnded) return null;
   const owner = api.getSimulationDecisionOwnerState?.(
-    legalActions[0]?.actorPlayerId ? { id: legalActions[0].actorPlayerId } : null,
+    legalActions[0]?.actorId ? { id: legalActions[0].actorId } : null,
   ) || null;
-  const actorPlayerId = owner?.actorPlayerId || legalActions[0]?.actorPlayerId || turnSlice.currentPlayerId || null;
+  const actorPlayerId = owner?.actorId || owner?.actorPlayerId || legalActions[0]?.actorId || turnSlice.currentPlayerId || null;
   if (!actorPlayerId) return null;
   return {
     actorPlayerId,
@@ -169,7 +165,9 @@ function buildDecision(api, legalActions) {
     effectOwnerPlayerId: owner?.effectOwnerPlayerId || null,
     currentPlayerId: owner?.currentPlayerId || turnSlice.currentPlayerId || null,
     source: owner?.source || "current_player",
-    decisionType: legalActions[0]?.decisionType || "turn_action",
+    decisionType: legalActions[0]?.phase === "conditional"
+      ? "conditional_choice"
+      : "turn_action",
     choiceCount: legalActions.length,
   };
 }
@@ -177,7 +175,7 @@ function buildDecision(api, legalActions) {
 function buildObservation(state, seed, viewerPlayerId, legalActions = [], options = {}) {
   const turn = getTurnState(state);
   const playersState = state.players || { players: [] };
-  const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorPlayerId || turn.currentPlayerId || null;
+  const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorId || turn.currentPlayerId || null;
   const decision = buildDecisionFromState(state, legalActions);
   const setup = state.match?.initialSetup || null;
   const setupCurrentPlayerId = setup?.currentPlayerId || null;
@@ -282,7 +280,7 @@ function createSimulationEnv() {
     const descriptors = legal.map((action) => (
       selectors.get(action.actionId) || action
     ));
-    const seatId = legal[0]?.actorPlayerId || null;
+    const seatId = legal[0]?.actorId || null;
     let rootStrategicFacts = null;
     return composition.counterfactualPort.evaluate(descriptors, {
       viewer: { playerId: seatId, role: "player" },
@@ -495,12 +493,6 @@ function createSimulationEnv() {
       .filter((action) => action.phase !== "conditional");
   }
 
-  function normalizeDescriptor(descriptor, actorPlayerId) {
-    return descriptor.phase === "conditional"
-      ? normalizeConditionalCandidate(descriptor, actorPlayerId)
-      : normalizeTurnCandidate(descriptor, actorPlayerId);
-  }
-
   function currentActorId(descriptors) {
     return descriptors[0]?.actorId || getTurnState(getWorkingProjection(composition)).currentPlayerId || null;
   }
@@ -508,7 +500,7 @@ function createSimulationEnv() {
   function observeWithActions(viewerPlayerId, actions) {
     const startedAt = performance.now();
     const projected = composition.projection({
-      playerId: viewerPlayerId || actions?.[0]?.actorPlayerId || null,
+      playerId: viewerPlayerId || actions?.[0]?.actorId || null,
       role: "player",
     }).state;
     const state = {
@@ -641,24 +633,17 @@ function createSimulationEnv() {
       assertUsable();
       const startedAt = performance.now();
       if (this.isTerminal()) return [];
-      const cachedActorId = cachedLegal?.[0]?.actorPlayerId || null;
+      const cachedActorId = cachedLegal?.[0]?.actorId || null;
       if (cachedLegal && (!viewerPlayerId || viewerPlayerId === cachedActorId)) return clone(cachedLegal);
       const descriptors = rawLegalDescriptors();
       const actorPlayerId = currentActorId(descriptors);
       if (viewerPlayerId && viewerPlayerId !== actorPlayerId) return [];
       selectors = new Map();
-      const stateVersion = getWorkingProjection(composition).meta?.stateVersion || 0;
-      const inspection = composition.inspect();
-      const decisionVersion = inspection.phase === "awaiting_input"
-        ? inspection.session?.decision?.decisionVersion ?? 0
-        : getWorkingProjection(composition).match?.decisionVersion || 0;
-      cachedLegal = descriptors.map((descriptor) => ({ descriptor, action: normalizeDescriptor(descriptor, actorPlayerId) }))
-        .filter((entry) => entry.action)
-        .sort((left, right) => left.action.actionId.localeCompare(right.action.actionId))
-        .map((entry, maskIndex) => {
-          const action = { ...entry.action, maskIndex, stateVersion, decisionVersion };
-          selectors.set(action.actionId, entry.descriptor);
-          return action;
+      cachedLegal = descriptors
+        .sort((left, right) => left.actionId.localeCompare(right.actionId))
+        .map((descriptor) => {
+          selectors.set(descriptor.actionId, descriptor);
+          return descriptor;
         });
       recordDuration("legalActionsMilliseconds", startedAt);
       diagnostics.legalActionsCalls += 1;
@@ -668,8 +653,11 @@ function createSimulationEnv() {
     step(action) {
       assertUsable();
       const actions = cachedLegal || this.legalActions();
-      const beforeObservation = lastObservation || observeWithActions(action?.actorPlayerId, actions);
-      const actorPlayerId = beforeObservation.decision?.actorPlayerId || null;
+      const beforeObservation = lastObservation || observeWithActions(action?.actorId || action?.actorPlayerId, actions);
+      const actorPlayerId = beforeObservation.decision?.actorPlayerId
+        || beforeObservation.decision?.actorId
+        || action?.actorId
+        || null;
       const terminal = this.isTerminal();
       const reject = (code, message) => ({
         ok: false,
@@ -693,10 +681,10 @@ function createSimulationEnv() {
           `动作不在当前 legalActions：${action?.actionId || "<missing>"}`,
         );
       }
-      if (action?.schemaVersion !== ACTION_SCHEMA_VERSION) {
-        return reject("SIMULATION_ACTION_SCHEMA_MISMATCH", "Simulation Action schema 版本不匹配");
+      if (action?.schemaVersion !== currentAction?.schemaVersion) {
+        return reject("SIMULATION_ACTION_SCHEMA_MISMATCH", "Simulation Action schema 与当前 legal descriptor 不一致");
       }
-      if (action.actorPlayerId !== currentAction.actorPlayerId) {
+      if (action.actorId !== currentAction.actorId) {
         return reject("SIMULATION_ACTION_ACTOR_MISMATCH", "Simulation Action actor 不是当前 decision owner");
       }
       if (action.stateVersion !== currentAction.stateVersion
@@ -1096,7 +1084,7 @@ function createSimulationEnv() {
       const vGuidedSearch = modules.search;
       const legal = this.legalActions();
       if (!legal.length) throw new Error("V 引导决策没有合法候选");
-      const seatId = legal[0]?.actorPlayerId || null;
+      const seatId = legal[0]?.actorId || null;
       // 初始选择/条件决策：由调用方委托 runHeuristicPolicyDecision（本方法只管
       // 主行动选择）。这里返回标记，调用方据此走 policyAdapter 路径。
       const allConditional = legal.every((a) => (

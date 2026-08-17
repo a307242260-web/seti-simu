@@ -93,11 +93,11 @@ function updateAgent(agent, trajectory, terminalObservation) {
 }
 
 function buildLegalMask(legalActions) {
-  return legalActions.map((action) => ({
-    maskIndex: action.maskIndex,
+  return legalActions.map((action, maskIndex) => ({
+    maskIndex,
     actionId: action.actionId,
     family: action.family || action.kind,
-    actorPlayerId: action.actorPlayerId,
+    actorPlayerId: action.actorId,
   }));
 }
 

@@ -29,8 +29,8 @@ def observation(score=0, final_score=None):
 
 def action(action_id="scan:a"):
     return {
-        "schemaVersion": "seti-rl-action-v2", "actionId": action_id,
-        "actorPlayerId": "blue", "decisionType": "turn_action", "family": "scan",
+        "schemaVersion": "seti-standard-action-v1", "actionId": action_id,
+        "actorId": "blue", "family": "scan", "phase": "main",
         "stateVersion": 1, "decisionVersion": 1,
     }
 

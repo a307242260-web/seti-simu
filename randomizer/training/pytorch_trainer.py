@@ -103,8 +103,8 @@ def assert_no_keys(value: Any, banned: set[str]) -> None:
 
 def sanitized_action(action: dict[str, Any]) -> dict[str, Any]:
     assert_no_keys(action, BANNED_CANDIDATE_KEYS)
-    allowed = ("schemaVersion", "actionId", "actorPlayerId", "decisionType", "family",
-               "target", "payload", "actionFeature", "summary", "maskIndex",
+    allowed = ("schemaVersion", "actionId", "actorId", "family", "phase",
+               "target", "payload", "summary",
                "stateVersion", "decisionVersion")
     clean = {key: action[key] for key in allowed if key in action}
     return clean
@@ -286,7 +286,7 @@ def load_encoded_dataset(path: Path) -> tuple[dict[str, Any], dict[str, list[Enc
             chosen_id = record["chosenAction"]["actionId"]
             chosen_index = next(index for index, item in enumerate(candidates)
                                 if item["actionId"] == chosen_id)
-            actor = record["chosenAction"]["actorPlayerId"]
+            actor = record["chosenAction"]["actorId"]
             example = EncodedExample(
                 hashed_features(policy_observation(record["observation"])),
                 torch.stack([hashed_features(sanitized_action(item)) for item in candidates]),
@@ -349,7 +349,7 @@ def evaluate_bc(model: CandidatePolicy, records: list[dict[str, Any]]) -> dict[s
             order = logits.argsort(descending=True).tolist()
             top1 += int(order[0] == chosen)
             top3 += int(chosen in order[:3])
-            actor = record["chosenAction"]["actorPlayerId"]
+            actor = record["chosenAction"]["actorId"]
             target = float(record["terminalScores"].get(actor, 0)) / 100.0
             value_error += abs(float(value) - target)
     count = len(records)

@@ -11,7 +11,7 @@ function committedState(environment) {
 }
 
 function chooseOpeningAction(actions, progressByPlayer) {
-  const actorId = actions[0]?.actorPlayerId;
+  const actorId = actions[0]?.actorId;
   const progress = progressByPlayer.get(actorId) || { industry: false, initialIds: new Set() };
   let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
     || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");

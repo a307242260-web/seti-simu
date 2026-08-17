@@ -1,6 +1,5 @@
 "use strict";
 
-const ACTION_SCHEMA_VERSION = "seti-rl-action-v2";
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
 
 const TURN_ACTION_FAMILIES = Object.freeze([
@@ -34,76 +33,6 @@ function clone(value) {
 
 function compactObject(value) {
   return Object.fromEntries(Object.entries(value).filter(([, item]) => item != null));
-}
-
-function normalizeTurnCandidate(candidate, actorPlayerId) {
-  const standardAction = candidate?.schemaVersion === "seti-standard-action-v1"
-    ? candidate
-    : null;
-  if (
-    standardAction
-    && standardAction.schemaVersion === "seti-standard-action-v1"
-    && TURN_ACTION_FAMILIES.includes(standardAction.family)
-    && standardAction.phase !== "conditional"
-  ) {
-    const family = standardAction.family;
-    const target = clone(standardAction.target || undefined);
-    const payload = clone(standardAction.payload || undefined);
-    return compactObject({
-      schemaVersion: ACTION_SCHEMA_VERSION,
-      actionId: standardAction.actionId,
-      actorPlayerId: standardAction.actorId || actorPlayerId,
-      decisionType: "turn_action",
-      family,
-      target,
-      payload,
-      actionFeature: {
-        familyIndex: ACTION_FAMILY_INDEX[family],
-        phase: standardAction.phase,
-        hasTarget: Boolean(target && Object.keys(target).length),
-        hasPayload: Boolean(payload && Object.keys(payload).length),
-      },
-      summary: standardAction.summary || family,
-    });
-  }
-  return null;
-}
-
-function normalizeConditionalCandidate(candidate, actorPlayerId) {
-  const standardAction = candidate?.schemaVersion === "seti-standard-action-v1"
-    ? candidate
-    : null;
-  if (
-    standardAction
-    && standardAction.schemaVersion === "seti-standard-action-v1"
-    && CONDITIONAL_FAMILIES.includes(standardAction.family)
-    && standardAction.phase === "conditional"
-  ) {
-    const family = standardAction.family;
-    const target = clone(standardAction.target || undefined);
-    const payload = clone(standardAction.payload || undefined);
-    if (target?.kind === "discard-hand-cards" && target.handIndexes?.length === 1) {
-      target.handIndex = target.handIndexes[0];
-      target.cardId = target.cardIds?.[0] || null;
-    }
-    return compactObject({
-      schemaVersion: ACTION_SCHEMA_VERSION,
-      actionId: standardAction.actionId,
-      actorPlayerId: standardAction.actorId || actorPlayerId,
-      decisionType: "conditional_choice",
-      family,
-      target,
-      payload,
-      actionFeature: {
-        familyIndex: ACTION_FAMILY_INDEX[family],
-        phase: "conditional",
-        hasTarget: Boolean(target && Object.keys(target).length),
-        hasPayload: Boolean(payload && Object.keys(payload).length),
-      },
-      summary: standardAction.summary || family,
-    });
-  }
-  return null;
 }
 
 function sanitizeCard(card) {
@@ -231,15 +160,12 @@ function containsForbiddenObservationKey(value) {
 }
 
 module.exports = {
-  ACTION_SCHEMA_VERSION,
   OBSERVATION_SCHEMA_VERSION,
   TURN_ACTION_FAMILIES,
   CONDITIONAL_FAMILIES,
   ACTION_FAMILY_INDEX,
   ACTION_COVERAGE_MATRIX,
   CONDITIONAL_COVERAGE_MATRIX,
-  normalizeTurnCandidate,
-  normalizeConditionalCandidate,
   sanitizeCard,
   sanitizePublicPlayer,
   sanitizeSelfPlayer,

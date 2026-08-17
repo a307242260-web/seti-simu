@@ -19,12 +19,10 @@ def fixture_record(split="train", seed="seed-a"):
         "selfState": {"playerId": "p1", "hand": []}, "terminal": False,
     }
     actions = [
-        {"schemaVersion": "seti-rl-action-v2", "actionId": "launch:1", "actorPlayerId": "p1",
-         "decisionType": "turn_action", "family": "launch", "maskIndex": 0,
-         "stateVersion": 1, "decisionVersion": 1},
-        {"schemaVersion": "seti-rl-action-v2", "actionId": "pass:1", "actorPlayerId": "p1",
-         "decisionType": "turn_action", "family": "pass", "maskIndex": 1,
-         "stateVersion": 1, "decisionVersion": 1},
+        {"schemaVersion": "seti-standard-action-v1", "actionId": "launch:1", "actorId": "p1",
+         "family": "launch", "phase": "main", "stateVersion": 1, "decisionVersion": 1},
+        {"schemaVersion": "seti-standard-action-v1", "actionId": "pass:1", "actorId": "p1",
+         "family": "pass", "phase": "main", "stateVersion": 1, "decisionVersion": 1},
     ]
     chosen = actions[0]
     return {"episodeId": seed, "seed": seed, "seat": 0, "step": 0,

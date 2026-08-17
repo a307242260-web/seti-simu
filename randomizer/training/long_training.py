@@ -125,8 +125,8 @@ def sanitized_action(action: dict[str, Any]) -> dict[str, Any]:
                 reject(item)
     reject(action)
     allowed = (
-        "schemaVersion", "actionId", "actorPlayerId", "decisionType", "family",
-        "target", "payload", "actionFeature", "summary", "maskIndex",
+        "schemaVersion", "actionId", "actorId", "family", "phase",
+        "target", "payload", "summary",
         "stateVersion", "decisionVersion",
     )
     return {key: action[key] for key in allowed if key in action}

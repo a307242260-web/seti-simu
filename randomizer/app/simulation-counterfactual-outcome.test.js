@@ -10,7 +10,7 @@ function drainOpeningDecisions(environment) {
   let guard = 0;
   while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
     const actions = environment.legalActions();
-    const actorId = actions[0].actorPlayerId;
+    const actorId = actions[0].actorId;
     const progress = selectionProgress.get(actorId) || { industry: false, initialIds: new Set() };
     let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
       || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
@@ -365,7 +365,7 @@ try {
       "白色 end_turn 后必须由 planner-only 时钟直接进入白色下一行动");
     assert.deepEqual(
       Object.keys(policyDiagnostics.executedNodeCountByActor || {}),
-      [actions[0].actorPlayerId],
+      [actions[0].actorId],
       "固定盘面全部物理执行节点必须只属于当前白色席位",
     );
     assert.equal(

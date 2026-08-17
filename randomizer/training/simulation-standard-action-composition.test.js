@@ -93,7 +93,7 @@ function drainOpeningDecisions(environment) {
   let guard = 0;
   while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
     const actions = environment.legalActions();
-    const actorId = actions[0].actorPlayerId;
+    const actorId = actions[0].actorId;
     const progress = selectionProgress.get(actorId) || { industry: false, initialIds: new Set() };
     let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
       || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
@@ -680,7 +680,7 @@ for (const family of ["scan", "place_data"]) {
     ));
     assert.ok(trade, "发射后必须可枚举 energy-for-move");
     const energyBefore = JSON.parse(quickMoveEnv.createCheckpoint().coreState.committedState)
-      .players.players.find((player) => player.id === trade.actorPlayerId).resources.energy;
+      .players.players.find((player) => player.id === trade.actorId).resources.energy;
     assert.equal(quickMoveEnv.step(trade).ok, true, "energy-for-move 提交失败");
     const moveChoice = quickMoveEnv.legalActions().find((action) => (
       action.family === "choose_target" && action.target?.kind === "quick-move"
@@ -689,9 +689,9 @@ for (const family of ["scan", "place_data"]) {
     const moved = quickMoveEnv.step(moveChoice);
     assert.equal(moved.ok, true, "快速移动方向提交失败: " + (moved.error || ""));
     const root = JSON.parse(quickMoveEnv.createCheckpoint().coreState.committedState);
-    const player = root.players.players.find((entry) => entry.id === trade.actorPlayerId);
+    const player = root.players.players.find((entry) => entry.id === trade.actorId);
     assert.equal(player.resources.energy, energyBefore - 1, "快速移动必须消耗 1 能量");
-    const rocket = root.pieces.rockets.find((entry) => entry.playerId === trade.actorPlayerId);
+    const rocket = root.pieces.rockets.find((entry) => entry.playerId === trade.actorId);
     assert.ok(rocket, "快速移动后探测器必须存在");
   } finally {
     quickMoveEnv.dispose();

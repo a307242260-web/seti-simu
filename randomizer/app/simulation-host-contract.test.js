@@ -3,7 +3,6 @@
 const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("./simulation-env");
 const {
-  ACTION_SCHEMA_VERSION,
   OBSERVATION_SCHEMA_VERSION,
 } = require("./simulation-contract");
 
@@ -37,10 +36,9 @@ assert.ok(
 
 const legal = env.legalActions();
 assert.ok(legal.length > 0, "reset 后必须暴露当前策略边界的 legal set");
-for (const [maskIndex, action] of legal.entries()) {
-  assert.equal(action.schemaVersion, ACTION_SCHEMA_VERSION);
-  assert.equal(action.actorPlayerId, initial.decision.actorPlayerId);
-  assert.equal(action.maskIndex, maskIndex);
+for (const action of legal) {
+  assert.equal(action.schemaVersion, "seti-standard-action-v1", "决策路径合法集必须用原生标准 schema（无训练转换）");
+  assert.equal(action.actorId, initial.decision.actorPlayerId, "原生 descriptor 用 actorId 标识 owner");
   assert.equal(Number.isSafeInteger(action.stateVersion), true);
   assert.equal(Number.isSafeInteger(action.decisionVersion), true);
 }
@@ -56,7 +54,7 @@ const current = legal[0];
 for (const [submitted, code] of [
   [{ ...current, actionId: "unknown-action" }, "SIMULATION_ACTION_NOT_LEGAL"],
   [{ ...current, schemaVersion: "seti-rl-action-v0" }, "SIMULATION_ACTION_SCHEMA_MISMATCH"],
-  [{ ...current, actorPlayerId: "other-player" }, "SIMULATION_ACTION_ACTOR_MISMATCH"],
+  [{ ...current, actorId: "other-player" }, "SIMULATION_ACTION_ACTOR_MISMATCH"],
   [{ ...current, stateVersion: current.stateVersion + 1 }, "SIMULATION_ACTION_STALE"],
   [{ ...current, target: { tampered: true } }, "SIMULATION_ACTION_DESCRIPTOR_MISMATCH"],
 ]) {
@@ -74,7 +72,7 @@ for (const [submitted, code] of [
 const accepted = env.step(current);
 assert.equal(accepted.ok, true, accepted.error);
 assert.equal(accepted.actionId, current.actionId);
-assert.equal(accepted.actorPlayerId, current.actorPlayerId);
+assert.equal(accepted.actorPlayerId, current.actorId);
 assert.equal(accepted.done, accepted.observation.terminal);
 assert.equal(accepted.terminated, accepted.observation.terminal);
 assert.equal(accepted.truncated, false);

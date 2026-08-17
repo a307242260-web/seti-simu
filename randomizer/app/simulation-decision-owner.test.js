@@ -14,8 +14,8 @@ function assertDecision(ownerState, expected, legalActorPlayerId = expected.acto
   const decision = buildDecision(
     createApi(ownerState),
     [{
-      actorPlayerId: legalActorPlayerId,
-      decisionType: expected.decisionType || "conditional_choice",
+      actorId: legalActorPlayerId,
+      phase: expected.decisionType === "turn_action" ? "main" : "conditional",
     }],
   );
   assert.deepEqual(decision, {
