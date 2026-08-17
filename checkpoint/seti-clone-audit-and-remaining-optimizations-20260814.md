@@ -118,6 +118,26 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 fast-path 设计启示：miss 集中在「根行动 → 条件决策」的平局选择，条件决策本身
 便宜；可考虑只对非条件决策 fast-path，或对条件决策携带稳定 tie-break。
 
+## 方向 D 落地：fast-path v3（分层架构：simulation 管复用，方案输出计划，2026-08-XX）
+
+按用户架构重构：simulation 侧负责模拟，每个机器人决策点先看能否直接复用上次
+计划；不复用才调用决策方案，方案输出 { actionId（至少下一步）, plan?（完整
+计划，用于复用判断）}。
+
+- 契约：`heuristic-policy-adapter.runDecision` 输出携带 `plan`（winning leaf 的
+  chain.slice(1) 完整链 + 依赖 + 揭示基线）；simulation 的 store 存完整计划，
+  `planReuseCheck` 命中后 `advancePlan` 前进一步存回（多步逐步消费），链条耗尽
+  或判定失败才调用方案。
+- 判定不变：下一步合法 + 揭示基线未增 + 依赖环节未变（含跨出路线终点守卫）→
+  复用；否则重新决策。
+- 复用的决策来源 = 计划缓存（不透明于 policy 接口的近似，见红线）；方案接口对
+  任何 policy 可插拔（输出含 plan 即可参与复用）。
+
+首测 A/B（seti-107，前 120 决策）：命中 76/92 = **82.6%**（多步消费使一次搜索
+覆盖后续多个决策），wall 16.8s vs baseline 36.2s（**省 53.7%**），miss 12 例
+no-plan + 4 例 step-not-legal；终局分差四席合计 +1（白 -6 / 棕 +5 / 绿 +2），
+提交失败 0。全量 Node 回归通过。
+
 ## 方向 D 落地：fast-path v2（三层判定，2026-08-XX）
 
 实现（按用户口径，对照基准 = 上轮本家行动执行完的计划假设状态，而非执行前）：

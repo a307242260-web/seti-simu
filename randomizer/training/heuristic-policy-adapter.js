@@ -4,6 +4,7 @@ const policyPort = require("../game/ai/policy-port");
 const standardAction = require("../game/actions/standard-action");
 const heuristicPolicy = require("../game/ai/heuristic-policy");
 const machinePlayerHost = require("../game/ai/machine-player-host");
+const planContinuation = require("../game/ai/plan-continuation");
 
 function toStandardDescriptor(action) {
   if (!action || typeof action !== "object") return null;
@@ -152,6 +153,16 @@ function createHeuristicPolicyAdapter(options = {}) {
         { hostResult: result || null },
       );
     }
+    // 决策方案输出：至少下一步（action），若有完整计划（winning leaf 链 ≥ 2 步）
+    // 则随决策返回，供 simulation 侧做复用判断（多步逐步消费）。
+    const snapshot = planContinuation.extractPlanSnapshot({
+      seatId: first.actorId,
+      chosenAction: action,
+      legalActions,
+      actionOutcomes,
+      rootObservation: observation,
+    }, { light: true });
+    const plan = planContinuation.buildPlanFromSnapshot(snapshot);
     return Object.freeze({
       context: policyPort.createDecisionContext({
         requestId: result.requestId,
@@ -165,6 +176,7 @@ function createHeuristicPolicyAdapter(options = {}) {
       }),
       decision: result.policyDecision,
       action,
+      plan,
       submission: result.submission,
       policyIdentity: result.policyIdentity,
     });

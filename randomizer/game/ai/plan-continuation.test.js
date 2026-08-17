@@ -329,12 +329,12 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
 }
 
 // ---------------------------------------------------------------------------
-// attemptPlanContinuation：三层判定（依赖环节未变 → 复用；变了 → 重决策）
+// planReuseCheck：simulation 侧复用判定（下一步合法 + 揭示基线 + 依赖环节未变）
 // ---------------------------------------------------------------------------
 
 {
-  const nextDescriptor = descriptor("move", { rocketId: "r1", deltaX: 1, deltaY: 0 }, {}, "move:a");
-  const nextKey = planContinuation.actionSemanticKey(nextDescriptor);
+  const nextActionId = "move:b";
+  const nextDescriptor = descriptor("move", { rocketId: "r1", deltaX: 1, deltaY: 0 }, {}, nextActionId);
   // 依赖：探测路线计划，终点 land:mars，移动 2 步（fixture 候选无 firstRewardSlotOpen → null）
   const routeDependency = {
     kind: "route",
@@ -343,42 +343,49 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     movementSteps: 2,
     firstRewardSlotOpen: null,
   };
-  const store = { nextStepKey: nextKey, dependency: routeDependency, revealedCount: 0 };
+  const plan = {
+    nextActionId,
+    continuation: ["move:b", "orbit:c"],
+    dependency: routeDependency,
+    revealedCount: 0,
+  };
 
-  const noStore = planContinuation.attemptPlanContinuation(null, null, [nextDescriptor]);
-  assert.equal(noStore.hit, false);
-  assert.equal(noStore.reason, "no-plan");
+  const noPlan = planContinuation.planReuseCheck(null, makeObservation(), [nextDescriptor]);
+  assert.equal(noPlan.hit, false);
+  assert.equal(noPlan.reason, "no-plan");
 
-  const notLegal = planContinuation.attemptPlanContinuation(
-    store,
-    makeObservation(),
-    [descriptor("move", { rocketId: "r1", deltaX: 2, deltaY: 0 })],
-  );
-  assert.equal(notLegal.hit, false, "下一步不在当前合法集必须重决策");
-  assert.equal(notLegal.reason, "step-not-legal");
-
-  const noDependency = planContinuation.attemptPlanContinuation(
-    { nextStepKey: nextKey, dependency: null },
+  const noStep = planContinuation.planReuseCheck(
+    { ...plan, nextActionId: "move:zz" },
     makeObservation(),
     [nextDescriptor],
   );
-  assert.equal(noDependency.hit, false, "无依赖信息（无法验证）必须保守重决策");
-  assert.equal(noDependency.reason, "no-dependency");
+  assert.equal(noStep.hit, false, "下一步不在当前合法集必须重新决策");
+  assert.equal(noStep.reason, "step-not-legal");
+
+  const noBaseline = planContinuation.planReuseCheck(
+    { ...plan, revealedCount: null },
+    makeObservation(),
+    [nextDescriptor],
+  );
+  assert.equal(noBaseline.hit, false, "无揭示基线必须保守重新决策");
+  assert.equal(noBaseline.reason, "no-reveal-count");
 
   // tier1/2：依赖环节未变 → 直接复用（盘面无变化，或变化不影响计划执行）
   const unchanged = makeObservation();
   unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
   unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const hit = planContinuation.attemptPlanContinuation(store, unchanged, [nextDescriptor]);
+  const hit = planContinuation.planReuseCheck(plan, unchanged, [nextDescriptor]);
   assert.equal(hit.hit, true, "路线移动步数与槽位未变必须复用");
-  assert.equal(hit.action.actionId, "move:a");
+  assert.equal(hit.action.actionId, nextActionId, "命中必须返回当前合法集内的 descriptor");
+  assert.equal(hit.nextPlan.nextActionId, "orbit:c", "复用后计划必须前进一步（多步消费）");
+  assert.deepEqual(hit.nextPlan.continuation, ["orbit:c"], "前进后续接下一动作");
 
   // tier3：着陆需要的移动更多了 → 重新决策
   const moreMoves = makeObservation();
   moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
   moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
   moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].gap.movementSteps = 5;
-  const affected = planContinuation.attemptPlanContinuation(store, moreMoves, [nextDescriptor]);
+  const affected = planContinuation.planReuseCheck(plan, moreMoves, [nextDescriptor]);
   assert.equal(affected.hit, false, "目标移动步数增加必须重新决策");
   assert.equal(affected.reason, "next-step-affected");
 
@@ -387,42 +394,72 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
   slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
   slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].firstRewardSlotOpen = false;
-  const slotMiss = planContinuation.attemptPlanContinuation(store, slotTaken, [nextDescriptor]);
+  const slotMiss = planContinuation.planReuseCheck(plan, slotTaken, [nextDescriptor]);
   assert.equal(slotMiss.hit, false, "第一奖励格被占必须重新决策");
 
+  // tier3：计划跨出当前路线终点（下一步是另一路线的 land）→ 重新决策
+  const otherRoutePlan = {
+    nextActionId: "land:venus:x",
+    continuation: ["land:venus:x"],
+    dependency: routeDependency,
+    revealedCount: 0,
+  };
+  const otherRoute = planContinuation.planReuseCheck(otherRoutePlan, unchanged, [
+    descriptor("land", { planetId: "venus" }, {}, "land:venus:x"),
+  ]);
+  assert.equal(otherRoute.hit, false, "下一步目标 ≠ 计划路线终点必须重新决策");
+  assert.equal(otherRoute.reason, "route-target-changed");
+
   // tier1/2：generic 依赖（对手火箭移动/打牌等不影响计划执行）→ 直接复用
-  const genericStore = { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: 0 };
-  const genericHit = planContinuation.attemptPlanContinuation(genericStore, makeObservation({ rotation: 2 }), [nextDescriptor]);
+  const genericPlan = { nextActionId, continuation: [], dependency: { kind: "generic" }, revealedCount: 0 };
+  const genericHit = planContinuation.planReuseCheck(genericPlan, makeObservation({ rotation: 2 }), [nextDescriptor]);
   assert.equal(genericHit.hit, true, "generic 依赖（未识别为影响计划执行）必须复用");
 
   // 硬性特例：翻开了外星人 → 无论依赖环节如何都必须重新决策
   const revealed = makeObservation();
   revealed.publicState.board.aliens = { slots: [{ revealed: true }] };
-  const revealedMiss = planContinuation.attemptPlanContinuation(
-    { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: 0 },
-    revealed,
-    [nextDescriptor],
-  );
+  const revealedMiss = planContinuation.planReuseCheck(genericPlan, revealed, [nextDescriptor]);
   assert.equal(revealedMiss.hit, false, "翻开了外星人必须重新决策");
   assert.equal(revealedMiss.reason, "alien-revealed");
   assert.equal(revealedMiss.currentRevealedCount, 1, "必须报告实际揭示槽位数");
 
-  // 揭示数未增加（还是 1 个）→ 不触发硬性特例，走正常依赖判定
-  const stillRevealed = planContinuation.attemptPlanContinuation(
-    { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: 1 },
+  // 揭示数未增加（还是 1 个）→ 不触发硬性特例
+  const stillRevealed = planContinuation.planReuseCheck(
+    { ...genericPlan, revealedCount: 1 },
     revealed,
     [nextDescriptor],
   );
   assert.equal(stillRevealed.hit, true, "揭示数未增加不触发特例");
+}
 
-  // store 无揭示基线 → 无法验证 → 保守重新决策
-  const noBaseline = planContinuation.attemptPlanContinuation(
-    { nextStepKey: nextKey, dependency: { kind: "generic" }, revealedCount: null },
-    makeObservation(),
-    [nextDescriptor],
-  );
-  assert.equal(noBaseline.hit, false, "无揭示基线必须保守重新决策");
-  assert.equal(noBaseline.reason, "no-reveal-count");
+// ---------------------------------------------------------------------------
+// buildPlanFromSnapshot / advancePlan：方案输出计划结构
+// ---------------------------------------------------------------------------
+
+{
+  const snapshot = {
+    plan: {
+      hasContinuation: true,
+      nextActionId: "move:b",
+      continuation: ["move:b", "orbit:c"],
+    },
+    planDependency: { kind: "generic" },
+    planAssumedRevealedCount: 0,
+  };
+  const built = planContinuation.buildPlanFromSnapshot(snapshot);
+  assert.equal(built.nextActionId, "move:b");
+  assert.deepEqual(built.continuation, ["move:b", "orbit:c"]);
+  assert.equal(built.dependency.kind, "generic");
+  assert.equal(built.revealedCount, 0);
+
+  const advanced = planContinuation.advancePlan(built);
+  assert.equal(advanced.nextActionId, "orbit:c", "前进后 nextActionId 续上链下一个");
+  assert.deepEqual(advanced.continuation, ["orbit:c"]);
+
+  const exhausted = planContinuation.advancePlan(advanced);
+  assert.equal(exhausted.nextActionId, null, "链条耗尽后 nextActionId 为 null（store 清空）");
+
+  assert.equal(planContinuation.buildPlanFromSnapshot({ plan: { hasContinuation: false } }), null, "无延续 → 无计划");
 }
 
 // ---------------------------------------------------------------------------

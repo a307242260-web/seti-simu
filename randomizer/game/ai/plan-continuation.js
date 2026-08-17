@@ -180,6 +180,8 @@ function planContinuationFromWinningLeaf(leaf) {
     nextStepFamily: descriptor?.family || String(nextActionId).split(":")[0],
     nextStepKey: descriptor ? actionSemanticKey(descriptor) : `id:${nextActionId}`,
     nextStepDescriptor: descriptor || null,
+    // 完整计划：根行动之后的全部后续步骤（actionIds），供多步复用逐步消费。
+    continuation: chain.slice(1),
     // 计划假设状态：根行动执行后的观测。rootActionSettledObservation 优先
     // （完整稳定边界），缺失时退回 rootActionObservation（根行动刚执行完）。
     planAssumedObservation: leaf?.rootActionSettledObservation
@@ -582,49 +584,83 @@ function countRevealedAliens(observation) {
 }
 
 // ---------------------------------------------------------------------------
-// fast-path 检查（纯函数）：只消费计划快照 + 当前合法集 + 当前观测
+// 决策方案输出的计划结构 + simulation 侧复用判定
 // ---------------------------------------------------------------------------
 
-// store: { nextStepKey, dependency, revealedCount, directoryFingerprint }
-// （由 extractPlanSnapshot 的 plan/planDependency/planAssumedRevealedCount/
-// directoryFingerprint 构造）。
-// 判定（用户口径，对照基准 = 上轮本家行动执行完的计划假设状态）：
-//   下一步仍合法 且 计划执行依赖的环节未变（盘面无变化 → tier1；盘面有变化但
-//   不影响计划执行，如对手火箭移动/打牌/资源变化/无关扇区/无探测器移动的旋转
-//   → tier2）→ 直接复用；依赖环节变了（着陆移动变多 / 目标外星人槽被占等 →
-//   tier3）→ 重新决策。
-// 硬性特例：翻开了外星人（揭示槽位数增加）→ 无条件重新决策——揭示可能带来
-// 计划未预见的全新目标/机会，不适用依赖环节近似。
-function attemptPlanContinuation(store, currentObservation, legalActions) {
-  if (!store) return Object.freeze({ hit: false, reason: "no-plan" });
+// 从 extractPlanSnapshot 快照构建「决策方案输出」携带的计划：
+//   { nextActionId, continuation, dependency, revealedCount }
+// 无延续（winning leaf 链条不足 2 步）返回 null → 方案只输出下一步，无计划。
+function buildPlanFromSnapshot(snapshot) {
+  const plan = snapshot?.plan;
+  if (!plan?.hasContinuation || !plan.nextActionId) return null;
+  return {
+    nextActionId: plan.nextActionId,
+    continuation: [...(plan.continuation || [])],
+    dependency: snapshot.planDependency ?? null,
+    revealedCount: snapshot.planAssumedRevealedCount ?? null,
+  };
+}
+
+// 计划前进一步：消费当前 nextActionId，续上 continuation 的下一个。
+function advancePlan(plan) {
+  if (!plan) return null;
+  const continuation = (plan.continuation || []).slice(1);
+  return {
+    nextActionId: continuation[0] ?? null,
+    continuation,
+    dependency: plan.dependency,
+    revealedCount: plan.revealedCount,
+  };
+}
+
+// simulation 侧复用判定（用户口径，对照基准 = 上轮本家行动执行完的计划假设状态）：
+//   下一步仍合法 且 计划执行依赖的环节未变 → 复用（盘面无变化 tier1；变化不影响
+//   计划执行 tier2——对手火箭移动/打牌/资源变化、无关扇区、无探测器移动的旋转）；
+//   依赖环节变了（着陆移动变多 / 目标外星人槽被占 / 第一奖励格被占 / 跨出当前
+//   路线终点）→ 重新决策（tier3）。
+//   硬性特例：翻开了外星人（揭示槽位数 > 计划假设值）→ 无条件重新决策。
+// 命中返回 { hit: true, action, nextPlan }——nextPlan 为前进后的计划（供 store
+// 存回，实现多步复用）；miss 返回 { hit: false, reason }。
+function planReuseCheck(plan, currentObservation, legalActions) {
+  if (!plan || !plan.nextActionId) return Object.freeze({ hit: false, reason: "no-plan" });
   const current = (legalActions || []).find((action) => (
-    actionSemanticKey(action) === store.nextStepKey
+    String(action?.actionId) === String(plan.nextActionId)
   ));
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
-  if (store.dependency == null) {
-    return Object.freeze({ hit: false, reason: "no-dependency" });
+  if (plan.revealedCount == null) {
+    return Object.freeze({ hit: false, reason: "no-reveal-count" });
   }
   if (!currentObservation) {
     return Object.freeze({ hit: false, reason: "no-observation" });
   }
-  // 硬性特例：翻开了外星人 → 一定重新决策
-  if (store.revealedCount == null) {
-    return Object.freeze({ hit: false, reason: "no-reveal-count" });
-  }
-  const currentRevealed = countRevealedAliens(currentObservation);
-  if (currentRevealed > store.revealedCount) {
+  if (countRevealedAliens(currentObservation) > plan.revealedCount) {
     return Object.freeze({
       hit: false,
       reason: "alien-revealed",
-      assumedRevealedCount: store.revealedCount,
-      currentRevealedCount: currentRevealed,
+      assumedRevealedCount: plan.revealedCount,
+      currentRevealedCount: countRevealedAliens(currentObservation),
     });
   }
-  const currentDependency = currentDependencyFromStore(store, currentObservation);
-  if (stableHash(currentDependency) === stableHash(store.dependency)) {
-    return Object.freeze({ hit: true, action: current });
+  if (plan.dependency == null) {
+    return Object.freeze({ hit: false, reason: "no-dependency" });
   }
-  return Object.freeze({ hit: false, reason: "next-step-affected", affected: currentDependency });
+  // 计划跨出当前路线终点（下一步是新路线的 orbit/land）→ 依赖失效 → 重新决策
+  if (plan.dependency.kind === "route" && ["orbit", "land"].includes(current.family)) {
+    const targetId = [
+      current.family,
+      current.target?.planetId,
+      current.target?.type || "planet",
+      current.target?.satelliteId || "",
+    ].join(":");
+    if (targetId !== plan.dependency.endpointTargetId) {
+      return Object.freeze({ hit: false, reason: "route-target-changed" });
+    }
+  }
+  const currentDependency = currentDependencyFromStore({ dependency: plan.dependency }, currentObservation);
+  if (stableHash(currentDependency) !== stableHash(plan.dependency)) {
+    return Object.freeze({ hit: false, reason: "next-step-affected", affected: currentDependency });
+  }
+  return Object.freeze({ hit: true, action: current, nextPlan: advancePlan(plan) });
 }
 
 module.exports = Object.freeze({
@@ -640,7 +676,9 @@ module.exports = Object.freeze({
   changedFactComponents,
   aggregateStats,
   extractPlanSnapshot,
-  attemptPlanContinuation,
+  buildPlanFromSnapshot,
+  advancePlan,
+  planReuseCheck,
   planDependencyFromPlan,
   currentDependencyFromStore,
   countRevealedAliens,

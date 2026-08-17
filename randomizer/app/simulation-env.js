@@ -797,29 +797,35 @@ function createSimulationEnv() {
         && ["start_initial_setup", "select_initial_card", "confirm_initial_setup", "discard-hand-cards"]
           .includes(action.target?.kind)
       ));
-      // 计划延续 fast-path：命中时跳过全量反事实搜索，直接提交上次搜索计划出的
-      // 下一步（含其 tie-break——计划内选择是与重搜等价的合法决策）。仅非 setup、
-      // 非 teacher 模式启用；提交经 env.step 的合法集/authority 重验。
+      // 计划延续复用（simulation 侧负责复用判断）：先看能否直接复用上次计划；
+      // 不复用才调用决策方案（启发式搜索 + policy），方案输出 { actionId, plan? }。
+      // 仅非 setup、非 teacher 模式启用；复用提交经 env.step 的合法集/authority
+      // 重验；store 存方案输出的完整计划（多步逐步消费）。
       if (config.planContinuationFastPath && !asTeacher && !initialSetupBoundary) {
         const seatId = beforeActions[0].actorPlayerId;
-        const fastPath = planContinuation.attemptPlanContinuation(
+        const reuse = planContinuation.planReuseCheck(
           planContinuationStores.get(seatId) || null,
           policyObservation,
           beforeActions,
         );
-        if (fastPath.hit) {
-          planContinuationStores.delete(seatId);
-          const committed = this.step(fastPath.action);
+        if (reuse.hit) {
+          const committed = this.step(reuse.action);
           if (!committed?.ok) {
             diagnostics.planContinuationCommitFailures += 1;
             // 提交失败（不应发生：action 来自当前 legal set）——回退全量搜索。
           } else {
             diagnostics.planContinuationHitCount += 1;
             const provenance = policyAdapter.getProvenance();
+            // 计划前进一步：仍有下一步则存回（多步复用），否则清空
+            if (reuse.nextPlan?.nextActionId) {
+              planContinuationStores.set(seatId, reuse.nextPlan);
+            } else {
+              planContinuationStores.delete(seatId);
+            }
             return {
               ...committed,
               policyDecision: {
-                actionId: fastPath.action.actionId,
+                actionId: reuse.action.actionId,
                 policyType: provenance.type,
                 policyVersion: provenance.version,
                 planContinuationFastPath: true,
@@ -827,13 +833,14 @@ function createSimulationEnv() {
               },
               policyProvenance: provenance,
               actionOutcomes: [],
+              plan: reuse.nextPlan,
               planContinuationFastPath: { hit: true },
             };
           }
         } else {
           diagnostics.planContinuationMissCount += 1;
-          diagnostics.planContinuationMissReasons[fastPath.reason] = (
-            diagnostics.planContinuationMissReasons[fastPath.reason] || 0
+          diagnostics.planContinuationMissReasons[reuse.reason] = (
+            diagnostics.planContinuationMissReasons[reuse.reason] || 0
           ) + 1;
         }
       }
@@ -905,44 +912,17 @@ function createSimulationEnv() {
       }, (chosenAction) => this.step(chosenAction), actionOutcomes);
       const result = selection.submission?.result;
       if (!result?.ok) throw new Error(result?.error || "Heuristic opponent 执行失败");
-      // 更新计划延续 store：每次全量搜索后用 winning leaf 重建（供下一次同席
-      // 决策 fast-path 复用，含条件决策的 tie-break 选择）。快照提取是诊断侧
-      // 逻辑，失败绝不 crash 游戏：计数 + 记录原因，store 置空（下次全量搜索）。
+      // 决策方案输出已含 plan（heuristic-policy-adapter.runDecision 从 winning leaf
+      // 构建）：存入 store 供下一次同席决策复用；无计划（链条不足 2 步）则清空。
       if (config.planContinuationFastPath) {
         const seatId = beforeActions[0].actorPlayerId;
-        try {
-          // light 模式：store 只需要 plan.nextStepKey 与 planDependency，
-          // 跳过全 action 排序（margin 已不参与判定）。
-          const snapshot = planContinuation.extractPlanSnapshot({
-            seatId,
-            chosenAction: selection.action,
-            legalActions: beforeActions,
-            actionOutcomes,
-            rootObservation: policyObservation,
-          }, { light: true });
-          for (const issue of snapshot.issues || []) {
-            const code = issue?.code || "unknown";
-            diagnostics.planContinuationExtractIssues[code] = (
-              diagnostics.planContinuationExtractIssues[code] || 0
-            ) + 1;
-          }
-          if (snapshot.plan?.hasContinuation && snapshot.planDependency != null) {
-            planContinuationStores.set(seatId, {
-              nextStepKey: snapshot.plan.nextStepKey,
-              dependency: snapshot.planDependency,
-              revealedCount: snapshot.planAssumedRevealedCount,
-              directoryFingerprint: snapshot.directoryFingerprint,
-            });
-          } else {
-            planContinuationStores.delete(seatId);
-            diagnostics.planContinuationStoreStatus[snapshot.planStatus || "unknown"] = (
-              diagnostics.planContinuationStoreStatus[snapshot.planStatus || "unknown"] || 0
-            ) + 1;
-          }
-        } catch (error) {
-          diagnostics.planContinuationExtractFailures += 1;
-          diagnostics.planContinuationExtractFailureMessage = error?.message || String(error);
+        if (selection.plan?.nextActionId) {
+          planContinuationStores.set(seatId, selection.plan);
+        } else {
           planContinuationStores.delete(seatId);
+          diagnostics.planContinuationStoreStatus["no-plan-output"] = (
+            diagnostics.planContinuationStoreStatus["no-plan-output"] || 0
+          ) + 1;
         }
       }
       if (!asTeacher) {
@@ -951,6 +931,7 @@ function createSimulationEnv() {
           policyDecision: selection.decision,
           policyProvenance: policyAdapter.getProvenance(),
           actionOutcomes: selection.context.actionOutcomes,
+          plan: selection.plan,
         };
       }
       return {
