@@ -1294,6 +1294,23 @@
       });
     }
 
+    // 卡牌追加的「登陆后奖励」摘要归卡牌域：与结算（resolvePlanet 的
+    // afterLandRewards）同一匹配规则，只拼进选项文案；共享登陆行为不感知。
+    function appendCardAfterLandRewards(label, effectOptions, entry) {
+      const rewards = (effectOptions?.afterLandRewards || [])
+        .filter((reward) => {
+          const planetIds = reward?.planetIds || [];
+          const planetMatch = !planetIds.length || planetIds.includes(entry.planetId);
+          const satelliteMatch = reward?.includeSatellites && entry.target?.type === "satellite";
+          return planetMatch || satelliteMatch;
+        })
+        .map((reward) => reward?.effect)
+        .filter(Boolean);
+      if (!rewards.length) return label;
+      const summary = planetRewards.formatRewardEffectsSummary(rewards);
+      return summary ? `${label}；${summary}` : label;
+    }
+
     function listPlanetChoices(root, sessionEffect, actionType) {
       const actor = getActor(root, sessionEffect.ownerId);
       if (!actor) return [];
@@ -1322,6 +1339,7 @@
           target.type || "planet",
           target.satelliteId || "",
         ].join(":");
+        const label = entry.label || `${actionType} ${entry.planetId}`;
         return makeChoice(
           "choose_target",
           choiceId,
@@ -1332,7 +1350,9 @@
             landTarget: target,
           },
           { options },
-          entry.label || `${actionType} ${entry.planetId}`,
+          actionType === "land"
+            ? appendCardAfterLandRewards(label, effectOptions, entry)
+            : label,
         );
       });
     }

@@ -170,24 +170,13 @@
     return formatRewardSummary(planetRewards.buildOrbitRewardEffects(planetId, markerSequence));
   }
 
-  function getAfterLandRewardEffects(options = {}, planetId, targetType) {
-    if (!Array.isArray(options.afterLandRewards)) return [];
-    return options.afterLandRewards
-      .filter((reward) => {
-        const planetIds = reward?.planetIds || [];
-        const planetMatch = !planetIds.length || planetIds.includes(planetId);
-        const satelliteMatch = reward?.includeSatellites && targetType === "satellite";
-        return planetMatch || satelliteMatch;
-      })
-      .map((reward) => reward?.effect)
-      .filter(Boolean);
-  }
-
   function getLandRewardMarkerSequence(target, markerSequence, options = {}) {
     if (target?.type === "planet" && options.forceFirstLandingReward) return 1;
     return markerSequence;
   }
 
+  // 共享登陆行为只展示标准登陆奖励；卡牌追加的「登陆后奖励」摘要由卡牌域
+  // （play-domain）负责拼接，能力层不再读取 afterLandRewards。
   function buildLandRewardSummary(planetId, target, markerSequence, options = {}) {
     const effects = [];
     if (options.grantRewards !== false) {
@@ -202,7 +191,6 @@
         ));
       }
     }
-    effects.push(...getAfterLandRewardEffects(options, planetId, target?.type || "planet"));
     return formatRewardSummary(effects);
   }
 

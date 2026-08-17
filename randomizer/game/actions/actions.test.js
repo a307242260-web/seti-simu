@@ -394,4 +394,25 @@ if (researchTake.bonusId === "bonus_1c") {
   assert.equal(player.resources.energy, 2, "开局发射不得扣能量（免成本）");
 }
 
+// 共享登陆行为纯净：getLandOptions 的选项摘要不得包含卡牌追加的
+// afterLandRewards（卡牌域摘要由 play-domain 负责拼接）。
+{
+  const pureLandContext = createContext();
+  launchToPlanet(pureLandContext, "mars");
+  const pureOptions = abilities.planet.getLandOptions(pureLandContext, {
+    afterLandRewards: [{
+      planetIds: ["mars"],
+      effect: { id: "card-extra", type: "gain_resources", label: "卡牌追加登陆奖励" },
+    }],
+  });
+  assert.equal(pureOptions.ok, true, pureOptions.message);
+  const pureLabel = pureOptions.choices[0].label;
+  assert.equal(
+    pureLabel.includes("卡牌追加登陆奖励"),
+    false,
+    "共享 getLandOptions 摘要不得读取卡牌 afterLandRewards",
+  );
+  assert.match(pureLabel, /奖励：/, "标准登陆奖励摘要仍保留");
+}
+
 console.log("action ability tests passed");
