@@ -15,7 +15,7 @@ const aliens = require("../aliens");
 const solar = require("../../solar-system/core");
 const rockets = require("../rockets");
 
-assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 46);
+assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 45);
 assert.deepEqual(
   playDomain.OWNED_PLAY_EFFECT_TYPES,
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES,
@@ -23,8 +23,8 @@ assert.deepEqual(
 );
 assert.equal(
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES.length,
-  47,
-  "182 张牌的递归 effect 闭包必须包含 46 个顶层类型与嵌套探测器计数奖励",
+  46,
+  "182 张牌的递归 effect 闭包必须包含 45 个顶层类型与嵌套探测器计数奖励",
 );
 assert.ok(
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES.includes(

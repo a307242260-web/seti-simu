@@ -47,7 +47,6 @@
     DISCARD_ANY_FOR_INCOME: "card_discard_any_for_income",
     PAY_CREDITS_FOR_REWARD: "card_pay_credits_for_reward",
     DISCARD_CARD_CORNER_REPEAT: "card_discard_card_corner_repeat",
-    REMOVE_ORBIT_TO_PROBE: "card_remove_orbit_to_probe",
     RETURN_UNFINISHED_TASK_TO_HAND: "card_return_unfinished_task_to_hand",
     COUNT_TECH_TYPES_REWARD: "card_count_tech_types_reward",
     COUNT_OWNED_TECH_REWARD: "card_count_owned_tech_reward",
@@ -673,10 +672,6 @@
       cornerRepeat: Math.max(1, Math.round(Number(options.repeat || 1))),
       excludeAlienCards: options.excludeAlienCards !== false,
     });
-  }
-
-  function removeOrbitToProbeEffect(id, label) {
-    return effect(id, EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE, label || "移除己方环绕并放置探测器", "orbitOrLand", {});
   }
 
   function returnUnfinishedTaskToHandEffect(id, label, options = {}) {
@@ -2402,7 +2397,17 @@
     }),
     "dlc_19.png": withSource("dlc_19.png", {
       cardType: 0,
-      playEffects: Object.freeze([removeOrbitToProbeEffect("dlc19-orbit-to-probe", "移除己方环绕并在该星球位置放置探测器")]),
+      // 凌日系外行星巡天卫星：若你拥有 3 个或更多扇区（有己方信号的扇区），
+      // 获得 2 个信号（往任意星云替换 token），不获得数据。
+      playEffects: Object.freeze([conditionalRewardEffect(
+        "dlc19-signals",
+        "拥有3个以上扇区：获得2个信号（不获得数据）",
+        { type: "distinctSignalSectors", count: 3 },
+        [
+          effect("dlc19-signal-1", EFFECT_TYPES.ANY_SECTOR_SCAN, "放置第1个信号（不获得数据）", "scan", { gainData: false }),
+          effect("dlc19-signal-2", EFFECT_TYPES.ANY_SECTOR_SCAN, "放置第2个信号（不获得数据）", "scan", { gainData: false }),
+        ],
+      )]),
     }),
     "dlc_20.png": withSource("dlc_20.png", {
       cardType: 0,

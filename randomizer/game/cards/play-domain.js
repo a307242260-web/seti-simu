@@ -1972,18 +1972,6 @@
         }
         return choices;
       }
-      if (effect.type === cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE) {
-        return listGenericChoices(root, {
-          ...sessionEffect,
-          payload: {
-            ...sessionEffect.payload,
-            cardEffect: {
-              ...effect,
-              type: cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER,
-            },
-          },
-        }).filter((choice) => choice.target.kind === "orbit");
-      }
       if (effect.type === cardEffects.EFFECT_TYPES.PROBE_LOCATION_REWARD) {
         return listPlayerRockets(root, actor.id)
           .map((rocket) => makeChoice(
@@ -2394,32 +2382,12 @@
         const [card] = actor.reservedCards.splice(index, 1);
         actor.hand.push(card);
         actor.resources.handSize = actor.hand.length;
-      } else if ([
-        cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER,
-        cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE,
-      ].includes(effect.type)) {
+      } else if (effect.type === cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER) {
         const state = getWorkingSlice(root, "planets");
         const planet = state.planets?.[legal.target.planetId];
         const key = legal.target.kind === "orbit" ? "orbitMarkers" : "landingMarkers";
         const markers = planet?.[key] || [];
         const [marker] = markers.splice(legal.target.index, 1);
-        if (effect.type === cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE && marker) {
-          const location = solar.createSolarSnapshot(
-            getWorkingSlice(root, "solarSystem"),
-          ).planetLocations?.find((planet) => planet.planetId === legal.target.planetId);
-          // 统一发射内核：环绕标记转探测器与行动性发射共用 launchProbe，
-          // 免成本、在目标星球扇区放置，并按普通发射规则检查探测器上限。
-          const launched = abilities.executeAbility(
-            "launchProbe",
-            createActionContext(root, actor.id),
-            {
-              skipCost: true,
-              sectorCoordinate: location,
-              source: "card",
-            },
-          );
-          if (!launched.ok) return launched;
-        }
       } else if (effect.type === cardEffects.EFFECT_TYPES.PROBE_LOCATION_REWARD) {
         const rocket = listPlayerRockets(root, actor.id)
           .find((entry) => String(entry.id) === String(legal.target.rocketId));
@@ -2513,7 +2481,6 @@
       [cardEffects.EFFECT_TYPES.PROBE_STACK_REWARD]: {},
       [cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD]: {},
       [cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS]: {},
-      [cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF]: {},
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },

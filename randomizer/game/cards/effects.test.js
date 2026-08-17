@@ -255,7 +255,15 @@ assert.deepEqual(cardEffects.buildPlayEffects({ cardId: "dlc_13.png" })[1].optio
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_15.png" })[0].options.afterResearchReward.kind, "repeatBonus");
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_17.png" })[0].type, cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_18.png" })[0].options.requireCondition.type, "resourceEquals");
-assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_19.png" })[0].type, cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE);
+{
+  const dlc19 = cardEffects.buildPlayEffects({ cardId: "dlc_19.png" })[0];
+  assert.equal(dlc19.type, cardEffects.EFFECT_TYPES.CONDITIONAL_REWARD, "dlc_19 凌日系外行星巡天卫星必须是条件奖励");
+  assert.deepEqual(dlc19.options.condition, { type: "distinctSignalSectors", count: 3 }, "dlc_19 条件：拥有3个以上扇区");
+  assert.equal(dlc19.options.rewards.length, 2, "dlc_19 必须获得 2 个信号");
+  assert.equal(dlc19.options.rewards.every((reward) => (
+    reward.type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN && reward.options.gainData === false
+  )), true, "dlc_19 的 2 个信号必须不获得数据");
+}
 const dlc20RepeatCorner = cardEffects.buildPlayEffects({ cardId: "dlc_20.png" })
   .find((effect) => effect.type === cardEffects.EFFECT_TYPES.DISCARD_CARD_CORNER_REPEAT);
 assert.equal(dlc20RepeatCorner.options.cornerRepeat, 3);
