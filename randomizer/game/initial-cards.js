@@ -457,15 +457,15 @@
   }
 
   function replaceNextSectorData(context, player, nebulaId) {
-    // 统一扫描内核：与主行动/卡牌/奖励扫描共用 abilities.scanNebula（找下一个
-    // 可替换 token → 替换 → 得数据 → 无可替换时追加扫描计数标记）。初始牌扫描
-    // 不付扫描费、不展开完整扫描队列（初始结算豁免），计分来源记 initialScore、
-    // 数据来源记 initial_card。
-    const result = scanAbility.scanNebula(context, {
+    // 统一「替换星云数据为自己」原语：与主行动/卡牌/奖励扫描共用
+    // abilities.placeNebulaToken（替换下一可替换槽位，无可替换时追加计数标记）。
+    // 初始牌不是扫描行动，直接调原语而非 scanNebula；计分来源记 initialScore、
+    // 数据来源记 initial_card，免扫描费、不展开完整扫描队列（初始结算豁免）。
+    const result = scanAbility.placeNebulaToken(context, {
       nebulaId,
+      playerId: player.id,
       source: "initial_card",
       scoreSourceKey: "initialScore",
-      prefix: "初始扫描",
     });
     return { ...result, type: "scan" };
   }

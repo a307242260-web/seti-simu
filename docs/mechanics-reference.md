@@ -81,7 +81,7 @@ Decision：
 - 公司牌重设资源后、初始牌结算前，会按初始顺位给予默认分：1 / 2 / 3 / 4 号位分别获得 1 / 2 / 3 / 4 分；之后初始牌或其他初始效果获得的分数继续累加。
 - 公司牌的盲抽、数据和发射效果会先结算；所有玩家的公司牌和初始牌都结算完成后，再按公司牌记录的“收入增加”次数依次处理。每次收入增加立即按当前收入水平结算，因此盲抽收入增加拿到的新牌可用于后续收入增加选择。**初始收入队列未全部完成前**，主要行动、公司 1x、快速交易、放置数据、移动、手牌角标快速行动等均锁定。初始收入属于 setup session，不进入正常回合 session。
 - 寰宇动力的 2 次初始发射与所有行动性发射共用同一发射内核 `launchProbe`（`abilities/rocket.js`，`source: "initial_company"`）；开局免成本，并按文档豁免普通发射行动的火箭数量上限（`ignoreRocketLimit`），直接在地球扇区放置火箭。
-- 扫描类初始牌与所有扫描来源共用同一扫描内核 `scanNebula`（`abilities/scan.js`）：替换指定星云的下一个数据 token 并获得数据；若指定星云已无可替换数据，则追加扇区扫描计数标记且不获得数据。初始牌扫描免扫描费、不展开完整扫描行动队列（初始结算豁免），计分来源记 `initialScore`、数据来源记 `initial_card`。若本批初始牌扫描导致扇区完成，所有初始牌结算完后再统一触发扇区结算。
+- 扫描类初始牌与所有「往星云放置自己 token」的来源共用同一原语 `placeNebulaToken`（`abilities/scan.js`）：替换指定星云的下一个数据 token 并获得数据；若指定星云已无可替换数据，则追加扇区扫描计数标记且不获得数据。`scanNebula` 只是该原语之上的扫描编排（费用/文案/事件来源），扫描类初始牌不是扫描行动，直接调原语。初始牌扫描免扫描费、不展开完整扫描行动队列（初始结算豁免），计分来源记 `initialScore`、数据来源记 `initial_card`。若本批初始牌扫描导致扇区完成，所有初始牌结算完后再统一触发扇区结算。
 - 额外环绕器只写入 `planetStatsState` 并同步行星参考图标记，不触发环绕奖励；同时计入玩家 `orbitCount`。
 - “公共牌区弃牌扫描资源”写入玩家 `resources.additionalPublicScan`；“1数据收入”写入 `income.availableData`；“1盲抽收入”写入 `income.handSize`。
 - 当前 1-21 号初始牌模型：1 天狼星A扫描2次；2 3分+1信用点+1盲抽；3 3分+1盲抽+1宣传+火星环绕器；4 3分+1能量+1宣传+金星环绕器；5 4分+2宣传+土星环绕器；6 织女一扫描1次+1额外公共扫描；7 1数据收入+海王星环绕器；8 2分+2信用点+1宣传+水星环绕器；9 1盲抽收入+天王星环绕器；10 外星人2黄色痕迹；11 外星人2粉色痕迹；12 巴纳德扫描2次；13 绘架座β扫描2次；14 3分+1能量+1盲抽；15 4分+1额外公共扫描+1宣传；16 3分+3宣传；17 室女座61扫描2次；18 南河三扫描2次；19 比邻星扫描2次；20 开普勒22扫描2次；21 3分+1数据+1宣传+木星环绕器。
@@ -376,9 +376,10 @@ journal 统一处理。
   - `researchTechRotate(context, options)`
   - `researchTechBonus(context, options)`
 - `scan.js`：
+  - `placeNebulaToken(context, options)`：通用「替换星云数据 token 为自己」原语——替换下一个可替换槽位（可选获得数据），无可替换时追加扇区额外计数标记且不获得数据；`scoreSourceKey`/`source`/`gainData`/`playerId` 可覆盖，卡牌、环绕奖励、初始牌等非扫描来源直接调它。
   - `payScanCost(context, options)`：内部费用结算能力；标准扫描行动开始时由 science session 调用。
   - `scanSector(context, options)`
-  - `scanNebula(context, options)`
+  - `scanNebula(context, options)`：`placeNebulaToken` 之上的扫描编排（星云定位、文案、`lastScanNebulaId` 记录）。
   - `scanPublicCard(context, options)`
   - `scanHandCard(context, options)`
   - `scanAction4(context, options)`

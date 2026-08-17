@@ -43,6 +43,7 @@
     researchTechRotate: techAbility.researchTechRotate,
     researchTechBonus: techAbility.researchTechBonus,
     payScanCost: scanAbility.payScanCost,
+    placeNebulaToken: scanAbility.placeNebulaToken,
     scanSector: scanAbility.scanSector,
     scanNebula: scanAbility.scanNebula,
     scanPublicCard: scanAbility.scanPublicCard,

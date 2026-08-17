@@ -435,6 +435,30 @@ if (researchTake.bonusId === "bonus_1c") {
   assert.equal(player.resources.energy, 2, "初始牌扫描不得扣能量（免成本）");
 }
 
+// 通用原语 placeNebulaToken：独立于扫描编排，可指定 playerId 与 scoreSourceKey。
+{
+  const data = require("../data");
+  const nebulaContext = createContext({
+    players: players.createPlayerState({
+      currentPlayer: { color: "white", resources: { credits: 5, energy: 5, publicity: 5 } },
+    }),
+  });
+  nebulaContext.data = data.createDefaultNebulaDataState();
+  data.fillAllNebulaData(nebulaContext.data, { source: "setup", root: nebulaContext });
+  const target = nebulaContext.players.players[0];
+  target.dataState = data.createDefaultDataState();
+  const placed = abilities.executeAbility("placeNebulaToken", nebulaContext, {
+    nebulaId: "sector-2-a",
+    playerId: target.id,
+    source: "test_source",
+    scoreSourceKey: "testScore",
+  });
+  assert.equal(placed.ok, true, placed.message);
+  assert.equal(placed.replaced?.ok, true, "必须完成一次槽位替换");
+  assert.equal(placed.events[0].type, "signalMarked", "原语必须发出 signalMarked 事件");
+  assert.equal(target.resources.credits, 5, "原语本身不扣任何费用");
+}
+
 // 共享登陆行为纯净：getLandOptions 的选项摘要不得包含卡牌追加的
 // afterLandRewards（卡牌域摘要由 play-domain 负责拼接）。
 {
