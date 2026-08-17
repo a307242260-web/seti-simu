@@ -2,26 +2,30 @@
 
 本文描述 Browser 与 Simulation 当前共用的机器玩家生产契约。旧 AI 自动对战 controller、pending resolver、candidate selector、valuation/route/demand/pressure、battle report 与 tuning 架构已物理删除，不是兼容层或未来扩展点。
 
-## 1. 唯一输入链
+## 1. 决策流程
 
-机器席位只经过以下链路：
+机器人每个决策点的生产分两层：**simulation 侧复用优先**，未命中才调用**决策方案**。
 
 ```text
-Rule Composition
-  -> Machine Player Host
-  -> Policy Port
-  -> Heuristic / Learned Policy
-  -> PolicyDecision
-  -> Standard Action/Decision input adapter
-  -> Rule Composition
+simulation（决策点，每个机器人座位）
+  -> planReuseCheck(上次方案输出的 plan, 当前观测, 合法集)
+  -> 命中：提交 plan.nextActionId（计划前进一步，多步消费）回到 Rule Composition
+  -> 未命中：调用决策方案 -> { actionId, plan? } 回到 simulation
+       -> plan 存回（供下一次复用判断）；actionId 经标准输入提交
 ```
 
-例外：Simulation 侧的计划延续复用（`planContinuationFastPath`，默认关）在决策点
-先复用上次方案输出的 plan，命中时**直接提交计划下一步，不经过上述链路**；仅
-simulation 训练/benchmark 路径启用，Browser 不受影响。见 §3。
-
-- Browser 由 `app/ai/browser-bootstrap.js` 读取 Rule Composition boundary，构造当前机器席位的只读 observation 与 legal descriptors。
-- Simulation 使用同一 Policy Port、Machine Player Host 语义与 Standard Action/Decision identity。
+- **决策方案**（decision scheme）是一个可插拔接口：输入当前 viewer-safe observation
+  与完整 legalActions，输出**至少下一步 `actionId`**；有完整计划时附带
+  `plan = { nextActionId, continuation[], dependency, revealedCount }`
+  （`plan-continuation.js#buildPlanFromSnapshot`），供 simulation 复用判断。
+  当前实现：`training/heuristic-policy-adapter.js#runDecision`（方案 = 反事实
+  outcome 生成 + Host + 启发式 Policy，见下）；Learned Policy 实现同一输出契约
+  即可参与复用。
+- **方案内部链路**（未命中时才走）：Rule Composition 的 counterfactualPort 生成
+  actionOutcomes -> Machine Player Host -> Policy Port -> Policy -> PolicyDecision
+  -> Standard Action/Decision input adapter -> Rule Composition。复用命中时不经过
+  这条链路，合法集/authority 重验由 `simulation-env.step()` 承担。
+- 复用判定与计划结构细节见 §3；Browser 无复用层，机器席位始终走方案内部链路。
 - Host 在 Policy 请求前通过 Rule Composition 的 `counterfactualPort` 为可能直接命中当前
   估值目标的 legal action 建立隔离 fork；明确不可能命中目标的 action 仍保留在完整 legal set
   中，并以 structured unresolved outcome 对齐。Policy 只收到裁剪后的 root/leaf observation、
@@ -67,17 +71,9 @@ simulation 训练/benchmark 路径启用，Browser 不受影响。见 §3。
 
 ## 3. 决策方案输出契约与计划延续复用（simulation 侧）
 
-### 3.1 分层
+决策点两层流程见 §1；本节给出方案输出契约与复用判定的细节。
 
-simulation 侧负责模拟与复用判断；机器人决策通过「决策方案」产出：
-
-```text
-simulation（决策点）
-  -> planReuseCheck(上次计划, 当前观测, 合法集)    # 先看能否直接复用上次计划
-  -> 命中：提交 plan.nextActionId；计划前进一步（多步消费）存回 store
-  -> 未命中：调用决策方案 -> { actionId, plan? }   # 方案输出决策回到 simulation
-       -> store 存 plan（供下一次复用判断）；提交 actionId
-```
+### 3.1 方案输出契约
 
 - simulation 只依赖方案的输出契约，不关心方案内部（启发式搜索 / learned policy
   可插拔）；
@@ -109,19 +105,19 @@ simulation（决策点）
   比较）；其余 family 视为 generic（不影响计划执行）。
 - 多步消费：命中后 `advancePlan` 前进一步，链条耗尽或判定失败才重新调用方案。
 
-### 3.3 近似边界
+### 3.3 边界与约束
 
-- 复用决策的来源是**计划缓存**（上一次方案输出的 plan），不经过 policy 的
-  decide 与 Machine Player Host 完整校验链；提交经 `env.step` 的合法集/authority
-  重验，计数进 diagnostics（`planContinuationHitCount` / `MissReasons` /
-  `planContinuationStoreStatus`）。属显式近似，与 `targetSchedulerPrunedCount`
-  同文化：优化判定空间前保持近似与搜索空间不变。
+- 复用层属于 simulation 决策流程（§1）的一部分：命中的决策来自**计划缓存**而非
+  policy 的 decide，不经过 Machine Player Host 的请求/校验链；提交经 `env.step`
+  的合法集/authority 重验，计数进 diagnostics（`planContinuationHitCount` /
+  `MissReasons` / `planContinuationStoreStatus`）。判定空间变更需保持搜索空间与
+  近似不变（同 `targetSchedulerPrunedCount` 文化）。
 - 计划 store 是 per-env 瞬态（`reset`/`loadCheckpoint` 清空，不入 checkpoint）：
   当前 simulation 每 env 固定单一 policy，store 的身份隐式等于该 policy；若未来
   支持同席多 policy 切换，store 必须按 policyType/version/modelChecksum/
   configChecksum 分键（checkpoint 红线）。
 - 仅在 simulation env 启用（默认关）；Browser 路径尚未接入，Browser 机器席位仍
-  走 Host -> Policy 完整链。
+  走方案内部链路（Host -> Policy）。
 - 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
   或多打一张移动牌）；tier2 的「可能出现更优选择」；多步链的跨路线续用。
 

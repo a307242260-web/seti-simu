@@ -5,6 +5,12 @@
 Standard Action/Decision 提交。真实提交仍只有一次；反事实执行委托给 Rule Composition
 隔离 fork，不把 root、executor、StateStore 或 Effect Session 暴露给 Policy。
 
+在 `docs/ai-design.md` §1 的决策流程里，Host 是**决策方案内部链路**的协调器：
+simulation 决策点先做计划延续复用（`planReuseCheck`），未命中才进入本 Host 请求
+Policy。复用命中时不经过本 Host（合法集/authority 重验由 `simulation-env.step()`
+承担），仅 simulation 训练/benchmark 路径启用（`planContinuationFastPath`，默认关），
+Browser 始终经本 Host。
+
 ## 席位与初始化
 
 新局或加载阶段通过 `initializeSeats(..., { phase: "new_game" | "load" })` 一次性固定每个席位的：
@@ -47,13 +53,8 @@ load 阶段切换到存档中预声明的整席 fallback。
 浏览器 `policy-input-adapter.js` 和训练 `heuristic-policy-adapter.js` 都只是该 Host 的 adapter。
 前者提交 BrowserInputAdapter，后者提交 Simulation 的标准 Action/Decision input；对局动作进入
 `simulation-env.step()`，setup 公司牌/初始牌组合则由 Standard Action registry 生成
-`choose_branch` descriptor，并经 `submitDecision()` 提交。两端不维护独立 Policy 分支。
-
-例外：Simulation 侧的计划延续复用（`planContinuationFastPath`，默认关）在决策点
-先复用上次方案输出的 plan，命中时直接提交计划下一步，**不经本 Host 的请求/校验链**
-（合法集/authority 重验由 `simulation-env.step()` 承担）；未命中才回到本 Host 请求
-Policy。该路径仅 simulation 训练/benchmark 启用，Browser 始终经本 Host。见
-`docs/ai-design.md` §3。
+`choose_branch` descriptor，并经 `submitDecision()` 提交。两端不维护独立 Policy 分支
+（simulation 的复用层见本文开头与 `docs/ai-design.md` §1/§3）。
 
 ## Browser 接线
 
