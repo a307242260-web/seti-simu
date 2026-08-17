@@ -203,36 +203,37 @@
             ? abilities.planet.getOrbitOptions(actionContext(root, player.id))
             : abilities.planet.getLandOptions(actionContext(root, player.id));
           if (!result.ok) return result;
+          // 登陆行动形态统一：无论有几个目标，「登陆」都只有一个动作，目标
+          // 选择由内核决策完成——唯一合法目标直接登陆（不弹窗），多目标弹
+          // 选择框（LAND_CHOICE，与打牌登陆同一选择框）。
+          if (family === "land") {
+            return { ok: true, choices: [{
+              target: { select: true },
+              payload: {},
+              label: "登陆",
+            }] };
+          }
           const choices = result.choices.map((choice) => ({
             target: {
               rocketId: choice.rocketId,
               planetId: choice.planetId,
-              ...(family === "land" ? {
-                type: choice.target.type,
-                ...(choice.target.satelliteId ? { satelliteId: choice.target.satelliteId } : {}),
-              } : {}),
             },
-            payload: family === "land" ? { energyCost: choice.energyCost } : {},
+            payload: {},
             label: choice.label,
           }));
-          // 多目标登陆（木星主星+卫星、多火箭等）：追加「选择登陆目标」动作，
-          // 提交后由内核生成 choose_target 决策（与打牌登陆同一正常选择框），
-          // 决策框列出所有火箭的全部可登目标，由玩家任选其一。
-          if (family === "land" && result.needsChoice) {
-            choices.push({
-              target: { select: true },
-              payload: {},
-              label: "选择登陆目标",
-            });
-          }
           return { ok: true, choices };
         },
         canExecute(context, option) {
+          if (family === "land") {
+            return option?.target?.select === true
+              ? { ok: true }
+              : fail("PROBE_LAND_STALE", "登陆行动已失效");
+          }
           const listed = this.getOptions(context);
           return listed.ok && listed.choices.some((choice) => (
             JSON.stringify(choice.target) === JSON.stringify(option.target)
             && JSON.stringify(choice.payload) === JSON.stringify(option.payload || {})
-          )) ? { ok: true } : fail(`PROBE_${family.toUpperCase()}_STALE`, `${this.label}行动已失效`);
+          )) ? { ok: true } : fail("PROBE_ORBIT_STALE", "环绕行动已失效");
         },
         execute: sessionRequired,
       }));
@@ -479,9 +480,11 @@
           source: "orbit",
         });
       } else if (action.family === "land") {
-        if (action.target?.select) {
-          // 多目标登陆（木星主星+卫星等）：spawn choose_target 决策，
-          // 由 decision-ui 渲染与打牌登陆一致的目标选择框。
+        // 登陆行动形态统一：无论目标数量，行动都只带 select 标记。这里按合法
+        // 目标数量分流——唯一目标直接登陆（不弹窗），多目标 spawn LAND_CHOICE
+        // 决策（与打牌登陆同一选择框），由玩家任选其一。
+        const landTargets = listLandChoiceTargets(root, { ownerId: player.id, payload: {} });
+        if (landTargets.length > 1) {
           return result(state, root, action.family, {
             spawnedEffects: [{
               priority: "direct",
@@ -497,15 +500,11 @@
             history: [{ type: "probe_turn_action", family: action.family, executorId: EXECUTOR_ID }],
           });
         }
-        // 统一登陆引擎：abilities.planet.landProbe 与打牌登陆同一实现
-        executed = abilities.executeAbility("landProbe", actionContext(root, player.id), {
-          rocketId: action.target.rocketId,
-          target: {
-            type: action.target.type,
-            ...(action.target.satelliteId ? { satelliteId: action.target.satelliteId } : {}),
-          },
-          source: "land",
-        });
+        if (!landTargets.length) {
+          return fail("PROBE_LAND_UNAVAILABLE", "没有可登陆的目标");
+        }
+        // 唯一合法目标：与多目标决策同一结算出口 settleLandProbe 直接结算
+        return settleLandProbe(state, root, player, landTargets[0]);
       } else if (action.family === "pass") {
         return result(state, root, action.family, {
           spawnedEffects: buildPassEffects(root, player),
@@ -609,6 +608,34 @@
         }));
     }
 
+    // 唯一登陆结算出口：单目标直连（EXECUTE）与多目标决策（LAND_CHOICE）共用
+    // 同一 landProbe + 主行动置位 + 奖励组装，避免两处实现漂移。
+    function settleLandProbe(state, root, player, landChoice) {
+      const executed = abilities.executeAbility("landProbe", actionContext(root, player.id), {
+        rocketId: landChoice.target.rocketId,
+        target: landChoice.target.landTarget,
+        source: "land",
+      });
+      if (!executed?.ok) return executed;
+      player.mainActionCompleted = true;
+      const rewardEffects = planetRewards.buildRewardEffectsForAction("land", executed);
+      return result(state, root, "land", {
+        spawnedEffects: [
+          ...(executed.spawnedEffects || []),
+          ...rewardEffects.map((reward) => ({
+            priority: "direct",
+            effect: {
+              type: EFFECT_TYPES.REWARD,
+              ownerId: player.id,
+              payload: { reward, sourceKey: "landScore" },
+            },
+          })),
+        ],
+        events: clone(executed.events || []),
+        history: [{ type: "probe_turn_action", family: "land", executorId: EXECUTOR_ID }],
+      });
+    }
+
     runtime.registerExecutor(EFFECT_TYPES.LAND_CHOICE, {
       getLegalChoices(state, effect, workingContext) {
         const root = getRoot(state, workingContext);
@@ -620,30 +647,8 @@
         const legal = listLandChoiceTargets(root, effect)
           .find((candidate) => String(candidate.target?.choiceId) === String(choice?.target?.choiceId));
         if (!legal) return fail("PROBE_LAND_CHOICE_STALE", "登陆目标选择已失效");
-        // 与打牌登陆同一执行引擎：abilities.planet.landProbe
-        const executed = abilities.executeAbility("landProbe", actionContext(root, player.id), {
-          rocketId: legal.target.rocketId,
-          target: legal.target.landTarget,
-          source: "land",
-        });
-        if (!executed?.ok) return executed;
-        player.mainActionCompleted = true;
-        const rewardEffects = planetRewards.buildRewardEffectsForAction("land", executed);
-        return result(state, root, "land", {
-          spawnedEffects: [
-            ...(executed.spawnedEffects || []),
-            ...rewardEffects.map((reward) => ({
-              priority: "direct",
-              effect: {
-                type: EFFECT_TYPES.REWARD,
-                ownerId: player.id,
-                payload: { reward, sourceKey: "landScore" },
-              },
-            })),
-          ],
-          events: clone(executed.events || []),
-          history: [{ type: "probe_turn_action", family: "land", executorId: EXECUTOR_ID }],
-        });
+        // 与单目标直连同一结算出口：abilities.planet.landProbe
+        return settleLandProbe(state, root, player, legal);
       },
     });
     runtime.registerExecutor(EFFECT_TYPES.TURN_ADVANCE, (state, effect, workingContext) => {

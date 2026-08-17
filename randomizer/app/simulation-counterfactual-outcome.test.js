@@ -452,10 +452,12 @@ try {
     actual.reset({ seed: "seti-104-official-v1", activePlayerCount: 4 });
     sandbox.loadCheckpoint(checkpoint);
     actual.loadCheckpoint(checkpoint);
+    // 登陆行动形态统一：只有一个「登陆」动作（select），目标由内核决策/直连结算。
     const landing = sandbox.legalActions().find((action) => (
-      action.family === "land" && action.target?.planetId === "saturn"
+      action.family === "land"
     ));
     assert.ok(landing, "R1 T04 必须能枚举土星登陆");
+    assert.equal(landing.target?.select, true, "登陆行动必须统一为单个目标选择动作");
     const before = sandbox.createCheckpoint();
     const outcome = sandbox.evaluateActionOutcomes([landing])[0];
     assert.equal(outcome.status, "settled");
