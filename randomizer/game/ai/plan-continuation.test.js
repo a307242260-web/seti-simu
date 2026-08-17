@@ -291,7 +291,6 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   assert.equal(hit.applicable, true);
   assert.equal(hit.actualHit, true, "计划下一步 == 实际选择必须命中");
   assert.equal(hit.stepLegal, true);
-  assert.equal(hit.marginOk, true);
   assert.deepEqual(hit.reasons, [], "命中不得有失效原因");
 
   const currentDiverged = {
@@ -315,17 +314,6 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     currentSame,
   );
   assert.equal(notApplicable.applicable, false, "无延续计划不得配对");
-
-  // margin 非正：计划继续但赢面为 0（平局）
-  const thinPrevious = { ...previous, margin: 0 };
-  const thin = planContinuation.pairContinuation(thinPrevious, currentSame);
-  assert.equal(thin.actualHit, true, "margin 非正不影响 actualHit（实际搜索仍然选中）");
-  assert.equal(thin.marginOk, false, "margin 0 必须令 marginOk 失效");
-
-  // margin 为 null（无次优候选）：视为安全
-  const vacuousPrevious = { ...previous, margin: null };
-  const vacuous = planContinuation.pairContinuation(vacuousPrevious, currentSame);
-  assert.equal(vacuous.marginOk, true, "margin 为 null（唯一可行行动）必须视为安全");
 }
 
 // ---------------------------------------------------------------------------
@@ -509,10 +497,7 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     stepLegal: true,
     directorySame: true,
     directorySameWithRockets: true,
-    planAssumedSame: true,
-    marginOk: true,
     changed: [],
-    planAssumedChanged: [],
     reasons: [],
   };
   const hitPair = { ...base, applicable: true, actualHit: true };
@@ -524,7 +509,6 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     stepLegal: false,
     reasons: ["step-not-legal"],
     changed: ["board.rotation"],
-    planAssumedChanged: ["board.rotation"],
   };
   const stats = planContinuation.aggregateStats([hitPair, falsePositive, missPair]);
   assert.equal(stats.applicableCount, 3);
@@ -537,7 +521,7 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   assert.equal(stepLegal.predicted, 2, "stepLegal 预测命中 2 个（hit + falsePositive）");
   assert.equal(stepLegal.precision, 0.5, "stepLegal precision = 1/2");
   assert.equal(stepLegal.recall, 1, "stepLegal recall = 全部实际命中都被预测");
-  const all = stats.predictorStats["stepLegal+directory+margin"];
+  const all = stats.predictorStats["stepLegal+directory"];
   assert.equal(all.predicted, 2, "组合预测器也只预测 2 个");
   assert.equal(all.wrong, 1);
   const empty = planContinuation.aggregateStats([]);

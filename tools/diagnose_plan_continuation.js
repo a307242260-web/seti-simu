@@ -9,17 +9,17 @@
  *
  *   1) record（慢，一次性）：完整跑一局（可 --max-decisions 截断），每次决策照常
  *      全量搜索，同时从结果里采样：选择的 action、winning leaf 的计划下一步、
- *      目录指纹（实际 + 计划假设）、赢面 margin、耗时构成与事实快照，写入 JSON。
+ *      目录指纹、赢面 margin、耗时构成与事实快照，写入 JSON。
  *   2) analyze（快，可无限次）：纯读 JSON，做同席连续决策配对，输出：
- *      - actualHit：计划下一步 == 新搜索实际选择（语义级），这是 fast-path 的
+ *      - actualHit：计划下一步 == 新搜索实际选择（语义级），这是计划延续复用的
  *        理论上界命中率；
- *      - would-hit 预测器（stepLegal / directorySame / planAssumedSame / marginOk）
+ *      - would-hit 预测器（stepLegal / directorySame / stepLegal+directory）
  *        的 precision/recall；
- *      - 失效原因分布：step-not-legal / directory-changed / margin 非正 /
+ *      - 失效原因分布：step-not-legal / directory-changed /
  *        plan-degraded-or-alternative-improved；
  *      - 事实变化分布：相邻决策间 board.* / directory.* 哪些分量变了
  *        （旋转 / 行星槽 / alien / 扇区 / 公共牌 / 科技供应 / 火箭占位…）；
- *      - 可省时间上界：actualHit 决策的搜索耗时之和（可扣 fast-path 检查成本）。
+ *      - 可省时间上界：actualHit 决策的搜索耗时之和（可扣复用检查成本）。
  *
  * 用法：
  *   node tools/diagnose_plan_continuation.js --record out.json

@@ -8,6 +8,7 @@
 
 - 开始修改前，先读相关模块和本文件列出的细节文档；不要只凭记忆改机制。
 - 机制、状态模型、能力流程或资料路径发生变化时，同步更新对应文档。
+- 所有接口改动必须记录并更新文档（如 `docs/ai-design.md`、`docs/rl-simulation-env.md`）；过期定义必须删除，不得遗留会产生误导的痕迹（已删除的函数名、旧判定规则、死诊断字段、已废弃设计的文档段落）。
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
 - `SETI-*` issue 使用 `/Users/bilibili/.local/bin/mocha` 的默认 workspace；执行 issue 命令前先运行 `mocha config show`，确认 workspace ID 为 `6377be1d-624b-40f3-aec9-810bdeaff66d`。不得附加 `--profile algo1-wyfx`，也不得把不存在的 `SETI-N` 改查或改写为同号 `ALG-N`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。

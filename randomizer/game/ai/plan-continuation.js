@@ -1,25 +1,21 @@
 "use strict";
 
 /**
- * 计划延续诊断（plan-continuation diagnostics）。
+ * 计划延续复用与诊断（plan-continuation）。
  *
- * 纯只读诊断：不修改规则状态、不改变任何决策语义。目标是为「跨决策复用搜索
- * 结果」（fast-path / warm start）收集硬证据：
+ * 决策方案输出计划结构、simulation 侧复用判定与诊断统计的纯函数集合，不修改
+ * 规则状态、不改变任何决策语义。架构见 docs/ai-design.md §3：
  *
- * - actualHit：上一次决策 winning leaf 计划出的「下一步」是否就是本次决策全量
- *   搜索实际选择的 action（语义级比较）；
- * - would-hit 预测器：只用便宜事实（下一步合法性 / 全量目录指纹 / 赢面 margin）
- *   能否准确预测 actualHit（precision / recall）；
- * - 失效原因：相邻同席决策之间哪些事实分量发生了变化（board.* / directory.*，
- *   含本席行动效果）。
+ * - 方案输出：`buildPlanFromSnapshot`（winning leaf -> { nextActionId,
+ *   continuation[], dependency, revealedCount }）、`advancePlan`（多步消费）；
+ * - 复用判定：`planReuseCheck`——下一步仍合法 + 外星揭示基线未增 + 依赖环节
+ *   未变（路线终点移动步数/第一奖励格、外星痕迹槽占用）则复用，否则重新决策；
+ *   翻开外星人（揭示槽位数增加）无条件重新决策；
+ * - 诊断：`pairContinuation` / `aggregateStats` 量化「计划下一步 == 新搜索实际
+ *   选择」的命中率与预测器质量（工具 tools/diagnose_plan_continuation.js）。
  *
- * 关键设计：目录指纹剥离资源缺口（credits/energy/…），本席自己的行动造成的
- * 「计划内变化」不改变指纹；目录候选数组按元素 stableHash 排序，投影深度
- * （cheap vs full）导致的枚举顺序差异不产生误报。
- *
- * 本模块全部为纯函数；数据采样由 tools/diagnose_plan_continuation.js 完成，
- * fast-path 复用处（simulation-env）与工具共用 extractPlanSnapshot /
- * attemptPlanContinuation。
+ * 本模块全部为纯函数；simulation-env（planReuseCheck 装配）与
+ * heuristic-policy-adapter（方案输出 plan）共用。
  * actionSemanticKey 与 expected-score-evaluator 内部同名单函数保持同一语义
  * （family+target+payload 稳定序列化），此处复制以避免在共享工作树中修改
  * 该 policy 模块；行为由单元测试钉住。
@@ -204,16 +200,11 @@ function pairContinuation(previous, current) {
   const directorySame = previous?.directoryFingerprint === current?.directoryFingerprint;
   const directorySameWithRockets = previous?.directoryFingerprintWithRockets
     === current?.directoryFingerprintWithRockets;
-  // 计划假设状态（搜索内 cheap 投影）与全量投影结构不可比，不设 planAssumedSame
-  // 预测器；外部事实发散由 directorySame（全量 vs 全量）覆盖。
-  // margin 为 null（无次优候选，只有唯一可行行动）视为安全；<= 0（平局/落后）才危险。
-  const marginOk = previous?.margin == null || Number(previous?.margin) > 0;
   const actualHit = stepLegal && plan.nextStepKey === current?.actionKey;
   const reasons = [];
   if (!stepLegal) reasons.push("step-not-legal");
   if (!directorySame) reasons.push("directory-changed");
-  if (!marginOk) reasons.push("margin-non-positive");
-  if (stepLegal && directorySame && marginOk && !actualHit) {
+  if (stepLegal && directorySame && !actualHit) {
     reasons.push("plan-degraded-or-alternative-improved");
   }
   return Object.freeze({
@@ -222,7 +213,6 @@ function pairContinuation(previous, current) {
     stepLegal,
     directorySame,
     directorySameWithRockets,
-    marginOk,
     reasons,
     changed: changedFactComponents(previous?.facts, current?.facts),
     nextStepFamily: plan.nextStepFamily,
@@ -255,11 +245,7 @@ function aggregateStats(pairs) {
     stepLegal: (pair) => pair.stepLegal === true,
     directorySame: (pair) => pair.directorySame === true,
     directorySameWithRockets: (pair) => pair.directorySameWithRockets === true,
-    marginOk: (pair) => pair.marginOk === true,
     "stepLegal+directory": (pair) => pair.stepLegal === true && pair.directorySame === true,
-    "stepLegal+directory+margin": (pair) => (
-      pair.stepLegal === true && pair.directorySame === true && pair.marginOk === true
-    ),
   };
   const reasonCounts = {};
   const changedCounts = {};

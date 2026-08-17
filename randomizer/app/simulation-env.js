@@ -81,15 +81,20 @@ function getTurnState(state) {
   return state.turn || {};
 }
 
-function policyOutcomeActions(actions, policyObservation) {
+function policyOutcomeActions(actions, policyObservation, unifiedSearch = false) {
   const candidates = (actions || []).filter((action) => (
-    expectedScoreEvaluator.requiresRootCounterfactual(action, policyObservation)
+    expectedScoreEvaluator.requiresRootCounterfactual(
+      action,
+      policyObservation,
+      unifiedSearch,
+    )
   ));
   return expectedScoreEvaluator.selectSecondaryAgentRootActions({
     focalSeatId: candidates[0]?.actorPlayerId || null,
     rootObservation: policyObservation,
     legalActions: candidates,
     maxProxyDepth: 15,
+    unifiedSearch,
   });
 }
 
@@ -344,11 +349,13 @@ function createSimulationEnv() {
       maxFrontierPerRoot: options.maxFrontierPerRoot
         || (options.secondaryAgentSearch ? 1 : 8),
       traceGoalClusters: options.traceGoalClusters === true,
+      allowUntargetedRootActions: options.unifiedSearch === true,
       secondaryAgentSearch: options.secondaryAgentSearch ? {
         focalSeatId: seatId,
         maxProxyDepth: options.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
         completeTargetCatalog: options.completeTargetCatalog === true,
+        unifiedSearch: options.unifiedSearch === true,
         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
@@ -510,6 +517,7 @@ function createSimulationEnv() {
         traceCounterfactualGoalClusters:
           resetConfig.traceCounterfactualGoalClusters === true,
         completeTargetCatalog: resetConfig.completeTargetCatalog === true,
+        unifiedSearch: resetConfig.unifiedSearch === true,
         vStateValueEnabled: resetConfig.vStateValueEnabled === true,
         planContinuationFastPath: resetConfig.planContinuationFastPath === true,
       };
@@ -537,9 +545,6 @@ function createSimulationEnv() {
         planContinuationCommitFailures: 0,
         planContinuationMissReasons: {},
         planContinuationStoreStatus: {},
-        planContinuationExtractIssues: {},
-        planContinuationExtractFailures: 0,
-        planContinuationExtractFailureMessage: null,
       };
       const startedAt = performance.now();
       seededRandom = createSeededRandom(seed);
@@ -851,7 +856,7 @@ function createSimulationEnv() {
       };
       const evaluatedActions = initialSetupBoundary
         ? initialSetupOutcomeActions(beforeActions, beforeObservation)
-        : policyOutcomeActions(beforeActions, policyObservation);
+        : policyOutcomeActions(beforeActions, policyObservation, config.unifiedSearch === true);
       const controlActions = initialSetupBoundary
         ? []
         : beforeActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));
@@ -892,6 +897,7 @@ function createSimulationEnv() {
           secondaryAgentSearch: !initialSetupBoundary,
           completeTargetCatalog: !initialSetupBoundary
             && config.completeTargetCatalog === true,
+          unifiedSearch: config.unifiedSearch === true,
           traceGoalClusters: !initialSetupBoundary
             && config.traceCounterfactualGoalClusters,
           maxProxyDepth: 15,

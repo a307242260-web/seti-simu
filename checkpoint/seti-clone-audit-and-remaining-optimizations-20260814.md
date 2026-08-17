@@ -115,9 +115,6 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 - 搜索耗时构成（28.9s）：execution 31.4%、orchestration 27.4%、projection
   15.5%、fork 12.3%、checkpoint 11.6%、frontier 1.8%。
 
-fast-path 设计启示：miss 集中在「根行动 → 条件决策」的平局选择，条件决策本身
-便宜；可考虑只对非条件决策 fast-path，或对条件决策携带稳定 tie-break。
-
 ## 方向 D 落地：fast-path v3（分层架构：simulation 管复用，方案输出计划，2026-08-XX）
 
 按用户架构重构：simulation 侧负责模拟，每个机器人决策点先看能否直接复用上次
@@ -138,75 +135,18 @@ fast-path 设计启示：miss 集中在「根行动 → 条件决策」的平局
 no-plan + 4 例 step-not-legal；终局分差四席合计 +1（白 -6 / 棕 +5 / 绿 +2），
 提交失败 0。全量 Node 回归通过。
 
-## 方向 D 落地：fast-path v2（三层判定，2026-08-XX）
+## 演进历史（已删除的中间设计，不实现）
 
-实现（按用户口径，对照基准 = 上轮本家行动执行完的计划假设状态，而非执行前）：
+- v1/v2 的 `attemptPlanContinuation`（单步 store + 全局目录指纹门槛 + margin 门槛）
+  已删除：margin 与「本次续用是否安全」无因果关系；全局目录指纹会把本家行动
+  造成的计划内变化误判为失效。
+- 判定演进结论保留在当前 v3：对照基准 = 上轮本家行动执行完的计划假设状态；
+  依赖环节（路线终点移动步数/第一奖励格、外星痕迹槽占用）未变即复用，翻开了
+  外星人无条件重新决策。
 
-- `plan-continuation.js`：`planDependencyFromPlan`（从 winning leaf 的 probeRoute
-  终点 / 外星痕迹槽提取计划执行依赖的盘面事实）+ `currentDependencyFromStore`
-  （从当前观测重算同一依赖，形状对齐才可比较）+ `attemptPlanContinuation`
-  （三层判定）。
-- 判定规则：
-  - **复用**：下一步仍合法 且 计划依赖环节未变。覆盖：
-    - tier1 盘面无变化（对照基准 = 上轮本家行动执行完）；
-    - tier2 盘面有变化但不影响计划执行——**当前直接复用**（记录为后续优化点）：
-      - 其他玩家火箭移动 / 打牌 / 资源变化（可能后续影响本家行动，现在不考虑）；
-      - 计划不涉及的扇区变化；太阳系转动但计划无探测器移动（可能出现更优选择，
-        现在不管）。
-  - **重新决策**：依赖环节变了——着陆需要的移动更多了 / 目标外星人槽位被占 /
-    第一奖励格被占 / 目标路线消失等。
-  - **硬性特例**：翻开了外星人（已揭示槽位数 > 计划假设值）→ 无条件重新决策，
-    不适用依赖环节近似（揭示可能带来计划未预见的全新目标/机会）。
-- tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电或多打一张
-  移动牌）**明确延后不实现**。
-- store 重建用 `extractPlanSnapshot(..., { light: true })`：跳过 rankActions
-  （margin 已不参与判定，rankActions 仅剩诊断工具使用）。
+## 后续红线（fast-path 落地约束）
 
-首测 A/B（seti-107，前 120 决策）：fast-path 命中 31/92（33.7%），miss 全部为
-no-plan（结构上限，约 2/3 决策的 winning leaf 链条不足 2 步，多为条件/控制等
-便宜决策——用户裁决先不管，属当前启发式在条件决策根边界成叶所致）；所有有
-store 的尝试全部命中（依赖环节在窗口内未变）；终局分差四席合计 +1，提交失败 0。
-
-后续优化点（记录，暂不实现）：tier2 的「可能出现更优选择」；tier3 的部分复用
-（warm start：成本调整后仍沿用路线）；no-plan 结构上限（多步链消费 / 条件决策
-延续提取）。
-
-## 方向 D 落地：fast-path v1（simulation env，opt-in，历史版本）
-
-实现：
-
-- `plan-continuation.js` 新增 `extractPlanSnapshot`（诊断 record 与 fast-path 共用：
-  从全量搜索结果提取 winning leaf 计划下一步 + 目录指纹 + margin）与
-  `attemptPlanContinuation`（护栏：store 存在 + 下一步仍合法 + 目录指纹未变）。
-- `simulation-env.js` 新增 `planContinuationFastPath` 配置（默认关）：每次决策先
-  attempt，命中则跳过全量反事实搜索、直接提交计划下一步（经 env.step 合法集/
-  authority 重验），未命中才全量搜索并重建 store；计数进 diagnostics。
-- `tools/verify_plan_continuation_fastpath.js`：同 seed 关/开 A/B，对比终局分与
-  计数器。
-
-护栏演进（含被否定的设计）：
-
-- margin 门槛已移除：上一次决策的赢面与「本次继续计划是否安全」无因果关系
-  （实测 margin=null 占 store 尝试 77%，全部误杀；严格更优候选案例由
-  directory-changed 拦截）。原则：盘面（目录）未变 → 照旧执行计划，含 tie-break。
-- 计划假设状态整目录比较已移除（cheap 投影与全量投影结构不同，见上）。
-
-首测 A/B（seti-107，前 120 决策）：
-
-- fast-path 命中 28/92（30.4% 的决策），其中「有延续计划（store 存在）」的决策
-  命中 28/36 = 77.8%——与诊断实际命中 77.1% 一致；其余 56 例 no-plan 是结构上限
-  （约 2/3 决策的 winning leaf 链条不足 2 步，多为 setup/条件决策/控制决策，本身
-  便宜），8 例 directory-changed 被护栏拦截；
-- 终局分差（ON - OFF）四席 +7（蓝 -4、绿 +7、棕 -1、白 +5），mid-game 截断样本，
-  未出现塌方；提交失败 0。
-
-剩余杠杆（未实现）：no-plan 结构上限——多步链消费（winning leaf 只携带
-rootActionLegalSuccessors，第 2 步及以后需 rule-composition 侧扩展）或条件决策
-延续提取。
-
-后续 fast-path 落地的红线（尚未实现，仅诊断）：
-
-- 命中决策提交前必须对 fresh state 重验（validateFresh / policy-input-adapter 边界）；
+- 命中决策提交前必须对 fresh state 重验（合法集/authority，经 env.step）；
 - 缓存键含 policyType/version/modelChecksum/configChecksum；隐藏信息屏障后失效；
 - 同一 seed 下开/关缓存的决策逐位一致（或作为显式近似 + 计数器登记，同
   targetSchedulerPrunedCount 文化）；
