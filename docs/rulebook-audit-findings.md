@@ -89,6 +89,19 @@
 - `4d6a3d9` M7 快速起始牌上半部分放置不再授予首痕迹奖励（扩展 P5，经用户确认）
 - `(本次)` 哨兵探测网络「打牌后结算弃牌角标」恢复接线：迁移（[SETI-26] `8963b38`）丢失的 `industry_sentinel_corner` 追加/补开在 play-domain PLAY 与 residual 哨兵 1x 重建（复用统一角标奖励转换 `applyCornerReward`），打牌记录（`industryPlayedCardThisRound` 等）同步恢复写入
 
+### D 组（统一内核审计，全行动族 + 非行动跨来源机制）
+本轮行动审计（23 族 + 非行动机制）收敛到的统一内核，详见 `docs/mechanics-reference.md`「统一内核清单」：
+- `b5280f5`/`2fcba91` 扫描流串尾 `SCAN_FINALIZE` 统一扇区结算（P13 不逐节点）；residual 死分支清理
+- `ceda731` 外星牌打出效果全部迁入卡表 `playEffects`（删 `buildImmediateEffects`/`is*Card` 循环，修复 aomomo_0/5/9 双路径重复结算）
+- `a13732b` 获得牌统一：盲抽/精选全部收拢到 `createCardDrawContext`
+- `dfbed5a`/`ae152b0` M4 物种澄清（钻探者=九折、硫铵虫=虫，说明书第 3 页核对）；弃牌/手牌上限注释同步
+- `c50442f` 哨兵角标恢复接线（见上）
+- `061a159` 任务结算统一内核 `settleTaskCardConsumption`（补回合末虫族搬运棋子移除）
+- `425047e`/`3374719` 插入牌到收入列统一（`gainIncome`：赫利昂、蓝槽/数据位收入、初始收入；收入牌一律移出游戏）
+- `870c9a1`/`aecef4b` 任务中继站改为「获得角标奖励」（一次性、不弃牌，`applyCornerGainReward`）；术语区分「插入收入列」vs「角标效果」
+- `84687b3` 术语修正：放置数据（计算机 4 号位）获得的收入行动，非「蓝槽收入」
+- `2480014` 外星人痕迹统一内核 `placeTraceForActor`（首次/额外/物种正面 + 奖励；`getSpeciesTraceApi` 单点）
+
 ### B 组（时机/顺序）
 - `8b3df76` M1 研究科技先公转后选科技；卡牌研究无合法目标时仍公转
 - `e258dee` M2 扇区改为扫描 flow 末统一结算（`finalize` 标记，同行动不再提前重置）

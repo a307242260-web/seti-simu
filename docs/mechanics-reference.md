@@ -390,6 +390,27 @@ journal 统一处理。
   - `getAbility(abilityId)`
   - `listAbilities()`
 
+## 统一内核清单（跨行动/卡牌/公司/外星人多处复用）
+
+以下机制经过全面审计，各来源全部收敛到单一内核（不在来源处重复实现）：
+
+- **发射**：`rocket.launchProbe`——标准发射、卡牌发射、紫4、寰宇初始发射、公司发射全部走它（`playerId`/`ignoreRocketLimit`/`skipCost` 覆盖）。
+- **环绕/登陆**：`planet.orbitProbe` / `planet.landProbe`——主行动、卡牌、行星奖励共用；登陆形态统一（唯一目标直接结算、多目标 LAND_CHOICE 决策），卡牌登陆后奖励归卡牌域摘要。
+- **移动**：`rocket.moveProbe`——快速行动、卡牌移动、紫4、公司免费移动、快速交易移动全部走它（`listPlayerMoveChoices` 枚举统一）。
+- **往扇区放信号**：`scan.placeNebulaToken`（原语）→ `scan.scanNebula`（编排）→ 统一扫描节点 `SCAN_STEP`（science）——扫描主行动、行星奖励、7 种卡牌扫描家族、公共牌扫描全部收敛；扫描流串尾 `SCAN_FINALIZE` 统一触发扇区结算（SETTLE，P13 不逐节点）。
+- **扇区结算**：`data.settleCompletedSectors`（SETTLE executor 统一触发；多扇区按「当前玩家赢家优先」排序）。
+- **分析**：`data.analyzeData`（ability `analyzeData`）——唯一来源标准分析，深空公司免能量只改费用。
+- **研究科技**：`tech.resolver.executeTakeTech`（RESEARCH executor 统一）——标准行动、卡牌、外星人全部收敛。
+- **打牌**：`cards.buildPlayEffects(card)`（PLAY executor 唯一路径）——普通牌与外星牌打出效果全部来自卡表模型 `playEffects`，无逐物种追加。
+- **获得牌**：`cards.createCardDrawContext`（盲抽 `blindDraw` / 精选 `pickFromPublic` 统一上下文）——卡牌/科技/收入/公司/外星人/快速交易/初始结算全部经它。
+- **插入牌到收入列**：`players.gainIncome`——初始收入牌、打牌转收入、收入角标、放置数据（计算机 4 号位）获得的收入行动、赫利昂 1x 收入牌；收入牌一律移出游戏。
+- **获得角标奖励**：`industry.applyCornerGainReward`（一次性、不弃牌）——任务中继站；弃牌获得角标奖励（card_corner）走 `executeCardCorner → applyReward → cards.buildRewardEffects`。
+- **角标奖励转换**：`cards.buildRewardEffects`——弃牌角标、卡牌角标重复、公司角标（哨兵/芬威克）共用。
+- **任务结算**：`residual.settleTaskCardConsumption`——complete_task 快速行动与回合末 CARD_DECISION 共用（task/trigger/chong_task/amiba_task + 虫族搬运棋子移除）。
+- **外星人痕迹放置**：`aliens.placeTraceForActor`——science ALIEN_TRACE 决策（分析/扇区胜利/行星奖励）、卡牌痕迹奖励、初始牌痕迹（`awardRewards:false` 豁免）共用；红黄蓝按 `traceType` 参数化；`aliens.getSpeciesTraceApi` 物种映射单点。
+- **公司 1x 能力**：`industry.buildActiveAbilityFlow` + residual COMPANY_DECISION executor——10 家公司 1x 能力统一入口与多步流执行。
+- **回合推进**：`turnFlow.advanceTurnAfterPlayerAction`（TURN_ADVANCE executor）——end_turn 与 PASS 共用同一回合末 handoff 链 + 推进内核。
+
 能力返回形状：
 
 ```js
