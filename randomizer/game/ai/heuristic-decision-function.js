@@ -35,8 +35,8 @@
  * enumerateActions 的裸 descriptor，不做训练 schema 转换）。
  *
  * 内部：
- * - 反事实搜索：counterfactualPort.evaluate（control/bounded/strategic 分桶，
- *   从原 simulation-env 迁移）；
+ * - 反事实搜索：counterfactualPort.evaluate（control/strategic 两路径——control
+ *   只做轻评估，其余动作统一走目标引导 + 需求引导的单一搜索，无 bounded 分桶）；
  * - 直调启发式 Policy（heuristic-policy.decide，不经过旧 Host/policyAdapter 壳）；
  * - 从所选 action 的 winning leaf 构建 plan（供协调器复用判断）。
  *
@@ -44,16 +44,15 @@
  */
 
 
-function policyOutcomeActions(actions, policyObservation, unifiedSearch = false) {
+function policyOutcomeActions(actions, policyObservation) {
   const candidates = (actions || []).filter((action) => (
-    expectedScoreEvaluator.requiresRootCounterfactual(action, policyObservation, unifiedSearch)
+    expectedScoreEvaluator.requiresRootCounterfactual(action, policyObservation)
   ));
   return expectedScoreEvaluator.selectSecondaryAgentRootActions({
     focalSeatId: candidates[0]?.actorId || null,
     rootObservation: policyObservation,
     legalActions: candidates,
     maxProxyDepth: 15,
-    unifiedSearch,
   });
 }
 
@@ -132,13 +131,12 @@ function createHeuristicDecisionFunction(options = {}) {
       maxFrontierPerRoot: evaluateOptions.maxFrontierPerRoot
         || (evaluateOptions.secondaryAgentSearch ? 1 : 8),
       traceGoalClusters: evaluateOptions.traceGoalClusters === true,
-      allowUntargetedRootActions: evaluateOptions.unifiedSearch === true,
+      allowUntargetedRootActions: true,
       secondaryAgentSearch: evaluateOptions.secondaryAgentSearch ? {
         focalSeatId: seatId,
         maxProxyDepth: evaluateOptions.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
         completeTargetCatalog: evaluateOptions.completeTargetCatalog === true,
-        unifiedSearch: evaluateOptions.unifiedSearch === true,
         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
@@ -184,18 +182,10 @@ function createHeuristicDecisionFunction(options = {}) {
     };
     const evaluatedActions = initialSetupBoundary
       ? initialSetupOutcomeActions(legalActions, observation)
-      : policyOutcomeActions(legalActions, observation, config.unifiedSearch === true);
+      : policyOutcomeActions(legalActions, observation);
     const controlActions = initialSetupBoundary
       ? []
       : legalActions.filter((action) => !expectedScoreEvaluator.requiresCounterfactualOutcome(action));
-    const evaluatedIds = new Set(evaluatedActions.map((action) => action.actionId));
-    const boundedActions = initialSetupBoundary
-      ? []
-      : legalActions.filter((action) => (
-        !evaluatedIds.has(action.actionId)
-        && expectedScoreEvaluator.requiresCounterfactualOutcome(action)
-        && action.family === "play_card"
-      ));
     const controlOutcomes = controlActions.length
       ? evaluateActions(controlActions, {
         maxDepth: 1,
@@ -205,14 +195,6 @@ function createHeuristicDecisionFunction(options = {}) {
         stopAtPassDecisionBoundary: true,
       })
       : [];
-    const boundedOutcomes = boundedActions.length
-      ? evaluateActions(boundedActions, {
-        maxDepth: 6,
-        maxLeaves: 3,
-        maxNodes: Math.max(boundedActions.length, boundedActions.length * 16),
-        secondaryAgentSearch: false,
-      })
-      : [];
     const strategicOutcomes = evaluatedActions.length
       ? evaluateActions(evaluatedActions, {
         maxDepth: initialSetupBoundary ? 6 : 15,
@@ -220,13 +202,12 @@ function createHeuristicDecisionFunction(options = {}) {
         maxNodes: initialSetupBoundary ? 12 : 128,
         secondaryAgentSearch: !initialSetupBoundary,
         completeTargetCatalog: !initialSetupBoundary && config.completeTargetCatalog === true,
-        unifiedSearch: config.unifiedSearch === true,
         traceGoalClusters: !initialSetupBoundary && config.traceCounterfactualGoalClusters,
         maxProxyDepth: 15,
       })
       : [];
     const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
-      [...strategicOutcomes, ...boundedOutcomes, ...controlOutcomes],
+      [...strategicOutcomes, ...controlOutcomes],
       outcomeOptions,
     );
     const actionOutcomes = completePolicyOutcomeSet(

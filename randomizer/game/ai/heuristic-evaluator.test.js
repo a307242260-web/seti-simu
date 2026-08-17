@@ -119,8 +119,16 @@ const rebound = expectedScore.selectSecondaryAgentSuccessors({
   legalSuccessors: targetSuccessors,
   routeTargetId: null,
 });
-assert.equal(rebound.every((action) => action.routeTargetId), true,
-  "上一个目标结算后，每个后继 action 必须先绑定新的正式目标");
+assert.deepEqual(
+  rebound.map((action) => [action.actionId, action.routeTargetId]),
+  [
+    ["launch", "orbit:mars:planet:"],
+    ["research", null],
+    ["scan", null],
+  ],
+  "统一搜索未绑定分支 = 目标路线动作（launch 绑定）+ 未绑定后继按立即价值截断"
+    + "（research/scan 不绑定，凭需求放行）",
+);
 
 const conversionObservation = {
   ...targetObservation,

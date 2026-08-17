@@ -3,7 +3,9 @@
 > 目标：拆掉"strategic/bounded/control 分桶 + 目标门控"（roadmap 第 4 节指出的
 > 性能 hack），改为"预算内全动作尝试 + 优先级排序"（roadmap 第 5 节）。
 > 本文件先整理**现状门控体系**（动手前必须完整理解），再记录统一搜索的改动。
-> 分桶启发式 = 现状默认；统一搜索 = 本迭代目标（开关 `unifiedSearch`，默认关）。
+> **2026-08-18 收口：搜索机制已合并为单一路径（heuristic-policy v27）——去掉
+> bounded 分桶与 unifiedSearch 开关，目标引导 + 需求引导恒生效，off 分桶语义
+> 删除（见 §6）。** 以下 §1-§5 保留历史分析与 A/B 记录。
 
 ## 1. 现状：启发式决策链与 5 层门控
 
@@ -165,3 +167,38 @@ quick_trade 是唯一有专项门控的 family。它**不被视为有独立价�
 - 每层全部后继展开（改动 4）→ 分支因子 17。
 
 收敛方案见 §3 剩余项（9/10）。实现后再验证，验证通过才考虑默认开。
+
+## 6. 搜索机制合并（2026-08-18，v27）
+
+**用户裁决：on/off 合并，搜索机制只需要一套。** 实施（commit 见 §7）：
+
+- **删除 bounded 桶**（`heuristic-decision-function.js#run`）：不再有
+  boundedActions/boundedOutcomes（未绑定 play_card 的 depth6 浅搜）。play_card
+  经目标绑定进入搜索（income:card / tech:research / probe:免费发射 / sector:观测
+  / data:卡牌），**不全部放行**——实测全部放行 play_card 让单决策 8.9s/4096 撞顶
+  且全盘行为退化（白色 86→17，纯效果牌评估虚高、打牌链未兑现），靠目标绑定识别
+  "值得打的牌"（对齐用户 405 档：打牌都是有目的的）。
+- **删除 unifiedSearch 开关**：`selectSecondaryAgentRootActions` /
+  `selectSecondaryAgentSuccessors` / `requiresRootCounterfactual` 的 off 分支删除，
+  unified 语义（目标绑定 + 需求放行 + quick 根截断 + 未绑定 top-K）恒生效；
+  `rule-composition.js` 的 `allowUntargetedRootActions` 恒 true；
+  simulation-env / app.js / browser-bootstrap 的开关透传删除（URL `?unifiedSearch=1`
+  不再有意义）。
+- **policyVersion 升 v27**：搜索行为变化（去掉 bounded 兜底）→ 指纹自动区分，
+  run_research_validation 的 FLAG_KEYS 移除 unifiedSearch。
+- 测试同步：strategic-goal-evaluator / heuristic-evaluator /
+  simulation-counterfactual-outcome 的 off 语义断言改为 unified 语义
+  （quick_trade 需求放行、未绑定 play_card NOT_EVALUATED、被调度器剪枝的目标
+  动作作为未绑定后继返回）。
+
+**行为含义**（v27 唯一路径）：
+- 打牌价值 = 目标绑定价值（免费发射/移动/收入/科技/外星链），无目的打牌不可见
+  （不再有 bounded 兜底浅搜）——为"打牌价值认知"待办清理了分桶残留；
+- quick_trade/card_corner/industry 凭需求放行（"需要了再做"），叶价值 = 立即效果；
+- 未绑定分支每层尝试 targeted + 未绑定 top-K(4) + controls，覆盖不再受目标清单
+  限制，低价值分支预算内被 pruned（被尝试过而非不可见）。
+
+## 7. 验证记录（v27 合并后）
+
+- `reports/research/0bd19be8...quick-200.json`：200 步快速验证（指纹含 v27）。
+- 全盘验证见 roadmap §6 收口记录；均分对比以 reports/research 落盘为准。

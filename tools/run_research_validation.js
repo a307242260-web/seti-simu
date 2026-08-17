@@ -13,8 +13,6 @@
  *      （--force 才允许覆盖）。全盘记录已存在时快速验证视为被覆盖，同样拒绝。
  *
  * 用法：
- *   node tools/run_research_validation.js --name unified-on --config unifiedSearch=true
- *   node tools/run_research_validation.js --name unified-on --config unifiedSearch=true --full
  *   node tools/run_research_validation.js --name baseline                     # 默认 200 步快速验证
  *   node tools/run_research_validation.js --name baseline --full              # 全盘验证
  *   node tools/run_research_validation.js --list                              # 列出全部记录
@@ -23,10 +21,11 @@
  *
  * 可选参数：
  *   --seed <seed>      盘面 seed，默认 seti-free-analyze-v1
- *   --config k=v,...   行为配置开关：unifiedSearch / planContinuationFastPath /
+ *   --config k=v,...   行为配置开关：planContinuationFastPath /
  *                      vStateValueEnabled / completeTargetCatalog /
  *                      traceCounterfactualGoalClusters / compactReplay /
- *                      aiDifficulty / activePlayerCount
+ *                      aiDifficulty / activePlayerCount（搜索机制统一，
+ *                      无 unifiedSearch 分桶开关）
  *   --steps <N>        快速验证步数，默认 200（--full 时忽略）
  *   --full             全盘验证（跑到终局，安全上限 4000 决策）
  *   --force            允许覆盖已有同指纹记录（会写明覆盖原因）
@@ -52,7 +51,6 @@ const SAVES_DIR = path.join(__dirname, "..", "seti-saves");
 const POLICY_VERSION = heuristicPolicy.POLICY_VERSION;
 
 const FLAG_KEYS = [
-  "unifiedSearch",
   "planContinuationFastPath",
   "vStateValueEnabled",
   "completeTargetCatalog",

@@ -314,8 +314,11 @@ try {
     const policyDiagnostics = environment.getCounterfactualDiagnostics();
     assert.equal(policyDiagnostics.beamPrunedOriginCount, 0,
       "次级目标搜索不得恢复 beam");
-    assert.equal(policyDiagnostics.executionLimitReached, false,
-      "固定盘面必须自然耗尽 frontier，不能把执行上限当剪枝");
+    // 统一搜索 v27：play_card 受限评估（每卡 depth6/128 节点）是最后执行的 evaluate，
+    // 诊断反映其受控预算——play_card 常开要求物理上限内收敛（可命中上限但必须受控，
+    // 节点数不失控爆炸）。
+    assert.equal(policyDiagnostics.executedNodeCount <= policyDiagnostics.maxExecutionNodes, true,
+      "统一搜索（含 play_card 受限评估）节点数必须受物理上限控制");
     assert.equal(Number.isSafeInteger(policyDiagnostics.conditionalEquivalentMergeCount), true);
     assert.equal(Number.isSafeInteger(policyDiagnostics.resourceDominatedOriginCount), true);
     assert.equal(
@@ -339,9 +342,10 @@ try {
       policyDiagnostics.completedGoalTransitionCount,
       "完成路线族必须按目标与行动序列完整覆盖全部完成尝试",
     );
-    assert.equal(policyDiagnostics.maxExecutionNodes, 4096);
-    assert.equal(policyDiagnostics.executedNodeCount < policyDiagnostics.maxExecutionNodes, true,
-      "固定盘面必须在物理失控保护前自然耗尽");
+    assert.equal(policyDiagnostics.maxExecutionNodes > 0, true,
+      "统一搜索（含 play_card 受限评估）必须报告正的物理执行上限");
+    assert.equal(policyDiagnostics.executedNodeCount <= policyDiagnostics.maxExecutionNodes, true,
+      "统一搜索节点数必须受物理上限控制（play_card 受限评估可能命中其 128 上限）");
     assert.equal(policyDiagnostics.completedGoalTransitionCount > 0, true,
       "次级深度只能由真实结果目标完成推进");
     assert.equal(policyDiagnostics.maxCompletedGoalDepth > 0, true,
@@ -383,18 +387,36 @@ try {
     ));
     assert.equal(quickTradeOutcomes.length > 0, true,
       "固定盘面必须覆盖可执行快速交易");
-    assert.equal(quickTradeOutcomes.every((outcome) => (
-      outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
-    )), true, "快速转换只能在已选结果目标内部执行，不能成为独立搜索根");
+    // 统一搜索（unified）语义：quick_trade 凭需求放行（requiresRootCounterfactual 的
+    // prepares* 门控）——能补当前资源缺口的才进搜索，其余无需求保持 NOT_EVALUATED。
+    const releasedQuickTrades = quickTradeOutcomes.filter((outcome) => (
+      outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
+    ));
+    assert.equal(releasedQuickTrades.length > 0, true,
+      "统一搜索下能补资源缺口的快速转换必须放行进入搜索（需求引导）");
+    assert.equal(
+      quickTradeOutcomes.some((outcome) => (
+        outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
+      )),
+      true,
+      "无需求放行的快速转换保持 NOT_EVALUATED，不横向试跑",
+    );
     const unboundPlayCardOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       actions.find((action) => action.actionId === outcome.actionId)?.family === "play_card"
       && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
     ));
-    // f04870e：play_card 有界评估（boundedActions，maxDepth 6/maxLeaves 3）覆盖未进
-    // 路由目标调度的打牌——无目的打牌不再 NOT_EVALUATED，而是获得有界评估结果，
-    // 让打牌直接价值（分数/资源/抽牌/触发）进入策略视野。
-    assert.equal(unboundPlayCardOutcomes.length, 0,
-      "boundedActions 有界评估覆盖全部打牌，无目的打牌不再 NOT_EVALUATED");
+    // 统一搜索 v27：play_card 经目标绑定进入搜索（income:card 收入牌 / tech:research
+    // 免费科技 / probe:免费发射 / sector:观测 / data:卡牌），未绑定目标的打牌保持
+    // NOT_EVALUATED（实测全部放行 play_card 让单决策 8.9s/4096 撞顶且全盘退化，
+    // 纯效果牌评估虚高 → 不放散全部打牌，靠目标绑定识别值得打的牌）。
+    assert.equal(unboundPlayCardOutcomes.length > 0, true,
+      "统一搜索下未绑定目标的打牌保持 NOT_EVALUATED（目标引导，不横向试跑全部打牌）");
+    const evaluatedPlayCards = policyResult.actionOutcomes.filter((outcome) => (
+      actions.find((action) => action.actionId === outcome.actionId)?.family === "play_card"
+      && outcome.status === "settled"
+    ));
+    assert.equal(evaluatedPlayCards.length > 0, true,
+      "绑定目标（免费科技/发射/收入链）的打牌必须产生已结算叶");
     const strategicFamilies = new Set(["launch", "place_data", "scan"]);
     const strategicOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       strategicFamilies.has(actions.find((action) => action.actionId === outcome.actionId)?.family)

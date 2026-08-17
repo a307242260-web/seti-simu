@@ -896,13 +896,13 @@
     return !UNEVALUATED_ROOT_FAMILIES.has(action?.family);
   }
 
-  function requiresRootCounterfactual(action, observation, unifiedSearch = false) {
+  function requiresRootCounterfactual(action, observation) {
     if (!requiresCounterfactualOutcome(action)) return false;
     if (action?.family !== "quick_trade") return true;
     // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade 本身没有独立价值，
-    // 价值来自"补当前资源缺口"。unified 也不全放行——无需求时 quick_trade 的叶必然
-    // 搭后续主行动的便车（leafValue 是整链价值，不按动作分摊），评估虚高导致 AI 乱做
-    // （实测 on 全盘白色 86→43，quick_trade/card_corner/industry 被误选）。
+    // 价值来自"补当前资源缺口"。quick_trade 的叶必然搭后续主行动的便车（leafValue
+    // 是整链价值，不按动作分摊），评估虚高导致 AI 乱做（实测 on 全盘白色 86→43，
+    // quick_trade/card_corner/industry 被误选）。
     // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
     const projection = observation?.outcomeProjection;
     const preparesAnalyze = Boolean(
@@ -1932,26 +1932,25 @@
 
   function selectSecondaryAgentRootActions(input = {}) {
     const legalActions = input.legalActions || [];
-    // 统一搜索（unifiedSearch）：搜索入口 = 目标引导 + 需求引导（用户口径
-    // "需要了再做"，乱按打字机的猴子写不出莎士比亚）——不把全部动作平铺进搜索树
-    // 稀释主行动深搜。未绑定动作只凭"需求"放行：目的型动作（quick_trade 补缺口 /
-    // card_corner 弃牌收益 / industry 公司能力）有需求才评估，其余未绑定动作保持
-    // off 的不可见（AI 通过目标绑定评估所有值得做的动作）。需求动作的叶价值由
-    // quick 根截断限制为立即效果（见 selectSecondaryAgentSuccessors），策略在
-    // "主行动完整链 vs 需求动作立即效果"间取舍。
+    // 统一搜索：搜索入口 = 目标引导 + 需求引导（用户口径"需要了再做"，乱按打字机的
+    // 猴子写不出莎士比亚）——不把全部动作平铺进搜索树稀释主行动深搜。放行规则：
+    //   1) 目标绑定动作（probe/data/sector/income/tech 目标下的正式动作）；
+    //   2) 目的型动作（quick_trade 补缺口 / card_corner 弃牌收益 / industry 公司
+    //      能力）凭需求放行（requiresRootCounterfactual 的 prepares* 门控）。
+    // 打牌经目标绑定进入（income:card 收入牌 / tech:research 免费科技 / probe:
+    // 免费发射 / sector:观测 / data:卡牌），不打散全部 play_card——实测全部放行
+    // 让单决策 8.9s/4096 撞顶且全盘行为退化（白色 86→17，纯效果牌评估虚高）。
+    // 需求动作的叶价值由 quick 根截断限制为立即效果（见 selectSecondaryAgentSuccessors）。
     const compatibleActionIds = new Set(enumerateSecondaryAgentRootTargets({
       focalSeatId: input.focalSeatId,
       rootObservation: input.rootObservation,
       legalActions,
       maxProxyDepth: input.maxProxyDepth,
     }).flatMap((target) => target.compatibleActionIds));
-    if (input.unifiedSearch === true) {
-      return legalActions.filter((action) => (
-        compatibleActionIds.has(action.actionId)
-        || UNIFIED_PURPOSE_FAMILIES.has(action.family)
-      ));
-    }
-    return legalActions.filter((action) => compatibleActionIds.has(action.actionId));
+    return legalActions.filter((action) => (
+      compatibleActionIds.has(action.actionId)
+      || UNIFIED_PURPOSE_FAMILIES.has(action.family)
+    ));
   }
 
   function probeGoalResourceReachable(observation, goal, seatId) {
@@ -2462,7 +2461,7 @@
             targetEquivalentChoiceCount: successors.length - 1,
           }));
       }
-      // 统一搜索：未绑定分支的 conditional 不展开支付/选牌细节。弃牌付费、移动支付
+      // 未绑定分支的 conditional 不展开支付/选牌细节。弃牌付费、移动支付
       // 与交易选牌是纯结算步骤（付同一种资源 / 选哪张牌对未绑定目标等价），对
       // "评估根动作价值"无贡献；逐张展开会 toggle 振荡（executeDiscard 语义：
       // 已选→移除，无状态折叠恒选第一张 → selected 在 A↔∅ 间振荡），实测
@@ -2471,8 +2470,7 @@
       // 分支浅尝 ≤3 层），支付细节直接 return [] 让 origin 收束（被尝试过）。
       // 绑定目标分支的弃牌仍走 routeTargetId 分支的折叠（会话少，够用）。
       if (
-        input.unifiedSearch === true
-        && !input.routeTargetId
+        !input.routeTargetId
         && successors[0]?.phase === "conditional"
       ) {
         const settlementOnly = (
@@ -2608,14 +2606,13 @@
             routePlanId: null,
             routeResultTargetIds: [],
           }));
-        // 统一搜索（unifiedSearch，默认关）：把"只留目标绑定动作"的后继门控改为
-        // "targeted + 未绑定后继（按立即价值截断 top-K）+ controls"合并返回——
-        // 搜索在每个节点都能尝试所有动作，覆盖不再受目标清单限制；但未绑定后继
-        // 必须按立即价值截断，否则每层 17 个后继全展开（分支因子 17，配合未绑定
-        // 浅尝 3 层仍到 17³ 节点）吃光预算。优先级由 getBranchPriority 在展开时
-        // 再排序；此处的 top-K 是"预算内优先级截断"，低价值后继仍会在根/上层
-        // 被尝试（见 §3 设计文档）。
-        if (input.unifiedSearch === true) {
+        // 统一搜索：把"只留目标绑定动作"的后继门控改为"targeted + 未绑定后继（按
+        // 立即价值截断 top-K）+ controls"合并返回——搜索在每个节点都能尝试所有动作，
+        // 覆盖不再受目标清单限制；但未绑定后继必须按立即价值截断，否则每层 17 个
+        // 后继全展开（分支因子 17，配合未绑定浅尝 3 层仍到 17³ 节点）吃光预算。
+        // 优先级由 getBranchPriority 在展开时再排序；此处的 top-K 是"预算内优先级
+        // 截断"，低价值后继仍会在根/上层被尝试（见 §3 设计文档）。
+        {
           // quick 根截断（"需要了再做"，用户口径）：根动作是 quick 时，其叶价值
           // 只算立即效果，不搭后续主行动的便车。leafValue 是整链价值（叶状态−根
           // 状态，不按动作分摊），quick 根（quick_trade/card_corner/industry/
@@ -2654,7 +2651,6 @@
             .slice(0, MAX_UNIFIED_SUCCESSORS);
           return [...targeted, ...untargeted, ...controls];
         }
-        return [...targeted, ...controls];
       }
       if (
         successors[0]?.phase === "conditional"

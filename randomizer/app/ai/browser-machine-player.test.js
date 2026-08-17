@@ -148,7 +148,7 @@ function makePort(options = {}) {
     }];
     const { port, coordinatorModule, inputAdapter } = makePort({
       composition: makeComposition({ legalActions }),
-      machineConfig: { unifiedSearch: true },
+      machineConfig: { completeTargetCatalog: false },
     });
     const result = await port.runOnce();
     assert.equal(result.ok, true);

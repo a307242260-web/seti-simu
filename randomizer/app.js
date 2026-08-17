@@ -963,8 +963,9 @@
     submitDecision: (submission) => residentInput.submitDecision(submission),
     afterSubmit: () => scheduleRefreshAndAutomation(),
   });
-  // 浏览器机器席位的策略开关（与 Simulation resetConfig 同源语义，默认关）：
-  // 通过 URL 查询参数开启，例如 ?unifiedSearch=1&planReuse=1。
+  // 浏览器机器席位的策略开关（与 Simulation resetConfig 同源语义）：
+  // 通过 URL 查询参数开启，例如 ?planReuse=1。搜索机制已统一（目标引导 +
+  // 需求引导单一路径，无分桶开关）。
   const browserMachineFlags = (typeof URLSearchParams === "function"
     ? new URLSearchParams(window.location.search)
     : new URLSearchParams(""));
@@ -980,7 +981,6 @@
       // 惰性读取：决策函数在首个 runOnce（startNewGame 之后）创建，
       // 新游戏时 invalidate 丢弃重建，难度切换随之生效。
       get difficulty() { return aiDifficulty; },
-      unifiedSearch: browserMachineFlags.get("unifiedSearch") === "1",
       completeTargetCatalog: browserMachineFlags.get("completeTargetCatalog") === "1",
       traceCounterfactualGoalClusters: browserMachineFlags.get("traceCounterfactualGoalClusters") === "1",
       vStateValueEnabled: browserMachineFlags.get("vStateValueEnabled") === "1",

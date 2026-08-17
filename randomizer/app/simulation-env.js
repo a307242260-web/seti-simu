@@ -298,13 +298,12 @@ function createSimulationEnv() {
       maxFrontierPerRoot: options.maxFrontierPerRoot
         || (options.secondaryAgentSearch ? 1 : 8),
       traceGoalClusters: options.traceGoalClusters === true,
-      allowUntargetedRootActions: options.unifiedSearch === true,
+      allowUntargetedRootActions: true,
       secondaryAgentSearch: options.secondaryAgentSearch ? {
         focalSeatId: seatId,
         maxProxyDepth: options.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
         completeTargetCatalog: options.completeTargetCatalog === true,
-        unifiedSearch: options.unifiedSearch === true,
         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
@@ -368,7 +367,6 @@ function createSimulationEnv() {
         config: {
           completeTargetCatalog: config.completeTargetCatalog === true,
           traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,
-          unifiedSearch: config.unifiedSearch === true,
         },
       });
     }
@@ -560,7 +558,6 @@ function createSimulationEnv() {
         traceCounterfactualGoalClusters:
           resetConfig.traceCounterfactualGoalClusters === true,
         completeTargetCatalog: resetConfig.completeTargetCatalog === true,
-        unifiedSearch: resetConfig.unifiedSearch === true,
         vStateValueEnabled: resetConfig.vStateValueEnabled === true,
         planContinuationFastPath: resetConfig.planContinuationFastPath === true,
       };

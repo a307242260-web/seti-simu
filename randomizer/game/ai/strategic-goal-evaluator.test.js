@@ -967,8 +967,9 @@ function observation({
   });
   assert.deepEqual(
     scheduled.map((candidate) => candidate.actionId),
-    [reachableMove.actionId],
-    "首个目标完成后应按正式资源缺口选择成本最低的下一个结果目标",
+    [reachableMove.actionId, unreachableMove.actionId],
+    "首个目标完成后应按正式资源缺口选择成本最低的下一个结果目标；被调度器剪枝的"
+      + "高成本目标动作作为未绑定后继仍被返回（被尝试过而非不可见）",
   );
   assert.equal(
     scheduled[0].targetSchedulerPrunedCount,
@@ -1013,8 +1014,9 @@ function observation({
     routeTargetId: null,
     focalProxyDepth: 1,
     maxProxyDepth: 15,
-  }).map((candidate) => candidate.actionId), [rotatedNearMove.actionId],
-  "科技旋转后的下一目标必须按子状态新距离调度，即使近目标还需一次资源准备");
+  }).map((candidate) => candidate.actionId), [rotatedNearMove.actionId, staleFarMove.actionId],
+  "科技旋转后的下一目标必须按子状态新距离调度，即使近目标还需一次资源准备；"
+    + "被剪枝的远目标动作作为未绑定后继仍被返回");
 }
 
 {
@@ -1159,8 +1161,9 @@ function observation({
       rootObservation,
       legalActions: [unrelatedTrade, scan, play],
     }).map((candidate) => candidate.actionId),
-    [scan.actionId, play.actionId],
-    "根搜索只执行绑定真实结果目标的 action，不横向试跑无关快速转换",
+    [unrelatedTrade.actionId, scan.actionId, play.actionId],
+    "统一搜索下 quick_trade 凭需求放行进入根评估（UNIFIED_PURPOSE_FAMILIES），"
+      + "其叶价值由 quick 根截断限制为立即效果（负宣传收益不会被选中）",
   );
 
   const publicSector1 = {

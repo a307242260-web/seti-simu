@@ -52,7 +52,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
 - `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用一份实现）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子（sim 训练补记 replay/reward，browser 空操作）；失败直接抛错。
-- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——反事实搜索分桶 + 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。unifiedSearch 等开关经同一 config 源透传，Browser/Simulation 一份装配。
+- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。开关（completeTargetCatalog / traceCounterfactualGoalClusters 等）经同一 config 源透传，Browser/Simulation 一份装配。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
   固定大小的探测器目标摘要，以及本席数据轨到下一次正式扫描、放置或分析所需的
@@ -81,7 +81,8 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - `app/ai/browser-bootstrap.js`：Browser 机器席位端口——与 Simulation 共用同一协调器与
   Heuristic 决策函数（唯一差异：recordStep 记账钩子，browser 空操作）；只保留席位判定、
   决策前稳定化、同 decision 去重、lifecycle 失效重建与 fail-closed 结果转写。内联反事实
-  搜索拷贝已删除，开关（unifiedSearch 等）经同一 config 源透传（URL 参数，见 §3.4）。
+  搜索拷贝已删除，开关（completeTargetCatalog / traceCounterfactualGoalClusters 等）经
+  同一 config 源透传（URL 参数，见 §3.4）。
 
 `game/ai/index.js` 只聚合以上 Policy/evaluator 模块。不得向其中重新加入 legacy valuation、candidate、planner、analytics 或 controller adapter。
 
@@ -96,9 +97,9 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - 方案输出**至少包含下一步 `actionId`**；若有完整计划（winning leaf 链条 ≥ 2 步），
   附带 `plan = { nextActionId, continuation[], dependency, revealedCount }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供复用判断；
-- 当前方案：`heuristic-decision-function.js`（反事实搜索分桶 + 直调启发式
-  Policy + 从 winning leaf 构建 plan）；协调器 `machine-player-coordinator.js`
-  编排 readBoundary/复用/调用/提交；
+- 当前方案：`heuristic-decision-function.js`（统一反事实搜索——目标引导 + 需求引导
+  单一路径 + 直调启发式 Policy + 从 winning leaf 构建 plan）；协调器
+  `machine-player-coordinator.js` 编排 readBoundary/复用/调用/提交；
 - 装配：`app/simulation-env.js#runHeuristicPolicyDecision`（复用判断先行，未命中才
   走 outcome 生成 + 方案；`config.planContinuationFastPath` 开关，默认关）。
 
@@ -138,41 +139,41 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
   或多打一张移动牌）；tier2 的「可能出现更优选择」；多步链的跨路线续用。
 
-### 3.4 统一搜索（unifiedSearch，默认关）
+### 3.4 统一搜索（唯一机制，v27）
 
-反事实搜索（`heuristic-decision-function.js` 的 strategic 桶）默认走分桶目标门控：
-只有"命中预设目标目录"的根动作进搜索，未绑定动作（多数 quick_trade、card_corner、
-industry、未命中目标的 place_data/play_card）被门控滤掉，outcome 为
-`STRATEGIC_GOAL_NOT_EVALUATED`。
+反事实搜索 = **目标引导 + 需求引导**（用户口径"需要了再做"；第一版"预算内全动作
+尝试"实测全体玩家变弱——动作平铺进搜索树稀释主行动深搜，任何长链都规划不出来，
+已废弃）。**搜索机制已合并为单一路径**（v27）：去掉 bounded 分桶与 `unifiedSearch`
+开关，off 分桶语义（strategic/bounded/control 三桶 + 目标门控）删除，以下行为恒生效：
 
-`config.unifiedSearch`（默认关）**搜索入口 = 目标引导 + 需求引导**（用户口径
-"需要了再做"；第一版"预算内全动作尝试"实测全体玩家变弱——动作平铺进搜索树稀释
-主行动深搜，任何长链都规划不出来，已废弃）。涉及：
-
-- `expected-score-evaluator#requiresRootCounterfactual`：quick_trade 保持需求门控
-  （prepares*：为当前资源缺口补资源才评估；unified 同 off）；
-- `expected-score-evaluator#selectSecondaryAgentRootActions`：`unifiedSearch` 时
-  返回**目标绑定动作 + 需求放行的目的型动作**（`UNIFIED_PURPOSE_FAMILIES` =
-  quick_trade/card_corner/industry，凭需求进搜索，不平铺全部候选）；
-- `rule-composition#evaluate`：加 `allowUntargetedRootActions`，需求动作以
+- `expected-score-evaluator#requiresRootCounterfactual`：quick_trade 需求门控
+  （prepares*：为当前资源缺口补资源才评估）；
+- `expected-score-evaluator#selectSecondaryAgentRootActions`：返回**目标绑定动作 +
+  需求放行的目的型动作**（`UNIFIED_PURPOSE_FAMILIES` = quick_trade/card_corner/
+  industry，凭需求进搜索，不平铺全部候选）；
+- `rule-composition#evaluate`：`allowUntargetedRootActions` 恒 true，需求动作以
   targetId=null 进初始 frontier（L4a 放开）；未绑定 origin 展开 ≤3 层
   （`MAX_UNTARGETED_DEPTH`）即收束 pruned（浅尝，防无限深挖）；
-- `expected-score-evaluator#selectSecondaryAgentSuccessors`：`unifiedSearch` 时
-  `!routeTargetId` 分支返回 targeted + 未绑定后继 top-K（`MAX_UNIFIED_SUCCESSORS`=4，
-  按 family 基础价值 + 净资源收益排序）+ controls；未绑定分支的 choose_payment
-  （弃牌/移动支付）与交易选牌视为纯结算直接不展开；绑定分支弃牌折叠的
-  `targetUsesFungibleResources` 扩展覆盖探测行动目标（orbit:/land:/move: 前缀），
-  card:/decision: 卡牌身份目标仍保留全部 choice；弃牌会话延续层（actionChain 末尾
-  已是 choose_payment）直接收束（toggle 振荡防死）；
+- `expected-score-evaluator#selectSecondaryAgentSuccessors`：`!routeTargetId` 分支
+  返回 targeted + 未绑定后继 top-K（`MAX_UNIFIED_SUCCESSORS`=4，按 family 基础
+  价值 + 净资源收益排序）+ controls；未绑定分支的 choose_payment（弃牌/移动支付）
+  与交易选牌视为纯结算直接不展开；绑定分支弃牌折叠的 `targetUsesFungibleResources`
+  扩展覆盖探测行动目标（orbit:/land:/move: 前缀），card:/decision: 卡牌身份目标
+  仍保留全部 choice；弃牌会话延续层（actionChain 末尾已是 choose_payment）直接
+  收束（toggle 振荡防死）；
 - **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/quick_trade/industry/card_corner/
   runezu_face_symbol/complete_task）：目的型/铺垫型 quick 根未绑定时，下一个主行动
   决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭后续主行动便车
   （leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/card_corner 65
-  虚高导致乱做）。
+  虚高导致乱做）；
+- **bounded 桶已删除**：play_card 经目标绑定进入搜索（income:card 收入牌 /
+  tech:research 免费科技 / probe:免费发射 / sector:观测 / data:卡牌），未绑定目标
+  的打牌保持 `STRATEGIC_GOAL_NOT_EVALUATED`。**不全部放行 play_card**——实测全部
+  放行让单决策 8.9s/4096 撞顶且全盘行为退化（白色 86→17，纯效果牌评估虚高、
+  打牌链未兑现），靠目标绑定识别"值得打的牌"（对齐用户 405 档：打牌都是
+  有目的的——免费登陆/外星链/免费发射→探测/收入牌）；
 
-全盘实测：on 白色 73 / 均分 60.3（off 86 / 63.5），目的型动作"需要时使用"
-（card_corner 7、industry 2——off 时 industry 完全不可见）。详细设计与 A/B 实测见
-`docs/project-progress/unified-search-design-20260817.md`。
+详细设计与 A/B 实测见 `docs/project-progress/unified-search-design-20260817.md`。
 
 ## 4. Policy 契约
 
