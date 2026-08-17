@@ -217,8 +217,9 @@
 
     function discardChoices(root, pending) {
       const player = resolvePlayer(root, pending);
-      // 外星人牌与普通牌行为一致：全部手牌都可作为弃牌费用（用户规则，
-      // 不区分虫/阿米巴等任何卡牌来源）。
+      // 快速交易弃牌候选包含全部手牌（含外星牌）。说明书 P20/P28 只豁免
+      // 「钻探者卡牌」（=九折牌，不进手牌），虫（硫铵虫）等外星牌无豁免，
+      // 按普通手牌可作弃牌/资源转换费用。
       const hand = player?.hand || [];
       const required = Math.max(1, Math.round(Number(pending?.count) || 1));
       const selected = [...(pending?.selected || [])].filter((id) => (

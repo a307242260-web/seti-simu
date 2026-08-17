@@ -368,7 +368,8 @@
     }));
     const isFinalRound = Number(turn.roundNumber) >= turnFlow.DEFAULT_FINAL_ROUND;
     // 手牌上限弃牌：所有轮次都执行（规则书 PASS 步骤 1，最后一轮同样适用）。
-    // 外星人牌与普通牌一致，均计入手牌上限。
+    // 外星牌与普通牌一致均计入手牌上限：说明书 P20 只豁免「钻探者卡牌」
+    // （=九折牌，不进手牌），虫（硫铵虫）等外星牌无豁免。
     const discardCount = Math.max(
       0,
       (player.hand || []).length - 4,
