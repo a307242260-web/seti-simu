@@ -96,7 +96,18 @@
       暴露 fork 原语（createCounterfactualFork，可回退执行）作为基础组件
 - [x] 新 V 引导决策器：randomizer/game/ai/v-guided-search.js（fork 浅搜索 depth 4，
       全动作评估 V(leaf)-V(root)+实际分Δ）+ runVGuidedDecision（条件决策委托启发式）
-- [ ] V 引导全盘对比：新决策器 vs baseline（行为/分数验证）
+- [x] V 引导全盘对比（2026-08-17 分析）：**V 对行动价值的判断被误导**——
+      quick_trade 霸榜（详见 docs/project-progress/v-quicktrade-mislead-analysis-20260817.md）：
+      - HEAD 原版：白色 86 → **14 分**，quick_trade 3 → **29 次**，均分 64.3 → 37.5
+      - 根因：liquidValue 把资源库存当价值（花 1 钱 = -8 惩罚所有花钱动作）+ 
+        cardValue 固定 +6/张不看成本（宣传/钱/能买卡 = 免费 +6）→ 唯一"赚"的
+        动作是 quick_trade；另发现 forkAdvance 深度恒为 1（proj.state.turn 恒
+        undefined，宣称的 depth-4 浅搜索未落地）、quick_trade 弃牌会话 toggle 死锁
+      - 工作树"资源清零"补丁治标不治本（全盘结果与 HEAD 逐位相同）
+- [ ] 修复方向（待用户拍板，不在旧方向加码）：① 资源不按固定单价进 V（手段
+      不是价值，通过"能解锁什么"间接体现）；② cardValue 与获取路径绑定（卡价值
+      = 可打效果链，不是 +6/张）；③ 修 forkAdvance 推进条件让浅搜索真实展开；
+      ④ 弃牌会话：规则层加批量弃牌原语或决策层会话感知（选满 required 再 confirm）
 - [ ] 统一搜索：去掉分桶门控（第 5 节三处改动，若 V 引导直接替代则跳过）
 - [ ] 外星目标簇：放首痕迹→三色齐→揭示→放位置→拿外星牌作为正式目标
 - [ ] 收入动力：环绕/填数据作为收入引擎进入评估
