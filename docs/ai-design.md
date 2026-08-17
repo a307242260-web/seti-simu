@@ -142,29 +142,37 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 反事实搜索（`heuristic-decision-function.js` 的 strategic 桶）默认走分桶目标门控：
 只有"命中预设目标目录"的根动作进搜索，未绑定动作（多数 quick_trade、card_corner、
-industry、未命中目标的 place_data/play_card）被 L1-L4 层门控滤掉，outcome 为
-`STRATEGIC_GOAL_NOT_EVALUATED`——评估器看不到其价值。
+industry、未命中目标的 place_data/play_card）被门控滤掉，outcome 为
+`STRATEGIC_GOAL_NOT_EVALUATED`。
 
-`config.unifiedSearch`（默认关）改为"预算内全动作尝试 + 优先级排序"，涉及：
+`config.unifiedSearch`（默认关）**搜索入口 = 目标引导 + 需求引导**（用户口径
+"需要了再做"；第一版"预算内全动作尝试"实测全体玩家变弱——动作平铺进搜索树稀释
+主行动深搜，任何长链都规划不出来，已废弃）。涉及：
 
-- `expected-score-evaluator#requiresRootCounterfactual`：加 `unifiedSearch` 参数，
-  开启时 quick_trade 不再要求"为某目标补资源缺口"（L1 放开）；
-- `expected-score-evaluator#selectSecondaryAgentRootActions`：加 `unifiedSearch`，
-  开启时返回全部非 control 动作（L2 目标门控放开）；
-- `rule-composition#evaluate`：加 `allowUntargetedRootActions`，未绑定动作以
+- `expected-score-evaluator#requiresRootCounterfactual`：quick_trade 保持需求门控
+  （prepares*：为当前资源缺口补资源才评估；unified 同 off）；
+- `expected-score-evaluator#selectSecondaryAgentRootActions`：`unifiedSearch` 时
+  返回**目标绑定动作 + 需求放行的目的型动作**（`UNIFIED_PURPOSE_FAMILIES` =
+  quick_trade/card_corner/industry，凭需求进搜索，不平铺全部候选）；
+- `rule-composition#evaluate`：加 `allowUntargetedRootActions`，需求动作以
   targetId=null 进初始 frontier（L4a 放开）；未绑定 origin 展开 ≤3 层
-  （`MAX_UNTARGETED_DEPTH`）即收束 pruned（浅尝，防无限深挖）；未绑定分支展开后
-  允许 `selectRouteTarget` 重新绑定目标；
+  （`MAX_UNTARGETED_DEPTH`）即收束 pruned（浅尝，防无限深挖）；
 - `expected-score-evaluator#selectSecondaryAgentSuccessors`：`unifiedSearch` 时
   `!routeTargetId` 分支返回 targeted + 未绑定后继 top-K（`MAX_UNIFIED_SUCCESSORS`=4，
-  按 family 基础价值 + 净资源收益排序，预算内优先级截断）+ controls；未绑定分支的
-  choose_payment（弃牌/移动支付）与交易选牌视为纯结算直接不展开；绑定分支弃牌折叠
-  的 `targetUsesFungibleResources` 扩展覆盖探测行动目标（orbit:/land:/move: 前缀，
-  弃牌等价），card:/decision: 卡牌身份目标仍保留全部 choice；弃牌会话延续层
-  （actionChain 末尾已是 choose_payment）直接收束（无状态折叠恒选第一张卡会 toggle
-  振荡，永不满 required）。
+  按 family 基础价值 + 净资源收益排序）+ controls；未绑定分支的 choose_payment
+  （弃牌/移动支付）与交易选牌视为纯结算直接不展开；绑定分支弃牌折叠的
+  `targetUsesFungibleResources` 扩展覆盖探测行动目标（orbit:/land:/move: 前缀），
+  card:/decision: 卡牌身份目标仍保留全部 choice；弃牌会话延续层（actionChain 末尾
+  已是 choose_payment）直接收束（toggle 振荡防死）；
+- **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/quick_trade/industry/card_corner/
+  runezu_face_symbol/complete_task）：目的型/铺垫型 quick 根未绑定时，下一个主行动
+  决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭后续主行动便车
+  （leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/card_corner 65
+  虚高导致乱做）。
 
-详细设计与 A/B 实测见 `docs/project-progress/unified-search-design-20260817.md`。
+全盘实测：on 白色 73 / 均分 60.3（off 86 / 63.5），目的型动作"需要时使用"
+（card_corner 7、industry 2——off 时 industry 完全不可见）。详细设计与 A/B 实测见
+`docs/project-progress/unified-search-design-20260817.md`。
 
 ## 4. Policy 契约
 
