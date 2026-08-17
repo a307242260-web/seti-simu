@@ -81,8 +81,6 @@
     PICK_CARD_START: "card_play_domain_pick_card_start",
     INCOME_DECISION: "card_play_domain_income_decision",
     LAUNCH: "card_play_domain_launch",
-    FIXED_NEBULA_SCAN: "card_play_domain_fixed_nebula_scan",
-    COLOR_NEBULA_SCAN: "card_play_domain_color_nebula_scan",
     EFFECT: "card_play_domain_effect",
   });
   const EXECUTOR_ID = `${DOMAIN_ID}:executor:v1`;
@@ -378,13 +376,15 @@
         return {
           priority: "direct",
           effect: {
-            type: science.EFFECT_TYPES.PUBLIC_SCAN,
-            decisionKind: "choose_card",
+            type: science.EFFECT_TYPES.SCAN_STEP,
             ownerId,
             payload: {
-              selected: 0,
-              max: Math.max(1, Number(effect.options?.repeat || effect.options?.count) || 1),
-              consumeMarkers: false,
+              options: {
+                mode: "public",
+                selected: 0,
+                max: Math.max(1, Number(effect.options?.repeat || effect.options?.count) || 1),
+                consumeMarkers: false,
+              },
               cardInstanceId,
               cardEffect: clone(effect),
             },
@@ -412,33 +412,57 @@
           },
         };
       }
-      let type = EFFECT_TYPES.COLOR_NEBULA_SCAN;
-      let decisionKind = "choose_target";
+      // 扫描家族 → 统一 science SCAN_STEP（目标枚举/扫描结算/扇区结算全部收敛到
+      // science 的统一扫描节点，底层 placeNebulaToken）。
+      const scanStepOptions = (() => {
+        const e = effect;
+        switch (e.type) {
+          case cardEffects.EFFECT_TYPES.SCAN_NEBULA:
+            return { mode: "specified", nebulaIds: [e.options?.nebulaId].filter(Boolean), gainData: e.options?.gainData !== false, label: e.label };
+          case cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN:
+            return { mode: "any", gainData: e.options?.gainData !== false, label: e.label };
+          case cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE:
+            return { mode: "color", color: e.options?.color, gainData: e.options?.gainData !== false, label: e.label };
+          case cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN:
+            return { mode: "planet", planetId: e.options?.planetId, gainData: e.options?.gainData !== false, label: e.label };
+          case cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN:
+            return { mode: "landing", gainData: e.options?.gainData !== false, label: e.label };
+          case cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN:
+            return { mode: "probe", gainData: e.options?.gainData !== false, label: e.label };
+          case cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN:
+            return { mode: "conditional", condition: e.options?.condition, gainData: e.options?.gainData !== false, label: e.label };
+          default:
+            return null;
+        }
+      })();
+      if (scanStepOptions) {
+        const science = getScienceDomain();
+        return {
+          priority: "direct",
+          effect: {
+            type: science.EFFECT_TYPES.SCAN_STEP,
+            ownerId,
+            payload: { options: scanStepOptions, cardInstanceId, cardEffect: clone(effect) },
+          },
+        };
+      }
+      // 其余效果：直接效果 / 抽牌 / 精选 / 发射 / 通用描述符（扫描家族已全部
+      // 在上方收敛到 science SCAN_STEP）。
+      let type = null;
+      let decisionKind = null;
       if (DIRECT_EFFECT_TYPES.includes(effect.type)) {
         type = EFFECT_TYPES.DIRECT;
-        decisionKind = null;
       } else if (effect.type === cardEffects.REWARD_TYPES.DRAW_CARDS) {
         type = EFFECT_TYPES.DRAW_CARDS;
-        decisionKind = null;
       } else if (effect.type === cardEffects.REWARD_TYPES.PICK_CARD) {
         type = EFFECT_TYPES.PICK_CARD_START;
-        decisionKind = null;
-        decisionKind = null;
       } else if (effect.type === cardEffects.REWARD_TYPES.LAUNCH) {
         type = EFFECT_TYPES.LAUNCH;
-        decisionKind = null;
-      } else if (effect.type === cardEffects.EFFECT_TYPES.SCAN_NEBULA) {
-        type = EFFECT_TYPES.FIXED_NEBULA_SCAN;
-        decisionKind = null;
-      } else if (![
-        cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
-      ].includes(effect.type)) {
+      } else {
         type = genericEffectRuntimeType(effect.type);
-        decisionKind = null;
       }
       const genericDescriptor = GENERIC_EFFECT_DESCRIPTORS[effect.type] || null;
       if (genericDescriptor?.decisionKind) {
-        decisionKind = null;
         type = genericEffectRuntimeType(effect.type);
       }
       return {
@@ -999,97 +1023,6 @@
       };
     });
 
-    runtime.registerExecutor(EFFECT_TYPES.FIXED_NEBULA_SCAN, (
-      state,
-      sessionEffect,
-      workingContext,
-    ) => {
-      const root = getWorkingRoot(state, workingContext);
-      const effect = sessionEffect.payload?.cardEffect;
-      const actor = getActor(root, sessionEffect.ownerId);
-      if (!actor || effect?.type !== cardEffects.EFFECT_TYPES.SCAN_NEBULA) {
-        return fail("CARD_SCAN_CONTEXT_STALE", "固定星云扫描上下文已失效");
-      }
-      const result = getScienceDomain().executeNebulaScan(root, actor.id, {
-        family: "choose_target",
-        target: {
-          choiceId: `nebula:${effect.options?.nebulaId}`,
-          nebulaId: effect.options?.nebulaId,
-        },
-        payload: { gainData: effect.options?.gainData !== false },
-      }, {
-        nebulaIds: [effect.options?.nebulaId],
-        gainData: effect.options?.gainData,
-        source: "card",
-        label: effect.label,
-      });
-      if (!result.ok) return result;
-      return {
-        ok: true,
-        nextState: commitWorkingState(state, { source: effect.type }),
-        // 统一扇区结算：卡牌固定星云扫描替换 token 后检查一次扇区完成。
-        spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
-        events: clone(result.events || []),
-        history: [{
-          type: "card_effect",
-          effectId: effect.id || null,
-          effectType: effect.type,
-          abilityId: result.abilityId,
-          executorId: EXECUTOR_ID,
-        }],
-      };
-    });
-
-    const colorDecisionExecutor = {
-      getLegalChoices(state, sessionEffect, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        const effect = sessionEffect.payload?.cardEffect;
-        const choices = getScienceDomain().listNebulaChoices(root, {
-          nebulaIds: cardEffects.NEBULA_IDS_BY_COLOR[effect?.options?.color] || [],
-          gainData: effect?.options?.gainData,
-        }).map((choice) => ({
-          ...choice,
-          target: { ...choice.target, choiceId: choice.target.nebulaId },
-        }));
-        return getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, choices);
-      },
-      resolveDecision(state, sessionEffect, choice, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        const effect = sessionEffect.payload?.cardEffect;
-        const actor = getActor(root, sessionEffect.ownerId);
-        const legal = colorDecisionExecutor.getLegalChoices(state, sessionEffect, workingContext)
-          .some((candidate) => candidate.target.nebulaId === choice?.target?.nebulaId);
-        if (!actor || !legal) return fail("CARD_SCAN_CHOICE_STALE", "星云扫描选择已失效");
-        const result = getScienceDomain().executeNebulaScan(root, actor.id, {
-          ...clone(choice),
-          target: {
-            ...clone(choice.target),
-            choiceId: `nebula:${choice.target.nebulaId}`,
-          },
-        }, {
-          nebulaIds: [choice.target.nebulaId],
-          gainData: effect.options?.gainData,
-          source: "card",
-          label: effect.label,
-        });
-        if (!result.ok) return result;
-        return {
-          ok: true,
-          nextState: commitWorkingState(state, { source: effect.type }),
-          // 统一扇区结算：卡牌颜色选择扫描替换 token 后检查一次扇区完成。
-          spawnedEffects: [getScienceDomain().settleAfterScan(actor.id)],
-          events: clone(result.events || []),
-          history: [{
-            type: "card_effect_decision",
-            effectId: effect.id || null,
-            effectType: effect.type,
-            choiceId: choice.target.nebulaId,
-            executorId: EXECUTOR_ID,
-          }],
-        };
-      },
-    };
-    runtime.registerExecutor(EFFECT_TYPES.COLOR_NEBULA_SCAN, colorDecisionExecutor);
 
     function cardEffectResult(state, root, sessionEffect, extra = {}) {
       const effect = sessionEffect.payload?.cardEffect;
@@ -1479,19 +1412,6 @@
       return effects;
     }
 
-    function countSignalsInSector(root, actor, sectorX) {
-      return Object.keys(cardEffects.NEBULA_IDS_BY_COLOR)
-        .flatMap((color) => cardEffects.NEBULA_IDS_BY_COLOR[color])
-        .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(sectorX))
-        .reduce((count, nebulaId) => count + (
-          data.listNebulaTokens(getWorkingSlice(root, "data"), nebulaId)
-            .filter((token) => (
-              token.replacedByPlayerId === actor.id
-              || token.replacedByPlayerColor === actor.color
-            )).length
-        ), 0);
-    }
-
     function conditionMet(root, actor, condition) {
       const probeData = buildProbeLocationData(root);
       return cardEffects.taskConditionMet(
@@ -1824,56 +1744,8 @@
           )
         ));
       }
-      if (effect.type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN) {
-        return listScannableNebulaChoices(
-          root,
-          Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat(),
-          options,
-        );
-      }
-      if (effect.type === cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN) {
-        const sectorXs = [...new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR)
-          .flat().map((nebulaId) => getNebulaSectorX(root, nebulaId)).filter((x) => x != null))];
-        const matching = cardEffects.getMatchingConditionalSectorXs(
-          options.condition,
-          sectorXs,
-          (sectorX) => countSignalsInSector(root, actor, sectorX),
-        );
-        const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
-          .filter((nebulaId) => matching.includes(getNebulaSectorX(root, nebulaId)));
-        return listScannableNebulaChoices(root, ids, options);
-      }
-      if (effect.type === cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN) {
-        const x = solar.createSolarSnapshot(
-          getWorkingSlice(root, "solarSystem"),
-        ).planetLocations?.find((planet) => planet.planetId === options.planetId)?.x;
-        const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
-          .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(x));
-        return listScannableNebulaChoices(root, ids, options);
-      }
-      if (effect.type === cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN) {
-        const planetId = root.match.cardPlayContext?.lastLanding?.planetId;
-        const x = solar.createSolarSnapshot(
-          getWorkingSlice(root, "solarSystem"),
-        ).planetLocations?.find((planet) => planet.planetId === planetId)?.x;
-        const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
-          .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(x));
-        return listScannableNebulaChoices(root, ids, options);
-      }
-      if (effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN) {
-        const ids = [];
-        for (const rocket of listPlayerRockets(root, actor.id, options)) {
-          for (const nebulaId of Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()) {
-            const x = getNebulaSectorX(root, nebulaId);
-            const distance = Math.min(
-              solar.mod8(x - rocket.sectorX),
-              solar.mod8(rocket.sectorX - x),
-            );
-            if (distance === 0 || (options.includeAdjacent && distance === 1)) ids.push(nebulaId);
-          }
-        }
-        return listScannableNebulaChoices(root, ids, options);
-      }
+      // 扫描家族（ANY/CONDITIONAL/PLANET/LANDING/PROBE 等）已统一收敛到 science
+      // SCAN_STEP，不再经 listGenericChoices；仅保留 DRAW_THEN_SCAN 的盲抽后扫描。
       if (effect.type === cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN) {
         const choices = listScannableNebulaChoices(
           root,
@@ -2020,12 +1892,9 @@
       const legal = listGenericChoices(root, sessionEffect)
         .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
       if (!actor || !legal) return fail("CARD_EFFECT_CHOICE_STALE", "卡牌效果选择已失效");
+      // 扫描家族（ANY/CONDITIONAL/PLANET/LANDING/PROBE）已统一到 science SCAN_STEP；
+      // 仅 DRAW_THEN_SCAN（盲抽后扫描）保留自己的流程。
       if ([
-        cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN,
-        cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN,
-        cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN,
-        cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN,
-        cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN,
         cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN,
       ].includes(effect.type)) return resolveNebulaScan(state, sessionEffect, choice, workingContext);
       if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL) {
@@ -2456,10 +2325,8 @@
 
     const GENERIC_EFFECT_DESCRIPTORS = Object.freeze({
       [cardEffects.REWARD_TYPES.ALIEN_TRACE]: { decisionKind: "choose_target" },
-      [cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.CONDITIONAL_REWARD]: {},
-      [cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.DISCARD_ANY_FOR_INCOME]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.DISCARD_CARD_CORNER_REPEAT]: { decisionKind: "choose_card" },

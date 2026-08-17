@@ -322,7 +322,7 @@ PASS 提交后（`passCompletionPending` 置位或已计入 `passedPlayerIds`）
 
 ### 扫描效果队列
 
-扫描 effect 由 `randomizer/game/actions/scan-effects.js` 构建，并由 `randomizer/game/effects/science-session.js` 在公共 Effect Session 中编排：
+扫描 effect 由 `randomizer/game/actions/scan-effects.js` 构建，并由 `randomizer/game/effects/science-session.js` 在公共 Effect Session 中编排。**所有「往扇区放信号」的节点统一为一个 `SCAN_STEP`**（`science_domain_scan_step`）：按 `mode` 枚举目标（`specified` 指定星云/扇区、`any` 任意、`color` 颜色族、`planet` 行星扇区、`probe` 探测器扇区、`landing` 刚登陆扇区、`conditional` 条件扇区、`hand` 手牌扫描、`public` 公共牌扫描），共享扫描结算（`scanNebula` → `placeNebulaToken`）与统一扇区结算（`SETTLE`）；固定单目标自动直接扫描，多目标/可跳过/公共牌提升为标准决策；`hand`/`public` 模式含弃牌与公共牌延迟补牌多步流。扫描主行动（`scanQueue`）、行星奖励扫描、卡牌扫描家族（任意/颜色/固定/行星/登陆/探测器/条件/公共牌）全部收敛到该节点；`DRAW_THEN_SCAN`（盲抽后扫描）与 `SCAN_ACTION_4`（紫4 发射/移动，非放信号）保留独立流程。
 
 - 标准扫描主行动开始时先支付扫描费用（受公司/被动修正影响），费用是行动触发条件，不作为效果队列节点；该支付仍随行动历史可撤销。
 - 无紫色科技：地球所在扇区扫描 + 公共牌区扫描。

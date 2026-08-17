@@ -809,13 +809,15 @@
             .find((candidate) => candidate.planetId === rewardOptions.planetId)
           : null;
         delegated = {
-          type: science.EFFECT_TYPES.SCAN_TARGET, kind: "decision",
-          decisionKind: "choose_target", ownerId: effect.ownerId,
+          type: science.EFFECT_TYPES.SCAN_STEP, ownerId: effect.ownerId,
           payload: {
-            sectorX: planet?.x ?? null,
-            nebulaIds: clone(rewardOptions.nebulaIds || []),
-            gainData: true,
-            label: reward.label,
+            options: {
+              mode: "specified",
+              sectorX: planet?.x ?? null,
+              nebulaIds: clone(rewardOptions.nebulaIds || []),
+              gainData: true,
+              label: reward.label,
+            },
           },
         };
       }

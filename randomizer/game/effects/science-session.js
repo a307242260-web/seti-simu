@@ -15,6 +15,7 @@
   let industryState = root.SetiIndustryState;
   let helios = root.SetiIndustryHeliosPassive;
   let stateSequences = root.SetiStateSequences;
+  let cardEffects = root.SetiCardEffects;
   if (typeof require === "function") {
     standardAction = standardAction || require("../actions/standard-action");
     scanEffects = scanEffects || require("../actions/scan-effects");
@@ -30,6 +31,7 @@
     industryState = industryState || require("../industry/state");
     helios = helios || require("../industry/helios-passive");
     stateSequences = stateSequences || require("../state/sequences");
+    cardEffects = cardEffects || require("../cards/effects");
   }
 
   const api = factory(
@@ -47,6 +49,7 @@
     industryState,
     helios,
     stateSequences,
+    cardEffects,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiScienceSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -64,6 +67,7 @@
   industryState,
   helios,
   stateSequences,
+  cardEffects,
 ) {
   "use strict";
 
@@ -78,9 +82,9 @@
   ]);
   const EFFECT_TYPES = Object.freeze({
     EXECUTE: "science_domain_execute",
-    SCAN_TARGET: "science_domain_scan_target",
-    PUBLIC_SCAN: "science_domain_public_scan",
-    HAND_SCAN: "science_domain_hand_scan",
+    // 统一扫描节点：一次「往扇区放信号」由 SCAN_STEP 完成（按 mode 枚举目标、
+    // 可选跳过、逐次扫描、统一扇区结算；hand/public 模式含弃牌与多步流）。
+    SCAN_STEP: "science_domain_scan_step",
     SCAN_ACTION_4: "science_domain_scan_action_4",
     PLACE_DATA: "science_domain_place_data",
     INCOME: "science_domain_income",
@@ -785,6 +789,18 @@
       };
     }
 
+    // 统一扫描节点 spawn：非决策形态（execute 内自动决定直接扫描或提升决策）。
+    function scanStepEffect(ownerId, options) {
+      return {
+        priority: "direct",
+        effect: {
+          type: EFFECT_TYPES.SCAN_STEP,
+          ownerId,
+          payload: { options: clone(options) },
+        },
+      };
+    }
+
     function scanQueue(root, actor, options = {}) {
       const queue = scanEffects.buildScanEffectQueue(actor, {
         fullScanAction: true,
@@ -810,8 +826,8 @@
               .map((sectorX) => solar.getNebulaAtCoordinate(sectorX, 5, sectorBySlot)?.id)
               .filter(Boolean);
             if (!listNebulaChoices(root, { nebulaIds, gainData: true }).length) return null;
-            return scanDecisionEffect(EFFECT_TYPES.SCAN_TARGET, actor.id, {
-              sectorX: null,
+            return scanStepEffect(actor.id, {
+              mode: "specified",
               nebulaIds,
               gainData: true,
               cost: entry.options?.cost || null,
@@ -819,7 +835,8 @@
             });
           }
           if (!listNebulaChoices(root, { sectorX: planet?.x, gainData: true }).length) return null;
-          return scanDecisionEffect(EFFECT_TYPES.SCAN_TARGET, actor.id, {
+          return scanStepEffect(actor.id, {
+            mode: "specified",
             sectorX: planet?.x ?? null,
             gainData: true,
             cost: entry.options?.cost || null,
@@ -830,7 +847,8 @@
         }
         if (entry.type === scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN) {
           if (!publicScanChoices(root).length) return null;
-          return scanDecisionEffect(EFFECT_TYPES.PUBLIC_SCAN, actor.id, {
+          return scanStepEffect(actor.id, {
+            mode: "public",
             selected: 0,
             // 信号标记（额外公共牌区扫描）：每次扫描行动最多通过弃置信号标记
             // 额外标记 2 个信号（规则书 FAQ：供应区只在行动完成后补满，因此封顶 2）。
@@ -839,14 +857,15 @@
               1 + Math.max(0, Number(actor.resources?.additionalPublicScan) || 0),
             ),
             consumeMarkers: true,
-          }, "choose_card");
+          });
         }
         if (entry.type === scanEffects.EFFECT_TYPES.HAND_SCAN) {
           if (!handScanChoices(root, actor.id).length) return null;
-          return scanDecisionEffect(EFFECT_TYPES.HAND_SCAN, actor.id, {
+          return scanStepEffect(actor.id, {
+            mode: "hand",
             // 紫3（手牌扫描）按规则书「可以」可选执行：提供跳过。
             skippable: true,
-          }, "choose_card");
+          });
         }
         if (entry.type === scanEffects.EFFECT_TYPES.SCAN_ACTION_4) {
           if (!listScanAction4Choices(root, actor.id).length) return null;
@@ -995,40 +1014,232 @@
       });
     });
 
-    runtime.registerExecutor(EFFECT_TYPES.SCAN_TARGET, {
+    // —— 统一扫描节点 SCAN_STEP ——
+    // 任何「往扇区放信号」都是一次 SCAN_STEP：mode 决定目标枚举，共享扫描结算
+    // （scanNebula → placeNebulaToken）+ 统一扇区结算。hand/public 模式带弃牌与
+    // 多步流；planet/probe/landing/conditional 按实时状态枚举（与卡牌/奖励共用）。
+    function getNebulaSectorX(root, nebulaId) {
+      const locations = solar.createSolarSnapshot(
+        getWorkingSlice(root, "solarSystem"),
+      ).nebulaLocations || {};
+      const location = Array.isArray(locations)
+        ? locations.find((entry) => entry.id === nebulaId)
+        : locations[nebulaId] || null;
+      return location?.x == null ? null : solar.mod8(Number(location.x));
+    }
+
+    function countSignalsInSector(root, actor, sectorX) {
+      return Object.keys(cardEffects.NEBULA_IDS_BY_COLOR)
+        .flatMap((color) => cardEffects.NEBULA_IDS_BY_COLOR[color])
+        .filter((nebulaId) => getNebulaSectorX(root, nebulaId) === solar.mod8(sectorX))
+        .reduce((count, nebulaId) => count + (
+          data.listNebulaTokens(getWorkingSlice(root, "data"), nebulaId)
+            .filter((token) => (
+              token.replacedByPlayerId === actor.id
+              || token.replacedByPlayerColor === actor.color
+            )).length
+        ), 0);
+    }
+
+    function scanStepChoices(root, actor, opts) {
+      const choices = [];
+      const mode = opts.mode || "specified";
+      if (mode === "any") {
+        choices.push(...listNebulaChoices(root, { gainData: opts.gainData }));
+      } else if (mode === "color") {
+        choices.push(...listNebulaChoices(root, {
+          nebulaIds: cardEffects.NEBULA_IDS_BY_COLOR[opts.color] || [],
+          gainData: opts.gainData,
+        }));
+      } else if (mode === "specified") {
+        choices.push(...listNebulaChoices(root, {
+          nebulaIds: opts.nebulaIds || [],
+          sectorX: opts.sectorX,
+          gainData: opts.gainData,
+        }));
+      } else if (mode === "planet" || mode === "landing") {
+        const planetId = mode === "landing"
+          ? root.match?.cardPlayContext?.lastLanding?.planetId
+          : opts.planetId;
+        const planet = planetId
+          ? solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem")).planetLocations
+            .find((candidate) => candidate.planetId === planetId)
+          : null;
+        if (planet?.x != null) {
+          choices.push(...listNebulaChoices(root, { sectorX: planet.x, gainData: opts.gainData }));
+        }
+      } else if (mode === "probe") {
+        const sectorBySlot = getWorkingSlice(root, "solarSystem").sectorBySlot;
+        const ids = [...new Set((getWorkingSlice(root, "pieces").rockets || [])
+          .filter((rocket) => rocket.playerId === actor.id && rocket.surface === "solar-board")
+          .map((rocket) => rockets.getRocketSectorCoordinate(rocket)?.x)
+          .filter((x) => x != null)
+          .map((x) => solar.getNebulaAtCoordinate(x, 5, sectorBySlot)?.id)
+          .filter(Boolean))];
+        choices.push(...listNebulaChoices(root, { nebulaIds: ids, gainData: opts.gainData }));
+      } else if (mode === "conditional") {
+        const sectorXs = [...new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR)
+          .flat().map((nebulaId) => getNebulaSectorX(root, nebulaId)).filter((x) => x != null))];
+        const matching = cardEffects.getMatchingConditionalSectorXs(
+          opts.condition,
+          sectorXs,
+          (sectorX) => countSignalsInSector(root, actor, sectorX),
+        );
+        const ids = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat()
+          .filter((nebulaId) => matching.includes(getNebulaSectorX(root, nebulaId)));
+        choices.push(...listNebulaChoices(root, { nebulaIds: ids, gainData: opts.gainData }));
+      } else if (mode === "hand") {
+        choices.push(...handScanChoices(root, actor.id));
+      } else if (mode === "public") {
+        choices.push(...publicScanChoices(root));
+        if (opts.selected > 0) {
+          choices.push(makeChoice("choose_card", "public:done", { done: true }, {}, "结束公共牌扫描"));
+        }
+      }
+      if (opts.skippable && mode !== "public") {
+        const skipFamily = mode === "hand" ? "choose_card" : "choose_target";
+        choices.push(makeChoice(skipFamily, "skip", { skip: true }, {}, "跳过"));
+      }
+      return choices;
+    }
+
+    // 共享扫描结算：支付附加费用 → scanNebula → placeNebulaToken → 统一扇区结算；
+    // hand/public 模式含弃牌与多步流（公共牌结束统一补牌）。
+    function resolveScanStep(state, root, effect, opts, actor, legal) {
+      const mode = opts.mode || "specified";
+      if (opts.cost) {
+        const spent = players.spendResources(actor, opts.cost);
+        if (!spent.ok) return spent;
+      }
+      const result = executeNebulaScan(root, actor.id, makeChoice(
+        "choose_target",
+        `nebula:${legal.target.nebulaId}`,
+        { nebulaId: legal.target.nebulaId },
+        { gainData: opts.gainData !== false },
+      ), {
+        nebulaIds: [legal.target.nebulaId],
+        gainData: opts.gainData,
+        source: opts.source || "science",
+        label: opts.label,
+      });
+      if (!result.ok) return result;
+      const spawnedEffects = [settleAfterScan(actor.id)];
+      const events = clone(result.events || []);
+      if (mode === "hand") {
+        const index = actor.hand.findIndex((card) => card.id === legal.target.cardInstanceId);
+        const removed = cards.discardFromHandAtIndex(actor, index);
+        if (!removed.ok) return removed;
+        cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
+      } else if (mode === "public") {
+        const cardsState = getWorkingSlice(root, "cards");
+        const card = cardsState.publicCards[legal.target.publicSlotIndex];
+        cardsState.publicCards[legal.target.publicSlotIndex] = null;
+        cards.addToDiscardPile(cardsState, card);
+        const selected = (Number(opts.selected) || 0) + 1;
+        if (selected > 1 && opts.consumeMarkers) {
+          actor.resources.additionalPublicScan = Math.max(
+            0,
+            (Number(actor.resources.additionalPublicScan) || 0) - 1,
+          );
+        }
+        // 公共牌扫描放置后空位保持空置，不立即补牌；流程结束统一补牌。
+        const scanFlowEnded = selected >= (Number(opts.max) || 1) || !publicScanChoices(root).length;
+        if (!scanFlowEnded) {
+          spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_STEP, actor.id, {
+            options: { ...clone(opts), selected },
+          }, "choose_card"));
+        } else {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: actor.id },
+          });
+        }
+      }
+      return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
+        spawnedEffects,
+        events,
+        history: [{ type: "science_scan", nebulaId: legal.target.nebulaId }],
+      });
+    }
+
+    runtime.registerExecutor(EFFECT_TYPES.SCAN_STEP, {
+      // 非决策路径：固定单目标直接扫描；公共牌/多目标/可跳过提升为决策。
+      execute(state, effect, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
+        const opts = effect.payload?.options || {};
+        const mode = opts.mode || "specified";
+        const actor = getActor(root, effect.ownerId);
+        if (!actor) return fail("SCIENCE_SCAN_STEP_STALE", "扫描玩家已失效");
+        if (mode === "public") {
+          // 公共牌扫描多步流：prepare → 决策（选牌/结束）→ 结束统一补牌。
+          const choices = publicScanChoices(root);
+          return scienceResult(state, root, `${EFFECT_TYPES.SCAN_STEP}:prepare`, {
+            spawnedEffects: choices.length ? [scanDecisionEffect(
+              EFFECT_TYPES.SCAN_STEP,
+              actor.id,
+              { options: clone(opts) },
+              "choose_card",
+            )] : [],
+            events: choices.length ? [] : [{ type: "scanStepSkipped", reason: "no_legal_target" }],
+          });
+        }
+        // 固定单目标（指定且唯一、不可跳过、无附加费用）：自动直接扫描。
+        const forcedSingle = mode === "specified"
+          && (opts.nebulaIds || []).length === 1
+          && !opts.skippable
+          && !opts.cost;
+        if (forcedSingle) {
+          const nebulaId = opts.nebulaIds[0];
+          const legal = scanStepChoices(root, actor, opts)
+            .find((candidate) => candidate.target.nebulaId === nebulaId);
+          if (!legal) return fail("SCIENCE_SCAN_TARGET_STALE", "扫描目标已失效");
+          return resolveScanStep(state, root, effect, opts, actor, legal);
+        }
+        // 其余：有合法目标则提升为决策（含跳过选项），无目标则跳过。
+        const choices = scanStepChoices(root, actor, opts);
+        return scienceResult(state, root, `${EFFECT_TYPES.SCAN_STEP}:prepare`, {
+          spawnedEffects: choices.length ? [scanDecisionEffect(
+            EFFECT_TYPES.SCAN_STEP,
+            actor.id,
+            { options: clone(opts) },
+            mode === "hand" ? "choose_card" : "choose_target",
+          )] : [],
+          events: choices.length ? [] : [{ type: "scanStepSkipped", reason: "no_legal_target" }],
+        });
+      },
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const choices = listNebulaChoices(root, {
-          sectorX: effect.payload?.sectorX,
-          nebulaIds: effect.payload?.nebulaIds,
-          gainData: effect.payload?.gainData,
-        });
-        if (effect.payload?.skippable) {
-          choices.push(makeChoice("choose_target", "skip", { skip: true }, {}, "跳过"));
-        }
-        return formalizeChoices(root, effect.ownerId, choices);
+        const opts = effect.payload?.options || {};
+        const actor = getActor(root, effect.ownerId);
+        if (!actor) return [];
+        return formalizeChoices(root, effect.ownerId, scanStepChoices(root, actor, opts));
       },
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
+        const opts = effect.payload?.options || {};
+        const mode = opts.mode || "specified";
+        const actor = getActor(root, effect.ownerId);
+        if (!actor) return fail("SCIENCE_SCAN_STEP_STALE", "扫描玩家已失效");
         if (choice?.target?.skip) {
-          return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
+          return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
             spawnedEffects: [],
-            events: [{ type: "scanTargetSkipped", playerId: effect.ownerId }],
+            events: [{ type: "scanStepSkipped", playerId: effect.ownerId }],
           });
         }
-        if (effect.payload?.cost) {
-          const actor = getActor(root, effect.ownerId);
-          const spent = players.spendResources(actor, effect.payload.cost);
-          if (!spent.ok) return spent;
+        if (mode === "public" && choice?.target?.done) {
+          // 统一扇区结算：公共牌扫描结束前检查一次扇区完成（SETTLE 幂等）。
+          return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
+            spawnedEffects: [
+              settleAfterScan(effect.ownerId),
+              { priority: "direct", effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId } },
+            ],
+            events: [{ type: "publicScanCompleted", selected: opts.selected || 0 }],
+          });
         }
-        const result = executeNebulaScan(root, effect.ownerId, choice, effect.payload || {});
-        if (!result.ok) return result;
-        // 统一扇区结算：任何扫描替换 token 后都检查一次扇区完成（SETTLE 幂等）。
-        return scienceResult(state, root, EFFECT_TYPES.SCAN_TARGET, {
-          spawnedEffects: [settleAfterScan(effect.ownerId)],
-          events: clone(result.events || []),
-          history: [{ type: "science_scan", nebulaId: choice.target.nebulaId }],
-        });
+        const legal = scanStepChoices(root, actor, opts)
+          .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
+        if (!legal) return fail("SCIENCE_SCAN_STEP_STALE", "扫描选择已失效");
+        return resolveScanStep(state, root, effect, opts, actor, legal);
       },
     });
 
@@ -1050,91 +1261,6 @@
           ));
       });
     }
-
-    runtime.registerExecutor(EFFECT_TYPES.PUBLIC_SCAN, {
-      execute(state, effect, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        const choices = publicScanChoices(root);
-        return scienceResult(state, root, `${EFFECT_TYPES.PUBLIC_SCAN}:prepare`, {
-          spawnedEffects: choices.length ? [scanDecisionEffect(
-            EFFECT_TYPES.PUBLIC_SCAN,
-            effect.ownerId,
-            clone(effect.payload || {}),
-            "choose_card",
-          )] : [],
-          events: choices.length ? [] : [{ type: "publicScanSkipped", reason: "no_legal_target" }],
-        });
-      },
-      getLegalChoices(state, effect, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        const choices = publicScanChoices(root);
-        if ((Number(effect.payload?.selected) || 0) > 0) {
-          choices.push(makeChoice("choose_card", "public:done", { done: true }, {}, "结束公共牌扫描"));
-        }
-        return formalizeChoices(root, effect.ownerId, choices);
-      },
-      resolveDecision(state, effect, choice, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        if (choice?.target?.done) {
-          // 统一扇区结算：公共牌扫描结束前检查一次扇区完成（SETTLE 幂等）。
-          return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
-            spawnedEffects: [
-              settleAfterScan(effect.ownerId),
-              {
-                priority: "direct",
-                effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: effect.ownerId },
-              },
-            ],
-            events: [{ type: "publicScanCompleted", selected: effect.payload?.selected || 0 }],
-          });
-        }
-        const legal = publicScanChoices(root)
-          .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
-        if (!legal) return fail("SCIENCE_PUBLIC_SCAN_STALE", "公共牌扫描选择已失效");
-        const actor = getActor(root, effect.ownerId);
-        const cardsState = getWorkingSlice(root, "cards");
-        const card = cardsState.publicCards[legal.target.publicSlotIndex];
-        const result = executeNebulaScan(root, actor.id, makeChoice(
-          "choose_target",
-          `nebula:${legal.target.nebulaId}`,
-          { nebulaId: legal.target.nebulaId },
-          { gainData: true },
-        ), { nebulaIds: [legal.target.nebulaId], gainData: true, source: "public_scan" });
-        if (!result.ok) return result;
-        // 公共牌扫描放置后空位保持空置，不立即补牌；待本次扫描流程结束时统一补牌
-        // （对应规则：公共区留空待扫描结束补牌）。
-        cardsState.publicCards[legal.target.publicSlotIndex] = null;
-        cards.addToDiscardPile(cardsState, card);
-        const selected = (Number(effect.payload?.selected) || 0) + 1;
-        if (selected > 1 && effect.payload?.consumeMarkers) {
-          actor.resources.additionalPublicScan = Math.max(
-            0,
-            (Number(actor.resources.additionalPublicScan) || 0) - 1,
-          );
-        }
-        const spawnedEffects = [];
-        // 统一扇区结算：公共牌每次扫描替换 token 后都检查一次扇区完成（SETTLE 幂等）。
-        spawnedEffects.push(settleAfterScan(actor.id));
-        const scanFlowEnded = selected >= (Number(effect.payload?.max) || 1)
-          || !publicScanChoices(root).length;
-        if (!scanFlowEnded) {
-          spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PUBLIC_SCAN, actor.id, {
-            selected,
-            max: effect.payload.max,
-            consumeMarkers: Boolean(effect.payload?.consumeMarkers),
-          }, "choose_card"));
-        } else {
-          spawnedEffects.push({
-            priority: "direct",
-            effect: { type: EFFECT_TYPES.PUBLIC_REFILL, ownerId: actor.id },
-          });
-        }
-        return scienceResult(state, root, EFFECT_TYPES.PUBLIC_SCAN, {
-          spawnedEffects,
-          events: clone(result.events || []),
-        });
-      },
-    });
 
     runtime.registerExecutor(EFFECT_TYPES.PUBLIC_REFILL, (state, effect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
@@ -1188,46 +1314,6 @@
       });
     }
 
-    runtime.registerExecutor(EFFECT_TYPES.HAND_SCAN, {
-      getLegalChoices(state, effect, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        const choices = handScanChoices(root, effect.ownerId);
-        if (effect.payload?.skippable) {
-          choices.push(makeChoice("choose_card", "skip", { skip: true }, {}, "跳过"));
-        }
-        return formalizeChoices(root, effect.ownerId, choices);
-      },
-      resolveDecision(state, effect, choice, workingContext) {
-        const root = getWorkingRoot(state, workingContext);
-        if (choice?.target?.skip) {
-          return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
-            spawnedEffects: [],
-            events: [{ type: "handScanSkipped", playerId: effect.ownerId }],
-          });
-        }
-        const legal = handScanChoices(root, effect.ownerId)
-          .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
-        const actor = getActor(root, effect.ownerId);
-        if (!actor || !legal) return fail("SCIENCE_HAND_SCAN_STALE", "手牌扫描选择已失效");
-        const result = executeNebulaScan(root, actor.id, makeChoice(
-          "choose_target",
-          `nebula:${legal.target.nebulaId}`,
-          { nebulaId: legal.target.nebulaId },
-          { gainData: true },
-        ), { nebulaIds: [legal.target.nebulaId], gainData: true, source: "hand_scan" });
-        if (!result.ok) return result;
-        const index = actor.hand.findIndex((card) => card.id === legal.target.cardInstanceId);
-        const removed = cards.discardFromHandAtIndex(actor, index);
-        if (!removed.ok) return removed;
-        cards.addToDiscardPile(getWorkingSlice(root, "cards"), removed.card);
-        // 统一扇区结算：手牌扫描替换 token 后检查一次扇区完成（SETTLE 幂等）。
-        return scienceResult(state, root, EFFECT_TYPES.HAND_SCAN, {
-          spawnedEffects: [settleAfterScan(actor.id)],
-          events: clone(result.events || []),
-        });
-      },
-    });
-
     runtime.registerExecutor(EFFECT_TYPES.SCAN_ACTION_4, {
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
@@ -1261,7 +1347,8 @@
           const earth = solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem"))
             .planetLocations.find((planet) => planet.planetId === "earth");
           if (listNebulaChoices(root, { sectorX: earth?.x, gainData: true }).length) {
-            spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.SCAN_TARGET, actor.id, {
+            spawnedEffects.push(scanStepEffect(actor.id, {
+              mode: "specified",
               sectorX: earth.x,
               gainData: true,
               label: "哨兵发射扫描地球",
@@ -1269,7 +1356,7 @@
           }
         }
         // 紫4 本身不替换数据 token，不触发扇区结算；若触发哨兵发射扫描，
-        // 该扫描会经由 SCAN_TARGET 统一结算。
+        // 该扫描会经由 SCAN_STEP 统一结算。
         return scienceResult(state, root, EFFECT_TYPES.SCAN_ACTION_4, {
           spawnedEffects,
           events: clone(result.events || []),
