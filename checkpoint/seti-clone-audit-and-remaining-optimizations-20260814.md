@@ -69,3 +69,59 @@ rootActionObservation）必须补克隆；sanitize 路径依赖冻结观测。
 - 两个都做？先 A（观测克隆，~30% 时延）还是先 B（拓扑缓存，~15%）？
 - A 涉及冻结语义与叶存储，需按 implementation-proof-obligations 冻结设计再动；
 - B 是纯缓存，风险较低，可先行。
+
+## 方向 D：计划延续复用（诊断已落地，2026-08-XX）
+
+现状：每次决策对每个绑定目标的 legal action 都从同一 checkpoint 全量反事实搜索
+到本席 PASS / 15 个结果目标。相邻同席决策（如 R1 两次行动之间）搜索的大部分内容
+（目标目录、路线、计划下一步）是同一份计划的延续，被重复执行。
+
+诊断工具（不改决策语义，纯只读采样）：
+
+- `randomizer/game/ai/plan-continuation.js`：目录指纹（剥离资源缺口，只对搜索读到
+  的外部结构事实敏感）、计划下一步提取（winning leaf chain[1] + 语义键）、同席
+  连续决策配对、预测器 precision/recall、失效原因与事实变化分布。单元测试登记
+  `policy/plan-continuation`。
+- `tools/diagnose_plan_continuation.js`：record-once（跑一局采样，可 --max-decisions
+  截断）/ analyze-many（纯读 JSON，可无限迭代）。模拟盘慢时不必跑 N 局。
+
+关键设计：
+
+- 目录指纹剥离资源缺口（credits/energy/…），本席自己的行动造成的「计划内变化」
+  不改变指纹；目录候选数组按元素 stableHash 排序后再哈希，投影深度（cheap vs
+  full）导致的枚举顺序差异不产生误报。
+- 计划下一步 = winning leaf actionChain[1]，descriptor 从
+  rootActionLegalSuccessors（根行动刚执行完的后继，含 conditional 决策）与
+  rootActionSettledLegalSuccessors 解析，语义键比较避免 actionId 序号漂移。
+- 尝试过「计划假设状态（rootActionObservation，cheap 投影）vs 实际状态」的整目录
+  比较：cheap 投影与全量投影结构不同（公共牌延迟补牌、resourceGap 缺失、
+  traceCount null），不可比，已从预测器中移除——外部事实发散由「上一决策全量目录
+  vs 当前全量目录」（directorySame）覆盖，本席计划内变化的误报由实证 precision/
+  recall 量化。
+- 失效原因按事实分量点名（board.rotation / board.planets / board.aliens /
+  board.data / board.publicCards / board.techSupply / directory.*）。
+
+首测（固定盘面 seti-107，前 150 决策，4 席，48 对同席连续决策）：
+
+- 实际命中（计划下一步 == 新搜索实际选择）37/48 = **77.1%**；
+- 预测器：stepLegal precision 77.1% / recall 100%；directorySame precision
+  80.6% / recall 78.4%；marginOk precision 80.4% / recall 100%；
+  组合（stepLegal+directory+margin）precision 80.6% / recall 78.4%；
+- 未命中 11 例：7 例 plan-degraded-or-alternative-improved（便宜检查全过但搜索
+  改选——实证为条件决策平局 tie-break 发散，如 blue1 slot1 vs slot4 同值 52），
+  4 例 directory-changed，2 例 margin-non-positive；
+- 命中决策可省搜索耗时 6.2s（占配对 cur 搜索总耗时 73.9%）；实测 miss 的条件
+  决策本身便宜（40-170ms），贵的根行动搜索命中率高；
+- 搜索耗时构成（28.9s）：execution 31.4%、orchestration 27.4%、projection
+  15.5%、fork 12.3%、checkpoint 11.6%、frontier 1.8%。
+
+fast-path 设计启示：miss 集中在「根行动 → 条件决策」的平局选择，条件决策本身
+便宜；可考虑只对非条件决策 fast-path，或对条件决策携带稳定 tie-break。
+
+后续 fast-path 落地的红线（尚未实现，仅诊断）：
+
+- 命中决策提交前必须对 fresh state 重验（validateFresh / policy-input-adapter 边界）；
+- 缓存键含 policyType/version/modelChecksum/configChecksum；隐藏信息屏障后失效；
+- 同一 seed 下开/关缓存的决策逐位一致（或作为显式近似 + 计数器登记，同
+  targetSchedulerPrunedCount 文化）；
+- 只把复用当「种子 / 优先级」，不当剪枝依据。
