@@ -141,6 +141,65 @@ family 已全部收敛到能力层（`launchProbe` / `orbitProbe` / `landProbe`�
 | 6 | `docs/standard-action-contract.md` L52 | "唯一规则执行器为 `game/actions/land`" | 统一后唯一执行器为 `abilities/planet.landProbe`（打牌/直接同一引擎） | ✅ 统一改造后消除 |
 | 7 | `docs/mechanics-reference.md` L282-283 | 奖励"在 orbitProbe/landProbe 成功后生成" | 统一后两条路径都经 `orbitProbe`/`landProbe`，表述成立 | ✅ 统一改造后消除 |
 
+## 8. 信息层统一（host-unify，2026-08-18）
+
+### 背景：Browser 机器席位 observation 失明（隐藏失败）
+
+机器协调器与 AI 评估需要**规则观察**形状的输入（顶层 `publicState.players/board`、
+`selfState.hand`、requirements）。修复前 Browser 的 `projectBrowserState` 产出的是
+**UI 展示视图**：`defaultVisibilityPolicy` 把 players/board/cards 放在 `resident.*`，
+随后 `projectBrowserState` 把 `visible.resident` **整体替换**成
+`{ finalReadModel, browserReadModel, initialSetup, initialIncome }`（读模型壳）。
+结果 `composition.projection(viewer).state` 顶层只剩 `match`/`resident`(壳)/
+`feedback` —— 协调器 `createDecisionObservation(projection.state)` 从中取不到
+players/board/hand，**静默**产出空 observation（players=0、assets=0、hand=[]），
+启发式决策评估全 0 → 兜底选 `pass`，且**不抛任何错**（隐藏失败）。
+
+`tools/diagnose_browser_machine_end_to_end.js` 实证：同一协调器 + 同一决策函数 +
+同一 seed 推进到主行动边界，Simulation 观察完整（players=4/hand=4/assets=3/5/1/3，
+选 `place_data`），Browser 观察失明（全 0，选 `pass`）。
+
+### 方案：信息层同源、UI 只套壳
+
+- 共享实现：`app/rule-observation.js` 从 simulation-env 迁移 `buildObservation`
+  （含 `pendingFinalMarkValue`/`buildDecisionFromState`），导出 `buildRuleObservation`。
+  Simulation 的 `projectCounterfactualState` 与 Browser 的 `projectBrowserState`
+  信息层调用**同一份实现**、同一 sanitize 纯函数（simulation-contract）。
+- Browser `projectBrowserState`（`app/browser-rule-composition.js`）：
+  - **不再整体替换 `visible.resident`**——信息字段（players/board/cards/tech/aliens/
+    solar/planets/data/finalScoring）保留为共享信息视图；
+  - 读模型壳附加为 `resident.ui = { finalReadModel, browserReadModel }`（不覆盖信息）；
+  - 顶层附加规则观察信息层 `publicState`/`selfState`（`buildRuleObservation` 产出，
+    与 Simulation 完全同源）。
+- 机器协调器 `createObservation(projection.state)` 命中顶层 `publicState`/`selfState`
+  → Browser/Simulation 机器席位观察同构，outcome-model 零改动。
+- UI 消费点迁移：`resident.browserReadModel` → `resident.ui.browserReadModel`、
+  `resident.finalReadModel` → `resident.ui.finalReadModel`（app.js / decision-ui /
+  resident-renderer）；`resident.players`、`resident.solar` 随信息层保留而恢复。
+
+### 连带修复：反事实叶观测从未被完整重建
+
+`rule-composition.js` 的 `fullLeafObservation` 原代码写 `composition.projection(viewer)`
+——`composition` 在本闭包未定义，**每次执行都抛 ReferenceError 被旧 `catch (_error)`
+静默吞掉** → 叶观测恒为中间（cheap）观测 fallback，评估器一直拿缺 planets/data/
+solarSystem/finalScoring 的观测算分。修复：
+
+- `fullLeafObservation` 改用搜索循环维护的 `activeForkComposition`（当前 fork 的
+  composition）重建完整叶观测；无可用 fork 时显式抛
+  `COUNTERFACTUAL_LEAF_OBSERVATION_FAILED`（错误必须暴露，不再静默回退）。
+- `simulation-counterfactual-outcome.test.js` 的"首痕迹宣传奖励"断言（同根两槽位
+  publicity delta = {0,1}）在修复前恒失败（叶观测无真实结算），修复后通过。
+
+### 验证
+
+- `node tools/run_node_tests.js` 全量回归通过（unit + full-flow）。
+- `tools/diagnose_browser_machine_end_to_end.js`：Browser 机器席位观察恢复完整
+  （players/hand/assets 非空），主行动正常评估，不再兜底 pass。
+- `tools/audit_v_state_inputs.js` 扩展 Browser 路径（projectBrowserState 信息层喂 V
+  评估）后全部通过。
+
+
+
 ## 7. 验证义务（已执行）
 
 - Browser/Simulation parity：`rule-composition.test.js`、`simulation-standard-action-

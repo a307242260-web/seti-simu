@@ -122,24 +122,26 @@ function projection(choices, overrides = {}) {
       currentPlayerRemainingCount: 2,
       companyLabel: "图灵系统",
     },
-    browserReadModel: {
-      render: {
-        playerPanels: {
-          players: [{
-            id: "p1",
-            displayName: "白色玩家",
-            resources: { credits: 4, energy: 2, publicity: 3, availableData: 1 },
-            income: { credits: 2, energy: 1, handSize: 1 },
-          }],
-        },
-        cardPanels: {
-          handCards: [{
-            id: "card-7",
-            definitionId: "b_7.webp",
-            imageSrc: "../assets/cards/basic/split/b_7.webp",
-            label: "轨道计划",
-            incomeGain: { energy: 1 },
-          }],
+    ui: {
+      browserReadModel: {
+        render: {
+          playerPanels: {
+            players: [{
+              id: "p1",
+              displayName: "白色玩家",
+              resources: { credits: 4, energy: 2, publicity: 3, availableData: 1 },
+              income: { credits: 2, energy: 1, handSize: 1 },
+            }],
+          },
+          cardPanels: {
+            handCards: [{
+              id: "card-7",
+              definitionId: "b_7.webp",
+              imageSrc: "../assets/cards/basic/split/b_7.webp",
+              label: "轨道计划",
+              incomeGain: { energy: 1 },
+            }],
+          },
         },
       },
     },
@@ -208,22 +210,24 @@ function projection(choices, overrides = {}) {
     },
   ], { decision: { kind: "choose_card" } });
   current.resident = {
-    browserReadModel: {
-      render: {
-        cardPanels: {
-          initialSelection: {
-            offer: {
-              selectedIndustryId: "industry:图灵系统.png",
-              selectedInitialIds: ["initial:7", "initial:8"],
-              industryOptions: [
-                { id: "industry:图灵系统.png", label: "图灵系统" },
-                { id: "industry:太阳动力.png", label: "太阳动力" },
-              ],
-              initialOptions: [
-                { id: "initial:7", label: "资源牌 7" },
-                { id: "initial:8", label: "资源牌 8" },
-                { id: "initial:9", label: "资源牌 9" },
-              ],
+    ui: {
+      browserReadModel: {
+        render: {
+          cardPanels: {
+            initialSelection: {
+              offer: {
+                selectedIndustryId: "industry:图灵系统.png",
+                selectedInitialIds: ["initial:7", "initial:8"],
+                industryOptions: [
+                  { id: "industry:图灵系统.png", label: "图灵系统" },
+                  { id: "industry:太阳动力.png", label: "太阳动力" },
+                ],
+                initialOptions: [
+                  { id: "initial:7", label: "资源牌 7" },
+                  { id: "initial:8", label: "资源牌 8" },
+                  { id: "initial:9", label: "资源牌 9" },
+                ],
+              },
             },
           },
         },

@@ -126,7 +126,7 @@
   }
 
   function projectedPlayer(projection, playerId) {
-    return projection?.resident?.browserReadModel?.render?.playerPanels?.players?.find(
+    return projection?.resident?.ui?.browserReadModel?.render?.playerPanels?.players?.find(
       (player) => String(player?.id) === String(playerId),
     ) || null;
   }
@@ -160,7 +160,7 @@
         displayLabel: choice.label,
       };
     }
-    const handCards = projection?.resident?.browserReadModel?.render?.cardPanels?.handCards || [];
+    const handCards = projection?.resident?.ui?.browserReadModel?.render?.cardPanels?.handCards || [];
     const handCard = presentation.cardKind === "hand"
       ? handCards.find((card) => (
         String(card?.definitionId) === String(presentation.cardId)
@@ -168,7 +168,7 @@
         || String(card?.label) === String(choice.label)
       ))
       : null;
-    const initialSelection = projection?.resident?.browserReadModel?.render
+    const initialSelection = projection?.resident?.ui?.browserReadModel?.render
       ?.cardPanels?.initialSelection?.offer;
     const setupCard = presentation.cardKind === "industry"
       ? initialSelection?.industryOptions?.find(
@@ -214,7 +214,7 @@
       choice.card?.cardKind === "industry" || choice.card?.cardKind === "initial"
     ));
     if (hasInitialCards) {
-      const offer = projection?.resident?.browserReadModel?.render
+      const offer = projection?.resident?.ui?.browserReadModel?.render
         ?.cardPanels?.initialSelection?.offer;
       const visibleInitialIds = new Set(choices
         .filter((choice) => choice.card?.cardKind === "initial")

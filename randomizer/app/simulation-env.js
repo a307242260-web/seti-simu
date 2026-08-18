@@ -3,23 +3,16 @@
 const { performance } = require("node:perf_hooks");
 const { createSeededRandom, hashSeed, RNG_ALGORITHM } = require("../game/random");
 const { createSimulationRuleComposition } = require("../training/simulation-rule-composition");
-const {
-  OBSERVATION_SCHEMA_VERSION,
-  sanitizeCard,
-  sanitizePublicPlayer,
-  sanitizeSelfPlayer,
-  sanitizeAlienPublicState,
-  sanitizeTechSupply,
-  sanitizeFinalScoringState,
-} = require("./simulation-contract");
+// 规则观察（信息层）构建已提升为 Browser/Simulation 共享实现（rule-observation.js），
+// Simulation 侧保持观察输出形状不变，只换实现来源（docs/browser-simulation-unification.md
+// §信息层统一）。
+const { buildRuleObservation } = require("./rule-observation");
 const outcomeModel = require("../game/ai/outcome-model");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const machinePlayerCoordinatorModule = require("../game/ai/machine-player-coordinator");
 const heuristicDecisionFunctionModule = require("../game/ai/heuristic-decision-function");
 const vGuidedDecisionFunctionModule = require("../game/ai/v-guided-decision-function");
-const endGameScoring = require("../game/end-game-scoring");
 const finalScoring = require("../game/final-scoring");
-const cardEffects = require("../game/cards/effects");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
 const REPLAY_SCHEMA_VERSION = "seti-rl-replay-v1";
@@ -77,81 +70,6 @@ function getTurnState(state) {
   return state.turn || {};
 }
 
-// 待放置终局标记的潜在价值：玩家 base 分已跨过 [25,50,70] 阈值但尚未认领的标记，
-// 每个标记会放在该玩家可标记的最优板块（公式 baseValue × 下一槽位倍率）。
-function pendingFinalMarkValue(state, player) {
-  const fs = state.finalScoring;
-  if (!fs || !fs.tiles || !Array.isArray(fs.thresholds)) return 0;
-  const playerId = player?.id || player?.color || null;
-  if (!playerId) return 0;
-  const score = Number(player?.resources?.score) || 0;
-  const minThreshold = Math.min(...fs.thresholds.map((t) => Number(t) || 0));
-  if (score < minThreshold) return 0;
-  const marks = Object.values(fs.tiles || {})
-    .flatMap((tile) => (Array.isArray(tile?.marks) ? tile.marks : []));
-  const claimed = new Set(marks
-    .filter((mark) => mark?.playerId === playerId || mark?.playerColor === playerId)
-    .map((mark) => Number(mark?.threshold)));
-  const pendingThresholds = fs.thresholds.filter((threshold) => (
-    score >= Number(threshold) && !claimed.has(Number(threshold))
-  ));
-  if (!pendingThresholds.length) return 0;
-  const formulaContext = {
-    aliens: state.aliens,
-    planets: state.planets,
-    data: state.data,
-  };
-  const getCardTypeCode = (card) => cardEffects.getRuntimeCardTypeCode(
-    card,
-    cardEffects.getCardModel(card)?.cardType,
-  );
-  let total = 0;
-  for (const threshold of pendingThresholds) {
-    let best = 0;
-    for (const [tileId, tile] of Object.entries(fs.tiles || {})) {
-      const tileMarks = Array.isArray(tile?.marks) ? tile.marks : [];
-      if (tileMarks.some((mark) => (
-        mark?.playerId === playerId || mark?.playerColor === playerId
-      ))) {
-        continue;
-      }
-      const nextSlot = !tileMarks.some((mark) => Number(mark?.slotIndex) === 1) ? 1
-        : !tileMarks.some((mark) => Number(mark?.slotIndex) === 2) ? 2 : 3;
-      const formulaId = endGameScoring.getFormulaId(tileId, fs.tileVariants?.[tileId]);
-      const baseValue = Number(endGameScoring.getFormulaBaseValue(
-        formulaId,
-        player,
-        formulaContext,
-        { getCardTypeCode },
-      ) || 0);
-      const multiplier = Number(endGameScoring.getSlotMultiplier(formulaId, nextSlot) || 0);
-      best = Math.max(best, baseValue * multiplier);
-    }
-    total += best;
-  }
-  return total;
-}
-
-function buildDecisionFromState(state, legalActions) {
-  const turn = getTurnState(state);
-  if (turn.gameEnded) return null;
-  const actorPlayerId = legalActions[0]?.actorId || turn.currentPlayerId || null;
-  if (!actorPlayerId) return null;
-  const decisionType = legalActions[0]?.phase === "conditional"
-    ? "conditional_choice"
-    : "turn_action";
-  const effectOwnerPlayerId = decisionType === "turn_action" ? null : actorPlayerId;
-  return {
-    actorPlayerId,
-    pendingOwnerPlayerId: effectOwnerPlayerId,
-    effectOwnerPlayerId,
-    currentPlayerId: turn.currentPlayerId,
-    source: effectOwnerPlayerId ? "effect_owner" : "current_player",
-    decisionType,
-    choiceCount: legalActions.length,
-  };
-}
-
 function buildDecision(api, legalActions) {
   const turnSlice = api.getTurnState();
   if (turnSlice.gameEnded) return null;
@@ -173,85 +91,11 @@ function buildDecision(api, legalActions) {
   };
 }
 
+// 规则观察构建委托共享实现（rule-observation.js，Browser/Simulation 同源）。
+// 保持 buildObservation 名字与签名，调用点（observeWithActions / projectCounterfactualState）
+// 不变。
 function buildObservation(state, seed, viewerPlayerId, legalActions = [], options = {}) {
-  const turn = getTurnState(state);
-  const playersState = state.players || { players: [] };
-  const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorId || turn.currentPlayerId || null;
-  const decision = buildDecisionFromState(state, legalActions);
-  const setup = state.match?.initialSetup || null;
-  const setupCurrentPlayerId = setup?.currentPlayerId || null;
-  // cheap：搜索中间节点只需 requirements/资源/rockets/aliens/公共牌/科技（遮蔽所需），
-  // 跳过 planets/data/solarSystem/finalScoring 克隆；完整观测只在叶/根/宿主构建。
-  const cheap = options.cheap === true;
-  return {
-    schemaVersion: OBSERVATION_SCHEMA_VERSION,
-    seed: seed ?? null,
-    perspectivePlayerId,
-    publicState: {
-      roundNumber: turn.roundNumber,
-      turnNumber: turn.turnNumber,
-      actionCycleNumber: turn.actionCycleNumber,
-      currentPlayerId: turn.currentPlayerId,
-      passedPlayerIds: [...(turn.passedPlayerIds || [])],
-      completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
-      activePlayerIds: [...(turn.activePlayerIds || [])],
-      players: (playersState.players || []).map((player) => {
-        const publicPlayer = sanitizePublicPlayer(player, null);
-        const breakdown = endGameScoring.computePlayerFinalScore({
-          ...state,
-          finalScoring: clone(state.finalScoring),
-          players: playersState.players || [],
-          currentPlayer: player,
-          cardEffects,
-          getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(
-            card,
-            cardEffects.getCardModel(card)?.cardType,
-          ),
-        }, player);
-        return {
-          ...publicPlayer,
-          securedEndGameBonus: breakdown.totalScore - breakdown.baseScore
-            + pendingFinalMarkValue(state, player),
-        };
-      }),
-      board: {
-        rockets: clone(state.pieces?.rockets || []),
-        ...(cheap ? {} : {
-          planets: clone(state.planets || {}),
-          data: clone(state.data || {}),
-          solarSystem: clone(state.solarSystem || {}),
-          finalScoring: sanitizeFinalScoringState(state.finalScoring),
-        }),
-        publicCards: (state.cards?.publicCards || []).map(sanitizeCard),
-        discardCount: (state.cards?.discardPile || []).length,
-        techSupply: sanitizeTechSupply(state.tech),
-        aliens: sanitizeAlienPublicState(state.aliens),
-      },
-      resident: {
-        initialSetup: {
-          active: setup?.phase === "selecting",
-          interactive: setup?.phase === "selecting"
-            && setupCurrentPlayerId === perspectivePlayerId,
-          currentPlayerId: setupCurrentPlayerId,
-          offer: setup?.phase === "selecting" && setupCurrentPlayerId === perspectivePlayerId
-            ? clone(setup.offersByPlayerId?.[setupCurrentPlayerId] || null)
-            : null,
-          confirmedPlayerIds: clone(setup?.confirmedPlayerIds || []),
-        },
-      },
-      pending: decision,
-    },
-    selfState: sanitizeSelfPlayer(
-      (playersState.players || []).find((player) => player.id === perspectivePlayerId) || null,
-    ),
-    decision,
-    probeRouteRequirements: state.probeRouteRequirements || null,
-    dataAnalyzeRequirements: state.dataAnalyzeRequirements || null,
-    sectorWinRequirements: state.sectorWinRequirements || null,
-    incomeGainRequirements: state.incomeGainRequirements || null,
-    techGainRequirements: state.techGainRequirements || null,
-    terminal: Boolean(turn.gameEnded),
-  };
+  return buildRuleObservation(state, seed, viewerPlayerId, legalActions, options);
 }
 
 function createSimulationEnv() {

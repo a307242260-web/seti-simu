@@ -47,6 +47,20 @@ DOM / Browser ViewState
   RNG 与实体 sequence 随 canonical state 提交；Browser 不再做第二次初始化 mutation；
 - renderer、query 或 Browser service 失败不反向污染规则状态。
 
+**投影信息层与 UI 壳分离（host-unify）**：`projectBrowserState` 输出的 `projection.state`
+同时包含：
+
+- **规则观察信息层**（与 Simulation `buildRuleObservation` 完全同源，见
+  `docs/browser-simulation-unification.md` §8）：顶层 `publicState.players/board`、
+  `selfState.hand`、requirements —— 机器协调器 / AI 评估 / 训练从这里读盘面；
+- **UI 展示视图**：`match`、`resident`（信息字段 + `resident.ui` 读模型壳）、
+  `feedback` —— 人类 UI 从这里渲染。
+
+**修复约束（不得回退）**：`resident` 的信息字段（players/board/cards/tech/aliens/
+solar/planets/data/finalScoring）必须保留，读模型壳只作为 `resident.ui` 附加——
+此前把 `resident` 整体替换为读模型导致机器席位 observation 失明（players/hand/assets
+全空 → 启发式决策静默退化为 pass），属隐藏失败。
+
 ### Presentation
 
 renderer、picker、Action Bar、玩家面板、卡牌/科技/扫描/外星人界面只消费当前 viewer 的

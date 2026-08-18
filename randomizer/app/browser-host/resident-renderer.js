@@ -23,7 +23,7 @@
   }
 
   function getRenderModel(projection) {
-    return projection.resident?.browserReadModel?.render || null;
+    return projection.resident?.ui?.browserReadModel?.render || null;
   }
 
   function createResidentRenderer(options = {}) {

@@ -1013,6 +1013,10 @@
         checkpointMilliseconds: 0,
         frontierMilliseconds: 0,
       };
+      // 当前 fork 的 composition（搜索循环每次 fork 更新时同步维护）：fullLeafObservation
+      // 需要从 fork 当前（分支）状态重建完整叶观测——闭包层的 projection(viewer) 投影的
+      // 是 root 状态，不是分支状态。
+      let activeForkComposition = null;
       const now = () => (
         typeof performance !== "undefined" && typeof performance.now === "function"
           ? performance.now()
@@ -1845,19 +1849,26 @@
 
       function fullLeafObservation(origin, fallback) {
         // 叶观测必须完整（评估器读 aliens/rockets、报告 winning state 读完整 board）；
-        // 中间观测是 cheap，这里从 fork 当前状态重建完整观测并按需遮蔽。
-        try {
-          const fullProjection = composition.projection(viewer).state;
-          return origin.informationMasked
-            ? sanitizeHiddenInformationObservation(
-              rootObservation,
-              fullProjection,
-              origin.informationBarrier || null,
-            )
-            : fullProjection;
-        } catch (_error) {
-          return fallback;
+        // 中间观测是 cheap，这里从 fork 当前（分支）状态重建完整观测并按需遮蔽。
+        // 错误必须暴露（AGENTS.md 硬规矩）：重建失败若静默回退到 cheap/缺字段观测，
+        // 评估器会拿坏输入算分导致 AI 失真长期潜伏——此处显式抛错并带出 origin 上下文。
+        // 修复：旧代码误写 composition.projection(viewer)（本闭包层 composition 未定义，
+        // 每次抛 ReferenceError 被旧 catch 静默吞掉 → 叶观测恒为中间观测 fallback）；
+        // 当前 fork 的 composition 由搜索循环维护为 activeForkComposition（闭包层的
+        // projection(viewer) 投影的是 root 状态，不是分支状态，不可用于叶重建）。
+        if (!activeForkComposition?.projection) {
+          throw new Error(
+            `COUNTERFACTUAL_LEAF_OBSERVATION_FAILED: 无可用 fork composition（root=${origin.rootAction?.actionId || ""} chain=${(origin.chain || []).join("→")}）`,
+          );
         }
+        const fullProjection = activeForkComposition.projection(viewer).state;
+        return origin.informationMasked
+          ? sanitizeHiddenInformationObservation(
+            rootObservation,
+            fullProjection,
+            origin.informationBarrier || null,
+          )
+          : fullProjection;
       }
 
       function addLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
@@ -1969,6 +1980,7 @@
             branchKey: branchIdentity,
           });
           const composition = fork?.composition || fork;
+          activeForkComposition = composition;
           if (reusableFork) {
             // 分支 RNG 必须始终重置到本 (envelope,action) 的种子（链上的精选/补牌消耗随机）。
             reusableFork.resetBranch?.(branchIdentity);

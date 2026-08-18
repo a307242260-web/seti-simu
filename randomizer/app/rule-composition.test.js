@@ -70,8 +70,22 @@ const viewer = {
 const projected = composition.projectionSource.read(viewer);
 assert.equal(projected.source.kind, "working");
 assert.equal(projected.decision.ownerId, start.actorId);
-assert.ok(projected.state.resident.finalReadModel);
-assert.ok(projected.state.resident.browserReadModel);
+assert.ok(projected.state.resident.ui.finalReadModel,
+  "UI 读模型壳必须附加在 resident.ui，不再替换信息字段");
+assert.ok(projected.state.resident.ui.browserReadModel);
+// 信息层（host-unify）：机器协调器 / AI 从 publicState/selfState 读盘面，
+// 与 Simulation buildRuleObservation 同源；此断言防止"壳替换芯"回归。
+assert.ok(Array.isArray(projected.state.publicState?.players),
+  "Browser projection 必须保留规则观察信息层 publicState.players");
+assert.ok(projected.state.publicState.players.length >= 1,
+  "publicState.players 必须可见（viewer-safe，无手牌泄漏）");
+assert.equal(
+  Object.hasOwn(projected.state.publicState.players[0], "hand"),
+  false,
+  "publicState.players 不得泄漏手牌（hand 只在 selfState）",
+);
+assert.ok(Array.isArray(projected.state.publicState?.board?.rockets),
+  "publicState.board.rockets 必须可见");
 assert.equal(JSON.stringify(projected.state).includes("drawPileCardIds"), false);
 
 assert.equal(

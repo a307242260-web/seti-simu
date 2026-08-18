@@ -1169,7 +1169,7 @@
     if (els.cornerPickerTitle) {
       els.cornerPickerTitle.textContent = "选择要完成的任务（可交任意一个）";
     }
-    const reservedCards = (projection?.resident?.browserReadModel?.render
+    const reservedCards = (projection?.resident?.ui?.browserReadModel?.render
       ?.cardPanels?.reservedCards?.items) || [];
     els.cornerPickerList.replaceChildren();
     for (const action of actions) {
@@ -1220,7 +1220,7 @@
       return;
     }
     if (!els.cornerPickerOverlay || !els.cornerPickerList) return;
-    const handCards = projection?.resident?.browserReadModel?.render
+    const handCards = projection?.resident?.ui?.browserReadModel?.render
       ?.cardPanels?.handCards || [];
     els.cornerPickerList.replaceChildren();
     for (const action of actions) {
@@ -1504,8 +1504,8 @@
       bucket.byFamily[family] = (bucket.byFamily[family] || 0) + 1;
       actionCounts[playerId] = bucket;
     }
-    const panels = projection.resident?.browserReadModel?.render?.playerPanels?.players || [];
-    const finalPlayers = projection.resident?.finalReadModel?.players || [];
+    const panels = projection.resident?.ui?.browserReadModel?.render?.playerPanels?.players || [];
+    const finalPlayers = projection.resident?.ui?.finalReadModel?.players || [];
     return finalScores.map((entry) => {
       const panel = panels.find((player) => String(player?.id) === String(entry.playerId)) || {};
       const sourceRecord = finalPlayers.find((player) => (
@@ -1544,7 +1544,7 @@
   function maybeShowFinalResult(projection) {
     if (finalResultDismissed || !els.finalResultOverlay) return;
     const terminal = Boolean(
-      projection?.resident?.browserReadModel?.render?.turnPresentation?.terminal,
+      projection?.resident?.ui?.browserReadModel?.render?.turnPresentation?.terminal,
     );
     const settled = Boolean(projection?.match?.finalScoringSettled);
     if (!terminal || !settled) return;

@@ -21,6 +21,16 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
        browser：空操作
 ```
 
+- **机器席位观察同源（host-unify 修复）**：`projection.state` 对 Browser/Simulation
+  都必须是**规则观察信息层**形状——顶层 `publicState.players/board`、`selfState.hand`
+  、requirements。Simulation 由 `projectCounterfactualState = buildRuleObservation`
+  产出；Browser 由 `projectBrowserState` 附加同源信息层（`rule-observation.js` 同一份
+  实现 + 同一 sanitize 纯函数），UI 渲染壳只作为 `resident.ui` 附加、不覆盖信息字段。
+  **修复前 Browser 机器席位 `projection.state` 是 UI 展示视图（resident 被读模型替换）
+  → observation 失明（players/hand/assets 全空）→ 启发式决策静默退化为 pass**，属
+  隐藏失败，不得回退到"壳替换芯"的装配方式。详见
+  `docs/browser-simulation-unification.md` §信息层统一。
+
 - **决策方案**（decision scheme）是一个可插拔接口：输入当前 viewer-safe observation
   与完整 legalActions，输出**至少下一步 `actionId`**；有完整计划时附带
   `plan = { nextActionId, continuation[], dependency, revealedCount }`

@@ -111,6 +111,69 @@ const forkState = comp.projection().state;
 allPass = auditObservation("vguided-fork(原始, 需装配)", forkState, seatId, false) && allPass;
 try { comp.dispose?.(); } catch (_e) { /* noop */ }
 
+// 路径 5：Browser projectBrowserState 信息层（host-unify 修复）—— 必须 PASS。
+// 修复前 Browser 机器席位 projection.state 是 UI 展示视图（resident 被读模型替换），
+// createDecisionObservation 取不到 players/hand → observation 失明（V=0 或 THROW）。
+// 现在信息层与 Simulation buildRuleObservation 同源（app/rule-observation.js），
+// 此路径必须与路径 2 一样完整。
+{
+  const productionKernel = require("../randomizer/game/production-kernel");
+  const projectionAdapter = require("../randomizer/app/browser-host/projection-adapter");
+  const browserRuleCompositionModule = require("../randomizer/app/browser-rule-composition");
+  let randomState = 1;
+  const browserRandom = () => {
+    randomState = Math.imul(randomState ^ (randomState >>> 15), 1 | randomState);
+    randomState ^= randomState + Math.imul(randomState ^ (randomState >>> 7), 61 | randomState);
+    return ((randomState ^ (randomState >>> 14)) >>> 0) / 4294967296;
+  };
+  browserRandom.getState = () => randomState >>> 0;
+  browserRandom.setState = (next) => { randomState = Number(next) >>> 0 || 1; };
+  const browserComp = browserRuleCompositionModule.createBrowserRuleComposition({
+    productionKernelApi: productionKernel,
+    random: browserRandom,
+    seed: `${seed}:browser-audit`,
+    activePlayerCount: 4,
+    hostServices: {},
+    browserProjection: {
+      visibilityPolicy: projectionAdapter.defaultVisibilityPolicy,
+      getFinalReadModelOwner: () => ({ project: () => ({ players: [] }) }),
+      getBrowserReadModelOwner: () => ({ project: () => ({ render: {} }) }),
+      createRenderPresentation: () => ({}),
+    },
+  });
+  browserComp.newGame({ seed: `${seed}:browser-audit`, activePlayerCount: 4 });
+  browserComp.inputPort.beginDrain({ metadata: { source: "audit" } });
+  const browserInspection = browserComp.inspect();
+  const browserOwner = browserInspection.session?.decision?.ownerId
+    || browserComp.projectionSource.read().state?.match?.currentPlayerId
+    || null;
+  if (!browserOwner) {
+    console.log("[FAIL] Browser 路径无法解析决策 owner");
+    allPass = false;
+  } else {
+    const browserProjected = browserComp.projection({
+      viewerId: `machine:${browserOwner}`,
+      playerId: browserOwner,
+      role: "player",
+    });
+    const browserObs = outcomeModel.createDecisionObservation(browserProjected.state, {
+      seatId: browserOwner,
+      stateVersion: null,
+      decisionVersion: null,
+    });
+    allPass = auditObservation("browser-info-layer(机器席位观察)", browserObs, browserOwner) && allPass;
+    const rawPlayers = browserObs.publicState?.players;
+    const playerCount = Array.isArray(rawPlayers)
+      ? rawPlayers.length
+      : (Array.isArray(rawPlayers?.players) ? rawPlayers.players.length : 0);
+    if (playerCount < 1) {
+      console.log("[FAIL] Browser 机器席位观察 publicState.players 为空（信息层缺失，修复前失明症状）");
+      allPass = false;
+    }
+  }
+  browserComp.dispose?.();
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

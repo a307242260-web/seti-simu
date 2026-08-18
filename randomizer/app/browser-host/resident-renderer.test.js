@@ -121,7 +121,7 @@ function createProjection() {
   const projection = coreProjectionApi.createBrowserProjectionAdapter({ stateStore: store })
     .projectCommitted({ viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" } });
   const renderProjection = structuredClone(projection);
-  renderProjection.resident.browserReadModel = {
+  renderProjection.resident.ui = { browserReadModel: {  
     render: {
       boardChrome: {
         wheelTransforms: [],
@@ -171,8 +171,7 @@ function createProjection() {
         tileVariants: { a: 1 },
         breakdownsByPlayerId: {},
       },
-    },
-  };
+    } } };
   return deepFreeze(renderProjection);
 }
 
@@ -278,11 +277,10 @@ function createProjection() {
     match: {},
     players: {},
     resident: {
-      browserReadModel: {
+      ui: { browserReadModel: { 
         render: {
           playerPanels: { interfacePlayerId: "p1", players: [player] },
-        },
-      },
+        } } },
     },
   };
   const input = { projection, viewState: {} };
@@ -312,7 +310,7 @@ function createProjection() {
     schemaVersion: rendererApi.SCHEMA_VERSION,
     match: {},
     resident: {
-      browserReadModel: {
+      ui: { browserReadModel: { 
         render: {
           cardPanels: {
             handCards: [{ id: "hand-1", imageSrc: "hand.webp", label: "手牌" }],
@@ -320,8 +318,7 @@ function createProjection() {
               items: [{ id: "reserved-1", imageSrc: "reserved.webp", label: "保留牌" }],
             },
           },
-        },
-      },
+        } } },
     },
   };
   renderer.renderPrivateCards({
@@ -344,7 +341,7 @@ function createProjection() {
   const projection = {
     schemaVersion: rendererApi.SCHEMA_VERSION,
     resident: {
-      browserReadModel: {
+      ui: { browserReadModel: { 
         render: {
           techTilePresentation: {
             supplyTiles: [{
@@ -373,8 +370,7 @@ function createProjection() {
               percentY: 68,
             }],
           },
-        },
-      },
+        } } },
     },
   };
   const input = { projection, viewState: {} };
@@ -398,7 +394,7 @@ function createProjection() {
     schemaVersion: rendererApi.SCHEMA_VERSION,
     match: {},
     resident: {
-      browserReadModel: {
+      ui: { browserReadModel: { 
         render: {
           boardChrome: {
             wheelTransforms: [{ wheelId: 1, degrees: -45 }],
@@ -451,8 +447,7 @@ function createProjection() {
             currentPlayerId: "p1",
             terminal: false,
           },
-        },
-      },
+        } } },
     },
   };
   renderer.renderSolarSystem({ projection, viewState: {} });
@@ -481,7 +476,7 @@ function createProjection() {
   const projection = {
     schemaVersion: rendererApi.SCHEMA_VERSION,
     resident: {
-      browserReadModel: {
+      ui: { browserReadModel: { 
         render: {
           playerPanels: {
             interfacePlayerId: "p1",
@@ -505,8 +500,7 @@ function createProjection() {
               ],
             }],
           },
-        },
-      },
+        } } },
     },
   };
   renderer.renderPlayers({ projection, viewState: {} });
@@ -525,7 +519,7 @@ function createProjection() {
   const projection = {
     schemaVersion: rendererApi.SCHEMA_VERSION,
     resident: {
-      browserReadModel: {
+      ui: { browserReadModel: { 
         render: {
           alienPresentation: {
             slots: [{
@@ -545,8 +539,7 @@ function createProjection() {
               }],
             }],
           },
-        },
-      },
+        } } },
     },
   };
   renderer.renderAliens({ projection, viewState: {} });
