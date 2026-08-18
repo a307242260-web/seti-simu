@@ -5,6 +5,13 @@
 > 分析复盘；绝不跑同一个实验多遍浪费时间。**
 > 配套工具：`tools/run_research_validation.js`（记录 schema
 > `seti-research-validation-record-v1`，落盘 `reports/research/`）。
+>
+> 全盘进度可见性：`run_research_validation` / `run_simulate_save` /
+> `save_checkpoints` / `compare_vguided_vs_baseline` 均接入
+> `tools/progress.js` 的持续进度输出——每次机器决策（至少每秒一行）输出
+> `[<标签>进度] 第X轮 第Y回合 决策#N 席位= 动作= 各席分数 用时 步/s` 到
+> **stderr**，单次决策耗时数秒时也不会看起来"卡住"；`--progress` 等原有
+> 固定步数输出保持原语义不变。stderr 不污染 stdout 上的最终结果。
 
 ## 1. 流程总纲
 

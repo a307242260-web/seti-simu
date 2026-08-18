@@ -41,6 +41,7 @@ const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const heuristicPolicy = require("../randomizer/game/ai/heuristic-policy");
+const { createStepProgressReporter } = require("./progress");
 
 const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
 const DEFAULT_SEED = "seti-free-analyze-v1";
@@ -370,6 +371,9 @@ function runValidation(options) {
     }
 
     const limit = options.full ? MAX_DECISIONS : options.steps;
+    // 持续进度输出（stderr）：单次决策可能耗时数秒，逐决策行让终端实时可见而非"卡住"；
+    // 与 --progress 的固定步数节流并存（--progress 保持原语义）。
+    const progress = createStepProgressReporter({ label: mode, minIntervalMs: 1000 });
     while (!env.isTerminal() && steps < limit) {
       const obsBefore = env.observe();
       const seat = obsBefore?.decision?.actorPlayerId || null;
@@ -378,6 +382,20 @@ function runValidation(options) {
       collectStep(collector, steps, result);
       const obsAfter = result?.observation || env.observe();
       collectAliens(collector, steps, obsAfter, seat);
+      const ps = obsAfter?.publicState || {};
+      progress.report({
+        steps,
+        maxSteps: limit,
+        round: ps.roundNumber,
+        turn: ps.turnNumber,
+        seat,
+        action: String(result?.policyDecision?.actionId || ""),
+        scores: (ps.players || []).map((p) => ({
+          label: p.playerLabel || p.playerId || p.color,
+          score: p.score ?? p.finalScore ?? "?",
+        })),
+        startedAt,
+      });
       if (options.progressEvery > 0 && steps % options.progressEvery === 0) {
         const sum = summaryOf(env.observe());
         process.stderr.write(

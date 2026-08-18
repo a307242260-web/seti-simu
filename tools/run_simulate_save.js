@@ -7,6 +7,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
+const { createStepProgressReporter } = require("./progress");
 
 const args = process.argv.slice(2);
 const tag = args[0] || "baseline";
@@ -29,6 +30,8 @@ function slotsOf(obs) {
 
 let decisions = 0;
 const t0 = Date.now();
+// 持续进度输出（stderr）：单次决策可能耗时数秒，逐决策行让终端实时可见而非"卡住"。
+const progress = createStepProgressReporter({ label: tag, minIntervalMs: 1000 });
 while (!env.isTerminal() && decisions < 4000) {
   const res = env.runHeuristicPolicyDecision();
   const pd = res.policyDecision;
@@ -58,6 +61,20 @@ while (!env.isTerminal() && decisions < 4000) {
     }
   }
   decisions += 1;
+  const ps = res.observation?.publicState || {};
+  progress.report({
+    steps: decisions,
+    maxSteps: 4000,
+    round: ps.roundNumber,
+    turn: ps.turnNumber,
+    seat,
+    action: String(pd?.actionId || ""),
+    scores: (ps.players || []).map((p) => ({
+      label: p.playerLabel || p.playerId || p.color,
+      score: p.score ?? p.finalScore ?? "?",
+    })),
+    startedAt: t0,
+  });
 }
 
 const terminal = env.observe();

@@ -6,6 +6,7 @@
 //   node tools/compare_vguided_vs_baseline.js --mode vguided [--maxdepth 4] [--seed seti-free-analyze-v1] [--progress 25]
 //   node tools/compare_vguided_vs_baseline.js --mode heuristic [--progress 25]
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
+const { createStepProgressReporter } = require("./progress");
 
 function familyOf(actionId) {
   return String(actionId || "").split(":")[0] || "<none>";
@@ -80,6 +81,9 @@ function runGame(options) {
   let discardSessionCount = 0;
   let lastRound = 0;
   const t0 = Date.now();
+  // 持续进度输出（stderr）：单次决策可能耗时数秒，逐决策行让终端实时可见而非"卡住"；
+  // 与 --progress 的固定步数节流并存（--progress 保持原语义）。
+  const progress = createStepProgressReporter({ label: `cmp-${mode}`, minIntervalMs: 1000 });
 
   while (!env.isTerminal()) {
     const obs = env.observe();
@@ -119,6 +123,18 @@ function runGame(options) {
     }
     allFams[fam] = (allFams[fam] || 0) + 1;
     const round = Number(obs.publicState?.roundNumber) || 0;
+    progress.report({
+      steps,
+      round,
+      turn: obs.publicState?.turnNumber ?? null,
+      seat,
+      action: fam,
+      scores: (obs.publicState?.players || []).map((p) => ({
+        label: p.playerLabel || p.playerId || p.color,
+        score: p.score ?? p.finalScore ?? "?",
+      })),
+      startedAt: t0,
+    });
     if (round !== lastRound) {
       lastRound = round;
       const white = obs.publicState?.players?.find((p) => String(p.playerId || p.color || "") === "player-white");
