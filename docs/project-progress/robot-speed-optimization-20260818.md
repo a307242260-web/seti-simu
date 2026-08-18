@@ -80,3 +80,44 @@ CPU profile 热点（self-time 采样）：
 - `serializeForkSnapshot` 换 JSON.stringify **不可行**：`canonicalEnvelopeHash` 直接
   哈希 envelope 字节 → 序列化格式变化会改变 fork RNG 种子 → 搜索行为改变（不满足
   覆盖不变门禁）。
+
+## 6. 第二轮（2026-08-18，单次决策成本继续压低）
+
+用户裁定"优化单次决策耗时"。在隔离 worktree（分支 speed-opt2，避开共享工作树的
+并行任务污染）上完成：
+
+### 6.1 改动
+
+1. **投影需求缓存键改 JSON.stringify**（production-kernel `probeStructureKey` /
+   `buildSectorWinRequirements` 缓存键）：stableSerialize 的键排序在每投影全量重排
+   （实测占采样 ~2.5%）；缓存键只需确定性相等，JSON.stringify 插入顺序确定、
+   同内容→同串（键是内部 Map 键不外泄；极端顺序差异只会缓存 miss 重算）。同时
+   删除已无调用者的模块级 stableSerialize。
+2. **stableSerialize 字符串拼接提速**（state-store / rule-composition）：输出
+   **逐字节一致**（专门脚本验证）的循环拼接替代递归 map/join，避免每层临时数组。
+
+### 6.2 验证（行为中立）
+
+- probe 覆盖指标（executedNodeCount/transposition/pruned 等）逐项一致；
+- counterfactual 总耗时 **5961 → 5458ms（-8.4%）**，median **6057 → 5748ms**；
+  分项：projection 1082→854ms（缓存键）、checkpoint 755→602ms（序列化提速）；
+- 完整局（seti-free-analyze-v1，300 决策）actionId 序列/终局分数/行动族逐项一致，
+  墙钟 320.6s → 313.3s（-2.3%）；
+- 67 unit + 1 fullFlow 全绿。
+
+### 6.3 "原地执行 + 回退"可行性结论（用户提议，实测数据）
+
+用户提议：搜索单线程，能否不 clone、直接在当前状态上执行 + 回退？实测：
+
+- 单决策 2802 物理节点中 **restore（回退）2063 次**（74%），宏步只覆盖 26%；
+  beginWorkingCopy 克隆 1579 次（每行动一次）。
+- 当前模型：克隆在每次行动（1579），回退是**冻结状态引用交换（≈0 成本）**。
+  原地执行模型：克隆消失（省 ~280ms），但每次回退都要从 envelope 字节重建
+  **可变**副本（2063 次 JSON.parse/clone，~100-180ms），且要移除 committedState
+  的冻结（它被投影直接引用 + 解析缓存共享，是承重不变量）→ 净收益 ~3-4%，
+  **不是"大幅度"**，且正确性风险高（失败行动的部分变更、共享解析缓存污染、
+  回退次数比行动还多）。
+- 结论：搜索已经是"执行+回退"（回退 = envelope restore）；clone 的用途不是
+  回退而是"冻结 committedState 上的可变工作副本"。大幅度的方向是
+  ① 节点数削减（路线 2，行为变化需用户拍板）或 ② Merkle 增量哈希 + 原地执行
+  重构（消除每节点全量序列化 453ms + 解析 134ms，高成本高风险）。
