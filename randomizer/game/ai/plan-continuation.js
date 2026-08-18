@@ -22,6 +22,9 @@
  * - 复用判定：`planReuseCheck`——下一步仍合法 + 外星揭示基线未增 + 依赖环节
  *   未变（路线终点移动步数/第一奖励格、外星痕迹槽占用）则复用，否则重新决策；
  *   翻开外星人（揭示槽位数增加）无条件重新决策；
+ * - 依赖来源：primaryAgentSearch 叶用 probeRoute.candidate（routeCheckpoints 摘要），
+ *   secondary-agent 叶无 checkpoints → 从叶的 rootRouteTargetId（orbit:/land: 终点）
+ *   补出路线依赖（见 planDependencyFromPlan），保证启发式主路径的 tier-3 失效判定生效；
  * - 诊断：`pairContinuation` / `aggregateStats` 量化「计划下一步 == 新搜索实际
  *   选择」的命中率与预测器质量（工具 tools/diagnose_plan_continuation.js）。
  *
@@ -489,22 +492,37 @@ function extractPlanSnapshot(input, options = {}) {
 // - 下一步是外星痕迹放置（target.alienSlotId）：槽位占用——「想标记的槽被占了」；
 // - 其他：{ kind: "generic" } → 视为不影响计划执行 → 可复用（对手火箭移动、
 //   打牌、资源变化、无关扇区、无探测器移动的旋转均落此分支，先直接复用）。
+//
+// 探测路线终点 id 来源（2026-08-18 修补）：primaryAgentSearch 叶带 probeRoute.candidate
+// （由 routeCheckpoints 摘要生成）；secondary-agent 搜索叶不携带 routeCheckpoints
+// （rule-composition addLeaf 对 secondaryAgentSearch 置空）→ candidate 恒为 null，
+// 此前路线依赖永远落 generic，planReuseCheck 的 tier-3（路线变贵/奖励格被占）从不触发。
+// 叶上仍保留 rootRouteTargetId（搜索绑定的路线终点，形如 orbit:.../land:...，与
+// production-kernel buildProbeCandidateStructures 的 targetId 同构），从这里补出依赖。
+function probeRouteEndpointTargetId(leaf) {
+  const targetId = String(leaf?.rootRouteTargetId || "");
+  return targetId.startsWith("orbit:") || targetId.startsWith("land:")
+    ? targetId
+    : null;
+}
+
 function planDependencyFromPlan(plan, leaf) {
   if (!plan || !leaf) return { kind: "generic" };
   const candidate = leaf?.observation?.outcomeProjection?.progress?.probeRoute?.candidate;
-  if (candidate?.endpointTargetId) {
+  const routeTargetId = candidate?.endpointTargetId || probeRouteEndpointTargetId(leaf);
+  if (routeTargetId) {
     const assumed = plan.planAssumedObservation;
     const requirements = assumed?.probeRouteRequirements
       || assumed?.outcomeProjection?.progress?.probeGoalRequirements;
     const requirement = (requirements?.candidates || []).find((entry) => (
-      String(entry?.targetId) === String(candidate.endpointTargetId)
+      String(entry?.targetId) === String(routeTargetId)
     ));
     return {
       kind: "route",
-      endpointTargetId: String(candidate.endpointTargetId),
+      endpointTargetId: String(routeTargetId),
       present: Boolean(requirement),
       movementSteps: Number(
-        requirement?.gap?.movementSteps ?? candidate.resourceGap?.movementSteps ?? 0,
+        requirement?.gap?.movementSteps ?? candidate?.resourceGap?.movementSteps ?? 0,
       ),
       firstRewardSlotOpen: requirement?.firstRewardSlotOpen ?? null,
     };

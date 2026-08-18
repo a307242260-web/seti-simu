@@ -131,6 +131,12 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - 依赖事实：探测路线终点 `{ movementSteps, firstRewardSlotOpen }` 与外星痕迹槽位
   占用（`planDependencyFromPlan` / `currentDependencyFromStore`，形状对齐才可
   比较）；其余 family 视为 generic（不影响计划执行）。
+  - 路线终点 id 来源：primaryAgentSearch 叶用 `probeRoute.candidate.endpointTargetId`
+    （routeCheckpoints 摘要生成）；secondary-agent 搜索叶不携带 routeCheckpoints
+    （rule-composition addLeaf 对 secondaryAgentSearch 置空）→ candidate 恒为 null，
+    此时从叶的 `rootRouteTargetId`（搜索绑定的 orbit:/land: 路线终点，与
+    production-kernel targetId 同构）补出路线依赖，保证启发式主路径的 tier-3
+    失效判定（路线变贵/奖励格被占/跨出终点）真正生效。
 - 多步消费：命中后 `advancePlan` 前进一步，链条耗尽或判定失败才重新调用方案。
 
 ### 3.3 边界与约束

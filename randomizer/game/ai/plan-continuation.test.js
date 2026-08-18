@@ -488,6 +488,108 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
 }
 
 // ---------------------------------------------------------------------------
+// planDependencyFromPlan：secondary-agent 叶无 probeRoute.candidate 时从
+// rootRouteTargetId 补出路线依赖（P1：启发式主路径此前依赖恒 generic）
+// ---------------------------------------------------------------------------
+
+{
+  // secondary-agent 搜索产物：无 candidate、带探测终点 rootRouteTargetId 的叶
+  const assumedObservation = makeObservation();
+  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  const leaf = {
+    actionChain: ["launch:x", "move:b", "land:mars"],
+    rootRouteTargetId: "land:mars:planet:",
+    rootRoutePlanId: "probe:c1",
+    rootActionLegalSuccessors: [descriptor("move", { rocketId: "r1" }, {}, "move:b")],
+    rootActionSettledObservation: assumedObservation,
+    observation: {
+      outcomeProjection: {
+        progress: {
+          probeRoute: { candidate: null }, // secondary-agent 叶的固定形状
+        },
+      },
+    },
+  };
+  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
+  const dependency = planContinuation.planDependencyFromPlan(plan, leaf);
+  assert.equal(dependency.kind, "route", "secondary-agent 叶必须从 rootRouteTargetId 补出路线依赖");
+  assert.equal(dependency.endpointTargetId, "land:mars:planet:", "依赖终点 = 叶绑定的路线终点");
+  assert.equal(dependency.movementSteps, 2, "移动步数从假设观测的 requirement.gap 读取");
+  assert.equal(dependency.present, true, "假设观测中终点仍存在");
+
+  // 复用判定：同一状态 → 命中；移动变多 → tier-3 失效（此前永不触发）
+  const planForReuse = {
+    nextActionId: "move:b",
+    continuation: ["move:b", "land:mars"],
+    dependency,
+    revealedCount: 0,
+  };
+  const moveDescriptor = descriptor("move", { rocketId: "r1" }, {}, "move:b");
+  const same = makeObservation();
+  same.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  same.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  const hit = planContinuation.planReuseCheck(planForReuse, same, [moveDescriptor]);
+  assert.equal(hit.hit, true, "依赖环节未变必须复用");
+  assert.equal(hit.action.actionId, "move:b");
+
+  const moved = makeObservation();
+  moved.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
+  moved.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  moved.outcomeProjection.progress.probeGoalRequirements.candidates[0].gap.movementSteps = 5;
+  const miss = planContinuation.planReuseCheck(planForReuse, moved, [moveDescriptor]);
+  assert.equal(miss.hit, false, "目标移动步数增加必须重新决策（tier-3 生效）");
+  assert.equal(miss.reason, "next-step-affected", "必须报告 next-step-affected");
+}
+
+{
+  // 非探测终点目标（data/sector/move）不得误判为路线依赖
+  const leaf = {
+    actionChain: ["place_data:x", "analyze:y"],
+    rootRouteTargetId: "data:analyze",
+    rootRoutePlanId: "data:analyze",
+    rootActionSettledObservation: makeObservation(),
+    observation: {
+      outcomeProjection: { progress: { probeRoute: { candidate: null } } },
+    },
+  };
+  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
+  assert.equal(
+    planContinuation.planDependencyFromPlan(plan, leaf).kind,
+    "generic",
+    "data:analyze 目标不是探测路线终点，必须保持 generic",
+  );
+}
+
+{
+  // candidate 存在时优先用 candidate（非 secondary 路径行为不变）
+  const assumedObservation = makeObservation();
+  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "orbit:venus:planet:";
+  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "orbit:venus:planet:";
+  const leaf = {
+    actionChain: ["launch:x", "orbit:venus"],
+    rootRouteTargetId: "land:mars:planet:", // 与 candidate 不同：必须优先 candidate
+    rootActionSettledObservation: assumedObservation,
+    observation: {
+      outcomeProjection: {
+        progress: {
+          probeRoute: {
+            candidate: { endpointTargetId: "orbit:venus:planet:", resourceGap: { movementSteps: 1 } },
+          },
+        },
+      },
+    },
+  };
+  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
+  const dependency = planContinuation.planDependencyFromPlan(plan, leaf);
+  assert.equal(
+    dependency.endpointTargetId,
+    "orbit:venus:planet:",
+    "candidate 存在时必须优先 candidate 终点",
+  );
+}
+
+// ---------------------------------------------------------------------------
 // aggregateStats：命中率 + 预测器 precision/recall + 原因分布
 // ---------------------------------------------------------------------------
 
