@@ -1277,6 +1277,12 @@
 
   function listFossilArrivalEvents(root) {
     if (!chong?.listTransportArrivalEvents || !solar) return [];
+    // 性能：无运输任务时任何火箭都取不到 task（listTransportArrivalEvents 第 934 行
+    // `if (!task ...) continue`），结果恒为 []。提前短路省去每 effect 执行都遍历
+    // aliens/rockets（含逐运输任务 createSolarSnapshot 坐标解析）——单决策 ~3552 次
+    // 调用，实测 solar 盘面函数占采样 ~8%。chong 切片缺失时同为空态，不初始化。
+    const tasks = root.aliens?.chong?.transportTasksByRocketId;
+    if (!tasks || Object.keys(tasks).length === 0) return [];
     return chong.listTransportArrivalEvents(
       root.aliens,
       root.pieces?.rockets || [],
@@ -1285,7 +1291,16 @@
           const snapshot = solar.createSolarSnapshot(root.solarSystem);
           const planet = (snapshot.planetLocations || []).find((entry) => entry.planetId === planetId);
           return planet ? { x: planet.x, y: planet.y } : null;
-        } catch (_error) {
+        } catch (error) {
+          // 容错（为何可忽略）：坐标解析失败 = 盘面结构异常，只影响"化石运输是否
+          // 恰好送达"这一辅助增补语义，不参与 action 主路径结算；返回 null 的正确
+          // 语义就是"该运输未到达"。直接抛会经 wrap 升级为整个行动失败（浏览器
+          // 玩家行动 / 搜索分支），代价不成比例。但错误不得完全静默：上报可见，
+          // 供诊断盘面结构损坏（正常路径零开销，仅异常时执行）。
+          if (typeof console !== "undefined" && typeof console.error === "function") {
+            console.error("[residual-domain] 化石运输送达坐标解析失败（已按未到达处理）",
+              error?.message || String(error));
+          }
           return null;
         }
       },

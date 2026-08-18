@@ -1004,6 +1004,10 @@
     }),
     "aomomo_8.webp": withSource("aomomo_8.webp", {
       cardType: 3,
+      // 终局计分：奥陌陌8 = 我方在奥陌陌盘面的痕迹标记（state 首放/额外 + 正面痕迹）
+      // 每个 1 分。ceda731 卡表模型迁移时曾丢失该字段（回归：end-game-scoring.test
+      // "奥陌陌8 should score state first, state extra, and face traces" 0≠3），恢复。
+      endGameScoring: Object.freeze({ kind: "aomomoTraceCount", scorePer: 1 }),
       playEffects: Object.freeze([
               Object.freeze({
                 "id": "aomomo-8-yellow",

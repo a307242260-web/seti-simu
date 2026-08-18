@@ -110,6 +110,13 @@ fork 4%。方向：
   rotation 是对象（`{wheel1Steps..}`）被 `Number()` 成 NaN 导致不同旋转碰撞同键、
   漏 player.id（同盘面不同玩家 sources 不同）、漏火箭上限（orange1+行业被动）。
   修复后整局轨迹与规则修复后基线完全一致（行为中立性恢复）。
+- **第二轮速度优化（2026-08-18，v27 统一搜索后基线）**：probe 单决策中位
+  7199ms（execution 2356 / orchestration 1940 / projection 1073 / checkpoint 775 /
+  fork 514）。两处行为中立修复：① `contextualizeExecutor.wrap` 的
+  transformEffectResult 包装跳过同引用 nextState 全量克隆（3552 次/决策，
+  ~600ms）；② 化石运输到达判定无任务短路。实测 execution 2356→1499ms、
+  完整局墙钟 447.5s→345.7s（-22.7%），覆盖指标/行动序列/终局分数逐项一致。
+  详见 docs/project-progress/robot-speed-optimization-20260818.md。
 - 节点数削减评估：complete 决策 4096 节点为 transposition 合并后的**唯一物理状态**
   （单决策 4416 次 transposition 命中 + 3308 次共享 origin），非可去重重复；
   宏步（深版内联）与完成态 DP 缓存的收益被物理共享与预算截断下的探索顺序变化限制；

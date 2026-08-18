@@ -437,9 +437,16 @@
             ),
           );
           if (transformed !== result && transformed?.ok === true) {
+            // 性能：transformEffectResult（production 唯一实现 augmentEffectResult）只
+            // 原地增补 result 并返回新外壳对象，nextState 恒为同一引用——此前每 effect
+            // 执行都整状态 structuredClone（单决策 ~3552 次，实测 ~600ms/11% + GC 压力）。
+            // nextState 同引用时直接复用：applyResult 在 trusted fork 下本就直接采用
+            // result.nextState（非 trusted 也会再 cloneState），语义不变；仅当 transform
+            // 真的产出新状态对象时才防御性克隆。
+            const nextState = transformed.nextState || result.nextState;
             return {
               ...transformed,
-              nextState: clone(transformed.nextState || result.nextState),
+              nextState: nextState === result.nextState ? nextState : clone(nextState),
             };
           }
           return transformed;

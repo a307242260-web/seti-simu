@@ -55,7 +55,8 @@ function drainOpeningDecisions(environment) {
   let steps = 0;
   while (environment.legalActions()[0]?.family?.startsWith("choose_")) {
     const actions = environment.legalActions();
-    const actorId = actions[0].actorPlayerId;
+    // 描述符使用 actorId（训练 wrapper 才叫 actorPlayerId）；缺省回退避免共享进度死锁。
+    const actorId = actions[0]?.actorId || actions[0]?.actorPlayerId;
     const progress = selectionProgress.get(actorId) || { industry: false, initialIds: new Set() };
     let action = actions.find((candidate) => candidate.target?.kind === "start_initial_setup")
       || actions.find((candidate) => candidate.target?.kind === "confirm_initial_setup");
@@ -74,12 +75,14 @@ function drainOpeningDecisions(environment) {
       ));
       if (action) progress.initialIds.add(action.target.cardId);
     }
+    // 初始收入决策：choose_payment 弃手牌插入收入区（公司 incomeIncreaseCount），
+    // 无目标 kind，取第一个合法弃牌即可。
     action = action || actions[0];
     selectionProgress.set(actorId, progress);
     const result = environment.step(action);
     if (!result.ok) throw new Error(result.error || "setup Decision 执行失败");
     steps += 1;
-    if (steps >= 50) throw new Error("opening Decision 未能有限结束");
+    if (steps >= 80) throw new Error("opening Decision 未能有限结束");
   }
   return steps;
 }
