@@ -27,6 +27,40 @@
    用户插收入列的牌是 dlc_40/dlc_39/b_48/dlc_25/chong_7/b_111/dlc_8/b_140/
    b_133）。→ 条件决策"收入选哪张"的评估需查：AI 为什么选 b_117 而不是
    保留它打牌（机会成本没被考虑？还是选牌评估只看收入收益？）。
+6. **第二条实锤（收入选牌评估全 0，纯字典序选择）**（2026-08-18 诊断）：
+   step31 收入选牌决策点（插 b_117 vs 插 dlc_9）两个候选的
+   `evaluateAction` **都评 0 分**（score=0, delta=0, infra=0, income=0）——
+   反事实搜索对 choose_card income:XXX 的叶链**没捕获 income 插牌效果**
+   （手牌上限+1 / 移出游戏 / 机会成本全不可见）。全 0 平局 → policy 按
+   actionId 字典序选（income:card-13-0 < income:card-15-0 → 选 b_117）=
+   **纯运气选择**。提交后规则侧正确执行（handSize 1→2、b_117 移除换
+   card-37），问题只在搜索评估侧。
+7. **修正误解：place_data 是 quick 行动不占主行动**（用户 2026-08-18 纠正）：
+   R1 step23 AI 选 place_data（quick）**不是问题**——先放数据不影响之后
+   打牌（main）。真正的问题链只在：① 收入选牌消耗 b_117（实锤）；
+   ② 主行动窗口 launch vs play_card 评估**平局**（69.5=69.5，诊断实测），
+   被 actionId 字典序打破选 launch——免费发射的 2 宣传+省发射费优势没被
+   评估捕获（launch 的叶链也做了同样探测，收益归因相同）。
+8. **收入选牌机会成本修复（2026-08-18 实施）**：用户口径"手牌也有价值，
+   已知的牌可以评估他的价值（插进去的损失价值/机会成本）"——新增
+   `cardPlayValue`（免费发射 15 / 宣传 5×宣传数 / 免费科技按
+   selectHeuristicTechPlans top3 是否匹配：匹配 30 / 不匹配 10 / 收入牌 /
+   登陆 / 移动 / 痕迹）+ `incomePickOpportunityCost`（evaluateOutcome 里对
+   choose_card income:* 扣被插牌的打牌价值×0.5）。修复前两候选评 0 平局
+   字典序选 b_117；修复后 step31 选 **dlc_9**（免费紫色科技不在 top3 →
+   成本 5）保留 b_117（免费发射+宣传 → 成本 12.5）——与用户行为一致。
+   67/67 测试全过。待 200 步快速验证确认整体行为。
+9. **免费发射打牌奖励（2026-08-18 实施，第二环）**：用户口径"免费发射 = 探测链
+   价值 + 省发射费 + 牌面宣传，理应优于付费 launch"。诊断确认 launch 与 play_card
+   b_117 在决策函数路径（目标绑定完整链）评出完全相同的 59.5——launch 的叶链展开
+   26 步（launch→end_turn→play_card→...→analyze→pass），incomeValue=30/
+   traceValue=5/alienPurpose=6.5/pubResearch=10 全是链里后续动作的收益被归因到
+   launch 根（搭便车；单独 evaluateActionOutcomes 无绑定则只有 1 层叶无 income）。
+   两候选绑定同一 probe 目标走相同完整链 → 平局 → 字典序选 launch。修复：
+   `playCardFreeLaunchBonus`（evaluateOutcome 对含 LAUNCH(skipCost) 的 play_card
+   加 2 钱发射费 × 信用单位 8 × 0.5 = 8 分奖励）。修复后 step32（R1 第一主行动，
+   同用户 405 档 step23 决策点）选 **play_card b_117**（67.5 > launch 59.5）——
+   与用户行为一致。67/67 测试全过。
 
 ## 正确诊断方法（重要，否则会误判）
 

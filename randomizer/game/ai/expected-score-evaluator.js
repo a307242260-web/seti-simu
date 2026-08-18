@@ -362,6 +362,115 @@
     });
   }
 
+  // 单张手牌的打牌价值（收入选牌机会成本用）——用户口径："手牌也有价值，未知的牌
+  // 有一个价值，已知的牌你可以评估他的价值（也就是插进去之后的损失价值/机会成本）"。
+  // 该牌打牌能产生的价值 = 免费发射（探测起点+省发射费，参考 b_117 用户 R1 免费探测）
+  // + 宣传（研究货币，跨门槛才有价值，折半）/ 免费科技（按当前研究方向是否匹配）/
+  // 免费登陆 / 移动 / 外星痕迹 / 收入牌。被插收入列 = 失去这张牌的打牌价值。
+  // 与 V 路径 handEffectValue 同源但校准到决策评估口径：
+  //   - LAUNCH 15（探测链起点：省发射费 + 首个探测器，用户 R1 打 b_117 的核心价值）
+  //   - GAIN_RESOURCES 含宣传（宣传=研究货币，跨门槛才兑现，×0.5）
+  //   - RESEARCH_TECH 按当前是否有对应研究方向（有则高 30，无则 10——R1 研究蓝科技时
+  //     紫色免费科技实际用不上，不该虚高）
+  function cardPlayValue(card, observation, remainingPayments) {
+    const effects = (typeof cardEffects?.buildPlayEffects === "function")
+      ? cardEffects.buildPlayEffects(card)
+      : [];
+    let value = 0;
+    // 当前研究方向（免费科技价值按是否匹配调整）——用科技打分 top3（实际会尝试的
+    // 方向），不是全量科技目录（R1 打分为 blue1/blue2/purple4 时，紫色免费科技
+    // dlc_9 不在 top3，价值低；用户 R1 保留 b_117 打而非插它）。
+    let researchTileTypes = null;
+    if (effects.some((effect) => effect?.type === cardEffects?.EFFECT_TYPES?.RESEARCH_TECH)) {
+      try {
+        researchTileTypes = new Set(
+          selectHeuristicTechPlans(observation).map((plan) => (
+            String(plan.tileId || "").replace(/[0-9]+$/, "")
+          )),
+        );
+      } catch {
+        researchTileTypes = new Set();
+      }
+    }
+    for (const effect of effects) {
+      const type = effect?.type;
+      const options = effect?.options || {};
+      if (type === cardEffects?.EFFECT_TYPES?.RESEARCH_TECH) {
+        // 免费科技：省 6 宣传 + 立即生效。价值按"当前研究方向是否包含该颜色"——
+        // 用户在 R1 研究蓝科技时，紫色免费科技牌（dlc_9）实际用不上，价值低。
+        const techTypes = (options?.techTypes || []).map(String);
+        const matchesCurrent = !techTypes.length
+          || (researchTileTypes && [...techTypes].some((t) => researchTileTypes.has(t)));
+        value += matchesCurrent ? 30 : 10;
+      } else if (
+        type === cardEffects?.EFFECT_TYPES?.INCOME
+        || type === cardEffects?.EFFECT_TYPES?.TUCK_PLAYED_CARD_TO_INCOME
+      ) {
+        value += 8 * Math.max(1, remainingPayments); // 收入牌每轮资源
+      } else if (type === cardEffects?.REWARD_TYPES?.LAUNCH) {
+        value += 15; // 免费发射：探测链起点 + 省发射费（用户 R1 打 b_117 核心价值）
+      } else if (type === cardEffects?.EFFECT_TYPES?.CARD_LAND) {
+        value += 8; // 免费登陆（登陆奖励 + 外星链）
+      } else if (
+        type === cardEffects?.EFFECT_TYPES?.CARD_MOVE
+        || type === cardEffects?.EFFECT_TYPES?.FREE_MOVE
+      ) {
+        value += 3 * Math.max(1, finite(options?.movementPoints) || 1);
+      } else if (type === cardEffects?.REWARD_TYPES?.ALIEN_TRACE) {
+        value += 6; // 外星痕迹（分 + 外星人牌）
+      } else if (type === cardEffects?.REWARD_TYPES?.GAIN_RESOURCES) {
+        const gain = options?.resources || options?.gain || {};
+        value += finite(gain.score);
+        value += finite(gain.credits) * 2;
+        value += finite(gain.energy) * 3;
+        // 宣传是研究货币：跨研究门槛（pub <6 → >=6）才兑现，折半期望
+        value += finite(gain.publicity) * 5;
+      }
+    }
+    return value;
+  }
+
+  // 收入选牌（choose_card income:*）机会成本：被插收入列的牌移出游戏，其未来
+  // 打牌价值全部损失（用户口径：已知的牌可以评估其价值 = 插进去的损失价值）。
+  // 选择插哪张 = 插机会成本最低的（保留打牌价值高的牌）。即时收益（income
+  // handSize+1 等）由 leafValue 的 incomeDelta 捕获；本机会成本拉开牌间差距。
+  function incomePickOpportunityCost(context, action) {
+    if (action?.family !== "choose_card") return null;
+    const choiceId = String(action?.target?.choiceId || "");
+    if (!choiceId.startsWith("income:")) return null;
+    const instanceId = String(action?.target?.cardInstanceId || "");
+    const observation = context?.observation;
+    const hand = observation?.selfState?.hand || [];
+    const card = hand.find((candidate) => String(candidate?.id) === instanceId);
+    if (!card) return null;
+    const roundNumber = Math.max(1, finite(
+      observation?.outcomeProjection?.progress?.roundNumber,
+    ) || 1);
+    const finalRoundNumber = Math.max(1, finite(
+      observation?.outcomeProjection?.progress?.finalRoundNumber,
+    ) || 4);
+    const remainingPayments = Math.max(0, finalRoundNumber - roundNumber);
+    const value = cardPlayValue(card, observation, remainingPayments) * 0.5;
+    if (value <= 0) return null;
+    return { cost: value, instanceId, cardValue: value };
+  }
+
+  // 打牌免费发射奖励：该 play_card 打出时含 LAUNCH(skipCost) 效果（如 b_117 免费
+  // 发射 +2 宣传）。免费发射的价值 = 省下的一次发射成本（launch 花 2 钱 ≈ 2 ×
+  // 信用单位 8 = 16，折半 0.5——未必每次都用于发射）+ 探测起点。用户 405 档
+  // R1 打 b_117：免费发射 → 探测开始，同时 +2 宣传（跨研究门槛，pubResearch 已
+  // 捕获宣传价值，此处不重复）。目的：打破 launch 与 play_card 在未绑定根时的
+  // 平局（两者叶链都搭后续动作便车评出相同分，字典序选 launch）。
+  function playCardFreeLaunchBonus(context, action) {
+    if (action?.family !== "play_card") return 0;
+    if (typeof cardHasFreeLaunch !== "function" || !cardHasFreeLaunch(context?.observation, action)) {
+      return 0;
+    }
+    const LAUNCH_CREDITS_COST = 2; // 标准 launch 成本（2 钱，见 rocket 发射）
+    const FREE_LAUNCH_UTILIZATION = 0.5; // 折半（未必每次都用于发射探测）
+    return LAUNCH_CREDITS_COST * INCOME_UNIT_VALUES.credits * FREE_LAUNCH_UTILIZATION;
+  }
+
   function quickTradePurpose(context, action, leaf) {
     if (action?.family !== "quick_trade") return { required: false, supported: true };
     const nextAgent = (leaf?.secondaryAgentTrace || [])
@@ -860,6 +969,42 @@
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
     let bestLeafValue = best.strategicValue;
     const bestVD = best.vDelta || 0;
+    // 收入选牌机会成本（2026-08-18 用户导向"插牌有即时+未来收益，评估不能是 0"）：
+    // choose_card income:*（place_data 4 号位奖励：选一张手牌插入收入列，移出游戏）。
+    // 该决策的"收益"是保留牌 vs 被插牌的差——即时收益（income handSize+1 等）由
+    // leafValue 的 incomeDelta 捕获，但**被插牌的打牌价值（未来免费科技/发射/登陆/
+    // 收入/痕迹）完全没评估** → 两个候选评 0 平局，policy 按 actionId 字典序选
+    // （实测 AI 把 b_117 插收入列，用户保留它打牌）。修复：被插牌的打牌价值作为
+    // 机会成本从 score 扣除——优先插"打牌价值最低"的牌，保留高价值牌。
+    const incomePickOpportunity = incomePickOpportunityCost(context, action);
+    if (incomePickOpportunity) {
+      bestLeafValue = {
+        ...bestLeafValue,
+        total: bestLeafValue.total - incomePickOpportunity.cost,
+        primaryValue: bestLeafValue.primaryValue - incomePickOpportunity.cost,
+        opportunityCost: (bestLeafValue.opportunityCost || 0) + incomePickOpportunity.cost,
+      };
+      // 收入选牌是 4 号位奖励的强制选择（必须插一张手牌进收入列）——机会成本为负
+      // 不拒绝（两个候选都会被扣，选扣后相对高的 = 插打牌价值最低的牌），保持
+      // conditional 可选择性，仅靠扣减后的 primaryValue 拉开排序差距。
+    }
+    // 打牌免费发射奖励（2026-08-18 用户口径"免费发射 = 探测链价值 + 省发射费 + 牌面
+    // 宣传，理应优于付费 launch"）：含 LAUNCH(skipCost) 效果的手牌打出时，免费获得
+    // 一次发射（省发射费 + 探测起点）。launch 作为未绑定根时叶链搭了后续动作便车
+    // （实测 launch 与 play_card b_117 评出完全相同的 59.5——26 步链 vs 18 步链，
+    // 收益全归因相同），免费发射的真实优势（省 2 钱发射费 + 2 宣传）被抹平，平局
+    // 后按 actionId 字典序选 launch（l < p）。奖励 = 省发射费（launch 成本 2 钱
+    // × 信用单位 8，折半——未必用于发射）+ 2 宣传（跨研究门槛价值由 pubResearch
+    // 已捕获，此处只补发射费差）。免费发射牌的价值同时由 cardPlayValue 在收入
+    // 选牌机会成本里体现（保留它 > 插掉它），此处是"打出"侧的奖励。
+    const freeLaunchBonus = playCardFreeLaunchBonus(context, action);
+    if (freeLaunchBonus) {
+      bestLeafValue = {
+        ...bestLeafValue,
+        total: bestLeafValue.total + freeLaunchBonus,
+        primaryValue: bestLeafValue.primaryValue + freeLaunchBonus,
+      };
+    }
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
     if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
     const cornerPurpose = cardCornerPurpose(
