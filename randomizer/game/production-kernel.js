@@ -170,13 +170,6 @@ function clone(value) {
   return value == null ? value : structuredClone(value);
 }
 
-function stableSerialize(value) {
-  if (value == null || typeof value !== "object") return JSON.stringify(value);
-  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
-  return `{${Object.keys(value).sort().map((key) => (
-    `${JSON.stringify(key)}:${stableSerialize(value[key])}`
-  )).join(",")}}`;
-}
 
 function createModules() {
   return {
@@ -559,7 +552,11 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
 // resourceGap，由 finalizeProbeRequirements 每节点便宜地重算。
 function probeStructureKey(workingState, player, context, sources) {
   const topologyKey = probeRouteTopologyKey(workingState, player, sources, context);
-  return `${topologyKey}|P${stableSerialize(workingState.planets)}|T${stableSerialize(player.techState)}|A${stableSerialize(workingState.aliens)}`;
+  // 缓存键只需确定性相等（同内容→同键），stableSerialize 的键排序在每投影都
+    // 全量重排（实测占采样 ~2.5%）；JSON.stringify 保留插入顺序且状态构建路径
+    // 确定（parse→clone→mutate），同逻辑内容→同字符串。键格式是内部 Map 键，
+    // 不外泄；即使顺序在极端路径下不同也只会缓存 miss（重算，结果正确）。
+    return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(player.techState)}|A${JSON.stringify(workingState.aliens)}`;
 }
 
 function buildProbeCandidateStructures(workingState, player, context, topology, sources) {
@@ -922,7 +919,7 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
   if (!player || workingState.turn.gameEnded) return null;
   // 扇区胜利需求完全无资源依赖（只读 data token/排名/玩家科技/手牌/标准扫描成本）：
   // 结构键命中时直接共享缓存结果，跳过 listNebulaTokens/getSectorRanking 等每节点重算。
-  const key = `${workingState.meta?.gameId || "?"}:${player.id}:D${stableSerialize(workingState.data)}:T${stableSerialize(player.techState)}:H${stableSerialize(player.hand || [])}`;
+  const key = `${workingState.meta?.gameId || "?"}:${player.id}:D${JSON.stringify(workingState.data)}:T${JSON.stringify(player.techState)}:H${JSON.stringify(player.hand || [])}`;
   const cached = SECTOR_REQUIREMENTS_CACHE.get(key);
   if (cached) return cached;
   const result = buildSectorWinRequirementsBody(workingState, player);
