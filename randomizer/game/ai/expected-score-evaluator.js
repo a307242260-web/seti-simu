@@ -1614,8 +1614,6 @@
   // 单次利用价值（每次使用该科技效果的价值，按 INCOME_UNIT_VALUES/行动收益校准）：
   //   blue1 槽 +1信用=8；blue2 槽 +1能量=10；blue3 槽选牌=6；blue4 槽 +2宣传=8
   //   orange2 无视小行星移动=6/次；orange3 登陆能量-1=10/次
-  //   orange4 卫星登陆解锁 = **持续收益**（用户纠正：解锁后每次卫星登陆 8-12 分 +
-  //     资源/收入/外星痕迹，可反复登陆反复赚）≈ 20/次
   //   purple2 水星扫描：1 宣传 → 额外扇区信号 + 数据（真实收益，可跳过）
   //     = 数据 4 + 扇区信号 3 ≈ 7（用户纠正：紫2是收益不是纯灵活性）
   //   purple4 扫描后发射/移动=6/次
@@ -1623,7 +1621,7 @@
   //   消耗宝贵手牌，换扫描不一定赚）价值 0（用户纠正）
   const TECH_USE_VALUE = Object.freeze({
     blue1: 8, blue2: 10, blue3: 6, blue4: 8,
-    orange1: 0, orange2: 6, orange3: 10, orange4: 20,
+    orange1: 0, orange2: 6, orange3: 10, orange4: 0,
     purple1: 0, purple2: 7, purple3: 0, purple4: 6,
   });
   // 预期使用次数基准（每轮该科技效果被使用的期望次数；乘以剩余轮次折算）。
@@ -1631,7 +1629,7 @@
   // 一次性解锁（orange1）和灵活性（purple1/purple3）无持续次数（0）。
   const TECH_USES_PER_ROUND = Object.freeze({
     blue1: 1.5, blue2: 1.5, blue3: 0.8, blue4: 0.6,   // 数据位槽（填轨活跃时高）
-    orange1: 0, orange2: 1.5, orange3: 1.2, orange4: 0.8, // 探测/卫星登陆
+    orange1: 0, orange2: 1.5, orange3: 1.2, orange4: 0, // 探测/登陆
     purple1: 0, purple2: 0.8, purple3: 0, purple4: 1,    // 扫描
   });
   // 场景相关度权重（0-1）：该科技效果在当前盘面是否活跃。
@@ -1715,8 +1713,17 @@
     // 每个科技打分（2026-08-18 用户纠正三类）：
     //   持续收益 = 单次利用价值 × 预期使用次数 × 场景权重 × 剩余轮次
     //   一次性解锁 = 解锁价值（不乘次数/轮次——研究即得的固定收益）
-    //   灵活性/有代价 = 0（purple1-3：收益可能不变或消耗手牌，不一定赚）
+    //   灵活性/有代价 = 0（purple1/purple3：收益可能不变或消耗手牌，不一定赚）
+    //   orange4 卫星登陆解锁 = **条件性有限收益**（用户纠正：橙4解锁后才允许卫星
+    //     登陆，但本身也能登陆/环绕本星；不是所有行星都有卫星；卫星槽位会被占、
+    //     每颗卫星只能登陆一次）——价值 = 可达卫星目标数 × 单颗卫星增量收益
+    //     （卫星登陆 8-12 分 vs 不登陆，保守 8）× 场景权重，**不乘每轮次数**
+    //     （每颗卫星一次性）
     // 即时收益（背面 bonus/首发分/扣宣传）不预估——反事实搜索真实结算进叶价值。
+    const reachableSatelliteCount = probeCandidates.filter((candidate) => (
+      candidate.endpointTarget?.type === "satellite"
+      || String(candidate.targetId || "").includes(":satellite:")
+    )).length;
     const scored = [...planByTile.values()]
       .map((plan) => {
         const tileId = plan.tileId;
@@ -1724,11 +1731,14 @@
         const useValue = Number(TECH_USE_VALUE[tileId]) || 0;
         const usesPerRound = Number(TECH_USES_PER_ROUND[tileId]) || 0;
         const unlockValue = Number(TECH_UNLOCK_VALUE[tileId]) || 0;
-        // 持续收益 × 次数（未来效率）；一次性解锁只算解锁价值（也乘场景权重：
-        // 无卫星目标时 orange4 解锁价值低）
+        // 持续收益 × 次数（未来效率）；一次性解锁只算解锁价值（乘场景权重）
         const useScore = useValue * usesPerRound * remainingRounds * weight;
-        const total = useScore + unlockValue * weight;
-        return { plan, tileId, total, useScore, unlockValue };
+        // 橙4：条件性有限收益（可达卫星数 × 单颗卫星价值 × 权重）
+        const orange4Score = tileId === "orange4"
+          ? reachableSatelliteCount * 8 * weight
+          : 0;
+        const total = useScore + unlockValue * weight + orange4Score;
+        return { plan, tileId, total, useScore, unlockValue, orange4Score };
       })
       .sort((left, right) => (
         right.total - left.total
