@@ -19,6 +19,14 @@
    play_card && cardHasFreeLaunch)`——只要探测目标 nextStep=launch 且手牌有
    免费发射牌，play_card 应并列进候选。b_117 的 playEffects 确实是
    `{type: "launch", options: {skipCost: true}}`，cardHasFreeLaunch 判定应通过。
+5. **第一条实锤（收入选牌消耗 b_117）**：AI step31"收入选牌"= place_data
+   计算机 4 号位奖励（`EFFECT_TYPES.INCOME`，science-session.js ~1475：
+   选一张手牌插入收入列，**移出游戏**）。AI 把手牌 b_117（income_code=2 →
+   手牌上限+1）插了收入列，b_117 移出游戏 → 后续无免费发射牌可打。
+   用户 405 档同机制下**从未把 b_117 插收入列**（用户 step23 打它免费发射；
+   用户插收入列的牌是 dlc_40/dlc_39/b_48/dlc_25/chong_7/b_111/dlc_8/b_140/
+   b_133）。→ 条件决策"收入选哪张"的评估需查：AI 为什么选 b_117 而不是
+   保留它打牌（机会成本没被考虑？还是选牌评估只看收入收益？）。
 
 ## 正确诊断方法（重要，否则会误判）
 
@@ -46,12 +54,16 @@
 
 ## 待查方向（新 agent 彻查点）
 
-1. **"收入选牌"机制**（step31 choose_card income:card-13-0）：为什么 R1 收入
-   阶段会出现选牌？b_117 被选中后去了哪里（手牌从 2 张变 2 张但内容变了）？
-   是否该选牌本身就有问题（用户档同一步是 play_card 打 b_117）。
-2. **probe 目标为什么没并列 play_card**：step32 决策点手牌是 card-15/card-37，
-   若这两张含免费发射（cardHasFreeLaunch）应并列进 launchCards；若不含，
-   则 probe 路径正确但手牌无免费发射牌——需查 b_117 为何不在手。
+1. **"收入选牌"消耗 b_117（已实锤，优先级最高）**：AI 把 b_117 插收入列
+   （手牌上限+1），用户保留它打牌（免费发射+2宣传）。查条件决策
+   choose_card income:XXX 的评估：为什么选 b_117 而不是保留它？
+   收入选牌是否有"跳过"选项？选牌评估是否考虑该牌的打牌价值/机会成本？
+   （science-session.js EFFECT_TYPES.INCOME executor ~1475；
+   协调器条件决策路径见 heuristic-decision-function policyFor。）
+2. **probe 目标为什么没并列 play_card**：step32 决策点手牌是 card-15/card-37
+   （b_117 已被收入选牌移出）。若这两张含免费发射（cardHasFreeLaunch）应
+   并列进 launchCards；若不包含，则 probe 路径本身待验证（用一张含免费发射
+   的牌在手的存档点测）。
 3. **外星牌打牌路径**：用户 8 张外星牌全打，AI 0 张。外星牌（amiba/chong）
    打牌经哪条目标绑定？是否完全不可见？
 4. **play_card 评估价值**：即使进候选，叶价值是否让 play_card 胜出？
