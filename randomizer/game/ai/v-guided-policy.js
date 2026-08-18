@@ -68,24 +68,19 @@
       return null;
     }
     const rootStd = toStandardObservation(outcome.rootObservation, seatId, authority);
-    let rootV = null;
-    try { rootV = expectedScoreEvaluator.evaluateStateValue(rootStd, seatId, params).total; } catch (_e) { rootV = null; }
+    // 2026-08-18（用户裁决"错误都暴露出来，不要偷偷静默处理"）：V 评估失败 =
+    // 调用契约被破坏（observation 漏装配 / 结构不符），必须显式抛错暴露，
+    // 不得 catch 后 rootV=null / continue 静默吞掉——那是"V 看不到东西"的隐藏机制。
+    const rootV = expectedScoreEvaluator.evaluateStateValue(rootStd, seatId, params).total;
     let best = null;
     for (const leaf of outcome.leaves) {
       if (leaf?.status === "failed" || !leaf?.observation) continue;
-      let leafStd = null;
-      try {
-        leafStd = toStandardObservation(leaf.observation, seatId, authority);
-      } catch (_e) { continue; }
-      let lv = null;
-      let actual = 0;
-      try {
-        lv = expectedScoreEvaluator.evaluateStateValue(leafStd, seatId, params).total;
-        const leafState = expectedScoreEvaluator.evaluateState(leafStd, seatId);
-        const rootState = expectedScoreEvaluator.evaluateState(rootStd, seatId);
-        actual = leafState.realizedScore - rootState.realizedScore;
-      } catch (_e) { continue; }
-      const vDelta = rootV == null ? 0 : lv - rootV;
+      const leafStd = toStandardObservation(leaf.observation, seatId, authority);
+      const lv = expectedScoreEvaluator.evaluateStateValue(leafStd, seatId, params).total;
+      const leafState = expectedScoreEvaluator.evaluateState(leafStd, seatId);
+      const rootState = expectedScoreEvaluator.evaluateState(rootStd, seatId);
+      const actual = leafState.realizedScore - rootState.realizedScore;
+      const vDelta = lv - rootV;
       const total = actual + vDelta;
       if (!best || total > best.total) {
         best = { total, vDelta, actual, leafId: leaf.leafId || null };

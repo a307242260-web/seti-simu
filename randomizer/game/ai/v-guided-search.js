@@ -76,8 +76,15 @@ function forkAdvance(comp, startAction, maxDepth, seatId) {
       if (!cr?.ok) break;
     }
     // 到达新主行动选择 = 状态稳定点（本玩家主行动完成）
+    // 2026-08-18 修复：fork projection 的 turn 在 publicState（state.turn 恒
+    // undefined → 每步都 break → 浅搜索 depth 恒 1，名存实亡）。
     const proj = comp.projection();
-    const currentActor = proj.state.turn?.currentPlayerId;
+    const projState = proj.state || proj;
+    const turn = projState.publicState?.turn
+      || projState.turn
+      || projState.publicState
+      || {};
+    const currentActor = turn.currentPlayerId ?? null;
     if (currentActor !== seatId) break;
     action = null; // 下一轮选任意（同一主行动内的连续动作）
   }
@@ -94,11 +101,31 @@ function evaluateActionWithFork(env, action, rootEnvelope, seatId, authority, pa
   const comp = fork.composition || fork;
   try {
     const trace = forkAdvance(comp, action, maxDepth, seatId);
+    // 2026-08-18（错误必须暴露 + 可行性过滤）：根动作 fork 执行失败（如
+    // quick_trade energy-for-move 但无探测器可移动 → "没有可移动的探测器"）
+    // 必须显式标记不可行（ok:false），不能返回 ok:true 让调用方提交后失败。
+    // 此前 forkAdvance 失败只记录 trace 不中断 → V 引导选出"实际执行会失败"的
+    // 动作 → env.step 报错（静默被 compare 工具吞掉或崩溃）。
+    const firstStep = trace[0];
+    if (!firstStep || firstStep.ok !== true) {
+      return {
+        actionId: action.actionId,
+        family: action.family,
+        total: -Infinity,
+        vDelta: -Infinity,
+        actual: -Infinity,
+        trace,
+        ok: false,
+        reason: firstStep?.code || "fork-root-action-failed",
+      };
+    }
     // fork 的 projection 返回 observation（publicState/selfState/decision 结构，
     // production-kernel 的 projectCounterfactualState 配置），不是 committed state。
+    // 2026-08-18 修复：leaf 必须传**完整 obs**（proj.state 含 publicState + selfState
+    // + decision）——此前只传 publicState，evaluateStateValue 读不到 selfState.hand /
+    // outcomeProjection.progress（手牌/科技/收入/外星），V 增量计算全部失真。
     const obs = comp.projection().state;
-    const publicState = obs?.publicState || obs;
-    const leafStd = outcomeModel.createDecisionObservation(publicState, {
+    const leafStd = outcomeModel.createDecisionObservation(obs, {
       seatId,
       stateVersion: authority?.stateVersion ?? null,
       decisionVersion: authority?.decisionVersion ?? null,

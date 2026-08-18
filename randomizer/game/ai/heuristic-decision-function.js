@@ -106,12 +106,15 @@ function createHeuristicDecisionFunction(options = {}) {
   if (!composition?.counterfactualPort?.evaluate) {
     throw new TypeError("Heuristic 决策函数需要 composition.counterfactualPort.evaluate");
   }
-  const policy = options.policy || heuristicPolicy.createHeuristicPolicy({
+  const defaultPolicy = options.policy || heuristicPolicy.createHeuristicPolicy({
     difficulty: options.difficulty,
     strategyWeights: options.strategyWeights,
     evaluationParameters: options.evaluationParameters,
     seed: options.seed,
   });
+  // policyFor（可选）：按 boundary 返回策略——条件决策（choose_*）用启发式，
+  // 主行动用 V 引导等。默认恒用 defaultPolicy。
+  const policyFor = options.policyFor || (() => defaultPolicy);
   const config = options.config || {};
 
   // 反事实搜索（从原 simulation-env evaluateActionOutcomes 迁移；legalActions 为
@@ -229,7 +232,10 @@ function createHeuristicDecisionFunction(options = {}) {
         heuristicDecisionFunctionSchemaVersion: "seti-heuristic-decision-function-v1",
       },
     });
-    const policyDecision = policy.decide(context);
+    const policyDecision = policyFor({
+      boundary: { seatId, legalActions, observation },
+      actionOutcomes,
+    }).decide(context);
     const actionId = policyDecision.actionId;
     const action = legalActions.find((candidate) => candidate.actionId === actionId);
     if (!action) {
@@ -253,7 +259,7 @@ function createHeuristicDecisionFunction(options = {}) {
 
   return Object.freeze({
     run,
-    getProvenance: policy.getProvenance,
+    getProvenance: defaultPolicy.getProvenance,
   });
 }
 

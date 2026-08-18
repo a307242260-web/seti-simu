@@ -44,10 +44,13 @@ function completeDiscardSession(env, legal) {
 
 // 白方条件/一般决策统一入口：纯弃牌决策走完成器，其余委托启发式（含主行动选择）。
 // 返回执行的动作 family 或 "discard-session"。
+// 2026-08-18：条件检测改用 family（与 runVGuidedDecision 的 allConditional 一致）——
+// 此前用 decisionType==="conditional_choice" 与真实 legal 结构（family=choose_target,
+// decisionType=undefined）不匹配，打牌后的 choose_target 条件决策漏处理。
 function runWhiteConditional(env) {
   const legal = env.legalActions();
   const allConditional = legal.length > 0 && legal.every((a) => (
-    a.decisionType === "conditional_choice"
+    ["choose_card", "choose_payment", "choose_target", "accept_optional_effect"].includes(a.family)
   ));
   if (allConditional) {
     const discardAction = completeDiscardSession(env, legal);
@@ -85,28 +88,20 @@ function runGame(options) {
     let fam = null;
     if (isWhite) {
       if (mode === "vguided") {
-        let res = null;
-        try {
-          res = env.runVGuidedDecision({ maxDepth });
-        } catch (error) {
-          fallbackCount += 1;
-          console.log(`[warn] step=${steps} runVGuidedDecision 异常: ${error?.message} → 回退启发式`);
+        // 2026-08-18（错误必须暴露）：runVGuidedDecision 异常不再静默回退——
+        // 显式抛出；条件决策现在直接返回第一个合法 action（契约修复），调用方
+        // 一律走 env.step(res.action)，不再有 undefined action 路径。
+        const res = env.runVGuidedDecision({ maxDepth });
+        if (!res?.action) {
+          throw new Error(`V 引导 step ${steps} 未返回 action（契约破坏）: ${JSON.stringify(res?.diagnostics || {})}`);
         }
-        if (res?.conditional) {
-          const handled = runWhiteConditional(env);
-          fam = familyOf(handled);
-          if (handled === "discard-session") discardSessionCount += 1;
+        const st = env.step(res.action);
+        if (!st.ok) throw new Error(`V 引导 step ${steps} 失败: ${st.error || st.failure?.code || "未知"}`);
+        fam = familyOf(res.action?.actionId);
+        if (res.conditional) {
           delegateCount += 1;
-        } else if (res?.action) {
-          const st = env.step(res.action);
-          if (!st.ok) throw new Error(`V 引导 step ${steps} 失败: ${st.error || st.failure?.code || "未知"}`);
-          fam = familyOf(res.action?.actionId);
-          vguidedCount += 1;
         } else {
-          const handled = runWhiteConditional(env);
-          fam = familyOf(handled);
-          if (handled === "discard-session") discardSessionCount += 1;
-          fallbackCount += 1;
+          vguidedCount += 1;
         }
       } else {
         const handled = runWhiteConditional(env);

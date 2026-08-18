@@ -16,6 +16,7 @@ const outcomeModel = require("../game/ai/outcome-model");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const machinePlayerCoordinatorModule = require("../game/ai/machine-player-coordinator");
 const heuristicDecisionFunctionModule = require("../game/ai/heuristic-decision-function");
+const vGuidedDecisionFunctionModule = require("../game/ai/v-guided-decision-function");
 const endGameScoring = require("../game/end-game-scoring");
 const finalScoring = require("../game/final-scoring");
 const cardEffects = require("../game/cards/effects");
@@ -270,6 +271,9 @@ function createSimulationEnv() {
   // recordStep 记账产出（协调器提交成功后补记的完整 step 形状，供
   // runHeuristicPolicyDecision 返回；见 recordMachineStep）。
   let machineStepResult = null;
+  // V 引导弃牌会话状态（2026-08-18）：quick_trade 弃牌是"单张点选 toggle + confirm"，
+  // 决策层维护选中集合，选满 required 再 confirm（防 toggle 死锁）。reset 清空。
+  let vGuidedDiscardSession = null;
   let diagnostics = null;
   let machineCoordinator = null;
   let heuristicDecision = null;
@@ -353,22 +357,29 @@ function createSimulationEnv() {
   }
 
   // Heuristic 决策函数（懒创建）：直调启发式 Policy，无旧 Host/policyAdapter 壳。
+  // V 引导模式（vStateValueEnabled）：用 v-guided-decision-function（复用启发式
+  // 生成 actionOutcomes = 先定倾向，叶排序用 V 增量 = 再执行）。
   function ensureHeuristicDecision() {
     if (!heuristicDecision) {
-      heuristicDecision = heuristicDecisionFunctionModule.createHeuristicDecisionFunction({
+      const common = {
         composition,
         difficulty: config.aiDifficulty,
         strategyWeights: config.strategyWeights || {},
-        // V(state) 接入开关透传（v-state-design-20260817.md）
-        evaluationParameters: config.vStateValueEnabled
-          ? { vStateValueEnabled: true }
-          : undefined,
         seed,
         config: {
           completeTargetCatalog: config.completeTargetCatalog === true,
           traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,
         },
-      });
+      };
+      heuristicDecision = config.vStateValueEnabled
+        ? vGuidedDecisionFunctionModule.createVGuidedDecisionFunction({
+          ...common,
+          evaluationParameters: { vStateValueEnabled: true },
+        })
+        : heuristicDecisionFunctionModule.createHeuristicDecisionFunction({
+          ...common,
+          evaluationParameters: undefined,
+        });
     }
     return heuristicDecision;
   }
@@ -568,6 +579,7 @@ function createSimulationEnv() {
       cachedLegal = null;
       lastObservation = null;
       machineStepResult = null;
+      vGuidedDiscardSession = null;
       machineCoordinator = null;
       heuristicDecision = null;
       diagnostics = {
@@ -1092,20 +1104,90 @@ function createSimulationEnv() {
       const legal = this.legalActions();
       if (!legal.length) throw new Error("V 引导决策没有合法候选");
       const seatId = legal[0]?.actorId || null;
-      // 初始选择/条件决策：由调用方委托 runHeuristicPolicyDecision（本方法只管
-      // 主行动选择）。这里返回标记，调用方据此走 policyAdapter 路径。
+      // 初始选择/条件决策（choose_*）：不 fork 搜索（效果延迟/结算步骤，浅搜索
+      // 看不到价值），返回**第一个合法 action**（与 v-guided-policy 一致）。
+      // 2026-08-18 修复契约：不再返回 action:null + conditional 标记让调用方猜
+      // （调用方漏检查会拿 undefined action 传给 step → 静默卡死）。
+      // 弃牌会话（quick_trade 等）：discard-hand-card 是"单张点选 toggle"+
+      // confirm，盲目取第一个会反复弃同一张卡 → toggle 死锁。这里维护会话状态，
+      // 选满 required 张不同卡再 confirm（决策层会话感知，所有调用方受益）。
       const allConditional = legal.every((a) => (
         ["choose_card", "choose_payment", "choose_target", "accept_optional_effect"].includes(a.family)
       ));
       if (allConditional) {
+        // 初始选牌（start_initial_setup / select_initial_card / confirm_initial_setup）：
+        // 有固定流程（公司→初始牌→confirm），"取第一个合法"会卡在选牌死循环
+        // （实测 choose_card 600 步 whiteScore=0）。委托启发式初始选择逻辑
+        // （selectInitialSetupAction 处理完整流程）。
+        const isInitialSetup = legal.some((a) => (
+          ["start_initial_setup", "select_initial_card", "confirm_initial_setup"].includes(a.target?.kind)
+        ));
+        if (isInitialSetup) {
+          // 只获取启发式初始选择（不执行，调用方 step）——runHeuristicPolicyDecision
+          // 会实际提交一步（双重执行），不能用。
+          const heuristicDecision = ensureHeuristicDecision();
+          const coordinator = ensureCoordinator();
+          const boundary = coordinator.readBoundary(null);
+          const scheme = heuristicDecision.run({
+            seatId,
+            legalActions: boundary.legalActions,
+            observation: this.observe(seatId),
+          });
+          if (!scheme?.actionId || !legal.some((a) => a.actionId === scheme.actionId)) {
+            throw new Error(`V 引导初始选牌启发式选择非法 actionId: ${scheme?.actionId}`);
+          }
+          return {
+            action: legal.find((a) => a.actionId === scheme.actionId),
+            seatId,
+            conditional: true,
+            diagnostics: { reasonCode: "initial-setup-delegated", evaluated: 0, searchMs: 0 },
+            evaluations: [],
+          };
+        }
+        const discardCards = legal.filter((a) => (
+          a.family === "choose_payment" && a.target?.kind === "discard-hand-card"
+        ));
+        const confirm = legal.find((a) => (
+          a.family === "choose_payment" && a.target?.kind === "confirm"
+        ));
+        const isDiscardSession = discardCards.length > 0 && Boolean(confirm);
+        if (isDiscardSession) {
+          if (!vGuidedDiscardSession) vGuidedDiscardSession = { selected: new Set() };
+          const required = 2; // 会话所需张数（quick_trade 弃 2 张；不足时 confirm 禁用）
+          if (vGuidedDiscardSession.selected.size >= required) {
+            vGuidedDiscardSession = null;
+            return {
+              action: confirm,
+              seatId,
+              conditional: true,
+              diagnostics: { reasonCode: "discard-session-confirm", evaluated: 0, searchMs: 0 },
+              evaluations: [],
+            };
+          }
+          const next = discardCards.find((c) => (
+            !vGuidedDiscardSession.selected.has(c.target?.cardInstanceId)
+          )) || discardCards[0];
+          vGuidedDiscardSession.selected.add(next.target?.cardInstanceId);
+          return {
+            action: next,
+            seatId,
+            conditional: true,
+            diagnostics: { reasonCode: "discard-session-pick", evaluated: 0, searchMs: 0 },
+            evaluations: [],
+          };
+        }
+        vGuidedDiscardSession = null;
+        const first = legal[0];
+        if (!first) throw new Error("V 引导条件决策没有合法候选");
         return {
-          action: null,
+          action: first,
           seatId,
           conditional: true,
-          diagnostics: { reasonCode: "conditional-delegated", evaluated: 0, searchMs: 0 },
+          diagnostics: { reasonCode: "conditional-first-legal", evaluated: 0, searchMs: 0 },
           evaluations: [],
         };
       }
+      vGuidedDiscardSession = null;
       const params = ev.evaluateStateValue && { vStateValueEnabled: true };
       const authority = {
         stateVersion: legal[0]?.stateVersion,
@@ -1119,13 +1201,49 @@ function createSimulationEnv() {
         decisionVersion: authority.decisionVersion,
       });
       const rootV = ev.evaluateStateValue(rootStd, seatId).total;
-      // 主行动集合（排除 control）
-      const mainActions = legal.filter((a) => !["end_turn", "pass"].includes(a.family));
+      // 主行动集合：先做**可行性预筛**（不 fork），再按**目标倾向**收敛值得评估的
+      // 动作（2026-08-18 用户指导"先有倾向的确定搜索目标，去掉不执行的，不是先
+      // 执行再失败"）：
+      //   1) 可行性：move / quick_trade energy-for-move 需要探测器在盘面（solar-board），
+      //      无探测器必然失败（"没有可移动的探测器"）→ 直接过滤，不 fork；
+      //   2) 目标倾向：复用 selectSecondaryAgentRootActions（目标绑定 + 目的型需求
+      //      放行）——继承启发式目标系统，只评估"值得试"的动作，不 fork 全部。
+      const rockets = rootObservation?.publicState?.board?.rockets;
+      const hasSolarRocket = Array.isArray(rockets) && rockets.some((rocket) => (
+        String(rocket?.playerId || rocket?.ownerPlayerId || "") === String(seatId)
+        && rocket?.surface === "solar-board"
+      ));
+      const isFeasible = (action) => {
+        const isMoveLike = action.family === "move"
+          || (action.family === "quick_trade" && String(action.target?.tradeId || "").includes("move"));
+        if (!isMoveLike) return true;
+        if (action.family === "quick_trade" && String(action.target?.tradeId || "").includes("move")) {
+          return hasSolarRocket;
+        }
+        return hasSolarRocket;
+      };
+      const feasibleActions = legal.filter((action) => (
+        !["end_turn", "pass"].includes(action.family) && isFeasible(action)
+      ));
+      // 目标倾向预筛：目标绑定 + 目的型需求放行（继承启发式目标系统）
+      const preferredActionIds = new Set(
+        ev.selectSecondaryAgentRootActions({
+          focalSeatId: seatId,
+          rootObservation,
+          legalActions: feasibleActions,
+          maxProxyDepth: 15,
+        }).map((action) => action.actionId),
+      );
+      const mainActions = feasibleActions.filter((action) => (
+        preferredActionIds.has(action.actionId)
+      ));
+      // 全部被倾向预筛掉时退回可行集合（至少给 end_turn/pass 之外的选项）
+      const evaluatedPool = mainActions.length ? mainActions : feasibleActions;
       const rootEnvelope = saveEnvelope();
       const maxDepth = Math.max(1, Number(options.maxDepth) || 4);
       const startedAt = performance.now();
       const evaluations = [];
-      for (const action of mainActions) {
+      for (const action of evaluatedPool) {
         const result = vGuidedSearch.evaluateActionWithFork(
           this,
           action,
@@ -1137,12 +1255,17 @@ function createSimulationEnv() {
         );
         if (result?.ok) evaluations.push(result);
       }
-      // 选 total 最高
+      // 选 total 最高（ok:false 的不可行动作已过滤）
       evaluations.sort((a, b) => b.total - a.total || String(a.actionId).localeCompare(String(b.actionId)));
       const best = evaluations[0] || null;
+      // fallback 优先 end_turn（总是可行），再退可行集合里第一个；
+      // 2026-08-18：不再用 legal[0] 兜底（可能是 fork 验证过不可行的动作）。
       const chosenAction = best
-        ? mainActions.find((a) => a.actionId === best.actionId)
-        : (legal.find((a) => a.family === "end_turn") || legal[0]);
+        ? evaluatedPool.find((a) => a.actionId === best.actionId)
+        : (legal.find((a) => a.family === "end_turn")
+          || evaluatedPool[0]
+          || legal.find((a) => !["pass"].includes(a.family))
+          || legal[0]);
       const searchMs = performance.now() - startedAt;
       return {
         action: chosenAction,

@@ -1240,6 +1240,9 @@
       const processedNodeKeys = new Set();
       const processedOriginKeys = new Set();
       let executedNodeCount = 0;
+      // 结算链排空的弃牌会话状态（2026-08-18 节点粒度改动）：同一搜索内按
+      // decisionId 记忆已选卡，选满 required 再 confirm（防 toggle 死锁）。
+      let nodeSettlementSelection = null;
       let expandedSearchNodeCount = 0;
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
@@ -2033,6 +2036,69 @@
             } else if (advanced.advanced) {
               focalPlanningTurnAdvanceCount += 1;
             }
+          }
+          // 2026-08-18（用户指导"一个行动包括所有的 target 选择完毕算一个节点"）：
+          // 结算链排空——主行动（launch/play_card/scan 等）提交后可能进入一串
+          // **纯结算决策**（弃牌/支付/交易选牌等，任意选择等价或由规则强制），
+          // 此前每个都展开成独立节点（choose_* 占单决策 4096 节点的 42%），节点
+          // 爆炸 → 暴力搜索搜不完 → 僵局。这里在**同一节点内**连续执行纯结算
+          // 决策到"下一个主行动决策"或"策略级选择"边界，整链只算 1 个节点。
+          // 策略级决策（探测目标/外星痕迹位置/科技选择等价值相关 choose_target /
+          // choose_card）**不折叠**，保持展开让价值进入搜索。
+          let drainGuard = 0;
+          while (drainGuard < 32) {
+            const drainInspection = composition.inspect();
+            if (drainInspection.phase !== "awaiting_input" || !drainInspection.session?.decision) break;
+            const drainChoices = drainInspection.session.decision.choices || [];
+            if (!drainChoices.length) break;
+            const allSettlement = drainChoices.length > 0 && drainChoices.every((choice) => (
+              choice.family === "choose_payment"
+              || (
+                choice.family === "choose_card"
+                && choice.target?.kind === "trade-card-selection"
+              )
+            ));
+            if (!allSettlement) break;
+            const discardCards = drainChoices.filter((choice) => (
+              choice.family === "choose_payment" && choice.target?.kind === "discard-hand-card"
+            ));
+            const confirm = drainChoices.find((choice) => (
+              choice.family === "choose_payment" && choice.target?.kind === "confirm"
+            ));
+            let settleChoice = null;
+            if (discardCards.length && confirm) {
+              // 弃牌会话：选满 2 张不同卡再 confirm（防 toggle 死锁）
+              if (!nodeSettlementSelection) nodeSettlementSelection = new Map();
+              const decisionId = drainInspection.session.decision.decisionId;
+              let selected = nodeSettlementSelection.get(decisionId) || new Set();
+              if (selected.size >= 2) {
+                settleChoice = confirm;
+                nodeSettlementSelection.delete(decisionId);
+              } else {
+                settleChoice = discardCards.find((c) => (
+                  !selected.has(String(c.target?.cardInstanceId || ""))
+                )) || discardCards[0];
+                selected.add(String(settleChoice.target?.cardInstanceId || ""));
+                nodeSettlementSelection.set(decisionId, selected);
+              }
+            } else {
+              settleChoice = drainChoices[0];
+            }
+            const settleResult = composition.inputPort.submitDecision({
+              decisionId: drainInspection.session.decision.decisionId,
+              decisionVersion: drainInspection.session.decision.decisionVersion,
+              ownerId: drainInspection.session.decision.ownerId,
+              choice: settleChoice,
+            }, { skipProjection: true });
+            if (!settleResult?.ok) {
+              // 结算失败 = 规则异常，显式暴露（不静默）
+              return {
+                failed: true,
+                code: settleResult?.code || "COUNTERFACTUAL_SETTLEMENT_FAILED",
+                message: settleResult?.message || `结算决策失败: ${settleChoice?.family}`,
+              };
+            }
+            drainGuard += 1;
           }
           let nextInspection = composition.inspect();
           let awaitingDecision = nextInspection.phase === "awaiting_input";

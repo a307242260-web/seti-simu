@@ -228,11 +228,13 @@
     const income = projection.progress?.income || {};
 
     const scoreValue = finite(realizedScore) + (terminal ? 0 : finite(projection.scoring.securedEndGameBonus));
+    // 资源流动性（手段不是价值，2026-08-18 修复根因 1）：资源库存**不按固定单价
+    // 计入 V**——花 1 钱 -8 会掩盖真实收益（launch/scan/打牌全负），让唯一"不花钱"
+    // 的 quick_trade 霸榜（实测白色 86→14，29 次 quick_trade）。资源价值通过
+    // "能解锁什么"间接体现（收入复利/科技效率/外星进度/即时分），V 只保留
+    // 数据→填槽/分析的转化期望（手段中唯一有明确未来路径的），钱/能/宣传 0。
     const liquidValue = (
-      finite(assets.credits) * INCOME_UNIT_VALUES.credits
-      + finite(assets.energy) * INCOME_UNIT_VALUES.energy
-      + finite(assets.availableData) * V_DATA_UNIT_VALUE
-      + finite(assets.publicity) * 0 // 宣传是研究货币，非直接分
+      finite(assets.availableData) * V_DATA_UNIT_VALUE * 0.5 // 数据→填槽/分析，折半（预期未必全转化）
     );
 
     // 准备类：收入复利（收入率 × 剩余发放次数 × 单位价值 × 放大系数）
@@ -266,16 +268,58 @@
       }
     }
 
-    // 准备类：手牌/保留牌可打效果期望（打牌价值认知的落点）
-    // 手牌数从 publicState.players 读（sanitize 后有 handCount），保留牌从 selfState
+    // 准备类：手牌/保留牌可打效果期望（2026-08-18 修复根因 2——卡价值与获取路径
+    // 绑定）。手牌价值 = 可打效果链期望（按卡面效果估算），不是固定 +6/张：
+    //   - 固定 +6/张 让"任何获得 1 张牌"都 +6（quick_trade 用 0 价值资源换卡 =
+    //     纯赚 → 霸榜）；且不看卡质量（废牌和科技牌同价）。
+    //   - 手牌价值应来自"能打出的效果"：免费科技（省 6 宣传）/收入牌（每轮资源）/
+    //     移动登陆链/外星痕迹。用 effectValue 按卡面估算，按剩余轮次折半（未必
+    //     每张都打出）。
     const selfState = observation?.selfState || {};
     const publicPlayers = observation?.publicState?.players || [];
     const selfPublic = publicPlayers.find((p) => (
       String(p.playerId || p.color || "") === String(seatId)
     ));
-    const handCount = finite(selfPublic?.handCount ?? selfState?.handCount);
-    const reservedCount = finite(selfState?.reservedCount);
-    const cardValue = (handCount + reservedCount * 0.5) * V_CARD_EFFECT_VALUE;
+    const handCards = (selfState?.hand || selfPublic?.hand || []).filter(Boolean);
+    const reservedCards = (selfState?.reservedCards || []).filter(Boolean);
+    const handEffectValue = (cards) => cards.reduce((total, card) => {
+      const effects = cardEffects?.buildPlayEffects?.(card) || [];
+      let value = 0;
+      for (const effect of effects) {
+        const type = effect?.type;
+        const options = effect?.options || {};
+        if (type === cardEffects?.EFFECT_TYPES?.RESEARCH_TECH) {
+          value += 30; // 免费科技（省 6 宣传 + 立即生效）
+        } else if (
+          type === cardEffects?.EFFECT_TYPES?.INCOME
+          || type === cardEffects?.EFFECT_TYPES?.TUCK_PLAYED_CARD_TO_INCOME
+        ) {
+          value += 8 * Math.max(1, remainingPayments); // 收入牌每轮资源
+        } else if (type === cardEffects?.REWARD_TYPES?.LAUNCH) {
+          value += 6; // 免费发射（省发射费 + 探测起点）
+        } else if (type === cardEffects?.EFFECT_TYPES?.CARD_LAND) {
+          value += 8; // 免费登陆（登陆奖励 + 外星链）
+        } else if (
+          type === cardEffects?.EFFECT_TYPES?.CARD_MOVE
+          || type === cardEffects?.EFFECT_TYPES?.FREE_MOVE
+        ) {
+          value += 3 * Math.max(1, finite(options?.movementPoints) || 1);
+        } else if (type === cardEffects?.REWARD_TYPES?.ALIEN_TRACE) {
+          value += 6; // 外星痕迹（分 + 外星人牌）
+        } else if (type === cardEffects?.REWARD_TYPES?.GAIN_RESOURCES) {
+          const gain = options?.resources || options?.gain || {};
+          value += finite(gain.score);
+          value += finite(gain.credits) * 2; // 资源→行动的转化（比固定单价低）
+          value += finite(gain.energy) * 3;
+        }
+      }
+      return total + value;
+    }, 0);
+    // 手牌全价值但折半（未必全打出）+ 保留牌更低（要花行动取回）
+    const cardValue = (
+      handEffectValue(handCards) * 0.5
+      + handEffectValue(reservedCards) * 0.25
+    );
 
     const total = scoreValue + liquidValue + incomeValue + techEfficiencyValue
       + alienValue + cardValue;

@@ -104,10 +104,23 @@
         动作是 quick_trade；另发现 forkAdvance 深度恒为 1（proj.state.turn 恒
         undefined，宣称的 depth-4 浅搜索未落地）、quick_trade 弃牌会话 toggle 死锁
       - 工作树"资源清零"补丁治标不治本（全盘结果与 HEAD 逐位相同）
-- [ ] 修复方向（待用户拍板，不在旧方向加码）：① 资源不按固定单价进 V（手段
-      不是价值，通过"能解锁什么"间接体现）；② cardValue 与获取路径绑定（卡价值
-      = 可打效果链，不是 +6/张）；③ 修 forkAdvance 推进条件让浅搜索真实展开；
-      ④ 弃牌会话：规则层加批量弃牌原语或决策层会话感知（选满 required 再 confirm）
+- [x] 修复方向（2026-08-18 用户拍板"按此方向修复 V(state)"，已实施）：
+      ① liquidValue 资源库存不再按固定单价计入 V（手段不是价值，钱/能/宣传 0，
+      数据仅保留 0.5 折半转化期望）——花资源动作不再背负值；
+      ② cardValue 与获取路径绑定（手牌价值 = 可打效果链期望：免费科技/收入牌/
+      移动登陆/外星痕迹，按剩余轮次折半，不是固定 +6/张）；
+      ③ forkAdvance 推进条件修复（proj.state.publicState.currentPlayerId 取代
+      恒 undefined 的 proj.state.turn → 浅搜索 trace 深度 1→3-6 真实展开）；
+      ④ 弃牌会话 toggle 死锁（另见 unified-search 防死锁 skip 兜底）；
+      配套：V 输入审计工具 tools/audit_v_state_inputs.js（所有路径喂 V 的
+      observation 必须标准装配，缺装配显式抛错——AGENTS 硬规矩"错误必须暴露"）
+- [x] V 引导接入方式（2026-08-18 用户裁决"先有倾向的确定搜索目标，去掉不执行的，
+      不是先执行再失败"）：放弃 fork 浅搜索路径（runVGuidedDecision +
+      v-guided-search——会话/可行性/状态漂移反复出问题），改为
+      **v-guided-decision-function**：复用启发式决策函数生成标准 actionOutcomes
+      （目标预筛+可行性+反事实搜索 = "先定倾向"），主行动叶排序用 v-guided-policy
+      （V 增量 = "再执行"），条件决策委托启发式（choose_* 含初始选牌/弃牌会话）。
+      heuristic-decision-function 加 policyFor 支持按 boundary 切换策略
 - [x] 统一搜索（目的引导版，2026-08-18 迁移回主分支 10ded3e9/dd5da46）：
       搜索入口 = 目标绑定 + 需求放行（quick_trade 补缺口/card_corner 弃牌收益/
       industry 公司能力），废弃"预算内全动作尝试"（实测全体玩家变弱：乱按打字机的
