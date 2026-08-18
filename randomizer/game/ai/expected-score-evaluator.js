@@ -1593,9 +1593,10 @@
   // 预期使用次数，按总分取 top 3 做尝试"）：废弃硬编码场景规则（preferred/fallback
   // 按 probe/scan/sector 布尔过滤，导致 blue3/blue4/orange3/purple1 等永远不可见），
   // 改为每个科技按真实效果打分，搜索覆盖由价值排序决定（top 3 尝试，其余不评估）。
-  // 评分 = 基础分（研究即得：背面 bonus 期望 + 首发分）+ 单次利用价值 × 预期使用次数。
-  // 背面 bonus 4 选 1（3分/1能量/1宣传/精选1牌）期望 ≈ 4；首发类型分 = 2。
-  const TECH_SCORE_BASE = 6; // 背面 bonus 期望 4 + 首发 2
+  // 评分 = 单次利用价值 × 预期使用次数（未来效率红利）。**不预估即时收益**
+  // （背面 bonus 随机翻到什么就是什么、首发分有就有没有就没有、扣 6 宣传）——
+  // 这些由反事实搜索执行研究动作时**真实结算**进叶价值（evaluateState 捕获实际
+  // realizedScore/资源/科技），预筛只编码"反事实浅搜索看不到的未来效率"。
   // 单次利用价值（每次使用该科技效果的价值，按 INCOME_UNIT_VALUES/行动收益校准）：
   //   blue1 槽 +1信用=8；blue2 槽 +1能量=10；blue3 槽选牌=6；blue4 槽 +2宣传=8
   //   orange1 火箭上限 1→2=15（一次性大收益，解锁第 2 探测器）
@@ -1692,16 +1693,16 @@
     const remainingRounds = Math.max(0, finalRoundNumber - roundNumber + 1);
 
     const context = { dataRequirements, probeCandidates, sectorRequirements, assets };
-    // 每个科技打分：基础 + 单次利用价值 × 预期使用次数（场景相关 × 剩余轮次）
+    // 每个科技打分：单次利用价值 × 预期使用次数（场景相关 × 剩余轮次）。
+    // 即时收益（背面 bonus/首发分/扣宣传）不预估——反事实搜索真实结算进叶价值。
     const scored = [...planByTile.values()]
       .map((plan) => {
         const tileId = plan.tileId;
         const weight = techScenarioWeight(tileId, observation, context);
         const useValue = Number(TECH_USE_VALUE[tileId]) || 0;
         const usesPerRound = Number(TECH_USES_PER_ROUND[tileId]) || 0;
-        const useScore = useValue * usesPerRound * remainingRounds * weight;
-        const total = TECH_SCORE_BASE + useScore;
-        return { plan, tileId, total, base: TECH_SCORE_BASE, useScore };
+        const total = useValue * usesPerRound * remainingRounds * weight;
+        return { plan, tileId, total, useScore: total };
       })
       .sort((left, right) => (
         right.total - left.total
