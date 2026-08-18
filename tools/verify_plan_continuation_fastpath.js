@@ -13,10 +13,15 @@
  *   node tools/verify_plan_continuation_fastpath.js
  *   node tools/verify_plan_continuation_fastpath.js --max-decisions 120
  *   node tools/verify_plan_continuation_fastpath.js --seed seti-107
+ *
+ * 进度：运行中按 1 秒节流输出逐决策进度到 stderr（共享 helper
+ * tools/progress.js），stdout 只保留最终汇总——两局全量对局可能耗时数分钟，
+ * 没有进度输出会让终端看起来像卡死。
  */
 
 const { performance } = require("node:perf_hooks");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
+const { createStepProgressReporter } = require("./progress");
 const {
   FIXED_BOARD_ID,
   FIXED_BOARD_CONFIG,
@@ -54,6 +59,8 @@ function finalScoresOf(env) {
 
 function runGame(options, planContinuationFastPath) {
   const env = createSimulationEnv();
+  const runLabel = planContinuationFastPath ? "fast-path" : "baseline";
+  const progress = createStepProgressReporter({ label: runLabel, minIntervalMs: 1000 });
   try {
     const initialObservation = env.reset({
       ...FIXED_BOARD_CONFIG,
@@ -61,13 +68,32 @@ function runGame(options, planContinuationFastPath) {
       planContinuationFastPath,
     });
     const startedAt = performance.now();
+    // 进度 reporter 的 startedAt 用 Date.now() 时间基（progress.js 内部用
+    // Date.now() 计算耗时，不能与 performance.now() 混用）
+    const progressStartedAt = Date.now();
+    progress.line(`[${runLabel}] 开局 seed=${initialObservation.seed} 决策上限=${options.maxDecisions}`);
     let decisionCount = 0;
     let fastPathDecisions = 0;
     while (!env.isTerminal() && decisionCount < options.maxDecisions) {
       const result = env.runHeuristicPolicyDecision();
       decisionCount += 1;
       if (result?.planContinuationFastPath) fastPathDecisions += 1;
+      const ps = result?.observation?.publicState || {};
+      progress.report({
+        steps: decisionCount,
+        maxSteps: options.maxDecisions,
+        round: ps.roundNumber,
+        turn: ps.turnNumber,
+        seat: result?.actorPlayerId,
+        action: String(result?.actionId || ""),
+        scores: (ps.players || []).map((player) => ({
+          label: player.playerLabel || player.playerId || player.color,
+          score: player.score ?? player.finalScore ?? "?",
+        })),
+        startedAt: progressStartedAt,
+      });
     }
+    progress.line(`[${runLabel}] 结束：决策数=${decisionCount} fast-path 决策=${fastPathDecisions} 耗时=${Math.round(performance.now() - startedAt)}ms`);
     const elapsedMilliseconds = performance.now() - startedAt;
     const diagnostics = env.getDiagnostics() || {};
     return {
