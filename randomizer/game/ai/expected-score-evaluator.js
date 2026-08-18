@@ -430,6 +430,39 @@
     return value;
   }
 
+  // 保留区任务价值（2026-08-18 用户口径"打牌有遥远的预期收益"）：任务卡（task
+  // card）打出后转入保留区挂起任务，有远期奖励（如 b_117 任务"5 环绕/登陆 →
+  // 3分+1信用"）。leafValue 只看资源/即时分，保留区任务卡的远期价值 = 0——
+  // 打 b_117 进保留区 vs launch 保留在手，差异不可见 → 打牌被低估。
+  // 算法：leaf 保留区新增的任务卡（root 没有的）× 单卡任务期望价值
+  // （任务奖励的折半期望——未必完成，按剩余轮次衰减）。用 leaf observation 的
+  // selfState.reservedCards（含 cardId）与 root 对比。
+  function reservedTaskDelta(context, action, leaf) {
+    const leafCards = leaf?.observation?.selfState?.reservedCards || [];
+    if (!leafCards.length) return 0;
+    const rootCards = context?.observation?.selfState?.reservedCards || [];
+    const rootIds = new Set(rootCards.map((card) => String(card?.id || card?.cardId || "")));
+    const newReserved = leafCards.filter((card) => {
+      const id = String(card?.id || card?.cardId || "");
+      return id && !rootIds.has(id);
+    });
+    if (!newReserved.length) return 0;
+    const roundNumber = Math.max(1, finite(
+      context?.observation?.outcomeProjection?.progress?.roundNumber,
+    ) || 1);
+    const finalRound = Math.max(1, finite(
+      context?.observation?.outcomeProjection?.progress?.finalRoundNumber,
+    ) || 4);
+    const remainingRounds = Math.max(0, finalRound - roundNumber);
+    // 单卡任务期望价值：任务奖励（score + 资源）折半 × 剩余轮次占比。
+    // b_117 任务 3分+1信用 ≈ 11 总值 → 折半 ≈ 5.5，按 R1 剩余轮次加权。
+    const TASK_COMPLETION_RATE = 0.5;
+    const TASK_SCORE_VALUE = 11; // 任务奖励均值（分数 + 资源货币化，b_117 ≈ 11）
+    const roundWeight = Math.max(0, Math.min(1, remainingRounds / 3));
+    const perCard = TASK_SCORE_VALUE * TASK_COMPLETION_RATE * Math.max(0.25, roundWeight);
+    return newReserved.length * perCard;
+  }
+
   // 收入选牌（choose_card income:*）机会成本：被插收入列的牌移出游戏，其未来
   // 打牌价值全部损失（用户口径：已知的牌可以评估其价值 = 插进去的损失价值）。
   // 选择插哪张 = 插机会成本最低的（保留打牌价值高的牌）。即时收益（income
@@ -453,22 +486,6 @@
     const value = cardPlayValue(card, observation, remainingPayments) * 0.5;
     if (value <= 0) return null;
     return { cost: value, instanceId, cardValue: value };
-  }
-
-  // 打牌免费发射奖励：该 play_card 打出时含 LAUNCH(skipCost) 效果（如 b_117 免费
-  // 发射 +2 宣传）。免费发射的价值 = 省下的一次发射成本（launch 花 2 钱 ≈ 2 ×
-  // 信用单位 8 = 16，折半 0.5——未必每次都用于发射）+ 探测起点。用户 405 档
-  // R1 打 b_117：免费发射 → 探测开始，同时 +2 宣传（跨研究门槛，pubResearch 已
-  // 捕获宣传价值，此处不重复）。目的：打破 launch 与 play_card 在未绑定根时的
-  // 平局（两者叶链都搭后续动作便车评出相同分，字典序选 launch）。
-  function playCardFreeLaunchBonus(context, action) {
-    if (action?.family !== "play_card") return 0;
-    if (typeof cardHasFreeLaunch !== "function" || !cardHasFreeLaunch(context?.observation, action)) {
-      return 0;
-    }
-    const LAUNCH_CREDITS_COST = 2; // 标准 launch 成本（2 钱，见 rocket 发射）
-    const FREE_LAUNCH_UTILIZATION = 0.5; // 折半（未必每次都用于发射探测）
-    return LAUNCH_CREDITS_COST * INCOME_UNIT_VALUES.credits * FREE_LAUNCH_UTILIZATION;
   }
 
   function quickTradePurpose(context, action, leaf) {
@@ -546,7 +563,14 @@
       immediateStateValue,
       parameters,
     );
-    if (immediateValue.primaryValue > 0) {
+    // 卡角/quick_trade 同口径（用户 2026-08-18）：本身不算分，只有缺了才干——
+    // 纯资源获得（宣传/钱/能增量）不构成"卡角立即有价值"的依据。immediate-primary
+    // 只看非资源获得部分（即时分/目标进度/科技等），资源获得（resourceGain）和
+    // 宣传固定值（publicityFixedValue）都不算（零星宣传远离门槛价值为 0）。
+    const nonResourceImmediate = immediateValue.primaryValue
+      - (immediateValue.resourceGain || 0)
+      - (immediateValue.publicityFixedValue || 0);
+    if (nonResourceImmediate > 0) {
       return { required: true, supported: true, reason: "card-corner-immediate-primary" };
     }
     if (action.payload?.kind === "move") {
@@ -766,12 +790,33 @@
     return value;
   }
 
-  function leafValue(rootValue, leafValueState, parameters) {
+  function leafValue(rootValue, leafValueState, parameters, action = null) {
     const actualScoreDelta = (
       leafValueState.realizedScore + finite(leafValueState.securedEndGameBonus)
     ) - (
       rootValue.realizedScore + finite(rootValue.securedEndGameBonus)
     );
+    // terminal 叶只能比较官方终局分（测试契约"terminal 叶只能比较官方终局分，
+    // 科技收入和剩余资源均归零"）：终局时资源/科技/宣传的"变化"没有意义（终局
+    // 计分已锁定），只保留 actualScoreDelta。
+    if (leafValueState.terminal) {
+      return {
+        total: actualScoreDelta,
+        primaryValue: actualScoreDelta,
+        actualScoreDelta,
+        infrastructure: infrastructureDeltaValue(rootValue, leafValueState),
+        publicityResearchValue: 0,
+        publicityFixedValue: 0,
+        researchUnlockValue: 0,
+        resourceValue: 0,
+        resourceCost: 0,
+        resourceGain: 0,
+        creditDelta: 0,
+        energyDelta: 0,
+        handDelta: 0,
+        opportunityCost: 0,
+      };
+    }
     const infrastructure = infrastructureDeltaValue(rootValue, leafValueState);
     // 宣传研究货币价值：宣传是研究科技的唯一货币（研究 cost 6 宣传，科技单位价值 10）。
     // 用户 405 档（终局未结算-v223）实测：打 b_117（免费发射+2 宣传）→ pub 4→6 达
@@ -783,28 +828,83 @@
     // TECH_VALUE_PER_RESEARCH 从 10 提到 60：10 是"研究一次"的旧固定值，但研究
     // blue2 的实际 techValue ≈50（R1 时每轮 10×3 + 蓝槽预期 5×4），10 让打牌凑宣传
     // 只值 3.33，远低于 launch 的乐观探测链评估（103）→ AI 永远不学用户"先打牌凑
-    // 宣传再研究"。提到 60 后 b_117 的 2 宣传 ≈20，与免费发射链叠加可超过 launch。
+    // 宣传价值（2026-08-18 用户口径"宣传固定价值，跨过6给额外价值"）：
+    //   - 固定单位价值：宣传固定单位价值 4（用户参考值：钱10电8普通牌6宣传4
+    //     数据6移动5外星人牌12）
+    //   - 跨门槛额外：pub 从 <6 到 >=6 时，解锁研究能力，给额外 bonus
+    //     （RESEARCH_UNLOCK_BONUS）——这反映"凑够宣传现在能研究科技了"
+    // 不双重计分：研究动作本身（research_tech）由反事实结算 techValue，宣传跨门槛
+    // 的额外价值是"解锁"本身的一次性奖励。
     const RESEARCH_PUBLICITY_COST = 6;
-    const TECH_VALUE_PER_RESEARCH = 60;
+    const PUBLICITY_UNIT_VALUE = 4;        // 宣传固定单位价值（用户参考值）
+    const RESEARCH_UNLOCK_BONUS = 20;      // 跨过研究门槛（pub >=6）的解锁奖励
     const rootPub = finite(rootValue.resourceFacts?.publicity);
     const leafPub = finite(leafValueState.resourceFacts?.publicity);
-    // 跨门槛判断只看 leaf 终点 pub：研究动作本身（research_tech）花宣传，终点 pub
-    // 下降 → 不触发（测试契约：R2 研究 orange2 score=14 不加宣传分）。b_117 打牌凑
-    // 宣传→研究的链，其研究价值已由 techValue（gainedTechIds）兑现，宣传是前置动作，
-    // 不重复计分；b_117 的 2 宣传价值由"打牌后 pub 达到 6"的 leaf 分支体现。
+    const pubDelta = leafPub - rootPub;
     const crossesThreshold = rootPub < RESEARCH_PUBLICITY_COST
       && leafPub >= RESEARCH_PUBLICITY_COST;
-    const publicityResearchValue = crossesThreshold
-      ? (RESEARCH_PUBLICITY_COST - rootPub)
-        * (TECH_VALUE_PER_RESEARCH / RESEARCH_PUBLICITY_COST)
-      : 0;
+    const publicityFixedValue = pubDelta * PUBLICITY_UNIT_VALUE;
+    const researchUnlockValue = crossesThreshold ? RESEARCH_UNLOCK_BONUS : 0;
+    const publicityResearchValue = publicityFixedValue + researchUnlockValue;
+    // 资源变化分（2026-08-18 用户口径"资源变化必须有分，不然花 2 电来回走和发射
+    // 没差"）：这一步的资源消耗是成本、获得是收益，必须计入节点分。库存不算价值
+    // （手段不是价值），但**动作的资源变化**是真实的成本/收益。
+    // 单位价值逐轮贬值（用户口径"R1 的一块钱可能抵 10 分，R4 可能就 4-5 分"）：
+    //   钱：R1=10 → R4=4.5（线性递减）；能：R1=8 → R4=4（线性递减）
+    // 手牌消耗：打牌消耗 1 张牌是机会成本（用户口径"打牌消耗了一张牌也是成本"，
+    // 随机普通牌参考值 6）。
+    const rootRound = Math.max(1, finite(rootValue.infrastructure?.roundNumber) || 1);
+    const finalRound = Math.max(rootRound, 4);
+    const roundFraction = (finalRound - rootRound) / Math.max(1, finalRound - 1);
+    // 线性贬值：R1 全值，R4 约一半（钱 10→4.5，能 8→4）
+    const creditUnit = 10 - (10 - 4.5) * roundFraction;
+    const energyUnit = 8 - (8 - 4) * roundFraction;
+    const rootCredits = finite(rootValue.resourceFacts?.credits);
+    const leafCredits = finite(leafValueState.resourceFacts?.credits);
+    const rootEnergy = finite(rootValue.resourceFacts?.energy);
+    const leafEnergy = finite(leafValueState.resourceFacts?.energy);
+    const rootCards = finite(rootValue.resourceFacts?.ordinaryCards)
+      + finite(rootValue.resourceFacts?.alienCards);
+    const leafCards = finite(leafValueState.resourceFacts?.ordinaryCards)
+      + finite(leafValueState.resourceFacts?.alienCards);
+    const creditDelta = leafCredits - rootCredits;
+    const energyDelta = leafEnergy - rootEnergy;
+    const handDelta = leafCards - rootCards;
+    const HAND_CARD_OPPORTUNITY_COST = 6; // 手牌机会成本（随机普通牌参考值 6）
+    // 资源变化拆分（2026-08-18 用户口径"成本是负分，资源是正分；quick_trade/card
+    // corner 本身不算分，只有缺了才干"）：
+    //   - 手段动作（quick_trade/card_corner）：资源分不进 primaryValue（本身无价值，
+    //     价值来自后续目标，需求门控管 selectable——测试契约"必要转换不能把正收益
+    //     路线否决"：quick_trade 换能后 orbit 的 +9 即时分必须主导）
+    //   - 目标步骤动作（launch/play_card/orbit/land/scan 等主行动）：资源成本（负）
+    //     进 primaryValue（花资源必须有代价），资源获得只进 total
+    const MEANS_FAMILIES = new Set(["quick_trade", "card_corner", "industry"]);
+    const isMeansAction = Boolean(action && MEANS_FAMILIES.has(action?.family));
+    const creditCost = Math.min(0, creditDelta) * creditUnit;
+    const energyCost = Math.min(0, energyDelta) * energyUnit;
+    const handCost = Math.min(0, handDelta) * HAND_CARD_OPPORTUNITY_COST;
+    const resourceCost = creditCost + energyCost + handCost;
+    const creditGain = Math.max(0, creditDelta) * creditUnit;
+    const energyGain = Math.max(0, energyDelta) * energyUnit;
+    const resourceGain = creditGain + energyGain;
+    const resourceValue = resourceCost + resourceGain;
     const opportunityCost = 0;
+    const basePrimary = actualScoreDelta + infrastructure.total + publicityResearchValue;
     return {
-      total: actualScoreDelta + infrastructure.total + publicityResearchValue - opportunityCost,
-      primaryValue: actualScoreDelta + infrastructure.total + publicityResearchValue,
+      total: basePrimary + resourceValue - opportunityCost,
+      // 手段动作：资源分不进 primaryValue；目标步骤动作：资源成本（负）进 primaryValue
+      primaryValue: basePrimary + (isMeansAction ? 0 : resourceCost),
       actualScoreDelta,
       infrastructure,
       publicityResearchValue,
+      publicityFixedValue,
+      researchUnlockValue,
+      resourceValue,
+      resourceCost,
+      resourceGain,
+      creditDelta,
+      energyDelta,
+      handDelta,
       opportunityCost,
     };
   }
@@ -952,7 +1052,7 @@
         return {
           leaf,
           leafStateValue,
-          strategicValue: leafValue(rootValue, leafStateValue, parameters),
+          strategicValue: leafValue(rootValue, leafStateValue, parameters, action),
           vDelta,
         };
       })
@@ -969,6 +1069,20 @@
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
     let bestLeafValue = best.strategicValue;
     const bestVD = best.vDelta || 0;
+    // 保留区任务价值（2026-08-18 用户口径"打牌有遥远的预期收益"）：打牌/登陆等
+    // 动作把任务卡（task card）转入保留区（reservedCards），挂起任务有远期奖励
+    // （如 b_117 任务"5 环绕/登陆 → 3分+1信用"）。此前 leafValue 只看资源/即时分，
+    // 保留区任务卡的远期价值 = 0——打 b_117 进保留区 vs launch 保留在手，差异
+    // 完全不可见，导致打牌被低估（实测 step23 打牌 55.5 < launch 58，差 2.5 正是
+    // 任务值缺失）。此处按保留区新增任务卡 × 单卡任务期望值计入。
+    const reservedTaskValue = reservedTaskDelta(context, action, best.leaf);
+    if (reservedTaskValue) {
+      bestLeafValue = {
+        ...bestLeafValue,
+        total: bestLeafValue.total + reservedTaskValue,
+        primaryValue: bestLeafValue.primaryValue + reservedTaskValue,
+      };
+    }
     // 收入选牌机会成本（2026-08-18 用户导向"插牌有即时+未来收益，评估不能是 0"）：
     // choose_card income:*（place_data 4 号位奖励：选一张手牌插入收入列，移出游戏）。
     // 该决策的"收益"是保留牌 vs 被插牌的差——即时收益（income handSize+1 等）由
@@ -987,23 +1101,6 @@
       // 收入选牌是 4 号位奖励的强制选择（必须插一张手牌进收入列）——机会成本为负
       // 不拒绝（两个候选都会被扣，选扣后相对高的 = 插打牌价值最低的牌），保持
       // conditional 可选择性，仅靠扣减后的 primaryValue 拉开排序差距。
-    }
-    // 打牌免费发射奖励（2026-08-18 用户口径"免费发射 = 探测链价值 + 省发射费 + 牌面
-    // 宣传，理应优于付费 launch"）：含 LAUNCH(skipCost) 效果的手牌打出时，免费获得
-    // 一次发射（省发射费 + 探测起点）。launch 作为未绑定根时叶链搭了后续动作便车
-    // （实测 launch 与 play_card b_117 评出完全相同的 59.5——26 步链 vs 18 步链，
-    // 收益全归因相同），免费发射的真实优势（省 2 钱发射费 + 2 宣传）被抹平，平局
-    // 后按 actionId 字典序选 launch（l < p）。奖励 = 省发射费（launch 成本 2 钱
-    // × 信用单位 8，折半——未必用于发射）+ 2 宣传（跨研究门槛价值由 pubResearch
-    // 已捕获，此处只补发射费差）。免费发射牌的价值同时由 cardPlayValue 在收入
-    // 选牌机会成本里体现（保留它 > 插掉它），此处是"打出"侧的奖励。
-    const freeLaunchBonus = playCardFreeLaunchBonus(context, action);
-    if (freeLaunchBonus) {
-      bestLeafValue = {
-        ...bestLeafValue,
-        total: bestLeafValue.total + freeLaunchBonus,
-        primaryValue: bestLeafValue.primaryValue + freeLaunchBonus,
-      };
     }
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
     if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
@@ -1692,6 +1789,17 @@
       const placeData = successors.find((action) => action.family === "place_data");
       if (placeData) return [placeData];
     }
+    // 打牌凑宣传（2026-08-18 用户 405 档：打 b_117 免费发射 +2 宣传 → 跨研究门槛）：
+    // playEffects 含 gain_resources(publicity) 的打牌是凑宣传的准备动作。价值排序
+    // 交给 leafValue（打牌本身有资源成本/宣传收益/任务，链上研究接 techValue）。
+    const playCards = successors.filter((action) => (
+      action.family === "play_card"
+      && plans.some((plan) => (
+        plan.kind === "play_card"
+        && String(action.target?.cardInstanceId) === String(plan.cardInstanceId)
+      ))
+    ));
+    if (playCards.length) return playCards;
     const cardById = new Map((observation?.selfState?.hand || []).map((card) => [
       String(card.id),
       card,
@@ -2458,7 +2566,9 @@
       sortKey: [
         Number(completedBoundTarget),
         dataRouteProgress + boundProbeProgress,
-        strategicValue.primaryValue,
+        // 目标/进度项优先于资源分（测试契约"填槽进度 > 纯资源"——资源获得不该压过
+        // 目标进度成为搜索优先级的主导）。资源分（primaryValue 含 resourceValue）
+        // 只在进度项之后参与排序（成本惩罚/收益修正，不作为主要展开依据）。
         finite(matchedRoot?.targetBenefit?.score),
         gapReduction,
         Math.max(0, finite(branchFacts.traceCount) - finite(rootFacts.traceCount)),
@@ -2466,6 +2576,7 @@
         Math.max(0, branchPlaced - rootPlaced),
         Number(Boolean(branchFacts.dataProgress?.analyzeReady)
           && finite(branchFacts.resourceFacts?.energy) > 0),
+        strategicValue.primaryValue,
         -strategicValue.opportunityCost,
         finite(branchGoal?.targetBenefit?.score),
         -finite(branchGoal?.required?.movementSteps),
@@ -3222,6 +3333,31 @@
           if (movementChoices.length) {
             return bindRoute(
               movementChoices,
+              input.routeTargetId,
+              `probe:${probeGoal.requirementId || probeGoal.targetId}`,
+            );
+          }
+        }
+        // 探测目标下一步（2026-08-18 用户口径"按目标步骤逐步决策，不搭无关后续便车"）：
+        // 目标还有 nextStep（orbit/land 等）时，绑定目标的链只返回该步骤的候选，
+        // 不让 launch/打牌等根动作的链展开到全部后续主行动（play_card/place_data/
+        // analyze 等无关动作会搭便车——实测 launch 与打牌叶链都到 17 步 PASS，
+        // 末态趋同导致整链对比看不出这一步差异）。
+        // 目标完成（nextStep 为空/目标已达）时返回全部 successors（链自然收束）。
+        if (probeGoal?.nextStep) {
+          const nextFamily = String(probeGoal.nextStep.family || "");
+          const stepChoices = successors.filter((action) => {
+            if (action.family !== nextFamily) return false;
+            if (nextFamily === "orbit" || nextFamily === "land") {
+              // 环绕/登陆目标：匹配终点（星球/卫星）
+              return String(action.target?.planetId || "") === String(probeGoal.planetId || "")
+                || String(action.target?.targetId || "") === String(probeGoal.targetId || "");
+            }
+            return true;
+          });
+          if (stepChoices.length) {
+            return bindRoute(
+              stepChoices,
               input.routeTargetId,
               `probe:${probeGoal.requirementId || probeGoal.targetId}`,
             );
