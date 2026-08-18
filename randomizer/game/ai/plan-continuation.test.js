@@ -418,6 +418,34 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     [nextDescriptor],
   );
   assert.equal(stillRevealed.hit, true, "揭示数未增加不触发特例");
+
+  // 控制动作特例：下一步是 end_turn/pass → 无条件重新决策（主行动不能被
+  // 计划复用跳过——实测 fast-path 同状态跳过 place_data 直接 end_turn）
+  const endTurnPlan = {
+    nextActionId: "end_turn:turn1",
+    continuation: [],
+    dependency: { kind: "generic" },
+    revealedCount: 0,
+  };
+  const endTurnDescriptor = descriptor("end_turn", {}, {}, "end_turn:turn1");
+  const endTurnMiss = planContinuation.planReuseCheck(
+    endTurnPlan,
+    makeObservation(),
+    [endTurnDescriptor],
+  );
+  assert.equal(endTurnMiss.hit, false, "下一步是 end_turn 必须重新决策");
+  assert.equal(endTurnMiss.reason, "control-step-redecide", "必须报告 control-step-redecide");
+
+  const passPlan = {
+    nextActionId: "pass:turn1",
+    continuation: [],
+    dependency: { kind: "generic" },
+    revealedCount: 0,
+  };
+  const passDescriptor = descriptor("pass", {}, {}, "pass:turn1");
+  const passMiss = planContinuation.planReuseCheck(passPlan, makeObservation(), [passDescriptor]);
+  assert.equal(passMiss.hit, false, "下一步是 pass 必须重新决策");
+  assert.equal(passMiss.reason, "control-step-redecide");
 }
 
 // ---------------------------------------------------------------------------

@@ -632,6 +632,10 @@ function advancePlan(plan) {
 //   计划执行 tier2——对手火箭移动/打牌/资源变化、无关扇区、无探测器移动的旋转）；
 //   依赖环节变了（着陆移动变多 / 目标外星人槽被占 / 第一奖励格被占 / 跨出当前
 //   路线终点）→ 重新决策（tier3）。
+//   控制动作特例：下一步是 end_turn/pass → 无条件重新决策。主行动选择是每次决策
+//   最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1），不能靠
+//   计划复用跳过——实测计划下一步为 end_turn 时被盲目复用，会跳过当前盘面上更
+//   有价值的主行动（同状态搜索选 place_data，fast-path 直接 end_turn，白方掉分）。
 //   硬性特例：翻开了外星人（揭示槽位数 > 计划假设值）→ 无条件重新决策。
 // 命中返回 { hit: true, action, nextPlan }——nextPlan 为前进后的计划（供 store
 // 存回，实现多步复用）；miss 返回 { hit: false, reason }。
@@ -641,6 +645,10 @@ function planReuseCheck(plan, currentObservation, legalActions) {
     String(action?.actionId) === String(plan.nextActionId)
   ));
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
+  // 控制动作不盲从计划（见上：end_turn/pass 必须每次重新决策主行动）
+  if (["end_turn", "pass"].includes(current.family)) {
+    return Object.freeze({ hit: false, reason: "control-step-redecide", family: current.family });
+  }
   if (plan.revealedCount == null) {
     return Object.freeze({ hit: false, reason: "no-reveal-count" });
   }
