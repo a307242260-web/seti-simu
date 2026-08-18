@@ -1593,27 +1593,46 @@
   // 预期使用次数，按总分取 top 3 做尝试"）：废弃硬编码场景规则（preferred/fallback
   // 按 probe/scan/sector 布尔过滤，导致 blue3/blue4/orange3/purple1 等永远不可见），
   // 改为每个科技按真实效果打分，搜索覆盖由价值排序决定（top 3 尝试，其余不评估）。
-  // 评分 = 单次利用价值 × 预期使用次数（未来效率红利）。**不预估即时收益**
-  // （背面 bonus 随机翻到什么就是什么、首发分有就有没有就没有、扣 6 宣传）——
-  // 这些由反事实搜索执行研究动作时**真实结算**进叶价值（evaluateState 捕获实际
-  // realizedScore/资源/科技），预筛只编码"反事实浅搜索看不到的未来效率"。
+  // **不预估即时收益**（背面 bonus 随机翻到什么就是什么、首发分有就有没有就没有、
+  // 扣 6 宣传）——这些由反事实搜索执行研究动作时**真实结算**进叶价值（evaluateState
+  // 捕获实际 realizedScore/资源/科技），预筛只编码"反事实浅搜索看不到的未来价值"。
+  // 科技分三类（2026-08-18 用户纠正）：
+  //   1) **持续收益类**：每次使用都省钱/产资源 → 单次利用价值 × 预期使用次数
+  //      blue1-4 数据槽（每槽 +1 资源）；orange2 移动自由（省绕路）；orange3 登陆-1能；
+  //      purple4 扫描后发射/移动
+  //   2) **一次性解锁类**：研究即解锁能力，无持续消耗 → 只有一次性解锁价值
+  //      orange1 火箭上限 1→2；orange4 卫星登陆解锁——**没有"每次使用"收益**，
+  //      不该用单次价值×次数算（用户纠正：橙1没有持续收益，应该只有基础分）
+  //   3) **灵活性/有代价**：多一个选项但收益不变或消耗资源 → 价值很低
+  //      purple1 扇区扫描升级（灵活性，收益可能完全不变）；purple2 水星扫描
+  //      （多一个扫描目标）；purple3 手牌扫描（手牌是宝贵资源转换手段，换扫描
+  //      不一定多赚，反而少了高效把钱转资源的渠道）
+  // 一次性解锁价值（研究即得的固定收益，不乘次数）：
+  const TECH_UNLOCK_VALUE = Object.freeze({
+    orange1: 15, // 火箭上限 1→2（解锁第 2 探测器，一次性；用户纠正：橙1没有持续收益）
+  });
   // 单次利用价值（每次使用该科技效果的价值，按 INCOME_UNIT_VALUES/行动收益校准）：
   //   blue1 槽 +1信用=8；blue2 槽 +1能量=10；blue3 槽选牌=6；blue4 槽 +2宣传=8
-  //   orange1 火箭上限 1→2=15（一次性大收益，解锁第 2 探测器）
-  //   orange2 无视小行星移动=6/次；orange3 登陆能量-1=10/次；orange4 卫星登陆解锁=20
-  //   purple1 扇区扫描升级=5/次；purple2 水星扇区扫描=4/次；purple3 手牌扫描=4/次
+  //   orange2 无视小行星移动=6/次；orange3 登陆能量-1=10/次
+  //   orange4 卫星登陆解锁 = **持续收益**（用户纠正：解锁后每次卫星登陆 8-12 分 +
+  //     资源/收入/外星痕迹，可反复登陆反复赚）≈ 20/次
+  //   purple2 水星扫描：1 宣传 → 额外扇区信号 + 数据（真实收益，可跳过）
+  //     = 数据 4 + 扇区信号 3 ≈ 7（用户纠正：紫2是收益不是纯灵活性）
   //   purple4 扫描后发射/移动=6/次
+  //   purple1（改进扇区扫描=灵活性，收益可能完全不变）/ purple3（手牌扫描=
+  //   消耗宝贵手牌，换扫描不一定赚）价值 0（用户纠正）
   const TECH_USE_VALUE = Object.freeze({
     blue1: 8, blue2: 10, blue3: 6, blue4: 8,
-    orange1: 15, orange2: 6, orange3: 10, orange4: 20,
-    purple1: 5, purple2: 4, purple3: 4, purple4: 6,
+    orange1: 0, orange2: 6, orange3: 10, orange4: 20,
+    purple1: 0, purple2: 7, purple3: 0, purple4: 6,
   });
   // 预期使用次数基准（每轮该科技效果被使用的期望次数；乘以剩余轮次折算）。
   // 未研究前按场景相关度估算：探测/登陆/扫描/数据位槽的活跃度。
+  // 一次性解锁（orange1）和灵活性（purple1/purple3）无持续次数（0）。
   const TECH_USES_PER_ROUND = Object.freeze({
     blue1: 1.5, blue2: 1.5, blue3: 0.8, blue4: 0.6,   // 数据位槽（填轨活跃时高）
-    orange1: 1, orange2: 1.5, orange3: 1.2, orange4: 0.8, // 探测/登陆
-    purple1: 1, purple2: 0.8, purple3: 0.6, purple4: 1,    // 扫描
+    orange1: 0, orange2: 1.5, orange3: 1.2, orange4: 0.8, // 探测/卫星登陆
+    purple1: 0, purple2: 0.8, purple3: 0, purple4: 1,    // 扫描
   });
   // 场景相关度权重（0-1）：该科技效果在当前盘面是否活跃。
   //   blue：数据位槽依赖"有数据可填轨"（availableData/填轨活跃）
@@ -1693,7 +1712,10 @@
     const remainingRounds = Math.max(0, finalRoundNumber - roundNumber + 1);
 
     const context = { dataRequirements, probeCandidates, sectorRequirements, assets };
-    // 每个科技打分：单次利用价值 × 预期使用次数（场景相关 × 剩余轮次）。
+    // 每个科技打分（2026-08-18 用户纠正三类）：
+    //   持续收益 = 单次利用价值 × 预期使用次数 × 场景权重 × 剩余轮次
+    //   一次性解锁 = 解锁价值（不乘次数/轮次——研究即得的固定收益）
+    //   灵活性/有代价 = 0（purple1-3：收益可能不变或消耗手牌，不一定赚）
     // 即时收益（背面 bonus/首发分/扣宣传）不预估——反事实搜索真实结算进叶价值。
     const scored = [...planByTile.values()]
       .map((plan) => {
@@ -1701,8 +1723,12 @@
         const weight = techScenarioWeight(tileId, observation, context);
         const useValue = Number(TECH_USE_VALUE[tileId]) || 0;
         const usesPerRound = Number(TECH_USES_PER_ROUND[tileId]) || 0;
-        const total = useValue * usesPerRound * remainingRounds * weight;
-        return { plan, tileId, total, useScore: total };
+        const unlockValue = Number(TECH_UNLOCK_VALUE[tileId]) || 0;
+        // 持续收益 × 次数（未来效率）；一次性解锁只算解锁价值（也乘场景权重：
+        // 无卫星目标时 orange4 解锁价值低）
+        const useScore = useValue * usesPerRound * remainingRounds * weight;
+        const total = useScore + unlockValue * weight;
+        return { plan, tileId, total, useScore, unlockValue };
       })
       .sort((left, right) => (
         right.total - left.total

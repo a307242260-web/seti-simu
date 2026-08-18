@@ -1485,11 +1485,11 @@ function observation({
     [
       ["tech:gain:blue1", "tech:blue1:1"],
       ["tech:gain:blue2", "tech:blue2:1"],
-      ["tech:gain:orange1", "tech:orange1:"],
+      ["tech:gain:purple4", "tech:purple4:"],
     ],
-    "科技按价值打分取 top3（2026-08-18）：有数据时蓝2/蓝1（数据槽）最高，"
-      + "orange1（火箭上限+1，一次性大价值）第三——废弃硬编码场景规则，"
-      + "搜索覆盖由价值排序决定（目标枚举按 targetId 字典序输出）",
+    "科技按价值打分取 top3（2026-08-18）：有数据且准备扫描时蓝2/蓝1（数据槽）最高，"
+      + "purple4（扫描后发射/移动持续收益）第三；一次性解锁（orange1 火箭上限）和"
+      + "灵活性（purple1-3）不虚高——废弃硬编码场景规则，搜索覆盖由价值排序决定",
   );
 }
 
