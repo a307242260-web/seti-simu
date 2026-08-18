@@ -1589,6 +1589,74 @@
     })[0] || null;
   }
 
+  // 科技评分（2026-08-18 用户裁决"给每个科技设定一个基础分数 + 单次利用价值 *
+  // 预期使用次数，按总分取 top 3 做尝试"）：废弃硬编码场景规则（preferred/fallback
+  // 按 probe/scan/sector 布尔过滤，导致 blue3/blue4/orange3/purple1 等永远不可见），
+  // 改为每个科技按真实效果打分，搜索覆盖由价值排序决定（top 3 尝试，其余不评估）。
+  // 评分 = 基础分（研究即得：背面 bonus 期望 + 首发分）+ 单次利用价值 × 预期使用次数。
+  // 背面 bonus 4 选 1（3分/1能量/1宣传/精选1牌）期望 ≈ 4；首发类型分 = 2。
+  const TECH_SCORE_BASE = 6; // 背面 bonus 期望 4 + 首发 2
+  // 单次利用价值（每次使用该科技效果的价值，按 INCOME_UNIT_VALUES/行动收益校准）：
+  //   blue1 槽 +1信用=8；blue2 槽 +1能量=10；blue3 槽选牌=6；blue4 槽 +2宣传=8
+  //   orange1 火箭上限 1→2=15（一次性大收益，解锁第 2 探测器）
+  //   orange2 无视小行星移动=6/次；orange3 登陆能量-1=10/次；orange4 卫星登陆解锁=20
+  //   purple1 扇区扫描升级=5/次；purple2 水星扇区扫描=4/次；purple3 手牌扫描=4/次
+  //   purple4 扫描后发射/移动=6/次
+  const TECH_USE_VALUE = Object.freeze({
+    blue1: 8, blue2: 10, blue3: 6, blue4: 8,
+    orange1: 15, orange2: 6, orange3: 10, orange4: 20,
+    purple1: 5, purple2: 4, purple3: 4, purple4: 6,
+  });
+  // 预期使用次数基准（每轮该科技效果被使用的期望次数；乘以剩余轮次折算）。
+  // 未研究前按场景相关度估算：探测/登陆/扫描/数据位槽的活跃度。
+  const TECH_USES_PER_ROUND = Object.freeze({
+    blue1: 1.5, blue2: 1.5, blue3: 0.8, blue4: 0.6,   // 数据位槽（填轨活跃时高）
+    orange1: 1, orange2: 1.5, orange3: 1.2, orange4: 0.8, // 探测/登陆
+    purple1: 1, purple2: 0.8, purple3: 0.6, purple4: 1,    // 扫描
+  });
+  // 场景相关度权重（0-1）：该科技效果在当前盘面是否活跃。
+  //   blue：数据位槽依赖"有数据可填轨"（availableData/填轨活跃）
+  //   orange：探测相关（launch/move/land 目标）、卫星解锁（卫星可达）
+  //   purple：扫描相关（数据获取需扫描/扇区目标）
+  function techScenarioWeight(tileId, observation, context) {
+    const dataReq = context?.dataRequirements;
+    const probeCandidates = context?.probeCandidates || [];
+    const sectorReq = context?.sectorRequirements;
+    const assets = context?.assets || {};
+    const scanRelevant = Boolean(
+      (dataReq?.acquisitionPlans || []).some((plan) => plan.kind === "scan")
+      || (sectorReq?.accessSources || []).some((source) => source.family === "scan")
+    );
+    const probeRelevant = probeCandidates.some((candidate) => (
+      ["launch", "move"].includes(candidate.nextStep?.family)
+    ));
+    const landRelevant = probeCandidates.some((candidate) => (
+      String(candidate.targetId || "").startsWith("land:")
+    ));
+    const satelliteRelevant = probeCandidates.some((candidate) => (
+      candidate.endpointTarget?.type === "satellite"
+      || String(candidate.targetId || "").includes(":satellite:")
+    ));
+    const blueActive = finite(assets.availableData) > 0
+      || Boolean(dataReq?.computerPlacedCount > 0)
+      || Boolean((dataReq?.acquisitionPlans || []).length);
+    const type = String(tileId).replace(/[0-9]+$/, "");
+    if (type === "blue") return blueActive ? 1 : 0.3;
+    if (type === "orange") {
+      if (tileId === "orange1") return probeRelevant ? 0.8 : 0.4;
+      if (tileId === "orange2") return probeRelevant ? 1 : 0.4;
+      if (tileId === "orange3") return landRelevant ? 1 : 0.3;
+      if (tileId === "orange4") return satelliteRelevant ? 1 : 0.2;
+    }
+    if (type === "purple") {
+      if (tileId === "purple1" || tileId === "purple2" || tileId === "purple4") {
+        return scanRelevant ? 0.9 : 0.4;
+      }
+      if (tileId === "purple3") return scanRelevant ? 0.7 : 0.3;
+    }
+    return 0.5;
+  }
+
   function selectHeuristicTechPlans(observation) {
     const requirements = rawTechGainRequirements(observation);
     const allPlans = requirements?.plans || [];
@@ -1614,69 +1682,33 @@
     const assets = resourceFactsOf(observation, requirements.playerId);
     const probeCandidates = rawProbeRequirements(observation)?.candidates || [];
     const sectorRequirements = rawSectorWinRequirements(observation);
-    const scanRelevant = Boolean(
-      (dataRequirements?.acquisitionPlans || []).some((plan) => plan.kind === "scan")
-      || (sectorRequirements?.accessSources || []).some((source) => source.family === "scan")
-    );
-    const probeRelevant = probeCandidates.some((candidate) => (
-      ["launch", "move"].includes(candidate.nextStep?.family)
-    ));
-    const landRelevant = probeCandidates.some((candidate) => candidate.targetId?.startsWith("land:"));
-    const satelliteRelevant = probeCandidates.some((candidate) => (
-      candidate.endpointTarget?.type === "satellite"
-      || candidate.targetId?.includes(":satellite:")
-    ));
-    const finalRound = finite(observation?.outcomeProjection?.progress?.roundNumber)
-      >= finite(observation?.outcomeProjection?.progress?.finalRoundNumber || 4);
-    const satellitePlanetIds = new Set([
-      "jupiter",
-      "saturn",
-      ...(finalRound ? ["uranus", "neptune"] : []),
-    ]);
-    const satelliteTechReachable = planByTile.has("orange4")
-      && probeCandidates.some((candidate) => (
-        satellitePlanetIds.has(String(candidate.planetId || ""))
-        && probeGoalResourceReachable(observation, candidate, requirements.playerId)
+    // 剩余轮次（研究科技的未来收益窗口）
+    const roundNumber = Math.max(1, finite(
+      observation?.outcomeProjection?.progress?.roundNumber,
+    ) || 1);
+    const finalRoundNumber = Math.max(1, finite(
+      observation?.outcomeProjection?.progress?.finalRoundNumber,
+    ) || 4);
+    const remainingRounds = Math.max(0, finalRoundNumber - roundNumber + 1);
+
+    const context = { dataRequirements, probeCandidates, sectorRequirements, assets };
+    // 每个科技打分：基础 + 单次利用价值 × 预期使用次数（场景相关 × 剩余轮次）
+    const scored = [...planByTile.values()]
+      .map((plan) => {
+        const tileId = plan.tileId;
+        const weight = techScenarioWeight(tileId, observation, context);
+        const useValue = Number(TECH_USE_VALUE[tileId]) || 0;
+        const usesPerRound = Number(TECH_USES_PER_ROUND[tileId]) || 0;
+        const useScore = useValue * usesPerRound * remainingRounds * weight;
+        const total = TECH_SCORE_BASE + useScore;
+        return { plan, tileId, total, base: TECH_SCORE_BASE, useScore };
+      })
+      .sort((left, right) => (
+        right.total - left.total
+        || String(left.tileId).localeCompare(String(right.tileId))
       ));
-    const needsTwoData = Boolean(
-      dataAnalyzeEligible(dataRequirements)
-      && finite(assets.availableData) < 2
-      && (dataRequirements?.acquisitionPlans || []).length
-    );
-    const sectorWinRelevant = Boolean((sectorRequirements?.candidates || []).length);
-
-    const preferredIds = [
-      // 蓝科技始终优先：研究后开数据位槽（每槽 +1 资源，用户 405 档 blue2 槽 8 次）。
-      // 此前依赖 availableData>0，AI 填轨耗尽数据后 blue 科技不优先 → 研究拖到填满轨
-      // 之后（step 101），无处可放槽（blueBonus 0）。用户先研究 blue2（sv11）再填轨。
-      ...(planByTile.has("blue1") ? ["blue1"] : []),
-      ...(planByTile.has("blue2") ? ["blue2"] : []),
-      ...(scanRelevant ? ["purple2", "purple4"] : []),
-      ...(probeRelevant ? ["orange2"] : []),
-      ...(satelliteTechReachable ? ["orange4"] : []),
-      ...(needsTwoData ? ["purple1"] : []),
-      ...(sectorWinRelevant ? ["purple3"] : []),
-    ];
-    const preferred = [...new Set(preferredIds)]
-      .map((tileId) => planByTile.get(tileId))
-      .filter(Boolean);
-    if (preferred.length) return preferred;
-
-    const fallbackIds = [
-      ...(probeRelevant ? ["orange1"] : []),
-      ...(landRelevant ? ["orange3"] : []),
-      ...(satelliteRelevant ? ["orange4"] : []),
-      ...(finite(assets.availableData) > 0 ? ["blue3", "blue4"] : []),
-      "orange1",
-      "orange3",
-      "orange4",
-      "blue3",
-      "blue4",
-    ];
-    return [...new Set(fallbackIds)]
-      .map((tileId) => planByTile.get(tileId))
-      .filter(Boolean)
-      .slice(0, 2);
+    // 取 top 3 尝试（用户裁决；其余科技不评估，避免全放开稀释搜索）
+    return scored.slice(0, 3).map((entry) => entry.plan);
   }
 
   function enumerateSecondaryAgentRootTargets(input = {}) {

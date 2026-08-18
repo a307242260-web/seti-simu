@@ -1485,10 +1485,11 @@ function observation({
     [
       ["tech:gain:blue1", "tech:blue1:1"],
       ["tech:gain:blue2", "tech:blue2:1"],
-      ["tech:gain:purple2", "tech:purple2:"],
-      ["tech:gain:purple4", "tech:purple4:"],
+      ["tech:gain:orange1", "tech:orange1:"],
     ],
-    "有数据且准备扫描时只展开蓝1/蓝2/紫2/紫4，并为蓝科选择最快可启用的单一槽位",
+    "科技按价值打分取 top3（2026-08-18）：有数据时蓝2/蓝1（数据槽）最高，"
+      + "orange1（火箭上限+1，一次性大价值）第三——废弃硬编码场景规则，"
+      + "搜索覆盖由价值排序决定（目标枚举按 targetId 字典序输出）",
   );
 }
 
