@@ -964,8 +964,8 @@
     afterSubmit: () => scheduleRefreshAndAutomation(),
   });
   // 浏览器机器席位的策略开关（与 Simulation resetConfig 同源语义）：
-  // 通过 URL 查询参数开启，例如 ?planReuse=1。搜索机制已统一（目标引导 +
-  // 需求引导单一路径，无分桶开关）。
+  // 计划延续复用默认开（与 Simulation 一致），URL 参数 ?planReuse=0 关闭。
+  // 搜索机制已统一（目标引导 + 需求引导单一路径，无分桶开关）。
   const browserMachineFlags = (typeof URLSearchParams === "function"
     ? new URLSearchParams(window.location.search)
     : new URLSearchParams(""));
@@ -984,7 +984,7 @@
       completeTargetCatalog: browserMachineFlags.get("completeTargetCatalog") === "1",
       traceCounterfactualGoalClusters: browserMachineFlags.get("traceCounterfactualGoalClusters") === "1",
       vStateValueEnabled: browserMachineFlags.get("vStateValueEnabled") === "1",
-      planContinuationReuse: browserMachineFlags.get("planReuse") === "1",
+      planContinuationReuse: browserMachineFlags.get("planReuse") !== "0",
     },
   });
 

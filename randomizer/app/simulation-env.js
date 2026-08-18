@@ -414,7 +414,7 @@ function createSimulationEnv() {
           resetConfig.traceCounterfactualGoalClusters === true,
         completeTargetCatalog: resetConfig.completeTargetCatalog === true,
         vStateValueEnabled: resetConfig.vStateValueEnabled === true,
-        planContinuationFastPath: resetConfig.planContinuationFastPath === true,
+        planContinuationFastPath: resetConfig.planContinuationFastPath !== false,
       };
       replaySteps = [];
       browserReplayHistory = [];

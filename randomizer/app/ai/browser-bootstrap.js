@@ -196,7 +196,7 @@
           return lastResult;
         }
         const result = activeCoordinator.runDecision(probeBoundary.seatId, {
-          reuseEnabled: config.planContinuationReuse === true,
+          reuseEnabled: config.planContinuationReuse !== false,
         });
         lastSubmittedKey = dedupeKey;
         submittedCount += 1;

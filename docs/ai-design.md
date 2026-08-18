@@ -111,7 +111,8 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   单一路径 + 直调启发式 Policy + 从 winning leaf 构建 plan）；协调器
   `machine-player-coordinator.js` 编排 readBoundary/复用/调用/提交；
 - 装配：`app/simulation-env.js#runHeuristicPolicyDecision`（复用判断先行，未命中才
-  走 outcome 生成 + 方案；`config.planContinuationFastPath` 开关，默认关）。
+  走 outcome 生成 + 方案；`config.planContinuationFastPath` 开关，默认开
+  （显式传 `false` 可关）。
 
 ### 3.2 复用判定（plan-continuation.js#planReuseCheck）
 
@@ -151,7 +152,8 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   支持同席多 policy 切换，store 必须按 policyType/version/modelChecksum/
   configChecksum 分键（checkpoint 红线）。
 - Browser 与 Simulation 同一份装配（同一协调器 + 同一决策函数 config 源）：
-  sim 经 `resetConfig.planContinuationFastPath`，browser 经 URL 参数 `?planReuse=1`。
+  计划延续复用默认开（与 Simulation 一致），sim 经 `resetConfig.planContinuationFastPath`
+  （`false` 关闭），browser 经 URL 参数 `?planReuse=0` 关闭。
 - 延后不实现：tier3 内部的部分复用（原一步登陆变两步，可能仍去登陆只是少 1 电
   或多打一张移动牌）；tier2 的「可能出现更优选择」；多步链的跨路线续用。
 
