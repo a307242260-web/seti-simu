@@ -2056,25 +2056,33 @@
           // 2026-08-18（用户指导"一个行动包括所有的 target 选择完毕算一个节点"）：
           // 结算链排空——主行动（launch/play_card/scan 等）提交后可能进入一串
           // **纯结算决策**（弃牌/支付/交易选牌等，任意选择等价或由规则强制），
-          // 此前每个都展开成独立节点（choose_* 占单决策 4096 节点的 42%），节点
+          // 此前每个都展开成独立节点（choose_payment 占单决策节点大头），节点
           // 爆炸 → 暴力搜索搜不完 → 僵局。这里在**同一节点内**连续执行纯结算
           // 决策到"下一个主行动决策"或"策略级选择"边界，整链只算 1 个节点。
-          // 策略级决策（探测目标/外星痕迹位置/科技选择等价值相关 choose_target /
-          // choose_card）**不折叠**，保持展开让价值进入搜索。
+          // 策略级决策（探测目标/科技/外星痕迹位置等价值相关 choose_target /
+          // choose_card）**不折叠**（折叠会断链——协调器路径 rootObservation 缺
+          // requirements 无法选最优），保持展开让价值进入搜索。
           let drainGuard = 0;
+          // 折叠结算链中产生的隐藏信息 barrier（公共牌翻出等）——折叠提交也必须
+          // 建立 mask，不能因节点折叠泄漏新翻出的牌身份。
+          let drainHiddenBarrier = null;
           while (drainGuard < 32) {
             const drainInspection = composition.inspect();
             if (drainInspection.phase !== "awaiting_input" || !drainInspection.session?.decision) break;
             const drainChoices = drainInspection.session.decision.choices || [];
             if (!drainChoices.length) break;
-            const allSettlement = drainChoices.length > 0 && drainChoices.every((choice) => (
+            // 可排空 = **纯结算**（弃牌/支付/交易选牌，任意选择等价或由规则强制）。
+            // 策略级选择（探测目标/科技/外星痕迹位置等 choose_target/choose_card）
+            // **不折叠**——折叠会断链（协调器路径 rootObservation 缺 requirements，
+            // selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
+            const drainable = drainChoices.length > 0 && drainChoices.every((choice) => (
               choice.family === "choose_payment"
               || (
                 choice.family === "choose_card"
                 && choice.target?.kind === "trade-card-selection"
               )
             ));
-            if (!allSettlement) break;
+            if (!drainable) break;
             const discardCards = drainChoices.filter((choice) => (
               choice.family === "choose_payment" && choice.target?.kind === "discard-hand-card"
             ));
@@ -2114,6 +2122,16 @@
                 message: settleResult?.message || `结算决策失败: ${settleChoice?.family}`,
               };
             }
+            // 折叠提交后的 hidden barrier（公共牌翻出等）必须捕获——折叠不泄漏信息。
+            if (!drainHiddenBarrier) {
+              const drainAfter = composition.inspect();
+              const barrier = settleResult?.irreversibleBarrier
+                || drainAfter?.session?.irreversibleBarrier
+                || null;
+              if (isHiddenInformationBarrier(barrier)) {
+                drainHiddenBarrier = barrier;
+              }
+            }
             drainGuard += 1;
           }
           let nextInspection = composition.inspect();
@@ -2131,7 +2149,7 @@
             ? result.irreversibleBarrier
             : isHiddenInformationBarrier(nextInspection.session?.irreversibleBarrier)
               ? nextInspection.session.irreversibleBarrier
-              : null;
+              : drainHiddenBarrier;
           const wasInformationMasked = node.origins.some((origin) => (
             origin.informationMasked
           ));
