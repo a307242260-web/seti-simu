@@ -160,18 +160,24 @@ function createMachinePlayerCoordinator(options = {}) {
             record("plan-reuse-miss", { seatId, reason: "step-not-legal-within-turn" });
           }
         } else {
-          // 新回合：盘面无新信息则复用上回合决策链（planReuseCheck 依赖/揭示基线判定）
-          const reuse = planContinuation.planReuseCheck(
-            stored.plan,
-            boundary.observation,
-            boundary.legalActions,
-          );
-          if (reuse.hit) {
-            action = reuse.action;
-            plan = reuse.nextPlan;
-            record("plan-reuse-hit", { seatId, actionId: action.actionId });
+          // 新回合：盘面无新信息则复用上回合决策链（planReuseCheck 依赖/揭示基线判定），
+          // 有新信息 → 重新搜索。newTurnReuseEnabled=false 时新回合一律重新搜索——
+          // 用于 A/B 评估"忽略非依赖变化（对手移动/资源/旋转等）而复用"的影响。
+          if (runOptions.newTurnReuseEnabled !== false) {
+            const reuse = planContinuation.planReuseCheck(
+              stored.plan,
+              boundary.observation,
+              boundary.legalActions,
+            );
+            if (reuse.hit) {
+              action = reuse.action;
+              plan = reuse.nextPlan;
+              record("plan-reuse-hit", { seatId, actionId: action.actionId });
+            } else {
+              record("plan-reuse-miss", { seatId, reason: reuse.reason });
+            }
           } else {
-            record("plan-reuse-miss", { seatId, reason: reuse.reason });
+            record("plan-reuse-miss", { seatId, reason: "new-turn-reuse-disabled" });
           }
         }
       } else {

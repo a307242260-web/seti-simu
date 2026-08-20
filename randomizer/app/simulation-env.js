@@ -415,6 +415,9 @@ function createSimulationEnv() {
         completeTargetCatalog: resetConfig.completeTargetCatalog === true,
         vStateValueEnabled: resetConfig.vStateValueEnabled === true,
         planContinuationFastPath: resetConfig.planContinuationFastPath !== false,
+        // 新回合复用开关（A/B 用）：planReuseCheck 判定"盘面无新信息则复用上回合
+        // 决策链"。关掉后新回合一律重新搜索——用于评估"忽略非依赖变化而复用"的影响。
+        planNewTurnReuse: resetConfig.planNewTurnReuse !== false,
       };
       replaySteps = [];
       browserReplayHistory = [];
@@ -716,6 +719,7 @@ function createSimulationEnv() {
       // 失败直接抛错；复用命中经 execute 直接提交共享 inputPort（零转换）。
       const result = coordinator.runDecision(seatId, {
         reuseEnabled: config.planContinuationFastPath === true,
+        newTurnReuseEnabled: config.planNewTurnReuse !== false,
       });
       if (!machineStepResult) {
         throw new Error("MACHINE_PLAYER_RECORD_STEP_MISSING: 协调器执行后未产出 step 记账结果");

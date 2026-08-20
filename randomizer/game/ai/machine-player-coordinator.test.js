@@ -164,6 +164,23 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
     assert.equal(second.source, "scheme", "新回合依赖环节变化（科技被拿走）必须重新决策");
     assert.equal(calls, 2);
   }
+  // 开关：newTurnReuseEnabled=false → 新回合一律重新搜索（用于评估忽略非依赖变化的影响）
+  {
+    const states = [makeState(1, 1), makeState(1, 2)];
+    let index = 0;
+    const coordinator = makeTurnCoordinator(() => ({ state: states[Math.min(index, states.length - 1)] }));
+    let calls = 0;
+    coordinator.registerSeat("p1", () => {
+      calls += 1;
+      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 } };
+    });
+    const first = coordinator.runDecision("p1", { reuseEnabled: true, newTurnReuseEnabled: false }); // T1: scheme
+    assert.equal(first.source, "scheme");
+    index = 1;
+    const second = coordinator.runDecision("p1", { reuseEnabled: true, newTurnReuseEnabled: false }); // T2: 开关关 → 新回合重搜
+    assert.equal(second.source, "scheme", "newTurnReuseEnabled=false 时新回合必须重新搜索");
+    assert.equal(calls, 2, "开关关时新回合不得复用计划");
+  }
 }
 
 // 失败即抛错（铁律）：
