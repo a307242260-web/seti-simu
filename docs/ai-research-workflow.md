@@ -45,7 +45,7 @@
 ```
 
 - `flags` = 行为配置开关（`unifiedSearch` / `planContinuationFastPath` /
-  `vStateValueEnabled` / `completeTargetCatalog` /
+  `planNewTurnReuse` / `vStateValueEnabled` / `completeTargetCatalog` /
   `traceCounterfactualGoalClusters` / `compactReplay`），只收显式传入的键。
 - `policyVersion` = 当前启发式 Policy 版本（如 `seti-heuristic-policy-v26`），
   策略实现变更自动生成新指纹，不会误当作旧实验。
@@ -57,7 +57,9 @@
 ```sh
 # 快速验证（默认 200 步，评估行为方向）
 node tools/run_research_validation.js --name unified-on --config unifiedSearch=true
-node tools/run_research_validation.js --name baseline                    # 无开关的基线
+node tools/run_research_validation.js --name baseline                    # 基线 = 默认装配（newfast：fastPath 开 + 新回合复用开，2026-08-20 起）
+node tools/run_research_validation.js --name base --config planContinuationFastPath=false   # 关快路径（对照）
+node tools/run_research_validation.js --name noreuse --config planNewTurnReuse=false        # 关新回合复用（对照）
 
 # 全盘验证（有机会时；自动从同实验快速存档续跑）
 node tools/run_research_validation.js --name unified-on --config unifiedSearch=true --full
@@ -74,8 +76,10 @@ node tools/run_research_validation.js --name x --no-save                 # 不�
 node tools/run_research_validation.js --name x --seed seti-107           # 换盘面
 ```
 
-默认 seed 为免电分析盘面 `seti-free-analyze-v1`（路线基线：白色 86 / 均分 64.3，
-目标均分 100），4 家，`aiDifficulty=laughable`。
+默认 seed 为免电分析盘面 `seti-free-analyze-v1`，4 家，`aiDifficulty=laughable`。
+基线 = 默认装配（newfast：`planContinuationFastPath` 开 + `planNewTurnReuse` 开），
+历史路线基线"白色 86 / 均分 64.3"为 fastPath 关闭时代（2026-08-17）的参考值，
+目标均分 100。
 
 ## 4. 记录内容（复盘看什么）
 
