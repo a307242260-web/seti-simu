@@ -236,11 +236,11 @@ UI 布局：
 - `playCard`：打牌，打开手牌选择/打出流程。
 - `researchTech`：研究科技，生成科技效果链：选择科技片、获得科技片、旋转、即时奖励（如橙1发射、紫1数据）、获取 bonus。异星实验室粉色板块正面时，标准研究费用改为 4 宣传并在获得科技片成功后翻背。
 
-轮与回合：
+轮次与回合（名词定义，全仓库统一口径）：
 
-- 轮：所有玩家各自执行若干回合，直到所有玩家都 PASS 后结束；全部 PASS 后进入下一轮第 1 回合。
-- 回合：一轮内的一次行动圈；每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS。所有未 PASS 玩家在当前行动圈都行动后，真实行动圈编号才递增。
-- `turn` 切片属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`game/turn-flow.js` 是轮次推进与太阳系旋转的唯一生产 owner，Browser 只读取 projection。它记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
+- **轮次（round，R1/R2）**：所有玩家各自执行若干回合，直到所有玩家都 PASS 后结束；全部 PASS 后进入下一轮第 1 回合。代码字段 `turn.roundNumber`。
+- **回合（turn）**：玩家每一次主要行动（一次主要行动圈）。每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS；所有未 PASS 玩家在当前行动圈都行动后，真实行动圈编号才递增。一个回合内该玩家可以连续执行若干次决策（主要行动 + 快速行动 + 条件结算），直到结束回合或 PASS。代码字段 `turn.turnNumber`（内部行动序号）与 `turn.actionCycleNumber`（本轮内真实行动圈编号）。
+- `turn` 切片属于统一 committed state，由 `game/state/**` 与 Rule Composition 管理；`game/turn-flow.js` 是轮次推进与太阳系旋转的唯一生产 owner，Browser 只读取 projection。它记录 `roundNumber`（轮次号）、`turnNumber`（回合序号）、`actionCycleNumber`（本轮内真实行动圈编号）、基础顺位、本轮起始玩家、启用玩家、已 PASS 玩家与当前行动圈已行动玩家。
 - 页面加载时会自动执行原 `set-button` 设置流程：白色玩家固定为初始首位，其余颜色玩家随机洗牌，并重置为第 1 轮第 1 回合。默认人机入口启用 4 名活跃玩家，其中白色为人类玩家，其余 3 个活跃席位为电脑玩家；开始界面可切换为 3 人局，此时白色玩家仍固定参与，其余颜色只随机启用 2 个电脑席位。
 - 新轮开始时，起始玩家按基础顺位顺延到上一轮第二顺位玩家。
 

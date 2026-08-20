@@ -114,35 +114,29 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   走 outcome 生成 + 方案；`config.planContinuationFastPath` 开关，默认开
   （显式传 `false` 可关）。
 
-### 3.2 复用判定（plan-continuation.js#planReuseCheck）
+### 3.2 搜索时机与复用判定（用户口径，2026-08-20 机制化）
 
-对照基准 = **上轮本家行动执行完**的计划假设状态（不是执行前——本家行动造成的
-盘面变化属于计划内，不能当作外部变化）。
+名词定义见 `docs/mechanics-reference.md`：**轮次（round，R1/R2）**、**回合（turn，玩家每一次主要行动圈）**。
 
-- **复用**：下一步仍合法（按 actionId 解析）且计划执行依赖的环节未变：
-  - tier1 盘面无变化；
-  - tier2 盘面有变化但不影响计划执行——当前直接复用（记录为后续优化点）：
-    其他玩家火箭移动 / 打牌 / 资源变化（可能后续影响本家行动，现在不考虑）；
-    计划不涉及的扇区变化；太阳系转动但计划无探测器移动（可能出现更优选择，
-    现在不管）。
-- **重新决策**：依赖环节变了——着陆需要的移动更多了 / 目标外星人槽位被占 /
-  第一奖励格被占 / 目标路线消失 / 计划跨出当前路线终点（`route-target-changed`）。
-- **控制动作特例**：下一步是 `end_turn`/`pass` → 无条件重新决策
-  （`control-step-redecide`）。主行动选择是每次决策最核心的评估，而 end_turn/pass
-  评估最便宜（control 路径 maxDepth=1），不能靠计划复用跳过——实测计划下一步为
-  end_turn 时被盲目复用，会跳过当前盘面上更有价值的主行动（同状态搜索选
-  place_data，fast-path 直接 end_turn，白方掉分）。
-- **硬性特例**：翻开了外星人（已揭示槽位数 > 计划假设值）→ 无条件重新决策，
-  不适用依赖环节近似（揭示可能带来计划未预见的全新目标/机会）。
-- 依赖事实：探测路线终点 `{ movementSteps, firstRewardSlotOpen }` 与外星痕迹槽位
-  占用（`planDependencyFromPlan` / `currentDependencyFromStore`，形状对齐才可
-  比较）；其余 family 视为 generic（不影响计划执行）。
+**搜索时机机制**：搜索只在**本方回合（一动）开始时**执行一次；回合内无新信息 → 按计划逐步骤执行，不重新搜索。搜索只发生在：无计划 / 计划耗尽 / 下一步不在合法集 / 新回合 planReuseCheck 未命中。**回合内出现新信息需重新决策 → TODO（暂不实现，回合内始终按计划走）**。
+
+- **本回合内**（协调器回合门控：计划记录的 round/turn == 当前决策的 round/turn）：按计划下一步直接执行（仅校验合法性），不调用 planReuseCheck、不搜索。`end_turn`/`pass` 是回合自然结束，属计划内正常推进，同样复用。
+- **新回合**：`planReuseCheck` 判定——**新信息只有两类**，无新信息则复用上回合决策链：
+  - **① 揭示外星人**：已揭示槽位数 > 计划假设值 → 无条件重新决策（隐藏信息揭示）；
+  - **② 计划依赖环节变化**（计划依赖的具体盘面事实变了）→ 重新决策：
+    - 路线：目标奖励格被占（终点行星标记数变化，不局限第一格，如奥陌陌登陆 3 格）/ 路线变长（移动步数增加）；
+    - 科技：计划要拿的科技 tile 被拿走（供应 remaining/bonus 变化）；
+    - 扇区：目标扇区标记状态变化（赢不了了）；
+    - 外星槽：目标外星痕迹槽被占；
+    - 公共牌：计划要用的公共牌被买走。
+  - 不算新信息（可复用）：其他玩家移动/资源变化、无关扇区变化、无探测器移动的旋转、计划内自己的推进（含顺序执行第二条路线）。
+- **防呆兜底**：下一步不在合法集（若因依赖变化 → 归入②；否则计划自身缺陷）→ 重新决策；缺揭示基线 / 缺依赖 → 保守重新决策。
+- 依赖事实：`planDependencyFromPlan` / `currentDependencyFromStore`（形状对齐才可比较）按下一步动作提取依赖：路线（`endpointTargetId` + `movementSteps` + `endpointMarkerCount`）、科技（`tileId` + 供应状态）、扇区（候选快照）、公共牌（存在性）、外星槽（占用）。
   - 路线终点 id 来源：primaryAgentSearch 叶用 `probeRoute.candidate.endpointTargetId`
     （routeCheckpoints 摘要生成）；secondary-agent 搜索叶不携带 routeCheckpoints
     （rule-composition addLeaf 对 secondaryAgentSearch 置空）→ candidate 恒为 null，
     此时从叶的 `rootRouteTargetId`（搜索绑定的 orbit:/land: 路线终点，与
-    production-kernel targetId 同构）补出路线依赖，保证启发式主路径的 tier-3
-    失效判定（路线变贵/奖励格被占/跨出终点）真正生效。
+    production-kernel targetId 同构）补出路线依赖。
 - 多步消费：命中后 `advancePlan` 前进一步，链条耗尽或判定失败才重新调用方案。
 
 ### 3.3 边界与约束

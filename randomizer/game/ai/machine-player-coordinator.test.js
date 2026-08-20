@@ -81,6 +81,91 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   assert.equal(recorded.every((entry) => entry.ok === true && entry.seatId === "p1"), true);
 }
 
+// 回合门控（机制）：本回合内按计划走（不搜索，end_turn 也复用）；
+// 新回合走 planReuseCheck（无新信息复用，有新信息重新决策）。
+{
+  const makeState = (round, turn) => ({
+    publicState: { roundNumber: round, turnNumber: turn, board: {} },
+    selfState: null,
+    perspectivePlayerId: "p1",
+  });
+  const makeTurnCoordinator = (projection, execute = () => ({ ok: true })) => (
+    createMachinePlayerCoordinator({
+      composition: {
+        inspect: () => ({ phase: "idle", session: null }),
+        inputPort: { enumerateActions: () => [makeDescriptor("a"), makeDescriptor("b"), makeDescriptor("end_turn:e")] },
+        projection,
+      },
+      execute,
+      onDiagnostic: () => {},
+    })
+  );
+  // 本回合内：scheme 一次后，后续决策全部复用计划（含 end_turn），不搜索
+  {
+    const coordinator = makeTurnCoordinator(() => ({ state: makeState(1, 1) }));
+    let calls = 0;
+    coordinator.registerSeat("p1", () => {
+      calls += 1;
+      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b", "end_turn:e"], dependency: { kind: "generic" }, revealedCount: 0 } };
+    });
+    const first = coordinator.runDecision("p1", { reuseEnabled: true });
+    assert.equal(first.source, "scheme");
+    assert.equal(first.actionId, "a");
+    const second = coordinator.runDecision("p1", { reuseEnabled: true });
+    assert.equal(second.source, "plan-reuse", "本回合内第二步必须复用计划");
+    assert.equal(second.actionId, "b");
+    const third = coordinator.runDecision("p1", { reuseEnabled: true });
+    assert.equal(third.source, "plan-reuse", "本回合内 end_turn 也是计划内步骤，必须复用（回合自然结束，非新信息）");
+    assert.equal(third.actionId, "end_turn:e");
+    assert.equal(calls, 1, "本回合内复用不得调用决策函数（搜索只在一动开始执行）");
+    // 计划耗尽 → 新决策
+    const fourth = coordinator.runDecision("p1", { reuseEnabled: true });
+    assert.equal(fourth.source, "scheme", "计划耗尽必须重新决策");
+    assert.equal(calls, 2);
+  }
+  // 新回合：盘面无新信息 → 复用上回合决策链（planReuseCheck 判定）
+  {
+    const states = [makeState(1, 1), makeState(1, 2), makeState(1, 2)];
+    let index = 0;
+    const coordinator = makeTurnCoordinator(() => ({ state: states[Math.min(index, states.length - 1)] }));
+    let calls = 0;
+    coordinator.registerSeat("p1", () => {
+      calls += 1;
+      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 } };
+    });
+    const first = coordinator.runDecision("p1", { reuseEnabled: true }); // T1: scheme
+    assert.equal(first.source, "scheme");
+    index = 1;
+    const second = coordinator.runDecision("p1", { reuseEnabled: true }); // T2: 新回合，无新信息 → 复用
+    assert.equal(second.source, "plan-reuse", "新回合盘面无新信息必须复用上回合决策链");
+    assert.equal(second.actionId, "b");
+    assert.equal(calls, 1, "新回合无新信息不得重新搜索");
+  }
+  // 新回合：依赖环节变化（新信息）→ 重新决策
+  {
+    const states = [makeState(1, 1), makeState(1, 2)];
+    let index = 0;
+    const coordinator = makeTurnCoordinator(() => ({ state: states[Math.min(index, states.length - 1)] }));
+    let calls = 0;
+    coordinator.registerSeat("p1", () => {
+      calls += 1;
+      // 首次生成计划（依赖科技 blue1 remaining 4）；T2 重算时 remaining 变 3 → 依赖变化
+      const state = states[Math.min(index, 1)];
+      const stack = state === states[1]
+        ? { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 3, depleted: false } }
+        : { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 4, depleted: false } };
+      state.publicState.board.techSupply = { stacks: stack };
+      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "tech", tileId: "blue1", present: true, bonusId: "bonus_1c", remaining: 4 }, revealedCount: 0 } };
+    });
+    const first = coordinator.runDecision("p1", { reuseEnabled: true }); // T1: scheme
+    assert.equal(first.source, "scheme");
+    index = 1;
+    const second = coordinator.runDecision("p1", { reuseEnabled: true }); // T2: 科技被拿走 → 新信息 → 重新决策
+    assert.equal(second.source, "scheme", "新回合依赖环节变化（科技被拿走）必须重新决策");
+    assert.equal(calls, 2);
+  }
+}
+
 // 失败即抛错（铁律）：
 {
   // 未注册决策函数

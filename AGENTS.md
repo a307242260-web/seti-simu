@@ -37,7 +37,7 @@
 - `randomizer/game/ai/heuristic-evaluator.js`、`expected-score-evaluator.js`：只消费公共 observation、legal descriptors 与标准反事实 outcome，负责纯估值和稳定排序；不得恢复 legacy candidate 或 selector adapter。
 - `randomizer/game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子；失败直接抛错。详见 `docs/ai-design.md` §1。
 - `randomizer/game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径，无 bounded 分桶）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。
-- `randomizer/game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策函数输出的计划结构（`buildPlanFromSnapshot`/`advancePlan`）、复用判定（`planReuseCheck`）、依赖事实与外星揭示基线；详见 `docs/ai-design.md` §3。装配在 `randomizer/app/simulation-env.js`（`planContinuationFastPath`，默认开，`false` 可关），诊断/验证工具 `tools/diagnose_plan_continuation.js`、`tools/verify_plan_continuation_fastpath.js`。
+- `randomizer/game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策函数输出的计划结构（`buildPlanFromSnapshot`/`advancePlan`）、复用判定（`planReuseCheck`：新信息只有"揭示外星人 + 依赖环节变化"两类）、依赖事实（路线/科技/扇区/外星槽/公共牌）与外星揭示基线；搜索时机机制（本回合按计划走、新回合 planReuseCheck 判定）见 `docs/ai-design.md` §3.2。装配在 `randomizer/app/simulation-env.js`（`planContinuationFastPath`，默认开，`false` 可关），诊断/验证工具 `tools/diagnose_plan_continuation.js`、`tools/verify_plan_continuation_fastpath.js`。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `randomizer/training/trajectory-recorder.js`：`seti-self-play-log-v1` 轨迹录制器（Browser/Node 共用，人类示范与 self-play 同一格式）。
 - `randomizer/app/browser-host/trajectory-recording.js`：Browser 输入链录制适配器（只读 projection、按确认 replay 对齐、终局导出 JSONL）。

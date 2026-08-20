@@ -483,22 +483,18 @@ function extractPlanSnapshot(input, options = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// 计划依赖事实（三层判定用；对照基准 = 上轮本家行动执行完的计划假设状态）
-// ---------------------------------------------------------------------------
-
-// 计划执行所依赖的盘面事实：
-// - 探测路线计划（winning leaf 带 probeRoute 终点）：终点 { movementSteps,
-//   firstRewardSlotOpen }——「着陆需要的移动更多了 / 第一奖励格被占」即此字段变化；
-// - 下一步是外星痕迹放置（target.alienSlotId）：槽位占用——「想标记的槽被占了」；
-// - 其他：{ kind: "generic" } → 视为不影响计划执行 → 可复用（对手火箭移动、
-//   打牌、资源变化、无关扇区、无探测器移动的旋转均落此分支，先直接复用）。
+// 计划依赖事实（复用判定用；对照基准 = 计划假设状态）。
+// 新信息只有两类：① 揭示外星人（planReuseCheck 单独判）；② 计划依赖环节变化——
+// 计划依赖的具体盘面事实变了：目标奖励格被占 / 路线变长 / 计划要拿的科技被拿走 /
+// 目标扇区赢不了 / 目标外星槽被占 / 目标公共牌被买走。其余变化（对手移动/资源、
+// 无关扇区、无探测器移动的旋转、计划内自己的推进）不算新信息。
 //
 // 探测路线终点 id 来源（2026-08-18 修补）：primaryAgentSearch 叶带 probeRoute.candidate
 // （由 routeCheckpoints 摘要生成）；secondary-agent 搜索叶不携带 routeCheckpoints
 // （rule-composition addLeaf 对 secondaryAgentSearch 置空）→ candidate 恒为 null，
-// 此前路线依赖永远落 generic，planReuseCheck 的 tier-3（路线变贵/奖励格被占）从不触发。
-// 叶上仍保留 rootRouteTargetId（搜索绑定的路线终点，形如 orbit:.../land:...，与
-// production-kernel buildProbeCandidateStructures 的 targetId 同构），从这里补出依赖。
+// 此前路线依赖永远落 generic。叶上仍保留 rootRouteTargetId（搜索绑定的路线终点，
+// 形如 orbit:.../land:...，与 production-kernel buildProbeCandidateStructures 的
+// targetId 同构），从这里补出依赖。
 function probeRouteEndpointTargetId(leaf) {
   const targetId = String(leaf?.rootRouteTargetId || "");
   return targetId.startsWith("orbit:") || targetId.startsWith("land:")
@@ -506,12 +502,57 @@ function probeRouteEndpointTargetId(leaf) {
     : null;
 }
 
+// 科技供应堆：publicState.board.techSupply.stacks[tileId]
+function techSupplyStackOf(observation, tileId) {
+  const stacks = observation?.publicState?.board?.techSupply?.stacks
+    || observation?.techSupply?.stacks
+    || {};
+  return stacks[tileId] || null;
+}
+
+// 扇区赢取候选（计划依赖"计划要赢的扇区还赢得了"）：快照 ownCount/maxOpponentCount/
+// openSlotCount，任一变化 = 扇区标记变化（赢不了了）= 依赖变化。
+function sectorCandidatesOf(observation) {
+  return observation?.sectorWinRequirements?.candidates
+    || observation?.outcomeProjection?.progress?.sectorWinRequirements?.candidates
+    || [];
+}
+
+function publicCardIdsOf(observation) {
+  const cards = observation?.publicState?.board?.publicCards
+    || observation?.publicCards
+    || [];
+  return new Set(cards.map((card) => String(card?.id ?? card?.cardId ?? "")).filter(Boolean));
+}
+
+// 终点行星对应类型的标记数（环绕=orbitMarkers 数，登陆=landingMarkers 数，
+// 卫星=卫星登陆数）。标记数决定计划实际会拿到的奖励槽位——不局限第一格
+// （如奥陌陌登陆 3 个奖励格），标记数变化 = 目标奖励格被占/变化 = 依赖变化。
+function endpointMarkerCount(observation, endpointTargetId) {
+  const parts = String(endpointTargetId || "").split(":");
+  const family = parts[0];
+  const planetId = parts[1];
+  const type = parts[2] || "planet";
+  const planets = observation?.publicState?.board?.planets?.planets
+    || observation?.planets?.planets
+    || {};
+  const planet = planets[planetId];
+  if (!planet) return null;
+  if (type === "satellite") {
+    return (planet.satelliteLandings || []).length;
+  }
+  const markers = family === "land"
+    ? (planet.landingMarkers || [])
+    : (planet.orbitMarkers || []);
+  return markers.length;
+}
+
 function planDependencyFromPlan(plan, leaf) {
   if (!plan || !leaf) return { kind: "generic" };
+  const assumed = plan.planAssumedObservation;
   const candidate = leaf?.observation?.outcomeProjection?.progress?.probeRoute?.candidate;
   const routeTargetId = candidate?.endpointTargetId || probeRouteEndpointTargetId(leaf);
   if (routeTargetId) {
-    const assumed = plan.planAssumedObservation;
     const requirements = assumed?.probeRouteRequirements
       || assumed?.outcomeProjection?.progress?.probeGoalRequirements;
     const requirement = (requirements?.candidates || []).find((entry) => (
@@ -524,12 +565,12 @@ function planDependencyFromPlan(plan, leaf) {
       movementSteps: Number(
         requirement?.gap?.movementSteps ?? candidate?.resourceGap?.movementSteps ?? 0,
       ),
-      firstRewardSlotOpen: requirement?.firstRewardSlotOpen ?? null,
+      endpointMarkerCount: endpointMarkerCount(assumed, routeTargetId),
     };
   }
-  const target = plan.nextStepDescriptor?.target || {};
+  const descriptor = plan.nextStepDescriptor;
+  const target = descriptor?.target || {};
   if (target.alienSlotId != null) {
-    const assumed = plan.planAssumedObservation;
     const slot = findAlienSlot(assumed, target.alienSlotId);
     return {
       kind: "alien-slot",
@@ -539,10 +580,41 @@ function planDependencyFromPlan(plan, leaf) {
       ownerPlayerColor: slot?.ownerPlayerColor ?? null,
     };
   }
+  if (descriptor?.family === "research_tech" && target.tileId) {
+    const stack = techSupplyStackOf(assumed, target.tileId);
+    return {
+      kind: "tech",
+      tileId: String(target.tileId),
+      present: Boolean(stack && stack.depleted !== true),
+      bonusId: stack?.bonusId ?? null,
+      remaining: stack?.remaining ?? null,
+    };
+  }
+  if (descriptor?.family === "scan") {
+    return {
+      kind: "sector",
+      candidates: sectorCandidatesOf(assumed)
+        .map((entry) => ({
+          sectorId: entry?.sectorId ?? null,
+          ownCount: Number(entry?.ownCount) || 0,
+          maxOpponentCount: Number(entry?.maxOpponentCount) || 0,
+          openSlotCount: Number(entry?.openSlotCount) || 0,
+        }))
+        .sort((left, right) => String(left.sectorId).localeCompare(String(right.sectorId))),
+    };
+  }
+  if (descriptor?.family === "play_card" && target.cardInstanceId
+    && publicCardIdsOf(assumed).has(String(target.cardInstanceId))) {
+    return {
+      kind: "public-card",
+      cardInstanceId: String(target.cardInstanceId),
+      present: true,
+    };
+  }
   return { kind: "generic" };
 }
 
-// 从当前观测重算同一依赖（与 planDependencyFromPlan 同构，供 fast-path 比较）。
+// 从当前观测重算同一依赖（与 planDependencyFromPlan 同构，供复用判定比较）。
 function currentDependencyFromStore(store, observation) {
   const dependency = store?.dependency || null;
   if (dependency?.kind === "route") {
@@ -556,7 +628,7 @@ function currentDependencyFromStore(store, observation) {
       endpointTargetId: dependency.endpointTargetId,
       present: Boolean(requirement),
       movementSteps: Number(requirement?.gap?.movementSteps ?? 0),
-      firstRewardSlotOpen: requirement?.firstRewardSlotOpen ?? null,
+      endpointMarkerCount: endpointMarkerCount(observation, dependency.endpointTargetId),
     };
   }
   if (dependency?.kind === "alien-slot") {
@@ -567,6 +639,36 @@ function currentDependencyFromStore(store, observation) {
       present: Boolean(slot),
       firstPlaced: slot?.firstPlaced ?? null,
       ownerPlayerColor: slot?.ownerPlayerColor ?? null,
+    };
+  }
+  if (dependency?.kind === "tech") {
+    const stack = techSupplyStackOf(observation, dependency.tileId);
+    return {
+      kind: "tech",
+      tileId: dependency.tileId,
+      present: Boolean(stack && stack.depleted !== true),
+      bonusId: stack?.bonusId ?? null,
+      remaining: stack?.remaining ?? null,
+    };
+  }
+  if (dependency?.kind === "sector") {
+    return {
+      kind: "sector",
+      candidates: sectorCandidatesOf(observation)
+        .map((entry) => ({
+          sectorId: entry?.sectorId ?? null,
+          ownCount: Number(entry?.ownCount) || 0,
+          maxOpponentCount: Number(entry?.maxOpponentCount) || 0,
+          openSlotCount: Number(entry?.openSlotCount) || 0,
+        }))
+        .sort((left, right) => String(left.sectorId).localeCompare(String(right.sectorId))),
+    };
+  }
+  if (dependency?.kind === "public-card") {
+    return {
+      kind: "public-card",
+      cardInstanceId: dependency.cardInstanceId,
+      present: publicCardIdsOf(observation).has(dependency.cardInstanceId),
     };
   }
   return { kind: "generic" };
@@ -627,28 +729,21 @@ function advancePlan(plan) {
   };
 }
 
-// simulation 侧复用判定（用户口径，对照基准 = 上轮本家行动执行完的计划假设状态）：
-//   下一步仍合法 且 计划执行依赖的环节未变 → 复用（盘面无变化 tier1；变化不影响
-//   计划执行 tier2——对手火箭移动/打牌/资源变化、无关扇区、无探测器移动的旋转）；
-//   依赖环节变了（着陆移动变多 / 目标外星人槽被占 / 第一奖励格被占 / 跨出当前
-//   路线终点）→ 重新决策（tier3）。
-//   控制动作特例：下一步是 end_turn/pass → 无条件重新决策。主行动选择是每次决策
-//   最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1），不能靠
-//   计划复用跳过——实测计划下一步为 end_turn 时被盲目复用，会跳过当前盘面上更
-//   有价值的主行动（同状态搜索选 place_data，fast-path 直接 end_turn，白方掉分）。
-//   硬性特例：翻开了外星人（揭示槽位数 > 计划假设值）→ 无条件重新决策。
-// 命中返回 { hit: true, action, nextPlan }——nextPlan 为前进后的计划（供 store
-// 存回，实现多步复用）；miss 返回 { hit: false, reason }。
+// simulation 侧复用判定（用户口径，对照基准 = 计划假设状态）：
+//   复用 = 没有新信息。新信息只两类：
+//   ① 翻开了外星人（揭示槽位数 > 计划假设值）→ 无条件重新决策；
+//   ② 计划依赖环节变化（计划依赖的具体盘面事实变了：目标奖励格被占 / 路线变长 /
+//      计划要拿的科技被拿走 / 目标扇区赢不了 / 目标外星槽被占 / 目标公共牌被买走）。
+//   其余（对手移动/资源变化、无关扇区、无探测器移动的旋转、计划内自己的推进）
+//   不算新信息 → 复用。end_turn/pass 是回合的自然结束，计划内正常推进，可复用
+//   （搜索只在每回合开始时执行一次，回合内按计划走——协调器回合门控负责）。
+// 命中返回 { hit: true, action, nextPlan }；miss 返回 { hit: false, reason }。
 function planReuseCheck(plan, currentObservation, legalActions) {
   if (!plan || !plan.nextActionId) return Object.freeze({ hit: false, reason: "no-plan" });
   const current = (legalActions || []).find((action) => (
     String(action?.actionId) === String(plan.nextActionId)
   ));
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
-  // 控制动作不盲从计划（见上：end_turn/pass 必须每次重新决策主行动）
-  if (["end_turn", "pass"].includes(current.family)) {
-    return Object.freeze({ hit: false, reason: "control-step-redecide", family: current.family });
-  }
   if (plan.revealedCount == null) {
     return Object.freeze({ hit: false, reason: "no-reveal-count" });
   }
@@ -665,18 +760,6 @@ function planReuseCheck(plan, currentObservation, legalActions) {
   }
   if (plan.dependency == null) {
     return Object.freeze({ hit: false, reason: "no-dependency" });
-  }
-  // 计划跨出当前路线终点（下一步是新路线的 orbit/land）→ 依赖失效 → 重新决策
-  if (plan.dependency.kind === "route" && ["orbit", "land"].includes(current.family)) {
-    const targetId = [
-      current.family,
-      current.target?.planetId,
-      current.target?.type || "planet",
-      current.target?.satelliteId || "",
-    ].join(":");
-    if (targetId !== plan.dependency.endpointTargetId) {
-      return Object.freeze({ hit: false, reason: "route-target-changed" });
-    }
   }
   const currentDependency = currentDependencyFromStore({ dependency: plan.dependency }, currentObservation);
   if (stableHash(currentDependency) !== stableHash(plan.dependency)) {

@@ -112,6 +112,21 @@ function createMachinePlayerCoordinator(options = {}) {
 
   // ③⑤⑥ 一次机器人决策：读边界 -> 复用判断 -> （未命中调决策函数）-> 输出 -> 执行。
   // runOptions.reuseEnabled = false 时跳过复用判断，直接调用决策函数。
+  //
+  // 复用机制（用户口径，docs/mechanics-reference.md 名词定义）：
+  //   - 本回合（turn，玩家每一次主要行动圈）内无新信息 → 按计划逐步骤执行，不重新搜索；
+  //   - 新回合：盘面无新信息变化 → 复用上回合决策链（planReuseCheck 的依赖/揭示基线判定），
+  //     有新信息 → 重新搜索；
+  //   - 回合内出现新信息需重新决策 → TODO（暂不实现，本回合内始终按计划走）。
+  // 搜索只发生在：无计划 / 计划耗尽 / 下一步不在合法集 / 新回合 planReuseCheck 未命中。
+  function turnOf(observation) {
+    const publicState = observation?.publicState || {};
+    const round = publicState.roundNumber;
+    const turn = publicState.turnNumber;
+    if (!Number.isInteger(round) || !Number.isInteger(turn)) return null;
+    return { round, turn };
+  }
+
   function runDecision(seatId, runOptions = {}) {
     const reuseEnabled = runOptions.reuseEnabled !== false;
     const boundary = readBoundary(seatId);
@@ -124,19 +139,43 @@ function createMachinePlayerCoordinator(options = {}) {
     let action;
     let plan;
     let decision = null;
+    const currentTurn = turnOf(boundary.observation);
     if (reuseEnabled) {
-      const storedPlan = planStores.get(seatId) || null;
-      const reuse = planContinuation.planReuseCheck(
-        storedPlan,
-        boundary.observation,
-        boundary.legalActions,
-      );
-      if (reuse.hit) {
-        action = reuse.action;
-        plan = reuse.nextPlan;
-        record("plan-reuse-hit", { seatId, actionId: action.actionId });
+      const stored = planStores.get(seatId) || null;
+      const sameTurn = Boolean(stored?.turn && currentTurn
+        && stored.turn.round === currentTurn.round
+        && stored.turn.turn === currentTurn.turn);
+      if (stored?.plan?.nextActionId) {
+        if (sameTurn) {
+          // 本回合内：无新信息，直接按计划下一步走（不重新搜索；回合内新信息
+          // 重新决策 TODO，暂不实现）。
+          const current = boundary.legalActions.find((candidate) => (
+            String(candidate?.actionId) === String(stored.plan.nextActionId)
+          ));
+          if (current) {
+            action = current;
+            plan = planContinuation.advancePlan(stored.plan);
+            record("plan-reuse-hit", { seatId, actionId: action.actionId });
+          } else {
+            record("plan-reuse-miss", { seatId, reason: "step-not-legal-within-turn" });
+          }
+        } else {
+          // 新回合：盘面无新信息则复用上回合决策链（planReuseCheck 依赖/揭示基线判定）
+          const reuse = planContinuation.planReuseCheck(
+            stored.plan,
+            boundary.observation,
+            boundary.legalActions,
+          );
+          if (reuse.hit) {
+            action = reuse.action;
+            plan = reuse.nextPlan;
+            record("plan-reuse-hit", { seatId, actionId: action.actionId });
+          } else {
+            record("plan-reuse-miss", { seatId, reason: reuse.reason });
+          }
+        }
       } else {
-        record("plan-reuse-miss", { seatId, reason: reuse.reason });
+        record("plan-reuse-miss", { seatId, reason: stored ? "no-plan-step" : "no-plan" });
       }
     }
     if (!action) {
@@ -177,7 +216,8 @@ function createMachinePlayerCoordinator(options = {}) {
       recordStep(action, executed, { seatId, boundary });
     }
     if (plan?.nextActionId) {
-      planStores.set(seatId, plan);
+      // 计划连同其所属回合（turn）一起存储：本回合内按计划走，新回合重新判定。
+      planStores.set(seatId, { plan, turn: currentTurn });
     } else {
       planStores.delete(seatId);
     }

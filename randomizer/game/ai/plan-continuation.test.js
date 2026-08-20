@@ -323,13 +323,13 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
 {
   const nextActionId = "move:b";
   const nextDescriptor = descriptor("move", { rocketId: "r1", deltaX: 1, deltaY: 0 }, {}, nextActionId);
-  // 依赖：探测路线计划，终点 land:mars，移动 2 步（fixture 候选无 firstRewardSlotOpen → null）
+  // 依赖：探测路线计划，终点 land:mars，移动 2 步（fixture 无行星标记 → markerCount null）
   const routeDependency = {
     kind: "route",
     endpointTargetId: "land:mars:planet:",
     present: true,
     movementSteps: 2,
-    firstRewardSlotOpen: null,
+    endpointMarkerCount: null,
   };
   const plan = {
     nextActionId,
@@ -358,17 +358,17 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   assert.equal(noBaseline.hit, false, "无揭示基线必须保守重新决策");
   assert.equal(noBaseline.reason, "no-reveal-count");
 
-  // tier1/2：依赖环节未变 → 直接复用（盘面无变化，或变化不影响计划执行）
+  // 依赖环节未变 → 复用（盘面无变化，或变化不影响计划执行）
   const unchanged = makeObservation();
   unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
   unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
   const hit = planContinuation.planReuseCheck(plan, unchanged, [nextDescriptor]);
-  assert.equal(hit.hit, true, "路线移动步数与槽位未变必须复用");
+  assert.equal(hit.hit, true, "路线移动步数与目标奖励格未变必须复用");
   assert.equal(hit.action.actionId, nextActionId, "命中必须返回当前合法集内的 descriptor");
   assert.equal(hit.nextPlan.nextActionId, "orbit:c", "复用后计划必须前进一步（多步消费）");
   assert.deepEqual(hit.nextPlan.continuation, ["orbit:c"], "前进后续接下一动作");
 
-  // tier3：着陆需要的移动更多了 → 重新决策
+  // 路线变长（移动步数增加）→ 重新决策
   const moreMoves = makeObservation();
   moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
   moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
@@ -377,15 +377,17 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   assert.equal(affected.hit, false, "目标移动步数增加必须重新决策");
   assert.equal(affected.reason, "next-step-affected");
 
-  // tier3：第一奖励格被占 → 重新决策
-  const slotTaken = makeObservation();
+  // 目标奖励格被占（终点行星标记数变化，不局限第一格）→ 重新决策
+  const slotTaken = makeObservation({
+    planets: { planets: { mars: { orbitMarkers: [], landingMarkers: [{ playerId: "p2" }], satelliteLandings: [] } } },
+  });
   slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
   slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].firstRewardSlotOpen = false;
   const slotMiss = planContinuation.planReuseCheck(plan, slotTaken, [nextDescriptor]);
-  assert.equal(slotMiss.hit, false, "第一奖励格被占必须重新决策");
+  assert.equal(slotMiss.hit, false, "目标奖励格被占（标记数变化）必须重新决策");
+  assert.equal(slotMiss.reason, "next-step-affected");
 
-  // tier3：计划跨出当前路线终点（下一步是另一路线的 land）→ 重新决策
+  // 计划推进到第二条路线（顺序执行，计划内推进，不是新信息）→ 复用
   const otherRoutePlan = {
     nextActionId: "land:venus:x",
     continuation: ["land:venus:x"],
@@ -395,10 +397,9 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   const otherRoute = planContinuation.planReuseCheck(otherRoutePlan, unchanged, [
     descriptor("land", { planetId: "venus" }, {}, "land:venus:x"),
   ]);
-  assert.equal(otherRoute.hit, false, "下一步目标 ≠ 计划路线终点必须重新决策");
-  assert.equal(otherRoute.reason, "route-target-changed");
+  assert.equal(otherRoute.hit, true, "计划推进到第二条路线是计划内顺序执行，不是新信息，必须复用");
 
-  // tier1/2：generic 依赖（对手火箭移动/打牌等不影响计划执行）→ 直接复用
+  // generic 依赖（对手火箭移动/打牌等不影响计划执行）→ 直接复用
   const genericPlan = { nextActionId, continuation: [], dependency: { kind: "generic" }, revealedCount: 0 };
   const genericHit = planContinuation.planReuseCheck(genericPlan, makeObservation({ rotation: 2 }), [nextDescriptor]);
   assert.equal(genericHit.hit, true, "generic 依赖（未识别为影响计划执行）必须复用");
@@ -419,8 +420,7 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   );
   assert.equal(stillRevealed.hit, true, "揭示数未增加不触发特例");
 
-  // 控制动作特例：下一步是 end_turn/pass → 无条件重新决策（主行动不能被
-  // 计划复用跳过——实测 fast-path 同状态跳过 place_data 直接 end_turn）
+  // end_turn/pass 是回合自然结束，计划内正常推进，不是新信息 → 可复用
   const endTurnPlan = {
     nextActionId: "end_turn:turn1",
     continuation: [],
@@ -428,13 +428,12 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     revealedCount: 0,
   };
   const endTurnDescriptor = descriptor("end_turn", {}, {}, "end_turn:turn1");
-  const endTurnMiss = planContinuation.planReuseCheck(
+  const endTurnHit = planContinuation.planReuseCheck(
     endTurnPlan,
     makeObservation(),
     [endTurnDescriptor],
   );
-  assert.equal(endTurnMiss.hit, false, "下一步是 end_turn 必须重新决策");
-  assert.equal(endTurnMiss.reason, "control-step-redecide", "必须报告 control-step-redecide");
+  assert.equal(endTurnHit.hit, true, "下一步是 end_turn 必须复用（回合自然结束，非新信息）");
 
   const passPlan = {
     nextActionId: "pass:turn1",
@@ -443,9 +442,79 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     revealedCount: 0,
   };
   const passDescriptor = descriptor("pass", {}, {}, "pass:turn1");
-  const passMiss = planContinuation.planReuseCheck(passPlan, makeObservation(), [passDescriptor]);
-  assert.equal(passMiss.hit, false, "下一步是 pass 必须重新决策");
-  assert.equal(passMiss.reason, "control-step-redecide");
+  const passHit = planContinuation.planReuseCheck(passPlan, makeObservation(), [passDescriptor]);
+  assert.equal(passHit.hit, true, "下一步是 pass 必须复用");
+}
+
+// ---------------------------------------------------------------------------
+// 新信息判定（对齐后）：科技被拿走 / 扇区赢不了 / 公共牌被买走 → 依赖变化 → 重决策
+// ---------------------------------------------------------------------------
+
+{
+  // 科技依赖：计划要拿的科技 tile 被拿走（供应 remaining 变化）→ 重新决策
+  const techPlan = {
+    nextActionId: "research_tech:blue1",
+    continuation: [],
+    dependency: { kind: "tech", tileId: "blue1", present: true, bonusId: "bonus_1c", remaining: 4 },
+    revealedCount: 0,
+  };
+  const techDescriptor = descriptor("research_tech", { tileId: "blue1" }, {}, "research_tech:blue1");
+  const techUnchanged = makeObservation();
+  techUnchanged.publicState.board.techSupply = {
+    stacks: { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 4, depleted: false } },
+  };
+  assert.equal(
+    planContinuation.planReuseCheck(techPlan, techUnchanged, [techDescriptor]).hit,
+    true,
+    "科技供应未变必须复用",
+  );
+  const techTaken = makeObservation();
+  techTaken.publicState.board.techSupply = {
+    stacks: { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 3, depleted: false } },
+  };
+  const techMiss = planContinuation.planReuseCheck(techPlan, techTaken, [techDescriptor]);
+  assert.equal(techMiss.hit, false, "计划要拿的科技被拿走（remaining 变化）必须重新决策");
+  assert.equal(techMiss.reason, "next-step-affected");
+
+  // 扇区依赖：目标扇区标记状态变化（赢不了了）→ 重新决策
+  const sectorPlan = {
+    nextActionId: "scan:s",
+    continuation: [],
+    dependency: { kind: "sector", candidates: [] },
+    revealedCount: 0,
+  };
+  const sectorDescriptor = descriptor("scan", {}, {}, "scan:s");
+  assert.equal(
+    planContinuation.planReuseCheck(sectorPlan, makeObservation(), [sectorDescriptor]).hit,
+    true,
+    "扇区状态未变必须复用",
+  );
+  const sectorChanged = makeObservation();
+  sectorChanged.outcomeProjection.progress.sectorWinRequirements = {
+    candidates: [{ sectorId: "sector-2-b", ownCount: 1, maxOpponentCount: 0, openSlotCount: 3 }],
+  };
+  const sectorMiss = planContinuation.planReuseCheck(sectorPlan, sectorChanged, [sectorDescriptor]);
+  assert.equal(sectorMiss.hit, false, "目标扇区标记变化（赢不了了）必须重新决策");
+
+  // 公共牌依赖：计划要用的公共牌被买走 → 重新决策
+  const cardPlan = {
+    nextActionId: "play_card:pub",
+    continuation: [],
+    dependency: { kind: "public-card", cardInstanceId: "card-17-0", present: true },
+    revealedCount: 0,
+  };
+  const cardDescriptor = descriptor("play_card", { cardInstanceId: "card-17-0" }, {}, "play_card:pub");
+  const cardUnchanged = makeObservation();
+  cardUnchanged.publicState.board.publicCards = [{ id: "card-17-0", cardId: "dlc_20.png" }];
+  assert.equal(
+    planContinuation.planReuseCheck(cardPlan, cardUnchanged, [cardDescriptor]).hit,
+    true,
+    "公共牌未变必须复用",
+  );
+  const cardTaken = makeObservation();
+  cardTaken.publicState.board.publicCards = [];
+  const cardMiss = planContinuation.planReuseCheck(cardPlan, cardTaken, [cardDescriptor]);
+  assert.equal(cardMiss.hit, false, "计划要用的公共牌被买走必须重新决策");
 }
 
 // ---------------------------------------------------------------------------
