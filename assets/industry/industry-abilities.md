@@ -18,6 +18,13 @@ Production company catalog 只包含 11 个正式标签：
 Browser 与 Simulation 只能提交 Standard Action 或 Effect Session Decision，不能直接调用
 `randomizer/app` 中的 picker、callback 或流程控制。
 
+**启用前置（合法性）铁律**：1x 主动能力在枚举时即校验其后续会话的前置，且校验谓词
+与 `listCompanyChoices` 的会话枚举同源——"枚举为合法的动作执行后必能继续"（否则会话
+0 选项会让机器席位 MACHINE_PLAYER_BOUNDARY_EMPTY 死局）。已在 `canStartCompany` 落位的
+前置：寰宇动力（有可移动探测器）、图灵系统（有可用橙/紫科技槽）、宣传选牌/战略/
+未来跨度/深空交换（有公共牌）。纯空转（如层云核心无公共牌时不开会话直接无效果）
+属可接受行为，不设前置。
+
 ## 主动能力
 
 | 公司 | 正式能力 |

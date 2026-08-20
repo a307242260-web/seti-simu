@@ -514,4 +514,109 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   );
 })();
 
+// ---------------------------------------------------------------------------
+// 寰宇动力 1x 合法性：枚举为合法的动作执行后必能继续（否则 free_move 会话
+// 0 选项 → 机器席位 MACHINE_PLAYER_BOUNDARY_EMPTY 死局）。合法性（industry
+// 动作枚举）与 free_move 会话枚举共用 listHuanyuMoveChoices 同一判定。
+// ---------------------------------------------------------------------------
+
+function huanyuRoot() {
+  const root = createRoot();
+  root.turn.passedPlayerIds = [];
+  root.players.players[0].initialSelection = { industry: { label: "寰宇动力" } };
+  return root;
+}
+
+function industryDefinition() {
+  return residual.createActionDefinitions()[0];
+}
+
+{
+  // 崩溃回归：无任何探测器时，industry 动作不得枚举（此前被枚举为合法，
+  // 执行后 free_move 会话 0 选项，下一决策 BOUNDARY_EMPTY）
+  const root = huanyuRoot();
+  root.pieces.rockets = [];
+  const choices = industryDefinition().enumerate({
+    state: root,
+    standardActionAuthority: { actorId: "p1" },
+    turn: root.turn,
+  });
+  assert.equal(choices.length, 0, "寰宇动力无可移动探测器时不得枚举 industry 动作");
+}
+
+{
+  // 同 class 守卫：图灵系统无可用橙/紫科技槽时不得枚举（turing_tech 会话 0 选项）
+  const root = createRoot();
+  root.turn.passedPlayerIds = [];
+  root.players.players[0].initialSelection = { industry: { label: "图灵系统" } };
+  root.tech = { board: { stacks: {} } }; // 无任何科技供应
+  const choices = industryDefinition().enumerate({
+    state: root,
+    standardActionAuthority: { actorId: "p1" },
+    turn: root.turn,
+  });
+  assert.equal(choices.length, 0, "图灵系统无可借用橙/紫科技时不得枚举 industry 动作");
+}
+
+{
+  // 同 class 守卫：宣传选牌类公司无公共牌时不得枚举（public_card 会话 0 选项）
+  const root = createRoot();
+  root.turn.passedPlayerIds = [];
+  root.players.players[0].initialSelection = { industry: { label: "任务中继站" } };
+  root.players.players[0].resources.publicity = 5;
+  root.cards.publicCards = []; // 无公共牌
+  const choices = industryDefinition().enumerate({
+    state: root,
+    standardActionAuthority: { actorId: "p1" },
+    turn: root.turn,
+  });
+  assert.equal(choices.length, 0, "任务中继站无公共牌时不得枚举 industry 动作");
+}
+
+{
+  // 正例：有太阳系探测器时 industry 可枚举，且执行后 free_move 会话必有选择
+  const root = huanyuRoot();
+  root.pieces.rockets = [{
+    id: "r1",
+    playerId: "p1",
+    color: "white",
+    surface: "solar-board",
+    sectorX: 0,
+    sectorY: 0,
+    slotIndex: 0,
+  }];
+  const choices = industryDefinition().enumerate({
+    state: root,
+    standardActionAuthority: { actorId: "p1" },
+    turn: root.turn,
+  });
+  assert.equal(choices.length, 1, "有可移动探测器时 industry 必须可枚举");
+  assert.equal(choices[0].target.abilityId, "huanyu_free_moves", "能力必须是 huanyu_free_moves");
+
+  const owner = createHarness(residual, "createResidualDomain");
+  const result = execute(owner.executors.get(residual.EFFECT_TYPES.EXECUTE), root, {
+    ownerId: "p1",
+    payload: {
+      action: {
+        schemaVersion: "seti-standard-action-v1",
+        actionId: "industry:huanyu",
+        family: "industry",
+        actorId: "p1",
+        target: { companyId: "寰宇动力", abilityId: "huanyu_free_moves" },
+        payload: {},
+      },
+    },
+  });
+  assert.equal(result.ok, true);
+  const freeMove = (result.spawnedEffects || []).find((entry) => (
+    entry?.effect?.type === residual.EFFECT_TYPES.COMPANY_DECISION
+    && entry?.effect?.payload?.step === "free_move"
+  ));
+  assert.ok(freeMove, "执行寰宇动力必须生成 free_move 决策");
+  const moveChoices = owner.executors
+    .get(residual.EFFECT_TYPES.COMPANY_DECISION)
+    .getLegalChoices(root, freeMove.effect, { state: root });
+  assert.ok(moveChoices.length > 0, "free_move 会话必须有合法移动选择（合法性与枚举一致）");
+}
+
 console.log("residual-domain-session production proofs passed");

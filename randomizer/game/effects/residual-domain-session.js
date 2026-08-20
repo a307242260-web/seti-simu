@@ -146,6 +146,29 @@
     };
   }
 
+  // 寰宇动力 1x 行动的可移动探测器选择。合法性（canStartCompany）与 free_move
+  // 会话枚举共用同一判定，保证"枚举为合法的动作执行后必能继续"——否则玩家无
+  // 可移动探测器时动作仍被枚举为合法，执行后 free_move 会话 0 选项，机器席位
+  // 在下一决策直接 MACHINE_PLAYER_BOUNDARY_EMPTY 死局（实测 #202 复用
+  // industry:寰宇动力 后崩溃）。
+  function listHuanyuMoveChoices(root, player, usedRocketIds = []) {
+    const used = new Set(usedRocketIds);
+    const context = {
+      state: root,
+      players: root.players,
+      pieces: root.pieces,
+      planets: root.planets,
+      aliens: root.aliens,
+      data: root.data,
+      cards: root.cards,
+      solarSystem: root.solarSystem,
+      turn: { ...root.turn, currentPlayerId: player.id },
+      tech: root.tech,
+    };
+    return gameAbilities.rocket.listPlayerMoveChoices(context, player, { maxPoints: 1 })
+      .filter((move) => !used.has(move.rocketId));
+  }
+
   function canStartCompany(root, player) {
     if (!player) return fail("COMPANY_OWNER_MISSING", "没有当前玩家");
     if ((root.turn?.passedPlayerIds || []).includes(player.id) || player.passCompletionPending) {
@@ -155,8 +178,39 @@
     if (!label) return fail("COMPANY_MISSING", "玩家没有正式公司");
     const active = industryAbilities.canStartActiveAbility(player, label);
     if (!active.ok) return active;
+    // 合法性 == 会话可枚举性（用户口径"枚举为合法的动作执行后必能继续"）：
+    // 各 1x 能力在启用前校验其后续会话的前置，否则会话 0 选项会让机器席位
+    // 在下一决策 MACHINE_PLAYER_BOUNDARY_EMPTY 死局。谓词与会话枚举同源。
+    const abilityId = active.abilityId;
+    // 寰宇动力 1x：没有可移动探测器时不得启用（free_move 会话 0 选项死局）
+    if (abilityId === "huanyu_free_moves" && listHuanyuMoveChoices(root, player).length === 0) {
+      return fail("COMPANY_NO_MOVABLE_ROCKET", "寰宇动力：没有可移动的探测器");
+    }
+    // 图灵系统 1x：没有可用橙/紫科技槽时不得启用（turing_tech 会话 0 选项死局）
+    if (abilityId === "turing_borrow_tech") {
+      const borrowable = (tech.TECH_TILE_IDS || []).some((tileId) => (
+        /^(orange|purple)/.test(tileId) && tech.isSlotAvailable(root.tech, tileId)
+      ));
+      if (!borrowable) {
+        return fail("COMPANY_NO_BORROWABLE_TECH", "图灵系统：没有可借用的橙/紫科技");
+      }
+    }
+    // 公共牌选择类 1x（宣传选牌/战略/未来跨度/深空交换）：无公共牌时
+    // 不得启用（public_card/swap_public 会话 0 选项死局）。层云角标不在其列：
+    // 无公共牌时 companyQueue 直接返回 []（不开会话），属可接受空转。
+    const publicCardAbilityIds = new Set([
+      "mission_publicity_pick_income",
+      "fenwick_publicity_pick_corner",
+      "strategy_pick_card",
+      "future_span_pick_advance",
+      "deepspace_swap_cards",
+    ]);
+    if (publicCardAbilityIds.has(abilityId)
+      && !(root.cards?.publicCards || []).some(Boolean)) {
+      return fail("COMPANY_NO_PUBLIC_CARD", `${active.label}：没有公共牌可选`);
+    }
     const mark = industry.canMarkIndustryAction(player, roundOf(root), { turnNumber: turnOf(root) });
-    return mark.ok ? { ok: true, label, abilityId: active.abilityId } : mark;
+    return mark.ok ? { ok: true, label, abilityId } : mark;
   }
 
   function createActionDefinitions() {
@@ -426,24 +480,9 @@
       }));
     }
     if (payload.step === "free_move") {
-      const used = new Set(payload.usedRocketIds || []);
-      const context = {
-        state: root,
-        players: root.players,
-        pieces: root.pieces,
-        planets: root.planets,
-        aliens: root.aliens,
-        data: root.data,
-        cards: root.cards,
-        solarSystem: root.solarSystem,
-        turn: { ...root.turn, currentPlayerId: player.id },
-        tech: root.tech,
-      };
-      // 统一移动入口：与卡牌/紫4/快速交易/probe turn 共用 listPlayerMoveChoices
-      const choices = gameAbilities.rocket.listPlayerMoveChoices(context, player, {
-        maxPoints: 1,
-      })
-        .filter((move) => !used.has(move.rocketId))
+      // 统一移动入口：与卡牌/紫4/快速交易/probe turn 共用 listPlayerMoveChoices，
+      // 且与 canStartCompany 的合法性判定同一 helper（合法动作执行后必能继续）
+      const choices = listHuanyuMoveChoices(root, player, payload.usedRocketIds || [])
         .map((move) => choice(
           "choose_target", `move:${move.rocketId}:${move.directionId}`,
           { rocketId: move.rocketId, deltaX: move.deltaX, deltaY: move.deltaY },
