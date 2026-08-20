@@ -33,7 +33,7 @@ Simulation（app/simulation-env.js）
 
 - `production-kernel.js` 的 `createBrowserProductionKernel` 与 `createSimulationRuleComposition`
   都调用同一个 `createProductionHostComposition`，只传不同的 `hostKind`；
-- 23 个 family 的 registry、五个 Effect domain（opening / standard / card / science /
+- 23 个 family 的 registry、六个 Effect domain（opening / standard / card / science /
   probe-turn / residual）、Decision owner、提交链全部由 `production-composition.js` 唯一安装；
 - 输入端口（`inputPort.enumerateActions / submitAction / submitQuickAction /
   submitDecision / undo`）与 `lifecycle`、`counterfactualPort`、`inspect` 由

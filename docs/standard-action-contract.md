@@ -53,12 +53,12 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `scan` | main | Production science domain | reference | registry 统一入口与支付合法性；sector/card 多选继续外显 Decision |
 | `analyze` | main | Standard Action registry；ability/effect adapter | reference | 数据来源固定为 computer/requiredSlot，费用写入 payload |
 | `research_tech` | main | Production science domain | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |
-| `play_card` | main | Production card-play domain | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性 旧路径 |
+| `play_card` | main | Production card-play domain | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性结算路径 |
 | `pass` | main | Production probe-turn domain | reference | PASS 主动作统一；预留牌/必做效果仍由对应 owner 外显，不由 policy 代选 |
 | `move` | quick | Production probe-turn domain | reference | rocket、方向和移动支付入口固定，补充支付继续外显 Decision |
 | `quick_trade` | quick | Production Domain Pack；`game/actions/quick-trades` | reference | game source 拥有 discard/card Decision、费用、实体迁移与 Session journal；Host 不注入 history/旧路径 |
 | `industry` | quick | Production residual domain | reference | 统一公司身份、1x 使用标志、Decision 与 journal |
-| `card_corner` | quick | Production residual domain | reference | 统一卡牌实例、角标效果与移动 旧路径 |
+| `card_corner` | quick | Production residual domain | reference | 统一卡牌实例、角标效果与移动路径 |
 | `place_data` | quick | Standard Action registry；data ability adapter | reference | 统一槽位候选、bonus、history 与无目标语义 |
 | `runezu_face_symbol` | quick | Production residual domain | reference | 统一符号来源、面板目标、分支与痕迹奖励 |
 | `end_turn` | turn_control | Production probe-turn domain | reference | 只在无待决策且主行动完成时合法，统一 owner 推进 |
@@ -67,11 +67,11 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `choose_payment` | conditional | Standard Action registry；discard/resource pending adapter | reference | 支付集合绑定 descriptor 与 authority，执行时重新校验 |
 | `choose_reward` | conditional | Standard Action registry；effect/industry/alien pending adapter | reference | 奖励 identity 与后续 effect chain 稳定 |
 | `choose_branch` | conditional | Standard Action registry；card/alien/confirm pending adapter | reference | 分支使用语义化 target，禁止按钮文案作为协议 |
-| `choose_final_scoring` | conditional | Production 旧路径 | reference | 独立 owner、候选、replay 与 terminal 结算 |
+| `choose_final_scoring` | conditional | Production final-scoring domain | reference | 独立 owner、候选、replay 与 terminal 结算 |
 | `accept_optional_effect` | conditional | Standard Action registry；optional effect adapter | reference | 明确 `accept/skip` target，禁止默认取首项 |
 
-`game/production-composition.js` 创建唯一 registry、五个 Effect domain 和 deterministic
-旧路径；Host 只提供 state/projection adapter 与纯 service，传入 `productionRules`、
+`game/production-composition.js` 创建唯一 registry、六个 Effect domain 和确定性提交链；
+Host 只提供 state/projection adapter 与纯 service，传入 `productionRules`、
 `standardActionDomainOptions`、conditional registry、quick-trade history 或 working-state
 规则 transaction 时构造期失败。`resolveIntent` 仅服务浏览器 DOM 的窄输入边界，多目标返回
 `STANDARD_ACTION_AMBIGUOUS`；浏览器 AI、Simulation 与训练 Policy 不使用它。orbit/land 的

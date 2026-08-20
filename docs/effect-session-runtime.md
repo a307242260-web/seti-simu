@@ -176,7 +176,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 ## 旧流程删除状态
 
-旧字段已按领域迁入 Decision Session、Effect Session、session journal 或正式 UI/Browser Host state；`randomizer/app/runtime.js` 不再创建通用 `pending` 对象。迁移验收仍必须证明以下旧责任从生产热路径不可达：
+旧字段已按领域迁入 Decision Session、Effect Session、session journal 或正式 UI/Browser Host state；`randomizer/app/runtime.js` 已物理删除（不再存在，也不会创建通用 `pending` 对象）。迁移验收仍必须证明以下旧责任从生产热路径不可达：
 
 - `abilities.chain` 不再作为第二套队列/插入状态机。
 - `actionHistory` / `quickActionHistory` 不再各自决定事务边界，改为消费 session journal。

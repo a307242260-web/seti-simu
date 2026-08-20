@@ -729,9 +729,17 @@ function createSimulationEnv() {
         return {
           ...machineStepResult,
           policyDecision: {
+            schemaVersion: "seti-policy-decision-v1",
+            requestId: `plan-reuse:${result.seatId}:${probeBoundary.legalActions[0]?.stateVersion || "?"}:${probeBoundary.legalActions[0]?.decisionVersion || "?"}`,
+            seatId: result.seatId,
+            stateVersion: probeBoundary.legalActions[0]?.stateVersion ?? null,
+            decisionVersion: probeBoundary.legalActions[0]?.decisionVersion ?? null,
             actionId: result.actionId,
-            policyType: provenance.type,
-            policyVersion: provenance.version,
+            policy: {
+              type: provenance.type,
+              version: provenance.version,
+              modelChecksum: null,
+            },
             planContinuationFastPath: true,
             diagnostics: { reasonCode: "plan-continuation-fast-path" },
           },

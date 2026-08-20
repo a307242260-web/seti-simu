@@ -44,7 +44,8 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   replay/reward，browser 为空操作。复用命中时不经这条链路，提交由协调器的 execute
   直接进共享 inputPort（零转换）。
 - 复用判定与计划结构细节见 §3。Browser 机器席位与 Simulation 一样走协调器复用层
-  （`planContinuationReuse`，默认关，URL 参数 `?planReuse=1` 开启）。
+  （`planContinuationReuse`，默认开，URL 参数 `?planReuse=0` 关闭，与 Simulation
+  默认装配一致）。
 - 反事实搜索在决策函数内经 `counterfactualPort` 隔离 fork：同根状态、同一
   Standard Action registry / Effect Session / Decision 与 commit 语义；Policy 只收到
   裁剪后的 root/leaf observation、标准行动链、合法后继和 unresolved 状态，仍只返回
@@ -123,6 +124,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - **本回合内**（协调器回合门控：计划记录的 round/turn == 当前决策的 round/turn）：按计划下一步直接执行（仅校验合法性），不调用 planReuseCheck、不搜索。`end_turn`/`pass` 是回合自然结束，属计划内正常推进，同样复用。
 - **新回合**：`planReuseCheck` 判定——**新信息只有两类**，无新信息则复用上回合决策链：
   - 开关 `planNewTurnReuse`（sim 经 `resetConfig.planNewTurnReuse`，默认开；`false` 关闭后新回合一律重新搜索，用于 A/B 评估"忽略非依赖变化而复用"的影响）。
+  - **控制动作特例（control-step-redecide）**：下一步是 `end_turn`/`pass` → 无条件重新决策，不盲从计划。主行动选择是每次决策最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1）——winning leaf 链穿过回合边界（end_turn）rollout 时，新回合计划下一步为 end_turn 被盲目复用会跳过当前盘面上更有价值的主行动（同状态搜索选 place_data，fast-path 直接 end_turn，白方掉分）。48f0af3e 曾移除该特例（实测免电盘面 219 决策即终局、均分暴跌 AVG 27.3），已恢复 1d063418 口径。**注意区分**：本回合内（回合门控分支）end_turn 仍按计划正常推进；特例只作用于新回合的 `planReuseCheck`。
   - **① 揭示外星人**：已揭示槽位数 > 计划假设值 → 无条件重新决策（隐藏信息揭示）；
   - **② 计划依赖环节变化**（计划依赖的具体盘面事实变了）→ 重新决策：
     - 路线：目标奖励格被占（终点行星标记数变化，不局限第一格，如奥陌陌登陆 3 格）/ 路线变长（移动步数增加）；

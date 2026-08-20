@@ -735,8 +735,14 @@ function advancePlan(plan) {
 //   ② 计划依赖环节变化（计划依赖的具体盘面事实变了：目标奖励格被占 / 路线变长 /
 //      计划要拿的科技被拿走 / 目标扇区赢不了 / 目标外星槽被占 / 目标公共牌被买走）。
 //   其余（对手移动/资源变化、无关扇区、无探测器移动的旋转、计划内自己的推进）
-//   不算新信息 → 复用。end_turn/pass 是回合的自然结束，计划内正常推进，可复用
-//   （搜索只在每回合开始时执行一次，回合内按计划走——协调器回合门控负责）。
+//   不算新信息 → 复用。
+//   控制动作特例：下一步是 end_turn/pass → 无条件重新决策。主行动选择是每次决策
+//   最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1），不能靠
+//   计划复用跳过——winning leaf 链穿过回合边界（end_turn）rollout 时，新回合计划
+//   下一步为 end_turn 被盲目复用会跳过当前盘面上更有价值的主行动（同状态搜索选
+//   place_data，fast-path 直接 end_turn，白方掉分）。48f0af3e 移除该特例后免电
+//   分析盘面 219 决策即终局（旧记录 520+）、均分暴跌（AVG 27.3），恢复 1d063418
+//   口径。同回合内（协调器回合门控）end_turn 仍按计划正常推进（回合自然结束）。
 // 命中返回 { hit: true, action, nextPlan }；miss 返回 { hit: false, reason }。
 function planReuseCheck(plan, currentObservation, legalActions) {
   if (!plan || !plan.nextActionId) return Object.freeze({ hit: false, reason: "no-plan" });
@@ -744,6 +750,10 @@ function planReuseCheck(plan, currentObservation, legalActions) {
     String(action?.actionId) === String(plan.nextActionId)
   ));
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
+  // 控制动作不盲从计划（见上：end_turn/pass 必须每次重新决策主行动）
+  if (["end_turn", "pass"].includes(current.family)) {
+    return Object.freeze({ hit: false, reason: "control-step-redecide", family: current.family });
+  }
   if (plan.revealedCount == null) {
     return Object.freeze({ hit: false, reason: "no-reveal-count" });
   }

@@ -116,6 +116,7 @@ function buildIdentity(options) {
     aiDifficulty: config.aiDifficulty || "laughable",
     policyVersion: POLICY_VERSION,
     flags: {},
+    gitCommit: gitCommit() || "dirty",
   };
   for (const key of FLAG_KEYS) {
     if (config[key] !== undefined) identity.flags[key] = config[key];
@@ -127,11 +128,16 @@ function fingerprintOf(identity) {
   const payload = {};
   for (const key of IDENTITY_KEYS) payload[key] = identity[key];
   payload.flags = identity.flags;
+  // 指纹含 gitCommit：同一实验（seed+policy+flags）不同代码版本产生不同指纹，
+  // 记录天然隔离（2026-08-20 缺陷修复——此前指纹不含 commit，行为变化会静默
+  // 覆盖旧记录或拒绝重跑，无法追溯每条记录对应的精确代码版本）。
+  payload.gitCommit = identity.gitCommit || "dirty";
   return sha256(stableSerialize(payload));
 }
 
-function recordFileOf(fingerprint, mode) {
-  return path.join(RECORDS_DIR, `${fingerprint}.${mode}.json`);
+function recordFileOf(fingerprint, mode, commit) {
+  const suffix = commit ? `.${String(commit).slice(0, 8)}` : "";
+  return path.join(RECORDS_DIR, `${fingerprint.slice(0, 8)}${suffix}.${mode}.json`);
 }
 
 function modeOf(options) {
@@ -153,8 +159,8 @@ function listRecords() {
     .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
 }
 
-function findRecord(fingerprint, mode) {
-  const file = recordFileOf(fingerprint, mode);
+function findRecord(fingerprint, mode, commit) {
+  const file = recordFileOf(fingerprint, mode, commit);
   if (!fs.existsSync(file)) return null;
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
@@ -309,22 +315,36 @@ function runValidation(options) {
   const identity = buildIdentity(options);
   const fingerprint = fingerprintOf(identity);
   const mode = modeOf(options);
-  const recordPath = recordFileOf(fingerprint, mode);
+  const commit = identity.gitCommit;
+  const recordPath = recordFileOf(fingerprint, mode, commit);
 
-  // ---- 去重（绝不跑同一个实验多遍）----
-  const existing = findRecord(fingerprint, mode);
+  // ---- 去重（绝不跑同一个实验同一代码版本多遍）----
+  // 指纹含 gitCommit：同 seed+policy+flags 不同代码版本 → 不同指纹 → 各自留档，
+  // 互不覆盖（2026-08-20 缺陷修复，此前指纹不含 commit，行为变化会被误判为
+  // 同一实验而拒绝重跑或 --force 覆盖旧记录）。
+  const existing = findRecord(fingerprint, mode, commit);
   if (existing && !options.force) {
-    console.log(`[skip] 同一实验同模式已存在记录（指纹 ${fingerprint.slice(0, 12)}，${mode}），不重跑。`);
-    console.log(`  记录: ${path.relative(path.join(__dirname, ".."), recordPath)}  createdAt=${existing.createdAt}`);
+    console.log(`[skip] 同一实验同一代码版本同模式已存在记录（指纹 ${fingerprint.slice(0, 12)}，${mode}），不重跑。`);
+    console.log(`  记录: ${path.relative(path.join(__dirname, ".."), recordPath)}  createdAt=${existing.createdAt} gitCommit=${existing.gitCommit}`);
     console.log(`  如需强制重跑请加 --force（并在提交说明里写明覆盖原因）。`);
     process.exit(2);
   }
-  const fullExisting = options.full ? null : findRecord(fingerprint, "full");
+  const fullExisting = options.full ? null : findRecord(fingerprint, "full", commit);
   if (fullExisting && !options.force) {
-    console.log(`[skip] 该实验已有全盘记录（${fullExisting.createdAt}），快速验证被全盘覆盖，不重跑。`);
-    console.log(`  记录: ${path.relative(path.join(__dirname, ".."), recordFileOf(fingerprint, "full"))}`);
+    console.log(`[skip] 该实验该代码版本已有全盘记录（${fullExisting.createdAt}），快速验证被全盘覆盖，不重跑。`);
+    console.log(`  记录: ${path.relative(path.join(__dirname, ".."), recordFileOf(fingerprint, "full", commit))}`);
     console.log(`  如需强制快速验证请加 --force。`);
     process.exit(2);
+  }
+  if (existing && options.force) {
+    // --force 覆盖前自动备份旧记录，保留对比基准（2026-08-20 缺陷修复）。
+    const backupPath = `${recordPath}.bak-${Date.now()}`;
+    try {
+      fs.copyFileSync(recordPath, backupPath);
+      console.log(`[backup] 覆盖前备份旧记录 → ${path.relative(path.join(__dirname, ".."), backupPath)}`);
+    } catch (_error) {
+      // 旧记录刚被并发删除/不存在时跳过备份（不阻断本次运行）。
+    }
   }
 
   // ---- 全盘续跑：优先复用同实验任意快速记录的存档 ----
@@ -486,11 +506,12 @@ function printList() {
     console.log("（无记录，先用 --name 跑一次验证）");
     return;
   }
-  console.log(`${"模式".padEnd(10)} ${"名称".padEnd(20)} ${"seed".padEnd(22)} ${"步骤".padEnd(6)} ${"终局".padEnd(5)} ${"均分".padEnd(6)} ${"创建时间".padEnd(20)} 指纹`);
+  console.log(`${"模式".padEnd(10)} ${"名称".padEnd(20)} ${"seed".padEnd(22)} ${"步骤".padEnd(6)} ${"终局".padEnd(5)} ${"均分".padEnd(6)} ${"commit".padEnd(10)} ${"创建时间".padEnd(20)} 指纹`);
   for (const r of records) {
     console.log(
       `${String(r.mode).padEnd(10)} ${String(r.name || "-").padEnd(20)} ${String(r.seed).padEnd(22)}`
       + ` ${String(r.steps).padEnd(6)} ${r.terminal ? "是" : "否"}  ${String(r.summary?.avgScore ?? "-").padEnd(6)}`
+      + ` ${String(r.gitCommit || "-").slice(0, 8).padEnd(10)}`
       + ` ${String(r.createdAt).padEnd(20)} ${r.fingerprint.slice(0, 12)}`,
     );
   }

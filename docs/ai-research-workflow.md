@@ -7,7 +7,7 @@
 > `seti-research-validation-record-v1`，落盘 `reports/research/`）。
 >
 > 全盘进度可见性：`run_research_validation` / `run_simulate_save` /
-> `save_checkpoints` / `compare_vguided_vs_baseline` 均接入
+> `compare_vguided_vs_baseline` 均接入
 > `tools/progress.js` 的持续进度输出——每次机器决策（至少每秒一行）输出
 > `[<标签>进度] 第X轮 第Y回合 决策#N 席位= 动作= 各席分数 用时 步/s` 到
 > **stderr**，单次决策耗时数秒时也不会看起来"卡住"；`--progress` 等原有
@@ -41,28 +41,40 @@
 指纹 = sha256 稳定序列化：
 
 ```text
-{ seed, activePlayerCount, aiDifficulty, policyVersion, flags }
+{ seed, activePlayerCount, aiDifficulty, policyVersion, flags, gitCommit }
 ```
 
-- `flags` = 行为配置开关（`unifiedSearch` / `planContinuationFastPath` /
+- `flags` = 行为配置开关（`planContinuationFastPath` /
   `planNewTurnReuse` / `vStateValueEnabled` / `completeTargetCatalog` /
   `traceCounterfactualGoalClusters` / `compactReplay`），只收显式传入的键。
-- `policyVersion` = 当前启发式 Policy 版本（如 `seti-heuristic-policy-v26`），
+- `policyVersion` = 当前启发式 Policy 版本（如 `seti-heuristic-policy-v27`），
   策略实现变更自动生成新指纹，不会误当作旧实验。
+- `gitCommit` = 当前 HEAD 短哈希（工作树脏时仍取 HEAD；无法取到用 `dirty`）。
+  **2026-08-20 缺陷修复**：此前指纹**不含 gitCommit**，协调器/搜索时机等行为层
+  改动若未升 `policyVersion`（如 `48f0af3e`、`185028b3`），指纹不变 → 工具拒绝
+  重跑（行为变化反而无新记录），或 `--force` 直接覆盖旧记录丢失对比基准。
+  现在指纹含 gitCommit：**同一实验（seed+policy+flags）不同代码版本自动产生
+  不同指纹，记录按 `<指纹8>.<commit8>.<模式>.json` 分文件并存、互不覆盖**，
+  每条记录可精确追溯到代码版本。
 - 模式（`quick-N` / `full`）不进指纹，但记录按 `指纹.模式.json` 分文件，
   同一实验的快速与全盘记录并存、互不覆盖。
+- `--force` 覆盖同一代码版本的记录前，**自动备份旧记录**
+  （`<记录文件>.bak-<时间戳>`），保留对比基准。
+**不要用 `benchmark_fixed_boards.js` / `run_simulate_save.js` 等无记录工具绕行
+去重**（2026-08-20 教训：用 benchmark 裸跑免电盘面重跑 8 分钟全盘，且 HEAD
+行为退化 219 决策终局/均分 27.3 没有被任何记录捕获）。
 
 ## 3. 用法
 
 ```sh
 # 快速验证（默认 200 步，评估行为方向）
-node tools/run_research_validation.js --name unified-on --config unifiedSearch=true
+node tools/run_research_validation.js --name vguided --config vStateValueEnabled=true
 node tools/run_research_validation.js --name baseline                    # 基线 = 默认装配（newfast：fastPath 开 + 新回合复用开，2026-08-20 起）
 node tools/run_research_validation.js --name base --config planContinuationFastPath=false   # 关快路径（对照）
 node tools/run_research_validation.js --name noreuse --config planNewTurnReuse=false        # 关新回合复用（对照）
 
 # 全盘验证（有机会时；自动从同实验快速存档续跑）
-node tools/run_research_validation.js --name unified-on --config unifiedSearch=true --full
+node tools/run_research_validation.js --name vguided --config vStateValueEnabled=true --full
 
 # 复盘
 node tools/run_research_validation.js --list                             # 全部记录

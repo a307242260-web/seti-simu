@@ -24,7 +24,7 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 - `getReplay()` / `loadReplay()`：读写已确认策略输入与环境事件。
 - `createCheckpoint()` / `loadCheckpoint()`：保存和恢复当前 composition envelope、RNG 与 replay cursor。
 - `evaluateActionOutcomes()`：在同根状态的隔离 fork 中执行标准 Action，用于策略评估。
-- `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经机器人玩家协调器（`machine-player-coordinator.js`）编排——裸调共享 composition 读边界、计划复用优先、未命中调用 Heuristic 决策函数（`heuristic-decision-function.js`，直调 Policy）、提交共享 `inputPort`（零转换）；replay/reward 记账由协调器 `recordStep` 钩子补做（env 提供实现，记录原生 action）。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`。`reset({ planContinuationFastPath: true })` 开启计划复用（默认关）。
+- `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经机器人玩家协调器（`machine-player-coordinator.js`）编排——裸调共享 composition 读边界、计划复用优先、未命中调用 Heuristic 决策函数（`heuristic-decision-function.js`，直调 Policy）、提交共享 `inputPort`（零转换）；replay/reward 记账由协调器 `recordStep` 钩子补做（env 提供实现，记录原生 action）。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`。计划复用默认开（`planContinuationFastPath`，显式传 `false` 关闭）；新回合复用 `planNewTurnReuse` 默认开（`false` 关闭后新回合一律重新搜索）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
 - `dispose()`：释放单局环境。
 
@@ -147,9 +147,9 @@ node tools/run_rl_evaluation.js \
 开始界面"固定盘面"下拉提供两个与训练侧同 seed 的确定性盘面（RNG 起点契约 =
 `hashSeed(seed)`，见下）：
 
-- `seti-107-move`（双发盘面）：白色 2 选 1 含「寰宇动力 / 异星实验室」；
-  训练侧 `FIXED_BOARD_CONFIG` 默认即为该盘面（`seti-107-move-board-v1`）。
-- `free-analyze-board`（免电分析盘面）：白色 2 选 1 含「深空探测 / 寰宇动力」，
+- `seti-107`（双发盘面）：白色 2 选 1 含「寰宇动力 / 异星实验室」；
+  训练侧 `FIXED_BOARD_CONFIG` 默认即为该盘面（`seti-107-board-v1`）。
+- `seti-free-analyze-v1`（免电分析盘面）：白色 2 选 1 含「异星实验室 / 深空探测」，
   深空探测被动 `deepspace_free_analyze` 使数据分析不消耗能量。
 
 选择固定盘面会把对应 seed 锁定到种子输入框；也可以直接输入任意种子自定义

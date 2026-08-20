@@ -420,7 +420,10 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
   );
   assert.equal(stillRevealed.hit, true, "揭示数未增加不触发特例");
 
-  // end_turn/pass 是回合自然结束，计划内正常推进，不是新信息 → 可复用
+  // 控制动作特例：下一步是 end_turn/pass → 无条件重新决策（不盲从计划）。
+  // 主行动选择是每次决策最核心的评估，end_turn/pass 被盲目复用会跳过当前盘面
+  // 更有价值的主行动（48f0af3e 移除该特例后免电盘面 219 决策即终局、均分暴跌，
+  // 恢复 1d063418 口径）。
   const endTurnPlan = {
     nextActionId: "end_turn:turn1",
     continuation: [],
@@ -428,12 +431,14 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     revealedCount: 0,
   };
   const endTurnDescriptor = descriptor("end_turn", {}, {}, "end_turn:turn1");
-  const endTurnHit = planContinuation.planReuseCheck(
+  const endTurnMiss = planContinuation.planReuseCheck(
     endTurnPlan,
     makeObservation(),
     [endTurnDescriptor],
   );
-  assert.equal(endTurnHit.hit, true, "下一步是 end_turn 必须复用（回合自然结束，非新信息）");
+  assert.equal(endTurnMiss.hit, false, "下一步是 end_turn 必须重新决策");
+  assert.equal(endTurnMiss.reason, "control-step-redecide", "必须报告 control-step-redecide");
+  assert.equal(endTurnMiss.family, "end_turn", "必须报告控制动作 family");
 
   const passPlan = {
     nextActionId: "pass:turn1",
@@ -442,8 +447,9 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
     revealedCount: 0,
   };
   const passDescriptor = descriptor("pass", {}, {}, "pass:turn1");
-  const passHit = planContinuation.planReuseCheck(passPlan, makeObservation(), [passDescriptor]);
-  assert.equal(passHit.hit, true, "下一步是 pass 必须复用");
+  const passMiss = planContinuation.planReuseCheck(passPlan, makeObservation(), [passDescriptor]);
+  assert.equal(passMiss.hit, false, "下一步是 pass 必须重新决策");
+  assert.equal(passMiss.reason, "control-step-redecide");
 }
 
 // ---------------------------------------------------------------------------

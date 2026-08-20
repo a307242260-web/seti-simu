@@ -46,7 +46,7 @@
 - `tools/run_rl_worker_server.js`、`tools/rl_worker_client.py`：Node JSONL worker 服务与 Python 标准库客户端；`tools/benchmark_rl_workers.js` 为分项吞吐闸门。
 - `randomizer/app.js`：Browser Production composition、projection/ViewState、标准输入、服务与渲染的窄装配根。
 - `randomizer/game/effects/residual-domain-session.js`、`randomizer/app/browser-host/decision-ui.js`：公司、卡牌、数据与八种外星人的标准 Decision/Effect owner 和只读 presentation；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
-- `randomizer/game/production-kernel.js`、`randomizer/game/production-composition.js`：Browser/Simulation 共用的唯一 Production factory、23 family registry（16 顶层 + 7 conditional）、五个 domain、Decision 与提交链。
+- `randomizer/game/production-kernel.js`、`randomizer/game/production-composition.js`：Browser/Simulation 共用的唯一 Production factory、23 family registry（16 顶层 + 7 conditional）、六个 domain（opening/standard/card/science/probe-turn/residual）、Decision 与提交链。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。
 - `randomizer/solar-system/core.js`：太阳系渲染与旋转相关核心逻辑。
@@ -105,6 +105,15 @@
 - `assets/aliens/符文族/implementation.md`
 
 ## 常用验证
+
+**机器人调研防重跑（硬规矩）**：跑机器人全盘/快速验证前，必须先
+`node tools/run_research_validation.js --list` 查 `reports/research/` 已有记录；
+同一实验同一代码版本（指纹含 gitCommit，2026-08-20 起）已有记录时工具会自动拒绝
+（exit 2），**不得用 `tools/benchmark_fixed_boards.js`、`tools/run_simulate_save.js`
+等无记录、无去重的裸工具绕过去重重跑已有实验**——这些工具只用于无记录的临时实验。
+指纹含 gitCommit：同一实验不同代码版本自动不同指纹、记录并存不覆盖（
+`<指纹8>.<commit8>.<模式>.json`）；同版本 `--force` 覆盖前工具自动备份旧记录。
+改动行为后重跑同 seed 实验会自然产生新记录，无需 --force。
 
 推荐回归：
 
