@@ -550,52 +550,83 @@ function buildActionLogReport(opts) {
 
   const playerColor = (pid) => PLAYER_LABELS[pid] || pid;
 
-  function stepCells(row, withPlayer) {
-    const cur = row.cur;
-    const res = cur
-      ? `${cur.credits} 钱 · ${cur.energy} 电 · ${cur.publicity} 宣 · ${cur.hand} 手`
+  // 按 (轮次, 回合, 玩家) 聚合为"每玩家每回合一行"（2026-08-21 用户口径：
+  // 一个玩家的回合 = 主行动 + 附属快速/条件步骤，合并成一行，不再逐子步骤拆行）。
+  // 主行动 = 该回合第一个 phase=main 的动作（PASS 也算主行动）；无主行动时取第一步。
+  function groupByTurn(stepRows) {
+    const groups = [];
+    const map = new Map();
+    for (const row of stepRows) {
+      const key = `${row.r ?? "?"}|${row.t ?? "?"}|${row.actor}`;
+      let g = map.get(key);
+      if (!g) {
+        g = { r: row.r, t: row.t, actor: row.actor, rows: [] };
+        map.set(key, g);
+        groups.push(g);
+      }
+      g.rows.push(row);
+    }
+    return groups.map((g) => {
+      const main = g.rows.find((row) => row.phase === "main") || g.rows[0];
+      const cur = g.rows[g.rows.length - 1].cur;
+      const delta = g.rows.reduce((acc, row) => acc + (row.delta || 0), 0);
+      return { r: g.r, t: g.t, actor: g.actor, count: g.rows.length, main, cur, delta };
+    });
+  }
+
+  // 主行动单元格：行动族标签 + 摘要（截断）
+  function turnMainCell(g) {
+    const m = g.main;
+    const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
+    const sum = m && m.summary ? String(m.summary) : "";
+    const sumTxt = sum.length > 44 ? sum.slice(0, 44) + "…" : sum;
+    return `<span class="fam">${escapeHtml(fam)}</span> ${escapeHtml(sumTxt)}`;
+  }
+
+  function turnCells(g, withPlayer) {
+    const res = g.cur
+      ? `${g.cur.credits} 钱 · ${g.cur.energy} 电 · ${g.cur.publicity} 宣 · ${g.cur.hand} 手`
       : "—";
-    const score = cur ? `${cur.score}` : "—";
-    const phaseBadge = row.phase ? `<span class="ph ph-${row.phase}">${row.phase}</span>` : "";
-    const fam = row.family ? FAMILY_LABELS[row.family] || row.family : "—";
+    const score = g.cur ? `${g.cur.score}` : "—";
     const playerCell = withPlayer
-      ? `<td class="actor c-${row.actor}">${playerColor(row.actor)}</td>`
+      ? `<td class="actor c-${g.actor}">${playerColor(g.actor)}</td>`
       : "";
     return `<tr>
-      <td class="num">#${row.i}</td>
+      <td class="num">R${g.r ?? "?"}·T${g.t ?? "?"}</td>
       ${playerCell}
-      <td class="num">R${row.r ?? "?"}·T${row.t ?? "?"}</td>
-      <td>${phaseBadge} <span class="fam">${escapeHtml(fam)}</span></td>
-      <td class="sum">${escapeHtml(row.summary || "")}</td>
-      <td class="num">${fmtDelta(row.delta)}</td>
+      <td class="sum">${turnMainCell(g)}</td>
+      <td class="num">${g.count} 步</td>
+      <td class="num">${fmtDelta(g.delta)}</td>
       <td class="num">${score}</td>
       <td class="res muted">${res}</td>
     </tr>`;
   }
 
+  // 每名玩家行动清单：按玩家分组，组内每回合一行（初始选择并入该玩家第一回合）
   const playerSections = PLAYER_ORDER.map((p) => {
-    const list = perPlayer[p] || [];
+    const list = groupByTurn(perPlayer[p] || []);
     const body = list.length
-      ? list.map((row) => stepCells(row, false)).join("\n")
-      : '<tr><td colspan="7" class="muted">无行动</td></tr>';
+      ? list.map((g) => turnCells(g, false)).join("\n")
+      : '<tr><td colspan="6" class="muted">无行动</td></tr>';
     return `<section class="panel">
-      <h2><span class="dot c-${p}"></span>${playerColor(p)}色玩家 · ${list.length} 步</h2>
+      <h2><span class="dot c-${p}"></span>${playerColor(p)}色玩家 · ${list.length} 个回合</h2>
       <table>
-        <thead><tr><th>步</th><th>轮/回合</th><th>阶段</th><th>行动</th><th>动作摘要</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
         <tbody>${body}</tbody>
       </table>
     </section>`;
   }).join("\n");
 
-  // 全程依次复盘（按轮分组）
+  // 全程依次复盘：按轮分组，每玩家每回合一行
+  const turnGroups = groupByTurn(rows);
   let lastRound = null;
   let chronoBody = "";
-  for (const row of rows) {
-    if (row.r !== lastRound) {
-      chronoBody += `<tr class="round-head"><td colspan="8">第 ${row.r ?? "?"} 轮</td></tr>`;
-      lastRound = row.r;
+  for (const g of turnGroups) {
+    if (g.r !== lastRound) {
+      chronoBody += `<tr class="round-head"><td colspan="7">第 ${g.r ?? "?"} 轮</td></tr>`;
+      lastRound = g.r;
     }
-    chronoBody += stepCells(row, true);
+    chronoBody += turnCells(g, true);
   }
 
   const finalSection = (() => {
@@ -677,9 +708,9 @@ code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
   ${finalSection}
   ${playerSections}
   <section class="panel">
-    <h2>全程依次复盘（${steps.length} 步）</h2>
+    <h2>全程依次复盘（${turnGroups.length} 个玩家回合 · ${steps.length} 步）</h2>
     <table>
-      <thead><tr><th>步</th><th>玩家</th><th>轮/回合</th><th>阶段</th><th>行动</th><th>动作摘要</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+      <thead><tr><th>轮/回合</th><th>玩家</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
       <tbody>${chronoBody}</tbody>
     </table>
   </section>
@@ -711,8 +742,9 @@ function renderPage(registry) {
 // ---------------- 主构建 ----------------
 
 // 纯计算 registry（不落盘）：解析版本 → 结果 → best-of → 审计 → 版本详情。
-// generateReports=true 时为所有有存档但缺报告的记录生成复盘报告（纯重放）并落盘。
-function computeRegistry({ generateReports = false } = {}) {
+// generateReports=true 时为所有有存档但缺报告的记录生成复盘报告（纯重放）并落盘；
+// forceReports=true 时已存在的报告也重新生成（报告模板/逻辑改动后刷新用）。
+function computeRegistry({ generateReports = false, forceReports = false } = {}) {
   const versionsData = loadVersions();
   const versions = versionsData.versions;
   const recordsByFile = scanResearchRecords();
@@ -723,7 +755,8 @@ function computeRegistry({ generateReports = false } = {}) {
   if (generateReports) {
     for (const v of versions) {
       for (const r of resolvedMap[v.id]) {
-        if (r.missingRecord || !r.savePath || !r.reportPath || r.reportExists) continue;
+        if (r.missingRecord || !r.savePath || !r.reportPath) continue;
+        if (!forceReports && r.reportExists) continue;
         const reportPath = path.join(REPO_ROOT, r.reportPath);
         fs.mkdirSync(path.dirname(reportPath), { recursive: true });
         const html = buildActionLogReport({
