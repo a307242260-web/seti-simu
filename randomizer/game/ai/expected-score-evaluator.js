@@ -1185,12 +1185,11 @@
       const blue3 = blueOf("blue3");
       if (blue3) return foldOthers(blue3, blueBonuses);
     }
-    // 5. 无需求 → 不填数据（place_data 是手段动作，没需求做了浪费，2026-08-21
-    //    用户裁定）；**除非数据要溢出**（可用数据 ≥ 数据池容量 6，必须放置腾位）
-    //    才选 computer 推进（同时解锁蓝色踪迹/分数/空出已填蓝槽）。
-    if (finite(assets.availableData) >= 6) {
-      if (computer) return [computer];
-    }
+    // 5. 目标驱动（2026-08-21 用户裁定"目标是解锁/分数 → 填满"）：本函数只在
+    //    data:analyze 目标分支被调用（目标 active），推进分析/解锁蓝色踪迹/分数/
+    //    腾出已填蓝槽本身就是需求 → 默认 computer 填。此前的"无需求收束"误把
+    //    active 分析目标当无需求（绿色 R1 数据不填 → 分析链断 → 全盘 7 分崩）。
+    if (computer) return [computer];
     return [];
   }
 
