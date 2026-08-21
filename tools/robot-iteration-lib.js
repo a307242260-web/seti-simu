@@ -538,6 +538,16 @@ const INITIAL_CARD_LABELS = {
   21: "3分、1数据、1宣传、木星环绕器",
 };
 
+// 收入轨资源增量标签（player.income 键）
+const INCOME_GAIN_LABELS = {
+  credits: "信用点",
+  energy: "能量",
+  handSize: "手牌上限",
+  publicity: "宣传",
+  availableData: "数据",
+  additionalPublicScan: "额外公共扫描",
+};
+
 // 内核重放存档 replaySteps，提取 after 快照里没有的逐步信息（2026-08-21 用户口径）：
 //   1) 研究科技：研究了哪张科技（ownedTiles 新增）+ 获得的背面 bonus（研究前该堆堆顶 bonusId）
 //   2) 收入插牌：choose_card summary 为「收入 <cardId>」的步骤
@@ -576,14 +586,18 @@ function replaySaveEnriched(savePath) {
   function snapshot() {
     const st = kernel.composition.projection().state;
     const owned = new Map();
+    const hands = new Map();
+    const incomes = new Map();
     for (const p of st.players?.players || []) {
       owned.set(p.id, new Set(Object.keys(p.techState?.ownedTiles || {})));
+      hands.set(p.id, (p.hand || []).map((c) => c.cardId));
+      incomes.set(p.id, p.income ? { ...p.income } : null);
     }
     const bonus = new Map();
     for (const [tid, stack] of Object.entries(st.tech?.stacks || {})) {
       if (stack && stack.bonusId) bonus.set(tid, stack.bonusId);
     }
-    return { owned, bonus };
+    return { owned, hands, incomes, bonus };
   }
 
   for (let index = 0; index < steps.length; index += 1) {
@@ -638,10 +652,25 @@ function replaySaveEnriched(savePath) {
         }
       }
     }
-    // 收入插牌：summary 以「收入 」开头
+    // 收入插牌：summary 以「收入 」开头；资源 = 该步前后 income 增量
     const sum = String(action.summary || "");
     if (sum.startsWith("收入 ")) {
-      e.income = { cardId: sum.slice(3).trim() };
+      const beforeInc = before.incomes.get(actorId) || {};
+      const afterInc = after.incomes.get(actorId) || {};
+      const gains = [];
+      for (const key of ["credits", "energy", "handSize", "publicity", "availableData", "additionalPublicScan"]) {
+        const diff = (afterInc[key] || 0) - (beforeInc[key] || 0);
+        if (diff) gains.push(`${INCOME_GAIN_LABELS[key] || key}${diff > 0 ? "+" : ""}${diff}`);
+      }
+      e.income = { cardId: sum.slice(3).trim(), gain: gains.join(" · ") || null };
+    } else if (actorId && sum !== "开始初始选择" && sum !== "确认初始选择" && !/^选择公司：/.test(sum) && !/^选择：初始牌/.test(sum)) {
+      // 抽牌（盲抽/精选奖励）：该步后 hand 新增的卡（排除初始选择与收入插牌步骤）
+      const beforeHand = before.hands.get(actorId) || [];
+      const afterHand = after.hands.get(actorId) || [];
+      const newCards = afterHand.filter((c) => !beforeHand.includes(c));
+      if (newCards.length) {
+        e.draw = { cardId: newCards[newCards.length - 1] };
+      }
     }
     if (Object.keys(e).length) enrich.set(step.stepIndex ?? index, e);
   }
@@ -819,19 +848,15 @@ function buildActionLogReport(opts) {
       });
   }
 
-  // 主行动单元格：主行动（family + 摘要）+ 该回合的快速行动列表
-  // （2026-08-21 用户口径：回合聚合为一行的同时，快速行动如放置数据不能被省略，
-  // 在行内列出；条件/目标选择等子步骤仍并入回合不单列）。
-  // 增强信息（内核重放）：研究科技显示研究了哪张科技+背面 bonus；收入插牌显示卡名。
+  // 主行动单元格：主行动（family + 摘要）+ 该回合的附属动作，按发生顺序合并一行列表
+  // （2026-08-21 用户口径：快速/抽牌/收入/终局标记/初始牌按顺序显示，内容完整——抽的牌、
+  // 收入资源都展示；条件/目标选择等子步骤仍并入回合不单列）。
+  // 增强信息（内核重放）：研究科技显示研究了哪张科技+背面 bonus；收入插牌显示卡名与资源；
+  // 盲抽/精选显示抽到的牌。
   function turnMainCell(g) {
     const m = g.main;
     const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
-    // 回合内研究增强（研究获得发生在 choose_target「研究 blueX」步骤，enrich 挂在该步）
     const research = g.rows.map((row) => row.enrich?.research).find(Boolean);
-    // 回合内收入插牌
-    const incomeList = g.rows.map((row) => row.enrich?.income).filter(Boolean);
-    // 回合内终局板块标记（「标记 A/B/C/D」）
-    const finalMarks = g.rows.map((row) => row.finalMark).filter(Boolean);
     let mainTxt;
     if (research && fam === "研究科技") {
       const bonus = research.bonusId
@@ -842,30 +867,29 @@ function buildActionLogReport(opts) {
       const sum = m && m.summary ? normalizeIncomeClause(replaceCardIds(String(m.summary))) : "";
       mainTxt = `${escapeHtml(fam)} ${escapeHtml(sum)}`.trim();
     }
-    const quicks = g.rows.filter((row) => row.phase === "quick");
-    const lists = [];
-    if (quicks.length) {
-      const parts = quicks.map((q) => {
-        const qfam = q.family ? FAMILY_LABELS[q.family] || q.family : "";
-        const qsum = q.summary ? replaceCardIds(String(q.summary)).trim() : "";
-        return qsum || qfam;
-      });
-      lists.push(`<div class="quick-list">快速：${escapeHtml(parts.join(" · "))}</div>`);
+    // 附属动作按 row 顺序合并（快速/抽牌/收入/终局标记/初始牌）
+    const extras = [];
+    for (const row of g.rows) {
+      if (row.phase === "quick") {
+        const qfam = row.family ? FAMILY_LABELS[row.family] || row.family : "";
+        const qsum = row.summary ? replaceCardIds(String(row.summary)).trim() : "";
+        extras.push(qsum || qfam);
+      } else if (row.enrich?.income) {
+        const name = cardNameFor(row.enrich.income.cardId) || row.enrich.income.cardId;
+        extras.push(`收入 ${name}${row.enrich.income.gain ? `（获得 ${row.enrich.income.gain}）` : ""}`);
+      } else if (row.enrich?.draw) {
+        const name = cardNameFor(row.enrich.draw.cardId) || row.enrich.draw.cardId;
+        extras.push(`抽牌 ${name}`);
+      } else if (row.finalMark) {
+        extras.push(`终局标记 ${row.finalMark}`);
+      } else if (row.initialCard) {
+        extras.push(`初始牌 ${row.initialCard.number}${row.initialCard.label ? `（${row.initialCard.label}）` : ""}`);
+      }
     }
-    if (incomeList.length) {
-      const names = incomeList.map((e) => cardNameFor(e.cardId) || e.cardId);
-      lists.push(`<div class="quick-list">收入：${escapeHtml(names.join(" · "))}</div>`);
-    }
-    if (finalMarks.length) {
-      lists.push(`<div class="quick-list">终局标记：${escapeHtml(finalMarks.join(" · "))}</div>`);
-    }
-    // 初始牌选择（2026-08-21 用户口径：与选公司同一行显示）
-    const initialCards = g.rows.map((row) => row.initialCard).filter(Boolean);
-    if (initialCards.length) {
-      const names = initialCards.map((c) => `${c.number}${c.label ? `（${c.label}）` : ""}`);
-      lists.push(`<div class="quick-list">初始牌：${escapeHtml(names.join(" · "))}</div>`);
-    }
-    return `<div class="main-act">${mainTxt}</div>${lists.join("")}`;
+    const extraTxt = extras.length
+      ? `<div class="quick-list">${escapeHtml(extras.join(" · "))}</div>`
+      : "";
+    return `<div class="main-act">${mainTxt}</div>${extraTxt}`;
   }
 
   function turnCells(g, withPlayer) {
