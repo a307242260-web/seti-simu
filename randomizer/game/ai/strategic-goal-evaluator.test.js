@@ -389,10 +389,8 @@ function observation({
   );
   assert.equal(
     evaluator.requiresRootCounterfactual(trade, belowThreshold),
-    true,
-    "2026-08-21 迭代：quick_trade 入口门控删除（按目标搜索，门控移到目标目录——"
-      + "上面的 enumerateSecondaryAgentRootTargets 断言已确认第一行不可达时无分析目标，"
-      + "trade 不在任何目标 compatibleActionIds，不会进根）",
+    false,
+    "第一行不可达时，快速转换不得借分析目标进入 root",
   );
   assert.equal(
     evaluator.selectSecondaryAgentRouteTarget({
@@ -1971,9 +1969,8 @@ function evaluate(candidateAction, before, after, status = "settled") {
       ordinaryTrade,
       observation({ resources: { credits: 14, energy: 0 } }),
     ),
-    true,
-    "2026-08-21 迭代：quick_trade 入口门控删除，无目标转换由目标目录挡住"
-      + "（不在任何 compatibleActionIds 就不进根）",
+    false,
+    "未选定代理目标时快速转换不是搜索根，不能随机瓜分全局节点预算",
   );
   assert.equal(
     evaluator.requiresRootCounterfactual(
@@ -1992,8 +1989,8 @@ function evaluate(candidateAction, before, after, status = "settled") {
   };
   assert.equal(
     evaluator.requiresRootCounterfactual(creditsForCard, observation()),
-    true,
-    "2026-08-21 迭代：quick_trade 入口门控删除，换牌是否进根由目标目录判定",
+    false,
+    "不知道会抽到哪张牌时，换牌不能被包装成固定打牌目标",
   );
 }
 
