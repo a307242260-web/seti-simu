@@ -32,9 +32,7 @@
       ],
       "summary": "end_turn/pass 计划复用特例恢复（48f0af3e 移除特例导致 219 决策即终局；恢复后 321 决策 / 白 58）+ 调研记录指纹对齐 + 文档过期项清理。",
       "records": {
-        "25bdb5e9.9e75c9cd.full.json": {
-          "note": "默认 newfast 全盘：321 步 / 白 58 / 均分 33.75。记录 gitCommit=9e75c9cd（运行于脏工作树），结果为 ec5cfb9f 特例恢复后的行为（2026-08-20 收口记录）；无匹配存档（v149 存档 294 步与 321 步不一致，不关联）。"
-        }
+        "25bdb5e9.9e75c9cd.full.json": { "note": "默认 newfast 全盘；记录 gitCommit=9e75c9cd（脏树运行），结果为 ec5cfb9f 特例恢复后行为（2026-08-20 收口记录）；无匹配存档" }
       },
       "roadmap": null
     },
@@ -53,12 +51,8 @@
       ],
       "summary": "打牌价值评估对齐（8b7cf3b6，2026-08-20 旧页标记 450→230 步退化主因，已按逐子项回退方向处理）；公司 1x 主动能力启用前置修复（ab701c40，堵死局不堵空转）；搜索时机机制化（48f0af3e：本回合不重搜 + 新回合 planReuseCheck 判定新信息）；新回合复用开关 planNewTurnReuse（185028b3）；newfast 固化为默认装配（9e75c9cd：fastPath 开 + 新回合复用开，无代码改动）。",
       "records": {
-        "bb319981.9e75c9cd.full.json": {
-          "note": "A/B：planNewTurnReuse=false（新回合一律重搜）206 步终局，均分 22.75"
-        },
-        "bced1aa3.9e75c9cd.full.json": {
-          "note": "A/B：planContinuationFastPath=false + planNewTurnReuse=false 230 步终局，均分 23.75"
-        }
+        "bb319981.9e75c9cd.full.json": { "note": "A/B：planNewTurnReuse=false（新回合一律重搜）" },
+        "bced1aa3.9e75c9cd.full.json": { "note": "A/B：两开关全关（fastPath 关 + 新回合复用关）" }
       },
       "roadmap": null
     },
@@ -77,9 +71,7 @@
       ],
       "summary": "打牌价值 + 计划复用线：机器席位观察失明修复（554df0f8）；打牌价值修复两环（de879058：收入选牌机会成本 + 免费发射打牌奖励）；计划延续复用（planContinuationFastPath）依赖修补并默认打开（eb480700 + 05dc1da8）；计划复用增加控制动作特例（1d063418：下一步是 end_turn/pass 一律重新决策，不盲从计划）。",
       "records": {
-        "b2a3aa41.1d063418.quick-200.json": {
-          "note": "v27-taskval 200 步快速验证（非终局，评估行为方向）"
-        }
+        "b2a3aa41.1d063418.quick-200.json": { "note": "v27-taskval 快速验证（评估行为方向）" }
       },
       "roadmap": null
     },
@@ -123,21 +115,11 @@
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
       "records": {
-        "51a3727a.53abbd5.full.json": {
-          "note": "off-head-clean（fastPath 关闭时代基线参考）：521 步，完整终局 75/70/92/105 均 85.5"
-        },
-        "d2c50ffe.53abbd5.full.json": {
-          "note": "on-head（统一搜索开）：557 步，完整终局 107/68/98/83 均 89"
-        },
-        "d2c50ffe.53abbd5.quick-200.json": {
-          "note": "on-baseline 200 步快速验证（on-head 全盘的前置快速档，非终局）"
-        },
-        "62321a79.6caeb0f.quick-5.json": {
-          "note": "smoke-test 冒烟（非评估）"
-        },
-        "62321a79.6caeb0f.quick-10.json": {
-          "note": "resume-test 续跑冒烟（非评估）；声明存档已删，仅记录级指标"
-        }
+        "51a3727a.53abbd5.full.json": { "note": "off-head-clean（fastPath 关闭时代基线参考）" },
+        "d2c50ffe.53abbd5.full.json": { "note": "on-head（统一搜索开）" },
+        "d2c50ffe.53abbd5.quick-200.json": { "note": "on-baseline 快速验证（on-head 全盘的前置快速档）" },
+        "62321a79.6caeb0f.quick-5.json": { "note": "smoke-test 冒烟（非评估）" },
+        "62321a79.6caeb0f.quick-10.json": { "note": "resume-test 续跑冒烟（非评估）；声明存档已删，仅记录级指标" }
       },
       "roadmap": null
     }
