@@ -302,7 +302,10 @@ function buildSavePath(options, name, mode, stateVersion) {
     .replace(/[^\w\u4e00-\u9fa5-]/g, "-")
     .replace(/-+/g, "-")
     .slice(0, 60) || "game";
-  return path.join(SAVES_DIR, `seti-save-research-${safe}-${mode}-v${stateVersion}.json`);
+  // 存档名带 gitCommit 前缀（2026-08-21 用户要求"不同版本分文件/分目录存档"）：
+  // <name>-<commit8>-<mode>-v<stateVersion>，杜绝"这个档是哪个版本跑的"混乱。
+  const commit = String(gitCommit() || "dirty").slice(0, 8);
+  return path.join(SAVES_DIR, `seti-save-research-${safe}-${commit}-${mode}-v${stateVersion}.json`);
 }
 
 // 从浏览器存档构建 checkpoint（与 tools/load_save_simulation.js 同构）。
