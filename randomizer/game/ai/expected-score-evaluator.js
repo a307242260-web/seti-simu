@@ -124,55 +124,25 @@
     });
   }
 
-  // ---- value 形状统一构造（审查清理项 9）----
-  // evaluateState（完整 outcomeProjection 源）与 valueFromStrategicFacts
-  // （轻量 strategicFacts 源）产出同一 value 形状（resourceFacts/infrastructure），
-  // 统一由 resourceFactsFrom/infrastructureFrom 组装。strategicFacts 源不投影
-  // alienSlots（createStrategicFacts 无槽位级数据）——分支优先级（getBranchPriority
-  // 热路径）因此不感知外星进度增量，与统一前一致。
-  function resourceFactsFrom(parts = {}) {
+  function infrastructureOf(projection) {
     return {
-      credits: finite(parts.credits),
-      energy: finite(parts.energy),
-      publicity: finite(parts.publicity),
-      availableData: finite(parts.availableData),
-      ordinaryCards: finite(parts.ordinaryCards),
-      alienCards: finite(parts.alienCards),
-    };
-  }
-
-  function infrastructureFrom(parts = {}) {
-    return {
-      ownedTechIds: [...(parts.ownedTechIds || [])].sort(),
-      income: { ...(parts.income || {}) },
-      roundNumber: Math.max(1, finite(parts.roundNumber) || 1),
-      finalRoundNumber: Math.max(1, finite(parts.finalRoundNumber) || 4),
-      traceCount: Math.max(0, finite(parts.traceCount) || 0),
+      ownedTechIds: [...(projection.progress?.ownedTechIds || [])].sort(),
+      income: { ...(projection.progress?.income || {}) },
+      roundNumber: Math.max(1, finite(projection.progress?.roundNumber) || 1),
+      finalRoundNumber: Math.max(1, finite(projection.progress?.finalRoundNumber) || 4),
+      traceCount: Math.max(0, finite(projection.progress?.traceCount) || 0),
       // 外星槽位级进度（V 同源）：{ slotId, revealed, ownFirstTraces, ownExtraMarks }
-      alienSlots: (parts.alienSlots || []).map((slot) => ({
+      alienSlots: (projection.progress?.alienSlots || []).map((slot) => ({
         slotId: slot?.slotId ?? null,
         revealed: Boolean(slot?.revealed),
         ownFirstTraces: Math.max(0, finite(slot?.ownFirstTraces)),
         ownExtraMarks: Math.max(0, finite(slot?.ownExtraMarks)),
       })),
-      sectorWinRequirements: parts.sectorWinRequirements
-        ? structuredClone(parts.sectorWinRequirements)
+      sectorWinRequirements: projection.progress?.sectorWinRequirements
+        ? structuredClone(projection.progress.sectorWinRequirements)
         : null,
-      dataProgress: { ...(parts.dataProgress || {}) },
+      dataProgress: { ...(projection.progress?.dataProgress || {}) },
     };
-  }
-
-  function infrastructureOf(projection) {
-    return infrastructureFrom({
-      ownedTechIds: projection.progress?.ownedTechIds,
-      income: projection.progress?.income,
-      roundNumber: projection.progress?.roundNumber,
-      finalRoundNumber: projection.progress?.finalRoundNumber,
-      traceCount: projection.progress?.traceCount,
-      alienSlots: projection.progress?.alienSlots,
-      sectorWinRequirements: projection.progress?.sectorWinRequirements,
-      dataProgress: projection.progress?.dataProgress,
-    });
   }
 
   function evaluateState(observation, seatId) {
@@ -195,14 +165,14 @@
       securedEndGameBonus: terminal ? 0 : finite(projection.scoring.securedEndGameBonus),
       total: realizedScore,
       infrastructure: infrastructureOf(projection),
-      resourceFacts: resourceFactsFrom({
-        credits: projection.assets.credits,
-        energy: projection.assets.energy,
-        publicity: projection.assets.publicity,
-        availableData: projection.assets.availableData,
-        ordinaryCards: projection.assets.ordinaryCards,
-        alienCards: projection.assets.alienCards,
-      }),
+      resourceFacts: {
+        credits: finite(projection.assets.credits),
+        energy: finite(projection.assets.energy),
+        publicity: finite(projection.assets.publicity),
+        availableData: finite(projection.assets.availableData),
+        ordinaryCards: finite(projection.assets.ordinaryCards),
+        alienCards: finite(projection.assets.alienCards),
+      },
       fieldPaths: {
         realizedScore: terminal
           ? "outcomeProjection.scoring.officialTerminalScore"
@@ -728,23 +698,22 @@
   }
 
   function valueFromStrategicFacts(facts) {
-    // 轻量 strategicFacts 源（getBranchPriority 热路径）：不投影 alienSlots
-    // （createStrategicFacts 无槽位级数据），外星进度增量不参与分支优先级；
-    // 最终叶排序走 evaluateState（完整 projection 源）。
     return {
       terminal: Boolean(facts.terminal),
       realizedScore: finite(facts.realizedScore),
       securedEndGameBonus: finite(facts.securedEndGameBonus),
-      resourceFacts: resourceFactsFrom(facts.resourceFacts),
-      infrastructure: infrastructureFrom({
-        ownedTechIds: facts.ownedTechIds,
-        income: facts.income,
-        roundNumber: facts.roundNumber,
-        finalRoundNumber: facts.finalRoundNumber,
-        traceCount: facts.traceCount,
-        sectorWinRequirements: facts.sectorWinRequirements,
-        dataProgress: facts.dataProgress,
-      }),
+      resourceFacts: { ...(facts.resourceFacts || {}) },
+      infrastructure: {
+        ownedTechIds: [...(facts.ownedTechIds || [])].sort(),
+        income: { ...(facts.income || {}) },
+        roundNumber: Math.max(1, finite(facts.roundNumber) || 1),
+        finalRoundNumber: Math.max(1, finite(facts.finalRoundNumber) || 4),
+        traceCount: Math.max(0, finite(facts.traceCount) || 0),
+        sectorWinRequirements: facts.sectorWinRequirements
+          ? structuredClone(facts.sectorWinRequirements)
+          : null,
+        dataProgress: { ...(facts.dataProgress || {}) },
+      },
     };
   }
 
@@ -924,12 +893,6 @@
     // 是整链价值，不按动作分摊），评估虚高导致 AI 乱做（实测 on 全盘白色 86→43，
     // quick_trade/card_corner/industry 被误选）。
     // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
-    // 2026-08-21 迭代结论（A/B 实证）：card_corner **不加**入口门控——card_corner 的
-    // 价值由叶级出口检查（cardCornerPurpose）判定（立即数据/宣传增量、直接解锁），
-    // root 级"目标已生成"判断会误过滤早期有价值的弃牌角标（如数据轨未成型时弃牌换
-    // 数据，A/B 实测绿 63→20/白 77→50）；quick_trade 的门控则因"缺口缩小"判定保留。
-    // 三件套（入口门控/quick 根截断/出口检查）互不替代：门控防无目标、截断防未绑定
-    // 便车、出口检查防"本就可达"便车——删任一均分都劣化（64.5→53.75/56.5）。
     const projection = observation?.outcomeProjection;
     const preparesAnalyze = Boolean(
       projection?.progress?.dataProgress?.analyzeReady
