@@ -1122,56 +1122,45 @@
     // null = 不是放置决策（无 data 选择），交给后续逻辑；[] = 有放置选择但无需求
     // → 收束（2026-08-21 用户裁定：没需求时做不做都一样，不展开省预算）。
     if (!dataChoices.length) return null;
+    // data:analyze 目标只填第一排 computer（2026-08-21 用户裁定：目标是收入/
+    // 分析 → 填第一排推进；blueBonus（蓝科技下方/第二行）不参与本目标判断——
+    // "蓝1下方不填是因为不需要你在目标是收入的时候判断，之后需要填的时候填即可"。
+    // 收入目标不耦合 blueBonus/宣传；分析目标前是否需要填第二行由
+    // selectAnalyzeBlueBonusChoice 前置判断（见 data:analyze 分支）。
     const computer = dataChoices.find((action) => action.target?.target === "computer") || null;
-    const computerSlot = computer ? computerSlotOf(computer) : null;
-    const blueBonuses = dataChoices.filter((action) => action.target?.target === "blueBonus");
-    const blueOf = (tileId) => blueBonuses.find((action) => (
+    if (!computer) return [];
+    // 数据不够（可放置数据为 0 或已无剩余位置）→ 不填（"数据不够就去拿"）。
+    const assets = resourceFactsOf(observation, seatId);
+    if (finite(assets.availableData) <= 0) return [];
+    // 目标 active（data:analyze / income:gain 下被调用）→ 填第一排（"数据够就填"）。
+    return [computer];
+  }
+
+  // 分析目标前判断是否需要填第二行 blueBonus 槽（2026-08-21 用户裁定：分析前
+  // 看第二行有没有需要填的槽；"有蓝科且要对应工位的资源就填上"，宣传不需要）：
+  // 按蓝科技工位奖励匹配当前资源缺口——blue1=+1信用/blue2=+1能量/blue3=精选牌。
+  // 收入目标不调用本函数（收入不耦合 blueBonus）。
+  function selectAnalyzeBlueBonusChoice(observation, successors, seatId) {
+    const blueBonusChoices = successors.filter((action) => (
+      String(action.target?.choiceId || "").startsWith("data:")
+      && action.target?.target === "blueBonus"
+    ));
+    if (!blueBonusChoices.length) return null;
+    const assets = resourceFactsOf(observation, seatId);
+    const wantsCredits = finite(assets.credits) <= 1;
+    const wantsEnergy = finite(assets.energy) <= 1;
+    const wantsCards = finite(assets.ordinaryCards) <= 1;
+    const blueOf = (tileId) => blueBonusChoices.find((action) => (
       blueTileOfSlot(observation, action.target?.blueSlot, seatId) === tileId
     )) || null;
-    const assets = resourceFactsOf(observation, seatId);
-    const gap = rawDataAnalyzeRequirements(observation)?.nextGap || {};
-    const techRequirements = rawTechGainRequirements(observation);
-    const researchCost = techRequirements?.researchCost ?? 6;
-    const needsPublicity = finite(assets.publicity) < researchCost;
-    const foldOthers = (primary, list) => (
-      list.length > 1
-        ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
-        : [primary]
-    );
-
-    // 1. 宣传缺口（研究科技刚需）→ blue4（+2宣传），其次 computer 第2格（+1宣传）
-    if (needsPublicity) {
-      const blue4 = blueOf("blue4");
-      if (blue4) return foldOthers(blue4, blueBonuses);
-      if (computer && computerSlot === 2) return [computer];
-    }
-    // 2. 收入目标 → computer 第4格（收入奖励）
-    if (computer && computerSlot === 4) {
-      const incomePlans = rawIncomeGainRequirements(observation)?.plans || [];
-      if (incomePlans.length || finite(gap.credits) === 0 && finite(gap.energy) === 0) {
-        return [computer];
-      }
-    }
-    // 3. 钱/电缺口 → 对应 blue1/blue2 槽
-    if (finite(gap.credits) > 0) {
-      const blue1 = blueOf("blue1");
-      if (blue1) return foldOthers(blue1, blueBonuses);
-    }
-    if (finite(gap.energy) > 0) {
-      const blue2 = blueOf("blue2");
-      if (blue2) return foldOthers(blue2, blueBonuses);
-    }
-    // 4. 牌（精选）→ blue3
-    if (finite(assets.ordinaryCards) <= 1) {
-      const blue3 = blueOf("blue3");
-      if (blue3) return foldOthers(blue3, blueBonuses);
-    }
-    // 5. 目标驱动（2026-08-21 用户裁定"目标是解锁/分数 → 填满"）：本函数只在
-    //    data:analyze 目标分支被调用（目标 active），推进分析/解锁蓝色踪迹/分数/
-    //    腾出已填蓝槽本身就是需求 → 默认 computer 填。此前的"无需求收束"误把
-    //    active 分析目标当无需求（绿色 R1 数据不填 → 分析链断 → 全盘 7 分崩）。
-    if (computer) return [computer];
-    return [];
+    const selectedBlue = wantsCredits && blueOf("blue1") ? blueOf("blue1")
+      : wantsEnergy && blueOf("blue2") ? blueOf("blue2")
+        : wantsCards && blueOf("blue3") ? blueOf("blue3")
+          : null;
+    if (!selectedBlue) return [];
+    return blueBonusChoices.length > 1
+      ? [{ ...selectedBlue, targetEquivalentChoiceCount: blueBonusChoices.length - 1 }]
+      : [selectedBlue];
   }
 
   function actionMatchesProbeStep(action, step) {
@@ -1858,17 +1847,26 @@
         const requiredAction = legalActions.find((action) => (
           action.family === dataRequirements.nextStep
         ));
-        add(
-          DATA_ANALYZE_ROUTE_TARGET,
-          `data:${dataRequirements.nextStep}`,
-          requiredAction
-            ? [requiredAction]
-            : selectDataResourcePreparation(
-              input.rootObservation,
-              legalActions,
-              input.focalSeatId,
-            ),
-        );
+        // 分析行动前先判断第二行 blueBonus（用户裁定：analyze 会改变后续填工位
+        // 成本，分析前决定是否填第二行；有独立需求就填——缺钱→blue1/缺电→blue2/
+        // 缺牌→blue3，宣传不需要）。blueBonus 与 requiredAction 并列候选，让
+        // 搜索在分析前先评估是否该填第二行。
+        const analyzeBlueBonus = selectAnalyzeBlueBonusChoice(
+          input.rootObservation,
+          legalActions,
+          input.focalSeatId,
+        ) || [];
+        const candidates = [
+          ...(analyzeBlueBonus.length ? analyzeBlueBonus : []),
+          ...(requiredAction ? [requiredAction] : selectDataResourcePreparation(
+            input.rootObservation,
+            legalActions,
+            input.focalSeatId,
+          )),
+        ];
+        if (candidates.length) {
+          add(DATA_ANALYZE_ROUTE_TARGET, `data:${dataRequirements.nextStep}`, candidates);
+        }
       }
       for (const plan of dataRequirements.acquisitionPlans || []) {
         if (!["scan", "card", "card_corner"].includes(plan.kind)) continue;
@@ -3106,6 +3104,20 @@
           }
         }
         if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
+          // 分析行动前先判断第二行 blueBonus（2026-08-21 用户裁定：分析会改变
+          // 后续填工位的成本，所以要在分析前决定是否填第二行；"有独立需求还是
+          // 填"——缺钱→blue1/缺电→blue2/缺牌→blue3，宣传不需要）。先填第二行
+          // 再 analyze 的成本最优；不填则走第一排 computer 推进。
+          const analyzeBlueBonus = selectAnalyzeBlueBonusChoice(
+            input.branchObservation,
+            successors,
+            input.focalSeatId,
+          );
+          if (analyzeBlueBonus) {
+            return analyzeBlueBonus.length
+              ? bindRoute(analyzeBlueBonus, input.routeTargetId, input.routePlanId)
+              : [];
+          }
           const dataPlacementChoices = selectDataPlacementChoice(
             input.branchObservation,
             successors,
