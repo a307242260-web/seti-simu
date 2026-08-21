@@ -112,8 +112,10 @@ function createHeuristicDecisionFunction(options = {}) {
   });
   const config = options.config || {};
 
-  // 反事实搜索（从原 simulation-env evaluateActionOutcomes 迁移；legalActions 为
-  // raw descriptor，evaluate 端按 actionId 对齐当前合法集）。
+  // 反事实搜索（唯一实现：counterfactualPort.evaluate；legalActions 为
+  // raw descriptor，evaluate 端按 actionId 对齐当前合法集）。估值入口统一走
+  // 本决策函数——simulation-env 旧 evaluateActionOutcomes 已删除，不存在第二套
+  // 搜索参数（旧默认非 secondary-agent 分支会与真实决策估值不一致）。
   function evaluateActions(actions, evaluateOptions = {}) {
     const seatId = actions[0]?.actorId || null;
     let rootStrategicFacts = null;
@@ -192,11 +194,12 @@ function createHeuristicDecisionFunction(options = {}) {
         stopAtPassDecisionBoundary: true,
       })
       : [];
-    // 初始选择不跑反事实（审查清理项 1）：selectInitialSetupAction 的估值依赖
-    // 初始牌效果在 confirm 结算后才出现，反事实叶看不到价值 → hasEvaluatedSelection
-    // 恒 false，setup 反事实（每动作 maxDepth=6/1 leaf/12 节点）结果从不被消费。
-    // 初始选择直接由 heuristic-policy 的硬编码/手工打分决定，动作标 unresolved
-    // 由 completePolicyOutcomeSet 补齐。
+    // 初始选择不跑反事实（审查清理项 1，2026-08-21 实证为**行为变化**而非行为不变）：
+    // setup 反事实的 settled 叶经 hasEvaluatedSelection 信号被消费，且其 winning leaf
+    // 会产生延续计划，计划驱动到主行动阶段（v2 白色 R1 被计划驱动选 place_data）。
+    // 删除后初始选择由 heuristic-policy 硬编码/手工打分决定、无延续计划 → 主行动
+    // 阶段自由决策（白色 R1 改选 launch 探测链）。全盘 A/B：均分 64.5→72.5（449 步，
+    // 用户裁定接受为增强）。动作标 unresolved 由 completePolicyOutcomeSet 补齐。
     const strategicOutcomes = !initialSetupBoundary && evaluatedActions.length
       ? evaluateActions(evaluatedActions, {
         maxDepth: 15,
