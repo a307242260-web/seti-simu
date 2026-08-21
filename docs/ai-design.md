@@ -167,12 +167,14 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 开关，off 分桶语义（strategic/bounded/control 三桶 + 目标门控）删除，以下行为恒生效：
 
 - `expected-score-evaluator#requiresRootCounterfactual`：**目的型动作需求门控**
-  （quick_trade 与 card_corner 对称，2026-08-21 迭代）：quick_trade/card_corner
+  （2026-08-21 迭代：card_corner 与 quick_trade 对称化）：quick_trade / card_corner
   本身不产生价值（资源负向），做它们是因为要达成某个目标但资源调配有问题——把
-  当前资源转成目标需要的资源。门控只放行"产出能缩小当前目标/行动缺口"的动作
+  当前资源转成目标需要的资源；门控只放行"产出能缩小当前目标/行动缺口"的动作
   （prepares*：探测/数据/扇区/收入支付缺口、分析能量缺口、研究宣传门槛；
   card_corner 另按弃牌收益（数据/宣传/支付资源）与 move 型（探测移动达成步骤）
-  判定）；**不存在无目标的 quick_trade/card_corner 根**；
+  判定）。**注意：门控只保证"贡献>0"，不保证"贡献比例"**——leafValue 是整链
+  价值不按动作分摊，小缺口吃全链的搭便车由 quick 根截断与出口目的检查继续兜底
+  （A/B 实测：删除截断+出口检查后均分 64.5→53.75，已回滚恢复）；
 - `expected-score-evaluator#selectSecondaryAgentRootActions`：返回**目标绑定动作 +
   需求放行的目的型动作**（`UNIFIED_PURPOSE_FAMILIES` = quick_trade/card_corner/
   industry，凭需求进搜索，不平铺全部候选）；
@@ -186,13 +188,11 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   扩展覆盖探测行动目标（orbit:/land:/move: 前缀），card:/decision: 卡牌身份目标
   仍保留全部 choice；弃牌会话延续层（actionChain 末尾已是 choose_payment）直接
   收束（toggle 振荡防死）；
-- **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/industry/runezu_face_symbol/
-  complete_task，2026-08-21 迭代：quick_trade/card_corner 已移出）：剩余 quick 根
-  未绑定时，下一个主行动决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭
-  后续主行动便车（leafValue 是整链价值，不按动作分摊）。**quick_trade/card_corner
-  不再截断**：入口需求门控已保证它们必有目标，叶价值 = 完整目标链是合理归因；
-  原"出口目的检查"（quickTradePurpose/cardCornerPurpose 防搭便车）同批删除——
-  两者都是"无门控旧时代"（第一版预算内全动作平铺）的双重防护补丁；
+- **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/quick_trade/industry/card_corner/
+  runezu_face_symbol/complete_task）：目的型/铺垫型 quick 根未绑定时，下一个主行动
+  决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭后续主行动便车
+  （leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/card_corner 65
+  虚高导致乱做；2026-08-21 尝试删除（含出口目的检查）A/B 均分 64.5→53.75，已回滚）；
 - **bounded 桶已删除**：play_card 经目标绑定进入搜索（income:card 收入牌 /
   tech:research 免费科技 / probe:免费发射 / sector:观测 / data:卡牌），未绑定目标
   的打牌保持 `STRATEGIC_GOAL_NOT_EVALUATED`。**不全部放行 play_card**——实测全部
