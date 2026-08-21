@@ -127,6 +127,15 @@ node tools/run_research_validation.js --name x --seed seti-107           # 换�
   记录、快速→全盘续跑一体。
 - `tools/compare_vguided_vs_baseline.js` / `tools/diag_vguided_quicktrade.js`：
   V 引导专项对比/成分分解，按需使用。
+- `tools/dump_decision_tree.js`：**单步决策搜索树 dump（2026-08-21 标准化调研工具）**——
+  加载存档重放到指定决策点，跑一次真实决策函数，把该决策的完整搜索数据
+  （合法动作 / 目标目录 / 根动作 / 每根 outcome 与叶子链 / 搜索诊断 / **实际耗时
+  wallMs**）dump 成 JSON（默认 `reports/iteration/decision-dumps/`），供多轮离线
+  分析，**不反复重放**。用于定位"状态复杂 → 搜索慢/预算耗尽"类问题（如免电盘面
+  白色 R3 决策 16384 预算下实测 42s、frontier 1.8 万节点）。输出文件名
+  `<存档名>.step<N>.json`，含 `wallMs / rootActionCount / targetCount /
+  outcomeStatusSummary / diagnostics`（executionLimitReached、frontier 分布等）。
+  用法：`node tools/dump_decision_tree.js <存档> <重放步数> [输出.json]`。
 
 ## 6. 版本登记与复盘（迭代记录体系，2026-08-21）
 
