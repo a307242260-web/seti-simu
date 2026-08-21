@@ -111,7 +111,8 @@ function gitRangeCommits(from, to) {
 
 // 提交区间改动摘要文本（--shortstat），如 "36 files changed, 1347 insertions(+), 325 deletions(-)"
 function gitRangeShortStat(from, to) {
-  const spec = from ? `${from}..${to}` : to;
+  // from 为 null（版本链根）时用提交自身范围（to^..to），不能裸 git diff <to>（那是工作树比较）
+  const spec = from ? `${from}..${to}` : `${to}^..${to}`;
   const out = git(["diff", "--shortstat", spec], { silent: true });
   return out == null ? "" : out.replace(/\s+/g, " ").trim();
 }
