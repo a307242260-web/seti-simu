@@ -1020,28 +1020,6 @@ function observation({
 }
 
 {
-  for (const family of [
-    "launch",
-    "move",
-    "quick_trade",
-    "place_data",
-    "card_corner",
-    "scan",
-    "orbit",
-    "land",
-    "analyze",
-    "play_card",
-    "research_tech",
-  ]) {
-    assert.equal(
-      evaluator.countsSecondaryAgentGoal(action(`route:${family}`, family)),
-      false,
-      `${family} 仅凭 action family 不能证明结果目标完成，不得消耗15个目标深度`,
-    );
-  }
-}
-
-{
   assert.equal(
     evaluator.completesSecondaryAgentRouteTarget(
       {

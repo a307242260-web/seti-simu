@@ -155,7 +155,6 @@ function createSimulationEnv() {
         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
-        countsGoal: expectedScoreEvaluator.countsSecondaryAgentGoal,
         completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
         getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
       } : null,

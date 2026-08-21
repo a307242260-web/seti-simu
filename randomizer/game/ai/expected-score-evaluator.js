@@ -930,10 +930,6 @@
       || preparesIncomeGoal;
   }
 
-  function countsSecondaryAgentGoal() {
-    return false;
-  }
-
   function completesSecondaryAgentRouteTarget(input = {}) {
     const action = input.action;
     const targetId = String(input.targetId || "");
@@ -3322,7 +3318,6 @@
     mergeParameters,
     requiresCounterfactualOutcome,
     requiresRootCounterfactual,
-    countsSecondaryAgentGoal,
     completesSecondaryAgentRouteTarget,
     secondaryAgentCompletionFacts,
     evaluateState,

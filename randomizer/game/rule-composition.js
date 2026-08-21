@@ -1494,7 +1494,6 @@
           origin.routeTargetId || "",
           origin.routePlanId || "",
           origin.proxyDepth || 0,
-          origin.opponentProxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
           Number(Boolean(origin.goalCompletionPending)),
           Number(Boolean(origin.informationMasked)),
@@ -1621,7 +1620,6 @@
           origin.routeTargetId || "",
           origin.routePlanId || "",
           origin.proxyDepth || 0,
-          origin.opponentProxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
           Number(Boolean(origin.goalCompletionPending)),
           Number(Boolean(origin.rootWasConditional)),
@@ -2328,7 +2326,6 @@
               proxyDepth: 0,
               quickTradeCount: 0,
               targetQuickTradeCount: 0,
-              opponentProxyDepth: 0,
               focalPassStarted: false,
               goalCompletionPending: false,
               informationMasked: false,
@@ -2563,11 +2560,6 @@
           const currentIsGoalTraceAction = traceGoalClusters
             && currentIsFocal
             && !["end_turn", "pass"].includes(current.family);
-          const currentCountsSecondaryGoal = currentIsRouteAction
-            && (
-              typeof secondaryAgentSearch.countsGoal !== "function"
-              || secondaryAgentSearch.countsGoal(current)
-            );
           const nextProbeAction = ["launch", "move", "orbit", "land"].includes(current.family)
             ? clone(current)
             : null;
@@ -2672,7 +2664,9 @@
                       branchObservation: execution.leafObservation,
                     },
                   )
-                  : currentCountsSecondaryGoal
+                  // completesRouteTarget 缺失时按"不完成目标"处理
+                  // （原 countsGoal 恒 false 的等价语义，见 2026-08-21 清理）。
+                  : false
               );
             const goalCompletionPending = Boolean(
               origin.goalCompletionPending
@@ -2845,7 +2839,6 @@
                     branchObservation: execution.leafObservation,
                     legalSuccessors: execution.successors,
                     focalProxyDepth: nextProxyDepth,
-                    opponentProxyDepth: origin.opponentProxyDepth,
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
                     routeTargetId,
@@ -3027,9 +3020,6 @@
                     branchObservation: execution.leafObservation,
                     legalSuccessors: execution.successors,
                     focalProxyDepth: nextProxyDepth,
-                    opponentProxyDepth: currentIsFocal || current.family === "end_turn"
-                      ? 0
-                      : origin.opponentProxyDepth + (currentCountsSecondaryGoal ? 1 : 0),
                     actionChain: nextChain,
                     rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
                     routeTargetId: completedGoal ? null : routeTargetId,
@@ -3148,13 +3138,6 @@
                         ? []
                         : nextGoalTraceActions,
                       goalTraceSelections: nextGoalTraceSelections,
-                      opponentProxyDepth: nextActorIsFocal
-                        ? 0
-                        : (
-                          currentIsFocal || current.family === "end_turn"
-                            ? 0
-                            : origin.opponentProxyDepth + (currentCountsSecondaryGoal ? 1 : 0)
-                      ),
                       focalPassStarted,
                       goalCompletionPending: nextActorIsFocal
                         ? false
