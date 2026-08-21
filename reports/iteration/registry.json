@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T06:29:45.752Z",
+  "builtAt": "2026-08-21T06:31:15.548Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "c87830d8",
+  "headCommit": "9d4f02b4",
   "currentBaseline": "v0",
   "worktreeDirty": true,
   "bestOf": {
@@ -722,6 +722,11 @@
   ],
   "warnings": [
     {
+      "kind": "orphan-record",
+      "level": "info",
+      "text": "未登记到任何版本：664ea780.c87830d8.quick-200.json（name=v0-revert-on commit=9d4f02b4 createdAt=2026-08-21T06:31:00.366Z）"
+    },
+    {
       "kind": "missing-save",
       "level": "info",
       "text": "v0 的记录 01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
@@ -732,5 +737,15 @@
       "text": "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（参见 newfast-recovery 的 25bdb5e9 注记）"
     }
   ],
-  "orphans": []
+  "orphans": [
+    {
+      "file": "664ea780.c87830d8.quick-200.json",
+      "mode": "quick-200",
+      "name": "v0-revert-on",
+      "gitCommit": "9d4f02b4",
+      "createdAt": "2026-08-21T06:31:00.366Z",
+      "steps": 200,
+      "terminal": false
+    }
+  ]
 }
