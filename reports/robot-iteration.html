@@ -116,13 +116,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:00:09.919Z",
+  "builtAt": "2026-08-21T05:00:45.823Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "fd9d7063",
+  "headCommit": "2461a2c9",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -1428,7 +1428,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 33285 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 33291 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1733,10 +1733,16 @@ function bestGrid(){
       `${runLine(b.bestAvg)}<br><span class="sum" title="${esc(summaryOf(b.bestAvg))}">${esc(summaryOf(b.bestAvg))||"（无改动摘要）"}</span>`,
       `来源 ${b.bestAvg.provenance}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
   } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
+  // 搜索耗时卡：分两块——最佳分数的耗时 / 最佳均分的耗时（对应前两张卡）
   const timeLines=[];
-  if(b.bestAvg&&b.bestAvg.wallMs!=null) timeLines.push(`最佳均分运行：<b>${fmtMs(b.bestAvg.wallMs)}</b> · 每步约 ${b.bestAvg.msPerStep} ms（${esc(b.bestAvg.versionId)}）`);
-  if(b.fastestPerStep) timeLines.push(`最快全盘（每步）：每步 ${b.fastestPerStep.msPerStep} ms · 总 ${fmtMs(b.fastestPerStep.wallMs)}（${esc(b.fastestPerStep.versionId)}）`);
-  if(b.fastestWall) timeLines.push(`最快全盘（总耗时）：${fmtMs(b.fastestWall.wallMs)}（${esc(b.fastestWall.versionId)}）`);
+  if(b.bestWhite){
+    const t=b.bestWhite.wallMs!=null?`${fmtMs(b.bestWhite.wallMs)} · 每步约 ${b.bestWhite.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳分数（${esc(b.bestWhite.versionId)} · ${b.bestWhite.value}）：${t}`);
+  }
+  if(b.bestAvg){
+    const t=b.bestAvg.wallMs!=null?`${fmtMs(b.bestAvg.wallMs)} · 每步约 ${b.bestAvg.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳均分（${esc(b.bestAvg.versionId)} · ${b.bestAvg.value}）：${t}`);
+  }
   html.push(card("搜索耗时",
     b.bestAvg&&b.bestAvg.wallMs!=null?fmtMs(b.bestAvg.wallMs):null,
     timeLines.join("<br>")||"尚无运行",

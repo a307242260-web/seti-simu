@@ -164,10 +164,16 @@ function bestGrid(){
       `${runLine(b.bestAvg)}<br><span class="sum" title="${esc(summaryOf(b.bestAvg))}">${esc(summaryOf(b.bestAvg))||"（无改动摘要）"}</span>`,
       `来源 ${b.bestAvg.provenance}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
   } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
+  // 搜索耗时卡：分两块——最佳分数的耗时 / 最佳均分的耗时（对应前两张卡）
   const timeLines=[];
-  if(b.bestAvg&&b.bestAvg.wallMs!=null) timeLines.push(`最佳均分运行：<b>${fmtMs(b.bestAvg.wallMs)}</b> · 每步约 ${b.bestAvg.msPerStep} ms（${esc(b.bestAvg.versionId)}）`);
-  if(b.fastestPerStep) timeLines.push(`最快全盘（每步）：每步 ${b.fastestPerStep.msPerStep} ms · 总 ${fmtMs(b.fastestPerStep.wallMs)}（${esc(b.fastestPerStep.versionId)}）`);
-  if(b.fastestWall) timeLines.push(`最快全盘（总耗时）：${fmtMs(b.fastestWall.wallMs)}（${esc(b.fastestWall.versionId)}）`);
+  if(b.bestWhite){
+    const t=b.bestWhite.wallMs!=null?`${fmtMs(b.bestWhite.wallMs)} · 每步约 ${b.bestWhite.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳分数（${esc(b.bestWhite.versionId)} · ${b.bestWhite.value}）：${t}`);
+  }
+  if(b.bestAvg){
+    const t=b.bestAvg.wallMs!=null?`${fmtMs(b.bestAvg.wallMs)} · 每步约 ${b.bestAvg.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳均分（${esc(b.bestAvg.versionId)} · ${b.bestAvg.value}）：${t}`);
+  }
   html.push(card("搜索耗时",
     b.bestAvg&&b.bestAvg.wallMs!=null?fmtMs(b.bestAvg.wallMs):null,
     timeLines.join("<br>")||"尚无运行",
