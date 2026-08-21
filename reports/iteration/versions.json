@@ -7,6 +7,21 @@
   },
   "versions": [
     {
+      "id": "v27strategy-reverted",
+      "name": "策略接口回退（v27-tech-v3）",
+      "date": "2026-08-21",
+      "baseline": "v27-tech-v3",
+      "head": "e23b710c",
+      "commits": [
+        "e23b710c"
+      ],
+      "summary": "expected-score-evaluator/production-kernel 回退 d347e658（撤销 de879058+8b7cf3b6 打牌价值），保留协调器/计划复用/end_turn 特例。479 步/均 72.75（完整口径）。",
+      "records": {
+        "6062da9f.ec5cfb9f.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "newfast-recovery",
       "name": "newfast + end_turn 特例恢复（HEAD）",
       "date": "2026-08-20",

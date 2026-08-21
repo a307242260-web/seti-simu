@@ -115,13 +115,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T04:35:15.466Z",
+  "builtAt": "2026-08-21T04:38:20.114Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "ec5cfb9f",
+  "headCommit": "e23b710c",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -206,6 +206,363 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "v27strategy-reverted",
+      "name": "策略接口回退（v27-tech-v3）",
+      "date": "2026-08-21",
+      "baseline": "v27-tech-v3",
+      "head": "e23b710c",
+      "commits": [
+        {
+          "hash": "e23b710c",
+          "date": "2026-08-21",
+          "subject": "策略选择接口回退到 v27-tech-v3（d347e658）：撤销 de879058 + 8b7cf3b6 的打牌价值改动，保留协调器/计划复用/end_turn 特例"
+        }
+      ],
+      "summary": "expected-score-evaluator/production-kernel 回退 d347e658（撤销 de879058+8b7cf3b6 打牌价值），保留协调器/计划复用/end_turn 特例。479 步/均 72.75（完整口径）。",
+      "diffStat": "63 files changed, 31197 insertions(+), 416 deletions(-)",
+      "diffFiles": [
+        {
+          "file": ".gitignore",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "AGENTS.md",
+          "insertions": 15,
+          "deletions": 2
+        },
+        {
+          "file": "assets/industry/industry-abilities.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 42,
+          "deletions": 22
+        },
+        {
+          "file": "docs/ai-research-workflow.md",
+          "insertions": 43,
+          "deletions": 10
+        },
+        {
+          "file": "docs/app-architecture.md",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "docs/browser-simulation-unification.md",
+          "insertions": 60,
+          "deletions": 1
+        },
+        {
+          "file": "docs/effect-session-runtime.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/fixed-boards.md",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "docs/project-progress/playcard-handoff-20260818.md",
+          "insertions": 132,
+          "deletions": 0
+        },
+        {
+          "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 186,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rulebook-audit-findings.md",
+          "insertions": 0,
+          "deletions": 1
+        },
+        {
+          "file": "docs/standard-action-contract.md",
+          "insertions": 5,
+          "deletions": 5
+        },
+        {
+          "file": "randomizer/app.js",
+          "insertions": 8,
+          "deletions": 8
+        },
+        {
+          "file": "randomizer/app/ai/browser-bootstrap.js",
+          "insertions": 16,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/app/browser-host/decision-ui.js",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app/browser-host/decision-ui.test.js",
+          "insertions": 38,
+          "deletions": 34
+        },
+        {
+          "file": "randomizer/app/browser-host/resident-renderer.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/browser-host/resident-renderer.test.js",
+          "insertions": 14,
+          "deletions": 21
+        },
+        {
+          "file": "randomizer/app/browser-rule-composition.js",
+          "insertions": 47,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/app/rule-composition.test.js",
+          "insertions": 16,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/app/rule-observation.js",
+          "insertions": 210,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 23,
+          "deletions": 167
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.js",
+          "insertions": 58,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.test.js",
+          "insertions": 102,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 157,
+          "deletions": 38
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 218,
+          "deletions": 13
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 58,
+          "deletions": 19
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.test.js",
+          "insertions": 105,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 24,
+          "deletions": 12
+        },
+        {
+          "file": "reports/iteration/page-template.html",
+          "insertions": 320,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 1223,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+          "insertions": 9983,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
+          "insertions": 10667,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/v27-playvalue/b2a3aa41.1d063418.quick-200.action-log.html",
+          "insertions": 3882,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 130,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 1542,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/browser-smoke-inventory.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/compare_browser_replay_v47.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/compare_browser_tech_refill.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/archive/diagnose_machine_observation.js",
+          "insertions": 142,
+          "deletions": 0
+        },
+        {
+          "file": "tools/archive/diagnose_sim_machine_end_to_end.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/inspect_sim_save.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/repro_discard_ui.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/repro_final_ui.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/save_checkpoints.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/trace_alien_play.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_actions_audit.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_discard_choices.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_from_checkpoint.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_land_choice.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_pass_auto_advance.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_position.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/audit_v_state_inputs.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "tools/diag_playcard_b117.js",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "tools/diagnose_browser_machine_end_to_end.js",
+          "insertions": 168,
+          "deletions": 0
+        },
+        {
+          "file": "tools/robot-iteration-lib.js",
+          "insertions": 850,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "6062da9f.ec5cfb9f.full.json",
+          "recordPath": "reports/research/6062da9f.ec5cfb9f.full.json",
+          "mode": "full",
+          "steps": 479,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 585349,
+          "flags": {
+            "planContinuationFastPath": false
+          },
+          "policyVersion": "seti-heuristic-policy-v27",
+          "gitCommit": "ec5cfb9f",
+          "createdAt": "2026-08-21T04:24:46.131Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": null,
+          "scores": {
+            "player-blue": 86,
+            "player-green": 62,
+            "player-brown": 93,
+            "player-white": 50
+          },
+          "avgScore": 72.75,
+          "scoreSource": "record-summary",
+          "savePath": null,
+          "reportPath": null,
+          "reportExists": false
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "newfast-recovery",
       "name": "newfast + end_turn 特例恢复（HEAD）",
@@ -403,7 +760,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": false,
@@ -1070,7 +1427,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "76 files changed, 3372 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 32552 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1294,9 +1651,9 @@ const REGISTRY = {
   ],
   "warnings": [
     {
-      "kind": "orphan-record",
+      "kind": "commit-mismatch",
       "level": "warn",
-      "text": "未登记到任何版本（全盘记录必须归属）：6062da9f.ec5cfb9f.full.json（name=v27strategy-reverted commit=ec5cfb9f createdAt=2026-08-21T04:24:46.131Z）"
+      "text": "v27strategy-reverted 的记录 6062da9f.ec5cfb9f.full.json gitCommit=ec5cfb9f 不在版本 commits（e23b710c）内——运行于脏工作树或归属错误，请核对 versions.json"
     },
     {
       "kind": "commit-mismatch",
@@ -1324,17 +1681,7 @@ const REGISTRY = {
       "text": "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（参见 newfast-recovery 的 25bdb5e9 注记）"
     }
   ],
-  "orphans": [
-    {
-      "file": "6062da9f.ec5cfb9f.full.json",
-      "mode": "full",
-      "name": "v27strategy-reverted",
-      "gitCommit": "ec5cfb9f",
-      "createdAt": "2026-08-21T04:24:46.131Z",
-      "steps": 479,
-      "terminal": true
-    }
-  ]
+  "orphans": []
 };
 
 const LABELS = {"player-blue":"蓝","player-green":"绿","player-brown":"棕","player-white":"白"};
