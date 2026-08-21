@@ -206,6 +206,7 @@ function readSaveFinalScores(saveRelPath) {
   if (!settled || !Array.isArray(match?.finalScores)) return null;
   const scores = {};
   const breakdown = {};
+  const formulaByTile = {};
   for (const fsItem of match.finalScores) {
     const pid = fsItem.playerId;
     scores[pid] = fsItem.totalScore ?? null;
@@ -219,10 +220,14 @@ function readSaveFinalScores(saveRelPath) {
       cards: Array.isArray(fsItem.cards) ? fsItem.cards : [],
       scoreSources: st.players?.players?.find((p) => p.id === pid)?.scoreSources || null,
     };
+    // 本局各板块实际使用的公式（a1/a2/...，用于板块称呼显示）
+    for (const t of fsItem.tiles || []) {
+      if (t.tileId && t.formulaId) formulaByTile[t.tileId] = t.formulaId;
+    }
   }
   const values = PLAYER_ORDER.map((p) => scores[p]).filter((v) => v != null);
   const avg = values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
-  return { scores, avgScore: avg, breakdown };
+  return { scores, avgScore: avg, breakdown, formulaByTile };
 }
 
 // ---------------- 版本结果解析 ----------------
@@ -971,7 +976,12 @@ function buildActionLogReport(opts) {
         .filter(([, v]) => v)
         .map(([k, v]) => `${SCORE_SOURCE_LABELS[k] || k} ${v}`);
       const tileParts = b.tileScoresById
-        ? Object.entries(b.tileScoresById).filter(([, v]) => v).map(([tid, v]) => `板块${tid} ${v}`)
+        ? Object.entries(b.tileScoresById).filter(([, v]) => v).map(([tid, v]) => {
+          // 板块用本局公式的新称呼（2026-08-21 用户裁定：a2=每套收入、d2=每两个科技…）
+          const formula = final?.formulaByTile?.[tid];
+          const label = formula ? FINAL_FORMULA_LABELS[formula] || formula : tid;
+          return `${label} ${v}`;
+        })
         : [];
       const cardParts = (b.cards || [])
         .filter((c) => c && c.score)
