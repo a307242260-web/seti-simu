@@ -1050,13 +1050,12 @@
 
   function dataAnalyzeEligible(requirements) {
     if (!requirements) return false;
-    if (typeof requirements.eligible === "boolean") return requirements.eligible;
-    const firstRowRemaining = Math.max(
-      0,
-      4 - finite(requirements.computerPlacedCount),
-    );
-    return finite(requirements.computerPlacedCount) >= 4
-      || finite(requirements.availableData) >= firstRowRemaining;
+    // 2026-08-21 用户裁定：已填格数 + 手头数据 ≥ 4（能凑满第一排 4 格）即开启
+    // data:analyze 目标——数据轨有推进条件就持续填到第 6 位解锁 analyze。
+    // 此前规则层（placed>=4 || available>=4-placed）与 placed>=4 纯阈值各有
+    // 偏差；"placed+available>=4"统一为"手头能凑够第一排"。
+    return finite(requirements.computerPlacedCount)
+      + finite(requirements.availableData) >= 4;
   }
 
   function rawSectorWinRequirements(observation) {
