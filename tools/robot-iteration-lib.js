@@ -926,7 +926,33 @@ function buildActionLogReport(opts) {
     </section>`;
   }).join("\n");
 
-  // 全程依次复盘：按轮分组，每玩家每回合一行
+  // 终局结算明细文本（base 构成 + 板块 + 卡牌；finalSection 与全程复盘末尾共用）
+  const finalDetailLines = (() => {
+    if (!final) return [];
+    return PLAYER_ORDER.map((p) => {
+      const b = final.breakdown[p];
+      if (!b) return null;
+      const ss = b.scoreSources || {};
+      const ssParts = Object.entries(ss)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${SCORE_SOURCE_LABELS[k] || k} ${v}`);
+      const tileParts = b.tileScoresById
+        ? Object.entries(b.tileScoresById).filter(([, v]) => v).map(([tid, v]) => `板块${tid} ${v}`)
+        : [];
+      const cardParts = (b.cards || [])
+        .filter((c) => c && c.score)
+        .map((c) => `${cardNameFor(c.cardId) || c.cardId} ${c.score}`);
+      const parts = [];
+      if (ssParts.length) parts.push(`base ${b.base}（${ssParts.join(" + ")}）`);
+      if (tileParts.length) parts.push(`板块 ${b.tile}（${tileParts.join(" + ")}）`);
+      if (cardParts.length) parts.push(`卡牌 ${b.card}（${cardParts.join(" + ")}）`);
+      if (!parts.length) return null;
+      return { player: p, text: parts.join(" + ") };
+    }).filter(Boolean);
+  })();
+
+  // 全程依次复盘：按轮分组，每玩家每回合一行；末尾追加终局结算说明（2026-08-21 用户口径：
+  // PASS 终局之后显示该玩家/各玩家的结算说明）
   const turnGroups = groupByTurn(rows);
   let lastRound = null;
   let chronoBody = "";
@@ -936,6 +962,13 @@ function buildActionLogReport(opts) {
       lastRound = g.r;
     }
     chronoBody += turnCells(g, true);
+  }
+  if (finalDetailLines.length) {
+    chronoBody += `<tr class="round-head"><td colspan="7">终局结算（完整终局口径）</td></tr>`;
+    for (const line of finalDetailLines) {
+      const highlight = line.player === "player-white" ? ' style="font-weight:700"' : "";
+      chronoBody += `<tr><td colspan="7" class="final-detail"${highlight}>${playerColor(line.player)}：${escapeHtml(line.text)}</td></tr>`;
+    }
   }
 
   const finalSection = (() => {
@@ -948,26 +981,9 @@ function buildActionLogReport(opts) {
         return `<tr${highlight}><td>${playerColor(p)}</td><td class="num"><b>${total ?? "—"}</b></td><td class="num">${b?.base ?? "—"}</td><td class="num">${b?.tile ?? "—"}</td><td class="num">${b?.card ?? "—"}</td></tr>`;
       }).join("");
       // 终局结算明细：base 构成 + 板块 + 卡牌（2026-08-21 用户口径：具体什么获得了几分）
-      const details = PLAYER_ORDER.map((p) => {
-        const b = final.breakdown[p];
-        if (!b) return "";
-        const ss = b.scoreSources || {};
-        const ssParts = Object.entries(ss)
-          .filter(([, v]) => v)
-          .map(([k, v]) => `${SCORE_SOURCE_LABELS[k] || k} ${v}`);
-        const tileParts = b.tileScoresById
-          ? Object.entries(b.tileScoresById).filter(([, v]) => v).map(([tid, v]) => `板块${tid} ${v}`)
-          : [];
-        const cardParts = (b.cards || [])
-          .filter((c) => c && c.score)
-          .map((c) => `${cardNameFor(c.cardId) || c.cardId} ${c.score}`);
-        const parts = [];
-        if (ssParts.length) parts.push(`base ${b.base}（${ssParts.join(" + ")}）`);
-        if (tileParts.length) parts.push(`板块 ${b.tile}（${tileParts.join(" + ")}）`);
-        if (cardParts.length) parts.push(`卡牌 ${b.card}（${cardParts.join(" + ")}）`);
-        if (!parts.length) return "";
-        return `<div class="final-detail"><b>${playerColor(p)}</b>：${escapeHtml(parts.join(" + "))}</div>`;
-      }).join("");
+      const details = finalDetailLines
+        .map((line) => `<div class="final-detail"><b>${playerColor(line.player)}</b>：${escapeHtml(line.text)}</div>`)
+        .join("");
       return `<section class="panel final">
         <h2>终局分数（完整终局口径，存档 finalScores）</h2>
         <table>${head}<tbody>${body}
