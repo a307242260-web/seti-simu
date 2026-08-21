@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "v1-simplify",
+      "name": "v1-simplify",
+      "date": "2026-08-21",
+      "baseline": "v0",
+      "head": "294708a6",
+      "commits": [
+        "6b077c39",
+        "294708a6"
+      ],
+      "summary": "v0 策略简化（行为不变）：删死导出 evaluateSetupProbeGoals/compareSetupProbeGoals/evaluateSearchPriority、死参数 strategyWeights/seed、重复集合 UNEVALUATED_ROOT_FAMILIES、死脚本 game/ai/index.js、恒0字段 opportunityCost；预期与 v0 均分一致（64.5）",
+      "records": {
+        "1d1505c5.294708a6.full.json": {
+          "note": "on-head：436 步，完整终局 45/63/73/77 均 64.5（与 v0 基线逐席一致，行为不变确认）"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "v0",
       "name": "v0 基线（当前代码默认装配）",
       "date": "2026-08-21",
