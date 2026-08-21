@@ -5,19 +5,22 @@
   let quickTrades = root.SetiQuickTrades;
   let cardEffects = root.SetiCardEffects;
   let alienState = root.SetiAlienState;
+  let cardDeck = root.SetiCards;
   if (typeof require === "function") {
     outcomeModel = outcomeModel || require("./outcome-model");
     quickTrades = quickTrades || require("../actions/quick-trades");
     cardEffects = cardEffects || require("../cards/effects");
     alienState = alienState || require("../aliens/state");
+    cardDeck = cardDeck || require("../cards/deck");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects, alienState);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, cardDeck);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
   quickTrades,
   cardEffects,
   alienState,
+  cardDeck,
 ) {
   "use strict";
 
@@ -33,8 +36,8 @@
   // 统一搜索的"需求放行"family：目的型动作——本身没有独立价值，价值来自
   // "满足当前需求"（quick_trade 补资源缺口 / card_corner 弃牌角标收益 /
   // industry 公司能力）。unified 下这些动作凭需求进搜索（requiresRootCounterfactual
-  // 已按缺口过滤 quick_trade），叶价值由 quick 根截断限制为立即效果；其余未绑定
-  // 动作保持目标绑定评估（不平铺进搜索树）。
+  // 按缺口过滤 quick_trade 与 card_corner，2026-08-21 对称化）；其余未绑定动作
+  // 保持目标绑定评估（不平铺进搜索树）。
   const UNIFIED_PURPOSE_FAMILIES = Object.freeze(new Set([
     "quick_trade", "card_corner", "industry",
   ]));
@@ -42,8 +45,12 @@
   // 价值来自"为后续主行动/目标做准备"（"需要了再做"，用户口径）。作为根展开时
   // 若继续主行动选择，leafValue（整链价值）会把主行动收益归因到 quick 根上，
   // 评估虚高 → 乱做。截断到"quick 完成 + end_turn"，价值 = 立即效果。
+  // 2026-08-21 迭代（用户裁定）：quick_trade / card_corner 已移出本集合——入口门控
+  // requiresRootCounterfactual 保证它们必有目标（补缺口），叶价值=完整目标链是合理
+  // 归因，不再截断；move 是纯移动（无目标时无价值）与 industry / 符文 / 任务仍靠
+  // 截断把价值限制在立即效果（它们无入口门控，防未绑定便车）。
   const QUICK_ROOT_FAMILIES = Object.freeze(new Set([
-    "move", "quick_trade", "industry", "card_corner",
+    "move", "industry",
     "runezu_face_symbol", "complete_task",
   ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
@@ -124,25 +131,55 @@
     });
   }
 
-  function infrastructureOf(projection) {
+  // ---- value 形状统一构造（审查清理项 9）----
+  // evaluateState（完整 outcomeProjection 源）与 valueFromStrategicFacts
+  // （轻量 strategicFacts 源）产出同一 value 形状（resourceFacts/infrastructure），
+  // 此前两处各自手写组装导致形状漂移风险；统一由 resourceFactsFrom/infrastructureFrom
+  // 组装。strategicFacts 源不投影 alienSlots（createStrategicFacts 无槽位级数据）——
+  // 分支优先级（getBranchPriority 热路径）因此不感知外星进度增量，与去重前一致。
+  function resourceFactsFrom(parts = {}) {
     return {
-      ownedTechIds: [...(projection.progress?.ownedTechIds || [])].sort(),
-      income: { ...(projection.progress?.income || {}) },
-      roundNumber: Math.max(1, finite(projection.progress?.roundNumber) || 1),
-      finalRoundNumber: Math.max(1, finite(projection.progress?.finalRoundNumber) || 4),
-      traceCount: Math.max(0, finite(projection.progress?.traceCount) || 0),
+      credits: finite(parts.credits),
+      energy: finite(parts.energy),
+      publicity: finite(parts.publicity),
+      availableData: finite(parts.availableData),
+      ordinaryCards: finite(parts.ordinaryCards),
+      alienCards: finite(parts.alienCards),
+    };
+  }
+
+  function infrastructureFrom(parts = {}) {
+    return {
+      ownedTechIds: [...(parts.ownedTechIds || [])].sort(),
+      income: { ...(parts.income || {}) },
+      roundNumber: Math.max(1, finite(parts.roundNumber) || 1),
+      finalRoundNumber: Math.max(1, finite(parts.finalRoundNumber) || 4),
+      traceCount: Math.max(0, finite(parts.traceCount) || 0),
       // 外星槽位级进度（V 同源）：{ slotId, revealed, ownFirstTraces, ownExtraMarks }
-      alienSlots: (projection.progress?.alienSlots || []).map((slot) => ({
+      alienSlots: (parts.alienSlots || []).map((slot) => ({
         slotId: slot?.slotId ?? null,
         revealed: Boolean(slot?.revealed),
         ownFirstTraces: Math.max(0, finite(slot?.ownFirstTraces)),
         ownExtraMarks: Math.max(0, finite(slot?.ownExtraMarks)),
       })),
-      sectorWinRequirements: projection.progress?.sectorWinRequirements
-        ? structuredClone(projection.progress.sectorWinRequirements)
+      sectorWinRequirements: parts.sectorWinRequirements
+        ? structuredClone(parts.sectorWinRequirements)
         : null,
-      dataProgress: { ...(projection.progress?.dataProgress || {}) },
+      dataProgress: { ...(parts.dataProgress || {}) },
     };
+  }
+
+  function infrastructureOf(projection) {
+    return infrastructureFrom({
+      ownedTechIds: projection.progress?.ownedTechIds,
+      income: projection.progress?.income,
+      roundNumber: projection.progress?.roundNumber,
+      finalRoundNumber: projection.progress?.finalRoundNumber,
+      traceCount: projection.progress?.traceCount,
+      alienSlots: projection.progress?.alienSlots,
+      sectorWinRequirements: projection.progress?.sectorWinRequirements,
+      dataProgress: projection.progress?.dataProgress,
+    });
   }
 
   function evaluateState(observation, seatId) {
@@ -165,14 +202,14 @@
       securedEndGameBonus: terminal ? 0 : finite(projection.scoring.securedEndGameBonus),
       total: realizedScore,
       infrastructure: infrastructureOf(projection),
-      resourceFacts: {
-        credits: finite(projection.assets.credits),
-        energy: finite(projection.assets.energy),
-        publicity: finite(projection.assets.publicity),
-        availableData: finite(projection.assets.availableData),
-        ordinaryCards: finite(projection.assets.ordinaryCards),
-        alienCards: finite(projection.assets.alienCards),
-      },
+      resourceFacts: resourceFactsFrom({
+        credits: projection.assets.credits,
+        energy: projection.assets.energy,
+        publicity: projection.assets.publicity,
+        availableData: projection.assets.availableData,
+        ordinaryCards: projection.assets.ordinaryCards,
+        alienCards: projection.assets.alienCards,
+      }),
       fieldPaths: {
         realizedScore: terminal
           ? "outcomeProjection.scoring.officialTerminalScore"
@@ -343,137 +380,6 @@
 
   function positiveDelta(after, before) {
     return Math.max(0, finite(after) - finite(before));
-  }
-
-  function stableSerialize(value) {
-    if (value == null || typeof value !== "object") return JSON.stringify(value);
-    if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
-    return `{${Object.keys(value).sort().map(
-      (key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`,
-    ).join(",")}}`;
-  }
-
-  function actionSemanticKey(action) {
-    return stableSerialize({
-      family: action?.family || null,
-      target: action?.target || {},
-      payload: action?.payload || {},
-    });
-  }
-
-  function quickTradePurpose(context, action, leaf) {
-    if (action?.family !== "quick_trade") return { required: false, supported: true };
-    const nextAgent = (leaf?.secondaryAgentTrace || [])
-      .find((candidate) => candidate?.family !== "quick_trade");
-    if (!nextAgent) {
-      return { required: true, supported: false, reason: "quick-trade-no-followup-agent" };
-    }
-    const nextKey = actionSemanticKey(nextAgent);
-    const alreadyLegal = (context?.legalActions || [])
-      .filter((candidate) => !["quick_trade", "pass", "end_turn"].includes(candidate?.family))
-      .some((candidate) => actionSemanticKey(candidate) === nextKey);
-    const directlyLegal = (leaf?.rootActionSettledLegalSuccessors || [])
-      .some((candidate) => actionSemanticKey(candidate) === nextKey);
-    const projection = context?.observation?.outcomeProjection;
-    const preparesReadyAnalyze = Boolean(
-      projection?.progress?.dataProgress?.analyzeReady
-      && finite(projection?.assets?.energy) === 0
-      && ["credits-for-energy", "cards-for-energy"].includes(action.target?.tradeId),
-    );
-    const preparesProbeGoal = (rawProbeRequirements(context?.observation)?.candidates || [])
-      .some((goal) => {
-        const projected = probeResourceGapAfterTrade(
-          context.observation,
-          goal,
-          action,
-          context.seatId,
-        );
-        return projected && projected.after < projected.before;
-      });
-    const dataRequirements = rawDataAnalyzeRequirements(context?.observation);
-    const dataNextFamilies = new Set([
-      dataRequirements?.nextStep,
-      ...(dataRequirements?.acquisitionPlans || [])
-        .map((plan) => plan.nextStep?.family),
-    ].filter(Boolean));
-    const preparesDataGoal = dataAnalyzeEligible(dataRequirements)
-      && dataNextFamilies.has(nextAgent?.family)
-      && dataPaymentGapAfterTrade(
-        context?.observation,
-        action,
-        context.seatId,
-      )?.reduction > 0;
-    return {
-      required: true,
-      supported: preparesReadyAnalyze
-        || preparesProbeGoal
-        || preparesDataGoal
-        || (directlyLegal && !alreadyLegal),
-      reason: preparesReadyAnalyze
-        ? "quick-trade-prepared-ready-analyze"
-        : preparesProbeGoal
-          ? "quick-trade-reduced-probe-goal-gap"
-          : preparesDataGoal
-            ? "quick-trade-reduced-data-goal-gap"
-            : directlyLegal && !alreadyLegal
-              ? "quick-trade-directly-unlocked-agent"
-              : "quick-trade-did-not-directly-unlock-agent",
-      nextAgent,
-    };
-  }
-
-  function cardCornerPurpose(context, action, leaf, rootValue, parameters) {
-    if (action?.family !== "card_corner") return { required: false, supported: true };
-    const immediateObservation = leaf?.rootActionObservation;
-    if (!immediateObservation) {
-      return { required: true, supported: false, reason: "card-corner-immediate-outcome-missing" };
-    }
-    const immediateStateValue = valueFromStrategicFacts(
-      outcomeModel.createStrategicFacts(immediateObservation, context.seatId),
-    );
-    const immediateValue = leafValue(
-      rootValue,
-      immediateStateValue,
-      parameters,
-    );
-    if (immediateValue.primaryValue > 0) {
-      return { required: true, supported: true, reason: "card-corner-immediate-primary" };
-    }
-    if (action.payload?.kind === "move") {
-      return { required: true, supported: true, reason: "card-corner-probe-progress" };
-    }
-    if (
-      finite(immediateStateValue.resourceFacts?.availableData)
-      > finite(rootValue.resourceFacts?.availableData)
-    ) {
-      return { required: true, supported: true, reason: "card-corner-data-progress" };
-    }
-    if (selectReducedProbeGoal(
-      context?.observation,
-      immediateObservation,
-      context?.seatId,
-    )) {
-      return { required: true, supported: true, reason: "card-corner-reduced-probe-goal-gap" };
-    }
-    const nextAgent = (leaf?.secondaryAgentTrace || []).find((candidate) => (
-      !["card_corner", "end_turn", "pass"].includes(candidate?.family)
-    ));
-    if (!nextAgent) {
-      return { required: true, supported: false, reason: "card-corner-no-followup-agent" };
-    }
-    const nextKey = actionSemanticKey(nextAgent);
-    const rootLegal = (context?.legalActions || [])
-      .some((candidate) => actionSemanticKey(candidate) === nextKey);
-    const immediatelyLegal = (leaf?.rootActionLegalSuccessors || [])
-      .some((candidate) => actionSemanticKey(candidate) === nextKey);
-    return {
-      required: true,
-      supported: immediatelyLegal && !rootLegal,
-      reason: immediatelyLegal && !rootLegal
-        ? "card-corner-directly-unlocked-agent"
-        : "card-corner-did-not-directly-unlock-agent",
-      nextAgent,
-    };
   }
 
   // 外星人 trace 价值：每个 trace 标记（第一放置 3-5 分即时 + 终局 trace 卡 2分/个
@@ -698,22 +604,23 @@
   }
 
   function valueFromStrategicFacts(facts) {
+    // 轻量 strategicFacts 源（getBranchPriority 热路径）：不投影 alienSlots
+    // （createStrategicFacts 无槽位级数据），外星进度增量不参与分支优先级，
+    // 与去重前行为一致；最终叶排序走 evaluateState（完整 projection 源）。
     return {
       terminal: Boolean(facts.terminal),
       realizedScore: finite(facts.realizedScore),
       securedEndGameBonus: finite(facts.securedEndGameBonus),
-      resourceFacts: { ...(facts.resourceFacts || {}) },
-      infrastructure: {
-        ownedTechIds: [...(facts.ownedTechIds || [])].sort(),
-        income: { ...(facts.income || {}) },
-        roundNumber: Math.max(1, finite(facts.roundNumber) || 1),
-        finalRoundNumber: Math.max(1, finite(facts.finalRoundNumber) || 4),
-        traceCount: Math.max(0, finite(facts.traceCount) || 0),
-        sectorWinRequirements: facts.sectorWinRequirements
-          ? structuredClone(facts.sectorWinRequirements)
-          : null,
-        dataProgress: { ...(facts.dataProgress || {}) },
-      },
+      resourceFacts: resourceFactsFrom(facts.resourceFacts),
+      infrastructure: infrastructureFrom({
+        ownedTechIds: facts.ownedTechIds,
+        income: facts.income,
+        roundNumber: facts.roundNumber,
+        finalRoundNumber: facts.finalRoundNumber,
+        traceCount: facts.traceCount,
+        sectorWinRequirements: facts.sectorWinRequirements,
+        dataProgress: facts.dataProgress,
+      }),
     };
   }
 
@@ -806,16 +713,11 @@
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
     let bestLeafValue = best.strategicValue;
     const bestVD = best.vDelta || 0;
-    const tradePurpose = quickTradePurpose(context, action, best.leaf);
-    if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
-    const cornerPurpose = cardCornerPurpose(
-      context,
-      action,
-      best.leaf,
-      rootValue,
-      parameters,
-    );
-    if (!cornerPurpose.supported) return unavailable(outcome, cornerPurpose.reason);
+    // 2026-08-21 迭代（用户裁定）：quick_trade/card_corner 出口"目的检查"
+    // （quickTradePurpose/cardCornerPurpose）已删除——入口门控 requiresRootCounterfactual
+    // 保证两者必有目标（补缺口），叶价值=完整目标链是合理归因；出口检查是"无门控
+    // 旧时代"（第一版预算内全动作平铺）防 quick 根搭便车的补丁，与截断一样已过时。
+    // selectable 判据统一为 primaryValue/control/conditional/move。
     const control = CONTROL_FAMILIES.has(action?.family);
     const conditional = action?.phase === "conditional";
     // 移动不是主行动：quick 相位的 move 是随时可用的免费快速行动（用电/移动牌/牌
@@ -847,8 +749,6 @@
       vStateValueEnabled: vEnabled,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
-      quickTradePurpose: tradePurpose.required ? tradePurpose : null,
-      cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
       techValue: best.strategicValue.infrastructure.techValue,
       gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
@@ -873,8 +773,6 @@
         best.strategicValue.actualScoreDelta > 0 ? "strategic-goal-score" : null,
         best.strategicValue.infrastructure.techValue > 0 ? "strategic-goal-tech" : null,
         best.strategicValue.infrastructure.incomeValue > 0 ? "strategic-goal-income" : null,
-        tradePurpose.required ? tradePurpose.reason : null,
-        cornerPurpose.required ? cornerPurpose.reason : null,
         conditional ? "required-standard-decision" : null,
         control ? "turn-control" : null,
       ].filter(Boolean),
@@ -885,21 +783,32 @@
     return !CONTROL_FAMILIES.has(action?.family);
   }
 
+  // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade / card_corner 本身
+  // 没有独立价值（资源上是负向的），做它们是因为要达成某个目标但资源调配有问题——
+  // 把当前持有的资源（钱/能量/牌）转成目标需要的资源。因此**不存在"无目标"的
+  // quick_trade/card_corner 根**：门控只放行"产出能缩小当前目标/行动缺口"的动作。
+  // 2026-08-21 迭代（用户裁定）：既然入口门控已保证有目标，叶价值（完整目标链）
+  // 归因给 quick 根是合理的，不再需要 quick 根截断与出口"目的检查"（两者都是
+  // 无门控旧时代的双重防护，见 ai-design.md §3.4）。
+  // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
+  function cardCornerDiscardReward(observation, action) {
+    if (action?.family !== "card_corner") return null;
+    const card = (observation?.selfState?.hand || [])
+      .find((candidate) => String(candidate?.id) === String(action.target?.cardInstanceId));
+    if (!card || typeof cardDeck?.getDiscardActionRewardForCard !== "function") return null;
+    return cardDeck.getDiscardActionRewardForCard(card) || null;
+  }
+
   function requiresRootCounterfactual(action, observation) {
     if (!requiresCounterfactualOutcome(action)) return false;
-    if (action?.family !== "quick_trade") return true;
-    // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade 本身没有独立价值，
-    // 价值来自"补当前资源缺口"。quick_trade 的叶必然搭后续主行动的便车（leafValue
-    // 是整链价值，不按动作分摊），评估虚高导致 AI 乱做（实测 on 全盘白色 86→43，
-    // quick_trade/card_corner/industry 被误选）。
-    // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
+    if (action?.family !== "quick_trade" && action?.family !== "card_corner") return true;
     const projection = observation?.outcomeProjection;
+    const seatId = observation?.viewer?.seatId || observation?.outcomeProjection?.viewerSeatId;
     const preparesAnalyze = Boolean(
       projection?.progress?.dataProgress?.analyzeReady
       && finite(projection?.assets?.energy) === 0
       && finite(action?.payload?.gain?.energy) > 0
     );
-    const seatId = observation?.viewer?.seatId || observation?.outcomeProjection?.viewerSeatId;
     const preparesProbeGoal = (rawProbeRequirements(observation)?.candidates || [])
       .some((goal) => {
         const projected = probeResourceGapAfterTrade(observation, goal, action, seatId);
@@ -923,11 +832,61 @@
         action,
         seatId,
       )?.reduction > 0);
-    return preparesAnalyze
-      || preparesProbeGoal
-      || preparesDataGoal
-      || preparesSectorGoal
-      || preparesIncomeGoal;
+    if (action?.family === "quick_trade") {
+      return preparesAnalyze
+        || preparesProbeGoal
+        || preparesDataGoal
+        || preparesSectorGoal
+        || preparesIncomeGoal;
+    }
+    // card_corner（2026-08-21 补充入口门控，与 quick_trade 对称）：
+    //   - move 型：作为探测路线的移动达成步骤——有需要移动的探测目标才放行；
+    //   - runezu_symbol / fangzhou_basic：物种专属弃牌角标（符文面部符号/方舟），
+    //     本身绑定外星机制目标，放行；
+    //   - resource 型：弃牌收益（数据/宣传/支付资源）缩小当前目标缺口——
+    //     数据缺口（数据目标需数据）/ 宣传跨研究门槛（科技目标）/ 探测·扇区·收入
+    //     支付缺口（弃牌得钱/能量缩小 required 缺口，复用缺口比较）。
+    if (action.payload?.kind === "move") {
+      return (rawProbeRequirements(observation)?.candidates || [])
+        .some((goal) => goal?.nextStep?.family === "move");
+    }
+    if (["runezu_symbol", "fangzhou_basic"].includes(action.payload?.kind)) return true;
+    const reward = cardCornerDiscardReward(observation, action);
+    if (!reward) return false;
+    const assets = resourceFactsOf(observation, seatId);
+    const dataGain = Math.max(0, finite(reward?.dataCount));
+    const gain = reward?.gain || {};
+    const dataRequirements = rawDataAnalyzeRequirements(observation);
+    const dataNeed = dataAnalyzeEligible(dataRequirements)
+      && (
+        (dataRequirements?.acquisitionPlans || []).some((plan) => plan.kind === "card_corner")
+        || finite(dataRequirements?.nextCost?.credits) > 0
+        || finite(dataRequirements?.nextCost?.energy) > 0
+      );
+    const preparesData = dataNeed && (dataGain > 0 || finite(gain.credits) > 0 || finite(gain.energy) > 0);
+    const techRequirements = rawTechGainRequirements(observation);
+    const researchCost = finite(techRequirements?.researchCost) || 6;
+    const publicityCrosses = finite(assets.publicity) < researchCost
+      && finite(assets.publicity) + finite(gain.publicity) >= researchCost;
+    const reducesPaymentGap = [
+      ...(rawProbeRequirements(observation)?.candidates || []).map((goal) => goal.required || {}),
+      rawSectorWinRequirements(observation)?.standardScanCost || {},
+      ...(rawIncomeGainRequirements(observation)?.plans || []).map((plan) => plan.nextCost || {}),
+    ].filter((required) => finite(required?.credits) > 0 || finite(required?.energy) > 0)
+      .some((required) => {
+        let before = 0;
+        let after = 0;
+        for (const resource of ["credits", "energy"]) {
+          before += Math.max(0, finite(required[resource]) - finite(assets[resource]));
+          after += Math.max(0, (
+            finite(required[resource])
+            - finite(assets[resource])
+            - finite(gain[resource])
+          ));
+        }
+        return after < before;
+      });
+    return preparesData || publicityCrosses || reducesPaymentGap;
   }
 
   function completesSecondaryAgentRouteTarget(input = {}) {

@@ -460,6 +460,10 @@ function extractPlanSnapshot(input, options = {}) {
     planStatus = "no-selected-leaf";
   }
 
+  // light（生产路径，协调器只消费 plan/planDependency/revealedCount）跳过纯诊断
+  // 指纹（facts/directoryFingerprint*）——这些只被 tools/diagnose_plan_continuation.js
+  // 消费；诊断工具调用时 light 缺省 false，功能不受影响。
+  const diagnosticFacts = !light && rootObservation;
   return {
     plan,
     planStatus,
@@ -474,9 +478,11 @@ function extractPlanSnapshot(input, options = {}) {
     poolSize: ranked.pool.length,
     issues,
     rootObservation,
-    facts: rootObservation ? directoryFactsSnapshot(rootObservation) : null,
-    directoryFingerprint: rootObservation ? directoryFingerprint(rootObservation) : null,
-    directoryFingerprintWithRockets: rootObservation
+    facts: diagnosticFacts ? directoryFactsSnapshot(rootObservation) : null,
+    directoryFingerprint: diagnosticFacts
+      ? directoryFingerprint(rootObservation)
+      : null,
+    directoryFingerprintWithRockets: diagnosticFacts
       ? directoryFingerprint(rootObservation, { includeRockets: true })
       : null,
   };

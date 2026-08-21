@@ -268,119 +268,6 @@
     return Object.freeze({ ok: true, action, decision, runtimeValidation });
   }
 
-  function createPolicyRequestSession(options = {}) {
-    const context = options.context;
-    if (context?.schemaVersion !== CONTEXT_SCHEMA_VERSION) {
-      throw new PolicyContractError("POLICY_CONTEXT_SCHEMA_MISMATCH", "Policy request 需要 DecisionContext");
-    }
-    if (typeof options.validateDecision !== "function") {
-      throw new TypeError("Policy request 需要 validateDecision(decision, runtimeContext)");
-    }
-    let status = "pending";
-    let settledResult = null;
-
-    function settle(nextStatus, result) {
-      if (status !== "pending") {
-        return fail(
-          status === "responded" ? "POLICY_DUPLICATE_RESPONSE" : "POLICY_LATE_RESPONSE",
-          status === "responded" ? "Policy request 已响应" : `Policy request 已 ${status}`,
-          { status },
-        );
-      }
-      status = nextStatus;
-      settledResult = result;
-      if (typeof options.onSettle === "function") options.onSettle(result, status);
-      return result;
-    }
-
-    return Object.freeze({
-      accept(decision, runtimeContext) {
-        if (status !== "pending") return settle("responded", null);
-        return settle("responded", options.validateDecision(decision, runtimeContext));
-      },
-      cancel(reason = "Policy request 已取消") {
-        return settle("cancelled", fail("POLICY_CANCELLED", reason));
-      },
-      expire() {
-        return settle("timed_out", fail("POLICY_TIMEOUT", "Policy request 超时"));
-      },
-      invalidate(reason = "权威版本或恢复代次已变化") {
-        return settle("invalidated", fail("POLICY_REQUEST_INVALIDATED", reason));
-      },
-      reject(error) {
-        return settle("failed", fail("POLICY_FAILURE", error?.message || String(error || "Policy 调用失败")));
-      },
-      snapshot() {
-        return Object.freeze({ requestId: context.requestId, status, result: settledResult });
-      },
-    });
-  }
-
-  function runPolicy(policy, context, options = {}) {
-    const decide = typeof policy === "function" ? policy : policy?.decide;
-    if (typeof decide !== "function") {
-      return Promise.resolve(fail("POLICY_NOT_CALLABLE", "Policy 必须是函数或实现 decide(context, request)"));
-    }
-    const now = typeof options.now === "function" ? options.now : Date.now;
-    const setTimer = options.setTimer || setTimeout;
-    const clearTimer = options.clearTimer || clearTimeout;
-    const deadlineAt = options.deadlineAt == null ? null : Number(options.deadlineAt);
-
-    return new Promise((resolve) => {
-      let timer = null;
-      let abortHandler = null;
-      const session = createPolicyRequestSession({
-        context,
-        validateDecision(decision, runtimeContext) {
-          return validatePolicyDecision(context, decision, {
-            registry: options.registry,
-            runtimeContext: runtimeContext || options.getRuntimeContext?.(),
-          });
-        },
-        onSettle(result) {
-          if (timer != null) clearTimer(timer);
-          if (abortHandler && options.signal) options.signal.removeEventListener("abort", abortHandler);
-          resolve(result);
-        },
-      });
-      if (typeof options.onSession === "function") options.onSession(session);
-
-      if (options.signal?.aborted) {
-        session.cancel("Policy request 在调用前已取消");
-        return;
-      }
-      if (options.signal) {
-        abortHandler = () => session.cancel("Policy request 被 AbortSignal 取消");
-        options.signal.addEventListener("abort", abortHandler, { once: true });
-      }
-      if (deadlineAt != null) {
-        if (!Number.isFinite(deadlineAt)) {
-          session.reject(new TypeError("deadlineAt 必须是有限 epoch milliseconds"));
-          return;
-        }
-        const remaining = deadlineAt - now();
-        if (remaining <= 0) {
-          session.expire();
-          return;
-        }
-        timer = setTimer(() => session.expire(), remaining);
-      }
-
-      try {
-        Promise.resolve(decide.call(policy, context, {
-          requestId: context.requestId,
-          deadlineAt,
-          signal: options.signal || null,
-        })).then(
-          (decision) => session.accept(decision, options.getRuntimeContext?.()),
-          (error) => session.reject(error),
-        );
-      } catch (error) {
-        session.reject(error);
-      }
-    });
-  }
-
   return Object.freeze({
     CONTEXT_SCHEMA_VERSION,
     DECISION_SCHEMA_VERSION,
@@ -389,7 +276,5 @@
     createDecisionContext,
     createPolicyDecision,
     validatePolicyDecision,
-    createPolicyRequestSession,
-    runPolicy,
   });
 });

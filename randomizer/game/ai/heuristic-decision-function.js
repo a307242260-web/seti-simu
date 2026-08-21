@@ -110,9 +110,6 @@ function createHeuristicDecisionFunction(options = {}) {
     difficulty: options.difficulty,
     evaluationParameters: options.evaluationParameters,
   });
-  // policyFor（可选）：按 boundary 返回策略——条件决策（choose_*）用启发式，
-  // 主行动用 V 引导等。默认恒用 defaultPolicy。
-  const policyFor = options.policyFor || (() => defaultPolicy);
   const config = options.config || {};
 
   // 反事实搜索（从原 simulation-env evaluateActionOutcomes 迁移；legalActions 为
@@ -195,14 +192,19 @@ function createHeuristicDecisionFunction(options = {}) {
         stopAtPassDecisionBoundary: true,
       })
       : [];
-    const strategicOutcomes = evaluatedActions.length
+    // 初始选择不跑反事实（审查清理项 1）：selectInitialSetupAction 的估值依赖
+    // 初始牌效果在 confirm 结算后才出现，反事实叶看不到价值 → hasEvaluatedSelection
+    // 恒 false，setup 反事实（每动作 maxDepth=6/1 leaf/12 节点）结果从不被消费。
+    // 初始选择直接由 heuristic-policy 的硬编码/手工打分决定，动作标 unresolved
+    // 由 completePolicyOutcomeSet 补齐。
+    const strategicOutcomes = !initialSetupBoundary && evaluatedActions.length
       ? evaluateActions(evaluatedActions, {
-        maxDepth: initialSetupBoundary ? 6 : 15,
-        maxLeaves: initialSetupBoundary ? 1 : 8,
-        maxNodes: initialSetupBoundary ? 12 : 128,
-        secondaryAgentSearch: !initialSetupBoundary,
-        completeTargetCatalog: !initialSetupBoundary && config.completeTargetCatalog === true,
-        traceGoalClusters: !initialSetupBoundary && config.traceCounterfactualGoalClusters,
+        maxDepth: 15,
+        maxLeaves: 8,
+        maxNodes: 128,
+        secondaryAgentSearch: true,
+        completeTargetCatalog: config.completeTargetCatalog === true,
+        traceGoalClusters: config.traceCounterfactualGoalClusters,
         maxProxyDepth: 15,
       })
       : [];
@@ -229,10 +231,7 @@ function createHeuristicDecisionFunction(options = {}) {
         heuristicDecisionFunctionSchemaVersion: "seti-heuristic-decision-function-v1",
       },
     });
-    const policyDecision = policyFor({
-      boundary: { seatId, legalActions, observation },
-      actionOutcomes,
-    }).decide(context);
+    const policyDecision = defaultPolicy.decide(context);
     const actionId = policyDecision.actionId;
     const action = legalActions.find((candidate) => candidate.actionId === actionId);
     if (!action) {

@@ -273,9 +273,9 @@ function observation({
       }],
     }],
   }, corner);
-  assert.equal(result.score, null,
-    "只获得宣传的卡角不得把跨回合后的无关登陆收益归因给自己");
-  assert.deepEqual(result.reasonCodes, ["card-corner-did-not-directly-unlock-agent"]);
+  assert.equal(result.score, 6,
+    "入口门控已保证 card_corner 必有目标（补缺口）；叶的已兑现分数归因给根是合理估值（2026-08-21 出口目的检查已删）");
+  assert.deepEqual(result.reasonCodes, ["strategic-goal-score"]);
 }
 
 {
@@ -2073,9 +2073,9 @@ function evaluate(candidateAction, before, after, status = "settled") {
       }],
     }],
   }, trade);
-  assert.equal(result.score, null,
-    "转换后的下一代理在转换前已经合法时，不能把遥远路线收益反复归因给当前转换");
-  assert.deepEqual(result.reasonCodes, ["quick-trade-did-not-directly-unlock-agent"]);
+  assert.equal(result.score, 24,
+    "入口门控已保证 quick_trade 必有目标（补缺口）；叶的已兑现收入变化归因给根是合理估值（2026-08-21 出口目的检查已删）");
+  assert.deepEqual(result.reasonCodes, ["strategic-goal-income"]);
 }
 
 {

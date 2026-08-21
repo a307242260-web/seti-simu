@@ -11,17 +11,15 @@
     return Number.isFinite(result) ? result : null;
   }
 
-  function evaluateAction(_context, action) {
-    const score = finiteScore(action?.outcome?.score);
-    return Object.freeze({
-      evaluationModel: "counterfactual-leaf-value-v1",
-      score,
-      status: score == null ? "unresolved" : "settled",
-    });
-  }
-
+  // 注意：本模块不提供"默认 evaluateAction"——旧的默认实现读 action.outcome.score
+  // （outcome 不在 action 上，恒 null → 全部 unresolved 静默退化），属误导死代码已删。
+  // 调用方必须显式传入 evaluateAction（heuristic-policy 传 expectedScoreEvaluator.
+  // evaluateAction）；缺失即抛错，不允许静默全 unresolved（错误必须暴露）。
   function selectLegalAction(context, options = {}) {
-    const evaluate = options.evaluateAction || evaluateAction;
+    const evaluate = options.evaluateAction;
+    if (typeof evaluate !== "function") {
+      throw new TypeError("selectLegalAction 需要 evaluateAction（不允许静默 unresolved 默认）");
+    }
     const available = (context?.legalActions || [])
       .filter((action) => (options.isFeasible?.(context, action) ?? true))
       .map((action) => {
@@ -57,5 +55,5 @@
     ))[0]?.action || null;
   }
 
-  return Object.freeze({ evaluateAction, selectLegalAction });
+  return Object.freeze({ selectLegalAction });
 });
