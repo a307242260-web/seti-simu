@@ -920,8 +920,8 @@ function buildActionLogReport(opts) {
   // 主行动单元格：主行动（family + 摘要）+ 该回合的附属动作，按发生顺序合并一行列表
   // （2026-08-21 用户口径：快速/抽牌/收入/终局标记/初始牌按顺序显示，内容完整——抽的牌、
   // 收入资源都展示；条件/目标选择等子步骤仍并入回合不单列）。
-  // 增强信息（内核重放）：研究科技显示研究了哪张科技+背面 bonus；收入插牌显示卡名与资源；
-  // 盲抽/精选显示抽到的牌。
+  // 主行动与附属动作**统一顺序编号**（2026-08-21 用户口径：主行动在回合里的位置要能区分，
+  // 如「① 扫描 扫描（主行动）→ ② 放置数据 → ③ …」）。
   function turnMainCell(g) {
     const m = g.main;
     const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
@@ -936,12 +936,19 @@ function buildActionLogReport(opts) {
       const sum = m && m.summary ? normalizeIncomeClause(replaceCardIds(String(m.summary))) : "";
       mainTxt = `${escapeHtml(fam)} ${escapeHtml(sum)}`.trim();
     }
-    // 附属动作按 row 顺序合并（快速/抽牌/收入/终局标记/初始牌/放痕迹），带顺序编号 ①②③
-    // （2026-08-21 用户口径：要能看懂先后顺序）
+    // 回合内会显示的动作序列（含主行动），用于统一编号
+    const shownRows = g.rows.filter((row) => {
+      if (row === m) return true;
+      return row.phase === "quick" || row.enrich?.income || row.enrich?.draw
+        || row.finalMark || row.trace || row.initialCard;
+    });
     const SEQ_NUM = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩"];
+    const seqOf = (idx) => SEQ_NUM[idx] || `${idx + 1}.`;
+    const mainSeq = shownRows.indexOf(m);
+    const mainLabel = mainSeq >= 0 ? `${seqOf(mainSeq)} ${mainTxt}（主行动）` : mainTxt;
     const extras = [];
-    let seq = 0;
-    for (const row of g.rows) {
+    shownRows.forEach((row, idx) => {
+      if (row === m) return;
       let text = null;
       if (row.phase === "quick") {
         const qfam = row.family ? FAMILY_LABELS[row.family] || row.family : "";
@@ -964,14 +971,13 @@ function buildActionLogReport(opts) {
       } else if (row.initialCard) {
         text = `初始牌 ${row.initialCard.number}${row.initialCard.label ? `（${row.initialCard.label}）` : ""}`;
       }
-      if (text == null) continue;
-      seq += 1;
-      extras.push(`${SEQ_NUM[seq - 1] || `${seq}.`} ${text}`);
-    }
+      if (text == null) return;
+      extras.push(`${seqOf(idx)} ${text}`);
+    });
     const extraTxt = extras.length
       ? `<div class="quick-list">${escapeHtml(extras.join(" · "))}</div>`
       : "";
-    return `<div class="main-act">${mainTxt}</div>${extraTxt}`;
+    return `<div class="main-act">${mainLabel}</div>${extraTxt}`;
   }
 
   function turnCells(g, withPlayer) {
