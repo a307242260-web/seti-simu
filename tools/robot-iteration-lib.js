@@ -560,6 +560,8 @@ function buildActionLogReport(opts) {
   // 按 (轮次, 回合, 玩家) 聚合为"每玩家每回合一行"（2026-08-21 用户口径：
   // 一个玩家的回合 = 主行动 + 附属快速/条件步骤，合并成一行，不再逐子步骤拆行）。
   // 主行动 = 该回合第一个 phase=main 的动作（PASS 也算主行动）；无主行动时取第一步。
+  // 纯 end_turn 回合（组内除 end_turn 外无任何实质动作）不构成玩家一动，整组不展示
+  // （2026-08-21 用户口径：结束回合不是一动，复盘报告只显示玩家的每一回合）。
   function groupByTurn(stepRows) {
     const groups = [];
     const map = new Map();
@@ -573,12 +575,14 @@ function buildActionLogReport(opts) {
       }
       g.rows.push(row);
     }
-    return groups.map((g) => {
-      const main = g.rows.find((row) => row.phase === "main") || g.rows[0];
-      const cur = g.rows[g.rows.length - 1].cur;
-      const delta = g.rows.reduce((acc, row) => acc + (row.delta || 0), 0);
-      return { r: g.r, t: g.t, actor: g.actor, count: g.rows.length, main, cur, delta };
-    });
+    return groups
+      .filter((g) => g.rows.some((row) => row.family !== "end_turn"))
+      .map((g) => {
+        const main = g.rows.find((row) => row.phase === "main") || g.rows[0];
+        const cur = g.rows[g.rows.length - 1].cur;
+        const delta = g.rows.reduce((acc, row) => acc + (row.delta || 0), 0);
+        return { r: g.r, t: g.t, actor: g.actor, count: g.rows.length, main, cur, delta };
+      });
   }
 
   // 主行动单元格：行动族标签 + 摘要（截断）
