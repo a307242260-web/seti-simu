@@ -930,30 +930,37 @@ function buildActionLogReport(opts) {
       const sum = m && m.summary ? normalizeIncomeClause(replaceCardIds(String(m.summary))) : "";
       mainTxt = `${escapeHtml(fam)} ${escapeHtml(sum)}`.trim();
     }
-    // 附属动作按 row 顺序合并（快速/抽牌/收入/终局标记/初始牌）
+    // 附属动作按 row 顺序合并（快速/抽牌/收入/终局标记/初始牌/放痕迹），带顺序编号 ①②③
+    // （2026-08-21 用户口径：要能看懂先后顺序）
+    const SEQ_NUM = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩"];
     const extras = [];
+    let seq = 0;
     for (const row of g.rows) {
+      let text = null;
       if (row.phase === "quick") {
         const qfam = row.family ? FAMILY_LABELS[row.family] || row.family : "";
         const qsum = row.summary ? replaceCardIds(String(row.summary)).trim() : "";
-        extras.push(qsum || qfam);
+        text = qsum || qfam;
       } else if (row.enrich?.income) {
         const name = cardNameFor(row.enrich.income.cardId) || row.enrich.income.cardId;
-        extras.push(`收入 ${name}${row.enrich.income.gain ? `（获得 ${row.enrich.income.gain}）` : ""}`);
+        text = `收入 ${name}${row.enrich.income.gain ? `（获得 ${row.enrich.income.gain}）` : ""}`;
       } else if (row.enrich?.draw) {
         const name = cardNameFor(row.enrich.draw.cardId) || row.enrich.draw.cardId;
-        extras.push(`抽牌 ${name}`);
+        text = `抽牌 ${name}`;
       } else if (row.finalMark) {
         const fm = row.finalMark;
         const formula = fm.formula
           ? `${fm.formula}：${FINAL_FORMULA_LABELS[fm.formula] || fm.formula}`
           : "";
-        extras.push(`终局标记 ${fm.tileId}（第${fm.slotIndex}槽${fm.threshold ? `/${fm.threshold}分` : ""}${formula ? ` · ${formula}` : ""}）`);
+        text = `终局标记 ${fm.tileId}（第${fm.slotIndex}槽${fm.threshold ? `/${fm.threshold}分` : ""}${formula ? ` · ${formula}` : ""}）`;
       } else if (row.trace) {
-        extras.push(`放痕迹 外星人${row.trace.alienSlot}·${row.trace.color}${row.trace.reward ? `（${row.trace.reward}）` : ""}`);
+        text = `放痕迹 外星人${row.trace.alienSlot}·${row.trace.color}${row.trace.reward ? `（${row.trace.reward}）` : ""}`;
       } else if (row.initialCard) {
-        extras.push(`初始牌 ${row.initialCard.number}${row.initialCard.label ? `（${row.initialCard.label}）` : ""}`);
+        text = `初始牌 ${row.initialCard.number}${row.initialCard.label ? `（${row.initialCard.label}）` : ""}`;
       }
+      if (text == null) continue;
+      seq += 1;
+      extras.push(`${SEQ_NUM[seq - 1] || `${seq}.`} ${text}`);
     }
     const extraTxt = extras.length
       ? `<div class="quick-list">${escapeHtml(extras.join(" · "))}</div>`
