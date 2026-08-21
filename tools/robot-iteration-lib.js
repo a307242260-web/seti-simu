@@ -217,6 +217,7 @@ function readSaveFinalScores(saveRelPath) {
       card: fsItem.cardScore ?? null,
       // 终局结算明细（2026-08-21 用户口径：显示"具体什么获得了几分"）
       tileScoresById: fsItem.tileScoresById || null,
+      tiles: Array.isArray(fsItem.tiles) ? fsItem.tiles : [],
       cards: Array.isArray(fsItem.cards) ? fsItem.cards : [],
       scoreSources: st.players?.players?.find((p) => p.id === pid)?.scoreSources || null,
     };
@@ -977,9 +978,14 @@ function buildActionLogReport(opts) {
         .map(([k, v]) => `${SCORE_SOURCE_LABELS[k] || k} ${v}`);
       const tileParts = b.tileScoresById
         ? Object.entries(b.tileScoresById).filter(([, v]) => v).map(([tid, v]) => {
-          // 板块用本局公式的新称呼（2026-08-21 用户裁定：a2=每套收入、d2=每两个科技…）
+          // 板块用本局公式的新称呼（2026-08-21 用户裁定：a2=每套收入、d2=每两个科技…），
+          // 得分拆成 基础分(multiplier)×套数(baseValue)（2026-08-21 用户口径）
           const formula = final?.formulaByTile?.[tid];
           const label = formula ? FINAL_FORMULA_LABELS[formula] || formula : tid;
+          const tile = (b.tiles || []).find((t) => t.tileId === tid);
+          if (tile && tile.multiplier != null && tile.baseValue != null) {
+            return `${label} ${tile.multiplier}×${tile.baseValue}=${v}`;
+          }
           return `${label} ${v}`;
         })
         : [];
