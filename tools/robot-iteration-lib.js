@@ -698,6 +698,8 @@ function buildActionLogReport(opts) {
       cur,
       delta: before && cur ? cur.score - before.score : null,
       enrich: enrichMap.get(step.stepIndex ?? i) || null,
+      // 终局板块标记放置（choose_target「标记 A/B/C/D」，2026-08-21 用户口径：终局时也显示一条记录）
+      finalMark: /^标记 ([A-D])$/.exec(String(step.action?.summary || ""))?.[1] || null,
     });
     if (cur) prev[actor] = cur;
   }
@@ -797,6 +799,8 @@ function buildActionLogReport(opts) {
     const research = g.rows.map((row) => row.enrich?.research).find(Boolean);
     // 回合内收入插牌
     const incomeList = g.rows.map((row) => row.enrich?.income).filter(Boolean);
+    // 回合内终局板块标记（「标记 A/B/C/D」）
+    const finalMarks = g.rows.map((row) => row.finalMark).filter(Boolean);
     let mainTxt;
     if (research && fam === "研究科技") {
       const bonus = research.bonusId
@@ -820,6 +824,9 @@ function buildActionLogReport(opts) {
     if (incomeList.length) {
       const names = incomeList.map((e) => cardNameFor(e.cardId) || e.cardId);
       lists.push(`<div class="quick-list">收入：${escapeHtml(names.join(" · "))}</div>`);
+    }
+    if (finalMarks.length) {
+      lists.push(`<div class="quick-list">终局标记：${escapeHtml(finalMarks.join(" · "))}</div>`);
     }
     return `<div class="main-act">${mainTxt}</div>${lists.join("")}`;
   }
