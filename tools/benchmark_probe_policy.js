@@ -75,8 +75,8 @@ function drainOpeningDecisions(environment) {
       ));
       if (action) progress.initialIds.add(action.target.cardId);
     }
-    // 初始收入决策：choose_payment 弃手牌插入收入区（公司 incomeIncreaseCount），
-    // 无目标 kind，取第一个合法弃牌即可。
+    // 初始收入决策：choose_payment 插入手牌到收入区（公司 incomeIncreaseCount），
+    // 无目标 kind，取第一个合法插牌即可。
     action = action || actions[0];
     selectionProgress.set(actorId, progress);
     const result = environment.step(action);

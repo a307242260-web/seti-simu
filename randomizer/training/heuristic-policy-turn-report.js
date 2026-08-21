@@ -682,7 +682,7 @@ function selectionVisual(action, options = {}) {
   const label = action?.target?.kind === "move-payment"
     ? "移动支付（弃牌获得 1 移动力）"
     : action?.target?.kind === "discard-hand-cards"
-      ? "弃牌支付"
+      ? "插收入"
       : "选择卡牌";
   const name = items.map((item) => item.name).join("、");
   return Object.freeze({

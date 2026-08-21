@@ -230,8 +230,8 @@ let handDiffCount = 0;  // 手牌分叉跳过的动作数
 // 当前决策匹配到 remaining 中靠后的动作时，前面的动作留在池里等待后续决策，
 // 不会被误跳过；RNG 严格按当前内核的决策顺序消费，手牌保持与当前内核一致。
 const remaining = new Set();
-// setup 段（初始选择 #0-16 + 初始收入弃牌 #17-22）与当前内核无规则演变，
-// 严格顺序消费，不走乱序池（避免初始收入弃牌被池错位）。
+// setup 段（初始选择 #0-16 + 初始收入插牌 #17-22）与当前内核无规则演变，
+// 严格顺序消费，不走乱序池（避免初始收入插牌被池错位）。
 const SETUP_END = 23;
 for (let i = SETUP_END; i < replaySteps.length; i += 1) remaining.add(i);
 let index = initialSetupEndIndex; // 仅用于日志/进度（remaining 的最小未匹配索引）
@@ -262,9 +262,9 @@ function matchDecision(d, action) {
   return null;
 }
 
-// —— setup 段（#0..#SETUP_END-1）严格顺序消费：初始选择 + 初始收入弃牌 ——
+// —— setup 段（#0..#SETUP_END-1）严格顺序消费：初始选择 + 初始收入插牌 ——
 // 与当前内核无规则演变，逐动作严格匹配（不匹配时宽松取当前决策第一项，
-// 因为初始收入弃牌选哪张由老档决定、当前内核候选应一致）。
+// 因为初始收入插牌选哪张由老档决定、当前内核候选应一致）。
 function consumeSetupStrictly() {
   let progress = true;
   while (progress) {
@@ -283,7 +283,7 @@ function consumeSetupStrictly() {
     }
     progress = false;
   }
-  // 初始收入弃牌（#17-#22 等 choose_payment discard-hand-cards）严格顺序消费。
+  // 初始收入插牌（#17-#22 等 choose_payment discard-hand-cards）严格顺序消费。
   // 注意：#0-#16 是初始选择（公司+初始牌），已由上面 pickSetupChoice 补齐逻辑
   // 处理，不消费老档动作；setupConsumedIndex 从 17 起。
   for (let i = setupConsumedIndex; i < SETUP_END && i < replaySteps.length; i += 1) {
@@ -315,7 +315,7 @@ function consumeSetupStrictly() {
     setupConsumedIndex = i + 1;
   }
 }
-let setupConsumedIndex = 17; // 初始选择(#0-16)由补齐逻辑处理，初始收入弃牌(#17+)严格顺序
+let setupConsumedIndex = 17; // 初始选择(#0-16)由补齐逻辑处理，初始收入插牌(#17+)严格顺序
 consumeSetupStrictly();
 
 while (remaining.size > 0) {

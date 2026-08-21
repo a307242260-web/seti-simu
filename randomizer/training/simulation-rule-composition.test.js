@@ -57,7 +57,7 @@ function completeInitialCardSelections(composition) {
       choice,
     }).ok, true);
   }
-  assert.fail("初始选择必须有限进入收入弃牌 Decision");
+  assert.fail("初始选择必须有限进入收入插牌 Decision");
 }
 
 const kernel = createSimulationRuleComposition({

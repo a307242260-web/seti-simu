@@ -353,7 +353,7 @@
     };
   }
 
-  function paymentChoices(rootState, decisionContext) {
+  function incomeInsertChoices(rootState, decisionContext) {
     const pending = decisionContext?.kind === "initial_income"
       ? decisionContext.queue?.[0] || null
       : null;
@@ -361,6 +361,7 @@
     const player = rootState.players.players.find((candidate) => candidate.id === pending.playerId);
     return (player?.hand || []).map((card, handIndex) => ({
       target: {
+        // wire kind 沿用 discard-hand-cards 以兼容旧存档；语义是"插入一张手牌到收入列"
         kind: "discard-hand-cards",
         choiceId: String(handIndex),
         cardIds: [card.cardId || card.id],
@@ -385,7 +386,7 @@
     });
   }
 
-  function executePayment(rootState, actionContext, action) {
+  function executeIncomeInsert(rootState, actionContext, action) {
     const decisionContext = actionContext?.standardActionDecisionContext;
     const pending = decisionContext?.kind === "initial_income"
       ? decisionContext.queue?.[0] || null
@@ -394,13 +395,13 @@
     const handIndex = action.target?.handIndexes?.[0];
     if (!player || !Number.isInteger(handIndex)
       || (player.hand[handIndex]?.cardId || player.hand[handIndex]?.id) !== action.target?.cardIds?.[0]) {
-      return { ok: false, code: "INITIAL_INCOME_PAYMENT_STALE", message: "初始收入弃牌已失效" };
+      return { ok: false, code: "INITIAL_INCOME_PAYMENT_STALE", message: "初始收入插牌已失效" };
     }
-    const discarded = cards.discardFromHandAtIndex(player, handIndex);
-    if (!discarded?.ok) return discarded;
+    const removed = cards.discardFromHandAtIndex(player, handIndex);
+    if (!removed?.ok) return removed;
     // 初始收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
-    cards.addRemovedFromGame(rootState.cards, discarded.card);
-    const gain = cards.getIncomeGainForCard(discarded.card);
+    cards.addRemovedFromGame(rootState.cards, removed.card);
+    const gain = cards.getIncomeGainForCard(removed.card);
     if (gain) {
       players.gainIncome(player, gain, {
         blindDraw: (targetPlayer) => (
@@ -441,7 +442,7 @@
         return request.family === "choose_card"
           ? selectionChoices(rootState)
           : request.family === "choose_payment"
-            ? paymentChoices(rootState, actionContext?.standardActionDecisionContext)
+            ? incomeInsertChoices(rootState, actionContext?.standardActionDecisionContext)
             : [];
       },
       validate(actionContext, action) {
@@ -465,7 +466,7 @@
         return family === "choose_card"
           ? executeSelection(rootState, actionContext, action)
           : family === "choose_payment"
-            ? executePayment(rootState, actionContext, action)
+            ? executeIncomeInsert(rootState, actionContext, action)
             : { ok: false, code: "INITIAL_SETUP_FAMILY_INACTIVE", message: "不是 initial_setup family" };
       },
     });

@@ -849,7 +849,7 @@
           family: "choose_card",
           target: { choiceId: card.id, cardInstanceId: card.id },
           payload: { incomeCode: cards.getIncomeCodeForCard(card) },
-          summary: `弃掉 ${cards.getCardLabel(card)} 作为收入`,
+          summary: `插入 ${cards.getCardLabel(card)} 作为收入`,
         }));
       },
       resolveDecision(state, sessionEffect, choice, workingContext) {
