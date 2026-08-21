@@ -297,7 +297,6 @@ function cmdReview(opts) {
     console.log(`改动摘要: ${v.summary}`);
     console.log("提交:");
     for (const c of v.commits) console.log(`  ${c.hash} ${c.date} ${c.subject}`);
-    if (v.diffStat) console.log(`改动统计: ${v.diffStat}`);
     console.log("结果:");
     if (v.results.length) {
       for (const r of v.results) {
@@ -311,13 +310,6 @@ function cmdReview(opts) {
       console.log("  （无 research 记录）");
     }
     if (v.roadmap) console.log(`roadmap 记录: 白 ${v.roadmap.scores?.["player-white"] ?? "—"} / 均分 ${v.roadmap.avgScore ?? "—"} / ${v.roadmap.steps ?? "—"} 步\n  来源: ${v.roadmap.note || ""}`);
-    const base = v.baseline ? registry.versions.find((x) => x.id === v.baseline) : null;
-    console.log("\n定位改动:");
-    console.log(`  git log --oneline ${base ? base.head + ".." : ""}${v.head}`);
-    console.log(`  git diff --stat ${base ? base.head + ".." : ""}${v.head}`);
-    console.log("快速回退:");
-    console.log(`  git checkout ${v.head}   # 回到该版本代码`);
-    if (base) console.log(`  git revert --no-commit ${base.head}..${v.head}   # 工作区撤销该版本全部改动`);
     return;
   }
   if (opts.compare) {
@@ -335,8 +327,6 @@ function cmdReview(opts) {
       }
       if (v.roadmap) console.log(`  roadmap: 白 ${v.roadmap.scores?.["player-white"] ?? "—"} 均 ${v.roadmap.avgScore ?? "—"}`);
     }
-    console.log(`提交区间 ${a.head}..${b.head}:`);
-    console.log(`  git log --oneline ${a.head}..${b.head}`);
     return;
   }
   // 默认：全版本一览

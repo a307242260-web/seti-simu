@@ -143,22 +143,20 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
 没有存档的记录无法生成行动级报告——页面标注"仅记录级指标"（记录 JSON 本身含
 行动族分布/外星时间线，仍可复盘）。`check` 会列出有存档但缺报告的记录。
 
-## 6. 每个版本：快速回退与定位改动
+## 6. 当前 baseline 与历史版本查询
 
-总览页迭表只展示**当前 baseline**（`registry.currentBaseline`：head 精确匹配 git HEAD，
-否则取 head 为 HEAD 最近祖先的版本——策略提交后又提交工具/文档时 HEAD 会前进到
-非版本提交，策略基线不变）；历史版本收进"历史版本（N）"折叠区，逐行同样可展开。
+总览页迭表只展示**当前 baseline** 一行（2026-08-21 用户口径：迭表只保留新的 baseline，
+历史版本与回退/定位改动不在页面展示）。`registry.currentBaseline` 判定：head 精确匹配
+git HEAD，否则取 head 为 HEAD 最近祖先的版本——策略提交后又提交工具/文档时 HEAD 会
+前进到非版本提交，策略基线不变（如当前 HEAD 为工具提交时 baseline 仍解析为最新策略版本）。
 
-页面每行可展开，`review --show <id>` 也会打印：
+历史版本信息用命令行查询（只读，不重跑）：
 
 ```sh
-git log --oneline <baseline>..<head>        # 定位改动（提交明细）
-git diff --stat <baseline>..<head>          # 定位改动（文件级）
-git checkout <head>                          # 快速回到该版本代码
-git revert --no-commit <baseline>..<head>    # 工作区撤销该版本全部改动（不提交）
+node tools/robot_iterate.js review --show <id>      # 版本详情（日期/head/baseline/改动摘要/提交/结果）
+node tools/robot_iterate.js review --compare <a>..<b>  # 两版本分数/步数/耗时对比
+node tools/robot_iterate.js review --best           # 固定盘面最佳（白分/均分/耗时）
 ```
-
-基线为空的版本用 `git show <head>` / `git revert <head>`。
 
 ## 7. 完整性审计（check / 页面底部面板）
 

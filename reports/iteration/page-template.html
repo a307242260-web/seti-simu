@@ -219,7 +219,7 @@ function iterTable(){
     <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th>
   </tr></thead>`;
   el.innerHTML=`<table>${thead}<tbody>${versionRow(head)}</tbody></table>
-    <p class="iter-hint">历史版本、提交明细、diff 与回退命令：<code>node tools/robot_iterate.js review --show &lt;id&gt;</code> / <code>--compare &lt;a&gt;..&lt;b&gt;</code> / <code>--best</code></p>`;
+    <p class="iter-hint">历史版本信息：<code>node tools/robot_iterate.js review --show &lt;id&gt;</code> / <code>--compare &lt;a&gt;..&lt;b&gt;</code></p>`;
 }
 
 // ---- 完整性 ----
