@@ -655,10 +655,10 @@ function observation({
       legalSuccessors: dataChoices,
       routeTargetId: "data:analyze",
     }).map((candidate) => candidate.actionId),
-    [],
+    ["choose:data-computer"],
     "分析目标的正式放置 Decision 需求驱动（2026-08-21 用户裁定：结算不搜索，按"
-      + "'我需要什么'选；没需求时做不做都一样 → 收束不展开）：无 blue 槽信息/缺口/"
-      + "数据未溢出时不填数据，排除 computer/blue/skip 全部分支",
+      + "'我需要什么'选）：无 blue 槽信息/缺口时默认推进 computer（data:analyze "
+      + "目标 active 即需求），排除 skip 与 blue 槽",
   );
 
   const discardChoices = ["a+b", "a+c", "b+c"].map((choiceId) => ({
