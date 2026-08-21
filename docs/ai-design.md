@@ -167,10 +167,9 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 开关，off 分桶语义（strategic/bounded/control 三桶 + 目标门控）删除，以下行为恒生效：
 
 - `expected-score-evaluator#requiresRootCounterfactual`：quick_trade 需求门控
-  （prepares*：为当前资源缺口补资源才评估）。**card_corner 不加入口门控**
-  （2026-08-21 A/B 实证）：card_corner 的价值由叶级出口检查（cardCornerPurpose：
-  立即数据/宣传增量、直接解锁）判定；root 级"目标已生成"门控会误过滤早期有价值
-  的弃牌角标（数据轨未成型时弃牌换数据被滤掉，全盘绿 63→20/白 77→50）；
+  （prepares*：为当前资源缺口补资源才评估）。card_corner **不加**入口门控
+  （2026-08-21 A/B 实证：root 级"目标已生成"门控误过滤早期有价值的弃牌角标，
+  全盘绿 63→20/白 77→50），其价值由叶估值（立即数据/宣传增量、目标链）判定；
 - `expected-score-evaluator#selectSecondaryAgentRootActions`：返回**目标绑定动作 +
   需求放行的目的型动作**（`UNIFIED_PURPOSE_FAMILIES` = quick_trade/card_corner/
   industry，凭需求进搜索，不平铺全部候选）；
@@ -184,14 +183,16 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   扩展覆盖探测行动目标（orbit:/land:/move: 前缀），card:/decision: 卡牌身份目标
   仍保留全部 choice；弃牌会话延续层（actionChain 末尾已是 choose_payment）直接
   收束（toggle 振荡防死）；
-- **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/quick_trade/industry/card_corner/
-  runezu_face_symbol/complete_task）：目的型/铺垫型 quick 根未绑定时，下一个主行动
-  决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭后续主行动便车
-  （leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/card_corner 65
-  虚高导致乱做）。**三件套互不替代（2026-08-21 A/B 实证，删除任一均分均劣化）**：
-  入口门控防"无目标"、quick 根截断防"进搜索但未绑定目标"的便车、出口检查
-  （quickTradePurpose/cardCornerPurpose）防"目标本就可达（trade 前已合法）"的便车；
-  删截断+出口检查 64.5→53.75，加 card_corner 入口门控 64.5→56.5（误过滤早期角标）；
+- **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/industry/runezu_face_symbol/
+  complete_task，2026-08-21 迭代：quick_trade/card_corner 已移出）：剩余 quick 根
+  未绑定时，下一个主行动决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭
+  后续主行动便车（leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/
+  card_corner 65 虚高导致乱做——那是无目标引导时代的问题）。
+  **quick_trade/card_corner 不再截断、出口"目的检查"（quickTradePurpose/
+  cardCornerPurpose）同批删除（2026-08-21 用户裁定）**：两者经目标引导/需求引导
+  进入搜索（quick_trade 有入口缺口门控），叶价值=完整目标链是合理归因——估值只
+  决定"选哪个动作当链首"，执行是逐步的（下一步再决策/计划复用继续），链真实可达
+  （反事实是真实规则执行），quick 根吃整链价值不产生坏行为；
 - **bounded 桶已删除**：play_card 经目标绑定进入搜索（income:card 收入牌 /
   tech:research 免费科技 / probe:免费发射 / sector:观测 / data:卡牌），未绑定目标
   的打牌保持 `STRATEGIC_GOAL_NOT_EVALUATED`。**不全部放行 play_card**——实测全部
