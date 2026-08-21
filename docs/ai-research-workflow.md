@@ -128,3 +128,20 @@ node tools/run_research_validation.js --name x --seed seti-107           # 换�
   记录、快速→全盘续跑一体。
 - `tools/compare_vguided_vs_baseline.js` / `tools/diag_vguided_quicktrade.js`：
   V 引导专项对比/成分分解，按需使用。
+
+## 6. 版本登记与复盘（迭代记录体系，2026-08-21）
+
+调研记录落盘后，用 `tools/robot_iterate.js` 做**版本登记 → 复盘报告 → 总览页**：
+
+```sh
+node tools/robot_iterate.js run --name <id> --full --summary "..."   # 跑验证+登记+报告+页面
+node tools/robot_iterate.js register --version-id <id> --summary "..." [--commits ...] [--records ...]
+node tools/robot_iterate.js build --reports                          # 补齐复盘报告+重建页面
+node tools/robot_iterate.js review --best | --show <id> | --compare <a>..<b>
+node tools/robot_iterate.js check                                    # 完整性审计
+```
+
+- 版本登记真相源：`reports/iteration/versions.json`；总览页：`reports/robot-iteration.html`。
+- 逐步复盘报告：`reports/iteration/<版本>/<记录>.action-log.html`（**纯重放存档，绝不重跑**）。
+- **每个固定盘面的全盘记录必须归属到某个版本**（`check` 把未归属记录列为 warn 孤儿）。
+- 机制与 schema 详见 `docs/robot-iteration-registry.md`。

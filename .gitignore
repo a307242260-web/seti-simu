@@ -21,3 +21,6 @@ seti-saves/
 
 # Research validation records (per-run artifacts, reviewed via tools/run_research_validation.js --list/--show).
 reports/research/
+
+# Iteration registry backups (auto-created by tools/robot_iterate.js register/run).
+reports/iteration/*.bak-*

@@ -75,6 +75,9 @@
 - 改科技、bonus 或科技板放置：先读 `randomizer/game/tech/**` 和 `randomizer/game/abilities/tech.js`。
 - 改公司牌：先读 `randomizer/game/industry/**` 和 `assets/industry/industry-abilities.md`。
 - 改外星人：先读 `randomizer/game/aliens/**`、`docs/alien-design.md` 和对应物种文档。
+- 机器人迭代收口/登记版本/复盘报告/总览页：先读 `docs/robot-iteration-registry.md`，
+  标准入口 `node tools/robot_iterate.js`（run/register/build/review/check）；**固定盘面
+  全盘记录必须归属到版本，绝不重跑同一版本**。
 
 ## 详细资料索引
 
@@ -88,6 +91,7 @@
 - `docs/fixed-boards.md`：固定盘面 seed ↔ 盘面 ↔ 初始公司关联清单（浏览器下拉与训练侧默认盘面的对号入座）。
 - `docs/rl-simulation-env.md`：RL Simulation env 契约、observation/action/replay schema 与当前浏览器实现映射。
 - `docs/save-replay-guide.md`：存档复盘与迁移指南——旧档（如 v47+v54+v223 三档拼接）用当前内核重放生成兼容新存档（`tools/migrate_537_full_chain.js`）、扫描流补牌时机差异、复盘工具用法。
+- `docs/robot-iteration-registry.md`：机器人迭代记录与复盘体系（版本登记 `reports/iteration/versions.json`、标准迭代入口 `tools/robot_iterate.js`、逐步复盘报告、回退与定位改动、完整性审计、分数口径 save-final/record/roadmap）。
 - `docs/browser-simulation-unification.md`：Browser/Simulation 内核共用审计、family 接口唯一性矩阵、打牌登陆与直接登陆双实现差异、代码与文档冲突清单与统一方案。
 - `docs/implementation-proof-obligations.md`：跨模块状态机/迁移任务的验收条款正向推导、proof obligation、检查问题与分层证据模板。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。

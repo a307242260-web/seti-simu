@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI 机器人迭代总览（免电分析盘面）</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#ffffff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--accent:#2f6fed;--accent-bg:#e8eefa;--good:#1e7e46;--bad:#c0392b;--warn-bg:#fff7e6;--warn-line:#f0c36d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.page{width:min(1400px,calc(100% - 32px));margin:auto;padding:28px 0 70px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+h1{margin:4px 0 8px;font-size:26px}
+h2{font-size:17px;margin:0 0 12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+h3{font-size:14px;margin:0}
+.intro{color:#3d4a5c;max-width:1000px;margin:0 0 4px}
+.note{font-size:12px;color:var(--muted);margin:4px 0 18px}
+code{background:#eef1f6;padding:1px 5px;border-radius:4px;font-size:12px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+table{border-collapse:collapse;width:100%;background:var(--panel);font-size:12.5px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#eef1f6;font-weight:600;white-space:nowrap}
+tr:hover td{background:#f8faff}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;vertical-align:1px}
+.badge.head{background:#1f6feb;color:#fff}
+.badge.roadmap{background:#f3e8c8;color:#7a5b00}
+.badge.warn{background:#fde8e8;color:#b3261e}
+.badge.record{background:#e6f4ea;color:#1e7e46}
+.badge.save{background:#e8eefa;color:#2f6fed}
+.badge.report{background:#f3eefc;color:#6b3fa0}
+.badge.missing{background:#f1f3f6;color:#98a2b3}
+.scores{white-space:nowrap}
+.scores b{font-variant-numeric:tabular-nums}
+.src{font-size:10.5px;color:var(--muted)}
+.dp{color:var(--good);font-weight:700}.dm{color:var(--bad);font-weight:700}
+/* ---- 顶部 best 面板 ---- */
+.best-panel{background:linear-gradient(135deg,#f0f5ff,#f7f9fe);border:1px solid #d3e0f8;border-radius:14px;padding:16px 18px;margin:18px 0 26px}
+.best-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.best-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.best-card .label{font-size:12px;color:var(--muted);font-weight:600}
+.best-card .value{font-size:30px;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.best-card .sub{font-size:12px;color:#44506a}
+.best-card .src{display:inline-block;margin-top:6px;padding:1px 8px;border-radius:8px;font-size:10.5px;background:var(--accent-bg);color:var(--accent)}
+.best-card .src.roadmap{background:#f3e8c8;color:#7a5b00}
+.top3{margin-top:12px}
+.top3 table{font-size:12px}
+/* ---- 迭代表 ---- */
+.iter-table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.detail-row td{background:#fbfcfe;padding:0}
+.detail-inner{padding:14px 18px;border-top:1px dashed var(--line)}
+.detail-inner h4{margin:12px 0 6px;font-size:12.5px;color:#44506a}
+.detail-inner h4:first-child{margin-top:0}
+.cmdblock{background:#101828;color:#d5e2ff;border-radius:8px;padding:8px 12px;font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto;white-space:pre;margin:4px 0}
+.diff-files{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:11.5px}
+.diff-files table{font-size:11.5px}
+.diff-files td.num{color:#44506a}
+.commit-list{max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:11.5px}
+.commit-list table{font-size:11.5px}
+.rollback-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.results-list{display:grid;gap:8px}
+.result-item{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff}
+.result-item .headline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.result-item .headline code{background:#eef1f6}
+.summary-cell{max-width:340px}
+.summary-cell .full{display:none;color:#3d4a5c}
+.btn{display:inline-block;padding:2px 10px;border-radius:8px;border:1px solid var(--line);background:#f6f8fb;color:#44506a;font-size:12px;cursor:pointer;margin:2px 4px 2px 0}
+.btn:hover{background:#eef1f6}
+/* ---- 完整性 ---- */
+.integrity{background:#fffdf7;border:1px solid var(--warn-line);border-radius:12px;padding:12px 16px;margin:24px 0}
+.integrity.ok{background:#f5fbf7;border-color:#b7e0c4}
+.integrity h3{margin:0 0 8px}
+.warn-item{font-size:12.5px;margin:3px 0;color:#7a5b00}
+.warn-item.warn{color:#b3261e}
+footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+.toggle-row{cursor:pointer}
+@media(max-width:900px){.best-grid{grid-template-columns:1fr}.rollback-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page">
+  <span class="eyebrow">SETI · 机器人迭代记录与复盘体系</span>
+  <h1>机器人迭代总览</h1>
+  <p class="intro">固定盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）：有存档的终局运行从存档 <code>finalScores</code> 读取（来源标记 <span class="src">save-final</span>），无存档的记录按当时记录口径展示（<span class="src">record</span>），无记录的版本按 roadmap 文档展示（<span class="src">roadmap</span>）。</p>
+  <p class="note">机制说明见 <code>docs/robot-iteration-registry.md</code>；标准迭代入口 <code>node tools/robot_iterate.js run --name &lt;id&gt; --full --summary "..."</code>（跑验证→登记→复盘报告→本页一次完成，绝不重跑同一版本）。</p>
+
+  <!-- 顶部：现在的 best version -->
+  <section class="best-panel">
+    <h2>当前最佳（固定盘面 · 全盘运行）</h2>
+    <div class="best-grid" id="best-grid"></div>
+    <div class="top3" id="top3"></div>
+  </section>
+
+  <!-- 迭代记录（倒序） -->
+  <section>
+    <h2>迭代记录（倒序）</h2>
+    <div class="iter-table-wrap">
+      <table>
+        <thead><tr>
+          <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th><th>回退 / 定位改动</th>
+        </tr></thead>
+        <tbody id="iter-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 数据完整性 -->
+  <section class="integrity" id="integrity"></section>
+
+  <footer id="foot"></footer>
+</main>
+
+<script>
+"use strict";
+const REGISTRY = /*__REGISTRY_JSON__*/;
+
+const LABELS = {"player-blue":"蓝","player-green":"绿","player-brown":"棕","player-white":"白"};
+const ORDER = ["player-blue","player-green","player-brown","player-white"];
+
+function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function fmtMs(ms){if(ms==null)return "—";const s=ms/1000;if(s<60)return s.toFixed(1)+"s";const m=Math.floor(s/60);return m+"m"+(s-m*60).toFixed(0)+"s";}
+function rel(p){return p?p.replace(/^reports\//,""):null;}
+function scoreCell(r){
+  if(!r) return "—";
+  const cells=ORDER.map(k=>r.scores&&r.scores[k]!=null?`<b>${r.scores[k]}</b>`:"—").join(" / ");
+  return `<span class="scores">${cells}</span><br><span class="src">${r.scoreSource==="save-final"?"完整终局 (save-final)":r.scoreSource==="roadmap"?"roadmap 文档":"记录口径 (record)"}</span>`;
+}
+function avgCell(r){return r&&r.avgScore!=null?r.avgScore.toFixed(2):"—";}
+function stepsCell(r){return r?`${r.steps}${r.stepsLimit&&!r.terminal?` / ${r.stepsLimit}`:""}${r.terminal?" · 终局":""}`:"—";}
+function timeCell(r){return r?fmtMs(r.wallMs):"—";}
+
+// ---- 版本主结果：优先全盘记录，否则首个记录，否则 roadmap ----
+function primaryResult(v){
+  const full=v.results.filter(r=>!r.missingRecord&&r.mode==="full"&&!Object.keys(r.flags||{}).length);
+  if(full.length) return {result:full[0],isRoadmap:false};
+  if(v.results.some(r=>!r.missingRecord)) return {result:v.results.find(r=>!r.missingRecord),isRoadmap:false};
+  return {result:null,isRoadmap:!!v.roadmap};
+}
+
+function bestGrid(){
+  const b=REGISTRY.bestOf;
+  const card=(label,value,sub,src,srcCls)=>
+    `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
+  const html=[];
+  if(b.bestWhite){
+    html.push(card("最佳分数（白色）",b.bestWhite.value,
+      `${esc(b.bestWhite.name)} <code>${b.bestWhite.versionId}</code> · head ${esc(b.bestWhite.runKey||b.bestWhite.versionId)} · ${b.bestWhite.steps??"—"} 步 · ${fmtMs(b.bestWhite.wallMs)}`,
+      `来源 ${b.bestWhite.provenance}${b.bestWhite.scoreSourceNote?" · "+esc(b.bestWhite.scoreSourceNote):""}`, b.bestWhite.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳分数（白色）","—","尚无全盘记录","—"));
+  if(b.bestAvg){
+    html.push(card("最佳平均分数",b.bestAvg.value,
+      `${esc(b.bestAvg.name)} <code>${b.bestAvg.versionId}</code> · ${b.bestAvg.steps??"—"} 步 · ${fmtMs(b.bestAvg.wallMs)}`,
+      `来源 ${b.bestAvg.provenance}${b.bestAvg.scoreSourceNote?" · "+esc(b.bestAvg.scoreSourceNote):""}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
+  const timeLines=[];
+  if(b.bestAvg&&b.bestAvg.wallMs!=null) timeLines.push(`最佳均分运行（${esc(b.bestAvg.name)}）：总耗时 <b>${fmtMs(b.bestAvg.wallMs)}</b> · 每步约 ${b.bestAvg.msPerStep} ms`);
+  if(b.fastestPerStep) timeLines.push(`最快全盘（每步）：${esc(b.fastestPerStep.name)} <code>${b.fastestPerStep.versionId}</code> · 每步 ${b.fastestPerStep.msPerStep} ms（总 ${fmtMs(b.fastestPerStep.wallMs)}）`);
+  if(b.fastestWall) timeLines.push(`最快全盘（总耗时）：${esc(b.fastestWall.name)} <code>${b.fastestWall.versionId}</code> · ${fmtMs(b.fastestWall.wallMs)}`);
+  html.push(card("搜索耗时",timeLines.length?timeLines[0].split("：")[1].split(" · ")[0]:null,
+    timeLines.join("<br>")||"尚无运行",
+    timeLines.length?"全盘运行实测 (wallMs)":""));
+  document.getElementById("best-grid").innerHTML=html.join("");
+
+  if(b.topByAvg&&b.topByAvg.length){
+    const rows=b.topByAvg.map(x=>`<tr>
+      <td><b>${esc(x.name)}</b> <code>${x.versionId}</code>${x.runKey?" · "+esc(x.runKey):""}</td>
+      <td class="num"><b>${x.value.toFixed(2)}</b></td>
+      <td class="num">${x.white!=null?x.white:"—"}</td>
+      <td class="num">${x.steps??"—"}</td>
+      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td>
+      <td><span class="src">${x.provenance}</span></td></tr>`).join("");
+    document.getElementById("top3").innerHTML=`<h3>全盘最佳 Top3（按均分）</h3>
+      <table><thead><tr><th>版本</th><th>均分</th><th>白</th><th>步数</th><th>耗时</th><th>来源</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+}
+
+// ---- 迭代表 ----
+function commitsHtml(v){
+  if(!v.commits.length) return '<span class="src">—</span>';
+  const rows=v.commits.map(c=>`<tr><td><code>${esc(c.hash)}</code></td><td class="num">${esc(c.date)}</td><td>${esc(c.subject)}</td></tr>`).join("");
+  return `<div class="commit-list"><table><thead><tr><th>commit</th><th>日期</th><th>提交说明</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function diffHtml(v){
+  const base=v.baseline?REGISTRY.versions.find(x=>x.id===v.baseline):null;
+  const baseArg=base?`${base.head}..`:"";
+  const showArg=base?`${base.head}..${v.head}`:`${v.head}`;
+  const cmds=[];
+  cmds.push(`# 定位改动\n`+(base?`git diff --stat ${baseArg}${v.head}`:`git show --stat --oneline ${v.head}`)+`\n`+(base?`git log --oneline ${baseArg}${v.head}`:`git log --oneline ${v.head} -10`));
+  cmds.push(`# 快速回退\n`+`git checkout ${v.head}   # 回到该版本代码`+(base?`\ngit revert --no-commit ${baseArg}${v.head}   # 工作区撤销该版本全部改动`:`\ngit revert ${v.head}   # 撤销该提交`));
+  const files=v.diffFiles&&v.diffFiles.length?`<div class="diff-files"><table><thead><tr><th>文件</th><th>+</th><th>−</th></tr></thead><tbody>${
+    v.diffFiles.map(f=>`<tr><td><code>${esc(f.file)}</code></td><td class="num">${f.insertions==null?"bin":f.insertions}</td><td class="num">${f.deletions==null?"bin":f.deletions}</td></tr>`).join("")
+  }</tbody></table></div>`:`<span class="src">${esc(v.diffStat||"无 diff 数据")}</span>`;
+  return `<div class="rollback-grid">
+    <div><h4>改动统计：${esc(v.diffStat||"—")}</h4>${files}</div>
+    <div>
+      <h4>命令</h4>
+      ${cmds.map(c=>`<div class="cmdblock">${esc(c)}</div>`).join("")}
+    </div>
+  </div>`;
+}
+function resultsHtml(v){
+  const items=v.results.map(r=>{
+    if(r.missingRecord) return `<div class="result-item"><span class="src">✗ 声明记录缺失：<code>${esc(r.recordFile)}</code></span></div>`;
+    const links=[];
+    if(r.reportExists&&r.reportPath) links.push(`<a href="${rel(r.reportPath)}">复盘报告</a>`);
+    if(r.recordPath) links.push(`<a href="${rel(r.recordPath)}">记录 JSON</a>`);
+    const flagTxt=Object.keys(r.flags||{}).length?` · flags: ${esc(Object.entries(r.flags).map(([k,v])=>k+"="+JSON.stringify(v)).join(", "))}`:"";
+    return `<div class="result-item">
+      <div class="headline"><code>${esc(r.recordFile)}</code><span class="src">${esc(r.mode)}${flagTxt}${r.terminal?" · 终局":""} · ${esc(r.policyVersion||"")} · git ${esc(r.gitCommit||"")}</span></div>
+      <div>${scoreCell(r)} · 均分 <b>${avgCell(r)}</b> · ${stepsCell(r)} · ${timeCell(r)} ${links.length?`· ${links.join(" · ")}`:""}</div>
+      ${r.note?`<div class="src">注：${esc(r.note)}</div>`:""}
+    </div>`;
+  }).join("");
+  return `<div class="results-list">${items||'<span class="src">（无 research 记录）</span>'}</div>`;
+}
+function summaryCell(v){
+  const short=v.summary.length>110?v.summary.slice(0,110)+"…":v.summary;
+  return `<div class="summary-cell">${esc(short)}${v.summary.length>110?` <a href="#" data-toggle="1">展开</a><span class="full">${esc(v.summary)}</span>`:""}</div>`;
+}
+function iterTable(){
+  const head=REGISTRY.versions.find(v=>v.isHead);
+  const rows=REGISTRY.versions.map(v=>{
+    const p=primaryResult(v);
+    const r=p.result;
+    const badges=[];
+    if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
+    if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
+    const comp=v.completeness;
+    badges.push((comp.record?'<span class="badge record" title="有 research 记录">记录✓</span>':'<span class="badge missing" title="无 research 记录">记录✗</span>'));
+    if(comp.save) badges.push('<span class="badge save" title="有存档">存档✓</span>');
+    if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
+    const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
+      v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
+    const recordLink=r&&r.recordPath?`<a href="${rel(r.recordPath)}">记录</a>`:(v.roadmap?'<span class="src">roadmap</span>':'<span class="src">—</span>');
+    const rmap=v.roadmap;
+    const summary=p.isRoadmap
+      ? (rmap
+        ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步 · ${esc(rmap.note||"")}</div></div>`
+        : summaryCell(v))
+      : summaryCell(v);
+    return `<tr class="toggle-row" data-vid="${esc(v.id)}">
+      <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}</td>
+      <td class="num">${esc(v.date)}</td>
+      <td>${summary}</td>
+      <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.steps??"—":"—"):stepsCell(r)}</td>
+      <td>${p.isRoadmap?(v.roadmap?'<span class="scores">— / — / — / <b>'+(v.roadmap.scores? v.roadmap.scores["player-white"] ?? "—" : "—")+'</b></span><br><span class="src">roadmap 文档</span>':scoreCell(null)):scoreCell(r)}</td>
+      <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
+      <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
+      <td>${reportLink}</td>
+      <td>${recordLink}</td>
+      <td><a href="#" data-detail="${esc(v.id)}">回退 / 定位改动</a></td>
+    </tr>
+    <tr class="detail-row" id="detail-${esc(v.id)}" style="display:none"><td colspan="10"><div class="detail-inner">
+      <h4>提交（${v.commits.length}）</h4>${commitsHtml(v)}
+      <h4>全部运行结果</h4>${resultsHtml(v)}
+      <h4>回退与定位改动</h4>${diffHtml(v)}
+    </div></td></tr>`;
+  }).join("");
+  document.getElementById("iter-body").innerHTML=rows;
+  // 行内展开/收起
+  document.getElementById("iter-body").addEventListener("click",(ev)=>{
+    const t=ev.target;
+    if(t.dataset&&t.dataset.detail){
+      ev.preventDefault();
+      const tr=document.getElementById("detail-"+t.dataset.detail);
+      if(tr) tr.style.display=tr.style.display==="none"?"":"none";
+      return;
+    }
+    if(t.dataset&&t.dataset.toggle){
+      ev.preventDefault();
+      const full=t.previousElementSibling;
+      if(full){const show=full.style.display!=="block";full.style.display=show?"block":"none";t.textContent=show?"收起":"展开";}
+      return;
+    }
+    const row=t.closest(".toggle-row");
+    if(row&&t.tagName!=="A"){
+      const tr=document.getElementById("detail-"+row.dataset.vid);
+      if(tr) tr.style.display=tr.style.display==="none"?"":"none";
+    }
+  });
+}
+
+// ---- 完整性 ----
+function integrityPanel(){
+  const warns=REGISTRY.warnings.filter(w=>w.level==="warn");
+  const infos=REGISTRY.warnings.filter(w=>w.level==="info");
+  const box=document.getElementById("integrity");
+  const cls=warns.length?"":" ok";
+  let html=`<h3>数据完整性审计 ${warns.length?`· ${warns.length} 个警告`:""}</h3>`;
+  const item=(w)=>`<div class="warn-item ${w.level}">${w.level==="warn"?"⚠ ":"· "}${esc(w.text)}</div>`;
+  if(warns.length) html+=warns.map(item).join("");
+  else html+='<div class="warn-item">无警告：所有固定盘面全盘记录均已归属版本，provenance 匹配，声明记录齐全。</div>';
+  if(infos.length) html+=`<div style="margin-top:6px">${infos.map(item).join("")}</div>`;
+  if(REGISTRY.orphans&&REGISTRY.orphans.length){
+    html+=`<div style="margin-top:8px"><div class="warn-item">未登记到任何版本的固定盘面记录（${REGISTRY.orphans.length}）：</div>`;
+    html+=REGISTRY.orphans.map(o=>`<div class="warn-item">· <code>${esc(o.file)}</code> ${esc(o.mode)} name=${esc(o.name||"—")} commit=${esc(o.gitCommit||"—")}</div>`).join("");
+    html+="</div>";
+  }
+  box.className="integrity"+cls;
+  box.innerHTML=html;
+}
+
+// ---- 初始化 ----
+function init(){
+  document.getElementById("board-name").textContent=REGISTRY.board.name||"";
+  document.getElementById("board-seed").textContent=REGISTRY.board.seed||"";
+  bestGrid();
+  iterTable();
+  integrityPanel();
+  const head=REGISTRY.versions.find(v=>v.isHead);
+  document.getElementById("foot").innerHTML=
+    `生成时间 ${esc(REGISTRY.builtAt)} · HEAD ${esc(REGISTRY.headCommit)}${REGISTRY.worktreeDirty?" · <span style='color:#b3261e'>工作树有未提交改动</span>":""}`+
+    (head?` · 当前 HEAD 对应版本 <code>${esc(head.id)}</code>`:"")+
+    `<br>数据源：<code>reports/iteration/versions.json</code>（人工维护） + <code>reports/research/*.json</code>（调研记录） → <code>reports/iteration/registry.json</code>（构建产物）。`;
+}
+init();
+</script>
+</body>
+</html>

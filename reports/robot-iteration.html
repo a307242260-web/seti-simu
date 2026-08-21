@@ -1,0 +1,1542 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI 机器人迭代总览（免电分析盘面）</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#ffffff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--accent:#2f6fed;--accent-bg:#e8eefa;--good:#1e7e46;--bad:#c0392b;--warn-bg:#fff7e6;--warn-line:#f0c36d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.page{width:min(1400px,calc(100% - 32px));margin:auto;padding:28px 0 70px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+h1{margin:4px 0 8px;font-size:26px}
+h2{font-size:17px;margin:0 0 12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+h3{font-size:14px;margin:0}
+.intro{color:#3d4a5c;max-width:1000px;margin:0 0 4px}
+.note{font-size:12px;color:var(--muted);margin:4px 0 18px}
+code{background:#eef1f6;padding:1px 5px;border-radius:4px;font-size:12px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+table{border-collapse:collapse;width:100%;background:var(--panel);font-size:12.5px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#eef1f6;font-weight:600;white-space:nowrap}
+tr:hover td{background:#f8faff}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;vertical-align:1px}
+.badge.head{background:#1f6feb;color:#fff}
+.badge.roadmap{background:#f3e8c8;color:#7a5b00}
+.badge.warn{background:#fde8e8;color:#b3261e}
+.badge.record{background:#e6f4ea;color:#1e7e46}
+.badge.save{background:#e8eefa;color:#2f6fed}
+.badge.report{background:#f3eefc;color:#6b3fa0}
+.badge.missing{background:#f1f3f6;color:#98a2b3}
+.scores{white-space:nowrap}
+.scores b{font-variant-numeric:tabular-nums}
+.src{font-size:10.5px;color:var(--muted)}
+.dp{color:var(--good);font-weight:700}.dm{color:var(--bad);font-weight:700}
+/* ---- 顶部 best 面板 ---- */
+.best-panel{background:linear-gradient(135deg,#f0f5ff,#f7f9fe);border:1px solid #d3e0f8;border-radius:14px;padding:16px 18px;margin:18px 0 26px}
+.best-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.best-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.best-card .label{font-size:12px;color:var(--muted);font-weight:600}
+.best-card .value{font-size:30px;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.best-card .sub{font-size:12px;color:#44506a}
+.best-card .src{display:inline-block;margin-top:6px;padding:1px 8px;border-radius:8px;font-size:10.5px;background:var(--accent-bg);color:var(--accent)}
+.best-card .src.roadmap{background:#f3e8c8;color:#7a5b00}
+.top3{margin-top:12px}
+.top3 table{font-size:12px}
+/* ---- 迭代表 ---- */
+.iter-table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.detail-row td{background:#fbfcfe;padding:0}
+.detail-inner{padding:14px 18px;border-top:1px dashed var(--line)}
+.detail-inner h4{margin:12px 0 6px;font-size:12.5px;color:#44506a}
+.detail-inner h4:first-child{margin-top:0}
+.cmdblock{background:#101828;color:#d5e2ff;border-radius:8px;padding:8px 12px;font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto;white-space:pre;margin:4px 0}
+.diff-files{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:11.5px}
+.diff-files table{font-size:11.5px}
+.diff-files td.num{color:#44506a}
+.commit-list{max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:11.5px}
+.commit-list table{font-size:11.5px}
+.rollback-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.results-list{display:grid;gap:8px}
+.result-item{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff}
+.result-item .headline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.result-item .headline code{background:#eef1f6}
+.summary-cell{max-width:340px}
+.summary-cell .full{display:none;color:#3d4a5c}
+.btn{display:inline-block;padding:2px 10px;border-radius:8px;border:1px solid var(--line);background:#f6f8fb;color:#44506a;font-size:12px;cursor:pointer;margin:2px 4px 2px 0}
+.btn:hover{background:#eef1f6}
+/* ---- 完整性 ---- */
+.integrity{background:#fffdf7;border:1px solid var(--warn-line);border-radius:12px;padding:12px 16px;margin:24px 0}
+.integrity.ok{background:#f5fbf7;border-color:#b7e0c4}
+.integrity h3{margin:0 0 8px}
+.warn-item{font-size:12.5px;margin:3px 0;color:#7a5b00}
+.warn-item.warn{color:#b3261e}
+footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+.toggle-row{cursor:pointer}
+@media(max-width:900px){.best-grid{grid-template-columns:1fr}.rollback-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="page">
+  <span class="eyebrow">SETI · 机器人迭代记录与复盘体系</span>
+  <h1>机器人迭代总览</h1>
+  <p class="intro">固定盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）：有存档的终局运行从存档 <code>finalScores</code> 读取（来源标记 <span class="src">save-final</span>），无存档的记录按当时记录口径展示（<span class="src">record</span>），无记录的版本按 roadmap 文档展示（<span class="src">roadmap</span>）。</p>
+  <p class="note">机制说明见 <code>docs/robot-iteration-registry.md</code>；标准迭代入口 <code>node tools/robot_iterate.js run --name &lt;id&gt; --full --summary "..."</code>（跑验证→登记→复盘报告→本页一次完成，绝不重跑同一版本）。</p>
+
+  <!-- 顶部：现在的 best version -->
+  <section class="best-panel">
+    <h2>当前最佳（固定盘面 · 全盘运行）</h2>
+    <div class="best-grid" id="best-grid"></div>
+    <div class="top3" id="top3"></div>
+  </section>
+
+  <!-- 迭代记录（倒序） -->
+  <section>
+    <h2>迭代记录（倒序）</h2>
+    <div class="iter-table-wrap">
+      <table>
+        <thead><tr>
+          <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th><th>回退 / 定位改动</th>
+        </tr></thead>
+        <tbody id="iter-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 数据完整性 -->
+  <section class="integrity" id="integrity"></section>
+
+  <footer id="foot"></footer>
+</main>
+
+<script>
+"use strict";
+const REGISTRY = {
+  "schemaVersion": "seti-robot-iteration-registry-build-v1",
+  "builtAt": "2026-08-21T04:35:15.466Z",
+  "board": {
+    "seed": "seti-free-analyze-v1",
+    "name": "免电分析盘面",
+    "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
+  },
+  "headCommit": "ec5cfb9f",
+  "worktreeDirty": true,
+  "bestOf": {
+    "bestWhite": {
+      "value": 106,
+      "versionId": "v27-tech-v3",
+      "name": "v27-tech-v3（科技价值打分）",
+      "runKey": null,
+      "provenance": "roadmap",
+      "steps": 520,
+      "wallMs": null,
+      "msPerStep": null,
+      "scoreSourceNote": "roadmap 2026-08-17/18 记录（白 base 64 + 板块 36 + 卡牌 6 = 106；均分 77.5）；蓝/绿/棕分数未记录；无 research 记录与存档，复盘数据仅此文档来源。"
+    },
+    "bestAvg": {
+      "value": 89,
+      "versionId": "v26-unified",
+      "name": "v26 统一搜索（on/off 合并）",
+      "runKey": "d2c50ffe.53abbd5.full",
+      "provenance": "save-final",
+      "steps": 557,
+      "wallMs": 518080,
+      "msPerStep": 930,
+      "scoreSourceNote": "on-head（统一搜索开）：557 步，完整终局 107/68/98/83 均 89"
+    },
+    "fastestWall": {
+      "versionId": "newfast-recovery",
+      "name": "newfast + end_turn 特例恢复（HEAD）",
+      "runKey": "25bdb5e9.9e75c9cd.full",
+      "provenance": "record",
+      "steps": 321,
+      "wallMs": 315153,
+      "msPerStep": 982,
+      "scoreSourceNote": "默认 newfast 全盘：321 步 / 白 58 / 均分 33.75。记录 gitCommit=9e75c9cd（运行于脏工作树），结果为 ec5cfb9f 特例恢复后的行为（2026-08-20 收口记录）；无匹配存档（v149 存档 294 步与 321 步不一致，不关联）。"
+    },
+    "fastestPerStep": {
+      "versionId": "v26-unified",
+      "name": "v26 统一搜索（on/off 合并）",
+      "runKey": "d2c50ffe.53abbd5.full",
+      "provenance": "save-final",
+      "steps": 557,
+      "wallMs": 518080,
+      "msPerStep": 930,
+      "scoreSourceNote": "on-head（统一搜索开）：557 步，完整终局 107/68/98/83 均 89"
+    },
+    "topByAvg": [
+      {
+        "value": 89,
+        "white": 83,
+        "versionId": "v26-unified",
+        "name": "v26 统一搜索（on/off 合并）",
+        "runKey": "d2c50ffe.53abbd5.full",
+        "provenance": "save-final",
+        "steps": 557,
+        "wallMs": 518080,
+        "msPerStep": 930,
+        "scoreSourceNote": "on-head（统一搜索开）：557 步，完整终局 107/68/98/83 均 89"
+      },
+      {
+        "value": 85.5,
+        "white": 105,
+        "versionId": "v26-unified",
+        "name": "v26 统一搜索（on/off 合并）",
+        "runKey": "51a3727a.53abbd5.full",
+        "provenance": "save-final",
+        "steps": 521,
+        "wallMs": 630200,
+        "msPerStep": 1210,
+        "scoreSourceNote": "off-head-clean（fastPath 关闭时代基线参考）：521 步，完整终局 75/70/92/105 均 85.5"
+      },
+      {
+        "value": 77.5,
+        "white": 106,
+        "versionId": "v27-tech-v3",
+        "name": "v27-tech-v3（科技价值打分）",
+        "runKey": null,
+        "provenance": "roadmap",
+        "steps": 520,
+        "wallMs": null,
+        "msPerStep": null,
+        "scoreSourceNote": "roadmap 2026-08-17/18 记录（白 base 64 + 板块 36 + 卡牌 6 = 106；均分 77.5）；蓝/绿/棕分数未记录；无 research 记录与存档，复盘数据仅此文档来源。"
+      }
+    ]
+  },
+  "versions": [
+    {
+      "id": "newfast-recovery",
+      "name": "newfast + end_turn 特例恢复（HEAD）",
+      "date": "2026-08-20",
+      "baseline": "newfast",
+      "head": "ec5cfb9f",
+      "commits": [
+        {
+          "hash": "ec5cfb9f",
+          "date": "2026-08-20",
+          "subject": "机器人迭代收口（2026-08-20）：end_turn/pass 计划复用特例恢复 + 调研记录指纹对齐 + 文档过期项清理"
+        }
+      ],
+      "summary": "end_turn/pass 计划复用特例恢复（48f0af3e 移除特例导致 219 决策即终局；恢复后 321 决策 / 白 58）+ 调研记录指纹对齐 + 文档过期项清理。",
+      "diffStat": "30 files changed, 127 insertions(+), 46 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 10,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-research-workflow.md",
+          "insertions": 18,
+          "deletions": 6
+        },
+        {
+          "file": "docs/browser-simulation-unification.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/effect-session-runtime.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/fixed-boards.md",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "docs/rulebook-audit-findings.md",
+          "insertions": 0,
+          "deletions": 1
+        },
+        {
+          "file": "docs/standard-action-contract.md",
+          "insertions": 5,
+          "deletions": 5
+        },
+        {
+          "file": "randomizer/app/ai/browser-bootstrap.js",
+          "insertions": 15,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 10,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 12,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 11,
+          "deletions": 5
+        },
+        {
+          "file": "tools/{ => archive}/browser-smoke-inventory.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/compare_browser_replay_v47.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/compare_browser_tech_refill.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/diagnose_machine_observation.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/diagnose_sim_machine_end_to_end.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/inspect_sim_save.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/repro_discard_ui.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/repro_final_ui.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/save_checkpoints.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/trace_alien_play.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_actions_audit.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_discard_choices.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_from_checkpoint.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_land_choice.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_pass_auto_advance.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/{ => archive}/verify_position.js",
+          "insertions": 0,
+          "deletions": 0
+        },
+        {
+          "file": "tools/run_research_validation.js",
+          "insertions": 35,
+          "deletions": 14
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "25bdb5e9.9e75c9cd.full.json",
+          "recordPath": "reports/research/25bdb5e9.9e75c9cd.full.json",
+          "mode": "full",
+          "steps": 321,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 315153,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v27",
+          "gitCommit": "9e75c9cd",
+          "createdAt": "2026-08-20T10:00:33.858Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "默认 newfast 全盘：321 步 / 白 58 / 均分 33.75。记录 gitCommit=9e75c9cd（运行于脏工作树），结果为 ec5cfb9f 特例恢复后的行为（2026-08-20 收口记录）；无匹配存档（v149 存档 294 步与 321 步不一致，不关联）。",
+          "scores": {
+            "player-blue": 48,
+            "player-green": 9,
+            "player-brown": 20,
+            "player-white": 58
+          },
+          "avgScore": 33.75,
+          "scoreSource": "record-summary",
+          "savePath": null,
+          "reportPath": null,
+          "reportExists": false
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
+    {
+      "id": "newfast",
+      "name": "newfast（默认装配固化）",
+      "date": "2026-08-20",
+      "baseline": "v27-playvalue",
+      "head": "9e75c9cd",
+      "commits": [
+        {
+          "hash": "8b7cf3b6",
+          "date": "2026-08-18",
+          "subject": "打牌价值评估对齐（用户逐项纠正）：①资源变化分——这一步的资源消耗是成本（负）、获得是收益（正），单位参考值钱10电8普通牌6宣传4数据6移动5外星牌12，钱/能逐轮贬值（R1钱≈10→R4≈4-5），quick_trade/card_corner 手段动作资源分不进 primaryValue（本身无价值只有缺了才做）；②宣传固定价值4+跨门槛解锁20（pub 从\u003c6到>=6）；③保留区任务价值——任务卡进保留区挂远期奖励（b_117 任务5环绕/登陆→3分+1信用≈11，折半×剩余轮次），此前=0导致打牌被低估（step23 打牌55.5\u003claunch58差2.5正是任务值缺失，补后打牌61>58）；④打牌凑宣传计划——techGainRequirements.publicityPreparationPlans 原来只认 place_data/card_corner，加 play_card（打 b_117 +2宣传→跨门槛→研究），打牌→凑宣传→研究科技链在目标系统可见；⑤terminal 叶归零（终局只比官方终局分）。200步验证：白色 R1 打b_117→放数据→环绕火星→研究blue2→分析，节奏对齐用户405档。67/67测试全过。注：全盘崩溃（MACHINE_PLAYER_BOUNDARY_EMPTY）定位为并行 agent 的 planContinuationFastPath 复用 bug（关 fastPath 不崩溃，基线代码同样崩溃），与本改动无关"
+        },
+        {
+          "hash": "ab701c40",
+          "date": "2026-08-20",
+          "subject": "公司 1x 主动能力启用前置（合法性）修复：枚举合法 ⇒ 执行必能继续（用户口径，堵死局不堵空转）。根因：industry 动作枚举只查 PASS/公司存在/能力未用，不查会话前置——寰宇动力无可移动探测器时被枚举为合法，执行后 free_move 会话 0 选项，机器席位下一决策 MACHINE_PLAYER_BOUNDARY_EMPTY 崩溃（实测 #202 复用 industry 后崩）。修复：canStartCompany 增加前置校验且与会话枚举同源（共享 listHuanyuMoveChoices helper）——寰宇动力需有可移动探测器、图灵系统需有可用橙/紫科技槽、宣传选牌/战略/未来跨度/深空交换需有公共牌；层云无公共牌是空转（companyQueue 不开会话）不设前置。新增单测（无探测器不可枚举/有探测器可枚举且 free_move 会话必有选项/图灵无槽/任务无公共牌）。实证：fastPath 默认开全盘 268 步无崩溃（原 #203 崩溃点已越过），67/67+1/1 全绿"
+        },
+        {
+          "hash": "48f0af3e",
+          "date": "2026-08-20",
+          "subject": "搜索时机机制化（用户口径）：搜索只在本方回合（一动）开始时执行一次，回合内无新信息按计划逐步骤执行不重搜；新回合盘面无新信息复用上回合决策链（planReuseCheck），有新信息才重新搜索。新信息只两类：①揭示外星人；②计划依赖环节变化（目标奖励格被占[终点标记数，不局限第一格]/路线变长/计划要拿的科技被拿走/目标扇区赢不了/目标外星槽被占/目标公共牌被买走）。移除 control-step-redecide（end_turn/pass 是回合自然结束，计划内正常推进可复用）与 route-target-changed（顺序执行第二条路线是计划内推进非新信息）；step-not-legal 归入依赖变化或计划缺陷兜底；缺基线防呆重决策；回合内新信息重新决策留 TODO。协调器计划存储带回合（round/turn）实现回合门控；依赖扩展 tech/sector/public-card/endpointMarkerCount。新增协调器回合门控测试与 plan-continuation 新信息判定测试；docs/mechanics-reference.md 记录名词定义（轮次 round / 回合 turn=玩家每一次主要行动）、ai-design.md §3.2 重写机制。实证：#28 打牌后 #29/#30 同回合复用（含 end_turn 不重搜），67/67+1/1 全绿"
+        },
+        {
+          "hash": "185028b3",
+          "date": "2026-08-20",
+          "subject": "新回合复用开关 planNewTurnReuse（默认开，false 关闭后新回合一律重新搜索）：用于 A/B 评估忽略非依赖变化（对手移动/资源/旋转等）而复用上回合决策链的影响。协调器 runOptions.newTurnReuseEnabled，simulation-env resetConfig 装配；新增协调器开关测试；ai-design.md §3.2 记录开关。A/B（seti-107，160 决策）：开关 OFF 终局分合计 77 vs ON 69（+8，单席蓝+12/绿-12/棕+8/白0）——新回合复用忽略非依赖变化的代价约 +8（10%）"
+        },
+        {
+          "hash": "9e75c9cd",
+          "date": "2026-08-20",
+          "subject": "newfast 固化为新基线（默认装配：fastPath 开 + 新回合复用开）：run_research_validation --config 白名单补 planNewTurnReuse（A/B 关掉该开关时可跑、指纹与默认 newfast 区分开），ai-research-workflow 基线口径由'无开关'改为'默认装配 newfast'并标注历史基线 86/64.3 为 fastPath 关闭时代参考值。simulation-env 默认装配本就是 newfast（两开关 !== false 默认开），无代码改动"
+        }
+      ],
+      "summary": "打牌价值评估对齐（8b7cf3b6，2026-08-20 旧页标记 450→230 步退化主因，已按逐子项回退方向处理）；公司 1x 主动能力启用前置修复（ab701c40，堵死局不堵空转）；搜索时机机制化（48f0af3e：本回合不重搜 + 新回合 planReuseCheck 判定新信息）；新回合复用开关 planNewTurnReuse（185028b3）；newfast 固化为默认装配（9e75c9cd：fastPath 开 + 新回合复用开，无代码改动）。",
+      "diffStat": "16 files changed, 814 insertions(+), 182 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "assets/industry/industry-abilities.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 20,
+          "deletions": 25
+        },
+        {
+          "file": "docs/ai-research-workflow.md",
+          "insertions": 8,
+          "deletions": 4
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "docs/project-progress/playcard-handoff-20260818.md",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 185,
+          "deletions": 49
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.js",
+          "insertions": 58,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.test.js",
+          "insertions": 102,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 129,
+          "deletions": 46
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 90,
+          "deletions": 21
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 58,
+          "deletions": 19
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.test.js",
+          "insertions": 105,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "tools/run_research_validation.js",
+          "insertions": 3,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "bb319981.9e75c9cd.full.json",
+          "recordPath": "reports/research/bb319981.9e75c9cd.full.json",
+          "mode": "full",
+          "steps": 206,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 326539,
+          "flags": {
+            "planNewTurnReuse": false
+          },
+          "policyVersion": "seti-heuristic-policy-v27",
+          "gitCommit": "9e75c9cd",
+          "createdAt": "2026-08-20T10:08:36.810Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "A/B：planNewTurnReuse=false（新回合一律重搜）206 步终局，均分 22.75",
+          "scores": {
+            "player-blue": 24,
+            "player-green": 9,
+            "player-brown": 23,
+            "player-white": 35
+          },
+          "avgScore": 22.75,
+          "scoreSource": "record-summary",
+          "savePath": null,
+          "reportPath": null,
+          "reportExists": false
+        },
+        {
+          "recordFile": "bced1aa3.9e75c9cd.full.json",
+          "recordPath": "reports/research/bced1aa3.9e75c9cd.full.json",
+          "mode": "full",
+          "steps": 230,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 395755,
+          "flags": {
+            "planContinuationFastPath": false,
+            "planNewTurnReuse": false
+          },
+          "policyVersion": "seti-heuristic-policy-v27",
+          "gitCommit": "9e75c9cd",
+          "createdAt": "2026-08-20T10:17:45.358Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "A/B：planContinuationFastPath=false + planNewTurnReuse=false 230 步终局，均分 23.75",
+          "scores": {
+            "player-blue": 16,
+            "player-green": 32,
+            "player-brown": 21,
+            "player-white": 26
+          },
+          "avgScore": 23.75,
+          "scoreSource": "record-summary",
+          "savePath": null,
+          "reportPath": null,
+          "reportExists": false
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
+    {
+      "id": "v27-playvalue",
+      "name": "v27 打牌价值 + 计划复用",
+      "date": "2026-08-18",
+      "baseline": "v27-tech-v3",
+      "head": "1d063418",
+      "commits": [
+        {
+          "hash": "554df0f8",
+          "date": "2026-08-18",
+          "subject": "审查机器席位观察装配：新增浏览器/仿真端到端诊断脚本，实证浏览器机器席位 observation 失明（players/hand/assets 全空）导致启发式决策退化为 pass"
+        },
+        {
+          "hash": "de879058",
+          "date": "2026-08-18",
+          "subject": "打牌价值修复两环（用户口径对齐）：① 收入选牌机会成本——手牌有价值、已知牌可评估（插进去的损失），cardPlayValue 按打牌价值（免费发射15/宣传5×数/免费科技按top3匹配30或10/收入牌/登陆/移动/痕迹）×0.5 作机会成本扣减，收入选牌改为插打牌价值最低的牌（step31 插 dlc_9 保留 b_117）；② 免费发射打牌奖励——launch 与 play_card 绑定同一探测目标时叶链相同评平局（59.5=59.5 字典序选 launch），免费发射打牌加 2钱发射费×8×0.5=8 分奖励（step32 R1 第一主行动选打 b_117 67.5>59.5，与用户 405 档 step23 一致）。200 步验证：白色 R1 打 b_117→放数据→研究 blue2→收入插 b_48，节奏对齐用户；play_card 1→2 次、外星首放 3→5 次。67/67 测试全过"
+        },
+        {
+          "hash": "eb480700",
+          "date": "2026-08-18",
+          "subject": "修补启发式主路径计划依赖恒 generic：secondary-agent 叶无 routeCheckpoints → probeRoute.candidate 恒 null → planDependencyFromPlan 永远 generic，planReuseCheck 的 tier-3 失效判定（路线变贵/第一奖励格被占/跨出终点）从不触发。改从叶的 rootRouteTargetId（orbit:/land: 路线终点，与 production-kernel targetId 同构）补出路线依赖；candidate 存在时仍优先 candidate（非 secondary 路径行为不变）。新增单测：secondary 叶补出路线依赖、移动步数增加触发 next-step-affected、data:analyze 不误判、candidate 优先；docs/ai-design.md §3.2 同步依赖双来源。实证：启发式主路径 plan 依赖分布由 generic:90 变为 route:20+generic:89"
+        },
+        {
+          "hash": "05dc1da8",
+          "date": "2026-08-18",
+          "subject": "计划延续复用（planContinuationFastPath）默认打开：simulation 经 resetConfig（显式 false 可关），browser 机器席位同步默认开（URL ?planReuse=0 关闭）。前提是上一提交修复的路线依赖（secondary-agent 叶 rootRouteTargetId 补依赖）已就位，tier-3 失效判定（路线变贵/奖励格被占/跨出终点）可正常触发。默认配置实测 73 步 35 命中/38 miss 无卡死，全量回归 67/67+1/1；文档同步（ai-design.md §3 默认开、AGENTS.md 代码地图）"
+        },
+        {
+          "hash": "1d063418",
+          "date": "2026-08-18",
+          "subject": "计划复用增加控制动作特例：下一步是 end_turn/pass 一律 control-step-redecide 重新决策，不盲从计划。根因：winning leaf 链穿过回合边界（end_turn）rollout，计划下一步为 end_turn 时被盲目复用，跳过当前盘面更有价值的主行动（同状态搜索选 place_data、fast-path 直接 end_turn，白色 120 步 24→12）。修复后分叉 #30 恢复 scheme 选 place_data，与 baseline 对齐。新增单测（end_turn/pass 下一步必须 miss）+ ai-design.md §3.2 同步控制动作特例"
+        }
+      ],
+      "summary": "打牌价值 + 计划复用线：机器席位观察失明修复（554df0f8）；打牌价值修复两环（de879058：收入选牌机会成本 + 免费发射打牌奖励）；计划延续复用（planContinuationFastPath）依赖修补并默认打开（eb480700 + 05dc1da8）；计划复用增加控制动作特例（1d063418：下一步是 end_turn/pass 一律重新决策，不盲从计划）。",
+      "diffStat": "26 files changed, 1453 insertions(+), 271 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 25,
+          "deletions": 2
+        },
+        {
+          "file": "docs/app-architecture.md",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "docs/browser-simulation-unification.md",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "docs/project-progress/playcard-handoff-20260818.md",
+          "insertions": 115,
+          "deletions": 0
+        },
+        {
+          "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app.js",
+          "insertions": 8,
+          "deletions": 8
+        },
+        {
+          "file": "randomizer/app/ai/browser-bootstrap.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/browser-host/decision-ui.js",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app/browser-host/decision-ui.test.js",
+          "insertions": 38,
+          "deletions": 34
+        },
+        {
+          "file": "randomizer/app/browser-host/resident-renderer.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/browser-host/resident-renderer.test.js",
+          "insertions": 14,
+          "deletions": 21
+        },
+        {
+          "file": "randomizer/app/browser-rule-composition.js",
+          "insertions": 47,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/app/rule-composition.test.js",
+          "insertions": 16,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/app/rule-observation.js",
+          "insertions": 206,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 9,
+          "deletions": 165
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 145,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 30,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 130,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 24,
+          "deletions": 12
+        },
+        {
+          "file": "tools/audit_v_state_inputs.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "tools/diag_playcard_b117.js",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "tools/diagnose_browser_machine_end_to_end.js",
+          "insertions": 168,
+          "deletions": 0
+        },
+        {
+          "file": "tools/diagnose_machine_observation.js",
+          "insertions": 142,
+          "deletions": 0
+        },
+        {
+          "file": "tools/diagnose_sim_machine_end_to_end.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "tools/verify_plan_continuation_fastpath.js",
+          "insertions": 26,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "b2a3aa41.1d063418.quick-200.json",
+          "recordPath": "reports/research/b2a3aa41.1d063418.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 135165,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v27",
+          "gitCommit": "1d063418",
+          "createdAt": "2026-08-18T12:36:01.350Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "v27-taskval 200 步快速验证（非终局，评估行为方向）",
+          "scores": {
+            "player-blue": 10,
+            "player-green": 24,
+            "player-brown": 25,
+            "player-white": 12
+          },
+          "avgScore": 17.75,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-v27-taskval-quick-200-v97.json",
+          "reportPath": "reports/iteration/v27-playvalue/b2a3aa41.1d063418.quick-200.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "b2a3aa41.1d063418.quick-200",
+            "path": "reports/iteration/v27-playvalue/b2a3aa41.1d063418.quick-200.action-log.html",
+            "mode": "quick-200"
+          }
+        ]
+      }
+    },
+    {
+      "id": "v27-tech-v3",
+      "name": "v27-tech-v3（科技价值打分）",
+      "date": "2026-08-18",
+      "baseline": "v26-unified",
+      "head": "d347e658",
+      "commits": [
+        {
+          "hash": "e8a368a4",
+          "date": "2026-08-18",
+          "subject": "科技价值打分（用户裁决）：selectHeuristicTechPlans 废弃硬编码场景规则，改为 基础分+单次利用价值×预期使用次数 打分取 top3 尝试 - 基础分=背面 bonus 期望+首发分；单次利用价值按科技效果校准（蓝槽资源/橙探测/紫扫描） - 预期使用次数=场景权重×剩余轮次；top3 尝试，其余不评估（避免全放开稀释） - 实测 R1 top3=blue1/blue2/orange1（数据槽+火箭上限），废弃旧规则 blue2/purple2/purple4 - 全盘白色 41→64，均分 38.25→54（续跑版）；67/67 测试全过"
+        },
+        {
+          "hash": "5c6f86ab",
+          "date": "2026-08-18",
+          "subject": "科技打分修正：移除基础分预估（背面 bonus/首发分不提前算）——反事实搜索真实结算 - 用户纠正：背面 bonus 随机翻到什么就是什么、首发分有就有没有就没有，不该合并成期望 - 反事实搜索研究动作真实结算（实测研究 blue1：score+2 首发 + pub-5 含随机 +1 宣传 bonus） - 预筛打分只编码未来效率（单次利用价值×预期使用次数×场景权重×剩余轮次），即时收益由搜索捕获 - 消除双重计分（预筛预估 + 搜索真实结算重复）"
+        },
+        {
+          "hash": "34730eeb",
+          "date": "2026-08-18",
+          "subject": "科技打分三类修正（用户逐项纠正）： - 橙4 卫星登陆解锁改为持续收益（解锁后每次卫星登陆 8-12 分+资源可反复赚，20×次数） - 紫2 水星扫描是真实收益（1宣传→扇区信号+数据≈7），非纯灵活性 - 紫1 扇区扫描升级=灵活性（收益可能不变）价值 0；紫3 手牌扫描=消耗宝贵手牌价值 0 - 橙1 火箭上限保持一次性解锁（用户拍板：无持续收益，只算解锁价值） - 即时收益（背面bonus/首发分/扣宣传）仍由反事实搜索真实结算，不预估"
+        },
+        {
+          "hash": "d347e658",
+          "date": "2026-08-18",
+          "subject": "科技打分橙4 改回条件性有限收益 + 全盘验证记录（用户纠正：橙4 解锁后才允许卫星登陆，但本身也能登陆/环绕本星；不是所有行星都有卫星、卫星槽位会被占、每颗卫星只能登陆一次）——价值 = 可达卫星目标数 × 8 × 场景权重，不乘每轮次数；roadmap 同步橙4 口径与 v27-tech-v3 真实从头全盘结果（白色 64/均分 52.25，含板块白色 106；终局科技 blue1+blue2+purple2 不再是纯蓝；三大缺口仍存：打牌 3vs19、科技研究 3vs8、外星首放 5vs全首）"
+        }
+      ],
+      "summary": "科技价值打分线（用户逐项纠正）：selectHeuristicTechPlans 废弃硬编码场景规则，改为基础分+单次利用价值×预期使用次数打分取 top3；移除基础分预估（背面 bonus/首发分由反事实搜索真实结算）；橙4 卫星登陆解锁改回条件性有限收益。roadmap 基线：白 106 / 均分 77.5（完整终局口径）。",
+      "diffStat": "36 files changed, 1347 insertions(+), 325 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 33,
+          "deletions": 32
+        },
+        {
+          "file": "docs/ai-research-workflow.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "docs/project-progress/heuristic-takeover-plan-20260814.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
+          "insertions": 68,
+          "deletions": 6
+        },
+        {
+          "file": "docs/project-progress/robot-speed-optimization-20260818.md",
+          "insertions": 123,
+          "deletions": 0
+        },
+        {
+          "file": "docs/project-progress/unified-search-design-20260817.md",
+          "insertions": 38,
+          "deletions": 1
+        },
+        {
+          "file": "docs/project-progress/v-state-design-20260817.md",
+          "insertions": 15,
+          "deletions": 7
+        },
+        {
+          "file": "randomizer/app.js",
+          "insertions": 3,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/app/ai/browser-bootstrap.js",
+          "insertions": 2,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/app/ai/browser-machine-player.test.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/simulation-counterfactual-outcome.test.js",
+          "insertions": 77,
+          "deletions": 34
+        },
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 140,
+          "deletions": 20
+        },
+        {
+          "file": "randomizer/app/simulation-training-replay.test.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/full-flow/standard-flow-v1.fixture.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 209,
+          "deletions": 100
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 16,
+          "deletions": 29
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-evaluator.test.js",
+          "insertions": 10,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-policy.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 12,
+          "deletions": 8
+        },
+        {
+          "file": "randomizer/game/ai/v-guided-decision-function.js",
+          "insertions": 85,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/v-guided-policy.js",
+          "insertions": 10,
+          "deletions": 15
+        },
+        {
+          "file": "randomizer/game/ai/v-guided-search.js",
+          "insertions": 30,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/cards/effects.js",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 16,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 6,
+          "deletions": 9
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 118,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/game/state/state-store.js",
+          "insertions": 19,
+          "deletions": 5
+        },
+        {
+          "file": "tools/audit_v_state_inputs.js",
+          "insertions": 116,
+          "deletions": 0
+        },
+        {
+          "file": "tools/benchmark_probe_policy.js",
+          "insertions": 5,
+          "deletions": 2
+        },
+        {
+          "file": "tools/compare_vguided_vs_baseline.js",
+          "insertions": 31,
+          "deletions": 20
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "tools/progress.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "tools/run_research_validation.js",
+          "insertions": 21,
+          "deletions": 5
+        },
+        {
+          "file": "tools/run_simulate_save.js",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "tools/save_checkpoints.js",
+          "insertions": 18,
+          "deletions": 3
+        }
+      ],
+      "results": [],
+      "roadmap": {
+        "scores": {
+          "player-blue": null,
+          "player-green": null,
+          "player-brown": null,
+          "player-white": 106
+        },
+        "avgScore": 77.5,
+        "steps": 520,
+        "note": "roadmap 2026-08-17/18 记录（白 base 64 + 板块 36 + 卡牌 6 = 106；均分 77.5）；蓝/绿/棕分数未记录；无 research 记录与存档，复盘数据仅此文档来源。"
+      },
+      "isHead": false,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
+    {
+      "id": "v26-unified",
+      "name": "v26 统一搜索（on/off 合并）",
+      "date": "2026-08-18",
+      "baseline": null,
+      "head": "53abbd5a",
+      "commits": [
+        {
+          "hash": "6caeb0f7",
+          "date": "2026-08-18",
+          "subject": "恢复任务中继站/宇宙战略集团打牌被动接线（迁移 8963b38 丢失）"
+        },
+        {
+          "hash": "10ded3e9",
+          "date": "2026-08-18",
+          "subject": "迁移独立 clone 的统一搜索+外星链改动回主分支：目的引导搜索（目标绑定+需求放行，废弃全动作平铺）、quick 根截断、外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）、弃牌死锁 skip 兜底；存档工具（save_checkpoints/verify_from_checkpoint）；on 均分 60.3→70"
+        },
+        {
+          "hash": "dd5da46e",
+          "date": "2026-08-18",
+          "subject": "ai-design §3.4 同步目的引导实现（废弃'预算内全动作尝试'描述，改'目标引导+需求引导'；quick 根截断/外星价值/位置引导）"
+        },
+        {
+          "hash": "53abbd5a",
+          "date": "2026-08-18",
+          "subject": "收口记录：统一搜索目的引导版+外星链已迁移主分支（on 均分 70），打牌价值/R3R4 资源流转根因定位待实现；全量测试阻塞于并发 initial-setup 中间状态"
+        }
+      ],
+      "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
+      "diffStat": "76 files changed, 3372 insertions(+), 734 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
+          "insertions": 16,
+          "deletions": 3
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "51a3727a.53abbd5.full.json",
+          "recordPath": "reports/research/51a3727a.53abbd5.full.json",
+          "mode": "full",
+          "steps": 521,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 630200,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v26",
+          "gitCommit": "53abbd5",
+          "createdAt": "2026-08-17T20:10:14.231Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "off-head-clean（fastPath 关闭时代基线参考）：521 步，完整终局 75/70/92/105 均 85.5",
+          "scores": {
+            "player-blue": 75,
+            "player-green": 70,
+            "player-brown": 92,
+            "player-white": 105
+          },
+          "avgScore": 85.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 75,
+              "base": 55,
+              "tile": 16,
+              "card": 4
+            },
+            "player-green": {
+              "total": 70,
+              "base": 54,
+              "tile": 16,
+              "card": 0
+            },
+            "player-brown": {
+              "total": 92,
+              "base": 55,
+              "tile": 33,
+              "card": 4
+            },
+            "player-white": {
+              "total": 105,
+              "base": 72,
+              "tile": 31,
+              "card": 2
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-off-head-clean-full-v264.json",
+          "reportPath": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "d2c50ffe.53abbd5.full.json",
+          "recordPath": "reports/research/d2c50ffe.53abbd5.full.json",
+          "mode": "full",
+          "steps": 557,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 518080,
+          "flags": {
+            "unifiedSearch": true
+          },
+          "policyVersion": "seti-heuristic-policy-v26",
+          "gitCommit": "53abbd5",
+          "createdAt": "2026-08-17T19:50:03.760Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "on-head（统一搜索开）：557 步，完整终局 107/68/98/83 均 89",
+          "scores": {
+            "player-blue": 107,
+            "player-green": 68,
+            "player-brown": 98,
+            "player-white": 83
+          },
+          "avgScore": 89,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 107,
+              "base": 68,
+              "tile": 31,
+              "card": 8
+            },
+            "player-green": {
+              "total": 68,
+              "base": 55,
+              "tile": 13,
+              "card": 0
+            },
+            "player-brown": {
+              "total": 98,
+              "base": 61,
+              "tile": 37,
+              "card": 0
+            },
+            "player-white": {
+              "total": 83,
+              "base": 58,
+              "tile": 22,
+              "card": 3
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-on-head-full-v284.json",
+          "reportPath": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "d2c50ffe.53abbd5.quick-200.json",
+          "recordPath": "reports/research/d2c50ffe.53abbd5.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 162775,
+          "flags": {
+            "unifiedSearch": true
+          },
+          "policyVersion": "seti-heuristic-policy-v26",
+          "gitCommit": "53abbd5",
+          "createdAt": "2026-08-17T19:32:20.865Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "on-baseline 200 步快速验证（on-head 全盘的前置快速档，非终局）",
+          "scores": {
+            "player-blue": 18,
+            "player-green": 23,
+            "player-brown": 29,
+            "player-white": 14
+          },
+          "avgScore": 21,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-on-baseline-quick-200-v101.json",
+          "reportPath": null,
+          "reportExists": false
+        },
+        {
+          "recordFile": "62321a79.6caeb0f.quick-5.json",
+          "recordPath": "reports/research/62321a79.6caeb0f.quick-5.json",
+          "mode": "quick-5",
+          "steps": 5,
+          "stepsLimit": 5,
+          "terminal": false,
+          "wallMs": 356,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v26",
+          "gitCommit": "6caeb0f",
+          "createdAt": "2026-08-17T17:45:49.066Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "smoke-test 冒烟（非评估）",
+          "scores": {
+            "player-blue": 0,
+            "player-green": 0,
+            "player-brown": 0,
+            "player-white": 0
+          },
+          "avgScore": 0,
+          "scoreSource": "record-summary",
+          "savePath": null,
+          "reportPath": null,
+          "reportExists": false
+        },
+        {
+          "recordFile": "62321a79.6caeb0f.quick-10.json",
+          "recordPath": "reports/research/62321a79.6caeb0f.quick-10.json",
+          "mode": "quick-10",
+          "steps": 10,
+          "stepsLimit": 10,
+          "terminal": false,
+          "wallMs": 800,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v26",
+          "gitCommit": "6caeb0f",
+          "createdAt": "2026-08-17T17:45:56.562Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "resume-test 续跑冒烟（非评估）；声明存档已删，仅记录级指标",
+          "scores": {
+            "player-blue": 0,
+            "player-green": 0,
+            "player-brown": 0,
+            "player-white": 0
+          },
+          "avgScore": 0,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-resume-test-quick-10-v1.json",
+          "reportPath": null,
+          "reportExists": false
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "51a3727a.53abbd5.full",
+            "path": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+            "mode": "full"
+          },
+          {
+            "runKey": "d2c50ffe.53abbd5.full",
+            "path": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：6062da9f.ec5cfb9f.full.json（name=v27strategy-reverted commit=ec5cfb9f createdAt=2026-08-21T04:24:46.131Z）"
+    },
+    {
+      "kind": "commit-mismatch",
+      "level": "warn",
+      "text": "newfast-recovery 的记录 25bdb5e9.9e75c9cd.full.json gitCommit=9e75c9cd 不在版本 commits（ec5cfb9f）内——运行于脏工作树或归属错误，请核对 versions.json"
+    },
+    {
+      "kind": "roadmap-only",
+      "level": "info",
+      "text": "v27-tech-v3（v27-tech-v3（科技价值打分））无 research 记录/存档，分数来自 roadmap 文档（roadmap 2026-08-17/18 记录（白 base 64 + 板块 36 + 卡牌 6 = 106；均分 77.5）；蓝/绿/棕分数未记录；无 research 记录与存档，复盘数据仅此文档来源。）"
+    },
+    {
+      "kind": "missing-save",
+      "level": "info",
+      "text": "v26-unified 的记录 d2c50ffe.53abbd5.quick-200.json 声明存档 seti-saves/seti-save-research-on-baseline-quick-200-v101.json 已不存在（无法生成复盘报告，仅记录级指标）"
+    },
+    {
+      "kind": "missing-save",
+      "level": "info",
+      "text": "v26-unified 的记录 62321a79.6caeb0f.quick-10.json 声明存档 seti-saves/seti-save-research-resume-test-quick-10-v1.json 已不存在（无法生成复盘报告，仅记录级指标）"
+    },
+    {
+      "kind": "dirty",
+      "level": "info",
+      "text": "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（参见 newfast-recovery 的 25bdb5e9 注记）"
+    }
+  ],
+  "orphans": [
+    {
+      "file": "6062da9f.ec5cfb9f.full.json",
+      "mode": "full",
+      "name": "v27strategy-reverted",
+      "gitCommit": "ec5cfb9f",
+      "createdAt": "2026-08-21T04:24:46.131Z",
+      "steps": 479,
+      "terminal": true
+    }
+  ]
+};
+
+const LABELS = {"player-blue":"蓝","player-green":"绿","player-brown":"棕","player-white":"白"};
+const ORDER = ["player-blue","player-green","player-brown","player-white"];
+
+function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function fmtMs(ms){if(ms==null)return "—";const s=ms/1000;if(s<60)return s.toFixed(1)+"s";const m=Math.floor(s/60);return m+"m"+(s-m*60).toFixed(0)+"s";}
+function rel(p){return p?p.replace(/^reports\//,""):null;}
+function scoreCell(r){
+  if(!r) return "—";
+  const cells=ORDER.map(k=>r.scores&&r.scores[k]!=null?`<b>${r.scores[k]}</b>`:"—").join(" / ");
+  return `<span class="scores">${cells}</span><br><span class="src">${r.scoreSource==="save-final"?"完整终局 (save-final)":r.scoreSource==="roadmap"?"roadmap 文档":"记录口径 (record)"}</span>`;
+}
+function avgCell(r){return r&&r.avgScore!=null?r.avgScore.toFixed(2):"—";}
+function stepsCell(r){return r?`${r.steps}${r.stepsLimit&&!r.terminal?` / ${r.stepsLimit}`:""}${r.terminal?" · 终局":""}`:"—";}
+function timeCell(r){return r?fmtMs(r.wallMs):"—";}
+
+// ---- 版本主结果：优先全盘记录，否则首个记录，否则 roadmap ----
+function primaryResult(v){
+  const full=v.results.filter(r=>!r.missingRecord&&r.mode==="full"&&!Object.keys(r.flags||{}).length);
+  if(full.length) return {result:full[0],isRoadmap:false};
+  if(v.results.some(r=>!r.missingRecord)) return {result:v.results.find(r=>!r.missingRecord),isRoadmap:false};
+  return {result:null,isRoadmap:!!v.roadmap};
+}
+
+function bestGrid(){
+  const b=REGISTRY.bestOf;
+  const card=(label,value,sub,src,srcCls)=>
+    `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
+  const html=[];
+  if(b.bestWhite){
+    html.push(card("最佳分数（白色）",b.bestWhite.value,
+      `${esc(b.bestWhite.name)} <code>${b.bestWhite.versionId}</code> · head ${esc(b.bestWhite.runKey||b.bestWhite.versionId)} · ${b.bestWhite.steps??"—"} 步 · ${fmtMs(b.bestWhite.wallMs)}`,
+      `来源 ${b.bestWhite.provenance}${b.bestWhite.scoreSourceNote?" · "+esc(b.bestWhite.scoreSourceNote):""}`, b.bestWhite.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳分数（白色）","—","尚无全盘记录","—"));
+  if(b.bestAvg){
+    html.push(card("最佳平均分数",b.bestAvg.value,
+      `${esc(b.bestAvg.name)} <code>${b.bestAvg.versionId}</code> · ${b.bestAvg.steps??"—"} 步 · ${fmtMs(b.bestAvg.wallMs)}`,
+      `来源 ${b.bestAvg.provenance}${b.bestAvg.scoreSourceNote?" · "+esc(b.bestAvg.scoreSourceNote):""}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
+  const timeLines=[];
+  if(b.bestAvg&&b.bestAvg.wallMs!=null) timeLines.push(`最佳均分运行（${esc(b.bestAvg.name)}）：总耗时 <b>${fmtMs(b.bestAvg.wallMs)}</b> · 每步约 ${b.bestAvg.msPerStep} ms`);
+  if(b.fastestPerStep) timeLines.push(`最快全盘（每步）：${esc(b.fastestPerStep.name)} <code>${b.fastestPerStep.versionId}</code> · 每步 ${b.fastestPerStep.msPerStep} ms（总 ${fmtMs(b.fastestPerStep.wallMs)}）`);
+  if(b.fastestWall) timeLines.push(`最快全盘（总耗时）：${esc(b.fastestWall.name)} <code>${b.fastestWall.versionId}</code> · ${fmtMs(b.fastestWall.wallMs)}`);
+  html.push(card("搜索耗时",timeLines.length?timeLines[0].split("：")[1].split(" · ")[0]:null,
+    timeLines.join("<br>")||"尚无运行",
+    timeLines.length?"全盘运行实测 (wallMs)":""));
+  document.getElementById("best-grid").innerHTML=html.join("");
+
+  if(b.topByAvg&&b.topByAvg.length){
+    const rows=b.topByAvg.map(x=>`<tr>
+      <td><b>${esc(x.name)}</b> <code>${x.versionId}</code>${x.runKey?" · "+esc(x.runKey):""}</td>
+      <td class="num"><b>${x.value.toFixed(2)}</b></td>
+      <td class="num">${x.white!=null?x.white:"—"}</td>
+      <td class="num">${x.steps??"—"}</td>
+      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td>
+      <td><span class="src">${x.provenance}</span></td></tr>`).join("");
+    document.getElementById("top3").innerHTML=`<h3>全盘最佳 Top3（按均分）</h3>
+      <table><thead><tr><th>版本</th><th>均分</th><th>白</th><th>步数</th><th>耗时</th><th>来源</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+}
+
+// ---- 迭代表 ----
+function commitsHtml(v){
+  if(!v.commits.length) return '<span class="src">—</span>';
+  const rows=v.commits.map(c=>`<tr><td><code>${esc(c.hash)}</code></td><td class="num">${esc(c.date)}</td><td>${esc(c.subject)}</td></tr>`).join("");
+  return `<div class="commit-list"><table><thead><tr><th>commit</th><th>日期</th><th>提交说明</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function diffHtml(v){
+  const base=v.baseline?REGISTRY.versions.find(x=>x.id===v.baseline):null;
+  const baseArg=base?`${base.head}..`:"";
+  const showArg=base?`${base.head}..${v.head}`:`${v.head}`;
+  const cmds=[];
+  cmds.push(`# 定位改动\n`+(base?`git diff --stat ${baseArg}${v.head}`:`git show --stat --oneline ${v.head}`)+`\n`+(base?`git log --oneline ${baseArg}${v.head}`:`git log --oneline ${v.head} -10`));
+  cmds.push(`# 快速回退\n`+`git checkout ${v.head}   # 回到该版本代码`+(base?`\ngit revert --no-commit ${baseArg}${v.head}   # 工作区撤销该版本全部改动`:`\ngit revert ${v.head}   # 撤销该提交`));
+  const files=v.diffFiles&&v.diffFiles.length?`<div class="diff-files"><table><thead><tr><th>文件</th><th>+</th><th>−</th></tr></thead><tbody>${
+    v.diffFiles.map(f=>`<tr><td><code>${esc(f.file)}</code></td><td class="num">${f.insertions==null?"bin":f.insertions}</td><td class="num">${f.deletions==null?"bin":f.deletions}</td></tr>`).join("")
+  }</tbody></table></div>`:`<span class="src">${esc(v.diffStat||"无 diff 数据")}</span>`;
+  return `<div class="rollback-grid">
+    <div><h4>改动统计：${esc(v.diffStat||"—")}</h4>${files}</div>
+    <div>
+      <h4>命令</h4>
+      ${cmds.map(c=>`<div class="cmdblock">${esc(c)}</div>`).join("")}
+    </div>
+  </div>`;
+}
+function resultsHtml(v){
+  const items=v.results.map(r=>{
+    if(r.missingRecord) return `<div class="result-item"><span class="src">✗ 声明记录缺失：<code>${esc(r.recordFile)}</code></span></div>`;
+    const links=[];
+    if(r.reportExists&&r.reportPath) links.push(`<a href="${rel(r.reportPath)}">复盘报告</a>`);
+    if(r.recordPath) links.push(`<a href="${rel(r.recordPath)}">记录 JSON</a>`);
+    const flagTxt=Object.keys(r.flags||{}).length?` · flags: ${esc(Object.entries(r.flags).map(([k,v])=>k+"="+JSON.stringify(v)).join(", "))}`:"";
+    return `<div class="result-item">
+      <div class="headline"><code>${esc(r.recordFile)}</code><span class="src">${esc(r.mode)}${flagTxt}${r.terminal?" · 终局":""} · ${esc(r.policyVersion||"")} · git ${esc(r.gitCommit||"")}</span></div>
+      <div>${scoreCell(r)} · 均分 <b>${avgCell(r)}</b> · ${stepsCell(r)} · ${timeCell(r)} ${links.length?`· ${links.join(" · ")}`:""}</div>
+      ${r.note?`<div class="src">注：${esc(r.note)}</div>`:""}
+    </div>`;
+  }).join("");
+  return `<div class="results-list">${items||'<span class="src">（无 research 记录）</span>'}</div>`;
+}
+function summaryCell(v){
+  const short=v.summary.length>110?v.summary.slice(0,110)+"…":v.summary;
+  return `<div class="summary-cell">${esc(short)}${v.summary.length>110?` <a href="#" data-toggle="1">展开</a><span class="full">${esc(v.summary)}</span>`:""}</div>`;
+}
+function iterTable(){
+  const head=REGISTRY.versions.find(v=>v.isHead);
+  const rows=REGISTRY.versions.map(v=>{
+    const p=primaryResult(v);
+    const r=p.result;
+    const badges=[];
+    if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
+    if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
+    const comp=v.completeness;
+    badges.push((comp.record?'<span class="badge record" title="有 research 记录">记录✓</span>':'<span class="badge missing" title="无 research 记录">记录✗</span>'));
+    if(comp.save) badges.push('<span class="badge save" title="有存档">存档✓</span>');
+    if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
+    const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
+      v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
+    const recordLink=r&&r.recordPath?`<a href="${rel(r.recordPath)}">记录</a>`:(v.roadmap?'<span class="src">roadmap</span>':'<span class="src">—</span>');
+    const rmap=v.roadmap;
+    const summary=p.isRoadmap
+      ? (rmap
+        ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步 · ${esc(rmap.note||"")}</div></div>`
+        : summaryCell(v))
+      : summaryCell(v);
+    return `<tr class="toggle-row" data-vid="${esc(v.id)}">
+      <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}</td>
+      <td class="num">${esc(v.date)}</td>
+      <td>${summary}</td>
+      <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.steps??"—":"—"):stepsCell(r)}</td>
+      <td>${p.isRoadmap?(v.roadmap?'<span class="scores">— / — / — / <b>'+(v.roadmap.scores? v.roadmap.scores["player-white"] ?? "—" : "—")+'</b></span><br><span class="src">roadmap 文档</span>':scoreCell(null)):scoreCell(r)}</td>
+      <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
+      <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
+      <td>${reportLink}</td>
+      <td>${recordLink}</td>
+      <td><a href="#" data-detail="${esc(v.id)}">回退 / 定位改动</a></td>
+    </tr>
+    <tr class="detail-row" id="detail-${esc(v.id)}" style="display:none"><td colspan="10"><div class="detail-inner">
+      <h4>提交（${v.commits.length}）</h4>${commitsHtml(v)}
+      <h4>全部运行结果</h4>${resultsHtml(v)}
+      <h4>回退与定位改动</h4>${diffHtml(v)}
+    </div></td></tr>`;
+  }).join("");
+  document.getElementById("iter-body").innerHTML=rows;
+  // 行内展开/收起
+  document.getElementById("iter-body").addEventListener("click",(ev)=>{
+    const t=ev.target;
+    if(t.dataset&&t.dataset.detail){
+      ev.preventDefault();
+      const tr=document.getElementById("detail-"+t.dataset.detail);
+      if(tr) tr.style.display=tr.style.display==="none"?"":"none";
+      return;
+    }
+    if(t.dataset&&t.dataset.toggle){
+      ev.preventDefault();
+      const full=t.previousElementSibling;
+      if(full){const show=full.style.display!=="block";full.style.display=show?"block":"none";t.textContent=show?"收起":"展开";}
+      return;
+    }
+    const row=t.closest(".toggle-row");
+    if(row&&t.tagName!=="A"){
+      const tr=document.getElementById("detail-"+row.dataset.vid);
+      if(tr) tr.style.display=tr.style.display==="none"?"":"none";
+    }
+  });
+}
+
+// ---- 完整性 ----
+function integrityPanel(){
+  const warns=REGISTRY.warnings.filter(w=>w.level==="warn");
+  const infos=REGISTRY.warnings.filter(w=>w.level==="info");
+  const box=document.getElementById("integrity");
+  const cls=warns.length?"":" ok";
+  let html=`<h3>数据完整性审计 ${warns.length?`· ${warns.length} 个警告`:""}</h3>`;
+  const item=(w)=>`<div class="warn-item ${w.level}">${w.level==="warn"?"⚠ ":"· "}${esc(w.text)}</div>`;
+  if(warns.length) html+=warns.map(item).join("");
+  else html+='<div class="warn-item">无警告：所有固定盘面全盘记录均已归属版本，provenance 匹配，声明记录齐全。</div>';
+  if(infos.length) html+=`<div style="margin-top:6px">${infos.map(item).join("")}</div>`;
+  if(REGISTRY.orphans&&REGISTRY.orphans.length){
+    html+=`<div style="margin-top:8px"><div class="warn-item">未登记到任何版本的固定盘面记录（${REGISTRY.orphans.length}）：</div>`;
+    html+=REGISTRY.orphans.map(o=>`<div class="warn-item">· <code>${esc(o.file)}</code> ${esc(o.mode)} name=${esc(o.name||"—")} commit=${esc(o.gitCommit||"—")}</div>`).join("");
+    html+="</div>";
+  }
+  box.className="integrity"+cls;
+  box.innerHTML=html;
+}
+
+// ---- 初始化 ----
+function init(){
+  document.getElementById("board-name").textContent=REGISTRY.board.name||"";
+  document.getElementById("board-seed").textContent=REGISTRY.board.seed||"";
+  bestGrid();
+  iterTable();
+  integrityPanel();
+  const head=REGISTRY.versions.find(v=>v.isHead);
+  document.getElementById("foot").innerHTML=
+    `生成时间 ${esc(REGISTRY.builtAt)} · HEAD ${esc(REGISTRY.headCommit)}${REGISTRY.worktreeDirty?" · <span style='color:#b3261e'>工作树有未提交改动</span>":""}`+
+    (head?` · 当前 HEAD 对应版本 <code>${esc(head.id)}</code>`:"")+
+    `<br>数据源：<code>reports/iteration/versions.json</code>（人工维护） + <code>reports/research/*.json</code>（调研记录） → <code>reports/iteration/registry.json</code>（构建产物）。`;
+}
+init();
+</script>
+</body>
+</html>
