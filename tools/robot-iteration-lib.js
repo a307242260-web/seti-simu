@@ -585,13 +585,12 @@ function buildActionLogReport(opts) {
       });
   }
 
-  // 主行动单元格：行动族标签 + 摘要（截断）
+  // 主行动单元格：行动族标签 + 摘要（完整显示，2026-08-21 用户口径：奖励说明等长摘要不截断）
   function turnMainCell(g) {
     const m = g.main;
     const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
     const sum = m && m.summary ? String(m.summary) : "";
-    const sumTxt = sum.length > 44 ? sum.slice(0, 44) + "…" : sum;
-    return `<span class="fam">${escapeHtml(fam)}</span> ${escapeHtml(sumTxt)}`;
+    return `<span class="fam">${escapeHtml(fam)}</span> ${escapeHtml(sum)}`;
   }
 
   function turnCells(g, withPlayer) {
@@ -696,7 +695,7 @@ th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-alig
 th{background:#f0f2f6;font-weight:600;white-space:nowrap}
 td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 td.actor{white-space:nowrap;font-weight:600}
-td.sum{min-width:220px}
+td.sum{min-width:220px;word-break:break-word}
 tr.round-head td{background:#eef2f9;font-weight:700;color:#4a5568}
 .avg-row td{background:#eaf7ea}
 .hero td:first-child{font-weight:700}
