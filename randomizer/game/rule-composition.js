@@ -3193,12 +3193,18 @@
       }
       const remainingFrontierNodeCount = frontier.length;
       const remainingFrontierOriginCountByGoalDepth = {};
+      // 待执行动作 family 分布（2026-08-21 调研诊断）：frontier 节点按
+      // node.action.family 聚合的 origin 数——回答"这些节点都是啥"（选目标/
+      // 结算/扫描/放数据……各自占多少），定位搜索分叉热点。
+      const frontierOriginCountByFamily = {};
       for (const node of frontier) {
         for (const origin of node.origins) {
           const depth = String(Number(origin.proxyDepth) || 0);
           remainingFrontierOriginCountByGoalDepth[depth] = (
             remainingFrontierOriginCountByGoalDepth[depth] || 0
           ) + 1;
+          const fam = node.action?.family || "?";
+          frontierOriginCountByFamily[fam] = (frontierOriginCountByFamily[fam] || 0) + 1;
         }
       }
       const executionLimitReached = (
@@ -3266,6 +3272,11 @@
         executionLimitReached,
         remainingFrontierNodeCount,
         remainingFrontierOriginCountByGoalDepth,
+        frontierOriginCountByFamily: Object.fromEntries(
+          Object.entries(frontierOriginCountByFamily).sort((left, right) => (
+            right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
+          )),
+        ),
         maxDepth,
         maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
         secondaryAgentSearch: Boolean(secondaryAgentSearch),
