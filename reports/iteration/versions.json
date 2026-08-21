@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "v2-countsgoal-removal",
+      "name": "v2-countsgoal-removal",
+      "date": "2026-08-21",
+      "baseline": "v1-simplify",
+      "head": "eae598e8",
+      "commits": [
+        "525bcadc",
+        "eae598e8"
+      ],
+      "summary": "完全清理 countsGoal/opponentProxyDepth 死链路（搜索内核，行为不变）：删恒 false 钩子 + 无消费方计数器 + 内核装配；预期与 v1-simplify 完全一致（436 步 45/63/73/77 均 64.5）",
+      "records": {
+        "085be66b.eae598e8.full.json": {
+          "note": "on-head：436 步，完整终局 45/63/73/77 均 64.5，行动族分布/研究步点与 v1-simplify 逐项一致（行为不变确认）"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "v1-simplify",
       "name": "v1-simplify",
       "date": "2026-08-21",

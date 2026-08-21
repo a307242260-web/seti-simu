@@ -78,37 +78,37 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T08:40:37.937Z",
+  "builtAt": "2026-08-21T08:50:57.792Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "294708a6",
-  "currentBaseline": "v1-simplify",
+  "headCommit": "eae598e8",
+  "currentBaseline": "v2-countsgoal-removal",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
       "value": 77,
-      "versionId": "v1-simplify",
-      "name": "v1-simplify",
-      "runKey": "1d1505c5.294708a6.full",
+      "versionId": "v2-countsgoal-removal",
+      "name": "v2-countsgoal-removal",
+      "runKey": "085be66b.eae598e8.full",
       "provenance": "save-final",
       "steps": 436,
-      "wallMs": 183211,
-      "msPerStep": 420,
-      "scoreSourceNote": "on-head：436 步，完整终局 45/63/73/77 均 64.5（与 v0 基线逐席一致，行为不变确认）"
+      "wallMs": 178645,
+      "msPerStep": 410,
+      "scoreSourceNote": "on-head：436 步，完整终局 45/63/73/77 均 64.5，行动族分布/研究步点与 v1-simplify 逐项一致（行为不变确认）"
     },
     "bestAvg": {
       "value": 64.5,
-      "versionId": "v1-simplify",
-      "name": "v1-simplify",
-      "runKey": "1d1505c5.294708a6.full",
+      "versionId": "v2-countsgoal-removal",
+      "name": "v2-countsgoal-removal",
+      "runKey": "085be66b.eae598e8.full",
       "provenance": "save-final",
       "steps": 436,
-      "wallMs": 183211,
-      "msPerStep": 420,
-      "scoreSourceNote": "on-head：436 步，完整终局 45/63/73/77 均 64.5（与 v0 基线逐席一致，行为不变确认）"
+      "wallMs": 178645,
+      "msPerStep": 410,
+      "scoreSourceNote": "on-head：436 步，完整终局 45/63/73/77 均 64.5，行动族分布/研究步点与 v1-simplify 逐项一致（行为不变确认）"
     },
     "fastestWall": {
       "versionId": "v0",
@@ -131,6 +131,22 @@ const REGISTRY = {
       "scoreSourceNote": "v0 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告"
     },
     "topByAvg": [
+      {
+        "value": 64.5,
+        "white": 77,
+        "bestPlayer": {
+          "color": "白",
+          "score": 77
+        },
+        "versionId": "v2-countsgoal-removal",
+        "name": "v2-countsgoal-removal",
+        "runKey": "085be66b.eae598e8.full",
+        "provenance": "save-final",
+        "steps": 436,
+        "wallMs": 178645,
+        "msPerStep": 410,
+        "scoreSourceNote": "on-head：436 步，完整终局 45/63/73/77 均 64.5，行动族分布/研究步点与 v1-simplify 逐项一致（行为不变确认）"
+      },
       {
         "value": 64.5,
         "white": 77,
@@ -166,6 +182,307 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "v2-countsgoal-removal",
+      "name": "v2-countsgoal-removal",
+      "date": "2026-08-21",
+      "baseline": "v1-simplify",
+      "head": "eae598e8",
+      "commits": [
+        {
+          "hash": "525bcadc",
+          "date": "2026-08-21",
+          "subject": "登记 v1-simplify 版本 + 修复 run_browser_smokes 坏引用"
+        },
+        {
+          "hash": "eae598e8",
+          "date": "2026-08-21",
+          "subject": "完全清理 countsGoal/opponentProxyDepth 死链路（搜索内核，行为不变）"
+        }
+      ],
+      "summary": "完全清理 countsGoal/opponentProxyDepth 死链路（搜索内核，行为不变）：删恒 false 钩子 + 无消费方计数器 + 内核装配；预期与 v1-simplify 完全一致（436 步 45/63/73/77 均 64.5）",
+      "diffStat": "10 files changed, 2479 insertions(+), 82 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 0,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 0,
+          "deletions": 5
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 0,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 0,
+          "deletions": 22
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 3,
+          "deletions": 20
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 398,
+          "deletions": 16
+        },
+        {
+          "file": "reports/iteration/v1-simplify/1d1505c5.294708a6.full.action-log.html",
+          "insertions": 1661,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 19,
+          "deletions": 1
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 398,
+          "deletions": 16
+        },
+        {
+          "file": "tools/{archive => }/browser-smoke-inventory.js",
+          "insertions": 0,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "085be66b.eae598e8.full.json",
+          "recordPath": "reports/research/085be66b.eae598e8.full.json",
+          "mode": "full",
+          "steps": 436,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 178645,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "eae598e8",
+          "createdAt": "2026-08-21T08:49:41.833Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "on-head：436 步，完整终局 45/63/73/77 均 64.5，行动族分布/研究步点与 v1-simplify 逐项一致（行为不变确认）",
+          "scores": {
+            "player-blue": 45,
+            "player-green": 63,
+            "player-brown": 73,
+            "player-white": 77
+          },
+          "avgScore": 64.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 45,
+              "base": 31,
+              "tile": 14,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 1,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 63,
+              "base": 41,
+              "tile": 22,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 23,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 73,
+              "base": 49,
+              "tile": 24,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 3,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            },
+            "player-white": {
+              "total": 77,
+              "base": 53,
+              "tile": 20,
+              "card": 4,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 0,
+                "orbitScore": 10,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-v2-countsgoal-removal-full-v230.json",
+          "reportPath": "reports/iteration/v2-countsgoal-removal/085be66b.eae598e8.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "085be66b.eae598e8.full",
+            "path": "reports/iteration/v2-countsgoal-removal/085be66b.eae598e8.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "v1-simplify",
       "name": "v1-simplify",
@@ -518,7 +835,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
