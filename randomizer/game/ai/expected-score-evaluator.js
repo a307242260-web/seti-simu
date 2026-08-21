@@ -1120,8 +1120,9 @@
   // place_data 需求型触发判定（2026-08-21 用户裁定：place_data 是需求型行动——
   // 能带来资源/收入/蓝色踪迹/分数，有这个目标的时候填上对应的数据去做；想做但
   // 数据不够，就想办法拿）。触发优先级：
-  //   1. 缺钱(≤1)→blue1 / 缺电(≤1)→blue2 / 缺牌(≤1)→blue3（纯赚，宣传不需要）
-  //   2. 数据溢出（可放数据 > 计算机剩余槽位）→ 填（数据多了不浪费，拿资源）
+  //   1. 缺钱(≤1)→blue1 / 缺电(≤1)→blue2（纯赚，用户裁定"数据填钱和电是纯赚"；
+  //      缺牌不在此列，blue3 是选牌非纯赚；宣传不需要）
+  //   2. 数据溢出（可放数据 ≥ 数据池上限 6，再拿会浪费）→ 填（避免浪费）
   //   3. 目标 active（income/data:analyze 下被调用）→ 填第一排 computer
   // 返回：null=非放置决策；[]=有放置但无触发（不填，收束）；[代表]=填哪。
   // 单选代表折叠（targetEquivalentChoiceCount），不展开搜索枚举。
@@ -1143,7 +1144,8 @@
         ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
         : [primary]
     );
-    // 1. 缺钱/电/牌 → 对应蓝槽（纯赚）。
+    // 1. 缺钱→blue1 / 缺电→blue2（纯赚，用户裁定"数据填钱和电是纯赚行为"；
+    //    缺牌不在此列——blue3 是选牌不是纯赚）。
     if (finite(assets.credits) <= 1) {
       const blue1 = blueOf("blue1");
       if (blue1) return foldOthers(blue1, blueBonuses);
@@ -1152,21 +1154,9 @@
       const blue2 = blueOf("blue2");
       if (blue2) return foldOthers(blue2, blueBonuses);
     }
-    if (finite(assets.ordinaryCards) <= 1) {
-      const blue3 = blueOf("blue3");
-      if (blue3) return foldOthers(blue3, blueBonuses);
-    }
-    // 2. 数据溢出（可放数据 > 计算机剩余槽位，放完仍有余）→ 填（数据不浪费）。
-    //    计算机共 6 位（ANALYZE_REQUIRED_COMPUTER_SLOT=6）。
-    const placedCount = finite(
-      observation?.outcomeProjection?.progress?.dataProgress?.computerPlacedCount,
-    );
-    const remainingSlots = Math.max(0, 6 - placedCount);
-    if (availableData > remainingSlots) {
-      const blue1 = blueOf("blue1");
-      if (blue1) return foldOthers(blue1, blueBonuses);
-      const blue2 = blueOf("blue2");
-      if (blue2) return foldOthers(blue2, blueBonuses);
+    // 2. 数据溢出（可放数据 ≥ 数据池上限 6，再获取数据会弃置浪费）→ 填 computer。
+    const DATA_POOL_LIMIT = 6;
+    if (availableData >= DATA_POOL_LIMIT) {
       if (computer) return [computer];
     }
     // 3. 目标 active（income/data:analyze 下被调用）→ 填第一排 computer。
