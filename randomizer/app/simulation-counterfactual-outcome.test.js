@@ -335,7 +335,7 @@ try {
     const policyDiagnostics = environment.getCounterfactualDiagnostics();
     assert.equal(policyDiagnostics.beamPrunedOriginCount, 0,
       "次级目标搜索不得恢复 beam");
-    // 统一搜索 v27：play_card 受限评估（每卡 depth6/128 节点）是最后执行的 evaluate，
+    // 统一搜索（v0）：play_card 受限评估（每卡 depth6/128 节点）是最后执行的 evaluate，
     // 诊断反映其受控预算——play_card 常开要求物理上限内收敛（可命中上限但必须受控，
     // 节点数不失控爆炸）。
     assert.equal(policyDiagnostics.executedNodeCount <= policyDiagnostics.maxExecutionNodes, true,
@@ -426,7 +426,7 @@ try {
       actions.find((action) => action.actionId === outcome.actionId)?.family === "play_card"
       && outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
     ));
-    // 统一搜索 v27：play_card 经目标绑定进入搜索（income:card 收入牌 / tech:research
+    // 统一搜索（v0）：play_card 经目标绑定进入搜索（income:card 收入牌 / tech:research
     // 免费科技 / probe:免费发射 / sector:观测 / data:卡牌），未绑定目标的打牌保持
     // NOT_EVALUATED（实测全部放行 play_card 让单决策 8.9s/4096 撞顶且全盘退化，
     // 纯效果牌评估虚高 → 不放散全部打牌，靠目标绑定识别值得打的牌）。

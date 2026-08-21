@@ -8,10 +8,10 @@
   "versions": [
     {
       "id": "v0",
-      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
+      "name": "v0 基线（当前代码默认装配）",
       "date": "2026-08-21",
       "baseline": null,
-      "head": "6675f9e8",
+      "head": "c5e0beab",
       "commits": [
         "53abbd5a",
         "a9356a8c",
@@ -31,12 +31,13 @@
         "e23b710c",
         "a18a2e00",
         "731173a8",
-        "6675f9e8"
+        "6675f9e8",
+        "c5e0beab"
       ],
-      "summary": "v0 基线（2026-08-21 用户裁定）：用 v27 当前代码默认装配（fastPath 保留 + 统一搜索单一路径，policyVersion seti-heuristic-policy-v27）。完整终局 45/63/73/77 均 64.5（436 步，有存档有复盘报告）。后续迭代从 v0 重新叠加。",
+      "summary": "v0 基线（2026-08-21 用户裁定）：当前代码默认装配（fastPath 保留 + 统一搜索单一路径，policyVersion seti-heuristic-policy-v0）。完整终局 45/63/73/77 均 64.5（436 步，有存档有复盘报告）。后续迭代从 v0 重新叠加。",
       "records": {
-        "bb48c7cd.6675f9e8.full.json": {
-          "note": "v27 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告"
+        "2c23b9bb.c5e0beab.full.json": {
+          "note": "v0 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告"
         }
       },
       "roadmap": null

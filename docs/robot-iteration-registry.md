@@ -87,7 +87,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
   "versions": [                    // 数组顺序 = 最新在前（页面倒序展示）
     {
       "id": "v0",                 // 稳定 id（页面/回退/对比都用它）
-      "name": "v0 基线（v27 当前代码默认装配）",
+      "name": "v0 基线（当前代码默认装配）",
       "date": "2026-08-18",
       "baseline": null,            // 基线版本 id（该版本基于哪个版本）
       "head": "53abbd5a",          // 该版本代码树（记录 gitCommit 的对照基准）
@@ -110,7 +110,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
   取 HEAD、可能与实际代码不符——这种情况下在记录注记里写明，并接受 audit 的
   provenance 警告。
 - 进行中的实验（未收口、脏树运行）**不登记为版本**，以孤儿记录形式留在页面上
-  可见（历史例子：`6062da9f`（v27strategy-reverted），已清理），收口后再 register。
+  可见，收口后再 register。
 
 ## 4. 分数口径（用户规定：所有分数以最终总分为准）
 
@@ -120,7 +120,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
 |---|---|
 | `save-final` | 有存档的终局运行：从存档 `committedState.match.finalScores` 读**完整终局分**（total = base + 板块 + 卡牌），最可信 |
 | `record` | 无存档/非终局：用记录 `summary.scores`（当时运行口径；2026-08-20 finalScore 修复前只显示 base 分） |
-| `roadmap` | 无 research 记录：用 versions.json 的 `roadmap` 字段（文档来源，如 v27-tech-v3 白 106/均 77.5） |
+| `roadmap` | 无 research 记录：用 versions.json 的 `roadmap` 字段（文档来源记录的分） |
 
 页面每个分数格都带来源徽标，杜绝口径混用（旧总览页的教训：base 分与完整分混在一张表里）。
 
@@ -129,12 +129,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
 **硬规矩（2026-08-21 用户口径）**：标准迭代入口 `robot_iterate run` **默认**产出完整复盘三件套
 （存档 + 复盘报告 + 记录）：跑验证默认写存档（不经 `--no-save`）→ 自动登记版本 → 从存档
 纯重放生成行动级复盘报告 → run 结束**硬校验**：记录/存档/复盘报告任一缺失即显式失败
-（exit 非 0，提示原因），不允许"跑完没复盘"的迭代收口。`build --reports` 可补齐历史缺报告记录。
-
-历史欠账（2026-08-21 用户拍板**不补跑**）：5 个评估实验（v27strategy-reverted 479 步 /
-newfast-recovery 321 步 / newfast A/B 206+230 步 / v26 on-baseline quick-200）当时未存
-存档，无行动级复盘，审计列为 info 提示（记录 JSON 仍有行动族分布/外星时间线可复盘）；
-**有存档却缺报告仍是 warn**（`build --reports` 立即可修复）。
+（exit 非 0，提示原因），不允许"跑完没复盘"的迭代收口。`build --reports` 可补齐缺报告记录。
 
 生成方式：`node tools/robot_iterate.js build --reports`（为所有有存档但缺报告的记录补齐；
 报告模板/聚合逻辑改动后用 `--force-reports` 强制重新生成全部报告）。**纯重放存档
@@ -202,24 +197,16 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 `check` 退出码 1 = 有 warn，用于 CI/提交前自查。
 
-## 8. 种子版本与已知注记（2026-08-21）
+## 8. 当前版本（2026-08-21）
 
 | 版本 | head | 说明 |
 |---|---|---|
-| `v0` | `a18a2e00` | **当前基线**（2026-08-21 用户裁定）：v27 当前代码默认装配（fastPath 保留 + 统一搜索单一路径）；0025f24a 全盘 436 步，完整终局 45/63/73/77 均 64.5（有存档有报告）；v26 时代记录（d2c50ffe on 均 89 / 51a3727a off 均 85.5 / 01c21bb4 复现）留作历史参照 |
-
-历史版本（newfast-recovery / newfast / v27-playvalue / v27-tech-v3）已于 2026-08-21
-历史清理（`28dd5763`）时从 `versions.json` 删除，不在当前登记体系中；仅在下文
-口径注记中保留分数事实供参照。
+| `v0` | `a18a2e00` | **当前基线**（2026-08-21 用户裁定）：当前代码默认装配（fastPath 保留 + 统一搜索单一路径）；全盘 436 步，完整终局 45/63/73/77 均 64.5（有存档有报告） |
 
 已知口径注记：
 
-- 历史记录（2026-08-17/18）的 `summary.scores` 多为 base 分（finalScore 传 null bug 修复前），
-  **有存档的已由 build 富化为 save-final 完整终局分**（如 v0 名下 v26 时代 on 记录实际 107/68/98/83 均 89）。
-- `v27strategy-reverted`（`6062da9f.ec5cfb9f.full.json`，479 步/均 72.75）为 2026-08-21 的
-  "策略接口回退"历史实验（expected-score-evaluator / production-kernel / rule-observation
-  回退到 d347e658），当时未登记为版本、以孤儿记录提示；其记录文件已随历史清理删除，
-  仅作口径注记保留。
+- 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
+  读取完整终局分（save-final），total = base + 板块 + 卡牌。
 
 ## 9. 与调研流程的关系
 

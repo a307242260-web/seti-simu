@@ -25,9 +25,9 @@
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  // v27：搜索机制合并——去掉 bounded 分桶，目标引导 + 需求引导成为唯一路径
-  // （unifiedSearch 开关删除，off 分桶语义废弃；打牌只经目标绑定进入搜索）。
-  const POLICY_VERSION = "seti-heuristic-policy-v27";
+  // v0 基线：搜索机制单一路径（目标引导 + 需求引导，无 bounded 分桶与
+  // unifiedSearch 开关），打牌只经目标绑定进入搜索。
+  const POLICY_VERSION = "seti-heuristic-policy-v0";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
   const FALLBACK_FAMILIES = Object.freeze(new Set([

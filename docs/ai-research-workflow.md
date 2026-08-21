@@ -47,7 +47,7 @@
 - `flags` = 行为配置开关（`planContinuationFastPath` /
   `planNewTurnReuse` / `vStateValueEnabled` / `completeTargetCatalog` /
   `traceCounterfactualGoalClusters` / `compactReplay`），只收显式传入的键。
-- `policyVersion` = 当前启发式 Policy 版本（如 `seti-heuristic-policy-v27`），
+- `policyVersion` = 当前启发式 Policy 版本（`seti-heuristic-policy-v0`），
   策略实现变更自动生成新指纹，不会误当作旧实验。
 - `gitCommit` = 当前 HEAD 短哈希（工作树脏时仍取 HEAD；无法取到用 `dirty`）。
   **2026-08-20 缺陷修复**：此前指纹**不含 gitCommit**，协调器/搜索时机等行为层
@@ -90,7 +90,6 @@ node tools/run_research_validation.js --name x --seed seti-107           # 换�
 
 默认 seed 为免电分析盘面 `seti-free-analyze-v1`，4 家，`aiDifficulty=laughable`。
 基线 = v0（当前 HEAD 默认装配：`planContinuationFastPath` 开 + `planNewTurnReuse` 开），
-历史路线基线"白色 86 / 均分 64.3"为 fastPath 关闭时代（2026-08-17）的参考值，
 目标均分 100。
 
 ## 4. 记录内容（复盘看什么）
