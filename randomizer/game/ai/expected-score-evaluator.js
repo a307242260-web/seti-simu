@@ -1858,22 +1858,25 @@
     const dataRequirements = rawDataAnalyzeRequirements(input.rootObservation);
     if (dataAnalyzeEligible(dataRequirements)) {
       if (["place_data", "analyze"].includes(dataRequirements.nextStep)) {
-        // data:analyze 目标候选 = 统一 place_data 触发判定（2026-08-21 用户裁定：
-        // 数据够就填/有独立需求填蓝槽/目标 active 填第一排）。**不把 place_data
-        // 无条件挂为候选**（此前 requiredAction 兜底导致 data:analyze 目标每个
-        // 分支都执行 place_data，实测 121 节点）；只有触发时才返回代表选项。
-        // nextStep=analyze 时 requiredAction=analyze 由 analyze 分支承担。
+        const requiredAction = legalActions.find((action) => (
+          action.family === dataRequirements.nextStep
+        ));
+        // data:analyze 目标候选 = 统一 place_data 触发判定（溢出/缺口→蓝槽、
+        // 目标 active→填第一排）+ requiredAction（place_data/analyze）兜底。
+        // 触发式收敛（只返回触发选项）曾改变搜索评估链致全局分数 84.5→74.75，
+        // 回退为 requiredAction 兜底（候选挂上，由搜索本身评估）。
         const placement = selectDataPlacementChoice(
           input.rootObservation,
           legalActions,
           input.focalSeatId,
         ) || [];
-        const analyzeAction = dataRequirements.nextStep === "analyze"
-          ? (legalActions.find((action) => action.family === "analyze") || null)
-          : null;
         const candidates = [
           ...(placement.length ? placement : []),
-          ...(analyzeAction ? [analyzeAction] : []),
+          ...(requiredAction ? [requiredAction] : selectDataResourcePreparation(
+            input.rootObservation,
+            legalActions,
+            input.focalSeatId,
+          )),
         ];
         if (candidates.length) {
           add(DATA_ANALYZE_ROUTE_TARGET, `data:${dataRequirements.nextStep}`, candidates);
