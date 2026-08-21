@@ -54,7 +54,7 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 <main class="page">
   <span class="eyebrow">SETI · 机器人迭代记录与复盘体系</span>
   <h1>机器人迭代总览</h1>
-  <p class="intro">固定盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）：有存档的终局运行从存档 <code>finalScores</code> 读取（来源标记 <span class="src">save-final</span>），无存档的记录按当时记录口径展示（<span class="src">record</span>），无记录的版本按 roadmap 文档展示（<span class="src">roadmap</span>）。</p>
+  <p class="intro">固定盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）。</p>
   <p class="note">机制说明见 <code>docs/robot-iteration-registry.md</code>；标准迭代入口 <code>node tools/robot_iterate.js run --name &lt;id&gt; --full --summary "..."</code>（跑验证→登记→复盘报告→本页一次完成，绝不重跑同一版本）。</p>
 
   <!-- 顶部：现在的 best version -->
