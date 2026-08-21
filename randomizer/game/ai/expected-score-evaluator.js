@@ -1115,17 +1115,23 @@
     return match ? Number(match[1]) : null;
   }
 
+  // place_data 统一逻辑触发式判定（2026-08-21 用户裁定：place_data 与
+  // quick_trade/card_corner 一样是"需要了再做"的手段动作——需要拿什么资源填
+  // 数据拿；想要收入填数据拿；想要蓝标填数据拿；数据溢出了填上拿一些资源；
+  // 一般数据填钱/电是纯赚）。触发优先级：
+  //   1. 数据溢出（可放数据 ≥ 第一排剩余槽数）→ 填（否则数据浪费）
+  //   2. 缺钱(≤1)→blue1 / 缺电(≤1)→blue2 / 缺牌(≤1)→blue3（纯赚，宣传不需要）
+  //   3. 目标 active（income/data:analyze 等）→ 填第一排 computer
+  // 返回：null=非放置决策；[]=有放置但无触发（不填，收束）；[代表]=填哪。
+  // 单选代表折叠（targetEquivalentChoiceCount），不展开搜索枚举。
   function selectDataPlacementChoice(observation, successors, seatId) {
     const dataChoices = successors.filter((action) => (
       String(action.target?.choiceId || "").startsWith("data:")
     ));
-    // null = 不是放置决策（无 data 选择），交给后续逻辑；[] = 有放置选择但无需求
-    // → 收束（2026-08-21 用户裁定：没需求时做不做都一样，不展开省预算）。
     if (!dataChoices.length) return null;
-    // 数据不够（可放置数据为 0）→ 不填（"数据不够就去拿"）。
     const assets = resourceFactsOf(observation, seatId);
-    if (finite(assets.availableData) <= 0) return [];
     const computer = dataChoices.find((action) => action.target?.target === "computer") || null;
+    const computerSlot = computer ? computerSlotOf(computer) : null;
     const blueBonuses = dataChoices.filter((action) => action.target?.target === "blueBonus");
     const blueOf = (tileId) => blueBonuses.find((action) => (
       blueTileOfSlot(observation, action.target?.blueSlot, seatId) === tileId
@@ -1135,53 +1141,36 @@
         ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
         : [primary]
     );
-    // blueBonus 独立需求优先（2026-08-21 用户裁定："blueBonus 不是独立目标 =》
-    // 有独立需求还是填"——缺钱→blue1/缺电→blue2/缺牌→blue3，宣传不需要）。
-    // place_data 无论挂在哪个目标（tech:gain 研究蓝科后填槽 / data:analyze /
-    // 无目标兜底）下，有独立需求就填对应蓝槽；收入目标不耦合（income 分支
-    // 不调用本函数）。
-    if (finite(assets.credits) <= 1) {
+    const availableData = finite(assets.availableData);
+    // 1. 数据溢出 → 填（拿资源/腾数据池，纯赚）。第一排 4 格，剩余槽数 =
+    //    4 - 已放数；可放数据 ≥ 剩余槽数说明放完仍有余 → 溢出。
+    const firstRowRemaining = Math.max(
+      0,
+      4 - finite(observation?.outcomeProjection?.progress?.dataProgress?.computerPlacedCount),
+    );
+    if (availableData > 0 && availableData > firstRowRemaining) {
+      const blue1 = blueOf("blue1");
+      if (blue1) return foldOthers(blue1, blueBonuses);
+      const blue2 = blueOf("blue2");
+      if (blue2) return foldOthers(blue2, blueBonuses);
+      if (computer) return [computer];
+    }
+    // 2. 缺钱/电/牌 → 对应蓝槽（纯赚）。
+    if (availableData > 0 && finite(assets.credits) <= 1) {
       const blue1 = blueOf("blue1");
       if (blue1) return foldOthers(blue1, blueBonuses);
     }
-    if (finite(assets.energy) <= 1) {
+    if (availableData > 0 && finite(assets.energy) <= 1) {
       const blue2 = blueOf("blue2");
       if (blue2) return foldOthers(blue2, blueBonuses);
     }
-    if (finite(assets.ordinaryCards) <= 1) {
+    if (availableData > 0 && finite(assets.ordinaryCards) <= 1) {
       const blue3 = blueOf("blue3");
       if (blue3) return foldOthers(blue3, blueBonuses);
     }
-    // 无独立需求 → 填第一排（目标 active：数据够就填，推进收入/分析）。
-    if (computer) return [computer];
+    // 3. 目标 active（income:gain / data:analyze 下被调用）→ 填第一排 computer。
+    if (availableData > 0 && computer) return [computer];
     return [];
-  }
-
-  // 分析目标前判断是否需要填第二行 blueBonus 槽（2026-08-21 用户裁定：分析前
-  // 看第二行有没有需要填的槽；"有蓝科且要对应工位的资源就填上"，宣传不需要）：
-  // 按蓝科技工位奖励匹配当前资源缺口——blue1=+1信用/blue2=+1能量/blue3=精选牌。
-  // 收入目标不调用本函数（收入不耦合 blueBonus）。
-  function selectAnalyzeBlueBonusChoice(observation, successors, seatId) {
-    const blueBonusChoices = successors.filter((action) => (
-      String(action.target?.choiceId || "").startsWith("data:")
-      && action.target?.target === "blueBonus"
-    ));
-    if (!blueBonusChoices.length) return null;
-    const assets = resourceFactsOf(observation, seatId);
-    const wantsCredits = finite(assets.credits) <= 1;
-    const wantsEnergy = finite(assets.energy) <= 1;
-    const wantsCards = finite(assets.ordinaryCards) <= 1;
-    const blueOf = (tileId) => blueBonusChoices.find((action) => (
-      blueTileOfSlot(observation, action.target?.blueSlot, seatId) === tileId
-    )) || null;
-    const selectedBlue = wantsCredits && blueOf("blue1") ? blueOf("blue1")
-      : wantsEnergy && blueOf("blue2") ? blueOf("blue2")
-        : wantsCards && blueOf("blue3") ? blueOf("blue3")
-          : null;
-    if (!selectedBlue) return [];
-    return blueBonusChoices.length > 1
-      ? [{ ...selectedBlue, targetEquivalentChoiceCount: blueBonusChoices.length - 1 }]
-      : [selectedBlue];
   }
 
   function actionMatchesProbeStep(action, step) {
@@ -1868,17 +1857,17 @@
         const requiredAction = legalActions.find((action) => (
           action.family === dataRequirements.nextStep
         ));
-        // 分析行动前先判断第二行 blueBonus（用户裁定：analyze 会改变后续填工位
-        // 成本，分析前决定是否填第二行；有独立需求就填——缺钱→blue1/缺电→blue2/
-        // 缺牌→blue3，宣传不需要）。blueBonus 与 requiredAction 并列候选，让
-        // 搜索在分析前先评估是否该填第二行。
-        const analyzeBlueBonus = selectAnalyzeBlueBonusChoice(
+        // data:analyze 目标候选 = 统一 place_data 触发判定（溢出/缺口→蓝槽、
+        // 目标 active→填第一排）+ requiredAction（place_data/analyze）兜底。
+        // 分析行动前填第二行/第一排的选择由 selectDataPlacementChoice 一次判定
+        // （用户裁定：数据够就填、有独立需求填蓝槽、目标 active 填第一排）。
+        const placement = selectDataPlacementChoice(
           input.rootObservation,
           legalActions,
           input.focalSeatId,
         ) || [];
         const candidates = [
-          ...(analyzeBlueBonus.length ? analyzeBlueBonus : []),
+          ...(placement.length ? placement : []),
           ...(requiredAction ? [requiredAction] : selectDataResourcePreparation(
             input.rootObservation,
             legalActions,
@@ -3127,20 +3116,8 @@
           }
         }
         if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
-          // 分析行动前先判断第二行 blueBonus（2026-08-21 用户裁定：分析会改变
-          // 后续填工位的成本，所以要在分析前决定是否填第二行；"有独立需求还是
-          // 填"——缺钱→blue1/缺电→blue2/缺牌→blue3，宣传不需要）。先填第二行
-          // 再 analyze 的成本最优；不填则走第一排 computer 推进。
-          const analyzeBlueBonus = selectAnalyzeBlueBonusChoice(
-            input.branchObservation,
-            successors,
-            input.focalSeatId,
-          );
-          if (analyzeBlueBonus) {
-            return analyzeBlueBonus.length
-              ? bindRoute(analyzeBlueBonus, input.routeTargetId, input.routePlanId)
-              : [];
-          }
+          // data:analyze 目标放置 = 统一触发判定（selectDataPlacementChoice：
+          // 数据溢出→填、缺钱/电/牌→对应蓝槽、目标 active→填第一排）。
           const dataPlacementChoices = selectDataPlacementChoice(
             input.branchObservation,
             successors,
