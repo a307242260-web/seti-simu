@@ -807,6 +807,12 @@ function buildActionLogReport(opts) {
       enrich: enrichMap.get(step.stepIndex ?? i) || null,
       // 终局板块标记放置（重放对比 marks 增量：板块/槽位/阈值/公式）
       finalMark: enrichMap.get(step.stepIndex ?? i)?.finalMark || null,
+      // 外星人踪迹放置（分析/奖励后的 choose_target「外星人 N 蓝/粉/黄色痕迹」，2026-08-21 用户口径：
+      // 踪迹放哪了要写出来）
+      trace: (() => {
+        const tm = /外星人 (\d+) (蓝|粉|黄)/.exec(String(step.action?.summary || ""));
+        return tm ? { alienSlot: Number(tm[1]), color: tm[2] } : null;
+      })(),
       // 初始牌选择（choose_card「选择：初始牌 N」，显示在选公司那一行）
       initialCard: (() => {
         const mm = /^选择：初始牌 (\d+)$/.exec(String(step.action?.summary || ""));
@@ -938,6 +944,8 @@ function buildActionLogReport(opts) {
           ? `${fm.formula}：${FINAL_FORMULA_LABELS[fm.formula] || fm.formula}`
           : "";
         extras.push(`终局标记 ${fm.tileId}（第${fm.slotIndex}槽${fm.threshold ? `/${fm.threshold}分` : ""}${formula ? ` · ${formula}` : ""}）`);
+      } else if (row.trace) {
+        extras.push(`放痕迹 外星人${row.trace.alienSlot}·${row.trace.color}`);
       } else if (row.initialCard) {
         extras.push(`初始牌 ${row.initialCard.number}${row.initialCard.label ? `（${row.initialCard.label}）` : ""}`);
       }

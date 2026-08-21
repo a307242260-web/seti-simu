@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T06:29:09.114Z",
+  "builtAt": "2026-08-21T06:29:45.752Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "530ce870",
+  "headCommit": "c87830d8",
   "currentBaseline": "v0",
   "worktreeDirty": true,
   "bestOf": {
