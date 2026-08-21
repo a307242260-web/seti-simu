@@ -51,8 +51,8 @@
   // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。
   // **place_data 不在此列**（2026-08-21 实证）：把它从 untargeted 排除后，主行动
   // （play_card 等）评估链里缺少"填数据拿资源"后继 → 评估漂移（步23 白色改选
-  // launch、全盘 84.5→57 崩）。place_data 是合法主行动后继（溢出/缺口时填），
-  // 由根目录 data:overflow 独立目标 + 触发判定把关，untargeted 枚举保留。
+  // launch、全盘 84.5→57 崩）。place_data 是合法主行动后继（数据溢出/缺口时
+  // 填上拿资源，"溢出不浪费"），untargeted 枚举保留。
   const UNTARGETED_MEANS_ONLY_FAMILIES = Object.freeze(new Set([
     "quick_trade", "card_corner",
   ]));
@@ -958,13 +958,6 @@
       // active → 每个分支都重新绑定 data:analyze → 无限循环，实测 data:analyze
       // 占 87% 执行节点、主行动 research_tech 只剩 14 节点 PRUNED 失真）。
       return action.family === "analyze" || action.family === "place_data";
-    }
-    if (targetId === "data:overflow") {
-      // 溢出/缺口独立目标：填一次（place_data 或其后继 choose_target 结算）即
-      // 完成，由下一次决策重新评估是否仍溢出。
-      return action.family === "place_data"
-        || (action.family === "choose_target" && action.target?.target === "computer")
-        || (action.family === "choose_target" && action.target?.target === "blueBonus");
     }
     if (targetId === `decision:${action.actionId}`) return true;
     if (targetId.startsWith("card:resolve:")) {
@@ -1921,44 +1914,6 @@
       }
     }
 
-    // 数据溢出/资源缺口独立目标（2026-08-21 用户裁定："溢出不浪费也是 target"）：
-    // 数据溢出（可放数据 > 第一排剩余槽数）或缺钱/电/牌时，填数据本身就是目标
-    // （拿资源/腾数据池，纯赚），不依赖 income/data:analyze 等其他目标背书。
-    // place_data 已从 untargeted 枚举排除（手段动作），必须有独立目标入口，
-    // 否则溢出场景无处触发（实测 trigger 版 323 步终局、均分 57 崩）。
-    // 注意：只取溢出/缺口触发（不因"目标 active"填 computer——那由
-    // income/data:analyze 各自处理，避免重复）。
-    const overflowDataChoices = legalActions.filter((action) => (
-      String(action.target?.choiceId || "").startsWith("data:")
-    ));
-    if (overflowDataChoices.length) {
-      const overflowAssets = resourceFactsOf(input.rootObservation, input.focalSeatId);
-      const overflowAvailable = finite(overflowAssets.availableData);
-      const firstRowRemainingOverflow = Math.max(
-        0,
-        4 - finite(
-          input.rootObservation?.outcomeProjection?.progress?.dataProgress?.computerPlacedCount,
-        ),
-      );
-      const dataOverflowing = overflowAvailable > 0
-        && overflowAvailable > firstRowRemainingOverflow;
-      const resourceGap = overflowAvailable > 0 && (
-        finite(overflowAssets.credits) <= 1
-        || finite(overflowAssets.energy) <= 1
-        || finite(overflowAssets.ordinaryCards) <= 1
-      );
-      if (dataOverflowing || resourceGap) {
-        const overflowPlacement = selectDataPlacementChoice(
-          input.rootObservation,
-          legalActions,
-          input.focalSeatId,
-        ) || [];
-        if (overflowPlacement.length) {
-          add("data:overflow", "data:overflow", overflowPlacement);
-        }
-      }
-    }
-
     const sectorRequirements = rawSectorWinRequirements(input.rootObservation);
     if (sectorRequirements) {
       const candidatesById = new Map((sectorRequirements.candidates || []).map((candidate) => [
@@ -2398,11 +2353,6 @@
   }
 
   function selectSecondaryAgentRouteTarget(input = {}) {
-    if (input.routeTargetId === "data:overflow") {
-      // 溢出/缺口独立目标：填一次即收束（completesSecondaryAgentRouteTarget 已
-      // 判定 place_data/choose_target 完成），下次决策重新评估是否仍溢出。
-      return null;
-    }
     if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
       // 目标完成判定统一在 completesSecondaryAgentRouteTarget（analyze/place_data
       // 都算推进一步 → 收束），这里不再特判：analyze 完成时 completes 已返回 true，
@@ -3327,23 +3277,6 @@
               successors,
               input.focalSeatId,
             ),
-            input.routeTargetId,
-            input.routePlanId,
-          );
-        }
-        return [];
-      }
-      if (input.routeTargetId === "data:overflow") {
-        // 溢出/缺口独立目标的后继：统一触发判定选填哪（溢出→蓝槽/第一排，
-        // 缺口→对应蓝槽）。填完收束由 completes 判定。
-        const overflowPlacement = selectDataPlacementChoice(
-          input.branchObservation,
-          successors,
-          input.focalSeatId,
-        ) || [];
-        if (overflowPlacement.length) {
-          return bindRoute(
-            overflowPlacement,
             input.routeTargetId,
             input.routePlanId,
           );
