@@ -214,6 +214,10 @@ function readSaveFinalScores(saveRelPath) {
       base: fsItem.baseScore ?? null,
       tile: fsItem.tileScore ?? null,
       card: fsItem.cardScore ?? null,
+      // 终局结算明细（2026-08-21 用户口径：显示"具体什么获得了几分"）
+      tileScoresById: fsItem.tileScoresById || null,
+      cards: Array.isArray(fsItem.cards) ? fsItem.cards : [],
+      scoreSources: st.players?.players?.find((p) => p.id === pid)?.scoreSources || null,
     };
   }
   const values = PLAYER_ORDER.map((p) => scores[p]).filter((v) => v != null);
@@ -487,6 +491,25 @@ const TECH_BONUS_LABELS = {
   bonus_1p: "1 能量",
   bonus_1m: "1 宣传",
   bonus_1c: "精选 1 张牌",
+};
+
+// base 分构成来源的中文标签（player.scoreSources 键）
+const SCORE_SOURCE_LABELS = {
+  initialScore: "初始",
+  scanScore: "扫描",
+  orbitScore: "环绕",
+  landScore: "登陆",
+  blueTechScore: "蓝科技",
+  techBonusScore: "科技bonus",
+  alienTraceBlueScore: "外星痕迹·蓝",
+  alienTracePinkScore: "外星痕迹·粉",
+  alienTraceYellowScore: "外星痕迹·黄",
+  alienCardQuickScore: "外星卡·快速",
+  alienEffectScore: "外星卡·效果",
+  cardQuickScore: "卡牌·快速",
+  cardEffectScore: "卡牌·效果",
+  taskCardScore: "任务卡",
+  industryEffectScore: "行业效果",
 };
 
 // 内核重放存档 replaySteps，提取 after 快照里没有的逐步信息（2026-08-21 用户口径）：
@@ -856,11 +879,33 @@ function buildActionLogReport(opts) {
         const highlight = p === "player-white" ? ' class="hero"' : "";
         return `<tr${highlight}><td>${playerColor(p)}</td><td class="num"><b>${total ?? "—"}</b></td><td class="num">${b?.base ?? "—"}</td><td class="num">${b?.tile ?? "—"}</td><td class="num">${b?.card ?? "—"}</td></tr>`;
       }).join("");
+      // 终局结算明细：base 构成 + 板块 + 卡牌（2026-08-21 用户口径：具体什么获得了几分）
+      const details = PLAYER_ORDER.map((p) => {
+        const b = final.breakdown[p];
+        if (!b) return "";
+        const ss = b.scoreSources || {};
+        const ssParts = Object.entries(ss)
+          .filter(([, v]) => v)
+          .map(([k, v]) => `${SCORE_SOURCE_LABELS[k] || k} ${v}`);
+        const tileParts = b.tileScoresById
+          ? Object.entries(b.tileScoresById).filter(([, v]) => v).map(([tid, v]) => `板块${tid} ${v}`)
+          : [];
+        const cardParts = (b.cards || [])
+          .filter((c) => c && c.score)
+          .map((c) => `${cardNameFor(c.cardId) || c.cardId} ${c.score}`);
+        const parts = [];
+        if (ssParts.length) parts.push(`base ${b.base}（${ssParts.join(" + ")}）`);
+        if (tileParts.length) parts.push(`板块 ${b.tile}（${tileParts.join(" + ")}）`);
+        if (cardParts.length) parts.push(`卡牌 ${b.card}（${cardParts.join(" + ")}）`);
+        if (!parts.length) return "";
+        return `<div class="final-detail"><b>${playerColor(p)}</b>：${escapeHtml(parts.join(" + "))}</div>`;
+      }).join("");
       return `<section class="panel final">
         <h2>终局分数（完整终局口径，存档 finalScores）</h2>
         <table>${head}<tbody>${body}
         <tr class="avg-row"><td>均分</td><td class="num"><b>${final.avgScore.toFixed(2)}</b></td><td colspan="3" class="muted">白色为人类席位（本轮评估侧重）</td></tr>
         </tbody></table>
+        ${details ? `<div class="final-details">${details}</div>` : ""}
       </section>`;
     }
     const last = lastAfter ? playerResourceRow(lastAfter.p, "player-white") : null;
@@ -906,6 +951,8 @@ td.actor{white-space:nowrap;font-weight:600}
 td.sum{min-width:220px;word-break:break-word}
 .main-act{font-weight:600}
 .quick-list{margin-top:3px;font-size:11px;color:var(--muted);font-weight:400}
+.final-details{margin-top:10px;display:grid;gap:4px}
+.final-detail{font-size:12px;line-height:1.5}
 tr.round-head td{background:#eef2f9;font-weight:700;color:#4a5568}
 .avg-row td{background:#eaf7ea}
 .hero td:first-child{font-weight:700}
