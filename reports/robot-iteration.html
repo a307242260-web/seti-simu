@@ -44,6 +44,7 @@ td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .best-card .sub{font-size:12px;color:#44506a}
 .best-card .src{display:inline-block;margin-top:6px;padding:1px 8px;border-radius:8px;font-size:10.5px;background:var(--accent-bg);color:var(--accent)}
 .best-card .src.roadmap{background:#f3e8c8;color:#7a5b00}
+.best-card .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px;color:#8a94a6;margin-top:5px;line-height:1.5}
 .top3{margin-top:12px}
 .top3 table{font-size:12px}
 /* ---- 迭代表 ---- */
@@ -115,13 +116,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T04:50:37.151Z",
+  "builtAt": "2026-08-21T04:59:09.057Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "087d25a5",
+  "headCommit": "4a502723",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -1427,7 +1428,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 33271 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 33299 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1711,24 +1712,35 @@ function bestGrid(){
   const b=REGISTRY.bestOf;
   const card=(label,value,sub,src,srcCls)=>
     `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
+  const summaryOf=(x)=>{
+    const v=REGISTRY.versions.find(vv=>vv.id===x.versionId);
+    if(!v||!v.summary) return "";
+    return v.summary.length>72?v.summary.slice(0,72)+"…":v.summary;
+  };
+  const runLine=(x)=>{
+    const nm=esc(x.name);
+    const hasId=nm.includes(x.versionId);
+    return (hasId?nm:`${nm} <code>${x.versionId}</code>`)+(x.runKey?" · "+esc(x.runKey):"");
+  };
   const html=[];
   if(b.bestWhite){
     html.push(card("最佳分数（白色）",b.bestWhite.value,
-      `${esc(b.bestWhite.name)} <code>${b.bestWhite.versionId}</code> · head ${esc(b.bestWhite.runKey||b.bestWhite.versionId)} · ${b.bestWhite.steps??"—"} 步 · ${fmtMs(b.bestWhite.wallMs)}`,
-      `来源 ${b.bestWhite.provenance}${b.bestWhite.scoreSourceNote?" · "+esc(b.bestWhite.scoreSourceNote):""}`, b.bestWhite.provenance==="roadmap"?"roadmap":""));
+      `${runLine(b.bestWhite)}<br><span class="sum" title="${esc(summaryOf(b.bestWhite))}">${esc(summaryOf(b.bestWhite))||"（无改动摘要）"}</span>`,
+      `来源 ${b.bestWhite.provenance}`, b.bestWhite.provenance==="roadmap"?"roadmap":""));
   } else html.push(card("最佳分数（白色）","—","尚无全盘记录","—"));
   if(b.bestAvg){
     html.push(card("最佳平均分数",b.bestAvg.value,
-      `${esc(b.bestAvg.name)} <code>${b.bestAvg.versionId}</code> · ${b.bestAvg.steps??"—"} 步 · ${fmtMs(b.bestAvg.wallMs)}`,
-      `来源 ${b.bestAvg.provenance}${b.bestAvg.scoreSourceNote?" · "+esc(b.bestAvg.scoreSourceNote):""}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
+      `${runLine(b.bestAvg)}<br><span class="sum" title="${esc(summaryOf(b.bestAvg))}">${esc(summaryOf(b.bestAvg))||"（无改动摘要）"}</span>`,
+      `来源 ${b.bestAvg.provenance}`, b.bestAvg.provenance==="roadmap"?"roadmap":""));
   } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
   const timeLines=[];
-  if(b.bestAvg&&b.bestAvg.wallMs!=null) timeLines.push(`最佳均分运行（${esc(b.bestAvg.name)}）：总耗时 <b>${fmtMs(b.bestAvg.wallMs)}</b> · 每步约 ${b.bestAvg.msPerStep} ms`);
-  if(b.fastestPerStep) timeLines.push(`最快全盘（每步）：${esc(b.fastestPerStep.name)} <code>${b.fastestPerStep.versionId}</code> · 每步 ${b.fastestPerStep.msPerStep} ms（总 ${fmtMs(b.fastestPerStep.wallMs)}）`);
-  if(b.fastestWall) timeLines.push(`最快全盘（总耗时）：${esc(b.fastestWall.name)} <code>${b.fastestWall.versionId}</code> · ${fmtMs(b.fastestWall.wallMs)}`);
-  html.push(card("搜索耗时",timeLines.length?timeLines[0].split("：")[1].split(" · ")[0]:null,
+  if(b.bestAvg&&b.bestAvg.wallMs!=null) timeLines.push(`最佳均分运行：<b>${fmtMs(b.bestAvg.wallMs)}</b> · 每步约 ${b.bestAvg.msPerStep} ms（${esc(b.bestAvg.versionId)}）`);
+  if(b.fastestPerStep) timeLines.push(`最快全盘（每步）：每步 ${b.fastestPerStep.msPerStep} ms · 总 ${fmtMs(b.fastestPerStep.wallMs)}（${esc(b.fastestPerStep.versionId)}）`);
+  if(b.fastestWall) timeLines.push(`最快全盘（总耗时）：${fmtMs(b.fastestWall.wallMs)}（${esc(b.fastestWall.versionId)}）`);
+  html.push(card("搜索耗时",
+    b.bestAvg&&b.bestAvg.wallMs!=null?fmtMs(b.bestAvg.wallMs):null,
     timeLines.join("<br>")||"尚无运行",
-    timeLines.length?"全盘运行实测 (wallMs)":""));
+    "全盘运行实测 (wallMs)"));
   document.getElementById("best-grid").innerHTML=html.join("");
 
   if(b.topByAvg&&b.topByAvg.length){
@@ -1805,7 +1817,7 @@ function iterTable(){
     const rmap=v.roadmap;
     const summary=p.isRoadmap
       ? (rmap
-        ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步 · ${esc(rmap.note||"")}</div></div>`
+        ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步</div></div>`
         : summaryCell(v))
       : summaryCell(v);
     return `<tr class="toggle-row" data-vid="${esc(v.id)}">
@@ -1823,6 +1835,7 @@ function iterTable(){
     <tr class="detail-row" id="detail-${esc(v.id)}" style="display:none"><td colspan="10"><div class="detail-inner">
       <h4>提交（${v.commits.length}）</h4>${commitsHtml(v)}
       <h4>全部运行结果</h4>${resultsHtml(v)}
+      ${v.roadmap?`<h4>roadmap 记录（无 research 记录/存档）</h4><div class="result-item"><div class="headline"><span class="src">白 ${v.roadmap.scores?v.roadmap.scores["player-white"]:"—"} / 均 ${v.roadmap.avgScore!=null?v.roadmap.avgScore:"—"} / ${v.roadmap.steps!=null?v.roadmap.steps:"—"} 步</span></div><div class="src">${esc(v.roadmap.note||"")}</div></div>`:""}
       <h4>回退与定位改动</h4>${diffHtml(v)}
     </div></td></tr>`;
   }).join("");
