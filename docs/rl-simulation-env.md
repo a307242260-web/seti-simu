@@ -23,8 +23,8 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 - `isTerminal()`：读取 Production Composition 的终局事实。
 - `getReplay()` / `loadReplay()`：读写已确认策略输入与环境事件。
 - `createCheckpoint()` / `loadCheckpoint()`：保存和恢复当前 composition envelope、RNG 与 replay cursor。
-- `evaluateActionOutcomes()`：在同根状态的隔离 fork 中执行标准 Action，用于策略评估。
 - `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经机器人玩家协调器（`machine-player-coordinator.js`）编排——裸调共享 composition 读边界、计划复用优先、未命中调用 Heuristic 决策函数（`heuristic-decision-function.js`，直调 Policy）、提交共享 `inputPort`（零转换）；replay/reward 记账由协调器 `recordStep` 钩子补做（env 提供实现，记录原生 action）。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`。计划复用默认开（`planContinuationFastPath`，显式传 `false` 关闭）；新回合复用 `planNewTurnReuse` 默认开（`false` 关闭后新回合一律重新搜索）。
+  **策略估值统一入口**：旧 `evaluateActionOutcomes()` 入口已删除——评估动作必须用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
 - `dispose()`：释放单局环境。
 

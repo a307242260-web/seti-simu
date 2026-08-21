@@ -34,7 +34,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/simulation-effect-session-worker-recovery.test.js", "architecture/simulation-host", "worker 恢复 active Session 与 journal", "恢复只还原 committed state 而丢失 active Decision 链"),
     entry("randomizer/app/simulation-no-browser-globals.test.js", "architecture/simulation-host", "rules-only Simulation 不依赖 DOM/Window", "训练入口加载浏览器全局或 app composition"),
     entry("randomizer/app/simulation-state-checkpoint.test.js", "architecture/simulation-host", "checkpoint 当前 schema round-trip 保持 action identity", "未知 schema 或非零版本恢复后 legal set 漂移"),
-    entry("randomizer/app/simulation-counterfactual-outcome.test.js", "architecture/policy-host", "每个 legal action 从同根隔离 fork 经标准链生成 outcome", "枚举顺序、失败 fork 或 RNG 消耗污染 canonical root"),
+    entry("randomizer/app/simulation-counterfactual-outcome.test.js", "architecture/policy-host", "真实决策（runHeuristicPolicyDecision）actionOutcomes 覆盖全部合法 action 且已结算/显式原因，叶 projection 与直接标准执行一致", "actionOutcomes 静默占位、与合法集不对齐或失败 fork 污染 canonical root"),
     entry("randomizer/app/simulation-training-replay.test.js", "architecture/simulation-host", "训练 replay 逐步复现 observation/action/reward", "stale 或篡改 replay 被静默接受"),
     entry("randomizer/training/simulation-rule-composition.test.js", "architecture/simulation-host", "生产 rules-only composition 经正式 Decision 提交", "直接 helper 调用绕过 composition working root"),
     entry("randomizer/training/trajectory-recorder.test.js", "training/trajectory", "录制器按 seti-self-play-log-v1 产出逐步记录与 episode 汇总且可截断对齐", "步骤缺 actor/action/reward/legalMask、汇总缺 players 或汇总后仍被改写仍被接受"),

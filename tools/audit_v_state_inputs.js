@@ -90,11 +90,11 @@ const stdObs = outcomeModel.createDecisionObservation(rawObs, { seatId, stateVer
 allPass = auditObservation("decisionObs(装配后)", stdObs, seatId) && allPass;
 
 // 路径 3：启发式 actionOutcomes 的 leaf.observation —— 必须 PASS
+// （evaluateActionOutcomes 旧入口已删除；统一用真实决策 runHeuristicPolicyDecision
+// 返回的 actionOutcomes，与决策函数同一搜索参数）
 const legal = env.legalActions();
-const outcomes = env.evaluateActionOutcomes(legal);
-const proj = outcomeModel.projectOutcomeObservations(outcomes, {
-  seatId, stateVersion: legal[0].stateVersion, decisionVersion: legal[0].decisionVersion,
-});
+const policyResult = env.runHeuristicPolicyDecision();
+const proj = policyResult.actionOutcomes;
 const leafWithObs = proj.find((o) => o?.leaves?.some((l) => l?.observation));
 if (leafWithObs) {
   const leafObs = leafWithObs.leaves.find((l) => l?.observation)?.observation;

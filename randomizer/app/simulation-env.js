@@ -123,69 +123,6 @@ function createSimulationEnv() {
   let heuristicDecision = null;
   let disposed = false;
 
-  function evaluateActionOutcomes(actions = null, options = {}) {
-    assertUsable();
-    cachedLegal = null;
-    selectors = new Map();
-    const freshLegal = this.legalActions();
-    const legal = clone((actions || freshLegal).map((requested) => (
-      freshLegal.find((action) => action.actionId === requested.actionId) || requested
-    )));
-    const descriptors = legal.map((action) => (
-      selectors.get(action.actionId) || action
-    ));
-    const seatId = legal[0]?.actorId || null;
-    let rootStrategicFacts = null;
-    return composition.counterfactualPort.evaluate(descriptors, {
-      viewer: { playerId: seatId, role: "player" },
-      maxDepth: options.maxDepth || 15,
-      maxLeaves: options.maxLeaves || 8,
-      maxNodes: options.maxNodes || 128,
-      ...(options.maxExecutionNodes ? { maxExecutionNodes: options.maxExecutionNodes } : {}),
-      stopAtPassDecisionBoundary: options.stopAtPassDecisionBoundary === true,
-      maxFrontierPerRoot: options.maxFrontierPerRoot
-        || (options.secondaryAgentSearch ? 1 : 8),
-      traceGoalClusters: options.traceGoalClusters === true,
-      allowUntargetedRootActions: true,
-      secondaryAgentSearch: options.secondaryAgentSearch ? {
-        focalSeatId: seatId,
-        maxProxyDepth: options.maxProxyDepth || 15,
-        rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
-        completeTargetCatalog: options.completeTargetCatalog === true,
-        selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
-        selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
-        selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
-        completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
-        getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
-      } : null,
-      getBranchPriority({
-        rootObservation,
-        branchObservation,
-        currentAction,
-        routeTargetIds,
-        routePlanIds,
-      }) {
-        if (options.secondaryAgentSearch) {
-          return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
-            rootObservation,
-            branchObservation,
-            focalSeatId: seatId,
-            currentAction,
-            routeTargetIds,
-            routePlanIds,
-          });
-        }
-        rootStrategicFacts = rootStrategicFacts
-          || outcomeModel.createStrategicFacts(rootObservation, seatId);
-        return expectedScoreEvaluator.evaluateStrategicFactsPriority(
-          rootStrategicFacts,
-          outcomeModel.createStrategicFacts(branchObservation, seatId),
-        );
-      },
-      confidence: "low",
-    });
-  }
-
   function recordDuration(key, startedAt) {
     diagnostics[key] += performance.now() - startedAt;
   }
@@ -841,8 +778,6 @@ function createSimulationEnv() {
         name: options.name ?? String(meta.seed ?? seed ?? "simulation"),
       };
     },
-
-    evaluateActionOutcomes,
 
     loadReplay(replay) {
       assertNotDisposed();

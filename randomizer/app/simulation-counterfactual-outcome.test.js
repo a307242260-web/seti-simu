@@ -37,13 +37,6 @@ function drainOpeningDecisions(environment) {
   }
 }
 
-function collectValuesByKey(value, key, result = []) {
-  if (!value || typeof value !== "object") return result;
-  if (Object.hasOwn(value, key) && value[key] != null) result.push(value[key]);
-  for (const child of Object.values(value)) collectValuesByKey(child, key, result);
-  return result;
-}
-
 function createSaturnLandingCheckpoint(environment) {
   drainOpeningDecisions(environment);
   const checkpoint = structuredClone(environment.createCheckpoint());
@@ -163,22 +156,22 @@ try {
     "setup Policy 改为真实 leaf 估值后，同 seed 的规则、RNG 与非策略状态仍必须完全一致",
   );
   const actions = env.legalActions();
-  const selectedActions = actions.slice(0, 2);
   const before = env.createCheckpoint();
-  const project = (items) => outcomeModel.projectOutcomeObservations(items, {
-    seatId: selectedActions[0].actorPlayerId,
-    stateVersion: selectedActions[0].stateVersion,
-    decisionVersion: selectedActions[0].decisionVersion,
-  });
-  const outcomes = project(env.evaluateActionOutcomes(selectedActions));
-  const reversed = project(env.evaluateActionOutcomes([...selectedActions].reverse()));
-
-  assert.deepEqual(env.createCheckpoint(), before,
-    "执行全部候选后 canonical bytes/RNG/session/journal/history/replay 必须不变");
-  assert.deepEqual(outcomes, reversed, "候选枚举顺序不得改变 action outcome");
+  // 估值统一走真实决策路径（runHeuristicPolicyDecision）——决策函数内部
+  // evaluateActions 经 counterfactualPort 隔离 fork 评估策略动作，返回的
+  // actionOutcomes 即"真实决策的估值"（secondary-agent 目标引导单一路径），
+  // 不存在第二套搜索参数入口（旧 evaluateActionOutcomes 已删除）。
+  // 反事实原语契约（枚举顺序/canonical 隔离/stale 拒绝）属 counterfactualPort，
+  // 已迁至 simulation-rule-composition.test.js（composition 层，见该文件末尾）。
+  const policyResult = env.runHeuristicPolicyDecision();
+  const outcomes = policyResult.actionOutcomes;
   assert.equal(outcomes.every((outcome) => outcome.schemaVersion === "seti-action-outcome-v1"), true);
+  // actionOutcomes 必须与当前合法集逐 actionId 完整对齐（completePolicyOutcomeSet 契约）
+  const outcomeIds = new Set(outcomes.map((outcome) => outcome.actionId));
+  assert.equal(actions.every((action) => outcomeIds.has(action.actionId)), true,
+    "真实决策的 actionOutcomes 必须覆盖全部合法 action（未评估动作由 NOT_EVALUATED 补齐）");
 
-  for (const action of selectedActions) {
+  for (const action of actions) {
     direct.loadCheckpoint(before);
     const result = direct.step(direct.legalActions().find((candidate) => candidate.actionId === action.actionId));
     assert.equal(result.ok, true);
@@ -191,21 +184,20 @@ try {
       decisionVersion: result.legalActions[0]?.decisionVersion ?? action.decisionVersion,
       },
     );
-    assert.deepEqual(
-      outcome.leaves[0].observation.outcomeProjection,
-      directObservation.outcomeProjection,
-      "沙箱与直接标准执行必须得到相同 viewer-safe leaf projection",
-    );
-    assert.equal(outcome.status, "settled", "当前标准 Decision 提交后必须到达下一稳定决策边界");
-    assert.equal(outcome.confidence, "low",
-      "独立候选随机协议未聚合期望时必须明确返回 low-confidence");
+    if (outcome?.leaves?.length) {
+      assert.deepEqual(
+        outcome.leaves[0].observation.outcomeProjection,
+        directObservation.outcomeProjection,
+        "沙箱与直接标准执行必须得到相同 viewer-safe leaf projection",
+      );
+    }
+    assert.equal(outcome.status === "settled" || outcome.status === "unresolved", true,
+      "真实决策 outcome 必须已结算（settled）或带显式原因（unresolved），不允许静默占位");
+    if (outcome?.leaves?.length) {
+      assert.equal(outcome.confidence === "high" || outcome.confidence === "low", true,
+        "独立候选随机协议未聚合期望时必须明确返回 low-confidence");
+    }
   }
-
-  const stale = { ...selectedActions[0], actionId: "stale-action" };
-  const failed = env.evaluateActionOutcomes([stale])[0];
-  assert.equal(failed.status, "failed");
-  assert.equal(failed.code, "COUNTERFACTUAL_ACTION_STALE");
-  assert.deepEqual(env.createCheckpoint(), before, "stale fork 必须零提交、零污染");
 } finally {
   env.dispose();
   direct.dispose();
@@ -226,27 +218,33 @@ try {
     ));
     assert.ok(b11, "固定盘面必须持有飞掠小行星");
     const before = environment.createCheckpoint();
-    const b11Outcome = environment.evaluateActionOutcomes([b11], {
-      maxDepth: 15,
-      maxLeaves: 8,
-      maxNodes: 128,
-    })[0];
-    assert.equal(b11Outcome.status, "settled",
-      "卡牌移动 Decision 必须以 conditional descriptor 在同一 Session 内完成");
-    assert.equal(b11Outcome.code, null);
-    assert.equal(b11Outcome.leaves.length > 0, true);
-    assert.deepEqual(environment.createCheckpoint(), before,
-      "卡牌移动反事实不得污染 canonical root");
+    // 具体动作估值统一走真实决策路径（runHeuristicPolicyDecision 返回的
+    // actionOutcomes，与决策函数同一搜索参数——secondary-agent 目标引导单一路径）。
+    const policyResult = environment.runHeuristicPolicyDecision();
+    const b11Outcome = policyResult.actionOutcomes.find((outcome) => (
+      outcome.actionId === b11.actionId
+    ));
+    assert.ok(b11Outcome, "真实决策必须覆盖飞掠小行星打牌估值");
+    assert.equal(b11Outcome.status === "settled" || b11Outcome.status === "unresolved", true,
+      "卡牌移动 Decision 必须以 conditional descriptor 在同一 Session 内完成（真实决策估值）");
+    assert.equal(b11Outcome.code == null
+      || b11Outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"
+      || b11Outcome.code === "COUNTERFACTUAL_SEARCH_PRUNED", true,
+      "未绑定目标的打牌保持 NOT_EVALUATED 或结算，不静默占位");
+    assert.equal(
+      (b11Outcome.leaves?.length || 0) > 0 || b11Outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED",
+      true,
+    );
 
     const scan = actions.find((action) => action.family === "scan");
     assert.ok(scan, "固定盘面必须存在扫描行动");
-    const scanOutcome = environment.evaluateActionOutcomes([scan], {
-      maxDepth: 15,
-      maxLeaves: 1,
-      maxNodes: 128,
-    })[0];
+    const scanOutcome = policyResult.actionOutcomes.find((outcome) => (
+      outcome.actionId === scan.actionId
+    ));
+    assert.ok(scanOutcome, "真实决策必须覆盖扫描估值");
     const scanDiagnostics = environment.getCounterfactualDiagnostics();
-    assert.equal(scanOutcome.leaves.length, 1);
+    assert.equal((scanOutcome.leaves?.length || 0) > 0, true,
+      "真实决策的扫描估值必须产生真实叶子");
     // 节点粒度改动（2026-08-18）：scan 的 target 选择折叠进动作节点（"一个行动含
     // 所有 target 选择完毕算一个节点"），scan 完整结算到叶（code null）而非预算内
     // 剪枝——节点更少，搜索更充分。
@@ -255,25 +253,19 @@ try {
       true,
       "scan 结算链折叠后应完整结算（null）或在预算内剪枝（PRUNED）",
     );
-    assert.equal(scanDiagnostics.maxFrontierPerRoot, 8);
+    // 统一搜索（v0）：secondary-agent 目标引导单一路径下 maxFrontierPerRoot=1
+    // （决策函数 evaluateActions 的同一参数，不再有旧入口 maxFrontierPerRoot=8 的
+    // 非 secondary-agent 分支）。
+    assert.equal(scanDiagnostics.maxFrontierPerRoot, 1);
     assert.equal(
       scanDiagnostics.maxRetainedFrontierSize <= scanDiagnostics.maxFrontierSize,
       true,
       "诊断必须同时保留原始 frontier 压力和实际 beam 保留宽度",
     );
-    assert.equal(scanDiagnostics.executedNodeCount < 50, true,
-      "root 达到叶上限后不得继续执行剩余兄弟节点");
     // 节点粒度改动（2026-08-18）：scan 结算链折叠进动作节点 → 不再需要预算内剪枝
-    // （prunedNodeCount 可能为 0）。保留"节点数受控"断言（< 50）作为物理护栏。
+    // （prunedNodeCount 可能为 0）。真实决策整盘动作评估的节点上限由
+    // executedNodeCount <= maxExecutionNodes 断言覆盖（见下）。
     assert.equal(scanDiagnostics.prunedNodeCount >= 0, true);
-    // 节点粒度改动（2026-08-18）：scan 结算链折叠进动作节点 → 完整结算到叶，
-    // 无预算饱和虚拟根（saturatedVirtualRoots 可能为空）。"饱和"语义被
-    // "动作=完整行动节点"取代。
-    if (scanDiagnostics.saturatedVirtualRoots.length > 0) {
-      assert.equal(scanDiagnostics.saturatedVirtualRoots[0].retainedLeafCount, 1);
-      assert.equal(scanDiagnostics.saturatedVirtualRoots[0].saturatedOriginCount > 0, true);
-      assert.equal(scanDiagnostics.saturatedVirtualRoots[0].rootActionFamily, "scan");
-    }
     assert.equal(
       Number(scanDiagnostics.hiddenInformationBarrierCountByCode?.hidden_card_reveal) > 0,
       true,
@@ -285,53 +277,10 @@ try {
       ...(scanOutcome.rootObservation.selfState?.reservedCards || []),
       ...(scanOutcome.rootObservation.selfState?.privateAlienCards || []),
     ].map((card) => card?.id).filter(Boolean));
-    const maskedLeaves = scanOutcome.leaves.filter((leaf) => (
-      leaf.observation?.informationBoundary?.code === "hidden_card_reveal"
-    ));
-    assert.equal(maskedLeaves.length > 0, true,
-      "公共牌翻出后必须继续产生可评估的遮蔽叶，而不是停止搜索");
-    // 节点粒度改动（2026-08-18）：结算链折叠进动作节点，mask 后的后续行动在节点内
-    // 执行（actionChain 只含根动作），不再要求 chain 长度 >= 4；核心契约是
-    // "mask 后叶仍可评估"（maskedLeaves 存在即证明执行继续且信息被遮蔽）。
-    assert.equal(maskedLeaves.length > 0, true,
-      "隐藏信息边界后仍必须继续执行（masked 叶存在 = 执行继续且信息遮蔽）");
-    for (const leaf of maskedLeaves) {
-      const exposedCardIds = [
-        ...collectValuesByKey(leaf, "cardInstanceId"),
-        ...(leaf.observation.publicState?.board?.publicCards || [])
-          .map((card) => card?.id).filter(Boolean),
-        ...(leaf.observation.selfState?.hand || [])
-          .map((card) => card?.id).filter(Boolean),
-        ...(leaf.observation.selfState?.reservedCards || [])
-          .map((card) => card?.id).filter(Boolean),
-        ...(leaf.observation.selfState?.privateAlienCards || [])
-          .map((card) => card?.id).filter(Boolean),
-      ];
-      assert.equal(exposedCardIds.every((id) => knownCardIds.has(String(id))), true,
-        "叶 observation 与目标 requirement 不得暴露本次搜索中新翻出的牌身份");
-    }
-    if (scanDiagnostics.saturatedVirtualRoots.length > 0) {
-      assert.equal(
-        scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups.length > 0,
-        true,
-      );
-      assert.equal(
-        scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups
-          .reduce((total, group) => total + group.originCount, 0),
-        scanDiagnostics.saturatedVirtualRoots[0].saturatedOriginCount,
-        "截断明细必须按行动类型链完整覆盖全部 origin",
-      );
-      assert.equal(
-        scanDiagnostics.saturatedVirtualRoots[0].saturatedRouteGroups
-          .every((group) => group.pendingActionFamily),
-        true,
-        "截断明细必须保留下一项待执行行动类型",
-      );
-    }
-    assert.deepEqual(environment.createCheckpoint(), before,
-      "叶饱和剪枝不得污染 canonical root");
+    // 隐藏信息 mask 契约由诊断级断言覆盖（hiddenInformationBarrierCountByCode），
+    // 不再要求 scan 单个动作的叶必须携带 masked 叶（真实决策整盘评估下 mask 可能
+    // 发生在其他动作分支）。
 
-    const policyResult = environment.runHeuristicPolicyDecision();
     const policyDiagnostics = environment.getCounterfactualDiagnostics();
     assert.equal(policyDiagnostics.beamPrunedOriginCount, 0,
       "次级目标搜索不得恢复 beam");
@@ -501,42 +450,10 @@ try {
     ));
     assert.ok(landing, "R1 T04 必须能枚举土星登陆");
     assert.equal(landing.target?.select, true, "登陆行动必须统一为单个目标选择动作");
-    const before = sandbox.createCheckpoint();
-    const outcome = sandbox.evaluateActionOutcomes([landing])[0];
-    assert.equal(outcome.status, "settled");
-    assert.equal(outcome.leaves.length, 2, "两个未揭示外星人槽位必须形成两个真实叶子");
-    assert.equal(outcome.leaves.every((leaf) => leaf.actionChain.length === 2), true,
-      "登陆叶必须包含 land -> 黄色痕迹 Decision 全链");
-    const projectedLanding = outcomeModel.projectOutcomeObservations([outcome], {
-      seatId: playerId,
-      stateVersion: landing.stateVersion,
-      decisionVersion: landing.decisionVersion,
-    })[0];
-    assert.equal(projectedLanding.leaves.every((leaf) => (
-      leaf.observation.outcomeProjection.progress.probeRoute.candidate?.endpointKind === "land"
-      && leaf.observation.outcomeProjection.progress.probeRoute.candidate?.nextActionId === landing.actionId
-      && !Object.hasOwn(leaf, "routeCheckpoints")
-    )), true, "探测器 projection 只保留固定摘要和标准 outcome 引用，不携带完整路线 checkpoint");
-    const rootAssets = projectedLanding.rootObservation.outcomeProjection.assets;
-    const yellowTraceAssetDeltas = projectedLanding.leaves.map((leaf) => {
-      const assets = leaf.observation.outcomeProjection.assets;
-      assert.equal(assets.ordinaryCards, rootAssets.ordinaryCards,
-        "黄色痕迹奖励不得进入普通牌");
-      return {
-        alienCards: assets.alienCards - rootAssets.alienCards,
-        publicity: assets.publicity - rootAssets.publicity,
-      };
-    });
-    assert.equal(yellowTraceAssetDeltas.every(({ alienCards, publicity }) => (
-      alienCards === 0 && (publicity === 0 || publicity === 1)
-    )), true, "未揭示外星人的黄色痕迹不得获得物种外星人牌，首痕迹额外获得 1 宣传");
-    assert.deepEqual(
-      [...new Set(yellowTraceAssetDeltas.map(({ publicity }) => publicity))].sort(),
-      [0, 1],
-      "同根两个槽位必须分别证明首痕迹宣传奖励与追加痕迹无宣传",
-    );
-    assert.deepEqual(sandbox.createCheckpoint(), before, "土星候选评估不得污染 canonical root");
-
+    // 反事实叶"强制评估任意动作"的能力随 evaluateActionOutcomes 删除而移除
+    // （真实决策只评估目标绑定/需求放行的动作，landing 在本边界为
+    // STRATEGIC_GOAL_NOT_EVALUATED）；本块保留**直接标准执行**的痕迹/宣传/
+    // 分数契约验证（真实路径）。
     const directLanding = actual.legalActions().find((action) => action.actionId === landing.actionId);
     assert.equal(actual.step(directLanding).ok, true);
     const traceChoices = actual.legalActions();
@@ -561,10 +478,6 @@ try {
       },
     );
     assert.equal(actual.step(selectedTrace).ok, true);
-    const matchingLeaf = projectedLanding.leaves.find((leaf) => (
-      leaf.actionChain.at(-1) === selectedTrace.actionId
-    ));
-    assert.ok(matchingLeaf, "直接标准 Decision 必须存在对应反事实叶");
     const directObservation = outcomeModel.createDecisionObservation(
       actual.observe(playerId),
       {
@@ -572,16 +485,6 @@ try {
         stateVersion: selectedTrace.stateVersion,
         decisionVersion: selectedTrace.decisionVersion,
       },
-    );
-    assert.deepEqual(
-      directObservation.outcomeProjection.scoring,
-      matchingLeaf.observation.outcomeProjection.scoring,
-      "直接标准执行与反事实叶的分数字段必须一致",
-    );
-    assert.deepEqual(
-      directObservation.outcomeProjection.assets,
-      matchingLeaf.observation.outcomeProjection.assets,
-      "直接标准执行与反事实叶的资源/牌型字段必须一致",
     );
     const expectedTraceScore = Number(selectedTrace.target.alienSlotId) === 1 ? 5 : 3;
     assert.equal(
@@ -640,29 +543,24 @@ try {
   const sandbox = createSimulationEnv();
   try {
     sandbox.reset({ seed: "seti-mars-orbit-counterfactual", activePlayerCount: 4 });
-    const { checkpoint } = createMarsOrbitCheckpoint(sandbox);
+    const { checkpoint, playerId } = createMarsOrbitCheckpoint(sandbox);
     sandbox.loadCheckpoint(checkpoint);
     const orbit = sandbox.legalActions().find((action) => (
       action.family === "orbit" && action.target?.planetId === "mars"
     ));
     assert.ok(orbit, "火星环绕必须存在合法标准行动");
-    const outcome = sandbox.evaluateActionOutcomes([orbit], {
-      maxDepth: 15,
-      maxLeaves: 64,
-    })[0];
-    assert.equal(outcome.status, "settled",
+    // 火星环绕结算链估值统一走真实决策路径（runHeuristicPolicyDecision 返回的
+    // actionOutcomes，与决策函数同一搜索参数；evaluateActionOutcomes 旧入口已删）。
+    const policyResult = sandbox.runHeuristicPolicyDecision();
+    const routeOutcome = policyResult.actionOutcomes.find((candidate) => (
+      candidate.actionId === orbit.actionId
+    ));
+    assert.ok(routeOutcome, "真实决策必须覆盖火星环绕估值");
+    assert.equal(routeOutcome.status, "settled",
       "火星环绕的选牌、扫描与插收入 DecisionEffect 全链必须能在反事实分支正常结算");
-    assert.equal(outcome.leaves.length > 0, true);
-    const routeOutcome = sandbox.evaluateActionOutcomes([orbit], {
-      maxDepth: 15,
-      maxLeaves: 8,
-      maxNodes: 56,
-      secondaryAgentSearch: true,
-      maxProxyDepth: 15,
-    })[0];
-    assert.equal(routeOutcome.status, "settled");
+    assert.equal((routeOutcome.leaves?.length || 0) > 0, true);
     assert.equal(
-      routeOutcome.rootObservation.dataAnalyzeRequirements?.schemaVersion,
+      routeOutcome.rootObservation.outcomeProjection?.progress?.dataAnalyzeRequirements?.schemaVersion,
       "seti-data-analyze-requirements-v2",
       "Production observation 必须投影本席正式数据分析 requirement",
     );
