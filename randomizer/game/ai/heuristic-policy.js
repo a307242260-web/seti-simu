@@ -440,7 +440,15 @@
           evaluateAction,
           isFeasible: isObservationFeasible,
         });
-      const selected = evaluatedSelection || selectControlFallbackAction(context);
+      const selected = evaluatedSelection || selectControlFallbackAction(context)
+        // 唯一合法动作兜底（用户裁定"结算不搜索"延伸，2026-08-21 修复）：
+        // 残余域强制结算（如阿米巴效果选牌 choiceCount=1）被 requiresRootCounterfactual
+        // 送进战略搜索，搜索对条件根（rootWasConditional）只展开 1 节点成叶且叶非
+        // settled → actionOutcomes 无 settled 叶 → 打分必失败 → 此前全盘崩溃
+        // （HEURISTIC_POLICY_NO_SELECTION）。唯一合法动作没有选择余地，直接选它
+        // 不依赖打分。16384 预算全盘不崩只是存档轨迹（步53 分叉点）绕开该状态，
+        // 并非搜索处理正确；4096 下撞上即崩。
+        || (context.legalActions?.length === 1 ? context.legalActions[0] : null);
       if (!selected) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_SELECTION", "Heuristic Policy 未能选择 legal descriptor");
       }

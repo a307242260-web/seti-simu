@@ -539,6 +539,12 @@
       const index = player.hand.findIndex((card) => card.id === target.cardInstanceId);
       if (index < 0) return fail("COMPANY_INCOME_CARD_STALE", "收入牌已失效");
       const [card] = player.hand.splice(index, 1);
+      // 手牌移除后必须同步 handSize（2026-08-21 修复）：此前 splice 后不更新
+      // handSize，仅在收入含盲抽（income_code=2）时 1 进 1 出长度碰巧恢复；
+      // 收入不含盲抽（如能量/数据收入牌）时 hand.length ≠ handSize → 提交前
+      // 状态校验 STATE_HAND_SIZE_MISMATCH → 全盘崩溃。与外星拿牌路径（2220 行
+      // player.resources.handSize = player.hand.length）同一同步语义。
+      player.resources.handSize = player.hand.length;
       // 收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
       cards.addRemovedFromGame(root.cards, card);
       const gain = cards.getIncomeGainForCard(card);

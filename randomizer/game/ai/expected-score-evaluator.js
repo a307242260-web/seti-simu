@@ -38,6 +38,20 @@
   const UNIFIED_PURPOSE_FAMILIES = Object.freeze(new Set([
     "quick_trade", "card_corner", "industry",
   ]));
+  // quick 根截断 family（405ee903 误删，2026-08-21 恢复）：根动作是 quick 时，
+  // 其叶价值只算立即效果，不搭后续主行动的便车（见 selectSecondaryAgentSuccessors
+  // 截断分支注释）。move 曾在此集合（v4 时代），现 move 有独立探测价值（move:xx
+  // 目标绑定进 targeted），仅保留纯目的型动作。
+  const QUICK_ROOT_FAMILIES = Object.freeze(new Set([
+    "quick_trade", "card_corner", "industry", "place_data",
+    "runezu_face_symbol", "complete_task",
+  ]));
+  // 树内 untargeted 枚举排除的手段动作（2026-08-21 用户裁定"无目标 quick_trade/
+  // card_corner 非法"贯彻到搜索树内层）：这两类动作只有目标缺口时才做（经目标
+  // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。
+  const UNTARGETED_MEANS_ONLY_FAMILIES = Object.freeze(new Set([
+    "quick_trade", "card_corner",
+  ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
   // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终
   // 叶评分（ai-design.md：任何中间 action/family 没有固定奖励）。
@@ -931,7 +945,16 @@
     const action = input.action;
     const targetId = String(input.targetId || "");
     if (!action || !targetId) return false;
-    if (targetId === DATA_ANALYZE_ROUTE_TARGET) return action.family === "analyze";
+    if (targetId === DATA_ANALYZE_ROUTE_TARGET) {
+      // data:analyze 目标 = "数据轨推进一步"（2026-08-21 用户裁定：数据够就填、
+      // 填完收束——目标决定填哪里是确定性的，填一次算一次推进，由下一次决策
+      // 重新绑定目标）。place_data（填第一排/蓝槽）与 analyze（分析解锁）都算
+      // 完成一次目标推进：目标完成后当前搜索路线收束，不再在同一搜索树内绕圈
+      // 重放 place_data→choose_target（此前只认 analyze → 填数据后目标永远
+      // active → 每个分支都重新绑定 data:analyze → 无限循环，实测 data:analyze
+      // 占 87% 执行节点、主行动 research_tech 只剩 14 节点 PRUNED 失真）。
+      return action.family === "analyze" || action.family === "place_data";
+    }
     if (targetId === `decision:${action.actionId}`) return true;
     if (targetId.startsWith("card:resolve:")) {
       const instanceId = targetId.slice("card:resolve:".length);
@@ -2318,7 +2341,9 @@
 
   function selectSecondaryAgentRouteTarget(input = {}) {
     if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
-      if (input.currentAction?.family === "analyze") return null;
+      // 目标完成判定统一在 completesSecondaryAgentRouteTarget（analyze/place_data
+      // 都算推进一步 → 收束），这里不再特判：analyze 完成时 completes 已返回 true，
+      // completedGoal 收束后不会继续绑定本目标。
       return rawDataAnalyzeRequirements(input.branchObservation)?.nextStep === "acquire_data"
         ? null
         : DATA_ANALYZE_ROUTE_TARGET;
@@ -2714,17 +2739,39 @@
         // 优先级由 getBranchPriority 在展开时再排序；此处的 top-K 是"预算内优先级
         // 截断"，低价值后继仍会在根/上层被尝试（见 §3 设计文档）。
         {
-          // 2026-08-21 迭代（用户裁定）：quick 根截断（QUICK_ROOT_FAMILIES 分支）
-          // **已删除**——根动作现在只来自目标目录绑定（无目标 quick_trade/card_corner
-          // 非法，不进搜索），进根的 quick 都有目标；但 quick 根首次展开时
-          // input.routeTargetId 仍为 null（目标在 targeted 计算里、未赋给当前节点），
-          // 截断条件 !routeTargetId 会误触发 → 有目标的 quick 根被截断（只给 control、
-          // 不展开目标链），与"按目标搜索"矛盾。截断是"无目标 quick 根防便车"的
-          // 旧时代遗留（当时 UNIFIED_PURPOSE_FAMILIES 无条件放行），现已无必要。
+          // quick 根截断（2026-08-21 用户口径"需要了再做"恢复，405ee903 误删修正）：
+          // 根动作是 quick 时，其叶价值只算立即效果，不搭后续主行动的便车。
+          // leafValue 是整链价值（叶状态−根状态，不按动作分摊），quick 根
+          // （quick_trade/card_corner/industry 等）展开后若继续主行动选择，链里
+          // 主行动的收益被归因到 quick 根上 → 评估虚高 + 每层 quick 分支展开
+          // 主行动树吃光预算（实测 4096 预算下 quick_trade 起源 826 节点、主行动
+          // research_tech 只分到 8 节点 PRUNED → 全盘 55.75 分）。截断：quick 根
+          // 的下一个主行动决策只给 control（end_turn/pass）→ 叶在 quick 完成后
+          // 立即形成。405ee903 以"!routeTargetId 误触发有目标 quick 根"为由删除，
+          // 实为误删——有目标的 quick 根由 targeted 进入（routeTargetId 非空、
+          // targeted.length>0），此处仅截断真正未绑定目标的 quick 根。
+          const rootActionId = String((input.actionChain || [])[0] || "");
+          const rootFamily = rootActionId.split(":")[0];
+          const rootIsQuick = QUICK_ROOT_FAMILIES.has(rootFamily);
+          const atMainActionDecision = !(
+            successors[0]?.phase === "conditional"
+            || CONDITIONAL_FAMILIES.has(successors[0]?.family)
+          );
+          if (rootIsQuick && atMainActionDecision && !targeted.length) {
+            return controls;
+          }
           const targetedIds = new Set(targeted.map((action) => action.actionId));
           const untargeted = successors
             .filter((action) => (
-              !targetedIds.has(action.actionId) && !CONTROL_FAMILIES.has(action.family)
+              !targetedIds.has(action.actionId)
+              && !CONTROL_FAMILIES.has(action.family)
+              // 无目标的手段动作不枚举（2026-08-21 用户裁定"无目标 quick_trade/
+              // card_corner 非法"贯彻到树内）：它们只该经目标目录资源准备
+              // （targeted）进入搜索。untargeted 枚举会让每层每分支都带出同样的
+              // 9 个 quick_trade 选项压队（实测单决策排队 826 次、4096 预算耗尽
+              // 时占满队列），主行动反而 PRUNED 评估失真（步53 research_tech 只
+              // 分到 8 节点 → 全盘 55.75 分）。
+              && !UNTARGETED_MEANS_ONLY_FAMILIES.has(action.family)
             ))
             .map((action) => ({
               ...action,
@@ -2968,15 +3015,23 @@
             }
           }
           if (input.currentAction?.family === "place_data") {
-            // 填数据轨时 computer 与 blueBonus（蓝科技数据位槽）并列候选：
-            // 用户 405 档"研究蓝科技→填轨→放槽"交替（blue2 槽 8 次，每次 +1 能量），
-            // 此前只返回 computer 导致 AI 研究 blue2 后从不放槽（blueBonus 0），
-            // 蓝科技收益（数据换资源槽）完全没兑现。价值由 leafValue 权衡。
-            const computer = successors.filter((action) => action.target?.target === "computer");
-            const blueBonus = successors.filter((action) => action.target?.target === "blueBonus");
-            const placementChoices = [...computer, ...blueBonus];
-            if (placementChoices.length) {
-              return bindRoute(placementChoices, input.routeTargetId, input.routePlanId);
+            // 放置数据 = 需求驱动的确定性选择（2026-08-21 用户裁定：数据够就填、
+            // 不够去拿、拿不到截断；有蓝科时选择不多、不需要暴力搜索枚举）：
+            // 统一走 selectDataPlacementChoice——按宣传/收入/钱电/牌缺口折叠出
+            // 代表选项（计算机第一排按"从左到右下一空位"单选项，blueBonus 仅在
+            // 有蓝科且对应工位资源缺口时入选），而非把 computer+blueBonus 全部
+            // 返回让搜索枚举。此前全量返回导致"第一排放置位"在每个中间节点重复
+            // 展开（data:analyze 目标链下 choose_target 766+ 节点吃掉 4096 预算
+            // 36%），主行动 research_tech 只剩 14 节点 PRUNED 评估失真。
+            const dataPlacementChoices = selectDataPlacementChoice(
+              input.branchObservation,
+              successors,
+              input.focalSeatId,
+            );
+            if (dataPlacementChoices) {
+              return dataPlacementChoices.length
+                ? bindRoute(dataPlacementChoices, input.routeTargetId, input.routePlanId)
+                : [];
             }
           }
         }
@@ -3033,16 +3088,21 @@
           String(input.routeTargetId || "").startsWith("income:gain:")
           && input.routePlanId === "income:data:computer-slot-4"
         ) {
-          // 收入链填轨也允许 blueBonus（用户交替放 computer/blueBonus 槽）。
-          const computer = successors.filter((action) => (
-            action.target?.target === "computer"
-          ));
-          const blueBonus = successors.filter((action) => (
-            action.target?.target === "blueBonus"
-          ));
-          const placementChoices = [...computer, ...blueBonus];
-          if (placementChoices.length) {
-            return bindRoute(placementChoices, input.routeTargetId, input.routePlanId);
+          // 收入链填轨（2026-08-21 用户裁定"要收入就填4"，有蓝科时选择不多
+          // 不需要暴力搜索）：走需求驱动放置选择（selectDataPlacementChoice 按
+          // 宣传/收入/钱电/牌缺口折叠出代表选项），而非把 computer+blueBonus
+          // 全部返回让搜索枚举。此前全量返回导致"第一排放置位"类单选项在每个
+          // 中间节点重复展开（data:analyze 目标链下 choose_target 916+769 节点
+          // 吃掉 4096 预算 36%），主行动 research_tech 只剩 14 节点 PRUNED 失真。
+          const dataPlacementChoices = selectDataPlacementChoice(
+            input.branchObservation,
+            successors,
+            input.focalSeatId,
+          );
+          if (dataPlacementChoices) {
+            return dataPlacementChoices.length
+              ? bindRoute(dataPlacementChoices, input.routeTargetId, input.routePlanId)
+              : [];
           }
         }
         if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {

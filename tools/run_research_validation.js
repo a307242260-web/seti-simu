@@ -182,6 +182,7 @@ function createCollector() {
     revealEvents: [],      // {step, seat, slotId, alienId}
     lastTraceOwner: new Map(),
     revealedKeys: new Set(),
+    budgetHits: [],        // 反事实搜索触顶 maxExecutionNodes 的决策（用户裁定：触碰 4096 截断要记录并在终局输出）
   };
 }
 
@@ -202,6 +203,24 @@ function collectStep(collector, stepIndex, result) {
   collector.famsBySeat[seat][fam] = (collector.famsBySeat[seat][fam] || 0) + 1;
   if (seat === "player-white" && fam === "quick_trade") collector.whiteQuickTrade += 1;
   if (seat === "player-white" && fam === "research_tech") collector.whiteResearchSteps.push(stepIndex);
+}
+
+// 采集反事实搜索触顶（executionLimitReached=true）的决策——用户裁定：4096 预算
+// 触顶必须可见，不能只看平均分/耗时。一次决策可能跑多次 evaluate（strategic 主搜
+// + control 浅搜），取最后一次主搜索诊断（决策函数先 control 后 strategic，故
+// env.getCounterfactualDiagnostics() 返回的是主搜索的触顶状态）。
+function collectBudgetHits(collector, stepIndex, result, env) {
+  const diag = env?.getCounterfactualDiagnostics?.();
+  if (!diag || diag.executionLimitReached !== true) return;
+  const pd = result?.policyDecision || {};
+  collector.budgetHits.push({
+    step: stepIndex,
+    seat: String(pd.seatId || "?"),
+    action: String(pd.actionId || ""),
+    executedNodeCount: Number(diag.executedNodeCount) || 0,
+    maxExecutionNodes: Number(diag.maxExecutionNodes) || 0,
+    frontierOriginCountByFamily: diag.frontierOriginCountByFamily || null,
+  });
 }
 
 // 从观测更新外星人时间线（trace 首放事件 / 揭示事件）。
@@ -246,6 +265,7 @@ function seedCollectorFrom(collector, source) {
     collector.revealedKeys.add(`slot${event.slotId}:${event.alienId}`);
     collector.revealEvents.push(event);
   }
+  for (const hit of source.budgetHits || []) collector.budgetHits.push(hit);
 }
 
 function seatScores(obs) {
@@ -402,6 +422,7 @@ function runValidation(options) {
       const result = env.runHeuristicPolicyDecision();
       steps += 1;
       collectStep(collector, steps, result);
+      collectBudgetHits(collector, steps, result, env);
       const obsAfter = result?.observation || env.observe();
       collectAliens(collector, steps, obsAfter, seat);
       const ps = obsAfter?.publicState || {};
@@ -465,6 +486,7 @@ function runValidation(options) {
         whiteResearchSteps: collector.whiteResearchSteps,
         traceEvents: collector.traceEvents,
         revealEvents: collector.revealEvents,
+        budgetHits: collector.budgetHits,
       },
     };
     fs.mkdirSync(RECORDS_DIR, { recursive: true });
@@ -494,6 +516,24 @@ function printSummary(record) {
   console.log(`白色 quick_trade=${metrics.whiteQuickTrade} 研究步=[${metrics.whiteResearchSteps.join(",")}]`);
   console.log(`外星人: 首放 ${metrics.traceEvents.length} 次、揭示 ${metrics.revealEvents.length} 次`);
   if (record.terminal) console.log(`终局轮=${summary.round}`);
+  // 触顶 4096 截断的决策（用户裁定必须可见）：按席位汇总 + Top 明细。
+  const hits = metrics.budgetHits || [];
+  if (hits.length) {
+    const bySeat = {};
+    for (const h of hits) bySeat[h.seat] = (bySeat[h.seat] || 0) + 1;
+    console.log(`反事实搜索触顶 ${hits.length}/${record.steps} 次决策（maxExecutionNodes 预算耗尽）按席位: ${JSON.stringify(bySeat)}`);
+    const top = [...hits].sort((a, b) => (b.executedNodeCount || 0) - (a.executedNodeCount || 0)).slice(0, 20);
+    for (const h of top) {
+      const origin = h.frontierOriginCountByFamily
+        ? Object.entries(h.frontierOriginCountByFamily)
+          .sort((a, b) => b[1] - a[1]).slice(0, 3)
+          .map(([f, n]) => `${f}×${n}`).join(" ")
+        : "";
+      console.log(`  步${h.step} ${h.seat} ${familyOf(h.action).padEnd(14)} 节点=${h.executedNodeCount}/${h.maxExecutionNodes}${origin ? ` 前沿来源: ${origin}` : ""}`);
+    }
+  } else {
+    console.log(`反事实搜索触顶: 0 次（无决策触碰 maxExecutionNodes 预算耗尽）`);
+  }
 }
 
 // ---------------------------------------------------------------------------
