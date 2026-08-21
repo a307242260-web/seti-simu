@@ -1050,14 +1050,13 @@
 
   function dataAnalyzeEligible(requirements) {
     if (!requirements) return false;
-    // 2026-08-21 用户裁定"想做但数据不够就想办法拿"：数据轨未满（第 6 位分析
-    // 前置未达成）即 active——数据够（nextStep=place_data）挂 place_data，
-    // 数据不够（nextStep=acquire_data）挂 scan/卡牌拿数据计划。此前要求"数据
-    // 够填满第一排"（heldDataCanFillFirstRow）才 eligible → 数据少时目标消失
-    // → 蓝色 scan 后不再攒数据、数据轨填不满、analyze 断（蓝 46 分）。
-    // 数据轨满（placed≥6）后目标不再 active（analyze 前置已达成）。
-    if (typeof requirements.eligible === "boolean" && requirements.eligible) return true;
-    return finite(requirements.computerPlacedCount) < 6;
+    if (typeof requirements.eligible === "boolean") return requirements.eligible;
+    const firstRowRemaining = Math.max(
+      0,
+      4 - finite(requirements.computerPlacedCount),
+    );
+    return finite(requirements.computerPlacedCount) >= 4
+      || finite(requirements.availableData) >= firstRowRemaining;
   }
 
   function rawSectorWinRequirements(observation) {
