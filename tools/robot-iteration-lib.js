@@ -548,6 +548,19 @@ const INCOME_GAIN_LABELS = {
   additionalPublicScan: "额外公共扫描",
 };
 
+// 终局计分板块公式短描述（assets/final/final_detail.md 精简，2026-08-21 用户口径：
+// 终局标记要说明标记的板块公式与槽位）
+const FINAL_FORMULA_LABELS = {
+  a1: "收入中信用点/能量较多者",
+  a2: "收入中信用点/能量/盲抽最少者",
+  b1: "3色外星痕迹最少者",
+  b2: "环绕+登陆 与 完成扇区 最少者",
+  c1: "完成任务牌数",
+  c2: "(任务+终局牌)÷2",
+  d1: "3色科技最少者",
+  d2: "科技总数÷2",
+};
+
 // 内核重放存档 replaySteps，提取 after 快照里没有的逐步信息（2026-08-21 用户口径）：
 //   1) 研究科技：研究了哪张科技（ownedTiles 新增）+ 获得的背面 bonus（研究前该堆堆顶 bonusId）
 //   2) 收入插牌：choose_card summary 为「收入 <cardId>」的步骤
@@ -583,6 +596,15 @@ function replaySaveEnriched(savePath) {
   });
   kernel.composition.inputPort.beginDrain({ metadata: { source: "report-enrich" } });
 
+  // 本局各终局板块实际使用的公式（finalScores.tiles 的 formulaId，如 d2）
+  const formulaByTile = {};
+  for (const fsItem of st0?.match?.finalScores || []) {
+    for (const t of fsItem.tiles || []) {
+      if (t.tileId && t.formulaId) formulaByTile[t.tileId] = t.formulaId;
+    }
+  }
+  const formulaForTile = (tileId) => formulaByTile[tileId] || null;
+
   function snapshot() {
     const st = kernel.composition.projection().state;
     const owned = new Map();
@@ -597,7 +619,12 @@ function replaySaveEnriched(savePath) {
     for (const [tid, stack] of Object.entries(st.tech?.stacks || {})) {
       if (stack && stack.bonusId) bonus.set(tid, stack.bonusId);
     }
-    return { owned, hands, incomes, bonus };
+    // 终局板块标记：tileId -> Set("playerColor:slotIndex:threshold")
+    const finalMarks = new Map();
+    for (const [tileId, tile] of Object.entries(st.finalScoring?.tiles || {})) {
+      finalMarks.set(tileId, new Set((tile?.marks || []).map((mk) => `${mk.playerColor}:${mk.slotIndex}:${mk.threshold}`)));
+    }
+    return { owned, hands, incomes, bonus, finalMarks };
   }
 
   for (let index = 0; index < steps.length; index += 1) {
@@ -670,6 +697,25 @@ function replaySaveEnriched(savePath) {
       const newCards = afterHand.filter((c) => !beforeHand.includes(c));
       if (newCards.length) {
         e.draw = { cardId: newCards[newCards.length - 1] };
+      }
+    }
+    // 终局板块标记（choose_target「标记 X」）：该步后某板块 marks 新增 → 槽位/阈值
+    const markMatch = /^标记 ([A-D])$/.exec(sum);
+    if (markMatch) {
+      const tileId = markMatch[1].toLowerCase();
+      const beforeMarks = before.finalMarks.get(tileId) || new Set();
+      const afterMarks = after.finalMarks.get(tileId) || new Set();
+      for (const mk of afterMarks) {
+        if (!beforeMarks.has(mk)) {
+          const [, slotIdx, threshold] = mk.split(":");
+          e.finalMark = {
+            tileId,
+            slotIndex: Number(slotIdx),
+            threshold: Number(threshold),
+            formula: formulaForTile(tileId),
+          };
+          break;
+        }
       }
     }
     if (Object.keys(e).length) enrich.set(step.stepIndex ?? index, e);
@@ -753,8 +799,8 @@ function buildActionLogReport(opts) {
       cur,
       delta: before && cur ? cur.score - before.score : null,
       enrich: enrichMap.get(step.stepIndex ?? i) || null,
-      // 终局板块标记放置（choose_target「标记 A/B/C/D」，2026-08-21 用户口径：终局时也显示一条记录）
-      finalMark: /^标记 ([A-D])$/.exec(String(step.action?.summary || ""))?.[1] || null,
+      // 终局板块标记放置（重放对比 marks 增量：板块/槽位/阈值/公式）
+      finalMark: enrichMap.get(step.stepIndex ?? i)?.finalMark || null,
       // 初始牌选择（choose_card「选择：初始牌 N」，显示在选公司那一行）
       initialCard: (() => {
         const mm = /^选择：初始牌 (\d+)$/.exec(String(step.action?.summary || ""));
@@ -881,7 +927,11 @@ function buildActionLogReport(opts) {
         const name = cardNameFor(row.enrich.draw.cardId) || row.enrich.draw.cardId;
         extras.push(`抽牌 ${name}`);
       } else if (row.finalMark) {
-        extras.push(`终局标记 ${row.finalMark}`);
+        const fm = row.finalMark;
+        const formula = fm.formula
+          ? `${fm.formula}：${FINAL_FORMULA_LABELS[fm.formula] || fm.formula}`
+          : "";
+        extras.push(`终局标记 ${fm.tileId}（第${fm.slotIndex}槽${fm.threshold ? `/${fm.threshold}分` : ""}${formula ? ` · ${formula}` : ""}）`);
       } else if (row.initialCard) {
         extras.push(`初始牌 ${row.initialCard.number}${row.initialCard.label ? `（${row.initialCard.label}）` : ""}`);
       }
