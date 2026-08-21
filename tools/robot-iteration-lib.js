@@ -693,7 +693,13 @@ function replaySaveEnriched(savePath) {
       const gains = [];
       for (const key of ["credits", "energy", "handSize", "publicity", "availableData", "additionalPublicScan"]) {
         const diff = (afterInc[key] || 0) - (beforeInc[key] || 0);
-        if (diff) gains.push(`${INCOME_GAIN_LABELS[key] || key}${diff > 0 ? "+" : ""}${diff}`);
+        if (!diff) continue;
+        if (key === "handSize") {
+          // 收入码 2 实际效果是获得一张随机牌（盲抽进手牌），不是"手牌上限+1"（2026-08-21 用户纠正）
+          gains.push(diff === 1 ? "1 张随机牌" : `${diff} 张随机牌`);
+        } else {
+          gains.push(`${INCOME_GAIN_LABELS[key] || key}${diff > 0 ? "+" : ""}${diff}`);
+        }
       }
       e.income = { cardId: sum.slice(3).trim(), gain: gains.join(" · ") || null };
     } else if (actorId && sum !== "开始初始选择" && sum !== "确认初始选择" && !/^选择公司：/.test(sum) && !/^选择：初始牌/.test(sum)) {

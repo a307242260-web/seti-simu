@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T06:32:56.346Z",
+  "builtAt": "2026-08-21T06:39:43.400Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "80c4b4fc",
+  "headCommit": "6f67818c",
   "currentBaseline": "v0",
   "worktreeDirty": true,
   "bestOf": {
@@ -723,6 +723,11 @@
   "warnings": [
     {
       "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：4545e2a4.9d4f02b4.full.json（name=v0-revert-on commit=80c4b4fc createdAt=2026-08-21T06:35:50.951Z）"
+    },
+    {
+      "kind": "orphan-record",
       "level": "info",
       "text": "未登记到任何版本：664ea780.c87830d8.quick-200.json（name=v0-revert-on commit=9d4f02b4 createdAt=2026-08-21T06:31:00.366Z）"
     },
@@ -738,6 +743,15 @@
     }
   ],
   "orphans": [
+    {
+      "file": "4545e2a4.9d4f02b4.full.json",
+      "mode": "full",
+      "name": "v0-revert-on",
+      "gitCommit": "80c4b4fc",
+      "createdAt": "2026-08-21T06:35:50.951Z",
+      "steps": 466,
+      "terminal": true
+    },
     {
       "file": "664ea780.c87830d8.quick-200.json",
       "mode": "quick-200",
