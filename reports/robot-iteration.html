@@ -52,12 +52,6 @@ td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .iter-hint{font-size:11.5px;color:var(--muted);margin:8px 12px;padding-bottom:10px}
 .summary-cell{max-width:340px}
 @media(max-width:900px){.best-grid{grid-template-columns:1fr}}
-/* ---- 完整性 ---- */
-.integrity{background:#fffdf7;border:1px solid var(--warn-line);border-radius:12px;padding:12px 16px;margin:24px 0}
-.integrity.ok{background:#f5fbf7;border-color:#b7e0c4}
-.integrity h3{margin:0 0 8px}
-.warn-item{font-size:12.5px;margin:3px 0;color:#7a5b00}
-.warn-item.warn{color:#b3261e}
 footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
 @media(max-width:900px){.best-grid{grid-template-columns:1fr}}
 </style>
@@ -82,9 +76,7 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
     <div class="iter-table-wrap" id="iter-container"></div>
   </section>
 
-  <!-- 数据完整性 -->
-  <section class="integrity" id="integrity"></section>
-
+  <!-- 数据完整性审计已移至命令行：node tools/robot_iterate.js check -->
   <footer id="foot"></footer>
 </main>
 
@@ -92,13 +84,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:16:22.670Z",
+  "builtAt": "2026-08-21T05:17:09.535Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "f2af17e1",
+  "headCommit": "29d79234",
   "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
@@ -530,7 +522,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T04:24:46.131Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": null,
+          "note": "策略接口回退实验（工作树回退后运行）：记录 gitCommit=ec5cfb9f（脏树运行），版本 head 登记为 e23b710c（回退提交）；无存档，无行动级复盘（历史欠账）",
           "scores": {
             "player-blue": 86,
             "player-green": 62,
@@ -1417,7 +1409,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15295 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 15266 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1642,8 +1634,8 @@ const REGISTRY = {
   "warnings": [
     {
       "kind": "commit-mismatch",
-      "level": "warn",
-      "text": "v27strategy-reverted 的记录 6062da9f.ec5cfb9f.full.json gitCommit=ec5cfb9f 不在版本 commits（e23b710c）内——运行于脏工作树或归属错误，请核对 versions.json"
+      "level": "info",
+      "text": "v27strategy-reverted 的记录 6062da9f.ec5cfb9f.full.json gitCommit=ec5cfb9f 不在版本 commits（e23b710c）内——运行于脏工作树或归属错误（记录注记已说明，视为已知例外）"
     },
     {
       "kind": "commit-mismatch",
@@ -1817,33 +1809,12 @@ function iterTable(){
     <p class="iter-hint">历史版本信息：<code>node tools/robot_iterate.js review --show &lt;id&gt;</code> / <code>--compare &lt;a&gt;..&lt;b&gt;</code></p>`;
 }
 
-// ---- 完整性 ----
-function integrityPanel(){
-  const warns=REGISTRY.warnings.filter(w=>w.level==="warn");
-  const infos=REGISTRY.warnings.filter(w=>w.level==="info");
-  const box=document.getElementById("integrity");
-  const cls=warns.length?"":" ok";
-  let html=`<h3>数据完整性审计 ${warns.length?`· ${warns.length} 个警告`:""}</h3>`;
-  const item=(w)=>`<div class="warn-item ${w.level}">${w.level==="warn"?"⚠ ":"· "}${esc(w.text)}</div>`;
-  if(warns.length) html+=warns.map(item).join("");
-  else html+='<div class="warn-item">无警告：所有固定盘面全盘记录均已归属版本，provenance 匹配，声明记录齐全。</div>';
-  if(infos.length) html+=`<div style="margin-top:6px">${infos.map(item).join("")}</div>`;
-  if(REGISTRY.orphans&&REGISTRY.orphans.length){
-    html+=`<div style="margin-top:8px"><div class="warn-item">未登记到任何版本的固定盘面记录（${REGISTRY.orphans.length}）：</div>`;
-    html+=REGISTRY.orphans.map(o=>`<div class="warn-item">· <code>${esc(o.file)}</code> ${esc(o.mode)} name=${esc(o.name||"—")} commit=${esc(o.gitCommit||"—")}</div>`).join("");
-    html+="</div>";
-  }
-  box.className="integrity"+cls;
-  box.innerHTML=html;
-}
-
 // ---- 初始化 ----
 function init(){
   document.getElementById("board-name").textContent=REGISTRY.board.name||"";
   document.getElementById("board-seed").textContent=REGISTRY.board.seed||"";
   bestGrid();
   iterTable();
-  integrityPanel();
   const head=REGISTRY.versions.find(v=>v.isHead);
   document.getElementById("foot").innerHTML=
     `生成时间 ${esc(REGISTRY.builtAt)} · HEAD ${esc(REGISTRY.headCommit)}${REGISTRY.worktreeDirty?" · <span style='color:#b3261e'>工作树有未提交改动</span>":""}`+

@@ -24,7 +24,7 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 | `reports/research/*.json` | 调研记录（`run_research_validation.js` 产物，指纹含 gitCommit） |
 | `seti-saves/*.json` | 存档（可选）；有存档的终局运行可读完整终局分、可生成复盘报告 |
 | `reports/iteration/registry.json` | 构建产物：版本+结果+best-of+审计合并后的数据 |
-| `reports/robot-iteration.html` | 总览页：顶部最佳卡 + 当前 baseline 迭表（**历史版本折叠归档**）+ 完整性面板；数据内嵌可离线打开 |
+| `reports/robot-iteration.html` | 总览页：顶部最佳卡 + 当前 baseline 迭表（**历史版本折叠归档**）；数据内嵌可离线打开 |
 | `reports/iteration/<vid>/<key>.action-log.html` | 逐步复盘报告 |
 | `tools/robot_iterate.js` | 标准迭代入口 CLI |
 | `tools/robot-iteration-lib.js` | 核心库（扫描/富化/best-of/审计/报告/渲染） |
@@ -167,7 +167,7 @@ node tools/robot_iterate.js review --compare <a>..<b>  # 两版本分数/步数/
 node tools/robot_iterate.js review --best           # 固定盘面最佳（白分/均分/耗时）
 ```
 
-## 7. 完整性审计（check / 页面底部面板）
+## 7. 完整性审计（命令行 check）
 
 | 级别 | 检查项 |
 |---|---|
