@@ -1732,8 +1732,10 @@ function observation({
     rootObservation,
     legalActions: [launch],
   }).map((target) => target.targetId), [
-    "land:mars:planet:",
-  ], "最近主星第一奖励格已被占领时，应跳到下一颗第一格为空的主星");
+    "land:venus:planet:",
+  ], "2026-08-21 迭代（用户裁定）：不再过滤第一奖励格被占的目标——金星（近、1步）"
+    + "即使第一格被占也保留为最近登陆候选，是否值得由估值打分权衡（后续格价值 vs 距离），"
+    + "不应一刀切跳到第一格为空但更远的火星");
 }
 
 {

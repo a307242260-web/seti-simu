@@ -2172,8 +2172,12 @@
     ]);
     const mainPlanetGoals = goals.filter((goal) => (
       String(goal.endpointTarget?.type || "planet") !== "satellite"
-      && goal.firstRewardSlotOpen !== false
     ));
+    // 2026-08-21 迭代（用户裁定）：不再过滤 firstRewardSlotOpen=false 的目标——
+    // 第一环绕/登陆奖励格被占时，后续格仍有价值（如金星后续格 +6分+收入、0 移动
+    // 可立即环绕），是否值得做由反事实估值打分权衡（近的后续格 vs 远的第一格），
+    // 不应在目标选择时一刀切丢弃。此前过滤导致免电盘面蓝色丢近目标（金星第一格
+    // 被占 → 被迫去海王星 move×14 到不了）→ 探测链废 → 47 分。
     const nearestOrbit = mainPlanetGoals
       .filter((goal) => probeEndpointFamily(goal) === "orbit")
       .sort(compareProbeDistance)[0] || null;
