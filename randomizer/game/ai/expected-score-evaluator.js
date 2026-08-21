@@ -47,10 +47,12 @@
     "runezu_face_symbol", "complete_task",
   ]));
   // 树内 untargeted 枚举排除的手段动作（2026-08-21 用户裁定"无目标 quick_trade/
-  // card_corner 非法"贯彻到搜索树内层）：这两类动作只有目标缺口时才做（经目标
-  // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。
+  // card_corner 非法"贯彻到搜索树内层）：这几类动作只有目标缺口时才做（经目标
+  // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。place_data
+  // 同属逻辑触发式（用户裁定：需要拿什么资源填数据拿/数据溢出填上拿资源——
+  // 有触发时经 selectDataPlacementChoice 进 targeted，无触发不枚举）。
   const UNTARGETED_MEANS_ONLY_FAMILIES = Object.freeze(new Set([
-    "quick_trade", "card_corner",
+    "quick_trade", "card_corner", "place_data",
   ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
   // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终
@@ -1854,25 +1856,22 @@
     const dataRequirements = rawDataAnalyzeRequirements(input.rootObservation);
     if (dataAnalyzeEligible(dataRequirements)) {
       if (["place_data", "analyze"].includes(dataRequirements.nextStep)) {
-        const requiredAction = legalActions.find((action) => (
-          action.family === dataRequirements.nextStep
-        ));
-        // data:analyze 目标候选 = 统一 place_data 触发判定（溢出/缺口→蓝槽、
-        // 目标 active→填第一排）+ requiredAction（place_data/analyze）兜底。
-        // 分析行动前填第二行/第一排的选择由 selectDataPlacementChoice 一次判定
-        // （用户裁定：数据够就填、有独立需求填蓝槽、目标 active 填第一排）。
+        // data:analyze 目标候选 = 统一 place_data 触发判定（2026-08-21 用户裁定：
+        // 数据够就填/有独立需求填蓝槽/目标 active 填第一排）。**不把 place_data
+        // 无条件挂为候选**（此前 requiredAction 兜底导致 data:analyze 目标每个
+        // 分支都执行 place_data，实测 121 节点）；只有触发时才返回代表选项。
+        // nextStep=analyze 时 requiredAction=analyze 由 analyze 分支承担。
         const placement = selectDataPlacementChoice(
           input.rootObservation,
           legalActions,
           input.focalSeatId,
         ) || [];
+        const analyzeAction = dataRequirements.nextStep === "analyze"
+          ? (legalActions.find((action) => action.family === "analyze") || null)
+          : null;
         const candidates = [
           ...(placement.length ? placement : []),
-          ...(requiredAction ? [requiredAction] : selectDataResourcePreparation(
-            input.rootObservation,
-            legalActions,
-            input.focalSeatId,
-          )),
+          ...(analyzeAction ? [analyzeAction] : []),
         ];
         if (candidates.length) {
           add(DATA_ANALYZE_ROUTE_TARGET, `data:${dataRequirements.nextStep}`, candidates);
@@ -1989,17 +1988,27 @@
         }
         let actions = [];
         if (plan.kind === "data") {
-          const direct = legalActions.find((action) => (
-            action.family === plan.nextStep?.family
-          ));
-          actions = direct
-            ? [direct]
-            : selectMinimumCostResourcePreparation(
-              input.rootObservation,
-              plan.nextCost || {},
-              legalActions,
-              input.focalSeatId,
-            );
+          // income 目标的 data 计划 = 统一 place_data 触发判定（2026-08-21 用户
+          // 裁定：要收入填数据拿；收入目标不耦合 blueBonus——只填第一排 computer
+          // 4 格）。此前直接把 place_data 挂为候选，income 目标每个分支都执行
+          // place_data（实测 184 节点）；触发式判定仅在"数据够/溢出/缺口"时返回
+          // 代表选项，否则返回空（目标暂不可行，不展开）。
+          const placement = selectDataPlacementChoice(
+            input.rootObservation,
+            legalActions,
+            input.focalSeatId,
+          ) || [];
+          if (placement.length) {
+            const computer = placement.find((action) => (
+              action.target?.target === "computer"
+            ));
+            // 收入目标只填第一排（不耦合 blueBonus）。
+            actions = computer
+              ? [{ ...computer, targetEquivalentChoiceCount: placement.length - 1 }]
+              : [];
+          } else {
+            actions = [];
+          }
         } else if (plan.kind === "industry") {
           actions = legalActions.filter((action) => (
             action.family === "industry"
