@@ -48,11 +48,13 @@
   ]));
   // 树内 untargeted 枚举排除的手段动作（2026-08-21 用户裁定"无目标 quick_trade/
   // card_corner 非法"贯彻到搜索树内层）：这几类动作只有目标缺口时才做（经目标
-  // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。place_data
-  // 同属逻辑触发式（用户裁定：需要拿什么资源填数据拿/数据溢出填上拿资源——
-  // 有触发时经 selectDataPlacementChoice 进 targeted，无触发不枚举）。
+  // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。
+  // **place_data 不在此列**（2026-08-21 实证）：把它从 untargeted 排除后，主行动
+  // （play_card 等）评估链里缺少"填数据拿资源"后继 → 评估漂移（步23 白色改选
+  // launch、全盘 84.5→57 崩）。place_data 是合法主行动后继（溢出/缺口时填），
+  // 由根目录 data:overflow 独立目标 + 触发判定把关，untargeted 枚举保留。
   const UNTARGETED_MEANS_ONLY_FAMILIES = Object.freeze(new Set([
-    "quick_trade", "card_corner", "place_data",
+    "quick_trade", "card_corner",
   ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
   // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终
@@ -2033,27 +2035,21 @@
         }
         let actions = [];
         if (plan.kind === "data") {
-          // income 目标的 data 计划 = 统一 place_data 触发判定（2026-08-21 用户
-          // 裁定：要收入填数据拿；收入目标不耦合 blueBonus——只填第一排 computer
-          // 4 格）。此前直接把 place_data 挂为候选，income 目标每个分支都执行
-          // place_data（实测 184 节点）；触发式判定仅在"数据够/溢出/缺口"时返回
-          // 代表选项，否则返回空（目标暂不可行，不展开）。
-          const placement = selectDataPlacementChoice(
-            input.rootObservation,
-            legalActions,
-            input.focalSeatId,
-          ) || [];
-          if (placement.length) {
-            const computer = placement.find((action) => (
-              action.target?.target === "computer"
-            ));
-            // 收入目标只填第一排（不耦合 blueBonus）。
-            actions = computer
-              ? [{ ...computer, targetEquivalentChoiceCount: placement.length - 1 }]
-              : [];
-          } else {
-            actions = [];
-          }
+          // income 目标的 data 计划：直接挂 nextStep 动作（place_data）候选。
+          // 触发式收敛（selectDataPlacementChoice 只返回触发选项）曾改变搜索树
+          // 评估链导致全局分叉（步23 白色 play_card→launch、全盘 84.5→57），
+          // 回退为 unified 行为——候选挂上，由搜索本身评估。
+          const direct = legalActions.find((action) => (
+            action.family === plan.nextStep?.family
+          ));
+          actions = direct
+            ? [direct]
+            : selectMinimumCostResourcePreparation(
+              input.rootObservation,
+              plan.nextCost || {},
+              legalActions,
+              input.focalSeatId,
+            );
         } else if (plan.kind === "industry") {
           actions = legalActions.filter((action) => (
             action.family === "industry"
