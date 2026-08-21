@@ -512,6 +512,32 @@ const SCORE_SOURCE_LABELS = {
   industryEffectScore: "行业效果",
 };
 
+// 初始牌编号 → 效果描述（randomizer/game/initial-cards.js INITIAL_CARD_EFFECTS label 同源，
+// 2026-08-21 用户口径：选择的初始牌显示在选公司那一行）
+const INITIAL_CARD_LABELS = {
+  1: "天狼星A扫描两次",
+  2: "3分、1信用点、1盲抽",
+  3: "3分、1盲抽、1宣传、火星环绕器",
+  4: "3分、1能量、1宣传、金星环绕器",
+  5: "4分、2宣传、土星环绕器",
+  6: "织女一扫描一次、1额外公共扫描",
+  7: "1数据收入、海王星环绕器",
+  8: "2分、2信用点、1宣传、水星环绕器",
+  9: "1盲抽收入、天王星环绕器",
+  10: "外星人2黄色痕迹",
+  11: "外星人2粉色痕迹",
+  12: "巴纳德扇区扫描两次",
+  13: "绘架座β扫描两次",
+  14: "3分、1能量、1盲抽",
+  15: "4分、1额外公共扫描、1宣传",
+  16: "3分、3宣传",
+  17: "室女座61扫描两次",
+  18: "南河三扫描两次",
+  19: "比邻星扫描两次",
+  20: "开普勒22扫描两次",
+  21: "3分、1数据、1宣传、木星环绕器",
+};
+
 // 内核重放存档 replaySteps，提取 after 快照里没有的逐步信息（2026-08-21 用户口径）：
 //   1) 研究科技：研究了哪张科技（ownedTiles 新增）+ 获得的背面 bonus（研究前该堆堆顶 bonusId）
 //   2) 收入插牌：choose_card summary 为「收入 <cardId>」的步骤
@@ -700,6 +726,11 @@ function buildActionLogReport(opts) {
       enrich: enrichMap.get(step.stepIndex ?? i) || null,
       // 终局板块标记放置（choose_target「标记 A/B/C/D」，2026-08-21 用户口径：终局时也显示一条记录）
       finalMark: /^标记 ([A-D])$/.exec(String(step.action?.summary || ""))?.[1] || null,
+      // 初始牌选择（choose_card「选择：初始牌 N」，显示在选公司那一行）
+      initialCard: (() => {
+        const mm = /^选择：初始牌 (\d+)$/.exec(String(step.action?.summary || ""));
+        return mm ? { number: Number(mm[1]), label: INITIAL_CARD_LABELS[Number(mm[1])] || null } : null;
+      })(),
     });
     if (cur) prev[actor] = cur;
   }
@@ -827,6 +858,12 @@ function buildActionLogReport(opts) {
     }
     if (finalMarks.length) {
       lists.push(`<div class="quick-list">终局标记：${escapeHtml(finalMarks.join(" · "))}</div>`);
+    }
+    // 初始牌选择（2026-08-21 用户口径：与选公司同一行显示）
+    const initialCards = g.rows.map((row) => row.initialCard).filter(Boolean);
+    if (initialCards.length) {
+      const names = initialCards.map((c) => `${c.number}${c.label ? `（${c.label}）` : ""}`);
+      lists.push(`<div class="quick-list">初始牌：${escapeHtml(names.join(" · "))}</div>`);
     }
     return `<div class="main-act">${mainTxt}</div>${lists.join("")}`;
   }

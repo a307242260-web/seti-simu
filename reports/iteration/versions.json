@@ -7,8 +7,8 @@
   },
   "versions": [
     {
-      "id": "v26-unified",
-      "name": "v26 统一搜索（on/off 合并）",
+      "id": "v0",
+      "name": "v0 基线（原 v26-unified 统一搜索）",
       "date": "2026-08-18",
       "baseline": null,
       "head": "53abbd5a",
@@ -18,7 +18,7 @@
         "dd5da46e",
         "53abbd5a"
       ],
-      "summary": "机器人新时代基线（2026-08-21 用户裁定）：v26 统一搜索（on/off 合并），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v26-unified 重新叠加。",
+      "summary": "机器人新时代基线（2026-08-21 用户裁定，2026-08-21 重命名为 v0）：统一搜索（on/off 合并，原 v26-unified），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v0 重新叠加。",
       "records": {
         "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json": {},
         "d2c50ffe.53abbd5.full.json": {},

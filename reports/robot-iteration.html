@@ -78,20 +78,20 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:52:18.826Z",
+  "builtAt": "2026-08-21T05:55:38.778Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "52fccc8b",
-  "currentBaseline": "v26-unified",
+  "headCommit": "18d08474",
+  "currentBaseline": "v0",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
       "value": 105,
-      "versionId": "v26-unified",
-      "name": "v26 统一搜索（on/off 合并）",
+      "versionId": "v0",
+      "name": "v0 基线（原 v26-unified 统一搜索）",
       "runKey": "51a3727a.53abbd5.full",
       "provenance": "save-final",
       "steps": 521,
@@ -101,8 +101,8 @@ const REGISTRY = {
     },
     "bestAvg": {
       "value": 89,
-      "versionId": "v26-unified",
-      "name": "v26 统一搜索（on/off 合并）",
+      "versionId": "v0",
+      "name": "v0 基线（原 v26-unified 统一搜索）",
       "runKey": "d2c50ffe.53abbd5.full",
       "provenance": "save-final",
       "steps": 557,
@@ -111,8 +111,8 @@ const REGISTRY = {
       "scoreSourceNote": null
     },
     "fastestWall": {
-      "versionId": "v26-unified",
-      "name": "v26 统一搜索（on/off 合并）",
+      "versionId": "v0",
+      "name": "v0 基线（原 v26-unified 统一搜索）",
       "runKey": "d2c50ffe.53abbd5.full",
       "provenance": "save-final",
       "steps": 557,
@@ -121,8 +121,8 @@ const REGISTRY = {
       "scoreSourceNote": null
     },
     "fastestPerStep": {
-      "versionId": "v26-unified",
-      "name": "v26 统一搜索（on/off 合并）",
+      "versionId": "v0",
+      "name": "v0 基线（原 v26-unified 统一搜索）",
       "runKey": "d2c50ffe.53abbd5.full",
       "provenance": "save-final",
       "steps": 557,
@@ -138,8 +138,8 @@ const REGISTRY = {
           "color": "蓝",
           "score": 107
         },
-        "versionId": "v26-unified",
-        "name": "v26 统一搜索（on/off 合并）",
+        "versionId": "v0",
+        "name": "v0 基线（原 v26-unified 统一搜索）",
         "runKey": "d2c50ffe.53abbd5.full",
         "provenance": "save-final",
         "steps": 557,
@@ -154,8 +154,8 @@ const REGISTRY = {
           "color": "白",
           "score": 105
         },
-        "versionId": "v26-unified",
-        "name": "v26 统一搜索（on/off 合并）",
+        "versionId": "v0",
+        "name": "v0 基线（原 v26-unified 统一搜索）",
         "runKey": "51a3727a.53abbd5.full",
         "provenance": "save-final",
         "steps": 521,
@@ -170,8 +170,8 @@ const REGISTRY = {
           "color": "蓝",
           "score": 68
         },
-        "versionId": "v26-unified",
-        "name": "v26 统一搜索（on/off 合并）",
+        "versionId": "v0",
+        "name": "v0 基线（原 v26-unified 统一搜索）",
         "runKey": "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full",
         "provenance": "record",
         "steps": 557,
@@ -183,8 +183,8 @@ const REGISTRY = {
   },
   "versions": [
     {
-      "id": "v26-unified",
-      "name": "v26 统一搜索（on/off 合并）",
+      "id": "v0",
+      "name": "v0 基线（原 v26-unified 统一搜索）",
       "date": "2026-08-18",
       "baseline": null,
       "head": "53abbd5a",
@@ -210,8 +210,8 @@ const REGISTRY = {
           "subject": "收口记录：统一搜索目的引导版+外星链已迁移主分支（on 均分 70），打牌价值/R3R4 资源流转根因定位待实现；全量测试阻塞于并发 initial-setup 中间状态"
         }
       ],
-      "summary": "机器人新时代基线（2026-08-21 用户裁定）：v26 统一搜索（on/off 合并），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v26-unified 重新叠加。",
-      "diffStat": "215 files changed, 11790 insertions(+), 1173129 deletions(-)",
+      "summary": "机器人新时代基线（2026-08-21 用户裁定，2026-08-21 重命名为 v0）：统一搜索（on/off 合并，原 v26-unified），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v0 重新叠加。",
+      "diffStat": "215 files changed, 11827 insertions(+), 1173129 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -417,7 +417,7 @@ const REGISTRY = {
             }
           },
           "savePath": "seti-saves/seti-save-research-on-head-full-v284.json",
-          "reportPath": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
+          "reportPath": "reports/iteration/v0/d2c50ffe.53abbd5.full.action-log.html",
           "reportExists": true
         },
         {
@@ -604,7 +604,7 @@ const REGISTRY = {
             }
           },
           "savePath": "seti-saves/seti-save-research-off-head-clean-full-v264.json",
-          "reportPath": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+          "reportPath": "reports/iteration/v0/51a3727a.53abbd5.full.action-log.html",
           "reportExists": true
         }
       ],
@@ -617,12 +617,12 @@ const REGISTRY = {
         "reportLinks": [
           {
             "runKey": "d2c50ffe.53abbd5.full",
-            "path": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
+            "path": "reports/iteration/v0/d2c50ffe.53abbd5.full.action-log.html",
             "mode": "full"
           },
           {
             "runKey": "51a3727a.53abbd5.full",
-            "path": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+            "path": "reports/iteration/v0/51a3727a.53abbd5.full.action-log.html",
             "mode": "full"
           }
         ]
@@ -633,7 +633,7 @@ const REGISTRY = {
     {
       "kind": "missing-save",
       "level": "info",
-      "text": "v26-unified 的记录 01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
+      "text": "v0 的记录 01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "dirty",
