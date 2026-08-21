@@ -950,14 +950,11 @@
     const targetId = String(input.targetId || "");
     if (!action || !targetId) return false;
     if (targetId === DATA_ANALYZE_ROUTE_TARGET) {
-      // data:analyze 目标 = "数据轨推进一步"（2026-08-21 用户裁定：数据够就填、
-      // 填完收束——目标决定填哪里是确定性的，填一次算一次推进，由下一次决策
-      // 重新绑定目标）。place_data（填第一排/蓝槽）与 analyze（分析解锁）都算
-      // 完成一次目标推进：目标完成后当前搜索路线收束，不再在同一搜索树内绕圈
-      // 重放 place_data→choose_target（此前只认 analyze → 填数据后目标永远
-      // active → 每个分支都重新绑定 data:analyze → 无限循环，实测 data:analyze
-      // 占 87% 执行节点、主行动 research_tech 只剩 14 节点 PRUNED 失真）。
-      return action.family === "analyze" || action.family === "place_data";
+      // data:analyze 目标完成 = analyze 已执行（v4 语义）：place_data 填数据
+      // **不算完成**——数据轨推进由需求驱动（用户裁定"有目标才填、数据不够想
+      // 办法拿"），填到第 6 位解锁 analyze 才完成。v4（f6e4c887）即此语义，
+      // 全盘 94.25/275s 无绕圈。
+      return action.family === "analyze";
     }
     if (targetId === `decision:${action.actionId}`) return true;
     if (targetId.startsWith("card:resolve:")) {
@@ -1053,13 +1050,14 @@
 
   function dataAnalyzeEligible(requirements) {
     if (!requirements) return false;
-    if (typeof requirements.eligible === "boolean") return requirements.eligible;
-    const firstRowRemaining = Math.max(
-      0,
-      4 - finite(requirements.computerPlacedCount),
-    );
-    return finite(requirements.computerPlacedCount) >= 4
-      || finite(requirements.availableData) >= firstRowRemaining;
+    // 2026-08-21 用户裁定"想做但数据不够就想办法拿"：数据轨未满（第 6 位分析
+    // 前置未达成）即 active——数据够（nextStep=place_data）挂 place_data，
+    // 数据不够（nextStep=acquire_data）挂 scan/卡牌拿数据计划。此前要求"数据
+    // 够填满第一排"（heldDataCanFillFirstRow）才 eligible → 数据少时目标消失
+    // → 蓝色 scan 后不再攒数据、数据轨填不满、analyze 断（蓝 46 分）。
+    // 数据轨满（placed≥6）后目标不再 active（analyze 前置已达成）。
+    if (typeof requirements.eligible === "boolean" && requirements.eligible) return true;
+    return finite(requirements.computerPlacedCount) < 6;
   }
 
   function rawSectorWinRequirements(observation) {
@@ -1119,13 +1117,12 @@
     return match ? Number(match[1]) : null;
   }
 
-  // place_data 统一逻辑触发式判定（2026-08-21 用户裁定：place_data 与
-  // quick_trade/card_corner 一样是"需要了再做"的手段动作——需要拿什么资源填
-  // 数据拿；想要收入填数据拿；想要蓝标填数据拿；数据溢出了填上拿一些资源；
-  // 一般数据填钱/电是纯赚）。触发优先级：
-  //   1. 数据溢出（可放数据 ≥ 第一排剩余槽数）→ 填（否则数据浪费）
-  //   2. 缺钱(≤1)→blue1 / 缺电(≤1)→blue2 / 缺牌(≤1)→blue3（纯赚，宣传不需要）
-  //   3. 目标 active（income/data:analyze 等）→ 填第一排 computer
+  // place_data 需求型触发判定（2026-08-21 用户裁定：place_data 是需求型行动——
+  // 能带来资源/收入/蓝色踪迹/分数，有这个目标的时候填上对应的数据去做；想做但
+  // 数据不够，就想办法拿）。触发优先级：
+  //   1. 缺钱(≤1)→blue1 / 缺电(≤1)→blue2 / 缺牌(≤1)→blue3（纯赚，宣传不需要）
+  //   2. 数据溢出（可放数据 > 计算机剩余槽位）→ 填（数据多了不浪费，拿资源）
+  //   3. 目标 active（income/data:analyze 下被调用）→ 填第一排 computer
   // 返回：null=非放置决策；[]=有放置但无触发（不填，收束）；[代表]=填哪。
   // 单选代表折叠（targetEquivalentChoiceCount），不展开搜索枚举。
   function selectDataPlacementChoice(observation, successors, seatId) {
@@ -1134,8 +1131,9 @@
     ));
     if (!dataChoices.length) return null;
     const assets = resourceFactsOf(observation, seatId);
+    const availableData = finite(assets.availableData);
+    if (availableData <= 0) return [];
     const computer = dataChoices.find((action) => action.target?.target === "computer") || null;
-    const computerSlot = computer ? computerSlotOf(computer) : null;
     const blueBonuses = dataChoices.filter((action) => action.target?.target === "blueBonus");
     const blueOf = (tileId) => blueBonuses.find((action) => (
       blueTileOfSlot(observation, action.target?.blueSlot, seatId) === tileId
@@ -1145,35 +1143,34 @@
         ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
         : [primary]
     );
-    const availableData = finite(assets.availableData);
-    // 1. 数据溢出 → 填（拿资源/腾数据池，纯赚）。第一排 4 格，剩余槽数 =
-    //    4 - 已放数；可放数据 ≥ 剩余槽数说明放完仍有余 → 溢出。
-    const firstRowRemaining = Math.max(
-      0,
-      4 - finite(observation?.outcomeProjection?.progress?.dataProgress?.computerPlacedCount),
+    // 1. 缺钱/电/牌 → 对应蓝槽（纯赚）。
+    if (finite(assets.credits) <= 1) {
+      const blue1 = blueOf("blue1");
+      if (blue1) return foldOthers(blue1, blueBonuses);
+    }
+    if (finite(assets.energy) <= 1) {
+      const blue2 = blueOf("blue2");
+      if (blue2) return foldOthers(blue2, blueBonuses);
+    }
+    if (finite(assets.ordinaryCards) <= 1) {
+      const blue3 = blueOf("blue3");
+      if (blue3) return foldOthers(blue3, blueBonuses);
+    }
+    // 2. 数据溢出（可放数据 > 计算机剩余槽位，放完仍有余）→ 填（数据不浪费）。
+    //    计算机共 6 位（ANALYZE_REQUIRED_COMPUTER_SLOT=6）。
+    const placedCount = finite(
+      observation?.outcomeProjection?.progress?.dataProgress?.computerPlacedCount,
     );
-    if (availableData > 0 && availableData > firstRowRemaining) {
+    const remainingSlots = Math.max(0, 6 - placedCount);
+    if (availableData > remainingSlots) {
       const blue1 = blueOf("blue1");
       if (blue1) return foldOthers(blue1, blueBonuses);
       const blue2 = blueOf("blue2");
       if (blue2) return foldOthers(blue2, blueBonuses);
       if (computer) return [computer];
     }
-    // 2. 缺钱/电/牌 → 对应蓝槽（纯赚）。
-    if (availableData > 0 && finite(assets.credits) <= 1) {
-      const blue1 = blueOf("blue1");
-      if (blue1) return foldOthers(blue1, blueBonuses);
-    }
-    if (availableData > 0 && finite(assets.energy) <= 1) {
-      const blue2 = blueOf("blue2");
-      if (blue2) return foldOthers(blue2, blueBonuses);
-    }
-    if (availableData > 0 && finite(assets.ordinaryCards) <= 1) {
-      const blue3 = blueOf("blue3");
-      if (blue3) return foldOthers(blue3, blueBonuses);
-    }
-    // 3. 目标 active（income:gain / data:analyze 下被调用）→ 填第一排 computer。
-    if (availableData > 0 && computer) return [computer];
+    // 3. 目标 active（income/data:analyze 下被调用）→ 填第一排 computer。
+    if (computer) return [computer];
     return [];
   }
 
