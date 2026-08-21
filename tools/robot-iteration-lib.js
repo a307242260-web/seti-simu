@@ -406,10 +406,13 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
         (c) => recCommit.startsWith(c) || c.startsWith(recCommit),
       );
       if (!matched && recCommit && recCommit !== "dirty") {
+        // 记录注记（versions.json records[file].note）已写明脏树运行等例外时降为 info；
+        // 未解释的 provenance 不匹配保持 warn（防版本混淆，用户核心诉求）
+        const explained = Boolean(r.note);
         warnings.push({
           kind: "commit-mismatch",
-          level: "warn",
-          text: `${v.id} 的记录 ${r.recordFile} gitCommit=${recCommit} 不在版本 commits（${v.commits?.join(",") || "无"}）内——运行于脏工作树或归属错误，请核对 versions.json`,
+          level: explained ? "info" : "warn",
+          text: `${v.id} 的记录 ${r.recordFile} gitCommit=${recCommit} 不在版本 commits（${v.commits?.join(",") || "无"}）内——运行于脏工作树或归属错误${explained ? "（记录注记已说明，视为已知例外）" : "，请核对 versions.json"}`,
         });
       }
     }
@@ -437,7 +440,9 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
     }
   }
   // 无存档或有存档但缺复盘报告（2026-08-21 用户口径：每个实验必须有完整复盘报告；
-  // 评估档 = full 或 ≥100 步；5/10 步冒烟测试豁免）
+  // 评估档 = full 或 ≥100 步；5/10 步冒烟测试豁免。
+  // 历史无存档实验接受记录级指标（info 提示，2026-08-21 用户拍板不补跑）；
+  // 有存档却缺报告必须 warn（build --reports 立即可修复）。）
   for (const v of versions) {
     for (const r of resolvedMap[v.id] || []) {
       if (r.missingRecord) continue;
@@ -447,8 +452,8 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
       if (!saveAbs || !fs.existsSync(saveAbs)) {
         warnings.push({
           kind: "missing-save",
-          level: "warn",
-          text: `${v.id} 的记录 ${r.recordFile} 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）`,
+          level: "info",
+          text: `${v.id} 的记录 ${r.recordFile} 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）`,
         });
         continue;
       }

@@ -126,10 +126,14 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
 
 ## 5. 逐步复盘报告（每个实验的完整复盘记录）
 
-**硬规矩（2026-08-21 用户口径）**：每个实验都必须有完整复盘报告。跑验证时
-`run_research_validation` 默认写存档（不要 `--no-save`），登记版本后
-`build --reports` 即从存档纯重放生成行动级复盘报告——没有存档的实验没有行动级
-复盘（`check` 列为 warn，需要补跑生成存档）。
+**硬规矩（2026-08-21 用户口径）**：标准迭代入口 `robot_iterate run` **默认**产出完整复盘——
+跑验证默认写存档（不经 `--no-save`）→ 自动登记版本 → 从存档纯重放生成行动级复盘报告
+→ run 结束打印报告路径；无存档时显式警告。`build --reports` 可补齐历史缺报告记录。
+
+历史欠账（2026-08-21 用户拍板**不补跑**）：5 个评估实验（v27strategy-reverted 479 步 /
+newfast-recovery 321 步 / newfast A/B 206+230 步 / v26 on-baseline quick-200）当时未存
+存档，无行动级复盘，审计列为 info 提示（记录 JSON 仍有行动族分布/外星时间线可复盘）；
+**有存档却缺报告仍是 warn**（`build --reports` 立即可修复）。
 
 生成方式：`node tools/robot_iterate.js build --reports`（为所有有存档但缺报告的记录补齐；
 报告模板/聚合逻辑改动后用 `--force-reports` 强制重新生成全部报告）。**纯重放存档

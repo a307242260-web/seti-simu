@@ -17,7 +17,7 @@
       ],
       "summary": "expected-score-evaluator/production-kernel 回退 d347e658（撤销 de879058+8b7cf3b6 打牌价值），保留协调器/计划复用/end_turn 特例。479 步/均 72.75（完整口径）。",
       "records": {
-        "6062da9f.ec5cfb9f.full.json": {}
+        "6062da9f.ec5cfb9f.full.json": { "note": "策略接口回退实验（工作树回退后运行）：记录 gitCommit=ec5cfb9f（脏树运行），版本 head 登记为 e23b710c（回退提交）；无存档，无行动级复盘（历史欠账）" }
       },
       "roadmap": null
     },

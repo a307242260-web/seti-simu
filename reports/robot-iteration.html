@@ -92,13 +92,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:11:27.712Z",
+  "builtAt": "2026-08-21T05:16:22.670Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "013c86f7",
+  "headCommit": "f2af17e1",
   "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
@@ -1417,7 +1417,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15300 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 15295 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1647,8 +1647,8 @@ const REGISTRY = {
     },
     {
       "kind": "commit-mismatch",
-      "level": "warn",
-      "text": "newfast-recovery 的记录 25bdb5e9.9e75c9cd.full.json gitCommit=9e75c9cd 不在版本 commits（ec5cfb9f）内——运行于脏工作树或归属错误，请核对 versions.json"
+      "level": "info",
+      "text": "newfast-recovery 的记录 25bdb5e9.9e75c9cd.full.json gitCommit=9e75c9cd 不在版本 commits（ec5cfb9f）内——运行于脏工作树或归属错误（记录注记已说明，视为已知例外）"
     },
     {
       "kind": "roadmap-only",
@@ -1657,28 +1657,28 @@ const REGISTRY = {
     },
     {
       "kind": "missing-save",
-      "level": "warn",
-      "text": "v27strategy-reverted 的记录 6062da9f.ec5cfb9f.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+      "level": "info",
+      "text": "v27strategy-reverted 的记录 6062da9f.ec5cfb9f.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "missing-save",
-      "level": "warn",
-      "text": "newfast-recovery 的记录 25bdb5e9.9e75c9cd.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+      "level": "info",
+      "text": "newfast-recovery 的记录 25bdb5e9.9e75c9cd.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "missing-save",
-      "level": "warn",
-      "text": "newfast 的记录 bb319981.9e75c9cd.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+      "level": "info",
+      "text": "newfast 的记录 bb319981.9e75c9cd.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "missing-save",
-      "level": "warn",
-      "text": "newfast 的记录 bced1aa3.9e75c9cd.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+      "level": "info",
+      "text": "newfast 的记录 bced1aa3.9e75c9cd.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "missing-save",
-      "level": "warn",
-      "text": "v26-unified 的记录 d2c50ffe.53abbd5.quick-200.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+      "level": "info",
+      "text": "v26-unified 的记录 d2c50ffe.53abbd5.quick-200.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "dirty",

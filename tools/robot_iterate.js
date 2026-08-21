@@ -194,10 +194,16 @@ async function cmdRun(opts) {
   console.log(`  记录: reports/research/${result.recordFile}`);
   if (result.savePath) console.log(`  存档: ${result.savePath}`);
 
-  // 生成复盘报告 + 重建总览页
+  // 生成复盘报告 + 重建总览页（标准口径：每次迭代默认存档+行动级复盘报告）
   const { registry, pagePath, generated } = buildRegistry({ generateReports: !opts.noReports });
   console.log(`[页面] ${pagePath}`);
   if (generated.length) console.log(`[报告] 生成 ${generated.length} 份复盘报告`);
+  const runResult = registry.versions.find((v) => v.id === vid)?.results.find((r) => r.recordFile === result.recordFile);
+  if (runResult?.reportExists && runResult.reportPath) {
+    console.log(`[复盘报告] ${runResult.reportPath}`);
+  } else if (!opts.noReports) {
+    console.log(`[警告] 本次运行无存档，未生成行动级复盘报告——标准迭代默认应存档（勿用 --no-save），请检查 run_research_validation 输出。`);
+  }
   printBestOf(registry);
   printWarnings(registry);
   console.log(`\n下一步：人工核对 versions.json 的 summary/records 注记后，提交记录体系产物（改动即文档，同一次提交）。`);
