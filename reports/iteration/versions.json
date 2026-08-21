@@ -8,21 +8,46 @@
   "versions": [
     {
       "id": "v0",
-      "name": "v0 基线（原 v26-unified 统一搜索）",
-      "date": "2026-08-18",
+      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
+      "date": "2026-08-21",
       "baseline": null,
-      "head": "53abbd5a",
+      "head": "a18a2e00",
       "commits": [
-        "6caeb0f7",
-        "10ded3e9",
-        "dd5da46e",
-        "53abbd5a"
+        "53abbd5a",
+        "a9356a8c",
+        "e8a368a4",
+        "5c6f86ab",
+        "34730eeb",
+        "d347e658",
+        "de879058",
+        "8b7cf3b6",
+        "48afb492",
+        "eb480700",
+        "05dc1da8",
+        "1d063418",
+        "48f0af3e",
+        "185028b3",
+        "ec5cfb9f",
+        "e23b710c",
+        "a18a2e00"
       ],
-      "summary": "机器人新时代基线（2026-08-21 用户裁定，2026-08-21 重命名为 v0）：统一搜索（on/off 合并，原 v26-unified），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v0 重新叠加。",
+      "summary": "v0 基线（2026-08-21 用户裁定）：用 v27 当前代码默认装配（fastPath 保留 + 统一搜索单一路径，policyVersion seti-heuristic-policy-v27）。完整终局 45/63/73/77 均 64.5（436 步，0025f24a 记录，存档 seti-save-research-v27-baseline-check-full-v230）。后续迭代从 v0 重新叠加。",
       "records": {
-        "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json": {},
-        "d2c50ffe.53abbd5.full.json": {},
-        "51a3727a.53abbd5.full.json": {}
+        "0025f24a.a18a2e00.full.json": {
+          "note": "v27 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告"
+        },
+        "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json": {
+          "note": "历史参照（v26 统一搜索 on 复现，53abbd5a）：完整终局均 89 / 白 83，高于 v27 基线——v26 时代 fastPath 默认关"
+        },
+        "d2c50ffe.53abbd5.full.json": {
+          "note": "历史参照（v26 on-head，53abbd5a）：557 步，完整终局 107/68/98/83 均 89"
+        },
+        "51a3727a.53abbd5.full.json": {
+          "note": "历史参照（v26 off-head-clean，53abbd5a）：521 步，完整终局 75/70/92/105 均 85.5"
+        },
+        "b0d76680.a18a2e00.full.json": {
+          "note": "中间实验（v26 策略回退+fastPath 保留+unifiedSearch on，代码已撤销回 v27）：完整终局 35/87/60/98 均 70——保留供对比，非 v0 基线代码"
+        }
       },
       "roadmap": null
     }

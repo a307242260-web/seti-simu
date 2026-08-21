@@ -78,57 +78,57 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T06:42:41.065Z",
+  "builtAt": "2026-08-21T07:55:22.023Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "95b82f98",
+  "headCommit": "a18a2e00",
   "currentBaseline": "v0",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
       "value": 105,
       "versionId": "v0",
-      "name": "v0 基线（原 v26-unified 统一搜索）",
+      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
       "runKey": "51a3727a.53abbd5.full",
       "provenance": "save-final",
       "steps": 521,
       "wallMs": 630200,
       "msPerStep": 1210,
-      "scoreSourceNote": null
+      "scoreSourceNote": "历史参照（v26 off-head-clean，53abbd5a）：521 步，完整终局 75/70/92/105 均 85.5"
     },
     "bestAvg": {
       "value": 89,
       "versionId": "v0",
-      "name": "v0 基线（原 v26-unified 统一搜索）",
+      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
       "runKey": "d2c50ffe.53abbd5.full",
       "provenance": "save-final",
       "steps": 557,
       "wallMs": 518080,
       "msPerStep": 930,
-      "scoreSourceNote": null
+      "scoreSourceNote": "历史参照（v26 on-head，53abbd5a）：557 步，完整终局 107/68/98/83 均 89"
     },
     "fastestWall": {
       "versionId": "v0",
-      "name": "v0 基线（原 v26-unified 统一搜索）",
-      "runKey": "d2c50ffe.53abbd5.full",
+      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
+      "runKey": "0025f24a.a18a2e00.full",
       "provenance": "save-final",
-      "steps": 557,
-      "wallMs": 518080,
-      "msPerStep": 930,
-      "scoreSourceNote": null
+      "steps": 436,
+      "wallMs": 208193,
+      "msPerStep": 478,
+      "scoreSourceNote": "v27 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告"
     },
     "fastestPerStep": {
       "versionId": "v0",
-      "name": "v0 基线（原 v26-unified 统一搜索）",
-      "runKey": "d2c50ffe.53abbd5.full",
+      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
+      "runKey": "0025f24a.a18a2e00.full",
       "provenance": "save-final",
-      "steps": 557,
-      "wallMs": 518080,
-      "msPerStep": 930,
-      "scoreSourceNote": null
+      "steps": 436,
+      "wallMs": 208193,
+      "msPerStep": 478,
+      "scoreSourceNote": "v27 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告"
     },
     "topByAvg": [
       {
@@ -139,13 +139,13 @@ const REGISTRY = {
           "score": 107
         },
         "versionId": "v0",
-        "name": "v0 基线（原 v26-unified 统一搜索）",
+        "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
         "runKey": "d2c50ffe.53abbd5.full",
         "provenance": "save-final",
         "steps": 557,
         "wallMs": 518080,
         "msPerStep": 930,
-        "scoreSourceNote": null
+        "scoreSourceNote": "历史参照（v26 on-head，53abbd5a）：557 步，完整终局 107/68/98/83 均 89"
       },
       {
         "value": 85.5,
@@ -155,71 +155,373 @@ const REGISTRY = {
           "score": 105
         },
         "versionId": "v0",
-        "name": "v0 基线（原 v26-unified 统一搜索）",
+        "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
         "runKey": "51a3727a.53abbd5.full",
         "provenance": "save-final",
         "steps": 521,
         "wallMs": 630200,
         "msPerStep": 1210,
-        "scoreSourceNote": null
+        "scoreSourceNote": "历史参照（v26 off-head-clean，53abbd5a）：521 步，完整终局 75/70/92/105 均 85.5"
       },
       {
-        "value": 60.5,
-        "white": 58,
+        "value": 70,
+        "white": 98,
         "bestPlayer": {
-          "color": "蓝",
-          "score": 68
+          "color": "白",
+          "score": 98
         },
         "versionId": "v0",
-        "name": "v0 基线（原 v26-unified 统一搜索）",
-        "runKey": "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full",
-        "provenance": "record",
-        "steps": 557,
-        "wallMs": 536949,
-        "msPerStep": 964,
-        "scoreSourceNote": null
+        "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
+        "runKey": "b0d76680.a18a2e00.full",
+        "provenance": "save-final",
+        "steps": 466,
+        "wallMs": 281697,
+        "msPerStep": 605,
+        "scoreSourceNote": "中间实验（v26 策略回退+fastPath 保留+unifiedSearch on，代码已撤销回 v27）：完整终局 35/87/60/98 均 70——保留供对比，非 v0 基线代码"
       }
     ]
   },
   "versions": [
     {
       "id": "v0",
-      "name": "v0 基线（原 v26-unified 统一搜索）",
-      "date": "2026-08-18",
+      "name": "v0 基线（v27 当前代码，2026-08-21 用户裁定）",
+      "date": "2026-08-21",
       "baseline": null,
-      "head": "53abbd5a",
+      "head": "a18a2e00",
       "commits": [
-        {
-          "hash": "6caeb0f7",
-          "date": "2026-08-18",
-          "subject": "恢复任务中继站/宇宙战略集团打牌被动接线（迁移 8963b38 丢失）"
-        },
-        {
-          "hash": "10ded3e9",
-          "date": "2026-08-18",
-          "subject": "迁移独立 clone 的统一搜索+外星链改动回主分支：目的引导搜索（目标绑定+需求放行，废弃全动作平铺）、quick 根截断、外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）、弃牌死锁 skip 兜底；存档工具（save_checkpoints/verify_from_checkpoint）；on 均分 60.3→70"
-        },
-        {
-          "hash": "dd5da46e",
-          "date": "2026-08-18",
-          "subject": "ai-design §3.4 同步目的引导实现（废弃'预算内全动作尝试'描述，改'目标引导+需求引导'；quick 根截断/外星价值/位置引导）"
-        },
         {
           "hash": "53abbd5a",
           "date": "2026-08-18",
           "subject": "收口记录：统一搜索目的引导版+外星链已迁移主分支（on 均分 70），打牌价值/R3R4 资源流转根因定位待实现；全量测试阻塞于并发 initial-setup 中间状态"
+        },
+        {
+          "hash": "a9356a8c",
+          "date": "2026-08-18",
+          "subject": "on/off 搜索机制合并为单一路径（v27）：去 bounded 分桶与 unifiedSearch 开关，目标引导+需求引导恒生效；play_card 保持目标绑定（实测全部放行致全盘退化 白色 86→17 已回退）；打牌价值/科技/外星痕迹目标系统增强待下一轮；登记 initial-setup 测试解除全量阻塞；full-flow fixture 升 v27"
+        },
+        {
+          "hash": "e8a368a4",
+          "date": "2026-08-18",
+          "subject": "科技价值打分（用户裁决）：selectHeuristicTechPlans 废弃硬编码场景规则，改为 基础分+单次利用价值×预期使用次数 打分取 top3 尝试 - 基础分=背面 bonus 期望+首发分；单次利用价值按科技效果校准（蓝槽资源/橙探测/紫扫描） - 预期使用次数=场景权重×剩余轮次；top3 尝试，其余不评估（避免全放开稀释） - 实测 R1 top3=blue1/blue2/orange1（数据槽+火箭上限），废弃旧规则 blue2/purple2/purple4 - 全盘白色 41→64，均分 38.25→54（续跑版）；67/67 测试全过"
+        },
+        {
+          "hash": "5c6f86ab",
+          "date": "2026-08-18",
+          "subject": "科技打分修正：移除基础分预估（背面 bonus/首发分不提前算）——反事实搜索真实结算 - 用户纠正：背面 bonus 随机翻到什么就是什么、首发分有就有没有就没有，不该合并成期望 - 反事实搜索研究动作真实结算（实测研究 blue1：score+2 首发 + pub-5 含随机 +1 宣传 bonus） - 预筛打分只编码未来效率（单次利用价值×预期使用次数×场景权重×剩余轮次），即时收益由搜索捕获 - 消除双重计分（预筛预估 + 搜索真实结算重复）"
+        },
+        {
+          "hash": "34730eeb",
+          "date": "2026-08-18",
+          "subject": "科技打分三类修正（用户逐项纠正）： - 橙4 卫星登陆解锁改为持续收益（解锁后每次卫星登陆 8-12 分+资源可反复赚，20×次数） - 紫2 水星扫描是真实收益（1宣传→扇区信号+数据≈7），非纯灵活性 - 紫1 扇区扫描升级=灵活性（收益可能不变）价值 0；紫3 手牌扫描=消耗宝贵手牌价值 0 - 橙1 火箭上限保持一次性解锁（用户拍板：无持续收益，只算解锁价值） - 即时收益（背面bonus/首发分/扣宣传）仍由反事实搜索真实结算，不预估"
+        },
+        {
+          "hash": "d347e658",
+          "date": "2026-08-18",
+          "subject": "科技打分橙4 改回条件性有限收益 + 全盘验证记录（用户纠正：橙4 解锁后才允许卫星登陆，但本身也能登陆/环绕本星；不是所有行星都有卫星、卫星槽位会被占、每颗卫星只能登陆一次）——价值 = 可达卫星目标数 × 8 × 场景权重，不乘每轮次数；roadmap 同步橙4 口径与 v27-tech-v3 真实从头全盘结果（白色 64/均分 52.25，含板块白色 106；终局科技 blue1+blue2+purple2 不再是纯蓝；三大缺口仍存：打牌 3vs19、科技研究 3vs8、外星首放 5vs全首）"
+        },
+        {
+          "hash": "de879058",
+          "date": "2026-08-18",
+          "subject": "打牌价值修复两环（用户口径对齐）：① 收入选牌机会成本——手牌有价值、已知牌可评估（插进去的损失），cardPlayValue 按打牌价值（免费发射15/宣传5×数/免费科技按top3匹配30或10/收入牌/登陆/移动/痕迹）×0.5 作机会成本扣减，收入选牌改为插打牌价值最低的牌（step31 插 dlc_9 保留 b_117）；② 免费发射打牌奖励——launch 与 play_card 绑定同一探测目标时叶链相同评平局（59.5=59.5 字典序选 launch），免费发射打牌加 2钱发射费×8×0.5=8 分奖励（step32 R1 第一主行动选打 b_117 67.5>59.5，与用户 405 档 step23 一致）。200 步验证：白色 R1 打 b_117→放数据→研究 blue2→收入插 b_48，节奏对齐用户；play_card 1→2 次、外星首放 3→5 次。67/67 测试全过"
+        },
+        {
+          "hash": "8b7cf3b6",
+          "date": "2026-08-18",
+          "subject": "打牌价值评估对齐（用户逐项纠正）：①资源变化分——这一步的资源消耗是成本（负）、获得是收益（正），单位参考值钱10电8普通牌6宣传4数据6移动5外星牌12，钱/能逐轮贬值（R1钱≈10→R4≈4-5），quick_trade/card_corner 手段动作资源分不进 primaryValue（本身无价值只有缺了才做）；②宣传固定价值4+跨门槛解锁20（pub 从\u003c6到>=6）；③保留区任务价值——任务卡进保留区挂远期奖励（b_117 任务5环绕/登陆→3分+1信用≈11，折半×剩余轮次），此前=0导致打牌被低估（step23 打牌55.5\u003claunch58差2.5正是任务值缺失，补后打牌61>58）；④打牌凑宣传计划——techGainRequirements.publicityPreparationPlans 原来只认 place_data/card_corner，加 play_card（打 b_117 +2宣传→跨门槛→研究），打牌→凑宣传→研究科技链在目标系统可见；⑤terminal 叶归零（终局只比官方终局分）。200步验证：白色 R1 打b_117→放数据→环绕火星→研究blue2→分析，节奏对齐用户405档。67/67测试全过。注：全盘崩溃（MACHINE_PLAYER_BOUNDARY_EMPTY）定位为并行 agent 的 planContinuationFastPath 复用 bug（关 fastPath 不崩溃，基线代码同样崩溃），与本改动无关"
+        },
+        {
+          "hash": "48afb492",
+          "date": "2026-08-18",
+          "subject": "host 信息层统一：Browser 机器席位观察恢复（与 Simulation 同源 buildRuleObservation）"
+        },
+        {
+          "hash": "eb480700",
+          "date": "2026-08-18",
+          "subject": "修补启发式主路径计划依赖恒 generic：secondary-agent 叶无 routeCheckpoints → probeRoute.candidate 恒 null → planDependencyFromPlan 永远 generic，planReuseCheck 的 tier-3 失效判定（路线变贵/第一奖励格被占/跨出终点）从不触发。改从叶的 rootRouteTargetId（orbit:/land: 路线终点，与 production-kernel targetId 同构）补出路线依赖；candidate 存在时仍优先 candidate（非 secondary 路径行为不变）。新增单测：secondary 叶补出路线依赖、移动步数增加触发 next-step-affected、data:analyze 不误判、candidate 优先；docs/ai-design.md §3.2 同步依赖双来源。实证：启发式主路径 plan 依赖分布由 generic:90 变为 route:20+generic:89"
+        },
+        {
+          "hash": "05dc1da8",
+          "date": "2026-08-18",
+          "subject": "计划延续复用（planContinuationFastPath）默认打开：simulation 经 resetConfig（显式 false 可关），browser 机器席位同步默认开（URL ?planReuse=0 关闭）。前提是上一提交修复的路线依赖（secondary-agent 叶 rootRouteTargetId 补依赖）已就位，tier-3 失效判定（路线变贵/奖励格被占/跨出终点）可正常触发。默认配置实测 73 步 35 命中/38 miss 无卡死，全量回归 67/67+1/1；文档同步（ai-design.md §3 默认开、AGENTS.md 代码地图）"
+        },
+        {
+          "hash": "1d063418",
+          "date": "2026-08-18",
+          "subject": "计划复用增加控制动作特例：下一步是 end_turn/pass 一律 control-step-redecide 重新决策，不盲从计划。根因：winning leaf 链穿过回合边界（end_turn）rollout，计划下一步为 end_turn 时被盲目复用，跳过当前盘面更有价值的主行动（同状态搜索选 place_data、fast-path 直接 end_turn，白色 120 步 24→12）。修复后分叉 #30 恢复 scheme 选 place_data，与 baseline 对齐。新增单测（end_turn/pass 下一步必须 miss）+ ai-design.md §3.2 同步控制动作特例"
+        },
+        {
+          "hash": "48f0af3e",
+          "date": "2026-08-20",
+          "subject": "搜索时机机制化（用户口径）：搜索只在本方回合（一动）开始时执行一次，回合内无新信息按计划逐步骤执行不重搜；新回合盘面无新信息复用上回合决策链（planReuseCheck），有新信息才重新搜索。新信息只两类：①揭示外星人；②计划依赖环节变化（目标奖励格被占[终点标记数，不局限第一格]/路线变长/计划要拿的科技被拿走/目标扇区赢不了/目标外星槽被占/目标公共牌被买走）。移除 control-step-redecide（end_turn/pass 是回合自然结束，计划内正常推进可复用）与 route-target-changed（顺序执行第二条路线是计划内推进非新信息）；step-not-legal 归入依赖变化或计划缺陷兜底；缺基线防呆重决策；回合内新信息重新决策留 TODO。协调器计划存储带回合（round/turn）实现回合门控；依赖扩展 tech/sector/public-card/endpointMarkerCount。新增协调器回合门控测试与 plan-continuation 新信息判定测试；docs/mechanics-reference.md 记录名词定义（轮次 round / 回合 turn=玩家每一次主要行动）、ai-design.md §3.2 重写机制。实证：#28 打牌后 #29/#30 同回合复用（含 end_turn 不重搜），67/67+1/1 全绿"
+        },
+        {
+          "hash": "185028b3",
+          "date": "2026-08-20",
+          "subject": "新回合复用开关 planNewTurnReuse（默认开，false 关闭后新回合一律重新搜索）：用于 A/B 评估忽略非依赖变化（对手移动/资源/旋转等）而复用上回合决策链的影响。协调器 runOptions.newTurnReuseEnabled，simulation-env resetConfig 装配；新增协调器开关测试；ai-design.md §3.2 记录开关。A/B（seti-107，160 决策）：开关 OFF 终局分合计 77 vs ON 69（+8，单席蓝+12/绿-12/棕+8/白0）——新回合复用忽略非依赖变化的代价约 +8（10%）"
+        },
+        {
+          "hash": "ec5cfb9f",
+          "date": "2026-08-20",
+          "subject": "机器人迭代收口（2026-08-20）：end_turn/pass 计划复用特例恢复 + 调研记录指纹对齐 + 文档过期项清理"
+        },
+        {
+          "hash": "e23b710c",
+          "date": "2026-08-21",
+          "subject": "策略选择接口回退到 v27-tech-v3（d347e658）：撤销 de879058 + 8b7cf3b6 的打牌价值改动，保留协调器/计划复用/end_turn 特例"
+        },
+        {
+          "hash": "a18a2e00",
+          "date": "2026-08-21",
+          "subject": "复盘报告主行动与附属动作统一顺序编号（①扫描（主行动）→ ②③④）"
         }
       ],
-      "summary": "机器人新时代基线（2026-08-21 用户裁定，2026-08-21 重命名为 v0）：统一搜索（on/off 合并，原 v26-unified），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v0 重新叠加。",
-      "diffStat": "1 file changed, 16 insertions(+), 3 deletions(-)",
+      "summary": "v0 基线（2026-08-21 用户裁定）：用 v27 当前代码默认装配（fastPath 保留 + 统一搜索单一路径，policyVersion seti-heuristic-policy-v27）。完整终局 45/63/73/77 均 64.5（436 步，0025f24a 记录，存档 seti-save-research-v27-baseline-check-full-v230）。后续迭代从 v0 重新叠加。",
+      "diffStat": "6 files changed, 615 insertions(+), 609 deletions(-)",
       "diffFiles": [
         {
-          "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
-          "insertions": 16,
-          "deletions": 3
+          "file": "reports/iteration/human-reports/seti-save-537-merged.action-log.html",
+          "insertions": 170,
+          "deletions": 170
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/v0/51a3727a.53abbd5.full.action-log.html",
+          "insertions": 204,
+          "deletions": 204
+        },
+        {
+          "file": "reports/iteration/v0/d2c50ffe.53abbd5.full.action-log.html",
+          "insertions": 220,
+          "deletions": 220
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "tools/robot-iteration-lib.js",
+          "insertions": 17,
+          "deletions": 11
         }
       ],
       "results": [
+        {
+          "recordFile": "0025f24a.a18a2e00.full.json",
+          "recordPath": "reports/research/0025f24a.a18a2e00.full.json",
+          "mode": "full",
+          "steps": 436,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 208193,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v27",
+          "gitCommit": "a18a2e00",
+          "createdAt": "2026-08-21T06:47:27.873Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "v27 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告",
+          "scores": {
+            "player-blue": 45,
+            "player-green": 63,
+            "player-brown": 73,
+            "player-white": 77
+          },
+          "avgScore": 64.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 45,
+              "base": 31,
+              "tile": 14,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 1,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 63,
+              "base": 41,
+              "tile": 22,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 23,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 73,
+              "base": 49,
+              "tile": 24,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 3,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            },
+            "player-white": {
+              "total": 77,
+              "base": 53,
+              "tile": 20,
+              "card": 4,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 0,
+                "orbitScore": 10,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-v27-baseline-check-full-v230.json",
+          "reportPath": "reports/iteration/v0/0025f24a.a18a2e00.full.action-log.html",
+          "reportExists": true
+        },
         {
           "recordFile": "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json",
           "recordPath": "reports/research/01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json",
@@ -236,7 +538,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T05:26:47.577Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": null,
+          "note": "历史参照（v26 统一搜索 on 复现，53abbd5a）：完整终局均 89 / 白 83，高于 v27 基线——v26 时代 fastPath 默认关",
           "scores": {
             "player-blue": 68,
             "player-green": 55,
@@ -265,7 +567,7 @@ const REGISTRY = {
           "createdAt": "2026-08-17T19:50:03.760Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": null,
+          "note": "历史参照（v26 on-head，53abbd5a）：557 步，完整终局 107/68/98/83 均 89",
           "scores": {
             "player-blue": 107,
             "player-green": 68,
@@ -514,7 +816,7 @@ const REGISTRY = {
           "createdAt": "2026-08-17T20:10:14.231Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": null,
+          "note": "历史参照（v26 off-head-clean，53abbd5a）：521 步，完整终局 75/70/92/105 均 85.5",
           "scores": {
             "player-blue": 75,
             "player-green": 70,
@@ -775,6 +1077,239 @@ const REGISTRY = {
           "savePath": "seti-saves/seti-save-research-off-head-clean-full-v264.json",
           "reportPath": "reports/iteration/v0/51a3727a.53abbd5.full.action-log.html",
           "reportExists": true
+        },
+        {
+          "recordFile": "b0d76680.a18a2e00.full.json",
+          "recordPath": "reports/research/b0d76680.a18a2e00.full.json",
+          "mode": "full",
+          "steps": 466,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 281697,
+          "flags": {
+            "unifiedSearch": true
+          },
+          "policyVersion": "seti-heuristic-policy-v26",
+          "gitCommit": "a18a2e00",
+          "createdAt": "2026-08-21T06:53:08.595Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "中间实验（v26 策略回退+fastPath 保留+unifiedSearch on，代码已撤销回 v27）：完整终局 35/87/60/98 均 70——保留供对比，非 v0 基线代码",
+          "scores": {
+            "player-blue": 35,
+            "player-green": 87,
+            "player-brown": 60,
+            "player-white": 98
+          },
+          "avgScore": 70,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 35,
+              "base": 30,
+              "tile": 5,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 2,
+                "cardEffectScore": 1,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 12,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-green": {
+              "total": 87,
+              "base": 62,
+              "tile": 22,
+              "card": 3,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_14.webp",
+                  "rule": {
+                    "color": "red",
+                    "kind": "sectorWinsByColor",
+                    "scorePer": 3
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 14,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 11,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            },
+            "player-brown": {
+              "total": 60,
+              "base": 36,
+              "tile": 24,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 3,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-white": {
+              "total": 98,
+              "base": 69,
+              "tile": 29,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 8,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 14,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 9,
+                "orbitScore": 0,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-v0-baseline-full-v241.json",
+          "reportPath": "reports/iteration/v0/b0d76680.a18a2e00.full.action-log.html",
+          "reportExists": true
         }
       ],
       "roadmap": null,
@@ -785,6 +1320,11 @@ const REGISTRY = {
         "report": true,
         "reportLinks": [
           {
+            "runKey": "0025f24a.a18a2e00.full",
+            "path": "reports/iteration/v0/0025f24a.a18a2e00.full.action-log.html",
+            "mode": "full"
+          },
+          {
             "runKey": "d2c50ffe.53abbd5.full",
             "path": "reports/iteration/v0/d2c50ffe.53abbd5.full.action-log.html",
             "mode": "full"
@@ -793,22 +1333,17 @@ const REGISTRY = {
             "runKey": "51a3727a.53abbd5.full",
             "path": "reports/iteration/v0/51a3727a.53abbd5.full.action-log.html",
             "mode": "full"
+          },
+          {
+            "runKey": "b0d76680.a18a2e00.full",
+            "path": "reports/iteration/v0/b0d76680.a18a2e00.full.action-log.html",
+            "mode": "full"
           }
         ]
       }
     }
   ],
   "warnings": [
-    {
-      "kind": "orphan-record",
-      "level": "warn",
-      "text": "未登记到任何版本（全盘记录必须归属）：4545e2a4.9d4f02b4.full.json（name=v0-revert-on commit=80c4b4fc createdAt=2026-08-21T06:35:50.951Z）"
-    },
-    {
-      "kind": "orphan-record",
-      "level": "info",
-      "text": "未登记到任何版本：664ea780.c87830d8.quick-200.json（name=v0-revert-on commit=9d4f02b4 createdAt=2026-08-21T06:31:00.366Z）"
-    },
     {
       "kind": "missing-save",
       "level": "info",
@@ -820,26 +1355,7 @@ const REGISTRY = {
       "text": "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（参见 newfast-recovery 的 25bdb5e9 注记）"
     }
   ],
-  "orphans": [
-    {
-      "file": "4545e2a4.9d4f02b4.full.json",
-      "mode": "full",
-      "name": "v0-revert-on",
-      "gitCommit": "80c4b4fc",
-      "createdAt": "2026-08-21T06:35:50.951Z",
-      "steps": 466,
-      "terminal": true
-    },
-    {
-      "file": "664ea780.c87830d8.quick-200.json",
-      "mode": "quick-200",
-      "name": "v0-revert-on",
-      "gitCommit": "9d4f02b4",
-      "createdAt": "2026-08-21T06:31:00.366Z",
-      "steps": 200,
-      "terminal": false
-    }
-  ]
+  "orphans": []
 };
 
 const LABELS = {"player-blue":"蓝","player-green":"绿","player-brown":"棕","player-white":"白"};
