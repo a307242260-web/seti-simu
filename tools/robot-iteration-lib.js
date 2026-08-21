@@ -960,22 +960,7 @@ function buildActionLogReport(opts) {
     </tr>`;
   }
 
-  // 每名玩家行动清单：按玩家分组，组内每回合一行（初始选择并入该玩家第一回合）
-  const playerSections = PLAYER_ORDER.map((p) => {
-    const list = groupByTurn(perPlayer[p] || []);
-    const body = list.length
-      ? list.map((g) => turnCells(g, false)).join("\n")
-      : '<tr><td colspan="6" class="muted">无行动</td></tr>';
-    return `<section class="panel">
-      <h2><span class="dot c-${p}"></span>${playerColor(p)}色玩家 · ${list.length} 个回合</h2>
-      <table>
-        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
-        <tbody>${body}</tbody>
-      </table>
-    </section>`;
-  }).join("\n");
-
-  // 终局结算明细文本（base 构成 + 板块 + 卡牌；finalSection 与全程复盘末尾共用）
+  // 终局结算明细文本（base 构成 + 板块 + 卡牌；玩家清单 / finalSection / 全程复盘末尾共用）
   const finalDetailLines = (() => {
     if (!final) return [];
     return PLAYER_ORDER.map((p) => {
@@ -999,6 +984,27 @@ function buildActionLogReport(opts) {
       return { player: p, text: parts.join(" + ") };
     }).filter(Boolean);
   })();
+
+  // 每名玩家行动清单：按玩家分组，组内每回合一行（初始选择并入该玩家第一回合）；
+  // 玩家 PASS（终局）之后追加该玩家的终局结算说明（2026-08-21 用户口径）
+  const playerSections = PLAYER_ORDER.map((p) => {
+    const list = groupByTurn(perPlayer[p] || []);
+    let body = list.length
+      ? list.map((g) => turnCells(g, false)).join("\n")
+      : '<tr><td colspan="6" class="muted">无行动</td></tr>';
+    const finalLine = finalDetailLines.find((line) => line.player === p);
+    if (finalLine) {
+      body += `\n<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>${playerColor(p)}</b>：${escapeHtml(finalLine.text)}</td></tr>`;
+    }
+    return `<section class="panel">
+      <h2><span class="dot c-${p}"></span>${playerColor(p)}色玩家 · ${list.length} 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </section>`;
+  }).join("\n");
 
   // 全程依次复盘：按轮分组，每玩家每回合一行；末尾追加终局结算说明（2026-08-21 用户口径：
   // PASS 终局之后显示该玩家/各玩家的结算说明）
