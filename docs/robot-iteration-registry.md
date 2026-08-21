@@ -87,7 +87,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
   "versions": [                    // 数组顺序 = 最新在前（页面倒序展示）
     {
       "id": "v0",                 // 稳定 id（页面/回退/对比都用它）
-      "name": "v0 基线（原 v26-unified 统一搜索）",
+      "name": "v0 基线（v27 当前代码默认装配）",
       "date": "2026-08-18",
       "baseline": null,            // 基线版本 id（该版本基于哪个版本）
       "head": "53abbd5a",          // 该版本代码树（记录 gitCommit 的对照基准）
@@ -108,9 +108,9 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
   **warn 级孤儿记录**）——孤儿记录说明有实验跑了但没登记，页面会一直提示直到登记。
 - 记录 gitCommit 应在版本 commits 内（前缀匹配）。运行于**脏工作树**时记录 gitCommit
   取 HEAD、可能与实际代码不符——这种情况下在记录注记里写明，并接受 audit 的
-  provenance 警告（已知例外，如 `newfast-recovery` 的 `25bdb5e9` 记录）。
+  provenance 警告。
 - 进行中的实验（未收口、脏树运行）**不登记为版本**，以孤儿记录形式留在页面上
-  可见（如 `6062da9f`（v27strategy-reverted）），收口后再 register。
+  可见（历史例子：`6062da9f`（v27strategy-reverted），已清理），收口后再 register。
 
 ## 4. 分数口径（用户规定：所有分数以最终总分为准）
 
@@ -132,7 +132,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
 （exit 非 0，提示原因），不允许"跑完没复盘"的迭代收口。`build --reports` 可补齐历史缺报告记录。
 
 历史欠账（2026-08-21 用户拍板**不补跑**）：5 个评估实验（v27strategy-reverted 479 步 /
-newfast-recovery 321 步 / newfast A/B 206+230 步 / v0（原 v26-unified）on-baseline quick-200）当时未存
+newfast-recovery 321 步 / newfast A/B 206+230 步 / v26 on-baseline quick-200）当时未存
 存档，无行动级复盘，审计列为 info 提示（记录 JSON 仍有行动族分布/外星时间线可复盘）；
 **有存档却缺报告仍是 warn**（`build --reports` 立即可修复）。
 
@@ -206,19 +206,20 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
-| `newfast-recovery` | `ec5cfb9f` | HEAD：end_turn/pass 特例恢复；321 步/白 58（记录 gitCommit=9e75c9cd，脏树运行） |
-| `newfast` | `9e75c9cd` | 默认装配固化（fastPath+新回合复用开）；A/B 对照记录（bb319981/bced1aa3，无存档） |
-| `v27-playvalue` | `1d063418` | 打牌价值+计划复用线；quick-200 记录（b2a3aa41，有存档有报告） |
-| `v27-tech-v3` | `d347e658` | 科技价值打分线；roadmap 基线白 106/均 77.5（无 research 记录） |
 | `v0` | `a18a2e00` | **当前基线**（2026-08-21 用户裁定）：v27 当前代码默认装配（fastPath 保留 + 统一搜索单一路径）；0025f24a 全盘 436 步，完整终局 45/63/73/77 均 64.5（有存档有报告）；v26 时代记录（d2c50ffe on 均 89 / 51a3727a off 均 85.5 / 01c21bb4 复现）留作历史参照 |
+
+历史版本（newfast-recovery / newfast / v27-playvalue / v27-tech-v3）已于 2026-08-21
+历史清理（`28dd5763`）时从 `versions.json` 删除，不在当前登记体系中；仅在下文
+口径注记中保留分数事实供参照。
 
 已知口径注记：
 
 - 历史记录（2026-08-17/18）的 `summary.scores` 多为 base 分（finalScore 传 null bug 修复前），
-  **有存档的已由 build 富化为 save-final 完整终局分**（如 v0 的 on 记录实际 107/68/98/83 均 89）。
-- `v27strategy-reverted`（`6062da9f.ec5cfb9f.full.json`，479 步/均 72.75）为**进行中的
-  "策略接口回退"实验**（工作树脏：expected-score-evaluator / production-kernel /
-  rule-observation 回退到 d347e658），未登记为版本，页面以孤儿记录提示。
+  **有存档的已由 build 富化为 save-final 完整终局分**（如 v0 名下 v26 时代 on 记录实际 107/68/98/83 均 89）。
+- `v27strategy-reverted`（`6062da9f.ec5cfb9f.full.json`，479 步/均 72.75）为 2026-08-21 的
+  "策略接口回退"历史实验（expected-score-evaluator / production-kernel / rule-observation
+  回退到 d347e658），当时未登记为版本、以孤儿记录提示；其记录文件已随历史清理删除，
+  仅作口径注记保留。
 
 ## 9. 与调研流程的关系
 

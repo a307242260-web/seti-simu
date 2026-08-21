@@ -484,7 +484,7 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
     warnings.push({
       kind: "dirty",
       level: "info",
-      text: "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（参见 newfast-recovery 的 25bdb5e9 注记）",
+      text: "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（历史上有脏树运行的记录在注记里标注了 gitCommit 偏差）",
     });
   }
   return { warnings, orphans };

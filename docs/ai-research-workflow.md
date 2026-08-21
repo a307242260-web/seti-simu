@@ -69,7 +69,7 @@
 ```sh
 # 快速验证（默认 200 步，评估行为方向）
 node tools/run_research_validation.js --name vguided --config vStateValueEnabled=true
-node tools/run_research_validation.js --name baseline                    # 基线 = 默认装配（newfast：fastPath 开 + 新回合复用开，2026-08-20 起）
+node tools/run_research_validation.js --name baseline                    # 基线 = v0（当前 HEAD 默认装配：fastPath 开 + 新回合复用开）
 node tools/run_research_validation.js --name base --config planContinuationFastPath=false   # 关快路径（对照）
 node tools/run_research_validation.js --name noreuse --config planNewTurnReuse=false        # 关新回合复用（对照）
 
@@ -89,7 +89,7 @@ node tools/run_research_validation.js --name x --seed seti-107           # 换�
 ```
 
 默认 seed 为免电分析盘面 `seti-free-analyze-v1`，4 家，`aiDifficulty=laughable`。
-基线 = 默认装配（newfast：`planContinuationFastPath` 开 + `planNewTurnReuse` 开），
+基线 = v0（当前 HEAD 默认装配：`planContinuationFastPath` 开 + `planNewTurnReuse` 开），
 历史路线基线"白色 86 / 均分 64.3"为 fastPath 关闭时代（2026-08-17）的参考值，
 目标均分 100。
 
