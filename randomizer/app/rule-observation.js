@@ -139,7 +139,6 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
       completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
       activePlayerIds: [...(turn.activePlayerIds || [])],
       players: (playersState.players || []).map((player) => {
-        const publicPlayer = sanitizePublicPlayer(player, null);
         const breakdown = endGameScoring.computePlayerFinalScore({
           ...state,
           finalScoring: clone(state.finalScoring),
@@ -151,6 +150,11 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
             cardEffects.getCardModel(card)?.cardType,
           ),
         }, player);
+        // finalScore 传完整终局总分（breakdown.totalScore）：observation 与记录
+        // 统一"所有分数以最终总分为准"口径（2026-08-20 用户规定）。此前传 null
+        // 导致 finalScore 恒 null、记录/复盘只看到 base 分（如 v27-tech-v3 白 64
+        // base，实际完整 106）。
+        const publicPlayer = sanitizePublicPlayer(player, breakdown);
         return {
           ...publicPlayer,
           securedEndGameBonus: breakdown.totalScore - breakdown.baseScore

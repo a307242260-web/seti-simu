@@ -1156,29 +1156,6 @@ function buildTechGainRequirements(workingState, requestedPlayerId = null) {
       nextStep: { family: "card_corner", cardInstanceId: card.id },
     });
   }
-  // 打牌凑宣传（2026-08-18 用户 405 档实测：R1 打 b_117（免费发射 +2 宣传）→
-  // pub 4→6 跨研究门槛 → 研究 blue2）。此前 publicityPreparationPlans 只认
-  // place_data/card_corner，打牌凑宣传的科技链在搜索里不可见——打 b_117 的
-  // "凑够宣传能研究科技"价值评估为 0，AI 选 launch 而非打牌。
-  // 每张手牌的 playEffects 里 gain_resources 给的宣传数即打牌凑宣传收益。
-  for (const card of player.hand || []) {
-    const effects = typeof cardEffects.buildPlayEffects === "function"
-      ? cardEffects.buildPlayEffects(card)
-      : [];
-    const playPublicityGain = effects.reduce((total, effect) => {
-      if (effect?.type !== "gain_resources") return total;
-      const gain = effect?.options?.gain || {};
-      return total + Math.max(0, Number(gain.publicity) || 0);
-    }, 0);
-    if (!playPublicityGain) continue;
-    publicityPreparationPlans.push({
-      planId: `tech:publicity:play:${card.id}`,
-      kind: "play_card",
-      cardInstanceId: card.id,
-      publicityGain: playPublicityGain,
-      nextStep: { family: "play_card", cardInstanceId: card.id },
-    });
-  }
   const plans = options.ok ? (options.choices || []).map((choice) => ({
     targetId: `tech:gain:${choice.tileId}`,
     planId: `tech:${choice.tileId}:${choice.blueSlot ?? ""}`,
