@@ -482,7 +482,6 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
       actualScoreDelta: evaluation?.actualScoreDelta ?? null,
       techValue: evaluation?.techValue ?? null,
       incomeValue: evaluation?.incomeValue ?? null,
-      opportunityCost: evaluation?.opportunityCost ?? null,
       quickTradeCount: evaluation?.quickTradeCount ?? null,
       routeTargetId: evaluation?.routeTargetId || null,
       actionChain: Object.freeze([...(evaluation?.actionChain || [])]),

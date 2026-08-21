@@ -95,7 +95,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   搜索拷贝已删除，开关（completeTargetCatalog / traceCounterfactualGoalClusters 等）经
   同一 config 源透传（URL 参数，见 §3.4）。
 
-`game/ai/index.js` 只聚合以上 Policy/evaluator 模块。不得向其中重新加入 legacy valuation、candidate、planner、analytics 或 controller adapter。
+`game/ai/index.js` 聚合器已删除（无消费方，Browser 装配直接经 index.html 逐个加载模块）。不得恢复 SetiAI 聚合或 legacy valuation、candidate、planner、analytics、controller adapter。
 
 ## 3. 决策方案输出契约与计划延续复用（simulation 侧）
 

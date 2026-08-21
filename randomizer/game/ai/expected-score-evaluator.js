@@ -68,7 +68,6 @@
     return (base(left) - base(right))
       || (netResources(left) - netResources(right));
   }
-  const UNEVALUATED_ROOT_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   const CONDITIONAL_FAMILIES = Object.freeze(new Set([
     "choose_card",
     "choose_target",
@@ -689,22 +688,13 @@
       ? (RESEARCH_PUBLICITY_COST - rootPub)
         * (TECH_VALUE_PER_RESEARCH / RESEARCH_PUBLICITY_COST)
       : 0;
-    const opportunityCost = 0;
     return {
-      total: actualScoreDelta + infrastructure.total + publicityResearchValue - opportunityCost,
+      total: actualScoreDelta + infrastructure.total + publicityResearchValue,
       primaryValue: actualScoreDelta + infrastructure.total + publicityResearchValue,
       actualScoreDelta,
       infrastructure,
       publicityResearchValue,
-      opportunityCost,
     };
-  }
-
-  function evaluateSearchPriority(rootObservation, branchObservation, seatId, parametersInput = {}) {
-    const parameters = mergeParameters(parametersInput);
-    const rootValue = evaluateState(rootObservation, seatId);
-    const branchValue = evaluateState(branchObservation, seatId);
-    return leafValue(rootValue, branchValue, parameters).total;
   }
 
   function valueFromStrategicFacts(facts) {
@@ -771,50 +761,6 @@
       || finite(right?.targetBenefit?.score) - finite(left?.targetBenefit?.score)
       || gapSize(left) - gapSize(right)
       || String(left?.requirementId || "").localeCompare(String(right?.requirementId || ""));
-  }
-
-  function bestGoal(requirements) {
-    return [...(requirements?.candidates || [])]
-      .filter((candidate) => finite(candidate?.targetBenefit?.score) > 0)
-      .sort(compareGoals)[0] || null;
-  }
-
-  function evaluateSetupProbeGoals(observation, seatId) {
-    evaluateState(observation, seatId);
-    const requirements = observation.outcomeProjection.progress?.probeGoalRequirements;
-    const goal = bestGoal(requirements);
-    const gap = goal?.gap || {};
-    return deepFreeze({
-      evaluationModel: EVALUATION_MODEL,
-      reachable: Boolean(goal),
-      affordable: isAffordable(goal),
-      targetBenefitScore: finite(goal?.targetBenefit?.score),
-      targetValue: goalValue(goal),
-      gap: {
-        credits: finite(gap.credits),
-        energy: finite(gap.energy),
-        movementSteps: finite(gap.movementSteps),
-      },
-      targetId: goal?.targetId || null,
-      fieldPaths: {
-        requirements: "outcomeProjection.progress.probeGoalRequirements.candidates",
-        targetBenefit: "outcomeProjection.progress.probeGoalRequirements.candidates[].targetBenefit.score",
-        gap: "outcomeProjection.progress.probeGoalRequirements.candidates[].gap",
-      },
-    });
-  }
-
-  function compareSetupProbeGoals(left, right) {
-    const leftGap = left?.gap || {};
-    const rightGap = right?.gap || {};
-    return Number(Boolean(right?.reachable)) - Number(Boolean(left?.reachable))
-      || Number(Boolean(right?.affordable)) - Number(Boolean(left?.affordable))
-      || finite(right?.targetValue) - finite(left?.targetValue)
-      || finite(right?.targetBenefitScore) - finite(left?.targetBenefitScore)
-      || gapSize({ gap: leftGap }) - gapSize({ gap: rightGap })
-      || finite(leftGap.credits) - finite(rightGap.credits)
-      || finite(leftGap.energy) - finite(rightGap.energy)
-      || finite(leftGap.movementSteps) - finite(rightGap.movementSteps);
   }
 
   function evaluateOutcome(context, action, parametersInput = {}) {
@@ -897,7 +843,6 @@
       leafValue: best.leafStateValue,
       actualScoreDelta: bestLeafValue.actualScoreDelta,
       primaryValue: bestLeafValue.primaryValue,
-      opportunityCost: bestLeafValue.opportunityCost,
       vDelta: bestVD,
       vStateValueEnabled: vEnabled,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
@@ -937,7 +882,7 @@
   }
 
   function requiresCounterfactualOutcome(action) {
-    return !UNEVALUATED_ROOT_FAMILIES.has(action?.family);
+    return !CONTROL_FAMILIES.has(action?.family);
   }
 
   function requiresRootCounterfactual(action, observation) {
@@ -2321,7 +2266,6 @@
         Math.max(0, branchPlaced - rootPlaced),
         Number(Boolean(branchFacts.dataProgress?.analyzeReady)
           && finite(branchFacts.resourceFacts?.energy) > 0),
-        -strategicValue.opportunityCost,
         finite(branchGoal?.targetBenefit?.score),
         -finite(branchGoal?.required?.movementSteps),
       ],
@@ -3383,9 +3327,6 @@
     secondaryAgentCompletionFacts,
     evaluateState,
     evaluateStateValue,
-    evaluateSetupProbeGoals,
-    compareSetupProbeGoals,
-    evaluateSearchPriority,
     evaluateStrategicFactsPriority,
     evaluateStrategicFactsBreakdown,
     evaluateSecondaryAgentSearchPriority,

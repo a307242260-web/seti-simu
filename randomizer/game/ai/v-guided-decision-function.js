@@ -55,9 +55,7 @@
     });
     const hPolicy = options.hPolicy || heuristicPolicy.createHeuristicPolicy({
       difficulty: options.difficulty,
-      strategyWeights: options.strategyWeights,
       evaluationParameters: options.evaluationParameters,
-      seed: options.seed,
     });
     // policyFor：条件决策（choose_*）→ 启发式；主行动 → V 引导。
     const policyFor = ({ boundary }) => {

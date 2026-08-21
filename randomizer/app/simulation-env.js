@@ -208,8 +208,6 @@ function createSimulationEnv() {
       const common = {
         composition,
         difficulty: config.aiDifficulty,
-        strategyWeights: config.strategyWeights || {},
-        seed,
         config: {
           completeTargetCatalog: config.completeTargetCatalog === true,
           traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,

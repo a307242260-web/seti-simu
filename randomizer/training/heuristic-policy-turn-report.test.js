@@ -32,7 +32,6 @@ const rankedEvaluations = [
       actualScoreDelta: 5,
       techValue: 5,
       incomeValue: 5,
-      opportunityCost: 3,
       quickTradeCount: 0,
       routeTargetId: "orbit:mars:planet:",
       actionChain: ["launch:a", "move:b", "orbit:c"],

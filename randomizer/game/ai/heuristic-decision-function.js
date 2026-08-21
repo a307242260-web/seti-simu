@@ -108,9 +108,7 @@ function createHeuristicDecisionFunction(options = {}) {
   }
   const defaultPolicy = options.policy || heuristicPolicy.createHeuristicPolicy({
     difficulty: options.difficulty,
-    strategyWeights: options.strategyWeights,
     evaluationParameters: options.evaluationParameters,
-    seed: options.seed,
   });
   // policyFor（可选）：按 boundary 返回策略——条件决策（choose_*）用启发式，
   // 主行动用 V 引导等。默认恒用 defaultPolicy。

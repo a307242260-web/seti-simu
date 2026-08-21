@@ -1974,7 +1974,6 @@ function evaluate(candidateAction, before, after, status = "settled") {
     observation({ score: 13, resources: { credits: 0, energy: 1 } }),
   );
   assert.equal(result.primaryValue, 9, "快速转换后的目标分仍按实际一级收益计算");
-  assert.equal(result.opportunityCost, 0, "叶节点当轮剩余资源不参与最终估值");
   assert.equal(result.score, 9, "一级目标收益先于资源效率比较，必要转换不能把正收益路线否决");
   assert.deepEqual(result.sortKey.slice(0, 2), [9, 0]);
 }
@@ -2255,7 +2254,6 @@ function evaluate(candidateAction, before, after, status = "settled") {
   });
   assert.equal(breakdown.actualScoreDelta, 5);
   assert.equal(breakdown.infrastructure.total, 0);
-  assert.equal(breakdown.opportunityCost, 0);
   assert.equal(breakdown.total, 5, "terminal 叶只能比较官方终局分，科技收入和剩余资源均归零");
 }
 

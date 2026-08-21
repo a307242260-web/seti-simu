@@ -86,7 +86,6 @@
         decisionFunction = heuristicDecisionFunctionModule.createHeuristicDecisionFunction({
           composition: ruleComposition,
           difficulty: config.difficulty,
-          strategyWeights: config.strategyWeights || {},
           evaluationParameters: config.vStateValueEnabled === true
             ? { vStateValueEnabled: true }
             : undefined,
