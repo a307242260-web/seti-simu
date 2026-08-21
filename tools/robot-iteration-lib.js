@@ -341,11 +341,26 @@ function computeBestOf(versions, resolvedMap) {
     bestAvg: byAvg.length ? { value: avgOf(byAvg[0]), ...describe(byAvg[0]) } : null,
     fastestWall: byWallMs.length ? describe(byWallMs[0]) : null,
     fastestPerStep: byMsPerStep.length ? describe(byMsPerStep[0]) : null,
-    topByAvg: byAvg.slice(0, 3).map((x) => ({
-      value: avgOf(x),
-      white: whiteOf(x),
-      ...describe(x),
-    })),
+    topByAvg: byAvg.slice(0, 3).map((x) => {
+      // 该局最高分玩家（roadmap 条目只有白色有值）
+      let bestPlayer = null;
+      if (x.result && x.result.scores) {
+        let best = null;
+        let bestScore = -Infinity;
+        for (const pid of PLAYER_ORDER) {
+          const s = x.result.scores[pid];
+          if (s != null && s > bestScore) {
+            best = pid;
+            bestScore = s;
+          }
+        }
+        if (best != null) bestPlayer = { color: PLAYER_LABELS[best], score: bestScore };
+      } else if (x.roadmap) {
+        const w = x.roadmap.scores?.["player-white"];
+        if (w != null) bestPlayer = { color: PLAYER_LABELS["player-white"], score: w };
+      }
+      return { value: avgOf(x), white: whiteOf(x), bestPlayer, ...describe(x) };
+    }),
   };
 }
 

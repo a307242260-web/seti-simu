@@ -116,13 +116,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:00:45.823Z",
+  "builtAt": "2026-08-21T05:01:15.144Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "2461a2c9",
+  "headCommit": "90acc889",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -171,6 +171,10 @@ const REGISTRY = {
       {
         "value": 89,
         "white": 83,
+        "bestPlayer": {
+          "color": "蓝",
+          "score": 107
+        },
         "versionId": "v26-unified",
         "name": "v26 统一搜索（on/off 合并）",
         "runKey": "d2c50ffe.53abbd5.full",
@@ -183,6 +187,10 @@ const REGISTRY = {
       {
         "value": 85.5,
         "white": 105,
+        "bestPlayer": {
+          "color": "白",
+          "score": 105
+        },
         "versionId": "v26-unified",
         "name": "v26 统一搜索（on/off 合并）",
         "runKey": "51a3727a.53abbd5.full",
@@ -195,6 +203,10 @@ const REGISTRY = {
       {
         "value": 77.5,
         "white": 106,
+        "bestPlayer": {
+          "color": "白",
+          "score": 106
+        },
         "versionId": "v27-tech-v3",
         "name": "v27-tech-v3（科技价值打分）",
         "runKey": null,
@@ -1428,7 +1440,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 33291 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 33314 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1750,15 +1762,17 @@ function bestGrid(){
   document.getElementById("best-grid").innerHTML=html.join("");
 
   if(b.topByAvg&&b.topByAvg.length){
-    const rows=b.topByAvg.map(x=>`<tr>
+    const rows=b.topByAvg.map(x=>{
+      const bp=x.bestPlayer?`${x.bestPlayer.color} ${x.bestPlayer.score}`:"—";
+      return `<tr>
       <td><b>${esc(x.name)}</b> <code>${x.versionId}</code>${x.runKey?" · "+esc(x.runKey):""}</td>
       <td class="num"><b>${x.value.toFixed(2)}</b></td>
-      <td class="num">${x.white!=null?x.white:"—"}</td>
+      <td class="num">${bp}</td>
       <td class="num">${x.steps??"—"}</td>
-      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td>
-      <td><span class="src">${x.provenance}</span></td></tr>`).join("");
+      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td></tr>`;
+    }).join("");
     document.getElementById("top3").innerHTML=`<h3>全盘最佳 Top3（按均分）</h3>
-      <table><thead><tr><th>版本</th><th>均分</th><th>白</th><th>步数</th><th>耗时</th><th>来源</th></tr></thead><tbody>${rows}</tbody></table>`;
+      <table><thead><tr><th>版本</th><th>均分</th><th>最高玩家</th><th>步数</th><th>耗时</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
 }
 

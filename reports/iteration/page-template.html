@@ -181,15 +181,17 @@ function bestGrid(){
   document.getElementById("best-grid").innerHTML=html.join("");
 
   if(b.topByAvg&&b.topByAvg.length){
-    const rows=b.topByAvg.map(x=>`<tr>
+    const rows=b.topByAvg.map(x=>{
+      const bp=x.bestPlayer?`${x.bestPlayer.color} ${x.bestPlayer.score}`:"—";
+      return `<tr>
       <td><b>${esc(x.name)}</b> <code>${x.versionId}</code>${x.runKey?" · "+esc(x.runKey):""}</td>
       <td class="num"><b>${x.value.toFixed(2)}</b></td>
-      <td class="num">${x.white!=null?x.white:"—"}</td>
+      <td class="num">${bp}</td>
       <td class="num">${x.steps??"—"}</td>
-      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td>
-      <td><span class="src">${x.provenance}</span></td></tr>`).join("");
+      <td class="num">${fmtMs(x.wallMs)}${x.msPerStep?`<br><span class="src">每步 ${x.msPerStep}ms</span>`:""}</td></tr>`;
+    }).join("");
     document.getElementById("top3").innerHTML=`<h3>全盘最佳 Top3（按均分）</h3>
-      <table><thead><tr><th>版本</th><th>均分</th><th>白</th><th>步数</th><th>耗时</th><th>来源</th></tr></thead><tbody>${rows}</tbody></table>`;
+      <table><thead><tr><th>版本</th><th>均分</th><th>最高玩家</th><th>步数</th><th>耗时</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
 }
 
