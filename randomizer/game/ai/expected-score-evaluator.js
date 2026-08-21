@@ -42,13 +42,8 @@
   // 价值来自"为后续主行动/目标做准备"（"需要了再做"，用户口径）。作为根展开时
   // 若继续主行动选择，leafValue（整链价值）会把主行动收益归因到 quick 根上，
   // 评估虚高 → 乱做。截断到"quick 完成 + end_turn"，价值 = 立即效果。
-  // 2026-08-21 迭代（用户裁定）：quick_trade / card_corner 移出本集合——两者经
-  // 目标引导/需求引导进入搜索（quick_trade 有入口缺口门控；card_corner 恒进搜索
-  // 但作为目标达成步骤或立即收益），其叶价值=完整目标链是合理归因（执行是逐步
-  // 的，估值整链不会导致坏行为）；剩余（move 纯移动 / industry / 符文 / 任务）仍
-  // 无独立价值，未绑定展开会吃主行动便车，保留截断。
   const QUICK_ROOT_FAMILIES = Object.freeze(new Set([
-    "move", "industry",
+    "move", "quick_trade", "industry", "card_corner",
     "runezu_face_symbol", "complete_task",
   ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
@@ -388,6 +383,129 @@
     ).join(",")}}`;
   }
 
+  function actionSemanticKey(action) {
+    return stableSerialize({
+      family: action?.family || null,
+      target: action?.target || {},
+      payload: action?.payload || {},
+    });
+  }
+
+  function quickTradePurpose(context, action, leaf) {
+    if (action?.family !== "quick_trade") return { required: false, supported: true };
+    const nextAgent = (leaf?.secondaryAgentTrace || [])
+      .find((candidate) => candidate?.family !== "quick_trade");
+    if (!nextAgent) {
+      return { required: true, supported: false, reason: "quick-trade-no-followup-agent" };
+    }
+    const nextKey = actionSemanticKey(nextAgent);
+    const alreadyLegal = (context?.legalActions || [])
+      .filter((candidate) => !["quick_trade", "pass", "end_turn"].includes(candidate?.family))
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    const directlyLegal = (leaf?.rootActionSettledLegalSuccessors || [])
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    const projection = context?.observation?.outcomeProjection;
+    const preparesReadyAnalyze = Boolean(
+      projection?.progress?.dataProgress?.analyzeReady
+      && finite(projection?.assets?.energy) === 0
+      && ["credits-for-energy", "cards-for-energy"].includes(action.target?.tradeId),
+    );
+    const preparesProbeGoal = (rawProbeRequirements(context?.observation)?.candidates || [])
+      .some((goal) => {
+        const projected = probeResourceGapAfterTrade(
+          context.observation,
+          goal,
+          action,
+          context.seatId,
+        );
+        return projected && projected.after < projected.before;
+      });
+    const dataRequirements = rawDataAnalyzeRequirements(context?.observation);
+    const dataNextFamilies = new Set([
+      dataRequirements?.nextStep,
+      ...(dataRequirements?.acquisitionPlans || [])
+        .map((plan) => plan.nextStep?.family),
+    ].filter(Boolean));
+    const preparesDataGoal = dataAnalyzeEligible(dataRequirements)
+      && dataNextFamilies.has(nextAgent?.family)
+      && dataPaymentGapAfterTrade(
+        context?.observation,
+        action,
+        context.seatId,
+      )?.reduction > 0;
+    return {
+      required: true,
+      supported: preparesReadyAnalyze
+        || preparesProbeGoal
+        || preparesDataGoal
+        || (directlyLegal && !alreadyLegal),
+      reason: preparesReadyAnalyze
+        ? "quick-trade-prepared-ready-analyze"
+        : preparesProbeGoal
+          ? "quick-trade-reduced-probe-goal-gap"
+          : preparesDataGoal
+            ? "quick-trade-reduced-data-goal-gap"
+            : directlyLegal && !alreadyLegal
+              ? "quick-trade-directly-unlocked-agent"
+              : "quick-trade-did-not-directly-unlock-agent",
+      nextAgent,
+    };
+  }
+
+  function cardCornerPurpose(context, action, leaf, rootValue, parameters) {
+    if (action?.family !== "card_corner") return { required: false, supported: true };
+    const immediateObservation = leaf?.rootActionObservation;
+    if (!immediateObservation) {
+      return { required: true, supported: false, reason: "card-corner-immediate-outcome-missing" };
+    }
+    const immediateStateValue = valueFromStrategicFacts(
+      outcomeModel.createStrategicFacts(immediateObservation, context.seatId),
+    );
+    const immediateValue = leafValue(
+      rootValue,
+      immediateStateValue,
+      parameters,
+    );
+    if (immediateValue.primaryValue > 0) {
+      return { required: true, supported: true, reason: "card-corner-immediate-primary" };
+    }
+    if (action.payload?.kind === "move") {
+      return { required: true, supported: true, reason: "card-corner-probe-progress" };
+    }
+    if (
+      finite(immediateStateValue.resourceFacts?.availableData)
+      > finite(rootValue.resourceFacts?.availableData)
+    ) {
+      return { required: true, supported: true, reason: "card-corner-data-progress" };
+    }
+    if (selectReducedProbeGoal(
+      context?.observation,
+      immediateObservation,
+      context?.seatId,
+    )) {
+      return { required: true, supported: true, reason: "card-corner-reduced-probe-goal-gap" };
+    }
+    const nextAgent = (leaf?.secondaryAgentTrace || []).find((candidate) => (
+      !["card_corner", "end_turn", "pass"].includes(candidate?.family)
+    ));
+    if (!nextAgent) {
+      return { required: true, supported: false, reason: "card-corner-no-followup-agent" };
+    }
+    const nextKey = actionSemanticKey(nextAgent);
+    const rootLegal = (context?.legalActions || [])
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    const immediatelyLegal = (leaf?.rootActionLegalSuccessors || [])
+      .some((candidate) => actionSemanticKey(candidate) === nextKey);
+    return {
+      required: true,
+      supported: immediatelyLegal && !rootLegal,
+      reason: immediatelyLegal && !rootLegal
+        ? "card-corner-directly-unlocked-agent"
+        : "card-corner-did-not-directly-unlock-agent",
+      nextAgent,
+    };
+  }
+
   // 外星人 trace 价值：每个 trace 标记（第一放置 3-5 分即时 + 终局 trace 卡 2分/个
   // + 外星人牌：开牌即可继续获得外星人牌/终局计分/机制收益）。用户高分档首回合
   // 就抢第一放置、全盘 5 痕迹占满（阿米巴3+虫2）——痕迹是稳定大分源，估值提高。
@@ -719,11 +837,16 @@
     if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
     let bestLeafValue = best.strategicValue;
     const bestVD = best.vDelta || 0;
-    // 2026-08-21 迭代（用户裁定）：quick_trade/card_corner 出口"目的检查"
-    // （quickTradePurpose/cardCornerPurpose）删除——叶价值=完整目标链是合理归因：
-    // 估值决定"选哪个动作当链首"，执行是逐步的（下一步再决策/计划复用继续），
-    // 链真实可达（反事实是真实规则执行），quick 根吃整链价值不会产生坏行为。
-    // selectable 判据统一为 primaryValue/control/conditional/move。
+    const tradePurpose = quickTradePurpose(context, action, best.leaf);
+    if (!tradePurpose.supported) return unavailable(outcome, tradePurpose.reason);
+    const cornerPurpose = cardCornerPurpose(
+      context,
+      action,
+      best.leaf,
+      rootValue,
+      parameters,
+    );
+    if (!cornerPurpose.supported) return unavailable(outcome, cornerPurpose.reason);
     const control = CONTROL_FAMILIES.has(action?.family);
     const conditional = action?.phase === "conditional";
     // 移动不是主行动：quick 相位的 move 是随时可用的免费快速行动（用电/移动牌/牌
@@ -755,6 +878,8 @@
       vStateValueEnabled: vEnabled,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
+      quickTradePurpose: tradePurpose.required ? tradePurpose : null,
+      cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
       techValue: best.strategicValue.infrastructure.techValue,
       gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
@@ -779,6 +904,8 @@
         best.strategicValue.actualScoreDelta > 0 ? "strategic-goal-score" : null,
         best.strategicValue.infrastructure.techValue > 0 ? "strategic-goal-tech" : null,
         best.strategicValue.infrastructure.incomeValue > 0 ? "strategic-goal-income" : null,
+        tradePurpose.required ? tradePurpose.reason : null,
+        cornerPurpose.required ? cornerPurpose.reason : null,
         conditional ? "required-standard-decision" : null,
         control ? "turn-control" : null,
       ].filter(Boolean),
