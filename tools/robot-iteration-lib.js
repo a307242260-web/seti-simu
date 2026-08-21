@@ -624,16 +624,29 @@ function buildActionLogReport(opts) {
         const main = g.rows.find((row) => row.phase === "main") || g.rows[0];
         const cur = g.rows[g.rows.length - 1].cur;
         const delta = g.rows.reduce((acc, row) => acc + (row.delta || 0), 0);
-        return { r: g.r, t: g.t, actor: g.actor, count: g.rows.length, main, cur, delta };
+        return { r: g.r, t: g.t, actor: g.actor, count: g.rows.length, rows: g.rows, main, cur, delta };
       });
   }
 
-  // 主行动单元格：行动族标签 + 摘要（完整显示 + 卡牌编号替换为名称）
+  // 主行动单元格：主行动（family + 摘要）+ 该回合的快速行动列表
+  // （2026-08-21 用户口径：回合聚合为一行的同时，快速行动如放置数据不能被省略，
+  // 在行内列出；条件/目标选择等子步骤仍并入回合不单列）
   function turnMainCell(g) {
     const m = g.main;
     const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
     const sum = m && m.summary ? replaceCardIds(String(m.summary)) : "";
-    return `<span class="fam">${escapeHtml(fam)}</span> ${escapeHtml(sum)}`;
+    const mainTxt = `${escapeHtml(fam)} ${escapeHtml(sum)}`.trim();
+    const quicks = g.rows.filter((row) => row.phase === "quick");
+    let quickTxt = "";
+    if (quicks.length) {
+      const parts = quicks.map((q) => {
+        const qfam = q.family ? FAMILY_LABELS[q.family] || q.family : "";
+        const qsum = q.summary ? replaceCardIds(String(q.summary)).trim() : "";
+        return qsum || qfam;
+      });
+      quickTxt = `<div class="quick-list">快速：${escapeHtml(parts.join(" · "))}</div>`;
+    }
+    return `<div class="main-act">${mainTxt}</div>${quickTxt}`;
   }
 
   function turnCells(g, withPlayer) {
@@ -739,6 +752,8 @@ th{background:#f0f2f6;font-weight:600;white-space:nowrap}
 td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 td.actor{white-space:nowrap;font-weight:600}
 td.sum{min-width:220px;word-break:break-word}
+.main-act{font-weight:600}
+.quick-list{margin-top:3px;font-size:11px;color:var(--muted);font-weight:400}
 tr.round-head td{background:#eef2f9;font-weight:700;color:#4a5568}
 .avg-row td{background:#eaf7ea}
 .hero td:first-child{font-weight:700}
