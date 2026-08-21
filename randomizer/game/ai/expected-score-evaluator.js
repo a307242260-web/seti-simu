@@ -38,14 +38,6 @@
   const UNIFIED_PURPOSE_FAMILIES = Object.freeze(new Set([
     "quick_trade", "card_corner", "industry",
   ]));
-  // quick 根截断（unified 未绑定）：这些 family 是 quick 动作，本身没有独立价值，
-  // 价值来自"为后续主行动/目标做准备"（"需要了再做"，用户口径）。作为根展开时
-  // 若继续主行动选择，leafValue（整链价值）会把主行动收益归因到 quick 根上，
-  // 评估虚高 → 乱做。截断到"quick 完成 + end_turn"，价值 = 立即效果。
-  const QUICK_ROOT_FAMILIES = Object.freeze(new Set([
-    "move", "quick_trade", "industry", "card_corner",
-    "runezu_face_symbol", "complete_task",
-  ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
   // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终
   // 叶评分（ai-design.md：任何中间 action/family 没有固定奖励）。
@@ -924,49 +916,15 @@
 
   function requiresRootCounterfactual(action, observation) {
     if (!requiresCounterfactualOutcome(action)) return false;
-    if (action?.family !== "quick_trade") return true;
-    // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade 本身没有独立价值，
-    // 价值来自"补当前资源缺口"。quick_trade 的叶必然搭后续主行动的便车（leafValue
-    // 是整链价值，不按动作分摊），评估虚高导致 AI 乱做（实测 on 全盘白色 86→43，
-    // quick_trade/card_corner/industry 被误选）。
-    // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
-    // 2026-08-21 迭代结论（A/B 实证）：card_corner **不加**入口门控——card_corner 的
-    // 价值由叶级出口检查（cardCornerPurpose）判定（立即数据/宣传增量、直接解锁），
-    // root 级"目标已生成"判断会误过滤早期有价值的弃牌角标（如数据轨未成型时弃牌换
-    // 数据，A/B 实测绿 63→20/白 77→50）；quick_trade 的门控则因"缺口缩小"判定保留。
-    // 三件套（入口门控/quick 根截断/出口检查）互不替代：门控防无目标、截断防未绑定
-    // 便车、出口检查防"本就可达"便车——删任一均分都劣化（64.5→53.75/56.5）。
-    const projection = observation?.outcomeProjection;
-    const preparesAnalyze = Boolean(
-      projection?.progress?.dataProgress?.analyzeReady
-      && finite(projection?.assets?.energy) === 0
-      && finite(action?.payload?.gain?.energy) > 0
-    );
-    const seatId = observation?.viewer?.seatId || observation?.outcomeProjection?.viewerSeatId;
-    const preparesProbeGoal = quickTradeReducesProbeGap(observation, action, seatId);
-    const preparesDataGoal = dataPaymentGapAfterTrade(
-      observation,
-      action,
-      seatId,
-    )?.reduction > 0;
-    const preparesSectorGoal = resourceGapAfterTrade(
-      observation,
-      rawSectorWinRequirements(observation)?.standardScanCost || {},
-      action,
-      seatId,
-    )?.reduction > 0;
-    const preparesIncomeGoal = (rawIncomeGainRequirements(observation)?.plans || [])
-      .some((plan) => resourceGapAfterTrade(
-        observation,
-        plan.nextCost || {},
-        action,
-        seatId,
-      )?.reduction > 0);
-    return preparesAnalyze
-      || preparesProbeGoal
-      || preparesDataGoal
-      || preparesSectorGoal
-      || preparesIncomeGoal;
+    // 2026-08-21 迭代（用户裁定"按目标搜索"）：quick_trade 的入口需求门控
+    // （prepares* 补缺口）已删除——根动作只来自目标目录绑定（selectSecondaryAgentRootActions
+    // = compatibleActionIds），目标目录的资源准备（selectMinimumCostResourcePreparation /
+    // selectDataResourcePreparation / selectTechPublicityPreparation 等）已保证
+    // quick_trade 只在"有目标缺口"时进入 compatibleActionIds，无缺口/无目标的
+    // quick_trade 被目标目录挡住，不再需要 requiresRootCounterfactual 重复过滤
+    // （双保险变单保险，行为应不变，A/B 验证）。card_corner 同理恒放行（价值由
+    // 叶级出口检查判定）。
+    return true;
   }
 
   function completesSecondaryAgentRouteTarget(input = {}) {
@@ -2752,26 +2710,13 @@
         // 优先级由 getBranchPriority 在展开时再排序；此处的 top-K 是"预算内优先级
         // 截断"，低价值后继仍会在根/上层被尝试（见 §3 设计文档）。
         {
-          // quick 根截断（"需要了再做"，用户口径）：根动作是 quick 时，其叶价值
-          // 只算立即效果，不搭后续主行动的便车。leafValue 是整链价值（叶状态−根
-          // 状态，不按动作分摊），quick 根（quick_trade/card_corner/industry/
-          // place_data 等）展开后若继续主行动选择，链里主行动的收益被归因到
-          // quick 根上（实测 on 单决策 quick_trade 87 / card_corner 65 / industry
-          // 55，全盘白色 86→43 乱做）。截断：quick 根的下一个主行动决策只给
-          // control（end_turn/pass）→ 叶在 quick 完成后立即形成，价值 = 立即
-          // 效果；主行动的价值由主行动自己作为根时的完整链评估承担。
-          // 注意：conditional（结算/支付）不算主行动，不截断；绑定目标的（routeTargetId
-          // 非空）不截断（目标路线的链价值归属正确）。
-          const rootActionId = String((input.actionChain || [])[0] || "");
-          const rootFamily = rootActionId.split(":")[0];
-          const rootIsQuick = QUICK_ROOT_FAMILIES.has(rootFamily);
-          const atMainActionDecision = !(
-            successors[0]?.phase === "conditional"
-            || CONDITIONAL_FAMILIES.has(successors[0]?.family)
-          );
-          if (rootIsQuick && atMainActionDecision && !input.routeTargetId) {
-            return controls;
-          }
+          // 2026-08-21 迭代（用户裁定）：quick 根截断（QUICK_ROOT_FAMILIES 分支）
+          // **已删除**——根动作现在只来自目标目录绑定（无目标 quick_trade/card_corner
+          // 非法，不进搜索），进根的 quick 都有目标；但 quick 根首次展开时
+          // input.routeTargetId 仍为 null（目标在 targeted 计算里、未赋给当前节点），
+          // 截断条件 !routeTargetId 会误触发 → 有目标的 quick 根被截断（只给 control、
+          // 不展开目标链），与"按目标搜索"矛盾。截断是"无目标 quick 根防便车"的
+          // 旧时代遗留（当时 UNIFIED_PURPOSE_FAMILIES 无条件放行），现已无必要。
           const targetedIds = new Set(targeted.map((action) => action.actionId));
           const untargeted = successors
             .filter((action) => (
