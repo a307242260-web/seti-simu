@@ -2814,6 +2814,22 @@
             }));
           }
         }
+        // 外星拿牌去掉 cancel（2026-08-21 用户裁定：不可能选取消）——display（拿
+        // 已知展示牌）与 blind（盲抽）保留正常反事实评估（不贪心折叠），cancel 从
+        // 搜索选项移除（AI 永远不会选取消）。
+        const alienPickChoices = successors.filter((action) => (
+          action.family === "choose_card"
+          && action.target?.kind === "residual-domain"
+          && ["display", "blind", "cancel"].includes(action.target?.source)
+        ));
+        if (alienPickChoices.length && alienPickChoices.length === successors.length) {
+          const withoutCancel = alienPickChoices.filter((action) => (
+            action.target?.source !== "cancel"
+          ));
+          if (withoutCancel.length) {
+            return bindRoute(withoutCancel, input.routeTargetId, input.routePlanId);
+          }
+        }
         const alienTraceChoices = selectUnrevealedAlienTraceChoices(
           input.branchObservation,
           successors,
