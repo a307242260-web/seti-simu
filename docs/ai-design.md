@@ -81,11 +81,17 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   unresolved 候选不可进入排序，同值时只按稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
   Standard Action registry、Effect Session、Decision 与 commit 语义。
-- Simulation setup 选择也进入隔离规则 fork：提交标准 setup Decision、执行正式初始结算，再以同一
-  `DecisionObservation -> OutcomeProjection -> target/gap/next-step` 口径选择。每个 setup
-  反事实叶从同一正式随机状态结算，并按正分探测器目标的当前盘面价值、实际分和信用/能源
-  缺口依次排序；语义相同才保留原始发牌顺序。旧
-  `selection-evaluator.js` 及其开局静态分值已删除。
+- 初始选择（setup）**不跑反事实**（2026-08-21 迭代，审查清理项 1）：setup 决策
+  由 heuristic-policy 的 `selectInitialSetupAction` 直接决策——固定用户开局按
+  `USER_INITIAL_PICKS` 硬编码精确复刻；**插收入**（弃 1 张手牌插收入轨，牌的
+  income 码决定哪条收入轨每轮 +1）按**资源单位价值表**选牌（钱 10 / 电 8 / 牌 6 /
+  数据 6 / 宣传 4，钱/电逐轮贬值 R1→R4 约折半；对齐 2026-08-18 用户口径，提交
+  8b7cf3b6 引入后被回退、2026-08-21 恢复）；行业/初始牌打分用同一价值表（替换
+  早期随意权重）。**为什么插收入不用反事实**：插收入是简单逻辑判断（"我需要哪条
+  收入轨"），反事实搜不出价值；v2 时代反事实在插收入上实际也没起作用（退化为
+  选第一个），删除 setup 反事实后曾误落入"初始牌价值打分"分支（语义错位，
+  插牌选择改变导致全盘分叉），现已用价值表显式修复。setup 动作的 outcome 由
+  completePolicyOutcomeSet 标 STRATEGIC_GOAL_NOT_EVALUATED 补齐。
 - setup 不消费对局 RNG 之外的未来随机数；probe-goal Policy 改变初始选择语义时，唯一 full-flow
   必须提升 schema/policy provenance，并通过公共 setup Decision 验证真实选择、结算和恢复结果，
   不能用历史发牌实体或 checkpoint hash 固化旧随机轨迹。
