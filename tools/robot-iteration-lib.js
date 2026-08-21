@@ -557,6 +557,49 @@ function buildActionLogReport(opts) {
 
   const playerColor = (pid) => PLAYER_LABELS[pid] || pid;
 
+  // 卡牌 id → 名称映射（2026-08-21 用户口径：复盘报告不显示卡牌编号，显示卡牌名称）。
+  // 数据源：assets/cards/card_model.json（basic+space-agency）+ assets/aliens/*/card_model.csv
+  // （外星卡，GBK 编码，card_id 无物种前缀需拼接，如 amiba_0.webp）；查不到的保留原编号。
+  const ALIEN_DIR_PREFIX = {
+    阿米巴: "amiba", 奥陌陌: "aomomo", 半人马: "banrenma", 虫: "chong",
+    方舟: "fangzhou", 九折: "jiuzhe", 异常点: "yichangdian", 符文族: "runezu",
+  };
+  let cardNameMap = null;
+  function cardNameFor(token) {
+    if (cardNameMap === null) {
+      cardNameMap = {};
+      const cat = readJson(path.join(REPO_ROOT, "assets", "cards", "card_model.json"));
+      if (Array.isArray(cat)) {
+        for (const c of cat) {
+          if (c && c.card_id != null) cardNameMap[String(c.card_id)] = String(c.card_name || "");
+        }
+      }
+      try {
+        for (const dir of fs.readdirSync(path.join(REPO_ROOT, "assets", "aliens"))) {
+          const prefix = ALIEN_DIR_PREFIX[dir];
+          if (!prefix) continue;
+          const csvPath = path.join(REPO_ROOT, "assets", "aliens", dir, "card_model.csv");
+          if (!fs.existsSync(csvPath)) continue;
+          // 外星卡 csv 为 GBK 编码（fs.readFileSync 不支持 gbk，用 TextDecoder）
+          const text = new TextDecoder("gbk").decode(fs.readFileSync(csvPath));
+          const lines = text.split(/\r?\n/);
+          for (let i = 1; i < lines.length; i += 1) {
+            const cols = lines[i].split(",");
+            if (cols.length < 2 || !cols[0]) continue;
+            cardNameMap[`${prefix}_${cols[0]}`] = cols[1];
+          }
+        }
+      } catch {
+        // 外星卡目录缺失时仅用主目录（basic/space-agency 已覆盖普通卡）
+      }
+    }
+    return cardNameMap[token] || null;
+  }
+  function replaceCardIds(text) {
+    if (!text) return text;
+    return String(text).replace(/([A-Za-z0-9_-]+\.(?:webp|png|jpg))/gi, (token) => cardNameFor(token) || token);
+  }
+
   // 按 (轮次, 回合, 玩家) 聚合为"每玩家每回合一行"（2026-08-21 用户口径：
   // 一个玩家的回合 = 主行动 + 附属快速/条件步骤，合并成一行，不再逐子步骤拆行）。
   // 主行动 = 该回合第一个 phase=main 的动作（PASS 也算主行动）；无主行动时取第一步。
@@ -585,11 +628,11 @@ function buildActionLogReport(opts) {
       });
   }
 
-  // 主行动单元格：行动族标签 + 摘要（完整显示，2026-08-21 用户口径：奖励说明等长摘要不截断）
+  // 主行动单元格：行动族标签 + 摘要（完整显示 + 卡牌编号替换为名称）
   function turnMainCell(g) {
     const m = g.main;
     const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
-    const sum = m && m.summary ? String(m.summary) : "";
+    const sum = m && m.summary ? replaceCardIds(String(m.summary)) : "";
     return `<span class="fam">${escapeHtml(fam)}</span> ${escapeHtml(sum)}`;
   }
 
