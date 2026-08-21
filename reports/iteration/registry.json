@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:18:52.576Z",
+  "builtAt": "2026-08-21T05:31:26.602Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "ed1bbc54",
+  "headCommit": "2291c1e8",
   "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
@@ -30,7 +30,7 @@
       "steps": 557,
       "wallMs": 518080,
       "msPerStep": 930,
-      "scoreSourceNote": "on-head（统一搜索开）"
+      "scoreSourceNote": null
     },
     "fastestWall": {
       "versionId": "newfast-recovery",
@@ -50,7 +50,7 @@
       "steps": 557,
       "wallMs": 518080,
       "msPerStep": 930,
-      "scoreSourceNote": "on-head（统一搜索开）"
+      "scoreSourceNote": null
     },
     "topByAvg": [
       {
@@ -67,7 +67,7 @@
         "steps": 557,
         "wallMs": 518080,
         "msPerStep": 930,
-        "scoreSourceNote": "on-head（统一搜索开）"
+        "scoreSourceNote": null
       },
       {
         "value": 85.5,
@@ -83,7 +83,7 @@
         "steps": 521,
         "wallMs": 630200,
         "msPerStep": 1210,
-        "scoreSourceNote": "off-head-clean（fastPath 关闭时代基线参考）"
+        "scoreSourceNote": null
       },
       {
         "value": 77.5,
@@ -1324,8 +1324,8 @@
           "subject": "收口记录：统一搜索目的引导版+外星链已迁移主分支（on 均分 70），打牌价值/R3R4 资源流转根因定位待实现；全量测试阻塞于并发 initial-setup 中间状态"
         }
       ],
-      "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15224 insertions(+), 734 deletions(-)",
+      "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径。2026-08-21 复现确认：557 步 / 68/55/61/58（base）/ 均 60.5，与原始记录逐位一致；完整终局 on 均 89 / 白 83（存档富化）。",
+      "diffStat": "88 files changed, 16856 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1335,57 +1335,33 @@
       ],
       "results": [
         {
-          "recordFile": "51a3727a.53abbd5.full.json",
-          "recordPath": "reports/research/51a3727a.53abbd5.full.json",
+          "recordFile": "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json",
+          "recordPath": "reports/research/01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json",
           "mode": "full",
-          "steps": 521,
+          "steps": 557,
           "stepsLimit": null,
           "terminal": true,
-          "wallMs": 630200,
-          "flags": {},
+          "wallMs": 536949,
+          "flags": {
+            "unifiedSearch": true
+          },
           "policyVersion": "seti-heuristic-policy-v26",
-          "gitCommit": "53abbd5",
-          "createdAt": "2026-08-17T20:10:14.231Z",
+          "gitCommit": "53abbd5a",
+          "createdAt": "2026-08-21T05:26:47.577Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "off-head-clean（fastPath 关闭时代基线参考）",
+          "note": null,
           "scores": {
-            "player-blue": 75,
-            "player-green": 70,
-            "player-brown": 92,
-            "player-white": 105
+            "player-blue": 68,
+            "player-green": 55,
+            "player-brown": 61,
+            "player-white": 58
           },
-          "avgScore": 85.5,
-          "scoreSource": "save-final",
-          "finalBreakdown": {
-            "player-blue": {
-              "total": 75,
-              "base": 55,
-              "tile": 16,
-              "card": 4
-            },
-            "player-green": {
-              "total": 70,
-              "base": 54,
-              "tile": 16,
-              "card": 0
-            },
-            "player-brown": {
-              "total": 92,
-              "base": 55,
-              "tile": 33,
-              "card": 4
-            },
-            "player-white": {
-              "total": 105,
-              "base": 72,
-              "tile": 31,
-              "card": 2
-            }
-          },
-          "savePath": "seti-saves/seti-save-research-off-head-clean-full-v264.json",
-          "reportPath": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
-          "reportExists": true
+          "avgScore": 60.5,
+          "scoreSource": "record-summary",
+          "savePath": null,
+          "reportPath": null,
+          "reportExists": false
         },
         {
           "recordFile": "d2c50ffe.53abbd5.full.json",
@@ -1403,7 +1379,7 @@
           "createdAt": "2026-08-17T19:50:03.760Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "on-head（统一搜索开）",
+          "note": null,
           "scores": {
             "player-blue": 107,
             "player-green": 68,
@@ -1443,87 +1419,57 @@
           "reportExists": true
         },
         {
-          "recordFile": "d2c50ffe.53abbd5.quick-200.json",
-          "recordPath": "reports/research/d2c50ffe.53abbd5.quick-200.json",
-          "mode": "quick-200",
-          "steps": 200,
-          "stepsLimit": 200,
-          "terminal": false,
-          "wallMs": 162775,
-          "flags": {
-            "unifiedSearch": true
-          },
+          "recordFile": "51a3727a.53abbd5.full.json",
+          "recordPath": "reports/research/51a3727a.53abbd5.full.json",
+          "mode": "full",
+          "steps": 521,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 630200,
+          "flags": {},
           "policyVersion": "seti-heuristic-policy-v26",
           "gitCommit": "53abbd5",
-          "createdAt": "2026-08-17T19:32:20.865Z",
+          "createdAt": "2026-08-17T20:10:14.231Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "on-baseline 快速验证（on-head 全盘的前置快速档）",
+          "note": null,
           "scores": {
-            "player-blue": 18,
-            "player-green": 23,
-            "player-brown": 29,
-            "player-white": 14
+            "player-blue": 75,
+            "player-green": 70,
+            "player-brown": 92,
+            "player-white": 105
           },
-          "avgScore": 21,
-          "scoreSource": "record-summary",
-          "savePath": "seti-saves/seti-save-research-on-baseline-quick-200-v101.json",
-          "reportPath": null,
-          "reportExists": false
-        },
-        {
-          "recordFile": "62321a79.6caeb0f.quick-5.json",
-          "recordPath": "reports/research/62321a79.6caeb0f.quick-5.json",
-          "mode": "quick-5",
-          "steps": 5,
-          "stepsLimit": 5,
-          "terminal": false,
-          "wallMs": 356,
-          "flags": {},
-          "policyVersion": "seti-heuristic-policy-v26",
-          "gitCommit": "6caeb0f",
-          "createdAt": "2026-08-17T17:45:49.066Z",
-          "resumeStep": 0,
-          "seed": "seti-free-analyze-v1",
-          "note": "smoke-test 冒烟（非评估）",
-          "scores": {
-            "player-blue": 0,
-            "player-green": 0,
-            "player-brown": 0,
-            "player-white": 0
+          "avgScore": 85.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 75,
+              "base": 55,
+              "tile": 16,
+              "card": 4
+            },
+            "player-green": {
+              "total": 70,
+              "base": 54,
+              "tile": 16,
+              "card": 0
+            },
+            "player-brown": {
+              "total": 92,
+              "base": 55,
+              "tile": 33,
+              "card": 4
+            },
+            "player-white": {
+              "total": 105,
+              "base": 72,
+              "tile": 31,
+              "card": 2
+            }
           },
-          "avgScore": 0,
-          "scoreSource": "record-summary",
-          "savePath": null,
-          "reportPath": null,
-          "reportExists": false
-        },
-        {
-          "recordFile": "62321a79.6caeb0f.quick-10.json",
-          "recordPath": "reports/research/62321a79.6caeb0f.quick-10.json",
-          "mode": "quick-10",
-          "steps": 10,
-          "stepsLimit": 10,
-          "terminal": false,
-          "wallMs": 800,
-          "flags": {},
-          "policyVersion": "seti-heuristic-policy-v26",
-          "gitCommit": "6caeb0f",
-          "createdAt": "2026-08-17T17:45:56.562Z",
-          "resumeStep": 0,
-          "seed": "seti-free-analyze-v1",
-          "note": "resume-test 续跑冒烟（非评估）；声明存档已删，仅记录级指标",
-          "scores": {
-            "player-blue": 0,
-            "player-green": 0,
-            "player-brown": 0,
-            "player-white": 0
-          },
-          "avgScore": 0,
-          "scoreSource": "record-summary",
-          "savePath": "seti-saves/seti-save-research-resume-test-quick-10-v1.json",
-          "reportPath": null,
-          "reportExists": false
+          "savePath": "seti-saves/seti-save-research-off-head-clean-full-v264.json",
+          "reportPath": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+          "reportExists": true
         }
       ],
       "roadmap": null,
@@ -1534,13 +1480,13 @@
         "report": true,
         "reportLinks": [
           {
-            "runKey": "51a3727a.53abbd5.full",
-            "path": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
+            "runKey": "d2c50ffe.53abbd5.full",
+            "path": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
             "mode": "full"
           },
           {
-            "runKey": "d2c50ffe.53abbd5.full",
-            "path": "reports/iteration/v26-unified/d2c50ffe.53abbd5.full.action-log.html",
+            "runKey": "51a3727a.53abbd5.full",
+            "path": "reports/iteration/v26-unified/51a3727a.53abbd5.full.action-log.html",
             "mode": "full"
           }
         ]
@@ -1548,6 +1494,21 @@
     }
   ],
   "warnings": [
+    {
+      "kind": "orphan-record",
+      "level": "info",
+      "text": "未登记到任何版本：62321a79.6caeb0f.quick-10.json（name=resume-test commit=6caeb0f createdAt=2026-08-17T17:45:56.562Z）"
+    },
+    {
+      "kind": "orphan-record",
+      "level": "info",
+      "text": "未登记到任何版本：62321a79.6caeb0f.quick-5.json（name=smoke-test commit=6caeb0f createdAt=2026-08-17T17:45:49.066Z）"
+    },
+    {
+      "kind": "orphan-record",
+      "level": "info",
+      "text": "未登记到任何版本：d2c50ffe.53abbd5.quick-200.json（name=on-baseline commit=53abbd5 createdAt=2026-08-17T19:32:20.865Z）"
+    },
     {
       "kind": "commit-mismatch",
       "level": "info",
@@ -1586,7 +1547,7 @@
     {
       "kind": "missing-save",
       "level": "info",
-      "text": "v26-unified 的记录 d2c50ffe.53abbd5.quick-200.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
+      "text": "v26-unified 的记录 01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json 无存档——该实验没有行动级复盘报告（历史欠账，接受记录级指标；标准迭代入口 run 默认存档+生成报告，新实验不会缺）"
     },
     {
       "kind": "dirty",
@@ -1594,5 +1555,33 @@
       "text": "工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（参见 newfast-recovery 的 25bdb5e9 注记）"
     }
   ],
-  "orphans": []
+  "orphans": [
+    {
+      "file": "62321a79.6caeb0f.quick-10.json",
+      "mode": "quick-10",
+      "name": "resume-test",
+      "gitCommit": "6caeb0f",
+      "createdAt": "2026-08-17T17:45:56.562Z",
+      "steps": 10,
+      "terminal": false
+    },
+    {
+      "file": "62321a79.6caeb0f.quick-5.json",
+      "mode": "quick-5",
+      "name": "smoke-test",
+      "gitCommit": "6caeb0f",
+      "createdAt": "2026-08-17T17:45:49.066Z",
+      "steps": 5,
+      "terminal": false
+    },
+    {
+      "file": "d2c50ffe.53abbd5.quick-200.json",
+      "mode": "quick-200",
+      "name": "on-baseline",
+      "gitCommit": "53abbd5",
+      "createdAt": "2026-08-17T19:32:20.865Z",
+      "steps": 200,
+      "terminal": false
+    }
+  ]
 }
