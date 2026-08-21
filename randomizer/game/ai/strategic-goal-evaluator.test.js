@@ -655,8 +655,10 @@ function observation({
       legalSuccessors: dataChoices,
       routeTargetId: "data:analyze",
     }).map((candidate) => candidate.actionId),
-    ["choose:data-computer"],
-    "分析目标的正式放置 Decision 应在建搜索节点前选择计算机位，并排除 skip/蓝附加槽",
+    [],
+    "分析目标的正式放置 Decision 需求驱动（2026-08-21 用户裁定：结算不搜索，按"
+      + "'我需要什么'选；没需求时做不做都一样 → 收束不展开）：无 blue 槽信息/缺口/"
+      + "数据未溢出时不填数据，排除 computer/blue/skip 全部分支",
   );
 
   const discardChoices = ["a+b", "a+c", "b+c"].map((choiceId) => ({
@@ -1139,9 +1141,10 @@ function observation({
       rootObservation,
       legalActions: [unrelatedTrade, scan, play],
     }).map((candidate) => candidate.actionId),
-    [unrelatedTrade.actionId, scan.actionId, play.actionId],
-    "统一搜索下 quick_trade 凭需求放行进入根评估（UNIFIED_PURPOSE_FAMILIES），"
-      + "其叶价值由 quick 根截断限制为立即效果（负宣传收益不会被选中）",
+    [scan.actionId, play.actionId],
+    "统一搜索下根动作只来自目标目录绑定（2026-08-21 用户裁定：无目标的 "
+      + "quick_trade/card_corner 非法，不进根评估——手段动作没有目标就是浪费，"
+      + "不再 UNIFIED_PURPOSE_FAMILIES 无条件放行）",
   );
 
   const publicSector1 = {

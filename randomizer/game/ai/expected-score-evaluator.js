@@ -1107,43 +1107,91 @@
     )) || null;
   }
 
+  // 放置数据结算的需求驱动（2026-08-21 用户裁定：结算不搜索，按"我需要什么"直接
+  // 选）：blue 槽奖励 blue1=+1信用 / blue2=+1能量 / blue3=精选1张 / blue4=+2宣传，
+  // computer 槽位奖励 第2格=+1宣传 / 第4格=收入，蓝列分数 2分/套。
+  // 需求优先级：宣传缺口（研究科技）→ 收入（第4格）→ 钱/电缺口 → 牌 → 默认推进。
+  // 修复旧实现：只认 blue1/blue2 的 gap 资源（credits/energy）、blue3/blue4 奖励
+  // 被滤掉导致折叠失效（白色 R3 决策 5555 个 choose_target 节点全展开）。
+  const BLUE_TILE_REWARD = Object.freeze({
+    blue1: { credits: 1 },
+    blue2: { energy: 1 },
+    blue3: { chooseCard: 1 },
+    blue4: { publicity: 2 },
+  });
+
+  function blueTileOfSlot(observation, blueSlot, seatId) {
+    const player = publicPlayerOf(observation, seatId);
+    const blueSlots = player?.techState?.blueBoardSlots || {};
+    return Object.keys(blueSlots).find((candidate) => (
+      Number(blueSlots[candidate]) === Number(blueSlot)
+    )) || null;
+  }
+
+  function computerSlotOf(action) {
+    const text = String(action.summary || action.label || action.description || "");
+    const match = text.match(/位置\s*(\d+)/);
+    return match ? Number(match[1]) : null;
+  }
+
   function selectDataPlacementChoice(observation, successors, seatId) {
     const dataChoices = successors.filter((action) => (
       String(action.target?.choiceId || "").startsWith("data:")
     ));
-    if (!dataChoices.length) return [];
-    const computer = dataChoices.find((action) => action.target?.target === "computer");
-    const requirements = rawDataAnalyzeRequirements(observation);
-    const gap = requirements?.nextGap || {};
-    const player = publicPlayerOf(observation, seatId);
-    const blueSlots = player?.techState?.blueBoardSlots || {};
-    const directBonuses = {
-      blue1: { resource: "credits", amount: 1 },
-      blue2: { resource: "energy", amount: 1 },
-    };
-    const usefulBlueChoices = dataChoices
-      .filter((action) => action.target?.target === "blueBonus")
-      .map((action) => {
-        const blueSlot = Number(action.target?.blueSlot);
-        const tileId = Object.keys(blueSlots).find((candidate) => (
-          Number(blueSlots[candidate]) === blueSlot
-        ));
-        const bonus = directBonuses[tileId] || null;
-        return {
-          action,
-          reduction: bonus
-            ? Math.min(finite(gap[bonus.resource]), bonus.amount)
-            : 0,
-        };
-      })
-      .filter((candidate) => candidate.reduction > 0)
-      .sort((left, right) => (
-        right.reduction - left.reduction
-        || String(left.action.actionId).localeCompare(String(right.action.actionId))
-      ));
-    return usefulBlueChoices.length
-      ? [usefulBlueChoices[0].action]
-      : (computer ? [computer] : []);
+    // null = 不是放置决策（无 data 选择），交给后续逻辑；[] = 有放置选择但无需求
+    // → 收束（2026-08-21 用户裁定：没需求时做不做都一样，不展开省预算）。
+    if (!dataChoices.length) return null;
+    const computer = dataChoices.find((action) => action.target?.target === "computer") || null;
+    const computerSlot = computer ? computerSlotOf(computer) : null;
+    const blueBonuses = dataChoices.filter((action) => action.target?.target === "blueBonus");
+    const blueOf = (tileId) => blueBonuses.find((action) => (
+      blueTileOfSlot(observation, action.target?.blueSlot, seatId) === tileId
+    )) || null;
+    const assets = resourceFactsOf(observation, seatId);
+    const gap = rawDataAnalyzeRequirements(observation)?.nextGap || {};
+    const techRequirements = rawTechGainRequirements(observation);
+    const researchCost = techRequirements?.researchCost ?? 6;
+    const needsPublicity = finite(assets.publicity) < researchCost;
+    const foldOthers = (primary, list) => (
+      list.length > 1
+        ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
+        : [primary]
+    );
+
+    // 1. 宣传缺口（研究科技刚需）→ blue4（+2宣传），其次 computer 第2格（+1宣传）
+    if (needsPublicity) {
+      const blue4 = blueOf("blue4");
+      if (blue4) return foldOthers(blue4, blueBonuses);
+      if (computer && computerSlot === 2) return [computer];
+    }
+    // 2. 收入目标 → computer 第4格（收入奖励）
+    if (computer && computerSlot === 4) {
+      const incomePlans = rawIncomeGainRequirements(observation)?.plans || [];
+      if (incomePlans.length || finite(gap.credits) === 0 && finite(gap.energy) === 0) {
+        return [computer];
+      }
+    }
+    // 3. 钱/电缺口 → 对应 blue1/blue2 槽
+    if (finite(gap.credits) > 0) {
+      const blue1 = blueOf("blue1");
+      if (blue1) return foldOthers(blue1, blueBonuses);
+    }
+    if (finite(gap.energy) > 0) {
+      const blue2 = blueOf("blue2");
+      if (blue2) return foldOthers(blue2, blueBonuses);
+    }
+    // 4. 牌（精选）→ blue3
+    if (finite(assets.ordinaryCards) <= 1) {
+      const blue3 = blueOf("blue3");
+      if (blue3) return foldOthers(blue3, blueBonuses);
+    }
+    // 5. 无需求 → 不填数据（place_data 是手段动作，没需求做了浪费，2026-08-21
+    //    用户裁定）；**除非数据要溢出**（可用数据 ≥ 数据池容量 6，必须放置腾位）
+    //    才选 computer 推进（同时解锁蓝色踪迹/分数/空出已填蓝槽）。
+    if (finite(assets.availableData) >= 6) {
+      if (computer) return [computer];
+    }
+    return [];
   }
 
   function actionMatchesProbeStep(action, step) {
@@ -2025,25 +2073,25 @@
 
   function selectSecondaryAgentRootActions(input = {}) {
     const legalActions = input.legalActions || [];
-    // 统一搜索：搜索入口 = 目标引导 + 需求引导（用户口径"需要了再做"，乱按打字机的
+    // 统一搜索：搜索入口 = 目标引导（用户口径"按目标搜索，需要了再做"，乱按打字机的
     // 猴子写不出莎士比亚）——不把全部动作平铺进搜索树稀释主行动深搜。放行规则：
-    //   1) 目标绑定动作（probe/data/sector/income/tech 目标下的正式动作）；
-    //   2) 目的型动作（quick_trade 补缺口 / card_corner 弃牌收益 / industry 公司
-    //      能力）凭需求放行（requiresRootCounterfactual 的 prepares* 门控）。
-    // 打牌经目标绑定进入（income:card 收入牌 / tech:research 免费科技 / probe:
-    // 免费发射 / sector:观测 / data:卡牌），不打散全部 play_card——实测全部放行
-    // 让单决策 8.9s/4096 撞顶且全盘行为退化（白色 86→17，纯效果牌评估虚高）。
-    // 需求动作的叶价值由 quick 根截断限制为立即效果（见 selectSecondaryAgentSuccessors）。
+    //   根动作 = 目标目录绑定的动作（probe/data/sector/income/tech 目标下的正式动作
+    //   与资源准备），**不再对 quick_trade/card_corner/industry 无条件放行**（2026-08-21
+    //   迭代，用户裁定）：补缺口/凑宣传的 quick_trade/card_corner 已作为目标目录的
+    //   资源准备动作（probePlanActions/selectMinimumCostResourcePreparation/
+    //   selectTechPublicityPreparation 等）进入 compatibleActionIds——目标目录里
+    //   没有的动作就是当前没有目标的，不该进深搜（无目标的手段动作进搜索会各自
+    //   展开主行动树吃光节点预算：实测白色 R3 17 根（6 card_corner 无条件放行）→
+    //   4096 预算耗尽 → 主行动 COUNTERFACTUAL_SEARCH_PRUNED → 只剩 pass 掉分）。
+    //   打牌经目标绑定进入（income:card 收入牌 / tech:research 免费科技 / probe:
+    //   免费发射 / sector:观测 / data:卡牌），不打散全部 play_card。
     const compatibleActionIds = new Set(enumerateSecondaryAgentRootTargets({
       focalSeatId: input.focalSeatId,
       rootObservation: input.rootObservation,
       legalActions,
       maxProxyDepth: input.maxProxyDepth,
     }).flatMap((target) => target.compatibleActionIds));
-    return legalActions.filter((action) => (
-      compatibleActionIds.has(action.actionId)
-      || UNIFIED_PURPOSE_FAMILIES.has(action.family)
-    ));
+    return legalActions.filter((action) => compatibleActionIds.has(action.actionId));
   }
 
   function probeGoalResourceReachable(observation, goal, seatId) {
@@ -3039,8 +3087,10 @@
             successors,
             input.focalSeatId,
           );
-          if (dataPlacementChoices.length) {
-            return bindRoute(dataPlacementChoices, input.routeTargetId, input.routePlanId);
+          if (dataPlacementChoices) {
+            return dataPlacementChoices.length
+              ? bindRoute(dataPlacementChoices, input.routeTargetId, input.routePlanId)
+              : [];
           }
         }
         const probeGoal = (rawProbeRequirements(input.branchObservation)?.candidates || [])
