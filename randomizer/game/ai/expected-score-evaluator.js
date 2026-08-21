@@ -1122,18 +1122,39 @@
     // null = 不是放置决策（无 data 选择），交给后续逻辑；[] = 有放置选择但无需求
     // → 收束（2026-08-21 用户裁定：没需求时做不做都一样，不展开省预算）。
     if (!dataChoices.length) return null;
-    // data:analyze 目标只填第一排 computer（2026-08-21 用户裁定：目标是收入/
-    // 分析 → 填第一排推进；blueBonus（蓝科技下方/第二行）不参与本目标判断——
-    // "蓝1下方不填是因为不需要你在目标是收入的时候判断，之后需要填的时候填即可"。
-    // 收入目标不耦合 blueBonus/宣传；分析目标前是否需要填第二行由
-    // selectAnalyzeBlueBonusChoice 前置判断（见 data:analyze 分支）。
-    const computer = dataChoices.find((action) => action.target?.target === "computer") || null;
-    if (!computer) return [];
-    // 数据不够（可放置数据为 0 或已无剩余位置）→ 不填（"数据不够就去拿"）。
+    // 数据不够（可放置数据为 0）→ 不填（"数据不够就去拿"）。
     const assets = resourceFactsOf(observation, seatId);
     if (finite(assets.availableData) <= 0) return [];
-    // 目标 active（data:analyze / income:gain 下被调用）→ 填第一排（"数据够就填"）。
-    return [computer];
+    const computer = dataChoices.find((action) => action.target?.target === "computer") || null;
+    const blueBonuses = dataChoices.filter((action) => action.target?.target === "blueBonus");
+    const blueOf = (tileId) => blueBonuses.find((action) => (
+      blueTileOfSlot(observation, action.target?.blueSlot, seatId) === tileId
+    )) || null;
+    const foldOthers = (primary, list) => (
+      list.length > 1
+        ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
+        : [primary]
+    );
+    // blueBonus 独立需求优先（2026-08-21 用户裁定："blueBonus 不是独立目标 =》
+    // 有独立需求还是填"——缺钱→blue1/缺电→blue2/缺牌→blue3，宣传不需要）。
+    // place_data 无论挂在哪个目标（tech:gain 研究蓝科后填槽 / data:analyze /
+    // 无目标兜底）下，有独立需求就填对应蓝槽；收入目标不耦合（income 分支
+    // 不调用本函数）。
+    if (finite(assets.credits) <= 1) {
+      const blue1 = blueOf("blue1");
+      if (blue1) return foldOthers(blue1, blueBonuses);
+    }
+    if (finite(assets.energy) <= 1) {
+      const blue2 = blueOf("blue2");
+      if (blue2) return foldOthers(blue2, blueBonuses);
+    }
+    if (finite(assets.ordinaryCards) <= 1) {
+      const blue3 = blueOf("blue3");
+      if (blue3) return foldOthers(blue3, blueBonuses);
+    }
+    // 无独立需求 → 填第一排（目标 active：数据够就填，推进收入/分析）。
+    if (computer) return [computer];
+    return [];
   }
 
   // 分析目标前判断是否需要填第二行 blueBonus 槽（2026-08-21 用户裁定：分析前
@@ -3086,21 +3107,23 @@
           String(input.routeTargetId || "").startsWith("income:gain:")
           && input.routePlanId === "income:data:computer-slot-4"
         ) {
-          // 收入链填轨（2026-08-21 用户裁定"要收入就填4"，有蓝科时选择不多
-          // 不需要暴力搜索）：走需求驱动放置选择（selectDataPlacementChoice 按
-          // 宣传/收入/钱电/牌缺口折叠出代表选项），而非把 computer+blueBonus
-          // 全部返回让搜索枚举。此前全量返回导致"第一排放置位"类单选项在每个
-          // 中间节点重复展开（data:analyze 目标链下 choose_target 916+769 节点
-          // 吃掉 4096 预算 36%），主行动 research_tech 只剩 14 节点 PRUNED 失真。
-          const dataPlacementChoices = selectDataPlacementChoice(
-            input.branchObservation,
-            successors,
-            input.focalSeatId,
-          );
-          if (dataPlacementChoices) {
-            return dataPlacementChoices.length
-              ? bindRoute(dataPlacementChoices, input.routeTargetId, input.routePlanId)
-              : [];
+          // 收入目标不耦合 blueBonus（2026-08-21 用户裁定）：要收入就填第一排
+          // 第4格，blueBonus/宣传不参与收入目标判断。只返回 computer 单选项，
+          // 不展开搜索枚举。
+          const computer = successors.filter((action) => (
+            action.target?.target === "computer"
+          ));
+          if (computer.length) {
+            return bindRoute(
+              computer.slice(0, 1),
+              input.routeTargetId,
+              input.routePlanId,
+            ).map((action, index) => ({
+              ...action,
+              ...(index === 0 && computer.length > 1
+                ? { targetEquivalentChoiceCount: computer.length - 1 }
+                : {}),
+            }));
           }
         }
         if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
