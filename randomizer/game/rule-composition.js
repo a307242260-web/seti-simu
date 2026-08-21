@@ -2081,15 +2081,25 @@
             if (drainInspection.phase !== "awaiting_input" || !drainInspection.session?.decision) break;
             const drainChoices = drainInspection.session.decision.choices || [];
             if (!drainChoices.length) break;
-            // 可排空 = **纯结算**（弃牌/支付/交易选牌，任意选择等价或由规则强制）。
-            // 策略级选择（探测目标/科技/外星痕迹位置等 choose_target/choose_card）
-            // **不折叠**——折叠会断链（协调器路径 rootObservation 缺 requirements，
-            // selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
+            // 可排空 = **纯结算**（弃牌/支付/交易选牌，任意选择等价或由规则强制）
+            // + **放置数据选位**（choose_target:computer"第一排放置位"= 规则强制的
+            // 从左到右下一空位，唯一合法选项——2026-08-21 用户裁定：place_data 是
+            // 快速行动，从 0 填到收入直接连续填 4 个数据，不需要占据 4 个节点，
+            // 选位折叠进 place_data 节点）。
+            // 策略级选择（探测目标/科技/外星痕迹位置等多选一 choose_target/
+            // choose_card）**不折叠**——折叠会断链（协调器路径 rootObservation 缺
+            // requirements，selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
             const drainable = drainChoices.length > 0 && drainChoices.every((choice) => (
               choice.family === "choose_payment"
               || (
                 choice.family === "choose_card"
                 && choice.target?.kind === "trade-card-selection"
+              )
+              || (
+                // 放置数据第一排放置位：唯一合法选项（规则强制），折叠。
+                choice.family === "choose_target"
+                && choice.target?.target === "computer"
+                && choice.target?.choiceId === "data:computer"
               )
             ));
             if (!drainable) break;
@@ -2140,6 +2150,36 @@
                 || null;
               if (isHiddenInformationBarrier(barrier)) {
                 drainHiddenBarrier = barrier;
+              }
+            }
+            // 连续填数据（2026-08-21 用户裁定：place_data 是快速行动，从 0 填到
+            // 收入直接连续填 4 个数据，不需要占据 4 个节点）：**仅当本节点是
+            // place_data**（或刚折叠了它的选位）时，选位折叠提交后若仍可继续填
+            // （数据池有数据 + 计算机第一排有剩余槽位，且本回合未 PASS），提交
+            // 下一个 place_data 快速行动，下一轮循环处理其选位——整条"填数据→
+            // 选位→填数据→选位"链在同一节点内连续执行，只算 1 个节点。
+            if (node.action?.family === "place_data") {
+              const afterInspection = composition.inspect();
+              if (afterInspection.phase !== "awaiting_input") {
+                const afterActions = composition.inputPort.enumerateActions({
+                  actorId: focalSeatId || node.action.actorId,
+                });
+                const nextPlaceData = (afterActions || []).find((action) => (
+                  action.family === "place_data" && action.phase !== "conditional"
+                ));
+                if (nextPlaceData) {
+                  const placeResult = composition.inputPort.submitAction(nextPlaceData, {
+                    skipProjection: true,
+                  });
+                  if (!placeResult?.ok) {
+                    return {
+                      failed: true,
+                      code: placeResult?.code || "COUNTERFACTUAL_PLACE_DATA_CHAIN_FAILED",
+                      message: placeResult?.message || "连续填数据失败",
+                    };
+                  }
+                  continue;
+                }
               }
             }
             drainGuard += 1;
