@@ -194,16 +194,24 @@ async function cmdRun(opts) {
   console.log(`  记录: reports/research/${result.recordFile}`);
   if (result.savePath) console.log(`  存档: ${result.savePath}`);
 
-  // 生成复盘报告 + 重建总览页（标准口径：每次迭代默认存档+行动级复盘报告）
+  // 生成复盘报告 + 重建总览页（标准口径：每次迭代默认产出 存档 + 复盘报告 + 记录）
   const { registry, pagePath, generated } = buildRegistry({ generateReports: !opts.noReports });
   console.log(`[页面] ${pagePath}`);
   if (generated.length) console.log(`[报告] 生成 ${generated.length} 份复盘报告`);
+  // 硬校验（2026-08-21 用户口径：每次实验默认必须有 存档、复盘、记录）：
+  // 记录缺失（未登记）、存档缺失、复盘报告缺失 → 本次迭代不算完成，显式失败
   const runResult = registry.versions.find((v) => v.id === vid)?.results.find((r) => r.recordFile === result.recordFile);
-  if (runResult?.reportExists && runResult.reportPath) {
-    console.log(`[复盘报告] ${runResult.reportPath}`);
-  } else if (!opts.noReports) {
-    console.log(`[警告] 本次运行无存档，未生成行动级复盘报告——标准迭代默认应存档（勿用 --no-save），请检查 run_research_validation 输出。`);
+  const problems = [];
+  if (!runResult || runResult.missingRecord) problems.push("记录未登记到版本");
+  else {
+    const saveAbs = runResult.savePath ? require("node:fs").existsSync(path.join(REPO_ROOT, runResult.savePath)) : false;
+    if (!saveAbs) problems.push("无存档（run_research_validation 需默认写存档，勿 --no-save）");
+    else if (!runResult.reportExists) problems.push("缺复盘报告（build --reports 未生成成功）");
   }
+  if (problems.length) {
+    die(`\n[失败] 本次迭代未产出完整复盘：${problems.join("；")}\n  标准迭代入口默认必须有 存档 + 复盘报告 + 记录，请检查后重跑。`);
+  }
+  console.log(`[复盘报告] ${runResult.reportPath}`);
   printBestOf(registry);
   printWarnings(registry);
   console.log(`\n下一步：人工核对 versions.json 的 summary/records 注记后，提交记录体系产物（改动即文档，同一次提交）。`);

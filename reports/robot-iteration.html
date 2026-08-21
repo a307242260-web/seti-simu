@@ -26,11 +26,6 @@ td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;vertical-align:1px}
 .badge.head{background:#1f6feb;color:#fff}
 .badge.roadmap{background:#f3e8c8;color:#7a5b00}
-.badge.warn{background:#fde8e8;color:#b3261e}
-.badge.record{background:#e6f4ea;color:#1e7e46}
-.badge.save{background:#e8eefa;color:#2f6fed}
-.badge.report{background:#f3eefc;color:#6b3fa0}
-.badge.missing{background:#f1f3f6;color:#98a2b3}
 .scores{white-space:nowrap}
 .scores b{font-variant-numeric:tabular-nums}
 .src{font-size:10.5px;color:var(--muted)}
@@ -84,13 +79,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:17:09.535Z",
+  "builtAt": "2026-08-21T05:18:15.653Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "29d79234",
+  "headCommit": "81bec9a5",
   "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
@@ -1409,7 +1404,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15266 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 15233 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1774,10 +1769,6 @@ function versionRow(v){
   const badges=[];
   if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
   if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
-  const comp=v.completeness;
-  badges.push((comp.record?'<span class="badge record" title="有 research 记录">记录✓</span>':'<span class="badge missing" title="无 research 记录">记录✗</span>'));
-  if(comp.save) badges.push('<span class="badge save" title="有存档">存档✓</span>');
-  if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
   const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
     v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
   const rmap=v.roadmap;
