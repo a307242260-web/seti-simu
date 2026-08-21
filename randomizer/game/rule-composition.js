@@ -3197,9 +3197,23 @@
       // node.action.family 聚合的 origin 数——回答"这些节点都是啥"（选目标/
       // 结算/扫描/放数据……各自占多少），定位搜索分叉热点。
       const frontierOriginCountByFamily = {};
+      // 节点级明细（2026-08-21 调研诊断）：每个 frontier 节点 = 一个待执行决策点，
+      // 记录其动作（family+摘要）、路径数（origins）、代表目标与深度——dump 一次
+      // 即完整快照，后续分析不重放。
+      const frontierNodeBreakdown = [];
       for (const node of frontier) {
-        for (const origin of node.origins) {
-          const depth = String(Number(origin.proxyDepth) || 0);
+        const origin = node.origins[0] || null;
+        frontierNodeBreakdown.push({
+          action: `${node.action?.family || "?"}:${String(node.action?.summary || "").slice(0, 40)}`,
+          originCount: node.origins.length,
+          routeTargetId: origin?.routeTargetId || null,
+          routePlanId: origin?.routePlanId || null,
+          proxyDepth: Number(origin?.proxyDepth) || 0,
+          chainDepth: (origin?.chain || []).length,
+          isConditional: node.action?.phase === "conditional",
+        });
+        for (const o of node.origins) {
+          const depth = String(Number(o.proxyDepth) || 0);
           remainingFrontierOriginCountByGoalDepth[depth] = (
             remainingFrontierOriginCountByGoalDepth[depth] || 0
           ) + 1;
@@ -3277,6 +3291,7 @@
             right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
           )),
         ),
+        frontierNodeBreakdown,
         maxDepth,
         maxProxyDepth: secondaryAgentSearch ? maxProxyDepth : null,
         secondaryAgentSearch: Boolean(secondaryAgentSearch),
