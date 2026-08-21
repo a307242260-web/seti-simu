@@ -205,7 +205,7 @@ function createHeuristicDecisionFunction(options = {}) {
         maxDepth: 15,
         maxLeaves: 8,
         maxNodes: 128,
-        maxExecutionNodes: 16384,
+        maxExecutionNodes: 4096,
         secondaryAgentSearch: true,
         completeTargetCatalog: config.completeTargetCatalog === true,
         traceGoalClusters: config.traceCounterfactualGoalClusters,
