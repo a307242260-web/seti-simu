@@ -142,6 +142,7 @@ node tools/robot_iterate.js check                                    # 完整性
 ```
 
 - 版本登记真相源：`reports/iteration/versions.json`；总览页：`reports/robot-iteration.html`。
+- `robot_iterate run` 实时透传子进程 stderr（逐决策进度），全盘数分钟全程可见，不会"卡死无输出"。
 - 逐步复盘报告：`reports/iteration/<版本>/<记录>.action-log.html`（**纯重放存档，绝不重跑**）。
 - **每个固定盘面的全盘记录必须归属到某个版本**（`check` 把未归属记录列为 warn 孤儿）。
 - 机制与 schema 详见 `docs/robot-iteration-registry.md`。

@@ -16,7 +16,7 @@
 // 机制说明见 docs/robot-iteration-registry.md。
 const fs = require("node:fs");
 const path = require("node:path");
-const { execFileSync, spawnSync } = require("node:child_process");
+const { execFileSync, spawn } = require("node:child_process");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const RESEARCH_DIR = path.join(REPO_ROOT, "reports", "research");
@@ -790,25 +790,46 @@ function buildRegistry(options = {}) {
 
 // ---------------- 委托 run_research_validation ----------------
 
-// 标准迭代入口的核心委托：跑验证（防重跑由底层指纹去重保证），
-// 返回 { ok, recordFile, savePath, output }；拒绝时 ok=false。
+// 标准迭代入口的核心委托：跑验证（防重跑由底层指纹去重保证）。
+// 用异步 spawn（非 spawnSync）并**实时透传**子进程 stdout/stderr 到父进程——
+// 全盘可能运行数分钟，run_research_validation 默认逐决策把进度写到 stderr
+// （progress.js，minIntervalMs=1000），透传后终端/agent 能实时看到
+// 轮次/回合/步数/分数，而不是等子进程结束才一次性吐出。
+// 返回 Promise<{ ok, status, recordFile, savePath, output }>；拒绝时 ok=false。
 function runResearchValidation(args) {
-  const result = spawnSync("node", [path.join(__dirname, "run_research_validation.js"), ...args], {
-    cwd: REPO_ROOT,
-    encoding: "utf8",
-    maxBuffer: 16 * 1024 * 1024,
+  return new Promise((resolve) => {
+    const child = spawn("node", [path.join(__dirname, "run_research_validation.js"), ...args], {
+      cwd: REPO_ROOT,
+    });
+    let stdoutText = "";
+    let stderrText = "";
+    child.stdout.on("data", (chunk) => {
+      const text = chunk.toString();
+      stdoutText += text;
+      process.stdout.write(text); // 实时透传（结果行/记录行）
+    });
+    child.stderr.on("data", (chunk) => {
+      const text = chunk.toString();
+      stderrText += text;
+      process.stderr.write(text); // 实时透传（逐决策进度行）
+    });
+    child.on("error", (err) => {
+      process.stderr.write(`run_research_validation 启动失败: ${err.message}\n`);
+      resolve({ ok: false, status: 1, recordFile: null, savePath: null, output: err.message });
+    });
+    child.on("close", (code) => {
+      const ok = code === 0;
+      let recordFile = null;
+      let savePath = null;
+      if (ok) {
+        const m = stdoutText.match(/记录:\s*(reports[\\/]research[\\/][^\s]+)/);
+        if (m) recordFile = path.basename(m[1]);
+        const m2 = stdoutText.match(/存档:\s*(seti-saves[\\/][^\s]+)/);
+        if (m2) savePath = m2[1].replace(/\\/g, "/");
+      }
+      resolve({ ok, status: code, recordFile, savePath, output: stdoutText + stderrText });
+    });
   });
-  const output = `${result.stdout || ""}\n${result.stderr || ""}`;
-  if (result.status !== 0) {
-    return { ok: false, status: result.status, output };
-  }
-  let recordFile = null;
-  let savePath = null;
-  const m = result.stdout.match(/记录:\s*(reports[\\/]research[\\/][^\s]+)/);
-  if (m) recordFile = path.basename(m[1]);
-  const m2 = result.stdout.match(/存档:\s*(seti-saves[\\/][^\s]+)/);
-  if (m2) savePath = m2[1].replace(/\\/g, "/");
-  return { ok: true, recordFile, savePath, output };
 }
 
 module.exports = {

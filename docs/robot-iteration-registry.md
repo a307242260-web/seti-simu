@@ -39,6 +39,11 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
    → 跑验证（底层指纹去重，绝不重跑）
    → 自动登记版本（head/commits/baseline 自动推导，写 versions.json 前自动 .bak 备份）
    → 生成复盘报告（纯重放，无 AI 重跑）→ 重建总览页
+
+`run` 的子进程用**异步 spawn 实时透传** stdout/stderr（2026-08-21 修复，替代原 spawnSync
+同步阻塞）：全盘数分钟期间，run_research_validation 默认逐决策写 stderr 的进度行
+（`progress.js`，minIntervalMs=1000：轮次/回合/决策#/席位/动作/各席分数/用时）会实时
+出现在终端，而不是等结束才一次性吐出；`--progress N` 的每 N 步汇总同样实时可见。
 3. 人工核对 versions.json 的 summary / 记录注记（可再跑 register/build 微调）
 4. 提交记录体系产物（与代码改动同一次提交或紧随其后）
 5. 分析历史：review --best / --show / --compare / check

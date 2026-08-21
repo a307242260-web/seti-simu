@@ -124,7 +124,7 @@ function autoBaseline(versions, head) {
   return null;
 }
 
-function cmdRun(opts) {
+async function cmdRun(opts) {
   if (!opts.name) die("run 需要 --name <id>（实验名 = 版本登记 id 的默认值）");
   const versionsData = loadVersions();
   const versions = versionsData.versions;
@@ -149,8 +149,9 @@ function cmdRun(opts) {
   if (opts.force) runArgs.push("--force");
   if (opts.verbose) console.log(`> node tools/run_research_validation.js ${runArgs.join(" ")}`);
 
-  const result = runResearchValidation(runArgs);
-  process.stdout.write(result.output);
+  const result = await runResearchValidation(runArgs);
+  // 注意：stdout/stderr 已在 runResearchValidation 内实时透传（含逐决策进度），
+  // 这里不再二次打印 result.output，避免输出重复。
   if (!result.ok) {
     if (result.status === 2) {
       die(`\n[拒绝] 同一实验同一代码版本已有记录，未重跑（符合'绝不重跑'铁律）。`, 2);
@@ -353,7 +354,7 @@ function cmdCheck() {
 
 // ---------------- main ----------------
 
-function main() {
+async function main() {
   let opts;
   try {
     opts = parseArgs(process.argv.slice(2));
@@ -361,7 +362,7 @@ function main() {
     die(`${err.message}\n${usage()}`);
   }
   switch (opts.cmd) {
-    case "run": cmdRun(opts); break;
+    case "run": await cmdRun(opts); break;
     case "register": cmdRegister(opts); break;
     case "build": cmdBuild(opts); break;
     case "review": cmdReview(opts); break;
@@ -376,4 +377,7 @@ function main() {
   }
 }
 
-main();
+main().catch((err) => {
+  process.stderr.write(`${err.stack || err.message}\n`);
+  process.exit(1);
+});
