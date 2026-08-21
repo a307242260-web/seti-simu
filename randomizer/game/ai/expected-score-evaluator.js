@@ -1050,11 +1050,13 @@
 
   function dataAnalyzeEligible(requirements) {
     if (!requirements) return false;
-    // 2026-08-21 用户裁定：数据轨不满 4 时由收入目标驱动填数据（income:
-    // data:computer-slot-4，目标=填到第4位拿收入），data:analyze 目标**不满 4
-    // 不开启**——否则目标里既有收入又有分析，两个目标抢填数据浪费资源。
-    // 数据轨填满 4（placed>=4）才开启 data:analyze（继续填到第 6 位解锁 analyze）。
-    return finite(requirements.computerPlacedCount) >= 4;
+    if (typeof requirements.eligible === "boolean") return requirements.eligible;
+    const firstRowRemaining = Math.max(
+      0,
+      4 - finite(requirements.computerPlacedCount),
+    );
+    return finite(requirements.computerPlacedCount) >= 4
+      || finite(requirements.availableData) >= firstRowRemaining;
   }
 
   function rawSectorWinRequirements(observation) {
