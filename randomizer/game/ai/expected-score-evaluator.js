@@ -5,22 +5,19 @@
   let quickTrades = root.SetiQuickTrades;
   let cardEffects = root.SetiCardEffects;
   let alienState = root.SetiAlienState;
-  let cardDeck = root.SetiCards;
   if (typeof require === "function") {
     outcomeModel = outcomeModel || require("./outcome-model");
     quickTrades = quickTrades || require("../actions/quick-trades");
     cardEffects = cardEffects || require("../cards/effects");
     alienState = alienState || require("../aliens/state");
-    cardDeck = cardDeck || require("../cards/deck");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, cardDeck);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
   quickTrades,
   cardEffects,
   alienState,
-  cardDeck,
 ) {
   "use strict";
 
@@ -127,25 +124,55 @@
     });
   }
 
-  function infrastructureOf(projection) {
+  // ---- value 形状统一构造（审查清理项 9）----
+  // evaluateState（完整 outcomeProjection 源）与 valueFromStrategicFacts
+  // （轻量 strategicFacts 源）产出同一 value 形状（resourceFacts/infrastructure），
+  // 统一由 resourceFactsFrom/infrastructureFrom 组装。strategicFacts 源不投影
+  // alienSlots（createStrategicFacts 无槽位级数据）——分支优先级（getBranchPriority
+  // 热路径）因此不感知外星进度增量，与统一前一致。
+  function resourceFactsFrom(parts = {}) {
     return {
-      ownedTechIds: [...(projection.progress?.ownedTechIds || [])].sort(),
-      income: { ...(projection.progress?.income || {}) },
-      roundNumber: Math.max(1, finite(projection.progress?.roundNumber) || 1),
-      finalRoundNumber: Math.max(1, finite(projection.progress?.finalRoundNumber) || 4),
-      traceCount: Math.max(0, finite(projection.progress?.traceCount) || 0),
+      credits: finite(parts.credits),
+      energy: finite(parts.energy),
+      publicity: finite(parts.publicity),
+      availableData: finite(parts.availableData),
+      ordinaryCards: finite(parts.ordinaryCards),
+      alienCards: finite(parts.alienCards),
+    };
+  }
+
+  function infrastructureFrom(parts = {}) {
+    return {
+      ownedTechIds: [...(parts.ownedTechIds || [])].sort(),
+      income: { ...(parts.income || {}) },
+      roundNumber: Math.max(1, finite(parts.roundNumber) || 1),
+      finalRoundNumber: Math.max(1, finite(parts.finalRoundNumber) || 4),
+      traceCount: Math.max(0, finite(parts.traceCount) || 0),
       // 外星槽位级进度（V 同源）：{ slotId, revealed, ownFirstTraces, ownExtraMarks }
-      alienSlots: (projection.progress?.alienSlots || []).map((slot) => ({
+      alienSlots: (parts.alienSlots || []).map((slot) => ({
         slotId: slot?.slotId ?? null,
         revealed: Boolean(slot?.revealed),
         ownFirstTraces: Math.max(0, finite(slot?.ownFirstTraces)),
         ownExtraMarks: Math.max(0, finite(slot?.ownExtraMarks)),
       })),
-      sectorWinRequirements: projection.progress?.sectorWinRequirements
-        ? structuredClone(projection.progress.sectorWinRequirements)
+      sectorWinRequirements: parts.sectorWinRequirements
+        ? structuredClone(parts.sectorWinRequirements)
         : null,
-      dataProgress: { ...(projection.progress?.dataProgress || {}) },
+      dataProgress: { ...(parts.dataProgress || {}) },
     };
+  }
+
+  function infrastructureOf(projection) {
+    return infrastructureFrom({
+      ownedTechIds: projection.progress?.ownedTechIds,
+      income: projection.progress?.income,
+      roundNumber: projection.progress?.roundNumber,
+      finalRoundNumber: projection.progress?.finalRoundNumber,
+      traceCount: projection.progress?.traceCount,
+      alienSlots: projection.progress?.alienSlots,
+      sectorWinRequirements: projection.progress?.sectorWinRequirements,
+      dataProgress: projection.progress?.dataProgress,
+    });
   }
 
   function evaluateState(observation, seatId) {
@@ -168,14 +195,14 @@
       securedEndGameBonus: terminal ? 0 : finite(projection.scoring.securedEndGameBonus),
       total: realizedScore,
       infrastructure: infrastructureOf(projection),
-      resourceFacts: {
-        credits: finite(projection.assets.credits),
-        energy: finite(projection.assets.energy),
-        publicity: finite(projection.assets.publicity),
-        availableData: finite(projection.assets.availableData),
-        ordinaryCards: finite(projection.assets.ordinaryCards),
-        alienCards: finite(projection.assets.alienCards),
-      },
+      resourceFacts: resourceFactsFrom({
+        credits: projection.assets.credits,
+        energy: projection.assets.energy,
+        publicity: projection.assets.publicity,
+        availableData: projection.assets.availableData,
+        ordinaryCards: projection.assets.ordinaryCards,
+        alienCards: projection.assets.alienCards,
+      }),
       fieldPaths: {
         realizedScore: terminal
           ? "outcomeProjection.scoring.officialTerminalScore"
@@ -701,22 +728,23 @@
   }
 
   function valueFromStrategicFacts(facts) {
+    // 轻量 strategicFacts 源（getBranchPriority 热路径）：不投影 alienSlots
+    // （createStrategicFacts 无槽位级数据），外星进度增量不参与分支优先级；
+    // 最终叶排序走 evaluateState（完整 projection 源）。
     return {
       terminal: Boolean(facts.terminal),
       realizedScore: finite(facts.realizedScore),
       securedEndGameBonus: finite(facts.securedEndGameBonus),
-      resourceFacts: { ...(facts.resourceFacts || {}) },
-      infrastructure: {
-        ownedTechIds: [...(facts.ownedTechIds || [])].sort(),
-        income: { ...(facts.income || {}) },
-        roundNumber: Math.max(1, finite(facts.roundNumber) || 1),
-        finalRoundNumber: Math.max(1, finite(facts.finalRoundNumber) || 4),
-        traceCount: Math.max(0, finite(facts.traceCount) || 0),
-        sectorWinRequirements: facts.sectorWinRequirements
-          ? structuredClone(facts.sectorWinRequirements)
-          : null,
-        dataProgress: { ...(facts.dataProgress || {}) },
-      },
+      resourceFacts: resourceFactsFrom(facts.resourceFacts),
+      infrastructure: infrastructureFrom({
+        ownedTechIds: facts.ownedTechIds,
+        income: facts.income,
+        roundNumber: facts.roundNumber,
+        finalRoundNumber: facts.finalRoundNumber,
+        traceCount: facts.traceCount,
+        sectorWinRequirements: facts.sectorWinRequirements,
+        dataProgress: facts.dataProgress,
+      }),
     };
   }
 
@@ -888,27 +916,20 @@
     return !CONTROL_FAMILIES.has(action?.family);
   }
 
-  // card_corner 弃牌收益（数据/宣传/分数/支付资源）：从手牌卡片的弃牌角标码读取
-  // （deck.getDiscardActionRewardForCard），descriptor payload 不携带 gain。
-  function cardCornerDiscardReward(observation, action) {
-    if (action?.family !== "card_corner") return null;
-    const card = (observation?.selfState?.hand || [])
-      .find((candidate) => String(candidate?.id) === String(action.target?.cardInstanceId));
-    if (!card || typeof cardDeck?.getDiscardActionRewardForCard !== "function") return null;
-    return cardDeck.getDiscardActionRewardForCard(card) || null;
-  }
-
   function requiresRootCounterfactual(action, observation) {
     if (!requiresCounterfactualOutcome(action)) return false;
-    if (action?.family !== "quick_trade" && action?.family !== "card_corner") return true;
-    // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade / card_corner 本身
-    // 没有独立价值（资源负向），做它们是因为要达成某个目标但资源调配有问题——把
-    // 当前资源转成目标需要的资源。**不存在无目标的 quick_trade/card_corner 根**。
-    // 2026-08-21 迭代：card_corner 门控与 quick_trade 对称化（此前 card_corner 恒
-    // 放行）。注意：门控只保证"贡献>0（缩小缺口）"，不保证"贡献比例"——leafValue
-    // 是整链价值不按动作分摊，小缺口吃全链的搭便车由 quick 根截断与出口目的检查
-    // （quickTradePurpose/cardCornerPurpose）继续兜底（A/B 实测删除后均分 64.5→53.75）。
+    if (action?.family !== "quick_trade") return true;
+    // 目的型动作需求门控（"需要了再做"，用户口径）：quick_trade 本身没有独立价值，
+    // 价值来自"补当前资源缺口"。quick_trade 的叶必然搭后续主行动的便车（leafValue
+    // 是整链价值，不按动作分摊），评估虚高导致 AI 乱做（实测 on 全盘白色 86→43，
+    // quick_trade/card_corner/industry 被误选）。
     // 需求判断 = 产出能缩小当前目标/行动缺口（规则投影的 requirements，不限绑定）。
+    // 2026-08-21 迭代结论（A/B 实证）：card_corner **不加**入口门控——card_corner 的
+    // 价值由叶级出口检查（cardCornerPurpose）判定（立即数据/宣传增量、直接解锁），
+    // root 级"目标已生成"判断会误过滤早期有价值的弃牌角标（如数据轨未成型时弃牌换
+    // 数据，A/B 实测绿 63→20/白 77→50）；quick_trade 的门控则因"缺口缩小"判定保留。
+    // 三件套（入口门控/quick 根截断/出口检查）互不替代：门控防无目标、截断防未绑定
+    // 便车、出口检查防"本就可达"便车——删任一均分都劣化（64.5→53.75/56.5）。
     const projection = observation?.outcomeProjection;
     const preparesAnalyze = Boolean(
       projection?.progress?.dataProgress?.analyzeReady
@@ -939,60 +960,11 @@
         action,
         seatId,
       )?.reduction > 0);
-    if (action?.family === "quick_trade") {
-      return preparesAnalyze
-        || preparesProbeGoal
-        || preparesDataGoal
-        || preparesSectorGoal
-        || preparesIncomeGoal;
-    }
-    // card_corner（2026-08-21 对称化入口门控）：
-    //   - move 型：作为探测路线的移动达成步骤——有需要移动的探测目标才放行；
-    //   - runezu_symbol / fangzhou_basic：物种专属弃牌角标（符文面部符号/方舟），
-    //     本身绑定外星机制目标，放行；
-    //   - resource 型：弃牌收益（数据/宣传/支付资源）缩小当前目标缺口——
-    //     数据缺口 / 宣传跨研究门槛 / 探测·扇区·收入支付缺口。
-    if (action.payload?.kind === "move") {
-      return (rawProbeRequirements(observation)?.candidates || [])
-        .some((goal) => goal?.nextStep?.family === "move");
-    }
-    if (["runezu_symbol", "fangzhou_basic"].includes(action.payload?.kind)) return true;
-    const reward = cardCornerDiscardReward(observation, action);
-    if (!reward) return false;
-    const assets = resourceFactsOf(observation, seatId);
-    const dataGain = Math.max(0, finite(reward?.dataCount));
-    const gain = reward?.gain || {};
-    const dataRequirements = rawDataAnalyzeRequirements(observation);
-    const dataNeed = dataAnalyzeEligible(dataRequirements)
-      && (
-        (dataRequirements?.acquisitionPlans || []).some((plan) => plan.kind === "card_corner")
-        || finite(dataRequirements?.nextCost?.credits) > 0
-        || finite(dataRequirements?.nextCost?.energy) > 0
-      );
-    const preparesData = dataNeed && (dataGain > 0 || finite(gain.credits) > 0 || finite(gain.energy) > 0);
-    const techRequirements = rawTechGainRequirements(observation);
-    const researchCost = finite(techRequirements?.researchCost) || 6;
-    const publicityCrosses = finite(assets.publicity) < researchCost
-      && finite(assets.publicity) + finite(gain.publicity) >= researchCost;
-    const reducesPaymentGap = [
-      ...(rawProbeRequirements(observation)?.candidates || []).map((goal) => goal.required || {}),
-      rawSectorWinRequirements(observation)?.standardScanCost || {},
-      ...(rawIncomeGainRequirements(observation)?.plans || []).map((plan) => plan.nextCost || {}),
-    ].filter((required) => finite(required?.credits) > 0 || finite(required?.energy) > 0)
-      .some((required) => {
-        let before = 0;
-        let after = 0;
-        for (const resource of ["credits", "energy"]) {
-          before += Math.max(0, finite(required[resource]) - finite(assets[resource]));
-          after += Math.max(0, (
-            finite(required[resource])
-            - finite(assets[resource])
-            - finite(gain[resource])
-          ));
-        }
-        return after < before;
-      });
-    return preparesData || publicityCrosses || reducesPaymentGap;
+    return preparesAnalyze
+      || preparesProbeGoal
+      || preparesDataGoal
+      || preparesSectorGoal
+      || preparesIncomeGoal;
   }
 
   function completesSecondaryAgentRouteTarget(input = {}) {
