@@ -349,9 +349,27 @@ function computeBestOf(versions, resolvedMap) {
     };
   };
 
+  // 所有玩家的最高单人分（跨记录、任意玩家；用户口径 2026-08-21：不再只统计白色）
+  const allPlayerScores = [];
+  for (const x of candidates) {
+    const scores = (x.result?.scores) || (x.roadmap?.scores) || {};
+    for (const pid of PLAYER_ORDER) {
+      const s = scores[pid];
+      if (s != null) allPlayerScores.push({ score: s, player: pid, x });
+    }
+  }
+  allPlayerScores.sort((a, b) => b.score - a.score);
+
   return {
     bestWhite: byWhite.length ? { value: whiteOf(byWhite[0]), ...describe(byWhite[0]) } : null,
     bestAvg: byAvg.length ? { value: avgOf(byAvg[0]), ...describe(byAvg[0]) } : null,
+    bestPlayer: allPlayerScores.length
+      ? {
+        value: allPlayerScores[0].score,
+        playerColor: PLAYER_LABELS[allPlayerScores[0].player],
+        ...describe(allPlayerScores[0].x),
+      }
+      : null,
     fastestWall: byWallMs.length ? describe(byWallMs[0]) : null,
     fastestPerStep: byMsPerStep.length ? describe(byMsPerStep[0]) : null,
     topByAvg: byAvg.slice(0, 3).map((x) => {

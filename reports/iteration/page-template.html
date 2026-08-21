@@ -120,11 +120,11 @@ function bestGrid(){
     return (hasId?nm:`${nm} <code>${x.versionId}</code>`)+(x.runKey?" · "+esc(x.runKey):"");
   };
   const html=[];
-  if(b.bestWhite){
-    html.push(card("最佳分数（白色）",b.bestWhite.value,
-      `${runLine(b.bestWhite)}<br><span class="sum" title="${esc(summaryOf(b.bestWhite))}">${esc(summaryOf(b.bestWhite))||"（无改动摘要）"}</span>`,
-      `来源 ${b.bestWhite.provenance}`, b.bestWhite.provenance==="roadmap"?"roadmap":""));
-  } else html.push(card("最佳分数（白色）","—","尚无全盘记录","—"));
+  if(b.bestPlayer){
+    html.push(card(`最佳分数（${esc(b.bestPlayer.playerColor)}）`,b.bestPlayer.value,
+      `${runLine(b.bestPlayer)}<br><span class="sum" title="${esc(summaryOf(b.bestPlayer))}">${esc(summaryOf(b.bestPlayer))||"（无改动摘要）"}</span>`,
+      `来源 ${b.bestPlayer.provenance}`, b.bestPlayer.provenance==="roadmap"?"roadmap":""));
+  } else html.push(card("最佳分数","—","尚无全盘记录","—"));
   if(b.bestAvg){
     html.push(card("最佳平均分数",b.bestAvg.value,
       `${runLine(b.bestAvg)}<br><span class="sum" title="${esc(summaryOf(b.bestAvg))}">${esc(summaryOf(b.bestAvg))||"（无改动摘要）"}</span>`,
@@ -132,9 +132,9 @@ function bestGrid(){
   } else html.push(card("最佳平均分数","—","尚无全盘记录","—"));
   // 搜索耗时卡：分两块——最佳分数的耗时 / 最佳均分的耗时（对应前两张卡）
   const timeLines=[];
-  if(b.bestWhite){
-    const t=b.bestWhite.wallMs!=null?`${fmtMs(b.bestWhite.wallMs)} · 每步约 ${b.bestWhite.msPerStep} ms`:'—（roadmap 无实测）';
-    timeLines.push(`最佳分数（${esc(b.bestWhite.versionId)} · ${b.bestWhite.value}）：${t}`);
+  if(b.bestPlayer){
+    const t=b.bestPlayer.wallMs!=null?`${fmtMs(b.bestPlayer.wallMs)} · 每步约 ${b.bestPlayer.msPerStep} ms`:'—（roadmap 无实测）';
+    timeLines.push(`最佳分数（${esc(b.bestPlayer.versionId)} · ${b.bestPlayer.value}）：${t}`);
   }
   if(b.bestAvg){
     const t=b.bestAvg.wallMs!=null?`${fmtMs(b.bestAvg.wallMs)} · 每步约 ${b.bestAvg.msPerStep} ms`:'—（roadmap 无实测）';
@@ -161,7 +161,8 @@ function bestGrid(){
   }
 }
 
-// ---- 迭代表（只展示当前 baseline 一行；历史版本与回退/定位改动走命令行 review）----
+// ---- 迭代表（全部版本完整行；用户口径 2026-08-21：历史版本与当前 baseline 一样
+//     完整展示，只是页面不额外展开提交/diff 细节——此前误实现为只显示 baseline 一行）----
 function summaryCell(v){
   const s=v.summary||"";
   return s.length>110
@@ -196,13 +197,14 @@ function versionRow(v){
 }
 
 function iterTable(){
-  const head=REGISTRY.versions.find(v=>v.isHead);
+  const all=REGISTRY.versions||[];
   const el=document.getElementById("iter-container");
-  if(!head){ el.innerHTML='<p class="note">无已登记版本（node tools/robot_iterate.js register 登记）</p>'; return; }
+  if(!all.length){ el.innerHTML='<p class="note">无已登记版本（node tools/robot_iterate.js register 登记）</p>'; return; }
   const thead=`<thead><tr>
     <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th>
   </tr></thead>`;
-  el.innerHTML=`<table>${thead}<tbody>${versionRow(head)}</tbody></table>`;
+  const rows=all.map(v=>versionRow(v)).join("");
+  el.innerHTML=`<table>${thead}<tbody>${rows}</tbody></table>`;
 }
 
 // ---- 初始化 ----

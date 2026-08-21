@@ -173,8 +173,9 @@ node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <�
 
 ## 6. 当前 baseline 与历史版本查询
 
-总览页迭表只展示**当前 baseline** 一行（2026-08-21 用户口径：迭表只保留新的 baseline，
-历史版本与回退/定位改动不在页面展示）。`registry.currentBaseline` 判定：head 精确匹配
+总览页迭表展示**全部版本完整行**（2026-08-21 用户口径修正：历史版本与当前 baseline
+一样完整展示，只是页面不额外展开提交/diff 细节；此前误实现为只显示 baseline 一行）。
+`registry.currentBaseline` 判定：head 精确匹配
 git HEAD，否则取 head 为 HEAD 最近祖先的版本——策略提交后又提交工具/文档时 HEAD 会
 前进到非版本提交，策略基线不变（如当前 HEAD 为工具提交时 baseline 仍解析为最新策略版本）。
 
