@@ -153,6 +153,18 @@ newfast-recovery 321 步 / newfast A/B 206+230 步 / v26 on-baseline quick-200�
 没有存档的记录无法生成行动级报告——页面标注"仅记录级指标"（记录 JSON 本身含
 行动族分布/外星时间线，仍可复盘）。`check` 会列出有存档但缺报告的记录。
 
+### 5.1 任意存档复盘（手打档/临时实验）
+
+```sh
+node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <路径>]
+```
+
+不登记版本、不重跑，直接从任意 `seti-browser-save-v2` 存档纯重放生成行动级复盘报告
+（默认输出 `reports/iteration/human-reports/<存档名>.action-log.html`）。
+示例——用户手打的免电分析盘面 405 分档（`seti-save-537-merged.json`，516 步）：
+`node tools/robot_iterate.js report --save seti-saves/seti-save-537-merged.json --title "手打 405 分档"`
+报告含完整终局分（白 405 = base 249 + 板块 118 + 卡牌 38）、每玩家回合清单与全程复盘。
+
 ## 6. 当前 baseline 与历史版本查询
 
 总览页迭表只展示**当前 baseline** 一行（2026-08-21 用户口径：迭表只保留新的 baseline，

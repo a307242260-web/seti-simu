@@ -20,6 +20,8 @@
 //       --force-reports 连已存在的报告也重新生成（报告模板/逻辑改动后刷新用）。
 //   node tools/robot_iterate.js review [--best] [--show <id>] [--compare <base>..<head>]
 //       历史分析（只读，不重跑）。
+//   node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <路径>]
+//       任意存档（手打档/临时实验）直接生成行动级复盘报告（不登记版本、不重跑）。
 //   node tools/robot_iterate.js check
 //       完整性审计：孤儿记录 / provenance 不匹配 / 缺存档 / 缺复盘报告。
 //
@@ -85,6 +87,9 @@ function parseArgs(argv) {
       case "--show": opts.show = take(key); break;
       case "--compare": opts.compare = take(key); break;
       case "--best": opts.best = true; break;
+      case "--save": opts.save = take(key); break;
+      case "--out": opts.out = take(key); break;
+      case "--title": opts.title = take(key); break;
       default:
         if (key.startsWith("--")) throw new Error(`未知选项: ${key}`);
         positionals.push(a);
@@ -107,6 +112,7 @@ function usage() {
   node tools/robot_iterate.js register --version-id <id> [--name n] [--summary "..."] [--commits h1,h2] [--records f1,f2] [--baseline vid] [--date YYYY-MM-DD] [--reports]
   node tools/robot_iterate.js build [--reports] [--force-reports]
   node tools/robot_iterate.js review [--best] [--show <id>] [--compare <base>..<head>]
+  node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <路径>]
   node tools/robot_iterate.js check
 `;
 }
@@ -354,6 +360,31 @@ function cmdReview(opts) {
   printWarnings(registry);
 }
 
+// 任意存档直接生成行动级复盘报告（手打档/临时实验等，不登记版本、不重跑）
+function cmdReport(opts) {
+  if (!opts.save) die("report 需要 --save <存档路径>（seti-browser-save-v2 格式）");
+  const saveAbs = path.join(REPO_ROOT, opts.save);
+  if (!require("node:fs").existsSync(saveAbs)) die(`存档不存在: ${opts.save}`);
+  const runKey = path.basename(opts.save).replace(/\.json$/, "");
+  const outRel = opts.out || path.posix.join("reports", "iteration", "human-reports", `${runKey}.action-log.html`);
+  const html = lib.buildActionLogReport({
+    savePath: opts.save,
+    versionId: "human-demo",
+    versionName: opts.title || runKey,
+    runKey,
+    recordFile: null,
+    gitCommit: null,
+    policyVersion: null,
+    flags: {},
+    wallMs: null,
+    mode: "human-demo",
+  });
+  const outAbs = path.join(REPO_ROOT, outRel);
+  require("node:fs").mkdirSync(path.dirname(outAbs), { recursive: true });
+  require("node:fs").writeFileSync(outAbs, html, "utf8");
+  console.log(`[复盘报告] ${outRel}`);
+}
+
 function cmdCheck() {
   const { registry } = computeRegistry({});
   printWarnings(registry);
@@ -375,6 +406,7 @@ async function main() {
     case "register": cmdRegister(opts); break;
     case "build": cmdBuild(opts); break;
     case "review": cmdReview(opts); break;
+    case "report": cmdReport(opts); break;
     case "check": cmdCheck(); break;
     case "help":
     case "--help":

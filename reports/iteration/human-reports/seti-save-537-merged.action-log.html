@@ -1,0 +1,1580 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI 行动复盘 · 手打 405 分档（免电分析盘面） · seti-save-537-merged</title>
+<style>
+:root{--bg:#f7f8fa;--panel:#fff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--blue:#3d83d7;--green:#54a96b;--brown:#9a623f;--white:#333;--accent:#2f6fed;--good:#27ae60;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.page{width:min(1280px,calc(100% - 32px));margin:auto;padding:30px 0 60px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+h1{margin:4px 0 10px;font-size:26px}
+.meta{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+.links{font-size:12.5px;margin:4px 0 18px}
+.links a{color:var(--accent);text-decoration:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0}
+.panel h2{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:#f0f2f6;font-weight:600;white-space:nowrap}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.actor{white-space:nowrap;font-weight:600}
+td.sum{min-width:220px}
+tr.round-head td{background:#eef2f9;font-weight:700;color:#4a5568}
+.avg-row td{background:#eaf7ea}
+.hero td:first-child{font-weight:700}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.c-player-blue{background:var(--blue)}.c-player-green{background:var(--green)}.c-player-brown{background:var(--brown)}.c-player-white{background:var(--white)}
+.dp{color:var(--good);font-weight:700}.dm{color:var(--bad);font-weight:700}.d0{color:#c3c9d2}
+.ph{display:inline-block;padding:1px 6px;border-radius:4px;background:#eef1f6;color:#556;font-size:11px;margin-right:4px}
+.fam{font-weight:600}
+.muted{color:var(--muted)}
+code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
+.version-badge{display:inline-block;padding:2px 10px;border-radius:8px;background:#e8eefa;color:var(--accent);font-weight:700;font-size:14px}
+@media(max-width:760px){.page{width:100%;padding:16px 10px}table{font-size:11.5px}td.sum{min-width:0}}
+</style>
+</head>
+<body><main class="page">
+  <span class="eyebrow">SETI · 机器人行动复盘（纯重放存档 replaySteps，无 AI 重跑）</span>
+  <h1><span class="version-badge">human-demo</span> seti-save-537-merged</h1>
+  <div class="meta">seed=seti-free-analyze-v1 · gitCommit=? · policy=? · flags=默认装配 · 模式=human-demo · 步数 516 · 耗时 —</div>
+  <div class="links"> · 存档: <code>seti-saves/seti-save-537-merged.json</code></div>
+  <section class="panel final">
+        <h2>终局分数（完整终局口径，存档 finalScores）</h2>
+        <table><thead><tr><th>玩家</th><th>完整终局分</th><th>base</th><th>板块</th><th>卡牌</th></tr></thead><tbody><tr><td>蓝</td><td class="num"><b>7</b></td><td class="num">7</td><td class="num">0</td><td class="num">0</td></tr><tr><td>绿</td><td class="num"><b>7</b></td><td class="num">7</td><td class="num">0</td><td class="num">0</td></tr><tr><td>棕</td><td class="num"><b>8</b></td><td class="num">8</td><td class="num">0</td><td class="num">0</td></tr><tr class="hero"><td>白</td><td class="num"><b>405</b></td><td class="num">249</td><td class="num">118</td><td class="num">38</td></tr>
+        <tr class="avg-row"><td>均分</td><td class="num"><b>106.75</b></td><td colspan="3" class="muted">白色为人类席位（本轮评估侧重）</td></tr>
+        </tbody></table>
+      </section>
+  <section class="panel">
+      <h2><span class="dot c-player-blue"></span>蓝色玩家 · 9 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+      
+      <td class="sum"><span class="fam">选牌</span> 选择公司：图灵系统</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 2 电 · 4 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T3</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 2 电 · 4 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T4</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_49.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 2 电 · 4 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T2</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 4 电 · 4 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T3</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_78.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 4 电 · 4 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T1</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T2</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_55.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T4</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">14 钱 · 8 电 · 4 宣 · 8 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T5</td>
+      
+      <td class="sum"><span class="fam">选牌</span> 弃置 dlc_23.png、b_13.webp、dlc_29.png、b_15.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">14 钱 · 8 电 · 4 宣 · 4 手</td>
+    </tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-green"></span>绿色玩家 · 9 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+      
+      <td class="sum"><span class="fam">选牌</span> 选择公司：寰宇动力</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T2</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T3</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_24.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T1</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 4 电 · 3 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T2</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_7.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 4 电 · 3 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T4</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 5 电 · 3 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T5</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_138.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 5 电 · 3 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T3</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 8 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T4</td>
+      
+      <td class="sum"><span class="fam">选牌</span> 弃置 dlc_11.png、b_24.webp、b_138.webp、b_9.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 4 手</td>
+    </tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-brown"></span>棕色玩家 · 9 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+      
+      <td class="sum"><span class="fam">选牌</span> 选择公司：赫利昂联合体</td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T4</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T5</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_80.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T3</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">6 钱 · 3 电 · 8 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T4</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_53.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">6 钱 · 3 电 · 8 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T2</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">9 钱 · 4 电 · 9 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T3</td>
+      
+      <td class="sum"><span class="fam">选牌</span> dlc_12.png</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">9 钱 · 4 电 · 9 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T1</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">12 钱 · 5 电 · 10 宣 · 6 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T2</td>
+      
+      <td class="sum"><span class="fam">选牌</span> 弃置 b_139.webp、dlc_12.png</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">12 钱 · 5 电 · 10 宣 · 4 手</td>
+    </tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-white"></span>白色玩家 · 61 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+      
+      <td class="sum"><span class="fam">打牌</span> b_117.webp</td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">6</td>
+      <td class="res muted">2 钱 · 1 电 · 7 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T2</td>
+      
+      <td class="sum"><span class="fam">结束回合</span> 结束回合</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">6</td>
+      <td class="res muted">2 钱 · 1 电 · 7 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T5</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">8</td>
+      <td class="res muted">2 钱 · 1 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T6</td>
+      
+      <td class="sum"><span class="fam">环绕</span> 环绕火星（R3）</td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">11</td>
+      <td class="res muted">2 钱 · 0 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T7</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_9.png</td>
+      <td class="num">17 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T8</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T1</td>
+      
+      <td class="sum"><span class="fam">选牌</span> dlc_5.png</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">6 钱 · 3 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T4</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">5 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T5</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_5.png</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">4 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T6</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_5.png</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">3 钱 · 0 电 · 4 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T7</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_37.png</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">20</td>
+      <td class="res muted">3 钱 · 0 电 · 6 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T8</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">25</td>
+      <td class="res muted">4 钱 · 0 电 · 0 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T9</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">32</td>
+      <td class="res muted">4 钱 · 1 电 · 1 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T10</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">4 钱 · 1 电 · 1 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T1</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_101.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">10 钱 · 3 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T3</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_31.png</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+12</span></td>
+      <td class="num">44</td>
+      <td class="res muted">9 钱 · 3 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T4</td>
+      
+      <td class="sum"><span class="fam">结束回合</span> 结束回合</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">44</td>
+      <td class="res muted">9 钱 · 3 电 · 2 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T5</td>
+      
+      <td class="sum"><span class="fam">打牌</span> amiba_1.webp</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">46</td>
+      <td class="res muted">8 钱 · 3 电 · 6 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T6</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">52</td>
+      <td class="res muted">8 钱 · 3 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T7</td>
+      
+      <td class="sum"><span class="fam">打牌</span> amiba_0.webp</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">56</td>
+      <td class="res muted">6 钱 · 3 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T8</td>
+      
+      <td class="sum"><span class="fam">打牌</span> b_101.webp</td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">58</td>
+      <td class="res muted">3 钱 · 4 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T9</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">19 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">60</td>
+      <td class="res muted">3 钱 · 2 电 · 0 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T10</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">65</td>
+      <td class="res muted">3 钱 · 2 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T11</td>
+      
+      <td class="sum"><span class="fam">打牌</span> amiba_7.webp</td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">65</td>
+      <td class="res muted">2 钱 · 2 电 · 1 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T12</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_20.png</td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">69</td>
+      <td class="res muted">1 钱 · 4 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T13</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">71</td>
+      <td class="res muted">0 钱 · 2 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T14</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">74</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T15</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">77</td>
+      <td class="res muted">0 钱 · 0 电 · 6 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T16</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">83</td>
+      <td class="res muted">1 钱 · 2 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T17</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">90</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T18</td>
+      
+      <td class="sum"><span class="fam">打牌</span> chong_3.webp</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+15</span></td>
+      <td class="num">105</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T19</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T1</td>
+      
+      <td class="sum"><span class="fam">选牌</span> b_111.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">7 钱 · 4 电 · 5 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T2</td>
+      
+      <td class="sum"><span class="fam">发射</span> 发射</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">5 钱 · 4 电 · 5 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T3</td>
+      
+      <td class="sum"><span class="fam">结束回合</span> 结束回合</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">5 钱 · 4 电 · 5 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T5</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">112</td>
+      <td class="res muted">5 钱 · 4 电 · 5 宣 · 6 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T6</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">114</td>
+      <td class="res muted">4 钱 · 2 电 · 5 宣 · 6 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T7</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">116</td>
+      <td class="res muted">4 钱 · 1 电 · 6 宣 · 6 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T8</td>
+      
+      <td class="sum"><span class="fam">打牌</span> chong_2.webp</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">116</td>
+      <td class="res muted">3 钱 · 3 电 · 6 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T9</td>
+      
+      <td class="sum"><span class="fam">打牌</span> chong_6.webp</td>
+      <td class="num">22 步</td>
+      <td class="num"><span class="dp">+25</span></td>
+      <td class="num">141</td>
+      <td class="res muted">2 钱 · 4 电 · 8 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T10</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">146</td>
+      <td class="res muted">2 钱 · 2 电 · 8 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T11</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">149</td>
+      <td class="res muted">2 钱 · 2 电 · 3 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T12</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">19 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">156</td>
+      <td class="res muted">4 钱 · 7 电 · 4 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T13</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">158</td>
+      <td class="res muted">3 钱 · 5 电 · 4 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T14</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">160</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T15</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_15.png</td>
+      <td class="num">12 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">166</td>
+      <td class="res muted">1 钱 · 5 电 · 5 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T16</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">170</td>
+      <td class="res muted">4 钱 · 6 电 · 6 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T17</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">172</td>
+      <td class="res muted">4 钱 · 6 电 · 1 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T18</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">175</td>
+      <td class="res muted">3 钱 · 4 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T19</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">177</td>
+      <td class="res muted">3 钱 · 4 电 · 0 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T20</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">15 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">183</td>
+      <td class="res muted">3 钱 · 2 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T21</td>
+      
+      <td class="sum"><span class="fam">打牌</span> dlc_1.png</td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">191</td>
+      <td class="res muted">2 钱 · 2 电 · 2 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T22</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">12 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">193</td>
+      <td class="res muted">2 钱 · 2 电 · 4 宣 · 6 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T23</td>
+      
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">31 步</td>
+      <td class="num"><span class="dp">+17</span></td>
+      <td class="num">210</td>
+      <td class="res muted">2 钱 · 1 电 · 8 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T24</td>
+      
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">219</td>
+      <td class="res muted">2 钱 · 1 电 · 2 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T25</td>
+      
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">224</td>
+      <td class="res muted">2 钱 · 1 电 · 3 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T26</td>
+      
+      <td class="sum"><span class="fam">land</span> 选择登陆目标</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">234</td>
+      <td class="res muted">2 钱 · 0 电 · 4 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T27</td>
+      
+      <td class="sum"><span class="fam">打牌</span> b_135.webp</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">238</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T28</td>
+      
+      <td class="sum"><span class="fam">打牌</span> amiba_5.webp</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">247</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T29</td>
+      
+      <td class="sum"><span class="fam">打牌</span> amiba_6.webp</td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">249</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T30</td>
+      
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">249</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr></tbody>
+      </table>
+    </section>
+  <section class="panel">
+    <h2>全程依次复盘（88 个玩家回合 · 516 步）</h2>
+    <table>
+      <thead><tr><th>轮/回合</th><th>玩家</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+      <tbody><tr class="round-head"><td colspan="7">第 1 轮</td></tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> b_117.webp</td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">6</td>
+      <td class="res muted">2 钱 · 1 电 · 7 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">选牌</span> 选择公司：寰宇动力</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">选牌</span> 选择公司：图灵系统</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 2 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">选牌</span> 选择公司：赫利昂联合体</td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R1·T2</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">结束回合</span> 结束回合</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">6</td>
+      <td class="res muted">2 钱 · 1 电 · 7 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T2</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R1·T3</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">选牌</span> b_24.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R1·T3</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 2 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R1·T4</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">选牌</span> b_49.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 2 电 · 4 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R1·T4</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R1·T5</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">选牌</span> b_80.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R1·T5</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">8</td>
+      <td class="res muted">2 钱 · 1 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T6</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">环绕</span> 环绕火星（R3）</td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">11</td>
+      <td class="res muted">2 钱 · 0 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T7</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_9.png</td>
+      <td class="num">17 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T8</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr><tr class="round-head"><td colspan="7">第 2 轮</td></tr><tr>
+      <td class="num">R2·T1</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">选牌</span> dlc_5.png</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">6 钱 · 3 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T1</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 4 电 · 3 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R2·T2</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">选牌</span> b_7.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">5 钱 · 4 电 · 3 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R2·T2</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 4 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R2·T3</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">选牌</span> b_78.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 4 电 · 4 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R2·T3</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">6 钱 · 3 电 · 8 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R2·T4</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">选牌</span> b_53.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">6 钱 · 3 电 · 8 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R2·T4</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">5 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T5</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_5.png</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">4 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T6</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_5.png</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">3 钱 · 0 电 · 4 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T7</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_37.png</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">20</td>
+      <td class="res muted">3 钱 · 0 电 · 6 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T8</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">25</td>
+      <td class="res muted">4 钱 · 0 电 · 0 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T9</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">32</td>
+      <td class="res muted">4 钱 · 1 电 · 1 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T10</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">4 钱 · 1 电 · 1 宣 · 0 手</td>
+    </tr><tr class="round-head"><td colspan="7">第 3 轮</td></tr><tr>
+      <td class="num">R3·T1</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">选牌</span> b_101.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">10 钱 · 3 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T1</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R3·T2</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">选牌</span> b_55.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R3·T2</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">9 钱 · 4 电 · 9 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R3·T3</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">选牌</span> dlc_12.png</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">9 钱 · 4 电 · 9 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R3·T3</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_31.png</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+12</span></td>
+      <td class="num">44</td>
+      <td class="res muted">9 钱 · 3 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T4</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">结束回合</span> 结束回合</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">44</td>
+      <td class="res muted">9 钱 · 3 电 · 2 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R3·T4</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 5 电 · 3 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R3·T5</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">选牌</span> b_138.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">8 钱 · 5 电 · 3 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R3·T5</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> amiba_1.webp</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">46</td>
+      <td class="res muted">8 钱 · 3 电 · 6 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T6</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">52</td>
+      <td class="res muted">8 钱 · 3 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T7</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> amiba_0.webp</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">56</td>
+      <td class="res muted">6 钱 · 3 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T8</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> b_101.webp</td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">58</td>
+      <td class="res muted">3 钱 · 4 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T9</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">19 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">60</td>
+      <td class="res muted">3 钱 · 2 电 · 0 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T10</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">65</td>
+      <td class="res muted">3 钱 · 2 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T11</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> amiba_7.webp</td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">65</td>
+      <td class="res muted">2 钱 · 2 电 · 1 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R3·T12</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_20.png</td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">69</td>
+      <td class="res muted">1 钱 · 4 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T13</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">71</td>
+      <td class="res muted">0 钱 · 2 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T14</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">74</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T15</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">77</td>
+      <td class="res muted">0 钱 · 0 电 · 6 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T16</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">83</td>
+      <td class="res muted">1 钱 · 2 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T17</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">90</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R3·T18</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> chong_3.webp</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+15</span></td>
+      <td class="num">105</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R3·T19</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 3 手</td>
+    </tr><tr class="round-head"><td colspan="7">第 4 轮</td></tr><tr>
+      <td class="num">R4·T1</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">选牌</span> b_111.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">7 钱 · 4 电 · 5 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T1</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">12 钱 · 5 电 · 10 宣 · 6 手</td>
+    </tr><tr>
+      <td class="num">R4·T2</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><span class="fam">选牌</span> 弃置 b_139.webp、dlc_12.png</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">8</td>
+      <td class="res muted">12 钱 · 5 电 · 10 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T2</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">发射</span> 发射</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">5 钱 · 4 电 · 5 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T3</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">结束回合</span> 结束回合</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">105</td>
+      <td class="res muted">5 钱 · 4 电 · 5 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T3</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 8 手</td>
+    </tr><tr>
+      <td class="num">R4·T4</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><span class="fam">选牌</span> 弃置 dlc_11.png、b_24.webp、b_138.webp、b_9.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">11 钱 · 6 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T4</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">14 钱 · 8 电 · 4 宣 · 8 手</td>
+    </tr><tr>
+      <td class="num">R4·T5</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><span class="fam">选牌</span> 弃置 dlc_23.png、b_13.webp、dlc_29.png、b_15.webp</td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">7</td>
+      <td class="res muted">14 钱 · 8 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T5</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">112</td>
+      <td class="res muted">5 钱 · 4 电 · 5 宣 · 6 手</td>
+    </tr><tr>
+      <td class="num">R4·T6</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">114</td>
+      <td class="res muted">4 钱 · 2 电 · 5 宣 · 6 手</td>
+    </tr><tr>
+      <td class="num">R4·T7</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">116</td>
+      <td class="res muted">4 钱 · 1 电 · 6 宣 · 6 手</td>
+    </tr><tr>
+      <td class="num">R4·T8</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> chong_2.webp</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">116</td>
+      <td class="res muted">3 钱 · 3 电 · 6 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T9</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> chong_6.webp</td>
+      <td class="num">22 步</td>
+      <td class="num"><span class="dp">+25</span></td>
+      <td class="num">141</td>
+      <td class="res muted">2 钱 · 4 电 · 8 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T10</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">146</td>
+      <td class="res muted">2 钱 · 2 电 · 8 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T11</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">149</td>
+      <td class="res muted">2 钱 · 2 电 · 3 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T12</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">19 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">156</td>
+      <td class="res muted">4 钱 · 7 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T13</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">158</td>
+      <td class="res muted">3 钱 · 5 电 · 4 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T14</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">160</td>
+      <td class="res muted">2 钱 · 3 电 · 3 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T15</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_15.png</td>
+      <td class="num">12 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">166</td>
+      <td class="res muted">1 钱 · 5 电 · 5 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R4·T16</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">170</td>
+      <td class="res muted">4 钱 · 6 电 · 6 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R4·T17</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">172</td>
+      <td class="res muted">4 钱 · 6 电 · 1 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R4·T18</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">175</td>
+      <td class="res muted">3 钱 · 4 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T19</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">177</td>
+      <td class="res muted">3 钱 · 4 电 · 0 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R4·T20</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">15 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">183</td>
+      <td class="res muted">3 钱 · 2 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T21</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> dlc_1.png</td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">191</td>
+      <td class="res muted">2 钱 · 2 电 · 2 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T22</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">12 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">193</td>
+      <td class="res muted">2 钱 · 2 电 · 4 宣 · 6 手</td>
+    </tr><tr>
+      <td class="num">R4·T23</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">扫描</span> 扫描</td>
+      <td class="num">31 步</td>
+      <td class="num"><span class="dp">+17</span></td>
+      <td class="num">210</td>
+      <td class="res muted">2 钱 · 1 电 · 8 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T24</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">研究科技</span> 研究科技</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">219</td>
+      <td class="res muted">2 钱 · 1 电 · 2 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T25</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">分析</span> 分析</td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">224</td>
+      <td class="res muted">2 钱 · 1 电 · 3 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T26</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">land</span> 选择登陆目标</td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">234</td>
+      <td class="res muted">2 钱 · 0 电 · 4 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T27</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> b_135.webp</td>
+      <td class="num">13 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">238</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R4·T28</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> amiba_5.webp</td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">247</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R4·T29</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">打牌</span> amiba_6.webp</td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">249</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T30</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><span class="fam">PASS</span> PASS</td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">249</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr></tbody>
+    </table>
+  </section>
+  <section class="panel">
+    <h2>行动族统计</h2>
+    <table><thead><tr><th>行动族</th><th>次数</th></tr></thead><tbody><tr><td>选择目标</td><td class="num">192</td></tr><tr><td>选牌</td><td class="num">93</td></tr><tr><td>放置数据</td><td class="num">68</td></tr><tr><td>结束回合</td><td class="num">51</td></tr><tr><td>打牌</td><td class="num">19</td></tr><tr><td>支付选择</td><td class="num">17</td></tr><tr><td>PASS</td><td class="num">16</td></tr><tr><td>扫描</td><td class="num">13</td></tr><tr><td>接受可选效果</td><td class="num">9</td></tr><tr><td>研究科技</td><td class="num">8</td></tr><tr><td>分析</td><td class="num">8</td></tr><tr><td>弃牌角标</td><td class="num">8</td></tr><tr><td>快速转换</td><td class="num">6</td></tr><tr><td>公司能力</td><td class="num">3</td></tr><tr><td>complete_task</td><td class="num">2</td></tr><tr><td>环绕</td><td class="num">1</td></tr><tr><td>发射</td><td class="num">1</td></tr><tr><td>land</td><td class="num">1</td></tr></tbody></table>
+  </section>
+</main></body></html>
