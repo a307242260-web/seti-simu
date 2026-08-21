@@ -76,6 +76,9 @@ td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .warn-item.warn{color:#b3261e}
 footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
 .toggle-row{cursor:pointer}
+.history-fold{margin:12px 10px;border-top:1px dashed var(--line);padding-top:10px}
+.history-fold summary{cursor:pointer;font-size:12.5px;font-weight:700;color:#44506a;padding:6px 10px;border-radius:8px;user-select:none}
+.history-fold summary:hover{background:#f6f8fb}
 @media(max-width:900px){.best-grid{grid-template-columns:1fr}.rollback-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -93,17 +96,10 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
     <div class="top3" id="top3"></div>
   </section>
 
-  <!-- 迭代记录（倒序） -->
+  <!-- 迭代记录（当前 baseline + 历史归档） -->
   <section>
-    <h2>迭代记录（倒序）</h2>
-    <div class="iter-table-wrap">
-      <table>
-        <thead><tr>
-          <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th><th>回退 / 定位改动</th>
-        </tr></thead>
-        <tbody id="iter-body"></tbody>
-      </table>
-    </div>
+    <h2>迭代记录（当前 baseline）</h2>
+    <div class="iter-table-wrap" id="iter-container"></div>
   </section>
 
   <!-- 数据完整性 -->
@@ -116,13 +112,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:04:46.246Z",
+  "builtAt": "2026-08-21T05:06:29.886Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "2f23f097",
+  "headCommit": "560a4fad",
+  "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -568,7 +565,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": false,
+      "isHead": true,
       "completeness": {
         "record": true,
         "save": false,
@@ -1440,7 +1437,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15385 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 15445 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1819,49 +1816,69 @@ function summaryCell(v){
   const short=v.summary.length>110?v.summary.slice(0,110)+"…":v.summary;
   return `<div class="summary-cell">${esc(short)}${v.summary.length>110?` <a href="#" data-toggle="1">展开</a><span class="full">${esc(v.summary)}</span>`:""}</div>`;
 }
+// 版本主行
+function versionRow(v){
+  const p=primaryResult(v);
+  const r=p.result;
+  const badges=[];
+  if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
+  if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
+  const comp=v.completeness;
+  badges.push((comp.record?'<span class="badge record" title="有 research 记录">记录✓</span>':'<span class="badge missing" title="无 research 记录">记录✗</span>'));
+  if(comp.save) badges.push('<span class="badge save" title="有存档">存档✓</span>');
+  if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
+  const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
+    v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
+  const recordLink=r&&r.recordPath?`<a href="${rel(r.recordPath)}">记录</a>`:(v.roadmap?'<span class="src">roadmap</span>':'<span class="src">—</span>');
+  const rmap=v.roadmap;
+  const summary=p.isRoadmap
+    ? (rmap
+      ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步</div></div>`
+      : summaryCell(v))
+    : summaryCell(v);
+  return `<tr class="toggle-row" data-vid="${esc(v.id)}">
+    <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}</td>
+    <td class="num">${esc(v.date)}</td>
+    <td>${summary}</td>
+    <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.steps??"—":"—"):stepsCell(r)}</td>
+    <td>${p.isRoadmap?(v.roadmap?'<span class="scores">— / — / — / <b>'+(v.roadmap.scores? v.roadmap.scores["player-white"] ?? "—" : "—")+'</b></span><br><span class="src">roadmap 文档</span>':scoreCell(null)):scoreCell(r)}</td>
+    <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
+    <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
+    <td>${reportLink}</td>
+    <td>${recordLink}</td>
+    <td><a href="#" data-detail="${esc(v.id)}">回退 / 定位改动</a></td>
+  </tr>`;
+}
+
+// 版本详情行（展开区）
+function versionDetail(v){
+  return `<tr class="detail-row" id="detail-${esc(v.id)}" style="display:none"><td colspan="10"><div class="detail-inner">
+    <h4>提交（${v.commits.length}）</h4>${commitsHtml(v)}
+    <h4>全部运行结果</h4>${resultsHtml(v)}
+    ${v.roadmap?`<h4>roadmap 记录（无 research 记录/存档）</h4><div class="result-item"><div class="headline"><span class="src">白 ${v.roadmap.scores?v.roadmap.scores["player-white"]:"—"} / 均 ${v.roadmap.avgScore!=null?v.roadmap.avgScore:"—"} / ${v.roadmap.steps!=null?v.roadmap.steps:"—"} 步</span></div><div class="src">${esc(v.roadmap.note||"")}</div></div>`:""}
+    <h4>回退与定位改动</h4>${diffHtml(v)}
+  </div></td></tr>`;
+}
+
 function iterTable(){
   const head=REGISTRY.versions.find(v=>v.isHead);
-  const rows=REGISTRY.versions.map(v=>{
-    const p=primaryResult(v);
-    const r=p.result;
-    const badges=[];
-    if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
-    if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
-    const comp=v.completeness;
-    badges.push((comp.record?'<span class="badge record" title="有 research 记录">记录✓</span>':'<span class="badge missing" title="无 research 记录">记录✗</span>'));
-    if(comp.save) badges.push('<span class="badge save" title="有存档">存档✓</span>');
-    if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
-    const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
-      v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
-    const recordLink=r&&r.recordPath?`<a href="${rel(r.recordPath)}">记录</a>`:(v.roadmap?'<span class="src">roadmap</span>':'<span class="src">—</span>');
-    const rmap=v.roadmap;
-    const summary=p.isRoadmap
-      ? (rmap
-        ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步</div></div>`
-        : summaryCell(v))
-      : summaryCell(v);
-    return `<tr class="toggle-row" data-vid="${esc(v.id)}">
-      <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}</td>
-      <td class="num">${esc(v.date)}</td>
-      <td>${summary}</td>
-      <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.steps??"—":"—"):stepsCell(r)}</td>
-      <td>${p.isRoadmap?(v.roadmap?'<span class="scores">— / — / — / <b>'+(v.roadmap.scores? v.roadmap.scores["player-white"] ?? "—" : "—")+'</b></span><br><span class="src">roadmap 文档</span>':scoreCell(null)):scoreCell(r)}</td>
-      <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
-      <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
-      <td>${reportLink}</td>
-      <td>${recordLink}</td>
-      <td><a href="#" data-detail="${esc(v.id)}">回退 / 定位改动</a></td>
-    </tr>
-    <tr class="detail-row" id="detail-${esc(v.id)}" style="display:none"><td colspan="10"><div class="detail-inner">
-      <h4>提交（${v.commits.length}）</h4>${commitsHtml(v)}
-      <h4>全部运行结果</h4>${resultsHtml(v)}
-      ${v.roadmap?`<h4>roadmap 记录（无 research 记录/存档）</h4><div class="result-item"><div class="headline"><span class="src">白 ${v.roadmap.scores?v.roadmap.scores["player-white"]:"—"} / 均 ${v.roadmap.avgScore!=null?v.roadmap.avgScore:"—"} / ${v.roadmap.steps!=null?v.roadmap.steps:"—"} 步</span></div><div class="src">${esc(v.roadmap.note||"")}</div></div>`:""}
-      <h4>回退与定位改动</h4>${diffHtml(v)}
-    </div></td></tr>`;
-  }).join("");
-  document.getElementById("iter-body").innerHTML=rows;
-  // 行内展开/收起
-  document.getElementById("iter-body").addEventListener("click",(ev)=>{
+  const history=REGISTRY.versions.filter(v=>!v.isHead);
+  const thead=`<thead><tr>
+    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th><th>回退 / 定位改动</th>
+  </tr></thead>`;
+  const rowsOf=(vs)=>vs.map(v=>versionRow(v)+versionDetail(v)).join("");
+  const mainTable=head
+    ? `<table>${thead}<tbody>${rowsOf([head])}</tbody></table>`
+    : "";
+  const historyBlock=history.length
+    ? `<details class="history-fold"><summary>历史版本（${history.length}，展开查看）</summary>
+        <table>${thead}<tbody>${rowsOf(history)}</tbody></table>
+      </details>`
+    : "";
+  const el=document.getElementById("iter-container");
+  el.innerHTML=`${mainTable}${historyBlock}`;
+  // 行内展开/收起（事件委托到容器，主表与历史表共用）
+  el.addEventListener("click",(ev)=>{
     const t=ev.target;
     if(t.dataset&&t.dataset.detail){
       ev.preventDefault();

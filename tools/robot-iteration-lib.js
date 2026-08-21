@@ -781,8 +781,32 @@ function computeRegistry({ generateReports = false, forceReports = false } = {})
   const bestOf = computeBestOf(versions, resolvedMap);
   const { warnings, orphans } = auditRegistry(versions, recordsByFile, resolvedMap, bestOf);
 
-  // 组装版本列表（含提交信息、diff 摘要、完整性）
+  // 当前 baseline 版本：优先 head 精确匹配 git HEAD；否则取 head 为 HEAD 最近祖先的
+  // 版本（策略提交后又有工具/文档提交时，HEAD 前进到非版本提交，策略基线不变）。
   const nowHead = gitHeadShort();
+  let currentBaseline = null;
+  for (const v of versions) {
+    if (v.head === nowHead || (nowHead && v.head && (nowHead.startsWith(v.head) || v.head.startsWith(nowHead)))) {
+      currentBaseline = v;
+      break;
+    }
+  }
+  if (!currentBaseline) {
+    let best = null;
+    let bestDist = -1;
+    for (const v of versions) {
+      if (!v.head || !gitIsAncestor(v.head, nowHead)) continue;
+      const distText = git(["rev-list", "--count", `${v.head}..${nowHead}`], { silent: true });
+      const dist = distText != null ? Number(distText) : -1;
+      if (dist >= 0 && (best == null || dist < bestDist)) {
+        best = v;
+        bestDist = dist;
+      }
+    }
+    currentBaseline = best;
+  }
+
+  // 组装版本列表（含提交信息、diff 摘要、完整性）
   const versionOut = versions.map((v) => {
     const commits = (v.commits || []).map((c) => gitCommitInfo(c)).filter(Boolean);
     const baseVersion = v.baseline ? versions.find((x) => x.id === v.baseline) : null;
@@ -807,7 +831,7 @@ function computeRegistry({ generateReports = false, forceReports = false } = {})
       diffFiles,
       results,
       roadmap: v.roadmap || null,
-      isHead: v.head === nowHead || (nowHead && v.head && (nowHead.startsWith(v.head) || v.head.startsWith(nowHead))),
+      isHead: currentBaseline ? v.id === currentBaseline.id : false,
       completeness: { record: hasRecord, save: hasSave, report: hasReport, reportLinks },
     };
   });
@@ -818,6 +842,7 @@ function computeRegistry({ generateReports = false, forceReports = false } = {})
       builtAt: new Date().toISOString(),
       board: versionsData.defaultBoard || { seed: "seti-free-analyze-v1", name: "免电分析盘面" },
       headCommit: nowHead,
+      currentBaseline: currentBaseline ? currentBaseline.id : null,
       worktreeDirty: gitIsDirty(),
       bestOf,
       versions: versionOut,
