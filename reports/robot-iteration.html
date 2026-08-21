@@ -47,27 +47,11 @@ td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .best-card .sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px;color:#8a94a6;margin-top:5px;line-height:1.5}
 .top3{margin-top:12px}
 .top3 table{font-size:12px}
-/* ---- 迭代表 ---- */
+/* ---- 迭表 ---- */
 .iter-table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.detail-row td{background:#fbfcfe;padding:0}
-.detail-inner{padding:14px 18px;border-top:1px dashed var(--line)}
-.detail-inner h4{margin:12px 0 6px;font-size:12.5px;color:#44506a}
-.detail-inner h4:first-child{margin-top:0}
-.cmdblock{background:#101828;color:#d5e2ff;border-radius:8px;padding:8px 12px;font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto;white-space:pre;margin:4px 0}
-.diff-files{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:11.5px}
-.diff-files table{font-size:11.5px}
-.diff-files td.num{color:#44506a}
-.commit-list{max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:11.5px}
-.commit-list table{font-size:11.5px}
-.rollback-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.results-list{display:grid;gap:8px}
-.result-item{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff}
-.result-item .headline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.result-item .headline code{background:#eef1f6}
+.iter-hint{font-size:11.5px;color:var(--muted);margin:8px 12px;padding-bottom:10px}
 .summary-cell{max-width:340px}
-.summary-cell .full{display:none;color:#3d4a5c}
-.btn{display:inline-block;padding:2px 10px;border-radius:8px;border:1px solid var(--line);background:#f6f8fb;color:#44506a;font-size:12px;cursor:pointer;margin:2px 4px 2px 0}
-.btn:hover{background:#eef1f6}
+@media(max-width:900px){.best-grid{grid-template-columns:1fr}}
 /* ---- 完整性 ---- */
 .integrity{background:#fffdf7;border:1px solid var(--warn-line);border-radius:12px;padding:12px 16px;margin:24px 0}
 .integrity.ok{background:#f5fbf7;border-color:#b7e0c4}
@@ -75,11 +59,7 @@ td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .warn-item{font-size:12.5px;margin:3px 0;color:#7a5b00}
 .warn-item.warn{color:#b3261e}
 footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
-.toggle-row{cursor:pointer}
-.history-fold{margin:12px 10px;border-top:1px dashed var(--line);padding-top:10px}
-.history-fold summary{cursor:pointer;font-size:12.5px;font-weight:700;color:#44506a;padding:6px 10px;border-radius:8px;user-select:none}
-.history-fold summary:hover{background:#f6f8fb}
-@media(max-width:900px){.best-grid{grid-template-columns:1fr}.rollback-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.best-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -112,13 +92,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:06:29.886Z",
+  "builtAt": "2026-08-21T05:08:13.572Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "560a4fad",
+  "headCommit": "05341dd7",
   "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
@@ -1437,7 +1417,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15445 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 15355 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1773,48 +1753,12 @@ function bestGrid(){
   }
 }
 
-// ---- 迭代表 ----
-function commitsHtml(v){
-  if(!v.commits.length) return '<span class="src">—</span>';
-  const rows=v.commits.map(c=>`<tr><td><code>${esc(c.hash)}</code></td><td class="num">${esc(c.date)}</td><td>${esc(c.subject)}</td></tr>`).join("");
-  return `<div class="commit-list"><table><thead><tr><th>commit</th><th>日期</th><th>提交说明</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-function diffHtml(v){
-  const base=v.baseline?REGISTRY.versions.find(x=>x.id===v.baseline):null;
-  const baseArg=base?`${base.head}..`:"";
-  const showArg=base?`${base.head}..${v.head}`:`${v.head}`;
-  const cmds=[];
-  cmds.push(`# 定位改动\n`+(base?`git diff --stat ${baseArg}${v.head}`:`git show --stat --oneline ${v.head}`)+`\n`+(base?`git log --oneline ${baseArg}${v.head}`:`git log --oneline ${v.head} -10`));
-  cmds.push(`# 快速回退\n`+`git checkout ${v.head}   # 回到该版本代码`+(base?`\ngit revert --no-commit ${baseArg}${v.head}   # 工作区撤销该版本全部改动`:`\ngit revert ${v.head}   # 撤销该提交`));
-  const files=v.diffFiles&&v.diffFiles.length?`<div class="diff-files"><table><thead><tr><th>文件</th><th>+</th><th>−</th></tr></thead><tbody>${
-    v.diffFiles.map(f=>`<tr><td><code>${esc(f.file)}</code></td><td class="num">${f.insertions==null?"bin":f.insertions}</td><td class="num">${f.deletions==null?"bin":f.deletions}</td></tr>`).join("")
-  }</tbody></table></div>`:`<span class="src">${esc(v.diffStat||"无 diff 数据")}</span>`;
-  return `<div class="rollback-grid">
-    <div><h4>改动统计：${esc(v.diffStat||"—")}</h4>${files}</div>
-    <div>
-      <h4>命令</h4>
-      ${cmds.map(c=>`<div class="cmdblock">${esc(c)}</div>`).join("")}
-    </div>
-  </div>`;
-}
-function resultsHtml(v){
-  const items=v.results.map(r=>{
-    if(r.missingRecord) return `<div class="result-item"><span class="src">✗ 声明记录缺失：<code>${esc(r.recordFile)}</code></span></div>`;
-    const links=[];
-    if(r.reportExists&&r.reportPath) links.push(`<a href="${rel(r.reportPath)}">复盘报告</a>`);
-    if(r.recordPath) links.push(`<a href="${rel(r.recordPath)}">记录 JSON</a>`);
-    const flagTxt=Object.keys(r.flags||{}).length?` · flags: ${esc(Object.entries(r.flags).map(([k,v])=>k+"="+JSON.stringify(v)).join(", "))}`:"";
-    return `<div class="result-item">
-      <div class="headline"><code>${esc(r.recordFile)}</code><span class="src">${esc(r.mode)}${flagTxt}${r.terminal?" · 终局":""} · ${esc(r.policyVersion||"")} · git ${esc(r.gitCommit||"")}</span></div>
-      <div>${scoreCell(r)} · 均分 <b>${avgCell(r)}</b> · ${stepsCell(r)} · ${timeCell(r)} ${links.length?`· ${links.join(" · ")}`:""}</div>
-      ${r.note?`<div class="src">注：${esc(r.note)}</div>`:""}
-    </div>`;
-  }).join("");
-  return `<div class="results-list">${items||'<span class="src">（无 research 记录）</span>'}</div>`;
-}
+// ---- 迭代表（只展示当前 baseline 一行；历史版本与回退/定位改动走命令行 review）----
 function summaryCell(v){
-  const short=v.summary.length>110?v.summary.slice(0,110)+"…":v.summary;
-  return `<div class="summary-cell">${esc(short)}${v.summary.length>110?` <a href="#" data-toggle="1">展开</a><span class="full">${esc(v.summary)}</span>`:""}</div>`;
+  const s=v.summary||"";
+  return s.length>110
+    ? `<div class="summary-cell" title="${esc(s)}">${esc(s.slice(0,110)+"…")}</div>`
+    : `<div class="summary-cell">${esc(s)}</div>`;
 }
 // 版本主行
 function versionRow(v){
@@ -1836,7 +1780,7 @@ function versionRow(v){
       ? `<div class="summary-cell">${esc(v.summary)}<div class="src">roadmap：白 ${rmap.scores?rmap.scores["player-white"]:"—"} / 均 ${rmap.avgScore!=null?rmap.avgScore:"—"} / ${rmap.steps!=null?rmap.steps:"—"} 步</div></div>`
       : summaryCell(v))
     : summaryCell(v);
-  return `<tr class="toggle-row" data-vid="${esc(v.id)}">
+  return `<tr>
     <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}</td>
     <td class="num">${esc(v.date)}</td>
     <td>${summary}</td>
@@ -1846,58 +1790,18 @@ function versionRow(v){
     <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
     <td>${reportLink}</td>
     <td>${recordLink}</td>
-    <td><a href="#" data-detail="${esc(v.id)}">回退 / 定位改动</a></td>
   </tr>`;
-}
-
-// 版本详情行（展开区）
-function versionDetail(v){
-  return `<tr class="detail-row" id="detail-${esc(v.id)}" style="display:none"><td colspan="10"><div class="detail-inner">
-    <h4>提交（${v.commits.length}）</h4>${commitsHtml(v)}
-    <h4>全部运行结果</h4>${resultsHtml(v)}
-    ${v.roadmap?`<h4>roadmap 记录（无 research 记录/存档）</h4><div class="result-item"><div class="headline"><span class="src">白 ${v.roadmap.scores?v.roadmap.scores["player-white"]:"—"} / 均 ${v.roadmap.avgScore!=null?v.roadmap.avgScore:"—"} / ${v.roadmap.steps!=null?v.roadmap.steps:"—"} 步</span></div><div class="src">${esc(v.roadmap.note||"")}</div></div>`:""}
-    <h4>回退与定位改动</h4>${diffHtml(v)}
-  </div></td></tr>`;
 }
 
 function iterTable(){
   const head=REGISTRY.versions.find(v=>v.isHead);
-  const history=REGISTRY.versions.filter(v=>!v.isHead);
-  const thead=`<thead><tr>
-    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th><th>回退 / 定位改动</th>
-  </tr></thead>`;
-  const rowsOf=(vs)=>vs.map(v=>versionRow(v)+versionDetail(v)).join("");
-  const mainTable=head
-    ? `<table>${thead}<tbody>${rowsOf([head])}</tbody></table>`
-    : "";
-  const historyBlock=history.length
-    ? `<details class="history-fold"><summary>历史版本（${history.length}，展开查看）</summary>
-        <table>${thead}<tbody>${rowsOf(history)}</tbody></table>
-      </details>`
-    : "";
   const el=document.getElementById("iter-container");
-  el.innerHTML=`${mainTable}${historyBlock}`;
-  // 行内展开/收起（事件委托到容器，主表与历史表共用）
-  el.addEventListener("click",(ev)=>{
-    const t=ev.target;
-    if(t.dataset&&t.dataset.detail){
-      ev.preventDefault();
-      const tr=document.getElementById("detail-"+t.dataset.detail);
-      if(tr) tr.style.display=tr.style.display==="none"?"":"none";
-      return;
-    }
-    if(t.dataset&&t.dataset.toggle){
-      ev.preventDefault();
-      const full=t.previousElementSibling;
-      if(full){const show=full.style.display!=="block";full.style.display=show?"block":"none";t.textContent=show?"收起":"展开";}
-      return;
-    }
-    const row=t.closest(".toggle-row");
-    if(row&&t.tagName!=="A"){
-      const tr=document.getElementById("detail-"+row.dataset.vid);
-      if(tr) tr.style.display=tr.style.display==="none"?"":"none";
-    }
-  });
+  if(!head){ el.innerHTML='<p class="note">无已登记版本（node tools/robot_iterate.js register 登记）</p>'; return; }
+  const thead=`<thead><tr>
+    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th>
+  </tr></thead>`;
+  el.innerHTML=`<table>${thead}<tbody>${versionRow(head)}</tbody></table>
+    <p class="iter-hint">历史版本、提交明细、diff 与回退命令：<code>node tools/robot_iterate.js review --show &lt;id&gt;</code> / <code>--compare &lt;a&gt;..&lt;b&gt;</code> / <code>--best</code></p>`;
 }
 
 // ---- 完整性 ----
