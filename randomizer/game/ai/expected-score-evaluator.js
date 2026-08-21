@@ -1144,8 +1144,7 @@
         ? [{ ...primary, targetEquivalentChoiceCount: list.length - 1 }]
         : [primary]
     );
-    // 1. 缺钱→blue1 / 缺电→blue2（纯赚，用户裁定"数据填钱和电是纯赚行为"；
-    //    缺牌不在此列——blue3 是选牌不是纯赚）。
+    // 1. 缺钱→blue1 / 缺电→blue2（纯赚，用户裁定"数据填钱和电是纯赚行为"）。
     if (finite(assets.credits) <= 1) {
       const blue1 = blueOf("blue1");
       if (blue1) return foldOthers(blue1, blueBonuses);
@@ -1153,6 +1152,17 @@
     if (finite(assets.energy) <= 1) {
       const blue2 = blueOf("blue2");
       if (blue2) return foldOthers(blue2, blueBonuses);
+    }
+    // 1b. 牌/宣传需求驱动（2026-08-21 用户裁定：牌和宣传都是"想要就去拿"——
+    //     非纯赚但想要就填 blue3/blue4；不想要则在分析前判断是否需要提前获取，
+    //     因为 analyze 会改变后续填工位的成本）。手牌/宣传少 → 填对应蓝槽。
+    if (finite(assets.ordinaryCards) <= 1) {
+      const blue3 = blueOf("blue3");
+      if (blue3) return foldOthers(blue3, blueBonuses);
+    }
+    if (finite(assets.publicity) <= 1) {
+      const blue4 = blueOf("blue4");
+      if (blue4) return foldOthers(blue4, blueBonuses);
     }
     // 2. 数据溢出（可放数据 ≥ 数据池上限 6，再获取数据会弃置浪费）→ 填 computer。
     const DATA_POOL_LIMIT = 6;
