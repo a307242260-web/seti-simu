@@ -93,10 +93,14 @@ function avgCell(r){return r&&r.avgScore!=null?r.avgScore.toFixed(2):"—";}
 function stepsCell(r){return r?`${r.steps}${r.stepsLimit&&!r.terminal?` / ${r.stepsLimit}`:""}${r.terminal?" · 终局":""}`:"—";}
 function timeCell(r){return r?fmtMs(r.wallMs):"—";}
 
-// ---- 版本主结果：优先全盘记录，否则首个记录，否则 roadmap ----
+// ---- 版本主结果：优先 save-final（完整终局分）的全盘记录，否则首个记录，否则 roadmap ----
 function primaryResult(v){
-  const full=v.results.filter(r=>!r.missingRecord&&r.mode==="full"&&!Object.keys(r.flags||{}).length);
-  if(full.length) return {result:full[0],isRoadmap:false};
+  const full=v.results.filter(r=>!r.missingRecord&&r.mode==="full");
+  if(full.length){
+    const saveFinal=full.find(r=>r.scoreSource==="save-final");
+    if(saveFinal) return {result:saveFinal,isRoadmap:false};
+    return {result:full[0],isRoadmap:false};
+  }
   if(v.results.some(r=>!r.missingRecord)) return {result:v.results.find(r=>!r.missingRecord),isRoadmap:false};
   return {result:null,isRoadmap:!!v.roadmap};
 }

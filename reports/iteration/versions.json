@@ -7,111 +7,6 @@
   },
   "versions": [
     {
-      "id": "v27strategy-reverted",
-      "name": "策略接口回退（v27-tech-v3）",
-      "date": "2026-08-21",
-      "baseline": "v27-tech-v3",
-      "head": "e23b710c",
-      "commits": [
-        "e23b710c"
-      ],
-      "summary": "expected-score-evaluator/production-kernel 回退 d347e658（撤销 de879058+8b7cf3b6 打牌价值），保留协调器/计划复用/end_turn 特例。479 步/均 72.75（完整口径）。",
-      "records": {
-        "6062da9f.ec5cfb9f.full.json": {
-          "note": "策略接口回退实验（工作树回退后运行）：记录 gitCommit=ec5cfb9f（脏树运行），版本 head 登记为 e23b710c（回退提交）；无存档，无行动级复盘（历史欠账）"
-        }
-      },
-      "roadmap": null
-    },
-    {
-      "id": "newfast-recovery",
-      "name": "newfast + end_turn 特例恢复（HEAD）",
-      "date": "2026-08-20",
-      "baseline": "newfast",
-      "head": "ec5cfb9f",
-      "commits": [
-        "ec5cfb9f"
-      ],
-      "summary": "end_turn/pass 计划复用特例恢复（48f0af3e 移除特例导致 219 决策即终局；恢复后 321 决策 / 白 58）+ 调研记录指纹对齐 + 文档过期项清理。",
-      "records": {
-        "25bdb5e9.9e75c9cd.full.json": {
-          "note": "默认 newfast 全盘；记录 gitCommit=9e75c9cd（脏树运行），结果为 ec5cfb9f 特例恢复后行为（2026-08-20 收口记录）；无匹配存档"
-        }
-      },
-      "roadmap": null
-    },
-    {
-      "id": "newfast",
-      "name": "newfast（默认装配固化）",
-      "date": "2026-08-20",
-      "baseline": "v27-playvalue",
-      "head": "9e75c9cd",
-      "commits": [
-        "8b7cf3b6",
-        "ab701c40",
-        "48f0af3e",
-        "185028b3",
-        "9e75c9cd"
-      ],
-      "summary": "打牌价值评估对齐（8b7cf3b6，2026-08-20 旧页标记 450→230 步退化主因，已按逐子项回退方向处理）；公司 1x 主动能力启用前置修复（ab701c40，堵死局不堵空转）；搜索时机机制化（48f0af3e：本回合不重搜 + 新回合 planReuseCheck 判定新信息）；新回合复用开关 planNewTurnReuse（185028b3）；newfast 固化为默认装配（9e75c9cd：fastPath 开 + 新回合复用开，无代码改动）。",
-      "records": {
-        "bb319981.9e75c9cd.full.json": {
-          "note": "A/B：planNewTurnReuse=false（新回合一律重搜）"
-        },
-        "bced1aa3.9e75c9cd.full.json": {
-          "note": "A/B：两开关全关（fastPath 关 + 新回合复用关）"
-        }
-      },
-      "roadmap": null
-    },
-    {
-      "id": "v27-playvalue",
-      "name": "v27 打牌价值 + 计划复用",
-      "date": "2026-08-18",
-      "baseline": "v27-tech-v3",
-      "head": "1d063418",
-      "commits": [
-        "554df0f8",
-        "de879058",
-        "eb480700",
-        "05dc1da8",
-        "1d063418"
-      ],
-      "summary": "打牌价值 + 计划复用线：机器席位观察失明修复（554df0f8）；打牌价值修复两环（de879058：收入选牌机会成本 + 免费发射打牌奖励）；计划延续复用（planContinuationFastPath）依赖修补并默认打开（eb480700 + 05dc1da8）；计划复用增加控制动作特例（1d063418：下一步是 end_turn/pass 一律重新决策，不盲从计划）。",
-      "records": {
-        "b2a3aa41.1d063418.quick-200.json": {
-          "note": "v27-taskval 快速验证（评估行为方向）"
-        }
-      },
-      "roadmap": null
-    },
-    {
-      "id": "v27-tech-v3",
-      "name": "v27-tech-v3（科技价值打分）",
-      "date": "2026-08-18",
-      "baseline": "v26-unified",
-      "head": "d347e658",
-      "commits": [
-        "e8a368a4",
-        "5c6f86ab",
-        "34730eeb",
-        "d347e658"
-      ],
-      "summary": "科技价值打分线（用户逐项纠正）：selectHeuristicTechPlans 废弃硬编码场景规则，改为基础分+单次利用价值×预期使用次数打分取 top3；移除基础分预估（背面 bonus/首发分由反事实搜索真实结算）；橙4 卫星登陆解锁改回条件性有限收益。roadmap 基线：白 106 / 均分 77.5（完整终局口径）。",
-      "records": {},
-      "roadmap": {
-        "scores": {
-          "player-blue": null,
-          "player-green": null,
-          "player-brown": null,
-          "player-white": 106
-        },
-        "avgScore": 77.5,
-        "steps": 520,
-        "note": "roadmap 2026-08-17/18 记录（白 base 64 + 板块 36 + 卡牌 6 = 106；均分 77.5）；蓝/绿/棕分数未记录；无 research 记录与存档，复盘数据仅此文档来源。"
-      }
-    },
-    {
       "id": "v26-unified",
       "name": "v26 统一搜索（on/off 合并）",
       "date": "2026-08-18",
@@ -123,7 +18,7 @@
         "dd5da46e",
         "53abbd5a"
       ],
-      "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径。2026-08-21 复现确认：557 步 / 68/55/61/58（base）/ 均 60.5，与原始记录逐位一致；完整终局 on 均 89 / 白 83（存档富化）。",
+      "summary": "机器人新时代基线（2026-08-21 用户裁定）：v26 统一搜索（on/off 合并），完整终局均分 89 / 白 83（高于 v27-tech-v3 77.5）；53abbd5a 复现确认 557 步 / base 68/55/61/58 均 60.5 与原始记录逐位一致。后续迭代从 v26-unified 重新叠加。",
       "records": {
         "01c21bb4eb4c18f78738036127684a0decfce13a8cdc1442f2e83128e7c50952.full.json": {},
         "d2c50ffe.53abbd5.full.json": {},
