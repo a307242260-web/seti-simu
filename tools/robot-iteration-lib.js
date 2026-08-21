@@ -436,17 +436,19 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
       });
     }
   }
-  // 有存档但缺复盘报告（可在 build --reports 补齐）
+  // 无存档或有存档但缺复盘报告（2026-08-21 用户口径：每个实验必须有完整复盘报告；
+  // 评估档 = full 或 ≥100 步；5/10 步冒烟测试豁免）
   for (const v of versions) {
     for (const r of resolvedMap[v.id] || []) {
       if (r.missingRecord) continue;
-      if (!r.savePath) continue;
-      const saveAbs = path.join(REPO_ROOT, r.savePath);
-      if (!fs.existsSync(saveAbs)) {
+      const isEval = r.mode === "full" || (r.steps ?? 0) >= 100;
+      if (!isEval) continue;
+      const saveAbs = r.savePath ? path.join(REPO_ROOT, r.savePath) : null;
+      if (!saveAbs || !fs.existsSync(saveAbs)) {
         warnings.push({
           kind: "missing-save",
-          level: "info",
-          text: `${v.id} 的记录 ${r.recordFile} 声明存档 ${r.savePath} 已不存在（无法生成复盘报告，仅记录级指标）`,
+          level: "warn",
+          text: `${v.id} 的记录 ${r.recordFile} 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）`,
         });
         continue;
       }

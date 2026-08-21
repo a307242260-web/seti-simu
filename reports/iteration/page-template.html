@@ -191,7 +191,6 @@ function versionRow(v){
   if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
   const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
     v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
-  const recordLink=r&&r.recordPath?`<a href="${rel(r.recordPath)}">记录</a>`:(v.roadmap?'<span class="src">roadmap</span>':'<span class="src">—</span>');
   const rmap=v.roadmap;
   const summary=p.isRoadmap
     ? (rmap
@@ -207,7 +206,6 @@ function versionRow(v){
     <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
     <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
     <td>${reportLink}</td>
-    <td>${recordLink}</td>
   </tr>`;
 }
 
@@ -216,7 +214,7 @@ function iterTable(){
   const el=document.getElementById("iter-container");
   if(!head){ el.innerHTML='<p class="note">无已登记版本（node tools/robot_iterate.js register 登记）</p>'; return; }
   const thead=`<thead><tr>
-    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th>
+    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th>
   </tr></thead>`;
   el.innerHTML=`<table>${thead}<tbody>${versionRow(head)}</tbody></table>
     <p class="iter-hint">历史版本信息：<code>node tools/robot_iterate.js review --show &lt;id&gt;</code> / <code>--compare &lt;a&gt;..&lt;b&gt;</code></p>`;

@@ -92,13 +92,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-21T05:09:40.050Z",
+  "builtAt": "2026-08-21T05:11:27.712Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "16954ce1",
+  "headCommit": "013c86f7",
   "currentBaseline": "v27strategy-reverted",
   "worktreeDirty": true,
   "bestOf": {
@@ -1417,7 +1417,7 @@ const REGISTRY = {
         }
       ],
       "summary": "统一搜索目的引导版 + 外星链迁移主分支（v26）：废弃全动作平铺，改目标引导+需求引导单一路径；quick 根截断；外星目的价值（首痕迹=分+外星人牌，揭示后位置优先给牌位置）；任务中继站/宇宙战略集团打牌被动接线恢复。收口记录：on 完整终局均分 89 / 白 83。",
-      "diffStat": "87 files changed, 15247 insertions(+), 734 deletions(-)",
+      "diffStat": "87 files changed, 15300 insertions(+), 734 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/project-progress/robot-iteration-roadmap-20260817.md",
@@ -1657,13 +1657,28 @@ const REGISTRY = {
     },
     {
       "kind": "missing-save",
-      "level": "info",
-      "text": "v26-unified 的记录 d2c50ffe.53abbd5.quick-200.json 声明存档 seti-saves/seti-save-research-on-baseline-quick-200-v101.json 已不存在（无法生成复盘报告，仅记录级指标）"
+      "level": "warn",
+      "text": "v27strategy-reverted 的记录 6062da9f.ec5cfb9f.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
     },
     {
       "kind": "missing-save",
-      "level": "info",
-      "text": "v26-unified 的记录 62321a79.6caeb0f.quick-10.json 声明存档 seti-saves/seti-save-research-resume-test-quick-10-v1.json 已不存在（无法生成复盘报告，仅记录级指标）"
+      "level": "warn",
+      "text": "newfast-recovery 的记录 25bdb5e9.9e75c9cd.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+    },
+    {
+      "kind": "missing-save",
+      "level": "warn",
+      "text": "newfast 的记录 bb319981.9e75c9cd.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+    },
+    {
+      "kind": "missing-save",
+      "level": "warn",
+      "text": "newfast 的记录 bced1aa3.9e75c9cd.full.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
+    },
+    {
+      "kind": "missing-save",
+      "level": "warn",
+      "text": "v26-unified 的记录 d2c50ffe.53abbd5.quick-200.json 无存档——**该实验没有行动级复盘报告**（2026-08-21 用户口径：每个实验必须有完整复盘报告；需补跑生成存档，见 docs/robot-iteration-registry.md §5）"
     },
     {
       "kind": "dirty",
@@ -1773,7 +1788,6 @@ function versionRow(v){
   if(comp.report) badges.push('<span class="badge report" title="有逐步复盘报告">复盘✓</span>');
   const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
     v.completeness.reportLinks&&v.completeness.reportLinks.length?`<a href="${rel(v.completeness.reportLinks[0].path)}">复盘报告</a>`:'<span class="src">—</span>');
-  const recordLink=r&&r.recordPath?`<a href="${rel(r.recordPath)}">记录</a>`:(v.roadmap?'<span class="src">roadmap</span>':'<span class="src">—</span>');
   const rmap=v.roadmap;
   const summary=p.isRoadmap
     ? (rmap
@@ -1789,7 +1803,6 @@ function versionRow(v){
     <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.avgScore??"—":"—"):avgCell(r)}</td>
     <td class="num">${p.isRoadmap?"—":timeCell(r)}</td>
     <td>${reportLink}</td>
-    <td>${recordLink}</td>
   </tr>`;
 }
 
@@ -1798,7 +1811,7 @@ function iterTable(){
   const el=document.getElementById("iter-container");
   if(!head){ el.innerHTML='<p class="note">无已登记版本（node tools/robot_iterate.js register 登记）</p>'; return; }
   const thead=`<thead><tr>
-    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th><th>记录</th>
+    <th>版本</th><th>日期</th><th>改动摘要</th><th>步数</th><th>蓝 / 绿 / 棕 / 白</th><th>均分</th><th>耗时</th><th>复盘报告</th>
   </tr></thead>`;
   el.innerHTML=`<table>${thead}<tbody>${versionRow(head)}</tbody></table>
     <p class="iter-hint">历史版本信息：<code>node tools/robot_iterate.js review --show &lt;id&gt;</code> / <code>--compare &lt;a&gt;..&lt;b&gt;</code></p>`;
