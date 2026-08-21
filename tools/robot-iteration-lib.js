@@ -17,6 +17,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync, spawn } = require("node:child_process");
+const { createSeededRandom, hashSeed } = require("../randomizer/game/random");
+const { createSimulationRuleComposition } = require("../randomizer/game/production-kernel");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const RESEARCH_DIR = path.join(REPO_ROOT, "reports", "research");
@@ -479,6 +481,136 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
 
 // ---------------- 报告生成 ----------------
 
+// 科技背面 bonus 含义（randomizer/game/tech/catalog.js BONUS_LABELS 同源）
+const TECH_BONUS_LABELS = {
+  bonus_3f: "3 分",
+  bonus_1p: "1 能量",
+  bonus_1m: "1 宣传",
+  bonus_1c: "精选 1 张牌",
+};
+
+// 内核重放存档 replaySteps，提取 after 快照里没有的逐步信息（2026-08-21 用户口径）：
+//   1) 研究科技：研究了哪张科技（ownedTiles 新增）+ 获得的背面 bonus（研究前该堆堆顶 bonusId）
+//   2) 收入插牌：choose_card summary 为「收入 <cardId>」的步骤
+// 返回 Map: stepIndex -> { research?: {tileId, bonusId}, income?: {cardId} }
+// 重放失败（某步不匹配）时返回已收集的部分增强，报告仍可生成（主行动显示退化，不静默吞错——注释如上）。
+function replaySaveEnriched(savePath) {
+  const enrich = new Map();
+  const save = readJson(path.join(REPO_ROOT, savePath));
+  if (!save || !Array.isArray(save.replaySteps)) return enrich;
+  const steps = save.replaySteps;
+  let st0 = save.committedState;
+  if (typeof st0 === "string") {
+    try {
+      st0 = JSON.parse(st0);
+    } catch {
+      st0 = null;
+    }
+  }
+  const SEED = "seti-free-analyze-v1";
+  const random = createSeededRandom(SEED);
+  random.setState(hashSeed(SEED));
+  const kernel = createSimulationRuleComposition({
+    seed: st0?.meta?.seed || SEED,
+    random,
+    activePlayerCount: 4,
+    trustedProjectionReader: true,
+  });
+  kernel.composition.lifecycle.newGame({
+    seed: st0?.meta?.seed || SEED,
+    activePlayerCount: 4,
+    initialize: true,
+    rngState: { algorithm: "seti-simulation-mulberry32-v1", state: hashSeed(SEED) },
+  });
+  kernel.composition.inputPort.beginDrain({ metadata: { source: "report-enrich" } });
+
+  function snapshot() {
+    const st = kernel.composition.projection().state;
+    const owned = new Map();
+    for (const p of st.players?.players || []) {
+      owned.set(p.id, new Set(Object.keys(p.techState?.ownedTiles || {})));
+    }
+    const bonus = new Map();
+    for (const [tid, stack] of Object.entries(st.tech?.stacks || {})) {
+      if (stack && stack.bonusId) bonus.set(tid, stack.bonusId);
+    }
+    return { owned, bonus };
+  }
+
+  for (let index = 0; index < steps.length; index += 1) {
+    const step = steps[index];
+    const action = step.action || {};
+    const before = snapshot();
+    const insp = kernel.composition.inspect();
+    let r;
+    if (insp.phase !== "awaiting_input") {
+      const proj = kernel.composition.projection();
+      const fixed = {
+        ...action,
+        stateVersion: proj.stateVersion,
+        decisionVersion: proj.state?.match?.decisionVersion ?? 0,
+      };
+      r = step.phase === "quick"
+        ? kernel.composition.inputPort.submitQuickAction(fixed)
+        : kernel.composition.inputPort.submitAction(fixed);
+    } else {
+      const d = insp.session.decision;
+      const isWhite = action.actorId === "player-white" || action.actorPlayerId === "player-white";
+      const cid = String(action.choiceId || action.target?.choiceId || "");
+      let pick = d.choices.find((c) => String(c.target?.choiceId) === cid)
+        || d.choices.find((c) => String(c.actionId) === String(action.actionId))
+        || d.choices.find((c) => String(c.summary || "") === String(action.summary || ""));
+      if (!pick && !isWhite) pick = d.choices.find((c) => !c.disabledReason) || d.choices[0];
+      if (!pick) break;
+      r = kernel.composition.inputPort.submitDecision({
+        decisionId: d.decisionId,
+        decisionVersion: d.decisionVersion,
+        ownerId: d.ownerId,
+        choice: pick,
+      });
+    }
+    if (!r?.ok) {
+      if (action.family === "accept_optional_effect" && String(action.summary || "").startsWith("跳过") && insp.phase !== "awaiting_input") {
+        continue;
+      }
+      break;
+    }
+    const after = snapshot();
+    const e = {};
+    // 研究科技：该步后 ownedTiles 新增（actor 在 step.actorPlayerId / action.actorId）
+    const actorId = step.actorPlayerId || action.actorId;
+    if (actorId) {
+      const beforeSet = before.owned.get(actorId) || new Set();
+      const afterSet = after.owned.get(actorId) || new Set();
+      for (const tid of afterSet) {
+        if (!beforeSet.has(tid)) {
+          e.research = { tileId: tid, bonusId: before.bonus.get(tid) || null };
+          break;
+        }
+      }
+    }
+    // 收入插牌：summary 以「收入 」开头
+    const sum = String(action.summary || "");
+    if (sum.startsWith("收入 ")) {
+      e.income = { cardId: sum.slice(3).trim() };
+    }
+    if (Object.keys(e).length) enrich.set(step.stepIndex ?? index, e);
+  }
+  try {
+    kernel.dispose?.();
+  } catch {
+    // 内核释放失败不影响已收集的增强数据
+  }
+  return enrich;
+}
+
+// 修正 orbit 等摘要里误导性的收入描述「获得 1 次收入（R1，1信用点 + 1能量）」：
+// 实际收入是插一张牌按该卡 income 码给单一资源（2026-08-21 用户纠正：不会同时获得 1钱+1电），
+// 具体插了什么牌由 income 增强信息展示。
+function normalizeIncomeClause(text) {
+  return String(text || "").replace(/；获得 1 次收入（[^）]*）/g, "；获得 1 次收入");
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -520,6 +652,8 @@ function buildActionLogReport(opts) {
   const steps = Array.isArray(save.replaySteps) ? save.replaySteps : [];
   const final = readSaveFinalScores(opts.savePath);
   const lastAfter = steps.length ? steps[steps.length - 1].after : null;
+  // 内核重放增强：研究科技（哪张科技+背面 bonus）与收入插牌（2026-08-21 用户口径）
+  const enrichMap = replaySaveEnriched(opts.savePath);
 
   // 逐玩家前序资源，计算每步分数/资源变化
   const prev = {};
@@ -540,6 +674,7 @@ function buildActionLogReport(opts) {
       summary: step.action?.summary ?? null,
       cur,
       delta: before && cur ? cur.score - before.score : null,
+      enrich: enrichMap.get(step.stepIndex ?? i) || null,
     });
     if (cur) prev[actor] = cur;
   }
@@ -630,23 +765,40 @@ function buildActionLogReport(opts) {
 
   // 主行动单元格：主行动（family + 摘要）+ 该回合的快速行动列表
   // （2026-08-21 用户口径：回合聚合为一行的同时，快速行动如放置数据不能被省略，
-  // 在行内列出；条件/目标选择等子步骤仍并入回合不单列）
+  // 在行内列出；条件/目标选择等子步骤仍并入回合不单列）。
+  // 增强信息（内核重放）：研究科技显示研究了哪张科技+背面 bonus；收入插牌显示卡名。
   function turnMainCell(g) {
     const m = g.main;
     const fam = m && m.family ? FAMILY_LABELS[m.family] || m.family : "—";
-    const sum = m && m.summary ? replaceCardIds(String(m.summary)) : "";
-    const mainTxt = `${escapeHtml(fam)} ${escapeHtml(sum)}`.trim();
+    // 回合内研究增强（研究获得发生在 choose_target「研究 blueX」步骤，enrich 挂在该步）
+    const research = g.rows.map((row) => row.enrich?.research).find(Boolean);
+    // 回合内收入插牌
+    const incomeList = g.rows.map((row) => row.enrich?.income).filter(Boolean);
+    let mainTxt;
+    if (research && fam === "研究科技") {
+      const bonus = research.bonusId
+        ? `，背面 bonus：${TECH_BONUS_LABELS[research.bonusId] || research.bonusId}`
+        : "";
+      mainTxt = `${escapeHtml("研究")} ${escapeHtml(research.tileId)}${bonus}`;
+    } else {
+      const sum = m && m.summary ? normalizeIncomeClause(replaceCardIds(String(m.summary))) : "";
+      mainTxt = `${escapeHtml(fam)} ${escapeHtml(sum)}`.trim();
+    }
     const quicks = g.rows.filter((row) => row.phase === "quick");
-    let quickTxt = "";
+    const lists = [];
     if (quicks.length) {
       const parts = quicks.map((q) => {
         const qfam = q.family ? FAMILY_LABELS[q.family] || q.family : "";
         const qsum = q.summary ? replaceCardIds(String(q.summary)).trim() : "";
         return qsum || qfam;
       });
-      quickTxt = `<div class="quick-list">快速：${escapeHtml(parts.join(" · "))}</div>`;
+      lists.push(`<div class="quick-list">快速：${escapeHtml(parts.join(" · "))}</div>`);
     }
-    return `<div class="main-act">${mainTxt}</div>${quickTxt}`;
+    if (incomeList.length) {
+      const names = incomeList.map((e) => cardNameFor(e.cardId) || e.cardId);
+      lists.push(`<div class="quick-list">收入：${escapeHtml(names.join(" · "))}</div>`);
+    }
+    return `<div class="main-act">${mainTxt}</div>${lists.join("")}`;
   }
 
   function turnCells(g, withPlayer) {
@@ -1002,6 +1154,8 @@ module.exports = {
   computeBestOf,
   auditRegistry,
   buildActionLogReport,
+  replaySaveEnriched,
+  TECH_BONUS_LABELS,
   renderPage,
   computeRegistry,
   buildRegistry,
