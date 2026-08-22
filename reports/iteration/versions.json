@@ -7,6 +7,327 @@
   },
   "versions": [
     {
+      "id": "elig-sum4",
+      "name": "elig-sum4",
+      "date": "2026-08-22",
+      "baseline": "elig-threshold4",
+      "head": "56e9a9c0",
+      "commits": [
+        "e3c3bf38",
+        "56e9a9c0"
+      ],
+      "summary": "dataAnalyzeEligible：placed + available ≥ 4（能凑满第一排即开启）——恢复 3c78eed2 eligible 规则层（placed>=4 || 数据>=4-placed）后叠加 placed+available≥4；全盘均分 99.75（25/144/147/83）历史最高（535 步，有存档有复盘报告）",
+      "records": {
+        "3eb9e994.56e9a9c0.full.json": {
+          "note": "on-head：535 步，完整终局 25/144/147/83 均 99.75（历史最高，save-final），有存档有复盘报告"
+        }
+      },
+      "roadmap": null
+    },
+    {
+      "id": "elig-threshold4",
+      "name": "elig-threshold4",
+      "date": "2026-08-21",
+      "baseline": "elig-aligned",
+      "head": "3ebcf7f0",
+      "commits": [
+        "3ebcf7f0"
+      ],
+      "summary": "dataAnalyzeEligible：数据轨满4才开启，<4由收入目标驱动",
+      "records": {
+        "aeaabc4b.3ebcf7f0.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "elig-aligned",
+      "name": "elig-aligned",
+      "date": "2026-08-21",
+      "baseline": "completes-v4-placement",
+      "head": "e9b52a49",
+      "commits": [
+        "e9b52a49"
+      ],
+      "summary": "dataAnalyzeEligible与其他目标一致（目标未达成即active，数据不够挂scan）",
+      "records": {
+        "81738624.e9b52a49.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "completes-v4-placement",
+      "name": "completes-v4-placement",
+      "date": "2026-08-21",
+      "baseline": "placement-full",
+      "head": "3c78eed2",
+      "commits": [
+        "3c78eed2"
+      ],
+      "summary": "completes只analyze(v4) + place_data触发补全 + eligible原样",
+      "records": {
+        "ceddb30f.3c78eed2.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "placement-full",
+      "name": "placement-full",
+      "date": "2026-08-21",
+      "baseline": "pure-profit",
+      "head": "b8cfb508",
+      "commits": [
+        "b8cfb508"
+      ],
+      "summary": "place_data 触发完整：钱/电纯赚+牌/宣传需求+溢出+目标active，分析前判断第二行",
+      "records": {
+        "5484d4eb.b8cfb508.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "pure-profit",
+      "name": "pure-profit",
+      "date": "2026-08-21",
+      "baseline": "data-chain-fix",
+      "head": "4e6acd93",
+      "commits": [
+        "4e6acd93"
+      ],
+      "summary": "place_data 触发只钱/电纯赚+溢出上限，验证分数",
+      "records": {
+        "dd6cc9dd.4e6acd93.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "data-chain-fix",
+      "name": "data-chain-fix",
+      "date": "2026-08-21",
+      "baseline": "place-chain",
+      "head": "7de69080",
+      "commits": [
+        "cdf8348f",
+        "7de69080"
+      ],
+      "summary": "place_data 需求型触发+数据目标持续（completes只analyze/eligible放宽/溢出6位）",
+      "records": {
+        "a67b0b40.7de69080.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "place-chain",
+      "name": "place-chain",
+      "date": "2026-08-21",
+      "baseline": "unified-restore",
+      "head": "b355ccd6",
+      "commits": [
+        "b355ccd6"
+      ],
+      "summary": "放置数据连续填链折叠（快速行动链1节点），place_data 351→209",
+      "records": {
+        "1bafe69d.b355ccd6.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "unified-restore",
+      "name": "unified-restore",
+      "date": "2026-08-21",
+      "baseline": "no-overflow",
+      "head": "5cf59018",
+      "commits": [
+        "5cf59018"
+      ],
+      "summary": "回退到 unified 最优（84.5）：data:analyze 候选 requiredAction 兜底恢复",
+      "records": {
+        "38e7df89.5cf59018.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "no-overflow",
+      "name": "no-overflow",
+      "date": "2026-08-21",
+      "baseline": "overflow-fixed",
+      "head": "0da417cc",
+      "commits": [
+        "0da417cc"
+      ],
+      "summary": "移除 data:overflow 独立目标（净负面），回到 unified 最优行为",
+      "records": {
+        "074c68aa.0da417cc.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "overflow-fixed",
+      "name": "overflow-fixed",
+      "date": "2026-08-21",
+      "baseline": "overflow-target",
+      "head": "ba807548",
+      "commits": [
+        "ba807548"
+      ],
+      "summary": "修复 trigger 崩（income 回直接挂候选 + place_data 回 untargeted），保留溢出独立目标",
+      "records": {
+        "91b4195c.ba807548.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "overflow-target",
+      "name": "overflow-target",
+      "date": "2026-08-21",
+      "baseline": "place-trigger-final",
+      "head": "d68e931b",
+      "commits": [
+        "d68e931b"
+      ],
+      "summary": "数据溢出/资源缺口独立目标（溢出不浪费也是 target），补回 trigger 版丢失的触发入口",
+      "records": {
+        "f04f92c6.d68e931b.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "place-trigger-final",
+      "name": "place-trigger-final",
+      "date": "2026-08-21",
+      "baseline": "place-data-unified",
+      "head": "5e662798",
+      "commits": [
+        "5e662798"
+      ],
+      "summary": "place_data 完全触发式（income/data:analyze 不挂候选、无目标枚举排除），步53 节点 802→164",
+      "records": {
+        "3c70096b.5e662798.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "place-data-unified",
+      "name": "place-data-unified",
+      "date": "2026-08-21",
+      "baseline": "blue-unified",
+      "head": "f6398808",
+      "commits": [
+        "f6398808"
+      ],
+      "summary": "place_data 统一逻辑触发式判定（溢出/缺口/目标触发），代码收敛 -23 行",
+      "records": {
+        "b2570520.f6398808.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "blue-unified",
+      "name": "blue-unified",
+      "date": "2026-08-21",
+      "baseline": "blue-analyze-pre",
+      "head": "908a41e7",
+      "commits": [
+        "908a41e7"
+      ],
+      "summary": "放置数据统一需求驱动：blueBonus 独立需求优先（缺钱blue1/缺电blue2/缺牌blue3），收入不耦合",
+      "records": {
+        "ef14823c.908a41e7.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "blue-analyze-pre",
+      "name": "blue-analyze-pre",
+      "date": "2026-08-21",
+      "baseline": "design-completion-fix",
+      "head": "c741f537",
+      "commits": [
+        "c741f537"
+      ],
+      "summary": "blueBonus 归位：分析行动前判断第二行（不做独立目标），收入目标不耦合；data:analyze 目标节点 3724→319",
+      "records": {
+        "346fb75c.c741f537.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "design-completion-fix",
+      "name": "design-completion-fix",
+      "date": "2026-08-21",
+      "baseline": "budget-4096-fixed",
+      "head": "7b1c0afd",
+      "commits": [
+        "7b1c0afd"
+      ],
+      "summary": "设计修正：data:analyze 目标完成判定=数据轨推进一步（place_data 也算完成），消除搜索循环；4096 预算下 research_tech 恢复 24 叶",
+      "records": {
+        "b631c7f0.7b1c0afd.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "budget-4096-fixed",
+      "name": "budget-4096-fixed",
+      "date": "2026-08-21",
+      "baseline": "v4-need-placement",
+      "head": "0fc257dd",
+      "commits": [
+        "a8723934",
+        "a4bf7191",
+        "4c4ce685",
+        "405ee903",
+        "e4282728",
+        "afe64993",
+        "0fc257dd"
+      ],
+      "summary": "4096 预算 + 修复：①唯一合法动作兜底（残余域结算不再 NO_SELECTION 崩）②income_card splice 手牌后同步 handSize（STATE_HAND_SIZE_MISMATCH 修复）",
+      "records": {
+        "7c12296c.0fc257dd.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "v4-need-placement",
+      "name": "v4-need-placement（放置数据需求驱动 + 按目标搜索根收敛）",
+      "date": "2026-08-21",
+      "baseline": "v3-income-value",
+      "head": "f6e4c887",
+      "commits": [
+        "d31e2f4c",
+        "0a265878",
+        "bd268b6b",
+        "650fa8dc",
+        "65c36004",
+        "f6e4c887"
+      ],
+      "summary": "搜索收敛系列（用户裁定：结算不搜索，按'我需要什么'贪心/需求驱动）：①根动作=目标目录绑定（无目标 quick_trade/card_corner 非法，不再 UNIFIED_PURPOSE_FAMILIES 无条件放行，17根→9）；②放置数据需求驱动（blue1=+1信用/blue2=+1能量/blue3=精选/blue4=+2宣传、computer第2格=+1宣传/第4格=收入；需求优先级 宣传→收入→钱/电→牌→默认 computer 推进；data:analyze 目标 active 时默认推进）；③dump 工具+搜索诊断（frontier 按 family/节点明细）标准化。效果：白色 R3 决策 42s/16384触顶/PRUNED→pass 收敛为 9.9s/不再触顶/主行动可选；全盘均分 94.25（587步，蓝134绿67棕90白86）历史最高；耗时 14.5min（步数多自然耗时多，用户裁定正常）；外星拿牌去 cancel（用户裁定不可能选取消，AI 本来就不选，纯省时间）：全盘耗时 874s→275s（3倍提速），分数/步数一字不变（94.25/587步）",
+      "records": {
+        "efec250b.f6e4c887.full.json": {
+          "note": "on-head：587 步，完整终局 134/67/90/86 均 94.25；耗时 275s（去 cancel 后 3 倍提速，行为与 65c36004 一字不变）"
+        }
+      },
+      "roadmap": null
+    },
+    {
+      "id": "v3-income-value",
+      "name": "v3-income-value（插收入/初始牌打分对齐价值表 + 死代码清理）",
+      "date": "2026-08-21",
+      "baseline": "v2-countsgoal-removal",
+      "head": "0058821c",
+      "commits": [
+        "2d72aa47",
+        "e3774f5c",
+        "0058821c"
+      ],
+      "summary": "Part A 死代码清理（项1-5）+ 项9 value 形状统一 + 项7 quick_trade 缺口判定提取 + 插收入/初始牌/公司打分改用对齐价值表（钱10电8牌6宣传4数据6，逐轮贬值，2026-08-18 用户口径 8b7cf3b6 恢复）。关键结论：setup 反事实删除后插收入曾误落入初始牌打分分支（语义错位，插牌改变→全盘分叉 64.5/72.5），现用价值表显式修复（插收入=按收入码价值选，白色插钱码牌）；单局分数无意义（任何开局改动都换局），价值在逻辑正确。全盘 66.25（393步，蓝70绿59棕116白20）",
+      "records": {
+        "c2f5eda1.0058821c.full.json": {
+          "note": "on-head：393 步，完整终局 70/59/116/20 均 66.25；单局分数无参考意义（开局改动换局），修复重点是插收入逻辑正确"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "v2-countsgoal-removal",
       "name": "v2-countsgoal-removal",
       "date": "2026-08-21",
