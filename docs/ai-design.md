@@ -148,27 +148,6 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
     production-kernel targetId 同构）补出路线依赖。
 - 多步消费：命中后 `advancePlan` 前进一步，链条耗尽或判定失败才重新调用方案。
 
-### 3.2.1 真实执行链的快速行动折叠（place_data 连续填）
-
-**用户裁定**：place_data 是快速行动，"搜索决策说填到收入格就一路填到收入格
-然后停、继续下一个决策；说填到 1 钱就填到 1 钱，说啥做啥"。搜索内部
-（`rule-composition` drain 折叠）已把 place_data 选位折叠进节点（搜索评估的
-leaf 链 = 填到目标/数据空）；真实执行链（协调器 `runDecision`）同样折叠：
-place_data 提交后自动结算唯一合法计算机选位（`choose_target:computer
-data:computer`，规则强制从左到右下一空位），放置后若仍可继续填（数据池>0、
-槽位<6、未 PASS）自动提交下一个 place_data，直到策略级边界（收入选牌/蓝色
-bonus 多选/数据空/槽满）交还决策函数。折叠链内每个原子动作都走 execute +
-recordStep（replay/训练记账完整）。
-
-**多格折叠后 plan 不延续**（2026-08-22 实测调优）：折叠链实际连续填了多个
-数据（多格折叠）后，真实状态与搜索评估的单目标链（income 路径）不一致——
-搜索评估 place_data 时沿绑定目标展开后继（income 路径只到 card_corner/scan），
-填完数据后真实世界应看到全部目标（orbit 等更优主行动）。多格折叠后 plan 不
-延续 → 下一轮重新搜索主行动（与 end_turn/pass 的 control-step-redecide 同理）。
-**单格填数据（未折叠）时 plan 照常延续**（与基线一致）——此前对所有
-place_data 一刀切 plan 不延续会破坏单格场景（全盘 76.25）；仅多格折叠才不
-延续，A/B 验证：基线 elig-sum4 99.75 → 折叠链 100.25（+0.5）。
-
 ### 3.3 边界与约束
 
 - 复用层属于协调器决策流程（§1）的一部分：命中的决策来自**计划缓存**而非

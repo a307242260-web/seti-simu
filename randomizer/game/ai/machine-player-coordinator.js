@@ -221,79 +221,9 @@ function createMachinePlayerCoordinator(options = {}) {
     if (typeof recordStep === "function") {
       recordStep(action, executed, { seatId, boundary });
     }
-    // —— 快速行动连续填折叠（真实执行链，与搜索内部 drain 折叠对称）——
-    // 用户裁定：place_data 是快速行动，"搜索决策说填到收入格就一路填到收入格
-    // 然后停、继续下一个决策；说填到 1 钱就填到 1 钱，说啥做啥"。搜索内部
-    // （rule-composition drain）已把选位折叠进 place_data 节点；这里把同一折叠
-    // 做到真实执行链：place_data 提交后自动结算唯一合法选位
-    // （choose_target:computer data:computer，规则强制从左到右下一空位），放置后
-    // 若仍可继续填（数据池>0、槽位<6、未 PASS）自动提交下一个 place_data，
-    // 直到策略级边界（收入选牌/蓝色 bonus 多选/数据空/槽满）交还决策函数——
-    // 边界与搜索内部折叠链一致（填到 4 号位触发收入选牌必然停止）。
-    // 折叠链内每个实际提交都走 execute + recordStep（replay/训练记账完整）。
-    let foldChainMultiFilled = false;
-    if (String(action?.family) === "place_data") {
-      const chainLimit = 32;
-      let firstSettleDone = false;
-      for (let chainIndex = 0; chainIndex < chainLimit; chainIndex += 1) {
-        const chainInspection = composition.inspect();
-        if (chainInspection.phase !== "awaiting_input" || !chainInspection.session?.decision) break;
-        const chainChoices = chainInspection.session.decision.choices || [];
-        // 唯一合法计算机选位（规则强制）才自动结算；多选（蓝色 bonus 可填）或
-        // 策略级（收入选牌）→ 交还决策函数。
-        const settleChoice = chainChoices.length === 1
-          && chainChoices[0]?.family === "choose_target"
-          && chainChoices[0]?.target?.target === "computer"
-          && chainChoices[0]?.target?.choiceId === "data:computer"
-          ? chainChoices[0]
-          : null;
-        if (!settleChoice) break;
-        const settled = execute(settleChoice);
-        if (!settled || settled.ok !== true) {
-          throw new Error(
-            `MACHINE_PLAYER_PLACE_DATA_CHAIN_SETTLE_FAILED: 座位 ${seatId} 连续填选位失败: `
-            + `${settled?.error || settled?.message || "unknown"}`,
-          );
-        }
-        if (typeof recordStep === "function") {
-          recordStep(settleChoice, settled, { seatId, boundary });
-        }
-        // 放置一个后：若进入策略级决策（4 号位收入选牌等）→ 交还；否则若能继续填
-        // （数据池>0、槽位<6、未 PASS），自动提交下一个 place_data。
-        const afterInspection = composition.inspect();
-        if (afterInspection.phase === "awaiting_input") break;
-        const nextActions = composition.inputPort.enumerateActions({});
-        const nextPlaceData = (nextActions || []).find((candidate) => (
-          candidate.family === "place_data" && candidate.phase !== "conditional"
-        ));
-        if (!nextPlaceData) break;
-        const chained = execute(nextPlaceData);
-        if (!chained || chained.ok !== true) {
-          throw new Error(
-            `MACHINE_PLAYER_PLACE_DATA_CHAIN_FAILED: 座位 ${seatId} 连续填下一个 place_data 失败: `
-            + `${chained?.error || chained?.message || "unknown"}`,
-          );
-        }
-        if (typeof recordStep === "function") {
-          recordStep(nextPlaceData, chained, { seatId, boundary });
-        }
-        // 至少完成了一次"填数据→填数据"的连续填（多格折叠）。
-        foldChainMultiFilled = true;
-      }
-    }
     if (plan?.nextActionId) {
       // 计划连同其所属回合（turn）一起存储：本回合内按计划走，新回合重新判定。
-      // 折叠链多格折叠后 plan 不延续：快速行动填完后真实状态与搜索评估的
-      // 单目标链（income 路径）不一致，主行动必须基于真实状态重新搜索评估
-      // （基线靠 plan 错位自然重搜；折叠链若延续 plan 会执行 income 路径的
-      // card_corner，跳过 orbit 等更优主行动 → 掉分）。单格填数据（未折叠）时
-      // plan 照常延续（与基线一致）。
-      if (!foldChainMultiFilled) {
-        planStores.set(seatId, { plan, turn: currentTurn });
-      } else {
-        planStores.delete(seatId);
-        record("fold-chain-plan-discarded", { seatId, actionId: action.actionId });
-      }
+      planStores.set(seatId, { plan, turn: currentTurn });
     } else {
       planStores.delete(seatId);
     }
