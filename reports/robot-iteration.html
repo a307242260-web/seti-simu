@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-22T02:21:54.781Z",
+  "builtAt": "2026-08-22T15:52:45.745Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "29e66b9b",
-  "currentBaseline": "fold-chain-real",
+  "headCommit": "5045a3ff",
+  "currentBaseline": "fold-rollback",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,58 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "fold-rollback",
+      "name": "回退折叠链实验（回到 elig-sum4 行为）",
+      "date": "2026-08-22",
+      "baseline": "fold-chain-real",
+      "head": "5045a3ff",
+      "commits": [
+        {
+          "hash": "5045a3ff",
+          "date": "2026-08-22",
+          "subject": "Revert \"真实执行链折叠：place_data 快速行动连续填 + 多格折叠后 plan 不延续\""
+        }
+      ],
+      "summary": "回退 29e66b9b 真实执行链折叠（用户裁定：统一缺口规则实现有问题，回退到 elig-sum4 行为）。代码与 elig-sum4（56e9a9c0）一致；折叠链完整经验见 reports/iteration/fold-chain-search-status.md。",
+      "diffStat": "5 files changed, 972 insertions(+), 148 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 0,
+          "deletions": 21
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.js",
+          "insertions": 1,
+          "deletions": 71
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 478,
+          "deletions": 28
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 15,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 478,
+          "deletions": 28
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "fold-chain-real",
       "name": "fold-chain-real",
@@ -626,7 +678,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -4070,6 +4122,16 @@ const REGISTRY = {
     },
     {
       "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：66aa586b.46c8d0cf.full.json（name=fold-unified commit=46c8d0cf createdAt=2026-08-22T14:41:58.114Z）"
+    },
+    {
+      "kind": "orphan-record",
+      "level": "info",
+      "text": "未登记到任何版本：66aa586b.46c8d0cf.quick-200.json（name=fold-chain-demand commit=46c8d0cf createdAt=2026-08-22T09:24:19.641Z）"
+    },
+    {
+      "kind": "orphan-record",
       "level": "info",
       "text": "未登记到任何版本：7c12296c.0fc257dd.quick-80.json（name=design-completion-fix commit=0fc257dd createdAt=2026-08-21T20:05:46.164Z）"
     },
@@ -4245,6 +4307,24 @@ const REGISTRY = {
       "createdAt": "2026-08-21T14:25:20.649Z",
       "steps": 557,
       "terminal": true
+    },
+    {
+      "file": "66aa586b.46c8d0cf.full.json",
+      "mode": "full",
+      "name": "fold-unified",
+      "gitCommit": "46c8d0cf",
+      "createdAt": "2026-08-22T14:41:58.114Z",
+      "steps": 377,
+      "terminal": true
+    },
+    {
+      "file": "66aa586b.46c8d0cf.quick-200.json",
+      "mode": "quick-200",
+      "name": "fold-chain-demand",
+      "gitCommit": "46c8d0cf",
+      "createdAt": "2026-08-22T09:24:19.641Z",
+      "steps": 200,
+      "terminal": false
     },
     {
       "file": "7c12296c.0fc257dd.quick-80.json",

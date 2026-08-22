@@ -7,6 +7,20 @@
   },
   "versions": [
     {
+      "id": "fold-rollback",
+      "name": "回退折叠链实验（回到 elig-sum4 行为）",
+      "date": "2026-08-22",
+      "baseline": "fold-chain-real",
+      "head": "5045a3ff",
+      "commits": [
+        "5045a3ff"
+      ],
+      "summary": "回退 29e66b9b 真实执行链折叠（用户裁定：统一缺口规则实现有问题，回退到 elig-sum4 行为）。代码与 elig-sum4（56e9a9c0）一致；折叠链完整经验见 reports/iteration/fold-chain-search-status.md。",
+      "records": {},
+      "roadmap": null,
+      "note": "回退提交 5045a3ff；折叠链迭代的机制结论与教训（搜索评估/执行一致性、blueBonus 价值、默认填充有害）见 fold-chain-search-status.md"
+    },
+    {
       "id": "fold-chain-real",
       "name": "fold-chain-real",
       "date": "2026-08-22",
@@ -19,7 +33,8 @@
       "records": {
         "e749439d.0a377f88.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "note": "已回退（2026-08-22，fold-rollback）：折叠链实验整体回退到 elig-sum4 行为"
     },
     {
       "id": "elig-sum4",

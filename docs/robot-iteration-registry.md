@@ -198,16 +198,20 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 `check` 退出码 1 = 有 warn，用于 CI/提交前自查。
 
-## 8. 当前版本（2026-08-21）
+## 8. 当前版本（2026-08-22）
 
 | 版本 | head | 说明 |
 |---|---|---|
-| `v0` | `a18a2e00` | **当前基线**（2026-08-21 用户裁定）：当前代码默认装配（fastPath 保留 + 统一搜索单一路径）；全盘 436 步，完整终局 45/63/73/77 均 64.5（有存档有报告） |
+| `fold-rollback` | `5045a3ff` | **当前 HEAD**（2026-08-22 回退）：回退折叠链实验（29e66b9b），代码与 `elig-sum4`（56e9a9c0）一致；place_data 无折叠链、无 foldTargetSlots。折叠链完整经验见 `reports/iteration/fold-chain-search-status.md` |
+| `elig-sum4` | `56e9a9c0` | **当前策略基线**（无折叠链默认装配）：全盘 535 决策/535 原子动作，完整终局均 99.75（有存档有报告） |
+| `fold-chain-real` | `29e66b9b` | 已回退（2026-08-22）：折叠链 + 多格 plan 不延续，均 100.3（A/B 记录保留） |
 
 已知口径注记：
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
+- 回退后 `registry.currentBaseline` 解析为 `fold-rollback`（head 精确匹配 HEAD）；
+  策略行为等价 `elig-sum4`。
 
 ## 9. 与调研流程的关系
 
