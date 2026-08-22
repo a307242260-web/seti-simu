@@ -7,6 +7,21 @@
   },
   "versions": [
     {
+      "id": "fold-chain-real",
+      "name": "fold-chain-real",
+      "date": "2026-08-22",
+      "baseline": "elig-sum4",
+      "head": "29e66b9b",
+      "commits": [
+        "29e66b9b"
+      ],
+      "summary": "真实执行链折叠：place_data 快速行动连续填 + 多格折叠后 plan 不延续。基线 elig-sum4 99.75 → 100.25",
+      "records": {
+        "e749439d.0a377f88.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "elig-sum4",
       "name": "elig-sum4",
       "date": "2026-08-22",
