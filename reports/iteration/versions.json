@@ -7,16 +7,39 @@
   },
   "versions": [
     {
+      "id": "round-data-income-r4-20260906",
+      "name": "轮初数据收入实体修复（终局超时）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "6d67a974",
+      "commits": [
+        "6d67a974"
+      ],
+      "summary": "轮初数据收入通过正式gainData发放实体并同步数量，满池按规则弃置，其他失败显式返回",
+      "records": {
+        "cdcd5d61.6d67a974.quick-200.json": {
+          "note": "200步，阶段均25.25，138940ms；同版本终局续跑在第二轮绿方触发30秒搜索超时，无完整终局。最后进度202步不等于准确失败步数；见round-data-income-r4-full-failure-20260906.json。第三/第四轮未通过。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "score-corner-r4-20260906",
       "name": "得分角标准入（终局未达标）",
       "date": "2026-09-06",
       "baseline": "blue-future-r2e-20260905",
       "head": "0d21aebf",
-      "commits": ["0d21aebf"],
+      "commits": [
+        "0d21aebf"
+      ],
       "summary": "按正式角标奖励表将直接得分弃牌角标绑定到card:resolve实例目标，沿用条件结算和计划依赖。",
       "records": {
-        "7a4c63fd.0d21aebf.quick-200.json": { "note": "200步，阶段均21，144137ms；同提交续跑，不作终局成绩。" },
-        "7a4c63fd.0d21aebf.full.json": { "note": "579步，正式终局74/118/116/108、均104，较上一候选+2.5，低于R2e基线2.75；总模拟495050ms。第三/第四轮未通过。" }
+        "7a4c63fd.0d21aebf.quick-200.json": {
+          "note": "200步，阶段均21，144137ms；同提交续跑，不作终局成绩。"
+        },
+        "7a4c63fd.0d21aebf.full.json": {
+          "note": "579步，正式终局74/118/116/108、均104，较上一候选+2.5，低于R2e基线2.75；总模拟495050ms。第三/第四轮未通过。"
+        }
       },
       "roadmap": null
     },

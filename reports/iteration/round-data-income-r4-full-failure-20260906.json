@@ -1,0 +1,28 @@
+{
+  "scope": "保存终局续跑进程返回的失败证据；不是完整研究记录",
+  "gitCommit": "6d67a974",
+  "command": "node tools/robot_iterate.js run --name round-data-income-r4-20260906 --full --baseline blue-future-r2e-20260905 --summary 轮初数据收入通过正式gainData发放实体并同步数量，满池按规则弃置，其他失败显式返回",
+  "sessionId": 32686,
+  "exitCode": 1,
+  "resumedFrom": "seti-saves/seti-save-research-round-data-income-r4-20260906-6d67a974-quick-200-v93.json",
+  "resumeStep": 200,
+  "lastReportedProgress": {
+    "step": 202,
+    "round": 2,
+    "turn": 8,
+    "seat": "player-white",
+    "actionId": "place_data:8fd12fd3",
+    "elapsedSeconds": 11.21
+  },
+  "failureSeat": "player-green",
+  "error": "MACHINE_PLAYER_DECISION_FAILED: 座位 player-green 决策函数抛错: COUNTERFACTUAL_SEARCH_TIMEOUT: 搜索超时，不返回部分策略动作",
+  "stack": [
+    "at Object.runDecision (randomizer/game/ai/machine-player-coordinator.js:174:15)",
+    "at Object.runHeuristicPolicyDecision (randomizer/app/simulation-env.js:652:34)",
+    "at runValidation (tools/run_research_validation.js:423:26)",
+    "at main (tools/run_research_validation.js:625:3)"
+  ],
+  "searchTimeoutMs": 30000,
+  "terminalResult": null,
+  "limitations": "进度输出节流，202只是最后报告步数，不等于失败前最后确认步数；失败工具不保存中间全盘checkpoint。不得据此虚构失败action或完整耗时。"
+}
