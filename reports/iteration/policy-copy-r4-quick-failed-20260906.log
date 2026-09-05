@@ -1,0 +1,30 @@
+[quick-200进度] 第 1 轮 · 第 1 回合 · 决策#1/200 · 席位=player-white · 动作=choose_card:04955932 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=0.052s · 19.2步/s
+[quick-200进度] 第 1 轮 · 第 1 回合 · 决策#24/200 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=10.849s · 2.2步/s
+[quick-200进度] 第 1 轮 · 第 2 回合 · 决策#42/200 · 席位=player-green · 动作=move:2729ba3d · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=22.296s · 1.9步/s
+[quick-200进度] 第 1 轮 · 第 3 回合 · 决策#49/200 · 席位=player-blue · 动作=play_card:6eb4a6de · 蓝色玩家=7 绿色玩家=12 棕色玩家=8 白色玩家=6 · 用时=33.518s · 1.5步/s
+[quick-200进度] 第 1 轮 · 第 4 回合 · 决策#52/200 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=9 绿色玩家=12 棕色玩家=8 白色玩家=6 · 用时=44.511s · 1.2步/s
+[quick-200进度] 第 1 轮 · 第 10 回合 · 决策#81/200 · 席位=player-green · 动作=place_data:dbe01b29 · 蓝色玩家=9 绿色玩家=12 棕色玩家=18 白色玩家=13 · 用时=45.603s · 1.8步/s
+[quick-200进度] 第 1 轮 · 第 12 回合 · 决策#101/200 · 席位=player-brown · 动作=research_tech:547c8803 · 蓝色玩家=11 绿色玩家=12 棕色玩家=18 白色玩家=13 · 用时=52.316s · 1.9步/s
+[quick-200进度] 第 1 轮 · 第 13 回合 · 决策#109/200 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=11 绿色玩家=12 棕色玩家=18 白色玩家=13 · 用时=53.913s · 2.0步/s
+[quick-200进度] 第 1 轮 · 第 17 回合 · 决策#135/200 · 席位=player-brown · 动作=choose_card:11fb9e5d · 蓝色玩家=11 绿色玩家=15 棕色玩家=18 白色玩家=18 · 用时=54.928s · 2.5步/s
+[quick-200进度] 第 2 轮 · 第 1 回合 · 决策#145/200 · 席位=player-green · 动作=card_corner:12343210 · 蓝色玩家=23 绿色玩家=15 棕色玩家=18 白色玩家=18 · 用时=1m5.111999999999995s · 2.2步/s
+[quick-200进度] 第 2 轮 · 第 2 回合 · 决策#149/200 · 席位=player-blue · 动作=launch:a4087d46 · 蓝色玩家=23 绿色玩家=15 棕色玩家=18 白色玩家=18 · 用时=1m12.787999999999997s · 2.0步/s
+[quick-200进度] 第 2 轮 · 第 3 回合 · 决策#151/200 · 席位=player-brown · 动作=play_card:f6bc657f · 蓝色玩家=23 绿色玩家=15 棕色玩家=18 白色玩家=18 · 用时=1m23.072999999999993s · 1.8步/s
+[quick-200进度] 第 2 轮 · 第 4 回合 · 决策#157/200 · 席位=player-white · 动作=launch:c94cda79 · 蓝色玩家=23 绿色玩家=15 棕色玩家=18 白色玩家=18 · 用时=1m35.387s · 1.6步/s
+/Users/bilibili/code/seti-simu/randomizer/game/ai/machine-player-coordinator.js:174
+        throw new Error(
+        ^
+
+Error: MACHINE_PLAYER_DECISION_FAILED: 座位 player-green 决策函数抛错: COUNTERFACTUAL_SEARCH_TIMEOUT: 搜索超时，不返回部分策略动作
+    at Object.runDecision (/Users/bilibili/code/seti-simu/randomizer/game/ai/machine-player-coordinator.js:174:15)
+    at Object.runHeuristicPolicyDecision (/Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js:652:34)
+    at runValidation (/Users/bilibili/code/seti-simu/tools/run_research_validation.js:423:26)
+    at main (/Users/bilibili/code/seti-simu/tools/run_research_validation.js:625:3)
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/tools/run_research_validation.js:628:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+
+Node.js v22.22.0

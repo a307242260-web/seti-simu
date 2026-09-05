@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T20:56:26.476Z",
+  "builtAt": "2026-09-05T21:09:48.974Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "b7bc42ff",
-  "currentBaseline": "search-budget-r4-20260906",
+  "headCommit": "e164bb59",
+  "currentBaseline": "policy-copy-r4-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,333 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "policy-copy-r4-20260906",
+      "name": "策略复制优化（快速验证搜索超时）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "e164bb59",
+      "commits": [
+        {
+          "hash": "e164bb59",
+          "date": "2026-09-06",
+          "subject": "减少策略输入复制的递归集合分配并保留完整校验"
+        }
+      ],
+      "summary": "策略输入复制改为维护当前递归祖先集合，退出节点时清理；保留完整字段校验、循环检测和独立副本缓存。",
+      "diffStat": "198 files changed, 170167 insertions(+), 1418 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/audit-completion-state-r4-20260906.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-income-card-reserve-witness-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-mercury-scan-directory-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-plan-boundaries-r3-20260905.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-completion-boundary-20260906.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-execution-events-20260906.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-source-consumers-20260906.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-source-opening-20260906.js",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r2e-expectation-20260905.js",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-actual-opening-plan-20260906.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-alien-dependency-input-20260905.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-plan-realization-20260906.js",
+          "insertions": 79,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-route-selection-20260906.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-second-round-20260906.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-first-divergence-choice-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-green-pass-20260906.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-green-pass-choice-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-legacy-payment-boundary-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-access-dependency-20260906.js",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-source-order-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-boundary-20260906.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-plan-origin-20260906.js",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-replan-realization-20260906.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-stale-scan-execution-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-search-contract-r4-20260906.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-search-equivalence-r4-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-sector-directory-cache-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-policy-copy-r4-20260906.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-income-reserve-failure-20260906.js",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-card-income-identity-20260906.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-probe-source-full-20260906.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-current-rounds-20260906.js",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-first-divergence-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-scan-earth-20260906.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-sector-directory-full-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r3-brown-decision-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-r4-cpu-20260906.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-income-identity-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-income-reserve-search-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-plan-steps-r3-20260905.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-source-plan-20260906.js",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-source-search-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-green-land-witness-20260906.js",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-scan-earth-20260906.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-20260906.js",
+          "insertions": 88,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-boundaries-20260906.js",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 91,
+          "deletions": 52
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 192,
+          "deletions": 3
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 63,
+          "deletions": 2
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 43,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app.js",
+          "insertions": 0,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/ai/browser-bootstrap.js",
+          "insertions": 1,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/simulation-env.js",
+          "insertions": 0,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/blue-bonus-value.test.js",
+          "insertions": 0,
+          "deletions": 25
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 77,
+          "deletions": 147
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-evaluator.test.js",
+          "insertions": 7,
+          "deletions": 0
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "search-budget-r4-20260906",
       "name": "全局搜索预算与完整性（性能未通过）",
@@ -513,7 +840,7 @@ const REGISTRY = {
       ],
       "results": [],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": false,
         "save": false,

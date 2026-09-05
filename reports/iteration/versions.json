@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "policy-copy-r4-20260906",
+      "name": "策略复制优化（快速验证搜索超时）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "e164bb59",
+      "commits": [
+        "e164bb59"
+      ],
+      "summary": "策略输入复制改为维护当前递归祖先集合，退出节点时清理；保留完整字段校验、循环检测和独立副本缓存。",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "search-budget-r4-20260906",
       "name": "全局搜索预算与完整性（性能未通过）",
       "date": "2026-09-06",
