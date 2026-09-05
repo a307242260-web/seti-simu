@@ -1,0 +1,736 @@
+{
+  "createdAt": "2026-09-05T14:42:24.178Z",
+  "gitCommit": "2c3ca2f2d415b61e862b277b82a7d3632d0ff9e1",
+  "scope": "协调器窄边界反例不代表真实完整游戏；真实叶只审计已有记录，不重搜",
+  "sameTurnReveal": {
+    "expected": "scheme/reconsidered",
+    "actual": "plan-reuse/planned",
+    "calls": 1,
+    "diagnostics": [
+      {
+        "type": "plan-reuse-miss",
+        "seatId": "p1",
+        "reason": "no-plan"
+      },
+      {
+        "type": "scheme-decision",
+        "seatId": "p1",
+        "actionId": "start"
+      },
+      {
+        "type": "plan-reuse-hit",
+        "seatId": "p1",
+        "actionId": "planned"
+      }
+    ]
+  },
+  "advance": {
+    "expected": "下一步scan使用其执行前的扇区依赖",
+    "actual": {
+      "nextActionId": "scan",
+      "continuation": [
+        "scan"
+      ],
+      "dependency": {
+        "kind": "tech",
+        "tileId": "blue1",
+        "present": true,
+        "remaining": 4,
+        "bonusId": "bonus_1c"
+      },
+      "revealedCount": 0
+    }
+  },
+  "realLeafSource": {
+    "path": "reports/iteration/search-result-retention-s1-profile-20260905.json",
+    "sha256": "66d0abdc2066b4862fc5e6ff3f45363858e561e0d6c35f116f53a5eea90b5534",
+    "leafCount": 76,
+    "foldedLeaves": 52,
+    "leaves": [
+      {
+        "leafId": "leaf:00d78da8",
+        "actionCount": 22,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:04bc9e6e",
+        "actionCount": 16,
+        "executionStepCount": 16,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:0615d227",
+        "actionCount": 14,
+        "executionStepCount": 20,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:07b29ac7",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:10a5b57d",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:11458282",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:12ab03e3",
+        "actionCount": 16,
+        "executionStepCount": 19,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:19ef6479",
+        "actionCount": 23,
+        "executionStepCount": 26,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:1f81eb38",
+        "actionCount": 21,
+        "executionStepCount": 24,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:2756c0d0",
+        "actionCount": 15,
+        "executionStepCount": 15,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:2a2353e4",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:30cd57a0",
+        "actionCount": 16,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:35ff616b",
+        "actionCount": 23,
+        "executionStepCount": 29,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:39a35cf6",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:3a21b862",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:4483b851",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:4ce09ba4",
+        "actionCount": 14,
+        "executionStepCount": 17,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:57aac9de",
+        "actionCount": 15,
+        "executionStepCount": 15,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:57f593c9",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:59644215",
+        "actionCount": 21,
+        "executionStepCount": 27,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:5a85f3bf",
+        "actionCount": 23,
+        "executionStepCount": 26,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:5d598f17",
+        "actionCount": 14,
+        "executionStepCount": 14,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:64ebca3c",
+        "actionCount": 15,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:6ba6c175",
+        "actionCount": 16,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:6e796c21",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:707cfd48",
+        "actionCount": 19,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:770717e1",
+        "actionCount": 23,
+        "executionStepCount": 29,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:7848c801",
+        "actionCount": 21,
+        "executionStepCount": 27,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:7bf69fcb",
+        "actionCount": 23,
+        "executionStepCount": 26,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:83c43849",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:8825b601",
+        "actionCount": 18,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:8c327071",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:8d6466cf",
+        "actionCount": 21,
+        "executionStepCount": 27,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:9136aee3",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:922d9a83",
+        "actionCount": 22,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:974ac915",
+        "actionCount": 23,
+        "executionStepCount": 26,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:9bda0cba",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:9cd0a711",
+        "actionCount": 19,
+        "executionStepCount": 19,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a04c9f42",
+        "actionCount": 22,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a494d048",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a4b224a6",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a6fbe2e2",
+        "actionCount": 19,
+        "executionStepCount": 19,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a868f65a",
+        "actionCount": 15,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a8a18f1d",
+        "actionCount": 19,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:a946b952",
+        "actionCount": 18,
+        "executionStepCount": 24,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:aa48fb13",
+        "actionCount": 15,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:ac0238b1",
+        "actionCount": 23,
+        "executionStepCount": 29,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:b3dbb900",
+        "actionCount": 23,
+        "executionStepCount": 29,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:b4b6ee23",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:b60d8091",
+        "actionCount": 14,
+        "executionStepCount": 14,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:b62f4f01",
+        "actionCount": 23,
+        "executionStepCount": 26,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:b9aff5d8",
+        "actionCount": 23,
+        "executionStepCount": 23,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:c92087fb",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:cc822d33",
+        "actionCount": 22,
+        "executionStepCount": 28,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:cdbe1925",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:d2ae09a9",
+        "actionCount": 23,
+        "executionStepCount": 29,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:d317d85a",
+        "actionCount": 19,
+        "executionStepCount": 19,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:d403ec85",
+        "actionCount": 23,
+        "executionStepCount": 29,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:d5d3b9c4",
+        "actionCount": 22,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:d746efcf",
+        "actionCount": 15,
+        "executionStepCount": 18,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:d87b61ec",
+        "actionCount": 22,
+        "executionStepCount": 22,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:db85d9fd",
+        "actionCount": 15,
+        "executionStepCount": 18,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:dc08dd79",
+        "actionCount": 21,
+        "executionStepCount": 27,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:e05f6741",
+        "actionCount": 15,
+        "executionStepCount": 15,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:e1bbed3a",
+        "actionCount": 18,
+        "executionStepCount": 18,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:e406b5fa",
+        "actionCount": 14,
+        "executionStepCount": 17,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:e6632874",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:e966ce09",
+        "actionCount": 21,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:ea26cc22",
+        "actionCount": 22,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:eaef8111",
+        "actionCount": 21,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:f3239619",
+        "actionCount": 18,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:f3c7a9b8",
+        "actionCount": 19,
+        "executionStepCount": 25,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:f4e28aca",
+        "actionCount": 18,
+        "executionStepCount": 24,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:f5c4fcc8",
+        "actionCount": 21,
+        "executionStepCount": 24,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:f62ac431",
+        "actionCount": 23,
+        "executionStepCount": 26,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      },
+      {
+        "leafId": "leaf:f9d62a7d",
+        "actionCount": 18,
+        "executionStepCount": 21,
+        "routeActions": 7,
+        "rootAssumedObservation": true,
+        "rootSettledObservation": true,
+        "hasPerStepObservations": false
+      }
+    ]
+  }
+}
