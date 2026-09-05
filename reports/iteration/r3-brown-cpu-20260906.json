@@ -1,0 +1,584 @@
+{
+  "createdAt": "2026-09-05T16:36:19.256Z",
+  "profilePath": "reports/iteration/r3-brown-decision-20260906.cpuprofile",
+  "checkpointPath": "reports/iteration/r3-brown-before-41-20260906.json",
+  "scope": "对已知超时状态的一次CPU采样；用于归因，不替代无采样性能验收，不跑全盘",
+  "wallMs": 11719.861334000001,
+  "chosen": "launch:c1616852",
+  "ok": true,
+  "diagnostics": {
+    "executedNodeCount": 4096,
+    "forkMilliseconds": 328.9181320000075,
+    "executionMilliseconds": 1425.653786000008,
+    "projectionMilliseconds": 915.5661850000126,
+    "identityMilliseconds": 81.89266900000541,
+    "checkpointMilliseconds": 643.8206289999653,
+    "frontierMilliseconds": 378.39184399996236,
+    "orchestrationMilliseconds": 5509.58371300004,
+    "totalMilliseconds": 9283.826958000001
+  },
+  "selfHotspots": [
+    {
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "name": "structuredClone",
+      "selfMs": 2985.6299999999974,
+      "totalMs": 3113.010999999997
+    },
+    {
+      "file": "",
+      "line": 0,
+      "name": "(garbage collector)",
+      "selfMs": 822.0370000000013,
+      "totalMs": 822.0370000000013
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 50,
+      "name": "copySerializable",
+      "selfMs": 628.6610000000003,
+      "totalMs": 787.623000000001
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/state-store.js",
+      "line": 46,
+      "name": "stableSerialize",
+      "selfMs": 505.29799999999966,
+      "totalMs": 505.29799999999966
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 30,
+      "name": "stableSerialize",
+      "selfMs": 487.90799999999973,
+      "totalMs": 487.90799999999973
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 539,
+      "name": "",
+      "selfMs": 412.91399999999976,
+      "totalMs": 412.91399999999976
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 24,
+      "name": "deepFreeze",
+      "selfMs": 399.28999999999985,
+      "totalMs": 399.28999999999985
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 529,
+      "name": "getNebulaLocations",
+      "selfMs": 364.5429999999996,
+      "totalMs": 784.2900000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 173,
+      "name": "getWheelStep",
+      "selfMs": 266.128,
+      "totalMs": 303.923
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 52,
+      "name": "stableHashSerialized",
+      "selfMs": 255.791,
+      "totalMs": 255.791
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1033,
+      "name": "getTrustedState",
+      "selfMs": 213.30100000000002,
+      "totalMs": 282.257
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 916,
+      "name": "buildSectorWinRequirements",
+      "selfMs": 195.666,
+      "totalMs": 287.9599999999999
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "name": "visit",
+      "selfMs": 182.67100000000002,
+      "totalMs": 202.42200000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 95,
+      "name": "deepFreeze",
+      "selfMs": 147.582,
+      "totalMs": 147.582
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1629,
+      "name": "pruneResourceDominatedOrigins",
+      "selfMs": 130.294,
+      "totalMs": 278.254
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/outcome-model.js",
+      "line": 32,
+      "name": "deepFreeze",
+      "selfMs": 127.167,
+      "totalMs": 127.167
+    },
+    {
+      "file": "",
+      "line": 0,
+      "name": "structuredClone",
+      "selfMs": 122.33900000000003,
+      "totalMs": 122.33900000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/state-store.js",
+      "line": 40,
+      "name": "deepFreeze",
+      "selfMs": 120.666,
+      "totalMs": 120.666
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/app/simulation-contract.js",
+      "line": 36,
+      "name": "compactObject",
+      "selfMs": 108.28399999999998,
+      "totalMs": 108.28399999999998
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 96,
+      "name": "containsUnknownCardReference",
+      "selfMs": 103.583,
+      "totalMs": 107.333
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 486,
+      "name": "getBaseWheelCell",
+      "selfMs": 97.334,
+      "totalMs": 121.251
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1040,
+      "name": "envelopeHash",
+      "selfMs": 94.082,
+      "totalMs": 480.2819999999998
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 562,
+      "name": "resolveVisibleContent",
+      "selfMs": 90.039,
+      "totalMs": 1493.9149999999988
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 493,
+      "name": "buildProbeRouteRequirements",
+      "selfMs": 88.541,
+      "totalMs": 1204.8370000000002
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 949,
+      "name": "evaluateCounterfactualOutcomes",
+      "selfMs": 83.33700000000002,
+      "totalMs": 8787.719000000054
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "name": "validateForbiddenFields",
+      "selfMs": 79.958,
+      "totalMs": 79.958
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "name": "scanForbidden",
+      "selfMs": 78.78899999999999,
+      "totalMs": 78.78899999999999
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 553,
+      "name": "probeStructureKey",
+      "selfMs": 75.626,
+      "totalMs": 89.875
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 557,
+      "name": "getNebulaAtCoordinate",
+      "selfMs": 74.788,
+      "totalMs": 846.0780000000005
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 46,
+      "name": "normalizeKey",
+      "selfMs": 69.08700000000002,
+      "totalMs": 128.87800000000001
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 511,
+      "name": "getWheelCellAtDisplayCoordinate",
+      "selfMs": 60.33600000000001,
+      "totalMs": 546.2979999999999
+    },
+    {
+      "file": "",
+      "line": 0,
+      "name": "RegExp: [^a-z0-9]",
+      "selfMs": 59.791000000000004,
+      "totalMs": 59.791000000000004
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1158,
+      "name": "settledSemanticStateHash",
+      "selfMs": 58.331999999999994,
+      "totalMs": 420.49899999999974
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 61,
+      "name": "stableHash",
+      "selfMs": 56.125,
+      "totalMs": 370.3709999999998
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1119,
+      "name": "replaceSerializedValue",
+      "selfMs": 48.711000000000006,
+      "totalMs": 103.12700000000001
+    }
+  ],
+  "totalHotspots": [
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/adhoc/profile-r3-brown-decision-20260906.js",
+      "line": 9,
+      "name": "run",
+      "selfMs": 0,
+      "totalMs": 10923.713999999864
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js",
+      "line": 611,
+      "name": "runHeuristicPolicyDecision",
+      "selfMs": 0,
+      "totalMs": 10897.796999999862
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/machine-player-coordinator.js",
+      "line": 130,
+      "name": "runDecision",
+      "selfMs": 1.25,
+      "totalMs": 10890.255999999863
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 176,
+      "name": "run",
+      "selfMs": 1.25,
+      "totalMs": 10876.922999999864
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 119,
+      "name": "evaluateActions",
+      "selfMs": 20.999,
+      "totalMs": 8809.968000000052
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 949,
+      "name": "evaluateCounterfactualOutcomes",
+      "selfMs": 83.33700000000002,
+      "totalMs": 8787.719000000054
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1966,
+      "name": "executeNode",
+      "selfMs": 17.582,
+      "totalMs": 6174.146000000037
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 551,
+      "name": "projection",
+      "selfMs": 1.167,
+      "totalMs": 2852.9249999999925
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 555,
+      "name": "projectionInner",
+      "selfMs": 1.292,
+      "totalMs": 2851.7579999999925
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 1371,
+      "name": "projectState",
+      "selfMs": 3.084,
+      "totalMs": 2500.9629999999934
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 533,
+      "name": "committedProjection",
+      "selfMs": 0,
+      "totalMs": 1705.250999999998
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 1252,
+      "name": "projectedRequirements",
+      "selfMs": 21.292,
+      "totalMs": 1644.841999999999
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 2035,
+      "name": "captureStep",
+      "selfMs": 9.833,
+      "totalMs": 1608.5539999999974
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 690,
+      "name": "createSolarSnapshot",
+      "selfMs": 34.041000000000004,
+      "totalMs": 1589.2879999999986
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 618,
+      "name": "collectVisibleCoordinateContents",
+      "selfMs": 9.75,
+      "totalMs": 1496.1229999999987
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 562,
+      "name": "resolveVisibleContent",
+      "selfMs": 90.039,
+      "totalMs": 1493.9149999999988
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 493,
+      "name": "buildProbeRouteRequirements",
+      "selfMs": 88.541,
+      "totalMs": 1204.8370000000002
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 348,
+      "name": "runWithWorkingStateContext",
+      "selfMs": 6.75,
+      "totalMs": 1202.7770000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 1349,
+      "name": "runWithWorkingState",
+      "selfMs": 1,
+      "totalMs": 1194.777
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/outcome-model.js",
+      "line": 557,
+      "name": "projectOutcomeObservations",
+      "selfMs": 0,
+      "totalMs": 1103.5830000000012
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/effects/session-runtime.js",
+      "line": 339,
+      "name": "observe",
+      "selfMs": 0,
+      "totalMs": 1074.7150000000004
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 257,
+      "name": "getEarthCoordinate",
+      "selfMs": 2.5,
+      "totalMs": 1047.005000000001
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/outcome-model.js",
+      "line": 558,
+      "name": "",
+      "selfMs": 0,
+      "totalMs": 1001.4990000000021
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 415,
+      "name": "projectState",
+      "selfMs": 0,
+      "totalMs": 989.2970000000015
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/outcome-model.js",
+      "line": 28,
+      "name": "clone",
+      "selfMs": 0,
+      "totalMs": 980.3330000000019
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 143,
+      "name": "createDecisionContext",
+      "selfMs": 0,
+      "totalMs": 935.2050000000019
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 557,
+      "name": "getNebulaAtCoordinate",
+      "selfMs": 74.788,
+      "totalMs": 846.0780000000005
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 630,
+      "name": "submitAction",
+      "selfMs": 3.791,
+      "totalMs": 842.3660000000007
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js",
+      "line": 391,
+      "name": "projectCounterfactualState",
+      "selfMs": 1.25,
+      "totalMs": 836.9540000000013
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js",
+      "line": 97,
+      "name": "buildObservation",
+      "selfMs": 2.5,
+      "totalMs": 835.7040000000013
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/app/rule-observation.js",
+      "line": 119,
+      "name": "buildRuleObservation",
+      "selfMs": 19.958000000000002,
+      "totalMs": 833.2040000000012
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1551,
+      "name": "mergeNode",
+      "selfMs": 2.5,
+      "totalMs": 830.1980000000005
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1531,
+      "name": "nodeKey",
+      "selfMs": 25.457999999999995,
+      "totalMs": 827.6980000000005
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 72,
+      "name": "",
+      "selfMs": 30.084000000000003,
+      "totalMs": 787.623000000001
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 50,
+      "name": "copySerializable",
+      "selfMs": 628.6610000000003,
+      "totalMs": 787.623000000001
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 529,
+      "name": "getNebulaLocations",
+      "selfMs": 364.5429999999996,
+      "totalMs": 784.2900000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 733,
+      "name": "enumerateActions",
+      "selfMs": 2.417,
+      "totalMs": 762.9520000000006
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 740,
+      "name": "",
+      "selfMs": 1.25,
+      "totalMs": 758.0770000000007
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 725,
+      "name": "submitDecision",
+      "selfMs": 4.584,
+      "totalMs": 749.9150000000005
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-composition.js",
+      "line": 819,
+      "name": "enumerate",
+      "selfMs": 21.71,
+      "totalMs": 744.1190000000007
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1848,
+      "name": "fullLeafObservation",
+      "selfMs": 1.167,
+      "totalMs": 740.4500000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1919,
+      "name": "addFrontierLeaf",
+      "selfMs": 29.583000000000002,
+      "totalMs": 735.7860000000003
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/actions/standard-action.js",
+      "line": 126,
+      "name": "enumerate",
+      "selfMs": 9.875,
+      "totalMs": 725.4490000000008
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/outcome-model.js",
+      "line": 563,
+      "name": "",
+      "selfMs": 1.25,
+      "totalMs": 722.1250000000002
+    },
+    {
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/state-store.js",
+      "line": 345,
+      "name": "compareAndCommit",
+      "selfMs": 3.792,
+      "totalMs": 637.5030000000004
+    }
+  ]
+}

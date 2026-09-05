@@ -43,6 +43,27 @@ function decision(current, overrides = {}) {
 }
 
 const current = context();
+{
+  const shared = { slots: [1, 2], nested: { value: 3 } };
+  const input = { left: shared, right: shared, repeated: [shared, shared] };
+  const copied = policyPort.createDecisionContext({ ...current, observation: input });
+  shared.slots.push(4);
+  assert.deepEqual(copied.observation.left.slots, [1, 2]);
+  assert.deepEqual(copied.observation.right.slots, [1, 2]);
+  assert.equal(Object.isFrozen(shared), false);
+  assert.equal(Object.isFrozen(copied.observation.repeated[0].nested), true);
+  const cyclic = {};
+  cyclic.self = cyclic;
+  const symbol = { [Symbol("not-json")]: 1 };
+  let getterCalls = 0;
+  const accessor = Object.defineProperty({}, "value", { enumerable: true, get() { getterCalls += 1; return 1; } });
+  for (const bad of [cyclic, symbol, accessor, new Date(), { value: NaN }, { value: Infinity },
+    { deckOrder: ["hidden"] }]) {
+    assert.throws(() => policyPort.createDecisionContext({ ...current, observation: { a: bad, b: bad } }),
+      (error) => ["POLICY_NOT_SERIALIZABLE", "POLICY_FORBIDDEN_FIELD"].includes(error.code));
+  }
+  assert.equal(getterCalls, 0, "校验不能调用accessor或通过重复引用绕过拒绝");
+}
 assert.equal(Object.isFrozen(current), true);
 assert.equal(Object.isFrozen(current.legalActions[0]), true);
 assert.throws(

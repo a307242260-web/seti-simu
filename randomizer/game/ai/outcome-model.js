@@ -555,12 +555,18 @@
   }
 
   function projectOutcomeObservations(outcomes, options = {}) {
-    return deepFreeze((outcomes || []).map((outcome) => {
+    // 观察由正式投影重建，不先复制随后会被覆盖的整棵树。
+    // 其余元数据一次复制为独立图，保留多叶共享的只读计划事实。
+    const metadata = clone((outcomes || []).map(({ rootObservation, leaves, ...outcome }) => ({
+      ...outcome,
+      leaves: (leaves || []).map(({ observation, routeCheckpoints, ...leaf }) => leaf),
+    })));
+    return deepFreeze((outcomes || []).map((outcome, outcomeIndex) => {
       const rootObservation = createDecisionObservation(outcome.rootObservation, options);
       return {
-        ...clone(outcome),
+        ...metadata[outcomeIndex],
         rootObservation,
-        leaves: (outcome.leaves || []).map((leaf) => {
+        leaves: (outcome.leaves || []).map((leaf, leafIndex) => {
           const checkpoints = (leaf.routeCheckpoints || []).map((checkpoint) => ({
             actionId: checkpoint.actionId,
             family: checkpoint.family,
@@ -574,10 +580,8 @@
             checkpoints,
             leaf.actionChain || [],
           );
-          const projectedLeaf = clone(leaf);
-          delete projectedLeaf.routeCheckpoints;
           return {
-            ...projectedLeaf,
+            ...metadata[outcomeIndex].leaves[leafIndex],
             observation: createDecisionObservation(leaf.observation, {
               ...options,
               probeRouteSummary,

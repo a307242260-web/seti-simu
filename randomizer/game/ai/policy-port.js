@@ -47,7 +47,7 @@
     return String(key).replace(/[^a-z0-9]/gi, "").toLowerCase();
   }
 
-  function copySerializable(value, path = "$", ancestors = new Set()) {
+  function copySerializable(value, path = "$", ancestors = new Set(), copies = new WeakMap()) {
     if (value == null || typeof value === "string" || typeof value === "boolean") return value;
     if (typeof value === "number") {
       if (!Number.isFinite(value)) {
@@ -61,6 +61,8 @@
     if (ancestors.has(value)) {
       throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path} 含循环引用`);
     }
+    // 只复用已完整校验的独立副本；循环检测不能被共享引用缓存绕过。
+    if (copies.has(value)) return copies.get(value);
     const prototype = Object.getPrototypeOf(value);
     if (prototype !== Object.prototype && prototype !== null && !Array.isArray(value)) {
       throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path} 必须是 plain object 或 array`);
@@ -69,7 +71,9 @@
     const nextAncestors = new Set(ancestors);
     nextAncestors.add(value);
     if (Array.isArray(value)) {
-      return value.map((item, index) => copySerializable(item, `${path}[${index}]`, nextAncestors));
+      const result = value.map((item, index) => copySerializable(item, `${path}[${index}]`, nextAncestors, copies));
+      copies.set(value, result);
+      return result;
     }
 
     const result = {};
@@ -87,8 +91,9 @@
           path: `${path}.${key}`,
         });
       }
-      result[key] = copySerializable(descriptor.value, `${path}.${key}`, nextAncestors);
+      result[key] = copySerializable(descriptor.value, `${path}.${key}`, nextAncestors, copies);
     }
+    copies.set(value, result);
     return result;
   }
 

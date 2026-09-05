@@ -57,6 +57,10 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+反事实结果投影与Policy输入保持来源隔离、返回图深冻结；多叶相同的只读元数据可在
+返回图内共享引用。观察仍从正式规则事实重建；复制优化不改字段值、顺序、隐藏信息
+边界或checkpoint格式。Policy副本缓存仅在单次复制调用内生效，完成校验后才可复用。
+
 机器策略的标准 Decision observation由`outcome-model`从规则观察派生。其中
 `outcomeProjection.progress.researchOptions`为同viewer正式科技候选的
 `{tileId, publicityCost}[]`，与轻量`strategicFacts.researchOptions`同源；只来自正式

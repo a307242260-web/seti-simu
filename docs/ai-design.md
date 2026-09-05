@@ -62,12 +62,16 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 ## 2. 当前模块
 
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
+  输入复制在单次调用内复用已完整校验的副本，先检查祖先循环，再查询副本缓存；不跨请求
+  缓存，不绕过校验。返回图深冻结且与来源隔离，内部相同事实可以共享只读引用。
 - `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用一份实现）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子（sim 训练补记 replay/reward，browser 空操作）；失败直接抛错。
 - `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。开关（completeTargetCatalog / traceCounterfactualGoalClusters 等）经同一 config 源透传，Browser/Simulation 一份装配。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
   固定大小的探测器目标摘要，以及本席数据轨到下一次正式扫描、放置或分析所需的
   viewer-safe `dataAnalyzeRequirements`。
+  标准结果投影只复制一次剩余元数据图；root/leaf观察仍由正式投影重建，原始
+  routeCheckpoints仍移除。避免复制随后被覆盖的字段，不减少逐步计划证据。
 - `game/ai/expected-score-evaluator.js`：只从真实标准叶读取已兑现分数、科技和收入变化，
   按剩余轮次计算版本化战略价值。
 - `game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策方案输出的计划结构
