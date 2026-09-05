@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T17:03:23.353Z",
+  "builtAt": "2026-09-05T17:13:50.926Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "d56bf23a",
-  "currentBaseline": "copy-cost-r3p1-20260906",
+  "headCommit": "186f97c1",
+  "currentBaseline": "planet-read-r3p2-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,98 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "planet-read-r3p2-20260906",
+      "name": "第三轮独立行星读取优化R3-P2（单状态门槛通过）",
+      "date": "2026-09-06",
+      "baseline": "copy-cost-r3p1-20260906",
+      "head": "186f97c1",
+      "commits": [
+        {
+          "hash": "186f97c1",
+          "date": "2026-09-06",
+          "subject": "规则内核直接读取正式行星坐标，省去无关太阳系快照计算"
+        }
+      ],
+      "summary": "规则内核复用正式行星坐标函数，省去地球与探测和行动上下文的无关完整快照计算",
+      "diffStat": "13 files changed, 541 insertions(+), 17 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-r3-brown-plan-realization-20260906.js",
+          "insertions": 78,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 4,
+          "deletions": 3
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 5,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 3,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906-review.md",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-plan-realization-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-planet-read-design-20260906.md",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-planet-read-verification-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 181,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 181,
+          "deletions": 4
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "copy-cost-r3p1-20260906",
       "name": "第三轮独立复制优化R3-P1（性能未达标）",
@@ -363,7 +455,7 @@ const REGISTRY = {
       ],
       "results": [],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": false,
         "save": false,

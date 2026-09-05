@@ -228,6 +228,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `planet-read-r3p2-20260906` | `186f97c1` | 第三轮独立行星读取优化：真实单状态评分/优胜叶/计划/节点数等价，9.56秒通过单状态10秒门槛；未跑全盘，不是第三轮验收通过版本；证据见`reports/iteration/r3-planet-read-verification-20260906.json` |
 | `copy-cost-r3p1-20260906` | `d56bf23a` | 第三轮独立复制优化：真实单状态评分/优胜叶/计划/节点数等价；11.61秒→10.59秒，仍超10秒门槛，未跑全盘，不是验收通过版本；证据见`reports/iteration/r3-copy-cost-verification-20260906.json` |
 | `plan-steps-r3-20260906` | `d7a78140` | **第三轮未通过候选**：逐步计划依赖；593步、63/100/82/124、均92.25，较R2e下降14.5；因果定位进行中 |
 | `blue-future-r2e-20260905` | `20feca27` | **当前验收版本**：蓝科技未来价值去重；667步、79/134/117/97、均106.75，较R1提高7，第二轮通过 |
@@ -244,7 +245,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析为`copy-cost-r3p1-20260906`，只表示当前
+- `registry.currentBaseline` 按代码祖先解析为`planet-read-r3p2-20260906`，只表示当前
   代码归属，不表示验收通过；最近通过版本仍为`blue-future-r2e-20260905`。四轮计划与
   验收证据见`docs/ai-iteration-plan-20260905.md`。
 - 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
