@@ -7,16 +7,36 @@
   },
   "versions": [
     {
+      "id": "score-corner-r4-20260906",
+      "name": "得分角标准入（终局未达标）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "0d21aebf",
+      "commits": ["0d21aebf"],
+      "summary": "按正式角标奖励表将直接得分弃牌角标绑定到card:resolve实例目标，沿用条件结算和计划依赖。",
+      "records": {
+        "7a4c63fd.0d21aebf.quick-200.json": { "note": "200步，阶段均21，144137ms；同提交续跑，不作终局成绩。" },
+        "7a4c63fd.0d21aebf.full.json": { "note": "579步，正式终局74/118/116/108、均104，较上一候选+2.5，低于R2e基线2.75；总模拟495050ms。第三/第四轮未通过。" }
+      },
+      "roadmap": null
+    },
+    {
       "id": "search-deadline-r4-20260906",
       "name": "搜索期限放宽（终局未达标）",
       "date": "2026-09-06",
       "baseline": "blue-future-r2e-20260905",
       "head": "8a6ef25e",
-      "commits": ["8a6ef25e"],
+      "commits": [
+        "8a6ef25e"
+      ],
       "summary": "共享搜索期限由十秒放宽为三十秒，保留节点预算、队列容量、排序及超时显式失败语义。",
       "records": {
-        "76d49ed1.8a6ef25e.quick-200.json": { "note": "200步，144806ms，阶段均21；同提交存档续跑全盘，不作终局成绩。" },
-        "76d49ed1.8a6ef25e.full.json": { "note": "584步，正式终局75/113/121/97、均101.5，低于R2e基线5.25；续跑344417ms，总模拟489223ms。第三、第四轮未通过。" }
+        "76d49ed1.8a6ef25e.quick-200.json": {
+          "note": "200步，144806ms，阶段均21；同提交存档续跑全盘，不作终局成绩。"
+        },
+        "76d49ed1.8a6ef25e.full.json": {
+          "note": "584步，正式终局75/113/121/97、均101.5，低于R2e基线5.25；续跑344417ms，总模拟489223ms。第三、第四轮未通过。"
+        }
       },
       "roadmap": null
     },

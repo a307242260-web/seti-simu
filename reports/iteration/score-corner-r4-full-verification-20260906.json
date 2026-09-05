@@ -1,0 +1,902 @@
+{
+  "scope": "只读正式存档、前缀、首分歧和角标行动；不将总分差归因于单步",
+  "gitCommit": "0d21aebf",
+  "steps": 579,
+  "scores": {
+    "player-blue": 74,
+    "player-green": 118,
+    "player-brown": 116,
+    "player-white": 108
+  },
+  "mean": 104,
+  "previousMean": 101.5,
+  "acceptedBaseline": 106.75,
+  "quickMs": 144137,
+  "resumeMs": 350913,
+  "totalSimulationMs": 495050,
+  "resumedPrefixIdentical": true,
+  "firstDifference": {
+    "step": 254,
+    "before": {
+      "stepIndex": 253,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:67bb827c",
+        "actorId": "player-white",
+        "stateVersion": 122,
+        "decisionVersion": 7,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:alien-chong-7-5",
+          "cardInstanceId": "alien-chong-7-5"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "chong_7.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "alien-chong-7-5",
+          "imageSrc": "../assets/aliens/虫/cards/7.webp",
+          "imageAlt": "chong_7.webp"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 2,
+        "t": 16,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            31,
+            0,
+            0,
+            6,
+            1,
+            1
+          ],
+          "player-green": [
+            25,
+            0,
+            1,
+            1,
+            3,
+            1
+          ],
+          "player-brown": [
+            35,
+            1,
+            0,
+            6,
+            0,
+            1
+          ],
+          "player-white": [
+            28,
+            0,
+            0,
+            3,
+            3,
+            1
+          ]
+        }
+      }
+    },
+    "after": {
+      "stepIndex": 253,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:74195d8c",
+        "actorId": "player-white",
+        "stateVersion": 122,
+        "decisionVersion": 7,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:alien-chong-2-6",
+          "cardInstanceId": "alien-chong-2-6"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "chong_2.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "alien-chong-2-6",
+          "imageSrc": "../assets/aliens/虫/cards/2.webp",
+          "imageAlt": "chong_2.webp"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 2,
+        "t": 16,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            31,
+            0,
+            0,
+            6,
+            1,
+            1
+          ],
+          "player-green": [
+            25,
+            0,
+            1,
+            1,
+            3,
+            1
+          ],
+          "player-brown": [
+            35,
+            1,
+            0,
+            6,
+            0,
+            1
+          ],
+          "player-white": [
+            28,
+            0,
+            0,
+            3,
+            3,
+            1
+          ]
+        }
+      }
+    }
+  },
+  "corners": [
+    {
+      "step": 33,
+      "actor": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:f7279abf",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-37-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_40.png：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          },
+          "actor": "player-white"
+        }
+      ]
+    },
+    {
+      "step": 107,
+      "actor": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:296892d5",
+        "actorId": "player-brown",
+        "stateVersion": 46,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-41-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_11.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-brown"
+        },
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "actor": "player-white"
+        }
+      ]
+    },
+    {
+      "step": 145,
+      "actor": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:12343210",
+        "actorId": "player-green",
+        "stateVersion": 66,
+        "decisionVersion": 3,
+        "target": {
+          "cardInstanceId": "card-20-pass-1-1"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_4.png：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "tech:purple4",
+            "tileId": "purple4",
+            "blueSlot": null
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-green"
+        }
+      ]
+    },
+    {
+      "step": 227,
+      "actor": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:1a4dbf63",
+        "actorId": "player-blue",
+        "stateVersion": 108,
+        "decisionVersion": 6,
+        "target": {
+          "cardInstanceId": "alien-amiba-0-1"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_0.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-blue"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:d",
+            "tileId": "d"
+          },
+          "actor": "player-blue"
+        },
+        {
+          "family": "industry",
+          "target": {
+            "companyId": "赫利昂联合体",
+            "abilityId": "helios_remove_tech_income"
+          },
+          "actor": "player-brown"
+        }
+      ]
+    },
+    {
+      "step": 247,
+      "actor": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:8414c7c6",
+        "actorId": "player-brown",
+        "stateVersion": 118,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "alien-amiba-3-3"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_3.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "card_corner",
+          "target": {
+            "cardInstanceId": "alien-chong-3-8"
+          },
+          "actor": "player-brown"
+        },
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-brown"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:a",
+            "tileId": "a"
+          },
+          "actor": "player-brown"
+        }
+      ]
+    },
+    {
+      "step": 248,
+      "actor": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:24aeb72c",
+        "actorId": "player-brown",
+        "stateVersion": 119,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "alien-chong-3-8"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_3.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-brown"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:a",
+            "tileId": "a"
+          },
+          "actor": "player-brown"
+        },
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-white"
+        }
+      ]
+    },
+    {
+      "step": 257,
+      "actor": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:68d40e4b",
+        "actorId": "player-green",
+        "stateVersion": 124,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "alien-amiba-1-2"
+        },
+        "payload": {
+          "kind": "move",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_1.webp：弃牌角标"
+      },
+      "scoreDelta": 1,
+      "following": [
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "target": {
+            "cardInstanceId": "alien-chong-0-4"
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "pass",
+          "target": {
+            "kind": "pass"
+          },
+          "actor": "player-green"
+        }
+      ]
+    },
+    {
+      "step": 259,
+      "actor": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:53872058",
+        "actorId": "player-green",
+        "stateVersion": 125,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "alien-chong-0-4"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_0.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "pass",
+          "target": {
+            "kind": "pass"
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "kind": "pass-reserve-card",
+            "choiceId": "card-27-pass-2-3",
+            "cardId": "b_7.webp"
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-blue"
+        }
+      ]
+    },
+    {
+      "step": 265,
+      "actor": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:0d29f052",
+        "actorId": "player-blue",
+        "stateVersion": 128,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "card-55-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_25.png：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-blue"
+        },
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-brown"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "actor": "player-brown"
+        }
+      ]
+    },
+    {
+      "step": 277,
+      "actor": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:71985c75",
+        "actorId": "player-white",
+        "stateVersion": 135,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "card-53-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_27.png：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "card_corner",
+          "target": {
+            "cardInstanceId": "card-46-0"
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "tech:purple4",
+            "tileId": "purple4",
+            "blueSlot": null
+          },
+          "actor": "player-white"
+        }
+      ]
+    },
+    {
+      "step": 278,
+      "actor": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:7a273bf7",
+        "actorId": "player-white",
+        "stateVersion": 136,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "card-46-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_31.png：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "research_tech",
+          "target": {
+            "kind": "research-tech"
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "tech:purple4",
+            "tileId": "purple4",
+            "blueSlot": null
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-white"
+        }
+      ]
+    },
+    {
+      "step": 286,
+      "actor": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:24c93329",
+        "actorId": "player-white",
+        "stateVersion": 142,
+        "decisionVersion": 7,
+        "target": {
+          "cardInstanceId": "alien-chong-7-5"
+        },
+        "payload": {
+          "kind": "move",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_7.webp：弃牌角标"
+      },
+      "scoreDelta": 1,
+      "following": [
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "pass",
+          "target": {
+            "kind": "pass"
+          },
+          "actor": "player-white"
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "kind": "pass-reserve-card",
+            "choiceId": "card-25-pass-2-1",
+            "cardId": "dlc_18.png"
+          },
+          "actor": "player-white"
+        }
+      ]
+    },
+    {
+      "step": 371,
+      "actor": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:c9049ca7",
+        "actorId": "player-blue",
+        "stateVersion": 183,
+        "decisionVersion": 16,
+        "target": {
+          "cardInstanceId": "card-26-pass-2-2"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_78.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "pass",
+          "target": {
+            "kind": "pass"
+          },
+          "actor": "player-blue"
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "kind": "pass-reserve-card",
+            "choiceId": "card-33-pass-3-4",
+            "cardId": "b_55.webp"
+          },
+          "actor": "player-blue"
+        },
+        {
+          "family": "industry",
+          "target": {
+            "companyId": "赫利昂联合体",
+            "abilityId": "helios_remove_tech_income"
+          },
+          "actor": "player-brown"
+        }
+      ]
+    },
+    {
+      "step": 391,
+      "actor": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:5bfea89c",
+        "actorId": "player-green",
+        "stateVersion": 193,
+        "decisionVersion": 16,
+        "target": {
+          "cardInstanceId": "alien-chong-9-13"
+        },
+        "payload": {
+          "kind": "move",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_9.webp：弃牌角标"
+      },
+      "scoreDelta": 1,
+      "following": [
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "11:0:1",
+            "rocketId": 11,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "move",
+          "target": {
+            "rocketId": 11,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "choose_payment",
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "actor": "player-green"
+        }
+      ]
+    },
+    {
+      "step": 416,
+      "actor": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:687d2941",
+        "actorId": "player-green",
+        "stateVersion": 205,
+        "decisionVersion": 18,
+        "target": {
+          "cardInstanceId": "alien-chong-8-16"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_8.webp：弃牌角标"
+      },
+      "scoreDelta": 0,
+      "following": [
+        {
+          "family": "end_turn",
+          "target": {
+            "kind": "end-turn"
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:d",
+            "tileId": "d"
+          },
+          "actor": "player-green"
+        },
+        {
+          "family": "pass",
+          "target": {
+            "kind": "pass"
+          },
+          "actor": "player-brown"
+        }
+      ]
+    }
+  ],
+  "saves": [
+    {
+      "path": "seti-saves/seti-save-research-score-corner-r4-20260906-0d21aebf-quick-200-v94.json",
+      "sha256": "4d3d68075bd25c928849a5ec034ed8771a52e632f6968825675556ef6f7f09e4"
+    },
+    {
+      "path": "seti-saves/seti-save-research-score-corner-r4-20260906-0d21aebf-full-v284.json",
+      "sha256": "3949de3c2434233a2ed84d309d1117e8f07b02a25320309b8ea44fb3b1d66599"
+    },
+    {
+      "path": "seti-saves/seti-save-research-search-deadline-r4-20260906-8a6ef25e-full-v292.json",
+      "sha256": "4fa4f7081f6ab9d139511c85f4738820ed13c02e84f880964b64736bc4e92d91"
+    }
+  ]
+}
