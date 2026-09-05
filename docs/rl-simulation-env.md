@@ -61,6 +61,10 @@ Composition drain，不伪装成策略动作。
 主行动基础成本；实际可选科技追加费用和合法性仍由正式执行校验。目录缓存的完整
 输入为data、玩家id/color、当前正式派生的来源及基础成本，公共牌/旋转/借用时点/
 公司成本变化不能沿用旧范围；紫2水星通过正式行星数组查找。
+`standardScanEarthSource`为标准扫描首步正式几何来源：普通扫描为`{sectorX}`，
+紫1为`{nebulaIds}`，缺失行星为null；由science-session的`getPlanetScanSource`共享计算。
+该字段也加入目录缓存键，避免地球/水星交换但能力并集不变时返回旧首步。
+计划只在同目标段仍有未来scan时依赖它，不写入规则session或持久化计划。
 
 逐步计划从公开`board.finalScoring.tiles`与`tileVariants`采集终局板块占位和变体，
 按正式`final:<tile>`选择身份建立具名依赖；不把终局tileId当作科技。此证据不写回

@@ -764,19 +764,12 @@
           scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN,
           scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN].includes(entry.type)) {
           const isImproved = entry.type === scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN;
-          const planetId = entry.type === scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN
-            ? "mercury"
-            : "earth";
-          const planet = solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem"))
-            .planetLocations.find((candidate) => candidate.planetId === planetId);
+          const source = getPlanetScanSource(root, entry.type);
+          if (!source) return null;
           if (entry.options?.cost && !players.canAfford(actor, entry.options.cost)) return null;
           if (isImproved) {
             // 紫1：可不在地球扇区标记信号，而改在相邻扇区标记（规则书：地球及相邻扇区三选一）。
-            if (planet?.x == null) return null;
-            const sectorBySlot = getWorkingSlice(root, "solarSystem").sectorBySlot;
-            const nebulaIds = [solar.mod8(planet.x - 1), solar.mod8(planet.x), solar.mod8(planet.x + 1)]
-              .map((sectorX) => solar.getNebulaAtCoordinate(sectorX, 5, sectorBySlot)?.id)
-              .filter(Boolean);
+            const { nebulaIds } = source;
             if (!listNebulaChoices(root, { nebulaIds, gainData: true }).length) return null;
             return scanStepEffect(actor.id, {
               mode: "specified",
@@ -786,10 +779,10 @@
               label: entry.label,
             });
           }
-          if (!listNebulaChoices(root, { sectorX: planet?.x, gainData: true }).length) return null;
+          if (!listNebulaChoices(root, { ...source, gainData: true }).length) return null;
           return scanStepEffect(actor.id, {
             mode: "specified",
-            sectorX: planet?.x ?? null,
+            sectorX: source.sectorX,
             gainData: true,
             cost: entry.options?.cost || null,
             label: entry.label,
@@ -1731,6 +1724,25 @@
     return Object.freeze({ actionFamilies: ACTION_FAMILIES, createEffectGroup });
   }
 
+  // 正式扫描队列与公共依赖目录共用同一几何来源；不判断费用或剩余信号。
+  function getPlanetScanSource(root, effectType) {
+    const types = scanEffects.EFFECT_TYPES;
+    if (![types.EARTH_SECTOR_SCAN, types.IMPROVED_SECTOR_SCAN, types.MERCURY_SECTOR_SCAN].includes(effectType)) {
+      throw new TypeError(`PLANET_SCAN_TYPE_INVALID: ${effectType}`);
+    }
+    const solarState = getWorkingSlice(root, "solarSystem");
+    const planetId = effectType === types.MERCURY_SECTOR_SCAN ? "mercury" : "earth";
+    const planet = solar.collectPlanetLocations(solarState)
+      .find((candidate) => candidate.planetId === planetId);
+    if (planet?.x == null) return null;
+    if (effectType === types.IMPROVED_SECTOR_SCAN) {
+      return { nebulaIds: [-1, 0, 1].map((offset) => (
+        solar.getNebulaAtCoordinate(solar.mod8(planet.x + offset), 5, solarState.sectorBySlot)?.id
+      )).filter(Boolean) };
+    }
+    return { sectorX: planet.x };
+  }
+
   return Object.freeze({
     DOMAIN_ID,
     ACTION_FAMILIES,
@@ -1739,6 +1751,7 @@
     createActionDefinitions,
     createScienceDomain,
     createActionContext,
+    getPlanetScanSource,
     listNebulaChoices,
     executeNebulaScan,
     settleAfterScan,

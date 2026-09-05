@@ -15,6 +15,7 @@ const rockets = loadProductionDependency("./rockets", "SetiRocketActions");
 const planetStats = loadProductionDependency("./planet-stats", "SetiPlanetStats");
 const planetRewards = loadProductionDependency("./actions/planet-rewards", "SetiPlanetRewards");
 const scanEffects = loadProductionDependency("./actions/scan-effects", "SetiScanEffects");
+const scienceSession = loadProductionDependency("./effects/science-session", "SetiScienceSession");
 const researchTechAction = loadProductionDependency("./actions/research-tech", "SetiActionResearchTech");
 const data = loadProductionDependency("./data", "SetiData");
 const cards = loadProductionDependency("./cards/deck", "SetiCards");
@@ -857,15 +858,11 @@ function cardScanCode(card) {
   return Number.isInteger(code) ? code : null;
 }
 
-function standardScanSectorIds(workingState, player) {
+function standardScanSectorIds(workingState, player, earthSource) {
   const sectorIds = new Set();
-  const earth = getEarthCoordinate(workingState);
-  const earthOffsets = scanEffects.playerOwnsPurpleTech(player, 1, {
-    roundNumber: workingState.turn.roundNumber,
-    turnNumber: workingState.turn.turnNumber,
-  }) ? [-1, 0, 1] : [0];
-  for (const offset of earthOffsets) {
-    const sectorId = nebulaAtSectorX(workingState, earth.x + offset);
+  const earthSectorIds = earthSource?.nebulaIds
+    || (earthSource?.sectorX != null ? [nebulaAtSectorX(workingState, earthSource.sectorX)] : []);
+  for (const sectorId of earthSectorIds) {
     if (sectorId) sectorIds.add(sectorId);
   }
   for (const card of workingState.cards?.publicCards || []) {
@@ -917,7 +914,9 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
-  const standardSectorIds = standardScanSectorIds(workingState, player);
+  const firstScan = scanEffects.buildScanEffectQueue(player, { turn: workingState.turn })[0];
+  const standardScanEarthSource = scienceSession.getPlanetScanSource(workingState, firstScan.type);
+  const standardSectorIds = standardScanSectorIds(workingState, player, standardScanEarthSource);
   const specialAccess = (player.hand || [])
     .map((card) => ({
       sourceId: `card:${card.id}`,
@@ -932,14 +931,14 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
   // 动态来源/费用先按正式规则计算，缓存body只依赖这些值、data和玩家身份。
   // 旋转、公共牌、借用科技及公司费用变化不能被旧目录遮蔽。
   const key = JSON.stringify([workingState.meta?.gameId, player.id, player.color,
-    workingState.data, accessSources, standardScanCost]);
+    workingState.data, accessSources, standardScanCost, standardScanEarthSource]);
   const cached = SECTOR_REQUIREMENTS_CACHE.get(key);
   if (cached) return cached;
-  const result = buildSectorWinRequirementsBody(workingState, player, accessSources, standardScanCost);
+  const result = buildSectorWinRequirementsBody(workingState, player, accessSources, standardScanCost, standardScanEarthSource);
   return cachePut(SECTOR_REQUIREMENTS_CACHE, key, result);
 }
 
-function buildSectorWinRequirementsBody(workingState, player, accessSources, standardScanCost) {
+function buildSectorWinRequirementsBody(workingState, player, accessSources, standardScanCost, standardScanEarthSource) {
   const playerKeys = new Set([player.id, player.color].filter(Boolean).map(String));
   const candidates = data.NEBULA_IDS
     .filter((sectorId) => sectorId !== data.AOMOMO_NEBULA_ID)
@@ -997,6 +996,7 @@ function buildSectorWinRequirementsBody(workingState, player, accessSources, sta
     playerId: player.id,
     candidates,
     standardScanCost,
+    standardScanEarthSource,
     accessSources,
     wins: clone(
       workingState.data?.sectorSettlements?.winsByPlayerId?.[player.id]

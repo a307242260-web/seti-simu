@@ -160,6 +160,11 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   `goalCompletionPending` 后进入独立奖励段：已达成目标不再作为依赖，奖励选择仍检查。
 - 多步消费：`advancePlan` 同时推进动作、依赖与揭示基线；旧结构、缺失事实或语义
   不对应显式 miss。计划只驻留协调器，reset/load 清空，失败提交不消费。
+- 标准扫描首步：同目标段剩余步骤含`scan`时，扫描及前置准备步骤检查公开
+  `sectorWinRequirements.standardScanEarthSource`（`scan-earth`依赖）。正式队列创建后，
+  无未来scan的段不再依赖地球位置；来源缺失显式miss。来源计算与正式science扫描队列
+  共用`getPlanetScanSource`，不以全部可扫描扇区的并集代替首步来源。本项不覆盖
+  独立卡牌/奖励/外星人扫描的全部前置依赖。
 
 ### 3.3 边界与约束
 

@@ -224,6 +224,20 @@ function pickChoice(composition, predicate, message) {
   return choice;
 }
 
+// 紫1首步仍由地球及相邻扇区组成；共享几何函数不改变正式Decision的目标集合。
+for (let rotation = 0; rotation < 8; rotation += 1) {
+  const { root } = createCanonicalState();
+  root.solarSystem.rotation.wheel1Steps = rotation;
+  root.players.players[0].techState.ownedTiles.purple1 = { tileId: "purple1" };
+  const earth = solar.createSolarSnapshot(root.solarSystem).planetLocations.find((p) => p.planetId === "earth");
+  const expected = [...new Set([-1, 0, 1].map((offset) => (
+    solar.getNebulaAtCoordinate(solar.mod8(earth.x + offset), 5, root.solarSystem.sectorBySlot).id
+  )))].sort();
+  const composition = createScanComposition(root);
+  assert.equal(composition.inputPort.submitAction(getScanAction(composition)).ok, true);
+  assert.deepEqual(composition.inspect().session.decision.choices.map((choice) => choice.target.nebulaId).sort(), expected);
+}
+
 // 地球扇区扫描完成 → 水星扫描跳过 → 手牌扫描命中已满扇区（额外标记）→
 // 串尾 SCAN_FINALIZE 统一触发一次 SETTLE。
 function runFullScanFlow() {

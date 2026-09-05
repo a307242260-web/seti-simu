@@ -727,7 +727,10 @@ function capturePlanStep({ observation, action }) {
   const probe = observation.probeRouteRequirements
     || observation.outcomeProjection?.progress?.probeGoalRequirements;
   const sectors = sectorCandidatesOf(observation);
+  const sectorRequirements = observation.sectorWinRequirements
+    || observation.outcomeProjection?.progress?.sectorWinRequirements;
   const facts = {
+    scanEarth: structuredClone(sectorRequirements?.standardScanEarthSource ?? null),
     routes: (probe?.candidates || []).map((candidate) => ({
       targetId: candidate.targetId, requirementId: candidate.requirementId,
       sourceId: candidate.sourceId, rocketId: candidate.rocketId,
@@ -796,6 +799,7 @@ function stepScopes(step, segment) {
   // decision:<actionId> 是正式目标目录为 conditional choice 建立的结构目标。
   // 它没有独立战略资源事实，仍从该段具体选择提取全部外部依赖。
   for (const item of segment) {
+    if (item.action.family === "scan") add("scan-earth", "standard");
     const target = item.action.target || {};
     if (target.tileId) {
       const choiceId = String(target.choiceId || "");
@@ -822,6 +826,7 @@ function stepScopes(step, segment) {
 }
 
 function scopedFact(facts, scope) {
+  if (scope.kind === "scan-earth") return facts.scanEarth ?? undefined;
   if (scope.kind === "route") {
     const routes = facts.routes.filter((item) => item.targetId === scope.id && item.sourceId === scope.sourceId)
       .sort((a, b) => String(a.requirementId).localeCompare(String(b.requirementId)));

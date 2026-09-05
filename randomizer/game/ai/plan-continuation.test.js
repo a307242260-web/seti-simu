@@ -337,6 +337,7 @@ function planObservation() {
     blue1: { tileId: "blue1", remaining: 4, depleted: false },
     blue2: { tileId: "blue2", remaining: 4, depleted: false },
   } };
+  observation.outcomeProjection.progress.sectorWinRequirements.standardScanEarthSource = { sectorX: 5 };
   observation.outcomeProjection.progress.sectorWinRequirements.candidates = [
     { sectorId: "sector-a", targetId: "sector:win:sector-a:1", ownCount: 1,
       maxOpponentCount: 0, openSlotCount: 3, nextSlotScore: 0, ranking: [] },
@@ -427,6 +428,28 @@ function planAction(id, family = "move", target = {}) {
     "无关扇区和科技不触发重搜");
   unrelated.outcomeProjection.progress.sectorWinRequirements.candidates[0].ownCount = 5;
   assert.equal(planContinuation.planReuseCheck(plan, unrelated, [scan]).reason, "next-step-affected");
+
+  const changed = structuredClone(before);
+  changed.outcomeProjection.progress.sectorWinRequirements.standardScanEarthSource = { sectorX: 1 };
+  assert.equal(planContinuation.planReuseCheck(plan, changed, [scan]).reason, "next-step-affected",
+    "即使潜在扇区并集不变，首步地球来源改变也在扣费前拒绝复用");
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(plan), changed, [choose]).hit, true,
+    "扫描队列创建后不再继承地球位置依赖");
+  const prep = planAction("prep", "quick_trade");
+  const prepared = storedSteps([
+    stepEvidence(prep, before, "sector:win:sector-a:1"),
+    stepEvidence(scan, changed, "sector:win:sector-a:1"),
+    stepEvidence(choose, changed, "sector:win:sector-a:1"),
+  ]);
+  assert.equal(planContinuation.planReuseCheck(prepared, changed, [prep]).reason, "next-step-affected",
+    "扫描前准备步骤同样约束来源");
+  assert.equal(planContinuation.planReuseCheck(prepared, before, [prep]).hit, true);
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(prepared), changed, [scan]).hit, true,
+    "自身推进后比较下一步的实际预测来源，而非整叶首步来源");
+  delete changed.outcomeProjection.progress.sectorWinRequirements.standardScanEarthSource;
+  const missing = storedSteps([stepEvidence(scan, changed)]);
+  assert.equal(planContinuation.planReuseCheck(missing, changed, [scan]).reason, "plan-dependency-fact-missing");
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(plan), changed, [choose]).hit, true);
 }
 
 {
