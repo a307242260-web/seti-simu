@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T16:14:36.562Z",
+  "builtAt": "2026-09-05T17:03:23.353Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "d7a78140",
-  "currentBaseline": "plan-steps-r3-20260906",
+  "headCommit": "d56bf23a",
+  "currentBaseline": "copy-cost-r3p1-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,183 @@
     ]
   },
   "versions": [
+    {
+      "id": "copy-cost-r3p1-20260906",
+      "name": "第三轮独立复制优化R3-P1（性能未达标）",
+      "date": "2026-09-06",
+      "baseline": "plan-steps-r3-20260906",
+      "head": "d56bf23a",
+      "commits": [
+        {
+          "hash": "d56bf23a",
+          "date": "2026-09-06",
+          "subject": "合并反事实元数据复制并复用已校验副本，记录等价与性能验证"
+        }
+      ],
+      "summary": "合并反事实结果元数据复制，Policy单次调用内复用已完整校验的独立副本",
+      "diffStat": "30 files changed, 129260 insertions(+), 32 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-r3-actual-opening-plan-20260906.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-route-selection-20260906.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-legacy-payment-boundary-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-first-divergence-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r3-brown-decision-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 10,
+          "deletions": 6
+        },
+        {
+          "file": "randomizer/game/ai/outcome-projection.test.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.js",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906-review.md",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906/e529366a.d7a78140.full.action-log.html",
+          "insertions": 2018,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906/e529366a.d7a78140.quick-200.action-log.html",
+          "insertions": 749,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-actual-opening-plan-20260906.json",
+          "insertions": 123944,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-before-171-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-before-41-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-cpu-20260906.json",
+          "insertions": 584,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-decision-20260906.cpuprofile",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-route-selection-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-copy-cost-design-20260906.md",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-copy-cost-verification-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-first-divergence-20260906.json",
+          "insertions": 275,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-legacy-payment-boundary-20260906.json",
+          "insertions": 78,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 485,
+          "deletions": 11
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 485,
+          "deletions": 11
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "plan-steps-r3-20260906",
       "name": "第三轮逐步计划依赖（未通过）",
@@ -571,7 +748,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

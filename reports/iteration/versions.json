@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "copy-cost-r3p1-20260906",
+      "name": "第三轮独立复制优化R3-P1（性能未达标）",
+      "date": "2026-09-06",
+      "baseline": "plan-steps-r3-20260906",
+      "head": "d56bf23a",
+      "commits": [
+        "d56bf23a"
+      ],
+      "summary": "合并反事实结果元数据复制，Policy单次调用内复用已完整校验的独立副本",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "plan-steps-r3-20260906",
       "name": "第三轮逐步计划依赖（未通过）",
       "date": "2026-09-06",
