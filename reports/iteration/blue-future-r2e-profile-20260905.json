@@ -1,0 +1,265 @@
+{
+  "createdAt": "2026-09-05T14:23:33.293Z",
+  "gitCommit": "5d43a4b5e3cd1a124f08ad583837f2cb06201c26",
+  "oldEvaluatorSha256": "44dbfb65b3970913ca96b392b6fa7ab342692da838879f056794e25e6235cbb0",
+  "evaluatorSha256": "455e0c8bb2e69d60625d4898b3c4ce385e2ee6d624adf517a369de58861659c8",
+  "scope": "同输入纯估值对照和已有真实开局盘面单次决策；不是固定盘面终局",
+  "values": [
+    {
+      "round": 1,
+      "tile": "blue1",
+      "oldValue": 43.333333333333336,
+      "value": 13.333333333333332,
+      "removed": 30.000000000000004
+    },
+    {
+      "round": 1,
+      "tile": "blue2",
+      "oldValue": 40.666666666666664,
+      "value": 10.666666666666666,
+      "removed": 30
+    },
+    {
+      "round": 1,
+      "tile": "blue3",
+      "oldValue": 27,
+      "value": 12,
+      "removed": 15
+    },
+    {
+      "round": 1,
+      "tile": "blue4",
+      "oldValue": 30.999999999999996,
+      "value": 16,
+      "removed": 14.999999999999996
+    },
+    {
+      "round": 2,
+      "tile": "blue1",
+      "oldValue": 27.777777777777775,
+      "value": 7.777777777777778,
+      "removed": 19.999999999999996
+    },
+    {
+      "round": 2,
+      "tile": "blue2",
+      "oldValue": 26.222222222222225,
+      "value": 6.222222222222222,
+      "removed": 20.000000000000004
+    },
+    {
+      "round": 2,
+      "tile": "blue3",
+      "oldValue": 18,
+      "value": 8,
+      "removed": 10
+    },
+    {
+      "round": 2,
+      "tile": "blue4",
+      "oldValue": 20.666666666666664,
+      "value": 10.666666666666666,
+      "removed": 9.999999999999998
+    },
+    {
+      "round": 3,
+      "tile": "blue1",
+      "oldValue": 13.333333333333332,
+      "value": 3.333333333333333,
+      "removed": 10
+    },
+    {
+      "round": 3,
+      "tile": "blue2",
+      "oldValue": 12.666666666666666,
+      "value": 2.6666666666666665,
+      "removed": 10
+    },
+    {
+      "round": 3,
+      "tile": "blue3",
+      "oldValue": 9,
+      "value": 4,
+      "removed": 5
+    },
+    {
+      "round": 3,
+      "tile": "blue4",
+      "oldValue": 10.333333333333332,
+      "value": 5.333333333333333,
+      "removed": 4.999999999999999
+    },
+    {
+      "round": 4,
+      "tile": "blue1",
+      "oldValue": 0,
+      "value": 0,
+      "removed": 0
+    },
+    {
+      "round": 4,
+      "tile": "blue2",
+      "oldValue": 0,
+      "value": 0,
+      "removed": 0
+    },
+    {
+      "round": 4,
+      "tile": "blue3",
+      "oldValue": 0,
+      "value": 0,
+      "removed": 0
+    },
+    {
+      "round": 4,
+      "tile": "blue4",
+      "oldValue": 0,
+      "value": 0,
+      "removed": 0
+    }
+  ],
+  "profile": {
+    "sourcePath": "reports/iteration/resource-r2b-opening-scan-20260905.json",
+    "sourceSha256": "7d1556f2642f3355df09f2e1d6ce01ce6923f32ea1eb878596b3e50149b1c923",
+    "wallMs": 1639.9072079999999,
+    "chosen": "launch:c94cda79",
+    "nodes": 651,
+    "opponents": 0,
+    "limitReached": false,
+    "outcomes": [
+      {
+        "actionId": "launch:c94cda79",
+        "status": "settled",
+        "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+        "leaves": 23
+      },
+      {
+        "actionId": "scan:2d21a323",
+        "status": "settled",
+        "code": null,
+        "leaves": 2
+      },
+      {
+        "actionId": "play_card:124d76d3",
+        "status": "settled",
+        "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+        "leaves": 51
+      },
+      {
+        "actionId": "play_card:d532befa",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "play_card:abc9ea68",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "play_card:05c15ee0",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "pass:a1f33c73",
+        "status": "settled",
+        "code": null,
+        "leaves": 1
+      },
+      {
+        "actionId": "quick_trade:f385e2ac",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:49c75492",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:12411a2c",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:a39c1a77",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:37140fcf",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:122c43fc",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:df811f99",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:71814d67",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "quick_trade:be9dd0cd",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "industry:4d9d56c5",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "card_corner:385c75e9",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "card_corner:69df9a0a",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "card_corner:72914895",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "card_corner:69a1aa49",
+        "status": "unresolved",
+        "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+        "leaves": 0
+      },
+      {
+        "actionId": "place_data:8fd12fd3",
+        "status": "settled",
+        "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+        "leaves": 67
+      }
+    ]
+  },
+  "passed": true
+}

@@ -138,10 +138,11 @@
     purple2: 10,
     purple3: 0,
     purple4: 10,
-    blue1: 10,
-    blue2: 10,
-    blue3: 5,
-    blue4: 5,
+    // 蓝科技未来用途由正式槽奖励计算，不再叠加旧固定轮次价值。
+    blue1: 0,
+    blue2: 0,
+    blue3: 0,
+    blue4: 0,
   });
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;

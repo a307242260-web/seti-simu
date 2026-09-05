@@ -48,7 +48,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
     entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值、V、搜索优先级和计划优胜路径", "宣传门槛、资源库存或未来收益使低正式分终局叶胜出"),
     entry("randomizer/game/ai/resource-value.test.js", "policy/heuristic-evaluator", "Policy、标准叶、轻量事实与V共用资源单价和真实未来收入窗口", "钱电单价颠倒、折价方向反转、末轮虚构收入或非钱电被错误折价"),
-    entry("randomizer/game/ai/research-potential.test.js", "policy/heuristic-evaluator", "宣传预期绑定正式科技与费用并以状态差分扣回已兑现机会", "无科技仍跨门槛加60、研究后重复计宣传预期或标准叶与搜索事实不一致"),
+    entry("randomizer/game/ai/research-potential.test.js", "policy/heuristic-evaluator", "宣传预期绑定正式科技与费用；蓝科技未来奖励只计一次，标准叶/事实/V同源", "蓝科技额外叠旧固定轮次价值、研究后重复计宣传预期或标准叶与搜索事实不一致"),
     entry("randomizer/game/ai/blue-bonus-value.test.js", "policy/heuristic-evaluator", "蓝槽来源只作归因；同库存同牌面的估值与完成态不因来源改变", "分析清空丢来源、其他收入复活来源、来源资源支付被额外扣分或蓝3牌面估值被排除"),
     entry("randomizer/game/effects/search-root-attribution.test.js", "architecture/effect-session", "共享状态收益归属每个根；目标无后继或完成后继续搜索触顶仍保留实际结果", "后到根或已完成目标收益被后续截断抹掉，或未完成目标虚增收益"),
     entry("randomizer/game/effects/search-payment-choices.test.js", "architecture/effect-session", "不同费用结果分别执行；支付未完成不能成叶，根状态不变", "固定选首项丢路线，或未结算费用的状态冒充完成目标"),
