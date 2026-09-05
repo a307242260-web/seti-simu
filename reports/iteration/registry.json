@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T10:37:40.638Z",
+  "builtAt": "2026-09-05T12:58:11.981Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "4f994f86",
-  "currentBaseline": "resource-attribution-r2-20260905",
+  "headCommit": "c1b7bd49",
+  "currentBaseline": "resource-realization-r2b-20260905",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,357 @@
     ]
   },
   "versions": [
+    {
+      "id": "resource-realization-r2b-20260905",
+      "name": "第二轮资源兑现候选（续跑未完成）",
+      "date": "2026-09-05",
+      "baseline": "terminal-value-r1-20260905",
+      "head": "c1b7bd49",
+      "commits": [
+        {
+          "hash": "c1b7bd49",
+          "date": "2026-09-05",
+          "subject": "分离蓝槽来源与估值，补全资源后继结算和搜索收益归属"
+        }
+      ],
+      "summary": "蓝槽来源只用于归因，取消来源库存加分和消费惩罚；蓝3牌按普通手牌估值；扫描继续搜索后继收益；修复弃牌结算、支付选择和搜索结果归属。",
+      "diffStat": "58 files changed, 256167 insertions(+), 364 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-ai-completion-context-20260905.js",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-ai-resource-attribution-20260905.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-r2-first-decision-20260905.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-r2-divergence-20260905.js",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-r2b-opening-scan-20260905.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/find-r2-data-routes-20260905.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r2b-final-20260905.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/prove-r2-scan-analyze-20260905.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-r2b-scan-successors-20260905.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r2b-scan-chain-20260905.js",
+          "insertions": 81,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 65,
+          "deletions": 11
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 494,
+          "deletions": 4
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 12,
+          "deletions": 5
+        },
+        {
+          "file": "docs/save-replay-guide.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 15,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-counterfactual-outcome.test.js",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/blue-bonus-value.test.js",
+          "insertions": 115,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 137,
+          "deletions": 141
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-policy.js",
+          "insertions": 16,
+          "deletions": 47
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 19,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/research-potential.test.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/resource-value.test.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 14,
+          "deletions": 17
+        },
+        {
+          "file": "randomizer/game/effects/science-scan-flow.test.js",
+          "insertions": 118,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 7,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/effects/search-payment-choices.test.js",
+          "insertions": 62,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/search-root-attribution.test.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/players.js",
+          "insertions": 24,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 49,
+          "deletions": 37
+        },
+        {
+          "file": "randomizer/game/state/high-coupling-slices.js",
+          "insertions": 11,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 977,
+          "deletions": 46
+        },
+        {
+          "file": "reports/iteration/resource-attribution-r2-20260905/241f6fc0.4f994f86.full.action-log.html",
+          "insertions": 1763,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-attribution-r2-20260905/241f6fc0.4f994f86.quick-200.action-log.html",
+          "insertions": 715,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-baseline-step73-20260905.json",
+          "insertions": 6300,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-completion-design-20260905.json",
+          "insertions": 99,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-data-route-candidates-20260905.json",
+          "insertions": 2350,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-design-20260905.json",
+          "insertions": 241,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-divergence-20260905.json",
+          "insertions": 5848,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-first-decision-20260905.json",
+          "insertions": 60740,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-scan-analyze-proof-20260905.json",
+          "insertions": 9682,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-step44-20260905.json",
+          "insertions": 13620,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-step67-20260905.json",
+          "insertions": 13799,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-step68-20260905.json",
+          "insertions": 16282,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2-step88-20260905.json",
+          "insertions": 10224,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-final-profile-20260905.json",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-opening-scan-20260905.json",
+          "insertions": 83950,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-scan-chain-20260905.json",
+          "insertions": 1602,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-scan-chain-review-20260905.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-scan-successors-20260905.json",
+          "insertions": 6986,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-scan-successors-formal-discard-20260905.json",
+          "insertions": 7890,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-r2b-scan-successors-projected-20260905.json",
+          "insertions": 7327,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.full.action-log.html",
+          "insertions": 1984,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.quick-200.action-log.html",
+          "insertions": 715,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 977,
+          "deletions": 46
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 6,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "60664a0b.c1b7bd49.quick-200.json",
+          "recordPath": "reports/research/60664a0b.c1b7bd49.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 61579,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "c1b7bd49",
+          "createdAt": "2026-09-05T12:53:42.886Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步阶段均分34.25，非终局；同提交续跑在R2第10回合反复点选choose_payment:638816f7，至至少420步无回合推进后停止。未取得完整终局，未通过；保留快速存档和中止日志，不重跑同版本。",
+          "scores": {
+            "player-blue": 18,
+            "player-green": 59,
+            "player-brown": 40,
+            "player-white": 20
+          },
+          "avgScore": 34.25,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-resource-realization-r2b-20260905-c1b7bd49-quick-200-v103.json",
+          "reportPath": "reports/iteration/resource-realization-r2b-20260905/60664a0b.c1b7bd49.quick-200.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "60664a0b.c1b7bd49.quick-200",
+            "path": "reports/iteration/resource-realization-r2b-20260905/60664a0b.c1b7bd49.quick-200.action-log.html",
+            "mode": "quick-200"
+          }
+        ]
+      }
+    },
     {
       "id": "resource-attribution-r2-20260905",
       "name": "第二轮资源归因候选（未通过）",
@@ -559,7 +910,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

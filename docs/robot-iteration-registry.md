@@ -204,6 +204,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `resource-realization-r2b-20260905` | `c1b7bd49` | **续跑未完成**：200步阶段均34.25；从快速存档续跑后弃牌点选循环，已停止，无正式终局成绩 |
 | `resource-attribution-r2-20260905` | `4f994f86` | **未通过候选**：资源、宣传和蓝槽归因修正；固定盘面464步、64/90/83/91、均分82，较验收基线下降17.75；快速与完整记录均保留 |
 | `terminal-value-r1-20260905` | `d9283ce5` | **当前验收版本**：终局宣传预期、V与搜索优先级统一正式分；固定盘面535步、25/144/147/83、均分99.75，与基线动作和状态摘要完全一致，按“均分不变且逻辑合理”通过 |
 | `fold-rollback` | `5045a3ff` | 2026-08-22 回退：回退折叠链实验（29e66b9b），代码与 `elig-sum4`（56e9a9c0）一致；place_data 无折叠链、无 foldTargetSlots。折叠链完整经验见 `reports/iteration/fold-chain-search-status.md` |
@@ -214,7 +215,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析为`resource-attribution-r2-20260905`，只表示当前
+- `registry.currentBaseline` 按代码祖先解析为`resource-realization-r2b-20260905`，只表示当前
   代码归属，不表示验收通过；最近通过版本仍是`terminal-value-r1-20260905`。四轮计划与
   验收证据见`docs/ai-iteration-plan-20260905.md`。
 - 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
