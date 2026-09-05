@@ -431,6 +431,24 @@ function runIncomeAndTechCount() {
   assert.equal(composition.inspect().phase, "awaiting_input");
   const decision = composition.inspect().session.decision;
   assert.deepEqual(decision.choices.map((choice) => choice.target.cardInstanceId), ["income-energy-card"]);
+  const incomeChoice = decision.choices[0];
+  assert.equal(incomeChoice.schemaVersion, standardAction.SCHEMA_VERSION);
+  assert.equal(incomeChoice.actorId, decision.ownerId);
+  assert.equal(incomeChoice.phase, "conditional");
+  assert.ok(incomeChoice.actionId.startsWith("choose_card:"));
+  assert.ok(Number.isInteger(incomeChoice.stateVersion));
+  assert.ok(Number.isInteger(incomeChoice.decisionVersion));
+  const savedIncome = composition.lifecycle.save();
+  assert.equal(savedIncome.ok, true);
+  const restoredIncome = createIntegratedComposition("dlc_34.png").composition;
+  assert.equal(restoredIncome.lifecycle.restore(savedIncome.envelope, { silent: true }).ok, true);
+  assert.deepEqual(restoredIncome.inspect().session.decision.choices, decision.choices,
+    "恢复重新枚举同一正式收入选择，身份保持稳定");
+  const wrongOwner = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion, ownerId: "wrong-owner", choice: incomeChoice });
+  assert.equal(wrongOwner.ok, false);
+  assert.deepEqual(composition.inspect().session.decision.choices, decision.choices,
+    "错误owner不得消费收入选择或改变其身份");
   const result = composition.inputPort.submitDecision({
     decisionId: decision.decisionId,
     decisionVersion: decision.decisionVersion,

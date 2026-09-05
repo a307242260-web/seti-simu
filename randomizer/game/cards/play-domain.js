@@ -845,12 +845,13 @@
       getLegalChoices(state, sessionEffect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         const actor = getActor(root, sessionEffect.ownerId);
-        return (actor?.hand || []).map((card) => ({
+        const choices = (actor?.hand || []).map((card) => ({
           family: "choose_card",
           target: { choiceId: card.id, cardInstanceId: card.id },
           payload: { incomeCode: cards.getIncomeCodeForCard(card) },
           summary: `插入 ${cards.getCardLabel(card)} 作为收入`,
         }));
+        return getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, choices);
       },
       resolveDecision(state, sessionEffect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);

@@ -57,6 +57,9 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+卡牌效果的插收入选择与精选选择均在play-domain经共享`formalizeChoices`输出完整
+Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写actionId/actorId。
+
 `incomeGainRequirements`中计算机第4格路线的`nextCost.handSize=1`表示完成收入所需
 持有的牌数，供资源准备使用，不是正式扫描费用；钱/能量仍表示当前下一行动需要量。
 该字段不改变正式Action、Decision或checkpoint状态结构。
