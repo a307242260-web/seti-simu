@@ -24,6 +24,23 @@
 也有只按targetId找第一条候选的读取。根选择已经携带明确routePlanId，后继未保持。
 必须核对原生搜索的origin绑定与共享执行拆分，不能只把本例的`find`换成另一个`find`。
 
+补充消费者证据`probe-source-consumers-20260906.json`（正式重放支付，纯函数调用，
+没有新搜索）：支付后合法集含`land`、target=`{select:true}`。现有
+`actionMatchesProbeStep`要求land入口携带rocketId/planetId，因此根目录和后继都
+漏掉这条正式两阶段登陆路径；普通后继只剩5号移动。翻转候选顺序仍未选登陆，
+但动作的routePlanId从1号变为5号，进一步证明身份绑定依赖目录顺序。
+
+完整修复必须同时覆盖两阶段动作：主行动入口只确认有绑定来源的合法登陆机会，
+真正的rocket/planet/satellite身份在正式choose_target阶段严格选择；不能把通用
+land入口伪造成携带某一火箭的第二份正式动作，也不能只放宽入口而任意选靶。
+
+已核对的状态归属：根目录按`probe:<requirementId>`登记，rule-composition每个origin
+保存routePlanId，两个selectSuccessors调用点都会传递，后继显式routePlanId会覆盖
+origin；共享物理执行不能用混合后的首项重写身份。goal完成后普通后继清空目标与计划，
+奖励conditional还保留绑定信息，故选靶筛选不能错误作用于外星痕迹/扫描奖励。
+Production仅在没有活动太阳系火箭时添加sourceId=launch，已发射来源为rocket:<id>。
+待发射身份转换仍须覆盖免费发射牌及嵌套效果，不能仅凭这个目录前置条件宣称映射完成。
+
 待冻结义务：
 
 | 路径 | 必须满足 | 待核对证据 |

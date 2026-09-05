@@ -901,3 +901,9 @@ R2e首次分歧仍为索引26，已有审查不重复执行。
 按targetId混合来源的代码在R2e已存在，不归因第三轮引入。独立设计见
 `reports/iteration/probe-source-binding-design-20260906.md`，尚待发射/conditional/
 完成与跨回合来源矩阵闭合；不直接从本例加特判，不将局部收益当终局达标。
+
+消费者审查进一步复现：正式land主入口target仅为`{select:true}`，旧探测匹配函数却
+要求入口已带rocketId/planetId，导致已到位火箭的登陆同时被根目录与后继漏掉。
+同输入翻转路线目录顺序，错误移动不变但绑定标签改变。证据
+`probe-source-consumers-20260906.json`；独立修复须一并处理两阶段登陆的入口与选靶，
+保持正式动作不变。当前仅补充设计与证据，尚未修改生产或重跑完整局。
