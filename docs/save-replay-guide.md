@@ -6,6 +6,11 @@
 
 ## 1. 旧档不兼容的两个真实原因
 
+2026-09-05新增蓝槽来源字段`players[].blueBonusResources`与卡实例`blueBonusOwnerId`，
+新checkpoint随正式状态保存、恢复和撤销。旧档缺字段仍可读，不追溯猜测旧奖励来源；
+从旧checkpoint续玩只记录后续新奖励。如需从开局完整记录来源，应使用原始replay迁移，
+不得仅为补来源重复运行同版本固定盘面AI实验。规则费用、奖励和RNG顺序不因此变化。
+
 老存档是旧版规则录制的，与当前内核有两类差异：
 
 1. **PASS 冗余 end_turn**（`mechanics-reference.md` 261 行）：当前内核 PASS 链

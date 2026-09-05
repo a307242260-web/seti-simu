@@ -1,5 +1,7 @@
 "use strict";
 
+const dataPlacement = require("../game/data/placement");
+
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
 
 const TURN_ACTION_FAMILIES = Object.freeze([
@@ -48,6 +50,7 @@ function sanitizeCard(card) {
     scanActionCode: card.scanActionCode,
     incomeCode: card.incomeCode,
     faceUp: card.faceUp,
+    blueBonusOwnerId: card.blueBonusOwnerId,
   });
 }
 
@@ -87,10 +90,22 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
     dataProgress: {
       computerSlots: computerDataSlots,
       blueBonusCount: placedData.length - computerDataSlots.length,
+      blueSlots: Object.entries(player?.techState?.blueBoardSlots || {})
+        .filter(([tileId]) => player.techState.ownedTiles?.[tileId] && !player.techState.disabledTiles?.[tileId])
+        .map(([tileId, slot]) => ({
+          tileId, slot: Number(slot),
+          occupied: placedData.some((token) => token.placementKind === "blueBonus" && Number(token.blueSlot) === Number(slot)),
+          unlocked: computerDataSlots.includes(dataPlacement.BLUE_BONUS_REQUIRED_COMPUTER_SLOT[slot]),
+        })),
       analyzeReady: computerDataSlots.includes(6),
     },
     techState: clone(player?.techState || {}),
     income: clone(player?.income || {}),
+    blueBonusAssets: {
+      credits: Number(player?.blueBonusResources?.credits) || 0,
+      energy: Number(player?.blueBonusResources?.energy) || 0,
+      ordinaryCards: (player?.hand || []).filter((card) => card.blueBonusOwnerId === player.id).length,
+    },
     passed: Boolean(player?.passed),
   };
 }

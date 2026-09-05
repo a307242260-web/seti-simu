@@ -174,3 +174,75 @@ V输入审计、语法和diff检查通过；已核对README、AGENTS、PROJECT_M
 选定公共牌后才入手，需按真实卡实例来源及其离手处理；blue4可复用已扣重的宣传研究P。
 未来蓝槽收益要按当前还可使用的槽位估计并取状态差，实际使用后减少对应预期、分析重开
 槽位时重新反映机会。该来源/留存方案尚待完整状态、恢复与观测矩阵冻结，未写生产实现。
+
+### 第二轮蓝槽批次设计冻结
+
+选择正式状态来源方案，不在搜索器维护第二份事件账本。钱电是可替代资源，采用明确的保守
+估值约定：支付时优先扣减蓝槽来源留存，其他来源入账不得补回。该约定只影响收益归因，
+不改变真实资源、费用或合法性。蓝3按仍在原奖励玩家手中的真实卡实例计；离手不计，
+同实例效果返回手中恢复可用价值，重洗后新实例不继承旧来源。蓝4只走已扣重的宣传P。
+
+| 闭包/owner | 状态与正式primitive | 验证/失败义务 |
+|---|---|---|
+| 钱电发奖 | science PLACE_DATA沿用blueTechScore来源；players.gainResources维护blueBonusResources | 只有该来源的钱电增加留存；计算机列2分不重复记资源；无新费用/RNG/id |
+| 钱电支付 | players.spendResources在正式可支付校验之后同步扣减留存 | 任意行动/嵌套效果同一入口，失败零变化；其他奖励不能复活已消费蓝槽资源 |
+| 蓝3 | PLACE_DATA派生PICK_CARD时传blueBonus来源；选牌成功后给真实card标记blueBonusOwnerId | 研究背面精选不标记；card完整克隆/离手/返回仍同实例，不根据手牌净增长猜来源 |
+| 初始/恢复 | createPlayer保存blueBonusResources，canonical card克隆保存来源 | 旧档缺来源视为此前未记录，不追溯猜测；checkpoint/撤销/fork复制同一正式状态；留存不得负数或超过库存 |
+| 观察 | simulation-contract共享sanitize输出blueBonusAssets及蓝槽tile/slot/occupied/unlocked事实 | 只公开来源数量，不公开对手牌身份；自身牌来源标记经sanitize，隐藏身份遮蔽仍移除整张新身份 |
+| 标准叶/轻量事实 | outcome-model同源blueBonusAssets与dataProgress.blueSlots | 标准/轻量一致，无新增搜索状态或事件去重问题 |
+| 实际留存价值B | 钱电留存×共享轮次单价 + 原奖励玩家当前持有蓝3牌数×普通牌单价 | 基于状态差B(叶)-B(根)，不截负值；资源消费或卡离手会扣回此前资源预期 |
+| 当前槽机会C | 已解锁、未占用蓝槽，按奖励价值排序，最多当前数据数个槽，预期折半 | blue1/2/3来自正式奖励表；blue4用增加2宣传的P差、受宣传上限约束；数据超槽容量不继续加值 |
+| 科技未来F | 所有已拥有科技的未来价值取状态差；蓝槽未来资源用正式奖励×共享单价×4/3×未来轮数×0.5 | 未来发放窗口与当前C分开；实际放置消耗C并转为B/P，分析清空不清来源；不再按新增占用数乘路线资源差 |
+| V | 使用同一B/C/F，蓝3来源卡不再重复进入普通手牌效果预期 | terminal仍全部未来项为0；无新参数、搜索目录或预算变化 |
+| 科技候选预排序 | selectHeuristicTechPlans的蓝槽单次奖励、橙3省电也用共享轮次单价 | 删除该处遗留的钱8/电10副表；不改候选数、场景权重、预算或路线生成规则 |
+
+有限来源核对：钱电生产写入集中players的gain/spend；blueTechScore只有science数据放置
+一处生产发奖；PICK_CARD另有两处科技奖励入口，必须不携带blue来源。卡牌标记随实体而非
+手牌数量保存，不要求在每个手牌移除入口增加旁路。正式data placement模块给出奖励和
+蓝槽前置格，观察层/估值层复用它，不复制奖励表。
+
+本批次验证要求：blue1/2发奖与混合来源、失败支付、来源消费、blue3选牌与普通科技精选
+区别、blue4无科技机会为0、当前槽容量、分析重开、研究→放置→消费价值转移、同根fork
+不污染canonical、非零checkpoint恢复来源与合法集一致。完成全部批次后才运行第二轮固定盘面。
+
+### 蓝槽批次补充：完成态收敛边界（实现前设计）
+
+反例checkpoint：`reports/iteration/resource-r2-completion-design-20260905.json`，生成器
+`adhoc/audit-ai-completion-context-20260905.js`。这是HEAD为`bfdfd14b`、含未提交蓝槽改动
+的纯估值诊断，不是该提交的固定盘面实验。相同库存、科技与计算机进度下，普通来源状态、
+蓝槽能源留存1状态、槽已占用状态的旧completion facts完全相同，而V的liquidValue分别
+为4、12、0。旧Pareto会依据交易次数/链长/key删除其中状态，遗漏新估值的有效差异。
+
+不采用“来源留存更多即可支配”的新增单调维度：蓝3来源标记同时参与普通手牌效果扣重，
+尚不能从来源数量推出整条后续路线单调。采用精确上下文分区，原有资源/收入比较仅在
+相同上下文内适用；这是对第二轮新增估值依赖的保留义务，不宣称旧Pareto整体最优性已证明。
+
+| 边界/唯一owner | 冻结设计 | 行为义务 |
+|---|---|---|
+| completion事实/expected-score-evaluator | schema升级v3；增加valuationContext：terminal、当前/终止轮次、规范化blueBonusAssets、排序后的blueSlots与researchOptions | 同一语义不受数组顺序影响；来源、槽位、候选费用改变必须可区分；不读取隐藏状态 |
+| 来源牌身份/同一事实owner | 上下文包含自身手牌中蓝3来源牌的实例id与cardId，排序保存 | 不因来源牌数量相同而把不同扣重对象视为同一上下文；不得读取对手牌身份 |
+| 完成态比较/rule-composition | 比较入口用既有stableSerialize检查上下文完全一致，不同即不支配；上下文相同沿用旧数值、科技与确定性tie-break | 真实counterfactual测试证明不同上下文两条完成路线保留且支配数0，相同上下文支配数1；既有实现不撤回已生成叶，不要求叶数归一 |
+| 状态/恢复/执行 | 仅派生事实，不改canonical、Decision、事务、RNG、id或收费；完整状态去重已包含来源元数据 | 不新增执行入口、缓存、fallback或事件账本；无需迁移存档 |
+| 性能与搜索边界 | 保留现有可达性/资源下界、4096全局执行上限及目标目录，不新增深度或beam参数 | 分区可能增加保留量；固定盘面前先做单次决策benchmark并检查10秒门槛，不能把执行上限称为性能证明 |
+| 删除与文档 | 旧v2事实定义及允许跨新估值上下文支配的描述同步替换 | 检查AI设计、RL接口及所有completion facts消费者；后续单独覆盖蓝槽与宣传候选差异 |
+
+以上边界补充已写入生产代码：completion事实升级v3并增加规范化上下文；比较器禁止跨
+上下文支配。新增来源、槽位、蓝3实例、集合枚举顺序的定向断言通过，蓝槽、宣传、终局、
+Science奖励四项定向unit通过，V输入审计通过。Science窄接口测试使用正式放槽规则及fork，
+以测试估值端口统一标量、只改变上下文：不同蓝槽来源/占用的两条完成路线均保留、支配数0；
+统一上下文的对照支配数1。测试未替换执行器，canonical保存前后完全一致。
+既有收敛只阻止后续展开，不撤回先前已生成叶；记录为第四轮搜索输出清理义务，不以此恢复
+跨上下文支配，也不将本测试称作完整Policy验证。
+
+单次主行动性能checkpoint：`reports/iteration/resource-r2-first-decision-20260905.json`，
+脚本`adhoc/benchmark-r2-first-decision-20260905.js`，存在时跳过。免电盘面、weak_start诊断
+配置，23个开局Decision后首个主行动真实搜索629节点、2262.738ms，低于10秒门槛。
+包含决策前checkpoint、HEAD及生产tracked diff哈希；这是工作树单步诊断，不是已提交版本
+快速/全盘实验，也不代表所有中后期决策满足门槛。正式固定盘面仍采用研究入口默认配置。
+本批次全量日志`/tmp/seti-r2-blue-completion-tests-20260905.log`：unit69通过、2处原有失败，
+唯一full-flow通过。未提交完整候选、未运行固定盘面，第二轮尚未验收。
+此前蓝槽全量验证为unit69通过、
+2处既有失败，唯一full-flow通过；V输入审计通过。Chrome开局与replay记录smoke通过；
+full-parity因renderer缺少rockets/scanData/aliens/scoring失败，独立HEAD快照同样失败，
+属于既有问题，不报告为全量Chrome通过。日志分别为`/tmp/seti-r2-blue-final-tests-20260905.log`、
+`/tmp/seti-r2-blue-browser-basic-20260905.log`和`/tmp/seti-r2-blue-browser-baseline-20260905.log`。

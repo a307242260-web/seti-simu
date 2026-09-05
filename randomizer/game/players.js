@@ -134,6 +134,18 @@
     return result;
   }
 
+  function blueBonusResourcesOf(player) {
+    const result = {};
+    for (const key of ["credits", "energy"]) {
+      const value = Number(player.blueBonusResources?.[key] ?? 0);
+      if (!Number.isFinite(value) || value < 0 || value > Number(player.resources[key])) {
+        throw new TypeError(`蓝槽${key}留存必须非负且不超过实际库存`);
+      }
+      result[key] = value;
+    }
+    return result;
+  }
+
   function normalizeScoreSources(scoreSources) {
     const source = scoreSources && typeof scoreSources === "object" ? scoreSources : {};
     const result = {};
@@ -214,6 +226,7 @@
       reservedCards,
       techState: normalizePlayerTechState(source.techState),
       scoreSources: normalizeScoreSources(source.scoreSources),
+      blueBonusResources: blueBonusResourcesOf({ ...source, resources }),
       orbitCount: Number.isInteger(orbitCount) ? orbitCount : Math.round(orbitCount),
     };
   }
@@ -255,6 +268,12 @@
       };
     }
 
+    const blueBonusResources = blueBonusResourcesOf(player);
+    for (const key of ["credits", "energy"]) {
+      // 钱电可替代；归因采用保守的“先消耗蓝槽留存”，不改变正式费用。
+      blueBonusResources[key] = Math.max(0, blueBonusResources[key] - Math.max(0, Number(required[key]) || 0));
+    }
+    player.blueBonusResources = blueBonusResources;
     if (required.credits != null) player.resources.credits -= required.credits;
     if (required.energy != null) player.resources.energy -= required.energy;
     if (required.publicity != null) {
@@ -288,6 +307,11 @@
   function gainResources(player, gain, scoreSourceKey = null) {
     const reward = gain || {};
     const beforeScore = Number(player?.resources?.score) || 0;
+    if (scoreSourceKey === "blueTechScore") {
+      const retained = blueBonusResourcesOf(player);
+      for (const key of ["credits", "energy"]) retained[key] += Math.max(0, Number(reward[key]) || 0);
+      player.blueBonusResources = retained;
+    }
     if (reward.credits != null) player.resources.credits += reward.credits;
     if (reward.energy != null) player.resources.energy += reward.energy;
     if (reward.score != null) {

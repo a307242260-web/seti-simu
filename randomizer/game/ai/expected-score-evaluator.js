@@ -5,19 +5,22 @@
   let quickTrades = root.SetiQuickTrades;
   let cardEffects = root.SetiCardEffects;
   let alienState = root.SetiAlienState;
+  let dataPlacement = root.SetiDataPlacement;
   if (typeof require === "function") {
     outcomeModel = outcomeModel || require("./outcome-model");
     quickTrades = quickTrades || require("../actions/quick-trades");
     cardEffects = cardEffects || require("../cards/effects");
     alienState = alienState || require("../aliens/state");
+    dataPlacement = dataPlacement || require("../data/placement");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects, alienState);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
   quickTrades,
   cardEffects,
   alienState,
+  dataPlacement,
 ) {
   "use strict";
 
@@ -183,6 +186,7 @@
       ownedTechIds: [...(parts.ownedTechIds || [])].sort(),
       income: { ...(parts.income || {}) },
       researchOptions: (parts.researchOptions || []).map((option) => ({ ...option })),
+      blueBonusAssets: { ...(parts.blueBonusAssets || {}) },
       roundNumber: Math.max(1, finite(parts.roundNumber) || 1),
       finalRoundNumber: Math.max(1, finite(parts.finalRoundNumber) || 4),
       traceCount: Math.max(0, finite(parts.traceCount) || 0),
@@ -205,6 +209,7 @@
       ownedTechIds: projection.progress?.ownedTechIds,
       income: projection.progress?.income,
       researchOptions: projection.progress?.researchOptions,
+      blueBonusAssets: projection.progress?.blueBonusAssets,
       roundNumber: projection.progress?.roundNumber,
       finalRoundNumber: projection.progress?.finalRoundNumber,
       traceCount: projection.progress?.traceCount,
@@ -273,7 +278,6 @@
   // 权重全部校准自用户 405 档（v-state-design 第 3 节）。
   // =====================================================================
   const V_INCOME_MULTIPLIER = 1.4; // 收入复利放大（收入→更多行动→更多分）
-  const V_TECH_EFFICIENCY_UNIT = 4; // 每个已研究科技每轮效率红利（橙/紫降价等）
   const V_TRACE_FIRST_VALUE = 5; // 首痕迹价值（slot1 5分+1宣、slot2 3分+1宣）
   const V_ALIEN_REVEAL_BONUS = 15; // 三色齐→揭示的期望（位置分+外星牌链）
   const V_ALIEN_SLOT_POSITION_VALUE = 3; // 揭示后每个位置期望分（3-5 分/位置）
@@ -291,7 +295,6 @@
     const roundNumber = Math.max(1, finite(projection.progress?.roundNumber) || 1);
     const finalRoundNumber = Math.max(1, finite(projection.progress?.finalRoundNumber) || 4);
     const remainingPayments = Math.max(0, finalRoundNumber - roundNumber); // 回合开始发放
-    const assets = projection.assets || {};
     const income = projection.progress?.income || {};
 
     const scoreValue = finite(realizedScore) + (terminal ? 0 : finite(projection.scoring.securedEndGameBonus));
@@ -316,23 +319,15 @@
         },
       });
     }
-    // 资源流动性（手段不是价值，2026-08-18 修复根因 1）：资源库存**不按固定单价
-    // 计入 V**——花 1 钱 -8 会掩盖真实收益（launch/scan/打牌全负），让唯一"不花钱"
-    // 的 quick_trade 霸榜（实测白色 86→14，29 次 quick_trade）。资源价值通过
-    // "能解锁什么"间接体现（收入复利/科技效率/外星进度/即时分），V 只保留
-    // 数据→填槽/分析的转化期望（手段中唯一有明确未来路径的），钱/能/宣传 0。
-    const liquidValue = (
-      finite(assets.availableData) * resourceUnitValue("availableData", roundNumber, finalRoundNumber) * 0.5
-    );
+    // 不对全部库存定价；只计有正式蓝槽来源的留存和当前有数据可用的槽位机会。
+    const stateValue = evaluateState(observation, seatId);
+    const liquidValue = blueRetainedValue(stateValue) + currentBlueSlotPotential(stateValue);
 
     // 准备类：收入复利（收入率 × 剩余发放次数 × 单位价值 × 放大系数）
     const incomeValue = incomeFutureValue(income, roundNumber, finalRoundNumber) * V_INCOME_MULTIPLIER;
 
-    // 准备类：科技效率红利（每个已研究科技 × 剩余轮次 × 单位效率）
-    const ownedTechIds = projection.progress?.ownedTechIds || [];
-    const techEfficiencyValue = ownedTechIds.length
-      * Math.max(0, finalRoundNumber - roundNumber)
-      * V_TECH_EFFICIENCY_UNIT;
+    // 与Primary同源的科技未来窗口，当前槽位机会已经在liquidValue中计算。
+    const techEfficiencyValue = infrastructureTechPotential(stateValue);
 
     // 准备类：外星进度（首痕迹 + 揭示期望 + 位置期望）
     const alienSlots = projection.progress?.alienSlots || [];
@@ -364,7 +359,8 @@
     const selfPublic = publicPlayers.find((p) => (
       String(p.playerId || p.color || "") === String(seatId)
     ));
-    const handCards = (selfState?.hand || selfPublic?.hand || []).filter(Boolean);
+    const handCards = (selfState?.hand || selfPublic?.hand || [])
+      .filter((card) => card && card.blueBonusOwnerId !== seatId);
     const reservedCards = (selfState?.reservedCards || []).filter(Boolean);
     const handEffectValue = (cards) => cards.reduce((total, card) => {
       const effects = cardEffects?.buildPlayEffects?.(card) || [];
@@ -406,7 +402,7 @@
       + handEffectValue(reservedCards) * 0.25
     );
 
-    const researchOptionValue = researchPotential(evaluateState(observation, seatId));
+    const researchOptionValue = researchPotential(stateValue);
     const total = scoreValue + liquidValue + incomeValue + techEfficiencyValue
       + alienValue + cardValue + researchOptionValue;
     return deepFreeze({
@@ -574,13 +570,56 @@
   // + 外星人牌：开牌即可继续获得外星人牌/终局计分/机制收益）。用户高分档首回合
   // 就抢第一放置、全盘 5 痕迹占满（阿米巴3+虫2）——痕迹是稳定大分源，估值提高。
   const TRACE_UNIT_VALUE = 5;
-  const BLUE_SLOT_UNIT_VALUES = Object.freeze({ blue1: 5, blue2: 5, blue3: 4, blue4: 5 });
+  function blueRewardUnit(tileId, roundNumber, finalRoundNumber) {
+    const reward = dataPlacement.getBlueTileDataBonus(tileId);
+    if (!reward) return 0;
+    if (reward.type === "choose_card") return resourceUnitValue("ordinaryCard", roundNumber, finalRoundNumber);
+    return ["credits", "energy", "publicity"].reduce((total, key) => (
+      total + finite(reward[key]) * resourceUnitValue(key, roundNumber, finalRoundNumber)
+    ), 0);
+  }
 
   // 科技取得与宣传研究机会共用未来价值，正式即时分仍由规则结算的分差提供。
-  function techFutureValue(tileId, remainingRounds) {
-    const roundWeight = Math.min(1, Math.max(0, remainingRounds / 3));
-    return finite(TECH_UNIT_VALUES[tileId]) * remainingRounds
-      + finite(BLUE_SLOT_UNIT_VALUES[tileId]) * 4 * roundWeight;
+  function techFutureValue(tileId, remainingRounds, finalRoundNumber = 4) {
+    let value = finite(TECH_UNIT_VALUES[tileId]) * remainingRounds;
+    for (let round = finalRoundNumber - remainingRounds + 1; round <= finalRoundNumber; round += 1) {
+      value += blueRewardUnit(tileId, round, finalRoundNumber) * (4 / 3) * 0.5;
+    }
+    return value;
+  }
+
+  function infrastructureTechPotential(value) {
+    if (value.terminal) return 0;
+    const infra = value.infrastructure;
+    const rounds = Math.max(0, infra.finalRoundNumber - infra.roundNumber);
+    return infra.ownedTechIds.reduce((total, tileId) => total + techFutureValue(tileId, rounds, infra.finalRoundNumber), 0);
+  }
+
+  function blueRetainedValue(value) {
+    if (value.terminal) return 0;
+    const infra = value.infrastructure;
+    return ["credits", "energy", "ordinaryCards"].reduce((total, key) => total
+      + finite(infra.blueBonusAssets[key]) * resourceUnitValue(
+        key === "ordinaryCards" ? "ordinaryCard" : key, infra.roundNumber, infra.finalRoundNumber,
+      ), 0);
+  }
+
+  function currentBlueSlotPotential(value) {
+    if (value.terminal) return 0;
+    const infra = value.infrastructure;
+    const rewards = (infra.dataProgress.blueSlots || [])
+      .filter((slot) => slot.unlocked && !slot.occupied)
+      .map((slot) => {
+        const reward = dataPlacement.getBlueTileDataBonus(slot.tileId);
+        if (reward?.publicity) {
+          const after = { ...value, resourceFacts: { ...value.resourceFacts,
+            publicity: Math.min(10, value.resourceFacts.publicity + reward.publicity) } };
+          return Math.max(0, researchPotential(after) - researchPotential(value));
+        }
+        return blueRewardUnit(slot.tileId, infra.roundNumber, infra.finalRoundNumber);
+      }).sort((a, b) => b - a);
+    return rewards.slice(0, Math.max(0, Math.floor(value.resourceFacts.availableData)))
+      .reduce((total, reward) => total + reward * 0.5, 0);
   }
 
   function researchPotential(value) {
@@ -593,7 +632,7 @@
     for (const option of infrastructure.researchOptions) {
       const cost = finite(option.publicityCost);
       if (owned.has(option.tileId) || cost <= 0) continue;
-      best = Math.max(best, techFutureValue(option.tileId, remainingRounds) * Math.min(1, publicity / cost));
+      best = Math.max(best, techFutureValue(option.tileId, remainingRounds, infrastructure.finalRoundNumber) * Math.min(1, publicity / cost));
     }
     return best * 0.5;
   }
@@ -622,58 +661,10 @@
     const rootTech = new Set(rootInfrastructure.ownedTechIds);
     const gainedTechIds = leafInfrastructure.ownedTechIds
       .filter((tileId) => !rootTech.has(tileId));
-    // 科技价值 = 每轮基础值 × 剩余轮次 + 蓝科技数据位槽收益（未来收益）。
-    // 校准自用户 405 档（终局未结算-v223）实测：研究 blue2 = 16 分（8 次蓝列分×2）
-    // + 2 首发 + 1 精选 + 8 能量 - 8 数据（四轮总量）。
-    //   - 首发分 +2 与背面 bonus 是研究即得的即时分，由 actualScoreDelta 捕获
-    //     （反事实结算真实发生），techValue 只计"未来收益"避免重复计分。
-    //   - 蓝科技数据位槽：预期 4 次（用户 8 次减半）× 每次槽位价值 × 轮次权重
-    //     （研究越靠后剩余轮次越少，可放的槽越少）。
-    const techValue = gainedTechIds.reduce((total, tileId) => (
-      total + techFutureValue(tileId, remainingRounds)
-    ), 0);
-    // 蓝科技数据位槽"实际放置"的即时收益：用户 405 档 19 次放槽是"用上"科技的主要形态
-    // （blue2 槽 8 次每次 +1 能量、blue1 槽 8 次 +1 信用、blue4 槽 2 次 +2 宣传、blue3 槽 1 次
-    // 选牌）。此前 leafValue 只计研究时的预期（预期4次，减半），
-    // 实际放槽的即时资源收益在评估里 value=0 → AI 研究 blue2 后从不放槽（blueBonus 0）。
-    // 按用户口径"实际产生的收益才是价值、预期次数才折半"：实际放置全额计。
-    // 与 research 的 techValue 不重复：放槽分支 gainedTechIds 为空（科技已在位），
-    // 研究分支 blueBonusCount 未增加；只有多步展开（研究→放槽）才可能同时出现，
-    // 但预期(减半)+实际(全额)符合"预期次数折半、实际不折半"的口径。
-    const rootBlueCount = finite(rootInfrastructure.dataProgress?.blueBonusCount);
-    const leafBlueCount = finite(leafInfrastructure.dataProgress?.blueBonusCount);
-    const blueBonusPlacementDelta = Math.max(0, leafBlueCount - rootBlueCount);
-    // 放槽的即时收益按实际到手的资源货币化：资源（能量/信用）会被 AI 转换为分数
-    // （能量→发射/移动/分析，信用→交易/研究），按共享资源单价与叶轮次折价。
-    // blue4 槽 +2 宣传走研究门槛逻辑；净增长归因的缺陷属于第二轮后续批次。
-    // 只在实际放槽（blueBonusCount 增加）时计入，避免 quick_trade/scan 等纯资源动作被高估。
-    const rootEnergy = finite(rootValue.resourceFacts?.energy);
-    const leafEnergy = finite(leafValue.resourceFacts?.energy);
-    const rootCredits = finite(rootValue.resourceFacts?.credits);
-    const leafCredits = finite(leafValue.resourceFacts?.credits);
-    const blueBonusPlacementValue = blueBonusPlacementDelta > 0
-      ? Math.max(0, leafEnergy - rootEnergy) * resourceUnitValue("energy", leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber)
-        + Math.max(0, leafCredits - rootCredits) * resourceUnitValue("credits", leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber)
-      : 0;
-    // 数据预期用途价值：scan/打牌获得的数据是放槽（blueBonus 每次 +5 资源价值）与
-    // analyze 的原料。数据库存本身不算分（测试契约"钱/电/宣传/数据/手牌库存不得
-    // 冒充分数"），但"已有 blue 科技可放槽"时数据的预期转换价值应可见——否则 scan
-    // 拿数据在评估里 value=0（白花 1c+2e），AI 从不扫描（用户 405 档 scan 13 次）。
-    // 用 root（决策时）科技判断：scan 分支里没有研究动作，leaf 恒无 blue——数据能
-    // 否放槽取决于决策时 AI 已拥有的 blue 科技。用户口径："用上了才有价值、预期
-    // 次数折半"：预期利用率 0.5。
-    const rootTechSet = new Set(rootInfrastructure.ownedTechIds);
-    const hasBlueTechForData = [...rootTechSet].some((tileId) => (
-      String(tileId).startsWith("blue")
-    ));
-    const rootDataCount = finite(rootValue.resourceFacts?.availableData);
-    const leafDataCount = finite(leafValue.resourceFacts?.availableData);
-    const dataDelta = Math.max(0, leafDataCount - rootDataCount);
-    const DATA_TO_BLUE_SLOT_VALUE = resourceUnitValue("energy", leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber);
-    const EXPECTED_DATA_UTILIZATION = 0.5; // 预期折半（数据未必全转化为放槽）
-    const dataUtilizationValue = hasBlueTechForData && dataDelta > 0
-      ? dataDelta * DATA_TO_BLUE_SLOT_VALUE * EXPECTED_DATA_UTILIZATION
-      : 0;
+    // 未来窗口、当前槽机会、实际留存分别取状态差；消费后允许负差，不能重复计价值。
+    const techValue = infrastructureTechPotential(leafValue) - infrastructureTechPotential(rootValue);
+    const blueBonusPlacementValue = blueRetainedValue(leafValue) - blueRetainedValue(rootValue);
+    const dataUtilizationValue = currentBlueSlotPotential(leafValue) - currentBlueSlotPotential(rootValue);
     const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
       key,
       positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
@@ -792,6 +783,7 @@
         ownedTechIds: facts.ownedTechIds,
         income: facts.income,
         researchOptions: facts.researchOptions,
+        blueBonusAssets: facts.blueBonusAssets,
         roundNumber: facts.roundNumber,
         finalRoundNumber: facts.finalRoundNumber,
         traceCount: facts.traceCount,
@@ -936,6 +928,8 @@
       cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
       techValue: best.strategicValue.infrastructure.techValue,
+      blueBonusPlacementValue: best.strategicValue.infrastructure.blueBonusPlacementValue,
+      dataUtilizationValue: best.strategicValue.infrastructure.dataUtilizationValue,
       gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
       incomeValue: best.strategicValue.infrastructure.incomeValue,
       incomeDelta: best.strategicValue.infrastructure.incomeDelta,
@@ -1046,8 +1040,31 @@
 
   function secondaryAgentCompletionFacts(observation, seatId) {
     const facts = outcomeModel.createStrategicFacts(observation, seatId);
+    const sortRows = (rows) => rows.sort((left, right) => (
+      JSON.stringify(left).localeCompare(JSON.stringify(right))
+    ));
     return {
-      schemaVersion: "seti-secondary-agent-completion-facts-v2",
+      schemaVersion: "seti-secondary-agent-completion-facts-v3",
+      // 来源与机会不是独立可累加的资源，只有上下文相同才允许完成态支配。
+      valuationContext: {
+        terminal: facts.terminal,
+        roundNumber: facts.roundNumber,
+        finalRoundNumber: facts.finalRoundNumber,
+        blueBonusAssets: {
+          credits: finite(facts.blueBonusAssets?.credits),
+          energy: finite(facts.blueBonusAssets?.energy),
+          ordinaryCards: finite(facts.blueBonusAssets?.ordinaryCards),
+        },
+        blueSlots: sortRows((facts.dataProgress?.blueSlots || []).map((slot) => [
+          String(slot.tileId), Number(slot.slot), Boolean(slot.occupied), Boolean(slot.unlocked),
+        ])),
+        researchOptions: sortRows((facts.researchOptions || []).map((option) => [
+          String(option.tileId), Number(option.publicityCost),
+        ])),
+        blueHandCards: sortRows((observation?.selfState?.hand || [])
+          .filter((card) => card && card.blueBonusOwnerId === seatId)
+          .map((card) => [String(card.id), String(card.cardId)])),
+      },
       score: finite(facts.realizedScore) + finite(facts.securedEndGameBonus),
       resources: {
         credits: finite(facts.resourceFacts?.credits),
@@ -1655,17 +1672,15 @@
   const TECH_UNLOCK_VALUE = Object.freeze({
     orange1: 15, // 火箭上限 1→2（解锁第 2 探测器，一次性；用户纠正：橙1没有持续收益）
   });
-  // 单次利用价值（每次使用该科技效果的价值，按 INCOME_UNIT_VALUES/行动收益校准）：
-  //   blue1 槽 +1信用=8；blue2 槽 +1能量=10；blue3 槽选牌=6；blue4 槽 +2宣传=8
-  //   orange2 无视小行星移动=6/次；orange3 登陆能量-1=10/次
+  // 单次利用价值：蓝槽从正式奖励表读取，橙3省1能量也使用共享轮次单价。
+  //   orange2 无视小行星移动=6/次
   //   purple2 水星扫描：1 宣传 → 额外扇区信号 + 数据（真实收益，可跳过）
   //     = 数据 4 + 扇区信号 3 ≈ 7（用户纠正：紫2是收益不是纯灵活性）
   //   purple4 扫描后发射/移动=6/次
   //   purple1（改进扇区扫描=灵活性，收益可能完全不变）/ purple3（手牌扫描=
   //   消耗宝贵手牌，换扫描不一定赚）价值 0（用户纠正）
   const TECH_USE_VALUE = Object.freeze({
-    blue1: 8, blue2: 10, blue3: 6, blue4: 8,
-    orange1: 0, orange2: 6, orange3: 10, orange4: 0,
+    orange1: 0, orange2: 6, orange4: 0,
     purple1: 0, purple2: 7, purple3: 0, purple4: 6,
   });
   // 预期使用次数基准（每轮该科技效果被使用的期望次数；乘以剩余轮次折算）。
@@ -1772,7 +1787,10 @@
       .map((plan) => {
         const tileId = plan.tileId;
         const weight = techScenarioWeight(tileId, observation, context);
-        const useValue = Number(TECH_USE_VALUE[tileId]) || 0;
+        const useValue = String(tileId).startsWith("blue")
+          ? blueRewardUnit(tileId, roundNumber, finalRoundNumber)
+          : tileId === "orange3" ? resourceUnitValue("energy", roundNumber, finalRoundNumber)
+            : Number(TECH_USE_VALUE[tileId]) || 0;
         const usesPerRound = Number(TECH_USES_PER_ROUND[tileId]) || 0;
         const unlockValue = Number(TECH_UNLOCK_VALUE[tileId]) || 0;
         // 持续收益 × 次数（未来效率）；一次性解锁只算解锁价值（乘场景权重）

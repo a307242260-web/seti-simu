@@ -59,6 +59,16 @@ Composition drain，不伪装成策略动作。
 `techGainRequirements`，不推测隐藏奖励。该派生字段不写入Production状态或checkpoint。
 研究预期的状态差分与V分项见`docs/ai-design.md`。
 
+蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：
+`publicState.players[].blueBonusAssets`及`outcomeProjection.progress.blueBonusAssets`
+含`credits/energy/ordinaryCards`来源留存数量，不暴露对手牌身份；`dataProgress.blueSlots`
+含`tileId/slot/occupied/unlocked`，槽位前置条件来自正式data placement表。
+轻量strategicFacts携带同样两项；原`blueBonusCount`只是当前占用数，不再用于奖励归因。
+自身可见卡的`blueBonusOwnerId`为来源标记，未知身份遮蔽仍移除整张卡身份及附加字段。
+搜索完成态抽象`seti-secondary-agent-completion-facts-v3`包含`valuationContext`：
+终局/轮次、蓝槽留存、槽位、研究候选费用、自身蓝3来源手牌实例与卡面标识；不同上下文
+禁止互相支配删除。此为搜索内部派生事实，不改变Observation或存档schema。
+
 Observation schema 为 `seti-rl-observation-v1`：
 
 ```js

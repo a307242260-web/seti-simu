@@ -30,7 +30,8 @@
   const HIGH_COUPLING_SLICES = Object.freeze(["players", "pieces", "cards", "tech"]);
   const COORDINATED_SLICES = Object.freeze([...HIGH_COUPLING_SLICES, "planets"]);
   const FIELD_OWNERSHIP = Object.freeze({
-    "players.players.*.resources/income/scoreSources": "committed",
+    "players.players.*.resources/income/scoreSources/blueBonusResources": "committed",
+    "card.blueBonusOwnerId": "committed reward provenance",
     "players.players.*.hand/reservedCards/techState": "committed",
     "players.currentPlayerId/player labels/assets": "turn-owned/host-only:excluded",
     "pieces.rockets/activeRocketId/playerRocketSequences": "committed",
@@ -141,6 +142,12 @@
           errors.push(error(`${path}.resources.${key}`, "STATE_PLAYER_RESOURCE_INVALID", "玩家资源必须是有限非负数"));
         }
       }
+      for (const [key, value] of Object.entries(player?.blueBonusResources || {})) {
+        if (!["credits", "energy"].includes(key) || !Number.isFinite(value)
+          || value < 0 || value > Number(player.resources?.[key])) {
+          errors.push(error(`${path}.blueBonusResources.${key}`, "STATE_BLUE_BONUS_RESOURCE_INVALID", "蓝槽资源留存必须非负且不超过对应库存"));
+        }
+      }
       if ((Array.isArray(player?.hand) || Object.hasOwn(player?.resources || {}, "handSize"))
         && Number(player?.resources?.handSize) !== (player?.hand || []).length) {
         errors.push(error(`${path}.resources.handSize`, "STATE_HAND_SIZE_MISMATCH", "handSize 必须等于手牌数量"));
@@ -215,6 +222,9 @@
     const cardLocations = new Map();
     let maximumCardSequence = 0;
     visitCardInstances(state, (card, path) => {
+      if (card?.blueBonusOwnerId != null && !getPlayers(state).some((player) => player.id === card.blueBonusOwnerId)) {
+        errors.push(error(`${path}.blueBonusOwnerId`, "STATE_BLUE_BONUS_OWNER_INVALID", "蓝槽奖励来源玩家不存在"));
+      }
       const instanceId = String(card?.id || "");
       const cardId = String(card?.cardId || "");
       const cardSequence = inferCardSequence(instanceId);

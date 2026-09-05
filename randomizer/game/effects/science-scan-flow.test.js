@@ -19,6 +19,9 @@ const tech = require("../tech");
 const solar = require("../../solar-system/core");
 const rockets = require("../rockets");
 const aliens = require("../aliens");
+const observationContract = require("../../app/simulation-contract");
+const outcomeModel = require("../ai/outcome-model");
+const expectedScore = require("../ai/expected-score-evaluator");
 
 function createActionContext(root) {
   return {
@@ -156,7 +159,7 @@ function createCanonicalState() {
   return { root, earthNebula };
 }
 
-function createScanComposition(root) {
+function createScanComposition(root, counterfactualEnabled = false) {
   const initialState = toCommitted(root);
   return createRuleComposition({
     stateStoreApi,
@@ -178,6 +181,12 @@ function createScanComposition(root) {
       create: scienceSession.createScienceDomain,
     }],
     projectState: (state) => state,
+    createCounterfactualFork: counterfactualEnabled ? (envelope) => {
+      const fork = createScanComposition(root);
+      const restored = fork.lifecycle.restore(envelope);
+      assert.equal(restored.ok, true);
+      return fork;
+    } : null,
   });
 }
 
@@ -339,4 +348,111 @@ function testSkipStillSettles() {
 
 testScanFlowSettlesOnceAtFinalize();
 testSkipStillSettles();
-console.log("science scan flow finalize tests passed");
+
+// 同一Science owner的蓝槽奖励必须经正式Decision入账并随非零checkpoint恢复。
+for (const tileId of ["blue1", "blue2", "blue3", "blue4"]) {
+  const { root } = createCanonicalState();
+  const actor = root.players.players[0];
+  actor.techState.ownedTiles[tileId] = true;
+  actor.techState.blueBoardSlots[tileId] = 1;
+  for (let index = 0; index < 2; index += 1) assert.equal(data.gainData(actor, { root }).ok, true);
+  assert.equal(data.placeDataToComputer(actor).ok, true);
+  root.cards.publicCards = [{ id: "blue-reward-public", cardId: "b_117.webp" }];
+  const composition = createScanComposition(root);
+  const before = composition.stateSourcePort.getSnapshot();
+  const action = composition.inputPort.enumerateActions({ family: "place_data" })[0];
+  assert.ok(action);
+  assert.equal(composition.inputPort.submitAction(action).ok, true);
+  submitDecision(composition, pickChoice(composition,
+    (choice) => choice.target?.target === "blueBonus", "蓝槽必须可放置"));
+  if (tileId === "blue3") {
+    submitDecision(composition, pickChoice(composition,
+      (choice) => choice.target?.publicSlotIndex === 0, "蓝3必须停在精选Decision"));
+  }
+  assert.equal(composition.inspect().phase, "idle");
+  const after = composition.stateSourcePort.getSnapshot();
+  const result = after.players.players[0];
+  if (tileId === "blue1") assert.equal(result.blueBonusResources.credits, 1);
+  if (tileId === "blue2") assert.equal(result.blueBonusResources.energy, 1);
+  if (tileId === "blue3") assert.equal(result.hand.find((card) => card.id === "blue-reward-public").blueBonusOwnerId, actor.id);
+  if (tileId === "blue4") assert.equal(result.resources.publicity - before.players.players[0].resources.publicity, 2);
+  const saved = composition.lifecycle.save();
+  assert.equal(saved.ok, true);
+  const restored = createScanComposition(root);
+  assert.equal(restored.lifecycle.restore(saved.envelope).ok, true);
+  assert.deepEqual(restored.stateSourcePort.getSnapshot(), after);
+  assert.deepEqual(restored.inputPort.enumerateActions({}), composition.inputPort.enumerateActions({}));
+  assert.equal(before.players.players[0].blueBonusResources, undefined, "事务不得污染初始snapshot");
+}
+{
+  const { root } = createCanonicalState();
+  const actor = root.players.players[0];
+  actor.resources.publicity = 6;
+  const stack = root.tech.stacks.orange2;
+  stack.bonusQueue[stack.bonusIndex] = "bonus_1c";
+  stack.bonusId = "bonus_1c";
+  root.cards.publicCards = [{ id: "tech-reward-public", cardId: "b_117.webp" }];
+  const composition = createScanComposition(root);
+  const action = composition.inputPort.enumerateActions({ family: "research_tech" })[0];
+  assert.ok(action);
+  assert.equal(composition.inputPort.submitAction(action).ok, true);
+  submitDecision(composition, pickChoice(composition,
+    (choice) => choice.target?.tileId === "orange2", "正式研究候选必须存在"));
+  submitDecision(composition, pickChoice(composition,
+    (choice) => choice.target?.publicSlotIndex === 0, "科技背面精选必须可选"));
+  const selected = composition.stateSourcePort.getSnapshot().players.players[0].hand
+    .find((card) => card.id === "tech-reward-public");
+  assert.ok(selected);
+  assert.equal(selected.blueBonusOwnerId, undefined, "普通科技精选不得混入蓝槽来源");
+}
+// 真实Science规则分叉，限定一次放槽；只替换估值端口的标量，以隔离上下文分区契约。
+// 不替换执行器，也不把此测试称为完整策略或固定盘面验证。
+{
+  const { root } = createCanonicalState();
+  const actor = root.players.players[0];
+  for (const [tileId, slot] of [["blue1", 1], ["blue2", 2]]) {
+    actor.techState.ownedTiles[tileId] = true;
+    actor.techState.blueBoardSlots[tileId] = slot;
+  }
+  for (let index = 0; index < 3; index += 1) {
+    assert.equal(data.gainData(actor, { root }).ok, true);
+    assert.equal(data.placeDataToComputer(actor).ok, true);
+  }
+  assert.equal(data.gainData(actor, { root }).ok, true);
+  const composition = createScanComposition(root, true);
+  const before = composition.lifecycle.save().envelope;
+  const action = composition.inputPort.enumerateActions({ family: "place_data" })[0];
+  assert.ok(action);
+  function search(useContext) {
+    return composition.counterfactualPort.evaluate([action], {
+      viewer: { playerId: actor.id, role: "player" },
+      maxDepth: 3, maxNodes: 8, maxExecutionNodes: 16,
+      secondaryAgentSearch: {
+        focalSeatId: actor.id, maxProxyDepth: 1,
+        selectRouteTarget: () => "blue:reward",
+        completesRouteTarget: ({ action: current }) => current.target?.target === "blueBonus",
+        selectSuccessors: ({ legalSuccessors }) => legalSuccessors.filter((choice) => choice.target?.target === "blueBonus"),
+        getCompletionFacts(state) {
+          const current = state.players.players[0];
+          const observation = outcomeModel.createDecisionObservation({
+            publicState: { roundNumber: 1, board: {}, players: [observationContract.sanitizePublicPlayer(current)] },
+            selfState: observationContract.sanitizeSelfPlayer(current),
+          }, { seatId: actor.id, stateVersion: state.meta.stateVersion, decisionVersion: 1 });
+          const facts = expectedScore.secondaryAgentCompletionFacts(observation, actor.id);
+          return { score: 0, valuationContext: useContext ? facts.valuationContext : {} };
+        },
+      },
+    })[0];
+  }
+  const distinct = search(true);
+  assert.equal(distinct.status, "settled", JSON.stringify(distinct));
+  assert.equal(distinct.leaves.length, 2, "不同来源/槽位的两条真实完成路线都必须保留");
+  assert.equal(composition.counterfactualPort.getDiagnostics().completionDominatedOriginCount, 0,
+    "不同上下文不得执行支配删除");
+  const equivalent = search(false);
+  assert.equal(equivalent.status, "settled");
+  assert.equal(composition.counterfactualPort.getDiagnostics().completionDominatedOriginCount, 1,
+    "相同上下文与标量仍须执行既有tie-break支配；已生成叶不保证回收");
+  assert.deepEqual(composition.lifecycle.save().envelope, before, "反事实比较不得污染canonical");
+}
+console.log("science scan and blue reward tests passed");

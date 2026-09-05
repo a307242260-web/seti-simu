@@ -1,0 +1,99 @@
+{
+  "date": "2026-09-05",
+  "gitCommit": "bfdfd14b0cecd77a765cc0250ed9fa4bd000ff09",
+  "scope": "第二轮未提交蓝槽候选的设计反例，非固定盘面实验；HEAD不能独立复现未提交估值改动",
+  "initial": {
+    "completion": {
+      "schemaVersion": "seti-secondary-agent-completion-facts-v2",
+      "score": 0,
+      "resources": {
+        "credits": 10,
+        "energy": 2,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 0,
+        "ordinaryCards": 0,
+        "alienCards": 0
+      },
+      "income": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 0,
+        "handSize": 0,
+        "additionalPublicScan": 0
+      },
+      "dataProgress": {
+        "computerPlacedCount": 1,
+        "analyzeReady": false
+      },
+      "ownedTechIds": [
+        "blue2"
+      ]
+    },
+    "liquidValue": 4
+  },
+  "blueSource": {
+    "completion": {
+      "schemaVersion": "seti-secondary-agent-completion-facts-v2",
+      "score": 0,
+      "resources": {
+        "credits": 10,
+        "energy": 2,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 0,
+        "ordinaryCards": 0,
+        "alienCards": 0
+      },
+      "income": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 0,
+        "handSize": 0,
+        "additionalPublicScan": 0
+      },
+      "dataProgress": {
+        "computerPlacedCount": 1,
+        "analyzeReady": false
+      },
+      "ownedTechIds": [
+        "blue2"
+      ]
+    },
+    "liquidValue": 12
+  },
+  "occupiedSlot": {
+    "completion": {
+      "schemaVersion": "seti-secondary-agent-completion-facts-v2",
+      "score": 0,
+      "resources": {
+        "credits": 10,
+        "energy": 2,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 0,
+        "ordinaryCards": 0,
+        "alienCards": 0
+      },
+      "income": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 0,
+        "handSize": 0,
+        "additionalPublicScan": 0
+      },
+      "dataProgress": {
+        "computerPlacedCount": 1,
+        "analyzeReady": false
+      },
+      "ownedTechIds": [
+        "blue2"
+      ]
+    },
+    "liquidValue": 0
+  },
+  "conclusion": "完成态事实相同，但来源与槽位改变使估值不同；不得以旧事实支配删除。"
+}

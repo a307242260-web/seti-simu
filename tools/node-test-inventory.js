@@ -49,6 +49,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值、V、搜索优先级和计划优胜路径", "宣传门槛、资源库存或未来收益使低正式分终局叶胜出"),
     entry("randomizer/game/ai/resource-value.test.js", "policy/heuristic-evaluator", "Policy、标准叶、轻量事实与V共用资源单价和真实未来收入窗口", "钱电单价颠倒、折价方向反转、末轮虚构收入或非钱电被错误折价"),
     entry("randomizer/game/ai/research-potential.test.js", "policy/heuristic-evaluator", "宣传预期绑定正式科技与费用并以状态差分扣回已兑现机会", "无科技仍跨门槛加60、研究后重复计宣传预期或标准叶与搜索事实不一致"),
+    entry("randomizer/game/ai/blue-bonus-value.test.js", "policy/heuristic-evaluator", "蓝槽来源留存与当前槽机会按状态差估值，消费后扣回", "其他来源净收益误归蓝槽、分析清空丢来源、消费后仍重复估值或超槽容量数据虚增价值"),
     entry("randomizer/game/ai/machine-player-coordinator.test.js", "policy/machine-player-coordinator", "机器人玩家协调器编排：席位决策函数注册表 + 读边界 + 计划复用多步消费 + 执行，失败直接抛错", "未注册席位/非法 actionId/执行失败被静默降级或复用路径污染决策"),
     entry("randomizer/game/ai/plan-continuation.test.js", "policy/plan-continuation", "计划延续诊断只读标准观测/outcome：目录指纹剥离资源缺口、计划下一步与语义键对齐、配对预测器可复算", "指纹含资源缺口误判本席行动、语义键随枚举序号漂移或诊断写入规则状态"),
     entry("randomizer/training/heuristic-policy-turn-report.test.js", "policy/heuristic-policy", "固定盘面报告保留根行动、目标路线与剪枝漏斗", "报告只展示赢家和前三备选而无法解释节点内部搜索"),
@@ -70,7 +71,7 @@ module.exports = Object.freeze({
 
     entry("randomizer/game/data/data.test.js", "rules/data", "数据获得、放置、分析与容量不变量", "满容量、未知目标或重复放置成功"),
     entry("randomizer/game/data/nebula.test.js", "rules/data", "星云数据槽与奖励结算", "非法槽位或重复奖励被接受"),
-    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描流串尾 SCAN_FINALIZE 统一扇区结算：不逐节点结算、同 flow 完成扇区不提前重置（后续信号只放额外标记）、跳过任意节点仍结算一次", "SETTLE 逐节点触发、额外标记缺失、跳过末节点后不结算或一次行动结算多次"),
+    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描串尾统一结算；四种蓝槽正式奖励、来源恢复与完成路线分区", "重复/漏扇区结算、蓝槽来源未入账、普通科技精选误归蓝槽、恢复丢来源或跨估值上下文支配"),
 
     entry("randomizer/game/tech/tech.test.js", "rules/tech", "科技供应、取得、蓝槽与 owner 规则", "被占/被封锁科技仍取得"),
     entry("randomizer/game/tech/bonuses.test.js", "rules/tech", "科技奖励按 tile/slot 唯一结算", "重复触发或错误颜色奖励"),

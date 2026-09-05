@@ -1719,6 +1719,9 @@
       }
 
       function completionFactsDominate(left, right) {
+        // 新估值依赖来源、槽位及研究机会；不同上下文不能用总资源替代。
+        if (stableSerialize(left.facts.valuationContext)
+          !== stableSerialize(right.facts.valuationContext)) return false;
         const scalarPaths = [
           ["score"],
           ...[

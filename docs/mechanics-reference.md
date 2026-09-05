@@ -26,6 +26,9 @@
 - `resources`：`credits`、`energy`、`publicity`、`availableData`、`additionalPublicScan`、`handSize`、`score`。
 - `income`：收入等级记录，字段与部分资源同名（含 `additionalPublicScan`）。
 - `hand` / `reservedCards`：手牌与保留牌。`handSize` 始终同步为 `hand.length`。
+- `blueBonusResources`：蓝槽发放的钱/电尚未消费量，用于AI来源估值；正式支付优先扣减该
+  留存，但不改变实际费用。蓝3精选的卡实例带`blueBonusOwnerId`，普通精选不带。
+  两者是随正式状态保存/撤销的来源信息，不是新增资源或额外奖励，详见`docs/ai-design.md`。
 - 起始手牌：每名玩家开局从 140 张普通牌和 42 张 DLC 牌组成的牌库中随机盲抽 4 张，不按牌库前几张固定发牌。
 - 公共牌区：进入初始选择时立即补满 3 张公共牌，玩家选择公司和初始牌时即可看到这 3 张牌。
 - `techState`：玩家已拥有科技 `ownedTiles`，以及蓝色科技放置位 `blueBoardSlots`。

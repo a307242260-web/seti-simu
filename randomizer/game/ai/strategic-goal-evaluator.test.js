@@ -2133,14 +2133,11 @@ function evaluate(candidateAction, before, after, status = "settled") {
       roundNumber: 1,
       finalRoundNumber: 4,
     });
-    // 科技价值 = 每轮基础值 × 3 + 蓝科技数据位槽收益
-    // （蓝科技预期 4 次槽位 × 槽位单位价值 4-5，R1 轮次权重 1；首发/背面即时分
-    //   由 actualScoreDelta 捕获，techValue 只计未来收益避免重复）
+    // 蓝槽未来每轮4/3次×0.5，钱电按实际未来轮次折价；当前槽机会独立计算。
     const blueSlotBonus = ["blue1", "blue2", "blue3", "blue4"].includes(tileId)
-      ? ({ blue1: 5, blue2: 5, blue3: 4, blue4: 5 })[tileId] * 4
+      ? ({ blue1: 40 / 3, blue2: 32 / 3, blue3: 12, blue4: 16 })[tileId]
       : 0;
-    assert.equal(breakdown.infrastructure.techValue,
-      perRound * 3 + blueSlotBonus,
+    assert.ok(Math.abs(breakdown.infrastructure.techValue - (perRound * 3 + blueSlotBonus)) < 1e-9,
       `${tileId} 必须按独立科技轮次价值 + 蓝槽收益计算`);
   }
 }
@@ -2255,10 +2252,10 @@ function evaluate(candidateAction, before, after, status = "settled") {
     }),
   );
   assert.equal(result.actualScoreDelta, 5);
-  assert.equal(result.techValue, 10 + 5 * 4 * (1 / 3),
-    "blue1 第3轮取得：每轮10×剩余1轮 + 蓝槽预期4次×5×轮次权重(1/3)");
+  assert.ok(Math.abs(result.techValue - (10 + 10 / 3)) < 1e-9,
+    "blue1 第3轮取得：基础未来10 + 第4轮单价5×4/3次×0.5");
   assert.equal(result.incomeValue, 4);
-  assert.equal(result.score, 5 + 10 + 5 * 4 * (1 / 3) + 4,
+  assert.ok(Math.abs(result.score - (5 + 10 + 10 / 3 + 4)) < 1e-9,
     "同一真实叶的分数、科技和收入可以合并，但中间资源不得重复计分");
 }
 

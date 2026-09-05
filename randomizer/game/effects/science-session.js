@@ -1436,7 +1436,9 @@
           if (bonus.type === "income" && listIncomeChoices(root, actor.id).length) {
             spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.INCOME, actor.id, {}, "choose_card"));
           } else if (bonus.type === "choose_card" && listPickCardChoices(root).length) {
-            spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, actor.id, {}, "choose_card"));
+            spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, actor.id, {
+              blueBonusSource: result.placementKind === "blueBonus",
+            }, "choose_card"));
           } else {
             appendResourceBonus(actor, bonus, events, "blueTechScore");
           }
@@ -1502,6 +1504,10 @@
         );
         const result = drawContext.pickFromPublic(actor, legal.target.publicSlotIndex);
         if (!result.ok) return result;
+        if (effect.payload?.blueBonusSource) {
+          if (!result.card || !actor.hand.includes(result.card)) throw new Error("蓝槽精选奖励缺少已入手的真实卡实例");
+          result.card.blueBonusOwnerId = actor.id;
+        }
         return scienceResult(state, root, EFFECT_TYPES.PICK_CARD, {
           irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
           rng: [{ owner: DOMAIN_ID, cursor: root.meta?.rngState?.science?.cursor || 0 }],
