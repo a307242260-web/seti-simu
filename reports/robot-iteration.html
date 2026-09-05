@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T19:12:17.390Z",
+  "builtAt": "2026-09-05T19:25:43.659Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "082d3e12",
-  "currentBaseline": "income-reserve-r3i1-20260906",
+  "headCommit": "cf4280fd",
+  "currentBaseline": "card-income-id-r3c1-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -160,6 +160,22 @@ const REGISTRY = {
         "scoreSourceNote": "同提交从200步续跑至667步，正式终局79/134/117/97、均106.75；比修正前S1均98.5提高8.25，比最近通过R1均99.75提高7。蓝科技重复估值修正符合公式，第二轮按固定盘面验收通过；47次搜索触顶及两项既有测试失败仍显式保留，不外推整体搜索完备性。"
       },
       {
+        "value": 105.5,
+        "white": 138,
+        "bestPlayer": {
+          "color": "白",
+          "score": 138
+        },
+        "versionId": "card-income-id-r3c1-20260906",
+        "name": "卡牌收入选择身份修复（第三轮仍未通过）",
+        "runKey": "22cf8cea.cf4280fd.full",
+        "provenance": "save-final",
+        "steps": 583,
+        "wallMs": 128787,
+        "msPerStep": 221,
+        "scoreSourceNote": "583步正式终局79/104/101/138，均105.5，仍低于已通过R2e基线106.75达1.25分，第三轮未通过。卡牌收入身份与owner/恢复/后继效果验证通过；前200步动作摘要及第201至235步已有失败前动作一致，第236步正确通过原报错点。相对上一完成候选89.25的提升包含收入准备与接口修复，不单独归因于本接口提交；收入准备原候选没有终局可比较。两个指定既有测试失败保留。"
+      },
+      {
         "value": 100.25,
         "white": 130,
         "bestPlayer": {
@@ -174,26 +190,633 @@ const REGISTRY = {
         "wallMs": 407948,
         "msPerStep": 800,
         "scoreSourceNote": null
-      },
-      {
-        "value": 99.75,
-        "white": 83,
-        "bestPlayer": {
-          "color": "棕",
-          "score": 147
-        },
-        "versionId": "terminal-value-r1-20260905",
-        "name": "第一轮：终局估值正确性",
-        "runKey": "16bce41e.d9283ce5.full",
-        "provenance": "save-final",
-        "steps": 535,
-        "wallMs": 264586,
-        "msPerStep": 495,
-        "scoreSourceNote": null
       }
     ]
   },
   "versions": [
+    {
+      "id": "card-income-id-r3c1-20260906",
+      "name": "卡牌收入选择身份修复（第三轮仍未通过）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "cf4280fd",
+      "commits": [
+        {
+          "hash": "cf4280fd",
+          "date": "2026-09-06",
+          "subject": "卡牌收入选择统一生成正式动作身份"
+        }
+      ],
+      "summary": "卡牌收入执行器复用正式选择生成函数，补齐动作身份、owner和版本字段",
+      "diffStat": "135 files changed, 156891 insertions(+), 602 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/audit-income-card-reserve-witness-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-mercury-scan-directory-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-plan-boundaries-r3-20260905.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r2e-expectation-20260905.js",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-actual-opening-plan-20260906.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-alien-dependency-input-20260905.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-plan-realization-20260906.js",
+          "insertions": 79,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-route-selection-20260906.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-second-round-20260906.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-first-divergence-choice-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-legacy-payment-boundary-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-access-dependency-20260906.js",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-source-order-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-boundary-20260906.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-plan-origin-20260906.js",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-replan-realization-20260906.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-stale-scan-execution-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-sector-directory-cache-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-income-reserve-failure-20260906.js",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-first-divergence-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-scan-earth-20260906.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-sector-directory-full-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r3-brown-decision-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-income-identity-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-income-reserve-search-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-plan-steps-r3-20260905.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-scan-earth-20260906.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-20260906.js",
+          "insertions": 88,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-boundaries-20260906.js",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 49,
+          "deletions": 15
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 93,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 38,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.js",
+          "insertions": 18,
+          "deletions": 35
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.test.js",
+          "insertions": 85,
+          "deletions": 23
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 10,
+          "deletions": 6
+        },
+        {
+          "file": "randomizer/game/ai/outcome-projection.test.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 217,
+          "deletions": 40
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 232,
+          "deletions": 349
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.js",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-scan-flow.test.js",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 25,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 33,
+          "deletions": 34
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905-review.md",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.full.action-log.html",
+          "insertions": 2103,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.quick-200.action-log.html",
+          "insertions": 732,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-income-identity-design-20260906.md",
+          "insertions": 16,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-income-identity-performance-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-income-identity-review-20260906.md",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-income-identity-verification-20260906-v2.json",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "22cf8cea.cf4280fd.quick-200.json",
+          "recordPath": "reports/research/22cf8cea.cf4280fd.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 44565,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "cf4280fd",
+          "createdAt": "2026-09-05T19:18:04.529Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步阶段均38.5，非终局；动作和状态摘要与收入准备候选完全一致。完整局同提交从该存档续跑。",
+          "scores": {
+            "player-blue": 35,
+            "player-green": 22,
+            "player-brown": 46,
+            "player-white": 51
+          },
+          "avgScore": 38.5,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-card-income-id-r3c1-20260906-cf4280fd-quick-200-v104.json",
+          "reportPath": "reports/iteration/card-income-id-r3c1-20260906/22cf8cea.cf4280fd.quick-200.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "22cf8cea.cf4280fd.full.json",
+          "recordPath": "reports/research/22cf8cea.cf4280fd.full.json",
+          "mode": "full",
+          "steps": 583,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 128787,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "cf4280fd",
+          "createdAt": "2026-09-05T19:20:24.990Z",
+          "resumeStep": 200,
+          "seed": "seti-free-analyze-v1",
+          "note": "583步正式终局79/104/101/138，均105.5，仍低于已通过R2e基线106.75达1.25分，第三轮未通过。卡牌收入身份与owner/恢复/后继效果验证通过；前200步动作摘要及第201至235步已有失败前动作一致，第236步正确通过原报错点。相对上一完成候选89.25的提升包含收入准备与接口修复，不单独归因于本接口提交；收入准备原候选没有终局可比较。两个指定既有测试失败保留。",
+          "scores": {
+            "player-blue": 79,
+            "player-green": 104,
+            "player-brown": 101,
+            "player-white": 138
+          },
+          "avgScore": 105.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 79,
+              "base": 51,
+              "tile": 24,
+              "card": 4,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 4,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 6,
+                "scanScore": 8,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 104,
+              "base": 77,
+              "tile": 27,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 26,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 101,
+              "base": 63,
+              "tile": 38,
+              "card": 0,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 4,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 27,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            },
+            "player-white": {
+              "total": 138,
+              "base": 76,
+              "tile": 62,
+              "card": 0,
+              "tileScoresById": {
+                "a": 44,
+                "b": 8,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 44,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 6,
+                "orbitScore": 9,
+                "scanScore": 14,
+                "taskCardScore": 7,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-card-income-id-r3c1-20260906-cf4280fd-full-v288.json",
+          "reportPath": "reports/iteration/card-income-id-r3c1-20260906/22cf8cea.cf4280fd.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "22cf8cea.cf4280fd.quick-200",
+            "path": "reports/iteration/card-income-id-r3c1-20260906/22cf8cea.cf4280fd.quick-200.action-log.html",
+            "mode": "quick-200"
+          },
+          {
+            "runKey": "22cf8cea.cf4280fd.full",
+            "path": "reports/iteration/card-income-id-r3c1-20260906/22cf8cea.cf4280fd.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "income-reserve-r3i1-20260906",
       "name": "收入资源准备保牌（全盘报错，未验收）",
@@ -541,7 +1164,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
