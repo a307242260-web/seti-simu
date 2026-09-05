@@ -11,6 +11,7 @@ const actionOutcomes = [
     actionId: "launch:a",
     status: "settled",
     confidence: "high",
+    searchCompleteness: { status: "incomplete", reasons: ["beam-budget"] },
     leaves: [{ leafId: "leaf-1" }, { leafId: "leaf-2" }],
   },
   {
@@ -62,6 +63,9 @@ const diagnostics = {
   rootTargetCount: 2,
   executedNodeCount: 9,
   maxFrontierOriginCount: 3,
+  maxFrontierNodes: 256,
+  maxRetainedFrontierSize: 256,
+  beamPrunedOriginCount: 7,
   transpositionHitCount: 1,
   completedGoalTransitionCount: 2,
   maxCompletedGoalDepth: 2,
@@ -121,6 +125,10 @@ const trace = buildSearchTrace(
 );
 
 assert.equal(trace.legalActionCount, 2);
+assert.deepEqual(trace.rootCandidates[0].searchCompleteness,
+  { status: "incomplete", reasons: ["beam-budget"] });
+assert.equal(trace.beamPrunedOriginCount, 7);
+assert.equal(trace.maxFrontierNodes, 256);
 assert.equal(trace.strategicCandidateCount, 1);
 assert.equal(trace.rootCandidates[0].selected, true);
 assert.equal(trace.rootCandidates[0].leafCount, 2);

@@ -30,8 +30,6 @@ function assertSourceNeutral(actor) {
   const untagged = observe(ordinary);
   assert.deepEqual(evaluator.evaluateStateValue(tagged, actor.id),
     evaluator.evaluateStateValue(untagged, actor.id));
-  assert.deepEqual(evaluator.secondaryAgentCompletionFacts(tagged, actor.id),
-    evaluator.secondaryAgentCompletionFacts(untagged, actor.id));
   close(delta(tagged, untagged).total, 0);
 }
 
@@ -89,27 +87,4 @@ assertSourceNeutral(blue3);
 assert.deepEqual(players.createPlayer(blue3).hand[0], heldCard);
 assert.throws(() => players.createPlayer({ resources: { energy: 0 }, blueBonusResources: { energy: 1 } }), /不超过/);
 
-// 完成态抽象不能抹去估值依赖；比较器的路线保留另由反事实行为测试验证。
-const completionActor = player();
-players.gainResources(completionActor, { energy: 2 });
-const completionOf = () => evaluator.secondaryAgentCompletionFacts(observe(completionActor), completionActor.id);
-const originalCompletion = completionOf();
-completionActor.blueBonusResources.energy = 1;
-const sourceCompletion = completionOf();
-assert.deepEqual(sourceCompletion.resources, originalCompletion.resources);
-assert.deepEqual(sourceCompletion.valuationContext, originalCompletion.valuationContext);
-completionActor.blueBonusResources.energy = 0;
-completionActor.dataState.placedTokens.push({ placementKind: "blueBonus", blueSlot: 1 });
-assert.notDeepEqual(completionOf().valuationContext, originalCompletion.valuationContext);
-const orderingObservation = structuredClone(observe(completionActor));
-orderingObservation.publicState.players[0].dataProgress.blueSlots.push({
-  tileId: "blue1", slot: 2, occupied: false, unlocked: true,
-});
-const orderedCompletion = evaluator.secondaryAgentCompletionFacts(orderingObservation, completionActor.id);
-orderingObservation.publicState.players[0].dataProgress.blueSlots.reverse();
-assert.deepEqual(evaluator.secondaryAgentCompletionFacts(orderingObservation, completionActor.id), orderedCompletion);
-const heldCompletion = evaluator.secondaryAgentCompletionFacts(observe(blue3), blue3.id);
-blue3.hand[0].id = "another-blue-card-instance";
-assert.notDeepEqual(evaluator.secondaryAgentCompletionFacts(observe(blue3), blue3.id).valuationContext,
-  heldCompletion.valuationContext);
 console.log("blue bonus value tests passed");

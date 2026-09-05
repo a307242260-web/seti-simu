@@ -15,6 +15,11 @@
     "settled", "unresolved", "failed", "stale",
   ]));
   const OUTCOME_CONFIDENCES = Object.freeze(new Set(["high", "low", "none"]));
+  const SEARCH_INCOMPLETE_REASONS = new Set([
+    "node-budget", "beam-budget", "leaf-budget", "conditional-depth", "goal-depth",
+    "untargeted-depth", "representative-choice", "information-barrier", "branch-failed",
+    "not-evaluated",
+  ]);
   const ASSET_PATHS = Object.freeze({
     credits: "outcomeProjection.assets.credits",
     energy: "outcomeProjection.assets.energy",
@@ -605,6 +610,20 @@
       }
       if (!OUTCOME_STATUSES.has(outcome.status) || !OUTCOME_CONFIDENCES.has(outcome.confidence)) {
         throw new TypeError(`action outcome status/confidence 非法: ${outcome.status}/${outcome.confidence}`);
+      }
+      if (outcome.searchCompleteness != null) {
+        const { status, reasons } = outcome.searchCompleteness;
+        const validReasons = Array.isArray(reasons)
+          && reasons.every((reason) => SEARCH_INCOMPLETE_REASONS.has(reason))
+          && JSON.stringify(reasons) === JSON.stringify([...new Set(reasons)].sort());
+        const validStatus = status === "complete" ? reasons?.length === 0
+          : status === "incomplete" ? reasons?.length > 0 && !reasons.includes("not-evaluated")
+            : status === "not-evaluated" && outcome.status === "unresolved"
+              && JSON.stringify(reasons) === '["not-evaluated"]'
+              && !(outcome.leaves || []).length;
+        if (!validReasons || !validStatus) {
+          throw new TypeError("action outcome searchCompleteness 非法或与结果状态不一致");
+        }
       }
       if (outcome.rootObservation?.schemaVersion !== OBSERVATION_SCHEMA_VERSION) {
         throw new TypeError("action outcome root 必须使用标准 Decision observation");

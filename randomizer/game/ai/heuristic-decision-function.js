@@ -87,6 +87,7 @@ function completePolicyOutcomeSet(actions, evaluated, rootObservation) {
       status: "unresolved",
       confidence: "none",
       code: "STRATEGIC_GOAL_NOT_EVALUATED",
+      searchCompleteness: { status: "not-evaluated", reasons: ["not-evaluated"] },
       rootObservation,
       leaves: [],
     };
@@ -127,6 +128,8 @@ function createHeuristicDecisionFunction(options = {}) {
       ...(evaluateOptions.maxExecutionNodes
         ? { maxExecutionNodes: evaluateOptions.maxExecutionNodes }
         : {}),
+      maxFrontierNodes: 256,
+      maxMilliseconds: 10000,
       stopAtPassDecisionBoundary: evaluateOptions.stopAtPassDecisionBoundary === true,
       maxFrontierPerRoot: evaluateOptions.maxFrontierPerRoot
         || (evaluateOptions.secondaryAgentSearch ? 1 : 8),
@@ -138,13 +141,11 @@ function createHeuristicDecisionFunction(options = {}) {
         focalSeatId: seatId,
         maxProxyDepth: evaluateOptions.maxProxyDepth || 15,
         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
-        completeTargetCatalog: evaluateOptions.completeTargetCatalog === true,
         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
         completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
         advanceRoutePlan: expectedScoreEvaluator.advanceSecondaryAgentRoutePlan,
-        getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
       } : null,
       getBranchPriority({
         rootObservation,
@@ -212,7 +213,6 @@ function createHeuristicDecisionFunction(options = {}) {
         maxNodes: 128,
         maxExecutionNodes: 4096,
         secondaryAgentSearch: true,
-        completeTargetCatalog: config.completeTargetCatalog === true,
         traceGoalClusters: config.traceCounterfactualGoalClusters,
         maxProxyDepth: 15,
       })

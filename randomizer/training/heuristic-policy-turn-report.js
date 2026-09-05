@@ -475,6 +475,9 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
       selected: outcome.actionId === selectedActionId,
       status: outcome.status,
       confidence: outcome.confidence,
+      searchCompleteness: outcome.searchCompleteness
+        ? Object.freeze({ status: outcome.searchCompleteness.status,
+          reasons: Object.freeze([...outcome.searchCompleteness.reasons]) }) : null,
       leafCount: outcome.leaves?.length || 0,
       selectable: Boolean(evaluation?.selectable),
       value: evaluation?.value ?? evaluation?.score ?? null,
@@ -588,6 +591,9 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
       Number(diagnostics?.sharedPhysicalExecutionOriginCount) || 0,
     transpositionHitCount: Number(diagnostics?.transpositionHitCount) || 0,
     maxFrontierOriginCount: Number(diagnostics?.maxFrontierOriginCount) || 0,
+    maxFrontierNodes: diagnostics?.maxFrontierNodes ?? null,
+    maxRetainedFrontierSize: diagnostics?.maxRetainedFrontierSize ?? null,
+    beamPrunedOriginCount: diagnostics?.beamPrunedOriginCount ?? null,
     completedGoalTransitionCount: Number(diagnostics?.completedGoalTransitionCount) || 0,
     maxCompletedGoalDepth: Number(diagnostics?.maxCompletedGoalDepth) || 0,
     completionDominatedOriginCount:
@@ -1184,7 +1190,7 @@ function renderSearchTrace(trace) {
   const rootRows = trace.rootCandidates.map((root) => `<tr class="${root.selected ? "selected-search-row" : ""}">
     <td>${root.rank == null ? "—" : `#${root.rank}`}</td>
     <td><strong>${escapeHtml(root.summary)}</strong><small>${escapeHtml(root.actionId)}</small></td>
-    <td>${escapeHtml(root.status)}${root.selectable ? " · 可比较" : " · 未进入终点比较"}</td>
+    <td>${escapeHtml(root.status)}${root.selectable ? " · 可比较" : " · 未进入终点比较"}<small>${escapeHtml(root.searchCompleteness ? `${root.searchCompleteness.status}: ${root.searchCompleteness.reasons.join(", ")}` : "旧记录无完整性字段")}</small></td>
     <td>${root.leafCount}</td>
     <td>${escapeHtml(formatTraceTargetId(root.routeTargetId))}</td>
     <td>${root.primaryValue == null ? "—" : escapeHtml(formatNumber(root.primaryValue))}</td>
@@ -1222,15 +1228,17 @@ function renderSearchTrace(trace) {
         <span><small>最大已完成目标深度</small><strong>${trace.maxCompletedGoalDepth} / 15</strong></span>
         <span><small>最大 frontier origin</small><strong>${trace.maxFrontierOriginCount}</strong></span>
         <span><small>状态共享命中</small><strong>${trace.transpositionHitCount}</strong></span>
-        <span><small>完成态 Pareto 删除</small><strong>${trace.completionDominatedOriginCount}</strong></span>
+        <span><small>全局队列峰值 / 容量</small><strong>${trace.maxRetainedFrontierSize ?? "—"} / ${trace.maxFrontierNodes ?? "—"}</strong></span>
+        <span><small>beam 淘汰来源</small><strong>${trace.beamPrunedOriginCount ?? "—"}</strong></span>
+        <span><small>旧版完成态支配删除</small><strong>${trace.completionDominatedOriginCount}</strong></span>
         <span><small>等价 choice 省略</small><strong>${trace.targetEquivalentChoicePrunedCount}</strong></span>
-        <span><small>后续目标调度省略</small><strong>${trace.targetSchedulerPrunedCount}</strong></span>
+        <span><small>旧版后续目标调度省略</small><strong>${trace.targetSchedulerPrunedCount}</strong></span>
         <span><small>不可达路线 origin</small><strong>${trace.unreachableRouteOriginCount}</strong></span>
         <span><small>执行保护</small><strong class="${trace.executionLimitReached ? "negative" : "positive"}">${trace.executionLimitReached ? "触发" : "未触发"}</strong></span>
       </div>
       <h5>第一层：根行动及其最终叶</h5>
       <div class="trace-table-wrap"><table class="trace-table"><thead><tr><th>排名</th><th>根行动</th><th>结果</th><th>完整叶</th><th>胜出叶目标</th><th>一级收益</th><th>净值</th><th>胜出叶行动链</th></tr></thead><tbody>${rootRows}</tbody></table></div>
-      <h5>第二层：目标内路线展开与 Pareto 收敛</h5>
+      <h5>第二层：目标内路线展开与完成结果（支配列仅用于旧记录）</h5>
       <div class="trace-table-wrap"><table class="trace-table"><thead><tr><th>结果目标</th><th>绑定入口</th><th>不同入口状态</th><th>执行 origin</th><th>完成</th><th>保留</th><th>被支配</th><th>完成路线族</th></tr></thead><tbody>${targetRows}</tbody></table></div>
       <h5>物理节点花在哪里</h5>
       <div class="node-family-list">${trace.nodeFamilies.map((entry) => `<span><small>${escapeHtml(entry.family)}</small><strong>${entry.count}</strong></span>`).join("")}</div>

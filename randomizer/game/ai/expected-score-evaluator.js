@@ -27,12 +27,11 @@
   const EVALUATION_MODEL = "strategic-goal-search-v3";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v3";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v18";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v19";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   // 统一搜索：未绑定分支每层最多展开的未绑定后继数（预算内优先级截断，见
   // docs/project-progress/unified-search-design-20260817.md §3 项 9）。
-  const MAX_UNIFIED_SUCCESSORS = 4;
   // 统一搜索的"需求放行"family：目的型动作——本身没有独立价值，价值来自
   // "满足当前需求"（quick_trade 补资源缺口 / card_corner 弃牌角标收益 /
   // industry 公司能力）。unified 下这些动作凭需求进搜索（requiresRootCounterfactual
@@ -1019,54 +1018,6 @@
     if (!launch) return planId;
     if (launch.rocketId == null) throw new TypeError("PROBE_LAUNCH_ID_MISSING: 发射事件缺少正式火箭身份");
     return `probe:rocket:${launch.rocketId}:${planId.slice("probe:launch:".length)}`;
-  }
-
-  function secondaryAgentCompletionFacts(observation, seatId) {
-    const facts = outcomeModel.createStrategicFacts(observation, seatId);
-    const sortRows = (rows) => rows.sort((left, right) => (
-      JSON.stringify(left).localeCompare(JSON.stringify(right))
-    ));
-    return {
-      schemaVersion: "seti-secondary-agent-completion-facts-v4",
-      // 机会与手牌身份仍影响后续用途；来源标签不改变资源的可支付性或估值。
-      valuationContext: {
-        terminal: facts.terminal,
-        roundNumber: facts.roundNumber,
-        finalRoundNumber: facts.finalRoundNumber,
-        blueSlots: sortRows((facts.dataProgress?.blueSlots || []).map((slot) => [
-          String(slot.tileId), Number(slot.slot), Boolean(slot.occupied), Boolean(slot.unlocked),
-        ])),
-        researchOptions: sortRows((facts.researchOptions || []).map((option) => [
-          String(option.tileId), Number(option.publicityCost),
-        ])),
-        handCards: sortRows((observation?.selfState?.hand || [])
-          .filter(Boolean)
-          .map((card) => [String(card.id), String(card.cardId)])),
-      },
-      score: finite(facts.realizedScore) + finite(facts.securedEndGameBonus),
-      resources: {
-        credits: finite(facts.resourceFacts?.credits),
-        energy: finite(facts.resourceFacts?.energy),
-        publicity: finite(facts.resourceFacts?.publicity),
-        availableData: finite(facts.resourceFacts?.availableData),
-        additionalPublicScan: finite(facts.resourceFacts?.additionalPublicScan),
-        ordinaryCards: finite(facts.resourceFacts?.ordinaryCards),
-        alienCards: finite(facts.resourceFacts?.alienCards),
-      },
-      income: {
-        credits: finite(facts.income?.credits),
-        energy: finite(facts.income?.energy),
-        publicity: finite(facts.income?.publicity),
-        availableData: finite(facts.income?.availableData),
-        handSize: finite(facts.income?.handSize),
-        additionalPublicScan: finite(facts.income?.additionalPublicScan),
-      },
-      dataProgress: {
-        computerPlacedCount: finite(facts.dataProgress?.computerPlacedCount),
-        analyzeReady: Boolean(facts.dataProgress?.analyzeReady),
-      },
-      ownedTechIds: [...new Set(facts.ownedTechIds || [])].map(String).sort(),
-    };
   }
 
   function rawProbeRequirements(observation) {
@@ -2758,24 +2709,18 @@
             target.planId,
           ];
         }
-        const scheduledCatalog = (
-          input.focalProxyDepth > 0
-          && targetCatalog.length
-          && input.completeTargetCatalog !== true
-        )
-          ? [[...targetCatalog].sort((left, right) => {
-            const leftKey = targetResourceLowerBound(left);
-            const rightKey = targetResourceLowerBound(right);
-            for (let index = 0; index < leftKey.length; index += 1) {
-              if (leftKey[index] !== rightKey[index]) {
-                return typeof leftKey[index] === "number"
-                  ? leftKey[index] - rightKey[index]
-                  : String(leftKey[index]).localeCompare(String(rightKey[index]));
-              }
+        const scheduledCatalog = [...targetCatalog].sort((left, right) => {
+          const leftKey = targetResourceLowerBound(left);
+          const rightKey = targetResourceLowerBound(right);
+          for (let index = 0; index < leftKey.length; index += 1) {
+            if (leftKey[index] !== rightKey[index]) {
+              return typeof leftKey[index] === "number"
+                ? leftKey[index] - rightKey[index]
+                : String(leftKey[index]).localeCompare(String(rightKey[index]));
             }
-            return 0;
-          })[0]]
-          : targetCatalog;
+          }
+          return 0;
+        });
         const targeted = scheduledCatalog.flatMap((target) => (
           target.compatibleActionIds.map((actionId) => ({
             ...legalById.get(actionId),
@@ -2784,13 +2729,6 @@
             routeResultTargetIds: target.resultTargetIds,
           }))
         ));
-        const targetSchedulerPrunedCount = targetCatalog.length - scheduledCatalog.length;
-        if (targeted.length && targetSchedulerPrunedCount > 0) {
-          targeted[0] = {
-            ...targeted[0],
-            targetSchedulerPrunedCount,
-          };
-        }
         const controls = successors
           .filter((action) => CONTROL_FAMILIES.has(action.family))
           .map((action) => ({
@@ -2799,12 +2737,7 @@
             routePlanId: null,
             routeResultTargetIds: [],
           }));
-        // 统一搜索：把"只留目标绑定动作"的后继门控改为"targeted + 未绑定后继（按
-        // 立即价值截断 top-K）+ controls"合并返回——搜索在每个节点都能尝试所有动作，
-        // 覆盖不再受目标清单限制；但未绑定后继必须按立即价值截断，否则每层 17 个
-        // 后继全展开（分支因子 17，配合未绑定浅尝 3 层仍到 17³ 节点）吃光预算。
-        // 优先级由 getBranchPriority 在展开时再排序；此处的 top-K 是"预算内优先级
-        // 截断"，低价值后继仍会在根/上层被尝试（见 §3 设计文档）。
+        // 全部已准入目标及未绑定后继交给全局beam；资源下界只排序，不删目标。
         {
           // quick 根截断（2026-08-21 用户口径"需要了再做"恢复，405ee903 误删修正）：
           // 根动作是 quick 时，其叶价值只算立即效果，不搭后续主行动的便车。
@@ -2849,8 +2782,7 @@
             .sort((left, right) => (
               compareUntargetedSuccessor(right, left, input.branchObservation)
               || String(left.actionId).localeCompare(String(right.actionId))
-            ))
-            .slice(0, MAX_UNIFIED_SUCCESSORS);
+            ));
           return [...targeted, ...untargeted, ...controls];
         }
       }
@@ -3477,7 +3409,6 @@
     requiresRootCounterfactual,
     completesSecondaryAgentRouteTarget,
     advanceSecondaryAgentRoutePlan,
-    secondaryAgentCompletionFacts,
     evaluateState,
     evaluateStateValue,
     evaluateStrategicFactsPriority,

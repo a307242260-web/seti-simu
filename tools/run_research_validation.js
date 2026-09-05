@@ -23,7 +23,6 @@
  *   --seed <seed>      盘面 seed，默认 seti-free-analyze-v1
  *   --config k=v,...   行为配置开关：planContinuationFastPath /
  *                      planNewTurnReuse / vStateValueEnabled /
- *                      completeTargetCatalog /
  *                      traceCounterfactualGoalClusters / compactReplay /
  *                      aiDifficulty / activePlayerCount（搜索机制统一，
  *                      无 unifiedSearch 分桶开关）
@@ -56,7 +55,6 @@ const FLAG_KEYS = [
   "planContinuationFastPath",
   "planNewTurnReuse",
   "vStateValueEnabled",
-  "completeTargetCatalog",
   "traceCounterfactualGoalClusters",
   "compactReplay",
 ];

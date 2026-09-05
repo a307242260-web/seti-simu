@@ -65,7 +65,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   输入复制在单次调用内复用已完整校验的副本，先检查祖先循环，再查询副本缓存；不跨请求
   缓存，不绕过校验。返回图深冻结且与来源隔离，内部相同事实可以共享只读引用。
 - `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用一份实现）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子（sim 训练补记 replay/reward，browser 空操作）；失败直接抛错。
-- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。开关（completeTargetCatalog / traceCounterfactualGoalClusters 等）经同一 config 源透传，Browser/Simulation 一份装配。
+- `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。开关（traceCounterfactualGoalClusters 等）经同一 config 源透传，Browser/Simulation 一份装配。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
 - `game/ai/outcome-model.js`：从 viewer-safe observation 投影已兑现分、科技、收入、资源事实和
   固定大小的探测器目标摘要，以及本席数据轨到下一次正式扫描、放置或分析所需的
@@ -103,7 +103,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - `app/ai/browser-bootstrap.js`：Browser 机器席位端口——与 Simulation 共用同一协调器与
   Heuristic 决策函数（唯一差异：recordStep 记账钩子，browser 空操作）；只保留席位判定、
   决策前稳定化、同 decision 去重、lifecycle 失效重建与 fail-closed 结果转写。内联反事实
-  搜索拷贝已删除，开关（completeTargetCatalog / traceCounterfactualGoalClusters 等）经
+  搜索拷贝已删除，开关（traceCounterfactualGoalClusters 等）经
   同一 config 源透传（URL 参数，见 §3.4）。
 
 `game/ai/index.js` 聚合器已删除（无消费方，Browser 装配直接经 index.html 逐个加载模块）。不得恢复 SetiAI 聚合或 legacy valuation、candidate、planner、analytics、controller adapter。
@@ -180,7 +180,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   policy 的 decide，不经过决策函数/反事实搜索链；提交经协调器 execute
   （合法集/authority 重验）与 recordStep 记账（sim 补记，计数进 diagnostics：
   `planContinuationHitCount` / `MissReasons`）。判定空间变更需保持搜索空间与
-  近似不变（同 `targetSchedulerPrunedCount` 文化）。
+  近似不变；搜索空间的独立变更单独归属版本。
 - 计划 store 是 per-env 瞬态（`reset`/`loadCheckpoint` 清空，不入 checkpoint）：
   当前 simulation 每 env 固定单一 policy，store 的身份隐式等于该 policy；若未来
   支持同席多 policy 切换，store 必须按 policyType/version/modelChecksum/
@@ -317,7 +317,8 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 移动点数和钱/电总成本排序。主星目标只保留第一奖励格尚未被占领的最近环绕与最近登陆各一个；
 卫星登陆在前三轮只保留木星、土星，最后一轮再加入天王星、海王星。没有橙4时卫星不属于当前
 合法目标；若当前能研究橙4，则先把橙4作为前置科技目标，取得后再从新状态生成卫星路线。
-同一具名终点的多条路线再做目标级 Pareto；不得给行星或卫星目标增加固定估值。
+同一具名终点的多条路线交给全局队列预算选择；不得按终点评分摘要合并未来状态，
+不得给行星或卫星目标增加固定估值。
 每次科技等效果旋转太阳系后，子状态重新生成路线 requirement 并按新距离调度，不复用旋转前
 距离。该阶段使用规则投影的路径和奖励，不以 action 展开次数代替行星距离。
 
@@ -360,25 +361,13 @@ targetEquivalentChoiceCount 报告），**不再展开全部 blue 槽**——此
 真实游戏已经进入该 conditional Decision 后，Policy 才能基于当时可见选项作答。搜索不进入
 新轮，因此不会把轮初收入误算成 PASS 的价值。
 
-完整终点先保存以下正式事实并做 Pareto 收敛：
+完整目标结果保留真实观察供终点评分；评分摘要不再用于淘汰后续搜索。不同火箭位置、
+手牌、公共盘面、RNG或实体序号不能因为当前分数相同而互相支配。旧完成事实
+目录及其支配比较器已删除。状态共享仅按完整envelope/session、动作与剩余条件深度，
+不同origin继续保留各自目标/计划和来源义务。
 
-- 当前正式分数与已锁定终局分；
-- 信用、能源、宣传、可用数据、额外公共扫描、普通牌和外星牌数量；
-- 六条收入轨；
-- 计算机已放置数据数与是否已到分析格；
-- 已拥有科技集合。
-
-完成态事实使用`seti-secondary-agent-completion-facts-v4`。支配比较前要求
-`valuationContext`完全一致：终局状态、当前/终止轮次、蓝槽占用与解锁、
-研究候选及正式费用、自身全部可见手牌实例与卡面标识。集合按稳定顺序保存，数组枚举顺序
-不造成分区差异。来源标签不再改变估值或分区；牌面不同仍可能具有不同的后继用途。
-
-完成态 Pareto 以 `根行动 + 已完成目标深度 + 具体次级目标` 分组；同一目标的不同路线可以互相
-支配，不同次级目标不得互相删除。目标入口数、不同入口状态、目标内完成路线族与被支配数量均
-写入 counterfactual diagnostics，用于区分目标目录规模和单目标路线爆炸。
-收入目标 ID 保存的是建立目标时六条收入轨的基线，因此不同父路线可能同时显示“继续提升收入”，
-但其完成条件是分别超过各自基线，并不是两种收入目标。报告必须把基线写入标题；这些父状态只有
-在完整终点事实上构成支配时才能合并，不能因为中文目标名相同就删除。
+收入目标ID保存建立目标时六条收入轨基线；同一中文目标不等于同一状态。
+报告保留不同入口状态与目标内完成路线；旧支配计数字段只用于读取历史版本。
 
 最终排序使用：
 
@@ -445,19 +434,25 @@ S1提交`e80ca9e7`固定盘面终局均98.5，较修复前提高16.75，仍低�
 预算/裁剪仍待第三、四轮，不以本轮得分提升宣称这些问题解决。
 任何中间 action、goal 或 family 都没有固定奖励。
 
-次级搜索使用精确最小堆维护frontier，不使用beam；普通maxNodes不计次级展开预算。
-当前仍按每根已结束路线的叶计数使用`maxLeaves=8`饱和限制；它是截断，不是无损剪枝。
-继续展开时保留的`goal-completed`结果不计入该停止计数，不改变原搜索范围。
-`maxProxyDepth=15` 只限制已经正式完成的结果目标数。物理执行另有
-`maxExecutionNodes=4096` 失控保护；触顶必须返回 incomplete，不能把剩余 frontier 包装成
-完整叶。当前实现仍可能在已有叶且触顶时返回settled/low confidence；第二轮记录也有触顶，
-不能声称固定盘面总能自然耗尽。这项完成度契约差异归第四轮处理。
+次级搜索使用精确最小堆维护frontier和全局beam：物理执行最多4096节点、队列最多
+保留256物理节点。根首步优先执行；每轮合并后先为每个仍有frontier的根动作保留最优
+一个节点，再按统一顺序填满容量，共享节点只占一格且保留全部origin。淘汰来源明确
+记为beam-budget，不伪称无损剪枝。普通control浅评估的独立预算不变。
 
-为了把单次决策控制在 10 秒内，当前保留一项明确的策略近似：首个结果目标及其非支配路线全部
-探索；完成首个目标后，下一目标只选择正式资源下界最小者，目标内部仍保留非支配路线。这不是
-beam、节点 cap 或固定选项分，但会漏掉“先完成较贵目标，反而改善后续组合”的目标顺序。诊断
-以 `targetSchedulerPrunedCount` 单独报告被省略的目标绑定；优化权重前必须保持这项近似和搜索
-空间不变，不能把调权重与改路线覆盖混为一次实验。
+次级maxLeaves饱和、资源/完成评分摘要支配、只留最便宜下一目标和未绑定top-4均已
+删除。资源下界只用于准入目标排序，全部准入后继交给全局beam；已有“手段需要
+目标”和未绑定quick根不借主行动收益的边界保留。目标/条件深度与未绑定深度边界
+仍是显式有损截断，不等于完整穷举。
+
+outcome.status仍表达真实结果可用性；searchCompleteness独立报告complete、
+incomplete、not-evaluated及原因。已有真实叶且截断仍为settled，可评分/提取计划；
+无叶截断为unresolved，frontier不可冒充收益。完整性覆盖声明的单席策略范围，
+不表示全多人游戏最优。元数据经投影与Policy契约校验，不改变估值权重。
+
+每次次级搜索期限10000ms，宏步前后检查；超时显式抛COUNTERFACTUAL_SEARCH_TIMEOUT，
+清理隔离fork，不返回部分策略或提交真实根。同步宏步不能中途抢占，因此不承诺严格
+实时中断。完整决策还含结果投影、Policy与计划提取，仍须实测低于10秒才跑完整局。
+本轮初次棕方样本总决策10.42秒，搜索8.39秒，性能尚未通过，不能据预算参数宣称达标。
 
 反事实执行复用一个 Composition 级可信隔离 fork。每个候选从同一 checkpoint 恢复
 StateStore、Effect Session 和分支 RNG，再调用生产 registry/executor；Simulation 的可信
@@ -515,11 +510,11 @@ Production的地球坐标、探测路线context及正式Action context直接读�
 在后续每个匹配事件上重复形成指数分支。
 
 运行诊断至少记录候选与根目标数、物理执行节点、actor 分项、对手执行数、单席位时钟推进数、
-PASS Decision 边界叶、最大 frontier、状态共享、完成态支配、
-完成目标次数/最大深度、目标调度省略数、不可达路线数、beam/执行保护状态，以及
+PASS Decision 边界叶、最大 frontier、状态共享、
+完成目标次数/最大深度、搜索完整性、不可达路线数、beam/执行保护状态，以及
 fork/执行/投影/checkpoint/frontier/编排耗时。耗时仅用于性能验证，不参与候选排序。
 固定盘面报告可通过 `--focus-decision N` 只重放到指定决策，并按“第 1 层结果目标 → 目标内
-完成路线 → Pareto 最终保留路线 → 下一层结果目标”输出单节点搜索树。父子目标与中文行动摘要
+完成路线 → 实际保留结果 → 下一层结果目标”输出单节点搜索树。父子目标与中文行动摘要
 只在该报告开关启用时记录，不进入普通 Browser/Simulation 搜索；trace 不参与排序、状态等价、
 节点预算或终点估值。单节点报告的太阳系、外围扇区及行星环绕/登陆区直接复用 Browser Web 的
 正式底图、token 图片与坐标函数；四块扇区板按 Web 的盘位和旋转围绕太阳系，行星区不再重复

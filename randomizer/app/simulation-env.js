@@ -145,7 +145,6 @@ function createSimulationEnv() {
         composition,
         difficulty: config.aiDifficulty,
         config: {
-          completeTargetCatalog: config.completeTargetCatalog === true,
           traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,
         },
       };
@@ -346,7 +345,6 @@ function createSimulationEnv() {
         compactReplay: resetConfig.compactReplay === true,
         traceCounterfactualGoalClusters:
           resetConfig.traceCounterfactualGoalClusters === true,
-        completeTargetCatalog: resetConfig.completeTargetCatalog === true,
         vStateValueEnabled: resetConfig.vStateValueEnabled === true,
         planContinuationFastPath: resetConfig.planContinuationFastPath !== false,
         // 新回合复用开关（A/B 用）：planReuseCheck 判定"盘面无新信息则复用上回合

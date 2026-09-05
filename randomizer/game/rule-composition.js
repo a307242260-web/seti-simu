@@ -957,6 +957,7 @@
           status: "unresolved",
           confidence: "none",
           code: "COUNTERFACTUAL_FORK_UNAVAILABLE",
+          searchCompleteness: { status: "incomplete", reasons: ["branch-failed"] },
           rootObservation,
           leaves: [],
         })));
@@ -969,6 +970,7 @@
           status: "failed",
           confidence: "none",
           code: saved?.code || "COUNTERFACTUAL_ROOT_SAVE_FAILED",
+          searchCompleteness: { status: "incomplete", reasons: ["branch-failed"] },
           rootObservation,
           leaves: [],
         })));
@@ -990,6 +992,13 @@
       const maxExecutionNodes = secondaryAgentSearch
         ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 32)
         : maxNodes;
+      const maxFrontierNodes = Number(evaluateOptions.maxFrontierNodes ?? 256);
+      const maxMilliseconds = Number(evaluateOptions.maxMilliseconds ?? 10000);
+      if (secondaryAgentSearch && (
+        !Number.isInteger(maxFrontierNodes) || maxFrontierNodes < legalActions.length
+        || maxFrontierNodes > maxExecutionNodes
+        || !Number.isFinite(maxMilliseconds) || maxMilliseconds <= 0
+      )) throw new TypeError("COUNTERFACTUAL_BUDGET_INVALID: 队列容量须覆盖根动作且不超过节点预算，期限须为正数");
       const focalSeatId = secondaryAgentSearch?.focalSeatId == null
         ? null
         : String(secondaryAgentSearch.focalSeatId);
@@ -1024,12 +1033,20 @@
       );
       const evaluationStartedAt = now();
       let reusableFork = null;
+      function checkDeadline() {
+        if (!secondaryAgentSearch || now() - evaluationStartedAt <= maxMilliseconds) return;
+        try {
+          (reusableFork?.composition || reusableFork)?.dispose?.();
+        } finally {
+          reusableFork = null;
+        }
+        const error = new Error("COUNTERFACTUAL_SEARCH_TIMEOUT: 搜索超时，不返回部分策略动作");
+        error.code = "COUNTERFACTUAL_SEARCH_TIMEOUT";
+        throw error;
+      }
       const parsedStateByBytes = new Map();
       const stateHashByBytes = new Map();
       const envelopeHashByObject = new WeakMap();
-      const settledSemanticStateHashByBytes = new Map();
-      const dominanceStateByBytes = new Map();
-      const semanticActionHashByObject = new WeakMap();
       function getTrustedState(envelope) {
         const bytes = envelope.committedState;
         if (!parsedStateByBytes.has(bytes)) {
@@ -1070,127 +1087,6 @@
           },
         });
       }
-      function semanticActionHash(action) {
-        if (!semanticActionHashByObject.has(action)) {
-          semanticActionHashByObject.set(action, stableHash({
-            actorId: action?.actorId || null,
-            family: action?.family || null,
-            phase: action?.phase || null,
-            target: action?.target || null,
-            payload: action?.payload || null,
-          }));
-        }
-        return semanticActionHashByObject.get(action);
-      }
-      function normalizedStateForSearch(state, maskFocalResources = false) {
-        const players = state.players?.players || [];
-        return {
-          ...state,
-          meta: {
-            ...state.meta,
-            rngState: null,
-            sequences: null,
-            stateVersion: 0,
-          },
-          match: {
-            ...state.match,
-            decisionVersion: 0,
-          },
-          ...(maskFocalResources ? {
-            players: {
-              ...state.players,
-              players: players.map((player) => (
-                String(player?.id || "") === focalSeatId
-                  ? {
-                    ...player,
-                    resources: {
-                      ...player.resources,
-                      credits: 0,
-                      energy: 0,
-                      publicity: 0,
-                    },
-                  }
-                  : player
-              )),
-            },
-          } : {}),
-        };
-      }
-      function replaceSerializedValue(bytes, currentValue, nextValue) {
-        const current = stableSerialize(currentValue);
-        const index = bytes.indexOf(current);
-        if (index < 0) return null;
-        return `${bytes.slice(0, index)}${stableSerialize(nextValue)}${
-          bytes.slice(index + current.length)
-        }`;
-      }
-      function normalizedStateBytesForSearch(envelope, maskFocalResources = false) {
-        const bytes = envelope.committedState;
-        const state = getTrustedState(envelope);
-        const normalizedMeta = {
-          ...state.meta,
-          rngState: null,
-          sequences: null,
-          stateVersion: 0,
-        };
-        const normalizedMatch = { ...state.match, decisionVersion: 0 };
-        let normalized = replaceSerializedValue(bytes, state.meta, normalizedMeta);
-        normalized = normalized == null
-          ? null
-          : replaceSerializedValue(normalized, state.match, normalizedMatch);
-        if (normalized != null && maskFocalResources) {
-          const player = (state.players?.players || []).find((candidate) => (
-            String(candidate?.id || "") === focalSeatId
-          ));
-          if (!player) return null;
-          normalized = replaceSerializedValue(normalized, player, {
-            ...player,
-            resources: {
-              ...player.resources,
-              credits: 0,
-              energy: 0,
-              publicity: 0,
-            },
-          });
-        }
-        return normalized;
-      }
-      function settledSemanticStateHash(envelope) {
-        if (envelope?.session != null) return null;
-        const bytes = envelope.committedState;
-        if (!settledSemanticStateHashByBytes.has(bytes)) {
-          const normalizedBytes = normalizedStateBytesForSearch(envelope);
-          settledSemanticStateHashByBytes.set(
-            bytes,
-            normalizedBytes == null
-              ? stableHash(normalizedStateForSearch(getTrustedState(envelope)))
-              : stableHashSerialized(normalizedBytes),
-          );
-        }
-        return settledSemanticStateHashByBytes.get(bytes);
-      }
-      function dominanceState(envelope) {
-        if (envelope?.session != null) return null;
-        const bytes = envelope.committedState;
-        if (!dominanceStateByBytes.has(bytes)) {
-          const state = getTrustedState(envelope);
-          const player = (state.players?.players || []).find((candidate) => (
-            String(candidate?.id || "") === focalSeatId
-          ));
-          const normalizedBytes = normalizedStateBytesForSearch(envelope, true);
-          dominanceStateByBytes.set(bytes, player ? {
-            contextHash: normalizedBytes == null
-              ? stableHash(normalizedStateForSearch(state, true))
-              : stableHashSerialized(normalizedBytes),
-            resources: {
-              credits: Number(player.resources?.credits) || 0,
-              energy: Number(player.resources?.energy) || 0,
-              publicity: Number(player.resources?.publicity) || 0,
-            },
-          } : null);
-        }
-        return dominanceStateByBytes.get(bytes);
-      }
       function branchKey(envelope, actionId) {
         return stableHash({
           schemaVersion: "seti-counterfactual-branch-key-v2",
@@ -1217,6 +1113,7 @@
         frontierLeaves: [],
         failures: [],
         pruned: false,
+        incompleteReasons: new Set(),
       }]));
       const rootTargetsByActionId = new Map();
       if (
@@ -1265,11 +1162,7 @@
       let prunedNodeCount = 0;
       let beamPrunedOriginCount = 0;
       let sharedPhysicalExecutionOriginCount = 0;
-      let conditionalEquivalentMergeCount = 0;
-      let resourceDominatedOriginCount = 0;
-      let completionDominatedOriginCount = 0;
       let targetEquivalentChoicePrunedCount = 0;
-      let targetSchedulerPrunedCount = 0;
       let unreachableRouteOriginCount = 0;
       let completedGoalTransitionCount = 0;
       let maxCompletedGoalDepth = 0;
@@ -1292,18 +1185,8 @@
       const retainedCompletedTransitionCountByTarget = new Map();
       const completedRouteGroupsByTarget = new Map();
       const leafCountByVirtualRoot = new Map();
-      const saturatedOriginCountByVirtualRoot = new Map();
-      const saturatedRouteGroupsByVirtualRoot = new Map();
-      const virtualRootDescriptionByKey = new Map();
       const chainKeyByOrigin = new WeakMap();
-      const dominanceCheckedOrigins = new WeakSet();
-      const resourceDominatedOrigins = new WeakSet();
-      const retainedDominanceEntriesByGroup = new Map();
-      const retainedCompletionEntriesByGroup = new Map();
-      const dominatedCompletionKeys = new Set();
-      const completionDominatedOriginCountByTarget = new Map();
       const goalClusterTraceByPath = new Map();
-      const goalCompletionTraceRefsByKey = new Map();
       let goalClusterTraceExecutionOrdinal = 0;
 
       function traceAction(action) {
@@ -1389,7 +1272,6 @@
         completion,
       ) {
         if (!traceGoalClusters || !targetId) return;
-        const refs = [];
         for (const parentPath of parentPaths || []) {
           const cluster = ensureGoalCluster(parentPath, targetId);
           const variantKey = goalRouteVariantKey(actions, quickTradeCount);
@@ -1407,25 +1289,6 @@
             variant.survivingCompletionCount += 1;
           }
           cluster.routeVariants.set(variantKey, variant);
-          refs.push({ clusterKey: cluster.key, variantKey });
-        }
-        if (completion.key) goalCompletionTraceRefsByKey.set(completion.key, refs);
-      }
-
-      function markGoalCompletionDominated(completionKey) {
-        if (!traceGoalClusters || !completionKey) return;
-        for (const ref of goalCompletionTraceRefsByKey.get(completionKey) || []) {
-          const cluster = goalClusterTraceByPath.get(ref.clusterKey);
-          const variant = cluster?.routeVariants.get(ref.variantKey);
-          if (!cluster || !variant) continue;
-          cluster.survivingCompletionCount = Math.max(
-            0,
-            cluster.survivingCompletionCount - 1,
-          );
-          variant.survivingCompletionCount = Math.max(
-            0,
-            variant.survivingCompletionCount - 1,
-          );
         }
       }
 
@@ -1505,20 +1368,6 @@
         ].join(":");
       }
 
-      function rememberVirtualRoot(origin) {
-        const key = virtualRootKey(origin);
-        if (!virtualRootDescriptionByKey.has(key)) {
-          virtualRootDescriptionByKey.set(key, {
-            rootActionId: origin.rootAction.actionId,
-            rootActionFamily: origin.rootAction.family,
-            rootActionSummary: origin.rootAction.summary || null,
-            rootRouteTargetId: origin.rootRouteTargetId || null,
-            rootRoutePlanId: origin.rootRoutePlanId || null,
-          });
-        }
-        return key;
-      }
-
       function exactNodeKey(envelope, action, depth) {
         return [
           envelopeHash(envelope),
@@ -1529,22 +1378,6 @@
       }
 
       function nodeKey(node) {
-        // settled（无 session）节点用语义键：mask meta 的 rngState/sequences/stateVersion
-        // 与 match.decisionVersion 后，合并"先发射再扫描 vs 先扫描再发射"这类置换等价
-        // 状态（cap frontier 36% 是 meta-only 雷同）。session 节点（awaiting）保持精确键
-        // （pending 决策不同不可合并）。
-        if (secondaryAgentSearch && node.envelope?.session == null) {
-          const semanticStateHash = settledSemanticStateHash(node.envelope);
-          if (semanticStateHash) {
-            return [
-              "semantic",
-              semanticStateHash,
-              semanticActionHash(node.action),
-              Math.max(0, maxDepth - node.depth),
-              focalSeatId,
-            ].join(":");
-          }
-        }
         return exactNodeKey(node.envelope, node.action, node.depth);
       }
 
@@ -1556,13 +1389,6 @@
           return;
         }
         transpositionHitCount += 1;
-        if (
-          node.semanticMergeEligible
-          && exactNodeKey(node.envelope, node.action, node.depth)
-            !== exactNodeKey(existing.envelope, existing.action, existing.depth)
-        ) {
-          conditionalEquivalentMergeCount += 1;
-        }
         if (compareSearchPriorities(node.priority, existing.priority) < 0) {
           existing.priority = node.priority;
         }
@@ -1595,76 +1421,14 @@
         existing.origins = [...origins.values()];
       }
 
-      function dominatesResources(left, right) {
-        const leftResources = left.state.resources;
-        const rightResources = right.state.resources;
-        const resourceKeys = ["credits", "energy", "publicity"];
-        const noLess = resourceKeys.every((key) => (
-          leftResources[key] >= rightResources[key]
-        ));
-        const noMoreTrades = Number(left.origin.quickTradeCount || 0)
-          <= Number(right.origin.quickTradeCount || 0);
-        const strictlyBetter = resourceKeys.some((key) => (
-          leftResources[key] > rightResources[key]
-        )) || Number(left.origin.quickTradeCount || 0)
-          < Number(right.origin.quickTradeCount || 0);
-        return noLess && noMoreTrades && strictlyBetter;
-      }
-
-      function dominanceGroupKey(node, origin) {
-        return [
-          virtualRootKey(origin),
-          origin.routeTargetId || "",
-          origin.routePlanId || "",
-          origin.proxyDepth || 0,
-          Number(Boolean(origin.focalPassStarted)),
-          Number(Boolean(origin.goalCompletionPending)),
-          Number(Boolean(origin.rootWasConditional)),
-          Number(Boolean(origin.informationMasked)),
-          semanticActionHash(node.action),
-          Math.max(0, maxDepth - node.depth),
-        ].join(":");
-      }
-
-      function pruneResourceDominatedOrigins(nodes) {
-        if (!secondaryAgentSearch) return nodes;
-        for (const node of nodes) {
-          if (node.envelope?.session != null) continue;
-          for (const origin of node.origins) {
-            if (dominanceCheckedOrigins.has(origin)) continue;
-            dominanceCheckedOrigins.add(origin);
-            const state = dominanceState(node.envelope);
-            if (!state) continue;
-            const key = `${dominanceGroupKey(node, origin)}:${state.contextHash}`;
-            const retained = retainedDominanceEntriesByGroup.get(key) || [];
-            const candidate = { node, origin, state };
-            if (retained.some((entry) => dominatesResources(entry, candidate))) {
-              resourceDominatedOrigins.add(origin);
-              resourceDominatedOriginCount += 1;
-              continue;
-            }
-            const survivors = [];
-            for (const entry of retained) {
-              if (dominatesResources(candidate, entry)) {
-                resourceDominatedOrigins.add(entry.origin);
-                resourceDominatedOriginCount += 1;
-              } else {
-                survivors.push(entry);
-              }
-            }
-            survivors.push(candidate);
-            retainedDominanceEntriesByGroup.set(key, survivors);
-          }
+      function markIncomplete(origins, reason) {
+        for (const origin of origins) {
+          outcomeStateByActionId.get(origin.rootAction.actionId)?.incompleteReasons.add(reason);
         }
-        return nodes.flatMap((node) => {
-          const origins = node.origins.filter((origin) => (
-            !resourceDominatedOrigins.has(origin)
-          ));
-          return origins.length ? [{ ...node, origins }] : [];
-        });
       }
 
-      function markPruned(origins) {
+      function markPruned(origins, reason = "node-budget") {
+        markIncomplete(origins, reason);
         prunedNodeCount += 1;
         for (const origin of origins) {
           const state = outcomeStateByActionId.get(origin.rootAction.actionId);
@@ -1673,6 +1437,7 @@
       }
 
       function markFailure(origins, failure) {
+        markIncomplete(origins, "branch-failed");
         for (const origin of origins) {
           const state = outcomeStateByActionId.get(origin.rootAction.actionId);
           if (state) state.failures.push(failure);
@@ -1698,7 +1463,11 @@
       }
 
       function compareNodes(left, right) {
-        return (
+        return (secondaryAgentSearch
+          ? Number(right.origins.some((origin) => !origin.chain.length))
+            - Number(left.origins.some((origin) => !origin.chain.length))
+          : 0)
+          || (
           secondaryAgentSearch
             ? Math.min(...left.origins.map((origin) => origin.proxyDepth || 0))
               - Math.min(...right.origins.map((origin) => origin.proxyDepth || 0))
@@ -1713,105 +1482,6 @@
           )
           || String(left.action.actionId).localeCompare(String(right.action.actionId))
           || String(left.key || "").localeCompare(String(right.key || ""));
-      }
-
-      function completionFactsDominate(left, right) {
-        // 新估值依赖来源、槽位及研究机会；不同上下文不能用总资源替代。
-        if (stableSerialize(left.facts.valuationContext)
-          !== stableSerialize(right.facts.valuationContext)) return false;
-        const scalarPaths = [
-          ["score"],
-          ...[
-            "credits",
-            "energy",
-            "publicity",
-            "availableData",
-            "additionalPublicScan",
-            "ordinaryCards",
-            "alienCards",
-          ]
-            .map((key) => ["resources", key]),
-          ...[
-            "credits",
-            "energy",
-            "publicity",
-            "availableData",
-            "handSize",
-            "additionalPublicScan",
-          ].map((key) => ["income", key]),
-          ["dataProgress", "computerPlacedCount"],
-          ["dataProgress", "analyzeReady"],
-        ];
-        const valueAt = (source, path) => (
-          path.reduce((value, key) => value?.[key], source)
-        );
-        const noLess = scalarPaths.every((path) => (
-          Number(valueAt(left.facts, path) || 0) >= Number(valueAt(right.facts, path) || 0)
-        ));
-        const leftTech = new Set(left.facts.ownedTechIds || []);
-        const rightTech = new Set(right.facts.ownedTechIds || []);
-        const techSuperset = [...rightTech].every((techId) => leftTech.has(techId));
-        if (!noLess || !techSuperset) return false;
-        const strictlyBetter = scalarPaths.some((path) => (
-          Number(valueAt(left.facts, path) || 0) > Number(valueAt(right.facts, path) || 0)
-        )) || leftTech.size > rightTech.size;
-        if (strictlyBetter) return true;
-        const leftTrades = Number(left.quickTradeCount || 0);
-        const rightTrades = Number(right.quickTradeCount || 0);
-        if (leftTrades !== rightTrades) return leftTrades < rightTrades;
-        if (left.chainLength !== right.chainLength) return left.chainLength < right.chainLength;
-        return left.key < right.key;
-      }
-
-      function retainCompletedEndpoint(origin, observation, nextProxyDepth, nextChain, quickTrades) {
-        if (typeof secondaryAgentSearch?.getCompletionFacts !== "function") {
-          return { retained: true, key: null };
-        }
-        const facts = secondaryAgentSearch.getCompletionFacts(observation, focalSeatId);
-        if (!facts || typeof facts !== "object") {
-          throw new TypeError("secondaryAgentSearch 完成态缺少正式终点评估事实");
-        }
-        const key = stableHash([
-          origin.rootAction.actionId,
-          origin.routeTargetId || "",
-          nextProxyDepth,
-          nextChain,
-        ]);
-        const targetId = origin.routeTargetId || "<unbound>";
-        const groupKey = `${origin.rootAction.actionId}:${nextProxyDepth}:${targetId}`;
-        const candidate = {
-          key,
-          facts,
-          quickTradeCount: quickTrades,
-          chainLength: nextChain.length,
-        };
-        const retained = retainedCompletionEntriesByGroup.get(groupKey) || [];
-        if (retained.some((entry) => completionFactsDominate(entry, candidate))) {
-          dominatedCompletionKeys.add(key);
-          completionDominatedOriginCount += 1;
-          completionDominatedOriginCountByTarget.set(
-            targetId,
-            (completionDominatedOriginCountByTarget.get(targetId) || 0) + 1,
-          );
-          return { retained: false, key };
-        }
-        const survivors = [];
-        for (const entry of retained) {
-          if (completionFactsDominate(candidate, entry)) {
-            dominatedCompletionKeys.add(entry.key);
-            markGoalCompletionDominated(entry.key);
-            completionDominatedOriginCount += 1;
-            completionDominatedOriginCountByTarget.set(
-              targetId,
-              (completionDominatedOriginCountByTarget.get(targetId) || 0) + 1,
-            );
-          } else {
-            survivors.push(entry);
-          }
-        }
-        survivors.push(candidate);
-        retainedCompletionEntriesByGroup.set(groupKey, survivors);
-        return { retained: true, key };
       }
 
       function retainRootFairBeam(nodes) {
@@ -1839,7 +1509,7 @@
           }
           if (prunedOrigins.length) {
             beamPrunedOriginCount += prunedOrigins.length;
-            markPruned(prunedOrigins);
+            markPruned(prunedOrigins, "beam-budget");
           }
           return retainedOrigins.length ? [{ ...node, origins: retainedOrigins }] : [];
         });
@@ -1874,7 +1544,10 @@
         const rootKey = virtualRootKey(origin);
         const leafCount = leafCountByVirtualRoot.get(rootKey) || 0;
         if (!state || (!secondaryAgentSearch && leafCount >= maxLeaves)) {
-          if (state) state.pruned = true;
+          if (state) {
+            state.pruned = true;
+            state.incompleteReasons.add("leaf-budget");
+          }
           return;
         }
         // 继续搜索中的完成目标结果不是停止路线叶；保留它不能提前触发既有饱和裁剪。
@@ -2123,6 +1796,7 @@
           // requirements 无法选最优），保持展开让价值进入搜索。
           let drainGuard = 0;
           let executionStepCount = 1; // 当前节点已成功提交的根动作/决策。
+          let representativeChoice = false;
           // 折叠结算链中产生的隐藏信息 barrier（公共牌翻出等）——折叠提交也必须
           // 建立 mask，不能因节点折叠泄漏新翻出的牌身份。
           let drainHiddenBarrier = null;
@@ -2166,6 +1840,7 @@
             ));
             let settleChoice = null;
             if (discardCards.length && confirm) {
+              if (discardCards.length > 1) representativeChoice = true;
               // 正式选择状态由当前Effect持有；每次点选会生成新的DecisionEffect，
               // 不能按decisionId另存已选集合，也不能硬编码弃牌数量。
               const pending = drainInspection.session.currentEffect?.payload?.decisionContext;
@@ -2342,8 +2017,9 @@
               branchPriority = Array.isArray(measured?.sortKey)
                 ? clone(measured)
                 : (Number.isFinite(Number(measured)) ? Number(measured) : 0);
-            } catch (_error) {
-              branchPriority = 0;
+            } catch (error) {
+              return { failed: true, code: "COUNTERFACTUAL_PRIORITY_FAILED",
+                message: error?.message || String(error) };
             }
           }
           const checkpointStartedAt = now();
@@ -2361,6 +2037,7 @@
             ok: true,
             current,
             executionStepCount,
+            representativeChoice,
             planSteps,
             probeSteps,
             nextInspection,
@@ -2524,6 +2201,32 @@
         }
         return first;
       }
+      function trimSecondaryFrontier() {
+        if (frontier.length <= maxFrontierNodes) return;
+        const ordered = [...frontier].sort(compareNodes);
+        const retained = new Set();
+        const coveredRoots = new Set();
+        for (const node of ordered) {
+          if (node.origins.some((origin) => !coveredRoots.has(origin.rootAction.actionId))) {
+            retained.add(node.key);
+            for (const origin of node.origins) coveredRoots.add(origin.rootAction.actionId);
+          }
+        }
+        for (const node of ordered) {
+          if (retained.size >= maxFrontierNodes) break;
+          retained.add(node.key);
+        }
+        frontier = [];
+        secondaryFrontierByKey.clear();
+        secondaryFrontierIndexByKey.clear();
+        for (const node of ordered) {
+          if (retained.has(node.key)) pushSecondaryFrontier(node);
+          else {
+            beamPrunedOriginCount += node.origins.length;
+            markPruned(node.origins, "beam-budget");
+          }
+        }
+      }
       if (secondaryAgentSearch) {
         const initialNodes = frontier;
         frontier = [];
@@ -2544,52 +2247,18 @@
       let lastExecutionAwaitingDecision = null;
 
       while (frontier.length && executedNodeCount < maxExecutionNodes) {
+        checkDeadline();
         const sorted = secondaryAgentSearch ? null : [...frontier].sort(compareNodes);
         const nextFrontierByKey = new Map();
         const selected = secondaryAgentSearch ? [popSecondaryFrontier()] : sorted;
         for (const node of selected) {
-          node.origins = node.origins.filter((origin) => (
-            !origin.completionFrontierKey
-            || !dominatedCompletionKeys.has(origin.completionFrontierKey)
-          ));
-          if (!node.origins.length) continue;
-          const saturatedOrigins = node.origins.filter((origin) => {
-            // 次级代理搜索同样受 maxLeaves 饱和限制：此前 secondary 不饱和 → scan 等
-            // 分支宽的根无限展开直到 maxExecutionNodes 耗尽仍无叶（unresolved）→ AI
-            // 评估 scan 返回 unavailable → 从不扫描（用户 405 档 scan 13 次 vs AI 2 次）。
-            // 让 secondary 也按 maxLeaves 收束出叶（settled），保留预算内剪枝语义。
-            return (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves;
-          });
-          if (saturatedOrigins.length) {
-            for (const origin of saturatedOrigins) {
-              const rootKey = rememberVirtualRoot(origin);
-              saturatedOriginCountByVirtualRoot.set(
-                rootKey,
-                (saturatedOriginCountByVirtualRoot.get(rootKey) || 0) + 1,
-              );
-              const groups = saturatedRouteGroupsByVirtualRoot.get(rootKey) || new Map();
-              const routeFamilies = (origin.routeActions || []).map((action) => action.family);
-              const groupKey = stableSerialize({
-                routeFamilies,
-                pendingActionFamily: node.action.family,
-                proxyDepth: origin.proxyDepth || 0,
-              });
-              const existing = groups.get(groupKey);
-              if (existing) {
-                existing.originCount += 1;
-              } else {
-                groups.set(groupKey, {
-                  routeFamilies,
-                  pendingActionFamily: node.action.family,
-                  proxyDepth: origin.proxyDepth || 0,
-                  originCount: 1,
-                });
-              }
-              saturatedRouteGroupsByVirtualRoot.set(rootKey, groups);
-            }
-            markPruned(saturatedOrigins);
+          if (!secondaryAgentSearch) {
+            const saturated = node.origins.filter((origin) => (
+              (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves
+            ));
+            markPruned(saturated, "leaf-budget");
+            node.origins = node.origins.filter((origin) => !saturated.includes(origin));
           }
-          node.origins = node.origins.filter((origin) => !saturatedOrigins.includes(origin));
           if (!node.origins.length) continue;
           if (executedNodeCount >= maxExecutionNodes) {
             markPruned(node.origins);
@@ -2620,10 +2289,13 @@
           sharedPhysicalExecutionOriginCount += Math.max(0, node.origins.length - 1);
           if (budgetedNode) expandedSearchNodeCount += 1;
           const execution = executeNode(node);
+          checkDeadline();
           if (execution.failed) {
             markFailure(node.origins, execution);
             continue;
           }
+          if (execution.representativeChoice) markIncomplete(node.origins, "representative-choice");
+          if (execution.informationMasked) markIncomplete(node.origins, "information-barrier");
           const current = execution.current;
           const currentActorId = String(current.actorId || "");
           executedNodeCountByActor.set(
@@ -2827,7 +2499,6 @@
             const nextProxyDepth = origin.rootWasConditional
               ? 0
               : origin.proxyDepth + Number(completedGoal);
-            let completionFrontierKey = origin.completionFrontierKey || null;
             let nextGoalTraceSelections = origin.goalTraceSelections || [];
             if (completedGoal) {
               completedGoalTransitionCount += 1;
@@ -2842,13 +2513,7 @@
                 (completedTransitionCountByTarget.get(routeTargetId) || 0) + 1,
               );
               maxCompletedGoalDepth = Math.max(maxCompletedGoalDepth, nextProxyDepth);
-              const retained = retainCompletedEndpoint(
-                origin,
-                execution.leafObservation,
-                nextProxyDepth,
-                nextChain,
-                nextQuickTradeCount,
-              );
+              const retained = { retained: true, key: null };
               recordGoalClusterCompletion(
                 origin.goalTracePaths || [],
                 routeTargetId,
@@ -2856,10 +2521,6 @@
                 nextTargetQuickTradeCount,
                 retained,
               );
-              completionFrontierKey = retained.key;
-              if (!retained.retained) {
-                continue;
-              }
               if (traceGoalClusters) {
                 nextGoalTraceSelections = [
                   ...nextGoalTraceSelections,
@@ -2958,7 +2619,7 @@
             }
             if (execution.awaitingDecision && execution.successors.length) {
               if (node.depth >= maxDepth) {
-                markPruned([origin]);
+                markPruned([origin], "conditional-depth");
                 continue;
               }
               let conditionalSuccessors = execution.successors;
@@ -2981,8 +2642,6 @@
                     routePlanId,
                     routeResultTargetIds: origin.routeResultTargetIds || [],
                     maxProxyDepth,
-                    completeTargetCatalog:
-                      secondaryAgentSearch.completeTargetCatalog === true,
                   }) || [];
                 } catch (error) {
                   markFailure([origin], {
@@ -2997,12 +2656,9 @@
                     Number(successor?.targetEquivalentChoiceCount) || 0
                   )),
                 );
-                targetSchedulerPrunedCount += Math.max(
-                  0,
-                  ...conditionalSuccessors.map((successor) => (
-                    Number(successor?.targetSchedulerPrunedCount) || 0
-                  )),
-                );
+                if (conditionalSuccessors.some((successor) => successor.targetEquivalentChoiceCount > 0)) {
+                  markIncomplete([origin], "representative-choice");
+                }
                 const legalById = new Map(execution.successors.map((successor) => [
                   successor.actionId,
                   successor,
@@ -3039,7 +2695,6 @@
                   action: successor,
                   depth: node.depth + 1,
                   priority: execution.branchPriority,
-                  semanticMergeEligible: true,
                   origins: [{
                     ...origin,
                     chain: nextChain,
@@ -3117,6 +2772,7 @@
                 continue;
               }
               if (nextProxyDepth >= maxProxyDepth) {
+                markIncomplete([origin], "goal-depth");
                 addLeaf(
                   {
                     ...origin,
@@ -3144,7 +2800,7 @@
                 && !origin.goalCompletionPending
                 && node.depth >= MAX_UNTARGETED_DEPTH
               ) {
-                markPruned([origin]);
+                markPruned([origin], "untargeted-depth");
                 continue;
               }
               if (execution.successors.length && execution.childEnvelope) {
@@ -3164,8 +2820,6 @@
                       ? []
                       : (origin.routeResultTargetIds || []),
                     maxProxyDepth,
-                    completeTargetCatalog:
-                      secondaryAgentSearch.completeTargetCatalog === true,
                   }) || [];
                 } catch (error) {
                   markFailure([origin], {
@@ -3174,12 +2828,6 @@
                   });
                   continue;
                 }
-                targetSchedulerPrunedCount += Math.max(
-                  0,
-                  ...selectedSuccessors.map((successor) => (
-                    Number(successor?.targetSchedulerPrunedCount) || 0
-                  )),
-                );
                 const legalById = new Map(execution.successors.map((successor) => [
                   successor.actionId,
                   successor,
@@ -3277,7 +2925,6 @@
                     action: successor,
                     depth: 0,
                     priority: execution.branchPriority,
-                    semanticMergeEligible: current.phase === "conditional",
                     origins: [{
                       ...origin,
                       chain: nextChain,
@@ -3310,7 +2957,6 @@
                       routeResultTargetIds: nextActorIsFocal
                         ? selectedRoute.routeResultTargetIds
                         : (origin.routeResultTargetIds || []),
-                      completionFrontierKey,
                     }],
                   });
                 }
@@ -3334,11 +2980,11 @@
           }
         }
         const frontierStartedAt = now();
-        const nextFrontier = pruneResourceDominatedOrigins(
-          [...nextFrontierByKey.values()],
-        );
+        const nextFrontier = [...nextFrontierByKey.values()];
         if (secondaryAgentSearch) {
           for (const nextNode of nextFrontier) pushSecondaryFrontier(nextNode);
+          maxFrontierSize = Math.max(maxFrontierSize, frontier.length);
+          trimSecondaryFrontier();
         } else {
           frontier = retainRootFairBeam(nextFrontier);
         }
@@ -3401,6 +3047,10 @@
           schemaVersion: "seti-action-outcome-v1",
           actionId: state.action.actionId,
           status,
+          searchCompleteness: {
+            status: state.incompleteReasons.size ? "incomplete" : "complete",
+            reasons: [...state.incompleteReasons].sort(),
+          },
           confidence: status === "failed"
             ? "none"
             : state.pruned || state.failures.length
@@ -3430,6 +3080,7 @@
         throw new Error("COUNTERFACTUAL_ROOT_POLLUTED: canonical state/RNG/session/journal/history/replay 发生变化");
       }
       const measuredMilliseconds = now() - evaluationStartedAt;
+      checkDeadline();
       const accountedMilliseconds = timing.forkMilliseconds
         + timing.executionMilliseconds
         + timing.projectionMilliseconds
@@ -3442,6 +3093,8 @@
         expandedSearchNodeCount,
         maxNodes,
         maxExecutionNodes,
+        maxFrontierNodes: secondaryAgentSearch ? maxFrontierNodes : null,
+        maxMilliseconds: secondaryAgentSearch ? maxMilliseconds : null,
         executionLimitReached,
         remainingFrontierNodeCount,
         remainingFrontierOriginCountByGoalDepth,
@@ -3463,16 +3116,7 @@
         maxFrontierOriginCount,
         transpositionHitCount,
         sharedPhysicalExecutionOriginCount,
-        conditionalEquivalentMergeCount,
-        resourceDominatedOriginCount,
-        completionDominatedOriginCount,
-        completionDominatedOriginCountByTarget: Object.fromEntries(
-          [...completionDominatedOriginCountByTarget.entries()].sort((left, right) => (
-            right[1] - left[1] || String(left[0]).localeCompare(String(right[0]))
-          )),
-        ),
         targetEquivalentChoicePrunedCount,
-        targetSchedulerPrunedCount,
         unreachableRouteOriginCount,
         completedGoalTransitionCount,
         maxCompletedGoalDepth,
@@ -3588,33 +3232,6 @@
               || stableSerialize(left.path).localeCompare(stableSerialize(right.path))
             ))
           : [],
-        saturatedVirtualRoots: [...saturatedOriginCountByVirtualRoot.entries()]
-          .map(([key, saturatedOriginCount]) => ({
-            ...virtualRootDescriptionByKey.get(key),
-            retainedLeafCount: leafCountByVirtualRoot.get(key) || 0,
-            saturatedOriginCount,
-            saturatedRouteGroups: [
-              ...(saturatedRouteGroupsByVirtualRoot.get(key)?.values() || []),
-            ]
-              .sort((left, right) => (
-                right.originCount - left.originCount
-                || left.proxyDepth - right.proxyDepth
-                || String(left.routeFamilies.join(":")).localeCompare(
-                  String(right.routeFamilies.join(":")),
-                )
-                || String(left.pendingActionFamily).localeCompare(right.pendingActionFamily)
-              )),
-          }))
-          .sort((left, right) => (
-            right.saturatedOriginCount - left.saturatedOriginCount
-            || String(left.rootActionId).localeCompare(String(right.rootActionId))
-            || String(left.rootRouteTargetId || "").localeCompare(
-              String(right.rootRouteTargetId || ""),
-            )
-            || String(left.rootRoutePlanId || "").localeCompare(
-              String(right.rootRoutePlanId || ""),
-            )
-          )),
         prunedNodeCount,
         beamPrunedOriginCount,
         forkMilliseconds: timing.forkMilliseconds,

@@ -108,6 +108,17 @@ for (const vStateValueEnabled of [false, true]) {
       seatId, rootObservation: root, legalActions, actionOutcomes: outcomes, chosenAction: chosen,
     }, { light: true });
     assert.equal(snapshot.plan.nextActionId, "finish:official-high", "计划必须来自正式分优胜叶");
+    const partial = outcomes.map((item) => ({ ...item,
+      searchCompleteness: { status: "incomplete", reasons: ["node-budget"] } }));
+    const partialChoice = evaluator.selectLegalAction({ ...context, actionOutcomes: partial }, {
+      evaluateAction: (ctx, action) => expectedScore.evaluateOutcome(ctx, action, { vStateValueEnabled }),
+    });
+    assert.equal(partialChoice.actionId, chosen.actionId, "搜索未穷尽不应丢弃已有真实结果");
+    const partialPlan = continuation.extractPlanSnapshot({
+      seatId, rootObservation: root, legalActions, actionOutcomes: partial, chosenAction: partialChoice,
+    }, { light: true });
+    assert.equal(partialPlan.plan.nextActionId, snapshot.plan.nextActionId,
+      "完整性不替代可用性；计划仍取同一真实优胜叶");
   }
   const ties = [leaf("a-sparse", actions[0].actionId, sparse), leaf("z-rich", actions[0].actionId, rich)];
   for (const leaves of [ties, [...ties].reverse()]) {

@@ -51,9 +51,10 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值、V、搜索优先级和计划优胜路径", "宣传门槛、资源库存或未来收益使低正式分终局叶胜出"),
     entry("randomizer/game/ai/resource-value.test.js", "policy/heuristic-evaluator", "Policy、标准叶、轻量事实与V共用资源单价和真实未来收入窗口", "钱电单价颠倒、折价方向反转、末轮虚构收入或非钱电被错误折价"),
     entry("randomizer/game/ai/research-potential.test.js", "policy/heuristic-evaluator", "宣传预期绑定正式科技与费用；蓝科技未来奖励只计一次，标准叶/事实/V同源", "蓝科技额外叠旧固定轮次价值、研究后重复计宣传预期或标准叶与搜索事实不一致"),
-    entry("randomizer/game/ai/blue-bonus-value.test.js", "policy/heuristic-evaluator", "蓝槽来源只作归因；同库存同牌面的估值与完成态不因来源改变", "分析清空丢来源、其他收入复活来源、来源资源支付被额外扣分或蓝3牌面估值被排除"),
+    entry("randomizer/game/ai/blue-bonus-value.test.js", "policy/heuristic-evaluator", "蓝槽来源只作归因；同库存同牌面的V与叶估值不因来源改变", "分析清空丢来源、其他收入复活来源、来源资源支付被额外扣分或蓝3牌面估值被排除"),
     entry("randomizer/game/effects/search-root-attribution.test.js", "architecture/effect-session", "共享状态收益归属每个根；目标无后继或完成后继续搜索触顶仍保留实际结果", "后到根或已完成目标收益被后续截断抹掉，或未完成目标虚增收益"),
     entry("randomizer/game/effects/search-payment-choices.test.js", "architecture/effect-session", "不同费用结果分别执行；支付未完成不能成叶，根状态不变", "固定选首项丢路线，或未结算费用的状态冒充完成目标"),
+    entry("randomizer/game/effects/search-budget.test.js", "architecture/effect-session", "全局队列容量、根覆盖、共享来源与完整性；超时不提交真实根", "逐根叶计数或摘要支配吞结果、换序改变覆盖、超时返回部分策略"),
     entry("randomizer/game/ai/conditional-resolution.test.js", "policy/heuristic-evaluator", "同收益条件决策选择较少实际提交，正式收益与终局排序优先", "折叠隐藏执行长度使点选与取消同分循环，或长度奖励压过正式分"),
     entry("randomizer/game/ai/machine-player-coordinator.test.js", "policy/machine-player-coordinator", "共享协调器逐步复用：同回合/跨回合检查揭示与依赖，解析后的 seat 持有计划，成功提交才消费", "同回合只检查合法性漏掉新信息、旧证据继续执行、失败提交消费计划或缓存跨 owner"),
     entry("randomizer/game/ai/plan-continuation.test.js", "policy/plan-continuation", "逐步动作证据与具名复合依赖：目标切换同步推进基线、预期自身推进可复用、正式外星槽输入与缺失事实失效；只读诊断可复算", "整叶根依赖残留到后续目标、缺失事实被当成未变化、无关扇区触发失效、外星槽编号或痕迹层级读错"),
@@ -76,7 +77,7 @@ module.exports = Object.freeze({
 
     entry("randomizer/game/data/data.test.js", "rules/data", "数据获得、放置、分析与容量不变量", "满容量、未知目标或重复放置成功"),
     entry("randomizer/game/data/nebula.test.js", "rules/data", "星云数据槽与奖励结算", "非法槽位或重复奖励被接受"),
-    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描串尾统一结算；四种蓝槽正式奖励、来源恢复与完成路线分区", "重复/漏扇区结算、蓝槽来源未入账、普通科技精选误归蓝槽、恢复丢来源或跨估值上下文支配"),
+    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描串尾统一结算；四种蓝槽正式奖励、来源恢复与不同完成路线保留", "重复/漏扇区结算、蓝槽来源未入账、普通科技精选误归蓝槽、恢复丢来源或评分摘要吞掉不同盘面"),
 
     entry("randomizer/game/tech/tech.test.js", "rules/tech", "科技供应、取得、蓝槽与 owner 规则", "被占/被封锁科技仍取得"),
     entry("randomizer/game/tech/bonuses.test.js", "rules/tech", "科技奖励按 tile/slot 唯一结算", "重复触发或错误颜色奖励"),

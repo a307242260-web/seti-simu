@@ -55,6 +55,7 @@ const before = composition.lifecycle.save().envelope;
 const actions = composition.inputPort.enumerateActions();
 const outcomes = composition.counterfactualPort.evaluate(actions, {
   viewer: { playerId: "p1", role: "player" }, maxNodes: 16, maxExecutionNodes: 32,
+  maxFrontierNodes: 16,
   maxDepth: 5, getBranchPriority: ({ branchObservation }) => branchObservation.stage,
   secondaryAgentSearch: {
     focalSeatId: "p1", maxProxyDepth: 1,
@@ -63,8 +64,7 @@ const outcomes = composition.counterfactualPort.evaluate(actions, {
     selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
   },
 });
-assert.ok(composition.counterfactualPort.getDiagnostics().transpositionHitCount > 0,
-  "两根先后到达相同状态，必须实际触发去重路径");
+// 两条链长度不同，stateVersion也不同；不能再要求忽略版本的语义合并。
 for (const action of actions) {
   const result = outcomes.find((item) => item.actionId === action.actionId);
   assert.equal(result.status, "settled", `${action.family}根不得丢失共同终点：${JSON.stringify(result)}`);
@@ -74,6 +74,7 @@ for (const action of actions) {
 assert.deepEqual(composition.lifecycle.save().envelope, before);
 const stopped = composition.counterfactualPort.evaluate(actions, {
   viewer: { playerId: "p1", role: "player" }, maxNodes: 16, maxExecutionNodes: 32,
+  maxFrontierNodes: 16,
   secondaryAgentSearch: {
     focalSeatId: "p1", maxProxyDepth: 1,
     selectRouteTarget: () => "score:3",
@@ -93,6 +94,7 @@ const continuingBefore = continuing.lifecycle.save().envelope;
 const launch = continuing.inputPort.enumerateActions().filter((action) => action.family === "launch");
 const [budgeted] = continuing.counterfactualPort.evaluate(launch, {
   viewer: { playerId: "p1", role: "player" }, maxNodes: 2, maxExecutionNodes: 2,
+  maxFrontierNodes: 2,
   secondaryAgentSearch: {
     focalSeatId: "p1", maxProxyDepth: 2,
     selectRouteTarget: () => "score:3",
@@ -102,6 +104,7 @@ const [budgeted] = continuing.counterfactualPort.evaluate(launch, {
 });
 assert.equal(continuing.counterfactualPort.getDiagnostics().executionLimitReached, true);
 assert.equal(budgeted.code, "COUNTERFACTUAL_SEARCH_PRUNED", "保留真实结果不代表搜索已穷尽");
+assert.deepEqual(budgeted.searchCompleteness, { status: "incomplete", reasons: ["node-budget"] });
 assert.ok(budgeted.leaves.some((leaf) => leaf.observation.score === 3
   && leaf.terminalReason === "goal-completed" && leaf.actionChain.length === 2),
 "launch→analyze的3分已结算，后续scan未执行不能抹掉它");

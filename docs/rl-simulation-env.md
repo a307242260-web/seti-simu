@@ -98,8 +98,24 @@ actionChain长度表示提交数。非终局条件决策的同价值排序使用
 
 搜索叶`terminalReason=goal-completed`表示目标及附带Decision已经完成，但搜索仍可继续
 下一目标；这是已执行路径的真实结果，不是尚待执行的frontier。后续触顶时仍可用于
-评估，outcome的pruned/低置信度标记保留。它不占原有结束路线叶的饱和计数，不改变
-节点预算、规则执行或正式存档schema。
+评估，outcome的pruned/低置信度标记保留。次级搜索已取消结束叶饱和计数；此叶不改变
+规则执行或正式存档schema。
+
+rollout v19使用4096物理节点、256全局队列容量及10000ms搜索期限；根首步优先，
+队列为每个仍有frontier的根保留最优节点，再按统一优先级填充。去重保留完整状态、
+RNG/序号和Decision；资源/完成摘要不再支配删除后继。全部准入目标进入统一队列，
+旧completeTargetCatalog配置及未绑定top-4已删除。宏步前后超时检查显式失败，不提交
+真实根；同步宏步不能中断，完整决策的10秒性能门槛另作实测。
+
+action outcome新增可选searchCompleteness元数据：`{status, reasons}`。生产输出必须
+提供；旧外部v1输入缺失不推断为complete。status为complete/incomplete/not-evaluated，
+reasons为去重排序字符串数组，校验失败显式抛错。原因包括node-budget、beam-budget、
+leaf-budget（普通control）、conditional-depth、goal-depth、untargeted-depth、
+representative-choice、information-barrier、branch-failed、not-evaluated。
+complete原因必须为空；incomplete原因非空且不含not-evaluated；not-evaluated须无叶、
+outcome.status=unresolved且只有同名原因。完整性表示声明的单席策略搜索范围。
+它不替代outcome.status：有真实完成叶但搜索不完整仍为settled并可选，未执行frontier
+不用于收益或计划。投影透传、Policy校验及复盘报告共用该字段，不加入正式游戏存档。
 
 rollout v18的搜索内部`executionEvents`只包含当前宏步成功提交新增的launch/orbit/land
 事件：新Action会话从0计数，恢复中的Decision从节点checkpoint的journal游标开始，

@@ -51,6 +51,7 @@ const composition = createComposition();
 const before = composition.lifecycle.save().envelope;
 const [result] = composition.counterfactualPort.evaluate(composition.inputPort.enumerateActions(), {
   viewer: { playerId: "p1", role: "player" }, maxNodes: 8, maxExecutionNodes: 16,
+  maxFrontierNodes: 8,
   secondaryAgentSearch: { focalSeatId: "p1", maxProxyDepth: 1,
     selectRouteTarget: () => "move:reward", selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
     completesRouteTarget: ({ branchObservation }) => branchObservation.score > 0 },
@@ -61,6 +62,7 @@ assert.deepEqual(result.leaves.map((leaf) => [leaf.observation.energy, leaf.obse
 assert.deepEqual(composition.lifecycle.save().envelope, before);
 const [pending] = composition.counterfactualPort.evaluate(composition.inputPort.enumerateActions(), {
   viewer: { playerId: "p1", role: "player" }, maxNodes: 1, maxExecutionNodes: 1,
+  maxFrontierNodes: 1,
   secondaryAgentSearch: { focalSeatId: "p1", maxProxyDepth: 2,
     selectRouteTarget: () => "move:reward", selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
     completesRouteTarget: () => true },

@@ -981,7 +981,6 @@
       // 惰性读取：决策函数在首个 runOnce（startNewGame 之后）创建，
       // 新游戏时 invalidate 丢弃重建，难度切换随之生效。
       get difficulty() { return aiDifficulty; },
-      completeTargetCatalog: browserMachineFlags.get("completeTargetCatalog") === "1",
       traceCounterfactualGoalClusters: browserMachineFlags.get("traceCounterfactualGoalClusters") === "1",
       vStateValueEnabled: browserMachineFlags.get("vStateValueEnabled") === "1",
       planContinuationReuse: browserMachineFlags.get("planReuse") !== "0",

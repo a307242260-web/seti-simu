@@ -79,7 +79,7 @@
     }
 
     // 一份 Heuristic 决策函数（与 Simulation 同一份实现、同一 config 源）：
-    // completeTargetCatalog / traceCounterfactualGoalClusters /
+    // traceCounterfactualGoalClusters /
     // vStateValueEnabled 等开关与 sim 完全一致地透传（搜索机制统一，无分桶开关）。
     function ensureDecisionFunction() {
       if (!decisionFunction) {
@@ -90,7 +90,6 @@
             ? { vStateValueEnabled: true }
             : undefined,
           config: {
-            completeTargetCatalog: config.completeTargetCatalog === true,
             traceCounterfactualGoalClusters: config.traceCounterfactualGoalClusters === true,
           },
         });
