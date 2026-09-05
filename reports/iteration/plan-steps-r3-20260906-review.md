@@ -170,3 +170,16 @@ unit 73通过、2项指定旧失败，唯一fullFlow通过；AI/RL说明已同�
 相关unit、默认fullFlow、V审计通过；2项指定旧失败保留。证据为
 `r3-tile-dependency-verification-20260906.json`与`r3-tile-dependency-realization-20260906.json`。
 尚无此修正的完整终局成绩，不宣称第三轮通过，也不把局部正确性等同于均分恢复。
+
+### R3-T1固定盘面验收（2026-09-06）
+
+生产提交`5ebc336e`；先完成200步快速记录`6fbffdcf.5ebc336e.quick-200.json`，
+再同提交从其存档续跑，完整记录`6fbffdcf.5ebc336e.full.json`。612步正式终局
+62/96/89/136，均95.75；已解析存档committedState并核对match.finalScores.totalScore，
+不是base分。较R3原候选提高3.5，仍低于已通过R2e基线106.75达11分，**第三轮仍未通过**。
+
+完整存档`seti-save-research-tile-dependency-r3t1-20260906-5ebc336e-full-v307.json`，
+行动报告位于`tile-dependency-r3t1-20260906/6fbffdcf.5ebc336e.full.action-log.html`。
+正确性证据证明本次类型修正按预期生效；其余均分差距未归因，不靠回退正确依赖追回分数。
+后段日志有约10秒的决策间隔，续跑约193秒；单个起手状态性能通过不代表全盘性能达标。
+后续继续查未覆盖的计划依赖与实际选择差异；水星扫描疑点仍应独立复现修复。
