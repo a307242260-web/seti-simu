@@ -1,0 +1,42 @@
+{
+  "createdAt": "2026-09-05T20:09:24.075Z",
+  "sourcePath": "reports/iteration/probe-source-opening-20260906.json.gz",
+  "sourceSha256": "ed355dcc26d195a86a1db90044c825e789c6441acc6a8503883a11f2a025c737",
+  "scope": "只读既有outcomes并调用纯评估器；incomplete仅为接口反例，不是新生产状态或搜索实验。",
+  "outcomeCounts": {
+    "settled/low/COUNTERFACTUAL_SEARCH_PRUNED": 3,
+    "settled/low/none": 2,
+    "unresolved/none/STRATEGIC_GOAL_NOT_EVALUATED": 13
+  },
+  "comparisons": [
+    {
+      "actionId": "launch:c94cda79",
+      "summary": "发射",
+      "original": {
+        "selectable": true,
+        "score": 76.5
+      },
+      "statusOnlyChange": {
+        "selectable": false
+      }
+    },
+    {
+      "actionId": "play_card:124d76d3",
+      "summary": "b_117.webp",
+      "original": {
+        "selectable": true,
+        "score": 63.83333333333333
+      },
+      "statusOnlyChange": {
+        "selectable": false
+      }
+    }
+  ],
+  "diagnostics": {
+    "executedNodeCount": 2621,
+    "executionLimitReached": false,
+    "prunedNodeCount": 311,
+    "targetSchedulerPrunedCount": 438
+  },
+  "passed": true
+}
