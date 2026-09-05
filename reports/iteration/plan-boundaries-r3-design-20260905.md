@@ -45,3 +45,52 @@
 实现符合上述边界后，固定盘面终局对比第二轮通过版本`20feca27`（106.75）；逻辑和效果
 双门禁按`docs/robot-iteration-registry.md` §2.1执行。第三轮不改估值、目标选择、预算、
 正式规则或用户明确暂不处理的两项旧测试。不因设计复杂要求用户确认技术实施顺序。
+
+## 执行闭包审查补充（2026-09-05）
+
+已完整读取rule-composition.executeNode（含finally清理）。搜索的正式提交集合只有
+下列三处；这是本轮逐步证据采集的有限集合，不另建执行器：
+
+| 正式提交位置 | 覆盖语义 | 采集边界与失败处理 |
+|---|---|---|
+| current提交 | 普通Standard Action，或当前session正式Decision choice | 提交前采集；沿原owner/decisionVersion提交；失败不得进入成功步骤链 |
+| settleChoice提交 | 正式弃牌点选/确认、唯一支付、唯一交易选牌、计算机强制选位 | 每次真实submitDecision各一项；不能只记录宏节点结算后状态 |
+| nextPlaceData提交 | 上一次计算机选位结算后连续提交下一次place_data | 每次submitAction各一项；保留其后独立选位证据，不重复扣费或假造合并动作 |
+
+正式effect自动执行不经以上inputPort提交时，不另造可供协调器提交的步骤；它造成的
+状态变化体现在下一次真实提交的前置证据中。folded executionStepCount包含以上三类，
+现有actionChain仅含current：R3不能修改既有actionChain含义来顺带影响估值、长度排序、
+预算或目标完成计数，必须增加独立的计划执行证据链。
+
+### 已排除的方案
+
+- 搜索结束后重放赢家补状态：executeNode每节点调用resetBranch(branchIdentity)，
+  且end_turn通过专用单席位时钟推进；普通actionChain重放既缺折叠步骤，也不保证相同
+  RNG边界。禁止另写重放执行器或借canonical状态冒充原fork证据。
+- 用cheap观察直接补空字段：共享rule-observation明确省略planets/data/solarSystem/
+  finalScoring，路线标记依赖不能把缺失planets当作0或null再宣称未变化。必须读取完整
+  viewer-safe投影并即时提取所需小型事实；不能长期持有cheap可变引用。
+- 只记录一次revealedCount：rootActionSettledObservation在多个条件步骤后才形成，
+  不是每个前置边界；不能继续作为所有后续步骤的统一揭示基线。
+
+### 已确定的采集方向
+
+沿上述原提交路径、在提交前采集独立的只读计划证据；提交成功后才加入当前节点局部
+步骤链。执行owner、RNG、id、费用、drain规则、剪枝和节点数均不改。完整投影经现有
+隐藏信息遮蔽后，立即提取小型事实，不保存每原子步整份大观察。原子步骤携带actor与
+action语义，origin将步骤链和当时routeTargetId/routePlanId一起持有；禁止使用共享节点
+的某个任意根目标替其他origin建立依赖。叶输出与outcome-model透传必须保留该对应关系。
+
+同席位规划时钟推进本身不是计划动作。end_turn之后与延迟FINAL_MARK排空后的推进
+都必须使下一条前置证据来自推进后的真实fork；不生成对手步骤。隐藏信息barrier在current、
+settleChoice及连续place_data后各自按实际产生时机生效，不能等宏节点结束才决定此前
+步骤是否有权看见新牌；不改变现有搜索动作遮蔽和分支执行范围。
+
+### 冻结前最后两项（尚不写生产代码）
+
+1. 依赖提取映射：probe终点/当前routePlan，tech:gain，sector:win，data:analyze，
+   income:gain以及条件动作目标（科技/外星槽/公共牌）；必须覆盖折叠步骤与同一步可能
+   同时依赖目标路线和当前条件选择的情况，不能再靠单个kind优先覆盖其他依赖。
+2. 性能与缺证据语义：完整投影采集的开销须计入单步门槛；确定元数据callback契约、
+   失败返回与旧计划结构删除证据。不得为了省时跳过折叠步骤、补generic、每步重搜，
+   也不得扩充搜索预算掩盖开销。设计冻结后统一修改采集、传递、提取、消费及文档。
