@@ -27,7 +27,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v3";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v3";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v17";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v18";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   // 统一搜索：未绑定分支每层最多展开的未绑定后继数（预算内优先级截断，见
@@ -1001,10 +1001,24 @@
       ].some((key, index) => finite(income[key]) > finite(baseline[index]));
     }
     const [family, planetId, targetType = "planet", satelliteId = ""] = targetId.split(":");
-    if (!["orbit", "land"].includes(family) || action.family !== family) return false;
-    return String(action.target?.planetId || "") === planetId
-      && String(action.target?.type || "planet") === targetType
-      && String(action.target?.satelliteId || "") === satelliteId;
+    if (!["orbit", "land"].includes(family)) return false;
+    return (input.executionEvents || []).some((event) => (
+      event.type === family && String(event.playerId) === String(input.focalSeatId)
+      && String(event.planetId) === planetId
+      && (event.markerKind === "satellite" ? "satellite" : "planet") === targetType
+      && String(event.satelliteId || "") === satelliteId
+    ));
+  }
+
+  // launch占位只在首次实际发射时转换；已绑定火箭不受后续发射影响。
+  function advanceSecondaryAgentRoutePlan({ planId, executionEvents = [], focalSeatId }) {
+    if (!String(planId || "").startsWith("probe:launch:")) return planId;
+    const launch = executionEvents.find((event) => (
+      event.type === "launch" && String(event.playerId) === String(focalSeatId)
+    ));
+    if (!launch) return planId;
+    if (launch.rocketId == null) throw new TypeError("PROBE_LAUNCH_ID_MISSING: 发射事件缺少正式火箭身份");
+    return `probe:rocket:${launch.rocketId}:${planId.slice("probe:launch:".length)}`;
   }
 
   function secondaryAgentCompletionFacts(observation, seatId) {
@@ -1200,6 +1214,7 @@
         && finite(action.target?.deltaY) === finite(step.deltaY);
     }
     if (["orbit", "land"].includes(step.family)) {
+      if (step.family === "land" && action.target?.select === true) return true;
       return String(action.target?.rocketId) === String(step.rocketId)
         && String(action.target?.planetId) === String(step.planetId)
         && String(action.target?.type || "planet") === String(step.target?.type || "planet")
@@ -2310,6 +2325,7 @@
         focalSeatId: input.focalSeatId,
         rootObservation: input.rootObservation,
         branchObservation: input.branchObservation,
+        executionEvents: input.executionEvents,
       })
     ));
     const rootDataRequirements = rawDataAnalyzeRequirements(input.rootObservation);
@@ -2419,11 +2435,19 @@
       return DATA_ANALYZE_ROUTE_TARGET;
     }
     const branchGoals = rawProbeRequirements(input.branchObservation)?.candidates || [];
+    const planForGoal = (goal) => goal ? advanceSecondaryAgentRoutePlan({
+      planId: `probe:${goal.requirementId}`, executionEvents: input.executionEvents,
+      focalSeatId: input.focalSeatId,
+    }) : null;
+    const branchForGoal = (goal) => branchGoals.find((candidate) => (
+      `probe:${candidate.requirementId}` === planForGoal(goal)
+    ));
+    const selectedProbe = (goal) => goal ? { targetId: goal.targetId, planId: planForGoal(goal) } : null;
     if (
       input.routeTargetId
       && branchGoals.some((goal) => goal.targetId === input.routeTargetId)
     ) {
-      return input.routeTargetId;
+      return { targetId: input.routeTargetId, planId: input.routePlanId };
     }
     if (
       String(input.currentAction?.actorId || "") !== String(input.focalSeatId || "")
@@ -2440,11 +2464,11 @@
             input.focalSeatId,
           );
           return projected && projected.after < projected.before
-            && branchGoals.some((candidate) => candidate.targetId === goal.targetId);
+            && Boolean(branchForGoal(goal));
         })
         .sort((left, right) => {
-          const leftBranch = branchGoals.find((candidate) => candidate.targetId === left.targetId);
-          const rightBranch = branchGoals.find((candidate) => candidate.targetId === right.targetId);
+          const leftBranch = branchForGoal(left);
+          const rightBranch = branchForGoal(right);
           return compareProbeRouteGoals(
             input.branchObservation,
             leftBranch,
@@ -2452,27 +2476,25 @@
             input.focalSeatId,
           );
         });
-      if (matchedTradeGoals.length) return matchedTradeGoals[0].targetId;
+      if (matchedTradeGoals.length) return selectedProbe(matchedTradeGoals[0]);
     }
     if (input.currentAction?.family === "card_corner") {
-      return selectReducedProbeGoal(
+      return selectedProbe(selectReducedProbeGoal(
         input.rootObservation,
         input.branchObservation,
         input.focalSeatId,
-      )?.targetId || null;
+      ));
     }
     if (!["launch", "move", "orbit", "land"].includes(input.currentAction?.family)) return null;
     const matched = (rawProbeRequirements(input.rootObservation)?.candidates || [])
       .filter((goal) => actionMatchesProbeStep(input.currentAction, goal.nextStep))
       .filter((goal) => {
-        const branchGoal = branchGoals.find((candidate) => (
-          candidate.targetId === goal.targetId
-        ));
+        const branchGoal = branchForGoal(goal);
         return Boolean(branchGoal);
       })
       .sort((left, right) => {
-        const leftBranch = branchGoals.find((candidate) => candidate.targetId === left.targetId);
-        const rightBranch = branchGoals.find((candidate) => candidate.targetId === right.targetId);
+        const leftBranch = branchForGoal(left);
+        const rightBranch = branchForGoal(right);
         return compareProbeRouteGoals(
           input.branchObservation,
           leftBranch,
@@ -2480,7 +2502,7 @@
           input.focalSeatId,
         );
       })[0] || null;
-    return matched?.targetId || null;
+    return selectedProbe(matched);
   }
 
   function unfinishedTaskDistinguishesAlienSlot(observation, traceType) {
@@ -2670,7 +2692,6 @@
               target.targetId === goal.targetId
               && (
                 target.planId === `probe:${goal.requirementId || goal.targetId}`
-                || target.planId.startsWith("probe:")
               )
             ));
           if (probe) {
@@ -2837,6 +2858,20 @@
         successors[0]?.phase === "conditional"
         || CONDITIONAL_FAMILIES.has(successors[0]?.family)
       ) {
+        const landChoices = successors.every((action) => (
+          action.family === "choose_target" && action.target?.landTarget
+          && String(action.target?.choiceId || "").startsWith("land:")
+        ));
+        if (landChoices && String(input.routePlanId || "").startsWith("probe:")) {
+          const goal = (rawProbeRequirements(input.branchObservation)?.candidates || [])
+            .find((candidate) => `probe:${candidate.requirementId}` === input.routePlanId);
+          return bindRoute(goal ? successors.filter((action) => (
+            String(action.target.rocketId) === String(goal.rocketId)
+            && String(action.target.planetId) === String(goal.planetId)
+            && String(action.target.landTarget.type || "planet") === String(goal.endpointTarget?.type || "planet")
+            && String(action.target.landTarget.satelliteId || "") === String(goal.endpointTarget?.satelliteId || "")
+          )) : [], input.routeTargetId, input.routePlanId);
+        }
         const immediateCardSettlement = successors.every((action) => (
           action.family === "accept_optional_effect"
           && action.target?.kind === "residual-domain"
@@ -3169,7 +3204,7 @@
         }
         const probeGoal = (rawProbeRequirements(input.branchObservation)?.candidates || [])
           .find((goal) => (
-            goal.targetId === input.routeTargetId
+            `probe:${goal.requirementId}` === input.routePlanId
           ));
         if (probeGoal?.nextStep?.family === "move") {
           const movementChoices = successors.filter((action) => (
@@ -3231,7 +3266,8 @@
           ? continueBoundTargetNextTurn()
           : [];
       }
-      if (String(input.routeTargetId || "").startsWith("income:gain:")) {
+      if (String(input.routeTargetId || "").startsWith("income:gain:")
+        && !String(input.routePlanId || "").startsWith("probe:")) {
         const requirements = rawIncomeGainRequirements(input.branchObservation);
         const plan = (requirements?.plans || []).find((candidate) => (
           candidate.planId === input.routePlanId
@@ -3269,50 +3305,6 @@
             && finite(assets.energy) >= finite(plan.nextCost?.energy)
             ? continueBoundTargetNextTurn()
             : [];
-        }
-        if (plan.kind === "probe") {
-          const goal = (rawProbeRequirements(input.branchObservation)?.candidates || [])
-            .find((candidate) => candidate.requirementId === plan.probeRequirementId);
-          if (!goal) return [];
-          const exact = successors.filter((action) => actionMatchesProbeStep(action, goal.nextStep));
-          const movementCards = selectProbeMovementCards(
-            input.branchObservation,
-            goal,
-            successors,
-          );
-          const deferredMovement = movementCards.length
-            ? []
-            : preferDeferredProbeMovementCard(
-              input.branchObservation,
-              goal,
-              [],
-              successors,
-              input.focalSeatId,
-            );
-          if (exact.length || movementCards.length) {
-            return bindRoute(
-              [...exact, ...movementCards, ...deferredMovement],
-              input.routeTargetId,
-              input.routePlanId,
-            );
-          }
-          const preparation = selectMinimumCostResourcePreparation(
-            input.branchObservation,
-            goal.required || {},
-            successors,
-            input.focalSeatId,
-          );
-          return bindRoute(
-            preferDeferredProbeMovementCard(
-              input.branchObservation,
-              goal,
-              preparation,
-              successors,
-              input.focalSeatId,
-            ),
-            input.routeTargetId,
-            input.routePlanId,
-          );
         }
         return [];
       }
@@ -3392,9 +3384,7 @@
         return [];
       }
       const goals = (rawProbeRequirements(input.branchObservation)?.candidates || [])
-        .filter((goal) => !input.routeTargetId || (
-          goal.targetId === input.routeTargetId
-        ));
+        .filter((goal) => `probe:${goal.requirementId}` === input.routePlanId);
       if (input.routeTargetId && goals.length) {
         const exact = successors.filter((action) => (
           goals.some((goal) => actionMatchesProbeStep(action, goal.nextStep))
@@ -3449,6 +3439,7 @@
             `probe:${goals[0].requirementId || goals[0].targetId}`,
           );
         }
+        if (preparation.length) return bindRoute(preparation, input.routeTargetId, input.routePlanId);
         if (goals.some((goal) => (
           ["launch", "orbit", "land"].includes(goal.nextStep?.family)
           && probeGoalResourceReachable(
@@ -3485,6 +3476,7 @@
     requiresCounterfactualOutcome,
     requiresRootCounterfactual,
     completesSecondaryAgentRouteTarget,
+    advanceSecondaryAgentRoutePlan,
     secondaryAgentCompletionFacts,
     evaluateState,
     evaluateStateValue,

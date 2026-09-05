@@ -143,6 +143,7 @@ function createHeuristicDecisionFunction(options = {}) {
         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
         completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
+        advanceRoutePlan: expectedScoreEvaluator.advanceSecondaryAgentRoutePlan,
         getCompletionFacts: expectedScoreEvaluator.secondaryAgentCompletionFacts,
       } : null,
       getBranchPriority({
@@ -151,6 +152,7 @@ function createHeuristicDecisionFunction(options = {}) {
         currentAction,
         routeTargetIds,
         routePlanIds,
+        executionEvents,
       }) {
         if (evaluateOptions.secondaryAgentSearch) {
           return expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority({
@@ -160,6 +162,7 @@ function createHeuristicDecisionFunction(options = {}) {
             currentAction,
             routeTargetIds,
             routePlanIds,
+            executionEvents,
           });
         }
         rootStrategicFacts = rootStrategicFacts

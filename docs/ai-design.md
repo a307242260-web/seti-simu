@@ -160,6 +160,14 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   `goalCompletionPending` 后进入独立奖励段：已达成目标不再作为依赖，奖励选择仍检查。
 - 多步消费：`advancePlan` 同时推进动作、依赖与揭示基线；旧结构、缺失事实或语义
   不对应显式 miss。计划只驻留协调器，reset/load 清空，失败提交不消费。
+- 探测来源（rollout v18）：`probe:<requirementId>`在根、后继、选靶及资源下界中精确
+  对应同一来源。`advanceRoutePlan`仅用本席正式首次launch事件把launch占位转换为
+  实际rocketId；后续发射不替换已绑定火箭。每个提交前记录当前绑定，提交后更新后续
+  步骤；收入探测共用同一选择链。来源不存在即结束路线，不换用同终点另一枚火箭。
+- 正式land入口为`target.select=true`，只有绑定需求的下一步已是land才匹配；多目标
+  `choose_target`严格匹配火箭、行星和主星/卫星。目标完成依靠当前执行新增的正式
+  orbit/land事件，不把请求选靶当作完成。完成后奖励步骤释放路线依赖，但继续检查
+  奖励选择。单目标直连、多目标选靶及卡牌触发共用正式结算事件。
 - 标准扫描首步：同目标段剩余步骤含`scan`时，扫描及前置准备步骤检查公开
   `sectorWinRequirements.standardScanEarthSource`（`scan-earth`依赖）。正式队列创建后，
   无未来scan的段不再依赖地球位置；来源缺失显式miss。来源计算与正式science扫描队列

@@ -101,6 +101,13 @@ actionChain长度表示提交数。非终局条件决策的同价值排序使用
 评估，outcome的pruned/低置信度标记保留。它不占原有结束路线叶的饱和计数，不改变
 节点预算、规则执行或正式存档schema。
 
+rollout v18的搜索内部`executionEvents`只包含当前宏步成功提交新增的launch/orbit/land
+事件：新Action会话从0计数，恢复中的Decision从节点checkpoint的journal游标开始，
+每次折叠提交按增量读取；缺journal或长度倒退显式失败。`getBranchPriority`和
+`completesRouteTarget`消费同一增量；`advanceRoutePlan`按正式launch身份推进来源。
+事件与逐步绑定只驻留反事实执行结果，不加入Production状态、Browser存档或replay schema。
+多个origin共享物理执行事实，各自推进绑定与计划，不能共用可变来源。
+
 蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：
 `publicState.players[].blueBonusAssets`及`outcomeProjection.progress.blueBonusAssets`
 含`credits/energy/ordinaryCards`来源留存数量，不暴露对手牌身份；`dataProgress.blueSlots`

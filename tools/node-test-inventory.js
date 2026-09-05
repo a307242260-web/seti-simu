@@ -7,6 +7,7 @@ function entry(file, owner, obligation, counterexample) {
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
+    entry("randomizer/game/ai/probe-source-binding.test.js", "policy/heuristic-policy", "探测来源保持、两阶段登陆与正式完成事件一致", "同终点换火箭、通用登陆入口漏选、已登陆却未完成、重复发射覆盖来源"),
     entry("randomizer/app/rule-composition.test.js", "architecture/rule-composition", "组合层独占 registry、session 与原子提交", "handler 或 renderer 失败污染 committed state"),
     entry("randomizer/app/host-architecture-audit.test.js", "architecture/host-source-zero", "Host 规则来源归零且 22 family/5 domain owner 完备", "第二 owner、直接 root 写、改名 bridge 或成功 fallback 重新进入 Host"),
     entry("randomizer/training/simulation-standard-action-composition.test.js", "architecture/standard-action", "生产 composition 唯一注册 22 family 并正式执行", "synthetic registry 掩盖漏注册、错误 phase 或 stale 重放"),

@@ -69,6 +69,8 @@ assert.equal(primaryBeforeCost.actionId, "score-with-cost",
 const targetObservation = {
   probeRouteRequirements: {
     candidates: [{
+      requirementId: "launch:orbit:mars:planet:",
+      sourceId: "launch",
       targetId: "orbit:mars:planet:",
       nextStep: { family: "launch" },
       required: { credits: 2, energy: 3 },
@@ -100,6 +102,7 @@ const boundProbe = expectedScore.selectSecondaryAgentSuccessors({
   branchObservation: targetObservation,
   legalSuccessors: targetSuccessors,
   routeTargetId: "orbit:mars:planet:",
+  routePlanId: "probe:launch:orbit:mars:planet:",
 });
 assert.deepEqual(
   boundProbe.map((action) => [action.actionId, action.routeTargetId]),
@@ -111,6 +114,7 @@ assert.deepEqual(expectedScore.selectSecondaryAgentSuccessors({
   branchObservation: targetObservation,
   legalSuccessors: targetSuccessors.slice(1),
   routeTargetId: "orbit:mars:planet:",
+  routePlanId: "probe:launch:orbit:mars:planet:",
 }), [], "目标不可达时必须结束路线，不得退回无关 legal actions");
 
 const rebound = expectedScore.selectSecondaryAgentSuccessors({
@@ -143,6 +147,8 @@ const conversionObservation = {
   },
   probeRouteRequirements: {
     candidates: [{
+      requirementId: "launch:orbit:mars:planet:",
+      sourceId: "launch",
       targetId: "orbit:mars:planet:",
       nextStep: { family: "launch" },
       required: { credits: 1, energy: 1 },
@@ -173,6 +179,7 @@ const conversionRoutes = expectedScore.selectSecondaryAgentSuccessors({
     },
   ],
   routeTargetId: "orbit:mars:planet:",
+  routePlanId: "probe:launch:orbit:mars:planet:",
 });
 assert.deepEqual(
   conversionRoutes.map((action) => action.actionId),

@@ -2029,6 +2029,8 @@
           // 计划证据与搜索宏节点分开：每次正式输入都有自己的执行前事实。
           // 只读投影来自当前可信 fork；屏障立即生效，不等折叠链结束才遮蔽。
           const planSteps = [];
+          const probeSteps = [];
+          let eventCursor = node.envelope.session?.session?.journal?.events?.length || 0;
           let planInformationMasked = node.origins.some((origin) => origin.informationMasked);
           let planInformationBarrier = node.origins.find((origin) => origin.informationBarrier)
             ?.informationBarrier || null;
@@ -2042,7 +2044,18 @@
                 : observation,
             });
           }
-          function retainStep(step, submitted) {
+          function retainStep(step, submitted, action) {
+            if (secondaryAgentSearch) {
+              if (action.phase !== "conditional") eventCursor = 0;
+              const events = submitted.journal?.events;
+              if (!Array.isArray(events) || events.length < eventCursor) {
+                throw new Error("COUNTERFACTUAL_EVENT_JOURNAL_INVALID: 提交事件缺失或游标倒退");
+              }
+              const executionEvents = events.slice(eventCursor)
+                .filter((event) => ["launch", "orbit", "land"].includes(event.type));
+              eventCursor = events.length;
+              probeSteps.push({ action, executionEvents, planStep: step });
+            }
             if (typeof evaluateOptions.capturePlanStep !== "function") return;
             if (!step) throw new Error("PLAN_STEP_EVIDENCE_MISSING: 采集回调未返回步骤证据");
             planSteps.push(step);
@@ -2073,7 +2086,7 @@
               message: result?.message || failure?.message || null,
             };
           }
-          retainStep(currentPlanStep, result);
+          retainStep(currentPlanStep, result, current);
           if (
             secondaryAgentSearch
             && current.family === "end_turn"
@@ -2191,7 +2204,7 @@
                 message: settleResult?.message || `结算决策失败: ${settleChoice?.family}`,
               };
             }
-            retainStep(settlePlanStep, settleResult);
+            retainStep(settlePlanStep, settleResult, settleChoice);
             // 折叠提交后的 hidden barrier（公共牌翻出等）必须捕获——折叠不泄漏信息。
             executionStepCount += 1;
             if (!drainHiddenBarrier) {
@@ -2230,7 +2243,7 @@
                       message: placeResult?.message || "连续填数据失败",
                     };
                   }
-                  retainStep(placePlanStep, placeResult);
+                  retainStep(placePlanStep, placeResult, nextPlaceData);
                   executionStepCount += 1;
                   continue;
                 }
@@ -2318,6 +2331,7 @@
                 branchObservation: leafObservation,
                 viewer,
                 currentAction: clone(current),
+                executionEvents: probeSteps.flatMap((step) => step.executionEvents),
                 routeTargetIds: [...new Set(node.origins.map((origin) => (
                   origin.routeTargetId || null
                 )))],
@@ -2348,6 +2362,7 @@
             current,
             executionStepCount,
             planSteps,
+            probeSteps,
             nextInspection,
             awaitingDecision,
             successors,
@@ -2657,18 +2672,43 @@
             ? clone(current)
             : null;
           for (const origin of node.origins) {
+            let routePlanId = origin.routePlanId || null;
+            let stepCompletionPending = origin.goalCompletionPending === true;
             if (execution.planSteps.length) {
               const previousStep = origin.planSteps?.at(-1);
               const sameGoal = previousStep?.goalDepth === (origin.proxyDepth || 0)
                 && previousStep.routeTargetId === (origin.routeTargetId || null);
-              origin.planSteps = [...(origin.planSteps || []), ...execution.planSteps.map((step) => ({
-                ...step,
-                goalDepth: origin.proxyDepth || 0,
-                routeTargetId: origin.routeTargetId || null,
-                routePlanId: origin.routePlanId || null,
-                probeAction: nextProbeAction || (sameGoal ? previousStep.probeAction : null),
-                goalCompletionPending: origin.goalCompletionPending === true,
-              }))];
+              const compiled = [];
+              for (const submitted of execution.probeSteps) {
+                if (submitted.planStep) compiled.push({
+                  ...submitted.planStep,
+                  goalDepth: origin.proxyDepth || 0,
+                  routeTargetId: origin.routeTargetId || null,
+                  routePlanId,
+                  probeAction: nextProbeAction || (sameGoal ? previousStep.probeAction : null),
+                  goalCompletionPending: stepCompletionPending,
+                });
+                if (typeof secondaryAgentSearch?.advanceRoutePlan === "function") {
+                  routePlanId = secondaryAgentSearch.advanceRoutePlan({
+                    planId: routePlanId, executionEvents: submitted.executionEvents, focalSeatId,
+                  });
+                }
+                if (/^(orbit|land):/.test(origin.routeTargetId || "")
+                  && submitted.executionEvents.length
+                  && typeof secondaryAgentSearch?.completesRouteTarget === "function") {
+                  stepCompletionPending ||= secondaryAgentSearch.completesRouteTarget({
+                    action: submitted.action, targetId: origin.routeTargetId, planId: routePlanId,
+                    focalSeatId, executionEvents: submitted.executionEvents,
+                    rootObservation, branchObservation: execution.leafObservation,
+                  });
+                }
+              }
+              origin.planSteps = [...(origin.planSteps || []), ...compiled];
+            } else if (typeof secondaryAgentSearch?.advanceRoutePlan === "function") {
+              routePlanId = secondaryAgentSearch.advanceRoutePlan({
+                planId: routePlanId, executionEvents: execution.probeSteps.flatMap((step) => step.executionEvents),
+                focalSeatId,
+              });
             }
             origin.informationMasked = Boolean(
               origin.informationMasked || execution.informationMasked,
@@ -2698,7 +2738,6 @@
             const nextChain = [...origin.chain, current.actionId];
             const originNextProbeAction = nextProbeAction || origin.lastProbeAction;
             let routeTargetId = origin.routeTargetId || null;
-            let routePlanId = origin.routePlanId || null;
             if (
               secondaryAgentSearch
               && !routeTargetId
@@ -2712,6 +2751,7 @@
                   currentAction: current,
                   rootObservation,
                   branchObservation: execution.leafObservation,
+                  executionEvents: execution.probeSteps.flatMap((step) => step.executionEvents),
                   routeTargetId,
                   routePlanId,
                   focalProxyDepth: origin.proxyDepth,
@@ -2769,6 +2809,7 @@
                       focalSeatId,
                       rootObservation,
                       branchObservation: execution.leafObservation,
+                      executionEvents: execution.probeSteps.flatMap((step) => step.executionEvents),
                     },
                   )
                   // completesRouteTarget 缺失时按"不完成目标"处理
