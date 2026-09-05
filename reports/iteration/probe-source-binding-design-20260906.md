@@ -41,6 +41,22 @@ origin；共享物理执行不能用混合后的首项重写身份。goal完成�
 Production仅在没有活动太阳系火箭时添加sourceId=launch，已发射来源为rocket:<id>。
 待发射身份转换仍须覆盖免费发射牌及嵌套效果，不能仅凭这个目录前置条件宣称映射完成。
 
+完成边界新增正式反例`probe-completion-boundary-20260906.json`：已执行的
+`choose_target:7af35885`明确为1号火箭登陆火星，绿方登陆标记0→1，但
+`completesSecondaryAgentRouteTarget`返回false。正式land有两个出口：唯一目标直接
+`settleLandProbe`，多个目标先请求LAND_CHOICE，再由同一出口结算。不能只支持
+choose_target而漏单目标直连，也不能把generic land入口开始选靶当成已完成。
+
+已核对正式发射原语`abilities/rocket.launchProbe`：成功结果携带实际rocket对象，
+events有launch/rocketId/playerId。来源信息应由实际执行事实确定，而非推测nextId。
+搜索宏步内还包含settleChoice和nextPlaceData的正式提交；若使用事件映射，必须覆盖
+各提交并按事件身份处理累计journal，不能再引入只覆盖根提交的半套来源收集。
+优先评估能否仅凭已有分支观察与明确launch占位来源完成绑定，避免为此重建事件账本。
+
+实施前剩余设计决策明确为两项：launch占位如何转换（包括一次效果链多次发射），
+以及单目标直连的完成证据如何与多目标选择保持同源。来源保持、land入口、选靶和
+完成四个消费者应一次实现、集中验证；本阶段不提交零碎生产修订。
+
 待冻结义务：
 
 | 路径 | 必须满足 | 待核对证据 |
