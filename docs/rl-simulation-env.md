@@ -36,6 +36,11 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 未知 family、非法 descriptor、stale、wrong-owner 和版本不匹配都零副作用失败，失败输入不进入
 confirmed replay。
 
+轮初数据收入由共享residual handoff通过正式`data.gainData`生成池内token，观察中的
+`availableData`与实际可放置数据同步；容量、弃置及实体序列由数据内核负责。
+收入在轮次推进的确定性效果中结算，checkpoint包含已生成token及序列；恢复已完成
+的收入不重复发放。本修复不追补旧错误存档已遗漏的历史收入，效果验证须新版本开局。
+
 ## Action 与 Decision
 
 Simulation 决策路径使用共享 `inputPort` 的原生 Action（`seti-standard-action-v1`，

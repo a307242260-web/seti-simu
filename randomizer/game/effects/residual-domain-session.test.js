@@ -6,6 +6,7 @@ const probeTurn = require("./probe-turn-session");
 const finalScoring = require("../final-scoring");
 const cardEffects = require("../cards/effects");
 const aliens = require("../aliens");
+const data = require("../data");
 
 function createRoot() {
   const taskCard = { id: "task-b1", cardId: "b_1.webp" };
@@ -80,6 +81,41 @@ function createRoot() {
     techGameState: { board: { stacks: {} }, ui: {} },
   };
 }
+
+(function roundIncomeCreatesUsableDataForEachOwner() {
+  for (const existing of [0, 5, 6]) {
+    for (const amount of [0, 2]) {
+      const root = createRoot();
+      root.meta.sequences.dataToken = 1;
+      for (const player of root.players.players) {
+        player.resources.availableData = 0;
+        player.income.availableData = amount;
+        for (let i = 0; i < existing; i += 1) assert.equal(data.gainData(player, { root }).ok, true);
+      }
+      const beforeSequence = root.meta.sequences.dataToken;
+      const beforeRng = structuredClone(root.meta.rngState);
+      const owner = createHarness(residual, "createResidualDomain");
+      for (const player of root.players.players) {
+        const beforeTokens = data.listPoolTokens(player);
+        const settled = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
+          ownerId: player.id,
+          payload: { schemaVersion: residual.HANDOFF_SCHEMA, domain: "income", effectType: "round_start_income", data: {} },
+        });
+        assert.equal(settled.ok, true);
+        const expected = Math.min(6, existing + amount);
+        assert.equal(data.listPoolTokens(player).length, expected, "轮初数据收入必须生成可放置token");
+        assert.equal(player.resources.availableData, expected);
+        assert.deepEqual(data.listPoolTokens(player).slice(0, existing), beforeTokens);
+        assert.equal(player.dataState?.discardedCount || 0, Math.max(0, existing + amount - 6));
+        assert.equal(data.canPlaceAnyData(player).ok, expected > 0);
+      }
+      const tokens = root.players.players.flatMap(player => data.listPoolTokens(player));
+      assert.equal(new Set(tokens.map(token => token.id)).size, tokens.length);
+      assert.equal(root.meta.sequences.dataToken, beforeSequence + 2 * Math.min(amount, 6 - existing));
+      assert.deepEqual(root.meta.rngState, beforeRng, "纯数据收入不消耗抽牌RNG");
+    }
+  }
+})();
 
 function createHarness(module, createDomain) {
   const executors = new Map();

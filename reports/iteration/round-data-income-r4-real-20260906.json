@@ -1,0 +1,22 @@
+{
+  "scope": "真实第144步轮初收入及checkpoint恢复，无AI搜索",
+  "source": "seti-saves/seti-save-research-score-corner-r4-20260906-0d21aebf-full-v284.json",
+  "beforeSequence": 20,
+  "afterSequence": 21,
+  "blueData": {
+    "discardedCount": 0,
+    "placedTokens": [],
+    "poolTokens": [
+      {
+        "id": "data-token-20",
+        "index": 1,
+        "slotIndex": 1
+      }
+    ]
+  },
+  "prefixSteps": 143,
+  "exactOldStateDifference": "blue.poolTokens新增1实体；dataToken序列+1",
+  "restoredBeforeAndAfterParity": true,
+  "repeatedActionRejectedWithoutMutation": true,
+  "passed": true
+}

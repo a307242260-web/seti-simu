@@ -1755,9 +1755,14 @@
         credits: Number(income.credits) || 0,
         energy: Number(income.energy) || 0,
         publicity: Number(income.publicity) || 0,
-        availableData: Number(income.availableData) || 0,
         additionalPublicScan: Number(income.additionalPublicScan) || 0,
       });
+      const dataCount = Math.max(0, Math.round(Number(income.availableData) || 0));
+      for (let index = 0; index < dataCount; index += 1) {
+        const gained = data.gainData(owner, { source: "round_start_income", root });
+        // 满池弃置是正式收入结果；其他失败必须阻止本次结算提交。
+        if (!gained.ok && !gained.discarded) return gained;
+      }
       const drawnCards = [];
       const drawContext = drawOptions(root);
       for (let index = 0; index < Math.max(0, Number(income.handSize) || 0); index += 1) {
