@@ -182,6 +182,7 @@
     return {
       ownedTechIds: [...(parts.ownedTechIds || [])].sort(),
       income: { ...(parts.income || {}) },
+      researchOptions: (parts.researchOptions || []).map((option) => ({ ...option })),
       roundNumber: Math.max(1, finite(parts.roundNumber) || 1),
       finalRoundNumber: Math.max(1, finite(parts.finalRoundNumber) || 4),
       traceCount: Math.max(0, finite(parts.traceCount) || 0),
@@ -203,6 +204,7 @@
     return infrastructureFrom({
       ownedTechIds: projection.progress?.ownedTechIds,
       income: projection.progress?.income,
+      researchOptions: projection.progress?.researchOptions,
       roundNumber: projection.progress?.roundNumber,
       finalRoundNumber: projection.progress?.finalRoundNumber,
       traceCount: projection.progress?.traceCount,
@@ -310,6 +312,7 @@
           techEfficiencyValue: 0,
           alienValue: 0,
           cardValue: 0,
+          researchOptionValue: 0,
         },
       });
     }
@@ -403,8 +406,9 @@
       + handEffectValue(reservedCards) * 0.25
     );
 
+    const researchOptionValue = researchPotential(evaluateState(observation, seatId));
     const total = scoreValue + liquidValue + incomeValue + techEfficiencyValue
-      + alienValue + cardValue;
+      + alienValue + cardValue + researchOptionValue;
     return deepFreeze({
       schemaVersion: "seti-state-value-v1",
       evaluationModel: EVALUATION_MODEL,
@@ -420,6 +424,7 @@
         techEfficiencyValue,
         alienValue,
         cardValue,
+        researchOptionValue,
       },
     });
   }
@@ -569,6 +574,29 @@
   // + 外星人牌：开牌即可继续获得外星人牌/终局计分/机制收益）。用户高分档首回合
   // 就抢第一放置、全盘 5 痕迹占满（阿米巴3+虫2）——痕迹是稳定大分源，估值提高。
   const TRACE_UNIT_VALUE = 5;
+  const BLUE_SLOT_UNIT_VALUES = Object.freeze({ blue1: 5, blue2: 5, blue3: 4, blue4: 5 });
+
+  // 科技取得与宣传研究机会共用未来价值，正式即时分仍由规则结算的分差提供。
+  function techFutureValue(tileId, remainingRounds) {
+    const roundWeight = Math.min(1, Math.max(0, remainingRounds / 3));
+    return finite(TECH_UNIT_VALUES[tileId]) * remainingRounds
+      + finite(BLUE_SLOT_UNIT_VALUES[tileId]) * 4 * roundWeight;
+  }
+
+  function researchPotential(value) {
+    if (value.terminal) return 0;
+    const infrastructure = value.infrastructure;
+    const remainingRounds = Math.max(0, infrastructure.finalRoundNumber - infrastructure.roundNumber);
+    const owned = new Set(infrastructure.ownedTechIds);
+    const publicity = Math.max(0, finite(value.resourceFacts.publicity));
+    let best = 0;
+    for (const option of infrastructure.researchOptions) {
+      const cost = finite(option.publicityCost);
+      if (owned.has(option.tileId) || cost <= 0) continue;
+      best = Math.max(best, techFutureValue(option.tileId, remainingRounds) * Math.min(1, publicity / cost));
+    }
+    return best * 0.5;
+  }
 
   function infrastructureDeltaValue(rootValue, leafValue) {
     const rootInfrastructure = rootValue.infrastructure;
@@ -601,26 +629,12 @@
     //     （反事实结算真实发生），techValue 只计"未来收益"避免重复计分。
     //   - 蓝科技数据位槽：预期 4 次（用户 8 次减半）× 每次槽位价值 × 轮次权重
     //     （研究越靠后剩余轮次越少，可放的槽越少）。
-    const BLUE_SLOT_UNIT_VALUES = Object.freeze({
-      blue1: 5,
-      blue2: 5,
-      blue3: 4,
-      blue4: 5,
-    });
-    const EXPECTED_BLUE_SLOT_PLACEMENTS = 4; // 用户 8 次减半
-    const roundWeight = Math.min(1, Math.max(0, remainingRounds / 3));
-    const baseTechValue = gainedTechIds.reduce((total, tileId) => (
-      total + finite(TECH_UNIT_VALUES[tileId]) * remainingRounds
+    const techValue = gainedTechIds.reduce((total, tileId) => (
+      total + techFutureValue(tileId, remainingRounds)
     ), 0);
-    const blueSlotTechValue = gainedTechIds.reduce((total, tileId) => {
-      const slotValue = BLUE_SLOT_UNIT_VALUES[tileId];
-      if (!slotValue) return total;
-      return total + slotValue * EXPECTED_BLUE_SLOT_PLACEMENTS * roundWeight;
-    }, 0);
-    const techValue = baseTechValue + blueSlotTechValue;
     // 蓝科技数据位槽"实际放置"的即时收益：用户 405 档 19 次放槽是"用上"科技的主要形态
     // （blue2 槽 8 次每次 +1 能量、blue1 槽 8 次 +1 信用、blue4 槽 2 次 +2 宣传、blue3 槽 1 次
-    // 选牌）。此前 leafValue 只计研究时的预期（EXPECTED_BLUE_SLOT_PLACEMENTS=4 减半），
+    // 选牌）。此前 leafValue 只计研究时的预期（预期4次，减半），
     // 实际放槽的即时资源收益在评估里 value=0 → AI 研究 blue2 后从不放槽（blueBonus 0）。
     // 按用户口径"实际产生的收益才是价值、预期次数才折半"：实际放置全额计。
     // 与 research 的 techValue 不重复：放槽分支 gainedTechIds 为空（科技已在位），
@@ -752,32 +766,10 @@
       rootValue.realizedScore + finite(rootValue.securedEndGameBonus)
     );
     const infrastructure = infrastructureDeltaValue(rootValue, leafValueState);
-    // 宣传研究货币价值：宣传是研究科技的唯一货币（研究 cost 6 宣传，科技单位价值 10）。
-    // 用户 405 档（终局未结算-v223）实测：打 b_117（免费发射+2 宣传）→ pub 4→6 达
-    // 研究门槛 → 研究 blue2（蓝科技数据位槽 8 次）。此前 AI 评估打牌只算即时分，
-    // 宣传增量=0 → b_117 不可选（no-score-tech-or-income-gain），AI 选 launch 而非打牌。
-    // 宣传价值只在"跨过研究门槛"时兑现（pub 从 <6 到 >=6 的那部分），零星宣传
-    // （远离门槛，如卡角 +1 宣传 pub 0→1）价值为 0——测试契约"只获得宣传的卡角
-    // 不得归因"保持成立。
-    // TECH_VALUE_PER_RESEARCH 从 10 提到 60：10 是"研究一次"的旧固定值，但研究
-    // blue2 的实际 techValue ≈50（R1 时每轮 10×3 + 蓝槽预期 5×4），10 让打牌凑宣传
-    // 只值 3.33，远低于 launch 的乐观探测链评估（103）→ AI 永远不学用户"先打牌凑
-    // 宣传再研究"。提到 60 后 b_117 的 2 宣传 ≈20，与免费发射链叠加可超过 launch。
-    const RESEARCH_PUBLICITY_COST = 6;
-    const TECH_VALUE_PER_RESEARCH = 60;
-    const rootPub = finite(rootValue.resourceFacts?.publicity);
-    const leafPub = finite(leafValueState.resourceFacts?.publicity);
-    // 跨门槛判断只看 leaf 终点 pub：研究动作本身（research_tech）花宣传，终点 pub
-    // 下降 → 不触发（测试契约：R2 研究 orange2 score=14 不加宣传分）。b_117 打牌凑
-    // 宣传→研究的链，其研究价值已由 techValue（gainedTechIds）兑现，宣传是前置动作，
-    // 不重复计分；b_117 的 2 宣传价值由"打牌后 pub 达到 6"的 leaf 分支体现。
-    const crossesThreshold = !leafValueState.terminal
-      && rootPub < RESEARCH_PUBLICITY_COST
-      && leafPub >= RESEARCH_PUBLICITY_COST;
-    const publicityResearchValue = crossesThreshold
-      ? (RESEARCH_PUBLICITY_COST - rootPub)
-        * (TECH_VALUE_PER_RESEARCH / RESEARCH_PUBLICITY_COST)
-      : 0;
+    // 状态预期差允许负值：宣传花掉或研究候选消失时扣回已计的机会价值。
+    // 终局契约只比较正式分，不在终局额外扣根状态预期。
+    const publicityResearchValue = leafValueState.terminal ? 0
+      : researchPotential(leafValueState) - researchPotential(rootValue);
     return {
       total: actualScoreDelta + infrastructure.total + publicityResearchValue,
       primaryValue: actualScoreDelta + infrastructure.total + publicityResearchValue,
@@ -799,6 +791,7 @@
       infrastructure: infrastructureFrom({
         ownedTechIds: facts.ownedTechIds,
         income: facts.income,
+        researchOptions: facts.researchOptions,
         roundNumber: facts.roundNumber,
         finalRoundNumber: facts.finalRoundNumber,
         traceCount: facts.traceCount,
@@ -933,6 +926,7 @@
       rootValue,
       leafValue: best.leafStateValue,
       actualScoreDelta: bestLeafValue.actualScoreDelta,
+      publicityResearchValue: bestLeafValue.publicityResearchValue,
       primaryValue: bestLeafValue.primaryValue,
       vDelta: bestVD,
       vStateValueEnabled: vEnabled,

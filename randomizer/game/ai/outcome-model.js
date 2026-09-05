@@ -172,6 +172,19 @@
     };
   }
 
+  function researchOptions(source, seatId) {
+    const requirements = source?.techGainRequirements
+      ?? source?.outcomeProjection?.progress?.techGainRequirements;
+    if (String(requirements?.playerId) !== String(seatId)) return [];
+    return (requirements.plans || []).map((plan) => {
+      const publicityCost = finiteOrNull(plan.required?.publicity ?? requirements.researchCost);
+      if (!plan.tileId || publicityCost == null || publicityCost < 0) {
+        throw new TypeError("研究预期需要正式科技标识和非负宣传成本");
+      }
+      return { tileId: String(plan.tileId), publicityCost };
+    });
+  }
+
   function createStrategicFacts(source, seatId) {
     const publicPlayer = findPlayer(source, seatId);
     const resources = publicPlayer?.resources || publicPlayer || {};
@@ -195,6 +208,7 @@
       securedEndGameBonus,
       ownedTechIds: ownedTechIds(publicPlayer),
       income: incomeFacts(publicPlayer),
+      researchOptions: researchOptions(source, seatId),
       dataProgress: dataProgressFacts(publicPlayer),
       traceCount: countPlayerTraces(source, seatId, publicPlayer).traceCount,
       resourceFacts: {
@@ -381,6 +395,7 @@
         orangeTechCount: countOrangeTech(publicPlayer),
         ownedTechIds: ownedTechIds(publicPlayer),
         income: incomeFacts(publicPlayer),
+        researchOptions: researchOptions(source, seatId),
         roundNumber: finiteOrNull(
           source?.publicState?.roundNumber
           ?? source?.turn?.roundNumber

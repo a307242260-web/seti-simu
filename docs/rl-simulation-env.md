@@ -53,6 +53,12 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+机器策略的标准 Decision observation由`outcome-model`从规则观察派生。其中
+`outcomeProjection.progress.researchOptions`为同viewer正式科技候选的
+`{tileId, publicityCost}[]`，与轻量`strategicFacts.researchOptions`同源；只来自正式
+`techGainRequirements`，不推测隐藏奖励。该派生字段不写入Production状态或checkpoint。
+研究预期的状态差分与V分项见`docs/ai-design.md`。
+
 Observation schema 为 `seti-rl-observation-v1`：
 
 ```js
