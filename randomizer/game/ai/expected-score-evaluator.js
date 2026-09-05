@@ -267,6 +267,26 @@
     const income = projection.progress?.income || {};
 
     const scoreValue = finite(realizedScore) + (terminal ? 0 : finite(projection.scoring.securedEndGameBonus));
+    // 终局没有未来行动窗口；所有预期分项在入口归零，也不再解析未打出的牌效果。
+    if (terminal) {
+      return deepFreeze({
+        schemaVersion: "seti-state-value-v1",
+        evaluationModel: EVALUATION_MODEL,
+        terminal,
+        roundNumber,
+        finalRoundNumber,
+        remainingPayments: 0,
+        total: scoreValue,
+        components: {
+          scoreValue,
+          liquidValue: 0,
+          incomeValue: 0,
+          techEfficiencyValue: 0,
+          alienValue: 0,
+          cardValue: 0,
+        },
+      });
+    }
     // 资源流动性（手段不是价值，2026-08-18 修复根因 1）：资源库存**不按固定单价
     // 计入 V**——花 1 钱 -8 会掩盖真实收益（launch/scan/打牌全负），让唯一"不花钱"
     // 的 quick_trade 霸榜（实测白色 86→14，29 次 quick_trade）。资源价值通过
@@ -728,7 +748,8 @@
     // 下降 → 不触发（测试契约：R2 研究 orange2 score=14 不加宣传分）。b_117 打牌凑
     // 宣传→研究的链，其研究价值已由 techValue（gainedTechIds）兑现，宣传是前置动作，
     // 不重复计分；b_117 的 2 宣传价值由"打牌后 pub 达到 6"的 leaf 分支体现。
-    const crossesThreshold = rootPub < RESEARCH_PUBLICITY_COST
+    const crossesThreshold = !leafValueState.terminal
+      && rootPub < RESEARCH_PUBLICITY_COST
       && leafPub >= RESEARCH_PUBLICITY_COST;
     const publicityResearchValue = crossesThreshold
       ? (RESEARCH_PUBLICITY_COST - rootPub)
@@ -2267,6 +2288,14 @@
   function evaluateSecondaryAgentSearchPriority(input = {}, parametersInput = {}) {
     const rootFacts = outcomeModel.createStrategicFacts(input.rootObservation, input.focalSeatId);
     const branchFacts = outcomeModel.createStrategicFacts(input.branchObservation, input.focalSeatId);
+    if (branchFacts.terminal) {
+      const terminalValue = evaluateStrategicFactsBreakdown(rootFacts, branchFacts, parametersInput);
+      return {
+        schemaVersion: "seti-secondary-search-priority-v1",
+        // 保持既有向量维度；终局只在正式价值维度比较，不奖励已无用途的目标进度。
+        sortKey: [0, 0, terminalValue.primaryValue, 0, 0, 0, 0, 0, 0, 0, 0],
+      };
+    }
     const routeTargetIds = [...new Set((input.routeTargetIds || []).filter(Boolean))];
     const completedBoundTarget = routeTargetIds.some((targetId) => (
       completesSecondaryAgentRouteTarget({
