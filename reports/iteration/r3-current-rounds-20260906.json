@@ -1,0 +1,1305 @@
+{
+  "createdAt": "2026-09-05T19:27:34.050Z",
+  "scope": "只读两个已完成版本；按after.r分组的是步骤后状态，不代表行动发起轮次。分差和行动差异只作定位，不作因果证明。",
+  "identicalPrefixSteps": 26,
+  "firstDivergence": [
+    {
+      "stepIndex": 26,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 4,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 1,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            2,
+            1,
+            7,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 26,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 4,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 2,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            2,
+            1,
+            7,
+            1,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "sources": [
+    {
+      "record": "baea50cc.20feca27.full.json",
+      "savePath": "seti-saves/seti-save-research-blue-future-r2e-20260905-20feca27-full-v313.json",
+      "sha256": "23715b720331864284971a9f65e01b9b5f878892632455c13ace1c6a95544471",
+      "finalScores": [
+        {
+          "baseScore": 50,
+          "cardScore": 7,
+          "cards": [
+            {
+              "cardId": "b_33.webp",
+              "rule": {
+                "kind": "techCount",
+                "scorePer": 2,
+                "techType": "blue"
+              },
+              "score": 4
+            },
+            {
+              "cardId": "dlc_8.png",
+              "rule": {
+                "kind": "remainingResource",
+                "resource": "availableData",
+                "scorePer": 3
+              },
+              "score": 3
+            }
+          ],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-blue",
+          "prePenaltyTotalScore": 79,
+          "runezuSymbolScore": 0,
+          "tileScore": 22,
+          "tileScoresById": {
+            "a": 16,
+            "b": 0,
+            "c": 0,
+            "d": 6
+          },
+          "tiles": [
+            {
+              "baseValue": 2,
+              "formulaId": "a2",
+              "multiplier": 8,
+              "score": 16,
+              "slotIndex": 2,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "d2",
+              "multiplier": 3,
+              "score": 6,
+              "slotIndex": 3,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 79
+        },
+        {
+          "baseScore": 89,
+          "cardScore": 0,
+          "cards": [],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-green",
+          "prePenaltyTotalScore": 134,
+          "runezuSymbolScore": 0,
+          "tileScore": 45,
+          "tileScoresById": {
+            "a": 22,
+            "b": 16,
+            "c": 0,
+            "d": 7
+          },
+          "tiles": [
+            {
+              "baseValue": 2,
+              "formulaId": "a2",
+              "multiplier": 11,
+              "score": 22,
+              "slotIndex": 1,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "b1",
+              "multiplier": 8,
+              "score": 16,
+              "slotIndex": 1,
+              "tileId": "b",
+              "variant": 1
+            },
+            {
+              "baseValue": 1,
+              "formulaId": "d2",
+              "multiplier": 7,
+              "score": 7,
+              "slotIndex": 1,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 134
+        },
+        {
+          "baseScore": 85,
+          "cardScore": 0,
+          "cards": [],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-brown",
+          "prePenaltyTotalScore": 117,
+          "runezuSymbolScore": 0,
+          "tileScore": 32,
+          "tileScoresById": {
+            "a": 20,
+            "b": 0,
+            "c": 3,
+            "d": 9
+          },
+          "tiles": [
+            {
+              "baseValue": 4,
+              "formulaId": "a2",
+              "multiplier": 5,
+              "score": 20,
+              "slotIndex": 3,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 1,
+              "formulaId": "c1",
+              "multiplier": 3,
+              "score": 3,
+              "slotIndex": 2,
+              "tileId": "c",
+              "variant": 1
+            },
+            {
+              "baseValue": 3,
+              "formulaId": "d2",
+              "multiplier": 3,
+              "score": 9,
+              "slotIndex": 3,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 117
+        },
+        {
+          "baseScore": 77,
+          "cardScore": 0,
+          "cards": [],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-white",
+          "prePenaltyTotalScore": 97,
+          "runezuSymbolScore": 0,
+          "tileScore": 20,
+          "tileScoresById": {
+            "a": 10,
+            "b": 0,
+            "c": 0,
+            "d": 10
+          },
+          "tiles": [
+            {
+              "baseValue": 2,
+              "formulaId": "a2",
+              "multiplier": 5,
+              "score": 10,
+              "slotIndex": 3,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 0,
+              "formulaId": "c1",
+              "multiplier": 4,
+              "score": 0,
+              "slotIndex": 1,
+              "tileId": "c",
+              "variant": 1
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "d2",
+              "multiplier": 5,
+              "score": 10,
+              "slotIndex": 2,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 97
+        }
+      ],
+      "rounds": [
+        {
+          "round": 1,
+          "lastStep": 133,
+          "after": {
+            "r": 1,
+            "t": 20,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                14,
+                1,
+                2,
+                1,
+                1,
+                2
+              ],
+              "player-green": [
+                23,
+                4,
+                0,
+                2,
+                1,
+                0
+              ],
+              "player-brown": [
+                17,
+                0,
+                3,
+                4,
+                0,
+                2
+              ],
+              "player-white": [
+                14,
+                2,
+                1,
+                3,
+                1,
+                1
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 46,
+              "family": "research_tech",
+              "target": {
+                "kind": "research-tech"
+              },
+              "summary": "研究科技"
+            },
+            {
+              "index": 76,
+              "family": "land",
+              "target": {
+                "select": true
+              },
+              "summary": "登陆"
+            },
+            {
+              "index": 102,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "lastStep": 291,
+          "after": {
+            "r": 2,
+            "t": 26,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                26,
+                1,
+                0,
+                4,
+                1,
+                1
+              ],
+              "player-green": [
+                42,
+                0,
+                0,
+                4,
+                1,
+                1
+              ],
+              "player-brown": [
+                29,
+                1,
+                0,
+                2,
+                0,
+                3
+              ],
+              "player-white": [
+                24,
+                0,
+                0,
+                2,
+                2,
+                1
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 135,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "card-21-pass-1-2"
+              },
+              "summary": "b_24.webp"
+            },
+            {
+              "index": 166,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "card-45-0"
+              },
+              "summary": "b_13.webp"
+            },
+            {
+              "index": 207,
+              "family": "orbit",
+              "target": {
+                "rocketId": 2,
+                "planetId": "neptune"
+              },
+              "summary": "环绕海王星 - 奖励：首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描（R2，1信用点 + 1能量）"
+            },
+            {
+              "index": 231,
+              "family": "analyze",
+              "target": {
+                "kind": "computer",
+                "requiredSlot": 6
+              },
+              "summary": "分析"
+            },
+            {
+              "index": 247,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "alien-amiba-0-1"
+              },
+              "summary": "amiba_0.webp"
+            },
+            {
+              "index": 274,
+              "family": "analyze",
+              "target": {
+                "kind": "computer",
+                "requiredSlot": 6
+              },
+              "summary": "分析"
+            },
+            {
+              "index": 285,
+              "family": "launch",
+              "target": null,
+              "summary": "发射"
+            },
+            {
+              "index": 289,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "lastStep": 426,
+          "after": {
+            "r": 3,
+            "t": 20,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                35,
+                0,
+                2,
+                2,
+                1,
+                2
+              ],
+              "player-green": [
+                64,
+                1,
+                0,
+                2,
+                1,
+                0
+              ],
+              "player-brown": [
+                39,
+                1,
+                0,
+                2,
+                1,
+                3
+              ],
+              "player-white": [
+                50,
+                0,
+                1,
+                3,
+                4,
+                1
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 320,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 365,
+              "family": "research_tech",
+              "target": {
+                "kind": "research-tech"
+              },
+              "summary": "研究科技"
+            },
+            {
+              "index": 386,
+              "family": "land",
+              "target": {
+                "select": true
+              },
+              "summary": "登陆"
+            },
+            {
+              "index": 410,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 424,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "lastStep": 666,
+          "after": {
+            "r": 4,
+            "t": 26,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                50,
+                2,
+                0,
+                5,
+                1,
+                2
+              ],
+              "player-green": [
+                89,
+                0,
+                0,
+                7,
+                1,
+                0
+              ],
+              "player-brown": [
+                85,
+                0,
+                0,
+                1,
+                0,
+                2
+              ],
+              "player-white": [
+                77,
+                2,
+                1,
+                2,
+                1,
+                1
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 451,
+              "family": "analyze",
+              "target": {
+                "kind": "computer",
+                "requiredSlot": 6
+              },
+              "summary": "分析"
+            },
+            {
+              "index": 503,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 545,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 580,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 607,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        }
+      ],
+      "steps": 667
+    },
+    {
+      "record": "22cf8cea.cf4280fd.full.json",
+      "savePath": "seti-saves/seti-save-research-card-income-id-r3c1-20260906-cf4280fd-full-v288.json",
+      "sha256": "2db91bcbaba0e44439a1e1ef7fa2911cb1210f5e90747f506e23859225277af5",
+      "finalScores": [
+        {
+          "baseScore": 51,
+          "cardScore": 4,
+          "cards": [
+            {
+              "cardId": "b_33.webp",
+              "rule": {
+                "kind": "techCount",
+                "scorePer": 2,
+                "techType": "blue"
+              },
+              "score": 4
+            }
+          ],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-blue",
+          "prePenaltyTotalScore": 79,
+          "runezuSymbolScore": 0,
+          "tileScore": 24,
+          "tileScoresById": {
+            "a": 10,
+            "b": 0,
+            "c": 0,
+            "d": 14
+          },
+          "tiles": [
+            {
+              "baseValue": 2,
+              "formulaId": "a2",
+              "multiplier": 5,
+              "score": 10,
+              "slotIndex": 3,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "d2",
+              "multiplier": 7,
+              "score": 14,
+              "slotIndex": 1,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 79
+        },
+        {
+          "baseScore": 77,
+          "cardScore": 0,
+          "cards": [],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-green",
+          "prePenaltyTotalScore": 104,
+          "runezuSymbolScore": 0,
+          "tileScore": 27,
+          "tileScoresById": {
+            "a": 15,
+            "b": 6,
+            "c": 0,
+            "d": 6
+          },
+          "tiles": [
+            {
+              "baseValue": 3,
+              "formulaId": "a2",
+              "multiplier": 5,
+              "score": 15,
+              "slotIndex": 3,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 1,
+              "formulaId": "b1",
+              "multiplier": 6,
+              "score": 6,
+              "slotIndex": 2,
+              "tileId": "b",
+              "variant": 1
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "d2",
+              "multiplier": 3,
+              "score": 6,
+              "slotIndex": 3,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 104
+        },
+        {
+          "baseScore": 63,
+          "cardScore": 0,
+          "cards": [],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-brown",
+          "prePenaltyTotalScore": 101,
+          "runezuSymbolScore": 0,
+          "tileScore": 38,
+          "tileScoresById": {
+            "a": 32,
+            "b": 0,
+            "c": 0,
+            "d": 6
+          },
+          "tiles": [
+            {
+              "baseValue": 4,
+              "formulaId": "a2",
+              "multiplier": 8,
+              "score": 32,
+              "slotIndex": 2,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "d2",
+              "multiplier": 3,
+              "score": 6,
+              "slotIndex": 3,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 101
+        },
+        {
+          "baseScore": 76,
+          "cardScore": 0,
+          "cards": [],
+          "jiuzheCardScore": 0,
+          "jiuzheCards": [],
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "jiuzheThreat": 0,
+          "playerId": "player-white",
+          "prePenaltyTotalScore": 138,
+          "runezuSymbolScore": 0,
+          "tileScore": 62,
+          "tileScoresById": {
+            "a": 44,
+            "b": 8,
+            "c": 0,
+            "d": 10
+          },
+          "tiles": [
+            {
+              "baseValue": 4,
+              "formulaId": "a2",
+              "multiplier": 11,
+              "score": 44,
+              "slotIndex": 1,
+              "tileId": "a",
+              "variant": 2
+            },
+            {
+              "baseValue": 1,
+              "formulaId": "b1",
+              "multiplier": 8,
+              "score": 8,
+              "slotIndex": 1,
+              "tileId": "b",
+              "variant": 1
+            },
+            {
+              "baseValue": 2,
+              "formulaId": "d2",
+              "multiplier": 5,
+              "score": 10,
+              "slotIndex": 2,
+              "tileId": "d",
+              "variant": 2
+            }
+          ],
+          "totalScore": 138
+        }
+      ],
+      "rounds": [
+        {
+          "round": 1,
+          "lastStep": 139,
+          "after": {
+            "r": 1,
+            "t": 23,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                17,
+                0,
+                0,
+                2,
+                1,
+                2
+              ],
+              "player-green": [
+                10,
+                0,
+                0,
+                2,
+                2,
+                2
+              ],
+              "player-brown": [
+                24,
+                1,
+                0,
+                4,
+                0,
+                1
+              ],
+              "player-white": [
+                27,
+                2,
+                0,
+                4,
+                2,
+                1
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 31,
+              "family": "orbit",
+              "target": {
+                "rocketId": 2,
+                "planetId": "mars"
+              },
+              "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R2，1信用点 + 1能量）"
+            },
+            {
+              "index": 50,
+              "family": "launch",
+              "target": null,
+              "summary": "发射"
+            },
+            {
+              "index": 73,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "card-5-0"
+              },
+              "summary": "dlc_35.png"
+            },
+            {
+              "index": 90,
+              "family": "research_tech",
+              "target": {
+                "kind": "research-tech"
+              },
+              "summary": "研究科技"
+            },
+            {
+              "index": 121,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "card-19-0"
+              },
+              "summary": "dlc_21.png"
+            },
+            {
+              "index": 135,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "lastStep": 255,
+          "after": {
+            "r": 2,
+            "t": 19,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                26,
+                1,
+                0,
+                5,
+                1,
+                2
+              ],
+              "player-green": [
+                22,
+                0,
+                0,
+                3,
+                3,
+                2
+              ],
+              "player-brown": [
+                30,
+                0,
+                1,
+                2,
+                1,
+                1
+              ],
+              "player-white": [
+                34,
+                1,
+                0,
+                2,
+                2,
+                2
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 142,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 177,
+              "family": "research_tech",
+              "target": {
+                "kind": "research-tech"
+              },
+              "summary": "研究科技"
+            },
+            {
+              "index": 191,
+              "family": "analyze",
+              "target": {
+                "kind": "computer",
+                "requiredSlot": 6
+              },
+              "summary": "分析"
+            },
+            {
+              "index": 230,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "lastStep": 421,
+          "after": {
+            "r": 3,
+            "t": 23,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                41,
+                2,
+                0,
+                4,
+                2,
+                2
+              ],
+              "player-green": [
+                44,
+                0,
+                0,
+                3,
+                1,
+                2
+              ],
+              "player-brown": [
+                50,
+                0,
+                2,
+                4,
+                2,
+                1
+              ],
+              "player-white": [
+                57,
+                1,
+                0,
+                2,
+                1,
+                2
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 293,
+              "family": "orbit",
+              "target": {
+                "rocketId": 5,
+                "planetId": "venus"
+              },
+              "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R5，1信用点 + 1能量）"
+            },
+            {
+              "index": 320,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "card-64-0"
+              },
+              "summary": "b_16.webp"
+            },
+            {
+              "index": 353,
+              "family": "orbit",
+              "target": {
+                "rocketId": 1,
+                "planetId": "uranus"
+              },
+              "summary": "环绕天王星 - 奖励：首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描（R1，1信用点 + 1能量）"
+            },
+            {
+              "index": 386,
+              "family": "launch",
+              "target": null,
+              "summary": "发射"
+            },
+            {
+              "index": 398,
+              "family": "research_tech",
+              "target": {
+                "kind": "research-tech"
+              },
+              "summary": "研究科技"
+            },
+            {
+              "index": 421,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "lastStep": 582,
+          "after": {
+            "r": 4,
+            "t": 25,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                51,
+                1,
+                1,
+                2,
+                2,
+                3
+              ],
+              "player-green": [
+                77,
+                0,
+                0,
+                0,
+                0,
+                2
+              ],
+              "player-brown": [
+                63,
+                0,
+                2,
+                3,
+                2,
+                1
+              ],
+              "player-white": [
+                76,
+                1,
+                1,
+                0,
+                1,
+                2
+              ]
+            }
+          },
+          "greenMainActions": [
+            {
+              "index": 450,
+              "family": "scan",
+              "target": {
+                "kind": "standard-scan"
+              },
+              "summary": "扫描"
+            },
+            {
+              "index": 478,
+              "family": "land",
+              "target": {
+                "select": true
+              },
+              "summary": "登陆"
+            },
+            {
+              "index": 501,
+              "family": "analyze",
+              "target": {
+                "kind": "computer",
+                "requiredSlot": 6
+              },
+              "summary": "分析"
+            },
+            {
+              "index": 539,
+              "family": "launch",
+              "target": null,
+              "summary": "发射"
+            },
+            {
+              "index": 563,
+              "family": "play_card",
+              "target": {
+                "cardInstanceId": "card-97-0"
+              },
+              "summary": "b_131.webp"
+            },
+            {
+              "index": 575,
+              "family": "orbit",
+              "target": {
+                "rocketId": 13,
+                "planetId": "venus"
+              },
+              "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R13，1信用点 + 1能量）"
+            },
+            {
+              "index": 579,
+              "family": "research_tech",
+              "target": {
+                "kind": "research-tech"
+              },
+              "summary": "研究科技"
+            },
+            {
+              "index": 582,
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            }
+          ]
+        }
+      ],
+      "steps": 583
+    }
+  ],
+  "seatDeltas": [
+    {
+      "playerId": "player-blue",
+      "base": 1,
+      "tile": 2,
+      "card": -3,
+      "total": 0
+    },
+    {
+      "playerId": "player-green",
+      "base": -12,
+      "tile": -18,
+      "card": 0,
+      "total": -30
+    },
+    {
+      "playerId": "player-brown",
+      "base": -22,
+      "tile": 6,
+      "card": 0,
+      "total": -16
+    },
+    {
+      "playerId": "player-white",
+      "base": -1,
+      "tile": 42,
+      "card": 0,
+      "total": 41
+    }
+  ]
+}

@@ -232,6 +232,9 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `card-income-id-r3c1-20260906` | `cf4280fd` | 卡牌收入选择身份独立修复；583步均105.5，低于R2e基线1.25，第三轮仍未通过 |
+| `income-reserve-r3i1-20260906` | `082d3e12` | 收入资源准备保留插牌容量；快速200步均38.5，全盘第236步遇既有卡牌收入接口缺陷，无终局 |
+| `scan-earth-r3s1-20260906` | `4fba7beb` | 标准扫描逐步依赖正式地球来源；529步均89.25，未通过；后续独立修复分别登记 |
 | `sector-directory-s2-20260906` | `904acf13` | 独立扇区目录修复：补水星来源及完整缓存依赖；612步均95.75，与R3-T1全程动作/摘要/终局明细一致，局部正确性通过；第三轮仍低于R2e基线11分，未通过 |
 | `tile-dependency-r3t1-20260906` | `5ebc336e` | **第三轮仍未通过**：纠正终局板块被误认科技的计划依赖；612步、62/96/89/136、均95.75，较R3原候选提高3.5，仍低于R2e基线11分 |
 | `planet-read-r3p2-20260906` | `186f97c1` | 第三轮独立行星读取优化：真实单状态评分/优胜叶/计划/节点数等价，9.56秒通过单状态10秒门槛；未跑全盘，不是第三轮验收通过版本；证据见`reports/iteration/r3-planet-read-verification-20260906.json` |
@@ -251,7 +254,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析为`sector-directory-s2-20260906`，只表示当前
+- `registry.currentBaseline` 按代码祖先解析为`card-income-id-r3c1-20260906`，只表示当前
   代码归属，不表示验收通过；最近通过版本仍为`blue-future-r2e-20260905`。四轮计划与
   验收证据见`docs/ai-iteration-plan-20260905.md`。
 - 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
