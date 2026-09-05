@@ -49,6 +49,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/strategic-goal-evaluator.test.js", "policy/heuristic-policy", "战略目标只读取标准叶已兑现的分数、科技和收入变化", "资源库存或未兑现的未来路线冒充目标收益"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
     entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值、V、搜索优先级和计划优胜路径", "宣传门槛、资源库存或未来收益使低正式分终局叶胜出"),
+    entry("randomizer/game/ai/score-corner-target.test.js", "policy/heuristic-evaluator", "正式得分角标按实例准入并完成，非得分角标不无条件放行", "得分角标在PASS前被漏评或其他实例离手误判完成"),
     entry("randomizer/game/ai/resource-value.test.js", "policy/heuristic-evaluator", "Policy、标准叶、轻量事实与V共用资源单价和真实未来收入窗口", "钱电单价颠倒、折价方向反转、末轮虚构收入或非钱电被错误折价"),
     entry("randomizer/game/ai/research-potential.test.js", "policy/heuristic-evaluator", "宣传预期绑定正式科技与费用；蓝科技未来奖励只计一次，标准叶/事实/V同源", "蓝科技额外叠旧固定轮次价值、研究后重复计宣传预期或标准叶与搜索事实不一致"),
     entry("randomizer/game/ai/blue-bonus-value.test.js", "policy/heuristic-evaluator", "蓝槽来源只作归因；同库存同牌面的V与叶估值不因来源改变", "分析清空丢来源、其他收入复活来源、来源资源支付被额外扣分或蓝3牌面估值被排除"),

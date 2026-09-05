@@ -6,14 +6,16 @@
   let cardEffects = root.SetiCardEffects;
   let alienState = root.SetiAlienState;
   let dataPlacement = root.SetiDataPlacement;
+  let cards = root.SetiCards;
   if (typeof require === "function") {
     outcomeModel = outcomeModel || require("./outcome-model");
     quickTrades = quickTrades || require("../actions/quick-trades");
     cardEffects = cardEffects || require("../cards/effects");
     alienState = alienState || require("../aliens/state");
     dataPlacement = dataPlacement || require("../data/placement");
+    cards = cards || require("../cards/deck");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement, cards);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
@@ -21,13 +23,14 @@
   cardEffects,
   alienState,
   dataPlacement,
+  cards,
 ) {
   "use strict";
 
   const EVALUATION_MODEL = "strategic-goal-search-v3";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v3";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v19";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v20";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   // 统一搜索：未绑定分支每层最多展开的未绑定后继数（预算内优先级截断，见
@@ -2024,6 +2027,20 @@
     }
 
     for (const action of legalActions) {
+      if (action.family === "card_corner") {
+        const card = (input.rootObservation?.selfState?.hand || []).find((item) => (
+          String(item.id) === String(action.target?.cardInstanceId)
+        ));
+        if (card) {
+          const code = cards.getDiscardActionCodeForCard(card);
+          const reward = cards.getDiscardActionRewardForCode(code)
+            || cards.getDiscardActionMoveRewardForCode(code);
+          if (finite(reward?.gain?.score) > 0) {
+            const targetId = `card:resolve:${card.id}`;
+            add(targetId, targetId, [action]);
+          }
+        }
+      }
       if (action.phase === "conditional" || CONDITIONAL_FAMILIES.has(action.family)) {
         add(`decision:${action.actionId}`, `decision:${action.actionId}`, [action]);
         continue;

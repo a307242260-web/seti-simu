@@ -75,6 +75,9 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   routeCheckpoints仍移除。避免复制随后被覆盖的字段，不减少逐步计划证据。
 - `game/ai/expected-score-evaluator.js`：只从真实标准叶读取已兑现分数、科技和收入变化，
   按剩余轮次计算版本化战略价值。
+  rollout v20将正式角标奖励表中gain.score>0的合法card_corner按实例绑定到已有
+  card:resolve目标；数据/移动附带选择排空后才形成完成叶，不给目标额外加分。
+  非得分角标仍须其他目标绑定。Browser/Node共用cards/deck奖励API，不维护第二份表。
 - `game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策方案输出的计划结构
   （`buildPlanFromSnapshot`/`advancePlan`）、simulation 侧复用判定
   （`planReuseCheck`）、逐步事实采集与编译（`capturePlanStep`/`compilePlanSteps`）、

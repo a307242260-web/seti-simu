@@ -1,0 +1,155 @@
+browser machine player tests passed
+action bar tests passed
+browser host tests passed
+browser decision UI tests passed
+resident-renderer tests passed
+browser trajectory recording tests passed
+game recovery composition lifecycle tests passed
+host architecture audit tests passed
+public-api tests passed
+rule composition tests passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 次级目标搜索不得恢复 beam
+
+10638 !== 0
+
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/randomizer/app/simulation-counterfactual-outcome.test.js:285:12)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 10638,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+simulation decision owner tests passed
+simulation Effect Session worker crash recovery tests passed
+simulation host public contract tests passed
+simulation no-browser-globals tests passed
+simulation committed-state checkpoint tests passed
+simulation-training-replay tests passed
+standard full-flow v2 passed
+action ability tests passed
+quick trade tests passed
+standard action protocol tests passed
+blue bonus value tests passed
+conditional resolution tests passed
+heuristic evaluator outcome behavior tests passed
+heuristic policy outcome behavior tests passed
+machine-player-coordinator.test.js ok
+outcome projection tests passed
+plan-continuation.test.js ok
+policy port protocol tests passed
+probe source binding tests passed
+research potential tests passed
+resource value tests passed
+score corner target tests passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 分析提交后数据目标应释放，继续搜索后续真实一级收益
++ actual - expected
+
++ 'data:analyze'
+- null
+
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/randomizer/game/ai/strategic-goal-evaluator.test.js:386:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'data:analyze',
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+terminal value tests passed
+amiba.test.js: all tests passed
+aomomo.test.js: all tests passed
+aliens/banrenma.test.js ok
+chong.test.js: all tests passed
+fangzhou.test.js: all tests passed
+aliens/jiuzhe.test.js ok
+aliens/reveal-card-grants.test.js ok
+runezu.test.js: all tests passed
+aliens/trace-placement-legality.test.js ok
+aliens/yichangdian.test.js ok
+card deck tests passed
+card effects tests passed
+card play domain production composition tests passed
+task-state.test.js: all tests passed
+data.test.js: all tests passed
+nebula.test.js: all tests passed
+probe-turn-session tests passed
+residual-domain-session production proofs passed
+science scan and blue reward tests passed
+search budget tests passed
+search payment choice tests passed
+search root attribution tests passed
+effect session journal stage 5 tests passed
+effect session runtime tests passed
+standard action Effect Session tests passed
+StateStore Effect Session stage 6 tests passed
+end-game-scoring tests passed
+final-scoring tests passed
+initial-setup mission startup final mark passed
+planet stats tests passed
+player tests passed
+rocket move tests passed
+rocket action tests passed
+high coupling state tests passed
+low coupling state tests passed
+state-store tests passed
+bonuses.test.js passed
+tech.test.js passed
+solar-system-core tests passed
+heuristic turn report search trace tests passed
+self-play demo ingestion tests passed
+simulation rules-only composition tests passed
+simulation production Standard Action composition tests passed
+trajectory recorder tests passed
+SUMMARY unit passed=76 failed=2 total=78 time=22.89s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.58s
+OWNER architecture/browser-host tests=7
+OWNER architecture/effect-session tests=9
+OWNER architecture/host-source-zero tests=1
+OWNER architecture/policy-host tests=4
+OWNER architecture/rule-composition tests=1
+OWNER architecture/simulation-host tests=7
+OWNER architecture/standard-action tests=1
+OWNER architecture/state-store tests=3
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/heuristic-evaluator tests=7
+OWNER policy/heuristic-policy tests=4
+OWNER policy/machine-player-coordinator tests=1
+OWNER policy/plan-continuation tests=1
+OWNER rules/actions tests=9
+OWNER rules/aliens tests=10
+OWNER rules/cards tests=4
+OWNER rules/data tests=3
+OWNER rules/scoring tests=2
+OWNER rules/tech tests=2
+OWNER training/trajectory tests=2
+FAIL randomizer/app/simulation-counterfactual-outcome.test.js status=1 signal=none
+FAIL randomizer/game/ai/strategic-goal-evaluator.test.js status=1 signal=none
