@@ -64,6 +64,11 @@ Composition drain，不伪装成策略动作。
 actionChain长度表示提交数。非终局条件决策的同价值排序使用该计数，终局不使用；它不
 写入正式游戏状态或改变replay/plan结构。
 
+搜索叶`terminalReason=goal-completed`表示目标及附带Decision已经完成，但搜索仍可继续
+下一目标；这是已执行路径的真实结果，不是尚待执行的frontier。后续触顶时仍可用于
+评估，outcome的pruned/低置信度标记保留。它不占原有结束路线叶的饱和计数，不改变
+节点预算、规则执行或正式存档schema。
+
 蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：
 `publicState.players[].blueBonusAssets`及`outcomeProjection.progress.blueBonusAssets`
 含`credits/energy/ordinaryCards`来源留存数量，不暴露对手牌身份；`dataProgress.blueSlots`

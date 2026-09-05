@@ -8,7 +8,7 @@ const standardDomain = require("./standard-action-session");
 const { createRuleComposition } = require("../rule-composition");
 
 const families = ["launch", "scan", "place_data", "analyze"];
-function createComposition() {
+function createComposition(continueAfterScore = false) {
   return createRuleComposition({
     stateStoreApi, effectRuntimeApi,
     createInitialState: () => stateStoreApi.createCommittedGameState({
@@ -22,7 +22,7 @@ function createComposition() {
       function actions(root) {
         const available = root.match.stage === 0 ? ["launch", "scan"]
           : root.match.stage === 1 ? ["place_data"]
-            : root.match.stage === 2 ? ["analyze"] : [];
+            : root.match.stage === 2 ? ["analyze"] : continueAfterScore ? ["scan"] : [];
         return available.map((family) => ({
           schemaVersion: "seti-standard-action-v1", actionId: `${family}:${root.meta.stateVersion}`,
           family, phase: "main", actorId: "p1", stateVersion: root.meta.stateVersion,
@@ -43,7 +43,7 @@ function createComposition() {
     effectDomains: [{ create: standardDomain.createStandardActionDomain, families,
       options: { actionFamilies: families } }],
     createCounterfactualFork(envelope) {
-      const fork = createComposition();
+      const fork = createComposition(continueAfterScore);
       assert.equal(fork.lifecycle.restore(envelope).ok, true);
       return fork;
     },
@@ -88,4 +88,23 @@ for (const result of stopped) {
   assert.equal(result.leaves[0].actionChain.length, 1);
 }
 assert.deepEqual(composition.lifecycle.save().envelope, before);
+const continuing = createComposition(true);
+const continuingBefore = continuing.lifecycle.save().envelope;
+const launch = continuing.inputPort.enumerateActions().filter((action) => action.family === "launch");
+const [budgeted] = continuing.counterfactualPort.evaluate(launch, {
+  viewer: { playerId: "p1", role: "player" }, maxNodes: 2, maxExecutionNodes: 2,
+  secondaryAgentSearch: {
+    focalSeatId: "p1", maxProxyDepth: 2,
+    selectRouteTarget: () => "score:3",
+    completesRouteTarget: ({ action }) => action.family === "analyze",
+    selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
+  },
+});
+assert.equal(continuing.counterfactualPort.getDiagnostics().executionLimitReached, true);
+assert.equal(budgeted.code, "COUNTERFACTUAL_SEARCH_PRUNED", "保留真实结果不代表搜索已穷尽");
+assert.ok(budgeted.leaves.some((leaf) => leaf.observation.score === 3
+  && leaf.terminalReason === "goal-completed" && leaf.actionChain.length === 2),
+"launch→analyze的3分已结算，后续scan未执行不能抹掉它");
+assert.ok(budgeted.leaves.every((leaf) => leaf.status !== "search_frontier"));
+assert.deepEqual(continuing.lifecycle.save().envelope, continuingBefore);
 console.log("search root attribution tests passed");

@@ -59,4 +59,13 @@ assert.equal(result.status, "settled");
 assert.deepEqual(result.leaves.map((leaf) => [leaf.observation.energy, leaf.observation.score]).sort(),
   [[1, 3], [2, 1]], "不同费用和结果的支付选择必须分别执行，不能固定取第一项");
 assert.deepEqual(composition.lifecycle.save().envelope, before);
+const [pending] = composition.counterfactualPort.evaluate(composition.inputPort.enumerateActions(), {
+  viewer: { playerId: "p1", role: "player" }, maxNodes: 1, maxExecutionNodes: 1,
+  secondaryAgentSearch: { focalSeatId: "p1", maxProxyDepth: 2,
+    selectRouteTarget: () => "move:reward", selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
+    completesRouteTarget: () => true },
+});
+assert.equal(pending.code, "COUNTERFACTUAL_SEARCH_PRUNED");
+assert.equal(pending.leaves.length, 0, "目标标为完成但正式支付未结束，仍不能保留为完成叶");
+assert.deepEqual(composition.lifecycle.save().envelope, before);
 console.log("search payment choice tests passed");

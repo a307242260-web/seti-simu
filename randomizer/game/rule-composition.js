@@ -1877,7 +1877,10 @@
           if (state) state.pruned = true;
           return;
         }
-        leafCountByVirtualRoot.set(rootKey, leafCount + 1);
+        // 继续搜索中的完成目标结果不是停止路线叶；保留它不能提前触发既有饱和裁剪。
+        if (!(secondaryAgentSearch && origin.terminalReason === "goal-completed")) {
+          leafCountByVirtualRoot.set(rootKey, leafCount + 1);
+        }
         const fullObservation = fullLeafObservation(origin, leafObservation);
         state.leaves.push({
           leafId: `leaf:${stableHash([
@@ -3129,14 +3132,21 @@
                   );
                   continue;
                 }
-                if (selectedRoutes.some((route) => (
+                const completedEndpoint = completedGoal
+                  && ["completed", "idle"].includes(execution.nextInspection.phase);
+                if (completedEndpoint || selectedRoutes.some((route) => (
                   String(route.action.actorId) === focalSeatId
                 ))) {
-                  addFrontierLeaf(
+                  // 已完成目标的实际收益独立于后续搜索；未完成路线仍仅作frontier诊断。
+                  const recordEndpoint = completedEndpoint ? addLeaf : addFrontierLeaf;
+                  recordEndpoint(
                     {
                       ...origin,
                       chain: nextChain,
                       proxyDepth: nextProxyDepth,
+                      goalTracePaths: nextGoalTracePaths,
+                      goalTraceSelections: nextGoalTraceSelections,
+                      terminalReason: completedEndpoint ? "goal-completed" : origin.terminalReason,
                       quickTradeCount: nextQuickTradeCount,
                       targetQuickTradeCount: completedGoal
                         ? 0
