@@ -1,0 +1,78 @@
+{
+  "createdAt": "2026-09-05T16:23:54.353Z",
+  "baseline": "20feca27",
+  "scope": "旧协调器/计划函数消费同一实际赢家的宏步骤链；正式内核提交，不执行新搜索。不是历史赢家身份或整体分差的证明",
+  "events": [
+    {
+      "type": "plan-reuse-miss",
+      "seatId": "player-white",
+      "reason": "no-plan"
+    },
+    {
+      "type": "scheme-decision",
+      "seatId": "player-white",
+      "actionId": "play_card:124d76d3"
+    },
+    {
+      "type": "plan-reuse-hit",
+      "seatId": "player-white",
+      "actionId": "move:e0158279"
+    },
+    {
+      "type": "plan-reuse-miss",
+      "seatId": "player-white",
+      "reason": "step-not-legal-within-turn"
+    },
+    {
+      "type": "scheme-decision",
+      "seatId": "player-white",
+      "actionId": "choose_payment:abbb51f1"
+    }
+  ],
+  "decisions": [
+    {
+      "call": 1,
+      "legal": [
+        "card_corner:c035cf98",
+        "card_corner:f9d602d7",
+        "industry:e887dc52",
+        "launch:c94cda79",
+        "pass:a1f33c73",
+        "place_data:8fd12fd3",
+        "play_card:124d76d3",
+        "play_card:437f4432",
+        "quick_trade:122c43fc",
+        "quick_trade:12411a2c",
+        "quick_trade:37140fcf",
+        "quick_trade:49c75492",
+        "quick_trade:71814d67",
+        "quick_trade:a39c1a77",
+        "quick_trade:be9dd0cd",
+        "quick_trade:df811f99",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323"
+      ]
+    },
+    {
+      "call": 2,
+      "legal": [
+        "choose_payment:abbb51f1"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "actionId": "play_card:124d76d3",
+      "source": "scheme"
+    },
+    {
+      "actionId": "move:e0158279",
+      "source": "plan-reuse"
+    },
+    {
+      "actionId": "choose_payment:abbb51f1",
+      "source": "scheme"
+    }
+  ],
+  "passed": true
+}
