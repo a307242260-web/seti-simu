@@ -516,6 +516,42 @@ for (const family of ["end_turn", "pass"]) {
   assert.equal(planContinuation.planReuseCheck(absent, changed, [action]).reason, "plan-dependency-fact-missing");
 }
 
+// 终局板块与科技共享tileId字段，但由正式选择身份区分依赖域。
+for (const tileId of ["a", "b", "c", "d"]) {
+  for (const variant of [1, 2]) {
+    const before = planObservation();
+    const final = require("../final-scoring").createFinalScoringState();
+    final.tileVariants[tileId] = variant;
+    before.publicState.board.finalScoring = final;
+    const end = planAction("end", "end_turn");
+    const mark = planAction(`final:${tileId}`, "choose_target", {
+      kind: "residual-domain", choiceId: `final:${tileId}`, tileId,
+    });
+    const plan = storedSteps([stepEvidence(end, before), stepEvidence(mark, before)]);
+    assert.equal(plan.steps.every((step) => step.valid), true);
+    assert.deepEqual(plan.steps[0].dependencies.map((item) => item.scope), [{ kind: "final-tile", id: tileId }]);
+    const first = planContinuation.planReuseCheck(plan, before, [end], { sameTurn: true });
+    assert.equal(first.hit, true);
+    assert.equal(planContinuation.planReuseCheck(first.nextPlan, before, [mark]).hit, true);
+    const unrelated = structuredClone(before);
+    unrelated.publicState.board.finalScoring.tiles[tileId === "a" ? "b" : "a"].marks.push({ playerId: "other", slotIndex: 1 });
+    unrelated.publicState.board.techSupply.stacks.blue1.remaining = 2;
+    assert.equal(planContinuation.planReuseCheck(plan, unrelated, [end], { sameTurn: true }).hit, true);
+    for (const change of ["marks", "variant", "missing"]) {
+      const changed = structuredClone(before);
+      const state = changed.publicState.board.finalScoring;
+      if (change === "marks") state.tiles[tileId].marks.push({ playerId: "other", slotIndex: 1 });
+      if (change === "variant") state.tileVariants[tileId] = 3 - variant;
+      if (change === "missing") delete state.tiles[tileId];
+      assert.equal(planContinuation.planReuseCheck(plan, changed, [end], { sameTurn: true }).hit, false);
+    }
+    const unknown = planAction("unknown", "choose_target", { tileId: "unknown", choiceId: "other:unknown" });
+    assert.equal(storedSteps([stepEvidence(unknown, before)]).steps[0].reason, "plan-tile-scope-unknown");
+    delete before.publicState.board.finalScoring;
+    assert.equal(storedSteps([stepEvidence(mark, before)]).steps[0].valid, false);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // aggregateStats：命中率 + 预测器 precision/recall + 原因分布
 // ---------------------------------------------------------------------------

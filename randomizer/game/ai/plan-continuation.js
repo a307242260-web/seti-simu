@@ -735,6 +735,9 @@ function capturePlanStep({ observation, action }) {
       markers: endpointMarkerCount(observation, candidate.targetId),
     })),
     tech: structuredClone(board.techSupply.stacks || {}),
+    finalTiles: Object.fromEntries(Object.entries(board.finalScoring?.tiles || {}).map(([id, tile]) => [id, {
+      tile: structuredClone(tile), variant: board.finalScoring?.tileVariants?.[id],
+    }])),
     sectors: sectors.map((candidate) => ({ sectorId: candidate.sectorId,
       targetId: candidate.targetId, ownCount: candidate.ownCount,
       maxOpponentCount: candidate.maxOpponentCount, openSlotCount: candidate.openSlotCount,
@@ -794,7 +797,14 @@ function stepScopes(step, segment) {
   // 它没有独立战略资源事实，仍从该段具体选择提取全部外部依赖。
   for (const item of segment) {
     const target = item.action.target || {};
-    if (target.tileId) add("tech", target.tileId);
+    if (target.tileId) {
+      const choiceId = String(target.choiceId || "");
+      if (choiceId === `final:${target.tileId}`) add("final-tile", target.tileId);
+      else if (Object.hasOwn(item.facts.tech, target.tileId)
+        && (!choiceId || choiceId === `tech:${target.tileId}`
+          || choiceId.startsWith(`tech:${target.tileId}:slot:`))) add("tech", target.tileId);
+      else return { valid: false, reason: "plan-tile-scope-unknown" };
+    }
     if (target.alienSlotId != null) {
       if (!target.traceType) return { valid: false, reason: "plan-trace-type-missing" };
       add("alien", `${target.alienSlotId}:${target.traceType}`);
@@ -819,6 +829,10 @@ function scopedFact(facts, scope) {
       ? routes : undefined;
   }
   if (scope.kind === "tech") return facts.tech[scope.id];
+  if (scope.kind === "final-tile") {
+    const fact = facts.finalTiles?.[scope.id];
+    return fact?.variant != null && Array.isArray(fact.tile?.marks) ? fact : undefined;
+  }
   if (scope.kind === "sector") return facts.sectors.find((item) => String(item.sectorId) === scope.id);
   if (scope.kind === "data") return facts.data ?? undefined;
   if (scope.kind === "card-slot") return facts.cards[Number(scope.id)];

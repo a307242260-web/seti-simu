@@ -158,3 +158,15 @@ unit 73通过、2项指定旧失败，唯一fullFlow通过；AI/RL说明已同�
 
 本次只新增诊断/重放证据并同步本复盘；AI/RL、README、AGENTS、PROJECT_MEMORY、
 测试规范与迭代标准已核对，无生产契约变更，不需修改。第三轮仍未通过。
+
+### 板块依赖类型修正R3-T1（局部验证完成）
+
+改动：按正式选择身份区分科技与终局板块；逐步采集终局板块占位/变体，按具名板块
+建立依赖并传给同段前置步骤。未知类型或缺事实仍显式拒绝，不再通用tileId=>tech。
+完整设计和语义目录见`r3-tile-dependency-design-20260906.md`。
+
+真实样本118节点、420.35ms，所有根的完整评分与修复前一致；原两个错误invalid步骤
+恢复有效。第194步真实边界的end_turn从缺事实miss变为hit，确认实现纠偏按预期生效。
+相关unit、默认fullFlow、V审计通过；2项指定旧失败保留。证据为
+`r3-tile-dependency-verification-20260906.json`与`r3-tile-dependency-realization-20260906.json`。
+尚无此修正的完整终局成绩，不宣称第三轮通过，也不把局部正确性等同于均分恢复。

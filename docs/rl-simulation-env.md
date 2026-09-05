@@ -57,6 +57,10 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+逐步计划从公开`board.finalScoring.tiles`与`tileVariants`采集终局板块占位和变体，
+按正式`final:<tile>`选择身份建立具名依赖；不把终局tileId当作科技。此证据不写回
+Production状态或存档，缺失事实仍拒绝复用。
+
 Production地球坐标及探测/正式行动context通过共享太阳系内核的
 `collectPlanetLocations`读取行星数组，省略无关的完整快照计算；Browser与Simulation
 使用同一函数，观察、合法动作、规则提交与存档schema不变。

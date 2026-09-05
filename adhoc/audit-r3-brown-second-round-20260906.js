@@ -5,7 +5,7 @@ const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
-const output = "reports/iteration/r3-brown-second-round-20260906.json";
+const output = process.argv[2] || "reports/iteration/r3-brown-second-round-20260906.json";
 if (fs.existsSync(output)) {
   console.log(`已有记录，未重跑：${output}`);
 } else {
@@ -13,6 +13,8 @@ if (fs.existsSync(output)) {
   const sample = structuredClone(source.samples[1]);
   const report = { createdAt: new Date().toISOString(),
     gitCommit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    planSourceSha256: crypto.createHash("sha256")
+      .update(fs.readFileSync("randomizer/game/ai/plan-continuation.js")).digest("hex"),
     scope: "从已有真实第172步checkpoint做一次冷计划决策；不重放、不跑全盘",
     sample };
   const env = createSimulationEnv();

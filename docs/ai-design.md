@@ -150,7 +150,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   加入 `leaf.planSteps`。既有 actionChain 和 executionStepCount 不改含义。
 - 依赖按每个 origin 当时的目标深度、routeTargetId、routePlanId 分段；每步取当前
   目标及该段后继具名选择所需事实的并集，包括路线、科技、扇区、数据布局、公共牌、
-  外星痕迹。不能用整叶根目标或最终观察代替下一步状态。外星痕迹按 `slotId` 与
+  外星痕迹、终局计分板块。`tileId`不是科技类型标记：正式`final:<tile>`选择依赖
+  具名终局板块的占位与变体，科技选择依赖公共科技目录；未知身份或缺失事实显式miss。
+  终局选择的依赖同样传递到同段前置end_turn，其他板块变化不使它失效。
+  不能用整叶根目标或最终观察代替下一步状态。外星痕迹按 `slotId` 与
   `traces[traceType]` 定位，不按物种名称或数组下标定位。
 - 路线限定终点与正式sourceId（launch或具名rocket）；来源取当前/同目标最近probe、
   同段后继原生动作或具名requirement，不比较同终点无关探测器。搜索标记
