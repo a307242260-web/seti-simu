@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T17:57:09.325Z",
+  "builtAt": "2026-09-05T18:41:19.401Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "904acf13",
-  "currentBaseline": "sector-directory-s2-20260906",
+  "headCommit": "4fba7beb",
+  "currentBaseline": "scan-earth-r3s1-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,612 @@
     ]
   },
   "versions": [
+    {
+      "id": "scan-earth-r3s1-20260906",
+      "name": "第三轮标准扫描首步依赖（效果未通过）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "4fba7beb",
+      "commits": [
+        {
+          "hash": "4fba7beb",
+          "date": "2026-09-06",
+          "subject": "补齐标准扫描首步的计划依赖并共享正式范围计算"
+        }
+      ],
+      "summary": "标准扫描首步范围与正式规则共享计算；计划在扫描及前置准备阶段检查地球来源，队列绑定后移除该依赖",
+      "diffStat": "97 files changed, 150542 insertions(+), 601 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/audit-mercury-scan-directory-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-plan-boundaries-r3-20260905.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r2e-expectation-20260905.js",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-actual-opening-plan-20260906.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-alien-dependency-input-20260905.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-plan-realization-20260906.js",
+          "insertions": 79,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-route-selection-20260906.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-second-round-20260906.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-first-divergence-choice-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-legacy-payment-boundary-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-access-dependency-20260906.js",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-source-order-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-sector-directory-cache-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-first-divergence-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-sector-directory-full-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r3-brown-decision-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-plan-steps-r3-20260905.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-scan-earth-20260906.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-20260906.js",
+          "insertions": 88,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-boundaries-20260906.js",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 44,
+          "deletions": 15
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 68,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 38,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.js",
+          "insertions": 18,
+          "deletions": 35
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.test.js",
+          "insertions": 85,
+          "deletions": 23
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 10,
+          "deletions": 6
+        },
+        {
+          "file": "randomizer/game/ai/outcome-projection.test.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 217,
+          "deletions": 40
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 232,
+          "deletions": 349
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.js",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-scan-flow.test.js",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 25,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 31,
+          "deletions": 34
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905-review.md",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.full.action-log.html",
+          "insertions": 2103,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.quick-200.action-log.html",
+          "insertions": 732,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/mercury-scan-directory-audit-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-boundaries-r3-audit-20260905.json",
+          "insertions": 736,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-boundaries-r3-design-20260905.md",
+          "insertions": 263,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906-review.md",
+          "insertions": 274,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906/e529366a.d7a78140.full.action-log.html",
+          "insertions": 2018,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-20260906/e529366a.d7a78140.quick-200.action-log.html",
+          "insertions": 749,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-profile-20260905-09dd888d.json",
+          "insertions": 785,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-profile-20260905-589f5bea.json",
+          "insertions": 775,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-profile-20260905-d2f49e3e.json",
+          "insertions": 781,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-profile-20260905-f13caf6d.json",
+          "insertions": 781,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/plan-steps-r3-profile-20260905.json",
+          "insertions": 758,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r2e-expectation-audit-20260905.json",
+          "insertions": 1296,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-actual-opening-plan-20260906.json",
+          "insertions": 123944,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-alien-dependency-input-20260905.json",
+          "insertions": 206,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-before-171-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-before-41-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/r3-brown-cpu-20260906.json",
+          "insertions": 584,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "c3eebca2.4fba7beb.quick-200.json",
+          "recordPath": "reports/research/c3eebca2.4fba7beb.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 48918,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "4fba7beb",
+          "createdAt": "2026-09-05T18:37:19.993Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步阶段均32.75，非终局；完整局同提交从该存档续跑，不重跑前200步。",
+          "scores": {
+            "player-blue": 23,
+            "player-green": 22,
+            "player-brown": 34,
+            "player-white": 52
+          },
+          "avgScore": 32.75,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-scan-earth-r3s1-20260906-4fba7beb-quick-200-v99.json",
+          "reportPath": "reports/iteration/scan-earth-r3s1-20260906/c3eebca2.4fba7beb.quick-200.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "c3eebca2.4fba7beb.full.json",
+          "recordPath": "reports/research/c3eebca2.4fba7beb.full.json",
+          "mode": "full",
+          "steps": 529,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 145621,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "4fba7beb",
+          "createdAt": "2026-09-05T18:39:51.752Z",
+          "resumeStep": 200,
+          "seed": "seti-free-analyze-v1",
+          "note": "529步完整终局64/82/102/109，均89.25；低于上一候选S2的95.75达6.5分，低于已通过R2e基线106.75达17.5分，未通过效果门禁。两个正式扫描反例、前置准备/绑定后作用域、缺事实拒绝、紫1八方位、正式费用及顺序验证通过；但尚未证明实际降分路径符合预期，不能凭局部验证接受本候选。首次分歧为第80步绿方quick_trade改research_tech，失效原因及终局分差因果仍待查。真实棕方单决策22根评分除新公开字段回显外一致，9821.75ms/4096节点；两个指定既有测试失败保留。",
+          "scores": {
+            "player-blue": 64,
+            "player-green": 82,
+            "player-brown": 102,
+            "player-white": 109
+          },
+          "avgScore": 89.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 64,
+              "base": 37,
+              "tile": 21,
+              "card": 6,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 18,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 82,
+              "base": 61,
+              "tile": 21,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 1,
+                "blueTechScore": 4,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 21,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 102,
+              "base": 57,
+              "tile": 39,
+              "card": 6,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 20,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-white": {
+              "total": 109,
+              "base": 68,
+              "tile": 41,
+              "card": 0,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 6,
+                "orbitScore": 21,
+                "scanScore": 2,
+                "taskCardScore": 10,
+                "techBonusScore": 5
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-scan-earth-r3s1-20260906-4fba7beb-full-v279.json",
+          "reportPath": "reports/iteration/scan-earth-r3s1-20260906/c3eebca2.4fba7beb.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "c3eebca2.4fba7beb.quick-200",
+            "path": "reports/iteration/scan-earth-r3s1-20260906/c3eebca2.4fba7beb.quick-200.action-log.html",
+            "mode": "quick-200"
+          },
+          {
+            "runKey": "c3eebca2.4fba7beb.full",
+            "path": "reports/iteration/scan-earth-r3s1-20260906/c3eebca2.4fba7beb.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "sector-directory-s2-20260906",
       "name": "独立扇区目录修复S2（均分不变，第三轮仍未通过）",
@@ -711,7 +1317,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -5431,7 +6037,7 @@
           },
           "savePath": "seti-saves/seti-save-research-fold-multifill-0a377f88-full-v283.json",
           "reportPath": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
-          "reportExists": false
+          "reportExists": true
         }
       ],
       "roadmap": null,
@@ -5439,8 +6045,14 @@
       "completeness": {
         "record": true,
         "save": true,
-        "report": false,
-        "reportLinks": []
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "e749439d.0a377f88.full",
+            "path": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
+            "mode": "full"
+          }
+        ]
       }
     },
     {
@@ -8936,11 +9548,6 @@
       "kind": "commit-mismatch",
       "level": "warn",
       "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json gitCommit=0a377f88 不在版本 commits（29e66b9b）内——运行于脏工作树或归属错误，请核对 versions.json"
-    },
-    {
-      "kind": "missing-report",
-      "level": "warn",
-      "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json 有存档但缺复盘报告（node tools/robot_iterate.js build --reports 可补齐）"
     },
     {
       "kind": "missing-save",
