@@ -7,6 +7,22 @@
   },
   "versions": [
     {
+      "id": "terminal-value-r1-20260905",
+      "name": "第一轮：终局估值正确性",
+      "date": "2026-09-05",
+      "baseline": "elig-sum4",
+      "head": "d9283ce5",
+      "commits": [
+        "d9283ce5"
+      ],
+      "summary": "固定免电分析盘面535步，终局25/144/147/83，均分99.75与基线相同；逐步动作和状态摘要一致。终局宣传预期、V与搜索排序统一正式分，按均分不变且逻辑合理通过。",
+      "records": {
+        "16bce41e.d9283ce5.quick-200.json": {},
+        "16bce41e.d9283ce5.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "fold-rollback",
       "name": "回退折叠链实验（回到 elig-sum4 行为）",
       "date": "2026-08-22",

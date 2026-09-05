@@ -198,20 +198,23 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 `check` 退出码 1 = 有 warn，用于 CI/提交前自查。
 
-## 8. 当前版本（2026-08-22）
+## 8. 当前版本（2026-09-05）
 
 | 版本 | head | 说明 |
 |---|---|---|
-| `fold-rollback` | `5045a3ff` | **当前 HEAD**（2026-08-22 回退）：回退折叠链实验（29e66b9b），代码与 `elig-sum4`（56e9a9c0）一致；place_data 无折叠链、无 foldTargetSlots。折叠链完整经验见 `reports/iteration/fold-chain-search-status.md` |
-| `elig-sum4` | `56e9a9c0` | **当前策略基线**（无折叠链默认装配）：全盘 535 决策/535 原子动作，完整终局均 99.75（有存档有报告） |
+| `terminal-value-r1-20260905` | `d9283ce5` | **当前验收版本**：终局宣传预期、V与搜索优先级统一正式分；固定盘面535步、25/144/147/83、均分99.75，与基线动作和状态摘要完全一致，按“均分不变且逻辑合理”通过 |
+| `fold-rollback` | `5045a3ff` | 2026-08-22 回退：回退折叠链实验（29e66b9b），代码与 `elig-sum4`（56e9a9c0）一致；place_data 无折叠链、无 foldTargetSlots。折叠链完整经验见 `reports/iteration/fold-chain-search-status.md` |
+| `elig-sum4` | `56e9a9c0` | 第一轮对照基线（无折叠链默认装配）：全盘535决策/535原子动作，完整终局均99.75（有存档有报告） |
 | `fold-chain-real` | `29e66b9b` | 已回退（2026-08-22）：折叠链 + 多格 plan 不延续，均 100.3（A/B 记录保留） |
 
 已知口径注记：
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- 回退后 `registry.currentBaseline` 解析为 `fold-rollback`（head 精确匹配 HEAD）；
-  策略行为等价 `elig-sum4`。
+- `registry.currentBaseline` 解析为 `terminal-value-r1-20260905`；代码提交之后的文档/报告
+  提交不改变策略版本。四轮计划与第一轮验收证据见 `docs/ai-iteration-plan-20260905.md`。
+- 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
+  更合理才可收口；200步快速结果不替代终局验收，续跑使用同代码提交的快速存档。
 
 ## 9. 与调研流程的关系
 

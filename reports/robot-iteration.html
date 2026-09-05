@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-08-22T15:52:45.745Z",
+  "builtAt": "2026-09-05T09:25:59.331Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "5045a3ff",
-  "currentBaseline": "fold-rollback",
+  "headCommit": "d9283ce5",
+  "currentBaseline": "terminal-value-r1-20260905",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -166,14 +166,14 @@ const REGISTRY = {
           "color": "棕",
           "score": 147
         },
-        "versionId": "elig-sum4",
-        "name": "elig-sum4",
-        "runKey": "3eb9e994.56e9a9c0.full",
+        "versionId": "terminal-value-r1-20260905",
+        "name": "第一轮：终局估值正确性",
+        "runKey": "16bce41e.d9283ce5.full",
         "provenance": "save-final",
         "steps": 535,
-        "wallMs": 514300,
-        "msPerStep": 961,
-        "scoreSourceNote": "on-head：535 步，完整终局 25/144/147/83 均 99.75（历史最高，save-final），有存档有复盘报告"
+        "wallMs": 264586,
+        "msPerStep": 495,
+        "scoreSourceNote": null
       },
       {
         "value": 99.75,
@@ -182,18 +182,487 @@ const REGISTRY = {
           "color": "棕",
           "score": 147
         },
-        "versionId": "completes-v4-placement",
-        "name": "completes-v4-placement",
-        "runKey": "ceddb30f.3c78eed2.full",
+        "versionId": "elig-sum4",
+        "name": "elig-sum4",
+        "runKey": "3eb9e994.56e9a9c0.full",
         "provenance": "save-final",
         "steps": 535,
-        "wallMs": 509669,
-        "msPerStep": 953,
-        "scoreSourceNote": null
+        "wallMs": 514300,
+        "msPerStep": 961,
+        "scoreSourceNote": "on-head：535 步，完整终局 25/144/147/83 均 99.75（历史最高，save-final），有存档有复盘报告"
       }
     ]
   },
   "versions": [
+    {
+      "id": "terminal-value-r1-20260905",
+      "name": "第一轮：终局估值正确性",
+      "date": "2026-09-05",
+      "baseline": "elig-sum4",
+      "head": "d9283ce5",
+      "commits": [
+        {
+          "hash": "d9283ce5",
+          "date": "2026-09-05",
+          "subject": "修正机器人终局估值：统一正式分、搜索排序与计划优胜叶"
+        }
+      ],
+      "summary": "固定免电分析盘面535步，终局25/144/147/83，均分99.75与基线相同；逐步动作和状态摘要一致。终局宣传预期、V与搜索排序统一正式分，按均分不变且逻辑合理通过。",
+      "diffStat": "33 files changed, 47757 insertions(+), 1374 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 10,
+          "deletions": 2
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 6,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 30,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/terminal-value.test.js",
+          "insertions": 120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-analyze-pre/346fb75c.c741f537.full.action-log.html",
+          "insertions": 1678,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-unified/ef14823c.908a41e7.full.action-log.html",
+          "insertions": 1678,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/budget-4096-fixed/7c12296c.0fc257dd.full.action-log.html",
+          "insertions": 1610,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/completes-v4-placement/ceddb30f.3c78eed2.full.action-log.html",
+          "insertions": 1984,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-chain-fix/a67b0b40.7de69080.full.action-log.html",
+          "insertions": 1610,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/design-completion-fix/b631c7f0.7b1c0afd.full.action-log.html",
+          "insertions": 1950,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/elig-aligned/81738624.e9b52a49.full.action-log.html",
+          "insertions": 1610,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/elig-sum4/3eb9e994.56e9a9c0.full.action-log.html",
+          "insertions": 1984,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/elig-threshold4/aeaabc4b.3ebcf7f0.full.action-log.html",
+          "insertions": 1933,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fold-chain-search-status.md",
+          "insertions": 183,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/human-reports/seti-save-research-fold-demand-v1-46c8d0cf-full-v257.action-log.html",
+          "insertions": 2018,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/no-overflow/074c68aa.0da417cc.full.action-log.html",
+          "insertions": 1831,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/overflow-fixed/91b4195c.ba807548.full.action-log.html",
+          "insertions": 1831,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/overflow-target/f04f92c6.d68e931b.full.action-log.html",
+          "insertions": 1593,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/place-chain/1bafe69d.b355ccd6.full.action-log.html",
+          "insertions": 1763,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/place-data-unified/b2570520.f6398808.full.action-log.html",
+          "insertions": 1882,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/place-trigger-final/3c70096b.5e662798.full.action-log.html",
+          "insertions": 1593,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/placement-full/5484d4eb.b8cfb508.full.action-log.html",
+          "insertions": 1610,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/pure-profit/dd6cc9dd.4e6acd93.full.action-log.html",
+          "insertions": 1610,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 3853,
+          "deletions": 679
+        },
+        {
+          "file": "reports/iteration/unified-restore/38e7df89.5cf59018.full.action-log.html",
+          "insertions": 1882,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/v3-income-value/c2f5eda1.0058821c.full.action-log.html",
+          "insertions": 1559,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/v4-need-placement/7da83ab1.65c36004.full.action-log.html",
+          "insertions": 2035,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/v4-need-placement/efec250b.f6e4c887.full.action-log.html",
+          "insertions": 2035,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 352,
+          "deletions": 1
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 3865,
+          "deletions": 689
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "16bce41e.d9283ce5.quick-200.json",
+          "recordPath": "reports/research/16bce41e.d9283ce5.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 165362,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "d9283ce5",
+          "createdAt": "2026-09-05T09:18:52.014Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": null,
+          "scores": {
+            "player-blue": 11,
+            "player-green": 40,
+            "player-brown": 19,
+            "player-white": 24
+          },
+          "avgScore": 23.5,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-terminal-value-r1-20260905-d9283ce5-quick-200-v94.json",
+          "reportPath": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.quick-200.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "16bce41e.d9283ce5.full.json",
+          "recordPath": "reports/research/16bce41e.d9283ce5.full.json",
+          "mode": "full",
+          "steps": 535,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 264586,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "d9283ce5",
+          "createdAt": "2026-09-05T09:23:41.181Z",
+          "resumeStep": 200,
+          "seed": "seti-free-analyze-v1",
+          "note": null,
+          "scores": {
+            "player-blue": 25,
+            "player-green": 144,
+            "player-brown": 147,
+            "player-white": 83
+          },
+          "avgScore": 99.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 25,
+              "base": 21,
+              "tile": 0,
+              "card": 4,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 6,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-green": {
+              "total": 144,
+              "base": 99,
+              "tile": 45,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 2,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 28,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 12,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 147,
+              "base": 84,
+              "tile": 63,
+              "card": 0,
+              "tileScoresById": {
+                "a": 44,
+                "b": 16,
+                "c": 3,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 44,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 2,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 4,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 12,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 10,
+                "orbitScore": 0,
+                "scanScore": 9,
+                "taskCardScore": 3,
+                "techBonusScore": 9
+              }
+            },
+            "player-white": {
+              "total": 83,
+              "base": 64,
+              "tile": 19,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 4,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 6,
+                "orbitScore": 18,
+                "scanScore": 6,
+                "taskCardScore": 3,
+                "techBonusScore": 8
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-terminal-value-r1-20260905-d9283ce5-full-v261.json",
+          "reportPath": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "16bce41e.d9283ce5.quick-200",
+            "path": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.quick-200.action-log.html",
+            "mode": "quick-200"
+          },
+          {
+            "runKey": "16bce41e.d9283ce5.full",
+            "path": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "fold-rollback",
       "name": "回退折叠链实验（回到 elig-sum4 行为）",
@@ -238,7 +707,7 @@ const REGISTRY = {
       ],
       "results": [],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": false,
         "save": false,
