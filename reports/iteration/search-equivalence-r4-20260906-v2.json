@@ -1,0 +1,216 @@
+{
+  "createdAt": "2026-09-05T20:12:35.204Z",
+  "scope": "真实checkpoint仅修改rocket序号的受控接口反例；不是两条已证明可达的历史分支。另只读已有叶寻找完成事实遗漏。",
+  "samples": [
+    {
+      "increment": 0,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c1616852",
+        "actorId": "player-brown",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "event": {
+        "type": "launch",
+        "rocketId": 4,
+        "playerId": "player-brown",
+        "source": "launch"
+      },
+      "nextMoves": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:060dbf6f",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 4 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:630a7f69",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 4,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 4 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:d8c62915",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 4,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 4 逆时针"
+        }
+      ],
+      "beforeMeta": {
+        "gameId": "seti-simulation-runtime",
+        "rngState": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 1702029963
+        },
+        "rulesetVersion": "seti-runtime-v1",
+        "schemaVersion": "seti-committed-game-state-v1",
+        "seed": "seti-simulation",
+        "sequences": {
+          "alienEntity": 1,
+          "card": 39,
+          "dataToken": 12,
+          "finalMark": 1,
+          "nebulaReplacement": 10,
+          "nebulaToken": 46,
+          "rocket": 4
+        },
+        "stateVersion": 12
+      }
+    },
+    {
+      "increment": 100,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c1616852",
+        "actorId": "player-brown",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "event": {
+        "type": "launch",
+        "rocketId": 104,
+        "playerId": "player-brown",
+        "source": "launch"
+      },
+      "nextMoves": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:6a43bbb0",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 104,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 104 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:ec328882",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 104,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 104 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:851282ee",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 104,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 104 逆时针"
+        }
+      ],
+      "beforeMeta": {
+        "gameId": "seti-simulation-runtime",
+        "rngState": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 1702029963
+        },
+        "rulesetVersion": "seti-runtime-v1",
+        "schemaVersion": "seti-committed-game-state-v1",
+        "seed": "seti-simulation",
+        "sequences": {
+          "alienEntity": 1,
+          "card": 39,
+          "dataToken": 12,
+          "finalMark": 1,
+          "nebulaReplacement": 10,
+          "nebulaToken": 46,
+          "rocket": 104
+        },
+        "stateVersion": 12
+      }
+    }
+  ],
+  "completionFactsCollision": null,
+  "passed": true
+}

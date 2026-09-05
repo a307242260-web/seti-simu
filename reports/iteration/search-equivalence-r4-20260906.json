@@ -1,0 +1,115 @@
+{
+  "createdAt": "2026-09-05T20:12:15.374Z",
+  "scope": "真实checkpoint仅修改rocket序号的受控接口反例；不是两条已证明可达的历史分支。另只读已有叶寻找完成事实遗漏。",
+  "samples": [
+    {
+      "increment": 0,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c1616852",
+        "actorId": "player-brown",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "event": {
+        "type": "launch",
+        "rocketId": 4,
+        "playerId": "player-brown",
+        "source": "launch"
+      },
+      "nextMoves": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:060dbf6f",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 4 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:630a7f69",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 4,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 4 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:d8c62915",
+          "actorId": "player-brown",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 4,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 4 逆时针"
+        }
+      ],
+      "beforeMeta": {
+        "gameId": "seti-simulation-runtime",
+        "rngState": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 1702029963
+        },
+        "rulesetVersion": "seti-runtime-v1",
+        "schemaVersion": "seti-committed-game-state-v1",
+        "seed": "seti-simulation",
+        "sequences": {
+          "alienEntity": 1,
+          "card": 39,
+          "dataToken": 12,
+          "finalMark": 1,
+          "nebulaReplacement": 10,
+          "nebulaToken": 46,
+          "rocket": 4
+        },
+        "stateVersion": 12
+      }
+    }
+  ],
+  "passed": false,
+  "error": {
+    "message": "checkpoint coreState 反序列化失败：RULE_COMPOSITION_ENVELOPE_INVALID",
+    "stack": "Error: checkpoint coreState 反序列化失败：RULE_COMPOSITION_ENVELOPE_INVALID\n    at Object.loadCheckpoint (/Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js:850:15)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/audit-search-equivalence-r4-20260906.js:24:13)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
