@@ -1,0 +1,165 @@
+{
+  "source": "reports/iteration/search-budget-r4-20260906.cpuprofile.gz",
+  "sourceSha256": "a4937e7a10942f7ae6c387043bc0e01cd84545e2b5e1e8581728cb29f8338ea7",
+  "scope": "同一次CPU采样按调用栈归类；采样时间不是精确墙钟分项，GC和启动/末尾诊断包含在other，不与阶段时间简单相减。",
+  "phaseMilliseconds": {
+    "other-including-startup-and-report": 1605.5419999999951,
+    "search": 8072.75100000011,
+    "outcome-projection": 607.54,
+    "policy-context": 937.0810000000014,
+    "policy-decide": 46.168000000000006,
+    "plan-extraction": 27.293000000000003
+  },
+  "topSelf": [
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "milliseconds": 3423.334999999994
+    },
+    {
+      "name": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 1010.7480000000022
+    },
+    {
+      "name": "copySerializable",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 50,
+      "milliseconds": 681.8300000000004
+    },
+    {
+      "name": "stableSerialize",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/state-store.js",
+      "line": 46,
+      "milliseconds": 454.2479999999998
+    },
+    {
+      "name": "deepFreeze",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 24,
+      "milliseconds": 449.75399999999973
+    },
+    {
+      "name": "buildSectorWinRequirements",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 913,
+      "milliseconds": 261.166
+    },
+    {
+      "name": "stableHashSerialized",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 52,
+      "milliseconds": 207.995
+    },
+    {
+      "name": "stableSerialize",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 30,
+      "milliseconds": 204.789
+    },
+    {
+      "name": "visit",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "milliseconds": 176.99800000000002
+    },
+    {
+      "name": "compactObject",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/app/simulation-contract.js",
+      "line": 36,
+      "milliseconds": 142.32699999999997
+    },
+    {
+      "name": "deepFreeze",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/state-store.js",
+      "line": 40,
+      "milliseconds": 132.456
+    },
+    {
+      "name": "envelopeHash",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1057,
+      "milliseconds": 131.83700000000002
+    },
+    {
+      "name": "containsUnknownCardReference",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 96,
+      "milliseconds": 123.58500000000001
+    },
+    {
+      "name": "probeStructureKey",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 554,
+      "milliseconds": 123.582
+    },
+    {
+      "name": "deepFreeze",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 100,
+      "milliseconds": 120.375
+    },
+    {
+      "name": "scanForbidden",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/high-coupling-slices.js",
+      "line": 113,
+      "milliseconds": 119.999
+    },
+    {
+      "name": "buildProbeRouteRequirements",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/production-kernel.js",
+      "line": 494,
+      "milliseconds": 106.33600000000001
+    },
+    {
+      "name": "deepFreeze",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/outcome-model.js",
+      "line": 37,
+      "milliseconds": 101
+    },
+    {
+      "name": "evaluateCounterfactualOutcomes",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 949,
+      "milliseconds": 99.08500000000001
+    },
+    {
+      "name": "getTrustedState",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1050,
+      "milliseconds": 97.61999999999999
+    },
+    {
+      "name": "getWheelStep",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js",
+      "line": 173,
+      "milliseconds": 84.91399999999999
+    },
+    {
+      "name": "validateForbiddenFields",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/state/low-coupling-slices.js",
+      "line": 137,
+      "milliseconds": 80.00300000000001
+    },
+    {
+      "name": "compareNodes",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1465,
+      "milliseconds": 72.834
+    },
+    {
+      "name": "addFrontierLeaf",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/rule-composition.js",
+      "line": 1592,
+      "milliseconds": 72.24699999999999
+    },
+    {
+      "name": "normalizeKey",
+      "file": "file:///Users/bilibili/code/seti-simu/randomizer/game/ai/policy-port.js",
+      "line": 46,
+      "milliseconds": 56.417
+    }
+  ]
+}

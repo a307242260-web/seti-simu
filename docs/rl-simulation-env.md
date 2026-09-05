@@ -84,6 +84,7 @@ Production地球坐标及探测/正式行动context通过共享太阳系内核�
 反事实结果投影与Policy输入保持来源隔离、返回图深冻结；多叶相同的只读元数据可在
 返回图内共享引用。观察仍从正式规则事实重建；复制优化不改字段值、顺序、隐藏信息
 边界或checkpoint格式。Policy副本缓存仅在单次复制调用内生效，完成校验后才可复用。
+祖先路径集合在递归进入时加入、finally退出时移除；共享兄弟引用不视为循环。
 
 机器策略的标准 Decision observation由`outcome-model`从规则观察派生。其中
 `outcomeProjection.progress.researchOptions`为同viewer正式科技候选的
@@ -105,7 +106,8 @@ rollout v19使用4096物理节点、256全局队列容量及10000ms搜索期限�
 队列为每个仍有frontier的根保留最优节点，再按统一优先级填充。去重保留完整状态、
 RNG/序号和Decision；资源/完成摘要不再支配删除后继。全部准入目标进入统一队列，
 旧completeTargetCatalog配置及未绑定top-4已删除。宏步前后超时检查显式失败，不提交
-真实根；同步宏步不能中断，完整决策的10秒性能门槛另作实测。
+真实根；同步宏步不能中断。2026-09-06用户允许适度放宽模拟耗时，完整决策略超10秒
+不再单独阻止全盘验证；搜索期限不变，整局耗时另行实测报告。
 
 action outcome新增可选searchCompleteness元数据：`{status, reasons}`。生产输出必须
 提供；旧外部v1输入缺失不推断为complete。status为complete/incomplete/not-evaluated，

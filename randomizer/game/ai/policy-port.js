@@ -68,33 +68,37 @@
       throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path} 必须是 plain object 或 array`);
     }
 
-    const nextAncestors = new Set(ancestors);
-    nextAncestors.add(value);
-    if (Array.isArray(value)) {
-      const result = value.map((item, index) => copySerializable(item, `${path}[${index}]`, nextAncestors, copies));
+    ancestors.add(value);
+    try {
+      if (Array.isArray(value)) {
+        const result = value.map((item, index) => copySerializable(item, `${path}[${index}]`, ancestors, copies));
+        copies.set(value, result);
+        return result;
+      }
+
+      const result = {};
+      for (const key of Reflect.ownKeys(value)) {
+        if (typeof key !== "string") {
+          throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path} 含 symbol key`);
+        }
+        const descriptor = Object.getOwnPropertyDescriptor(value, key);
+        if (!descriptor?.enumerable) continue;
+        if (!Object.hasOwn(descriptor, "value")) {
+          throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path}.${key} 不得使用 accessor`);
+        }
+        if (FORBIDDEN_KEYS.has(normalizeKey(key))) {
+          throw new PolicyContractError("POLICY_FORBIDDEN_FIELD", `${path}.${key} 不得进入 Policy context`, {
+            path: `${path}.${key}`,
+          });
+        }
+        result[key] = copySerializable(descriptor.value, `${path}.${key}`, ancestors, copies);
+      }
       copies.set(value, result);
       return result;
+    } finally {
+      // 集合仅描述当前递归路径；兄弟共享引用不属于循环，失败也必须退出路径。
+      ancestors.delete(value);
     }
-
-    const result = {};
-    for (const key of Reflect.ownKeys(value)) {
-      if (typeof key !== "string") {
-        throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path} 含 symbol key`);
-      }
-      const descriptor = Object.getOwnPropertyDescriptor(value, key);
-      if (!descriptor?.enumerable) continue;
-      if (!Object.hasOwn(descriptor, "value")) {
-        throw new PolicyContractError("POLICY_NOT_SERIALIZABLE", `${path}.${key} 不得使用 accessor`);
-      }
-      if (FORBIDDEN_KEYS.has(normalizeKey(key))) {
-        throw new PolicyContractError("POLICY_FORBIDDEN_FIELD", `${path}.${key} 不得进入 Policy context`, {
-          path: `${path}.${key}`,
-        });
-      }
-      result[key] = copySerializable(descriptor.value, `${path}.${key}`, nextAncestors, copies);
-    }
-    copies.set(value, result);
-    return result;
   }
 
   function deepFreeze(value) {

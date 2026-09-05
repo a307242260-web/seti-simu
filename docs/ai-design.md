@@ -64,6 +64,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
   输入复制在单次调用内复用已完整校验的副本，先检查祖先循环，再查询副本缓存；不跨请求
   缓存，不绕过校验。返回图深冻结且与来源隔离，内部相同事实可以共享只读引用。
+  祖先集合在本次遍历内维护，进入节点时加入、退出时在finally移除，不再逐层复制Set。
 - `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用一份实现）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子（sim 训练补记 replay/reward，browser 空操作）；失败直接抛错。
 - `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。开关（traceCounterfactualGoalClusters 等）经同一 config 源透传，Browser/Simulation 一份装配。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。
@@ -451,8 +452,9 @@ incomplete、not-evaluated及原因。已有真实叶且截断仍为settled，�
 
 每次次级搜索期限10000ms，宏步前后检查；超时显式抛COUNTERFACTUAL_SEARCH_TIMEOUT，
 清理隔离fork，不返回部分策略或提交真实根。同步宏步不能中途抢占，因此不承诺严格
-实时中断。完整决策还含结果投影、Policy与计划提取，仍须实测低于10秒才跑完整局。
-本轮初次棕方样本总决策10.42秒，搜索8.39秒，性能尚未通过，不能据预算参数宣称达标。
+实时中断。完整决策还含结果投影、Policy与计划提取。2026-09-06用户允许适度放宽
+模拟耗时：初次棕方样本总决策10.42秒、搜索8.39秒不再单独阻止全盘验证；仍需报告
+整局实测耗时及慢决策，不扩大节点预算、不移除搜索超时保护，也不宣称性能已优化达标。
 
 反事实执行复用一个 Composition 级可信隔离 fork。每个候选从同一 checkpoint 恢复
 StateStore、Effect Session 和分支 RNG，再调用生产 registry/executor；Simulation 的可信

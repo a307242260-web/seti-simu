@@ -1,0 +1,17 @@
+{
+  "label": "after",
+  "sourceHash": "ed355dcc26d195a86a1db90044c825e789c6441acc6a8503883a11f2a025c737",
+  "policySourceHash": "652bafe908b287de58887cebab9df9ae7a668cc5233eab30824eca824de7f9b0",
+  "scope": "已有真实结果的纯Policy复制；JSON恢复不保留原运行时别名，耗时不冒充原整局或原决策耗时。一次预热、五次计时，不运行搜索。",
+  "leafCount": 122,
+  "times": [
+    310.55212500000005,
+    356.85925,
+    307.400625,
+    308.52766699999984,
+    310.9100420000002
+  ],
+  "medianMilliseconds": 310.55212500000005,
+  "resultHash": "323478c8248b77ae37a0d63166b1bba93124d36e7cd2e05ab5d617c8179bcbd7",
+  "inputUnchanged": true
+}

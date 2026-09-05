@@ -64,6 +64,22 @@ const current = context();
   }
   assert.equal(getterCalls, 0, "校验不能调用accessor或通过重复引用绕过拒绝");
 }
+{
+  const shared = { value: 1 };
+  const input = { first: shared, branches: [{ shared }, { shared }] };
+  input.branches[1].back = input.branches;
+  assert.throws(() => policyPort.createDecisionContext({ ...current, observation: input }),
+    (error) => error.code === "POLICY_NOT_SERIALIZABLE"
+      && error.message === "$.observation.branches[1].back 含循环引用");
+  delete input.branches[1].back;
+  const copied = policyPort.createDecisionContext({ ...current, observation: input });
+  assert.equal(copied.observation.first, copied.observation.branches[1].shared);
+  assert.notEqual(copied.observation.first, shared);
+  shared.deckOrder = ["hidden"];
+  assert.throws(() => policyPort.createDecisionContext({ ...current, observation: input }),
+    (error) => error.code === "POLICY_FORBIDDEN_FIELD" && error.path === "$.observation.first.deckOrder",
+    "下一请求必须重新校验，不能复用前次完成副本");
+}
 assert.equal(Object.isFrozen(current), true);
 assert.equal(Object.isFrozen(current.legalActions[0]), true);
 assert.throws(
