@@ -91,14 +91,41 @@
     parameterVersion: PARAMETER_VERSION,
     searchDepth: 15,
   });
-  const INCOME_UNIT_VALUES = Object.freeze({
-    credits: 8,
-    energy: 10,
-    publicity: 0,
-    availableData: 0,
-    handSize: 0,
-    additionalPublicScan: 0,
+  const RESOURCE_UNIT_VALUES = Object.freeze({
+    score: 1, credits: 10, energy: 8, ordinaryCard: 6, publicity: 4,
+    availableData: 6, movement: 5, alienCard: 12, additionalPublicScan: 0,
   });
+  const INCOME_RESOURCE_KEYS = Object.freeze({
+    credits: "credits", energy: "energy", publicity: "publicity",
+    availableData: "availableData", handSize: "ordinaryCard",
+    additionalPublicScan: "additionalPublicScan",
+  });
+  const INCOME_UNIT_VALUES = Object.freeze(Object.fromEntries(
+    Object.entries(INCOME_RESOURCE_KEYS).map(([key, resource]) => [key, RESOURCE_UNIT_VALUES[resource]]),
+  ));
+
+  function resourceUnitValue(resource, roundNumber = 1, finalRoundNumber = 4) {
+    if (!Object.hasOwn(RESOURCE_UNIT_VALUES, resource)) {
+      throw new TypeError(`未知估值资源: ${resource}`);
+    }
+    const finalRound = Math.max(1, finite(finalRoundNumber) || 4);
+    const round = Math.min(finalRound, Math.max(1, finite(roundNumber) || 1));
+    const elapsed = (round - 1) / Math.max(1, finalRound - 1);
+    const discount = ["credits", "energy"].includes(resource) ? 1 - 0.5 * elapsed : 1;
+    return RESOURCE_UNIT_VALUES[resource] * discount;
+  }
+
+  function incomeFutureValue(income, roundNumber = 1, finalRoundNumber = 4) {
+    const finalRound = Math.max(1, Math.floor(finite(finalRoundNumber) || 4));
+    const round = Math.max(1, Math.floor(finite(roundNumber) || 1));
+    let value = 0;
+    for (let paymentRound = round + 1; paymentRound <= finalRound; paymentRound += 1) {
+      for (const [key, resource] of Object.entries(INCOME_RESOURCE_KEYS)) {
+        value += finite(income?.[key]) * resourceUnitValue(resource, paymentRound, finalRound);
+      }
+    }
+    return value;
+  }
   const TECH_UNIT_VALUES = Object.freeze({
     orange1: 0,
     orange2: 7,
@@ -248,7 +275,6 @@
   const V_TRACE_FIRST_VALUE = 5; // 首痕迹价值（slot1 5分+1宣、slot2 3分+1宣）
   const V_ALIEN_REVEAL_BONUS = 15; // 三色齐→揭示的期望（位置分+外星牌链）
   const V_ALIEN_SLOT_POSITION_VALUE = 3; // 揭示后每个位置期望分（3-5 分/位置）
-  const V_DATA_UNIT_VALUE = 4; // 数据→填槽/分析转化价值
   const V_CARD_EFFECT_VALUE = 6; // 手牌可打效果期望（科技/收入/移动/登陆链）
 
   function evaluateStateValue(observation, seatId) {
@@ -293,15 +319,11 @@
     // "能解锁什么"间接体现（收入复利/科技效率/外星进度/即时分），V 只保留
     // 数据→填槽/分析的转化期望（手段中唯一有明确未来路径的），钱/能/宣传 0。
     const liquidValue = (
-      finite(assets.availableData) * V_DATA_UNIT_VALUE * 0.5 // 数据→填槽/分析，折半（预期未必全转化）
+      finite(assets.availableData) * resourceUnitValue("availableData", roundNumber, finalRoundNumber) * 0.5
     );
 
     // 准备类：收入复利（收入率 × 剩余发放次数 × 单位价值 × 放大系数）
-    const incomeValue = (
-      finite(income.credits) * INCOME_UNIT_VALUES.credits
-      + finite(income.energy) * INCOME_UNIT_VALUES.energy
-      + finite(income.availableData) * V_DATA_UNIT_VALUE
-    ) * remainingPayments * V_INCOME_MULTIPLIER;
+    const incomeValue = incomeFutureValue(income, roundNumber, finalRoundNumber) * V_INCOME_MULTIPLIER;
 
     // 准备类：科技效率红利（每个已研究科技 × 剩余轮次 × 单位效率）
     const ownedTechIds = projection.progress?.ownedTechIds || [];
@@ -368,8 +390,9 @@
         } else if (type === cardEffects?.REWARD_TYPES?.GAIN_RESOURCES) {
           const gain = options?.resources || options?.gain || {};
           value += finite(gain.score);
-          value += finite(gain.credits) * 2; // 资源→行动的转化（比固定单价低）
-          value += finite(gain.energy) * 3;
+          // 未打出效果的资源兑现概率统一为1/4；不再给钱电设第二套单价。
+          value += finite(gain.credits) * resourceUnitValue("credits", roundNumber, finalRoundNumber) * 0.25;
+          value += finite(gain.energy) * resourceUnitValue("energy", roundNumber, finalRoundNumber) * 0.25;
         }
       }
       return total + value;
@@ -607,16 +630,16 @@
     const leafBlueCount = finite(leafInfrastructure.dataProgress?.blueBonusCount);
     const blueBonusPlacementDelta = Math.max(0, leafBlueCount - rootBlueCount);
     // 放槽的即时收益按实际到手的资源货币化：资源（能量/信用）会被 AI 转换为分数
-    // （能量→发射/移动/分析，信用→交易/研究），因此实际到手的资源按 INCOME_UNIT_VALUES
-    // 计价值（blue2 槽 +1 能量→10，blue1 槽 +1 信用→8，blue4 槽 +2 宣传走研究门槛逻辑）。
+    // （能量→发射/移动/分析，信用→交易/研究），按共享资源单价与叶轮次折价。
+    // blue4 槽 +2 宣传走研究门槛逻辑；净增长归因的缺陷属于第二轮后续批次。
     // 只在实际放槽（blueBonusCount 增加）时计入，避免 quick_trade/scan 等纯资源动作被高估。
     const rootEnergy = finite(rootValue.resourceFacts?.energy);
     const leafEnergy = finite(leafValue.resourceFacts?.energy);
     const rootCredits = finite(rootValue.resourceFacts?.credits);
     const leafCredits = finite(leafValue.resourceFacts?.credits);
     const blueBonusPlacementValue = blueBonusPlacementDelta > 0
-      ? Math.max(0, leafEnergy - rootEnergy) * INCOME_UNIT_VALUES.energy
-        + Math.max(0, leafCredits - rootCredits) * INCOME_UNIT_VALUES.credits
+      ? Math.max(0, leafEnergy - rootEnergy) * resourceUnitValue("energy", leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber)
+        + Math.max(0, leafCredits - rootCredits) * resourceUnitValue("credits", leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber)
       : 0;
     // 数据预期用途价值：scan/打牌获得的数据是放槽（blueBonus 每次 +5 资源价值）与
     // analyze 的原料。数据库存本身不算分（测试契约"钱/电/宣传/数据/手牌库存不得
@@ -632,7 +655,7 @@
     const rootDataCount = finite(rootValue.resourceFacts?.availableData);
     const leafDataCount = finite(leafValue.resourceFacts?.availableData);
     const dataDelta = Math.max(0, leafDataCount - rootDataCount);
-    const DATA_TO_BLUE_SLOT_VALUE = INCOME_UNIT_VALUES.energy; // 数据→放槽→+1 能量（10）
+    const DATA_TO_BLUE_SLOT_VALUE = resourceUnitValue("energy", leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber);
     const EXPECTED_DATA_UTILIZATION = 0.5; // 预期折半（数据未必全转化为放槽）
     const dataUtilizationValue = hasBlueTechForData && dataDelta > 0
       ? dataDelta * DATA_TO_BLUE_SLOT_VALUE * EXPECTED_DATA_UTILIZATION
@@ -641,9 +664,9 @@
       key,
       positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
     ]));
-    const incomePerWindowValue = Object.entries(INCOME_UNIT_VALUES)
-      .reduce((total, [key, unitValue]) => total + incomeDelta[key] * unitValue, 0);
-    const incomeValue = incomePerWindowValue * remainingRounds;
+    const incomeValue = incomeFutureValue(
+      incomeDelta, leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber,
+    );
     // 外星人标记价值：新增 trace 标记 → 即时分 + 终局 trace 分 + 外星人牌。
     // traceValue 保持"每痕迹 5 分"（终局 trace 分近似）；另加 alienPurposeValue：
     // 放首痕迹的"揭示进度"期望（学习用户 405 档：R1-R2 放首痕迹 → R3 三色齐揭示 →
@@ -3469,6 +3492,9 @@
     PARAMETER_VERSION,
     OUTCOME_SCHEMA_VERSION,
     DEFAULT_PARAMETERS,
+    RESOURCE_UNIT_VALUES,
+    resourceUnitValue,
+    incomeFutureValue,
     INCOME_UNIT_VALUES,
     TECH_UNIT_VALUES,
     SECONDARY_AGENT_ROLLOUT_VERSION,

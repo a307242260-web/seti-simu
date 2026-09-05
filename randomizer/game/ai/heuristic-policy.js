@@ -36,36 +36,10 @@
     "pass",
   ]));
 
-  // 资源单位价值表（2026-08-18 用户对齐口径，提交 8b7cf3b6 引入后被 e23b710c
-  // 回退；2026-08-21 恢复用于初始牌/公司打分与插收入选牌）：
-  //   钱 10、电 8、随机普通牌 6、宣传 4、数据 6、移动 5、外星牌 12。
-  // 替换早期 initialCardValue 的随意权重（宣传 0.4/扫描 3+1.5×次/数据 4 等）。
-  const RESOURCE_UNIT_VALUES = Object.freeze({
-    score: 1,
-    credits: 10,
-    energy: 8,
-    ordinaryCard: 6,
-    publicity: 4,
-    availableData: 6,
-    movement: 5,
-    alienCard: 12,
-  });
-  // 钱/能逐轮贬值（8b7cf3b6 口径：R1 全值 → R4 约折半，钱 10→4.5、电 8→4）。
-  // 牌/数据/宣传为手段/库存性质，不随轮次贬值。
-  function degradedUnit(unit, roundNumber, finalRoundNumber = 4) {
-    const round = Math.max(1, Number(roundNumber) || 1);
-    const finalRound = Math.max(1, Number(finalRoundNumber) || 4);
-    const fraction = (finalRound - round) / Math.max(1, finalRound - 1);
-    return unit * (1 - 0.5 * fraction);
-  }
-  // 收入码 → 单位价值（deck.js INCOME_CODE_GAINS：0=钱/1=电/2=牌/3=数据/4=宣传）。
-  // 插收入选牌：按"该收入码对应的单位价值"决定插哪条收入轨的牌。
-  const INCOME_UNIT_BY_CODE = Object.freeze({
-    0: RESOURCE_UNIT_VALUES.credits,
-    1: RESOURCE_UNIT_VALUES.energy,
-    2: RESOURCE_UNIT_VALUES.ordinaryCard,
-    3: RESOURCE_UNIT_VALUES.availableData,
-    4: RESOURCE_UNIT_VALUES.publicity,
+  // 与正式叶评分/V共用单价与逐次收入窗口，不持有第二份资源表。
+  const { RESOURCE_UNIT_VALUES, resourceUnitValue, incomeFutureValue } = expectedScoreEvaluator;
+  const INCOME_RESOURCE_BY_CODE = Object.freeze({
+    0: "credits", 1: "energy", 2: "handSize", 3: "availableData", 4: "publicity",
   });
 
   class HeuristicPolicyError extends Error {
@@ -173,26 +147,21 @@
         //   baseIncome 每轮收入 × 单位价值 × 剩余轮次窗口。
         const roundNumber = Math.max(1, Number(context.observation?.publicState?.roundNumber) || 1);
         const finalRoundNumber = Math.max(1, Number(context.observation?.publicState?.finalRoundNumber) || 4);
-        const unit = (base) => degradedUnit(base, roundNumber, finalRoundNumber);
-        const remainingRounds = Math.max(0, finalRoundNumber - roundNumber);
+        const unit = (resource) => resourceUnitValue(resource, roundNumber, finalRoundNumber);
         const industryValue = (industryId) => {
           const label = String(industryId || "").replace(/^industry:/, "").replace(/\.png$/, "");
           const effect = initialCards?.INDUSTRY_EFFECTS?.[label];
           if (!effect) return 0;
           let value = 0;
           value += Number(effect.resources?.score || 0) * RESOURCE_UNIT_VALUES.score;
-          value += Number(effect.resources?.credits || 0) * unit(RESOURCE_UNIT_VALUES.credits);
-          value += Number(effect.resources?.energy || 0) * unit(RESOURCE_UNIT_VALUES.energy);
+          value += Number(effect.resources?.credits || 0) * unit("credits");
+          value += Number(effect.resources?.energy || 0) * unit("energy");
           value += Number(effect.resources?.publicity || 0) * RESOURCE_UNIT_VALUES.publicity;
           value += Number(effect.dataGain || 0) * RESOURCE_UNIT_VALUES.availableData;
           value += Number(effect.blindDraw || 0) * RESOURCE_UNIT_VALUES.ordinaryCard;
           // launchCount / incomeIncreaseCount 是手段（发射/插收入次数），不直接算分；
           // baseIncome 每轮收入按剩余轮次窗口计。
-          value += Number(effect.baseIncome?.credits || 0) * unit(RESOURCE_UNIT_VALUES.credits) * remainingRounds;
-          value += Number(effect.baseIncome?.energy || 0) * unit(RESOURCE_UNIT_VALUES.energy) * remainingRounds;
-          value += Number(effect.baseIncome?.publicity || 0) * RESOURCE_UNIT_VALUES.publicity * remainingRounds;
-          value += Number(effect.baseIncome?.handSize || 0) * RESOURCE_UNIT_VALUES.ordinaryCard * remainingRounds;
-          value += Number(effect.baseIncome?.availableData || 0) * RESOURCE_UNIT_VALUES.availableData * remainingRounds;
+          value += incomeFutureValue(effect.baseIncome, roundNumber, finalRoundNumber);
           return value;
         };
         let bestIndustry = null;
@@ -228,19 +197,17 @@
     //   收入（数据/手牌）×剩余轮次窗口、环绕器 6、扫描次数×5、外星痕迹=外星牌 12。
     const roundNumber = Math.max(1, Number(context.observation?.publicState?.roundNumber) || 1);
     const finalRoundNumber = Math.max(1, Number(context.observation?.publicState?.finalRoundNumber) || 4);
-    const unit = (base) => degradedUnit(base, roundNumber, finalRoundNumber);
-    const remainingRounds = Math.max(0, finalRoundNumber - roundNumber);
+    const unit = (resource) => resourceUnitValue(resource, roundNumber, finalRoundNumber);
     const initialCardValue = (effect) => {
       if (!effect) return 0;
       let value = 0;
       value += Number(effect.resources?.score || 0) * RESOURCE_UNIT_VALUES.score;
-      value += Number(effect.resources?.credits || 0) * unit(RESOURCE_UNIT_VALUES.credits);
-      value += Number(effect.resources?.energy || 0) * unit(RESOURCE_UNIT_VALUES.energy);
+      value += Number(effect.resources?.credits || 0) * unit("credits");
+      value += Number(effect.resources?.energy || 0) * unit("energy");
       value += Number(effect.resources?.publicity || 0) * RESOURCE_UNIT_VALUES.publicity;
       value += Number(effect.resources?.additionalPublicScan || 0) * 0; // 额外公共扫描=手段
       value += Number(effect.dataGain || 0) * RESOURCE_UNIT_VALUES.availableData;
-      value += Number(effect.income?.availableData || 0) * RESOURCE_UNIT_VALUES.availableData * Math.max(1, remainingRounds);
-      value += Number(effect.income?.handSize || 0) * RESOURCE_UNIT_VALUES.ordinaryCard * Math.max(1, remainingRounds);
+      value += incomeFutureValue(effect.income, roundNumber, finalRoundNumber);
       value += Number(effect.blindDraw || 0) * RESOURCE_UNIT_VALUES.ordinaryCard;
       if (effect.orbitPlanetId) value += 6; // 环绕器：开局免费环绕（奖励分+资源）
       if (effect.scan) value += (Number(effect.scan.count) || 0) * 5; // 扫描→数据/扇区信号
@@ -279,8 +246,10 @@
       const incomeValueOf = (action) => {
         const card = cardOf(action);
         const incomeCode = Number(card?.incomeCode);
-        const base = INCOME_UNIT_BY_CODE[incomeCode];
-        return base != null ? degradedUnit(base, roundNumber, finalRoundNumber) : 0;
+        const resource = INCOME_RESOURCE_BY_CODE[incomeCode];
+        if (!resource) return 0;
+        const resourceKey = resource === "handSize" ? "ordinaryCard" : resource;
+        return unit(resourceKey) + incomeFutureValue({ [resource]: 1 }, roundNumber, finalRoundNumber);
       };
       let best = actions[0];
       let bestValue = -1;
