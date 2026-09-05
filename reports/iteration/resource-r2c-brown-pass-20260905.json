@@ -1,0 +1,7 @@
+{
+  "gitCommit": "fda901b94578ecdc5326d1cf121e4f94cdf46463",
+  "source": "seti-saves/seti-save-research-conditional-progress-r2c-20260905-fda901b9-full-v233.json",
+  "replayedSteps": 396,
+  "scope": "计划纯重放396步，但在第373步失败，未执行AI决策，不作为PASS因果证据",
+  "error": { "message": "AssertionError: replay 373; env.step returned ok=false", "log": "/tmp/seti-r2c-brown-pass-20260905.log" }
+}
