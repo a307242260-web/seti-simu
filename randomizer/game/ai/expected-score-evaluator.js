@@ -832,6 +832,7 @@
           leafStateValue,
           strategicValue: leafValue(rootValue, leafStateValue, parameters),
           vDelta,
+          executionStepCount: Number(leaf.executionStepCount ?? leaf.actionChain?.length ?? 0),
         };
       })
       .sort((left, right) => (
@@ -841,6 +842,8 @@
         || right.strategicValue.actualScoreDelta - left.strategicValue.actualScoreDelta
         || Number(left.leaf.quickTradeCount || 0) - Number(right.leaf.quickTradeCount || 0)
         || Number(left.leaf.secondaryAgentDepth || 0) - Number(right.leaf.secondaryAgentDepth || 0)
+        || (action?.phase === "conditional" && !left.leafStateValue.terminal && !right.leafStateValue.terminal
+          ? left.executionStepCount - right.executionStepCount : 0)
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
     const best = evaluatedLeaves[0] || null;
@@ -875,6 +878,7 @@
         0,
         -Number(best.leaf.quickTradeCount || 0),
         -Number(best.leaf.secondaryAgentDepth || 0),
+        ...(conditional && !best.leafStateValue.terminal ? [-best.executionStepCount] : []),
       ],
       selectable: true,
       priorityClass: conditional ? 3 : control ? 0 : 2,
@@ -889,6 +893,7 @@
       vStateValueEnabled: vEnabled,
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
+      executionStepCount: best.executionStepCount,
       quickTradePurpose: tradePurpose.required ? tradePurpose : null,
       cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,

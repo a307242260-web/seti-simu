@@ -59,6 +59,11 @@ Composition drain，不伪装成策略动作。
 `techGainRequirements`，不推测隐藏奖励。该派生字段不写入Production状态或checkpoint。
 研究预期的状态差分与V分项见`docs/ai-design.md`。
 
+反事实叶可携带`executionStepCount`：实际成功提交的Action/Decision总数，包含节点内
+折叠步骤，不等于搜索节点数。Production搜索输出该计数；未提供此字段的非折叠叶以
+actionChain长度表示提交数。非终局条件决策的同价值排序使用该计数，终局不使用；它不
+写入正式游戏状态或改变replay/plan结构。
+
 蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：
 `publicState.players[].blueBonusAssets`及`outcomeProjection.progress.blueBonusAssets`
 含`credits/energy/ordinaryCards`来源留存数量，不暴露对手牌身份；`dataProgress.blueSlots`

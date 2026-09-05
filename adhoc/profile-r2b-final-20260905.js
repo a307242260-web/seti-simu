@@ -4,7 +4,9 @@ const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
-const output = "reports/iteration/resource-r2b-final-profile-20260905.json";
+const candidate = process.argv[2] || "r2b";
+assert.match(candidate, /^r2[b-z]$/);
+const output = `reports/iteration/resource-${candidate}-final-profile-20260905.json`;
 if (fs.existsSync(output)) {
   console.log(`已有checkpoint，未重跑：${output}`);
 } else {

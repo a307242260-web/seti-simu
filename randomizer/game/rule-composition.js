@@ -1889,6 +1889,7 @@
             ? "settled"
             : nextInspection.phase,
           actionChain: secondaryAgentSearch ? origin.chain : clone(origin.chain),
+          executionStepCount: origin.executionStepCount || 0,
           observation: secondaryAgentSearch
             ? fullObservation
             : clone(fullObservation),
@@ -1919,6 +1920,7 @@
           leafId: `frontier:${stableHash(origin.chain)}`,
           status: "search_frontier",
           actionChain: origin.chain,
+          executionStepCount: origin.executionStepCount || 0,
           observation: fullObservation,
           legalSuccessors: successors,
           routeCheckpoints: [],
@@ -2073,6 +2075,7 @@
           // choose_card）**不折叠**（折叠会断链——协调器路径 rootObservation 缺
           // requirements 无法选最优），保持展开让价值进入搜索。
           let drainGuard = 0;
+          let executionStepCount = 1; // 当前节点已成功提交的根动作/决策。
           // 折叠结算链中产生的隐藏信息 barrier（公共牌翻出等）——折叠提交也必须
           // 建立 mask，不能因节点折叠泄漏新翻出的牌身份。
           let drainHiddenBarrier = null;
@@ -2154,6 +2157,7 @@
               };
             }
             // 折叠提交后的 hidden barrier（公共牌翻出等）必须捕获——折叠不泄漏信息。
+            executionStepCount += 1;
             if (!drainHiddenBarrier) {
               const drainAfter = composition.inspect();
               const barrier = settleResult?.irreversibleBarrier
@@ -2189,6 +2193,7 @@
                       message: placeResult?.message || "连续填数据失败",
                     };
                   }
+                  executionStepCount += 1;
                   continue;
                 }
               }
@@ -2303,6 +2308,7 @@
           return {
             ok: true,
             current,
+            executionStepCount,
             nextInspection,
             awaitingDecision,
             successors,
@@ -2615,6 +2621,7 @@
             origin.informationMasked = Boolean(
               origin.informationMasked || execution.informationMasked,
             );
+            origin.executionStepCount = (origin.executionStepCount || 0) + execution.executionStepCount;
             if (execution.informationMasked && !origin.informationBarrier) {
               origin.informationBarrier = execution.hiddenBarrier || null;
             }

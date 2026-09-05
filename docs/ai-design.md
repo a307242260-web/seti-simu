@@ -439,6 +439,11 @@ undo frame、重复输入克隆和中间 validation，但最终 candidate 仍执
 选择回到selector分组排序后执行，composition不固定取首项。弃牌/交易的手牌代表选择仍为
 既有策略近似，不等于完整枚举全部手牌用途。
 
+叶的`executionStepCount`计入每次成功的正式Action/Decision提交，包括节点内折叠的支付和
+连续放置，但不改变搜索节点预算或actionChain/plan结构。同价值、同既有次级排序的
+非终局条件决策优先更少实际提交；叶内选择和跨候选排序一致。它只消除取消再重选等无效
+绕行，不增加动作分，不能压过收益，也不改变终局正式分的稳定排序。
+
 完整 future state、Session、RNG、Decision owner 和下一 action 相同的分支可以共享一次物理
 执行；不同奖励、手牌身份、科技、收入或盘面不能作为规则等价合并。仅在资源目标内部，等量弃牌
 支付和终局 PASS 后只影响未纳入终点评估的普通牌身份 choice 会稳定保留一个代表，并通过

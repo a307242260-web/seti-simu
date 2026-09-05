@@ -1,0 +1,34 @@
+{
+  "gitCommit": "e4ac07aac09e77a9aa55dfdc644ef821ca99e166",
+  "workingDiffSha256": "80f2def0be528e6668dafc5a66ceedfbd38297fa65108871a714d166bcc5dddb",
+  "scope": "两份已保存盘面的单次真实协调器决策；不作为全盘成绩",
+  "cases": [
+    {
+      "name": "opening",
+      "wallMs": 1562.541916,
+      "chosen": "place_data:8fd12fd3",
+      "nodes": 704,
+      "limitReached": false,
+      "opponents": 0,
+      "scan": {
+        "status": "settled",
+        "leaves": 2,
+        "analysisLeaves": 0
+      }
+    },
+    {
+      "name": "baseline-step73",
+      "wallMs": 426.6276250000001,
+      "chosen": "research_tech:547c8803",
+      "nodes": 178,
+      "limitReached": false,
+      "opponents": 0,
+      "scan": {
+        "status": "settled",
+        "leaves": 9,
+        "analysisLeaves": 8
+      }
+    }
+  ],
+  "passed": true
+}

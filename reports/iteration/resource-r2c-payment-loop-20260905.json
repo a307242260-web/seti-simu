@@ -1,0 +1,270 @@
+{
+  "source": "seti-saves/seti-save-research-resource-realization-r2b-20260905-c1b7bd49-quick-200-v103.json",
+  "scope": "纯重放200个已有输入，再执行4次真实条件决策；不重跑全盘",
+  "decisions": [
+    {
+      "chosen": "choose_payment:638816f7",
+      "plan": null,
+      "candidates": [
+        {
+          "actionId": "choose_payment:0cdfa336",
+          "target": {
+            "kind": "confirm",
+            "confirm": true
+          },
+          "disabledReason": "还需选择 2 张牌",
+          "score": null,
+          "leaves": []
+        },
+        {
+          "actionId": "choose_payment:638816f7",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-48-0",
+            "select": true
+          },
+          "selected": false,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:638816f7"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        },
+        {
+          "actionId": "choose_payment:d7d26350",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-23-pass-1-4",
+            "select": true
+          },
+          "selected": false,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:d7d26350"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chosen": "choose_payment:638816f7",
+      "plan": null,
+      "candidates": [
+        {
+          "actionId": "choose_payment:0cdfa336",
+          "target": {
+            "kind": "confirm",
+            "confirm": true
+          },
+          "disabledReason": "还需选择 1 张牌",
+          "score": null,
+          "leaves": []
+        },
+        {
+          "actionId": "choose_payment:638816f7",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-48-0",
+            "select": true
+          },
+          "selected": true,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:638816f7"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        },
+        {
+          "actionId": "choose_payment:d7d26350",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-23-pass-1-4",
+            "select": true
+          },
+          "selected": false,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:d7d26350"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chosen": "choose_payment:638816f7",
+      "plan": null,
+      "candidates": [
+        {
+          "actionId": "choose_payment:0cdfa336",
+          "target": {
+            "kind": "confirm",
+            "confirm": true
+          },
+          "disabledReason": "还需选择 2 张牌",
+          "score": null,
+          "leaves": []
+        },
+        {
+          "actionId": "choose_payment:638816f7",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-48-0",
+            "select": true
+          },
+          "selected": false,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:638816f7"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        },
+        {
+          "actionId": "choose_payment:d7d26350",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-23-pass-1-4",
+            "select": true
+          },
+          "selected": false,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:d7d26350"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chosen": "choose_payment:638816f7",
+      "plan": null,
+      "candidates": [
+        {
+          "actionId": "choose_payment:0cdfa336",
+          "target": {
+            "kind": "confirm",
+            "confirm": true
+          },
+          "disabledReason": "还需选择 1 张牌",
+          "score": null,
+          "leaves": []
+        },
+        {
+          "actionId": "choose_payment:638816f7",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-48-0",
+            "select": true
+          },
+          "selected": true,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:638816f7"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        },
+        {
+          "actionId": "choose_payment:d7d26350",
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-23-pass-1-4",
+            "select": true
+          },
+          "selected": false,
+          "score": 0,
+          "sortKey": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "leaves": [
+            {
+              "chain": [
+                "choose_payment:d7d26350"
+              ],
+              "reason": "root-decision-settled",
+              "hand": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
