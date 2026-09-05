@@ -81,8 +81,9 @@ effect的完整payload；不能事后靠parentEffectId恢复丢失的具体来�
 | science.SCAN_STEP prepare/resolve(public) | Decision或后继公共选择 | 复制已有options，不是新的来源；自身消费按selected推进，不提前补牌 |
 | residual-domain旧扫描入口 | 委托card factory | 不是第二个扫描执行器；不得恢复旧扫描实现 |
 
-以上终点均由同一个scanStepChoices/resolveScanStep执行，9种mode为有限集合。
-卡牌效果链及奖励的后续/嵌套调用必须沿既有factory进入，不能只为公开顶层行动补事实。
+上述SCAN_STEP路径由同一个scanStepChoices/resolveScanStep执行，9种mode为有限集合；
+这不是全部扫描执行闭包，后续核对发现另外两个直接入口，见文末。不能只为公开顶层
+行动或SCAN_STEP补事实。
 
 ## 下一项设计决策
 
@@ -95,3 +96,43 @@ decision也没有mode或绑定时点。必须先确定正式来源身份如何�
 正式effect增加只读来源元数据，必须同时列明持久化/旧checkpoint/隐藏信息契约，
 重新审核前文“不新增恢复字段”的初步约束，不得在实现中临时增加字段。
 目前仍未冻结，不写生产patch；已排除并集指纹和事后从journal反推两个不完整方向。
+
+## 完整执行入口复核与接口约束（2026-09-06）
+
+从实际扫描执行函数反向核对，而不是只搜SCAN_STEP类型，发现此前生产者矩阵还需
+增加两条直接路径。当前`executeNebulaScan`在生产代码有三个调用点：
+
+| 调用点 | 来源、绑定与实际执行 | 隐藏/恢复义务 |
+|---|---|---|
+| science-session.resolveScanStep | 前述9种mode、正式队列与所有对应factory | prepare/公共后继保留绑定；自动单目标也要采集，不能只在用户Decision前采集 |
+| cards.play-domain.resolveNebulaScan | DRAW_THEN_SCAN：正式盲抽后按扫描码确定scanNebulaIds，随后独立Decision；选中后弃掉抽到的牌 | 抽牌前不能将未来scanNebulaIds写进可用计划依赖；抽后新的独立根可读取已知牌。skip和discardDrawnOnSkip不产生扫描收益 |
+| cards.play-domain.executeYichangdianNextAnomalyScan | 正式地球位置→yichangdian.getNextAnomalySectorX→扇区，直接扫描并追加FINALIZE | 无条件Decision步骤，不能靠未来action.target推断此依赖；依赖地球及已公开异常点布局，未揭示信息仍遮蔽 |
+
+三处均复用science.executeNebulaScan→abilities.executeAbility("scanNebula")，没有
+理由将后两处迁回SCAN_STEP；本任务只补计划证据，不改变其执行owner、盲抽/弃牌顺序、
+结算时点或RNG。对生产game目录直接扫描调用的反向搜索已核对这三个入口；仅统计
+SCAN_STEP类型或顶层action.family===scan不足以界定本任务集合。
+
+### 已确定的接口职责（尚未冻结生产签名）
+
+1. **来源必须由正式生产者给出**：普通队列、card factory、probe奖励、紫4哨兵、
+   DRAW_THEN_SCAN与异常点直接扫描分别说明其来源；不由计划模块从坐标/收费/label猜测。
+2. **生成与消费分开记录**：位置在创建队列时绑定的来源，绑定完成后不继续依赖当前
+   行星位置；实时读取来源持续检查到其正式消费边界。自动效果与折叠提交也须覆盖。
+3. **同一执行链采集**：继续使用rule-composition三类正式提交的成功步骤链；新增来源
+   信息必须能关联到这些步骤，不改现有actionChain、节点/执行计数、RNG或目标排序。
+4. **只给计划可见事实**：projection(viewer)由Production读取正式根/session，再经
+   rule-observation输出；当前sanitizeHiddenInformationObservation只遮蔽既有字段，
+   任何新增来源字段都必须纳入遮蔽，尤其是drawnCardId/scanNebulaIds。不能因为字段不叫
+   hand就把新抽牌内容传入计划。未知来源证据显式miss，不补默认事实。
+5. **生命周期有明确端点**：从同目标段的前置准备传播到绑定或实时消费的那一步，
+   随advance推进。绑定后的步骤继续检查其具名扇区/公共牌等依赖，不继承已完成来源。
+6. **旧checkpoint**：正式规则仍按既有payload正常执行；旧checkpoint不含新来源信息
+   时，不得猜来源使计划命中。计划是瞬态且load/reset清空；读取旧会话的缺证据应有
+   明确miss，不使规则恢复失败，也不引入第二套旧版规则执行。
+
+剩余设计问题已经收敛为一个：选定正式来源的携带位置，并使“创建/消费对应哪次
+正式提交”的关联可机械验证。当前session journal.effects不保存已执行payload，
+但applyResult会正式归档events，且撤销按journal长度回退；若用事件携带，必须同步
+定义事件增量去重、失败不入成功步骤、信息遮蔽与checkpoint续接，不能只加一个来源字段。
+该关联闭合后才能冻结批量实现，当前不宣称设计已完成。
