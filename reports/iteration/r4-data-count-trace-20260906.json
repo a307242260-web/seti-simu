@@ -1,0 +1,182 @@
+{
+  "scope": "正式重放并检查资源计数与数据池；无AI搜索",
+  "savePath": "seti-saves/seti-save-research-score-corner-r4-20260906-0d21aebf-full-v284.json",
+  "changes": [
+    {
+      "step": 144,
+      "playerId": "player-blue",
+      "before": {
+        "count": 0,
+        "pool": 0,
+        "placed": 0
+      },
+      "after": {
+        "count": 1,
+        "pool": 0,
+        "placed": 0
+      },
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:1061905a",
+        "actorId": "player-blue",
+        "stateVersion": 65,
+        "decisionVersion": 3,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-24-pass-1-5",
+          "cardId": "dlc_5.png"
+        },
+        "payload": {
+          "cardInstanceId": "card-24-pass-1-5"
+        },
+        "decision": null,
+        "summary": "dlc_5.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-24-pass-1-5",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_5.png",
+          "imageAlt": "dlc_5.png"
+        }
+      }
+    },
+    {
+      "step": 170,
+      "playerId": "player-blue",
+      "before": {
+        "count": 1,
+        "pool": 0,
+        "placed": 0
+      },
+      "after": {
+        "count": 1,
+        "pool": 1,
+        "placed": 0
+      },
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:2c7648bc",
+        "actorId": "player-blue",
+        "stateVersion": 80,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "4:-1:0",
+          "rocketId": 4,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "requiredMovePoints": 1,
+          "remaining": 1
+        },
+        "decision": null,
+        "summary": "R4 逆时针"
+      }
+    },
+    {
+      "step": 291,
+      "playerId": "player-blue",
+      "before": {
+        "count": 0,
+        "pool": 0,
+        "placed": 2
+      },
+      "after": {
+        "count": 1,
+        "pool": 0,
+        "placed": 2
+      },
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:518629a3",
+        "actorId": "player-brown",
+        "stateVersion": 144,
+        "decisionVersion": 7,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-28-pass-2-4",
+          "cardId": "b_53.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-28-pass-2-4"
+        },
+        "decision": null,
+        "summary": "b_53.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-28-pass-2-4",
+          "imageSrc": "../assets/cards/basic/split/b_53.webp",
+          "imageAlt": "b_53.webp"
+        }
+      }
+    },
+    {
+      "step": 430,
+      "playerId": "player-blue",
+      "before": {
+        "count": 1,
+        "pool": 0,
+        "placed": 2
+      },
+      "after": {
+        "count": 2,
+        "pool": 0,
+        "placed": 2
+      },
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:dc21139d",
+        "actorId": "player-green",
+        "stateVersion": 212,
+        "decisionVersion": 18,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-30-pass-3-1",
+          "cardId": "b_111.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-30-pass-3-1"
+        },
+        "decision": null,
+        "summary": "b_111.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-30-pass-3-1",
+          "imageSrc": "../assets/cards/basic/split/b_111.webp",
+          "imageAlt": "b_111.webp"
+        }
+      }
+    }
+  ],
+  "firstMismatchCheckpoint": "reports/iteration/r4-data-first-mismatch-20260906.json",
+  "final": {
+    "player-blue": {
+      "count": 2,
+      "pool": 0,
+      "placed": 2
+    },
+    "player-green": {
+      "count": 0,
+      "pool": 0,
+      "placed": 0
+    },
+    "player-brown": {
+      "count": 0,
+      "pool": 0,
+      "placed": 6
+    },
+    "player-white": {
+      "count": 1,
+      "pool": 1,
+      "placed": 0
+    }
+  },
+  "passed": true
+}
