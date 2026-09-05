@@ -993,7 +993,7 @@
         ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 32)
         : maxNodes;
       const maxFrontierNodes = Number(evaluateOptions.maxFrontierNodes ?? 256);
-      const maxMilliseconds = Number(evaluateOptions.maxMilliseconds ?? 10000);
+      const maxMilliseconds = Number(evaluateOptions.maxMilliseconds ?? 30000);
       if (secondaryAgentSearch && (
         !Number.isInteger(maxFrontierNodes) || maxFrontierNodes < legalActions.length
         || maxFrontierNodes > maxExecutionNodes

@@ -71,6 +71,10 @@ const options = {
 };
 const outcomes = composition.counterfactualPort.evaluate(actions, options);
 const diagnostics = composition.counterfactualPort.getDiagnostics();
+assert.equal(diagnostics.maxMilliseconds, 30000);
+assert.deepEqual(composition.counterfactualPort.evaluate(actions, { ...options, maxMilliseconds: 10000 }), outcomes,
+  "未超时的同一搜索不因期限放宽改变结果");
+assert.equal(composition.counterfactualPort.getDiagnostics().maxMilliseconds, 10000);
 assert.ok(diagnostics.maxRetainedFrontierSize <= 2);
 assert.ok(diagnostics.beamPrunedOriginCount > 0);
 assert.ok(diagnostics.sharedPhysicalExecutionOriginCount > 0, "相同物理状态须共享执行但保留两个来源");

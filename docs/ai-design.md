@@ -450,11 +450,12 @@ incomplete、not-evaluated及原因。已有真实叶且截断仍为settled，�
 无叶截断为unresolved，frontier不可冒充收益。完整性覆盖声明的单席策略范围，
 不表示全多人游戏最优。元数据经投影与Policy契约校验，不改变估值权重。
 
-每次次级搜索期限10000ms，宏步前后检查；超时显式抛COUNTERFACTUAL_SEARCH_TIMEOUT，
+每次次级搜索期限30000ms，宏步前后检查；超时显式抛COUNTERFACTUAL_SEARCH_TIMEOUT，
 清理隔离fork，不返回部分策略或提交真实根。同步宏步不能中途抢占，因此不承诺严格
 实时中断。完整决策还含结果投影、Policy与计划提取。2026-09-06用户允许适度放宽
 模拟耗时：初次棕方样本总决策10.42秒、搜索8.39秒不再单独阻止全盘验证；仍需报告
 整局实测耗时及慢决策，不扩大节点预算、不移除搜索超时保护，也不宣称性能已优化达标。
+后续快速验证触发原10秒搜索超时，期限独立放宽为30秒；若仍超时须定位，不自动加码。
 
 反事实执行复用一个 Composition 级可信隔离 fork。每个候选从同一 checkpoint 恢复
 StateStore、Effect Session 和分支 RNG，再调用生产 registry/executor；Simulation 的可信

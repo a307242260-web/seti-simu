@@ -129,7 +129,7 @@ function createHeuristicDecisionFunction(options = {}) {
         ? { maxExecutionNodes: evaluateOptions.maxExecutionNodes }
         : {}),
       maxFrontierNodes: 256,
-      maxMilliseconds: 10000,
+      maxMilliseconds: 30000,
       stopAtPassDecisionBoundary: evaluateOptions.stopAtPassDecisionBoundary === true,
       maxFrontierPerRoot: evaluateOptions.maxFrontierPerRoot
         || (evaluateOptions.secondaryAgentSearch ? 1 : 8),
