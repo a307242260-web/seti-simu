@@ -877,8 +877,8 @@ function standardScanSectorIds(workingState, player) {
     roundNumber: workingState.turn.roundNumber,
     turnNumber: workingState.turn.turnNumber,
   })) {
-    const mercury = solar.createSolarSnapshot(workingState.solarSystem)
-      .planetLocations?.mercury;
+    const mercury = solar.collectPlanetLocations(workingState.solarSystem)
+      .find((planet) => planet.planetId === "mercury");
     const sectorId = mercury ? nebulaAtSectorX(workingState, mercury.x) : null;
     if (sectorId) sectorIds.add(sectorId);
   }
@@ -917,17 +917,6 @@ function buildSectorWinRequirements(workingState, requestedPlayerId = null) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
-  // 扇区胜利需求完全无资源依赖（只读 data token/排名/玩家科技/手牌/标准扫描成本）：
-  // 结构键命中时直接共享缓存结果，跳过 listNebulaTokens/getSectorRanking 等每节点重算。
-  const key = `${workingState.meta?.gameId || "?"}:${player.id}:D${JSON.stringify(workingState.data)}:T${JSON.stringify(player.techState)}:H${JSON.stringify(player.hand || [])}`;
-  const cached = SECTOR_REQUIREMENTS_CACHE.get(key);
-  if (cached) return cached;
-  const result = buildSectorWinRequirementsBody(workingState, player);
-  return cachePut(SECTOR_REQUIREMENTS_CACHE, key, result);
-}
-
-function buildSectorWinRequirementsBody(workingState, player) {
-  const playerKeys = new Set([player.id, player.color].filter(Boolean).map(String));
   const standardSectorIds = standardScanSectorIds(workingState, player);
   const specialAccess = (player.hand || [])
     .map((card) => ({
@@ -937,6 +926,21 @@ function buildSectorWinRequirementsBody(workingState, player) {
       sectorIds: cardDirectScanSectorIds(card),
     }))
     .filter((source) => source.sectorIds.length > 0);
+  const accessSources = [{ sourceId: "standard-scan", family: "scan", sectorIds: standardSectorIds },
+    ...specialAccess];
+  const standardScanCost = scanEffects.getStandardScanCost(player);
+  // 动态来源/费用先按正式规则计算，缓存body只依赖这些值、data和玩家身份。
+  // 旋转、公共牌、借用科技及公司费用变化不能被旧目录遮蔽。
+  const key = JSON.stringify([workingState.meta?.gameId, player.id, player.color,
+    workingState.data, accessSources, standardScanCost]);
+  const cached = SECTOR_REQUIREMENTS_CACHE.get(key);
+  if (cached) return cached;
+  const result = buildSectorWinRequirementsBody(workingState, player, accessSources, standardScanCost);
+  return cachePut(SECTOR_REQUIREMENTS_CACHE, key, result);
+}
+
+function buildSectorWinRequirementsBody(workingState, player, accessSources, standardScanCost) {
+  const playerKeys = new Set([player.id, player.color].filter(Boolean).map(String));
   const candidates = data.NEBULA_IDS
     .filter((sectorId) => sectorId !== data.AOMOMO_NEBULA_ID)
     .map((sectorId) => {
@@ -992,15 +996,8 @@ function buildSectorWinRequirementsBody(workingState, player) {
     schemaVersion: "seti-sector-win-requirements-v1",
     playerId: player.id,
     candidates,
-    standardScanCost: scanEffects.getStandardScanCost(player),
-    accessSources: [
-      {
-        sourceId: "standard-scan",
-        family: "scan",
-        sectorIds: standardSectorIds,
-      },
-      ...specialAccess,
-    ],
+    standardScanCost,
+    accessSources,
     wins: clone(
       workingState.data?.sectorSettlements?.winsByPlayerId?.[player.id]
       || workingState.data?.sectorSettlements?.winsByPlayerId?.[player.color]

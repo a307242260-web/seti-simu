@@ -10,12 +10,14 @@ if (fs.existsSync(output)) {
   console.log(`已有记录，未重跑：${output}`);
 } else {
   const source = JSON.parse(fs.readFileSync("reports/iteration/r3-brown-route-selection-20260906.json"));
-  const sample = structuredClone(source.samples[1]);
+  const sample = structuredClone(source.samples[Number(process.argv[3] ?? 1)]);
   const report = { createdAt: new Date().toISOString(),
     gitCommit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
     planSourceSha256: crypto.createHash("sha256")
       .update(fs.readFileSync("randomizer/game/ai/plan-continuation.js")).digest("hex"),
-    scope: "从已有真实第172步checkpoint做一次冷计划决策；不重放、不跑全盘",
+    kernelSourceSha256: crypto.createHash("sha256")
+      .update(fs.readFileSync("randomizer/game/production-kernel.js")).digest("hex"),
+    scope: "从已有真实棕方checkpoint做一次冷计划决策；不重放、不跑全盘",
     sample };
   const env = createSimulationEnv();
   try {
