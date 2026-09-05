@@ -1,0 +1,275 @@
+{
+  "createdAt": "2026-09-05T16:15:38.536Z",
+  "scope": "对照已有完整存档动作与after摘要，不重跑搜索；不是全状态因果证明",
+  "identicalPrefixSteps": 26,
+  "sources": [
+    {
+      "path": "seti-saves/seti-save-research-blue-future-r2e-20260905-20feca27-full-v313.json",
+      "sha256": "23715b720331864284971a9f65e01b9b5f878892632455c13ace1c6a95544471",
+      "count": 667
+    },
+    {
+      "path": "seti-saves/seti-save-research-plan-steps-r3-20260906-d7a78140-full-v299.json",
+      "sha256": "4796a0ac69fc936e64a9a14f63e3f18ad375845813028b41880f2ed35ffedd16",
+      "count": 593
+    }
+  ],
+  "baseline": [
+    {
+      "stepIndex": 25,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:abbb51f1",
+        "actorId": "player-white",
+        "stateVersion": 3,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 1,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            2,
+            1,
+            7,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 26,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 4,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 1,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            2,
+            1,
+            7,
+            1,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "candidate": [
+    {
+      "stepIndex": 25,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:abbb51f1",
+        "actorId": "player-white",
+        "stateVersion": 3,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 1,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            2,
+            1,
+            7,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 26,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 4,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 2,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            2,
+            1,
+            7,
+            1,
+            1
+          ]
+        }
+      }
+    }
+  ]
+}
