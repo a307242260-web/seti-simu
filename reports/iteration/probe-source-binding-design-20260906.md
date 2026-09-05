@@ -1,4 +1,4 @@
-# 探测路线来源身份审查（2026-09-06，设计中）
+# 探测路线来源身份修复（2026-09-06，设计冻结）
 
 ## 已证实的问题
 
@@ -79,3 +79,32 @@ events有launch/rocketId/playerId。来源信息应由实际执行事实确定�
 门槛后，提交生产与AI/RL对应文档，再按去重入口快速200步及同提交续跑完整盘面。
 保持第三轮验收基线106.75，第四轮预算/裁剪整体义务不变。两项用户指定既有测试
 失败不在修复范围。
+
+## 冻结实现矩阵
+
+正式执行证据`probe-execution-events-20260906.json`：两牌换电与两阶段登陆的六次
+提交中，generic land入口无land事件，选靶成功后恰有一次land事件；真实棕方发射
+事件rocketId=4，与正式公共盘面的火箭身份一致。所有成功submit结果均有累计journal。
+
+以下为生效方案，替代前文“待冻结/剩余设计决策”状态；历史反例保留，不继续扩展审查域。
+
+| 消费者 | 实现决定与唯一owner | 必须验证的边界 |
+|---|---|---|
+| 宏步提交事实 | rule-composition复用成功submit的journal.events；从节点已有session checkpoint取初始游标，新的非conditional提交游标归零，同一session的conditional按长度取增量；只保留launch/orbit/land | current、settleChoice、nextPlaceData三处提交；新session、恢复中间session、零新增事件；journal缺失或长度倒退显式失败 |
+| 事实生命周期 | 事件只属于当前物理执行结果，不写正式状态、不跨checkpoint持久化；每个planStep关联本次提交新增事实 | fork共享执行的多个origin读取同一不可变事实，不能消费掉别的origin数据；无RNG/id/sequence写入 |
+| 发射来源转换 | 纯规划函数把probe:launch:<终点>绑定到本席本次实际第一条launch事件的rocketId；已经绑定rocket的不再转换 | 多次发射按正式事件顺序选择第一枚，不按候选目录顺序猜；卡牌/嵌套发射同源；对手事件不绑定；未发射保持launch占位 |
+| 逐步身份推进 | 每个origin从自己的routePlanId开始，按执行步骤顺序：先记录该步提交前绑定，再应用该步事件得到后续绑定；无计划采集的调用也按同一事件序列推进来源 | 根来源provenance保留，后续步骤指向实际rocket；支付折叠不能让整段仍标launch；收入probe前缀共用 |
+| 来源读取 | 根目录、普通后继、conditional及后继目标资源下界使用精确requirementId，不将同终点不同来源混成goals[0] | 候选换序等价；来源消失不能转向另一枚火箭；卡牌移动与跨行动圈延后保持来源 |
+| 正式land入口 | actionMatchesProbeStep识别正式family=land,target.select=true的入口；前提是已绑定需求的nextStep为land | 入口动作不加伪rocket字段；不把尚需移动的来源当作已能登陆 |
+| 正式land选靶 | 在LAND_CHOICE形态的choose_target集合中按绑定rocket/planet/landTarget精确选择 | 主星/卫星、错误来源、无匹配；外星痕迹/扫描等奖励选择不套land过滤 |
+| 目标完成 | 直接探测目标优先消费当前宏步新增的正式orbit/land事件，按席位、终点、主星/卫星匹配；不能用打开land入口或历史累计事件证明完成 | 单目标直连、多目标选靶、奖励尚未排空、恢复后不重复完成；无新事件返回未完成 |
+| 计划奖励阶段 | 按步骤新增探测完成事实推进goalCompletionPending，已完成后的奖励步骤不再依赖已消失路线 | 当前动作和折叠奖励步骤的前后边界正确，奖励仍需正常选完；普通后继沿现有completedGoal清空目标 |
+| 版本与预算 | 版本化搜索回调传递事件及来源推进函数，更新rollout provenance；原状态等价、4096全局预算、终点评分和目标裁剪数量不改 | 单状态性能先过10秒；节点共享不丢来源；不是第四轮预算重构 |
+
+验收先覆盖已保存真实绿方两牌换电→1号火星登陆，随后验证候选换序、首次发射转换、
+重复发射不换已绑定来源、conditional恢复、单目标/多目标完成与计划奖励阶段。只读
+诊断脚本保存的是旧实现反例，不改旧checkpoint来伪装通过；修复后产物用新版本路径。
+
+实现范围为expected-score-evaluator、rule-composition、启发式决策装配及直接受影响
+行为测试/AI与RL文档。正式Production owner、运行方式和存档schema不变。完整方案
+一次实现后集中验证；新增不在此矩阵内的语义才回到设计，不做无关机制审查。
