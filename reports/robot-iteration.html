@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T09:25:59.331Z",
+  "builtAt": "2026-09-05T09:28:55.685Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "d9283ce5",
+  "headCommit": "b51ab343",
   "currentBaseline": "terminal-value-r1-20260905",
   "worktreeDirty": true,
   "bestOf": {
@@ -207,7 +207,7 @@ const REGISTRY = {
           "subject": "修正机器人终局估值：统一正式分、搜索排序与计划优胜叶"
         }
       ],
-      "summary": "固定免电分析盘面535步，终局25/144/147/83，均分99.75与基线相同；逐步动作和状态摘要一致。终局宣传预期、V与搜索排序统一正式分，按均分不变且逻辑合理通过。",
+      "summary": "终局不再计入宣传换研究、剩余数据、手牌和外星进度的预期收益；V估值只取正式终局分，搜索排序不再奖励终局目标进度。",
       "diffStat": "33 files changed, 47757 insertions(+), 1374 deletions(-)",
       "diffFiles": [
         {
