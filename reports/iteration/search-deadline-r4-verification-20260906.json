@@ -1,0 +1,27 @@
+{
+  "scope": "读取已有快速/全盘记录和正式存档，不重跑AI；不证明全部搜索与计划行为正确",
+  "gitCommit": "8a6ef25e",
+  "steps": 584,
+  "resumedPrefixIdentical": true,
+  "scores": {
+    "player-blue": 75,
+    "player-green": 113,
+    "player-brown": 121,
+    "player-white": 97
+  },
+  "mean": 101.5,
+  "acceptedBaseline": 106.75,
+  "quickMs": 144806,
+  "resumedMs": 344417,
+  "totalSimulationMs": 489223,
+  "saves": [
+    {
+      "path": "seti-saves/seti-save-research-search-deadline-r4-20260906-8a6ef25e-quick-200-v94.json",
+      "sha256": "327df7c459f9fabd1bf47a9aa4b6ffccf19c4f6b633e4e49330e349d3ad72b91"
+    },
+    {
+      "path": "seti-saves/seti-save-research-search-deadline-r4-20260906-8a6ef25e-full-v292.json",
+      "sha256": "4fa4f7081f6ab9d139511c85f4738820ed13c02e84f880964b64736bc4e92d91"
+    }
+  ]
+}

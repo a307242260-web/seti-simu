@@ -232,6 +232,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `search-deadline-r4-20260906` | `8a6ef25e` | 期限放宽至30秒；584步75/113/121/97、均101.5，低于R2e基线5.25；总模拟489223ms，第三/第四轮未通过 |
 | `policy-copy-r4-20260906` | `e164bb59` | 独立复制优化；快速200步未完成，第二轮绿方搜索内部超时，无终局；日志见`reports/iteration/policy-copy-r4-quick-failed-20260906.log` |
 | `search-budget-r4-20260906` | `b7bc42ff` | 全局预算与独立完整性；单决策10.42秒未过性能门槛，无新快速/全盘记录，第四轮未通过；详见`reports/iteration/search-budget-r4-review-20260906.md` |
 | `probe-source-r3p1-20260906` | `d969b727` | 来源保持、两阶段登陆与正式完成事件；543步均94.25，低于R2e基线12.5，第三轮未通过 |
@@ -257,7 +258,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析为`policy-copy-r4-20260906`，只表示当前
+- `registry.currentBaseline` 按代码祖先解析为`search-deadline-r4-20260906`，只表示当前
   代码归属，不表示验收通过；最近通过版本仍为`blue-future-r2e-20260905`。四轮计划与
   验收证据见`docs/ai-iteration-plan-20260905.md`。
 - 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
