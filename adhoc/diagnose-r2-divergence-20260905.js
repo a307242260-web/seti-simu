@@ -7,9 +7,11 @@ const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
 const outcome = require("../randomizer/game/ai/outcome-model");
 const replayCount = process.argv[2] == null ? null : Number(process.argv[2]);
+const useBaseline = process.argv[3] === "baseline";
+assert.ok(process.argv[3] == null || useBaseline);
 assert.ok(replayCount == null || (Number.isSafeInteger(replayCount) && replayCount >= 0));
 const output = replayCount == null ? "reports/iteration/resource-r2-divergence-20260905.json"
-  : `reports/iteration/resource-r2-step${replayCount + 1}-20260905.json`;
+  : `reports/iteration/resource-r2-${useBaseline ? "baseline-" : ""}step${replayCount + 1}-20260905.json`;
 if (fs.existsSync(output)) {
   console.log(`使用已有诊断：${output}`);
 } else {
@@ -19,6 +21,7 @@ if (fs.existsSync(output)) {
     return { file, record, save, state: JSON.parse(save.committedState) };
   });
   const [baseline, candidate] = runs;
+  const diagnosticRun = useBaseline ? baseline : candidate;
   const first = baseline.save.replaySteps.findIndex((step, index) => (
     step.action.actionId !== candidate.save.replaySteps[index]?.action.actionId
   ));
@@ -37,10 +40,10 @@ if (fs.existsSync(output)) {
   const env = createSimulationEnv();
   try {
     const target = replayCount ?? first;
-    assert.ok(target < candidate.save.replaySteps.length);
-    env.reset({ seed: candidate.save.seed, activePlayerCount: 4, aiDifficulty: "weak_start" });
+    assert.ok(target < diagnosticRun.save.replaySteps.length);
+    env.reset({ seed: diagnosticRun.save.seed, activePlayerCount: 4, aiDifficulty: "weak_start" });
     for (let index = 0; index < target; index += 1) {
-      assert.equal(env.step(candidate.save.replaySteps[index].action).ok, true, `重放步骤${index + 1}`);
+      assert.equal(env.step(diagnosticRun.save.replaySteps[index].action).ok, true, `重放步骤${index + 1}`);
     }
     const legal = env.legalActions();
     const seatId = legal[0].actorId || legal[0].actorPlayerId;
@@ -65,9 +68,10 @@ if (fs.existsSync(output)) {
     }));
     const report = { createdAt: new Date().toISOString(), gitCommit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
       scope: "完整实验离线对比与单次冷计划搜索；手工重放不恢复原协调器计划，不能假定与原决策来源相同",
-      records: runs.map((run) => run.file), firstDifferentStep: first + 1, diagnosedStep: target + 1,
+      records: runs.map((run) => run.file), diagnosticRecord: diagnosticRun.file,
+      firstDifferentStep: first + 1, diagnosedStep: target + 1,
       baselineAction: baseline.save.replaySteps[first].action,
-      candidateAction: candidate.save.replaySteps[target].action,
+      candidateAction: diagnosticRun.save.replaySteps[target].action,
       freshActionId: result.policyDecision.actionId, plan: result.plan, wallMs, deltas,
       revealEvents: runs.map((run) => run.record.metrics.revealEvents),
       evaluations, outcomes: compactOutcomes, diagnostics: env.getCounterfactualDiagnostics(),

@@ -1,0 +1,2350 @@
+{
+  "createdAt": "2026-09-05T11:12:00.933Z",
+  "gitCommit": "6cf270e5e5c235b0467b14068900ff93b7aeb0f2",
+  "scope": "纯重放两个已有终局，筛查数据门槛；尚未验证扫描后费用和实际完整收益链",
+  "candidates": [
+    {
+      "record": "16bce41e.d9283ce5.full.json",
+      "replayCount": 70,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 4,
+        "remainingPlacements": 2,
+        "availableData": 1,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "place_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 29,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:50a9ac16",
+        "actorId": "player-brown",
+        "stateVersion": 29,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 13,
+        "finalScore": 13,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 3,
+        "publicity": 8,
+        "availableData": 1,
+        "additionalPublicScan": 0,
+        "handCount": 1,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue1": 1
+          }
+        },
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 0
+      }
+    },
+    {
+      "record": "16bce41e.d9283ce5.full.json",
+      "replayCount": 72,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "launch:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:venus:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:venus:planet:",
+            "probeTargetId": "land:venus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:venus:planet:"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:547c8803",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 13,
+        "finalScore": 13,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 3,
+        "publicity": 8,
+        "availableData": 0,
+        "additionalPublicScan": 0,
+        "handCount": 1,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue1": 1
+          }
+        },
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 0
+      }
+    },
+    {
+      "record": "16bce41e.d9283ce5.full.json",
+      "replayCount": 110,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "launch:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 1,
+            "probeRequirementId": "launch:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:venus:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:venus:planet:",
+            "probeTargetId": "land:venus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:venus:planet:"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 50,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 50,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 13,
+        "finalScore": 13,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 4,
+        "publicity": 2,
+        "availableData": 0,
+        "additionalPublicScan": 0,
+        "handCount": 1,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue2",
+              "slot": 2,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue1": 1,
+            "blue2": 2
+          }
+        },
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 0
+      }
+    },
+    {
+      "record": "16bce41e.d9283ce5.full.json",
+      "replayCount": 249,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 4,
+        "remainingPlacements": 2,
+        "availableData": 1,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "place_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 119,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 119,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 25,
+        "finalScore": 58,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 1,
+        "additionalPublicScan": 0,
+        "handCount": 0,
+        "reservedCount": 2,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue2",
+              "slot": 2,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          },
+          "disabledTiles": {
+            "purple4": true
+          },
+          "blueBoardSlots": {
+            "blue1": 1,
+            "blue2": 2
+          }
+        },
+        "income": {
+          "credits": 4,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 33
+      }
+    },
+    {
+      "record": "16bce41e.d9283ce5.full.json",
+      "replayCount": 327,
+      "seatId": "player-green",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-green",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "launch:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 1,
+            "probeRequirementId": "launch:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:1b66b805",
+        "actorId": "player-green",
+        "stateVersion": 162,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:f86fc96a",
+        "actorId": "player-green",
+        "stateVersion": 162,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "player": {
+        "playerId": "player-green",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 39,
+        "finalScore": 53,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 4,
+        "publicity": 6,
+        "availableData": 0,
+        "additionalPublicScan": 0,
+        "handCount": 1,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 2,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue1",
+              "slot": 2,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue2": true,
+            "blue1": true,
+            "purple4": true,
+            "purple2": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue2": 1,
+            "blue1": 2
+          }
+        },
+        "income": {
+          "credits": 5,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 14
+      }
+    },
+    {
+      "record": "16bce41e.d9283ce5.full.json",
+      "replayCount": 335,
+      "seatId": "player-green",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-green",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "launch:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 1,
+            "probeRequirementId": "launch:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:1b66b805",
+        "actorId": "player-green",
+        "stateVersion": 166,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:1b66b805",
+        "actorId": "player-green",
+        "stateVersion": 166,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "player": {
+        "playerId": "player-green",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 41,
+        "finalScore": 55,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 4,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 0,
+        "handCount": 2,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 2,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue1",
+              "slot": 2,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue3",
+              "slot": 3,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue2": true,
+            "blue1": true,
+            "purple4": true,
+            "purple2": true,
+            "blue3": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue2": 1,
+            "blue1": 2,
+            "blue3": 3
+          }
+        },
+        "income": {
+          "credits": 5,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 14
+      }
+    },
+    {
+      "record": "241f6fc0.4f994f86.full.json",
+      "replayCount": 64,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 4,
+        "remainingPlacements": 2,
+        "availableData": 1,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "place_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 25,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:50a9ac16",
+        "actorId": "player-brown",
+        "stateVersion": 25,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 8,
+        "finalScore": 8,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 8,
+        "availableData": 1,
+        "additionalPublicScan": 0,
+        "handCount": 2,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {},
+          "disabledTiles": {},
+          "blueBoardSlots": {}
+        },
+        "income": {
+          "credits": 4,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 0
+      }
+    },
+    {
+      "record": "241f6fc0.4f994f86.full.json",
+      "replayCount": 66,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "launch:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:venus:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:venus:planet:",
+            "probeTargetId": "land:venus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:venus:planet:"
+            ]
+          },
+          {
+            "planId": "data:card:card-11-0",
+            "kind": "card",
+            "dataCount": 1,
+            "cardInstanceId": "card-11-0",
+            "nextStep": {
+              "family": "play_card",
+              "cardInstanceId": "card-11-0"
+            },
+            "nextCost": {
+              "credits": 3
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "card:resolve:card-11-0"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 26,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:4cf8cfb4",
+        "actorId": "player-brown",
+        "stateVersion": 26,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "card-11-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 3
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_65.webp"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 8,
+        "finalScore": 8,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 4,
+        "energy": 2,
+        "publicity": 8,
+        "availableData": 0,
+        "additionalPublicScan": 0,
+        "handCount": 2,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {},
+          "disabledTiles": {},
+          "blueBoardSlots": {}
+        },
+        "income": {
+          "credits": 4,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 0
+      }
+    },
+    {
+      "record": "241f6fc0.4f994f86.full.json",
+      "replayCount": 304,
+      "seatId": "player-brown",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-brown",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:venus:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "rocket:8:land:venus:planet:",
+            "probeTargetId": "land:venus:planet:",
+            "nextStep": {
+              "family": "land",
+              "rocketId": 8,
+              "planetId": "venus",
+              "target": {
+                "type": "planet",
+                "rocketId": 8
+              }
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:venus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "rocket:8:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "rocket:8:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "rocket:8:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "rocket:8:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "rocket:8:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "rocket:8:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:rocket:8:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "rocket:8:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "move",
+              "rocketId": 8,
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 161,
+        "decisionVersion": 6,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 161,
+        "decisionVersion": 6,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "player": {
+        "playerId": "player-brown",
+        "color": "brown",
+        "playerLabel": "棕色玩家",
+        "score": 25,
+        "finalScore": 57,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 1,
+        "energy": 2,
+        "publicity": 3,
+        "availableData": 0,
+        "additionalPublicScan": 0,
+        "handCount": 0,
+        "reservedCount": 3,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 4,
+              "occupied": false,
+              "unlocked": false
+            },
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true,
+            "orange2": true,
+            "purple2": true,
+            "blue2": true
+          },
+          "disabledTiles": {
+            "orange2": true,
+            "purple2": true
+          },
+          "blueBoardSlots": {
+            "blue1": 4,
+            "blue2": 1
+          }
+        },
+        "income": {
+          "credits": 5,
+          "energy": 4,
+          "handSize": 4,
+          "publicity": 1,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 32
+      }
+    },
+    {
+      "record": "241f6fc0.4f994f86.full.json",
+      "replayCount": 360,
+      "seatId": "player-white",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-white",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 4,
+        "remainingPlacements": 2,
+        "availableData": 1,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "place_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 190,
+        "decisionVersion": 6,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 190,
+        "decisionVersion": 6,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "player": {
+        "playerId": "player-white",
+        "color": "white",
+        "playerLabel": "白色玩家",
+        "score": 31,
+        "finalScore": 46,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 7,
+        "energy": 3,
+        "publicity": 5,
+        "availableData": 1,
+        "additionalPublicScan": 1,
+        "handCount": 5,
+        "reservedCount": 2,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true,
+            "purple4": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue1": 1
+          }
+        },
+        "income": {
+          "credits": 6,
+          "energy": 3,
+          "handSize": 3,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 1
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 15
+      }
+    },
+    {
+      "record": "241f6fc0.4f994f86.full.json",
+      "replayCount": 362,
+      "seatId": "player-white",
+      "requirement": {
+        "schemaVersion": "seti-data-analyze-requirements-v2",
+        "playerId": "player-white",
+        "targetId": "data:analyze",
+        "computerPlacedCount": 5,
+        "remainingPlacements": 1,
+        "availableData": 0,
+        "dataNeeded": 1,
+        "firstRowComplete": true,
+        "firstRowRemainingPlacements": 0,
+        "heldDataCanFillFirstRow": true,
+        "eligible": true,
+        "eligibilityReason": "held-data-can-fill-first-row",
+        "nextStep": "acquire_data",
+        "nextCost": {
+          "credits": 0,
+          "energy": 0
+        },
+        "nextGap": {
+          "credits": 0,
+          "energy": 0
+        },
+        "acquisitionPlans": [
+          {
+            "planId": "data:scan",
+            "kind": "scan",
+            "dataCount": 1,
+            "nextStep": {
+              "family": "scan"
+            },
+            "nextCost": {
+              "credits": 1,
+              "energy": 2
+            },
+            "resultTargetIds": [
+              "data:analyze"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mercury:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:mercury:planet:",
+            "probeTargetId": "land:mercury:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mercury:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:uranus:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:uranus:planet:",
+            "probeTargetId": "land:uranus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:uranus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:saturn:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:saturn:planet:",
+            "probeTargetId": "land:saturn:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:saturn:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 3,
+            "probeRequirementId": "launch:land:neptune:planet:",
+            "probeTargetId": "land:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:neptune:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:jupiter:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:jupiter:planet:",
+            "probeTargetId": "land:jupiter:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:jupiter:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:mars:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:mars:planet:",
+            "probeTargetId": "land:mars:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:mars:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:land:venus:planet:",
+            "kind": "probe",
+            "dataCount": 2,
+            "probeRequirementId": "launch:land:venus:planet:",
+            "probeTargetId": "land:venus:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "land:venus:planet:"
+            ]
+          },
+          {
+            "planId": "data:probe:launch:orbit:neptune:planet:",
+            "kind": "probe",
+            "dataCount": 4,
+            "probeRequirementId": "launch:orbit:neptune:planet:",
+            "probeTargetId": "orbit:neptune:planet:",
+            "nextStep": {
+              "family": "launch"
+            },
+            "resultTargetIds": [
+              "data:analyze",
+              "orbit:neptune:planet:"
+            ]
+          }
+        ],
+        "fieldSources": {
+          "dataProgress": "players[].dataProgress.computerSlots",
+          "availableData": "players[].resources.availableData",
+          "scanCost": "SetiScanEffects.getStandardScanCost",
+          "analyzeCost": "SetiIndustryPassives.canAnalyzeWithoutEnergy"
+        }
+      },
+      "scan": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 191,
+        "decisionVersion": 6,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "recordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 191,
+        "decisionVersion": 6,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "player": {
+        "playerId": "player-white",
+        "color": "white",
+        "playerLabel": "白色玩家",
+        "score": 31,
+        "finalScore": 46,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 7,
+        "energy": 3,
+        "publicity": 5,
+        "availableData": 0,
+        "additionalPublicScan": 1,
+        "handCount": 5,
+        "reservedCount": 2,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "ownedTiles": {
+            "blue1": true,
+            "purple4": true
+          },
+          "disabledTiles": {},
+          "blueBoardSlots": {
+            "blue1": 1
+          }
+        },
+        "income": {
+          "credits": 6,
+          "energy": 3,
+          "handSize": 3,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 1
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "securedEndGameBonus": 15
+      }
+    }
+  ]
+}

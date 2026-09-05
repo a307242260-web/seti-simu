@@ -1,0 +1,6300 @@
+{
+  "createdAt": "2026-09-05T11:13:46.119Z",
+  "gitCommit": "6cf270e5e5c235b0467b14068900ff93b7aeb0f2",
+  "scope": "完整实验离线对比与单次冷计划搜索；手工重放不恢复原协调器计划，不能假定与原决策来源相同",
+  "records": [
+    "16bce41e.d9283ce5.full.json",
+    "241f6fc0.4f994f86.full.json"
+  ],
+  "diagnosticRecord": "16bce41e.d9283ce5.full.json",
+  "firstDifferentStep": 27,
+  "diagnosedStep": 73,
+  "baselineAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "end_turn",
+    "phase": "turn_control",
+    "actionId": "end_turn:b2f9b29d",
+    "actorId": "player-white",
+    "stateVersion": 4,
+    "decisionVersion": 0,
+    "target": {
+      "kind": "end-turn"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "结束回合"
+  },
+  "candidateAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "research_tech",
+    "phase": "main",
+    "actionId": "research_tech:547c8803",
+    "actorId": "player-brown",
+    "stateVersion": 30,
+    "decisionVersion": 0,
+    "target": {
+      "kind": "research-tech"
+    },
+    "payload": {
+      "skipCost": false,
+      "skipRotate": false,
+      "skipBonus": false
+    },
+    "decision": null,
+    "summary": "研究科技"
+  },
+  "freshActionId": "research_tech:547c8803",
+  "plan": {
+    "nextActionId": "choose_target:5537a104",
+    "continuation": [
+      "choose_target:5537a104",
+      "industry:2259bbe0",
+      "choose_target:db8eed92",
+      "choose_card:0b4d20ab",
+      "end_turn:d59ab08c",
+      "scan:0ca111ac",
+      "choose_target:9b846ddd",
+      "choose_card:3796966b",
+      "place_data:50a9ac16",
+      "end_turn:d59ab08c",
+      "analyze:c31ddbb9",
+      "choose_target:273b18e9",
+      "end_turn:d59ab08c",
+      "pass:ac4b4ab2"
+    ],
+    "dependency": {
+      "kind": "generic"
+    },
+    "revealedCount": 0
+  },
+  "wallMs": 510,
+  "deltas": [
+    {
+      "seatId": "player-blue",
+      "scoreSourceDeltas": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": 0,
+        "alienTraceBlueScore": 0,
+        "alienTracePinkScore": 0,
+        "alienTraceYellowScore": 0,
+        "blueTechScore": 0,
+        "cardEffectScore": 0,
+        "cardQuickScore": 0,
+        "industryEffectScore": 0,
+        "initialScore": 0,
+        "landScore": 0,
+        "orbitScore": 6,
+        "scanScore": 0,
+        "taskCardScore": 0,
+        "techBonusScore": 8
+      },
+      "actions": [
+        {
+          "choose_card": 12,
+          "choose_payment": 5,
+          "play_card": 4,
+          "choose_target": 13,
+          "industry": 2,
+          "end_turn": 9,
+          "research_tech": 2,
+          "scan": 1,
+          "pass": 4,
+          "launch": 1,
+          "accept_optional_effect": 2,
+          "place_data": 2,
+          "move": 3,
+          "orbit": 1
+        },
+        {
+          "choose_card": 10,
+          "choose_payment": 7,
+          "play_card": 6,
+          "choose_target": 15,
+          "industry": 2,
+          "end_turn": 14,
+          "research_tech": 4,
+          "pass": 4,
+          "launch": 2,
+          "accept_optional_effect": 2,
+          "move": 5,
+          "card_corner": 5,
+          "orbit": 2
+        }
+      ],
+      "tech": [
+        {
+          "blue1": true,
+          "blue2": true,
+          "purple4": true
+        },
+        {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "blue4": true,
+          "orange2": true,
+          "orange3": true,
+          "purple4": true
+        }
+      ]
+    },
+    {
+      "seatId": "player-green",
+      "scoreSourceDeltas": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": -28,
+        "alienTraceBlueScore": -2,
+        "alienTracePinkScore": -6,
+        "alienTraceYellowScore": -5,
+        "blueTechScore": -8,
+        "cardEffectScore": 13,
+        "cardQuickScore": -1,
+        "industryEffectScore": 0,
+        "initialScore": 0,
+        "landScore": -6,
+        "orbitScore": 6,
+        "scanScore": -5,
+        "taskCardScore": 0,
+        "techBonusScore": 0
+      },
+      "actions": [
+        {
+          "choose_card": 25,
+          "choose_payment": 6,
+          "move": 4,
+          "place_data": 23,
+          "choose_target": 65,
+          "orbit": 2,
+          "end_turn": 23,
+          "card_corner": 6,
+          "research_tech": 4,
+          "scan": 4,
+          "analyze": 3,
+          "play_card": 8,
+          "pass": 4,
+          "launch": 1,
+          "land": 1
+        },
+        {
+          "choose_card": 15,
+          "choose_payment": 10,
+          "move": 8,
+          "place_data": 10,
+          "choose_target": 24,
+          "card_corner": 4,
+          "research_tech": 3,
+          "quick_trade": 3,
+          "end_turn": 14,
+          "scan": 2,
+          "pass": 4,
+          "play_card": 4,
+          "analyze": 1,
+          "orbit": 3,
+          "choose_reward": 3,
+          "launch": 1
+        }
+      ],
+      "tech": [
+        {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "blue4": true,
+          "purple2": true,
+          "purple4": true
+        },
+        {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true
+        }
+      ]
+    },
+    {
+      "seatId": "player-brown",
+      "scoreSourceDeltas": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": -8,
+        "alienTraceBlueScore": -3,
+        "alienTracePinkScore": 1,
+        "alienTraceYellowScore": -1,
+        "blueTechScore": -8,
+        "cardEffectScore": -3,
+        "cardQuickScore": -1,
+        "industryEffectScore": 0,
+        "initialScore": 0,
+        "landScore": -5,
+        "orbitScore": 6,
+        "scanScore": -9,
+        "taskCardScore": -3,
+        "techBonusScore": -5
+      },
+      "actions": [
+        {
+          "choose_card": 27,
+          "place_data": 24,
+          "choose_target": 53,
+          "play_card": 3,
+          "end_turn": 20,
+          "card_corner": 3,
+          "research_tech": 4,
+          "scan": 6,
+          "analyze": 3,
+          "pass": 4,
+          "industry": 2,
+          "accept_optional_effect": 1,
+          "launch": 2,
+          "move": 5,
+          "choose_payment": 5,
+          "land": 2,
+          "complete_task": 1,
+          "quick_trade": 1
+        },
+        {
+          "choose_card": 19,
+          "place_data": 14,
+          "choose_target": 29,
+          "card_corner": 2,
+          "play_card": 4,
+          "end_turn": 14,
+          "research_tech": 3,
+          "analyze": 2,
+          "industry": 3,
+          "pass": 4,
+          "launch": 1,
+          "move": 6,
+          "choose_payment": 6,
+          "orbit": 1,
+          "quick_trade": 1,
+          "scan": 2,
+          "land": 1
+        }
+      ],
+      "tech": [
+        {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple3": true,
+          "purple4": true
+        },
+        {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "orange3": true,
+          "purple2": true
+        }
+      ]
+    },
+    {
+      "seatId": "player-white",
+      "scoreSourceDeltas": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": 18,
+        "alienTraceBlueScore": 1,
+        "alienTracePinkScore": 4,
+        "alienTraceYellowScore": -5,
+        "blueTechScore": 0,
+        "cardEffectScore": 0,
+        "cardQuickScore": 0,
+        "industryEffectScore": 0,
+        "initialScore": 0,
+        "landScore": -6,
+        "orbitScore": -3,
+        "scanScore": 1,
+        "taskCardScore": -3,
+        "techBonusScore": -5
+      },
+      "actions": [
+        {
+          "choose_card": 20,
+          "choose_payment": 9,
+          "play_card": 6,
+          "move": 7,
+          "end_turn": 20,
+          "research_tech": 3,
+          "choose_target": 33,
+          "land": 1,
+          "place_data": 12,
+          "analyze": 2,
+          "pass": 4,
+          "launch": 3,
+          "orbit": 3,
+          "industry": 1,
+          "complete_task": 1,
+          "scan": 2,
+          "quick_trade": 2
+        },
+        {
+          "choose_card": 31,
+          "choose_payment": 7,
+          "play_card": 6,
+          "move": 5,
+          "place_data": 20,
+          "choose_target": 45,
+          "end_turn": 20,
+          "orbit": 3,
+          "research_tech": 4,
+          "card_corner": 7,
+          "analyze": 3,
+          "pass": 4,
+          "launch": 2,
+          "quick_trade": 3,
+          "scan": 2,
+          "industry": 1,
+          "accept_optional_effect": 2
+        }
+      ],
+      "tech": [
+        {
+          "blue1": true,
+          "orange3": true,
+          "purple4": true
+        },
+        {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple4": true
+        }
+      ]
+    }
+  ],
+  "revealEvents": [
+    [
+      {
+        "step": 137,
+        "seat": "player-green",
+        "slotId": 1,
+        "alienId": "阿米巴"
+      },
+      {
+        "step": 190,
+        "seat": "player-brown",
+        "slotId": 2,
+        "alienId": "虫"
+      }
+    ],
+    [
+      {
+        "step": 332,
+        "seat": "player-white",
+        "slotId": 2,
+        "alienId": "阿米巴"
+      },
+      {
+        "step": 380,
+        "seat": "player-brown",
+        "slotId": 1,
+        "alienId": "虫"
+      }
+    ]
+  ],
+  "evaluations": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:ac858e80",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-12-0"
+        },
+        "payload": {
+          "kind": "move",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_139.webp：弃牌角标"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ac4b4ab2",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": 0,
+        "value": 0,
+        "sortKey": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "selectable": true,
+        "priorityClass": 0,
+        "status": "settled",
+        "confidence": "low",
+        "rootValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 13,
+          "securedEndGameBonus": 0,
+          "total": 13,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue1"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4,
+            "traceCount": 0,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              },
+              {
+                "slotId": 2,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-brown",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-3-a:1",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 2,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-a:1",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 9
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:1",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 2
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:1",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 8
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-b"
+                  ]
+                }
+              ],
+              "wins": [],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 8,
+            "availableData": 0,
+            "ordinaryCards": 1,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "leafValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 13,
+          "securedEndGameBonus": 0,
+          "total": 13,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue1"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4,
+            "traceCount": 0,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              },
+              {
+                "slotId": 2,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-brown",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-3-a:1",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 2,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-a:1",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 9
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:1",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 2
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:1",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 8
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-b"
+                  ]
+                }
+              ],
+              "wins": [],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 8,
+            "availableData": 0,
+            "ordinaryCards": 1,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "actualScoreDelta": 0,
+        "publicityResearchValue": 0,
+        "primaryValue": 0,
+        "vDelta": 0,
+        "vStateValueEnabled": false,
+        "quickTradeCount": 0,
+        "secondaryAgentDepth": 0,
+        "quickTradePurpose": null,
+        "cardCornerPurpose": null,
+        "infrastructureValue": 0,
+        "techValue": 0,
+        "blueBonusPlacementValue": 0,
+        "dataUtilizationValue": 0,
+        "gainedTechIds": [],
+        "incomeValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "remainingRounds": 3,
+        "probeRouteSummary": null,
+        "routeTargetId": null,
+        "goalPaths": [],
+        "goalSelections": [],
+        "selectedLeafId": "leaf:1156ce5d",
+        "actionChain": [
+          "pass:ac4b4ab2"
+        ],
+        "reasonCodes": [
+          "turn-control"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:9ab996c0",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-12-0"
+        },
+        "payload": {
+          "cost": {},
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_139.webp"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:11754f92",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "publicity-for-card"
+        },
+        "payload": {
+          "cost": {
+            "publicity": 3
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "3宣传 → 精选1张牌"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:678cc831",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-card"
+        },
+        "payload": {
+          "cost": {
+            "energy": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2能量 → 1张牌"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:adfe3e7e",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-credit"
+        },
+        "payload": {
+          "cost": {
+            "energy": 2
+          },
+          "gain": {
+            "credits": 1
+          }
+        },
+        "decision": null,
+        "summary": "2能量 → 1信用点"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:c49d725c",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-move"
+        },
+        "payload": {
+          "cost": {
+            "energy": 1
+          },
+          "gain": {}
+        },
+        "decision": null,
+        "summary": "1能量 → 移动1步"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:547c8803",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": 37.33333333333334,
+        "value": 37.33333333333334,
+        "sortKey": [
+          37.33333333333334,
+          0,
+          0,
+          -3
+        ],
+        "selectable": true,
+        "priorityClass": 2,
+        "status": "settled",
+        "confidence": "low",
+        "rootValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 13,
+          "securedEndGameBonus": 0,
+          "total": 13,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue1"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4,
+            "traceCount": 0,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              },
+              {
+                "slotId": 2,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-brown",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-3-a:1",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 2,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-a:1",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 9
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:1",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 2
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:1",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 8
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-b"
+                  ]
+                }
+              ],
+              "wins": [],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 8,
+            "availableData": 0,
+            "ordinaryCards": 1,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "leafValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 20,
+          "securedEndGameBonus": 0,
+          "total": 20,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4,
+            "traceCount": 1,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": false,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 0
+              },
+              {
+                "slotId": 2,
+                "revealed": false,
+                "ownFirstTraces": 0,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-brown",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-3-b:1",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 4,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 4,
+                      "latestReplacementOrder": 11
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:1",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 2,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-a:1",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 9
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:1",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 2
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 2,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 5,
+                  "ranking": []
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-b"
+                  ]
+                }
+              ],
+              "wins": [],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 3,
+            "availableData": 1,
+            "ordinaryCards": 1,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "actualScoreDelta": 7,
+        "publicityResearchValue": -10.166666666666666,
+        "primaryValue": 37.33333333333334,
+        "vDelta": 0,
+        "vStateValueEnabled": false,
+        "quickTradeCount": 0,
+        "secondaryAgentDepth": 3,
+        "quickTradePurpose": null,
+        "cardCornerPurpose": null,
+        "infrastructureValue": 40.50000000000001,
+        "techValue": 21.000000000000007,
+        "blueBonusPlacementValue": -10,
+        "dataUtilizationValue": 0,
+        "gainedTechIds": [
+          "orange2"
+        ],
+        "incomeValue": 18,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "remainingRounds": 3,
+        "probeRouteSummary": null,
+        "routeTargetId": "tech:gain:orange2",
+        "goalPaths": [],
+        "goalSelections": [],
+        "selectedLeafId": "leaf:0c563a92",
+        "actionChain": [
+          "research_tech:547c8803",
+          "choose_target:5537a104",
+          "industry:2259bbe0",
+          "choose_target:db8eed92",
+          "choose_card:0b4d20ab",
+          "end_turn:d59ab08c",
+          "scan:0ca111ac",
+          "choose_target:9b846ddd",
+          "choose_card:3796966b",
+          "place_data:50a9ac16",
+          "end_turn:d59ab08c",
+          "analyze:c31ddbb9",
+          "choose_target:273b18e9",
+          "end_turn:d59ab08c",
+          "pass:ac4b4ab2"
+        ],
+        "reasonCodes": [
+          "strategic-goal-score",
+          "strategic-goal-tech",
+          "strategic-goal-income"
+        ]
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:0ca111ac",
+        "actorId": "player-brown",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "settled",
+        "confidence": "low",
+        "reasonCodes": [
+          "no-score-tech-or-income-gain"
+        ]
+      }
+    }
+  ],
+  "outcomes": [
+    {
+      "actionId": "scan:0ca111ac",
+      "status": "settled",
+      "code": null,
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": [
+        {
+          "leafId": "leaf:2b4c1e65",
+          "actionChain": [
+            "scan:0ca111ac",
+            "choose_target:c1cec196"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 13,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 8,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": -10,
+            "primaryValue": -10,
+            "actualScoreDelta": 0,
+            "infrastructure": {
+              "total": -10,
+              "remainingRounds": 3,
+              "gainedTechIds": [],
+              "techValue": 0,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": 0
+          }
+        },
+        {
+          "leafId": "leaf:4c760866",
+          "actionChain": [
+            "scan:0ca111ac",
+            "choose_target:c1cec196"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 13,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 8,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": -10,
+            "primaryValue": -10,
+            "actualScoreDelta": 0,
+            "infrastructure": {
+              "total": -10,
+              "remainingRounds": 3,
+              "gainedTechIds": [],
+              "techValue": 0,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": 0
+          }
+        }
+      ]
+    },
+    {
+      "actionId": "research_tech:547c8803",
+      "status": "settled",
+      "code": null,
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": [
+        {
+          "leafId": "leaf:04f149b6",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:5537a104",
+            "industry:2259bbe0",
+            "choose_target:db8eed92",
+            "choose_card:0b4d20ab",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 15,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 5,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 27.44444444444445,
+            "primaryValue": 27.44444444444445,
+            "actualScoreDelta": 2,
+            "infrastructure": {
+              "total": 39.00000000000001,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange2"
+              ],
+              "techValue": 21.000000000000007,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 1,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 18,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -13.555555555555555
+          }
+        },
+        {
+          "leafId": "leaf:0c563a92",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:5537a104",
+            "industry:2259bbe0",
+            "choose_target:db8eed92",
+            "choose_card:0b4d20ab",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "place_data:50a9ac16",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 20,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 2,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 30.833333333333343,
+            "primaryValue": 30.833333333333343,
+            "actualScoreDelta": 7,
+            "infrastructure": {
+              "total": 34.00000000000001,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange2"
+              ],
+              "techValue": 21.000000000000007,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 1,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 18,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -10.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:2ae3e6bf",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:8f07ac06",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 18,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange3"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 4,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 6.444444444444445,
+            "primaryValue": 6.444444444444445,
+            "actualScoreDelta": 5,
+            "infrastructure": {
+              "total": 15,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange3"
+              ],
+              "techValue": 15,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -13.555555555555555
+          }
+        },
+        {
+          "leafId": "leaf:3632a674",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:8f07ac06",
+            "industry:2259bbe0",
+            "choose_target:990e60c6",
+            "choose_card:0b4d20ab",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "place_data:50a9ac16",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 23,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange3"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 27.833333333333336,
+            "primaryValue": 27.833333333333336,
+            "actualScoreDelta": 10,
+            "infrastructure": {
+              "total": 28,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange3"
+              ],
+              "techValue": 15,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 1,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 18,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -10.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:39a17093",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:5537a104",
+            "end_turn:d59ab08c",
+            "play_card:9ab996c0",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 15,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 5,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 0,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 9.444444444444452,
+            "primaryValue": 9.444444444444452,
+            "actualScoreDelta": 2,
+            "infrastructure": {
+              "total": 21.000000000000007,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange2"
+              ],
+              "techValue": 21.000000000000007,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -13.555555555555555
+          }
+        },
+        {
+          "leafId": "leaf:3e85b269",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:4ee066f7",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 13,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "blue2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                },
+                {
+                  "tileId": "blue2",
+                  "slot": 2,
+                  "occupied": false,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 4,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 25.5,
+            "primaryValue": 25.5,
+            "actualScoreDelta": 0,
+            "infrastructure": {
+              "total": 40.666666666666664,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "blue2"
+              ],
+              "techValue": 40.666666666666664,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -15.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:4ab9010e",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:8f07ac06",
+            "end_turn:d59ab08c",
+            "play_card:9ab996c0",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 18,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange3"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 4,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 0,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 6.444444444444445,
+            "primaryValue": 6.444444444444445,
+            "actualScoreDelta": 5,
+            "infrastructure": {
+              "total": 15,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange3"
+              ],
+              "techValue": 15,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -13.555555555555555
+          }
+        },
+        {
+          "leafId": "leaf:56a442b2",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:5537a104",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "industry:2259bbe0",
+            "choose_target:db8eed92",
+            "choose_card:0b4d20ab",
+            "end_turn:d59ab08c",
+            "place_data:50a9ac16",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 20,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 2,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 30.833333333333343,
+            "primaryValue": 30.833333333333343,
+            "actualScoreDelta": 7,
+            "infrastructure": {
+              "total": 34.00000000000001,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange2"
+              ],
+              "techValue": 21.000000000000007,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 1,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 18,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -10.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:596da3c7",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:5537a104",
+            "end_turn:d59ab08c",
+            "play_card:9ab996c0",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "place_data:50a9ac16",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 20,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 2,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 0,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 12.833333333333341,
+            "primaryValue": 12.833333333333341,
+            "actualScoreDelta": 7,
+            "infrastructure": {
+              "total": 16.000000000000007,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange2"
+              ],
+              "techValue": 21.000000000000007,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -10.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:62891dbc",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:4ee066f7",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "place_data:50a9ac16",
+            "choose_target:9e798bfd",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 18,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "blue2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                },
+                {
+                  "tileId": "blue2",
+                  "slot": 2,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 28.083333333333332,
+            "primaryValue": 28.083333333333332,
+            "actualScoreDelta": 5,
+            "infrastructure": {
+              "total": 35.666666666666664,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "blue2"
+              ],
+              "techValue": 40.666666666666664,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -12.583333333333332
+          }
+        },
+        {
+          "leafId": "leaf:7a9c0b7a",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:8f07ac06",
+            "end_turn:d59ab08c",
+            "play_card:9ab996c0",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "place_data:50a9ac16",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 23,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange3"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 0,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 9.833333333333334,
+            "primaryValue": 9.833333333333334,
+            "actualScoreDelta": 10,
+            "infrastructure": {
+              "total": 10,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange3"
+              ],
+              "techValue": 15,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -10.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:7d738fcc",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:4ee066f7",
+            "end_turn:d59ab08c",
+            "play_card:9ab996c0",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 13,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "blue2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                },
+                {
+                  "tileId": "blue2",
+                  "slot": 2,
+                  "occupied": false,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 4,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 0,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 25.5,
+            "primaryValue": 25.5,
+            "actualScoreDelta": 0,
+            "infrastructure": {
+              "total": 40.666666666666664,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "blue2"
+              ],
+              "techValue": 40.666666666666664,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -15.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:85926284",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:8f07ac06",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "industry:2259bbe0",
+            "choose_target:990e60c6",
+            "choose_card:0b4d20ab",
+            "place_data:50a9ac16",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 23,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange3"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 27.833333333333336,
+            "primaryValue": 27.833333333333336,
+            "actualScoreDelta": 10,
+            "infrastructure": {
+              "total": 28,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange3"
+              ],
+              "techValue": 15,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 1,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 18,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -10.166666666666666
+          }
+        },
+        {
+          "leafId": "leaf:a13c3b20",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:8f07ac06",
+            "industry:2259bbe0",
+            "choose_target:990e60c6",
+            "choose_card:0b4d20ab",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 18,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange3"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 2,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 4,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 24.444444444444443,
+            "primaryValue": 24.444444444444443,
+            "actualScoreDelta": 5,
+            "infrastructure": {
+              "total": 33,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange3"
+              ],
+              "techValue": 15,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 1,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 18,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -13.555555555555555
+          }
+        },
+        {
+          "leafId": "leaf:c1fe0327",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:4ee066f7",
+            "end_turn:d59ab08c",
+            "scan:0ca111ac",
+            "choose_target:9b846ddd",
+            "choose_card:3796966b",
+            "place_data:50a9ac16",
+            "choose_target:9e798bfd",
+            "end_turn:d59ab08c",
+            "analyze:c31ddbb9",
+            "choose_target:273b18e9",
+            "end_turn:d59ab08c",
+            "play_card:9ab996c0",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 18,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "blue2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                },
+                {
+                  "tileId": "blue2",
+                  "slot": 2,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            },
+            "traceCount": 1,
+            "resourceFacts": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 0,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 28.083333333333332,
+            "primaryValue": 28.083333333333332,
+            "actualScoreDelta": 5,
+            "infrastructure": {
+              "total": 35.666666666666664,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "blue2"
+              ],
+              "techValue": 40.666666666666664,
+              "blueBonusPlacementValue": -10,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 1,
+              "traceValue": 5,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -12.583333333333332
+          }
+        },
+        {
+          "leafId": "leaf:c9219798",
+          "actionChain": [
+            "research_tech:547c8803",
+            "choose_target:5537a104",
+            "end_turn:d59ab08c",
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 15,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1",
+              "orange2"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 5,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 9.444444444444452,
+            "primaryValue": 9.444444444444452,
+            "actualScoreDelta": 2,
+            "infrastructure": {
+              "total": 21.000000000000007,
+              "remainingRounds": 3,
+              "gainedTechIds": [
+                "orange2"
+              ],
+              "techValue": 21.000000000000007,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": -13.555555555555555
+          }
+        }
+      ]
+    },
+    {
+      "actionId": "play_card:9ab996c0",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": []
+    },
+    {
+      "actionId": "pass:ac4b4ab2",
+      "status": "settled",
+      "code": null,
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": [
+        {
+          "leafId": "leaf:1156ce5d",
+          "actionChain": [
+            "pass:ac4b4ab2"
+          ],
+          "facts": {
+            "viewerSeatId": "player-brown",
+            "terminal": false,
+            "realizedScore": 13,
+            "securedEndGameBonus": 0,
+            "ownedTechIds": [
+              "blue1"
+            ],
+            "income": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 1,
+              "availableData": 0,
+              "handSize": 1,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple2",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple4",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 1,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "dataProgress": {
+              "computerPlacedCount": 5,
+              "analyzeReady": false,
+              "blueBonusCount": 1,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 1,
+                  "occupied": true,
+                  "unlocked": true
+                }
+              ]
+            },
+            "traceCount": 0,
+            "resourceFacts": {
+              "credits": 1,
+              "energy": 3,
+              "publicity": 8,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "ordinaryCards": 1,
+              "alienCards": 0
+            },
+            "roundNumber": 1,
+            "finalRoundNumber": 4
+          },
+          "breakdown": {
+            "total": 0,
+            "primaryValue": 0,
+            "actualScoreDelta": 0,
+            "infrastructure": {
+              "total": 0,
+              "remainingRounds": 3,
+              "gainedTechIds": [],
+              "techValue": 0,
+              "blueBonusPlacementValue": 0,
+              "dataUtilizationValue": 0,
+              "incomeDelta": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "availableData": 0,
+                "handSize": 0,
+                "additionalPublicScan": 0
+              },
+              "incomeValue": 0,
+              "traceDelta": 0,
+              "traceValue": 0,
+              "alienPurposeValue": 0
+            },
+            "publicityResearchValue": 0
+          }
+        }
+      ]
+    },
+    {
+      "actionId": "quick_trade:678cc831",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": []
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": []
+    },
+    {
+      "actionId": "quick_trade:11754f92",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": []
+    },
+    {
+      "actionId": "quick_trade:c49d725c",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": []
+    },
+    {
+      "actionId": "card_corner:ac858e80",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "rootFacts": {
+        "viewerSeatId": "player-brown",
+        "terminal": false,
+        "realizedScore": 13,
+        "securedEndGameBonus": 0,
+        "ownedTechIds": [
+          "blue1"
+        ],
+        "income": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 1,
+          "additionalPublicScan": 0
+        },
+        "researchOptions": [
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "blue4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "orange4",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple1",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple2",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple3",
+            "publicityCost": 6
+          },
+          {
+            "tileId": "purple4",
+            "publicityCost": 6
+          }
+        ],
+        "blueBonusAssets": {
+          "credits": 1,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "dataProgress": {
+          "computerPlacedCount": 5,
+          "analyzeReady": false,
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue1",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ]
+        },
+        "traceCount": 0,
+        "resourceFacts": {
+          "credits": 1,
+          "energy": 3,
+          "publicity": 8,
+          "availableData": 0,
+          "additionalPublicScan": 0,
+          "ordinaryCards": 1,
+          "alienCards": 0
+        },
+        "roundNumber": 1,
+        "finalRoundNumber": 4
+      },
+      "leaves": []
+    }
+  ],
+  "diagnostics": {
+    "candidateCount": 2,
+    "executedNodeCount": 166,
+    "expandedSearchNodeCount": 0,
+    "maxNodes": 128,
+    "maxExecutionNodes": 4096,
+    "executionLimitReached": false,
+    "remainingFrontierNodeCount": 0,
+    "remainingFrontierOriginCountByGoalDepth": {},
+    "frontierOriginCountByFamily": {},
+    "frontierNodeBreakdown": [],
+    "maxDepth": 15,
+    "maxProxyDepth": 15,
+    "secondaryAgentSearch": true,
+    "rootTargetCount": 5,
+    "rolloutVersion": "secondary-agent-rollout-v17",
+    "maxFrontierPerRoot": 1,
+    "maxFrontierSize": 18,
+    "maxRetainedFrontierSize": 18,
+    "maxFrontierOriginCount": 18,
+    "transpositionHitCount": 10,
+    "sharedPhysicalExecutionOriginCount": 4,
+    "conditionalEquivalentMergeCount": 2,
+    "resourceDominatedOriginCount": 0,
+    "completionDominatedOriginCount": 7,
+    "completionDominatedOriginCountByTarget": {
+      "data:analyze": 5,
+      "income:gain:3,2,1,0,1,0": 2
+    },
+    "targetEquivalentChoicePrunedCount": 8,
+    "targetSchedulerPrunedCount": 17,
+    "unreachableRouteOriginCount": 16,
+    "completedGoalTransitionCount": 23,
+    "maxCompletedGoalDepth": 4,
+    "opponentExecutedNodeCount": 0,
+    "focalPlanningTurnAdvanceCount": 30,
+    "focalPassBoundaryLeafCount": 16,
+    "hiddenInformationFilteredActionCount": 59,
+    "hiddenInformationBarrierCountByCode": {
+      "tech_bonus_reveal": 3
+    },
+    "executedNodeCountByFamily": {
+      "analyze": 12,
+      "choose_card": 14,
+      "choose_payment": 4,
+      "choose_target": 32,
+      "end_turn": 30,
+      "industry": 6,
+      "pass": 16,
+      "place_data": 30,
+      "play_card": 4,
+      "quick_trade": 8,
+      "research_tech": 1,
+      "scan": 9
+    },
+    "executedNodeCountByDecisionKind": {
+      "analyze:computer": 12,
+      "choose_card:<none>": 8,
+      "choose_card:residual-domain": 6,
+      "choose_payment:discard-hand-card": 4,
+      "choose_target:<none>": 14,
+      "choose_target:planet-reward-alien-trace": 12,
+      "choose_target:residual-domain": 6,
+      "end_turn:end-turn": 30,
+      "industry:<none>": 6,
+      "pass:pass": 16,
+      "place_data:place-data": 30,
+      "play_card:<none>": 4,
+      "quick_trade:<none>": 8,
+      "research_tech:research-tech": 1,
+      "scan:standard-scan": 9
+    },
+    "executedNodeCountByActionSummary": {
+      "end_turn:结束回合": 30,
+      "place_data:放置数据": 30,
+      "pass:PASS": 16,
+      "analyze:分析": 12,
+      "choose_target:外星人 1 蓝色痕迹": 12,
+      "scan:扫描": 9,
+      "choose_card:dlc_39.png → 比邻星": 8,
+      "choose_target:扫描 比邻星": 8,
+      "choose_card:b_139.webp": 6,
+      "industry:赫利昂联合体 1x 行动": 6,
+      "play_card:b_139.webp": 4,
+      "quick_trade:2张牌 → 1信用点": 4,
+      "quick_trade:3宣传 → 精选1张牌": 4,
+      "choose_target:无效 orange2": 3,
+      "choose_target:无效 orange3": 3,
+      "choose_payment:dlc_37.png": 2,
+      "choose_payment:dlc_38.png": 2,
+      "choose_target:第一排放置位 6": 2,
+      "choose_target:扫描 天狼星A": 1,
+      "choose_target:研究 blue2（蓝槽 2）": 1,
+      "choose_target:研究 orange2": 1,
+      "choose_target:研究 orange3": 1,
+      "research_tech:研究科技": 1
+    },
+    "executedNodeCountByActor": {
+      "player-brown": 166
+    },
+    "executedOriginCountByTarget": {
+      "data:analyze": 68,
+      "<unbound>": 44,
+      "income:gain:3,2,1,0,1,0": 26,
+      "income:gain:3,2,1,0,2,0": 20,
+      "decision:choose_target:9b846ddd": 4,
+      "sector:win:sector-1-a:1": 2,
+      "tech:gain:blue2": 2,
+      "tech:gain:orange2": 2,
+      "tech:gain:orange3": 2
+    },
+    "executedOriginCountByTargetAndDecisionKind": {
+      "<unbound> -> end_turn:end-turn": 20,
+      "<unbound> -> pass:pass": 16,
+      "data:analyze -> analyze:computer": 12,
+      "data:analyze -> choose_target:planet-reward-alien-trace": 12,
+      "data:analyze -> place_data:place-data": 12,
+      "data:analyze -> end_turn:end-turn": 10,
+      "data:analyze -> choose_target:<none>": 9,
+      "income:gain:3,2,1,0,1,0 -> place_data:place-data": 8,
+      "income:gain:3,2,1,0,2,0 -> place_data:place-data": 8,
+      "income:gain:3,2,1,0,2,0 -> quick_trade:<none>": 8,
+      "data:analyze -> scan:standard-scan": 7,
+      "data:analyze -> choose_card:<none>": 6,
+      "income:gain:3,2,1,0,1,0 -> choose_card:residual-domain": 6,
+      "income:gain:3,2,1,0,1,0 -> choose_target:residual-domain": 6,
+      "income:gain:3,2,1,0,1,0 -> industry:<none>": 6,
+      "<unbound> -> play_card:<none>": 4,
+      "income:gain:3,2,1,0,2,0 -> choose_payment:discard-hand-card": 4,
+      "<unbound> -> place_data:place-data": 2,
+      "<unbound> -> scan:standard-scan": 2,
+      "decision:choose_target:9b846ddd -> choose_card:<none>": 2,
+      "decision:choose_target:9b846ddd -> choose_target:<none>": 2,
+      "sector:win:sector-1-a:1 -> choose_target:<none>": 1,
+      "sector:win:sector-1-a:1 -> scan:standard-scan": 1,
+      "tech:gain:blue2 -> choose_target:<none>": 1,
+      "tech:gain:blue2 -> research_tech:research-tech": 1,
+      "tech:gain:orange2 -> choose_target:<none>": 1,
+      "tech:gain:orange2 -> research_tech:research-tech": 1,
+      "tech:gain:orange3 -> choose_target:<none>": 1,
+      "tech:gain:orange3 -> research_tech:research-tech": 1
+    },
+    "routeEntryStatsByTarget": {
+      "income:gain:3,2,1,0,1,0": {
+        "bindingOriginCount": 8,
+        "distinctEntryStateCount": 8,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 6,
+        "retainedCompletedTransitionCount": 4
+      },
+      "income:gain:3,2,1,0,2,0": {
+        "bindingOriginCount": 5,
+        "distinctEntryStateCount": 5,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "data:analyze": {
+        "bindingOriginCount": 3,
+        "distinctEntryStateCount": 3,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 12,
+        "retainedCompletedTransitionCount": 9
+      },
+      "sector:win:sector-1-a:1": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "tech:gain:blue2": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "tech:gain:orange2": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "tech:gain:orange3": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    },
+    "completedRouteGroupsByTarget": {
+      "data:analyze": [
+        {
+          "routeFamilies": [
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 3
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 3,
+          "retainedCompletedTransitionCount": 3
+        },
+        {
+          "routeFamilies": [
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 3,
+          "retainedCompletedTransitionCount": 3
+        }
+      ],
+      "income:gain:3,2,1,0,1,0": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 4
+        }
+      ],
+      "decision:choose_target:9b846ddd": [
+        {
+          "routeFamilies": [
+            "scan"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        }
+      ],
+      "tech:gain:blue2": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:orange2": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:orange3": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ]
+    },
+    "goalClusters": [],
+    "saturatedVirtualRoots": [],
+    "prunedNodeCount": 0,
+    "beamPrunedOriginCount": 0,
+    "forkMilliseconds": 12.433293999998227,
+    "executionMilliseconds": 66.17070600000056,
+    "projectionMilliseconds": 48.419373000000405,
+    "identityMilliseconds": 2.5411219999986088,
+    "checkpointMilliseconds": 27.41641599999923,
+    "frontierMilliseconds": 7.773464000000217,
+    "orchestrationMilliseconds": 257.4482920000029,
+    "totalMilliseconds": 422.20266700000013
+  }
+}
