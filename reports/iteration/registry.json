@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T18:41:19.401Z",
+  "builtAt": "2026-09-05T18:48:12.089Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "4fba7beb",
+  "headCommit": "616d2c56",
   "currentBaseline": "scan-earth-r3s1-20260906",
   "worktreeDirty": true,
   "bestOf": {
@@ -475,7 +475,7 @@
           "createdAt": "2026-09-05T18:39:51.752Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
-          "note": "529步完整终局64/82/102/109，均89.25；低于上一候选S2的95.75达6.5分，低于已通过R2e基线106.75达17.5分，未通过效果门禁。两个正式扫描反例、前置准备/绑定后作用域、缺事实拒绝、紫1八方位、正式费用及顺序验证通过；但尚未证明实际降分路径符合预期，不能凭局部验证接受本候选。首次分歧为第80步绿方quick_trade改research_tech，失效原因及终局分差因果仍待查。真实棕方单决策22根评分除新公开字段回显外一致，9821.75ms/4096节点；两个指定既有测试失败保留。",
+          "note": "529步完整终局64/82/102/109，均89.25；低于上一候选S2的95.75达6.5分，低于已通过R2e基线106.75达17.5分，未通过效果门禁。正式扫描反例、前置准备/绑定后作用域、缺事实拒绝、紫1八方位和正式费用顺序通过。首次动作分歧为第80步绿方换能改研究；补证定位实际失效在第74步准备扫描前（地球预计x=5、实际x=3），仅移除新增依赖即hit，继续旧计划则正式扣费后预定扇区已不合法。该处失效符合预期，但不证明全部终局分差，继续查重搜候选与计划兑现，不凭局部验证接受候选。真实棕方22根评分除新增字段回显外一致，9821.75ms/4096节点；两个指定既有测试失败保留。",
           "scores": {
             "player-blue": 64,
             "player-green": 82,
@@ -6037,7 +6037,7 @@
           },
           "savePath": "seti-saves/seti-save-research-fold-multifill-0a377f88-full-v283.json",
           "reportPath": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
-          "reportExists": true
+          "reportExists": false
         }
       ],
       "roadmap": null,
@@ -6045,14 +6045,8 @@
       "completeness": {
         "record": true,
         "save": true,
-        "report": true,
-        "reportLinks": [
-          {
-            "runKey": "e749439d.0a377f88.full",
-            "path": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
-            "mode": "full"
-          }
-        ]
+        "report": false,
+        "reportLinks": []
       }
     },
     {
@@ -9548,6 +9542,11 @@
       "kind": "commit-mismatch",
       "level": "warn",
       "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json gitCommit=0a377f88 不在版本 commits（29e66b9b）内——运行于脏工作树或归属错误，请核对 versions.json"
+    },
+    {
+      "kind": "missing-report",
+      "level": "warn",
+      "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json 有存档但缺复盘报告（node tools/robot_iterate.js build --reports 可补齐）"
     },
     {
       "kind": "missing-save",
