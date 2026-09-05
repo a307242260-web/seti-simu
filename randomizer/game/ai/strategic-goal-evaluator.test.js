@@ -55,6 +55,44 @@ function observation({
   }, { seatId, stateVersion: 1, decisionVersion: 1 });
 }
 
+// 收入准备的留牌需求必须进入目标与两层缓存，不能被同费用无留牌要求污染。
+{
+  const trade = (id) => ({ ...action(id, "quick_trade"), actorId: seatId, target: { tradeId: id } });
+  const legal = [trade("cards-for-energy"), trade("publicity-for-card")];
+  function prepare(handSize, publicity, reserve, extra = {}) {
+    const base = observation({ resources: { credits: 1, energy: 1, publicity }, handCount: handSize });
+    const branchObservation = { ...base,
+      outcomeProjection: { ...base.outcomeProjection, assets: { ...base.outcomeProjection.assets,
+        alienCards: (extra.hand || []).length + (extra.privateAlienCards || []).length } },
+      selfState: { ...base.selfState, hand: [...base.selfState.hand, ...(extra.hand || [])],
+        privateAlienCards: extra.privateAlienCards || [] } };
+    branchObservation.incomeGainRequirements = {
+      targetId: "income:gain:0,0,0,0,0,0",
+      plans: [{ planId: "income:data:computer-slot-4", kind: "data",
+        nextStep: { family: "scan" }, nextCost: { credits: 1, energy: 2, handSize: reserve } }],
+    };
+    const legalActions = legal.filter((a) => a.target.tradeId === "cards-for-energy" ? handSize >= 2 : publicity >= 3);
+    if (extra.root) return evaluator.selectSecondaryAgentRootActions({ focalSeatId: seatId,
+      rootObservation: branchObservation, legalActions }).map((a) => a.actionId);
+    return evaluator.selectSecondaryAgentSuccessors({ focalSeatId: seatId, branchObservation,
+      legalSuccessors: legalActions,
+      routeTargetId: branchObservation.incomeGainRequirements.targetId,
+      routePlanId: "income:data:computer-slot-4" }).map((a) => a.actionId);
+  }
+  assert.deepEqual(prepare(2, 0, 0), ["cards-for-energy"]);
+  assert.deepEqual(prepare(2, 0, 1), [], "不能把仅够支付的两张牌也算作剩余收入牌");
+  assert.deepEqual(prepare(2, 0, 0), ["cards-for-energy"], "有留牌要求的无解缓存不能污染原路线");
+  assert.ok(prepare(2, 3, 1).length > 0, "允许中途耗牌后以宣传补回一张牌的完整转换链");
+  assert.deepEqual(prepare(3, 0, 1), ["cards-for-energy"], "足够保牌时保留原最低损耗动作");
+  assert.deepEqual(prepare(2, 0, 1, { hand: [{ id: "alien-hand", kind: "alien" }] }), ["cards-for-energy"],
+    "正式外星手牌能用于收入，不应额外要求普通牌留存");
+  assert.deepEqual(prepare(2, 0, 1, { privateAlienCards: [{ id: "private-alien", kind: "alien" }] }), [],
+    "私有外星牌不在正式手牌中，不能据此允许换光收入牌");
+  assert.deepEqual(prepare(2, 0, 1, { root: true }), [], "根候选也不能接受没有收入牌的准备终态");
+  assert.ok(prepare(2, 3, 1, { root: true }).length > 0, "可补回牌的根准备必须保留");
+  assert.deepEqual(prepare(0, 0, 1), [], "无牌且无可转换资源时明确无路线");
+}
+
 {
   const cardSettlement = ["confirm", "skip"].map((choice) => ({
     ...action(`${choice}:card-trigger`, "accept_optional_effect"),

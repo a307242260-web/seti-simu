@@ -18,7 +18,7 @@ v1失败是诊断把正式slotIndex误写为publicSlotIndex；v2失败是重复�
 |---|---|
 | 正式需求来源 | science-session的计算机4号位income奖励由手牌列表提供选择，至少需1张手牌；公开income data计划在nextCost声明handSize=1。nextCost是规划所需持有量，不是把手牌计入正式扫描扣费 |
 | 唯一转换器 | selectMinimumCostResourcePreparation保留当前TRADE_ACTIONS、正损耗递归和非支配终态保留方式；satisfied增加手牌要求，不以中途手牌归零拒绝一条能补回牌的完整转换链 |
-| 既有手牌模型 | 现有转换器只把ordinaryCards计为可支付容量，不趁本次扩大所有路线对外星牌的支付探索。收入可用所有手牌，因此普通牌保有下界为max(0, required.handSize-alienCards)；未建模为可支付的外星牌数量构成保守留存容量，具体弃牌身份仍由正式执行提供 |
+| 既有手牌模型 | 现有转换器只把ordinaryCards计为可支付容量，不趁本次扩大所有路线对外星牌的支付探索。收入可用正式selfState.hand中的牌，额外可留存容量=max(0, hand.length-ordinaryCards)，普通牌保有下界=max(0, required.handSize-额外可留存容量)。不能使用assets.alienCards，它包括不在手牌里的privateAlienCards；没有完整手牌列表时不凭空认定额外容量。具体弃牌身份仍由正式执行提供 |
 | 缓存与状态等价 | preparationKey与resourceDistanceCache的stateKey都包含手牌目标，不能把“无需留牌”和“需留牌”当同一距离。状态仍为钱/电/宣传/可支付牌四元组，终态key不变 |
 | 根与后继 | 收入data根准备、绑定收入路线后继准备均使用同一nextCost；无手牌要求的探测/分析等旧调用以0为默认，行为应等价。直接scan/place_data不因本次增加环境特例 |
 | 搜索与预算 | 不新建状态空间、叶类型或第二套转换器；每个转换的四资源总数严格下降，递归有限，memo复用。外层global4096节点及原深度/叶限制不改；单决策10秒门槛保持，第四轮整体预算义务仍未完成 |

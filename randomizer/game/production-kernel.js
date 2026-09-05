@@ -1072,6 +1072,8 @@ function buildIncomeGainRequirements(
       nextCost: {
         credits: Number(nextCost.credits) || 0,
         energy: Number(nextCost.energy) || 0,
+        // 规划持有量：完成第4格收入奖励需要一张手牌，不是扫描追加扣费。
+        handSize: 1,
       },
     });
   }

@@ -57,6 +57,10 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+`incomeGainRequirements`中计算机第4格路线的`nextCost.handSize=1`表示完成收入所需
+持有的牌数，供资源准备使用，不是正式扫描费用；钱/能量仍表示当前下一行动需要量。
+该字段不改变正式Action、Decision或checkpoint状态结构。
+
 `sectorWinRequirements.accessSources`是潜在扫描能力目录，`standardScanCost`仅为
 主行动基础成本；实际可选科技追加费用和合法性仍由正式执行校验。目录缓存的完整
 输入为data、玩家id/color、当前正式派生的来源及基础成本，公共牌/旋转/借用时点/

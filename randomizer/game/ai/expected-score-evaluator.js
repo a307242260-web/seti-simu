@@ -1389,18 +1389,24 @@
       publicity: Math.max(0, Math.floor(finite(assets.publicity))),
       handSize: Math.max(0, Math.floor(finite(assets.ordinaryCards))),
     };
+    const retainedHandCapacity = Array.isArray(observation?.selfState?.hand)
+      ? Math.max(0, observation.selfState.hand.length - initial.handSize) : 0;
     const target = {
       credits: Math.max(0, Math.ceil(finite(required?.credits))),
       energy: Math.max(0, Math.ceil(finite(required?.energy))),
+      // 只计正式手牌；assets.alienCards还包括不能插收入的私有外星牌。
+      handSize: Math.max(0, Math.ceil(finite(required?.handSize) - retainedHandCapacity)),
     };
     const satisfied = (state) => (
       state.credits >= target.credits
       && state.energy >= target.energy
+      && state.handSize >= target.handSize
     );
     if (satisfied(initial)) return [];
     const preparationKey = [
       target.credits,
       target.energy,
+      target.handSize,
       ...PLANNED_RESOURCE_KEYS.map((key) => initial[key]),
       ...[...legalByTradeId.keys()].sort(),
     ].join(":");
@@ -1412,6 +1418,7 @@
     const stateKey = (state) => [
       target.credits,
       target.energy,
+      target.handSize,
       ...PLANNED_RESOURCE_KEYS.map((key) => state[key]),
     ].join(":");
     const available = (state, trade) => PLANNED_RESOURCE_KEYS.every((key) => (
