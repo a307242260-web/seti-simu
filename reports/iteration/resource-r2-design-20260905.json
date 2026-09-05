@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "seti-ai-design-counterexamples-v1",
+  "createdAt": "2026-09-05T09:35:41.464Z",
+  "gitCommit": "02c8b12bd58914e48e24532fe924d4a24395282a",
+  "kind": "pure-evaluator-counterexamples-not-fixed-board-validation",
+  "cases": {
+    "blueOnly": {
+      "total": 10,
+      "primaryValue": 10,
+      "actualScoreDelta": 0,
+      "infrastructure": {
+        "total": 10,
+        "remainingRounds": 3,
+        "gainedTechIds": [],
+        "techValue": 0,
+        "blueBonusPlacementValue": 10,
+        "dataUtilizationValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "incomeValue": 0,
+        "traceDelta": 0,
+        "traceValue": 0,
+        "alienPurposeValue": 0
+      },
+      "publicityResearchValue": 0
+    },
+    "blueAndOtherGain": {
+      "total": 30,
+      "primaryValue": 30,
+      "actualScoreDelta": 0,
+      "infrastructure": {
+        "total": 30,
+        "remainingRounds": 3,
+        "gainedTechIds": [],
+        "techValue": 0,
+        "blueBonusPlacementValue": 30,
+        "dataUtilizationValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "incomeValue": 0,
+        "traceDelta": 0,
+        "traceValue": 0,
+        "alienPurposeValue": 0
+      },
+      "publicityResearchValue": 0
+    },
+    "blueThenAnalyze": {
+      "total": 0,
+      "primaryValue": 0,
+      "actualScoreDelta": 0,
+      "infrastructure": {
+        "total": 0,
+        "remainingRounds": 3,
+        "gainedTechIds": [],
+        "techValue": 0,
+        "blueBonusPlacementValue": 0,
+        "dataUtilizationValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "incomeValue": 0,
+        "traceDelta": 0,
+        "traceValue": 0,
+        "alienPurposeValue": 0
+      },
+      "publicityResearchValue": 0
+    },
+    "publicity": [
+      {
+        "roundNumber": 1,
+        "breakdown": {
+          "total": 60,
+          "primaryValue": 60,
+          "actualScoreDelta": 0,
+          "infrastructure": {
+            "total": 0,
+            "remainingRounds": 3,
+            "gainedTechIds": [],
+            "techValue": 0,
+            "blueBonusPlacementValue": 0,
+            "dataUtilizationValue": 0,
+            "incomeDelta": {
+              "credits": 0,
+              "energy": 0,
+              "publicity": 0,
+              "availableData": 0,
+              "handSize": 0,
+              "additionalPublicScan": 0
+            },
+            "incomeValue": 0,
+            "traceDelta": 0,
+            "traceValue": 0,
+            "alienPurposeValue": 0
+          },
+          "publicityResearchValue": 60
+        }
+      },
+      {
+        "roundNumber": 4,
+        "breakdown": {
+          "total": 60,
+          "primaryValue": 60,
+          "actualScoreDelta": 0,
+          "infrastructure": {
+            "total": 0,
+            "remainingRounds": 0,
+            "gainedTechIds": [],
+            "techValue": 0,
+            "blueBonusPlacementValue": 0,
+            "dataUtilizationValue": 0,
+            "incomeDelta": {
+              "credits": 0,
+              "energy": 0,
+              "publicity": 0,
+              "availableData": 0,
+              "handSize": 0,
+              "additionalPublicScan": 0
+            },
+            "incomeValue": 0,
+            "traceDelta": 0,
+            "traceValue": 0,
+            "alienPurposeValue": 0
+          },
+          "publicityResearchValue": 60
+        }
+      }
+    ],
+    "income": [
+      {
+        "resource": "credits",
+        "breakdown": {
+          "total": 24,
+          "primaryValue": 24,
+          "actualScoreDelta": 0,
+          "infrastructure": {
+            "total": 24,
+            "remainingRounds": 3,
+            "gainedTechIds": [],
+            "techValue": 0,
+            "blueBonusPlacementValue": 0,
+            "dataUtilizationValue": 0,
+            "incomeDelta": {
+              "credits": 1,
+              "energy": 0,
+              "publicity": 0,
+              "availableData": 0,
+              "handSize": 0,
+              "additionalPublicScan": 0
+            },
+            "incomeValue": 24,
+            "traceDelta": 0,
+            "traceValue": 0,
+            "alienPurposeValue": 0
+          },
+          "publicityResearchValue": 0
+        }
+      },
+      {
+        "resource": "energy",
+        "breakdown": {
+          "total": 30,
+          "primaryValue": 30,
+          "actualScoreDelta": 0,
+          "infrastructure": {
+            "total": 30,
+            "remainingRounds": 3,
+            "gainedTechIds": [],
+            "techValue": 0,
+            "blueBonusPlacementValue": 0,
+            "dataUtilizationValue": 0,
+            "incomeDelta": {
+              "credits": 0,
+              "energy": 1,
+              "publicity": 0,
+              "availableData": 0,
+              "handSize": 0,
+              "additionalPublicScan": 0
+            },
+            "incomeValue": 30,
+            "traceDelta": 0,
+            "traceValue": 0,
+            "alienPurposeValue": 0
+          },
+          "publicityResearchValue": 0
+        }
+      }
+    ]
+  },
+  "formalBlueRewards": [
+    {
+      "tileId": "blue1",
+      "reward": {
+        "type": "credits",
+        "credits": 1
+      }
+    },
+    {
+      "tileId": "blue2",
+      "reward": {
+        "type": "energy",
+        "energy": 1
+      }
+    },
+    {
+      "tileId": "blue3",
+      "reward": {
+        "type": "choose_card"
+      }
+    },
+    {
+      "tileId": "blue4",
+      "reward": {
+        "type": "publicity",
+        "publicity": 2
+      }
+    }
+  ],
+  "conclusions": [
+    "蓝2实际只给1能量，额外2能量的其他来源却让蓝槽分项从10变30。",
+    "相同资源终点，仅占用数被分析清空，蓝槽分项从10变0；占用数不能代表历史放置。",
+    "无具体科技候选输入时，宣传0到6在第1轮和第4轮均固定获得60研究预期。",
+    "新增一格信用/能源收入在第1轮计24/30，与已确认的信用10、能源8单位表方向相反。"
+  ]
+}
