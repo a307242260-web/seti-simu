@@ -119,3 +119,17 @@ unit 73通过、2项指定旧失败；唯一fullFlow及V输入审计通过。没
 
 本次只增加离线重放诊断及其记录；已复核AI/RL、README、AGENTS、PROJECT_MEMORY、
 Node测试标准与迭代流程，无生产接口、行为或运行方式变化，不需修改这些文档。
+
+### 独立行星读取优化R3-P2（2026-09-06）
+
+改动：Production地球位置、探测路线context、正式Action context直调现有
+`collectPlanetLocations`，不再为行星数组计算完整可视格子/星云快照。没有第二份
+坐标算法、缓存、策略或预算变化。设计见`r3-planet-read-design-20260906.md`。
+
+验证见`r3-planet-read-verification-20260906.json`：同一真实棕方状态单次9558.01ms，
+每根完整评分/优胜叶、计划和4096节点与原始记录等价，单状态10秒门槛通过。
+unit 73通过、2项指定旧失败，唯一fullFlow通过；AI/RL说明已同步。不是全局性能或
+第三轮终局通过证明。现在可继续使用第172步checkpoint核对后续路线。
+
+独立待验证疑点：紫2水星扫描候选读取使用`planetLocations?.mercury`，但正式坐标为
+数组。此处本次未动，避免将逻辑修正混入等价性能优化；需正式盘面复现后单独处理。

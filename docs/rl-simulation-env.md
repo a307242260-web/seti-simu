@@ -57,6 +57,10 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+Production地球坐标及探测/正式行动context通过共享太阳系内核的
+`collectPlanetLocations`读取行星数组，省略无关的完整快照计算；Browser与Simulation
+使用同一函数，观察、合法动作、规则提交与存档schema不变。
+
 反事实结果投影与Policy输入保持来源隔离、返回图深冻结；多叶相同的只读元数据可在
 返回图内共享引用。观察仍从正式规则事实重建；复制优化不改字段值、顺序、隐藏信息
 边界或checkpoint格式。Policy副本缓存仅在单次复制调用内生效，完成校验后才可复用。

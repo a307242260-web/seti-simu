@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
-const output = "reports/iteration/r3-copy-cost-verification-20260906.json";
+const output = process.argv[2] || "reports/iteration/r3-copy-cost-verification-20260906.json";
 const hash = (raw) => crypto.createHash("sha256").update(raw).digest("hex");
 if (fs.existsSync(output)) {
   console.log(`已有记录，未重跑：${output}`);
@@ -13,11 +13,12 @@ if (fs.existsSync(output)) {
   const baselineRaw = fs.readFileSync(baselinePath);
   const baseline = JSON.parse(baselineRaw).samples[0];
   const checkpointRaw = fs.readFileSync(baseline.checkpointPath);
-  const files = ["randomizer/game/ai/outcome-model.js", "randomizer/game/ai/policy-port.js"];
+  const files = ["randomizer/game/ai/outcome-model.js", "randomizer/game/ai/policy-port.js",
+    "randomizer/game/production-kernel.js"];
   const report = { createdAt: new Date().toISOString(), baselinePath,
     baselineSha256: hash(baselineRaw), checkpointPath: baseline.checkpointPath,
     checkpointSha256: hash(checkpointRaw),
-    scope: "未提交复制优化的单状态等价与性能验证；不是版本全盘验收",
+    scope: "工作树性能优化的单状态等价与性能验证（源码哈希见sourceHashes）；不是版本全盘验收",
     sourceHashes: Object.fromEntries(files.map((file) => [file, hash(fs.readFileSync(file))])),
     baselineWallMs: baseline.wallMs, checks: {} };
   const env = createSimulationEnv();

@@ -255,7 +255,7 @@ function randomizeBoard(workingState, random) {
 }
 
 function getEarthCoordinate(workingState) {
-  const earth = solar.createSolarSnapshot(workingState.solarSystem).planetLocations
+  const earth = solar.collectPlanetLocations(workingState.solarSystem)
     .find((planet) => planet.planetId === "earth");
   return earth ? { x: earth.x, y: earth.y } : { x: 1, y: 1 };
 }
@@ -502,7 +502,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     planets: workingState.planets,
     aliens: workingState.aliens,
     turn: workingState.turn,
-    getPlanetLocations: () => solar.createSolarSnapshot(workingState.solarSystem).planetLocations,
+    getPlanetLocations: () => solar.collectPlanetLocations(workingState.solarSystem),
   };
   const earth = getEarthCoordinate(workingState);
   const activeRockets = rockets.getRocketsForPlayer(workingState.pieces, player.id)
@@ -1297,7 +1297,7 @@ function createProductionHostComposition(options = {}) {
         ).blindDraw(player);
       },
       getEarthSectorCoordinate: () => getEarthCoordinate(state),
-      getPlanetLocations: () => solar.createSolarSnapshot(state.solarSystem).planetLocations,
+      getPlanetLocations: () => solar.collectPlanetLocations(state.solarSystem),
       rotateSolarOrbit(count = 1) {
         const beforeRotation = clone(state.solarSystem.rotation);
         state.solarSystem.rotation = solar.applySolarOrbitRotation(

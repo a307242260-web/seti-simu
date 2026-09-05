@@ -445,6 +445,10 @@ undo frame、重复输入克隆和中间 validation，但最终 candidate 仍执
 验证，异常分支由下一次 restore 整体恢复。canonical root、正式 RNG、journal 和其他 frontier
 不共享可变引用。
 
+Production的地球坐标、探测路线context及正式Action context直接读取太阳系内核
+`collectPlanetLocations`；它也是完整太阳系快照的行星字段来源。只需行星坐标时不生成
+未消费的可视格子与星云数组，不增加缓存或改变旋转、奥陌陌激活、排序与规则语义。
+
 已处理来源与frontier合并共用完整originKey，包括根行动、根目标/路线、当前目标/路线、
 目标深度、PASS、待结算完成与信息遮蔽状态；不能因另一个根先到同一物理节点而删除后到
 根的收益归属。正常行动边界无选中后继时保留已结算实际状态，并以`route-unreachable`
