@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "search-budget-r4-20260906",
+      "name": "全局搜索预算与完整性（性能未通过）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "b7bc42ff",
+      "commits": [
+        "b7bc42ff"
+      ],
+      "summary": "精确状态去重与全局beam替换停止叶饱和和摘要支配；全部准入目标统一调度，结果可用性与搜索完整性分离，超时显式失败并更新复盘展示。",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "probe-source-r3p1-20260906",
       "name": "探测来源与登陆修复（第三轮未通过）",
       "date": "2026-09-06",
