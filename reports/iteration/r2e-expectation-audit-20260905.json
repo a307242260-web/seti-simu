@@ -1,0 +1,1296 @@
+{
+  "scope": "固定156个已有叶，仅检验R2e前后公式变化的边界；不是完整历史Policy或终局因果证明",
+  "beforeCommit": "5d43a4b5",
+  "afterCommit": "20feca27",
+  "beforeSha256": "44dbfb65b3970913ca96b392b6fa7ab342692da838879f056794e25e6235cbb0",
+  "afterSha256": "455e0c8bb2e69d60625d4898b3c4ce385e2ee6d624adf517a369de58861659c8",
+  "cases": [
+    {
+      "source": "reports/iteration/resource-r2-divergence-20260905.json",
+      "sha256": "8a4a4251102b2bd7dd23b65604cdcd8a5f601069a8d765eee1192e26c7647f7e",
+      "changes": [
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 0,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 1,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 2,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 3,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 4,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 5,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 6,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "leafIndex": 7,
+          "before": 18,
+          "after": 18,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        }
+      ]
+    },
+    {
+      "source": "reports/iteration/resource-r2-step44-20260905.json",
+      "sha256": "88c577fd091272a634082dd221a68dc94dba1525c0eaa977f8e23eee011002dd",
+      "changes": [
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 0,
+          "before": 28.333333333333332,
+          "after": 20,
+          "expectedTechChange": -15,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 1,
+          "before": 28.333333333333332,
+          "after": 20,
+          "expectedTechChange": -15,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 2,
+          "before": 21,
+          "after": 21,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 3,
+          "before": 28.333333333333332,
+          "after": 20,
+          "expectedTechChange": -15,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 4,
+          "before": 21,
+          "after": 21,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 5,
+          "before": 34.94444444444444,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 5.555555555555557
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 6,
+          "before": 34.94444444444444,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 5.555555555555557
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "leafIndex": 7,
+          "before": 28.333333333333332,
+          "after": 20,
+          "expectedTechChange": -15,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "scan:1b66b805",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "scan:1b66b805",
+          "leafIndex": 1,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 0,
+          "before": 20.999999999999996,
+          "after": -2.333333333333334,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 1,
+          "before": 38.44444444444444,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.888888888888889
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 2,
+          "before": 26.666666666666668,
+          "after": 3.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 3,
+          "before": 10.555555555555554,
+          "after": 15,
+          "expectedTechChange": 0,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 4,
+          "before": -1.6666666666666679,
+          "after": 5,
+          "expectedTechChange": 0,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 5,
+          "before": 20.999999999999996,
+          "after": -2.333333333333334,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 6,
+          "before": 38.44444444444444,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.888888888888889
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 7,
+          "before": 26.666666666666668,
+          "after": 3.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 8,
+          "before": 33.222222222222214,
+          "after": 7.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 9,
+          "before": 33.222222222222214,
+          "after": 7.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 10,
+          "before": 10.555555555555554,
+          "after": 15,
+          "expectedTechChange": 0,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 11,
+          "before": 33.222222222222214,
+          "after": 7.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 12,
+          "before": 26.666666666666668,
+          "after": 3.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 13,
+          "before": -1.6666666666666679,
+          "after": 5,
+          "expectedTechChange": 0,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 14,
+          "before": 20.999999999999996,
+          "after": -2.333333333333334,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 15,
+          "before": 33.222222222222214,
+          "after": 7.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 16,
+          "before": -1.6666666666666679,
+          "after": 5,
+          "expectedTechChange": 0,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 17,
+          "before": 26.666666666666668,
+          "after": 3.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 18,
+          "before": -1.6666666666666679,
+          "after": 5,
+          "expectedTechChange": 0,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 19,
+          "before": 38.44444444444444,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.888888888888889
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 20,
+          "before": 10.555555555555554,
+          "after": 15,
+          "expectedTechChange": 0,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 21,
+          "before": 20.999999999999996,
+          "after": -2.333333333333334,
+          "expectedTechChange": -30,
+          "expectedPChange": 6.666666666666668
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 22,
+          "before": 38.44444444444444,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.888888888888889
+        },
+        {
+          "actionId": "research_tech:f86fc96a",
+          "leafIndex": 23,
+          "before": 10.555555555555554,
+          "after": 15,
+          "expectedTechChange": 0,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "pass:ff716055",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        }
+      ]
+    },
+    {
+      "source": "reports/iteration/resource-r2-step67-20260905.json",
+      "sha256": "80bc3ed77904aba658dff1b34c17e4379bda974d0cd8abc80be9be919b07f62f",
+      "changes": [
+        {
+          "actionId": "scan:0ca111ac",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "scan:0ca111ac",
+          "leafIndex": 1,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 0,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 1,
+          "before": 82.08333333333333,
+          "after": 28.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 2,
+          "before": 61.83333333333334,
+          "after": 35.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 3,
+          "before": 70.83333333333334,
+          "after": 29.83333333333333,
+          "expectedTechChange": -45,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 4,
+          "before": 5.555555555555554,
+          "after": 10,
+          "expectedTechChange": 0,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 5,
+          "before": 41.833333333333336,
+          "after": 15.833333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 6,
+          "before": 82.08333333333333,
+          "after": 28.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 7,
+          "before": 82.08333333333333,
+          "after": 28.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 8,
+          "before": 41.833333333333336,
+          "after": 15.833333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 9,
+          "before": 82.08333333333333,
+          "after": 28.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 10,
+          "before": 63.83333333333334,
+          "after": 37.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 11,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 12,
+          "before": 5.555555555555554,
+          "after": 10,
+          "expectedTechChange": 0,
+          "expectedPChange": 4.444444444444446
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 13,
+          "before": 70.83333333333334,
+          "after": 29.83333333333333,
+          "expectedTechChange": -45,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 14,
+          "before": 82.08333333333333,
+          "after": 28.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 15,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 16,
+          "before": 61.83333333333334,
+          "after": 35.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 17,
+          "before": 61.83333333333334,
+          "after": 35.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 18,
+          "before": 63.83333333333334,
+          "after": 37.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 19,
+          "before": 41.83333333333333,
+          "after": 15.166666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 20,
+          "before": 61.83333333333334,
+          "after": 35.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 21,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 22,
+          "before": 82.08333333333333,
+          "after": 28.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 23,
+          "before": 41.83333333333333,
+          "after": 15.166666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 0,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 1,
+          "before": 66.83333333333334,
+          "after": 40.83333333333333,
+          "expectedTechChange": -30,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 2,
+          "before": 54,
+          "after": 25.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 1.3333333333333357
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 3,
+          "before": 84.08333333333333,
+          "after": 30.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 4,
+          "before": 84.08333333333333,
+          "after": 30.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 5,
+          "before": 84.08333333333333,
+          "after": 30.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 6,
+          "before": 72.83333333333334,
+          "after": 31.83333333333333,
+          "expectedTechChange": -45,
+          "expectedPChange": 4.0000000000000036
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 7,
+          "before": 64.83333333333333,
+          "after": 38.166666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 8,
+          "before": 52.666666666666664,
+          "after": 22.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 9,
+          "before": 52.666666666666664,
+          "after": 22.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 10,
+          "before": 84.08333333333333,
+          "after": 30.5,
+          "expectedTechChange": -60,
+          "expectedPChange": 6.416666666666668
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 11,
+          "before": 52.666666666666664,
+          "after": 22.666666666666664,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 12,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 13,
+          "before": 70.83333333333333,
+          "after": 29.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 14,
+          "before": 54,
+          "after": 25.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 1.3333333333333357
+        },
+        {
+          "actionId": "play_card:4cf8cfb4",
+          "leafIndex": 15,
+          "before": 74.83333333333333,
+          "after": 33.166666666666664,
+          "expectedTechChange": -45,
+          "expectedPChange": 3.333333333333332
+        },
+        {
+          "actionId": "pass:ac4b4ab2",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        }
+      ]
+    },
+    {
+      "source": "reports/iteration/resource-r2-step68-20260905.json",
+      "sha256": "0143a5a751f8deffe5f493ec056761a674585c369e6c1ee05a99502579ab835b",
+      "changes": [
+        {
+          "actionId": "choose_target:b6404518",
+          "leafIndex": 0,
+          "before": 42,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 1.3333333333333357
+        },
+        {
+          "actionId": "choose_target:4fdf614c",
+          "leafIndex": 0,
+          "before": 42,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 1.3333333333333357
+        },
+        {
+          "actionId": "choose_target:43a1afc4",
+          "leafIndex": 0,
+          "before": 42,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 1.3333333333333357
+        },
+        {
+          "actionId": "choose_target:6d775958",
+          "leafIndex": 0,
+          "before": 42,
+          "after": 13.333333333333332,
+          "expectedTechChange": -30,
+          "expectedPChange": 1.3333333333333357
+        },
+        {
+          "actionId": "choose_target:fcf53684",
+          "leafIndex": 0,
+          "before": 42.666666666666664,
+          "after": 12.666666666666666,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:349dc7a4",
+          "leafIndex": 0,
+          "before": 42.666666666666664,
+          "after": 12.666666666666666,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:9cbf765c",
+          "leafIndex": 0,
+          "before": 42.666666666666664,
+          "after": 12.666666666666666,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:fd6d5b34",
+          "leafIndex": 0,
+          "before": 42.666666666666664,
+          "after": 12.666666666666666,
+          "expectedTechChange": -30,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:622d0cc4",
+          "leafIndex": 0,
+          "before": 29,
+          "after": 14,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:475f1e7c",
+          "leafIndex": 0,
+          "before": 29,
+          "after": 14,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:ce1f0b80",
+          "leafIndex": 0,
+          "before": 29,
+          "after": 14,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:0a5bca28",
+          "leafIndex": 0,
+          "before": 29,
+          "after": 14,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:60c4b2a0",
+          "leafIndex": 0,
+          "before": 33,
+          "after": 18,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:9c2152c4",
+          "leafIndex": 0,
+          "before": 33,
+          "after": 18,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:611b3458",
+          "leafIndex": 0,
+          "before": 33,
+          "after": 18,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "choose_target:5097fd04",
+          "leafIndex": 0,
+          "before": 33,
+          "after": 18,
+          "expectedTechChange": -15,
+          "expectedPChange": 0
+        }
+      ]
+    },
+    {
+      "source": "reports/iteration/resource-r2-baseline-step73-20260905.json",
+      "sha256": "44f43125aa6c7444efde2d1a9a8d70ccdc632291f3869bee502a228d95144e9c",
+      "changes": [
+        {
+          "actionId": "scan:0ca111ac",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "scan:0ca111ac",
+          "leafIndex": 1,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 0,
+          "before": 27.44444444444445,
+          "after": 31,
+          "expectedTechChange": 0,
+          "expectedPChange": 3.5555555555555536
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 1,
+          "before": 40.83333333333334,
+          "after": 43.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 2,
+          "before": 6.444444444444445,
+          "after": 10,
+          "expectedTechChange": 0,
+          "expectedPChange": 3.5555555555555536
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 3,
+          "before": 37.833333333333336,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 4,
+          "before": 9.444444444444452,
+          "after": 12.999999999999996,
+          "expectedTechChange": 0,
+          "expectedPChange": 3.5555555555555536
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 5,
+          "before": 25.5,
+          "after": 0.6666666666666679,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.166666666666666
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 6,
+          "before": 6.444444444444445,
+          "after": 10,
+          "expectedTechChange": 0,
+          "expectedPChange": 3.5555555555555536
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 7,
+          "before": 40.83333333333334,
+          "after": 43.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 8,
+          "before": 22.833333333333343,
+          "after": 25.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 9,
+          "before": 38.08333333333333,
+          "after": 13.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 10,
+          "before": 19.833333333333336,
+          "after": 22.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 11,
+          "before": 25.5,
+          "after": 0.6666666666666679,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.166666666666666
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 12,
+          "before": 37.833333333333336,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 13,
+          "before": 24.444444444444443,
+          "after": 28,
+          "expectedTechChange": 0,
+          "expectedPChange": 3.5555555555555536
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 14,
+          "before": 38.08333333333333,
+          "after": 13.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 15,
+          "before": 9.444444444444452,
+          "after": 12.999999999999996,
+          "expectedTechChange": 0,
+          "expectedPChange": 3.5555555555555536
+        },
+        {
+          "actionId": "pass:ac4b4ab2",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        }
+      ]
+    },
+    {
+      "source": "reports/iteration/resource-r2-step88-20260905.json",
+      "sha256": "01ee4e82e8a2540d153ea023b6400c209209e05cefc78691c21007b6c3d24855",
+      "changes": [
+        {
+          "actionId": "scan:0ca111ac",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 0,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 1,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 2,
+          "before": 28.833333333333343,
+          "after": 16.5,
+          "expectedTechChange": -15,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 3,
+          "before": 10,
+          "after": 10,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 4,
+          "before": 10,
+          "after": 10,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 5,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 6,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "analyze:c31ddbb9",
+          "leafIndex": 7,
+          "before": 22.833333333333343,
+          "after": 25.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 0,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 1,
+          "before": 22.833333333333343,
+          "after": 25.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 2,
+          "before": 19.833333333333336,
+          "after": 22.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 3,
+          "before": 37.833333333333336,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 4,
+          "before": 19.833333333333336,
+          "after": 22.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 5,
+          "before": 19.833333333333336,
+          "after": 22.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 6,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 7,
+          "before": 42.666666666666664,
+          "after": 17.666666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 8,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 9,
+          "before": 44.22222222222223,
+          "after": 46,
+          "expectedTechChange": 0,
+          "expectedPChange": 1.7777777777777786
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 10,
+          "before": 22.833333333333343,
+          "after": 25.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 11,
+          "before": 37.833333333333336,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 12,
+          "before": 42.666666666666664,
+          "after": 17.666666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 13,
+          "before": 37.833333333333336,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 14,
+          "before": 40.83333333333334,
+          "after": 43.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 15,
+          "before": 40.08333333333333,
+          "after": 15.166666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5.083333333333332
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 16,
+          "before": 37.833333333333336,
+          "after": 40.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 17,
+          "before": 42.666666666666664,
+          "after": 17.666666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 18,
+          "before": 44.22222222222223,
+          "after": 46,
+          "expectedTechChange": 0,
+          "expectedPChange": 1.7777777777777786
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 19,
+          "before": 42.666666666666664,
+          "after": 17.666666666666668,
+          "expectedTechChange": -30,
+          "expectedPChange": 5
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 20,
+          "before": 40.83333333333334,
+          "after": 43.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 21,
+          "before": 19.833333333333336,
+          "after": 22.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 22,
+          "before": 22.833333333333343,
+          "after": 25.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "research_tech:547c8803",
+          "leafIndex": 23,
+          "before": 40.83333333333334,
+          "after": 43.5,
+          "expectedTechChange": 0,
+          "expectedPChange": 2.666666666666668
+        },
+        {
+          "actionId": "pass:ac4b4ab2",
+          "leafIndex": 0,
+          "before": 0,
+          "after": 0,
+          "expectedTechChange": 0,
+          "expectedPChange": 0
+        }
+      ]
+    }
+  ],
+  "leaves": 156,
+  "excludedWithoutLeaves": 57,
+  "passed": true
+}
