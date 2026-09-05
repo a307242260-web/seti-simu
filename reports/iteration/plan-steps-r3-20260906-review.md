@@ -248,3 +248,16 @@ sector-1-a移到sector-2-a，但计划只比较扇区竞争事实，scan仍hit�
 本次只补诊断、checkpoint与设计，不改生产/观察接口、不跑固定盘面。已核对AI/RL、
 README、AGENTS、PROJECT_MEMORY、Node及迭代标准，当前运行契约未变，无需修改这些
 文档；本复盘同步新增已复现问题。第三轮仍未通过，第四轮未开始，Goal保持active。
+
+### 扫描来源与绑定边界补证（2026-09-06）
+
+正式隔离扫描进一步证明：地球/水星交换位置时，能力并集相同，但免费地球与付费水星
+的实际选择顺序交换。因此只把S2的accessSources加入计划比较不足以修复。两组真实
+正式提交、支付与非零queue checkpoint见`r3-scan-source-order-20260906.json`。
+本记录不是历史AI优胜计划或新的固定盘面实验。
+
+已在扫描设计文档补齐science、card factory、probe奖励、紫4哨兵和公共后继的来源
+生产矩阵。部分生产者把planetId转换为sectorX后丢失来源，journal不保留已执行effect
+的payload，无法仅从action或parentEffectId可靠补回。下一步先闭合来源身份的保留与
+viewer-safe投影契约，再冻结实现，不用中文label或全量旋转指纹做绕过。
+本次无生产/API变化，沿用前述文档一致性检查范围，仅更新诊断与设计复盘。
