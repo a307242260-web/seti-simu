@@ -132,6 +132,8 @@ function createHeuristicDecisionFunction(options = {}) {
         || (evaluateOptions.secondaryAgentSearch ? 1 : 8),
       traceGoalClusters: evaluateOptions.traceGoalClusters === true,
       allowUntargetedRootActions: true,
+      capturePlanStep: evaluateOptions.secondaryAgentSearch
+        ? planContinuation.capturePlanStep : null,
       secondaryAgentSearch: evaluateOptions.secondaryAgentSearch ? {
         focalSeatId: seatId,
         maxProxyDepth: evaluateOptions.maxProxyDepth || 15,

@@ -1893,6 +1893,7 @@
             : nextInspection.phase,
           actionChain: secondaryAgentSearch ? origin.chain : clone(origin.chain),
           executionStepCount: origin.executionStepCount || 0,
+          ...(origin.planSteps ? { planSteps: origin.planSteps } : {}),
           observation: secondaryAgentSearch
             ? fullObservation
             : clone(fullObservation),
@@ -2025,6 +2026,35 @@
             : composition.inputPort.enumerateActions({ actorId: node.action.actorId });
           const current = candidates.find((candidate) => candidate.actionId === node.action.actionId);
           if (!current) return { failed: true, code: "COUNTERFACTUAL_ACTION_STALE" };
+          // 计划证据与搜索宏节点分开：每次正式输入都有自己的执行前事实。
+          // 只读投影来自当前可信 fork；屏障立即生效，不等折叠链结束才遮蔽。
+          const planSteps = [];
+          let planInformationMasked = node.origins.some((origin) => origin.informationMasked);
+          let planInformationBarrier = node.origins.find((origin) => origin.informationBarrier)
+            ?.informationBarrier || null;
+          function captureStep(action) {
+            if (typeof evaluateOptions.capturePlanStep !== "function") return null;
+            const observation = composition.projection(viewer).state;
+            return evaluateOptions.capturePlanStep({
+              action,
+              observation: planInformationMasked
+                ? sanitizeHiddenInformationObservation(rootObservation, observation, planInformationBarrier)
+                : observation,
+            });
+          }
+          function retainStep(step, submitted) {
+            if (typeof evaluateOptions.capturePlanStep !== "function") return;
+            if (!step) throw new Error("PLAN_STEP_EVIDENCE_MISSING: 采集回调未返回步骤证据");
+            planSteps.push(step);
+            const after = composition.inspect();
+            const barrier = [submitted?.irreversibleBarrier, after.session?.irreversibleBarrier]
+              .find(isHiddenInformationBarrier);
+            if (barrier) {
+              planInformationMasked = true;
+              planInformationBarrier = barrier;
+            }
+          }
+          const currentPlanStep = captureStep(current);
           const executionStartedAt = now();
           const result = current.phase === "conditional"
             ? composition.inputPort.submitDecision({
@@ -2043,6 +2073,7 @@
               message: result?.message || failure?.message || null,
             };
           }
+          retainStep(currentPlanStep, result);
           if (
             secondaryAgentSearch
             && current.family === "end_turn"
@@ -2145,6 +2176,7 @@
             } else {
               settleChoice = drainChoices[0];
             }
+            const settlePlanStep = captureStep(settleChoice);
             const settleResult = composition.inputPort.submitDecision({
               decisionId: drainInspection.session.decision.decisionId,
               decisionVersion: drainInspection.session.decision.decisionVersion,
@@ -2159,6 +2191,7 @@
                 message: settleResult?.message || `结算决策失败: ${settleChoice?.family}`,
               };
             }
+            retainStep(settlePlanStep, settleResult);
             // 折叠提交后的 hidden barrier（公共牌翻出等）必须捕获——折叠不泄漏信息。
             executionStepCount += 1;
             if (!drainHiddenBarrier) {
@@ -2186,6 +2219,7 @@
                   action.family === "place_data" && action.phase !== "conditional"
                 ));
                 if (nextPlaceData) {
+                  const placePlanStep = captureStep(nextPlaceData);
                   const placeResult = composition.inputPort.submitAction(nextPlaceData, {
                     skipProjection: true,
                   });
@@ -2196,6 +2230,7 @@
                       message: placeResult?.message || "连续填数据失败",
                     };
                   }
+                  retainStep(placePlanStep, placeResult);
                   executionStepCount += 1;
                   continue;
                 }
@@ -2312,6 +2347,7 @@
             ok: true,
             current,
             executionStepCount,
+            planSteps,
             nextInspection,
             awaitingDecision,
             successors,
@@ -2621,6 +2657,19 @@
             ? clone(current)
             : null;
           for (const origin of node.origins) {
+            if (execution.planSteps.length) {
+              const previousStep = origin.planSteps?.at(-1);
+              const sameGoal = previousStep?.goalDepth === (origin.proxyDepth || 0)
+                && previousStep.routeTargetId === (origin.routeTargetId || null);
+              origin.planSteps = [...(origin.planSteps || []), ...execution.planSteps.map((step) => ({
+                ...step,
+                goalDepth: origin.proxyDepth || 0,
+                routeTargetId: origin.routeTargetId || null,
+                routePlanId: origin.routePlanId || null,
+                probeAction: nextProbeAction || (sameGoal ? previousStep.probeAction : null),
+                goalCompletionPending: origin.goalCompletionPending === true,
+              }))];
+            }
             origin.informationMasked = Boolean(
               origin.informationMasked || execution.informationMasked,
             );

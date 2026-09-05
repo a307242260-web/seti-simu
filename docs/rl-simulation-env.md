@@ -28,6 +28,10 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
 - `dispose()`：释放单局环境。
 
+机器玩家计划使用 `seti-action-plan-v2`：`steps` 逐项携带动作身份、执行前揭示基线和
+具名依赖。搜索的折叠支付/连续数据提交也各有证据；同回合与跨回合均校验，只有控制
+动作的重决策例外受回合边界控制。计划不写入 checkpoint，恢复时清空。详见 AI 设计 §3。
+
 环境没有 pending inventory、resolver、recover、skip、DOM callback 或第二套规则 executor。
 未知 family、非法 descriptor、stale、wrong-owner 和版本不匹配都零副作用失败，失败输入不进入
 confirmed replay。
@@ -102,6 +106,10 @@ Observation schema 为 `seti-rl-observation-v1`：
   Policy/heuristic score 和 Browser ViewState 不得进入 observation。
 
 ## State、Checkpoint 与 Replay
+
+公共观察中的 `publicState.board.aliens.slots[]` 保留正式 `slotId`（1/2）；数组位置不是
+槽身份。每槽只公开 `revealed`、已揭示的 `alienId` 和 `traces`，不输出 `assignedAlienId`。
+逐步计划按 `slotId` 与 `traces[traceType]` 读取依赖，不读取槽顶层的首痕迹字段。
 
 Simulation 只读取 Composition 的 committed snapshot 或 active Session working state。唯一
 持久化根是当前 `CommittedGameState` schema；不得重建传统 slice root。

@@ -15,16 +15,15 @@
  * 计划延续复用与诊断（plan-continuation）。
  *
  * 决策方案输出计划结构、simulation 侧复用判定与诊断统计的纯函数集合，不修改
- * 规则状态、不改变任何决策语义。架构见 docs/ai-design.md §3：
+ * 规则状态；复用决策依赖逐步证据。架构见 docs/ai-design.md §3：
  *
- * - 方案输出：`buildPlanFromSnapshot`（winning leaf -> { nextActionId,
- *   continuation[], dependency, revealedCount }）、`advancePlan`（多步消费）；
+ * - 方案输出：`buildPlanFromSnapshot`（winning leaf -> { schemaVersion,
+ *   nextActionId, steps[] }）、`advancePlan`（动作/依赖/揭示基线同步推进）；
  * - 复用判定：`planReuseCheck`——下一步仍合法 + 外星揭示基线未增 + 依赖环节
  *   未变（路线终点移动步数/第一奖励格、外星痕迹槽占用）则复用，否则重新决策；
  *   翻开外星人（揭示槽位数增加）无条件重新决策；
- * - 依赖来源：primaryAgentSearch 叶用 probeRoute.candidate（routeCheckpoints 摘要），
- *   secondary-agent 叶无 checkpoints → 从叶的 rootRouteTargetId（orbit:/land: 终点）
- *   补出路线依赖（见 planDependencyFromPlan），保证启发式主路径的 tier-3 失效判定生效；
+ * - 依赖来源：搜索每次正式提交前采集同viewer事实，按origin目标与完成阶段编译，
+ *   不使用整叶根目标或最终观察代替当前步骤证据；
  * - 诊断：`pairContinuation` / `aggregateStats` 量化「计划下一步 == 新搜索实际
  *   选择」的命中率与预测器质量（工具 tools/diagnose_plan_continuation.js）。
  *
@@ -360,7 +359,7 @@ function rankActions(context, legalActions) {
 // 目录指纹与事实。rootObservation 取搜索同源的 viewer-safe 根观测
 // （policyObservation / outcome.rootObservation）。
 // options.light = true 时跳过 rankActions（margin/pool 不计算）：fast-path 的
-// store 只需要 plan.nextStepKey 与 planDependency，不需要全 action 排序。
+// store 只消费 plan.executionSteps，不需要全 action 排序或旧单依赖诊断。
 // 每个缺失都带显式 status/reason，不静默吞错：
 //   planStatus: continuation | chain-too-short | no-winning-leaf | leaf-missing |
 //               evaluation-failed | chosen-outcome-missing | no-root-observation
@@ -443,9 +442,11 @@ function extractPlanSnapshot(input, options = {}) {
       String(candidate?.leafId) === String(evaluation.selectedLeafId)
     )) || null;
     if (leaf) {
-      plan = planContinuationFromWinningLeaf(leaf);
+      plan = { ...planContinuationFromWinningLeaf(leaf),
+        executionSteps: compilePlanSteps(leaf.planSteps || []) };
+      if (!plan.executionSteps.length) issues.push({ code: "plan-step-evidence-missing" });
       planStatus = plan.hasContinuation ? "continuation" : "chain-too-short";
-      planDependency = planDependencyFromPlan(plan, leaf);
+      if (!light) planDependency = planDependencyFromPlan(plan, leaf);
     } else {
       planStatus = "leaf-missing";
       issues.push({ code: "leaf-missing", selectedLeafId: evaluation.selectedLeafId });
@@ -460,7 +461,7 @@ function extractPlanSnapshot(input, options = {}) {
     planStatus = "no-selected-leaf";
   }
 
-  // light（生产路径，协调器只消费 plan/planDependency/revealedCount）跳过纯诊断
+  // light（生产路径只消费 plan.executionSteps）跳过纯诊断
   // 指纹（facts/directoryFingerprint*）——这些只被 tools/diagnose_plan_continuation.js
   // 消费；诊断工具调用时 light 缺省 false，功能不受影响。
   const diagnosticFacts = !light && rootObservation;
@@ -489,7 +490,7 @@ function extractPlanSnapshot(input, options = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// 计划依赖事实（复用判定用；对照基准 = 计划假设状态）。
+// 历史单依赖诊断（非 light 快照保留；生产 planReuseCheck 不消费这些字段）。
 // 新信息只有两类：① 揭示外星人（planReuseCheck 单独判）；② 计划依赖环节变化——
 // 计划依赖的具体盘面事实变了：目标奖励格被占 / 路线变长 / 计划要拿的科技被拿走 /
 // 目标扇区赢不了 / 目标外星槽被占 / 目标公共牌被买走。其余变化（对手移动/资源、
@@ -620,7 +621,7 @@ function planDependencyFromPlan(plan, leaf) {
   return { kind: "generic" };
 }
 
-// 从当前观测重算同一依赖（与 planDependencyFromPlan 同构，供复用判定比较）。
+// 重算历史诊断依赖；不供生产逐步复用。
 function currentDependencyFromStore(store, observation) {
   const dependency = store?.dependency || null;
   if (dependency?.kind === "route") {
@@ -709,30 +710,164 @@ function countRevealedAliens(observation) {
 // 决策方案输出的计划结构 + simulation 侧复用判定
 // ---------------------------------------------------------------------------
 
-// 从 extractPlanSnapshot 快照构建「决策方案输出」携带的计划：
-//   { nextActionId, continuation, dependency, revealedCount }
-// 无延续（winning leaf 链条不足 2 步）返回 null → 方案只输出下一步，无计划。
-function buildPlanFromSnapshot(snapshot) {
-  const plan = snapshot?.plan;
-  if (!plan?.hasContinuation || !plan.nextActionId) return null;
-  return {
-    nextActionId: plan.nextActionId,
-    continuation: [...(plan.continuation || [])],
-    dependency: snapshot.planDependency ?? null,
-    revealedCount: snapshot.planAssumedRevealedCount ?? null,
+// 从 winning leaf 的真实提交证据构建版本化逐步计划；不使用宏节点 actionChain
+// 猜测折叠步骤，也不把整叶的单一依赖或最终观察当成下一步的执行前状态。
+const PLAN_SCHEMA_VERSION = "seti-action-plan-v2";
+
+// 只在正式提交前读取同viewer完整观察；立即复制小型事实，不跨步骤持有观察。
+function capturePlanStep({ observation, action }) {
+  const board = observation?.publicState?.board;
+  const actorId = String(action?.actorId || "");
+  const self = observation?.publicState?.players?.find((player) => (
+    String(player.playerId || player.id || "") === actorId
+  ));
+  if (!actorId || !board?.planets || !board.techSupply || !board.aliens || !self) {
+    throw new TypeError("PLAN_STEP_OBSERVATION_INCOMPLETE: 逐步证据需要完整同viewer观察");
+  }
+  const probe = observation.probeRouteRequirements
+    || observation.outcomeProjection?.progress?.probeGoalRequirements;
+  const sectors = sectorCandidatesOf(observation);
+  const facts = {
+    routes: (probe?.candidates || []).map((candidate) => ({
+      targetId: candidate.targetId, requirementId: candidate.requirementId,
+      sourceId: candidate.sourceId, rocketId: candidate.rocketId,
+      movementSteps: candidate.gap?.movementSteps ?? candidate.required?.movementSteps ?? null,
+      markers: endpointMarkerCount(observation, candidate.targetId),
+    })),
+    tech: structuredClone(board.techSupply.stacks || {}),
+    sectors: sectors.map((candidate) => ({ sectorId: candidate.sectorId,
+      targetId: candidate.targetId, ownCount: candidate.ownCount,
+      maxOpponentCount: candidate.maxOpponentCount, openSlotCount: candidate.openSlotCount,
+      nextSlotScore: candidate.nextSlotScore, ranking: structuredClone(candidate.ranking || []) })),
+    cards: (board.publicCards || []).map((card) => card ? { id: card.id, cardId: card.cardId } : null),
+    aliens: structuredClone(board.aliens.slots || []),
+    data: structuredClone(self.dataProgress || null),
   };
+  return { action: structuredClone(action), facts, revealedCount: countRevealedAliens(observation) };
 }
 
-// 计划前进一步：消费当前 nextActionId，续上 continuation 的下一个。
+function stepScopes(step, segment) {
+  const scopes = new Map();
+  const add = (kind, id) => scopes.set(`${kind}:${id}`, { kind, id: String(id) });
+  function addRoute(targetId) {
+    const candidates = step.facts.routes.filter((route) => route.targetId === targetId);
+    const actions = [step.action, step.probeAction, ...segment.map((item) => item.action)];
+    let route = null;
+    for (const action of actions) {
+      if (!["move", "orbit", "land"].includes(action?.family) || action.target?.rocketId == null) continue;
+      route = candidates.find((candidate) => String(candidate.rocketId) === String(action.target.rocketId));
+      if (route) break;
+    }
+    if (!route && String(step.routePlanId || "").startsWith("probe:")) {
+      route = candidates.find((candidate) => candidate.requirementId === step.routePlanId.slice(6));
+    }
+    if (!route?.sourceId) return false;
+    const scope = { kind: "route", id: targetId, sourceId: route.sourceId };
+    scopes.set(stableSerialize(scope), scope);
+    return true;
+  }
+  // 正式目标已达成但奖励 Decision 未排空：只依赖后续奖励选择，不继承已完成路线。
+  const targetId = step.goalCompletionPending === true ? "" : String(step.routeTargetId || "");
+  if (/^(orbit|land):/.test(targetId)) {
+    if (!addRoute(targetId)) return { valid: false, reason: "plan-route-source-missing" };
+  }
+  else if (targetId.startsWith("tech:gain:")) add("tech", targetId.slice("tech:gain:".length));
+  else if (targetId.startsWith("sector:win:")) {
+    const sector = step.facts.sectors.find((item) => item.targetId === targetId);
+    if (!sector) return { valid: false, reason: "plan-sector-target-missing" };
+    add("sector", sector.sectorId);
+  } else if (targetId === "data:analyze") add("data", "self");
+  else if (targetId.startsWith("income:gain:")) {
+    const routePlanId = String(step.routePlanId || "");
+    if (routePlanId.startsWith("probe:")) {
+      const route = step.facts.routes.find((item) => item.requirementId === routePlanId.slice(6));
+      if (!route) return { valid: false, reason: "plan-income-route-missing" };
+      if (!addRoute(route.targetId)) return { valid: false, reason: "plan-route-source-missing" };
+    } else if (routePlanId === "income:data:computer-slot-4") add("data", "self");
+    else if (!routePlanId.startsWith("card:") && !routePlanId.startsWith("income:industry:")) {
+      return { valid: false, reason: "plan-income-scope-unknown" };
+    }
+  } else if (targetId && !targetId.startsWith("card:resolve:") && !targetId.startsWith("decision:")) {
+    return { valid: false, reason: "plan-target-scope-unknown" };
+  }
+  // decision:<actionId> 是正式目标目录为 conditional choice 建立的结构目标。
+  // 它没有独立战略资源事实，仍从该段具体选择提取全部外部依赖。
+  for (const item of segment) {
+    const target = item.action.target || {};
+    if (target.tileId) add("tech", target.tileId);
+    if (target.alienSlotId != null) {
+      if (!target.traceType) return { valid: false, reason: "plan-trace-type-missing" };
+      add("alien", `${target.alienSlotId}:${target.traceType}`);
+    }
+    if (target.nebulaId || target.sectorId) add("sector", target.nebulaId || target.sectorId);
+    if (target.publicSlotIndex != null) add("card-slot", target.publicSlotIndex);
+    else if (target.cardInstanceId && item.facts.cards.some((card) => card?.id === target.cardInstanceId)) {
+      add("card", target.cardInstanceId);
+    }
+    if (item.action.family === "place_data" || target.target === "computer" || target.target === "blueBonus") {
+      add("data", "self");
+    }
+  }
+  return { valid: true, scopes: [...scopes.values()].sort((a, b) => stableSerialize(a).localeCompare(stableSerialize(b))) };
+}
+
+function scopedFact(facts, scope) {
+  if (scope.kind === "route") {
+    const routes = facts.routes.filter((item) => item.targetId === scope.id && item.sourceId === scope.sourceId)
+      .sort((a, b) => String(a.requirementId).localeCompare(String(b.requirementId)));
+    return routes.length && routes.every((item) => item.markers != null && item.movementSteps != null)
+      ? routes : undefined;
+  }
+  if (scope.kind === "tech") return facts.tech[scope.id];
+  if (scope.kind === "sector") return facts.sectors.find((item) => String(item.sectorId) === scope.id);
+  if (scope.kind === "data") return facts.data ?? undefined;
+  if (scope.kind === "card-slot") return facts.cards[Number(scope.id)];
+  if (scope.kind === "card") return facts.cards.find((card) => card?.id === scope.id);
+  if (scope.kind === "alien") {
+    const [slotId, traceType] = scope.id.split(":");
+    const slot = facts.aliens.find((item) => String(item.slotId) === slotId);
+    return slot?.traces?.[traceType];
+  }
+  throw new TypeError(`PLAN_DEPENDENCY_SCOPE_UNKNOWN: ${scope.kind}`);
+}
+
+function compilePlanSteps(steps) {
+  return steps.map((step, index) => {
+    const segment = [];
+    for (let next = index; next < steps.length; next += 1) {
+      const item = steps[next];
+      if (item.goalDepth !== step.goalDepth || item.routeTargetId !== step.routeTargetId
+        || item.routePlanId !== step.routePlanId
+        || Boolean(item.goalCompletionPending) !== Boolean(step.goalCompletionPending)) break;
+      segment.push(item);
+    }
+    const selected = stepScopes(step, segment);
+    const dependencies = (selected.scopes || []).map((scope) => ({
+      scope, fact: structuredClone(scopedFact(step.facts, scope)),
+    }));
+    const missing = dependencies.some((dependency) => dependency.fact === undefined);
+    return { actionId: step.action.actionId, actionKey: actionSemanticKey(step.action),
+      actorId: step.action.actorId, revealedCount: step.revealedCount,
+      valid: selected.valid && !missing,
+      reason: selected.reason || (missing ? "plan-dependency-fact-missing" : null),
+      dependencies };
+  });
+}
+
+function planFromSteps(steps) {
+  return { schemaVersion: PLAN_SCHEMA_VERSION, nextActionId: steps[0]?.actionId ?? null, steps };
+}
+
+function buildPlanFromSnapshot(snapshot) {
+  const steps = snapshot?.plan?.executionSteps;
+  return steps?.length > 1 ? planFromSteps(steps.slice(1)) : null;
+}
+
+// 计划前进一步：同时消费动作、依赖和揭示基线。
 function advancePlan(plan) {
   if (!plan) return null;
-  const continuation = (plan.continuation || []).slice(1);
-  return {
-    nextActionId: continuation[0] ?? null,
-    continuation,
-    dependency: plan.dependency,
-    revealedCount: plan.revealedCount,
-  };
+  if (plan.schemaVersion !== PLAN_SCHEMA_VERSION || !Array.isArray(plan.steps)) return null;
+  return planFromSteps(plan.steps.slice(1));
 }
 
 // simulation 侧复用判定（用户口径，对照基准 = 计划假设状态）：
@@ -750,36 +885,56 @@ function advancePlan(plan) {
 //   分析盘面 219 决策即终局（旧记录 520+）、均分暴跌（AVG 27.3），恢复 1d063418
 //   口径。同回合内（协调器回合门控）end_turn 仍按计划正常推进（回合自然结束）。
 // 命中返回 { hit: true, action, nextPlan }；miss 返回 { hit: false, reason }。
-function planReuseCheck(plan, currentObservation, legalActions) {
+function planReuseCheck(plan, currentObservation, legalActions, options = {}) {
   if (!plan || !plan.nextActionId) return Object.freeze({ hit: false, reason: "no-plan" });
+  if (plan.schemaVersion !== PLAN_SCHEMA_VERSION || !plan.steps?.length) {
+    return Object.freeze({ hit: false, reason: "plan-step-evidence-missing" });
+  }
+  const step = plan.steps[0];
+  if (step.actionId !== plan.nextActionId || step.valid !== true) {
+    return Object.freeze({ hit: false, reason: step.reason || "plan-step-evidence-invalid" });
+  }
   const current = (legalActions || []).find((action) => (
     String(action?.actionId) === String(plan.nextActionId)
   ));
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
+  if (String(current.actorId) !== String(step.actorId) || actionSemanticKey(current) !== step.actionKey) {
+    return Object.freeze({ hit: false, reason: "plan-step-identity-changed" });
+  }
   // 控制动作不盲从计划（见上：end_turn/pass 必须每次重新决策主行动）
-  if (["end_turn", "pass"].includes(current.family)) {
+  if (options.sameTurn !== true && ["end_turn", "pass"].includes(current.family)) {
     return Object.freeze({ hit: false, reason: "control-step-redecide", family: current.family });
   }
-  if (plan.revealedCount == null) {
+  if (step.revealedCount == null) {
     return Object.freeze({ hit: false, reason: "no-reveal-count" });
   }
   if (!currentObservation) {
     return Object.freeze({ hit: false, reason: "no-observation" });
   }
-  if (countRevealedAliens(currentObservation) > plan.revealedCount) {
+  if (countRevealedAliens(currentObservation) > step.revealedCount) {
     return Object.freeze({
       hit: false,
       reason: "alien-revealed",
-      assumedRevealedCount: plan.revealedCount,
+      assumedRevealedCount: step.revealedCount,
       currentRevealedCount: countRevealedAliens(currentObservation),
     });
   }
-  if (plan.dependency == null) {
+  if (!Array.isArray(step.dependencies)) {
     return Object.freeze({ hit: false, reason: "no-dependency" });
   }
-  const currentDependency = currentDependencyFromStore({ dependency: plan.dependency }, currentObservation);
-  if (stableHash(currentDependency) !== stableHash(plan.dependency)) {
-    return Object.freeze({ hit: false, reason: "next-step-affected", affected: currentDependency });
+  let facts;
+  try { facts = capturePlanStep({ observation: currentObservation, action: current }).facts; }
+  catch (error) {
+    return Object.freeze({ hit: false, reason: "plan-step-observation-incomplete", message: error.message });
+  }
+  for (const dependency of step.dependencies) {
+    const currentFact = scopedFact(facts, dependency.scope);
+    if (dependency.fact === undefined || currentFact === undefined) {
+      return Object.freeze({ hit: false, reason: "plan-dependency-fact-missing", affected: dependency.scope });
+    }
+    if (stableSerialize(currentFact) !== stableSerialize(dependency.fact)) {
+      return Object.freeze({ hit: false, reason: "next-step-affected", affected: dependency.scope });
+    }
   }
   return Object.freeze({ hit: true, action: current, nextPlan: advancePlan(plan) });
 }
@@ -798,6 +953,9 @@ function planReuseCheck(plan, currentObservation, legalActions) {
     aggregateStats,
     extractPlanSnapshot,
     buildPlanFromSnapshot,
+    capturePlanStep,
+    compilePlanSteps,
+    PLAN_SCHEMA_VERSION,
     advancePlan,
     planReuseCheck,
     planDependencyFromPlan,

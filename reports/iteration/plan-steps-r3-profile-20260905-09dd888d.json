@@ -1,0 +1,785 @@
+{
+  "createdAt": "2026-09-05T15:58:59.297Z",
+  "scope": "已有真实开局盘面的一次生产决策：逐步证据完整性与性能；不是终局验收",
+  "gitCommit": "40db1fb000e0937a623b50662c934feec8f319be",
+  "sourcePath": "reports/iteration/resource-r2b-opening-scan-20260905.json",
+  "sourceSha256": "7d1556f2642f3355df09f2e1d6ce01ce6923f32ea1eb878596b3e50149b1c923",
+  "fileSha256": {
+    "randomizer/game/rule-composition.js": "abc4b4b391dc011eca289154f46f09ed5266c223eb9b85c7fd79033ca79477f4",
+    "randomizer/game/ai/plan-continuation.js": "538b420626610227d33e0568570b66e2fb83f1a4f7e16ded1bff59fb7bbef040",
+    "randomizer/game/ai/heuristic-decision-function.js": "1e5e492957e783b3ae89c5bf32a5c127795a9cc8cb5764c61620fbcd7ddd15b7",
+    "randomizer/game/ai/machine-player-coordinator.js": "bbcc063cb00425ef4fb2f3ae028098d299d8ea412176e98a9dd8f692508bf5e1",
+    "randomizer/app/simulation-contract.js": "f9d173818d3c0cc1e8a5a820825d4de0b59c7b8008213fa4c0c03969879c8cdb"
+  },
+  "fingerprint": "09dd888d97d169f46674e45a597a143ca6a77a9699a4130abb2e7c7e44c23b62",
+  "wallMs": 2087.097042,
+  "chosen": "launch:c94cda79",
+  "nodes": 651,
+  "opponents": 0,
+  "limitReached": false,
+  "outcomes": [
+    {
+      "actionId": "launch:c94cda79",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "leaves": 23
+    },
+    {
+      "actionId": "scan:2d21a323",
+      "status": "settled",
+      "code": null,
+      "leaves": 2
+    },
+    {
+      "actionId": "play_card:124d76d3",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "leaves": 51
+    },
+    {
+      "actionId": "play_card:d532befa",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "play_card:abc9ea68",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "play_card:05c15ee0",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "pass:a1f33c73",
+      "status": "settled",
+      "code": null,
+      "leaves": 1
+    },
+    {
+      "actionId": "quick_trade:f385e2ac",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:49c75492",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:12411a2c",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:a39c1a77",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:37140fcf",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:122c43fc",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:df811f99",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:71814d67",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:be9dd0cd",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "industry:4d9d56c5",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:385c75e9",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:69df9a0a",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:72914895",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:69a1aa49",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "leaves": 67
+    }
+  ],
+  "steps": {
+    "leaves": 143,
+    "foldedLeaves": 123,
+    "atoms": 2111,
+    "invalidReasons": {
+      "plan-route-source-missing": 20
+    },
+    "families": {
+      "launch": 47,
+      "move": 69,
+      "choose_payment": 117,
+      "end_turn": 209,
+      "play_card": 146,
+      "choose_target": 597,
+      "orbit": 20,
+      "choose_card": 257,
+      "industry": 86,
+      "place_data": 295,
+      "quick_trade": 36,
+      "pass": 17,
+      "scan": 61,
+      "card_corner": 102,
+      "research_tech": 43,
+      "analyze": 8,
+      "accept_optional_effect": 1
+    },
+    "invalidTargets": {
+      "{\"reason\":\"plan-route-source-missing\",\"target\":\"orbit:venus:planet:\",\"planId\":\"probe:rocket:1:orbit:venus:planet:\",\"family\":\"choose_card\"}": 20
+    }
+  },
+  "returnedPlan": {
+    "schemaVersion": "seti-action-plan-v2",
+    "nextActionId": "move:b2f83963",
+    "steps": [
+      {
+        "actionId": "move:b2f83963",
+        "actionKey": "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":1}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 2,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:abbb51f1",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 2,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 1,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "play_card:d532befa",
+        "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{},\"handIndex\":1},\"target\":{\"cardInstanceId\":\"card-14-0\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 1,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:de24256f",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"remaining\":1,\"requiredMovePoints\":1},\"target\":{\"choiceId\":\"1:-1:0\",\"deltaX\":-1,\"deltaY\":0,\"rocketId\":1}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 1,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 0,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "orbit:19cc40bd",
+        "actionKey": "{\"family\":\"orbit\",\"payload\":{},\"target\":{\"planetId\":\"venus\",\"rocketId\":1}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:1:orbit:venus:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 0,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:aa77442c",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-39-0\",\"choiceId\":\"income:card-39-0\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": false,
+        "reason": "plan-route-source-missing",
+        "dependencies": []
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "b_44.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue1"
+            },
+            "fact": {
+              "tileId": "blue1",
+              "techType": "blue",
+              "stackIndex": 1,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "orange3"
+            },
+            "fact": {
+              "tileId": "orange3",
+              "techType": "orange",
+              "stackIndex": 3,
+              "bonusId": "bonus_1m",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "industry:4d9d56c5",
+        "actionKey": "{\"family\":\"industry\",\"payload\":{},\"target\":{\"abilityId\":\"turing_borrow_tech\",\"companyId\":\"图灵系统\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "b_44.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue1"
+            },
+            "fact": {
+              "tileId": "blue1",
+              "techType": "blue",
+              "stackIndex": 1,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "orange3"
+            },
+            "fact": {
+              "tileId": "orange3",
+              "techType": "orange",
+              "stackIndex": 3,
+              "bonusId": "bonus_1m",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:383e3db5",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"choiceId\":\"tech:orange3\",\"kind\":\"residual-domain\",\"tileId\":\"orange3\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "b_44.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue1"
+            },
+            "fact": {
+              "tileId": "blue1",
+              "techType": "blue",
+              "stackIndex": 1,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "orange3"
+            },
+            "fact": {
+              "tileId": "orange3",
+              "techType": "orange",
+              "stackIndex": 3,
+              "bonusId": "bonus_1m",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "play_card:124d76d3",
+        "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":3},\"handIndex\":0},\"target\":{\"cardInstanceId\":\"card-13-0\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "b_44.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue1"
+            },
+            "fact": {
+              "tileId": "blue1",
+              "techType": "blue",
+              "stackIndex": 1,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:22325cd1",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":true,\"skipRotate\":false},\"target\":{\"blueSlot\":4,\"choiceId\":\"tech:blue1:slot:4\",\"tileId\":\"blue1\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "b_44.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue1"
+            },
+            "fact": {
+              "tileId": "blue1",
+              "techType": "blue",
+              "stackIndex": 1,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:bac8ef0b",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-19-0\",\"choiceId\":\"pick:card-19-0\",\"publicSlotIndex\":2}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "b_44.webp"
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "play_card:81a63f82",
+        "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{},\"handIndex\":0},\"target\":{\"cardInstanceId\":\"card-35-0\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "place_data:8fd12fd3",
+        "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [],
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 4,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:29b5215c",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [],
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 4,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "place_data:8fd12fd3",
+        "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 4,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:29b5215c",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "actorId": "player-white",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue1",
+                  "slot": 4,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ],
+              "analyzeReady": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "continuation": [
+    {
+      "actionId": "move:b2f83963",
+      "hit": true,
+      "reason": null
+    },
+    {
+      "actionId": "choose_payment:abbb51f1",
+      "hit": true,
+      "reason": null
+    },
+    {
+      "actionId": "end_turn:b2f9b29d",
+      "hit": true,
+      "reason": null
+    }
+  ],
+  "passed": true
+}

@@ -33,7 +33,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 - **决策方案**（decision scheme）是一个可插拔接口：输入当前 viewer-safe observation
   与完整 legalActions，输出**至少下一步 `actionId`**；有完整计划时附带
-  `plan = { nextActionId, continuation[], dependency, revealedCount }`
+  `plan = { schemaVersion: "seti-action-plan-v2", nextActionId, steps[] }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供 simulation 复用判断。
   当前实现：`heuristic-decision-function.js`（反事实搜索 + 直调启发式 Policy，
   从 winning leaf 构建 plan）；Learned Policy 实现同一输出契约即可参与复用。
@@ -72,8 +72,8 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   按剩余轮次计算版本化战略价值。
 - `game/ai/plan-continuation.js`：计划延续复用的纯逻辑——决策方案输出的计划结构
   （`buildPlanFromSnapshot`/`advancePlan`）、simulation 侧复用判定
-  （`planReuseCheck`）、计划依赖事实提取（`planDependencyFromPlan`/
-  `currentDependencyFromStore`）、外星揭示基线（`countRevealedAliens`）。诊断工具
+  （`planReuseCheck`）、逐步事实采集与编译（`capturePlanStep`/`compilePlanSteps`）、
+  外星揭示基线（`countRevealedAliens`）。旧单依赖函数仅用于历史诊断，不供生产复用。诊断工具
   `tools/diagnose_plan_continuation.js`（record-once/analyze-many）与
   `tools/verify_plan_continuation_fastpath.js`（同 seed A/B）共用同一套纯函数；
   单元测试登记 `policy/plan-continuation`。
@@ -113,7 +113,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - simulation 只依赖方案的输出契约，不关心方案内部（启发式搜索 / learned policy
   可插拔）；
 - 方案输出**至少包含下一步 `actionId`**；若有完整计划（winning leaf 链条 ≥ 2 步），
-  附带 `plan = { nextActionId, continuation[], dependency, revealedCount }`
+  附带 `plan = { schemaVersion: "seti-action-plan-v2", nextActionId, steps[] }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供复用判断；
 - 当前方案：`heuristic-decision-function.js`（统一反事实搜索——目标引导 + 需求引导
   单一路径 + 直调启发式 Policy + 从 winning leaf 构建 plan）；协调器
@@ -126,10 +126,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 名词定义见 `docs/mechanics-reference.md`：**轮次（round，R1/R2）**、**回合（turn，玩家每一次主要行动圈）**。
 
-**搜索时机机制**：搜索只在**本方回合（一动）开始时**执行一次；回合内无新信息 → 按计划逐步骤执行，不重新搜索。搜索只发生在：无计划 / 计划耗尽 / 下一步不在合法集 / 新回合 planReuseCheck 未命中。**回合内出现新信息需重新决策 → TODO（暂不实现，回合内始终按计划走）**。
+**搜索时机机制**：无计划、计划耗尽或下一步检查未命中时搜索；有有效计划时，同回合与新回合均检查对应步骤的执行前证据。揭示和具名依赖变化在同回合也会触发重新决策。
 
-- **本回合内**（协调器回合门控：计划记录的 round/turn == 当前决策的 round/turn）：按计划下一步直接执行（仅校验合法性），不调用 planReuseCheck、不搜索。`end_turn`/`pass` 是回合自然结束，属计划内正常推进，同样复用。
-- **新回合**：`planReuseCheck` 判定——**新信息只有两类**，无新信息则复用上回合决策链：
+- **本回合内**（计划记录的 round/turn == 当前决策的 round/turn）：调用 `planReuseCheck(..., {sameTurn:true})`；合法性、actor、动作语义、揭示与依赖全部通过后复用。`end_turn`/`pass` 同样检查，但不因控制动作身份单独重搜。
+- **新回合**：使用同一检查——**新信息只有两类**，无新信息则复用上回合决策链：
   - 开关 `planNewTurnReuse`（sim 经 `resetConfig.planNewTurnReuse`，默认开；`false` 关闭后新回合一律重新搜索，用于 A/B 评估"忽略非依赖变化而复用"的影响）。
   - **控制动作特例（control-step-redecide）**：下一步是 `end_turn`/`pass` → 无条件重新决策，不盲从计划。主行动选择是每次决策最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1）——winning leaf 链穿过回合边界（end_turn）rollout 时，新回合计划下一步为 end_turn 被盲目复用会跳过当前盘面上更有价值的主行动（同状态搜索选 place_data，fast-path 直接 end_turn，白方掉分）。48f0af3e 曾移除该特例（实测免电盘面 219 决策即终局、均分暴跌 AVG 27.3），已恢复 1d063418 口径。**注意区分**：本回合内（回合门控分支）end_turn 仍按计划正常推进；特例只作用于新回合的 `planReuseCheck`。
   - **① 揭示外星人**：已揭示槽位数 > 计划假设值 → 无条件重新决策（隐藏信息揭示）；
@@ -141,13 +141,18 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
     - 公共牌：计划要用的公共牌被买走。
   - 不算新信息（可复用）：其他玩家移动/资源变化、无关扇区变化、无探测器移动的旋转、计划内自己的推进（含顺序执行第二条路线）。
 - **防呆兜底**：下一步不在合法集（若因依赖变化 → 归入②；否则计划自身缺陷）→ 重新决策；缺揭示基线 / 缺依赖 → 保守重新决策。
-- 依赖事实：`planDependencyFromPlan` / `currentDependencyFromStore`（形状对齐才可比较）按下一步动作提取依赖：路线（`endpointTargetId` + `movementSteps` + `endpointMarkerCount`）、科技（`tileId` + 供应状态）、扇区（候选快照）、公共牌（存在性）、外星槽（占用）。
-  - 路线终点 id 来源：primaryAgentSearch 叶用 `probeRoute.candidate.endpointTargetId`
-    （routeCheckpoints 摘要生成）；secondary-agent 搜索叶不携带 routeCheckpoints
-    （rule-composition addLeaf 对 secondaryAgentSearch 置空）→ candidate 恒为 null，
-    此时从叶的 `rootRouteTargetId`（搜索绑定的 orbit:/land: 路线终点，与
-    production-kernel targetId 同构）补出路线依赖。
-- 多步消费：命中后 `advancePlan` 前进一步，链条耗尽或判定失败才重新调用方案。
+- 逐步证据：搜索在 current、折叠 settleChoice、连续 nextPlaceData 三类正式输入前，
+  读取当前 fork 的完整同 viewer 观察，立即按信息屏障遮蔽并提取事实；成功提交后才
+  加入 `leaf.planSteps`。既有 actionChain 和 executionStepCount 不改含义。
+- 依赖按每个 origin 当时的目标深度、routeTargetId、routePlanId 分段；每步取当前
+  目标及该段后继具名选择所需事实的并集，包括路线、科技、扇区、数据布局、公共牌、
+  外星痕迹。不能用整叶根目标或最终观察代替下一步状态。外星痕迹按 `slotId` 与
+  `traces[traceType]` 定位，不按物种名称或数组下标定位。
+- 路线限定终点与正式sourceId（launch或具名rocket）；来源取当前/同目标最近probe、
+  同段后继原生动作或具名requirement，不比较同终点无关探测器。搜索标记
+  `goalCompletionPending` 后进入独立奖励段：已达成目标不再作为依赖，奖励选择仍检查。
+- 多步消费：`advancePlan` 同时推进动作、依赖与揭示基线；旧结构、缺失事实或语义
+  不对应显式 miss。计划只驻留协调器，reset/load 清空，失败提交不消费。
 
 ### 3.3 边界与约束
 

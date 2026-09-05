@@ -2,16 +2,41 @@
 
 const assert = require("node:assert/strict");
 const { createMachinePlayerCoordinator } = require("./machine-player-coordinator");
+const plans = require("./plan-continuation");
 
 function makeDescriptor(actionId, family = "move", target = {}) {
   return { schemaVersion: "seti-standard-action-v1", actionId, family, phase: "main", actorId: "p1", stateVersion: 1, decisionVersion: 1, target, payload: {} };
+}
+
+function makeState(round = 1, turn = 1) {
+  return {
+    publicState: {
+      roundNumber: round, turnNumber: turn,
+      players: [{ playerId: "p1", dataProgress: { computerDataSlots: [] } }],
+      board: { planets: { planets: {} }, aliens: { slots: [{ slotId: 1, revealed: false }] },
+        publicCards: [], techSupply: { stacks: {
+          blue1: { tileId: "blue1", remaining: 4, depleted: false },
+        } } },
+    },
+    selfState: { playerId: "p1", hand: [] },
+    perspectivePlayerId: "p1",
+  };
+}
+
+// 窄协调器契约：通过正式计划采集/编译接口提供逐步证据，不伪造旧 generic 依赖。
+function makePlan(actions, observation = makeState(), routeTargetId = null) {
+  const steps = plans.compilePlanSteps(actions.map((action) => ({
+    ...plans.capturePlanStep({ action, observation }),
+    goalDepth: 0, routeTargetId, routePlanId: null,
+  })));
+  return { schemaVersion: plans.PLAN_SCHEMA_VERSION, nextActionId: steps[0].actionId, steps };
 }
 
 function makeComposition(legalActions) {
   return {
     inspect: () => ({ phase: "idle", session: null }),
     inputPort: { enumerateActions: () => legalActions },
-    projection: () => ({ state: {} }),
+    projection: () => ({ state: makeState() }),
   };
 }
 
@@ -30,7 +55,7 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   const executed = [];
   coordinator.registerSeat("p1", (boundary) => {
     assert.equal(boundary.legalActions, legal, "决策函数必须收到协调器读出的合法集");
-    return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 } };
+    return { actionId: "a", plan: makePlan([makeDescriptor("b")]) };
   });
   const result = coordinator.runDecision("p1", { reuseEnabled: false });
   assert.equal(result.source, "scheme");
@@ -44,12 +69,12 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   let calls = 0;
   coordinator.registerSeat("p1", () => {
     calls += 1;
-    return { actionId: "a", plan: { nextActionId: "b", continuation: ["b", "c"], dependency: { kind: "generic" }, revealedCount: 0 } };
+    return { actionId: "a", plan: makePlan([makeDescriptor("b"), makeDescriptor("c")]) };
   });
   const first = coordinator.runDecision("p1", { reuseEnabled: true });
   assert.equal(first.source, "scheme", "首次无计划必须走方案");
   assert.equal(calls, 1);
-  // 第二次决策：合法集含 b，generic 依赖不变 -> 复用命中，计划前进到 c
+  // 第二次决策：合法集含 b，逐步证据未变 -> 复用命中，计划前进到 c
   const second = coordinator.runDecision("p1", { reuseEnabled: true });
   assert.equal(second.source, "plan-reuse", "盘面未变必须复用上次计划");
   assert.equal(second.actionId, "b");
@@ -71,7 +96,7 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   });
   coordinator.registerSeat("p1", () => ({
     actionId: "a",
-    plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 },
+    plan: makePlan([makeDescriptor("b")]),
   }));
   const first = coordinator.runDecision("p1", { reuseEnabled: true });
   assert.equal(first.source, "scheme");
@@ -81,19 +106,13 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   assert.equal(recorded.every((entry) => entry.ok === true && entry.seatId === "p1"), true);
 }
 
-// 回合门控（机制）：本回合内按计划走（不搜索，end_turn 也复用）；
-// 新回合走 planReuseCheck（无新信息复用，有新信息重新决策）。
+// 回合门控只控制 end_turn/PASS 特例；两种回合都检查逐步证据。
 {
-  const makeState = (round, turn) => ({
-    publicState: { roundNumber: round, turnNumber: turn, board: {} },
-    selfState: null,
-    perspectivePlayerId: "p1",
-  });
   const makeTurnCoordinator = (projection, execute = () => ({ ok: true })) => (
     createMachinePlayerCoordinator({
       composition: {
         inspect: () => ({ phase: "idle", session: null }),
-        inputPort: { enumerateActions: () => [makeDescriptor("a"), makeDescriptor("b"), makeDescriptor("end_turn:e")] },
+        inputPort: { enumerateActions: () => [makeDescriptor("a"), makeDescriptor("b"), makeDescriptor("end_turn:e", "end_turn")] },
         projection,
       },
       execute,
@@ -106,7 +125,7 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
     let calls = 0;
     coordinator.registerSeat("p1", () => {
       calls += 1;
-      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b", "end_turn:e"], dependency: { kind: "generic" }, revealedCount: 0 } };
+      return { actionId: "a", plan: makePlan([makeDescriptor("b"), makeDescriptor("end_turn:e", "end_turn")]) };
     });
     const first = coordinator.runDecision("p1", { reuseEnabled: true });
     assert.equal(first.source, "scheme");
@@ -131,7 +150,7 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
     let calls = 0;
     coordinator.registerSeat("p1", () => {
       calls += 1;
-      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 } };
+      return { actionId: "a", plan: makePlan([makeDescriptor("b")]) };
     });
     const first = coordinator.runDecision("p1", { reuseEnabled: true }); // T1: scheme
     assert.equal(first.source, "scheme");
@@ -144,18 +163,13 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   // 新回合：依赖环节变化（新信息）→ 重新决策
   {
     const states = [makeState(1, 1), makeState(1, 2)];
+    states[1].publicState.board.techSupply.stacks.blue1.remaining = 3;
     let index = 0;
     const coordinator = makeTurnCoordinator(() => ({ state: states[Math.min(index, states.length - 1)] }));
     let calls = 0;
     coordinator.registerSeat("p1", () => {
       calls += 1;
-      // 首次生成计划（依赖科技 blue1 remaining 4）；T2 重算时 remaining 变 3 → 依赖变化
-      const state = states[Math.min(index, 1)];
-      const stack = state === states[1]
-        ? { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 3, depleted: false } }
-        : { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 4, depleted: false } };
-      state.publicState.board.techSupply = { stacks: stack };
-      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "tech", tileId: "blue1", present: true, bonusId: "bonus_1c", remaining: 4 }, revealedCount: 0 } };
+      return { actionId: "a", plan: makePlan([makeDescriptor("b")], states[index], "tech:gain:blue1") };
     });
     const first = coordinator.runDecision("p1", { reuseEnabled: true }); // T1: scheme
     assert.equal(first.source, "scheme");
@@ -172,7 +186,7 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
     let calls = 0;
     coordinator.registerSeat("p1", () => {
       calls += 1;
-      return { actionId: "a", plan: { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 } };
+      return { actionId: "a", plan: makePlan([makeDescriptor("b")]) };
     });
     const first = coordinator.runDecision("p1", { reuseEnabled: true, newTurnReuseEnabled: false }); // T1: scheme
     assert.equal(first.source, "scheme");
@@ -181,6 +195,54 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
     assert.equal(second.source, "scheme", "newTurnReuseEnabled=false 时新回合必须重新搜索");
     assert.equal(calls, 2, "开关关时新回合不得复用计划");
   }
+}
+
+// 同回合揭示/具名依赖改变也要重新决策；旧证据不能靠合法性旁路继续执行。
+for (const change of ["reveal", "dependency", "old-plan"]) {
+  const state = makeState();
+  const legal = [makeDescriptor("a"), makeDescriptor("b")];
+  const diagnostics = [];
+  let calls = 0;
+  const coordinator = createMachinePlayerCoordinator({
+    composition: { ...makeComposition(legal), projection: () => ({ state }) },
+    execute: () => ({ ok: true }),
+    onDiagnostic: (type, details) => diagnostics.push({ type, ...details }),
+  });
+  coordinator.registerSeat("p1", () => {
+    calls += 1;
+    return { actionId: "a", plan: change === "old-plan"
+      ? { nextActionId: "b", continuation: ["b"], dependency: { kind: "generic" }, revealedCount: 0 }
+      : makePlan([legal[1]], state, "tech:gain:blue1") };
+  });
+  coordinator.runDecision("p1");
+  if (change === "reveal") state.publicState.board.aliens.slots[0].revealed = true;
+  if (change === "dependency") state.publicState.board.techSupply.stacks.blue1.remaining = 3;
+  assert.equal(coordinator.runDecision("p1").source, "scheme", change);
+  assert.equal(calls, 2);
+  assert.equal(diagnostics.at(-2).reason, {
+    reveal: "alien-revealed", dependency: "next-step-affected", "old-plan": "plan-step-evidence-missing",
+  }[change]);
+}
+
+// 省略 seatId 时仍归属解析出的 owner；失败提交不消费计划，reset 清空瞬态计划。
+{
+  let reject = false;
+  let calls = 0;
+  const coordinator = makeCoordinator([makeDescriptor("a"), makeDescriptor("b")], () => (
+    reject ? { ok: false, error: "rejected" } : { ok: true }
+  ));
+  coordinator.registerSeat("p1", () => {
+    calls += 1;
+    return { actionId: "a", plan: makePlan([makeDescriptor("b")]) };
+  });
+  coordinator.runDecision();
+  reject = true;
+  assert.throws(() => coordinator.runDecision("p1"), /EXECUTE_FAILED/);
+  reject = false;
+  assert.equal(coordinator.runDecision("p1").actionId, "b");
+  assert.equal(calls, 1);
+  coordinator.resetPlans();
+  assert.equal(coordinator.runDecision("p1").source, "scheme");
 }
 
 // 失败即抛错（铁律）：

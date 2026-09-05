@@ -317,379 +317,203 @@ function descriptor(family, target = {}, payload = {}, actionId = `${family}:${M
 }
 
 // ---------------------------------------------------------------------------
-// planReuseCheck：simulation 侧复用判定（下一步合法 + 揭示基线 + 依赖环节未变）
+// 逐步计划：每步前置事实、跨目标切换、具名依赖与未知证据拒绝。
 // ---------------------------------------------------------------------------
 
-{
-  const nextActionId = "move:b";
-  const nextDescriptor = descriptor("move", { rocketId: "r1", deltaX: 1, deltaY: 0 }, {}, nextActionId);
-  // 依赖：探测路线计划，终点 land:mars，移动 2 步（fixture 无行星标记 → markerCount null）
-  const routeDependency = {
-    kind: "route",
-    endpointTargetId: "land:mars:planet:",
-    present: true,
-    movementSteps: 2,
-    endpointMarkerCount: null,
-  };
-  const plan = {
-    nextActionId,
-    continuation: ["move:b", "orbit:c"],
-    dependency: routeDependency,
-    revealedCount: 0,
-  };
-
-  const noPlan = planContinuation.planReuseCheck(null, makeObservation(), [nextDescriptor]);
-  assert.equal(noPlan.hit, false);
-  assert.equal(noPlan.reason, "no-plan");
-
-  const noStep = planContinuation.planReuseCheck(
-    { ...plan, nextActionId: "move:zz" },
-    makeObservation(),
-    [nextDescriptor],
-  );
-  assert.equal(noStep.hit, false, "下一步不在当前合法集必须重新决策");
-  assert.equal(noStep.reason, "step-not-legal");
-
-  const noBaseline = planContinuation.planReuseCheck(
-    { ...plan, revealedCount: null },
-    makeObservation(),
-    [nextDescriptor],
-  );
-  assert.equal(noBaseline.hit, false, "无揭示基线必须保守重新决策");
-  assert.equal(noBaseline.reason, "no-reveal-count");
-
-  // 依赖环节未变 → 复用（盘面无变化，或变化不影响计划执行）
-  const unchanged = makeObservation();
-  unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  unchanged.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const hit = planContinuation.planReuseCheck(plan, unchanged, [nextDescriptor]);
-  assert.equal(hit.hit, true, "路线移动步数与目标奖励格未变必须复用");
-  assert.equal(hit.action.actionId, nextActionId, "命中必须返回当前合法集内的 descriptor");
-  assert.equal(hit.nextPlan.nextActionId, "orbit:c", "复用后计划必须前进一步（多步消费）");
-  assert.deepEqual(hit.nextPlan.continuation, ["orbit:c"], "前进后续接下一动作");
-
-  // 路线变长（移动步数增加）→ 重新决策
-  const moreMoves = makeObservation();
-  moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  moreMoves.outcomeProjection.progress.probeGoalRequirements.candidates[0].gap.movementSteps = 5;
-  const affected = planContinuation.planReuseCheck(plan, moreMoves, [nextDescriptor]);
-  assert.equal(affected.hit, false, "目标移动步数增加必须重新决策");
-  assert.equal(affected.reason, "next-step-affected");
-
-  // 目标奖励格被占（终点行星标记数变化，不局限第一格）→ 重新决策
-  const slotTaken = makeObservation({
-    planets: { planets: { mars: { orbitMarkers: [], landingMarkers: [{ playerId: "p2" }], satelliteLandings: [] } } },
+function planObservation() {
+  const observation = makeObservation({
+    planets: { planets: { mars: { orbitMarkers: [], landingMarkers: [], satelliteLandings: [] } } },
+    aliens: { slots: [{ slotId: 1, revealed: false, traces: {
+      blue: { firstPlaced: false, ownerPlayerColor: null },
+    } }] },
   });
-  slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  slotTaken.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const slotMiss = planContinuation.planReuseCheck(plan, slotTaken, [nextDescriptor]);
-  assert.equal(slotMiss.hit, false, "目标奖励格被占（标记数变化）必须重新决策");
-  assert.equal(slotMiss.reason, "next-step-affected");
+  observation.publicState.players = [{
+    playerId: "player-white", dataProgress: { computerDataSlots: [0], blueBonusSlots: [] },
+  }];
+  Object.assign(observation.outcomeProjection.progress.probeGoalRequirements.candidates[0], {
+    sourceId: "rocket:r1", rocketId: "r1",
+  });
+  observation.publicState.board.techSupply = { stacks: {
+    blue1: { tileId: "blue1", remaining: 4, depleted: false },
+    blue2: { tileId: "blue2", remaining: 4, depleted: false },
+  } };
+  observation.outcomeProjection.progress.sectorWinRequirements.candidates = [
+    { sectorId: "sector-a", targetId: "sector:win:sector-a:1", ownCount: 1,
+      maxOpponentCount: 0, openSlotCount: 3, nextSlotScore: 0, ranking: [] },
+    { sectorId: "sector-b", targetId: "sector:win:sector-b:1", ownCount: 0,
+      maxOpponentCount: 1, openSlotCount: 3, nextSlotScore: 0, ranking: [] },
+  ];
+  return observation;
+}
 
-  // 计划推进到第二条路线（顺序执行，计划内推进，不是新信息）→ 复用
-  const otherRoutePlan = {
-    nextActionId: "land:venus:x",
-    continuation: ["land:venus:x"],
-    dependency: routeDependency,
-    revealedCount: 0,
-  };
-  const otherRoute = planContinuation.planReuseCheck(otherRoutePlan, unchanged, [
-    descriptor("land", { planetId: "venus" }, {}, "land:venus:x"),
+function stepEvidence(action, observation, routeTargetId = null, goalDepth = 0, routePlanId = null) {
+  return { ...planContinuation.capturePlanStep({ action, observation }),
+    routeTargetId, goalDepth, routePlanId };
+}
+
+function storedSteps(evidence) {
+  const steps = planContinuation.compilePlanSteps(evidence);
+  return { schemaVersion: planContinuation.PLAN_SCHEMA_VERSION,
+    nextActionId: steps[0].actionId, steps };
+}
+
+function planAction(id, family = "move", target = {}) {
+  return { actionId: id, actorId: "player-white", phase: "main", family, target, payload: {} };
+}
+
+{
+  const before = planObservation();
+  const move = planAction("move:b", "move", { rocketId: "r1" });
+  const research = planAction("research:c", "research_tech");
+  const plan = storedSteps([
+    stepEvidence(move, before, "orbit:mars"),
+    stepEvidence(research, before, "tech:gain:blue1", 1),
   ]);
-  assert.equal(otherRoute.hit, true, "计划推进到第二条路线是计划内顺序执行，不是新信息，必须复用");
-
-  // generic 依赖（对手火箭移动/打牌等不影响计划执行）→ 直接复用
-  const genericPlan = { nextActionId, continuation: [], dependency: { kind: "generic" }, revealedCount: 0 };
-  const genericHit = planContinuation.planReuseCheck(genericPlan, makeObservation({ rotation: 2 }), [nextDescriptor]);
-  assert.equal(genericHit.hit, true, "generic 依赖（未识别为影响计划执行）必须复用");
-
-  // 硬性特例：翻开了外星人 → 无论依赖环节如何都必须重新决策
-  const revealed = makeObservation();
-  revealed.publicState.board.aliens = { slots: [{ revealed: true }] };
-  const revealedMiss = planContinuation.planReuseCheck(genericPlan, revealed, [nextDescriptor]);
-  assert.equal(revealedMiss.hit, false, "翻开了外星人必须重新决策");
-  assert.equal(revealedMiss.reason, "alien-revealed");
-  assert.equal(revealedMiss.currentRevealedCount, 1, "必须报告实际揭示槽位数");
-
-  // 揭示数未增加（还是 1 个）→ 不触发硬性特例
-  const stillRevealed = planContinuation.planReuseCheck(
-    { ...genericPlan, revealedCount: 1 },
-    revealed,
-    [nextDescriptor],
-  );
-  assert.equal(stillRevealed.hit, true, "揭示数未增加不触发特例");
-
-  // 控制动作特例：下一步是 end_turn/pass → 无条件重新决策（不盲从计划）。
-  // 主行动选择是每次决策最核心的评估，end_turn/pass 被盲目复用会跳过当前盘面
-  // 更有价值的主行动（48f0af3e 移除该特例后免电盘面 219 决策即终局、均分暴跌，
-  // 恢复 1d063418 口径）。
-  const endTurnPlan = {
-    nextActionId: "end_turn:turn1",
-    continuation: [],
-    dependency: { kind: "generic" },
-    revealedCount: 0,
-  };
-  const endTurnDescriptor = descriptor("end_turn", {}, {}, "end_turn:turn1");
-  const endTurnMiss = planContinuation.planReuseCheck(
-    endTurnPlan,
-    makeObservation(),
-    [endTurnDescriptor],
-  );
-  assert.equal(endTurnMiss.hit, false, "下一步是 end_turn 必须重新决策");
-  assert.equal(endTurnMiss.reason, "control-step-redecide", "必须报告 control-step-redecide");
-  assert.equal(endTurnMiss.family, "end_turn", "必须报告控制动作 family");
-
-  const passPlan = {
-    nextActionId: "pass:turn1",
-    continuation: [],
-    dependency: { kind: "generic" },
-    revealedCount: 0,
-  };
-  const passDescriptor = descriptor("pass", {}, {}, "pass:turn1");
-  const passMiss = planContinuation.planReuseCheck(passPlan, makeObservation(), [passDescriptor]);
-  assert.equal(passMiss.hit, false, "下一步是 pass 必须重新决策");
-  assert.equal(passMiss.reason, "control-step-redecide");
-}
-
-// ---------------------------------------------------------------------------
-// 新信息判定（对齐后）：科技被拿走 / 扇区赢不了 / 公共牌被买走 → 依赖变化 → 重决策
-// ---------------------------------------------------------------------------
-
-{
-  // 科技依赖：计划要拿的科技 tile 被拿走（供应 remaining 变化）→ 重新决策
-  const techPlan = {
-    nextActionId: "research_tech:blue1",
-    continuation: [],
-    dependency: { kind: "tech", tileId: "blue1", present: true, bonusId: "bonus_1c", remaining: 4 },
-    revealedCount: 0,
-  };
-  const techDescriptor = descriptor("research_tech", { tileId: "blue1" }, {}, "research_tech:blue1");
-  const techUnchanged = makeObservation();
-  techUnchanged.publicState.board.techSupply = {
-    stacks: { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 4, depleted: false } },
-  };
-  assert.equal(
-    planContinuation.planReuseCheck(techPlan, techUnchanged, [techDescriptor]).hit,
-    true,
-    "科技供应未变必须复用",
-  );
-  const techTaken = makeObservation();
-  techTaken.publicState.board.techSupply = {
-    stacks: { blue1: { tileId: "blue1", bonusId: "bonus_1c", remaining: 3, depleted: false } },
-  };
-  const techMiss = planContinuation.planReuseCheck(techPlan, techTaken, [techDescriptor]);
-  assert.equal(techMiss.hit, false, "计划要拿的科技被拿走（remaining 变化）必须重新决策");
-  assert.equal(techMiss.reason, "next-step-affected");
-
-  // 扇区依赖：目标扇区标记状态变化（赢不了了）→ 重新决策
-  const sectorPlan = {
-    nextActionId: "scan:s",
-    continuation: [],
-    dependency: { kind: "sector", candidates: [] },
-    revealedCount: 0,
-  };
-  const sectorDescriptor = descriptor("scan", {}, {}, "scan:s");
-  assert.equal(
-    planContinuation.planReuseCheck(sectorPlan, makeObservation(), [sectorDescriptor]).hit,
-    true,
-    "扇区状态未变必须复用",
-  );
-  const sectorChanged = makeObservation();
-  sectorChanged.outcomeProjection.progress.sectorWinRequirements = {
-    candidates: [{ sectorId: "sector-2-b", ownCount: 1, maxOpponentCount: 0, openSlotCount: 3 }],
-  };
-  const sectorMiss = planContinuation.planReuseCheck(sectorPlan, sectorChanged, [sectorDescriptor]);
-  assert.equal(sectorMiss.hit, false, "目标扇区标记变化（赢不了了）必须重新决策");
-
-  // 公共牌依赖：计划要用的公共牌被买走 → 重新决策
-  const cardPlan = {
-    nextActionId: "play_card:pub",
-    continuation: [],
-    dependency: { kind: "public-card", cardInstanceId: "card-17-0", present: true },
-    revealedCount: 0,
-  };
-  const cardDescriptor = descriptor("play_card", { cardInstanceId: "card-17-0" }, {}, "play_card:pub");
-  const cardUnchanged = makeObservation();
-  cardUnchanged.publicState.board.publicCards = [{ id: "card-17-0", cardId: "dlc_20.png" }];
-  assert.equal(
-    planContinuation.planReuseCheck(cardPlan, cardUnchanged, [cardDescriptor]).hit,
-    true,
-    "公共牌未变必须复用",
-  );
-  const cardTaken = makeObservation();
-  cardTaken.publicState.board.publicCards = [];
-  const cardMiss = planContinuation.planReuseCheck(cardPlan, cardTaken, [cardDescriptor]);
-  assert.equal(cardMiss.hit, false, "计划要用的公共牌被买走必须重新决策");
-}
-
-// ---------------------------------------------------------------------------
-// buildPlanFromSnapshot / advancePlan：方案输出计划结构
-// ---------------------------------------------------------------------------
-
-{
-  const snapshot = {
-    plan: {
-      hasContinuation: true,
-      nextActionId: "move:b",
-      continuation: ["move:b", "orbit:c"],
-    },
-    planDependency: { kind: "generic" },
-    planAssumedRevealedCount: 0,
-  };
-  const built = planContinuation.buildPlanFromSnapshot(snapshot);
-  assert.equal(built.nextActionId, "move:b");
-  assert.deepEqual(built.continuation, ["move:b", "orbit:c"]);
-  assert.equal(built.dependency.kind, "generic");
-  assert.equal(built.revealedCount, 0);
-
-  const advanced = planContinuation.advancePlan(built);
-  assert.equal(advanced.nextActionId, "orbit:c", "前进后 nextActionId 续上链下一个");
-  assert.deepEqual(advanced.continuation, ["orbit:c"]);
-
-  const exhausted = planContinuation.advancePlan(advanced);
-  assert.equal(exhausted.nextActionId, null, "链条耗尽后 nextActionId 为 null（store 清空）");
-
-  assert.equal(planContinuation.buildPlanFromSnapshot({ plan: { hasContinuation: false } }), null, "无延续 → 无计划");
-}
-
-// ---------------------------------------------------------------------------
-// planDependencyFromPlan / currentDependencyFromStore：形状一致才可比较
-// ---------------------------------------------------------------------------
-
-{
-  const assumedObservation = makeObservation();
-  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const leaf = {
-    actionChain: ["place_data:x", "land:mars"],
-    rootActionLegalSuccessors: [descriptor("land", { planetId: "mars" }, {}, "land:mars")],
-    rootActionObservation: assumedObservation,
-    observation: {
-      outcomeProjection: {
-        progress: {
-          probeRoute: { candidate: { endpointTargetId: "land:mars:planet:", resourceGap: { movementSteps: 2 } } },
-        },
-      },
-    },
-  };
-  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
-  const assumed = planContinuation.planDependencyFromPlan(plan, leaf);
-  assert.equal(assumed.kind, "route");
-  assert.equal(assumed.movementSteps, 2);
-
-  const store = { dependency: assumed };
-  const current = makeObservation();
-  current.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  current.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const recomputed = planContinuation.currentDependencyFromStore(store, current);
-  assert.equal(
-    planContinuation.stableHash(recomputed),
-    planContinuation.stableHash(assumed),
-    "同一状态的依赖重算必须与计划假设一致（形状对齐才能比较）",
-  );
-}
-
-// ---------------------------------------------------------------------------
-// planDependencyFromPlan：secondary-agent 叶无 probeRoute.candidate 时从
-// rootRouteTargetId 补出路线依赖（P1：启发式主路径此前依赖恒 generic）
-// ---------------------------------------------------------------------------
-
-{
-  // secondary-agent 搜索产物：无 candidate、带探测终点 rootRouteTargetId 的叶
-  const assumedObservation = makeObservation();
-  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const leaf = {
-    actionChain: ["launch:x", "move:b", "land:mars"],
-    rootRouteTargetId: "land:mars:planet:",
-    rootRoutePlanId: "probe:c1",
-    rootActionLegalSuccessors: [descriptor("move", { rocketId: "r1" }, {}, "move:b")],
-    rootActionSettledObservation: assumedObservation,
-    observation: {
-      outcomeProjection: {
-        progress: {
-          probeRoute: { candidate: null }, // secondary-agent 叶的固定形状
-        },
-      },
-    },
-  };
-  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
-  const dependency = planContinuation.planDependencyFromPlan(plan, leaf);
-  assert.equal(dependency.kind, "route", "secondary-agent 叶必须从 rootRouteTargetId 补出路线依赖");
-  assert.equal(dependency.endpointTargetId, "land:mars:planet:", "依赖终点 = 叶绑定的路线终点");
-  assert.equal(dependency.movementSteps, 2, "移动步数从假设观测的 requirement.gap 读取");
-  assert.equal(dependency.present, true, "假设观测中终点仍存在");
-
-  // 复用判定：同一状态 → 命中；移动变多 → tier-3 失效（此前永不触发）
-  const planForReuse = {
-    nextActionId: "move:b",
-    continuation: ["move:b", "land:mars"],
-    dependency,
-    revealedCount: 0,
-  };
-  const moveDescriptor = descriptor("move", { rocketId: "r1" }, {}, "move:b");
-  const same = makeObservation();
-  same.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  same.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
-  const hit = planContinuation.planReuseCheck(planForReuse, same, [moveDescriptor]);
-  assert.equal(hit.hit, true, "依赖环节未变必须复用");
-  assert.equal(hit.action.actionId, "move:b");
-
-  const moved = makeObservation();
-  moved.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars:planet:";
-  moved.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "land:mars:planet:";
+  const frozen = structuredClone(before);
+  const hit = planContinuation.planReuseCheck(plan, before, [move]);
+  assert.equal(hit.hit, true);
+  assert.equal(hit.action, move, "返回当前合法描述符，而非缓存的旧版本");
+  assert.equal(hit.nextPlan.nextActionId, research.actionId);
+  assert.deepEqual(hit.nextPlan.steps[0].dependencies.map((item) => item.scope.kind), ["tech"]);
+  assert.deepEqual(before, frozen, "采集、编译和复用不修改输入");
+  const otherRocket = structuredClone(before);
+  otherRocket.outcomeProjection.progress.probeGoalRequirements.candidates.push({
+    ...structuredClone(otherRocket.outcomeProjection.progress.probeGoalRequirements.candidates[0]),
+    requirementId: "other-route", sourceId: "rocket:r2", rocketId: "r2", gap: { movementSteps: 9 },
+  });
+  assert.equal(planContinuation.planReuseCheck(plan, otherRocket, [move]).hit, true,
+    "同终点的无关探测器路线变化不得使具名路线失效");
+  const moved = structuredClone(before);
   moved.outcomeProjection.progress.probeGoalRequirements.candidates[0].gap.movementSteps = 5;
-  const miss = planContinuation.planReuseCheck(planForReuse, moved, [moveDescriptor]);
-  assert.equal(miss.hit, false, "目标移动步数增加必须重新决策（tier-3 生效）");
-  assert.equal(miss.reason, "next-step-affected", "必须报告 next-step-affected");
+  assert.equal(planContinuation.planReuseCheck(plan, moved, [move]).reason, "next-step-affected");
+  assert.equal(planContinuation.planReuseCheck(hit.nextPlan, moved, [research]).hit, true,
+    "进入研究目标后不再继承已完成路线的依赖");
+  moved.publicState.board.techSupply.stacks.blue1.remaining = 3;
+  assert.equal(planContinuation.planReuseCheck(hit.nextPlan, moved, [research]).reason, "next-step-affected");
+
+  const occupied = structuredClone(before);
+  occupied.publicState.board.planets.planets.mars.orbitMarkers.push({ playerId: "other" });
+  assert.equal(planContinuation.planReuseCheck(plan, occupied, [move]).reason, "next-step-affected");
+  assert.equal(planContinuation.planReuseCheck(plan, before, []).reason, "step-not-legal");
+  assert.equal(planContinuation.planReuseCheck(plan, before, [{ ...move, actorId: "other" }]).reason,
+    "plan-step-identity-changed");
+  assert.equal(planContinuation.planReuseCheck(plan, before, [{ ...move, target: { rocketId: "other" } }]).reason,
+    "plan-step-identity-changed");
+  assert.equal(planContinuation.planReuseCheck(null, before, [move]).reason, "no-plan");
+  assert.equal(planContinuation.planReuseCheck({ nextActionId: move.actionId }, before, [move]).reason,
+    "plan-step-evidence-missing");
+  const missing = structuredClone(plan);
+  missing.steps[0].revealedCount = null;
+  assert.equal(planContinuation.planReuseCheck(missing, before, [move]).reason, "no-reveal-count");
+  delete before.publicState.board.planets.planets.mars;
+  const absent = storedSteps([stepEvidence(move, before, "orbit:mars")]);
+  assert.equal(absent.steps[0].valid, false);
+  assert.equal(planContinuation.planReuseCheck(absent, before, [move]).reason, "plan-dependency-fact-missing",
+    "两份缺失行星事实不能被认为未变化");
 }
 
 {
-  // 非探测终点目标（data/sector/move）不得误判为路线依赖
-  const leaf = {
-    actionChain: ["place_data:x", "analyze:y"],
-    rootRouteTargetId: "data:analyze",
-    rootRoutePlanId: "data:analyze",
-    rootActionSettledObservation: makeObservation(),
-    observation: {
-      outcomeProjection: { progress: { probeRoute: { candidate: null } } },
-    },
-  };
-  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
-  assert.equal(
-    planContinuation.planDependencyFromPlan(plan, leaf).kind,
-    "generic",
-    "data:analyze 目标不是探测路线终点，必须保持 generic",
-  );
+  const before = planObservation();
+  const scan = planAction("scan", "scan");
+  const choose = planAction("scan-sector", "choose_target", { nebulaId: "sector-a" });
+  const plan = storedSteps([
+    stepEvidence(scan, before, "sector:win:sector-a:1"),
+    stepEvidence(choose, before, "sector:win:sector-a:1"),
+  ]);
+  const unrelated = structuredClone(before);
+  unrelated.outcomeProjection.progress.sectorWinRequirements.candidates[1].ownCount = 5;
+  unrelated.publicState.board.techSupply.stacks.blue2.remaining = 1;
+  assert.equal(planContinuation.planReuseCheck(plan, unrelated, [scan]).hit, true,
+    "无关扇区和科技不触发重搜");
+  unrelated.outcomeProjection.progress.sectorWinRequirements.candidates[0].ownCount = 5;
+  assert.equal(planContinuation.planReuseCheck(plan, unrelated, [scan]).reason, "next-step-affected");
 }
 
 {
-  // candidate 存在时优先用 candidate（非 secondary 路径行为不变）
-  const assumedObservation = makeObservation();
-  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "orbit:venus:planet:";
-  assumedObservation.outcomeProjection.progress.probeGoalRequirements.candidates[0].requirementId = "orbit:venus:planet:";
-  const leaf = {
-    actionChain: ["launch:x", "orbit:venus"],
-    rootRouteTargetId: "land:mars:planet:", // 与 candidate 不同：必须优先 candidate
-    rootActionSettledObservation: assumedObservation,
-    observation: {
-      outcomeProjection: {
-        progress: {
-          probeRoute: {
-            candidate: { endpointTargetId: "orbit:venus:planet:", resourceGap: { movementSteps: 1 } },
-          },
-        },
-      },
-    },
-  };
-  const plan = planContinuation.planContinuationFromWinningLeaf(leaf);
-  const dependency = planContinuation.planDependencyFromPlan(plan, leaf);
-  assert.equal(
-    dependency.endpointTargetId,
-    "orbit:venus:planet:",
-    "candidate 存在时必须优先 candidate 终点",
-  );
+  const before = planObservation();
+  const root = planAction("research", "research_tech");
+  const choose = planAction("tile", "choose_target", { tileId: "blue1", publicSlotIndex: 0 });
+  before.publicState.board.publicCards = [{ id: "card-a", cardId: "c1" }];
+  const plan = storedSteps([
+    stepEvidence(root, before, "decision:research"),
+    stepEvidence(choose, before, "decision:research"),
+  ]);
+  assert.deepEqual(plan.steps[0].dependencies.map((item) => item.scope.kind).sort(), ["card-slot", "tech"],
+    "当前主行动未具名时，从同目标段后继选择确定复合依赖");
+  const changed = structuredClone(before);
+  changed.publicState.board.publicCards[0] = { id: "card-b", cardId: "c2" };
+  assert.equal(planContinuation.planReuseCheck(plan, changed, [root]).reason, "next-step-affected");
+}
+
+{
+  const before = planObservation();
+  const after = structuredClone(before);
+  after.publicState.players[0].dataProgress.computerDataSlots.push(1);
+  const first = planAction("place1", "place_data");
+  const second = planAction("place2", "place_data");
+  const plan = storedSteps([stepEvidence(first, before), stepEvidence(second, after)]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [first]).hit, true);
+  const advanced = planContinuation.advancePlan(plan);
+  assert.equal(planContinuation.planReuseCheck(advanced, after, [second]).hit, true,
+    "自身放置数据按下一步预测布局比较");
+  assert.equal(planContinuation.planReuseCheck(advanced, before, [second]).reason, "next-step-affected");
+  assert.equal(planContinuation.advancePlan(advanced).nextActionId, null);
+  const built = planContinuation.buildPlanFromSnapshot({ plan: { executionSteps: plan.steps } });
+  assert.equal(built.nextActionId, second.actionId, "根动作已实际提交，缓存从第二个真实输入开始");
+  assert.equal(planContinuation.buildPlanFromSnapshot({ plan: { executionSteps: [plan.steps[0]] } }), null);
+}
+
+for (const family of ["end_turn", "pass"]) {
+  const before = planObservation();
+  const action = planAction(family, family);
+  const plan = storedSteps([stepEvidence(action, before)]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [action]).reason, "control-step-redecide");
+  assert.equal(planContinuation.planReuseCheck(plan, before, [action], { sameTurn: true }).hit, true);
+  const revealed = structuredClone(before);
+  revealed.publicState.board.aliens.slots[0].revealed = true;
+  assert.equal(planContinuation.planReuseCheck(plan, revealed, [action], { sameTurn: true }).reason,
+    "alien-revealed", "同回合控制动作也不能绕过新揭示检查");
+}
+
+// 环绕已完成后的选牌只检查奖励依赖；同一个选择在目标未完成时不能跳过路线证据。
+{
+  const before = planObservation();
+  before.outcomeProjection.progress.probeGoalRequirements.candidates = [];
+  before.publicState.board.publicCards = [{ id: "reward-a", cardId: "c1" }];
+  const action = planAction("reward", "choose_card", { publicSlotIndex: 0, cardInstanceId: "reward-a" });
+  const evidence = stepEvidence(action, before, "orbit:mars", 0, "probe:c1");
+  const pending = storedSteps([{ ...evidence, goalCompletionPending: true }]);
+  assert.equal(planContinuation.planReuseCheck(pending, before, [action]).hit, true);
+  const unfinished = storedSteps([{ ...evidence, goalCompletionPending: false }]);
+  assert.equal(planContinuation.planReuseCheck(unfinished, before, [action]).reason, "plan-route-source-missing");
+  before.publicState.board.publicCards[0] = { id: "reward-b", cardId: "c2" };
+  assert.equal(planContinuation.planReuseCheck(pending, before, [action]).reason, "next-step-affected",
+    "完成路线不能跳过具名奖励选牌检查");
+}
+
+// 正式 sanitize 输入是槽编号对象；不能在公共 fixture 手工补 id 或顶层 firstPlaced。
+{
+  const { sanitizeAlienPublicState } = require("../../app/simulation-contract");
+  const canonical = { aliens: {
+    1: { assignedAlienId: "hidden-a", revealed: false, traces: { blue: { firstPlaced: false } } },
+    2: { assignedAlienId: "hidden-b", revealed: false, traces: { blue: { firstPlaced: false } } },
+  } };
+  const before = planObservation();
+  before.publicState.board.aliens = sanitizeAlienPublicState(canonical);
+  assert.deepEqual(before.publicState.board.aliens.slots.map((slot) => slot.slotId), [1, 2]);
+  assert.equal(JSON.stringify(before.publicState.board.aliens).includes("hidden-"), false);
+  const action = planAction("trace", "choose_target", { alienSlotId: 2, traceType: "blue" });
+  const plan = storedSteps([stepEvidence(action, before)]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [action]).hit, true);
+  canonical.aliens[2].traces.blue.firstPlaced = true;
+  const changed = structuredClone(before);
+  changed.publicState.board.aliens = sanitizeAlienPublicState(canonical);
+  assert.equal(planContinuation.planReuseCheck(plan, changed, [action]).reason, "next-step-affected");
+  canonical.aliens[2].traces = {};
+  changed.publicState.board.aliens = sanitizeAlienPublicState(canonical);
+  const absent = storedSteps([stepEvidence(action, changed)]);
+  assert.equal(absent.steps[0].valid, false);
+  assert.equal(planContinuation.planReuseCheck(absent, changed, [action]).reason, "plan-dependency-fact-missing");
 }
 
 // ---------------------------------------------------------------------------

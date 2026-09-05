@@ -127,7 +127,10 @@ function sanitizeSelfPlayer(player) {
 
 function sanitizeAlienPublicState(state) {
   if (!state || typeof state !== "object") return {};
-  const slots = Object.values(state.aliens || state.slots || state.alienSlots || {}).map((slot) => ({
+  const source = state.aliens || state.slots || state.alienSlots || {};
+  const slots = Object.entries(source).map(([slotId, slot]) => ({
+    // 正式状态对象的键是槽编号；公共 slots 数组必须携带编号，不能把下标 0 当槽 1。
+    slotId: slot?.slotId ?? (Array.isArray(source) ? null : Number(slotId)),
     revealed: Boolean(slot?.revealed),
     alienId: slot?.revealed ? (slot.alienId || slot.assignedAlienId || null) : null,
     traces: clone(slot?.traces || {}),

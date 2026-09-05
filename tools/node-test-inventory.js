@@ -53,8 +53,8 @@ module.exports = Object.freeze({
     entry("randomizer/game/effects/search-root-attribution.test.js", "architecture/effect-session", "共享状态收益归属每个根；目标无后继或完成后继续搜索触顶仍保留实际结果", "后到根或已完成目标收益被后续截断抹掉，或未完成目标虚增收益"),
     entry("randomizer/game/effects/search-payment-choices.test.js", "architecture/effect-session", "不同费用结果分别执行；支付未完成不能成叶，根状态不变", "固定选首项丢路线，或未结算费用的状态冒充完成目标"),
     entry("randomizer/game/ai/conditional-resolution.test.js", "policy/heuristic-evaluator", "同收益条件决策选择较少实际提交，正式收益与终局排序优先", "折叠隐藏执行长度使点选与取消同分循环，或长度奖励压过正式分"),
-    entry("randomizer/game/ai/machine-player-coordinator.test.js", "policy/machine-player-coordinator", "机器人玩家协调器编排：席位决策函数注册表 + 读边界 + 计划复用多步消费 + 执行，失败直接抛错", "未注册席位/非法 actionId/执行失败被静默降级或复用路径污染决策"),
-    entry("randomizer/game/ai/plan-continuation.test.js", "policy/plan-continuation", "计划延续诊断只读标准观测/outcome：目录指纹剥离资源缺口、计划下一步与语义键对齐、配对预测器可复算", "指纹含资源缺口误判本席行动、语义键随枚举序号漂移或诊断写入规则状态"),
+    entry("randomizer/game/ai/machine-player-coordinator.test.js", "policy/machine-player-coordinator", "共享协调器逐步复用：同回合/跨回合检查揭示与依赖，解析后的 seat 持有计划，成功提交才消费", "同回合只检查合法性漏掉新信息、旧证据继续执行、失败提交消费计划或缓存跨 owner"),
+    entry("randomizer/game/ai/plan-continuation.test.js", "policy/plan-continuation", "逐步动作证据与具名复合依赖：目标切换同步推进基线、预期自身推进可复用、正式外星槽输入与缺失事实失效；只读诊断可复算", "整叶根依赖残留到后续目标、缺失事实被当成未变化、无关扇区触发失效、外星槽编号或痕迹层级读错"),
     entry("randomizer/training/heuristic-policy-turn-report.test.js", "policy/heuristic-policy", "固定盘面报告保留根行动、目标路线与剪枝漏斗", "报告只展示赢家和前三备选而无法解释节点内部搜索"),
 
     entry("randomizer/game/actions/standard-action.test.js", "rules/actions", "Standard Action registry 的 identity、phase、validate/execute 协议", "未知、stale、越权 descriptor 到达 handler"),
