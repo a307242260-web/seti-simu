@@ -94,3 +94,44 @@ settleChoice及连续place_data后各自按实际产生时机生效，不能等�
 2. 性能与缺证据语义：完整投影采集的开销须计入单步门槛；确定元数据callback契约、
    失败返回与旧计划结构删除证据。不得为了省时跳过折叠步骤、补generic、每步重搜，
    也不得扩充搜索预算掩盖开销。设计冻结后统一修改采集、传递、提取、消费及文档。
+
+## 复合依赖映射与真实输入缺陷（2026-09-05）
+
+已核对production-kernel正式目标生产者：probe的targetId/requirementId，
+`sector:win:<sectorId>:<nextSettlementNumber>`，`tech:gain:<tileId>`，
+`data:analyze`，`income:gain:<六轨基线>`。收入的probe计划另带probeRequirementId，
+不能把所有income目标都当作没有外部依赖的数据动作。
+
+| 目标或具体选择 | 必须引用的事实 | 不得使用的替代 |
+|---|---|---|
+| probe或income的probe计划 | 当前routePlan对应的正式候选、终点标记与路线移动步数 | 整叶根目标、任意同终点候选或最终叶观察 |
+| tech:gain及研究条件选择 | 具名tile供应remaining/bonus/depleted、指定blueSlot | 只看research_tech主行动target（正式主行动本身不一定指定tile） |
+| sector:win及具名扫描选择 | 指定sector的结算编号、标记/排名、剩余槽位 | 全部无关扇区一起比较，或只比动作是否还合法 |
+| data:analyze、income数据计划 | 本席计算机/蓝槽布局及对应计划前置；正常推进按逐步预测基线比较 | 第一条计划开始时的布局、把自己填数据当外部变化 |
+| income卡牌/公司、私有牌准备 | 当前具体牌/能力的正式可用性；嵌套目标另加其依赖 | 给全部私有动作无条件套generic，或重新实现收费规则 |
+| 公共选牌/扫描用牌 | 计划指定的公共槽位与卡实例；目标可能在后续conditional才明确 | 只检查play_card是否来自公共牌（不能覆盖真实choose_card/choose_target） |
+| 外星痕迹选择 | 正式alienSlotId + traceType；首痕迹/额外标记及指定位置合法性 | 按物种名字定位槽位、读取槽顶层firstPlaced |
+
+同一步可能同时服务probe目标并处理科技/选牌/痕迹条件选择，依赖集合必须取并集，
+不能用旧单kind优先级把其中一项覆盖。若目标在后继条件选择中才具体化，采集层应先
+保存该边界必要的小型公共事实，计划提取再按同一目标段内实际后继选择确定依赖；
+不能在当前尚未知目标时猜默认项，也不能因此整体比较所有无关盘面。
+
+### 已复现的外星观察契约缺陷
+
+`simulation-contract.sanitizeAlienPublicState`用Object.values丢掉正式槽键1/2，输出
+只有revealed/alienId/traces；旧findAlienSlot按id/slotId/alienId匹配正式数字target，
+无法定位。即使补编号，firstPlaced/ownerPlayerColor实际在traces[traceType]内，
+旧planDependencyFromPlan/currentDependencyFromStore仍读错层级。
+
+`r3-alien-dependency-input-20260905.json`使用已有真实canonical存档，经正式sanitize
+生成观察，2槽×3痕迹均被旧依赖读取成present=false、firstPlaced=null。没有手工给
+观察补字段，也没有重跑搜索；这是输入/读取缺陷的直接证据，不是完整游戏行为证明。
+
+完整方案必须同步修正公共观察：保留正式公开槽编号，不暴露assignedAlienId；依赖按
+编号和traceType读真实痕迹对象。隐藏信息遮蔽、outcome-model、Browser/Simulation共用
+观察与RL字段说明一起核对。该问题属于第三轮依赖输入的必要修正，不称为本轮新引入。
+旧手工fixture里补id或把firstPlaced放顶层的断言不能作为正式形状验收证据。
+
+本项新输入契约已回填设计，未开始生产patch。下一步集中落实上述复合依赖的采集/提取
+接口与失败契约，尤其是“后继选择确定目标”的目标段切分；不在接口未闭合时零散改旧检查。

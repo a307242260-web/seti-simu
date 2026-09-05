@@ -1,0 +1,206 @@
+{
+  "createdAt": "2026-09-05T14:58:58.419Z",
+  "gitCommit": "9d1e82376af8462fe68023250ce3ca74bf67035f",
+  "source": "reports/iteration/resource-r2c-brown-pass-canonical-20260905.json",
+  "sourceSha256": "bc96f7b08c5242386189ea271804b2343defe538facdaf733841e810d3271a2f",
+  "scope": "已有真实canonical经正式sanitize生成观察，按真实target字段读取纯依赖；不是动作合法性或完整游戏验证",
+  "publicAliens": {
+    "slots": [
+      {
+        "revealed": true,
+        "alienId": "阿米巴",
+        "traces": {
+          "blue": {
+            "extraCount": 1,
+            "extraMarkers": [
+              {
+                "ownerPlayerColor": "white"
+              }
+            ],
+            "firstPlaced": true,
+            "neutral": false,
+            "ownerPlayerColor": "green"
+          },
+          "pink": {
+            "extraCount": 0,
+            "extraMarkers": [],
+            "firstPlaced": true,
+            "neutral": false,
+            "ownerPlayerColor": "white"
+          },
+          "yellow": {
+            "extraCount": 1,
+            "extraMarkers": [
+              {
+                "ownerPlayerColor": "green"
+              }
+            ],
+            "firstPlaced": true,
+            "neutral": false,
+            "ownerPlayerColor": "green"
+          }
+        }
+      },
+      {
+        "revealed": false,
+        "alienId": null,
+        "traces": {
+          "blue": {
+            "extraCount": 1,
+            "extraMarkers": [
+              {
+                "ownerPlayerColor": "green"
+              }
+            ],
+            "firstPlaced": true,
+            "neutral": false,
+            "ownerPlayerColor": "brown"
+          },
+          "pink": {
+            "extraCount": 0,
+            "extraMarkers": [],
+            "firstPlaced": false,
+            "ownerPlayerColor": null
+          },
+          "yellow": {
+            "extraCount": 1,
+            "extraMarkers": [
+              {
+                "ownerPlayerColor": "brown"
+              }
+            ],
+            "firstPlaced": true,
+            "neutral": false,
+            "ownerPlayerColor": "blue"
+          }
+        }
+      }
+    ]
+  },
+  "cases": [
+    {
+      "slotId": 1,
+      "traceType": "pink",
+      "canonicalTrace": {
+        "extraCount": 0,
+        "extraMarkers": [],
+        "firstPlaced": true,
+        "neutral": false,
+        "ownerPlayerColor": "white"
+      },
+      "dependency": {
+        "kind": "alien-slot",
+        "alienSlotId": "1",
+        "present": false,
+        "firstPlaced": null,
+        "ownerPlayerColor": null
+      }
+    },
+    {
+      "slotId": 1,
+      "traceType": "yellow",
+      "canonicalTrace": {
+        "extraCount": 1,
+        "extraMarkers": [
+          {
+            "ownerPlayerColor": "green"
+          }
+        ],
+        "firstPlaced": true,
+        "neutral": false,
+        "ownerPlayerColor": "green"
+      },
+      "dependency": {
+        "kind": "alien-slot",
+        "alienSlotId": "1",
+        "present": false,
+        "firstPlaced": null,
+        "ownerPlayerColor": null
+      }
+    },
+    {
+      "slotId": 1,
+      "traceType": "blue",
+      "canonicalTrace": {
+        "extraCount": 1,
+        "extraMarkers": [
+          {
+            "ownerPlayerColor": "white"
+          }
+        ],
+        "firstPlaced": true,
+        "neutral": false,
+        "ownerPlayerColor": "green"
+      },
+      "dependency": {
+        "kind": "alien-slot",
+        "alienSlotId": "1",
+        "present": false,
+        "firstPlaced": null,
+        "ownerPlayerColor": null
+      }
+    },
+    {
+      "slotId": 2,
+      "traceType": "pink",
+      "canonicalTrace": {
+        "extraCount": 0,
+        "extraMarkers": [],
+        "firstPlaced": false,
+        "ownerPlayerColor": null
+      },
+      "dependency": {
+        "kind": "alien-slot",
+        "alienSlotId": "2",
+        "present": false,
+        "firstPlaced": null,
+        "ownerPlayerColor": null
+      }
+    },
+    {
+      "slotId": 2,
+      "traceType": "yellow",
+      "canonicalTrace": {
+        "extraCount": 1,
+        "extraMarkers": [
+          {
+            "ownerPlayerColor": "brown"
+          }
+        ],
+        "firstPlaced": true,
+        "neutral": false,
+        "ownerPlayerColor": "blue"
+      },
+      "dependency": {
+        "kind": "alien-slot",
+        "alienSlotId": "2",
+        "present": false,
+        "firstPlaced": null,
+        "ownerPlayerColor": null
+      }
+    },
+    {
+      "slotId": 2,
+      "traceType": "blue",
+      "canonicalTrace": {
+        "extraCount": 1,
+        "extraMarkers": [
+          {
+            "ownerPlayerColor": "green"
+          }
+        ],
+        "firstPlaced": true,
+        "neutral": false,
+        "ownerPlayerColor": "brown"
+      },
+      "dependency": {
+        "kind": "alien-slot",
+        "alienSlotId": "2",
+        "present": false,
+        "firstPlaced": null,
+        "ownerPlayerColor": null
+      }
+    }
+  ],
+  "finding": "sanitize丢失槽编号；依赖读取还将traces[traceType]字段错误读取为槽顶层字段"
+}
