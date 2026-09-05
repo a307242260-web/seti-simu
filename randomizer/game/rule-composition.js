@@ -1260,9 +1260,6 @@
       const processedNodeKeys = new Set();
       const processedOriginKeys = new Set();
       let executedNodeCount = 0;
-      // 结算链排空的弃牌会话状态（2026-08-18 节点粒度改动）：同一搜索内按
-      // decisionId 记忆已选卡，选满 required 再 confirm（防 toggle 死锁）。
-      let nodeSettlementSelection = null;
       let expandedSearchNodeCount = 0;
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
@@ -2084,7 +2081,8 @@
             if (drainInspection.phase !== "awaiting_input" || !drainInspection.session?.decision) break;
             const drainChoices = drainInspection.session.decision.choices || [];
             if (!drainChoices.length) break;
-            // 可排空 = **纯结算**（弃牌/支付/交易选牌，任意选择等价或由规则强制）
+            // 可排空 = 正式弃牌代表路线、唯一支付/交易选牌项与计算机唯一选位。
+            // 多个不同费用或牌身份的选择必须回到selector，不能在此固定取首项。
             // + **放置数据选位**（choose_target:computer"第一排放置位"= 规则强制的
             // 从左到右下一空位，唯一合法选项——2026-08-21 用户裁定：place_data 是
             // 快速行动，从 0 填到收入直接连续填 4 个数据，不需要占据 4 个节点，
@@ -2093,10 +2091,14 @@
             // choose_card）**不折叠**——折叠会断链（协调器路径 rootObservation 缺
             // requirements，selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
             const drainable = drainChoices.length > 0 && drainChoices.every((choice) => (
-              choice.family === "choose_payment"
+              (choice.family === "choose_payment" && (
+                drainChoices.length === 1
+                || ["discard-hand-card", "confirm"].includes(choice.target?.kind)
+              ))
               || (
                 choice.family === "choose_card"
                 && choice.target?.kind === "trade-card-selection"
+                && drainChoices.length === 1
               )
               || (
                 // 放置数据第一排放置位：唯一合法选项（规则强制），折叠。
@@ -2114,19 +2116,25 @@
             ));
             let settleChoice = null;
             if (discardCards.length && confirm) {
-              // 弃牌会话：选满 2 张不同卡再 confirm（防 toggle 死锁）
-              if (!nodeSettlementSelection) nodeSettlementSelection = new Map();
-              const decisionId = drainInspection.session.decision.decisionId;
-              let selected = nodeSettlementSelection.get(decisionId) || new Set();
-              if (selected.size >= 2) {
+              // 正式选择状态由当前Effect持有；每次点选会生成新的DecisionEffect，
+              // 不能按decisionId另存已选集合，也不能硬编码弃牌数量。
+              const pending = drainInspection.session.currentEffect?.payload?.decisionContext;
+              if (pending?.kind !== "discard" || !Array.isArray(pending.selected)
+                || !Number.isInteger(pending.count) || pending.count < 1) {
+                return { failed: true, code: "COUNTERFACTUAL_DISCARD_CONTEXT_INVALID",
+                  message: "弃牌结算缺少正式数量或已选牌状态" };
+              }
+              const selected = new Set(pending.selected.map(String));
+              if (selected.size === pending.count) {
                 settleChoice = confirm;
-                nodeSettlementSelection.delete(decisionId);
               } else {
                 settleChoice = discardCards.find((c) => (
                   !selected.has(String(c.target?.cardInstanceId || ""))
-                )) || discardCards[0];
-                selected.add(String(settleChoice.target?.cardInstanceId || ""));
-                nodeSettlementSelection.set(decisionId, selected);
+                ));
+                if (!settleChoice || selected.size > pending.count) {
+                  return { failed: true, code: "COUNTERFACTUAL_DISCARD_SELECTION_INVALID",
+                    message: "正式弃牌状态与可选手牌不一致" };
+                }
               }
             } else {
               settleChoice = drainChoices[0];
@@ -2534,22 +2542,19 @@
           }
           const key = node.key || nodeKey(node);
           if (processedNodeKeys.has(key)) {
-            // 换位去重不是无损的：同一状态可能被多个「不同路由目标」的 origin 到达，
-            // 而搜索从该状态的继续展开是跟着目标的（selectSuccessors 用 routeTargetId）。
-            // 只按 (state, action, depth) 判重会静默丢弃后到 origin 的目标路径。这里
-            // 按 (key, routeTarget, routePlan) 判重，仅丢弃目标已处理过的 origin。
-            const originKey = (o) => `${key}|${o.routeTargetId || ""}|${o.routePlanId || ""}`;
-            const freshOrigins = node.origins.filter((o) => !processedOriginKeys.has(originKey(o)));
+            // 物理状态共享不等于收益归属共享。与frontier合并使用同一完整来源键，
+            // 保留后到的不同根、根路线、目标深度和信息上下文的后继义务。
+            const freshOrigins = node.origins.filter((o) => !processedOriginKeys.has(`${key}|${originKey(o)}`));
             if (!freshOrigins.length) {
               transpositionHitCount += 1;
               continue;
             }
             node.origins = freshOrigins;
-            for (const o of freshOrigins) processedOriginKeys.add(originKey(o));
+            for (const o of freshOrigins) processedOriginKeys.add(`${key}|${originKey(o)}`);
             transpositionHitCount += 1;
           } else {
             processedNodeKeys.add(key);
-            for (const o of node.origins) processedOriginKeys.add(`${key}|${o.routeTargetId || ""}|${o.routePlanId || ""}`);
+            for (const o of node.origins) processedOriginKeys.add(`${key}|${originKey(o)}`);
           }
           executedNodeCount += 1;
           sharedPhysicalExecutionOriginCount += Math.max(0, node.origins.length - 1);
@@ -2779,25 +2784,13 @@
             const nextGoalTracePaths = completedGoal && routeTargetId
               ? (origin.goalTracePaths || []).map((path) => [...path, routeTargetId])
               : (origin.goalTracePaths || []);
-            // scan 主行动的叶边界必须跳过其目标选择（choose_target）：scan 效果链是
-            // scan → choose_target（选扇区/星云）→ 扫描结算（数据/痕迹/扇区奖励）。
-            // 若在 scan 后的第一个 awaitingDecision 成叶，叶在选目标前就断了——scan
-            // 白花 1c+2e 无任何收益（评估 0 分 → AI 从不扫描）。只有 scan 的目标选择
-            // 已结算（choose_target 走完、奖励到手、focal 回到主行动选择）才成叶。
-            const scanTargetChoicePending = origin.rootAction?.family === "scan"
-              && execution.successors[0]?.family === "choose_target";
+            // 独立条件决策根只负责本次选择；主行动根则走通用后继链，不能在扫描
+            // 附带的选牌等条件决策尚未结算时提前成叶。隐藏信息仍由executeNode遮蔽。
             if (
               secondaryAgentSearch
-              && (
-                origin.rootWasConditional
-                || (origin.rootAction?.family === "scan" && !scanTargetChoicePending)
-              )
+              && origin.rootWasConditional
               && execution.awaitingDecision
             ) {
-              // scan 主行动执行完成（数据/痕迹/扇区奖励已发）后 focal 等待下一主行动
-              // 选择——在此边界形成叶。此前 scan 无叶边界，继续展开 focal 后续（分支
-              // 爆炸）到不了 focal pass → 4096 节点耗尽仍 unresolved → AI 评估 scan
-              // unavailable → 从不扫描（用户 405 档 scan 13 次 vs AI 2 次）。
               addLeaf(
                 {
                   ...origin,
@@ -3111,6 +3104,22 @@
                   .filter((route) => Boolean(route.action));
                 if (!selectedRoutes.length) {
                   unreachableRouteOriginCount += 1;
+                  // 当前动作已经完整结算；目标无法继续不应抹掉实际结果。
+                  // 条件决策分支仍不走此路径，未支付/未选完的状态不能冒充已结算叶。
+                  addLeaf(
+                    {
+                      ...origin,
+                      chain: nextChain,
+                      proxyDepth: nextProxyDepth,
+                      quickTradeCount: nextQuickTradeCount,
+                      routeActions: nextRouteActions,
+                      terminalReason: "route-unreachable",
+                    },
+                    execution.leafObservation,
+                    execution.successors,
+                    execution.nextInspection,
+                    nextCheckpoints,
+                  );
                   continue;
                 }
                 if (selectedRoutes.some((route) => (

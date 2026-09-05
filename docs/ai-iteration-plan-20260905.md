@@ -412,3 +412,134 @@ data analyze仅暴露下一步费用，income的部分card/industry计划只有�
 预算分配、低置信度处理等第四轮义务仍保留。生产patch前还需逐项复核scan的条件决策、
 折叠结算、rootWasConditional、隐藏信息、目标完成和最终叶物化的完整控制流，并形成
 对应行为测试/旧路径删除清单。现阶段不实现局部开关、不临时提高预算、不跑新固定盘面。
+
+### 第二轮替换执行矩阵（2026-09-05）
+
+复核纠正：scan专属截断条件是`awaitingDecision`且首个后继不是`choose_target`，
+并非所有扫描结算结束均截断。它会在仍有选牌等条件决策时提前返回；条件决策所属的正式
+session还未结算，不能把它称为下一次主行动选择。隐藏信息边界则使用既有观测遮蔽和
+后继过滤，不是一律停止执行。以下冻结替换职责，不把尚未运行的行为验证记为通过。
+
+| 闭包 | 唯一owner与正式来源 | 状态/边界与删除义务 | 行为证据要求 |
+|---|---|---|---|
+| 蓝槽入账/消费/蓝3精选 | players与science正式primitive | 保留canonical来源字段和save/restore；不改费用、RNG、卡实例id、sequence或Decision归属 | 现有正式奖励与恢复测试继续通过 |
+| Primary与V | expected-score-evaluator | 删除B/C函数及两项评分诊断；V保留既有liquidValue输出但为0；蓝3按普通手牌效果估值；F/P/收入函数不变 | 同库存同牌面仅来源不同，叶差分与V完全相同；终局正式分不变 |
+| 完成态比较 | evaluator派生context，rule-composition比较 | 来源不再是比较维度；全部可见手牌实例/牌面按同一规则记录，不能只保护蓝3牌；槽位/研究候选保留 | 来源变更不阻止比较；牌面、实例、槽位或研究费用不同仍区分 |
+| scan及嵌套条件决策 | rule-composition执行science session | 删除scan专属提前成叶；独立conditional根原有结束语义保留；通用条件决策选择、折叠支付/放置、目标完成、PASS和轮转沿用原路径 | scan根叶覆盖扫描附带选牌及可达分析，不执行对手；真实输入状态不被反事实修改 |
+| 信息与恢复 | executeNode的正式fork/restore、遮蔽函数 | 所有新展开继续传播informationMasked，折叠产生barrier仍捕获；不得使用新翻牌身份选择后继 | 新信息遮蔽与动作过滤测试，真实状态及合法集恢复一致 |
+| 搜索边界 | 既有目标目录、资源剪枝与全局执行预算 | 不提高4096保护、不新增局部资源搜索或根行动奖励；保留frontier和低置信度标记 | 已保存盘面单步不超过10秒；之后才提交版本做完整固定盘面 |
+
+文档同步范围：AI设计的Primary/V公式、完成态schema与扫描边界；RL文档的派生完成态；
+本计划的实施状态。mechanics和save指南的正式来源字段仍有效，不删除。README/AGENTS
+入口、运行命令与目录不变，无需修改。历史失败记录保留当时B/C口径，不能改写成新版本。
+
+### 第二轮替换实现与新回归（未提交、未验收）
+
+工作树已删除B/C评分函数和输出字段，V不再按蓝槽来源计库存或排除蓝3牌面；完成态v4
+统一记录全部可见手牌身份，来源标签不再分区。scan专属条件决策截断已删除。对应AI/RL
+说明及蓝槽unit与inventory同步；尚未作为已通过版本登记。
+
+已运行来源一致性、终局、宣传研究、正式蓝槽奖励测试及V输入审计，均通过。
+全量Node为unit 69通过、2失败，唯一fullFlow通过；不能将这2项都称为原有失败：
+`simulation-counterfactual-outcome.test.js`现在提前在246行“扫描必须有真实叶”失败，
+这是新回归；另一个strategic-goal-evaluator旧目标释放断言仍失败。保留行为断言，不改弱。
+
+`resource-r2b-scan-chain-20260905.json`保存基线72步后的一次搜索，706ms、无对手执行，
+8个扫描根叶均包含正式分析，叶正式分18或20（根13）。最初脚本把协调器的“决策并提交”
+接口误当只读，状态不变断言失败；这不是内核污染证据。原始失败记录保留，单独的
+`resource-r2b-scan-chain-review-20260905.json`只复核已保存结果的后继链、性能和对手执行数，
+不重跑搜索、不声称已证明端口状态隔离。
+
+新回归通过`resource-r2b-opening-scan-20260905.json`复现：seti-104-official-v1按unit相同
+初始选择进行一次决策，4513ms、1529执行节点、4096上限未触顶、frontier已空；scan为
+unresolved、0叶、code=null。不是预算耗尽，不能提高预算或恢复scan特例遮盖。
+因此原“沿用通用后继即可完整兑现”的设计尚不充分：下一步须核对目标不可达、条件后继
+过滤和已结算端点保留之间的契约，再统一修订，不能先运行全盘或宣称第二轮完成。
+
+### 已处理状态的来源归属修订
+
+新增窄接口反例`search-root-attribution.test.js`：根A直接到共同状态，根B经一个额外动作
+后到同一状态，再执行同一得分动作。真实rule-composition/session执行，实际触发transposition；
+改动前根B返回unresolved、无叶、无错误码，稳定复现归属丢失。
+
+根因：frontier合并已经使用完整originKey，但processedOriginKeys另造了仅含物理节点、
+当前目标、当前路线的键，遗漏根行动、根目标/路线、目标深度、PASS、待结算完成标记与信息
+遮蔽状态。因此“物理状态处理过”错误地变成“另一根的后继也处理过”。
+修订矩阵补充：唯一owner仍为rule-composition；所有已处理来源登记/查询统一复用现有
+originKey，与frontier合并相同，不引入第二套来源等价。物理节点键、RNG/id/sequence、
+fork恢复、Decision提交、目标裁剪与4096上限均不改。行为证据要求两根都保留自己的得分叶，
+真实canonical不变；随后复核原开局扫描回归和单步性能。不能将该归属修复外推为现有
+semantic状态键忽略RNG等元数据已正确，后者仍归第四轮。
+
+### 扫描后弃牌结算的唯一状态归属
+
+归属修复后真实开局扫描仍无叶，不能将归属反例当作该盘面的完整根因。
+`resource-r2b-scan-successors-projected-20260905.json`从已有checkpoint只搜索scan根，
+使用与Simulation相同的buildRuleObservation并断言publicState完整，记录正式selector输入输出。
+先前不带projectCounterfactualState的裸内核诊断输入缺少公共观察，不用于策略因果判断；
+其`resource-r2b-scan-successors-20260905.json`保留仅作诊断错误记录。
+
+有效追踪显示：扫描及公共牌扫描结算后，扇区目标选择快速交易补资源；两条分支均停在
+quick_trade→choose_payment，后继仍是弃牌点选及confirm，不能将该状态登记成已结算叶。
+Production openDiscard持有`decisionContext.count/selected`，executeDiscard点选后创建
+新的DecisionEffect；runtime的decisionId就是effectId。搜索却以decisionId另存已选集合并
+硬编码选2张，因此选择更新后不能可靠继承正式已选状态，重复点选直到排空上限，随后
+selector的支付重复保护截断路线。
+
+冻结修订：rule-composition排空只读当前正式effect.payload.decisionContext中的count和
+selected，每次选择未选牌，选满后提交正式confirm；删除nodeSettlementSelection及硬编码2。
+正式owner、可支付判断、弃牌执行、奖励派生、Decision stale/owner校验、RNG与卡id均不变。
+缺少正式弃牌上下文或找不到必需的未选牌时返回明确失败，不能猜数量或静默继续。
+既有32步保护、隐藏信息捕获、其他支付类型、交易选牌和连续填数据边界不改；尚未完成的
+支付不成为叶。证据要求恢复中途已选牌状态后正确续选、不同count按正式数量支付，且原
+开局扫描回归恢复。完成归属修复与此修复组合后仍需重新验证单步性能，不沿用706ms旧数据。
+
+正式弃牌状态修复后的追踪`resource-r2b-scan-successors-formal-discard-20260905.json`显示
+支付已完成，路线能继续第二次扫描；最终在正常行动边界因原扇区目标没有可选后继而结束。
+此时已无pending支付，和修复前条件决策内被截断不同。补充完整结束矩阵：条件决策无
+后继仍不成已结算叶；正常行动边界无选中后继则保留真实状态，terminalReason明确为
+route-unreachable，目标深度不增加、未兑现目标不加分；节点/深度预算截断仍标pruned，
+PASS、终局、隐藏信息规则不变，不用frontier冒充完成路线。新增窄接口反例已证明旧实现
+会把这种已结算根行动丢成unresolved；修订只修改这一通用正常行动边界，不按scan特判。
+
+组合实现后的最新全量日志为`/tmp/seti-r2b-settled-endpoint-tests-20260905.log`：unit
+70通过、2失败，唯一fullFlow通过。246行扫描有叶与其后的隐藏信息断言已通过；失败前移
+问题已消除，但现在353行“choose_payment执行节点数>1”失败。这个计数不能单独证明
+非等价支付是否保留：此前计数包含弃牌toggle循环，修复折叠后会自然减少。另一方面，现有
+排空还会固定选择其他支付类型，不能仅删除该断言就宣称非等价支付正确。下一步必须用
+不同实际费用/结果的支付选择构造行为验证，核对可折叠与不可折叠的完整分类，再决定
+替换旧计数断言及相应实现边界；本候选仍未提交、未跑新全盘。
+
+### 支付折叠分类与行为证据
+
+生产choose_payment来源有限：quick-trade弃牌选择（discard-hand-card/confirm）、probe-turn
+移动支付（move-payment），以及初始选择的支付描述；初始选择不走启发式反事实。另有
+交易精选choose_card（trade-card-selection）和计算机唯一选位。新增窄接口测试以正式
+Session提交两种不同能耗/得分选择，旧排空只返回低耗低分叶，另一合法路线消失。
+
+冻结分类：正式弃牌多选继续读取owner的count/selected完成当前代表路线（既有手牌代表
+近似不外推为规则等价）；计算机唯一选位继续折叠；只有单个合法项的支付/交易选牌可直接
+折叠。移动支付等多项费用选择、交易精选多项身份选择和其他条件决策必须回到既有selector
+分组/排序，再由同一规则内核执行，不在composition固定取首项。不同能耗的移动支付组不能
+合并；selector中资源目标的卡牌代表近似仍显式保留为模型局限，不宣称全部手牌组合完备。
+删除旧choose_payment节点数>1断言，以两种实际资源/得分结果及根状态不变的行为测试替代；
+计数减少既可能是正确折叠也可能是错误丢路，本身不能证明非等价选择覆盖。
+
+### 第二轮替换候选提交前验证
+
+2026-09-05用户明确：快速交易准入、分析目标释放这两项旧失败暂不处理，不作为本轮
+阻断项；不据此批量删除测试。最新回归unit 71通过、2项上述旧失败，唯一fullFlow通过；
+V输入审计通过。新增共享根归属、已结算端点与不同费用/收益支付测试通过。
+
+`resource-r2b-final-profile-20260905.json`记录最终生产改动指纹及两次单步：开局1625ms、
+704节点，扫描2叶；基线72步后473ms、178节点，扫描9叶中8叶包含分析。均无对手执行、
+未触4096上限、低于10秒。它们只证明所测盘面的单步门槛，不代替终局或全状态性能。
+
+Chrome启动与存档摘要检查通过。免电固定盘面显示检查失败（扇区读到空数组），已在HEAD
+5a792981的独立archive副本复现完全相同错误，非本轮回归；日志分别为
+`/tmp/seti-r2b-browser-smokes-20260905.log`、`/tmp/seti-r2b-browser-fixed-baseline-20260905.log`、
+`/tmp/seti-r2b-browser-replay-20260905.log`。不宣称全部浏览器smoke通过。
+
+本次同步AI设计、RL完成态schema、测试清单与本计划。README/AGENTS/PROJECT_MEMORY、
+mechanics和save指南入口及正式来源字段未变，无需改动。准备提交候选后进行200步快速与
+同提交续跑完整固定盘面；通过门槛仍为终局均分至少99.75，当前尚无新的终局成绩。

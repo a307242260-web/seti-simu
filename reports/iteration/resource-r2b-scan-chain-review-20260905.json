@@ -1,0 +1,9 @@
+{
+  "sourceCheckpoint": "reports/iteration/resource-r2b-scan-chain-20260905.json",
+  "sourceSha256": "1d248cbd3d4a408fda8f5ecf3b32b028ce6df5aa1c809f8105e72e578387c39a",
+  "passed": true,
+  "wallMs": 706.3935,
+  "analysisLeafCount": 8,
+  "scope": "仅验证扫描后继分析叶、无对手执行和单步性能；不证明规则端口状态隔离",
+  "harnessCorrection": "runHeuristicPolicyDecision按契约提交所选行动，旧只读断言错误；原始失败checkpoint保留，不改写为通过"
+}

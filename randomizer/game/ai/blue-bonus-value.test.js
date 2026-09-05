@@ -22,28 +22,42 @@ function observe(actor) {
 }
 const facts = (obs) => outcome.createStrategicFacts(obs, obs.viewer.seatId);
 const delta = (root, leaf) => evaluator.evaluateStrategicFactsBreakdown(facts(root), facts(leaf));
+function assertSourceNeutral(actor) {
+  const ordinary = structuredClone(actor);
+  ordinary.blueBonusResources = { credits: 0, energy: 0 };
+  for (const card of ordinary.hand) delete card.blueBonusOwnerId;
+  const tagged = observe(actor);
+  const untagged = observe(ordinary);
+  assert.deepEqual(evaluator.evaluateStateValue(tagged, actor.id),
+    evaluator.evaluateStateValue(untagged, actor.id));
+  assert.deepEqual(evaluator.secondaryAgentCompletionFacts(tagged, actor.id),
+    evaluator.secondaryAgentCompletionFacts(untagged, actor.id));
+  close(delta(tagged, untagged).total, 0);
+}
 
-for (const [tileId, resource, unit] of [["blue1", "credits", 10], ["blue2", "energy", 8]]) {
+for (const [tileId, resource] of [["blue1", "credits"], ["blue2", "energy"]]) {
   const actor = player(tileId);
   const root = observe(actor);
   players.gainResources(actor, { [resource]: 1 }, "blueTechScore");
   actor.resources.availableData = 0;
   actor.dataState.placedTokens.push({ placementKind: "blueBonus", blueSlot: 1 });
   const rewarded = observe(actor);
-  close(delta(root, rewarded).infrastructure.blueBonusPlacementValue, unit);
-  close(delta(root, rewarded).infrastructure.dataUtilizationValue, -unit / 2);
+  assert.equal(actor.blueBonusResources[resource], 1);
+  close(delta(root, rewarded).total, 0, "来源资源本身不冒充已兑现收益");
+  assertSourceNeutral(actor);
   players.gainResources(actor, { [resource]: 2 }, "cardEffectScore");
   close(delta(root, observe(actor)).total, delta(root, rewarded).total);
   const beforeFailure = structuredClone(actor);
   assert.equal(players.spendResources(actor, { [resource]: 99 }).ok, false);
   assert.deepEqual(actor, beforeFailure);
   actor.dataState.placedTokens = [];
-  close(delta(root, observe(actor)).infrastructure.blueBonusPlacementValue, unit,
-    "分析清空占用不清除奖励留存");
+  assert.equal(actor.blueBonusResources[resource], 1, "分析清空占用不清除奖励留存");
+  assertSourceNeutral(actor);
   assert.equal(players.spendResources(actor, { [resource]: 1 }).ok, true);
   assert.equal(actor.blueBonusResources[resource], 0);
   players.gainResources(actor, { [resource]: 2 });
-  close(delta(root, observe(actor)).infrastructure.blueBonusPlacementValue, 0);
+  assert.equal(actor.blueBonusResources[resource], 0, "其他来源收入不能复活已消费的来源留存");
+  assertSourceNeutral(actor);
   const restored = players.createPlayer(actor);
   assert.deepEqual(restored.blueBonusResources, actor.blueBonusResources);
 }
@@ -63,14 +77,15 @@ const beforeCard = observe(blue3);
 blue3.hand.push({ id: "blue-awarded-card", cardId: "b_117.webp", blueBonusOwnerId: blue3.id });
 blue3.resources.handSize = blue3.hand.length;
 const holding = observe(blue3);
-close(delta(beforeCard, holding).infrastructure.blueBonusPlacementValue, 6);
-close(evaluator.evaluateStateValue(holding, blue3.id).components.cardValue, 0);
+close(delta(beforeCard, holding).total, 0);
+assertSourceNeutral(blue3);
 const heldCard = blue3.hand.pop();
 blue3.resources.handSize = blue3.hand.length;
-close(delta(holding, observe(blue3)).infrastructure.blueBonusPlacementValue, -6);
+close(delta(holding, observe(blue3)).total, 0);
 blue3.hand.push(heldCard);
 blue3.resources.handSize = blue3.hand.length;
-close(delta(beforeCard, observe(blue3)).infrastructure.blueBonusPlacementValue, 6);
+close(delta(beforeCard, observe(blue3)).total, 0);
+assertSourceNeutral(blue3);
 assert.deepEqual(players.createPlayer(blue3).hand[0], heldCard);
 assert.throws(() => players.createPlayer({ resources: { energy: 0 }, blueBonusResources: { energy: 1 } }), /不超过/);
 
@@ -82,7 +97,7 @@ const originalCompletion = completionOf();
 completionActor.blueBonusResources.energy = 1;
 const sourceCompletion = completionOf();
 assert.deepEqual(sourceCompletion.resources, originalCompletion.resources);
-assert.notDeepEqual(sourceCompletion.valuationContext, originalCompletion.valuationContext);
+assert.deepEqual(sourceCompletion.valuationContext, originalCompletion.valuationContext);
 completionActor.blueBonusResources.energy = 0;
 completionActor.dataState.placedTokens.push({ placementKind: "blueBonus", blueSlot: 1 });
 assert.notDeepEqual(completionOf().valuationContext, originalCompletion.valuationContext);

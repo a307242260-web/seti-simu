@@ -319,14 +319,14 @@
         },
       });
     }
-    // 不对全部库存定价；只计有正式蓝槽来源的留存和当前有数据可用的槽位机会。
+    // 库存来源只用于归因；资源用途通过正式后继路线兑现，不另加来源价格。
     const stateValue = evaluateState(observation, seatId);
-    const liquidValue = blueRetainedValue(stateValue) + currentBlueSlotPotential(stateValue);
+    const liquidValue = 0;
 
     // 准备类：收入复利（收入率 × 剩余发放次数 × 单位价值 × 放大系数）
     const incomeValue = incomeFutureValue(income, roundNumber, finalRoundNumber) * V_INCOME_MULTIPLIER;
 
-    // 与Primary同源的科技未来窗口，当前槽位机会已经在liquidValue中计算。
+    // 与Primary同源的科技未来窗口；当轮用途由正式后继路线体现。
     const techEfficiencyValue = infrastructureTechPotential(stateValue);
 
     // 准备类：外星进度（首痕迹 + 揭示期望 + 位置期望）
@@ -359,8 +359,7 @@
     const selfPublic = publicPlayers.find((p) => (
       String(p.playerId || p.color || "") === String(seatId)
     ));
-    const handCards = (selfState?.hand || selfPublic?.hand || [])
-      .filter((card) => card && card.blueBonusOwnerId !== seatId);
+    const handCards = (selfState?.hand || selfPublic?.hand || []).filter(Boolean);
     const reservedCards = (selfState?.reservedCards || []).filter(Boolean);
     const handEffectValue = (cards) => cards.reduce((total, card) => {
       const effects = cardEffects?.buildPlayEffects?.(card) || [];
@@ -595,33 +594,6 @@
     return infra.ownedTechIds.reduce((total, tileId) => total + techFutureValue(tileId, rounds, infra.finalRoundNumber), 0);
   }
 
-  function blueRetainedValue(value) {
-    if (value.terminal) return 0;
-    const infra = value.infrastructure;
-    return ["credits", "energy", "ordinaryCards"].reduce((total, key) => total
-      + finite(infra.blueBonusAssets[key]) * resourceUnitValue(
-        key === "ordinaryCards" ? "ordinaryCard" : key, infra.roundNumber, infra.finalRoundNumber,
-      ), 0);
-  }
-
-  function currentBlueSlotPotential(value) {
-    if (value.terminal) return 0;
-    const infra = value.infrastructure;
-    const rewards = (infra.dataProgress.blueSlots || [])
-      .filter((slot) => slot.unlocked && !slot.occupied)
-      .map((slot) => {
-        const reward = dataPlacement.getBlueTileDataBonus(slot.tileId);
-        if (reward?.publicity) {
-          const after = { ...value, resourceFacts: { ...value.resourceFacts,
-            publicity: Math.min(10, value.resourceFacts.publicity + reward.publicity) } };
-          return Math.max(0, researchPotential(after) - researchPotential(value));
-        }
-        return blueRewardUnit(slot.tileId, infra.roundNumber, infra.finalRoundNumber);
-      }).sort((a, b) => b - a);
-    return rewards.slice(0, Math.max(0, Math.floor(value.resourceFacts.availableData)))
-      .reduce((total, reward) => total + reward * 0.5, 0);
-  }
-
   function researchPotential(value) {
     if (value.terminal) return 0;
     const infrastructure = value.infrastructure;
@@ -646,8 +618,6 @@
         remainingRounds: 0,
         gainedTechIds: [],
         techValue: 0,
-        blueBonusPlacementValue: 0,
-        dataUtilizationValue: 0,
         incomeDelta: Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [key, 0])),
         incomeValue: 0,
         traceDelta: 0,
@@ -661,10 +631,8 @@
     const rootTech = new Set(rootInfrastructure.ownedTechIds);
     const gainedTechIds = leafInfrastructure.ownedTechIds
       .filter((tileId) => !rootTech.has(tileId));
-    // 未来窗口、当前槽机会、实际留存分别取状态差；消费后允许负差，不能重复计价值。
+    // 科技未来窗口取状态差；当轮资源取得与消费不因来源另外加减分。
     const techValue = infrastructureTechPotential(leafValue) - infrastructureTechPotential(rootValue);
-    const blueBonusPlacementValue = blueRetainedValue(leafValue) - blueRetainedValue(rootValue);
-    const dataUtilizationValue = currentBlueSlotPotential(leafValue) - currentBlueSlotPotential(rootValue);
     const incomeDelta = Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [
       key,
       positiveDelta(leafInfrastructure.income[key], rootInfrastructure.income[key]),
@@ -688,13 +656,10 @@
       remainingRounds,
     );
     return {
-      total: techValue + blueBonusPlacementValue + dataUtilizationValue
-        + incomeValue + traceValue + alienPurposeValue,
+      total: techValue + incomeValue + traceValue + alienPurposeValue,
       remainingRounds,
       gainedTechIds,
       techValue,
-      blueBonusPlacementValue,
-      dataUtilizationValue,
       incomeDelta,
       incomeValue,
       traceDelta,
@@ -928,8 +893,6 @@
       cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
       techValue: best.strategicValue.infrastructure.techValue,
-      blueBonusPlacementValue: best.strategicValue.infrastructure.blueBonusPlacementValue,
-      dataUtilizationValue: best.strategicValue.infrastructure.dataUtilizationValue,
       gainedTechIds: best.strategicValue.infrastructure.gainedTechIds,
       incomeValue: best.strategicValue.infrastructure.incomeValue,
       incomeDelta: best.strategicValue.infrastructure.incomeDelta,
@@ -1044,25 +1007,20 @@
       JSON.stringify(left).localeCompare(JSON.stringify(right))
     ));
     return {
-      schemaVersion: "seti-secondary-agent-completion-facts-v3",
-      // 来源与机会不是独立可累加的资源，只有上下文相同才允许完成态支配。
+      schemaVersion: "seti-secondary-agent-completion-facts-v4",
+      // 机会与手牌身份仍影响后续用途；来源标签不改变资源的可支付性或估值。
       valuationContext: {
         terminal: facts.terminal,
         roundNumber: facts.roundNumber,
         finalRoundNumber: facts.finalRoundNumber,
-        blueBonusAssets: {
-          credits: finite(facts.blueBonusAssets?.credits),
-          energy: finite(facts.blueBonusAssets?.energy),
-          ordinaryCards: finite(facts.blueBonusAssets?.ordinaryCards),
-        },
         blueSlots: sortRows((facts.dataProgress?.blueSlots || []).map((slot) => [
           String(slot.tileId), Number(slot.slot), Boolean(slot.occupied), Boolean(slot.unlocked),
         ])),
         researchOptions: sortRows((facts.researchOptions || []).map((option) => [
           String(option.tileId), Number(option.publicityCost),
         ])),
-        blueHandCards: sortRows((observation?.selfState?.hand || [])
-          .filter((card) => card && card.blueBonusOwnerId === seatId)
+        handCards: sortRows((observation?.selfState?.hand || [])
+          .filter(Boolean)
           .map((card) => [String(card.id), String(card.cardId)])),
       },
       score: finite(facts.realizedScore) + finite(facts.securedEndGameBonus),

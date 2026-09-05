@@ -350,8 +350,8 @@ try {
     assert.equal(policyDiagnostics.targetSchedulerPrunedCount > 0, true,
       "后续目标必须由资源下界调度，而不是重新展开全部目标排列");
     assert.equal(Number.isSafeInteger(policyDiagnostics.unreachableRouteOriginCount), true);
-    assert.equal(policyDiagnostics.executedNodeCountByFamily.choose_payment > 1, true,
-      "非等价支付 Decision 必须继续逐项执行，不能固定选择一个 conditional");
+    // 非等价支付由search-payment-choices.test.js核对实际费用/得分双叶；
+    // 此处不以节点数量代替行为，正确折叠弃牌后节点数可以减少。
     const quickTradeOutcomes = policyResult.actionOutcomes.filter((outcome) => (
       actions.find((action) => action.actionId === outcome.actionId)?.family === "quick_trade"
     ));

@@ -65,8 +65,9 @@ Composition drain，不伪装成策略动作。
 含`tileId/slot/occupied/unlocked`，槽位前置条件来自正式data placement表。
 轻量strategicFacts携带同样两项；原`blueBonusCount`只是当前占用数，不再用于奖励归因。
 自身可见卡的`blueBonusOwnerId`为来源标记，未知身份遮蔽仍移除整张卡身份及附加字段。
-搜索完成态抽象`seti-secondary-agent-completion-facts-v3`包含`valuationContext`：
-终局/轮次、蓝槽留存、槽位、研究候选费用、自身蓝3来源手牌实例与卡面标识；不同上下文
+来源字段仅供归因，不直接改变Primary或V的资源估值。
+搜索完成态抽象`seti-secondary-agent-completion-facts-v4`包含`valuationContext`：
+终局/轮次、槽位、研究候选费用、自身全部可见手牌实例与卡面标识；不同上下文
 禁止互相支配删除。此为搜索内部派生事实，不改变Observation或存档schema。
 
 Observation schema 为 `seti-rl-observation-v1`：
