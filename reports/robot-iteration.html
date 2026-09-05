@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T18:48:12.089Z",
+  "builtAt": "2026-09-05T19:12:17.390Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "616d2c56",
-  "currentBaseline": "scan-earth-r3s1-20260906",
+  "headCommit": "082d3e12",
+  "currentBaseline": "income-reserve-r3i1-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,367 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "income-reserve-r3i1-20260906",
+      "name": "收入资源准备保牌（全盘报错，未验收）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "082d3e12",
+      "commits": [
+        {
+          "hash": "082d3e12",
+          "date": "2026-09-06",
+          "subject": "收入资源准备纳入手牌保有要求并隔离转换缓存"
+        }
+      ],
+      "summary": "收入数据路线声明手牌保有量；最小资源转换终态同时检查钱、能量和收入牌，缓存键纳入手牌目标",
+      "diffStat": "122 files changed, 155125 insertions(+), 601 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/audit-income-card-reserve-witness-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-mercury-scan-directory-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-plan-boundaries-r3-20260905.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r2e-expectation-20260905.js",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-actual-opening-plan-20260906.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-alien-dependency-input-20260905.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-plan-realization-20260906.js",
+          "insertions": 79,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-route-selection-20260906.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-second-round-20260906.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-first-divergence-choice-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-legacy-payment-boundary-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-access-dependency-20260906.js",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-source-order-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-boundary-20260906.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-plan-origin-20260906.js",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-replan-realization-20260906.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-stale-scan-execution-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-sector-directory-cache-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-first-divergence-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-scan-earth-20260906.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-sector-directory-full-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r3-brown-decision-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-income-reserve-search-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-plan-steps-r3-20260905.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-scan-earth-20260906.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-20260906.js",
+          "insertions": 88,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-sector-directory-boundaries-20260906.js",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 49,
+          "deletions": 15
+        },
+        {
+          "file": "docs/ai-iteration-plan-20260905.md",
+          "insertions": 90,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 38,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.js",
+          "insertions": 18,
+          "deletions": 35
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.test.js",
+          "insertions": 85,
+          "deletions": 23
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 10,
+          "deletions": 6
+        },
+        {
+          "file": "randomizer/game/ai/outcome-projection.test.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 217,
+          "deletions": 40
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 232,
+          "deletions": 349
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.js",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-scan-flow.test.js",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 25,
+          "deletions": 12
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 33,
+          "deletions": 34
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905-review.md",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.full.action-log.html",
+          "insertions": 2103,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.quick-200.action-log.html",
+          "insertions": 732,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-card-reserve-witness-20260906-v2.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-card-reserve-witness-20260906-v3.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-card-reserve-witness-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-preparation-design-20260906.md",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-reserve-performance-20260906-v2.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-reserve-performance-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-reserve-review-20260906.md",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-reserve-search-20260906-v2.json",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "990c007e.082d3e12.quick-200.json",
+          "recordPath": "reports/research/990c007e.082d3e12.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 45034,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "082d3e12",
+          "createdAt": "2026-09-05T19:07:31.824Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步阶段均38.5，非终局。完整局同提交续跑第236步棕方卡牌插收入选择缺actionId/actorId等正式字段，搜索报错；没有full结果、没有终局成绩，候选未验收。失败日志和正式checkpoint见income-reserve-full-failure-20260906-v2.json。收入准备局部真实搜索已出现正式收入价值20的完成叶；相关unit/V通过，慢样本9.73秒。原两项指定测试失败保留；卡牌Decision契约另行定位修复，不把快速分数提高当作通过。",
+          "scores": {
+            "player-blue": 35,
+            "player-green": 22,
+            "player-brown": 46,
+            "player-white": 51
+          },
+          "avgScore": 38.5,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-income-reserve-r3i1-20260906-082d3e12-quick-200-v104.json",
+          "reportPath": "reports/iteration/income-reserve-r3i1-20260906/990c007e.082d3e12.quick-200.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "990c007e.082d3e12.quick-200",
+            "path": "reports/iteration/income-reserve-r3i1-20260906/990c007e.082d3e12.quick-200.action-log.html",
+            "mode": "quick-200"
+          }
+        ]
+      }
+    },
     {
       "id": "scan-earth-r3s1-20260906",
       "name": "第三轮标准扫描首步依赖（效果未通过）",
@@ -781,7 +1142,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

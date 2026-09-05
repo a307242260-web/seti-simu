@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "income-reserve-r3i1-20260906",
+      "name": "收入资源准备保牌（全盘报错，未验收）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "082d3e12",
+      "commits": [
+        "082d3e12"
+      ],
+      "summary": "收入数据路线声明手牌保有量；最小资源转换终态同时检查钱、能量和收入牌，缓存键纳入手牌目标",
+      "records": {
+        "990c007e.082d3e12.quick-200.json": {
+          "note": "200步阶段均38.5，非终局。完整局同提交续跑第236步棕方卡牌插收入选择缺actionId/actorId等正式字段，搜索报错；没有full结果、没有终局成绩，候选未验收。失败日志和正式checkpoint见income-reserve-full-failure-20260906-v2.json。收入准备局部真实搜索已出现正式收入价值20的完成叶；相关unit/V通过，慢样本9.73秒。原两项指定测试失败保留；卡牌Decision契约另行定位修复，不把快速分数提高当作通过。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "scan-earth-r3s1-20260906",
       "name": "第三轮标准扫描首步依赖（效果未通过）",
       "date": "2026-09-06",
