@@ -4,14 +4,15 @@ const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const plans = require("../randomizer/game/ai/plan-continuation");
-const output = "reports/iteration/r3-brown-plan-realization-20260906.json";
+const output = process.argv[3] || "reports/iteration/r3-brown-plan-realization-20260906.json";
 const hash = (raw) => crypto.createHash("sha256").update(raw).digest("hex");
 if (fs.existsSync(output)) {
   console.log(`已有记录，未重跑：${output}`);
 } else {
-  const sourcePath = "reports/iteration/r3-brown-route-selection-20260906.json";
+  const sourcePath = process.argv[2] || "reports/iteration/r3-brown-route-selection-20260906.json";
   const raw = fs.readFileSync(sourcePath);
-  const source = JSON.parse(raw).samples[0];
+  const sourceReport = JSON.parse(raw);
+  const source = sourceReport.sample || sourceReport.samples[0];
   const savePath = "seti-saves/seti-save-research-plan-steps-r3-20260906-d7a78140-full-v299.json";
   const saveRaw = fs.readFileSync(savePath);
   const save = JSON.parse(saveRaw);
