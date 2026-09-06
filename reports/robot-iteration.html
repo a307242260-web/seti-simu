@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T20:38:13.240Z",
+  "builtAt": "2026-09-06T21:58:38.839Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "de8a4056",
-  "currentBaseline": "trade-confirm-20260907",
+  "headCommit": "def25c80",
+  "currentBaseline": "probe-scan-contract-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -100,15 +100,15 @@ const REGISTRY = {
       "scoreSourceNote": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。"
     },
     "bestAvg": {
-      "value": 109,
-      "versionId": "shared-leaf-observation-20260907",
-      "name": "冻结叶观察共享（整局提速未证实）",
-      "runKey": "dd9a1dab.a4453b64.full",
+      "value": 113.75,
+      "versionId": "probe-scan-contract-20260907",
+      "name": "探测器扫描契约修复（范围验收未通过）",
+      "runKey": "b48d2904.def25c80.full",
       "provenance": "save-final",
-      "steps": 569,
-      "wallMs": 387053,
-      "msPerStep": 680,
-      "scoreSourceNote": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。"
+      "steps": 581,
+      "wallMs": 444391,
+      "msPerStep": 765,
+      "scoreSourceNote": "固定581步终局113/95/135/112、均113.75；167次搜索、124241节点、152820正式输入、0规则失败，32次截断，444391ms。较前版均分+6.75，但节点、截断与耗时均增加。首次动作分歧433：白方由b17改打b58，不据此推断全部涨分因果。8模型规则、9个正式composition场景及16次Decision恢复验证通过；42冷决策14.889秒、4096节点/4804输入、0规则失败、30计划输入重放成功。复查发现generic扫描Decision额外透传卡牌身份也覆盖非probe模式，超出本轮边界，须单独收紧并用新版本验收；当前候选不通过。none/undefined全面核验、目的式移动、place_data合并和第一Goal均未完成。"
     },
     "bestPlayer": {
       "value": 152,
@@ -144,6 +144,22 @@ const REGISTRY = {
     },
     "topByAvg": [
       {
+        "value": 113.75,
+        "white": 112,
+        "bestPlayer": {
+          "color": "棕",
+          "score": 135
+        },
+        "versionId": "probe-scan-contract-20260907",
+        "name": "探测器扫描契约修复（范围验收未通过）",
+        "runKey": "b48d2904.def25c80.full",
+        "provenance": "save-final",
+        "steps": 581,
+        "wallMs": 444391,
+        "msPerStep": 765,
+        "scoreSourceNote": "固定581步终局113/95/135/112、均113.75；167次搜索、124241节点、152820正式输入、0规则失败，32次截断，444391ms。较前版均分+6.75，但节点、截断与耗时均增加。首次动作分歧433：白方由b17改打b58，不据此推断全部涨分因果。8模型规则、9个正式composition场景及16次Decision恢复验证通过；42冷决策14.889秒、4096节点/4804输入、0规则失败、30计划输入重放成功。复查发现generic扫描Decision额外透传卡牌身份也覆盖非probe模式，超出本轮边界，须单独收紧并用新版本验收；当前候选不通过。none/undefined全面核验、目的式移动、place_data合并和第一Goal均未完成。"
+      },
+      {
         "value": 109,
         "white": 109,
         "bestPlayer": {
@@ -174,26 +190,535 @@ const REGISTRY = {
         "wallMs": 375302,
         "msPerStep": 660,
         "scoreSourceNote": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。"
-      },
-      {
-        "value": 109,
-        "white": 109,
-        "bestPlayer": {
-          "color": "蓝",
-          "score": 121
-        },
-        "versionId": "amiba-data-overflow-20260906",
-        "name": "阿米巴满池奖励结算修复",
-        "runKey": "25c65ece.795cd6eb.full",
-        "provenance": "save-final",
-        "steps": 569,
-        "wallMs": 398875,
-        "msPerStep": 701,
-        "scoreSourceNote": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "probe-scan-contract-20260907",
+      "name": "探测器扫描契约修复（范围验收未通过）",
+      "date": "2026-09-07",
+      "baseline": "trade-confirm-20260907",
+      "head": "def25c80",
+      "commits": [
+        {
+          "hash": "def25c80",
+          "date": "2026-09-07",
+          "subject": "修复探测器扫描来源、次数、相邻标记与原卡回手流程"
+        }
+      ],
+      "summary": "探测器扫描保留来源和重复次数，支持任意玩家多艘选择与相邻扇区标记，补齐原卡回手及计划来源依赖",
+      "diffStat": "43 files changed, 109447 insertions(+), 37 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-company-entry-prefixes-20260907.js",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/prototype-company-route-cost-20260907.js",
+          "insertions": 108,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/replay-company-hot-prefix-20260907.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-probe-scan-contract-20260907.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-phase-boundary-20260907.js",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-movement-purpose-witnesses-20260907.js",
+          "insertions": 95,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-scan-production-20260907.js",
+          "insertions": 78,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-visit-demand-contracts-20260907.js",
+          "insertions": 113,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 23,
+          "deletions": 2
+        },
+        {
+          "file": "docs/card-modeling-dsl-spec.md",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 8,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 8,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 3,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/effects.js",
+          "insertions": 5,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/cards/effects.test.js",
+          "insertions": 3,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 20,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/effects/science-scan-flow.test.js",
+          "insertions": 84,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 65,
+          "deletions": 8
+        },
+        {
+          "file": "reports/iteration/company-demand-design-20260906.md",
+          "insertions": 170,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/company-entry-prefixes-20260907.json",
+          "insertions": 79445,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-hot-prefix-20260907.json",
+          "insertions": 3689,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-phase-boundary-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-phase-boundary-v2-20260907.json",
+          "insertions": 860,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-route-cost-20260907.json",
+          "insertions": 965,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-route-phases-20260907.json",
+          "insertions": 1528,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-purpose-witnesses-20260907.json",
+          "insertions": 1089,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-design-20260907.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/probe-scan-contract-design-20260907.md",
+          "insertions": 97,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-contract-reproduction-20260907.json",
+          "insertions": 392,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-final-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-production-20260907.json",
+          "insertions": 835,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 424,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/trade-confirm-20260907/7ac3da29.de8a4056.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trade-confirm-design-20260907.md",
+          "insertions": 12,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/trade-confirm-full-verification-20260907.json",
+          "insertions": 1024,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/visit-demand-contracts-20260907.json",
+          "insertions": 2984,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 424,
+          "deletions": 4
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "b48d2904.def25c80.full.json",
+          "recordPath": "reports/research/b48d2904.def25c80.full.json",
+          "mode": "full",
+          "steps": 581,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 444391,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "def25c80",
+          "createdAt": "2026-09-06T21:52:28.752Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "固定581步终局113/95/135/112、均113.75；167次搜索、124241节点、152820正式输入、0规则失败，32次截断，444391ms。较前版均分+6.75，但节点、截断与耗时均增加。首次动作分歧433：白方由b17改打b58，不据此推断全部涨分因果。8模型规则、9个正式composition场景及16次Decision恢复验证通过；42冷决策14.889秒、4096节点/4804输入、0规则失败、30计划输入重放成功。复查发现generic扫描Decision额外透传卡牌身份也覆盖非probe模式，超出本轮边界，须单独收紧并用新版本验收；当前候选不通过。none/undefined全面核验、目的式移动、place_data合并和第一Goal均未完成。",
+          "scores": {
+            "player-blue": 113,
+            "player-green": 95,
+            "player-brown": 135,
+            "player-white": 112
+          },
+          "avgScore": 113.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 113,
+              "base": 68,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 95,
+              "base": 75,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 19,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 135,
+              "base": 82,
+              "tile": 48,
+              "card": 5,
+              "tileScoresById": {
+                "a": 15,
+                "b": 12,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 5
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 13,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 4,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 112,
+              "base": 56,
+              "tile": 38,
+              "card": 18,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 18
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 11,
+                "orbitScore": 0,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-probe-scan-contract-20260907-def25c80-full-v290.json",
+          "reportPath": "reports/iteration/probe-scan-contract-20260907/b48d2904.def25c80.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "b48d2904.def25c80.full",
+            "path": "reports/iteration/probe-scan-contract-20260907/b48d2904.def25c80.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "trade-confirm-20260907",
       "name": "弃牌确认准入修复（整体搜索目标未通过）",
@@ -600,7 +1125,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
