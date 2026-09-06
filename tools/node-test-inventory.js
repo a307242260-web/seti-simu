@@ -79,7 +79,7 @@ module.exports = Object.freeze({
 
     entry("randomizer/game/data/data.test.js", "rules/data", "数据获得、放置、分析与容量不变量", "满容量、未知目标或重复放置成功"),
     entry("randomizer/game/data/nebula.test.js", "rules/data", "星云数据槽与奖励结算", "非法槽位或重复奖励被接受"),
-    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描串尾统一结算；任意扫描八扇区/同扇区重复/数据开关；探测器来源/份数/邻接扫描/原卡回手；四种蓝槽正式奖励、来源恢复与不同完成路线保留", "任意扫描空目录、重复扫描换扇区、漏对手或同格多艘扫描、遗漏邻接标记/回手、重复扇区结算、蓝槽来源未入账或恢复丢来源"),
+    entry("randomizer/game/effects/science-scan-flow.test.js", "rules/data", "扫描串尾统一结算；任意扫描八扇区/同扇区重复/数据开关；探测器来源/份数/邻接扫描/原卡回手；四种蓝槽正式奖励、来源恢复与不同完成路线保留；放置位置互斥字段与付费/免能分析真实清除数量", "任意扫描空目录、重复扫描换扇区、漏对手或同格多艘扫描、遗漏邻接标记/回手、重复扇区结算、蓝槽来源未入账或恢复丢来源、数据事件undefined"),
 
     entry("randomizer/game/tech/tech.test.js", "rules/tech", "科技供应、取得、蓝槽与 owner 规则", "被占/被封锁科技仍取得"),
     entry("randomizer/game/tech/bonuses.test.js", "rules/tech", "科技奖励按 tile/slot 唯一结算", "重复触发或错误颜色奖励"),

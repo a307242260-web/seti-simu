@@ -104,6 +104,12 @@
       return { ok: false, abilityId: "placeData", message: result.message };
     }
 
+    const positionKey = result.placementKind === data.PLACEMENT_KIND_BLUE_BONUS
+      ? "blueSlot" : result.placementKind === data.PLACEMENT_KIND_COMPUTER ? "placementSlot" : null;
+    if (!positionKey || !Number.isInteger(result[positionKey]) || result[positionKey] < 1) {
+      throw new TypeError("DATA_PLACEMENT_RESULT_INVALID: 正式放置结果缺少对应位置");
+    }
+
     const message = options.message || result.message;
     return {
       ok: true,
@@ -113,8 +119,7 @@
       cost: {},
       payload: {
         placementKind: result.placementKind,
-        placementSlot: result.placementSlot,
-        blueSlot: result.blueSlot,
+        [positionKey]: result[positionKey],
         blueTileId: result.blueTileId ?? null,
         slotBonus: result.slotBonus ?? null,
         slotBonuses: result.slotBonuses ?? [],

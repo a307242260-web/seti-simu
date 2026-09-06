@@ -1529,8 +1529,9 @@
           type: "placeData",
           playerId: actor.id,
           placementKind: result.placementKind,
-          placementSlot: result.placementSlot,
-          blueSlot: result.blueSlot ?? null,
+          ...(result.placementKind === data.PLACEMENT_KIND_BLUE_BONUS
+            ? { blueSlot: result.payload.blueSlot }
+            : { placementSlot: result.payload.placementSlot }),
         }];
         for (const bonus of result.slotBonuses || (result.slotBonus ? [result.slotBonus] : [])) {
           // 计算机数据位覆盖奖励：4 号位 = 获得 1 次收入行动（插入一张收入牌）。
@@ -1624,6 +1625,10 @@
         skipCost: Boolean(effect.payload?.action?.payload?.skipCost),
       });
       if (!actor || !result.ok) return result || fail("SCIENCE_ANALYZE_STALE", "分析已失效");
+      const clearedCount = result.payload.clearedCount;
+      if (!Number.isInteger(clearedCount) || clearedCount < 0) {
+        throw new TypeError("SCIENCE_ANALYZE_RESULT_INVALID: 分析结果缺少实际清除数量");
+      }
       // 消耗主行动由标准行动入口传入的 consumeMainAction 决定（当前无卡牌触发
       // analyze，标准 analyze 必然带标记；与 scan/research 保持同一解耦结构）。
       if (effect.payload?.consumeMainAction) actor.mainActionCompleted = true;
@@ -1632,7 +1637,7 @@
         spawnedEffects: choices.length
           ? [scanDecisionEffect(EFFECT_TYPES.ALIEN_TRACE, actor.id, { traceType: "blue" })]
           : [],
-        events: [{ type: "analyze", playerId: actor.id, clearedCount: result.clearedCount }],
+        events: [{ type: "analyze", playerId: actor.id, clearedCount }],
       });
     });
 

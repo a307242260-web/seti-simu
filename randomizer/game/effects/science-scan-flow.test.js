@@ -368,14 +368,37 @@ for (const tileId of ["blue1", "blue2", "blue3", "blue4"]) {
   actor.techState.blueBoardSlots[tileId] = 1;
   for (let index = 0; index < 2; index += 1) assert.equal(data.gainData(actor, { root }).ok, true);
   assert.equal(data.placeDataToComputer(actor).ok, true);
+  const abilityData = require("../abilities/data");
+  for (const target of ["computer", "blueBonus"]) {
+    const isolated = structuredClone(root);
+    const direct = abilityData.placeData(scienceSession.createActionContext(isolated, actor.id), { target, blueSlot: 1 });
+    assert.equal(direct.ok, true);
+    assert.deepEqual(JSON.parse(JSON.stringify(direct.payload)), direct.payload, "能力payload不得写undefined");
+    assert.equal(Object.hasOwn(direct.payload, target === "computer" ? "blueSlot" : "placementSlot"), false);
+    assert.equal(direct.payload[target === "computer" ? "placementSlot" : "blueSlot"], target === "computer" ? 2 : 1);
+  }
   root.cards.publicCards = [{ id: "blue-reward-public", cardId: "b_117.webp" }];
   const composition = createScanComposition(root);
   const before = composition.stateSourcePort.getSnapshot();
   const action = composition.inputPort.enumerateActions({ family: "place_data" })[0];
   assert.ok(action);
   assert.equal(composition.inputPort.submitAction(action).ok, true);
-  submitDecision(composition, pickChoice(composition,
+  const pending = composition.lifecycle.save().envelope;
+  const decision = composition.inspect().session.decision;
+  const rejected = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion, ownerId: "wrong-owner", choice: decision.choices[0] });
+  assert.equal(rejected.ok, false);
+  assert.deepEqual(composition.lifecycle.save().envelope, pending);
+  const placed = submitDecision(composition, pickChoice(composition,
     (choice) => choice.target?.target === "blueBonus", "蓝槽必须可放置"));
+  const placedEnvelope = composition.lifecycle.save().envelope;
+  assert.equal(composition.lifecycle.restore(pending).ok, true);
+  submitDecision(composition, pickChoice(composition,
+    (choice) => choice.target?.target === "blueBonus", "恢复后蓝槽必须可放置"));
+  assert.deepEqual(composition.lifecycle.save().envelope, placedEnvelope);
+  const event = placed.journal.events.find(event => event.type === "placeData");
+  assert.deepEqual(event, { type: "placeData", playerId: actor.id, placementKind: "blueBonus", blueSlot: 1 });
+  assert.deepEqual(JSON.parse(JSON.stringify(event)), event, "蓝槽事件不得携带undefined位置");
   if (tileId === "blue3") {
     submitDecision(composition, pickChoice(composition,
       (choice) => choice.target?.publicSlotIndex === 0, "蓝3必须停在精选Decision"));
@@ -592,5 +615,42 @@ for (const tileId of ["blue1", "blue2", "blue3", "blue4"]) {
     .filter(e => e.type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN);
   assert.equal(repeated.length, 1);
   assert.equal(repeated[0].options.repeat, 2);
+}
+// 分析事件必须带真实清除数量，覆盖付费/免能及蓝槽数据，并保留未放置池数据。
+for (const free of [false, true]) for (const withBlue of [false, true]) {
+  const { root } = createCanonicalState();
+  const actor = root.players.players[0];
+  actor.dataState = { poolTokens: [], placedTokens: [], discardedCount: 0 };
+  actor.resources.availableData = 0;
+  actor.techState = players.normalizePlayerTechState(null);
+  if (withBlue) {
+    actor.techState.ownedTiles.blue1 = true;
+    actor.techState.blueBoardSlots.blue1 = 1;
+  }
+  for (let i = 0; i < 6; i++) {
+    assert.equal(data.gainData(actor, { root }).ok, true);
+    assert.equal(data.placeDataToComputer(actor).ok, true);
+  }
+  if (withBlue) {
+    assert.equal(data.gainData(actor, { root }).ok, true);
+    assert.equal(data.placeDataToComputer(actor, { target: "blueBonus", blueSlot: 1 }).ok, true);
+  }
+  assert.equal(data.gainData(actor, { root }).ok, true);
+  const beforePool = structuredClone(actor.dataState.poolTokens);
+  const energy = actor.resources.energy;
+  const executors = new Map();
+  scienceSession.createScienceDomain({ runtime: { registerExecutor(type, executor) {
+    executors.set(type, executor);
+  } }, commitWorkingState(state) { return state; } });
+  const result = executors.get(scienceSession.EFFECT_TYPES.ANALYZE)(root, {
+    ownerId: actor.id, payload: { consumeMainAction: true, action: { payload: { skipCost: free } } },
+  }, { state: root });
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.events, [{ type: "analyze", playerId: actor.id, clearedCount: withBlue ? 7 : 6 }]);
+  assert.deepEqual(JSON.parse(JSON.stringify(result.events)), result.events);
+  assert.equal(actor.dataState.placedTokens.length, 0);
+  assert.deepEqual(actor.dataState.poolTokens, beforePool);
+  assert.equal(actor.resources.energy, energy - (free ? 0 : data.ANALYZE_ENERGY_COST));
+  assert.equal(actor.mainActionCompleted, true);
 }
 console.log("science scan and blue reward tests passed");

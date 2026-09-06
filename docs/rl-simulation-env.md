@@ -70,6 +70,12 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+数据能力placeData的payload及Science的placeData事件按placementKind携带互斥位置：
+computer对应placementSlot，blueBonus对应blueSlot，不写不适用的undefined属性。
+正式返回缺少对应正整数位置时显式抛错。analyze事件的clearedCount读取能力
+payload中的实际清除数量，包含计算机与蓝槽已放数据，不包含池中未放数据；
+缺少非负整数数量显式抛错，不填0，也不回填旧存档已经丢失的历史事实。
+
 共享Effect Session的一次完整观察只枚举一次当前Decision，投影器与返回decision
 使用独立副本；不跨观察缓存，不改viewer可见性、合法项身份或枚举错误语义。
 
