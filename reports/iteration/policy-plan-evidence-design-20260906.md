@@ -51,7 +51,9 @@ v2改为完整双向对象映射检查字段/值/共享关系：25动作完整�
 回归77 unit + 唯一fullFlow通过（7.04s/0.55s），V输入审计通过；明确排除用户
 指定暂不处理的simulation-counterfactual-outcome和strategic-goal-evaluator。
 测试fixture首次漏plan采集必需board字段已修正，之后改前因Policy含planSteps失败、
-改后通过；未为了fixture改动生产机制。固定盘面完整终局尚待提交后验证。
+改后通过；未为了fixture改动生产机制。73e7b2ca完整终局已通过：569步均109，
+全部replay/终局状态/非时间搜索诊断一致，398875→375302ms（-5.91%）。
+完整验收与残余风险见policy-plan-full-review-20260906.md。
 
 文档同步：更新AI设计、RL契约、测试inventory义务及性能计划。README/AGENTS和公司
 规则无入口、接口或规则变化，无需修改；不触碰长期记忆。

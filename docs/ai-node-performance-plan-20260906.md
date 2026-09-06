@@ -170,4 +170,7 @@ reports/iteration/company-demand-design-20260906.md，尚未冻结、无生产�
 原actionOutcomes和计划提取证据完整保留，通用Policy安全校验不变。真实42输入
 2938叶的逐字段/共享关系、25动作评价及Decision相同；单决策23.032→16.915秒，
 4096节点/4804提交及29步计划不变。77 unit+唯一fullFlow及V输入审计通过，
-固定完整局待提交后按去重流程验证。详见policy-plan-evidence-design-20260906.md。
+固定完整局已按去重流程验证：569步正式121/88/118/109、均109；全replay、终局
+完整状态及逐次非时间搜索诊断相同，107100节点/132190提交不变，总398875→375302ms
+（-5.91%），搜索内部耗时基本不变。本项通过，Goal继续。完整验收见
+reports/iteration/policy-plan-full-review-20260906.md；不扩大到公司策略裁剪。

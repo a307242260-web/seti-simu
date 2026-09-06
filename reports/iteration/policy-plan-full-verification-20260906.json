@@ -1,0 +1,91 @@
+{
+  "scope": "只读两版本完整记录/存档；核对正式计分、全部replay、终局完整状态及逐次非时间搜索诊断",
+  "sources": [
+    "reports/research/25c65ece.795cd6eb.full.json",
+    "reports/research/91f9a83a.73e7b2ca.full.json"
+  ],
+  "mean": 109,
+  "scores": [
+    {
+      "playerId": "player-blue",
+      "total": 121
+    },
+    {
+      "playerId": "player-green",
+      "total": 88
+    },
+    {
+      "playerId": "player-brown",
+      "total": 118
+    },
+    {
+      "playerId": "player-white",
+      "total": 109
+    }
+  ],
+  "steps": 569,
+  "sameReplay": true,
+  "sameFinalState": true,
+  "sameSearchDiagnosticsExceptTime": true,
+  "measurements": [
+    {
+      "commit": "795cd6eb",
+      "wallMs": 398875,
+      "searches": 171,
+      "nodes": 107100,
+      "submissions": 132190,
+      "searchMs": 263032.9236259999,
+      "fullBudgetSearches": 21,
+      "failedSearches": [
+        {
+          "step": 433,
+          "seat": "player-white",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 2
+          }
+        },
+        {
+          "step": 471,
+          "seat": "player-blue",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 1
+          }
+        }
+      ]
+    },
+    {
+      "commit": "73e7b2ca",
+      "wallMs": 375302,
+      "searches": 171,
+      "nodes": 107100,
+      "submissions": 132190,
+      "searchMs": 263155.089209,
+      "fullBudgetSearches": 21,
+      "failedSearches": [
+        {
+          "step": 433,
+          "seat": "player-white",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 2
+          }
+        },
+        {
+          "step": 471,
+          "seat": "player-blue",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 1
+          }
+        }
+      ]
+    }
+  ],
+  "savedMs": 23573,
+  "wallReductionPercent": 5.9098715136320905,
+  "sha256": {
+    "reports/research/25c65ece.795cd6eb.full.json": "02b5ff0cd24c5a49d047b91ba82d13be30a63bf073bec2df5e0248c113a1ed82",
+    "reports/research/91f9a83a.73e7b2ca.full.json": "ba594c3a6837a4fbeb0a2f1ff8c6af2a39e6f62dc14e427a0abb10029c2cee64",
+    "seti-saves/seti-save-research-amiba-data-overflow-20260906-795cd6eb-full-v283.json": "30a78a90b709051df6056d536ff65085d692fe1e4c31088024e78c77e04abd55",
+    "seti-saves/seti-save-research-policy-plan-evidence-20260906-73e7b2ca-full-v283.json": "fbfc1d00207901595b419c43f0ab61984464e6396d2d864122033e15d38b0899"
+  },
+  "passed": true
+}

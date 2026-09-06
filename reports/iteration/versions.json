@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "policy-plan-evidence-20260906",
+      "name": "Policy计划证据复制优化",
+      "date": "2026-09-06",
+      "baseline": "amiba-data-overflow-20260906",
+      "head": "73e7b2ca",
+      "commits": [
+        "73e7b2ca"
+      ],
+      "summary": "Heuristic传给Policy的叶视图排除planSteps，原始计划证据和对外actionOutcomes完整保留",
+      "records": {
+        "91f9a83a.73e7b2ca.full.json": {
+          "note": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "amiba-data-overflow-20260906",
       "name": "阿米巴满池奖励结算修复",
       "date": "2026-09-06",

@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T14:46:14.275Z",
+  "builtAt": "2026-09-06T16:01:23.084Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "795cd6eb",
-  "currentBaseline": "amiba-data-overflow-20260906",
+  "headCommit": "73e7b2ca",
+  "currentBaseline": "policy-plan-evidence-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -101,14 +101,14 @@ const REGISTRY = {
     },
     "bestAvg": {
       "value": 109,
-      "versionId": "amiba-data-overflow-20260906",
-      "name": "阿米巴满池奖励结算修复",
-      "runKey": "25c65ece.795cd6eb.full",
+      "versionId": "policy-plan-evidence-20260906",
+      "name": "Policy计划证据复制优化",
+      "runKey": "91f9a83a.73e7b2ca.full",
       "provenance": "save-final",
       "steps": 569,
-      "wallMs": 398875,
-      "msPerStep": 701,
-      "scoreSourceNote": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。"
+      "wallMs": 375302,
+      "msPerStep": 660,
+      "scoreSourceNote": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。"
     },
     "bestPlayer": {
       "value": 152,
@@ -150,6 +150,22 @@ const REGISTRY = {
           "color": "蓝",
           "score": 121
         },
+        "versionId": "policy-plan-evidence-20260906",
+        "name": "Policy计划证据复制优化",
+        "runKey": "91f9a83a.73e7b2ca.full",
+        "provenance": "save-final",
+        "steps": 569,
+        "wallMs": 375302,
+        "msPerStep": 660,
+        "scoreSourceNote": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。"
+      },
+      {
+        "value": 109,
+        "white": 109,
+        "bestPlayer": {
+          "color": "蓝",
+          "score": 121
+        },
         "versionId": "amiba-data-overflow-20260906",
         "name": "阿米巴满池奖励结算修复",
         "runKey": "25c65ece.795cd6eb.full",
@@ -174,26 +190,595 @@ const REGISTRY = {
         "wallMs": 398848,
         "msPerStep": 701,
         "scoreSourceNote": "569步，正式终局121/88/118/109，均109，超过108.5门槛0.5；398848ms，107100节点、131422成功提交、21次策略4096满额。仍有795次执行失败，其中404步738次，不宣称全部分支正确。生产代码全程保持553e19c6；运行期间仅新增只读取证脚本与报告。见company-free-move-review-20260906.md。"
-      },
-      {
-        "value": 108.5,
-        "white": 124,
-        "bestPlayer": {
-          "color": "棕",
-          "score": 130
-        },
-        "versionId": "search-statistics-p1-20260906",
-        "name": "逐次搜索节点统计",
-        "runKey": "4e84be21.06738145.full",
-        "provenance": "save-final",
-        "steps": 702,
-        "wallMs": 403228,
-        "msPerStep": 574,
-        "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5；全部动作及状态摘要与基线一致。191次搜索、148749节点，32次4096策略满额贡献88.12%节点。总模拟547927ms，较基线增加3.88%；只完成统计观测验收，无提速成果。详见search-statistics-full-review-20260906.md。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "policy-plan-evidence-20260906",
+      "name": "Policy计划证据复制优化",
+      "date": "2026-09-06",
+      "baseline": "amiba-data-overflow-20260906",
+      "head": "73e7b2ca",
+      "commits": [
+        {
+          "hash": "73e7b2ca",
+          "date": "2026-09-06",
+          "subject": "精简Policy输入中的续用证据并保留完整计划提取"
+        }
+      ],
+      "summary": "Heuristic传给Policy的叶视图排除planSteps，原始计划证据和对外actionOutcomes完整保留",
+      "diffStat": "55 files changed, 308986 insertions(+), 59 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-policy-plan-view-20260906.js",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-policy-input-42-20260906.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/classify-target-nodes-20260906.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/classify-trace-permutations-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-company-move-orders-20260906.js",
+          "insertions": 62,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-company-demand-42-20260906.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-trace-hotspot-433-20260906.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-movement-decision-42-20260906.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/rebuild-movement-input-42-20260906.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-movement-cpu-20260906.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-analysis-hotspot-433-20260906.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-company-movement-42-20260906.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-amiba-overflow-full-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-policy-plan-view-42-20260906.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 42,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 6,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 5,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-data-overflow-20260906/25c65ece.795cd6eb.full.action-log.html",
+          "insertions": 2052,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-data-overflow-design-20260906.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/amiba-data-overflow-review-20260906.md",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-overflow-before-step-433-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-overflow-full-verification-795cd6eb-20260906.json",
+          "insertions": 254,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-overflow-search-404-795cd6eb-20260906.json",
+          "insertions": 917,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-demand-42-20260906.json",
+          "insertions": 2136,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-demand-design-20260906.md",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-move-orders-42-20260906.json",
+          "insertions": 330,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-42-20260906-v2.json",
+          "insertions": 61691,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-42-20260906.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-hotspot-review-20260906.md",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-input-42-20260906.json",
+          "insertions": 83315,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-cpu-decision-42-20260906.json",
+          "insertions": 4356,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-cpu-review-20260906.md",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-cpu-summary-42-20260906.json",
+          "insertions": 464,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-decision-42-20260906.cpuprofile",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-input-42-20260906.v8.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/policy-input-capture-42-20260906.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-evidence-design-20260906.md",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-view-benchmark-20260906-v2.json",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-view-benchmark-20260906.json",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-view-decision-42-20260906.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 470,
+          "deletions": 25
+        },
+        {
+          "file": "reports/iteration/search-distribution-795cd6eb-full-20260906.json",
+          "insertions": 2428,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/target-node-classes-553e19c6-full-20260906.json",
+          "insertions": 146,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/target-node-classes-795cd6eb-full-20260906.json",
+          "insertions": 146,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-analysis-hotspot-433-20260906.json",
+          "insertions": 138773,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-hotspot-433-input-20260906.json",
+          "insertions": 2832,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-hotspot-review-20260906.md",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-permutations-433-20260906-v2.json",
+          "insertions": 3583,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-permutations-433-20260906.json",
+          "insertions": 3503,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 470,
+          "deletions": 25
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "91f9a83a.73e7b2ca.full.json",
+          "recordPath": "reports/research/91f9a83a.73e7b2ca.full.json",
+          "mode": "full",
+          "steps": 569,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 375302,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "73e7b2ca",
+          "createdAt": "2026-09-06T15:53:56.206Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。",
+          "scores": {
+            "player-blue": 121,
+            "player-green": 88,
+            "player-brown": 118,
+            "player-white": 109
+          },
+          "avgScore": 109,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 121,
+              "base": 70,
+              "tile": 47,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 88,
+              "base": 68,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 72,
+              "tile": 42,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 9,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 7,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 109,
+              "base": 53,
+              "tile": 38,
+              "card": 18,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 18
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 16,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-policy-plan-evidence-20260906-73e7b2ca-full-v283.json",
+          "reportPath": "reports/iteration/policy-plan-evidence-20260906/91f9a83a.73e7b2ca.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "91f9a83a.73e7b2ca.full",
+            "path": "reports/iteration/policy-plan-evidence-20260906/91f9a83a.73e7b2ca.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "amiba-data-overflow-20260906",
       "name": "阿米巴满池奖励结算修复",
@@ -625,7 +1210,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
