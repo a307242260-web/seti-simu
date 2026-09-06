@@ -53,6 +53,15 @@ nextState而失败；拟按原result封装修正executor契约，不删除取消
 AI从拿展示牌改为取消，完整局效果待验。取证同时暴露完整simulation投影冻结共享
 meta、随后提交stateVersion只读的独立缺陷，已保留证据待单独修复，不视为已归零。
 
+该投影缺陷已做读取方式对照：仅完整simulation投影后取消失败，不读取/cheap及
+玩家投影都成功；值相同不代表没有冻结副作用。边界与验收见
+reports/iteration/projection-freeze-design-20260907.md；当前未修改该生产路径。
+
+取消修复61cc94af完整局：562步109/88/118/107、均105.5，效果未通过；失败3→2，
+仍21满额，105127节点/129504规则执行。前470步相同，471改选取消。保留符合规则
+的取消修复，单独检查观察/估值/排序为何优先取消，不调权重补分。详见
+reports/iteration/alien-card-cancel-full-review-20260907.md。
+
 ## 初始取证
 
 已有绿方210步：4096节点，choose_target3070、place_data209；三种阿米巴符号奖励

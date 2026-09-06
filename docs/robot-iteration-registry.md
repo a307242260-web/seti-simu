@@ -261,6 +261,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `alien-card-cancel-20260907` | `61cc94af` | 当前未通过候选：取消返回正式状态；失败3→2，562步109/88/118/107、均105.5，低于108.5；首次分歧471取消取代拿牌，保留正确修复并查排序原因 |
 | `shared-leaf-observation-20260907` | `a4453b64` | 当前候选：同批冻结叶观察共享；569步均109，全程动作/状态/非时间诊断相同，107100节点与21满额不变；单点提速但整局375302→387053ms（+3.13%），整局收益未证实 |
 | `policy-plan-evidence-20260906` | `73e7b2ca` | 当前通过版本：Policy输入排除仅供计划续用的planSteps，原始证据完整保留；569步均109，完整动作、终局状态与非时间搜索诊断不变，107100节点；398875→375302ms（-5.91%） |
 | `amiba-data-overflow-20260906` | `795cd6eb` | 上一通过版本：阿米巴满池数据按弃置继续领奖；569步121/88/118/109，均109，与公司修复版全程动作一致；失败795→3，107100节点、398875ms |
@@ -297,7 +298,8 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
 - `registry.currentBaseline` 按代码祖先解析；当前策略归属为
-  `shared-leaf-observation-20260907`，完整终局均109，效果门槛通过但整局性能收益未证实；
+  `alien-card-cancel-20260907`，完整终局均105.5，效果门槛未通过，取消排序原因待查；
+  前版`shared-leaf-observation-20260907`均109，效果门槛通过但整局性能收益未证实；
   上一通过性能版本为`policy-plan-evidence-20260906`。
   高节点性能Goal尚未完成，不能把规则修复通过等同于性能优化收口。
   四轮历史计划见`docs/ai-iteration-plan-20260905.md`。

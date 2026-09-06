@@ -1,0 +1,2243 @@
+{
+  "scope": "真实471三候选Policy输入与评分专项取证；不作为性能重测或完整局重跑",
+  "inputPath": "reports/iteration/cancel-ranking-input-471-20260907.v8.gz",
+  "selected": "choose_card:657d4336",
+  "evaluations": [
+    {
+      "summary": "取消",
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": 0,
+        "value": 0,
+        "sortKey": [
+          0,
+          0,
+          0,
+          0,
+          -1
+        ],
+        "selectable": true,
+        "priorityClass": 3,
+        "status": "settled",
+        "confidence": "low",
+        "rootValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 56,
+          "securedEndGameBonus": 43,
+          "total": 56,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue2",
+              "orange2",
+              "purple2",
+              "purple4"
+            ],
+            "income": {
+              "credits": 4,
+              "energy": 3,
+              "publicity": 0,
+              "availableData": 1,
+              "handSize": 3,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 4,
+            "finalRoundNumber": 4,
+            "traceCount": 3,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": true,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 1
+              },
+              {
+                "slotId": 2,
+                "revealed": true,
+                "ownFirstTraces": 2,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-blue",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-1-a:2",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 19
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 12
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:2",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 31
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 29
+                    },
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 1,
+                      "latestReplacementOrder": 23
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 13
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:2",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 22
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:2",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 21
+                    }
+                  ]
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "standardScanEarthSource": {
+                "sectorX": 1
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-3-a",
+                    "sector-4-a"
+                  ]
+                },
+                {
+                  "sourceId": "card:card-82-0",
+                  "family": "play_card",
+                  "cardInstanceId": "card-82-0",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-1-b",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-a",
+                    "sector-3-b",
+                    "sector-4-a",
+                    "sector-4-b"
+                  ]
+                }
+              ],
+              "wins": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue2",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 5,
+            "availableData": 2,
+            "ordinaryCards": 3,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "leafValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 56,
+          "securedEndGameBonus": 43,
+          "total": 56,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue2",
+              "orange2",
+              "purple2",
+              "purple4"
+            ],
+            "income": {
+              "credits": 4,
+              "energy": 3,
+              "publicity": 0,
+              "availableData": 1,
+              "handSize": 3,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 4,
+            "finalRoundNumber": 4,
+            "traceCount": 3,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": true,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 1
+              },
+              {
+                "slotId": 2,
+                "revealed": true,
+                "ownFirstTraces": 2,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-blue",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-1-a:2",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 19
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 12
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:2",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 31
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 29
+                    },
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 1,
+                      "latestReplacementOrder": 23
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 13
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:2",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 22
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:2",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 21
+                    }
+                  ]
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "standardScanEarthSource": {
+                "sectorX": 1
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-3-a",
+                    "sector-4-a"
+                  ]
+                },
+                {
+                  "sourceId": "card:card-82-0",
+                  "family": "play_card",
+                  "cardInstanceId": "card-82-0",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-1-b",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-a",
+                    "sector-3-b",
+                    "sector-4-a",
+                    "sector-4-b"
+                  ]
+                }
+              ],
+              "wins": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue2",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 5,
+            "availableData": 2,
+            "ordinaryCards": 3,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "actualScoreDelta": 0,
+        "publicityResearchValue": 0,
+        "primaryValue": 0,
+        "vDelta": 0,
+        "vStateValueEnabled": false,
+        "quickTradeCount": 0,
+        "secondaryAgentDepth": 0,
+        "executionStepCount": 1,
+        "quickTradePurpose": null,
+        "cardCornerPurpose": null,
+        "infrastructureValue": 0,
+        "techValue": 0,
+        "gainedTechIds": [],
+        "incomeValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "remainingRounds": 0,
+        "probeRouteSummary": null,
+        "routeTargetId": "decision:choose_card:657d4336",
+        "goalPaths": [],
+        "goalSelections": [],
+        "selectedLeafId": "leaf:da738bc5",
+        "actionChain": [
+          "choose_card:657d4336"
+        ],
+        "reasonCodes": [
+          "required-standard-decision"
+        ]
+      }
+    },
+    {
+      "summary": "获得展示的火星隔离实验室",
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": 0,
+        "value": 0,
+        "sortKey": [
+          0,
+          0,
+          0,
+          0,
+          -1
+        ],
+        "selectable": true,
+        "priorityClass": 3,
+        "status": "settled",
+        "confidence": "low",
+        "rootValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 56,
+          "securedEndGameBonus": 43,
+          "total": 56,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue2",
+              "orange2",
+              "purple2",
+              "purple4"
+            ],
+            "income": {
+              "credits": 4,
+              "energy": 3,
+              "publicity": 0,
+              "availableData": 1,
+              "handSize": 3,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 4,
+            "finalRoundNumber": 4,
+            "traceCount": 3,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": true,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 1
+              },
+              {
+                "slotId": 2,
+                "revealed": true,
+                "ownFirstTraces": 2,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-blue",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-1-a:2",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 19
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 12
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:2",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 31
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 29
+                    },
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 1,
+                      "latestReplacementOrder": 23
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 13
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:2",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 22
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:2",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 21
+                    }
+                  ]
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "standardScanEarthSource": {
+                "sectorX": 1
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-3-a",
+                    "sector-4-a"
+                  ]
+                },
+                {
+                  "sourceId": "card:card-82-0",
+                  "family": "play_card",
+                  "cardInstanceId": "card-82-0",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-1-b",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-a",
+                    "sector-3-b",
+                    "sector-4-a",
+                    "sector-4-b"
+                  ]
+                }
+              ],
+              "wins": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue2",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 5,
+            "availableData": 2,
+            "ordinaryCards": 3,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "leafValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 56,
+          "securedEndGameBonus": 43,
+          "total": 56,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue2",
+              "orange2",
+              "purple2",
+              "purple4"
+            ],
+            "income": {
+              "credits": 4,
+              "energy": 3,
+              "publicity": 0,
+              "availableData": 1,
+              "handSize": 3,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 4,
+            "finalRoundNumber": 4,
+            "traceCount": 3,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": true,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 1
+              },
+              {
+                "slotId": 2,
+                "revealed": true,
+                "ownFirstTraces": 2,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-blue",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-1-a:2",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 19
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 12
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:2",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 31
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 29
+                    },
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 1,
+                      "latestReplacementOrder": 23
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 13
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:2",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 22
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:2",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 21
+                    }
+                  ]
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "standardScanEarthSource": {
+                "sectorX": 1
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-3-a",
+                    "sector-4-a"
+                  ]
+                },
+                {
+                  "sourceId": "card:card-82-0",
+                  "family": "play_card",
+                  "cardInstanceId": "card-82-0",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-1-b",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-a",
+                    "sector-3-b",
+                    "sector-4-a",
+                    "sector-4-b"
+                  ]
+                }
+              ],
+              "wins": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue2",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 5,
+            "availableData": 2,
+            "ordinaryCards": 4,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "actualScoreDelta": 0,
+        "publicityResearchValue": 0,
+        "primaryValue": 0,
+        "vDelta": 0,
+        "vStateValueEnabled": false,
+        "quickTradeCount": 0,
+        "secondaryAgentDepth": 0,
+        "executionStepCount": 1,
+        "quickTradePurpose": null,
+        "cardCornerPurpose": null,
+        "infrastructureValue": 0,
+        "techValue": 0,
+        "gainedTechIds": [],
+        "incomeValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "remainingRounds": 0,
+        "probeRouteSummary": null,
+        "routeTargetId": "decision:choose_card:b10e56e6",
+        "goalPaths": [],
+        "goalSelections": [],
+        "selectedLeafId": "leaf:96ec9fd1",
+        "actionChain": [
+          "choose_card:b10e56e6"
+        ],
+        "reasonCodes": [
+          "required-standard-decision"
+        ]
+      }
+    },
+    {
+      "summary": "盲抽虫牌",
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": 0,
+        "value": 0,
+        "sortKey": [
+          0,
+          0,
+          0,
+          0,
+          -1
+        ],
+        "selectable": true,
+        "priorityClass": 3,
+        "status": "settled",
+        "confidence": "low",
+        "rootValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 56,
+          "securedEndGameBonus": 43,
+          "total": 56,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue2",
+              "orange2",
+              "purple2",
+              "purple4"
+            ],
+            "income": {
+              "credits": 4,
+              "energy": 3,
+              "publicity": 0,
+              "availableData": 1,
+              "handSize": 3,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 4,
+            "finalRoundNumber": 4,
+            "traceCount": 3,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": true,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 1
+              },
+              {
+                "slotId": 2,
+                "revealed": true,
+                "ownFirstTraces": 2,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-blue",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-1-a:2",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 19
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 12
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:2",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 31
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 29
+                    },
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 1,
+                      "latestReplacementOrder": 23
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 13
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:2",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 22
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:2",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 21
+                    }
+                  ]
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "standardScanEarthSource": {
+                "sectorX": 1
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-3-a",
+                    "sector-4-a"
+                  ]
+                },
+                {
+                  "sourceId": "card:card-82-0",
+                  "family": "play_card",
+                  "cardInstanceId": "card-82-0",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-1-b",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-a",
+                    "sector-3-b",
+                    "sector-4-a",
+                    "sector-4-b"
+                  ]
+                }
+              ],
+              "wins": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue2",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 5,
+            "availableData": 2,
+            "ordinaryCards": 3,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "leafValue": {
+          "schemaVersion": "seti-outcome-value-v2",
+          "evaluationModel": "strategic-goal-search-v3",
+          "parameterVersion": "seti-strategic-goal-search-v3",
+          "terminal": false,
+          "realizedScore": 56,
+          "securedEndGameBonus": 43,
+          "total": 56,
+          "infrastructure": {
+            "ownedTechIds": [
+              "blue2",
+              "orange2",
+              "purple2",
+              "purple4"
+            ],
+            "income": {
+              "credits": 4,
+              "energy": 3,
+              "publicity": 0,
+              "availableData": 1,
+              "handSize": 3,
+              "additionalPublicScan": 0
+            },
+            "researchOptions": [
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "blue4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange3",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "orange4",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple1",
+                "publicityCost": 6
+              },
+              {
+                "tileId": "purple3",
+                "publicityCost": 6
+              }
+            ],
+            "blueBonusAssets": {
+              "credits": 0,
+              "energy": 0,
+              "ordinaryCards": 0
+            },
+            "roundNumber": 4,
+            "finalRoundNumber": 4,
+            "traceCount": 3,
+            "alienSlots": [
+              {
+                "slotId": 1,
+                "revealed": true,
+                "ownFirstTraces": 1,
+                "ownExtraMarks": 1
+              },
+              {
+                "slotId": 2,
+                "revealed": true,
+                "ownFirstTraces": 2,
+                "ownExtraMarks": 0
+              }
+            ],
+            "sectorWinRequirements": {
+              "schemaVersion": "seti-sector-win-requirements-v1",
+              "playerId": "player-blue",
+              "candidates": [
+                {
+                  "targetId": "sector:win:sector-1-a:2",
+                  "sectorId": "sector-1-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 2,
+                      "latestReplacementOrder": 19
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 12
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-a:2",
+                  "sectorId": "sector-3-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 2,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 2,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 31
+                    },
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 4
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-b:1",
+                  "sectorId": "sector-2-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 3,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 3,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 29
+                    },
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 1,
+                      "latestReplacementOrder": 23
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-1-b:1",
+                  "sectorId": "sector-1-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 0,
+                  "minimumOwnMarks": 4,
+                  "ranking": []
+                },
+                {
+                  "targetId": "sector:win:sector-4-a:1",
+                  "sectorId": "sector-4-a",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 0,
+                  "ownCount": 0,
+                  "maxOpponentCount": 2,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-brown",
+                      "playerColor": "brown",
+                      "count": 2,
+                      "latestReplacementOrder": 6
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-4-b:1",
+                  "sectorId": "sector-4-b",
+                  "nextSettlementNumber": 1,
+                  "openSlotCount": 4,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 4,
+                  "ranking": [
+                    {
+                      "playerId": "player-green",
+                      "playerColor": "green",
+                      "count": 1,
+                      "latestReplacementOrder": 13
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-2-a:2",
+                  "sectorId": "sector-2-a",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 22
+                    }
+                  ]
+                },
+                {
+                  "targetId": "sector:win:sector-3-b:2",
+                  "sectorId": "sector-3-b",
+                  "nextSettlementNumber": 2,
+                  "openSlotCount": 5,
+                  "nextSlotScore": 2,
+                  "ownCount": 0,
+                  "maxOpponentCount": 1,
+                  "minimumOwnMarks": 5,
+                  "ranking": [
+                    {
+                      "playerId": "player-white",
+                      "playerColor": "white",
+                      "count": 1,
+                      "latestReplacementOrder": 21
+                    }
+                  ]
+                }
+              ],
+              "standardScanCost": {
+                "credits": 1,
+                "energy": 2
+              },
+              "standardScanEarthSource": {
+                "sectorX": 1
+              },
+              "accessSources": [
+                {
+                  "sourceId": "standard-scan",
+                  "family": "scan",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-2-a",
+                    "sector-3-a",
+                    "sector-4-a"
+                  ]
+                },
+                {
+                  "sourceId": "card:card-82-0",
+                  "family": "play_card",
+                  "cardInstanceId": "card-82-0",
+                  "sectorIds": [
+                    "sector-1-a",
+                    "sector-1-b",
+                    "sector-2-a",
+                    "sector-2-b",
+                    "sector-3-a",
+                    "sector-3-b",
+                    "sector-4-a",
+                    "sector-4-b"
+                  ]
+                }
+              ],
+              "wins": [
+                {
+                  "sectorId": "sector-3-a",
+                  "settlementNumber": 1
+                }
+              ],
+              "fieldSources": {
+                "competition": "data.{nebulae,sectorExtraMarks}",
+                "tieBreak": "data.*.replacementOrder",
+                "completion": "data.sectorSettlements.winsByPlayerId"
+              }
+            },
+            "dataProgress": {
+              "computerPlacedCount": 0,
+              "analyzeReady": false,
+              "blueBonusCount": 0,
+              "blueSlots": [
+                {
+                  "tileId": "blue2",
+                  "slot": 1,
+                  "occupied": false,
+                  "unlocked": false
+                }
+              ]
+            }
+          },
+          "resourceFacts": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 5,
+            "availableData": 2,
+            "ordinaryCards": 4,
+            "alienCards": 0
+          },
+          "fieldPaths": {
+            "realizedScore": "outcomeProjection.scoring.realizedScore",
+            "infrastructure": "outcomeProjection.progress.{ownedTechIds,income,roundNumber}",
+            "securedEndGameBonus": "outcomeProjection.scoring.securedEndGameBonus",
+            "resources": {
+              "credits": "outcomeProjection.assets.credits",
+              "energy": "outcomeProjection.assets.energy",
+              "availableData": "outcomeProjection.assets.availableData",
+              "publicity": "outcomeProjection.assets.publicity",
+              "additionalPublicScan": "outcomeProjection.assets.additionalPublicScan",
+              "ordinaryCard": "outcomeProjection.assets.ordinaryCards",
+              "alienCard": "outcomeProjection.assets.alienCards"
+            }
+          }
+        },
+        "actualScoreDelta": 0,
+        "publicityResearchValue": 0,
+        "primaryValue": 0,
+        "vDelta": 0,
+        "vStateValueEnabled": false,
+        "quickTradeCount": 0,
+        "secondaryAgentDepth": 0,
+        "executionStepCount": 1,
+        "quickTradePurpose": null,
+        "cardCornerPurpose": null,
+        "infrastructureValue": 0,
+        "techValue": 0,
+        "gainedTechIds": [],
+        "incomeValue": 0,
+        "incomeDelta": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 0,
+          "additionalPublicScan": 0
+        },
+        "remainingRounds": 0,
+        "probeRouteSummary": null,
+        "routeTargetId": "decision:choose_card:db101618",
+        "goalPaths": [],
+        "goalSelections": [],
+        "selectedLeafId": "leaf:366165e0",
+        "actionChain": [
+          "choose_card:db101618"
+        ],
+        "reasonCodes": [
+          "required-standard-decision"
+        ]
+      }
+    }
+  ],
+  "captured": true
+}
