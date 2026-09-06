@@ -1,0 +1,462 @@
+{
+  "scope": "真实42六方向的到达事件/资源与任务消费者取证，不运行搜索，不以方向无即时奖励推断全局无用",
+  "cases": [],
+  "before": {
+    "player": {
+      "blueBonusResources": {
+        "credits": 0,
+        "energy": 0
+      },
+      "color": "green",
+      "completedTaskCount": 0,
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": [
+          {
+            "id": "data-token-5",
+            "index": 1,
+            "slotIndex": 1
+          },
+          {
+            "id": "data-token-6",
+            "index": 2,
+            "slotIndex": 2
+          }
+        ]
+      },
+      "hand": [
+        {
+          "cardId": "dlc_35.png",
+          "cardTypeCode": 2,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-5-0",
+          "incomeCode": 2,
+          "price": 1,
+          "scanActionCode": 0,
+          "set": "space-agency"
+        },
+        {
+          "cardId": "b_115.webp",
+          "cardTypeCode": 3,
+          "discardActionCode": 1,
+          "faceUp": true,
+          "id": "card-6-0",
+          "incomeCode": 2,
+          "price": 2,
+          "scanActionCode": 2,
+          "set": "basic"
+        },
+        {
+          "cardId": "dlc_11.png",
+          "cardTypeCode": 2,
+          "discardActionCode": 1,
+          "faceUp": true,
+          "id": "card-7-0",
+          "incomeCode": 2,
+          "price": 3,
+          "scanActionCode": 1,
+          "set": "space-agency"
+        }
+      ],
+      "id": "player-green",
+      "income": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "initialSelection": {
+        "industry": {
+          "id": "industry:寰宇动力.png"
+        },
+        "removedInitialCards": [
+          {
+            "id": "initial:14"
+          },
+          {
+            "id": "initial:20"
+          }
+        ]
+      },
+      "mainActionCompleted": false,
+      "name": "绿色玩家",
+      "orbitCount": 0,
+      "reservedCards": [],
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 7
+      },
+      "scoreSources": {
+        "initialScore": 7
+      },
+      "techState": {
+        "blueBoardSlots": {},
+        "disabledTiles": {},
+        "ownedTiles": {}
+      },
+      "industryRoundMarkRound": 1,
+      "industryRoundMarkTurn": 2,
+      "industryStrategyPassiveSlots": {
+        "yellow": false,
+        "red": false,
+        "blue": false
+      },
+      "industryAlienLabPanels": {
+        "blue": true,
+        "yellow": true,
+        "pink": true
+      },
+      "industryFutureSpan": {
+        "card": null,
+        "targetScore": 0,
+        "playing": false
+      },
+      "industryHuanyuFreeMoveRound": 0,
+      "industryHuanyuFreeMoveTurn": 0,
+      "industryHuanyuFreeMovesLeft": 0,
+      "industryHuanyuMovedRocketIds": []
+    },
+    "turn": {
+      "actionCycleNumber": 1,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [
+        "player-white"
+      ],
+      "currentPlayerId": "player-green",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [],
+      "roundNumber": 1,
+      "startPlayerId": "player-white",
+      "turnNumber": 2,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "pieces": {
+      "activeRocketId": 2,
+      "playerRocketSequences": {
+        "player-green": [
+          1,
+          2
+        ]
+      },
+      "rockets": [
+        {
+          "angleDegrees": 157.5,
+          "color": "green",
+          "id": 1,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 5,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        {
+          "angleDegrees": 144.9,
+          "color": "green",
+          "id": 2,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 2,
+          "radius": 69.42,
+          "sectorX": 5,
+          "sectorY": 1,
+          "slotIndex": 0,
+          "surface": "solar-board"
+        }
+      ]
+    },
+    "aliens": {
+      "aliens": {
+        "1": {
+          "alienId": null,
+          "assignedAlienId": null,
+          "revealed": false,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          }
+        },
+        "2": {
+          "alienId": null,
+          "assignedAlienId": null,
+          "revealed": false,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        }
+      },
+      "amiba": {
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "symbolSlots": {},
+        "symbolsById": {},
+        "traceSlotsByAlienSlotId": {}
+      },
+      "aomomo": {
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "landingMarkers": [],
+        "orbitMarkers": [],
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {}
+      },
+      "banrenma": {
+        "bonusSlots": {},
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "scoreMarksByPlayerId": {},
+        "traceSlotsByAlienSlotId": {}
+      },
+      "chong": {
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "completedTransports": [],
+        "displayedCardIndex": null,
+        "fossilsById": {},
+        "panelFossilSlots": {},
+        "planetFossilIds": {
+          "jupiter": [],
+          "saturn": []
+        },
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {},
+        "transportTasksByRocketId": {},
+        "unlockedBluePositions": [
+          7,
+          8,
+          9
+        ]
+      },
+      "fangzhou": {
+        "card1Deck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "card1Revealed": [],
+        "card1RevealedSinceShuffle": 0,
+        "displayedCard1Index": null,
+        "playerCard2ById": {},
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {},
+        "unlockCountByPlayerId": {}
+      },
+      "jiuzhe": {
+        "cardsDealt": false,
+        "freeScoreThreshold": null,
+        "paidScoreThreshold": null,
+        "playerCardsById": {},
+        "playerThreatByColor": {},
+        "playerThreatById": {},
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {}
+      },
+      "neutralScoreTraceMarks": {},
+      "revealPoolAlienIds": [
+        "九折",
+        "半人马",
+        "奥陌陌",
+        "异常点",
+        "方舟",
+        "符文族",
+        "虫",
+        "阿米巴"
+      ],
+      "runezu": {
+        "availableSymbols": [],
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "faceSymbolSlots": {},
+        "panelSymbolSlots": {},
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "sourceSymbolSlots": {},
+        "traceSlotsByAlienSlotId": {}
+      },
+      "yichangdian": {
+        "anomalies": [],
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "nextAnomalySectorX": null,
+        "revealEarthX": null,
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {}
+      }
+    }
+  },
+  "passed": false,
+  "error": {
+    "message": "Cannot read properties of undefined (reading 'events')",
+    "stack": "TypeError: Cannot read properties of undefined (reading 'events')\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/inspect-company-arrivals-42-20260907.js:23:52)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

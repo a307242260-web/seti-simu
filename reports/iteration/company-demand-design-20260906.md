@@ -97,3 +97,40 @@
 本轮脚本语法和 `node tools/audit_v_state_inputs.js` 通过；未修改生产。
 已检查相关AI选择器、Production探测需求、公司流程及实现证据门禁；只更新本设计
 与性能计划。README/AGENTS、AI设计/RL契约及公司规则没有行为或接口变化，无需改写。
+
+## 2026-09-07到达收益核对（不运行搜索）
+
+company-arrivals-42-v2-20260907.json从同一公司启动后的正式envelope逐个执行六个
+首步方向，保存玩家、当回合bonus、探测器、外星人，以及各步新增事件/资源/后续Decision。
+两艘探测器均从显示坐标(5,1)出发：向外到火星，正式visitPlanet且宣传+1；顺时针
+到(6,1)空格，逆时针到(4,1)空格，均只有move事件、资源变化0。根状态无reservedCards
+或cardTurnEventBonuses。目的地content内x/y是盘面底层格坐标，不能代替move.to显示坐标。
+结合原始目标目录：逆时针虽无即时收益，但每艘匹配4个环绕/登陆路线下一步；
+顺时针每艘匹配0个且本次无即时收益。因此不能用“无即时奖励”统一删除四个横移。
+本证据仍不证明顺时针不可能为手牌位置条件/后续任务服务，必须核对实际需求闭包。
+
+继续核对本样本三张手牌的正式getCardModel：dlc35是dataTotal>=12任务，b115是
+unmarkedFinalRightmost终局计分，dlc11的任务则是probeLocation/asteroid，奖励3分
+与2能量。这是本样本确实存在的小行星位置需求，不是为了未来假设而增加目标类型。
+应先生成这一需求，再用正式拓扑检查各首步是否推进它；不能因当前没有已打出的任务
+或只读取现有行星目录就排除横移，也不能反过来把所有横移默认视作完成该需求。
+
+到达事件消费者进一步确认：residual-domain-session不仅处理触发任务和当回合bonus，
+还在visitPlanet推进虫族运输化石送达；独立访问目标必须覆盖当前有效运输任务。
+当回合bonus的distinctBy/usedKeys/minCount/claimedKeys影响需求是否已完成，不能
+仅匹配eventType。卡牌eventMatchesTrigger与residual eventMatchesBonus当前为各自
+内部纯匹配，外层collectMatchingTriggers/奖励结算会写状态；不能直接拿外层对冻结
+观察作读取，也不能另建第二份规则匹配表。
+
+初版诊断错误读取inspect.session.journal，尚未执行方向即失败，原始证据保留在
+company-arrivals-42-20260907.json。工具改为读取正式envelope与submitResult.journal
+后六方向全部成功；无生产改动。当前b10ae543完整局运行中，不提交或修改其生产版本。
+
+小行星需求路线已进一步核验：asteroid-routes-42-20260907.json与对应只读脚本，
+每个首步复用正式canMoveFromCoordinate和getRequiredMovePointsFromCoordinate计算
+32格最短移动点，保存全部可达小行星端点。向外→(5,2)火星→(5,3)小行星共2点；
+顺时针→(6,1)→(6,2)小行星同为2点；逆时针首步的最近小行星需3点。两艘一致。
+原来0个行星下一步匹配的顺时针，实际上推进当前手牌的位置任务，不能直接删除。
+这是路线成本证据，不证明不同终点完整状态等价，也不把32格拓扑检查计为AI搜索节点。
+需求应按任务身份形成，路线比较复用正式成本并保留有用沿途收益；不能把每个方向
+重新包装成独立目标。手牌任务尚需打牌/支付与正式完成条件，不能把到达位置直接记成得分。

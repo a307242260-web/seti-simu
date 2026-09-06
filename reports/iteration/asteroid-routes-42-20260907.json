@@ -1,0 +1,1227 @@
+{
+  "scope": "真实42手牌小行星任务与各公司首步的最短移动点；只读正式几何/成本，不执行搜索或证明全部收益等价",
+  "routes": [
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      },
+      "minimumPoints": 2,
+      "destinations": [
+        {
+          "coordinate": {
+            "x": 5,
+            "y": 3
+          },
+          "points": 2,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 2,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 6,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 3,
+            "y": 2
+          },
+          "points": 3,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 7,
+            "y": 3
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 3
+            },
+            {
+              "x": 6,
+              "y": 3
+            },
+            {
+              "x": 7,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 0,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 1,
+            "y": 2
+          },
+          "points": 6,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            },
+            {
+              "x": 2,
+              "y": 2
+            },
+            {
+              "x": 1,
+              "y": 2
+            }
+          ]
+        }
+      ],
+      "exploredCoordinates": 32
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:baf97e87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 1 顺时针"
+      },
+      "minimumPoints": 2,
+      "destinations": [
+        {
+          "coordinate": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 2,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "points": 3,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 0,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 7,
+            "y": 3
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 2
+            },
+            {
+              "x": 7,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 5,
+            "y": 3
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 1,
+            "y": 2
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 2
+            },
+            {
+              "x": 0,
+              "y": 2
+            },
+            {
+              "x": 1,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 3,
+            "y": 2
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        }
+      ],
+      "exploredCoordinates": 32
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d69b7722",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:ccw",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 1 逆时针"
+      },
+      "minimumPoints": 3,
+      "destinations": [
+        {
+          "coordinate": {
+            "x": 3,
+            "y": 2
+          },
+          "points": 3,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 5,
+            "y": 3
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 3
+            },
+            {
+              "x": 5,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 6,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 0,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 1,
+            "y": 2
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 3,
+              "y": 1
+            },
+            {
+              "x": 2,
+              "y": 1
+            },
+            {
+              "x": 2,
+              "y": 2
+            },
+            {
+              "x": 1,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 7,
+            "y": 3
+          },
+          "points": 6,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 2
+            },
+            {
+              "x": 7,
+              "y": 3
+            }
+          ]
+        }
+      ],
+      "exploredCoordinates": 32
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96f6cb01",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 2 向外"
+      },
+      "minimumPoints": 2,
+      "destinations": [
+        {
+          "coordinate": {
+            "x": 5,
+            "y": 3
+          },
+          "points": 2,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 2,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 6,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 3,
+            "y": 2
+          },
+          "points": 3,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 7,
+            "y": 3
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 3
+            },
+            {
+              "x": 6,
+              "y": 3
+            },
+            {
+              "x": 7,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 0,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 1,
+            "y": 2
+          },
+          "points": 6,
+          "path": [
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            },
+            {
+              "x": 2,
+              "y": 2
+            },
+            {
+              "x": 1,
+              "y": 2
+            }
+          ]
+        }
+      ],
+      "exploredCoordinates": 32
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:9d684f87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 2 顺时针"
+      },
+      "minimumPoints": 2,
+      "destinations": [
+        {
+          "coordinate": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 2,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "points": 3,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 0,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 7,
+            "y": 3
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 2
+            },
+            {
+              "x": 7,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 5,
+            "y": 3
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 1,
+            "y": 2
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 2
+            },
+            {
+              "x": 0,
+              "y": 2
+            },
+            {
+              "x": 1,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 3,
+            "y": 2
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        }
+      ],
+      "exploredCoordinates": 32
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:abf3937a",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 2 逆时针"
+      },
+      "minimumPoints": 3,
+      "destinations": [
+        {
+          "coordinate": {
+            "x": 3,
+            "y": 2
+          },
+          "points": 3,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 3,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 5,
+            "y": 3
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 3
+            },
+            {
+              "x": 5,
+              "y": 3
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 4,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 5,
+              "y": 2
+            },
+            {
+              "x": 6,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 0,
+            "y": 1
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 0,
+              "y": 1
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 1,
+            "y": 2
+          },
+          "points": 5,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 3,
+              "y": 1
+            },
+            {
+              "x": 2,
+              "y": 1
+            },
+            {
+              "x": 2,
+              "y": 2
+            },
+            {
+              "x": 1,
+              "y": 2
+            }
+          ]
+        },
+        {
+          "coordinate": {
+            "x": 7,
+            "y": 3
+          },
+          "points": 6,
+          "path": [
+            {
+              "x": 4,
+              "y": 1
+            },
+            {
+              "x": 5,
+              "y": 1
+            },
+            {
+              "x": 6,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 1
+            },
+            {
+              "x": 7,
+              "y": 2
+            },
+            {
+              "x": 7,
+              "y": 3
+            }
+          ]
+        }
+      ],
+      "exploredCoordinates": 32
+    }
+  ],
+  "handModels": [
+    {
+      "card": {
+        "cardId": "dlc_35.png",
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-5-0",
+        "incomeCode": 2,
+        "price": 1,
+        "scanActionCode": 0,
+        "set": "space-agency"
+      },
+      "model": {
+        "cardType": 2,
+        "playEffects": [
+          {
+            "id": "dlc35-public-scan-marker",
+            "type": "gain_resources",
+            "label": "获得 1 个公共牌区扫描标记",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "additionalPublicScan": 1
+              }
+            }
+          }
+        ],
+        "tasks": [
+          {
+            "id": "dlc35-data-total",
+            "condition": {
+              "type": "dataTotal",
+              "count": 12
+            },
+            "rewards": [
+              {
+                "id": "dlc35-energy",
+                "type": "gain_resources",
+                "label": "未分析与可用数据至少12：1能量",
+                "icon": "energy",
+                "options": {
+                  "gain": {
+                    "energy": 1
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "source": {
+          "referenceId": "dlc_35",
+          "referenceName": "NASA系外行星档案",
+          "className": "DlcCardsSpec",
+          "sourceKind": "dlc_cards"
+        }
+      }
+    },
+    {
+      "card": {
+        "cardId": "b_115.webp",
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-6-0",
+        "incomeCode": 2,
+        "price": 2,
+        "scanActionCode": 2,
+        "set": "basic"
+      },
+      "model": {
+        "cardType": 3,
+        "playEffects": [
+          {
+            "id": "b115-publicity",
+            "type": "gain_resources",
+            "label": "获得 2 宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        ],
+        "endGameScoring": {
+          "kind": "unmarkedFinalRightmost"
+        },
+        "source": {
+          "referenceId": "b_115",
+          "referenceName": "索尔维会议",
+          "className": "Cards71Spec",
+          "sourceKind": "cards_71"
+        }
+      }
+    },
+    {
+      "card": {
+        "cardId": "dlc_11.png",
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-7-0",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 1,
+        "set": "space-agency"
+      },
+      "model": {
+        "cardType": 2,
+        "playEffects": [
+          {
+            "id": "dlc11-launch",
+            "type": "launch",
+            "label": "发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            }
+          },
+          {
+            "id": "dlc11-publicity",
+            "type": "gain_resources",
+            "label": "获得 1 宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 1
+              }
+            }
+          }
+        ],
+        "tasks": [
+          {
+            "id": "dlc11-asteroid-probe",
+            "condition": {
+              "type": "probeLocation",
+              "locationType": "asteroid"
+            },
+            "rewards": [
+              {
+                "id": "dlc11-score-energy",
+                "type": "gain_resources",
+                "label": "小行星探测器：3分+2能量",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3,
+                    "energy": 2
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "source": {
+          "referenceId": "dlc_11",
+          "referenceName": "八灵神星探测器",
+          "className": "DlcCardsSpec",
+          "sourceKind": "dlc_cards"
+        }
+      }
+    }
+  ],
+  "passed": true
+}

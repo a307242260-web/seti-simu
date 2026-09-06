@@ -1,0 +1,1487 @@
+{
+  "scope": "真实42六方向的到达事件/资源与任务消费者取证，不运行搜索，不以方向无即时奖励推断全局无用",
+  "cases": [
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      },
+      "rocket": {
+        "angleDegrees": 157.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 156.26,
+        "sectorX": 5,
+        "sectorY": 2,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      "destination": {
+        "x": 2,
+        "y": 2,
+        "kind": "planet",
+        "planetId": "mars",
+        "label": "火星",
+        "tags": [
+          "orbit_target",
+          "landing_target"
+        ]
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 0
+      },
+      "events": [
+        {
+          "type": "move",
+          "rocketId": 1,
+          "playerId": "player-green",
+          "source": "industry",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "sameRing": false
+        },
+        {
+          "type": "visitPlanet",
+          "planetId": "mars",
+          "rocketId": 1,
+          "tokenKind": "standard",
+          "fossilId": null,
+          "playerId": "player-green",
+          "source": "industry",
+          "publicityReward": 1,
+          "publicityGained": 1
+        }
+      ],
+      "nextDecision": {
+        "ok": true,
+        "decisionId": "effect-session-1:effect:3",
+        "decisionVersion": 2,
+        "ownerId": "player-green",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:96f6cb01",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:out",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out"
+            },
+            "decision": null,
+            "summary": "移动 2 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:9d684f87",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:cw",
+              "rocketId": 2,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw"
+            },
+            "decision": null,
+            "summary": "移动 2 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:abf3937a",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:ccw",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 2 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:49d31bca",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "skip",
+              "skip": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束移动"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:baf97e87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 1 顺时针"
+      },
+      "rocket": {
+        "angleDegrees": 202.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 84.68,
+        "sectorX": 6,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      "destination": {
+        "x": 6,
+        "y": 1,
+        "kind": "empty_space",
+        "label": "内圈空白"
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "events": [
+        {
+          "type": "move",
+          "rocketId": 1,
+          "playerId": "player-green",
+          "source": "industry",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "sameRing": true
+        }
+      ],
+      "nextDecision": {
+        "ok": true,
+        "decisionId": "effect-session-1:effect:3",
+        "decisionVersion": 2,
+        "ownerId": "player-green",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:96f6cb01",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:out",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out"
+            },
+            "decision": null,
+            "summary": "移动 2 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:9d684f87",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:cw",
+              "rocketId": 2,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw"
+            },
+            "decision": null,
+            "summary": "移动 2 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:abf3937a",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:ccw",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 2 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:49d31bca",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "skip",
+              "skip": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束移动"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d69b7722",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:ccw",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 1 逆时针"
+      },
+      "rocket": {
+        "angleDegrees": 112.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 84.68,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      "destination": {
+        "x": 5,
+        "y": 1,
+        "kind": "empty_space",
+        "label": "三层内圈空白"
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "events": [
+        {
+          "type": "move",
+          "rocketId": 1,
+          "playerId": "player-green",
+          "source": "industry",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "sameRing": true
+        }
+      ],
+      "nextDecision": {
+        "ok": true,
+        "decisionId": "effect-session-1:effect:3",
+        "decisionVersion": 2,
+        "ownerId": "player-green",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:96f6cb01",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:out",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out"
+            },
+            "decision": null,
+            "summary": "移动 2 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:9d684f87",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:cw",
+              "rocketId": 2,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw"
+            },
+            "decision": null,
+            "summary": "移动 2 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:abf3937a",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:ccw",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 2 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:49d31bca",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "skip",
+              "skip": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束移动"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96f6cb01",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 2 向外"
+      },
+      "rocket": {
+        "angleDegrees": 157.5,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 156.26,
+        "sectorX": 5,
+        "sectorY": 2,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      "destination": {
+        "x": 2,
+        "y": 2,
+        "kind": "planet",
+        "planetId": "mars",
+        "label": "火星",
+        "tags": [
+          "orbit_target",
+          "landing_target"
+        ]
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 0
+      },
+      "events": [
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-green",
+          "source": "industry",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "sameRing": false
+        },
+        {
+          "type": "visitPlanet",
+          "planetId": "mars",
+          "rocketId": 2,
+          "tokenKind": "standard",
+          "fossilId": null,
+          "playerId": "player-green",
+          "source": "industry",
+          "publicityReward": 1,
+          "publicityGained": 1
+        }
+      ],
+      "nextDecision": {
+        "ok": true,
+        "decisionId": "effect-session-1:effect:3",
+        "decisionVersion": 2,
+        "ownerId": "player-green",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:b849344b",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:out",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out"
+            },
+            "decision": null,
+            "summary": "移动 1 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:baf97e87",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:cw",
+              "rocketId": 1,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw"
+            },
+            "decision": null,
+            "summary": "移动 1 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:d69b7722",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:ccw",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 1 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:49d31bca",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "skip",
+              "skip": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束移动"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:9d684f87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 2 顺时针"
+      },
+      "rocket": {
+        "angleDegrees": 202.5,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 84.68,
+        "sectorX": 6,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      "destination": {
+        "x": 6,
+        "y": 1,
+        "kind": "empty_space",
+        "label": "内圈空白"
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "events": [
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-green",
+          "source": "industry",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "sameRing": true
+        }
+      ],
+      "nextDecision": {
+        "ok": true,
+        "decisionId": "effect-session-1:effect:3",
+        "decisionVersion": 2,
+        "ownerId": "player-green",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:b849344b",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:out",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out"
+            },
+            "decision": null,
+            "summary": "移动 1 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:baf97e87",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:cw",
+              "rocketId": 1,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw"
+            },
+            "decision": null,
+            "summary": "移动 1 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:d69b7722",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:ccw",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 1 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:49d31bca",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "skip",
+              "skip": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束移动"
+          }
+        ]
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:abf3937a",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 2 逆时针"
+      },
+      "rocket": {
+        "angleDegrees": 112.5,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 84.68,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      "destination": {
+        "x": 5,
+        "y": 1,
+        "kind": "empty_space",
+        "label": "三层内圈空白"
+      },
+      "resourceDelta": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 0
+      },
+      "events": [
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-green",
+          "source": "industry",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "sameRing": true
+        }
+      ],
+      "nextDecision": {
+        "ok": true,
+        "decisionId": "effect-session-1:effect:3",
+        "decisionVersion": 2,
+        "ownerId": "player-green",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:b849344b",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:out",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "direction": "out"
+            },
+            "decision": null,
+            "summary": "移动 1 向外"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:baf97e87",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:cw",
+              "rocketId": 1,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw"
+            },
+            "decision": null,
+            "summary": "移动 1 顺时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:d69b7722",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:1:ccw",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 1 逆时针"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:49d31bca",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "skip",
+              "skip": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束移动"
+          }
+        ]
+      }
+    }
+  ],
+  "before": {
+    "player": {
+      "blueBonusResources": {
+        "credits": 0,
+        "energy": 0
+      },
+      "color": "green",
+      "completedTaskCount": 0,
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": [
+          {
+            "id": "data-token-5",
+            "index": 1,
+            "slotIndex": 1
+          },
+          {
+            "id": "data-token-6",
+            "index": 2,
+            "slotIndex": 2
+          }
+        ]
+      },
+      "hand": [
+        {
+          "cardId": "dlc_35.png",
+          "cardTypeCode": 2,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-5-0",
+          "incomeCode": 2,
+          "price": 1,
+          "scanActionCode": 0,
+          "set": "space-agency"
+        },
+        {
+          "cardId": "b_115.webp",
+          "cardTypeCode": 3,
+          "discardActionCode": 1,
+          "faceUp": true,
+          "id": "card-6-0",
+          "incomeCode": 2,
+          "price": 2,
+          "scanActionCode": 2,
+          "set": "basic"
+        },
+        {
+          "cardId": "dlc_11.png",
+          "cardTypeCode": 2,
+          "discardActionCode": 1,
+          "faceUp": true,
+          "id": "card-7-0",
+          "incomeCode": 2,
+          "price": 3,
+          "scanActionCode": 1,
+          "set": "space-agency"
+        }
+      ],
+      "id": "player-green",
+      "income": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "initialSelection": {
+        "industry": {
+          "id": "industry:寰宇动力.png"
+        },
+        "removedInitialCards": [
+          {
+            "id": "initial:14"
+          },
+          {
+            "id": "initial:20"
+          }
+        ]
+      },
+      "mainActionCompleted": false,
+      "name": "绿色玩家",
+      "orbitCount": 0,
+      "reservedCards": [],
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 7
+      },
+      "scoreSources": {
+        "initialScore": 7
+      },
+      "techState": {
+        "blueBoardSlots": {},
+        "disabledTiles": {},
+        "ownedTiles": {}
+      },
+      "industryRoundMarkRound": 1,
+      "industryRoundMarkTurn": 2,
+      "industryStrategyPassiveSlots": {
+        "yellow": false,
+        "red": false,
+        "blue": false
+      },
+      "industryAlienLabPanels": {
+        "blue": true,
+        "yellow": true,
+        "pink": true
+      },
+      "industryFutureSpan": {
+        "card": null,
+        "targetScore": 0,
+        "playing": false
+      },
+      "industryHuanyuFreeMoveRound": 0,
+      "industryHuanyuFreeMoveTurn": 0,
+      "industryHuanyuFreeMovesLeft": 0,
+      "industryHuanyuMovedRocketIds": []
+    },
+    "turn": {
+      "actionCycleNumber": 1,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [
+        "player-white"
+      ],
+      "currentPlayerId": "player-green",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [],
+      "roundNumber": 1,
+      "startPlayerId": "player-white",
+      "turnNumber": 2,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "pieces": {
+      "activeRocketId": 2,
+      "playerRocketSequences": {
+        "player-green": [
+          1,
+          2
+        ]
+      },
+      "rockets": [
+        {
+          "angleDegrees": 157.5,
+          "color": "green",
+          "id": 1,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 5,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        {
+          "angleDegrees": 144.9,
+          "color": "green",
+          "id": 2,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 2,
+          "radius": 69.42,
+          "sectorX": 5,
+          "sectorY": 1,
+          "slotIndex": 0,
+          "surface": "solar-board"
+        }
+      ]
+    },
+    "aliens": {
+      "aliens": {
+        "1": {
+          "alienId": null,
+          "assignedAlienId": null,
+          "revealed": false,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          }
+        },
+        "2": {
+          "alienId": null,
+          "assignedAlienId": null,
+          "revealed": false,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        }
+      },
+      "amiba": {
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "symbolSlots": {},
+        "symbolsById": {},
+        "traceSlotsByAlienSlotId": {}
+      },
+      "aomomo": {
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "landingMarkers": [],
+        "orbitMarkers": [],
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {}
+      },
+      "banrenma": {
+        "bonusSlots": {},
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "scoreMarksByPlayerId": {},
+        "traceSlotsByAlienSlotId": {}
+      },
+      "chong": {
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "completedTransports": [],
+        "displayedCardIndex": null,
+        "fossilsById": {},
+        "panelFossilSlots": {},
+        "planetFossilIds": {
+          "jupiter": [],
+          "saturn": []
+        },
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {},
+        "transportTasksByRocketId": {},
+        "unlockedBluePositions": [
+          7,
+          8,
+          9
+        ]
+      },
+      "fangzhou": {
+        "card1Deck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "card1Revealed": [],
+        "card1RevealedSinceShuffle": 0,
+        "displayedCard1Index": null,
+        "playerCard2ById": {},
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {},
+        "unlockCountByPlayerId": {}
+      },
+      "jiuzhe": {
+        "cardsDealt": false,
+        "freeScoreThreshold": null,
+        "paidScoreThreshold": null,
+        "playerCardsById": {},
+        "playerThreatByColor": {},
+        "playerThreatById": {},
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {}
+      },
+      "neutralScoreTraceMarks": {},
+      "revealPoolAlienIds": [
+        "九折",
+        "半人马",
+        "奥陌陌",
+        "异常点",
+        "方舟",
+        "符文族",
+        "虫",
+        "阿米巴"
+      ],
+      "runezu": {
+        "availableSymbols": [],
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "faceSymbolSlots": {},
+        "panelSymbolSlots": {},
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "sourceSymbolSlots": {},
+        "traceSlotsByAlienSlotId": {}
+      },
+      "yichangdian": {
+        "anomalies": [],
+        "cardDeck": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "displayedCardIndex": null,
+        "nextAnomalySectorX": null,
+        "revealEarthX": null,
+        "revealInitialized": false,
+        "revealedByPlayerColor": null,
+        "revealedByPlayerId": null,
+        "revealedSlotId": null,
+        "traceSlotsByAlienSlotId": {}
+      }
+    }
+  },
+  "passed": true
+}
