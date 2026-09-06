@@ -1,0 +1,392 @@
+{
+  "scope": "真实42盘面派生的Card Play→Science正式owner反例；隔离放置两艘及替换手牌，无完整session/CAS/RNG重放，不运行AI",
+  "cases": [
+    {
+      "cardId": "b_50.webp",
+      "modelOptions": {
+        "owner": "any",
+        "maxTargets": 3,
+        "repeat": 1,
+        "includeAdjacent": false,
+        "gainData": true
+      },
+      "scanNodes": [
+        {
+          "type": "science_domain_scan_step",
+          "ownerId": "player-green",
+          "payload": {
+            "options": {
+              "mode": "probe",
+              "gainData": true,
+              "label": "选择最多3个探测器，各扫描所在扇区"
+            },
+            "cardInstanceId": "card-900",
+            "cardEffect": {
+              "id": "b50-probe-sector-scan",
+              "type": "card_probe_sector_scan",
+              "label": "选择最多3个探测器，各扫描所在扇区",
+              "icon": "scan",
+              "options": {
+                "owner": "any",
+                "maxTargets": 3,
+                "repeat": 1,
+                "includeAdjacent": false,
+                "gainData": true
+              },
+              "status": "pending"
+            }
+          }
+        }
+      ],
+      "prepared": [
+        {
+          "decision": {
+            "type": "science_domain_scan_step",
+            "kind": "decision",
+            "decisionKind": "choose_target",
+            "ownerId": "player-green",
+            "payload": {
+              "options": {
+                "mode": "probe",
+                "gainData": true,
+                "label": "选择最多3个探测器，各扫描所在扇区"
+              }
+            }
+          },
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:606367a1",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-a",
+                "nebulaId": "sector-1-a",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 南河三"
+            }
+          ],
+          "events": [
+            {
+              "type": "signalMarked",
+              "nebulaId": "sector-1-a",
+              "slotIndex": 2,
+              "playerId": "player-green"
+            }
+          ],
+          "followups": []
+        }
+      ],
+      "confirmedMismatch": "对手探测器所在扇区不可选，选择一次后不再提供第2/3艘"
+    },
+    {
+      "cardId": "b_58.webp",
+      "modelOptions": {
+        "owner": "current",
+        "maxTargets": 1,
+        "repeat": 1,
+        "includeAdjacent": true,
+        "gainData": true
+      },
+      "scanNodes": [
+        {
+          "type": "science_domain_scan_step",
+          "ownerId": "player-green",
+          "payload": {
+            "options": {
+              "mode": "probe",
+              "gainData": true,
+              "label": "选择1个己方探测器，扫描所在及相邻扇区"
+            },
+            "cardInstanceId": "card-900",
+            "cardEffect": {
+              "id": "b58-probe-adjacent-scan",
+              "type": "card_probe_sector_scan",
+              "label": "选择1个己方探测器，扫描所在及相邻扇区",
+              "icon": "scan",
+              "options": {
+                "owner": "current",
+                "maxTargets": 1,
+                "repeat": 1,
+                "includeAdjacent": true,
+                "gainData": true
+              },
+              "status": "pending"
+            }
+          }
+        }
+      ],
+      "prepared": [
+        {
+          "decision": {
+            "type": "science_domain_scan_step",
+            "kind": "decision",
+            "decisionKind": "choose_target",
+            "ownerId": "player-green",
+            "payload": {
+              "options": {
+                "mode": "probe",
+                "gainData": true,
+                "label": "选择1个己方探测器，扫描所在及相邻扇区"
+              }
+            }
+          },
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:606367a1",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-a",
+                "nebulaId": "sector-1-a",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 南河三"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a81340a9",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-b",
+                "nebulaId": "sector-1-b",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 织女一"
+            }
+          ],
+          "events": [
+            {
+              "type": "signalMarked",
+              "nebulaId": "sector-1-a",
+              "slotIndex": 2,
+              "playerId": "player-green"
+            }
+          ],
+          "followups": []
+        }
+      ],
+      "confirmedMismatch": "仅一个扫描节点，结算后没有两个相邻扇区的扫描"
+    },
+    {
+      "cardId": "b_22.webp",
+      "modelOptions": {
+        "owner": "current",
+        "maxTargets": 1,
+        "repeat": 2,
+        "includeAdjacent": false,
+        "gainData": true
+      },
+      "scanNodes": [
+        {
+          "type": "science_domain_scan_step",
+          "ownerId": "player-green",
+          "payload": {
+            "options": {
+              "mode": "probe",
+              "gainData": true,
+              "label": "选择己方探测器所在扇区扫描两次 1/2"
+            },
+            "cardInstanceId": "card-900",
+            "cardEffect": {
+              "id": "b22-probe-sector-scan-1",
+              "type": "card_probe_sector_scan",
+              "label": "选择己方探测器所在扇区扫描两次 1/2",
+              "icon": "scan",
+              "options": {
+                "owner": "current",
+                "maxTargets": 1,
+                "repeat": 1,
+                "includeAdjacent": false,
+                "gainData": true
+              },
+              "status": "pending"
+            }
+          }
+        },
+        {
+          "type": "science_domain_scan_step",
+          "ownerId": "player-green",
+          "payload": {
+            "options": {
+              "mode": "probe",
+              "gainData": true,
+              "label": "选择己方探测器所在扇区扫描两次 2/2"
+            },
+            "cardInstanceId": "card-900",
+            "cardEffect": {
+              "id": "b22-probe-sector-scan-2",
+              "type": "card_probe_sector_scan",
+              "label": "选择己方探测器所在扇区扫描两次 2/2",
+              "icon": "scan",
+              "options": {
+                "owner": "current",
+                "maxTargets": 1,
+                "repeat": 1,
+                "includeAdjacent": false,
+                "gainData": true
+              },
+              "status": "pending"
+            }
+          }
+        }
+      ],
+      "prepared": [
+        {
+          "decision": {
+            "type": "science_domain_scan_step",
+            "kind": "decision",
+            "decisionKind": "choose_target",
+            "ownerId": "player-green",
+            "payload": {
+              "options": {
+                "mode": "probe",
+                "gainData": true,
+                "label": "选择己方探测器所在扇区扫描两次 1/2"
+              }
+            }
+          },
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:606367a1",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-a",
+                "nebulaId": "sector-1-a",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 南河三"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a81340a9",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-b",
+                "nebulaId": "sector-1-b",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 织女一"
+            }
+          ],
+          "events": [
+            {
+              "type": "signalMarked",
+              "nebulaId": "sector-1-a",
+              "slotIndex": 2,
+              "playerId": "player-green"
+            }
+          ],
+          "followups": []
+        },
+        {
+          "decision": {
+            "type": "science_domain_scan_step",
+            "kind": "decision",
+            "decisionKind": "choose_target",
+            "ownerId": "player-green",
+            "payload": {
+              "options": {
+                "mode": "probe",
+                "gainData": true,
+                "label": "选择己方探测器所在扇区扫描两次 2/2"
+              }
+            }
+          },
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:606367a1",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-a",
+                "nebulaId": "sector-1-a",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 南河三"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a81340a9",
+              "actorId": "player-green",
+              "stateVersion": 11,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "nebula:sector-1-b",
+                "nebulaId": "sector-1-b",
+                "sectorX": null
+              },
+              "payload": {
+                "gainData": true
+              },
+              "decision": null,
+              "summary": "扫描 织女一"
+            }
+          ],
+          "events": [
+            {
+              "type": "signalMarked",
+              "nebulaId": "sector-1-a",
+              "slotIndex": 3,
+              "playerId": "player-green"
+            }
+          ],
+          "followups": []
+        }
+      ],
+      "observedBehavior": "两次扫描独立选择扇区，没有锁定同一探测器来源；规则语义待核准"
+    }
+  ],
+  "verified": true
+}
