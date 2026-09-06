@@ -340,6 +340,11 @@
       if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
       const state = session.phase === "completed" ? session.committedState : session.workingState;
       const skipDecisionChoices = options.skipDecisionChoices === true;
+      const inspection = inspect(session, { skipChoices: skipDecisionChoices });
+      // 同一次观察只枚举一次；投影与返回决策各持独立副本，不跨调用缓存。
+      const decision = session.phase === "awaiting_input" && !skipDecisionChoices
+        ? clone(inspection.decision)
+        : null;
       return {
         schemaVersion: SCHEMA_VERSION,
         sessionId: session.sessionId,
@@ -348,11 +353,9 @@
         state: projectState(
           trustedIsolatedOwnership ? state : cloneState(state),
           viewer,
-          inspect(session, { skipChoices: skipDecisionChoices }),
+          inspection,
         ),
-        decision: session.phase === "awaiting_input" && !skipDecisionChoices
-          ? getDecisionSnapshot(session)
-          : null,
+        decision,
       };
     }
 

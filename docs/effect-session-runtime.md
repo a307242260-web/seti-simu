@@ -102,6 +102,11 @@ Decision submission 必须同时匹配 `decisionId` 与 `decisionVersion`。快�
 
 `baseState`、`workingState`、`committedState` 互不共享可变引用。session 内渲染和 Policy observation 都由 `observe()` 对同一 workingState 做 viewer-specific projection。配置 `stateStore` 的生产 runtime 由 `dispatchStoredAction()` 从 `beginWorkingCopy()` 建立 session，并在 `compareAndCommit()` 成功返回递增版本 snapshot 后才进入 `completed`；宿主不得再做第二次替换。未配置 store 的 `dispatchAction()` 只保留为 reference/test 模式。
 
+`observe()` 在一次调用内由 `inspect()` 枚举一次当前 Decision，并在调用投影器前复制
+该 Decision：投影器收到的 inspection 与观察返回的 decision 不共享可变引用。
+不跨调用、viewer 或 revision 缓存；`skipDecisionChoices` 仍不枚举完整选择并返回
+`decision=null`，枚举失败仍保留原结构化错误，不通过重枚举或默认空选择掩盖失败。
+
 ## 状态机
 
 | phase | 进入条件 | 允许操作 | 退出条件 |

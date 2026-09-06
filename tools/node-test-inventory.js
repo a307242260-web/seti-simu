@@ -12,7 +12,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/host-architecture-audit.test.js", "architecture/host-source-zero", "Host 规则来源归零且 22 family/5 domain owner 完备", "第二 owner、直接 root 写、改名 bridge 或成功 fallback 重新进入 Host"),
     entry("randomizer/training/simulation-standard-action-composition.test.js", "architecture/standard-action", "生产 composition 唯一注册 22 family 并正式执行", "synthetic registry 掩盖漏注册、错误 phase 或 stale 重放"),
 
-    entry("randomizer/game/effects/session-runtime.test.js", "architecture/effect-session", "Effect Session 独占 working copy、队列、Decision 与提交", "多选自动代选、失败 effect 入 journal 或脏提交"),
+    entry("randomizer/game/effects/session-runtime.test.js", "architecture/effect-session", "Effect Session 独占 working copy、队列、Decision 与提交；单次观察枚举一次且消费者副本隔离", "多选自动代选、失败 effect 入 journal、脏提交、投影修改污染返回决策或观察隐藏枚举错误"),
     entry("randomizer/game/effects/session-journal.test.js", "architecture/effect-session", "session journal 可重放且 barrier/undo 语义稳定", "barrier 后伪回滚或失败步骤进入 journal"),
     entry("randomizer/game/effects/state-store-session.test.js", "architecture/effect-session", "Session 只经 StateStore CAS 原子提交", "并发 working copy 覆盖新版本 committed state"),
     entry("randomizer/game/effects/standard-action-session.test.js", "architecture/effect-session", "Standard Action 领域只经统一 Session/Decision 入口", "conditional choice 绕过 owner/version 校验"),

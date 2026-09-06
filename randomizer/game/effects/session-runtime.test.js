@@ -60,6 +60,52 @@ function createHarness(options = {}) {
   };
 }
 
+(function observationEnumeratesOnceWithIsolatedDecisionCopies() {
+  let calls = 0;
+  let failEnumeration = false;
+  const runtime = createRuntime({
+    projectState(state, viewer, inspection) {
+      // 模拟投影消费者处理自己的副本，不得影响返回decision及规则状态。
+      if (inspection.decision?.choices) inspection.decision.choices[0].tech = "presentation-only";
+      return { value: state.value, viewer };
+    },
+  });
+  runtime.registerExecutor("choose", {
+    getLegalChoices(state) {
+      calls += 1;
+      if (failEnumeration) throw new Error("invalid choices");
+      return state.legalTechs.map(tech => ({ tech }));
+    },
+    resolveDecision() { return { ok: true }; },
+  });
+  const dispatched = runtime.dispatchAction(
+    { version: 1, value: 0, legalTechs: ["orange", "blue"] },
+    { family: "test" },
+    actionGroup([{ type: "choose", kind: "decision", ownerId: "p1" }]),
+  );
+  runtime.drain(dispatched.session);
+  const before = structuredClone(dispatched.session);
+  calls = 0;
+  const observed = runtime.observe(dispatched.session, "browser");
+  assert.equal(calls, 1, "一次观察不得重复枚举同一决策");
+  assert.deepEqual(observed.decision.choices, [{ tech: "orange" }, { tech: "blue" }]);
+  observed.decision.choices[0].tech = "external-mutation";
+  const next = runtime.observe(dispatched.session, "policy");
+  assert.equal(calls, 2, "不能跨观察缓存选择");
+  assert.equal(next.decision.choices[0].tech, "orange");
+  assert.deepEqual(dispatched.session, before);
+  const cheap = runtime.observe(dispatched.session, "policy", { skipDecisionChoices: true });
+  assert.equal(cheap.decision, null);
+  assert.equal(calls, 2);
+  failEnumeration = true;
+  const failed = runtime.observe(dispatched.session, "policy");
+  assert.equal(failed.decision.ok, false);
+  assert.equal(failed.decision.code, "EFFECT_DECISION_ENUMERATION_FAILED");
+  assert.equal(failed.decision.message, "invalid choices");
+  assert.equal(calls, 3);
+  assert.deepEqual(dispatched.session, before);
+})();
+
 function actionGroup(effects) {
   return () => ({ groupId: "main", effects });
 }

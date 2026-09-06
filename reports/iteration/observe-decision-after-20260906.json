@@ -1,0 +1,19 @@
+{
+  "scope": "真实条件决策状态纯observe基准，不运行AI",
+  "phase": "after",
+  "source": "seti-saves/seti-save-research-round-data-income-r4-20260906-6d67a974-quick-200-v93.json",
+  "samples": [
+    218.58062499999997,
+    216.19320899999997,
+    236.40374999999995,
+    223.28495899999984,
+    212.42370800000003
+  ],
+  "hashes": {
+    "player-white": "7cbf9c0e338d350511a355f57846ee6f575988d64113469b8ae21d3f7c382e24",
+    "player-green": "c52a856691594bd361165fad0ed58235e990c57d409a78fe073e877adf8bbf69"
+  },
+  "medianMsPer80Observations": 218.58062499999997,
+  "inputUnchanged": true,
+  "passed": true
+}
