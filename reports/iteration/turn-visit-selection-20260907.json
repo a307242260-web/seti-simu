@@ -1,0 +1,1274 @@
+{
+  "scope": "对已验证148/497无公司路线读取现行根目录、条件选择器和计划证据；不是完整AI搜索，不证明历史winning leaf或实际错误复用",
+  "rows": [
+    {
+      "step": 148,
+      "roots": [
+        {
+          "targetId": "land:venus:planet:",
+          "planId": "probe:rocket:2:land:venus:planet:",
+          "resultTargetIds": [
+            "land:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "move:cc916f6c",
+            "play_card:269f8980"
+          ]
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:2:orbit:venus:planet:",
+          "resultTargetIds": [
+            "income:gain:5,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "move:cc916f6c",
+            "play_card:269f8980"
+          ]
+        },
+        {
+          "targetId": "income:gain:5,2,0,0,2,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:5,2,0,0,2,0"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-1-a:1",
+          "planId": "sector:standard-scan:sector-1-a",
+          "resultTargetIds": [
+            "sector:win:sector-1-a:1"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:",
+          "resultTargetIds": [
+            "tech:gain:orange2"
+          ],
+          "compatibleActionIds": [
+            "card_corner:f41c30d8"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:",
+          "resultTargetIds": [
+            "tech:gain:orange3"
+          ],
+          "compatibleActionIds": [
+            "card_corner:f41c30d8"
+          ]
+        },
+        {
+          "targetId": "tech:gain:purple4",
+          "planId": "tech:purple4:",
+          "resultTargetIds": [
+            "tech:gain:purple4"
+          ],
+          "compatibleActionIds": [
+            "card_corner:f41c30d8"
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:60d1e992",
+            "actorId": "player-green",
+            "stateVersion": 69,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "2:0:1",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1,
+              "remaining": 2
+            },
+            "decision": null,
+            "summary": "R2 向外"
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:60d1e992",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:0:1",
+                "rocketId": 2,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R2 向外"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5a05d718",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:1:0",
+                "rocketId": 2,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R2 顺时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a18cb710",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:-1:0",
+                "rocketId": 2,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R2 逆时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ff223208",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "结束移动"
+            }
+          ],
+          "selected": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5a05d718",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:1:0",
+                "rocketId": 2,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R2 顺时针",
+              "routeTargetId": "decision:choose_target:5a05d718",
+              "routePlanId": "decision:choose_target:5a05d718",
+              "routeResultTargetIds": [
+                "decision:choose_target:5a05d718"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:60d1e992",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:0:1",
+                "rocketId": 2,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R2 向外",
+              "routeTargetId": "decision:choose_target:60d1e992",
+              "routePlanId": "decision:choose_target:60d1e992",
+              "routeResultTargetIds": [
+                "decision:choose_target:60d1e992"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a18cb710",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:-1:0",
+                "rocketId": 2,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R2 逆时针",
+              "routeTargetId": "decision:choose_target:a18cb710",
+              "routePlanId": "decision:choose_target:a18cb710",
+              "routeResultTargetIds": [
+                "decision:choose_target:a18cb710"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ff223208",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "结束移动",
+              "routeTargetId": "decision:choose_target:ff223208",
+              "routePlanId": "decision:choose_target:ff223208",
+              "routeResultTargetIds": [
+                "decision:choose_target:ff223208"
+              ]
+            }
+          ],
+          "compiled": {
+            "actionId": "choose_target:60d1e992",
+            "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"remaining\":2,\"requiredMovePoints\":1},\"target\":{\"choiceId\":\"2:0:1\",\"deltaX\":0,\"deltaY\":1,\"rocketId\":2}}",
+            "actorId": "player-green",
+            "revealedCount": 0,
+            "valid": true,
+            "reason": null,
+            "dependencies": []
+          },
+          "ownerEffect": {
+            "schemaVersion": "seti-effect-session-v1",
+            "effectId": "effect-session-1:effect:4",
+            "groupId": "effect-session-1:group:4",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:decision:card_move",
+            "kind": "decision",
+            "ownerId": "player-green",
+            "decisionKind": "choose_target",
+            "allowQuickActions": false,
+            "payload": {
+              "cardEffect": {
+                "id": "b24-move",
+                "type": "card_move",
+                "label": "2移动",
+                "icon": "movement",
+                "options": {
+                  "movementPoints": 2,
+                  "repeat": 1
+                },
+                "status": "pending"
+              },
+              "cardInstanceId": "card-21-pass-1-2"
+            },
+            "source": {
+              "parentEffectId": "effect-session-1:effect:3",
+              "priority": "direct"
+            },
+            "groupIndex": 0
+          },
+          "bonusProgress": []
+        },
+        {
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:6f9b314b",
+            "actorId": "player-green",
+            "stateVersion": 69,
+            "decisionVersion": 2,
+            "target": {
+              "choiceId": "2:0:1",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1,
+              "remaining": 1
+            },
+            "decision": null,
+            "summary": "R2 向外"
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:6f9b314b",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:0:1",
+                "rocketId": 2,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 向外"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:74a5688d",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:1:0",
+                "rocketId": 2,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 顺时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:1d5fc8f1",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:-1:0",
+                "rocketId": 2,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 逆时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:78e5b52f",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:0:-1",
+                "rocketId": 2,
+                "deltaX": 0,
+                "deltaY": -1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 向内"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5b51e8f7",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "结束移动"
+            }
+          ],
+          "selected": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:1d5fc8f1",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:-1:0",
+                "rocketId": 2,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 逆时针",
+              "routeTargetId": "decision:choose_target:1d5fc8f1",
+              "routePlanId": "decision:choose_target:1d5fc8f1",
+              "routeResultTargetIds": [
+                "decision:choose_target:1d5fc8f1"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5b51e8f7",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "结束移动",
+              "routeTargetId": "decision:choose_target:5b51e8f7",
+              "routePlanId": "decision:choose_target:5b51e8f7",
+              "routeResultTargetIds": [
+                "decision:choose_target:5b51e8f7"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:6f9b314b",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:0:1",
+                "rocketId": 2,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 向外",
+              "routeTargetId": "decision:choose_target:6f9b314b",
+              "routePlanId": "decision:choose_target:6f9b314b",
+              "routeResultTargetIds": [
+                "decision:choose_target:6f9b314b"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:74a5688d",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:1:0",
+                "rocketId": 2,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 顺时针",
+              "routeTargetId": "decision:choose_target:74a5688d",
+              "routePlanId": "decision:choose_target:74a5688d",
+              "routeResultTargetIds": [
+                "decision:choose_target:74a5688d"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:78e5b52f",
+              "actorId": "player-green",
+              "stateVersion": 69,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "2:0:-1",
+                "rocketId": 2,
+                "deltaX": 0,
+                "deltaY": -1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R2 向内",
+              "routeTargetId": "decision:choose_target:78e5b52f",
+              "routePlanId": "decision:choose_target:78e5b52f",
+              "routeResultTargetIds": [
+                "decision:choose_target:78e5b52f"
+              ]
+            }
+          ],
+          "compiled": {
+            "actionId": "choose_target:6f9b314b",
+            "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"remaining\":1,\"requiredMovePoints\":1},\"target\":{\"choiceId\":\"2:0:1\",\"deltaX\":0,\"deltaY\":1,\"rocketId\":2}}",
+            "actorId": "player-green",
+            "revealedCount": 0,
+            "valid": true,
+            "reason": null,
+            "dependencies": []
+          },
+          "ownerEffect": {
+            "schemaVersion": "seti-effect-session-v1",
+            "effectId": "effect-session-1:effect:5",
+            "groupId": "effect-session-1:group:5",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:decision:card_move",
+            "kind": "decision",
+            "ownerId": "player-green",
+            "decisionKind": "choose_target",
+            "allowQuickActions": false,
+            "payload": {
+              "cardEffect": {
+                "id": "b24-move",
+                "type": "card_move",
+                "label": "2移动",
+                "icon": "movement",
+                "options": {
+                  "movementPoints": 2,
+                  "repeat": 1
+                },
+                "status": "pending"
+              },
+              "cardInstanceId": "card-21-pass-1-2",
+              "remaining": 1
+            },
+            "source": {
+              "parentEffectId": "effect-session-1:effect:4",
+              "priority": "direct"
+            },
+            "groupIndex": 0
+          },
+          "bonusProgress": []
+        }
+      ]
+    },
+    {
+      "step": 497,
+      "roots": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:12:land:mars:planet:",
+          "resultTargetIds": [
+            "land:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "land:1cbade2c"
+          ]
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:12:orbit:venus:planet:",
+          "resultTargetIds": [
+            "income:gain:6,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "move:0c89471d",
+            "play_card:57da1d07"
+          ]
+        },
+        {
+          "targetId": "income:gain:6,2,0,0,2,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:6,2,0,0,2,0"
+          ],
+          "compatibleActionIds": [
+            "place_data:dbe01b29"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-3-a:2",
+          "planId": "sector:standard-scan:sector-3-a",
+          "resultTargetIds": [
+            "sector:win:sector-3-a:2"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:d37b0828",
+            "actorId": "player-green",
+            "stateVersion": 252,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "12:0:1",
+              "rocketId": 12,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1,
+              "remaining": 2
+            },
+            "decision": null,
+            "summary": "R12 向外"
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d37b0828",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 向外"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0a7ed20e",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:1:0",
+                "rocketId": 12,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 顺时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:19bc288a",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:-1:0",
+                "rocketId": 12,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 逆时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:67892c84",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:-1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": -1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 向内"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ff223208",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "结束移动"
+            }
+          ],
+          "selected": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0a7ed20e",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:1:0",
+                "rocketId": 12,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 顺时针",
+              "routeTargetId": "decision:choose_target:0a7ed20e",
+              "routePlanId": "decision:choose_target:0a7ed20e",
+              "routeResultTargetIds": [
+                "decision:choose_target:0a7ed20e"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:19bc288a",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:-1:0",
+                "rocketId": 12,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 逆时针",
+              "routeTargetId": "decision:choose_target:19bc288a",
+              "routePlanId": "decision:choose_target:19bc288a",
+              "routeResultTargetIds": [
+                "decision:choose_target:19bc288a"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:67892c84",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:-1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": -1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 向内",
+              "routeTargetId": "decision:choose_target:67892c84",
+              "routePlanId": "decision:choose_target:67892c84",
+              "routeResultTargetIds": [
+                "decision:choose_target:67892c84"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d37b0828",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "R12 向外",
+              "routeTargetId": "decision:choose_target:d37b0828",
+              "routePlanId": "decision:choose_target:d37b0828",
+              "routeResultTargetIds": [
+                "decision:choose_target:d37b0828"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ff223208",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 2
+              },
+              "decision": null,
+              "summary": "结束移动",
+              "routeTargetId": "decision:choose_target:ff223208",
+              "routePlanId": "decision:choose_target:ff223208",
+              "routeResultTargetIds": [
+                "decision:choose_target:ff223208"
+              ]
+            }
+          ],
+          "compiled": {
+            "actionId": "choose_target:d37b0828",
+            "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"remaining\":2,\"requiredMovePoints\":1},\"target\":{\"choiceId\":\"12:0:1\",\"deltaX\":0,\"deltaY\":1,\"rocketId\":12}}",
+            "actorId": "player-green",
+            "revealedCount": 2,
+            "valid": true,
+            "reason": null,
+            "dependencies": []
+          },
+          "ownerEffect": {
+            "schemaVersion": "seti-effect-session-v1",
+            "effectId": "effect-session-1:effect:4",
+            "groupId": "effect-session-1:group:4",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:decision:card_move",
+            "kind": "decision",
+            "ownerId": "player-green",
+            "decisionKind": "choose_target",
+            "allowQuickActions": false,
+            "payload": {
+              "cardEffect": {
+                "id": "dlc12-move",
+                "type": "card_move",
+                "label": "2移动",
+                "icon": "movement",
+                "options": {
+                  "movementPoints": 2,
+                  "repeat": 1
+                },
+                "status": "pending"
+              },
+              "cardInstanceId": "card-31-pass-3-2"
+            },
+            "source": {
+              "parentEffectId": "effect-session-1:effect:3",
+              "priority": "direct"
+            },
+            "groupIndex": 0
+          },
+          "bonusProgress": []
+        },
+        {
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:3c8f9031",
+            "actorId": "player-green",
+            "stateVersion": 252,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "12:0:-1",
+              "rocketId": 12,
+              "deltaX": 0,
+              "deltaY": -1
+            },
+            "payload": {
+              "requiredMovePoints": 1,
+              "remaining": 1
+            },
+            "decision": null,
+            "summary": "R12 向内"
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0cb0f2f1",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 向外"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:8b1c33bb",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:1:0",
+                "rocketId": 12,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 顺时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:8b74b74b",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:-1:0",
+                "rocketId": 12,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 逆时针"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:3c8f9031",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:-1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": -1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 向内"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5b51e8f7",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "结束移动"
+            }
+          ],
+          "selected": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0cb0f2f1",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 向外",
+              "routeTargetId": "decision:choose_target:0cb0f2f1",
+              "routePlanId": "decision:choose_target:0cb0f2f1",
+              "routeResultTargetIds": [
+                "decision:choose_target:0cb0f2f1"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:3c8f9031",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:0:-1",
+                "rocketId": 12,
+                "deltaX": 0,
+                "deltaY": -1
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 向内",
+              "routeTargetId": "decision:choose_target:3c8f9031",
+              "routePlanId": "decision:choose_target:3c8f9031",
+              "routeResultTargetIds": [
+                "decision:choose_target:3c8f9031"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:5b51e8f7",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "skip",
+                "skip": true
+              },
+              "payload": {
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "结束移动",
+              "routeTargetId": "decision:choose_target:5b51e8f7",
+              "routePlanId": "decision:choose_target:5b51e8f7",
+              "routeResultTargetIds": [
+                "decision:choose_target:5b51e8f7"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:8b1c33bb",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:1:0",
+                "rocketId": 12,
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 顺时针",
+              "routeTargetId": "decision:choose_target:8b1c33bb",
+              "routePlanId": "decision:choose_target:8b1c33bb",
+              "routeResultTargetIds": [
+                "decision:choose_target:8b1c33bb"
+              ]
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:8b74b74b",
+              "actorId": "player-green",
+              "stateVersion": 252,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "12:-1:0",
+                "rocketId": 12,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              "payload": {
+                "requiredMovePoints": 1,
+                "remaining": 1
+              },
+              "decision": null,
+              "summary": "R12 逆时针",
+              "routeTargetId": "decision:choose_target:8b74b74b",
+              "routePlanId": "decision:choose_target:8b74b74b",
+              "routeResultTargetIds": [
+                "decision:choose_target:8b74b74b"
+              ]
+            }
+          ],
+          "compiled": {
+            "actionId": "choose_target:3c8f9031",
+            "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"remaining\":1,\"requiredMovePoints\":1},\"target\":{\"choiceId\":\"12:0:-1\",\"deltaX\":0,\"deltaY\":-1,\"rocketId\":12}}",
+            "actorId": "player-green",
+            "revealedCount": 2,
+            "valid": true,
+            "reason": null,
+            "dependencies": []
+          },
+          "ownerEffect": {
+            "schemaVersion": "seti-effect-session-v1",
+            "effectId": "effect-session-1:effect:5",
+            "groupId": "effect-session-1:group:5",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:decision:card_move",
+            "kind": "decision",
+            "ownerId": "player-green",
+            "decisionKind": "choose_target",
+            "allowQuickActions": false,
+            "payload": {
+              "cardEffect": {
+                "id": "dlc12-move",
+                "type": "card_move",
+                "label": "2移动",
+                "icon": "movement",
+                "options": {
+                  "movementPoints": 2,
+                  "repeat": 1
+                },
+                "status": "pending"
+              },
+              "cardInstanceId": "card-31-pass-3-2",
+              "remaining": 1
+            },
+            "source": {
+              "parentEffectId": "effect-session-1:effect:4",
+              "priority": "direct"
+            },
+            "groupIndex": 0
+          },
+          "bonusProgress": []
+        }
+      ]
+    }
+  ],
+  "verified": true
+}
