@@ -1,0 +1,1089 @@
+{
+  "scope": "正式位置条件的完整有限目录与来源见证；仅位置反事实，不是合法路线、收益、全部移动消费者或生产优化验收",
+  "inputs": [
+    {
+      "path": "reports/iteration/movement-demand-catalog-20260907.json",
+      "sha256": "46fd030b3c54cab594426f2100ba3986accd70a66dcc71edf877a1961ebc677c"
+    },
+    {
+      "path": "reports/iteration/company-movement-input-42-20260906.json",
+      "sha256": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122"
+    },
+    {
+      "path": "reports/iteration/company-hot-prefix-20260907.json",
+      "sha256": "be5244d32a414e3dcd2b0159406e97d7f4a13821d604d698e2f6ed25e8ff4ec0"
+    }
+  ],
+  "conditionTypes": 6,
+  "conditionEntries": 8,
+  "states": [
+    {
+      "name": "root42",
+      "rocketIds": [
+        1,
+        2
+      ],
+      "conditions": [
+        {
+          "cardId": "b_52.webp",
+          "path": "model.playEffects.0.options.condition",
+          "value": {
+            "type": "probeLocation",
+            "locationType": "asteroid"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "b_105.webp",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeLocation",
+            "locationType": "comet"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [
+                {
+                  "x": 2,
+                  "y": 2
+                },
+                {
+                  "x": 7,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 5,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 2,
+                  "y": 2
+                },
+                {
+                  "x": 7,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 5,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_11.png",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeLocation",
+            "locationType": "asteroid"
+          },
+          "held": true,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "b_81.webp",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeAdjacentEarthAsteroid"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "b_101.webp",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeDistanceFromEarth",
+            "minDistance": 5
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 1,
+                  "y": 3
+                },
+                {
+                  "x": 2,
+                  "y": 3
+                },
+                {
+                  "x": 0,
+                  "y": 4
+                },
+                {
+                  "x": 1,
+                  "y": 4
+                },
+                {
+                  "x": 2,
+                  "y": 4
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 7,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 1,
+                  "y": 3
+                },
+                {
+                  "x": 2,
+                  "y": 3
+                },
+                {
+                  "x": 0,
+                  "y": 4
+                },
+                {
+                  "x": 1,
+                  "y": 4
+                },
+                {
+                  "x": 2,
+                  "y": 4
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 7,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_5.png",
+          "path": "model.playEffects.2.options.condition",
+          "value": {
+            "type": "probeAdjacentEarth"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [
+                {
+                  "x": 4,
+                  "y": 1
+                },
+                {
+                  "x": 6,
+                  "y": 1
+                },
+                {
+                  "x": 5,
+                  "y": 2
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 4,
+                  "y": 1
+                },
+                {
+                  "x": 6,
+                  "y": 1
+                },
+                {
+                  "x": 5,
+                  "y": 2
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_7.png",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probesOnDifferentPlanets",
+            "count": 2,
+            "excludePlanetIds": [
+              "earth"
+            ]
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_14.png",
+          "path": "model.playEffects.2.options.condition",
+          "value": {
+            "type": "otherProbeAtPlanet",
+            "planetId": "earth"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 1,
+              "destinations": [],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [],
+              "blockedCoordinates": []
+            }
+          ]
+        }
+      ],
+      "joint": {
+        "oneSourceDestinationCounts": [
+          {
+            "rocketId": 1,
+            "count": 0
+          },
+          {
+            "rocketId": 2,
+            "count": 0
+          }
+        ],
+        "pairWitnessCount": 42,
+        "firstWitness": {
+          "placements": [
+            {
+              "rocketId": 1,
+              "coordinate": {
+                "x": 1,
+                "y": 1
+              }
+            },
+            {
+              "rocketId": 2,
+              "coordinate": {
+                "x": 3,
+                "y": 1
+              }
+            }
+          ],
+          "requiredRocketIds": [
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "hot-prefix",
+      "rocketIds": [
+        3,
+        2
+      ],
+      "conditions": [
+        {
+          "cardId": "b_52.webp",
+          "path": "model.playEffects.0.options.condition",
+          "value": {
+            "type": "probeLocation",
+            "locationType": "asteroid"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "b_105.webp",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeLocation",
+            "locationType": "comet"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [
+                {
+                  "x": 2,
+                  "y": 2
+                },
+                {
+                  "x": 7,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 5,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 2,
+                  "y": 2
+                },
+                {
+                  "x": 7,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 5,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_11.png",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeLocation",
+            "locationType": "asteroid"
+          },
+          "held": true,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "b_81.webp",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeAdjacentEarthAsteroid"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "b_101.webp",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probeDistanceFromEarth",
+            "minDistance": 5
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 1,
+                  "y": 3
+                },
+                {
+                  "x": 2,
+                  "y": 3
+                },
+                {
+                  "x": 0,
+                  "y": 4
+                },
+                {
+                  "x": 1,
+                  "y": 4
+                },
+                {
+                  "x": 2,
+                  "y": 4
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 7,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 1,
+                  "y": 3
+                },
+                {
+                  "x": 2,
+                  "y": 3
+                },
+                {
+                  "x": 0,
+                  "y": 4
+                },
+                {
+                  "x": 1,
+                  "y": 4
+                },
+                {
+                  "x": 2,
+                  "y": 4
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 7,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_5.png",
+          "path": "model.playEffects.2.options.condition",
+          "value": {
+            "type": "probeAdjacentEarth"
+          },
+          "held": false,
+          "baseline": true,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [
+                {
+                  "x": 4,
+                  "y": 1
+                },
+                {
+                  "x": 6,
+                  "y": 1
+                },
+                {
+                  "x": 5,
+                  "y": 2
+                }
+              ],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "x": 1,
+                  "y": 1
+                },
+                {
+                  "x": 2,
+                  "y": 1
+                },
+                {
+                  "x": 3,
+                  "y": 1
+                },
+                {
+                  "x": 4,
+                  "y": 1
+                },
+                {
+                  "x": 5,
+                  "y": 1
+                },
+                {
+                  "x": 6,
+                  "y": 1
+                },
+                {
+                  "x": 7,
+                  "y": 1
+                },
+                {
+                  "x": 0,
+                  "y": 2
+                },
+                {
+                  "x": 1,
+                  "y": 2
+                },
+                {
+                  "x": 2,
+                  "y": 2
+                },
+                {
+                  "x": 3,
+                  "y": 2
+                },
+                {
+                  "x": 4,
+                  "y": 2
+                },
+                {
+                  "x": 5,
+                  "y": 2
+                },
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 7,
+                  "y": 2
+                },
+                {
+                  "x": 0,
+                  "y": 3
+                },
+                {
+                  "x": 1,
+                  "y": 3
+                },
+                {
+                  "x": 2,
+                  "y": 3
+                },
+                {
+                  "x": 3,
+                  "y": 3
+                },
+                {
+                  "x": 4,
+                  "y": 3
+                },
+                {
+                  "x": 5,
+                  "y": 3
+                },
+                {
+                  "x": 6,
+                  "y": 3
+                },
+                {
+                  "x": 7,
+                  "y": 3
+                },
+                {
+                  "x": 0,
+                  "y": 4
+                },
+                {
+                  "x": 1,
+                  "y": 4
+                },
+                {
+                  "x": 2,
+                  "y": 4
+                },
+                {
+                  "x": 3,
+                  "y": 4
+                },
+                {
+                  "x": 4,
+                  "y": 4
+                },
+                {
+                  "x": 5,
+                  "y": 4
+                },
+                {
+                  "x": 6,
+                  "y": 4
+                },
+                {
+                  "x": 7,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_7.png",
+          "path": "model.tasks.0.condition",
+          "value": {
+            "type": "probesOnDifferentPlanets",
+            "count": 2,
+            "excludePlanetIds": [
+              "earth"
+            ]
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [
+                {
+                  "x": 1,
+                  "y": 1
+                },
+                {
+                  "x": 3,
+                  "y": 1
+                },
+                {
+                  "x": 2,
+                  "y": 3
+                },
+                {
+                  "x": 6,
+                  "y": 3
+                },
+                {
+                  "x": 1,
+                  "y": 4
+                },
+                {
+                  "x": 6,
+                  "y": 4
+                }
+              ],
+              "blockedCoordinates": []
+            }
+          ]
+        },
+        {
+          "cardId": "dlc_14.png",
+          "path": "model.playEffects.2.options.condition",
+          "value": {
+            "type": "otherProbeAtPlanet",
+            "planetId": "earth"
+          },
+          "held": false,
+          "baseline": false,
+          "sources": [
+            {
+              "rocketId": 3,
+              "destinations": [],
+              "blockedCoordinates": []
+            },
+            {
+              "rocketId": 2,
+              "destinations": [],
+              "blockedCoordinates": []
+            }
+          ]
+        }
+      ],
+      "joint": {
+        "oneSourceDestinationCounts": [
+          {
+            "rocketId": 3,
+            "count": 0
+          },
+          {
+            "rocketId": 2,
+            "count": 6
+          }
+        ],
+        "pairWitnessCount": 42,
+        "firstWitness": {
+          "placements": [
+            {
+              "rocketId": 3,
+              "coordinate": {
+                "x": 1,
+                "y": 1
+              }
+            },
+            {
+              "rocketId": 2,
+              "coordinate": {
+                "x": 3,
+                "y": 1
+              }
+            }
+          ],
+          "requiredRocketIds": [
+            3,
+            2
+          ]
+        }
+      }
+    }
+  ],
+  "verified": true
+}
