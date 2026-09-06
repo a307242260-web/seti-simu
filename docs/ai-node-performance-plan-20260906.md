@@ -117,4 +117,7 @@ reports/iteration/amiba-region-rule-design-20260906.md。官方中英文说明�
 第605步已直接复现公司免费移动失败：四个正式合法方向均执行成零位移，原因是
 调用者把deltaX/deltaY嵌入target而正式moveProbe读取顶层。该调用自2026-07-24
 存在；不是卡牌痕迹修复引入。下一项完整核对免费移动来源、第二次无目标及访问
-事件传递后独立修复；未改变生产或新跑完整局。见company-free-move-cause-20260906.md。
+事件传递后独立修复。现已实施方向参数、可结束移动、无第二目标结算与正式移动事件
+传递；真实605四方向和结束选择全部执行成功，pending恢复完整检查点与合法集一致。
+单步搜索与固定完整局仍待验证，不宣称性能或均分通过。见company-free-move-design-20260906.md
+及company-free-move-contract-20260906.json；原失败证据保留于company-free-move-cause-20260906.md。

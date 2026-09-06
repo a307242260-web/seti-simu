@@ -2,7 +2,8 @@
 
 结论：已复现公司合法移动与执行不一致。寰宇动力公开的四个合法方向全部失败，
 因为调用者传嵌套target.deltaX/deltaY，正式moveProbe只读顶层deltaX/deltaY，
-执行变成零位移并报“已在边界，无法继续移动”。未实施生产修复。
+执行变成零位移并报“已在边界，无法继续移动”。本文记录修复前取证；后续方案与实施
+见company-free-move-design-20260906.md，真实恢复验证见company-free-move-contract-20260906.json。
 
 ## 实际证据
 

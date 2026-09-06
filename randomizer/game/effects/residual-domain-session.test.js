@@ -613,12 +613,12 @@ function industryDefinition() {
   // 正例：有太阳系探测器时 industry 可枚举，且执行后 free_move 会话必有选择
   const root = huanyuRoot();
   root.pieces.rockets = [{
-    id: "r1",
+    id: 1,
     playerId: "p1",
     color: "white",
     surface: "solar-board",
     sectorX: 0,
-    sectorY: 0,
+    sectorY: 2,
     slotIndex: 0,
   }];
   const choices = industryDefinition().enumerate({
@@ -653,6 +653,102 @@ function industryDefinition() {
     .get(residual.EFFECT_TYPES.COMPANY_DECISION)
     .getLegalChoices(root, freeMove.effect, { state: root });
   assert.ok(moveChoices.length > 0, "free_move 会话必须有合法移动选择（合法性与枚举一致）");
+  const executor = owner.executors.get(residual.EFFECT_TYPES.COMPANY_DECISION);
+  for (const selected of moveChoices) {
+    const working = structuredClone(root);
+    const beforeResources = structuredClone(working.players.players[0].resources);
+    const moved = executor.resolveDecision(working, freeMove.effect, selected, { state: working });
+    assert.equal(moved.ok, true, JSON.stringify(moved));
+    assert.equal(moved.spawnedEffects.length, 0, "只有一艘火箭，不能生成空的第二次移动");
+    assert.equal(working.players.players[0].resources.energy, beforeResources.energy);
+    assert.equal(working.players.players[0].resources.credits, beforeResources.credits);
+    if (selected.target.skip) {
+      assert.deepEqual(working, root, "结束移动不改变资源或位置");
+      assert.equal(moved.events[0].type, "company_move_skipped");
+    } else {
+      const event = moved.events.find((item) => item.type === "move");
+      assert.ok(event, "公司路径不得丢弃正式移动事件");
+      assert.equal(event.source, "industry");
+      assert.equal(event.rocketId, 1);
+      assert.notDeepEqual(working.pieces.rockets, root.pieces.rockets);
+    }
+  }
+  const twoRockets = structuredClone(root);
+  twoRockets.pieces.rockets.push({ ...root.pieces.rockets[0], id: 2, sectorX: 1 });
+  const first = executor.getLegalChoices(twoRockets, freeMove.effect, { state: twoRockets })
+    .find((item) => item.target.rocketId === 1);
+  const movedFirst = executor.resolveDecision(twoRockets, freeMove.effect, first, { state: twoRockets });
+  assert.equal(movedFirst.ok, true);
+  assert.equal(movedFirst.spawnedEffects.length, 1);
+  const second = movedFirst.spawnedEffects[0].effect;
+  assert.deepEqual(second.payload.usedRocketIds, [1]);
+  const secondChoices = executor.getLegalChoices(twoRockets, second, { state: twoRockets });
+  assert.ok(secondChoices.some((item) => item.target.skip), "最多两个允许第二次结束");
+  assert.ok(secondChoices.some((item) => item.target.rocketId === 2));
+  assert.ok(secondChoices.every((item) => item.target.skip || item.target.rocketId === 2));
+  for (const selected of secondChoices) {
+    const working = structuredClone(twoRockets);
+    const moved = executor.resolveDecision(working, second, selected, { state: working });
+    assert.equal(moved.ok, true);
+    assert.equal(moved.spawnedEffects.length, 0);
+  }
+  const beforeStale = structuredClone(twoRockets);
+  assert.equal(executor.resolveDecision(twoRockets, second, first, { state: twoRockets }).ok, false);
+  assert.deepEqual(twoRockets, beforeStale, "重复移动首艘的失效选择不得改变状态");
+  const arrival = structuredClone(root);
+  arrival.pieces.rockets[0].sectorY = 0;
+  const towardMercury = executor.getLegalChoices(arrival, freeMove.effect, { state: arrival })
+    .find((item) => item.target.deltaX === 1);
+  const arrived = executor.resolveDecision(arrival, freeMove.effect, towardMercury, { state: arrival });
+  assert.equal(arrived.ok, true);
+  const visits = arrived.events.filter((event) => event.type === "visitPlanet");
+  assert.equal(visits.length, 1, "到达水星只产生一次访问事件");
+  assert.equal(visits[0].planetId, "mercury");
+  assert.equal(visits[0].publicityGained, 1);
+  assert.equal(visits[0].source, "industry");
+  assert.equal(arrival.players.players[0].resources.publicity, root.players.players[0].resources.publicity + 1);
+}
+
+for (const companyId of ["层云核心", "芬威克研究中心", "哨兵探测网络"]) {
+  for (const hasRocket of [false, true]) {
+    const root = huanyuRoot();
+    root.players.players[0].initialSelection.industry.label = companyId;
+    root.players.players[0].resources.publicity = 2;
+    if (hasRocket) root.pieces.rockets = [{
+      id: 1, playerId: "p1", color: "white", surface: "solar-board",
+      sectorX: 0, sectorY: 2, slotIndex: 0,
+    }];
+    const card = { id: "move-corner", cardId: "b_1.webp" };
+    root.cards.publicCards = [card];
+    const owner = createHarness(residual, "createResidualDomain");
+    const executor = owner.executors.get(residual.EFFECT_TYPES.COMPANY_DECISION);
+    let applied;
+    if (companyId === "哨兵探测网络") {
+      applied = execute(owner.executors.get("industry_sentinel_corner"), root, {
+        ownerId: "p1", payload: { playedCard: card },
+      });
+    } else {
+      const effect = { ownerId: "p1", payload: {
+        companyId,
+        abilityId: companyId === "层云核心" ? "stratus_public_corners" : "fenwick_publicity_pick_corner",
+        step: companyId === "层云核心" ? "stratus_corner" : "public_card",
+        index: 0, node: { options: { reward: { kind: "move", movementPoints: 1 } } },
+      } };
+      const [selected] = executor.getLegalChoices(root, effect, { state: root });
+      assert.ok(selected);
+      applied = executor.resolveDecision(root, effect, selected, { state: root });
+    }
+    assert.equal(applied.ok, true, JSON.stringify(applied));
+    const moves = applied.spawnedEffects.filter((entry) => entry.effect.payload?.step === "free_move");
+    assert.equal(moves.length, hasRocket ? 1 : 0, `${companyId}无目标时不创建空移动`);
+    if (hasRocket) {
+      const effect = moves[0].effect;
+      const selected = executor.getLegalChoices(root, effect, { state: root }).find((item) => !item.target.skip);
+      const moved = executor.resolveDecision(root, effect, selected, { state: root });
+      assert.equal(moved.ok, true);
+      assert.ok(moved.events.some((item) => item.type === "move" && item.source === "industry"));
+    }
+  }
 }
 
 console.log("residual-domain-session production proofs passed");

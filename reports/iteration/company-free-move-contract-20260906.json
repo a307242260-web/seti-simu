@@ -1,0 +1,166 @@
+{
+  "scope": "真实605全部公司选择及pending恢复；无AI搜索",
+  "choices": [
+    {
+      "selected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:011654e8",
+        "actorId": "player-green",
+        "stateVersion": 300,
+        "decisionVersion": 18,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:12:in",
+          "rocketId": 12,
+          "deltaX": 0,
+          "deltaY": -1
+        },
+        "payload": {
+          "direction": "in"
+        },
+        "decision": null,
+        "summary": "移动 12 向内"
+      },
+      "ok": true,
+      "restoreParity": true,
+      "nextFamilies": [
+        "launch",
+        "move",
+        "pass",
+        "quick_trade",
+        "research_tech"
+      ]
+    },
+    {
+      "selected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:4667ceea",
+        "actorId": "player-green",
+        "stateVersion": 300,
+        "decisionVersion": 18,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:12:ccw",
+          "rocketId": 12,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 12 逆时针"
+      },
+      "ok": true,
+      "restoreParity": true,
+      "nextFamilies": [
+        "launch",
+        "move",
+        "pass",
+        "quick_trade",
+        "research_tech"
+      ]
+    },
+    {
+      "selected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:49d31bca",
+        "actorId": "player-green",
+        "stateVersion": 300,
+        "decisionVersion": 18,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "skip",
+          "skip": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束移动"
+      },
+      "ok": true,
+      "restoreParity": true,
+      "nextFamilies": [
+        "land",
+        "launch",
+        "move",
+        "orbit",
+        "pass",
+        "quick_trade",
+        "research_tech"
+      ]
+    },
+    {
+      "selected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:552a0363",
+        "actorId": "player-green",
+        "stateVersion": 300,
+        "decisionVersion": 18,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:12:out",
+          "rocketId": 12,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 12 向外"
+      },
+      "ok": true,
+      "restoreParity": true,
+      "nextFamilies": [
+        "land",
+        "launch",
+        "move",
+        "orbit",
+        "pass",
+        "quick_trade",
+        "research_tech"
+      ]
+    },
+    {
+      "selected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:57e19c07",
+        "actorId": "player-green",
+        "stateVersion": 300,
+        "decisionVersion": 18,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:12:cw",
+          "rocketId": 12,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 12 顺时针"
+      },
+      "ok": true,
+      "restoreParity": true,
+      "nextFamilies": [
+        "launch",
+        "move",
+        "pass",
+        "quick_trade",
+        "research_tech"
+      ]
+    }
+  ],
+  "passed": true
+}

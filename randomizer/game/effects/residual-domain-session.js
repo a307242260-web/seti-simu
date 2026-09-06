@@ -153,18 +153,7 @@
   // industry:寰宇动力 后崩溃）。
   function listHuanyuMoveChoices(root, player, usedRocketIds = []) {
     const used = new Set(usedRocketIds);
-    const context = {
-      state: root,
-      players: root.players,
-      pieces: root.pieces,
-      planets: root.planets,
-      aliens: root.aliens,
-      data: root.data,
-      cards: root.cards,
-      solarSystem: root.solarSystem,
-      turn: { ...root.turn, currentPlayerId: player.id },
-      tech: root.tech,
-    };
+    const context = science.createActionContext(root, player.id);
     return gameAbilities.rocket.listPlayerMoveChoices(context, player, { maxPoints: 1 })
       .filter((move) => !used.has(move.rocketId));
   }
@@ -397,9 +386,9 @@
           ...common, step: "turing_tech",
         })];
       case "huanyu_free_moves":
-        return [decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
+        return companyFreeMoveEffects(root, player, {
           ...common, step: "free_move", remaining: 2, usedRocketIds: [],
-        })];
+        });
       case "helios_remove_tech":
         return [decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
           ...common, step: "helios_tech",
@@ -488,9 +477,16 @@
           { rocketId: move.rocketId, deltaX: move.deltaX, deltaY: move.deltaY },
           { direction: move.directionId }, `移动 ${move.rocketId} ${move.label}`,
         ));
+      choices.push(choice("choose_target", "skip", { skip: true }, {}, "结束移动"));
       return formalize(root, player.id, choices);
     }
     return [];
+  }
+
+  function companyFreeMoveEffects(root, player, payload) {
+    // 未使用的移动可以放弃；没有可移动目标时无需创建只有结束选项的 Decision。
+    if (!listHuanyuMoveChoices(root, player, payload.usedRocketIds || []).length) return [];
+    return [decision(EFFECT_TYPES.COMPANY_DECISION, player.id, payload)];
   }
 
   // 统一抽牌上下文：残余域所有盲抽/精选共用 cards.createCardDrawContext
@@ -509,6 +505,7 @@
     const step = payload.step;
     const target = legal.target || {};
     const spawnedEffects = [];
+    const events = [];
     let irreversible = null;
     if (step === "stratus_corner") {
       const applied = industryAbilities.applyCornerReward(
@@ -520,7 +517,7 @@
       );
       if (!applied.ok) return applied;
       if (applied.pendingFreeMove) {
-        spawnedEffects.push(decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
+        spawnedEffects.push(...companyFreeMoveEffects(root, player, {
           ...payload, step: "free_move", remaining: 1, usedRocketIds: [],
         }));
       }
@@ -617,8 +614,8 @@
           { root, cards },
         );
         if (!applied.ok) return applied;
-        if (applied.pendingFreeMove) spawnedEffects.push(decision(
-          EFFECT_TYPES.COMPANY_DECISION, player.id,
+        if (applied.pendingFreeMove) spawnedEffects.push(...companyFreeMoveEffects(
+          root, player,
           { ...payload, step: "free_move", remaining: 1, usedRocketIds: [] },
         ));
       } else if (payload.abilityId === "strategy_pick_card") {
@@ -628,28 +625,23 @@
         if (!advanced.ok) return advanced;
       }
     } else if (step === "free_move") {
-      const context = {
-        state: root,
-        players: root.players,
-        pieces: root.pieces,
-        planets: root.planets,
-        aliens: root.aliens,
-        data: root.data,
-        cards: root.cards,
-        solarSystem: root.solarSystem,
-        turn: { ...root.turn, currentPlayerId: player.id },
-        tech: root.tech,
+      if (target.skip) return {
+        ok: true, spawnedEffects, irreversible,
+        events: [{ type: "company_move_skipped", playerId: player.id, source: "industry" }],
       };
+      const context = science.createActionContext(root, player.id);
       const moved = gameAbilities.executeAbility("moveProbe", context, {
         rocketId: target.rocketId,
-        target: { deltaX: target.deltaX, deltaY: target.deltaY },
+        deltaX: target.deltaX,
+        deltaY: target.deltaY,
         movementPoints: 1,
         cost: {},
         source: "industry",
       });
       if (!moved.ok) return moved;
+      events.push(...moved.events);
       if (Number(payload.remaining) > 1) {
-        spawnedEffects.push(decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
+        spawnedEffects.push(...companyFreeMoveEffects(root, player, {
           ...payload,
           remaining: Number(payload.remaining) - 1,
           usedRocketIds: [...(payload.usedRocketIds || []), target.rocketId],
@@ -658,7 +650,7 @@
     } else {
       return fail("COMPANY_DECISION_UNKNOWN", `未知公司 Decision: ${step}`);
     }
-    return { ok: true, spawnedEffects, irreversible };
+    return { ok: true, spawnedEffects, irreversible, events };
   }
 
   function initializeAlienReveal(root, slotId, speciesId, owner, options = {}) {
@@ -2064,6 +2056,7 @@
         return result(state, root, `company:${effect.payload.step}`, {
           spawnedEffects: applied.spawnedEffects,
           irreversible: applied.irreversible,
+          events: applied.events,
         });
       },
     });
@@ -2082,7 +2075,7 @@
       if (!applied?.ok) return applied;
       const spawnedEffects = [];
       if (applied.pendingFreeMove) {
-        spawnedEffects.push(decision(EFFECT_TYPES.COMPANY_DECISION, player.id, {
+        spawnedEffects.push(...companyFreeMoveEffects(root, player, {
           companyId: industry.getPlayerIndustryLabel(player),
           abilityId: "sentinel_arm_play_corner",
           step: "free_move",
