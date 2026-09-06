@@ -1,0 +1,1121 @@
+{
+  "scope": "真实42显式目的的正式几何最短路原型；不执行AI，不删除生产分支；最短路不是完整收益支配证明",
+  "input": "reports/iteration/company-movement-input-42-20260906.json",
+  "inputSha256": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+  "routes": [
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:mercury",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 1,
+            "y": 1
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 4,
+      "firstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 3,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:venus",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 3,
+            "y": 1
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 2,
+      "firstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 1,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:mars",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 5,
+            "y": 2
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 1,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 0,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:jupiter",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 2,
+            "y": 3
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 5,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 4,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:saturn",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 6,
+            "y": 3
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 4,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 3,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:neptune",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 1,
+            "y": 4
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 7,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 6,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "planet:uranus",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 6,
+            "y": 4
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 5,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 4,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 1,
+      "purpose": {
+        "id": "task:card-7-0:dlc11-asteroid-probe",
+        "role": "手牌任务位置准备，仍需打牌与正式领取",
+        "destinations": [
+          {
+            "x": 0,
+            "y": 1
+          },
+          {
+            "x": 1,
+            "y": 2
+          },
+          {
+            "x": 3,
+            "y": 2
+          },
+          {
+            "x": 6,
+            "y": 2
+          },
+          {
+            "x": 5,
+            "y": 3
+          },
+          {
+            "x": 7,
+            "y": 3
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 2,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 1,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:mercury",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 1,
+            "y": 1
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 4,
+      "firstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 3,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:venus",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 3,
+            "y": 1
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 2,
+      "firstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 1,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:mars",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 5,
+            "y": 2
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 1,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 0,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:jupiter",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 2,
+            "y": 3
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 5,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 4,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:saturn",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 6,
+            "y": 3
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 4,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 3,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:neptune",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 1,
+            "y": 4
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 7,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        },
+        {
+          "direction": "ccw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 6,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "planet:uranus",
+        "role": "既有环绕/登陆的移动前置，不含终点费用",
+        "destinations": [
+          {
+            "x": 6,
+            "y": 4
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 5,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 4,
+      "vertices": 32,
+      "edges": 112
+    },
+    {
+      "rocketId": 2,
+      "purpose": {
+        "id": "task:card-7-0:dlc11-asteroid-probe",
+        "role": "手牌任务位置准备，仍需打牌与正式领取",
+        "destinations": [
+          {
+            "x": 0,
+            "y": 1
+          },
+          {
+            "x": 1,
+            "y": 2
+          },
+          {
+            "x": 3,
+            "y": 2
+          },
+          {
+            "x": 6,
+            "y": 2
+          },
+          {
+            "x": 5,
+            "y": 3
+          },
+          {
+            "x": 7,
+            "y": 3
+          }
+        ]
+      },
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "minimumPoints": 2,
+      "firstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "companyFirstSteps": [
+        {
+          "direction": "out",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "points": 1
+        },
+        {
+          "direction": "cw",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1
+          },
+          "points": 1
+        }
+      ],
+      "minimumPaidPointsAfterCompany": 1,
+      "vertices": 32,
+      "edges": 112
+    }
+  ],
+  "prototypeWallMs": 12.572665999999998,
+  "verified": true
+}
