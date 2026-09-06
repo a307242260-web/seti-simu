@@ -4,7 +4,7 @@ const rockets = require("../randomizer/game/rockets"), solar = require("../rando
 const ability = require("../randomizer/game/abilities/rocket"), cards = require("../randomizer/game/cards/effects");
 const residual = require("../randomizer/game/effects/residual-domain-session");
 const input = "reports/iteration/current-movement-hotspots-20260907.json";
-const output = "reports/iteration/turn-visit-routes-shared-progress-20260907.json";
+const output = "reports/iteration/turn-visit-routes-shared-progress-v2-20260907.json";
 const key = n => `${n.at.x},${n.at.y}/${n.card}/${n.free}/${JSON.stringify(n.progress)}/${n.complete}`;
 const compare = (a, b) => a.paid - b.paid || a.moves - b.moves;
 
@@ -34,7 +34,8 @@ function route(root, actor, rocket, bonus, points, free) {
       const event = { type: "move", playerId: actor.id, sameRing: move.to.y === n.at.y };
       if (content.kind === solar.layout.CONTENT_KIND.COMET) event.type = "visitComet";
       if (content.kind === solar.layout.CONTENT_KIND.ASTEROID) event.type = "visitAsteroid";
-      if (content.kind === solar.layout.CONTENT_KIND.PLANET && content.planetId !== "earth") {
+      // 正式applyArrivalRewards对地球也生成visitPlanet；不发宣传不等于没有访问。
+      if (content.kind === solar.layout.CONTENT_KIND.PLANET) {
         event.type = "visitPlanet"; event.planetId = content.planetId;
       }
       const progress = structuredClone(n.progress);

@@ -1,0 +1,444 @@
+{
+  "scope": "提取事件进度判定前后的完整固定局：逐步动作/摘要、完整持久终局、全部非时间搜索字段；仅排除diagnostics.totalMilliseconds，不重跑AI",
+  "sources": [
+    "reports/research/7f66d3e1.c555bc33.full.json",
+    "reports/research/2a4865e5.1585d689.full.json"
+  ],
+  "measurements": [
+    {
+      "commit": "c555bc33",
+      "steps": 596,
+      "wallMs": 504581,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 100
+        },
+        {
+          "playerId": "player-green",
+          "total": 86
+        },
+        {
+          "playerId": "player-brown",
+          "total": 115
+        },
+        {
+          "playerId": "player-white",
+          "total": 137
+        }
+      ],
+      "mean": 109.5,
+      "searches": 184,
+      "nodes": 135649,
+      "submissions": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 280,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 285,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 328,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 332,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 369,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 412,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 420,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 435,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 435,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 439,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 443,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 449,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 476,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 492,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 497,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 539,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 553,
+          "kind": "strategic",
+          "cap": 4096
+        }
+      ],
+      "failures": []
+    },
+    {
+      "commit": "1585d689",
+      "steps": 596,
+      "wallMs": 503652,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 100
+        },
+        {
+          "playerId": "player-green",
+          "total": 86
+        },
+        {
+          "playerId": "player-brown",
+          "total": 115
+        },
+        {
+          "playerId": "player-white",
+          "total": 137
+        }
+      ],
+      "mean": 109.5,
+      "searches": 184,
+      "nodes": 135649,
+      "submissions": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 280,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 285,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 328,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 332,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 369,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 412,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 420,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 435,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 435,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 439,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 443,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 449,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 476,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 492,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 497,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 539,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 553,
+          "kind": "strategic",
+          "cap": 4096
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "sameReplay": true,
+  "sameFinalState": true,
+  "sameNonTimeSearches": true,
+  "meanFloorPassed": true,
+  "noScoreRegression": true,
+  "noRuleFailures": true,
+  "zeroCutoffs": false,
+  "sha256": {
+    "reports/research/7f66d3e1.c555bc33.full.json": "de7b64c52cb36a052e7a045a8b9fe4f2585ed5994006a4a7123883eb205549da",
+    "reports/research/2a4865e5.1585d689.full.json": "6c20df232247cfdfaa78d523470683fa8cda6ff3b7b0036a4dc68f698411bab9",
+    "seti-saves/seti-save-research-data-event-contract-20260907-c555bc33-full-v299.json": "37a4b4f88f2aa94a0a4d846e527483a572c38fdb68b30708c76606e1fff60100",
+    "seti-saves/seti-save-research-visit-progress-read-20260907-1585d689-full-v299.json": "60e4064e647af23ac6f41f064d658255538b64463f14dcf99cf83270117e37fe"
+  },
+  "extractionParityPassed": true,
+  "goalComplete": false
+}
